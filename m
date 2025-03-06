@@ -1,154 +1,202 @@
-Return-Path: <linux-kernel+bounces-548893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD933A54A95
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:23:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 14D74A54A9D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:25:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 118093A3D27
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:23:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 433FD3A5900
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FBE20B207;
-	Thu,  6 Mar 2025 12:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F7B720B807;
+	Thu,  6 Mar 2025 12:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VIVHm+Ry"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="KSNf9NaX"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C1F1853
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 12:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8630820B1E4;
+	Thu,  6 Mar 2025 12:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741263830; cv=none; b=pR3PU2zXGftLmimqvhBJ2eH4jSOHC6j2ru2A2V66eK/+7vDW2IgTMASabjXbMFLmi2CxgZnDfqQ6FcLPZY5hGCYCQis857wr8bIF0aEgFFnIqbME457+wPEl4NZKt5w2r9YsZo26D6gRa+T4JSHMKDtyiWyMdaMbU557FstdDts=
+	t=1741263878; cv=none; b=lDlLo+f3Z4hOELHHufsn5dFZl1FgFWJoqp3pXCaA+ExSS6cBFXEBzSFmEOBUHEElG2mSHcrBuHpRCLSenoas+9jeMJKvVMJz9zQVJleijeeAMDUJnJ0mMk0un/wkFq/fdjaZfLvzs9RR+z3GknIDbE8HvKGWHwHwzABsbGJVSwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741263830; c=relaxed/simple;
-	bh=XnsPLRnXSWb7buELfPusaeb+B8AlBgoQQP15h/UL+Kc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hQxBliRh22YJwzX4CuKqEyw56oqL7HUg/mtQaihzol17JHc9TryO2j/1xkVTacpshxgQQqKe0kDITORXwkQWDpqKelC2t1O5pUPARQxeG2zCxoEyrrgjXGt6gC3uzwe0m8SuFLoIUc8Lc4RLO3xLteDPSWGzqDE0+fvAswdlVa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VIVHm+Ry; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43bbf159247so658055e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 04:23:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741263826; x=1741868626; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M16Hx03LPq6Hpxa+7YZIfd9IWWJDL42bnuEv+y5yizM=;
-        b=VIVHm+RyJq8WE+p3322eTYpgG1NYzUqgF/ySd4KpZlDQJX2sqN7C++0yPJZhyIOKRF
-         u+O1u4+JrFQs6ve8P48QZjJIgdUhInvJNsKVvCNzBOuJuk3bMvdxfDltvWApMwB2DagZ
-         g5ecaOwERnTOcwPhvDQBZX2x3CyvwDVZvU4SFv0xFL2tJQii/0Azank772wFa6PH+7LQ
-         ob47J/aATABG8YNxm8JCQ7VCjyA60pQhfxrPjaU4bz/WRX5CD5NY8XjpnxxQtZYM9Pep
-         qJfWHg5net0118fYAauk91UI2G/xMstHOO1YVh1zBP4umx/dRvDb+Z9gKozTc29N83tv
-         6c1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741263826; x=1741868626;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M16Hx03LPq6Hpxa+7YZIfd9IWWJDL42bnuEv+y5yizM=;
-        b=ttqIEdLK56Mn3l51VfKP2yGFrMa+y63/O4JKxZ+1OHv6sbWI7CxpWVIA2lIfvjAWJW
-         uFyaLqeZgNsLggPHpjXOgo1SPEo1jQdbxhdenLg7qkXTiK0OuV619npUzDZWAwp1shvi
-         V4SjYURswytiYXCQDEhZDiEyVo+nWgeaR3i37esDE6dLVRbjHd+NochlXUk6SVKwi3KE
-         SWjxY/BLn7hHPNrxP3ClfpC/dTfxmZF3xU7jfEmwgBvhmHias4bPfA2IflCyarxNJzie
-         li6OwBsVK8Vpp5B6rXB+OzoQqikana+qHGdwNXdSpd1rFwBa98pSY+tNFW9TfGJ+UqvG
-         5KDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIupRX6SoUdjfEVZHmYRvFPJIW7B4s0CQrHnAGB5Z5HPTFPbDrJ8rvAE+UEj4k3NBEopsWv3S2kUry9kc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuuWNZpbTrA4Ffp3h2PfhKypdOw618LwzivuOmJ7IWKbjPSO/B
-	kPQISCllqYQcX6D8j0TtqzUvSlk1EvKlRVIUXjOJo9RLBmhZ/NRmC1fDLDr7yB4=
-X-Gm-Gg: ASbGncsOpsqqJ+AA3PbrdpWu/Vrh255d78XjO2lvcdiCfPk6kDosFTa/Kv6Of826sRb
-	r2ekxluGPcDbH0+Wp/dPKvQZH74icMbKqitgplPLl74RKsOPGJH/ueJ0QExJw9D0BHN5KaLjrFP
-	aSr9u/gvgWt0f60MtS5wg8pCZMlILLknU6oTBrfdJ7SY2ROfKz8jqb+x21+qWmExlWdbEbG7JMt
-	OCF4tlqthOq6EtUJ8OM3hjWuz96X52Ld5ryneEihpCIUTtdHMrZljpHGhsIRkEYgOcfj8dDxxZv
-	wReoBmmzYI0FBvu/pljHET10GxORlQWs5EXRYUK7iXqMIEDj9p6iHDSDAntgyuXlIPAgZRbRfty
-	to7KluHLAtD8f3fWdx7ninFFG14SFuhpLV+FkTBE5XIkCCm23XA==
-X-Google-Smtp-Source: AGHT+IFsubZy1stzLlAQAO2x9t8qCSSvv55Pi5w0YDWBthveEExrqPR8Wq2/UXbzt8+RS0SQ+6/D5w==
-X-Received: by 2002:a05:600c:3d1a:b0:439:9a1f:d73d with SMTP id 5b1f17b1804b1-43bd2ae647bmr19310215e9.8.1741263826596;
-        Thu, 06 Mar 2025 04:23:46 -0800 (PST)
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfb79b9sm1886787f8f.3.2025.03.06.04.23.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 04:23:46 -0800 (PST)
-Date: Thu, 6 Mar 2025 13:23:43 +0100
-From: Petr Tesarik <ptesarik@suse.com>
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Valentin Schneider <vschneid@redhat.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rt-users@vger.kernel.org, Mike Galbraith <efault@gmx.de>, Peter
- Collingbourne <pcc@google.com>, Thomas Gleixner <tglx@linutronix.de>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Thiago Jung Bauermann
- <thiago.bauermann@linaro.org>, Mark Brown <broonie@kernel.org>, Kristina
- Martsenko <kristina.martsenko@arm.com>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, Jinjie Ruan <ruanjinjie@huawei.com>, Juri Lelli
- <juri.lelli@redhat.com>, Phil Auld <pauld@redhat.com>
-Subject: Re: [PATCH 1/1] arm64: enable PREEMPT_LAZY
-Message-ID: <20250306132343.6b902a3d@mordecai.tesarici.cz>
-In-Reply-To: <Z8hAZ09Q40fxLJSk@J2N7QTR9R3>
-References: <20250305104925.189198-1-vschneid@redhat.com>
-	<20250305104925.189198-2-vschneid@redhat.com>
-	<Z8hAZ09Q40fxLJSk@J2N7QTR9R3>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1741263878; c=relaxed/simple;
+	bh=TlUDW05wiBr8NQ7PIcGNl2xXhbKOhVFYimd3dlIl6Jk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=mO9eYE8UPkLc1BpfnoZHg2khl/5J1URU9ZJRSn6vm18MdN5bWOspSATf+8dUYLLnwYTCPU6i5jPAnPGGTjXOEXB0vA5fJ0O9+v3ivoXS0GMAttk+EzUQB0Cz/CeI4YD0UIr9OhDjsC//dc1R2vxtv/0d5SoZtji5OjDAGY0z6Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=KSNf9NaX; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 20E2740E0214;
+	Thu,  6 Mar 2025 12:24:32 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id liJDraIwtjRa; Thu,  6 Mar 2025 12:24:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741263868; bh=BWyyMK8vDQwsydUw2VxbIvYQKhjrWbAedtXpQPzoiPo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=KSNf9NaXOQmCIV3Ia3GlVK+bKltSnztdW2kTITlGoN594vzghFUlx9B9OQVf2K+WA
+	 e5+RJhi2CaqJlwotm8axqdNOvXMhs+r73orY/zd4upeyBLAt256gP9wtmg7uCyhUYz
+	 hSTj3KqXDRP3Ze/TMVlQXnWeUiOHJrdMrjXBOE932FqBoEbJIWtqDeebm0IzwWPEcM
+	 gS2uxTpk/pS3WrG2VaGx09F/GtAZ7IS2WZpsXPqQyUdgNUpyhN7VCS7ApMCPySNNYa
+	 tBgWLMaCL9qBa7UvZWBC/7hiYRgvuvCXq/YYuQrl0GChP/VTu0tNcB1X/6mz87nyCG
+	 ARrW0e27IeosBsFQTA2LObxXRcxaBHjW5v6QTWEdqV9anI7dl5u4nItz8F0s4zjCL/
+	 7U8Om8tYOJe9MTw6xpWkfOvJsFce+qdtPJLP+6iEHcZbsLZhlCvAnXp1Jntt5nvYkL
+	 527AWFYQpmpqI2KV7LwvhHdU8Yg2t+0svMcYD9XH3ILeviQL1itmrFIj0OlkZZDItt
+	 v/KpsV1R6TSoZ6YqFX4GPcpFX2jwlSxBEDBrf4FFIdMPVlAlSS+TpN9gvEDpETnWaG
+	 W86iESUptpajCyHSFiAFuF8aldXBVOvRLxXDakxgmZPiH79xxTstOPp/AmIyOaj+8q
+	 WlSKlhzTekdtJ+AbNFKAhV8o=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 367EC40E020E;
+	Thu,  6 Mar 2025 12:24:19 +0000 (UTC)
+Date: Thu, 6 Mar 2025 13:24:13 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>, linux-kernel@vger.kernel.org,
+	x86-ml <x86@kernel.org>
+Subject: request_irq() with local bh disabled
+Message-ID: <20250306122413.GBZ8mT7Z61Tmgnh5Y9@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-On Wed, 5 Mar 2025 12:15:35 +0000
-Mark Rutland <mark.rutland@arm.com> wrote:
+Hi,
 
-> On Wed, Mar 05, 2025 at 11:49:25AM +0100, Valentin Schneider wrote:
-> > From: Mark Rutland <mark.rutland@arm.com>
-> > 
-> > For an architecture to enable CONFIG_ARCH_HAS_RESCHED_LAZY, two things are
-> > required:
-> > 1) Adding a TIF_NEED_RESCHED_LAZY flag definition
-> > 2) Checking for TIF_NEED_RESCHED_LAZY in the appropriate locations
-> > 
-> > 2) is handled in a generic manner by CONFIG_GENERIC_ENTRY, which isn't
-> > (yet) implemented for arm64. However, outside of core scheduler code,
-> > TIF_NEED_RESCHED_LAZY only needs to be checked on a kernel exit, meaning:
-> > o return/entry to userspace.
-> > o return/entry to guest.
-> > 
-> > The return/entry to a guest is all handled by xfer_to_guest_mode_handle_work()
-> > which already does the right thing, so it can be left as-is.
-> > 
-> > arm64 doesn't use common entry's exit_to_user_mode_prepare(), so update its
-> > return to user path to check for TIF_NEED_RESCHED_LAZY and call into
-> > schedule() accordingly.
-> > 
-> > Link: https://lore.kernel.org/linux-rt-users/20241216190451.1c61977c@mordecai.tesarici.cz/
-> > Link: https://lore.kernel.org/all/xhsmh4j0fl0p3.mognet@vschneid-thinkpadt14sgen2i.remote.csb/
-> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> > [testdrive, _TIF_WORK_MASK fixlet and changelog.]
-> > Signed-off-by: Mike Galbraith <efault@gmx.de>
-> > [Another round of testing; changelog faff]
-> > Signed-off-by: Valentin Schneider <vschneid@redhat.com>
-> > ---
-> >  arch/arm64/Kconfig                   |  1 +
-> >  arch/arm64/include/asm/thread_info.h | 16 +++++++++-------
-> >  arch/arm64/kernel/entry-common.c     |  2 +-
-> >  3 files changed, 11 insertions(+), 8 deletions(-)  
-> 
-> Catalin, Will, given this is small and self-contained, I reckon it makes
-> sense to pick this up ahead of Jinjie's series to move arm64 over to the
-> generic entry library (which is on my queue of things to review). Even
-> if we pick up both, it'll be easier to bisect and debug issues caused by
-> this patch alone.
-> 
-> The fixes/cleanups from Mike and Valentin look right to me, so FWIW:
-> 
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
+this is latest Linus/master + tip/master on a 32-bit x86:
 
-Thank you, all. Much appreciated.
+tglx says one cannot request_irq() with local bh disabled.
 
-Petr T
+[   17.354927] cfg80211: Loading compiled-in X.509 certificates for regulatory database
+[   17.906996] Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
+[   17.950874] Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
+[   18.034884] platform regulatory.0: Direct firmware load for regulatory.db failed with error -2
+[   18.038920] cfg80211: failed to load regulatory.db
+
+[   18.726638] =============================
+[   18.726638] [ BUG: Invalid wait context ]
+[   18.726638] 6.14.0-rc5+ #1 Not tainted
+[   18.726638] -----------------------------
+[   18.726638] ip/991 is trying to lock:
+[   18.726638] c36a2d64 (&desc->request_mutex){+.+.}-{4:4}, at: __setup_irq+0x98/0x6cc
+[   18.726638] other info that might help us debug this:
+[   18.746793] context-{5:5}
+[   18.746793] 2 locks held by ip/991:
+[   18.746793]  #0: c261f920 (rtnl_mutex){+.+.}-{4:4}, at: rtnl_newlink+0x336/0x9fc
+[   18.746793]  #1: c1f56ea0 (local_bh){.+.+}-{1:3}, at: dev_set_rx_mode+0x5/0x80
+[   18.746793] stack backtrace:
+[   18.746793] CPU: 1 UID: 0 PID: 991 Comm: ip Not tainted 6.14.0-rc5+ #1
+[   18.746793] Hardware name: Acer AOA150/, BIOS v0.3309 10/06/2008
+[   18.746793] Call Trace:
+[   18.746793]  dump_stack_lvl+0x94/0x10c
+[   18.746793]  dump_stack+0x13/0x18
+[   18.746793]  __lock_acquire+0xa1c/0x2500
+[   18.746793]  lock_acquire+0xc3/0x2ac
+[   18.746793]  ? __setup_irq+0x98/0x6cc
+[   18.746793]  ? debug_smp_processor_id+0x12/0x14
+[   18.746793]  ? __mutex_lock+0x54/0xcb8
+[   18.746793]  ? __mutex_lock+0x54/0xcb8
+[   18.746793]  ? trace_preempt_off+0x2e/0xb4
+[   18.746793]  ? __might_sleep+0x35/0x6c
+[   18.746793]  ? __mutex_lock+0x54/0xcb8
+[   18.746793]  ? preempt_count_add+0x6c/0xd4
+[   18.746793]  __mutex_lock+0x82/0xcb8
+[   18.746793]  ? __setup_irq+0x98/0x6cc
+[   18.746793]  mutex_lock_nested+0x27/0x2c
+[   18.746793]  ? __setup_irq+0x98/0x6cc
+[   18.746793]  __setup_irq+0x98/0x6cc
+[   18.746793]  ? __kmalloc_cache_noprof+0x1b1/0x2d0
+[   18.746793]  ? request_threaded_irq+0x84/0x188
+[   18.746793]  request_threaded_irq+0xc2/0x188
+[   18.746793]  rtl_open+0x33b/0x5e4 [r8169]
+[   18.746793]  ? raw_notifier_call_chain+0x20/0x24
+[   18.746793]  __dev_open+0xce/0x17c
+[   18.746793]  ? dev_set_rx_mode+0x74/0x80
+[   18.746793]  __dev_change_flags+0x176/0x1cc
+[   18.746793]  dev_change_flags+0x29/0x6c
+[   18.746793]  do_setlink.isra.0+0x28f/0x1180
+[   18.746793]  ? __mutex_lock+0x107/0xcb8
+[   18.746793]  ? __mutex_lock+0x107/0xcb8
+[   18.746793]  ? trace_preempt_on+0x2e/0xac
+[   18.746793]  ? __mutex_lock+0x107/0xcb8
+[   18.746793]  ? preempt_count_sub+0xb1/0x100
+[   18.746793]  ? debug_smp_processor_id+0x12/0x14
+[   18.746793]  ? __mutex_lock+0x107/0xcb8
+[   18.746793]  ? rtnl_newlink+0x336/0x9fc
+[   18.746793]  ? __kmalloc_cache_noprof+0x1b1/0x2d0
+[   18.746793]  ? do_alloc_pages+0x64/0xbc
+[   18.746793]  rtnl_newlink+0x762/0x9fc
+[   18.746793]  ? __this_cpu_preempt_check+0xf/0x20
+[   18.746793]  ? do_alloc_pages+0x64/0xbc
+[   18.746793]  ? do_setlink.isra.0+0x1180/0x1180
+[   18.746793]  rtnetlink_rcv_msg+0x3fd/0x584
+[   18.746793]  ? rtnetlink_rcv_msg+0x58/0x584
+[   18.746793]  ? netlink_deliver_tap.constprop.0+0xe5/0x4ac
+[   18.746793]  ? local_clock_noinstr+0x68/0x1c0
+[   18.746793]  ? rtnl_fdb_dump+0x370/0x370
+[   18.746793]  netlink_rcv_skb+0x42/0xdc
+[   18.746793]  ? do_alloc_pages+0x64/0xbc
+[   18.746793]  rtnetlink_rcv+0x12/0x14
+[   18.746793]  netlink_unicast+0x198/0x2a8
+[   18.746793]  netlink_sendmsg+0x1bb/0x3ec
+[   18.746793]  ? netlink_unicast+0x2a8/0x2a8
+[   18.746793]  ____sys_sendmsg+0x233/0x280
+[   18.746793]  ? netlink_unicast+0x2a8/0x2a8
+[   18.746793]  ? do_alloc_pages+0x64/0xbc
+[   18.746793]  ___sys_sendmsg+0x66/0x9c
+[   18.746793]  ? __might_fault+0x3b/0x84
+[   18.746793]  ? __might_fault+0x3b/0x84
+[   18.746793]  ? local_clock_noinstr+0x68/0x1c0
+[   18.746793]  ? do_alloc_pages+0x64/0xbc
+[   18.746793]  __sys_sendmsg+0x52/0x88
+[   18.746793]  ? _copy_from_user+0x51/0x60
+[   18.746793]  __ia32_sys_socketcall+0x30b/0x320
+[   18.746793]  ? __might_fault+0x7d/0x84
+[   18.746793]  ia32_sys_call+0x2695/0x284c
+[   18.746793]  __do_fast_syscall_32+0x67/0xf0
+[   18.746793]  do_fast_syscall_32+0x29/0x5c
+[   18.746793]  do_SYSENTER_32+0x15/0x18
+[   18.746793]  entry_SYSENTER_32+0x98/0xf9
+[   18.746793] EIP: 0xb7edd579
+[   18.746793] Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d 76 00 58 b8 77 00 00 00 cd 80 90 8d 76
+[   18.746793] EAX: ffffffda EBX: 00000010 ECX: bff4ab70 EDX: 00000000
+[   18.746793] ESI: b7e5f000 EDI: 005692a0 EBP: 00000010 ESP: bff4ab60
+[   18.746793] DS: 007b ES: 007b FS: 0000 GS: 0033 SS: 007b EFLAGS: 00000282
+[   18.874284] hpet: Lost 9 RTC interrupts
+[   18.874867] RTL8201CP Ethernet r8169-0-200:00: attached PHY driver (mii_bus:phy_addr=r8169-0-200:00, irq=MAC)
+[   18.932445] r8169 0000:02:00.0 eth0: Link is Down
+[   19.264574] ath5k 0000:03:00.0: can't disable ASPM; OS doesn't have ASPM control
+[   19.269295] ath5k 0000:03:00.0: registered as 'phy0'
+[   19.827560] ath: EEPROM regdomain: 0x65
+[   19.829929] ath: EEPROM indicates we should expect a direct regpair map
+[   19.832273] ath: Country alpha2 being used: 00
+[   19.834396] ath: Regpair used: 0x65
+[   19.837790] ieee80211 phy0: Selected rate control algorithm 'minstrel_ht'
+[   19.854976] ath5k: phy0: Atheros AR2425 chip found (MAC: 0xe2, PHY: 0x70)
+[   20.566012] r8169 0000:02:00.0 eth0: Link is Up - 100Mbps/Full - flow control rx/tx
+[   20.966578] NET: Registered PF_INET6 protocol family
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
