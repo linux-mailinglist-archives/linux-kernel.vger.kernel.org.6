@@ -1,210 +1,217 @@
-Return-Path: <linux-kernel+bounces-549874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 450CCA5580D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:02:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7601BA557FB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:01:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CBE318980F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:02:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77681896820
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:01:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF97727932E;
-	Thu,  6 Mar 2025 21:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 932812063EB;
+	Thu,  6 Mar 2025 21:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="qTEQ082Z"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bS9XeDFG"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2075.outbound.protection.outlook.com [40.107.237.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6571327814D;
-	Thu,  6 Mar 2025 21:01:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741294897; cv=none; b=dHZot4JRLPmQg85hbxIuo9baVctX2zJjGIceLRUmNK2tpylwfGY/9MfEoE0K8jSp9YdxKXrYSs2WHj1smo/PWLqSAdrf3BradHueqchhqxIX8Ui1s8+dTmZsg6BIGKtW3qVf0BhOqu2GK6HElOCwzcx+yj55UmlKV3pfp324o+w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741294897; c=relaxed/simple;
-	bh=zrZRc+SbouOjcSqL76REKNkmVAy/m9mWfpVBP+/U6wA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mrKBqVkxUILJNfgnpVW/s6sdzWf1wnKssliQnISDVew4FE6eRK/WDozv3F5X6CQlQ6mLPE6wbhAu+IJiiB1erT7fAPX5tIX187TLsj+x2d4oXgSoxDndxedDTsX7LX8qnniy1BETLfTw6Y7ocG9ZUFNt+C8ezwyDXU52dAFxwUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=qTEQ082Z; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526HfeBJ003108;
-	Thu, 6 Mar 2025 16:01:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=EuQFs
-	WlKwnyVcooHtBoWpdbs4tk0p3riY+QlPn1uc8U=; b=qTEQ082ZYj4PVGfKEDW8P
-	wvO1aglZ+9FTYhO1Y6COTyrCDya2Y6O/UWsq5+ipz9/sCrIuT2SFRsN6G9ZQF6Qa
-	Rfte19CLLTQ8gyQywQdbpUJRwl2iCPWeqT7NOCjzRhjTdeNupl9FSxWLXhXmTR5S
-	3XndEpYMPLfeHTOdcQyyYW5wUDGjmmwU20fGii5gLYAMdz3n+D19UmsPB1DjSL7S
-	h/0xVIMIJz7LrTG713oz6PnA5PKmjLR9TyS0W+skkzhEqt6uOgPt/EXwwXYY+gh8
-	zbISYOooBeVVw8b2dv4m/LzHGH2ud9sOaMV4wvgQKTDgHAXFDpDpw0bs/cIkpiDv
-	g==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 455wnuf8g9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 16:01:15 -0500 (EST)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 526L1EJW031099
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 6 Mar 2025 16:01:14 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Thu, 6 Mar 2025
- 16:01:14 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Thu, 6 Mar 2025 16:01:14 -0500
-Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 526L0whb011460;
-	Thu, 6 Mar 2025 16:01:00 -0500
-From: Jonathan Santos <Jonathan.Santos@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-CC: Jonathan Santos <Jonathan.Santos@analog.com>, <lars@metafoo.de>,
-        <Michael.Hennerich@analog.com>, <marcelo.schmitt@analog.com>,
-        <jic23@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linus.walleij@linaro.org>, <brgl@bgdev.pl>,
-        <lgirdwood@gmail.com>, <broonie@kernel.org>, <dlechner@baylibre.com>,
-        <marcelo.schmitt1@gmail.com>, <jonath4nns@gmail.com>
-Subject: [PATCH v4 03/17] dt-bindings: iio: adc: ad7768-1: add trigger-sources property
-Date: Thu, 6 Mar 2025 18:00:56 -0300
-Message-ID: <4136b5259df75221fc314bcd4a57ecaeeab41a45.1741268122.git.Jonathan.Santos@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1741268122.git.Jonathan.Santos@analog.com>
-References: <cover.1741268122.git.Jonathan.Santos@analog.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A46D1FC7ED
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 21:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741294868; cv=fail; b=pq4D3xsaTR/GWahpS764zDic+zO6Eoy25ijW5d94Gzjg/n9uVN/yyPCNbIY2g7FkT3xw5/UxYRqD3RYKRFi/NZ3C/IfdU3TcuSGrbQxgwyVqe7uRu0j/47jnWX5ua4JHKr/+x6jEbjtH6+3/Dq7NxiP8QjFjYnWKdkexBhNXa4g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741294868; c=relaxed/simple;
+	bh=ScdREdPyY3nA1U3Om4rXwW8eHWLP0LPYQLN7MyI8xGg=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=X53E5llO9ONntLhIJSappI39LH8vtMtAw8gINqVFq+OuhF+M4ky3YNOiqHIsopNYIjrUDUa8wV5CeZ2zDHgHwErlS0JXjM+DF+CCqsSOCIwa0goDRXjPBNtppAjLClwfBrJQ/842yDFSpRedLJ31UrfdMFhF9NEmBUNFNG0zNwI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bS9XeDFG; arc=fail smtp.client-ip=40.107.237.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ydEU9PJCe0mVa1HEznC5MFoHkBpG9rgQ7KXnWN6U7X1gytImKZ3X3VjgjfMP+4bJRPQ7BDVhYLRJ07+KT6rgPqLnGUS9kxjQRRA0+prz8wOT+Nyzzx6CLPFJTj24kTAEPTGaw7flY6N5tyyTHe2Vw2DFufZ1ymA5XjjS8XSnpJA8Os36kZc9Qvs+O0QRVg7pCsywWhsuj+y/ThjQ1B3ILFkz5dA1za4s4WUA00Icr92a+24bFkQwWbSZJoGgjrsptGiU846iqXNYoIflSRYw9kXwWOoSaEZtelwZ7P/FNY0M1G15f0a4HPTTYwEl/MrDHBhOZ9tp79WLfo2wiHxjHw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ScdREdPyY3nA1U3Om4rXwW8eHWLP0LPYQLN7MyI8xGg=;
+ b=FamXJm6LDKhueEkXwk4hxzQ/Xdlb9l/shtsq3DFw+CaaoSWh7uylorXm5K/zJgTSXtVDitbyy8uvHp8A+CZqekXhwiW6CCjd8ZYNQfAvSg7naSA8q3LNIwNqZcN7sVW8BP855NFjm4TDON1YjkEULiHZpx1TVgyHzr3pxPbkBHgWalI7tzocoze2FRD125wgPLNOXU3HrOo08zbPeIibGRFwnjp3WWq5liLunzJCQYdY91LFbEchB/nycvNgmW7aqYFirBPmZ4c0+WrgcWEd5hRiPngayl9OnggYOwd0oPbsHSQz0C207mSPFZx2LSRdYHnxr3K78ozHiQpyhNW9bA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ScdREdPyY3nA1U3Om4rXwW8eHWLP0LPYQLN7MyI8xGg=;
+ b=bS9XeDFGEND9dNAamGk1jYhQL4SKZmXkP7+8BG7AVuaG0RO+94S9NsLGMViOD2jgDvhhZTvLfRmcBEc5KeF+dff+VIwRB/FvaFzUObZgn+UjylG8+b9Jc+MjzF1VCt9/LOMozwdUSOV3isqVbRwR6b5RlFECWkuv//LirXUYzjqnjr6TdMj0qbLs8WdRDc1675wZMqLZcgPReIW+tGsoWr2WpPpSB/zyxCfh+jE++N0PlotcQYFvFHIGBadqlrny83S3txoKEe7Q4vbva43yl64s0r5jVfZi1ea16lctgAYfdsrXXBD6V3eUQLVRE3NbEl/jLCv7IFYIVib0Ug/r0A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM6PR12MB2667.namprd12.prod.outlook.com (2603:10b6:5:42::28) by
+ IA1PR12MB7662.namprd12.prod.outlook.com (2603:10b6:208:425::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Thu, 6 Mar
+ 2025 21:01:04 +0000
+Received: from DM6PR12MB2667.namprd12.prod.outlook.com
+ ([fe80::bd88:b883:813d:54a2]) by DM6PR12MB2667.namprd12.prod.outlook.com
+ ([fe80::bd88:b883:813d:54a2%5]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
+ 21:01:01 +0000
+Message-ID: <bc9ad63c-186b-40ea-9427-ce6a78a1e5c1@nvidia.com>
+Date: Thu, 6 Mar 2025 13:00:58 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 04/49] x86/resctrl: Use schema type to determine how to
+ parse schema values
+To: James Morse <james.morse@arm.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Reinette Chatre <reinette.chatre@intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
+ Babu Moger <Babu.Moger@amd.com>, shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>,
+ Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>
+References: <20250228195913.24895-1-james.morse@arm.com>
+ <20250228195913.24895-5-james.morse@arm.com>
+Content-Language: en-US
+From: Fenghua Yu <fenghuay@nvidia.com>
+In-Reply-To: <20250228195913.24895-5-james.morse@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BYAPR06CA0061.namprd06.prod.outlook.com
+ (2603:10b6:a03:14b::38) To DM6PR12MB2667.namprd12.prod.outlook.com
+ (2603:10b6:5:42::28)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: RV_zPSangsWcmFNWAW0m0b2XgaXBZxWV
-X-Proofpoint-ORIG-GUID: RV_zPSangsWcmFNWAW0m0b2XgaXBZxWV
-X-Authority-Analysis: v=2.4 cv=VNcnn8PX c=1 sm=1 tr=0 ts=67ca0d1b cx=c_pps a=3WNzaoukacrqR9RwcOSAdA==:117 a=3WNzaoukacrqR9RwcOSAdA==:17 a=Vs1iUdzkB0EA:10 a=gAnH3GRIAAAA:8 a=1BXouof-NqooHmoyBnsA:9 a=ll8Ng6K2x5dEghGH17xW:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-06_07,2025-03-06_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- spamscore=0 clxscore=1015 priorityscore=1501 bulkscore=0 mlxlogscore=999
- lowpriorityscore=0 impostorscore=0 suspectscore=0 adultscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503060160
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB2667:EE_|IA1PR12MB7662:EE_
+X-MS-Office365-Filtering-Correlation-Id: bf53cbdb-f28b-40be-b013-08dd5cf20047
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|376014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SjFoL0h3RUk2Y2pINmRRWTljSHhUMHJ0L0VxRkpYVmY0anhpMWQyU3hBaHVi?=
+ =?utf-8?B?YkMza2NEdFp6a3FqL1RCdC9GUFZ1cnozL0VsM1dQU1VRQUlEcXVpdFZaWUc1?=
+ =?utf-8?B?ckQ5WnN0Y1RXYVVoM0hKOUY1MVJ2RzBMRDB6Qk9xaVBnenNGdlRyODJhUlR6?=
+ =?utf-8?B?K2h0V3BvcFdOZkVIOEt2OHhtdXFUMHBSejl5cjVTS2hxVWZUY3pKc1hvQ2pO?=
+ =?utf-8?B?R3o0YmZ0a1U2bEIrcUZnOFlvVDdWVzFVcDBTbFVUeklBaXFENTZSL2hnVllo?=
+ =?utf-8?B?K1NCTDBhVE8ydUZjUmswOXVuZ1hWa0Z2U2RhazduOG4rUS80REVxWkRqRVRP?=
+ =?utf-8?B?cDd1a0hCL2U1c05nUnlSWUhlVXZsZ2U0VjRaMnJCbmZxWENFRWZhaEd2UzE4?=
+ =?utf-8?B?eGIwN3hYY1poeTUrUUlRbmJnb3B5NVZXeFhwWFdFY3pyRXRVYy9UaStxRHZo?=
+ =?utf-8?B?VFNNYVZSNFR6UGdYRnM0STgzd09lVlAzU0hGdlc5MElNaS9qL2xxVVM4KzVm?=
+ =?utf-8?B?QmtyWUZiT2NwbjJ5Qy9MTnpnZjQzRjc5U1F5bWNteEZFRHJ3eHNUT290eHRD?=
+ =?utf-8?B?QjlvNzFIdlJuWld2ZHBmZ25nNEoxR202N0xBTDdrcHNJemZSbzIxOWRaMURW?=
+ =?utf-8?B?UUVaemc2NUFBS2RaS2gwVzkyaVhURDBtVUl5Q1RpZHVqQ0R0QVpabHp3aHll?=
+ =?utf-8?B?VzZTY1lzclRTTXY5N3Y3ZWEyMERaVDc0Nk1jcTIxci9CWXZVVkF5OExXR3U2?=
+ =?utf-8?B?RlpCOWNDaHJINzZGZW1qQlFDV3g4ZGVnV2xoclJpaVJVU0Uycnp0MEJ2ODZG?=
+ =?utf-8?B?WFY0b3JsT3N5S1JrOWNXRTluOHJ5SGNpTVVuYjYwRHZpSmg5aFE0dVBvaXJV?=
+ =?utf-8?B?UG9ybSs5RXE3am1vUzhaUFFTakgyQklXOWtVRWkxaDdjYUZHQy9idTRsVWtG?=
+ =?utf-8?B?TTBVUVdLcjdhRHlhNEI4NDZ0bXBzNGhsSk12dFovYjdvQmNpQ1djRy9kSjdH?=
+ =?utf-8?B?OTI2dXpDZWFUN0dVeWxyMFJoeVZjL1Zlb05tTjZGM0s2NEVaRStIZ0xJa1FG?=
+ =?utf-8?B?NitxWWUzZVJCT0ZrL0RTVm9tb3hXVkszRnYxUmsrdWM3aWZOcmlLbld0aTUy?=
+ =?utf-8?B?ai8yVGNwN1hIdUgza1lxeG51NzRBWGh5cHR4LzZIOVBLeTd4N1poT2wyZjUr?=
+ =?utf-8?B?YmJwRnMvdUk5NkZxVURQZ0xDdW8vN2UzbmcwKy9ySDNhWHV6WnNoVHJiMnhn?=
+ =?utf-8?B?cUlrUDl0SVFFUy9CUGpucGs5ZmFxSS9uc2lNSitXZXlmeE9tdUJYL1IvVExI?=
+ =?utf-8?B?RVc1MEhVSjhwNitDTGkvQWFWVzBMRC9oeXJMbjV5OTJWdG1xS3pHYjNmMEJZ?=
+ =?utf-8?B?cXZrcmQwQmcrZVhNODgwcTJsZjQ3WGc2d0FMeVpwV2pxTFptUjNRMS9GSGps?=
+ =?utf-8?B?SGxTYVp4RzR6VDBFckFaUzNUNjU1THdpVE5jRDFBcWV1Y3o4QnZnL09kK1Vo?=
+ =?utf-8?B?b1Vvell6RVVFMFdNMWZwektxYkJ3QWZ2M1VCc3NPN2kzTUNzd3lUeEhzN3Zx?=
+ =?utf-8?B?VWRXRmhRVmtCT0lQM1lQMSthUmp3UkFkdEVMN09GY2wyTmVnOXdNWmxKOWFG?=
+ =?utf-8?B?OG14N0h3cmZVdUVmb3J2UXJueU5LZmpOSnZzQm05V2NMcEd6QU54aHJJbUhT?=
+ =?utf-8?B?NXNsSjN1Ullyd0ZCeDFmTW9VUU9TdnRVdHo4YnVWS1l4UHQzczV4UTJ0WDlS?=
+ =?utf-8?B?RW9jTHY3cEN6NG9OL3ZVSDdVdG5rdTZTNVl6Ri9GeElaOWVpMUg4SmlGOUZS?=
+ =?utf-8?B?Rk96eWVubFc3eHpPbkhsLzlhVVVNdklZK1d1aXRIck1uZnVPSitwbDR4bUcw?=
+ =?utf-8?Q?zXhtwEmIDJ3Cq?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB2667.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bVhKRmxPZlZrYlljbU83VUZoZlJOZ0xCc0FWUk5mQzdWY2E0U0NpZ2ZoWHlC?=
+ =?utf-8?B?TVJXc1l4cVZQVjlOSmtmTVJrU2NGaWtYdFlHOFZXcGNpUS9UM2FVSmZWa2ZK?=
+ =?utf-8?B?YS9RTkdiL3NqK0tDd291RS9kRHo1TFhxUjZreDV3QjVaVE9DbVordWZMSVlU?=
+ =?utf-8?B?aGhmWXRaNU01LzM5NXl5Y2g2M3p2YTArSFA0OGloU05CYTh6NHphbjMvTXZm?=
+ =?utf-8?B?VGdvekMvSzdmUDJhbG1HVndQUk9OWjVxb0xvdEh6WWpwdGdyQXQxK1N2OUx4?=
+ =?utf-8?B?Qk1IQXVqb0pPWUYzd0hjM0d5dHZhRThjVmdBK3luQ2xwSkpYQ1M1NTdyQVFk?=
+ =?utf-8?B?SU1xM3F3V1lHQlZtZHlveXNpeEV4YktSU0dSRTRTdTVRdVV4b3BtaE4xTWVm?=
+ =?utf-8?B?TklIUzhoTm5CQW5BcnNrNm5wRWlDYWNPVVRvU3o0K0JJVHM0c2dBSllIaXR6?=
+ =?utf-8?B?SnpwMUJTUm9XWTZ0NlBod1AvakU1Z2JzMXdxZW5RZ1RYOG5EcFpEVGFqVnhL?=
+ =?utf-8?B?V3IzSnVuODREWXZneGd3T1pNbjlpa3YrVnp3L2J5amlSUUdXWHIyV01nRGg2?=
+ =?utf-8?B?aGh4aEt4R25mamVvbWV0V0xRSHB0R1NqUk9RaWFMZFdsdXVxdlBucTl4QkpE?=
+ =?utf-8?B?THNFZllqRlRFdXNDL01qTFZKSjMyTTFTRGJGNUJLbWsyTHZIUWhBY3lxMThP?=
+ =?utf-8?B?d1FlWmpPMFdtYmYrNFhiUmNqb3R2N0VqN1NVZTZsc09WZUtnSWJIRkVGZHdP?=
+ =?utf-8?B?c0w4TVZTNHp2WTNiZUppVUJGbnhPRERoakliemJqdFdIU1loODJrbnNyWVYz?=
+ =?utf-8?B?L1pjSHQ2NGltbndBNWEwakU4NFg0QURuSkUvenRja1N5QXBtTWtJQWZteXpM?=
+ =?utf-8?B?TGppZEtSWHhhSEpHbWdwYmlqT3ZGMkxCTVBOeUhTMUpGMzhZSkFtT3g0Rnhy?=
+ =?utf-8?B?NEwzYUowek1QUzlSTU05ZDdDT0JZSXpPTkRLcWt4WE1RNGlrSWVUeDRRNExZ?=
+ =?utf-8?B?SlhaR1Q5a28vZDNiTGlRcSswQjQydWFTdlNnVXR2VFA1QWQrYTltcDkrYUFT?=
+ =?utf-8?B?QkRxZjB4dnFlazBDRjlrWDJjbVFXWTlLdmwyMVcyRUs5U2pObDl5Vk1UcllW?=
+ =?utf-8?B?d2NsUkdlQlRzdlQ4YnZSc29zRG11bFF3R05ScHM5QkxmRGhERE1Gc0hwaCti?=
+ =?utf-8?B?clJTTDVhY1BTc1VTWGpKRHNhWXZSbGdscGRCTkhCMldQQS96M0tNR2NHUkZn?=
+ =?utf-8?B?ME9Rd0RSVkJIUVRRRlowaHJPVnhxWWkxZk9xV0o0R3FNWnU1ZVFSeGxlRUo4?=
+ =?utf-8?B?K1duOSswZzhRZDNUOUhOekhnWEV2NkFxVkdzRWljMS9HbEliSjloQ1gwVHZN?=
+ =?utf-8?B?ejFUK2gyVUFNMWtOSWcrSEw4R2ZUU0pBUTVVN0dMYzZLQTFPUTFEeEdXdlcz?=
+ =?utf-8?B?eVdCTWFOcGd4Z095ZlFacXhjeXkvd1lpN3lwQWJSbkNtOFRlZ2pHRm5KZU15?=
+ =?utf-8?B?aS9TT08yRXlaZitBeExuYkszMzFIMTlkdmJZL08razJqOHI3bGo0QkcwdG51?=
+ =?utf-8?B?MzhPVm1rQWFsWWJLWm1Yc1pSUHhLanpWTEVlb0xuOU91M3FIK3ZDdTN6c0Va?=
+ =?utf-8?B?czgrdnJ5cFhpcUUrZ09pMmlJUVd6VE9mMEhpazJwRFZGNzBqcU5ESTBFTWFE?=
+ =?utf-8?B?cG9UNzFaZVBycE9HK3V6SVpwcFJaTGxCamZySWZTamVFaDQzaXVKS25ZeGc1?=
+ =?utf-8?B?U0ZadHdwaGNQemM4eXJRYWs5dFlBYmhyTU5IQkU4QysvRWp1emQrSHJWTldi?=
+ =?utf-8?B?S2VTSnVMWHNKdHV1WXFzc21jek9qU1FBU1VnTzhPNVVFY3RZOHZKNjN0U0p6?=
+ =?utf-8?B?WXV5aDlVQXhlYmU2NmE1cUloT0twdEpBRXl1Vm5ZWVQ3QWdHTHAyWG1XL3pI?=
+ =?utf-8?B?YzdjQk0vRkcrZzJhVStBVSt3WHlSSzAxVEY4L0FycXJBVmhYaEUvbTR6UjFE?=
+ =?utf-8?B?THlvUzZjbTVqWVJuLzdCc1VJeklibmV2RG52aStudUR3Z05VYUxlTWxrRnRp?=
+ =?utf-8?B?OVdOL29FbC84Ui9aaU9MS3RyeVNEY1VSSWRFUUt4c3R0ZlpOQXJZRy9vWE8v?=
+ =?utf-8?Q?tk9Z8huuHN/Vh04dg2AeCcG/X?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bf53cbdb-f28b-40be-b013-08dd5cf20047
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB2667.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 21:01:01.4896
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: uE71oKkSa+JLK7FP+4+KO5K1JCZ4t094H1FMc08EC3wWp7hu3byssgNCa605nDqXHAmLg0Rzjhkw2cN4iWYM+Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7662
 
-In addition to GPIO synchronization, The AD7768-1 also supports
-synchronization over SPI, which use is recommended when the GPIO
-cannot provide a pulse synchronous with the base MCLK signal. It
-consists of looping back the SYNC_OUT to the SYNC_IN pin and send
-a command via SPI to trigger the synchronization.
 
-Add a new trigger-sources property to enable synchronization over SPI
-and future multiple devices support. This property references the
-main device (or trigger provider) responsible for generating the
-SYNC_OUT pulse to drive the SYNC_IN of device.
+On 2/28/25 11:58, James Morse wrote:
+> Resctrl's architecture code gets to specify a function pointer that is
+> used when parsing schema entries. This is expected to be one of two
+> helpers from the filesystem code.
+>
+> Setting this function pointer allows the architecture code to change
+> the ABI resctrl presents to user-space, and forces resctrl to expose
+> these helpers.
+>
+> Instead, add a schema format enum to choose which schema parser to
+> use. This allows the helpers to be made static and the structs used
+> for passing arguments moved out of shared headers.
+>
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
+> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+> Reviewed-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+> Reviewed-by: Tony Luck <tony.luck@intel.com>
+> Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 
-While at it, add description to the interrupts property.
+Reviewed-by: Fenghua Yu <fenghuay@nvidia.com>
 
-Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
----
-v4 Changes:
-* none
 
-v3 Changes:
-* Fixed dt-bindings errors.
-* Trigger-source is set as an alternative to sync-in-gpios, so we
-  don't break the previous ABI.
-* increased maxItems from trigger-sources to 2.
+Thanks.
 
-v2 Changes:
-* Patch added as replacement for adi,sync-in-spi patch.
-* addressed the request for a description to interrupts property.
----
- .../bindings/iio/adc/adi,ad7768-1.yaml        | 28 +++++++++++++++++--
- 1 file changed, 25 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-index 3ce59d4d065f..4bcc9e20fab9 100644
---- a/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-+++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7768-1.yaml
-@@ -26,7 +26,19 @@ properties:
-   clock-names:
-     const: mclk
- 
-+  trigger-sources:
-+    description:
-+      Specifies the device responsible for driving the synchronization pin,
-+      as an alternative to adi,sync-in-gpios. If the own device node is
-+      referenced, The synchronization over SPI is enabled and the SYNC_OUT
-+      output will drive the SYNC_IN pin.
-+    maxItems: 2
-+
-   interrupts:
-+    description:
-+      Specifies the interrupt line associated with the ADC. This refers
-+      to the DRDY (Data Ready) pin, which signals when conversion results are
-+      available.
-     maxItems: 1
- 
-   '#address-cells':
-@@ -57,6 +69,9 @@ properties:
-   "#io-channel-cells":
-     const: 1
- 
-+  "#trigger-source-cells":
-+    const: 0
-+
- required:
-   - compatible
-   - reg
-@@ -65,7 +80,6 @@ required:
-   - vref-supply
-   - spi-cpol
-   - spi-cpha
--  - adi,sync-in-gpios
- 
- patternProperties:
-   "^channel@([0-9]|1[0-5])$":
-@@ -89,6 +103,13 @@ patternProperties:
- allOf:
-   - $ref: /schemas/spi/spi-peripheral-props.yaml#
- 
-+  - oneOf:
-+      - required:
-+          - trigger-sources
-+          - "#trigger-source-cells"
-+      - required:
-+          - adi,sync-in-gpios
-+
- unevaluatedProperties: false
- 
- examples:
-@@ -99,7 +120,7 @@ examples:
-         #address-cells = <1>;
-         #size-cells = <0>;
- 
--        adc@0 {
-+        adc0: adc@0 {
-             compatible = "adi,ad7768-1";
-             reg = <0>;
-             spi-max-frequency = <2000000>;
-@@ -108,7 +129,8 @@ examples:
-             vref-supply = <&adc_vref>;
-             interrupts = <25 IRQ_TYPE_EDGE_RISING>;
-             interrupt-parent = <&gpio>;
--            adi,sync-in-gpios = <&gpio 22 GPIO_ACTIVE_LOW>;
-+            trigger-sources = <&adc0 0>;
-+            #trigger-source-cells = <0>;
-             reset-gpios = <&gpio 27 GPIO_ACTIVE_LOW>;
-             clocks = <&ad7768_mclk>;
-             clock-names = "mclk";
--- 
-2.34.1
+-Fenghua
 
 
