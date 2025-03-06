@@ -1,121 +1,228 @@
-Return-Path: <linux-kernel+bounces-549307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D208AA550B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:27:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91238A550B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:27:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 035AE3B12B5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:26:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A11867A5E94
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:26:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028BA213E7C;
-	Thu,  6 Mar 2025 16:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF07E21883F;
+	Thu,  6 Mar 2025 16:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JhNTTJhy"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tmj5ojKk"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB9E1F4188;
-	Thu,  6 Mar 2025 16:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DE52212FAA;
+	Thu,  6 Mar 2025 16:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741278284; cv=none; b=XCcGWYd2Q8Vk5N+Vu2raT58AbIsSR/HAna+ees0gAKIjaq+KcVnpI6HMB382KF/NZOwI41t/ssyyOBLMa+GuYPBpKOgdOLWwTxnMidblaUg6g4N8z7hGuf/KnB6zq+lXCQSOEAZ0a2dUGFpMgBXOkLJIEV4KOQ2fhlIjkI3hC1U=
+	t=1741278360; cv=none; b=nLnyJlKSu4dAW6A6lp2iR+wS4U+V679bAkJGNKe2JPogAZbkTZzetJfc/RBAM7l5kQIzD8pjOqk/wYmH5URPQxb8s9o2ARUJBENbiNj6H8WmgYEO0BJQp/Dzo2RQO8ZIFNnzYeVugBNs59ezTT8pZ5eagPUFRc3VlGCvfRT6s2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741278284; c=relaxed/simple;
-	bh=+kNbwlJsG0d5knwFU8XMrHfRrzZxy6Vq25nHdxqvRjs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=MSkIetlw0iQFRNPLAH6RN9HVIBYsohnd9VQ++6SgNwc2eQ4REhqA/6aFqGABJG5pcT9QNJKwxVdR/QLPDLU91fQkh8/U51W6XaMJOgKQqtUqdRX1LcHhbH3Dd4ofyK3Bv1fou6BGHq7Y80aIWU6wjJhuNtfArGjZmy/H6wk6VHM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JhNTTJhy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 886B0C4CEE0;
-	Thu,  6 Mar 2025 16:24:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741278282;
-	bh=+kNbwlJsG0d5knwFU8XMrHfRrzZxy6Vq25nHdxqvRjs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=JhNTTJhyjWlAbu4BZhAXyZuXHFR/dSZu1Tfv00+OsXDcMVd+NHEF5iuf3O3flLXZk
-	 7L67uVL2vsWmXUzX3WyRYJ5A4dkIBzEASjc3dwmLQN5ljvYSRmwEfF0N/s2KQ4WARH
-	 pXeK6gloj2qFlulAjIA0lk90CQM/1Z5WuRch8xxESaY4xyu2CTvxu06wOf48w4zYSA
-	 ZJeWRzvIAXw312j1L26TM/TuecV/2YfGiDwUvB9gEc//O4j2v459NZKGIx6z0IkTBc
-	 cC4rhmwDDRR+c2iRMsXhpJluWYcnWOhLOb2sUPGzjQGipwtzuzWM7qlOGy2SkfkRqP
-	 eatxxgQ1Oakng==
-Date: Thu, 6 Mar 2025 10:24:41 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 4/8] PCI: brcmstb: Fix error path upon call of
- regulator_bulk_get()
-Message-ID: <20250306162441.GA344031@bhelgaas>
+	s=arc-20240116; t=1741278360; c=relaxed/simple;
+	bh=X1osDnOd9IPjfmzORkmuJvIJiGkdvCzDfoi5CFuWloE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MSB5fqwmhU0aaqB0d/KSbcpKRVUplO0iMpkP8/xFdLla/lCD4HSAbtYbSdmDqWtOXvHIPMYYNiNZfee82wuqEGh1dugUSqKClr78hErWhgC2XVhQ/sjauaGoTSpmoqFZNRvaIkwlSq+9IQgrjcW/2Y5T7WcoyRrAHrUdhDgjV+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tmj5ojKk; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff4a4f901fso1424943a91.2;
+        Thu, 06 Mar 2025 08:25:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741278358; x=1741883158; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=v1Sq6955SeW7fXdSe6bezpmzNTL9tmkfZyPLC9/YdtI=;
+        b=Tmj5ojKk3Y/y3B8NDm7yycDjSt9Ieoe1fK/mJwN0EnDLY1N4fSdHpRUqmlVXrrVuBk
+         J9+X7OvoSpe9NH/lF56BIj+uVsl2b6TtrqzETOUiOqHxnvQoNcpyeGFNMfL+4mPlP3RG
+         19HDTQ+9qWFdRRkwlXKJXqc/JYKFMFhqmXv/sXgvHpFgCANe4Aeh2tqxBWsYyHfa6hzN
+         Zs/UULXxJV5T8dbRc04CO4QREiC2xJ++R9cjjL0vUaSRke9ymGRbFTHEA6iDrZ2Tjycq
+         MeOlrqBYUypicJ/fF1pXr9ZyBIAde5vg3zvVXd/pfhe+BwzWpgMGWnenHOrCfYLQHVWp
+         gx/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741278358; x=1741883158;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=v1Sq6955SeW7fXdSe6bezpmzNTL9tmkfZyPLC9/YdtI=;
+        b=vhAugXAbiVYnasBckF1rMeqfvIVkTWNn5LiCYoDxxyLa1a/j0pdoguwtLb9Cf+0huj
+         84ZUfTNtL53eOTsnepabdGp94+I/Dx4KZPQ0fVQQWNdCgfRw8PZvBnbaga26PqSOz5o/
+         dIwp3gf1VkcrTh5ihUB0riJNlx2SLDzFl3307omkEwJO3365o004vQ6tI7f/J+OmM4Ml
+         3NPpY+ix+YhOPtxO58aPL8fx+8JeBEhGNYCu8n/QYugobSyi8Kn9wgPhZBc5LRDLvFK4
+         1Vg22xkOI5PZzaS2AgQnbr2xXpVBw6Y5zQvx4sy7MWSLG3jRrB9CGTsDhddWh9l3kJ7H
+         kM6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUEMfPcrSxvZ/qNdWlW7I6k1KQS79bRg0Hx+Van65vV9kMbNxy7Qa5ni+i+pHN9dzkZWF8cW7TXjEEhFqk=@vger.kernel.org, AJvYcCUXXg2PVwP2z+brOFLbDp67XNYW4VC4v3NPMt+NlBCD1eQEcnTGIxNyzKs+v0wAHcVq8BJe8L0PKdlkorY/Oow=@vger.kernel.org, AJvYcCVkBRttH3Ycme1KPguOL7zfYvf7bJK/Br7PjmxGIPVq/CLCfawNF5XMRR/piAj2M0PFr7aW1IK01qpLFH0=@vger.kernel.org, AJvYcCVnej78gTmX/VUPAIS+vlvFuDsXyDBaotcjiolQlzlBd9bpr7ZWAmF2W4O/Jv3RMarVfDg=@vger.kernel.org, AJvYcCVvhGKOJ+O4M6G2xptlBq5gabWHMqmejie5GVheOoeGlqKbjzVgzXVQJcRuqVNZDk8gy597ghiC1zp1XqRS@vger.kernel.org, AJvYcCW1JEOjBNEtRD0UnSBcuWdy6pMrFiBl56o/3EPVclYTYVqBe6bcL3pIlJZ0uX21u/kbuRkl4Jt/suipic+j@vger.kernel.org, AJvYcCWpNuTTPpvkYBDBDmTaJATuKpV221TwkVCD32lzmBPegnLLnmazX5jhBK1vqeXCsPNZgoPyaonu@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlqFxtc3YLM19EUlu5UtnT8jzqmxbj9h0t9S87vpCCCZ4nZRdV
+	gsqT+1joPWeRkisX5yQfpoj4P2kQjOY9bKTuR9V6hXI2mbuqUQ7L
+X-Gm-Gg: ASbGncunWJdw5bIvitwVAXxuJwgU2UlLQpzqQhqMjnBHrYQbpuc/P3aELgTDU5tXvNL
+	pfjPH71VlyP8sfrA99U11YJETHxQg56eOhttoI+RcR0PZjeH2ZgJpC4p7U3XF2xN9obbRX8Ifuz
+	WxqGOOiTeZYSEJSs4U1S9j08DLjUcgWFRtJ7HWjDnh6/puQM2Fz6ED4cocX37qao3DaQpTZJi/K
+	uMVl9BD/o4t68fVo/yDnUxe16oLPRxX3jQsU9z9S0bF6rdNfCxHlg6d7Du/t+Cn9eV1SxKgMziE
+	qHGmjNanmFlTJtHUOB+BBwJATlpzPkQ6pHvEkBRcuJEajRxFgPo2A4XjTTQ+JhHrCUWX4X0oros
+	=
+X-Google-Smtp-Source: AGHT+IHx/FA9q9VeYWlT31tM+odxs15FTKCjv2n+9fQOLwshtfFtm1FM7EynPDhqEgIZlabXqJLing==
+X-Received: by 2002:a17:90b:2702:b0:2fe:99cf:f566 with SMTP id 98e67ed59e1d1-2ff49775b54mr11884816a91.13.1741278357585;
+        Thu, 06 Mar 2025 08:25:57 -0800 (PST)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff693e75bfsm1464298a91.33.2025.03.06.08.25.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 08:25:56 -0800 (PST)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	jk@ozlabs.org,
+	joel@jms.id.au,
+	eajames@linux.ibm.com,
+	andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org,
+	rfoss@kernel.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	dmitry.torokhov@gmail.com,
+	mchehab@kernel.org,
+	awalls@md.metrocast.net,
+	hverkuil@xs4all.nl,
+	miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com,
+	louis.peens@corigine.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	pabeni@redhat.com,
+	parthiban.veerasooran@microchip.com,
+	arend.vanspriel@broadcom.com,
+	johannes@sipsolutions.net,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	yury.norov@gmail.com,
+	akpm@linux-foundation.org
+Cc: hpa@zytor.com,
+	alistair@popple.id.au,
+	linux@rasmusvillemoes.dk,
+	Laurent.pinchart@ideasonboard.com,
+	jonas@kwiboo.se,
+	jernej.skrabec@gmail.com,
+	kuba@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsi@lists.ozlabs.org,
+	dri-devel@lists.freedesktop.org,
+	linux-input@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	oss-drivers@corigine.com,
+	netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com,
+	linux-serial@vger.kernel.org,
+	bpf@vger.kernel.org,
+	jserv@ccns.ncku.edu.tw,
+	Kuan-Wei Chiu <visitorckw@gmail.com>,
+	Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: [PATCH v3 00/16] Introduce and use generic parity16/32/64 helper
+Date: Fri,  7 Mar 2025 00:25:25 +0800
+Message-Id: <20250306162541.2633025-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+-6iNyXeXhqzwbV+pcizpyXg-c-gihcLEtPv1s1uczdNN_VOQ@mail.gmail.com>
 
-On Thu, Mar 06, 2025 at 10:24:56AM -0500, Jim Quinlan wrote:
-> On Tue, Mar 4, 2025 at 9:49 AM Jim Quinlan <james.quinlan@broadcom.com> wrote:
-> > On Mon, Mar 3, 2025 at 1:40 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > > On Fri, Feb 14, 2025 at 12:39:32PM -0500, Jim Quinlan wrote:
-> > > > If regulator_bulk_get() returns an error, no regulators are created and we
-> > > > need to set their number to zero.  If we do not do this and the PCIe
-> > > > link-up fails, regulator_bulk_free() will be invoked and effect a panic.
-> > > >
-> > > > Also print out the error value, as we cannot return an error upwards as
-> > > > Linux will WARN on an error from add_bus().
-> > > >
-> > > > Fixes: 9e6be018b263 ("PCI: brcmstb: Enable child bus device regulators from DT")
-> > > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > > > ---
-> > > >  drivers/pci/controller/pcie-brcmstb.c | 3 ++-
-> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> > > > index e0b20f58c604..56b49d3cae19 100644
-> > > > --- a/drivers/pci/controller/pcie-brcmstb.c
-> > > > +++ b/drivers/pci/controller/pcie-brcmstb.c
-> > > > @@ -1416,7 +1416,8 @@ static int brcm_pcie_add_bus(struct pci_bus *bus)
-> > > >
-> > > >               ret = regulator_bulk_get(dev, sr->num_supplies, sr->supplies);
-> > > >               if (ret) {
-> > > > -                     dev_info(dev, "No regulators for downstream device\n");
-> > > > +                     dev_info(dev, "Did not get regulators; err=%d\n", ret);
-> > > > +                     pcie->sr = NULL;
-> > >
-> > > Is alloc_subdev_regulators() buying us something useful?  It seems
-> > > like it would be simpler to have:
-> > >
-> > >   struct brcm_pcie {
-> > >     ...
-> > >     struct regulator_bulk_data supplies[3];
-> > >     ...
-> > >   };
-> > >
-> > > I think that's what most callers of devm_regulator_bulk_get() do.
-> 
-> Manivannan stated that this series has already been merged.  So shall
-> I implement your comments with a commit sometime in the future?
+Several parts of the kernel contain redundant implementations of parity
+calculations for 16/32/64-bit values. Introduces generic
+parity16/32/64() helpers in bitops.h, providing a standardized
+and optimized implementation. 
 
-Sorry, I should have mentioned this would be something possible for
-the future.  This current series is all set to go.
+Subsequent patches refactor various kernel components to replace
+open-coded parity calculations with the new helpers, reducing code
+duplication and improving maintainability.
 
-Bjorn
+Co-developed-by: Yu-Chun Lin <eleanor15x@gmail.com>
+Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+---
+In v3, I use parityXX() instead of the parity() macro since the
+parity() macro may generate suboptimal code and requires special hacks
+to make GCC happy. If anyone still prefers a single parity() macro,
+please let me know.
+
+Additionally, I changed parityXX() << y users to !!parityXX() << y
+because, unlike C++, C does not guarantee that true casts to int as 1.
+
+Changes in v3:
+- Avoid using __builtin_parity.
+- Change return type to bool.
+- Drop parity() macro.
+- Change parityXX() << y to !!parityXX() << y.
+
+
+Changes in v2:
+- Provide fallback functions for __builtin_parity() when the compiler
+  decides not to inline it
+- Use __builtin_parity() when no architecture-specific implementation
+  is available
+- Optimize for constant folding when val is a compile-time constant
+- Add a generic parity() macro
+- Drop the x86 bootflag conversion patch since it has been merged into
+  the tip tree
+
+v1: https://lore.kernel.org/lkml/20250223164217.2139331-1-visitorckw@gmail.com/
+v2: https://lore.kernel.org/lkml/20250301142409.2513835-1-visitorckw@gmail.com/
+
+Kuan-Wei Chiu (16):
+  bitops: Change parity8() return type to bool
+  bitops: Add parity16(), parity32(), and parity64() helpers
+  media: media/test_drivers: Replace open-coded parity calculation with
+    parity8()
+  media: pci: cx18-av-vbi: Replace open-coded parity calculation with
+    parity8()
+  media: saa7115: Replace open-coded parity calculation with parity8()
+  serial: max3100: Replace open-coded parity calculation with parity8()
+  lib/bch: Replace open-coded parity calculation with parity32()
+  Input: joystick - Replace open-coded parity calculation with
+    parity32()
+  net: ethernet: oa_tc6: Replace open-coded parity calculation with
+    parity32()
+  wifi: brcm80211: Replace open-coded parity calculation with parity32()
+  drm/bridge: dw-hdmi: Replace open-coded parity calculation with
+    parity32()
+  mtd: ssfdc: Replace open-coded parity calculation with parity32()
+  fsi: i2cr: Replace open-coded parity calculation with parity32()
+  fsi: i2cr: Replace open-coded parity calculation with parity64()
+  Input: joystick - Replace open-coded parity calculation with
+    parity64()
+  nfp: bpf: Replace open-coded parity calculation with parity64()
+
+ drivers/fsi/fsi-master-i2cr.c                 | 18 ++-----
+ .../drm/bridge/synopsys/dw-hdmi-ahb-audio.c   |  8 +--
+ drivers/input/joystick/grip_mp.c              | 17 +-----
+ drivers/input/joystick/sidewinder.c           | 24 ++-------
+ drivers/media/i2c/saa7115.c                   | 12 +----
+ drivers/media/pci/cx18/cx18-av-vbi.c          | 12 +----
+ .../media/test-drivers/vivid/vivid-vbi-gen.c  |  8 +--
+ drivers/mtd/ssfdc.c                           | 20 ++-----
+ drivers/net/ethernet/netronome/nfp/nfp_asm.c  |  7 +--
+ drivers/net/ethernet/oa_tc6.c                 | 19 ++-----
+ .../broadcom/brcm80211/brcmsmac/dma.c         | 16 +-----
+ drivers/tty/serial/max3100.c                  |  3 +-
+ include/linux/bitops.h                        | 52 +++++++++++++++++--
+ lib/bch.c                                     | 14 +----
+ 14 files changed, 77 insertions(+), 153 deletions(-)
+
+-- 
+2.34.1
+
 
