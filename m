@@ -1,88 +1,122 @@
-Return-Path: <linux-kernel+bounces-549120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C0A4A54DBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:27:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51B0BA54DC2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:28:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB73D1896C68
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:27:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEFA6173FEE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FC9C16DEA9;
-	Thu,  6 Mar 2025 14:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1085614EC46;
+	Thu,  6 Mar 2025 14:28:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b="MIMQVhvQ"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011056.outbound.protection.outlook.com [52.101.65.56])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e8HbfpWI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19AF14F9FF;
-	Thu,  6 Mar 2025 14:27:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF260139CFA;
+	Thu,  6 Mar 2025 14:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741271246; cv=fail; b=lSNyqgqLlKsaz0HhQzjbSyLiqyVg/VJIACKEhdxZzlnuDsWronLJSUWRKR6UXAiD4H9vdLXSNIhU25jN7P6lZ6+sQzKXU6449K0g9eGAeej9fJoaj6zENTwIP06Y59D8gFlfH1LoNSH2a55Olu3Ukwn3DXofYrRYzPfDAlw25CU=
+	t=1741271304; cv=fail; b=DVREKel2Cg4myA5R09AldBDrtdqPiePCp/xMYmLrAxafjrQSU495l4CDHo6SBuJJHFobEowY+ymomUD/1PQFBBoOc4IP/kyZ0hGcDh9HCs69nn63f1w3HvVqOFH4dkaLTuu48uz+NNUd2DZ+yU2rjKSwPWMqWsQxIBwfjzGtEc8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741271246; c=relaxed/simple;
-	bh=ReNlllr7jD6HjhxEFMr3UEQUdd6BuWPGFkiD+fA5kVo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=IygdfKGG5mLvQzcZq72nIDF6Vxkmz9svIjzU933Fmf89NWMp8Kli3ULOSROXL+tuL/xfspi1+AtIlj/et/zB9Vu7mIjqsLWsdsFqCO4+ehVhYf4VcFm8a4wWKci6U1jVtcQZTSzixqNfptHmdc1WoZtguzd/nEIGTAusT312JVM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk; spf=pass smtp.mailfrom=prevas.dk; dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b=MIMQVhvQ; arc=fail smtp.client-ip=52.101.65.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prevas.dk
+	s=arc-20240116; t=1741271304; c=relaxed/simple;
+	bh=pH9ytqMOMtRlpl9TNqS1WX6J6YwfyXKod1wq4t0xyQw=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=WzHvhlzxbi8/4szjCumsrtcE/04ovIIfaI7VfKuPgHfXXIa22hFj5BuzrAxDkDO4BVh/DAvvXFNXJN5ajxFUtVWA8tcoJbv5QZDhJIo6RbNitI/wCg+zKlx5wsoOZfNllvmdLRTP9Hr3Q4xurhUgpQ3sLe5TewkVKFPqxXjsIb8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e8HbfpWI; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741271303; x=1772807303;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=pH9ytqMOMtRlpl9TNqS1WX6J6YwfyXKod1wq4t0xyQw=;
+  b=e8HbfpWIHSsszS1jLnnQ61JWrMD272S8m6hVTlgLrFZu7JFv+kgMmTUH
+   HxQ+/KzlICmPOd866xs0cuAuI+vbi28vhFKZw0KM4j9l0XpHe4pFMaox9
+   SSx72d/0nuSwPjk/0FRTLpuhyKhUAhELmVmxfqPAPOfSuKy7vZFMywGjO
+   GXulRoh1ztn2p0QNZHwIOKVi1c/rMIwiXWD2ho5RrpPjkmeVXMg2EPWgq
+   oGlgSuuF3Cw2DCQbgr/hnIPm1SNK9k8ph2iq9z1usdEyd738+62EgUSe6
+   GeGazs6gdJR4ezNrLF0P1aN1vycu9Ruq8eapK0UHElcG5mTwaYPTqoRrb
+   g==;
+X-CSE-ConnectionGUID: MSvBJnfbT5ynsHcDBGZi2w==
+X-CSE-MsgGUID: XhoisxVcRb+jEFYtCX85mg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42141581"
+X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
+   d="scan'208";a="42141581"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 06:28:23 -0800
+X-CSE-ConnectionGUID: QuOnebScQr2/IR5Ck19M3A==
+X-CSE-MsgGUID: 9XTU6luZSZue+sg+Obg/Jw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
+   d="scan'208";a="118771065"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orviesa009.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 Mar 2025 06:28:22 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Thu, 6 Mar 2025 06:28:21 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 6 Mar 2025 06:28:21 -0800
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.45) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 6 Mar 2025 06:28:21 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=oD7bv8SMfnbr00+XdTXWEnETUNAzeyVWfHjGA4LLeEdbhv8RiQQpdcrNkzDP5JvYf3dinJiTL+yYvGNpcHzKcR+s5Ad5ep4ib+62iDVHrBcbhiJ3Ln495VVj3tykAjHF89Kxxf8vXx5Y72ejUvkP+AH7D52ohV5HrVS6wLsy4VarWNknCFxxh6euIJCHGgMkFrcQIdJ8iwPhHnTNpvLjqo9AmmwTg8PznIJGPEmGxxxFPIVDappvWq/m9NIH5kcK8aYvwqu+I0aw3U869bCAu5zADq8FTgQdpUGLIIl/VSDUEBDEmM8GauycRmXzEort69cEvRN8SABtQGxViatHEQ==
+ b=YM4QZDpb6OGSCsqUv/wh786tuxyIYyZImpvyiN46fZTYGPhW9G4TeogeeIoYPOin/UvFMbpiK95B+2PFaud/yIvaVH1sPI5HimElnFCt/KkdTegJmFauIWxqALfaclsw/rLnavsdb8J6Tcepfyalv1K7bhZ3KWSSJ/y61ccUZ58jgHxjNoDDv6wTGzNir2DdYLH7sQxnqgUWes/Dt9STFccEx/eCxBba/zUWJmts9Z82BEhpiIZBH+B8j4yH04uG+Ha4MeInP41gsdor+nswgG8qGdM9R2qbUWY5MYOWBEk7vDWM+Hia1hpBTiGqVKmHiRwrdwyF9JlFIOw61WzFTg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8D+fNWxMGYbs40FrqidwR8C+IQjb3JNJ4Ybp9B8O8Vo=;
- b=yTtBa+co+LcEXv+UFzBN4Menk4jPzhqWRSWFYWgMlrP2f64SBS0T6qnSRkMksC+x1O9UpAwyJNHvrei6299tvFvT3o9Qa+H0qBHPFAinFZ/+IOYF98bYH/oYqGEPPUNqVzUnpR8wgtoCFC747AcOeiW57Ep8O2uxPTga0jXuM82jA6DF3RPw5YP42BMpZYjWOrs0MBdwKg0n0pDmwu8Lg1JIoBipdJ15a3YdwCSSaZpLA9426M1zuJng8h3kcpCwT+49eqk1jzFaS2MYc6+GgRxyBwoiysy3n0Y6lH8dlVYkvwY7wdAAKHT9Zm7nnaRPTNun+YkTjjDlTEW+7aqFbw==
+ bh=FG/BOhDsrL6wMhIV4oxnnPMOCGxzGmIJ9kdUeApZ+Ng=;
+ b=Vl1g0IGot2+OIOWqNar2HLxuKIk8mc/Hocxmm7Fy/hyGPFfM34nOp0WDT5KExosSFfMUb8KyE/RT/3WXXyKh8AuaYsXE5m9UULIOT/XEdqAz45CdzVoy3sjq4Qk/KBYQDfamVG9fdDbQYKYmPkUlhoYHX47Rx57FCb/ibvz7ucrhDdUKzTAq+eAoXB7XAgJUHXofEuMR4Z0SzWVnEYhkJm4wq5sBwlTyVMTOgrNIbMlGKgwr+v++D4XWG2O3piGXZKipUh+ViEjpEdT+GQWYo4sQZQYjrSqRNw3CoWePfJQlqtb97owjYl23Ft/chEFvP12ZSNFItAlzmJ0p5GoPww==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=prevas.dk; dmarc=pass action=none header.from=prevas.dk;
- dkim=pass header.d=prevas.dk; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.dk;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8D+fNWxMGYbs40FrqidwR8C+IQjb3JNJ4Ybp9B8O8Vo=;
- b=MIMQVhvQSI8dtV1J88n3q30AVhBXdf7CzImHQwY2E7mGoTcApi5QdQI67YeNHjHZPE4XZ5HGxaqCp8kLkm4yiFSjVttSKBFE99W10pbqVKpYsUNd4tKegTudWzLZ9oxoL1J0VjesJ9V12Em2rJRg2TFEgbAXROEFV4/yNkwF5rY=
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=prevas.dk;
-Received: from DB7PR10MB2475.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:41::17)
- by DB9PR10MB5642.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:30d::9) with
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BYAPR11MB3605.namprd11.prod.outlook.com (2603:10b6:a03:f5::33)
+ by MW3PR11MB4764.namprd11.prod.outlook.com (2603:10b6:303:5a::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Thu, 6 Mar
- 2025 14:27:17 +0000
-Received: from DB7PR10MB2475.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::7e2c:5309:f792:ded4]) by DB7PR10MB2475.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::7e2c:5309:f792:ded4%5]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 14:27:17 +0000
-From: Rasmus Villemoes <ravi@prevas.dk>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,  Linus Torvalds
- <torvalds@linux-foundation.org>,  Miklos Szeredi <miklos@szeredi.hu>,
-  Alexander Viro <viro@zeniv.linux.org.uk>,  Christian Brauner
- <brauner@kernel.org>,  Andrew Morton <akpm@linux-foundation.org>,  Hugh
- Dickins <hughd@google.com>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,  Jan Kara
- <jack@suse.cz>,  "Matthew Wilcox (Oracle)" <willy@infradead.org>,  Mateusz
- Guzik <mjguzik@gmail.com>,  "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-  Neeraj.Upadhyay@amd.com,  Ananth.narayan@amd.com,  Swapnil Sapkal
- <swapnil.sapkal@amd.com>
-Subject: Re: [RFC PATCH 3/3] treewide: pipe: Convert all references to
- pipe->{head,tail,max_usage,ring_size} to unsigned short
-In-Reply-To: <20250306123245.GE19868@redhat.com> (Oleg Nesterov's message of
-	"Thu, 6 Mar 2025 13:32:46 +0100")
-References: <CAHk-=wjyHsGLx=rxg6PKYBNkPYAejgo7=CbyL3=HGLZLsAaJFQ@mail.gmail.com>
-	<20250306113924.20004-1-kprateek.nayak@amd.com>
-	<20250306113924.20004-4-kprateek.nayak@amd.com>
-	<20250306123245.GE19868@redhat.com>
-Date: Thu, 06 Mar 2025 15:27:16 +0100
-Message-ID: <87v7sm44l7.fsf@prevas.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Content-Type: text/plain
-X-ClientProxiedBy: MM0P280CA0001.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:a::10) To DB7PR10MB2475.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:10:41::17)
+ 2025 14:28:05 +0000
+Received: from BYAPR11MB3605.namprd11.prod.outlook.com
+ ([fe80::1c0:cc01:1bf0:fb89]) by BYAPR11MB3605.namprd11.prod.outlook.com
+ ([fe80::1c0:cc01:1bf0:fb89%4]) with mapi id 15.20.8489.025; Thu, 6 Mar 2025
+ 14:28:05 +0000
+Message-ID: <7fad9ddf-f113-4c07-965a-5c515f1def7b@intel.com>
+Date: Thu, 6 Mar 2025 16:27:53 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V23 15/16] mmc: sdhci-pci-gli: enable UHS-II mode for
+ GL9755
+To: Ben Chuang <benchuanggli@gmail.com>
+CC: Victor Shih <victorshihgli@gmail.com>, <ulf.hansson@linaro.org>,
+	<linux-mmc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<Lucas.Lai@genesyslogic.com.tw>, <HL.Liu@genesyslogic.com.tw>,
+	<Greg.tu@genesyslogic.com.tw>, <dlunev@chromium.org>, Ben Chuang
+	<ben.chuang@genesyslogic.com.tw>, AKASHI Takahiro
+	<takahiro.akashi@linaro.org>, Victor Shih <victor.shih@genesyslogic.com.tw>,
+	<asahi@lists.linux.dev>, Janne Grunau <j@jannau.net>
+References: <20241018105333.4569-1-victorshihgli@gmail.com>
+ <20241018105333.4569-16-victorshihgli@gmail.com>
+ <20250219213224.GA57799@robin.jannau.net>
+ <CACT4zj9Xgah3Gp-=Ujp-z7hRCmHt_aGnLEchurN00M1LtbjSzQ@mail.gmail.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <CACT4zj9Xgah3Gp-=Ujp-z7hRCmHt_aGnLEchurN00M1LtbjSzQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ZRAP278CA0013.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:10::23) To BYAPR11MB3605.namprd11.prod.outlook.com
+ (2603:10b6:a03:f5::33)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,107 +124,211 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB7PR10MB2475:EE_|DB9PR10MB5642:EE_
-X-MS-Office365-Filtering-Correlation-Id: a41b13a1-3c2f-40e1-1412-08dd5cbaff34
+X-MS-TrafficTypeDiagnostic: BYAPR11MB3605:EE_|MW3PR11MB4764:EE_
+X-MS-Office365-Filtering-Correlation-Id: 65772253-081c-4ad2-4dd3-08dd5cbb1b7e
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|52116014|366016|1800799024|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5XeRcYAHB70mbbAQsTL/5WTkwLaWre842tFWkDcuRBlZDnB7vQVML2UmxHVK?=
- =?us-ascii?Q?z6uJZRShGiYlE/kdNPaW4rhidUTpECqhY7OMj6fArl57ZHQhwKcPkn/UjNHl?=
- =?us-ascii?Q?P/weQePaHz7goUkY1bajn0n/ks/Ns45ydQkGdBaadDPZyk8GGH6TzTc0olKL?=
- =?us-ascii?Q?zBZMYknb5YTuRIf+aQBAPeR+rtxxvHwhFTMqvPU+RBLw2cr7I7+U1XOCq0vd?=
- =?us-ascii?Q?VzkS4ct6exsgFYYM2/QUJgceT3bFwJ6LcK4OSoPVyQ2Lvx4wdZzwCGpeiUFF?=
- =?us-ascii?Q?eLHDmjefZV6xk2cBa5zZixZgtQ5p/TmCl/3tjEnYc0yYyA2aLIIurAC9YOqT?=
- =?us-ascii?Q?LtzDS7C0pBG0+KfAEu9qUF91sHnWosZkgXkszfO2Ne4kwlYLWqrJhFQntI4W?=
- =?us-ascii?Q?tnLq7HG0N1xt6MttARi6AEjYtaBydwM9HcmUmV8QSbmaOswjrlxFZOWALYhh?=
- =?us-ascii?Q?r7WRR8Vh6PxJHWg80pugjF4i2MaojxhCSlc/7GbXD0o8r313qwtbWiDlaj9E?=
- =?us-ascii?Q?mvhj2tJcOU+ovtU3oNaS/4eAXri28qCyMvAYGcc95D52eVAlJWPeFrqrEdyO?=
- =?us-ascii?Q?EOLtPXesutsF8dw5IEsSodELaaCuHU2eYwfYP1IGMjdJQ8JHKCLASKcG0601?=
- =?us-ascii?Q?mbJfncauxtf1bP5x3AM+yikrVcYMDM6KsDZ6/VCxWT/xOTNHw63zl1C4cM4w?=
- =?us-ascii?Q?rKbxJBw2aF/IW50vM8e4CXcKEcr7ghJbtWr9O9kYsLlyXZzD/2BjSilUjZuw?=
- =?us-ascii?Q?xjQ5Ee/3CeAMYNvVhOBnrRlJGsY7ZWVoy4cu89fP7fOAW6lv2KXbofbGZv2g?=
- =?us-ascii?Q?FqWOf30D85pdBkyOZK5bAapUxxwN8MlypbLEZxmXwa7y1Zsp5iJ7M/mHl4bW?=
- =?us-ascii?Q?N5H6G5lY8OANbSSCaIzRZnDq63/6T8wIZKV73FVTQTYp9TjMtZBcz/FRsRq3?=
- =?us-ascii?Q?6VQgSpTFaKrGBWF2eniB9IloR1TtYCDiVigwUGvQEwqWn8curhiTEHGclNah?=
- =?us-ascii?Q?mdyT34DNtr9ROnb2C9xodt8k+/B69zwfiu4l1eSb/UebNlrUcuYvK3K6GfS8?=
- =?us-ascii?Q?ex96sisw6paDnyB7ualkt74XMqKVfi20rnrJH3mGq//sYDIZdESZRlp55cLp?=
- =?us-ascii?Q?21sSuaS/J8kYpte4zZQzZEcD1Rd2RnMbe/ZYwQsu6i7h32G7nx2C3+yMMloX?=
- =?us-ascii?Q?id+IjN6I3q+1MBEJdJCK+Pdz1AunPfky1cLrUIAPop+UF/8EOIQs0cEmg1mt?=
- =?us-ascii?Q?3eHM6+QyS6249Gs+xq+0TV+vs366O8s65CR3/KrMTcbbfjRn2N5MoBpFwaAm?=
- =?us-ascii?Q?KlDe81JZMPsgVE6oib/Hb6+rUI1x1DMHF+cTLowAbhl8xD6CngSOnpfuQDQO?=
- =?us-ascii?Q?gnjOH7AzC//PdF/XNBe9bppweJbD1UQd04v/gxLXv/TACN/+8lOxVjBznc9V?=
- =?us-ascii?Q?H7LgFYHFTVf5JceXGfTuN/7msYvatxpO?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR10MB2475.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(52116014)(366016)(1800799024)(7053199007)(38350700014);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?Yit4S0NOU1QzTmlia2YrT1VBM0pwTE1IZEJPTEQzVWx1U09BWTRzeFRWSGpq?=
+ =?utf-8?B?U2Z3eEtkY0lPM3pGOFAwNEt6QWFHSHltajNxbEkvY3JBV3o4YllzcEwrTmwx?=
+ =?utf-8?B?akpqVjhMTUt6aENoOEpkMlM3SzRxVUZQZTRsSTYrc0JZTEFiQnN2U01mVVph?=
+ =?utf-8?B?YjJmK21JM1JRRWpyREEyc00zNjMxVGZRbzduakdYMnZkYWU3WVFkc29oL0gx?=
+ =?utf-8?B?c1F3TGF6Q3piMGp0dzZ0TnF0SDA4cjFKN01UL3E3alNFb09QMEJnYnptV0kx?=
+ =?utf-8?B?V3YvQzMvTytCamRLcVpsZEphY0ZRem01Kzl5Vk05eHVBcm5JRDR6K1JJTmFx?=
+ =?utf-8?B?UUxZek5lSlNrcW5xaUQwVzUrcjRkV0dQdHlYZ2p1Tm12YTk5WkRuaXpMVUQy?=
+ =?utf-8?B?VGIweTVGZ1E0b2lIOFdKblQ3bUNvOS9EeW91emM5YXY3K0NkWUNDOUtFa29j?=
+ =?utf-8?B?UFVCdEZlRW1hRWxiZGZNVHZ0K1VpcS9OdE5yTEszYVRqOFhUWnE2dkpmaGdV?=
+ =?utf-8?B?VEJjRlRVY2VIeDg4WXdQZGovWTdmUmVSOHNCL2FhbnNWcjBDTTZTWnZnV1FH?=
+ =?utf-8?B?d1VhQVVBclRsQjEyK3pDcDhzelFNT2xNelF5SklJVXp6UHEyaHc5OGZUZDgr?=
+ =?utf-8?B?MitDcnVIWmFQMXZnRVRVZjlGSXZkNVZsalJtZzBJdzdHYXVrL3hQRHVCUVBM?=
+ =?utf-8?B?L210R0hMK2pWcnhOU2dvM3JXKzRUb3pXR1VwYXpNYldHYUt5MCt4NVBtL1Rk?=
+ =?utf-8?B?Q25uWksyRE9IYzFqVWlLS1VqY0ZJVDBNVkN3U3NUalR1VEZoWTV3SThCSCs3?=
+ =?utf-8?B?U0E4UUhzOW82MlZWblBXUkNhbW1DVUJpZzYwa0R1aUhPV0VvQzgyVGNLMUo2?=
+ =?utf-8?B?d1RINUVQd05YK0YzZ09YN3dKWUk5UWpFNHBKaXMrTGVsQXArcklxR2lIS09m?=
+ =?utf-8?B?NDk3RTJabTlBTFY0YUlXMFBudjcyVDhWV0FMK2hicUt1VWpna1didHE2cEJm?=
+ =?utf-8?B?WUd2UUNPRWZpZXFTTlpDbXBNMEdHOTd3Y1RnZDdBUDZ4VU1UUW9MTGVLeUp6?=
+ =?utf-8?B?Nkt2djI1cFdlK2NJUVpianAvbWlNR24rbUxEUURkelRqWEt1VEp4ZnZNZDND?=
+ =?utf-8?B?NTZIT0VrWHhSSjl2cmJmWFV5N2F0WEdlUFBkWkJsK3hLQ293NER1bEt4S09L?=
+ =?utf-8?B?SU5hRW42L2pRcUhIRG9tWVFLby9kOTZzWUhWQmNpTW1LbGxTTlNMN0hSTmlw?=
+ =?utf-8?B?WlFxL3hPZ1BpZ012bjRSNjZBbGdvQ0tzQm5RRllMbmtWS3JlTWh6czd6Z3hu?=
+ =?utf-8?B?VHZSQ1lyVW53TW5jRkhYV2x4YnBlSlp4Y0U5MGJCdDRuYXpSUTgvQzBzdjBJ?=
+ =?utf-8?B?Z1psZXdwNWo0d2Z5aGtVNDdjemc0a2NTNW1YL3UyRzBqWEZwSExaamFXemxq?=
+ =?utf-8?B?eVFNTTM2S0hiYUlGUnJHNGdPRy9DY2VMYlFmbVhLZXJtcEM1N3haa0lVZlZH?=
+ =?utf-8?B?d2F5ZHVKOXNXZGZJWENpR1c1dlJUR3VYVDgvM3BCcG9BRU5rUkVHdS9iOUZ5?=
+ =?utf-8?B?aUg4SkdlM0VCeEJnVjVtNzBTTEtLY2dMZHI5aUM3TnBuMXVUVDREV3JzdHdy?=
+ =?utf-8?B?WlNtU1Q4N0YwN3pjcnU2Vjd3cWRVYUVBRFFWNXpRbXlxRmJLWkVOOTVrN0Ix?=
+ =?utf-8?B?TTZndnVPanNRZHBrUVVpUlRYTURDdEhzdEtSNkMzVkRyaXpocXNjNmYvSjlo?=
+ =?utf-8?B?SkxsaGhwTzA4M3ZlM2ZaSHNhQmJmdjErTmZoR0xDQi9PM0JIcVdOTm5pYy9v?=
+ =?utf-8?B?bTJCVk5rWERHdXZaWFAzeEx0Z2J1NFBSS25WY0tWUWt1VUNnUmlSWUsvSmZX?=
+ =?utf-8?Q?aY4vcEIrDzkru?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3605.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?/isMP2ltZ0loMVf3tbPSH63q6hEMZSqq/bbMQ/Icf3yN7WpsnemEDkB8mTFQ?=
- =?us-ascii?Q?ppxsvXF+Ebfkydr2VAFcnct4HfflTakEabSr/8ydmY7HMDQtuNDEM6sOKqRn?=
- =?us-ascii?Q?vilGrgeIfdudT/T3dv98I8SI7kam+2YNecfKXL3R5otNG5+cvw6W26rkuq+u?=
- =?us-ascii?Q?tAXmFZCrQcO2nXxKh1WDn7kRNl5baqDtfR98PKxoTdVI6dNBstqYPQPFJZFI?=
- =?us-ascii?Q?GKbVue4JNVPcu0KHSAehOY1tKrwaYvU+qDAIzrW1tLn+rGdN5fWP0+u/cAKG?=
- =?us-ascii?Q?fhLhJbH2q/UeB1S96XBuBx9R/i848idIvBKN7eLEGs50okML1e5Srn+2ueq5?=
- =?us-ascii?Q?OBXZKnae+9UMjM9GupK1LT9FH1CUiCrGkye0xN7ynSUq5NHdBXPlWS90IdrA?=
- =?us-ascii?Q?8an4cAyzcc52st6muxd6ixZbmGt9nI8480ZBsybZh2fZIrtMw36zaqq/Uto6?=
- =?us-ascii?Q?Ld3qBVwaYnsmRxfcH3dIHnZRQ7HNVKlXlJ2kBLySKYcoHle4rohchCg089aX?=
- =?us-ascii?Q?BgQs1JL/q75wwIYlm5BxIr7Z4a3jCVEBzvj2kKy55jT842lpJa6WjC1lcqay?=
- =?us-ascii?Q?VWPo3Xu0WL2wVQ4w77/GXR2r6H4w9JaOZIhZectFU0VrVbM7vvKxpPKnNAon?=
- =?us-ascii?Q?XuJ1mu8vaQEU+FmDRZ4zhNwiGEtTOgqfUFSZpyRNK8M1qudYGw9MAKgq3kVk?=
- =?us-ascii?Q?yBNnOd8U6/ORcxTUbhbUSr8hzvzsyAQWmCl9SfGl6WWiGEpoBihfozJBIXw0?=
- =?us-ascii?Q?yqte/vxpbIfpysVOdRCfQZJKKG1l/EPX8Ma1ezPq3P4FCcNkITZFBw4eUSee?=
- =?us-ascii?Q?31KZRIstH0xP1uOkfVjJs9K8X9bGmfQj71X7iEzlemCFeNamzGEsJ/VuqJ/3?=
- =?us-ascii?Q?TveBfvAawBB2Kf4gMbNxUlVX/5KGmP7oyzR/uTmGL5l+VajvUgUbAP9E+i2u?=
- =?us-ascii?Q?mW+Kj5Xl8iwpDx4sUz2hNSt59ExVGIkedvXmfCJtwk6h5KS3fs3NWla29R5J?=
- =?us-ascii?Q?QcOybSOQ5dhsUdk4G3hqorPn6hsl+dsBXdc9xFpQhBqDr8BPrJTA3OJhy8y1?=
- =?us-ascii?Q?TmbRwEBDlRwNRGOM9H/KZPzPmBEk6kniMWJysNfSrJUHp6qVPjds3vYrIzjY?=
- =?us-ascii?Q?sNfMxGpG+EH186b6htzKMS309bCm0Jos8YCtWuXZIGEiGtpYH6lZVyMDWOho?=
- =?us-ascii?Q?8XMbaqL1DRYcupaedIsup0yX4NParEmVRE0HpF4ByLdlR1qFT7/51D69Jpa+?=
- =?us-ascii?Q?4SklLGtQt/++jJUEl1q3vUD1IOEjn8Ix9udyk0fjYCwn+AQKafM24LfcKTE0?=
- =?us-ascii?Q?BbGUxAyNQ2PDDqAWLpWsPvxAaqsSc3rjP7Pj1UN+/U5LTMCmz43gdMOVVaWl?=
- =?us-ascii?Q?9IFQNeQX9i8Q2yOMXA7MZFCRh/MvSjTQ26Lckthj1xh4Wsba3i3cmoJbMV92?=
- =?us-ascii?Q?ELVWu61GAaQCE3rjxdVIXumWVjHrGWCCeirsqsHnzBZ4NP6gALsm6HlFkUqe?=
- =?us-ascii?Q?lS2+Aww7KeWeaIYvTWHlA5BvgBtETVzRcIiheZ/xFVWvWgN+qvdTTrjZzUNp?=
- =?us-ascii?Q?PT48M/F5mjj9CjNDLTLNkO2I+x+S0XAebpeqY0VkCJKIyr+JHGQtIKVPWFYs?=
- =?us-ascii?Q?6A=3D=3D?=
-X-OriginatorOrg: prevas.dk
-X-MS-Exchange-CrossTenant-Network-Message-Id: a41b13a1-3c2f-40e1-1412-08dd5cbaff34
-X-MS-Exchange-CrossTenant-AuthSource: DB7PR10MB2475.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?MnRpbHE5cnNBTm8vTHhxZkRDRVFjVEtoUldLZllQTkpvc1pvbnVHZE1mMWtB?=
+ =?utf-8?B?cTBwcS9CcHlZdTUyTjhlZnNSM2FoTzhzaE0wNk03TkVHWVFtcHpKRjExdDUr?=
+ =?utf-8?B?ZlJJZ0w0aXlueHltSkJrWGc5UnJDUzR6a1RWZllvVW80SHhicDNYYzJJU2F5?=
+ =?utf-8?B?alJSUXQ5cERzSnNvWjNVaEhhVWx2T0EvNXoxWjFnMkx3OGZqNXpYakZNWnp5?=
+ =?utf-8?B?NlJnNXg2SC93d2kycTJ4ZTJxTnhwalZyZ2JCdEZ5Qi9hZTdpSWlMWUduMzFW?=
+ =?utf-8?B?bWhGT2owaVNMS0ZoSUlnSDFKYllUQ0pTeHRxaUprWjIyQ3Z3YXdreVkxMVZM?=
+ =?utf-8?B?ekp5REROdVczQmxUU0dCYUxoNnhWUmRHNC8xL1d2WEJ6eCs3YXZlK3dPRDRs?=
+ =?utf-8?B?ZlNQeklqL3hlK2cwNHhPcXk1bTRTQmI4MGZKY3NZOHNKY0JDeVlFK2xiV3M4?=
+ =?utf-8?B?Sm5vUzhTZnkyekdONnBVczdhWkg1TDJSY3VXSFZTK3lKM1NRRW1kcktPclhu?=
+ =?utf-8?B?KzAzZ0V5NVhpMnZKZklaNlV1Z2pVS2E3bGR1TU9wRHl2RzR5aGVWQ2hPbEZl?=
+ =?utf-8?B?YlgzTGFsbFpXRnVhWm1iRjJ2dnB0d0ZLbkVLbEtwN3pZK24xWldxMjR2OHZ4?=
+ =?utf-8?B?ekFSQ1lZMEd5NWtKS0N4eTBLWUF5V0o4VnJtaTVNdTA0dkJvRnBnN1BDNExm?=
+ =?utf-8?B?SFlVY1NSR0Z3d3JLeVk0VElsVE1uU2JKdHNsUEtFM1dRR2ZJUmlqa3RNOWFR?=
+ =?utf-8?B?Qm13NXJwSkY1VnhLcmh0WlppdWIvY3YzZDNzb3dqTmF3RWJNa2dlL1EvQkE3?=
+ =?utf-8?B?djcybm9SSGloL3JFUFhUUUJHc2s5TjZkSTJDZzdSRkJiWWdHTnNOZ0ZtT1dt?=
+ =?utf-8?B?K09qR0dhdDhJenZJUnZPQnVRaEw1M1BhR2dRL2dBNERFMXlEeENUdHpPc3ph?=
+ =?utf-8?B?MDM2azV1Y2ovbDdYNWRNejYvczVkb1lSMHJzbmRpc2MrcFJGcXlYMXhkQVhW?=
+ =?utf-8?B?aG5BdW9PaEdPNjR3aFpXUkYyQmt3cU1nRVU2QjRkOVlLYkFKNGRMYWRsT2RM?=
+ =?utf-8?B?TGptWHdpTFByUHNheWsvTVd0dTFKTlJqTGJ4OWQ5T1VJTm9qNzJwMGNEUTBi?=
+ =?utf-8?B?NllJdmt5R3JJR21YeEU2c3BrK2VNcEN1RjFFQWl6eTBOVGxxejlrMzFQRFlK?=
+ =?utf-8?B?WEJYZW91TG9iU3JSQlUrbjVESHZabDFBVjRidTVSSVZHUklpM2hxeU9aOFJT?=
+ =?utf-8?B?VVRkQUdEaXhpNThLQ1IraDErclJndVN2dUYrQnF4ZXVXNFhjTmVUSExPZysw?=
+ =?utf-8?B?VVFVQTFwcTRZNEpnTzNFRDM3V3JES2lTRUdiMXhBTlE3WGJwQ1g0NmovVnll?=
+ =?utf-8?B?U1JmdTkwVW4rSk1ydkV4bGFOQ2YyQk1lQlA4NHFLTzQzZ2tjTU03TFQrMTBo?=
+ =?utf-8?B?aDZJeUdPR2FUWWM5S2VCSXFuQ05SZ0p2eGVKcWV6SFRxRWRFeUxaTGhOS1Zs?=
+ =?utf-8?B?U3ZGaWptZjNBZXd0SVlVSlduMzFGY0xrVllvdnNyNHhBeWcrdUQvSllabkZG?=
+ =?utf-8?B?S1M4TGpJeXZQallBN1NMcnJMZ0NtTmVmYU45NThNdFhzYUtzT003Sm5CR01k?=
+ =?utf-8?B?QUtTRFVHVkNhcmNmKzRCdGMvSy9KeVhmdEs2bk04OFhXVXVQQmhVRmp5Z1oy?=
+ =?utf-8?B?SHZiUVF6eE5QZVozdnFTQTA5K1BxM0ZibkxRN0VuWFdFdWlOWXBvWXhVbDcx?=
+ =?utf-8?B?ODREM2hOcW5jRHJxU2I4dE9RREVwOVVUWHRpcGlJQlVYQXZOeGlIQW83cmNW?=
+ =?utf-8?B?bDlwMnM0S1NEdmlrczBhaG9GbkU1OTgxZHVLUXBGL3YyQWNicVpFTGd5R2Q3?=
+ =?utf-8?B?R0Nzay9qamQrZjIxZDE2VzdBOE5VYmVoMmhqaS9GK3p6SmhUWERiQVo5WERV?=
+ =?utf-8?B?STZCNUx4WjRqOWhjQ3JmQ1p6OENkZG1TQjA4WktpV0x3K2tNaTBONVRZM2xw?=
+ =?utf-8?B?RGRNakE3MjBSbjJXSVJqS1BsdENXQVFxNkNZckxkZytWQnFkaEJSUGhaS2Y2?=
+ =?utf-8?B?TjUvQVp4dnFnK1BRV2RiRlI3T2VNdG5nSHJrWUtMRU5Ha3J1MzJsM1U2K05Y?=
+ =?utf-8?B?UHV6TWowYkZZTnBBSWZnUFBBTlR2akc2Q0FJUGkyWEN0UnBCSlRqV2JWRElh?=
+ =?utf-8?B?N2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 65772253-081c-4ad2-4dd3-08dd5cbb1b7e
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3605.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 14:27:17.3057
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 14:28:05.4653
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: d350cf71-778d-4780-88f5-071a4cb1ed61
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3MUc6xa8y3QVUwpRW2UEpFPTNZkgzKuBP5aKEHRxzLsk8iGEkXWPfOmHl51p83YaMM7ESttUPzmZittCujr6EhRnw5AtYVtzHXXYdo2kSn0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR10MB5642
+X-MS-Exchange-CrossTenant-UserPrincipalName: Dr2ScT4q9DB90+CJD6SmdstbnTx7NDZRdCR9veskHs+80Il1sGk4F/6Al/l0jRSOTcinB6p1x4WIX98O9zOYgQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4764
+X-OriginatorOrg: intel.com
 
-On Thu, Mar 06 2025, Oleg Nesterov <oleg@redhat.com> wrote:
-
-> On 03/06, K Prateek Nayak wrote:
+On 5/03/25 02:56, Ben Chuang wrote:
+> Hi Janne,
+> 
+> On Thu, Feb 20, 2025 at 5:32 AM Janne Grunau <j@jannau.net> wrote:
 >>
->> @@ -272,9 +272,9 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
->>  	 */
->>  	for (;;) {
->>  		/* Read ->head with a barrier vs post_one_notification() */
->> -		unsigned int head = smp_load_acquire(&pipe->head);
->> -		unsigned int tail = pipe->tail;
->> -		unsigned int mask = pipe->ring_size - 1;
->> +		unsigned short head = smp_load_acquire(&pipe->head);
->> +		unsigned short tail = pipe->tail;
->> +		unsigned short mask = pipe->ring_size - 1;
->
-> I dunno... but if we do this, perhaps we should
-> s/unsigned int/pipe_index_t instead?
->
-> At least this would be more grep friendly.
+>> Hej,
+>>
+>> On Fri, Oct 18, 2024 at 06:53:32PM +0800, Victor Shih wrote:
+>>> From: Victor Shih <victor.shih@genesyslogic.com.tw>
+>>>
+>>> Changes are:
+>>>  * Disable GL9755 overcurrent interrupt when power on/off on UHS-II.
+>>>  * Enable the internal clock when do reset on UHS-II mode.
+>>>  * Increase timeout value before detecting UHS-II interface.
+>>>  * Add vendor settings fro UHS-II mode.
+>>>  * Remove sdhci_gli_enable_internal_clock functon unused clk_ctrl variable.
+>>>  * Make a function sdhci_gli_wait_software_reset_done() for gl9755 reset.
+>>>  * Remove unnecessary code from sdhci_gl9755_reset().
+>>>
+>>> Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+>>> Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+>>> Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+>>> Signed-off-by: Lucas Lai <lucas.lai@genesyslogic.com.tw>
+>>> ---
+>>>
+>>>  drivers/mmc/host/sdhci-pci-gli.c | 235 ++++++++++++++++++++++++++++++-
+>>>  1 file changed, 234 insertions(+), 1 deletion(-)
+>>
+>> This change results in error messages / timeout about UHS2 followed by
+>> register dumps with the GL9755 integrated in Apple silicon Macbook Pros
+>> and Mac Studio systems. Non UHS-II function of controller does not seem
+>> to be affected. Apple advertises the the SDXC slot as UHS-II capable.
+>>
+>> The only quirk we've experienced with gl9755 on this platform is that 8
+>> and 16 bit MMIO reads do not work. Workaround added in commit
+>> c064bb5c78c1b ("mmc: sdhci-pci-gli: GL975[50]: Issue 8/16-bit MMIO reads
+>> as 32-bit reads.").
+>>
+>> If you have ideas or patches to try I'm happy to do that. If not we can
+>> look into what MacOS does.
+>>
+>> See kernel log and lspci output below
+>>
+>> Thanks,
+>> Janne
+>>
+>> [   38.130033] kernel: sdhci: Secure Digital Host Controller Interface driver
+>> [   38.130141] kernel: sdhci: Copyright(c) Pierre Ossman
+>> [   38.133352] kernel: sdhci-pci 0000:02:00.0: Adding to iommu group 13
+>> [   38.160551] kernel: sdhci-pci 0000:02:00.0: SDHCI controller found [17a0:9755] (rev 1)
+>> [   38.160655] kernel: sdhci-pci 0000:02:00.0: enabling device (0000 -> 0002)
+>> [   38.160750] kernel: mmc0: SDHCI controller on PCI [0000:02:00.0] using ADMA 64-bit
+>> [   38.274617] kernel: mmc0: not detect UHS2 interface in 100ms.
+>> [   38.274717] kernel: mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
+>> [   38.274782] kernel: mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00000005
+>> [   38.277391] kernel: mmc0: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
+>> [   38.277475] kernel: mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
+>> [   38.280125] kernel: mmc0: sdhci: Present:   0x20070000 | Host ctl: 0x00000000
+>> [   38.280206] kernel: mmc0: sdhci: Power:     0x000000bf | Blk gap:  0x00000000
+>> [   38.284511] kernel: mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x0000032f
+>> [   38.284592] kernel: mmc0: sdhci: Timeout:   0x00000007 | Int stat: 0x00000000
+>> [   38.284636] kernel: mmc0: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
+>> [   38.287200] kernel: mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
+>> [   38.287281] kernel: mmc0: sdhci: Caps:      0x396a3281 | Caps_1:   0x1803057f
+>> [   38.291212] kernel: mmc0: sdhci: Cmd:       0x00000000 | Max curr: 0x000000c8
+>> [   38.291292] kernel: mmc0: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
+>> [   38.291335] kernel: mmc0: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
+>> [   38.293513] kernel: mmc0: sdhci: Host ctl2: 0x00009107
+>> [   38.293604] kernel: mmc0: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x0000000000000000
+>> [   38.297842] kernel: mmc0: sdhci_uhs2: ==================== UHS2 ==================
+>> [   38.297923] kernel: mmc0: sdhci_uhs2: Blk Size:  0x00000000 | Blk Cnt:  0x00000000
+>> [   38.297968] kernel: mmc0: sdhci_uhs2: Cmd:       0x00000000 | Trn mode: 0x00000000
+>> [   38.300773] kernel: mmc0: sdhci_uhs2: Int Stat:  0x00000000 | Dev Sel : 0x00000000
+>> [   38.300853] kernel: mmc0: sdhci_uhs2: Dev Int Code:  0x00000000
+>> [   38.304739] kernel: mmc0: sdhci_uhs2: Reset:     0x00000000 | Timer:    0x000000a7
+>> [   38.304811] kernel: mmc0: sdhci_uhs2: ErrInt:    0x00000000 | ErrIntEn: 0x00030000
+>> [   38.304856] kernel: mmc0: sdhci_uhs2: ErrSigEn:  0x00030000
+>> [   38.307110] kernel: mmc0: sdhci: ============================================
+>> [   38.307201] kernel: mmc0: cannot detect UHS2 interface.
+>> [   38.310110] kernel: mmc0: failed to initial phy for UHS-II!
+>> [   38.424645] kernel: mmc0: not detect UHS2 interface in 100ms.
+>> [   38.424731] kernel: mmc0: sdhci: ============ SDHCI REGISTER DUMP ===========
+>> [   38.424758] kernel: mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x00000005
+>> [   38.424782] kernel: mmc0: sdhci: Blk size:  0x00000000 | Blk cnt:  0x00000000
+>> [   38.424840] kernel: mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x00000000
+>> [   38.427603] kernel: mmc0: sdhci: Present:   0x20070000 | Host ctl: 0x00000000
+>> [   38.427659] kernel: mmc0: sdhci: Power:     0x000000bf | Blk gap:  0x00000000
+>> [   38.430579] kernel: mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x0000032f
+>> [   38.430626] kernel: mmc0: sdhci: Timeout:   0x00000007 | Int stat: 0x00000000
+>> [   38.433504] kernel: mmc0: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x00ff0083
+>> [   38.433550] kernel: mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x00000000
+>> [   38.437596] kernel: mmc0: sdhci: Caps:      0x396a3281 | Caps_1:   0x1803057f
+>> [   38.437641] kernel: mmc0: sdhci: Cmd:       0x00000000 | Max curr: 0x000000c8
+>> [   38.437677] kernel: mmc0: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x00000000
+>> [   38.440318] kernel: mmc0: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x00000000
+>> [   38.440345] kernel: mmc0: sdhci: Host ctl2: 0x00009107
+>> [   38.444119] kernel: mmc0: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x0000000000000000
+>> [   38.444161] kernel: mmc0: sdhci_uhs2: ==================== UHS2 ==================
+>> [   38.444184] kernel: mmc0: sdhci_uhs2: Blk Size:  0x00000000 | Blk Cnt:  0x00000000
+>> [   38.446918] kernel: mmc0: sdhci_uhs2: Cmd:       0x00000000 | Trn mode: 0x00000000
+>> [   38.446958] kernel: mmc0: sdhci_uhs2: Int Stat:  0x00000000 | Dev Sel : 0x00000000
+>> [   38.450833] kernel: mmc0: sdhci_uhs2: Dev Int Code:  0x00000000
+>> [   38.450874] kernel: mmc0: sdhci_uhs2: Reset:     0x00000000 | Timer:    0x000000a7
+>> [   38.450907] kernel: mmc0: sdhci_uhs2: ErrInt:    0x00000000 | ErrIntEn: 0x00030000
+>> [   38.454625] kernel: mmc0: sdhci_uhs2: ErrSigEn:  0x00030000
+>> [   38.454665] kernel: mmc0: sdhci: ============================================
+>> [   38.454699] kernel: mmc0: cannot detect UHS2 interface.
+>> [   38.456705] kernel: mmc0: failed to initial phy for UHS-II!
+>>
+> 
+> On which UHS-II card does this message appear? Please share the card
+> information.
+> If it is a UHS-I card, this message is normal.
 
-Agreed. Also, while using u16 on all arches may be good for now to make
-sure everything is updated, it may also be that it ends up causing
-suboptimal code gen for 64 bit architectures, so even if we do change
-pipe_index_t now, perhaps we'd want to change it back to "half a ulong"
-at some point in the future.
+If it is normal, we should not be producing error messages
+and register dumps.  Please change all these messages to be
+debug only.  The register dump can go behind DYNAMIC_DEBUG_BRANCH().
 
-Rasmus
+
 
