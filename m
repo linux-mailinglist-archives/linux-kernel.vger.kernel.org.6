@@ -1,132 +1,176 @@
-Return-Path: <linux-kernel+bounces-550063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6EC0A55AE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:29:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 973DCA55AEF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:33:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6AB188EEA5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:29:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1D77177736
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:33:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F0227E1DC;
-	Thu,  6 Mar 2025 23:28:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D2D27D77A;
+	Thu,  6 Mar 2025 23:33:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="UrUqzjkz"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9FAyKy8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3315627CB33
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 23:28:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537E613D897;
+	Thu,  6 Mar 2025 23:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741303737; cv=none; b=IJ+xKUAnM3xeJT30ej0Fa4kSRgN+dHoKCOWWY/ztnk/1onLgrMB8qoJ5keQxYov9buq8/h78eU6hKwRZPWDSnVCXygsyiuxaLKmrtLlZl2sVMGwn3pdzv4d0nqu68YJLbBgT3odOpUcjkhHyi+wVHEpSMNZ6ePlPOgDuUpGpOMM=
+	t=1741304016; cv=none; b=IHrXtG/92mShk3HgyHAOaKcPuhCeU/NhNWXe2r3BJwM06v6ktGxfEMT5BiJZ68TZ4Fe66qiggYIx2egICdWGRtAJfnNqvoSTR6+0wH98VO8ajpbbq5XATtPHmMKxbyR9t+qXXb19stoxI7EQyAhiTNq489GiBkA/UBEIyeAoZPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741303737; c=relaxed/simple;
-	bh=ywZ1zNMC6Cpsx8jP3sSiESAhGtT8ek6DoRudfqs218Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ixvg4qTuULYBHK6aFiza+DBhfYDrovtlcqzI/ZPD4H7Uk9TllnKrGoLKnBdlgrXgMuubutwop7yXdk2VYix/UApfae51wBIpzV7fLwRvHHeDid55IDyli/yxfCxUnHjEo+i/uDujVX2nE1r3Kqb2hoToekmSU0gLC4zxsgUCwok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=UrUqzjkz; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1741303735;
- bh=q2c6AS1rlUDUzvA6Yu68aG7T+Ty/a7PAe/Tq0jI31fc=;
- b=UrUqzjkzrzqKGFYiE+hjiz6hJho0xc1vfo7NvFs68dZPibizvzRqn1vEW24/nQ0c8TZEQrEAn
- 3Cb/dlEGbqIjw9YyTQtMvXAoec1Xg3krelI0yzdD0aW/Gb8e/lmCKcKJmD32XVU1V1An06VNnCo
- B2gINL7qIGzEuzdNhJi2Rl4tuaZmWK1yB/GFGlGSLrAZ4De/48/fltZvEIx0usx4JeDfz+Kl1KB
- uZXIqfKi2mNHWsNZM+WfalH1W0vWlitYrF/rDANVTQwTE64aJ7dCkZECKocNsRrYK5ZdBJHq6O4
- UA+YM9TdOinE8AtCgWwLzw/+MxIsm4NPdn1HNZcElLvg==
-X-Forward-Email-ID: 67ca2fafc1763851c065d15d
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <624f2474-9a39-46a3-a6e5-f9966471bf3d@kwiboo.se>
-Date: Fri, 7 Mar 2025 00:28:42 +0100
+	s=arc-20240116; t=1741304016; c=relaxed/simple;
+	bh=kCdbLq4MKXLwDRdTHw76PigGCWnhj7eKDSPYYqRZntY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EgeOv4AnfZVU4ARZReYuu4S0G+z7luwKfTVezun+HDHHeGSH1vYNQ+wOES4U1HJuSlSaZAWUKCr3WCvhg8oRiLtkKg29DBEqENoyv5lJitvoN6+oLX6Vkq/MXYlJaHlDjh5CWLC/3If1jfZJosyLp67Iag6hHZApr5yYmQNxMUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9FAyKy8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E9EFC4CEE5;
+	Thu,  6 Mar 2025 23:33:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741304015;
+	bh=kCdbLq4MKXLwDRdTHw76PigGCWnhj7eKDSPYYqRZntY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A9FAyKy8ohb1PeLj1EqmWd1zPedYvgckso3d73bNbfFKOExw3imTL95t3pTSiWZ9O
+	 Gw6RsY01zRa5tsmxukA1MTzSs3B4bFP58eyeqKRoT1Y8sfLRhxQaUpM83sZhBuVEzQ
+	 2QogVagOJ+ysSDFkXqeRtKLc7wArWKBU2z7tPbV+4AwIgXmhDl1neVPVO2YnyQg6ky
+	 VlqnQXopv9kiQQR5XVzarpjkkx36xWsLAO5kDarYQ7Yc74AdWgX4s7LJBc11gSM8qi
+	 areNCTtOUsOgSAKrRYxxHesMCrTswH27mP2gnO5+ad9yIOM7FU9ysSFIJoFOMsuazB
+	 Ada39tJXebrRA==
+Date: Fri, 7 Mar 2025 00:33:32 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Abel Vesa <abel.vesa@linaro.org>, Lee Jones <lee@kernel.org>, 
+	Pavel Machek <pavel@kernel.org>, Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>, 
+	Kamal Wadhwa <quic_kamalw@quicinc.com>, Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Johan Hovold <johan@kernel.org>, Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] leds: rgb: leds-qcom-lpg: Compute PWM value based on
+ period instead
+Message-ID: <fnxx2tduww5m3ljs3g5po23ucr4qfytzipgspcf2udkusg7ys6@semr224oy56d>
+References: <20250303-leds-qcom-lpg-compute-pwm-value-using-period-v1-1-833e729e3da2@linaro.org>
+ <ylnkjxnukss7askv7ip5htrb4tyjzhpw7jim2se6rloleq5h6w@ngk7lbk26hxj>
+ <dbfb17df-90e2-4a7c-9921-9dff5e9382f4@kernel.org>
+ <ovnmhbzwwimil3opuv6e2ayyntlx7upxfkzm5qdfskx2x7hl7x@wmtul33ttow5>
+ <bdca9e9f-7e0d-4ca7-8e8b-f27ea8bb3b54@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] net: stmmac: dwmac-rk: Use DELAY_ENABLE macro for
- RK3328
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
- <mcoquelin.stm32@gmail.com>, Alexandre Torgue
- <alexandre.torgue@foss.st.com>, Wadim Egorov <w.egorov@phytec.de>,
- netdev@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250306203858.1677595-1-jonas@kwiboo.se>
- <20250306203858.1677595-2-jonas@kwiboo.se>
- <d6b15dc2-f6b2-4703-a4da-07618eaed4db@lunn.ch>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <d6b15dc2-f6b2-4703-a4da-07618eaed4db@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="h3wax27yl7jges3z"
+Content-Disposition: inline
+In-Reply-To: <bdca9e9f-7e0d-4ca7-8e8b-f27ea8bb3b54@kernel.org>
 
-Hi Andrew,
 
-On 2025-03-06 23:25, Andrew Lunn wrote:
-> On Thu, Mar 06, 2025 at 08:38:52PM +0000, Jonas Karlman wrote:
->> Support for Rockchip RK3328 GMAC and addition of the DELAY_ENABLE macro
->> was merged in the same merge window. This resulted in RK3328 not being
->> converted to use the new DELAY_ENABLE macro.
->>
->> Change to use the DELAY_ENABLE macro to help disable MAC delay when
->> RGMII_ID/RXID/TXID is used.
->>
->> Fixes: eaf70ad14cbb ("net: stmmac: dwmac-rk: Add handling for RGMII_ID/RXID/TXID")
-> 
-> Please add a description of the broken behaviour. How would i know i
-> need this fix? What would i see?
+--h3wax27yl7jges3z
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RFC] leds: rgb: leds-qcom-lpg: Compute PWM value based on
+ period instead
+MIME-Version: 1.0
 
-Based on my layman testing I have not seen any real broken behaviour
-with current enablement of a zero rx/tx MAC delay for RGMII_ID/RXID/TXID.
+Hello Krzysztof,
 
-The driver ops is called with a rx/tx_delay=0 for RGMII_ID/RXID/TXID
-modes, what the MAC does with enable=true and rx/tx_delay=0 is unclear
-to me.
+On Tue, Mar 04, 2025 at 05:30:40PM +0100, Krzysztof Kozlowski wrote:
+> On 04/03/2025 17:03, Uwe Kleine-K=F6nig wrote:
+> > On Tue, Mar 04, 2025 at 10:53:53AM +0100, Krzysztof Kozlowski wrote:
+> >> On 04/03/2025 07:24, Uwe Kleine-K=C3=B6nig wrote:
+> >>>> [...]
+> >>>> ---
+> >>>> base-commit: 0067a4b21c9ab441bbe6bf3635b3ddd21f6ca7c3
+> >>>
+> >>> My git repo doesn't know that commit. Given that you said your patch
+> >>> bases on that other series, this isn't surprising. Please use a publi=
+cly
+> >>> available commit as base parameter, otherwise you (and I) don't benef=
+it
+> >>> from the armada of build bots because they just silently fail to test=
+ in
+> >>
+> >> As you can easily see in the signature, this patchset was generated by
+> >> b4 and such tag was added automatically. No point in stripping it even
+> >> if it is not useful (life, happens).
+> >=20
+> > My request was not about stripping it, but making it useful. I don't
+> > know the b4 patch sending side, but git send-email has the capability to
+> > make it more useful in this scenario. I didn't check, but
+> > `b4 --edit-deps` which Abel mentioned sounds about right.
+> >=20
+> > The relevant documentation for the git side is the paragraph "BASE TREE
+> > INFORMATION" in git-format-patch(1).
+>=20
+> Useful how? The dependency is on the lists, so there is no base-commit
+> you would know.
 
-> 
-> We also need to be careful with backwards compatibility. Is there the
-> potential for double bugs cancelling each other out? A board which has
-> the wrong phy-mode in DT, but because of this bug, the wrong register
-> is written and it actually works because of reset defaults?
+Have you tried to understand the part of the manpage I pointed out? It
+seems to me "base-commit" has different semantics for us and only mine
+is aligned to git's (and consequently b4's) meaning.
+The correct base commit would have been
+cd3215bbcb9d4321def93fea6cfad4d5b42b9d1d.
 
-To my knowledge this should have very limited effect, however I am no
-network expert and after doing very basic testing on several different
-rk3328/rk3566/rk3568/rk3588 I could not see any real affect with/without
-this change.
+> And regardless of edit-deps, that base-commit tag is standard from b4,
+> so what do you expect from all submitters even if this was not RFC?
 
-The use of Fixes-tag was more to have a reference to the commit that
-first should have used the DELAY_ENABLE macro.
+I don't understand this question. I expect from submitters to pick a
+publicly known commit as base no matter if the series is an RFC or who's
+standard this is.
 
-Regards,
-Jonas
+> Always base on known commit?
 
-> 
->     Andrew
-> 
-> ---
-> pw-bot: cr
-> 
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+Yes please. The manpage isn't explicit about that but the above
+referenced commit has:
 
+    The base tree info consists of the "base commit", which is a well-known
+    commit that is part of the stable part of the project history everybody
+    else works off of, and zero or more "prerequisite patches", which are
+    well-known patches in flight that is not yet part of the "base commit"
+    that need to be applied on top of "base commit" in topological order
+    before the patches can be applied.
+
+> But for most of the cases this is
+> irrelevant. I can have intermediate commit between linux-next tip and my
+> patch, thus base-commit will be bogus for you, but it does not matter
+> for the patch - it's based on linux-next.
+
+I agree, linux-next is the base. So the respective tip of linux-next is
+the right thing to pass to git format-patch --base (independent of if
+it's called directly or through b4). Ideally you also drop the
+irrelevant intermediate patches to make the build bots test exactly the
+changes you suggest with your series. I would expect that this is the
+tree you actually tested, so it shouldn't be a big hurdle.
+
+So summarizing we have: Iff you use --base with a non-public commit, it's
+useless and irrelevant. I fully agree. Our conclusion is different
+though. You accept it's useless (and even request from me that I do the
+same), and I asked the submitter to use --base as intended to make the
+resulting information usable.
+
+Best regards
+Uwe
+
+--h3wax27yl7jges3z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfKMMcACgkQj4D7WH0S
+/k7Lygf/Wa8FyPopVUtLVV8RF+FamEmr7aP28fWYMpJ9idhxmdffTkrUmF7NiT4J
+0pFxztHcSNJ1a9jZ9SGJ8EPovbz3fhwrvo9bvsmKRVWOaqC+YdnysBEzPbehBroo
+YM7YnPZNLXy2Z/sgAh9a7w3A83gr+Uy86LfE8x6CQIuSM9byW50qgRZoDOIkmTuv
+IzenAuIx7nt9Q4GM6toaaenlm8E/eze4pM8Yo6p9emHXPfqyGnm0UOqM9pc0uuoq
+Lp5pjLpMjKOuaon2utLIGH10Yd2uM98v/ky3Iu0s9OrfjBMhmIJr/dFuWbHB+CwB
+qul6dih0nSTcXdrI/m9B2txhPsxPJA==
+=F+Te
+-----END PGP SIGNATURE-----
+
+--h3wax27yl7jges3z--
 
