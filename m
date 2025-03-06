@@ -1,97 +1,108 @@
-Return-Path: <linux-kernel+bounces-549597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B94BA55430
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:10:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2518FA5546C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:13:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C184A7A8AC3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:09:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7490175D74
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:10:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3C526E15F;
-	Thu,  6 Mar 2025 18:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8BC26B2AE;
+	Thu,  6 Mar 2025 18:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nvwl4xwS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="r5sEDRIG"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B7A26BDBC;
-	Thu,  6 Mar 2025 18:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978D825D8F8;
+	Thu,  6 Mar 2025 18:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741284497; cv=none; b=pUG2h/m8kn0eQAxIo+3VUf0p7rJBW7+cl3Qvuf+IApeKq2VyLnWmj9n28X6nX+ED5V31j0yT3+noTq2+YnfwRcx+vTcrLdRwkeLql89RwE2gRg/lXsImee4sohbKFkrVvChpi0KRsk1yjLlB6eBD6dlrxwqdinMqTNXZ7T190fA=
+	t=1741284531; cv=none; b=lzHNthyTr4L96NP/rQ4OJyTwDs7FJJp3/zVCYBmGD9k4qTvUK4GNwRMlg7SEUIETTKKFLd4ZDCG0qkfgJZZmpXkSE1HcJG2LZG/364vHeXIVuS9SQKq3eKmMTL62C/rCbBdVoDs8HiqtuAs+40FZ04a+UewSak2Ve+4/Cz9zuXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741284497; c=relaxed/simple;
-	bh=vnQaN/qxxPA2ii1NVe2wlYHRUmqVqeNn54F4JWGaStc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gSc+LwZGsoZF5RgVTUx/9erW4qNquFBvI7SpxZcgyyuDuPGeO1AzQKD04uzUek3cybEKkwv1YWXYcOjBya5LD9UGWPNXDAmmlnPHUVHC7OlhE6gh5PYWym0MPp4Odttz7Zjc+Flbbn6sG7zFr0u1ZhA+LiHPyuHuUlzX+RLLRbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nvwl4xwS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 506AFC4CEE0;
-	Thu,  6 Mar 2025 18:08:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741284495;
-	bh=vnQaN/qxxPA2ii1NVe2wlYHRUmqVqeNn54F4JWGaStc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Nvwl4xwSvjkljsRP3f3kBgF5hHuWZ0as8X+2wuue/0mNzPTN5U/EzoA2nja4d9OVX
-	 OulwOipU4pmhRw3uwQ2QgvUweaQ81woD8KXAr8J/2sHnb+AJk7vLcpiQIoUxFs83iW
-	 Ao6CPSJGPM9q5XfrJjS9TR/8HFWP2uynX4IqHOEWoIpbckjbRK7/0r3AcoUlWSaGwm
-	 WIvrj0ynA+eEw5No/E/iPK2+jLKNc3RTNXTeMv90YGQ6tOmUetOMwQyJ5mohOR/1VC
-	 uDDx3yzIuVHwwPmrdz7b7av5YqqpsL9hT1KaEAlYzC3lryYIP60HxM0hkCWnQJXpPF
-	 FMtYetaOo8wqQ==
-Date: Thu, 6 Mar 2025 18:08:09 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com
-Subject: Re: [PATCH 6.13 000/154] 6.13.6-rc2 review
-Message-ID: <ac2f6563-6cf5-495b-b7e9-f65d5f501255@sirena.org.uk>
-References: <20250306151416.469067667@linuxfoundation.org>
+	s=arc-20240116; t=1741284531; c=relaxed/simple;
+	bh=95aCu9KRIh6bsNk0DJdly4sMY9zLTrem/lSRmRwQZ0A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JzXUfqKyqkIXa23kbOLVZRsRBIUaGZFYTMjqKLhrVBDcrPXQmAG31X6fEEmpMlzUagMWouGHYdy0Fdg5s4XqcL/N9hFZBRmFZz4COvfOIr+dviY1+LA9zYonmZGWOMYKzhL4HAfpXfPHy85AM5CX+53ano1mmstWAl6ESaKkY4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=r5sEDRIG; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=qoSIZeEZItfdQePn3xpCH5SMAbZNHhyWtQWXr+rp4aI=; b=r5sEDRIGxBH5f3gyz69wvRQSgC
+	t7CIcyI+U1fP26VBt8p8YKwZFGcGW3bvpz8Z5Vvzsq+xzhjX/qmWP2+LuRDlfBkasaCAMhh84pJKs
+	6ho59zt56Lv+Wbr07v4wpaMNgLx4T505ik1wUHZS6IGOhM3mca8GbssBhJztcPkhhBIjCi+guQ9cR
+	lrBqyIUlEJwqu2ITq4EII85fjWKwmJeNgfwDmAmBapvG7dw0a/trEaxmpotVMPbqYBoqt0dfpGV2c
+	YpsnWiEEf1NKxxRknYHSq+f2quCO2svAH2xIQ/H8k4lx7CGYb0XFuCuY8sYSh5h73ZdfaXCOyvlBy
+	aX6mzrJA==;
+Received: from i53875a38.versanet.de ([83.135.90.56] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tqFeA-0005TK-H2; Thu, 06 Mar 2025 19:08:38 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Chukun Pan <amadeus@jmu.edu.cn>, Jonas Karlman <jonas@kwiboo.se>
+Cc: Yao Zi <ziyao@disroot.org>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] arm64: dts: rockchip: Add rk3528 QoS register node
+Date: Thu, 06 Mar 2025 19:08:37 +0100
+Message-ID: <117081043.nniJfEyVGO@diego>
+In-Reply-To: <cdbc1556-4662-4078-a4d6-33545e2e2491@kwiboo.se>
+References:
+ <20250306123809.273655-1-amadeus@jmu.edu.cn>
+ <20250306123809.273655-3-amadeus@jmu.edu.cn>
+ <cdbc1556-4662-4078-a4d6-33545e2e2491@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QGqYIfYqC+HtPrX0"
-Content-Disposition: inline
-In-Reply-To: <20250306151416.469067667@linuxfoundation.org>
-X-Cookie: What!?  Me worry?
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+
+Am Donnerstag, 6. M=C3=A4rz 2025, 17:55:16 MEZ schrieb Jonas Karlman:
+> Hi Chukun,
+>=20
+> On 2025-03-06 13:38, Chukun Pan wrote:
+> > The Quality-of-Service (QsS) node stores/restores specific
+> > register contents when the power domains is turned off/on.
+> > Add QoS node so that they can connect to the power domain.
+> >=20
+> > Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 160 +++++++++++++++++++++++
+> >  1 file changed, 160 insertions(+)
+> >=20
+
+>=20
+> These QoS node are typically referenced from power domains so that the
+> PMU driver know what QoS to save/restore when a power domain is power
+> cycled.
+>=20
+> Vendor kernel only reference the two qos_gpu nodes in it's power domains,
+> do you have any documentation or knowledge about what power domain the
+> remaining QoS are related to?
+
+I think the GPU actually is the _only_ fully switchable power-domain on the
+rk3528. The other powerdomains seem to be always on, but can do this
+idle-request thing.
+
+At least that is what I'm reading from the pm-domain definitions in the
+vendor-kernel, combined with a look at the pmu section of the rk3528 TRM.
 
 
---QGqYIfYqC+HtPrX0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Heiko
 
-On Thu, Mar 06, 2025 at 04:21:02PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.6 release.
-> There are 154 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
 
-Tested-by: Mark Brown <broonie@kernel.org>
-
---QGqYIfYqC+HtPrX0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfJ5IgACgkQJNaLcl1U
-h9AgEAf7BLGDQ8x/fTtEGi0htpXNap8PeuaFNhyX+Ax/1WdX++Yyk2MOrvHnAK2X
-VHdqm7Q+glIBrBx7ijLrFLhg+PDBV5Vi/onSJfJISRfw/Dv9ou/HPYgKjucz4TPU
-CaCQc4RCPU59wQT1wIb2KDYwB0WvLOW9HWqgxIxe7VWQM98vsGmRT/b5M+U3ClBn
-A/JrYyxkyKzgl3YU/Vyt/l2qYiLcf6Ez3W0BsM9fWH5jNgzw8oMgMKWxgOfk059q
-5/qrHkxWpZzfc2diQAWEYXCDYmvRYs0vrE2LIXAz5LECbGiKQuhpCNUc2rLdzx1a
-/NrRM8p5TW4WpKJ1CLfau5F3+Ezk2g==
-=xcXi
------END PGP SIGNATURE-----
-
---QGqYIfYqC+HtPrX0--
 
