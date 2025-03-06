@@ -1,120 +1,137 @@
-Return-Path: <linux-kernel+bounces-549327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCF8BA5511B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:34:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3799A5514F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:37:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DEC267A8782
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:33:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4829B3ABA7A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0104021B9DA;
-	Thu,  6 Mar 2025 16:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8/rVKxc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B42602417C8;
+	Thu,  6 Mar 2025 16:28:06 +0000 (UTC)
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B5D23F42D;
-	Thu,  6 Mar 2025 16:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A0A21D3E7;
+	Thu,  6 Mar 2025 16:28:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741278472; cv=none; b=mQ1tDK4z6lgbZzOY+OBwMPlRv38XTYL0XJpKMx7bSOZXzKBeWnr+a0PaFkAxg4+5oMcUiPbwDAAw19r31sqjeaDLQ2ZnZMAVAIZWB85GvG43UyW7+AAtf2Upzw14w5Fk4wocRMU2FMTK6JPl+neGhhE8b+QARM1UotCpfDT9SDQ=
+	t=1741278486; cv=none; b=sTzv2aFwv5rowEn00cauGoDnuYovzE8AlnKezS5q7WKtP0boBAqyxttJcSTlg/ArcYpSILjvdqSSlxovYM862rUpZLEUN1NFwxPujiB+tLWrlCrFqotoyYCgiXrfN7wzhmRqfF9MVIMOI6pV9qhugvVtLcaDX6k6SE4Tu5R/Q4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741278472; c=relaxed/simple;
-	bh=6CMCRwOUYh67tKcbM/XuwZFGUiXaz18QVK9UO2VRh/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ve4wIZa++58XBAXGyWt2kS6u0OMDrY25KAuCyW64kDXR10g5DgfABRSqiP5cDRd6MbS9pZ1f6IqwWFBq7RhxmuZVhErN0QcWMeWEJSODinwTaU1dC4KoHBzhoSZcNRXGq2R9d+w2kbHj2x07Fh98fQueOyRhrHJ/GLiaUknA0tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8/rVKxc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2AA6C4CEE8;
-	Thu,  6 Mar 2025 16:27:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741278471;
-	bh=6CMCRwOUYh67tKcbM/XuwZFGUiXaz18QVK9UO2VRh/Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=o8/rVKxc+BgfIZHssN+untqD7OxtqqKGGYp4111h7EbNrivuEv3U2w9Mh7oJQvVgA
-	 DKc3rDfXmRbLNPALNTjG568jXUYItcNWszXtsRGuMN24TsDMkZand/Rr+duoTls1ov
-	 dBTvq7xsab29aDihh5RVA6HYbMgPAu9l8Hyvpq1g+iDQNbS8pfpErO9PwAakpw0xg/
-	 Ahiv6QmtRPuYAPD+XYTSyf2e6wHrjMce3Wg6oRsLL9VNONpdKh+bYjLSWnXUJj2Bwq
-	 53l5J80twC6Gpd5umt+wmer864ybaHC+ictKumNbw0Qth9cDBaG/yiSgSxBPrg/uwC
-	 ViGMChagTidDQ==
-Date: Thu, 6 Mar 2025 16:27:46 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Dong Aisheng <aisheng.dong@nxp.com>, Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"open list:FREESCALE IMX LPI2C DRIVER" <linux-i2c@vger.kernel.org>,
-	"open list:FREESCALE IMX LPI2C DRIVER" <imx@lists.linux.dev>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/1] dt-bindings: i2c: imx-lpi2c: add i.MX94 LPI2C
-Message-ID: <20250306-backstab-chewing-89e93ccba5d7@spud>
-References: <20250306155815.110514-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1741278486; c=relaxed/simple;
+	bh=RieI6T8+GnLltjFdq+B3y0WTT5CK4xQkz/PyogGNpso=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oaDwyM9oGuHU9cx/RPDwK9TIN0xk5C9CU9Nyji62vaO3jQrHb1sblDHpypTecixH8x61uQrnaUm4jUqqB458SJlWjYYoPnSGepJ2hrVOk9qaCu3+D0u1Q0ck30TnI3Lx2/ySWgg4c328CKu3mlwNodOYk+zKXK+CqN+Gq9GUpK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aaec111762bso168363766b.2;
+        Thu, 06 Mar 2025 08:28:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741278483; x=1741883283;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zWz3562ixpgOjZyLkTmlCW12K3CVuT3pKkHg+iSiURk=;
+        b=ky+gxJFj8A1EZWesaz7LmEXiy3Al80geBNWoJl0bsAtXOFcrVY7PkPEmloofxUBVJi
+         +fPuzvfRiNXotoUwBJCXGbCl02zUsIig+gs2KMPeG+0ai2+SdeZCm7rU2Kk3KJJ+vPfO
+         6AcB1sSj6dT0XEaaLUpu0/k5GnVGU0qrpieCaHOSJG2vaHQsPbxtPTbKAyGpwNxKbouv
+         fi5OEXtDMsH4zLWKK6UhPaC0PFcyY/y4lMTtpg8zV6oW9xBHI4e2Y/aCHQY7ZK7TgpDV
+         GwdaCWzq9FHr6K+bS1GPUAx7mhvFoaL9iFsdpvQFCxmBiBCLBKEdYZ2DdH7Tk1dL2R+P
+         4jJg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvRY/CRnBGZeh/YFxJt7jewuPuOGirVbmKwvFZ3u2iMH/A591uEx5RomtPrYp3s37d2i0=@vger.kernel.org, AJvYcCXl7I1Zz0TbJCHdrLOt0Duwhyb8IROImD9JpIrdk07bks5sc4VzndG2ENPohH9HU65/vDy7CLUG3XyG1Qjj@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxMy1gcpiGHB2BBqJWDQFyP9GbDORSvqPwP4J2C5sTjSadhv6G
+	mMnW3RznsSfcm+fjIgoqxmgqWw8Bx7szonI6EcQPvjo/qH+fKPdP
+X-Gm-Gg: ASbGncu4ffDkAbLF01e4AuSp6/VDieSSjBIA190UEo0ACccl/oZrSzPHhE6W3i1mtX3
+	QuToHbN5cDOuYsTKtG0bW8Xgdx0EB60d80c+/CWYgTU8W4cka0bZ82JjlxB+1+/q3UoM22ia7Od
+	fPhW7gOk6MR2N+L9N+5+0Tcou5J4wH444ARKL9C6pIhhatjkZEWTRYkaU608X/U8iXAUTQsylYa
+	nD92WFPfCI3T1xIl3ZIfVQwphoJR1xKo1BTB4NsDBalh+uRj/vHSQV81gEqN4v/5C+FycakAHpT
+	FiRc4w0hYKfjeN9I3L6o6tLWDHyV7CzMIF7+
+X-Google-Smtp-Source: AGHT+IEJV2JOj1YXcWKWdKaU/xsu6mOtDGDJCcjrKsMH1t7e24mfeW+ZSvxc5C6UG8THTxQ2XKEKFg==
+X-Received: by 2002:a17:906:6290:b0:ac1:d878:f87d with SMTP id a640c23a62f3a-ac20db04e4bmr917411066b.56.1741278482515;
+        Thu, 06 Mar 2025 08:28:02 -0800 (PST)
+Received: from localhost ([2a03:2880:30ff:70::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac23973a74bsm115734966b.123.2025.03.06.08.28.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 08:28:01 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Date: Thu, 06 Mar 2025 08:27:51 -0800
+Subject: [PATCH] block: Name the RQF flags enum
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FI7Itgj+bcYXrnFK"
-Content-Disposition: inline
-In-Reply-To: <20250306155815.110514-1-Frank.Li@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250306-rqf_flags-v1-1-bbd64918b406@debian.org>
+X-B4-Tracking: v=1; b=H4sIAAbNyWcC/x3MUQqAIBAFwKss7zvBjIK8SkRYrrUQVgoRhHcPm
+ gPMi8xJOMPSi8S3ZDkiLNUVYdlcXFmJhyUYbVrd6E6lK0xhd2tWvfOzq72Z2QRUhDNxkOe/hrG
+ UDyo4NfhbAAAA
+X-Change-ID: 20250306-rqf_flags-9adba1d2be2f
+To: Jens Axboe <axboe@kernel.dk>
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ bpf@vger.kernel.org, kernel-team@meta.com, 
+ Yonghong Song <yonghong.song@linux.dev>, Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-42535
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1399; i=leitao@debian.org;
+ h=from:subject:message-id; bh=RieI6T8+GnLltjFdq+B3y0WTT5CK4xQkz/PyogGNpso=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnyc0QW/hz0BGrRvx8XmUY7nab78lXrA0HoGbbN
+ Jh8nRxPDEKJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ8nNEAAKCRA1o5Of/Hh3
+ bdo4EACQnyP8l8apbcsGVhMgcyjKLgdrM9fPbwprHvM2TtW2qrmIm8Cy/g+R4EhQvNJ3erB0prR
+ XyxKI4A91hNfQ5b/cEADyIwv8iXP5djZNhex+09TZLdCJuy7ujCz9DDuu6hf25wgPEHhHhXadBJ
+ 9e7VxmRPEwFQZKO/miEAjkxPg9G5fMYxK9vHrKr+xYOqpg1gAVfHyhsTq/rZgR43YjG7h5idpR8
+ 5FEGM2by5b/LQAL7H0cRTL1i5OXEBobjf5t16fA9d1ibijRhKVglbuvYr/XS/1qOxVf+bbwGwVp
+ 1aukJqRge6lZOzdL0/LwrWQpDr1V2pT+55ayVDlkJ/v7EA3VEmhgQ/CV0yJ/4RSAbIx4712cQGq
+ gMYNwGaK2s+5QLk6jwD6qYsYpwNZ22+U5Bqs2ZWvz4l2D28rbD9F3JPEGS+K2V+dfXGVRdWGJxt
+ 9UKWf7nq09QIrkcxzOhNeGTmsNQTxbMGfn4DocdPQmnJqKnoAnWQ8ydIeNvlHtKWNWTFKdpeR/Z
+ 29POjUD/cqUCJQUmXy1yR2UzAGUX5ZzU1RPDiyBFya5Ou5X1Fc/j8FGFLYImdu3Qp+1cvUK8DMN
+ ArhsS2+GBBstUsrkbZ1xRXsxFaQXScsOh+r607Vz2ZPrW3IBXNuf+NeM2x71dIsc2oJQe0l6+JU
+ CfBlPbHTIsQdxBw==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
+Commit 5f89154e8e9e3445f9b59 ("block: Use enum to define RQF_x bit
+indexes") converted the RQF flags to an anonymous enum, which was
+a beneficial change. This patch goes one step further by naming the enum
+as "rqf_flags".
 
---FI7Itgj+bcYXrnFK
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This naming enables exporting these flags to BPF clients, eliminating
+the need to duplicate these flags in BPF code. Instead, BPF clients can
+now access the same kernel-side values through CO:RE (Compile Once, Run
+Everywhere), as shown in this example:
 
-On Thu, Mar 06, 2025 at 10:58:15AM -0500, Frank Li wrote:
-> Add compatible string "fsl,imx94-lpi2c" for the i.MX94 chip, which is
-> backward compatible with i.MX7ULP. Set it to fall back to
-> "fsl,imx7ulp-lpi2c".
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+    rqf_stats = bpf_core_enum_value(enum rqf_flags, __RQF_STATS)
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Suggested-by: Yonghong Song <yonghong.song@linux.dev>
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+ include/linux/blk-mq.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
->  Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml b/D=
-ocumentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml
-> index 1dcb9c78de3b5..969030a6f82ab 100644
-> --- a/Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml
-> @@ -26,6 +26,7 @@ properties:
->                - fsl,imx8qm-lpi2c
->                - fsl,imx8ulp-lpi2c
->                - fsl,imx93-lpi2c
-> +              - fsl,imx94-lpi2c
->                - fsl,imx95-lpi2c
->            - const: fsl,imx7ulp-lpi2c
-> =20
-> --=20
-> 2.34.1
->=20
+diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+index fa2a76cc2f73d..71f4f0cc3dac6 100644
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -28,7 +28,7 @@ typedef enum rq_end_io_ret (rq_end_io_fn)(struct request *, blk_status_t);
+ typedef __u32 __bitwise req_flags_t;
+ 
+ /* Keep rqf_name[] in sync with the definitions below */
+-enum {
++enum rqf_flags {
+ 	/* drive already may have started this one */
+ 	__RQF_STARTED,
+ 	/* request for flush sequence */
 
---FI7Itgj+bcYXrnFK
-Content-Type: application/pgp-signature; name="signature.asc"
+---
+base-commit: c42048cee22435a6ea0de68cc02231cf359ca8b2
+change-id: 20250306-rqf_flags-9adba1d2be2f
 
------BEGIN PGP SIGNATURE-----
+Best regards,
+-- 
+Breno Leitao <leitao@debian.org>
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8nNAgAKCRB4tDGHoIJi
-0l57AQCqtv96l2iZhR6gqRjBt3zAi8MxJxWpWyM1j5TLuPotSAD9F+lDTHLtWifM
-PYf5w7zIctNlp+bnBCKzUd2Nsh8yFAc=
-=rJKT
------END PGP SIGNATURE-----
-
---FI7Itgj+bcYXrnFK--
 
