@@ -1,247 +1,213 @@
-Return-Path: <linux-kernel+bounces-548318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93362A54351
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:10:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA860A54356
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:11:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3CAF7A7DDF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:09:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8FCD3A6AF7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C84D21A8F79;
-	Thu,  6 Mar 2025 07:10:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB7F19DF4D;
+	Thu,  6 Mar 2025 07:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZuqElGty"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8XyFjF4"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1239A1A7262
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 07:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C181A5BB5;
+	Thu,  6 Mar 2025 07:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741245019; cv=none; b=iTeEHH9gbvrDAg9+fHfjCbNdV/fVOst+7q8pOx+IzUfWyZ9TRTXN8ImZB5oZ4kdi5zXXfRO0BDTS+Lr2p3T7/YzMYztIsPZJYvrV5pIDJPlNp+KO7Jk62RIIKUIt/F867IZcyBSykjOfKMWU+D4oQl5CTC/uimtvLOQ8XDIi09M=
+	t=1741245070; cv=none; b=ue7uHwolOFkC/RAJryJ4XKddapVK3qPPewG5rhWf6quvOShyfN76U8sriwGPGw3jGqJwQka6e7FWr99lPwmexry86EZc9xIOFrUjoKL2EnFLCbNXjofZ1KPp6vH2nIGiSCBmuKr+SXhkzoktOhrN/TDd7DjkiVaPoXBP7z08eFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741245019; c=relaxed/simple;
-	bh=uLVKQD758EUg7Bo+dpC2xCHWzH3049GVfgk/d5pPfqc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mZoJKqNDOkoj/uIDAVdMkchrxMI7PPuVjoONSUgNZYx7aVnRYIYOk9t6ZrhaYHpnVJyTob/DrYuIp1oclBkUWz6uyp1hWgExUqWSCH/OiitO7Ze8q5x6uESOYv/Iw20+xUdpuKyLgRwR7NNgqK/zXuRUPSjv+LqCiGXM/O7rVw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZuqElGty; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8879FC4CEE4;
-	Thu,  6 Mar 2025 07:10:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741245018;
-	bh=uLVKQD758EUg7Bo+dpC2xCHWzH3049GVfgk/d5pPfqc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZuqElGtySpnV76JQM6BL7UC7PMl1NZrXQdii8R2nl738rgghN8/r2jNj3wmvcE80r
-	 7QaSxP2OHN12tdUR/ndi3dd6z3v1mdnexaOo1Ar45FUDqeRwQEn4F/9UWiSlFTC1Gi
-	 un8WN6BBUXnlLMUt+RCHtPkXn8g/tpnFq5+uaIpEuUs1rmEgeEm52Tc+0O95UDohNt
-	 Oy2VT0UXc4nW9P8tj33EDFQVDNQKR7P0Btd1srFi4dYTLeOfG4Vy4Cm7kbvDwxn/i8
-	 2zFe4f82V00q3Q17TbfnBs76nxhim0omT+y5PdO4g0R/InEaIJi62orMuv4pTaibDP
-	 0uGl/jlEhQ+Wg==
-Date: Thu, 6 Mar 2025 08:10:16 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Andy Yan <andyshrk@163.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Douglas Anderson <dianders@chromium.org>, Herve Codina <herve.codina@bootlin.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Simona Vetter <simona.vetter@ffwll.ch>
-Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
- connector by encoder
-Message-ID: <20250306-able-wonderful-saluki-aacd1d@houat>
-References: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
- <20250304-bridge-connector-v5-4-aacf461d2157@kernel.org>
- <5180089f.a640.19566290538.Coremail.andyshrk@163.com>
- <20250305-ruddy-nightingale-of-wealth-db100a@houat>
- <mqh4wedfokuta2tmyctoi6jrzol7mqzm27nj3ylu6yj2vjy22j@mexke5x2o7a2>
- <7c1c61e7.10e1.19569067029.Coremail.andyshrk@163.com>
+	s=arc-20240116; t=1741245070; c=relaxed/simple;
+	bh=xN0GSgo1YgrQ84SnN1b56MUMz5jIvfTrI3SY/kuEBRc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eQUThN0o9US/qDAGEJB6tREAkZU0RMagzTPF6e8GzF3RLpYYEwy9K6HiVE2tIdFmEmBb8DBvUH2EPQ/WA9kk5p5tA8hcvVg0kJbIibmjwg+5IYW/L6LVjhUlkKmWjJsJ/WSEs3ca1Lw+Fp/e2IBY1qZ05Ual2f5fLDQSeqTMiBo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F8XyFjF4; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac202264f9cso59264266b.0;
+        Wed, 05 Mar 2025 23:11:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741245066; x=1741849866; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eq1N4bGBvJPpN/I5LSt/1X49Dltjy7IGKVFQlpiMSBE=;
+        b=F8XyFjF4VtFA97UkJnYTKGICrWR80aPq3Gtt8smyJ+os8yI0eheA+N9I5071qSeeUe
+         loG2q7N7E+kY2OQoY4/1dJaOFRtRFdgzKiUnMbU+L0Ir/mptkz4zyNBP1kAGO7UPeMRG
+         r55sMr/8C/rpo5dpdapqegypWARy75bb7rZZZNwD1F8xlFDC/6kdlInw7tRx2UlexrVI
+         Pr5a0e75MeRhusr6gZkX3J85hic/xKSR8KRtMF8n13d0hZK4j6yy8bUTTPEcWCMKL3kS
+         nRyFlawu5+861cm/xr+dKwabv9XWfcilhGneIjkCyU7qRKujbxDMVSYqumk6H7sHKXfA
+         5N+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741245066; x=1741849866;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eq1N4bGBvJPpN/I5LSt/1X49Dltjy7IGKVFQlpiMSBE=;
+        b=aNYP4STKsqLPDbZQi1vS5zNKQqORaNsq+a7sn5/DQMZdzNlbZSBcPtcQ50S4vbiEpy
+         9Vu/DaDaZBt2sOmghv2ypxBR8AqLsdUlfAJdXQ2mRAUbbWTE7II/AAUTyiccRhYlVgY/
+         kMtmiKUvtt1b9IDdYCjr8oo5xpK7Z38aXq8l2+PJ5vN4fsRpTbqBVhfDzT/8vos6M7xO
+         tSAog+Tzoj+/0oM5tPPDfPZdxXASTLoTnCC5v8ziU4MlA0fCt2lf9OGTJRUum2qFhIjs
+         QthYNcwmQ11Lo7yVlGX71PB+bCR99EbI1MTpK2E78x0uK43e+hyIjoD/djwdcoZdFbvB
+         nr9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWaepUHYWrl8yxJWFXiS5xlyAufDQ2YnmuN+l6G6FGIf5TRUjC0fgcg0W3Dv3CT626hjYFvzfifrfd/vHU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7y7+2MHBSR2QaTJoMFLVAMmFy7nX6vNWACfCJjS7DR3wBzZlY
+	3/wrsXayFhuhsQVZQBuWlozrmRQiOYgmex9ecpXeWj9lzWdA6GM5JLv6iMzU1YSKMFY/tdmnOPh
+	A6DsnKWjGTYNiKYqGtA+QInLindM=
+X-Gm-Gg: ASbGnctvd9aEvUgFwJkvQkHO1TR1625kyF3l8QLsZmuSlL5Z+QCFwxVq850Z24eev8A
+	XSDaOlbmLHfAw6WCKKhPJznJkZ5PoJVx5jOGm6Cy86XsvtkkxuZhmREHIbXY9Tt2qzaK0mo7JPG
+	zFFukb+JpF6B6nUNOpl96kV3zzlw==
+X-Google-Smtp-Source: AGHT+IFsFFd0j9Nf6TtQ26FR2dBi3ZDy5r4JM229KJ++sWK2cR1afB18UmXezAYMjkZDOPQ3/RT7d/rbS5d+t+ddxVc=
+X-Received: by 2002:a17:907:d092:b0:abf:56e3:e88b with SMTP id
+ a640c23a62f3a-ac20e152abdmr549115066b.38.1741245065891; Wed, 05 Mar 2025
+ 23:11:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="pmuiqbf7dxpe77sp"
-Content-Disposition: inline
-In-Reply-To: <7c1c61e7.10e1.19569067029.Coremail.andyshrk@163.com>
-
-
---pmuiqbf7dxpe77sp
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
+References: <20250304035447.3138221-1-adamsimonelli@gmail.com>
+ <7969025.Sb9uPGUboI@nerdopolis2> <CAHp75VfadXS8Z2G6U_DcOOZFFmaOSn_9uQN_N7Psse3kiSGj0g@mail.gmail.com>
+ <4451040.8hb0ThOEGa@nerdopolis2>
+In-Reply-To: <4451040.8hb0ThOEGa@nerdopolis2>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 6 Mar 2025 09:10:29 +0200
+X-Gm-Features: AQ5f1JogMmQH0eE_du27Z5fWg-tESulb8jPOXXKpWslA7vl3W4sc_8S8SYErBKo
+Message-ID: <CAHp75VdogqwA2qJBp5Sp-tuJbKvmj9mLuop8GZP+vLVeJNg2DQ@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] tty: Change order of ttynull to be linked sooner
+ if enabled as a console.
+To: Adam Simonelli <adamsimonelli@gmail.com>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jiri Slaby <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
- connector by encoder
-MIME-Version: 1.0
 
-On Thu, Mar 06, 2025 at 09:16:24AM +0800, Andy Yan wrote:
->=20
-> Hi Maxime and Dmitry:
->=20
-> At 2025-03-06 04:13:53, "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org> =
-wrote:
-> >On Wed, Mar 05, 2025 at 02:19:36PM +0100, Maxime Ripard wrote:
-> >> Hi Andy,
-> >>=20
-> >> On Wed, Mar 05, 2025 at 07:55:19PM +0800, Andy Yan wrote:
-> >> > At 2025-03-04 19:10:47, "Maxime Ripard" <mripard@kernel.org> wrote:
-> >> > >With the bridges switching over to drm_bridge_connector, the direct
-> >> > >association between a bridge driver and its connector was lost.
-> >> > >
-> >> > >This is mitigated for atomic bridge drivers by the fact you can acc=
-ess
-> >> > >the encoder, and then call drm_atomic_get_old_connector_for_encoder=
-() or
-> >> > >drm_atomic_get_new_connector_for_encoder() with drm_atomic_state.
-> >> > >
-> >> > >This was also made easier by providing drm_atomic_state directly to=
- all
-> >> > >atomic hooks bridges can implement.
-> >> > >
-> >> > >However, bridge drivers don't have a way to access drm_atomic_state
-> >> > >outside of the modeset path, like from the hotplug interrupt path o=
-r any
-> >> > >interrupt handler.
-> >> > >
-> >> > >Let's introduce a function to retrieve the connector currently assi=
-gned
-> >> > >to an encoder, without using drm_atomic_state, to make these driver=
-s'
-> >> > >life easier.
-> >> > >
-> >> > >Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >> > >Co-developed-by: Simona Vetter <simona.vetter@ffwll.ch>
-> >> > >Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> >> > >---
-> >> > > drivers/gpu/drm/drm_atomic.c | 45 ++++++++++++++++++++++++++++++++=
-++++++++++++
-> >> > > include/drm/drm_atomic.h     |  3 +++
-> >> > > 2 files changed, 48 insertions(+)
-> >> > >
-> >> > >diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_ato=
-mic.c
-> >> > >index 9ea2611770f43ce7ccba410406d5f2c528aab022..b926b132590e78f8d41=
-d48eb4da4bccf170ee236 100644
-> >> > >--- a/drivers/gpu/drm/drm_atomic.c
-> >> > >+++ b/drivers/gpu/drm/drm_atomic.c
-> >> > >@@ -985,10 +985,55 @@ drm_atomic_get_new_connector_for_encoder(cons=
-t struct drm_atomic_state *state,
-> >> > >=20
-> >> > > 	return NULL;
-> >> > > }
-> >> > > EXPORT_SYMBOL(drm_atomic_get_new_connector_for_encoder);
-> >> > >=20
-> >> > >+/**
-> >> > >+ * drm_atomic_get_connector_for_encoder - Get connector currently =
-assigned to an encoder
-> >> > >+ * @encoder: The encoder to find the connector of
-> >> > >+ * @ctx: Modeset locking context
-> >> > >+ *
-> >> > >+ * This function finds and returns the connector currently assigne=
-d to
-> >> > >+ * an @encoder.
-> >> > >+ *
-> >> > >+ * Returns:
-> >> > >+ * The connector connected to @encoder, or an error pointer otherw=
-ise.
-> >> > >+ * When the error is EDEADLK, a deadlock has been detected and the
-> >> > >+ * sequence must be restarted.
-> >> > >+ */
-> >> > >+struct drm_connector *
-> >> > >+drm_atomic_get_connector_for_encoder(const struct drm_encoder *enc=
-oder,
-> >> > >+				     struct drm_modeset_acquire_ctx *ctx)
-> >> > >+{
-> >> > >+	struct drm_connector_list_iter conn_iter;
-> >> > >+	struct drm_connector *out_connector =3D ERR_PTR(-EINVAL);
-> >> > >+	struct drm_connector *connector;
-> >> > >+	struct drm_device *dev =3D encoder->dev;
-> >> > >+	int ret;
-> >> > >+
-> >> > >+	ret =3D drm_modeset_lock(&dev->mode_config.connection_mutex, ctx);
-> >> > >+	if (ret)
-> >> > >+		return ERR_PTR(ret);
-> >> >=20
-> >> > It seems that this will cause a deadlock when called from a hotplug
-> >> > handling path, I have a WIP DP diver[0], which suggested by Dmitry to
-> >> > use this API from a &drm_bridge_funcs.detect callback to get the
-> >> > connector, as detect is called by drm_helper_probe_detect, which will
-> >> > hold connection_mutex first, so the deaklock happens:
-> >> >
-> >> > drm_helper_probe_detect(struct drm_connector *connector,
-> >> >                         struct drm_modeset_acquire_ctx *ctx,
-> >> >                         bool force)
-> >> > {
-> >> >         const struct drm_connector_helper_funcs *funcs =3D connector=
-->helper_private;
-> >> >         struct drm_device *dev =3D connector->dev;
-> >> >         int ret;
-> >> >=20
-> >> >         if (!ctx)
-> >> >                 return drm_helper_probe_detect_ctx(connector, force);
-> >> >=20
-> >> >         ret =3D drm_modeset_lock(&dev->mode_config.connection_mutex,=
- ctx);
-> >> >         if (ret)
-> >> >                 return ret;
-> >> >=20
-> >> >         if (funcs->detect_ctx)
-> >> >                 ret =3D funcs->detect_ctx(connector, ctx, force);
-> >> >         else if (connector->funcs->detect)
-> >> >                 ret =3D connector->funcs->detect(connector, force);
-> >> >         else
-> >> >                 ret =3D connector_status_connected;
-> >> >=20
-> >> >         if (ret !=3D connector->status)
-> >> >                 connector->epoch_counter +=3D 1;
-> >> >=20
-> >> > So I wonder can we let drm_bridge_funcs.detect pass a connector for
-> >> > this case ?
-> >>=20
-> >> Do you actually see a deadlock occurring? AFAIK, drm_modeset_lock is
-> >> fine with reentrancy from the same context, so it should work just fin=
-e.
+On Thu, Mar 6, 2025 at 6:22=E2=80=AFAM Adam Simonelli <adamsimonelli@gmail.=
+com> wrote:
+>
+> On Wednesday, March 5, 2025 1:52:00 PM EST Andy Shevchenko wrote:
+> > On Wed, Mar 5, 2025 at 4:06=E2=80=AFAM Adam Simonelli <adamsimonelli@gm=
+ail.com> wrote:
+> > > On Tuesday, March 4, 2025 1:51:52 AM EST Andy Shevchenko wrote:
+> > > > On Tue, Mar 4, 2025 at 5:55=E2=80=AFAM <adamsimonelli@gmail.com> wr=
+ote:
+
+...
+
+> > > > >  obj-y                          +=3D vt/
+> > > >
+> > > > + blank line.
+> > > >
+> > > > > +# If ttynull is configured to be a console by default, ensure th=
+at it is linked
+> > > > > +# earlier before a real one is selected.
+> > > > > +obj-$(CONFIG_NULL_TTY_DEFAULT_CONSOLE) \
+> > > > > +                               +=3D ttynull.o
+> > > >
+> > > > Here is the question: are you sure that all console drivers that ex=
+ist
+> > > > in the kernel happen to be here? Have you grepped the source tree f=
+or
+> > > > checking this?
+> > > >
+> > > Grepping for console_initcall, the only other places I see outside of
+> > > drivers/tty/ is
+> > >
+> > > arch/mips/fw/arc/arc_con.c
+> > > arch/mips/sibyte/common/cfe_console.c
+> > > arch/powerpc/kernel/legacy_serial.c
+> > > arch/powerpc/kernel/udbg.c
+> > > arch/powerpc/platforms/powermac/setup.c
+> > > arch/um/drivers/stderr_console.c
+> > > arch/xtensa/platforms/iss/console.c
+> > > drivers/s390/char/con3215.c
+> > > drivers/s390/char/con3270.c
+> > > drivers/s390/char/sclp_con.c
+> > > drivers/s390/char/sclp_vt220.c
 > >
-> >Andy, that probably means that you should use .detect_ctx() and pass the
-> >context to drm_atomic_get_connector_for_encoder().
->=20
-> Unfortunately, the drm_bridge_funcs does not have a .detect_ctx()  versio=
-n .
-> The call chain is:
->  drm_helper_probe_detect=20
->  --> drm_bridge_connector_detect(struct drm_connector *connector, bool fo=
-rce)
-> --> drm_bridge_funcs.detect(bridge)
-> The ctx got dropped when drm_helper_probe_detect call  drm_bridge_connect=
-or_detect
-> The connector got dropped  when connector call it's bridege.detect
->=20
-> So I think the simplest solution is to have drm_bridge_funcs.detect
-> directly pass the connector
+> > Which means you need to test your stuff on those cases, to see how the
+> > linker order is done there. It might be that your change wouldn't work
+> > there as expected (quick workaround is to mark the new option as
+> > depends on !S390 && !PPC and so on.
 
-I don't disagree on principle, but I think a better first step would be
-to provide a detect_ctx hook to bridges.
+> It will be difficult to test other arches, I mean I guess it is possible =
+with
+> QEMU, and cross-building, though I did do an experimental test on x86:
+>
+> Making it temporarily adding an architecture specific console like
+> powerpc/some mips/s390/arches with Xen enabled.
 
-Maxime
+Thanks. Make sure the summary of this gets into the commit message.
+Also consider updating the relevant documentation under
+Documentation/, if any.
 
---pmuiqbf7dxpe77sp
-Content-Type: application/pgp-signature; name="signature.asc"
+> -------------------------------------------------------------------------=
+------
+> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+> index 05c5aa951da7..bcd248c44fc8 100644
+> --- a/arch/x86/kernel/setup.c
+> +++ b/arch/x86/kernel/setup.c
+> @@ -1159,6 +1159,8 @@ void __init setup_arch(char **cmdline_p)
+>
+>         e820__setup_pci_gap();
+>
+> +       add_preferred_console("ttyS", 0, NULL);
+> +
+>  #ifdef CONFIG_VT
+>  #if defined(CONFIG_VGA_CONSOLE)
+>         if (!efi_enabled(EFI_BOOT) || (efi_mem_type(0xa0000) !=3D EFI_CON=
+VENTIONAL_MEMORY))
+> -------------------------------------------------------------------------=
+------
+>
+> to see what /proc/consoles will look like, to pretend that x86 is an arch=
+ that
+> sets a console somewhere, and I get:
+>
+> ttynull0             --- (EC    )  242:0
+> ttyS0                -W- (E  p a)    4:64
+>
+> and I got console messages to ttyS0 with no issue.
+>
+> which in my mind is acceptable I would think. ttynull is first in the lis=
+t,
+> which is desired effect of CONFIG_NULL_TTY_DEFAULT_CONSOLE, it doesn't ha=
+ve to
+> be _exclusive_ AFAIK, especially if there are long-time default consoles =
+that.
+> users or the hardware expects.
+>
+>
+> The only arch that seems to _unconditionally_ add a console without some =
+other
+> circumstance, like boot loader env var, and command line option, or firmw=
+are
+> flag, or suboption (like CONFIG_SERIAL_PMACZILOG_CONSOLE) is Jazz.
+>
+> Like platforms/powernv adds it if CONFIG_HVC_OPAL is disabled, or the fir=
+mware
+> is missing "FW_FEATURE_OPAL". I would assume that a user of this situatio=
+n
+> turning on CONFIG_NULL_TTY_DEFAULT_CONSOLE in addition, will just get tty=
+null
+> and hvc in /proc/consoles instead of just hvc. Could that cause something=
+ to
+> break?
 
------BEGIN PGP SIGNATURE-----
+> Correct me if I am wrong, I could very very very well be wrong.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ8lKUwAKCRAnX84Zoj2+
-dplLAYD0PNkWx2P6tT36ZQI4vktBQwh+kmk3ttmeVB9ObjGZ8/Ms2eFWQgF1Tab2
-YpCqetIBf1d2P+PGirdlb8kkIk1NEfgOc5tRF1cL5rlFnGcXwQnyWpVG8AHTe9BF
-dODqm7D1ig==
-=n2MU
------END PGP SIGNATURE-----
+I leave this to Petr to comment as I'm not that expert in the area.
 
---pmuiqbf7dxpe77sp--
+--=20
+With Best Regards,
+Andy Shevchenko
 
