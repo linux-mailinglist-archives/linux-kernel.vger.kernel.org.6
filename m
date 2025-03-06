@@ -1,79 +1,92 @@
-Return-Path: <linux-kernel+bounces-549519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93529A55375
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:51:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FB5CA55371
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:50:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDDFC177E25
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:51:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3838F177DC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CDB25CC88;
-	Thu,  6 Mar 2025 17:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7D4255252;
+	Thu,  6 Mar 2025 17:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ABRF7DlS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rCZw7zEr"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B1525A638;
-	Thu,  6 Mar 2025 17:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B8C254AF6
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741283454; cv=none; b=BfbW6LhOkkcqe4U3ljIHKb6pzWON1Bm4hQmfIiv0IB1EjLPAVXWGBv/Jgqls2QFPnURW9IplUGOVAnJV/Zs84R2khnGt/763mw3is+vJdIQKEJhkUFxEI/LLBVIp5eydakw51jCtsoSI16Az3ZpC4uclTHlBHWAn097soN1ZU1c=
+	t=1741283425; cv=none; b=Y/0XVwK+iril9ppI5m+e8ilz0AlFLM+g0zGL4ws1gru7tAS2YJFtYcbYGBAYwvYW7dfx1uMSr9sHGywE+v+bzFqZlbAj0lNc3fFpPhwsKYvfIp9kCD0MpNVoFHf993uQnnHRXBuKlWShBoM6ItGyqTV4oxxoZkSvqphZ7suKBlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741283454; c=relaxed/simple;
-	bh=PbmD1kFv3+1BgQZMJaKX/JavH2z6eXzjqWH/xXgLcCM=;
+	s=arc-20240116; t=1741283425; c=relaxed/simple;
+	bh=OYwPTl37kpqpb1obSyEsyaLgdYEvB2tSrap1fnb6oEg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KxCfdhSdsLkFaB87RnFdOzRc0/fKb9iCcqkFd4lpPoifvzCMannlXKNzuoOYka6L/wKQpFeXzuKaDrx3kaow9oEPAN6dHCIyFcn9k13/tsxNOMICF8tYUsUrsCRH2MYUJVYlY0sDQB42Ak5Dnri0MeFWtr2ZlkKNRD05h/Qd5Co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ABRF7DlS; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741283453; x=1772819453;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=PbmD1kFv3+1BgQZMJaKX/JavH2z6eXzjqWH/xXgLcCM=;
-  b=ABRF7DlSI8M+V8GByPAyfMnDe3e4XLPfEyeOE99U36NPijqzRUiP/pFw
-   cWA0uKPAR1yk/nK0IiE9hHKkwSTOCm2/8tHDTTWvvy4RPTXPp5sO/LObU
-   rbsFbEqc8NepvqeOH4FPFkHz7V5ha3Yj+DDOtVRacCJsYWEP1iBeooKrd
-   nCL58wrAePnrfZQ9Daf0OHDdeM6YiMcVZr7mCz9dBhzQVAc5/ZKMAAmPq
-   2gWP/BY/fikcNg1vYfM6NOC+Ml4kcRhVZMeuT3j/CEyevmfOTvx30vYTF
-   ACJPeE6vb8cIUtfgech1v89YQegPMCZih9aqj1zfoa5jIMA0Aic8JkbFN
-   g==;
-X-CSE-ConnectionGUID: 9c6FRcqJTE6b0Gl+YO6RQg==
-X-CSE-MsgGUID: +45iLMv+RrSwFou27kiu9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42445680"
-X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
-   d="scan'208";a="42445680"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 09:50:52 -0800
-X-CSE-ConnectionGUID: egZ7sObHSZG31vCHuMPaag==
-X-CSE-MsgGUID: j2ujJPyGTFK5c7CMR2MRtA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
-   d="scan'208";a="119278140"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 06 Mar 2025 09:50:49 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tqFMs-000NOs-2E;
-	Thu, 06 Mar 2025 17:50:46 +0000
-Date: Fri, 7 Mar 2025 01:49:55 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sricharan R <quic_srichara@quicinc.com>, jassisinghbrar@gmail.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, andersson@kernel.org,
-	konradybcio@kernel.org, manivannan.sadhasivam@linaro.org,
-	dmitry.baryshkov@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH V3 2/2] mailbox: tmelite-qmp: Introduce TMEL QMP mailbox
- driver
-Message-ID: <202503070135.WJVIL67R-lkp@intel.com>
-References: <20250228045356.3527662-3-quic_srichara@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uY8wcupz+pU6jMvVw/es0vcnrZ7Cjgr/yFJq3TJZ3DfGVuLecMI5/CiYMq6EwpG9uQf8v6pqQ1lfS3Wjl/9a8PCeJh/3zg/VU1+pOUuMUCEwpL4w9XRZDbu/oAfr7haWsZ4KZiU0elFP9I8PxPG7UUVG7peRPuBJdIu5a9y1DKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rCZw7zEr; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ff187f027fso1804360a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:50:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741283422; x=1741888222; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kBQoogV3j30g7FrMy9Z3NT7u/NY7leEMjZRTS18vRj8=;
+        b=rCZw7zEr7yLvJyd6sTt8XpfyXMROM7xso1Uh94y/jlfaQcnGSRatD4lg6uLKHe+2zK
+         YNmtSDzIU+pJDs/9RMRAla7TYfY8SVYt16tlypexEK1dyRksLYcPaxl5tqmucVtXe/5+
+         Cq8sCN4llmcPmOs73A/2kW6iGM5pQvygFJQKHcb+Wa/j5uTsXEhqScDJYXRhTgy0lxFo
+         hR0tz+viIJRTNHV/UMZ99JmFFFUTh+TrDqODnqFZhZV+25xoZkyQPkMp+7jOCKCguOdz
+         iu1D+VsqSVn2kw38uAxbGRs6IIo0znNELEuhcZ3Nd3JhyCxomykj97tOb3VHH/3lVRdb
+         xDoA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741283422; x=1741888222;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kBQoogV3j30g7FrMy9Z3NT7u/NY7leEMjZRTS18vRj8=;
+        b=br6huoPFPxM2uEwmYK6K0GmFsyg2LNZoGsFvgRGqEgvYXRhZpr3ZPDhYIvz3lrS1It
+         FPL88AbUxwRgkuElUIsEOSNFHHcv+H5D4EyuoHGS4WBGeVEOxnIplE+BwtGQ8RmDq8iJ
+         CgRYspA6xdvEDDncq1eenD8WD8MRNs4hg82Pzs+pLj8oWi+BrfHze/MNDDHlAyuN4M73
+         wbjoRiGH2qDP9BjwfAVcqkOGZXRWnZzMcBrAKGIshu74vrX90eGZJ+Cu/JhGDm5oy6cE
+         jzVnQPnrRPkAHFebf3wAfcPwSxvCz1Fvz1i8MbU3wltmF0gzq2MDpkc30zPcVI/kAgXL
+         5cIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWhjtbrv33W9BmumEcD6I3D382irblTcETgc+Gggz/XEfV9gU2i/JoiGUFmKWzpO9O8ERPeER5fNq3w3TY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuuCMkMXFJHvKVOnfhQf2iuNbr6r+fLKdRZ6wA2BJat+EFBg4L
+	KgtZhJYjKPy3KezOVbMA/kpUiTq55txO3OWtYvsJDvRy4TT6aRh5UlBOfTTSTOk=
+X-Gm-Gg: ASbGncsO0avf0PdjLqT62EKvkAAz1A+NxmkIixskCXJKOgSObfLXXe1GE2BYvr4VyC1
+	1cXSNeWbP7s85v+GLxH4oT3rx2UhOFLm1iDnSnV3sUmwThMp37pD2t2vt60CyuTLvtMQ+5lkHIc
+	NZcbMyjBQYREEbG2FOYPPgo/VbQ50cHrYI8aOSka9akRcMt3Pj0hbPdJj1exAZe4RtD6qzz+NvT
+	f3JEv8xFqMsFsH+lRsTVfdR0DUcsI/PFktnb3h8ch5x5oHCiksVOGOMqnlSlJcrHMjQZitEDRdE
+	ok+Ia+0NwMdpsEn3Q/LjiCWtEtdoJwcVuphLA9kO+g8A2AY=
+X-Google-Smtp-Source: AGHT+IGEuTXsYktLG7Gbe5A2wqYq14IVrHxmlthLo8VbHdBbTToc9qLW5FvoQCp4OUC59CVSGAIxyg==
+X-Received: by 2002:a17:90b:1d4f:b0:2fa:2268:1af4 with SMTP id 98e67ed59e1d1-2ff6175a47dmr6758129a91.7.1741283422491;
+        Thu, 06 Mar 2025 09:50:22 -0800 (PST)
+Received: from p14s ([2604:3d09:148c:c800:d45:b21a:9b36:7bcc])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109fda8esm15294235ad.101.2025.03.06.09.50.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 09:50:21 -0800 (PST)
+Date: Thu, 6 Mar 2025 10:50:18 -0700
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	"S.J. Wang" <shengjiu.wang@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Mpuaudiosw <Mpuaudiosw@nxp.com>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>, imx@lists.linux.dev,
+	linux-remoteproc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: Re: [PATCH] remoteproc: imx_dsp_rproc: conditionally wait for
+ FW_READY
+Message-ID: <Z8ngWhbkO2770qMq@p14s>
+References: <20250305123923.514386-1-iuliana.prodan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,116 +95,179 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250228045356.3527662-3-quic_srichara@quicinc.com>
+In-Reply-To: <20250305123923.514386-1-iuliana.prodan@oss.nxp.com>
 
-Hi Sricharan,
+Good morning,
 
-kernel test robot noticed the following build errors:
+On Wed, Mar 05, 2025 at 02:39:23PM +0200, Iuliana Prodan (OSS) wrote:
+> From: Iuliana Prodan <iuliana.prodan@nxp.com>
+> 
+> Some DSP firmware requires a FW_READY signal before proceeding,
+> while others do not.
+> Introduce imx_dsp_rproc_wait_fw_ready() to check the resource table
+> and determine if waiting is needed.
+> 
+> Use the WAIT_FW_READY flag (bit 1) to distinguish cases where
+> waiting is required, as bit 0 is reserved for VIRTIO_RPMSG_F_NS
+> in OpenAMP and mentioned in rpmsg documentation (not used in Linux,
+> so far).
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.14-rc5 next-20250306]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+VIRTIO_RPMSG_F_NS is used in [1].
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sricharan-R/dt-bindings-mailbox-Document-qcom-tmel-qmp/20250228-125707
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250228045356.3527662-3-quic_srichara%40quicinc.com
-patch subject: [PATCH V3 2/2] mailbox: tmelite-qmp: Introduce TMEL QMP mailbox driver
-config: sh-allyesconfig (https://download.01.org/0day-ci/archive/20250307/202503070135.WJVIL67R-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250307/202503070135.WJVIL67R-lkp@intel.com/reproduce)
+[1]. https://elixir.bootlin.com/linux/v6.14-rc5/source/drivers/rpmsg/virtio_rpmsg_bus.c#L1051
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503070135.WJVIL67R-lkp@intel.com/
+> This flag is set by the remote processor in the dfeatures member of
+> struct fw_rsc_vdev, indicating supported virtio device features.
+> 
+> Update imx_dsp_rproc_start() to handle this condition accordingly.
+> 
+> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
+> ---
+>  drivers/remoteproc/imx_dsp_rproc.c | 84 +++++++++++++++++++++++++++---
+>  1 file changed, 77 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+> index b9bb15970966..8eefaee28061 100644
+> --- a/drivers/remoteproc/imx_dsp_rproc.c
+> +++ b/drivers/remoteproc/imx_dsp_rproc.c
+> @@ -1,5 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0-only
+> -/* Copyright 2021 NXP */
+> +/* Copyright 2021, 2025 NXP */
+>  
+>  #include <dt-bindings/firmware/imx/rsrc.h>
+>  #include <linux/arm-smccc.h>
+> @@ -38,6 +38,15 @@ MODULE_PARM_DESC(no_mailboxes,
+>  #define REMOTE_IS_READY				BIT(0)
+>  #define REMOTE_READY_WAIT_MAX_RETRIES		500
+>  
+> +/*
+> + * This flag is set by the remote processor in the dfeatures member of
+> + * struct fw_rsc_vdev, indicating supported virtio device features
+> + *
+> + * Use bit 1 since bit 0 is used for VIRTIO_RPMSG_F_NS
+> + * in OpenAMP and mentioned in kernel's rpmsg documentation
+> + */
+> +#define WAIT_FW_READY				BIT(1)
+> +
+>  /* att flags */
+>  /* DSP own area */
+>  #define ATT_OWN					BIT(31)
+> @@ -300,13 +309,74 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
+>  	return -ETIMEDOUT;
+>  }
+>  
+> +/*
+> + * Determines whether we should wait for a FW_READY reply
+> + * from the remote processor.
+> + *
+> + * This function inspects the resource table associated with the remote
+> + * processor to check if the firmware has indicated that waiting
+> + * for a FW_READY signal is necessary.
+> + * By default, wait for FW_READY unless an RSC_VDEV explicitly
+> + * indicates otherwise.
+> + *
+> + * Return:
+> + *   - true: If we should wait for FW READY
+> + *   - false: If FW_READY wait is not required
+> + */
+> +static bool imx_dsp_rproc_wait_fw_ready(struct rproc *rproc)
+> +{
+> +	struct device *dev = &rproc->dev;
+> +	struct fw_rsc_hdr *hdr;
+> +	struct fw_rsc_vdev *rsc;
+> +	int i, offset, avail;
+> +
+> +	/*
+> +	 * If there is no resource table, wait for FW_READY
+> +	 * unless no_mailboxes module param is used
+> +	 */
+> +	if (!rproc->table_ptr)
+> +		return true;
+> +
+> +	/* Iterate over each resource entry in the resource table */
+> +	for (i = 0; i < rproc->table_ptr->num; i++) {
+> +		offset = rproc->table_ptr->offset[i];
+> +		hdr = (void *)rproc->table_ptr + offset;
+> +		avail = rproc->table_sz - offset - sizeof(*hdr);
+> +
+> +		/* Ensure the resource table is not truncated */
+> +		if (avail < 0) {
+> +			dev_err(dev, "Resource table is truncated\n");
+> +			return true;
+> +		}
+> +
+> +		/* Check if the resource type is a virtio device */
+> +		if (hdr->type == RSC_VDEV) {
+> +			rsc = (struct fw_rsc_vdev *)((void *)hdr + sizeof(*hdr));
+> +
+> +			/* vdev does not require waiting for FW_READY */
+> +			return !!(rsc->dfeatures & WAIT_FW_READY);
 
-All errors (new ones prefixed by >>):
+From a virtIO perspective where one virtIO device pertains to one virtIO driver,
+your approach is valid.  From a remoteproc perspecrtive though, we have one
+virtIO driver [2] used by several implementation (NXP, ST, TI, ...).  So far,
+information conveyed by rsc->dfeatures was applicable to all implementation and
+things need to remain that way.  Otherwise, it is a matter of time before custom
+and global features start clashing.
 
-   In file included from include/linux/device.h:15,
-                    from include/linux/dma-mapping.h:5,
-                    from drivers/mailbox/qcom-tmel-qmp.c:6:
-   drivers/mailbox/qcom-tmel-qmp.c: In function 'qmp_send_data':
-   drivers/mailbox/qcom-tmel-qmp.c:196:36: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
-     196 |                 dev_err(mdev->dev, "Unsupported packet size %ld\n", pkt->iov_len);
-         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ^~~
-   include/linux/dev_printk.h:154:56: note: in expansion of macro 'dev_fmt'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                        ^~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c:196:17: note: in expansion of macro 'dev_err'
-     196 |                 dev_err(mdev->dev, "Unsupported packet size %ld\n", pkt->iov_len);
-         |                 ^~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c:196:63: note: format string is defined here
-     196 |                 dev_err(mdev->dev, "Unsupported packet size %ld\n", pkt->iov_len);
-         |                                                             ~~^
-         |                                                               |
-         |                                                               long int
-         |                                                             %d
-   In file included from drivers/mailbox/qcom-tmel-qmp.c:10:
-   drivers/mailbox/qcom-tmel-qmp.c: In function 'tmel_prepare_msg':
->> include/linux/mailbox/tmelcom-qmp.h:16:41: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
-      16 | #define TMEL_MSG_UID_MSG_TYPE(v)        FIELD_GET(GENMASK(15, 8), v)
-         |                                         ^~~~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c:406:29: note: in expansion of macro 'TMEL_MSG_UID_MSG_TYPE'
-     406 |         msg_hdr->msg_type = TMEL_MSG_UID_MSG_TYPE(msg_uid);
-         |                             ^~~~~~~~~~~~~~~~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c: In function 'tmel_process_request':
-   drivers/mailbox/qcom-tmel-qmp.c:501:36: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
-     501 |                 dev_err(tdev->dev, "Invalid pkt.size received size: %ld, expected: %zu\n",
-         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ^~~
-   include/linux/dev_printk.h:154:56: note: in expansion of macro 'dev_fmt'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                        ^~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c:501:17: note: in expansion of macro 'dev_err'
-     501 |                 dev_err(tdev->dev, "Invalid pkt.size received size: %ld, expected: %zu\n",
-         |                 ^~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c:501:71: note: format string is defined here
-     501 |                 dev_err(tdev->dev, "Invalid pkt.size received size: %ld, expected: %zu\n",
-         |                                                                     ~~^
-         |                                                                       |
-         |                                                                       long int
-         |                                                                     %d
-   drivers/mailbox/qcom-tmel-qmp.c: In function 'tmel_secboot_sec_auth':
->> include/linux/mailbox/tmelcom-qmp.h:13:10: error: implicit declaration of function 'FIELD_PREP_CONST' [-Wimplicit-function-declaration]
-      13 |         (FIELD_PREP_CONST((0xff << 8), msg_type) | FIELD_PREP_CONST(0xff, action_id))
-         |          ^~~~~~~~~~~~~~~~
-   include/linux/mailbox/tmelcom-qmp.h:55:45: note: in expansion of macro 'TMEL_MSG_UID_CREATE'
-      55 | #define TMEL_MSG_UID_SECBOOT_SEC_AUTH       TMEL_MSG_UID_CREATE(TMEL_MSG_SECBOOT,\
-         |                                             ^~~~~~~~~~~~~~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c:541:42: note: in expansion of macro 'TMEL_MSG_UID_SECBOOT_SEC_AUTH'
-     541 |         ret = tmel_process_request(tdev, TMEL_MSG_UID_SECBOOT_SEC_AUTH, msg,
-         |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c: In function 'tmel_qmp_send_work':
->> drivers/mailbox/qcom-tmel-qmp.c:595:9: error: case label does not reduce to an integer constant
-     595 |         case TMEL_MSG_UID_SECBOOT_SEC_AUTH:
-         |         ^~~~
-   drivers/mailbox/qcom-tmel-qmp.c:598:9: error: case label does not reduce to an integer constant
-     598 |         case TMEL_MSG_UID_SECBOOT_SS_TEAR_DOWN:
-         |         ^~~~
+Using rsc->dfeatures in the way you do above means the resource table in the FW
+image needs to be mofidied.  As such, you could take advantage of the vendor
+specific resource table entry already supported by the remoteproc framework [3].
+From there you provide a resource handler specific to the iMX DSP driver and
+things just work.  Moreover, you wouldn't have to parse the whole resource table
+every time imx_dsp_rproc_start() is called.
 
+Hopefully this works for you.
 
-vim +/FIELD_GET +16 include/linux/mailbox/tmelcom-qmp.h
+Thanks,
+Mathieu
 
-     7	
-     8	/*
-     9	 * Macro used to define unique TMEL Message Identifier based on
-    10	 * message type and action identifier.
-    11	 */
-    12	#define TMEL_MSG_UID_CREATE(msg_type, action_id)	\
-  > 13		(FIELD_PREP_CONST((0xff << 8), msg_type) | FIELD_PREP_CONST(0xff, action_id))
-    14	
-    15	/** Helper macro to extract the messageType from TMEL_MSG_UID. */
-  > 16	#define TMEL_MSG_UID_MSG_TYPE(v)	FIELD_GET(GENMASK(15, 8), v)
-    17	
+[2]. https://elixir.bootlin.com/linux/v6.14-rc5/source/drivers/rpmsg/virtio_rpmsg_bus.c#L1054
+[3]. https://elixir.bootlin.com/linux/v6.14-rc5/source/drivers/remoteproc/remoteproc_core.c#L1044
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * By default, wait for the FW_READY
+> +	 * unless a vdev entry disables it
+> +	 */
+> +	return true;
+> +}
+> +
+>  /*
+>   * Start function for rproc_ops
+>   *
+> - * There is a handshake for start procedure: when DSP starts, it
+> - * will send a doorbell message to this driver, then the
+> - * REMOTE_IS_READY flags is set, then driver will kick
+
+> - * a message to DSP.
+> + * The start procedure involves a handshake: when the DSP starts, it
+> + * sends a doorbell message to this driver, which sets the
+> + * REMOTE_IS_READY flag. The driver then sends a message to the DSP.
+> + *
+> + * Before proceeding, the driver checks if it needs to wait for a
+> + * firmware ready reply using imx_dsp_rproc_wait_fw_ready().
+> + * If waiting is required, it calls imx_dsp_rproc_ready() to complete
+> + * the initialization.
+> + * If waiting is not required, the start function returns.
+>   */
+>  static int imx_dsp_rproc_start(struct rproc *rproc)
+>  {
+> @@ -335,8 +405,8 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
+>  
+>  	if (ret)
+>  		dev_err(dev, "Failed to enable remote core!\n");
+> -	else
+> -		ret = imx_dsp_rproc_ready(rproc);
+> +	else if (imx_dsp_rproc_wait_fw_ready(rproc))
+> +		return imx_dsp_rproc_ready(rproc);
+>  
+>  	return ret;
+>  }
+> -- 
+> 2.25.1
+> 
 
