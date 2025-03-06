@@ -1,419 +1,223 @@
-Return-Path: <linux-kernel+bounces-548743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35282A548C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:10:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60B80A548BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:08:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F0AD188E4B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:10:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89B39172A68
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FD0520B7F1;
-	Thu,  6 Mar 2025 11:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FA320551E;
+	Thu,  6 Mar 2025 11:08:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="POwpDWlb"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2068.outbound.protection.outlook.com [40.107.94.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CmAfn7Yg"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFC8209681
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 11:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741259342; cv=fail; b=l5EGRNhoFIi3OxeYYIoLTReVFLpKNodH62LWY6xQKItMUAFpSyen1lygY96/NQHT+iofwkxGWUGZlFThkO3m4GFEwxcMLf9NbCnKy0V+oTcJfT41IEw7EnygPLMEHstxwpk+ugRJknv6/hqCcliWfcsiwQg9+CAMeGEdfu93EcY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741259342; c=relaxed/simple;
-	bh=cannI8wLSLKJs4HxNvYv/SyCOPBBLafCIovZKgso8d4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fsOhVidA7AJrICvV0y9r0Wn7K7SISqpWUYsn3HDNFt5/6UpY5+S4WtS47M9/7E3njVSyYOV9hdhLv/GTLnyUDWY6qktWcrpTUvbFOg8ihgTcmz6OjRf3SxlrPyLK/F3sClh7I9t0g605cZBNyZ60LD/AKN3qDmk3fb7qnTEtQZU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=POwpDWlb; arc=fail smtp.client-ip=40.107.94.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pLq3Oqe6PQkaHOqxgUIZJVVtLTcc3aUYPdz/Y/Xn7/jCXjO7H7C2O9Koy0APaEOdoIUG9gc88Hj7JAeZRgbmxfL3rGUqMAdmUaWRcYFEN/PgDFi05+Mxd9JoI/ud7ikPRKv/TH1H921H/xf09DmrWi/UWSozxwT4DZNp17qf3m59g0UkUfDxp1cxFwrl7LG6nCW7lTpkR6un3Tw2wyfD3YF6shO8hEzkOtev2162L1IBFZqtF3cTX/aBVIKiT0LdQJU4756oL2Whtiq/nuoatgqig7abpcDdXH5gkqIgRov2xLGeLP8LIaewkLAzLxYvDi0CwQXZjgjGQdKAV1Bz0g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yHUIRi0jHL+VKEOq7A4wC/l3NWO1LytHjAeyNXEqji0=;
- b=rJfGhaKUpI83uZ4wim+wXGgC9qH34WQHU5tekoj6ivW76jiWUHuOPlfOxPOWWFRrAaRPomkxVXG+HOfHtR0mhzRoDQKuO4MHV/96WK8f1UUQYPXgkxuPOkm0Gp6SUu6T/BngOSMTKWqIem8gAaNp4AU+eN7PSFOIEKWLN7iokZQUdpn/a32SVuUFw4eJYe49FVnmGwLL5ubreQSlYsWMLHRg71zuZtuzIh7RuGRAivNOYMQ6YldjZBjUOCZCf9m8ZarVAksTIos1wxn5YHTkCbMX5YO08yUtuPzIk3Ce8gj+SnloGp1fr0IztwkiNydoyHZog5EB7xN5IaD8ppAnSw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=suse.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yHUIRi0jHL+VKEOq7A4wC/l3NWO1LytHjAeyNXEqji0=;
- b=POwpDWlbvvw8FhKHvQyi4201VDy0/DeSeVKd62nbiHJ68ySf/HyNdlZm6HnWzi0K2w2X8bRyB2Y82uWZHINOnynHT53I6R6+zLMlu1D4hGmM7aQpsEhol+lvel7VSycsRjt7gIm9E6oTCBegivi8ARFLn7W/zL5Fo3adxZT0T1k=
-Received: from MW4PR04CA0169.namprd04.prod.outlook.com (2603:10b6:303:85::24)
- by SJ1PR12MB6316.namprd12.prod.outlook.com (2603:10b6:a03:455::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Thu, 6 Mar
- 2025 11:08:56 +0000
-Received: from CO1PEPF000066E7.namprd05.prod.outlook.com
- (2603:10b6:303:85:cafe::30) by MW4PR04CA0169.outlook.office365.com
- (2603:10b6:303:85::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.29 via Frontend Transport; Thu,
- 6 Mar 2025 11:08:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1PEPF000066E7.mail.protection.outlook.com (10.167.249.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8511.15 via Frontend Transport; Thu, 6 Mar 2025 11:08:55 +0000
-Received: from penny-System-Product-Name.amd.com (10.180.168.240) by
- SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 6 Mar 2025 05:08:52 -0600
-From: Penny Zheng <Penny.Zheng@amd.com>
-To: <jbeulich@suse.com>, Juergen Gross <jgross@suse.com>, Stefano Stabellini
-	<sstabellini@kernel.org>, Oleksandr Tyshchenko
-	<oleksandr_tyshchenko@epam.com>
-CC: Ray Huang <Ray.Huang@amd.com>, Jason Andryuk <jason.andryuk@amd.com>,
-	Penny Zheng <Penny.Zheng@amd.com>, <xen-devel@lists.xenproject.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 5/5] xen/cppc: introduce cppc data upload sub-hypercall
-Date: Thu, 6 Mar 2025 19:08:24 +0800
-Message-ID: <20250306110824.1506699-6-Penny.Zheng@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250306110824.1506699-1-Penny.Zheng@amd.com>
-References: <20250306110824.1506699-1-Penny.Zheng@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58EF22E339F
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 11:08:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741259323; cv=none; b=txBREXqSVTZb5487nQGGWmLI/W/R2rN4vOjVlNruy5TMwK+M2sO7ymoSWtf6Eitzm2AF/FL84SNgA479AwoWhbmBvhu147CqkPQMn54pbefyp357RWRdQLkcjkxgKcKl+sN6cBiH77Yzs3auhQLMLrWx26iJvJb6DGml9tHJZcM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741259323; c=relaxed/simple;
+	bh=1l2lg4pxnKWN66VYlhTC0zCZyNqViTJOeCnoCR667mQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kGkLUn0Oqcq3AiLQUfP7ajl2JvMpkuVzMrtHr/74puD6pKuSAH8jX6egZBKV4Km21YIrGmp4j6BLIAgTJ6EUM/ruIWNd4DYvNKVuZmStvKrvFBVe+9e96UgcK07Kl2KQGauT2UfVrW9QrzDr/EFVWC88KZjLQtGuRsBS3+SraAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CmAfn7Yg; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6dd420f82e2so6980996d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 03:08:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741259320; x=1741864120; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8HOAdle44AxtzHdRU+24G5NySxyY61Mu4iq8aJK231o=;
+        b=CmAfn7Yg6yY2VH2yjSe3sy6EMny1FCd3wcKfhsOYhaRauUsDq8VqTA3EjygXuhS6gi
+         tahiMvzPr+kDtxJvtbAt3+ZMw471nibDAkoaiI3rZdBforj61QYKuza9iFFB7F9+G0fw
+         lDRwdfNbFowqsw18evrmyrIF3KfOgC/yF4/Yn9FFm38/1mSeXT8M5NTS75oo5NsBpMFA
+         CPNuraePWimvYNkzZ2q3tZg3QALNg9kmXx0f4VfBNWU7xENmY+fl8uqsLUH5YwR9Y/Dt
+         W+/ZgTja8cvfnjVolpCUlidCcqpiWzGJairMjuslCwTCSoU7jZ8ktKIFT5stb9Er/o4o
+         88TA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741259320; x=1741864120;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8HOAdle44AxtzHdRU+24G5NySxyY61Mu4iq8aJK231o=;
+        b=eILem0wpdIEAGz7IBcgCfvzI/sEm77ODeGiLNXRrqpoESuJ12IfYUhOrCvRtaGJMVw
+         WmITh3NsO13f2O5MOfGEpiMOck3nAT3U8eYdWjb9QIykUkFfI59h9dKF2P+2pTHu2K/E
+         Cfwb2WBkV1hOaAk9YoZuaQhBiSwMxQ3gD2uEr6u+oHHy1iLveeEg1poWYlZwVIlhwjFW
+         tG0tsGoCVkNv4cdhOn/KTSesPp1ADWPMzrG+NydxzJbCMiEmC9mBb4bS4dkEd+XsJOb8
+         cTgvjleOFTr1Wn4VbkeqpHfQpmJuaMNKfcZxeLzfNRRHajfQi28YhvHEClkeOYr+xNct
+         f1Iw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFMMBZPTiylPF2J2KgZek/jkUul/qtpRTHJXpXWz7Xcy7skwnV7jiSB7zwqsT7Ts3A7Lk1piItli0nM0o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr5+ENO1GUxzwpVUvcwFqt4089oYOIKVBb9M/EPfJZTctfBtDO
+	QLMOf8lSRDQDGuWHrrGwTdEH6tDOyoaiInkDJ8nz0+tfaDE+yIuEscvOtTkHa6Pc1ueC3LFATtg
+	E4GMW0FxBmmyXL1Rm73bqHeWwCiRSKwDmov2J
+X-Gm-Gg: ASbGnctxCv09Y0teGHy9Gjdipdgmc+bhdrOHx0C0H/hzpLgT4+/MieWzCiOZR3aMDpQ
+	HcR6HgNxkYQF3zLHqtAUGnEI/UNTCx/FC7Kfv4zJjR0t89EK/B6o/Uj2Tly99IzgJQ/1O9UUpXq
+	/PoqgrI46j8KuR54Tqh5lDMdCiI5I=
+X-Google-Smtp-Source: AGHT+IGqjDyiWMbG6cj6FS2OJY2L/aGCOTmLPTlaPopreMPZINSjvjq5BUceWbtCkk+LzB1fdNlNrVp3CR8l8HiQTI4=
+X-Received: by 2002:a05:6214:252f:b0:6e8:ddf6:d137 with SMTP id
+ 6a1803df08f44-6e8e6cd170cmr106132706d6.18.1741259319968; Thu, 06 Mar 2025
+ 03:08:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1PEPF000066E7:EE_|SJ1PR12MB6316:EE_
-X-MS-Office365-Filtering-Correlation-Id: 50e54340-d5e6-4b12-4088-08dd5c9f498d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|1800799024|36860700013;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Z4l3lhxdL8FwebKIeKarDw6pIaLeW8J/Om5VdXdtq16RabP5avdgFqM6VC7Z?=
- =?us-ascii?Q?TPJMASCw2Sc/IcyuOT+unn57EyAkus/5vE0CzCOTrGv8bX2Nfs/jl0F7hbQa?=
- =?us-ascii?Q?s3VH9E61vZu6I03U/shyS+C5EVFR2sWAuw0EQAli8oehmrtKmW2med40+aGq?=
- =?us-ascii?Q?kGz9PrzKCgxmPxt+3jhKKrzhrqaO7eD22Vut9OxB3GH5jChYykCgrL57EqDy?=
- =?us-ascii?Q?hCFxJR7uAMocHM3MmcrTca+LkJ4JNXNpi2qT0zR1eEcSCYvtx3T5uA8UJP7W?=
- =?us-ascii?Q?hLyCjUJ7uZVjnZpMB6C/TVcRv/H19jYRR4O8Fk4O6Zcil+wqRz6TAPxtrwU1?=
- =?us-ascii?Q?3y5vWXI5VogD7RkJH6kRq+XxRkN+ZAK+ANhrzb9Zn3XyHYmQlK75Qgq3bdvt?=
- =?us-ascii?Q?u1/mPIuOwSK1NAbkB5MenEfc816YRjOHGPv5EZKoSB3+cuIXZ95DqDWK+Enl?=
- =?us-ascii?Q?QmH81ZQdbAyD8O03ZYBMQSwBCyHXGbQeMhPRr/u8hWvGRaAoSzIn2+RHU4BT?=
- =?us-ascii?Q?GhIt7wTI5oB9ISh6Hhd6d631Pp8/KF/Mch0DNlmz5G4SaFzFtg4cGAeGQGRi?=
- =?us-ascii?Q?cAYFCv085tg5RJRx1SFrlBBRMmJcOBIxkk73Zh0mWuUsmPdSfxouUIh0tL7/?=
- =?us-ascii?Q?wg1GTexrZ+yLatYE4s6HOtf1JroCPj6QfojmxWql4iJITgbuBXYDv25zoqnG?=
- =?us-ascii?Q?EHgdsTVNyyKGQI17Nu+ZGQO6VIQkJvD3GuPB+iTLyIEnLL8e2rMWK3jDWKgo?=
- =?us-ascii?Q?G2JK+naA0JqLyW+5AYjxFXVOIrSbdw8DFLCIh1EuxvesQ5Zr2TnKYGilhPJC?=
- =?us-ascii?Q?+PSXhyl9w6U4/LacOO7gwtrsyV3hjlqLj5dkSDaVndhdsY+KUBVeJwuSFpat?=
- =?us-ascii?Q?FysvSe9wXfmD8M0Kkfpu2WQm8Z3NUJYyqPOMBdiegFhQRZp6lSG4pWLHM9rT?=
- =?us-ascii?Q?YJnoAsnNiqjpL6WRghS43XG5rkmr9QUW4FTjwh/86Hnud+oQR13KYv3V5Oav?=
- =?us-ascii?Q?z6Iyx1dKW7LRVHjaqZbc85et60R17nmfyd6Is5xMfirolX2IOnvFpxknbtAf?=
- =?us-ascii?Q?+w0IxFysfEJxpoo/I9jTzI1sgACAt7a929mlYbrOGVLq93fhKr/1K8CifCb3?=
- =?us-ascii?Q?4Kuv+pwzpe86Uwqdee8rnB38mgPd6BiLLvluZoaRQpwU74bf3ucXRoBUZmLQ?=
- =?us-ascii?Q?UiBbDWE2FGc1LOegJDcqTkdFG2I4J0IY1Ht6PqNngFQ+77sLcwVyLbfDiwpO?=
- =?us-ascii?Q?v04uECNhg4TQvS6nT8Ba1C6n7B/01/+9lQ5kzR8nO0E3uC467BdO2e2O4Fqv?=
- =?us-ascii?Q?apeCUNEV4oZIIlHqgkNnY9Sc1Zg5uFpBI10qb4qGpy/O9mE0OhnpmRxn0rXS?=
- =?us-ascii?Q?9EGCfWqEBIik8Tpd08BGEXtYXaJ4fQHfCFr/ud/vwknuAEY6XpAJ3Q88SeQG?=
- =?us-ascii?Q?A0/+z7BveEZ4RErVmDlq3rdGHHdUjVsb5HYpuqs4aPivrmv6PnUUCwnPInlQ?=
- =?us-ascii?Q?MhMQJQq2q0dDHi0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(1800799024)(36860700013);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 11:08:55.8309
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 50e54340-d5e6-4b12-4088-08dd5c9f498d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CO1PEPF000066E7.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6316
+References: <20250305-net-next-fix-tcp-win-clamp-v1-1-12afb705d34e@kernel.org>
+ <CAL+tcoAqZmeV0-4rjH-EPmhBBaS=ZSwgcXhU8ZsBCr_aXS3Lqw@mail.gmail.com>
+ <CANn89iLqgi5byZd+Si7jTdg7zrLNn13ejWAQjMRurvrQPeg3zg@mail.gmail.com>
+ <281edb3a-4679-4c75-9192-a5f0ef6952ea@kernel.org> <CANn89iKVsDrL9YFx883wTfRSAe6tOR7x2U5zk=TcgHBMr+VtkQ@mail.gmail.com>
+ <a3266974-d561-4e8f-a23a-9c0774ee2bbe@kernel.org> <CANn89iJ4DyC8OSEA2Qn3WhWHAUr9Bpo_ZmJdcx3ofM-qKvEU=g@mail.gmail.com>
+In-Reply-To: <CANn89iJ4DyC8OSEA2Qn3WhWHAUr9Bpo_ZmJdcx3ofM-qKvEU=g@mail.gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 6 Mar 2025 12:08:28 +0100
+X-Gm-Features: AQ5f1JqnqOEjgEt1NTmjqKYptzUm18O7uGofh7YTyGk_91RbtSC-SoxS4lIhJ18
+Message-ID: <CANn89iJ2S+mCs8PxZ-EBAfH--j6v9cUazCc8O4FWvMat=_yURQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] tcp: clamp window like before the cleanup
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: Jason Xing <kerneljasonxing@gmail.com>, mptcp@lists.linux.dev, 
+	Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-As Xen is uncapable of parsing the ACPI dynamic table, this commit
-introduces a new sub-hypercall XEN_PM_CPPC to deliver CPPC perf
-caps data.
+On Thu, Mar 6, 2025 at 11:16=E2=80=AFAM Eric Dumazet <edumazet@google.com> =
+wrote:
+>
+> On Thu, Mar 6, 2025 at 11:12=E2=80=AFAM Matthieu Baerts <matttbe@kernel.o=
+rg> wrote:
+> >
+> > On 06/03/2025 11:02, Eric Dumazet wrote:
+> > > On Thu, Mar 6, 2025 at 10:55=E2=80=AFAM Matthieu Baerts <matttbe@kern=
+el.org> wrote:
+> > >>
+> > >> Hi Eric,
+> > >>
+> > >> On 06/03/2025 10:45, Eric Dumazet wrote:
+> > >>> On Thu, Mar 6, 2025 at 6:22=E2=80=AFAM Jason Xing <kerneljasonxing@=
+gmail.com> wrote:
+> > >>>>
+> > >>>> On Wed, Mar 5, 2025 at 10:49=E2=80=AFPM Matthieu Baerts (NGI0)
+> > >>>> <matttbe@kernel.org> wrote:
+> > >>>>>
+> > >>>>> A recent cleanup changed the behaviour of tcp_set_window_clamp().=
+ This
+> > >>>>> looks unintentional, and affects MPTCP selftests, e.g. some tests
+> > >>>>> re-establishing a connection after a disconnect are now unstable.
+> > >>>>>
+> > >>>>> Before the cleanup, this operation was done:
+> > >>>>>
+> > >>>>>   new_rcv_ssthresh =3D min(tp->rcv_wnd, new_window_clamp);
+> > >>>>>   tp->rcv_ssthresh =3D max(new_rcv_ssthresh, tp->rcv_ssthresh);
+> > >>>>>
+> > >>>>> The cleanup used the 'clamp' macro which takes 3 arguments -- val=
+ue,
+> > >>>>> lowest, and highest -- and returns a value between the lowest and=
+ the
+> > >>>>> highest allowable values. This then assumes ...
+> > >>>>>
+> > >>>>>   lowest (rcv_ssthresh) <=3D highest (rcv_wnd)
+> > >>>>>
+> > >>>>> ... which doesn't seem to be always the case here according to th=
+e MPTCP
+> > >>>>> selftests, even when running them without MPTCP, but only TCP.
+> > >>>>>
+> > >>>>> For example, when we have ...
+> > >>>>>
+> > >>>>>   rcv_wnd < rcv_ssthresh < new_rcv_ssthresh
+> > >>>>>
+> > >>>>> ... before the cleanup, the rcv_ssthresh was not changed, while a=
+fter
+> > >>>>> the cleanup, it is lowered down to rcv_wnd (highest).
+> > >>>>>
+> > >>>>> During a simple test with TCP, here are the values I observed:
+> > >>>>>
+> > >>>>>   new_window_clamp (val)  rcv_ssthresh (lo)  rcv_wnd (hi)
+> > >>>>>       117760   (out)         65495         <  65536
+> > >>>>>       128512   (out)         109595        >  80256  =3D> lo > hi
+> > >>>>>       1184975  (out)         328987        <  329088
+> > >>>>>
+> > >>>>>       113664   (out)         65483         <  65536
+> > >>>>>       117760   (out)         110968        <  110976
+> > >>>>>       129024   (out)         116527        >  109696 =3D> lo > hi
+> > >>>>>
+> > >>>>> Here, we can see that it is not that rare to have rcv_ssthresh (l=
+o)
+> > >>>>> higher than rcv_wnd (hi), so having a different behaviour when th=
+e
+> > >>>>> clamp() macro is used, even without MPTCP.
+> > >>>>>
+> > >>>>> Note: new_window_clamp is always out of range (rcv_ssthresh < rcv=
+_wnd)
+> > >>>>> here, which seems to be generally the case in my tests with small
+> > >>>>> connections.
+> > >>>>>
+> > >>>>> I then suggests reverting this part, not to change the behaviour.
+> > >>>>>
+> > >>>>> Fixes: 863a952eb79a ("tcp: tcp_set_window_clamp() cleanup")
+> > >>>>> Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/55=
+1
+> > >>>>> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> > >>>>
+> > >>>> Tested-by: Jason Xing <kerneljasonxing@gmail.com>
+> > >>>>
+> > >>>> Thanks for catching this. I should have done more tests :(
+> > >>>>
+> > >>>> Now I use netperf with TCP_CRR to test loopback and easily see the
+> > >>>> case where tp->rcv_ssthresh is larger than tp->rcv_wnd, which mean=
+s
+> > >>>> tp->rcv_wnd is not the upper bound as you said.
+> > >>>>
+> > >>>> Thanks,
+> > >>>> Jason
+> > >>>>
+> > >>>
+> > >>> Patch looks fine to me but all our tests are passing with the curre=
+nt kernel,
+> > >>> and I was not able to trigger the condition.
+> > >>
+> > >> Thank you for having looked at this patch!
+> > >>
+> > >>
+> > >>> Can you share what precise test you did ?
+> > >>
+> > >> To be able to get a situation where "rcv_ssthresh > rcv_wnd", I simp=
+ly
+> > >> executed MPTCP Connect selftest. You can also force creating TCP onl=
+y
+> > >> connections with '-tt', e.g.
+> > >>
+> > >>   ./mptcp_connect.sh -tt
+> > >
+> > > I was asking Jason about TCP tests. He mentioned TCP_CRR
+> >
+> > Oops, I'm sorry, I didn't look at the "To:" field.
+> >
+> > > I made several of them, with temporary debug in the kernel that did
+> > > not show the issue.
+> > >
+> > >
+> > > I am wondering if this could hide an issue in MPTCP ?
+> > Indeed, I was wondering the same thing. I didn't see anything obvious
+> > when looking at this issue. The behaviours around the window clamping,
+> > with MPTCP single flow, and "plain" TCP were quite similar I think.
+>
+> OK, let me run mptcp tests just in case I see something dubious.
 
-Signed-off-by: Penny Zheng <Penny.Zheng@amd.com>
----
-v2 -> v3:
-- Adapt to the changes from new commit "xen: introduces XEN_PM_PSD
-sub-hypercall for solely delivery of _PSD info"
----
- drivers/acpi/cppc_acpi.c         |  1 +
- drivers/xen/xen-acpi-processor.c | 92 +++++++++++++++++++++++++++++++-
- include/acpi/processor.h         |  1 +
- include/xen/interface/platform.h | 11 ++++
- 4 files changed, 103 insertions(+), 2 deletions(-)
+I have no idea why only MPTCP flows can trigger the condition, I do
+not think it matters anyway.
 
-diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-index ee8015ce3ddf..6b1c8d167405 100644
---- a/drivers/acpi/cppc_acpi.c
-+++ b/drivers/acpi/cppc_acpi.c
-@@ -856,6 +856,7 @@ static int acpi_cppc_processor_parse(struct acpi_processor *pr, struct cpc_desc
- 		cpc_ptr->cpc_regs[i].cpc_entry.int_value = 0;
- 	}
- 
-+	pr->flags.has_cpc = 1;
- 	pr_debug("Parsed _CPC entry for CPU: %d\n", pr->acpi_id);
- 	kfree(output.pointer);
- 	return 0;
-diff --git a/drivers/xen/xen-acpi-processor.c b/drivers/xen/xen-acpi-processor.c
-index 8db8631a4b9d..9c4faad043bc 100644
---- a/drivers/xen/xen-acpi-processor.c
-+++ b/drivers/xen/xen-acpi-processor.c
-@@ -25,6 +25,7 @@
- #include <xen/xen.h>
- #include <xen/interface/platform.h>
- #include <asm/xen/hypercall.h>
-+#include <acpi/cppc_acpi.h>
- 
- static int no_hypercall;
- MODULE_PARM_DESC(off, "Inhibit the hypercall.");
-@@ -45,8 +46,12 @@ static unsigned long *acpi_ids_done;
- static unsigned long *acpi_id_present;
- /* And if there is an _CST definition (or a PBLK) for the ACPI IDs */
- static unsigned long *acpi_id_cst_present;
-+/* And if there is an _CPC entry for the ACPI IDs */
-+static unsigned long *acpi_id_cpc_present;
- /* Which ACPI P-State dependencies for a enumerated processor */
- static struct acpi_psd_package *acpi_psd;
-+/* ACPI CPPC structures for a enumerated processor */
-+static struct cppc_perf_caps *acpi_cppc_data;
- 
- static bool pr_initialized;
- 
-@@ -228,6 +233,44 @@ static int push_psd_to_hypervisor(struct acpi_processor *_pr)
- 
- 	return 0;
- }
-+static int push_cppc_to_hypervisor(struct acpi_processor *_pr)
-+{
-+	int ret = 0;
-+	struct xen_platform_op op = {
-+		.cmd            = XENPF_set_processor_pminfo,
-+		.interface_version  = XENPF_INTERFACE_VERSION,
-+		.u.set_pminfo.id    = _pr->acpi_id,
-+		.u.set_pminfo.type  = XEN_PM_CPPC,
-+	};
-+	const struct cppc_perf_caps *cppc_perf = acpi_cppc_data + _pr->acpi_id;
-+
-+	op.u.set_pminfo.cppc_data.highest_perf = cppc_perf->highest_perf;
-+	op.u.set_pminfo.cppc_data.lowest_perf = cppc_perf->lowest_perf;
-+	op.u.set_pminfo.cppc_data.nominal_perf = cppc_perf->nominal_perf;
-+	op.u.set_pminfo.cppc_data.lowest_nonlinear_perf = cppc_perf->lowest_nonlinear_perf;
-+	op.u.set_pminfo.cppc_data.lowest_freq = cppc_perf->lowest_freq;
-+	op.u.set_pminfo.cppc_data.nominal_freq = cppc_perf->nominal_freq;
-+
-+	if (!no_hypercall)
-+		ret = HYPERVISOR_platform_op(&op);
-+
-+	if (!ret) {
-+		pr_debug("ACPI CPU%u - CPPC uploaded.\n", _pr->acpi_id);
-+		pr_debug("     highest_perf: %d\n", cppc_perf->highest_perf);
-+		pr_debug("     lowest_perf: %d\n", cppc_perf->lowest_perf);
-+		pr_debug("     lowest_nonlinear_perf: %d\n", cppc_perf->lowest_nonlinear_perf);
-+		pr_debug("     nominal_perf: %d\n", cppc_perf->nominal_perf);
-+		pr_debug("     lowest_freq: %d Mhz\n", cppc_perf->lowest_freq);
-+		pr_debug("     nominal_freq: %d Mhz\n", cppc_perf->nominal_freq);
-+	} else if ((ret != -EINVAL) && (ret != -ENOSYS))
-+		/* EINVAL means the ACPI ID is incorrect - meaning the ACPI
-+		 * table is referencing a non-existing CPU - which can happen
-+		 * with broken ACPI tables. */
-+		pr_warn("(_CPC): Hypervisor error (%d) for ACPI CPU%u\n",
-+			ret, _pr->acpi_id);
-+
-+		return ret;
-+}
- static int push_pxx_to_hypervisor(struct acpi_processor *_pr)
- {
- 	int ret = 0;
-@@ -300,12 +343,16 @@ static int upload_pm_data(struct acpi_processor *_pr)
- 		return -EBUSY;
- 	}
- 
--	if (_pr->performance && _pr->performance->states)
-+	if ((_pr->performance && _pr->performance->states) ||
-+	    _pr->flags.has_cpc)
- 		err |= push_psd_to_hypervisor(_pr);
- 
- 	if (_pr->flags.power)
- 		err = push_cxx_to_hypervisor(_pr);
- 
-+	if (_pr->flags.has_cpc)
-+		err |= push_cppc_to_hypervisor(_pr);
-+
- 	if (_pr->performance && _pr->performance->states)
- 		err |= push_pxx_to_hypervisor(_pr);
- 
-@@ -510,6 +557,7 @@ read_acpi_id(acpi_handle handle, u32 lvl, void *context, void **rv)
- 	union acpi_object object = { 0 };
- 	struct acpi_buffer buffer = { sizeof(union acpi_object), &object };
- 	struct acpi_buffer cst_buf = { ACPI_ALLOCATE_BUFFER, NULL };
-+	struct acpi_buffer cpc_buf = { ACPI_ALLOCATE_BUFFER, NULL };
- 	acpi_io_address pblk = 0;
- 
- 	status = acpi_get_type(handle, &acpi_type);
-@@ -589,11 +637,20 @@ read_acpi_id(acpi_handle handle, u32 lvl, void *context, void **rv)
- 	/* .. and it has a C-state */
- 	__set_bit(acpi_id, acpi_id_cst_present);
- 
-+	status = acpi_evaluate_object(handle, "_CPC", NULL, &cpc_buf);
-+	if (ACPI_FAILURE(status)) {
-+		return AE_OK;
-+	}
-+	kfree(cpc_buf.pointer);
-+
-+	/* .. and it has a _CPC entry */
-+	__set_bit(acpi_id, acpi_id_cpc_present);
-+
- 	return AE_OK;
- }
- static int check_acpi_ids(struct acpi_processor *pr_backup)
- {
--	if (acpi_id_present && acpi_id_cst_present)
-+	if (acpi_id_present && acpi_id_cst_present && acpi_id_cpc_present)
- 		/* OK, done this once .. skip to uploading */
- 		goto upload;
- 
-@@ -610,11 +667,19 @@ static int check_acpi_ids(struct acpi_processor *pr_backup)
- 		return -ENOMEM;
- 	}
- 
-+	acpi_id_cpc_present = bitmap_zalloc(nr_acpi_bits, GFP_KERNEL);
-+	if (!acpi_id_cpc_present) {
-+		bitmap_free(acpi_id_present);
-+		bitmap_free(acpi_id_cst_present);
-+		return -ENOMEM;
-+	}
-+
- 	acpi_psd = kcalloc(nr_acpi_bits, sizeof(struct acpi_psd_package),
- 			   GFP_KERNEL);
- 	if (!acpi_psd) {
- 		bitmap_free(acpi_id_present);
- 		bitmap_free(acpi_id_cst_present);
-+		bitmap_free(acpi_id_cpc_present);
- 		return -ENOMEM;
- 	}
- 
-@@ -630,6 +695,12 @@ static int check_acpi_ids(struct acpi_processor *pr_backup)
- 			pr_backup->acpi_id = i;
- 			/* Mask out C-states if there are no _CST or PBLK */
- 			pr_backup->flags.power = test_bit(i, acpi_id_cst_present);
-+			/* Mask out relevant flag if there are no _CPC */
-+			pr_backup->flags.has_cpc = test_bit(i, acpi_id_cpc_present);
-+			if (pr_backup->flags.has_cpc) {
-+				if (xen_processor_get_perf_caps(pr_backup, acpi_cppc_data + i))
-+					return -EINVAL;
-+			}
- 			/* num_entries is non-zero if we evaluated _PSD */
- 			if (acpi_psd[i].num_entries) {
- 				memcpy(&pr_backup->performance->domain_info,
-@@ -748,6 +819,15 @@ static int __init xen_acpi_processor_init(void)
- 		bitmap_free(acpi_ids_done);
- 		return -ENOMEM;
- 	}
-+
-+	acpi_cppc_data = kcalloc(nr_acpi_bits, sizeof(struct cppc_perf_caps),
-+				GFP_KERNEL);
-+	if (!acpi_cppc_data) {
-+		pr_debug("Memory allocation error for acpi_cppc_data\n");
-+		rc = -ENOMEM;
-+		goto err1_out;
-+	}
-+
- 	for_each_possible_cpu(i) {
- 		if (!zalloc_cpumask_var_node(
- 			&per_cpu_ptr(acpi_perf_data, i)->shared_cpu_map,
-@@ -773,6 +853,11 @@ static int __init xen_acpi_processor_init(void)
- 		rc = acpi_processor_get_performance_info(pr);
- 		if (rc)
- 			goto err_out;
-+
-+		pr->flags.pcc_unsupported = true;
-+		rc = xen_processor_get_perf_caps(pr, acpi_cppc_data + i);
-+		if (rc)
-+			goto err_out;
- 	}
- 
- 	rc = xen_upload_processor_pm_data();
-@@ -788,6 +873,8 @@ static int __init xen_acpi_processor_init(void)
- 
- err_out:
- 	/* Freeing a NULL pointer is OK: alloc_percpu zeroes. */
-+	kfree(acpi_cppc_data);
-+err1_out:
- 	free_acpi_perf_data();
- 	bitmap_free(acpi_ids_done);
- 	return rc;
-@@ -801,6 +888,7 @@ static void __exit xen_acpi_processor_exit(void)
- 	bitmap_free(acpi_id_present);
- 	bitmap_free(acpi_id_cst_present);
- 	kfree(acpi_psd);
-+	kfree(acpi_cppc_data);
- 	for_each_possible_cpu(i)
- 		acpi_processor_unregister_performance(i);
- 
-diff --git a/include/acpi/processor.h b/include/acpi/processor.h
-index 1decb437c750..12c1398abc7e 100644
---- a/include/acpi/processor.h
-+++ b/include/acpi/processor.h
-@@ -214,6 +214,7 @@ struct acpi_processor_flags {
- 	u8 bm_control:1;
- 	u8 bm_check:1;
- 	u8 has_cst:1;
-+	u8 has_cpc:1;
- 	u8 pcc_unsupported:1;
- 	u8 has_lpi:1;
- 	u8 power_setup_done:1;
-diff --git a/include/xen/interface/platform.h b/include/xen/interface/platform.h
-index a35e1eb958f3..1db915d44dd7 100644
---- a/include/xen/interface/platform.h
-+++ b/include/xen/interface/platform.h
-@@ -320,6 +320,7 @@ DEFINE_GUEST_HANDLE_STRUCT(xenpf_getidletime_t);
- #define XEN_PM_TX   2
- #define XEN_PM_PDC  3
- #define XEN_PM_PSD  4
-+#define XEN_PM_CPPC 5
- /* Px sub info type */
- #define XEN_PX_PCT   1
- #define XEN_PX_PSS   2
-@@ -384,6 +385,15 @@ struct xen_processor_px {
- };
- DEFINE_GUEST_HANDLE_STRUCT(xen_processor_px);
- 
-+struct xen_processor_cppc {
-+    uint32_t highest_perf;
-+    uint32_t nominal_perf;
-+    uint32_t lowest_perf;
-+    uint32_t lowest_nonlinear_perf;
-+    uint32_t lowest_freq;
-+    uint32_t nominal_freq;
-+};
-+
- struct xen_psd_package {
- 	uint64_t num_entries;
- 	uint64_t revision;
-@@ -411,6 +421,7 @@ struct xenpf_set_processor_pminfo {
- 		struct xen_psd_package              domain_info; /* _PSD */
- 		struct xen_processor_performance    perf; /* Px: _PPC/_PCT/_PSS */
- 		GUEST_HANDLE(uint32_t)              pdc;
-+		struct xen_processor_cppc           cppc_data; /* _CPC */
- 	};
- 	uint32_t shared_type;     /* coordination type of this processor */
- };
--- 
-2.34.1
-
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
