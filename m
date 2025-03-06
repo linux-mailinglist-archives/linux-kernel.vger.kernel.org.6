@@ -1,146 +1,106 @@
-Return-Path: <linux-kernel+bounces-549767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2323A55711
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:47:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63FCBA55715
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:48:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36AB2169DE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:47:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 599FF1887EAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E89727426C;
-	Thu,  6 Mar 2025 19:46:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E95270EBF;
+	Thu,  6 Mar 2025 19:48:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="X8icVlPx"
-Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c9RiLJkP"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F7A271833
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 19:46:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2FD20E71B;
+	Thu,  6 Mar 2025 19:48:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741290414; cv=none; b=n6htS/PoBqfujLIWOdU847nW5Yp4E/8kgZZwEZBPcOS5dWxgCcc1XLZkzdzvWykmoVRtxy74Npuld5sZET8XYq1OrQqaSgKfDhgl+dr+d19CqxT0Y82S1LeexFzFCQYopImxfs0ROX0cfe/W4/cYsM0I8Db5r6nsre6AuvXlo+8=
+	t=1741290517; cv=none; b=l+D0o9RJTHd+nI5AWB8voPN/iff8Tg4Gp1Ck5TTEbmiiqCSIGOGD0J7ac4ciXBHrm5lBnUFDfKZ8+Wvo5U4C1zb827ns6nLVjvbE69AXZUipMSQ+/WOauSzoynT0wrXKCQrrjm1NbHrp0W4tjM+n1nY0P6mQhxeLO8l7+JDwjso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741290414; c=relaxed/simple;
-	bh=Qy7zGsJTaXY4YvT3V6KgAR44azxYg0LCKGz4DciGpLw=;
-	h=Content-Type:Message-ID:Date:MIME-Version:From:Subject:To:Cc; b=RDeireccJRkHKdy53sa5WembaZrZ6jSehitTEesaR/DH9YB9mX9zKKvOi1qvgTi8lWr8FWRq6Pg8N4O5mINWS6ZxHLzdTKJpuYsZL4i9qwUICrqf2zyRGe3aw9RzldMZkkZ25PExGg5Oxa3wJYCHhcROTGvXWmQt5en3RmwVMWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=X8icVlPx; arc=none smtp.client-ip=209.85.166.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-854a68f5afcso27674339f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 11:46:52 -0800 (PST)
+	s=arc-20240116; t=1741290517; c=relaxed/simple;
+	bh=6KlhLZJHxbMl3/LmwbEXaHYfqXDA8ofy5GnbEx0QOjk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cSZJ7+Af72kW08V25q2WPc4F4UretoGTVBClCURmlSsYbx4aAdKyfAaBtHiV+aEogGRPRWiaKVEPBboZPBVcb7GNwcAeNlr4ZSVIF3lyhWswD/pZQ9o1xmgn5FuRwuk3ybV5JCapFI1J3XCQ1WhEPtpFrjiEwjOJCHnNitYxkrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c9RiLJkP; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-390e702d481so574975f8f.1;
+        Thu, 06 Mar 2025 11:48:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1741290412; x=1741895212; darn=vger.kernel.org;
-        h=cc:to:subject:from:content-language:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=vAZsrQ5pHfKfGgxDS14zPnvQCXj7F1Vy1cfr1GUo/8Q=;
-        b=X8icVlPxEPYrMHLFFVZ8vqVsvKbTOHHHtSW6jsCeDfgwViL9cu06PeZ8ykuy9Mge8Y
-         dLIrvIcDzUvzJI87Fz8+Ou8dgGQU5Qp8so5UgEzCMOpxAfTRwccSKP8NFGAIxEbbfTzp
-         h52bz4mr7j5YZ8VDMRfgQ76XlIREM/0/4kS58=
+        d=gmail.com; s=20230601; t=1741290513; x=1741895313; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IwABPoxBGNDDl4dsMEfG8YvhAybcbbsFvKADV+Rz3OA=;
+        b=c9RiLJkPxSHYpMSWc46rBTixTQHmDgNUt2SufKVa2mjvUDax0agHYc3VcYVOcZwjBw
+         qz04KIZSo8D66JKVWhLxR7yw/jdMAzZZkBFEqTpfsNr1XgQyI4hPt7hHeMqNBjYUnunX
+         NGEIsLdGTMTjwX+Fa5JNsm/fTyzLThmuWYG1i8X6OKsKmYYxlcPqCJ/8mtArqe1zhqat
+         CE6VyjjBkzRxtExfAIsfTiNXsjrVJMtdDb43Za3HMxwX19mmpkN2RZ6j8zUlso9FslKK
+         tOCX8c/CMiParJQkExrjNANMYEPG3LnD3nmxLaaojOHj1V3Er1U8gWJg71C1OQN59GN2
+         +dQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741290412; x=1741895212;
-        h=cc:to:subject:from:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vAZsrQ5pHfKfGgxDS14zPnvQCXj7F1Vy1cfr1GUo/8Q=;
-        b=n7c/by8ei4pN/otskJQ0v2iipHewvaQhgEnCqkmYcVre0QoBntMsrxcnyoEXC/F2WA
-         qPG8ZM8x1Y8Cf1nE2qUcR1vbL9Dj0tHF02ChgrA0MQvVkl/Hui0ew6nCKexGm4I3KJd4
-         N5iJLOZxEEregAqbq8J7WFqpHeeCeGLWdWu+1BEH/8FWPnt7lIEOxbi8axEDh2tHvZ9w
-         sj35H6F4/ZqsZantzoVFxybaLIGeYS4cwpZAzFTkq3Ycf/0wzWtP+sbR2Kv2gaUcek9l
-         yy5bj+58YM8E3/l2z0ZSvkl9sOFm8c3yPsSRClHW5d+gkfF075M4HtAXBAo+AzzwX812
-         TcHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdevZttigSzsKTUUfbpx/yJ14Ryz97rBD+iDUGOc0LNQSHtGEsKPvn3M7h3bymRXtClK3YNkgA9RqgjoM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzJhE3RadCxwuH52AibkyhQuVdtIFKbMzYOpDrEi1xUS5VocdJ
-	XY16S+s6jclUhjjWZW1MGUs42iLcACwhXjaRBz1gbgfpWuFQF7LVsDr78+ElrfU=
-X-Gm-Gg: ASbGnctA3vbm7y9nTiUi6ooo8TQMAeD8mzfQ42FFAis/Q2RGhCFBanO4fxz60g5lr45
-	KhOGF/uvNr/Yq9Ar1G4TImHg8oiWdByK8B9e+fNNExmt7bg6F0FKObj4XMBTUJPNSfg1B1GVSK+
-	w81xRzlVvxPSj6aLkZXrhwlPnGYswN+sP+P3MchRMsL/os4absMfwvvKR6tAzW2AysZGYOREeYW
-	xOBDIRigWifWwqfJyZ2VTONwEcA9Ni0Ho4L6PqvyKZIFhfculgpbHJ1mVAYtqGiBG3nJuGQ6ZT9
-	I+a7n+tqHMj6WUof6FhPG8i6bCB1NMa6ON/lEY1sphw1nLMUckNHt+8=
-X-Google-Smtp-Source: AGHT+IE4jehB2r0k/L1GncTFMRlZv1hWZJcvcV/y63BhnbuVN9R9itnxTvtsR2t8iDnag8rzRyLbxQ==
-X-Received: by 2002:a05:6602:3818:b0:85a:fd12:9270 with SMTP id ca18e2360f4ac-85b1d05d2e3mr108030739f.10.1741290411723;
-        Thu, 06 Mar 2025 11:46:51 -0800 (PST)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f209dee919sm518783173.15.2025.03.06.11.46.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 11:46:51 -0800 (PST)
-Content-Type: multipart/mixed; boundary="------------w78nUxmUbzxQVn2eMG0M3ZMu"
-Message-ID: <a3344fc3-c7ea-44ae-8fc8-86184315a58f@linuxfoundation.org>
-Date: Thu, 6 Mar 2025 12:46:50 -0700
+        d=1e100.net; s=20230601; t=1741290513; x=1741895313;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=IwABPoxBGNDDl4dsMEfG8YvhAybcbbsFvKADV+Rz3OA=;
+        b=Zg1oP4NaCO3YnD3+dVUt9OBPWg1Ob1a1+yTFUE5yYoInxfy2g7gNK3KjafccQeLA7b
+         gVla0S+96yIFnDfdDUGYpfDzMx+hI3Z+Lc1DEYycN5VlZ8ptnc1AcQMuTRRr3I5fap6R
+         0WfRl1hTET921RrwdU3JTSAXaMDXbefF6oPf41mAa+7mMfXCUyb6vvhaeg7P4DtrqZRE
+         tOvc4JJgA1cKYgMYOi58vrPp7LsX55SEhLC70p1gsOrCNzCO2LMlml09eVwcJCdRDQJL
+         0vaKwMA9AQXI6Js8g4FrHbIRhVsn2ZxdZJx9G0xGmLkNlLvMTpzguqNbCcUC9KkyqyWZ
+         Ydgg==
+X-Forwarded-Encrypted: i=1; AJvYcCUO34sqNeScP86u9xozTZkVOxe04tFFGY6EqbwsCXblBPlnDZg9l9GUH4gqfCy/VxMlDipEECEepmQV/xnK@vger.kernel.org, AJvYcCUfn/4NOYW4Jn6BZDGjtHaLJZI1hs5fjHvbMocwZQglKx85/b9gpMPlI7yKU2XTN0PyAeg8fwotAWdF@vger.kernel.org, AJvYcCVdNOHx7jF+eyB8ZBK3Sfjj0BTr4gFF7l5kpfvhu83xpeKLtrdL7XENaBnWu3ynL5OoJMPKcuVBJRFl@vger.kernel.org, AJvYcCWq8Suh+9rRX9UOQaOzrDweq2O6T45/jc16MXyOdlcO5SbtHgOlfHDpNpn43pwLuKxA7FmmVrEvh2jcEWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKc+U3IyI0xK4wcbOmcHKdInziaVWp83yYF1xRLJaL63k4pnJH
+	4qQGn7vQilqVmrqKCj9hV3W5cDVPtOpl5BwET6yfxmXEPs9vDksLM9tHzJNd5xtH5/sq437hJLI
+	o1XArJj+SsXIl4b2ZPM1nTrVsq4M=
+X-Gm-Gg: ASbGncsQ6prBK6bECUJ0fFHjDMR/604+9g1hnZOXNkwkiXVgYmQEbQwPs2OoEN1RjCc
+	u6aNoVKUJIwgaqozd41lAPOfg3OQpncbNgobSxQm82l2WfIiMT/tfOSfjTtt4iB9Od+T38Gcwka
+	8EhL2MYdbhT1ut81uMuRsp/aju72o=
+X-Google-Smtp-Source: AGHT+IESx6J0fQPhrHzv5lys/ppFZv5l4yXAH23ndOkrFvwzwq/OeoVrFxPPglCoCuorF3oRyYLsUiZIFyRXuk0r6ks=
+X-Received: by 2002:a5d:64c3:0:b0:391:31c8:ba58 with SMTP id
+ ffacd0b85a97d-39132d16dd6mr307761f8f.10.1741290512846; Thu, 06 Mar 2025
+ 11:48:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-Subject: [GIT PULL] Linux Media vimc update for Linux 6.15-rc1
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, hverkuil@xs4all.nl
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
+References: <20250225143501.68966-1-clamor95@gmail.com> <20250225143501.68966-8-clamor95@gmail.com>
+ <04be5106-0d93-449c-b8a9-d8b3dc15ef24@gmail.com>
+In-Reply-To: <04be5106-0d93-449c-b8a9-d8b3dc15ef24@gmail.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Thu, 6 Mar 2025 21:48:21 +0200
+X-Gm-Features: AQ5f1JqPM8VmWqKAvqMUUYrU16-NlerNF4D8twXr8-KoJ5UNMcvW9sCYiBK9Y9U
+Message-ID: <CAPVz0n1ZTDZnZHu6R_YVfhDqkjcMV0xH1UHVih=bgv9DGoZ2nw@mail.gmail.com>
+Subject: Re: [PATCH v1 7/9] memory: tegra: Add Tegra114 EMC driver
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Georgi Djakov <djakov@kernel.org>, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is a multi-part message in MIME format.
---------------w78nUxmUbzxQVn2eMG0M3ZMu
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+=D1=87=D1=82, 6 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 21:42 Dmitr=
+y Osipenko <digetx@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> 25.02.2025 17:34, Svyatoslav Ryhel =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > +     /* Read register to wait until programming has settled */
+> > +     readl(emc->regs + EMC_INTSTATUS);
+>
+> Tegra4 TRM says this must be MC register and not EMC
+>
 
-Hi Mauro,
-
-Please pull the following vimc update for Linux 6.15-rc1.
-
-Fixes a bug in vimc streamer pipeline init code found by syzbot.
-
-diff is attached.
-
-thanks,
--- Shuah
-
-----------------------------------------------------------------
-The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
-
-   Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
-
-are available in the Git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-vimc-6.15-rc1
-
-for you to fetch changes up to d6813eb9c3de01307801f253d89d777b4669a0d0:
-
-   media: vimc: skip .s_stream() for stopped entities (2025-03-06 09:11:39 -0700)
-
-----------------------------------------------------------------
-linux-vimc-6.15-rc1
-
-Fixes a bug in vimc streamer pipeline init code found by syzbot.
-
-----------------------------------------------------------------
-Nikita Zhandarovich (1):
-       media: vimc: skip .s_stream() for stopped entities
-
-  drivers/media/test-drivers/vimc/vimc-streamer.c | 6 ++++++
-  1 file changed, 6 insertions(+)
-----------------------------------------------------------------
---------------w78nUxmUbzxQVn2eMG0M3ZMu
-Content-Type: text/x-patch; charset=UTF-8; name="linux-vimc-6.15-rc1.diff"
-Content-Disposition: attachment; filename="linux-vimc-6.15-rc1.diff"
-Content-Transfer-Encoding: base64
-
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvbWVkaWEvdGVzdC1kcml2ZXJzL3ZpbWMvdmltYy1zdHJl
-YW1lci5jIGIvZHJpdmVycy9tZWRpYS90ZXN0LWRyaXZlcnMvdmltYy92aW1jLXN0cmVhbWVy
-LmMKaW5kZXggODA3NTUxYTUxNDNiLi4xNWQ4NjNmOTdjYmYgMTAwNjQ0Ci0tLSBhL2RyaXZl
-cnMvbWVkaWEvdGVzdC1kcml2ZXJzL3ZpbWMvdmltYy1zdHJlYW1lci5jCisrKyBiL2RyaXZl
-cnMvbWVkaWEvdGVzdC1kcml2ZXJzL3ZpbWMvdmltYy1zdHJlYW1lci5jCkBAIC01OSw2ICs1
-OSwxMiBAQCBzdGF0aWMgdm9pZCB2aW1jX3N0cmVhbWVyX3BpcGVsaW5lX3Rlcm1pbmF0ZShz
-dHJ1Y3QgdmltY19zdHJlYW0gKnN0cmVhbSkKIAkJCWNvbnRpbnVlOwogCiAJCXNkID0gbWVk
-aWFfZW50aXR5X3RvX3Y0bDJfc3ViZGV2KHZlZC0+ZW50KTsKKwkJLyoKKwkJICogRG8gbm90
-IGNhbGwgLnNfc3RyZWFtKCkgdG8gc3RvcCBhbiBhbHJlYWR5CisJCSAqIHN0b3BwZWQvdW5z
-dGFydGVkIHN1YmRldi4KKwkJICovCisJCWlmICghdjRsMl9zdWJkZXZfaXNfc3RyZWFtaW5n
-KHNkKSkKKwkJCWNvbnRpbnVlOwogCQl2NGwyX3N1YmRldl9jYWxsKHNkLCB2aWRlbywgc19z
-dHJlYW0sIDApOwogCX0KIH0K
-
---------------w78nUxmUbzxQVn2eMG0M3ZMu--
+Are you sure? Tegra4 has no MC_INTSTATUS but it has EMC_INTSTATUS
 
