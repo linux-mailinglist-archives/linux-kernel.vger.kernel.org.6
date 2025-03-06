@@ -1,283 +1,177 @@
-Return-Path: <linux-kernel+bounces-549417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC9A2A55259
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:08:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C3BA55245
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:06:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F040D18845FD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:05:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD7807A28D6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:05:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CFE25A626;
-	Thu,  6 Mar 2025 17:05:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C60B25B686;
+	Thu,  6 Mar 2025 17:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CuVlkGg7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="WGgnc136"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13AF0253358
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8681256C68;
+	Thu,  6 Mar 2025 17:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741280717; cv=none; b=Gh08lVNzJzKb9Iin6gAJAuesEFTWnpkupjLat3EQd6NMt4B4HCaedI7zr7/1RvHZkQEJYKegDh6Z1VVMlktjunSH8VVGfv00JVD2FAgMCjxyaL9vT8X3nHTz4YpHN3wx+Yjr8B6lQiwfbMjkrXas8FT3gWkhPOl0qt0ZwgXYlS0=
+	t=1741280736; cv=none; b=GuHV6gOjdeh6HvaFVHSlMZ3yv0vV/CDNU4sC0J0VmPDNWA7NcRoArv6RsE/x+vN29C9RqRGqrx1ihdn74kzQBZwh67ED/3EMJFw7Wbjyn0DVMkSutSIUdICdTygdyg+olkrvGpk+7pFlkWIhgXn4NbTQZpsr05nXomJHO5jY1F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741280717; c=relaxed/simple;
-	bh=juBDRNImR2QnHw+IxkfJS8lxpFiWsVRDf+BVRf9RC/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=esj1MMazQFwQqHYXRv33C3AzULxlTRrSMIR72QgUc4WpvWM1lMeShLxFZraDOI2f3/cjSJwGeTGcd8kScgFb2etkFk39vTxg0iA5+qBMULDsiTVVE9ufrotGR202RKmHeBPOwVHK4LefemEbjUBkex3erzeEprP7mzcQlvx/RAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CuVlkGg7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741280714;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Rts5eSskbnJp/CQFVaAat8eJ+DA7k4QIn4k1VQ/bSLY=;
-	b=CuVlkGg7+gwFeXs0V0+7B1CAEScPqw94C46MSBSj6ePlsl6xRaC+SaHI1lev7CJWZuwbu5
-	oSvfAhHcplkyoGfAeTND2xIvrRCMq+rhmVebwEEzqiK5tTvR1Ecyo1jIXgRWtpGUoCqZ6T
-	AfpuQiZeYZbtQ0dLYOGCkWjYcMqT8YQ=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-637-yXb6hldZPDO-BgLEz9hS-Q-1; Thu, 06 Mar 2025 12:05:13 -0500
-X-MC-Unique: yXb6hldZPDO-BgLEz9hS-Q-1
-X-Mimecast-MFC-AGG-ID: yXb6hldZPDO-BgLEz9hS-Q_1741280712
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-390f3652842so555440f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:05:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741280712; x=1741885512;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rts5eSskbnJp/CQFVaAat8eJ+DA7k4QIn4k1VQ/bSLY=;
-        b=f0R0K67DntpvSrd7CkZ9vQ13lX+byxx1iXaxthfCO2mc+RNqIbECGOTETMyL4R57N5
-         kbZ+NdySGBfW5pssXE/b0ptx7faetGrsRy3OfUmnGyUA8pSTB3fuVZqE51heXVmrTgOV
-         p4hCeeoJxlCv3eFD06vGu+VrK6L3ypmIMcAQ3uxvD7cI4gdQOycmaMEb4kvNbbKdJEeC
-         qe/vll82yueRmQkK1IQ5KWSeyfcIPZ7rv9mWXxn8pHhjxUZkNaoHZL5hMBOwLwCWYnvr
-         ZX6+bzSSrpymUd3MlarehLipm5yZI7Vi5UiWcxbY30AmDm2T2npvUWofYOsuLacjz2bn
-         9gkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8sy2xQQHvLYRLj1RCmGAV7xByXQIeZFtFmgPjudhYH60BM/7R8oiXCZGC7xYlvoQcQIra//7VQnUrhFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZgUw0+uB2tulvvQa5v/nHqrFTPdpUxt2K2waBWo62UxducC5q
-	k7HXm2qzAGuyrt67tozBhtQX/bOJfTBK/vub6e6stjm5VlMIUKfevcrEdGDQVNFK/bB2YFhL0K7
-	XSQslSKuuEvDqF1IRroQU45UZMmsJjNOxa6X36TgM36M7zv97qr1DraVHaY9abw==
-X-Gm-Gg: ASbGncvKgDiYyCmKv5MNGGwomJUnH7cLchAuQ2g/MOjYmnZ5YyXPlNP2BuhZZle3bzq
-	WIP3qi7kcuKRomBZ3pDFh8ofHAM91EBo/+pRkeXJy+xtZ91/BSy3Rq0IltIT/jHQOSqMQ+mUUp2
-	xzm8cmXsJtoBYd+/Ckggs8EF5mit00X5ClggXhb9EK2WlhV1hNopELYUvNDj/f12dm8ewRsfhQQ
-	VFnh6NUtV6bNIGTU17YjvZBjWoHM+e03EDR7OeME+gZp70Ca6wxgTiD+ByUjV7MTEdFPGLh80iR
-	DVG5mfoKoUcxnvZbZcIfZ26ZQQ6J/UtETJTJ3dlIYlrt6z3LgjNA694isv5c70Pk
-X-Received: by 2002:a05:6000:1449:b0:390:f971:4ecd with SMTP id ffacd0b85a97d-3911f764cb9mr7120577f8f.26.1741280712172;
-        Thu, 06 Mar 2025 09:05:12 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFkaWSlL+r0y99UcBiSFo86iDccFc9BimFwiW02LQK5dm6lsqELUu1YfKEo2PEg2KrOfTUthA==
-X-Received: by 2002:a05:6000:1449:b0:390:f971:4ecd with SMTP id ffacd0b85a97d-3911f764cb9mr7120511f8f.26.1741280711456;
-        Thu, 06 Mar 2025 09:05:11 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfdfdsm2679033f8f.34.2025.03.06.09.05.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 09:05:09 -0800 (PST)
-Date: Thu, 6 Mar 2025 18:05:05 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Luigi Leonardi <leonardi@redhat.com>
-Cc: Michal Luczaj <mhal@rbox.co>, virtualization@lists.linux.dev, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] vsock/test: Add test for null ptr deref
- when transport changes
-Message-ID: <7ea5ikhvo2iupdlwuolemqrtswmogogpofso7u5pir3eggnjab@iacdjg4r64ss>
-References: <20250306-test_vsock-v1-0-0320b5accf92@redhat.com>
- <20250306-test_vsock-v1-2-0320b5accf92@redhat.com>
+	s=arc-20240116; t=1741280736; c=relaxed/simple;
+	bh=3VfLqqlmovthJNuFMZVeB6EtRJFnUlkX4NOlEqhohiE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N4Qi/s8QEA0NqDNyJ4LRyeIxRO2ICbc16flvcDoRVooadvPAYNoVSLJl8hMeECvVrp/89cC0OP55DeHMIA5QU8LH30jg60BalVVO3cM61QnNBKUl/9X9Xa54IdHBltdof+0HqCj/08qSle7X40SGJ+J7duR9ecLf824p+ekpp5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=WGgnc136; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4Z7wlp2t0dzm0ySG;
+	Thu,  6 Mar 2025 17:05:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1741280724; x=1743872725; bh=A24+KffKtFSUVrYAFQdKne2r
+	rxq+xDeCpRePORA+drE=; b=WGgnc1365z+z/MCkk3wq0Ptnoo4oI5To9+nUweQB
+	uUe2kjevacnrrWUS/2/oX04FmiJumMOt/HObNkMgiIAYFCuryhzOBSLoR+mfeMEm
+	caNirXHPxCGiZgOFMeNAayrqgZR+h3qBRdvUQtuBSQWMgzxXhCW4oG6vBJoYQ6zo
+	5C6pmgNc8gGIFA9T0ZWQyEZitEVFa7OQwWiX2W9WzyQmguaFMWYSzrU23C8LMqOu
+	1l1jilgsOJtICajy9zk/Obu+VkpJoxeRxBWSCjh4LtOs7OzeIJa71Jf0Of9d/jDd
+	1wQfLtSFeWe7Xl7BBghCPbug4DJtdUV5A/BnGt7biTXd+w==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id wqlyNVe4qNmw; Thu,  6 Mar 2025 17:05:24 +0000 (UTC)
+Received: from [172.20.25.222] (unknown [192.80.0.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4Z7wld6Czxzm0yTc;
+	Thu,  6 Mar 2025 17:05:16 +0000 (UTC)
+Message-ID: <34aa5237-75fb-4cd1-9b90-f0a3f73753f8@acm.org>
+Date: Thu, 6 Mar 2025 09:05:15 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250306-test_vsock-v1-2-0320b5accf92@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 3/3] scsi: ufs-qcom: Add support for testbus registers
+To: Manish Pandey <quic_mapa@quicinc.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_nitirawa@quicinc.com,
+ quic_cang@quicinc.com, quic_nguyenb@quicinc.com
+References: <20250305120355.16834-1-quic_mapa@quicinc.com>
+ <20250305120355.16834-4-quic_mapa@quicinc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250305120355.16834-4-quic_mapa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 06, 2025 at 05:09:33PM +0100, Luigi Leonardi wrote:
->Add a new test to ensure that when the transport changes a null pointer
->dereference does not occur[1].
->
->Note that this test does not fail, but it may hang on the client side if
->it triggers a kernel oops.
->
->This works by creating a socket, trying to connect to a server, and then
->executing a second connect operation on the same socket but to a
->different CID (0). This triggers a transport change. If the connect
->operation is interrupted by a signal, this could cause a null-ptr-deref.
->
->Since this bug is non-deterministic, we need to try several times. It
->is safe to assume that the bug will show up within the timeout period.
->
->If there is a G2H transport loaded in the system, the bug is not
->triggered and this test will always pass.
->
->[1]https://lore.kernel.org/netdev/Z2LvdTTQR7dBmPb5@v4bel-B760M-AORUS-ELITE-AX/
->
->Suggested-by: Michal Luczaj <mhal@rbox.co>
->Signed-off-by: Luigi Leonardi <leonardi@redhat.com>
->---
-> tools/testing/vsock/Makefile     |  1 +
-> tools/testing/vsock/vsock_test.c | 80 ++++++++++++++++++++++++++++++++++++++++
-> 2 files changed, 81 insertions(+)
->
->diff --git a/tools/testing/vsock/Makefile b/tools/testing/vsock/Makefile
->index 6e0b4e95e230500f99bb9c74350701a037ecd198..88211fd132d23ecdfd56ab0815580a237889e7f2 100644
->--- a/tools/testing/vsock/Makefile
->+++ b/tools/testing/vsock/Makefile
->@@ -5,6 +5,7 @@ vsock_test: vsock_test.o vsock_test_zerocopy.o timeout.o control.o util.o msg_ze
-> vsock_diag_test: vsock_diag_test.o timeout.o control.o util.o
-> vsock_perf: vsock_perf.o msg_zerocopy_common.o
->
->+vsock_test: LDLIBS = -lpthread
-> vsock_uring_test: LDLIBS = -luring
-> vsock_uring_test: control.o util.o vsock_uring_test.o timeout.o msg_zerocopy_common.o
->
->diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
->index d0f6d253ac72d08a957cb81a3c38fcc72bec5a53..1e00cb6e117859d5c18fb3e52a574444b5489173 100644
->--- a/tools/testing/vsock/vsock_test.c
->+++ b/tools/testing/vsock/vsock_test.c
->@@ -23,6 +23,7 @@
-> #include <sys/ioctl.h>
-> #include <linux/sockios.h>
-> #include <linux/time64.h>
->+#include <pthread.h>
->
-> #include "vsock_test_zerocopy.h"
-> #include "timeout.h"
->@@ -1788,6 +1789,80 @@ static void test_stream_connect_retry_server(const struct test_opts *opts)
-> 	close(fd);
-> }
->
->+static void *test_transport_change_thread(void *vargp)
->+{
->+	pid_t *t = (pid_t *)vargp;
->+
->+	//We want this thread to terminate as soon as possible
+On 3/5/25 4:03 AM, Manish Pandey wrote:
+> This patch introduces support for dumping testbus registers,
+> enhancing the debugging capabilities for UFS-QCOM drivers.
+> 
+> Signed-off-by: Manish Pandey <quic_mapa@quicinc.com>
+> ---
+>   drivers/ufs/host/ufs-qcom.c | 73 +++++++++++++++++++++++++++++++++++++
+>   1 file changed, 73 insertions(+)
+> 
+> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+> index 7daee416eb8b..c8f95519b580 100644
+> --- a/drivers/ufs/host/ufs-qcom.c
+> +++ b/drivers/ufs/host/ufs-qcom.c
+> @@ -1566,6 +1566,75 @@ int ufs_qcom_testbus_config(struct ufs_qcom_host *host)
+>   	return 0;
+>   }
+>   
+> +static void ufs_qcom_dump_testbus(struct ufs_hba *hba)
+> +{
+> +	struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+> +	u32 *testbus = NULL;
+> +	int i, j, nminor = 0, testbus_len = 0;
+> +	char *prefix;
 
-Please follow the stile in this file, we use /* Something ... */ for
-comments.
+Shouldn't the declarations be ordered from longest to shortest for new
+code?
 
->+	pthread_setcanceltype(PTHREAD_CANCEL_ASYNCHRONOUS, NULL);
->+
->+	while (true)
->+		kill(*t, SIGUSR1);
+Has it been considered to annotate the 'testbus' declaration with __free
+and to remove the kfree(testbus) call? See also <linux/cleanup.h>
 
-Should we check the return value of kill()?
+> +		switch (j) {
+> +		case TSTBUS_UAWM:
+> +			prefix = "TSTBUS_UAWM ";
+> +			break;
+> +		case TSTBUS_UARM:
+> +			prefix = "TSTBUS_UARM ";
+> +			break;
+> +		case TSTBUS_TXUC:
+> +			prefix = "TSTBUS_TXUC ";
+> +			break;
+> +		case TSTBUS_RXUC:
+> +			prefix = "TSTBUS_RXUC ";
+> +			break;
+> +		case TSTBUS_DFC:
+> +			prefix = "TSTBUS_DFC ";
+> +			break;
+> +		case TSTBUS_TRLUT:
+> +			prefix = "TSTBUS_TRLUT ";
+> +			break;
+> +		case TSTBUS_TMRLUT:
+> +			prefix = "TSTBUS_TMRLUT ";
+> +			break;
+> +		case TSTBUS_OCSC:
+> +			prefix = "TSTBUS_OCSC ";
+> +			break;
+> +		case TSTBUS_UTP_HCI:
+> +			prefix = "TSTBUS_UTP_HCI ";
+> +			break;
+> +		case TSTBUS_COMBINED:
+> +			prefix = "TSTBUS_COMBINED ";
+> +			break;
+> +		case TSTBUS_WRAPPER:
+> +			prefix = "TSTBUS_WRAPPER ";
+> +			break;
+> +		case TSTBUS_UNIPRO:
+> +			nminor = 256;
+> +			prefix = "TSTBUS_UNIPRO ";
+> +			break;
+> +		default:
+> +			break;
+> +		}
 
->+	return NULL;
->+}
->+
->+static void test_transport_change_signal_handler(int signal)
->+{
+Has it been considered to convert the above switch-statement into an
+array lookup?
 
-Can you put comment here to explain why it's empty?
+> @@ -1682,6 +1751,10 @@ static void ufs_qcom_dump_dbg_regs(struct ufs_hba *hba)
+>   			ufs_qcom_dump_mcq_hci_regs(hba);
+>   			usleep_range(1000, 1100);
+>   		}
+> +		ufshcd_dump_regs(hba, UFS_TEST_BUS, 4, "UFS_TEST_BUS ");
+> +		usleep_range(1000, 1100);
+> +		ufs_qcom_dump_testbus(hba);
+> +		usleep_range(1000, 1100);
+>   	}
+>   }
 
->+}
->+
->+static void test_transport_change_client(const struct test_opts *opts)
->+{
->+	__sighandler_t old_handler;
->+	pid_t pid = getpid();
->+	pthread_t thread_id;
->+
->+	old_handler = signal(SIGUSR1, test_transport_change_signal_handler);
->+
->+	pthread_create(&thread_id, NULL, test_transport_change_thread, &pid);
->+
->+	timeout_begin(TIMEOUT);
->+
->+	while (true) {
-
-What about `while (timeout_check_expired()) {` here?
-
->+		struct sockaddr_vm sa = {
->+			.svm_family = AF_VSOCK,
->+			.svm_cid = opts->peer_cid,
->+			.svm_port = opts->peer_port,
->+		};
->+
->+		int s = socket(AF_VSOCK, SOCK_STREAM, 0);
-
-Please check that `s` is a valid file descriptor.
-
->+
->+		connect(s, (struct sockaddr *)&sa, sizeof(sa));
->+
-
-Maybe I'd add a comment here to explain why we are setting
-`svm_cid = 0`.
-
->+		sa.svm_cid = 0;
->+		connect(s, (struct sockaddr *)&sa, sizeof(sa));
->+
->+		close(s);
->+
->+		if (timeout_check_expired())
->+			break;
->+	}
->+
->+	timeout_end();
->+
->+	pthread_cancel(thread_id);
->+	//Wait for the thread to terminate
->+	pthread_join(thread_id, NULL);
-
-Please check return values and fix the comment style.
-
->+	//Restore the old handler
->+	signal(SIGUSR1, old_handler);
->+}
->+
->+static void test_transport_change_server(const struct test_opts *opts)
->+{
->+	timeout_begin(TIMEOUT);
-
-Instead of using timeout_begin(), etc. on both sides, can we do 
-something similar to what we did in test_stream_leak_acceptq_client() 
-and test_stream_leak_acceptq_server() ?
-
->+
->+	while (true) {
->+		int s;
->+
->+		s = vsock_stream_listen(opts->peer_cid, opts->peer_port);
->+		close(s);
->+
->+		if (timeout_check_expired())
->+			break;
->+	}
->+
->+	timeout_end();
->+}
->+
-> static void test_stream_linger_client(const struct test_opts *opts)
-> {
-> 	struct linger optval = {
->@@ -1984,6 +2059,11 @@ static struct test_case test_cases[] = {
-> 		.run_client = test_stream_linger_client,
-> 		.run_server = test_stream_linger_server,
-> 	},
->+	{
->+		.name = "SOCK_STREAM transport change null-ptr-deref",
->+		.run_client = test_transport_change_client,
->+		.run_server = test_transport_change_server,
-
-Following the other test, I'd call `test_stream_transport_change...`.
+Please add a comment that explains why the usleep_range() calls are
+present.
 
 Thanks,
-Stefano
 
->+	},
-> 	{},
-> };
->
->
->-- 
->2.48.1
->
+Bart.
+
 
 
