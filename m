@@ -1,98 +1,169 @@
-Return-Path: <linux-kernel+bounces-549921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81953A558A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:20:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9A1EA558A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:21:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 693933A6A84
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:20:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 078311898D59
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040DB271295;
-	Thu,  6 Mar 2025 21:20:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8D0213253;
+	Thu,  6 Mar 2025 21:21:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fCD2eitP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IdcUPmwH"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003022063EB;
-	Thu,  6 Mar 2025 21:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAD320469E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 21:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741296006; cv=none; b=EuxXbGLJ9FgpP3J0IRXVfcGo7Nnp++oqL2NIDA2Uh70rm9x4W5N4EteKgygGcSsag4p8UmgVKDepFPZu/JpM/lk4kZQrJ7uqtRTVpBPLthcDsx3VskZTb75jMkIR6b0HshB1uOpj5pl/DgNYlIBMNX+39/xvprf/z0zylDhfDu8=
+	t=1741296066; cv=none; b=eHrANCFKSw87ITQODTUf/1Q2lyWGINlanGw97Er50f0/9rFEUBzL/IAlVMrhhmuNAd+HtWdlxNFG7adNMdVVVtMdqiLYTS2ChC9BXDIJtOsNsXoo4dCfkGSBcTq0Og77M/mEq8Al6P6OKToAOHPQLhNDGFWPkrG2R9lf8acdSbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741296006; c=relaxed/simple;
-	bh=cZDw6Poc4BDrQ+UyFQkoa8sDIiciZub+M7TYHo89aq4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=MokhWgxpVZ9lNICHfLGEAvGyP7SpKn7Dsc9kWXlFukm3zs766/ex/scBvNXAy0VkUP3e/L1O6sXwW6MYJ+Wb4SdDFJLTMPJfDxV7qh09bv93JdkpTgaTQviYZzOrSPjmCkhUlQcnT2TgFUZM6AHVJ6VexRPdHosYHI6gJ3AnOmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fCD2eitP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9335C4CEE0;
-	Thu,  6 Mar 2025 21:20:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1741296005;
-	bh=cZDw6Poc4BDrQ+UyFQkoa8sDIiciZub+M7TYHo89aq4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=fCD2eitPTHFzv+QGanXjZD4bENnmRFCyuGnOvEmFo3oZUyxfGbz0e9/waUKJcay/B
-	 ulqAAqZ8fT7ST4z1YZd+B5XSm85iLoKo7BN7tD3KTLECZ4zAMHYgvB+TmrABW752ri
-	 sqVT0tKHdBGtciAetPrknw/7LiV2aVP98DL5X7zA=
-Date: Thu, 6 Mar 2025 13:20:03 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Andreas Larsson
- <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann
- <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>, Brian Cain
- <bcain@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Dave Hansen
- <dave.hansen@linux.intel.com>, "David S. Miller" <davem@davemloft.net>,
- Dinh Nguyen <dinguyen@kernel.org>, Geert Uytterhoeven
- <geert@linux-m68k.org>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Helge
- Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar
- <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Johannes Berg
- <johannes@sipsolutions.net>, John Paul Adrian Glaubitz
- <glaubitz@physik.fu-berlin.de>, Madhavan Srinivasan <maddy@linux.ibm.com>,
- Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
- Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <monstr@monstr.eu>,
- Palmer Dabbelt <palmer@dabbelt.com>, Peter Zijlstra <peterz@infradead.org>,
- Richard Weinberger <richard@nod.at>, Russell King <linux@armlinux.org.uk>,
- Stafford Horne <shorne@gmail.com>, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Thomas Gleixner <tglx@linutronix.de>, Vasily
- Gorbik <gor@linux.ibm.com>, Vineet Gupta <vgupta@kernel.org>, Will Deacon
- <will@kernel.org>, linux-alpha@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
- linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
- linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
- linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
- linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
-Subject: Re: [PATCH 00/13] arch, mm: reduce code duplication in mem_init()
-Message-Id: <20250306132003.0066f109dae75f74711f9432@linux-foundation.org>
-In-Reply-To: <20250306185124.3147510-1-rppt@kernel.org>
-References: <20250306185124.3147510-1-rppt@kernel.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741296066; c=relaxed/simple;
+	bh=QwtTDEYAnNwj0jO5A7hwwJCo0R5apTOt+3h+jokZPyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H6fcA67uYL/rou8IjFUFRnx2ZEV33pwh53l6zZHFTHEqUR+B8vVArL2EmLLc0Ihv8AqMzuzurjZrW6ovCQKp3sFUMsSc4OeGZAldyTXJggNUv9ypj/vhDeVIXevnvF7JbG4HaDERv5zo09aZgKmT2Hw+OyoumBMLnpoLkD2F48I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IdcUPmwH; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 6 Mar 2025 21:20:48 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741296062;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lJvaHPzJT7/lU+BeSLL68xR7OTi5kIy1KlaEzXrMnR8=;
+	b=IdcUPmwHqIZR9E0XtWbE4Ood0ckZDEBhIMJN9pQ1RPRvqJ9vkaikVt6R4REfmrV5CKak3Z
+	d6K9DcBzTHIfov1zamF+8M0YK4qS6HctAZ7eV4dt9vJbrQub1DkU1npt7k/s9zLvRLp/zW
+	tIRMiRO+jYZ+ozeKFPuHCcBlsPs/Tzg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: Nhat Pham <nphamcs@gmail.com>, lkp <lkp@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"21cnbao@gmail.com" <21cnbao@gmail.com>,
+	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"clabbe@baylibre.com" <clabbe@baylibre.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"ebiggers@google.com" <ebiggers@google.com>,
+	"surenb@google.com" <surenb@google.com>,
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
+	"oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>,
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+Subject: Re: [PATCH v8 14/14] mm: zswap: Compress batching with request
+ chaining in zswap_store() of large folios.
+Message-ID: <Z8oRsGHmt2E4diKK@google.com>
+References: <20250303084724.6490-15-kanchana.p.sridhar@intel.com>
+ <202503031847.j1iReOtf-lkp@intel.com>
+ <CAKEwX=MgV22UBNi-2dNBDgNM2DRfrngk_4gO7z9t-O0KrpdPUw@mail.gmail.com>
+ <SA3PR11MB8120445C8DBDBB9945231B66C9C92@SA3PR11MB8120.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SA3PR11MB8120445C8DBDBB9945231B66C9C92@SA3PR11MB8120.namprd11.prod.outlook.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu,  6 Mar 2025 20:51:10 +0200 Mike Rapoport <rppt@kernel.org> wrote:
-
-> Every architecture has implementation of mem_init() function and some
-> even more than one. All these release free memory to the buddy
-> allocator, most of them set high_memory to the end of directly
-> addressable memory and many of them set max_mapnr for FLATMEM case.
+On Mon, Mar 03, 2025 at 09:34:04PM +0000, Sridhar, Kanchana P wrote:
 > 
-> These patches pull the commonalities into the generic code and refactor
-> some of the mem_init() implementations so that many of them can be just
-> dropped.
+> > -----Original Message-----
+> > From: Nhat Pham <nphamcs@gmail.com>
+> > Sent: Monday, March 3, 2025 10:22 AM
+> > To: lkp <lkp@intel.com>
+> > Cc: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>; linux-
+> > kernel@vger.kernel.org; linux-mm@kvack.org; hannes@cmpxchg.org;
+> > yosry.ahmed@linux.dev; chengming.zhou@linux.dev;
+> > usamaarif642@gmail.com; ryan.roberts@arm.com; 21cnbao@gmail.com;
+> > ying.huang@linux.alibaba.com; akpm@linux-foundation.org; linux-
+> > crypto@vger.kernel.org; herbert@gondor.apana.org.au;
+> > davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
+> > ebiggers@google.com; surenb@google.com; Accardi, Kristen C
+> > <kristen.c.accardi@intel.com>; llvm@lists.linux.dev; oe-kbuild-
+> > all@lists.linux.dev; Feghali, Wajdi K <wajdi.k.feghali@intel.com>; Gopal,
+> > Vinodh <vinodh.gopal@intel.com>
+> > Subject: Re: [PATCH v8 14/14] mm: zswap: Compress batching with request
+> > chaining in zswap_store() of large folios.
+> > 
+> > On Mon, Mar 3, 2025 at 3:07 AM kernel test robot <lkp@intel.com> wrote:
+> > >
+> > > Hi Kanchana,
+> > >
+> > > kernel test robot noticed the following build errors:
+> > >
+> > > > 1166                          prefetchw(entries[j]);
+> > > --
+> > 
+> > Why are we doing this anyway? Does it have a notable performance
+> > difference? At the very least, leave a comment explaining why we're
+> > prefetching this (although the build error suggests that we have to
+> > remove it anyway).
+> 
+> Hi Nhat,
+> 
+> Yes, it does. The use of prefetchw reduces sys time by ~1.5% because
+> it minimizes cache-miss latency by moving the zswap entry to the cache
+> before it is written to. 
+> 
+> This is data with kernel compilation test, v8 without prefetchw and v8 as-is:
+> 
+> --------------------------------------------------------------------------------
+>  Kernel compile       v8 without               v8      v8 without              v8
+>  allmodconfig          prefetchw                        prefetchw
+>  2M folios
+>  --------------------------------------------------------------------------------
+>  zswap compressor    deflate-iaa      deflate-iaa            zstd            zstd   
+>  --------------------------------------------------------------------------------
+>  real_sec                 732.89           735.63          768.53          758.21
+>  user_sec              15,708.37        15,699.84       15,702.64       15,678.73
+>  sys_sec                4,632.58         4,563.70        5,735.06        5,635.69
+>  --------------------------------------------------------------------------------
+>  Max_Res_Set_Size_KB   1,874,672        1,867,516       1,874,684       1,872,888
+>  --------------------------------------------------------------------------------
+>  memcg_high                    0                0               0               0
+>  memcg_swap_fail               0                0               0               0
+>  zswpout             114,742,930      112,836,725      92,904,961      89,596,085
+>  zswpin               41,184,897       39,983,793      31,018,149      29,163,932
+>  pswpout                     625            1,069             558           1,059
+>  pswpin                      599            1,056             540           1,051
+>  thp_swpout                    1                2               1               2
+>  thp_swpout_fallback      10,967           10,195           6,918           6,141
+>  pgmajfault           42,588,331       41,349,069      31,931,882      30,006,422
+>  ZSWPOUT-2048kB            7,661            8,710           6,799           7,480
+>  SWPOUT-2048kB                 1                2               1               2
+>  --------------------------------------------------------------------------------
+> 
+> 
+> Sure, I will add a comment, and also "#include <linux/prefetch.h>" in zswap.c
+> that will resolve the build error. This is similar to how these files handle prefetchw:
+> mm/vmscan.c, kernel/locking/qspinlock.c, include/asm-generic/xor.h, etc.
 
-Thanks, I added this series to mm.git.
+Please also explicitly mention that the prefetch and likely/unlikely
+annotations prevent regressions with software compression like zstd, and
+generally improve the performance with the batching code by ~1.5%.
+
+> 
+> Thanks,
+> Kanchana
+> 
 
