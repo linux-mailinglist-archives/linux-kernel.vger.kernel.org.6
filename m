@@ -1,140 +1,77 @@
-Return-Path: <linux-kernel+bounces-548047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEEE0A53F30
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:32:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B74AA53F33
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:36:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 236BB171C00
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:32:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10C1B7A1DD9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BA71F95C;
-	Thu,  6 Mar 2025 00:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748A418EA2;
+	Thu,  6 Mar 2025 00:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="atx8Y3TD"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MQiiVbXA"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A002110E;
-	Thu,  6 Mar 2025 00:32:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39AC10E9
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 00:36:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741221164; cv=none; b=RA9iIQ/0UZuze0EY9WIqlbxNzqLOedovkR9QAdB2zdVmx3jLtmuZfhlH8oJ2WGoFvE7mA3dfC6uptHGUsxL2XovMAm1ZoP4XpE/hf4v9XwgXSNXvcklEUnGu+tyiXdZfq/NGV2IFInyZVWBFZnKfJk3VVyMG47sTbdlKNXYp4SE=
+	t=1741221387; cv=none; b=X+k8aRyuT09bT62d2VAil2La8E99gJnKjT/1I1o2DI6NJ3UTG6GlyK5yXckGRN3hb+dFNYT5xyAvQmU7Wo5QM752pYtxUgty1TMk/FuUDtZUz6/dA7icsrsvJuOMA553mN38czLECQXUzDI5z6mdLRs8Imq1bSRiJsqVMNJXda4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741221164; c=relaxed/simple;
-	bh=f5/msq66A8dGExPJS5orgs8AKsYIe/Lcr2NDLfzR7A8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IGXBDC2UF6ywIArkuSRvt7GWV1/cUBpLPp2hwwG+6zVKn50wD8pNuLl+amKxlZO0fy2uSRQjXMEk4eufG/U1+easmHjymHq9gWAjJVrQ2B4ZnkIPWS6sL40rFIUPvQnGS7FzbSENrntkKeyTOdySLQ4Vu0qyHwdw0Kgf5dk0E1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=atx8Y3TD; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6e89959f631so1125716d6.3;
-        Wed, 05 Mar 2025 16:32:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741221161; x=1741825961; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kbniOkrcE/iLVnL8rQsYyL/qvVYTkKklM91CTqrRJBI=;
-        b=atx8Y3TDUXfX+GUHGeR84a2qbpKy/tWs7g+itfzhfjLqwdcJaA24vNwAbhNynSoLN6
-         KWL525s90CT+TsPKU6Zx0U1K7UkPqvS1LJh2ZNh3/GvXdbilO/jiLU+RLKFgCSXnOUur
-         uWAdQz3I0nVa2V92Jq5Y4EZ3XD2bpNeAAZ2aQPdG44qU2PO1mrMs4BWQ1Xd92UlZeFVp
-         2GqYrs2h0N0ZACD03usjyzU4wfYnDuxOavhE8/o31UJMeh/dgOG9NMe1ja9oYbD3Z5n5
-         +D+Ynx0zf6JPt1hwjMYgAC36FIzMk0PAZyZBxjDAIlbg7Xl5GOAkakM9U/2WAR1PWFZp
-         QfLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741221161; x=1741825961;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kbniOkrcE/iLVnL8rQsYyL/qvVYTkKklM91CTqrRJBI=;
-        b=kxt0pi6XxGsrYs3Tw1W7xURswgyijh4e9vMyl7Pd7ZgNfEa19cB3yLGFwuPeRQDPcP
-         O64Te/8AGVJ+uOqDgTnYquD2uB6+fFv+AdM6JV7napTxVcsK8/Bt8yn5BSnHwerdMwTM
-         0yyZCOeq2O1clh0gnOAJIKdHqOUEnOZDJb+WtZhqXxzKThZ7Kh5xqTAnYkGjmCWmjo5k
-         tPKLuXKcE0ofTj3d4RL49G97zgZLzE0s5B2C7cIbOHMTW5DYETU2CCYeouipOVnhnidO
-         CjsupwGWfcI7OOVBvjchybg3pntd8ex5i/L77aO+EPhWyfZ8/KQldOH9d2a3jwk5zzbw
-         kFRw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7YP+AUbE0+FdnuW2sgC7ZvPAwMKuhCqkfsVGkBEke2Hsb2TVy+Ke+dghvwJZLwBq17nLLliH704ed@vger.kernel.org, AJvYcCUq+kfxZIyJV4a6n1maCE/ZqRC/2EFJ1r0trWhUFRgyQfVVkj2XeLR4e88Wg3/TbAmPvn5bAEaXbe2H@vger.kernel.org, AJvYcCVa/VKd1TrwEw2zCPjKvGGln0QJLVrpcuP5L+CXh+5Rs/thwuwuwmTd4JBB20SXuzvFHUhwztROwUiKjior@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVY4tXK8oV8TGOzy4DSxWtw/0lHQcLKIlTJMUz1N9ZS5HdHRII
-	8IkSohoC6emnBRvJChFwTFMj8yi5b/O8V63OO8Ov5ug+UMeykmn4n5hePxLj4eJr/NoMZVjZwl/
-	SaCzFRElWWSnX1CXo2NVFN/i6hbI=
-X-Gm-Gg: ASbGncsPU0WCjPET+W/VFHt1d6oycFIlUTyBCOEfn9WV1fSNp8I3I4k5iO8l0DZ0YLX
-	SS/TPF5ouPsGkQqZypbsIrAIOTOTA0NERaG6rXjqdRzojHLLJWk9Zv6aTP1ZFs02Iw5yPbQCihY
-	zitIYe+pDDVfGZx3rg7Z0tsBe3Ig==
-X-Google-Smtp-Source: AGHT+IG+AhTOU/hFmUj2Gkpld0BqtJ/4yuByg5APV8R/JeUdRUJkWdIIvsJDj978xbhdoWG645LFlNqS3HrGShS/6Y0=
-X-Received: by 2002:a05:6214:2b09:b0:6e6:6535:17dd with SMTP id
- 6a1803df08f44-6e8e6d13ef2mr91605216d6.7.1741221160908; Wed, 05 Mar 2025
- 16:32:40 -0800 (PST)
+	s=arc-20240116; t=1741221387; c=relaxed/simple;
+	bh=XvSYVIWIx4JlgRvVKfDmNeOqRvGeKDXeKAmROwFoSEg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b5tbHTx0LWvsyZb2Manm/ejl+Byx26rfIuIPKq4sfCYsz89YYIfq1k0xOP0Jz6Fflvk3Dh0DUqzXT0z5lZrM31vpjzAHL/Hq0EXAiSDIz0QUU9b8RUUIg+kDPqvSMS4wQcs/7HEb/8s21iG+LFhQR8j7AI/xzw+8rh8LokqDxFM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MQiiVbXA; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=qIu7osBSJiIgxNywGkZoX9U3Sf37DBFZmEM3WJe0tKA=; b=MQiiVbXAENaxQRYFHwlV/IXpms
+	43KATUc6fOY2IJ1xYhrmSDo41DUMIC/BpEyopAt+54yu9aCbLZzNez2I0S/kAlzxrbRAaz5Brv3ET
+	6NmTRIfwrg+Y4Ti23kjow0uS46Li7RvTiLOaFWXxSZZpEBln6CZa2+NorIMUNX36eGQMfjCIE1E+4
+	gR01GmUAvQ3l7RQDWeHmpXFxfX27KF/JiXNqsmmppUhKt1o6Kx36m/g22q4fZB0NsNqk9a/X9JEOY
+	97aX519bjLFOa+AbefuNEWweKq2L3/ztgfMyIz/TLMCR+DEYZhTMWXsEUsl1dZxxYNnQZ6O725WuE
+	iWExdbcA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tpzDu-00000009i3I-0ezv;
+	Thu, 06 Mar 2025 00:36:26 +0000
+Date: Wed, 5 Mar 2025 16:36:26 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Kit Chow <kchow@maxlinear.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: pci_p2pdma_add_resource of bar memory rejected by memory hotplug
+ as out of range
+Message-ID: <Z8juCusc7oA2VG9v@infradead.org>
+References: <SJ2PR19MB8094482894628FF87E806CC8A4CB2@SJ2PR19MB8094.namprd19.prod.outlook.com>
+ <Z8jpi5nf63APb8aN@infradead.org>
+ <SJ2PR19MB80942BB17ED2D5B34AF2C230A4CA2@SJ2PR19MB8094.namprd19.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303235930.68731-1-danascape@gmail.com> <20250304143918.733d6cca@jic23-huawei>
-In-Reply-To: <20250304143918.733d6cca@jic23-huawei>
-From: Barry Song <21cnbao@gmail.com>
-Date: Thu, 6 Mar 2025 13:32:28 +1300
-X-Gm-Features: AQ5f1JosxNJs8S75DECePZKWETpL2y5LjB4cLtk5HNNr9lPQYzI9s5_-kDJ6Ibo
-Message-ID: <CAGsJ_4zGOvEK-NE1DBtk5jQZCfPp0vtjOb2pWskmhAAn_y93eQ@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: iio: accel: add binding documentation for ADIS16203
-To: Jonathan Cameron <jic23@kernel.org>, Saalim Quadri <danascape@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, gregkh@linuxfoundation.org, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-staging@lists.linux.dev, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SJ2PR19MB80942BB17ED2D5B34AF2C230A4CA2@SJ2PR19MB8094.namprd19.prod.outlook.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, Mar 5, 2025 at 3:39=E2=80=AFAM Jonathan Cameron <jic23@kernel.org> =
-wrote:
->
-> On Tue,  4 Mar 2025 05:29:30 +0530
-> Saalim Quadri <danascape@gmail.com> wrote:
->
-> > This patch add device tree binding documentation for ADIS16203.
-> >
-> > Signed-off-by: Saalim Quadri <danascape@gmail.com>
-> > ---
-> > Changes:
-> > V1 - V2: change compatible property from enum to const
-> >
-> >  .../bindings/iio/accel/adi,adis16203.yaml     | 52 +++++++++++++++++++
-> >  1 file changed, 52 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/iio/accel/adi,adi=
-s16203.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adis16203.=
-yaml b/Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml
-> > new file mode 100644
-> > index 000000000000..64370f13e1dc
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml
-> > @@ -0,0 +1,52 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/iio/accel/adi,adis16203.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Analog Devices ADIS16203 Programmable 360 Degrees Inclinometer
-> > +
-> > +maintainers:
-> > +  - Barry Song <21cnbao@gmail.com>
-> I think you'll be dropping this patch anyway, but just a quick not that
-> it isn't good to volunteer people.  Barry hasn't worked on these
-> devices for quite a long time now so seems unlikely he agreed to this.
+On Thu, Mar 06, 2025 at 12:30:48AM +0000, Kit Chow wrote:
+> Hi Christoph,
+> 
+> Is the kernel licensing issue causing the shrinkage in hotplug memory range? Can you please provide some more info on how MaxLinear is violating kernel licensing and I can take it up with management? 
 
-Hi Saalim, if you're sending a v2, feel free to nominate yourself or anyone
-interested as the maintainer. Apologies, but I probably won=E2=80=99t have =
-time to
-handle this :-)
+Your comany sells slimey solutions violating the kernels GPL licensing.
+You shoul be ashamed in a corner and not ask kernel developers whos
+license you violate for help.  Go away!
 
->
-> Jonathan
-
-Thanks
-Barry
 
