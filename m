@@ -1,238 +1,261 @@
-Return-Path: <linux-kernel+bounces-549234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB909A54F5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:41:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BA212A54F5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:41:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B86313AD25D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:41:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD2953AC626
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:41:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2A7920F078;
-	Thu,  6 Mar 2025 15:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0927720E6FD;
+	Thu,  6 Mar 2025 15:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="d7NxU0nU"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="lEes4RZE"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AC520C46A;
-	Thu,  6 Mar 2025 15:41:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F74A148FF5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 15:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741275692; cv=none; b=UiIpnwsfWMF2+ixbKc/TuPzyqwdL/dLUH81CKdpzY9eT2tP0d11JGt1+BIgKUQCzTjUHYnI5GJKYA1ZHS/iLvBhVhPa/eATPvJgcN1weH58clshAsc0xMmtkLX+0qX5/UTM+01u8UqG7tAuW8g7qPaAnhugayx5i5QtWB//8zAA=
+	t=1741275691; cv=none; b=oWHeKW6Nanyc5iFrGjtsOUzB3YrThxj1/HKk2bycOtLyvCe1uAj2enmhQq4lTEGrPSwH9CeidbhBGIzgVqEr6y9IAkArkStOIiBIya0ZmthGkcHI7WUyPgD/xZ0gbE72kehwRZ7604EnPZGHeDR9PCoyxVwMq7h/ZXew/vTz0DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741275692; c=relaxed/simple;
-	bh=8fbMY8SwQspH1wER8XtpaGcYm/GrDfVnX0T1zU1RT7I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=m0vYj/6d4i094js55p4TAT2jPgN9Z+LySPw+wS4fv0cjw9yGnC6t5N0sf/y0N2uRxF2Wggcd7vkRjPyrc9hmJUU4+4RuwpoJJMMkhRFVARNGotX935YVN5tM4W6C+7bbKiscFkmvINnaKZEO6Z9hndKOS4Ax55suT4+MUu/I/sU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=d7NxU0nU; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526CS9Bq006414;
-	Thu, 6 Mar 2025 15:41:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=xLEcEg
-	GLRQEklmroADsacfKh8IuCslLlpSN3By6o+h8=; b=d7NxU0nUZ1iL0GRNFFeAdV
-	b6+AyXJrrsis5IO1/Lvn5/e5g92Um9yYNWCgX8yKHh2TlP4AtD+ahgXWnszZyC8X
-	eDW4caXJKdL9076vYSfbxWPcqM5TCkpcAWYbWPBbFMoEeqK7QvVq7WOx0ffuvIfj
-	wqBUTIEY6tEHqeSgVPYNdyikWDZBji/DoH93GsQulmYMi8MGU9a7TwanpddKljH+
-	QJVMfvrt9ToKOEbFefKJjPp/dBWAJTKHrLofzb1aslhXkExI21sswfcZvDeypn2o
-	Ashuj1cTPQzHQxfoGzN6uV6S8beQPa29xFghTWDOIwnKDzZGFNb6xsQHu7m4lvzQ
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457br2s1pe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 15:41:19 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 526EpFkv032236;
-	Thu, 6 Mar 2025 15:41:18 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 454cjt9qk7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 15:41:18 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 526FfH2L22217448
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 6 Mar 2025 15:41:17 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 402D658065;
-	Thu,  6 Mar 2025 15:41:17 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 599145804B;
-	Thu,  6 Mar 2025 15:41:14 +0000 (GMT)
-Received: from [9.171.48.29] (unknown [9.171.48.29])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  6 Mar 2025 15:41:14 +0000 (GMT)
-Message-ID: <dabc5fd13900935287a3b187d0d2cac2f2920dd4.camel@linux.ibm.com>
-Subject: Re: [PATCH] s390/pci: Fix dev.dma_range_map missing sentinel element
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Matthew Rosato <mjrosato@linux.ibm.com>, Joerg Roedel <jroedel@suse.de>,
-        Will Deacon <will@kernel.org>, Gerd Bayer <gbayer@linux.ibm.com>,
-        Jason
- Gunthorpe <jgg@ziepe.ca>
-Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens	
- <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev	
- <agordeev@linux.ibm.com>,
-        Christian Borntraeger
- <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, iommu@lists.linux.dev,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org
-Date: Thu, 06 Mar 2025 16:41:13 +0100
-In-Reply-To: <20250306-fix_dma_map_alloc-v1-1-b4fa44304eac@linux.ibm.com>
-References: <20250306-fix_dma_map_alloc-v1-1-b4fa44304eac@linux.ibm.com>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1741275691; c=relaxed/simple;
+	bh=3DmVVu7DQIQKIIp4t8lsKAIOMSSQUzyJkbGFxd4z+EQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gZW2Vn9QeV2mj4+b2GWl9gA1r/n1RQcLpDoyb8D6+GBwJlj/xF7+xZ0JcS7Uk2rLBgwm38B8z8zHgd+f2QUo+Xgy7dh8agHeDqpUYttGAMMRoWB7ghlKZTV8MZuf04vpKqj18Igz9wke2SGFPK0aU8xvLL0w3JQL1bG4UzW7G8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=lEes4RZE; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-39127512371so622294f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 07:41:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1741275687; x=1741880487; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KfAw/lWzC06xKDDTRZDupFFimlwRpNal8Mn/TGIr/gI=;
+        b=lEes4RZE74EDulSKVUFk507AMUr9xOG66RoMEI5k+u5QMVCsSyFBZPzWtN+SIKC4Lu
+         uZ9nO7lH1FrLT+hbfiY+Det7XMXrmjukaCHjKB+QrNlvm7msyDdDQbw8w6Lvin3qj+Xh
+         RENxxxhHfdiMhFiUvgIxJBwT1PKClqBXLuxJg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741275687; x=1741880487;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KfAw/lWzC06xKDDTRZDupFFimlwRpNal8Mn/TGIr/gI=;
+        b=fFg+Z3q7H+0Ln6lkMDuYc4ou52x0bRS4xx6Kf+9Eyva75O0Z8P8ls/LSrEki4aBxbA
+         IFbC9OrCEYXjNU+AI/jiL/whUchNWYSS2vrDD6dRYc1UBX015Do3p8cKLjCT2B2Wwbls
+         ETPIeo4evyeU6sZIITrVjBtqsoy1F4SrU9iNmEnwonLM8nSNKzMGah+3aDYUFADFDChk
+         EdIzVRllzzpZjIypBq1ASrEyA4ufcraA54RQjgijhOzD6YYvpM05OiDX9gwf2yxJyTRT
+         0NE0xHErus3MnP0gWmHgTzaA5qczhV7qP/sGMy2MaPS+Lx1hX+nA+O76WJORm4UEZOz8
+         fnjA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBEKUKrGu8BiVHNb4FByEDIhKKJxAHJC/zAa+USjWQlm6IG/s+xMrERNj3QQXv6+YhpxrsCo5hoUluLr0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNM/oEqZgmujuMF2N1LhYlVS/mycWULqlST/g+tSpelaSEivaf
+	XtRRPyLDF9WF2t3A44jzfRW1O8XiF0vfDL0ZqS3/NtV08Bh+Nummd4dFWe+6lDg=
+X-Gm-Gg: ASbGncvT4QEgZXZvUqDjaGKnK44TUAVo+4EjDQpLlTWT0EeInEpPsAOD1ZCqTS6LfC5
+	i1kELqiv7IJqjtLUCuiWK+E0Y2ftDYSQaMVT4Ig90y77k6cufwdbgK0BZvuYx/8LoFO0UvVs8XX
+	n52Yf1oYQFdmLN5f7LB3hiumMRaj/JSVqd+VXX0DuqvxlYkuV7fRN7fKyUy/qHh/wF5bXaxSRdZ
+	7b4kYpRCOWVzRzpBYFxgxnbeHD/bEwsTpQi0pRZ2C7P/6l8UcbZ6DYsvksABtlnnicOZ6UvbHl4
+	B0AkqvAAqbyzV9wR+iBVx2JDiegY/t2Vv0Hs5o7I3QnqMWRx6qIj6wol
+X-Google-Smtp-Source: AGHT+IHILhgpH9qsFMyPlni2g1PV1h6rdNmhtz7SSlpztS/80IfakxCQlbtDJtFSlQ77i0LW0AVdJw==
+X-Received: by 2002:a05:6000:2ca:b0:391:454:5eb8 with SMTP id ffacd0b85a97d-3911f7c83f0mr7652632f8f.48.1741275687342;
+        Thu, 06 Mar 2025 07:41:27 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c015a29sm2342134f8f.42.2025.03.06.07.41.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 07:41:26 -0800 (PST)
+Date: Thu, 6 Mar 2025 16:41:24 +0100
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andy Yan <andyshrk@163.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Simona Vetter <simona.vetter@ffwll.ch>
+Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
+ connector by encoder
+Message-ID: <Z8nCJACBmcUNvQB8@phenom.ffwll.local>
+Mail-Followup-To: Maxime Ripard <mripard@kernel.org>,
+	Andy Yan <andyshrk@163.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
+ <20250304-bridge-connector-v5-4-aacf461d2157@kernel.org>
+ <5180089f.a640.19566290538.Coremail.andyshrk@163.com>
+ <20250305-ruddy-nightingale-of-wealth-db100a@houat>
+ <mqh4wedfokuta2tmyctoi6jrzol7mqzm27nj3ylu6yj2vjy22j@mexke5x2o7a2>
+ <7c1c61e7.10e1.19569067029.Coremail.andyshrk@163.com>
+ <20250306-able-wonderful-saluki-aacd1d@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: NEmAqTUpu9S7uvVo6JYiQ6I1xxd_IkSo
-X-Proofpoint-ORIG-GUID: NEmAqTUpu9S7uvVo6JYiQ6I1xxd_IkSo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- spamscore=0 priorityscore=1501 bulkscore=0 clxscore=1015 mlxlogscore=999
- malwarescore=0 suspectscore=0 adultscore=0 impostorscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503060118
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306-able-wonderful-saluki-aacd1d@houat>
+X-Operating-System: Linux phenom 6.12.11-amd64 
 
-On Thu, 2025-03-06 at 16:25 +0100, Niklas Schnelle wrote:
-> The fixed commit sets up dev.dma_range_map but missed that this is
-> supposed to be an array of struct bus_dma_region with a sentinel element
-> with the size field set to 0 at the end. This would lead to overruns in
-> e.g. dma_range_map_min(). It could also result in wrong translations
-> instead of DMA_MAPPIN_ERROR in translate_phys_to_dma() if the paddr were
-> to not fit in the aperture. Fix this by using the dma_direct_set_offset()
-> helper which creates a sentinel for us.
->=20
-> Fixes: d236843a6964 ("s390/pci: store DMA offset in bus_dma_region")
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> ---
-> This is based on iommu/next which contains the fixed commit
-> ---
->  arch/s390/pci/pci_bus.c | 24 +++++++++++-------------
->  1 file changed, 11 insertions(+), 13 deletions(-)
->=20
-> diff --git a/arch/s390/pci/pci_bus.c b/arch/s390/pci/pci_bus.c
-> index 0e725039861f92925a38f7ff7cb6de6b0d965ac3..14310c3b48860a16de13536ad=
-f95ef99e6af21cc 100644
-> --- a/arch/s390/pci/pci_bus.c
-> +++ b/arch/s390/pci/pci_bus.c
-> @@ -287,23 +287,21 @@ static struct zpci_bus *zpci_bus_alloc(int topo, bo=
-ol topo_is_tid)
->  static void pci_dma_range_setup(struct pci_dev *pdev)
->  {
->  	struct zpci_dev *zdev =3D to_zpci(pdev);
-> -	struct bus_dma_region *map;
-> -	u64 aligned_end;
-> +	u64 aligned_end, size;
-> +	dma_addr_t dma_start;
-> +	int ret;
-> =20
-> -	map =3D kzalloc(sizeof(*map), GFP_KERNEL);
-> -	if (!map)
-> -		return;
-> -
-> -	map->cpu_start =3D 0;
-> -	map->dma_start =3D PAGE_ALIGN(zdev->start_dma);
-> +	dma_start =3D PAGE_ALIGN(zdev->start_dma);
->  	aligned_end =3D PAGE_ALIGN_DOWN(zdev->end_dma + 1);
-> -	if (aligned_end >=3D map->dma_start)
-> -		map->size =3D aligned_end - map->dma_start;
-> +	if (aligned_end >=3D dma_start)
-> +		size =3D aligned_end - dma_start;
->  	else
-> -		map->size =3D 0;
-> -	WARN_ON_ONCE(map->size =3D=3D 0);
-> +		size =3D 0;
-> +	WARN_ON_ONCE(size =3D=3D 0);
-> =20
-> -	pdev->dev.dma_range_map =3D map;
-> +	ret =3D dma_direct_set_offset(&pdev->dev, 0, dma_start, size);
-> +	if (ret)
-> +		pr_err("Failed to allocate DMA range map for %s\n", pci_name(pdev));
+On Thu, Mar 06, 2025 at 08:10:16AM +0100, Maxime Ripard wrote:
+> On Thu, Mar 06, 2025 at 09:16:24AM +0800, Andy Yan wrote:
+> > 
+> > Hi Maxime and Dmitry:
+> > 
+> > At 2025-03-06 04:13:53, "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org> wrote:
+> > >On Wed, Mar 05, 2025 at 02:19:36PM +0100, Maxime Ripard wrote:
+> > >> Hi Andy,
+> > >> 
+> > >> On Wed, Mar 05, 2025 at 07:55:19PM +0800, Andy Yan wrote:
+> > >> > At 2025-03-04 19:10:47, "Maxime Ripard" <mripard@kernel.org> wrote:
+> > >> > >With the bridges switching over to drm_bridge_connector, the direct
+> > >> > >association between a bridge driver and its connector was lost.
+> > >> > >
+> > >> > >This is mitigated for atomic bridge drivers by the fact you can access
+> > >> > >the encoder, and then call drm_atomic_get_old_connector_for_encoder() or
+> > >> > >drm_atomic_get_new_connector_for_encoder() with drm_atomic_state.
+> > >> > >
+> > >> > >This was also made easier by providing drm_atomic_state directly to all
+> > >> > >atomic hooks bridges can implement.
+> > >> > >
+> > >> > >However, bridge drivers don't have a way to access drm_atomic_state
+> > >> > >outside of the modeset path, like from the hotplug interrupt path or any
+> > >> > >interrupt handler.
+> > >> > >
+> > >> > >Let's introduce a function to retrieve the connector currently assigned
+> > >> > >to an encoder, without using drm_atomic_state, to make these drivers'
+> > >> > >life easier.
+> > >> > >
+> > >> > >Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > >> > >Co-developed-by: Simona Vetter <simona.vetter@ffwll.ch>
+> > >> > >Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> > >> > >---
+> > >> > > drivers/gpu/drm/drm_atomic.c | 45 ++++++++++++++++++++++++++++++++++++++++++++
+> > >> > > include/drm/drm_atomic.h     |  3 +++
+> > >> > > 2 files changed, 48 insertions(+)
+> > >> > >
+> > >> > >diff --git a/drivers/gpu/drm/drm_atomic.c b/drivers/gpu/drm/drm_atomic.c
+> > >> > >index 9ea2611770f43ce7ccba410406d5f2c528aab022..b926b132590e78f8d41d48eb4da4bccf170ee236 100644
+> > >> > >--- a/drivers/gpu/drm/drm_atomic.c
+> > >> > >+++ b/drivers/gpu/drm/drm_atomic.c
+> > >> > >@@ -985,10 +985,55 @@ drm_atomic_get_new_connector_for_encoder(const struct drm_atomic_state *state,
+> > >> > > 
+> > >> > > 	return NULL;
+> > >> > > }
+> > >> > > EXPORT_SYMBOL(drm_atomic_get_new_connector_for_encoder);
+> > >> > > 
+> > >> > >+/**
+> > >> > >+ * drm_atomic_get_connector_for_encoder - Get connector currently assigned to an encoder
+> > >> > >+ * @encoder: The encoder to find the connector of
+> > >> > >+ * @ctx: Modeset locking context
+> > >> > >+ *
+> > >> > >+ * This function finds and returns the connector currently assigned to
+> > >> > >+ * an @encoder.
+> > >> > >+ *
+> > >> > >+ * Returns:
+> > >> > >+ * The connector connected to @encoder, or an error pointer otherwise.
+> > >> > >+ * When the error is EDEADLK, a deadlock has been detected and the
+> > >> > >+ * sequence must be restarted.
+> > >> > >+ */
+> > >> > >+struct drm_connector *
+> > >> > >+drm_atomic_get_connector_for_encoder(const struct drm_encoder *encoder,
+> > >> > >+				     struct drm_modeset_acquire_ctx *ctx)
+> > >> > >+{
+> > >> > >+	struct drm_connector_list_iter conn_iter;
+> > >> > >+	struct drm_connector *out_connector = ERR_PTR(-EINVAL);
+> > >> > >+	struct drm_connector *connector;
+> > >> > >+	struct drm_device *dev = encoder->dev;
+> > >> > >+	int ret;
+> > >> > >+
+> > >> > >+	ret = drm_modeset_lock(&dev->mode_config.connection_mutex, ctx);
+> > >> > >+	if (ret)
+> > >> > >+		return ERR_PTR(ret);
+> > >> > 
+> > >> > It seems that this will cause a deadlock when called from a hotplug
+> > >> > handling path, I have a WIP DP diver[0], which suggested by Dmitry to
+> > >> > use this API from a &drm_bridge_funcs.detect callback to get the
+> > >> > connector, as detect is called by drm_helper_probe_detect, which will
+> > >> > hold connection_mutex first, so the deaklock happens:
+> > >> >
+> > >> > drm_helper_probe_detect(struct drm_connector *connector,
+> > >> >                         struct drm_modeset_acquire_ctx *ctx,
+> > >> >                         bool force)
+> > >> > {
+> > >> >         const struct drm_connector_helper_funcs *funcs = connector->helper_private;
+> > >> >         struct drm_device *dev = connector->dev;
+> > >> >         int ret;
+> > >> > 
+> > >> >         if (!ctx)
+> > >> >                 return drm_helper_probe_detect_ctx(connector, force);
+> > >> > 
+> > >> >         ret = drm_modeset_lock(&dev->mode_config.connection_mutex, ctx);
+> > >> >         if (ret)
+> > >> >                 return ret;
+> > >> > 
+> > >> >         if (funcs->detect_ctx)
+> > >> >                 ret = funcs->detect_ctx(connector, ctx, force);
+> > >> >         else if (connector->funcs->detect)
+> > >> >                 ret = connector->funcs->detect(connector, force);
+> > >> >         else
+> > >> >                 ret = connector_status_connected;
+> > >> > 
+> > >> >         if (ret != connector->status)
+> > >> >                 connector->epoch_counter += 1;
+> > >> > 
+> > >> > So I wonder can we let drm_bridge_funcs.detect pass a connector for
+> > >> > this case ?
+> > >> 
+> > >> Do you actually see a deadlock occurring? AFAIK, drm_modeset_lock is
+> > >> fine with reentrancy from the same context, so it should work just fine.
+> > >
+> > >Andy, that probably means that you should use .detect_ctx() and pass the
+> > >context to drm_atomic_get_connector_for_encoder().
+> > 
+> > Unfortunately, the drm_bridge_funcs does not have a .detect_ctx()  version .
+> > The call chain is:
+> >  drm_helper_probe_detect 
+> >  --> drm_bridge_connector_detect(struct drm_connector *connector, bool force)
+> > --> drm_bridge_funcs.detect(bridge)
+> > The ctx got dropped when drm_helper_probe_detect call  drm_bridge_connector_detect
+> > The connector got dropped  when connector call it's bridege.detect
+> > 
+> > So I think the simplest solution is to have drm_bridge_funcs.detect
+> > directly pass the connector
+> 
+> I don't disagree on principle, but I think a better first step would be
+> to provide a detect_ctx hook to bridges.
 
-Arguably one might want to use dev_err() here but the rest of the file
-uses pr_err(). On the other hand dma_direct_set_offset() uses dev_err()
-in case there is already a dev.dma_range_map.
-
-Also maybe s/allocate/set up/ since we're not checking just for -ENOMEM
-
->  }
-> =20
->  void pcibios_bus_add_device(struct pci_dev *pdev)
->=20
-> ---
-> base-commit: e840414e5a73ac02ffba6299b46f535a0b7cba98
-> change-id: 20250306-fix_dma_map_alloc-b3b05903dcfb
->=20
-> Best regards,
-
+Yup. There's other reasons you really want to get at the locking context
+in detect callbacks, doing this special case by passing something for
+everyone doesn't sound like the right approach to me.
+-Sima
+-- 
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
