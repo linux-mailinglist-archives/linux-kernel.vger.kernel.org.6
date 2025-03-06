@@ -1,107 +1,173 @@
-Return-Path: <linux-kernel+bounces-548696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548695-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322F5A54843
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:45:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B43B6A54837
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:44:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A9263AD0F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:45:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2452E188DF4F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB659209F41;
-	Thu,  6 Mar 2025 10:44:14 +0000 (UTC)
-Received: from cstnet.cn (smtp81.cstnet.cn [159.226.251.81])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9E020ADCF;
+	Thu,  6 Mar 2025 10:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="TsS6odNZ"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C452045AE;
-	Thu,  6 Mar 2025 10:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C55A2080FB;
+	Thu,  6 Mar 2025 10:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741257854; cv=none; b=YRnRPbViALbAzNQlWBX8z3EgHK7dEivpFHrGeWA5YULYV2hC2C/paaOa+CtRaRyyePmuhvkAIqM4SzDTqhSnx6Oz1CG3nOkNdhm3gbI1ANbTa/BZao9lKTAa0bfgnsDH4DdgxCvJLDUuiB1HkEL2Qj95G1wtA79QXRwCCegqHRI=
+	t=1741257832; cv=none; b=UBBOJDjpWRbs7zXr/pr2L8/ydpL2N9xnVt6HsDyfTJjjz3RQqZUfH0232F2P4nsojBS/cs/avr5yeOonUp4Gp58wslzyY1kOznM6ENmEdNeHTsaVbc0zwAe1hM7gCSyRA1OVJ89cy7sajO+YqCl8txYK2rUvEj+gzSB9HYUmh6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741257854; c=relaxed/simple;
-	bh=Y2Ze13u5oiC3+cLqwxTGSF5SsH2PLvoyTg85F5Ty7RA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=traxqp1NeiMTu2kNiF0HjQf3K9rP5qJUi30J94ScoSqx0GvTy6brckvJhzsuAcN8OVxkTr0J755rXR6u8afWx20ZqDAp6RLFCV3a/hCRPPqRfMSOdSSjYNJ1tNAn31qD4XMT97DLLOzhPmjt8NCFMQdHnEZ4ECsI4UShj4gYby4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-03 (Coremail) with SMTP id rQCowAD3_lppfMlnVXXHEg--.33580S2;
-	Thu, 06 Mar 2025 18:43:55 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: saeedm@nvidia.com,
-	leon@kernel.org,
-	tariqt@nvidia.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>
-Subject: [PATCH v3] net/mlx5: handle errors in mlx5_chains_create_table()
-Date: Thu,  6 Mar 2025 18:43:37 +0800
-Message-ID: <20250306104337.2581-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1741257832; c=relaxed/simple;
+	bh=61sTIcpxdnrd5cAzz31qmm4JpGHVL+BQuYWc+ewBL0Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=faBr7sQZbGntqTRoYuG+UDoZHPh62EV3OI/QJ7Kjjm4KsJA2+0ViZK4N/KlaSoYqsmv2CVbTf6y4C9La9q1jqxOavqx1WPi1LqorY+/l9vivLH53RuzYHs7MJ3rnfgHLd+et8R+gzKYszaOAhwT/5fUiqk0gV8ZSVf5urZMsSHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=TsS6odNZ; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 1B57B1F96B;
+	Thu,  6 Mar 2025 11:43:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1741257828;
+	bh=nskpp7xo6FpLd4tlbD/YpaMXfWmCB453KZHTU3uQAM0=; h=From:To:Subject;
+	b=TsS6odNZBTXg+Cr73aZnO1/h+0iST9hQ0jgjlq0VHydLXfbuV82vxG7BTe6N9cDDm
+	 8Hwmh0zmDW8oc6LXsea7GipXU692PHnfNy3uquP4rb0HSuznK9ZSmQP5WHbkr5PEYh
+	 T3TABKJJUBa/IGDpyKyjqGyKaD3Ghsq2GP/Hvxb/IcgH/HtYwuyxpQY6znZw0z3H0i
+	 +g5DCt+IJTTcVhDgvfAjEGseMjavNgtQnsiNp0A49pbfNPDXY7I7f4nXE042Sn0ejN
+	 aAhvHbupOS1tQ3F+8wlXIi7Ji3mxZ3tZXQnVmb/0r1a30hwnyGcM60E2Sxvk+pSX8D
+	 l1eZci3LH9ohQ==
+Date: Thu, 6 Mar 2025 11:43:46 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Jeff Chen <jeff.chen_1@nxp.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	briannorris@chromium.org, johannes@sipsolutions.net,
+	francesco@dolcini.it, tsung-hsien.hsieh@nxp.com,
+	s.hauer@pengutronix.de
+Subject: Re: [PATCH v3 1/2] wifi: mwifiex: Part A of resolving the failure in
+ downloading calibration data.
+Message-ID: <20250306104346.GC19853@francesco-nb>
+References: <20250205012843.758714-1-jeff.chen_1@nxp.com>
+ <20250220061143.1417420-1-jeff.chen_1@nxp.com>
+ <20250220061143.1417420-2-jeff.chen_1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:rQCowAD3_lppfMlnVXXHEg--.33580S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7uF17XFyfCw1xGryxXFWrZrb_yoW8Gr1rpF
-	47AryDWrZ5J348J34UZFWFq34rua1kKa4j9Fs3K3yfZwnrXanrAF1rG34akr4jkry5G39x
-	tFn8A3WUZFZxC3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
-	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
-	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBwkNA2fJcksk+wAAsI
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250220061143.1417420-2-jeff.chen_1@nxp.com>
 
-In mlx5_chains_create_table(), the return value of mlx5_get_fdb_sub_ns()
-and mlx5_get_flow_namespace() must be checked to prevent NULL pointer
-dereferences. If either function fails, the function should log error
-message with mlx5_core_warn() and return error pointer.
+Hello Jeff,
 
-Fixes: 39ac237ce009 ("net/mlx5: E-Switch, Refactor chains and priorities")
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c | 5 +++++
- 1 file changed, 5 insertions(+)
+On Thu, Feb 20, 2025 at 02:11:42PM +0800, Jeff Chen wrote:
+> This patch corrects the command format used for downloading RF
+> calibration data to the firmware.
 
-diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c
-index a80ecb672f33..711d14dea248 100644
---- a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c
-+++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c
-@@ -196,6 +196,11 @@ mlx5_chains_create_table(struct mlx5_fs_chains *chains,
- 		ns = mlx5_get_flow_namespace(chains->dev, chains->ns);
- 	}
- 
-+	if (!ns) {
-+		mlx5_core_warn(chains->dev, "Failed to get flow namespace\n");
-+		return ERR_PTR(-EOPNOTSUPP);
-+	}
-+
- 	ft_attr.autogroup.num_reserved_entries = 2;
- 	ft_attr.autogroup.max_num_groups = chains->group_num;
- 	ft = mlx5_create_auto_grouped_flow_table(ns, &ft_attr);
--- 
-2.42.0.windows.2
+Do we need any fixes tag? is this supposed to be backported to stable?
 
+Was the command format always broken? Do this format depends on the
+firmware version? We would need to explain why changing the format of
+this command here is safe.
+
+> 
+> This patch is a split from the previous submission.
+> 
+> Signed-off-by: Jeff Chen <jeff.chen_1@nxp.com>
+> ---
+>  drivers/net/wireless/marvell/mwifiex/fw.h      |  7 +++++++
+>  drivers/net/wireless/marvell/mwifiex/sta_cmd.c | 14 +++++++++-----
+>  2 files changed, 16 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/marvell/mwifiex/fw.h b/drivers/net/wireless/marvell/mwifiex/fw.h
+> index 4a96281792cc..0c75a574a7ee 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/fw.h
+> +++ b/drivers/net/wireless/marvell/mwifiex/fw.h
+> @@ -2352,6 +2352,12 @@ struct host_cmd_ds_add_station {
+>  	u8 tlv[];
+>  } __packed;
+>  
+> +struct host_cmd_ds_802_11_cfg_data {
+> +	__le16 action;
+> +	__le16 type;
+> +	__le16 data_len;
+> +} __packed;
+> +
+>  struct host_cmd_ds_command {
+>  	__le16 command;
+>  	__le16 size;
+> @@ -2431,6 +2437,7 @@ struct host_cmd_ds_command {
+>  		struct host_cmd_ds_pkt_aggr_ctrl pkt_aggr_ctrl;
+>  		struct host_cmd_ds_sta_configure sta_cfg;
+>  		struct host_cmd_ds_add_station sta_info;
+> +		struct host_cmd_ds_802_11_cfg_data cfg_data;
+>  	} params;
+>  } __packed;
+>  
+> diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+> index e2800a831c8e..6e7b2b5c7dc5 100644
+> --- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+> +++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+> @@ -1500,18 +1500,19 @@ int mwifiex_dnld_dt_cfgdata(struct mwifiex_private *priv,
+>  
+>  /* This function prepares command of set_cfg_data. */
+>  static int mwifiex_cmd_cfg_data(struct mwifiex_private *priv,
+> -				struct host_cmd_ds_command *cmd, void *data_buf)
+> +				struct host_cmd_ds_command *cmd, void *data_buf, u16 cmd_action)
+>  {
+>  	struct mwifiex_adapter *adapter = priv->adapter;
+>  	struct property *prop = data_buf;
+>  	u32 len;
+>  	u8 *data = (u8 *)cmd + S_DS_GEN;
+>  	int ret;
+> +	struct host_cmd_ds_802_11_cfg_data *pcfg_data = &cmd->params.cfg_data;
+>  
+>  	if (prop) {
+>  		len = prop->length;
+>  		ret = of_property_read_u8_array(adapter->dt_node, prop->name,
+> -						data, len);
+> +						data + sizeof(*pcfg_data), len);
+>  		if (ret)
+>  			return ret;
+>  		mwifiex_dbg(adapter, INFO,
+> @@ -1519,15 +1520,18 @@ static int mwifiex_cmd_cfg_data(struct mwifiex_private *priv,
+>  			    prop->name);
+>  	} else if (adapter->cal_data->data && adapter->cal_data->size > 0) {
+>  		len = mwifiex_parse_cal_cfg((u8 *)adapter->cal_data->data,
+> -					    adapter->cal_data->size, data);
+> +					    adapter->cal_data->size, data + sizeof(*pcfg_data));
+>  		mwifiex_dbg(adapter, INFO,
+>  			    "download cfg_data from config file\n");
+>  	} else {
+>  		return -1;
+>  	}
+>  
+> +	pcfg_data->action = cpu_to_le16(cmd_action);
+> +	pcfg_data->type = cpu_to_le16(2);
+> +	pcfg_data->data_len = cpu_to_le16(len);
+>  	cmd->command = cpu_to_le16(HostCmd_CMD_CFG_DATA);
+> -	cmd->size = cpu_to_le16(S_DS_GEN + len);
+> +	cmd->size = cpu_to_le16(S_DS_GEN + sizeof(*pcfg_data) + len);
+>  
+>  	return 0;
+>  }
+> @@ -1949,7 +1953,7 @@ int mwifiex_sta_prepare_cmd(struct mwifiex_private *priv, uint16_t cmd_no,
+>  		ret = mwifiex_cmd_get_hw_spec(priv, cmd_ptr);
+>  		break;
+>  	case HostCmd_CMD_CFG_DATA:
+> -		ret = mwifiex_cmd_cfg_data(priv, cmd_ptr, data_buf);
+> +		ret = mwifiex_cmd_cfg_data(priv, cmd_ptr, data_buf, cmd_action);
+>  		break;
+>  	case HostCmd_CMD_MAC_CONTROL:
+>  		ret = mwifiex_cmd_mac_control(priv, cmd_ptr, cmd_action,
+> -- 
+> 2.34.1
+> 
 
