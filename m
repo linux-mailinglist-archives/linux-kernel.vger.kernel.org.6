@@ -1,132 +1,131 @@
-Return-Path: <linux-kernel+bounces-548081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B65A53F9B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:10:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6437AA53F9A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:09:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4EDE189279C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:10:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90A6B173422
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:09:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1CA8624B;
-	Thu,  6 Mar 2025 01:10:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1799487BF;
+	Thu,  6 Mar 2025 01:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kJri+WDQ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KEkJMk2S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B900487BF
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 01:09:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2659224EA;
+	Thu,  6 Mar 2025 01:09:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741223401; cv=none; b=Yj/No46ct5D8tp9IoOmtxP5Q0g979pnYaTj3ziYYveevSMsZ5qRrxiUQUezwlBHdzAuHbkx/mQRRQpP/B1RfVc8BOlPy9qHW9ZCb9bZTLlkZ4GcdEeNBHxtc8BnljrDgJum/8t1/e2SXAl9PqVg1KT2M+Q6fKdVo9PTXxJTwDIk=
+	t=1741223381; cv=none; b=DyFdPjET9CbD9fFr23GGwixOmTMcNkJp9NfeSM1f+IqltOf7yDvVfTgo61kadUeb9ODdjLQSbA3CbOrjqcWhYinjxJs/rkm4pm5JEeBHcLKgsrHVpapWpUyMODzGmm9FJcRNLN07duCGkskRGkG6VbOvjy4VUZWaSC0q+G6Bmb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741223401; c=relaxed/simple;
-	bh=TaEwSc5jmVb7CdItKEJ8ADFV/XzGuCfQAd25mGX16EU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eui39da+D16Q5ttSf7gMz2GZjMH08ExLoYYXpMuit2fSG+9351ZLT3gYooBh8ZMkg2Btd/2epD0vR/g2XQmUw6SlgLq+mr68RQl9GBV3UNoS9LSxNbk0z/XdKudH0kszyH/3vjy/WwcxUfX83AISFxwcMj6IQBC3sXtRBkVqM7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kJri+WDQ; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741223399; x=1772759399;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=TaEwSc5jmVb7CdItKEJ8ADFV/XzGuCfQAd25mGX16EU=;
-  b=kJri+WDQQSM7Ao2iS260SLskUR9wDOaSVgzTm5WaCf4AjBDOWZ+RXXY7
-   f+R5OPZC+5qLNJx97RE0ceOKd2j9Ey1WvxYAhfjbKGKVbN1lZffvZhNdz
-   FUlx+zCY9eksBQG7HAfaAFzLFeKOkyETNIkyv253PfsJ5RvDoGEcFLzOm
-   vFgU/NXuUc2eghfM2uk8kw44fMmPk9b6VLa5DVZMv9jEZ3V8KQxIbW8F7
-   T+Yt1mNTo94l3RUPTBsuHeZCPux0SFTrPsBIZmPaWqAr7irhe6VAXAQ9S
-   4Djn1No7Wc5TDDPhB2QcSHNeRfyJ6SQItwML/wq/Jup7CRv3JkfQQrteH
-   g==;
-X-CSE-ConnectionGUID: mxuP4gfQRAGfo7G+sy2sFw==
-X-CSE-MsgGUID: cw86yfFCRUuUmqHlITap1w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="64662945"
-X-IronPort-AV: E=Sophos;i="6.14,224,1736841600"; 
-   d="scan'208";a="64662945"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 17:09:59 -0800
-X-CSE-ConnectionGUID: z98SHcREQWSLD+xxzTEgHA==
-X-CSE-MsgGUID: +s6P5KKUSNuFiktc/kxbTg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,224,1736841600"; 
-   d="scan'208";a="123957648"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 05 Mar 2025 17:09:57 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tpzkA-000MNU-30;
-	Thu, 06 Mar 2025 01:09:48 +0000
-Date: Thu, 6 Mar 2025 09:09:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: George Lander <lander@jagmn.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>,
-	Marcus Cooper <codekipper@gmail.com>
-Subject: sound/soc/sunxi/sun4i-spdif.c:180: warning: Function parameter or
- struct member 'mclk_multiplier' not described in 'sun4i_spdif_quirks'
-Message-ID: <202503060947.QKUUR62l-lkp@intel.com>
+	s=arc-20240116; t=1741223381; c=relaxed/simple;
+	bh=b2O3intjjzzHZVCLA/WUqLy+RaAc48GwCL3MWthLRUE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hA8jyCPKkMgSKhaMqZlqlPI3bYHAWh4LtQWnQUs9vqhLHfp7QhuONpy9qZ7CujzMvX/Q1kf37yJduyfBurbtsIkjg3rXy9eXPOEXhb070atCiLrrKClsGDwzK/IabEAWWJiG1Lye5kefRSmMvdk7rPT/n8yXtK5lj9hFdyEPXZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KEkJMk2S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44D49C4CED1;
+	Thu,  6 Mar 2025 01:09:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741223380;
+	bh=b2O3intjjzzHZVCLA/WUqLy+RaAc48GwCL3MWthLRUE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=KEkJMk2SNS7jI+zACEr7gu9d7PzymrprIWw9h8HfyFBOMA8/CLfAusRait9kUzmWP
+	 Z9xpttwLdMHjeTxVVkIc8mX8onz/xPj+AW6bnCJmK9CnOvj2dp6OIsg6C3OOOLJ3Kl
+	 wpZLYk8U15P72P30vwUGzAmaBG2N0yM/ZUcGiHMqtn+CNvno/zUtay0diGu7NT0mtd
+	 To+dgMHhb7YR1PLiE1fRLjXYemLLELgbrtKGpkmRfRmtRDmI8e3Yzy4A5+LmoaTLZ4
+	 oJ0v//RW/jKl46UpLLHgWLDazZCoBZlIgYfeXuKWRVrcYEqlE3z8d1g0hOUyxYz19Q
+	 ZpFSQOWpBH4Xw==
+From: SeongJae Park <sj@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	stable@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org,
+	damon@lists.linux.dev
+Subject: Re: [PATCH 6.1 000/176] 6.1.130-rc1 review
+Date: Wed,  5 Mar 2025 17:09:38 -0800
+Message-Id: <20250306010938.138792-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250305174505.437358097@linuxfoundation.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 
-Hi George,
+Hello,
 
-FYI, the error/warning still remains.
+On Wed,  5 Mar 2025 18:46:09 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   848e076317446f9c663771ddec142d7c2eb4cb43
-commit: 0a2319308de88b9e819c0b43d0fccd857123eb31 ASoC: sun4i-spdif: Add clock multiplier settings
-date:   3 months ago
-config: mips-randconfig-r024-20220830 (https://download.01.org/0day-ci/archive/20250306/202503060947.QKUUR62l-lkp@intel.com/config)
-compiler: mips-linux-gcc (GCC) 12.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250306/202503060947.QKUUR62l-lkp@intel.com/reproduce)
+> This is the start of the stable review cycle for the 6.1.130 release.
+> There are 176 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 07 Mar 2025 17:44:26 +0000.
+> Anything received after that time might be too late.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503060947.QKUUR62l-lkp@intel.com/
+This rc kernel passes DAMON functionality test[1] on my test machine.
+Attaching the test results summary below.  Please note that I retrieved the
+kernel from linux-stable-rc tree[2].
 
-All warnings (new ones prefixed by >>):
+Tested-by: SeongJae Park <sj@kernel.org>
 
->> sound/soc/sunxi/sun4i-spdif.c:180: warning: Function parameter or struct member 'mclk_multiplier' not described in 'sun4i_spdif_quirks'
+[1] https://github.com/damonitor/damon-tests/tree/next/corr
+[2] 34da6dd4fda1 ("Linux 6.1.130-rc1")
 
+Thanks,
+SJ
 
-vim +180 sound/soc/sunxi/sun4i-spdif.c
+[...]
 
-f8260afa444b67 Marcus Cooper 2016-02-08  167  
-ae9cccc30f6c08 Clément Péron 2019-05-27  168  /**
-ae9cccc30f6c08 Clément Péron 2019-05-27  169   * struct sun4i_spdif_quirks - Differences between SoC variants.
-ae9cccc30f6c08 Clément Péron 2019-05-27  170   *
-c7202a19cf838d Lee Jones     2020-07-09  171   * @reg_dac_txdata: TX FIFO offset for DMA config.
-ae9cccc30f6c08 Clément Péron 2019-05-27  172   * @has_reset: SoC needs reset deasserted.
-f6a86b436b2658 Clément Péron 2019-05-27  173   * @val_fctl_ftx: TX FIFO flush bitmask.
-ae9cccc30f6c08 Clément Péron 2019-05-27  174   */
-ae9cccc30f6c08 Clément Péron 2019-05-27  175  struct sun4i_spdif_quirks {
-ae9cccc30f6c08 Clément Péron 2019-05-27  176  	unsigned int reg_dac_txdata;
-ae9cccc30f6c08 Clément Péron 2019-05-27  177  	bool has_reset;
-f6a86b436b2658 Clément Péron 2019-05-27  178  	unsigned int val_fctl_ftx;
-0a2319308de88b George Lander 2024-11-11  179  	unsigned int mclk_multiplier;
-ae9cccc30f6c08 Clément Péron 2019-05-27 @180  };
-ae9cccc30f6c08 Clément Péron 2019-05-27  181  
+---
 
-:::::: The code at line 180 was first introduced by commit
-:::::: ae9cccc30f6c088dd6ead63e990407e37cd9437b ASoC: sun4i-spdif: Move quirks to the top
-
-:::::: TO: Clément Péron <peron.clem@gmail.com>
-:::::: CC: Mark Brown <broonie@kernel.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+ok 1 selftests: damon: debugfs_attrs.sh
+ok 2 selftests: damon: debugfs_schemes.sh
+ok 3 selftests: damon: debugfs_target_ids.sh
+ok 4 selftests: damon: debugfs_empty_targets.sh
+ok 5 selftests: damon: debugfs_huge_count_read_write.sh
+ok 6 selftests: damon: debugfs_duplicate_context_creation.sh
+ok 7 selftests: damon: sysfs.sh
+ok 1 selftests: damon-tests: kunit.sh
+ok 2 selftests: damon-tests: huge_count_read_write.sh
+ok 3 selftests: damon-tests: buffer_overflow.sh
+ok 4 selftests: damon-tests: rm_contexts.sh
+ok 5 selftests: damon-tests: record_null_deref.sh
+ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
+ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
+ok 8 selftests: damon-tests: damo_tests.sh
+ok 9 selftests: damon-tests: masim-record.sh
+ok 10 selftests: damon-tests: build_i386.sh
+ok 11 selftests: damon-tests: build_arm64.sh # SKIP
+ok 12 selftests: damon-tests: build_m68k.sh # SKIP
+ok 13 selftests: damon-tests: build_i386_idle_flag.sh
+ok 14 selftests: damon-tests: build_i386_highpte.sh
+ok 15 selftests: damon-tests: build_nomemcg.sh
+ [33m
+ [92mPASS [39m
 
