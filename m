@@ -1,145 +1,126 @@
-Return-Path: <linux-kernel+bounces-548301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E0AA54320
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:56:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D15A5A54322
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:57:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 003DC188EE94
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:56:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E7B37A4B95
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF9A1A727D;
-	Thu,  6 Mar 2025 06:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEC91A316C;
+	Thu,  6 Mar 2025 06:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=g-sokol-info.20230601.gappssmtp.com header.i=@g-sokol-info.20230601.gappssmtp.com header.b="V/B60e5W"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Frk96SLE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB1C81A2C25
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 06:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED96018DB04;
+	Thu,  6 Mar 2025 06:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741244189; cv=none; b=W5VfZ3rYRWtc+g3HGoUQb4U/B35Eegb1CqYTVTKmOHfHiTSxlp5Scg1BOVdUA9DrJSu8ely3hQDOUC9yuZV1FXlA+dM7ErqVeKhg79Ldv/Z9cHVnq79HNxBjxAzbHaDtcSC7l4vgaGV1VTy0bcUzDqZ+ihaLEf913Eqp7My2qHg=
+	t=1741244268; cv=none; b=c3Tdj55hWxMh3QY/XOxfhfvw1SwSP/+OplXe9awvdbP+42tBPFTs2aK90OSnGZEZaI6GD55RZIYyofV0/2T/xWSO44fQJK+Eza/Ho/rDAveLz2epUNBOvzqGRhEKMgO8GiX7WbWkfWGZRxIYmdNWms1EA2VLz8s8xnjlHOJ/7LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741244189; c=relaxed/simple;
-	bh=R8mD42C8JSzeDOw/OyH96NT7Zu4tAstbJIMNxeeoAvE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HJcMgJjUc0DSMzpqASgB3d74BOObx4ZSzr3dgnHoQLL5ncBkhaHLWl4iA/48wSfGTY+Zxq0RR1MhAqamoA0oDsT03rifJG7dHuYzeLl20IkH+JryHYi6uofgM5hPrKye+2KP2Ie865jWAmMHiYqurWBbKjeRVOzdNpDHhjqQqb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=g-sokol.info; spf=none smtp.mailfrom=g-sokol.info; dkim=pass (2048-bit key) header.d=g-sokol-info.20230601.gappssmtp.com header.i=@g-sokol-info.20230601.gappssmtp.com header.b=V/B60e5W; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=g-sokol.info
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=g-sokol.info
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54964606482so359564e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 22:56:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=g-sokol-info.20230601.gappssmtp.com; s=20230601; t=1741244186; x=1741848986; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=19askMh4Gm0YmwCpt25BNi0LwkLNtJtl5vhunDMvF40=;
-        b=V/B60e5W1bAx3Zsncnyt8QW1XB11gcmdmWpuX/vrJCjdjKf2qI1B9k5pxdPKwzdDIL
-         r0G3dh0byWrv/Smj00xJFy7HrFyo87zzjFN8Zb1vwZ1dsgNdBNr729s4nCcaD+ru3NmJ
-         08Rh5SIjQSbf5l35J8K4aqsG4ssNNVuNxJiLFSSpjVfoLQWgkbNcxQDUYUPKizeMb4QG
-         3tos6e+oAViHfMuIcS8GkQG9V1w/iZ5irUikGuKH1AV4DcNOX0yIdAyvWunV8gTxyNk5
-         aZaEBnzwy0VL7Sq6/SCS7bA5JvVuLtZZ2q1P7QdHDcmzq6IQemOTrTt6ZOneRvSnpRvM
-         Y6Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741244186; x=1741848986;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=19askMh4Gm0YmwCpt25BNi0LwkLNtJtl5vhunDMvF40=;
-        b=tAudjl9tUSlpUTATr2SyAAFaF4qqpv5QQsvVoD1Y0orfXat4+svb2CvqRL18fw6a8I
-         CSEamThLGqyokpk5YidYHZ0XEHg+Fq+IBVMZUu0OeCdpljKRduNnRNAd3EwdMgcejLgS
-         G/p9ujiZqLumjQyEwNkaqbv+y/sk/N1uAvriaSPcZ77T/8VtuHYsvfe0NEdgYT4IjtV2
-         RqcPlknWcOE/WFfJAIV3Y97pPtmFyJXn2OuzYnwMecOOqjxt3eeNPXNyN/cDekofPfpg
-         JGt3J5D5R3TEEHDTRMxE2J6DI3/rz2ymhowZEwfBm+r+yzlQhjwHgAhU3+mBiiApRBPU
-         h6hQ==
-X-Gm-Message-State: AOJu0Yzx3LHeiCT3wzoZNiq0zACGh12mpn5TKpWDzdk/v53nuEDntZ9h
-	CQx2S8VNlRCyu8ea/cN/bkmqzEarO9Y6QLLOCZjfV15WT5jcF6eWaX3C+Jpla6M=
-X-Gm-Gg: ASbGncskl076zD4SwLV1xcAZk3aNOQAN0VF2HzWi++tvI76cFeHy2tJwW9MzWDzxlFH
-	PEgPDQTmPF3cBV2GzdXZhyksC/J0vNNWMCdqeif/rHMtveWI4zeM/Fi/4UvdhinVkPOlkfB67vT
-	H/mMQvNfV9LaD0VNnGrbz7DmvXDStbxOKlqJA8NCe1YU7Bopl90CWDW9eEzsUp3vAL1a6fY88rT
-	wxPv+aHLuamgfesJh5bM5SjHVDHi2Em996pMwDpc9E2EvAGz9WbSS9vPvwMjq8Zqfdz2i8GXB7W
-	aSBy0Jsnp3wJcIqXlpQSApyUfm/XBvYasaeEmsTQ1PQ7oPV4Cn9Ll+9Nf8NtChZkZ+OAAI1ssHN
-	Ez5pVcKaT+XH/BCM=
-X-Google-Smtp-Source: AGHT+IEhsVNR3gSbh61Y1tznp41FObkjySBY+/3RpLVfhfSe2tySyMT9ruiLPFVJ6YBni9BkickxLQ==
-X-Received: by 2002:a05:6512:114b:b0:549:70ea:27a1 with SMTP id 2adb3069b0e04-5497d3531demr2193555e87.23.1741244185749;
-        Wed, 05 Mar 2025 22:56:25 -0800 (PST)
-Received: from localhost.localdomain (185-11-210-173.s1networks.fi. [185.11.210.173])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae59398sm85905e87.92.2025.03.05.22.56.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 22:56:25 -0800 (PST)
-From: Grigorii Sokolik <g.sokol99@g-sokol.info>
-To: jikos@kernel.org,
-	jkosina@suse.com,
-	jkosina@suse.cz,
-	benjamin.tissoires@redhat.com,
-	bentiss@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-input@vger.gernel.org,
-	Grigorii Sokolik <g.sokol99@g-sokol.info>
-Subject: [PATCH 2/2] HID: hid-apple: Apple Magic Keyboard a3118 USB-C support
-Date: Thu,  6 Mar 2025 08:56:08 +0200
-Message-ID: <20250306065608.531205-2-g.sokol99@g-sokol.info>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250306065608.531205-1-g.sokol99@g-sokol.info>
-References: <20250306065608.531205-1-g.sokol99@g-sokol.info>
+	s=arc-20240116; t=1741244268; c=relaxed/simple;
+	bh=weI/kwSBsrQsHpQ8px4HMhGgp73aX2Uq1ONCo9dVmW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n/kpM/3qhF9Nqc8gcUgmeOZBbNBbGd76g9HO2sBu0ILYwGaoSi5j+lu00M9kLplSXF9VeMXYOcMCFqWvk0IgTOTFbDO83XtIg/Mawh4ltexG7ijShWhXNGsVlhl5TrrER99MP9BHjO7lyLK9p0ulD5bzpDOTSSschjBUCVsT0h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Frk96SLE; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741244267; x=1772780267;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=weI/kwSBsrQsHpQ8px4HMhGgp73aX2Uq1ONCo9dVmW0=;
+  b=Frk96SLERu0XMDV+OTWGomq6sO/pmeSKpZ6h0oPjBWuwy64WDNFXnayp
+   GIew258qLveFlqSEOsM1oVRF5kQc5X41vrg3IOWg/R2SppdICJb4Djsjn
+   KbJI6vYGVBBEcusG7FfdBQ0MFiJhR84u1yRFoz4wTAC5F1eczwFLcVxSC
+   Fi2KA4dJolT7ih9tbt/Kd3CwjKmueKJOwhsN07ajKc5hk1jcvIUKC9BvR
+   Wjv3A28ppdCEJ+ZxIy0oi+aVLYmpAhdvxG8UNNPARojvGBKIgI+pRbUPR
+   aWD0Xp175SMrB3jnupp4jHoOBpCu6RNUqtI5nrtAZa6v17JEZORxNuTXN
+   A==;
+X-CSE-ConnectionGUID: 5zCScHmbRLmEWlDHpGP03w==
+X-CSE-MsgGUID: VlvtVbvhQ0GQhuazY70xVA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="41947969"
+X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
+   d="scan'208";a="41947969"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 22:57:46 -0800
+X-CSE-ConnectionGUID: a4th9ztnTA+EfE0LcPrpNQ==
+X-CSE-MsgGUID: cy620EDBRQeGbwMOaavjKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
+   d="scan'208";a="119107579"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 05 Mar 2025 22:57:42 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tq5Aq-000MfU-2r;
+	Thu, 06 Mar 2025 06:57:40 +0000
+Date: Thu, 6 Mar 2025 14:56:57 +0800
+From: kernel test robot <lkp@intel.com>
+To: Stanley Chu <stanley.chuys@gmail.com>, frank.li@nxp.com,
+	miquel.raynal@bootlin.com, alexandre.belloni@bootlin.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-i3c@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, tomer.maimon@nuvoton.com,
+	kwliu@nuvoton.com, yschu@nuvoton.com
+Subject: Re: [PATCH v6 2/5] i3c: master: svc: Add support for Nuvoton npcm845
+ i3c
+Message-ID: <202503061400.GGr64rkR-lkp@intel.com>
+References: <20250305034414.2246870-3-yschu@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305034414.2246870-3-yschu@nuvoton.com>
 
-Add Apple Magic Keyboard 2024 model (with USB-C port) device ID (0321)
-to those recognized by the hid-apple driver. Keyboard is otherwise
-compatible with the existing implementation for its earlier 2021 model.
+Hi Stanley,
 
-Signed-off-by: Grigorii Sokolik <g.sokol99@g-sokol.info>
----
- drivers/hid/hid-apple.c | 5 +++++
- drivers/hid/hid-ids.h   | 1 +
- 2 files changed, 6 insertions(+)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
-index 3c3f67d0bf..daf4c505e7 100644
---- a/drivers/hid/hid-apple.c
-+++ b/drivers/hid/hid-apple.c
-@@ -475,6 +475,7 @@ static int hidinput_apple_event(struct hid_device *hid, struct input_dev *input,
- 			table = magic_keyboard_2015_fn_keys;
- 		else if (hid->product == USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2021 ||
- 			 hid->product == USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024 ||
-+			 hid->product == USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024_V2 ||
- 			 hid->product == USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2021 ||
- 			 hid->product == USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2021)
- 			table = apple2021_fn_keys;
-@@ -1155,6 +1156,10 @@ static const struct hid_device_id apple_devices[] = {
- 		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK | APPLE_RDESC_BATTERY },
- 	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024),
- 		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK },
-+	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024_V2),
-+		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK | APPLE_RDESC_BATTERY },
-+	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024_V2),
-+		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2021),
- 		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK | APPLE_RDESC_BATTERY },
- 	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2021),
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 4f583d6f2e..953850f043 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -185,6 +185,7 @@
- #define USB_DEVICE_ID_APPLE_IRCONTROL5	0x8243
- #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2021   0x029c
- #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024   0x0320
-+#define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024_V2   0x0320
- #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2021   0x029a
- #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2021   0x029f
- #define USB_DEVICE_ID_APPLE_TOUCHBAR_BACKLIGHT 0x8102
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on linus/master v6.14-rc5 next-20250305]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Stanley-Chu/dt-bindings-i3c-silvaco-Add-npcm845-compatible-string/20250305-114705
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250305034414.2246870-3-yschu%40nuvoton.com
+patch subject: [PATCH v6 2/5] i3c: master: svc: Add support for Nuvoton npcm845 i3c
+config: sparc-randconfig-r121-20250306 (https://download.01.org/0day-ci/archive/20250306/202503061400.GGr64rkR-lkp@intel.com/config)
+compiler: sparc-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250306/202503061400.GGr64rkR-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503061400.GGr64rkR-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+   drivers/i3c/master/svc-i3c-master.c:1971:30: sparse: sparse: symbol 'npcm845_drvdata' was not declared. Should it be static?
+>> drivers/i3c/master/svc-i3c-master.c:1973:30: sparse: sparse: symbol 'svc_default_drvdata' was not declared. Should it be static?
+   drivers/i3c/master/svc-i3c-master.c:559:9: sparse: sparse: context imbalance in 'svc_i3c_master_ibi_work' - wrong count at exit
+   drivers/i3c/master/svc-i3c-master.c: note: in included file (through include/linux/mutex.h, include/linux/notifier.h, include/linux/clk.h):
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+
+vim +/svc_default_drvdata +1973 drivers/i3c/master/svc-i3c-master.c
+
+  1972	
+> 1973	const struct svc_i3c_drvdata svc_default_drvdata = {};
+  1974	
+
 -- 
-2.48.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
