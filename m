@@ -1,96 +1,260 @@
-Return-Path: <linux-kernel+bounces-548018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E401FA53EDD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:07:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 281D8A53EE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:08:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 454A21893420
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:07:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F39A3A9485
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65947FD;
-	Thu,  6 Mar 2025 00:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEE91FDD;
+	Thu,  6 Mar 2025 00:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xyv0f9Hi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZyfEurbD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DD010E4;
-	Thu,  6 Mar 2025 00:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A15367;
+	Thu,  6 Mar 2025 00:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741219651; cv=none; b=CrO4IvAlDc1bd+hB87u7DSgfhBm4MqkpVLwoWXQ/ROrw0hPXm6D/ZgQIGJ9EJMfaLxGsdSrs8HipjSPGEaL9e8kdK1KPA4ZJ3mLMMSxGVkxT03LTc1gcrB2muVs7CblfS/ZQRrc3Hdb+S9d32vEswcE9o1SU06FtyDJ/EdvndCo=
+	t=1741219692; cv=none; b=bTKoyJRf/DH4hv9R1T5OAiyr1wAS9hBvsqQmae+Xtb25fML7ZvesAcGp6SJFtzfvMMHXQJjPd4RA1ReuFaO5Qx/2bRCxMFk04capSS+moNsioqpEUB0tuqR+/pz6iVxjLWD0n5PZ6dsjTGf5O31UIFL2Y0FBTEHkr4genGiUyBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741219651; c=relaxed/simple;
-	bh=s4L8LbIbR3L5t3u2JtJZrxB8f91I8axNv8Plf1/vuig=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OkFlyXib9y6Mg3kSPhiIIM6LY/nemY73JbiePllgnhgvfo4fQH1EYI8FqsvJT1WE0li8jKBKStAVBL14VzRoy1dM3wPcQQ5qDSyf3qBcG1VzJnzs5cp7tXJJ7M/DAbViHUrUyW5acD3qhUVhzs5RCAV6sSvqLxuGDZMGfWZwOyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xyv0f9Hi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E1C4C4CED1;
-	Thu,  6 Mar 2025 00:07:25 +0000 (UTC)
+	s=arc-20240116; t=1741219692; c=relaxed/simple;
+	bh=jHcXou5Sz5uJwsNjZkmahX4Asibi4r5E88O5sxADoU4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KxRbnTJYfn0FaF6RfOuH1Hj8YVLe4qTGncam/rjcYGkxkb/9g0vVWJdgxqot+3N0pMMvHVhUcFyB3ksuPa7Q6BU7+2macu5J23Eyh0lqBQT97y1i1MR3xiUhGByt44sNSAaTnSvaSvtykmPhsGXQq7GYyZe9ZXLuC9cNv+Q8zr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZyfEurbD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD7A4C4AF0B;
+	Thu,  6 Mar 2025 00:08:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741219651;
-	bh=s4L8LbIbR3L5t3u2JtJZrxB8f91I8axNv8Plf1/vuig=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Xyv0f9Hi2J6SwJFdMsLyH0V/cSnptot+yps+/3BDidAnMzsOvZ0x7ZtFvHOagRBzx
-	 pghcP+TjM/QIAtd0+AAhbotdocCfstdeyheKUxGJpMnMOjRra1x+KozENU9/Jx7Nv8
-	 AzgrQQVY5SFkYd5LQG9slbReu1bfNqSCmx/6NHBKu5/uXDG2ry5WQkqvOpy4DGB4KE
-	 5Q73Dg7HLmIJ4BAN15YsPQYrEDcPXoIi0lZCFI47TA4AeIYvb2ZBHKgQWuMd2KkklZ
-	 ArQ5TrXxkAcXhSiechyC2uVCQPcz1DStLa5Rs0wYp+TFOkdOlRBtZ+iTu2zTMdpAch
-	 ZHM+Qi2r0GDUQ==
-Date: Thu, 6 Mar 2025 00:07:18 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Cosmin Tanislav
- <cosmin.tanislav@analog.com>, Dumitru Ceclan <mitrutzceclan@gmail.com>,
- Guillaume Ranquet <granquet@baylibre.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>,
- Michael Walle <michael@walle.cc>, Nuno Sa <nuno.sa@analog.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 8/8] iio: adc: ad7124: Implement system calibration
-Message-ID: <20250306000718.330c99db@jic23-huawei>
-In-Reply-To: <20250303114659.1672695-18-u.kleine-koenig@baylibre.com>
-References: <20250303114659.1672695-10-u.kleine-koenig@baylibre.com>
-	<20250303114659.1672695-18-u.kleine-koenig@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1741219691;
+	bh=jHcXou5Sz5uJwsNjZkmahX4Asibi4r5E88O5sxADoU4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZyfEurbDBERJ1HmoY8WUhD8+MZY/+liGkRjovmvk58CYEslnOHPAP6c23oZqE50tZ
+	 e4dVUjkBl/jNwbK7bGzz9n2Ep29JCF1tiYH6+9afOQPUpPhKgpqsFthPEXU++3GYU4
+	 jw6KWIYWnyGDPbZfISwN4HDDcCPptC/JxvzX+z93WafZ03dgrg5ezZoZwxWmwxYvBJ
+	 ov2aTluoUyok7UKx9DKo7HL9ZEp3nXIKEL7e+GHC8fzsUJn7aOIV5tVcAy2LZlI1mA
+	 aNqxJlakRIUd9zHf9TvVkRHwARpoPyqbl1cxYW/ZcTT6Z+kTCYJrRYtXWfS9nlQ+u7
+	 TIpUQv20hqGCg==
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e549be93d5eso58150276.1;
+        Wed, 05 Mar 2025 16:08:11 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVToZIbWEOt8zIC/FjINrAlBad8z84/NtOChuY7h2KjcP+hrY01vogFr14tzcH6O5ZiUkt/BYPLG3gFwIiTutobnBUN3KLQ@vger.kernel.org, AJvYcCVyexsotb6Ji/5E0ul1/DnnSmxyXGXO1qbvIwkrKAgmqFs/MuWkgdYsPe3z9BADfMusHr0Jeg==@vger.kernel.org, AJvYcCW9I7B6jUH9NiZmc+FhatLeEr0y7jjKKxqASIERaOowGiRGzPMgxqNQrf+nLLfHKiyGAclXxC2W69e2wWEe@vger.kernel.org, AJvYcCX70oU9ZD5VnN8dU42nWmqT3+MDjTDfpwtgakvO4KIYf45VXgBfbAkAvVMd/spJxseI1wtPOtirUdDf@vger.kernel.org
+X-Gm-Message-State: AOJu0YypWtXt17xzfZc9ROkRB3vB6x1pighU5y+dvfXSeQKQm7p2m5JB
+	1mU4WHTpaVq1OnP6vi32ckAAnWcIzrQqtmFqNoll7DcWKKJ9qJytwR4hBvdV/wbhoAodTP0+6/s
+	IBmKWyt4lmcirYCn4s1YkcqT7L0k=
+X-Google-Smtp-Source: AGHT+IEZ1qra7BnNhKazDRTEd03UN0781gYS4zWBq9ewiUm4ecWq7+lXmsWypFaXLgMPy0sn8BkXc/vftI/yDz9OwwI=
+X-Received: by 2002:a05:6902:2882:b0:e57:4226:8ae0 with SMTP id
+ 3f1490d57ef6-e611e1b0720mr6437379276.18.1741219691059; Wed, 05 Mar 2025
+ 16:08:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <CAKtyLkFyqFCcqUi7TPn9niUwYcHwv8nVq-joKc8kd8tFg58p-Q@mail.gmail.com>
+ <1740784265-19829-1-git-send-email-jasjivsingh@linux.microsoft.com>
+ <CAKtyLkGV4cGJzbvVUAeLBp=evc_QAWPD8FsskHNVvx-1UZJB-A@mail.gmail.com>
+ <0a5e586a-9b55-4905-8663-6ef0112aa32d@linux.microsoft.com>
+ <CAKtyLkEveJbJ9HAufC1_x8J287qqDFYZOhK2Y0MEaPo+dkJm2Q@mail.gmail.com> <5a9793e1-e31c-4dfd-ab36-48f00f66ac7e@linux.microsoft.com>
+In-Reply-To: <5a9793e1-e31c-4dfd-ab36-48f00f66ac7e@linux.microsoft.com>
+From: Fan Wu <wufan@kernel.org>
+Date: Wed, 5 Mar 2025 16:08:00 -0800
+X-Gmail-Original-Message-ID: <CAKtyLkGUrf1txbKo2QWLn7vJ2jc=Zu3NYQPWiBh9h5fU8FT_nA@mail.gmail.com>
+X-Gm-Features: AQ5f1Joxnmy57aHmlR4MdOLkI8NPizMPMUFew2U7JlnlxM0aHx_tKskqY1nCqDc
+Message-ID: <CAKtyLkGUrf1txbKo2QWLn7vJ2jc=Zu3NYQPWiBh9h5fU8FT_nA@mail.gmail.com>
+Subject: Re: [PATCH v3] ipe: add errno field to IPE policy load auditing
+To: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+Cc: Fan Wu <wufan@kernel.org>, audit@vger.kernel.org, corbet@lwn.net, 
+	eparis@redhat.com, jmorris@namei.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	paul@paul-moore.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon,  3 Mar 2025 12:47:06 +0100
-Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> wrote:
+On Wed, Mar 5, 2025 at 3:27=E2=80=AFPM Jasjiv Singh
+<jasjivsingh@linux.microsoft.com> wrote:
+>
+>
+>
+> On 3/5/2025 1:23 PM, Fan Wu wrote:
+> > On Tue, Mar 4, 2025 at 4:04=E2=80=AFPM Jasjiv Singh
+> > <jasjivsingh@linux.microsoft.com> wrote:
+> >>
+> >>
+> >>
+> >> On 3/3/2025 2:11 PM, Fan Wu wrote:
+> >>> On Fri, Feb 28, 2025 at 3:11=E2=80=AFPM Jasjiv Singh
+> >>> <jasjivsingh@linux.microsoft.com> wrote:
+> >>>>
+> >>>> Users of IPE require a way to identify when and why an operation fai=
+ls,
+> >>>> allowing them to both respond to violations of policy and be notifie=
+d
+> >>>> of potentially malicious actions on their systems with respect to IP=
+E.
+> >>>>
+> >>>> This patch introduces a new error field to the AUDIT_IPE_POLICY_LOAD=
+ event
+> >>>> to log policy loading failures. Currently, IPE only logs successful =
+policy
+> >>>> loads, but not failures. Tracking failures is crucial to detect mali=
+cious
+> >>>> attempts and ensure a complete audit trail for security events.
+> >>>>
+> >>>> The new error field will capture the following error codes:
+> >>>>
+> >>>> * 0: no error
+> >>>> * -EPERM: Insufficient permission
+> >>>> * -EEXIST: Same name policy already deployed
+> >>>> * -EBADMSG: policy is invalid
+> >>>> * -ENOMEM: out of memory (OOM)
+> >>>> * -ERANGE: policy version number overflow
+> >>>> * -EINVAL: policy version parsing error
+> >>>>
+> >>>
+> >>> These error codes are not exhaustive. We recently introduced the
+> >>> secondary keyring and platform keyring to sign policy so the policy
+> >>> loading could return -ENOKEY or -EKEYREJECT. And also the update
+> >>> policy can return -ESTALE when the policy version is old.
+> >>> This is my fault that I forgot we should also update the documentatio=
+n
+> >>> of the newly introduced error codes. Could you please go through the
+> >>> whole loading code and find all possible error codes?  Also this is a
+> >>> good chance to update the current stale function documents.
+> >>>
+> >>> ...
+> >>>
+> >>
+> >> So, I looked into error codes when the policy loads. In ipe_new_policy=
+,
+> >> the verify_pkcs7_signature can return a lot of errno codes (ex: ENOKEY=
+,
+> >> EKEYREJECTED, EBADMSG, etc.) while parsing the pkcs7 and other functio=
+ns
+> >> as well. Also, In ipe_new_policyfs_node used in new_policy(), I see th=
+e same
+> >> issue with securityfs_create_dir and securityfs_create_file as they
+> >> return the errno directly from API to. So, what should we return?
+> >
+> > I think the key here is we need to document the errors in the ipe's
+> > context. For example, ENOKEY means the key used to sign the ipe policy
+> > is not found in the keyring, EKEYREJECTED means ipe signature
+> > verification failed. If an error does not have specific meaning for
+> > ipe then probably we don't need to document it.
+> >
+> >>
+> >> For other functions: I have complied the errno list:
+> >>
+> >> * -ENOENT: Policy is not found while updating
+> >
+> > This one means policy was deleted while updating, this only happens
+> > the update happened just after the policy deletion.
+> >
+> >> * -EEXIST: Same name policy already deployed
+> >> * -ERANGE: Policy version number overflow
+> >> * -EINVAL: Policy version parsing error
+> >> * -EPERM: Insufficient permission
+> >> * -ESTALE: Policy version is old
+> >
+> > Maybe make this one clearer, how about trying to update an ipe policy
+> > with an older version policy.
+> >
+> > -Fan
+>
+> Thanks, I have compiled the list based on your comments.
+>
+> * -ENOKEY: Key used to sign the IPE policy not found in the keyring
+> * -ESTALE: Attempting to update an IPE policy with an older version
+> * -EKEYREJECTED: IPE signature verification failed
+> * -ENOENT: Policy was deleted while updating
+> * -EEXIST: Same name policy already deployed
+> * -ERANGE: Policy version number overflow
+> * -EINVAL: Policy version parsing error
+> * -EPERM: Insufficient permission
+> * -ENOMEM: Out of memory (OOM)
+> * -EBADMSG: Policy is invalid
+>
+> How does that that look? I will update the documentation with this list
+> in the next patch along with suggestions you mentioned.
+>
 
-> Allow triggering both zero-scale and full-scale calibration via sysfs in
-> the same way as it's done for ad7173.
->=20
-> Signed-off-by: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-> ---
->  drivers/iio/adc/ad7124.c | 153 ++++++++++++++++++++++++++++++++++-----
->  1 file changed, 136 insertions(+), 17 deletions(-)
->=20
-> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> index 382f46ff2b51..5ab0d3e48c43 100644
-> --- a/drivers/iio/adc/ad7124.c
-> +++ b/drivers/iio/adc/ad7124.c
-> @@ -4,6 +4,7 @@
->   *
->   * Copyright 2018 Analog Devices Inc.
->   */
-> +
-Stray change.  I'm in that sort of mood so I'll tweak it whilst
-apply.  Rest looks good to me.
+This looks good to me, make sure to also update the function
+documentations in the code.
 
-Applied to the togreg branch of iio.git and pushed out as testing.
-As the fixes are theoretical(ish) I'll not rush them in.
+>
+> Moving the memdup failure discussion here:
+>
+> >>> diff --git a/security/ipe/fs.c b/security/ipe/fs.c
+> >>> index 5b6d19fb844a..da51264a1d0f 100644
+> >>> --- a/security/ipe/fs.c
+> >>> +++ b/security/ipe/fs.c
+> >>> @@ -141,12 +141,16 @@ static ssize_t new_policy(struct file *f, const=
+ char __user *data,
+> >>>         char *copy =3D NULL;
+> >>>         int rc =3D 0;
+> >>>
+> >>> -       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN))
+> >>> -               return -EPERM;
+> >>> +       if (!file_ns_capable(f, &init_user_ns, CAP_MAC_ADMIN)) {
+> >>> +               rc =3D -EPERM;
+> >>> +               goto out;
+> >>> +       }
+> >>>
+> >>>         copy =3D memdup_user_nul(data, len);
+> >>> -       if (IS_ERR(copy))
+> >>> -               return PTR_ERR(copy);
+> >>> +       if (IS_ERR(copy)) {
+> >>> +               rc =3D PTR_ERR(copy);
+> >>> +               goto out;
+> >>> +       }
+> >>>
+> >>>         p =3D ipe_new_policy(NULL, 0, copy, len);
+> >>>         if (IS_ERR(p)) {
+> >>> @@ -161,8 +165,10 @@ static ssize_t new_policy(struct file *f, const =
+char __user *data,
+> >>>         ipe_audit_policy_load(p);
+> >>>
+> >>>  out:
+> >>> -       if (rc < 0)
+> >>> +       if (rc < 0) {
+> >>>                 ipe_free_policy(p);
+> >>> +               ipe_audit_policy_load(ERR_PTR(rc));
+> >>> +       }
+> >>>         kfree(copy);
+> >>>         return (rc < 0) ? rc : len;
+> >>>  }
+> >>
+> >> In case of memdup fail, the kfree(copy) will be called with the error
+> >> pointer. Also how about refactor the code like
+> >>
+> >>         ipe_audit_policy_load(p);
+> >>         kfree(copy);
+> >>
+> >>         return len;
+> >> err:
+> >>         ipe_audit_policy_load(ERR_PTR(rc));
+> >>         ipe_free_policy(p);
+> >>
+> >>         return rc;
+>
+> Another issue I was thinking about that is what if memdup works but then
+> ipe_new_policy fails, then we still need to call kfree but the above code
+> mentioned by you will not do that.
+>
+> I think we can just use "copy =3D NULL;" after recording the rc value fro=
+m it,
+> instead of the suggested code. For examples, we can look at selinux.
+>
+> -Jasjiv
+>
 
-Thanks,
+Yep this makes sense to me. We can just add "copy =3D NULL" and still
+use only one out: tag.
 
-Jonathan
+-Fan
 
