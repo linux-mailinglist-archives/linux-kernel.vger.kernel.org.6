@@ -1,197 +1,132 @@
-Return-Path: <linux-kernel+bounces-548089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94928A53FB0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:13:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B65A53F9B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:10:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94DA816E68D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:13:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4EDE189279C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:10:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1DEC12EBE7;
-	Thu,  6 Mar 2025 01:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1CA8624B;
+	Thu,  6 Mar 2025 01:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="QFejrRtK"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kJri+WDQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0222E40B;
-	Thu,  6 Mar 2025 01:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B900487BF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 01:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741223632; cv=none; b=L0ktDzbyo3phSm9oWC3hr2yWIfCHZiGWdYddgDLId/zfLPAUmBamSunH4+J0vsgnqNiQWysOW+DvByzYNGvfD5K5lJnhmchOEW/q5ACr9HhbYOlrMJpt5CPA3mq+TLDr0VCSo7XwhxylL+pzYENTO/9MH9C8QiD2WU3H5+atzhk=
+	t=1741223401; cv=none; b=Yj/No46ct5D8tp9IoOmtxP5Q0g979pnYaTj3ziYYveevSMsZ5qRrxiUQUezwlBHdzAuHbkx/mQRRQpP/B1RfVc8BOlPy9qHW9ZCb9bZTLlkZ4GcdEeNBHxtc8BnljrDgJum/8t1/e2SXAl9PqVg1KT2M+Q6fKdVo9PTXxJTwDIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741223632; c=relaxed/simple;
-	bh=QWaVP3lU5VkuEOVlItDoif8fyki3ruUbQgi/VV3pfbY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uJI/X+T7bWFFj640U3krC90MtEPB8y0YuvRB0bLmeSalk/GLmLMVPjEgjh9jQHYeNDNOz/og17rFdNK9wjOknr/8A5VoGwZRt4iQf/K0zvbV9NbkNzUN/4gYIwVqqGGHWsqZ4LMDyM72/UeBvSedA0RKhOgWNOTpmJndrErIsFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=QFejrRtK; arc=none smtp.client-ip=192.19.144.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-acc-it-01.broadcom.com (mail-acc-it-01.acc.broadcom.net [10.35.36.83])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id 830D7C002830;
-	Wed,  5 Mar 2025 17:08:02 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com 830D7C002830
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1741223282;
-	bh=QWaVP3lU5VkuEOVlItDoif8fyki3ruUbQgi/VV3pfbY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QFejrRtKtRBsmKmCjqRwdBjMrilEe8DVmBVUq56y4e7MtD59H269h7J0e17vaO5u6
-	 obDX+2v8MZw+PmxDCb8FbTpeaDfnsRsrfxej0NQewgKuG48aN3CC78dGAi43ZG8eaR
-	 o4dXEW4wC8w/C24zHrKBy805dGn4joqQAZpMNJBI=
-Received: from stbirv-lnx-1.igp.broadcom.net (stbirv-lnx-1.igp.broadcom.net [10.67.48.32])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-acc-it-01.broadcom.com (Postfix) with ESMTPSA id 7739D4002F47;
-	Wed,  5 Mar 2025 20:08:01 -0500 (EST)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org,
-	Kees Cook <keescook@chromium.org>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	linux-hardening@vger.kernel.org,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Keith Busch <kbusch@kernel.org>
-Subject: [PATCH stable 5.4 3/3] overflow: Allow mixed type arguments
-Date: Wed,  5 Mar 2025 17:07:56 -0800
-Message-Id: <20250306010756.719024-4-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250306010756.719024-1-florian.fainelli@broadcom.com>
-References: <20250306010756.719024-1-florian.fainelli@broadcom.com>
+	s=arc-20240116; t=1741223401; c=relaxed/simple;
+	bh=TaEwSc5jmVb7CdItKEJ8ADFV/XzGuCfQAd25mGX16EU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eui39da+D16Q5ttSf7gMz2GZjMH08ExLoYYXpMuit2fSG+9351ZLT3gYooBh8ZMkg2Btd/2epD0vR/g2XQmUw6SlgLq+mr68RQl9GBV3UNoS9LSxNbk0z/XdKudH0kszyH/3vjy/WwcxUfX83AISFxwcMj6IQBC3sXtRBkVqM7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kJri+WDQ; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741223399; x=1772759399;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TaEwSc5jmVb7CdItKEJ8ADFV/XzGuCfQAd25mGX16EU=;
+  b=kJri+WDQQSM7Ao2iS260SLskUR9wDOaSVgzTm5WaCf4AjBDOWZ+RXXY7
+   f+R5OPZC+5qLNJx97RE0ceOKd2j9Ey1WvxYAhfjbKGKVbN1lZffvZhNdz
+   FUlx+zCY9eksBQG7HAfaAFzLFeKOkyETNIkyv253PfsJ5RvDoGEcFLzOm
+   vFgU/NXuUc2eghfM2uk8kw44fMmPk9b6VLa5DVZMv9jEZ3V8KQxIbW8F7
+   T+Yt1mNTo94l3RUPTBsuHeZCPux0SFTrPsBIZmPaWqAr7irhe6VAXAQ9S
+   4Djn1No7Wc5TDDPhB2QcSHNeRfyJ6SQItwML/wq/Jup7CRv3JkfQQrteH
+   g==;
+X-CSE-ConnectionGUID: mxuP4gfQRAGfo7G+sy2sFw==
+X-CSE-MsgGUID: cw86yfFCRUuUmqHlITap1w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="64662945"
+X-IronPort-AV: E=Sophos;i="6.14,224,1736841600"; 
+   d="scan'208";a="64662945"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 17:09:59 -0800
+X-CSE-ConnectionGUID: z98SHcREQWSLD+xxzTEgHA==
+X-CSE-MsgGUID: +s6P5KKUSNuFiktc/kxbTg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,224,1736841600"; 
+   d="scan'208";a="123957648"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 05 Mar 2025 17:09:57 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tpzkA-000MNU-30;
+	Thu, 06 Mar 2025 01:09:48 +0000
+Date: Thu, 6 Mar 2025 09:09:08 +0800
+From: kernel test robot <lkp@intel.com>
+To: George Lander <lander@jagmn.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>,
+	Marcus Cooper <codekipper@gmail.com>
+Subject: sound/soc/sunxi/sun4i-spdif.c:180: warning: Function parameter or
+ struct member 'mclk_multiplier' not described in 'sun4i_spdif_quirks'
+Message-ID: <202503060947.QKUUR62l-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 
-From: Kees Cook <keescook@chromium.org>
+Hi George,
 
-When the check_[op]_overflow() helpers were introduced, all arguments
-were required to be the same type to make the fallback macros simpler.
-However, now that the fallback macros have been removed[1], it is fine
-to allow mixed types, which makes using the helpers much more useful,
-as they can be used to test for type-based overflows (e.g. adding two
-large ints but storing into a u8), as would be handy in the drm core[2].
+FYI, the error/warning still remains.
 
-Remove the restriction, and add additional self-tests that exercise
-some of the mixed-type overflow cases, and double-check for accidental
-macro side-effects.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   848e076317446f9c663771ddec142d7c2eb4cb43
+commit: 0a2319308de88b9e819c0b43d0fccd857123eb31 ASoC: sun4i-spdif: Add clock multiplier settings
+date:   3 months ago
+config: mips-randconfig-r024-20220830 (https://download.01.org/0day-ci/archive/20250306/202503060947.QKUUR62l-lkp@intel.com/config)
+compiler: mips-linux-gcc (GCC) 12.3.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250306/202503060947.QKUUR62l-lkp@intel.com/reproduce)
 
-[1] https://git.kernel.org/linus/4eb6bd55cfb22ffc20652732340c4962f3ac9a91
-[2] https://lore.kernel.org/lkml/20220824084514.2261614-2-gwan-gyeong.mun@intel.com
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503060947.QKUUR62l-lkp@intel.com/
 
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Nick Desaulniers <ndesaulniers@google.com>
-Cc: linux-hardening@vger.kernel.org
-Reviewed-by: Andrzej Hajda <andrzej.hajda@intel.com>
-Reviewed-by: Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>
-Tested-by: Gwan-gyeong Mun <gwan-gyeong.mun@intel.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-[florian: Drop changes to lib/test_overflow.c]
-Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
----
- include/linux/overflow.h | 72 +++++++++++++++++++++++-----------------
- 1 file changed, 41 insertions(+), 31 deletions(-)
+All warnings (new ones prefixed by >>):
 
-diff --git a/include/linux/overflow.h b/include/linux/overflow.h
-index d1dd039fe1c3..54788a3cdcf5 100644
---- a/include/linux/overflow.h
-+++ b/include/linux/overflow.h
-@@ -55,40 +55,50 @@ static inline bool __must_check __must_check_overflow(bool overflow)
- }
- 
- #ifdef COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW
--/*
-- * For simplicity and code hygiene, the fallback code below insists on
-- * a, b and *d having the same type (similar to the min() and max()
-- * macros), whereas gcc's type-generic overflow checkers accept
-- * different types. Hence we don't just make check_add_overflow an
-- * alias for __builtin_add_overflow, but add type checks similar to
-- * below.
-+/** check_add_overflow() - Calculate addition with overflow checking
-+ *
-+ * @a: first addend
-+ * @b: second addend
-+ * @d: pointer to store sum
-+ *
-+ * Returns 0 on success.
-+ *
-+ * *@d holds the results of the attempted addition, but is not considered
-+ * "safe for use" on a non-zero return value, which indicates that the
-+ * sum has overflowed or been truncated.
-  */
--#define check_add_overflow(a, b, d) __must_check_overflow(({	\
--	typeof(a) __a = (a);			\
--	typeof(b) __b = (b);			\
--	typeof(d) __d = (d);			\
--	(void) (&__a == &__b);			\
--	(void) (&__a == __d);			\
--	__builtin_add_overflow(__a, __b, __d);	\
--}))
-+#define check_add_overflow(a, b, d)	\
-+	__must_check_overflow(__builtin_add_overflow(a, b, d))
- 
--#define check_sub_overflow(a, b, d) __must_check_overflow(({	\
--	typeof(a) __a = (a);			\
--	typeof(b) __b = (b);			\
--	typeof(d) __d = (d);			\
--	(void) (&__a == &__b);			\
--	(void) (&__a == __d);			\
--	__builtin_sub_overflow(__a, __b, __d);	\
--}))
-+/** check_sub_overflow() - Calculate subtraction with overflow checking
-+ *
-+ * @a: minuend; value to subtract from
-+ * @b: subtrahend; value to subtract from @a
-+ * @d: pointer to store difference
-+ *
-+ * Returns 0 on success.
-+ *
-+ * *@d holds the results of the attempted subtraction, but is not considered
-+ * "safe for use" on a non-zero return value, which indicates that the
-+ * difference has underflowed or been truncated.
-+ */
-+#define check_sub_overflow(a, b, d)	\
-+	__must_check_overflow(__builtin_sub_overflow(a, b, d))
- 
--#define check_mul_overflow(a, b, d) __must_check_overflow(({	\
--	typeof(a) __a = (a);			\
--	typeof(b) __b = (b);			\
--	typeof(d) __d = (d);			\
--	(void) (&__a == &__b);			\
--	(void) (&__a == __d);			\
--	__builtin_mul_overflow(__a, __b, __d);	\
--}))
-+/** check_mul_overflow() - Calculate multiplication with overflow checking
-+ *
-+ * @a: first factor
-+ * @b: second factor
-+ * @d: pointer to store product
-+ *
-+ * Returns 0 on success.
-+ *
-+ * *@d holds the results of the attempted multiplication, but is not
-+ * considered "safe for use" on a non-zero return value, which indicates
-+ * that the product has overflowed or been truncated.
-+ */
-+#define check_mul_overflow(a, b, d)	\
-+	__must_check_overflow(__builtin_mul_overflow(a, b, d))
- 
- #else
- 
+>> sound/soc/sunxi/sun4i-spdif.c:180: warning: Function parameter or struct member 'mclk_multiplier' not described in 'sun4i_spdif_quirks'
+
+
+vim +180 sound/soc/sunxi/sun4i-spdif.c
+
+f8260afa444b67 Marcus Cooper 2016-02-08  167  
+ae9cccc30f6c08 Clément Péron 2019-05-27  168  /**
+ae9cccc30f6c08 Clément Péron 2019-05-27  169   * struct sun4i_spdif_quirks - Differences between SoC variants.
+ae9cccc30f6c08 Clément Péron 2019-05-27  170   *
+c7202a19cf838d Lee Jones     2020-07-09  171   * @reg_dac_txdata: TX FIFO offset for DMA config.
+ae9cccc30f6c08 Clément Péron 2019-05-27  172   * @has_reset: SoC needs reset deasserted.
+f6a86b436b2658 Clément Péron 2019-05-27  173   * @val_fctl_ftx: TX FIFO flush bitmask.
+ae9cccc30f6c08 Clément Péron 2019-05-27  174   */
+ae9cccc30f6c08 Clément Péron 2019-05-27  175  struct sun4i_spdif_quirks {
+ae9cccc30f6c08 Clément Péron 2019-05-27  176  	unsigned int reg_dac_txdata;
+ae9cccc30f6c08 Clément Péron 2019-05-27  177  	bool has_reset;
+f6a86b436b2658 Clément Péron 2019-05-27  178  	unsigned int val_fctl_ftx;
+0a2319308de88b George Lander 2024-11-11  179  	unsigned int mclk_multiplier;
+ae9cccc30f6c08 Clément Péron 2019-05-27 @180  };
+ae9cccc30f6c08 Clément Péron 2019-05-27  181  
+
+:::::: The code at line 180 was first introduced by commit
+:::::: ae9cccc30f6c088dd6ead63e990407e37cd9437b ASoC: sun4i-spdif: Move quirks to the top
+
+:::::: TO: Clément Péron <peron.clem@gmail.com>
+:::::: CC: Mark Brown <broonie@kernel.org>
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
