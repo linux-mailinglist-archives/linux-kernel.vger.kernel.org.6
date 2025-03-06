@@ -1,128 +1,156 @@
-Return-Path: <linux-kernel+bounces-548445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E9CCA544F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:33:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0B6CA544F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:33:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FA1116718C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:33:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D1973A16D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 000EA207A23;
-	Thu,  6 Mar 2025 08:33:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602D2207666;
+	Thu,  6 Mar 2025 08:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="puxbGR39"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="K1DXdl/j"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55FAD1FC113;
-	Thu,  6 Mar 2025 08:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B66B207E05
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741249991; cv=none; b=budnONcRRt+dzLccIyfpGefKXTs+urgZCdnLKsCe0aAP15tsgGI92lhypFnuric/OEY4YLrgqbQXksYDkilRYj8PopQgUbARSWy3i5vvtHgYzOqLKFafP8uR0PJPlPgn8HYXgMzxu8A+vWLzpqYPWjDS5T81vQFPlKU3lGMldo0=
+	t=1741249998; cv=none; b=bx+RP/KPOO7uqgiqNmQhvGoUUUMpV7Jo66Ra19bMMpiKNiZmjJo6n0NmyGQ7rSNlrc5/ezvG8iagTQqNCiAPcF3hvygEsuvQTB2GgXrvpX78CzEmANUw+B3n4isQgR1Dvn7Xv5OWncfeULQrk0YFa+d1HYitYj0HaFXRvUXHkhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741249991; c=relaxed/simple;
-	bh=W1vlfejmBdJ9OrBJVwnv8CtY5kHu1G54rZbxMYZx5Sg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NHBvS+dPKyyqVpAa+MkGnPKFM9h0bd7RQoZpF0qXjKfwH3DWTji1k2d3BnUYvNTImnLNY9JQ9g8khSSwJAmnQIHQYporZoQ8F0l6Na9yeP2SPyTqiz6UOlm9NrBAIvsQe9w/fQ6Lcp3DkZ1lX+Li9cKAzncULvFQMNPf23gKz80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=puxbGR39; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60659C4CEE2;
-	Thu,  6 Mar 2025 08:33:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741249989;
-	bh=W1vlfejmBdJ9OrBJVwnv8CtY5kHu1G54rZbxMYZx5Sg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=puxbGR39RPY7d5MG4B9a7p3LWolV1DKKVt2VvdxSBHAGTE5V9eoWcSmcIVKowZ5TC
-	 eT/M7QoWTFJdYfp3F5WAEOj3JG0eBxYq8CsZzt2Jhc8urDjxtSaPOs0RcCRlFAc6GR
-	 3jpcLJUq9CpcBl75ltun5/j0JDesOpWf+DvXn4eW1oGTm/KDr8kDZrfmohRUbI8LQC
-	 +L09oyT0biIz6nwDpRc0pmiABqGid2OM+iAZbybhlVKJf6i6npg2a0Kd1Y+5ULmLCY
-	 nfS9A675CpYW6J+p8MozNmq3Ja5iRmsHEyervUB7/dcjwSzGkaMYKIPY4rka+VuA3g
-	 DYaBlWeQgmfHw==
-Message-ID: <c1bf7e68-c23b-4e73-8369-4480c7f080fc@kernel.org>
-Date: Thu, 6 Mar 2025 09:33:00 +0100
+	s=arc-20240116; t=1741249998; c=relaxed/simple;
+	bh=hOVOOStkW8jmkt+1hp/0Jr1VkM8lrszPOZ7dkECB3lI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RQwizawBvAS1VOXiyrQHYiQlrHM29NYwEi8PhWLfjyM0OjOb5J7OYY6Bxs1p0zNE6PJPc9o5a2vktbSMpVIHIhnei5V1l4S02Az3kz1bEeqsM66RfGzA3yxIAP4DelVb6zM/d+27oOl58wOi6ejwXv6tpgBdvUsBe0XX3JfVffU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=K1DXdl/j; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43bb6b0b898so2864285e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 00:33:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741249994; x=1741854794; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X2EUc1x5Of7vZCQZZ48kByIEQAeOmgrKgZ4g5Ou9HIs=;
+        b=K1DXdl/jLd3lGnBeY+6K9KDo21yVRKd5LmQj11MBIpiigiwvfdb750QwYnfKRzJRGK
+         qV9NWLSPf0KRZoWxkP8ZYFda/IqEYR5RmQGV/zOqxdRf+bAT7k7YkJlDEnwCnEijE93R
+         wHZM9bjjVTrGaeIrUmltDSGLVO9wKSO5fOa/PGum2mWO6GISIr66RbniGALJFr5qjZk1
+         0x2Qj1pvqTxbZz2scScNIEiSsX65GpCrLd3kh7fcClJkyRl+mtUC52t18A0HUGo6/MxU
+         Ukr0Oeh1+5hb+u/0jg/vKSkmXsFuE4IDJt1rP9zg3KstOLMH73vb5OzcbHIv325nvV6A
+         JDCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741249994; x=1741854794;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X2EUc1x5Of7vZCQZZ48kByIEQAeOmgrKgZ4g5Ou9HIs=;
+        b=w/LNAEJNK3NyUwD2pe73SN2rX6+zZ8w1cKAuHy6RFJnMG8VTcj8HKzP3VL/OnnEU1C
+         uIgE0GNn8Uec3M7dYe3BFyDZDaIz/Vue/AyEb/MhLvuIohjCP21GDdzNX3caxD0j91pu
+         DMQmppFK03jcdxco+9x6oVeTpgbM6NkWRbooCF5tV4ffzzjIxGl2ofhtMG9J0c1GRUdI
+         eDnaPGKgNbOgXWsomyEoW0xAJKeZCA60nfKtIR/4SuIdLwTIHppegjwiw7kbDFfLxnjL
+         meYYlB4qOkIbIOtJp/reNKLFcD8120DYRzK9J/c+4g7huxkpTU2+3ST6TFge1Yvb9SPA
+         0lzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVoH5hI3kWp3f/NNpzuPZH6zA4grheQRAD0XEct+66+QLJ2sPc2N7/ZX2/+U9vnmJghamULyv+fIxMhOts=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7kiySYWgVgW6CFApdhnt30i2UI3vhWS+iR/Q9JnasoUMf0FF4
+	3DCukuV6nxg1P969zpqpHzWZlgcFaDENSmpKOCupuSo1BLJl6iJ64Df+Sjyfowo=
+X-Gm-Gg: ASbGncvXJ4Bpc4kpOdRVCSzuuInHdiBUwLpjPH+2EAxQnSgYlLTg05CSWpZy4WJx1Rc
+	2U8s67G9EpscD67B+I/uZo/eYCRNnHpfSe4SdD9Zlx48qVXWrT2K3rGa6NFihj8v/uOKjiAY2xl
+	vh1c89y6WhPv8UkYaTCefLZtKy4OkJ97pROd9hsLrXUpb8WbLvoVutrJdzs4hsOxGxr/hxSr+4U
+	YW5YW9ezaQgUI25yP5LLGOqrxqb0vwB+KtwC9sZ7ydgPcxD+V0kvO8WN0FHFv09FqgEVlxRNDAm
+	8eoOVztZyPAYGoUxWgxrzfCck9+VTT5qm+eU3nOaPhFBbB3ZjeJg4AlRE/7Blga74yaoTjn9wfA
+	Q6eDxR+bChtHXZ7lBoVs4CbmNzw==
+X-Google-Smtp-Source: AGHT+IENVLytuFM3iADZunJAXBOhvQ3LIEDZZsGeB1MuN2juBTFSeQk4BfBlXS8v8nNpLXWbNWI+2g==
+X-Received: by 2002:a05:600c:3544:b0:439:a1f2:50a3 with SMTP id 5b1f17b1804b1-43bd29462e3mr49071765e9.4.1741249993713;
+        Thu, 06 Mar 2025 00:33:13 -0800 (PST)
+Received: from localhost (amontpellier-556-1-148-206.w109-210.abo.wanadoo.fr. [109.210.4.206])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c102e01sm1282552f8f.93.2025.03.06.00.33.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 00:33:13 -0800 (PST)
+Date: Thu, 6 Mar 2025 09:33:11 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	Cosmin Tanislav <cosmin.tanislav@analog.com>, Dumitru Ceclan <mitrutzceclan@gmail.com>, 
+	Guillaume Ranquet <granquet@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Michael Walle <michael@walle.cc>, Nuno Sa <nuno.sa@analog.com>, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 8/8] iio: adc: ad7124: Implement system calibration
+Message-ID: <53jwjqqspaow6npy76vyhkz7stt6abkkwfj7hv7rs4dspazilv@54uua2bpcpk3>
+References: <20250303114659.1672695-10-u.kleine-koenig@baylibre.com>
+ <20250303114659.1672695-18-u.kleine-koenig@baylibre.com>
+ <20250306000718.330c99db@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/2] dt-bindings: net: Add FSD EQoS device tree
- bindings
-To: Swathi K S <swathi.ks@samsung.com>, krzk+dt@kernel.org,
- andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, conor+dt@kernel.org,
- richardcochran@gmail.com, mcoquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com
-Cc: rmk+kernel@armlinux.org.uk, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- pankaj.dubey@samsung.com, ravi.patel@samsung.com, gost.dev@samsung.com
-References: <20250305091246.106626-1-swathi.ks@samsung.com>
- <CGME20250305091852epcas5p18a0853e85a5ed3d36d5d42ef89735ca6@epcas5p1.samsung.com>
- <20250305091246.106626-2-swathi.ks@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250305091246.106626-2-swathi.ks@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="braso36kgpzqa6iv"
+Content-Disposition: inline
+In-Reply-To: <20250306000718.330c99db@jic23-huawei>
 
-On 05/03/2025 10:12, Swathi K S wrote:
-> Add FSD Ethernet compatible in Synopsys dt-bindings document. Add FSD
-> Ethernet YAML schema to enable the DT validation.
-> 
-> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
-> Signed-off-by: Swathi K S <swathi.ks@samsung.com>
-> ---
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+--braso36kgpzqa6iv
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v4 8/8] iio: adc: ad7124: Implement system calibration
+MIME-Version: 1.0
 
-Best regards,
-Krzysztof
+On Thu, Mar 06, 2025 at 12:07:18AM +0000, Jonathan Cameron wrote:
+> On Mon,  3 Mar 2025 12:47:06 +0100
+> Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com> wrote:
+>=20
+> > Allow triggering both zero-scale and full-scale calibration via sysfs in
+> > the same way as it's done for ad7173.
+> >=20
+> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+> > ---
+> >  drivers/iio/adc/ad7124.c | 153 ++++++++++++++++++++++++++++++++++-----
+> >  1 file changed, 136 insertions(+), 17 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+> > index 382f46ff2b51..5ab0d3e48c43 100644
+> > --- a/drivers/iio/adc/ad7124.c
+> > +++ b/drivers/iio/adc/ad7124.c
+> > @@ -4,6 +4,7 @@
+> >   *
+> >   * Copyright 2018 Analog Devices Inc.
+> >   */
+> > +
+> Stray change.  I'm in that sort of mood so I'll tweak it whilst
+> apply.  Rest looks good to me.
+
+Ack, thanks for cleaning up behind me.
+
+> Applied to the togreg branch of iio.git and pushed out as testing.
+> As the fixes are theoretical(ish) I'll not rush them in.
+
+Also Ack.
+
+Thanks
+Uwe
+
+--braso36kgpzqa6iv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfJXcUACgkQj4D7WH0S
+/k7GMggAnd1NKiaoKhZmRgoFkNSYlKr3g05lRuBEs91JFvKNJxoV/UU0ZvqpGSOA
+ecyBpb02lZ1gD8M95AciwtSSAtv8fRJLzvjtmN28A6W0w0ScR7TVvlCdf5HZZy4K
+q8QQHWgLIBp508UFwdCqhLtsCD9UxjQROt7qM25CLj3u/x8qpNpIEpTEL9yHmaRA
+NPssmTPPvd6Z/qSsxLel7QlDoYIyleuRwWT9CmD1FJ8SCKo7zcSLdnm9IAGBsn21
+Jmv16gfyLeFrd7vwQs1G85Z4aPdwDhuojrjeEkSsy6LhEZl5quFCSb5rpmOT9xLV
+w0hS+YekqIIB9SWL9wJweHM0xusgAw==
+=C5a+
+-----END PGP SIGNATURE-----
+
+--braso36kgpzqa6iv--
 
