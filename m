@@ -1,234 +1,267 @@
-Return-Path: <linux-kernel+bounces-548163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADE41A54103
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:06:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A31B7A54107
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:07:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEC163AC8DD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:06:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF6D61892DFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DB8192D7C;
-	Thu,  6 Mar 2025 03:06:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5219192D9D;
+	Thu,  6 Mar 2025 03:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LdDlyX97"
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="enLIb8M4"
+Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazolkn19010009.outbound.protection.outlook.com [52.103.11.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6F3F513;
-	Thu,  6 Mar 2025 03:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741230395; cv=none; b=Mon3sg4zNCe7vZfUT48M/V60Eew4SW5UEMnt79h08Iegtq4xbDvvpJvpI2JKg9YBDlUJRnnP8quYJDsjhdHsOgFMxVsjMNtfg6HVssBi1loNJzlhqXIXNCR4ZDfCcfGaHIix5eR8nxTz9qGRQnDKmBJU5hafb7ihQs6hR4/ZH04=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741230395; c=relaxed/simple;
-	bh=Xlz9r5dgABLXp+EuZeZfVtT8mnEGTMyXPNGzaZpzcxk=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Mw/qrU/VuNgqlnwn2GPo8xQ3iL2w3pPTPhpB6aua3JzZmPUE8tLnCJEd8X+HEgdq93vmNjRC76KBhsHgN7bxNfykwmHavWWM0+livPx0Fz2IO7wojb9miskidnbgykgMHfToGgXoS56TTzmHArB8BYz1ArUyuinshanjY6Hd8Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LdDlyX97; arc=none smtp.client-ip=209.85.222.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c3b533a683so19245685a.2;
-        Wed, 05 Mar 2025 19:06:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741230392; x=1741835192; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xlz9r5dgABLXp+EuZeZfVtT8mnEGTMyXPNGzaZpzcxk=;
-        b=LdDlyX97NGbK3IzAVHphjUMCv/7Sc5MzugpTgcSg8jnmRf+UtkvzVI++evVL3lGgjn
-         roEEYm1Uy27z/1ZofsNdW6DMkNfnZP5We4NWrgzhddI8tWtNCMQQZbKbPd5dvGKmvxAt
-         dkMezk1lVgfsPBHNJ801+jmzAU4Xq1T3ogWmtH6COG0yAL/tUjBqGdgMitIw5jBWudJ+
-         G9DqHu2VeJzyqwzFAL2qHvY2NJf0K3OO8oqiqZYv6dWcob7+6qucXvtT9052ePtMwoLC
-         YjWlmENbEKDkyW1SSZnEV6OvWF8e/11eTabjTY0bUdEh/9KmZKqiFLFHJSB96U2MCE3Z
-         m6/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741230392; x=1741835192;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Xlz9r5dgABLXp+EuZeZfVtT8mnEGTMyXPNGzaZpzcxk=;
-        b=sNdu9Z7BbgB3JnIDybWBXBv4I6NbmZdN4DuURnCBVv5/cgENaPMsbH2oUEwXar9Agy
-         3vybUM0OVbHR0Div5Cx3DEx2AH+4D9RBrmsGnXuSeJ7oHLTp1WnFuc4L0PZxL4oSHSAD
-         bz1cUfwC3wkHhQRSY45NtnUjnWIw32fJI/FP6lMBCevontZ+Idh7GBcuJ3aj0dyw5QN0
-         GiW8AV3Gj3DR3vY9avJ//A3D5+yNaZ1jC9u23WPoNGJV6YyV1NrVO+RrCpOxibPNAR8c
-         /dhwWaU++AEClI7WmrxXK8ODXjTlMdSMt9LA0mu3xKqkGUuwgVhebOjlc2a/VrAUX+re
-         jnKA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXMZtKCvPuWFbXmGueaxduy72OQe4t4/3qRqEhQUxdaaHwIVj7etxWda/pEmDruUganhZghMO0YRkoJuA4@vger.kernel.org, AJvYcCVu6wBiDwHJR34Rs3jkEek+gN+2jhEIpTYFH4hPk0A+gLhjrvLHjwCdJ3cf3S+auo+qlDh1fRxGL7i4@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaYwGOB+kEtxHruPC90hDPL+2DN24Qybjs1qp3wD5we7i7WqYL
-	RBvjTyxSLslirOrIc60iuszaYYx70tu/gH4GF6Q8P7dE7EzWy1A3lT/TsD+LHF9vFAQgiPVrjRe
-	9TnomfvXIBtVGPpsefqX06XPWQ1CLHs1jfedT2g==
-X-Gm-Gg: ASbGncu0wrvGneogXShU5RadOWVlBAbKCT/LCkQmGHwHI+fZqRNWKJueqN3IuuZbcVX
-	nHoT4VidLZoI8WFBxJEGfatX05bODxYEHCSkEfsVHddv6C6svztiyKnm7s++5t7kfBn/TLBKz58
-	smdtbYra2la0F+QY6WTQtYdjQGb0g=
-X-Google-Smtp-Source: AGHT+IGuV8I4lGu/BiaT2CPPqNNCKrrFqca7miWSDaXiSXkrjqr/9LxSmnR5hi2TN/ltgQTKrWGl47zF7Tt+0yHKOQQ=
-X-Received: by 2002:ad4:5ba3:0:b0:6e4:2e5f:c03b with SMTP id
- 6a1803df08f44-6e8e6d60dbfmr83797296d6.22.1741230392362; Wed, 05 Mar 2025
- 19:06:32 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7872191461;
+	Thu,  6 Mar 2025 03:06:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.11.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741230421; cv=fail; b=JWc3uYvLj1XSpddFf++3Nz+pwOc9kvoJO1zq2stdDQPr4hAt7yUFKAGUx/fZPcKPWjxXgs3gG91QWZFsfrNjoVMWpQoFW58WLZIDPAVUug7x/HulkE5MahEEqHPSLI1/XOrEEb1/4ii7YxqtkgJvtnkuPMsdwedqZWTTZ5h/ee0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741230421; c=relaxed/simple;
+	bh=X89LrUz0/nKPtr4BMhMZ9kbzE0QID1obj1LiSaHpH3w=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=M1siJMOaHFOE3xWapsOPuXGq0nW0+a0fjc8OcR1Z3piXLtYEsC9EEHjlhjziLYQRAjgRIkHqcnBLa8HKMfw7rvVM1ya+16ZEvOaH94nGL2kibXWEPOBI2Tu0o5BzgsAmP6ct7ShO0UdTJbJG7b0UZ10OxXkoGgRIlwRwK9+PHYA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=enLIb8M4; arc=fail smtp.client-ip=52.103.11.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=onXlMcQTSN/eSdD5Lj7BR7HvNU3rDRqPcxOtuBI85PCc9/UAsTmvGFlpyq6dMH6KTIx/LfKbD82hLNxPeEhTUfvWAclfSdifAxNQUkdsO54/r/0Q4RuqlR2sYyAcVWaiFtRI82Gw9GieB1iLKkyoIAjEbBL5EyJJIqL6fxfT0fBxZrYfhk32XPhhe8lU+OJu8xwR5R1oabqaP6Q1/ejc1PDVL0dFA8CWAetgwpW+V7raodZQ6Wjeav237kWz2qxScBAkkj4+2VOsAR2y1r6OZqTt4YUwn8cjiY17rMuOhVfGqIAZdbcIkUglFryP8LGqzwlfXxVxWk3z6DiOPvoong==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KL7PbFmrzPeDQJB5kU4FNUT1Y7VTHaElZbQbARr5vPs=;
+ b=mhbDzN4PlahCVSYz+NwpVWmv5+8xD2xYJ28CrJxQ70xKYmhM5KdDVUzz58vIfQFlCr5xIGAT2wF+F+LXcKls3nvuOZMZsLJj46QnpBAYAG0yDHuzuNYmHv93ZVouV1Qv13HGzcm/thTjrN/q0hWumE/x59aYpobGmGFio0ufYkRiquTVC5oHRv4WATu9CLdCErWFCbraojenyuE2LVtGSRwWw34lEFXR3vJuCDRIlzJB4f5JtqZcTQSP8wpBV2nlA4xUMFPtzaqBc0XU6wcWmUTQ2ZKCLkzHejLK9UXnmhhmktZ2DZOH78q5+lS+hEE3SRvk/6Zfb3DYwri97tMIzA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KL7PbFmrzPeDQJB5kU4FNUT1Y7VTHaElZbQbARr5vPs=;
+ b=enLIb8M4djFvDww+ASIEDha1uUo3tYhx9mfVVIVmp1qb5vzgkP0rtyoeR4d0jG80ZIHP4iEvFURcuqHkRzzF1qjz/idAGz7xEhqWFCwgIzC6NM1dy9gE2c9SuGOAdLGeEaHO7eoncam1AaR43tXUzm67GuIVV9vIPsaL648azyvdDGm+pMozURPyxIP8zzy6Z68r1E5xTDPXJStXtNQ19i+bLsiSrtQKxxc1srcPSkiP9BV+KNbp4O+6xz6lXkQWoqciZ5uKXcuz0e8D38g/KqfT4slwxDk6PTtuwaR9adq8MlLiR4j8Uxcp406FTDvmn/zyGB6W6DiycrJoVMLbxA==
+Received: from BN7PR02MB4148.namprd02.prod.outlook.com (2603:10b6:406:f6::17)
+ by SN4PR0201MB8728.namprd02.prod.outlook.com (2603:10b6:806:1eb::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Thu, 6 Mar
+ 2025 03:06:56 +0000
+Received: from BN7PR02MB4148.namprd02.prod.outlook.com
+ ([fe80::1c3a:f677:7a85:4911]) by BN7PR02MB4148.namprd02.prod.outlook.com
+ ([fe80::1c3a:f677:7a85:4911%4]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
+ 03:06:55 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Saurabh Sengar <ssengar@linux.microsoft.com>, "kys@microsoft.com"
+	<kys@microsoft.com>, "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>, "decui@microsoft.com"
+	<decui@microsoft.com>, "deller@gmx.de" <deller@gmx.de>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC: "ssengar@microsoft.com" <ssengar@microsoft.com>
+Subject: RE: [PATCH v3 2/2] fbdev: hyperv_fb: Allow graceful removal of
+ framebuffer
+Thread-Topic: [PATCH v3 2/2] fbdev: hyperv_fb: Allow graceful removal of
+ framebuffer
+Thread-Index: AQHbisVRnvCldUULrUOKRdfkOSEc2LNlc7WA
+Date: Thu, 6 Mar 2025 03:06:54 +0000
+Message-ID:
+ <BN7PR02MB4148986520E4843A34300436D4CA2@BN7PR02MB4148.namprd02.prod.outlook.com>
+References: <1740845791-19977-1-git-send-email-ssengar@linux.microsoft.com>
+ <1740845791-19977-3-git-send-email-ssengar@linux.microsoft.com>
+In-Reply-To: <1740845791-19977-3-git-send-email-ssengar@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN7PR02MB4148:EE_|SN4PR0201MB8728:EE_
+x-ms-office365-filtering-correlation-id: 6e278758-faf7-4c8a-1959-08dd5c5bf341
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8060799006|15080799006|461199028|8062599003|19110799003|102099032|3412199025|440099028;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?YWdv4xnH8kofuo+anFdvy3yIbpW6AUrtrcxRPujuNZt5wfM//7uhJmH2rJbb?=
+ =?us-ascii?Q?i/konjgJyoTOi8xNPdusqHZa7iPn5JpT9cGiJEoZNuEiPrL8iqdOgpsRP/Kx?=
+ =?us-ascii?Q?SQHMbySYuRYUhuOMUCMeWEQyeLDoaMMxti/VqlQnL/ueg1wO3mPIcr3DE802?=
+ =?us-ascii?Q?wTXgmb2lB/TiHO8yddK9ygewazs62qLhLbGCYHjNbCedIXq0weiLuWzzoFWw?=
+ =?us-ascii?Q?5b+yvPtsNyZo3wOsbW4avV5bKVuknXcKyI1QqJmc3M8n8vqFQksZ+DGH7GL4?=
+ =?us-ascii?Q?m+npOviQK+KYGHmgp1gCHo/i5fuIwy0qAVDgsjLTXfAYSbuqAtyeY80FAA5k?=
+ =?us-ascii?Q?NL4YoQfYW9tHNkd6frfCN2bpw7QlvHmTgoz3HF32i4xKEFkjDgk9IXaV0i9y?=
+ =?us-ascii?Q?NBL3kk2BFnHwOkaCaGfD+bjWSpYCNgppWI1QgVvDk39I5KZCRbPvUxWndNKm?=
+ =?us-ascii?Q?FoW0RQE+AFuWhajrEfrheoCc3jCXYnTSQ6lA2fyIJ4S54YsdOHzypyNXlYOk?=
+ =?us-ascii?Q?5PAEeuiUJ+kYogDuBBBX4Mf2Yw8C3PxVteYkglRNg5rgv2wNkt/Gk1idwoms?=
+ =?us-ascii?Q?eTgttYUqEaeNEVVuPXE0lOThyck5IYQqe5nWWtVw+kIJOKq+NafZj5YhZJIR?=
+ =?us-ascii?Q?xlG+gS0jepS5nXKjVVpb8bY5Pf2WJeAF2qOdXGZuEGS2fJERB25yGWXkjZa2?=
+ =?us-ascii?Q?IIjSx0q1aRVfE9ErCNcAhLgHw2InUcLDDGZ+AhbdeBkqHSqjaFTSpfIBT38w?=
+ =?us-ascii?Q?OGIDSc2GghjPVn37p+Dvpi0gKTMMVYIttXba9PBlTUbX7neBSQAQ71iCilaX?=
+ =?us-ascii?Q?Hl23woxy3ecM9oxYMV2rybr3RapYoDfzOmtn5HugqKXGNS+bz/fVTVcOO6sA?=
+ =?us-ascii?Q?INhOcsyr+ynzqzWLrriWslGhMb899W9+BdRjwYSFxZRp6xC/IhtIpzJT9SX2?=
+ =?us-ascii?Q?J0ZrrJqm7s9xbZ3ewunehvXBsNMeuMrFMuysz8EYm0nrjd5vVGC8OrLS2c+v?=
+ =?us-ascii?Q?1g91E6/duAJUNGrNQkv3PZgNm3R6XOC1w1uMutgEUSM/cWI=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?XcBfSZ/QQEZnx9X5Q8+oM4NbcZAZKxIZAAgp0wGjPTvsLEDbS/yatOJELgiG?=
+ =?us-ascii?Q?R/3ddP5C5AZOKYpqULp4hJIx26u5j6TopH7QuWuJnZ5tqfvfdTmPv1Ru3CKG?=
+ =?us-ascii?Q?KbFgqG328puhdbZieOMVoN1ULA3YCaQxqN9SZHUgV+ghuS+qvUH0dNjotnnI?=
+ =?us-ascii?Q?QfEZDarjtAUUfhcp6aqbY24SoOHO96rLrUZwA5elzyjL7MQaOHOeNVdnLGWo?=
+ =?us-ascii?Q?QFbM7ajPNpRGNNM9qCPfsl34IqN3xrgmskypjpklorBnGH7t0/lsDKn/P1QA?=
+ =?us-ascii?Q?uHEwdMOkFvgUT3mz+yTtXNiFBYVl5OAcmb6HNxlIx//nqgATQM1sDF+33wtk?=
+ =?us-ascii?Q?K+U9zyZe8bJJeQBjGVNmXReOdL3TJnkNrF0xdVAcYB3IjkUj3CagRHCpDBPI?=
+ =?us-ascii?Q?Phyh1peo3HAtZQyxqReApMq8/IoLFbfnOa7GawFAR2wrn9xMPv/yARSXMfiB?=
+ =?us-ascii?Q?+NEhdN0I/LO8Ew56aSIbqo1lWbKBu6rs4n/vNDrcOeNFvYXVmFXDlLfdkAoZ?=
+ =?us-ascii?Q?kx3qxMh29J6xz118+wzuVG2o2vNvQ2yauFxMQ6y6W6d2pq+eaZCZsiR//ZAw?=
+ =?us-ascii?Q?xSq8goZL6LrD/m0HSvelqRqavO3FP4zDcIrYPDTRBh1uCpytC9/4Jj8LC1pe?=
+ =?us-ascii?Q?3AG4bq5VAFYFUauelrwuWs+80uyr8O3qmV5RnW7H0bBShfTvQyhEuRfdL2BU?=
+ =?us-ascii?Q?KPD7JOalhoBdfREuhjrWDdp2/0xeRlmWC0Lk7asxt33bAfrKG7KbWhPth26E?=
+ =?us-ascii?Q?9SpRmUuYJlj2eKrkLtD3721XwoJbsE7FlV7z49nlUxgC6HUUYoMR6YCCpdUT?=
+ =?us-ascii?Q?ZCZsPoz/dXiZKcwx9z9uJauyc6WAEzzhMH3+qG09SeBRawnO55XN39vRRsHG?=
+ =?us-ascii?Q?C+ivjSGOJbyKX+E/vy+2vEb3XQChD7XJ2gF1ivxC5+tzy6jQKRRF3G3BpoDf?=
+ =?us-ascii?Q?b9j4fF9U1jTJ0aSUq3k7znCECeybhivzIQiS/bh6lz23rMAXHW6Piq7XARxT?=
+ =?us-ascii?Q?2OUJJjKtaZM7bOGBBs3ccFVqvCa+O7prfj6GyaFfxymiew5x8huHWOUj2Wvy?=
+ =?us-ascii?Q?V6W6ZXRJqm0LmVHozuwMNYBma+46DQzavvTETRiqQ5zhtTo0qOrQxM2kUrKw?=
+ =?us-ascii?Q?2QIAz0SbdVHqxFO99glRUY1LTa2XTmAVOi2yuxsBCi4tuYVYDBpNptQu7UQ0?=
+ =?us-ascii?Q?QTRxLXf3LaRwkHBCioa6XFxzjjlqkIejQYQ3JpMuqamEhMq9jMX2JuNlpG0?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Luka <luka.2016.cs@gmail.com>
-Date: Thu, 6 Mar 2025 11:06:21 +0800
-X-Gm-Features: AQ5f1Jocv5Qcj2kNRuYNc8BYc0xo7Q8YLmK47upb9QsraCDR8xg0t84BzQi1ZDE
-Message-ID: <CALm_T+0f2Z4yjoB6J-HO-Ttk6z-RXQB54zKi+rLkkhhpp=huRQ@mail.gmail.com>
-Subject: Potential Linux Crash: KASAN: slab-use-after-free Read in
- acpi_ut_update_object_reference in Linux kernel v6.13-rc5
-To: Robert Moore <robert.moore@intel.com>, 
-	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN7PR02MB4148.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6e278758-faf7-4c8a-1959-08dd5c5bf341
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Mar 2025 03:06:54.9308
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0201MB8728
 
-Dear Linux Kernel Experts,
+From: Saurabh Sengar <ssengar@linux.microsoft.com> Sent: Saturday, March 1,=
+ 2025 8:17 AM
+>=20
+> When a Hyper-V framebuffer device is unbind, hyperv_fb driver tries to
+> release the framebuffer forcefully. If this framebuffer is in use it
+> produce the following WARN and hence this framebuffer is never released.
+>=20
+> [   44.111220] WARNING: CPU: 35 PID: 1882 at drivers/video/fbdev/core/fb_=
+info.c:70
+> framebuffer_release+0x2c/0x40
+> < snip >
+> [   44.111289] Call Trace:
+> [   44.111290]  <TASK>
+> [   44.111291]  ? show_regs+0x6c/0x80
+> [   44.111295]  ? __warn+0x8d/0x150
+> [   44.111298]  ? framebuffer_release+0x2c/0x40
+> [   44.111300]  ? report_bug+0x182/0x1b0
+> [   44.111303]  ? handle_bug+0x6e/0xb0
+> [   44.111306]  ? exc_invalid_op+0x18/0x80
+> [   44.111308]  ? asm_exc_invalid_op+0x1b/0x20
+> [   44.111311]  ? framebuffer_release+0x2c/0x40
+> [   44.111313]  ? hvfb_remove+0x86/0xa0 [hyperv_fb]
+> [   44.111315]  vmbus_remove+0x24/0x40 [hv_vmbus]
+> [   44.111323]  device_remove+0x40/0x80
+> [   44.111325]  device_release_driver_internal+0x20b/0x270
+> [   44.111327]  ? bus_find_device+0xb3/0xf0
+>=20
+> Fix this by moving the release of framebuffer and assosiated memory
+> to fb_ops.fb_destroy function, so that framebuffer framework handles
+> it gracefully.
+>=20
+> While we fix this, also replace manual registrations/unregistration of
+> framebuffer with devm_register_framebuffer.
+>=20
+> Fixes: 68a2d20b79b1 ("drivers/video: add Hyper-V Synthetic Video Frame Bu=
+ffer Driver")
+>=20
+> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+> ---
+> [V3]
+>  - using simplified hvfb_putmem()
+>=20
+>  drivers/video/fbdev/hyperv_fb.c | 20 +++++++++++++++-----
+>  1 file changed, 15 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/video/fbdev/hyperv_fb.c b/drivers/video/fbdev/hyperv=
+_fb.c
+> index 09fb025477f7..76a42379c8df 100644
+> --- a/drivers/video/fbdev/hyperv_fb.c
+> +++ b/drivers/video/fbdev/hyperv_fb.c
+> @@ -282,6 +282,8 @@ static uint screen_depth;
+>  static uint screen_fb_size;
+>  static uint dio_fb_size; /* FB size for deferred IO */
+>=20
+> +static void hvfb_putmem(struct fb_info *info);
+> +
+>  /* Send message to Hyper-V host */
+>  static inline int synthvid_send(struct hv_device *hdev,
+>  				struct synthvid_msg *msg)
+> @@ -862,6 +864,17 @@ static void hvfb_ops_damage_area(struct fb_info *inf=
+o, u32 x, u32 y, u32 width,
+>  		hvfb_ondemand_refresh_throttle(par, x, y, width, height);
+>  }
+>=20
+> +/*
+> + * fb_ops.fb_destroy is called by the last put_fb_info() call at the end
+> + * of unregister_framebuffer() or fb_release(). Do any cleanup related t=
+o
+> + * framebuffer here.
+> + */
+> +static void hvfb_destroy(struct fb_info *info)
+> +{
+> +	hvfb_putmem(info);
+> +	framebuffer_release(info);
+> +}
+> +
+>  /*
+>   * TODO: GEN1 codepaths allocate from system or DMA-able memory. Fix the
+>   *       driver to use the _SYSMEM_ or _DMAMEM_ helpers in these cases.
+> @@ -877,6 +890,7 @@ static const struct fb_ops hvfb_ops =3D {
+>  	.fb_set_par =3D hvfb_set_par,
+>  	.fb_setcolreg =3D hvfb_setcolreg,
+>  	.fb_blank =3D hvfb_blank,
+> +	.fb_destroy	=3D hvfb_destroy,
+>  };
+>=20
+>  /* Get options from kernel paramenter "video=3D" */
+> @@ -1172,7 +1186,7 @@ static int hvfb_probe(struct hv_device *hdev,
+>  	if (ret)
+>  		goto error;
+>=20
+> -	ret =3D register_framebuffer(info);
+> +	ret =3D devm_register_framebuffer(&hdev->device, info);
+>  	if (ret) {
+>  		pr_err("Unable to register framebuffer\n");
+>  		goto error;
+> @@ -1220,14 +1234,10 @@ static void hvfb_remove(struct hv_device *hdev)
+>=20
+>  	fb_deferred_io_cleanup(info);
+>=20
+> -	unregister_framebuffer(info);
+>  	cancel_delayed_work_sync(&par->dwork);
+>=20
+>  	vmbus_close(hdev->channel);
+>  	hv_set_drvdata(hdev, NULL);
+> -
+> -	hvfb_putmem(info);
+> -	framebuffer_release(info);
+>  }
+>=20
+>  static int hvfb_suspend(struct hv_device *hdev)
+> --
+> 2.43.0
 
-Hello!
+Reviewed-by: Michael Kelley <mhklinux@outlook.com>
+Tested-by: Michael Kelley <mhklinux@outlook.com>
 
-I am a security researcher focused on testing Linux kernel
-vulnerabilities. Recently, while testing the v6.13-rc5 Linux kernel,
-we encountered a crash related to the drivers/acpi/acpica kernel
-module. We have successfully captured the call trace information for
-this crash.
-
-Unfortunately, we have not been able to reproduce the issue in our
-local environment, so we are unable to provide a PoC (Proof of
-Concept) at this time.
-
-We fully understand the complexity and importance of Linux kernel
-maintenance, and we would like to share this finding with you for
-further analysis and confirmation of the root cause. Below is a
-summary of the relevant information:
-
-Kernel Version: v6.13-rc5
-
-Kernel Module: drivers/acpi/acpica/utdelete.c
-
-=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
-=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94CallTr=
-ace=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=
-=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94
-
-BUG: KASAN: slab-use-after-free in
-acpi_ut_update_object_reference+0x601/0x6a0
-drivers/acpi/acpica/utdelete.c:497
-Read of size 1 at addr ffff888104ecbdd8 by task sh/4165
-
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/=
-2014
-Call Trace:
-<TASK>
-__dump_stack lib/dump_stack.c:94 [inline]
-dump_stack_lvl+0x7b/0xa0 lib/dump_stack.c:120
-print_address_description mm/kasan/report.c:378 [inline]
-print_report+0xce/0x660 mm/kasan/report.c:489
-kasan_report+0xc6/0x100 mm/kasan/report.c:602
-acpi_ut_update_object_reference+0x601/0x6a0 drivers/acpi/acpica/utdelete.c:=
-497
-acpi_ut_remove_reference drivers/acpi/acpica/utdelete.c:740 [inline]
-acpi_ut_remove_reference+0x65/0x80 drivers/acpi/acpica/utdelete.c:710
-acpi_ds_clear_implicit_return drivers/acpi/acpica/dsutils.c:55 [inline]
-acpi_ds_clear_implicit_return+0x7c/0xd0 drivers/acpi/acpica/dsutils.c:34
-acpi_ds_method_error+0x1c8/0x2f0 drivers/acpi/acpica/dsmethod.c:219
-acpi_ds_exec_end_op+0x6f6/0x1350 drivers/acpi/acpica/dswexec.c:753
-acpi_ps_parse_loop+0x3e4/0x1b00 drivers/acpi/acpica/psloop.c:525
-acpi_ps_parse_aml+0x372/0xbe0 drivers/acpi/acpica/psparse.c:475
-acpi_ps_execute_method+0x52e/0xb20 drivers/acpi/acpica/psxface.c:190
-acpi_ns_evaluate+0x717/0xc30 drivers/acpi/acpica/nseval.c:205
-acpi_ut_evaluate_object+0xcf/0x420 drivers/acpi/acpica/uteval.c:60
-acpi_rs_get_prt_method_data+0x84/0xf0 drivers/acpi/acpica/rsutils.c:446
-acpi_get_irq_routing_table+0x9b/0xd0 drivers/acpi/acpica/rsxface.c:137
-acpi_pci_irq_find_prt_entry+0x171/0xc00 drivers/acpi/pci_irq.c:214
-acpi_pci_irq_lookup+0x8a/0x5a0 drivers/acpi/pci_irq.c:298
-acpi_pci_irq_enable+0x1aa/0x570 drivers/acpi/pci_irq.c:413
-pcibios_enable_device+0x97/0xc0 arch/x86/pci/common.c:699
-do_pci_enable_device+0x11f/0x260 drivers/pci/pci.c:2077
-pci_enable_device_flags+0x1cf/0x250 drivers/pci/pci.c:2162
-enable_store+0x1b2/0x220 drivers/pci/pci-sysfs.c:314
-dev_attr_store+0x58/0x80 drivers/base/core.c:2439
-sysfs_kf_write+0x136/0x1a0 fs/sysfs/file.c:139
-kernfs_fop_write_iter+0x323/0x530 fs/kernfs/file.c:334
-new_sync_write fs/read_write.c:586 [inline]
-vfs_write+0x51e/0xc80 fs/read_write.c:679
-ksys_write+0x110/0x200 fs/read_write.c:731
-do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-do_syscall_64+0xa6/0x1a0 arch/x86/entry/common.c:83
-entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f615e492513
-Code: 8b 15 81 29 0e 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f
-1f 00 64 8b 04 25 18 00 00 00 85 c0 75 14 b8 01 00 00 00 0f 05 <48> 3d
-00 f0 ff ff 77 55 c3 0f 1f 40 00 48 83 ec 28 48 89 54 24 18
-RSP: 002b:00007ffe949c1848 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 000056557c2586b0 RCX: 00007f615e492513
-RDX: 0000000000000002 RSI: 000056557c2586b0 RDI: 0000000000000001
-RBP: 0000000000000002 R08: 000056557c2586b0 R09: 00007f615e575be0
-R10: 0000000000000070 R11: 0000000000000246 R12: 0000000000000001
-R13: 0000000000000002 R14: 7fffffffffffffff R15: 0000000000000000
-</TASK>
-
-Allocated by task 4165:
-kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
-kasan_save_track+0x14/0x30 mm/kasan/common.c:68
-unpoison_slab_object mm/kasan/common.c:319 [inline]
-__kasan_slab_alloc+0x6e/0x70 mm/kasan/common.c:345
-kasan_slab_alloc include/linux/kasan.h:250 [inline]
-slab_post_alloc_hook mm/slub.c:4119 [inline]
-slab_alloc_node mm/slub.c:4168 [inline]
-kmem_cache_alloc_noprof+0xf5/0x360 mm/slub.c:4175
-acpi_ut_allocate_object_desc_dbg drivers/acpi/acpica/utobject.c:359 [inline=
-]
-acpi_ut_create_internal_object_dbg+0x6d/0x3c0 drivers/acpi/acpica/utobject.=
-c:69
-acpi_ut_copy_iobject_to_iobject+0x65/0x390 drivers/acpi/acpica/utcopy.c:947
-acpi_ds_store_object_to_local+0x260/0x440 drivers/acpi/acpica/dsmthdat.c:54=
-2
-acpi_ex_store+0x1ee/0x970 drivers/acpi/acpica/exstore.c:147
-acpi_ex_opcode_1A_1T_1R+0x51d/0x10b0 drivers/acpi/acpica/exoparg1.c:443
-acpi_ds_exec_end_op+0x618/0x1350 drivers/acpi/acpica/dswexec.c:415
-acpi_ps_parse_loop+0x3e4/0x1b00 drivers/acpi/acpica/psloop.c:525
-acpi_ps_parse_aml+0x372/0xbe0 drivers/acpi/acpica/psparse.c:475
-acpi_ps_execute_method+0x52e/0xb20 drivers/acpi/acpica/psxface.c:190
-acpi_ns_evaluate+0x717/0xc30 drivers/acpi/acpica/nseval.c:205
-acpi_ut_evaluate_object+0xcf/0x420 drivers/acpi/acpica/uteval.c:60
-acpi_rs_get_prt_method_data+0x84/0xf0 drivers/acpi/acpica/rsutils.c:446
-acpi_get_irq_routing_table+0x9b/0xd0 drivers/acpi/acpica/rsxface.c:137
-acpi_pci_irq_find_prt_entry+0x171/0xc00 drivers/acpi/pci_irq.c:214
-acpi_pci_irq_lookup+0x8a/0x5a0 drivers/acpi/pci_irq.c:298
-acpi_pci_irq_enable+0x1aa/0x570 drivers/acpi/pci_irq.c:413
-pcibios_enable_device+0x97/0xc0 arch/x86/pci/common.c:699
-do_pci_enable_device+0x11f/0x260 drivers/pci/pci.c:2077
-pci_enable_device_flags+0x1cf/0x250 drivers/pci/pci.c:2162
-enable_store+0x1b2/0x220 drivers/pci/pci-sysfs.c:314
-dev_attr_store+0x58/0x80 drivers/base/core.c:2439
-sysfs_kf_write+0x136/0x1a0 fs/sysfs/file.c:139
-kernfs_fop_write_iter+0x323/0x530 fs/kernfs/file.c:334
-new_sync_write fs/read_write.c:586 [inline]
-vfs_write+0x51e/0xc80 fs/read_write.c:679
-ksys_write+0x110/0x200 fs/read_write.c:731
-do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-do_syscall_64+0xa6/0x1a0 arch/x86/entry/common.c:83
-entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888104ecbdd0
-which belongs to the cache Acpi-Operand of size 72
-The buggy address is located 8 bytes inside of
-freed 72-byte region [ffff888104ecbdd0, ffff888104ecbe18)
-
-
-
-=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
-=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94CallTr=
-ace=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=
-=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94
-
-If you need more details or additional test results, please feel free
-to let us know. Thank you so much for your attention! Please don't
-hesitate to reach out if you have any suggestions or need further
-communication.
-
-Best regards,
-Luka
 
