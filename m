@@ -1,96 +1,107 @@
-Return-Path: <linux-kernel+bounces-548027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BBF6A53EF8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:15:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BEC7A53EFB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:16:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E645A1893298
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:15:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 705BD3AF306
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0099F9F8;
-	Thu,  6 Mar 2025 00:15:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7EE58F5E;
+	Thu,  6 Mar 2025 00:15:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mx4PrFji"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a9699QBa"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D10017E4
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 00:15:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADAD353A7;
+	Thu,  6 Mar 2025 00:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741220122; cv=none; b=DKjRZTVLKgp2XFLwVb1cQjTIer84d8doSz0BnHj0zlHhmbUVC9eT8nQHNqDjuL5Z5SLbcafF1/t0KqeMjZ+X5O5CYora9d+hQqSTrtvo8xsQgk3h9EffNa9guwhg3HveHLftzLdsxDZzBHD+yXEFingYqgo4jovBxtU1uXzXjMo=
+	t=1741220158; cv=none; b=OQ4dXwQqBrJLAwgt05ks3weFRT3AQiW2ZvAa3mf49EHUlWpK4M5+Vw1pyNa+xDpcaMAqMz4Z2W7xCIbP7MfoNpiF0h1XXcWOkWL1N8r6j6ukYJNpd7M7jypcytvqsPnVNJ3pYxB6q+8y8HO49KmJ7FlEayMSDwNJHuwtiUPBCbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741220122; c=relaxed/simple;
-	bh=Adg+t74yvHJFHoXDLdfTv32xGE3wVBh+8yopvBgugco=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CU8M7KOlLJ+x9/pgvRkSrNGEc1+LbZTHF4y7dzyQdUdA3mGQ/TrBK7cqOVQ0XEDeAdWH9jpyXIfYJom9l3v2BZqPhKZPorSQ6Pwn7V4CmQwDAr3GvhLrIyxiAq2BgbJeA+AGRgtcd2fBg1ufzId2abtHWpSBoEZCVDNcaS5iTkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mx4PrFji; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DABAC4CED1;
-	Thu,  6 Mar 2025 00:15:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741220121;
-	bh=Adg+t74yvHJFHoXDLdfTv32xGE3wVBh+8yopvBgugco=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mx4PrFjiz7pideDtrB1Pi9/1K1KLoBEmSepuhUg0qkS74e/21ucT+PHiOT31LbxHY
-	 sMQz9yqDhjS1FtToBn+F4dki0/zy2ZfhO1LddCPdE9F29q5QlZkWnIcA+x91H9Fesd
-	 BrO5ezSG75UinDnJvxr4UCWTq+OJ6KLQV8U4J3DyT3VqL1DKUDROAj7EXAojvHvH+H
-	 kVBRxtG4FvI8Kv1axUDCYREFrgriy8ySrMctRU1WsOGdRaBdAyUB+3oHT3SR6hY/+o
-	 mzJIdU1Fhgb72pZt3RX4nFkWgJ5OnyI8Nw81f4PQRsywU4/FnHEtltM9czBShyNo6T
-	 yq3QJzWjCq78w==
-Date: Wed, 5 Mar 2025 17:15:18 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Hannes Reinecke <hare@suse.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Nilay Shroff <nilay@linux.ibm.com>,
-	John Meneghini <jmeneghi@redhat.com>, bmarzins@redhat.com,
-	Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Marco Patalano <mpatalan@redhat.com>,
-	axboe@kernel.dk
-Subject: Re: [PATCH] nvme: remove multipath module parameter
-Message-ID: <Z8jpFkHsN94nVgEf@kbusch-mbp>
-References: <Z7TARX-tFY3mnuU7@kbusch-mbp>
- <2ff87386-c6db-4f2e-be91-213504d99a78@linux.ibm.com>
- <0656b66c-dd9c-495d-b1fc-4f09e763fa66@grimberg.me>
- <Z7dct_AbaSO7uZ2h@kbusch-mbp>
- <91ae613a-7b56-4ca0-b91c-6bc1eee798b8@suse.de>
- <20250305141554.GA18065@lst.de>
- <Z8hrJ5JVqi7TgFCn@kbusch-mbp>
- <20250305235119.GB896@lst.de>
- <Z8jk-D3EjEdyBIU5@kbusch-mbp>
- <20250306000348.GA1233@lst.de>
+	s=arc-20240116; t=1741220158; c=relaxed/simple;
+	bh=favXHBjW2XqGOaXq1mR0Rb2UpGKt6GW39kYnwTEyA+o=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=YXmdQ4DW8c8q3BJqr8BGkk8GiDNJthH/VEthV28VZ7xPSU070Q2rgFrBwAV30Ezsqr6RyiKUcR/ItKfJNFAbMIHtmC9t64JmFsLQOIgTV+oBSPHGVJbvIh+8DRbMBhVG7e07+3+SuzrjxGwMXaKFNAyIjHdX5JZHkQ9vQaaPmkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a9699QBa; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2235908a30aso770485ad.3;
+        Wed, 05 Mar 2025 16:15:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741220156; x=1741824956; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=favXHBjW2XqGOaXq1mR0Rb2UpGKt6GW39kYnwTEyA+o=;
+        b=a9699QBa4Vt7XTv1Rxjn0ugnS+eI+p0tM2z38LThkxsBPiVM3maFPOJFUfWOgXk9mD
+         LD12dv7Jo9awmN1lhQ78ej2FPVWNmuXiBOBpMDNCOtxUu77Yi2stCAeKCVlUtGvsR2lA
+         Z8nzK8RzP0Mko0LyzirDt6dx6YPrcjAnuRHckotnTcymCPqxCOB50PRgXlwANksDSpdJ
+         InMGfNSkWpG/b/LmIXO4N76mTq79Vwvh/JEZL9K2F7BuWTAlonV27+7g60C8AYV8JHPO
+         dmZ21v0HsaTYHNCeibNY/7qdX66jswGN9wd6JFqLQc/pP50Nz8egxi8wOZd0X4j40Ngp
+         J81A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741220156; x=1741824956;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=favXHBjW2XqGOaXq1mR0Rb2UpGKt6GW39kYnwTEyA+o=;
+        b=SWhTFl5IkpYMkCrvD8ywNfqWcSyX0gXJcPALWuo9HbbkU2IVSoDrc015fvCsTGeIxy
+         MSuV/jiVfLPBrDydQp3fMX2il9P5uCzWyBDcP2s8MEfwhjhy0nPROx6LvcV/Ds4wNij/
+         UKoJnUUhTMfj80rawSYs6YZBufyr/KosaP1iorBIXKUQTjm09TxqLHDCWJ2S5J2llO1n
+         EZygNN0iXC9VV5xEGzuUdVnDkk8ZrFwXSDVHFi4Q9q06Kd9eXuFkmQ1Wrm/Hnhv19d6q
+         fLgDbCISnHozbwB+RobTs26f7TQAbnjsCBd9wVNXC21UQ0y/8KrNKG8Dq5pEdTdp+aHN
+         y+aw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFSR8+IzBB9w+U+F6V6QWA+CtgreHjsO/l5e+2VZyzelLUjdE/1muCfd3WGBpI1z0IYbyYC3xYABodl41w@vger.kernel.org, AJvYcCVGYd2XQMiE0eJBCTe3p16MdY+UBDuTUv4NmCEzM7PTFovMdjXOqOnj7LifG9ypzdJWnjN9pmsgsK1X@vger.kernel.org, AJvYcCXNceVk6NyQkVU4LwJIUIy4Mq60tB5+mhXh3qetozLmdL9JTEwMksr687tmiLSTXrqi/xHuRyXEVo7W@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi42H+LAb6vU9YemLDv4Pb9T78IuW6Pp2dPMei0FkgC5+Rbbat
+	YeSizhmJYzqJVhmfnK4CTxY0rMPk8nbC84Ofxfe84LBaNECTnEEB
+X-Gm-Gg: ASbGncs6MYOxXnqDZYvJPKDCHO3yI0eBOHFtuGPuS315pCSv4CT1gV6c9V4ZaC1Vn/f
+	RNM5WKSZnWeMiSQpfiqE6/G38A79Wn4zJe84N6WQv3tG60XEbZF5pqXDuU9NyNXfFEmobJaEMcj
+	ys389/mU0BR3qNNFeUzcHV11dzo3tLqvQvSkWqiy5WcWaZaU/NEhWEVE9EidOUWlCMb3pojG2fs
+	1nVIlQyEFLoaQLwWrR+sCmzXZj40uN6toOFXYefzrz7K3gVdci1s1R7Sm3mFWxcX7seIprpnQ32
+	or/BnCcdpnSLlaVbk7OOUa6x8wDN3qvCH/1fur1k6b/b63QagC1SId7JXloc3zNf/nU=
+X-Google-Smtp-Source: AGHT+IH0KfutgjAyQ57rGNBxxUkmDhrjevQ3H0lmsRe1Jaub+nCdx0wlT3TR/LNg6JGp9CtdqBt+Nw==
+X-Received: by 2002:a05:6a00:1995:b0:736:73ad:365b with SMTP id d2e1a72fcca58-73682bf0da3mr7851367b3a.14.1741220155668;
+        Wed, 05 Mar 2025 16:15:55 -0800 (PST)
+Received: from danascape.tail34aafc.ts.net ([2402:e280:218d:2e5:857:3077:7768:d8a9])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73698243f21sm46067b3a.52.2025.03.05.16.15.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 16:15:55 -0800 (PST)
+From: Saalim Quadri <danascape@gmail.com>
+To: jic23@kernel.org
+Cc: 21cnbao@gmail.com,
+	Michael.Hennerich@analog.com,
+	conor+dt@kernel.org,
+	danascape@gmail.com,
+	devicetree@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	krzk+dt@kernel.org,
+	lars@metafoo.de,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	robh@kernel.org
+Subject: Re: [PATCH v2] dt-bindings: iio: accel: add binding documentation for ADIS16203
+Date: Thu,  6 Mar 2025 05:45:50 +0530
+Message-Id: <20250306001550.1555151-1-danascape@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250304143918.733d6cca@jic23-huawei>
+References: <20250304143918.733d6cca@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306000348.GA1233@lst.de>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 06, 2025 at 01:03:48AM +0100, Christoph Hellwig wrote:
-> On Wed, Mar 05, 2025 at 04:57:44PM -0700, Keith Busch wrote:
-> > In my experience, it's left enabled because of SRIOV, which many of
-> > these devices end up shipping without supporting in PCI space anyway.
-> 
-> If a device supports SR-IO setting CMIC and NMIC is corret, but I've
-> actually seen surprisingly few production controllers actually supporting
-> SR-IOV despite what the datasheets say.
+Apologies, it was a mistake on my end, I had wrong dependencies
+installed which passed the dt-bindings check on my end when I tried to verify.
 
-And I bet at least some of those devices left their {C,N}MIC bits on
-despite not even supporting the virtual functions in their shipping
-product.
- 
-> > Not quite the same thing, but kind of related: I proposed this device
-> > missing debounce thing about a year ago:
-> > 
-> > https://lore.kernel.org/linux-nvme/Y+1aKcQgbskA2tra@kbusch-mbp.dhcp.thefacebook.com/
-> 
-> Yes, that somehow fell off the cliff.
-
-I'll be happy to revive it, but I don't know how much time I can
-dedicate to seeing it across the line.
+Sincerely,
+Saalim Quadri
 
