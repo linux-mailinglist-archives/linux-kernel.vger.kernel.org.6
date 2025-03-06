@@ -1,198 +1,244 @@
-Return-Path: <linux-kernel+bounces-548424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2E6A544B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:23:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 298F5A544B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:24:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AABE17205B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:23:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1961188EC1D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:23:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32D4F206F37;
-	Thu,  6 Mar 2025 08:22:52 +0000 (UTC)
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE295204F9F;
+	Thu,  6 Mar 2025 08:23:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oVBIkaXx"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A423E1FC119;
-	Thu,  6 Mar 2025 08:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CE91C8625
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:23:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741249371; cv=none; b=FbzSJp8/3IEpZYxZGbIDoRIQp0tfzZsPQyXgllR07/g6Pd3/98zwPJaLA0mvPl9WY4jwxwFhXd6k/4KpgYUgWkzp2Hnqa5oe+bSV+si7LaHBh32oRICVPZ7HoGn16Q7NX4OhbbHXyvq8P9weBNEvwpKpO64/cYf7x5WF+WSP4dg=
+	t=1741249388; cv=none; b=bWRfrvECqK/SclnXnVs3cAvtPHy+jRLCpvYC/UlQjmYz2kO0zmbaq2RCOpHfeqPQN04Cn6SUPjdZVEQ6hJFd5VeOAnmuPop3J8dxD1wN0EKUvvEDCIX+CCNDgEbPK9plDzOBohxoPsKG4FqktvpjPOWAU/nIx/7LfKQjJ900Go4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741249371; c=relaxed/simple;
-	bh=pukdi8UtngLWSTK0RiOB7GIFMpGrGcHkmXsaY8bzxNo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lZJVX/ug/O8se+b4kjo+35gQvKGkqz8qFZd+oi3Ry71qQrINSj8ISwgJthvDf1ngme2yvoyq/g5io9AfTjKf9blew2GrGMThmycrD9DH4xUV8QehwHpEEsi5HAk9oXyHdmjlK6v1admkoO1IcL6NM4f0k/s8WUcbBCL3ku1Ch90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-523bf140eccso510520e0c.0;
-        Thu, 06 Mar 2025 00:22:49 -0800 (PST)
+	s=arc-20240116; t=1741249388; c=relaxed/simple;
+	bh=TBM7ZdoAEJmWV4G+EtplAqbhqX+oEIuKc0qcEJTTXSs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=i+hDTq7RJB71OKGZPKH3vfilFRgFu7UD4mMVOxzZxRGfnYy2UPCU64C6TSYSp2sKBfaxrk8rXI1TBAqjQJ5SzuFUDp9NBS7AN1gM6qiAc1K5E7jRkpZA6FbZOwy7AYNyTUQvKAa8eD7/PM8nh5ZQKFVCjOqIgSOwNB+KrnzZ/Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oVBIkaXx; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43bc48ff815so2392115e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 00:23:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741249384; x=1741854184; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FGuGofdiBgeCaS66wbZZbCbyCtmGJE9XpjuRggbUJ/A=;
+        b=oVBIkaXx9oyiyv2b9+I+j38kslqoHppOYGgfBzuFCWpJl50cgcdXh1bVFet2lC8Mov
+         D+4j+jcsIT8CcBGJ7XbJ8PbpDap8Fqd9/fq9KxsBfhyRNk2EYL4bv8Uiq9GJcD5rgQb3
+         fyOzj/JbIt36rnFKZEPBPrMCQjAo9uET2488P86+9pDV23OT9YT79dLby3/uWdC6P7f9
+         j9r3EgA5c9S/G2t3k1weZFMU89QqDgINgTE9m4t/5IhxNjyela6bG2Odecm36xpcok2i
+         cPjuOjSqo4x4aE7x96210tGViPKqjZO/IYiiIE/9pmjaIMXuBtX3/UrcBvpNJiV3SbBe
+         zEMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741249368; x=1741854168;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FRrVZ0Qb4mFOKQncQdIGVomsgNpOi0dxaE9w627ruA0=;
-        b=eGanvIMXSJWnPiFV4dC92Nw+PWCua4AcTfk4ndQNEUGS3LUvWQ1vQOsdSMZjxupD7N
-         UY10WWViE0FWGkAiRcTgch+zOw3a7p4oW+ciNOMum8QJsgSJQKwcVelKWvjFew8qSjtY
-         TDTyA+XVhjcXJ+MKtX8/FWelm76I1z39OSEKQmr8nJGJIdDLr16V1LHK9duQaXunTTIz
-         KF2g7p3r20E/776NKCHEQMI7mQwC4hY/5QbZN8ezHAWI4DuhfaCN0DQLjSuhbur6DrzR
-         ygfRSrp+GAjrA0m6F9dV6LZ9z6iUm99r1V/F0bSdaJkN0WKZeIiz9t7DUTpm5ctlM+hH
-         Yhrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwIuKa7Cn7f8tEE5lmjOKktiCQDBKZrioj1tXZiymQMpsKeFoQ/UVIkaWa8xjivxEo7ZQP5UteKHcVE0briVuqFg==@vger.kernel.org, AJvYcCVTo9Tsxvz2Q1fi/KpMhw42Xpg58MYGcaTgbJVWwQxlyE1PG76xcPO88hRVnjQeHZTfMm4ZsEPeaG8I@vger.kernel.org, AJvYcCVsOUXveQoQFzFPppUY5EuGNiZfsXGBd8oytbRA6gDl8BOg9kIf1oYrR0ropwERXeqTDNgM7I2scq7vyO0=@vger.kernel.org, AJvYcCWayD2tqK+rG5bxaTr7B1/nH6G2fyeI/6oA38Mu1z6wq+srOv9nrae2eTDa85RVfyuKahlVEIRVsmHAaz06UfHsYaI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywqp/Lq5g7Y0fZxR39dJKkYoE09UVENgKv6uTn6Oe3SUIF32XlM
-	EAWK2VgUKhUw8/YnDk2J/gMj/6c+CNal9PlYkniyPaNk6lJtQxiD9t+IoXbC
-X-Gm-Gg: ASbGncuSBKBmIPnNmvW2ZNKFBz72ZTMQN8eQ+JBi40/7MBfHB2WvG5o/tlO3klHbVGm
-	ABF1Z4kMr6PJy1Xiu5L0chW66kt8sZ1tvOnIVH0WPrL9OR3eA6yPSJNfmjU21HbPYYWbsn3/UR8
-	9SmOgWFa03Brk41+hPXXmk7y7V4sU+G1g/2AZfRbf8EMD0r3PPdFMZHNIBYwyO2rYql95+Jq3xo
-	SMC8AQ7AlBH6E56py0FfB1y774jvxiPG5vK/rktPSX9U8onRbc+DAFQYFo557xI5zWTuDsQQFmh
-	Sqeg5VPDf+773QZnXKf7zREjJewIQs3N1sb/2uk8FYut3UImwasj68VkYsM9y5VF4ra2qisg+EK
-	qRAMkHgg=
-X-Google-Smtp-Source: AGHT+IEF7Bk+YzM0FJVs21ZthTCQsIgAALWxRqcwaxTWxnJ87UxJKa7kaDN1WW94AZpty8Xphy+TTA==
-X-Received: by 2002:a05:6122:4d19:b0:50d:39aa:7881 with SMTP id 71dfb90a1353d-523d4f005f9mr1580065e0c.0.1741249367680;
-        Thu, 06 Mar 2025 00:22:47 -0800 (PST)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523d8a85320sm119527e0c.8.2025.03.06.00.22.46
+        d=1e100.net; s=20230601; t=1741249384; x=1741854184;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FGuGofdiBgeCaS66wbZZbCbyCtmGJE9XpjuRggbUJ/A=;
+        b=ZYi4lOBamYy89H3lk+a1T65D+rLxLOM+juqIFTxigjPaS5wglJCL4XPIvQqP85FYCz
+         SdE3BeKi5jOFaVBpdr8D8+rdy5RQjPD4BqB4ASyKGbkxo0SDjDLG1qOYzWn+4q9Ees12
+         NPw5NaIqZuF53Bd7AIk0VEw9nQKyJMZfOm7aGE3PjCpzPIotAgP7LEbXlO/Iw8iauQ8h
+         mBl4o3+ZbaEVt1ZKM10W36ANkDKPf9FsCbhOW6gDrby3hX/lA2Hrfn1j3S7u++S+7fw3
+         F4PTiCsu8ZfxYFMCOCamb+145cTdgtyaz5NPVCNLt7Zzf8fk9lQG3OCWOecMfZimeBvV
+         QcjA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9QlDHWiQhQOXaKbhworJCkZk+jPpGk9EMPNJ61xeZnhhwKsVVbN6l7GIZI5XZKUcNcLMOwJZOXXb7k2w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAOlZXbtl8CRvHwxatvbnlUETdtNkByHaohN/GVBmFMmtvrQc+
+	4Az0gH4ZQDCxREhmBgQVQBy7BPOcZdcWLB0jFHCVMQW5e1xPueO/Ro8NTuWQ7TM=
+X-Gm-Gg: ASbGncscBOxXQen24ZEMYAyn3DjPDyocjWxgv2H+UGaXyS7Yx3gGIO4a5uk0pZFM6ge
+	wHCqneEgZZ6eXdY9ARDiG+ehhe1W92VOf3jW5bKQEchMCYsnxy613tQfwD+ONUJr3WoFskPx+98
+	LERxyfAD8rfYBsn8J5BfY62xBQKHE7HS18ko/8DlssdvX5cL+96IYZ9pffGsBSPPWzQY2r7BFeN
+	c5hYRh6hX2k14byMX2AU9rhjf2RAGYYDINuut08vfVb7sHog4hcdlXv7viXgg7PUuwGZqtX2TLf
+	/NhVJgN6m30YCAN0GsOwUhk0/Yz5qgQT6TrIJBZX3B6SIfeA9W3xT5F75A==
+X-Google-Smtp-Source: AGHT+IH151lwQVNoK7D/gsd6Nuf9nzMnhqbH1DqJBNBByko64LML2udj6wgGGTZX+oEUFfskKpkrrA==
+X-Received: by 2002:a7b:ca55:0:b0:43b:4829:8067 with SMTP id 5b1f17b1804b1-43bdb37ce80mr16864395e9.6.1741249384220;
+        Thu, 06 Mar 2025 00:23:04 -0800 (PST)
+Received: from [192.168.1.101] ([37.167.203.236])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd42c6203sm42080905e9.24.2025.03.06.00.22.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 00:22:46 -0800 (PST)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-860f0e91121so1761709241.0;
-        Thu, 06 Mar 2025 00:22:46 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVAfut96joLXAyWozfcykF+WpHhLbQtoDpjHrCD60tzyXlwCX8SrZhxm9JO9MNhYeuKbOPIi7gotObBmX7a0qbtyvc=@vger.kernel.org, AJvYcCVdAK6Q7KYjQy9b2qw6HAFQOfv/lb7fk3CSsnftfhhNGn1KTYqicbbk+KUKc8DQXFg1ef/yUbu4H85OC/4kCrf8LQ==@vger.kernel.org, AJvYcCWj79hA4cxkZIRy8OQv92gN/vrtipYascz63x5WHO6oLMdvWRFMsJ+POg3Xotv8XWcps8y4Tok3U0keNpg=@vger.kernel.org, AJvYcCXWMIzzShLJJ38t/LAzL7Ww7kdkRyPNb0PR3pWMlK7uF0dDYlOhv+pZHuw9d4n4bW3z3GjdOW2DMGeG@vger.kernel.org
-X-Received: by 2002:a67:f948:0:b0:4c1:b01f:8c7 with SMTP id
- ada2fe7eead31-4c2f66d367bmr1172152137.8.1741249365980; Thu, 06 Mar 2025
- 00:22:45 -0800 (PST)
+        Thu, 06 Mar 2025 00:23:03 -0800 (PST)
+Message-ID: <ffff2d49-d90b-4512-a12e-cf7c4251b4a8@linaro.org>
+Date: Thu, 6 Mar 2025 09:22:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304171154.njoygsvfd567pb66@thinkpad> <20250305173826.GA303920@bhelgaas>
- <20250305182833.cgrwbrcwzjscxmku@thinkpad> <20250305190955.GK847772@rocinante>
-In-Reply-To: <20250305190955.GK847772@rocinante>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Mar 2025 09:22:34 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVRSjkss3gPnocXpfPQ=mEo4AevpaU=fdGvm=kb3RTmcQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JrhQM2yc1IEyYpQi2IEGHYpY6yhiE8-bZMdZwiJJ0QwJlNhyHxfSkZ8qMU
-Message-ID: <CAMuHMdVRSjkss3gPnocXpfPQ=mEo4AevpaU=fdGvm=kb3RTmcQ@mail.gmail.com>
-Subject: Re: [PATCH v7 3/5] Add debugfs based silicon debug support in DWC
-To: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Bjorn Helgaas <helgaas@kernel.org>, 
-	Fan Ni <nifan.cxl@gmail.com>, Shradha Todi <shradha.t@samsung.com>, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org, 
-	lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com, 
-	jingoohan1@gmail.com, Jonathan.Cameron@huawei.com, a.manzanares@samsung.com, 
-	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com, 
-	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com, will@kernel.org, 
-	mark.rutland@arm.com, Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, 
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 3/7] media: platform: qcom/iris: add
+ power_off_controller to vpu_ops
+To: Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250305-topic-sm8x50-iris-v10-v2-0-bd65a3fc099e@linaro.org>
+ <20250305-topic-sm8x50-iris-v10-v2-3-bd65a3fc099e@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250305-topic-sm8x50-iris-v10-v2-3-bd65a3fc099e@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+On 05/03/2025 20:05, Neil Armstrong wrote:
+> In order to support the SM8650 iris33 hardware, we need to provide a
+> specific constoller power off sequences via the vpu_ops callbacks.
+> 
+> Add the callback, and use the current helper for currently supported
+> platforms.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>   drivers/media/platform/qcom/iris/iris_vpu2.c       |  1 +
+>   drivers/media/platform/qcom/iris/iris_vpu3.c       |  2 ++
+>   drivers/media/platform/qcom/iris/iris_vpu_common.c | 14 ++++++++++----
+>   drivers/media/platform/qcom/iris/iris_vpu_common.h |  2 ++
+>   4 files changed, 15 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu2.c b/drivers/media/platform/qcom/iris/iris_vpu2.c
+> index 8f502aed43ce2fa6a272a2ce14ff1ca54d3e63a2..7cf1bfc352d34b897451061b5c14fbe90276433d 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu2.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu2.c
+> @@ -34,5 +34,6 @@ static u64 iris_vpu2_calc_freq(struct iris_inst *inst, size_t data_size)
+>   
+>   const struct vpu_ops iris_vpu2_ops = {
+>   	.power_off_hw = iris_vpu_power_off_hw,
+> +	.power_off_controller = iris_vpu_power_off_controller,
+>   	.calc_freq = iris_vpu2_calc_freq,
+>   };
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu3.c b/drivers/media/platform/qcom/iris/iris_vpu3.c
+> index b484638e6105a69319232f667ee7ae95e3853698..95f362633c95b101ecfda6480c4c0b73416bd00c 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu3.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu3.c
+> @@ -117,6 +117,8 @@ static u64 iris_vpu3_calculate_frequency(struct iris_inst *inst, size_t data_siz
+>   }
+>   
+>   const struct vpu_ops iris_vpu3_ops = {
+> +	.reset_controller = iris_vpu_reset_controller,
 
-On Wed, 5 Mar 2025 at 20:10, Krzysztof Wilczy=C5=84ski <kw@linux.com> wrote=
-:
-> [...]
-> > > > Even though debugfs_init() failure is not supposed to fail the prob=
-e(),
-> > > > dwc_pcie_rasdes_debugfs_init() has a devm_kzalloc() and propagating=
- that
-> > > > failure would be canolically correct IMO.
-> > >
-> > > I'm not sure about this.  What's the requirement to propagate
-> > > devm_kzalloc() failures?  I think devres will free any allocs that
-> > > were successful regardless.
-> > >
-> > > IIUC, we resolved the Gray Hawk Single issue by changing
-> > > dwc_pcie_rasdes_debugfs_init() to return success without doing
-> > > anything when there's no RAS DES Capability.
-> > >
-> > > But dwc_pcie_debugfs_init() can still return failure, and that still
-> > > causes dw_pcie_ep_init_registers() to fail, which breaks the "don't
-> > > propagate debugfs issues upstream" rule:
-> > >
-> > >   int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
-> > >   {
-> > >           ...
-> > >           ret =3D dwc_pcie_debugfs_init(pci);
-> > >           if (ret)
-> > >                   goto err_remove_edma;
-> > >
-> > >           return 0;
-> > >
-> > >   err_remove_edma:
-> > >           dw_pcie_edma_remove(pci);
-> > >
-> > >           return ret;
-> > >   }
-> > >
-> > > We can say that kzalloc() failure should "never" happen, and therefor=
-e
-> > > it's OK to fail the driver probe if it happens, but that doesn't seem
-> > > like a strong argument for breaking the "don't propagate debugfs
-> > > issues" rule.  And someday there may be other kinds of failures from
-> > > dwc_pcie_debugfs_init().
+Seems I sent the patches too fast, this is remnant of v1, it should disappear, I'll fix it in v3.
 
-pcie-designware-debugfs.c only does small allocations.  If any of
-these fail, you have much bigger problems, and the system will die soon,
-irrespective of propagating the -ENOMEM or not...
+>   	.power_off_hw = iris_vpu3_power_off_hardware,
+> +	.power_off_controller = iris_vpu_power_off_controller,
+>   	.calc_freq = iris_vpu3_calculate_frequency,
+>   };
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.c b/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> index d6ce92f3c7544e44dccca26bf6a4c95a720f9229..3b3e1ca1e42183561ee78c89f50946fd0cc3c3ab 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.c
+> @@ -251,7 +251,7 @@ static void iris_vpu_power_off_controller_disable(struct iris_core *core)
+>   	iris_disable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_CTRL_POWER_DOMAIN]);
+>   }
+>   
+> -static int iris_vpu_power_off_controller(struct iris_core *core)
+> +int iris_vpu_power_off_controller(struct iris_core *core)
+>   {
+>   	u32 val = 0;
+>   	int ret;
+> @@ -284,23 +284,29 @@ void iris_vpu_power_off(struct iris_core *core)
+>   {
+>   	dev_pm_opp_set_rate(core->dev, 0);
+>   	core->iris_platform_data->vpu_ops->power_off_hw(core);
+> -	iris_vpu_power_off_controller(core);
+> +	core->iris_platform_data->vpu_ops->power_off_controller(core);
+>   	iris_unset_icc_bw(core);
+>   
+>   	if (!iris_vpu_watchdog(core, core->intr_status))
+>   		disable_irq_nosync(core->irq);
+>   }
+>   
+> -static int iris_vpu_power_on_controller(struct iris_core *core)
+> +static int iris_vpu_reset_controller(struct iris_core *core)
+>   {
+>   	u32 rst_tbl_size = core->iris_platform_data->clk_rst_tbl_size;
+> +
+> +	return reset_control_bulk_reset(rst_tbl_size, core->resets);
+> +}
 
-Another issue is that the caller does not handle failures correctly,
-given (A) the irqdomain WARNING I got, and (B) the half-registered
-PCI bus, oopsing on "lspci"...
+Same here, I'll remove this now useless iris_vpu_reset_controller() function.
 
-> > Fine with me. I was not too sure about propagating failure either.
->
-> What if we do this?
->
-> diff --git i/drivers/pci/controller/dwc/pcie-designware-debugfs.c w/drive=
-rs/pci/controller/dwc/pcie-designware-debugfs.c
-> index 586a9d107434..fddf71f014c4 100644
-> --- i/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-> +++ w/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-> @@ -162,7 +162,7 @@ void dwc_pcie_debugfs_deinit(struct dw_pcie *pci)
->         debugfs_remove_recursive(pci->debugfs->debug_dir);
->  }
->
-> -int dwc_pcie_debugfs_init(struct dw_pcie *pci)
-> +void dwc_pcie_debugfs_init(struct dw_pcie *pci)
->  {
->         char dirname[DWC_DEBUGFS_BUF_MAX];
->         struct device *dev =3D pci->dev;
-> @@ -174,17 +174,15 @@ int dwc_pcie_debugfs_init(struct dw_pcie *pci)
->         snprintf(dirname, DWC_DEBUGFS_BUF_MAX, "dwc_pcie_%s", dev_name(de=
-v));
->         dir =3D debugfs_create_dir(dirname, NULL);
->         debugfs =3D devm_kzalloc(dev, sizeof(*debugfs), GFP_KERNEL);
-> -       if (!debugfs)
-> -               return -ENOMEM;
-> +       if (!debugfs) {
-> +               dev_err(dev, "failed to allocate memory for debugfs\n");
+Neil
 
-There is no need to print an error message when a memory allocation
-fails, as the memory allocation core already takes care of that.
-So please drop the dev_err() call.
+> +
+> +static int iris_vpu_power_on_controller(struct iris_core *core)
+> +{
+>   	int ret;
+>   
+>   	ret = iris_enable_power_domains(core, core->pmdomain_tbl->pd_devs[IRIS_CTRL_POWER_DOMAIN]);
+>   	if (ret)
+>   		return ret;
+>   
+> -	ret = reset_control_bulk_reset(rst_tbl_size, core->resets);
+> +	ret = iris_vpu_reset_controller(core);
+>   	if (ret)
+>   		goto err_disable_power;
+>   
+> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_common.h b/drivers/media/platform/qcom/iris/iris_vpu_common.h
+> index 63fa1fa5a4989e48aebdb6c7619c140000c0b44c..f8965661c602f990d5a7057565f79df4112d097e 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vpu_common.h
+> +++ b/drivers/media/platform/qcom/iris/iris_vpu_common.h
+> @@ -13,6 +13,7 @@ extern const struct vpu_ops iris_vpu3_ops;
+>   
+>   struct vpu_ops {
+>   	void (*power_off_hw)(struct iris_core *core);
+> +	int (*power_off_controller)(struct iris_core *core);
+>   	u64 (*calc_freq)(struct iris_inst *inst, size_t data_size);
+>   };
+>   
+> @@ -22,6 +23,7 @@ void iris_vpu_clear_interrupt(struct iris_core *core);
+>   int iris_vpu_watchdog(struct iris_core *core, u32 intr_status);
+>   int iris_vpu_prepare_pc(struct iris_core *core);
+>   int iris_vpu_power_on(struct iris_core *core);
+> +int iris_vpu_power_off_controller(struct iris_core *core);
+>   void iris_vpu_power_off_hw(struct iris_core *core);
+>   void iris_vpu_power_off(struct iris_core *core);
+>   
+> 
 
-> +               return;
-> +       }
->
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
