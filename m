@@ -1,174 +1,417 @@
-Return-Path: <linux-kernel+bounces-549484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2A3CA55318
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:29:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D06A55325
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:32:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 130D1174912
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:29:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E8961757C8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0455525C6F3;
-	Thu,  6 Mar 2025 17:29:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7DE919D89B;
+	Thu,  6 Mar 2025 17:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vzDzs/cR"
-Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="E/erdLU/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076D325BACB
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC84E2192F1;
+	Thu,  6 Mar 2025 17:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741282191; cv=none; b=e8sYlu+zKK0H/2t++fD6sHkgrkxDi0Qeri55kIQ2DiDsg5y5ZKue6JBrZRMAGlgV3PgWFSjbyNHigA/Hxs3B7LIVyonF7uX1VF9SsJrXb17qikiX0oDFd/U9v9QdJ3MywMd6krWNP9s0DGuK1zq6kYQPTxAWEKOo5HDEUJo8C0A=
+	t=1741282356; cv=none; b=szsgcA7xYGHcKRFDeJINg9M9gFLYuje/nPgNcfvKqaOWQbqBySUsr3YWZY6z6ZyazVREp4eW651cwuSKyhgYz2Z96P3FeoPJ2rUi43YtYRRmJIn4LxcY2c68YWKjlxjI2NY9kfL3w1codGSJDuRUWZ2xc9bTBh4/fingDNUu0GE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741282191; c=relaxed/simple;
-	bh=JiXBBKulzpm1G4toJd+w3rK2oa2JI2KBaqVst92x83g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YFHMqiR45tzQSd74+5Gx2qHxDfm+vipHkEFLUDeaXJ9tn+qjlG+iCD4O3J0MMxgjiK9LqapY8tO4LO8c3QQjon+PC1F6KZeEJFaflFXqIEnCG791wz7y6gmws5jSBX0O2rwDTTCeQmEJc0he3XCl6VkTsVmYf4ZYPV8GnXNc//I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vzDzs/cR; arc=none smtp.client-ip=209.85.222.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-8670d630d2dso369474241.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:29:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741282188; x=1741886988; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pXtLFB7rHzBBDM/TAUEEN+9FpT67VqyHhiDM0Anig2k=;
-        b=vzDzs/cRCiQItFRB2GbLTmEsO6b2pDtyv0Q1X3irPGjRoy8lOBya/Jq88zvqJLPs6z
-         2LEENMMT4hyKFG+WsiWqjE2kxrZvjeQOMJMuKkgI+uZlErK0yk6lxzRnZzNIjfJ4twvZ
-         XAAO9UmT5VoyxMN1/dtTvE95mZtQ84F9K1S8Aw/eNojGlqlTFnrf0ig9wqLdn5baRzwP
-         t9eIYPxhKZ1bA8H5JxQx29mqL7LovKvi/eQLsEORFZ2LjTGL+/GKYAc4ejJNMtpiVQF/
-         8JgGf7XMajisqhho1xG8MxHX2hWoCRtHTfGqzOtOGbzxtX3hBPEGosGQ/LMPcXN80ie2
-         EAow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741282188; x=1741886988;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pXtLFB7rHzBBDM/TAUEEN+9FpT67VqyHhiDM0Anig2k=;
-        b=L3zX6f0wENscHxPl+ayZ2Poh5NwBRYqHvc7tKU0JLkiw3apHYGIj2RvNf/M4LTCDAj
-         xVn/jTa/hUc3s99JyjPUg2AcqAjHx2LNfS8uWRxbz1EOLwSpBbhnUFbSWpQqwVHVLMqK
-         GU27BURmbnmo7y+vgPAjFZRO81/ynrKqSDU7x/jJS83LSi2byoRTlK/6W4ohnhc2b7ba
-         xj2D9tsevB3QqOuJSFOz/h4Re8sPX3CyU5F4rlvpXeVfBNL99NpM7QprqtABjt5gpn02
-         7cLTO7YdngApW8S28dnO6XZROeSHk6oKeyKpl91wGAIfvhmlOSprYcVUhdK0dV5jpp/B
-         bPJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUkSg59r4CwOoQKfU7mQQN1FRVpEI8P9XfrcYKusLme51QH1rRVIBQM5kiLFayw126dsEh8eat7G6+k14o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzfep1XqwJ6GzGEHNtKqo2TxpiPDZNVSgv3/GkEeDnLu4h1v6WY
-	IyTiQIq/LYrpVFuLmN1nCZfkR0YoVjF+sI71+HEpdF/qsCK4StyitNx7pItpr3S0/Dpr8yVqs3u
-	8qHdh5M9Evg5V29CTXwP+ydMFNURbFxAoNBRODQ==
-X-Gm-Gg: ASbGnctAdlYLJA4tNeRFwSQFfXAcUO48LvEJfVk4YazgBf+Kzyx+Bbj3xpzulRjKwce
-	2vaxbBIEfScje1ErL1ScDXf1xtDA2a/zSr2qaTL1Nl4FUX3hL9JJWPiSbHw1gHr3wiLsdVSddJR
-	obEk+mDNMoW9Q7m+vDFaEzohYofpX8xX2u4tgatq5ffaNjU8dINuYgK1myjb0=
-X-Google-Smtp-Source: AGHT+IFNXCtuHq8zvVxiVQYiR8dorrj9uyzpsQMGx5pTaYKW3Lqu3uOnXFHmE6jvJxArEtny4FPQcKgSRyM9FNa8LGA=
-X-Received: by 2002:a05:6102:3594:b0:4c1:90ee:ab2 with SMTP id
- ada2fe7eead31-4c2e2815489mr5712797137.14.1741282187745; Thu, 06 Mar 2025
- 09:29:47 -0800 (PST)
+	s=arc-20240116; t=1741282356; c=relaxed/simple;
+	bh=A7zLjVG6YZ+2TI9o/IVTJYRiZhxZvh0qIPkvFCcsucU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=azV12gUMVU0gFUt14lxbJjhvxJKC9x4Ll9LJ5nvFTQQDPNd/TQ/3FUuyhk+2/fVbtKCeZ7y+v9GYXuvucTd17mqKUeB7UaFqj2zR1IidoMdmcVgWRNoYOPAmxC4YpxJsQNEQuBPcPpDC4hSdeM8rOAWIzRZIaXbGjqbjsd7EFEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=E/erdLU/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526Awxlm006820;
+	Thu, 6 Mar 2025 17:32:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=wqN+oUEBZy4in/4xutVX3dcLn914vASacUX78rTNBqg=; b=E/
+	erdLU/+bSA7eHCNVsWzZqa0MyhkjtHXJjTn/tg25fYvTibfWSMooJoWAfta/JuUY
+	rXH1PMT+hH1UOmJze959qRrJPTslufwTHFcTZ+mTo2L9jLhMylgrlqI5H0+ujqnD
+	xBK3gf0P68sk0dp3KcWdSJ/iKxi1PlK1ay2T0wmPrVZapBUUjRMB5X47mFZ7ii2I
+	HBSEaM76Gz2bbUOzlO/IwaAsXfhMno/fd4++J+q2gWW4V7+PPfyiKkREoAz9VEKi
+	UrTaV/qtU3/sIBW9FSPsAkadK1X8otEr0lg5E9YgPhGyfHCB02CU+zulEDDnB1Cp
+	aDFNo/eoFbpZzK37aBBw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4571sdamyv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Mar 2025 17:32:00 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 526HVx1P008543
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 6 Mar 2025 17:31:59 GMT
+Received: from stor-berry.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 6 Mar 2025 09:31:58 -0800
+From: "Bao D. Nguyen" <quic_nguyenb@quicinc.com>
+To: <quic_cang@quicinc.com>, <quic_nitirawa@quicinc.com>, <bvanassche@acm.org>,
+        <avri.altman@wdc.com>, <peter.wang@mediatek.com>,
+        <manivannan.sadhasivam@linaro.org>, <minwoo.im@samsung.com>,
+        <adrian.hunter@intel.com>, <martin.petersen@oracle.com>
+CC: <linux-scsi@vger.kernel.org>, "Bao D. Nguyen" <quic_nguyenb@quicinc.com>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        "James E.J. Bottomley"
+	<James.Bottomley@HansenPartnership.com>,
+        Bean Huo <beanhuo@micron.com>,
+        "Ziqi
+ Chen" <quic_ziqichen@quicinc.com>,
+        Keoseong Park <keosung.park@samsung.com>,
+        Gwendal Grignou <gwendal@chromium.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Eric Biggers <ebiggers@google.com>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 1/1] scsi: ufs: core: add device level exception support
+Date: Thu, 6 Mar 2025 09:31:06 -0800
+Message-ID: <772730b9a036a33bebc27cb854576a012e76ca91.1741282081.git.quic_nguyenb@quicinc.com>
+X-Mailer: git-send-email 2.7.4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306151412.957725234@linuxfoundation.org>
-In-Reply-To: <20250306151412.957725234@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 6 Mar 2025 22:59:35 +0530
-X-Gm-Features: AQ5f1Jo2c_NWeRxraJqOe3rUK2VTQXZDSVRCocH07muKH4PVHGeh0vesJBzv5Ho
-Message-ID: <CA+G9fYtfmMThUC+erk6jVk8BN0jWJCw=FnKh68ypwhgv65OZ+w@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/147] 6.6.81-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	nik.borisov@suse.com, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Tke_d13tCRwaIUEVI2lss-VEKQttIhYV
+X-Authority-Analysis: v=2.4 cv=W6PCVQWk c=1 sm=1 tr=0 ts=67c9dc10 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=D3a0u0wl9lu6AOdgJ4EA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: Tke_d13tCRwaIUEVI2lss-VEKQttIhYV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-06_06,2025-03-06_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 clxscore=1015 impostorscore=0 spamscore=0 malwarescore=0
+ mlxlogscore=999 adultscore=0 bulkscore=0 suspectscore=0 mlxscore=0
+ lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503060133
 
-On Thu, 6 Mar 2025 at 20:50, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.81 release.
-> There are 147 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 08 Mar 2025 15:13:38 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.81-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+The device JEDEC standard version 4.1 adds support for the device
+level exception events. To support this new device level exception
+feature, expose two new sysfs nodes below to provide
+the user space access to the device level exception information.
+/sys/bus/platform/drivers/ufshcd/*/device_lvl_exception
+/sys/bus/platform/drivers/ufshcd/*/device_lvl_exception_id
 
+The device_lvl_exception sysfs node reports the number of
+device level exceptions that have occurred since the last time
+this variable is reset.
+The device_lvl_exception_id sysfs node reports the exception ID
+which is the JEDEC standard qDeviceLevelExceptionID attribute.
+The user space application can query these sysfs nodes to get more
+information about the device level exception.
 
-Regressions on i386 the defconfig builds failed with clang-20
-and gcc-13 the stable-rc 6.6.81-rc2.
+Signed-off-by: Bao D. Nguyen <quic_nguyenb@quicinc.com>
+---
+ Documentation/ABI/testing/sysfs-driver-ufs | 23 +++++++++++
+ drivers/ufs/core/ufs-sysfs.c               | 54 ++++++++++++++++++++++++++
+ drivers/ufs/core/ufshcd-priv.h             |  1 +
+ drivers/ufs/core/ufshcd.c                  | 61 ++++++++++++++++++++++++++++++
+ include/uapi/scsi/scsi_bsg_ufs.h           |  9 +++++
+ include/ufs/ufs.h                          |  5 ++-
+ include/ufs/ufshcd.h                       |  5 +++
+ 7 files changed, 157 insertions(+), 1 deletion(-)
 
-First seen on the
- Good: v6.6.78
- Bad: v6.6.78-442-g8f0527d547fe
+diff --git a/Documentation/ABI/testing/sysfs-driver-ufs b/Documentation/ABI/testing/sysfs-driver-ufs
+index ae01912..5cf3f43 100644
+--- a/Documentation/ABI/testing/sysfs-driver-ufs
++++ b/Documentation/ABI/testing/sysfs-driver-ufs
+@@ -1604,3 +1604,26 @@ Description:
+ 		prevent the UFS from frequently performing clock gating/ungating.
+ 
+ 		The attribute is read/write.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/device_lvl_exception
++What:		/sys/bus/platform/devices/*.ufs/device_lvl_exception
++Date:		March 2025
++Contact:	Bao D. Nguyen <quic_nguyenb@quicinc.com>
++Description:
++		The device_lvl_exception is a counter indicating the number
++		of times the device level exceptions have occurred since the
++		last time this variable is reset. Read the device_lvl_exception_id
++		sysfs node to know more information about the exception.
++		The file is read only.
++
++What:		/sys/bus/platform/drivers/ufshcd/*/device_lvl_exception_id
++What:		/sys/bus/platform/devices/*.ufs/device_lvl_exception_id
++Date:		March 2025
++Contact:	Bao D. Nguyen <quic_nguyenb@quicinc.com>
++Description:
++		Reading the device_lvl_exception_id returns the device JEDEC
++		standard's qDeviceLevelExceptionID attribute. The definition of the
++		qDeviceLevelExceptionID is the ufs device vendor specific design.
++		Refer to the device manufacturer datasheet for more information
++		on the meaning of the qDeviceLevelExceptionID attribute value.
++		The file is read only.
+diff --git a/drivers/ufs/core/ufs-sysfs.c b/drivers/ufs/core/ufs-sysfs.c
+index 90b5ab6..0248288a 100644
+--- a/drivers/ufs/core/ufs-sysfs.c
++++ b/drivers/ufs/core/ufs-sysfs.c
+@@ -466,6 +466,56 @@ static ssize_t critical_health_show(struct device *dev,
+ 	return sysfs_emit(buf, "%d\n", hba->critical_health_count);
+ }
+ 
++static ssize_t device_lvl_exception_show(struct device *dev,
++					 struct device_attribute *attr,
++					 char *buf)
++{
++	struct ufs_hba *hba = dev_get_drvdata(dev);
++
++	if (hba->dev_info.wspecversion < 0x410)
++		return -EOPNOTSUPP;
++
++	return sysfs_emit(buf, "%u\n", hba->dev_lvl_exception_count);
++}
++
++static ssize_t device_lvl_exception_store(struct device *dev,
++					  struct device_attribute *attr,
++					  const char *buf, size_t count)
++{
++	struct ufs_hba *hba = dev_get_drvdata(dev);
++	unsigned int value;
++
++	if (kstrtouint(buf, 0, &value))
++		return -EINVAL;
++
++	/* the only supported usecase is to reset the dev_lvl_exception_count */
++	if (value)
++		return -EINVAL;
++
++	hba->dev_lvl_exception_count = 0;
++
++	return count;
++}
++
++static ssize_t device_lvl_exception_id_show(struct device *dev,
++					    struct device_attribute *attr,
++					    char *buf)
++{
++	struct ufs_hba *hba = dev_get_drvdata(dev);
++	u64 exception_id;
++	int err;
++
++	ufshcd_rpm_get_sync(hba);
++	err = ufshcd_read_device_lvl_exception_id(hba, &exception_id);
++	ufshcd_rpm_put_sync(hba);
++
++	if (err)
++		return err;
++
++	hba->dev_lvl_exception_id = exception_id;
++	return sysfs_emit(buf, "%llu\n", exception_id);
++}
++
+ static DEVICE_ATTR_RW(rpm_lvl);
+ static DEVICE_ATTR_RO(rpm_target_dev_state);
+ static DEVICE_ATTR_RO(rpm_target_link_state);
+@@ -479,6 +529,8 @@ static DEVICE_ATTR_RW(wb_flush_threshold);
+ static DEVICE_ATTR_RW(rtc_update_ms);
+ static DEVICE_ATTR_RW(pm_qos_enable);
+ static DEVICE_ATTR_RO(critical_health);
++static DEVICE_ATTR_RW(device_lvl_exception);
++static DEVICE_ATTR_RO(device_lvl_exception_id);
+ 
+ static struct attribute *ufs_sysfs_ufshcd_attrs[] = {
+ 	&dev_attr_rpm_lvl.attr,
+@@ -494,6 +546,8 @@ static struct attribute *ufs_sysfs_ufshcd_attrs[] = {
+ 	&dev_attr_rtc_update_ms.attr,
+ 	&dev_attr_pm_qos_enable.attr,
+ 	&dev_attr_critical_health.attr,
++	&dev_attr_device_lvl_exception.attr,
++	&dev_attr_device_lvl_exception_id.attr,
+ 	NULL
+ };
+ 
+diff --git a/drivers/ufs/core/ufshcd-priv.h b/drivers/ufs/core/ufshcd-priv.h
+index 10b4a19..d0a2c96 100644
+--- a/drivers/ufs/core/ufshcd-priv.h
++++ b/drivers/ufs/core/ufshcd-priv.h
+@@ -94,6 +94,7 @@ int ufshcd_exec_raw_upiu_cmd(struct ufs_hba *hba,
+ 			     enum query_opcode desc_op);
+ 
+ int ufshcd_wb_toggle(struct ufs_hba *hba, bool enable);
++int ufshcd_read_device_lvl_exception_id(struct ufs_hba *hba, u64 *exception_id);
+ 
+ /* Wrapper functions for safely calling variant operations */
+ static inline const char *ufshcd_get_var_name(struct ufs_hba *hba)
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 4e1e214..01b2f95 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -6013,6 +6013,44 @@ static void ufshcd_bkops_exception_event_handler(struct ufs_hba *hba)
+ 				__func__, err);
+ }
+ 
++int ufshcd_read_device_lvl_exception_id(struct ufs_hba *hba, u64 *exception_id)
++{
++	struct utp_upiu_query_response_v4_0 *upiu_resp;
++	struct ufs_query_req *request = NULL;
++	struct ufs_query_res *response = NULL;
++	int err;
++
++	if (hba->dev_info.wspecversion < 0x410)
++		return -EOPNOTSUPP;
++
++	ufshcd_hold(hba);
++	mutex_lock(&hba->dev_cmd.lock);
++
++	ufshcd_init_query(hba, &request, &response,
++			  UPIU_QUERY_OPCODE_READ_ATTR,
++			  QUERY_ATTR_IDN_DEV_LVL_EXCEPTION_ID, 0, 0);
++
++	request->query_func = UPIU_QUERY_FUNC_STANDARD_READ_REQUEST;
++
++	err = ufshcd_exec_dev_cmd(hba, DEV_CMD_TYPE_QUERY, QUERY_REQ_TIMEOUT);
++
++	if (err) {
++		dev_err(hba->dev, "%s: failed to read device level exception %d\n",
++			__func__, err);
++		goto out;
++	}
++
++	upiu_resp = (struct utp_upiu_query_response_v4_0 *)response;
++	*exception_id = get_unaligned_be64(&upiu_resp->value);
++
++out:
++	mutex_unlock(&hba->dev_cmd.lock);
++	ufshcd_release(hba);
++
++	return err;
++}
++EXPORT_SYMBOL_GPL(ufshcd_read_device_lvl_exception_id);
++
+ static int __ufshcd_wb_toggle(struct ufs_hba *hba, bool set, enum flag_idn idn)
+ {
+ 	u8 index;
+@@ -6240,6 +6278,11 @@ static void ufshcd_exception_event_handler(struct work_struct *work)
+ 		sysfs_notify(&hba->dev->kobj, NULL, "critical_health");
+ 	}
+ 
++	if (status & hba->ee_drv_mask & MASK_EE_DEV_LVL_EXCEPTION) {
++		hba->dev_lvl_exception_count++;
++		sysfs_notify(&hba->dev->kobj, NULL, "device_lvl_exception");
++	}
++
+ 	ufs_debugfs_exception_event(hba, status);
+ }
+ 
+@@ -8139,6 +8182,22 @@ static void ufshcd_temp_notif_probe(struct ufs_hba *hba, const u8 *desc_buf)
+ 	}
+ }
+ 
++static void ufshcd_device_lvl_exception_probe(struct ufs_hba *hba, u8 *desc_buf)
++{
++	u32 ext_ufs_feature;
++
++	if (hba->dev_info.wspecversion < 0x410)
++		return;
++
++	ext_ufs_feature = get_unaligned_be32(desc_buf +
++				DEVICE_DESC_PARAM_EXT_UFS_FEATURE_SUP);
++	if (!(ext_ufs_feature & UFS_DEV_LVL_EXCEPTION_SUP))
++		return;
++
++	hba->dev_lvl_exception_count = 0;
++	ufshcd_enable_ee(hba, MASK_EE_DEV_LVL_EXCEPTION);
++}
++
+ static void ufshcd_set_rtt(struct ufs_hba *hba)
+ {
+ 	struct ufs_dev_info *dev_info = &hba->dev_info;
+@@ -8339,6 +8398,8 @@ static int ufs_get_device_desc(struct ufs_hba *hba)
+ 
+ 	ufs_init_rtc(hba, desc_buf);
+ 
++	ufshcd_device_lvl_exception_probe(hba, desc_buf);
++
+ 	/*
+ 	 * ufshcd_read_string_desc returns size of the string
+ 	 * reset the error value
+diff --git a/include/uapi/scsi/scsi_bsg_ufs.h b/include/uapi/scsi/scsi_bsg_ufs.h
+index 8c29e49..8b61dff 100644
+--- a/include/uapi/scsi/scsi_bsg_ufs.h
++++ b/include/uapi/scsi/scsi_bsg_ufs.h
+@@ -143,6 +143,15 @@ struct utp_upiu_query_v4_0 {
+ 	__be32 reserved;
+ };
+ 
++struct utp_upiu_query_response_v4_0 {
++	__u8 opcode;
++	__u8 idn;
++	__u8 index;
++	__u8 selector;
++	__be64 value;
++	__be32 reserved;
++} __attribute__((__packed__));
++
+ /**
+  * struct utp_upiu_cmd - Command UPIU structure
+  * @exp_data_transfer_len: Data Transfer Length DW-3
+diff --git a/include/ufs/ufs.h b/include/ufs/ufs.h
+index 8a24ed5..1c47136 100644
+--- a/include/ufs/ufs.h
++++ b/include/ufs/ufs.h
+@@ -180,7 +180,8 @@ enum attr_idn {
+ 	QUERY_ATTR_IDN_AVAIL_WB_BUFF_SIZE       = 0x1D,
+ 	QUERY_ATTR_IDN_WB_BUFF_LIFE_TIME_EST    = 0x1E,
+ 	QUERY_ATTR_IDN_CURR_WB_BUFF_SIZE        = 0x1F,
+-	QUERY_ATTR_IDN_TIMESTAMP		= 0x30
++	QUERY_ATTR_IDN_TIMESTAMP		= 0x30,
++	QUERY_ATTR_IDN_DEV_LVL_EXCEPTION_ID     = 0x34,
+ };
+ 
+ /* Descriptor idn for Query requests */
+@@ -390,6 +391,7 @@ enum {
+ 	UFS_DEV_EXT_TEMP_NOTIF		= BIT(6),
+ 	UFS_DEV_HPB_SUPPORT		= BIT(7),
+ 	UFS_DEV_WRITE_BOOSTER_SUP	= BIT(8),
++	UFS_DEV_LVL_EXCEPTION_SUP       = BIT(12),
+ };
+ #define UFS_DEV_HPB_SUPPORT_VERSION		0x310
+ 
+@@ -419,6 +421,7 @@ enum {
+ 	MASK_EE_TOO_LOW_TEMP		= BIT(4),
+ 	MASK_EE_WRITEBOOSTER_EVENT	= BIT(5),
+ 	MASK_EE_PERFORMANCE_THROTTLING	= BIT(6),
++	MASK_EE_DEV_LVL_EXCEPTION       = BIT(7),
+ 	MASK_EE_HEALTH_CRITICAL		= BIT(9),
+ };
+ #define MASK_EE_URGENT_TEMP (MASK_EE_TOO_HIGH_TEMP | MASK_EE_TOO_LOW_TEMP)
+diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
+index e3909cc..ad90a43 100644
+--- a/include/ufs/ufshcd.h
++++ b/include/ufs/ufshcd.h
+@@ -968,6 +968,9 @@ enum ufshcd_mcq_opr {
+  * @pm_qos_req: PM QoS request handle
+  * @pm_qos_enabled: flag to check if pm qos is enabled
+  * @critical_health_count: count of critical health exceptions
++ * @dev_lvl_exception_count: count of device level exceptions since last reset
++ * @dev_lvl_exception_id: vendor specific information about the
++ * device level exception event.
+  */
+ struct ufs_hba {
+ 	void __iomem *mmio_base;
+@@ -1138,6 +1141,8 @@ struct ufs_hba {
+ 	bool pm_qos_enabled;
+ 
+ 	int critical_health_count;
++	u32 dev_lvl_exception_count;
++	u64 dev_lvl_exception_id;
+ };
+ 
+ /**
+-- 
+2.7.4
 
-* i386 build
-  - clang-20-defconfig
-  - clang-nightly-defconfig
-  - gcc-13-defconfig
-  - gcc-8-defconfig
-
-Regression Analysis:
- - New regression? Yes
- - Reproducibility? Yes
-
-Build regression: i386 microcode core.c use of undeclared identifier
-'initrd_start_early'
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build log
-arch/x86/kernel/cpu/microcode/core.c:198:11: error: use of undeclared
-identifier 'initrd_start_early'; did you mean 'initrd_start'?
-  198 |                 start = initrd_start_early;
-      |                         ^~~~~~~~~~~~~~~~~~
-      |                         initrd_start
-include/linux/initrd.h:18:22: note: 'initrd_start' declared here
-   18 | extern unsigned long initrd_start, initrd_end;
-      |                      ^
-1 error generated.
-
-## Source
-* Kernel version: 6.6.81-rc2
-* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* Git sha: 8f0527d547fe50fe08bab12d39c9a2cfb4f6ef3f
-* Git describe: v6.6.78-442-g8f0527d547fe
-* Project details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.78-437-g9f243f9dd268
-
-## Build
-* Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.78-442-g8f0527d547fe/testrun/27525967/suite/build/test/clang-20-lkftconfig/log
-* Build history:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.78-442-g8f0527d547fe/testrun/27526163/suite/build/test/clang-20-lkftconfig/history/
-* Build details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.78-442-g8f0527d547fe/testrun/27526163/suite/build/test/clang-20-lkftconfig/
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2twuoLsehi5aV5tpYyqa6pqU9cZ/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2twuoLsehi5aV5tpYyqa6pqU9cZ/config
-
-## Steps to reproduce
-- tuxmake --runtime podman --target-arch i386 --toolchain clang-20
---kconfig defconfig LLVM=1 LLVM_IAS=1
-
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
