@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-549993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EE00A559A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:24:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AECC3A559AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:24:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6639B189645E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:24:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9752D3B172A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:24:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B014727CB10;
-	Thu,  6 Mar 2025 22:23:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B1527CB34;
+	Thu,  6 Mar 2025 22:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LEDnF/vA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MbcKDMn+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1019E33981;
-	Thu,  6 Mar 2025 22:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A2927C867;
+	Thu,  6 Mar 2025 22:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741299833; cv=none; b=WZq8B/ZQecvOmGMTWI/1vT9K1L8gMdIdDPUfCYuW9ApPzeetKZ+qZcpV+Hea8WuppTn1bArLKp21rv8+VCqQuE1mC7ylX1CfX/IBZ9e0sLGgjHkl42MX1oKoq82WGE2B6gM4OQ/uOEoK7SRCFZ1Ih7NKpJiUoY2JUVHfduCQTmQ=
+	t=1741299839; cv=none; b=QCjSndDFmxn66bQIA4AwPX6Gy56CCtwBpW2WwzxI1s6kextZJTsqRAMPqLHAWK+QHXUBMjZoIA3YojbL4NAOLs1AoTEF3Zp1ZiVYCg+jlX8/kdT9KWAKWsSvGLdhhDiMNeOozBmnvrkvS3bd337Q4kBbW+LXgwaq0ukW+UkdbgY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741299833; c=relaxed/simple;
-	bh=y3CZ8ZJK599hbiqH7CSxRE1Iiyt7j7EOyB3glexphq4=;
+	s=arc-20240116; t=1741299839; c=relaxed/simple;
+	bh=ILGJjKKo5nQZHxzXgwewCMckflvSqIeS3xmxKI0k4uM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VuluLw8GL8WEh+LOzVNLChhHz3BrS079i1epggkiBCdNAvDj6iutPYbYBAbXBsufyPkF8+zI2MscRsHKLiOGSJuTi8HeXWCO+JbIzhy0MOy5sj6wEj8bzD2mYGCHXny5sPRBnxFmaBD1Duk+V1wUei805uKrblM5SznFIvpZi5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LEDnF/vA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C56EC4CEE9;
-	Thu,  6 Mar 2025 22:23:46 +0000 (UTC)
+	 MIME-Version; b=EI3POJgmeIfj3YF6fTAnP3CU6S3/VrISBOHuxK8QGFEXpENPLCL8UFGgY8hD9uelu9GaFk9YBcLc/OSP2M6KCW5Se6rII5agz5rcSIT5lgjH48fGS/Sh6hYRLM7Hzu8mCV+zInJxtH+QQu1d0ZlUdyrBKiSpcqXGv7cfj0dwofw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MbcKDMn+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7D4AC4CEEB;
+	Thu,  6 Mar 2025 22:23:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741299832;
-	bh=y3CZ8ZJK599hbiqH7CSxRE1Iiyt7j7EOyB3glexphq4=;
+	s=k20201202; t=1741299839;
+	bh=ILGJjKKo5nQZHxzXgwewCMckflvSqIeS3xmxKI0k4uM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LEDnF/vAatuGoGS+jJ/f8Il9WWcjMiMR52s7GqhoM1H4CT+lNLEGSl/8twSncm9K9
-	 VhHca6D76eqleQx4IeiIcOiKo78v8SEwd77XX44t1sIsI/siVVY8xh7JXCVcv/m1Os
-	 GKi62DLNuE9J7e+uiPAemMzd+tT9Kcz52TbrE62MJcVtBiG8ot2YDrbbKm9oqzSZI3
-	 wYA8lWbI9M7DACASeAdo1E0303TcVmLEl1GtwhUspNlb+sX7BW0AzOOyTgZxrK6wjc
-	 DgdVys5kg1YAUSc3zuHdDCJethaX59mIgaGzpXXlPpb2Jqtt5ACy+G4PCM1QUY6VFY
-	 VPRgyxiKmzhTQ==
+	b=MbcKDMn+v17Jlhx7k1of1maIC3wGlRZRcgexU9K896QzxSROQEhd5YkuHiPaEKPfp
+	 YNd15lAFxZ5nEXsQtXTWFtQX4EbhZRYBZhw4UxQwHF4sDXrUGs18SHeJP5xTLZGQNn
+	 hAEOFNMyQWxy7wX7mBDL5FfHqozrd1QbipglcV6Xi0TafZxC01zX/71bJxfdXTe0E9
+	 VUbQpWfSuyDow21BWdgx9ZScYZEgK9d7+ePkGYbHau+R6kL1vlhVoLkfEvIjJ1/Yka
+	 EhZNKq8Q6eaXv42yK9oZILxlBrXGKMonB+Gsk8TC1yKwd51UvPs6zN3kGcJGdysJan
+	 59FwoY6ItGEkg==
 From: Danilo Krummrich <dakr@kernel.org>
 To: airlied@gmail.com,
 	simona@ffwll.ch,
@@ -73,9 +73,9 @@ Cc: ojeda@kernel.org,
 	nouveau@lists.freedesktop.org,
 	rust-for-linux@vger.kernel.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v6 1/5] rust: module: add type `LocalModule`
-Date: Thu,  6 Mar 2025 23:23:27 +0100
-Message-ID: <20250306222336.23482-2-dakr@kernel.org>
+Subject: [PATCH v6 2/5] rust: firmware: introduce `firmware::ModInfoBuilder`
+Date: Thu,  6 Mar 2025 23:23:28 +0100
+Message-ID: <20250306222336.23482-3-dakr@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250306222336.23482-1-dakr@kernel.org>
 References: <20250306222336.23482-1-dakr@kernel.org>
@@ -87,36 +87,159 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The `LocalModule` type is the type of the module created by `module!`,
-`module_pci_driver!`, `module_platform_driver!`, etc.
+The `firmware` field of the `module!` only accepts literal strings,
+which is due to the fact that it is implemented as a proc macro.
 
-Since the exact type of the module is sometimes generated on the fly by
-the listed macros, provide an alias.
+Some drivers require a lot of firmware files (such as nova-core) and
+hence benefit from more flexibility composing firmware path strings.
 
-This is first used by the `module_firmware!` macro.
+The `firmware::ModInfoBuilder` is a helper component to flexibly compose
+firmware path strings for the .modinfo section in const context.
 
-Acked-by: Miguel Ojeda <ojeda@kernel.org>
-Suggested-by: Alice Ryhl <aliceryhl@google.com>
+It is meant to be used in combination with `kernel::module_firmware!`.
+
+Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 ---
- rust/macros/module.rs | 4 ++++
- 1 file changed, 4 insertions(+)
+ rust/kernel/firmware.rs | 127 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 127 insertions(+)
 
-diff --git a/rust/macros/module.rs b/rust/macros/module.rs
-index cdf94f4982df..110e59c64197 100644
---- a/rust/macros/module.rs
-+++ b/rust/macros/module.rs
-@@ -228,6 +228,10 @@ pub(crate) fn module(ts: TokenStream) -> TokenStream {
-                 kernel::ThisModule::from_ptr(core::ptr::null_mut())
-             }};
- 
-+            /// The `LocalModule` type is the type of the module created by `module!`,
-+            /// `module_pci_driver!`, `module_platform_driver!`, etc.
-+            type LocalModule = {type_};
+diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
+index c5162fdc95ff..6008b62f2de8 100644
+--- a/rust/kernel/firmware.rs
++++ b/rust/kernel/firmware.rs
+@@ -115,3 +115,130 @@ unsafe impl Send for Firmware {}
+ // SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, references to which are safe to
+ // be used from any thread.
+ unsafe impl Sync for Firmware {}
 +
-             impl kernel::ModuleMetadata for {type_} {{
-                 const NAME: &'static kernel::str::CStr = kernel::c_str!(\"{name}\");
-             }}
++/// Builder for firmware module info.
++///
++/// [`ModInfoBuilder`] is a helper component to flexibly compose firmware paths strings for the
++/// .modinfo section in const context.
++///
++/// Therefore the [`ModInfoBuilder`] provides the methods [`ModInfoBuilder::new_entry`] and
++/// [`ModInfoBuilder::push`], where the latter is used to push path components and the former to
++/// mark the beginning of a new path string.
++///
++/// [`ModInfoBuilder`] is meant to be used in combination with `kernel::module_firmware!`.
++///
++/// The const generic `N` as well as the `module_name` parameter of [`ModInfoBuilder::new`] is an
++/// internal implementation detail and supplied through the above macro.
++pub struct ModInfoBuilder<const N: usize> {
++    buf: [u8; N],
++    n: usize,
++    module_name: &'static CStr,
++}
++
++impl<const N: usize> ModInfoBuilder<N> {
++    /// Create an empty builder instance.
++    pub const fn new(module_name: &'static CStr) -> Self {
++        Self {
++            buf: [0; N],
++            n: 0,
++            module_name,
++        }
++    }
++
++    const fn push_internal(mut self, bytes: &[u8]) -> Self {
++        let mut j = 0;
++
++        if N == 0 {
++            self.n += bytes.len();
++            return self;
++        }
++
++        while j < bytes.len() {
++            if self.n < N {
++                self.buf[self.n] = bytes[j];
++            }
++            self.n += 1;
++            j += 1;
++        }
++        self
++    }
++
++    /// Push an additional path component.
++    ///
++    /// Append path components to the [`ModInfoBuilder`] instance. Paths need to be separated
++    /// with [`ModInfoBuilder::new_entry`].
++    ///
++    /// # Example
++    ///
++    /// ```
++    /// use kernel::firmware::ModInfoBuilder;
++    ///
++    /// # const DIR: &str = "vendor/chip/";
++    /// # const fn no_run<const N: usize>(builder: ModInfoBuilder<N>) {
++    /// let builder = builder.new_entry()
++    ///     .push(DIR)
++    ///     .push("foo.bin")
++    ///     .new_entry()
++    ///     .push(DIR)
++    ///     .push("bar.bin");
++    /// # }
++    /// ```
++    pub const fn push(self, s: &str) -> Self {
++        // Check whether there has been an initial call to `next_entry()`.
++        if N != 0 && self.n == 0 {
++            crate::build_error!("Must call next_entry() before push().");
++        }
++
++        self.push_internal(s.as_bytes())
++    }
++
++    const fn push_module_name(self) -> Self {
++        let mut this = self;
++        let module_name = this.module_name;
++
++        if !this.module_name.is_empty() {
++            this = this.push_internal(module_name.as_bytes_with_nul());
++
++            if N != 0 {
++                // Re-use the space taken by the NULL terminator and swap it with the '.' separator.
++                this.buf[this.n - 1] = b'.';
++            }
++        }
++
++        this
++    }
++
++    /// Prepare the [`ModInfoBuilder`] for the next entry.
++    ///
++    /// This method acts as a separator between module firmware path entries.
++    ///
++    /// Must be called before constructing a new entry with subsequent calls to
++    /// [`ModInfoBuilder::push`].
++    ///
++    /// See [`ModInfoBuilder::push`] for an example.
++    pub const fn new_entry(self) -> Self {
++        self.push_internal(b"\0")
++            .push_module_name()
++            .push_internal(b"firmware=")
++    }
++
++    /// Build the byte array.
++    pub const fn build(self) -> [u8; N] {
++        // Add the final NULL terminator.
++        let this = self.push_internal(b"\0");
++
++        if this.n == N {
++            this.buf
++        } else {
++            crate::build_error!("Length mismatch.");
++        }
++    }
++}
++
++impl ModInfoBuilder<0> {
++    /// Return the length of the byte array to build.
++    pub const fn build_length(self) -> usize {
++        // Compensate for the NULL terminator added by `build`.
++        self.n + 1
++    }
++}
 -- 
 2.48.1
 
