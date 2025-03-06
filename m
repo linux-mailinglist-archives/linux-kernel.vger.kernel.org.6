@@ -1,186 +1,226 @@
-Return-Path: <linux-kernel+bounces-548941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 444DCA54B30
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:50:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03E09A54B34
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:51:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F4B51727E1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:50:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E14C172102
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37AE21FCFE6;
-	Thu,  6 Mar 2025 12:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E8A1F03D2;
+	Thu,  6 Mar 2025 12:51:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Uu3L2VRL"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="icMrSTub"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 089091FAC45
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 12:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F25201005
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 12:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741265433; cv=none; b=f8pL1D4oodfSh2fXQBTJIEjFfdE8ZIMSCbqDW/g4IFh070g3639AyeZFVb3+OGfuKMjUyq98W9pqXkjf1CJB3G6WBr5VBMs0Iu0cdIf1c0q3/4/GLV2HBanM828mkqrlfQQaV9goqGC8AK1ue1C9hGXdmKtQWLwco+h7csuF8RY=
+	t=1741265463; cv=none; b=r8LIxGTBHhlvYWq0ZlrrFiIe/gM336MUAnhzcyfvDrpER5sMi2CwLMgJdkzkVA8S8TnRs43+YSElSc3+a/8RUeXobjcuwnCPfgoZoPv8WSVtS9h+539nmyJpf8EHO/nCftCJIl6+ncK8Eusr4gNDViSxs+qwzs9hwlGUCOQ03Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741265433; c=relaxed/simple;
-	bh=BtNMsxiok8bjE/Uecuit1I1KeHCfuemYnlxgnIJ8nGI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IONeZqmw9WRxIIrBHoRi4nC4DicGGZGgM6Zf96owLLWB2e+vTon/fwJEOn7XQDaSEEWkAGV3KiU5rb3rNZxrLlhgSSQ9qWH6XLdrGcodOYUP4Lt7HMsBc2A68IAotDQXt3Ed/LNuWgN+hHdGOT7DfZcxss8X9maaOYLLl2njV3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Uu3L2VRL; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741265432; x=1772801432;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BtNMsxiok8bjE/Uecuit1I1KeHCfuemYnlxgnIJ8nGI=;
-  b=Uu3L2VRLETsgIrbev16snR698mXLgvNB3QHbnEsFpLRQ97wu5Ta+jYaG
-   k/TAkA1uPKIMqzU5ixY9k/x4HbP7+uWjkYfMWtmIm0UsvyqNKoBil1Rcp
-   y90Frm9wngMxvnyt5EMHeXY1Q7mU2CFBFRdQwB013OaMWHWGhqdOZeWAH
-   q79OmFAtS4ugVODwz5zsue9dhhAiszU3GMqY/EeUF5oBAr7S78CFr4U3d
-   pdRFhiXC0CXK2zY70dAOCnubQjZlcVVuFeO5eyeERXuqeGu+BT93tc5N2
-   NJ8O1SfzOj9lA6gVQFlBKIwz6hwVOPNKDqSyz5BlvvKbgNP4ZGdIwqP/0
-   g==;
-X-CSE-ConnectionGUID: XSdsHb6QRAS8XX1rxjzbSg==
-X-CSE-MsgGUID: i6ZAcoWaTg6smoLoj1rDMQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="41978048"
-X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
-   d="scan'208";a="41978048"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 04:50:29 -0800
-X-CSE-ConnectionGUID: InDhsmqWSpus9n+GhZgblQ==
-X-CSE-MsgGUID: BkU8VWW0QJO1LHb3Lp9ryQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
-   d="scan'208";a="119021849"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 04:50:27 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tqAgC-000000007R2-3yOR;
-	Thu, 06 Mar 2025 14:50:24 +0200
-Date: Thu, 6 Mar 2025 14:50:24 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-	bleung@chromium.org, groeck@chromium.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Convert regulator drivers to use
- devm_kmemdup_array()
-Message-ID: <Z8maEKX-4vbwtra3@smile.fi.intel.com>
-References: <20250228072057.151436-1-raag.jadav@intel.com>
- <174077776750.602863.5336934105237710269.b4-ty@kernel.org>
- <Z8kFW13EyR0YXnJd@black.fi.intel.com>
- <Z8loo-N5byavJLkm@smile.fi.intel.com>
- <Z8l1ozUOMTDNQupC@black.fi.intel.com>
- <Z8mBQEKAJfZd6a7G@smile.fi.intel.com>
- <Z8mHw_W1xT9Mcilt@black.fi.intel.com>
- <Z8mXJUwt4q2NY059@smile.fi.intel.com>
+	s=arc-20240116; t=1741265463; c=relaxed/simple;
+	bh=njxf6y5pyhmeInfBHOslV7CsXmJ8ztcHfHOXm07MRa0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gt3424sgHGnjZpUnbtGW3g93EgzilCr9ei5N3/W8CkVzHJOIv61R0/+4HNTTSSZI4jMBGhA9fR5sgUGJpmjQ3nb8EI5otcd0r1euzuFjJRRHrPsXQJI+7gwrLkXi8w84AlKnIc3SwWLvfmN8E5e5Lg+uLnJeoRLTA/t8pNdJMrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=icMrSTub; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526952Cn020153
+	for <linux-kernel@vger.kernel.org>; Thu, 6 Mar 2025 12:51:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	rR7talaNqtIpgG6BnMXQyYngWs9JqhRdQCma/K1hsFk=; b=icMrSTubB9SZAon0
+	2lJr/BDocNqY3ulT0ybde+gZuGMWe14o5JD3jNuQoj1Y736/zZVqbZoeKX46ulE/
+	wnvGi0zwiUxOnKPDqgX24Txszlk3XMnou9L51HOrmd5gznmkphiBKPCEFeKPmIEF
+	GKyAT9sGu2V+sBE0bKjzYY0xHdyJIFGqXWHTs0ugL7nNQ8ui6opf+V0sosJeCGVe
+	ER9Onww4ji8wKjL6+8vQUhKfpx4Y+LfzcnXUM4e694FYlvty5CvAdxRnyTgPgwF/
+	SOW02fceiYlagUiBQeDsb6QrxAR939R9ydBjSTrZxCsS0M1rhdce03WwlFMcqJHf
+	SXbQYA==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 456xcuj9jf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 12:51:00 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c3c5833b58so18453285a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 04:51:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741265459; x=1741870259;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rR7talaNqtIpgG6BnMXQyYngWs9JqhRdQCma/K1hsFk=;
+        b=ejTQx5BzFUAjb88/UMv5ao9rhVgsTBszR+bCx2Nin+cs8IWKxlUTJos3ArjA1QfygJ
+         3wdgY5G1kkEBPIFmIDBpxKpxSqP6ewi/mdzeb/UHnawAzbNsjcTkR9Yj3Xd9LaF/4Sub
+         bejawhfqQGeMxRnJ2Xmmjrc7qezgy6RPg7iC7k5jxSTSw4QeVzwzr9q3rjVNC+rbt7eG
+         M52DcxUo/70o1LvGKyA7lsGrM1v9YGOQL39U2WCfpWO7HTmRBnG28I4m77FhAG6uO6ov
+         fgWgXalg+O72o6JjS9DRuHErjrWWuZLG5o7Ufuac/RlWOyH7taq54U4X3X6CkehyrBZQ
+         ls3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVQZ6URvSVgtiGuUMHOJGa3tuFcyXsGpIOy9FUzGfKmh5jnQgz7yG27Je1tXMhDmhDvPlg8bwJemL9vtiY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB1iWTAouDh1QWuoCkrZSb0Vx6/meivGJG0MC45kMLhlZ/7MEs
+	F5hW8ITjIQz/rqQ62aU4p4JYuer/bIwzWHdyJGvSIB6qV+gru+uSGO6e5vKSpbnSsZ3lAt98rmD
+	irxh1Ics3ylefvMhEFctxoZiVC+myYIv21HsJfPK3yrzJWPvexrHgjlnm/nktTRiZtmnqzsg=
+X-Gm-Gg: ASbGncvw5EU2+s22x41Q4q5CVOv05YKbdSnIN0Lw20f59P/NmqGpVSrLN1vgJmDvY56
+	CbtdTguVLnfslTAhXe7DD+GJDnXSvmnhwH9YPKQWingaYvjIlF0pNJsGb6VnwdJJN/89rrqAMuv
+	QgzijDZIFHrC0izBDMH3AawyLTKB9u8yuRMlAaOAW8KnVEc41akCR5kVIlqRVNGqLzLaRWGB/N7
+	A1eEVyG3n3LQKIkJBs806wyQ6oDaD3qqnBv3K3OxlYaSE6ELBAdTGA28BoVvebspvgQpOUnKyWQ
+	EmFDzQGxpljCVBXNmAUR/ODtTnZsvOcGj6d26+d3U1ar3/xZbzzxTfqcPUbxkk7awknNWQ==
+X-Received: by 2002:a05:620a:45a5:b0:7c3:bae4:2339 with SMTP id af79cd13be357-7c3d8eb1d1amr362886385a.11.1741265459249;
+        Thu, 06 Mar 2025 04:50:59 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFGFeZzV5Gmz2xjrjPxgVHagGLQpB8t4BoOY66hcYV5oNZhHazGLh/6he83HV2x8pZLW82bwQ==
+X-Received: by 2002:a05:620a:45a5:b0:7c3:bae4:2339 with SMTP id af79cd13be357-7c3d8eb1d1amr362885285a.11.1741265458827;
+        Thu, 06 Mar 2025 04:50:58 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c745d5cfsm908598a12.19.2025.03.06.04.50.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 04:50:58 -0800 (PST)
+Message-ID: <5e72992c-170c-48b9-8df4-2caf31c4ae44@oss.qualcomm.com>
+Date: Thu, 6 Mar 2025 13:50:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8mXJUwt4q2NY059@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: Add device tree for TUXEDO Elite 14
+ Gen1
+To: Georg Gottleuber <ggo@tuxedocomputers.com>,
+        Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, wse@tuxedocomputers.com,
+        cs@tuxedocomputers.com
+References: <57589859-fec1-4875-9127-d1f99e40a827@tuxedocomputers.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <57589859-fec1-4875-9127-d1f99e40a827@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: jmvtFFoDCVcM9NSBi02q4ZK_wDzwIs6N
+X-Proofpoint-GUID: jmvtFFoDCVcM9NSBi02q4ZK_wDzwIs6N
+X-Authority-Analysis: v=2.4 cv=eeXHf6EH c=1 sm=1 tr=0 ts=67c99a34 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=yDUiu3_GAAAA:8 a=n7UT6Et6nPPvcfnAv1EA:9 a=QEXdDO2ut3YA:10 a=RVmHIydaz68A:10
+ a=DbJdjrQMpfET-33fQHBk:22 a=PEH46H7Ffwr30OY-TuGO:22 a=gafEeHOdjwYkg5oUpzAY:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ impostorscore=0 malwarescore=0 bulkscore=0 phishscore=0 adultscore=0
+ priorityscore=1501 suspectscore=0 clxscore=1015 lowpriorityscore=0
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503060097
 
-On Thu, Mar 06, 2025 at 02:37:57PM +0200, Andy Shevchenko wrote:
-> On Thu, Mar 06, 2025 at 01:32:19PM +0200, Raag Jadav wrote:
-> > On Thu, Mar 06, 2025 at 01:04:32PM +0200, Andy Shevchenko wrote:
-> > > On Thu, Mar 06, 2025 at 12:14:59PM +0200, Raag Jadav wrote:
-> > > > On Thu, Mar 06, 2025 at 11:19:31AM +0200, Andy Shevchenko wrote:
-> > > > > On Thu, Mar 06, 2025 at 04:15:55AM +0200, Raag Jadav wrote:
-> > > > > > On Fri, Feb 28, 2025 at 09:22:47PM +0000, Mark Brown wrote:
-> > > > > > > On Fri, 28 Feb 2025 12:50:55 +0530, Raag Jadav wrote:
-> > > > > > > > This series converts regulator drivers to use the newly introduced[1]
-> > > > > > > > devm_kmemdup_array() helper. This depends on changes available on
-> > > > > > > > immutable tag[2].
-> > > > > > > > 
-> > > > > > > > [1] https://lore.kernel.org/r/20250212062513.2254767-1-raag.jadav@intel.com
-> > > > > > > > [2] https://lore.kernel.org/r/Z7xGpz3Q4Zj6YHx7@black.fi.intel.com
-> > > > > > > > 
-> > > > > > > > [...]
-> > > > > > > 
-> > > > > > > Applied to
-> > > > > > > 
-> > > > > > >    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-> > > > > > 
-> > > > > > Thank you.
-> > > > > > 
-> > > > > > Unless there's a nuance intended in the merge series title that I'm unable
-> > > > > > to understand, it probably seems incomplete.
-> > > > > 
-> > > > > I believe it's an issue somewhere in the scripts. The long Subject line is
-> > > > > split in the mailbox and that's probably is not supported by the machinery.
-> > > > > 
-> > > > > You are not the only one who reports this issue.
-> > > > 
-> > > > While I'm not well educated on the machinery, I'm also seeing devm_kmemdup_array()
-> > > > introduction commit reordered in -next and thinking perhaps it can cause issues
-> > > > with bisect, especially after final merge into Linus' tree?
-> > > 
-> > > I;m not sure what you exactly pointing out here. Mark seems applied only
-> > > necessary part of the immutable tag, which have the same effect. The Git merges
-> > > only once the stuff as long as it has the same hash.
-> > 
-> > $ git describe
-> > next-20250306
-> > 
-> > $ git log --oneline --grep raag
+On 6.03.2025 1:25 PM, Georg Gottleuber wrote:
+> Initial support for TUXEDO Elite 14 Gen1 based on Qualcomm Snapdragon X
+> Elite SoC (X1E78100).
 > 
-> --author="Raag ..."
+> Working:
+> * Touchpad
+> * Keyboard
+> * eDP (no brightness control yet)
 
-...
+in case your panel as a PWM backlight, you will need to set the PWM
+output pin function explicitly, see x1e80100-microsoft-romulus.dtsi
 
-> > 1f4c7f3b3afa Merge patch series "Split devres APIs to device/devres.h and introduce devm_kmemdup_array()"
-> > a103b833ac38 devres: Introduce devm_kmemdup_array()
-> > b8c38ccb2ca5 input: ipaq-micro-keys: use devm_kmemdup_array()
-> > cdcc09a495a4 input: sparse-keymap: use devm_kmemdup_array()
-> > a0d78eec8839 iio: adc: xilinx-xadc-core: use devm_kmemdup_array()
-> > 86068aca7548 pinctrl: pxa2xx: use devm_kmemdup_array()
-> > 91bfcc7a2fdb pinctrl: tangier: use devm_kmemdup_array()
-> > d795fb90d6c6 pinctrl: cherryview: use devm_kmemdup_array()
-> > f192c8447f4e pinctrl: baytrail: copy communities using devm_kmemdup_array()
-> > 753764aa8eb5 pinctrl: intel: copy communities using devm_kmemdup_array()
-> > a21cad931276 driver core: Split devres APIs to device/devres.h
-> > 18311a766c58 err.h: move IOMEM_ERR_PTR() to err.h
-> > 
-> > I'm expecting commit a103b833ac38 to be before its users, or perhaps I'm
-> > doing something wrong here?
+> * NVMe
+> * USB Type-C port
+> * WiFi (WiFi 7 untested)
+> * GPU (software rendering)
 > 
-> $ git tag --contains a103b833ac38
-> ib-devres-iio-input-pinctrl-v6.15
-> next-20250225
-> next-20250226
-> next-20250227
-> next-20250228
-> next-20250303
-> next-20250304
-> next-20250305
-> next-20250306
+> Not working:
+> * GPU (WIP: firmware loading but output is jerky)
 
-Ah, and this:
+Please tell us more
 
-$ git cat-file commit 753764aa8eb5
-tree 7d99d7bb009118f7c0d8cbac9aa2ae321fc74785
-parent a103b833ac3806b816bc993cba77d0b17cf801f1
-author Raag Jadav <raag.jadav@intel.com> 1739341506 +0530
-committer Andy Shevchenko <andriy.shevchenko@linux.intel.com> 1740391732 +0200
+> * USB Type-A (WIP)
+> * Suspend with substantial energy saving
+> * Audio, Speakers, Microphones
+> * Camera
+> * Fingerprint Reader
 
-pinctrl: intel: copy communities using devm_kmemdup_array()
-...
+If it's connected to the multiport controller, you should be able to
+just enable it, like on the T14s, similarly to the Type-A port
 
-Most likely it uses the one which was merged earlier by Stephen, who merged
-the ASoC before merging my immutable tag.
+[...]
 
--- 
-With Best Regards,
-Andy Shevchenko
+> Signed-off-by: Georg Gottleuber <ggo@tuxedocomputers.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile             |   1 +
+>  .../qcom/x1e80100-tuxedo-elite-14-gen1.dts    | 798 ++++++++++++++++++
+>  2 files changed, 799 insertions(+)
+>  create mode 100644
+> arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index 140b0b2abfb5..f0a9d677d957 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -298,3 +298,4 @@ dtb-$(CONFIG_ARCH_QCOM)     += x1e80100-lenovo-yoga-slim7x.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += x1e80100-microsoft-romulus13.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += x1e80100-microsoft-romulus15.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += x1e80100-qcp.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)        += x1e80100-tuxedo-elite-14-gen1.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
+> new file mode 100644
+> index 000000000000..86bdec4a2dd8
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
+> @@ -0,0 +1,798 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+> + * Copyright (c) 2025 TUXEDO Computers GmbH
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> +
+> +#include "x1e80100.dtsi"
+> +#include "x1e80100-pmics.dtsi"
+> +
+> +/ {
+> +       model = "TUXEDO Elite 14 Gen1";
 
+Please use 8-wide tabs instead of spaces
 
+> +       compatible = "tuxedo,elite14gen1", "qcom,x1e80100";
+
+You'll need to define a new vendor in:
+
+Documentation/devicetree/bindings/vendor-prefixes.yaml
+
+[...]
+
+> +       vreg_edp_3p3: regulator-edp-3p3 {
+> +               compatible = "regulator-fixed";
+> +
+> +               regulator-name = "VREG_EDP_3P3";
+> +               regulator-min-microvolt = <3300000>;
+> +               regulator-max-microvolt = <3300000>;
+> +
+> +               // EDP_VDD_EN_GPIO54
+
+C-style (/* foo */) comments are preferred, but these ones can be
+removed, as they repeat what the code says
+
+[...]
+
+> +&gpu {
+> +       status = "okay";
+> +
+> +       zap-shader {
+> +               firmware-name = "qcom/a740_zap.mbn";
+
+Are the laptop's OEM key/security fuses not blown?
+
+Konrad
 
