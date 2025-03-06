@@ -1,276 +1,250 @@
-Return-Path: <linux-kernel+bounces-548626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A4B2A5473D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:03:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31E73A54741
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:03:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A15AC3A5709
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:02:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C5851678FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5391EA7C5;
-	Thu,  6 Mar 2025 10:02:31 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37781FE476;
+	Thu,  6 Mar 2025 10:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fuYz1YKl"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1630B1FECB5;
-	Thu,  6 Mar 2025 10:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493CE1F03D2
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:02:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741255351; cv=none; b=non3wvigSM542SyGwgHFcla7wJvLbv40dM/arCwnqgKf30dFyEzTJtddijt1wxM/Hfr2d80WQ0M5NuHDNeRdhBjA+F/JO1lftphI6i7S0fYq2MBTOfzdEJHqg7lNUMyLWftoEWmFeeyWqdFTIFYEKW21ByJbt9uOgue2vW3DvkE=
+	t=1741255371; cv=none; b=DTgRoj6UTsa9D+DYwdLP4HTvAP/oev0YtarLI2lQ4HuizK5jL9KagwkFhSdas1imRte9zpWdf478RUOkdyZdGppyZq8AC896OA4SDPI1LWOn76hjJrVfEtCN/L3OArbmiJF0UeH/a6pVIw/vSfs3bp2VCvN9ngWdgLxYJw4IgAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741255351; c=relaxed/simple;
-	bh=kxGqFgv5DV4uqS8x3+VfQonPcdYK8J9y0uKc1HKkDT0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ITDg8sd6W5gopc72Lx8uD2h5iEoqFb/w0Oo0x4ygrer6idGUo/1qHV64ePsZ0En7c0J44rbc1Zj5AX05nfaFQJEVx9O95jnwsu2LL3GSr3o4+f/BULKv4eovQAS9dPQozTWs54g8bbSYQVA3+OXQIRFeyXnvCs/l5DGwxBM1mmY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 704C0C4CEE0;
-	Thu,  6 Mar 2025 10:02:29 +0000 (UTC)
-Message-ID: <97e71c79-b6ca-4840-bb86-32ac44508f69@xs4all.nl>
-Date: Thu, 6 Mar 2025 11:02:27 +0100
+	s=arc-20240116; t=1741255371; c=relaxed/simple;
+	bh=HsRBxEOsATnne1eQ3OkNuWRbsRwyHHR86jhp69zJgzk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pNObR5/KhC9yiJXwwv+rg7ACUdQ1PkAiSYoQjDTKIsrV1YECTbhRigxcctQZ6S/p1CZ2jo5IoNlHuCjcwwXan0z3ZBkiJ7vBKP241pSHGam5saxLvSDb6LyGdCgbhxMKxyf5urmCY/DiolBs5CDtiMMtyhWmnBYJFcKA3k2viz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fuYz1YKl; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4750bc8d102so4160171cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 02:02:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741255368; x=1741860168; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/sPmaeX1x05bYpEnk3NGTrmxS0rSOx4NYk/DbTEnnrk=;
+        b=fuYz1YKl4HDOSeCh2HfvnuAu8tRf+TEZaC0fNJc87TJ+bLvQ6hc/wp/ZavMeJNHSmy
+         l+Ka+NbEoiLCCbroLT01wf/wV1iIDtBpdLhE0rfJSnczuxSn1/fbZMM1wNAbpLKqDWZO
+         iPwpvLoWktWiznhbJf82Uj7KTRIHIHFDxXMzh8+ry7+Ag8qjSzb1G8S1nGHz3we+Ucus
+         2euAkcxeVpcRIlyaVR53mygnTNJKN3/yvbQVg19iU82f7tZSX9ww2FqRw2jl8VrdNQOU
+         d+lGjS0Z0OeDDAOJd7pW80QI+hlMZYBOq/NUJn8mfKDqSOqsTXx4CFqSERYy64rZujsH
+         GAgQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741255368; x=1741860168;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/sPmaeX1x05bYpEnk3NGTrmxS0rSOx4NYk/DbTEnnrk=;
+        b=Qv4DLZUbges4U63SxuHqiPdGhF6/EpoBQCtUKKQuNBAD7E29eaCmKSH96Jm1VkqifN
+         mFdDpadJYYSIPhHo5pmsFBJ6D/nRSgONDehiSQP1vQqGH4Mk3epqFuJXSRsdJtoES6mZ
+         Sk/KTldZznshfHyeJvimaAMUPstca3Slh/23yarBUJOZRjYZcEWEOtFXDJ9ruQ1MuPWz
+         Bf/0nhdssDWv1yYrpg0wvQJQabwsYVeD0xNsbYd8Hktj9abZGhZLcEMU3SU0S05ew1Wp
+         cSMovoSmkuEz+8AdietgfIcJ1dSBhIql1MlofwqjdmeslMLrqZOtc45G07YUbi1B1CGc
+         eNUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPUvUaH/PFqIOukmcBdhl4tTWpk5pYL9U+0S9c98IBLURDBfDxK+FeHe9Gq/HexgWrfOHkHD4FkTJ7AcU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo188w2J3B7NeHJtqCTwioSaJHKtS/9k+7XCvx49QyKYHHtykl
+	x6S5dZYxE8VRCp8UssOVkuTZ4KrZx/w2rvOlenIiREo+roWf45LehHhuRm9U76djtosAJKsl4SA
+	dfnt5Pq+Cig59j7LrqJ0DHDVwjtXXYyKdGDu9
+X-Gm-Gg: ASbGnctqMnszr1EfV0ChX3XpyFfCyijOaMqIuscNOMXDazxzgLdecCzBiMZ1adec0rY
+	Cl9miNCbEa2y85ZyA18Ie22WyjXl7m2o1EA0yl2j5ETXxboitf3tW123zJdUkqUkYSy85RLuJmC
+	dOBX3HltCFFrMqUkPREPIKIMl0vxU=
+X-Google-Smtp-Source: AGHT+IHd1HIb0eXA4rKqblE465qJbAez2NG9Yf1BwvaxbW9nnIkEBNovq0uQEXai6+ONuiH5tyu+dBoz8/Y2zl/Vxxg=
+X-Received: by 2002:ac8:7d56:0:b0:475:aef:3f9b with SMTP id
+ d75a77b69052e-4750b4e6a53mr96885501cf.47.1741255367764; Thu, 06 Mar 2025
+ 02:02:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] media: vivid: Introduce VIDEO_VIVID_OSD
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- Slawomir Rosek <srosek@google.com>, Hidenori Kobayashi <hidenorik@google.com>
-References: <20250228-vivid-osd-v1-0-16963a0a0ab7@chromium.org>
- <20250228-vivid-osd-v1-2-16963a0a0ab7@chromium.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <20250228-vivid-osd-v1-2-16963a0a0ab7@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250305-net-next-fix-tcp-win-clamp-v1-1-12afb705d34e@kernel.org>
+ <CAL+tcoAqZmeV0-4rjH-EPmhBBaS=ZSwgcXhU8ZsBCr_aXS3Lqw@mail.gmail.com>
+ <CANn89iLqgi5byZd+Si7jTdg7zrLNn13ejWAQjMRurvrQPeg3zg@mail.gmail.com> <281edb3a-4679-4c75-9192-a5f0ef6952ea@kernel.org>
+In-Reply-To: <281edb3a-4679-4c75-9192-a5f0ef6952ea@kernel.org>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 6 Mar 2025 11:02:36 +0100
+X-Gm-Features: AQ5f1JponQjKg0-oTqSrqiSL_Le-2bBFIMoznJ3kyCjReeZGsPCuhxXuES6US3o
+Message-ID: <CANn89iKVsDrL9YFx883wTfRSAe6tOR7x2U5zk=TcgHBMr+VtkQ@mail.gmail.com>
+Subject: Re: [PATCH net-next] tcp: clamp window like before the cleanup
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: Jason Xing <kerneljasonxing@gmail.com>, mptcp@lists.linux.dev, 
+	Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ricardo,
+On Thu, Mar 6, 2025 at 10:55=E2=80=AFAM Matthieu Baerts <matttbe@kernel.org=
+> wrote:
+>
+> Hi Eric,
+>
+> On 06/03/2025 10:45, Eric Dumazet wrote:
+> > On Thu, Mar 6, 2025 at 6:22=E2=80=AFAM Jason Xing <kerneljasonxing@gmai=
+l.com> wrote:
+> >>
+> >> On Wed, Mar 5, 2025 at 10:49=E2=80=AFPM Matthieu Baerts (NGI0)
+> >> <matttbe@kernel.org> wrote:
+> >>>
+> >>> A recent cleanup changed the behaviour of tcp_set_window_clamp(). Thi=
+s
+> >>> looks unintentional, and affects MPTCP selftests, e.g. some tests
+> >>> re-establishing a connection after a disconnect are now unstable.
+> >>>
+> >>> Before the cleanup, this operation was done:
+> >>>
+> >>>   new_rcv_ssthresh =3D min(tp->rcv_wnd, new_window_clamp);
+> >>>   tp->rcv_ssthresh =3D max(new_rcv_ssthresh, tp->rcv_ssthresh);
+> >>>
+> >>> The cleanup used the 'clamp' macro which takes 3 arguments -- value,
+> >>> lowest, and highest -- and returns a value between the lowest and the
+> >>> highest allowable values. This then assumes ...
+> >>>
+> >>>   lowest (rcv_ssthresh) <=3D highest (rcv_wnd)
+> >>>
+> >>> ... which doesn't seem to be always the case here according to the MP=
+TCP
+> >>> selftests, even when running them without MPTCP, but only TCP.
+> >>>
+> >>> For example, when we have ...
+> >>>
+> >>>   rcv_wnd < rcv_ssthresh < new_rcv_ssthresh
+> >>>
+> >>> ... before the cleanup, the rcv_ssthresh was not changed, while after
+> >>> the cleanup, it is lowered down to rcv_wnd (highest).
+> >>>
+> >>> During a simple test with TCP, here are the values I observed:
+> >>>
+> >>>   new_window_clamp (val)  rcv_ssthresh (lo)  rcv_wnd (hi)
+> >>>       117760   (out)         65495         <  65536
+> >>>       128512   (out)         109595        >  80256  =3D> lo > hi
+> >>>       1184975  (out)         328987        <  329088
+> >>>
+> >>>       113664   (out)         65483         <  65536
+> >>>       117760   (out)         110968        <  110976
+> >>>       129024   (out)         116527        >  109696 =3D> lo > hi
+> >>>
+> >>> Here, we can see that it is not that rare to have rcv_ssthresh (lo)
+> >>> higher than rcv_wnd (hi), so having a different behaviour when the
+> >>> clamp() macro is used, even without MPTCP.
+> >>>
+> >>> Note: new_window_clamp is always out of range (rcv_ssthresh < rcv_wnd=
+)
+> >>> here, which seems to be generally the case in my tests with small
+> >>> connections.
+> >>>
+> >>> I then suggests reverting this part, not to change the behaviour.
+> >>>
+> >>> Fixes: 863a952eb79a ("tcp: tcp_set_window_clamp() cleanup")
+> >>> Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/551
+> >>> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> >>
+> >> Tested-by: Jason Xing <kerneljasonxing@gmail.com>
+> >>
+> >> Thanks for catching this. I should have done more tests :(
+> >>
+> >> Now I use netperf with TCP_CRR to test loopback and easily see the
+> >> case where tp->rcv_ssthresh is larger than tp->rcv_wnd, which means
+> >> tp->rcv_wnd is not the upper bound as you said.
+> >>
+> >> Thanks,
+> >> Jason
+> >>
+> >
+> > Patch looks fine to me but all our tests are passing with the current k=
+ernel,
+> > and I was not able to trigger the condition.
+>
+> Thank you for having looked at this patch!
+>
+>
+> > Can you share what precise test you did ?
+>
+> To be able to get a situation where "rcv_ssthresh > rcv_wnd", I simply
+> executed MPTCP Connect selftest. You can also force creating TCP only
+> connections with '-tt', e.g.
+>
+>   ./mptcp_connect.sh -tt
 
-I like this change, but I have a few comments:
+I was asking Jason about TCP tests. He mentioned TCP_CRR
 
-On 28/02/2025 14:08, Ricardo Ribalda wrote:
-> vivid-osd depends on CONFIG_FB, which can be a large dependency. Introduce
-> CONFIG_VIDEO_VIVID_OSD to control enabling support for testing output
-> overlay.
-> 
-> Suggested-by: Slawomir Rosek <srosek@google.com>
-> Co-developed-by: Slawomir Rosek <srosek@google.com>
-> Signed-off-by: Slawomir Rosek <srosek@google.com>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/test-drivers/vivid/Kconfig         | 12 ++++++++++--
->  drivers/media/test-drivers/vivid/Makefile        |  5 ++++-
->  drivers/media/test-drivers/vivid/vivid-core.c    |  4 ++++
->  drivers/media/test-drivers/vivid/vivid-core.h    |  2 ++
->  drivers/media/test-drivers/vivid/vivid-osd.h     | 11 +++++++++++
->  drivers/media/test-drivers/vivid/vivid-vid-out.c |  7 ++++---
->  6 files changed, 35 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/media/test-drivers/vivid/Kconfig b/drivers/media/test-drivers/vivid/Kconfig
-> index ec2e71d76965..e95edc0f22bf 100644
-> --- a/drivers/media/test-drivers/vivid/Kconfig
-> +++ b/drivers/media/test-drivers/vivid/Kconfig
-> @@ -1,9 +1,8 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  config VIDEO_VIVID
->  	tristate "Virtual Video Test Driver"
-> -	depends on VIDEO_DEV && !SPARC32 && !SPARC64 && FB
-> +	depends on VIDEO_DEV && !SPARC32 && !SPARC64
->  	depends on HAS_DMA
-> -	select FB_IOMEM_HELPERS
->  	select FONT_SUPPORT
->  	select FONT_8x16
->  	select VIDEOBUF2_VMALLOC
-> @@ -31,6 +30,15 @@ config VIDEO_VIVID_CEC
->  	  When selected the vivid module will emulate the optional
->  	  HDMI CEC feature.
->  
-> +config VIDEO_VIVID_OSD
-> +	bool "Enable Framebuffer for testing Output Overlay"
-> +	depends on VIDEO_VIVID && FB
-> +	default y
-> +	select FB_IOMEM_HELPERS
-> +	help
-> +	  When selected the vivid module will emulate a Framebuffer for
-> +	  testing Output Overlay.
-> +
->  config VIDEO_VIVID_MAX_DEVS
->  	int "Maximum number of devices"
->  	depends on VIDEO_VIVID
-> diff --git a/drivers/media/test-drivers/vivid/Makefile b/drivers/media/test-drivers/vivid/Makefile
-> index b12ad0152a3e..284a59e97335 100644
-> --- a/drivers/media/test-drivers/vivid/Makefile
-> +++ b/drivers/media/test-drivers/vivid/Makefile
-> @@ -3,10 +3,13 @@ vivid-objs := vivid-core.o vivid-ctrls.o vivid-vid-common.o vivid-vbi-gen.o \
->  		vivid-vid-cap.o vivid-vid-out.o vivid-kthread-cap.o vivid-kthread-out.o \
->  		vivid-radio-rx.o vivid-radio-tx.o vivid-radio-common.o \
->  		vivid-rds-gen.o vivid-sdr-cap.o vivid-vbi-cap.o vivid-vbi-out.o \
-> -		vivid-osd.o vivid-meta-cap.o vivid-meta-out.o \
-> +		vivid-meta-cap.o vivid-meta-out.o \
->  		vivid-kthread-touch.o vivid-touch-cap.o
->  ifeq ($(CONFIG_VIDEO_VIVID_CEC),y)
->    vivid-objs += vivid-cec.o
->  endif
-> +ifeq ($(CONFIG_VIDEO_VIVID_OSD),y)
-> +  vivid-objs += vivid-osd.o
-> +endif
->  
->  obj-$(CONFIG_VIDEO_VIVID) += vivid.o
-> diff --git a/drivers/media/test-drivers/vivid/vivid-core.c b/drivers/media/test-drivers/vivid/vivid-core.c
-> index 10f5bef3f49c..6af12a76a067 100644
-> --- a/drivers/media/test-drivers/vivid/vivid-core.c
-> +++ b/drivers/media/test-drivers/vivid/vivid-core.c
-> @@ -125,7 +125,9 @@ MODULE_PARM_DESC(node_types, " node types, default is 0xe1d3d. Bitmask with the
->  			     "\t\t    bit 8: Video Output node\n"
->  			     "\t\t    bit 10-11: VBI Output node: 0 = none, 1 = raw vbi, 2 = sliced vbi, 3 = both\n"
->  			     "\t\t    bit 12: Radio Transmitter node\n"
-> +#if IS_ENABLED(CONFIG_VIDEO_VIVID_OSD)
+I made several of them, with temporary debug in the kernel that did
+not show the issue.
 
-Just use #ifdef CONFIG_VIDEO_VIVID_OSD. It's a simple bool config option, after all.
 
->  			     "\t\t    bit 16: Framebuffer for testing output overlays\n"
-> +#endif
->  			     "\t\t    bit 17: Metadata Capture node\n"
->  			     "\t\t    bit 18: Metadata Output node\n"
->  			     "\t\t    bit 19: Touch Capture node\n");
-> @@ -1071,9 +1073,11 @@ static int vivid_detect_feature_set(struct vivid_dev *dev, int inst,
->  	/* do we have a modulator? */
->  	*has_modulator = dev->has_radio_tx;
->  
-> +#if IS_ENABLED(CONFIG_VIDEO_VIVID_OSD)
->  	if (dev->has_vid_cap)
->  		/* do we have a framebuffer for overlay testing? */
->  		dev->has_fb = node_type & 0x10000;
-> +#endif
->  
->  	/* can we do crop/compose/scaling while capturing? */
->  	if (no_error_inj && *ccs_cap == -1)
-> diff --git a/drivers/media/test-drivers/vivid/vivid-core.h b/drivers/media/test-drivers/vivid/vivid-core.h
-> index d2d52763b119..72bd48031ba0 100644
-> --- a/drivers/media/test-drivers/vivid/vivid-core.h
-> +++ b/drivers/media/test-drivers/vivid/vivid-core.h
-> @@ -403,9 +403,11 @@ struct vivid_dev {
->  	int				display_byte_stride;
->  	int				bits_per_pixel;
->  	int				bytes_per_pixel;
-> +#if IS_ENABLED(CONFIG_VIDEO_VIVID_OSD)
->  	struct fb_info			fb_info;
->  	struct fb_var_screeninfo	fb_defined;
->  	struct fb_fix_screeninfo	fb_fix;
-> +#endif
->  
->  	/* Error injection */
->  	bool				disconnect_error;
-> diff --git a/drivers/media/test-drivers/vivid/vivid-osd.h b/drivers/media/test-drivers/vivid/vivid-osd.h
-> index 883459552fa9..6830e6d63dc5 100644
-> --- a/drivers/media/test-drivers/vivid/vivid-osd.h
-> +++ b/drivers/media/test-drivers/vivid/vivid-osd.h
-> @@ -8,8 +8,19 @@
->  #ifndef _VIVID_OSD_H_
->  #define _VIVID_OSD_H_
->  
-> +#if IS_ENABLED(CONFIG_VIDEO_VIVID_OSD)
->  int vivid_fb_init(struct vivid_dev *dev);
->  void vivid_fb_deinit(struct vivid_dev *dev);
->  void vivid_clear_fb(struct vivid_dev *dev);
+I am wondering if this could hide an issue in MPTCP ?
 
-Let's rename this to vivid_fb_clear (that can be done in the previous patch).
-
-That way all these functions use a common prefix.
-
-> +#else
-> +static inline int vivid_fb_init(struct vivid_dev *dev)
-> +{
-> +	return -ENODEV;
-> +}
-> +
-> +static inline void vivid_fb_deinit(struct vivid_dev *dev) {}
-> +
-
-Just drop this empty line.
-
-> +static inline void vivid_clear_fb(struct vivid_dev *dev) {}
-> +#endif
->  
->  #endif
-> diff --git a/drivers/media/test-drivers/vivid/vivid-vid-out.c b/drivers/media/test-drivers/vivid/vivid-vid-out.c
-> index 5ec84db934d6..75b24751b9a4 100644
-> --- a/drivers/media/test-drivers/vivid/vivid-vid-out.c
-> +++ b/drivers/media/test-drivers/vivid/vivid-vid-out.c
-> @@ -907,10 +907,11 @@ int vivid_vid_out_g_fbuf(struct file *file, void *fh,
->  	a->base = (void *)dev->video_pbase;
->  	a->fmt.width = dev->display_width;
->  	a->fmt.height = dev->display_height;
-> -	if (dev->fb_defined.green.length == 5)
-> -		a->fmt.pixelformat = V4L2_PIX_FMT_ARGB555;
-> -	else
-> +	a->fmt.pixelformat = V4L2_PIX_FMT_ARGB555;
-> +#if IS_ENABLED(CONFIG_VIDEO_VIVID_FB)
-> +	if (dev->fb_defined.green.length != 5)
->  		a->fmt.pixelformat = V4L2_PIX_FMT_RGB565;
-> +#endif
-
-I prefer that this uses a new helper: vivid_fb_green_bits(). Again, that can
-be done in the previous patch. With that helper you can keep the original
-if-else construct, which is easier to read.
-
-The helper should return 5 if CONFIG_VIDEO_VIVID_OSD is not defined.
-
->  	a->fmt.bytesperline = dev->display_byte_stride;
->  	a->fmt.sizeimage = a->fmt.height * a->fmt.bytesperline;
->  	a->fmt.field = V4L2_FIELD_NONE;
-> 
-
-Regards,
-
-	Hans
+>
+>
+> To be able to reproduce the issue with the selftests mentioned in [1], I
+> simply executed ./mptcp_connect.sh in a loop after having applied this
+> small patch to execute only a part of the subtests ("disconnect"):
+>
+> > diff --git a/tools/testing/selftests/net/mptcp/mptcp_connect.sh b/tools=
+/testing/selftests/net/mptcp/mptcp_connect.sh
+> > index 5e3c56253274..d8ebea5abc6c 100755
+> > --- a/tools/testing/selftests/net/mptcp/mptcp_connect.sh
+> > +++ b/tools/testing/selftests/net/mptcp/mptcp_connect.sh
+> > @@ -855,6 +855,7 @@ make_file "$sin" "server"
+> >
+> >  mptcp_lib_subtests_last_ts_reset
+> >
+> > +if false; then
+> >  check_mptcp_disabled
+> >
+> >  stop_if_error "The kernel configuration is not valid for MPTCP"
+> > @@ -882,6 +883,7 @@ mptcp_lib_result_code "${ret}" "ping tests"
+> >
+> >  stop_if_error "Could not even run ping tests"
+> >  mptcp_lib_pr_ok
+> > +fi
+> >
+> >  [ -n "$tc_loss" ] && tc -net "$ns2" qdisc add dev ns2eth3 root netem l=
+oss random $tc_loss delay ${tc_delay}ms
+> >  tc_info=3D"loss of $tc_loss "
+> > @@ -910,6 +912,7 @@ mptcp_lib_pr_info "Using ${tc_info}on ns3eth4"
+> >
+> >  tc -net "$ns3" qdisc add dev ns3eth4 root netem delay ${reorder_delay}=
+ms $tc_reorder
+> >
+> > +if false; then
+> >  TEST_GROUP=3D"loopback v4"
+> >  run_tests_lo "$ns1" "$ns1" 10.0.1.1 1
+> >  stop_if_error "Could not even run loopback test"
+> > @@ -959,6 +962,7 @@ log_if_error "Tests with MPTFO have failed"
+> >  run_test_transparent 10.0.3.1 "tproxy ipv4"
+> >  run_test_transparent dead:beef:3::1 "tproxy ipv6"
+> >  log_if_error "Tests with tproxy have failed"
+> > +fi
+> >
+> >  run_tests_disconnect
+> >  log_if_error "Tests of the full disconnection have failed"
+>
+> Note that our CI was able to easily reproduce it. Locally, it was taking
+> around 30 to 50 iterations to reproduce the issue.
+>
+> [1] https://github.com/multipath-tcp/mptcp_net-next/issues/551
+>
+> Cheers,
+> Matt
+> --
+> Sponsored by the NGI0 Core fund.
+>
 
