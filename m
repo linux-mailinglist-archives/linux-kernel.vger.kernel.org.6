@@ -1,140 +1,133 @@
-Return-Path: <linux-kernel+bounces-548511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEAFEA545D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:05:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9479AA545DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:06:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 626EA7A23D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:04:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19A4416CA21
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A595220969D;
-	Thu,  6 Mar 2025 09:05:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5CA220A5EF;
+	Thu,  6 Mar 2025 09:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LV7UTtU2"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XLXJ068n"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5701C20897D
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 638FF20967B;
+	Thu,  6 Mar 2025 09:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741251927; cv=none; b=hsebbONuPIZUS7wKC3kQugzRtq0MS7fjIMqCjVSHSe1s6a6Tx+Jlim2TPH74rffkc3mbtQWjOxSfYhYAh+h2RYj0w9iPEc3gjDxHqVOQU37TDmas3u9pfPbJL1Kew4wOrMrMML4vGvsBzXywskENQ3BvGpuP7zS4Z/EJZIpCiwQ=
+	t=1741251948; cv=none; b=NUikHsPUpX09/X9R3IzteJ2s/6VRx5uZXGvqP+MswBSIiHWq5FLBQ0WvKVxFJuFvhR7Hl+QenNwd+ED+knk2OpXz/WKv/lYyP5u+GnKWmjPh5THLEdZSYezs9DBqBdwEhhqE1hItuNdqe8JxIQZ5IrpLUJW4f3Eutsb9NcyzN0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741251927; c=relaxed/simple;
-	bh=p1PjBgzx6b5CCqqsstRRWhCBnA7J6btvkzsO7hVie44=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SAMgzykjgROa1sLLW3/CpV4qT342vSI183h/A4YOvNCg76YOpDQtinQAlpp+R73fH+LFfqUfAQ5kCFDwRfxbSzMdBgLROS1C+Fi0sfPzkET8xJzMytF94k8dBIxurpycMk8I4/pV1+v4Jq1yAk/UKULQVIQVdErRrM9ui2hRxy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LV7UTtU2; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso82662266b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:05:25 -0800 (PST)
+	s=arc-20240116; t=1741251948; c=relaxed/simple;
+	bh=tBF7qxWzzza3ZW6Fbt/OJqSoYXdfOO97tMGgtm4bT6I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F4ekfhXEpGXLiQWpukbcXeFnfQ34Vfz1Ot/qJS92UM8DNxDCsgLb2AhPskrXtp5OxaQ2/yx21TX+86d5zf4gkbiqNkxjji9ahX44KWaHI+xkXEodshY3n3n+4UOooccVSyJR8KgLeKUVPgQahe8Tg0f99F7SLra76TxGhGaU4Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XLXJ068n; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e4f88ea298so641730a12.2;
+        Thu, 06 Mar 2025 01:05:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741251923; x=1741856723; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741251944; x=1741856744; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PrQjM7IQyFKyZiPXOT0aMP5QicIarZ+wMT6jNBpqAVQ=;
-        b=LV7UTtU2ImR/dUl5/fulpt4FqB8CUfSnXdTK+cY9OWe2QARhaD9RW+q2yGUydQZOHT
-         M7b422T/MqIiDgdSiAckm7M+cyVEx+c0pDhMgdLkIevi5mIZVcrnLW5KOXlBkT0psf9U
-         2WwjND6hkCdQ5nJcIUzy1Sr1MbdSrdiPGTl4JcV8q3zZ6F1Kwikbx05pCqEJnzlGqkRx
-         fYXJnWfE//vYBc+3ckfrgPdn03MsJOrqvM3bn+lJU4tZ9Xvll7TdPSYAk0HkIYYzlliR
-         nFs3emTmgo4yzEgGkYP2Oj5jRHxsCeD5mpkC1VSMlxZV95NYvIjdAX+0qQx/jolGEi0I
-         RuIQ==
+        bh=qF1a4xy5g06O2GkwhB05ytvAS2BqrA8TH0Jy33gZxiw=;
+        b=XLXJ068nQF617QcsTcy1UAF5lPxx3GnBfjfa+C36yU7rSvA4xLdLGIV98Dzg92NEub
+         Ke4Vsl9QQP3/hYA2lUpJxYpMzhUg6UzKCSuVoKcDueZHwz7k0gzA5j+lBrotssOAF+bY
+         Qo/+xo0UQPmC+ubkoY6uDJTaE6chnzu4+S8Ovpipd5Dvc0bhkDwo7sonT80+tbxpfovO
+         L71ZKmeTWkx5/JqZKdfTHG0CCior8j6rE3HND0Vvdyy/H4TmAPoHutJtYJb5MX986Ast
+         P96sYYDGA+3O8TQUaTyd/0t9u5fjDWW6ZZ2Sh0IZq7ItdhNiq8CvkJQEzl563vnlZwdo
+         V27A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741251923; x=1741856723;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741251944; x=1741856744;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PrQjM7IQyFKyZiPXOT0aMP5QicIarZ+wMT6jNBpqAVQ=;
-        b=HhJ0NrdrTdLbBI/kUy5zEj7mZNpXyGsT6VVXML/Q4410aCfuU3MSOmW9L2PEFQYQeH
-         k1cFGwC4hzrxsVDnZ3Nq6PwNImaUN83KOe2VWXPJeVRvLb7HHgGvLMyspy5/bJVC8XO1
-         YpzhDwuqUYvRzwoRCCvL6AQ24GurofN5pIZX1D2f/mQOgwdB+Zr5x6FEG8SOjODT/Ylp
-         tN6XhLR1K8CiTEK4g6y5/rMEurUYgYKCrlBokHOF7yGogYSTrLw3limBFEQh3pdNUkp8
-         nC3uan4grYVvtzHOTOhRL4HwZYEQtEEjZEc/cUWZYNF5E7kbTaCUBVo3yOJj/Z7ZkFhi
-         Ko/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUPU9/fzINbuhfjeb0c4SlMsR5cPrO8XIs9voXRqH4kbDJCe9GaDfPQjnxDxxb/ffFoLmG+pEaU994oGek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsDCJzbQTTBmVadD3DTdumD2KsV3zcJVLRDRIMsS/oWoY6t2dA
-	KaPVs5eTG9KbGmbUHTERziv4FN9fSxZHpMMacjbLMRtze7ILZ7vdTWBVdUL7B2o=
-X-Gm-Gg: ASbGncveVekExtNywByf4oi+RFxKfVqW54utFQi98ofQS3e5B3Nr4fPPyoDom0+x5Wx
-	lC2dZ3KEZgRSjy3UmmF/HLThFpvqGvJ36Cdq3VSJz+mNLmGuxUIppIwnIBVMA678PT5bm2jzsOB
-	BaDrtnsLbbo+/EfxqsXXgYYjXsio6tISwCwqV3RUtQ9T7SoawoaeEir7vyeEvUbK7Aw/gr0tl3a
-	AH2yaUTVieKtsQua3IUfp7SWZr+xTIRsaJMhI7juEhpN+B2FGP7g5Ti/FMfLcT1uk90RAd7W1UL
-	WlJnUkw0BhFtrkuBqb+Nm4RDnfIQMfgRYjJqbjajhtg=
-X-Google-Smtp-Source: AGHT+IEGjkDNOrIByxVzQMvdZ3yuv6/fOpZUz6eYYP4NxiiFaRGnAEn+bVqc9B5Gr4Dr3tphGX8DzQ==
-X-Received: by 2002:a17:906:cc84:b0:ac2:29cf:643d with SMTP id a640c23a62f3a-ac229cf6594mr206934766b.25.1741251923435;
-        Thu, 06 Mar 2025 01:05:23 -0800 (PST)
-Received: from hackbox.lan ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac23943a194sm61606866b.37.2025.03.06.01.05.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 01:05:22 -0800 (PST)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Sebastian Reichel <sre@kernel.org>
-Subject: [RFC 2/2] arm64: dts: qcom: x1e78100-t14s: Add OLED variant
-Date: Thu,  6 Mar 2025 11:05:03 +0200
-Message-Id: <20250306090503.724390-3-abel.vesa@linaro.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250306090503.724390-1-abel.vesa@linaro.org>
-References: <20250306090503.724390-1-abel.vesa@linaro.org>
+        bh=qF1a4xy5g06O2GkwhB05ytvAS2BqrA8TH0Jy33gZxiw=;
+        b=t75E2Xs/JxKskRnREqvL10iIsbBEeGOJhQKHNCFrjf23WXAKef896ef/eSRagyLRao
+         vPAlpPy9eAHgcRUjrJy6D9+uGSk8lLFKf+SFKdywABkymsNhinURFtmOGi/wFeHeKaaC
+         9LRcvYFEVB8egXFwOkt/yBkQjR18JTdJps1JOp3MncfpdlQKVSOOn+BqBC0B6A5569HE
+         4kp4q+YKImyhM2KvrXo8vNOIv25JPjk4eXAFlPHNdnZhcrx2Sa2LilvOE9WaPCH8orzA
+         669J/9A3x8qU6Sp0BYr5iKUgAILsU3zb9oBDzRLAIsN3J8NxTNqX6LPl5ZY9hC0e8tro
+         2gqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUV1T8Ee4Ctcu6y+cwXmhWab8/azRdpmmISv0M5Ax9E+/M7CSA6Ox0p3w4tUby9SuGQduCZEg9Q@vger.kernel.org, AJvYcCUaod/z7+h4i9R453j8SDS5a/5WQv/eOn93pvRGsML6jy30ydvlwuHTjVlzIkdNaQ/NTx786i9/sUQlpfc=@vger.kernel.org, AJvYcCWNfPtdKKyJI5bndBiGngVofVobEkyGGh+g7pWBAfQExteY5Xj/yKyW5MnJGBC7rHWORaLFls/XAtXpZTxZuEIvKAdIeQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhQG3EqFJ/km3oC3xEwXWsaKN9Ti+zv0h2z980u7RK/NVqvYEt
+	XX9+IL+w+5wx7xt0PaRz+p0UYLOwtj6Ry9Qz42BbjtqOncd5CiEWgH3/5C42DAksiJg27T/caiV
+	zsouH53hrV1Ujvxj8VVPNmQV7ZqU=
+X-Gm-Gg: ASbGncsoxe8s33U1rOfaCFTrrxBBmX4W8O1FSbNfkfA8b+MV4ZRcqRWonHnSISsJbIC
+	yaVlb3WfqeVWXXdvyxA6EoqSSD8tvvirOL1E9kOIIbRmw7JBrOzmrMivvUKMMhswx5NR9WGchVE
+	9ENw3TWk0jjJzNwRHCww2uyYv94KqB
+X-Google-Smtp-Source: AGHT+IEZf+mByLmt2C5pECGvzvf9DNU4dvPx4rdt3aJSm/Ho3YYl4NaclXM6a/5zGcCuNqGotXObOzkukzSbT9Fj/lE=
+X-Received: by 2002:a17:907:2d21:b0:ac1:de84:dea1 with SMTP id
+ a640c23a62f3a-ac20da878e7mr662880966b.43.1741251944175; Thu, 06 Mar 2025
+ 01:05:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250227121522.1802832-1-yong.liang.choong@linux.intel.com>
+ <20250227121522.1802832-6-yong.liang.choong@linux.intel.com>
+ <Z8lLm9Ze9VAx3cE_@surfacebook.localdomain> <601c88fb-8ec8-4866-a45d-f28dea6d9625@linux.intel.com>
+In-Reply-To: <601c88fb-8ec8-4866-a45d-f28dea6d9625@linux.intel.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 6 Mar 2025 11:05:08 +0200
+X-Gm-Features: AQ5f1JpWFPB7HB7xwoyOVydwoKV_kFgASdMk4fd6Z1W-9JCutpUYIBvLsaYm1DU
+Message-ID: <CAHp75VeOKbAsvSuf5+VQnGFmUcN92TNnR2eF1+70h3PjaMdMqA@mail.gmail.com>
+Subject: Re: [PATCH net-next v9 5/6] net: stmmac: configure SerDes according
+ to the interface mode
+To: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+Cc: Simon Horman <horms@kernel.org>, Jose Abreu <joabreu@synopsys.com>, 
+	Jose Abreu <Jose.Abreu@synopsys.com>, David E Box <david.e.box@linux.intel.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin" <hpa@zytor.com>, 
+	Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>, David E Box <david.e.box@intel.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jiawen Wu <jiawenwu@trustnetic.com>, Mengyuan Lou <mengyuanlou@net-swift.com>, 
+	Heiner Kallweit <hkallweit1@gmail.com>, Russell King <linux@armlinux.org.uk>, 
+	Hans de Goede <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Serge Semin <fancer.lancer@gmail.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Since the Lenovo Thinkpad T14s Gen6 is available with an OLED, add
-dedicated a dedicated dts for it.
+On Thu, Mar 6, 2025 at 10:39=E2=80=AFAM Choong Yong Liang
+<yong.liang.choong@linux.intel.com> wrote:
+> On 6/3/2025 3:15 pm, Andy Shevchenko wrote:
+> > Thu, Feb 27, 2025 at 08:15:21PM +0800, Choong Yong Liang kirjoitti:
 
-This is needed because the backlight is handled differently for OLED
-panels when compared to LCD ones.
+...
 
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- arch/arm64/boot/dts/qcom/Makefile                           | 1 +
- .../boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts    | 6 ++++++
- 2 files changed, 7 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
+> >> config DWMAC_INTEL
+> >>      default X86
+> >>      depends on X86 && STMMAC_ETH && PCI
+> >>      depends on COMMON_CLK
+> >> +    depends on ACPI
+> > Stray and unexplained change. Please, fix it. We don't need the depende=
+ncies
+> > which are not realised in the compile time.
+>
+> The dependency on ACPI is necessary because the intel_pmc_ipc.h header
+> relies on ACPI functionality to interact with the Intel PMC.
 
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index b54f45b3bec8..df8d63560d06 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -290,6 +290,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-mtp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-qrd.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= x1e001de-devkit.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= x1e78100-lenovo-thinkpad-t14s.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= x1e78100-lenovo-thinkpad-t14s-oled.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-asus-vivobook-s15.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-crd.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-dell-xps13-9345.dtb
-diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
-new file mode 100644
-index 000000000000..1891f6143ec9
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
-@@ -0,0 +1,6 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2025, Linaro Limited
-+ */
-+
-+#include "x1e78100-lenovo-thinkpad-t14s.dtsi"
--- 
-2.34.1
+So, that header has to be fixed as ACPI here is really unneeded
+dependency for the cases when somebody (for whatever reasons) want to
+build a kernel without ACPI support but with the driver enabled for
+let's say PCI device.
 
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
