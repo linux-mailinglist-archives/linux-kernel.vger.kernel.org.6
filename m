@@ -1,98 +1,66 @@
-Return-Path: <linux-kernel+bounces-549639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5ADD6A554D0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:23:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F8FBA554E0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:26:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B97711782CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:22:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 489FD167A4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8D725485B;
-	Thu,  6 Mar 2025 18:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="UnDMrJ75"
-Received: from relay.smtp-ext.broadcom.com (relay.smtp-ext.broadcom.com [192.19.144.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5706425CC96;
+	Thu,  6 Mar 2025 18:26:06 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6854230273;
-	Thu,  6 Mar 2025 18:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.19.144.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0151913D509
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 18:26:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741285310; cv=none; b=dFhrlT+k8P9AT64IB6UBeB31MSkubJ3WvqquJB0hDg2gcwagKmthpEAIAYihSuXBuGAZ8KmJtPHWdg3NQMW+mD1yvgfErLDOhhZ48D+2GPBXLnNb6XoJeb6+aJ3LlBSX5NTVb0JUclFTElO3xDNfDZjPx2uTIhB2R7XxnYPnISg=
+	t=1741285566; cv=none; b=p52iQ/e2fCDG8J05q3YpAU50u2JL3mR4QRElDUxV6/NlO5NmW5syfEyTZcBPSIAlDPC7fupGXH1TfkpkCOY+C1DYPdFxiVIdQDn0OK2IGrvHmOIIQ4mqqyVkQyyeJRN5ZAkeZungLaghmHD+np5z0Vw0J7Dh68eT9KK4kxwqVgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741285310; c=relaxed/simple;
-	bh=zT//KZZFEKytLDpgaT8Obwl7x/iYNsngN/KykrGbh3U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JXGNH7pj46CADJhe6V7jgWXcpP3bJ8XGAC6ZGMbT8h2nNX+HT5DkRCSnMbuMzMA50O+YF8dwwnNODBlQMizDdCOFho21HErFhTRWXSAdvg/uub0Fuqk3tAHr60MM3dV2zifZ2cU+iDl0Mz1kjEP3gV+cYiU6pstCjvKy79ENejk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=UnDMrJ75; arc=none smtp.client-ip=192.19.144.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: from mail-lvn-it-01.broadcom.com (mail-lvn-it-01.lvn.broadcom.net [10.36.132.253])
-	by relay.smtp-ext.broadcom.com (Postfix) with ESMTP id AF501C003E08;
-	Thu,  6 Mar 2025 10:21:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 relay.smtp-ext.broadcom.com AF501C003E08
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=broadcom.com;
-	s=dkimrelay; t=1741285307;
-	bh=zT//KZZFEKytLDpgaT8Obwl7x/iYNsngN/KykrGbh3U=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=UnDMrJ75OX3hcsHuFZ+n0/AfWoS5zAilNrJihvoWQKa8tA/VS2RNaCrIReq3AkN8Z
-	 LZiPMi6YzuF4/OG+P2+zjT+pQqL/WuydAgCwMfQuigDfZOjl4ynJNWn/72Yg71mPf8
-	 djq0lnPC6KUDfj+aFFmZ5AgNQTye338MYwspbnkM=
-Received: from fainelli-desktop.igp.broadcom.net (fainelli-desktop.dhcp.broadcom.net [10.67.48.245])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-lvn-it-01.broadcom.com (Postfix) with ESMTPSA id 394BB1800051E;
-	Thu,  6 Mar 2025 10:21:47 -0800 (PST)
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-To: bcm-kernel-feedback-list@broadcom.com,
-	Artur Weber <aweber.kernel@gmail.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>,
-	Scott Branden <sbranden@broadcom.com>
-Cc: Florian Fainelli <f.fainelli@gmail.com>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Stanislav Jakubek <stano.jakubek@gmail.com>,
-	~postmarketos/upstreaming@lists.sr.ht
-Subject: Re: [PATCH v3 6/6] ARM: dts: bcm2166x: Add bcm2166x-pinctrl DTSI
-Date: Thu,  6 Mar 2025 10:21:46 -0800
-Message-ID: <20250306182146.1762360-1-florian.fainelli@broadcom.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250303-bcm21664-pinctrl-v3-6-5f8b80e4ab51@gmail.com>
-References: <20250303-bcm21664-pinctrl-v3-0-5f8b80e4ab51@gmail.com> <20250303-bcm21664-pinctrl-v3-6-5f8b80e4ab51@gmail.com>
+	s=arc-20240116; t=1741285566; c=relaxed/simple;
+	bh=BkibElEiOWuR0hTTh6VYRN1SX9HUX6x4eWUjtp46PYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EJj2TgwTR9Asu8VbjDYNpA082pZe/ZA278jZXPdrgf2YaG+aHyWGvEdKAt9KgonRzRmhUq2j10UFjYHVVUNRskMLEYTQB2ALosKroFiYuQnGoe6uqhaDsC/Ekz6Pv1QZUgyRS6+Lnjs03Q+hu/rTuYpBWMDmkNjiYCeXdkYpOCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4404C4CEE0;
+	Thu,  6 Mar 2025 18:26:04 +0000 (UTC)
+Date: Thu, 6 Mar 2025 13:26:05 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [for-next][PATCH 0/3] tracing: Updates for v6.15
+Message-ID: <20250306132605.4cc45349@gandalf.local.home>
+In-Reply-To: <20250227001235.355892523@goodmis.org>
+References: <20250227001235.355892523@goodmis.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Florian Fainelli <f.fainelli@gmail.com>
+On Wed, 26 Feb 2025 19:12:35 -0500
+Steven Rostedt <rostedt@goodmis.org> wrote:
 
-On Mon, 03 Mar 2025 21:54:51 +0100, Artur Weber <aweber.kernel@gmail.com> wrote:
-> Add common DTSI with common pin control configs for BCM21664/BCM23550
-> and include it in bcm2166x-common.dtsi. The configs are kept in a
-> separate DTSI to keep things cleaner (pin config definitions take up
-> quite a lot of space).
-> 
-> Currently contains pins for BSC buses and SD/MMC; more pins can be
-> added in the future.
-> 
-> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> ---
+> Masami Hiramatsu (Google) (2):
+>       mm/memblock: Add reserved memory release function
+>       tracing: Freeable reserved ring buffer
 
-Applied to https://github.com/Broadcom/stblinux/commits/devicetree/next, thanks!
---
-Florian
+Masami,
+
+I'm going to revert these two patches from the trace/for-next tree and
+rebase them on top of the ring-buffer/for-next, as they conflict, and I
+rather not send Linus a pull request that has conflicts between two of my
+topic branches.
+
+-- Steve
 
