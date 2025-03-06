@@ -1,188 +1,139 @@
-Return-Path: <linux-kernel+bounces-549526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 398C1A5538C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:54:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20AC0A5538B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:53:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 114B01758AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:54:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6A8A1896598
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1DFD25C6E6;
-	Thu,  6 Mar 2025 17:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3C31FC7F9;
+	Thu,  6 Mar 2025 17:53:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FhXbOlJk"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k9tOjDmo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674E925C708
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:53:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB52525B671
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:53:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741283640; cv=none; b=q2Zrn6nAhpCGXQInJAIgCqvgpGcpKk9AXE9fKkMe/CDQmgEFrlsen2zWhkY+MLoPObGTBHzj+W1oYDkIs28IuPtclVK80V/Q3EKDJCzkAVrDMMtAnGDwk6zHHevld7eS+noUU48485O+b4XcYVQTQ4wH6YpHeQBMi6mwz8d7fxI=
+	t=1741283632; cv=none; b=VKV6IBR3jgbP3izIy5dcLrNy9xbGsLcB2LzMBFH6Ck57ChfWUpF2vN/Cw6n2df5YwMdR1ZsDOiFrFu8SRtRVVwNOOw1craTvJZx1j6+c7hI2N6tdNQvX9O3DqieQAA+uDxUNfOb00LWv+1nAITPaTE+atyMYCGOQl9Is7yowhQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741283640; c=relaxed/simple;
-	bh=VcmDipHwuj8PgRhQ4UBe7gUhRK502GziUS3SiEtvIAg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IappOdSNhWBa6bZqNH6ZCDqIeGVZA7jTnFXxAJ2MA0G688n2EzCjTE9mHj1kBK63MMfmGaXcLlidrr72D3hDxTlwrzc/7AvFUpoRihMcFrKbXhL1N3OhSj+F+OXMfTNG08HNCdcVOcxcgDl+F8TD9kOOsQf/oS76T4dRyr6Dr18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FhXbOlJk; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-54959d1a856so2630445e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:53:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741283633; x=1741888433; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VcmDipHwuj8PgRhQ4UBe7gUhRK502GziUS3SiEtvIAg=;
-        b=FhXbOlJkaGqHLAxHA/n8S7KSyIcFRnoigqKNOYYcXYYHgHTah7VB2OV6qX15HPwpRr
-         k+KXbr1AfmxJHGiCzlbqPKv4y+XtSN2SgVsZb5/YEnbXBRjW+1L4501ZQU675CfJUVQ2
-         Ot4HCaYF2tXleKJ6vpqfR1PBoAYoNEZlpNH1A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741283633; x=1741888433;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VcmDipHwuj8PgRhQ4UBe7gUhRK502GziUS3SiEtvIAg=;
-        b=kGprXWtlnlgyoYAl0mTPVAu20RFOh7kZx55KpA737dhQJar8gUkP2P9d7wGQSYUnNK
-         MtWwwsB53N0vStiZHDPrdisAmG5NnAU1B1LeZqEIOwHJQFa9FJk/et+BqramQxhcQnNV
-         MyivkWH1X81XIppqgmr0vwqpqAojaKKXeDbJRn7a+YkpkK8LfBn+4TEMg0HvV5rIkj0A
-         oRieLfT/EgmGlSvq97gepEiexswDFAJ6u9zofzCdmYHSmtRmj90HWpT6pxpT3m92D3ho
-         4zIz2p2SDKSr9I9JKrhm79V9ExCc5rtAbTw+DFf1iIC0q4b6YSiNsXTyFj6Ql8sgt6Hb
-         z0FQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjrg1oTfM6dJQBtnRyggKF20mtNnTLkKzImRdHobmw/Wg+xSO8nw6KO44+vF1zrci5kL1of0yRuVbh4fg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yye/AfLSCEEnbERaFZjNfhIGCmddDFQreAFQDC9QXF++tH6TSff
-	Qlyuyf+vVbbHkrcldHKFLniDxkY7FP08XodV9ugfsN/9LlrYi0RY3i9cQD/jmkKYoFwtUCpAWTk
-	gc/rA
-X-Gm-Gg: ASbGnctXpmZYLTP2gwqdPaR4NjGqiAX20WN1Gw6Q6HFN9/UIcFcimPYKcG5LknmVdkK
-	yd9Vp395p83jYXkqrAabZe2KjKIAyXopvGbwJgmV2p+88l4OaCi9teFMfKYZKoFyJ+XuKeYBJAe
-	NXRjr6V/Lh1aDgNwaQlPUj6WrCfTET/ZUVWn/LS4g4+eNoTl8PG5lZtq4Dm48xemB+cGOdZzlsJ
-	FCYbsPVNcJQVhUQgqJaBgTf9KvlFG+bOeqpSvPE5d1VLcfjNhRigwj7i1RDchRyoB4uWIrVjLUG
-	93REVjCTaDD9vLadW+vVYbj+XSy9K+0YMdKKavzKvfjBGnl2TFyNCD0I6lYXpIhTLOjTY3Ejnon
-	0j0vUTckVYjlt
-X-Google-Smtp-Source: AGHT+IGE/qpOq1hMT9YtTX7SEzMNKSZR2HbDjXZ4YIJmBDGxaKyURHPa3NsnbIHw/3xzDW75u9i6Wg==
-X-Received: by 2002:ac2:48a3:0:b0:549:8c0c:ea15 with SMTP id 2adb3069b0e04-5498c0cec7emr1016881e87.0.1741283633267;
-        Thu, 06 Mar 2025 09:53:53 -0800 (PST)
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498fc0ac2asm54739e87.192.2025.03.06.09.53.51
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 09:53:52 -0800 (PST)
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-307c13298eeso11618551fa.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:53:51 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXQiySX4KR2sM3zmceTzCcvZXLFPxkOPU0x61oGN6LoBdcs0GJkWtnYom9dpNp43FmbCwisScuo0sfKKxw=@vger.kernel.org
-X-Received: by 2002:a2e:9187:0:b0:30b:f0fd:5136 with SMTP id
- 38308e7fff4ca-30bf0fd5290mr6793931fa.18.1741283631322; Thu, 06 Mar 2025
- 09:53:51 -0800 (PST)
+	s=arc-20240116; t=1741283632; c=relaxed/simple;
+	bh=TsDBzmg+/rLwfKQ/+P27CYwnhvUD4cy1XnVraIMWiyw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ui9LjTyHTnDeuqiEX0Bw3TPW2zm+XlYGRv6EzCNdkgE9bNt5RPG1qfMZTO3FvxCsoFC1R/V1rakZ3GjaDkhByYPyAF9uF/iyYcM2DTdBbAUpi+yefO7czMYf0bTpv11BW10a4nK1hWaBemYRChterehXdsGvZvAf5kWK4y+pvqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k9tOjDmo; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741283631; x=1772819631;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=TsDBzmg+/rLwfKQ/+P27CYwnhvUD4cy1XnVraIMWiyw=;
+  b=k9tOjDmos0HJvnDAdAE9P3d4t9MhmGSx4DvVksMDlxkpbfaJrK+qkmU6
+   EmMCOMBy68iOOKu7Q3Fxdb3WDcN5D3U2/H/ZqgoqNYZAmO90zGn3V7uFi
+   3eeUnVyPbLDwkgInKTbpulZ2cFI5hdBDb6ia8mD/cI5TlxyBvcJep1gRC
+   5QkepGDZCtw4Tjupi1VC0wdhSiq6EPPgU0GWyvIxhcWGz0bO3kn9K48tj
+   mmji+EGKxGHzzM5311F+koMIxGyYQ78jOI1v7EWfuSuJi7LdLaToZHI2S
+   rCDTMZxxGq+mTX01X29GXYbAL7rT4mgKY9ejAzHbPhcKdimXDaBecPayN
+   w==;
+X-CSE-ConnectionGUID: X0ixOdF5Rj+8Wws3G/VQ8Q==
+X-CSE-MsgGUID: kNho4neAR3mdGwRXpj1v1g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42446054"
+X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
+   d="scan'208";a="42446054"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 09:53:50 -0800
+X-CSE-ConnectionGUID: lXk9vUeURSOFzz5QrvGS7w==
+X-CSE-MsgGUID: jvwBAumET9S2eHd1WBwZdg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
+   d="scan'208";a="119278800"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 09:53:46 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tqFPi-00000000B5i-2edP;
+	Thu, 06 Mar 2025 19:53:42 +0200
+Date: Thu, 6 Mar 2025 19:53:42 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	David Laight <David.Laight@aculab.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [PATCH v5 2/7] bits: introduce fixed-type genmasks
+Message-ID: <Z8nhJv36eq11oJOD@smile.fi.intel.com>
+References: <20250306-fixed-type-genmasks-v5-0-b443e9dcba63@wanadoo.fr>
+ <20250306-fixed-type-genmasks-v5-2-b443e9dcba63@wanadoo.fr>
+ <Z8meY7NS65_d14og@smile.fi.intel.com>
+ <1c081c07-2833-4fa9-96fb-88a7295d2c14@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305-mipi-synaptic-1-v1-1-92017cd19ef6@redhat.com>
- <20250306-clever-lime-tanuki-e2fc43@houat> <CAN9Xe3SDyC47HWww1eH63aZOiM-WF9BGxztM3yh9bf6ORuY7VA@mail.gmail.com>
- <20250306-brave-wonderful-sambar-3d0bc5@houat>
-In-Reply-To: <20250306-brave-wonderful-sambar-3d0bc5@houat>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 6 Mar 2025 09:53:39 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=XZJjNpzUgvGog0pFGwqUR09SocYFEk5355eptbK_gjqA@mail.gmail.com>
-X-Gm-Features: AQ5f1JrRJDiXo61n02Hjt29_oRyhxwMEG-u37b6Vvo-aWJLulx2MO1UpXmYjZko
-Message-ID: <CAD=FV=XZJjNpzUgvGog0pFGwqUR09SocYFEk5355eptbK_gjqA@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel/synaptics-r63353: Use _multi variants
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Anusha Srivatsa <asrivats@redhat.com>, Michael Trimarchi <michael@amarulasolutions.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Tejas Vipin <tejasvipin76@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1c081c07-2833-4fa9-96fb-88a7295d2c14@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi,
+On Fri, Mar 07, 2025 at 01:08:01AM +0900, Vincent Mailhol wrote:
+> On 06/03/2025 à 22:08, Andy Shevchenko wrote:
+> > On Thu, Mar 06, 2025 at 08:29:53PM +0900, Vincent Mailhol via B4 Relay wrote:
 
-On Thu, Mar 6, 2025 at 9:20=E2=80=AFAM Maxime Ripard <mripard@kernel.org> w=
-rote:
->
-> On Thu, Mar 06, 2025 at 10:08:24AM -0500, Anusha Srivatsa wrote:
-> > On Thu, Mar 6, 2025 at 4:31=E2=80=AFAM Maxime Ripard <mripard@kernel.or=
-g> wrote:
-> >
-> > > Hi Anusha,
-> > >
-> > > On Wed, Mar 05, 2025 at 07:01:41PM -0500, Anusha Srivatsa wrote:
-> > > > Move away from using deprecated API and use _multi
-> > > > variants if available. Use mipi_dsi_msleep()
-> > > > and mipi_dsi_usleep_range() instead of msleep()
-> > > > and usleep_range() respectively.
-> > > >
-> > > > Used Coccinelle to find the multiple occurences.
-> > > > SmPl patch:
-> > > > @rule@
-> > > > identifier dsi_var;
-> > > > identifier r;
-> > > > identifier func;
-> > > > type t;
-> > > > position p;
-> > > > expression dsi_device;
-> > > > expression list es;
-> > > > @@
-> > > > t func(...) {
-> > > > ...
-> > > > struct mipi_dsi_device *dsi_var =3D dsi_device;
-> > > > +struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D dsi_var };
-> > > > <+...
-> > > > (
-> > > > -mipi_dsi_dcs_write_seq(dsi_var,es)@p;
-> > > > +mipi_dsi_dcs_write_seq_multi(&dsi_ctx,es);
-> > > > |
-> > > > -mipi_dsi_generic_write_seq(dsi_var,es)@p;
-> > > > +mipi_dsi_generic_write_seq_multi(&dsi_ctx,es);
-> > > > |
-> > > > -mipi_dsi_generic_write(dsi_var,es)@p;
-> > > > +mipi_dsi_generic_write_multi(&dsi_ctx,es);
-> > > > |
-> > > > -r =3D mipi_dsi_dcs_nop(dsi_var)@p;
-> > > > +mipi_dsi_dcs_nop_multi(&dsi_ctx);
-> > > > |
-> > > > ....rest of API
-> > > > ..
-> > > > )
-> > > > -if(r < 0) {
-> > > > -...
-> > > > -}
-> > > > ...+>
-> > >
-> > > The point of sending a single patch was to review the coccinelle scri=
-pt,
-> > > so you must put the entire script you used here.
-> >
-> > I was actually thinking of sending patches per driver this time around
-> > since Tejas also seems to be looking into similar parts....Thoughts?
->
-> Not really?
->
-> The point of doing it with one driver was to make sure the coccinelle
-> script was fine before rolling it to other drivers. And actually, it
-> doesn't really matter: the whole point of putting the script in the
-> commit log is to be able to review and document the script you used. If
-> you're not going to put the one you used, it's kind of pointless.
+...
 
-Personally, I don't have any interest in reviewing the coccinelle
-script so I don't need it and, from my point of view, you could just
-remove it from the patch description (or point to it indirectly or
-something). I'll review each patch on its own merits. I am a bit
-curious if you ended up fully generating this patch with a coccinelle
-script or if you used a coccinelle script to start and then had to
-manually tweak the patch after. Actually, I guess I'll take it back.
-If you manage to fully generate conversions for all the panels with a
-single cocinelle script, I would love to take a glance at your full
-script just to satisfy my curiosity for how you handled everything
-properly. :-P
+> Does this mean I get your Reviewed-by tag? Or will you wait the v6 to
+> formally give it?
 
--Doug
+I'll wait for v6.
+
+> > but just to be sure: you prepared your series using histogram
+> > diff algo, right?
+> 
+> No, I never used the histogram diff. My git config is extremely boring.
+> Mostly vanilla.
+> 
+> I remember that Linus even commented on this:
+> 
+> https://lore.kernel.org/all/CAHk-=wiUxm-NZ1si8dXWVTTJ9n3c+1SRTC0V+Lk7hOE4bDVwJQ@mail.gmail.com/
+> 
+> But he made it clear this was *not* a requirement, so I just left the
+> diff algorithm to the default. Or did I miss any communication that
+> contributors should now use histogram diff?
+
+Use your common sense, i.e. look at the result and evaluate which one is more
+readable. My guts are telling me that histogram will be slightly better here.
+
+> Regardless, I do not mind activating it. I just did a:
+> 
+>   git config diff.algorithm histogram
+> 
+> The v6 will have histogram diffs.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
