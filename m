@@ -1,156 +1,145 @@
-Return-Path: <linux-kernel+bounces-548446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0B6CA544F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:33:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CC52A544F9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:34:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D1973A16D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:33:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C76CB7A2A06
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 602D2207666;
-	Thu,  6 Mar 2025 08:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E0D20767F;
+	Thu,  6 Mar 2025 08:34:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="K1DXdl/j"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LhSKew1w"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B66B207E05
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7502D1FC113
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741249998; cv=none; b=bx+RP/KPOO7uqgiqNmQhvGoUUUMpV7Jo66Ra19bMMpiKNiZmjJo6n0NmyGQ7rSNlrc5/ezvG8iagTQqNCiAPcF3hvygEsuvQTB2GgXrvpX78CzEmANUw+B3n4isQgR1Dvn7Xv5OWncfeULQrk0YFa+d1HYitYj0HaFXRvUXHkhI=
+	t=1741250053; cv=none; b=JymW9gNidEX6iYV51Osl9HkBpM/FPHHVyvQHHRoTbPjD7V6nsUFqPUcPv5f7O7diA98tq/439MayfGaVbY7nwyolQoPlacMNBl2jwJCEYBHiqEt0cONNLV+FvRmgcNZFNAxpUpgN1ujgQ3I6fjxDF6yQnbIWR8YUqX2RNX87YLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741249998; c=relaxed/simple;
-	bh=hOVOOStkW8jmkt+1hp/0Jr1VkM8lrszPOZ7dkECB3lI=;
+	s=arc-20240116; t=1741250053; c=relaxed/simple;
+	bh=OUp0E+qsiDEUSCpddjnFVpM0lNWkMIkK+SwJDDKMgp8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RQwizawBvAS1VOXiyrQHYiQlrHM29NYwEi8PhWLfjyM0OjOb5J7OYY6Bxs1p0zNE6PJPc9o5a2vktbSMpVIHIhnei5V1l4S02Az3kz1bEeqsM66RfGzA3yxIAP4DelVb6zM/d+27oOl58wOi6ejwXv6tpgBdvUsBe0XX3JfVffU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=K1DXdl/j; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43bb6b0b898so2864285e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 00:33:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741249994; x=1741854794; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X2EUc1x5Of7vZCQZZ48kByIEQAeOmgrKgZ4g5Ou9HIs=;
-        b=K1DXdl/jLd3lGnBeY+6K9KDo21yVRKd5LmQj11MBIpiigiwvfdb750QwYnfKRzJRGK
-         qV9NWLSPf0KRZoWxkP8ZYFda/IqEYR5RmQGV/zOqxdRf+bAT7k7YkJlDEnwCnEijE93R
-         wHZM9bjjVTrGaeIrUmltDSGLVO9wKSO5fOa/PGum2mWO6GISIr66RbniGALJFr5qjZk1
-         0x2Qj1pvqTxbZz2scScNIEiSsX65GpCrLd3kh7fcClJkyRl+mtUC52t18A0HUGo6/MxU
-         Ukr0Oeh1+5hb+u/0jg/vKSkmXsFuE4IDJt1rP9zg3KstOLMH73vb5OzcbHIv325nvV6A
-         JDCA==
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yqb35+Xaymt6PFjI9S73+2I8pmBw8pawJbWCgEz6iy8a8tGXOzMnYZz49LnetGaphuKIglYhrdu7XHZCZCF4Fk6t7RnF5BknRcm+VWa7/iJOhKmgRksF4bgKJ9vsb7nR3ZpQ7ObthvTFPBuJRWAlxM70lRKPergIWj6KpjR0Zo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LhSKew1w; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741250050;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xVFBDJpq+OLAVUkkYuhqX9NrEU4yq2FBIEz0GFuT+xc=;
+	b=LhSKew1wNkzmpuJETl6G12bkVd+TCk6s20WEkGy1gnLj3LqTtSUO5T7+ZYyCBeCCrHJXg9
+	D1RpEFE2VqjH45cWg13aGmYj5+rrpCkSJTmUn+YrnoJp6Iha0Z/snsTriZXTOvFYLpixZB
+	Ws5MZZdZSnsiornU4VfaEjZ2W+UGrFg=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-391-pyuynPR_NyaEyU7wjoOvMQ-1; Thu, 06 Mar 2025 03:34:08 -0500
+X-MC-Unique: pyuynPR_NyaEyU7wjoOvMQ-1
+X-Mimecast-MFC-AGG-ID: pyuynPR_NyaEyU7wjoOvMQ_1741250048
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c0b7ee195bso91809885a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 00:34:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741249994; x=1741854794;
+        d=1e100.net; s=20230601; t=1741250048; x=1741854848;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=X2EUc1x5Of7vZCQZZ48kByIEQAeOmgrKgZ4g5Ou9HIs=;
-        b=w/LNAEJNK3NyUwD2pe73SN2rX6+zZ8w1cKAuHy6RFJnMG8VTcj8HKzP3VL/OnnEU1C
-         uIgE0GNn8Uec3M7dYe3BFyDZDaIz/Vue/AyEb/MhLvuIohjCP21GDdzNX3caxD0j91pu
-         DMQmppFK03jcdxco+9x6oVeTpgbM6NkWRbooCF5tV4ffzzjIxGl2ofhtMG9J0c1GRUdI
-         eDnaPGKgNbOgXWsomyEoW0xAJKeZCA60nfKtIR/4SuIdLwTIHppegjwiw7kbDFfLxnjL
-         meYYlB4qOkIbIOtJp/reNKLFcD8120DYRzK9J/c+4g7huxkpTU2+3ST6TFge1Yvb9SPA
-         0lzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoH5hI3kWp3f/NNpzuPZH6zA4grheQRAD0XEct+66+QLJ2sPc2N7/ZX2/+U9vnmJghamULyv+fIxMhOts=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7kiySYWgVgW6CFApdhnt30i2UI3vhWS+iR/Q9JnasoUMf0FF4
-	3DCukuV6nxg1P969zpqpHzWZlgcFaDENSmpKOCupuSo1BLJl6iJ64Df+Sjyfowo=
-X-Gm-Gg: ASbGncvXJ4Bpc4kpOdRVCSzuuInHdiBUwLpjPH+2EAxQnSgYlLTg05CSWpZy4WJx1Rc
-	2U8s67G9EpscD67B+I/uZo/eYCRNnHpfSe4SdD9Zlx48qVXWrT2K3rGa6NFihj8v/uOKjiAY2xl
-	vh1c89y6WhPv8UkYaTCefLZtKy4OkJ97pROd9hsLrXUpb8WbLvoVutrJdzs4hsOxGxr/hxSr+4U
-	YW5YW9ezaQgUI25yP5LLGOqrxqb0vwB+KtwC9sZ7ydgPcxD+V0kvO8WN0FHFv09FqgEVlxRNDAm
-	8eoOVztZyPAYGoUxWgxrzfCck9+VTT5qm+eU3nOaPhFBbB3ZjeJg4AlRE/7Blga74yaoTjn9wfA
-	Q6eDxR+bChtHXZ7lBoVs4CbmNzw==
-X-Google-Smtp-Source: AGHT+IENVLytuFM3iADZunJAXBOhvQ3LIEDZZsGeB1MuN2juBTFSeQk4BfBlXS8v8nNpLXWbNWI+2g==
-X-Received: by 2002:a05:600c:3544:b0:439:a1f2:50a3 with SMTP id 5b1f17b1804b1-43bd29462e3mr49071765e9.4.1741249993713;
-        Thu, 06 Mar 2025 00:33:13 -0800 (PST)
-Received: from localhost (amontpellier-556-1-148-206.w109-210.abo.wanadoo.fr. [109.210.4.206])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c102e01sm1282552f8f.93.2025.03.06.00.33.12
+        bh=xVFBDJpq+OLAVUkkYuhqX9NrEU4yq2FBIEz0GFuT+xc=;
+        b=SSw7IyCiKGQ46hGb4M/aeuHmNQcvRZJouuOytfQlcNmetZ2iT0GwGSiMJLZb0Zcef/
+         8lkED9HqkOySVL6FG27VH1xIDd7V3wp+p4Tlb+LFyYwp3PuZYesuuTX0DK6KsKxrFz/C
+         zmZG0KqAcLm9ESFEIvHt18RLcKMCEfSRcxMge7P4UEu36Dooju3inC1Ic4nH5kSDdzcv
+         6RkAdlk+eu+KIKvBcpmkvLUCUgCUjxsVo4fS0UePFgXXfzBnfZZ7Xi9GDtcXodhdu/FJ
+         UJ7VgMLY3eC6WUOjmfmVqtEFz5NuGOcemlj01rwis7Zn5e4NbNAi8muGdkX2U1R3bKlv
+         fFLQ==
+X-Gm-Message-State: AOJu0YyvHY94SicGRjC7VOlCB2LcamTXHczvxqbRnD7QRmuQViTVYEH8
+	GZbp+I+hRX+C/o3dMIYd6vX2rnmadk8FCZljuJyyEng4bls/xye70CgfcPeivy1+gStMCc0cZVE
+	IH5IhCV5Gv/Hd8EAjzcFaN3Zs1zXuIgKAAym7JzfGiD1UGuAigQidWbe6WQvfVg==
+X-Gm-Gg: ASbGncsc8YBFZuClxJjsyxQxjZp43EYyRpnAYtpz3nllHzaRSu6nmnl9FM+D0Z4ZiKW
+	R8D0iO/J38yOrCfS7OFp0kUcsHAzvqySWymcjTU9f2pqdNfckYBDO1EkA7bic1lw14jX+s2+xr5
+	Ygx5l0+3jQrpCZzAhIN2Me7tIYGMZlS/IvqEFL/DiLK8FxJypKrvyzJkxARhcjjOhQryDGqiSKv
+	xngGhNUZZSbM0G3i2sSNkJ2P/lg/GIh55rmRnKB5Dv7lcNLAGdRu608Vksmr96kFnD81fK++kZ7
+	sBrawbWWjeGm3q79mRLYTyzgXuJw3qTBE1r3JIlW+ufKV/nT7n42dmgtq+OaKl3S0wvzO3ZVCqo
+	kY5u3
+X-Received: by 2002:a05:620a:43a7:b0:7c3:d717:c0a4 with SMTP id af79cd13be357-7c3d8ea1affmr917471485a.33.1741250048288;
+        Thu, 06 Mar 2025 00:34:08 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHZRnjkumUJ/eM6/ka96Ogpv4ZIhNgKdZ2rJrJTuRVTpRw8PW21uUe5vsN/2ChkYxUDB6nUbA==
+X-Received: by 2002:a05:620a:43a7:b0:7c3:d717:c0a4 with SMTP id af79cd13be357-7c3d8ea1affmr917468485a.33.1741250047994;
+        Thu, 06 Mar 2025 00:34:07 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e5389d57sm63078285a.64.2025.03.06.00.34.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 00:33:13 -0800 (PST)
-Date: Thu, 6 Mar 2025 09:33:11 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Cosmin Tanislav <cosmin.tanislav@analog.com>, Dumitru Ceclan <mitrutzceclan@gmail.com>, 
-	Guillaume Ranquet <granquet@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Michael Walle <michael@walle.cc>, Nuno Sa <nuno.sa@analog.com>, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 8/8] iio: adc: ad7124: Implement system calibration
-Message-ID: <53jwjqqspaow6npy76vyhkz7stt6abkkwfj7hv7rs4dspazilv@54uua2bpcpk3>
-References: <20250303114659.1672695-10-u.kleine-koenig@baylibre.com>
- <20250303114659.1672695-18-u.kleine-koenig@baylibre.com>
- <20250306000718.330c99db@jic23-huawei>
+        Thu, 06 Mar 2025 00:34:06 -0800 (PST)
+Date: Thu, 6 Mar 2025 08:34:02 +0000
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, mingo@kernel.org, peterz@infradead.org,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, hbathini@linux.ibm.com, joelagnelf@nvidia.com
+Subject: Re: [PATCH 2/2] sched/rt: update limit of sched_rt sysctl in
+ documentation
+Message-ID: <Z8ld-hutVNH3_aXF@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250306052954.452005-1-sshegde@linux.ibm.com>
+ <20250306052954.452005-3-sshegde@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="braso36kgpzqa6iv"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250306000718.330c99db@jic23-huawei>
+In-Reply-To: <20250306052954.452005-3-sshegde@linux.ibm.com>
 
+Hi,
 
---braso36kgpzqa6iv
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 8/8] iio: adc: ad7124: Implement system calibration
-MIME-Version: 1.0
+On 06/03/25 10:59, Shrikanth Hegde wrote:
+> By default fair_server dl_server allocates 5% of the bandwidth to the root
+> domain. Due to this writing any value less than 5% fails due to -EBUSY.
+> 
+> cat /proc/sys/kernel/sched_rt_period_us
+> 1000000
+> $ echo 49999 > /proc/sys/kernel/sched_rt_runtime_us
+> -bash: echo: write error: Device or resource busy
+> $ echo 50000 > /proc/sys/kernel/sched_rt_runtime_us
+> $
+> 
+> Since the sched_rt_runtime_us allows -1 as the minimum, put this
+> restriction in the documentation.
+> 
+> One should check average of runtime/period in 
+> /sys/kernel/debug/sched/fair_server/cpuX/* for exact value.
+> 
+> Signed-off-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+> ---
+>  Documentation/scheduler/sched-rt-group.rst | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/Documentation/scheduler/sched-rt-group.rst b/Documentation/scheduler/sched-rt-group.rst
+> index 80b05a3009ea..ab464335d320 100644
+> --- a/Documentation/scheduler/sched-rt-group.rst
+> +++ b/Documentation/scheduler/sched-rt-group.rst
+> @@ -102,6 +102,9 @@ The system wide settings are configured under the /proc virtual file system:
+>    * sched_rt_period_us takes values from 1 to INT_MAX.
+>    * sched_rt_runtime_us takes values from -1 to sched_rt_period_us.
+>    * A run time of -1 specifies runtime == period, ie. no limit.
+> +  * sched_rt_runtime_us/sched_rt_period_us > 0.05 inorder to preserve
+> +    bandwidth for fair dl_server. For accurate value check average of
+> +    runtime/period in /sys/kernel/debug/sched/fair_server/cpuX/
 
-On Thu, Mar 06, 2025 at 12:07:18AM +0000, Jonathan Cameron wrote:
-> On Mon,  3 Mar 2025 12:47:06 +0100
-> Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com> wrote:
->=20
-> > Allow triggering both zero-scale and full-scale calibration via sysfs in
-> > the same way as it's done for ad7173.
-> >=20
-> > Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
-> > ---
-> >  drivers/iio/adc/ad7124.c | 153 ++++++++++++++++++++++++++++++++++-----
-> >  1 file changed, 136 insertions(+), 17 deletions(-)
-> >=20
-> > diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> > index 382f46ff2b51..5ab0d3e48c43 100644
-> > --- a/drivers/iio/adc/ad7124.c
-> > +++ b/drivers/iio/adc/ad7124.c
-> > @@ -4,6 +4,7 @@
-> >   *
-> >   * Copyright 2018 Analog Devices Inc.
-> >   */
-> > +
-> Stray change.  I'm in that sort of mood so I'll tweak it whilst
-> apply.  Rest looks good to me.
+Looks good to me.
 
-Ack, thanks for cleaning up behind me.
+Reviewed-by: Juri Lelli <juri.lelli@redhat.com>
 
-> Applied to the togreg branch of iio.git and pushed out as testing.
-> As the fixes are theoretical(ish) I'll not rush them in.
+Thanks!
+Juri
 
-Also Ack.
-
-Thanks
-Uwe
-
---braso36kgpzqa6iv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfJXcUACgkQj4D7WH0S
-/k7GMggAnd1NKiaoKhZmRgoFkNSYlKr3g05lRuBEs91JFvKNJxoV/UU0ZvqpGSOA
-ecyBpb02lZ1gD8M95AciwtSSAtv8fRJLzvjtmN28A6W0w0ScR7TVvlCdf5HZZy4K
-q8QQHWgLIBp508UFwdCqhLtsCD9UxjQROt7qM25CLj3u/x8qpNpIEpTEL9yHmaRA
-NPssmTPPvd6Z/qSsxLel7QlDoYIyleuRwWT9CmD1FJ8SCKo7zcSLdnm9IAGBsn21
-Jmv16gfyLeFrd7vwQs1G85Z4aPdwDhuojrjeEkSsy6LhEZl5quFCSb5rpmOT9xLV
-w0hS+YekqIIB9SWL9wJweHM0xusgAw==
-=C5a+
------END PGP SIGNATURE-----
-
---braso36kgpzqa6iv--
 
