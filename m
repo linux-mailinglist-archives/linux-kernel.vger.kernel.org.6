@@ -1,119 +1,88 @@
-Return-Path: <linux-kernel+bounces-550024-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1421A55A1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:46:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C97AA55A1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:47:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52C953B1EAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:46:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75C061898D59
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0687C27CCC2;
-	Thu,  6 Mar 2025 22:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A08827C86B;
+	Thu,  6 Mar 2025 22:46:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="frZ2g56C"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40CC200B95;
-	Thu,  6 Mar 2025 22:45:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="OfEm/pu2"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9634DA2D;
+	Thu,  6 Mar 2025 22:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741301160; cv=none; b=a8c7pA4vH9TO+4XmuXXFGt7jjNOZXcKUUrAyadeIHIoxdWBkw/6BigZX7GPQBw1P5fOo0qogJ0i+v6R8y+oqjD/UEfU8bZih0cl+kfpgWVIIFRYVvxiFWyhHwqKfD8FXy8HPPyZya8Y6FbuA3p97Khu3yo0vb9tibzkPsqkZE3k=
+	t=1741301215; cv=none; b=oUV31Voed9my6SdH2zbl4NDuRo8nOKgAl2otLqh6904Trk+4YK+T0yb3bgiKoEDLMYs2TZKzWcMECHaKK5Wg/VU0nBwvpd07XdAFwNMRhy1jF/B79M6ljU0yO2GT8xQ2QUfAziWwDNNy2kCWHNWaDubG+t3i55YuzD8bo4WKlKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741301160; c=relaxed/simple;
-	bh=73rsgDoass/Y1+2HG5CNEyi1Fuz1zgyePDkEuCjqoog=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BrRaxCOJyE4T8cMkez8613+RBekqWZjkXKRmKNTh1KtGpd8Kn6t6ARgWzaUDG8KpDRFCFC2sSIzYx8YBURprgMns6jK9I3r2Z2BmENZjbvcE0md0RE/cCgm7GdgXXNdDuWmqabub4IQygE5VmTjbM8QIPybZDUsbST5/l3d2fBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=frZ2g56C; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.17.64.156] (unknown [131.107.174.156])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A21DB211049E;
-	Thu,  6 Mar 2025 14:45:51 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A21DB211049E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741301151;
-	bh=3h7ftrzvKeXTY/PZI7hZ0Sx+af2u9JaEQAn6P8Go0PY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=frZ2g56CJBXLTlvFGP10n2vV/Lei/JOHKPeR+oJ+BoOYE4NEjI4GdM5s5AvOja4F1
-	 e9x3Q4hPs5Z9OFTrxEDuZSVeSuZf2eaMpxJ46AbqeZBCaiFvT54SezOOZdv8w5cOZw
-	 CccLoMZbeAJsRhpSgj0J0ugVr2zhbfTBS/qXOFTU=
-Message-ID: <8bc74dd8-ecd0-44ad-88a2-8b36fa61100a@linux.microsoft.com>
-Date: Thu, 6 Mar 2025 14:45:50 -0800
+	s=arc-20240116; t=1741301215; c=relaxed/simple;
+	bh=zs7g5b8i1KCeLS8bZsz0/RmzAKizQG5V0mKic0zbqZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pp5TiYPCYMow1jBdCstM340kzn0O2DqmU+/LohjhQtO1h6+mpAS4J+4J19xWDkgrw6nLLoopamfv/9y+jiPdn+kN3+8jJv2Q1WrpZUdFU1fhsuuDD0KkVJsO2SkN27qcAIKwJIgk5yOBdVyzaaCUHQqPNYAJSJINtMWaELC3/5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=OfEm/pu2; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=WLg3duqCK2hWUeRlR2AWlamGy6Hsm8C3eYidl98LRSk=; b=OfEm/pu2toLz8/Xyzv0lALa3nZ
+	g91nhITzmWSogS26PvhjV1wX0ump/l/NHKrlqbzEY2xKc+YEjrmnQupJVoK+OgpAxOKn/KAEL9Dat
+	expL+6hVxhKMlG2xEZEeQGibmPe8TSrIsV4XTXiZ3n4Jhw6ix5MPIvBYzJOhLQfcQPas=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tqJzD-002wTu-Hw; Thu, 06 Mar 2025 23:46:39 +0100
+Date: Thu, 6 Mar 2025 23:46:39 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yao Zi <ziyao@disroot.org>,
+	linux-rockchip@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add GMAC nodes for RK3528
+Message-ID: <a827e7e9-882a-40c6-9f2c-03d8181dff88@lunn.ch>
+References: <20250306221402.1704196-1-jonas@kwiboo.se>
+ <20250306221402.1704196-4-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/7] ima: copy only complete measurement records across
- kexec
-To: Mimi Zohar <zohar@linux.ibm.com>, Baoquan He <bhe@redhat.com>
-Cc: stefanb@linux.ibm.com, roberto.sassu@huaweicloud.com,
- roberto.sassu@huawei.com, eric.snowberg@oracle.com, ebiederm@xmission.com,
- paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
- linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
- James.Bottomley@hansenpartnership.com, vgoyal@redhat.com, dyoung@redhat.com
-References: <20250304190351.96975-1-chenste@linux.microsoft.com>
- <20250304190351.96975-2-chenste@linux.microsoft.com>
- <Z8g+uhZQ6totYLmp@MiWiFi-R3L-srv>
- <fe6e3c1333a50d66dc876b5a196d3491170802a8.camel@linux.ibm.com>
-Content-Language: en-US
-From: steven chen <chenste@linux.microsoft.com>
-In-Reply-To: <fe6e3c1333a50d66dc876b5a196d3491170802a8.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306221402.1704196-4-jonas@kwiboo.se>
 
-On 3/5/2025 4:27 AM, Mimi Zohar wrote:
-> On Wed, 2025-03-05 at 20:08 +0800, Baoquan He wrote:
->> On 03/04/25 at 11:03am, steven chen wrote:
->>> Carrying the IMA measurement list across kexec requires allocating a
->>> buffer and copying the measurement records.  Separate allocating the
->>> buffer and copying the measurement records into separate functions in
->>> order to allocate the buffer at kexec 'load' and copy the measurements
->>> at kexec 'execute'.
->>>
->>> This patch includes the following changes:
->> I don't know why one patch need include so many changes. From below log,
->> it should be split into separate patches. It may not need to make one
->> patch to reflect one change, we should at least split and wrap several
->> kind of changes to ease patch understanding and reviewing. My personal
->> opinion.
-> Agreed, well explained.
->
-> Mimi
->
->>>   - Refactor ima_dump_measurement_list() to move the memory allocation
->>>     to a separate function ima_alloc_kexec_file_buf() which allocates
->>>     buffer of size 'kexec_segment_size' at kexec 'load'.
->>>   - Make the local variable ima_kexec_file in ima_dump_measurement_list()
->>>     a local static to the file, so that it can be accessed from
->>>     ima_alloc_kexec_file_buf(). Compare actual memory required to ensure
->>>     there is enough memory for the entire measurement record.
->>>   - Copy only complete measurement records.
->>>   - Make necessary changes to the function ima_add_kexec_buffer() to call
->>>     the above two functions.
->>>   - Compared the memory size allocated with memory size of the entire
->>>     measurement record. Copy only complete measurement records if there
->>>     is enough memory. If there is not enough memory, it will not copy
->>>     any IMA measurement records, and this situation will result in a
->>>     failure of remote attestation.
->>>
->>> Suggested-by: Mimi Zohar <zohar@linux.ibm.com>
->>> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
->>> Signed-off-by: steven chen <chenste@linux.microsoft.com>
+On Thu, Mar 06, 2025 at 10:13:56PM +0000, Jonas Karlman wrote:
+> Rockchip RK3528 has two Ethernet controllers based on Synopsys DWC
+> Ethernet QoS IP.
+> 
+> Add device tree nodes for the two Ethernet controllers in RK3528.
+> 
+> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+> ---
+> gmac0 is missing the integrated-phy and has not been tested bacause I do
+> not have any board that use this Ethernet controller.
 
-I will split this patch into the following two patches:
+What do you know about the integrated PHY? Does it use one of the
+standard phy-modes? RMII? Does the datasheet indicate what address it
+uses on the MDIO bus? If you know these two bits of information, you
+can probably add it.
 
-     ima: define and call ima_alloc_kexec_file_buf
-     ima: copy measurement records as much as possible across kexec
-
-Thanks,
-
-Steven
-
+    Andrew
 
