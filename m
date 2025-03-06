@@ -1,136 +1,116 @@
-Return-Path: <linux-kernel+bounces-549373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3268A551C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:48:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3DE6A551DA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:52:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 088FF175AA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:48:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94DE33A86D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5506725BACC;
-	Thu,  6 Mar 2025 16:46:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E5D269AE0;
+	Thu,  6 Mar 2025 16:47:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="umUoEtpX"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhpUO6eC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C748525B699
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A9D2698AE
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:47:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741279564; cv=none; b=jVqSRvnKCa5CzjElICGif4jQwY1ceVSFFCB52BqwBHjJzve8rtWq6D6SIntqsgxsTfyuKnu1X6laSqtTZ13PrOfRmZ0hgGaD3q8Wy5VzVamoljzmSrSxbZ9ioYf606g9xFQY9aj36u0WPY5bZaIC7eiUoUWZbrwKEogulekAIjQ=
+	t=1741279667; cv=none; b=VWKxFiq/GpuZ53/vTSDCoAupXqykhJY2sXCD/0hipDx3f5BOEwBgzRj+/v7fh1E/LOMb108sKs42nbGIyc9PSp6MG8iG4/ydZx/nYAk6sM8kQ3LLtjI4uCrzd9FZ4GiTSGy4E8h9zqNP/5372gqGNMhhjFK4N3kw2SL48Z677fM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741279564; c=relaxed/simple;
-	bh=TFqb6nBt6h/0td1uTW45nWiS8RKPJqUeWeIGjdp/DUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JYWRuYQVdtqhf3GzcfaNqOJ4zMlgthDu0tjGyYiXWliqV3OKAJs4m2rj2zuX85mi2JugYW6vn3HezgRRtt7bgXtPmPS5zOnq0cZuH8KnL9jrwyBEGU/6BHRtHMQTBEPDeemYWsdybCfWd42u3LcXKsyynQl9BPg7ocPI2I79u6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=umUoEtpX; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30795988ebeso9396651fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 08:46:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741279561; x=1741884361; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iYkKdW4t5OSFScRUxZzZa9zKFqxQ50ly8uK9WVZ07tM=;
-        b=umUoEtpXyA8DNsbuXKB4TRycGHlKq/HKfpfcaF8jd9CvESP528Djkx8c7R03U0blZb
-         G/xferS3kGofdnLagkKEPjpuKn737XFLZofAlIBLf4Od0wf4yNpiZJALksQ5cNVLJYLl
-         aitegvl2YpsnyugKQcc6xASsp7YFggyJDK8gXOGIk0QWfOMJ4u6FxawQ0LQ2rfluZunG
-         uE08sJwtG0zOjH6PoxxGsQuhaYRECT72ddeokk1bDbc0FjIUjV0RjUxh9qQ+/60ZWlo/
-         T+kKkh2TnEJWV7nPrbZjFotux2JGmtXJuc758niA6gk1dOsWK5ZrW/70EwR1MvKU8WKc
-         Rfog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741279561; x=1741884361;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iYkKdW4t5OSFScRUxZzZa9zKFqxQ50ly8uK9WVZ07tM=;
-        b=Udgw5Qhupi7FLv5r6YURQG7+3sdniH4I7fSW1YsdF3C1oTF6vY/7ATvVYuSpwLDVPR
-         uduURb8PjuJ///4G8ZY24EEs56Mak3lOP6nWrym2Kv5PDL7UKG6jbu5nspMIAwOmcrRg
-         lbfZNyutQADfINedvrVbezNAd6lyr9uyJo+xTAl1VCErT6xT40QgJPaMVD5ITpskqa3i
-         O6WFbjyJ243Z2b0LKNzlmbnPk2RwAuhLCQJn0xsZChLezMq7sFEQ+3xsE0qKWnEk4CcC
-         htwBhhzl8cOVjN1sf6Lj3UZ5chHnJ6almX7I03UBZQ5n02qNJ4IJEH/nUM4YVfnnOyCJ
-         Pnvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWcT8Q2H8x5HoAA3RzNJUiuGPGudsvrsBCwFmv32bwN4gZ7RvDCcx7Cr9z0vKdhETMZ7ECfzL/Pl+lUgpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx41d5EGQkP5OrF0+W2En6C7VgPXGIQqT3EqKChS8oPi3dlU680
-	RaL808h+l1HMvHAuuHwFTb09bUNRnZSJTried7ZooncblSOLnululs0atvKqDz4=
-X-Gm-Gg: ASbGncuH1UozF3GdalE0ygzmf846X+yEFc9q8nTvzNLMDLqEOrsnjqY9rzvplGDT1m4
-	wY4AYpsY7RiTttHHeWs1DYHZj2PWU0dTbyAT/Rc7ScIxQsJBKLF6w3wuf4mKzQKNPrBUPepTD3U
-	jg/Pbdn5x/VIheFSG3u3X/hXCg2wABDupwVpuY25k9M0YrMS1c3Ikg2QpK1UoKQF2wNSNO6t1Jl
-	zfQves2oIhKRaOc82l6scnNMZXN+Vhswmo2CIYbeHAwLe0ugCMjWk//f7tg+6WTZJXBg/YRPO1W
-	nbRBGhgtZCIOXRUIH9IdlAKvhFyv1uDoV5CavwSrdhEGTdfNLaJe3pUGZWy2UtgL1GPNS3BsuKV
-	H2w1R6hBxxK7k0v5YQEBXm5lO
-X-Google-Smtp-Source: AGHT+IGpbLi2y4PhgwxHevBiZsJmX/UmrqptJ9oIY8nq8Avmeb5P0twX8p0VwFnIZrkkMoJhAI8b8w==
-X-Received: by 2002:a05:651c:22c:b0:30b:a4f6:bb35 with SMTP id 38308e7fff4ca-30bd7a65210mr22112421fa.22.1741279560809;
-        Thu, 06 Mar 2025 08:46:00 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30be98d0800sm2597551fa.5.2025.03.06.08.45.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 08:45:59 -0800 (PST)
-Date: Thu, 6 Mar 2025 18:45:57 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Georg Gottleuber <g.gottleuber@tuxedocomputers.com>, 
-	Georg Gottleuber <ggo@tuxedocomputers.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
-	wse@tuxedocomputers.com, cs@tuxedocomputers.com
-Subject: Re: [PATCH] arm64: dts: qcom: Add device tree for TUXEDO Elite 14
- Gen1
-Message-ID: <jxld7w4i7nut35pnmaxgsnmccg3efffas3rubouxcpxbxrrrxh@rrl47w24ju3i>
-References: <57589859-fec1-4875-9127-d1f99e40a827@tuxedocomputers.com>
- <75c17309-3072-4321-ab15-69d60190f2f7@kernel.org>
- <d98ad83e-6479-4453-bd1d-4f3703b0dad2@tuxedocomputers.com>
- <aa837beb-ef4e-43ec-b8fa-54a21df1202c@kernel.org>
+	s=arc-20240116; t=1741279667; c=relaxed/simple;
+	bh=twFTbYxAB1EArSmPyT2JRqopxKqWs42pTkltMVGd1gA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 Cc:Content-Type; b=iH1Xz9tLjpOR79RTdrQ7scpkrvsJKhDE1Tia3gOV6EddH3e6S43TjrfW0nhGQ3M7Mxd6gEtM2n0WrniJVLnLjBv9cSl1b/BvkYgcs79bSgdz0AXrzpUIB2yYGZyE6gs2n34Q4HjDWIZC6Csdktuz15vvR9uhbYmZ2uSRPpb/z7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QhpUO6eC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDC1DC4CEE4
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:47:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741279666;
+	bh=twFTbYxAB1EArSmPyT2JRqopxKqWs42pTkltMVGd1gA=;
+	h=References:In-Reply-To:From:Date:Subject:Cc:From;
+	b=QhpUO6eCNrtrllawflc6gCLCYI1Kn+tIfRMdkg4ME11yaYzCLWcRUoRJtx3z6dfLe
+	 moH5TeID0FA9GNEXP5a/dlY9zLbLp08NEQ800o+/eqcXlPSRpnugFbgGomBvKQ9Shg
+	 NSJnTl4+XspVZooYMw65XT7zprutVB92Fs3K2PsxdCbB8nKSGtALu5m454YOWbyJ1+
+	 A6jLVvKpp5GsusiOcTYav9mqyHR4779cNrVdfgeOhLluudoZReIJHsSGpbhA6MGJm5
+	 DXcm+ViEFciQ1U7BYKJz8Ak8XnxtUcTDnxTZVlE1O0ImLA5uVEEaA8nzmoi8E3ILa1
+	 mEjy+iWHPBtOg==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5494bc8a526so1022214e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 08:47:46 -0800 (PST)
+X-Gm-Message-State: AOJu0YzTMha3DT9MzuDJbDsroQ7qubJaUUGGpc1P8ifK+yq8co0zz2k+
+	v+iUIqIlRSNB9wyCuIGKZLh/LrspmSQBAV5mac+2vLa+51oOd5pijxmoo7RS4LvcqUJMSQMCDRU
+	Ai1stSXDqEBp5jmt1i6d2vxWjm5c=
+X-Received: by 2002:a05:6512:1241:b0:549:733b:6afc with SMTP id
+ 2adb3069b0e04-5497d3358bemt3061168e87.12.1741279665290; Thu, 06 Mar 2025
+ 08:47:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <aa837beb-ef4e-43ec-b8fa-54a21df1202c@kernel.org>
+References: <20250224132132.1765115-6-ardb+git@google.com>
+In-Reply-To: <20250224132132.1765115-6-ardb+git@google.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Thu, 6 Mar 2025 17:47:33 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXHamiZ8u4YO9FnrWhpcotUkAusDF_db_5H2qaVD85qmVA@mail.gmail.com>
+X-Gm-Features: AQ5f1JqSV6MLnlpRrip5gVWxbX6kcgtJrmEkxxn0pKEv2rCJmgtvhbpESrpcKwY
+Message-ID: <CAMj1kXHamiZ8u4YO9FnrWhpcotUkAusDF_db_5H2qaVD85qmVA@mail.gmail.com>
+Subject: Re: [RFC PATCH 0/4] x86/build: Get rid of vmlinux postlink step
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-kbuild@vger.kernel.org, 
+	Masahiro Yamada <masahiroy@kernel.org>, Ingo Molnar <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Mar 06, 2025 at 03:03:32PM +0100, Krzysztof Kozlowski wrote:
-> On 06/03/2025 14:56, Georg Gottleuber wrote:
-> > 
-> >> ...
-> >>
-> >>> +
-> >>> +       eusb3_repeater: redriver@47 {
-> >>> +               compatible = "nxp,ptn3222";
-> >>> +               reg = <0x47>;
-> >>> +               #phy-cells = <0>;
-> >>> +
-> >>> +               vdd1v8-supply = <&vreg_l4b_1p8>;
-> >>> +               vdd3v3-supply = <&vreg_l13b_3p0>;
-> >>> +
-> >>> +               reset-gpios = <&tlmm 124 GPIO_ACTIVE_LOW>;
-> >>> +
-> >>> +               pinctrl-0 = <&eusb3_reset_n>;
-> >>> +               pinctrl-names = "default";
-> >>
-> >> No graph? Isn't it needed?
-> > 
-> > What do you mean by ‘no graph’?
-> 
-> ports connecting this within USB graph between controller and connector.
-> Just like other devices with redriver.
+On Mon, 24 Feb 2025 at 14:21, Ard Biesheuvel <ardb+git@google.com> wrote:
+>
+> From: Ard Biesheuvel <ardb@kernel.org>
+>
+> Kbuild supports an architecture specific Makefile.postlink file that is
+> invoked for the vmlinux target after it has been built. This Makefile
+> takes 'vmlinux' (which has just been built) as the target, and mangles
+> the file and/or constructs other intermediate artifacts from it.
+>
+> This violates the general philosophy of Make, which is based on rules
+> and dependencies, and artifacts that are rebuilt only when any of their
+> dependencies have been updated.
+>
+> Instead, the different incarnations of vmlinux that are consumed by
+> different stages of the build should be emitted as distinct files, where
+> rules and dependencies are used to define one in terms of the other.
+>
+> This also works around an error observed here [0], where vmlinux is
+> deleted by Make because a subsequent step that consumes it as input
+> throws an error.
+>
+> So refactor the vmlinux shell scripts and build rules so that
+> architectures that rely on --emit-relocs to construct vmlinux with
+> static relocations preserved will get a separate vmlinux.unstripped file
+> carrying those relocations. This removes the need for an imperative
+> postlink step, given that any rules that depend on the unstripped
+> vmlinux can now simply depend on vmlinux.unstripped, rather than inject
+> a build step into Makefile.postlink
+>
+> S390 should be able to do the same. MIPS and RISC-V perform some
+> post-build checks on vmlinux, which is reasonable in principle for a
+> postlink step, although deleting vmlinux when the check fails is equally
+> unhelpful.
+>
+> [0] https://lore.kernel.org/all/Z5ARucnUgqjwBnrp@gmail.com/T/#m731ed0206949fc3f39fcc8a7b82fe348a8fc80c4
+>
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Cc: Ingo Molnar <mingo@kernel.org>
+>
+> Ard Biesheuvel (4):
+>   Kbuild/link-vmlinux.sh: Make output file name configurable
+>   Kbuild: Introduce Kconfig symbol for linking vmlinux with relocations
+>   Kbuild: Create intermediate vmlinux build with relocations preserved
+>   x86: Get rid of Makefile.postlink
+>
 
-No, eUSB2 redrivers don't need (and don't use) OF graph, they are
-basic PHYs. See Documentation/devicetree/bindings/phy/nxp,ptn3222.yaml
-
-So this one is correct.
-
--- 
-With best wishes
-Dmitry
+Ping?
 
