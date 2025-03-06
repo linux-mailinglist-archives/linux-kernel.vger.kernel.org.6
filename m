@@ -1,129 +1,154 @@
-Return-Path: <linux-kernel+bounces-549410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA2E1A55232
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:04:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4A69A5522D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:03:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0DD518997D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:02:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E0C31898DED
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:01:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209DA25A325;
-	Thu,  6 Mar 2025 17:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A440C19047F;
+	Thu,  6 Mar 2025 17:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="iNTknRuK"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="OBFBi61X"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A52325BADC;
-	Thu,  6 Mar 2025 17:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7AB25A637
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741280436; cv=none; b=tcwfypwva6KiWO7I3rujXOMhwT/bcuUugCrus1rsctUKRTtrE7udm7DskXiZ7ei20GhKM803mjBs2cBlqvo04BK5/dz1lD9u2F1DTpPn9GYX1MM4PbBObQppz/g+EyWo0GGG3YfmRg2Aakeq44J3KRPdC7eMDeX2VPOcMyJXxfY=
+	t=1741280408; cv=none; b=StGQPOVrUxsYorU8EqL8xTVPNq3pEZyQIeqP8Ryephf17f/s1K/MswRSRgmdxRUNsFsLFGrXZI16iXJ5pSsLh5qfiG/fnoSjmDNUQrX0zsgQyqf6ggWludFbn3jglrFunfG/rt5f+T8Wv1BbG86e7esj4YxlLDi0h7+Uy1LpVDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741280436; c=relaxed/simple;
-	bh=CA3oS7yvpfmULftQdCN1MhnvUH4iqwV7t8JiQGZfNqg=;
+	s=arc-20240116; t=1741280408; c=relaxed/simple;
+	bh=6EHelBLacWleQv44yGckAy3mIbBU9S9fc+Yecr7hfhk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S1dE/rQyx4cc3RBdtjczGehVO0aX5TvzlTCklmzGWOTPj5Fgr9Rsx7KfWcBjfJVemAVki+jFzfDSR+1YZOqXB1O7RxYU/oba61nXEu7WuNHCXxBKfRqUQZgE22Q3E5EiHy8yQSi4L17gZLknkz7h02O+XCPn1Rv2x2JNWc7daMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=iNTknRuK; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 24B8440E0216;
-	Thu,  6 Mar 2025 17:00:30 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id nxFP5hBSf08p; Thu,  6 Mar 2025 17:00:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741280419; bh=yRS5zdx12qlghPTisegH/MGSTWiNp0ZxQFtA1dzgSCA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iNTknRuK8K0YaWLMKsbSE7wAsBn+qoAs+cnac+2DvCsqlfCH/sERig2gFVI1M1kjX
-	 VjELmvuYsSFT11HDtmwZoEnhliioJJ/OfeH1mqNo2lcg6/6DZhypTeHvRiLX6FLlFl
-	 S60Q1ssaFWb1BBd8EQ6GG1lJObJCygUFYlDUdW4uhTT+69wxNGpcEb9G8g+DaWX49b
-	 5LZH6lpb83J0wjbfeRU/KshRXJ7gxGjI33g5O4VFYJk5EMkGdFAkQrNEbJwlZ9Ro/H
-	 tpyeqR+7F6XOR1d3JZ8vWlJy6h61gPmjidntFdDQoGL8+O/NTTh7DcaW1xYczGf55t
-	 zfXC/16gAmErg2eewKpj7WmDneFcSkWoygk8lrW62aHAQUk8s7YyQVZXGb/MrbM4CH
-	 iHrvUjPaEJy33pAWsfOpPot0tdlZjbh7tvrR/OkRaQZV7qZnqZIEoIfgp0DvNDEjQD
-	 MGegSFaOjE5SgwIWY1tg7WaRPyOtwHKdfg170zLElbeiuWScJeLFHv+YDCWqRh9JEn
-	 E995j59TN8+AZRo9KvMpjv1jkZKveh9BDpFcGVvbxksXCyH32po7/4LkQ3y2tY+hbQ
-	 ySTjZgs4n5QJMgF5fGlbacB9+KY6IWVh2dQwRIyq5N04YM84nwS0eRnK3wIEeJ1MA8
-	 5KZ40LTgQLk49vGlN0AfzjmI=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 32F4A40E0214;
-	Thu,  6 Mar 2025 17:00:05 +0000 (UTC)
-Date: Thu, 6 Mar 2025 17:59:58 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Kim Phillips <kim.phillips@amd.com>
-Cc: kvm@vger.kernel.org, linux-coco@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	"Nikunj A . Dadhania" <nikunj@amd.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH v4 1/2] x86/cpufeatures: Add "Allowed SEV Features"
- Feature
-Message-ID: <20250306165958.GGZ8nUjqVyJnw-JV0B@fat_crate.local>
-References: <20250306003806.1048517-1-kim.phillips@amd.com>
- <20250306003806.1048517-2-kim.phillips@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pEF/U4aS86u0Wxt6aTMO23eWTECy8hvo1pHMNKFUmFqh97kjOmf/qUg5V5bmN1Na9wyi+T/XTtRRLFgU1FqYf1DnSqVvU4aZEtExCgEcDOuRUtWAZC+TyQdqu5XNGt/Kp8MU9Tgz/VuLnJWVJ7hKtffZFpsW25BPPzFXRMobPNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=OBFBi61X; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2feb9076cdcso2056257a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:00:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1741280406; x=1741885206; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RQqTHFjNB8mAC6MabLFJci/UUFVOIM/RIyf/FHXgNd8=;
+        b=OBFBi61Xhv2xkNoU7z7xkdqvHEZIWTSQ5PJQ2Qsj4ms+zsdxD/ynUw/jToc5bk4IMN
+         h9y4ZMSUPumTLvnf0cJI78LcN0t8NSPHE7avP5fTZ4icmIVLT1BcQaffZwrpCiL5L3Ma
+         JENUqnbSk7BS5gvewlb0OMxyhcz1HkAp0cFAQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741280406; x=1741885206;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RQqTHFjNB8mAC6MabLFJci/UUFVOIM/RIyf/FHXgNd8=;
+        b=oIFzbMyjQ99mKTI1rHFSN2WY+TVHozh5wOBr/89KT6nNaAbOig9C4aVPk1nh68//kA
+         Tl8Pihi7JNaJprhnk/ufLoj+Sbljy+Zogzmp7pnSA1d5JIGeFxTOVOpN/kAqv83/F8cr
+         rezyMrsdn6s+ieA6qAgfh6SDFXTIqKddD+aAU2jfAX5C/B0JEKtHhJ5V/xw3ltkBOO+e
+         qhXhHLmZ/2frHP5LpagP470OkrgQ9AhuOUhMITImVr2yZ1R72gf7y4FzDk3UM7C5Qlnp
+         jpzIiSacxDCP26s8v3YNKwdo/UPATTVXbvSysUlblcIz39luitUxB1vkZGgmW5G/0lHH
+         OzGg==
+X-Forwarded-Encrypted: i=1; AJvYcCXCu00zuQH8KRn6yk5E3oasLy0PEQC7DxgQJdgwRBBYTSQnk8t5HjaE98ScV7YRgCWz/mXe6dcr4ebX8+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw54We4qnO6Z+B0F1WRnd9ncfnQ+e+5cME+T15kHXs1w3nNizci
+	w3dwwVCHaCzxrp91TUtdpoLN+w4EPefLSJH+XgIJoQma3o7Oy6NAcUfkarfZsyc=
+X-Gm-Gg: ASbGncuaqWAlqTkEklr1pcgOJKwMp4TArmbJugCiziv0/yqYRAYt+YSjWORUmufHfxl
+	7/8PO3OmlNk8oVs4Lyj8Xd5NKkdEfGPPpCJz88ImtvXVoMHFkdDiPoEMart5sl0CjoU1sbSbjHZ
+	qe61boppD74YQHaJHwysUFDamnXT74dfIIhoZZX0hm0e/n/3Pvm2bzjDWI8rrk5Id0W4/gqXF6d
+	oYIL/cWa1ew0uKC0McBI01aA5OPJRol+FDGLPWvaUWfe0ENPptcMPcpvXfMthVlvWOpU3LmGInu
+	T+uTQBb54Z6x69odp3viAUKOzXy6GmJ1DOExaLttqySSCQQB63Wj6eih+HbUqJaYrnF80dE5E9h
+	t8qwr4ayssJo=
+X-Google-Smtp-Source: AGHT+IGMGInMYoKZVtUaLSTFn7K3E/qcMiV7/r81nffI3pTWDuYLKqaB5kMCtQ4fVSMgy49C9wt38w==
+X-Received: by 2002:a17:90b:5688:b0:2ee:5bc9:75c3 with SMTP id 98e67ed59e1d1-2ff49717481mr11337807a91.5.1741280406235;
+        Thu, 06 Mar 2025 09:00:06 -0800 (PST)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff5f6a64ecsm1685585a91.0.2025.03.06.09.00.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 09:00:05 -0800 (PST)
+Date: Thu, 6 Mar 2025 09:00:02 -0800
+From: Joe Damato <jdamato@fastly.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca,
+	gerhard@engleder-embedded.com, jasowang@redhat.com,
+	xuanzhuo@linux.alibaba.com, mst@redhat.com, leiyang@redhat.com,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next v5 3/4] virtio-net: Map NAPIs to queues
+Message-ID: <Z8nUksjJyKEbP68-@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, gerhard@engleder-embedded.com,
+	jasowang@redhat.com, xuanzhuo@linux.alibaba.com, mst@redhat.com,
+	leiyang@redhat.com,
+	Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20250227185017.206785-1-jdamato@fastly.com>
+ <20250227185017.206785-4-jdamato@fastly.com>
+ <20250228182759.74de5bec@kernel.org>
+ <Z8Xc0muOV8jtHBkX@LQ3V64L9R2>
+ <Z8XgGrToAD7Bak-I@LQ3V64L9R2>
+ <Z8X15hxz8t-vXpPU@LQ3V64L9R2>
+ <20250303160355.5f8d82d8@kernel.org>
+ <Z8j9i-bW3P-GOpbw@LQ3V64L9R2>
+ <20250305182118.3d885f0d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250306003806.1048517-2-kim.phillips@amd.com>
+In-Reply-To: <20250305182118.3d885f0d@kernel.org>
 
-On Wed, Mar 05, 2025 at 06:38:04PM -0600, Kim Phillips wrote:
-> From: Kishon Vijay Abraham I <kvijayab@amd.com>
+On Wed, Mar 05, 2025 at 06:21:18PM -0800, Jakub Kicinski wrote:
+> On Wed, 5 Mar 2025 17:42:35 -0800 Joe Damato wrote:
+> > Two spots that come to mind are:
+> >  - in virtnet_probe where all the other netdev ops are plumbed
+> >    through, or
+> >  - above virtnet_disable_queue_pair which I assume a future queue
+> >    API implementor would need to call for ndo_queue_stop
 > 
-> Add CPU feature detection for "Allowed SEV Features" to allow the
-> Hypervisor to enforce that SEV-ES and SEV-SNP guest VMs cannot
-> enable features (via SEV_FEATURES) that the Hypervisor does not
-> support or wish to be enabled.
-> 
-> Signed-off-by: Kishon Vijay Abraham I <kvijayab@amd.com>
-> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-> Signed-off-by: Kim Phillips <kim.phillips@amd.com>
-> ---
->  arch/x86/include/asm/cpufeatures.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index 8f8aaf94dc00..6a12c8c48bd2 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -454,6 +454,7 @@
->  #define X86_FEATURE_DEBUG_SWAP		(19*32+14) /* "debug_swap" SEV-ES full debug state swap support */
->  #define X86_FEATURE_RMPREAD		(19*32+21) /* RMPREAD instruction */
->  #define X86_FEATURE_SEGMENTED_RMP	(19*32+23) /* Segmented RMP support */
-> +#define X86_FEATURE_ALLOWED_SEV_FEATURES (19*32+27) /* Allowed SEV Features */
->  #define X86_FEATURE_SVSM		(19*32+28) /* "svsm" SVSM present */
->  #define X86_FEATURE_HV_INUSE_WR_ALLOWED	(19*32+30) /* Allow Write to in-use hypervisor-owned pages */
->  
-> -- 
+> I'd put it next to some call which will have to be inspected.
+> Normally we change napi_disable() to napi_disable_locked()
+> for drivers using the instance lock, so maybe on the napi_disable()
+> line in the refill? 
 
-I guess this goes thru Sean:
+Sure, that seems reasonable to me.
 
-Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+Does this comment seem reasonable? I tried to distill what you said
+in your previous message (thanks for the guidance, btw):
 
--- 
-Regards/Gruss,
-    Boris.
+diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
+index d6c8fe670005..fe5f6313d422 100644
+--- a/drivers/net/virtio_net.c
++++ b/drivers/net/virtio_net.c
+@@ -2883,6 +2883,18 @@ static void refill_work(struct work_struct *work)
+        for (i = 0; i < vi->curr_queue_pairs; i++) {
+                struct receive_queue *rq = &vi->rq[i];
 
-https://people.kernel.org/tglx/notes-about-netiquette
++               /*
++                * When queue API support is added in the future and the call
++                * below becomes napi_disable_locked, this driver will need to
++                * be refactored.
++                *
++                * One possible solution would be to:
++                *   - cancel refill_work with cancel_delayed_work (note: non-sync)
++                *   - cancel refill_work with cancel_delayed_work_sync in
++                *     virtnet_remove after the netdev is unregistered
++                *   - wrap all of the work in a lock (perhaps vi->refill_lock?)
++                *   - check netif_running() and return early to avoid a race
++                */
 
