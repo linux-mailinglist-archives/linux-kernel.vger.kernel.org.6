@@ -1,127 +1,112 @@
-Return-Path: <linux-kernel+bounces-549344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BE23A5518D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:42:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68070A55182
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:41:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E13E188736E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:40:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D77927A9976
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8D522D789;
-	Thu,  6 Mar 2025 16:34:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DB9221573;
+	Thu,  6 Mar 2025 16:36:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VlLxC4Wb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZEwTeG1"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2180238382;
-	Thu,  6 Mar 2025 16:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC08221561;
+	Thu,  6 Mar 2025 16:36:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741278869; cv=none; b=iTEixzXKpN5IBcV6BET9vAj/WqWcWSpf/AABuZ5Wg4GaRbbf+G7HOYH3KsQqzk8xJpVsgdr3oRsmw+NAu+aWZw0fMyncrhlrVVV1OCF84gvil1zYGJ7J7cLSlf7uTFLSvQIiWv/Sj7GDKMrGeR5VLbkcC9ZFOOoMYfMm4YiFh7Y=
+	t=1741278979; cv=none; b=Gr40j/4iRB6m5CSYoeaWesAyRgUHQ2lWubGCIfp7G+qJgx76yke9bIJje4Ip2Gdtjf7Y8L67yNxvnTdeOwV5o1woZjkQQrFEGhy4nPSECo3B8fCN6EG4aJfMrqHIc7H3Mpo3dO0sx3vwimAQxBz/E+Xpw0a++EMn40lpwpFLJuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741278869; c=relaxed/simple;
-	bh=y8w9Z5XBGvuLTNVCiYL3sVM/L5ZsatxzgXTOSmbh1dY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CIP7X3m4qedK230Tmfs83M2r7v1ixD2768aJ7Ow/yHOP8gfZbMd6Ibm3DYKxe3hMokjYLevFgrVtXn1Xq8xF/lyiJCGavfVxgVSYkVGiSdnB3pCvis9beb77ubxHpaVTKxRVMynqDw6YJ9gF3Gk499ZShA8McS/jcV6TI69wTIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VlLxC4Wb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98E4BC4CEE4;
-	Thu,  6 Mar 2025 16:34:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741278868;
-	bh=y8w9Z5XBGvuLTNVCiYL3sVM/L5ZsatxzgXTOSmbh1dY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VlLxC4Wbu1cdNhjxZzjiVL/C5tkGwZlf23bdXVa3qCrhfN8CmtftVb20j29BCf5LK
-	 Y/sCfElxHHfVikbYUa0e/0j7g2tgVXcml3GmVrK+8ujY+bKTwyyDOkpIcVRf1jMvZd
-	 99WDtUreuEkMqxYlOBhNkc6rNSRpulykPMZi+jf0hHbBPlZvfkVM0dO3Ywphir7eun
-	 q/xsNHIvW8ZxKWwLCQ1YKqjbfOA1Lwa6Jevn6uzKx3nuSgsV/ofiNou+XNm2v7aWmj
-	 olBAhlmIn+u0d0pDU/N7HUZl91u0pODjgWjo3oBGF4APSlsZsI1L/H/BILmh4/oBlr
-	 KwXleXLvWhoVg==
-Date: Thu, 6 Mar 2025 17:34:21 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Simona Vetter <simona.vetter@ffwll.ch>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>, aliceryhl@google.com,
-	robin.murphy@arm.com, daniel.almeida@collabora.com,
-	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Valentin Obst <kernel@valentinobst.de>,
-	open list <linux-kernel@vger.kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
-	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
-Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
-Message-ID: <Z8nOjV5CoUfq6ogU@cassiopeiae>
-References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
- <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
- <20250305174118.GA351188@nvidia.com>
- <Z8mlAxsszdOH-ow8@cassiopeiae>
- <Z8m9j3SwWHqaCTXo@phenom.ffwll.local>
- <Z8nFJjb30_Wm3cJJ@cassiopeiae>
- <20250306161818.GG354511@nvidia.com>
+	s=arc-20240116; t=1741278979; c=relaxed/simple;
+	bh=Rre3tsQ7P67NIH1eBWiW6QiBSh4za0d+d/ZYpmd2TsI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IFUrQZly+Zu4ORM5qmS0/Os1HSOhaZhLg2nWIP3ikqlSjIfOteVdJUhpEr83zkpbZOMZd4vv9qQOw3ouUsv9ea7LYv9NNPXP5Qv2hBkuZZfe2Uru26o9KxJBCgt14g9Drfq9qd+L3HKMkwjU/B8QFvSdjv6V8yKS1pt5PGj9kX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZEwTeG1; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff6ce72844so154389a91.2;
+        Thu, 06 Mar 2025 08:36:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741278977; x=1741883777; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rre3tsQ7P67NIH1eBWiW6QiBSh4za0d+d/ZYpmd2TsI=;
+        b=TZEwTeG1B9f+OHZBmOATuwhwxDBSUdAsxV5mnICQV4ilSM39WbuYPlUr4fDBDDqKZ/
+         lF1G/Jr3tFlitLPbJWRaX6RFVcGEZRLrsgdQPl/04JoyZnEpDgoP7Bt3teXmDW8B1HE8
+         jTqmB3Pgb9Thm8Enjen5t2IPT2QV9KGE3At8vTXXnPd68KAIleKO1VQW9mqdBxGS1imB
+         7+7Pn+kkfkLySr52PozyKIwnB/AAnKDAFsMQrWJHhshcl1GWeyegkcuenxId7GQyPcbt
+         9e8qnnbtCQwB23PY7WUSly8HocSgABO9opciZiSEMt8wxrjT2bQiJFdyVkoe9quWkad2
+         /iWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741278977; x=1741883777;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Rre3tsQ7P67NIH1eBWiW6QiBSh4za0d+d/ZYpmd2TsI=;
+        b=BggQr5pyBLO5DkW0YOARyDNpdqYO7t+QuCQf8WamAZpmiVZdy+NA1gHb0Yuyw96Xnv
+         SIAYhytma6FW0ZponU2+hix62qddVLf4fpIKFmFQ3pslX172MxE7/c+NH6mDH431/97u
+         SPZILG+ilV76yc6+Rq2qxKpJg/INICtb7inULijrw8usl46mgAitctzrkeEfiSFQTAby
+         F8aiURady1XvcqfY7hqVYkifM4KQQg8M9lU3pzs6wXsEnql3S5q/ZUKqiryrtw8rYCY2
+         xMJaXtDqQdEQnfx2zKn0iE0xDKfYC6p9U257bG4gzGxEOc1vgod27cOD2KV0IfmTj0ri
+         buOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUh63Mvwpx89NQw42drX4JRv0jvsyQA7L/B++sOt5rwObSxlASGZS5c9sTXQagqrQPPt/jgf38l+1wSZv8=@vger.kernel.org, AJvYcCVqrN7ah0petqFTTPUJL7FX4MIxM8LVSZ5ldw4163zxTyWfKKpV+YmxzBqVxizbNUPkQEcQA5mQW0+RxhhEoNI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO9kbU3JWFdjBfbO6IVwpet6C1HMi/9trLXRCW5WdrXcyFly2i
+	Wx/J6ZbrvZLt7+bEeJLIm14qPg96S2/sTpkTALVR3yqbUET7btbX6FGNIp0F0jE0K9RTbW6GS+u
+	MjDcAGyU9Jzfp34BounX5vxJHctI=
+X-Gm-Gg: ASbGncsg/VeRI77pSE/E5c/Ytw9TSP5E7vJvWHe6bNixifLi0gs6cy9AVRgq9sdcA6t
+	GbugxfK2w9Mj/dBmlAuMo9oklvkBC0xCVDKcN+Mtl+qcoAo2pnC2T11sj/llH9vPD3WBe6BwE9f
+	FhZiUgbnd7j4ghiqZkZrPQRr/bmg==
+X-Google-Smtp-Source: AGHT+IHohoEXH/Px6pI4TKEWpzlyZTq0CWYULx0ZUFd4G/eQPh82YnhefvCcDjTbmvIW+sgNbb8eocKWnxh8dmxzsMc=
+X-Received: by 2002:a17:90b:3504:b0:2ee:f59a:94d3 with SMTP id
+ 98e67ed59e1d1-2ff49634f33mr5130208a91.0.1741278977492; Thu, 06 Mar 2025
+ 08:36:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306161818.GG354511@nvidia.com>
+References: <CANiq72n=gFWrv9yFmzntaeR+RH5=qeD_uOs6NiW4dHkdaopKKw@mail.gmail.com>
+ <20250306160844.269308-1-trintaeoitogc@gmail.com>
+In-Reply-To: <20250306160844.269308-1-trintaeoitogc@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 6 Mar 2025 17:36:05 +0100
+X-Gm-Features: AQ5f1JpfqmxFwyJn6hhiA6K_0j7V5ITxtazc-jBTJPEMb_lr1T8GOjC3CLOVtvQ
+Message-ID: <CANiq72nXzY_j38ytE7KwHpH3Cy4sDw85WU2MyUe5u74oB2UP+Q@mail.gmail.com>
+Subject: Re: [PATCH V6 2/2] checkpatch: check format of Vec<String> in modules
+To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, aliceryhl@google.com, 
+	apw@canonical.com, arnd@arndb.de, aswinunni01@gmail.com, axboe@kernel.dk, 
+	benno.lossin@proton.me, bhelgaas@google.com, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, dakr@kernel.org, dwaipayanray1@gmail.com, 
+	ethan.twardy@gmail.com, fujita.tomonori@gmail.com, gary@garyguo.net, 
+	gregkh@linuxfoundation.org, joe@perches.com, linux-kernel@vger.kernel.org, 
+	lukas.bulwahn@gmail.com, ojeda@kernel.org, pbonzini@redhat.com, 
+	rust-for-linux@vger.kernel.org, tmgross@umich.edu, walmeida@microsoft.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 06, 2025 at 12:18:18PM -0400, Jason Gunthorpe wrote:
-> On Thu, Mar 06, 2025 at 04:54:14PM +0100, Danilo Krummrich wrote:
-> > (For some reason, when replying to this mail, mutt removed Sima from To: and
-> > instead switched Cc: to To:, hence resending.)
-> 
-> It is normal, Simona's mail client is setup to do that.
+On Thu, Mar 6, 2025 at 5:08=E2=80=AFPM Guilherme Giacomo Simoes
+<trintaeoitogc@gmail.com> wrote:
+>
+> In current config, the formatting seems don't have a effect for arrays.
+> i.e. this array: authors: [ "author_1", "author_2", "author_3", "author_4=
+","author_5","author_6","author_7" ]
+> don't is fixed by rustfmt for no format.
 
-Huh! Never noticed that in the past.
+So if I understand correctly, `rustfmt` will simply not do anything,
+i.e. it will always keep the array as it was -- that sounds good
+enough to me! Most people will write it correctly, and for those that
+don't, `checkpatch.pl` will likely catch the mistake -- that is all we
+need.
 
-> 
-> > > I think for basic driver allocations that you just need to run the device
-> > > stuffing it all into devres is ok.
-> > 
-> > What exactly do you mean with that? DMA memory allocations or "normal" memory
-> > allocations?
-> 
-> Simona means things like a coherent allocation backing something
-> allocated once like a global queue for talking to the device.
-
-Yeah, that's what I propose then.
-
-> 
-> Ie DMA API usage that is not on the performance path.
-> 
-> > > But for dma mappings at runtime this will be too slow.
-> > 
-> > What exactly do you mean with "DMA mappings at runtime"? What to you think is
-> > is slow in this aspect?
-> 
-> Things like dma_map_sg(), dma_map_page(), etc, etc.
-> 
-> You cannot propose to add any runtime overhead to those paths and get
-> any support from the kernel community. They are performance paths
-> optimized to be fast.
-
-Oh, I didn't do that. How could I, since I did not knew what was referred
-to? :-)
-
-Quite the opposite, I fully agree with that.
-
-I think for this we need higher level abstraction (which now that I know what
-was meant I know Sima proposed already), or maybe provide an API that can
-consolidate single operations for a single Devres container, etc.
-
-But that's out of scope for this series.
-
-- Danilo
+Cheers,
+Miguel
 
