@@ -1,132 +1,147 @@
-Return-Path: <linux-kernel+bounces-548143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CFB2A540C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:40:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1341FA540C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:40:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5FCD3AF148
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:40:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668161892F2A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6611917E7;
-	Thu,  6 Mar 2025 02:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GFp+HLV6"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D102190485;
+	Thu,  6 Mar 2025 02:40:42 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E3A18DB2C;
-	Thu,  6 Mar 2025 02:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC8BBE46;
+	Thu,  6 Mar 2025 02:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741228787; cv=none; b=RGg4XLW9r+BnyWsm8NwAbxLpfGWrTZPRi79xkHX52LjM+zhWxNv7t8s0/q49ct1umV/Tx7WYHtrj7zjBF/bvRUwbXWUs77T6/Gjl0g97EtDu6vdtmEgm+VsuxNAL2ovMgWmiRHbbkxIJNHbVlpNNGVswNRWdL+Qo5VKnvAL9feI=
+	t=1741228842; cv=none; b=K20b3pv5bWoZtQty4CCRe8G/KJk9eOnF3twVh1FHPfz9Hpxfl2AS6BrSqJ3MV4fvIFBmYlFFSLDtb+4Etf78PUndlzUiIlkj8mMK+7itncZ+E6kWgUJpWFt1mAiKCpOUeFy7KVRL+05RRMhURG2jJM0xZsflt/8YXM+/0bjZ/QQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741228787; c=relaxed/simple;
-	bh=8WBcXaLXL/iP7nl/3ES4eit2pxrZ+37ELIaPFNukPYg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OeBitLxT9aMRl/nA84D/5obZZmRVLeex39iosa1pOULVD+6uzEdQ+Io/cAs/hodU8juNx+URDnnpzHc4OaG0UryuX4D2OCMtEfH+9sxTQMM2IGUy3ei8TUi0GaQBX6NhLf6dOoqvw4FFUmXZH8XbSB8220LiuONFxVB36/i8/2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GFp+HLV6; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-223f4c06e9fso3295705ad.1;
-        Wed, 05 Mar 2025 18:39:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741228784; x=1741833584; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nO/K3jIMTWzpsGmyTlzR4YihT171aoPHTsbAGep3ycE=;
-        b=GFp+HLV6g6pcMSUQx65h975kuaTuobaOZIlzxP2V0lh1OPfLSZwK8ZTL7ALVKA6yrc
-         B1UE6V8FoQuqckwyU8pr0K9qGsA4rkCHGFVuXtstO1FVFoK4X3ChGqCJAYobS2587QeS
-         K8u649xEOIvWHRYF0mXMAn8gpH6qNBRsnLf9zyflJw53LHLKI+MzIssxWds9MlNuT+JF
-         0ocqNuOy6kJ4jIAeyLrNsInq4ssA6QCfdck0UQt2rUqJh1/itGlPw4xVex7F9Ef1/6EK
-         IzwJfX+9wOa2ehDB6v6N9AplXPIg981agLJmxq1msGG8b/ow8tAuk3aSaM35iT/Xnu/m
-         cdGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741228784; x=1741833584;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nO/K3jIMTWzpsGmyTlzR4YihT171aoPHTsbAGep3ycE=;
-        b=qrmMUvum4UaC2Obrrg02fs3B2DB/J/BdQqqcpvadn7G4rKzmkJsWa66dUqVRVNTGyR
-         7fnZn+arvkPx9MB1603wDrHUp+Hf1PoLanAJbT/h9sIDiHGXAJPRJlJi0COJhyHtv9vc
-         9eoatvzqm8gkGr39mmzYG6yeHQIuBGFWBbq+ExDdSFbso0tD8hmIFHzQmLn8R0V5SjdL
-         VQp7ylrDUU7quxR3wk70QhtQo2rUsq8uNIANicveXDZ3k0gKDeT3yEkIYwNheT5pd8GI
-         XVaM+8u37WFFNBi5rYSCQViIZGgHrDl+ba09qkPI4uXthCb9cAT8Ks9PA3lCN0L2facz
-         0czw==
-X-Forwarded-Encrypted: i=1; AJvYcCURbwHudxyMU5Ax1qI0Uy9/i+1vhSDS92ssDKksRkouKLM2JebitTqXsAM7qxQarw1uN4Ajb6DEsdUPjdnfJPhO@vger.kernel.org, AJvYcCXZOZwM87ewpnasyt3QqZEBPKTcg77NKGA034j9vt04j8gJ4mMb/pH4NG4nab8vM2BW40Fk8y3Jx/HTJGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuFNU73f5HeKDzIoE2YH2NFqHS/UvNSmXdF9jaZGi+nOxST7Hr
-	HEHix2kVoIxWPrK9Aw2tslFGw1554TCe1m1wHU2iDn+uGuD1nlI6JAVo28DQNdWh2w==
-X-Gm-Gg: ASbGncs0STNJdnfji7//yU78J5FS+z2cklgz3dSJZwVrIqBS1DxEartkHb/Cu7CMeo7
-	8hQ6ZSgbkhjDhsgcTcfw35J4KqoaVMieODcSKg2+1BH/ugcbQa37uCHGzh6lw/6GFuiLlrNt+Ga
-	daL6Cc6EHMoQaKPVJcyLCb1zyVFAL/PQbSiuTrflUQyMg88SzZgKv4oSEFhi0RcPuKm1GGIhbVk
-	RxZPfdeQPTnaqFENuWTwMWtScdAStPoYB+Dv1iVp3J7lfjI04TGxpgbWTL0hO46GDJq+417slTa
-	pf1I8hsscoMBdTEQHqCPGCmeozzKkpnnX0YEkzftQUQuynxJaqIU3URpSdg+9Yd9
-X-Google-Smtp-Source: AGHT+IHYwOCpr7hGkL1F7WPPMLX5exZ5+7vBbvbuOwSyzigC1YACRXQNSDsEgsOfuAbn3XruKcOAKw==
-X-Received: by 2002:a17:902:ce0c:b0:215:6c5f:d142 with SMTP id d9443c01a7336-22409471a71mr26077915ad.20.1741228784127;
-        Wed, 05 Mar 2025 18:39:44 -0800 (PST)
-Received: from fedora.dns.podman ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410aa8ae4sm1292185ad.243.2025.03.05.18.39.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 18:39:43 -0800 (PST)
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Jay Vosburgh <jv@jvosburgh.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	Simon Horman <horms@kernel.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Cosmin Ratiu <cratiu@nvidia.com>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Hangbin Liu <liuhangbin@gmail.com>
-Subject: [PATCHv4 net 2/2] selftests: bonding: fix incorrect mac address
-Date: Thu,  6 Mar 2025 02:39:23 +0000
-Message-ID: <20250306023923.38777-3-liuhangbin@gmail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250306023923.38777-1-liuhangbin@gmail.com>
-References: <20250306023923.38777-1-liuhangbin@gmail.com>
+	s=arc-20240116; t=1741228842; c=relaxed/simple;
+	bh=ONtAi5Sqk5d11lgQN9ofiQ1SwRaBMpb8UpGrlN+B3Dc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XRfvxaY7/04IY01jcuqgSP/S6Z+sykL07mnR86Uop0ZZHoh2PFnh9mTHhvUhAPGP8FE2dNDVpMAWh/tkvOcl8U+Uitlswy4nCKhrMrbghoNN8mjsk8Qqwt9OeJQdASvgRB4eY+T4BB7MwI2YPMuu/QRLl277HE/wMD4oPrVqmpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z7YYR135vz4f3lW5;
+	Thu,  6 Mar 2025 10:40:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id BB4DC1A058E;
+	Thu,  6 Mar 2025 10:40:34 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgDHKl8gC8lnRDSxFg--.7098S3;
+	Thu, 06 Mar 2025 10:40:34 +0800 (CST)
+Message-ID: <355c8355-a6bc-181f-73e7-1baf7749f984@huaweicloud.com>
+Date: Thu, 6 Mar 2025 10:40:32 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [Bug report] NULL pointer dereference in frwr_unmap_sync()
+To: Chuck Lever <chuck.lever@oracle.com>, Dai Ngo <Dai.Ngo@oracle.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ linux-nfs@vger.kernel.org, trondmy@hammerspace.com, sagi@grimberg.me,
+ cel@kernel.org, "wanghai (M)" <wanghai38@huawei.com>, yanhaitao2@huawei.com,
+ chengjike.cheng@huawei.com, dingming09@huawei.com
+References: <e7c72dfc-ecbc-bd99-16f6-977afa642f18@huaweicloud.com>
+ <314f60a8-4b0d-45f9-87f4-5a4757d34aea@oracle.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <314f60a8-4b0d-45f9-87f4-5a4757d34aea@oracle.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDHKl8gC8lnRDSxFg--.7098S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7WFWkCw1kuw18uFy5Cr4rKrg_yoW8tw15pF
+	yktrZ8GrW8Crn5Xr4DZ3WkAa40vFsYy3ZxJr1kGF97AF4DJry2qr4UWFyvgasrGr4xGa1r
+	WF1UXa13ur93Xw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBSb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487
+	Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aV
+	AFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E
+	8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82
+	IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC2
+	0s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMI
+	IF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF
+	0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87
+	Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFDGOUUUUU
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-The correct mac address for NS target 2001:db8::254 is 33:33:ff:00:02:54,
-not 33:33:00:00:02:54. The same with client maddress.
 
-Fixes: 86fb6173d11e ("selftests: bonding: add ns multicast group testing")
-Acked-by: Jay Vosburgh <jv@jvosburgh.net>
-Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
-Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
----
- tools/testing/selftests/drivers/net/bonding/bond_options.sh | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/drivers/net/bonding/bond_options.sh b/tools/testing/selftests/drivers/net/bonding/bond_options.sh
-index edc56e2cc606..7bc148889ca7 100755
---- a/tools/testing/selftests/drivers/net/bonding/bond_options.sh
-+++ b/tools/testing/selftests/drivers/net/bonding/bond_options.sh
-@@ -11,8 +11,8 @@ ALL_TESTS="
- 
- lib_dir=$(dirname "$0")
- source ${lib_dir}/bond_topo_3d1c.sh
--c_maddr="33:33:00:00:00:10"
--g_maddr="33:33:00:00:02:54"
-+c_maddr="33:33:ff:00:00:10"
-+g_maddr="33:33:ff:00:02:54"
- 
- skip_prio()
- {
+在 2025/3/5 22:02, Chuck Lever 写道:
+> On 3/4/25 9:43 PM, Li Nan wrote:
+>> We found a following problem in kernel 5.10, and the same problem should
+>> exist in mainline:
+>>
+>> During NFS mount using 'soft' option over RoCE network, we observed kernel
+>> crash with below trace when network issues occur (congestion/disconnect):
+>>    nfs: server 10.10.253.211 not responding, timed out
+>>    BUG: kernel NULL pointer dereference, address: 00000000000000a0
+>>    RIP: 0010:frwr_unmap_sync+0x77/0x200 [rpcrdma]
+>>    Call Trace:
+>>     ? __die_body.cold+0x8/0xd
+>>     ? no_context+0x155/0x230
+>>     ? __bad_area_nosemaphore+0x52/0x1a0
+>>     ? exc_page_fault+0x2dc/0x550
+>>     ? asm_exc_page_fault+0x1e/0x30
+>>     ? frwr_unmap_sync+0x77/0x200 [rpcrdma]
+>>     xprt_release+0x9e/0x1a0 [sunrpc]
+>>     rpc_release_resources_task+0xe/0x50 [sunrpc]
+>>     rpc_release_task+0x19/0xa0 [sunrpc]
+>>     rpc_async_schedule+0x29/0x40 [sunrpc]
+>>     process_one_work+0x1b2/0x350
+>>     worker_thread+0x49/0x310
+>>     ? rescuer_thread+0x380/0x380
+>>     kthread+0xfb/0x140
+>>
+>> Problem analysis:
+>> The crash happens in frwr_unmap_sync() when accessing req->rl_registered
+>> list, caused by either NULL pointer or accessing freed MR resources.
+>> There's a race condition between:
+>> T1
+>> __ib_process_cq
+>>   wc->wr_cqe->done (frwr_wc_localinv)
+>>    rpcrdma_flush_disconnect
+>>     rpcrdma_force_disconnect
+>>      xprt_force_disconnect
+>>       xprt_autoclose
+>>        xprt_rdma_close
+>>         rpcrdma_xprt_disconnect
+>>          rpcrdma_reqs_reset
+>>           frwr_reset
+>>            rpcrdma_mr_pop(&req->rl_registered)
+>> T2
+>> rpc_async_schedule
+>>   rpc_release_task
+>>    rpc_release_resources_task
+>>     xprt_release
+>>      xprt_rdma_free
+>>       frwr_unmap_sync
+>>        rpcrdma_mr_pop(&req->rl_registered)
+>>                     
+>> This problem also exists in function rpcrdma_mrs_destroy().
+>>
+> 
+> Dai, is this the same as the system test problem you've been looking at?
+> 
+
+Thank you for looking into it. Is there a patch that needs to be tested? We
+are happy to help with the testing.
+
 -- 
-2.46.0
+Thanks,
+Nan
 
 
