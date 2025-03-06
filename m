@@ -1,140 +1,171 @@
-Return-Path: <linux-kernel+bounces-548713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B17A54881
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:56:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D92A5488A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:57:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 050CD18950F8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:56:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1033D171B97
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:57:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F89209F44;
-	Thu,  6 Mar 2025 10:56:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632FA207DEA;
+	Thu,  6 Mar 2025 10:57:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fN5c6zP2"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PmjxlUG6"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBE0204686
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:56:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00ED8202984;
+	Thu,  6 Mar 2025 10:57:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741258587; cv=none; b=lkgwFILGhWo0X9nVvxBKJ0TvZDEKdp0oj03H1zz448ZJ+AJ0iCURtCqbFi8JUQsuDIFnO7a/HlYZ8LGBxA3vyAlesR9hHX/xWRPO9n8IoN6lCG+JSv1UGRi8QoNLiKO+lueDq6jp3SACr92X5vq6ZdOXisqKdlHLGoat5BuwwL0=
+	t=1741258640; cv=none; b=DJqGgOXvvbfyPydLnHE8JuyYD0PR9cq2EDIUBF0nhE4r0H5vPNSKRLtPccQLpLgEupIqiD4AdbG2uIKi4c8seqXB/8jwtIAK6Yv7Vs70V+L5S4n1Dp9ojvv1h5Vr2VadsnElM6KT17nIwEONqpb3Vhr6DN1PpqOpcH/99RoBvLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741258587; c=relaxed/simple;
-	bh=P71o+WVhxYn8Se0AGo5XXf4Chk/tu5d7gpsoPtCEyy4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jC4byaWt6Zt3fjVqLXwkdN7qfcyRS+ONpSB15ywy88LNecLlo6z/Qkw8qDFJKRTeUrl9cgZKchgf22wRJA9KmmX9eUL0WYmC6LES1ZBgtuigvoL10Nv74hEjS18BW/Q/auAt96cPBiYwR2+BPRI2vTobk/nC4EbMzeFmJkaLXWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fN5c6zP2; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-438a39e659cso2642655e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 02:56:25 -0800 (PST)
+	s=arc-20240116; t=1741258640; c=relaxed/simple;
+	bh=I9pdTKoLaw+6AaESsv4LPJeCEfXkPMTSZEKG9PY9KuY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g2tpscL3q/9zV5OtjIJOKPigWmLbCNTlAh84qb2rwTIQSYwyFbF6Pw4+CKa++3dGsZFVbMXv/fWxFzDzXJ6yFTTwaoAmPUVcwEAKTziK0+ht43cfuCM69VVCbRQqSzOg2652Bsfh7eXNb3YVchJ7Es10on0dzUTqZPGpUKYik3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PmjxlUG6; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394a823036so4252855e9.0;
+        Thu, 06 Mar 2025 02:57:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741258584; x=1741863384; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LxBaNed9RSMl/yW/MAlaQb2l44+yRXzgp7zH4r9ij/k=;
-        b=fN5c6zP2ff/XI10MuSKo/u2HPpgI+MqN5mZrRquTHW/fS6Kk1TwbeYhbwEN0bHDxlv
-         yLvsYK0aw3BHSzOittEyyQV1s+MQN4qHNzK1hdYHPi0YtOG0rXMNmYWcp5wa7qqT44b2
-         ZldUvHkPykJ62pG+iZERELMKFzQKIVwVfhfhmdrnCEv5yFkIkPQyKmElLbHK0F42QhxC
-         xKdtg65/ygpHBOk+y6uBhNeQHqv5aw9hjBFOAKuAi+GxeqltvusNsj9EZpq0izxdVI8B
-         LOOK7tiImFRRzBHyxkj23csieuZR1U3Z7owzpSsCSPYubdtawVqlOPm7kDN9J2SBXq1c
-         jqZw==
+        d=gmail.com; s=20230601; t=1741258637; x=1741863437; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=lgkMBhBzFh4GMW6txcVgpWsBqFCCmiQ9SftChtsfc9M=;
+        b=PmjxlUG6VrJKmJPC6cd+uEun1KdKE+THkC4GWs67ZKj2jbJp/1g4JtGtXbsqEQmeZo
+         xa3NRg9xSZua+CuuTFilX3ZZj70RrSuwKLd6xEf+GeWD1VfSnMb7FdW7kLrOSg/LoykZ
+         2w8Rh8dbIebmg7XsXQ1nR8kMKK76/uQTMkQYjtlMC5TPrNqTzL/1418qAFJFTeUy3+Hy
+         UiF/XXAKb1hMM2SDXGs+7e7QleH0G2atTD4k/aZ7h+JyDKraohBWjZk73mfAedKx5toq
+         fSiOlHRm1Wx8Db4gFsxnyczi81ms358608cQYGQ1BtyZXODHeLlgGVEpK96hp7EZeida
+         +0dw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741258584; x=1741863384;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LxBaNed9RSMl/yW/MAlaQb2l44+yRXzgp7zH4r9ij/k=;
-        b=rezYGgOssSecIIJcCr5eDjHnFCJomek8qG7v1GTVUjTZthOC24WvL8s6iv2gEgTqTw
-         9vChYQkS0CAyI+Lt5cbP8z1SPaIpHv4LQy91CzBVwJrJk6AelBh49SU+5R/6jIVLq3LS
-         gpYTwwQos60jS1Gu5mbOfI2xzIY4uCWdTmzc30xC9Kd0XCc3hrtXBr+K5oUE/1H3C1Bp
-         miJmkJsUyK94AFQSvQ4Jd6DkNFtI59oilbQOVKXwZRX5fv5tSkuLRYzzpLynYFAaXMiK
-         1TsfxjD2zm5xQ/z1KV1WJoBh+10w2Yyts+9xtDRfwy9G84sIYBxutxKsnWgKguhVsudM
-         +vZw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2WDipzVDEVOdzs1xs9BzE5lKG5mDaDXsqXDHS+/tmcmEFoc+DBquzsIQ6Y4RwHF20E9ugp9SufobMbYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2X9r9UAUsBaAzMQ5Ozut0a0YF3xPoIQ5gOXO1hDQAvCr35Fky
-	flDuBK33qkxQI1cfLHGE+6nMJ1i9AEEDzFWN3/hw3tKnBcu+URhE4C41cPzoipg=
-X-Gm-Gg: ASbGncuX1BwsWMxTNJBFotHI2tCKE/AtluikRhotqXd+uAIAYGgQbcIFzDJB7zAMPcl
-	qLGz5DZ+Zj+oo/9qKng9B9U0JqrbLN53DeC3Jj7CBIdsZ/LO+Cl6jnNCAVkBTFPa3lkQIrN7oAJ
-	VGTicELMXiQLAFWNlf9Ang7KpIxs8rtOwnj9RcgTlzHrFcM1OJsh4qqAPu5ClZfN6E6a6wIm2MB
-	3pfWDxm6FEohniiMw/2A9DbYtCrpLpT/mzFpW6ro4CO4tMnuH/nfnAQKg9zftOfHGeEKBhwA0Bo
-	n4yDrAW6VRwSl8XLrljcJrqmi5zbF3F6N1+41S+VOREKnSDiIxbk+qv/+xOPaZSL5w==
-X-Google-Smtp-Source: AGHT+IECRN+bvTx+8pm4GOrYZ5/1UypaJFOSp9E9046SWdeMqENayv/oHV7TP5Iul0p4eNzKyHKWUg==
-X-Received: by 2002:a5d:6da2:0:b0:38f:451b:653c with SMTP id ffacd0b85a97d-3911f72fe43mr5103677f8f.7.1741258584233;
-        Thu, 06 Mar 2025 02:56:24 -0800 (PST)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd831719sm17406675e9.0.2025.03.06.02.56.23
+        d=1e100.net; s=20230601; t=1741258637; x=1741863437;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lgkMBhBzFh4GMW6txcVgpWsBqFCCmiQ9SftChtsfc9M=;
+        b=DnmU+AmyGQUJvIQc43ZrWedLu8YVNK9IR4A0Vsbmi0hA5QZJbYt3LcsS7ke46ajTlc
+         8IHCFRWZEimj8N5O6rr0HJ57uVd9D3mi4XZgdfiOHw9aPG5e6343PeZBJhD77hfcN3Qt
+         zvU5rSSrXTthQDFHkVDHao0CJborEMP6o+MlQS3whJ3+tL47D8KXT0zKGfLzMoIzeSxF
+         7GEimLqRQ8thTr/BPy6sZiEx1uXsqeZJwkRorTZ0n/oJajEpTdvTptQof0qeLDZY3bFq
+         t73cgZBVUtiVRXXRQ2jCNFak8iy3eHfBd5Ha1b+gvaOvjwGAR08PYkOT3AB+UfV4Oy+M
+         lUPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUGGlg/GpDKulMPxPPZOmAhAi2kZFmO7RBSwXjYHCZlIJEWrG3AAQ9U5wy6S7F9f2bUtcEXWgXYqg4WF2V/@vger.kernel.org, AJvYcCUUY7hdyTI3q6ZNSmFmsyEhMdTOoys+7fXiuKTERsR8crdAz7hQLjUuSl6BcUPRsDvYkSZG1SOVIxWr@vger.kernel.org, AJvYcCVbJD9ckb7u53lcssV+yJrRPsBlwkWf9fm1/Lm9sKbxrvZPT3Y6O/kUyr8WAUJMS35IUrE=@vger.kernel.org, AJvYcCW0f4jWFDk/A+hgw9YIcmobkKkhdA4w41HRa+P7Kd/R7wVtox2hIvcrMB+AeMNd+J9+hW5nThci@vger.kernel.org, AJvYcCWdblM5mYu3Od982WBbTNg/c/KNToMio0epDMGyVi8t0WAWW81TuB/rnUOba6EE9J5+2MwRVLC71FtsmCrBfBPAGqFJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyol0cm7lv0K1Av3qib7fXvRlSgpgyRJEIcOXcTYDYYbfYyXQkU
+	NSAzOBEQyk15M9907URiY8qmKTSWwu+SMlkmXSRjIKOUHbpfAcIadlX+wTaGHis=
+X-Gm-Gg: ASbGnctErop6Lcri2Leua4OkAor+I/vMrdmOn+Afky7YaADGvIiDekz+36KQeiDPm95
+	0dEWuVxvXPiKNr8tCZJs9LYYpa6YD1kMCcsECOAmqiIqq7THFj7ETWXhpDQgvYjMNsOI7Jk0UPd
+	nly83edHLcjBLhpr7BHQr5RCpgnX7Sn95rdPuVEpkw5/k4IfMzO3WfYDbjz8pFMsO2H8m3677ni
+	GDq8bEw8FiS2WqoluuLT0nYJVwJKATFesF7/FQQEg76rSo1cZ1DwSXu6fLAU9jcbwnhgPymvSyo
+	A0UHij5u+GvXXH440irrcZTvl+CxWORITxtuxQ==
+X-Google-Smtp-Source: AGHT+IGLhJA7BskK5ld+jvgOXMpsvckCM2ZvvuLBgJH2nBAC7Z74GOkDTinBbaMSWaLdw5nhhGwZtQ==
+X-Received: by 2002:a05:600c:3205:b0:439:969e:d80f with SMTP id 5b1f17b1804b1-43be1d8de13mr4102405e9.31.1741258636883;
+        Thu, 06 Mar 2025 02:57:16 -0800 (PST)
+Received: from krava ([2a00:102a:401e:9b3a:b228:9e66:580a:3bc8])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfb79adsm1674487f8f.7.2025.03.06.02.57.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 02:56:23 -0800 (PST)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Thu, 06 Mar 2025 11:56:20 +0100
-Subject: [PATCH v4 2/2] MAINTAINERS: update dlg,da72??.txt to yaml
+        Thu, 06 Mar 2025 02:57:16 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 6 Mar 2025 11:57:14 +0100
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Kees Cook <kees@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Eyal Birger <eyal.birger@gmail.com>, stable@vger.kernel.org,
+	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	x86@kernel.org, bpf@vger.kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Deepak Gupta <debug@rivosinc.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: Re: [PATCHv3 perf/core] uprobes: Harden uretprobe syscall trampoline
+ check
+Message-ID: <Z8l_ipCn8tBE1d9Q@krava>
+References: <20250212220433.3624297-1-jolsa@kernel.org>
+ <CALCETrVFdAFVinbpPK+q7pSQHo3=JgGxZSPZVz-y7oaG=xP3fA@mail.gmail.com>
+ <Z623ZcZj6Wsbnrhs@krava>
+ <CALCETrVt=N-QG3zGyPspNCF=8tA4icC75RVVe70-DvJfsh7Sww@mail.gmail.com>
+ <Z7MnB3yf2u9eR1yp@krava>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-topic-misc-da7280-convert-v4-2-2972c4e81cb5@linaro.org>
-References: <20250306-topic-misc-da7280-convert-v4-0-2972c4e81cb5@linaro.org>
-In-Reply-To: <20250306-topic-misc-da7280-convert-v4-0-2972c4e81cb5@linaro.org>
-To: Support Opensource <support.opensource@diasemi.com>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Roy Im <roy.im.opensource@diasemi.com>
-Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
- kernel test robot <lkp@intel.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1039;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=P71o+WVhxYn8Se0AGo5XXf4Chk/tu5d7gpsoPtCEyy4=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnyX9VcGMUWuU5jZ1YXvxkpZFrAABVDhICGdek8KCx
- BPGWbWaJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ8l/VQAKCRB33NvayMhJ0YNMEA
- CWQ0pe8i+7H7rezUyIlfPbhcXFUmUor+5YvJ8DcfHAhHZ3hKAGtCbpIkjGeGH5E88m5EgnH4AprVCl
- +B78O9t1OB4tXX/uFchdJTdybm1Rmrn50HPEuqXbuww2mIKnvvXUY44qz96r1irR8Q7OtfGcH0Jonl
- +7RpVfvwfw2afEVhP/1vTWJ7p5PZLkrBHDw/IDuR+Ut+UqZkaQD2vnzubKvmZZVj9evyhzuj0ae8oc
- cH6X8sYFRx4ItwRRpy3dKU73hD74GuKmwSkYdwoEzyddksKfbYj+zfjLjvVHEGo3eondbK7VU1kauG
- WDUV3zjIPHlCRzFreXGXxomGILTKn81qBxv9rcZrVC2xig+locIeq0zhcrT9Y01gMdUlQTmHQ/0tQy
- BHuF/y+XAQW4CcHwoOQMw9pwyNMIAkEkGgopRZYYzc1rt/yVxA7/pAacrH+Z+n8joo2cPBv1GM2nOF
- hmBk8Fg6luOAcByOhRDLw36bsGXgEdttPowaotKTmHxywvc2znNcIKW98n7vOJA94mlM4R9pmO1W9/
- RtYNaj7wO7pUJGLJ8uZK7Co+CE3I2MpWHr1ep61v2DeKiz5xVSDnwugmaF/gn5B12DS5REDmrEAIJ2
- m3WBmtFMHCdQ1OVd1YHwvmS8yVANYssFYHgtyAbhyILfJ1Kx9Qrbje3csEFA==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z7MnB3yf2u9eR1yp@krava>
 
-Now the dlg,da7280.txt file has been converted to dt-schema,
-update the corresponding MAINTAINERS entry.
+On Mon, Feb 17, 2025 at 01:09:43PM +0100, Jiri Olsa wrote:
+> On Thu, Feb 13, 2025 at 09:58:29AM -0800, Andy Lutomirski wrote:
+> > On Thu, Feb 13, 2025 at 1:16 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> > >
+> > > On Wed, Feb 12, 2025 at 05:37:11PM -0800, Andy Lutomirski wrote:
+> > > > On Wed, Feb 12, 2025 at 2:04 PM Jiri Olsa <jolsa@kernel.org> wrote:
+> > > > >
+> > > > > Jann reported [1] possible issue when trampoline_check_ip returns
+> > > > > address near the bottom of the address space that is allowed to
+> > > > > call into the syscall if uretprobes are not set up.
+> > > > >
+> > > > > Though the mmap minimum address restrictions will typically prevent
+> > > > > creating mappings there, let's make sure uretprobe syscall checks
+> > > > > for that.
+> > > >
+> > > > It would be a layering violation, but we could perhaps do better here:
+> > > >
+> > > > > -       if (regs->ip != trampoline_check_ip())
+> > > > > +       /* Make sure the ip matches the only allowed sys_uretprobe caller. */
+> > > > > +       if (unlikely(regs->ip != trampoline_check_ip(tramp)))
+> > > > >                 goto sigill;
+> > > >
+> > > > Instead of SIGILL, perhaps this should do the seccomp action?  So the
+> > > > logic in seccomp would be (sketchily, with some real mode1 mess):
+> > > >
+> > > > if (is_a_real_uretprobe())
+> > > >     skip seccomp;
+> > >
+> > > IIUC you want to move the address check earlier to the seccomp path..
+> > > with the benefit that we would kill not allowed caller sooner?
+> > 
+> > The benefit would be that seccomp users that want to do something
+> > other than killing a process (returning an error code, getting
+> > notified, etc) could retain that functionality without the new
+> > automatic hole being poked for uretprobe() in cases where uprobes
+> > aren't in use or where the calling address doesn't match the uprobe
+> > trampoline.  IOW it would reduce the scope to which we're making
+> > seccomp behave unexpectedly.
+> 
+> Kees, any thoughts about this approach?
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202412070625.zZpw80SM-lkp@intel.com/
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ping, any idea?
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7109a562c96fe22314201f691f1d3d8e8b231f0a..302c27df1b94d5fd579c2855a6ba57be8b34db17 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -6808,7 +6808,7 @@ DIALOG SEMICONDUCTOR DRIVERS
- M:	Support Opensource <support.opensource@diasemi.com>
- S:	Supported
- W:	http://www.dialog-semiconductor.com/products
--F:	Documentation/devicetree/bindings/input/dlg,da72??.txt
-+F:	Documentation/devicetree/bindings/input/dlg,da72??.yaml
- F:	Documentation/devicetree/bindings/input/dlg,da9062-onkey.yaml
- F:	Documentation/devicetree/bindings/mfd/da90*.txt
- F:	Documentation/devicetree/bindings/mfd/dlg,da90*.yaml
+thanks,
+jirka
 
--- 
-2.34.1
-
+> 
+> thanks,
+> jirka
+> 
+> 
+> > 
+> > >
+> > > jirka
+> > >
+> > > >
+> > > > where is_a_real_uretprobe() is only true if the nr and arch match
+> > > > uretprobe *and* the address is right.
+> > > >
+> > > > --Andy
+> > >
 
