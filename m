@@ -1,78 +1,56 @@
-Return-Path: <linux-kernel+bounces-549923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 554A4A558AD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:21:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC2BA558AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:22:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D02189489C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:21:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E62EF7A8396
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117F72702B8;
-	Thu,  6 Mar 2025 21:21:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF0820E315;
+	Thu,  6 Mar 2025 21:22:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="guMhklL/"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwn0bef7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0E620469E;
-	Thu,  6 Mar 2025 21:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B928E1A3176;
+	Thu,  6 Mar 2025 21:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741296102; cv=none; b=DiEDcjvzhgFteC76fVzOorit8Po8lT2ZbeSt4rY0LoQQvVGBpWGNPFwptXkd8+or9m/yI/ahKB5ADNdr4d5m6S0D8hhsQS2l68zl2c2V5r59YRIYxy2p8+HEIhJfLB+W0T0VJMQ9XMOuQ88JpZ5R11O7KXvuuqB8DNOprRpEUr0=
+	t=1741296134; cv=none; b=ER85SDVPtcKNq6dHaO5zHRxyLXX8OTyhX84qOBW/bVZ+ziZBuHwqzaCqBGaAaJ9SVWRaedqeX+3QFGrypvQ5+3eJstFNeVNr1yfU6UP87KGw+188jgVctUb6jVjuToJ3cJNz1PdX7nMpthPSI5UaBga6UFwYY95HB9wrdYeeRj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741296102; c=relaxed/simple;
-	bh=dG3d9aBGMx3DfnzuFFKM0PvgEVAcQQKTYUoYLJZ2bfw=;
+	s=arc-20240116; t=1741296134; c=relaxed/simple;
+	bh=RJ7L2/PCOnNpUBmkwWMftwXfB0mjGlfWd+PF6zlAMkA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gpxH2YtPeLbSPFeG7XI+1y0btE78hs2KV8g4qh5I+ENIpjoWxM7/OtEb/tbl54mPuz4a+k72Fd1iY+14xuTtGwy3KvtQNgF8v8M9TEsDv8BqO4ZQyoEusMYkdW2xpaEj/V9m9/EdM/yliq/xMdAxivPZ7+yhCS8jfU0QKbrXCj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=guMhklL/; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=9H78NGtDgrJN8almAooGMPfIHicQD7QyEml+BfISIgg=; b=guMhklL/+BIxtizh+xS6aUCkcs
-	xiqV6+jRMkvDCFI1Sdi2vxBbaC8HFPmkFSPNomuM1DaFuR9gXBO5W5pyVze8dw4T1rail/m4jEtUx
-	Sl+bfrPyvulBDrN60FqU93ZP8sEOV2aYu0DUfALLj08VQcaukP31Ov9Z/eDXCzgNeMYfJ7JgOoYxm
-	LPp2dr+vWeNh/k4dbT3BM/AH62dODYTy86qE4hCFZTafmDcEGEjAArTWjqtWhJCGRgRQU2TGorsuO
-	lhbZjQJ6ndCqIFdVoMdRuVoKtIzDJrHoh05ZDgdAg/TKTa1NWtUgxeKTc/aq5QAwqsoVm3sVyDVdT
-	vzH1AxrA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44602)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tqIeb-0006Vr-05;
-	Thu, 06 Mar 2025 21:21:17 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tqIeW-00078z-38;
-	Thu, 06 Mar 2025 21:21:12 +0000
-Date: Thu, 6 Mar 2025 21:21:12 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 2/2] net: stmmac: dwmac-rk: Validate rockchip,grf and
- php-grf during probe
-Message-ID: <Z8oRyHThun9mLgx8@shell.armlinux.org.uk>
-References: <20250306210950.1686713-1-jonas@kwiboo.se>
- <20250306210950.1686713-3-jonas@kwiboo.se>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aeemr+JhJJ31Mp6gBx+ILcL5k33WG2jWccCZRgJidZDYCmmpjmZiMLjN3glddko5b301eGNV+d7H5Br3+pAGtTC9ftKoVfR1yIRTbDjb4JgHNVndi/ypiIDjM3dkktIBX3SMLM7nTGK6VhMsnXL29Qv0X+j4IQlV4FH+sq8VLD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwn0bef7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 935FDC4CEE0;
+	Thu,  6 Mar 2025 21:22:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741296134;
+	bh=RJ7L2/PCOnNpUBmkwWMftwXfB0mjGlfWd+PF6zlAMkA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uwn0bef73GNPx8L+gZZiaT2/B3QVQ9uwWwTinqdvReKlNxgAvoNOUcLt4sZDnmvnY
+	 TUoqzUoCvAzNPrUydPuDJ/5v4FvnJ9EMOXKd1JumVsuNFR6kqZ6yfv3j0JmIjiMqmr
+	 n6OGX/ATcIBE5IOV3OyHPwslxDAR20y5NSjfbu7TIbY4a9lxdnQ4e0YNEFMNTRId/N
+	 NqK8DACwLywDYuBKuh9zEdubIAVo20kZDk/uP10B2kvM2M6vLJ2qMR6GPkaTFbo+WP
+	 wW+0GZNoQPOYx2WlVz86poGqMuRrzFbWEwBS1KfOj5w30V8X6XTtVO4LswlIa0HeWu
+	 RG+Z8wS42ZglQ==
+Date: Thu, 6 Mar 2025 22:22:09 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	kernel test robot <lkp@intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, x86@kernel.org
+Subject: Re: [tip: x86/mm] x86/mm: Check if PTRS_PER_PMD is defined before use
+Message-ID: <Z8oSAQiBvVJ_METQ@gmail.com>
+References: <20250306092658.378837-1-andriy.shevchenko@linux.intel.com>
+ <174125602814.14745.12946945836213678532.tip-bot2@tip-bot2>
+ <CAHk-=whTGVy1aaEashu3K49wuG7-hARh02xbAr_hMm3844Ec7Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,30 +59,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250306210950.1686713-3-jonas@kwiboo.se>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <CAHk-=whTGVy1aaEashu3K49wuG7-hARh02xbAr_hMm3844Ec7Q@mail.gmail.com>
 
-On Thu, Mar 06, 2025 at 09:09:46PM +0000, Jonas Karlman wrote:
-> @@ -1813,8 +1564,24 @@ static struct rk_priv_data *rk_gmac_setup(struct platform_device *pdev,
->  
->  	bsp_priv->grf = syscon_regmap_lookup_by_phandle(dev->of_node,
->  							"rockchip,grf");
-> -	bsp_priv->php_grf = syscon_regmap_lookup_by_phandle(dev->of_node,
-> -							    "rockchip,php-grf");
-> +	if (IS_ERR(bsp_priv->grf)) {
-> +		ret = PTR_ERR(bsp_priv->grf);
-> +		dev_err_probe(dev, ret, "failed to lookup rockchip,grf\n");
-> +		return ERR_PTR(ret);
 
-Did you consider using ERR_CAST() for these, which would look like this:
+* Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-		dev_err_probe(dev, PTR_ERR(bsp_priv->grf),
-			      "failed to lookup rockchip,grf\n");
-		return ERR_CAST(bsp_priv->grf);
+> On Thu, 6 Mar 2025 at 00:13, tip-bot2 for Andy Shevchenko
+> <tip-bot2@linutronix.de> wrote:
+> >
+> > x86/mm: Check if PTRS_PER_PMD is defined before use
+> 
+> I'm not at all happy with this one.
+> 
+> > -#if PTRS_PER_PMD > 1
+> > +#if defined(PTRS_PER_PMD) && (PTRS_PER_PMD > 1)
+> 
+> Honestly, I feel that if PTRS_PER_PMD isn't defined, we've missed some
+> include, and now the code is making random decisions based on lack of
+> information.
 
-?
+Yeah, so <asm/pgtable-2level_types.h> hasn't defined it historically, 
+because 2-level paging only has PGDs and PTE tables - and it relies on 
+<asm-generic/pgtable-nopmd.h> doing it:
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+ #define PTRS_PER_PMD    1
+
+<asm/pgtable_types.h> includes <asm-generic/pgtable-nopmd.h>, and with 
+it most of the MM headers.
+
+But:
+
+> It should be defined either by the architecture pgtable_types.h
+> header, or if the PMD is folded away, the architecture should have
+> included <asm-generic/pgtable-nopmd.h>.
+> 
+> So I'm *really* thinking this patch is completely bogus and is hiding
+> a serious problem, and making PAGE_TABLE_SIZE() have random values.
+
+Yeah, so the MM headers cover the C case - but the bugreport was about 
+the assembly side (head_32.S):
+
+  In file included from arch/x86/kernel/head_32.S:29:
+  arch/x86/include/asm/pgtable_32.h:59:5: error: "PTRS_PER_PMD" is not defined, evaluates to 0 [-Werror=undef]
+     59 | #if PTRS_PER_PMD > 1
+
+and AFAICS the assembly version of these headers doesn't define 
+PTRS_PER_PMD.
+
+Separating out the assembler-compatible defines from the types headers 
+appears to be a bigger patch, since it's all mixed in with C syntax:
+
+<=-----------------------------------===============================
+typedef struct { pud_t pud; } pmd_t;
+
+#define PMD_SHIFT       PUD_SHIFT
+#define PTRS_PER_PMD    1
+#define PMD_SIZE        (1UL << PMD_SHIFT)
+#define PMD_MASK        (~(PMD_SIZE-1))
+
+/*
+ * The "pud_xxx()" functions here are trivial for a folded two-level
+ * setup: the pmd is never bad, and a pmd always exists (as it's folded
+ * into the pud entry)
+ */
+static inline int pud_none(pud_t pud)           { return 0; }
+static inline int pud_bad(pud_t pud)            { return 0; }
+static inline int pud_present(pud_t pud)        { return 1; }
+================================================================>
+
+In any case I've removed the commit for the time being until this all 
+is cleared up.
+
+Thanks,
+
+	Ingo
 
