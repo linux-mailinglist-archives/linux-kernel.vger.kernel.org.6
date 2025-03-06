@@ -1,98 +1,134 @@
-Return-Path: <linux-kernel+bounces-549293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF2B2A55068
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:19:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F7EA5506E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:21:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D8163AB689
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:19:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C1857A2C5B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117FF212F8A;
-	Thu,  6 Mar 2025 16:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17FAF211294;
+	Thu,  6 Mar 2025 16:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="dS7JjNSp"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="M59Msc71"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 887D71991CF;
-	Thu,  6 Mar 2025 16:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8B83D6F
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:21:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741277983; cv=none; b=tVw1BWDL5pAxrOrGxDiPQORWbXhCw/HrjhKFdHTc9dgvxUVqDfPrxLb4iwUNLcvA2Dds5GgWmPxvSn1OI7mo9i3gVG2hzu8WI6xtcj8nlPnTZJkUcRdG1jPrUHDUueQB5OXG8s8+BCHfERQqKmAEXl9Rkou2wO6WncDgHAoiieo=
+	t=1741278108; cv=none; b=mTHKvcqXmxZBFPv4h1Oe1cNIL0HPfnQwJXLBbjvijpRA0sOzd8qVAS7nNcrUGhmF66Y1bENwQzYtaBq1Ywu2YJ/M2dj/MBnCiuRbJb0flRBvF+UQ30Vv00kBzARmOSyk7Gb1YfWDwKoUX82UYLVw565Fan6xwJqZ0IzMaNCFNWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741277983; c=relaxed/simple;
-	bh=mha3/rqc6BD2iffoShtz4KfaDYz7lkqmtpJkKWRR2i8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RW0wfx/polUzRPoaaFZzGT1M0Zhywkox/swGVgEIbk6XhQWOPQ3NVOB+WlIuGx//LSIKQWVuXFg4RBfrg0ZZr0y8nlk0yUxxtj7B7xAIep00VdY9PFyrhP+cpU8ta6gTlTebKlwCm3fMkg7d+/UxNxwokFaAf3tOwXtJqEeZkHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=dS7JjNSp; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 25FEC40E0214;
-	Thu,  6 Mar 2025 16:19:32 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id XhiL8TMhWTUD; Thu,  6 Mar 2025 16:19:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741277968; bh=2JaKV6O0O/0Vj73XlyNNmyimAQdzhmggMcmuSrsq1/I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dS7JjNSpUUz8pB3vHUR83NVR42s86t/OupTWRDjgGYObQuWambmQhTl9elUQFq6ZE
-	 TrVPLF3PVOZEsheqDeohpwMU2+sOMIdWqzlDnuyAccGUWkzCi8x4Wt1AUS5BmukxVX
-	 S9QfoEtvekOzRH/tZTWbuSzgMK56ezgEDuOkNrpIPYVr2mVZhDBbbqqsPo5qCrU75z
-	 n+CMXj8PkxkZC4KPNEGk11OORutA1UITOMp+giZjCshSlqnR4tbOZpx/Y9ehQywDJ2
-	 exgKMv5iRAeczNgwt+ZzkmKTooUCyonNHIXbA29DuI9nKmyOVcFOzjLWMHoxrg2fx5
-	 S5Rm2AvLLV9bOHhEitJx1FuvMuNGZB6ZZIUXwnoT7twZcFnDtovt6CcOTtH+MNv3PL
-	 TM2DpPkYBguBK9dZj9eo5KzAUtElAKwUuXtml7UndvvF0QGXj1pDkVsS2L1ESgCwqM
-	 ms4aRTEcSnUji+0tdT1WPsHIdKsvdaHnmNr2E2hSl+cAS0Iou+rYlPERSPyH/gywe2
-	 RiaVZKwbKMRXAJXCv2vNbNOaMWS64dwJNv2lShtWCVk0qMWlU7oHh9J/cIC0eC3Voq
-	 csTEElcfNt/dnvBIymmztWXU0rCSnMfYC1RQQruI/dnE7iiidrQEjKdu87TUd+/ZSf
-	 sm3T6DemNaXPeWKzA6umfHM8=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 68E8440E015D;
-	Thu,  6 Mar 2025 16:19:19 +0000 (UTC)
-Date: Thu, 6 Mar 2025 17:19:12 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Eric Dumazet <edumazet@google.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>, linux-kernel@vger.kernel.org,
-	x86-ml <x86@kernel.org>
-Subject: Re: request_irq() with local bh disabled
-Message-ID: <20250306161912.GFZ8nLAAVKdlx0s4xv@fat_crate.local>
-References: <20250306122413.GBZ8mT7Z61Tmgnh5Y9@fat_crate.local>
- <CANn89iJeHhGQaeRp01HP-KqA65aML+P5ppHjYT_oHSdXbcuzoQ@mail.gmail.com>
+	s=arc-20240116; t=1741278108; c=relaxed/simple;
+	bh=NnwwiFX0fgN9MDN62lMjnICri18W7lMtlk90+146rbY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=I9/2ZSmbO9zc9rvo2fO2LVkGyzTIIuKxYtGzgUGp/nuh+P/8fgOaq7y/j7ITkhr5Kgg/X2Tem+6VBm3BC9gwylTvDD+5vAQ0bqGX2HkVtqiWjpz9n2GLrxJ2rYroX/B6LYXcmvZWgqXrt/n9k+KRH/hU30O5nG2jtRfAcUTBtPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=M59Msc71; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43bcad638efso5574545e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 08:21:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1741278104; x=1741882904; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wW8fv/c/SOuj1ifoxIC+BzegNrFlqpqBNUShKNP4Jmc=;
+        b=M59Msc71zCvXZCg7C9fT4ifu+PMb8YVhFgYWQziMFfeclU4iTDry0AAwufibJ3313z
+         czgu+Yr257c0oqd8sMBAkIB5DEgdMmuJNyA4RFKlB822ckqYD6VQbUUP30rS/r6s/XK6
+         FC5sxI1Z+t7Q26ukswAkO44hmaAIFlnNj/CJMSBZUbzWDZ2aASFAE5r4FMHPCoV1cV0x
+         PW5gL6DHJ1vONuKoyG3gQyRqbeTffbDibT1anI/jJiAQ0pNwXeLIfR2j8p/22ymyVxjQ
+         nSvEZ+i+JpOk11TIATOx69Ot7swrXwDr35nYeNyZuclT47A6AnpHYv8WRmM9u2q0LzMV
+         O/Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741278104; x=1741882904;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wW8fv/c/SOuj1ifoxIC+BzegNrFlqpqBNUShKNP4Jmc=;
+        b=NSyuMY3CRb5/h87g6dlq2Os90GpFPibhDNcJR8ii6w8cM4svggifzlYqFuISYj+tGZ
+         FFa31S95xfaTTpKkYYhk7klfNyjVriUKjtPUCP+6ERCLo/xAS+UUTXZLO4eer2IDIE2z
+         C2gqB/D1/RBaeqyOtwnDS+oNqZF4nGdM0+Hb8O0kVjUmwTsfGsEcWW44kDuGXIb8HaF6
+         BsISPdjyy4ldZYbIzm0FfKaJY6hFNe+unmkNVHr44X02VvnsIk7kSegM5eMTh7m2WF7t
+         pp9tYMznhmtdPrFGC7DqnzGF8Dss2Owt2kStXzsbELng4gbkS9XSAQbSCCBiSe8QiIBb
+         32Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmLyM6ESNIlrCs1/c+lb2UqHEpTiFbJa7z4bLQQqFwrrwxrYjUxMTQGG2cTMPl3JMba2vdcIq9nJ+mOrk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwybR6N36eiLbHeB91jLv9pL2rX4hgMYkHzKjCVsKZsCXzJVqlJ
+	Dijnhfnt4RZn6HrT/DQORWkPPFyTrWvIoPPyyEVyI+UMAA4iThKsnqtGOVBmIXY=
+X-Gm-Gg: ASbGncsoWrOlh5kSU+JxFNYZrO2Mx0hYPnkGGFtdLvyTbj+GkMx0Bp0NKbb+DQltZ/9
+	IqWpnUX/X+wcFWWaMPOC7/CNo7tiAXfBLKBGyuByDTqZ1noKnoGY5Wu7fEAxfzFjBMjSCxiBEtY
+	SSjQSV1elz8n3sJAL9tAZa+NHP5YCbUPBCbt7Ygcr+Rxt9Ko4oFsHnZPdf7j1xs4yZ6OYt0VzCV
+	8ZGYxhJL88RZ5ib1XBu6v99iCmZxH2m63qUmIwg3Fy3Z3h3zK9wmna5S98U2mFarI+VPbotUC9o
+	7TI/XdNQk4h0esA6UdF8nmuQhm2P+FucZmy1YRkaC6m4Z5LN
+X-Google-Smtp-Source: AGHT+IFHQXHU03Zs/hnxG2LMsd+FqGQL18YfZKdZoNQgvKHJ+pNPDgffKMalooCg9O9MuolKgzLHnQ==
+X-Received: by 2002:a5d:5f84:0:b0:390:f55b:ba94 with SMTP id ffacd0b85a97d-3911f73fa74mr7220020f8f.13.1741278104005;
+        Thu, 06 Mar 2025 08:21:44 -0800 (PST)
+Received: from dhcp161.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0193bfsm2507741f8f.55.2025.03.06.08.21.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 08:21:43 -0800 (PST)
+From: Petr Pavlu <petr.pavlu@suse.com>
+To: Luis Chamberlain <mcgrof@kernel.org>,
+	Petr Pavlu <petr.pavlu@suse.com>
+Cc: Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] MAINTAINERS: Update the MODULE SUPPORT section
+Date: Thu,  6 Mar 2025 17:20:59 +0100
+Message-ID: <20250306162117.18876-1-petr.pavlu@suse.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CANn89iJeHhGQaeRp01HP-KqA65aML+P5ppHjYT_oHSdXbcuzoQ@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 06, 2025 at 02:45:16PM +0100, Eric Dumazet wrote:
-> Hmmm.. not sure why local_bh is considered held..
+Change my role for MODULE SUPPORT from a reviewer to a maintainer. We
+started to rotate its maintainership and I currently look after the modules
+tree. This not being reflected in MAINTAINERS proved to confuse folks.
 
-Yeah, it looks like it is some crap in tip as current mainline is fine.
+Add lib/tests/module/ and tools/testing/selftests/module/ to maintained
+files. They were introduced previously by commit 84b4a51fce4c ("selftests:
+add new kallsyms selftests").
 
-Lemme see what I can find there.
+Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+---
+ MAINTAINERS | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thx and sorry for the noise.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 8e0736dc2ee0..0c8a00b0b49b 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -15982,7 +15982,7 @@ F:	include/dt-bindings/clock/mobileye,eyeq5-clk.h
+ 
+ MODULE SUPPORT
+ M:	Luis Chamberlain <mcgrof@kernel.org>
+-R:	Petr Pavlu <petr.pavlu@suse.com>
++M:	Petr Pavlu <petr.pavlu@suse.com>
+ R:	Sami Tolvanen <samitolvanen@google.com>
+ R:	Daniel Gomez <da.gomez@samsung.com>
+ L:	linux-modules@vger.kernel.org
+@@ -15993,8 +15993,10 @@ F:	include/linux/kmod.h
+ F:	include/linux/module*.h
+ F:	kernel/module/
+ F:	lib/test_kmod.c
++F:	lib/tests/module/
+ F:	scripts/module*
+ F:	tools/testing/selftests/kmod/
++F:	tools/testing/selftests/module/
+ 
+ MONOLITHIC POWER SYSTEM PMIC DRIVER
+ M:	Saravanan Sekar <sravanhome@gmail.com>
 
+base-commit: 848e076317446f9c663771ddec142d7c2eb4cb43
 -- 
-Regards/Gruss,
-    Boris.
+2.43.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
