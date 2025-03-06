@@ -1,178 +1,159 @@
-Return-Path: <linux-kernel+bounces-549058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D65CA54CB0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:56:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0F9FA54CB3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 680F13AE89E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:56:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 176F6174C69
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:56:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3BEE13BC26;
-	Thu,  6 Mar 2025 13:56:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E58D613C80C;
+	Thu,  6 Mar 2025 13:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="KlzG7U7s"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V8letVuq"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1F2523A9;
-	Thu,  6 Mar 2025 13:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C5513957E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 13:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741269376; cv=none; b=Y3pZZYTy3Mdq2ifqxu2vp1tKWH8LaLhIRcUoQdUHz698wKtQK0+2euMa4nae5Wlnll/yrGZlk43DI255SMVeELo89UAnrT8th66ddhBe5FwJxHVqsRqhSVkzciv0D1lNbh+f5dABLV0p4e/HENyAIPzDG0eJy3spSS3g95z4veM=
+	t=1741269402; cv=none; b=RXWC8cPKel8TnR30R4gRd0IMqsWTOgEKy9sAaS+SLCgzJ6pYYSlmh+kwSSKSXnzfhdFyxVe9VGICvj7k+9nTOV8V2huhj8CdsSFK01NaqdbI+X4yX3YvexjW/4dYOPvW81NLYXor2IY1v8ofF2jVwbxxoNuJ32I4s4deSAHE+XY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741269376; c=relaxed/simple;
-	bh=+Pimst16aPdCxGYqUpJuW6UMGnHrJPBhkR8LtjurZn0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dkDgZj4vhpV2dFI3t4mzs/MKbWA5aIpR4W88TK2cudSuw7OEt65XkRmD6j0vNb3u4A5pDJq4+s4rZh7ONE/49nPs4+pG1GmIuRXLuKaQzkFf7v5haF77qyFbwgXwequFZjP89RlhrDmzoHvGbWOIISNITtGgjDCgua5s6dlrHgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=KlzG7U7s; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.178.76] (business-24-134-207-61.pool2.vodafone-ip.de [24.134.207.61])
-	(Authenticated sender: g.gottleuber@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id A61292FC0048;
-	Thu,  6 Mar 2025 14:56:09 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1741269370;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7bQXDLdPVD7kCqCo4PQ87J+ynI5NxAEe/Nqs7CoZ62A=;
-	b=KlzG7U7snk/0gtQgGXFwiDkx1Z0tlRKxaigeNF7+c/LY/I4qeOOFP/t3Xha6GGVzGF9uYi
-	TzBCa15UxdWoQi5Jj8KUljJYif0ytUJho1MDGaNs4pEkrZIuCz0xP6TL9J5v9DeCQ7jmd0
-	V4b2bpGJiGd82ZJ+yayxWdvP9TX+p7Q=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=g.gottleuber@tuxedocomputers.com smtp.mailfrom=g.gottleuber@tuxedocomputers.com
-Message-ID: <d98ad83e-6479-4453-bd1d-4f3703b0dad2@tuxedocomputers.com>
-Date: Thu, 6 Mar 2025 14:56:09 +0100
+	s=arc-20240116; t=1741269402; c=relaxed/simple;
+	bh=Ak4jPNS2H5zDaC93QvcNheTKkzUBzednJJVpi8m397w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kM0nLgW3PcRz9nkWoZygXC9/WQgXPK6sPyyNaA5FP2aXGGiMYynlEbgc0vCwUSzRJPtFrslHKsHM76/3k7+4LvsjY7HdWmhoU8kefWz50Y2O3ZDUvkX0hEdVbIOjcc70G71LmJ8MlMbjC9VbtL3xmLGNv3172CGWAGoj7J9d974=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V8letVuq; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30bb2fdbb09so6612231fa.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 05:56:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741269398; x=1741874198; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qw/mZJ3F1G3n89iZgBPP7rYy/9o9JwgTq33glnQrqFE=;
+        b=V8letVuqFBa3yl1LlyE0KEwjHxMjMvZnAUCNXRYbUcvELMOYfY+98IPoCmRKiTdEde
+         b5TsB8UZTVWLLyscuru1WNbPI8yANG3Zj3dejGxZZZxUXSmjgki1TkfXQ2ThOSBPXRMU
+         M7L0ZhtZy8KXD/K/7yVer/RUSscaENJROH8Y+KDWyRPrv9sotW8vkKAwOBgYzU3dJVRB
+         fGIVj9JDEMxLIulAFLl1qZ6OI0EfefnnKTuNhborFB55TUPv04pPdaxea8//XXn/YKH+
+         +NrZbL0HUgj7N+6AllTr/JfvSv/oWn45GaelxJSUIGvgqFDJYKyIR/vH95g5xw+zNv+x
+         zcmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741269398; x=1741874198;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qw/mZJ3F1G3n89iZgBPP7rYy/9o9JwgTq33glnQrqFE=;
+        b=u6HeXc7Bd3hHXl1rebxYNJ/k0xkwBSMQLKGe3iTx9AYuZKvyMNlQVXaLv1HgLi3X+n
+         mC5neT8MQmV+bWuS/67nMef+u1tdWiPC+ARSWfve6DMtSTZKu64fY4sCbM8bT78yUEcn
+         ZafwJ31UoPJznjRREL/potPN2vJmBE6RM5Be5vUh5R1Ju3t+bjyOdSAFZeCQnfxnMUz5
+         UNdAGuiO0xViXA0osHTuU3NB4Kv5hHg9nMETUcsdPornbcuV85uhpWLCT1jvQkiiowcQ
+         FrSLGBJzUilWKetuH0ixUdwoArCrcBLEoMkdnjVo3+U/W8CZ04CWKv7mdeVI21xo3E2Q
+         uWdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULzYuJgMz6WWHYP7EZ54iqHQuB6D+2ZJxfjcbcTW+B/EX0D6KEWbX5mVJRyuTyaK7yDk8m4OTsfbJpsxo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhZ4ioqKy4OjAZA61Os75+vBAm3gpyY+yZ6EpmLPkbK/wCFGwE
+	Ueq65bNn1XC9HJh/iXJsqRxO5+jonu636T+ys8B04r+/0rokYRaE5F+a91YFTXEvyCZ4EiE1h6U
+	/+HG4SNW623LddaFCm77/pFwGdcfeYKl4FD0=
+X-Gm-Gg: ASbGncswIZ++RNC0eOCYlOP6HGR6ohtp0Ik7gaRzO/mYXnZcIyfrVhB2+xPD0e/p8iH
+	1prAUkY9XjFoKRSW1Vur7RdHABL708a6+UnI1mFXMV1VRyAVU6YELQmK2ywnQk83iJaken7NPiB
+	G9rpUZ6SPmMIGqH5fOqjU5Pgqn7w==
+X-Google-Smtp-Source: AGHT+IG3DQkcHiaFi2rFPWS7ff35/Uqx4ZLwiQtUwV9Zn19JbqWqJcH8NcQXcuXMik2Tf40dgxj/DlfcHSrz3vuXxPE=
+X-Received: by 2002:a2e:be28:0:b0:30b:963e:9b1a with SMTP id
+ 38308e7fff4ca-30bd7b11c0cmr29194141fa.23.1741269398222; Thu, 06 Mar 2025
+ 05:56:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: Add device tree for TUXEDO Elite 14
- Gen1
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Georg Gottleuber <ggo@tuxedocomputers.com>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Konrad Dybcio
- <konrad.dybcio@oss.qualcomm.com>, wse@tuxedocomputers.com,
- cs@tuxedocomputers.com
-References: <57589859-fec1-4875-9127-d1f99e40a827@tuxedocomputers.com>
- <75c17309-3072-4321-ab15-69d60190f2f7@kernel.org>
-Content-Language: en-US
-From: Georg Gottleuber <g.gottleuber@tuxedocomputers.com>
-In-Reply-To: <75c17309-3072-4321-ab15-69d60190f2f7@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250228123825.2729925-1-ubizjak@gmail.com> <Z8lxmPmnJhBmPRvl@gmail.com>
+In-Reply-To: <Z8lxmPmnJhBmPRvl@gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Thu, 6 Mar 2025 14:56:35 +0100
+X-Gm-Features: AQ5f1JrmwxMl7SeTCZmrmdvqkLUhSfb_P2EoWHVOqTWShygNYpWcbMYk4qFB3ug
+Message-ID: <CAFULd4b-YJnC1LFrvqLXTTsZQqchGQar=q3vUmeN-c8Kcrd51A@mail.gmail.com>
+Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
+ locking insns
+To: Ingo Molnar <mingo@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Mar 6, 2025 at 10:57=E2=80=AFAM Ingo Molnar <mingo@kernel.org> wrot=
+e:
+>
+>
+> * Uros Bizjak <ubizjak@gmail.com> wrote:
+>
+> > According to:
+> >
+> >   https://gcc.gnu.org/onlinedocs/gcc/Size-of-an-asm.html
+> >
+> > the usage of asm pseudo directives in the asm template can confuse
+> > the compiler to wrongly estimate the size of the generated
+> > code.
+> >
+> > The LOCK_PREFIX macro expands to several asm pseudo directives, so
+> > its usage in atomic locking insns causes instruction length estimate
+> > to fail significantly (the specially instrumented compiler reports
+> > the estimated length of these asm templates to be 6 instructions long).
+> >
+> > This incorrect estimate further causes unoptimal inlining decisions,
+> > unoptimal instruction scheduling and unoptimal code block alignments
+> > for functions that use these locking primitives.
+> >
+> > Use asm_inline instead:
+> >
+> >   https://gcc.gnu.org/pipermail/gcc-patches/2018-December/512349.html
+> >
+> > which is a feature that makes GCC pretend some inline assembler code
+> > is tiny (while it would think it is huge), instead of just asm.
+> >
+> > For code size estimation, the size of the asm is then taken as
+> > the minimum size of one instruction, ignoring how many instructions
+> > compiler thinks it is.
+> >
+> > The code size of the resulting x86_64 defconfig object file increases
+> > for 33.264 kbytes, representing 1.2% code size increase:
+> >
+> >    text    data     bss     dec     hex filename
+> > 27450107        4633332  814148 32897587        1f5fa33 vmlinux-old.o
+> > 27483371        4633784  814148 32931303        1f67de7 vmlinux-new.o
+> >
+> > mainly due to different inlining decisions of -O2 build.
+>
+> So my request here would be not more benchmark figures (I don't think
+> it's a realistic expectation for contributors to be able to measure
+> much of an effect with such a type of change, let alone be certain
+> what a macro or micro-benchmark measures is causally connected with
+> the patch), but I'd like to ask for some qualitative analysis on the
+> code generation side:
+>
+>  - +1.2% code size increase is a lot, especially if it's under the
+>    default build flags of the kernel. Where does the extra code come
+>    from?
+>
+>  - Is there any effect on Clang? Are its inlining decisions around
+>    these asm() statements comparable, worse/better?
 
+FTR, clang recognizes "asm inline", but there was no difference in code siz=
+es:
 
-Am 06.03.25 um 13:41 schrieb Krzysztof Kozlowski:
-...
-> 
-> Please run scripts/checkpatch.pl and fix reported warnings. After that,
-> run also `scripts/checkpatch.pl --strict` and (probably) fix more
-> warnings. Some warnings can be ignored, especially from --strict run,
-> but the code here looks like it needs a fix. Feel free to get in touch
-> if the warning is not clear.
-> 
-> It does not look like you tested the DTS against bindings. Please run
-> `make dtbs_check W=1` (see
-> Documentation/devicetree/bindings/writing-schema.rst or
-> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-> for instructions).
-> Maybe you need to update your dtschema and yamllint. Don't rely on
-> distro packages for dtschema and be sure you are using the latest
-> released dtschema.
+  text    data     bss     dec     hex filename
+27577163        4503078  807732 32887973        1f5d4a5 vmlinux-clang-patch=
+ed.o
+27577181        4503078  807732 32887991        1f5d4b7
+vmlinux-clang-unpatched.o
 
-Thank you for the advice and the offer to answer further questions.
-Didn't know that dtb_check exists.
-
-> ...
-> 
->> +
->> +       eusb3_repeater: redriver@47 {
->> +               compatible = "nxp,ptn3222";
->> +               reg = <0x47>;
->> +               #phy-cells = <0>;
->> +
->> +               vdd1v8-supply = <&vreg_l4b_1p8>;
->> +               vdd3v3-supply = <&vreg_l13b_3p0>;
->> +
->> +               reset-gpios = <&tlmm 124 GPIO_ACTIVE_LOW>;
->> +
->> +               pinctrl-0 = <&eusb3_reset_n>;
->> +               pinctrl-names = "default";
-> 
-> No graph? Isn't it needed?
-
-What do you mean by ‘no graph’?
-
->> +       };
->> +
->> +       eusb5_repeater: redriver@43 {
->> +               compatible = "nxp,ptn3222";
->> +               reg = <0x43>;
->> +               #phy-cells = <0>;
->> +
->> +               vdd1v8-supply = <&vreg_l4b_1p8>;
->> +               vdd3v3-supply = <&vreg_l13b_3p0>;
->> +
->> +               reset-gpios = <&tlmm 184 GPIO_ACTIVE_LOW>;
->> +
->> +               pinctrl-0 = <&eusb6_reset_n>;
->> +               pinctrl-names = "default";
->> +       };
->> +
->> +       eusb6_repeater: redriver@4f {
->> +               compatible = "nxp,ptn3222";
->> +               reg = <0x4f>;
->> +               #phy-cells = <0>;
->> +
->> +               vdd1v8-supply = <&vreg_l4b_1p8>;
->> +               vdd3v3-supply = <&vreg_l13b_3p0>;
->> +
->> +               reset-gpios = <&tlmm 111 GPIO_ACTIVE_LOW>;
->> +
->> +               pinctrl-0 = <&eusb6_reset_n>;
->> +               pinctrl-names = "default";
->> +       };
->> +
-> 
-> Stray blank line
-
-Sorry. Will fix this.
-
->> +};
->> +
->> +&mdss {
->> +       status = "okay";
->> +};
->> +
-> 
-> 
->> +
->> +&usb_1_ss0_dwc3_hs {
->> +       remote-endpoint = <&pmic_glink_ss0_hs_in>;
->> +};
->> +
->> +&usb_1_ss0_qmpphy_out {
->> +       remote-endpoint = <&pmic_glink_ss0_ss_in>;
->> +};
->> +
-> 
-> Here as well
-
-Same here.
-
-Regards,
-Georg
+Uros.
 
