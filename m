@@ -1,141 +1,113 @@
-Return-Path: <linux-kernel+bounces-549071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F254A54CD7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:04:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E7D3A54CDB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:04:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D149188BC77
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:03:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89085188D618
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13A014EC7E;
-	Thu,  6 Mar 2025 14:03:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h8WkNDUU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E38148FED;
+	Thu,  6 Mar 2025 14:04:32 +0000 (UTC)
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4CF13C9B8;
-	Thu,  6 Mar 2025 14:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A206D1304BA;
+	Thu,  6 Mar 2025 14:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741269823; cv=none; b=AIvFpss/8ZpugIh8KXGTh06w3RAOJYwvuAXuDMXk9MNWDg3uyLowZ4BrytFkasLlisnqvcX5EFZ8T5piwQ32f6sto0Jgm3gaq7vgU4SkwSdkcr+PfhBDIetZd6iJUPYGOsiPFlrRdCf071AU5JMg3Fdk1J+n/x/iC/XkI6nAeuw=
+	t=1741269872; cv=none; b=Ps//Ea1dKsL9AeE7fIoAeN2864tqLH71/qDu6xtfhnvmuKi+5utYB/Rtgd4Pbk/+vj6DLDHlhELucfrRpadeu7+crw7JGiLAinT13VBJ+Ayj482PrSO1slw+jcyRPaEXD+CeDKo0OATlt/pENVn6zGmhIC/v9u1nUOBYE4EiI9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741269823; c=relaxed/simple;
-	bh=SUWfRHt3+o6PkKiiZQSPnjQs4j0CrDv+922ALxaOa+Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qyv4hWqQ7vaf6CSZoQ6OpAU7itkx2Z7p9s0nPhmYNMpSJvpwHHNxLO248ufe4sTfM8TNFuixpPxPAoDj90Jx08ept3dsROhI/o6RoCbC8NaMsN+t9h7qj/tyb6Q5LO9Yq/YGqbjTmLlCBu5x7xFPM6tECkPk0g91o6sMKirT/kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h8WkNDUU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 049DCC4CEE0;
-	Thu,  6 Mar 2025 14:03:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741269821;
-	bh=SUWfRHt3+o6PkKiiZQSPnjQs4j0CrDv+922ALxaOa+Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=h8WkNDUUARmoKHf+FRC3jkp3D5bno9PkLfB5haf2THOPT4+UrEcvp1PJ/xyfla4Xp
-	 xXthPKmuWiPB+6EsJoMDoZVBTMemlAD9ndqi7DtdPz3/lT0INXoTXPp2gJwUh4RTOc
-	 DBW5+wjtrr1K6eAdr6Bb3FzvwH/EOyRdjpAYzpmvOwj98kQyIScuwCJj2uRlLSy4r4
-	 Pg6rlpzT7iZPnz7c6a48qDxxA9nCFBVuD/8mb35qdJ9G/+ZmlUyAHWrX7CCy1nFYus
-	 0guFGnkIEM2r5VglE+/KszkjdsuB6PBDHJ+mbQCJ+NojJFSKVqDrpok8Z4V3E7/oHO
-	 BoRfWYCZG5NoQ==
-Message-ID: <aa837beb-ef4e-43ec-b8fa-54a21df1202c@kernel.org>
-Date: Thu, 6 Mar 2025 15:03:32 +0100
+	s=arc-20240116; t=1741269872; c=relaxed/simple;
+	bh=ihsnWaJWrXQ8Rw3BJDgIJH8wRf4rO5PQ3bVhB5xotzU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IIjio/lJBBkv19VXucIrpCANR/7gsJEE2r+o0aLvHGdUuXmYZF5hnqhR+70+42UPzix5DDhRecai8+NgNxqi75oHgLfxlRR7TOGrqBEFMFdZkns24sxd6IvlcBDpN/vr7RJ6l7F0CW224e2AgMdtOLkg5GHcGlTVOJYOGMC5EGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c3b4c4b409so107649685a.3;
+        Thu, 06 Mar 2025 06:04:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741269868; x=1741874668;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OVN3i5PuRzQd5GnIu45kxsywYrlcAkKHUI5lcUWEDuA=;
+        b=eHJsBKxlIvhpYLXZd6LY8ZL9zEDGuMDGNJaN9l8vGbtC0kc7d+JGapZyvr/tJpM6MD
+         XKhgMDd52icbs8oUdxSS9tHfXe7HiUBV8VmZb0DM/M+TeZwQ4uCgW8g6k09Xv9ymHC9h
+         oV6M7ym7gAs9hB8wpgAQuNA9l0bzgiNeTJDerVU69scDWgmxmUlXA4alNbuOsaZKHCZI
+         ga4ePv4WU9X1pWpCaA9nv44ng1jvbkHoThpHQ3vbN/u2v2lso40mySr0jAVO8+V7+HGo
+         C0KCCXBXYMdbjhdNFW+sw5622WsEoLTeVaNG+CXqXfAI8m0yVB1/+rIopQstJgL4mUFW
+         ERsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLAp21LiqUigB1AZPx3+KV411275qV30eChf8R9sgrxu780eyCULZLMoRN2fnRIRJXxfPtfpCJ/l7s@vger.kernel.org, AJvYcCWX2WS0V7vNMuFeZ1XNCJctDmIaZhmkIP0R7aS90EEpm6N3y2IrvsD62VW4gC6XedAjSgK2R2SpqiaiCbcJ@vger.kernel.org, AJvYcCXikA1eSjZB25qK+vB/Qfi80xZ+GP6DYVgBBLQn7FKu41rvl3yr662Qg9446VYtgRcp2dKkDOzbgAAYmbcUZg4ikVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyg4rQRao/hWU60PYbllpivuIseKI0+DJHu5W9qewQ0Zd5k5J9C
+	E6h6V2O+ElaqX++0QM7+JDmYTVWshq4vhY0LXBIWH7djzHmmNP3zaLYlBeVv
+X-Gm-Gg: ASbGnctJ4XRI+uGf73YGMCQ/8MLeaEh2W7JpM+0C17hMIfOAyT3yrBQP+tiP9PYfgOj
+	LOBe3mfxCRmw1k321QhnAogpDzyxC7WN3pdJtFNtl+ZS1oEtXQdlZtEvGdvq0Uwjjs9w+VPiFVy
+	fkxZ1qkxlMqTtjgslRaJOgAWdYi0Cn72TeTy9mgk/Sy9wdZlHFwSARV4d1Zc/M4SuttjBs+to4k
+	Adml9d1BKnsSQRVyjULqIkTr8w50Nzup0H14HtlC7oJH7kbQC5CJspK6ciGDACY5HNhLlTM3SU3
+	ia0pMuQCQRR8WAdBGWs1+ggwzp/t24gKxnN6YTr0/iAG8DB9nQK9Ld7WFaDlRHET430/lpaybTZ
+	vB+2aJs0qvpU=
+X-Google-Smtp-Source: AGHT+IEgnUgiYt4gU8lh39n0ti6trL4CLvTO1Bp36gvAXnTs91f6QVEF54fv+5+jgHuwtxYjUzY/gg==
+X-Received: by 2002:a05:620a:6190:b0:7c3:d280:a67e with SMTP id af79cd13be357-7c3d8e1f787mr1231923885a.7.1741269868228;
+        Thu, 06 Mar 2025 06:04:28 -0800 (PST)
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com. [209.85.222.177])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e54ff929sm94788085a.70.2025.03.06.06.04.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 06:04:27 -0800 (PST)
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c0848d475cso84641585a.2;
+        Thu, 06 Mar 2025 06:04:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWfqwb7YaX2xINdnRtzJ6FDPfZ/UhsEMSq5qTZ3OkWVpPXg5LEgNJ0asc1sjaymdksAAmkZI7/YFE2pSmcen7fCtc0=@vger.kernel.org, AJvYcCXh+CNg48R68w8HTNtHn4BZZF5GpvWYmg0jFwvqU9u/ZZc8Toddk5o6so/BtchCWUpGForstjXat+Qi@vger.kernel.org, AJvYcCXkcaGGwJ/yweLqFrqUXZquDdw5n7DmP/YHUK21dx6DVV65sMETrnf0A5OhsukT/12wF/ExSJbft893QE91@vger.kernel.org
+X-Received: by 2002:a05:620a:8082:b0:7c3:bdce:d1f7 with SMTP id
+ af79cd13be357-7c3d8eec180mr1208781785a.58.1741269867178; Thu, 06 Mar 2025
+ 06:04:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: Add device tree for TUXEDO Elite 14
- Gen1
-To: Georg Gottleuber <g.gottleuber@tuxedocomputers.com>,
- Georg Gottleuber <ggo@tuxedocomputers.com>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Konrad Dybcio
- <konrad.dybcio@oss.qualcomm.com>, wse@tuxedocomputers.com,
- cs@tuxedocomputers.com
-References: <57589859-fec1-4875-9127-d1f99e40a827@tuxedocomputers.com>
- <75c17309-3072-4321-ab15-69d60190f2f7@kernel.org>
- <d98ad83e-6479-4453-bd1d-4f3703b0dad2@tuxedocomputers.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <d98ad83e-6479-4453-bd1d-4f3703b0dad2@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250218115922.407816-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250218115922.407816-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250218115922.407816-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Mar 2025 15:04:14 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUmfcJCc9eMYZkROYOsXnwZh9QCNHFzsRKiV41_Jcs=KA@mail.gmail.com>
+X-Gm-Features: AQ5f1JrYPsfu25PIeNIu60xL2O69zif9ZzXRhar4BbB7hfkcOwb3D_-DKEmgPEo
+Message-ID: <CAMuHMdUmfcJCc9eMYZkROYOsXnwZh9QCNHFzsRKiV41_Jcs=KA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] arm64: dts: renesas: r9a09g057: Add Mali-G31 GPU node
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 06/03/2025 14:56, Georg Gottleuber wrote:
-> 
->> ...
->>
->>> +
->>> +       eusb3_repeater: redriver@47 {
->>> +               compatible = "nxp,ptn3222";
->>> +               reg = <0x47>;
->>> +               #phy-cells = <0>;
->>> +
->>> +               vdd1v8-supply = <&vreg_l4b_1p8>;
->>> +               vdd3v3-supply = <&vreg_l13b_3p0>;
->>> +
->>> +               reset-gpios = <&tlmm 124 GPIO_ACTIVE_LOW>;
->>> +
->>> +               pinctrl-0 = <&eusb3_reset_n>;
->>> +               pinctrl-names = "default";
->>
->> No graph? Isn't it needed?
-> 
-> What do you mean by ‘no graph’?
+On Tue, 18 Feb 2025 at 12:59, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+>
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add Mali-G31 GPU node to SoC DTSI.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-ports connecting this within USB graph between controller and connector.
-Just like other devices with redriver.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-devel for v6.15.
 
-Best regards,
-Krzysztof
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
