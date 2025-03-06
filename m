@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-548068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B3FA53F77
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:58:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FED2A53F78
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:59:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EBC13A9016
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:58:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EEC21885E07
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224911474A9;
-	Thu,  6 Mar 2025 00:58:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881B014F132;
+	Thu,  6 Mar 2025 00:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VEZ+FCtG"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VJF2KBUZ"
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED07113D509;
-	Thu,  6 Mar 2025 00:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CA614831C;
+	Thu,  6 Mar 2025 00:58:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741222693; cv=none; b=MxNn+ooi1Qi9xq+TdfRWo+zXhzBUcR1ZIGJryqDA2Kmfg++VcoH5hFUwOw4F1q0ePPLIJ4VflL8B7fV+E0/HtgGtPCKU8ZgraBF8D36iz/NpsxEMns4YL8TKlwUZCs3VVkxzWV9IbPGowhL3qR3jn0FkL/h7GD3DVNT9Ugn3zOo=
+	t=1741222695; cv=none; b=Ec9kYFJG6O6GRSV+lhtFB3ZgghTuGNVCzWVq4Wc5bCHqQ6LvQg5eJlQAIpKklZTlGLQhzdVc36ARvTTYpoJXOwUUOq0ucJFaczTDSjtLsVcJld4c4Ez9sfLrjvr3tcLV3tTEVPdyBJRKkIxKHagyZTPLc7800hWqux1LZYyS0ak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741222693; c=relaxed/simple;
-	bh=8U4ihaIIp3NI7j6SGITav4hp8DoUwXulxF0G7jdyFEE=;
+	s=arc-20240116; t=1741222695; c=relaxed/simple;
+	bh=HSddJ4u2EeUmqQkj/4pdfLTCTeH+AqHJpKz+ERkQ4Ug=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=qM6at5rmHtD+ZiLpt5CwW5TogdyA90Srvcnc4iBuSlZROqcn41VzNrkJZ3B0LPEbZ++YoxerZVxWUZSTKKeRUCq9Yv0xndiJ5hkO20bsmslDz+XADaFLaiO1XcdvWZh4Xhskq50wc4WJ8bi7nI2YrvSkwjb+Nk2oVRVf4CCuy14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VEZ+FCtG; arc=none smtp.client-ip=209.85.221.182
+	 In-Reply-To:To:Cc; b=Ks7RZ3+7LI2MK3zcl5Y2eCzuxrXy7OkgK9HR+wUcxmisqGtPUhS17WWSRfeSRzQ6Oy5pcPPLpsmX7DY/34VBzHGJUOrXDrDV55dWH+pkLBcJxMS/Qc9/6LtWvdZZyiabr95AZqyghe2GsaEQZUIsM3WjHsmMlhz0Uko7XC7qvcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VJF2KBUZ; arc=none smtp.client-ip=209.85.222.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-51eb1a6ca1bso46685e0c.1;
-        Wed, 05 Mar 2025 16:58:11 -0800 (PST)
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-86b7185d653so27777241.0;
+        Wed, 05 Mar 2025 16:58:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741222691; x=1741827491; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741222693; x=1741827493; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=sqj+xl520LWWbYcDKIbFTGCJcSVK9Yty0PIVI9ICJGo=;
-        b=VEZ+FCtG9an3Hz7YPdCFoWrPXnfJPT4Hf16MI59TVPWHYIh8Y2L0Aevtminy0o73Lk
-         f+i9iiGVYDjD4q2pvtvdA/YigpjoaAJs3XKx6uuqzjeVMAJzquRgkuIKUlnDjL9ekVCs
-         GvQ67TgWF0hFFuGVGR2Y6T/EOl2AREtM0kYyi3vjrSiro3r2bI/5k+VkLA/s6dszcsiQ
-         BwiCNCFj3BZt3X/IBCe84G+eQOe5+WhFz8dyLfFWdQl7tDtVjcac8j32izDxOIHRr5U8
-         cSlAFl65jZHGtkFfs3gidesWFQ6bvQXRWGbvPqC8PiLlNai1V9uyoiRSE2JKr+IjRrPZ
-         na9g==
+        bh=lYu11Ks2/ykMetK4IPyEkkQITTjZX6WFAwoWnv7cViE=;
+        b=VJF2KBUZ50dko1Y0/+wJ5ryFIS9c3V3H3BjbNgmI1AAyfbIXQ+N1DAtea52/iNmqX4
+         sMLQDZEFiryeLo39vBSW5OXjfhI0G3edjeLtJPXlcgIYz+BuuD0jK8LcDSguJK5M1jqC
+         zTfHE4fVew3AOFzihC5P3rqvvsWXHFy+whNRE6VrUb/tQcKCe/DaujybC/Jlb7C0UGnD
+         IzenzzlPoX4j8BoAEhRvQWUQWdvAa2XmFSrhecPW3qM+GWP7sCUfSxfU3S1U6bIwZ/RF
+         jOUJzcEfYsFA4a7jihI4jioU9L4JhR/HPrqRxfdqlzwER3lwSEO9PC8lSDhc+cKZTQNk
+         bpxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741222691; x=1741827491;
+        d=1e100.net; s=20230601; t=1741222693; x=1741827493;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=sqj+xl520LWWbYcDKIbFTGCJcSVK9Yty0PIVI9ICJGo=;
-        b=l1iylzos75f2CoAnq8MPSzJSEndWgBBi4y9E+ICbe1UHuAzCLaaPvwn/BxSAvcAB8e
-         Zg0PbxxYIhKbQNtX39xRm2ERrmUYl3vqTa5nGoq+D49yKfhiZgWvV7WGLtTjNMc7e3Lb
-         yUduiFJczTnYjUC9eELu6K0CRG4q2ev3P1I4fmFU3X84vgUokYJv5s5yml1SPvBF3Es1
-         JsBInoKegiHk2BdGnPqlafpkAgB1OjxlfyeSzL0KJUyEDTkTAmcWLue2hguqTJXS/5Ys
-         QA0BEQZtb4TUrFYK+p/sf/URxMofUI6aTb+Fyw6cvmEaOAe7qZw5DjkTyzSkGqaZJEr/
-         eahw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoNJ3s5kG3IUpYDowx8qAZ9wuFb8Jm9TFwskysuF5BvAC1yHks+pTsyDW4U7PVj1mO063kE/VOgZgnIJE=@vger.kernel.org, AJvYcCVeazOy8xymLAwOE/EZ9SPIMZpDuw9JwAeMRoSwG/9Y63I4GiqDAHfBtG3ebFFEXQ0q2CkGqhXAn76VjsAfLSKFwstV1Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxLsE1J0ubjVAdWBC8n67/WsvUEX1ESbHmHX43MZxKDziL9Odrs
-	3cRSzk8K9Ks6wT9Xlcl/T2Z6bzqiBHh6MFuIeVtcrgV4B5KDkg0YhHG/4f+GG+E=
-X-Gm-Gg: ASbGnct2W4tYJC7+gDYGEiUhxwPoOvvf7hqTj3mH506xn1YV8m+WcbzSSuZikWfFqYb
-	Cag5mNwwAwfSDm83zYjBQZy9yrPDsLQlsNeUtifIUBEZIRbQd643RNxrkvlAv5HY+xAoBZGX2Qe
-	cvf/iH1lwaFCZi1eMCTKgIB7gCiAySWKPkzbyIKTQEjWgSRq0N3v/BdCvlxSwB8UNwLxMpPCBq/
-	DTPZBurzg83ZY1J7q0A7+D/2dvqAyjkySZdiWmD6/Gy9dQ0c/Gsl14db+Vj2DIwl4DzDp5MzPS7
-	YNmPYsiVfjucMu+imQ3T4J//viNbUYyHaPD/QbA02lpzew==
-X-Google-Smtp-Source: AGHT+IHKmZT8j/BZaNfmNR280fp/6acUEQbafFFWYqVE0FwYpqVYB08th8svfdT07cOFjvFKSS2K5Q==
-X-Received: by 2002:a05:6102:41a2:b0:4c1:9cb2:8389 with SMTP id ada2fe7eead31-4c2e27661f5mr4328594137.2.1741222690773;
-        Wed, 05 Mar 2025 16:58:10 -0800 (PST)
+        bh=lYu11Ks2/ykMetK4IPyEkkQITTjZX6WFAwoWnv7cViE=;
+        b=m6pEJLJ7HvTzd9Tgz+YGmqSl0SzGIKmqgA7aS/clahMNfusx5fDoi6z3LXRcN4iQgq
+         Q1WRd3RwvWUMWUZfn51gvgnHU+qhUJWjOqm9WCr1pphWazYYXNsYzAVI+6o4vrUyp/Ty
+         QR55FSQl5f7aYbxlhUluqxq2iUDN7DjZ4/a+B0a7MzANRH6vMtm5+YQONPZeXzS18t9S
+         mu10ziyzRCewW1kNtmGdYEdfKLMCr5APwKrMYldfc6OFPosk614qe9xLF4sHn+gtrkDA
+         EfrgF9M5Wljmm7oxU6Tq7LV9ZRyzVgxk2xkOvx7Wzldl8x6oMIgz+qhO/GE1wyLhprny
+         oKuw==
+X-Forwarded-Encrypted: i=1; AJvYcCWkqCCofWHEKrvpw5UNqoXgG8uwB5rDwMVIcyCyVcF/Otzdnb5yS/403nuuOUWMZ8torjkSDf9J2rOjPFk=@vger.kernel.org, AJvYcCWuEFjBYJEtTpqfTghTEhhF98qzm/Dl9bOaRemrFTePQjO39OE3f5Ri3HCiEpQgE6xDNzL+KwXfg4AcY0lKYqf37b3lLw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrKxcpCRhD61Th7Z2+uOgvnalHXHwG91x8/+j0jI8NoaGFmc/e
+	JPXOhuinVFVk+2uKwAs10CFTaLL+nIuhj/tlxKG1tIt4pEZ6z6Hr
+X-Gm-Gg: ASbGncu5c4NcH9FkPoWw5kV0QCGWpCYCkhePfMlq8BaBMi1st7VpFvf+rRlcYQgGWUf
+	BrP7KKOnIkLoXg/NjU3jdTw+LuPaZK06bl+OauJyODC3QPrsu3unRKXoRJICaEyvHXu40Gw1QQD
+	K2DUSxBwyqwrSSZEZML2COC8c13Qn8VMua1m6BCKEItFPVz/5AxLYu+LEBpzQ4lClO8fvkmkEr6
+	yTz4JxP8DGLx3/g3iSUZEIbya2VRQU09uW044oP2eOQ2qkzyyMnXqcppV2M+nu4L07w+tLDCdl8
+	6z5oLbnX+CqED5+YGiLih3cMANLU84ezj1MZPU1o8ypQ1g==
+X-Google-Smtp-Source: AGHT+IEbbiQIJwuvicyFa+IN0N2du42kscWhhbufga27C0UdZpyPhCcD3M/cinnOmNG4zLBiETOR9A==
+X-Received: by 2002:a05:6102:508f:b0:4bb:c527:aacd with SMTP id ada2fe7eead31-4c2e299a2d3mr3470947137.23.1741222693198;
+        Wed, 05 Mar 2025 16:58:13 -0800 (PST)
 Received: from [192.168.100.70] ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86d33bc0065sm25925241.4.2025.03.05.16.58.08
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86d33bc0065sm25925241.4.2025.03.05.16.58.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 16:58:09 -0800 (PST)
+        Wed, 05 Mar 2025 16:58:12 -0800 (PST)
 From: Kurt Borja <kuurtb@gmail.com>
-Date: Wed, 05 Mar 2025 19:56:55 -0500
-Subject: [PATCH v3 04/10] platform/x86: alienware-wmi-wmax: Modify
- supported_thermal_profiles[]
+Date: Wed, 05 Mar 2025 19:56:56 -0500
+Subject: [PATCH v3 05/10] platform/x86: alienware-wmi-wmax: Improve
+ platform profile probe
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,8 +82,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250305-hwm-v3-4-395e7a1407e2@gmail.com>
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250305-hwm-v3-5-395e7a1407e2@gmail.com>
 References: <20250305-hwm-v3-0-395e7a1407e2@gmail.com>
 In-Reply-To: <20250305-hwm-v3-0-395e7a1407e2@gmail.com>
 To: =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
@@ -93,57 +93,136 @@ Cc: Kurt Borja <kuurtb@gmail.com>, Hans de Goede <hdegoede@redhat.com>,
  linux-kernel@vger.kernel.org
 X-Mailer: b4 0.14.2
 
-Rename supported_thermal_profiles[] -> supported_profiles[] and change
-it's type to u8 because it stores AWCC thermal IDs.
+Get and store the AWCC system description in alienware_awcc_setup()
+instead of awcc_platform_profile_probe() and add a check for integer
+overflows to avoid misbehaviors.
+
+While at it, replace set_bit() with it's non-atomic version __set_bit()
+because `choices` belong to this thread only.
 
 Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
 Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 ---
- drivers/platform/x86/dell/alienware-wmi-wmax.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/platform/x86/dell/alienware-wmi-wmax.c | 61 +++++++++++++++++++-------
+ 1 file changed, 46 insertions(+), 15 deletions(-)
 
 diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-index a43373717bd4580e8f62a7263e67664630165e28..8e91fb4b349b7b62b6f914ac68d5eb1cd30a606e 100644
+index 8e91fb4b349b7b62b6f914ac68d5eb1cd30a606e..a89fac80fa9e819e042f3807eb69dc8ddd9a4841 100644
 --- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
 +++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
-@@ -213,7 +213,7 @@ struct wmax_u32_args {
+@@ -38,6 +38,9 @@
+ /* Some IDs have a BIT(8) flag that we ignore */
+ #define AWCC_RESOURCE_ID_MASK			GENMASK(7, 0)
+ 
++/* Arbitrary limit based on supported models */
++#define AWCC_MAX_RES_COUNT			16
++
+ static bool force_platform_profile;
+ module_param_unsafe(force_platform_profile, bool, 0);
+ MODULE_PARM_DESC(force_platform_profile, "Forces auto-detecting thermal profiles without checking if WMI thermal backend is available");
+@@ -212,6 +215,17 @@ struct wmax_u32_args {
+ 
  struct awcc_priv {
  	struct wmi_device *wdev;
++	union {
++		u32 system_description;
++		struct {
++			u8 fan_count;
++			u8 temp_count;
++			u8 unknown_count;
++			u8 profile_count;
++		};
++		u8 res_count[4];
++	};
++
  	struct device *ppdev;
--	enum awcc_thermal_profile supported_thermal_profiles[PLATFORM_PROFILE_LAST];
-+	u8 supported_profiles[PLATFORM_PROFILE_LAST];
+ 	u8 supported_profiles[PLATFORM_PROFILE_LAST];
  };
+@@ -636,37 +650,40 @@ static int awcc_platform_profile_probe(void *drvdata, unsigned long *choices)
+ 	enum platform_profile_option profile;
+ 	struct awcc_priv *priv = drvdata;
+ 	enum awcc_thermal_profile mode;
+-	u8 sys_desc[4];
+-	u32 first_mode;
++	u8 id, offset = 0;
+ 	u32 out_data;
+ 	int ret;
+-	u8 id;
  
- static const enum platform_profile_option awcc_mode_to_platform_profile[AWCC_PROFILE_LAST] = {
-@@ -628,8 +628,7 @@ static int awcc_platform_profile_set(struct device *dev,
- 		}
- 	}
+-	ret = awcc_thermal_information(priv->wdev, AWCC_OP_GET_SYSTEM_DESCRIPTION,
+-				       0, (u32 *) &sys_desc);
+-	if (ret < 0)
+-		return ret;
+-
+-	first_mode = sys_desc[0] + sys_desc[1];
+-
+-	for (u32 i = 0; i < sys_desc[3]; i++) {
+-		ret = awcc_op_get_resource_id(priv->wdev, i + first_mode, &out_data);
++	/*
++	 * Thermal profile IDs are listed last at offset
++	 *	fan_count + temp_count + unknown_count
++	 */
++	for (unsigned int i = 0; i < ARRAY_SIZE(priv->res_count) - 1; i++)
++		offset += priv->res_count[i];
  
--	return awcc_op_activate_profile(priv->wdev,
--					priv->supported_thermal_profiles[profile]);
-+	return awcc_op_activate_profile(priv->wdev, priv->supported_profiles[profile]);
- }
++	for (unsigned int i = 0; i < priv->profile_count; i++) {
++		ret = awcc_op_get_resource_id(priv->wdev, i + offset, &out_data);
+ 		if (ret == -EIO)
+ 			return ret;
  
- static int awcc_platform_profile_probe(void *drvdata, unsigned long *choices)
-@@ -665,7 +664,7 @@ static int awcc_platform_profile_probe(void *drvdata, unsigned long *choices)
++		/*
++		 * Some devices report an incorrect number of thermal profiles
++		 * so the resource ID list may end prematurely
++		 */
+ 		if (ret == -EBADRQC)
+ 			break;
+ 
+ 		id = FIELD_GET(AWCC_RESOURCE_ID_MASK, out_data);
+-		if (!is_awcc_thermal_profile_id(id))
++		if (!is_awcc_thermal_profile_id(id)) {
++			dev_dbg(&priv->wdev->dev, "Unmapped thermal profile ID 0x%02x\n", id);
+ 			continue;
++		}
  
  		mode = FIELD_GET(AWCC_THERMAL_MODE_MASK, id);
  		profile = awcc_mode_to_platform_profile[mode];
--		priv->supported_thermal_profiles[profile] = id;
-+		priv->supported_profiles[profile] = id;
+ 		priv->supported_profiles[profile] = id;
  
- 		set_bit(profile, choices);
+-		set_bit(profile, choices);
++		__set_bit(profile, choices);
  	}
-@@ -674,7 +673,7 @@ static int awcc_platform_profile_probe(void *drvdata, unsigned long *choices)
- 		return -ENODEV;
  
- 	if (awcc->gmode) {
--		priv->supported_thermal_profiles[PLATFORM_PROFILE_PERFORMANCE] =
-+		priv->supported_profiles[PLATFORM_PROFILE_PERFORMANCE] =
+ 	if (bitmap_empty(choices, PLATFORM_PROFILE_LAST))
+@@ -676,7 +693,7 @@ static int awcc_platform_profile_probe(void *drvdata, unsigned long *choices)
+ 		priv->supported_profiles[PLATFORM_PROFILE_PERFORMANCE] =
  			AWCC_THERMAL_MODE_GMODE;
  
- 		set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
+-		set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
++		__set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
+ 	}
+ 
+ 	return 0;
+@@ -707,6 +724,20 @@ static int alienware_awcc_setup(struct wmi_device *wdev)
+ 	if (!priv)
+ 		return -ENOMEM;
+ 
++	ret = awcc_thermal_information(wdev, AWCC_OP_GET_SYSTEM_DESCRIPTION,
++				       0, &priv->system_description);
++	if (ret < 0)
++		return ret;
++
++	/* Sanity check */
++	for (unsigned int i = 0; i < ARRAY_SIZE(priv->res_count); i++) {
++		if (priv->res_count[i] > AWCC_MAX_RES_COUNT) {
++			dev_err(&wdev->dev, "Malformed system description: 0x%08x\n",
++				priv->system_description);
++			return -ENXIO;
++		}
++	}
++
+ 	priv->wdev = wdev;
+ 	dev_set_drvdata(&wdev->dev, priv);
+ 
 
 -- 
 2.48.1
