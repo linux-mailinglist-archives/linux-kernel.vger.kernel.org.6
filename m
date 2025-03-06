@@ -1,312 +1,95 @@
-Return-Path: <linux-kernel+bounces-549180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF02A54EA6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:13:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 550EBA54EA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:13:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42C213A77F1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:12:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 490C73A62AF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:13:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FB9520B7E1;
-	Thu,  6 Mar 2025 15:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B1iNrT1s"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DEAF1FF7C4;
+	Thu,  6 Mar 2025 15:13:17 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 119CE17AE1D
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 15:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87AC2114;
+	Thu,  6 Mar 2025 15:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741273959; cv=none; b=hzU3mHKgSOiQx8UO/yiqVL2OvK1JW0pTnYv9nDn+uJ0wDfDeE03tBbVn40QcB/LKjMWBNDA2qafdvY8mq4U2U7BYQg1AY7N3FmAkOV9qJ2TjcrHt5rGk0iq/DVDVmdEbUHR3uqAhXRYQf9fkoIwB8fltxw1Qeht3mEfDPM88jDE=
+	t=1741273996; cv=none; b=FQhsk9q7Y/IUEPTVLKIr4X4HonJicPvk/YlNJciNV3pX9eqNTFQlhjcAb8SUZKaGxbBDhYK7Ahf2pvikEVMW8O9LEMU+1k11ziTwlshD5OznF7VDQVPD3AVOn7pJzRoU/6Ic955JV44ji90LfbEXz3w5NOqcn+RndbypPdIHorw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741273959; c=relaxed/simple;
-	bh=MbaA8Jl8S3jVUvq6r2rR5IWHnrkzSP2fS8HSagCBdRM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=B5zWjHytzmZZb1q9qKojDzqZii5A+Zbwp1yZJWanF8BUAunPNXHUdgP643Dymp7XFF9XxtfaE8P1dTQUpORIRJYZnFeM6JkG8IFnrP3j+EdCBL5GXZ8guCJLpg43sVZmmUinqAJHDE9ol9/c0YF87uRxqpyR58GZn37vEMHzLG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B1iNrT1s; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abf5f4e82caso155157366b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 07:12:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741273954; x=1741878754; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=t63bq+d/LpsIykq1hi1k/LtwI40WtvQ23p3N/1mWz+k=;
-        b=B1iNrT1s8vE2ZKV+ggwmXWvnlpKw0n+8TpDKyJDt04+bQL59JHvAP/Y9xpDYPxBN/R
-         A/ToL45rIBBaNK06mHrAmOebK0yPPM/GlHENm3u/4EE8vHH7XxDTZFu9nCvY1ETtoXsl
-         Spcjq0z2C9Y4KZT3ts0vKJKzPnIn0hVA+wEs2sLR0foZwsPajMRA4bh8NQXWUp2tF7UA
-         YFu76ePxiEUYvr8I6yyw+TlDwFGQxH924F0b/5zz0ekQ1CM8tFzxWY90hpjPu8RRzEyM
-         ZMUT40Pdx3FlgrRGVXYCat5mWRKMO8u4c1+7fOZUEzaK3XoIGMcQmncE3/z/irg8wbM8
-         17nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741273954; x=1741878754;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=t63bq+d/LpsIykq1hi1k/LtwI40WtvQ23p3N/1mWz+k=;
-        b=VZC4FpHQVZc8dGmVHI8QjG1qci/f2tfMniRo80ibjdMN3yTZL66v7w50Ri2dg4mC7a
-         aEsaziquuCDHtREZTDVf8CsxJrf4XbR5a7nUWkKQiiXqK1SeDYavXFQnypyfhWdTOOwj
-         2m1NoTiF51lOu4ZrnnYYx4MkIuSsq9QgQrl4WONu32Ycvf/Bt3AoTkkwAojN2ScrQxCu
-         d4vgP2Po1F6Klx1c4dNRrAAA8GDwftV4zvbg5mLgoZydXK6IVDQ/0NGrRsP1107tWZ7J
-         C1780dKr1RCOpfiUz7/5xrGD1ukfL885xW0NsT6j4Hp/CDKLhEIJFqVk6PH9USnczprO
-         5SXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUVu7nunf16QUMY2fMimfN/MDEDsbqjOKBs+id4N9OSfWw80NmLw+w56LGGLQSGP0xXbU7vOIlVwpAjHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM8Fj7rm1Ghfb+ReFIphTRXrsmaoaoZHBkLNXi4exj394TYK8a
-	GvlUnOhjg/ITZ05vbwY49Phlr0oF/FteaEtt0Jx5LqXeP2VKEXgROCauFZF3f7k=
-X-Gm-Gg: ASbGncsbW/GxJis8EahI0jMe7jGSGA3USf6dcHZSNV6WJBUCJ4Rk2a6wdktkQbXRkSN
-	JM4GTsIjAUKZeYLfJi7/ynpOAxjqtwLB3Apner74bD/7XjGkXH8OaodQ3iVws5LJj2vxc3mO95m
-	46fa+8nLKtiVyX8pSdcv4NYIPJHKwYLFb/1QUNcFTR53zHRiHXmIFhOZyRi3+qaODWexyFUgFCY
-	AEqOYiDuW/aYyBq5AL2QXXu6SYHrTyms1rz0TaNhTkZXEWcCPhNKk66+CSwvr7MZ2/upSJfaate
-	ZfgJSW+/gi23rft/crLrzJVZzCxxJgA8TmskWf119Db1BD/Z
-X-Google-Smtp-Source: AGHT+IH7SBrGMUK6lepD8VBY8jodF8Fc1H+Cg8ymOlKEi3QzrC0KSEIuP1OA3o6i6LlXHdXrzopcZA==
-X-Received: by 2002:a17:907:7f89:b0:ac1:db49:99b7 with SMTP id a640c23a62f3a-ac20e42964amr851164166b.51.1741273954310;
-        Thu, 06 Mar 2025 07:12:34 -0800 (PST)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac239488be1sm110733966b.74.2025.03.06.07.12.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 07:12:33 -0800 (PST)
-Message-ID: <5fe34e1193a167c24c7af900f5b7cf85140d66e0.camel@linaro.org>
-Subject: Re: [PATCH v2 3/4] pinctrl: samsung: add gs101 specific eint
- suspend/resume callbacks
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, Krzysztof Kozlowski	
- <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar
-	 <alim.akhtar@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- 	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	tudor.ambarus@linaro.org, willmcvicker@google.com,
- semen.protsenko@linaro.org, 	kernel-team@android.com,
- jaewon02.kim@samsung.com, stable@vger.kernel.org
-Date: Thu, 06 Mar 2025 15:12:32 +0000
-In-Reply-To: <20250301-pinctrl-fltcon-suspend-v2-3-a7eef9bb443b@linaro.org>
-References: <20250301-pinctrl-fltcon-suspend-v2-0-a7eef9bb443b@linaro.org>
-	 <20250301-pinctrl-fltcon-suspend-v2-3-a7eef9bb443b@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.53.2-1 
+	s=arc-20240116; t=1741273996; c=relaxed/simple;
+	bh=pap1xK5SnNKiiMrorspnPCO3wV1Ru3Gs/zhidkela08=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mEpodJD4LXu9R1A/URdcpLjFswudF+KbBFaGnCx1r3ucMHz99tdRuT3JGAUFUd00T6zEU6DaWC+t15PeqiP6O+kzw4vMYzEwpNlm8kGa3ULw3GAhCeODpxuY5h9YNJ9x3ynoqdjBLEGaspAE1EOV7a+Jrcoa394iOPPKNlztyIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 311CFC4CEE0;
+	Thu,  6 Mar 2025 15:13:15 +0000 (UTC)
+Date: Thu, 6 Mar 2025 10:13:15 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Shijie Huang <shijie@amperemail.onmicrosoft.com>
+Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Huang Shijie
+ <shijie@os.amperecomputing.com>, patches@amperecomputing.com, cl@linux.com,
+ yang@os.amperecomputing.com, peterz@infradead.org, jpoimboe@kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH resend ] tracepoint: Print the function symbol when
+ tracepoint_debug is set
+Message-ID: <20250306101315.5a5f1d7f@gandalf.local.home>
+In-Reply-To: <b098cbdf-394b-4f20-9dcd-393ad1b734b7@amperemail.onmicrosoft.com>
+References: <20250305015505.14493-1-shijie@os.amperecomputing.com>
+	<f600edd0-8855-46af-98ec-1181db1f5dd4@efficios.com>
+	<b098cbdf-394b-4f20-9dcd-393ad1b734b7@amperemail.onmicrosoft.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, 2025-03-01 at 11:43 +0000, Peter Griffin wrote:
-> gs101 differs to other SoCs in that fltcon1 register doesn't
-> always exist. Additionally the offset of fltcon0 is not fixed
-> and needs to use the newly added eint_fltcon_offset variable.
+On Thu, 6 Mar 2025 11:37:38 +0800
+Shijie Huang <shijie@amperemail.onmicrosoft.com> wrote:
+
+> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+> index abfd0ac1177f..5a5041f32cc8 100644
+> --- a/kernel/tracepoint.c
+> +++ b/kernel/tracepoint.c
+> @@ -127,7 +127,8 @@ static void debug_print_probes(struct=20
+> tracepoint_func *funcs)
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 return;
 >=20
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> Fixes: 4a8be01a1a7a ("pinctrl: samsung: Add gs101 SoC pinctrl configurati=
-on")
-> Cc: stable@vger.kernel.org
-> ---
-> =C2=A0drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 24 ++++-----
-> =C2=A0drivers/pinctrl/samsung/pinctrl-exynos.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 71 ++++++++++++++++++++++++++
-> =C2=A0drivers/pinctrl/samsung/pinctrl-exynos.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 |=C2=A0 2 +
-> =C2=A03 files changed, 85 insertions(+), 12 deletions(-)
+>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for (i =3D 0; funcs[i].func; =
+i++)
+> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 printk(KERN_DEBUG "Probe %d : %p\n", i, funcs[i].func);
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 printk(KERN_DEBUG "Probe %d : [ %p ] %pS\n",
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 i, funcs[i].func, funcs[i].func);
+>  =C2=A0}
 >=20
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c b/drivers/pin=
-ctrl/samsung/pinctrl-exynos-arm64.c
-> index 57c98d2451b5..fca447ebc5f5 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos-arm64.c
-> @@ -1455,15 +1455,15 @@ static const struct samsung_pin_ctrl gs101_pin_ct=
-rl[] __initconst =3D {
-> =C2=A0		.pin_banks	=3D gs101_pin_alive,
-> =C2=A0		.nr_banks	=3D ARRAY_SIZE(gs101_pin_alive),
-> =C2=A0		.eint_wkup_init =3D exynos_eint_wkup_init,
-> -		.suspend	=3D exynos_pinctrl_suspend,
-> -		.resume		=3D exynos_pinctrl_resume,
-> +		.suspend	=3D gs101_pinctrl_suspend,
-> +		.resume		=3D gs101_pinctrl_resume,
-> =C2=A0	}, {
-> =C2=A0		/* pin banks of gs101 pin-controller (FAR_ALIVE) */
-> =C2=A0		.pin_banks	=3D gs101_pin_far_alive,
-> =C2=A0		.nr_banks	=3D ARRAY_SIZE(gs101_pin_far_alive),
-> =C2=A0		.eint_wkup_init =3D exynos_eint_wkup_init,
-> -		.suspend	=3D exynos_pinctrl_suspend,
-> -		.resume		=3D exynos_pinctrl_resume,
-> +		.suspend	=3D gs101_pinctrl_suspend,
-> +		.resume		=3D gs101_pinctrl_resume,
-> =C2=A0	}, {
-> =C2=A0		/* pin banks of gs101 pin-controller (GSACORE) */
-> =C2=A0		.pin_banks	=3D gs101_pin_gsacore,
-> @@ -1477,29 +1477,29 @@ static const struct samsung_pin_ctrl gs101_pin_ct=
-rl[] __initconst =3D {
-> =C2=A0		.pin_banks	=3D gs101_pin_peric0,
-> =C2=A0		.nr_banks	=3D ARRAY_SIZE(gs101_pin_peric0),
-> =C2=A0		.eint_gpio_init =3D exynos_eint_gpio_init,
-> -		.suspend	=3D exynos_pinctrl_suspend,
-> -		.resume		=3D exynos_pinctrl_resume,
-> +		.suspend	=3D gs101_pinctrl_suspend,
-> +		.resume		=3D gs101_pinctrl_resume,
-> =C2=A0	}, {
-> =C2=A0		/* pin banks of gs101 pin-controller (PERIC1) */
-> =C2=A0		.pin_banks	=3D gs101_pin_peric1,
-> =C2=A0		.nr_banks	=3D ARRAY_SIZE(gs101_pin_peric1),
-> =C2=A0		.eint_gpio_init =3D exynos_eint_gpio_init,
-> -		.suspend	=3D exynos_pinctrl_suspend,
-> -		.resume	=3D exynos_pinctrl_resume,
-> +		.suspend	=3D gs101_pinctrl_suspend,
-> +		.resume		=3D gs101_pinctrl_resume,
-> =C2=A0	}, {
-> =C2=A0		/* pin banks of gs101 pin-controller (HSI1) */
-> =C2=A0		.pin_banks	=3D gs101_pin_hsi1,
-> =C2=A0		.nr_banks	=3D ARRAY_SIZE(gs101_pin_hsi1),
-> =C2=A0		.eint_gpio_init =3D exynos_eint_gpio_init,
-> -		.suspend	=3D exynos_pinctrl_suspend,
-> -		.resume		=3D exynos_pinctrl_resume,
-> +		.suspend	=3D gs101_pinctrl_suspend,
-> +		.resume		=3D gs101_pinctrl_resume,
-> =C2=A0	}, {
-> =C2=A0		/* pin banks of gs101 pin-controller (HSI2) */
-> =C2=A0		.pin_banks	=3D gs101_pin_hsi2,
-> =C2=A0		.nr_banks	=3D ARRAY_SIZE(gs101_pin_hsi2),
-> =C2=A0		.eint_gpio_init =3D exynos_eint_gpio_init,
-> -		.suspend	=3D exynos_pinctrl_suspend,
-> -		.resume		=3D exynos_pinctrl_resume,
-> +		.suspend	=3D gs101_pinctrl_suspend,
-> +		.resume		=3D gs101_pinctrl_resume,
-> =C2=A0	},
-> =C2=A0};
-> =C2=A0
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/s=
-amsung/pinctrl-exynos.c
-> index d65a9fba0781..ddc7245ec2e5 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-> @@ -801,6 +801,41 @@ void exynos_pinctrl_suspend(struct samsung_pin_bank =
-*bank)
-> =C2=A0	}
-> =C2=A0}
-> =C2=A0
-> +void gs101_pinctrl_suspend(struct samsung_pin_bank *bank)
-> +{
-> +	struct exynos_eint_gpio_save *save =3D bank->soc_priv;
-> +	const void __iomem *regs =3D bank->eint_base;
-> +
-> +	exynos_set_wakeup(bank);
-
-As for patch 2, would be good to have this if / else, to make it more
-obvious that this is conditional, too.
-
-> +
-> +	if (bank->eint_type =3D=3D EINT_TYPE_GPIO) {
-> +		save->eint_con =3D readl(regs + EXYNOS_GPIO_ECON_OFFSET
-> +				=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 + bank->eint_offset);
-> +
-> +		save->eint_fltcon0 =3D readl(regs + EXYNOS_GPIO_EFLTCON_OFFSET +
-> +					=C2=A0=C2=A0 bank->eint_fltcon_offset);
-
-If there's another version, maybe align style where the '+'
-is placed (end of line vs start of line). It seems this file
-generally uses + at start of line.
-
-> +
-> +		/* fltcon1 register only exists for pins 4-7 */
-> +		if (bank->nr_pins > 4)
-> +			save->eint_fltcon1 =3D readl(regs +
-> +						EXYNOS_GPIO_EFLTCON_OFFSET +
-> +						bank->eint_fltcon_offset + 4);
-> +
-> +		save->eint_mask =3D readl(regs + bank->irq_chip->eint_mask
-> +					+ bank->eint_offset);
-> +
-> +		pr_debug("%s: save=C2=A0=C2=A0=C2=A0=C2=A0 con %#010x\n",
-> +			 bank->name, save->eint_con);
-> +		pr_debug("%s: save fltcon0 %#010x\n",
-> +			 bank->name, save->eint_fltcon0);
-> +		if (bank->nr_pins > 4)
-> +			pr_debug("%s: save fltcon1 %#010x\n",
-> +				 bank->name, save->eint_fltcon1);
-> +		pr_debug("%s: save=C2=A0=C2=A0=C2=A0 mask %#010x\n",
-> +			 bank->name, save->eint_mask);
-> +	}
-> +}
-> +
-> =C2=A0void exynosautov920_pinctrl_suspend(struct samsung_pin_bank *bank)
-> =C2=A0{
-> =C2=A0	struct exynos_eint_gpio_save *save =3D bank->soc_priv;
-> @@ -820,6 +855,42 @@ void exynosautov920_pinctrl_suspend(struct samsung_p=
-in_bank *bank)
-> =C2=A0	}
-> =C2=A0}
-> =C2=A0
-> +void gs101_pinctrl_resume(struct samsung_pin_bank *bank)
-> +{
-> +	struct exynos_eint_gpio_save *save =3D bank->soc_priv;
-> +
-> +	void __iomem *regs =3D bank->eint_base;
-> +	void __iomem *eint_fltcfg0 =3D regs + EXYNOS_GPIO_EFLTCON_OFFSET
-> +		=C2=A0=C2=A0=C2=A0=C2=A0 + bank->eint_fltcon_offset;
-> +
-> +	if (bank->eint_type =3D=3D EINT_TYPE_GPIO) {
-> +		pr_debug("%s:=C2=A0=C2=A0=C2=A0=C2=A0 con %#010x =3D> %#010x\n", bank-=
->name,
-> +			 readl(regs + EXYNOS_GPIO_ECON_OFFSET
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 + bank->eint_offset), save->eint=
-_con);
-> +
-> +		pr_debug("%s: fltcon0 %#010x =3D> %#010x\n", bank->name,
-> +			 readl(eint_fltcfg0), save->eint_fltcon0);
-> +
-> +		/* fltcon1 register only exists for pins 4-7 */
-> +		if (bank->nr_pins > 4) {
-> +			pr_debug("%s: fltcon1 %#010x =3D> %#010x\n", bank->name,
-> +				 readl(eint_fltcfg0 + 4), save->eint_fltcon1);
-> +		}
-
-If there's another version, braces are not needed here.
-
-Cheers,
-Andre'
-
-
-> +		pr_debug("%s:=C2=A0=C2=A0=C2=A0 mask %#010x =3D> %#010x\n", bank->name=
-,
-> +			 readl(regs + bank->irq_chip->eint_mask
-> +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 + bank->eint_offset), save->eint=
-_mask);
-> +
-> +		writel(save->eint_con, regs + EXYNOS_GPIO_ECON_OFFSET
-> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 + bank->eint_offset);
-> +		writel(save->eint_fltcon0, eint_fltcfg0);
-> +
-> +		if (bank->nr_pins > 4)
-> +			writel(save->eint_fltcon1, eint_fltcfg0 + 4);
-> +		writel(save->eint_mask, regs + bank->irq_chip->eint_mask
-> +		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 + bank->eint_offset);
-> +	}
-> +}
-> +
-> =C2=A0void exynos_pinctrl_resume(struct samsung_pin_bank *bank)
-> =C2=A0{
-> =C2=A0	struct exynos_eint_gpio_save *save =3D bank->soc_priv;
-> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/s=
-amsung/pinctrl-exynos.h
-> index 35c2bc4ea488..773f161a82a3 100644
-> --- a/drivers/pinctrl/samsung/pinctrl-exynos.h
-> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
-> @@ -225,6 +225,8 @@ void exynosautov920_pinctrl_resume(struct samsung_pin=
-_bank *bank);
-> =C2=A0void exynosautov920_pinctrl_suspend(struct samsung_pin_bank *bank);
-> =C2=A0void exynos_pinctrl_suspend(struct samsung_pin_bank *bank);
-> =C2=A0void exynos_pinctrl_resume(struct samsung_pin_bank *bank);
-> +void gs101_pinctrl_suspend(struct samsung_pin_bank *bank);
-> +void gs101_pinctrl_resume(struct samsung_pin_bank *bank);
-> =C2=A0struct samsung_retention_ctrl *
-> =C2=A0exynos_retention_init(struct samsung_pinctrl_drv_data *drvdata,
-> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const struct samsung_retention_dat=
-a *data);
 >=20
+> The output will look like:
+>=20
+> [=C2=A0=C2=A0 63.818829] Probe 0 : [ 0000000032848d41 ]=20
+> perf_trace_sched_wakeup_template+0x0/0x20
+> [=C2=A0=C2=A0 63.819287] Probe 0 : [ 00000000fe8cca4d ]=20
+> perf_trace_sched_switch+0x0/0x20
+> [=C2=A0=C2=A0 65.325638] Probe 0 : [ 0000000032848d41 ]=20
+> perf_trace_sched_wakeup_template+0x0/0x20
+> [=C2=A0=C2=A0 65.695631] Probe 0 : [ 00000000fe8cca4d ]=20
+> perf_trace_sched_switch+0x0/0x20
 
+I'm fine either way. Mathieu, what's your preference?
+
+Although the above shows a hashed %p. Is that even useful?
+
+-- Steve
 
