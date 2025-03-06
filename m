@@ -1,133 +1,170 @@
-Return-Path: <linux-kernel+bounces-548154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9394A540E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:56:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57F55A540E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:57:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 244C67A760D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:55:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81B0C7A1B1E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E128192D77;
-	Thu,  6 Mar 2025 02:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94669191F91;
+	Thu,  6 Mar 2025 02:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CW9jEJvf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KVfiB9i1"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67A6191484;
-	Thu,  6 Mar 2025 02:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763261917CD;
+	Thu,  6 Mar 2025 02:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741229806; cv=none; b=MVhQDIDW/TJV40s+7QVNqnIvd0W0Ao/fr2UMCEpAEBzZTO1FCMzgtRvOgIEQ3k6HMsuEAfcM+AXERNpligaEZ/ZwiHnrzmtZE3CoB2+ctQXioo1Q3MwM2+G79lqqz4uFX8r4nhcHKee+aMXX6NaCN95abVbyhMMIDYWAOvQ7gCc=
+	t=1741229837; cv=none; b=N1aqxfHZ5dvuhVxxc6LE5/KLIvjfmKWhY0qLRbppacx5OntMBJo4hJmvnpJcxXmJdESfPbLFfqjh5GspD1VFQQYMtCDqwBlP9e0nK1fm1TojWv2O5JkFU7wm2+S6dYUm8VMeJ6/FS6gDqaUd8TL7ubsAYVhTXU22Tzn64PQoV/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741229806; c=relaxed/simple;
-	bh=8DeWfzCxrqel0/a7+qeFa55jA1XHeM+A8wMYrayk/U8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s8VX/5utz1FQQrXm2Y3ZVjcl2VQLdBBigHDqeHOd2O8Bpq3MgLFu+xW4P1/mcwXNpDKbB/iFBlf99KP1aN0NufNlPiIsfn1Lrk1rlJmtvv1pGOmCfUqzbxSK6X5bq7d8i6VWtM7ydVo4Ov86K6IhueqH2I9E8ve4Ev/xnxlUznw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CW9jEJvf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87F43C4CED1;
-	Thu,  6 Mar 2025 02:56:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741229805;
-	bh=8DeWfzCxrqel0/a7+qeFa55jA1XHeM+A8wMYrayk/U8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CW9jEJvfczPFw6j9/0McknStDTMBFz1KTucb6dKvDCc0zaL1eTb2kHQNJCIR+DlzV
-	 Bv7gzJXXnQHzlLbylnKsV+sEYTbcREaDrv9m+X6fbXil6ccqgkenc9gRgo19OshVDO
-	 GgEyIfXjOxM1mV1Jn/3xlYF1m1+e4kxJ8DcTSPtxGOSP1t6u7fDOYdRTEPBSmRwoJx
-	 hOF5PueZbmDztYOFSZ85wV1dKtDqtDhRmLb5SZsHDCPHRPh67ltmvThYPACTuCh9B3
-	 mMZ9h0ECnkTac85q2TaO3uXCRol+iyUHjhJ4O83CiKnVJ9wnFogXH/sEhDo2EqMdn3
-	 2EoupNof6gtcw==
-Date: Wed, 5 Mar 2025 18:56:43 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Bill Wendling <morbo@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] x86/crc32: optimize tail handling for crc32c short inputs
-Message-ID: <20250306025643.GA1592@sol.localdomain>
-References: <20250304213216.108925-1-ebiggers@kernel.org>
- <20250305142653.751d9840@pumpkin>
- <20250305191608.GA19889@sol.localdomain>
- <20250305220739.1cb4b61e@pumpkin>
+	s=arc-20240116; t=1741229837; c=relaxed/simple;
+	bh=BIoD5qFBqV3yEisDpxx4/YCUOyVwNYqDpjwUtc0cVs4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=jFrWZotK7aXKK2QQt6ddtC2IU9QmRvD21LGut4G/jRXrPMbgLph80Z+pkbvgmJJqlzvaIRrfwPSAw293YjQMPQin4i0DzCpUQcAXzrePGpMNdoNiopgCF/hPXU0VRzAnkAl9/sFamejHLNWg3WZyRxjW3kbMoWW0FFCBdEDG1LA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KVfiB9i1; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6e8f916e75fso561146d6.1;
+        Wed, 05 Mar 2025 18:57:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741229834; x=1741834634; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=BIoD5qFBqV3yEisDpxx4/YCUOyVwNYqDpjwUtc0cVs4=;
+        b=KVfiB9i1X1gIO2qKQp2rFlph3HnafapVXd+yH18ZAF0kEQRvjvqMb+qBGAMIZVlBnz
+         eKzYQjSZZyGSqOfTuROFrwrBN1MMjYh9jHZfR21ak/mTS4qJvjqPESbDqJV5UWD1dtMu
+         FjtpJ4gTNEjKhRrRIK884tJKc6jtZ5rB9MoQK+hIR+WWQmVkoBvsSVRH1IbcZMwB3nS5
+         oCPVAriv3wu15FZUkCdB0bCcfPt/a0DbJkQ6BbFfhes/1fJU/HQBmh9VyDjU8uT+GCwn
+         mYjgIihE4xCKvPuf+HzPx3Q3cvMsygdUaESAmmwrtle1RsOUPVSf1BZtIzC6v0laPzXO
+         Ff4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741229834; x=1741834634;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BIoD5qFBqV3yEisDpxx4/YCUOyVwNYqDpjwUtc0cVs4=;
+        b=Q+bDUF5rLZ9YncQikvuuyHcuCgjniV4h7YhIlLm0v1ED9WflvPCtLodVOmT2gPwk0z
+         GLDQaLdZ67+CexXFhCMkoUdEQuedn8AUjcNzkA5Lt43Jnds3eMbn6ARjx2vi/DNncZPk
+         rfSe6Y5z1E0TLVSrv5oQXPU8mzc7+WkWVKTIHL/tRwGVC9kHoUlcsmWumM81kA2urQ+k
+         +2vqpivQhKNsgix3znhifpsqsPHQKsAZV3u4UhHiAxLmR2krDedo1WGwy9kF5rdvVDwV
+         GD+bUiV1oVD4Q5yQEzfVYZ1tbRHQlP9VbfLG761/USjrVAQ7rfvvTZmmHM/q+ITiMyER
+         ykTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVeo2ksX7KESJeAyy94ppfiLhaBW7UuxTGKv5nXgeiluzTqoLsz4dizI88q93mb1UVxA+wVfxMlVoZnTCc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxk8r6oofHPLwjdRUMxFGpz56Op6SE4npruk9EvmR7rSPuzXuUf
+	pIj2ttehcY1zOLPwOjmohfk1IFfXR6sUHp3ec0R3tlHWFNW4Ddd/cSVxoaQy6WkdshR4fSjVsPd
+	ZNlhuK7JCSC6+GVoejHjJnheCjXU=
+X-Gm-Gg: ASbGncvYTJ5xYk8+bvfcio780NEoSCZdriVs4TmISxJDkD1NcDQFCfrAzLrS0j4yUb/
+	Fzy3AQenwbZKKFi+j3vx5YZ3eUK3bRUJR5szWban+h73r2d5XM4MD5/0xFw/ISBTyDGVq+VBsFU
+	mIWkslyA8Zxov6c7mDfDUo7Is4U7g=
+X-Google-Smtp-Source: AGHT+IERsCQhMrMDQqiU0iMtB+EOtLrzwRivbZlA8p4pPhF7SFuEXGE5Z9cWmLhyVxI3328TRXCA9SPQuLFK9lm8ZeA=
+X-Received: by 2002:a05:6214:226a:b0:6e4:4676:85c3 with SMTP id
+ 6a1803df08f44-6e8f46ee9b0mr21341716d6.11.1741229834208; Wed, 05 Mar 2025
+ 18:57:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305220739.1cb4b61e@pumpkin>
+From: Luka <luka.2016.cs@gmail.com>
+Date: Thu, 6 Mar 2025 10:57:02 +0800
+X-Gm-Features: AQ5f1JptL5EJrqDc_1_pU2JegQ78qmQFCHo74lddduwHiHN5qg3kjwag_N8l56k
+Message-ID: <CALm_T+1DnSQRHiyO3c1-H4rRnBJHKRMpfQYQMGN=yZROm7tYKQ@mail.gmail.com>
+Subject: Potential Linux Crash: KASAN use-after-free Read in
+ ext4_ext_remove_space in Linux kernel v6.13-rc5
+To: "Theodore Ts'o" <tytso@mit.edu>, Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 05, 2025 at 10:07:39PM +0000, David Laight wrote:
-> On Wed, 5 Mar 2025 11:16:08 -0800
-> Eric Biggers <ebiggers@kernel.org> wrote:
-> 
-> > On Wed, Mar 05, 2025 at 02:26:53PM +0000, David Laight wrote:
-> > > On Tue,  4 Mar 2025 13:32:16 -0800
-> > > Eric Biggers <ebiggers@kernel.org> wrote:
-> > >   
-> > > > From: Eric Biggers <ebiggers@google.com>
-> > > > 
-> > > > For handling the 0 <= len < sizeof(unsigned long) bytes left at the end,
-> > > > do a 4-2-1 step-down instead of a byte-at-a-time loop.  This allows
-> > > > taking advantage of wider CRC instructions.  Note that crc32c-3way.S
-> > > > already uses this same optimization too.  
-> > > 
-> > > An alternative is to add extra zero bytes at the start of the buffer.
-> > > They don't affect the crc and just need the first 8 bytes shifted left.
-> > > 
-> > > I think any non-zero 'crc-in' just needs to be xor'ed over the first
-> > > 4 actual data bytes.
-> > > (It's over 40 years since I did the maths of CRC.)
-> ...
-> > > 	David  
-> > 
-> > Sure, but that only works when len >= sizeof(unsigned long).  Also, the initial
-> > CRC sometimes has to be divided between two unsigned longs.
-> 
-> Yes, I was thinking that might make it a bit more tricky.
-> I need to find some spare time :-)
-> 
-> I wasn't taught anything about using non-carry multiplies either.
-> And I can't remember the relevant 'number field' stuff either.
-> But (with no-carry maths) I think you have:
-> 	crc(n + 1) = (crc(n) + data(n)) * poly
-> If data(n+1) and data(n+2) are zero (handled elsewhere) you have:
-> 	crc(n + 3) = (((crc(n) + data(n)) * poly) * poly) * poly
-> I think that because it is a field this is the same as
-> 	crc(n + 3) = (crc(n) + data(n)) * (poly * poly * poly)
-> which is just a different crc polynomial.
-> If true your '3-way' cpu doesn't have to use big blocks.
+Dear Linux Kernel Experts,
 
-Well, to extend by some constant number of bits 'n', you can carryless-multiply
-by the polynomial x^n, pre-reduced by the CRC's generator polynomial.  That's
-basically how all the CRC implementations using carryless multiplication work.
-Take a look at the x86 and riscv optimized code, for example -- especially my
-new versions in the crc-next tree at
-https://web.git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=crc-next.
+Hello!
 
-But x86 does not have a scalar carryless multiplication instruction, only vector
-(PCLMULQDQ).  It does have a scalar CRC instruction, for crc32c *specifically*,
-and that is what the code we're discussing is taking advantage of.  Given that
-there is overhead associated with using kernel-mode FPU (i.e. vector), it makes
-sense to do that, at least on short messages.
+I am a security researcher focused on testing Linux kernel
+vulnerabilities. Recently, while testing the v6.13-rc5 Linux kernel,
+we encountered a crash related to the fs/ext4 kernel module. We have
+successfully captured the call trace information for this crash.
 
-On longer messages a PCLMULQDQ-only implementation would work well, but so does
-interleaving the crc32c scalar instruction on multiple chunks, which is what is
-currently wired up in the kernel via crc32c-3way.S.  And yes, the chunks for
-that do not *have* to be long, but you still need to use pclmulqdq instructions
-to combine them (unless you do a really slow bit-at-a-time carryless
-multiplication), and you have to enter a kernel-mode FPU section to do that.
+Unfortunately, we have not been able to reproduce the issue in our
+local environment, so we are unable to provide a PoC (Proof of
+Concept) at this time.
 
-- Eric
+We fully understand the complexity and importance of Linux kernel
+maintenance, and we would like to share this finding with you for
+further analysis and confirmation of the root cause. Below is a
+summary of the relevant information:
+
+Kernel Version: v6.13.0-rc5
+
+Kernel Module: fs/ext4/extents.c
+
+=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
+=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94CallTr=
+ace=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=
+=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94
+
+BUG: KASAN: use-after-free in ext4_ext_rm_leaf fs/ext4/extents.c:2623 [inli=
+ne]
+BUG: KASAN: use-after-free in ext4_ext_remove_space+0x3401/0x37f0
+fs/ext4/extents.c:2961
+Read of size 4 at addr ffff888116add7f8 by task syz-executor.5/9417
+
+CPU: 2 UID: 0 PID: 9417 Comm: syz-executor.5 Not tainted
+6.13.0-rc5-00012-g0bc21e701a6f #2
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/=
+2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x7b/0xa0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0xce/0x660 mm/kasan/report.c:489
+ kasan_report+0xc6/0x100 mm/kasan/report.c:602
+ ext4_ext_rm_leaf fs/ext4/extents.c:2623 [inline]
+ ext4_ext_remove_space+0x3401/0x37f0 fs/ext4/extents.c:2961
+ ext4_ext_truncate+0x1c6/0x260 fs/ext4/extents.c:4466
+ ext4_truncate+0x6bb/0xea0 fs/ext4/inode.c:4217
+ ext4_evict_inode+0x64c/0x1330 fs/ext4/inode.c:263
+ evict+0x337/0x7c0 fs/inode.c:796
+ iput_final fs/inode.c:1946 [inline]
+ iput fs/inode.c:1972 [inline]
+ iput+0x4c3/0x6a0 fs/inode.c:1958
+ do_unlinkat+0x4fa/0x690 fs/namei.c:4594
+ __do_sys_unlink fs/namei.c:4635 [inline]
+ __se_sys_unlink fs/namei.c:4633 [inline]
+ __x64_sys_unlink+0xbc/0x100 fs/namei.c:4633
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xa6/0x1a0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f381a667b7b
+Code: 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66
+2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa b8 57 00 00 00 0f 05 <48> 3d
+01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffec5a26028 EFLAGS: 00000206 ORIG_RAX: 0000000000000057
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f381a667b7b
+RDX: 00007ffec5a26050 RSI: 00007ffec5a260e0 RDI: 00007ffec5a260e0
+RBP: 00007ffec5a260e0 R08: 0000000000000000 R09: 00007ffec5a25eb0
+R10: 0000000000000100 R11: 0000000000000206 R12: 00007ffec5a271e0
+R13: 00007f381a72667b R14: 000000000002b7da R15: 000000000000001d
+ </TASK>
+
+
+=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
+=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94CallTr=
+ace=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=
+=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94
+
+If you need more details or additional test results, please feel free
+to let us know. Thank you so much for your attention! Please don't
+hesitate to reach out if you have any suggestions or need further
+communication.
+
+Best regards,
+Luka
 
