@@ -1,143 +1,234 @@
-Return-Path: <linux-kernel+bounces-548993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C21D9A54BD7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:17:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA7B6A54BD9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:17:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF6B33B3C23
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:16:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4F9E7A326F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:16:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C8820F08C;
-	Thu,  6 Mar 2025 13:16:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A58212D7D;
+	Thu,  6 Mar 2025 13:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="c8ESAFFV"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CVOa4SZ6"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9871220E30A;
-	Thu,  6 Mar 2025 13:16:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86617210F5B;
+	Thu,  6 Mar 2025 13:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741266975; cv=none; b=lYmG/Gea+lQ0P/ynurcUveK2N1E+5MIGi90XM2J6Hx+uJBOegL1YO2yWcXQVrmHcmJh3+z8jKNc/poo8Mzx23fV1BHe6cVvR/gGhaKCNTDDN2GdF+J11gb2grCJcvRWGCP6OzGTMl+wCW5XFwoQv4V6ex1wqwXGUTfCRdMFhE+U=
+	t=1741266984; cv=none; b=FJakL4p89rMFy1fs890wS8Z+vkhEfTYtLtakDUyeDHcahrsELKyRnVq+x32NUWCo2SlOF9PiqABrUl40/E5v0CK214yohykljRHlnwsvBTE/z47s3lx/oaFqdTJJusKQTzqKISytaOOpygewU6bymq1lB2g0Qqo3glVGP9SdKS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741266975; c=relaxed/simple;
-	bh=RPvn/9JHKv0KUET0yq7JeqWzZgiTqKGfU9kbzBYO3Aw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lXLrssDE0FbviUvoZ7ZXsKAAGbxyIv9bs2ejUgdvwAkq09LvipbaEu45Nv3vjlvcyxM4fj2zgd201li1RRwv1OGo8JnJksAwE9Ifa7v2BnixIke+ClxVu3DuZxz5s5z/W2+FjtsE1qdkE9IA0JNM/NsZeyoOgaMtWlZXiqN2I3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=c8ESAFFV; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=2oMXT75K3tzJGkfzmknyPEa8yvFgjeDBRC2ukbCyplw=; b=c8ESAFFVd02/xr5SomVhTmc89w
-	YoUUchGt/lkfyW2b09wdC10EQCGMHV6KeL5v6yLZiWlR7+U0HLnRv6XhiOmmVbk2ffwsrBPlkemBF
-	nU668o8bpTsXIAWBbK1RsoqAbRD6z7rDWPuHi06+FlITALCNFMoycse38x+0scUPa/YeVVWR2wxfU
-	ZP4TjBOaWz4xEK/9eQoMJXiNRmCoVTUpcCZ1IhXiEgA27S+WM9yQ4qvdFJe00/jVhdk0xXLR6bTMD
-	sfupizO8tLft/pF2tlSXjE2GJ5L8lQVLb58Tr4AhPrBei/Fs9ezNpdWUXK4lwfkgKLbSyHcNmGhlZ
-	5VSCaxaw==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tqB4u-004kVa-Vw; Thu, 06 Mar 2025 14:16:02 +0100
-From: Luis Henriques <luis@igalia.com>
-To: Bernd Schubert <bernd@bsbernd.com>
-Cc: Miklos Szeredi <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  kernel-dev@igalia.com
-Subject: Re: [PATCH] fuse: fix possible deadlock if rings are never initialized
-In-Reply-To: <1dc28f9d-c453-42f4-8edb-1d5c8084d576@bsbernd.com> (Bernd
-	Schubert's message of "Thu, 6 Mar 2025 12:45:59 +0100")
-References: <20250306111218.13734-1-luis@igalia.com>
-	<1dc28f9d-c453-42f4-8edb-1d5c8084d576@bsbernd.com>
-Date: Thu, 06 Mar 2025 13:16:02 +0000
-Message-ID: <87bjue2tbh.fsf@igalia.com>
+	s=arc-20240116; t=1741266984; c=relaxed/simple;
+	bh=DH84FFsst4rTl71ErFsSV5nN9QN9azV2zCDNHg/9Zzc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=h7WHbEYD361OKrWbUcjtaggELZ8+GZhlNVPdBaWDBqKaW0zSWdbNUwZ1HTv0q4n2cgNow95qrqSwbnuIEvIy+yEEWE7L8b2j1TVN29TrAO9y7X1NJETbnyFoDtOQpn6yfXwOQU4qFNsFrhLe3X/Gv3ytsBHQF6joR9rUZbVMrv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CVOa4SZ6; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5267Mfh7017954;
+	Thu, 6 Mar 2025 13:16:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WMs9v8KjOG4v5v0BJmhTd3qeTYh7hV+U8VJ1PN1W6C8=; b=CVOa4SZ6Dgk6P3C9
+	/j1vKEN9YJ8jc/9aCvMS5R9iZrntZbrMFLwQ7Pf2L4Cb4gM468ZdLZA7w12ZiQBq
+	ALXWcrPuZwWaxYfyWNMTLzxhbFo12/IYMKADQw1mM1N+p+JGLXbJU/avw9w2Bicp
+	5lnbs9ZgDjEtkqXVngxOs/uLCgvow29hAuU/jxRc20oSED1nfBinVVc/RLHXfdVG
+	ijcjglo9LySoCEtiVnEf76N1Zvgvkl95YT9VRW6tzA32LpTtNN9+tHajSk7TG8HS
+	IWoBlj19GknA+f14YhCFLjbOkfG5MVkpnHIl0aekE+Gfk9NmHmp6MjnFKf2j5PwJ
+	Dgzpbw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45778t9242-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Mar 2025 13:16:14 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 526DGDCP030013
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 6 Mar 2025 13:16:13 GMT
+Received: from [10.50.63.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Mar 2025
+ 05:16:09 -0800
+Message-ID: <feea4c41-d3cf-4dc7-d197-6d91313d90ff@quicinc.com>
+Date: Thu, 6 Mar 2025 18:46:06 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v2 7/7] media: platform: qcom/iris: add sm8650 support
+Content-Language: en-US
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250305-topic-sm8x50-iris-v10-v2-0-bd65a3fc099e@linaro.org>
+ <20250305-topic-sm8x50-iris-v10-v2-7-bd65a3fc099e@linaro.org>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <20250305-topic-sm8x50-iris-v10-v2-7-bd65a3fc099e@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: J6r7M2itE_A9dJvmYZaDh6AxpB8eRTlp
+X-Authority-Analysis: v=2.4 cv=U5poDfru c=1 sm=1 tr=0 ts=67c9a01e cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=1rntOs83oLOrlNc53msA:9 a=QEXdDO2ut3YA:10
+ a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: J6r7M2itE_A9dJvmYZaDh6AxpB8eRTlp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 adultscore=0 clxscore=1015 malwarescore=0 bulkscore=0
+ mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503060100
 
-On Thu, Mar 06 2025, Bernd Schubert wrote:
 
-> On 3/6/25 12:12, Luis Henriques wrote:
->> When mounting a user-space filesystem using io_uring, the initialization
->> of the rings is done separately in the server side.  If for some reason
->> (e.g. a server bug) this step is not performed it will be impossible to
->> unmount the filesystem if there are already requests waiting.
->>=20
->> This issue is easily reproduced with the libfuse passthrough_ll example,
->> if the queue depth is set to '0' and a request is queued before trying to
->> unmount the filesystem.  When trying to force the unmount, fuse_abort_co=
-nn()
->> will try to wake up all tasks waiting in fc->blocked_waitq, but because =
-the
->> rings were never initialized, fuse_uring_ready() will never return 'true=
-'.
->>=20
->> Fixes: 3393ff964e0f ("fuse: block request allocation until io-uring init=
- is complete")
->> Signed-off-by: Luis Henriques <luis@igalia.com>
->> ---
->>  fs/fuse/dev.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>=20
->> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
->> index 7edceecedfa5..2fe565e9b403 100644
->> --- a/fs/fuse/dev.c
->> +++ b/fs/fuse/dev.c
->> @@ -77,7 +77,7 @@ void fuse_set_initialized(struct fuse_conn *fc)
->>  static bool fuse_block_alloc(struct fuse_conn *fc, bool for_background)
->>  {
->>  	return !fc->initialized || (for_background && fc->blocked) ||
->> -	       (fc->io_uring && !fuse_uring_ready(fc));
->> +	       (fc->io_uring && fc->connected && !fuse_uring_ready(fc));
->>  }
->>=20=20
->>  static void fuse_drop_waiting(struct fuse_conn *fc)
->>=20
->
-> Oh yes, I had missed that.
->
-> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
 
-Thanks!  And... by the way, Bernd:
+On 3/6/2025 12:35 AM, Neil Armstrong wrote:
+> Add support for the SM8650 platform by re-using the SM8550
+> definitions and using the vpu33 ops.
+> 
+> The SM8650/vpu33 requires more reset lines, but the H.284
+> decoder capabilities are identical.
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  .../platform/qcom/iris/iris_platform_common.h      |  1 +
+>  .../platform/qcom/iris/iris_platform_sm8550.c      | 64 ++++++++++++++++++++++
+>  drivers/media/platform/qcom/iris/iris_probe.c      |  4 ++
+>  3 files changed, 69 insertions(+)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> index fdd40fd80178c4c66b37e392d07a0a62f492f108..6bc3a7975b04d612f6c89206eae95dac678695fc 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> @@ -35,6 +35,7 @@ enum pipe_type {
+>  
+>  extern struct iris_platform_data sm8250_data;
+>  extern struct iris_platform_data sm8550_data;
+> +extern struct iris_platform_data sm8650_data;
+>  
+>  enum platform_clk_type {
+>  	IRIS_AXI_CLK,
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+> index 35d278996c430f2856d0fe59586930061a271c3e..d0f8fa960d53367023e41bc5807ba3f8beae2efc 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+> @@ -144,6 +144,10 @@ static const struct icc_info sm8550_icc_table[] = {
+>  
+>  static const char * const sm8550_clk_reset_table[] = { "bus" };
+>  
+> +static const char * const sm8650_clk_reset_table[] = { "bus", "core" };
+> +
+> +static const char * const sm8650_controller_reset_table[] = { "xo" };
+> +
+>  static const struct bw_info sm8550_bw_table_dec[] = {
+>  	{ ((4096 * 2160) / 256) * 60, 1608000 },
+>  	{ ((4096 * 2160) / 256) * 30,  826000 },
+> @@ -264,3 +268,63 @@ struct iris_platform_data sm8550_data = {
+>  	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
+>  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
+>  };
+> +
+> +/*
+> + * Shares most of SM8550 data except:
+> + * - vpu_ops to iris_vpu33_ops
+> + * - clk_rst_tbl to sm8650_clk_reset_table
+> + * - controller_rst_tbl to sm8650_controller_reset_table
+> + * - fwname to "qcom/vpu/vpu33_p4.mbn"
+> + */
+> +struct iris_platform_data sm8650_data = {
+> +	.get_instance = iris_hfi_gen2_get_instance,
+> +	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
+> +	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
+> +	.vpu_ops = &iris_vpu33_ops,
+> +	.set_preset_registers = iris_set_sm8550_preset_registers,
+> +	.icc_tbl = sm8550_icc_table,
+> +	.icc_tbl_size = ARRAY_SIZE(sm8550_icc_table),
+> +	.clk_rst_tbl = sm8650_clk_reset_table,
+> +	.clk_rst_tbl_size = ARRAY_SIZE(sm8650_clk_reset_table),
+> +	.controller_rst_tbl = sm8650_controller_reset_table,
+> +	.controller_rst_tbl_size = ARRAY_SIZE(sm8650_controller_reset_table),
+> +	.bw_tbl_dec = sm8550_bw_table_dec,
+> +	.bw_tbl_dec_size = ARRAY_SIZE(sm8550_bw_table_dec),
+> +	.pmdomain_tbl = sm8550_pmdomain_table,
+> +	.pmdomain_tbl_size = ARRAY_SIZE(sm8550_pmdomain_table),
+> +	.opp_pd_tbl = sm8550_opp_pd_table,
+> +	.opp_pd_tbl_size = ARRAY_SIZE(sm8550_opp_pd_table),
+> +	.clk_tbl = sm8550_clk_table,
+> +	.clk_tbl_size = ARRAY_SIZE(sm8550_clk_table),
+> +	/* Upper bound of DMA address range */
+> +	.dma_mask = 0xe0000000 - 1,
+> +	.fwname = "qcom/vpu/vpu33_p4.mbn",
+> +	.pas_id = IRIS_PAS_ID,
+> +	.inst_caps = &platform_inst_cap_sm8550,
+> +	.inst_fw_caps = inst_fw_cap_sm8550,
+> +	.inst_fw_caps_size = ARRAY_SIZE(inst_fw_cap_sm8550),
+> +	.tz_cp_config_data = &tz_cp_config_sm8550,
+> +	.core_arch = VIDEO_ARCH_LX,
+> +	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
+> +	.ubwc_config = &ubwc_config_sm8550,
+> +	.num_vpp_pipe = 4,
+> +	.max_session_count = 16,
+> +	.max_core_mbpf = ((8192 * 4352) / 256) * 2,
+> +	.input_config_params =
+> +		sm8550_vdec_input_config_params,
+> +	.input_config_params_size =
+> +		ARRAY_SIZE(sm8550_vdec_input_config_params),
+> +	.output_config_params =
+> +		sm8550_vdec_output_config_params,
+> +	.output_config_params_size =
+> +		ARRAY_SIZE(sm8550_vdec_output_config_params),
+> +	.dec_input_prop = sm8550_vdec_subscribe_input_properties,
+> +	.dec_input_prop_size = ARRAY_SIZE(sm8550_vdec_subscribe_input_properties),
+> +	.dec_output_prop = sm8550_vdec_subscribe_output_properties,
+> +	.dec_output_prop_size = ARRAY_SIZE(sm8550_vdec_subscribe_output_properties),
+> +
+> +	.dec_ip_int_buf_tbl = sm8550_dec_ip_int_buf_tbl,
+> +	.dec_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_ip_int_buf_tbl),
+> +	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
+> +	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
+> +};
+This approach looks good to me, reusing the platform data like this keeps
+the code cleaner and avoids duplication. I think this is a good way to
+handle the differences while sharing the common parts.
 
-I know io_uring support in libfuse isn't ready yet, but I think there's
-some error handling missing in your uring branch.  In particular, the
-return of fuse_uring_start() is never checked, and thus if the rings
-initialization fails, the server will not get any error.
-
-I found that out because I blindly tried the patch below, and I was
-surprised that the server was started just fine.
-
-Cheers,
---=20
-Lu=C3=ADs
-
-diff --git a/lib/fuse_uring.c b/lib/fuse_uring.c
-index 312aa5dbc735..2258cf0d4259 100644
---- a/lib/fuse_uring.c
-+++ b/lib/fuse_uring.c
-@@ -498,6 +498,11 @@ static struct fuse_ring_pool *fuse_create_ring(struct =
-fuse_session *se)
- 		fuse_log(FUSE_LOG_DEBUG, "starting io-uring q-depth=3D%d\n",
- 			 se->uring.q_depth);
-=20
-+	if (!se->uring.q_depth) {
-+		fuse_log(FUSE_LOG_ERR, "Invalid ring queue depth value\n");
-+		goto err;
-+	}
-+
- 	fuse_ring =3D calloc(1, sizeof(*fuse_ring));
- 	if (fuse_ring =3D=3D NULL) {
- 		fuse_log(FUSE_LOG_ERR, "Allocating the ring failed\n");
+Thanks,
+Dikshita
+> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
+> index 4f8bce6e2002bffee4c93dcaaf6e52bf4e40992e..7cd8650fbe9c09598670530103e3d5edf32953e7 100644
+> --- a/drivers/media/platform/qcom/iris/iris_probe.c
+> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
+> @@ -345,6 +345,10 @@ static const struct of_device_id iris_dt_match[] = {
+>  			.data = &sm8250_data,
+>  		},
+>  #endif
+> +	{
+> +		.compatible = "qcom,sm8650-iris",
+> +		.data = &sm8650_data,
+> +	},
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, iris_dt_match);
+> 
 
