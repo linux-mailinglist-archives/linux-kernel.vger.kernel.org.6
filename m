@@ -1,104 +1,88 @@
-Return-Path: <linux-kernel+bounces-548469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82A55A54544
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:47:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30226A54547
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:48:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFF361895E5B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:48:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41DFD3A64F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:48:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C84F207E11;
-	Thu,  6 Mar 2025 08:47:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9FC2080CD;
+	Thu,  6 Mar 2025 08:48:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AB63qzBf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Clg2cLtd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E841519D891;
-	Thu,  6 Mar 2025 08:47:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8C920551C;
+	Thu,  6 Mar 2025 08:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741250867; cv=none; b=qNOCHYnmJd8pC9GBKPgfNvE2GIkj46W2i6oRmnigMcrdr1AhLhBixFIyfqT7Mi/Mqrwpq3TM+d46hx+d3fcPgGIiJk5amxeZnWjULeGADsTrbWf17p9xxtHIm72F0bsa98l0ZYm+uoHCGKsiJBgrbfgNL8QC8qMZ9BUqOxwiP10=
+	t=1741250879; cv=none; b=sRwOQ0TDK073bLG6hn6QFrkhmj1exhYDcD7Y5Y88s88bVsd5NnNC+8YU2ngGdKCeTCZL+xHrogIjrbH5LeaD/7zUepPKHu3POu6RjRvwoI5Lnhvid/MvJeHWnUOhg3wZEWNtjEekLhRhvwLgHf1037M3Kr18/RhEjBrMdohDbAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741250867; c=relaxed/simple;
-	bh=12pRnKMM3oj/6bYjZMs3d0jaNeQblRP+N8DXFazNXyI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ocbbVaglo2JF0hgswCNLx6r7DpGq6IyE9xmyfkf33JqS0hxrA5h5CWn6+UM/NxRNnSkcx7MElR1eo5h9lu3qKwlWwzcByaSpoCzWNtK4ymE8yqWA2q1szj1vlj2CSN/bxySmnXJLxKAO1b3bWTm8v+DtxmaQ+IcpSbPnvss107M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AB63qzBf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0E89C4CEE0;
-	Thu,  6 Mar 2025 08:47:43 +0000 (UTC)
+	s=arc-20240116; t=1741250879; c=relaxed/simple;
+	bh=J+PDjpUqfvf57ViyFi5yPq7UxVpHRWHfqW+jl+tEfWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=paKy6GxEd4238YywA6s1W0C+fCJP8eoL2x2FW58fE/ch3e9SFDRfB7OzO8JBqu/cU0dl5AeaplsO/nN8svXPqQSs/vhh2MxczGcfI7ltmbJKQKOitSj93TCDa80epjPKPC6ykTRSzwBhhPbOj1no3UU+MtpH+ztmANu9tZNQdL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Clg2cLtd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E539C4CEE0;
+	Thu,  6 Mar 2025 08:47:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741250866;
-	bh=12pRnKMM3oj/6bYjZMs3d0jaNeQblRP+N8DXFazNXyI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=AB63qzBfyGUAgFUS2sejRrY4CYAKf792DfspDYJ5BRII+Sz//5Et7RQjpSiBVRk1p
-	 ATY39q2EyGheMtZHj/0uMETppHAyakiDSV78Tk3xmb4RG6NiezrJzOynUDbZSbRIME
-	 NU1hwJQ+20w4xMwmZ7gkkvt50P16zVJV+RHWEcHDPfZyDR6BxvjX9+peBsuaemsCRp
-	 F0dd8eXPw3pQ1owYthc+uK2FVdSPQvSyfdKF3iYBFOo/SxLdXrs66Gfg+ElWuRfHGK
-	 S6ei18RvBkZFvWGp9IdkxcjkW7ohh8uo24VdAfMnfat9xbapav6L5ws6VZDucY+0um
-	 u5aVWNWreNmjw==
-From: Christian Brauner <brauner@kernel.org>
-To: djwong@kernel.org,
-	cem@kernel.org,
-	John Garry <john.g.garry@oracle.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-xfs@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	ojaswin@linux.ibm.com,
-	ritesh.list@gmail.com,
-	martin.petersen@oracle.com,
-	tytso@mit.edu,
-	linux-ext4@vger.kernel.org
-Subject: Re: (subset) [PATCH v4 00/12] large atomic writes for xfs with CoW
-Date: Thu,  6 Mar 2025 09:47:24 +0100
-Message-ID: <20250306-beugen-sehkraft-997e984040a1@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250303171120.2837067-1-john.g.garry@oracle.com>
-References: <20250303171120.2837067-1-john.g.garry@oracle.com>
+	s=k20201202; t=1741250879;
+	bh=J+PDjpUqfvf57ViyFi5yPq7UxVpHRWHfqW+jl+tEfWE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Clg2cLtdb6GNixf2GL7cU41I+Dixm63vAKvHkIx2m2D6kz5olpYI2+XvyNJPMpQts
+	 Ncl41mdckfamKfXDNI4ua9AB+VLwXgeMOuNck6dRLhY/6H837vexzW1SCNWdVVyEQX
+	 lE8LPPAhe6vZFKA59CjrjkdvyI2ErQ/wXY7JDQp2GnK+Ukfw2DGJLg8xmZSGE9HpO0
+	 mTwBL0FGQ+/c5EAw0nEjsl9V7HvzvLk9WEwk7tXi2v+YSpQ5o4GwxN3UQNF+JFKMe7
+	 8oUiZoGW3TvyYADzE9LiZeWkevy7yrr2q9BS4Rfrx1lAg4BX2E+txzEK1bbiS04O8A
+	 b/FcndbLFSksw==
+Date: Thu, 6 Mar 2025 10:47:54 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Cheng Xu <chengyou@linux.alibaba.com>,
+	Markus Elfring <Markus.Elfring@web.de>
+Cc: kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org,
+	Cheng Xu <chengyou@linux.alibaba.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Kai Shen <kaishen@linux.alibaba.com>,
+	Yang Li <yang.lee@linux.alibaba.com>, cocci@inria.fr,
+	LKML <linux-kernel@vger.kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>
+Subject: Re: [PATCH] RDMA/erdma: Prevent use-after-free in
+ erdma_accept_newconn()
+Message-ID: <20250306084754.GR1955273@unreal>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <f0f96f74-21d1-f5bf-1086-1c3ce0ea18f5@web.de>
+ <167179d0-e1ea-39a8-4143-949ad57294c2@linux.alibaba.com>
+ <20a1a47c-8906-44e8-92e6-9b3e698b1491@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1330; i=brauner@kernel.org; h=from:subject:message-id; bh=12pRnKMM3oj/6bYjZMs3d0jaNeQblRP+N8DXFazNXyI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSfTNT6MvnMcTOurk2ntDtc1ePcvnuuDHvMWvk1beVud n7bjYlHOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbyWoORYcF10XCmn/xWfmuX GBdK/uIN4DLhtDi8/c/CeW4L197j38vI8IqPLz02YM8vxhl12q66rg8Xid7YGP3q8Mn1x0Qijqz g4AEA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20a1a47c-8906-44e8-92e6-9b3e698b1491@web.de>
 
-On Mon, 03 Mar 2025 17:11:08 +0000, John Garry wrote:
-> Currently atomic write support for xfs is limited to writing a single
-> block as we have no way to guarantee alignment and that the write covers
-> a single extent.
+On Wed, Mar 05, 2025 at 03:20:41PM +0100, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 5 Mar 2025 15:07:51 +0100
 > 
-> This series introduces a method to issue atomic writes via a software
-> emulated method.
+> The implementation of the function “erdma_accept_newconn” contained
+> still the statement “new_cep->sock = NULL” after
+> the function call “erdma_cep_put(new_cep)”.
+> Thus delete an inappropriate reset action.
 > 
-> [...]
+> Reported-by: Cheng Xu <chengyou@linux.alibaba.com>
 
-Applied to the vfs-6.15.iomap branch of the vfs/vfs.git tree.
-Patches in the vfs-6.15.iomap branch should appear in linux-next soon.
+Cheng, please resubmit this patch, I'm experiencing the same issues as
+Christophe has here https://lore.kernel.org/all/20a1a47c-8906-44e8-92e6-9b3e698b1491@web.de
+and it looks like Markus continues do not listen to the feedback.
 
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs-6.15.iomap
-
-[02/12] iomap: Rename IOMAP_ATOMIC -> IOMAP_ATOMIC_HW
-        https://git.kernel.org/vfs/vfs/c/af97c9498b28
-[05/12] iomap: Support SW-based atomic writes
-        https://git.kernel.org/vfs/vfs/c/e5708b92d9bf
-[06/12] iomap: Lift blocksize restriction on atomic writes
-        https://git.kernel.org/vfs/vfs/c/2ebcf55ea0c6
+Thanks
 
