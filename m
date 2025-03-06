@@ -1,233 +1,157 @@
-Return-Path: <linux-kernel+bounces-549143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93E2CA54E01
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:42:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60FFEA54E0B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:43:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF3731897093
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:42:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43A1E3A859D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B8B17B500;
-	Thu,  6 Mar 2025 14:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b="gNHNUkn/"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2077.outbound.protection.outlook.com [40.107.20.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105A9188A3A;
+	Thu,  6 Mar 2025 14:43:30 +0000 (UTC)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC0B188724;
-	Thu,  6 Mar 2025 14:42:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741272143; cv=fail; b=cwOwEr+AKnVAjdkyndcaaTcL6fXqOldqZoPwKxj2pcwlK6wKjYZ4d+DbuCHhacJu0/ydtb6DN54hvXBx3RHBSPcnl0zzxK78aGu+3vitxiGxwcKVU4V9orpSx7kcr9P/yedg0H71NZwDmrwtx8MtfS5KV8+TI6pW8sh182ZNyvQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741272143; c=relaxed/simple;
-	bh=f/oSN8qP1ji3EhX6kJoIuICMDd4OuwFgtHdTRdHjpHY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 Content-Type:MIME-Version; b=K+ntS+mOcPUZFX85SW5p+85onUX1U/yH54uH8eD4ckeLpaiZyV/q4wJf8/3Asn+O1MCafQI85JWZLT4YL+65FbV4pei1SZOWbzHndA1S+R4K6wlO0tgXGCnqjxw5LE1wD0Q2/0NRaUDiuWhjMIz9/SEWaUeWknhCwWgcXvwMeQw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk; spf=pass smtp.mailfrom=prevas.dk; dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b=gNHNUkn/; arc=fail smtp.client-ip=40.107.20.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prevas.dk
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hOcUwUWYRRcOywcdYKp7oHuO/a+rDO3h9G/qMmqCyiWq0V//UKDY/sCrica7YC53UDqfd+vjm3oghKmOcdwiL8X3jEXRQu8Vw4OYP2De5+G+OgZ6h6sYRmM38eNxyK9eItFVNd+PK12KdpGDcM5fisG7bUN9V9jz+wfOQoam2zDmI2vnOvc5EQQPluAH3FRAYrf9lAD6IGH6upHo/vVX9W8Xr1pOnH75ueqxmosMPqVD3ehn94GO1QongIxpK+CLYLnSvBrDSdi+cPwD2funPq5zDvVefhmhg+bfb9bLfRWerfzd9f37f0e9HXVrScCbEqpXAZR0Hq2QHEknOvEY0Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MEpUlGQ3gOPNMoZkxf1TNWD8UFjjcto1VI28D+/Jpm0=;
- b=yrb7++UIus0IwTe4OYNxyQCXfn2wGElDNstmTNBPv5WSgOk/wrLOf3NTfWMa+KreUxKcvXPcxvvkiUvR3Exhg1axmp51n/FYB2h53yaU/v7Zmu/9SKP7AXd9IbCG06792PGn6xURl+smZkaRQlDyFV+dF+qcTHUkt3tjokKREEpdjPhFBFezBg2lfiD7IzqKl8jPHqRHA2x3f6NVI9wh95YsOBVdPaksJ8hustn758gCRpOK9z3ytVTRqOA18jJVfckrGXi0k6v1R7Agy76Cfk+1vhtM3PiftUddkdbhJ+ikTCwxhFKslXiOtwJE0OUI5bT6Deext6S6vp7c8VS9rg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=prevas.dk; dmarc=pass action=none header.from=prevas.dk;
- dkim=pass header.d=prevas.dk; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.dk;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MEpUlGQ3gOPNMoZkxf1TNWD8UFjjcto1VI28D+/Jpm0=;
- b=gNHNUkn/aRJY752erZXG5zQJso/HCzKQuASTi4Cvmn2iYDfYVdivRTtW9UWiWWVpd2661wz5A91fjILihwFU1y39K0DUoIOvqo5IK1vcBFWmZO/ciVVb00/r79KNA0b6lAFtELwB7QloVOH1hSTjqm0Uh/qOUDyn/6SRnfIzvWU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=prevas.dk;
-Received: from DB7PR10MB2475.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:41::17)
- by AS4PR10MB6183.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:20b:58a::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.16; Thu, 6 Mar
- 2025 14:42:15 +0000
-Received: from DB7PR10MB2475.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::7e2c:5309:f792:ded4]) by DB7PR10MB2475.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::7e2c:5309:f792:ded4%5]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 14:42:15 +0000
-From: Rasmus Villemoes <ravi@prevas.dk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org, Nick
- Desaulniers <nick.desaulniers+lkml@gmail.com>
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is
- still full
-In-Reply-To: <874j065w1v.fsf@prevas.dk> (Rasmus Villemoes's message of "Thu,
-	06 Mar 2025 10:48:44 +0100")
-References: <20250228143049.GA17761@redhat.com>
-	<20250228163347.GB17761@redhat.com>
-	<03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com>
-	<CAGudoHHA7uAVUmBWMy4L50DXb4uhi72iU+nHad=Soy17Xvf8yw@mail.gmail.com>
-	<CAGudoHE_M2MUOpqhYXHtGvvWAL4Z7=u36dcs0jh3PxCDwqMf+w@mail.gmail.com>
-	<741fe214-d534-4484-9cf3-122aabe6281e@amd.com>
-	<3jnnhipk2at3f7r23qb7fvznqg6dqw4rfrhajc7h6j2nu7twi2@wc3g5sdlfewt>
-	<CAHk-=whuLzj37umjCN9CEgOrZkOL=bQPFWA36cpb24Mnm3mgBw@mail.gmail.com>
-	<CAGudoHG2PuhHte91BqrnZi0VbhLBfZVsrFYmYDVrmx4gaLUX3A@mail.gmail.com>
-	<CAHk-=whVfFhEq=Hw4boXXqpnKxPz96TguTU5OfnKtCXo0hWgVw@mail.gmail.com>
-	<20250303202735.GD9870@redhat.com>
-	<CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
-	<87h6475w9q.fsf@prevas.dk>
-	<CAHk-=wh6Ra8=dBUTo1vKT5Wao1hFq3+2x1mDwmBcVx2Ahp_rag@mail.gmail.com>
-	<874j065w1v.fsf@prevas.dk>
-Date: Thu, 06 Mar 2025 15:42:13 +0100
-Message-ID: <87r03a43wa.fsf@prevas.dk>
-User-Agent: Gnus/5.13 (Gnus v5.13)
-Content-Type: text/plain
-X-ClientProxiedBy: MM0P280CA0022.SWEP280.PROD.OUTLOOK.COM (2603:10a6:190:a::7)
- To DB7PR10MB2475.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:41::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E0CDF71;
+	Thu,  6 Mar 2025 14:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741272209; cv=none; b=j7aB2QWhtTgMhC8zaLykSGMsRqFwMJGlC+o+kkP2b8MFENk4hc0KJb5sYbzGhuR3zzeKBC7nwDo2vRoZU15kemXs56+h/mW4s/qsvaCH+CMvO3pSmx3l+udPA85aHA1PPTsedY87jAi9cX1S3ELDcaEAeqCOfEN+Vm63LOJd0LQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741272209; c=relaxed/simple;
+	bh=5Z1DMv21sdf0Ne/VuvH+jXpSrvdILbGxdSvlin/45XM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gl9NG+oLdota9NJ2r16dN1aytLZfsg1ilDQ0f2BHcHDn5diF/ASjbwGLlHKb+tCZBwzWTndc3gOxyUHrTkiCUzgo+9lh7kqZ0gbMZpnsWWaYVnY+pi6f7TgbpCHdH6O7GfcmRWRL1SiM2ynag/mdvSDtKKOtvuGiJvsf1nGupvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-523cbce3fecso686387e0c.0;
+        Thu, 06 Mar 2025 06:43:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741272206; x=1741877006;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RUTS2miX6PVep9uVrOr0nGVc9hTpNXk1WYhPSxq21w8=;
+        b=JAOrzSO+11dlk6lppgZ84K0uruNNedjx9l01cSEQ3ZVwgJAXZQ34ysDIjCHq9fPT9m
+         m4Fpin3RvU7ivqzFoV6/HFNdrnVq5BBfwOZ4U6LAnD0Sp8rre3Tl949aNvYmCwTLn81+
+         yrJt1xa0LpXHa0J6xPlytIR8F2kf4oZcVxPcOgEOv9jL76AgDvrrrqvfjxkzmY19YQBt
+         2MjHWnwhy+tki3IbvWkxHS/93K8+4qKcUTiYesWyQiPL12Q+zLckBCHAxO4IvQ5i80y8
+         ko5PnSy3WDydjjTMgsHF54nF26ZiYQTKVs8XbQgpyjpsdSJzPA0Ab9TSbmHNxMVfl8FA
+         64Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0+sOo5Ba2ZQklVS8Eej9c20JzU6y0yw+M/b8b7IzDj1vqtN8ZXpmbpAKjgJau76iTAmaJOQsjmKHAm/XiCcnXgds=@vger.kernel.org, AJvYcCVQMKAT7lUm470rauYkR0HFfXmQsrN5cGAX3fitn5Z/A0KIvitsbfEIxpVBAWq97N+qlPT/zhq/CaM=@vger.kernel.org, AJvYcCWCJ75FHLmDgqa8lWUnB5RZG+1bbegRvyhBJ+thGm0tJzM+0DfyCuY4DsmsOFqG4R7iH2rXhj8wvKShVxwC@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP5ytV2rT5hhtGTnEO/N7EJFyumeCYZ1KWv7pUBcEKWdq/UFyF
+	/SPQBZPuCl1XpdkZqtCVFe6oCeFAYa5XQo1iUhSApodRrRc3ZLOnwyGuVTvUTHA=
+X-Gm-Gg: ASbGncsHWDo9WEuo7E9Z3YVtdnkjUL+dymyUbGPbm14s2d9iIkfmidWrqKsYoKs9bti
+	kcmsn+/v/oNqHuyugNL3l7IUwv+oNDFZFhM5GXYoq4HbKJ8jFQ+fvQtSbuhYifSdIckX7Qjdhvu
+	lKnj+j+bAwYBbpf3P+61yRD1FgoTvyALVvN+mU2Ef8cx3ET2Zfu9KGBEoBKs58kBIxOumywk2V0
+	TwCoBT9ZVtL8SURdulHiVtxfFd7dR63xYuMU+706TPqJFBTVBmFgI7gXTxRbi3bDqlB+t306Wvp
+	c83XYtq3lmG5NGeHIO4sk/gfd8n9bTlYZzGZLnzxy3PAEXElwRVW+wvUrljsqRJrEUVSs9JaBq5
+	Jw9PIOsc2ICg=
+X-Google-Smtp-Source: AGHT+IEFTut9cn2GDd24OgwSJAM2WTxPxVzI97cvUXieVhoF3qUJxmVF8A3r+JTAuL5TrHKe7hsw3Q==
+X-Received: by 2002:a05:6122:2011:b0:520:5e9b:49b3 with SMTP id 71dfb90a1353d-523c614d999mr4981039e0c.3.1741272205794;
+        Thu, 06 Mar 2025 06:43:25 -0800 (PST)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523d8cbbdb3sm194312e0c.48.2025.03.06.06.43.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 06:43:25 -0800 (PST)
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-51eb1a714bfso722134e0c.3;
+        Thu, 06 Mar 2025 06:43:25 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUZvbGAiKFWFCoPzmNLuj7SdS97ZLRNKNoNmAXQTlHlXPQfwpt7CC1hKmcQE6dfdgGSWGip/P+Mj+MijdGYXVD1zQQ=@vger.kernel.org, AJvYcCWMPoWpRX5mMGxyCUjMga9HfPdJeN8OHZj/h8MHpXPXZI9Ngwr3hmocTq+nl97DRcd4Nc8TQ8PGThm7dzH4@vger.kernel.org, AJvYcCXYsXzAWAD3en6dJMoZWs9vDdWn+zT1S07C4ObXkHK1HoGHEzxlcys3nGR7N7D7u1hIyOTle72T+vM=@vger.kernel.org
+X-Received: by 2002:a05:6102:160d:b0:4c1:869b:7db4 with SMTP id
+ ada2fe7eead31-4c2e27b2c9bmr4823796137.9.1741272203957; Thu, 06 Mar 2025
+ 06:43:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB7PR10MB2475:EE_|AS4PR10MB6183:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf5e8569-4058-4d08-49f8-08dd5cbd167d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VQXh0Ng6GuGztgrONlXwTOUTvFCyMKYnfHkIAfKNhu+RUe4ohGmO7gUBuKJ8?=
- =?us-ascii?Q?4WdiEYXv9DjeFdlsPK3uDCMBAMBAkPGJtX2vpcsw0P+eepuX4uOuyzO7MZkd?=
- =?us-ascii?Q?4Cc4+fw84htAxA1CjvulIE4fJ8WnKh58/Z7oYxmrHCFEb2hsqAc0BBDu6wGW?=
- =?us-ascii?Q?pQxlHxaPCbsDnHZvly7mBn7wGQrT/GdNHASfxbQ0MRV7jB8RG+YElAUiPVlc?=
- =?us-ascii?Q?84wvlB6PaDPUB8bq5DaOKTrce1iNVeJlPuf0obcvbQVxkZw3qc3RArlaWawB?=
- =?us-ascii?Q?gTdNUWFlzX9XVLPffdMaSTkn/Pnt5ks9KPihFoyLwMmG4z7bxO9Y8yi+P+MB?=
- =?us-ascii?Q?k133ACjYpucYKIPdQigEHn+2zPRAm3Muddf3VAnoSW3tbqsu0F8P1Eynb/OX?=
- =?us-ascii?Q?1rC9ZvS1MpjmIcfuFVjeUm5BI7SlnFp+87sMUpYtrQqSIVCCXFosz62QYeo3?=
- =?us-ascii?Q?mV7ErHGr0fN8dekoeGAwqZCKXbIoRE4QiysPSEjcK7H/IScVcA3piFed1T67?=
- =?us-ascii?Q?lFhrWbvL58gEHnInbIV8hK1EoaY/MA6J3QkUBhaDJDAfRQOfWWLslI+tpn0c?=
- =?us-ascii?Q?TPfRt6XGE7Gsqf8wysnyAUB6vPsaiQTKJMIHTcIekG5QMveuZ872dPp0lFPF?=
- =?us-ascii?Q?9QHz4ZV0XVxzXjrNKo7UH1jz7fuo+KkMTSxHFAoMlbxIuy5409WxshEzdNAj?=
- =?us-ascii?Q?FR5kwgJcSJZOJnKQEf1xj2s97IJX9Dzpi2EpxhSquQUwOqFpUmPOzzfoZC5D?=
- =?us-ascii?Q?UCAQMgfNZFvkCiS2YzoLRcQGPVCpVpETxVM0pI+uaokds7aAYk7RKKsOoMPN?=
- =?us-ascii?Q?voaWDjqqGXYJ7GPtHcxPlwMVQhctfWo7pWxXLRlikg8JqaeOwO0gAEhAEh8a?=
- =?us-ascii?Q?1KANTY9reSA/GZSIc0cshGDwvKH3k9U3+cG/qV+TKIiB9VG43LMhtAIziinY?=
- =?us-ascii?Q?kwzYDh8md37Ci6V9RU9Zdf4QXnVCHvyd7JtdOtXqMxx6Hft+c1IDJEeeXCgo?=
- =?us-ascii?Q?7gs39ZfLfxkiL2VH/jmzQPHdF48eQ7mExz6XWYz80XinrnPd58Ne7WXg8wr/?=
- =?us-ascii?Q?tD8fGgxa3dXDFz9wuylJN122q6QfpMx8flSvtWOFKy3TNXpmVMowIhN05RII?=
- =?us-ascii?Q?x1ew9zp1pT8xplRkw1275vOC7ueExO1k8r9DPp0poKD0tgcaRBVe3fSjLcnT?=
- =?us-ascii?Q?xME7vCpRBXVNd2GJSoTDgseW5NaV4+awX1CNbITYDn5XdQPY+NRK+HNCuum3?=
- =?us-ascii?Q?RTAsuArovmo8elsj2FaSNidKBKeUsybO4FpTD1aXDdWFlT6RpxNhxYJDR6CK?=
- =?us-ascii?Q?pYXhKnHIhzHsUvXC71JKpdxVCde4M3zRS0TFsnbQo19kpjLyVVZFWIW65sPt?=
- =?us-ascii?Q?rBtGfTmU3ZQn90S+NS4iUBaoj/rHANIMcvUZ6g8RV0ccawOts84pdEp+KYp6?=
- =?us-ascii?Q?0JexKWmfW14dxNi49pD6JsFCcgX2Hwbr?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR10MB2475.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?l0jN1anBBS1E//4j8UR7gdrjjTyMePhwoQLA6+t4YC+2F6ealHuhnEQhkBSF?=
- =?us-ascii?Q?+dh2hg0h93AsuRIAEyBWGIXWxztlxjzNj9gQFxjqTOLL1xIFCzFcmmsiVoK+?=
- =?us-ascii?Q?We0EG4jvy2hEXVwPbTQle+iAWIBhkgHwcRb4J2pfs0QWKOda0ebm/ZxK3Nfr?=
- =?us-ascii?Q?Xx2CqFkfeV0Q3S3Yiry96TE8MiP4JHK9l+GUumNaFDMqLU8zXcxQSHJofSi6?=
- =?us-ascii?Q?x7hyasQsud68jwc4uCTVaan7cX/Z27C8E4pnPmTlG2Of49YkqZGFJMv3H3vv?=
- =?us-ascii?Q?IUdbQXJ/KvMh7Z/snQn+gzYYhHmeWETuHiLYOM1OwufJkG6r2t/qZE4Y/7C+?=
- =?us-ascii?Q?IzCeRFxL5JuBgDlJ8tDkWUgXF9rAH2/cYpufL/LxAIQG9sc8DOSn+Wq1FGxO?=
- =?us-ascii?Q?VmGebQQ3vsGLrjyw6TByau0xc/O1gjUBrL92bJivQsnT9ieelJORytMv1wgI?=
- =?us-ascii?Q?DkXso/mqI3Nt7WOW8bnGLmPOqXHDht0kmuY6JIKkYYtvTvF4ulaLbTYjrGLF?=
- =?us-ascii?Q?6NYR/JchqjUDUSriCrupVOOsJ9hqy8twJcWzIXGLf6kUgWdgjFchOdlEAeu+?=
- =?us-ascii?Q?3mSUMZziup2YYpa4XoE5vZQUgqn+2YK6gP+47FQBN5hoCRRiaMXl3q4i2g/h?=
- =?us-ascii?Q?e1XaxXpNngza+V9QM71DIVJQvIOMLfWpQgFqlP5/4RmEMslSZJZp6PpYyPd/?=
- =?us-ascii?Q?haODMErH2L44XUAwvHvu2JdCbwmsCZMSRFCDiNixdvwusoblHMUa48lYvWDO?=
- =?us-ascii?Q?NPFwfsLKoAmMVD80F6Pf/p2Yz1JebfiqlsExlpDJm9sJjsVC9hFF378vyULp?=
- =?us-ascii?Q?m8y719k5ciiBx3IsYi1omoBNzP39f8RRDB0MgiW02l3JdzwmDoGXnrfITan9?=
- =?us-ascii?Q?jeqNBLwTInpr2q32JaBUtWqKXZGG+3kwd4LN9FC92j1gj4qX5fObbc7JFDW4?=
- =?us-ascii?Q?eu9lEe88Ucr5qXPPMIYcygvUNt0pJrrkxJISYjf+Bnj8nHPjWtj8N17KBYLG?=
- =?us-ascii?Q?s7KpU4DkUVa/mcoMLrRjKtNbpe4GjJfesU2JEd7lTclKoMxFbjhAPeuLttrT?=
- =?us-ascii?Q?DlesTQr/qkikPex+htAF2qLkDQhoxr6QJY3/2kszWi0slYMZpSwiZ2fFYALX?=
- =?us-ascii?Q?LL+/Ws2aQYwUnZ49wBAb2HclWr14ACn3LyMHtuOjUh6CnJLzOgVaGtPmKKL/?=
- =?us-ascii?Q?C/BVGx+IS+dETC8rUgPOaaKfbBqiFJAyvr/Tt9k4TIgg+xDghGlAaeVl+xZQ?=
- =?us-ascii?Q?KN8Cw2DgAdtOOv5HQC7AgYamj3YXXjya+KkSZc7QCW+AvIEFd//EC7ptdygm?=
- =?us-ascii?Q?JXUFeE9Z9VjvcYrvO1XZZEL6jz672YQH9smqr4D47Gh6FuUF2VptxnwgBGYX?=
- =?us-ascii?Q?OEO9+Yg5XTSe1gYxhmbaW2DoUg3nw2rVcvHaPiSgSql8QmlMI075XPrCcABg?=
- =?us-ascii?Q?A3FOyLQK/QQF2DXbtCUEZ1/FB3P69F5wznUTELeolMSSEaJlpyqHz8wmLFhY?=
- =?us-ascii?Q?mWpTlmC8c/7SWNY+cbEfUOSwLx7I4suN6/xJI8Qtr84tdk5YmOAw/AdgteFC?=
- =?us-ascii?Q?snWdsBiltns0fwjnmPYsX2O3eX/7UzQ0Jn7VAD/icB4YVtKS6hMcNkN3t8xn?=
- =?us-ascii?Q?Zg=3D=3D?=
-X-OriginatorOrg: prevas.dk
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf5e8569-4058-4d08-49f8-08dd5cbd167d
-X-MS-Exchange-CrossTenant-AuthSource: DB7PR10MB2475.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 14:42:15.3992
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: d350cf71-778d-4780-88f5-071a4cb1ed61
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NZ1qmS1YfmpJgxWqzjIu16fyPNLVz7lPvEnPaXofU0vCvCwihhuLDHulmpJJubaxKTY9Gj9jXBlV9olm+ChOVPiZH/SyTp6k5AajhQ7qzh0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS4PR10MB6183
+References: <20250228202655.491035-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250228202655.491035-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20250228202655.491035-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Mar 2025 15:43:12 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWHpSiVzTeGKZ6tQiHp=6qdzeS6yc9inhQENwVEcSt=eQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jql0xtkZCUNZvipqcOLg7G1CwUSQ5JTJb7udm5La-IerxFIp1PkKoR1tUY
+Message-ID: <CAMuHMdWHpSiVzTeGKZ6tQiHp=6qdzeS6yc9inhQENwVEcSt=eQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] clk: renesas: rzv2h-cpg: Add macro for defining
+ static dividers
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Mar 06 2025, Rasmus Villemoes <ravi@prevas.dk> wrote:
+Hi Prabhakar,
 
-> On Wed, Mar 05 2025, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+On Fri, 28 Feb 2025 at 21:27, Prabhakar <prabhakar.csengg@gmail.com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
->> On Wed, 5 Mar 2025 at 05:31, Rasmus Villemoes <ravi@prevas.dk> wrote:
->>>
->>> On Mon, Mar 03 2025, Linus Torvalds <torvalds@linux-foundation.org> wrote:
->>>
->>> > +/*
->>> > + * We have to declare this outside 'struct pipe_inode_info',
->>> > + * but then we can't use 'union pipe_index' for an anonymous
->>> > + * union, so we end up having to duplicate this declaration
->>> > + * below. Annoying.
->>> > + */
->>> > +union pipe_index {
->>> > +     unsigned long head_tail;
->>> > +     struct {
->>> > +             pipe_index_t head;
->>> > +             pipe_index_t tail;
->>> > +     };
->>> > +};
->>> > +
->>>
->>> -fms-extensions ? Willy wanted to add that for use in mm/ some years ago
->>> [*], and it has come up a few other times as well.
->>>
->>> [*] https://lore.kernel.org/lkml/20180419152817.GD25406@bombadil.infradead.org/
->>
->> Oh, I was unaware of that extension, and yes, it would have been
->> lovely here, avoiding that duplicate union declaration.
->>
->> But it does require clang support - I see that clang has a
->> '-fms-extensions' as well, so it's presumably there.
+> Unlike dynamic dividers, static dividers do not have a monitor bit.
+> Introduce the `DEF_CSDIV()` macro for defining static dividers, ensuring
+> consistency with existing dynamic divider macros.
 >
-> Yes, it seems they do have it, but for mysterious reasons saying
-> -fms-extensions is not quite enough to convince clang that one does
-> intend to use that MS extension, one also has to say
-> -Wno-microsoft-anon-tag, or it complains
+> Additionally, introduce the `CSDIV_NO_MON` macro to indicate the absence
+> of a monitor bit, allowing the monitoring step to be skipped when
+> `mon` is set to `CSDIV_NO_MON`.
 >
-> warning: anonymous unions are a Microsoft extension [-Wmicrosoft-anon-tag]
+> Note, `rzv2h_cpg_ddiv_clk_register()` will be re-used instead of generic
+> `clk_hw_register_divider_table()` for registering satic dividers
+> as some of the static dividers require RMW operations.
 >
-> Also, the warning text is somewhat misleading; anon unions itself have
-> certainly been a gcc extension since forever, and nowadays a C11 thing,
-> and clang has a separate -Wpedantic warning for that when using
-> -std=c99:
->
-> warning: anonymous unions are a C11 extension [-Wc11-extensions]
->
-> The -W flag name actually suggests an improvement to the warning
-> "_tagged_ anonymous unions are a Microsoft extension", but I really
-> wonder why -fms-extensions isn't sufficient to silence that in the first
-> place. Also, the warning seems to be on by default; it's not some
-> -Wextra or -Wpedantic thing.
->
-> cc += Nick
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Gah, sorry, I wasn't aware that address didn't work anymore.
+Thanks for your patch!
 
-So Cc -= everything but the lists and Cc += Nick for real this time,
-hopefully.
+I understand this is in preparation of adding GBETH/XSPI clocks, and
+thus related to "[PATCH 2/4] clk: renesas: rzv2h-cpg: Add support for
+static dividers"[1]?
 
-Rasmus
+> --- a/drivers/clk/renesas/rzv2h-cpg.h
+> +++ b/drivers/clk/renesas/rzv2h-cpg.h
+> @@ -25,6 +25,14 @@ struct ddiv {
+>         unsigned int monbit:5;
+>  };
+>
+> +/*
+> + * On RZ/V2H(P), the dynamic divider clock supports up to 19 monitor bits,
+> + * while on RZ/G3E, it supports up to 16 monitor bits. Use the maximum value
+> + * `0x1f` to indicate that monitor bits are not supported for static divider
+> + * clocks.
+> + */
+> +#define CSDIV_NO_MON   (0x1f)
+> +
+>  #define DDIV_PACK(_offset, _shift, _width, _monbit) \
+>         ((struct ddiv){ \
+>                 .offset = _offset, \
+> @@ -130,6 +138,8 @@ enum clk_types {
+>                 .parent = _parent, \
+>                 .dtable = _dtable, \
+>                 .flag = CLK_DIVIDER_HIWORD_MASK)
+> +#define DEF_CSDIV(_name, _id, _parent, _ddiv_packed, _dtable) \
+> +       DEF_DDIV(_name, _id, _parent, _ddiv_packed, _dtable)
+>  #define DEF_SMUX(_name, _id, _smux_packed, _parent_names) \
+>         DEF_TYPE(_name, _id, CLK_TYPE_SMUX, \
+>                  .cfg.smux = _smux_packed, \
+
+However, Biju's patch adds a new composer DEF_SDIV(), and we end up
+with not using DEF_CSDIV() at all?
+
+[1] https://lore.kernel.org/20250303110433.76576-3-biju.das.jz@bp.renesas.com
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
