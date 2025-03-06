@@ -1,83 +1,172 @@
-Return-Path: <linux-kernel+bounces-548504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2F5EA545BF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:02:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15993A545BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:01:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB85C164734
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:02:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DE791645F7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638A82080CD;
-	Thu,  6 Mar 2025 09:02:27 +0000 (UTC)
-Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73BE8828;
+	Thu,  6 Mar 2025 09:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="SOMuJmNd"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6F81DF759;
-	Thu,  6 Mar 2025 09:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CF019D071;
+	Thu,  6 Mar 2025 09:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741251747; cv=none; b=JO7Hl1bkT+VGaIz1hCbnRfHvj0cxzD7moAmwyjU4oMaPHZ7QUvwDahwxcLqgD0Rop3igE9engTPPzD8el3ilDeC12H4OhsmlvEXaZCBA8g7o7F7Nk7tHmq6QLCLyoeI4pnawwsHr3x+0mu9P7xIBYFqjVeKyj9HC2rHZ8/gSIDo=
+	t=1741251666; cv=none; b=XVZ1+kGYXio0dxYy/h/zGIiyA6q6b5nNo63sTDPR+9s8hzl2SbLutEB5t3uTwbFiZbd5sXDyhyqcfOIlqMFU8muFlukwFz5nqbqpmKP5s25N9eYoZMszI2WUmcSiM2aVGRRfZwzVZcJPC3TAEM27wpjHVXWVt1P9mwLT28ngJsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741251747; c=relaxed/simple;
-	bh=D9/WEW6tyPw9DbuSZopa9attlAEU5bOtQtJOBNnThlg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fN02le5vkwQoB4H5sOq7BKybK4Z/aBRGb91v9bL4qIuWESP6HjyW2zU/HH65bdV2NX8ToZLVzH0kmCsAAGX39WubR+jfhSMLxcATxcZl8MjaJqaO60O/eeFH4jnhi80QkEwLiQgnvIBXcrblbsIxiPiBHrT9/SyHy8JVIvkTtiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [119.122.215.89])
-	by smtp.qiye.163.com (Hmail) with ESMTP id d2603c59;
-	Thu, 6 Mar 2025 17:02:11 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: jonas@kwiboo.se
-Cc: conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	heiko@sntech.de,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mmc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Chukun Pan <amadeus@jmu.edu.cn>
-Subject: Re: [PATCH 0/3] rockchip: Add support for onboard eMMC on Radxa E20C
-Date: Thu,  6 Mar 2025 17:00:01 +0800
-Message-Id: <20250306090001.113127-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250305214108.1327208-1-jonas@kwiboo.se>
-References: <20250305214108.1327208-1-jonas@kwiboo.se>
+	s=arc-20240116; t=1741251666; c=relaxed/simple;
+	bh=bFPyYCMrzKR8vp8DZ4QjKL2f7mF9ZTGXU+XgZbC8/SE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=HhvgE5Hgv4L5uKm2f5Hb/cEv1+ox+stjg7R/IqAlWqoSvvTAFcavrgymXembcyTbbSotfBRwEJlrP0cG2lFywa1iHWNGcTrbHdZlGSc3ShniHjT+YiO1moZBzko5rK4xsv5jeNTmHX+AoIPQ6PTPG5iTaIOuNlnTHZc7Yv793Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=SOMuJmNd; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
+	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
+	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
+	References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
+	List-Owner:List-Archive; bh=6IrX1eM8G/pcQ9Ik0E9LCERhzGjEzWP/RJw7jGqJxW4=; b=S
+	OMuJmNdn7T7jkpjiqYfIS8QIoC9gxUfeBwfleKjzyilJ0Yhkvtc2rqhlhx6a9bsiS15557l9+hjoh
+	1z9tPEAvdoJUVFSz240v3wDV0lJEdS233gZCzO6n9DM/WEqjvdOlc/hYO5HK9xHFge1lWJ0KVCyvo
+	B8karKoa6UM33TZaHkPs4OkFx9a2DyQJsO48VbW1K8w+Xo8gCgNNMcT3UfOo8dUGMIv3ghU9WJytq
+	Q/Aw2KHAKoFemjyKiLHcBHa7ymfx6aGwUqA0OApxmSCvoUoSf+b40ra6CD1H1FPg5imTec+dL+Ftu
+	dcxq+huiqtGU9N1RIY3qHTSEDO6+2FwtA==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1tq768-00BiOQ-17;
+	Thu, 06 Mar 2025 09:00:56 +0000
+Date: Thu, 6 Mar 2025 09:00:56 +0000
+From: Jonathan McDowell <noodles@earth.li>
+To: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Stefan Berger <stefanb@linux.ibm.com>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] tpm, tpm_tis: Workaround failed command reception on
+ Infineon devices
+Message-ID: <Z8lkSKOqBgt78pU2@earth.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCHR5PVkJOQktIQ0gdTE1MGVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKTlVDQllXWRYaDxIVHRRZQVlPS0hVSktISk5MTlVKS0tVSk
-	JLS1kG
-X-HM-Tid: 0a956ab0e16203a2kunmd2603c59
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MDo6Dww5SjJKIjwxDjgIPkIR
-	AS8wFENVSlVKTE9KSU5KTEhJQkxOVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
-	QlVKSUlVSUpOVUNCWVdZCAFZQUhISTcG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi,
+From: Jonathan McDowell <noodles@meta.com>
 
-> Driver changes to use different delay and tap num is needed to be able
-> to support HS400 modes, something for a future series. With this HS200
-> mode should work:
+Some Infineon devices have a issue where the status register will get
+stuck with a quick REQUEST_USE / COMMAND_READY sequence. This is not
+simply a matter of requiring a longer timeout; the work around is to
+retry the command submission. Add appropriate logic to do this in the
+send path.
 
-I have tried HS200 mode on other rk3528 boards and it works fine,
-so can we enable HS200 mode for Radxa E20C first?
+This is fixed in later firmware revisions, but those are not always
+available, and cannot generally be easily updated from outside a
+firmware environment.
 
-Thanks,
-Chukun
+Testing has been performed with a simple repeated loop of doing a
+TPM2_CC_GET_CAPABILITY for TPM_CAP_PROP_MANUFACTURER using the Go code
+at:
 
+ https://the.earth.li/~noodles/tpm-stuff/timeout-reproducer-simple.go
+
+It can take several hours to reproduce, and millions of operations.
+
+Signed-off-by: Jonathan McDowell <noodles@meta.com>
+---
+ drivers/char/tpm/tpm_tis_core.c | 17 ++++++++++++++---
+ drivers/char/tpm/tpm_tis_core.h |  1 +
+ include/linux/tpm.h             |  1 +
+ 3 files changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+index 167d71747666..e4eae206a353 100644
+--- a/drivers/char/tpm/tpm_tis_core.c
++++ b/drivers/char/tpm/tpm_tis_core.c
+@@ -464,7 +464,10 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
+ 
+ 		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+ 					&priv->int_queue, false) < 0) {
+-			rc = -ETIME;
++			if (test_bit(TPM_TIS_STATUS_WORKAROUND, &priv->flags))
++				rc = -EAGAIN;
++			else
++				rc = -ETIME;
+ 			goto out_err;
+ 		}
+ 		status = tpm_tis_status(chip);
+@@ -481,7 +484,10 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
+ 
+ 	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+ 				&priv->int_queue, false) < 0) {
+-		rc = -ETIME;
++		if (test_bit(TPM_TIS_STATUS_WORKAROUND, &priv->flags))
++			rc = -EAGAIN;
++		else
++			rc = -ETIME;
+ 		goto out_err;
+ 	}
+ 	status = tpm_tis_status(chip);
+@@ -546,9 +552,11 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
+ 		if (rc >= 0)
+ 			/* Data transfer done successfully */
+ 			break;
+-		else if (rc != -EIO)
++		else if (rc != EAGAIN && rc != -EIO)
+ 			/* Data transfer failed, not recoverable */
+ 			return rc;
++
++		usleep_range(priv->timeout_min, priv->timeout_max);
+ 	}
+ 
+ 	/* go and do it */
+@@ -1144,6 +1152,9 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+ 		priv->timeout_max = TIS_TIMEOUT_MAX_ATML;
+ 	}
+ 
++	if (priv->manufacturer_id == TPM_VID_IFX)
++		set_bit(TPM_TIS_STATUS_WORKAROUND, &priv->flags);
++
+ 	if (is_bsw()) {
+ 		priv->ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
+ 					ILB_REMAP_SIZE);
+diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+index 690ad8e9b731..ce97b58dc005 100644
+--- a/drivers/char/tpm/tpm_tis_core.h
++++ b/drivers/char/tpm/tpm_tis_core.h
+@@ -89,6 +89,7 @@ enum tpm_tis_flags {
+ 	TPM_TIS_INVALID_STATUS		= 1,
+ 	TPM_TIS_DEFAULT_CANCELLATION	= 2,
+ 	TPM_TIS_IRQ_TESTED		= 3,
++	TPM_TIS_STATUS_WORKAROUND	= 4,
+ };
+ 
+ struct tpm_tis_data {
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index 20a40ade8030..6c3125300c00 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -335,6 +335,7 @@ enum tpm2_cc_attrs {
+ #define TPM_VID_WINBOND  0x1050
+ #define TPM_VID_STM      0x104A
+ #define TPM_VID_ATML     0x1114
++#define TPM_VID_IFX      0x15D1
+ 
+ enum tpm_chip_flags {
+ 	TPM_CHIP_FLAG_BOOTSTRAPPED		= BIT(0),
 -- 
-2.25.1
+2.48.1
 
 
