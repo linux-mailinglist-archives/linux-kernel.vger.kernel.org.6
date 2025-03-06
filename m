@@ -1,222 +1,136 @@
-Return-Path: <linux-kernel+bounces-549366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33A7DA551CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:49:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3268A551C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:48:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E14763AF436
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:46:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 088FF175AA6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AEC212B01;
-	Thu,  6 Mar 2025 16:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5506725BACC;
+	Thu,  6 Mar 2025 16:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="PZR3j/Eu"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="umUoEtpX"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FC5257426
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C748525B699
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741279546; cv=none; b=Sr+p0mciF2Ee55GMU7Uj2TbY5EOnKwTkR6a+nQSHREOnU8E72kl14QGR07W67Cy3PQML+w/iq+ONLt+cjFTh6T9O41NHhT6JafcMWWveoJ5zyDudEh74iiL+fmYOaaKX5FY1OMLY0I++QQ71FrmCQiYucD6o0w5518M67jLvfBY=
+	t=1741279564; cv=none; b=jVqSRvnKCa5CzjElICGif4jQwY1ceVSFFCB52BqwBHjJzve8rtWq6D6SIntqsgxsTfyuKnu1X6laSqtTZ13PrOfRmZ0hgGaD3q8Wy5VzVamoljzmSrSxbZ9ioYf606g9xFQY9aj36u0WPY5bZaIC7eiUoUWZbrwKEogulekAIjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741279546; c=relaxed/simple;
-	bh=QBbBN5q5jWmas5qLcxj17oZ+jdnLgvFe5h91P+f5FGE=;
+	s=arc-20240116; t=1741279564; c=relaxed/simple;
+	bh=TFqb6nBt6h/0td1uTW45nWiS8RKPJqUeWeIGjdp/DUs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XJ9wFvnySfVixLcABKxh0wV+BQmfe95roxKt7uUXLAmgGtKcZSWIwooR0oVKx4pg84YnOkX+VBbT2OHFvoBM3PPhT/C/wpM3zGv/WunKFl45Nx2Y9+kZi5TAqBMkaZHBSEho26/gxw9YSSpRNBDCtc7ACw4Tm1FhKrYAu+m2qdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=PZR3j/Eu; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22349bb8605so17533155ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 08:45:44 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=JYWRuYQVdtqhf3GzcfaNqOJ4zMlgthDu0tjGyYiXWliqV3OKAJs4m2rj2zuX85mi2JugYW6vn3HezgRRtt7bgXtPmPS5zOnq0cZuH8KnL9jrwyBEGU/6BHRtHMQTBEPDeemYWsdybCfWd42u3LcXKsyynQl9BPg7ocPI2I79u6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=umUoEtpX; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30795988ebeso9396651fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 08:46:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1741279544; x=1741884344; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y1tVqjEsF9yz8as4gUEJSF7TOmyvcDOBt4MIJRvQkVI=;
-        b=PZR3j/EuVQYZWE21li6QoRQedCT7JnMnGf/od4wE6dyyVgekUliUg6eNTO1Im67f7T
-         /w5W4lng4T7Fuwpt9mhYaDaKe16zGXSM/Yya1x9A4GHojyvRMZHy/+ho6KQsSfdwNN3Q
-         icvWlv3Vbu6bLJ+CClchlUORc5/VBAeolG1EM=
+        d=linaro.org; s=google; t=1741279561; x=1741884361; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=iYkKdW4t5OSFScRUxZzZa9zKFqxQ50ly8uK9WVZ07tM=;
+        b=umUoEtpXyA8DNsbuXKB4TRycGHlKq/HKfpfcaF8jd9CvESP528Djkx8c7R03U0blZb
+         G/xferS3kGofdnLagkKEPjpuKn737XFLZofAlIBLf4Od0wf4yNpiZJALksQ5cNVLJYLl
+         aitegvl2YpsnyugKQcc6xASsp7YFggyJDK8gXOGIk0QWfOMJ4u6FxawQ0LQ2rfluZunG
+         uE08sJwtG0zOjH6PoxxGsQuhaYRECT72ddeokk1bDbc0FjIUjV0RjUxh9qQ+/60ZWlo/
+         T+kKkh2TnEJWV7nPrbZjFotux2JGmtXJuc758niA6gk1dOsWK5ZrW/70EwR1MvKU8WKc
+         Rfog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741279544; x=1741884344;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1741279561; x=1741884361;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y1tVqjEsF9yz8as4gUEJSF7TOmyvcDOBt4MIJRvQkVI=;
-        b=hnKjvu7kXMY7zIiSFcOlna+lmoq+JedHD3mX52Svr5KH2YdhjYPhb8M1ERC1vP0OTS
-         qVh7PD0Ig0WUDN51KqZbUu4VQ8tsalrevn3X+qOhqZcZNQYxOBxGM8FYqJ5M76ORyIgM
-         jldI8nOkofGh4ZsCtaHv0xduBIh8ZzoTaxaayjUfwh4aVlAm5SzEeIY0Su2VeRlNKKHg
-         8FmKDcDtmaIoGlgR6uPYS79qeakAKEMhLQmAfjVOBlMc/J5WQmptasdnkqNk6S81XCbY
-         3vEid60sXydfE7WCi3ZpzMKxnvsRBmNLvYe9QJjTAarGV5YNcoItwB7clHTUAwba1O9n
-         TzqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBCQoVEqROt4+5gYLXnER9ZHth5eUBeS83rVsQd5hpwpU9UTXD0D8rt360/iJmIz5QGK8BG8iygbcJaEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkAnl5rYERv21mBo6zMCsppYhBlXxpod0zDZthpGkHUUFbkl9L
-	S9dmcmecVARDoAEfWqz0HYJmKsAyZ2fla+YrPGXY79zvWMldicDxiddHBO8KZZw=
-X-Gm-Gg: ASbGncs57qsQScOWSnd5pox3LY1KKcgHXtxbimM03JssH85sNnUVmoep3XdNcLaawbI
-	Fish+kE6Z80PCiVTrWDh2SEI9L0pW+lajThK6LBvst/omt3akcWkjA1BKBjZU7L96BS9JatcAo9
-	1y9B/4DcBn7fBV65/jieuY3VJwOXa1i02yDHrI36vzqnL/SQEi+e6lMkZQGa0nSDofe5zM+pOZ0
-	omrTk4fLWdwjdKAY0ksNuytpN5bhDgcF5osalkxWFtqdVUXd5OKkNV+Qfu71dN1NySd7vlKccu7
-	LSP3yqzbc1QZuzKGv8yhsgf6/OaI/noqwj8qibxnNcLILkhbL9VKHKzU9PtqPOF702OjiveS2zt
-	IaPV7O1jBiXo=
-X-Google-Smtp-Source: AGHT+IGQhJlPlmoVKTFjSwcpy61urGaNYqp80VZY41flaZiT4qOPtjFv0gmL/biTffVDgOSzy876LQ==
-X-Received: by 2002:a05:6a00:244f:b0:736:5c8e:bab8 with SMTP id d2e1a72fcca58-73682b5510amr13251516b3a.3.1741279543956;
-        Thu, 06 Mar 2025 08:45:43 -0800 (PST)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73698452a28sm1570365b3a.78.2025.03.06.08.45.42
+        bh=iYkKdW4t5OSFScRUxZzZa9zKFqxQ50ly8uK9WVZ07tM=;
+        b=Udgw5Qhupi7FLv5r6YURQG7+3sdniH4I7fSW1YsdF3C1oTF6vY/7ATvVYuSpwLDVPR
+         uduURb8PjuJ///4G8ZY24EEs56Mak3lOP6nWrym2Kv5PDL7UKG6jbu5nspMIAwOmcrRg
+         lbfZNyutQADfINedvrVbezNAd6lyr9uyJo+xTAl1VCErT6xT40QgJPaMVD5ITpskqa3i
+         O6WFbjyJ243Z2b0LKNzlmbnPk2RwAuhLCQJn0xsZChLezMq7sFEQ+3xsE0qKWnEk4CcC
+         htwBhhzl8cOVjN1sf6Lj3UZ5chHnJ6almX7I03UBZQ5n02qNJ4IJEH/nUM4YVfnnOyCJ
+         Pnvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcT8Q2H8x5HoAA3RzNJUiuGPGudsvrsBCwFmv32bwN4gZ7RvDCcx7Cr9z0vKdhETMZ7ECfzL/Pl+lUgpU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx41d5EGQkP5OrF0+W2En6C7VgPXGIQqT3EqKChS8oPi3dlU680
+	RaL808h+l1HMvHAuuHwFTb09bUNRnZSJTried7ZooncblSOLnululs0atvKqDz4=
+X-Gm-Gg: ASbGncuH1UozF3GdalE0ygzmf846X+yEFc9q8nTvzNLMDLqEOrsnjqY9rzvplGDT1m4
+	wY4AYpsY7RiTttHHeWs1DYHZj2PWU0dTbyAT/Rc7ScIxQsJBKLF6w3wuf4mKzQKNPrBUPepTD3U
+	jg/Pbdn5x/VIheFSG3u3X/hXCg2wABDupwVpuY25k9M0YrMS1c3Ikg2QpK1UoKQF2wNSNO6t1Jl
+	zfQves2oIhKRaOc82l6scnNMZXN+Vhswmo2CIYbeHAwLe0ugCMjWk//f7tg+6WTZJXBg/YRPO1W
+	nbRBGhgtZCIOXRUIH9IdlAKvhFyv1uDoV5CavwSrdhEGTdfNLaJe3pUGZWy2UtgL1GPNS3BsuKV
+	H2w1R6hBxxK7k0v5YQEBXm5lO
+X-Google-Smtp-Source: AGHT+IGpbLi2y4PhgwxHevBiZsJmX/UmrqptJ9oIY8nq8Avmeb5P0twX8p0VwFnIZrkkMoJhAI8b8w==
+X-Received: by 2002:a05:651c:22c:b0:30b:a4f6:bb35 with SMTP id 38308e7fff4ca-30bd7a65210mr22112421fa.22.1741279560809;
+        Thu, 06 Mar 2025 08:46:00 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30be98d0800sm2597551fa.5.2025.03.06.08.45.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 08:45:43 -0800 (PST)
-Date: Thu, 6 Mar 2025 08:45:40 -0800
-From: Joe Damato <jdamato@fastly.com>
-To: florian@bezdeka.de
-Cc: netdev@vger.kernel.org, vitaly.lifshits@intel.com,
-	avigailx.dahan@intel.com, anthony.l.nguyen@intel.com,
-	stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	bpf@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH iwl-net] igc: Fix XSK queue NAPI ID mapping
-Message-ID: <Z8nRNJ7QmevZrKYZ@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>, florian@bezdeka.de,
-	netdev@vger.kernel.org, vitaly.lifshits@intel.com,
-	avigailx.dahan@intel.com, anthony.l.nguyen@intel.com,
-	stable@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	bpf@vger.kernel.org, intel-wired-lan@lists.osuosl.org,
-	linux-kernel@vger.kernel.org
-References: <20250305180901.128286-1-jdamato@fastly.com>
- <796726995fe2c0e895188862321a0de8@bezdeka.de>
+        Thu, 06 Mar 2025 08:45:59 -0800 (PST)
+Date: Thu, 6 Mar 2025 18:45:57 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Georg Gottleuber <g.gottleuber@tuxedocomputers.com>, 
+	Georg Gottleuber <ggo@tuxedocomputers.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+	wse@tuxedocomputers.com, cs@tuxedocomputers.com
+Subject: Re: [PATCH] arm64: dts: qcom: Add device tree for TUXEDO Elite 14
+ Gen1
+Message-ID: <jxld7w4i7nut35pnmaxgsnmccg3efffas3rubouxcpxbxrrrxh@rrl47w24ju3i>
+References: <57589859-fec1-4875-9127-d1f99e40a827@tuxedocomputers.com>
+ <75c17309-3072-4321-ab15-69d60190f2f7@kernel.org>
+ <d98ad83e-6479-4453-bd1d-4f3703b0dad2@tuxedocomputers.com>
+ <aa837beb-ef4e-43ec-b8fa-54a21df1202c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <796726995fe2c0e895188862321a0de8@bezdeka.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aa837beb-ef4e-43ec-b8fa-54a21df1202c@kernel.org>
 
-On Thu, Mar 06, 2025 at 05:27:38PM +0100, florian@bezdeka.de wrote:
-> Hi Joe,
+On Thu, Mar 06, 2025 at 03:03:32PM +0100, Krzysztof Kozlowski wrote:
+> On 06/03/2025 14:56, Georg Gottleuber wrote:
+> > 
+> >> ...
+> >>
+> >>> +
+> >>> +       eusb3_repeater: redriver@47 {
+> >>> +               compatible = "nxp,ptn3222";
+> >>> +               reg = <0x47>;
+> >>> +               #phy-cells = <0>;
+> >>> +
+> >>> +               vdd1v8-supply = <&vreg_l4b_1p8>;
+> >>> +               vdd3v3-supply = <&vreg_l13b_3p0>;
+> >>> +
+> >>> +               reset-gpios = <&tlmm 124 GPIO_ACTIVE_LOW>;
+> >>> +
+> >>> +               pinctrl-0 = <&eusb3_reset_n>;
+> >>> +               pinctrl-names = "default";
+> >>
+> >> No graph? Isn't it needed?
+> > 
+> > What do you mean by ‘no graph’?
 > 
-> On 2025-03-05 19:09, Joe Damato wrote:
-> > In commit b65969856d4f ("igc: Link queues to NAPI instances"), the XSK
-> > queues were incorrectly unmapped from their NAPI instances. After
-> > discussion on the mailing list and the introduction of a test to codify
-> > the expected behavior, we can see that the unmapping causes the
-> > check_xsk test to fail:
-> > 
-> > NETIF=enp86s0 ./tools/testing/selftests/drivers/net/queues.py
-> > 
-> > [...]
-> >   # Check|     ksft_eq(q.get('xsk', None), {},
-> >   # Check failed None != {} xsk attr on queue we configured
-> >   not ok 4 queues.check_xsk
-> > 
-> > After this commit, the test passes:
-> > 
-> >   ok 4 queues.check_xsk
-> > 
-> > Note that the test itself is only in net-next, so I tested this change
-> > by applying it to my local net-next tree, booting, and running the test.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: b65969856d4f ("igc: Link queues to NAPI instances")
-> > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> > ---
-> >  drivers/net/ethernet/intel/igc/igc_xdp.c | 2 --
-> >  1 file changed, 2 deletions(-)
-> > 
-> > diff --git a/drivers/net/ethernet/intel/igc/igc_xdp.c
-> > b/drivers/net/ethernet/intel/igc/igc_xdp.c
-> > index 13bbd3346e01..869815f48ac1 100644
-> > --- a/drivers/net/ethernet/intel/igc/igc_xdp.c
-> > +++ b/drivers/net/ethernet/intel/igc/igc_xdp.c
-> > @@ -86,7 +86,6 @@ static int igc_xdp_enable_pool(struct igc_adapter
-> > *adapter,
-> >  		napi_disable(napi);
-> >  	}
-> > 
-> > -	igc_set_queue_napi(adapter, queue_id, NULL);
-> >  	set_bit(IGC_RING_FLAG_AF_XDP_ZC, &rx_ring->flags);
-> >  	set_bit(IGC_RING_FLAG_AF_XDP_ZC, &tx_ring->flags);
-> > 
-> > @@ -136,7 +135,6 @@ static int igc_xdp_disable_pool(struct igc_adapter
-> > *adapter, u16 queue_id)
-> >  	xsk_pool_dma_unmap(pool, IGC_RX_DMA_ATTR);
-> >  	clear_bit(IGC_RING_FLAG_AF_XDP_ZC, &rx_ring->flags);
-> >  	clear_bit(IGC_RING_FLAG_AF_XDP_ZC, &tx_ring->flags);
-> > -	igc_set_queue_napi(adapter, queue_id, napi);
-> > 
-> >  	if (needs_reset) {
-> >  		napi_enable(napi);
-> 
-> That doesn't look correct to me. You removed both invocations of
-> igc_set_queue_napi() from igc_xdp.c. Where is the napi mapping now
-> done (in case XDP is enabled)?
+> ports connecting this within USB graph between controller and connector.
+> Just like other devices with redriver.
 
-igc_set_queue_napi is called when the queues are created (igc_up,
-__igc_open). When the queues are created they'll be linked. Whether
-or not XDP is enabled does not affect the queues being linked.
+No, eUSB2 redrivers don't need (and don't use) OF graph, they are
+basic PHYs. See Documentation/devicetree/bindings/phy/nxp,ptn3222.yaml
 
-The test added for this (which I mentioned in the commit message)
-confirms that this is the correct behavior, as does the
-documentation in Documentation/netlink/specs/netdev.yaml.
+So this one is correct.
 
-See commit df524c8f5771 ("netdev-genl: Add an XSK attribute to
-queues").
-
-> To me it seems flipped. igc_xdp_enable_pool() should do the mapping
-> (previously did the unmapping) and igc_xdp_disable_pool() should do
-> the unmapping (previously did the mapping). No?
-
-In igc, all queues get their NAPIs mapped in igc_up or __igc_open. I
-had mistakenly added code to remove the mapping for XDP because I
-was under the impression that NAPIs should not be mapped for XDP
-queues. See the commit under fixes.
-
-This was incorrect, so this commit removes the unmapping and
-corrects the behavior.
-
-With this change, all queues have their NAPIs mapped (whether or not
-they are used for AF_XDP) and is the agreed upon behavior based on
-prior conversations on the list and the documentation I mentioned
-above.
-
-> Btw: I got this patch via stable. It doesn't make sense to send it
-> to stable where this patch does not apply.
-
-Maybe I made a mistake, but as far as I can tell the commit under
-fixes is in 6.14-rc*:
-
-$ git tag --contains b65969856d4f
-v6.14-rc1
-v6.14-rc2
-v6.14-rc3
-v6.14-rc4
-
-So, I think this change is:
-  - Correct
-  - Definitely a "fixes" and should go to iwl-net
-  - But maybe does not need to CC stable ?
-
-If the Intel folks would like me to resend with some change please
-let me know.
+-- 
+With best wishes
+Dmitry
 
