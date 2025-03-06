@@ -1,258 +1,137 @@
-Return-Path: <linux-kernel+bounces-549573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC53A55418
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:07:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF16EA55408
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:06:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D23583B7A94
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:04:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA1AB3B737B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74FEB269CE8;
-	Thu,  6 Mar 2025 18:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 559E725D8F4;
+	Thu,  6 Mar 2025 18:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MKnwTg9X"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="zqNUp79V"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F58E274264;
-	Thu,  6 Mar 2025 18:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD8425D534
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 18:01:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741284133; cv=none; b=aguiGCMQ7fGuTSRsPZU59WME6BmeqrPQXk0lp9vaJ58mihln1GKgumM2OV7c6BI3ILmmClufzwJG8mGOZgl85hXYtvhV9gw7XBC/lHYdF3nvFbgFT2orOvnK9jtpRPJEE9ERtei68ojoFnN/q3dLB7NP87hC+Q1S638OCATy884=
+	t=1741284090; cv=none; b=ke+n6PYAkVit1J40CtqAFdidEPWM2DOIpUEs5Hmtm9Uo5wqQ1gh23qrt0Tueb6D9xruGE40cjQfO1XUil0+Q5mUYu5NBvFomq1vj8l89d/NHoKxPebQnXj/I3ZnLb/T4Bwd9cK9AgR9xXz2ehmS1ZjuexoXTq+UCDUN8PZXkCho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741284133; c=relaxed/simple;
-	bh=aS4+MiTQzEhxzLiPX4aqCukgIbUCu3ZfrqEOUCUr7XI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BT6unvJLiOYcb48923vdT1kTUxC7ljtIY77krjfXcfUX7GSn/Jsot+bkiu4+z55Neegr6rJ8Kc0iyTkPtLNo8J+ssqfzdhP3SGheM4+V3d7HbcZDo9bHHUfPtiX6bC0TUhKqMoxZeyNzELHzsoR0o5VwpJdf2zrDdq8bjd0sJn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MKnwTg9X; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741284132; x=1772820132;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aS4+MiTQzEhxzLiPX4aqCukgIbUCu3ZfrqEOUCUr7XI=;
-  b=MKnwTg9XfCk6OiNaEjttE9+DTjc85JWsvokG+p046iUSrJhUSD5a6Z83
-   XFiedEPYQjJ3OStqDUpgpu/KJrSbwV9W1xGXuiiZJBlr7PqQkGPRGaxrN
-   Jb9xDmw2xEdn88dQc2mRaQYvWoa3+V68oim6+kCAyyu2sziTd1dtkusXk
-   ilnYRNrk5PpiIvHAGgSXJsS8+DnzPPZo1sKpyFDoIBJyQUbppfcNVeC9l
-   hz45HsOzWy1gUJiDakGqtBSP5dz9nDEJ7ewzJ1I9choVsPoIlEuMt3oq/
-   bHMh0afnIrmVN6BDcaAnoZX+MNtLII1E+pnr0GU+M3bKJ4HsrZkrKwU9h
-   w==;
-X-CSE-ConnectionGUID: wT9EdGW1TxK7BDKySn/TOg==
-X-CSE-MsgGUID: UNvUsp7QRb+Lpq14g28BLw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42447282"
-X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
-   d="scan'208";a="42447282"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 10:01:54 -0800
-X-CSE-ConnectionGUID: gNpnIM6CT4yTMEC2oo0i5w==
-X-CSE-MsgGUID: 7bbIzenPRDe7V8jlIyKzsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
-   d="scan'208";a="119280835"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 06 Mar 2025 10:01:51 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tqFXY-000NQI-0V;
-	Thu, 06 Mar 2025 18:01:48 +0000
-Date: Fri, 7 Mar 2025 02:01:04 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ryan Chen <ryan_chen@aspeedtech.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@aj.id.au>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v9 3/3] clk: aspeed: add AST2700 clock driver
-Message-ID: <202503070117.mMjnpop8-lkp@intel.com>
-References: <20250224095506.2047064-4-ryan_chen@aspeedtech.com>
+	s=arc-20240116; t=1741284090; c=relaxed/simple;
+	bh=MlHWpuSPnBnNnarX4860OY7cQRU3tIoDpwNBc16ZlGo=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=asmNr4Pzo0+rhL/Srb440x2VNqFSGIJKR3lqWAeeFazvf6FHOH9+kEOQ8I7mG6a8iyrQzjn0dJP4LilX8gz1FiDSKpY5SV53bDGY1xqip/l4Uc0/IUVUPlxiiVkm4Eo505nrMLQm2r/PaflUjVWxAUotrs6ynTDiaR8rpY88oNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=zqNUp79V; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2fa8ada6662so2178163a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 10:01:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1741284088; x=1741888888; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PZqJTh0YCvVr8icSs09kza3W0ABw7bZnL85iQtnzYZ4=;
+        b=zqNUp79VpIhIJuj1DjBE9YTemkwt+z0KoNE++XqSqekw07Einshg0p4wfGGJlQQmGn
+         SXPH23NOcdDc3bCs8jCfTvzXwfN9DJdYLpj114KNu6BUvRFAeSLsz3QLXuixCG0dLIls
+         PnQYHFy3E03m3WamDNugYwrhkFVcJI/Nt3Lpb9m7WnBDfCR3gAJ8GVmN+C1BbAQhIH9M
+         IusT0OUEMtazyjlhYFM5A4CKUYXPfuWSKQjQXaTUH0RZZkJXx+G7pvOsyZ4dppQVck45
+         i2x8BWnEjRyQCB18lDaLj4zKNhkJgIJCslxq3eprvbZX3U5G3Nw4Q0sIkjIIURTZbPZI
+         /h3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741284088; x=1741888888;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PZqJTh0YCvVr8icSs09kza3W0ABw7bZnL85iQtnzYZ4=;
+        b=FNHKLW+iDOr5UhrqwYppaF+1fbFrLjnMySn+b/SPR93rPDJrdpKFKTYH5+RlbNMyGl
+         tW20tZIGxQwcJwK2KsYnpiBcJEWAXnSs3MDCfVo3KYojHq8s/YQMoferIkpoIf55uUvC
+         ZKpcRW80MviTpgpkPuPdgzjwvBHTPPSmcEorvMxDFT+f5mg/DW0luK/vw9XfgJNK9iiz
+         qNGy180jsXCLDdW8wCnY0ACVmRWYXC/a1Lqe9WbplL9cN7sSFSvS0oWtFWAl365hz5Yw
+         6htrl87gx5gaNc4lpZBuQAJJvgzpnLwzSIc0Onvm/A8m2cRQpOEMR0PBAP6tLlUQNRjG
+         dpFw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwk97d5nFggJ+QdGgYMmUG0Y/L8XF6vtSDlHo4tjTjvkOEMerCUCIDeMn7rJxVcL1QvXJSMrwMgQVLdus=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZ4Zqh3YkzYTNaTrrlsEbV4PWY4HWJ4w4toRScweXva4Rpr08R
+	TD3C5avd7R1icOPfMkpuwaeiT+kFKePDdxy/RoDCqDj1FWp7dlBb1WoGvvhmdMw=
+X-Gm-Gg: ASbGncvTD0/sqpUGJAY3mUh0VXtOHIHiUubgU9Y8vNq8zt/z1C4AZsSaHWFSGpzcPmn
+	uO7m4mguip2jCtdsey+8dbRvWowqbQ6lX2nckX/vqHyNhgHhS7SsP2xIEW2Ceo6bLnq2U88Ytx5
+	Fd2j8yAcx356RNlcw97X9PvmgwT1q2ibhGxFAxv4g94Re5Tixf8OZdn+wXb8CPXAp3/dzCppelA
+	zdpibow80yauWpIyLZz6XMczIJTlNQPtn6AHUiKLbjDnyKGGogzVfGz2Z9Kc7ozXt60jOxCcprJ
+	JHYaJqHX+egrcx0PGKh8tOh6NRSDuCunRfXNOrj5Dw==
+X-Google-Smtp-Source: AGHT+IHbtFJc0sZMysZ3vYXJuVTW6NBS2O3AVJRjOnc6c6T0oJ1FFGCKVknIrhqtI5fTinhi9uFXQQ==
+X-Received: by 2002:a17:90b:164f:b0:2fe:8fc4:6f4b with SMTP id 98e67ed59e1d1-2ff7ce904f9mr294169a91.8.1741284087517;
+        Thu, 06 Mar 2025 10:01:27 -0800 (PST)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109e8345sm15463375ad.57.2025.03.06.10.01.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 10:01:26 -0800 (PST)
+Date: Thu, 06 Mar 2025 10:01:26 -0800 (PST)
+X-Google-Original-Date: Thu, 06 Mar 2025 10:01:19 PST (-0800)
+Subject:     Re: [resend PATCH] riscv: fix memory leakage in process_accumulated_relocations
+In-Reply-To: <a9058ac757636e4f5160a0bd11abeb3c111fc9a5.camel@iscas.ac.cn>
+CC: Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu,
+  linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: zhangkai@iscas.ac.cn
+Message-ID: <mhng-a1315877-d100-437d-923e-ebbae4745074@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250224095506.2047064-4-ryan_chen@aspeedtech.com>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Ryan,
+On Sat, 16 Nov 2024 04:07:18 PST (-0800), zhangkai@iscas.ac.cn wrote:
+> Sorry for last weird email.
+> ---
+>
+> When module relocation is done, process_accumulated_relocations()
+> frees all dynamic allocated memory. rel_head_iter->rel_entry is
+> missed to free that kmemleak might report:
+>
+> unreferenced object 0xffffffd880c5fc40 (size 16):
+>   comm "insmod", pid 1101, jiffies 4295045138
+>   hex dump (first 16 bytes):
+>     e0 c0 f5 87 d8 ff ff ff 60 c5 f5 87 d8 ff ff ff  ........`.......
+>   backtrace (crc d2ecb20c):
+>     [<00000000b01655f6>] kmalloc_trace_noprof+0x268/0x2f6
+>     [<000000006dc0067a>]
+> add_relocation_to_accumulate.constprop.0+0xf2/0x1aa
+>     [<00000000e1b29a36>] apply_relocate_add+0x13c/0x36e
+>     [<000000007543f1fb>] load_module+0x5c6/0x83e
+>     [<00000000abce12e8>] init_module_from_file+0x74/0xaa
+>     [<0000000049413e3d>] idempotent_init_module+0x116/0x22e
+>     [<00000000f9b98b85>] __riscv_sys_finit_module+0x62/0xae
+>
+> Signed-off-by: Kai Zhang <zhangkai@iscas.ac.cn>
+> ---
+>  arch/riscv/kernel/module.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
+> index 1cd461f3d87..f8c3c4b47dc 100644
+> --- a/arch/riscv/kernel/module.c
+> +++ b/arch/riscv/kernel/module.c
+> @@ -643,6 +643,7 @@ process_accumulated_relocations(struct module *me,
+>                         }
+>                         reloc_handlers[curr_type].accumulate_handler(
+>                                 me, location, buffer);
+> +                       kfree(rel_head_iter->rel_entry);
+>                         kfree(rel_head_iter);
+>                 }
+>                 kfree(bucket_iter);
 
-kernel test robot noticed the following build warnings:
+I just found this one.  The patch is also a bit mangled, so it doesn't 
+apply (and probably got missed by some tools).
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.14-rc5 next-20250306]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-binding-clock-ast2700-modify-soc0-1-clock-define/20250224-175830
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250224095506.2047064-4-ryan_chen%40aspeedtech.com
-patch subject: [PATCH v9 3/3] clk: aspeed: add AST2700 clock driver
-config: powerpc64-randconfig-r121-20250306 (https://download.01.org/0day-ci/archive/20250307/202503070117.mMjnpop8-lkp@intel.com/config)
-compiler: powerpc64-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250307/202503070117.mMjnpop8-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503070117.mMjnpop8-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/clk/clk-ast2700.c:1066:92: sparse: sparse: Using plain integer as NULL pointer
-
-vim +1066 drivers/clk/clk-ast2700.c
-
-   952	
-   953	static int ast2700_soc_clk_probe(struct platform_device *pdev)
-   954	{
-   955		const struct ast2700_clk_data *clk_data;
-   956		struct ast2700_clk_ctrl *clk_ctrl;
-   957		struct clk_hw_onecell_data *clk_hw_data;
-   958		struct device *dev = &pdev->dev;
-   959		void __iomem *clk_base;
-   960		struct clk_hw **hws;
-   961		char *reset_name;
-   962		int ret;
-   963		int i;
-   964	
-   965		clk_ctrl = devm_kzalloc(dev, sizeof(*clk_ctrl), GFP_KERNEL);
-   966		if (!clk_ctrl)
-   967			return -ENOMEM;
-   968		clk_ctrl->dev = dev;
-   969		dev_set_drvdata(&pdev->dev, clk_ctrl);
-   970	
-   971		spin_lock_init(&clk_ctrl->lock);
-   972	
-   973		clk_base = devm_platform_ioremap_resource(pdev, 0);
-   974		if (IS_ERR(clk_base))
-   975			return PTR_ERR(clk_base);
-   976	
-   977		clk_ctrl->base = clk_base;
-   978	
-   979		clk_data = device_get_match_data(dev);
-   980		if (!clk_data)
-   981			return -ENODEV;
-   982	
-   983		clk_ctrl->clk_data = clk_data;
-   984		reset_name = devm_kasprintf(dev, GFP_KERNEL, "reset%d", clk_data->scu);
-   985	
-   986		clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws, clk_data->nr_clks),
-   987					   GFP_KERNEL);
-   988		if (!clk_hw_data)
-   989			return -ENOMEM;
-   990	
-   991		clk_hw_data->num = clk_data->nr_clks;
-   992		hws = clk_hw_data->hws;
-   993	
-   994		if (clk_data->scu)
-   995			ast2700_soc1_configure_i3c_clk(clk_ctrl);
-   996	
-   997		for (i = 0; i < clk_data->nr_clks; i++) {
-   998			const struct ast2700_clk_info *clk = &clk_data->clk_info[i];
-   999			void __iomem *reg;
-  1000	
-  1001			if (clk->type == CLK_FIXED) {
-  1002				const struct ast2700_clk_fixed_rate_data *fixed_rate = &clk->data.rate;
-  1003	
-  1004				hws[i] = devm_clk_hw_register_fixed_rate(dev, clk->name, NULL, 0,
-  1005									 fixed_rate->fixed_rate);
-  1006			} else if (clk->type == CLK_FIXED_FACTOR) {
-  1007				const struct ast2700_clk_fixed_factor_data *factor = &clk->data.factor;
-  1008	
-  1009				hws[i] = devm_clk_hw_register_fixed_factor(dev, clk->name,
-  1010									   factor->parent->name,
-  1011									   0, factor->mult, factor->div);
-  1012			} else if (clk->type == DCLK_FIXED) {
-  1013				const struct ast2700_clk_pll_data *pll = &clk->data.pll;
-  1014	
-  1015				reg = clk_ctrl->base + pll->reg;
-  1016				hws[i] = ast2700_clk_hw_register_dclk(reg, clk->name, clk_ctrl);
-  1017			} else if (clk->type == CLK_HPLL) {
-  1018				const struct ast2700_clk_pll_data *pll = &clk->data.pll;
-  1019	
-  1020				reg = clk_ctrl->base + pll->reg;
-  1021				hws[i] = ast2700_clk_hw_register_hpll(reg, clk->name,
-  1022								      pll->parent->name, clk_ctrl);
-  1023			} else if (clk->type == CLK_PLL) {
-  1024				const struct ast2700_clk_pll_data *pll = &clk->data.pll;
-  1025	
-  1026				reg = clk_ctrl->base + pll->reg;
-  1027				hws[i] = ast2700_clk_hw_register_pll(i, reg, clk->name,
-  1028								     pll->parent->name, clk_ctrl);
-  1029			} else if (clk->type == CLK_UART_PLL) {
-  1030				const struct ast2700_clk_pll_data *pll = &clk->data.pll;
-  1031	
-  1032				reg = clk_ctrl->base + pll->reg;
-  1033				hws[i] = ast2700_clk_hw_register_uartpll(reg, clk->name,
-  1034									 pll->parent->name, clk_ctrl);
-  1035			} else if (clk->type == CLK_MUX) {
-  1036				const struct ast2700_clk_mux_data *mux = &clk->data.mux;
-  1037	
-  1038				reg = clk_ctrl->base + mux->reg;
-  1039				hws[i] = devm_clk_hw_register_mux_parent_data_table(dev, clk->name,
-  1040										    mux->parents,
-  1041										    mux->num_parents, 0,
-  1042										    reg, mux->bit_shift,
-  1043										    mux->bit_width, 0,
-  1044										    NULL, &clk_ctrl->lock);
-  1045			} else if (clk->type == CLK_MISC) {
-  1046				const struct ast2700_clk_pll_data *misc = &clk->data.pll;
-  1047	
-  1048				reg = clk_ctrl->base + misc->reg;
-  1049				hws[i] = ast2700_clk_hw_register_misc(i, reg, clk->name,
-  1050								      misc->parent->name, clk_ctrl);
-  1051			} else if (clk->type == CLK_DIVIDER) {
-  1052				const struct ast2700_clk_div_data *div = &clk->data.div;
-  1053	
-  1054				reg = clk_ctrl->base + div->reg;
-  1055				hws[i] = devm_clk_hw_register_divider_table(dev, clk->name,
-  1056									    div->parent->name, 0,
-  1057									    reg, div->bit_shift,
-  1058									    div->bit_width, 0,
-  1059									    div->div_table,
-  1060									    &clk_ctrl->lock);
-  1061			} else if (clk->type == CLK_GATE_ASPEED) {
-  1062				const struct ast2700_clk_gate_data *gate = &clk->data.gate;
-  1063	
-  1064				reg = clk_ctrl->base + gate->reg;
-  1065				hws[i] = ast2700_clk_hw_register_gate(dev, clk->name, gate->parent,
-> 1066								      reg, gate->bit, gate->flags, 0);
-  1067	
-  1068			} else {
-  1069				const struct ast2700_clk_gate_data *gate = &clk->data.gate;
-  1070	
-  1071				reg = clk_ctrl->base + gate->reg;
-  1072				hws[i] = devm_clk_hw_register_gate_parent_data(dev, clk->name, gate->parent,
-  1073									       0, reg, clk->clk_idx, 0,
-  1074									       &clk_ctrl->lock);
-  1075			}
-  1076	
-  1077			if (IS_ERR(hws[i]))
-  1078				return PTR_ERR(hws[i]);
-  1079		}
-  1080	
-  1081		ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get, clk_hw_data);
-  1082		if (ret)
-  1083			return ret;
-  1084	
-  1085		return aspeed_reset_controller_register(dev, clk_base, reset_name);
-  1086	}
-  1087	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I had this buffer up to say something else, but I don't remember what it 
+was.
 
