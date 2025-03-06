@@ -1,160 +1,141 @@
-Return-Path: <linux-kernel+bounces-548495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2C66A545A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:58:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72E83A545A2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:58:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC9081895650
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:58:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97E881881FEC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967CF207E11;
-	Thu,  6 Mar 2025 08:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A692209F4E;
+	Thu,  6 Mar 2025 08:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aB2pAhX8"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="R72szu28"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1AF01FF7CC;
-	Thu,  6 Mar 2025 08:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C158B20896D;
+	Thu,  6 Mar 2025 08:57:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741251458; cv=none; b=rhsIF6bCPNmM7FGfLZxA5NhR9sRATMEKULusHWvhH6FnZVs+2JveYJcJ0/8c+OhdMj2g908vFUH+H888375ECZhULS8KdnN7562TdT7zq44+5amTxLH4SuClGR8FDrf5x0YuXkHekbpf9KFXZHure90TBdvh34NyRqvswa5PpjU=
+	t=1741251461; cv=none; b=mpBNTFc7kR3f7AE6AyNUk8bvENQTcdOCprh/PhuZ7zi4GDX0w6W8KXelXo7BNBZaqwNhItyEnz7KZ80feO+UwawWwwGBgdF9hKRsRuhWrH+TvTwqOm+D5Cv+ziHKhVRhn+SjxZN0CEIuChVqEcqKW+C31y6J2nkW8OCY5mKQeZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741251458; c=relaxed/simple;
-	bh=n2BLu+Wu2eYN86k7ZRRHm5l9dQn/ExFVkpkl7i1CO1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u1tPfBx9LFfQmpFk6gmsIsTZLn+eNaQ1Gudzr6gvWaJFAD/gniK8XR8VkahjTLpqWOM6dxaPzw/3j83NsH8EKW/P89zpJBEGQVEoko/RoSWF7ZlUdKD6pTGxceiDu9PM/KF/GwNbSI2ATXUp9ecxQgniA5Jycmx3RBZ6UN/GxY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aB2pAhX8; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 27221443D1;
-	Thu,  6 Mar 2025 08:57:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741251448;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=j8Ai/j9FWWA8BuJUB3RoPY/GqoMvHgqve37LLwirBbU=;
-	b=aB2pAhX86gJ5Okidw2qqL44L/5oQPxeMT8/W0NaSFXpM4wICQD+xVuyjuP0I8hLLAOHAVT
-	wH9OpIbQtbFkWaXKbxzjWjLiGrlIouHnC+loz/GIPwyQEYgCJXE+9g+vM8/BebvuDf+9Xu
-	yWT/9y3nbhQShoPQHgLd6KIiJdG3233LVuXyToZf+X3NzUWGA1irx00zQFPoYWAVY491GU
-	xSL4L7m2lBinbXXphSxowPEzyYN2JcYiDs0CJf1pk6meg0Q311TwMlylExRJL6SM29ewzQ
-	P8HKGCJMe+qTtGud89KRbhi/0iDQyLHgJNZ2/jxmHmlg7ysZDt7OdRs+EMG/OQ==
-Date: Thu, 6 Mar 2025 09:57:26 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Russell King
- <linux@armlinux.org.uk>, Heiner Kallweit <hkallweit1@gmail.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
- Simon Horman <horms@kernel.org>, Romain Gantois
- <romain.gantois@bootlin.com>
-Subject: Re: [PATCH net-next v4 02/13] net: phy: Use an internal, searchable
- storage for the linkmodes
-Message-ID: <20250306095726.04125e5f@fedora.home>
-In-Reply-To: <738bd67c-8688-4902-805f-4e35e6aaed4a@redhat.com>
-References: <20250303090321.805785-1-maxime.chevallier@bootlin.com>
-	<20250303090321.805785-3-maxime.chevallier@bootlin.com>
-	<738bd67c-8688-4902-805f-4e35e6aaed4a@redhat.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1741251461; c=relaxed/simple;
+	bh=RxI+sn6ItS1HjBLrenfZWt6mdaN+DJqre18glSgG4wI=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=ciodu1js8TjlUc9LRMYq0RmfPemHO4IaNRtbfQf702RunhXqA6JZQr+B1dFEWDBa+0JqSKWXAwpSsl3cozUR08w4otq8Cwu0gcgpwS01PmjR/V8RIpA39G9XNVMeC60B09ant6AkD/9mv/LbQEV1an1eGecu5Xnc6ToMKFuq8d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=R72szu28; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1741251451;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=S2EQXtwX2k8Ao3it0ml2knRXy6h7kOt3zIk2p2gCi7Y=;
+	b=R72szu28Tny5mtJPlLwYZjQZpIIUhaE2gpVqe+evn5BWhclxNazmIWXMb6gqrWySTWjYXe
+	IEbVH4My+20cNl2S99qRR3DQxqo73VvHEimj3PpCu/yzsC81HcXhP8kgZh0myLDLP0WhJT
+	VRVgUI0ibNQ1aFJ2nYwQUE7w/mku2mhmPf3tHVpQsOp1C5nZuM9C1Oe6BWKLmKxX4iAey2
+	sOB9pqYd05SqnBCZjqmlZaG3RBHj8lcYAjjQuOShnXvjlSKGyj/jh4UZO/l65wYZeanZMy
+	Rc2o6TgRJWHdoYAHb/LK4+rZpB1H4i0H2Npd0pBFcaMUfjQCgAveJU2zFaVWSg==
+Date: Thu, 06 Mar 2025 09:57:31 +0100
+From: Dragan Simic <dsimic@manjaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ heiko@sntech.de, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] docs: dt-bindings: Specify ordering for properties
+ within groups
+In-Reply-To: <20250306-dexterous-goshawk-of-aptitude-e4f1f6@krzk-bin>
+References: <47c51c10098f089e52fb14c5c5527611dc8daf32.1741164239.git.dsimic@manjaro.org>
+ <166a7b77-74e3-40b7-a536-ee56850d9318@kernel.org>
+ <f05919742c34f5d4489d2cd711c7736f@manjaro.org>
+ <20250306-dexterous-goshawk-of-aptitude-e4f1f6@krzk-bin>
+Message-ID: <c166178a01b7e83e9d3c488f4871bad3@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdejfedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepudelpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepk
- hhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuhigrdhorhhgrdhukhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Hello Paolo,
+Hello Krzysztof,
 
-On Thu, 6 Mar 2025 09:30:11 +0100
-Paolo Abeni <pabeni@redhat.com> wrote:
-
-> On 3/3/25 10:03 AM, Maxime Chevallier wrote:
-> [...]
-> > +static int speed_duplex_to_capa(int speed, unsigned int duplex)
-> > +{
-> > +	if (duplex == DUPLEX_UNKNOWN ||
-> > +	    (speed > SPEED_1000 && duplex != DUPLEX_FULL))
-> > +		return -EINVAL;
-> > +
-> > +	switch (speed) {
-> > +	case SPEED_10: return duplex == DUPLEX_FULL ?
-> > +			      LINK_CAPA_10FD : LINK_CAPA_10HD;
-> > +	case SPEED_100: return duplex == DUPLEX_FULL ?
-> > +			       LINK_CAPA_100FD : LINK_CAPA_100HD;
-> > +	case SPEED_1000: return duplex == DUPLEX_FULL ?
-> > +				LINK_CAPA_1000FD : LINK_CAPA_1000HD;
-> > +	case SPEED_2500: return LINK_CAPA_2500FD;
-> > +	case SPEED_5000: return LINK_CAPA_5000FD;
-> > +	case SPEED_10000: return LINK_CAPA_10000FD;
-> > +	case SPEED_20000: return LINK_CAPA_20000FD;
-> > +	case SPEED_25000: return LINK_CAPA_25000FD;
-> > +	case SPEED_40000: return LINK_CAPA_40000FD;
-> > +	case SPEED_50000: return LINK_CAPA_50000FD;
-> > +	case SPEED_56000: return LINK_CAPA_56000FD;
-> > +	case SPEED_100000: return LINK_CAPA_100000FD;
-> > +	case SPEED_200000: return LINK_CAPA_200000FD;
-> > +	case SPEED_400000: return LINK_CAPA_400000FD;
-> > +	case SPEED_800000: return LINK_CAPA_800000FD;
-> > +	}
-> > +  
+On 2025-03-06 09:38, Krzysztof Kozlowski wrote:
+> On Wed, Mar 05, 2025 at 10:53:48AM +0100, Dragan Simic wrote:
+>> On 2025-03-05 10:36, Krzysztof Kozlowski wrote:
+>> > On 05/03/2025 09:45, Dragan Simic wrote:
+>> > >
+>> > > diff --git a/Documentation/devicetree/bindings/dts-coding-style.rst
+>> > > b/Documentation/devicetree/bindings/dts-coding-style.rst
+>> > > index 8a68331075a0..15de3ede2d9c 100644
+>> > > --- a/Documentation/devicetree/bindings/dts-coding-style.rst
+>> > > +++ b/Documentation/devicetree/bindings/dts-coding-style.rst
+>> > > @@ -133,6 +133,12 @@ The above-described ordering follows this
+>> > > approach:
+>> > >  3. Status is the last information to annotate that device node is
+>> > > or is not
+>> > >     finished (board resources are needed).
+>> > >
+>> > > +The above-described ordering specifies the preferred ordering of
+>> > > property
+>> > > +groups, while the individual properties inside each group shall use
+>> > > natural
+>> > > +sort order by the property name.  More specifically, natural sort
+>> > > order shall
+>> > > +apply to multi-digit numbers found inside the property names, while
+>> > > alpha-
+>> > > +numerical ordering shall apply otherwise.
+>> >
+>> > The last sentence was not here and I don't get the point. Natural sort
+>> > order should be always preferred over alpha-numerical for properties.
+>> > About which other case ("...apply otherwise.") are you thinking?
+>> 
+>> Yes, I added that sentence in the v2 to, hopefully, clarify the 
+>> natural
+>> sort order itself a bit.  I've researched the natural sort order a bit
+>> further, and it technically applies only to the multi-digit numbers 
+>> found
+>> inside the sorted strings.  That's what I wanted to explain, and 
+>> "shall
 > 
-> What about adding some code here to help future patch updating LINK_CAPA
-> definition as needed?
-> 
-> Something alike:
-> 
-> 	pr_err_once("Unknown speed %d, please update LINK_CAPS\n", speed);
-> 
-> 
-> > +	return -EINVAL;
-> > +}
-> > +
-> > +/**
-> > + * phy_caps_init() - Initializes the link_caps array from the link_mode_params.
-> > + */
-> > +void phy_caps_init(void)
-> > +{
-> > +	const struct link_mode_info *linkmode;
-> > +	int i, capa;
-> > +
-> > +	/* Fill the caps array from net/ethtool/common.c */
-> > +	for (i = 0; i < __ETHTOOL_LINK_MODE_MASK_NBITS; i++) {
-> > +		linkmode = &link_mode_params[i];
-> > +		capa = speed_duplex_to_capa(linkmode->speed, linkmode->duplex);
-> > +
-> > +		if (capa < 0)
-> > +			continue;  
-> 
-> Or even error-out here.
+> Natural sort applies to everywhere. It's just the same as
+> alpha-numerical sort for single digits.
 
-Good point yes indeed. Russell raised the point for the need of keeping
-this in sync with new SPEED_XXX definitions, I'll add a check that
-errors out.
+Technically, it depends on how one describes the natural sort order.
+I'll get back to this below.
 
-I hope that's OK though, as higher speeds are introduced and used by
-NICs that usually don't use phylib at all, so there's a good chance
-that the developper introducing the new speed won't have CONFIG_PHYLIB
-enabled.
+>> apply otherwise" refers to applying the alpha-numerical sort order to 
+>> the
+>> remainders of the sorted strings, i.e. to everything but the 
+>> multi-digit
+>> numbers found in the property names.
+> 
+> Sorry, still don't get. What would be the difference if for remainders
+> of properties you would also apply natural sort instead of
+> alphanumerical sort?
 
-Is that still good ?
+Oh, there are no differences in the results of the ordering, it's just
+about the formal definition of the natural sort order.  In some places,
+the natural sort order is described to apply to the multi-digit numbers
+found in the sorted strings only.  Thus, the wording I proposed tries
+to explain that further, but I do agree that it's somewhat confusing.
 
-Maxime
+In other words, the way natural sort order is defined in some places,
+it applies to the multi-digit parts of the sorted strings only, while
+the remainders of the strings are sorted alpha-numerically.  I'll 
+consult
+some more sources and get back with some better wording in the v3, to
+make it less confusing, while still describing the natural sort order
+a bit, because the people who will be reading the DTS coding style may
+not already be familiar with it.
 
