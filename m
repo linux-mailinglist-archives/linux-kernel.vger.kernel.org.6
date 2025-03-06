@@ -1,285 +1,128 @@
-Return-Path: <linux-kernel+bounces-549011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE87FA54C20
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:27:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67B64A54C21
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:27:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D8497A4583
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:26:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C52EA1894BA7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBAA620E6E0;
-	Thu,  6 Mar 2025 13:27:22 +0000 (UTC)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECDAB20E33B;
+	Thu,  6 Mar 2025 13:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tf5Rwb9t"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E5A20E310;
-	Thu,  6 Mar 2025 13:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68D120C01C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 13:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741267642; cv=none; b=pOKC8rjMUbI36fQSNgTBH/Z40bXbhDav+HSovcsWXz6/8fHdB3Y2JQFFu94ImOb61OumFkjcquQVoIuzSeTdiGXJxenp8vRfu/gIjWF+108V6RFjQnnPBbRChyRxscIhjI6Oh8M8/pwiLuuv0sMN6cctR2t7r4PEFaLU3iDebbU=
+	t=1741267664; cv=none; b=NGjGZFfhXGzCisBLjzw5+GAccHibUOLkBBxUGY7F7GGGFTZ5IkdS0STct4QcS8x1SyDkbjhv8rssleNVzKemza+6ps82karI8xf84vA7P6OHmzE8okDzvzNrDQXPhOKX3Rf9LJnbAEl1/N5Sh4dZANaywk8KmAkLGpN/nNV7R8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741267642; c=relaxed/simple;
-	bh=XKcEeWbzH4fA5/cvRfTVPBDGny582CAz/diU/D9T8do=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ApGOFXxXY5xEoeIl/WBW66aQ7r/9ZlOn0m15WH05p+oNFV49qWgH7pOj3jTCkJsq2lhEupbkvm/KYx7bmxZOg/mZ9J6l0dste9tWfMf63AapHKw07fB7zRKg3qsdFgep6H7p202zdJ2TZwA8ws4AegxTmrPVBmHlKMQPevpS3vU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-86b6be2c480so226858241.0;
-        Thu, 06 Mar 2025 05:27:19 -0800 (PST)
+	s=arc-20240116; t=1741267664; c=relaxed/simple;
+	bh=GBWhdIX7+bsQlP1/z+onvju6dUl0avsUu/gCJdhYKNI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FmPDrAyUUE4BzSKYhzq7ZVuYVDe7kkTrXNe4DNRdk62GuHToWANLK8ZsHfciMb+zMyzBdEVS2emJjILzSjDcEn7P35Ei4P5MZnAVX/5hPqly8bnzh5kcJfq7nPyBGNp/K7bLxub2ctTYa3OIqafhcmJnrOzvf2bYwO6dSLCNOco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Tf5Rwb9t; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c3be0d212fso87501385a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 05:27:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1741267661; x=1741872461; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IqRNCNLgK3dXEi8BwCu1UN2hZhXMdHF5U05cO3WMfr4=;
+        b=Tf5Rwb9t5/i43cjd6qjH7vARALxKO4FSrfl/jCvaW7LxU4Btsbnk3s7Ocog9KqOcR6
+         gUSqIcirLq00C5Lund6NHus3+MLfxvvE/lQz1jMUwvcEbdjgsSIayTZSJlVOIDCMp6AP
+         uL4mVH20XO+jJLaI4VaeER+73WhU31sQ37Vwc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741267638; x=1741872438;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1741267661; x=1741872461;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=E1V4GXjxaHQ1MX8XrAYuwsdCJjMPQ0MFEVUQeYP147s=;
-        b=m3qxBlVPwOPZnKoVJLeJFLRQqSBq+WbqIqNIwbx7HmBOvt4sIcfh18c92G00LjtvQJ
-         w5a1MYM25R8JWyumJSeue63VPLAoiV3v2DYww+CviSXxBbO7NaHM4ch5YsC0nl/vv7AU
-         zYYO4DmPUx51yQwhH2ENUmJ6IcPM9B/IXAr327FjQhvy7pP7zHXIXcg4A9KvEdyUO6Kh
-         5WRFEU1VkbzA5KfNSfhIYRnod8YeMNf0V4gh3NPoKXQGq19EgNnMSuzy9TKHsnUrg8Ug
-         w++2t5Va1cAyEcT9yGddVj3YBTnVB5B43ScuixXLD3Gd6HNKtdECXK5hZiGZCJQ5CBqT
-         d+zw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4gHPoXFd0H9ZuvkD/UCd9+3JKd5t/qtqsrI1wF7GF53Nj4fhH9+8lJcYns/dGMl9azQO5+94KVCPzduUB@vger.kernel.org, AJvYcCWYjG3/BuECLQptl9FrYWqlQLnlC/mUbTVyR9SsWpUq8gtOFZP7UtkZPdyUMsSNym+q/6lZCUNRg37e@vger.kernel.org, AJvYcCWcSesvGcWQFnXdAQ1fIEjV/mR5GqA8Q8lB9jKx0hS8mkRFhfHwtz2S51A3mI0lDOS0mdAuwTKGlB+M@vger.kernel.org, AJvYcCXhMWOUe76kpzRs5oFP4NOPSXI13pDo16svGp8GXkney8NdwodfFjEs1el9Gk/waZdpIr1kR+dBElbb8aBt5HzLy78=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf2JQTgStjCK+DJH210+Y+KXxB5UgyoDdf1TTfcoCOcCQDzTfI
-	G4Mmn0j6Dsx+0SpowfnCCFeNIUvQPZnBgP2PVb22q3IZP23s8/yV5tX6NPdn
-X-Gm-Gg: ASbGncvRbFvGv+xl5+WXigAH2SMHGnWPGKgVo+l0ku4Bj4JdxBC6IQ/39cR59N5RbAs
-	mMmhiqg3Wa97GR/BF0BlcNcPzbothJk7KZUcPbQp5Modp6IqLH5PkLdSPvWy2cKZ960vWBWOQeK
-	6EoMZrOOE+FaI8znPMLPitcM8Q8cDBmRiSl0j6OAYRCSLIptVCu2PvDrXqbFywajUvX9jv+4ZMi
-	tV068QMFYrbfVHL5qAXTz+q8smm9MYanAymKHjYs3X8xdbB7Eomw4GCGez9SS/frQ9QkjtUDJK2
-	ZMBANtW6uwNEN1j5LEnRL2qYjSPpnAVG/eT9U+ha/TqA+i21UVZyHJiRASkU9WtedrYV/zRlYHD
-	8vFkh6+Y=
-X-Google-Smtp-Source: AGHT+IEy6Rv4wjm84q5K+TbBTG944eiJABN0mDsfYMGHJX/ZGbboYio9IbTuwHyaN29m5pVPVd1RoQ==
-X-Received: by 2002:a05:6102:dce:b0:4bb:cf25:c5a7 with SMTP id ada2fe7eead31-4c2e27a6d7dmr4441933137.7.1741267638412;
-        Thu, 06 Mar 2025 05:27:18 -0800 (PST)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-86d33ca65a9sm219399241.27.2025.03.06.05.27.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 05:27:18 -0800 (PST)
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-86b6be2c480so226841241.0;
-        Thu, 06 Mar 2025 05:27:18 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU92WFNfySAnYVgKlWOUXgBHaW565dGpVNMpOpzEHn+/1MNShzgqaaPC2QX98aP+ZbjeaCvoblDJgIp@vger.kernel.org, AJvYcCUWpNX27F7ebNDUkBz3h1pY1ByBTTFcKVPP8Bzsun8T9ESkqvxBWkODOxesfiX35Of8+T8lXl1Z7btGQrBj@vger.kernel.org, AJvYcCXiBXrAqOoa+R2A3TM8EqkQ9+zsy+ToCENjOlElsCuMYeKbpo7oGQp6UC9Z2RNaqqYIcWMjQa+crshHZWPb1waIh8A=@vger.kernel.org, AJvYcCXvpHYzGUcDC92TMRiTc5rrAPamygUFPdZ4RTwEWWiRfSwTwea2XMSJQzeiKi+z0WkLlr1lkvHWazDY@vger.kernel.org
-X-Received: by 2002:a05:6102:e12:b0:4bd:3519:44be with SMTP id
- ada2fe7eead31-4c2e2804512mr4388822137.15.1741267637914; Thu, 06 Mar 2025
- 05:27:17 -0800 (PST)
+        bh=IqRNCNLgK3dXEi8BwCu1UN2hZhXMdHF5U05cO3WMfr4=;
+        b=DjchXe+UbQ1c+IhonyT4e9EuwzaxE7tY3uoJ3AHbqzEGRSF3iLmPhJjLY97YFVymoR
+         fJNplbovdbitNA5D6wXAVC+6OASRuMs/if3rHXDODtHxCyPlnfO8aI52wAokNyTY7hAQ
+         uVMD+D0B1ke6b39DWV3VaiNF4T4kuUrqq8zWeM/YiWCEnKnCSFyWecTYE4BW2Ni8M9aV
+         YL7TUbGHJdG4yFcpRRudSc2XjRoafv54MwDR4MVUL1axjvqsRboWGnmr11MBEO3huuHr
+         cRzDDsaCT0pHHMztB4hCDDWwzStILr2rFLPl2ArtgbNr3XXWaMjQnwF8bxjtp1cakzpx
+         /0Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCXOIPShwx5rESon4PQj+pha9xzOEe0xAM1OBeh5rx8RK5wCTAfbozLOGm4mWV0eIWeR9KF5HvdUfsUcUEA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxGnWDFKwK07Ba5vjX6DVvLx7xQIrK59lltbCQpxP/PfZQ0/bu
+	oIOSbwYSLQRuR5yPBGqRhqBHgh2/sUQBClmpXDncCKt2Tuna1Wi81UPxtGTPKg==
+X-Gm-Gg: ASbGncvH06Q2NLIFy7KP6EyAACYZqBafTavPu3Bgw1QGLzm3EZO8RfRYCVXWr+jg2Fn
+	s4EY/xuzRDDQTcxbUkkzaw8fwKDfbAMApXxz2d4xNJDlnT8+RBcpWpxSQWJ1W4eyDWnW/nXu62s
+	wP6/s5OumjnWR6Rr1YE7xtFps4utiNk8c/0deGEKZ75CrqLMWR7wKLCqKoYhkhXSdmVDrCdt8La
+	4MP8zL3em7ZuYBQmO0x5j2xeq8kN6321Uai4B+UdWYzpikRTzStgMIBLc/qFMmZ+hmL1FJZXaM+
+	8qeDTTd4r6jRfB+kh91ZRRXBZeMmogr1oPY7JldzOw2iqzqJ2PzPYXZYmoztd92lqLeUZhWEip0
+	15kV4vokPbNODDUkhKwt9dQ==
+X-Google-Smtp-Source: AGHT+IEfIoIIdPPoE1y3HdxySgzdj1Qs67+7tRyU94WxFWThwqhrkMpPUKaTEIRrwffXymQ3TTTs7g==
+X-Received: by 2002:a05:620a:1d09:b0:7c0:a1ac:1525 with SMTP id af79cd13be357-7c3d8ef4649mr1112578885a.37.1741267661557;
+        Thu, 06 Mar 2025 05:27:41 -0800 (PST)
+Received: from denia.c.googlers.com (15.237.245.35.bc.googleusercontent.com. [35.245.237.15])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e538448fsm91268685a.63.2025.03.06.05.27.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 05:27:40 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v2 0/2] media: vivid: Make CONFIG_FB optional
+Date: Thu, 06 Mar 2025 13:27:29 +0000
+Message-Id: <20250306-vivid-osd-v2-0-86db53ecb39c@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305002112.5289-1-fabrizio.castro.jz@renesas.com> <20250305002112.5289-3-fabrizio.castro.jz@renesas.com>
-In-Reply-To: <20250305002112.5289-3-fabrizio.castro.jz@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Mar 2025 14:27:06 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVeLiQKHm5BQXhqEjKTP4p7Y20b5ocsjvNCnicDQym19A@mail.gmail.com>
-X-Gm-Features: AQ5f1JroeThd9ulD1ahlmdpsXT6NLFZFZZdIi3Hy9pIsRu-zZy6kxIxGiyfRxZQ
-Message-ID: <CAMuHMdVeLiQKHm5BQXhqEjKTP4p7Y20b5ocsjvNCnicDQym19A@mail.gmail.com>
-Subject: Re: [PATCH v5 2/6] dt-bindings: dma: rz-dmac: Document RZ/V2H(P)
- family of SoCs
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMGiyWcC/22MQQ6CMBBFr0Jm7Zi2WIquvIdhUaDQWUDJVBsN6
+ d2trM1fvZ+Xt0N0TC7CrdqBXaJIYS2gThUM3q6zQxoLgxJKC6VaTJRoxBBHNMZa3U617sUFir+
+ xm+h9tB5dYU/xGfhzpJP8vf8qSaJA2Vyb2oqy3twHz2Gh13IOPEOXc/4CReTfBaUAAAA=
+X-Change-ID: 20250228-vivid-osd-77aa58f35b04
+To: Hans Verkuil <hverkuil@xs4all.nl>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Slawomir Rosek <srosek@google.com>, 
+ Hidenori Kobayashi <hidenorik@google.com>, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.2
 
-Hi Fabrizio,
+Vivid now depends always on CONFIG_FB, but that dependency can be
+optional.
 
-On Wed, 5 Mar 2025 at 01:21, Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
-> Document the Renesas RZ/V2H(P) family of SoCs DMAC block.
-> The Renesas RZ/V2H(P) DMAC is very similar to the one found on the
-> Renesas RZ/G2L family of SoCs, but there are some differences:
-> * It only uses one register area
-> * It only uses one clock
-> * It only uses one reset
-> * Instead of using MID/IRD it uses REQ No
-> * It is connected to the Interrupt Control Unit (ICU)
->
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v4->v5:
-> * Removed ACK No from the specification of the dma cell.
-> * I have kept the tags received as this is a minor change and the
->   structure remains the same as v4. Please let me know if this is
->   not okay.
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v2, Thanks Hans:
+- s/DEFINED/ifdef
+- s/vivid_clear_fb/vivid_fb_clear/
+- CodeStyle
+- Introduce vivid_fb_green_bits()
+- Link to v1: https://lore.kernel.org/r/20250228-vivid-osd-v1-0-16963a0a0ab7@chromium.org
 
-Thanks for the update!
+---
+Ricardo Ribalda (2):
+      media: vivid: Move all fb_info references into vivid-osd
+      media: vivid: Introduce VIDEO_VIVID_OSD
 
-> --- a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
-> +++ b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
-> @@ -61,14 +66,21 @@ properties:
->    '#dma-cells':
->      const: 1
->      description:
-> -      The cell specifies the encoded MID/RID values of the DMAC port
+ drivers/media/test-drivers/vivid/Kconfig         | 12 ++++++++++--
+ drivers/media/test-drivers/vivid/Makefile        |  5 ++++-
+ drivers/media/test-drivers/vivid/vivid-core.c    | 14 ++++++--------
+ drivers/media/test-drivers/vivid/vivid-core.h    |  2 ++
+ drivers/media/test-drivers/vivid/vivid-ctrls.c   |  2 +-
+ drivers/media/test-drivers/vivid/vivid-osd.c     | 24 ++++++++++++++++++++----
+ drivers/media/test-drivers/vivid/vivid-osd.h     | 18 ++++++++++++++++--
+ drivers/media/test-drivers/vivid/vivid-vid-out.c |  3 ++-
+ 8 files changed, 61 insertions(+), 19 deletions(-)
+---
+base-commit: d98e9213a768a3cc3a99f5e1abe09ad3baff2104
+change-id: 20250228-vivid-osd-77aa58f35b04
 
-Please just insert "or the REQ No" and be done with it?
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
 
-> -      connected to the DMA client and the slave channel configuration
-> -      parameters.
-> +      For the RZ/A1H, RZ/Five, RZ/G2{L,LC,UL}, RZ/V2L, and RZ/G3S SoCs, the cell
-> +      specifies the encoded MID/RID values of the DMAC port connected to the
-> +      DMA client and the slave channel configuration parameters.
->        bits[0:9] - Specifies MID/RID value
->        bit[10] - Specifies DMA request high enable (HIEN)
->        bit[11] - Specifies DMA request detection type (LVL)
->        bits[12:14] - Specifies DMAACK output mode (AM)
->        bit[15] - Specifies Transfer Mode (TM)
-> +      For the RZ/V2H(P) SoC the cell specifies the DMAC REQ No and the slave channel
-> +      configuration parameters.
-> +      bits[0:9] - Specifies the DMAC REQ No
-> +      bit[10] - Specifies DMA request high enable (HIEN)
-> +      bit[11] - Specifies DMA request detection type (LVL)
-> +      bits[12:14] - Specifies DMAACK output mode (AM)
-> +      bit[15] - Specifies Transfer Mode (TM)
-
-... so the casual reader doesn't have to look for the (nonexisting)
-differences in the other bits.
-
->
->    dma-channels:
->      const: 16
-> @@ -80,12 +92,29 @@ properties:
->      items:
->        - description: Reset for DMA ARESETN reset terminal
->        - description: Reset for DMA RST_ASYNC reset terminal
-> +    minItems: 1
->
->    reset-names:
->      items:
->        - const: arst
->        - const: rst_async
->
-> +  renesas,icu:
-> +    description:
-> +      On the RZ/V2H(P) SoC configures the ICU to which the DMAC is connected to.
-
-Are other SoCs with ICU planned?
-
-> +      It must contain the phandle to the ICU, and the index of the DMAC as seen
-> +      from the ICU (e.g. parameter k from register ICU_DMkSELy).
-
-This is already described more formally below
-
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-> +    items:
-> +      - items:
-> +          - description: phandle to the ICU node.
-> +          - description: The DMAC index.
-> +              4 for DMAC0
-> +              0 for DMAC1
-> +              1 for DMAC2
-> +              2 for DMAC3
-> +              3 for DMAC4
-
-Other SoCs may have other mappings.
-So perhaps leave out the translation table, but write:
-
-    The number of the DMAC as seen from the ICU, i.e. parameter k from
-register ICU_DMkSELy.
-    This may differ from the actual DMAC instance number!
-
-> +
->  required:
->    - compatible
->    - reg
-> @@ -98,13 +127,25 @@ allOf:
->    - $ref: dma-controller.yaml#
->
->    - if:
-> -      not:
-> -        properties:
-> -          compatible:
-> -            contains:
-> -              enum:
-> -                - renesas,r7s72100-dmac
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - renesas,r9a07g043-dmac
-> +              - renesas,r9a07g044-dmac
-> +              - renesas,r9a07g054-dmac
-> +              - renesas,r9a08g045-dmac
->      then:
-> +      properties:
-> +        reg:
-> +          minItems: 2
-> +        clocks:
-> +          minItems: 2
-> +        resets:
-> +          minItems: 2
-> +
-> +        renesas,icu: false
-> +
->        required:
->          - clocks
->          - clock-names
-> @@ -112,13 +153,42 @@ allOf:
->          - resets
->          - reset-names
->
-> -    else:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: renesas,r7s72100-dmac
-> +    then:
->        properties:
-
-    reg:
-        minItems: 2
-
->          clocks: false
->          clock-names: false
->          power-domains: false
->          resets: false
->          reset-names: false
-> +        renesas,icu: false
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: renesas,r9a09g057-dmac
-> +    then:
-> +      properties:
-> +        reg:
-> +          maxItems: 1
-> +        clocks:
-> +          maxItems: 1
-> +        resets:
-> +          maxItems: 1
-> +
-> +        clock-names: false
-> +        reset-names: false
-> +
-> +      required:
-> +        - clocks
-> +        - power-domains
-> +        - renesas,icu
-> +        - resets
->
->  additionalProperties: false
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
