@@ -1,90 +1,50 @@
-Return-Path: <linux-kernel+bounces-548933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74BA8A54AFF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:42:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D22DA54B00
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:42:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D3E71883CE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:42:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFCED7A4875
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:41:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0DD20C02A;
-	Thu,  6 Mar 2025 12:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="w0Xl756R"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BF1220C48E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 12:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16AFD190051;
+	Thu,  6 Mar 2025 12:42:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D0920B807;
+	Thu,  6 Mar 2025 12:42:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741264931; cv=none; b=IUs4N8EMXUBdRKywvV5kv7F1GpVO7RtzZ1qLP9P0gV/M00qu54BC8o8j7YdErCN2M9Cgk6GBz19m1yNu63eeU8hhFU/lPpSAeW7vPE6X3VyjU50QuBZe96rGzI0qcAqtdJBQjzr/6PEA3e92mpam6Wq1ZEedIEJwSdbTxeU9QOo=
+	t=1741264967; cv=none; b=K0bfWFJhgRTQVq/o6TIUiW0ylBMsB1DzQcEonXjJx0AaaBq0NPjEc8iQBR8gH4kUz1N6lj0Lq0IVHxqp/V5xs/pc1exrso3H4NXlXKBF686gofalELspuH7gvh6XchRK2ZpB2m0C08SsK+P9E3ErtX5xfXiTPVmr0FceCj7d/1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741264931; c=relaxed/simple;
-	bh=22gI3ylpHx/xFFYcb4YRhD6/V8m5GMoSsuIUika6lHY=;
+	s=arc-20240116; t=1741264967; c=relaxed/simple;
+	bh=LaMtgQvYTUM2jrJATyinTgdG/0gAEnXubFyZfap9nXI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ioj5t8PSK4nyKFzjmEvpfxyX+hE9taxIY32h35hWwW8kJT6AlovjXaYmUkmj8KiDdWWXOWaWo5T+OBosoxy89oRObZ/bxTihHjMiF/EVwuWh4jEdiPjGArePe5GlZXllrEXZ884R4xQ52CcWD0glCJJNe3VwrI168XWjnh14cy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=w0Xl756R; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-438d9c391fcso50225e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 04:42:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741264928; x=1741869728; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9MRAkaS5reseLkYqY2aSknQ7KzyTvAIpY7HWZEUr9kQ=;
-        b=w0Xl756RUrCpaii7yQEnO8R8gkUYHE9p4TFbCqDZvKte+f2aP7Ma36YoC6V6sw/bcu
-         8QZUmjDFwZHwitoiB8I3SNYllqP7vfYFtrP8eB9dVp2MjJ7Y1+oWENrJ2RpG6NzfE2D5
-         ukgZkSQqX81BcbwEDkizCAbU/zhYHPRf87iow9mAu34gpaWXDDRSsC8q8XQMno7JHdR0
-         c9mqz9Jr2hhHY7dU0YKJqtu39dkFUC2BCLgVq1fCiGsa7Xn9jtVrohAB7/bAC8d2/gtW
-         IpBwn6yjcjTJxjo7e2Fhmm/DmgY0OR3DRJSz4QPo43f3S52DlcvlM9QYkh0Ar8mg06yz
-         Ffgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741264928; x=1741869728;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9MRAkaS5reseLkYqY2aSknQ7KzyTvAIpY7HWZEUr9kQ=;
-        b=am6oJAo0PJsovCh3hF+lVat7N4MqyocwCJKNquwaR2HfHR1JRUrYWqeEMYmVLNOOCc
-         zE8qjNfqsPUjQM5vX8P6wpNBWYHm5yVwZtb8pGOm6bCTHQJYHxI4SQyaF5lbu747xSAm
-         mc83xFss6AQZpWuw6HUpCe3ROVYFNQcRo9o0qREShluAQNIThRtw/V7soRhXquZlDQ7A
-         ku4tzXsg8b093f4a+rNon75hXJcQwyIrwGfaoyWnlY1zZiJx5CxTg+/2CUGjSfMwh07L
-         NpG6wjN9dPAHgnuFixLuhLhOzFzyHRhzOCWb+sChFDGFybU94VdnjBAbxqEMtgj4f3g0
-         +PEg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7E2A1mZ+E36V3fQx45SDKy2dSJfz1SsFHDwQ7J7oEE9Im72tUIgceX1x8PNjnrnuOZFwY2XjTN7xhCQA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyOLSBqAaTJRJnXRQjYVRQ/w1Tkai2b25t4m6gkhfMRyufCiWI
-	n1WGChkeabjnFHe69hZT0MnkxZfI3sumPuUoDPpAW7wKSTfSm8xH071wODKL5Q==
-X-Gm-Gg: ASbGncsMjQb5WRBqxLZ+1J7AscYw5liwUHhJdAeAn6hDe9lcgrpHsqr3dLeBtBgOzxo
-	AEtjKkncoS6jRxwUMWXfVP0FTv3lM/PPpfWdImyTBVwCuHzSyeth6EzoD5x4OKI3R6nfe8Ckr58
-	JqF1sXgwJe6Wgo+4cS+snRlpvwcVoECj0Pj7fdJR9GxdG4dEeNKM1Ia4UbZe+08epZxxrvo2+qK
-	eJQFrpx12yKrpD1wbcBaRf5xBux8g4VUi8r+X2lITQ5IW53ppxy11z+p88a6dkiIwUm4gxsfUlF
-	8b7a4ZTX7XCVmFqltJIVWbYbKAn11dM9nTvbWHmlJZqw0X8mIw1/8AH2qtDT6rFQvplLEPjgkWK
-	fE9vu
-X-Google-Smtp-Source: AGHT+IGmNXAcbrIiTndMd8TKLO7wDtMCWMyWdNa1KQz3K3QIoj6wzvoQxrplVkDQaNapk/ITigBdow==
-X-Received: by 2002:a05:600c:54c7:b0:43b:c396:7405 with SMTP id 5b1f17b1804b1-43bdce18c53mr947115e9.7.1741264928259;
-        Thu, 06 Mar 2025 04:42:08 -0800 (PST)
-Received: from google.com (44.232.78.34.bc.googleusercontent.com. [34.78.232.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfba888sm1984885f8f.16.2025.03.06.04.42.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 04:42:07 -0800 (PST)
-Date: Thu, 6 Mar 2025 12:42:03 +0000
-From: Brendan Jackman <jackmanb@google.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>, Dev Jain <dev.jain@arm.com>,
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 08/10] selftests/mm: Skip gup_longerm tests on weird
- filesystems
-Message-ID: <Z8mYG8eQnMsOA4c1@google.com>
-References: <20250228-mm-selftests-v3-0-958e3b6f0203@google.com>
- <20250228-mm-selftests-v3-8-958e3b6f0203@google.com>
- <08023d47-dcf4-4efb-bf13-5aef3c6dca14@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=saZtymo00T0QizqK8qsC4n2wXQvArVjHf28QukQJtjPgtK5ZAP2UZqeuCQiMNValLR+8H5rj6ZSUr8TSY9WqNXBuRAA1+JLY+tkSQMkGpd1UtDnWRA9yJ1g2liKnIYnm2HuQFCy5RdvxVeBnb3/Dp7wy6vquJRXotGP9G2WHjJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A266E1007;
+	Thu,  6 Mar 2025 04:42:57 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 58BBA3F673;
+	Thu,  6 Mar 2025 04:42:42 -0800 (PST)
+Date: Thu, 6 Mar 2025 12:42:39 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Jacky Bai <ping.bai@nxp.com>, lpieralisi@kernel.org, rafael@kernel.org,
+	daniel.lezcano@linaro.org, james.morse@arm.com, d-gole@ti.com,
+	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	khilman@baylibre.com, quic_tingweiz@quicinc.com,
+	quic_yuanjiey@quicinc.com
+Subject: Re: [PATCH v3] cpuidle: psci: Init cpuidle only for present CPUs
+Message-ID: <Z8mYP7AGBPeDTvXn@bogus>
+References: <20250306061805.2318154-1-ping.bai@nxp.com>
+ <CAPDyKForY4VNZtqietDPt2FQM3p4OsaoE_oJb0PPLUAh98WsHQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,57 +53,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <08023d47-dcf4-4efb-bf13-5aef3c6dca14@redhat.com>
+In-Reply-To: <CAPDyKForY4VNZtqietDPt2FQM3p4OsaoE_oJb0PPLUAh98WsHQ@mail.gmail.com>
 
-On Thu, Mar 06, 2025 at 10:28:09AM +0100, David Hildenbrand wrote:
-> On 28.02.25 17:54, Brendan Jackman wrote:
-> > Some filesystems don't support funtract()ing unlinked files. They return
-> > ENOENT. In that case, skip the test.
-> > 
+On Thu, Mar 06, 2025 at 11:53:14AM +0100, Ulf Hansson wrote:
+> On Thu, 6 Mar 2025 at 07:17, Jacky Bai <ping.bai@nxp.com> wrote:
+> >
+> > for_each_possible_cpu() is currently used to initialize cpuidle
+> > in the PSCI cpuidle driver.
+> >
+> > However, in cpu_dev_register_generic(), for_each_present_cpu()
+> > is used to register CPU devices which means the CPU devices are
+> > only registered for present CPUs and not all possible CPUs.
+> >
+> > With nosmp or maxcpus=0, only the boot CPU is present, leading
+> > to the failure:
+> >
+> >   |  Failed to register cpuidle device for cpu1
+> >
+> > Change for_each_possible_cpu() to for_each_present_cpu() in the
+> > PSCI cpuidle driver to ensure it only registers cpuidle devices
+> > for CPUs that are actually present.
+> >
+> > Fixes: b0c69e1214bc ("drivers: base: Use present CPUs in GENERIC_CPU_DEVICES")
+> > Reviewed-by: Dhruva Gole <d-gole@ti.com>
+> > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> > Tested-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+> > Signed-off-by: Jacky Bai <ping.bai@nxp.com>
 > 
-> That's not documented in the man page, so is this a bug of these
-> filesystems?
+> Is this problem specific to cpuidle-psci?
+> 
+> Others are using for_each_possible_cpu() when registering their cpuidle drivers.
+> 
 
-Um...
+Good point. I assumed as this was very old patch, only this is left without
+conversion to using present_cpumask. Looks like there are many other drivers
+that need similar change. May be PSCI is most commonly used ones these days
+and hardly anyone tests with nosmp or maxcpus=1 on those platforms.
 
-unlink(2) does say:
+But yes, all the users of for_each_possible_cpu() need to move to
+for_each_present_cpu() if they are relying on CPU device being registered.
 
-  If the name was the last link to a file but any processes still have
-  the file open, the file will remain in existence until the last file
-  descriptor referring to it is closed.
-
-And POSIX says
-
-  If one or more processes have the file open when the last link is
-  removed, the link shall be removed before unlink() returns, but the
-  removal of the file contents shall be postponed until all references
-  to the file are closed
-
-I didn't call it a bug in the commit message because my impression was
-always that filesystem semantics are broadly determined by vibes. But
-looking at the above I do feel more confident that the "unlink isn't
-delete" thing is actually a pretty solid expectation.
-
-> What are examples for these weird filesystems?
-
-My experience of the issue is with 9pfs. broonie reported on #mm that
-NFS can display similar issues but I haven't hit it myself.
-
-> As we have the fstype available, we could instead simply reject more
-> filesystems earlier. See fs_is_unknown().
-
-Oh. I didn't know this was so easy, I thought that checking the
-filesystem type would require some awful walk to find the mountpoint
-and join it against the mount list. (Now I think about it, I should
-have recorded this rationale in the commit message, so you could
-easily see my bogus reasoning).
-
-If there's a syscall to just say "what FS is this file on please?"
-we should just do that and explicitly denylist the systems that are
-known to have issues. I will just do 9pfs for now. Maybe we can log
-warning if the error shows up on systems that aren't listed, then if
-someone does run into it on NFS they should get a strong clue about
-what the problem is.
-
-Thanks!
+-- 
+Regards,
+Sudeep
 
