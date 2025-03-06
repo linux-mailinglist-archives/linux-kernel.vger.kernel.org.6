@@ -1,257 +1,381 @@
-Return-Path: <linux-kernel+bounces-548863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5007A54A42
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:04:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45BC9A54A3E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:04:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD80E188B4EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:04:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F3BB188E23F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776B420B1EB;
-	Thu,  6 Mar 2025 12:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 192A02063C3;
+	Thu,  6 Mar 2025 12:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="SDwDatux"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013032.outbound.protection.outlook.com [40.107.159.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FovarSi7"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DB920B215;
-	Thu,  6 Mar 2025 12:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741262638; cv=fail; b=SLvZEJuzjF10vUNO1HlS2Ho+4WPOJv830OOoHN+E/j7WbWwKg8q8PwhiykHPWlXTFgA9F3vMBkVAyJzRNXTUwPevc9Q9qL6gABkswEi+FuT2KWCtEQEbz06X/A9wiIFzIR2AImFNg73wYSop3e0Wbc7bnY1m1Im7IAglKVaRLrk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741262638; c=relaxed/simple;
-	bh=pxyCbhoKUJLElR3zkWROhVl9dF3g1Fn1EziFe6wsKUY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Y8UC/+WQYtyrWFS6I3yFO6G4U8KuMXNFZkBW2YU0JmpE/DQR4mihuHla6Zd/ws86oXzaCj7v/AaXZHGFKX/gJD9vPH10ZEd/jjHjxchM6wfj/DwG14jyphAV1zGLlJ9kI8uyWbKWgCUcvYkXFo2ilNqdQ9paF7Ju3ZqFUNabfG8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=SDwDatux; arc=fail smtp.client-ip=40.107.159.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vIFPWvfjrCtGiqorSNjMZgj0IPgEcwTAkkVb+nUpHEBl8xQ/Lip1+ddEYRw6HbUTX6v02Z0ylah9HN18L9OFjU5dM9CcRsZ+dk2Am3za6FVSvJEc0ewfpJJgS9vp+s62oJ8CFtArM09aByOe/aJUXbhiFX08t6eVojzJ2K6esmvzwXrzc7S202c3CB5PR0bxn6+r+79TXiPsMeLilMPNuNKiKOMy/lQRspxmWF+l9D8W8DU677DfKKidnStwgskt5dY53e2hP/Sfsm2GYPe/NX6DeeTUuGXdUKqzmD0DkY7LJ6CRwBVnKs5zZjqLrhuSN9Go8TuemfSnKyLKl4ON0w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1SGqeOzkUwLlievBI2VyRMiYnCXyeXUr4Ny0oACDe5c=;
- b=XLuWNXttU2gKU/AFdmnhBdnftiRNh7cZyr3jUD50dJ8A/PmWM7N8wnLkyUgCzYxim+TargwKh1WBKjITU75ycRa6cDlVVC7/GfZ6h2bJMWVIHIDFIMxDmlsjM3+eBs+Hehi3Y2EAukbiS0QJXL7r4/ivAgrS47WLt+Td49vnGsM9OfTsoTRVe8UL5SpAcKDovLAEvBS/iAJb7YTvVbYBbnD7OVI7R5WyxwFOU1FV2jfIvfs6dFBVgPatO8gf5iPQ2gU9X3p6dYdT1apWYxFm0SyxDKZeccRtmPTiZRsZWZamyncGODMEZlF2p0rK17Z+0+YjsONnFv5WadRkzWi2LA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1SGqeOzkUwLlievBI2VyRMiYnCXyeXUr4Ny0oACDe5c=;
- b=SDwDatuxG4+hlV7QL8ht+Omzy0ksSdOEQhV6EtoTuHReTGZaeW0UyWvgfphwOEFmIAJL+MIhrc3+vht57GdoBHtYS5GoDkxhNfF8NFpebi1vWOYAixMxAXbRf/zmJt+f344F4gRd/bOuON7aV8sidbLdIT4AIB/QV5kgBbKyaBMiUPsU16ZwD6qvQWUvwq9buWKK3nxPi7cB8vDnmlgc+Gors/WZsg9x8TYFtp3Ih/CV+FQ3Sh9wikLS9D5L03KD94v+Y98AFtEwDbexxwzyw2NLzsTk0JXpb/QYBUA0f+slIY75aHZ7Q+MZqO1Xm5z/I88/q6HvVA+asqviJAh2vA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AS8PR04MB8216.eurprd04.prod.outlook.com (2603:10a6:20b:3f2::22)
- by DU6PR04MB11136.eurprd04.prod.outlook.com (2603:10a6:10:5c0::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Thu, 6 Mar
- 2025 12:03:50 +0000
-Received: from AS8PR04MB8216.eurprd04.prod.outlook.com
- ([fe80::f1:514e:3f1e:4e4a]) by AS8PR04MB8216.eurprd04.prod.outlook.com
- ([fe80::f1:514e:3f1e:4e4a%5]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 12:03:50 +0000
-Message-ID: <f37c7159-528d-4c58-b531-8d66757d2c16@oss.nxp.com>
-Date: Thu, 6 Mar 2025 14:03:26 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 1/2] net: phy: nxp-c45-tja11xx: add TJA112X PHY
- configuration errata
-To: Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, s32@nxp.com,
- Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
- Enric Balletbo <eballetb@redhat.com>, stable@vger.kernel.org
-References: <20250304160619.181046-1-andrei.botila@oss.nxp.com>
- <20250304160619.181046-2-andrei.botila@oss.nxp.com>
- <7c14179c-0262-47e5-a13e-a53c2061da9b@redhat.com>
-Content-Language: en-US
-From: Andrei Botila <andrei.botila@oss.nxp.com>
-In-Reply-To: <7c14179c-0262-47e5-a13e-a53c2061da9b@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM8P251CA0024.EURP251.PROD.OUTLOOK.COM
- (2603:10a6:20b:21b::29) To AS8PR04MB8216.eurprd04.prod.outlook.com
- (2603:10a6:20b:3f2::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4754D1FC7FF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 12:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741262631; cv=none; b=Wza7tGs0Ld9yA2wjSIohJ4k4gNKHXdywkEo+m9asLA/o2TlYBhZ4LDJIrfbBmbB9yq/ptb8iRhDnTlBSA4K2VbGyumZ2I64OFwlcSpVK9IwPYZ2Orh5kqQUCZl+X2Dqmr0iuZ5Z377KSSKqlDs5uM55IoDAtF//BOjxktFefdTs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741262631; c=relaxed/simple;
+	bh=jWFV4ugbql1khahqJopcd/i0Pa4mczy1QE6qHiXtVb0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b9mVWoWcO45hjCpicbre6GE6SBz/Ue7CebQs4sp7wbooe+dqvIpj2t56QFxsKXwLmR4kp1Vfw8GDuCXnMmS7m+XxiDfNvzhbwwlayUw8vFjP/UDMTb1YhcC17TF3VRtO14W8dXWnB8SuSgw3/qEE8kegeyNNw9P7MvvfcokWTys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FovarSi7; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-ab771575040so337829866b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 04:03:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741262627; x=1741867427; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q8jaf1DymlDATybUorICW5SzH4hHp8n7eITjEXTUSps=;
+        b=FovarSi7muwWxSE0b6yFXZfFD1EzWJnJCgt6wL9aZj73MljPC8lklyS5lPWBx4gtvd
+         0JZVayxkfqHpUtcSvSlEGKf2IYRNhz66LuLEPuLMPOKjP7gejNoQT7YVJZ5NnyVb/o7F
+         TImKiUGMUY0keyk0m+tYNr3t7UiwCDIc7Bf456QWhuIxvrUVky5L9q7pMimiuWH/DWFy
+         U80r3xYv35aPcD18k7ojJCdQn9jHiHMWWB5SN+1QzubnvhSOXkjtLR+vgPJHahjYXHiD
+         iKibXhzwY3EBXRbAqpKQuY9EwTdHrQw5TnkdXDKHyNFijMT/awCiKag0i9YNQ8altszJ
+         Mzdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741262627; x=1741867427;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=q8jaf1DymlDATybUorICW5SzH4hHp8n7eITjEXTUSps=;
+        b=rYoNPUM2pk48t2SyB5XLivwLFvJXY4gGedK4yG2N0KN0uleQJzF93QlGVpc2sJirRT
+         qcqT286Np58GZpgHaJi/H899YXAWtFcIQTIaK6iAgQTHyep34A39xLzEYT+8kT+m7sbi
+         ytiHPBdXWEsCVksfxP4oj94bZTMpXPPmB9vpdDanD3MsqDXovsQdeRlFNLrSkjOcMMNn
+         NMKijnfkvTE/Zi4IDgpbwlzdjfD/0BuQ+yj2dEfft2u7+P0w8HHYhxLaevi4RZS3NrdZ
+         fPBFXV0bpMaeo8LO68JBohdFjnKDna+VyIGonLwAqV7ZxM8dtkhEpF9amwdiScvxYq1v
+         r31Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWqQmPfCguOqYxZBCAGXBG/ezIYTH+PlkKYfexcNharkK6WAj4cs91ypXbydwZu2FWjgnjGp0zmSu2w94E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGkcTn24tZTkMQWA3vEtIH8Ed++Z3AFp4CQmT1S6jKLEo4ASaX
+	eAGePQcXvVDuBdt3wZykpSvem/8Vrap6694oGyg7/9aDA9kIY1u70Ise32YZVEvQg2QqUnc3hNf
+	wGa1EE17YZNUvGGFGpVKCbdOf2Q8=
+X-Gm-Gg: ASbGncvk2XyXLVWSvskxQDZpxH+23AmAT50UZYakF1A/yrHGyY42uqZi/l/562RNm1s
+	XzJ2ubVqSBiscyGTB3WjBG4IrM4qwgykor+PMbh0lG0MqwCypgwKnyv0SyDwSqS+q+wSlkhH6Bq
+	3aTuUKjlvHa8tryEpDr1fTOeVSSQI=
+X-Google-Smtp-Source: AGHT+IFcWkO1tOCSIQdjCALK5MOzbXU6T8HPu+q+v8f13GktJf/jKewg7YW/p7ePabblkK3GTMCCBPoDW4ASlm20im4=
+X-Received: by 2002:a17:907:2d12:b0:abf:4a62:6e5b with SMTP id
+ a640c23a62f3a-ac22ca6c17emr278138566b.5.1741262627188; Thu, 06 Mar 2025
+ 04:03:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8216:EE_|DU6PR04MB11136:EE_
-X-MS-Office365-Filtering-Correlation-Id: abd513ff-525a-4e7f-af61-08dd5ca6f4b4
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VmprclRoZVpBVkVkWlRVTTF0bmNQVVlEbldwTDI1aTVJNnFYZXhEN0hUaElC?=
- =?utf-8?B?NGs5UnN4UDUzZlBpa1ZjNW9MVG94dCtrUHBnR0JZOS8rWHhGSkJVSEJzeWc2?=
- =?utf-8?B?bHAwelRLTHdVTERKQ3RDRmR6cGxpYVFzM2NicU53NVdKQ0QwVzIyUnN4UVhn?=
- =?utf-8?B?dmUzNHk2VmlSaGJ6YkpKUGNBellDUHU5dk92Nk9pNmZka0s3OWRzZHlPdU5z?=
- =?utf-8?B?YzRYVVhrdzQxUXNROTFNWGs3aGMxM2IwVnJOV3p2akJnYmhPTjVkWFlFb1A1?=
- =?utf-8?B?ZWVicWRLYzI5MjFYN0ovdUdScHBGKzVhcnVnMlVndDNVck9kcjllYmw5dUFw?=
- =?utf-8?B?aFZBOXZ3TVhGM1QrS2NlaEs4SFZvRW1OY1hNUmluaUFteTRpczhNUmJBUlFh?=
- =?utf-8?B?cnBPWVZSbnEwVTB4MTRGdG13YnU4WUJMbUZXVlFQUVJ5cDBKMkhUd3ZJZEZD?=
- =?utf-8?B?ZFAzeGNjbUYrWWt6NXdIYzRxb25ZSlJKMWNaS0wxaVhIcVVLcXdGbTZBR2RK?=
- =?utf-8?B?UkF6cSsxWkplVDlaczg2TG11L1pML0RsR3plbkNOYU5iSm9mTjFnUkJXdXB3?=
- =?utf-8?B?Zk9INGlMcW1GOFFsN1lrbEMyTDc0SEg5K2ZTTFB2WWVPZjloanRqYW8zYlVq?=
- =?utf-8?B?aHBXM29KeE9tcUxlRlBiZmd6L2RCYkVDYmNGUGJ0eDBHL1BRanJ1b1p0MmxX?=
- =?utf-8?B?dXBaTk84TWJLNFp1YXBkYzFvalZEaUVSQ0YveTJLSS9VM25xZGtHeHlrUTZo?=
- =?utf-8?B?NmFhU1ZUaUZpRW9sdnFkQ2tNV2ovRmgzN2ViZjBzcjB6cFNwU2VDSGlDbnAz?=
- =?utf-8?B?R1VVWjBFNW9TU1NXYlVzUFZHTHBLUk9BcEZ0ekg3WmwzTHUrUlA5THZrbEw4?=
- =?utf-8?B?eVRxUGc5YTY5aktZZ1crRGhGVHl3UVZTMXVvNjZJa3dseXo5aE9MS1g2Nzhq?=
- =?utf-8?B?ZHBHNWZMMXRsNTl4Rml5UUVZaGFiQ2JhT1Z0VjNRWEswbFFaMVhnYTZCZ2dX?=
- =?utf-8?B?eFFrQjd5YUF6TElRK1N5cW9OVjNuaHkxbE5UTGlGSXZMemcwcTk5dmVrcVBs?=
- =?utf-8?B?QXdrbEp5N2FMRUxsWjJoVnJ1OVdPY1dsQ004OGpqMkh6b2ZiWjJ4SFFpb0t2?=
- =?utf-8?B?QVlUNnF1OVdSWEJSOU95VldlbExUdkNETkxaZWJ6UEdzSTlrdjhMbTArVk9R?=
- =?utf-8?B?TCtEL3RndG9iSFpKeTV3TWZYZytXM1N2dlkzTml4dHNXZWtyek1KY0k0ZkhK?=
- =?utf-8?B?ZDhsYkxEMTJ2a3ZMMys0Ni9pUWZiMEdZTWRLVm1kSURrK1dJcWRTYW12ODI3?=
- =?utf-8?B?TEdweUswQVVXbUcxeVgvLzhFMS9hb3gxK3dsWFRMaDA1dXh6ZjdTd2Q4ZzEx?=
- =?utf-8?B?Nk5hbGVlTXVnMDNUVEw5ZGtTSDAyMFdJOWRJZ0lrbk4ycTc5RDNwWFU1d3JQ?=
- =?utf-8?B?S0ZKWndIZ1lKRWdLdUhrYjRDN3Z4bU1hZ1hHT3U5ZGZJT1ZZOGp0SFM5QVhG?=
- =?utf-8?B?cXgyTW5GcXNwcmNsSVErU3lrV1k5NTlkYWt6U3V4aEY2WGNGdloybklGTFdp?=
- =?utf-8?B?UGhmY0NyVkMyWldtVEE2d3JONHl1UXFnWHFNTXNNeXNYalcvK0srWGZGRmFN?=
- =?utf-8?B?NERPQjQ1QkQ1M2VUemZvVEVQLy96NkZjZ3RCZVJma1pkVXU5SGdCRHNGVlIv?=
- =?utf-8?B?QU5kU1ZWUWZ2OUdtRHFXM1cyUzNYR0VyYW82Q2hhWWwvZWtFWnNyVFlFeVZz?=
- =?utf-8?B?N0l0UHBQZWJpbWFnY2tEcWhOdlVYM3NBRE5ITHhMOUdRazF5UnJyZWRuSUlW?=
- =?utf-8?B?SXB6VnhRT1FiUEROdlU3MXBNRUxib0F5S3lVOTNSVys2L0RCNys4b29RcS9R?=
- =?utf-8?Q?uUAJhzvl1JLli?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8216.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?Slc3MFFISjZyL3JTU3dQaXhCWjdWSW56TjZYc1RvZ0xJN29LNVpLdFptdU5K?=
- =?utf-8?B?Ti9vWDNDWHZoc0VUMHRyUDZZSVBzVE1TamNsTE5uYW5sb1RGQU81T0JyMXc0?=
- =?utf-8?B?dlA0dEhaaUl3NzVtbW5zUGY4Ym9rT0pqMi9ETGNneFg4T0lWVDQrRXk5R1FB?=
- =?utf-8?B?cjZxK2hSVnZBc2VjYjUySTdUcFNXMDVEK0dmQk4vdHQ5and5N1dmcTRGZUNl?=
- =?utf-8?B?ZVAzNXo1djBFR3BWQzNvVktBRDQyQnBMMFBaaGJHTFdTQlByeFpkTllNM1JO?=
- =?utf-8?B?K3hyN1ROY1pFeDZVUDFRdnhrOXMzV1VSbkJ3V2s4S0x5MnVqdkR4a2xuQTUx?=
- =?utf-8?B?TE5ZelRLY3Y1TnM3Y2cxNlhJQS9lTkx1eXZaNElvSTB0ZjhlKzRTdVdzSGRx?=
- =?utf-8?B?UlNkYVVCSWZBNEk3ekVEY3dTSk12eHR1UWE5bjg3K1JycTEra2t4bXNlWTRh?=
- =?utf-8?B?L0lVclZEdFQzQmpVWEo1YjRRQVZSaHpsMFRXc1FOVU4vZVVWTnNpbDdyWjRL?=
- =?utf-8?B?ak5kcnFNQ2dnUVp4cU5NbExtUFIzSWREOGNpR2JLWHdVbGFJMmRVdStjU0sw?=
- =?utf-8?B?d3lMRXNLQkdRWXJkTmxkcFRvRzMyVWloemxtdVlRZ1hZVmNCVVRoU25oYzBH?=
- =?utf-8?B?YW5qb0lnajJjd1lrelhhblRLU0VnOWV6ZU9yV2hiRGlhcFRkL0ZYcWJVaXNU?=
- =?utf-8?B?RW9wQVpOWWlrSzFWc2pMRFM2UTg5bHBsbUlhMGxNR1JCTVpORFJLNEpkWW83?=
- =?utf-8?B?d1IyN3R5SjBBWTVHRHVmcjRwd2pQYUlNQ0JoaldMVUVsbHJRN1FqamZqOTZL?=
- =?utf-8?B?MjlYN2paYkNCZ3NXNXN1NTNsT2hwMXNhRzJRTlJNc1Y4bXhmUHdlSWQ1bjlG?=
- =?utf-8?B?ZElBb3haLzU5a2Q0QjNxbXIxNlkrQ1F0RkxNMUdaWXRnT1FRWHlsOWhnRlRN?=
- =?utf-8?B?OVh5cEI1bkdZVWg4Zm9aVmRoZndod1NKVjZrUlpiZElrbXVDMFJ0V25TQ2RK?=
- =?utf-8?B?YlRsZGhNY0xjdHZ5ZjdxVWxKaGVPWlBuSDVXR0cyRVZreXpDMmVBZ1dqd1BE?=
- =?utf-8?B?ZlB0QzVnd1RCTDZJdU1tcEdickJ4elJzTmdBclh4S2FoMThYQmZabFo3UjFH?=
- =?utf-8?B?bFR4MTgvcDI1Z0QzWWVWNjAzS05WRXZ5RHQ2UlhsSEJZWm42end6ek9LdzV3?=
- =?utf-8?B?azdGc2FkOHVxU2dGWm0rRlMzaGYwWktjYXNjTkpHYSt6NStrWGE2QUtFL1M1?=
- =?utf-8?B?aFdTWkpyYzFlbnNoM3NNSlVyeDMra3NUT2E2YmszNGpCMWFWZDFNRytYaEtS?=
- =?utf-8?B?b20xd2FTY2dvWGFkZ3VtczRhaHhQVmU5RC9CbFBwbHB4S1k1ZDNvY0xqRDBQ?=
- =?utf-8?B?cjFYRHVDYzV3Q3gwa0g1Tis1NWRYTTZiZGk2WkpqYStyVCtWb0N0cUN3M1l0?=
- =?utf-8?B?eXhLZUhnZWJVcGM5R29BeUJ5SThPeTFXYTk0ajlxWkZpZ1RIZDlTZ1JGNU85?=
- =?utf-8?B?V2JGVm8yamQxMjRxMkNQM1A0Mis2RVgwMUU4L2hwZzNlTDZHRFF5TDVZTVV5?=
- =?utf-8?B?TVNFYm15cHlRNzhid0d4R1pwYURGSEZDcjBNZy9WWnQ2NUFRblZqWHlla3dz?=
- =?utf-8?B?ZGVwNEpvN2o5ZENhY09YalVNUW1xKzJpWTluMTNWRFBzanFWWXBBOExWZGJ0?=
- =?utf-8?B?ZC96MUtxYzNyandnWm5oSmw1WWx3L1pnRjRmbVVwMElKbG5PU3dyTEkzSllG?=
- =?utf-8?B?ZE9xbW9TYVdGbWgxVUZ1NXd5SCtGRXR0Ny9lN2p5dit5NElLMi9kUmFRQkhk?=
- =?utf-8?B?d3ByVHF0QmtMcnBtVEZITU1kdWd1cE1tV3lCdndwTjdETTM5VGNrN1RTdmw0?=
- =?utf-8?B?MmRBVkxuZldaQkFuZHdHZmtVN0lJMWtMcjlNRlNsVDlmM2ZzZWNRT1dVdVcw?=
- =?utf-8?B?Zm5aaFNjZFAzcEIrUzNTdXhDTm1IbW1ISTl4U3dsV2RxbE5NT3FRRXJOTThN?=
- =?utf-8?B?UVhnNlNLRDlwZDFIMW11SWRUUHNKOTA2ZWZWS1c4RDJQSlJiVURlbHdaLzFO?=
- =?utf-8?B?Q2pUQkVIMU5WelFoTnB6eXBMditRR1FGRFYzQTBHa3BPZVlsWkpHNDI2SFlR?=
- =?utf-8?B?SmVjQnBNSzR0VlF5Wm5RbDNKUy9uWUdJMnNyV2JOYStENEc5K1g2eFEwSjdR?=
- =?utf-8?B?OWc9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: abd513ff-525a-4e7f-af61-08dd5ca6f4b4
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8216.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 12:03:50.5516
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aCcXmr/e3F4P55b98Isk6FN/FlAW69q1wYlglKIz7EwQrsOGKrmqIqWUSLTXkUQ43pFLhitd5FywDXajOQAJ9Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU6PR04MB11136
+References: <84441660bef0a5e67fd09dc3787178d0276dad31.1740664400.git.hongyan.xia2@arm.com>
+In-Reply-To: <84441660bef0a5e67fd09dc3787178d0276dad31.1740664400.git.hongyan.xia2@arm.com>
+From: Xuewen Yan <xuewen.yan94@gmail.com>
+Date: Thu, 6 Mar 2025 20:03:34 +0800
+X-Gm-Features: AQ5f1JpH_yIH3DJregzXfMOKSWac8fpX8Wqg9oddhEjnc23k1qrzYsnXeZmWq8k
+Message-ID: <CAB8ipk_xXY7Dia32NzCpva_Bi1L7ijTHjZHA_riCUwj7e4PtpA@mail.gmail.com>
+Subject: Re: [PATCH] sched/uclamp: Let each sched_class handle uclamp
+To: Hongyan Xia <hongyan.xia2@arm.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>, 
+	Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>, linux-kernel@vger.kernel.org, 
+	Xuewen Yan <xuewen.yan@unisoc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/6/2025 11:43 AM, Paolo Abeni wrote:
-> On 3/4/25 5:06 PM, Andrei Botila wrote:
->> diff --git a/drivers/net/phy/nxp-c45-tja11xx.c b/drivers/net/phy/nxp-c45-tja11xx.c
->> index 34231b5b9175..709d6c9f7cba 100644
->> --- a/drivers/net/phy/nxp-c45-tja11xx.c
->> +++ b/drivers/net/phy/nxp-c45-tja11xx.c
->> @@ -22,6 +22,11 @@
->>  #define PHY_ID_TJA_1103			0x001BB010
->>  #define PHY_ID_TJA_1120			0x001BB031
->>  
->> +#define VEND1_DEVICE_ID3		0x0004
->> +#define TJA1120_DEV_ID3_SILICON_VERSION	GENMASK(15, 12)
->> +#define TJA1120_DEV_ID3_SAMPLE_TYPE	GENMASK(11, 8)
->> +#define DEVICE_ID3_SAMPLE_TYPE_R	0x9
->> +
->>  #define VEND1_DEVICE_CONTROL		0x0040
->>  #define DEVICE_CONTROL_RESET		BIT(15)
->>  #define DEVICE_CONTROL_CONFIG_GLOBAL_EN	BIT(14)
->> @@ -1593,6 +1598,50 @@ static int nxp_c45_set_phy_mode(struct phy_device *phydev)
->>  	return 0;
->>  }
->>  
->> +/* Errata: ES_TJA1120 and ES_TJA1121 Rev. 1.0 — 28 November 2024 Section 3.1 */
->> +static void nxp_c45_tja1120_errata(struct phy_device *phydev)
->> +{
->> +	int silicon_version, sample_type;
->> +	bool macsec_ability;
->> +	int phy_abilities;
->> +	int ret = 0;
->> +
->> +	ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, VEND1_DEVICE_ID3);
->> +	if (ret < 0)
->> +		return;
->> +
->> +	sample_type = FIELD_GET(TJA1120_DEV_ID3_SAMPLE_TYPE, ret);
->> +	if (sample_type != DEVICE_ID3_SAMPLE_TYPE_R)
->> +		return;
->> +
->> +	silicon_version = FIELD_GET(TJA1120_DEV_ID3_SILICON_VERSION, ret);
->> +
->> +	phy_abilities = phy_read_mmd(phydev, MDIO_MMD_VEND1,
->> +				     VEND1_PORT_ABILITIES);
->> +	macsec_ability = !!(phy_abilities & MACSEC_ABILITY);
->> +	if ((!macsec_ability && silicon_version == 2) ||
->> +	    (macsec_ability && silicon_version == 1)) {
->> +		/* TJA1120/TJA1121 PHY configuration errata workaround.
->> +		 * Apply PHY writes sequence before link up.
->> +		 */
->> +		if (!macsec_ability) {
->> +			phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x01F8, 0x4b95);
->> +			phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x01F9, 0xf3cd);
->> +		} else {
->> +			phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x01F8, 0x89c7);
->> +			phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x01F9, 0x0893);
->> +		}
->> +
->> +		phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x0476, 0x58a0);
->> +
->> +		phy_write_mmd(phydev, MDIO_MMD_PMAPMD, 0x8921, 0xa3a);
->> +		phy_write_mmd(phydev, MDIO_MMD_PMAPMD, 0x89F1, 0x16c1);
->> +
->> +		phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x01F8, 0x0);
->> +		phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x01F9, 0x0);
-> 
-> Please add macro with meaningful names for all the magic numbers used
-> above, thanks!
-> 
-> Paolo
-> 
+Hi Hongyan,
 
-Hello, these registers are not documented in the datasheet or errata sheet.
-The access sequence comes 1-to-1 from the errata so I couldn't use macros.
+On Thu, Feb 27, 2025 at 9:55=E2=80=AFPM Hongyan Xia <hongyan.xia2@arm.com> =
+wrote:
+>
+> While delayed dequeue issues were being resolved, uclamp was made out of
+> sync with cpufreq, especially in enqueue_task().
+>
+> For example, when a task with uclamp_min goes through enqueue_task() and
+> updates cpufreq, its uclamp_min won't even be considered in the cpufreq
+> update. It is only after enqueue will the uclamp_min be added to rq
+> buckets, and cpufreq will only pick it up at the next update. This is
+> very different from the old behavior, where a uclamp value immediately
+> has an effect at enqueue. Worse, sub classes like fair.c issue cpufreq
+> updates on utilization changes. If no utilization changes for a while,
+> the new uclamp will be delayed further.
+>
+> So, let each sched_class handle uclamp in its own class, in case delayed
+> dequeue needs further tweaks or there are potential future similar
+> changes, and make sure uclamp is picked up immediately on enqueue. In
+> fair.c, we re-use the guard logic for util_est.
+>
+> Signed-off-by: Hongyan Xia <hongyan.xia2@arm.com>
+> ---
+>  kernel/sched/core.c  | 28 ++--------------------------
+>  kernel/sched/ext.c   |  8 ++++----
+>  kernel/sched/fair.c  | 12 ++++++------
+>  kernel/sched/rt.c    |  8 ++++----
+>  kernel/sched/sched.h |  9 +++++----
+>  5 files changed, 21 insertions(+), 44 deletions(-)
+>
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index b00f884701a6..2d51608a4c46 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -1745,7 +1745,7 @@ static inline void uclamp_rq_dec_id(struct rq *rq, =
+struct task_struct *p,
+>         }
+>  }
+>
+> -static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+> +void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
+>  {
+>         enum uclamp_id clamp_id;
+>
+> @@ -1758,12 +1758,6 @@ static inline void uclamp_rq_inc(struct rq *rq, st=
+ruct task_struct *p)
+>         if (!static_branch_unlikely(&sched_uclamp_used))
+>                 return;
+>
+> -       if (unlikely(!p->sched_class->uclamp_enabled))
+> -               return;
+> -
+> -       if (p->se.sched_delayed)
+> -               return;
+> -
+>         for_each_clamp_id(clamp_id)
+>                 uclamp_rq_inc_id(rq, p, clamp_id);
+>
+> @@ -1772,7 +1766,7 @@ static inline void uclamp_rq_inc(struct rq *rq, str=
+uct task_struct *p)
+>                 rq->uclamp_flags &=3D ~UCLAMP_FLAG_IDLE;
+>  }
+>
+> -static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
+> +void uclamp_rq_dec(struct rq *rq, struct task_struct *p)
+>  {
+>         enum uclamp_id clamp_id;
+>
+> @@ -1785,12 +1779,6 @@ static inline void uclamp_rq_dec(struct rq *rq, st=
+ruct task_struct *p)
+>         if (!static_branch_unlikely(&sched_uclamp_used))
+>                 return;
+>
+> -       if (unlikely(!p->sched_class->uclamp_enabled))
+> -               return;
+> -
+> -       if (p->se.sched_delayed)
+> -               return;
+> -
+>         for_each_clamp_id(clamp_id)
+>                 uclamp_rq_dec_id(rq, p, clamp_id);
+>  }
+> @@ -2029,8 +2017,6 @@ static void __init init_uclamp(void)
+>  }
+>
+>  #else /* !CONFIG_UCLAMP_TASK */
+> -static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p) {=
+ }
+> -static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p) {=
+ }
+>  static inline void uclamp_fork(struct task_struct *p) { }
+>  static inline void uclamp_post_fork(struct task_struct *p) { }
+>  static inline void init_uclamp(void) { }
+> @@ -2066,11 +2052,6 @@ void enqueue_task(struct rq *rq, struct task_struc=
+t *p, int flags)
+>                 update_rq_clock(rq);
+>
+>         p->sched_class->enqueue_task(rq, p, flags);
+> -       /*
+> -        * Must be after ->enqueue_task() because ENQUEUE_DELAYED can cle=
+ar
+> -        * ->sched_delayed.
+> -        */
+> -       uclamp_rq_inc(rq, p);
+>
+>         psi_enqueue(p, flags);
+>
+> @@ -2097,11 +2078,6 @@ inline bool dequeue_task(struct rq *rq, struct tas=
+k_struct *p, int flags)
+>
+>         psi_dequeue(p, flags);
+>
+> -       /*
+> -        * Must be before ->dequeue_task() because ->dequeue_task() can '=
+fail'
+> -        * and mark the task ->sched_delayed.
+> -        */
+> -       uclamp_rq_dec(rq, p);
+>         return p->sched_class->dequeue_task(rq, p, flags);
+>  }
+>
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index 8857c0709bdd..4521c27f9ab8 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -2094,6 +2094,8 @@ static void enqueue_task_scx(struct rq *rq, struct =
+task_struct *p, int enq_flags
+>  {
+>         int sticky_cpu =3D p->scx.sticky_cpu;
+>
+> +       uclamp_rq_inc(rq, p);
+> +
+>         if (enq_flags & ENQUEUE_WAKEUP)
+>                 rq->scx.flags |=3D SCX_RQ_IN_WAKEUP;
+>
+> @@ -2181,6 +2183,8 @@ static void ops_dequeue(struct task_struct *p, u64 =
+deq_flags)
+>
+>  static bool dequeue_task_scx(struct rq *rq, struct task_struct *p, int d=
+eq_flags)
+>  {
+> +       uclamp_rq_dec(rq, p);
+> +
+>         if (!(p->scx.flags & SCX_TASK_QUEUED)) {
+>                 WARN_ON_ONCE(task_runnable(p));
+>                 return true;
+> @@ -4456,10 +4460,6 @@ DEFINE_SCHED_CLASS(ext) =3D {
+>         .prio_changed           =3D prio_changed_scx,
+>
+>         .update_curr            =3D update_curr_scx,
+> -
+> -#ifdef CONFIG_UCLAMP_TASK
+> -       .uclamp_enabled         =3D 1,
+> -#endif
+>  };
+>
+>  static void init_dsq(struct scx_dispatch_q *dsq, u64 dsq_id)
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 857808da23d8..7e5a653811ad 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -6941,8 +6941,10 @@ enqueue_task_fair(struct rq *rq, struct task_struc=
+t *p, int flags)
+>          * Let's add the task's estimated utilization to the cfs_rq's
+>          * estimated utilization, before we update schedutil.
+>          */
+> -       if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags &=
+ ENQUEUE_RESTORE))))
+> +       if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags &=
+ ENQUEUE_RESTORE)))) {
+> +               uclamp_rq_inc(rq, p);
+>                 util_est_enqueue(&rq->cfs, p);
+> +       }
+>
+>         if (flags & ENQUEUE_DELAYED) {
+>                 requeue_delayed_entity(se);
+> @@ -7183,8 +7185,10 @@ static int dequeue_entities(struct rq *rq, struct =
+sched_entity *se, int flags)
+>   */
+>  static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int =
+flags)
+>  {
+> -       if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags &=
+ DEQUEUE_SAVE))))
+> +       if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags &=
+ DEQUEUE_SAVE)))) {
+> +               uclamp_rq_dec(rq, p);
+>                 util_est_dequeue(&rq->cfs, p);
+> +       }
+>
+>         util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
+>         if (dequeue_entities(rq, &p->se, flags) < 0)
+> @@ -13660,10 +13664,6 @@ DEFINE_SCHED_CLASS(fair) =3D {
+>  #ifdef CONFIG_SCHED_CORE
+>         .task_is_throttled      =3D task_is_throttled_fair,
+>  #endif
+> -
+> -#ifdef CONFIG_UCLAMP_TASK
+> -       .uclamp_enabled         =3D 1,
+> -#endif
+>  };
+>
+>  #ifdef CONFIG_SCHED_DEBUG
+> diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+> index 4b8e33c615b1..7c0642ea85f2 100644
+> --- a/kernel/sched/rt.c
+> +++ b/kernel/sched/rt.c
+> @@ -1471,6 +1471,8 @@ enqueue_task_rt(struct rq *rq, struct task_struct *=
+p, int flags)
+>  {
+>         struct sched_rt_entity *rt_se =3D &p->rt;
+>
+> +       uclamp_rq_inc(rq, p);
+> +
+>         if (flags & ENQUEUE_WAKEUP)
+>                 rt_se->timeout =3D 0;
+>
+> @@ -1487,6 +1489,8 @@ static bool dequeue_task_rt(struct rq *rq, struct t=
+ask_struct *p, int flags)
+>  {
+>         struct sched_rt_entity *rt_se =3D &p->rt;
+>
+> +       uclamp_rq_dec(rq, p);
+> +
+>         update_curr_rt(rq);
+>         dequeue_rt_entity(rt_se, flags);
+>
+> @@ -2649,10 +2653,6 @@ DEFINE_SCHED_CLASS(rt) =3D {
+>  #ifdef CONFIG_SCHED_CORE
+>         .task_is_throttled      =3D task_is_throttled_rt,
+>  #endif
+> -
+> -#ifdef CONFIG_UCLAMP_TASK
+> -       .uclamp_enabled         =3D 1,
+> -#endif
+>  };
+>
+>  #ifdef CONFIG_RT_GROUP_SCHED
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index ab16d3d0e51c..990d87e8d8ed 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -2410,10 +2410,6 @@ extern s64 update_curr_common(struct rq *rq);
+>
+>  struct sched_class {
+>
+> -#ifdef CONFIG_UCLAMP_TASK
+> -       int uclamp_enabled;
+> -#endif
 
-Regards, Andrei B.
+Why delete the uclamp_enable?
 
+> -
+>         void (*enqueue_task) (struct rq *rq, struct task_struct *p, int f=
+lags);
+>         bool (*dequeue_task) (struct rq *rq, struct task_struct *p, int f=
+lags);
+>         void (*yield_task)   (struct rq *rq);
+> @@ -3393,6 +3389,8 @@ static inline bool update_other_load_avgs(struct rq=
+ *rq) { return false; }
+>  #ifdef CONFIG_UCLAMP_TASK
+>
+>  unsigned long uclamp_eff_value(struct task_struct *p, enum uclamp_id cla=
+mp_id);
+> +void uclamp_rq_inc(struct rq *rq, struct task_struct *p);
+> +void uclamp_rq_dec(struct rq *rq, struct task_struct *p);
+>
+>  static inline unsigned long uclamp_rq_get(struct rq *rq,
+>                                           enum uclamp_id clamp_id)
+> @@ -3470,6 +3468,9 @@ uclamp_se_set(struct uclamp_se *uc_se, unsigned int=
+ value, bool user_defined)
+>
+>  #else /* !CONFIG_UCLAMP_TASK: */
+>
+> +static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p) {=
+ };
+> +static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p) {=
+ };
+> +
+>  static inline unsigned long
+>  uclamp_eff_value(struct task_struct *p, enum uclamp_id clamp_id)
+>  {
+> --
+> 2.34.1
+>
+>
 
