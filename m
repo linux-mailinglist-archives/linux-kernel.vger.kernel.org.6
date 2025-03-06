@@ -1,133 +1,140 @@
-Return-Path: <linux-kernel+bounces-549401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CDEEA55213
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:00:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F7D6A55211
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:00:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B062188D654
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:00:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D9481659FC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F4012275617;
-	Thu,  6 Mar 2025 16:56:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E8D2144BC;
+	Thu,  6 Mar 2025 16:57:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="d6dnVDEZ"
-Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/zKuPZt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41F8274264;
-	Thu,  6 Mar 2025 16:56:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF42C2566F3;
+	Thu,  6 Mar 2025 16:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741280209; cv=none; b=R+zsl3kUpoO+67fA5Mp4Tk0V4F9QJQpNXXKUz6bUVLlMq0fHwNuVaU3PPQecPCm9jHISuXE5veaIYbrfvBHmy0dt2VXYsldOxEIe691WegcL2XBugt1k4tF/+fo7KPEojwhTTGuMLHhd38KKsA3RxLiK5ELDdAgSD2li/XRqxfA=
+	t=1741280243; cv=none; b=L7qcZcgcDDHkC7IWSQl45pBij42jjOgvj9XZKBdkAjkqMqdXyhxbvneFGoCI4XOX+mMs0gxvqe3Ux9MolVx2LbH6caVgZX6GKm4CnHB/69iX7k7DXwabGkEGwuRR0ZfK3FsXgSAnrIq16+ON66Iv6+mOP3pl4CN/A/ndbYm41/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741280209; c=relaxed/simple;
-	bh=Z2ypabXvCGArSPxy33xEOYc3fcdzWS3UPjpoZPRI7dg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V1bggTM2jOKboYowjnYLneSF/fuxnqv2VhU8C5MdCN6zSafF1Jbmepf+MF+wIFlxV8W+n2ESa+3zxZCeIneIK7b+3Xt8AE2uVKGy9FJuhACMyljXzAnCbXk36Jv+ksq3hFWZLAJJGPl1svmcpof0Ki7hscRPfT8CRpMTvw+wtE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=d6dnVDEZ; arc=none smtp.client-ip=166.84.1.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
-Received: from [192.168.126.122] (ip72-219-82-239.oc.oc.cox.net [72.219.82.239])
-	by mailbackend.panix.com (Postfix) with ESMTPSA id 4Z7wYn1FPGz10Wf;
-	Thu,  6 Mar 2025 11:56:45 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
-	t=1741280206; bh=Z2ypabXvCGArSPxy33xEOYc3fcdzWS3UPjpoZPRI7dg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=d6dnVDEZh1crd2fx+MkvXufuOZmwIx2y7eztdYir7mgWyRSr67jDMdiVo5cbkdtl1
-	 9GkkNLxLFnWNnQMO2WOD+tnr9XcU5X3W1V5MEqq6G7WfS18Y/ztU1cF6pvjCw+bEHG
-	 Vz6PVEcI5yjWx4xZYWhfzrLXvS6tAWtDmXCtIgok=
-Message-ID: <8d270603-4604-4c1c-b3a9-f596e2e8af6d@panix.com>
-Date: Thu, 6 Mar 2025 08:56:44 -0800
+	s=arc-20240116; t=1741280243; c=relaxed/simple;
+	bh=aJZfEajPBD2iDdwcbtY5Avx4D4TADjWaPWTqb27CuZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hzsodWmEQV3vRasXcj+vFYsBpbMdswUeNECFWfhGXjnNRMrdxBeF1Mu3oIfCyJwIN5/6+ajb4jT/B8x0wGMcntlaWtBpz/5uW8lrAjxkhx9hYdTUu2D5aMeL4wEg2wKi1JrSD8SswvOt7SEbwZdiGTmoHcRG5mkh8AXfZdIcD40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/zKuPZt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03E35C4CEE0;
+	Thu,  6 Mar 2025 16:57:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741280242;
+	bh=aJZfEajPBD2iDdwcbtY5Avx4D4TADjWaPWTqb27CuZk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a/zKuPZtB/q7WJWachcbscNMt2RpxJbhxrweb9D3AFQ/J7a9xhz/lAS2i/IK2RuEO
+	 dM+XbQKheP5Epwae9QZ0ElwT6NH3EOYRqBZZlj4alZ1wGwH2jEuAFBU0x9/3ujuII3
+	 SSI6bB8f5xLQ3JfurvV3sk2ftg7vZqY7wWl66KlPIQRPg0Dl06P99XbDBwgA41Nw87
+	 nk2q6mEcSIEXKKD7mqrg66FA7z8tFQM7oNXx5dymWmzxYHw2iasdIUluCpEPuGPoim
+	 bbFLeodMSiPJSJPCUCpg8mule2+aswhuVJubxyqf+kPMNI5q2+rN8cPv6/X179U0pn
+	 fgj067cXZm8nw==
+Date: Thu, 6 Mar 2025 08:57:20 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>,
+	Petr Mladek <pmladek@suse.com>, Jani Nikula <jani.nikula@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-mm <linux-mm@kvack.org>, linux-modules@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] module: Taint the kernel when write-protecting
+ ro_after_init fails
+Message-ID: <Z8nT8PCPThnfb3Cq@bombadil.infradead.org>
+References: <20250306103712.29549-1-petr.pavlu@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
- Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
-To: Lukas Wunner <lukas@wunner.de>,
- Mika Westerberg <mika.westerberg@linux.intel.com>, Me <kenny@panix.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com,
- Bjorn Helgaas <bhelgaas@google.com>, Jian-Hong Pan <jhp@endlessos.org>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- Nikl??vs Ko??es??ikovs <pinkflames.linux@gmail.com>,
- Andreas Noever <andreas.noever@gmail.com>,
- Michael Jamet <michael.jamet@intel.com>,
- Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
-References: <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
- <20250213135911.GG3713119@black.fi.intel.com>
- <a8d6ca75-8f50-4c46-8c67-fcf20d870dcc@panix.com>
- <20250214162948.GJ3713119@black.fi.intel.com>
- <661459dd-67d0-4e1c-bb28-9adf1417f660@panix.com>
- <20250226084404.GM3713119@black.fi.intel.com> <Z77ak-4YsdAKXbHr@wunner.de>
- <20250226091958.GN3713119@black.fi.intel.com> <Z8YKXC1IXYXctQrZ@wunner.de>
- <20250304082314.GE3713119@black.fi.intel.com> <Z8nRI6xjGl3frMe5@wunner.de>
-Content-Language: en-US
-From: Kenneth Crudup <kenny@panix.com>
-In-Reply-To: <Z8nRI6xjGl3frMe5@wunner.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306103712.29549-1-petr.pavlu@suse.com>
 
++ linux-mm since we're adding TAINT_BAD_PAGE
 
-
-Is this a separate commit on top of master, or along with your previous fix?
-
--Kenny
-
-On 3/6/25 08:45, Lukas Wunner wrote:
-> On Tue, Mar 04, 2025 at 10:23:14AM +0200, Mika Westerberg wrote:
->> Unfortunately I still see the same hang. I double checked, with revert the
->> problem goes a way and with this patch I still see it.
->>
->> Steps:
->>
->> 1. Boot the system, nothing connected.
->> 2. Connect TBT 4 dock to the host.
->> 3. Connect TBT 3 NVMe to the TBT4 doc.
->> 4. Authorize both PCIe tunnels, verify devices are there.
->> 5. Enter s2idle.
->> 6. Unplug the TBT 4 dock from the host.
->> 7. Exit s2idle.
+On Thu, Mar 06, 2025 at 11:36:55AM +0100, Petr Pavlu wrote:
+> In the unlikely case that setting ro_after_init data to read-only fails, it
+> is too late to cancel loading of the module. The loader then issues only
+> a warning about the situation. Given that this reduces the kernel's
+> protection, it was suggested to make the failure more visible by tainting
+> the kernel.
 > 
-> Thanks for testing.  Would you mind giving the below a spin?
+> Allow TAINT_BAD_PAGE to be set per-module and use it in this case. The flag
+> is set in similar situations and has the following description in
+> Documentation/admin-guide/tainted-kernels.rst: "bad page referenced or some
+> unexpected page flags".
 > 
-> I've realized this can likely be solved in a much easier way:
+> Adjust the warning that reports the failure to avoid references to internal
+> functions and to add information about the kernel being tainted, both to
+> match the style of other messages in the file. Additionally, merge the
+> message on a single line because checkpatch.pl recommends that for the
+> ability to grep for the string.
 > 
-> The ->resume_noirq callback is invoked while traversing down
-> the hierarchy and the topmost slot which detects device replacement
-> already marks everything below as disconnected.  Hence any nested
-> hotplug ports can just skip the replacement check because they're
-> disconnected as well.
+> Suggested-by: Kees Cook <kees@kernel.org>
+> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+> ---
+> I opted to use TAINT_BAD_PAGE for now because it seemed unnecessary to me
+> to introduce a new flag only for this specific case. However, if we end up
+> similarly checking set_memory_*() in the boot context, a separate flag
+> would be probably better.
+> ---
+>  kernel/module/main.c | 7 ++++---
+>  kernel/panic.c       | 2 +-
+>  2 files changed, 5 insertions(+), 4 deletions(-)
 > 
-> -- >8 --
-> 
-> diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
-> index ff458e6..997841c 100644
-> --- a/drivers/pci/hotplug/pciehp_core.c
-> +++ b/drivers/pci/hotplug/pciehp_core.c
-> @@ -286,9 +286,12 @@ static int pciehp_suspend(struct pcie_device *dev)
->   
->   static bool pciehp_device_replaced(struct controller *ctrl)
->   {
-> -	struct pci_dev *pdev __free(pci_dev_put);
-> +	struct pci_dev *pdev __free(pci_dev_put) = NULL;
->   	u32 reg;
->   
-> +	if (pci_dev_is_disconnected(ctrl->pcie->port))
-> +		return false;
-> +
->   	pdev = pci_get_slot(ctrl->pcie->port->subordinate, PCI_DEVFN(0, 0));
->   	if (!pdev)
->   		return true;
-> 
+> diff --git a/kernel/module/main.c b/kernel/module/main.c
+> index 1fb9ad289a6f..8f424a107b92 100644
+> --- a/kernel/module/main.c
+> +++ b/kernel/module/main.c
+> @@ -3030,10 +3030,11 @@ static noinline int do_init_module(struct module *mod)
+>  	rcu_assign_pointer(mod->kallsyms, &mod->core_kallsyms);
+>  #endif
+>  	ret = module_enable_rodata_ro_after_init(mod);
+> -	if (ret)
+> -		pr_warn("%s: module_enable_rodata_ro_after_init() returned %d, "
+> -			"ro_after_init data might still be writable\n",
+> +	if (ret) {
+> +		pr_warn("%s: write-protecting ro_after_init data failed with %d, the data might still be writable - tainting kernel\n",
+>  			mod->name, ret);
+> +		add_taint_module(mod, TAINT_BAD_PAGE, LOCKDEP_STILL_OK);
+> +	}
+>  
+>  	mod_tree_remove_init(mod);
+>  	module_arch_freeing_init(mod);
+> diff --git a/kernel/panic.c b/kernel/panic.c
+> index d8635d5cecb2..794c443bfb5c 100644
+> --- a/kernel/panic.c
+> +++ b/kernel/panic.c
+> @@ -497,7 +497,7 @@ const struct taint_flag taint_flags[TAINT_FLAGS_COUNT] = {
+>  	TAINT_FLAG(CPU_OUT_OF_SPEC,		'S', ' ', false),
+>  	TAINT_FLAG(FORCED_RMMOD,		'R', ' ', false),
+>  	TAINT_FLAG(MACHINE_CHECK,		'M', ' ', false),
+> -	TAINT_FLAG(BAD_PAGE,			'B', ' ', false),
+> +	TAINT_FLAG(BAD_PAGE,			'B', ' ', true),
+>  	TAINT_FLAG(USER,			'U', ' ', false),
+>  	TAINT_FLAG(DIE,				'D', ' ', false),
+>  	TAINT_FLAG(OVERRIDDEN_ACPI_TABLE,	'A', ' ', false),
 
--- 
-Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
-County CA
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
+For our needs this makes sense, however I am curious if TAINT_BAD_PAGE
+is too broadly generic, and also if we're going to add it, if there are
+other mm uses for such a thing.
+
+  Luis
 
