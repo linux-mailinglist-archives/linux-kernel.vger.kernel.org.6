@@ -1,45 +1,39 @@
-Return-Path: <linux-kernel+bounces-548180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E10FA54142
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:36:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78389A54145
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:37:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 898BD1892626
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:36:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E235C3A87B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10630198A29;
-	Thu,  6 Mar 2025 03:35:54 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E1C185B76;
-	Thu,  6 Mar 2025 03:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BC2194C75;
+	Thu,  6 Mar 2025 03:37:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150DE185B76
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 03:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741232153; cv=none; b=OLkDkQsJL1VsNzi0T4EKA6g8t9q7/UQufqHCAmBRCGFOLp/r/KCnTxw+v61qhYtomq5xkopskBqc7J7gVK7JYJRF6mfNaWuT23b+BjJsByfd2x8i8iFGth9T3gV3vvcG+nrvdL3DAhGDPTthT2JpqN9nIYIW/qpF3NvwKR0VXqA=
+	t=1741232251; cv=none; b=fo0qjewtkafTYGx4nFYFvzO9o0C1QyHAizX6VlW+M86SiF58TqyJKiF0D9liHu8IFTpOzGeAgC91tLIT1Z8T7I+HL8JCkXa1t/HjLMdf4NUi+JaBe1FYL8sH2rZJr1thtKIh8+xYmj93N5rWiSkgz8SVaZLI+jdZZs7Hl55wE7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741232153; c=relaxed/simple;
-	bh=FJYMs784lA5chz9oCN41fUHCj/LPe5ipzFX5DvTb3yw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oxP0xQJJnFbiTSPxfWy9FOBlBBx2/LypSrHPO3L6df5CtBl4orQRvcIWRwTGxtXVLspH/YGtodWHOvWJlEr3PaUvRGSH1OKEI3wk8J+27D8Rb/T6aoLvlybI72fW6JP/4uu16GxLvy5w783rGKXt7SR38bo9jZoHWZO1pKD/Vmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Z7Zhb6wg4z1f0CF;
-	Thu,  6 Mar 2025 11:31:27 +0800 (CST)
-Received: from kwepemf500003.china.huawei.com (unknown [7.202.181.241])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1A58E1A0190;
-	Thu,  6 Mar 2025 11:35:42 +0800 (CST)
-Received: from [10.174.176.82] (10.174.176.82) by
- kwepemf500003.china.huawei.com (7.202.181.241) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 6 Mar 2025 11:35:41 +0800
-Message-ID: <dac30597-6d62-46f4-9493-059344e253c4@huawei.com>
-Date: Thu, 6 Mar 2025 11:35:26 +0800
+	s=arc-20240116; t=1741232251; c=relaxed/simple;
+	bh=EI/MrPX0W0O44b8U4Y3yF2IUzcEvrUhly5LMPz7Jfi8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kKpAblSvwKIMDim5wiZ2FBUEeT1wBG3r+YuxoYSVfQln9kqWBC7fRhMKiqKBzyxRhnfnsyLYoZ92J6GOdtd0Jc26cNPznKXC/aS2fl/vV8Cz12Ddg4G5uI96rH28GIHqh6ydL5eNueQo+ifQDSRZrTzU6cIdaUE837qaSRO7bHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 02BF91007;
+	Wed,  5 Mar 2025 19:37:40 -0800 (PST)
+Received: from [10.163.39.177] (unknown [10.163.39.177])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 84A9E3F66E;
+	Wed,  5 Mar 2025 19:37:24 -0800 (PST)
+Message-ID: <e0c2841b-3776-4d78-9514-b03ada39c739@arm.com>
+Date: Thu, 6 Mar 2025 09:07:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,82 +41,179 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Is there something wrong with v5.10.234 patch 664760c49d98
- ("xhci: use pm_ptr() instead of #ifdef for CONFIG_PM conditionals")?
-To: <gregkh@linuxfoundation.org>
-CC: <akpm@linux-foundation.org>, <jslaby@suse.cz>,
-	<linux-kernel@vger.kernel.org>, <lwn@lwn.net>, <stable@vger.kernel.org>,
-	<torvalds@linux-foundation.org>, <chenweilong@huawei.com>,
-	<liuyongqiang13@huawei.com>, <arnd@arndb.de>
-References: <2025020133-ultimatum-legwork-0940@gregkh>
- <20250306023301.125540-1-zhangzekun11@huawei.com>
-From: "zhangzekun (A)" <zhangzekun11@huawei.com>
-In-Reply-To: <20250306023301.125540-1-zhangzekun11@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemf500003.china.huawei.com (7.202.181.241)
+Subject: Re: [PATCH] arm64/mm: Create level specific section mappings in
+ map_range()
+To: Ryan Roberts <ryan.roberts@arm.com>, linux-arm-kernel@lists.infradead.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org
+References: <20250303041834.2796751-1-anshuman.khandual@arm.com>
+ <0fe6f3b2-1011-4418-bc19-612a3b98c78d@arm.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <0fe6f3b2-1011-4418-bc19-612a3b98c78d@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Sorry for make noise. Please ignore this messgae.
-The latter patch c762b76981fc ("Partial revert of xhci: use pm_ptr() 
-instead #ifdef for CONFIG_PM conditionals") patial revert the patch, So, 
-there is no such problem with the patch.
 
-Thanks,
-Zekunk
 
-在 2025/3/6 10:33, Zhang Zekun 写道:
-> Hi, Greg,
-> The stable patch 664760c49d98 ("xhci: use pm_ptr() instead of #ifdef for CONFIG_PM conditionals") in linux-5.10.y, is different with the mainline patch. In the following code.
+On 3/4/25 21:51, Ryan Roberts wrote:
+> On 03/03/2025 04:18, Anshuman Khandual wrote:
+>> Currently PMD section mapping mask i.e PMD_TYPE_SECT is used while creating
+>> section mapping at all page table levels except the last level. This works
+>> fine as the section mapping masks are exactly the same (0x1UL) for all page
+>> table levels.
+>>
+>> This will change in the future with D128 page tables that have unique skip
+>> level values (SKL) required for creating section mapping at different page
+>> table levels. Hence use page table level specific section mapping macros
+>> instead of the common PMD_TYPE_SECT.
+>>
+>> Cc: Catalin Marinas <catalin.marinas@arm.com>
+>> Cc: Will Deacon <will@kernel.org>
+>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>> Cc: Ard Biesheuvel <ardb@kernel.org>
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: linux-arm-kernel@lists.infradead.org
+>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
+>> ---
+>> This patch applies on 6.14-rc5
+>>
+>> PGD_TYPE_SECT for level -1 section map handling has been added for 4K
+>> base pages with 52 bit VA configuration that has 5 page table levels.
+>> In such cases (CONFIG_PGTABLE_LEVELS = 5) early_map_kernel() can call
+>> map_range() eventually with -1 (i.e 4 - CONFIG_PGTABLE_LEVELS) as the
+>> root_level.
 > 
-> mainline:
-> -#ifdef CONFIG_PM
-> -       xhci_pci_hc_driver.pci_suspend = xhci_pci_suspend;
-> -       xhci_pci_hc_driver.pci_resume = xhci_pci_resume;
-> -       xhci_pci_hc_driver.pci_poweroff_late = xhci_pci_poweroff_late;
-> -       xhci_pci_hc_driver.shutdown = xhci_pci_shutdown;
-> -#endif
-> +       xhci_pci_hc_driver.pci_suspend = pm_ptr(xhci_pci_suspend);		
-> +       xhci_pci_hc_driver.pci_resume = pm_ptr(xhci_pci_resume);		
-> +       xhci_pci_hc_driver.pci_poweroff_late = pm_ptr(xhci_pci_poweroff_late);	
-> +       xhci_pci_hc_driver.shutdown = pm_ptr(xhci_pci_shutdown);		
-> 
-> linux-5.10.y:
-> -#ifdef CONFIG_PM
->   	xhci_pci_hc_driver.pci_suspend = xhci_pci_suspend;
->   	xhci_pci_hc_driver.pci_resume = xhci_pci_resume;
->   	xhci_pci_hc_driver.shutdown = xhci_pci_shutdown;
-> -#endif
-> 
-> xhci_pci_shutdown() in mainline is wrapped with pm_ptr(), which is NULL if CONFIG_PM is not enabled, but for linux-5.10.y, xhci_pci_shutdown() it will not be converted to a NULL pointer. The .shutdown() function seems has been used in usb_hcd_platform_shutdown() in usb platfrom device shutdown routine:
-> 
-> drivers/usb/host/ehci-atmel.c:  .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ehci-brcm.c:   .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ehci-exynos.c: .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ehci-fsl.c:    .shutdown = usb_hcd_platform_shutdown,
-> drivers/usb/host/ehci-grlib.c:  .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ehci-mxc.c:    .shutdown = usb_hcd_platform_shutdown,
-> drivers/usb/host/ehci-npcm7xx.c:        .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ehci-omap.c:   .shutdown               = usb_hcd_platform_shutdown,
-> drivers/usb/host/ehci-orion.c:  .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ehci-platform.c:       .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ehci-ppc-of.c: .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ehci-spear.c:  .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ehci-st.c:     .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ehci-xilinx-of.c:      .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ohci-at91.c:   usb_hcd_platform_shutdown(pdev);
-> drivers/usb/host/ohci-at91.c:   .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ohci-da8xx.c:  .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ohci-omap.c:   .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ohci-platform.c:       .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ohci-ppc-of.c: .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ohci-pxa27x.c: .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ohci-s3c2410.c:        .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ohci-sm501.c:  .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ohci-st.c:     .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/ohci-tmio.c:   .shutdown       = usb_hcd_platform_shutdown,
-> drivers/usb/host/xhci-plat.c:   .shutdown = usb_hcd_platform_shutdown,
->   
-> For the mainline patch seems does not want to call xhci_pci_shutdown() when CONFIG_PM is diabled, is there something wrong with the stable patch?
+> Table Table D8-16 on page D8-6459 of ARM DDI 0487 L.a says that block mappings
+> at level -1 are not permitted for 4K pages; only levels 0-3 support leaf
+> mappings. Similarly for 16K, table D8-26 says only levels 1-3 permit leaf
+> mappings. And for 64K, table D8-35 says only levels 1-3 permit leaf mappings.
 
+Then seems like the current code is actually wrong because PMD_TYPE_SECT
+is being set at all levels (except level 3) regardless of the configured
+page size ?
+
+> 
+> So I don't think PGD_TYPE_SECT is the right solution. Perhaps we need to
+> explicitly force the unsupported levels to be table entries even if the
+> alignment is correct?
+
+Just wondering - something like the following will work instead ? Tested
+on both 4K and 64K page sizes.
+
+--- a/arch/arm64/kernel/pi/map_range.c
++++ b/arch/arm64/kernel/pi/map_range.c
+@@ -26,6 +26,21 @@
+  * @va_offset:         Offset between a physical page and its current mapping
+  *                     in the VA space
+  */
++static bool sect_supported(int level)
++{
++       switch(level) {
++       case -1:
++               return false;
++       case 0:
++               if(IS_ENABLED(CONFIG_ARM64_16K_PAGES) ||
++                  IS_ENABLED(CONFIG_ARM64_64K_PAGES))
++                       return false;
++               fallthrough;
++       default:
++               return true;
++       }
++}
++
+ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
+                      int level, pte_t *tbl, bool may_use_cont, u64 va_offset)
+ {
+@@ -44,13 +59,30 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
+         * Set the right block/page bits for this level unless we are
+         * clearing the mapping
+         */
+-       if (protval)
+-               protval |= (level < 3) ? PMD_TYPE_SECT : PTE_TYPE_PAGE;
++       if (protval && sect_supported(level)) {
++               switch (level) {
++               case 3:
++                       protval |= PTE_TYPE_PAGE;
++                       break;
++               case 2:
++                       protval |= PMD_TYPE_SECT;
++                       break;
++               case 1:
++                       protval |= PUD_TYPE_SECT;
++                       break;
++               case 0:
++                       protval |= P4D_TYPE_SECT;
++                       break;
++               default:
++                       break;
++               }
++       }
+ 
+        while (start < end) {
+                u64 next = min((start | lmask) + 1, PAGE_ALIGN(end));
+ 
+-               if (level < 3 && (start | next | pa) & lmask) {
++               if ((level < 3 && (start | next | pa) & lmask) ||
++                    !sect_supported(level)){
+                        /*
+                         * This chunk needs a finer grained mapping. Create a
+                         * table mapping if necessary and recurse.
+
+> 
+> Thanks,
+> Ryan
+> 
+>>
+>>  arch/arm64/include/asm/pgtable-hwdef.h |  1 +
+>>  arch/arm64/kernel/pi/map_range.c       | 23 +++++++++++++++++++++--
+>>  2 files changed, 22 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
+>> index a9136cc551cc..fd0a82e8878c 100644
+>> --- a/arch/arm64/include/asm/pgtable-hwdef.h
+>> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
+>> @@ -99,6 +99,7 @@
+>>  #define PGD_TYPE_TABLE		(_AT(pgdval_t, 3) << 0)
+>>  #define PGD_TABLE_BIT		(_AT(pgdval_t, 1) << 1)
+>>  #define PGD_TYPE_MASK		(_AT(pgdval_t, 3) << 0)
+>> +#define PGD_TYPE_SECT		(_AT(pgdval_t, 1) << 0)
+>>  #define PGD_TABLE_AF		(_AT(pgdval_t, 1) << 10)	/* Ignored if no FEAT_HAFT */
+>>  #define PGD_TABLE_PXN		(_AT(pgdval_t, 1) << 59)
+>>  #define PGD_TABLE_UXN		(_AT(pgdval_t, 1) << 60)
+>> diff --git a/arch/arm64/kernel/pi/map_range.c b/arch/arm64/kernel/pi/map_range.c
+>> index 2b69e3beeef8..9ea869f5745f 100644
+>> --- a/arch/arm64/kernel/pi/map_range.c
+>> +++ b/arch/arm64/kernel/pi/map_range.c
+>> @@ -44,8 +44,27 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
+>>  	 * Set the right block/page bits for this level unless we are
+>>  	 * clearing the mapping
+>>  	 */
+>> -	if (protval)
+>> -		protval |= (level < 3) ? PMD_TYPE_SECT : PTE_TYPE_PAGE;
+>> +	if (protval) {
+>> +		switch (level) {
+>> +		case 3:
+>> +			protval |= PTE_TYPE_PAGE;
+>> +			break;
+>> +		case 2:
+>> +			protval |= PMD_TYPE_SECT;
+>> +			break;
+>> +		case 1:
+>> +			protval |= PUD_TYPE_SECT;
+>> +			break;
+>> +		case 0:
+>> +			protval |= P4D_TYPE_SECT;
+>> +			break;
+>> +		case -1:
+>> +			protval |= PGD_TYPE_SECT;
+>> +			break;
+>> +		default:
+>> +			break;
+>> +		}
+>> +	}
+>>  
+>>  	while (start < end) {
+>>  		u64 next = min((start | lmask) + 1, PAGE_ALIGN(end));
+> 
 
