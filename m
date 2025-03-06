@@ -1,113 +1,145 @@
-Return-Path: <linux-kernel+bounces-548292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46E3FA54300
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:45:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9ECA54304
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:47:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A00B1893ECE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:45:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D0F0188D780
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:47:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E5E1A5BA8;
-	Thu,  6 Mar 2025 06:45:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836061A23BC;
+	Thu,  6 Mar 2025 06:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fqnZooV7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vppdhw8Z"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411B71A0BE0;
-	Thu,  6 Mar 2025 06:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4D53B784
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 06:46:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741243512; cv=none; b=JCBqS3vCd/XspFY/nzwIYww5YMdlc0QI04lPlPz3CyL0BKWXPlF1uc25fzFF1jJsZytw8kgU0Jcn+V4ArPW3hi5sBJnsmdfoFjiGMmvxPUkK+z8KtPxzrepLzcNl5C0Hh/XsUqT5QdB0Cuq3mGPzKW2AfmyLFk0bWDFwFwRBPNk=
+	t=1741243618; cv=none; b=FkA+VBIDQHXnQ5WXX50/oJqkZIjeIJW6gVx4IDc7++XzRHZ8s4ImLARLHq5YmLGGreds0ChCFtb9RLQhMkwKNf36SfCHsDdqZNvx7VQPyo88/Dv3KgFQk8h5EmKyip3JZyYPiQeLAHuzrIyYDEtuEpzvvR9MxtEKIVewjUYGvtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741243512; c=relaxed/simple;
-	bh=GLDFpWa9p6ur71vANNFod64M62p+KiTefovBzlACU4Y=;
+	s=arc-20240116; t=1741243618; c=relaxed/simple;
+	bh=KpOy4pfpR4+rxn6tIFJkaSFhCJ2yW1+8lwBUy4Z33pE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=urHnHniNan81lf4X8kTTlYpdDmu4AFSzZjkn3luJ0SrrDinW5tcp1jBHMtA+aNVXCM7ZhK7eqA/zdMoVqYtxLNQbzWbtEE3xplECrJwpKxrReGyfVd2IRGlwNt8K0EQ7e15nzdgusG+zBUT53AULNL4v8Ay4hiZrgc4DvAvFskw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fqnZooV7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37EFBC4CEE4;
-	Thu,  6 Mar 2025 06:45:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741243511;
-	bh=GLDFpWa9p6ur71vANNFod64M62p+KiTefovBzlACU4Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fqnZooV7JonBPPbUC8OkkmA3A8hxkP/IdURpSFSEdeG5nSzC1L6PT2B2J+ApQPIV5
-	 CKsVvxVYXjxjemTNZli8ZnlpkDS4Qc1BtdZmaQ45EClQsrWW9M1rbx2DzmvLGua3Pa
-	 VQghnGbEIjZ45noMgUy4aP81OrVgOSu7yelz4OWQOSopXvRZp5CPgb08iloKJmxK86
-	 CnUNL15yIR2N8njPWRpqDahOKNMcnPWbE4Xfi4v71CCpdqdcEQ6XA2PI2g307R0Aqs
-	 BT6fucET9B3P6Bl/Vxpog57t8oslkrPDfb7Ar5enQTZ7gYJSXBvhoONe5m5gIkGK12
-	 i/HOtuFjApH8w==
-Date: Wed, 5 Mar 2025 22:45:09 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
-	Kevin Nomura <nomurak@google.com>, Song Liu <song@kernel.org>
-Subject: Re: [PATCH] perf report: Do not process non-JIT BPF ksymbol events
-Message-ID: <Z8lEdWxt8CKepTJ3@google.com>
-References: <20250305232838.128692-1-namhyung@kernel.org>
- <d962792a-c852-494b-b35c-e8f83cac7218@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BNExfJ4P9kaE8VhYoCME/BTDkQozfqgYrfc5Lk9OwFQ1ehRrFTWxCOuMpHSx8h2tuMZ33pwZWbmE+C8MPD5zswBgxjM3phommRFPfpMCgME4tEwaovnc8r1U5lt8Mp7Ms3iuH64jsyZDBD7uicMqHgFcWAgURf9eshfkaQc2gvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vppdhw8Z; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5496078888eso377783e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 22:46:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741243614; x=1741848414; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aBJt5IiboHla6lV3Ran8Kn8NxsmqzqpO6sJDmhngbes=;
+        b=vppdhw8Zq/8+0izrBHKbLmALahRX69m2tI3OciVwmdm7Gd5vnnbqdqIllpkKiRCILY
+         EyjDAyE7Dsp61Jpgo9UuXFkrpRGNYddjnY+DGeWSZyHKsOAlb+rfaZvyl4N79Luf9fpb
+         i+4QKV9kjQz/1vXNqQtPn6ZPqobXqyNM6k4vxrl7mvZYrEoy8jPiYGToGxUuyaAxti8Y
+         sZMU+TElVdRbCVb4X6HWydRd3OB/H4XnhEMOOw9MVdv6JdU5MtotzKXeBHFpEojplVP5
+         WjBGw95iC5qIvI0uF7+DWD7O0QG9oPy0slEAe7tEjAouXCNIXxtrTC0GNCtED5HHmRhB
+         Jzng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741243614; x=1741848414;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aBJt5IiboHla6lV3Ran8Kn8NxsmqzqpO6sJDmhngbes=;
+        b=nkf2H/dyWJlRCccKQKwmCW0W89TjMnpIjcqrU9AMyevAZ9BMZc6jr+vg4JLd6QIcMN
+         3DUvG13bkmnWdP6CZnauY2XORj9WsWM729+2n9Q/ndS0BAeoQz+O7ebdvyDT8x0WbZ0y
+         NrE3KTvgpzn/XlGZBxgaKC3II56eIBRmWCjq5r9aOkkssp5NWxJDAv/0SAu4arf6KziS
+         tFSozskqVs6QBnqtIdD9dnUQi+J1p+enhi0fjCpPczA04bSuC7ZqeYe4dJkMawWs2qdV
+         AvkL5OKVGirhS3SgTwzpciH254KOfbtkwpP3y/dFvKgk+e5kPbBEzosQrrWN3kcWvIX6
+         9I2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXl5OUX+iDWhGuW0IjtcyCL3ohuxSRo7nq4aPhYsVGJqV79/UdjHImptdCGnYR+22NeHw1tfkCP6ZSsUHI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNUHjh/tE5PV2Xk5sIVR2m/nlBRkkTDc80kzF2qm+50MSvcKOT
+	oSFON150NQ9JpvE18mxrIJlZbmgb2vpkTmItKkjkr9UHmmlgzgTXt9baCLolBOM=
+X-Gm-Gg: ASbGncuzNevDQ2SikumTkXMak3neEdf/33QB5k2jQXQ+t7QHeyVUpgb+1/ma4XgN1zW
+	lqoFF0eYge3gtNqUbcnW04KFPbZezsglbV/oJurd4EB6KoxSgZRLyvlgRMtdJCRZJPl7HsyAcCB
+	eMVN7U5G6r8KmQ1e2OJuAuYSfvEvGzLMP1hjn8ake5H18I80gIJkJ40TflmlAn5sZnQtv6cQ0UR
+	tboApHcGep2UOthxD3TFwLVGcKLCaoK+VjdPwcK/6Lx3hhOAngH4pqk3YJR7n1peckbLfDvQeul
+	fNcCxrdPwAS28PAXF9oYU2Y6ECpVSykSndh+nHZjiL5Q0lpS8DHqQe4c9vFgsZKqbV7bC9TlK0D
+	BfTMktXg1ewfp3411jaF9P5Pz
+X-Google-Smtp-Source: AGHT+IHw2m0vBIquj8s91nI2Oqzx4I4bD6M7fJN4tOBXcl0RZL/nJ12bNu4CSxcWu+sPaxEIuNgp6Q==
+X-Received: by 2002:a05:6512:b09:b0:545:c89:2bc9 with SMTP id 2adb3069b0e04-5497d38dbe7mr2421818e87.43.1741243613998;
+        Wed, 05 Mar 2025 22:46:53 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b0bd6e2sm80629e87.130.2025.03.05.22.46.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 22:46:52 -0800 (PST)
+Date: Thu, 6 Mar 2025 08:46:50 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/msm/dpu: Adjust CDM_MUX to support CWB PINGPONG
+Message-ID: <732vgwega4ok3tkbefyxixyfdonfenik5q5zhdxqot62aygavt@s2m3m7gzjgb7>
+References: <20250305-cdm-cwb-mux-fix-v1-1-16148ca6e4d2@quicinc.com>
+ <f3bfb118-f947-4b09-a368-42c5f0d1373b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d962792a-c852-494b-b35c-e8f83cac7218@intel.com>
+In-Reply-To: <f3bfb118-f947-4b09-a368-42c5f0d1373b@quicinc.com>
 
-Hello,
-
-On Thu, Mar 06, 2025 at 08:25:01AM +0200, Adrian Hunter wrote:
-> On 6/03/25 01:28, Namhyung Kim wrote:
-> > The length of PERF_RECORD_KSYMBOL for BPF is a size of JITed code so
-> > it'd be 0 when it's not JITed.  The ksymbol is needed to symbolize the
-> > code when it gets samples in the region but non-JITed code cannot get
-> > samples.  Thus it'd be ok to ignore them.
-> > 
-> > Actually it caused a performance issue in the perf tools on old ARM
-> > kernels where it can refuse to JIT some BPF codes.  It ended up
-> > splitting the existing kernel map (kallsyms).  And later lookup for a
-> > kernel symbol would create a new kernel map from kallsyms and then
-> > split it again and again. :(
-> > 
-> > Probably there's a bug in the kernel map/symbol handling in perf tools.
-> > But I think we need to fix this anyway.
-> > 
-> > Reported-by: Kevin Nomura <nomurak@google.com>
-> > Cc: Song Liu <song@kernel.org>
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> >  tools/perf/util/machine.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> > index 3f1faf94198dbe56..c7d27384f0736408 100644
-> > --- a/tools/perf/util/machine.c
-> > +++ b/tools/perf/util/machine.c
-> > @@ -779,6 +779,10 @@ int machine__process_ksymbol(struct machine *machine __maybe_unused,
-> >  	if (dump_trace)
-> >  		perf_event__fprintf_ksymbol(event, stdout);
-> >  
-> > +	/* no need to process non-JIT BPF as it cannot get samples */
-> > +	if (event->ksymbol.len == 0)
-> > +		return 0;
+On Wed, Mar 05, 2025 at 09:15:10PM -0800, Abhinav Kumar wrote:
 > 
-> Are all ksymbol events BPF?  Maybe it is OK
-> for PERF_RECORD_KSYMBOL_TYPE_OOL also.  Perhaps adjust the
-> comment in that case.
+> 
+> On 3/5/2025 7:16 PM, Jessica Zhang wrote:
+> > Similar to WB_MUX, CDM_MUX also needs to be adjusted to support
+> > dedicated CWB PINGPONGs
+> > 
+> > Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> > ---
+> >   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_cdm.c | 4 +++-
+> >   1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> 
+> Not exactly sure which fixes tag to use here, but
+> since this should have ideally been addressed together while adding the WB
+> mux programming to handle CWB, I am going with
+> 
+> Fixes: a31a610fd44b ("drm/msm/dpu: add CWB support to dpu_hw_wb")
 
-Probably, but I didn't see OOL with zero length yet.  Is it possible?
+I don't think it needs Fixes tag. The patch is good to go on its own.
 
-Thanks,
-Namhyung
+> 
+> Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> 
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_cdm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_cdm.c
+> > index ae1534c49ae0..3f88c3641d4a 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_cdm.c
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_cdm.c
+> > @@ -214,7 +214,9 @@ static void dpu_hw_cdm_bind_pingpong_blk(struct dpu_hw_cdm *ctx, const enum dpu_
+> >   	mux_cfg = DPU_REG_READ(c, CDM_MUX);
+> >   	mux_cfg &= ~0xf;
+> > -	if (pp)
+> > +	if (pp >= PINGPONG_CWB_0)
+> > +		mux_cfg |= 0xd;
+> > +	else if (pp)
+> >   		mux_cfg |= (pp - PINGPONG_0) & 0x7;
+> >   	else
+> >   		mux_cfg |= 0xf;
+> > 
+> > ---
+> > base-commit: 6d3175a72cc07e90f81fb35841048a8a9b5134cb
+> > change-id: 20250305-cdm-cwb-mux-fix-69ed5297d4f7
+> > 
+> > Best regards,
+> 
 
+-- 
+With best wishes
+Dmitry
 
