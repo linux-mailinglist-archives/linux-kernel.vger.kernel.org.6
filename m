@@ -1,172 +1,129 @@
-Return-Path: <linux-kernel+bounces-549015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C530A54C2C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:29:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE5BA54C3C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:31:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF6F33A5E36
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:29:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F13337A5298
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79DB320E6F2;
-	Thu,  6 Mar 2025 13:29:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A03211476;
+	Thu,  6 Mar 2025 13:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="WtYsCFSV"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="w4QRgGNM"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D3820E30A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 13:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C164320F078;
+	Thu,  6 Mar 2025 13:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741267755; cv=none; b=Ruazf2U768aFaNh+q2g7YBcaZOfTsDp1bF9TqTwMuenXCJ8fnCa0mrVAX5DbpX+Uu3z9GsSOGTxAByIS08ziPy8RYr/MSuyX1AcCQeaQtIm0fpw9/JYk+X0VrmOCyX45H1vIQWqWLIh5oDzs92q/H2zGSKd+S4tqa1TQF6uIz+U=
+	t=1741267800; cv=none; b=MGL+HIcgd+zS23eCs3BjpXtaZkefnCUfu9d9yoMNPG9uMG4DsfazVWYwxXDjImWKUmEUyP8pS4JuWDmAE/xEPVSv2BJv71ihjD21mBdiaKB4uvLoP9qJxt4pA/kF995mJN+jiaB1bbZXyUYGKYnXFw9PY8woJuYf4sDkAvRgZvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741267755; c=relaxed/simple;
-	bh=Zk6KznM1Mny3IifnHC66rR/yxzf5hcz/58qW1fHNFzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EI7oyA5KaEbF7Y9et5sZC9Dvm1RM4uImJPXNFmcnMjHFJ2A2/oTG1nxg58Ag21z8a1iYNljK1cdHVgsqGYL/xD4dctTKiA6r80jvqUPP8tZRm37r5qh/c9TrGodZK8JdNNNg1ldik9YwD1T3lVD9B9y4bVWy0q9sdOd0lkuG77I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=WtYsCFSV; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c3db4a6110so150078585a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 05:29:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1741267752; x=1741872552; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TO273gAYQ0oUb9YC0Kv4nC2xrHAVYrUP62Xzo8si0Uw=;
-        b=WtYsCFSVWhhtSCYH1osSgbgSDODlO+pseYZ8PDoJ7ZtIZXCvVe1bHvtazsLLqa+4Pv
-         TSmhtudLi9/tzvdvaixJJ99FLuU7vd65/AkjLdnPi/4h5/+3waaLqP1eVTgaLctMA5Ir
-         UZapzOek0/n8MErWvTldVeqAxc8Gub2x/a+pyHwKSLog9sk5EVnytI0M12M6eQe3o9AN
-         lcjvj+6t4bPngx3U0Bz5zFb7bh+JyluchjPfASqeXqfKVHkZBiYau+pxVgC4KZWMWVzC
-         ykgc2EQnJuswMbmAOmTmtKRRKYtSBcpYTUKFhWMhTY2p8WbcMMc5scpzGTYO7YDPClpv
-         A+bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741267752; x=1741872552;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TO273gAYQ0oUb9YC0Kv4nC2xrHAVYrUP62Xzo8si0Uw=;
-        b=i08fULoy6nONQwwNqxP2GfJPC7CEHufhYGvUwdO0yGDk3vG/ALzBCrLg9gSGN3/Hx0
-         w2NEuOKaCzuztaIRJEtsMxbfOPtQtH6dqzV1JEPyXilGdHVN0p4mNuoazxZBBCC7xMlC
-         225Eyp3QgOd0oPyYSyy/DuuP0whdh9Hcn7ig7aRVxpTqxga26UbgEWtdQVCawCXWMnjs
-         5cAslP+m1sI8k0SajKPYZe6+GFk5Y7HN3NN9iJ1w3EzJFfiYDgR0jnBAmeAkoRdFam1c
-         R4slNbPJSTI3L04VAo8k6Nwi63ZbIn0Sji1pWJ9jWrvDVl5n1x+jbkNRrh1YSsIUUhcH
-         l13A==
-X-Forwarded-Encrypted: i=1; AJvYcCVZIOBSFOz3QJHMQkcJMxPllEL2n6HeF9txo0I2CEsTRmi9g9aJLtU1WyvoQWEb0ZYW0lqjCoHKw9ffG5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLktkWwJ5JFevfrFzvOckHgwgJm6DaNYIa9mNiP1dwe8o6reWY
-	z/ooLog8rH/zLjidS0n3hbH/dtcAmMj+5g1tWxQ97i9MKLjVimFBVx6c45cjuA==
-X-Gm-Gg: ASbGnctC4z8oO6xwSrzdRgBtCQ6RaYrScI0Ql0hjVt4w3rtJk36TsTfBvYbQ2jQqXhb
-	jkgX7KeCcx/pky87cTilwNDlj7qA5j1mVt+em8tBV+8de8D0oUKjp4HZqAaH4Hflz21ItDyAEGC
-	9Eile4dh5as2ibp4ayRn2eVywIFa3r3nrAZus+nwM/MgyTMezaYHXKKP5C+UZo0hh5j4/5WBFUR
-	5yerqPnQsblIb2GFDCV3B7zdKoXOXFkcXICD96a3fnsTUa34ktJ2foUgUGHmj7MMIbA8JlwsmQ/
-	9qkIBHo2kjLtbEouzemVvPjnBGSWphLLJGVer5+J1beODw==
-X-Google-Smtp-Source: AGHT+IG8tT1+AXlJX2np1Pv8ZLeKeVEq894Sr4SIQ9hI43LDy8VQzN1drOvtY/uAtno3oVS/H4tnyQ==
-X-Received: by 2002:a05:620a:6087:b0:7c3:ca29:c87e with SMTP id af79cd13be357-7c3e3a1c978mr415437085a.21.1741267751741;
-        Thu, 06 Mar 2025 05:29:11 -0800 (PST)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::3ca7])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e551d075sm90283285a.112.2025.03.06.05.29.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 05:29:11 -0800 (PST)
-Date: Thu, 6 Mar 2025 08:29:08 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Jiayi Li <lijiayi@kylinos.cn>
-Cc: gregkh@linuxfoundation.org, stefan.eichenberger@toradex.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jiayi_dec@163.com
-Subject: Re: [PATCH v1] usb: core: Add boot delay for DH34 board in restore
- mode
-Message-ID: <d3b12542-4919-45e7-b2a5-28742a6c7943@rowland.harvard.edu>
-References: <20250306061749.1502029-1-lijiayi@kylinos.cn>
+	s=arc-20240116; t=1741267800; c=relaxed/simple;
+	bh=mUWv69KxFp1nkfKwXwTvoUTd8hihwnHohClUV7h795A=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jI7qROGyn8OjGgG+7PYIBEjITdVR5rTAh0iORJT5y8viQJEo46VheGxtoiizdlohMhlkMKtBKeJbm2+gw85LIgQfKRoy6+eL1q5E/UnQbbvDknG4fQp5RqI4OGMm4wVZvCMDYxBmSlxg9yf4alz1T/BrVT56TZDnR1ZxricdOQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=w4QRgGNM; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 526DTGEP4163412
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 6 Mar 2025 07:29:16 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741267756;
+	bh=j1l3rkpvSqXIl+5ZitL+bxerJBlyJLYrf9pOoucxKqU=;
+	h=From:To:CC:Subject:Date;
+	b=w4QRgGNM5VaMda1+JD4dipmKY6JrBZeshEv18M10QvBrbzJw4jygrBCpd63c9Pe1l
+	 t9yZRZPiEt8zt+M5e2Z7ddtLu4hDLX0ppK3sfAY56YCNkAU7Oe/SM7wB3SjzDiJ3xp
+	 u9w50BCwsGFm/aIHPA1vWf2US7HIEQ37GKUgrTd0=
+Received: from DLEE110.ent.ti.com (dlee110.ent.ti.com [157.170.170.21])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 526DTGPW088332
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 6 Mar 2025 07:29:16 -0600
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 6
+ Mar 2025 07:29:15 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 6 Mar 2025 07:29:15 -0600
+Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 526DTFOb021890;
+	Thu, 6 Mar 2025 07:29:15 -0600
+From: Devarsh Thakkar <devarsht@ti.com>
+To: <jyri.sarha@iki.fi>, <tomi.valkeinen@ideasonboard.com>,
+        <airlied@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+        <mripard@kernel.org>, <tzimmermann@suse.de>,
+        <dri-devel@lists.freedesktop.org>, <simona@ffwll.ch>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <praneeth@ti.com>, <vigneshr@ti.com>, <aradhya.bhatia@linux.dev>,
+        <s-jain1@ti.com>, <r-donadkar@ti.com>, <j-choudhary@ti.com>,
+        <h-shenoy@ti.com>, <devarsht@ti.com>
+Subject: [PATCH v3 0/3] Add support for AM62L DSS
+Date: Thu, 6 Mar 2025 18:59:11 +0530
+Message-ID: <20250306132914.1469387-1-devarsht@ti.com>
+X-Mailer: git-send-email 2.39.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306061749.1502029-1-lijiayi@kylinos.cn>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Mar 06, 2025 at 02:17:49PM +0800, Jiayi Li wrote:
-> On certain DH34-model motherboards, USB keyboards may fail to respond
-> during the restore mode confirmation prompt due to the usbhid driver
-> not being fully initialized when device registration occurs.
+This adds support for DSS subsystem present in TI's AM62L SoC
+which supports single display pipeline with DPI output which
+is also routed to DSI Tx controller within the SoC.
 
-Why does that make any difference?  The driver core will probe the 
-usbhid driver when it is fully registered (assuming the keyboard device 
-hasn't been bound to a different driver in the meantime).
+Change Log:
+V3:
+- Make generic infra to support truncated K3 DSS IP's
+- Remove AM62A updates from AM62L DT binding updates
 
->  This
-> results in inability to input 'y'/'n' confirmation.
-> 
-> Detect this scenario by:
-> 1. Checking DMI_BOARD_NAME for "DH34" substring
-> 2. Verifying "restore" in kernel command line
-> 
-> Introduce a 200ms delay before device registration when both conditions
-> are met. This allows sufficient time for the usbhid driver to properly
-> initialize before user interaction is required.
+V2:
+- Fix incorrect format of compatible string (comma instead of
+  hyphen) for AM62L SoC
+- Use separate register space and helper functions for AM62L
+  due to minor differences in register offset/bit position differences
+  for first plane
 
-Why does delaying device registration help?  In theory it should make 
-things worse: When user interaction is required, the keyboard device 
-won't even be registered yet, let alone bound to the usbhid driver.  
+Rangediff:
+V2->V3:
+- https://gist.github.com/devarsht/24fa8dd2986861efa431352d19ebbb41
 
-Furthermore, your patch delays registration of _all_ devices, not just 
-the keyboard device.  This will slow down the restore-mode boot 
-procedure considerably.
+V1->V2
+- https://gist.github.com/devarsht/11d47f25ca9fea6976e6284330ddf443
 
-It sounds like what you really need to do is delay the user interaction, 
-leaving the device and driver initialization and registration unchanged.
+Links to previous versions:
+V2: https://lore.kernel.org/all/20250204061552.3720261-1-devarsht@ti.com/
+V1: https://lore.kernel.org/all/20241231090432.3649158-1-devarsht@ti.com/
 
-Alan Stern
+Test logs:
+https://gist.github.com/devarsht/16fe796b8fd3ea8abf5df8e2327d2311
 
-> Signed-off-by: Jiayi Li <lijiayi@kylinos.cn>
-> ---
->  drivers/usb/core/hub.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> index a76bb50b6202..b81b518f438b 100644
-> --- a/drivers/usb/core/hub.c
-> +++ b/drivers/usb/core/hub.c
-> @@ -36,6 +36,7 @@
->  #include <linux/bitfield.h>
->  #include <linux/uaccess.h>
->  #include <asm/byteorder.h>
-> +#include <linux/dmi.h>
->  
->  #include "hub.h"
->  #include "phy.h"
-> @@ -2610,6 +2611,7 @@ static void set_usb_port_removable(struct usb_device *udev)
->  int usb_new_device(struct usb_device *udev)
->  {
->  	int err;
-> +	const char *board_name;
->  
->  	if (udev->parent) {
->  		/* Initialize non-root-hub device wakeup to disabled;
-> @@ -2656,6 +2658,17 @@ int usb_new_device(struct usb_device *udev)
->  	/* check whether the hub or firmware marks this port as non-removable */
->  	set_usb_port_removable(udev);
->  
-> +	/* get board manufacturer information (DMI_BOARD_VENDOR) */
-> +	board_name = dmi_get_system_info(DMI_BOARD_NAME);
-> +
-> +	/* In order to load the usbhid driver on a specific model motherboards
-> +	 * before the restore mode confirmation, add 200ms of latancy.
-> +	 */
-> +	if (board_name && strstr(board_name, "DH34") &&
-> +		(strstr(saved_command_line, "restore") != NULL))
-> +		msleep(200);
-> +
-> +
->  	/* Register the device.  The device driver is responsible
->  	 * for configuring the device and invoking the add-device
->  	 * notifier chain (used by usbfs and possibly others).
-> -- 
-> 2.47.1
-> 
+Devarsh Thakkar (3):
+  dt-bindings: display: ti,am65x-dss: Add support for AM62L DSS
+  drm/tidss: Update infra to support DSS7 cut-down versions
+  drm/tidss: Add support for AM62L display subsystem
+
+ .../bindings/display/ti/ti,am65x-dss.yaml     |  21 +-
+ drivers/gpu/drm/tidss/tidss_crtc.c            |   7 +-
+ drivers/gpu/drm/tidss/tidss_dispc.c           | 185 +++++++++++++++---
+ drivers/gpu/drm/tidss/tidss_dispc.h           |  12 +-
+ drivers/gpu/drm/tidss/tidss_drv.c             |   1 +
+ drivers/gpu/drm/tidss/tidss_irq.c             |   6 +
+ drivers/gpu/drm/tidss/tidss_kms.c             |  10 +-
+ 7 files changed, 211 insertions(+), 31 deletions(-)
+
+-- 
+2.39.1
+
 
