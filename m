@@ -1,139 +1,150 @@
-Return-Path: <linux-kernel+bounces-549262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E022A54FE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:00:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B2FAA54FFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:01:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 776397A419F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:59:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2F423A88FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:01:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D10D211472;
-	Thu,  6 Mar 2025 16:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA7B20E710;
+	Thu,  6 Mar 2025 16:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RHBvHhi6"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h5Ji2W+h"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76AD2116E4
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1394EC2
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741276805; cv=none; b=V7zl5DmC6+t/S5QIm6AJHXVTN0vuqxnNpxH5ndD2ur/xBr9JzZpbEyjpESvMONbc3Ok38SVR93I0roLdaTx940KLvtkX6bLWhsPzOpywi1FEgFT8HC7GZx393c5+cAlZ0uSAC3+HcoZGmzgfPmJSlewbETtKCVSX5ncVestK0YY=
+	t=1741276903; cv=none; b=dE0rlz4O3RWSy+vxE84dqCm9/6/Yyzz0F/oYcTR675yKXhuJ2G9kPbFreG1Nm2VuX3EgBC9/+5UusikyzThroIComjRH+IDe5BbyIFAT75PYDqk0rHw84P9xiJd467ixpWery+1TDVhpPhynjFrB6XHVCMioilYMqKFgYouoC38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741276805; c=relaxed/simple;
-	bh=8S+kn9eoLFcIV6s94q7ylj8ShiwoJrydVhkVyJ5u72Y=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=QNn3nyCCuanw7Y642It7SGtC/ALjIcOEfg2dYg1xp89FL4CSAMu8DBwaIaYtmCUOKVkkc3tcNiT4vSpD+4+TS0lRT4gdUpWV8BjIJtDMUQF1WSJLN7EVVfCLaV2k4hRYTlwROenNMFQY/4kh1iRGnUOc/Boic60vawzhjyxVCBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RHBvHhi6; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43935e09897so5564985e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 08:00:03 -0800 (PST)
+	s=arc-20240116; t=1741276903; c=relaxed/simple;
+	bh=E8ASYo3UrMPC3hDewAZmOcmnA1im+L9mOOJf1TCKZ2k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UC+LNEFK/FARS4n83eyOm5uHAHDWw0X0/Gmf+wIxLskLUlzuLX6PdaMYUiuyTUivT8imoZzPUeVIi5u3wNvc6vKC48zzJ7v6jeMt3+YRuA+9Dojj6TKvt2M0f41wLy1pUkiPPcOCVkPmPJWxmj0eJTrFkFOv6tzc7LF1SB/DgRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h5Ji2W+h; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d3e28e6bb4so6524775ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 08:01:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741276802; x=1741881602; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=tAB6/suJHRre/mBnY4z2mAVnfCiXWv+PUSg8dX32QjI=;
-        b=RHBvHhi6uFOmR3J5yDpTtjiHlMCbynqcb9QyI3HCUoREaGHYBGl8/ZyHNQqunhL/GM
-         TQcke2MVSQ9aBH1d0ZYIGHZBFu1e5rAJf+KWCRQoX3RnfNh+TPFqL61Mx+mdHFj3oDDV
-         uTytlBo3BQnPtdZQEQN+iJis46dtuiMF9VlgC/XhaU5jfRkpqqf1+gwGfi986P7lZL1r
-         Gu6BU4476I2jgzMfExV0UsLPN1Kjm8aMoJ+cSVQH39tiEvr1wceq/2JJnPrE2hASdlvr
-         5xsTAli/mbscULtR4nn04dc3t1Tjvluo6uuO6dHZRmbgswao41MhqNoQDmLatWkPu88M
-         x2xQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741276802; x=1741881602;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+        d=linuxfoundation.org; s=google; t=1741276900; x=1741881700; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=tAB6/suJHRre/mBnY4z2mAVnfCiXWv+PUSg8dX32QjI=;
-        b=coPnlxztygFJZXJWfRSYhdu3WZufj7UtLg1XGAf9Grmb0+qIotHjHGzb9ogWcKO44V
-         p+F+yFlAaM3iNIfUGbFuCpvZq6DvMiL80Ut+0v0hzg0/PVIOmcQsJ4wKSmzsqzRXJ8Cp
-         Je0smHnVx2feO/NIUn8uYHq6icT5mbhpEn1UyUhwAVfptNYRQ5bgjpjZ2D7Unc8wPqk0
-         s4ufSME8tAMm2JG1ElJBqOzHQyUZJEEQn0CHrNTqLP7qyFgyzVXf2gPO0pSXkCaZAJZY
-         0XgIyoVpFE3R97v06Icirnb3AcZDiatIw9NPe17NXI3XUXoRfXUBS5i6QycMLLaL2N/e
-         q5iw==
-X-Gm-Message-State: AOJu0YxBNrPM+IiJiKNv0943q+spPqIQ2hsK7TeFTpqX+i5uX0vgRlqC
-	Icrv7Brbku7d9nPFzpKnoX5w1Gb2MHl8StPAUw/wV1uHi4+XB6WA8Kb05PfET3rEUIG+bGK1xOI
-	YDnTYnFI5MyoIOWxjHBR6M2x4DF/5uVLtqTPmEpG68nobwsF8whfLP3SiCExx6bQb2Bcrk/u0qf
-	QqctjQkDA1sAzQc7RBBd5tAOPDSm1wLQ==
-X-Google-Smtp-Source: AGHT+IGsDyZVuVoMjePfqPudE5bSuQ6vDQ2BfMvhJ2lchzVjnxqNAPjMSZLAKW5xDNxWxhEBguihiDLX
-X-Received: from wmbay39.prod.google.com ([2002:a05:600c:1e27:b0:43b:d42e:35b6])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:5116:b0:439:689b:99eb
- with SMTP id 5b1f17b1804b1-43c5a5f9569mr241385e9.7.1741276802113; Thu, 06 Mar
- 2025 08:00:02 -0800 (PST)
-Date: Thu,  6 Mar 2025 16:59:16 +0100
+        bh=ZVnnzRabgTQCEUIYr+F/94B5+FAwfZoxZsQ8xoGHCek=;
+        b=h5Ji2W+hiTaUSbj4Gs2KjMb/Q9pE+8MAb4zF6ypplJuHTux906qAx2tEwIvD0KFvDi
+         qoiFGqEUGO1/+k8QyuaTaCTulniW00KJq5cN+lAQFG2Jjgj+8y/eBTvC0bHPnMkDrIVN
+         rxtQQSQLIvdSRuyBYB0X0SvP/pLjQ5erv2t20=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741276900; x=1741881700;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZVnnzRabgTQCEUIYr+F/94B5+FAwfZoxZsQ8xoGHCek=;
+        b=B63RGiHoqkQItUlhwnajJjeheD70K0DQDJG6xHaiZUVPWrliJQX7SUwM83d+gPioQR
+         M0h7GHYCDSxm1dWyfirNRa0cH/wGUjIOKwtjQxvUrL1FsQAvklYQuDPTur/zdd3f70Sr
+         3LPWmwB8/TuZA1sX2W8MvAWnMMGABOjdJYlq9jswASeUU/8yGOIir0NxJEUOvEyA5PRp
+         W63x/BRwiu3E4CUHCbcZ2FUyqyXJn/qSLTlRRWrqqOj5ulEO5jX6EvIoC4+8Y8SoR3rr
+         EHHtR4yAp4bXkyCM/Itdgsbkbq5LHBaCcKT7hA2X66vMO0MwOx260iOjG72BejgmMf9E
+         P5wA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWDY/e7ol6gCwg/C3JMdw676d/CGbG2qjHiIrGy+B/K6lHsEpm2fb+0xqRfJRTK6r3UnLfIXtZyiJkzA4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1na31CaOVfHfmzfsDT3z29v0tzlwyzHIc4WBEMa0ygNsmuEQC
+	1Lw2IWp4SPFv1g1iVsAMLrtn3uMciGcyZCf4eWZRKQ/UoNIsmQxazpEHwqa8A+c=
+X-Gm-Gg: ASbGncuEp1Pws+Vqz0J81HaB4+XwT0sKR21m9UP+4rEuLhZr4ax5Wk+nrZIENaY3syL
+	/GD0FHjIhGoN4o9eBZrHyPJd3h17iHaq/3v+TS/n+aUWtnJ9xeKMbGJzAbJzmuDavJdCXK7UUXh
+	+CaVOrdVU0S5QGyFHN96Hmpdheb3qzrz3qiIVniMRYfsQnf/A5CJJxw8IcAfd2dSoC+laWvZU4q
+	pIZyaND0CEEJe703+sXAs6ZZBHbf48MTL6EroIybpjyTCyXgJSKtU275C5IkaNOnAfAG6eAZxyr
+	wCsgeNKrojT6toHu+FX6YKi7xr3StgGlx5omu/Hb10UK8P7ntEBB7y8=
+X-Google-Smtp-Source: AGHT+IFqVDoMxQ+ybV14JJzOP/UeroC4pF5340mvSNaJjPqDwHb3xmlejwbzaVxMkbTTC6Lh4W+Qrg==
+X-Received: by 2002:a92:3603:0:b0:3d4:3aba:954a with SMTP id e9e14a558f8ab-3d43aba962emr23771405ab.15.1741276899710;
+        Thu, 06 Mar 2025 08:01:39 -0800 (PST)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d43b510102sm3335975ab.37.2025.03.06.08.01.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 08:01:39 -0800 (PST)
+Message-ID: <287521e2-afaf-4ed9-bcd6-bac610aab564@linuxfoundation.org>
+Date: Thu, 6 Mar 2025 09:01:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2044; i=ardb@kernel.org;
- h=from:subject; bh=yr5e1p3Qi6PlIBF5j5H9Cs2Lch54/XspKfU9Gt9v1No=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIf3ksZDeBi+tF4KHeBqSLmw9f+WdwccLqlM9jB+JmO+rE
- VX2vHGgo5SFQYyDQVZMkUVg9t93O09PlKp1niULM4eVCWQIAxenAEwkTIHhf47hKrYwTYvjfnPf
- aNYv0BcsO1GSaR9k+XejoXJnSOHqNQx/5aqLDt47aznj50qGm433dmg+lO5rsuwNOupu0qKdmJn JDgA=
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <20250306155915.342465-2-ardb+git@google.com>
-Subject: [PATCH] x86/boot: Sanitize boot params before parsing command line
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, stable@vger.kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	Ulrich Gemkow <ulrich.gemkow@ikr.uni-stuttgart.de>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: vim2m: print device name after registering device
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+ Matthew Majewski <mattwmajewski@gmail.com>,
+ Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
+References: <20250219190501.295976-1-mattwmajewski@gmail.com>
+ <ym5q2cpn2lxk7sarylnf4o3ztvtnb47wroxdiibdsp6yz4gt2y@jfyfo2ekmdmj>
+ <5051c252-f1ef-4731-b0cb-fedfcda04d98@linuxfoundation.org>
+ <61bd42742ff8a8e5f409b0f2ccc4ab8875dfe7a4.camel@gmail.com>
+ <fdd0356f-d91e-400e-9598-d34e0862c9cb@linuxfoundation.org>
+ <06766086-b148-436c-b6d4-975c26493233@xs4all.nl>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <06766086-b148-436c-b6d4-975c26493233@xs4all.nl>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Ard Biesheuvel <ardb@kernel.org>
+On 3/6/25 01:37, Hans Verkuil wrote:
+> Hi Shuah,
+> 
+> On 20/02/2025 17:27, Shuah Khan wrote:
+>> On 2/20/25 08:29, Matthew Majewski wrote:
+>>> On Wed, 2025-02-19 at 17:21 -0700, Shuah Khan wrote:
+>>>> On 2/19/25 14:58, Uwe Kleine-Konig wrote:
+>>>>> On Wed, Feb 19, 2025 at 02:05:01PM -0500, Matthew Majewski wrote:
+>>>>>> Move the v4l2_info() call displaying the video device name after
+>>>>>> the
+>>>>>> device is actually registered.
+>>>>>>
+>>>>>> This fixes a bug where the driver was always displaying
+>>>>>> "/dev/video0"
+>>>>>> since it was reading from the vfd before it was registered.
+>>>>>>
+>>>>>> Signed-off-by: Matthew Majewski <mattwmajewski@gmail.com>
+>>>>>
+>>>>> A Fixes: tag would be great.
+>>>>
+>>>> Matthew, there is no need to resend the patch. Just send me the
+>>>> Fixes tag and I will update the repo.
+>>>>
+>>>>
+>>>
+>>> Ok, here is the fixes tag:
+>>>
+>>> Fixes: cf7f34777a5b4100a ("media: vim2m: Register video device after
+>>> setting up internals")
+>>>
+>>
+>> Thank you. commit is now updated.
+>>
+>> thanks,
+>> -- Shuah
+>>
+> 
+> Please post your PR today, if possible. Otherwise it might slip to the
+> v6.16. Alternatively, I can take this patch myself.
 
-The 5-level paging code parses the command line to look for the 'no5lvl'
-string, and does so very early, before sanitize_boot_params() has been
-called and has been given the opportunity to wipe bogus data from the
-fields in boot_params that are not covered by struct setup_header, and
-are therefore supposed to be initialized to zero by the bootloader.
+Thanks for the reminder - I have to send a vimc PR
 
-This triggers an early boot crash when using syslinux-efi to boot a
-recent kernel built with CONFIG_X86_5LEVEL=y and CONFIG_EFI_STUB=n, as
-the 0xff padding that now fills the unused PE/COFF header is copied into
-boot_params by the bootloader, and interpreted as the top half of the
-command line pointer.
+Please take this through your tree.
 
-Fix this by sanitizing the boot_params before use. Note that there is no
-harm in calling this more than once; subsequent invocations are able to
-spot that the boot_params have already been cleaned up.
+> 
+> Also, why did you pick up this vim2m patch? I was a bit surprised by that.
 
-Cc: <stable@vger.kernel.org> # v6.1+
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Ulrich Gemkow <ulrich.gemkow@ikr.uni-stuttgart.de>
-Closes: https://lore.kernel.org/all/202503041549.35913.ulrich.gemkow@ikr.uni-stuttgart.de
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/x86/boot/compressed/pgtable_64.c | 2 ++
- 1 file changed, 2 insertions(+)
+By mistake - Blame it on jet lag - sorry. Explains why Matthew sent series
+for my review.
 
-diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
-index c882e1f67af0..d8c5de40669d 100644
---- a/arch/x86/boot/compressed/pgtable_64.c
-+++ b/arch/x86/boot/compressed/pgtable_64.c
-@@ -1,6 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- #include "misc.h"
- #include <asm/bootparam.h>
-+#include <asm/bootparam_utils.h>
- #include <asm/e820/types.h>
- #include <asm/processor.h>
- #include "pgtable.h"
-@@ -107,6 +108,7 @@ asmlinkage void configure_5level_paging(struct boot_params *bp, void *pgtable)
- 	bool l5_required = false;
- 
- 	/* Initialize boot_params. Required for cmdline_find_option_bool(). */
-+	sanitize_boot_params(bp);
- 	boot_params_ptr = bp;
- 
- 	/*
--- 
-2.48.1.711.g2feabab25a-goog
-
+thanks,
+-- Shuah
 
