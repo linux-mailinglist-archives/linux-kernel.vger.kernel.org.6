@@ -1,279 +1,222 @@
-Return-Path: <linux-kernel+bounces-548157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1783AA540EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:00:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7946AA540EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:00:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1765B16D51A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:00:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7E523A8CBE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCD7195980;
-	Thu,  6 Mar 2025 03:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qr4+n0iP"
-Received: from mail-yw1-f196.google.com (mail-yw1-f196.google.com [209.85.128.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825F6192B8F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A499191F91;
 	Thu,  6 Mar 2025 02:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.196
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741230001; cv=none; b=uMrqGpiCOXRxTN4+D9ejxCsdILj23jW+glPTUs//ZkXTHNe0waKUBMuPDEHABPqENDf4Vg1eQ/HF6xR8kVYGJ+DFnhCjde69r1N8cNCOIyzDFLUhoUIPhkzS+9ATN3lY6PjKFXp4EZF31RUVumXtDRnasYbj37CmeW7jjfLjpaI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741230001; c=relaxed/simple;
-	bh=61tMRzNOM/5QWusjnzUN8wPxi9LPAafyPlmyDrpfEP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EI/9v1x3SE2EiN1w7Ui/Qj9KcTOoSxi3qK1JIQuDZJYpj2OiIuh/MFosxV7CAT7k6VOnV9zMy6Gzqqj2ZsDKiWwp5m3vn0lBKLQnPYFoKVTmJm1Grqz5xFm0YG9/dvnoSiaPqwJdre7hhHZPyetgnype/jGMKyoMzhGcEvGVARU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qr4+n0iP; arc=none smtp.client-ip=209.85.128.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f196.google.com with SMTP id 00721157ae682-6f679788fd1so1438407b3.2;
-        Wed, 05 Mar 2025 18:59:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741229998; x=1741834798; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Jsf4FJkD/oQcph6Un/Rvp8XZNnCIvEKvX+i6GNumRQ=;
-        b=Qr4+n0iPgWdR1cXqJ9eWI4FM9271xlh9iV7xZ/zIKX3v/OVucwnZAkq5y7y/KuGKdA
-         3/FuFZD6BzbacsAXsQwOgUXGUJZtmxHK8ObippSiy4dMw81oiCDsqdgQ/32oZKYfK6Yk
-         0Msr11zx/OSChlCorbQlnfShfvnJAVbQQ4QBewNDUrS6svY0aaP4XXda7Y1uPT4cRzBc
-         0l/2MDynHa8+CUWPKpwGDrGxNBXN4mDoiF0JNUZOpWIy+qZpLefevMBlI1S4Eeg0sDnd
-         qU8s+e4bIhvtnmdzEDOZce3fjPI/WyUSrOEAXHkyBL7H7iIXVpyPlODig524uBD71ElN
-         Lp8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741229998; x=1741834798;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4Jsf4FJkD/oQcph6Un/Rvp8XZNnCIvEKvX+i6GNumRQ=;
-        b=BRvS6MfyrZ4Fz2dWODUz8SP4lu55kgF8oizY645eg/aVCzFbse/xY0ebFpYVA2hWRn
-         DuKnX+DzlP3kvr2uH2MzuH/OH2LTS/y0Nh5Ix+i7rz0njhO0fvQ+ncJw47rI7CcWcL7x
-         dlN/n1XrwA2B4M1I/qUq3OkfyA0ohIPF5PX3WMueCg8uB3kxkYofRLzyzDzyg+BiXyij
-         vHczzACDa6KOeXqrVM4ULYXfSFgHVKZdclf4zJ5zO++URb5JgFw40Olt7jpffKO1NXrk
-         +OxjbxyJwTPnvk1l69ulKPxOOSxx+5eoWiMXptjpo/ZlAr3on6qcPq1HWf1xCG0OkNmV
-         YgMA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/jAU/Mf+zwyL7O0/aYe2PZmuOr5lHecs1zPuqx77CrCaPF0P1TUKeb8faptTrERYfIi8=@vger.kernel.org, AJvYcCWLbAWw9WsTx6RCSAguXgkB93Cb70MjFOrr3bgPHAZdLmXCcMJJYOHG2CtWLVtPuIzei0EmDOPH@vger.kernel.org, AJvYcCWue2EBo974zXxRN4oYMPUiq6eDQTijIkp/zElbg5c+LP9Jn/N774g46IGNQr3LQlIihevKzZ8DUqFWdC5HiyJiOXrt@vger.kernel.org, AJvYcCXWfqmVm5+mZ6ZNYjZs78XtK6V9hlVb9nNuChyRa+SBSYaZdbUUlElTGRHCZmaBaAnIV7sBVbjyCjm8tHYb@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAR0Ny3nL6uZtngW42NGf0d8/fujMfv5AesKO4ZfBWzuLQrweX
-	2lAhaDsHwu6llzqHlwcyOrIaBGqW0EuQHZj3CkBxkX1Y6qhn/V69+7JKB4nK7uL5iL9DUMuORPO
-	/Vqma25G4WIKTxUqUbhiNrcGXkIE=
-X-Gm-Gg: ASbGncsbA09TZx8JGtW5BoHzFpTQrCY4by0xBLyvuVUR6aZhn+DbgeQOI0XSzZY8pDB
-	sNwBhsMJqFs6kskpSVw/btVfcjwayOjVL47qLSzadp0L8Vzf/eNz411zc7EkgPPp3/68ML12Ap0
-	h1x3o0tq3KvzqwwyrnPzRZ0l1GBA==
-X-Google-Smtp-Source: AGHT+IFeoYjcATqNsYPiuA+luhOQkjmbzDn/LQX+nvbyZv2699UHF1GDqeNPtOjeUYjHowLaxUhtHEMTkQhU0GT/F40=
-X-Received: by 2002:a05:690c:680f:b0:6fb:1e5a:fcd8 with SMTP id
- 00721157ae682-6fda31222edmr79126807b3.28.1741229998289; Wed, 05 Mar 2025
- 18:59:58 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="XBirJK3P"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2050.outbound.protection.outlook.com [40.107.96.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C1671750
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 02:59:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741229998; cv=fail; b=GMk33G+SKGgZA7zHKMbL7jkrhgkP9/9h9T7Wwj38JzZcIwMVic1DpLC3RnqU9LZGRHfTjgFCgK6x2MUPMtVjF7gJXhA4RluujXce+ua0dwN3MlvRYMKfm0oShm4E+EWEmvWIelhV4feo8mr6jzRchPjl4mAgYGqI6kgNzGFoMOo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741229998; c=relaxed/simple;
+	bh=qWJr0DMGzZQJZtSblXCgme5OSaJAAgTVkfKEmMsHXgA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=XDAhFDBXM0n0FtYfjpYq5E+vyJczxJ16//7g4TF1zRyS7WCvYh3YVR2KSDT+wP86Bh18rk4ouIQQK41lROJqhgkX70LKwyj/Uv82/mygTY2jVNWhvwLmFkM8gJMgcna//rpPXHrc+6u9u+n2JM6gwGHmxoNQ1OJT/VXxGiQVclU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=XBirJK3P; arc=fail smtp.client-ip=40.107.96.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=f5eD1O8GYZcpTxJV5lWclXRQ8YE9FCbMpw3cd2o25GBcxiBAInO/gpofE4Ka+BlQwOEQpC07UTIlyP0i+dJMdm460ckhMyrpPWlTHqmtWzeCO6o6cM15WaCJyhCBHAtu7fwBS4HSGXPOermQfqg3S/Zn7Fnvd4JNRdbwu2L4G6A5s4+Oj2avOrQJProL7llf1GzGygZ1apjfv0FZQe6gtcTOJry/NkkJHfmAbpPI9lLbifgiY7B6Fnx9L4tDmfE5tYdLisu6t339iJmgscrs+m8IIoGeNFEGNqWA6FfleoH6eDsVSfcI4XY5Y2y74oFKpY654ZHp2xe3g4RXr/byfQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EYr4HvnrrsqKdrZ4wDogVF5l/RG14Je6HNXERQhLiwM=;
+ b=sbwD5pFLn2xG2airNYzUu2eHPxZyBP7A3SEkQyt54XG7JZ26069jv0ebOu/5yXSvu9gCXYu3HwPwKFz9an30fjSdFvwfQwW+a+s6H48Y8v7zY+HKcThHkDa0kzLtfOes81JoqQHLhNh6Hh+ssn2ImPZMvhTwTHITo7ffaTBDrKDceCYJ9P24WbSAaX2L8sTzQrpbLysrdUoeUhbUrkYVgBE8JeydLHjRfSOtyJtH2Dvi/LdVnH6W7Y7HZQCNaD0UmrBlSe3vlyw4/91HMzOG3Yn+iHtskMBdqroXTgeWJObgN5SqPII5xH5DM6sLzxGX2NhXe7qVoeoQTdiPydsD4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EYr4HvnrrsqKdrZ4wDogVF5l/RG14Je6HNXERQhLiwM=;
+ b=XBirJK3PwC+WeBWWPaQDuMhJqI7XtBscyY98N2HrAaGoalbT6VGU1ApobPREE19t2g1GVsq8caJefOv0xbhfmGua9n2HxHWHI4ARtIHBODBQrmExEBSW+4BIKjYstVMgaDNJoY6jGgm74Y+I5jhF6BtH9z0d8QCMSZTfHbC/iDI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM6PR12MB4401.namprd12.prod.outlook.com (2603:10b6:5:2a9::15)
+ by MN2PR12MB4127.namprd12.prod.outlook.com (2603:10b6:208:1d1::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Thu, 6 Mar
+ 2025 02:59:45 +0000
+Received: from DM6PR12MB4401.namprd12.prod.outlook.com
+ ([fe80::1fc8:2c4c:ea30:a42f]) by DM6PR12MB4401.namprd12.prod.outlook.com
+ ([fe80::1fc8:2c4c:ea30:a42f%7]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
+ 02:59:45 +0000
+Message-ID: <faadd6ad-3b85-4ad3-8d17-acb5e0991a18@amd.com>
+Date: Thu, 6 Mar 2025 08:29:38 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ktest: Fix Test Failures Due to Missing LOG_FILE
+ Directories
+To: Steven Rostedt <rostedt@goodmis.org>, Ayush Jain <Ayush.jain3@amd.com>
+Cc: warthog9@eaglescrag.net, linux-kernel@vger.kernel.org,
+ srikanth.aithal@amd.com, kalpana.shetty@amd.com
+References: <20250305041913.1720599-1-Ayush.jain3@amd.com>
+ <20250305190159.7c590242@gandalf.local.home>
+Content-Language: en-US
+From: "Jain, Ayush" <ayushjai@amd.com>
+In-Reply-To: <20250305190159.7c590242@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0197.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:e9::6) To DM6PR12MB4401.namprd12.prod.outlook.com
+ (2603:10b6:5:2a9::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303132837.498938-1-dongml2@chinatelecom.cn>
- <20250303132837.498938-2-dongml2@chinatelecom.cn> <20250303165454.GB11590@noisy.programming.kicks-ass.net>
- <CADxym3aVtKx_mh7aZyZfk27gEiA_TX6VSAvtK+YDNBtuk_HigA@mail.gmail.com>
- <20250304053853.GA7099@noisy.programming.kicks-ass.net> <20250304061635.GA29480@noisy.programming.kicks-ass.net>
- <CADxym3bS_6jpGC3vLAAyD20GsR+QZofQw0_GgKT8nN3c-HqG-g@mail.gmail.com>
- <20250304094220.GC11590@noisy.programming.kicks-ass.net> <6F9EF5C3-4CAE-4C5E-B70E-F73462AC7CA0@zytor.com>
- <CADxym3busXZKtX=+FY_xnYw7e1CKp5AiHSasZGjVJTdeCZao-g@mail.gmail.com> <20250305100306.4685333a@gandalf.local.home>
-In-Reply-To: <20250305100306.4685333a@gandalf.local.home>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Thu, 6 Mar 2025 10:58:18 +0800
-X-Gm-Features: AQ5f1Jq_Oa1dQKvMfe98EdRc4mzdybzOfF6-Dlq5oONytu-pPWGY-R6eybChn8I
-Message-ID: <CADxym3ZB_eQny=-aO4AwrHiwT264NXitdKwjRUYrnGJ2tH=Qwg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] x86/ibt: factor out cfi and fineibt offset
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, mark.rutland@arm.com, 
-	alexei.starovoitov@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	mhiramat@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, ast@kernel.org, 
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
-	eddyz87@gmail.com, yonghong.song@linux.dev, john.fastabend@gmail.com, 
-	kpsingh@kernel.org, sdf@fomichev.me, jolsa@kernel.org, davem@davemloft.net, 
-	dsahern@kernel.org, mathieu.desnoyers@efficios.com, nathan@kernel.org, 
-	nick.desaulniers+lkml@gmail.com, morbo@google.com, samitolvanen@google.com, 
-	kees@kernel.org, dongml2@chinatelecom.cn, akpm@linux-foundation.org, 
-	riel@surriel.com, rppt@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, netdev@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4401:EE_|MN2PR12MB4127:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1ba28e32-edc6-437a-6034-08dd5c5af2fd
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?MW85dC9QWU9zL2NRalpRaHRyeldaNDFKSDBjbk03M0Q3Z2xZQmZvam0rVjdi?=
+ =?utf-8?B?VUk1NG9Sbmdsb2ZscHl0aXBGaytKZVBTd1ltQi9rR3hzaUJ6N254SWJhcXJ6?=
+ =?utf-8?B?WVVYRkpEREFoWlhYMy8vNUdkMFlKb09MSkRXVThZWUhwZ05BRGhrbGRubTB3?=
+ =?utf-8?B?andnWGRNSnEzcHhSWDVYeU9wVzFrbGt1ZmlDL2t0UFdET05pTWtjbTdSR2Ny?=
+ =?utf-8?B?TC9GL09hcWZ1UWJDWkJQdmZ5T094WC9KbXZMTm5sQm8xVXF3UXZEaFRPMDg5?=
+ =?utf-8?B?UHY3dzdQS1dkOU9TVjNlWGlzQjNETTUwMjFVazY1L3Y3c0ZKaWJrdTFoQXBV?=
+ =?utf-8?B?TmR3U3orLzFuOXMvdFRZM0xpSStNNXZTM0xWRFNLbG95dEM1TThTdFgveXhr?=
+ =?utf-8?B?Y1ZaeEFwSThhTGJIZGdiTHRoUS9aSGpkTDd4S29WOTk3ZEI5VmhNZ3JMa01Y?=
+ =?utf-8?B?bDQvQ0lFY2dobGszdy9XRnJjL3BIT2ZwMC9GSzZ5L25vb0J3Yy96dkZ3OS9R?=
+ =?utf-8?B?Z1FXNmtqRGRhWGxEajNUTXRFQ2sxdCtvSnkyODN3U0ZubEszdDBsWkp0WmlB?=
+ =?utf-8?B?NFQzK2w5Tno2UGhMR3FGa0t5ZHFHSHhTbjJQN0hLanJDRkhFMFJ2UWoxZDhI?=
+ =?utf-8?B?b1I0SENLeUcyZkh5QlFWenNNV2poMVpuTklOaEFud2pQYXNSa2x3QTVScUJT?=
+ =?utf-8?B?cThJN2dPVGw5dVJXTnpRZDlWZVJiWC82bmwyTm1nUmJUZzBJWWt3d3I0RWpS?=
+ =?utf-8?B?eW9JVDhPVUNia0p6UmtSS1dhSDlVUVRIZCtkREdIMjBLV0V2U3JWeVhvZGdX?=
+ =?utf-8?B?emw5YXRQVGlaa0NhTG9Vc1dPUnZRL01jQzAyM3RiQm9lZkU4QjExSG8xbHpJ?=
+ =?utf-8?B?emFyeWRBellFV2k0ekZHR3ZqTStvS1g0eW0rZEp4OVNkYTZZM3RUeEpmcTVu?=
+ =?utf-8?B?S0NuUkJISmROZG53eEErZk94NkVZbnlmMkJPZmVMZW50NlVUTURGTXlqaEVS?=
+ =?utf-8?B?anVVR2pKV21uQkFobGsyN3o2RlJvUm5LdGV2eTNkME8rKzZYbTVuWFJCSHlv?=
+ =?utf-8?B?eXliajl4VVNib1lkbHlpMkR0cmdyZkNvN21tNk5FQlB0MFk1T05nMFdBVDBl?=
+ =?utf-8?B?S0JhdkJRQU9RNFV5UkhXeHoyUngvTnBiOGhhdUV4blg3OE1FekxUckZpOTZN?=
+ =?utf-8?B?cURBZ2VNNVlob252U1FtamZHRTJpZ21SU0Y4eXhGRCtmbTE2Qnp2dFE0bWFw?=
+ =?utf-8?B?K1Z3SXBWUkYxUEF4WFdDUnY1WFFjckpRZWpneXhLUGJ0Unl5ZWhwUWhxZ2dL?=
+ =?utf-8?B?NktYUmlSR0dkZWZpODlUd3JVZkRhSzRSZDBHNE9BdDAvMkI4aUpQSUQyekxu?=
+ =?utf-8?B?aG52V0ZNKzlRUFVUd3c0SGhNTFgxZFBNdnNZSDBxRUkzeHZ3RTQ3QlRqUWJR?=
+ =?utf-8?B?NHNxcFZLYVAwYkVjbElrL2dGMnJVUmRaN2hNb1c2RW9zN0I0QlFRaGRaVzJU?=
+ =?utf-8?B?RVBOeCtjemFlVWl1d0lDYVpsNWRnZDVyUU9yM1VIQmNWSnppWmlpZ3JiVzRR?=
+ =?utf-8?B?VzZOT2c0SWp0Q1ZvejA4bndPTysrR3BnSStGT3dXaUJDbUgyZXdqMkVCUTFW?=
+ =?utf-8?B?SkI3eUhybXFDcndER1RHanRyUGR6LzFjcVV6d2ZZWjEwSnJwY2J0azF5RmVX?=
+ =?utf-8?B?SFdtbmhMMXh3NkZ2Y3JQWDQ1cDRubGsvREJWQzdXNXBhbHVqYlJrL0VhRmdI?=
+ =?utf-8?B?MGZSTHJMeWo4WWx3M3A0TWJZbWhPd09ZcWhJQ3cwelJ4cGx0NUttdnJiWUhH?=
+ =?utf-8?B?dE43T2dWYldRUnhJMEp0T1pHSnM4UnhCdnZtaEozbXRoeTNlQ21hdXMzdDli?=
+ =?utf-8?Q?Hgno1ck/FJIR4?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4401.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?K3FTMHVmM1ZEWjZQUFcrQ1ZENllFMG9PL3N5R0p0ZXhKVnZhTnZaZmxyckY0?=
+ =?utf-8?B?NnFTenJiZ3Y0YU1tdXk1djNSSFJMN0V2Y1htU2lYOFN5c1RGTmFiZkQvUngx?=
+ =?utf-8?B?T2dOLzBaU3AvdUZZRnczcWcwUlZVZ2VoUUZNTmtYd094UzJXWmdDeDFOaFVn?=
+ =?utf-8?B?aEY1UVkzZVVFSU9WdytGV21waVdFZ0xDMlpONS9kVXNhKy9pMTEyWjRlcURo?=
+ =?utf-8?B?MHptS3BQd1dHZVUyWm1FVE41VnEvWVZYb2pYMlI4bFJCa1BPekd6SDQwR0Vs?=
+ =?utf-8?B?STdVTDRMQXFUenU3dEU2dGtTQlNGV3VSSThWck9pNUlRSkZ4Sm1zeXFoY0F2?=
+ =?utf-8?B?OHFKL1ZoV01GK1hsalNPdnEwem5VV2h0US81dGdPOTZsT0ZGQlhqeDRrbmFa?=
+ =?utf-8?B?Ulo3clpWT3U4c1dZNU1oL0tpNHFLTE90d1ZSZFdJL1oyZmVzbjNaYm1JTkVP?=
+ =?utf-8?B?SDB3bUFURGRkMmFuS3RjNEFTZHN2V2gxQTlWOFNDVDJnZlZYTTJ5M0ozekZ0?=
+ =?utf-8?B?SnlaeDBEVUJpVHBmYldiZ2pxYVh5Z29uZ0gwMVQxemxHNUtmUEFUNG9HQW1J?=
+ =?utf-8?B?bUs0cjQ3ZmxNUU5QWHAzM2YwcnRUUmhtVkpodldPVnBJYjBGdVRhMHYzeXdZ?=
+ =?utf-8?B?emw1R3JHd3pKV3NIZkpLVTZIQVcrT0J0bzdTSFdIWmQyM3pLNXdYTDk5V2ZS?=
+ =?utf-8?B?MndZUVZlendxY24xVjlOZ00vOWNPWDl4RVRoZFNCemVzMklGaE5SRFh5Y3Mw?=
+ =?utf-8?B?OU1MSmhaR2ptamhUTzhabzYxdUdwUmI1ZWUwMWw2RTFCL2dybnQ0TlJ3VWNr?=
+ =?utf-8?B?ZWZZRmgwS0RSQkcvSHhYRlVvZFIzVEZtL1lZSUxvZ21iMjZiRy9rU2EzeXRz?=
+ =?utf-8?B?eUM1ME9zcGpRd05NUVNuaDhXM092SUZUQzNteTBDZmhiaGNmY3h1ZUljTGxx?=
+ =?utf-8?B?VktSODJGWFJhcEdGSWhYb1F4WUZKS0pEWnVzWEFPSkFVK1dPSFJQTmZOYkFO?=
+ =?utf-8?B?WHpzQUoyejhrM1k5OGE3anRQQnNHTW44RjhCTyt5UUR5ajhxUWoxNjZ3WVhy?=
+ =?utf-8?B?bHp0MGFESlc5MkxvcGF2MlcxMStoS3IwenNXZHdhcTF6bndZRFJydjN5RUdo?=
+ =?utf-8?B?VVl5ZFZHb3c3MWlXbXZ5bGZFWU1rcEhpMmZWbVoxTEVhTGRPK3UvY3phS2Vz?=
+ =?utf-8?B?cEU3OGxrZnIxKzc5RjMxaGtYSnpocGppdk1KUEJ2RlUwV1hCNW5Ob0hLdmhr?=
+ =?utf-8?B?L1JwMWh2SlNsZkw5WklpVTJ0NkdoRDRCVzlBcyt0cVBlbGdyVDNSTlpzbk9W?=
+ =?utf-8?B?ZjFHcmREK0tpV0UwUDFQTHh3eXhKVm9UVU5LMWtQSXZtcmJFZFZWc01NNDR2?=
+ =?utf-8?B?emhQbHF2Uk9HZ3l0blNMT3BtWVQ0UTZqcWRyUGtEdlFBOVVucG9mV2s4ejFL?=
+ =?utf-8?B?NWhYN203R1cyMWZPZ0VQRzFZeGY3Y0NFYUZSMGZXK05GU29MVXhjbUNNUzJL?=
+ =?utf-8?B?QVd4ZHp3bjR2MHdhZlgrMkp2NmhHazZqVXdVRHNBdVBnOVhOYjJSbkMwVjk0?=
+ =?utf-8?B?V3B1a25KWjNYUnlkM0dVVldrM2xBU3k2Z3FRdnE4YWlCYkE4RzlTNElsWWNI?=
+ =?utf-8?B?L3JzNGNtemJnRUJsYzRabEpZYWFydUtKSlNrZkQxbXExQk5YMU8wai8zeWpl?=
+ =?utf-8?B?L0MvVldicHVWR1kvUDMzdUlDcDJVMldpZkIxRnltMGNmWGtpb25iSFNUaGh1?=
+ =?utf-8?B?SzhKazJxS0c5ek1yYUJrYmJBRjVJSjROWFFPa2J1T3VBa25rZGltWG5xOFIw?=
+ =?utf-8?B?NkdUdStGbVYxSGVjdVc1V2xiMzg1dk03ZlJ3eU5UOU5GTUVpaWhuWHdIc21N?=
+ =?utf-8?B?bjF0YnlKYXVFdks5Q1NkNEJ5anZ6YitrTkJiUG9VeGpwOXA2WHh4d2dIQzht?=
+ =?utf-8?B?cGMvaHlNVnorVEpPWDVCb2FMZTlTeFN3dlNDc0VJZUtFcVR3V1FnZTQ2UGRU?=
+ =?utf-8?B?WEI4cGRuYVlWK2ZDODB3ZldnUk1OSWlEblRXK1BxdXdEeHdpZWN2akFzajVF?=
+ =?utf-8?B?aTVRcjN2M0hnVk1JMTVzblVFS0V0UnExOVkzRWl3bFlaQVhiYllKSVp4aFBL?=
+ =?utf-8?Q?udqZ/yMUhr/T1+YXwMfjyWAJL?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ba28e32-edc6-437a-6034-08dd5c5af2fd
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4401.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 02:59:45.4033
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BEGOAKXWFenrlQN7xa4UcB41WCzntElQ8HFRUx1ejMvuwu2+OmkJ2ER81mcP2yrwd/AcgSAdNhtf49d7LrtM/g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4127
 
-On Wed, Mar 5, 2025 at 11:02=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> On Wed, 5 Mar 2025 09:19:09 +0800
-> Menglong Dong <menglong8.dong@gmail.com> wrote:
->
-> > Ok, let me explain it from the beginning. (My English is not good,
-> > but I'll try to describe it as clear as possible :/)
->
-> I always appreciate those who struggle with English having these
-> conversations. Thank you for that, as I know I am horrible in speaking an=
-y
-> other language. (I can get by in German, but even Germans tell me to swit=
-ch
-> back to English ;-)
->
-> >
-> > Many BPF program types need to depend on the BPF trampoline,
-> > such as BPF_PROG_TYPE_TRACING, BPF_PROG_TYPE_EXT,
-> > BPF_PROG_TYPE_LSM, etc. BPF trampoline is a bridge between
-> > the kernel (or bpf) function and BPF program, and it acts just like the
-> > trampoline that ftrace uses.
-> >
-> > Generally speaking, it is used to hook a function, just like what ftrac=
-e
-> > do:
-> >
-> > foo:
-> >     endbr
-> >     nop5  -->  call trampoline_foo
-> >     xxxx
-> >
-> > In short, the trampoline_foo can be this:
-> >
-> > trampoline_foo:
-> >     prepare a array and store the args of foo to the array
-> >     call fentry_bpf1
-> >     call fentry_bpf2
-> >     ......
-> >     call foo+4 (origin call)
->
-> Note, I brought up this issue when I first heard about how BPF does this.
-> The calling of the original function from the trampoline. I said this wil=
-l
-> cause issues, and is only good for a few functions. Once you start doing
-> this for 1000s of functions, it's going to be a nightmare.
->
-> Looks like you are now in the nightmare phase.
->
-> My argument was once you have this case, you need to switch over to the
-> kretprobe / function graph way of doing things, which is to have a shadow
-> stack and hijack the return address. Yes, that has slightly more overhead=
-,
-> but it's better than having to add all theses hacks.
->
-> And function graph has been updated so that it can do this for other user=
-s.
-> fprobes uses it now, and bpf can too.
+Hello steven,
 
-Yeah, I heard that the kretprobe is able to get the function
-arguments too, which benefits from the function graph.
-
-Besides the overhead, another problem is that we can't do
-direct memory access if we use the BPF based on kretprobe.
-
+On 3/6/2025 5:31 AM, Steven Rostedt wrote:
+> On Wed, 5 Mar 2025 04:19:13 +0000
+> Ayush Jain <Ayush.jain3@amd.com> wrote:
 >
-> >     save the return value of foo
-> >     call fexit_bpf1 (this bpf can get the return value of foo)
-> >     call fexit_bpf2
-> >     .......
-> >     return to the caller of foo
-> >
-> > We can see that the trampoline_foo can be only used for
-> > the function foo, as different kernel function can be attached
-> > different BPF programs, and have different argument count,
-> > etc. Therefore, we have to create 1000 BPF trampolines if
-> > we want to attach a BPF program to 1000 kernel functions.
-> >
-> > The creation of the BPF trampoline is expensive. According to
-> > my testing, It will spend more than 1 second to create 100 bpf
-> > trampoline. What's more, it consumes more memory.
-> >
-> > If we have the per-function metadata supporting, then we can
-> > create a global BPF trampoline, like this:
-> >
-> > trampoline_global:
-> >     prepare a array and store the args of foo to the array
-> >     get the metadata by the ip
-> >     call metadata.fentry_bpf1
-> >     call metadata.fentry_bpf2
-> >     ....
-> >     call foo+4 (origin call)
->
-> So if this is a global trampoline, wouldn't this "call foo" need to be an
-> indirect call? It can't be a direct call, otherwise you need a separate
-> trampoline for that.
->
-> This means you need to mitigate for spectre here, and you just lost the
-> performance gain from not using function graph.
+>> diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
+>> index 8c8da966c641..13b97e6b8459 100755
+>> --- a/tools/testing/ktest/ktest.pl
+>> +++ b/tools/testing/ktest/ktest.pl
+>> @@ -4303,6 +4303,14 @@ if (defined($opt{"LOG_FILE"})) {
+>>      if ($opt{"CLEAR_LOG"}) {
+>>  	unlink $opt{"LOG_FILE"};
+>>      }
+>> +
+>> +	if (! -e $opt{"LOG_FILE"} && $opt{"LOG_FILE"} =~ m,^(.*/),) {
+>> +	my $dir = $1;
+>> +	if (! -d $dir) {
+>> +	mkpath($dir) or die "Failed to create directories '$dir': $!";
+>> +	print "\nThe log directory $dir did not exist, so it was created.\n";
+>> +	}
+>> +	}
+> Hmm, somehow the indentation is messed up here. Should be:
 
-Yeah, you are right, this is an indirect call here. I haven't done
-any research on mitigating for spectre yet, and maybe we can
-convert it into a direct call somehow? Such as, we maintain a
-trampoline_table:
-    some preparation
-    jmp +%eax (eax is the index of the target function)
-    call foo1 + 4
-    return
-    call foo2 + 4
-    return
-    call foo3 + 4
-    return
+Sure, will update it in next version
 
-(Hmm......Is the jmp above also an indirect call?)
-
-And in the trampoline_global, we can call it like this:
-
-    mov metadata.index %eax
-    call trampoline_table
-
-I'm not sure if it works. However, indirect call is also used
-in function graph, so we still have better performance. Isn't it?
-
-Let me have a look at the code of the function graph first :/
-
-Thanks!
-Menglong Dong
-
->
->
-> >     save the return value of foo
-> >     call metadata.fexit_bpf1 (this bpf can get the return value of foo)
-> >     call metadata.fexit_bpf2
-> >     .......
-> >     return to the caller of foo
-> >
-> > (The metadata holds more information for the global trampoline than
-> > I described.)
-> >
-> > Then, we don't need to create a trampoline for every kernel function
-> > anymore.
-> >
-> > Another beneficiary can be ftrace. For now, all the kernel functions th=
-at
-> > are enabled by dynamic ftrace will be added to a filter hash if there a=
-re
-> > more than one callbacks. And hash lookup will happen when the traced
-> > functions are called, which has an impact on the performance, see
-> > __ftrace_ops_list_func() -> ftrace_ops_test(). With the per-function
-> > metadata supporting, we can store the information that if the callback =
-is
-> > enabled on the kernel function to the metadata, which can make the perf=
-ormance
-> > much better.
->
-> Let me say now that ftrace will not use this. Looks like too much work fo=
-r
-> little gain. The only time this impacts ftrace is when there's two
-> different callbacks tracing the same function, and it only impacts that
-> function. All other functions being traced still call the appropriate
-> trampoline for the callback.
+> diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
+> index 8c8da966c641..13b97e6b8459 100755
+> --- a/tools/testing/ktest/ktest.pl
+> +++ b/tools/testing/ktest/ktest.pl
+> @@ -4303,6 +4303,14 @@ if (defined($opt{"LOG_FILE"})) {
+>      if ($opt{"CLEAR_LOG"}) {
+>  	unlink $opt{"LOG_FILE"};
+>      }
+> +
+> +    if (! -e $opt{"LOG_FILE"} && $opt{"LOG_FILE"} =~ m,^(.*/),) {
+> +	my $dir = $1;
+> +	if (! -d $dir) {
+> +	    mkpath($dir) or die "Failed to create directories '$dir': $!";
+> +	    print "\nThe log directory $dir did not exist, so it was created.\n";
+> +	}
+> +    }
 >
 > -- Steve
->
-> >
-> > The per-function metadata storage is a basic function, and I think ther=
-e
-> > may be other functions that can use it for better performance in the fe=
-ature
-> > too.
-> >
-> > (Hope that I'm describing it clearly :/)
->
+
+Regards,
+
+Ayush Jain
+
 
