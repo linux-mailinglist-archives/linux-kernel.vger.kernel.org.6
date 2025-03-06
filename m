@@ -1,49 +1,89 @@
-Return-Path: <linux-kernel+bounces-549617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CBF9A554AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:18:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FE25A554B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:19:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74AB6178300
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:15:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33DF6179E82
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2448627814A;
-	Thu,  6 Mar 2025 18:13:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5618D278176;
+	Thu,  6 Mar 2025 18:13:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2kdLc9v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c+uj9W2T"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748E02698BD;
-	Thu,  6 Mar 2025 18:13:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CAC278158;
+	Thu,  6 Mar 2025 18:13:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741284797; cv=none; b=L6w4V43mdAIWeZCrhwbqN7uCfhvwEUF8KM8lZ3oCa53UZSRYxm63y0999o3fuSTSWHIELqZqs5Mam2DI7AkWZSAMu34jgqo9rvAcwG6cwXzmr0Gw+WzeAdHBcwFCtn07WvCGMgvpkn5kobbaWPOnQEAmI2/n21y30jWcNnc6mjo=
+	t=1741284800; cv=none; b=pQ8D0UfBLTr5z6Qnm8EYMLo1bhc32cvK1F15wKEHw4+Kz+nGB5DpACAYHD0LmJFBDKRzXbg4l3aVKLJVLRPf3ZkPPIhOfDAb+f3qS96z8I80b91DyTHApb1rTBTo293c8LLDtKU4gghOM3h3xzZ3bLRgYhTIpqc26x6GaST36V4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741284797; c=relaxed/simple;
-	bh=V9H185IolkXGrMv0yDeTgeTZjT8H3BkkpxepgLhl15Y=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=j3ESYOEEC6lUlwue/LS9Xyrosmr4y1A8UrD8AfEIcjGvNRTEu2HuXeat4SAnYXvALzy3EBpIn+0RmqkZCwClPyetitjqn9UQbUya1xX7DsmxJ9SrLvYYBF07I93Y99nzL90hKEUcK6Uh2mJhLk6UZFjWynA+AeWK6LfEIwaqAd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o2kdLc9v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF9BFC4CEE8;
-	Thu,  6 Mar 2025 18:13:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741284794;
-	bh=V9H185IolkXGrMv0yDeTgeTZjT8H3BkkpxepgLhl15Y=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=o2kdLc9vQQ1cGNg8H+JtdjvAp/s0j+FUkrAgV683yNJcPw8JoeIo04pLGV5VuW8V8
-	 f9Zpqgp9buF7RtJxrodYBaB/mjfW3QN+BGds414e3o5jq7q43lMrivcubXB0tcQgt/
-	 k8+N8h9scBvDvcsoqWdBwV/KwaFEsfzY0MpQQq2KBMoSB9vU1AkLFf34AVHyoLfEW3
-	 UNDmlnl6GRx7ot6A4L4JgA8K+EjYOTqfpUnvsvxmeDOXh2xcDAFPU1gWyDk+zi52cn
-	 yzBzYATI9EGyzKJHoEVKLbPmjdMrMhsMGXI1ZDe3nUMqz/6KVfNd7/EedEBFEqk158
-	 eiiKLxWp3OSrA==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Thu, 06 Mar 2025 19:11:23 +0100
-Subject: [PATCH 11/11] arm64: dts: qcom: x1e001de-devkit: Drop clock-names
- from PS8830
+	s=arc-20240116; t=1741284800; c=relaxed/simple;
+	bh=EVr+mP55XoH0XviBXbcka/95/f1BtJ3c9cR9hYR+L0c=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MovbIcDkFq8IC0wq2hTsdekDjuF+r/gecas4OtOxBcgw2xRABsaBiK2xHHJCN9kh4hrWndm6foDt5tiBqjgy1JwzSyCA7Nf4+3G1SLXkkXRG1+JF7iccMObVKEa2dNnvML8bR7nTjYOJfONk5mo77X2AgsTEPtY8VirWQL0wLtg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c+uj9W2T; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-390f69e71c8so684547f8f.0;
+        Thu, 06 Mar 2025 10:13:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741284796; x=1741889596; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WM6XsR+FCi3oVZdQFbq5hq9EeEJYAwuc2HQEr8qjJck=;
+        b=c+uj9W2TGliSFmtMINlfEGxFZ3kK7aNWmflfrxk4ZrSe/PZJqhVkDT6Fqa61TykGqf
+         8MLkxHUM/gr4EMC1AC3HeeJ0X4d1I/UNmEkQ8egdrQG5Vre9lWwfBvy5rEXCwEdHG+Rs
+         T2PdKA9t6e7sAM0xZHCxx6XO1TT1ksRpa/CiUDW38LbCgll+YJak4Oc5T6PRwGsP5gHL
+         eIU5rghGzRDVtzJ6hL+CO0s+1kGfgiXWdV+k29qt+9IrK7yoHxQyFRXvon1xtrzDKvis
+         8T6NoEoxjRMum/A1qKQ2i9NBt4Ti0IfvAhNjAdOoP8d1FqhUF9sluzR1tAvl0s6iWWeD
+         J9mQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741284796; x=1741889596;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WM6XsR+FCi3oVZdQFbq5hq9EeEJYAwuc2HQEr8qjJck=;
+        b=ktO2XRdBXXuHK0cEa46/fAv2BbgnSPbJwVJG+UviLCkEp8+FR/66NlvJxPMOEo6nCS
+         S2K9aEEuqvGDNEdKMHYKmVvqPFofNK5j/CIin6rGqzcp1W5GrtCMxpScWlqvl4yDmCRk
+         S0UxLvHnhWuxsaMqn5+z+o6T6+5k0QBVe8R9SWuInQMMHrO5fmOJsqdPjNd1Tz/0dUGo
+         ipYy9OsgfwcXU0VvBYbFxkJq0IQwOz7xxV1A9+QZxleycUChluogldPuXTzn3md3oajo
+         lL57Yf7cYQ5onNeNFUeinxBYMwBhdDcpfRdRFgMw8mJ52eYX+nq7tnaUjk9/85uo1xj4
+         QHug==
+X-Forwarded-Encrypted: i=1; AJvYcCUK6ud0ax/O0JbqXPD0jrxW1CqzvwWfc/w0+HBxgx0GPhtwGTE36H2PtbJbfbeB0H9w7XyvXTdvykVC2Rk=@vger.kernel.org, AJvYcCXm7qwGRHWOGN+Ft4H9h/Bs95oDvKH8C5wJRgvDxW4KgJ5/TSb821i5oa2b8h90EnViGYKQBKCcNbpmWCM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbgLVJjS7ZGBfO4+Hyewnv6UKzcRHoVXdsfJPtrND6tCsvwCHa
+	4BX9I2vXIj37lfjmPEw1gULvJ+2acoCWpGfpSybuR8Y6P/GgQRqGAgf/fw==
+X-Gm-Gg: ASbGncuPryFil8lbOQv/fCNfVJKi1f0sKP/c/yNoPvZgMynQGUhHl1rncCckgJs6t16
+	YnVcmurnZ0+S0++m4CSGAh+RkzKX0oXC74C0FiVnsc03tuF1K8f5m52118YMr2TOreCMwnd9q03
+	EHWcZw4FJm0OdWO6pWRuomYhdkhwxYeJqRj1/Vj8uA0zOQS/rP9WUttcQ1P6ShUTmKT0GCBAjMV
+	rbcOkuVXoVHmoHupcJcd/hhltRHrKOiI4SXT1DJN+OkoK3WgWHGyZrDTkZRRUKrrQrPi23z+157
+	cFpUWDKvx0vngswAPUim3UWjZQCrWJroT/OdHdTc93kMecZUQxGbQWQ8uq9X1i4AXYmoUcrkhVv
+	3khRz0hrXcCcW+rZZmZ/Smtx7NxohH3L7lXYo
+X-Google-Smtp-Source: AGHT+IHwnSpVgeGxEDzzBl9LZA0NVqRAFhN9N7CakekbdEKT/Ia5kmGdDFbU1EjkYIuLQub8ls+rHQ==
+X-Received: by 2002:a05:6000:2108:b0:390:ef45:1a36 with SMTP id ffacd0b85a97d-391320f49b7mr320707f8f.19.1741284796146;
+        Thu, 06 Mar 2025 10:13:16 -0800 (PST)
+Received: from localhost (p200300e41f3a9f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3a:9f00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c103aa5sm2751462f8f.94.2025.03.06.10.13.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 10:13:15 -0800 (PST)
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] soc: tegra: Use str_enable_disable-like helpers
+Date: Thu,  6 Mar 2025 19:13:13 +0100
+Message-ID: <174128478440.2031308.15667094912348711160.b4-ty@nvidia.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250114203638.1013670-1-krzysztof.kozlowski@linaro.org>
+References: <20250114203638.1013670-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,81 +91,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-topic-dt_bindings_fixups-v1-11-0c84aceb0ef9@oss.qualcomm.com>
-References: <20250306-topic-dt_bindings_fixups-v1-0-0c84aceb0ef9@oss.qualcomm.com>
-In-Reply-To: <20250306-topic-dt_bindings_fixups-v1-0-0c84aceb0ef9@oss.qualcomm.com>
-To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
- Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Robert Foss <rfoss@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Wesley Cheng <quic_wcheng@quicinc.com>, 
- Christian Marangi <ansuelsmth@gmail.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Rohit Agarwal <quic_rohiagar@quicinc.com>, 
- Kyle Deng <quic_chunkaid@quicinc.com>, Vinod Koul <vkoul@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- linux-arm-msm@vger.kernel.org, iommu@lists.linux.dev, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-usb@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741284679; l=1160;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=ohEmbayu2LsT1id4h533hC8kGW2KXwVmCy3qoWajQvY=;
- b=4aIxanukVplVRHvn1zCChM9eaau0QidU2RP7g1GtwCrds6llxAy+yOc/LeaWvnOE5W0DyRBTV
- 23BM8GcQOkMCnULh4Bf7jZ/gqTLzXDVluSPkf/Qkejwp0XSRIusE74j
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Transfer-Encoding: 8bit
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+From: Thierry Reding <treding@nvidia.com>
 
-The preemptively-merged node contains a property absent from the final
-bindings. Remove it.
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/x1e001de-devkit.dts | 3 ---
- 1 file changed, 3 deletions(-)
+On Tue, 14 Jan 2025 21:36:38 +0100, Krzysztof Kozlowski wrote:
+> Replace ternary (condition ? "enable" : "disable") syntax with helpers
+> from string_choices.h because:
+> 1. Simple function call with one argument is easier to read.  Ternary
+>    operator has three arguments and with wrapping might lead to quite
+>    long code.
+> 2. Is slightly shorter thus also easier to read.
+> 3. It brings uniformity in the text - same string.
+> 4. Allows deduping by the linker, which results in a smaller binary
+>    file.
+> 
+> [...]
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-index 602bd793e09cc9e7d8447af593e934010fc0c789..f87730f4b63fffc88d07eedef33cdab9bca759f5 100644
---- a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-@@ -777,7 +777,6 @@ typec-mux@8 {
- 		reg = <0x08>;
- 
- 		clocks = <&rpmhcc RPMH_RF_CLK5>;
--		clock-names = "xo";
- 
- 		vdd-supply = <&vreg_rtmr2_1p15>;
- 		vdd33-supply = <&vreg_rtmr2_3p3>;
-@@ -832,7 +831,6 @@ typec-mux@8 {
- 		reg = <0x08>;
- 
- 		clocks = <&rpmhcc RPMH_RF_CLK3>;
--		clock-names = "xo";
- 
- 		vdd-supply = <&vreg_rtmr0_1p15>;
- 		vdd33-supply = <&vreg_rtmr0_3p3>;
-@@ -887,7 +885,6 @@ typec-mux@8 {
- 		reg = <0x8>;
- 
- 		clocks = <&rpmhcc RPMH_RF_CLK4>;
--		clock-names = "xo";
- 
- 		vdd-supply = <&vreg_rtmr1_1p15>;
- 		vdd33-supply = <&vreg_rtmr1_3p3>;
+Applied, thanks!
 
+[1/1] soc: tegra: Use str_enable_disable-like helpers
+      commit: 5e63dfe213d01cdf0bb2786ae3d5ac613182a433
+
+Best regards,
 -- 
-2.48.1
-
+Thierry Reding <treding@nvidia.com>
 
