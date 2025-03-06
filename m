@@ -1,278 +1,154 @@
-Return-Path: <linux-kernel+bounces-548894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C67A54A97
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:24:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD933A54A95
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:23:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 368C816AB06
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:24:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 118093A3D27
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:23:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7255820B21F;
-	Thu,  6 Mar 2025 12:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FBE20B207;
+	Thu,  6 Mar 2025 12:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S3eST6MG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VIVHm+Ry"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4A320B1EB
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 12:23:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55C1F1853
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 12:23:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741263839; cv=none; b=TmCQOBYbNNnCYN0DhbCl+k0VGAesegxBec7gERn2RTlkvO2H/iO7N6MdiwWA1VTnCfhWw9s7Fs7Tp56Rpu4JbGDIFfOmIxk5okM2a4hyP3+unhh+toOjphvmuDW0Ymbudmhd4/9pTTFi/Kb6ZzIi9pF8rOiCNFpeUvfVRi2sf/M=
+	t=1741263830; cv=none; b=pR3PU2zXGftLmimqvhBJ2eH4jSOHC6j2ru2A2V66eK/+7vDW2IgTMASabjXbMFLmi2CxgZnDfqQ6FcLPZY5hGCYCQis857wr8bIF0aEgFFnIqbME457+wPEl4NZKt5w2r9YsZo26D6gRa+T4JSHMKDtyiWyMdaMbU557FstdDts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741263839; c=relaxed/simple;
-	bh=ym2UI+/DVc+FX4NViTGlLJydqmh8h7xVuxY4ut1K9G8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VsUIJxfK2QsqoZX9gPh6nf6p/EogveqKAk0xx/VCDKrXVcw+QJwsx9E43DWGU/f9420IU4fMXTb2Jx6GGlD8NT7X/Hga8vhJ6NMgHt+KL89hiUoVqBtz/3odG1qZyUWqMVfaUY82Mj3hJsO3vm1/PRjYqlgbnxkwcOvxMX2JFCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S3eST6MG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741263836;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=a9+U3W7blKCSVJ/P43dTMQCw4/GD/uUym29Go1Jn5IQ=;
-	b=S3eST6MGj3APMNT+RMnFXiKeZbiEWodtXxcnsl2m22fIM4dsfN4n6Qjs73Z3DPQJoIcMf5
-	U6s9tdPddFn+3VBM0Jn9ZH3tr3wjRBCJnFRotdGAPz0vN7Q4MBVRxOJ+0Zkqll9VBSrrvT
-	JbUhgOGlv72nyNXMc2tSvfrTHSfDYXQ=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-689-Ark_q4_pP72LLtzdyo5zSw-1; Thu,
- 06 Mar 2025 07:23:53 -0500
-X-MC-Unique: Ark_q4_pP72LLtzdyo5zSw-1
-X-Mimecast-MFC-AGG-ID: Ark_q4_pP72LLtzdyo5zSw_1741263832
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6B47C18009FC;
-	Thu,  6 Mar 2025 12:23:52 +0000 (UTC)
-Received: from gerbillo.redhat.com (unknown [10.45.224.236])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 514F71955DCE;
-	Thu,  6 Mar 2025 12:23:49 +0000 (UTC)
-From: Paolo Abeni <pabeni@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Networking for v6.14-rc6
-Date: Thu,  6 Mar 2025 13:23:40 +0100
-Message-ID: <20250306122340.27248-1-pabeni@redhat.com>
+	s=arc-20240116; t=1741263830; c=relaxed/simple;
+	bh=XnsPLRnXSWb7buELfPusaeb+B8AlBgoQQP15h/UL+Kc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hQxBliRh22YJwzX4CuKqEyw56oqL7HUg/mtQaihzol17JHc9TryO2j/1xkVTacpshxgQQqKe0kDITORXwkQWDpqKelC2t1O5pUPARQxeG2zCxoEyrrgjXGt6gC3uzwe0m8SuFLoIUc8Lc4RLO3xLteDPSWGzqDE0+fvAswdlVa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VIVHm+Ry; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43bbf159247so658055e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 04:23:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1741263826; x=1741868626; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M16Hx03LPq6Hpxa+7YZIfd9IWWJDL42bnuEv+y5yizM=;
+        b=VIVHm+RyJq8WE+p3322eTYpgG1NYzUqgF/ySd4KpZlDQJX2sqN7C++0yPJZhyIOKRF
+         u+O1u4+JrFQs6ve8P48QZjJIgdUhInvJNsKVvCNzBOuJuk3bMvdxfDltvWApMwB2DagZ
+         g5ecaOwERnTOcwPhvDQBZX2x3CyvwDVZvU4SFv0xFL2tJQii/0Azank772wFa6PH+7LQ
+         ob47J/aATABG8YNxm8JCQ7VCjyA60pQhfxrPjaU4bz/WRX5CD5NY8XjpnxxQtZYM9Pep
+         qJfWHg5net0118fYAauk91UI2G/xMstHOO1YVh1zBP4umx/dRvDb+Z9gKozTc29N83tv
+         6c1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741263826; x=1741868626;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M16Hx03LPq6Hpxa+7YZIfd9IWWJDL42bnuEv+y5yizM=;
+        b=ttqIEdLK56Mn3l51VfKP2yGFrMa+y63/O4JKxZ+1OHv6sbWI7CxpWVIA2lIfvjAWJW
+         uFyaLqeZgNsLggPHpjXOgo1SPEo1jQdbxhdenLg7qkXTiK0OuV619npUzDZWAwp1shvi
+         V4SjYURswytiYXCQDEhZDiEyVo+nWgeaR3i37esDE6dLVRbjHd+NochlXUk6SVKwi3KE
+         SWjxY/BLn7hHPNrxP3ClfpC/dTfxmZF3xU7jfEmwgBvhmHias4bPfA2IflCyarxNJzie
+         li6OwBsVK8Vpp5B6rXB+OzoQqikana+qHGdwNXdSpd1rFwBa98pSY+tNFW9TfGJ+UqvG
+         5KDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIupRX6SoUdjfEVZHmYRvFPJIW7B4s0CQrHnAGB5Z5HPTFPbDrJ8rvAE+UEj4k3NBEopsWv3S2kUry9kc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuuWNZpbTrA4Ffp3h2PfhKypdOw618LwzivuOmJ7IWKbjPSO/B
+	kPQISCllqYQcX6D8j0TtqzUvSlk1EvKlRVIUXjOJo9RLBmhZ/NRmC1fDLDr7yB4=
+X-Gm-Gg: ASbGncsOpsqqJ+AA3PbrdpWu/Vrh255d78XjO2lvcdiCfPk6kDosFTa/Kv6Of826sRb
+	r2ekxluGPcDbH0+Wp/dPKvQZH74icMbKqitgplPLl74RKsOPGJH/ueJ0QExJw9D0BHN5KaLjrFP
+	aSr9u/gvgWt0f60MtS5wg8pCZMlILLknU6oTBrfdJ7SY2ROfKz8jqb+x21+qWmExlWdbEbG7JMt
+	OCF4tlqthOq6EtUJ8OM3hjWuz96X52Ld5ryneEihpCIUTtdHMrZljpHGhsIRkEYgOcfj8dDxxZv
+	wReoBmmzYI0FBvu/pljHET10GxORlQWs5EXRYUK7iXqMIEDj9p6iHDSDAntgyuXlIPAgZRbRfty
+	to7KluHLAtD8f3fWdx7ninFFG14SFuhpLV+FkTBE5XIkCCm23XA==
+X-Google-Smtp-Source: AGHT+IFsubZy1stzLlAQAO2x9t8qCSSvv55Pi5w0YDWBthveEExrqPR8Wq2/UXbzt8+RS0SQ+6/D5w==
+X-Received: by 2002:a05:600c:3d1a:b0:439:9a1f:d73d with SMTP id 5b1f17b1804b1-43bd2ae647bmr19310215e9.8.1741263826596;
+        Thu, 06 Mar 2025 04:23:46 -0800 (PST)
+Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfb79b9sm1886787f8f.3.2025.03.06.04.23.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 04:23:46 -0800 (PST)
+Date: Thu, 6 Mar 2025 13:23:43 +0100
+From: Petr Tesarik <ptesarik@suse.com>
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Valentin Schneider <vschneid@redhat.com>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-rt-users@vger.kernel.org, Mike Galbraith <efault@gmx.de>, Peter
+ Collingbourne <pcc@google.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Thiago Jung Bauermann
+ <thiago.bauermann@linaro.org>, Mark Brown <broonie@kernel.org>, Kristina
+ Martsenko <kristina.martsenko@arm.com>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Jinjie Ruan <ruanjinjie@huawei.com>, Juri Lelli
+ <juri.lelli@redhat.com>, Phil Auld <pauld@redhat.com>
+Subject: Re: [PATCH 1/1] arm64: enable PREEMPT_LAZY
+Message-ID: <20250306132343.6b902a3d@mordecai.tesarici.cz>
+In-Reply-To: <Z8hAZ09Q40fxLJSk@J2N7QTR9R3>
+References: <20250305104925.189198-1-vschneid@redhat.com>
+	<20250305104925.189198-2-vschneid@redhat.com>
+	<Z8hAZ09Q40fxLJSk@J2N7QTR9R3>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Linus!
+On Wed, 5 Mar 2025 12:15:35 +0000
+Mark Rutland <mark.rutland@arm.com> wrote:
 
-The following changes since commit 1e15510b71c99c6e49134d756df91069f7d18141:
+> On Wed, Mar 05, 2025 at 11:49:25AM +0100, Valentin Schneider wrote:
+> > From: Mark Rutland <mark.rutland@arm.com>
+> > 
+> > For an architecture to enable CONFIG_ARCH_HAS_RESCHED_LAZY, two things are
+> > required:
+> > 1) Adding a TIF_NEED_RESCHED_LAZY flag definition
+> > 2) Checking for TIF_NEED_RESCHED_LAZY in the appropriate locations
+> > 
+> > 2) is handled in a generic manner by CONFIG_GENERIC_ENTRY, which isn't
+> > (yet) implemented for arm64. However, outside of core scheduler code,
+> > TIF_NEED_RESCHED_LAZY only needs to be checked on a kernel exit, meaning:
+> > o return/entry to userspace.
+> > o return/entry to guest.
+> > 
+> > The return/entry to a guest is all handled by xfer_to_guest_mode_handle_work()
+> > which already does the right thing, so it can be left as-is.
+> > 
+> > arm64 doesn't use common entry's exit_to_user_mode_prepare(), so update its
+> > return to user path to check for TIF_NEED_RESCHED_LAZY and call into
+> > schedule() accordingly.
+> > 
+> > Link: https://lore.kernel.org/linux-rt-users/20241216190451.1c61977c@mordecai.tesarici.cz/
+> > Link: https://lore.kernel.org/all/xhsmh4j0fl0p3.mognet@vschneid-thinkpadt14sgen2i.remote.csb/
+> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> > [testdrive, _TIF_WORK_MASK fixlet and changelog.]
+> > Signed-off-by: Mike Galbraith <efault@gmx.de>
+> > [Another round of testing; changelog faff]
+> > Signed-off-by: Valentin Schneider <vschneid@redhat.com>
+> > ---
+> >  arch/arm64/Kconfig                   |  1 +
+> >  arch/arm64/include/asm/thread_info.h | 16 +++++++++-------
+> >  arch/arm64/kernel/entry-common.c     |  2 +-
+> >  3 files changed, 11 insertions(+), 8 deletions(-)  
+> 
+> Catalin, Will, given this is small and self-contained, I reckon it makes
+> sense to pick this up ahead of Jinjie's series to move arm64 over to the
+> generic entry library (which is on my queue of things to review). Even
+> if we pick up both, it'll be easier to bisect and debug issues caused by
+> this patch alone.
+> 
+> The fixes/cleanups from Mike and Valentin look right to me, so FWIW:
+> 
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-  Merge tag 'net-6.14-rc5' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2025-02-27 09:32:42 -0800)
+Thank you, all. Much appreciated.
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git tags/net-6.14-rc6
-
-for you to fetch changes up to 5da15a9c11c1c47ef573e6805b60a7d8a1687a2a:
-
-  net: ipv6: fix missing dst ref drop in ila lwtunnel (2025-03-06 11:08:45 +0100)
-
-----------------------------------------------------------------
-We have been notified of a TLS regression that will be addressed
-via the MM tree.
-
-Including fixes from bluetooth and wireless.
-
-Current release - new code bugs:
-
-  - wifi: nl80211: disable multi-link reconfiguration
-
-Previous releases - regressions:
-
-  - gso: fix ownership in __udp_gso_segment
-
-  - wifi: iwlwifi:
-    - fix A-MSDU TSO preparation
-    - free pages allocated when failing to build A-MSDU
-
-  - ipv6: fix dst ref loop in ila lwtunnel
-
-  - mptcp: fix 'scheduling while atomic' in mptcp_pm_nl_append_new_local_addr
-
-  - bluetooth: add check for mgmt_alloc_skb() in mgmt_device_connected()
-
-  - ethtool: allow NULL nlattrs when getting a phy_device
-
-  - eth: be2net: fix sleeping while atomic bugs in be_ndo_bridge_getlink
-
-Previous releases - always broken:
-
-  - core: support TCP GSO case for a few missing flags
-
-  - wifi: mac80211:
-    - fix vendor-specific inheritance
-    - cleanup sta TXQs on flush
-
-  - llc: do not use skb_get() before dev_queue_xmit()
-
-  - eth: ipa: nable checksum for IPA_ENDPOINT_AP_MODEM_{RX,TX} for v4.7
-
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-
-----------------------------------------------------------------
-Alexander Wetzel (3):
-      wifi: mac80211: Cleanup sta TXQs on flush
-      wifi: mac80211: remove debugfs dir for virtual monitor
-      wifi: mac80211: Fix sparse warning for monitor_sdata
-
-Antoine Tenart (1):
-      net: gso: fix ownership in __udp_gso_segment
-
-Antonio Quartulli (1):
-      mailmap: remove unwanted entry for Antonio Quartulli
-
-Emmanuel Grumbach (3):
-      wifi: iwlwifi: mvm: don't dump the firmware state upon RFKILL while suspend
-      wifi: iwlwifi: mvm: don't try to talk to a dead firmware
-      wifi: iwlwifi: mvm: use the right version of the rate API
-
-Eric Dumazet (1):
-      llc: do not use skb_get() before dev_queue_xmit()
-
-Haoxiang Li (2):
-      Bluetooth: Add check for mgmt_alloc_skb() in mgmt_remote_name()
-      Bluetooth: Add check for mgmt_alloc_skb() in mgmt_device_connected()
-
-Ilan Peer (2):
-      wifi: iwlwifi: Free pages allocated when failing to build A-MSDU
-      wifi: iwlwifi: Fix A-MSDU TSO preparation
-
-Jakub Kicinski (4):
-      Merge tag 'for-net-2025-02-27' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
-      net: dsa: rtl8366rb: don't prompt users for LED control
-      Merge tag 'wireless-2025-03-04' of https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless
-      Merge branch 'fixes-for-ipa-v4-7'
-
-Jason Xing (1):
-      net-timestamp: support TCP GSO case for a few missing flags
-
-Jiayuan Chen (1):
-      ppp: Fix KMSAN uninit-value warning with bpf
-
-Johannes Berg (6):
-      wifi: iwlwifi: fw: allocate chained SG tables for dump
-      wifi: iwlwifi: mvm: clean up ROC on failure
-      wifi: iwlwifi: limit printed string from FW file
-      wifi: mac80211: fix MLE non-inheritance parsing
-      wifi: mac80211: fix vendor-specific inheritance
-      wifi: nl80211: disable multi-link reconfiguration
-
-Justin Iurman (2):
-      net: ipv6: fix dst ref loop in ila lwtunnel
-      net: ipv6: fix missing dst ref drop in ila lwtunnel
-
-Krister Johansen (1):
-      mptcp: fix 'scheduling while atomic' in mptcp_pm_nl_append_new_local_addr
-
-Lorenzo Bianconi (1):
-      net: dsa: mt7530: Fix traffic flooding for MMIO devices
-
-Luca Weiss (3):
-      net: ipa: Fix v4.7 resource group names
-      net: ipa: Fix QSB data for v4.7
-      net: ipa: Enable checksum for IPA_ENDPOINT_AP_MODEM_{RX,TX} for v4.7
-
-Matt Johnston (1):
-      mctp i3c: handle NULL header address
-
-Matthias Proske (1):
-      wifi: brcmfmac: keep power during suspend if board requires it
-
-Maxime Chevallier (1):
-      net: ethtool: netlink: Allow NULL nlattrs when getting a phy_device
-
-Miri Korenblit (1):
-      wifi: iwlwifi: fw: avoid using an uninitialized variable
-
-Nikita Zhandarovich (1):
-      wifi: cfg80211: regulatory: improve invalid hints checking
-
-Nikolay Aleksandrov (1):
-      be2net: fix sleeping while atomic bugs in be_ndo_bridge_getlink
-
-Oscar Maes (1):
-      vlan: enforce underlying device type
-
-Peiyang Wang (1):
-      net: hns3: make sure ptp clock is unregister and freed if hclge_ptp_get_cycle returns an error
-
-Philipp Stanner (1):
-      stmmac: loongson: Pass correct arg to PCI function
-
-Salah Triki (1):
-      bluetooth: btusb: Initialize .owner field of force_poll_sync_fops
-
-Vitaliy Shevtsov (2):
-      wifi: nl80211: reject cooked mode if it is set along with other flags
-      caif_virtio: fix wrong pointer check in cfv_probe()
-
- .mailmap                                           |   1 -
- drivers/bluetooth/btusb.c                          |   1 +
- drivers/net/caif/caif_virtio.c                     |   2 +-
- drivers/net/dsa/mt7530.c                           |   8 +-
- drivers/net/dsa/realtek/Kconfig                    |   2 +-
- drivers/net/ethernet/emulex/benet/be.h             |   2 +-
- drivers/net/ethernet/emulex/benet/be_cmds.c        | 197 ++++++++++-----------
- drivers/net/ethernet/emulex/benet/be_main.c        |   2 +-
- .../net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c |   2 +-
- .../net/ethernet/stmicro/stmmac/dwmac-loongson.c   |   6 +-
- drivers/net/ipa/data/ipa_data-v4.7.c               |  18 +-
- drivers/net/mctp/mctp-i3c.c                        |   3 +
- drivers/net/ppp/ppp_generic.c                      |  28 ++-
- .../wireless/broadcom/brcm80211/brcmfmac/bcmsdh.c  |  20 ++-
- drivers/net/wireless/intel/iwlwifi/fw/dbg.c        |  86 ++++++---
- drivers/net/wireless/intel/iwlwifi/fw/dump.c       |   3 +
- drivers/net/wireless/intel/iwlwifi/iwl-drv.c       |   2 +-
- drivers/net/wireless/intel/iwlwifi/mvm/d3.c        |  77 +++++---
- drivers/net/wireless/intel/iwlwifi/mvm/debugfs.c   |   7 +
- drivers/net/wireless/intel/iwlwifi/mvm/rxmq.c      |   8 +-
- .../net/wireless/intel/iwlwifi/mvm/time-event.c    |   2 +
- drivers/net/wireless/intel/iwlwifi/pcie/internal.h |   5 +-
- drivers/net/wireless/intel/iwlwifi/pcie/tx-gen2.c  |   6 +-
- drivers/net/wireless/intel/iwlwifi/pcie/tx.c       |  20 ++-
- net/8021q/vlan.c                                   |   3 +-
- net/bluetooth/mgmt.c                               |   5 +
- net/ethtool/cabletest.c                            |   8 +-
- net/ethtool/linkstate.c                            |   2 +-
- net/ethtool/netlink.c                              |   6 +-
- net/ethtool/netlink.h                              |   5 +-
- net/ethtool/phy.c                                  |   2 +-
- net/ethtool/plca.c                                 |   6 +-
- net/ethtool/pse-pd.c                               |   4 +-
- net/ethtool/stats.c                                |   2 +-
- net/ethtool/strset.c                               |   2 +-
- net/ipv4/tcp_offload.c                             |  11 +-
- net/ipv4/udp_offload.c                             |   8 +-
- net/ipv6/ila/ila_lwt.c                             |   4 +-
- net/llc/llc_s_ac.c                                 |  49 ++---
- net/mac80211/driver-ops.c                          |  10 +-
- net/mac80211/iface.c                               |  11 +-
- net/mac80211/mlme.c                                |   1 +
- net/mac80211/parse.c                               | 135 +++++++++-----
- net/mac80211/util.c                                |   5 +-
- net/mptcp/pm_netlink.c                             |  18 +-
- net/wireless/nl80211.c                             |   7 +-
- net/wireless/reg.c                                 |   3 +-
- 47 files changed, 499 insertions(+), 316 deletions(-)
-
+Petr T
 
