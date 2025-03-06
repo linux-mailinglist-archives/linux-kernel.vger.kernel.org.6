@@ -1,127 +1,119 @@
-Return-Path: <linux-kernel+bounces-548505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B23CA545C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:02:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D8C3A545C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:03:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A98D11884A44
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:02:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D3E13A6C3A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6040F2080E4;
-	Thu,  6 Mar 2025 09:02:40 +0000 (UTC)
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5C72066EF;
+	Thu,  6 Mar 2025 09:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="V15rHs2S";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Lo/U7vzv"
+Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919171EDA10;
-	Thu,  6 Mar 2025 09:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DF71EDA10
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741251760; cv=none; b=QEN6MsD0vt/SBM6U0hmXqtKhAT0BCN+7h0e2BtylbAXZRc9VVn6mhahOeRuK+MlsAXli+lMsxjCxU4jCCWK6BuFVJ4FObaL1S4kZlxlJAsF3b4+zQovxtCLeCc50LZXLOQonyv3nBY/MI0MvPyvV8CIXfsIVHg4Rk3VQaiLYJdg=
+	t=1741251794; cv=none; b=FMW/VMJmbKzS6Pz1CZ6YnLKy527uPyoc0zTF09kh1RIwMYsUX6yd/2kSHJ39z6Aq2Ri98Sgh+/+pcy+SfbLi50uw4cNcIsvD0yo6G8oKzPSPiOLz9NGO644LuPj+UgST8/J3zSZe5ChgzHuSCE3lYeFXhkTzdS4I5zOVq+U015o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741251760; c=relaxed/simple;
-	bh=EmzY32j5rrDzC9R6X90mqEI/cN8KHLb58ft9sgUPtjY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ofUhNJX/mQ+8zqs0Gk/TdLKCvvwW7HJd1ONpqG8VXR77bRMIkNje0isVZfjQ3BqA1uyG4hdMnpr/CFsnJPiwEZWtph8Nj8XM5+qafoOOxcGF6lQrXpY0LOqsUmulRtnwSWfq8zRAz0Deq151Ot2TBDOzSkuCenAoRo4OaovwBJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2feb91a25bdso666538a91.1;
-        Thu, 06 Mar 2025 01:02:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741251758; x=1741856558;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=61ZqbVDQw/xvqBk0WBOL0pupyCSc6ErVs2yZMS/tx8g=;
-        b=AQ5FqP6VfPPNcJYnrmq4XpuuJUSq07vOciGMMquxTeXLO4mgsJCK6ir5+QB+BeTBjj
-         hVhTmrFddAm8saH2cuDrlUai4JiXBHZZypqfQ99b9LwGldbkb+lZkTBv7GLWeWpDlvF4
-         F4QeWOGJanJ2KAHJkqGS2fIJT7gRy+wblfYRbxlHb7sbqmV3mUPEXHe//+VhQ3Ccl5ZK
-         kwNhDqfO+tE+cG1q6/MW4apXONeUkF7Iar8VL6vUmW+HdF65KhLNMOCEeIV5QPv8GtFV
-         mHdA/3iVbSNN07pb/GwYidMSiCDSH3o5GQ4QjfELqJ6mOyYwxmhan3FD+0KHJLCCd0b2
-         XHKw==
-X-Forwarded-Encrypted: i=1; AJvYcCUfArC9EKanpeTNI6iMvsdyO4LuiH6gwetQZWZU2Czp08t0Ckuq8WN6qUKaV6vas1+kvvvhkMtQ1IHn@vger.kernel.org, AJvYcCWmRtKSSUCc2x5bHtX8dwGmW4hmRCPPagr3OhcqQuZP2NmvsIFTeYt/9d0q3vxhn+DLQ16UhMizsscvrsJHTzVkLQ==@vger.kernel.org, AJvYcCXlXvaerZWUNODoU3oqOvGajzWhBoa1Oh4vEZ4gu6VmXMm8zC+xyUHQ1n/9O1FemHuvo2oku2A/QVgfipYXJJEr2dk=@vger.kernel.org, AJvYcCXn1k4xkNsbR9W0DaQoUV84Af9S8nryi2Chh9WlY5oOR+XMUcmL261J+cvNrf+hvCj+x286oDqqH69a0zg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaaAvOdf35JnE70AkrYp2A0xtagsau6wH+NsRqPNFlibtRb8JM
-	M5sgLtVophYz8U6dothx+KY2X8lSHJIkkQD2GOy7A+emn0rCj51B
-X-Gm-Gg: ASbGncvZCkaZAC+czwhUqNv0MYc3f2KlDuTbGau0R9FwrMLLof3oN6peGk/aSCoeVKY
-	TkfOoDq9Hdn+IvIGSxIPsWp3gLbSS5lNJzb5OCZRB5us3XnK4OoZYwrMmIZpjNPM8woYqN1prjG
-	PRLHOs+XuCV4gaohM5cuM4FOF3KrHWtlwqo6Ty37DGaPA5CfswVIyjNGHacgueAFxgFGEW4qmy+
-	UDs3MhlSGEvJWeJJC7YK12ZC5eBTaYKs19ANCH6juO5OP5nhw4oYqzBzhzSb9y0OCkGwg6p3Tnm
-	xt1mQTZNTm9kxeofNYJPLlI5+qHvTnmZqGGhpSFzqr5ey2wMGtMXo5NkeNrkEzpTRALL/IWqwbH
-	GNf0=
-X-Google-Smtp-Source: AGHT+IEVObRPs9r9DCgAFKVxTkcg7YE/ev/oTYXjSeBAHqcHwBFpzXUfu6D3RSOSTJvuqgree5Nh5A==
-X-Received: by 2002:a17:90b:4c07:b0:2ff:6ac2:c5a6 with SMTP id 98e67ed59e1d1-2ff6ac2c770mr1605779a91.31.1741251757794;
-        Thu, 06 Mar 2025 01:02:37 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2ff4e75ed7csm2641751a91.3.2025.03.06.01.02.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 01:02:37 -0800 (PST)
-Date: Thu, 6 Mar 2025 18:02:34 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <helgaas@kernel.org>, Fan Ni <nifan.cxl@gmail.com>,
-	Shradha Todi <shradha.t@samsung.com>, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, lpieralisi@kernel.org,
-	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
-	Jonathan.Cameron@huawei.com, a.manzanares@samsung.com,
-	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
-	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
-	will@kernel.org, mark.rutland@arm.com,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v7 3/5] Add debugfs based silicon debug support in DWC
-Message-ID: <20250306090234.GA390800@rocinante>
-References: <20250304171154.njoygsvfd567pb66@thinkpad>
- <20250305173826.GA303920@bhelgaas>
- <20250305182833.cgrwbrcwzjscxmku@thinkpad>
- <20250305190955.GK847772@rocinante>
- <CAMuHMdVRSjkss3gPnocXpfPQ=mEo4AevpaU=fdGvm=kb3RTmcQ@mail.gmail.com>
+	s=arc-20240116; t=1741251794; c=relaxed/simple;
+	bh=T9Sxi7UM96lJZzoWcrB8nkdiF4e8dZcfT3E9sdmD6oQ=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=nCEvOiR5flirVGMD8DRlUge97mIV2a1lmIjc5qSfkbvHGzN35uZYB/+3s5wJYpcRYD+N87GZUp584RHgfLV5bbBO32yChyOfZ49d5Rr7GRPZz+UwFJBjcUm9K8QKqzOTLjqOcmH8pXzH8jhsnl3cBEgV9mllzv6BduiDTZOo7Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=V15rHs2S; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Lo/U7vzv; arc=none smtp.client-ip=202.12.124.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 564422540103;
+	Thu,  6 Mar 2025 04:03:10 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-09.internal (MEProxy); Thu, 06 Mar 2025 04:03:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1741251790;
+	 x=1741338190; bh=T9Sxi7UM96lJZzoWcrB8nkdiF4e8dZcfT3E9sdmD6oQ=; b=
+	V15rHs2SARquaLYXZI2/eQHUlWmBI7MvlxhEk04PptPf9NqMUCW4haq5dDgTlTdo
+	NuObg8qsLqYxGTW217FjBPp/Q+cPXlX/83mUlEO3YKRSD8mBPSOARxQBZiaIlxaR
+	vswGotNjvNuSkLM87T5A2XelXPd9rgLC4+bGQvUuTAHkw3l3caPPUprVZYW2dBh2
+	2/VBF3Gssj8nKy6KnmJjBRj756UpIOErqoJfCBctBw7BcRqm8qXlA96CVTqcGklK
+	mSIam4WMAK1E8Wx/Ss1I/ijEMmg0/hOHIK+2tt+Blb8KIurFS3AW+fpU2gSys9+F
+	Z1g40xdpoC+dLVBtz4Zymw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741251790; x=
+	1741338190; bh=T9Sxi7UM96lJZzoWcrB8nkdiF4e8dZcfT3E9sdmD6oQ=; b=L
+	o/U7vzv6zGcc6BHgsCcSMt1Ya/Tk9t5Vhg6md63Ac8LUor1/4PylT9wiI69+6YEx
+	Eo+S0xgB2Q8DtQwSettvmJLMtCrQSiI2xQPHVUIqty0kD7ePV9xI5MIt0yzsUP/P
+	WDmsUXUAqRkVImIWfiEyjfuZsnxwlShklyDOVLef/BbDrNCyYwM16kiylAt83P3F
+	6P7c8qDtbB4SDGOuu8p0S0jL4zdHh1C585QidvAkckNEbCjBYO16gaX4KA18RWA8
+	LCxN/ryw6FJYmK4XsSql9dCL7cOMn7+63hFHMMRaRLhuP1/L0R54dKDfsm0bQbIZ
+	bLdaXOVGsLadii6qV27ig==
+X-ME-Sender: <xms:zWTJZ22cS8InxrZX6ifTZXrwoCoUmsmXiV44cylar0MzvI4-3cwtlg>
+    <xme:zWTJZ5GkLauUzoNB79u6ryP0t80t3ssMGe63KFqgLlF4YIqNZYXit0-J0RDpq981g
+    fupqyeP2-BN_ZAj7w0>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdejfedvucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
+    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
+    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
+    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
+    hedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplh
+    dprhgtphhtthhopegsrghrthhoshiirdhgohhlrghsiigvfihskhhisehlihhnrghrohdr
+    ohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtth
+    hopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdr
+    ohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
+    drohhrgh
+X-ME-Proxy: <xmx:zWTJZ-6vVU_hwfA6CpYoqM2_KyGma8sbJjdhwmvqNDAhFx6yZsqcqQ>
+    <xmx:zWTJZ30o15uhtICFaA1zmH6UUk05KKBmCcFupwZqcfu2imFlHTPWcQ>
+    <xmx:zWTJZ5FPfJ4OcwRRQptLa4sFJGVOBoX7ftFAatrjyFrVEalF7tLKBw>
+    <xmx:zWTJZw_D_MJfCB3fBjmoGY96PU-QRXIFco6eSW_JVTcISiHtJ5h0UA>
+    <xmx:zmTJZ9h7ajJd_2rJtxZzCwtyFpi-AAHzFpfQAlj3kWwm95_Kiyd3bg75>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D60B82220072; Thu,  6 Mar 2025 04:03:09 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdVRSjkss3gPnocXpfPQ=mEo4AevpaU=fdGvm=kb3RTmcQ@mail.gmail.com>
+Date: Thu, 06 Mar 2025 10:02:49 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Bartosz Golaszewski" <brgl@bgdev.pl>,
+ "Thomas Gleixner" <tglx@linutronix.de>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>
+Message-Id: <1f599860-0276-47a2-89cb-e655e516cf23@app.fastmail.com>
+In-Reply-To: <20250306084552.15894-1-brgl@bgdev.pl>
+References: <20250306084552.15894-1-brgl@bgdev.pl>
+Subject: Re: [PATCH] irqchip: davinci: remove leftover header
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Thu, Mar 6, 2025, at 09:45, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Commit fa8dede4d0a0 ("irqchip: remove davinci aintc driver") removed the
+> davinci aintc driver but left behind the associated header. Remove it
+> now.
+>
+> Fixes: fa8dede4d0a0 ("irqchip: remove davinci aintc driver")
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-[...]
-> Another issue is that the caller does not handle failures correctly,
-> given (A) the irqdomain WARNING I got, and (B) the half-registered
-> PCI bus, oopsing on "lspci"...
-
-This is something we will look into.  A more robust DesignWare core is
-something we would definitely want to have.
-
-Sorry about the issues with this...
-
-[...]
-> > -int dwc_pcie_debugfs_init(struct dw_pcie *pci)
-> > +void dwc_pcie_debugfs_init(struct dw_pcie *pci)
-> >  {
-> >         char dirname[DWC_DEBUGFS_BUF_MAX];
-> >         struct device *dev = pci->dev;
-> > @@ -174,17 +174,15 @@ int dwc_pcie_debugfs_init(struct dw_pcie *pci)
-> >         snprintf(dirname, DWC_DEBUGFS_BUF_MAX, "dwc_pcie_%s", dev_name(dev));
-> >         dir = debugfs_create_dir(dirname, NULL);
-> >         debugfs = devm_kzalloc(dev, sizeof(*debugfs), GFP_KERNEL);
-> > -       if (!debugfs)
-> > -               return -ENOMEM;
-> > +       if (!debugfs) {
-> > +               dev_err(dev, "failed to allocate memory for debugfs\n");
-> 
-> There is no need to print an error message when a memory allocation
-> fails, as the memory allocation core already takes care of that.
-> So please drop the dev_err() call.
-
-Done.  Thank you!
-
-	Krzysztof
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
