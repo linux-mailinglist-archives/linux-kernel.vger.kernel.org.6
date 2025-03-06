@@ -1,147 +1,219 @@
-Return-Path: <linux-kernel+bounces-548144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1341FA540C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:40:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A737CA540CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:43:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668161892F2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:40:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1B5A16A5EA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D102190485;
-	Thu,  6 Mar 2025 02:40:42 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8556F18EFDE;
+	Thu,  6 Mar 2025 02:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JVjThDHu"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BC8BBE46;
-	Thu,  6 Mar 2025 02:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D64F18BC20
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 02:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741228842; cv=none; b=K20b3pv5bWoZtQty4CCRe8G/KJk9eOnF3twVh1FHPfz9Hpxfl2AS6BrSqJ3MV4fvIFBmYlFFSLDtb+4Etf78PUndlzUiIlkj8mMK+7itncZ+E6kWgUJpWFt1mAiKCpOUeFy7KVRL+05RRMhURG2jJM0xZsflt/8YXM+/0bjZ/QQ=
+	t=1741228992; cv=none; b=PIIfLOsHZ1msTSwfnnS7zKbw0mo0bzVGLLEBSAXETERwAGax3xLD6XsxQqTfZOsNGhVz81gjlGE2L9oidqizUE8HSlFajrQTooPLPpLAYKv003vwWUMBwK/T27sERvXsNu7jYV13B0EVAvSuHlRn+ujOBPGdPNWbOMfb1eO8WmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741228842; c=relaxed/simple;
-	bh=ONtAi5Sqk5d11lgQN9ofiQ1SwRaBMpb8UpGrlN+B3Dc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XRfvxaY7/04IY01jcuqgSP/S6Z+sykL07mnR86Uop0ZZHoh2PFnh9mTHhvUhAPGP8FE2dNDVpMAWh/tkvOcl8U+Uitlswy4nCKhrMrbghoNN8mjsk8Qqwt9OeJQdASvgRB4eY+T4BB7MwI2YPMuu/QRLl277HE/wMD4oPrVqmpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z7YYR135vz4f3lW5;
-	Thu,  6 Mar 2025 10:40:11 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id BB4DC1A058E;
-	Thu,  6 Mar 2025 10:40:34 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgDHKl8gC8lnRDSxFg--.7098S3;
-	Thu, 06 Mar 2025 10:40:34 +0800 (CST)
-Message-ID: <355c8355-a6bc-181f-73e7-1baf7749f984@huaweicloud.com>
-Date: Thu, 6 Mar 2025 10:40:32 +0800
+	s=arc-20240116; t=1741228992; c=relaxed/simple;
+	bh=mGmVA41InuhWKFDP5IX+GXBDPzYWsKn7qwH08B/7Xbo=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=pycZSmcxgjTa5e0SSd3EMsN7WxO4hAmbqrzEz/Xntl6tT4rn5R15rffFy9SC4ua88nfEp3A6DuT6/JkpfoKQOr5eR3wQLPRf2nlfXL5T3Bjdih1YC/LXvboD7fNc+khKwk6OWtl2cnvT8TJulEUy3iymWUNdSZJGCnocBzNQFIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JVjThDHu; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6e89c11fd8fso3295386d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 18:43:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741228990; x=1741833790; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=79veWWMEqpkUTSnr6eizZS2Ox0WRYptpzWwPvtn6UYE=;
+        b=JVjThDHushBvekeP/HeZasPrMpaprZumpEvhZ3P77p326f5I4FpEysmzCHsgRj9NIT
+         bi6hrgAiH1Q7uwNbzgYT0JkCAJpGywWKzyRTlH2cfdQArHIjcIaCV98E0uZGKy4zknXS
+         u3PUtNiiaapUawX0Bo86DzyzNN9H3uCYnud0TdzZEl/70uExtOGj8VDIwV/JnMFF63ox
+         /xZrYK6+jlkRSD0uDCOkciJHoaJbHWuF05codL7EZt3g0vklOltp1oMSrX64kkYMISBU
+         le541aiV5YoApHppblAK6t4iu7D0C2dH7zrlsvT3nOZ8jwr81Lj+aDDtegVae+toQuHl
+         oFNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741228990; x=1741833790;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=79veWWMEqpkUTSnr6eizZS2Ox0WRYptpzWwPvtn6UYE=;
+        b=DTePURJ5E9cO8xSUnxCIXDFGqeW8HvM4URZ70mW2KXsnLKNdixjKSb+ZkYSnJCX/Du
+         E0o72+I4H6J6SrHMQEzBxsuShH49M6O/dLK2R5GWk6RpIzaDxdIvT0+gq8w1Zofqo4AZ
+         M9lw/vRduUyRmlDuwqV3fyPvt8YVRLy6CXvMNDK8jSFHbbukCUVJKR3AWqKv7avP9GCS
+         BT9S0fpgc+T47Xbxv7YyV1m728/fJ9XDVJaHXVEPxSOVBrnZ6WlsPHO0po2yBgjN6uGb
+         T8mGvmTHN9aL0SmPnTrSg7TYTD0jf5vVBFDkUhLdUpkBTNqSQSVxDjvsHSmBG03fPlvC
+         9M1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUa5R9HSnsvqlHKjdEiWTQXMFjwtTNXDPJy8sAeK4NWxUN2e0wiBS0FSt3QEOcLHAEebizCjb0d/gm9kh4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz26yd8i3w0oXiCdnSsnGv4q22XvRH66C6iXFbyEK4AQP0CN8D4
+	7LRJmWAWgJbpVTaddz0T7jjoDMXbh7kdFMt0AX9G5nDYTWPmNxBD/uFa0l0TgEQn0Yoy6Edck/X
+	4fXtNKCd65tsy0tGNfe8Vws2aoazHkHOEQtJKbqGk
+X-Gm-Gg: ASbGnctQ/QQYiKpANcQ1BV12mgGJ0YnFPJ57R6hyPOia7jvNY4oyQd8xAVE/xfnByS/
+	XBRCixH9ps2tNsYegea7pCfFX1IQT63gagFDYZcREipmKYmjMGnc0NSkvkDDcsYxeJyPPwYaWqn
+	tB0Rc/F6MR2mnkgcvOfOixJSkszFA=
+X-Google-Smtp-Source: AGHT+IH3Vp5qfbw91pBfK04ImWE2cHJHPA97nGIuZNgdA2FsKaKMYthlzLsyZFtNIrZGDhcktmG51lqbgOGdS3/umM0=
+X-Received: by 2002:a05:6214:5856:b0:6e8:f0f8:680e with SMTP id
+ 6a1803df08f44-6e8f0f869a1mr36062026d6.9.1741228989977; Wed, 05 Mar 2025
+ 18:43:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [Bug report] NULL pointer dereference in frwr_unmap_sync()
-To: Chuck Lever <chuck.lever@oracle.com>, Dai Ngo <Dai.Ngo@oracle.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-nfs@vger.kernel.org, trondmy@hammerspace.com, sagi@grimberg.me,
- cel@kernel.org, "wanghai (M)" <wanghai38@huawei.com>, yanhaitao2@huawei.com,
- chengjike.cheng@huawei.com, dingming09@huawei.com
-References: <e7c72dfc-ecbc-bd99-16f6-977afa642f18@huaweicloud.com>
- <314f60a8-4b0d-45f9-87f4-5a4757d34aea@oracle.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <314f60a8-4b0d-45f9-87f4-5a4757d34aea@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHKl8gC8lnRDSxFg--.7098S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7WFWkCw1kuw18uFy5Cr4rKrg_yoW8tw15pF
-	yktrZ8GrW8Crn5Xr4DZ3WkAa40vFsYy3ZxJr1kGF97AF4DJry2qr4UWFyvgasrGr4xGa1r
-	WF1UXa13ur93Xw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBSb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487
-	Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aV
-	AFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E
-	8cxan2IY04v7Mxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82
-	IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC2
-	0s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMI
-	IF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF
-	0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87
-	Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUFDGOUUUUU
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+From: Luka <luka.2016.cs@gmail.com>
+Date: Thu, 6 Mar 2025 10:42:58 +0800
+X-Gm-Features: AQ5f1JrscYg_mdogcQmb8LzhvtNFir9gloUNfwlqY0sEklBQxTQ5tKBgXTyjDb4
+Message-ID: <CALm_T+2cEDUJvjh6Lv+6Mg9QJxGBVAHu-CY+okQgh-emWa7-1A@mail.gmail.com>
+Subject: Potential Linux Crash: WARNING in ext4_dirty_folio in Linux kernel v6.13-rc5
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Dear Linux Kernel Experts,
 
+Hello!
 
-在 2025/3/5 22:02, Chuck Lever 写道:
-> On 3/4/25 9:43 PM, Li Nan wrote:
->> We found a following problem in kernel 5.10, and the same problem should
->> exist in mainline:
->>
->> During NFS mount using 'soft' option over RoCE network, we observed kernel
->> crash with below trace when network issues occur (congestion/disconnect):
->>    nfs: server 10.10.253.211 not responding, timed out
->>    BUG: kernel NULL pointer dereference, address: 00000000000000a0
->>    RIP: 0010:frwr_unmap_sync+0x77/0x200 [rpcrdma]
->>    Call Trace:
->>     ? __die_body.cold+0x8/0xd
->>     ? no_context+0x155/0x230
->>     ? __bad_area_nosemaphore+0x52/0x1a0
->>     ? exc_page_fault+0x2dc/0x550
->>     ? asm_exc_page_fault+0x1e/0x30
->>     ? frwr_unmap_sync+0x77/0x200 [rpcrdma]
->>     xprt_release+0x9e/0x1a0 [sunrpc]
->>     rpc_release_resources_task+0xe/0x50 [sunrpc]
->>     rpc_release_task+0x19/0xa0 [sunrpc]
->>     rpc_async_schedule+0x29/0x40 [sunrpc]
->>     process_one_work+0x1b2/0x350
->>     worker_thread+0x49/0x310
->>     ? rescuer_thread+0x380/0x380
->>     kthread+0xfb/0x140
->>
->> Problem analysis:
->> The crash happens in frwr_unmap_sync() when accessing req->rl_registered
->> list, caused by either NULL pointer or accessing freed MR resources.
->> There's a race condition between:
->> T1
->> __ib_process_cq
->>   wc->wr_cqe->done (frwr_wc_localinv)
->>    rpcrdma_flush_disconnect
->>     rpcrdma_force_disconnect
->>      xprt_force_disconnect
->>       xprt_autoclose
->>        xprt_rdma_close
->>         rpcrdma_xprt_disconnect
->>          rpcrdma_reqs_reset
->>           frwr_reset
->>            rpcrdma_mr_pop(&req->rl_registered)
->> T2
->> rpc_async_schedule
->>   rpc_release_task
->>    rpc_release_resources_task
->>     xprt_release
->>      xprt_rdma_free
->>       frwr_unmap_sync
->>        rpcrdma_mr_pop(&req->rl_registered)
->>                     
->> This problem also exists in function rpcrdma_mrs_destroy().
->>
-> 
-> Dai, is this the same as the system test problem you've been looking at?
-> 
+I am a security researcher focused on testing Linux kernel
+vulnerabilities. Recently, while testing the v6.13-rc5 Linux kernel,
+we encountered a crash related to the mm kernel module. We have
+successfully captured the call trace information for this crash.
 
-Thank you for looking into it. Is there a patch that needs to be tested? We
-are happy to help with the testing.
+Unfortunately, we have not been able to reproduce the issue in our
+local environment, so we are unable to provide a PoC (Proof of
+Concept) at this time.
 
--- 
-Thanks,
-Nan
+We fully understand the complexity and importance of Linux kernel
+maintenance, and we would like to share this finding with you for
+further analysis and confirmation of the root cause. Below is a
+summary of the relevant information:
 
+Kernel Version: v6.13.0-rc5
+
+Kernel Module: mm/page_alloc.c
+
+=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
+=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=
+=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=
+=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
+=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94Call
+Trace=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=
+=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=
+=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
+=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=
+=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=
+=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
+=80=94
+
+WARNING: CPU: 1 PID: 333 at mm/page_alloc.c:4240
+__alloc_pages_slowpath mm/page_alloc.c:4240 [inline]
+WARNING: CPU: 1 PID: 333 at mm/page_alloc.c:4240
+__alloc_pages_noprof+0x1808/0x2040 mm/page_alloc.c:4766
+Modules linked in:
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/01/=
+2014
+RIP: 0010:__alloc_pages_slowpath mm/page_alloc.c:4240 [inline]
+RIP: 0010:__alloc_pages_noprof+0x1808/0x2040 mm/page_alloc.c:4766
+Code: 89 fa 48 c1 ea 03 0f b6 14 02 48 89 f8 83 e0 07 83 c0 03 38 d0
+7c 08 84 d2 0f 85 b3 07 00 00 f6 43 2d 08 0f 84 30 ed ff ff 90 <0f> 0b
+90 e9 27 ed ff ff 44 89 4c 24 38 65 8b 15 c0 89 52 78 89 d2
+RSP: 0018:ffff8880141ee990 EFLAGS: 00010202
+RAX: 0000000000000007 RBX: ffff888012544400 RCX: 0000000000000000
+RDX: 0000000000000000 RSI: 0000000000000002 RDI: ffff88801254442c
+RBP: 0000000000048c40 R08: 0000000000000801 R09: 00000000000000f7
+R10: 0000000000000000 R11: ffff88813fffdc40 R12: 0000000000000000
+R13: 0000000000000400 R14: 0000000000048c40 R15: 0000000000000000
+FS:  0000555589d15480(0000) GS:ffff88811b280000(0000) knlGS:000000000000000=
+0
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055e47d593e61 CR3: 00000000141ce000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ alloc_pages_mpol_noprof+0xda/0x300 mm/mempolicy.c:2269
+ folio_alloc_noprof+0x1e/0x70 mm/mempolicy.c:2355
+ filemap_alloc_folio_noprof+0x2b2/0x2f0 mm/filemap.c:1009
+ __filemap_get_folio+0x16d/0x3d0 mm/filemap.c:1951
+ ext4_mb_load_buddy_gfp+0x42b/0xc00 fs/ext4/mballoc.c:1640
+ ext4_discard_preallocations+0x45c/0xc70 fs/ext4/mballoc.c:5592
+ ext4_clear_inode+0x3d/0x1e0 fs/ext4/super.c:1523
+ ext4_evict_inode+0x1b2/0x1330 fs/ext4/inode.c:323
+ evict+0x337/0x7c0 fs/inode.c:796
+ dispose_list fs/inode.c:845 [inline]
+ prune_icache_sb+0x189/0x290 fs/inode.c:1033
+ super_cache_scan+0x33d/0x510 fs/super.c:223
+ do_shrink_slab mm/shrinker.c:437 [inline]
+ shrink_slab+0x43e/0x930 mm/shrinker.c:664
+ shrink_node_memcgs mm/vmscan.c:5931 [inline]
+ shrink_node+0x4dd/0x15c0 mm/vmscan.c:5970
+ shrink_zones mm/vmscan.c:6215 [inline]
+ do_try_to_free_pages+0x284/0x1160 mm/vmscan.c:6277
+ try_to_free_pages+0x1ee/0x3e0 mm/vmscan.c:6527
+ __perform_reclaim mm/page_alloc.c:3929 [inline]
+ __alloc_pages_direct_reclaim mm/page_alloc.c:3951 [inline]
+ __alloc_pages_slowpath mm/page_alloc.c:4382 [inline]
+ __alloc_pages_noprof+0xa48/0x2040 mm/page_alloc.c:4766
+ alloc_pages_bulk_noprof+0x6d6/0xf40 mm/page_alloc.c:4701
+ alloc_pages_bulk_array_mempolicy_noprof+0x1fd/0xcb0 mm/mempolicy.c:2559
+ vm_area_alloc_pages mm/vmalloc.c:3565 [inline]
+ __vmalloc_area_node mm/vmalloc.c:3669 [inline]
+ __vmalloc_node_range_noprof+0x453/0x1170 mm/vmalloc.c:3846
+ __vmalloc_node_noprof+0xad/0xf0 mm/vmalloc.c:3911
+ xt_counters_alloc+0x32/0x60 net/netfilter/x_tables.c:1380
+ __do_replace net/ipv4/netfilter/ip_tables.c:1046 [inline]
+ do_replace net/ipv4/netfilter/ip_tables.c:1141 [inline]
+ do_ipt_set_ctl+0x6d8/0x10d0 net/ipv4/netfilter/ip_tables.c:1635
+ nf_setsockopt+0x7d/0xe0 net/netfilter/nf_sockopt.c:101
+ ip_setsockopt+0xa4/0xc0 net/ipv4/ip_sockglue.c:1424
+ tcp_setsockopt+0x9c/0x100 net/ipv4/tcp.c:4030
+ do_sock_setsockopt+0xd3/0x1a0 net/socket.c:2313
+ __sys_setsockopt+0x105/0x170 net/socket.c:2338
+ __do_sys_setsockopt net/socket.c:2344 [inline]
+ __se_sys_setsockopt net/socket.c:2341 [inline]
+ __x64_sys_setsockopt+0xbd/0x160 net/socket.c:2341
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xa6/0x1a0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc5c73fa87e
+Code: 0f 1f 40 00 48 c7 c2 b0 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff
+ff ff eb b1 0f 1f 00 f3 0f 1e fa 49 89 ca b8 36 00 00 00 0f 05 <48> 3d
+00 f0 ff ff 77 0a c3 66 0f 1f 84 00 00 00 00 00 48 c7 c2 b0
+RSP: 002b:00007ffc1866e9a8 EFLAGS: 00000206 ORIG_RAX: 0000000000000036
+RAX: ffffffffffffffda RBX: 00007ffc1866ea30 RCX: 00007fc5c73fa87e
+RDX: 0000000000000040 RSI: 0000000000000000 RDI: 0000000000000003
+RBP: 0000000000000003 R08: 00000000000002d8 R09: 00007ffc1866ef30
+R10: 00007fc5c75c0c60 R11: 0000000000000206 R12: 00007fc5c75c0c00
+R13: 00007ffc1866e9cc R14: 0000000000000000 R15: 00007fc5c75c2dc0
+ </TASK>
+
+=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
+=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=
+=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=
+=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
+=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94Call
+Trace=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=
+=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=
+=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
+=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=
+=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=
+=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=80=94=E2=
+=80=94
+
+If you need more details or additional test results, please feel free
+to let us know. Thank you so much for your attention! Please don't
+hesitate to reach out if you have any suggestions or need further
+communication.
+
+Best regards,
+Luka
 
