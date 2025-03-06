@@ -1,231 +1,276 @@
-Return-Path: <linux-kernel+bounces-548627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01A23A54738
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:03:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A4B2A5473D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:03:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A23E1887E4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:03:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A15AC3A5709
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E90204866;
-	Thu,  6 Mar 2025 10:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fw3+OLQ9"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC5391EA7C5;
+	Thu,  6 Mar 2025 10:02:31 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6ADBE46;
-	Thu,  6 Mar 2025 10:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1630B1FECB5;
+	Thu,  6 Mar 2025 10:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741255356; cv=none; b=B/rhY942xD6orGmnFG/EMhsInfvDw31dv2b665bxr6iC/RmgP3Eh/Cf927v/cheh5Guj13ZNWZi3CkfEGVAD7E3F33o8JqbjNI7Rnuomh3xKhgS2kv1+atUdgbMGCKM4CzxyQCL0EpTV+yutR3YdyzOJGT4QcoYrUMCl4xbjPvM=
+	t=1741255351; cv=none; b=non3wvigSM542SyGwgHFcla7wJvLbv40dM/arCwnqgKf30dFyEzTJtddijt1wxM/Hfr2d80WQ0M5NuHDNeRdhBjA+F/JO1lftphI6i7S0fYq2MBTOfzdEJHqg7lNUMyLWftoEWmFeeyWqdFTIFYEKW21ByJbt9uOgue2vW3DvkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741255356; c=relaxed/simple;
-	bh=wTFlYBvJD+DPro0IJ6A0zpCSv+QG49I4vgkSUKda6Co=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fyus86SitiLNSdRYXfgirTrVk28VVDmR++xWEwYwA+GRWakjjEqwFU9Dote0sCA3nekFiq8dL26UBJKEhZGd1Nu8h+T6E86lnJnHCALO/3UsRS2ECqo4Q3aafNPQAiNe/tgcEHCqbehLNIrIKeXvIg2h1YslXpVD4pwbDkbdp4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fw3+OLQ9; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-223a7065ff8so8978975ad.0;
-        Thu, 06 Mar 2025 02:02:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741255354; x=1741860154; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=I6C2R+19zIRVeliQUNh0n4zfR/ryo+Fy/zku5DukOZs=;
-        b=fw3+OLQ9h5wO9+PUdm5kJfjnviEHfpqRREeqzEvI6F1TRTFjquaQtPgmlWXMDCue2B
-         FR9SqS4yFXvqbZC0+vNm+36RSJU2kSNk9nWlOk1JQ0WPCGrC7UJ5ncIAf3kH8ISClED8
-         mg+bVTSqI3dqJtOMc0XQHIrnR0eLvYxHoE/2vVI9+k4tbMb8sXZ/0Gm4veWMf/iA99pX
-         o6ORt0zxDnsDv16pfoCFkI31XcrnPaBS79vcMz+WRSOzf6XS/W2C0opbX7gZKvH43FU+
-         bHYULK/nluGEQE5aYlTD1+dMG/ZF39bo0RNOlmGyAwZEVeE7ADSwHqhDDsKdMHI2w6qM
-         PrjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741255354; x=1741860154;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I6C2R+19zIRVeliQUNh0n4zfR/ryo+Fy/zku5DukOZs=;
-        b=sZuwvIiXpGqgsGvnY3zJ9iA516yL061uywpglT9skyHUDF24SqysVZd4JuOh671Y8X
-         IXVNo7q+7AvVTeYCwuoMBoNjg3w1xeaw04VtvvSjx573zQHi5eE09yQP0bpVwJ7OnRgD
-         AnZy03LYDjpjJf39Bp5DpIjv2ukY6CDrp1FNz1wl/a3yMTI4awTD4PCS1lQVzr6JwWhm
-         AhuU4FURViE99TUPLPUND8ZICCjNu3VECh1gOOk96PKsZmtcRVJBoqlrYVkhNIJ0VURL
-         c0dcwOLo350BB0+p3WcHR9Jq8P0kAvAwlQAlcrKNJ/rZs5+rfrySRDaVwhk/rahVu9sP
-         tQ2g==
-X-Forwarded-Encrypted: i=1; AJvYcCVyaGViFgO+KkQ6r0zS5ayd6iLrPsOjXT/9e6a0KhH+WZRYht0iTVyCKhvAjOBn0sTeUZ8lzX/S@vger.kernel.org, AJvYcCWMsZRURKSfUUs0YsgWgqxCR4w+3fctLak9zs/ZrphZ0eAaFqqJ/6yc2c90yiW7pSeKIrMN10VWO/qJrgB0dzjl@vger.kernel.org, AJvYcCWjHe2jvthx/FALvb0xtBTeTkEH6ogv2j387L+MFalCbqQTi6UIMRixphsLapSuhPe4KEm9DtX8IztnoJs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0Due2JMqdxNq1hOCw9pf6mQ8S0sqx+El2TWXTva1tJdv6N9xf
-	K9uXdNNi54G8E0/e9x5nqweRss3hm5+5ioN8NZIQUBrNBvFxhhf7
-X-Gm-Gg: ASbGnctI+ewAvBcOH6aVU/suQBhdyLdU9YGsEEjcnLmePoxgPSHu1ktjMmK2TErCMQK
-	rR49TXkBd8o+m9O4VN7ePRQM8Iuz2+e0OvPJUsBRe1SSzeemJ7UprTpFDH0TN1AG/XgVh6Gqqb0
-	4odBUwa/YrxYOwJQTOAaeP7+ys8OX8cawl4h4eThG0pluYvd5yt/MDpelOX8OXLwKL3sluM/Y2R
-	hPeGI+Zt7piMKMnv+HRQMPI7o6owgi/1DbR/e0SDxoXhRA97b1lT9Fa66AC6fZ3xbySgpsdvv8w
-	wwQrY7uHTjckreKoO4yo1P0wsMwnV8dYy8/H6iQDxhJGiWgP3g==
-X-Google-Smtp-Source: AGHT+IEQ/HT20nm25UhSyrBIvKEOt7us6r/8Uje5w1QgDMFkAlZcymJjjQmF/1bibHtRHpgmynXDZA==
-X-Received: by 2002:a05:6a21:8dc2:b0:1f0:e7a4:8f7c with SMTP id adf61e73a8af0-1f34959e143mr12555833637.36.1741255353853;
-        Thu, 06 Mar 2025 02:02:33 -0800 (PST)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af281075ec4sm848915a12.2.2025.03.06.02.02.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 02:02:33 -0800 (PST)
-Date: Thu, 6 Mar 2025 10:02:24 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Cosmin Ratiu <cratiu@nvidia.com>
-Cc: "razor@blackwall.org" <razor@blackwall.org>,
-	Petr Machata <petrm@nvidia.com>,
-	"shuah@kernel.org" <shuah@kernel.org>,
-	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"jv@jvosburgh.net" <jv@jvosburgh.net>,
-	"jarod@redhat.com" <jarod@redhat.com>,
-	Jianbo Liu <jianbol@nvidia.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"edumazet@google.com" <edumazet@google.com>,
-	"pabeni@redhat.com" <pabeni@redhat.com>,
-	"horms@kernel.org" <horms@kernel.org>,
-	"kuba@kernel.org" <kuba@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"steffen.klassert@secunet.com" <steffen.klassert@secunet.com>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
-Subject: Re: [PATCHv4 net 1/3] bonding: move IPsec deletion to
- bond_ipsec_free_sa
-Message-ID: <Z8lysOLMnYoknLsW@fedora>
-References: <20250304131120.31135-1-liuhangbin@gmail.com>
- <20250304131120.31135-2-liuhangbin@gmail.com>
- <4108bfd8-b19f-46ea-8820-47dd8fb9ee7c@blackwall.org>
- <Z8hcFSElK7iF8u9o@fedora>
- <f9bf79aff80eae232bc16863aa7a3ea56c80069a.camel@nvidia.com>
- <Z8ls6fAwBtiV_C9b@fedora>
+	s=arc-20240116; t=1741255351; c=relaxed/simple;
+	bh=kxGqFgv5DV4uqS8x3+VfQonPcdYK8J9y0uKc1HKkDT0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ITDg8sd6W5gopc72Lx8uD2h5iEoqFb/w0Oo0x4ygrer6idGUo/1qHV64ePsZ0En7c0J44rbc1Zj5AX05nfaFQJEVx9O95jnwsu2LL3GSr3o4+f/BULKv4eovQAS9dPQozTWs54g8bbSYQVA3+OXQIRFeyXnvCs/l5DGwxBM1mmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 704C0C4CEE0;
+	Thu,  6 Mar 2025 10:02:29 +0000 (UTC)
+Message-ID: <97e71c79-b6ca-4840-bb86-32ac44508f69@xs4all.nl>
+Date: Thu, 6 Mar 2025 11:02:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8ls6fAwBtiV_C9b@fedora>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] media: vivid: Introduce VIDEO_VIVID_OSD
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Slawomir Rosek <srosek@google.com>, Hidenori Kobayashi <hidenorik@google.com>
+References: <20250228-vivid-osd-v1-0-16963a0a0ab7@chromium.org>
+ <20250228-vivid-osd-v1-2-16963a0a0ab7@chromium.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20250228-vivid-osd-v1-2-16963a0a0ab7@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 06, 2025 at 09:37:53AM +0000, Hangbin Liu wrote:
-> > 
-> > The reason the mutex was added (instead of the spinlock used before)
-> > was exactly because the add and free offload operations could sleep.
-> > 
-> > > With your reply, I also checked the xdo_dev_state_add() in
-> > > bond_ipsec_add_sa_all(), which may also sleep, e.g.
-> > > mlx5e_xfrm_add_state(),
-> > > 
-> > > If we unlock the spin lock, then the race came back again.
-> > > 
-> > > Any idea about this?
-> > 
-> > The race is between bond_ipsec_del_sa_all and bond_ipsec_del_sa (plus
-> > bond_ipsec_free_sa). The issue is that when bond_ipsec_del_sa_all
-> > releases x->lock, bond_ipsec_del_sa can immediately be called, followed
-> > by bond_ipsec_free_sa.
-> > Maybe dropping x->lock after setting real_dev to NULL? I checked,
-> > real_dev is not used anywhere on the free calls, I think. I have
-> > another series refactoring things around real_dev, I hope to be able to
-> > send it soon.
-> > 
-> > Here's a sketch of this idea:
-> > 
-> > --- a/drivers/net/bonding/bond_main.c
-> > +++ b/drivers/net/bonding/bond_main.c
-> > @@ -613,8 +613,11 @@ static void bond_ipsec_del_sa_all(struct bonding
-> > *bond)
-> >  
-> >         mutex_lock(&bond->ipsec_lock);
-> >         list_for_each_entry(ipsec, &bond->ipsec_list, list) {
-> > -               if (!ipsec->xs->xso.real_dev)
-> > +               spin_lock(&ipsec->x->lock);
-> > +               if (!ipsec->xs->xso.real_dev) {
-> > +                       spin_unlock(&ipsec->x->lock);
-> >                         continue;
-> > +               }
-> >  
-> >                 if (!real_dev->xfrmdev_ops ||
-> >                     !real_dev->xfrmdev_ops->xdo_dev_state_delete ||
-> > @@ -622,12 +625,16 @@ static void bond_ipsec_del_sa_all(struct bonding
-> > *bond)
-> >                         slave_warn(bond_dev, real_dev,
-> >                                    "%s: no slave
-> > xdo_dev_state_delete\n",
-> >                                    __func__);
-> > -               } else {
-> > -                       real_dev->xfrmdev_ops-
-> > >xdo_dev_state_delete(real_dev, ipsec->xs);
-> > -                       if (real_dev->xfrmdev_ops->xdo_dev_state_free)
-> > -                               real_dev->xfrmdev_ops-
-> > >xdo_dev_state_free(ipsec->xs);
-> > -                       ipsec->xs->xso.real_dev = NULL;
-> > +                       spin_unlock(&ipsec->x->lock);
-> > +                       continue;
-> >                 }
-> > +
-> > +               real_dev->xfrmdev_ops->xdo_dev_state_delete(real_dev,
-> > ipsec->xs);
-> > +               ipsec->xs->xso.real_dev = NULL;
+Hi Ricardo,
+
+I like this change, but I have a few comments:
+
+On 28/02/2025 14:08, Ricardo Ribalda wrote:
+> vivid-osd depends on CONFIG_FB, which can be a large dependency. Introduce
+> CONFIG_VIDEO_VIVID_OSD to control enabling support for testing output
+> overlay.
 > 
-> Set xs->xso.real_dev = NULL is a good idea. As we will break
-> in bond_ipsec_del_sa()/bond_ipsec_free_sa() when there is no
-> xs->xso.real_dev.
+> Suggested-by: Slawomir Rosek <srosek@google.com>
+> Co-developed-by: Slawomir Rosek <srosek@google.com>
+> Signed-off-by: Slawomir Rosek <srosek@google.com>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+>  drivers/media/test-drivers/vivid/Kconfig         | 12 ++++++++++--
+>  drivers/media/test-drivers/vivid/Makefile        |  5 ++++-
+>  drivers/media/test-drivers/vivid/vivid-core.c    |  4 ++++
+>  drivers/media/test-drivers/vivid/vivid-core.h    |  2 ++
+>  drivers/media/test-drivers/vivid/vivid-osd.h     | 11 +++++++++++
+>  drivers/media/test-drivers/vivid/vivid-vid-out.c |  7 ++++---
+>  6 files changed, 35 insertions(+), 6 deletions(-)
 > 
-> For bond_ipsec_add_sa_all(), I will move the xso.real_dev = real_dev
-> after .xdo_dev_state_add() in case the following situation.
+> diff --git a/drivers/media/test-drivers/vivid/Kconfig b/drivers/media/test-drivers/vivid/Kconfig
+> index ec2e71d76965..e95edc0f22bf 100644
+> --- a/drivers/media/test-drivers/vivid/Kconfig
+> +++ b/drivers/media/test-drivers/vivid/Kconfig
+> @@ -1,9 +1,8 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  config VIDEO_VIVID
+>  	tristate "Virtual Video Test Driver"
+> -	depends on VIDEO_DEV && !SPARC32 && !SPARC64 && FB
+> +	depends on VIDEO_DEV && !SPARC32 && !SPARC64
+>  	depends on HAS_DMA
+> -	select FB_IOMEM_HELPERS
+>  	select FONT_SUPPORT
+>  	select FONT_8x16
+>  	select VIDEOBUF2_VMALLOC
+> @@ -31,6 +30,15 @@ config VIDEO_VIVID_CEC
+>  	  When selected the vivid module will emulate the optional
+>  	  HDMI CEC feature.
+>  
+> +config VIDEO_VIVID_OSD
+> +	bool "Enable Framebuffer for testing Output Overlay"
+> +	depends on VIDEO_VIVID && FB
+> +	default y
+> +	select FB_IOMEM_HELPERS
+> +	help
+> +	  When selected the vivid module will emulate a Framebuffer for
+> +	  testing Output Overlay.
+> +
+>  config VIDEO_VIVID_MAX_DEVS
+>  	int "Maximum number of devices"
+>  	depends on VIDEO_VIVID
+> diff --git a/drivers/media/test-drivers/vivid/Makefile b/drivers/media/test-drivers/vivid/Makefile
+> index b12ad0152a3e..284a59e97335 100644
+> --- a/drivers/media/test-drivers/vivid/Makefile
+> +++ b/drivers/media/test-drivers/vivid/Makefile
+> @@ -3,10 +3,13 @@ vivid-objs := vivid-core.o vivid-ctrls.o vivid-vid-common.o vivid-vbi-gen.o \
+>  		vivid-vid-cap.o vivid-vid-out.o vivid-kthread-cap.o vivid-kthread-out.o \
+>  		vivid-radio-rx.o vivid-radio-tx.o vivid-radio-common.o \
+>  		vivid-rds-gen.o vivid-sdr-cap.o vivid-vbi-cap.o vivid-vbi-out.o \
+> -		vivid-osd.o vivid-meta-cap.o vivid-meta-out.o \
+> +		vivid-meta-cap.o vivid-meta-out.o \
+>  		vivid-kthread-touch.o vivid-touch-cap.o
+>  ifeq ($(CONFIG_VIDEO_VIVID_CEC),y)
+>    vivid-objs += vivid-cec.o
+>  endif
+> +ifeq ($(CONFIG_VIDEO_VIVID_OSD),y)
+> +  vivid-objs += vivid-osd.o
+> +endif
+>  
+>  obj-$(CONFIG_VIDEO_VIVID) += vivid.o
+> diff --git a/drivers/media/test-drivers/vivid/vivid-core.c b/drivers/media/test-drivers/vivid/vivid-core.c
+> index 10f5bef3f49c..6af12a76a067 100644
+> --- a/drivers/media/test-drivers/vivid/vivid-core.c
+> +++ b/drivers/media/test-drivers/vivid/vivid-core.c
+> @@ -125,7 +125,9 @@ MODULE_PARM_DESC(node_types, " node types, default is 0xe1d3d. Bitmask with the
+>  			     "\t\t    bit 8: Video Output node\n"
+>  			     "\t\t    bit 10-11: VBI Output node: 0 = none, 1 = raw vbi, 2 = sliced vbi, 3 = both\n"
+>  			     "\t\t    bit 12: Radio Transmitter node\n"
+> +#if IS_ENABLED(CONFIG_VIDEO_VIVID_OSD)
+
+Just use #ifdef CONFIG_VIDEO_VIVID_OSD. It's a simple bool config option, after all.
+
+>  			     "\t\t    bit 16: Framebuffer for testing output overlays\n"
+> +#endif
+>  			     "\t\t    bit 17: Metadata Capture node\n"
+>  			     "\t\t    bit 18: Metadata Output node\n"
+>  			     "\t\t    bit 19: Touch Capture node\n");
+> @@ -1071,9 +1073,11 @@ static int vivid_detect_feature_set(struct vivid_dev *dev, int inst,
+>  	/* do we have a modulator? */
+>  	*has_modulator = dev->has_radio_tx;
+>  
+> +#if IS_ENABLED(CONFIG_VIDEO_VIVID_OSD)
+>  	if (dev->has_vid_cap)
+>  		/* do we have a framebuffer for overlay testing? */
+>  		dev->has_fb = node_type & 0x10000;
+> +#endif
+>  
+>  	/* can we do crop/compose/scaling while capturing? */
+>  	if (no_error_inj && *ccs_cap == -1)
+> diff --git a/drivers/media/test-drivers/vivid/vivid-core.h b/drivers/media/test-drivers/vivid/vivid-core.h
+> index d2d52763b119..72bd48031ba0 100644
+> --- a/drivers/media/test-drivers/vivid/vivid-core.h
+> +++ b/drivers/media/test-drivers/vivid/vivid-core.h
+> @@ -403,9 +403,11 @@ struct vivid_dev {
+>  	int				display_byte_stride;
+>  	int				bits_per_pixel;
+>  	int				bytes_per_pixel;
+> +#if IS_ENABLED(CONFIG_VIDEO_VIVID_OSD)
+>  	struct fb_info			fb_info;
+>  	struct fb_var_screeninfo	fb_defined;
+>  	struct fb_fix_screeninfo	fb_fix;
+> +#endif
+>  
+>  	/* Error injection */
+>  	bool				disconnect_error;
+> diff --git a/drivers/media/test-drivers/vivid/vivid-osd.h b/drivers/media/test-drivers/vivid/vivid-osd.h
+> index 883459552fa9..6830e6d63dc5 100644
+> --- a/drivers/media/test-drivers/vivid/vivid-osd.h
+> +++ b/drivers/media/test-drivers/vivid/vivid-osd.h
+> @@ -8,8 +8,19 @@
+>  #ifndef _VIVID_OSD_H_
+>  #define _VIVID_OSD_H_
+>  
+> +#if IS_ENABLED(CONFIG_VIDEO_VIVID_OSD)
+>  int vivid_fb_init(struct vivid_dev *dev);
+>  void vivid_fb_deinit(struct vivid_dev *dev);
+>  void vivid_clear_fb(struct vivid_dev *dev);
+
+Let's rename this to vivid_fb_clear (that can be done in the previous patch).
+
+That way all these functions use a common prefix.
+
+> +#else
+> +static inline int vivid_fb_init(struct vivid_dev *dev)
+> +{
+> +	return -ENODEV;
+> +}
+> +
+> +static inline void vivid_fb_deinit(struct vivid_dev *dev) {}
+> +
+
+Just drop this empty line.
+
+> +static inline void vivid_clear_fb(struct vivid_dev *dev) {}
+> +#endif
+>  
+>  #endif
+> diff --git a/drivers/media/test-drivers/vivid/vivid-vid-out.c b/drivers/media/test-drivers/vivid/vivid-vid-out.c
+> index 5ec84db934d6..75b24751b9a4 100644
+> --- a/drivers/media/test-drivers/vivid/vivid-vid-out.c
+> +++ b/drivers/media/test-drivers/vivid/vivid-vid-out.c
+> @@ -907,10 +907,11 @@ int vivid_vid_out_g_fbuf(struct file *file, void *fh,
+>  	a->base = (void *)dev->video_pbase;
+>  	a->fmt.width = dev->display_width;
+>  	a->fmt.height = dev->display_height;
+> -	if (dev->fb_defined.green.length == 5)
+> -		a->fmt.pixelformat = V4L2_PIX_FMT_ARGB555;
+> -	else
+> +	a->fmt.pixelformat = V4L2_PIX_FMT_ARGB555;
+> +#if IS_ENABLED(CONFIG_VIDEO_VIVID_FB)
+> +	if (dev->fb_defined.green.length != 5)
+>  		a->fmt.pixelformat = V4L2_PIX_FMT_RGB565;
+> +#endif
+
+I prefer that this uses a new helper: vivid_fb_green_bits(). Again, that can
+be done in the previous patch. With that helper you can keep the original
+if-else construct, which is easier to read.
+
+The helper should return 5 if CONFIG_VIDEO_VIVID_OSD is not defined.
+
+>  	a->fmt.bytesperline = dev->display_byte_stride;
+>  	a->fmt.sizeimage = a->fmt.height * a->fmt.bytesperline;
+>  	a->fmt.field = V4L2_FIELD_NONE;
 > 
-> bond_ipsec_add_sa_all()
-> spin_unlock(&ipsec->x->lock);
-> ipsec->xs->xso.real_dev = real_dev;
->                                            __xfrm_state_delete x->state = DEAD
->                                               - bond_ipsec_del_sa()
->                                                 - .xdo_dev_state_delete()
-> .xdo_dev_state_add()
 
+Regards,
 
-Hmm, do we still need to the spin_lock in bond_ipsec_add_sa_all()? With
-xs->xso.real_dev = NULL after bond_ipsec_del_sa_all(), it looks there is
-no need the spin_lock in bond_ipsec_add_sa_all(). e.g.
-
-
-diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-index 04b677d0c45b..3ada51c63207 100644
---- a/drivers/net/bonding/bond_main.c
-+++ b/drivers/net/bonding/bond_main.c
-@@ -537,15 +537,27 @@ static void bond_ipsec_add_sa_all(struct bonding *bond)
- 	}
- 
- 	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
-+		spin_lock_bh(&ipsec->xs->lock);
-+		/* Skip dead xfrm states, they'll be freed later. */
-+		if (ipsec->xs->km.state == XFRM_STATE_DEAD) {
-+			spin_unlock_bh(&ipsec->xs->lock);
-+			continue;
-+		}
-+
- 		/* If new state is added before ipsec_lock acquired */
--		if (ipsec->xs->xso.real_dev == real_dev)
-+		if (ipsec->xs->xso.real_dev == real_dev) {
-+			spin_unlock_bh(&ipsec->xs->lock);
- 			continue;
-+		}
- 
--		ipsec->xs->xso.real_dev = real_dev;
- 		if (real_dev->xfrmdev_ops->xdo_dev_state_add(ipsec->xs, NULL)) {
- 			slave_warn(bond_dev, real_dev, "%s: failed to add SA\n", __func__);
- 			ipsec->xs->xso.real_dev = NULL;
- 		}
-+		/* Set real_dev after .xdo_dev_state_add in case
-+		 * __xfrm_state_delete() is called in parallel
-+		 */
-+		ipsec->xs->xso.real_dev = real_dev;
- 	}
-
-The spin_lock here seems useless now. What do you think?
-
-Thanks
-Hangbin
+	Hans
 
