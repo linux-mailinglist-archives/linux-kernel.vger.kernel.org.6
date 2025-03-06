@@ -1,115 +1,132 @@
-Return-Path: <linux-kernel+bounces-550062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C92AA55AE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:29:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6EC0A55AE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:29:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6F5717775F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:29:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE6AB188EEA5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E9F27D771;
-	Thu,  6 Mar 2025 23:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76F0227E1DC;
+	Thu,  6 Mar 2025 23:28:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZbVxBka"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="UrUqzjkz"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E28B259C9F;
-	Thu,  6 Mar 2025 23:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3315627CB33
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 23:28:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741303736; cv=none; b=unOCFHJRgnvwwfx3bMFmvxurJeeO12YMoDScH3yPw2aTtozKR2gc4K2Quz0su3TEaNLe+7C+rBsFdKkAitTqdelt7CegsP0btxmAyc/WdiHxH8+mpVOw5e1uV+MQCSkxBLOg58nuK3qdiELx/2FkrQaYAB8eS+mMQsYkK0Cl5TU=
+	t=1741303737; cv=none; b=IJ+xKUAnM3xeJT30ej0Fa4kSRgN+dHoKCOWWY/ztnk/1onLgrMB8qoJ5keQxYov9buq8/h78eU6hKwRZPWDSnVCXygsyiuxaLKmrtLlZl2sVMGwn3pdzv4d0nqu68YJLbBgT3odOpUcjkhHyi+wVHEpSMNZ6ePlPOgDuUpGpOMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741303736; c=relaxed/simple;
-	bh=nh7ClG5xpB7iVPUSC5b9cR+XtRGFSg8uFU+sQmc5mHs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gJhTTdlywn++wTfgVdhVmXGIOYTPR/hHtBZG7aJLH8SLpOobuJ0iuMThp5H2uHv8sjMtoUscnxhn2bROhaizVsJXXfvhbTjaaDR41U4Wf+OxM18uLdmowigmO5An5Ciy6OPjo1KBjqoZJyjONpMEpVkTRL7GYSpjVxVH08tgp/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZbVxBka; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4394036c0efso7269515e9.2;
-        Thu, 06 Mar 2025 15:28:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741303732; x=1741908532; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EZl2HOj5CnuXTvILYduxJ5ao1DJjyVJeLLF8l6J639c=;
-        b=lZbVxBka06BAUL3hn+A8qmBwAXa6lBSIhu+SIVOSSzAouI0F2zGruGY/lcDa3lv622
-         V/2Jou9bde95w4+m8a0IYPlyXp5amvTZ/hRCyO9OM3ELzNT7WIWvqpaQkw5fpvdDODEs
-         DdN415Tn79/PB2XS8IgKjFLBIwpfWESp+LFGLeQl9ecr8KjXXnrbVbPQa3X0+eMiI5Q7
-         MxvF4ZhnXXcpMsTdwl/vEcYJttzwwTuLFcjDlYt05gyY1wGkT6t0t0JuOzaFO0KBaWGI
-         jXjjAWHF6JESIClop0ay5OA8HR5MfYaXUyOC0OPaUDwshSr+6wZh6KLednmc4Z831B0C
-         92LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741303732; x=1741908532;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EZl2HOj5CnuXTvILYduxJ5ao1DJjyVJeLLF8l6J639c=;
-        b=HlDZxetRYvSljn7rh/Zi5Q9tWUdL78tsrs2Wdc6i397qZzEoDmHqbM6VuKUDDfT1qK
-         QrH3lmt5/NVzevim/iO1v//qPhkBEaRMxnM8C+dOBBwUfJfC1h838BrXyOGqGlMW82uI
-         MVibd7Qr4kmXN4W4o+/4b7oznutKiy6toLttpRY6rDUVp5uOMsoAvUTQ7jsDE4U4Mmmn
-         4kLoUADpE1XXUNQYWDeKIuCB8+Oj41A83irO5ZeWLcfrYhfv7xJwUUrdmumRxZ/sEJSH
-         rtKMr7PY+OkEWquCnwuBLnmjllRK5S165imTQob6LiUgtIp6QzmoVvEOSM+Mdh0YJA5v
-         LuZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVw5mYgLZMMxTp/X8yvEP3hZ1OJ7BJZNtZIsTdhMX9FlXnN7ikiouR2DwpygzvhhkBEs3ibX2dB5uBS3A==@vger.kernel.org, AJvYcCXuUWNNfIkdTuaCU9NQ1XJjoIieMPrLySws4JLNW/1ZkrOxo5Hnols5Sss0I3nn9s2z1xadwIPT40ejjxX3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSQ7/yKx6HXusrreo6Z1klHSxeQvm2GB90AwjDp6nMcu7ZUuSN
-	21Z/ivkqDtK00eBkMFsss/8oMVTz821T8d10VJJibkBbrbDya+6gIVkCnipqx25Losp7Q2bVWY5
-	pqfYblOyBgfDqxN0CCkmAiWOalRc=
-X-Gm-Gg: ASbGncuIaOfdvOGedfSnwdMa00PiVMFpn+/XimFhEwS54zpXH3p3eSniVZSkJ7MIOji
-	34lqdUMRv99XB7XpmGwjp9VtwDwTEyQMpRqmNs2VjGv03UiGHtqvvJfCUndnsiZh69cWTDs0LQ9
-	fN9A6Wo963DYc75DosU8qX3g==
-X-Google-Smtp-Source: AGHT+IEQmCH6dK55zXOkds/ZHDMnczRyVqU6As+1fkm66BRqyj6QpVHUWogFcNW2HSeh3J4QkVBTphwhdwBXfd/xI2o=
-X-Received: by 2002:a05:6000:1fa4:b0:391:319c:1950 with SMTP id
- ffacd0b85a97d-39132d0539dmr704892f8f.8.1741303732207; Thu, 06 Mar 2025
- 15:28:52 -0800 (PST)
+	s=arc-20240116; t=1741303737; c=relaxed/simple;
+	bh=ywZ1zNMC6Cpsx8jP3sSiESAhGtT8ek6DoRudfqs218Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ixvg4qTuULYBHK6aFiza+DBhfYDrovtlcqzI/ZPD4H7Uk9TllnKrGoLKnBdlgrXgMuubutwop7yXdk2VYix/UApfae51wBIpzV7fLwRvHHeDid55IDyli/yxfCxUnHjEo+i/uDujVX2nE1r3Kqb2hoToekmSU0gLC4zxsgUCwok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=UrUqzjkz; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1741303735;
+ bh=q2c6AS1rlUDUzvA6Yu68aG7T+Ty/a7PAe/Tq0jI31fc=;
+ b=UrUqzjkzrzqKGFYiE+hjiz6hJho0xc1vfo7NvFs68dZPibizvzRqn1vEW24/nQ0c8TZEQrEAn
+ 3Cb/dlEGbqIjw9YyTQtMvXAoec1Xg3krelI0yzdD0aW/Gb8e/lmCKcKJmD32XVU1V1An06VNnCo
+ B2gINL7qIGzEuzdNhJi2Rl4tuaZmWK1yB/GFGlGSLrAZ4De/48/fltZvEIx0usx4JeDfz+Kl1KB
+ uZXIqfKi2mNHWsNZM+WfalH1W0vWlitYrF/rDANVTQwTE64aJ7dCkZECKocNsRrYK5ZdBJHq6O4
+ UA+YM9TdOinE8AtCgWwLzw/+MxIsm4NPdn1HNZcElLvg==
+X-Forward-Email-ID: 67ca2fafc1763851c065d15d
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <624f2474-9a39-46a3-a6e5-f9966471bf3d@kwiboo.se>
+Date: Fri, 7 Mar 2025 00:28:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250306074101epcas1p4b24ac546f93df2c7fe3176607b20e47f@epcas1p4.samsung.com>
- <20250306074056.246582-1-s.suk@samsung.com> <Z8m-vJ6mP1Sh2pt3@infradead.org>
-In-Reply-To: <Z8m-vJ6mP1Sh2pt3@infradead.org>
-From: Jaewon Kim <jaewon31.kim@gmail.com>
-Date: Fri, 7 Mar 2025 08:28:41 +0900
-X-Gm-Features: AQ5f1JopaLOUpTwxdPg5AfqwLDYqWbHBUyR2VJnXqln5-8Dd2-m6QI-_lvHe4-8
-Message-ID: <CAJrd-UuLvOPLC2Xr=yOzZYvOw9k8qwbNa0r9oNjne31x8Pmnhw@mail.gmail.com>
-Subject: Re: [RFC PATCH] block, fs: use FOLL_LONGTERM as gup_flags for direct IO
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Sooyong Suk <s.suk@samsung.com>, viro@zeniv.linux.org.uk, 
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	spssyr@gmail.com, "axboe@kernel.dk" <axboe@kernel.dk>, linux-block@vger.kernel.org, 
-	dhavale@google.com, surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] net: stmmac: dwmac-rk: Use DELAY_ENABLE macro for
+ RK3328
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Wadim Egorov <w.egorov@phytec.de>,
+ netdev@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20250306203858.1677595-1-jonas@kwiboo.se>
+ <20250306203858.1677595-2-jonas@kwiboo.se>
+ <d6b15dc2-f6b2-4703-a4da-07618eaed4db@lunn.ch>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <d6b15dc2-f6b2-4703-a4da-07618eaed4db@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 7, 2025 at 12:26=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
-g> wrote:
->
-> On Thu, Mar 06, 2025 at 04:40:56PM +0900, Sooyong Suk wrote:
-> > There are GUP references to pages that are serving as direct IO buffers=
-.
-> > Those pages can be allocated from CMA pageblocks despite they can be
-> > pinned until the DIO is completed.
->
-> direct I/O is eactly the case that is not FOLL_LONGTERM and one of
-> the reasons to even have the flag.  So big fat no to this.
->
+Hi Andrew,
 
-Hello, thank you for your comment.
-We, Sooyong and I, wanted to get some opinions about this
-FOLL_LONGTERM for direct I/O as CMA memory got pinned pages which had
-been pinned from direct io.
+On 2025-03-06 23:25, Andrew Lunn wrote:
+> On Thu, Mar 06, 2025 at 08:38:52PM +0000, Jonas Karlman wrote:
+>> Support for Rockchip RK3328 GMAC and addition of the DELAY_ENABLE macro
+>> was merged in the same merge window. This resulted in RK3328 not being
+>> converted to use the new DELAY_ENABLE macro.
+>>
+>> Change to use the DELAY_ENABLE macro to help disable MAC delay when
+>> RGMII_ID/RXID/TXID is used.
+>>
+>> Fixes: eaf70ad14cbb ("net: stmmac: dwmac-rk: Add handling for RGMII_ID/RXID/TXID")
+> 
+> Please add a description of the broken behaviour. How would i know i
+> need this fix? What would i see?
 
-> You also completely failed to address the relevant mailinglist and
-> maintainers.
+Based on my layman testing I have not seen any real broken behaviour
+with current enablement of a zero rx/tx MAC delay for RGMII_ID/RXID/TXID.
 
-I added block maintainer Jens Axboe and the block layer maillinst
-here, and added Suren and Sandeep, too.
+The driver ops is called with a rx/tx_delay=0 for RGMII_ID/RXID/TXID
+modes, what the MAC does with enable=true and rx/tx_delay=0 is unclear
+to me.
+
+> 
+> We also need to be careful with backwards compatibility. Is there the
+> potential for double bugs cancelling each other out? A board which has
+> the wrong phy-mode in DT, but because of this bug, the wrong register
+> is written and it actually works because of reset defaults?
+
+To my knowledge this should have very limited effect, however I am no
+network expert and after doing very basic testing on several different
+rk3328/rk3566/rk3568/rk3588 I could not see any real affect with/without
+this change.
+
+The use of Fixes-tag was more to have a reference to the commit that
+first should have used the DELAY_ENABLE macro.
+
+Regards,
+Jonas
+
+> 
+>     Andrew
+> 
+> ---
+> pw-bot: cr
+> 
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+
 
