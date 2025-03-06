@@ -1,146 +1,132 @@
-Return-Path: <linux-kernel+bounces-548479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE7C7A54561
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:51:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E4F2A5454C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:48:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42783171195
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:51:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 163397A7E99
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C980920968E;
-	Thu,  6 Mar 2025 08:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3C020896D;
+	Thu,  6 Mar 2025 08:48:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="llXdhcrm"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="jjqyJYr3"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91623204C31;
-	Thu,  6 Mar 2025 08:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2E820896C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:48:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741251052; cv=none; b=uKQkocLr5w4K8IdK9cvxX7d8Gf1Zdo8Z5VyYtXG/F1QtsVCyxJP0RcA2hs65+o0/nwee5ysRYAx2fdMnI9kkgSl3W9C+jLcrtMBA2H364Gh46xz7sogVUeH16AQs09/cS8FNq10+9gVUrybQEkbo4aSOelwQKWB03kzzpCeuNCs=
+	t=1741250895; cv=none; b=f4KONTa3aK5Uo7iXgQ4h2ZJPKh6BGa5k4TKZWE0hdXgl9Zs4LV7T4Wxje0nqYzCOLOcxQASbVIdnbku1YQVXD3vpNM7wM5jhqCYTVyMgQHdCBgdTmYXZnl+KzRBtA6wDcyQsqvv1BQR34C9928BBlBshtaVUmJbJazd/I72Hg+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741251052; c=relaxed/simple;
-	bh=f1FAL7pgFjsfu/PHchgQvCkDMKRRw5zrXEXnM4cI2Pw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GLtqEUhV6BT2x9HiqY46fkO8NetNJyF0Y6AP29ub2lmjY0YdUtYGLuGQ/AWkzcvpFGMQtlzyGjLJI88FQ0DzUaSiSvAYta1tZBOjLwRkIJgJLqfuzYtgKoejwKuj2FZVK1YR0cka4lEO2kVi92PoEZYfQPNEkZ003xH6fgSWQZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=llXdhcrm; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 1402c728fa6811efaae1fd9735fae912-20250306
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=Zz2I7BU9rLfHfSph96G/PmbWf/qxl7KFg2teZ6A/Rts=;
-	b=llXdhcrmzmOgBHto4nFwlf4lbe7vPxUfWdJd3S31z/Ipa65CSQ4q+XPUIAFDlc2ovfO3qn8fWCEYhW68HQ0wuNQtJaHXVwzbBMS09OnXIUlwa9sY4bBliDnly13/He1FwdCIOKnxpXBSS0CNQWxix+8PQsqtoORvIowGZQE3VOY=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:4295f812-53f7-432f-a9c6-1e1a33a8d98a,IP:0,UR
-	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-25
-X-CID-META: VersionHash:0ef645f,CLOUDID:5d1a078c-f5b8-47d5-8cf3-b68fe7530c9a,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:nil,Content:0|50,EDM:-3
-	,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
-	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 1402c728fa6811efaae1fd9735fae912-20250306
-Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
-	(envelope-from <axe.yang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1493921118; Thu, 06 Mar 2025 16:50:39 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Thu, 6 Mar 2025 16:50:37 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.28 via Frontend Transport; Thu, 6 Mar 2025 16:50:37 +0800
-From: Axe Yang <axe.yang@mediatek.com>
-To: Chaotian Jing <chaotian.jing@mediatek.com>, Ulf Hansson
-	<ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
-	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Wenbin Mei
-	<wenbin.mei@mediatek.com>
-CC: <yong.mao@mediatek.com>, <qingliang.li@mediatek.com>,
-	<andy-ld.lu@mediatek.com>, <linux-mmc@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Axe Yang <axe.yang@mediatek.com>
-Subject: [PATCH 2/2] mmc: mtk-sd: add support to disable single burst
-Date: Thu, 6 Mar 2025 16:48:06 +0800
-Message-ID: <20250306085028.5024-3-axe.yang@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250306085028.5024-1-axe.yang@mediatek.com>
-References: <20250306085028.5024-1-axe.yang@mediatek.com>
+	s=arc-20240116; t=1741250895; c=relaxed/simple;
+	bh=eN2UxJs/P0sNcKbeYZx5A6ber95WpSjYnmsGggEt1+U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hRH0mK6SqGOK5XON9jC6jML9TRnioc96aRi+/ZYTlbgGYtAaUxzAUYxQOxyhfC6Lb5gpI9aW4KmkLqG5X5/WKhDvXvmBv24WiO0EAfQwJ2tLvTIVy8660+JSygVpbIE/ewfuxVv9ua/G9A7AIeXxGxw6PiHGgjjtzgDhSVvuxpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=jjqyJYr3; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2ff6cf448b8so326829a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 00:48:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=citrix.com; s=google; t=1741250893; x=1741855693; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=w4k+jXFhr9NDIRUmOU/UyvLqGcx7hV3cHJqh3EvrMGk=;
+        b=jjqyJYr3BZ2t+TXJRZksijLIUHO9KQVi+rASpiLxjcieoe84XmIDYaR3WXCAPOBTJy
+         UyqZV++9uyWRP0DOEpTIUgv1ftKbXH4HnIhd4tCpKqCDPWlmyKIokgPKo87aKdis3nC4
+         5SXmwax1sJcACkem++Gr3d3A8A62Q2SxSo2XU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741250893; x=1741855693;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w4k+jXFhr9NDIRUmOU/UyvLqGcx7hV3cHJqh3EvrMGk=;
+        b=XA4gLErreFhgBV6BoSAcQUaUfjXPcQArQLOwCkPPdsT3F3dfk39xjoIliXnwOP5rJ4
+         Nth7TAcHfuX1frYZHMStP1ZE+f4PyX/Bx7Hp16Zl3Ht8n2jLWaksyb3qekNXqe32U/ls
+         GDnI3H+ICHnlbH1ZqF1ouzXf4OuZApI70F29DgZE1fckJ4uKBmgjWAn5nFPqDcD05aAW
+         inkXJYHlLn1NRC9sULb7Yl+NwkKrfQ+SWyNQe7BfqG+nXEyYNfOUPAe/2XUq30v6Dlk8
+         HUUM0mQ3Jz/L4wCZk+P3+NA3463TH37PB8L2xWsRMaLVUoQdgBx+UrC74zgxNHa+Icnb
+         6rkA==
+X-Gm-Message-State: AOJu0YzSZ1qTt8vldBtZr5gF7M8OMgY1q+NxITUcNJk/dpIUoviJEst6
+	v/tqInhvDHBhDhv9PaluQwVAMR92fS25fUlk9LZt/9urDmFt37Uho9IOiz4oRFs=
+X-Gm-Gg: ASbGncsEGAQSwSFDF7qV/6mpDf5Ulxr3ANCGVSGg69k5rokW4Rf1gtq6LGdsgBxWZ2V
+	qbRCrMSkJrk3vuiPcwXw6p5DLk5b63jKHjjJ3t7pqenUHizTHK2qbZLzGns/o2OxQzm4NVTF/Gw
+	3Lbrqf50y78lVhF5r/92gMNfBYFS3JjeytEoqY2rHyaCNEQw4EWcsqxiuenCrF1e46/ewRD6kHS
+	CQBe9+T4v2GeX5Oee90gyRXdZ4+bKSmx5BgyJeW2vbkAgr1IF6QCiWiSZUYF0832PLPDDcvddlA
+	mqlikalIHDLYSxfaj1kDz016bHmMrlh8i0B7hIbDUpAfxjC1aA==
+X-Google-Smtp-Source: AGHT+IFzZ0vFCL7WbpviFO4L9vuMIRkk6grLTKfpSaA2lbSdMUSiTAorLN0JYGBYyPjaalZWK0RreA==
+X-Received: by 2002:a17:90b:524f:b0:2fe:ba82:ca5 with SMTP id 98e67ed59e1d1-2ff497283aamr10783848a91.11.1741250893553;
+        Thu, 06 Mar 2025 00:48:13 -0800 (PST)
+Received: from localhost ([84.78.159.3])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2ff6933b039sm727306a91.1.2025.03.06.00.48.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 00:48:13 -0800 (PST)
+Date: Thu, 6 Mar 2025 09:48:07 +0100
+From: Roger Pau =?utf-8?B?TW9ubsOp?= <roger.pau@citrix.com>
+To: Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Bjorn Helgaas <helgaas@kernel.org>, Juergen Gross <jgross@suse.com>
+Cc: linux-kernel@vger.kernel.org, xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v3 0/3] xen: Fix usage of devices behind a VMD bridge
+Message-ID: <Z8lhR2DSsB8P6L96@macbook.local>
+References: <20250219092059.90850-1-roger.pau@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250219092059.90850-1-roger.pau@citrix.com>
 
-Add support to disable 'single' burst type if the bus type is AXI.
-Since the AMBA within some of the legacy and new designed MSDC IP
-is AXI, this switch is necessary.
+Hello,
 
-The burst type is not IC-specific, but host-specific. So we use a
-devicetree property 'mediatek,disable-single-burst' to switch burst
-type for specific MSDC host.
+I've attempted to ping Nirmal directly on the VMD patch, but got no
+reply so far.
 
-Signed-off-by: Axe Yang <axe.yang@mediatek.com>
----
- drivers/mmc/host/mtk-sd.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+First version of this series was posted on 10/01, yet there hasn't
+been any feedback from Nirmal.  Would it be possible to merge this
+without Nirmal Ack due to timeout?
 
-diff --git a/drivers/mmc/host/mtk-sd.c b/drivers/mmc/host/mtk-sd.c
-index 345ea91629e0..ed46c69def1e 100644
---- a/drivers/mmc/host/mtk-sd.c
-+++ b/drivers/mmc/host/mtk-sd.c
-@@ -249,6 +249,7 @@
- #define MSDC_PATCH_BIT1_CMDTA     GENMASK(5, 3)    /* RW */
- #define MSDC_PB1_BUSY_CHECK_SEL   BIT(7)    /* RW */
- #define MSDC_PATCH_BIT1_STOP_DLY  GENMASK(11, 8)    /* RW */
-+#define MSDC_PB1_SINGLE_BURST     BIT(16)   /* RW */
- 
- #define MSDC_PATCH_BIT2_CFGRESP   BIT(15)   /* RW */
- #define MSDC_PATCH_BIT2_CFGCRCSTS BIT(28)   /* RW */
-@@ -485,6 +486,7 @@ struct msdc_host {
- 	u32 src_clk_freq;	/* source clock frequency */
- 	unsigned char timing;
- 	bool vqmmc_enabled;
-+	bool disable_single_burst;
- 	u32 latch_ck;
- 	u32 hs400_ds_delay;
- 	u32 hs400_ds_dly3;
-@@ -1874,6 +1876,10 @@ static void msdc_init_hw(struct msdc_host *host)
- 	writel(0xffff4089, host->base + MSDC_PATCH_BIT1);
- 	sdr_set_bits(host->base + EMMC50_CFG0, EMMC50_CFG_CFCSTS_SEL);
- 
-+	if (host->disable_single_burst)
-+		sdr_clr_bits(host->base + MSDC_PATCH_BIT1,
-+			     MSDC_PB1_SINGLE_BURST);
-+
- 	if (host->dev_comp->stop_clk_fix) {
- 		if (host->dev_comp->stop_dly_sel)
- 			sdr_set_field(host->base + MSDC_PATCH_BIT1,
-@@ -2820,6 +2826,10 @@ static void msdc_of_property_parse(struct platform_device *pdev,
- 		host->cqhci = true;
- 	else
- 		host->cqhci = false;
-+
-+	host->disable_single_burst =
-+		of_property_read_bool(pdev->dev.of_node,
-+				      "mediatek,disable-single-burst");
- }
- 
- static int msdc_of_clock_parse(struct platform_device *pdev,
--- 
-2.46.0
+It's not even a new feature, just a bugfix that allows running with
+VMD devices when using Xen.
 
+Thanks, Roger.
+
+On Wed, Feb 19, 2025 at 10:20:54AM +0100, Roger Pau Monne wrote:
+> Hello,
+> 
+> The following series should fix the usage of devices behind a VMD bridge
+> when running Linux as a Xen PV hardware domain (dom0).  I've only been
+> able to test PV. I think PVH should also work but I don't have hardware
+> capable of testing it right now.
+> 
+> I don't expect the first two patches to be problematic, the last patch
+> is likely to be more controversial.  I've tested it internally and
+> didn't see any issues, but my testing of PV mode is mostly limited to
+> dom0.
+> 
+> Thanks, Roger.
+> 
+> Roger Pau Monne (3):
+>   xen/pci: Do not register devices with segments >= 0x10000
+>   PCI: vmd: Disable MSI remapping bypass under Xen
+>   PCI/MSI: Convert pci_msi_ignore_mask to per MSI domain flag
+> 
+>  arch/x86/pci/xen.c           |  8 ++------
+>  drivers/pci/controller/vmd.c | 20 +++++++++++++++++++
+>  drivers/pci/msi/msi.c        | 37 ++++++++++++++++++++----------------
+>  drivers/xen/pci.c            | 32 +++++++++++++++++++++++++++++++
+>  include/linux/msi.h          |  3 ++-
+>  kernel/irq/msi.c             |  2 +-
+>  6 files changed, 78 insertions(+), 24 deletions(-)
+> 
+> -- 
+> 2.46.0
+> 
 
