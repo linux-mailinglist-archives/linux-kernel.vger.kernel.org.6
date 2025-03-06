@@ -1,134 +1,88 @@
-Return-Path: <linux-kernel+bounces-548536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0985BA54632
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:24:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76EB0A54633
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:24:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 490FA7A58D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:23:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D37A189585E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A59E209681;
-	Thu,  6 Mar 2025 09:24:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38EEB20967A;
+	Thu,  6 Mar 2025 09:24:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="ZczVZJqN"
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fkmpD9y4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 276E9199935
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:24:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 912C219CCFC
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741253063; cv=none; b=Rzp3onJ45RHwWDCcEvycRvOCsHInOI+m6kzjtrmQ18p7Fs2KCp493i5ePHJlQBsMUsxE0WigtdCWC3TgSgNICfT+6mzz6+pWqCbLQpM5wq+5eEEAn+Yqxla+NjCr61Km3DBYA8wc8J/mDAANTLA055aE5OIK6q+Vl2LvSzcYjl8=
+	t=1741253081; cv=none; b=iKQYPxSP8CSQNalnqziH2VMeGSU0pHTJdkbIpICl4K5hiZusYG3M312189xnCcq0PNm9+Fn9MJNSgM77Qo2Tg3GqD2N5OOgDgmk00UEq9WYR0aGX0ah4hp436HONpsQA/E1UKURz9rh6VH1d2dUvm+78QE838jkhGy1icF9KLTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741253063; c=relaxed/simple;
-	bh=j0RcAgL5YWRREhQKAZGCC/R9ud0Ut5V3hmRzvVuFIn4=;
+	s=arc-20240116; t=1741253081; c=relaxed/simple;
+	bh=DMNEwMMCToXbqvKWO5VHsSmY5eBHtySWCjfyioNYdqY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m3EuHzogFWeIL7AvPEbVQXwXHoyrWZlmBqBtxnaJFjtKKnI5E4z+EWgX+HiGYP76a53ksbDzJVsz83f+zYUMKpAmFe7tsJoJQ6J3Ra7/ILkR6C98hThCLD7xPGf0WLKtxxuUHNsSqrZphL2wEe1viJ3a2qQUxJ8FF9NCYpkZRYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=ZczVZJqN; arc=none smtp.client-ip=209.85.128.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-43bcfa6c57fso2231075e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:24:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741253059; x=1741857859; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=j0RcAgL5YWRREhQKAZGCC/R9ud0Ut5V3hmRzvVuFIn4=;
-        b=ZczVZJqNuhyT9Wcx/fWZGT/dsQsca/vEx+fe0XEBfcnSyN5atPg8jGGzNQRyqG5Rww
-         gK1r+G3PFNPFcYIVXVIkf+H+/YmLSwKVh6LdanrGsZ3vSZytEaZGu642XHqlL2sutmay
-         UqyZE+QlUgXbFeH7L964fqi9zqA3+eFp60d9aAs44R7MNHkbgIvDg0UQ8gg4WBg5/J8d
-         7QAINt+HF3lDy2XXMJw44AcroUY8nLn36S3d4soVuznJPGW1t4oxOTUSEvRzCeWtiuJW
-         wRn//skyF/wgNaANU4FnQAOpVCvs5eb0Oa6NIUjQYiLR5Zjzm4gBU5U64ZTYvKZGxs0b
-         Eybw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741253059; x=1741857859;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j0RcAgL5YWRREhQKAZGCC/R9ud0Ut5V3hmRzvVuFIn4=;
-        b=Nxi0HOT/rDA9sPaIwRMXadyLNE3kUAjX6tkFiYUrlbh1geHv9BpNHO/TqGPd6iemd7
-         g9pIZFF5WUYvd/IglLNeZS2+VKxezQGypYIb4D59Z+Fo+yUrDtvKfJsMIQA71OxX+UaM
-         l4CtFAkVTYUUBJ0Aa74+54lNa5Xdy9vLJ4HX2Zejgpd2CVh9nKdT74j3Q4pUTCcyIsm3
-         MN9bZ5bx3XeMKaZ32hxj1fq122L+J6b0pBaGJRMPTQTjdsf8Ty9FJvsd1S3K9tz8PpZr
-         SVVb1kQx7ozVy70TWklq6MryQFdVBnqc5g+ahcPhCyaHMZWU/42d6QDddUGfIQpFiNYY
-         l9jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFpuukkBcI5d7KCoYr5u2CFqBs1y805FZln6nLPa0fEZvSkpTrpXl9dtdcWPaBUBIKfLDm7Ld//xZNOgE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBtR+StpHduFHovLQYmGl3/0Y7MaDG9vT7Gv8/06fXroBomT5B
-	RMUp8OGBHyaTKElGSM+WAWnwLXnhjoOXR1LFq/pkM705jQ3I9bbgG/gzNodb6mcu4fo1OZl+Anq
-	69rBM3w==
-X-Gm-Gg: ASbGncsjOpBeYL2EqbYznLIWqFDxs5pqdTwpAY9+8TLiEbwhhpAYQb1ZUjIQemq7sqv
-	grBLQEgTm9Nvc58Hd0jWUxv1kP/rK+G8qBSg8c9c0ceUhrrRzgcgYjWNHV7OXQm48iXjE4T6R4M
-	Ys1k7+XRaTVxsHJckjpz4gEi2vxT4kkmflXGcqZYqo6vjFc4ECjrB3S/1Ae/c5/4zCW3OVIcat3
-	P6pc1AtMGngrs5cbz4wbtz7mvSm90aF+PoPZ0qF4l73RsBEw5BHxYvKN3I6dVaaHoE2bi9uxh8t
-	sAmBVkpDUpE5nOcYT7ofx+xtur0bGbrTSf8tkBXO5xZzfLM=
-X-Google-Smtp-Source: AGHT+IEwm2Wm4aFloBAUl06rFqikq/Xzgz5VXqXvF3hfYK5HGYNeMVztKGBzm2e6Ik1rxa3tHdAzQg==
-X-Received: by 2002:a05:600c:3ba8:b0:43b:cd0a:970f with SMTP id 5b1f17b1804b1-43bd2929829mr48086105e9.3.1741253059315;
-        Thu, 06 Mar 2025 01:24:19 -0800 (PST)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd435c836sm43678905e9.37.2025.03.06.01.24.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 01:24:18 -0800 (PST)
-Date: Thu, 6 Mar 2025 10:24:17 +0100
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Alexander Mikhalitsyn <alexander@mihalicyn.com>
-Cc: Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org, 
-	Joel Granados <joel.granados@kernel.org>, Oleg Nesterov <oleg@redhat.com>, 
-	"Eric W . Biederman" <ebiederm@xmission.com>, "Martin K . Petersen" <martin.petersen@oracle.com>, 
-	Wei Liu <wei.liu@kernel.org>, Baoquan He <bhe@redhat.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] pid: Do not set pid_max in new pid namespaces
-Message-ID: <nma6nbsdpu7qu7afdkrqzvyf5fxgw5x6vuzmeyncct4ertrgva@vw7ublyhbzxp>
-References: <20250305145849.55491-1-mkoutny@suse.com>
- <CAJqdLrri0q-Et5PfdwP69r7wYDi3_nY225UP5HYVABUFtE5TGw@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wbfx7RpUn89pSgCGDWI1xaVAYuBMZYCCtNtM7NONjI1m9uP2hhmLfjPGv20c/q+VsM33UqQolo80qL2Aru9t7gBTovUg709LaI08k8sWxUp7VOHz52ITkPQD/I3VpSnWe2VCoERBaNTWJLlZOTLZECNwueGwLm8mfbP1ihjU5YA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fkmpD9y4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F042FC4CEE2;
+	Thu,  6 Mar 2025 09:24:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741253081;
+	bh=DMNEwMMCToXbqvKWO5VHsSmY5eBHtySWCjfyioNYdqY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fkmpD9y4YPa4laMqDgvsm1VBrrBAf1xEry8NLJTBSzVFvdTDITcbV78fd+Hd6pNsg
+	 FZoxsBtQZ+6NCznMsna7IaNBrBkWym4iNUZRy5fhMvD7GWbyf8fhYdRtr35RT6nA+/
+	 W5dMm0k3doyUnbDW4hMFUvf2q0V3INUaTvyAxL9CzT1Bzn0Dz/TP4EZE+/wivnGmxG
+	 0S0ZrRkBI5A2jUCURLsgax+lWCfo4L86D0tSJhuEYYJv4aOKQ1g1wh9HtGBJi/KXAN
+	 xfDM0eGk0bGeNY/pccECRyGbn2KlRvov7afDaQDMciURM5euEVRv0Mhz9h/xErdaBL
+	 AHMwCWkf5Zb4w==
+Date: Thu, 6 Mar 2025 10:24:35 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: "Lai, Yi" <yi1.lai@linux.intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, lucas.demarchi@intel.com,
+	linux-kernel@vger.kernel.org, willy@infradead.org, acme@kernel.org,
+	namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com
+Subject: Re: [PATCH 04/19] perf: Simplify perf_event_alloc() error path
+Message-ID: <Z8lp0z-7nlUr7LyD@gmail.com>
+References: <20241104133909.669111662@infradead.org>
+ <20241104135517.967889521@infradead.org>
+ <Z8lVchtSX/w/atEU@ly-workstation>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ktuupgvc2fngchzs"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJqdLrri0q-Et5PfdwP69r7wYDi3_nY225UP5HYVABUFtE5TGw@mail.gmail.com>
+In-Reply-To: <Z8lVchtSX/w/atEU@ly-workstation>
 
 
---ktuupgvc2fngchzs
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH] pid: Do not set pid_max in new pid namespaces
-MIME-Version: 1.0
+* Lai, Yi <yi1.lai@linux.intel.com> wrote:
 
-On Thu, Mar 06, 2025 at 10:11:27AM +0100, Alexander Mikhalitsyn <alexander@mihalicyn.com> wrote:
-> This completely makes sense and I tend to agree.
-> But we also need to
-> ensure that the kselftest for pid_max is not broken with this change.
+> Hi Peter Zijlstra ,
+> 
+> Greetings!
+> 
+> I used Syzkaller and found that in linux-next (tag: next-20250303), there are two issues and the first bad commit for both issues is
+> 
+> "
+> 02be310c2d24 perf/core: Simplify the perf_event_alloc() error path
+> "
 
-I built [1] and ran it with three passes. Assuming it didn't rely on the
-copying.
+We've had a number of fixes in this area, could you please check 
+whether you can reproduce this crash with the latest perf tree:
 
-> Let me play with this stuff a bit and I get back with "Tested-by" ;-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git perf/core
 
-I'd be happy for further validation.
+Thanks!
 
-Thanks,
-Michal
-
-[1] https://github.com/Werkov/linux/commit/019b884d5a005dd8a3e18f0865b276fc3d804d7e
-
-
---ktuupgvc2fngchzs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ8lpvgAKCRAt3Wney77B
-SbSsAP9STriSECu9xxBMqtt5p67lkH0RAvIMkTeDmNDfhPGC/AD/dzKLCZyk9tEI
-bhGjN+iD01tmM3t9M4rPQh0JtGQhVQc=
-=N3gY
------END PGP SIGNATURE-----
-
---ktuupgvc2fngchzs--
+	Ingo
 
