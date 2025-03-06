@@ -1,138 +1,100 @@
-Return-Path: <linux-kernel+bounces-548686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2416A547F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:38:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CA5EA547F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:38:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD1E51728F0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:38:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FE7F16D5E8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDA1205513;
-	Thu,  6 Mar 2025 10:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715DD2080D7;
+	Thu,  6 Mar 2025 10:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlqhKDkb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="Rvc93h64"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68605204F75;
-	Thu,  6 Mar 2025 10:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741257479; cv=none; b=hF8EpsvzkmdHboNFF5QwbnjoXUuW1k0ybetRDoO4EiVVuFwaxZw/uaLUNla3e+VootKzprGQGqPWpneEgcxXGceyFZ3XtZvsANLeNrznWNkdM0K0G3w0nzCHeMZpo/KPCSKh3tbbIW3n10+cwuLdp/4zmtFdeXhhZv6UcBCMGOY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741257479; c=relaxed/simple;
-	bh=YNg+XgZ1AZ6kclyonPJqBkYdvbYBqR4ivmV7p6WuUlA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iCEUGDFYpgBTHemw45p23cJUBt3rCTAtIQlr1eJMU3HUDNCAQddS8q4TGJA90tguOknEzGUNlFvIV/R+jP8KzipuMVnVXWtt8Z+eaCpmpQYqabKbH0aKn1OO+NadlRL/beSNuXO8vKLX1nCj+WtcxkFmG6rZkYpglME0uaAi4pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YlqhKDkb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D94BFC4CEED;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB1A201034;
 	Thu,  6 Mar 2025 10:37:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741257478;
-	bh=YNg+XgZ1AZ6kclyonPJqBkYdvbYBqR4ivmV7p6WuUlA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YlqhKDkb7hvLHzOkt9B+0yyFkJi5QXGdSZOtv7A76rs16rcPAk/UCBLkzUxVEcL14
-	 //gp0MwZRSS5liC75reC4ytfwXss59R2UwbT5BftrMLZKpoXNcH6k195Tc63Ztnuq3
-	 y99Voq8B/U3hFw3iUwy8MzahPS5lCyNy9Zaypu0mLvm7rRgGbesHdTHKa7P01ALn2e
-	 /IYXatGyKSg/mHU1C8CdJsUSIKE2+oVfTqfn5MrtUm9QRM7kqW895Y8DqwNV9VNVxr
-	 Vy8C07s3rhWPHdzsynP8fUberGlizGjnLYAfczxCGdJ594CFJ27gbGzpocHnNFTwqO
-	 6oRLMc8AOJyDQ==
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2bcca6aae0bso333422fac.1;
-        Thu, 06 Mar 2025 02:37:58 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWDv5F1Usw8EPcKi0CTSY1K6HKSK/MC1WcmZ8dYTA/LmgOOn/n71TMkVgLbB9R9zY0WokA2yHKBKW8=@vger.kernel.org, AJvYcCWmS8rRWgMKRg0hUfAWqpfumI80CjfT7MYtR63IMDtASr9zj3vFABs0IEzHnQVwSrgHrpABargEDaMZ2wQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNnZsqjETlqXX+T1skrf27Raxt1MMoswzB5Wn39oHWUbNdkgM+
-	9Ux4i6c/7otnh2/DCaakDwPK7Rz5CsS3nE9WGvGLWG2WhEf4sf71RT/PJPZK27HnhXolsrxo4fS
-	BAFN7pZC+Q6IsNHMNefHxdh+DvcY=
-X-Google-Smtp-Source: AGHT+IH3MUzd3IYGjGngSPT3jt28qznhOZYfbjOgCKDZoTXI1A16WoPmO0MWUmbYmN8AFuZ5cx0hgDeNPJplg4UOXto=
-X-Received: by 2002:a05:6871:588:b0:29e:5522:8ee4 with SMTP id
- 586e51a60fabf-2c21cd1f13emr3716612fac.25.1741257478205; Thu, 06 Mar 2025
- 02:37:58 -0800 (PST)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741257481; cv=none; b=A6YUJ9PlhS7/4i8A8ZEYLF0qCaD6R18Aoe1Bm6nUF3TaW8i1CNatkFuA3OXgffbMwT7tBiIHh1ivoaPKEat6m7/7lob8/L4/enjBjZUywBO0zkQZmNd9x1L9bkRcKw44RYO4YnkLmUTUfd7ZznPiyQw5Nq1OLbhwpDQJVNspawQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741257481; c=relaxed/simple;
+	bh=NA/C/lQQJ7iC/V1D5CSud13PQVeHlXko0a0LHmZiKSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VNWhMKhPsM7e/rhm0nLhiZwxp9UtDNfU0PJ6UbyyRmBk/bPm2cVvPo9Oz+y4YMgzbbeers7FUqaIJWwUjr5ONtoloRlhcEUxV8pcrTi6C1+R/7JasNp5Nb1utE7/twsfbL+3YZaE6qVcyN+V1xd6MltJHlALBLI7itn/EVOCnlY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=Rvc93h64; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id 379E61F96B;
+	Thu,  6 Mar 2025 11:37:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1741257476;
+	bh=huaQNZUNLgBibcGAgOaoxe/NMXk/qcXn/Hj7HWtKGS8=; h=From:To:Subject;
+	b=Rvc93h64us6VwiXxhDBjO1m+aq7C+7yP5RrdvrIZcavhVkM0KgHGEDnGcbcLpuU6N
+	 VzMjGqsQSHBW4FXQOUHEoHxgdQ32XgJajInJ8lW489Nj5hZNmOHFX/0EC/S7JT8L3F
+	 g8GI706KyFHEwIz3Csz6kfcO4S0E2uZ28kZV5dD3gKbRNqgidIjfskocn4GtbtISEg
+	 +n/KJTE2VPjnID+Pf3R0u9tbtfpohoFTUnLJ7ciTFs4n+8Ih0024zcdst+uJ6qy7wp
+	 SUsCkEFxXEiQvRBcTI3qPgKh+EBcloVQGthU0dA1Q/wQFg9RDfOQ0HBp2r+0YnyuVx
+	 mlvNP4qKSucVQ==
+Date: Thu, 6 Mar 2025 11:37:54 +0100
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Jeff Chen <jeff.chen_1@nxp.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org,
+	briannorris@chromium.org, kvalo@kernel.org, francesco@dolcini.it,
+	tsung-hsien.hsieh@nxp.com, s.hauer@pengutronix.de
+Subject: Re: [PATCH v2 2/2] wifi: mwifiex: Fix HT40 bandwidth issue.
+Message-ID: <20250306103754.GB19853@francesco-nb>
+References: <20250205012843.758714-1-jeff.chen_1@nxp.com>
+ <20250205012843.758714-2-jeff.chen_1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <5880743.DvuYhMxLoT@rjwysocki.net> <1929404.tdWV9SEqCh@rjwysocki.net>
- <92699eb4-8495-4ccd-a9dc-120b14271f9d@arm.com>
-In-Reply-To: <92699eb4-8495-4ccd-a9dc-120b14271f9d@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 6 Mar 2025 11:37:46 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0id8ZF+8Q9vaBZfXXhwyiZzbX0NWz0t+4iYTWLo7-X5KA@mail.gmail.com>
-X-Gm-Features: AQ5f1JpCJatDg4H_4G0HO3_y4n_KtbONzf6jVYjuP1cxb-3t01EiCBuwp0JKDMY
-Message-ID: <CAJZ5v0id8ZF+8Q9vaBZfXXhwyiZzbX0NWz0t+4iYTWLo7-X5KA@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] PM: EM: Make three functions static
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux PM <linux-pm@vger.kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250205012843.758714-2-jeff.chen_1@nxp.com>
 
-On Thu, Mar 6, 2025 at 11:01=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.com> w=
-rote:
->
-> Hi Rafael,
->
-> On 3/5/25 21:11, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Three functions in the Energy Model code, em_dev_update_perf_domain(),
-> > em_table_alloc() and em_table_free(), have no users outside that code a=
-nd
-> > so make them static, remove their headers from the Energy Model header
-> > file and remove a piece of documentation associated with them.
-> >
-> > This also helps to clean up RCU handling in the Energy Model code that
-> > will be done subsequently.
-> >
-> > No intentional functional impact.
-> >
-> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> > ---
-> >
-> > This essentially follow the rules that all functions without users in t=
-he
-> > files where they are defined should be static (with all due respect to =
-any
-> > out-of-the-tree users of them).
-> >
-> > This change can be reversed when any new users of these functions appea=
-r,
-> > but it will have to take changes made by the subsequent patch into acco=
-unt.
-> >
->
-> I see your point and it's valid.
->
-> Although, please give me a few days and I will send some patches which
-> add a client for this API. It will be a modification of the EM for
-> CPUs while the GPU is producing heat to the SoC. Then IPA and EAS
-> will get the updated total power values (doe to this this leakage power)
-> in the EM.
+Hello Jeff,
 
-OK, so I'll need to change the headers in the next patch and I'll drop this=
- one.
+On Wed, Feb 05, 2025 at 09:28:43AM +0800, Jeff Chen wrote:
+> This patch addresses an issue where, despite the AP supporting 40MHz
+> bandwidth, the connection was limited to 20MHz. Without this fix,
+> even if the access point supports 40MHz, the bandwidth after
+> connection remains at 20MHz. This issue is not a regression.
 
-> As of now, I had some code downstream for research, that I share with
-> partners in the Android world [1].
-> I believe the user-space sysfs (like in that top patch) which allows
-> such EM modification would not be accepted?
+As you know this patch came after us (Toradex) reported some issue
+connecting to 2.4GHz network using IW416.
 
-Well, if there's a good enough reason for its existence, then it can
-be added I think.  It all depends on how this is expected to be used.
+However according to this commit message this actual fix is not related
+to the issue in which it was not possible to connect at all, but it's
+just an improvement. Can you confirm this?
 
-> Such approach might also help the Middle-ware in the OS to influence the
-> kernel decisions, mainly on phones, where the app just occupies the
-> screen and Middle-ware knows about it.
+Can you please also answer the last comment I had in the previous version of
+this patch, see https://lore.kernel.org/all/Z44vj59nWIiswq7s@gaggiata.pivistrello.it/
+?
 
-You need to be cautious about changing the EM too often though as that
-would only lead to thrashing and nothing beneficial.
+Reported here again for you convenience:
 
-> [1]
-> https://gitlab.arm.com/linux-arm/linux-power/-/commits/dynamic_energy_mod=
-el/android14-v6.1/v6.1.75/?ref_type=3Dheads
+  setting `radio_type |= (CHAN_BW_40MHZ << 2)` seems the only real change on this
+  patch, correct? Anything else is cosmetic, correct?
+  
+  would doing just this change be equivalent, right?
+  
+  	SET_SECONDARYCHAN(chan_list->chan_scan_param[0].
+  			  radio_type | (CHAN_BW_40MHZ << 2),
+  			  (bss_desc->bcn_ht_oper->ht_param &
+  			  IEEE80211_HT_PARAM_CHA_SEC_OFFSET));
+
+
+Thanks,
+Francesco
+
 
