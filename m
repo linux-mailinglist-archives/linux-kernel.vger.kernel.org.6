@@ -1,104 +1,101 @@
-Return-Path: <linux-kernel+bounces-549529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8E88A55395
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:54:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56EFCA55397
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:54:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 589C617511C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:54:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 903AE171F57
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC3F269AF5;
-	Thu,  6 Mar 2025 17:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7128725D902;
+	Thu,  6 Mar 2025 17:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="neq2mqZA"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAdCSqQt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE4925DAF6;
-	Thu,  6 Mar 2025 17:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB18D269CE8;
+	Thu,  6 Mar 2025 17:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741283663; cv=none; b=XPyw2/PZ78sbtMfPow3P4Go40EZtH32c+eAGzXWy0KfsCAqYvyNpJVf9u6H2sOj2mTR68SnwzilU+nOw1W1/ne1QEHJQOLH3CQlUy9LNFmfmHx4v4pV+3jhoePmHNo2wFP2ujrjiCb/14/6pdJxEpPOvjOiNQ1W+ds8uJleYap0=
+	t=1741283664; cv=none; b=qy1CgxleBKHRBdDDfJC+q7oDIFV2Dxgfsagh79+jpANJLcxJr5WYtyBTD4QrallNZcINEBcXI7mXvBNf4bezzUdtwKL/G9xHHhQq4V6B8HM86fNaEkggg2g+pMsYgU+4InPajxFy2fUJs6XfqWvtwbsEYb6E0mzdt9E0h5NI0kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741283663; c=relaxed/simple;
-	bh=6QJEMGm+9MSZAnbjzsImNpcy06EhURuUIPbByRzams4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JN0ucFMTtG6sq1z3f8Mdge409PGjaddtCPxgy+w8U6BzjcG3rG+zj3g1onXFNOfo5jhF+Z3SH48uCLE4cO2smppc4SaqSanHMw/pNIAPYfyNKOctY6j8fzYBtDGyFXNJzGYK71sDRm/jBX9hT9RZImrHaS6YnAfI5W7sKhHehTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=neq2mqZA; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43bcf9612f4so8378625e9.3;
-        Thu, 06 Mar 2025 09:54:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741283660; x=1741888460; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6QJEMGm+9MSZAnbjzsImNpcy06EhURuUIPbByRzams4=;
-        b=neq2mqZA7BFuYLt2m19GUF1W6pMfpYxYxyIEzO/0GDrKA8vPdUe/6LLNItWRHB/jm1
-         /c+V981yZBNWFFp4epeu9bgBKVINxp8eq8HDPH9EISO1k8LuDiIRoyiD5e2NEW8a8ys9
-         m+Z6d9s4GRC73NfW51AEUc0yZcg95aihANa1GypA/mqx8sLf81cZ7Tlu2HLOpCOCnqYd
-         WE2fxctPB6/onD3YbCrrRf09bhBuE9QlOOTULz1jD8N1UfaIg09oPFKdcb+0h1xCh4YH
-         7AeWYs0b9WmZszsrnNMwKWAp+SjlmRG14rftAvREzfiTN0jCqUzYKI/69Ftc4rW4/cNs
-         VjYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741283660; x=1741888460;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6QJEMGm+9MSZAnbjzsImNpcy06EhURuUIPbByRzams4=;
-        b=V419jJ7STlawiWYZ5BhGKPrbbHqB0eW8jkpey5OK5E1pZZsrcnhMYpjMvRBzpsjTeO
-         +XzSo0jI5rTps6Kt4vxQE5cLCVFGJFf9h7609OdcOAaocrYEkSVOulsmZll9Af1iZTX7
-         wGjin9WAyuWixEak0ah67kvewlYs2CTV8Ua1VhudgusrpoVZtUqf0/PiO2uFjBe+RHx9
-         0oynw654hMOLc/g9fxNCNJGeLaL4fEiWVMpcU8Tnd5/1uk3v7Be26e/pTb3yrD4hBHkU
-         WxPjpvjjk6hfFQdJ7Eo3z9wlF4xcbzLkfe6NoOGPc10YQ1Fws7PD98cKIbSIQiocK3BG
-         K/RA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwClrnPQIu4QckVNo3I5jxdWE+D3jc0mBu/MoE3U12+QsWnmSSTrHgCs5buwuEKCIJvd0ectREmeT1pNY=@vger.kernel.org, AJvYcCVDq1K3PovhgnoOLMTRaxeGy0HRHquOIcRPC1p6qbio7DLEvJHIVB6YAVhogtw2zpVloHT+a1RzN4Ra/hZe@vger.kernel.org, AJvYcCXceV/v0fqWcXAIcS8x+fgCeMUfgMSaQDSRGFlMGWX89/PoOB8KLzmCeMbEXmeeYEBQbIzEF/YvbrWh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw68pwoo1BImtCNYBG12jNBmsEloP4aNX9S2hLlO2EU0o5tJX2I
-	R6LLlchJjH4eARufqr6RVRHxNDypQlB2YL6Cw83mOkGOYavxWF7FEZoLiXDw7vGYCGzvRzT9wfW
-	70TthfERkkV0Go+3OqapiDJ9wQW8=
-X-Gm-Gg: ASbGncvM5S/l3SofiqwjalOoWWaEGHLTejN28wlBXReC2lq44w0cBJIwn9/qS1gI2Hs
-	1v6v8CUU+mRViKjfQ8tAjgPlsRSlb1p6B4jo/LNiKHx6l1e86SkyycaekI+RdiOtzoWXWXZYSnu
-	6Jhdn3TPTe/I1iH+8KSJCUUTRtY0s=
-X-Google-Smtp-Source: AGHT+IGXbX5gWO5r/Azm8BW15rhqNm3gJq0c4dlBh5HFE7mUA5MzJn9NiCBx1LJWR5Ox+y9PO9zoFPWv9sUaTbf1SfQ=
-X-Received: by 2002:a05:6000:1545:b0:391:2ba9:4c51 with SMTP id
- ffacd0b85a97d-39132d98bb8mr41904f8f.44.1741283659915; Thu, 06 Mar 2025
- 09:54:19 -0800 (PST)
+	s=arc-20240116; t=1741283664; c=relaxed/simple;
+	bh=HOTfJ1QXXP4CgH7Tvks0Ox/LEt7X49JaIPOsEMYIiyA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WXfD/8aVA0TUfOmfqRGoGCBG7b7MZbD+4RI7AgL3vHahuQI9CMwxkWSSNszODRjjlUISzJDNHqAIpHhnevbU5gyWzxEkr3GuVDxbYqjizJ0n+tZ+nvuX97i3xR+P5CsRAukYcZoAc90FlMbhJrz9twZFXsN5RPDqMJLz8m4x4vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAdCSqQt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5F1AC4CEE9;
+	Thu,  6 Mar 2025 17:54:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741283664;
+	bh=HOTfJ1QXXP4CgH7Tvks0Ox/LEt7X49JaIPOsEMYIiyA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UAdCSqQtlyo7/hMbTRNauz/qKbpGDypROcXt8aDYV+GIOftCnaDwxPWMFK69C8YjE
+	 X5A6a22WzlgbLoi9fkM465b906EUIScA1d583wfRS9bZT7W4OtGN1MNjt9pCN5nI+K
+	 GiF5NQCpyLzH65OWxy3t4lQDIy7VCWXQzHps/a1lbUJJj6WAz2xJug9zTMny/lzNZp
+	 0PtPEypRoizrjG5jBWB1EZ+xADgqBGpToPkTRi/bsJR9oh99FUzsxrrGv5G4q9sU2p
+	 R2ds8DXqgrfxzqU7zzCpYwBRqoNh3cZymBd2ySZD6d8PYtRzP1lJ9WmrCOYxEy5ODL
+	 WqwUaNR0y/2BA==
+Date: Thu, 6 Mar 2025 09:54:22 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+	Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Oleg Nesterov <oleg@redhat.com>, Uros Bizjak <ubizjak@gmail.com>,
+	x86@kernel.org
+Subject: Re: [tip: x86/fpu] x86/fpu: Improve crypto performance by making
+ kernel-mode FPU reliably usable in softirqs
+Message-ID: <20250306175422.GH1796@sol.localdomain>
+References: <20250304204954.3901-1-ebiggers@kernel.org>
+ <174126241675.14745.2521678635311279694.tip-bot2@tip-bot2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226105615.61087-1-clamor95@gmail.com> <20250226105615.61087-7-clamor95@gmail.com>
- <tob3hj44k6rt6rq2o23fn2dqvq4qye2yezxqbvqcek62c7h6vq@r7jakxxf3whx>
-In-Reply-To: <tob3hj44k6rt6rq2o23fn2dqvq4qye2yezxqbvqcek62c7h6vq@r7jakxxf3whx>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 6 Mar 2025 19:54:08 +0200
-X-Gm-Features: AQ5f1JrCq2aWrnGWnxHDsFHa-_q7i7qLoPvG3xBFT1leym5F7gK1dwKaD08Nuw0
-Message-ID: <CAPVz0n2vs3oEAJC5qfp-GbSTH7oDBpVzB6+SRM9Uoo-4PFwbMA@mail.gmail.com>
-Subject: Re: [PATCH v1 6/6] ARM: tegra124: complete HOST1X devices binding
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174126241675.14745.2521678635311279694.tip-bot2@tip-bot2>
 
-=D1=87=D1=82, 6 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 19:53 Thier=
-ry Reding <thierry.reding@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Wed, Feb 26, 2025 at 12:56:15PM +0200, Svyatoslav Ryhel wrote:
-> > Add nodes for devices on the HOST1X bus: VI, ISP, ISPB, MSENC and TSEC.
->
-> Same as for Tegra114, we're missing the bindings for ISP, MSENC and
-> TSEC.
->
+On Thu, Mar 06, 2025 at 12:00:16PM -0000, tip-bot2 for Eric Biggers wrote:
+> Performance results:
+> ====================
+> 
+> I did some benchmarks with AES-XTS encryption of 16-byte messages (which is
+> unrealistically small, but this makes it easier to see the overhead of
+> kernel-mode FPU...).  The baseline was 384 MB/s.  Removing the use of
+> crypto/simd.c, which this work makes possible, increases it to 487 MB/s,
+> a +27% improvement in throughput.
+> 
+> CPU was AMD Ryzen 9 9950X (Zen 5).  No debugging options were enabled.
+> 
+> [ mingo: Prettified the changelog and added performance results. ]
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> Cc: Andy Lutomirski <luto@kernel.org>
+> Cc: H. Peter Anvin <hpa@zytor.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Uros Bizjak <ubizjak@gmail.com>
+> Link: https://lore.kernel.org/r/20250304204954.3901-1-ebiggers@kernel.org
 
-Acknowledged, thank you.
+Thanks!  To clarify, the removal of the use of crypto/simd.c from
+arch/x86/crypto/, which is what gives the measured performance improvement,
+happens in a separate patch
+https://lore.kernel.org/r/20250220051325.340691-3-ebiggers@kernel.org/ which
+depends on this one.  I'll try to get applied to the crypto tree in 6.16
+(probably split into multiple patches).
 
-> Thierry
+As I've mentioned, there can also be a much larger performance improvement in
+certain cases where the slow fallback path was being taken, or when users were
+requesting a synchronous algorithm and therefore couldn't use the AES-NI code.
+
+- Eric
 
