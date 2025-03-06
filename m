@@ -1,286 +1,150 @@
-Return-Path: <linux-kernel+bounces-548533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA79EA54629
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:22:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16E2A54623
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:20:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1DC918925A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:22:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 097413B065D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E327E19B3CB;
-	Thu,  6 Mar 2025 09:21:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CD8209F22;
+	Thu,  6 Mar 2025 09:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gl4prFYy"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fFrbEVlx"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F96208988
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31310191F75;
+	Thu,  6 Mar 2025 09:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741252909; cv=none; b=iSt90pm3O8zKiuTn9dlzrwnhkbPbcUc5ztPbhbZAd6REVzLI/L53HRaY1F4dWd1oKx+pZ9K2JjY6KLFf3wz/8y4kzZjo0AO0CnAWdZnL55MPhFGgajBvu87Bwdq1k6Ex13D9/8HrqCTTIRmtdcjvOMyx1pY3pF0bBFv51CWdApo=
+	t=1741252834; cv=none; b=vA5C9WRLyH1ux1QCR3Mo7DDNOMV2lckCFb6xFt9dyqXZhkKhePxfGZBepITN/brK4v/vxS6we/KkAQFtXbIXsXUOWtO6wCDEd56fdD4GJzIAfL1/wkIEtJI7jSUW/3vV+yF35lB0LtFyZp8m1SvVH0MiHrGWFjaFOIuY/Ga77RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741252909; c=relaxed/simple;
-	bh=OIik2RI9qIy0xGcVlcIQ9Lf//sdqTBTRU2HuJLiXVzU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=YZOv2e9V9fK9Ymy85Epy6dqsx09TlZIqsrWLMEOCHmiJgQfNMOykthIqLBdhfIONlN91VfzAr2/5q4Pkn/4sXJHUxe0vq1hP6d2juYmPwaN55bkDipdQRLGWcTCn0oMw/u7uEONsJNwKjUZq8mrQhgFg3TEwDzmXSm+X6kqCo6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=gl4prFYy; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250306092143epoutp039589a9dfba07e5a1c5973659e3321b00~qLEpVroky3125631256epoutp03E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:21:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250306092143epoutp039589a9dfba07e5a1c5973659e3321b00~qLEpVroky3125631256epoutp03E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1741252903;
-	bh=Toj+T87tTrxlVRA6BA9XF8FjrBO9X4SjJLlUboAI4X0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=gl4prFYyfH+ho/XspXm6Lywgz2bciZ6q5w00jP7KLqMhhzD6I6+u8R5HBPMLIVTtV
-	 A4Uce/+GcaluGvYFwdyFsX3SpTAeDeAlavAI0+b/6nie76YXkcmFb9hfYZ3LNgHLgG
-	 7UQjprtUNiUHgWUJ0OjDy67OlZwgyYfQ2kj8bMws=
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.42.68]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20250306092142epcas5p2fe8305b799ba79678854b1af1e3405b0~qLEoqj5ZT1356713567epcas5p2x;
-	Thu,  6 Mar 2025 09:21:42 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	BB.33.19710.62969C76; Thu,  6 Mar 2025 18:21:42 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20250306092021epcas5p41133e5a273e547d39ae8b724c9eca23f~qLDdECj5t0432404324epcas5p4F;
-	Thu,  6 Mar 2025 09:20:21 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250306092021epsmtrp1a3db0c5c97183cae02fa7708dbbb4a91~qLDdDP_Dx2217622176epsmtrp1T;
-	Thu,  6 Mar 2025 09:20:21 +0000 (GMT)
-X-AuditID: b6c32a44-36bdd70000004cfe-5b-67c96926ab31
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	32.7C.18729.5D869C76; Thu,  6 Mar 2025 18:20:21 +0900 (KST)
-Received: from localhost.localdomain (unknown [107.109.224.44]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250306092019epsmtip19be7b78fd75ad57748045f431ebbdd28~qLDa0Wdlb1437814378epsmtip1w;
-	Thu,  6 Mar 2025 09:20:19 +0000 (GMT)
-From: Maninder Singh <maninder1.s@samsung.com>
-To: chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, lorenzo@kernel.org
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	chungki0201.woo@samsung.com, Maninder Singh <maninder1.s@samsung.com>,
-	Shubham Rana <s9.rana@samsung.com>
-Subject: [PATCH 2/2] NFSD: fix race between nfsd registration and
- exports_proc
-Date: Thu,  6 Mar 2025 14:50:07 +0530
-Message-Id: <20250306092007.1419237-2-maninder1.s@samsung.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250306092007.1419237-1-maninder1.s@samsung.com>
+	s=arc-20240116; t=1741252834; c=relaxed/simple;
+	bh=uBHlBDIrln1GrAHp3cN9FgNmGfoO883gfPJWP3sGgHY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gpdlamDcnoYJTEHpo7j0td5XDdW5uczKrhQB73MOEGbFODGZ4BET++EU3/QLk6C4wxifC3WSRsRC3dslUmcWY7j3eWuOf+vwMA543g0+VAF4v1QifEHMmhgqpWrd554JhmvCa9UHlN9Wf/qt2X647h6oS3H4Cou4Bk7LWxCet9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fFrbEVlx; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52694jHw023685;
+	Thu, 6 Mar 2025 09:20:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	CsysUVEkhk42vZcPM2hd34YgSe6fY17nfaO1phx5tq4=; b=fFrbEVlxrf30B4ou
+	wOOa9UCM3IK+HxMyBkONDVnplTDd02u3d0EDvx5PN7bdoBFoQVcFl1NXz2xC7FQW
+	yLuMCflti46J0nM7khikQWFsRW3tMwf+ogiq8Cp8ayTyklFj/N1pKXcuarvTSvBc
+	DZSOfZjQjLSyrVGlyDbG/b94eXRyZuM5jDDgdDZZs84hAP05sQaA248kFiL21BL5
+	t2+09lRsVsw3/gzYNpcLScF9yCHkUflwhmyORLuLYuJg//kTnKHoBtjMPrX6bat2
+	uSt9w0tKioqHNjUArz1ihCKUDpHLoZoghFljVXohXJsx+4EItk+XCOCfRQefe5XR
+	FXCLrw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6t8gqe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Mar 2025 09:20:28 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5269KRDD028567
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 6 Mar 2025 09:20:27 GMT
+Received: from [10.217.216.53] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Mar 2025
+ 01:20:24 -0800
+Message-ID: <db019dfe-ef4c-4b6b-b819-e5d0450ce307@quicinc.com>
+Date: Thu, 6 Mar 2025 14:50:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Se0hTcRTmd+/d3XW1uNnraA9rZKLQzEi59FAJq0GUvYtea+htWmpjW5pF
-	OFJH6tSywnzUKrNoYYnTmOayLJrbolInltF7JU3IbNYos8d2F/Xf953znd/5vsOPwgObecFU
-	aoaaVWbI0kSkgLhxNzxs7pxUq3xef8985tfzfoyxexx8Rn/BSDLfLhn4THdLNck8vm3nMSVX
-	KxFzV68lGLNeQzBl7z/zGc/bLsTYvtuw+LGSBkMBKRl610dIBm/1kJKSRgOSGO2HJN1OB5K4
-	G2as4W8VLE5m01IzWWVk7C5Bit1axlOMzj5w9FUtoUH1IYUogAJ6ARSVHyELkYAKpG8iaOk4
-	gXPkM4LePJOffEXw4sEAKkSUb6TJMZmrmxFoutyII8MIBqpcuPddkhaDoaWV8DYm0joEN6pb
-	MS/BaQOCNv05vlc1gV4DL63lPkzQoXDEYsa8WEjHwkCBhuAchkBFl8enCaDjoNj9Auc048Fa
-	4fRp8D+a3KYqn1egz1BQ8/EijxtOgNr8UT6HJ4DL0ujHwfChVMvn8mRB07Ecbjbvj7nqkySn
-	iQNn53meV4PT4XC9JZIrT4dTtmsYt3ccFI84Ma4uBNPZvzgU8p7W+y1MBffQkD+LBPJNVv+1
-	yxA4hnLRMTSz8r88lf/lqfy3+hzCDSiIVajS5WxStCIqg80Sq2Tpqv0ZcnHSvvQG5PtdEQkm
-	9ET/U9yOMAq1I6Bw0URh52qrPFCYLMs+yCr3SZX701hVO5pKEaIpwtzmPHkgLZep2b0sq2CV
-	f7sYFRCswY6r72240LvAuORZBRM+cCVMWqLLZJaG2mKGc8Nev0kZTVrbd6ezY1NJA/np67J7
-	T11FXxyZvG/Zm3Ww8JH2WeKZXs/CoJCNsau2lfbGRIv5p8nsV7znSmmWy5wo2v1DcWmudFnR
-	rGuw3TLtltZzPyZuxnDb4MjGrQesptoT5fHdk94ur9+1Imn89eQrZT3qSZGH7z+eHt23/tdw
-	fttiHbKrtyjOSwvdl80fRhYlVBlvOvWt6GO6pbGYzXGUsiqi2DYYNLOm2ZZlC52ii5rVGE++
-	S9kb8SjHXOfaLRjZsdMyZ4+pLvxoRwwzZl2fJ7jKGG9a/7Dmzsq6gv7b2sQCnkIhIlQpsqgI
-	XKmS/QaszKNrzAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrFLMWRmVeSWpSXmKPExsWy7bCSnO7VjJPpBme2a1n8v/ucyeL09yvs
-	FvMXbWaz+LlsFbvF5V1z2CwuHDjNatG3ehajxeH5bSwWe+c3sFhMevaJ3eL740uMFqd+nWJy
-	4PHYtKqTzePj01ssHu/3XWXz6NuyitFj8+lqj8tPrjB6fN4kF8AexWWTkpqTWZZapG+XwJVx
-	+uQk1oK/KhUdD5ayNDBukO9i5OCQEDCR2HpFrIuRi0NIYDejxP7TU1i7GDmB4tISP/+9Z4Gw
-	hSVW/nvODlH0iVHiwdfZ7CAJNgE9iVW79rCAJEQEpjFKLOqaA1bFLLCOUWL74bdgVcICfhKd
-	K++zgdgsAqoSTcf3MoHYvAJ2Eq87G6BWyEvMvPQdrJ5TwF6i9/M9ZhBbCKjm2oIrzBD1ghIn
-	Zz4Bq2cGqm/eOpt5AqPALCSpWUhSCxiZVjFKphYU56bnFhsWGOallusVJ+YWl+al6yXn525i
-	BEeHluYOxu2rPugdYmTiYDzEKMHBrCTCe9HvZLoQb0piZVVqUX58UWlOavEhRmkOFiVxXvEX
-	vSlCAumJJanZqakFqUUwWSYOTqkGpuUsBf+Cbm7z6pv7Vu0pd/aSiwnihwNO9Z9vmPtzUuSs
-	qalhJx0CtdauVdlwb4nPZk2TP7sn342LVbwdv01felJ21HKnKqYPvI7TC9endT90Xv788Z7K
-	63z5NZsN23dXLM3uDNh6kTdBy98xMip0u5BdisqZHFeJT8Vbassu76oX+mjwW1aH59jckhXP
-	DFuzf4bOL522UOx49Hzn2SrRPSbzsiz3C+sL5s3lDYn4+vS4zL4518JPWTfx3MtZFWJ04Bj7
-	fhOvKVd9NXe3ub/OvPj64O6p1twm93ebvptl2zPZ8uPn2VxXkup9FP/nulT5qwYHnH7//ftk
-	iVimDXVG7f48P/Yqnz//XPbeziLWQ0osxRmJhlrMRcWJAMDf1m79AgAA
-X-CMS-MailID: 20250306092021epcas5p41133e5a273e547d39ae8b724c9eca23f
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-CMS-RootMailID: 20250306092021epcas5p41133e5a273e547d39ae8b724c9eca23f
-References: <20250306092007.1419237-1-maninder1.s@samsung.com>
-	<CGME20250306092021epcas5p41133e5a273e547d39ae8b724c9eca23f@epcas5p4.samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gcc-sm8650: Do not turn off USB GDSCs during
+ gdsc_disable()
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250305-topic-sm8650-upstream-fix-usb-suspend-v1-1-649036ab0557@linaro.org>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <20250305-topic-sm8650-upstream-fix-usb-suspend-v1-1-649036ab0557@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=I/ufRMgg c=1 sm=1 tr=0 ts=67c968dc cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=M3tcf35oER1-PgU3zw8A:9
+ a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 5KLN_69DrQ3QCidBBOOuWVUPYLmff5x1
+X-Proofpoint-ORIG-GUID: 5KLN_69DrQ3QCidBBOOuWVUPYLmff5x1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-06_04,2025-03-06_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ spamscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 phishscore=0 malwarescore=0 mlxlogscore=594 impostorscore=0
+ clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503060070
 
-As of now nfsd calls create_proc_exports_entry() at start of init_nfsd
-and cleanup by remove_proc_entry() at last of exit_nfsd.
 
-Which causes kernel OOPs if there is race between below 2 operations:
-(i) exportfs -r
-(ii) mount -t nfsd none /proc/fs/nfsd
 
-for 5.4 kernel ARM64:
+On 3/6/2025 12:30 AM, Neil Armstrong wrote:
+> With PWRSTS_OFF_ON, USB GDSCs are turned off during gdsc_disable(). This
+> can happen during scenarios such as system suspend and breaks the resume
+> of USB controller from suspend.
+> 
+> So use PWRSTS_RET_ON to indicate the GDSC driver to not turn off the GDSCs
+> during gdsc_disable() and allow the hardware to transition the GDSCs to
+> retention when the parent domain enters low power state during system
+> suspend.
+> 
+> Fixes: c58225b7e3d7 ("clk: qcom: add the SM8650 Global Clock Controller driver, part 1")
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/clk/qcom/gcc-sm8650.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sm8650.c b/drivers/clk/qcom/gcc-sm8650.c
+> index 9dd5c48f33bed5b944a0b25959ef69e7862d0449..fa1672c4e7d814e1e08c79f9cda9463bf1cd1598 100644
+> --- a/drivers/clk/qcom/gcc-sm8650.c
+> +++ b/drivers/clk/qcom/gcc-sm8650.c
+> @@ -3497,7 +3497,7 @@ static struct gdsc usb30_prim_gdsc = {
+>  	.pd = {
+>  		.name = "usb30_prim_gdsc",
+>  	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> +	.pwrsts = PWRSTS_RET_ON,
+>  	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+>  };
+>  
+> @@ -3506,7 +3506,7 @@ static struct gdsc usb3_phy_gdsc = {
+>  	.pd = {
+>  		.name = "usb3_phy_gdsc",
+>  	},
+> -	.pwrsts = PWRSTS_OFF_ON,
+> +	.pwrsts = PWRSTS_RET_ON,
+>  	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+>  };
+>  
+> 
+Reviewed-by: Taniya Das <quic_tdas@quicinc.com>
 
-CPU 1:
-el1_irq+0xbc/0x180
-arch_counter_get_cntvct+0x14/0x18
-running_clock+0xc/0x18
-preempt_count_add+0x88/0x110
-prep_new_page+0xb0/0x220
-get_page_from_freelist+0x2d8/0x1778
-__alloc_pages_nodemask+0x15c/0xef0
-__vmalloc_node_range+0x28c/0x478
-__vmalloc_node_flags_caller+0x8c/0xb0
-kvmalloc_node+0x88/0xe0
-nfsd_init_net+0x6c/0x108 [nfsd]
-ops_init+0x44/0x170
-register_pernet_operations+0x114/0x270
-register_pernet_subsys+0x34/0x50
-init_nfsd+0xa8/0x718 [nfsd]
-do_one_initcall+0x54/0x2e0
-
-CPU 2 :
-Unable to handle kernel NULL pointer dereference at virtual address 0000000000000010
-
-PC is at : exports_net_open+0x50/0x68 [nfsd]
-
-Call trace:
-exports_net_open+0x50/0x68 [nfsd]
-exports_proc_open+0x2c/0x38 [nfsd]
-proc_reg_open+0xb8/0x198
-do_dentry_open+0x1c4/0x418
-vfs_open+0x38/0x48
-path_openat+0x28c/0xf18
-do_filp_open+0x70/0xe8
-do_sys_open+0x154/0x248
-
-Sometimes it crashes at exports_net_open() and sometimes cache_seq_next_rcu().
-
-and same is happening on latest 6.14 kernel as well:
-
-[    0.000000] Linux version 6.14.0-rc5-next-20250304-dirty
-...
-[  285.455918] Unable to handle kernel paging request at virtual address 00001f4800001f48
-...
-[  285.464902] pc : cache_seq_next_rcu+0x78/0xa4
-...
-[  285.469695] Call trace:
-[  285.470083]  cache_seq_next_rcu+0x78/0xa4 (P)
-[  285.470488]  seq_read+0xe0/0x11c
-[  285.470675]  proc_reg_read+0x9c/0xf0
-[  285.470874]  vfs_read+0xc4/0x2fc
-[  285.471057]  ksys_read+0x6c/0xf4
-[  285.471231]  __arm64_sys_read+0x1c/0x28
-[  285.471428]  invoke_syscall+0x44/0x100
-[  285.471633]  el0_svc_common.constprop.0+0x40/0xe0
-[  285.471870]  do_el0_svc_compat+0x1c/0x34
-[  285.472073]  el0_svc_compat+0x2c/0x80
-[  285.472265]  el0t_32_sync_handler+0x90/0x140
-[  285.472473]  el0t_32_sync+0x19c/0x1a0
-[  285.472887] Code: f9400885 93407c23 937d7c27 11000421 (f86378a3)
-[  285.473422] ---[ end trace 0000000000000000 ]---
-
-It reproduced simply with below script:
-while [ 1 ]
-do
-/exportfs -r
-done &
-
-while [ 1 ]
-do
-insmod /nfsd.ko
-mount -t nfsd none /proc/fs/nfsd
-umount /proc/fs/nfsd
-rmmod nfsd
-done &
-
-So exporting interfaces to user space shall be done at last and
-cleanup at first place.
-
-With change there is no Kernel OOPs.
-
-Co-developed-by: Shubham Rana <s9.rana@samsung.com>
-Signed-off-by: Shubham Rana <s9.rana@samsung.com>
-Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
----
- fs/nfsd/nfsctl.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
-
-diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
-index d773481bcf10..f9763ced743d 100644
---- a/fs/nfsd/nfsctl.c
-+++ b/fs/nfsd/nfsctl.c
-@@ -2291,12 +2291,9 @@ static int __init init_nfsd(void)
- 	if (retval)
- 		goto out_free_pnfs;
- 	nfsd_lockd_init();	/* lockd->nfsd callbacks */
--	retval = create_proc_exports_entry();
--	if (retval)
--		goto out_free_lockd;
- 	retval = register_pernet_subsys(&nfsd_net_ops);
- 	if (retval < 0)
--		goto out_free_exports;
-+		goto out_free_lockd;
- 	retval = register_cld_notifier();
- 	if (retval)
- 		goto out_free_subsys;
-@@ -2307,12 +2304,17 @@ static int __init init_nfsd(void)
- 	if (retval)
- 		goto out_free_nfsd4;
- 	retval = genl_register_family(&nfsd_nl_family);
-+	if (retval)
-+		goto out_free_filesystem;
-+	retval = create_proc_exports_entry();
- 	if (retval)
- 		goto out_free_all;
- 	nfsd_localio_ops_init();
- 
- 	return 0;
- out_free_all:
-+	genl_unregister_family(&nfsd_nl_family);
-+out_free_filesystem:
- 	unregister_filesystem(&nfsd_fs_type);
- out_free_nfsd4:
- 	nfsd4_destroy_laundry_wq();
-@@ -2320,9 +2322,6 @@ static int __init init_nfsd(void)
- 	unregister_cld_notifier();
- out_free_subsys:
- 	unregister_pernet_subsys(&nfsd_net_ops);
--out_free_exports:
--	remove_proc_entry("fs/nfs/exports", NULL);
--	remove_proc_entry("fs/nfs", NULL);
- out_free_lockd:
- 	nfsd_lockd_shutdown();
- 	nfsd_drc_slab_free();
-@@ -2335,14 +2334,14 @@ static int __init init_nfsd(void)
- 
- static void __exit exit_nfsd(void)
- {
-+	remove_proc_entry("fs/nfs/exports", NULL);
-+	remove_proc_entry("fs/nfs", NULL);
- 	genl_unregister_family(&nfsd_nl_family);
- 	unregister_filesystem(&nfsd_fs_type);
- 	nfsd4_destroy_laundry_wq();
- 	unregister_cld_notifier();
- 	unregister_pernet_subsys(&nfsd_net_ops);
- 	nfsd_drc_slab_free();
--	remove_proc_entry("fs/nfs/exports", NULL);
--	remove_proc_entry("fs/nfs", NULL);
- 	nfsd_lockd_shutdown();
- 	nfsd4_free_slabs();
- 	nfsd4_exit_pnfs();
--- 
-2.25.1
+> ---
+> base-commit: 7ec162622e66a4ff886f8f28712ea1b13069e1aa
+> change-id: 20250305-topic-sm8650-upstream-fix-usb-suspend-20979d5a0170
+> 
+> Best regards,
 
 
