@@ -1,155 +1,138 @@
-Return-Path: <linux-kernel+bounces-549745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50903A556B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:32:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34355A556C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:33:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3002B17685A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:32:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C43E1899ABC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:32:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78EAA27603A;
-	Thu,  6 Mar 2025 19:29:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AAF7276038
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 19:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741289349; cv=none; b=GDgA4/qF+Mkq32A+p7px2lWG+Nr0Sby51zJAne+KrQREdZU4jrNhxcIvLNOrJGKihhRXj5PHYvv64BPDJXwQT/BtLrG5409dlWuavA3v93Qlvm2+B0zEKRKodVh8wc4XwXCrV/ok9LhOfmZf+a0z8+hDzc1/U/5jnObNgtS2sKg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741289349; c=relaxed/simple;
-	bh=CuZXTzRcYhEIRKW16ysUZ/i2b3d/1Wkn240XU+Sob6A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WWHjpAVFYMACOav+Y525qYn60Gaii75D+IaQFiCGJAck88nBTx5BKr8YF5zRPsiUcr3nFFLBN/MYEADwrbF8tzZd3ZGVvxsQcrtt/IB1z+bNTLV+fQ8uOi2WSkHDQ0C0dlhNChGWby+38sdxcZ5bxWNG53MjYXKkVMriWOtLcEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5832E1BC0;
-	Thu,  6 Mar 2025 11:29:19 -0800 (PST)
-Received: from [10.1.197.49] (eglon.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 406ED3F5A1;
-	Thu,  6 Mar 2025 11:29:00 -0800 (PST)
-Message-ID: <824605e0-35b9-4f26-9c71-f9104fa31a87@arm.com>
-Date: Thu, 6 Mar 2025 19:28:54 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5748826FDAB;
+	Thu,  6 Mar 2025 19:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="dS4u8h0N"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1150F270EBF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 19:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741289404; cv=pass; b=F4OqK45gJbtgYy03KNQcgrr4VWs/6iGX6dVHNDFah8tUdmmqP9AkljxRQyIvCSxWAbC4t8eeatopDBLbL4RIC9j8fYtORHI4jy8/BBA5Iil7sJPPRCHTCcQjCKEU+aa9IBtoYows4HNDqpNqHb3zSc0/G9S14WqtYz0UTQU63LQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741289404; c=relaxed/simple;
+	bh=yhXkQRFofusFU8Aw4kJpCBmpMiN5cPEkRcv5OC80QwE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=DZb2GqVYa1+KuqVz6kJq8B/3vwdhWXhpe77wsgIf9SQHQ8a4JVX5VOHpNG+JePJiNwLLdsFK/85j0llkWsCkXS3N/urB1vs8Q+6STO6IofogNOG2ZhFneVK+KmIfQJJCTrhhwHl7N0tTJYJtBv2SyEcnTftGXxwkFXI68bRukC0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=dS4u8h0N; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741289383; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=LhMQiTrpinuACBWF/TfiUv/6m6Uc4ebC3J70WJ19u2mQa8pvSEgzxdtBKfmEfSsepufdZxQvWHnIJWiqAaJa2Y/MTRw7vLqLAwrSObGVxWvM3h642MRu8/iLmpqERyLMD8xPiL/tH38PvBosUGgU6ol4yacFd8+6AgoMMg09zKk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741289383; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=J3FMXf/kAUtNvuSZsQyWBK8cEK4f3VIEHblgAMIBzL4=; 
+	b=HWWgtKzuBpEKEh1FNUZrVY183c66clDbM0xCkHWA6lDQk8+19U56cJeKuBhTzRhIEJcEiCl3s+lbDFoHLSDVLBx2ssR+oCc6FC48Y0QhC4sHUoPTRpvtcFiGgb+YmAukG4wL6gGNFaH4Pp7YNpcb2nmRlXMIfL3pfjmDZiX4lC8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741289383;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
+	bh=J3FMXf/kAUtNvuSZsQyWBK8cEK4f3VIEHblgAMIBzL4=;
+	b=dS4u8h0NFBtvoCdx0cRje9ZUFtqr9u6I+Waj98wTjoDcIF02fcnN2+87Kgu/gXMx
+	hF1i3mUJIiEmyg2OPIf9/hr8/yWauX/Jfmmh34u6wwCvvmJjsQa0sP/NOJYHWSW6nP2
+	Gg93d9qk9xHLhjs0gCHSEdjTlTPo8OJc21GIUgoo=
+Received: by mx.zohomail.com with SMTPS id 1741289381820148.17280241335516;
+	Thu, 6 Mar 2025 11:29:41 -0800 (PST)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+Date: Thu, 06 Mar 2025 20:29:23 +0100
+Subject: [PATCH] phy: phy-rockchip-samsung-hdptx: Add support for RK3576
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 29/42] x86/resctrl: Move get_config_index() to a header
-To: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
- Babu Moger <Babu.Moger@amd.com>, shameerali.kolothum.thodi@huawei.com,
- D Scott Phillips OS <scott@os.amperecomputing.com>,
- carl@os.amperecomputing.com, lcherian@marvell.com,
- bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
- baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
- Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
- dfustini@baylibre.com, amitsinght@marvell.com,
- David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
- Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>,
- Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>
-References: <20250207181823.6378-1-james.morse@arm.com>
- <20250207181823.6378-30-james.morse@arm.com>
- <3749ab92-6f6e-43b4-8147-22775e31d21b@intel.com>
- <44cf4fb5-fa3f-42bc-ba16-46645495d669@arm.com>
- <ce60836d-d482-45c7-842b-d7e28e9bf794@intel.com>
-Content-Language: en-GB
-From: James Morse <james.morse@arm.com>
-In-Reply-To: <ce60836d-d482-45c7-842b-d7e28e9bf794@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250306-rk3576-hdptx-phy-v1-1-288cc4b0611a@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAJL3yWcC/y3MQQrDIBCF4avIrDtgYp1CrlKySHVSpcRYtcUSc
+ vdK0+X/4H0bZE6eMwxig8Rvn/0aWnQnAcZN4c7obWvoZa+lkoTpofSF0NlYKkb3wTPPREp2RMZ
+ Cu8XEs68/8joenfj5anI5RrhNmdGsy+LLIALXgn9dw7jvX+t/1NeTAAAA
+X-Change-ID: 20250306-rk3576-hdptx-phy-4ef6630166cd
+To: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>, 
+ Heiko Stuebner <heiko@sntech.de>, Andy Yan <andyshrk@163.com>, 
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ kernel@collabora.com, linux-phy@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+X-Mailer: b4 0.14.2
 
-Hi Reinette,
+Despite the compatible already being listed in the bindings, the PHY
+driver never gained explicit support for it. This is especially a
+problem because the explicitly listed PHY addresses need to be specified
+for each SoC.
 
-On 01/03/2025 02:28, Reinette Chatre wrote:
-> On 2/28/25 11:51 AM, James Morse wrote:
->> On 20/02/2025 01:27, Reinette Chatre wrote:
->>> On 2/7/25 10:18 AM, James Morse wrote:
->>>> get_config_index() is used by the architecture specific code to map a
->>>> CLOSID+type pair to an index in the configuration arrays.
->>>>
->>>> MPAM needs to do this too to preserve the ABI to user-space, there is
->>>> no reason to do it differently.
->>>>
->>>> Move the helper to a header file.
->>
->>>> --- a/include/linux/resctrl.h
->>>> +++ b/include/linux/resctrl.h
->>>> @@ -384,6 +384,21 @@ void resctrl_arch_mon_event_config_write(void *config_info);
->>>>   */
->>>>  void resctrl_arch_mon_event_config_read(void *config_info);
->>>>  
->>>> +/* For use by arch code to remap resctrl's smaller CDP CLOSID range */
->>>> +static inline u32 resctrl_get_config_index(u32 closid,
->>>> +					   enum resctrl_conf_type type)
->>>> +{
->>>> +	switch (type) {
->>>> +	default:
->>>> +	case CDP_NONE:
->>>> +		return closid;
->>>> +	case CDP_CODE:
->>>> +		return closid * 2 + 1;
->>>> +	case CDP_DATA:
->>>> +		return closid * 2;
->>>> +	}
->>>> +}
->>>> +
->>
->>> Could you please add the motivation for the use of an inline function?
->>
->> Putting this in the header file means it isn't duplicated, so its behaviour can't become
-> 
-> I am not following this. How would making this part of a .c file of fs/resctrl with just
-> the prototype in include/linux/resctrl.h result in this function being duplicated?
+To solve this, add the compatible, and a PHY config, with the address
+gleaned from rk3576.dtsi.
 
-Ah, I misread this as one of the functions marked resctrl_arch_.
+Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+---
+I thought this must've been already submitted somewhere, but it wasn't
+in linux-next and searching for the modified file on lore also didn't
+yield any results. I guess this slipped through the cracks, and
+torpedoes HDMI support for RK3576 entirely until merged, so it'd be
+great if this could be merged in time for 6.15.
 
+Let me know if I'm just very confused and this is already handled in
+some other series that's about to be applied.
+---
+ drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
->> different. If its in a header file, it has to be marked inline otherwise every C file that
->> includes it gets a copy that probably isn't used, and upsets the linker.
->>
->> Calling from the arch code into the filesystem prevents the arch code from being
->> standalone. This is a useful direction of travel because it allows fs/resctrl to one
->> day become a module
+diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+index f88369864c50e4563834ccbb26f1f9f440e99271..fe7c057483563686b8076cf2ce562440cfa6fe55 100644
+--- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
++++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+@@ -2017,6 +2017,13 @@ static const struct dev_pm_ops rk_hdptx_phy_pm_ops = {
+ 		       rk_hdptx_phy_runtime_resume, NULL)
+ };
+ 
++static const struct rk_hdptx_phy_cfg rk3576_hdptx_phy_cfgs = {
++	.num_phys = 1,
++	.phy_ids = {
++		0x2b000000,
++	},
++};
++
+ static const struct rk_hdptx_phy_cfg rk3588_hdptx_phy_cfgs = {
+ 	.num_phys = 2,
+ 	.phy_ids = {
+@@ -2026,6 +2033,10 @@ static const struct rk_hdptx_phy_cfg rk3588_hdptx_phy_cfgs = {
+ };
+ 
+ static const struct of_device_id rk_hdptx_phy_of_match[] = {
++	{
++		.compatible = "rockchip,rk3576-hdptx-phy",
++		.data = &rk3576_hdptx_phy_cfgs
++	},
+ 	{
+ 		.compatible = "rockchip,rk3588-hdptx-phy",
+ 		.data = &rk3588_hdptx_phy_cfgs
 
-> Don't we have this already with all the needed CPU and domain management (
-> resctrl_online_ctrl_domain(), resctrl_online_mon_domain(), resctrl_online_cpu(),
-> resctrl_offline_cpu(), etc.)?
+---
+base-commit: a03be51d680391ba113e2e22b38743c276b6e2fa
+change-id: 20250306-rk3576-hdptx-phy-4ef6630166cd
 
-And the realloc threshold, yes. These are the things that would need further abstraction
-to allow the filesystem to be a module that isn't loaded. But these would all be changes
-to the existing behaviour.
-This one is just putting the definition in a header.
+Best regards,
+-- 
+Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 
-
->> Today, the compiler is choosing to inline this:
->> | x86_64-linux-objdump -d ctrlmondata.o | grep resctrl_get_config_index | wc -l
->> | 0
->>
->> This kind of arithmetic for an array lookup is the kind of thing its good to give the
->> compiler full visibility of as its good fodder for constant folding.
->>
->> For so few call sites, I don't think this is really worth thinking about.
->> Forcing this call out of line makes the kernel text bigger, but only by 32 bytes.
->>
->>
->> I've expanded the last paragraph of the commit message to read:
->> | Move the helper to a header file to allow all architectures that either
->> | use or emulate CDP to use the same pattern of CLOSID values. Moving
->> | this to a header file means it must be marked inline, which matches
->> | the existing compiler choice for this static function.
-
-
-Thanks,
-
-James
 
