@@ -1,272 +1,231 @@
-Return-Path: <linux-kernel+bounces-549348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44187A55188
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:42:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83F70A55183
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:42:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EB297AAE66
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:40:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1208177557
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBB022759C;
-	Thu,  6 Mar 2025 16:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573F821A424;
+	Thu,  6 Mar 2025 16:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KcIRlrAO"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="afb0FDqc"
+Received: from YT3PR01CU008.outbound.protection.outlook.com (mail-canadacentralazon11020131.outbound.protection.outlook.com [52.101.189.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66183221F10;
-	Thu,  6 Mar 2025 16:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741279081; cv=none; b=nPttkcBBNNjR6boVpBV+TCWKGzjyM/wyomtnQorq5LpPHFHXNlk925YCrF0TB11Vold6hGRUHGcm3deAppH8TJeeJYcTal/mcgpVjm4PbqvqTCPrikT49n4cO4huM3AUOGxKyzn0U8403KW5LRYmSGVzIGUBvoYQs1/v/4Z6jr8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741279081; c=relaxed/simple;
-	bh=IsYlA1pLnu2lPgka8Es27hJXGLId8UclLTRhAvqtl8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Wus85pHDpkDecNJBrsMvYY7fM4cylTLuC1bLybtrsRB/XFx+ZMxWRIq7cN/C+m4uyc9SQGQyLv8B0vSQRzVzPIrq6eQDBGGgJ4q3DbAWrHDbgUiXCS6yZhIpAWYYrmnhNZukh+5qUD8IIwL9FgbgHmKrv873oLwaYqXuEGl4e1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KcIRlrAO; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741279080; x=1772815080;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=IsYlA1pLnu2lPgka8Es27hJXGLId8UclLTRhAvqtl8M=;
-  b=KcIRlrAOEAZjib2uZWmpjlNsxFsU78c5/CS/1fIn6SVKVu8mwJgijPcB
-   3bDaEPDQjAZC2Bhp1p7USdcdVOfd7QwAy5j0yP6zHRDB3+BXwyEaO8dpY
-   6esWpinfhqEteN0N0uGsxp/nP8B3dFRcd5/dzGdsJpGhE+G9AYY2GeZUj
-   Mh9Is2AM5luIfqio6VsBZ5NsHUFRjwNCCfaK1x+WJcNXrFVC6j0bzVRRb
-   4lcEbVE+fFzFZZawT1EOwVHlGqbT/hlR1DlW666L2ciuEZvuUhxwTplkV
-   hnAlW0kV4NKVPg1s1Y0Csf9A2FXY7oKO33NcBRGzqXOT7MtrTz+nYDgl6
-   A==;
-X-CSE-ConnectionGUID: YMV6RP5IQqeCojx6iqPTRQ==
-X-CSE-MsgGUID: HuI0S3qgQSCWmGudMR085g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42327332"
-X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
-   d="scan'208";a="42327332"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 08:37:59 -0800
-X-CSE-ConnectionGUID: gg3mW5X9R8iM0K5KgoVBdw==
-X-CSE-MsgGUID: MTPC3i0RR5mJXDT9hO30xg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
-   d="scan'208";a="123659819"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 06 Mar 2025 08:37:56 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tqEE7-000NIg-2g;
-	Thu, 06 Mar 2025 16:37:46 +0000
-Date: Fri, 7 Mar 2025 00:36:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>, marcel@holtmann.org,
-	luiz.dentz@gmail.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-	amitkumar.karwar@nxp.com, neeraj.sanjaykale@nxp.com
-Subject: Re: [PATCH v1 2/3] Bluetooth: btnxpuart: Handle bootloader error
- during change baudrate
-Message-ID: <202503070049.8e6dNvjC-lkp@intel.com>
-References: <20250305134523.40111-2-neeraj.sanjaykale@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABFC2192F6;
+	Thu,  6 Mar 2025 16:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.189.131
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741279054; cv=fail; b=AGgn01rsUzHa5+RYlUTUIecI2AiTBMQ7rM/AZ9P7VGMbCzJ9I6KD/tVaoUtLjX+GrLKDeR++aZULxVoICF2AK43YLPSKOs6QyLsxVEeXDj/yDdUz7T3W8vPClvnjav7lEGNQHdbjSX5HOmZw6dOBftEWrU/vagMv8ojhOU2dquk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741279054; c=relaxed/simple;
+	bh=9YPufjKMxfHzpbcLVGI/O3ahpXG6oPucU9OVINqsnkU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jXM/Yfxy5wzJILrLgTkrr9mKptq2HxfSGyi6LRw9UCc3kYGDiVe2sAWG2bAxIqvefsFIqlBP28+D0IWux7Ck9lM3fowBqPBhb4A3MNlacz5XE4W9UzbytvPNHPBezBWLJHjx+r7AotjBI7ZZ0USWXh4swD/iG9vw8Dt82mGy3hk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=afb0FDqc; arc=fail smtp.client-ip=52.101.189.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=egixUUR6nHD1nYWeB50Sc25196wuas8EyVjvr2ojgYOvsw45ZUM55nLLjrvWK0LIhLWgyQfjejIUb6JaHww1tGRrME2VTm2S9olQ5X4E/esQHTbUhSN2eijGfB/Nnaqoec4kmQTppUBXXpekV6+qm+82L66WQMbTy7fIRZ70IlVShrodChpb9hXwGwVdYtC4y8fi0K4/rgu3c6+9PxoF2wKcneKln5w0iMLWwB9BGtNxPy7KoUF1aT5DRCm1zv7SSJU9SOb51I6Z/TET/6N19cjcTVztWnlDbfQvnIvEAG6i50ecXm3o3+y+YfjcnRqsiUguMYZg0zmKzweruF8/Zg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=L1qM1Ip9kmA3FsJIY0oHe5ArfA9FugPA2sbPKuUov3c=;
+ b=FlQ7gqkha96Qj367wnlf3C7EUuW/s8IPtJWmhlry39GTQy46hSx4hi6rt5fYQpC1OO8FYZLPgNsfSHhcH1UcoMFqvKMz99zJ5K13tdx+Dg2/SlhDGZlzkwECXMkAoM86Cafw+zzjIq+yJ9xmoEhwI7kGbfnK655NV44+rpO0/EdVirnieCYgNubpDtHaekPtPDRVEk9OTOTf4LaeBw00qMfRIVQU1I5n9suzoNSwcf1tzzagWoSEgHERbw4PouhrqSblCKTICHcm3x+9jAzCe7Yxo8y92OiL+Y3T2oTeDKqf1V92ljJW433eihJPAisI1rYQcQONlz4RDoD0pkoKvQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=L1qM1Ip9kmA3FsJIY0oHe5ArfA9FugPA2sbPKuUov3c=;
+ b=afb0FDqcCaniBzY8bATHOKxBOLsPd7TSfcN01S695HivxqOV+aqEDRqAoHQ5CnONonfxcvgelFyyyvsbviKRwzc7Tc2moc6fLm0m1VoBP0ABlqGP+LNn8k7Muo5CNbmbAfXFbtKwrXSeOQCCd4EA4uyWuEKops22ZKzSH2OXp70DSjRFfd+AWxqGOA1J+0xKjajDJDG/J8N58LHo1jX/P3CtN71AHeAsRzuUSJOK4OQ7uORLtRsWF16IKhyYGVk8uDP09LelMelag8QJakWpP0iHNVtpPO1Np/8q3lCOSDL94lShHxWRvnJg5If72xG1OU2M220xxzbt/VC0CqMbaQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT2PR01MB5645.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:4d::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Thu, 6 Mar
+ 2025 16:37:30 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%4]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
+ 16:37:30 +0000
+Message-ID: <0e691a3e-1406-4496-b7e4-8b1679b59b5d@efficios.com>
+Date: Thu, 6 Mar 2025 11:37:27 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH resend ] tracepoint: Print the function symbol when
+ tracepoint_debug is set
+To: Steven Rostedt <rostedt@goodmis.org>,
+ Shijie Huang <shijie@amperemail.onmicrosoft.com>
+Cc: Huang Shijie <shijie@os.amperecomputing.com>,
+ patches@amperecomputing.com, cl@linux.com, yang@os.amperecomputing.com,
+ peterz@infradead.org, jpoimboe@kernel.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+References: <20250305015505.14493-1-shijie@os.amperecomputing.com>
+ <f600edd0-8855-46af-98ec-1181db1f5dd4@efficios.com>
+ <b098cbdf-394b-4f20-9dcd-393ad1b734b7@amperemail.onmicrosoft.com>
+ <20250306101315.5a5f1d7f@gandalf.local.home>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20250306101315.5a5f1d7f@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: YQBPR0101CA0320.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:6c::15) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305134523.40111-2-neeraj.sanjaykale@nxp.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT2PR01MB5645:EE_
+X-MS-Office365-Filtering-Correlation-Id: f8949302-0272-4eab-bf41-08dd5ccd2ff9
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YktzY3ZKOG93Rmx6TlltQUpFWEN0dllMcDl0VVBmeTcwcXdoUzhVcU9IRktz?=
+ =?utf-8?B?ODNjRU9EMzV0NUppQTcrZmw5cG9kSHZ3Z01lSmF5S1hBTElENkM5ODBDRFpQ?=
+ =?utf-8?B?NWRLcFBYRXNJa2ZqYXpYYU5uY1M0d3FJOVg5Ymp5Rit6N2pIUDZybnk5eVJ6?=
+ =?utf-8?B?SzYrZXhjSFFlcnhPU1FnT0xhTGtYMXJsNERsVGJCL1VQVUt3bS81UkFJYmNs?=
+ =?utf-8?B?cUIyRUxjV0I3b004TXV3N3FUTExpZUt4TmNFejI4TzYrZjREeUJXN1NaRFJv?=
+ =?utf-8?B?clFNOUdBSHQrRXRLWkpYQ1FjU1dsdjJodnNnWS96dVprWVBaMldzcndVZWQ4?=
+ =?utf-8?B?ZjlKczZ4UlRpVTY0OWRhcURkOWN4UytiQmR6NWlSbURUdzAvcXVEM2NaN3hE?=
+ =?utf-8?B?ekxCTHE3WG5MUmhKOUFxc2JHVHd1eTVWVkFJOHBPYUtuNC9VN2QvTUxmV2JX?=
+ =?utf-8?B?a3lvU3o5ekNFMGV2ckpQSVNOTE1GUDdwdk9yNmZPblhNQStBQXdhSnhnZlJG?=
+ =?utf-8?B?elhvMmhVNXVlbDc4RHY5c2VMSGNzemJRbFZPdmVWaFdNd05QQ2lNOFVCeFdI?=
+ =?utf-8?B?Tis1RXp2MElBbEFscW1qd3RNRlprMTRFMUVyaGxvU2ZFaFhtOUtKYzZDNVhU?=
+ =?utf-8?B?Q1hxakJzQ1dmazBUWmszZ0Vwbll2bU5JSmJvNFdxZUk1SFdNY2pWYmdycGVm?=
+ =?utf-8?B?ZCtxZFkrTUVaNGsvRnk0UkpYSWZ4YUNrV0NiQTZMM3V5RzgwTERBZExhb3Vz?=
+ =?utf-8?B?WmV4SVZkMDY3OHdyb2dRYkpMVXQ2VjQ2bFlBN0RlNXhETlFFZlQrOEc4Zlln?=
+ =?utf-8?B?TG1oa0kvQW52ak9Hb0o1ZTA5ZnBTaW9jSzBueWJkN2JiQmxBUURTL01wVGc3?=
+ =?utf-8?B?NFFSaWtLK2V4VG1PRi9EYTdMd0p3RkxnUzdBUlhFNU03NldtbkdRRDZrYlh4?=
+ =?utf-8?B?djd4WnMreTlhWGIwL0t5ZDB2bURZWGRwU3FUcFI5Z3c1Q3NSdGZXYWFlcUsw?=
+ =?utf-8?B?b3NPODVsK2NySkJBMHpkdGxYOS9MbjZ4TC8rNVhsbytHYnhvSzZMcnB2RXpF?=
+ =?utf-8?B?RVlWMzV2Nlhlb0xJRTJEUmNKYkcvSm9EWHBxYjJMdjhVWkYwUHRYalFtQ3BQ?=
+ =?utf-8?B?TTJIS1BqQ0lWUzdidGkrbjBLMFhHTW40Z1V3eDRCWHI1cFMyMXNSeUZpVU5l?=
+ =?utf-8?B?b0E0TVB3ckRMeEgwZXUvd0h1QStmOWUzV09id0pLNkV3NytSTTA3YWJaTEpK?=
+ =?utf-8?B?Z1ZRRXNLNlZyWURxNllENzkvaml3L2R3ZE5sNzR3dHRoQjl0cXI2dDRvNHFQ?=
+ =?utf-8?B?WmRibjREVWorbFI0S0xQa0MyQVZMOGlaSXNIZ2ROckNYWStSVGR4QlMyZm9Q?=
+ =?utf-8?B?MDdkSHJlWjJvdVJlUFY2YktBQ2RDNC9uSEZnMDNTbU04Zzc4Z21BMU90NVM0?=
+ =?utf-8?B?cGN3L1RRRWR5Q1cwT2hxS2lEeWE5SnN3aDNET21ETW5adXgxOUs4WU00YmZa?=
+ =?utf-8?B?OXM4K0pxa1d1cWlkSVNFZ21EZEFUb3Nob1FXVmR1OHNETXAxeHBjMkEvbHZr?=
+ =?utf-8?B?UXozaklwOGJzaWYxWXZWQVlGeFREZFp6SWcwMUZ3S3puNHFHN1RFVXNUUkZ5?=
+ =?utf-8?B?RElpaXIvQlpua2pvUnYwM3dOQzVFRkYwSU9yK1paWWI5MXVCZFNMRktIM2k3?=
+ =?utf-8?B?NHdyQ0hBNHRlaTVhU05tNXJKWllYL3BqRXhlTmdlTG9Lck5oUEZ6NHlYdkR5?=
+ =?utf-8?Q?sbcDTwYZu88YW0j6F0eR9zuWt1N9At0utNiDF2e?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?amxzd1RnVGw3MlZqakdJb24rOXlZK1ZUbXZUSDlvQXNkOUNXWTBJNjVqNFdW?=
+ =?utf-8?B?VWhiOWg3SzU1Y2hqQTFFckN1RVRkNHEwekpvQXRtK29mOGFGRjJLV3dEOFVk?=
+ =?utf-8?B?WUI4NjQ0SXpLdUtXVXUvdE1Xd1pHWXZxcVVMem52eVI5NHhRekFUVkNhYkVO?=
+ =?utf-8?B?QTVkTDMvTUIwRkNteFZTK3ZxRjhhdkdmbzBPT0RuSkFMTUZDRjdCc0xwY2ty?=
+ =?utf-8?B?dWdOMHRIUHJVZXhudGdyMXg0TEQydFN5ck5xdmtMQjdQZFBGMS9LMTlwUGd0?=
+ =?utf-8?B?bU93VDJkajYwYk9mR2JFQldLMmszdVRFR3RlT3dHUDRZK1JWNVVZcHBGMjZS?=
+ =?utf-8?B?WW5rNVAvaWlMZXM4dU9PY2ZmZUk0VTllSnFQQTZ3NHZaUmhGSlZsdWszQytF?=
+ =?utf-8?B?Z2Z4MDcwRzgrZmM3eDNpL3h3Tks0K3grbmN3TlZqQ1ZYcGxic1JialpJbFZh?=
+ =?utf-8?B?eXlTeWRkMDJCRjNuVkdSZUtUV0ViUFNSS2NMaXB1Ynczd2Zyck9hRTBDaUJL?=
+ =?utf-8?B?dmVEY0N6WEhqVkE0MzJBc0lDWkh4MU4vekVoc2trL3k3N2s0N3pVQXR5aTJs?=
+ =?utf-8?B?Qm5FUHNLMFN1TDM2SU8zblMyY3dHKzR2U3RodDhuc1BOTHk2ZUttS0VTSHhK?=
+ =?utf-8?B?RVBqbXZOSG1EWlNNWThaa004dVZjRE1FQVpiYWI5YlFZM01vdG1aQzJ0QkQw?=
+ =?utf-8?B?S0pURzkyN3RmQ1QyaC9XV2J2RnZGNHRrZzJQS3NTWEFUMDduVURiSmVjYStL?=
+ =?utf-8?B?ajFvdXRvNThWdmdvdTUxMFBrcWlzZEs4TDh1OXhGM25xeFlhMU9pazh2WXNa?=
+ =?utf-8?B?cnlpQmJyVVZQcFRPYWNYd3pxU0o1ZUtvOExLcktLTUZVR3c1YjRScFkzOW9N?=
+ =?utf-8?B?RGEvTW8vMG4rTXdTRUdGYVJpWjByd2FTeXBBRnN2MGpBajdyYWNWb21FSy9M?=
+ =?utf-8?B?QUp1R0NST1dsMnBrV2pKZkJWVUk1NGlyWnpEd2lVcVdKdWJnZkxmd0xIeVdk?=
+ =?utf-8?B?WGJoUzVCcWR0SkF0bHhidHMzdldkRUwrOS9ORlo4dkpta2xZRkc2bk9kVGpa?=
+ =?utf-8?B?UDZPanA0YjFSOUV5ZjN3VkJzVkRZSHdKU1NxR2RzZ0t6TVdYeld6YllPdTFQ?=
+ =?utf-8?B?aXhIME9ERFFFbnFmdktjb2NJbXR4SEJhYW1vNWlYMzFWQUhOUXRnMi83eDhp?=
+ =?utf-8?B?TXVoc3JzbThVcWgxRlR6ZFFWQmFuUXpBNlgyN1d6VzJGWmQ4TEQ3dmd5K0N0?=
+ =?utf-8?B?WHRoaGllaEJVRTFzd3VUbVpETjBSbVh1M3AycE5MUFQyOFpHN210cGRROEtJ?=
+ =?utf-8?B?QWhybmpqQjJEbFoxSUVBdHpQd2xoTWtFTlY1UWlLSzZGVUJpZXFZUDFpUkt3?=
+ =?utf-8?B?NVFXSHlwdlp2ZEFya0Z0YnV5QTB0TXQzYlBNN2EvQUdramwvU3dSdXR3c0N4?=
+ =?utf-8?B?NGtTaWFQUkdwWXNEejBUWkJURWRKbmVta0UyemZJNmc0YXptUi9vOWpWc3Ux?=
+ =?utf-8?B?aWx3QjFobFA0Z3hnd3FzekRaWERIRUZSUnVNblUyTWxwU3F6STVOZERCbGdE?=
+ =?utf-8?B?TmhsUGpmOW5XeHBmR3l5d05UT0tSRE5hNGNSMkViUWpHSlZUMTlPYkEyZWdE?=
+ =?utf-8?B?Uzk3anluWWsxY1dOT2hhR3ZDTHFYK2NiQ0pMTUtmY3U3UWhEcTRLd1VHYlVE?=
+ =?utf-8?B?UnVPOWc3WXBRbkliZ3BtMmJ4MVZ0Y0NTZmVRV0U0L01obk9sZU9xUG4wMmpE?=
+ =?utf-8?B?YThlL3NXSHBjQ3RuNHpyaXRBSkV5Z3B6ZGYwQkhTd05Bd2p6TmZRdVlYRE1i?=
+ =?utf-8?B?OXRaTm8ydW4rcjVrTWxtQndpNHdxT29namUxNkF6RUdGM0U0TmZscGdFcFh0?=
+ =?utf-8?B?dFJsVjV0NEoxVnRiT1pmbjZpMTUreGlScDR6bUNCWkw4SUdRNFQzeVVoWHRQ?=
+ =?utf-8?B?aFpXQ2k0MEtpL0pMREZEdkMxekpBRmRBM2pNK3I3ZXZhUGZoUTBEUzlvWTRV?=
+ =?utf-8?B?TXVjRTd6R09VUkd0M2lTeVgrMEdMNitrYnVtYW5wa3NMZWM1V0lsRlF0NTk3?=
+ =?utf-8?B?Ly9OMU9LNHlvSGZtamt2Ry9aV3hTYmVDRHk0OGhndFB5Z2RNdktiMnIrUTZX?=
+ =?utf-8?B?Mk94VTNRSCt3cVdsNjJwdTZZMjR1Y1FRT2V2WkpxZzJER1FVaEZ6ajBxUUYz?=
+ =?utf-8?Q?X33zw/XkK/5MLnKhIcRokiU=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8949302-0272-4eab-bf41-08dd5ccd2ff9
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 16:37:30.0863
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: mXBVaaprE8n8L75JZ2BZ7ZMEsBRYIikswHF6IlhdLN1NANyq9vuE2MpGaj/amadFdBCmnA+jEnKdgMi0ZiXV9xUQGIwTQcyvTpHALdXvQH8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB5645
 
-Hi Neeraj,
+On 2025-03-06 10:13, Steven Rostedt wrote:
+> On Thu, 6 Mar 2025 11:37:38 +0800
+> Shijie Huang <shijie@amperemail.onmicrosoft.com> wrote:
+> 
+>> diff --git a/kernel/tracepoint.c b/kernel/tracepoint.c
+>> index abfd0ac1177f..5a5041f32cc8 100644
+>> --- a/kernel/tracepoint.c
+>> +++ b/kernel/tracepoint.c
+>> @@ -127,7 +127,8 @@ static void debug_print_probes(struct
+>> tracepoint_func *funcs)
+>>                   return;
+>>
+>>           for (i = 0; funcs[i].func; i++)
+>> -               printk(KERN_DEBUG "Probe %d : %p\n", i, funcs[i].func);
+>> +               printk(KERN_DEBUG "Probe %d : [ %p ] %pS\n",
+>> +                               i, funcs[i].func, funcs[i].func);
+>>    }
+>>
+>>
+>> The output will look like:
+>>
+>> [   63.818829] Probe 0 : [ 0000000032848d41 ]
+>> perf_trace_sched_wakeup_template+0x0/0x20
+>> [   63.819287] Probe 0 : [ 00000000fe8cca4d ]
+>> perf_trace_sched_switch+0x0/0x20
+>> [   65.325638] Probe 0 : [ 0000000032848d41 ]
+>> perf_trace_sched_wakeup_template+0x0/0x20
+>> [   65.695631] Probe 0 : [ 00000000fe8cca4d ]
+>> perf_trace_sched_switch+0x0/0x20
+> 
+> I'm fine either way. Mathieu, what's your preference?
+> 
+> Although the above shows a hashed %p. Is that even useful?
 
-kernel test robot noticed the following build warnings:
+The hashed %p is not really useful.
 
-[auto build test WARNING on bluetooth/master]
-[also build test WARNING on bluetooth-next/master linus/master v6.14-rc5 next-20250306]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I think we could just print %Sb
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Neeraj-Sanjay-Kale/Bluetooth-btnxpuart-Handle-bootloader-error-during-change-baudrate/20250305-214856
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth.git master
-patch link:    https://lore.kernel.org/r/20250305134523.40111-2-neeraj.sanjaykale%40nxp.com
-patch subject: [PATCH v1 2/3] Bluetooth: btnxpuart: Handle bootloader error during change baudrate
-config: i386-buildonly-randconfig-001-20250306 (https://download.01.org/0day-ci/archive/20250307/202503070049.8e6dNvjC-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250307/202503070049.8e6dNvjC-lkp@intel.com/reproduce)
+e.g. from core-api/printk-formats.rst:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503070049.8e6dNvjC-lkp@intel.com/
+         %pSb    versatile_init+0x0/0x110 [module_name ed5019fdf5e53be37cb1ba7899292d7e143b259e]
 
-All warnings (new ones prefixed by >>):
+AFAIU, when the kallsyms_lookup_buildid fails, it prints the raw address instead
+(see __sprint_symbol).
 
->> drivers/bluetooth/btnxpuart.c:1104:6: warning: variable 'len' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
-    1104 |         if (!req->error) {
-         |             ^~~~~~~~~~~
-   drivers/bluetooth/btnxpuart.c:1168:28: note: uninitialized use occurs here
-    1168 |         nxpdev->fw_v3_prev_sent = len;
-         |                                   ^~~
-   drivers/bluetooth/btnxpuart.c:1104:2: note: remove the 'if' if its condition is always true
-    1104 |         if (!req->error) {
-         |         ^~~~~~~~~~~~~~~~
-    1105 |                 nxp_send_ack(NXP_ACK_V3, hdev);
-    1106 |                 if (nxpdev->timeout_changed == cmd_sent)
-    1107 |                         nxpdev->timeout_changed = changed;
-    1108 |                 if (nxpdev->baudrate_changed == cmd_sent)
-    1109 |                         nxpdev->baudrate_changed = changed;
-    1110 |         } else {
-         |           ~~~~~~
-    1111 |                 nxp_handle_fw_download_error(hdev, req);
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1112 |                 if (nxpdev->timeout_changed == cmd_sent &&
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1113 |                     req->error == NXP_CRC_RX_ERROR) {
-         |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1114 |                         nxpdev->fw_v3_offset_correction -= nxpdev->fw_v3_prev_sent;
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1115 |                         nxpdev->timeout_changed = not_changed;
-         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1116 |                 }
-         |                 ~
-    1117 |                 /* After baudrate change, it is normal to get ACK Timeout error */
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1118 |                 if (nxpdev->baudrate_changed == cmd_sent &&
-         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1119 |                     req->error == NXP_CRC_RX_ERROR) {
-         |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> drivers/bluetooth/btnxpuart.c:1101:6: warning: variable 'len' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
-    1101 |         if (!req || !nxpdev->fw)
-         |             ^~~~~~~~~~~~~~~~~~~
-   drivers/bluetooth/btnxpuart.c:1168:28: note: uninitialized use occurs here
-    1168 |         nxpdev->fw_v3_prev_sent = len;
-         |                                   ^~~
-   drivers/bluetooth/btnxpuart.c:1101:2: note: remove the 'if' if its condition is always false
-    1101 |         if (!req || !nxpdev->fw)
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~
-    1102 |                 goto free_skb;
-         |                 ~~~~~~~~~~~~~
->> drivers/bluetooth/btnxpuart.c:1101:6: warning: variable 'len' is used uninitialized whenever '||' condition is true [-Wsometimes-uninitialized]
-    1101 |         if (!req || !nxpdev->fw)
-         |             ^~~~
-   drivers/bluetooth/btnxpuart.c:1168:28: note: uninitialized use occurs here
-    1168 |         nxpdev->fw_v3_prev_sent = len;
-         |                                   ^~~
-   drivers/bluetooth/btnxpuart.c:1101:6: note: remove the '||' if its condition is always false
-    1101 |         if (!req || !nxpdev->fw)
-         |             ^~~~~~~
-   drivers/bluetooth/btnxpuart.c:1097:6: warning: variable 'len' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
-    1097 |         if (!process_boot_signature(nxpdev))
-         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/bluetooth/btnxpuart.c:1168:28: note: uninitialized use occurs here
-    1168 |         nxpdev->fw_v3_prev_sent = len;
-         |                                   ^~~
-   drivers/bluetooth/btnxpuart.c:1097:2: note: remove the 'if' if its condition is always false
-    1097 |         if (!process_boot_signature(nxpdev))
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1098 |                 goto free_skb;
-         |                 ~~~~~~~~~~~~~
-   drivers/bluetooth/btnxpuart.c:1094:11: note: initialize the variable 'len' to silence this warning
-    1094 |         __u16 len;
-         |                  ^
-         |                   = 0
-   4 warnings generated.
+Thanks,
 
-
-vim +1104 drivers/bluetooth/btnxpuart.c
-
-27489364299a2d Neeraj Sanjay Kale     2024-06-14  1089  
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1090  static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1091  {
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1092  	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1093  	struct v3_data_req *req;
-9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1094  	__u16 len;
-9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1095  	__u32 offset;
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1096  
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1097  	if (!process_boot_signature(nxpdev))
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1098  		goto free_skb;
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1099  
-9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1100  	req = skb_pull_data(skb, sizeof(*req));
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16 @1101  	if (!req || !nxpdev->fw)
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1102  		goto free_skb;
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1103  
-27489364299a2d Neeraj Sanjay Kale     2024-06-14 @1104  	if (!req->error) {
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1105  		nxp_send_ack(NXP_ACK_V3, hdev);
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1106  		if (nxpdev->timeout_changed == cmd_sent)
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1107  			nxpdev->timeout_changed = changed;
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1108  		if (nxpdev->baudrate_changed == cmd_sent)
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1109  			nxpdev->baudrate_changed = changed;
-27489364299a2d Neeraj Sanjay Kale     2024-06-14  1110  	} else {
-27489364299a2d Neeraj Sanjay Kale     2024-06-14  1111  		nxp_handle_fw_download_error(hdev, req);
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1112  		if (nxpdev->timeout_changed == cmd_sent &&
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1113  		    req->error == NXP_CRC_RX_ERROR) {
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1114  			nxpdev->fw_v3_offset_correction -= nxpdev->fw_v3_prev_sent;
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1115  			nxpdev->timeout_changed = not_changed;
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1116  		}
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1117  		/* After baudrate change, it is normal to get ACK Timeout error */
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1118  		if (nxpdev->baudrate_changed == cmd_sent &&
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1119  		    req->error == NXP_CRC_RX_ERROR) {
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1120  			nxpdev->fw_v3_offset_correction -= nxpdev->fw_v3_prev_sent;
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1121  			nxpdev->baudrate_changed = not_changed;
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1122  		}
-27489364299a2d Neeraj Sanjay Kale     2024-06-14  1123  		goto free_skb;
-27489364299a2d Neeraj Sanjay Kale     2024-06-14  1124  	}
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1125  
-9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1126  	len = __le16_to_cpu(req->len);
-9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1127  
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1128  	if (nxpdev->timeout_changed != changed) {
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1129  		nxp_fw_change_timeout(hdev, len);
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1130  		nxpdev->timeout_changed = cmd_sent;
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1131  		goto free_skb;
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1132  	}
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1133  
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1134  	if (nxpdev->baudrate_changed != changed) {
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1135  		if (nxp_fw_change_baudrate(hdev, len)) {
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1136  			nxpdev->baudrate_changed = cmd_sent;
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1137  			serdev_device_set_baudrate(nxpdev->serdev,
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1138  						   HCI_NXP_SEC_BAUDRATE);
-b0310d6ed684b8 Neeraj Sanjay Kale     2023-04-19  1139  			serdev_device_set_flow_control(nxpdev->serdev, true);
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1140  			nxpdev->current_baudrate = HCI_NXP_SEC_BAUDRATE;
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1141  		}
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1142  		goto free_skb;
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1143  	}
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1144  
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1145  	if (req->len == 0) {
-2684dd614ccf08 Neeraj Sanjay Kale     2024-05-15  1146  		bt_dev_info(hdev, "FW Download Complete: %zu bytes",
-9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1147  			   nxpdev->fw->size);
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1148  		clear_bit(BTNXPUART_FW_DOWNLOADING, &nxpdev->tx_state);
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1149  		wake_up_interruptible(&nxpdev->fw_dnld_done_wait_q);
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1150  		goto free_skb;
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1151  	}
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1152  
-9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1153  	offset = __le32_to_cpu(req->offset);
-9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1154  	if (offset < nxpdev->fw_v3_offset_correction) {
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1155  		/* This scenario should ideally never occur. But if it ever does,
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1156  		 * FW is out of sync and needs a power cycle.
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1157  		 */
-9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1158  		bt_dev_err(hdev, "Something went wrong during FW download");
-9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1159  		bt_dev_err(hdev, "Please power cycle and try again");
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1160  		goto free_skb;
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1161  	}
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1162  
-e3c4891098c875 Neeraj Sanjay Kale     2024-05-15  1163  	nxpdev->fw_dnld_v3_offset = offset - nxpdev->fw_v3_offset_correction;
-e3c4891098c875 Neeraj Sanjay Kale     2024-05-15  1164  	serdev_device_write_buf(nxpdev->serdev, nxpdev->fw->data +
-e3c4891098c875 Neeraj Sanjay Kale     2024-05-15  1165  				nxpdev->fw_dnld_v3_offset, len);
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1166  
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1167  free_skb:
-5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1168  	nxpdev->fw_v3_prev_sent = len;
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1169  	kfree_skb(skb);
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1170  	return 0;
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1171  }
-689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1172  
+Mathieu
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
