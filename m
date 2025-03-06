@@ -1,119 +1,110 @@
-Return-Path: <linux-kernel+bounces-548904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64EA5A54AB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:27:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E815A54AB7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:29:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76AA17A84A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:26:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C702716C3AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:29:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0AA20C024;
-	Thu,  6 Mar 2025 12:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBF020B7F4;
+	Thu,  6 Mar 2025 12:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KxoHPM7Z"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c8nXhH5x"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC8920B803;
-	Thu,  6 Mar 2025 12:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72456208973
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 12:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741264051; cv=none; b=S4R5aQJVOtdvU8BjaWZU4dwaJ/rncImJMkQ5TSfVD6Aw7028DJVk+M3IXebXrBZgvCPVYN/1ScGLePTOcU9vjWK6K7lP5kLYDxg8XOJ+OwRx3L7eegGoF2yVr4LmVQ95q3gS5SO0IfoT2+es6aAf80hiPQm1Jkd9cOTkRwureS0=
+	t=1741264139; cv=none; b=evTT+Q7M9R+HWZW1TkA1mjpHBJ4+yy9Pe0nGPSow9E5dC0h0fUI3+BrrToOLHElIAWR9l6mAW5Woawos3BoJq7xLb5MiS4FbUDTbtNvoD4/LYvsnadsT2s7T2h7NoFL+4qN7f3CXZwZyDy4I9Hk73sl4R6apuJKjAVnubQ6owL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741264051; c=relaxed/simple;
-	bh=i6lhP4dLCbuG+vXuHqvcoEZMh0tGfth+sV3ZOUeeA3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oYYvUQiqPwBUOq7GpwwNXwC/POYETJNhoq8TAqanexA+v06PKoMkqqttWKUaNlzEfm5DIEOOiIIoUZXBA9xkqnjQIjMQcpENc1XMFAYnxhwAD/v/SogF3q7WocjM41+Zm51SdfAnAkIt33kLG1htXtmxUIJOiT1iXEIVjQ4bdcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KxoHPM7Z; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52699B3U028897;
-	Thu, 6 Mar 2025 12:27:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FNvXtXzlNRsNDmsd+K6pePAdlNt7Cl9S+JRR+eX3utU=; b=KxoHPM7ZvSZqoyF5
-	Bc4MMUoH6byTHr8V/1M9zm4OXYxsqhe2YMsKvsAWXEu/J4SptY6cfb+MwAJs+fGr
-	vFsHswDXCODpEWH7caHTVYKloukOUqhGI3p7da8492jQvucZ0odJJ5rD8Ge+ql0Z
-	J+i+tmi9mgEu0/vhNpgk6+F9n51hvuc4Wm0b+z/sJY0v+Cd9Xo4kPZjzSpgFAJjO
-	QAo0KtNDWIziZ4jbtfM51SN5cd1UeZHtxsostfDOeFjpN572r+Gi2wD9k/ISHof1
-	giR4563BcDaOsEXYAviTXbBTaksYt3Xn4zWsUSZZbYMO91VbmIHUGqou2nj6r0y+
-	MXohVg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6tryex-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 12:27:26 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 526CRPhX016421
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 6 Mar 2025 12:27:25 GMT
-Received: from [10.50.63.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Mar 2025
- 04:27:22 -0800
-Message-ID: <a74e5ca2-f5ef-3dab-723d-6ed99d1d0d32@quicinc.com>
-Date: Thu, 6 Mar 2025 17:57:19 +0530
+	s=arc-20240116; t=1741264139; c=relaxed/simple;
+	bh=lq2YrIb5jWHI4kYgySuAWdRce2aAiZNsZiwC8rAo2bU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S7lzmQYFtkCI3fcLqToEYj9pRa3WLFuiNndzBk5ysLPMXdWIJVt771/TJQ8fXuTBZUhM4Z/UW9LxycEACpYqWk4zA/I34MN+zJUJAPBMdMZEWxG7vqRn35wSVVt0skVhSkPLYD8in09lRYQ/eoa8X5PmNH+AQzhTCohZf0RD3ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c8nXhH5x; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741264136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0V8bEBMj4qDTw4A6gJnd9yt6K6KK+9XkOtnCntFymag=;
+	b=c8nXhH5xZMvtfF7ge0RsXByMJvVAg11XkRniVUZNAYcRv1o6jPIJGo/avzzDjajm4J3lyk
+	caG5Jyr8AgZ+tMwnte0dRuzOJwfq6ronANzYcQM3pqRt9os7VZgZIU7iUABSEvahRrSHnO
+	AXM6sWwA3tpzhhkaa2IWeVPE1+fN7tM=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-348-I2e09rAfMYy5CSas15muGA-1; Thu,
+ 06 Mar 2025 07:28:50 -0500
+X-MC-Unique: I2e09rAfMYy5CSas15muGA-1
+X-Mimecast-MFC-AGG-ID: I2e09rAfMYy5CSas15muGA_1741264128
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 417EF1956055;
+	Thu,  6 Mar 2025 12:28:47 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.240])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 26037180AF7A;
+	Thu,  6 Mar 2025 12:28:39 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Thu,  6 Mar 2025 13:28:16 +0100 (CET)
+Date: Thu, 6 Mar 2025 13:28:08 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Jan Kara <jack@suse.cz>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Rasmus Villemoes <ravi@prevas.dk>, Neeraj.Upadhyay@amd.com,
+	Ananth.narayan@amd.com, Swapnil Sapkal <swapnil.sapkal@amd.com>
+Subject: Re: [RFC PATCH 1/3] fs/pipe: Limit the slots in pipe_resize_ring()
+Message-ID: <20250306122807.GD19868@redhat.com>
+References: <CAHk-=wjyHsGLx=rxg6PKYBNkPYAejgo7=CbyL3=HGLZLsAaJFQ@mail.gmail.com>
+ <20250306113924.20004-1-kprateek.nayak@amd.com>
+ <20250306113924.20004-2-kprateek.nayak@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [RFC PATCH 06/12] media: iris: Update CAPTURE format info based
- on OUTPUT format
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <quic_vgarodia@quicinc.com>, <quic_abhinavk@quicinc.com>,
-        <mchehab@kernel.org>, <hverkuil@xs4all.nl>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250305104335.3629945-1-quic_dikshita@quicinc.com>
- <20250305104335.3629945-7-quic_dikshita@quicinc.com>
- <zw42tgyhxedcifrad5i2gam5sbjjczcaopv4iy2fy5hckkjdsj@crawjvp7bdox>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <zw42tgyhxedcifrad5i2gam5sbjjczcaopv4iy2fy5hckkjdsj@crawjvp7bdox>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=PMb1+eqC c=1 sm=1 tr=0 ts=67c994ae cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=JMUmPn8huWlHet3H1LoA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: r0d6DtmSGc0AZEFozAiyInf22UjI0l5o
-X-Proofpoint-GUID: r0d6DtmSGc0AZEFozAiyInf22UjI0l5o
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=898
- phishscore=0 lowpriorityscore=0 malwarescore=0 priorityscore=1501
- mlxscore=0 adultscore=0 spamscore=0 suspectscore=0 impostorscore=0
- clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503060094
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306113924.20004-2-kprateek.nayak@amd.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
+On 03/06, K Prateek Nayak wrote:
+>
+> @@ -1272,6 +1272,10 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
+>  	struct pipe_buffer *bufs;
+>  	unsigned int head, tail, mask, n;
+>
+> +	/* nr_slots larger than limits of pipe->{head,tail} */
+> +	if (unlikely(nr_slots > BIT(BITS_PER_TYPE(pipe_index_t) - 1)))
 
+Hmm, perhaps
 
-On 3/6/2025 2:15 AM, Dmitry Baryshkov wrote:
-> On Wed, Mar 05, 2025 at 04:13:29PM +0530, Dikshita Agarwal wrote:
->> Update the width, height and buffer size of CAPTURE based on the
->> resolution set to OUTPUT via VIDIOC_S_FMT. This is required to set the
->> updated capture resolution to firmware when S_FMT is called only for
->> OUTPUT.
->>
->> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
->> ---
->>  drivers/media/platform/qcom/iris/iris_vdec.c | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
-> 
-> This also looks like a fix, so Fixes, cc:stable, move to the top.
-Ack.
-> 
+	if (nr_slots > (pipe_index_t)-1u)
+
+is more clear?
+
+Oleg.
+
 
