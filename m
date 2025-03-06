@@ -1,65 +1,65 @@
-Return-Path: <linux-kernel+bounces-549539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238DDA553B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:57:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FF0A553BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:57:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 519BE1899F3F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:57:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74EF63B3919
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA1E25D52E;
-	Thu,  6 Mar 2025 17:56:26 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29DD125D90B;
+	Thu,  6 Mar 2025 17:57:31 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9A6E25EFBD
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:56:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F72D25CC9F
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741283785; cv=none; b=NwBvrO1ChumCBZPG52AYXSAvdqz9Dj7kFG6w7QIiibJ4BQjBhKT1pB3FwxE3VPuEEGSUKA0CoT9peCBoDdKdn0DqPv/Cfhxs2udwQqaP1g+A/d6i2tOSCXdG+ADCavDpZEv7ddgotvW+WE9+jzjj0FazxJ0HKOKkcer7AQnp1QE=
+	t=1741283850; cv=none; b=uYEmEukgRktQc6UjumO4HC4+BzESZ9+DmOM+JQzpc1lwzgUeqRkau7IAv9sdGDwjb2NgJn1gC/h+KA6R0Y0Z6cEG/EKw0FLzMD8UfIvzBC8usWo+ikv1rkMbMyRz2HGSz1MPZu6+Ft+a5gHOPTjO9tBjo4KJRXhEm/ec+ZKBl9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741283785; c=relaxed/simple;
+	s=arc-20240116; t=1741283850; c=relaxed/simple;
 	bh=cuP/vScxGtaMqppW/h6NaC/dlve9qOgtjc8hq4kp0AU=;
 	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TAkSCPNOg4ohb3r39kyQZ+K114fLktEofPMEE3iNOOH0xOEmZ19zAkJxWIVRjAZHtRfXBFzjQTtMDvQ1E8WluogxV43Q3lA20brc5HIlPMYqUbYldZE3sGwJfm9j8o5wZScMibLWe2nCP96oQhBjboEoXyuBGrGb1JyljPRMlK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+	 Content-Type; b=rTysyROKyjeFL+sbjrKF/GybuMIKp4lp29U24dYPe8uKhTY4x3cpirqkcw/cA82UTjhpbcYh7CzTC7iLeqZWnVp+sMrg+x4gC/ygtFYmofJKOF3s4lufGF6ZeSGRiy5hkmWFQGCNa1dMRyesyq5LAJ6EqPxMhfiUEwlE7JxbXGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d43355c250so10905385ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:56:23 -0800 (PST)
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d4423d0c49so445045ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:57:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741283783; x=1741888583;
+        d=1e100.net; s=20230601; t=1741283847; x=1741888647;
         h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
         bh=ifMmxd60Hb7OPYrM+DTw5Np2I8L4Y/29uTi+Rh8hpQk=;
-        b=Dgg44aqub4YkAH0R4xJ4XMjvRrYIS5Ix9z4rV0TPePg3g/FNatqelr9KALNRXAn9/A
-         NmaehTqK9bnPyZPhOibyA5tq+ecG5FLKKYE03ZTHqCYHlzHrGy+u/o8BsTs9H5N6CZpj
-         3kReaLXmsjIiKaflDyUfn7wSFUaSxEZbhJs+0CtZn03ksRznh8LMfPJY5AUdDh6EkhiS
-         Gu5tnIsxHP85BQYrx+t3PYuImqxzgPWuA/bsmxyfeuujz5/AXHBMam16fGMvaASfnY/L
-         smaTaEQpObXWZr60cwu12Og69Ap1Mu3cgQXMU1q2JiiLpfsHpf9y4gu+LLeBn3MhoI1R
-         I7Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEWlj9jlgfRPFzJgkn8F+CjXDjdktF+ht+kqHHJILS7Kq2YY0elgIK7fuEFpy1cwHZkkUT7hltAr1LAqw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCOQlz1z3KgdZ6f+w+Usg1B0H8EB1FuPqjpzP4WS/ke0cBiAGS
-	bJyFf6tfFCCDbuoik4YcmJ+zpKh3WFrbTgM/8Ip91BiQCK99UWdFJMCM70jW+d8RizWSBxO0FTM
-	YeXmrGiMzXhhLe5lHX2G7RdXRoa53iR8XKbvzQ19gLWa13PXfykfTnWo=
-X-Google-Smtp-Source: AGHT+IGN4/lr3303D2ure65HrI7xLb3mzdeqytcauxv0spNuQhQjk68kpN8yar/xg9vUpV7GekXX87dGz8p22JCq9OqmwjY5MSXM
+        b=BqPWWGIJ++6Q197bYzMRe6MK2KXruPkV3uHzUcS6FuTRTkhrLRSOvj1pzgM+5CSvnf
+         iomIXcEC+1JO8j29K3enbC5yu0ASaPk10aVkjubGt9utG1huzfVD/9vwwnhnqqnFf1ql
+         NhBroRgOxk9+i1LuWAB0OG8kcb7UoVHMBbs2bV7s7jw95QL58eyE6DLRc39NMrZAUNdB
+         NpLfGeCiZAIhaXLCOUKDh5a2w8HEsYElUEJpIoF5f/KCC75/UzMC4pgUO1TgGL393+O/
+         n1aEGUaQo4rJf2jW5yhUWWEauCmfRrTAVJ9TAxhCNnOyekEvyiXpbbJvZi8eMuWkVfV9
+         oUIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWgtS/itnbib5Zhb7FZ6UuyxdZOVi/3WS5dDbFdJ4WD/OjA+BODRuUuiYqDsSBMGMn3eEXO5U0QKqXtA8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3Oini9p8qsC+f5ILXe/3HtQ2eh36UMSwta4jL6NLzYyShe86F
+	ln1S1GYngf2E/mbYQ2TEUl9kTTA0PgN67mmnzKNVwMl0XFZbb5fb9hiTutudWuxbIuYSWUwxNkg
+	F/IFXHN95ifG/RKjP2IlklP2JdbCD5ahL88LXQ1vyvwF1HlkjqfnjWuY=
+X-Google-Smtp-Source: AGHT+IFVIqSWwCFtZ50FheN4IvJX8vArr87rSFAMgBXAlkwEwYEJhwPVgslshx0bBuKftYPImWm0HWVZeMc3DMEEKgPEYPDB6Qfk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:741:b0:3d4:414b:e082 with SMTP id
- e9e14a558f8ab-3d441a038d0mr5846255ab.20.1741283782851; Thu, 06 Mar 2025
- 09:56:22 -0800 (PST)
-Date: Thu, 06 Mar 2025 09:56:22 -0800
+X-Received: by 2002:a05:6e02:1d1b:b0:3d0:4700:db0f with SMTP id
+ e9e14a558f8ab-3d4419e6b1amr7443695ab.12.1741283847535; Thu, 06 Mar 2025
+ 09:57:27 -0800 (PST)
+Date: Thu, 06 Mar 2025 09:57:27 -0800
 In-Reply-To: <6761bbbd.050a0220.29fcd0.0075.GAE@google.com>
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c9e1c6.050a0220.15b4b9.004b.GAE@google.com>
+Message-ID: <67c9e207.050a0220.15b4b9.004d.GAE@google.com>
 Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_connect_cfm
 From: syzbot <syzbot+e9abaabc441d3dd18735@syzkaller.appspotmail.com>
 To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
