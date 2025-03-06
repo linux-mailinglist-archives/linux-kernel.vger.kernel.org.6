@@ -1,112 +1,228 @@
-Return-Path: <linux-kernel+bounces-549159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03372A54E56
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:54:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75199A54E59
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:54:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580C318972D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:54:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B928A1651B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E20B18DF65;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD5E19AD48;
 	Thu,  6 Mar 2025 14:54:20 +0000 (UTC)
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VRlSJjcc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E75502BE;
-	Thu,  6 Mar 2025 14:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7519816DEB3;
+	Thu,  6 Mar 2025 14:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741272859; cv=none; b=GijjF9mDyJBCqtic5bTUVxnb1+s7itmQ71TL22z1PY4qxU5I6bXXPrqU9ileV0KNFqvbMMgGNuUEIcwvdSzhXPx5thhYqM8RsqW3kCAHhH3wiscs5OKdWsMRyZcGEQ4N4yr0C8UQF4Gtlc/fQjOfPlezaR9ZQI0MSW8Ek6w57UI=
+	t=1741272859; cv=none; b=c2zxkAnWbMY8tYvl2kZq+ZCBIiiKRBAS56+/0JY1tYlAp1Oyyv/4BSl7oBMMd3+yzyW2Z4xg+sB3IAynxb/arSYm5tvqYKMXdnwyNxDamqQb7eAcTXTXNhKJm+BRyqLvEo6VQpUoP38Zu31BgEw1FeK3MNc0IRihqMYEE4kU/O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741272859; c=relaxed/simple;
-	bh=3b05lQoPmfwdxN/nn39tzUnKU7Nb1LFlRiPMuFHjMaU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GIW6FVNc8Fj2JMOiFIv4o1ms2eW3bV+9yMjy9kge3LnWveQM4/3UYoRpyquMN8DsjnvHpWv+W42sn+vuV+vDCBUiajAPYGQOimHquA/Lzek1SRq4F8KBM0VdIs8PTB4gUPZPm8f5Ukp00TOexM40wQb33qSYLUZCqAu9glRS2d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-523dc3649edso185304e0c.0;
-        Thu, 06 Mar 2025 06:54:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741272855; x=1741877655;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BQszd6Rcuah2ZLoMRf35X23n2wyRO4Wt+Ll9IkLTxlA=;
-        b=nWjIrO80uh4sK7nUfjrQOpRb2px4PbWSJk5aVEUGzOfs85AniyRz1koylC3vgGoVw4
-         SyNS7Cw5F8Py+LN58xTg2A8SvPMjrNs7ORLrXhLpWNNYBeffjAI/m6YIPY799CoR/PGt
-         4mTmGv6HMQgAsA8oAyJUru+cWNUVfBZJa/hxH2FraNWOu/PNiLXjPEBK80rYj1ZiZBOM
-         Bhopl7nT0eODyYRSKGESCIxPKLSWKx7RmwtDOCGEY+6TaQ6svh6Tl75X+VAU81EUjjfs
-         fH1UB5TNQ8QOYTkFLVwTocBlc2DHupkPH0m7C/qdtnuEHfMWXXdMmv7aLtZgWjpdyxI1
-         gEVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVEo8jb2EQPGDD/Sl7EBw2Pp1kQjlfYG6IrAw3P3vd7Z9ANtiNWbfusHBEozQT9FwiW1Uiys2aX3wvm@vger.kernel.org, AJvYcCWAKT9iTJcSXqfdwlSOpO1iN22jkWC/I6PuXYyBhmkv5NpFQEVbx4i5OqPjqQZ6YC5nPld5PbtMuB6LV8ASLh3MIHg=@vger.kernel.org, AJvYcCXbPg87bdLELUkERtSKzIpdwsta2OISCJw2tkIpVKEr8dxqju8CDHSiDDIt+BVMIR1ABdCJ/y3B5N89r3C6@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMHd57pynWCCOQnaS794tJ2/3d4WzTaLcZvtqfOlNdtJ3Zmjja
-	xvst2pQmsHUCmis57LBfceUCTc8iE50oaNnL7HgWrq9IhBaDbgUpSjz25nT8D8o=
-X-Gm-Gg: ASbGnct4IjikYLoyJMON0sQAgLOVws+rGedbKBG3TnZFmy/C9rgdASNdrNZvuPGvx9W
-	fuv9lLXlXWxbvUK2+CzbLiU1SerCE3x3Cba/QyHqyF9Hb+GxXfzhUH7hrf+zEO4iSkXxWoqWePr
-	CxAJAjsF3T2qjsBX4F9nxjQWQHGxL4a0D+3NC7ML/iEuYKINoLuHJ6vBvHKECsj/RJWUynpZqcY
-	O4dC6a/3xsi1dmR0D3Iixl2wVgHnNTG20wuuMO1KEfA/f87aSEglfRoD9E9Hm3tiUXlvEk+akNF
-	LuVgJWnaOtgTc5WK/GRhmjAeFT0rrCvh3dLNnpr6JSnjGI5XP5uX8uU+4fLnYM/RfVDp1Gr8/6t
-	Y3riezmw=
-X-Google-Smtp-Source: AGHT+IH5Pt3jT4r99CLjSdWNCzRS3IE8UUvwYf6xLQrng7gN1DfIwz6DPRBZCZPi6jMC7PuPAnhqBg==
-X-Received: by 2002:a05:6122:3a10:b0:523:8230:70db with SMTP id 71dfb90a1353d-523c62ef265mr4288522e0c.10.1741272855243;
-        Thu, 06 Mar 2025 06:54:15 -0800 (PST)
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com. [209.85.222.49])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523d8cb6204sm191360e0c.39.2025.03.06.06.54.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 06:54:14 -0800 (PST)
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-86d3907524cso169768241.0;
-        Thu, 06 Mar 2025 06:54:14 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVlKLEFzYZf/7IByBtDuanbjzvQ+YnnbLpG0ND6RlULLFcZehz4O6PZmuefGrzGp45lV67yEThVobXuo6IVD/Kz2ak=@vger.kernel.org, AJvYcCWju6aYynD+XL/jaW9XlHwERNaUbGqrDewcNn0FNbXKvCU6k8+xaJqmXRl/hTklN7fLKozrkX7dprPr@vger.kernel.org, AJvYcCXnzrcM3QUGn/DCy/XmLLxs+n9owyO1GLe+487yEhxk02tb9gm4VYmPDyS8LW+xYEpuSKOoxZF1xAGTb48I@vger.kernel.org
-X-Received: by 2002:a05:6102:4409:b0:4c1:9e13:8283 with SMTP id
- ada2fe7eead31-4c2e2a5890amr5334076137.25.1741272854631; Thu, 06 Mar 2025
- 06:54:14 -0800 (PST)
+	bh=ILbT7RQMEoDsdwEXXugZGqEIy/JOrstY20pKKZ4TSQY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XLl0IR9TH6TyGwdlI8xLmUY6JR95LNQAcaZBUO03bmIA8lO0OzE+BLGani+06foCblhq8TOuishBVqRI9Ibk2wb4Rjmr0eZBzKFKkY0Xr6ieO6DEQodx+iNCwfIZ+fqUNQXsI8HwnDDjjFt1EpwoBMMvPUDTv538o2BF0nET0wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VRlSJjcc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAF9AC4CEE0;
+	Thu,  6 Mar 2025 14:54:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741272859;
+	bh=ILbT7RQMEoDsdwEXXugZGqEIy/JOrstY20pKKZ4TSQY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VRlSJjccXTjUOES93hGww9x7aXWW2u8eW/otT1Yj/1MudHbFNIxw8NAnSE1xUli1P
+	 s5Q5//cvtz/8+POwJ1DfkpMQorgr3HNsa6yvrtIYYmZjxaAvaJQt8nAKUDIB4mZ0QQ
+	 VNOJ08/PDyn8WIsrVdEVWzcGgDS4H75EgPDE/Tpk=
+Date: Thu, 6 Mar 2025 15:54:16 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: David Jander <david@protonic.nl>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
+Message-ID: <2025030617-waggle-sanitizer-f961@gregkh>
+References: <20250227162823.3585810-2-david@protonic.nl>
+ <6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
+ <20250305164046.4de5b6ef@erd003.prtnl>
+ <mzxammninwmak5ti4c6is4pbdx3xzzziiwbxiwrldjyxgae4ok@ocec24vu4txa>
+ <2025030611-embezzle-sacrament-00d9@gregkh>
+ <20250306092013.1147f27e@erd003.prtnl>
+ <2025030638-wavy-napkin-41ab@gregkh>
+ <20250306103402.2b9e51d7@erd003.prtnl>
+ <2025030633-covenant-bootlace-7163@gregkh>
+ <20250306152529.31dbfef2@erd003.prtnl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305163753.34913-1-fabrizio.castro.jz@renesas.com> <20250305163753.34913-4-fabrizio.castro.jz@renesas.com>
-In-Reply-To: <20250305163753.34913-4-fabrizio.castro.jz@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Mar 2025 15:54:01 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUq7+j8AZDiXzjU4pcw2RLp9dV_+Tw90SWqeXsVv+vauw@mail.gmail.com>
-X-Gm-Features: AQ5f1JryqcQ6dOrp6yyeJ4w_Y5UIsOTRUgkgptmLPhsjZZW92onlEA82BkBAw7E
-Message-ID: <CAMuHMdUq7+j8AZDiXzjU4pcw2RLp9dV_+Tw90SWqeXsVv+vauw@mail.gmail.com>
-Subject: Re: [PATCH 3/4] pinctrl: renesas: rzv2m: Fix missing of_node_put() call
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250306152529.31dbfef2@erd003.prtnl>
 
-On Wed, 5 Mar 2025 at 17:38, Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
-> of_parse_phandle_with_fixed_args() requires its caller to
-> call into of_node_put() on the node pointer from the output
-> structure, but such a call is currently missing.
->
-> Call into of_node_put() to rectify that.
->
-> Fixes: 92a9b8252576 ("pinctrl: renesas: Add RZ/V2M pin and gpio controller driver")
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+On Thu, Mar 06, 2025 at 03:25:29PM +0100, David Jander wrote:
+> On Thu, 6 Mar 2025 14:39:16 +0100
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> 
+> > On Thu, Mar 06, 2025 at 10:34:02AM +0100, David Jander wrote:
+> > > On Thu, 6 Mar 2025 10:03:26 +0100
+> > > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > >   
+> > > > On Thu, Mar 06, 2025 at 09:20:13AM +0100, David Jander wrote:  
+> > > > > On Thu, 6 Mar 2025 08:18:46 +0100
+> > > > > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> > > > >     
+> > > > > > On Thu, Mar 06, 2025 at 12:21:22AM +0100, Uwe Kleine-König wrote:    
+> > > > > > > Hello David,
+> > > > > > > 
+> > > > > > > On Wed, Mar 05, 2025 at 04:40:45PM +0100, David Jander wrote:      
+> > > > > > > > On Fri, 28 Feb 2025 17:44:27 +0100
+> > > > > > > > Uwe Kleine-König <u.kleine-koenig@baylibre.com> wrote:      
+> > > > > > > > > On Thu, Feb 27, 2025 at 05:28:17PM +0100, David Jander wrote:
+> > > > > > > > > [...]      
+> > > > > > > > > > +static int motion_open(struct inode *inode, struct file *file)
+> > > > > > > > > > +{
+> > > > > > > > > > +	int minor = iminor(inode);
+> > > > > > > > > > +	struct motion_device *mdev = NULL, *iter;
+> > > > > > > > > > +	int err;
+> > > > > > > > > > +
+> > > > > > > > > > +	mutex_lock(&motion_mtx);        
+> > > > > > > > > 
+> > > > > > > > > If you use guard(), error handling gets a bit easier.      
+> > > > > > > > 
+> > > > > > > > This looks interesting. I didn't know about guard(). Thanks. I see the
+> > > > > > > > benefits, but in some cases it also makes the locked region less clearly
+> > > > > > > > visible. While I agree that guard() in this particular place is nice,
+> > > > > > > > I'm hesitant to try and replace all mutex_lock()/_unlock() calls with guard().
+> > > > > > > > Let me know if my assessment of the intended use of guard() is incorrect.      
+> > > > > > > 
+> > > > > > > I agree that guard() makes it harder for non-trivial functions to spot
+> > > > > > > the critical section. In my eyes this is outweight by not having to
+> > > > > > > unlock in all exit paths, but that might be subjective. Annother
+> > > > > > > downside of guard is that sparse doesn't understand it and reports
+> > > > > > > unbalanced locking.
+> > > > > > >        
+> > > > > > > > > > +	list_for_each_entry(iter, &motion_list, list) {
+> > > > > > > > > > +		if (iter->minor != minor)
+> > > > > > > > > > +			continue;
+> > > > > > > > > > +		mdev = iter;
+> > > > > > > > > > +		break;
+> > > > > > > > > > +	}        
+> > > > > > > > > 
+> > > > > > > > > This should be easier. If you use a cdev you can just do
+> > > > > > > > > container_of(inode->i_cdev, ...);      
+> > > > > > > > 
+> > > > > > > > Hmm... I don't yet really understand what you mean. I will have to study the
+> > > > > > > > involved code a bit more.      
+> > > > > > > 
+> > > > > > > The code that I'm convinced is correct is
+> > > > > > > https://lore.kernel.org/linux-pwm/00c9f1181dc351e1e6041ba6e41e4c30b12b6a27.1725635013.git.u.kleine-koenig@baylibre.com/
+> > > > > > > 
+> > > > > > > This isn't in mainline because there is some feedback I still have to
+> > > > > > > address, but I think it might serve as an example anyhow.
+> > > > > > >       
+> > > > > > > > > > [...]
+> > > > > > > > > > +
+> > > > > > > > > > +static const struct class motion_class = {
+> > > > > > > > > > +	.name		= "motion",
+> > > > > > > > > > +	.devnode	= motion_devnode,        
+> > > > > > > > > 
+> > > > > > > > > IIRC it's recommended to not create new classes, but a bus.      
+> > > > > > > > 
+> > > > > > > > Interesting. I did some searching, and all I could find was that the chapter
+> > > > > > > > in driver-api/driver-model about classes magically vanished between versions
+> > > > > > > > 5.12 and 5.13. Does anyone know where I can find some information about this?
+> > > > > > > > Sorry if I'm being blind...      
+> > > > > > > 
+> > > > > > > Half knowledge on my end at best. I would hope that Greg knows some
+> > > > > > > details (which might even be "no, classes are fine"). I added him to Cc:      
+> > > > > > 
+> > > > > > A class is there for when you have a common api that devices of
+> > > > > > different types can talk to userspace (i.e. the UAPI is common, not the
+> > > > > > hardware type).  Things like input devices, tty, disks, etc.  A bus is
+> > > > > > there to be able to write different drivers to bind to for that hardware
+> > > > > > bus type (pci, usb, i2c, platform, etc.)
+> > > > > > 
+> > > > > > So you need both, a bus to talk to the hardware, and a class to talk to
+> > > > > > userspace in a common way (ignore the fact that we can also talk to
+> > > > > > hardware directly from userspace like raw USB or i2c or PCI config
+> > > > > > space, that's all bus-specific stuff).    
+> > > > > 
+> > > > > Thanks for chiming in. Let me see if I understand this correctly: In this
+> > > > > case, I have a UAPI that is common to different types of motion control
+> > > > > devices. So I need a class. check.    
+> > > > 
+> > > > Correct.
+> > > >   
+> > > > > Do I need a bus? If one can conceive other drivers or kernel parts that talk to
+> > > > > motion drivers, I would need a bus. If that doesn't make sense, I don't. Right?    
+> > > > 
+> > > > Correct.
+> > > >   
+> > > > > I actually can think of a new motion device that acts as an aggregator of
+> > > > > several single-channel motion devices into a single "virtual" multi-channel
+> > > > > device... so do I need also a bus? I suppose...?    
+> > > > 
+> > > > Nope, that should just be another class driver.  Think about how input
+> > > > does this, some input /dev/ nodes are the sum of ALL input /dev/ nodes
+> > > > together, while others are just for individual input devices.  
+> > > 
+> > > Understood. Thanks!
+> > >   
+> > > > > Then the question remains: why did the chapter about classes vanish?    
+> > > > 
+> > > > What are you specifically referring to?  I don't remember deleting any
+> > > > documentation, did files move around somehow and the links not get
+> > > > updated?  
+> > > 
+> > > This:
+> > > https://www.kernel.org/doc/html/v5.12/driver-api/driver-model/index.html
+> > > 
+> > > vs this:
+> > > https://www.kernel.org/doc/html/v5.13/driver-api/driver-model/index.html
+> > > 
+> > > Maybe it moved somewhere else, but I can't find it... I'd have to git bisect
+> > > or git blame between the two releases maybe.  
+> > 
+> > Ah, this was removed in:
+> > 	1364c6787525 ("docs: driver-model: Remove obsolete device class documentation")
+> > as the information there was totally incorrect, since the 2.5.69 kernel
+> > release.  "device classes" aren't a thing, "classes" are a thing :)
+> 
+> Aha. Thanks for pointing this out. The sheer removal of this, combined with
+> other indirect indications, such as /sys/class/gpio being replaced with
+> /sys/bus/gpio in the new api, Uwe's comment, etc... derailed my interpretation.
+> :-)
+> 
+> Btw, sorry to ask here and now @Greg: I didn't CC you with this whole series
+> while I probably should have... now I am tempted to move V2 of this series to
+> staging, due to higher chances of potentially breaking UAPI changes during
+> initial development, and in order to have a more flexible discussions over the
+> UAPI of LMC in general. Is that advisable or should we better make sure that
+> the version to get merged upstream (I hope it eventually will be) is set in
+> stone?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-pinctrl for v6.15.
+Just because something is in drivers/staging/ does not mean you can
+break the user/kernel api, that is NOT what staging is for at all.
 
-Gr{oetje,eeting}s,
+Take the time to get this right, there's no rush here.  Make sure
+userspace works well with what you have before committing to it.
 
-                        Geert
+If you want to cc: me on the next series so I can review the driver-core
+interaction bits, I'll be glad to do so.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+thanks,
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+greg k-h
 
