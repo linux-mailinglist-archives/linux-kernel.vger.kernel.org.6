@@ -1,115 +1,163 @@
-Return-Path: <linux-kernel+bounces-548683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2620A547EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:37:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C66DBA547F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:37:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5321170800
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:37:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46FAD17131E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A708B2063C7;
-	Thu,  6 Mar 2025 10:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3E3207DF5;
+	Thu,  6 Mar 2025 10:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kD1epc8Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FE270KjJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035CC1A76BC;
-	Thu,  6 Mar 2025 10:37:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F39320468E;
+	Thu,  6 Mar 2025 10:37:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741257434; cv=none; b=MwJP2GIchI86LB5hnLjPPVWb8FsRQPb3+0HJ2EewaceXQ4Gpa58jl1bQMtEi35zTkcvQln6iOpZyrB6xlvjLUgpTlzAJI8+FzHyX54EFC1ZsNL6m07nnUfNkwZo9Ay4C1TrgJChtQrgf8UqHodxp6dJQjVbmJToijkOKgUpcrwA=
+	t=1741257450; cv=none; b=DQ1NACpCpyJyWP2BRXHRgEUEz++/R2YURV0cIKzGIsYK4i8oZm94jg1Dv1ZXCYA2QPL0QfsdCDJXA/4yvYISkdLf6d7/hptWMMjWo5IyATCoS1kAFUo25cuylD2Z6y52EtPodpgis2ikCvCYCVxupRFD7KjUdAtWaTVCAvlXUMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741257434; c=relaxed/simple;
-	bh=IO7c0ocWghm1HF2Y6BtOJGBD54V3rraIIlXJos9nIRg=;
+	s=arc-20240116; t=1741257450; c=relaxed/simple;
+	bh=qevjN5tUatdD4sRyacUuX0cpfWvxaopsOVfxeABNgSI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xjdan7UaqOYa3VZY7ABEM2VlWgAA0KIFI2qjLjpPGbDNh82iI6xG08BpLQPrN7vzQDTDC3AS6NjFLxkcC0ufYNPh53gwK5H9R+emi7V0s7LidPvsOQvdzJpQoFlrRWToCcsgbhe5OuCCeBGcTVtirM1TgBzXJ5SqcBJFLT4FSnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kD1epc8Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A99F0C4CEE0;
-	Thu,  6 Mar 2025 10:37:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=GqPLSzCOKjBD4JTJL5hEbnej1a76DX7LTs+nij/uO2m6oIOoyx2Qv++zL+2MzEc8pXsNDq8MdS7SFmHFgybAwLJPsProQYpIpasE8tZ+R4DYPgJLVMOFNCROMVnCgLTCeqqTh7IH+2s6+ITF2Go2r0h3IaFBlLwYgU9UMjLt4qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FE270KjJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BB1CC4CEE0;
+	Thu,  6 Mar 2025 10:37:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741257433;
-	bh=IO7c0ocWghm1HF2Y6BtOJGBD54V3rraIIlXJos9nIRg=;
+	s=k20201202; t=1741257450;
+	bh=qevjN5tUatdD4sRyacUuX0cpfWvxaopsOVfxeABNgSI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kD1epc8ZVdG4tJyWNHlY0ILFCECnUn/YrBiOFK7OXdUasu/4ggapdRwdrsI5fDlrs
-	 kF1Emj8ZmB0Xx0c8s8J8ITH0yzbcpO+Nj7qpEIpkFSvw0pyPYJgqcGb/Rnuh0/L/M6
-	 vO2QBR8MXndMNqKDghPh32Zb2Ox6PdR8ozJaTJMXmIVnMwGFZ8Y36K+9xWVQj99YIu
-	 eSTPZGPul0RSbBCf9UMQl1g5a/q2qOAWJ5PEnStSxh25GoKhy4+sjUFfOGcEabE444
-	 galG1B7wDGmdJYutFvVLBP+8jdzHuK9RT7UJY9aYSgx/W8BwT18JiuxxDJ+uFmA9z+
-	 YWAL8qGqpu7ig==
-Date: Thu, 6 Mar 2025 11:37:08 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Eric <eric.4.debian@grabatoulnz.fr>
-Cc: Salvatore Bonaccorso <carnil@debian.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Jian-Hong Pan <jhp@endlessos.org>, regressions@lists.linux.dev,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	linux-ide@vger.kernel.org,
-	Dieter Mummenschanz <dmummenschanz@web.de>
-Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
- board type") on reboot (but not cold boot)
-Message-ID: <Z8l61Kxss0bdvAQt@ryzen>
-References: <Z8SBZMBjvVXA7OAK@eldamar.lan>
- <Z8SyVnXZ4IPZtgGN@ryzen>
- <8763ed79-991a-4a19-abb6-599c47a35514@grabatoulnz.fr>
- <Z8VLZERz0FpvpchM@x1-carbon>
- <8b1cbfd4-6877-48ef-b17d-fc10402efbf7@grabatoulnz.fr>
+	b=FE270KjJC49vsjvPwANMviQ4xzGVAwPXLtdLVrLcnC/xBC0D/nSnefHiAKdLduxHX
+	 v08BqHo2rdOAZwy0krwrM3GdzgFV4NDZ/I89Xa0Srcs38toyi5DyWr4OEGSFO+Y/mr
+	 w/KwAFMXqAzH4TqXwZ+W+ejJGinyIsVQh4Gk7NYpf+YbJg4gY0bYE9s/uTVb/3xxVA
+	 7+td4U/iJCL8RcjO9UyBSdlG/e1RcfrZfx27TEdHOdR/uyAyVZfLyBle7dKIFjFmJy
+	 H9QeBGuGwpzfhC5ei9Zi7O0bzykpAIF8kR5Sh0bwe0rTpJUsP+7xdF0kIN6W0VjrY4
+	 4ITbFAf0Y62yQ==
+Date: Thu, 6 Mar 2025 11:37:24 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Kees Cook <kees@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, sparclinux@vger.kernel.org, linux-s390@vger.kernel.org, 
+	linux-acpi@vger.kernel.org
+Subject: Re: [PATCH 4/8] stack_tracer: move sysctl registration to
+ kernel/trace/trace.c
+Message-ID: <f574knvwbip2hvyvorxcxfjrojd2bblmewvfsv6utivydljrpj@h2cryrh7cojq>
+References: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
+ <20250218-jag-mv_ctltables-v1-4-cd3698ab8d29@kernel.org>
+ <20250303204732.1f5af40d@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8b1cbfd4-6877-48ef-b17d-fc10402efbf7@grabatoulnz.fr>
+In-Reply-To: <20250303204732.1f5af40d@gandalf.local.home>
 
-On Mon, Mar 03, 2025 at 03:58:30PM +0100, Eric wrote:
-> Hi Niklas
+On Mon, Mar 03, 2025 at 08:47:32PM -0500, Steven Rostedt wrote:
+> On Tue, 18 Feb 2025 10:56:20 +0100
+> Joel Granados <joel.granados@kernel.org> wrote:
 > 
-> Le 03/03/2025 à 07:25, Niklas Cassel a écrit :
-> > So far, this just sounds like a bug where UEFI cannot detect your SSD.
-> Bit it is detected during cold boot, though.
-> > UEFI problems should be reported to your BIOS vendor.
-> I'll try to see what can be done, however I am not sure how responsive they
-> will be for this board...
+> > Squash with ftrace:
+I'll also fix this little marker that I missed. And I'll not squash it,
+as it is now going into trace_stack.c
+
+> > Move stac_tracer_enabled into trace_sysctl_table while keeping the
+> > CONFIG_STACK_TRACER ifdef. This is part of a greater effort to move ctl
+I'll remove these comments from the commit message
+
+> > tables into their respective subsystems which will reduce the merge
+> > conflicts in kerenel/sysctl.c.
 > > 
-> > It would be interesting to see if _Linux_ can detect your SSD, after a
-> > reboot, without UEFI involvement.
+> > Signed-off-by: Joel Granados <joel.granados@kernel.org>
+> > ---
+> >  kernel/sysctl.c      | 10 ----------
+> >  kernel/trace/trace.c |  9 +++++++++
+> >  2 files changed, 9 insertions(+), 10 deletions(-)
 > > 
-> > If you kexec into the same kernel as you are currently running:
-> > https://manpages.debian.org/testing/kexec-tools/kexec.8.en.html
-> > 
-> > Do you see your SSD in the kexec'd kernel?
+> > diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> > index baa250e223a2..dc3747cc72d4 100644
+> > --- a/kernel/sysctl.c
+> > +++ b/kernel/sysctl.c
+> > @@ -68,7 +68,6 @@
+> >  
+> >  #ifdef CONFIG_X86
+> >  #include <asm/nmi.h>
+> > -#include <asm/stacktrace.h>
+> >  #include <asm/io.h>
+> >  #endif
+> >  #ifdef CONFIG_SPARC
+> > @@ -1674,15 +1673,6 @@ static const struct ctl_table kern_table[] = {
+> >  		.proc_handler	= proc_dointvec,
+> >  	},
+> >  #endif
+> > -#ifdef CONFIG_STACK_TRACER
+> > -	{
+> > -		.procname	= "stack_tracer_enabled",
+> > -		.data		= &stack_tracer_enabled,
+> > -		.maxlen		= sizeof(int),
+> > -		.mode		= 0644,
+> > -		.proc_handler	= stack_trace_sysctl,
+> > -	},
+> > -#endif
+> >  #ifdef CONFIG_MODULES
+> >  	{
+> >  		.procname	= "modprobe",
+> > diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> > index abfc0e56173b..17b449f9e330 100644
+> > --- a/kernel/trace/trace.c
+> > +++ b/kernel/trace/trace.c
 > 
-> Sorry, I've tried that using several methods (systemctl kexec / kexec --load
-> + kexec -e / kexec --load + shutdown --reboot now) and it failed each time.
-> I *don't* think it is related to this bug, however, because each time the
-> process got stuck just after displaying "kexec_core: Starting new kernel".
+> This should go into kernel/trace/trace_stack.c, and remove the #ifdef.
+Will send my V2 shortly with this modification.
+> 
+> -- Steve
+> 
+> > @@ -166,6 +166,15 @@ static const struct ctl_table trace_sysctl_table[] = {
+> >  		.mode		= 0644,
+> >  		.proc_handler	= tracepoint_printk_sysctl,
+> >  	},
+> > +#ifdef CONFIG_STACK_TRACER
+> > +	{
+> > +		.procname	= "stack_tracer_enabled",
+> > +		.data		= &stack_tracer_enabled,
+> > +		.maxlen		= sizeof(int),
+> > +		.mode		= 0644,
+> > +		.proc_handler	= stack_trace_sysctl,
+> > +	},
+> > +#endif
+> >  };
+> >  
+> >  static int __init init_trace_sysctls(void)
+> > 
+> 
 
-I just tired (as root):
-# kexec -l /boot/vmlinuz-6.13.5-200.fc41.x86_64 --initrd=/boot/initramfs-6.13.5-200.fc41.x86_64.img --reuse-cmd
-# kexec -e
+Thx for the review
 
-and FWIW, kexec worked fine.
+Best
 
-Did you specify an initrd ? did you specify --reuse-cmd ?
+-- 
 
-If not, please try it.
-
-
-It would be interesting to see if Linux can detect your SATA drive after
-a kexec. If it can't, then we need to report the issue to your drive
-vendor (Samsung).
-
-
-Kind regards,
-Niklas
+Joel Granados
 
