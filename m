@@ -1,303 +1,130 @@
-Return-Path: <linux-kernel+bounces-548215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB2F2A541D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:48:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB1AA541D3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:48:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B2CC188E83F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:49:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85BC616DD91
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F526199238;
-	Thu,  6 Mar 2025 04:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E5A19CCEC;
+	Thu,  6 Mar 2025 04:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fK+ZTqa0"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bMpHgUwP"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A187FD
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 04:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAE82F50
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 04:48:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741236532; cv=none; b=omWth5GbWlMuYZ1tTHdreutVbW3EivGy6/r1c9kxKHkS6z3jZj9GBHZMqQTfaIB7/f+y5b5kFqwGvdn7XCX2q7+2JH6cUyrB+9TaZNwrO8wqdfujZXfttdcRG6wqpd3JVuHoxntFvF72HmoaprN/brNaFwk/9gKIlMO+iL2lnog=
+	t=1741236495; cv=none; b=e95GIokc4b5KzHBchFoLo2GfXIqmVHYghORUYZDgAg7s9t1S9BH4AzDMZXdtWoOe8H9R2pDHGx7PQoR/e7F14dYteLJDKyDhBF2ThbaVlLiQshilbtpMmZi/25x9M8ElATigtD0chHSsiYnBoSGZWouC9MrV7qMfjf21PmvxmCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741236532; c=relaxed/simple;
-	bh=/RLhckEvknyPIuDLWygMxijGKZQrmwdEnzAEyBcI+4E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Z14Uf7A2n9BgC/GwgpqxGhksrwzIoUWVbYu86z4ImOvsoVgL9Vqkd6qckUdl8dMWbYhw62tZh3XgFp88jVvsMef+KJ2vkp0rlVxIS+v5QM1eH4K/RgmawsmhDSx9CDuYiaK5T562a/37Z0C/02w4wmOG0obE7IhQu5x+ugwK0dw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fK+ZTqa0; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 525Kcxk9028695;
-	Thu, 6 Mar 2025 04:48:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=4X/CoW
-	babJva0wcKAJX50W2hG5IeeQQ0zM6RIVXoD7s=; b=fK+ZTqa06jDaMSzjkvFoDy
-	W4/CCJ86oUe85hnB3ck11sh8oMKuqQJn9Ad0Yx9lqAM9ufz5xatrwtGGvHbLValR
-	Bunm44FxMt6ml+GkzDfhWvo8LX6yAsVq/AxVjwbUqm6Vp/8Akimv0oEdziMjf5MC
-	UasYX+Eq6Ax2Nq/QariwHhuApfW3FuYUvtA/QysLMAiSbXZmROoFLppfB611QwEU
-	Bmbns8NtdXiQ9l7WjORvpwlADxQhO2RLjmotioWWGi3frER5Gp4o/yleSzuQmuGw
-	uoyCTSAFsnavXI6NAisgZELMg7X3vzBEsauPC/3T9q2d1xb+WhmqQ59HlIPmFHmg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 456wu01p24-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 04:48:13 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5264jECB006825;
-	Thu, 6 Mar 2025 04:48:12 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 456wu01p23-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 04:48:12 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5261H08u013805;
-	Thu, 6 Mar 2025 04:48:12 GMT
-Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454e2kxneq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 04:48:12 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5264mBKm24773120
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 6 Mar 2025 04:48:11 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CEAC35805C;
-	Thu,  6 Mar 2025 04:48:11 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0EBE958054;
-	Thu,  6 Mar 2025 04:48:07 +0000 (GMT)
-Received: from li-c18b6acc-24ee-11b2-a85c-81492619bda1.ibm.com (unknown [9.39.18.221])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu,  6 Mar 2025 04:48:06 +0000 (GMT)
-Message-ID: <172769aab6901361f992a4ca67dd5dd8864f43ba.camel@linux.ibm.com>
-Subject: Re: [PATCH 1/1] sched/fair: Fix invalid pointer dereference in
- child_cfs_rq_on_list()
-From: Aboorva Devarajan <aboorvad@linux.ibm.com>
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, mingo@redhat.com,
-        peterz@infradead.org, juri.lelli@redhat.com, riel@surriel.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        vschneid@redhat.com, odin@uged.al, linux-kernel@vger.kernel.org
-Date: Thu, 06 Mar 2025 10:18:04 +0530
-In-Reply-To: <f1bf21e6-4fd3-4f97-b28f-b0e8dc37ff91@arm.com>
-References: <20250304170007.245261-1-aboorvad@linux.ibm.com>
-	 <CAKfTPtCJKkwFeMKUrD3o224Nz4N+1qjtq0LvL945k9tJ8t8h-g@mail.gmail.com>
-	 <f1bf21e6-4fd3-4f97-b28f-b0e8dc37ff91@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1741236495; c=relaxed/simple;
+	bh=SkKfQC6CZcQpKn3fA8/UGW3rZ+8PsyS1MkVPLxlRNEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PNNBrNPuC4Tg/RTpOQf1n5XJwjcBT4RYAeyCg24WnsXBP3eWDlMz/n7vimsg7eoi6z7Dg4HTVBCNRHyCAt9thLN0kASqcQfOm8M54xssNki/VOER7Ogzez6D7x9Paq5K8wUCeJIpKb3TuJUPz7nxx7r7j+EKE3Rlqy5h1Da35fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bMpHgUwP; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2240b4de12bso4630795ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 20:48:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741236493; x=1741841293; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pVhCeF3zfzn4fOX1E4nH6Dq1VG6iFwnhwgnMjYfbfh4=;
+        b=bMpHgUwPQQ3kBe0bHMxiBD4El/qNbW0D6ULjA0jjV1iyWPU4110SJdFhZHRVXDOfr7
+         lVh88ROeGXrddGokIVlm2rKDWy9k6hol2v0nxuK2JoIWt4RkcUdzQsMy3CJd89u0C7RG
+         r+Y4Y2/yWLmf14owCWZ2Lz1IRb8OpcmPn1YkDNLCRtUcAZJx109N7GKTp81pG75T2FcF
+         j3hp9vWinhGqu5I5Xq7i3FwJh5QcBpRzUUUILSXCJKpToBUyoNwqhpH2y9Ewta5yot8R
+         OealpzSFnOxNuw7b2410LcPSPcqvUEWn//NAphrv8lzirFTzgLM+kAeBt1sUe2OHRCly
+         Q5lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741236493; x=1741841293;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pVhCeF3zfzn4fOX1E4nH6Dq1VG6iFwnhwgnMjYfbfh4=;
+        b=Yv56kj+9SnjR85dOLwvDHJOxc3fpeqz9r9Memi6cMbug/CHsNjGIOGOi7d0z3l97vE
+         7H/s2IgF5XXt0wbnT3+yUKjgfxV6vHt2bQaoJZiAnDVEgLDk7Ssuud8mRAIm9Hcx6vm7
+         E+brTjLlhWaBGDnnvC/QGWDIbP6R3dAnxBi3bFIo+TqbrS1I4KtxUkh/BPHexnKG0cB2
+         1ouu1h11yI5fRI05lizcfPto3YxDm9QkHzkRorvk8ZQzEHj1S+XNWROYVW2+2klvQOu0
+         yObD2GIBEKUKdvpr6bc0QlJWQ+N2gfvsWxUTj83BHNNaPDXAYxKj+WtI9jjA5nes47I0
+         mafw==
+X-Forwarded-Encrypted: i=1; AJvYcCVX6pUYeIEq4mm917ytVXyMRpRU4PnYySooSQuimkRjyGZgU6GzDEzFFNmGGQGrYUCOg7gU8wsVcNa7tGo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8dJZwz9TOfnx+2KH+w1U6BgOhxo/er9/8wQwKQzNRaUCKgfxX
+	PpNvHa4sRWgVvHiCPigr6g0MdbunK3Cw1pq/pwFiC2buAZBdRHcthk0v63lS/hc=
+X-Gm-Gg: ASbGncuqr6mYBxneOsrSte7jbUKlLJE8P2GjjG+teQ+Qfxeb/WScCcljWNwcHTDOg3R
+	hQ4gFuE+xpJ4RN10nA9MOHX8wH2ZAqee8/XWHSAkhX0q2eUI+isphq2KSYjujOZJN4nZIwzjRho
+	3O9++Kcqn853BJVaebHd02eT4QrdrmX93YFK1tXu2iZ7WlFEKO1BLP/kn9yHWqyiGFHPz/pHzVo
+	gy8iHIVIttc0gVLbIhx8t1s1TepPfmN2N26MwtnBGyoGw1cb9ttMMqiC8WZiUDRyBrJVw/KcZNs
+	DdxwecNoQffiL/mq1fqh1/IsU7Uv84wlfVEHJvtF1DVnMg==
+X-Google-Smtp-Source: AGHT+IF/7SpYm7RhZEOVyZQ0/yR2A6FRsW6wiwdOD3yjpFUdPfld11PpaLDCbSfVpUDCWJ0TInwjUA==
+X-Received: by 2002:a05:6a00:4f8d:b0:736:2a73:6756 with SMTP id d2e1a72fcca58-73682d10227mr7674703b3a.21.1741236492786;
+        Wed, 05 Mar 2025 20:48:12 -0800 (PST)
+Received: from localhost ([122.172.84.15])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736985191cfsm333947b3a.145.2025.03.05.20.48.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 20:48:12 -0800 (PST)
+Date: Thu, 6 Mar 2025 10:18:10 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH V2 2/2] rust: Add basic bindings for clk APIs
+Message-ID: <20250306044810.mqbo74nc6ch4dauw@vireshk-i7>
+References: <cover.1740118863.git.viresh.kumar@linaro.org>
+ <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
+ <Z7iGHiQcqa-_AXli@pollux>
+ <4AD8A8F3-EA7E-4FBE-9F0D-58CF7BB09ED5@collabora.com>
+ <Z7iSHR0F2QpiNpMZ@pollux>
+ <aoprvojsnmkbzmmpgx5wxjqtamnr3jyhyqfcqnwhxulp34gn32@aau57u4cotpe>
+ <20250221215931.GA134397-robh@kernel.org>
+ <20250224095945.xjcjwkoqlgcsd2np@vireshk-i7>
+ <CAL_JsqJFeb66pt37wsTB7esCpRD1tpvqP1bvW=Nw8MmP5LvktQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: -OMTedxBvcznT2QOWSyxCk7hNMmTEb1R
-X-Proofpoint-ORIG-GUID: akJXhoAYz05ayWYSmxi6BMTO-O7YiZPh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-06_02,2025-03-05_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0
- bulkscore=0 adultscore=0 spamscore=0 mlxlogscore=999 phishscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503060025
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_JsqJFeb66pt37wsTB7esCpRD1tpvqP1bvW=Nw8MmP5LvktQ@mail.gmail.com>
 
-On Wed, 2025-03-05 at 10:23 +0100, Dietmar Eggemann wrote:
-> On 05/03/2025 09:21, Vincent Guittot wrote:
-> > On Tue, 4 Mar 2025 at 18:00, Aboorva Devarajan <aboorvad@linux.ibm.com>=
- wrote:
-> > >=20
-> > > In child_cfs_rq_on_list(), leaf_cfs_rq_list.prev is expected to point=
- to
-> > > a valid cfs_rq->leaf_cfs_rq_list in the hierarchy. However, when acce=
-ssed
-> > > from the first node in a list, leaf_cfs_rq_list.prev can incorrectly =
-point
-> > > back to the list head (rq->leaf_cfs_rq_list) instead of another
-> > > cfs_rq->leaf_cfs_rq_list.
-> > >=20
-> > > The function does not handle this case, leading to incorrect pointer
-> > > calculations and unintended memory accesses, which can result in a ke=
-rnel
-> > > crash.
-> > >=20
-> > > A recent attempt to reorder fields in struct rq exposed this issue by
-> > > modifying memory offsets and affecting how pointer computations are
-> > > resolved. While the problem existed before, it was previously masked =
-by
-> > > specific field arrangement. The reordering caused erroneous pointer
-> > > accesses, leading to a NULL dereference and a crash, as seen in the
->=20
-> I'm running tip/sched/core on arm64 and I still only see the wrong
-> pointer for 'prev_cfs_rq->tg->parent' in the 'prev =3D=3D
-> &rq->leaf_cfs_rq_list' case?
->=20
-> ...
-> cpu=3D5 prev_cfs_rq->tg=3Dffff00097efb63a0 parent=3D0000000000000010
-> cfs_rq->tg=3Dffff000802084000
-> ...
->=20
+On 05-03-25, 14:09, Rob Herring wrote:
+> Either way, but generally I think 2 functions are preferred over 1
+> function and flags.
+> 
+> The harder part here is in C we just return NULL and all subsequent
+> functions (e.g. clk_enable()) just return with no error for a NULL
+> struct clk. For rust, I think we'd need a dummy Clk returned and then
+> handle comparing the passed in reference to the dummy Clk in the rust
+> bindings.
 
-Hi Dietmar,
+I have implemented it differently in V3:
 
-Yes, you are right, I meant that we will still have invalid pointers and us=
-e it=20
-silently in the vanilla kernel, but it won't always lead to a crash.
+https://lore.kernel.org/all/023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org/
 
-The crash in this specific case happens if `prev_cfs_rq->tg` points to a me=
-mory
-location that cannot be de-referenced. Otherwise, the function de-reference=
-s and
-uses memory locations that are not valid but did not cause a visible failur=
-e so far.
+So even for a NULL value returned from clk_get_optional(), Rust users still get
+OptionalClk (Deref as Clk) and they keep using it as if a valid Clk is returned
+and will keep calling all clk APIs (which will return early for NULL clks).
 
-Here are more details on what I meant by reordering the runqueue:
-
-With the system and kernel configuration, I encountered the crash while try=
-ing
-to reorder the runqueue structure, here is the minimal change that caused t=
-he
-crash on top of v6.14-rc5 kernel:
-
----
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index c8512a9fb022..597c1e6a9b5d 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -1143,8 +1143,8 @@ struct rq {
-=20
- #ifdef CONFIG_FAIR_GROUP_SCHED
-        /* list of leaf cfs_rq on this CPU: */
-+       struct list_head        *tmp_alone_branch;
-        struct list_head        leaf_cfs_rq_list;
--       struct list_head        *tmp_alone_branch;
- #endif /* CONFIG_FAIR_GROUP_SCHED */
----
-
-Here is the crash signature:
-
-[    1.114431][  T552] Kernel attempted to read user page (10000012f) - exp=
-loit attempt? (uid: 0)
-[    1.114440][  T552] BUG: Unable to handle kernel data access on read at =
-0x10000012f
-[    1.114446][  T552] Faulting instruction address: 0xc0000000001c1044
-[    1.116344][  T241] pstore: backend (nvram) writing error (-1)
-[    1.116351][  T241]=20
-[    1.116354][  T552] Oops: Kernel access of bad area, sig: 11 [#2]
-[    1.116354][  T241] note: kworker/44:0[241] exited with irqs disabled
-[    1.116356][  T552] LE PAGE_SIZE=3D64K MMU=3DRadix SMP NR_CPUS=3D2048 NU=
-MA pSeries
-[    1.116368][  T552] Modules linked in: autofs4
-[    1.116374][  T552] CPU: 73 UID: 0 PID: 552 Comm: kworker/73:1 Tainted: =
-G      D            6.14.0-rc5-dirty #193
-[    1.116381][  T552] Tainted: [D]=3DDIE
-[    1.116384][  T552] Hardware name: IBM,9080-HEX POWER10 (architected) 0x=
-800200 0xf000006 of:IBM,FW1060.00 (NH1060_012) hv:phyp pSeries
-[    1.116391][  T552] NIP:  c0000000001c1044 LR: c0000000001c0f98 CTR: c00=
-0000000027ad4
-[    1.116396][  T552] REGS: c000000076627870 TRAP: 0300   Tainted: G      =
-D             (6.14.0-rc5-dirty)
-[    1.116401][  T552] MSR:  800000000280b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI=
-,LE>  CR: 48008202  XER: 20040154
-...
-[    1.116467][  T552] NIP [c0000000001c1044] sched_balance_update_blocked_=
-averages+0x35c/0x88c
-[    1.116474][  T552] LR [c0000000001c0f98] sched_balance_update_blocked_a=
-verages+0x2b0/0x88c
-
-~~~~
-
-Before reordering, struct rq and cfs_rq had the following memory layout
-(snippet from pahole):
-
-struct rq {
-	...                                                 (offset  bytes)
-	struct list_head           leaf_cfs_rq_list;     /*  4048    16 */
-	struct list_head *         tmp_alone_branch;     /*  4064     8 */
-	unsigned int               nr_uninterruptible;   /*  4072     4 */
-	...
-}
-struct cfs_rq {
-	...
-	struct list_head           leaf_cfs_rq_list;     /*   456    16 */
-	struct task_group *        tg;                   /*   472     8 */
-	...
-}
-
-In child_cfs_rq_on_list(), `prev_cfs_rq` is computed using the `container_o=
-f`
-macro:
-
-prev_cfs_rq =3D container_of(prev, struct cfs_rq, leaf_cfs_rq_list);
-
-Since `prev =3D=3D &rq->leaf_cfs_rq_list`, this results in:
-
-prev_cfs_rq =3D rq->leaf_cfs_rq_list -  456 (offset of leaf_cfs_rq_list in =
-cfs_rq)
-
-Then, `prev_cfs_rq->tg` is accessed at an offset of 472 bytes from base cfs=
-_rq:
-
-prev_cfs_rq->tg =3D (rq->leaf_cfs_rq_list - 456) + 472
-                 =3D rq->leaf_cfs_rq_list + 16
-                 =3D rq->tmp_alone_branch
-
-Since `tmp_alone_branch` is always at this point a valid pointer, dereferen=
-cing
-`prev_cfs_rq->tg->parent` doesn't cause a crash, even though it is not
-a valid task_group pointer.
-
-~~~~
-
-After reordering, the layout of `struct rq` changed as follows:
-
-struct rq {
-	...                                                (offset  bytes)
-	struct list_head *         tmp_alone_branch;     /*  4048     8 */ -> this=
- is shuffled up
-	struct list_head           leaf_cfs_rq_list;     /*  4056    16 */
-	unsigned int               nr_uninterruptible;   /*  4072     4 */
-	...
-}
-
-The layout of `struct cfs_rq` is unchanged.
-
-Now, when the same pointer arithmetic is performed:
-
-prev_cfs_rq =3D rq->leaf_cfs_rq_list - 456
-
-prev_cfs_rq->tg =3D (rq->leaf_cfs_rq_list - 456) + 472
-                 =3D rq->leaf_cfs_rq_list + 16
-                 =3D rq->nr_uninterruptible        # now this mem location =
-corresponds to nr_uninterruptible.
-
-Since nr_uninterruptible is an integer rather than a de-referenceable point=
-er, I presume because of
-this, de-referencing parent from prev_cfs_rq->tg results in a crash. Otherw=
-ise,
-incorrect pointers are silently used without a visible failure.
-
-
-But looks like a patch similar to this is merged yesterday [1], so this can
-be ignored :)
-
-
-[1] https://lore.kernel.org/all/174119292742.14745.16827644501260146974.tip=
--bot2@tip-bot2/
-
-Thanks,
-Aboorva
-
-
-> > > ...
-> > >=20
->=20
-
+-- 
+viresh
 
