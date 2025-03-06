@@ -1,124 +1,117 @@
-Return-Path: <linux-kernel+bounces-549459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5ACA552D9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:21:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0DEAA552DE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:22:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DACA188D3A1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32CE4188D550
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC0625D558;
-	Thu,  6 Mar 2025 17:21:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A58425D91E;
+	Thu,  6 Mar 2025 17:21:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CfujXFgp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YqK7Q1HO"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314BF2571DA;
-	Thu,  6 Mar 2025 17:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF2A25A627;
+	Thu,  6 Mar 2025 17:21:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741281679; cv=none; b=WRtOjKe5RMHrMCp8uoH8/b+fZfff0ckJNtVbKstc1SVnMFwjpQBqPtd64Infsmywn8t4xANRw5vA4EofkmOWhJeFRaM1R43yuly8cUNQ4k6xfoUdqEMGFUTIRTDbP2HvkUNsYppLX55hYGOl85IWn3dvc+sIGjL3sFZL6MrPDDM=
+	t=1741281696; cv=none; b=ulGERms+/a708EgKZkjIRe3tADYQqNx5KLzd5bL/zvjNocCnjqSnHmmA0BoXEnUqDoi8TFpROjkcLEl5uxnDy10W1/tSZZJO42q0BQloI+tnzVAJmQVNWuad1Y2dGcAJK2xwJXzdMrG45NN1mJczl1XLm0WeJy4q3P08k79sEkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741281679; c=relaxed/simple;
-	bh=5Bvc9ud5a8OdhEve9BLHR7b9ZedTTQHeaVFBFAY4FR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ojfsY3gCyeBZWQ55MLa6D44vz3vK0Hb/PVT3UVkPR0iN0rI80BmtaPran+0rl9cxT7ouuGDEZzwmKWFvajuSMo8eYNHL407D/crDYYFH66SqXyUqIbL5X2LyXxQk1cDpIOk9+gKVZSQ0dJ2htVQ0xMJZkZnKXTiyM5F/zWaVVs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CfujXFgp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77ED1C4CEE0;
-	Thu,  6 Mar 2025 17:21:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741281678;
-	bh=5Bvc9ud5a8OdhEve9BLHR7b9ZedTTQHeaVFBFAY4FR0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CfujXFgpWWVo7fel5Oz/JKpf24MqlqpTw9dq4IkKJa4YCbqn+PUb2iXsVaxDH5aHw
-	 G+fhzYbpAxFNlHXUxPz+5NYLL3lbZqxGqUNJuBGtH2HZIw1zEMJUf9PGOUxB9dDzcs
-	 Gd6i/CVLNqA57y7slRNbtUVkGPeOuGz0d7yqX22/AOXV6gaGQ6RTCQ7YkpRijosLhU
-	 wW8YAVA9MOOJcneZA4M5Hnejrd9EElLrhGlcWUjbQrDHj6DG3p6CPPa7os2h2/6syD
-	 GLK6kCEfNq9e3Gt32lNG3KUHpfegerlOOfW9tS7EOzHuIaeGk8Bx4i6fIgkO6o/hg3
-	 ZifSJk1BybIWg==
-Date: Thu, 6 Mar 2025 09:21:17 -0800
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Petr Pavlu <petr.pavlu@suse.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Sami Tolvanen <samitolvanen@google.com>,
-	Daniel Gomez <da.gomez@samsung.com>,
-	Steven Rostedt <rostedt@goodmis.org>, linux-modules@vger.kernel.org,
+	s=arc-20240116; t=1741281696; c=relaxed/simple;
+	bh=vuF4uyZajwvR4CFn3hV2Tys0FhFnloVWMh6VgbjOGAU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IbY91x8ExJ9V3CX7IKeenNMOVX3gj752jb9i1UkKHkUS0qtsPLpfrx+p+kvttjHsqW+3PNrGTvHNuP2rGwc7PXfrWNodadUHCZ5CJJr5nQvI3CB11imPRS2y5teYANVg/Mj+f1ap4fsm2/w82cziqPNZhkNvRfcNAHNmbKSUdeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YqK7Q1HO; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-223785beedfso17284785ad.1;
+        Thu, 06 Mar 2025 09:21:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741281695; x=1741886495; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vuF4uyZajwvR4CFn3hV2Tys0FhFnloVWMh6VgbjOGAU=;
+        b=YqK7Q1HOR3D7y01TEoNMXD8j7V98v8T5JyFUT7UtPK3hfWYkWVw0piheoyHDqJ21Dd
+         hy4+jPWlUSEL4BYnQqOiyr4SKTBDwoMtLZG3Ba8833M4t8Z1pau5xk2G0MfwGGKY34dW
+         QgyZEOZFWrt5+tfbfgA/XhSwUxlGrwUM1mvl9IJlUnFnepHk7emUjvsqIuLp1WY5/HGt
+         ZLwW8dMMcTaP1BJBXF4vB4bPo/NwLlb5c+KLhHUgmoa5EDDXguoHIZwaHAu/hY6x6nCh
+         JoNBJ93k9LmKsITRGiY2McQh99LklJeYeatK+AC9jSudfP8Ns4vOdnJ7mnaWXkD4owYp
+         WwGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741281695; x=1741886495;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vuF4uyZajwvR4CFn3hV2Tys0FhFnloVWMh6VgbjOGAU=;
+        b=VAI7HBl3ETkmMaclVtLl5pUQ8qcNoZvH4FXDwc9hYQq/9vJ3GU8urAr3iszpjrD+32
+         gZPSuMyOK+XszD7JySqAXiFBn6pHs+RzbsGPhBhsWF788+SgxBrnCsUlEtlSj2h9nx+B
+         bVFIltOW7smxSJ7GeghOPLBnW+0SY+7SoAjuuEhhfkZJYRDtUgz80CqkGozQ83t/+8oB
+         FaHx0LjOGtrMJDgaVmfFhCc3q7pG2shgC9aNMqroGFIhSqTF5dwmAAucSjSXT1hDOqHP
+         D3vks1z7haLcIARJVmuMy8G9YQBbvd1HCV8/zG6dUZ8EqrlW6982qDWFlTyINsDbUN8o
+         XWJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUWKjjr3dN6+yIQlvLQbp5AtMInfNUW4zXSfMRDUiX48i9MEJJBelPc6BNs+lubV6eYWQ0ovH+OMi43xA==@vger.kernel.org, AJvYcCXVSqvDhj2HxKdlzqncIfhF62v3GdpRTaBlOLfkBGqllNR+9cLBwyDfN5Hug/6660kETwkNefNQI5avJeQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtFQFxuOYcpyqIYIJhEyHdPTeCFOmIgw7wMkBmiKN5DMeArlea
+	domLJRMyHRX+pFFJvyjufjVuIyDpC2Ey93i+AqxPIZWMqhjFfH4lhrQXWiCa
+X-Gm-Gg: ASbGncvJEJOh5qHbZ8WAcRmPNxueNFDjKUy8mLIuMLhhqatxWhX2S5vuCqH+Iv1y67x
+	UoUpW7ixQwzJCG9OTLGJoHCRTBgUlYZJIo1xw1FjgbPqjopWIybd7WvKJeVjvEHBuBG1GJ8kCGY
+	4PVUA7y0EOpZIdzI3ywPZQKiR4ht1AA463JGTIHdgapYoYIexLm+2AaFlpEd08cnRcvdleXkvsX
+	Z9Xa8NiwpJOlb+U3CMHFHk681yHbQCRYnswJTWCGRt8TJ9kshlJncZuFvvVxmVqMpMVt2RMTSwJ
+	50Rh2QgDaqI5vrNPKzhumNXx0/0DdNTWXQFhEsONce9jERMDJ+RtLL5fMqU7SytnkQ==
+X-Google-Smtp-Source: AGHT+IEUn36ku7iQxq3qJ4CuSrWPoX5y/kwBkhKYGkTjHrcYhnTln/kKvK1bidujUGGAonf+D8E9aQ==
+X-Received: by 2002:a17:902:d48f:b0:224:2715:bf44 with SMTP id d9443c01a7336-22428a96909mr1067465ad.19.1741281694723;
+        Thu, 06 Mar 2025 09:21:34 -0800 (PST)
+Received: from DESKTOP-P76LG1N.localdomain ([123.16.133.44])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109dd627sm15103375ad.50.2025.03.06.09.21.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 09:21:34 -0800 (PST)
+From: Nam Tran <trannamatk@gmail.com>
+To: pavel@kernel.org,
+	lee@kernel.org,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	conor+dt@kernel.org
+Cc: devicetree@vger.kernel.org,
+	linux-leds@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: Update the MODULE SUPPORT section
-Message-ID: <Z8nZjcKKLmFDh4ZP@bombadil.infradead.org>
-References: <20250306162117.18876-1-petr.pavlu@suse.com>
+Subject: [PATCH v3 0/3] leds: add new LED driver for TI LP5812
+Date: Fri,  7 Mar 2025 00:21:23 +0700
+Message-Id: <20250306172126.24667-1-trannamatk@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306162117.18876-1-petr.pavlu@suse.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 06, 2025 at 05:20:59PM +0100, Petr Pavlu wrote:
-> Change my role for MODULE SUPPORT from a reviewer to a maintainer. We
-> started to rotate its maintainership and I currently look after the modules
-> tree. This not being reflected in MAINTAINERS proved to confuse folks.
-> 
-> Add lib/tests/module/ and tools/testing/selftests/module/ to maintained
-> files. They were introduced previously by commit 84b4a51fce4c ("selftests:
-> add new kallsyms selftests").
-> 
-> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+From: Nam Tran <trannamatk@gmail.com>
+To: Pavel Machek <pavel@kernel.org>, Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 
-Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
+This patch series adds support for the Texas Instruments LP5812 LED driver.
+Patch 1 adds the Device Tree (DT) bindings documentation.
+Patch 2 adds the LP5812 device tree node for Raspberry Pi 4B.
+Patch 3 introduces the core driver implementation.
 
-> ---
->  MAINTAINERS | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8e0736dc2ee0..0c8a00b0b49b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -15982,7 +15982,7 @@ F:	include/dt-bindings/clock/mobileye,eyeq5-clk.h
->  
->  MODULE SUPPORT
->  M:	Luis Chamberlain <mcgrof@kernel.org>
-> -R:	Petr Pavlu <petr.pavlu@suse.com>
-> +M:	Petr Pavlu <petr.pavlu@suse.com>
->  R:	Sami Tolvanen <samitolvanen@google.com>
->  R:	Daniel Gomez <da.gomez@samsung.com>
->  L:	linux-modules@vger.kernel.org
-> @@ -15993,8 +15993,10 @@ F:	include/linux/kmod.h
->  F:	include/linux/module*.h
->  F:	kernel/module/
->  F:	lib/test_kmod.c
-> +F:	lib/tests/module/
->  F:	scripts/module*
->  F:	tools/testing/selftests/kmod/
-> +F:	tools/testing/selftests/module/
->  
->  MONOLITHIC POWER SYSTEM PMIC DRIVER
->  M:	Saravanan Sekar <sravanhome@gmail.com>
-> 
-> base-commit: 848e076317446f9c663771ddec142d7c2eb4cb43
+This driver has been tested on Raspberry Pi 4 B using kernel version 6.14.0-rc5.
 
-And as a further note to Linus:
+I kindly request feedback from the community to ensure that this driver adheres to the Linux LED subsystem standards.
 
-Petr, Sami and Daniel had volunteered to help with maintenance to help
-with Rust module support. My requesto to the Rust community was that
-while I don't speak Rust I'd be happy to support Rust provided we get
-volunteers from the Rust community to help with maintenance of *both*
-the C and Rust code. The Rust community came back strong with 3
-volunteers.
+Thank you for your consideration.
 
-To help with ramp up I decided that after a few months of them being
-reviewers we'd rotate them to be the main maintainer for 6 months each.
-Petr has been doing this since around November of last year and he's
-been doing an incredible job. Next up will be Daniel and then 6 months
-after Sami.
+Best regards,
+Nam
 
-  Luis
+---
+
+Changes in v3:
+- Addressed review comments from v2.
+- Split the patches properly (DTS separated).
+- Updated DTS example based on reviewer feedback.
 
