@@ -1,146 +1,140 @@
-Return-Path: <linux-kernel+bounces-549757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE832A556F6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:40:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDF87A556F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:41:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52F05189816C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:40:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED57D3A52A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA18270EB7;
-	Thu,  6 Mar 2025 19:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3689626FA79;
+	Thu,  6 Mar 2025 19:41:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOfGrryq"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="KZHiWWR4"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2482DDA8;
-	Thu,  6 Mar 2025 19:40:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EE251A83EE
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 19:41:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741290012; cv=none; b=tY59qxdE5ZnYni5yUHI9VHMlJExq7+T94AbB1xfcu8UQVeEQKr3NJTl4F1w7Td57R0sJkDkJ1zE/FlKQUb1XwQ5QMWId+w8H3pragInVT2sH9fKRviSdW9XEgwd2ba36VW3Zlwrl7Q7j+M1S9ZaXGeOAbDnc9nF3495FzQOHLHA=
+	t=1741290081; cv=none; b=hSHln471Xzoec+Ai9b/zseL+P9gnnc2nLRjDAWe2H39lW4J7L0yl5UGO/eElXPl4BcitNC52HtsR2BB5SjWBTmkv88N1qgHCLOhHOuAzEt18I69tsZm9dlH/RQeY3bAlfFqducwVgPQwRKVu9Ou7uL05i6El87pywtw192fWHsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741290012; c=relaxed/simple;
-	bh=CFtDuLIpuU03+nhtMAtX9r4UPxfCF/bDqSWeFl/X5vQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=c9He2uyBHZxAoTPeHxSV3PtOJyWXBMYNfoN2KmJDcRCYbT6VKltOcrCZH1VMgRP98fNnz+d2BEJlBM0PRB6XaTl7XEwtOEwwMhhElNOIvu40aHSPSO8VfIq9LAEldvL+9Y1rovJnW8bJilSzZHh9qIpcIx3OzI/s4UumY8xrVT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOfGrryq; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-223f4c06e9fso21134605ad.1;
-        Thu, 06 Mar 2025 11:40:10 -0800 (PST)
+	s=arc-20240116; t=1741290081; c=relaxed/simple;
+	bh=a4/H17QdyhUQ9lsG9asq7ncIiJGi9nsUmwthOROKUwc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k/4HEPQBNHOv51hOoX3XIfB2x0+6afphYYRhlIAJSY7XaPYf27EVvJ3KgEZkuz8/wwn/ytPQ4NNRESreeuPIB+xFoMRJQIoZm5srbU7q+yXDdprD3KmnMX7+v4lKZKmFHBBLnHKVYrJBwouHuUQo2XHCmv+wdtkZNpHvS40L4Jo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=KZHiWWR4; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2ff6cf448b8so1773022a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 11:41:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741290010; x=1741894810; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ewCB/nm+A9ngd0jnoOxdtVcsF/YbNlLGD5eMN+wHgAQ=;
-        b=DOfGrryqhsvUzUrcX9Tmg22AtyKvTGuTxsIyAzNx9dY0y5J/VB8L51QCmEXwbK5OkC
-         A0X/KI6DR8R+g4EEXdDSUjLwpzKw4Pr5DufQ/rR/RNewHCx7qCZCORm+BrQ1kzOM5ubS
-         KrR58S4xqPiwZEIVresT6x96KHzte43t1QhWwJXz2mCIq9W7207r0oETY7J47qJjbyaP
-         sWz8J66cfaX66lesjcMOr398QRIZuzuiB31akNLJvQDhc2vNWkC2+wQ8tv5RHLhtmPHj
-         1SPGKjwh30EmBO8W0N3cURWcS1bhLTftpmcZdej/xhKQR5NJANNJxA1hQDWio8HcDTg7
-         nFHQ==
+        d=broadcom.com; s=google; t=1741290079; x=1741894879; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=LVL6+28pQW+71axRyK5XesnFXBZvUmkWaO6p4RpyIVo=;
+        b=KZHiWWR4HCnP6tccCrwH765VCKcWIuEXDKr4/Hw7iUSFqMPTiTkXaO1tlM+5/C5zh2
+         nub6pd6Yr7VldRHZ4EYpLqo/2YXCMfCMqYFNTPJ2T2ZV3F8u6dOSkjOoBQWJJ7O+Sq6V
+         7ygb7R1lF0HHJP3MHbdFBaT5p7PHmyqZ3Vfdg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741290010; x=1741894810;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ewCB/nm+A9ngd0jnoOxdtVcsF/YbNlLGD5eMN+wHgAQ=;
-        b=eoKxulrFb+nkMiyigFM6GR3TuBynozEVdzqlrmC5ZuutM2wzIFf8LaeO4ZIXMw3C61
-         97QvNctC2qMiCf4G3CYBXTRuvdEIOgwioETSdD9acU/KnXsdluxUHRbCflDuLpXiHTZF
-         vYz39mzm2b8EZDTwx9GOZjUUCqk2hs+SLVqIRhv4J77232T+HNueKsEhLLJv68wYIjs8
-         tKy9frN6mQFOrLPcPOX7CHdvxbmCFA4LhQHnOeGA66U7J20iKiA4VkyaJfARuF8uVrrv
-         7abntL3oI9HwxTnRI0tjJAtWcRFhGbS04uGtHtC6L7BLrEQOZIxgDCbq+nxzBfU9J2na
-         Oqvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXb8kKuOjO4QNkeqLL8Y5k8xzEOZJN2v9AO7AsN3bERNnBetjwng1MGs2uyPcd83eHmc/Ue3qK7zJBsgy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoI/dPivPqLbJUBiauZeNgPygyHAkzGUbaf7YLkt9eFtW8Bzqt
-	OFOzwDPtQX5N8tqSXY3BqGWfCFl02+Z3QAsuOpaRO93rBSF/NWzB
-X-Gm-Gg: ASbGncs2BBnSJreHonI2r3+A2m1XwwEuhSScQOHq0vtkzPWYVqIToDP0m7IqyLvuAqN
-	3A5lEZw+zSlQLi69006S1Sx8p/61jTJ0qBvD3ZHN6C2N88DmGhJ2WIs4jTPFWrmOePuA4l6xkdz
-	vkVWsShR9Q494Fm0KAKhPa7Aov4Qhe8b1TsoM56o/8lyhiT9tQqlUs1ndz0FwLAukPgA9Td4fkk
-	ZI7KZcRXTRj4BeKzF2cHPPZYd2vGHtOe6QDiG+0bsmLVzP1ZF+hpTX9beJPVHS/cU559mNHkR5B
-	M+2ZShpT05to153ZMbViTLPaybGlMInrZceekQy7/BRF3oTBqAtBq7AIkpQFqMxngf8/v+rdeuA
-	H4GmznR5dPyyjbLu18bA=
-X-Google-Smtp-Source: AGHT+IEQMyjX97Nt8KzVYICwQGtL7t0fOwHtki0gYYS+FzmLNhfE7q4pmhk2ZkcLJLMumQ0lloKrXQ==
-X-Received: by 2002:a17:903:292:b0:215:58be:334e with SMTP id d9443c01a7336-22426fd8525mr13145525ad.10.1741290009936;
-        Thu, 06 Mar 2025 11:40:09 -0800 (PST)
-Received: from ?IPv6:2804:7f0:3f4:754:40b4:b78f:5cfc:8620? ([2804:7f0:3f4:754:40b4:b78f:5cfc:8620])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410aa448dsm16304945ad.210.2025.03.06.11.40.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 11:40:09 -0800 (PST)
-Message-ID: <635f849e14854b0db1f53a0d0bf329c3070e5859.camel@gmail.com>
-Subject: Re: [PATCH] staging: sm750fb: Fix CamelCase variable naming
-From: Gabriel Lima Luz <lima.gabriel.luz@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-  Teddy Wang <teddy.wang@siliconmotion.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,  ~lkcamp/patches@lists.sr.ht
-Date: Thu, 06 Mar 2025 16:40:05 -0300
-In-Reply-To: <ba45d980-c6b1-482a-8bfd-457a92d3e24b@stanley.mountain>
-References: <20250228162359.14029-1-lima.gabriel.luz@gmail.com>
-	 <ba45d980-c6b1-482a-8bfd-457a92d3e24b@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+        d=1e100.net; s=20230601; t=1741290079; x=1741894879;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LVL6+28pQW+71axRyK5XesnFXBZvUmkWaO6p4RpyIVo=;
+        b=AlJILgpUsAK7xAhTiGKt84H6M+TtFFXqoWIbmID6mSts4jTqP6X/V2SNBV1yBf0Uc4
+         WyE6/RhV2QzpVCXvei29fFoZ8sBh/VoUn2TP3wGjeCNbaWS0qzvCu4uvSexFdmC2p9sQ
+         PdUbaHmnXKsb6PiNo1ng4mBZ5A/XQCSY8vuRMiKcG9IMvk2jSpuy5SJ1i7FdVPVMx1B3
+         tFbTqKutz1d8Xko4AGQhtms7pXEB5yQ8q9bB15Afj6z2pdRqtGpT6riX/pVTP9mllyKa
+         y+KhEPwtjK45s4kvKNesbOS0eYEXVtOpBNJMaWAga+3GhII+ePZSJn/DjNoIxqJ/2rAC
+         W3/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUKSzmlm+l8Q+01wV3OIFfXKwRmBEEeH2xwb/1sQ8xhEMh1zevEk1BbGfbN8EL2bDEx5/6Igrr/nGPr1dw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+URZZIILkwsxtOHw/yM6VPa7QIKa5U6BqqyTKwz5fUyU7oTK8
+	+yKplzz9e55PM5mKnqD8SxTUae3F9MRStYo/xE5pq//2T9d4AFExQJLKqVR7sA==
+X-Gm-Gg: ASbGncto0/sURgC937yzeALYSy97rtRKTaHudVLcu8U5f151yOEjMk0aUbYyibdIy//
+	+qRACNvhUif3j17fj7W6yfSvSVUYg5h2XSxHRqokyuAWAToKDwVoxsX4Ymt840H1PnlEYDFjVbs
+	SEv/SfyFa8yR44xBzplGhwty5EQX8dzU4bF/tAKUTYglM6j+45DWMUYdkRdoq5ehulE7ARWjTAs
+	zqfeIbfDICGbWG548vnrVnKhFprVBUkagGwDsA66lWl909SPjEPDqs4HP2ICeuVq4ZnOvtwUR+k
+	6tDl0NsPKGHU0p/IbxYG0OevcLN3tHYw1otW1+NXLtBQxYfztGJuvvmikco4kfHnblHoQSVazJN
+	pLBaUvSZi
+X-Google-Smtp-Source: AGHT+IFqE4TLwQa2Dg4INaDzax/i5SEZyAIrYbIrg5js+SzvBWKKp0IE8nnP0ztQ5rWllvG2RHp5xA==
+X-Received: by 2002:a17:90b:5290:b0:2fe:ba82:ca5 with SMTP id 98e67ed59e1d1-2ff7ce93e3dmr834349a91.11.1741290079511;
+        Thu, 06 Mar 2025 11:41:19 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff693746b9sm1643765a91.27.2025.03.06.11.41.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 11:41:18 -0800 (PST)
+Message-ID: <13093957-0457-4bda-b807-2fac6f01a80b@broadcom.com>
+Date: Thu, 6 Mar 2025 11:41:15 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 01/14] net: bcmgenet: bcmgenet_hw_params clean up
+To: Doug Berger <opendmb@gmail.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250306192643.2383632-1-opendmb@gmail.com>
+ <20250306192643.2383632-2-opendmb@gmail.com>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <20250306192643.2383632-2-opendmb@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Em sex, 2025-02-28 =C3=A0s 20:40 +0300, Dan Carpenter escreveu:
-> On Fri, Feb 28, 2025 at 01:23:54PM -0300, Gabriel Lima Luz wrote:
-> > Adhere to Linux kernel coding style.
-> >=20
-> > Reported by checkpatch:
-> >=20
-> > CHECK: Avoid CamelCase
-> >=20
-> > Signed-off-by: Gabriel Lima Luz <lima.gabriel.luz@gmail.com>
-> > ---
-> > =C2=A0drivers/staging/sm750fb/ddk750_power.h | 8 ++++----
-> > =C2=A01 file changed, 4 insertions(+), 4 deletions(-)
-> >=20
-> > diff --git a/drivers/staging/sm750fb/ddk750_power.h
-> > b/drivers/staging/sm750fb/ddk750_power.h
-> > index 63c9e8b6ffb3..33e852fe6949 100644
-> > --- a/drivers/staging/sm750fb/ddk750_power.h
-> > +++ b/drivers/staging/sm750fb/ddk750_power.h
-> > @@ -3,10 +3,10 @@
-> > =C2=A0#define DDK750_POWER_H__
-> > =C2=A0
-> > =C2=A0enum dpms {
-> > -	crtDPMS_ON =3D 0x0,
-> > -	crtDPMS_STANDBY =3D 0x1,
-> > -	crtDPMS_SUSPEND =3D 0x2,
-> > -	crtDPMS_OFF =3D 0x3,
-> > +	crt_DPMS_ON =3D 0x0,
-> > +	crt_DPMS_STANDBY =3D 0x1,
-> > +	crt_DPMS_SUSPEND =3D 0x2,
-> > +	crt_DPMS_OFF =3D 0x3,
-> > =C2=A0};
-> > =C2=A0
->=20
-> It seems these are not used.=C2=A0 Just delete them.
->=20
-> regards,
-> dan carpenter
->=20
-The dpms enum is used in the definition of the=20
-ddk750_set_dpms function in ddk750_power.h file and
-this function is called in ddk750_display.c on line 158.
+On 3/6/25 11:26, Doug Berger wrote:
+> The entries of the bcmgenet_hw_params array are broken out to
+> remove unused and duplicate entries and are made read only since
+> they should not change for a specific version of the GENET
+> hardware.
+> 
+> Signed-off-by: Doug Berger <opendmb@gmail.com>
 
-If I were to delete it, what changes should I make to=20
-the function mentioned above ?=20
-
-this is my first contribution, thanks for all the help.
-
-best regards,
-Gabriel Lima
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
