@@ -1,368 +1,861 @@
-Return-Path: <linux-kernel+bounces-549577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4123EA55415
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:07:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00885A5541A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:07:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4608B1897468
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:05:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6093A1898ECF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713F326D5A7;
-	Thu,  6 Mar 2025 18:03:28 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A86113AA38;
+	Thu,  6 Mar 2025 18:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="PTz3C3ge"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2040.outbound.protection.outlook.com [40.107.94.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EA7026BD9D
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 18:03:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741284207; cv=none; b=ZyV7duugFc7MDyozyZYA9FDGh4mKiL2vzPdHjN0pN4dNzooLoU7SoQ52z4tar5IVExDKz8WNXiGBlY8zGUQICgcKltmIMZmNWvCYfO/fCWDqDyxdj2pdLu5b8yx7GjP8A3pwcdbHinmOy/D2p839/cglnWdt/q9gWA2qNP1iOsI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741284207; c=relaxed/simple;
-	bh=cuP/vScxGtaMqppW/h6NaC/dlve9qOgtjc8hq4kp0AU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=WMgGZ5Cm0KJL/4x6K0BPPChVozIhFK2hzyiYpyv/lWXP6hsTqSXfrBFZgAZqQ91qsOlbDbnFrKqQNgCkxqEIyTEw2TtyyCUVlcvv5/T57/ROkkihpjSE5Ra0dkSbMwhXl5NoEgDqOfGgyxsdRvYRGl4qdlWa3bobdnN+oZdm/34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d43621bb7eso11610235ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 10:03:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741284204; x=1741889004;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ifMmxd60Hb7OPYrM+DTw5Np2I8L4Y/29uTi+Rh8hpQk=;
-        b=wMVgbMZhMuz+aEBHXbYmdhY3+OOu+sRfBfPIc+VpEONh9YgoQ4f2eV8zvSvlCt3jAO
-         D3fqTU1csW7tiS7ZxwzdpF/5Y2uER4jC6hzDH1dFtIHctdYOuBw9pZuqHmDTv/sfPVlm
-         zq+aLF96qDcTkfhBRpHI2QwZqvrytHzwugHOt6Uz6mdcN5/rP28V7j+pS/8FMdAVw/N/
-         NVaEOsZqtiPM2FhfXHZCL59zEwjRh7vLAHP1pDyySOVINulnoSsXi8L7YM+8a8bfyg1q
-         VwirHD4ZVJqjjUaSZ3z0+kEraHpg4cd7MeIzlgezXatAVfYL8OPvbc0iqPH5gLTk5Arl
-         GawQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXCnOAJRmEEGhyT/8G1XlO4GCjZqfYbzC4kMJUYbvg54K1Pco75BmS4NRvtllyWhOmPkrFtm5vlGpZdFrw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVty41bLUQ2/LJZeqhuBmaoLq/9ZvEo3byCf1NLLZ7yoQlrGEP
-	gHG1L/7Un3A9t6Rs0MjmO/bS/rxfzqrcLuWLOe57JVORbZXlGdj0DdsXWYzzW8MfQmdBS7lcZL4
-	E8MTbRMYGfs4SJoq2cV4BlINNN/1qhCuXM/NR6KsbMC6bPQV+B/3DlfE=
-X-Google-Smtp-Source: AGHT+IH2jcLXMLkyBeHftLRNEhEqcOKnH3GBH44/MMuDSOzLLAffyp83OzyUQrUSl6gX6bDAGCUVTqi49i03ZOHfxlIz0BMknDIa
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE177211715
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 18:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741284238; cv=fail; b=UdwpNZ3zURSTYJdod4bKEtrnqLBnDbHtDPyDljWoj2YGWZnM7O/hHglycEmDpzI6oQ+oOV8I7OMePwBBPgzbXSbRtX0Ey9nPj1626qN/a9gCgOUfSInXiNe9qvkDCUqGrtNUC2oUsQDdMzIx5AWAdby1693RpWxQNQClVjTVLT0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741284238; c=relaxed/simple;
+	bh=ONcsTTC/+aaXSNRALTIZPEtDxLFIGG4TRR4tzLOspRY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a78076hhUTWwz61n+TWtVWE0BWScWBomHGjxfaEll5PMXU2UpHaD6Dyr+YSNU2mnPt+AKa2ZwXcgjSrox7aBo1MOK4IqJ8VFgw2pkLXuQ/9IDZKI29c5kuLWZlTo4wJe2JIGT/1VAtXYDM1JeSvSLwRRl7ksCb7vquvPs3cQhCQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=PTz3C3ge; arc=fail smtp.client-ip=40.107.94.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=lrDUTjsHK9wUyI4zEyV/vDASHWApZoq+zXBAkX9ttPeQu/LRZRLyhmQkce9rJ2NcbW+pUlTBXshtT/T8ge09mXnYWTrD6ilaO69Kt7SzJD0DTm9N5GaFH7b5yY3evOQoSXgz4QP1A2tnauP+6BTMENPSK1TB9Y7Ua6AV4RoWQnjfRlhZoEUX6Fl7X9pFnVKrk3rEc6aNvDIvlHE09w3qiQAFl3dTcyg9H9a0Lc4nNNzLgl/u0bPhpeG2thSKxMcWqtOiFqdONM46lR8iqmsgUkpFBhPSPZkrMN8fdy1cJetk6gvgmutOJQPyXXPcy1yctTpcapuS1aCJyf6SOnqqew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TCELzq/NgO7QRgDVHKFGM0oL7TSob1oiiNtlARsLqM8=;
+ b=o/5w7gXmSN1oQZrKhGX7Zzy+Wza461h77c6TAb6y72oT0NKFVHPqD6D+ebAuBjuITwXVruLQ5GHyziEvGMHceuegZJ8ELAiy9KHTOu72Atc5h+9JkFwF9xEofKQnBVGBQht9ueEOlQk8Jbtjrox3QJGOt6e2pbhEAhUyttq936xAd8Dtkuq2WYGWr2LYz+7qCeWMBd344fAv9V/RAdmtRvkXHOrFyDERcX/mNbbNDbwl3WH0Vv8oLsy1GYMB7PrzupH0WmrZPXoO2/U0j8nldACn/Kbav8e3KhOjxJJ/X8FJr+62Gp6gUJiLXWI1U6d8+WEj9bZdDrcMqO0H1eLA4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TCELzq/NgO7QRgDVHKFGM0oL7TSob1oiiNtlARsLqM8=;
+ b=PTz3C3gelaYqfpRdOOJB6TNwtr0sM1/zoy01L3vefNRPBdxSFVxbCmaJRKnbRnMihz9jgiqzLxtTewPwVq1qYQVXPjAxd+wUbUWUZStpPgGOnZdMBL39psLGaoEzycGVl+3HPIO6bEk2aRxPwQrHXfH3Vi/xMmRW6TY3kdfvJEA=
+Received: from SJ0PR03CA0153.namprd03.prod.outlook.com (2603:10b6:a03:338::8)
+ by MW6PR12MB8957.namprd12.prod.outlook.com (2603:10b6:303:23a::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.18; Thu, 6 Mar
+ 2025 18:03:52 +0000
+Received: from BY1PEPF0001AE1D.namprd04.prod.outlook.com
+ (2603:10b6:a03:338:cafe::62) by SJ0PR03CA0153.outlook.office365.com
+ (2603:10b6:a03:338::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.28 via Frontend Transport; Thu,
+ 6 Mar 2025 18:03:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BY1PEPF0001AE1D.mail.protection.outlook.com (10.167.242.106) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8511.15 via Frontend Transport; Thu, 6 Mar 2025 18:03:52 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 6 Mar
+ 2025 12:03:51 -0600
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 6 Mar
+ 2025 12:03:51 -0600
+Received: from xsjlizhih51.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Thu, 6 Mar 2025 12:03:50 -0600
+From: Lizhi Hou <lizhi.hou@amd.com>
+To: <ogabbay@kernel.org>, <quic_jhugo@quicinc.com>,
+	<jacek.lawrynowicz@linux.intel.com>, <mario.limonciello@amd.com>,
+	<dri-devel@lists.freedesktop.org>
+CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
+	<min.ma@amd.com>, <max.zhen@amd.com>, <sonal.santan@amd.com>,
+	<king.tam@amd.com>
+Subject: [PATCH V1] accel/amdxdna: Add BO import and export
+Date: Thu, 6 Mar 2025 10:03:34 -0800
+Message-ID: <20250306180334.3843850-1-lizhi.hou@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12e8:b0:3d3:fa69:6755 with SMTP id
- e9e14a558f8ab-3d44192a194mr5616395ab.5.1741284204483; Thu, 06 Mar 2025
- 10:03:24 -0800 (PST)
-Date: Thu, 06 Mar 2025 10:03:24 -0800
-In-Reply-To: <6761bbbd.050a0220.29fcd0.0075.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c9e36c.050a0220.15b4b9.0053.GAE@google.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_connect_cfm
-From: syzbot <syzbot+e9abaabc441d3dd18735@syzkaller.appspotmail.com>
-To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: lizhi.hou@amd.com does not designate
+ permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BY1PEPF0001AE1D:EE_|MW6PR12MB8957:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9e37c32d-b11a-42eb-e892-08dd5cd94101
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?S76EgRwBG31kRn7hB983LhUBayalIl+cQUYG4Jmc6MA3FfcRBdqGBBzC5zDR?=
+ =?us-ascii?Q?Pofa6zLYBxHhyHN9bQqcNYoDAGEBhtdY3g78z8wmivuwpzVb8vtRk8lcvFz6?=
+ =?us-ascii?Q?aygUUU5NtcvM6lDrwj5Kjk84buhOU+uQ2XvHjUA8Dnlwl57FI8NHrcAHC1cm?=
+ =?us-ascii?Q?mDVvMU5CDAL/VkAuq6i56nx0ja7PuptsxX8VU0FS/505GETReqccaGOBcIYm?=
+ =?us-ascii?Q?5El3X7jGnMa9t6wSZVPHvmR5bLNtZGiATPS6xBzMRTQGLzX6fnVi3W6rE4x6?=
+ =?us-ascii?Q?yD7NcG6L6D4AR/eEkhOHXWYzCMHiMHW+oHjtSXhteHfdXB12A8527dYMQxlF?=
+ =?us-ascii?Q?xAFSfnpI2QChFeP2d62K5Mzwg2UYR7JApwoBcOcKALPoj9xSi7oxgjm8ZDDZ?=
+ =?us-ascii?Q?KKQC72l9atUZYdxmxd6TsJQ4IYsnVORWi4nQ6D95YP9Ye+/kJ277ndY9Uo8J?=
+ =?us-ascii?Q?I46Tt8OiYkVq9Ik7vzyGr0WQmE/P4/yVRbELZXiI/svN9uJle58edTwCVzYc?=
+ =?us-ascii?Q?rFsGYpX3jXuCGSkGO3N81pV4yTnsoEdC57M5hCKgSSdW1WaAJr11JvAsj41S?=
+ =?us-ascii?Q?pXPKTzaG7LM39dTxSp+f4Jt8BLw0BKyoLJ8BSIMyMefqzwfMq1yOyTxrqGTn?=
+ =?us-ascii?Q?xtZwVef8MEf9WgF7Il4OvWyqIBm5H9wh5k9ToASampZgbwEnnvbe9Efkfpbc?=
+ =?us-ascii?Q?dhpArNRsDe/HouDSRzkZCY6zZICbg8YqgcigSPrzfguK1YSCKH0Fi/9c6jJl?=
+ =?us-ascii?Q?dBvuH1XYjMPBe8Mp4spRv+v8jOVxJHmYdXEjojQb5nJ6+VcUzYjkTG1QD47y?=
+ =?us-ascii?Q?/R4UMolLYCNQ6K27c5/OXlr/7P5ijexNtVrRXAfgj9VXZQfIDNKuiZIYnHgG?=
+ =?us-ascii?Q?u5IVdZPFdVJ5ZEWPWy0TvNMJr4aROMDq4qPxcBde4XPfY2VXi0hMrmOlAo4s?=
+ =?us-ascii?Q?ty/1Oyez2/tyI7T/Q7DTg0J23see1okd12VjmxaTNrXzbpid6WsOIRd0zHGd?=
+ =?us-ascii?Q?sGIn7EXod5hILfHPq/KwAgyunjr2GBRVJZt+gbvOF3LcokBnvcph2TZA2GSz?=
+ =?us-ascii?Q?OxPWLOdcLXQ8jM83mqPL77S0oLUFdYp+AdkOwXIXde+hbzTWV9iQqnby784+?=
+ =?us-ascii?Q?hu2SEeOXYKQWjb4fDEhHosUbDfNbM+x0jN4bP6fBl7qmUySCAsMx5AywMwWK?=
+ =?us-ascii?Q?himvSf3UbdLYp/n4ydC+3AdYVz/UqujNhDEy2bGHN+iIA3Y5Tzojf+y4cwRf?=
+ =?us-ascii?Q?IgaYzQcbSWVXIdMBBCR+iZHQ0DJFkiqJFOp4UCFR9cExCAboVh8nEEV7VgFq?=
+ =?us-ascii?Q?N9gQYJXzDpNyj0ilk9BbzxBmLzz29m5xjoAOHqR3RS7WG8Pz6wX01QxoMK/o?=
+ =?us-ascii?Q?+A8WwQ5srGHKq2CGDlYuqfMgdETDDojNLBR09SIZvBscL6bbYztLQ7OT6il5?=
+ =?us-ascii?Q?eLRtUKqvKPnQTsjRi1uU8Um4OVcnUO5Tkx8zb1XH+8GE4qVQPtxnfFNysX4R?=
+ =?us-ascii?Q?rav9l4AV43JXnUE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 18:03:52.3217
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e37c32d-b11a-42eb-e892-08dd5cd94101
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BY1PEPF0001AE1D.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8957
 
-syzbot has found a reproducer for the following issue on:
+Add amdxdna_gem_prime_export() and amdxdna_gem_prime_import() for BO
+import and export. Register mmu notifier for imported BO as well. When
+MMU_NOTIFIER_UNMAP event is received, queue work to remove the notifier.
 
-HEAD commit:    f66d6acccbc0 Merge tag 'x86_urgent_for_v6.12' of git://git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1666b2e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ca2f08f822652bd0
-dashboard link: https://syzkaller.appspot.com/bug?extid=e9abaabc441d3dd18735
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+The same BO could be mapped multiple times if it is exported and imported
+by an application. Use a link list to track VMAs the BO been mapped.
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5b28ec7d6aaa/disk-f66d6acc.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/1999546fff71/vmlinux-f66d6acc.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ef848d42ab19/bzImage-f66d6acc.xz
-
-Bisection is inconclusive: the issue happens on the oldest tested release.
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=147adb78580000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=167adb78580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=127adb78580000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e9abaabc441d3dd18735@syzkaller.appspotmail.com
-
-kobject: kobject_add_internal failed for hci5:201 with -EEXIST, don't try to register things with the same name in the same directory.
-Bluetooth: hci5: failed to register connection device
-==================================================================
-BUG: KASAN: slab-use-after-free in l2cap_conn_ready net/bluetooth/l2cap_core.c:1619 [inline]
-BUG: KASAN: slab-use-after-free in l2cap_connect_cfm+0xdbe/0xf80 net/bluetooth/l2cap_core.c:7278
-Read of size 8 at addr ffff8880780f0480 by task kworker/u9:3/5950
-
-CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Not tainted 6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Workqueue: hci5 hci_rx_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0xc3/0x620 mm/kasan/report.c:488
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- l2cap_conn_ready net/bluetooth/l2cap_core.c:1619 [inline]
- l2cap_connect_cfm+0xdbe/0xf80 net/bluetooth/l2cap_core.c:7278
- hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
- le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
- hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
- hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
- hci_event_func net/bluetooth/hci_event.c:7440 [inline]
- hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
- hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
- process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c4/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Allocated by task 5950:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
- kmalloc_noprof include/linux/slab.h:878 [inline]
- kzalloc_noprof include/linux/slab.h:1014 [inline]
- l2cap_chan_create+0x44/0x920 net/bluetooth/l2cap_core.c:449
- l2cap_sock_alloc.constprop.0+0xf3/0x180 net/bluetooth/l2cap_sock.c:1886
- l2cap_sock_new_connection_cb+0x101/0x240 net/bluetooth/l2cap_sock.c:1468
- l2cap_connect_cfm+0x4cc/0xf80 net/bluetooth/l2cap_core.c:7261
- hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
- le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
- hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
- hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
- hci_event_func net/bluetooth/hci_event.c:7440 [inline]
- hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
- hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
- process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c4/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Freed by task 6070:
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_save_track+0x14/0x30 mm/kasan/common.c:68
- kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:230 [inline]
- slab_free_hook mm/slub.c:2342 [inline]
- slab_free mm/slub.c:4579 [inline]
- kfree+0x14f/0x4b0 mm/slub.c:4727
- l2cap_chan_destroy net/bluetooth/l2cap_core.c:495 [inline]
- kref_put include/linux/kref.h:65 [inline]
- l2cap_chan_put+0x216/0x2c0 net/bluetooth/l2cap_core.c:519
- l2cap_sock_cleanup_listen+0x4d/0x2a0 net/bluetooth/l2cap_sock.c:1451
- l2cap_sock_release+0x5c/0x210 net/bluetooth/l2cap_sock.c:1411
- __sock_release+0xb3/0x270 net/socket.c:658
- sock_close+0x1c/0x30 net/socket.c:1426
- __fput+0x3f9/0xb60 fs/file_table.c:431
- task_work_run+0x151/0x250 kernel/task_work.c:239
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
- do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff8880780f0000
- which belongs to the cache kmalloc-2k of size 2048
-The buggy address is located 1152 bytes inside of
- freed 2048-byte region [ffff8880780f0000, ffff8880780f0800)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff8880780f6000 pfn:0x780f0
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801b042000 ffffea0001292c00 0000000000000002
-raw: ffff8880780f6000 0000000080080003 00000001f5000000 0000000000000000
-head: 00fff00000000040 ffff88801b042000 ffffea0001292c00 0000000000000002
-head: ffff8880780f6000 0000000080080003 00000001f5000000 0000000000000000
-head: 00fff00000000003 ffffea0001e03c01 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 2965, tgid 2965 (kworker/u8:7), ts 97728781507, free_ts 97577158223
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
- prep_new_page mm/page_alloc.c:1564 [inline]
- get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
- __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4751
- alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
- alloc_slab_page mm/slub.c:2412 [inline]
- allocate_slab mm/slub.c:2578 [inline]
- new_slab+0x2c9/0x410 mm/slub.c:2631
- ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
- __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
- __slab_alloc_node mm/slub.c:3961 [inline]
- slab_alloc_node mm/slub.c:4122 [inline]
- __do_kmalloc_node mm/slub.c:4263 [inline]
- __kmalloc_node_track_caller_noprof+0x355/0x430 mm/slub.c:4283
- kmalloc_reserve+0xef/0x2c0 net/core/skbuff.c:609
- __alloc_skb+0x164/0x380 net/core/skbuff.c:678
- alloc_skb include/linux/skbuff.h:1322 [inline]
- nlmsg_new include/net/netlink.h:1015 [inline]
- rtmsg_ifinfo_build_skb+0x81/0x280 net/core/rtnetlink.c:4099
- unregister_netdevice_many_notify+0x983/0x1e50 net/core/dev.c:11411
- cleanup_net+0x58c/0xb40 net/core/net_namespace.c:621
- process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c4/0x3a0 kernel/kthread.c:389
-page last free pid 2965 tgid 2965 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_unref_page+0x661/0x1080 mm/page_alloc.c:2657
- __folio_put+0x32a/0x450 mm/swap.c:112
- kvfree+0x47/0x50 mm/util.c:701
- unix_net_exit+0x61/0xb0 net/unix/af_unix.c:3708
- ops_exit_list+0xb3/0x180 net/core/net_namespace.c:173
- cleanup_net+0x5b7/0xb40 net/core/net_namespace.c:626
- process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c4/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Memory state around the buggy address:
- ffff8880780f0380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880780f0400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff8880780f0480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                   ^
- ffff8880780f0500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880780f0580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-==================================================================
-BUG: KASAN: wild-memory-access in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-BUG: KASAN: wild-memory-access in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
-BUG: KASAN: wild-memory-access in l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
-BUG: KASAN: wild-memory-access in l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
-BUG: KASAN: wild-memory-access in l2cap_connect_cfm+0x7eb/0xf80 net/bluetooth/l2cap_core.c:7278
-Read of size 4 at addr deacfffffffffc8c by task kworker/u9:3/5950
-
-CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Tainted: G    B              6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Workqueue: hci5 hci_rx_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- kasan_report+0xd9/0x110 mm/kasan/report.c:601
- check_region_inline mm/kasan/generic.c:183 [inline]
- kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
- instrument_atomic_read include/linux/instrumented.h:68 [inline]
- atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
- l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
- l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
- l2cap_connect_cfm+0x7eb/0xf80 net/bluetooth/l2cap_core.c:7278
- hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
- le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
- hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
- hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
- hci_event_func net/bluetooth/hci_event.c:7440 [inline]
- hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
- hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
- process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c4/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-==================================================================
-Oops: general protection fault, probably for non-canonical address 0xfbd59bffffffff91: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: maybe wild-memory-access in range [0xdeacfffffffffc88-0xdeacfffffffffc8f]
-CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Tainted: G    B              6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
-Tainted: [B]=BAD_PAGE
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-Workqueue: hci5 hci_rx_work
-RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
-RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
-RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
-RIP: 0010:l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
-RIP: 0010:l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
-RIP: 0010:l2cap_connect_cfm+0x7f2/0xf80 net/bluetooth/l2cap_core.c:7278
-Code: 80 fb ff ff 49 39 c5 0f 84 29 01 00 00 e8 26 a0 6e f7 49 8d 6f 0c be 04 00 00 00 48 89 ef e8 b5 80 cf f7 48 89 e8 48 c1 e8 03 <0f> b6 14 18 48 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 c5
-RSP: 0018:ffffc90003e0f878 EFLAGS: 00010213
-RAX: 1bd59fffffffff91 RBX: dffffc0000000000 RCX: ffffffff814e821f
-RDX: ffff888030808000 RSI: ffffffff81ee2f8e RDI: 0000000000000007
-RBP: deacfffffffffc8c R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: ffff88804779003b
-R13: ffff88806c83d2c0 R14: 0000000000000080 R15: deacfffffffffc80
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055558a5ef5c8 CR3: 000000007bf02000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
- le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
- hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
- hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
- hci_event_func net/bluetooth/hci_event.c:7440 [inline]
- hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
- hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
- process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c4/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
-RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
-RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
-RIP: 0010:l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
-RIP: 0010:l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
-RIP: 0010:l2cap_connect_cfm+0x7f2/0xf80 net/bluetooth/l2cap_core.c:7278
-Code: 80 fb ff ff 49 39 c5 0f 84 29 01 00 00 e8 26 a0 6e f7 49 8d 6f 0c be 04 00 00 00 48 89 ef e8 b5 80 cf f7 48 89 e8 48 c1 e8 03 <0f> b6 14 18 48 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 c5
-RSP: 0018:ffffc90003e0f878 EFLAGS: 00010213
-RAX: 1bd59fffffffff91 RBX: dffffc0000000000 RCX: ffffffff814e821f
-RDX: ffff888030808000 RSI: ffffffff81ee2f8e RDI: 0000000000000007
-RBP: deacfffffffffc8c R08: 0000000000000007 R09: 0000000000000000
-R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: ffff88804779003b
-R13: ffff88806c83d2c0 R14: 0000000000000080 R15: deacfffffffffc80
-FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055558a5ef5c8 CR3: 000000007bf02000 CR4: 0000000000350ef0
-----------------
-Code disassembly (best guess), 4 bytes skipped:
-   0:	49 39 c5             	cmp    %rax,%r13
-   3:	0f 84 29 01 00 00    	je     0x132
-   9:	e8 26 a0 6e f7       	call   0xf76ea034
-   e:	49 8d 6f 0c          	lea    0xc(%r15),%rbp
-  12:	be 04 00 00 00       	mov    $0x4,%esi
-  17:	48 89 ef             	mov    %rbp,%rdi
-  1a:	e8 b5 80 cf f7       	call   0xf7cf80d4
-  1f:	48 89 e8             	mov    %rbp,%rax
-  22:	48 c1 e8 03          	shr    $0x3,%rax
-* 26:	0f b6 14 18          	movzbl (%rax,%rbx,1),%edx <-- trapping instruction
-  2a:	48 89 e8             	mov    %rbp,%rax
-  2d:	83 e0 07             	and    $0x7,%eax
-  30:	83 c0 03             	add    $0x3,%eax
-  33:	38 d0                	cmp    %dl,%al
-  35:	7c 08                	jl     0x3f
-  37:	84 d2                	test   %dl,%dl
-  39:	0f                   	.byte 0xf
-  3a:	85 c5                	test   %eax,%ebp
-
-
+Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
 ---
+ drivers/accel/amdxdna/TODO              |   1 -
+ drivers/accel/amdxdna/aie2_ctx.c        |  65 +++--
+ drivers/accel/amdxdna/amdxdna_gem.c     | 320 ++++++++++++++++++++----
+ drivers/accel/amdxdna/amdxdna_gem.h     |  21 +-
+ drivers/accel/amdxdna/amdxdna_pci_drv.c |  11 +-
+ drivers/accel/amdxdna/amdxdna_pci_drv.h |   2 +
+ 6 files changed, 341 insertions(+), 79 deletions(-)
+
+diff --git a/drivers/accel/amdxdna/TODO b/drivers/accel/amdxdna/TODO
+index 5119bccd1917..ad8ac6e315b6 100644
+--- a/drivers/accel/amdxdna/TODO
++++ b/drivers/accel/amdxdna/TODO
+@@ -1,3 +1,2 @@
+-- Add import and export BO support
+ - Add debugfs support
+ - Add debug BO support
+diff --git a/drivers/accel/amdxdna/aie2_ctx.c b/drivers/accel/amdxdna/aie2_ctx.c
+index 00d215ac866e..e04549f64d69 100644
+--- a/drivers/accel/amdxdna/aie2_ctx.c
++++ b/drivers/accel/amdxdna/aie2_ctx.c
+@@ -758,27 +758,42 @@ int aie2_hwctx_config(struct amdxdna_hwctx *hwctx, u32 type, u64 value, void *bu
+ static int aie2_populate_range(struct amdxdna_gem_obj *abo)
+ {
+ 	struct amdxdna_dev *xdna = to_xdna_dev(to_gobj(abo)->dev);
+-	struct mm_struct *mm = abo->mem.notifier.mm;
+-	struct hmm_range range = { 0 };
++	struct amdxdna_umap *mapp;
+ 	unsigned long timeout;
++	struct mm_struct *mm;
++	bool found;
+ 	int ret;
+ 
+-	XDNA_INFO_ONCE(xdna, "populate memory range %llx size %lx",
+-		       abo->mem.userptr, abo->mem.size);
+-	range.notifier = &abo->mem.notifier;
+-	range.start = abo->mem.userptr;
+-	range.end = abo->mem.userptr + abo->mem.size;
+-	range.hmm_pfns = abo->mem.pfns;
+-	range.default_flags = HMM_PFN_REQ_FAULT;
++	timeout = jiffies + msecs_to_jiffies(HMM_RANGE_DEFAULT_TIMEOUT);
++again:
++	found = false;
++	down_write(&xdna->notifier_lock);
++	list_for_each_entry(mapp, &abo->mem.umap_list, node) {
++		if (mapp->invalid) {
++			found = true;
++			break;
++		}
++	}
+ 
+-	if (!mmget_not_zero(mm))
++	if (!found) {
++		abo->mem.map_invalid = false;
++		up_write(&xdna->notifier_lock);
++		return 0;
++	}
++	kref_get(&mapp->refcnt);
++	up_write(&xdna->notifier_lock);
++
++	XDNA_DBG(xdna, "populate memory range %lx %lx",
++		 mapp->vma->vm_start, mapp->vma->vm_end);
++	mm = mapp->notifier.mm;
++	if (!mmget_not_zero(mm)) {
++		amdxdna_umap_put(mapp);
+ 		return -EFAULT;
++	}
+ 
+-	timeout = jiffies + msecs_to_jiffies(HMM_RANGE_DEFAULT_TIMEOUT);
+-again:
+-	range.notifier_seq = mmu_interval_read_begin(&abo->mem.notifier);
++	mapp->range.notifier_seq = mmu_interval_read_begin(&mapp->notifier);
+ 	mmap_read_lock(mm);
+-	ret = hmm_range_fault(&range);
++	ret = hmm_range_fault(&mapp->range);
+ 	mmap_read_unlock(mm);
+ 	if (ret) {
+ 		if (time_after(jiffies, timeout)) {
+@@ -786,21 +801,27 @@ static int aie2_populate_range(struct amdxdna_gem_obj *abo)
+ 			goto put_mm;
+ 		}
+ 
+-		if (ret == -EBUSY)
++		if (ret == -EBUSY) {
++			amdxdna_umap_put(mapp);
+ 			goto again;
++		}
+ 
+ 		goto put_mm;
+ 	}
+ 
+-	down_read(&xdna->notifier_lock);
+-	if (mmu_interval_read_retry(&abo->mem.notifier, range.notifier_seq)) {
+-		up_read(&xdna->notifier_lock);
++	down_write(&xdna->notifier_lock);
++	if (mmu_interval_read_retry(&mapp->notifier, mapp->range.notifier_seq)) {
++		up_write(&xdna->notifier_lock);
++		amdxdna_umap_put(mapp);
+ 		goto again;
+ 	}
+-	abo->mem.map_invalid = false;
+-	up_read(&xdna->notifier_lock);
++	mapp->invalid = false;
++	up_write(&xdna->notifier_lock);
++	amdxdna_umap_put(mapp);
++	goto again;
+ 
+ put_mm:
++	amdxdna_umap_put(mapp);
+ 	mmput(mm);
+ 	return ret;
+ }
+@@ -908,10 +929,6 @@ void aie2_hmm_invalidate(struct amdxdna_gem_obj *abo,
+ 	struct drm_gem_object *gobj = to_gobj(abo);
+ 	long ret;
+ 
+-	down_write(&xdna->notifier_lock);
+-	abo->mem.map_invalid = true;
+-	mmu_interval_set_seq(&abo->mem.notifier, cur_seq);
+-	up_write(&xdna->notifier_lock);
+ 	ret = dma_resv_wait_timeout(gobj->resv, DMA_RESV_USAGE_BOOKKEEP,
+ 				    true, MAX_SCHEDULE_TIMEOUT);
+ 	if (!ret || ret == -ERESTARTSYS)
+diff --git a/drivers/accel/amdxdna/amdxdna_gem.c b/drivers/accel/amdxdna/amdxdna_gem.c
+index 606433d73236..abd7f9c99442 100644
+--- a/drivers/accel/amdxdna/amdxdna_gem.c
++++ b/drivers/accel/amdxdna/amdxdna_gem.c
+@@ -9,7 +9,10 @@
+ #include <drm/drm_gem.h>
+ #include <drm/drm_gem_shmem_helper.h>
+ #include <drm/gpu_scheduler.h>
++#include <linux/dma-buf.h>
++#include <linux/dma-direct.h>
+ #include <linux/iosys-map.h>
++#include <linux/pagemap.h>
+ #include <linux/vmalloc.h>
+ 
+ #include "amdxdna_ctx.h"
+@@ -18,6 +21,8 @@
+ 
+ #define XDNA_MAX_CMD_BO_SIZE	SZ_32K
+ 
++MODULE_IMPORT_NS("DMA_BUF");
++
+ static int
+ amdxdna_gem_insert_node_locked(struct amdxdna_gem_obj *abo, bool use_vmap)
+ {
+@@ -94,18 +99,28 @@ static bool amdxdna_hmm_invalidate(struct mmu_interval_notifier *mni,
+ 				   const struct mmu_notifier_range *range,
+ 				   unsigned long cur_seq)
+ {
+-	struct amdxdna_gem_obj *abo = container_of(mni, struct amdxdna_gem_obj,
+-						   mem.notifier);
+-	struct amdxdna_dev *xdna = to_xdna_dev(to_gobj(abo)->dev);
++	struct amdxdna_umap *mapp = container_of(mni, struct amdxdna_umap, notifier);
++	struct amdxdna_gem_obj *abo = mapp->abo;
++	struct amdxdna_dev *xdna;
+ 
+-	XDNA_DBG(xdna, "Invalid range 0x%llx, 0x%lx, type %d",
+-		 abo->mem.userptr, abo->mem.size, abo->type);
++	xdna = to_xdna_dev(to_gobj(abo)->dev);
++	XDNA_DBG(xdna, "Invalidating range 0x%lx, 0x%lx, type %d",
++		 mapp->vma->vm_start, mapp->vma->vm_end, abo->type);
+ 
+ 	if (!mmu_notifier_range_blockable(range))
+ 		return false;
+ 
++	down_write(&xdna->notifier_lock);
++	abo->mem.map_invalid = true;
++	mapp->invalid = true;
++	mmu_interval_set_seq(&mapp->notifier, cur_seq);
++	up_write(&xdna->notifier_lock);
++
+ 	xdna->dev_info->ops->hmm_invalidate(abo, cur_seq);
+ 
++	if (range->event == MMU_NOTIFY_UNMAP)
++		queue_work(xdna->notifier_wq, &mapp->hmm_unreg_work);
++
+ 	return true;
+ }
+ 
+@@ -113,104 +128,257 @@ static const struct mmu_interval_notifier_ops amdxdna_hmm_ops = {
+ 	.invalidate = amdxdna_hmm_invalidate,
+ };
+ 
+-static void amdxdna_hmm_unregister(struct amdxdna_gem_obj *abo)
++static void amdxdna_hmm_unregister(struct amdxdna_gem_obj *abo,
++				   struct vm_area_struct *vma)
+ {
+ 	struct amdxdna_dev *xdna = to_xdna_dev(to_gobj(abo)->dev);
++	struct amdxdna_umap *mapp;
+ 
+-	if (!xdna->dev_info->ops->hmm_invalidate)
+-		return;
++	down_read(&xdna->notifier_lock);
++	list_for_each_entry(mapp, &abo->mem.umap_list, node) {
++		if (mapp->vma == vma) {
++			queue_work(xdna->notifier_wq, &mapp->hmm_unreg_work);
++			break;
++		}
++	}
++	up_read(&xdna->notifier_lock);
++}
++
++static void amdxdna_umap_release(struct kref *ref)
++{
++	struct amdxdna_umap *mapp = container_of(ref, struct amdxdna_umap, refcnt);
++	struct vm_area_struct *vma = mapp->vma;
++	struct amdxdna_dev *xdna;
++
++	mmu_interval_notifier_remove(&mapp->notifier);
++	if (is_import_bo(mapp->abo) && vma->vm_file && vma->vm_file->f_mapping)
++		mapping_clear_unevictable(vma->vm_file->f_mapping);
++
++	xdna = to_xdna_dev(to_gobj(mapp->abo)->dev);
++	down_write(&xdna->notifier_lock);
++	list_del(&mapp->node);
++	up_write(&xdna->notifier_lock);
++
++	drm_gem_object_put(to_gobj(mapp->abo));
++	kvfree(mapp->range.hmm_pfns);
++	kfree(mapp);
++}
++
++void amdxdna_umap_put(struct amdxdna_umap *mapp)
++{
++	kref_put(&mapp->refcnt, amdxdna_umap_release);
++}
++
++static void amdxdna_hmm_unreg_work(struct work_struct *work)
++{
++	struct amdxdna_umap *mapp = container_of(work, struct amdxdna_umap,
++						 hmm_unreg_work);
+ 
+-	mmu_interval_notifier_remove(&abo->mem.notifier);
+-	kvfree(abo->mem.pfns);
+-	abo->mem.pfns = NULL;
++	amdxdna_umap_put(mapp);
+ }
+ 
+-static int amdxdna_hmm_register(struct amdxdna_gem_obj *abo, unsigned long addr,
+-				size_t len)
++static int amdxdna_hmm_register(struct amdxdna_gem_obj *abo,
++				struct vm_area_struct *vma)
+ {
+ 	struct amdxdna_dev *xdna = to_xdna_dev(to_gobj(abo)->dev);
++	unsigned long len = vma->vm_end - vma->vm_start;
++	unsigned long addr = vma->vm_start;
++	struct amdxdna_umap *mapp;
+ 	u32 nr_pages;
+ 	int ret;
+ 
+ 	if (!xdna->dev_info->ops->hmm_invalidate)
+ 		return 0;
+ 
+-	if (abo->mem.pfns)
+-		return -EEXIST;
++	mapp = kzalloc(sizeof(*mapp), GFP_KERNEL);
++	if (!mapp)
++		return -ENOMEM;
+ 
+ 	nr_pages = (PAGE_ALIGN(addr + len) - (addr & PAGE_MASK)) >> PAGE_SHIFT;
+-	abo->mem.pfns = kvcalloc(nr_pages, sizeof(*abo->mem.pfns),
+-				 GFP_KERNEL);
+-	if (!abo->mem.pfns)
+-		return -ENOMEM;
++	mapp->range.hmm_pfns = kvcalloc(nr_pages, sizeof(*mapp->range.hmm_pfns),
++					GFP_KERNEL);
++	if (!mapp->range.hmm_pfns) {
++		ret = -ENOMEM;
++		goto free_map;
++	}
+ 
+-	ret = mmu_interval_notifier_insert_locked(&abo->mem.notifier,
++	ret = mmu_interval_notifier_insert_locked(&mapp->notifier,
+ 						  current->mm,
+ 						  addr,
+ 						  len,
+ 						  &amdxdna_hmm_ops);
+ 	if (ret) {
+ 		XDNA_ERR(xdna, "Insert mmu notifier failed, ret %d", ret);
+-		kvfree(abo->mem.pfns);
++		goto free_pfns;
+ 	}
+-	abo->mem.userptr = addr;
+ 
++	mapp->range.notifier = &mapp->notifier;
++	mapp->range.start = vma->vm_start;
++	mapp->range.end = vma->vm_end;
++	mapp->range.default_flags = HMM_PFN_REQ_FAULT;
++	mapp->vma = vma;
++	mapp->abo = abo;
++	kref_init(&mapp->refcnt);
++	drm_gem_object_get(to_gobj(abo));
++
++	if (abo->mem.userptr == AMDXDNA_INVALID_ADDR)
++		abo->mem.userptr = addr;
++	INIT_WORK(&mapp->hmm_unreg_work, amdxdna_hmm_unreg_work);
++	if (is_import_bo(abo) && vma->vm_file && vma->vm_file->f_mapping)
++		mapping_set_unevictable(vma->vm_file->f_mapping);
++
++	down_write(&xdna->notifier_lock);
++	list_add_tail(&mapp->node, &abo->mem.umap_list);
++	up_write(&xdna->notifier_lock);
++
++	return 0;
++
++free_pfns:
++	kvfree(mapp->range.hmm_pfns);
++free_map:
++	kfree(mapp);
+ 	return ret;
+ }
+ 
++static int amdxdna_insert_pages(struct amdxdna_gem_obj *abo,
++				struct vm_area_struct *vma)
++{
++	struct amdxdna_dev *xdna = to_xdna_dev(to_gobj(abo)->dev);
++	unsigned long num_pages = vma_pages(vma);
++	unsigned long offset = 0;
++	int ret;
++
++	if (!is_import_bo(abo)) {
++		ret = drm_gem_shmem_mmap(&abo->base, vma);
++		if (ret) {
++			XDNA_ERR(xdna, "Failed shmem mmap %d", ret);
++			return ret;
++		}
++
++		/* The buffer is based on memory pages. Fix the flag. */
++		vm_flags_mod(vma, VM_MIXEDMAP, VM_PFNMAP);
++		ret = vm_insert_pages(vma, vma->vm_start, abo->base.pages,
++				      &num_pages);
++		if (ret) {
++			XDNA_ERR(xdna, "Failed insert pages %d", ret);
++			vma->vm_ops->close(vma);
++			return ret;
++		}
++
++		return 0;
++	}
++
++	vma->vm_private_data = NULL;
++	vma->vm_ops = NULL;
++	ret = dma_buf_mmap(to_gobj(abo)->dma_buf, vma, 0);
++	if (ret) {
++		XDNA_ERR(xdna, "Failed to mmap dma buf %d", ret);
++		return ret;
++	}
++
++	do {
++		vm_fault_t fault_ret;
++
++		fault_ret = handle_mm_fault(vma, vma->vm_start + offset,
++					    FAULT_FLAG_WRITE, NULL);
++		if (fault_ret & VM_FAULT_ERROR) {
++			vma->vm_ops->close(vma);
++			XDNA_ERR(xdna, "Fault in page failed");
++			return -EFAULT;
++		}
++
++		offset += PAGE_SIZE;
++	} while (--num_pages);
++
++	/* Drop the reference drm_gem_mmap_obj() acquired.*/
++	drm_gem_object_put(to_gobj(abo));
++
++	return 0;
++}
++
+ static int amdxdna_gem_obj_mmap(struct drm_gem_object *gobj,
+ 				struct vm_area_struct *vma)
+ {
++	struct amdxdna_dev *xdna = to_xdna_dev(gobj->dev);
+ 	struct amdxdna_gem_obj *abo = to_xdna_obj(gobj);
+-	unsigned long num_pages;
+ 	int ret;
+ 
+-	ret = amdxdna_hmm_register(abo, vma->vm_start, gobj->size);
++	ret = amdxdna_hmm_register(abo, vma);
+ 	if (ret)
+ 		return ret;
+ 
++	ret = amdxdna_insert_pages(abo, vma);
++	if (ret) {
++		XDNA_ERR(xdna, "Failed insert pages, ret %d", ret);
++		goto hmm_unreg;
++	}
++
++	XDNA_DBG(xdna, "BO map_offset 0x%llx type %d userptr 0x%lx size 0x%lx",
++		 drm_vma_node_offset_addr(&gobj->vma_node), abo->type,
++		 vma->vm_start, gobj->size);
++	return 0;
++
++hmm_unreg:
++	amdxdna_hmm_unregister(abo, vma);
++	return ret;
++}
++
++static int amdxdna_gem_dmabuf_mmap(struct dma_buf *dma_buf, struct vm_area_struct *vma)
++{
++	struct drm_gem_object *gobj = dma_buf->priv;
++	struct amdxdna_gem_obj *abo = to_xdna_obj(gobj);
++	unsigned long num_pages = vma_pages(vma);
++	int ret;
++
++	vma->vm_ops = &drm_gem_shmem_vm_ops;
++	vma->vm_private_data = gobj;
++
++	drm_gem_object_get(gobj);
+ 	ret = drm_gem_shmem_mmap(&abo->base, vma);
+ 	if (ret)
+-		goto hmm_unreg;
++		goto put_obj;
+ 
+-	num_pages = gobj->size >> PAGE_SHIFT;
+-	/* Try to insert the pages */
++	/* The buffer is based on memory pages. Fix the flag. */
+ 	vm_flags_mod(vma, VM_MIXEDMAP, VM_PFNMAP);
+-	ret = vm_insert_pages(vma, vma->vm_start, abo->base.pages, &num_pages);
++	ret = vm_insert_pages(vma, vma->vm_start, abo->base.pages,
++			      &num_pages);
+ 	if (ret)
+-		XDNA_ERR(abo->client->xdna, "Failed insert pages, ret %d", ret);
++		goto close_vma;
+ 
+ 	return 0;
+ 
+-hmm_unreg:
+-	amdxdna_hmm_unregister(abo);
++close_vma:
++	vma->vm_ops->close(vma);
++put_obj:
++	drm_gem_object_put(gobj);
+ 	return ret;
+ }
+ 
+-static vm_fault_t amdxdna_gem_vm_fault(struct vm_fault *vmf)
+-{
+-	return drm_gem_shmem_vm_ops.fault(vmf);
+-}
++static const struct dma_buf_ops amdxdna_dmabuf_ops = {
++	.cache_sgt_mapping = true,
++	.attach = drm_gem_map_attach,
++	.detach = drm_gem_map_detach,
++	.map_dma_buf = drm_gem_map_dma_buf,
++	.unmap_dma_buf = drm_gem_unmap_dma_buf,
++	.release = drm_gem_dmabuf_release,
++	.mmap = amdxdna_gem_dmabuf_mmap,
++	.vmap = drm_gem_dmabuf_vmap,
++	.vunmap = drm_gem_dmabuf_vunmap,
++};
+ 
+-static void amdxdna_gem_vm_open(struct vm_area_struct *vma)
++static struct dma_buf *amdxdna_gem_prime_export(struct drm_gem_object *gobj, int flags)
+ {
+-	drm_gem_shmem_vm_ops.open(vma);
+-}
++	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
+ 
+-static void amdxdna_gem_vm_close(struct vm_area_struct *vma)
+-{
+-	struct drm_gem_object *gobj = vma->vm_private_data;
++	exp_info.ops = &amdxdna_dmabuf_ops;
++	exp_info.size = gobj->size;
++	exp_info.flags = flags;
++	exp_info.priv = gobj;
++	exp_info.resv = gobj->resv;
+ 
+-	amdxdna_hmm_unregister(to_xdna_obj(gobj));
+-	drm_gem_shmem_vm_ops.close(vma);
++	return drm_gem_dmabuf_export(gobj->dev, &exp_info);
+ }
+ 
+-static const struct vm_operations_struct amdxdna_gem_vm_ops = {
+-	.fault = amdxdna_gem_vm_fault,
+-	.open = amdxdna_gem_vm_open,
+-	.close = amdxdna_gem_vm_close,
+-};
+-
+ static const struct drm_gem_object_funcs amdxdna_gem_shmem_funcs = {
+ 	.free = amdxdna_gem_obj_free,
+ 	.print_info = drm_gem_shmem_object_print_info,
+@@ -220,7 +388,8 @@ static const struct drm_gem_object_funcs amdxdna_gem_shmem_funcs = {
+ 	.vmap = drm_gem_shmem_object_vmap,
+ 	.vunmap = drm_gem_shmem_object_vunmap,
+ 	.mmap = amdxdna_gem_obj_mmap,
+-	.vm_ops = &amdxdna_gem_vm_ops,
++	.vm_ops = &drm_gem_shmem_vm_ops,
++	.export = amdxdna_gem_prime_export,
+ };
+ 
+ static struct amdxdna_gem_obj *
+@@ -239,6 +408,7 @@ amdxdna_gem_create_obj(struct drm_device *dev, size_t size)
+ 	abo->mem.userptr = AMDXDNA_INVALID_ADDR;
+ 	abo->mem.dev_addr = AMDXDNA_INVALID_ADDR;
+ 	abo->mem.size = size;
++	INIT_LIST_HEAD(&abo->mem.umap_list);
+ 
+ 	return abo;
+ }
+@@ -258,6 +428,46 @@ amdxdna_gem_create_object_cb(struct drm_device *dev, size_t size)
+ 	return to_gobj(abo);
+ }
+ 
++struct drm_gem_object *
++amdxdna_gem_prime_import(struct drm_device *dev, struct dma_buf *dma_buf)
++{
++	struct dma_buf_attachment *attach;
++	struct drm_gem_object *gobj;
++	struct sg_table *sgt;
++	int ret;
++
++	attach = dma_buf_attach(dma_buf, dev->dev);
++	if (IS_ERR(attach))
++		return ERR_CAST(attach);
++
++	get_dma_buf(dma_buf);
++
++	sgt = dma_buf_map_attachment_unlocked(attach, DMA_BIDIRECTIONAL);
++	if (IS_ERR(sgt)) {
++		ret = PTR_ERR(sgt);
++		goto fail_detach;
++	}
++
++	gobj = drm_gem_shmem_prime_import_sg_table(dev, attach, sgt);
++	if (IS_ERR(gobj)) {
++		ret = PTR_ERR(gobj);
++		goto fail_unmap;
++	}
++
++	gobj->import_attach = attach;
++	gobj->resv = dma_buf->resv;
++
++	return gobj;
++
++fail_unmap:
++	dma_buf_unmap_attachment_unlocked(attach, sgt, DMA_BIDIRECTIONAL);
++fail_detach:
++	dma_buf_detach(dma_buf, attach);
++	dma_buf_put(dma_buf);
++
++	return ERR_PTR(ret);
++}
++
+ static struct amdxdna_gem_obj *
+ amdxdna_drm_alloc_shmem(struct drm_device *dev,
+ 			struct amdxdna_drm_create_bo *args,
+@@ -483,6 +693,9 @@ int amdxdna_gem_pin_nolock(struct amdxdna_gem_obj *abo)
+ 	struct amdxdna_dev *xdna = to_xdna_dev(to_gobj(abo)->dev);
+ 	int ret;
+ 
++	if (is_import_bo(abo))
++		return 0;
++
+ 	switch (abo->type) {
+ 	case AMDXDNA_BO_SHMEM:
+ 	case AMDXDNA_BO_DEV_HEAP:
+@@ -515,6 +728,9 @@ int amdxdna_gem_pin(struct amdxdna_gem_obj *abo)
+ 
+ void amdxdna_gem_unpin(struct amdxdna_gem_obj *abo)
+ {
++	if (is_import_bo(abo))
++		return;
++
+ 	if (abo->type == AMDXDNA_BO_DEV)
+ 		abo = abo->dev_heap;
+ 
+@@ -606,7 +822,9 @@ int amdxdna_drm_sync_bo_ioctl(struct drm_device *dev,
+ 		goto put_obj;
+ 	}
+ 
+-	if (abo->type == AMDXDNA_BO_DEV)
++	if (is_import_bo(abo))
++		drm_clflush_sg(abo->base.sgt);
++	else if (abo->type == AMDXDNA_BO_DEV)
+ 		drm_clflush_pages(abo->mem.pages, abo->mem.nr_pages);
+ 	else
+ 		drm_clflush_pages(abo->base.pages, gobj->size >> PAGE_SHIFT);
+diff --git a/drivers/accel/amdxdna/amdxdna_gem.h b/drivers/accel/amdxdna/amdxdna_gem.h
+index 8ccc0375dd9d..5101d632c800 100644
+--- a/drivers/accel/amdxdna/amdxdna_gem.h
++++ b/drivers/accel/amdxdna/amdxdna_gem.h
+@@ -6,6 +6,19 @@
+ #ifndef _AMDXDNA_GEM_H_
+ #define _AMDXDNA_GEM_H_
+ 
++#include <linux/hmm.h>
++
++struct amdxdna_umap {
++	struct vm_area_struct		*vma;
++	struct mmu_interval_notifier	notifier;
++	struct hmm_range		range;
++	struct work_struct		hmm_unreg_work;
++	struct amdxdna_gem_obj		*abo;
++	struct list_head		node;
++	struct kref			refcnt;
++	bool				invalid;
++};
++
+ struct amdxdna_mem {
+ 	u64				userptr;
+ 	void				*kva;
+@@ -13,8 +26,7 @@ struct amdxdna_mem {
+ 	size_t				size;
+ 	struct page			**pages;
+ 	u32				nr_pages;
+-	struct mmu_interval_notifier	notifier;
+-	unsigned long			*pfns;
++	struct list_head		umap_list;
+ 	bool				map_invalid;
+ };
+ 
+@@ -34,6 +46,7 @@ struct amdxdna_gem_obj {
+ };
+ 
+ #define to_gobj(obj)    (&(obj)->base.base)
++#define is_import_bo(obj) (to_gobj(obj)->import_attach)
+ 
+ static inline struct amdxdna_gem_obj *to_xdna_obj(struct drm_gem_object *gobj)
+ {
+@@ -47,8 +60,12 @@ static inline void amdxdna_gem_put_obj(struct amdxdna_gem_obj *abo)
+ 	drm_gem_object_put(to_gobj(abo));
+ }
+ 
++void amdxdna_umap_put(struct amdxdna_umap *mapp);
++
+ struct drm_gem_object *
+ amdxdna_gem_create_object_cb(struct drm_device *dev, size_t size);
++struct drm_gem_object *
++amdxdna_gem_prime_import(struct drm_device *dev, struct dma_buf *dma_buf);
+ struct amdxdna_gem_obj *
+ amdxdna_drm_alloc_dev_bo(struct drm_device *dev,
+ 			 struct amdxdna_drm_create_bo *args,
+diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+index f5b8497cf5ad..f2bf1d374cc7 100644
+--- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
++++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
+@@ -226,6 +226,7 @@ const struct drm_driver amdxdna_drm_drv = {
+ 	.num_ioctls = ARRAY_SIZE(amdxdna_drm_ioctls),
+ 
+ 	.gem_create_object = amdxdna_gem_create_object_cb,
++	.gem_prime_import = amdxdna_gem_prime_import,
+ };
+ 
+ static const struct amdxdna_dev_info *
+@@ -266,12 +267,16 @@ static int amdxdna_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		fs_reclaim_release(GFP_KERNEL);
+ 	}
+ 
++	xdna->notifier_wq = alloc_ordered_workqueue("notifier_wq", 0);
++	if (!xdna->notifier_wq)
++		return -ENOMEM;
++
+ 	mutex_lock(&xdna->dev_lock);
+ 	ret = xdna->dev_info->ops->init(xdna);
+ 	mutex_unlock(&xdna->dev_lock);
+ 	if (ret) {
+ 		XDNA_ERR(xdna, "Hardware init failed, ret %d", ret);
+-		return ret;
++		goto destroy_notifier_wq;
+ 	}
+ 
+ 	ret = amdxdna_sysfs_init(xdna);
+@@ -301,6 +306,8 @@ static int amdxdna_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+ 	mutex_lock(&xdna->dev_lock);
+ 	xdna->dev_info->ops->fini(xdna);
+ 	mutex_unlock(&xdna->dev_lock);
++destroy_notifier_wq:
++	destroy_workqueue(xdna->notifier_wq);
+ 	return ret;
+ }
+ 
+@@ -310,6 +317,8 @@ static void amdxdna_remove(struct pci_dev *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct amdxdna_client *client;
+ 
++	destroy_workqueue(xdna->notifier_wq);
++
+ 	pm_runtime_get_noresume(dev);
+ 	pm_runtime_forbid(dev);
+ 
+diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/accel/amdxdna/amdxdna_pci_drv.h
+index 37848a8d8031..ab79600911aa 100644
+--- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
++++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
+@@ -6,6 +6,7 @@
+ #ifndef _AMDXDNA_PCI_DRV_H_
+ #define _AMDXDNA_PCI_DRV_H_
+ 
++#include <linux/workqueue.h>
+ #include <linux/xarray.h>
+ 
+ #define XDNA_INFO(xdna, fmt, args...)	drm_info(&(xdna)->ddev, fmt, ##args)
+@@ -98,6 +99,7 @@ struct amdxdna_dev {
+ 	struct list_head		client_list;
+ 	struct amdxdna_fw_ver		fw_ver;
+ 	struct rw_semaphore		notifier_lock; /* for mmu notifier*/
++	struct workqueue_struct		*notifier_wq;
+ };
+ 
+ /*
+-- 
+2.34.1
+
 
