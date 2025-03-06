@@ -1,130 +1,131 @@
-Return-Path: <linux-kernel+bounces-548474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F3EAA54552
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:49:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B9BA54554
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:50:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7DAC16A491
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:49:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38E487A92DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5F9207A23;
-	Thu,  6 Mar 2025 08:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CD0207A23;
+	Thu,  6 Mar 2025 08:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="1n/7bGar"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="im0/b2Aa"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0245B195FEC
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7FD2E3369;
+	Thu,  6 Mar 2025 08:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741250982; cv=none; b=aLSwA58otW1aw6tI0pouGU6D1Akl6mZkaZMCGLVo3yDWO6yQ34bBebMDw5oP5jQ/Zh52Btu7gyYpNlhffddG3lJHxaMcfIeHXnIIexPwQfoRfuH6pESJkLUKj3VIOojI9qlxrRvAsrHULbMoKRgT52ISauWvyufv/GNnGqVC8CU=
+	t=1741251028; cv=none; b=k/99RPkH/wXjIn/Xdj8xJW5KwR3Z2Ok13JLWoOAO1QKm9j3hB17eQkD8ENPd2vp378SIV2ntL7lu+eCrHG2+ekqtSIpiAwNjnmZx9Oytnxs1CNcoxu2mKO4Ct9zZ8cTMK+uWDUYZ1y6mCHD7HFEI/C0IcEsXJh8BuZf+P7VpvAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741250982; c=relaxed/simple;
-	bh=+JMIF5nv1JW6AAUeomgberOu7YOgUGgzWRtym6vZ8jg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rggMXV0MpmJCNszF/OW7214eaqxzKTf7+tetAckLZG7SvAPYj29uezmuTvCyi7VUQ7EGZ3J4tOuMz3OhQzYuYjOubPgefq+Poaxw5mxcmw8lQGVMLq6xEDYUuKQwMCgozFfct/dZRXZo1L6nfnNFHiVcTsO8N5guEwSnWa1noCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=1n/7bGar; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-223959039f4so6220495ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 00:49:40 -0800 (PST)
+	s=arc-20240116; t=1741251028; c=relaxed/simple;
+	bh=48yO3J3+siY7ATLtE0ddXjtLybSDlrSr5KtoJ1IapD0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Z8M++z8dt5IKV7epc9jOG6P8w35t+Y5tjpg2sg+HddT8KOrALNkvQhaxRyU1bHDA+TfxJT0k4NjVfP6wcXAvOYCryGUleX3HySsZaNCiBn5KJagZLfTC14W6RAkuBo5TRA4vYHJZa4AzbhAtPrCycvHyjedkIJEaZOyrR1dnEQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=im0/b2Aa; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e058ca6806so641613a12.3;
+        Thu, 06 Mar 2025 00:50:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1741250980; x=1741855780; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XOTsx+ET2udwRwOl4LMvTIaV72hOacAVf21e+cPMpSk=;
-        b=1n/7bGar67f7nv7s2bsctXJIjPlBnjDFsBuskeuLyasftc+5aQC04T+ga68F+rzSqe
-         N8f1pYgF+sbmsy71wPEmpy3ahw8DkhsGIUd2zWV/qnVZ8tDxylG5A3zfNsPRLk6ZR1rD
-         VPwkEGUIrCkAQ2cRzg3y17ydHocL265Y+h3c9VbiArQrO+FdZcTYVuw00/Ebw6pAgwqh
-         DlRp1Sp05j0b8HoxBjDJF/r1RbXjhb5dbhezIxPsDlMoYNLqx/wMLh/BhGvagQJslwbz
-         Ua8bOk2HThV0WtzaodfmaK9pnJAag0UjXxqgpAxmjoZBwVnkjRmFOh5hLuCTfp8vmXDo
-         184Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741250980; x=1741855780;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741251025; x=1741855825; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XOTsx+ET2udwRwOl4LMvTIaV72hOacAVf21e+cPMpSk=;
-        b=RUkYx7yC7rS6NeO0n9+ZLh8Ui05iYNeIynBeqJuHuYgEWZX+PkYvTUwZ1xqCmslr0K
-         Ri7qM4bz1zuwzHRjJMYiK4lVLXIj3/hYj+8mFVEn/vpaTHYLqLbRX2HLf5tiUPIKJQbY
-         w1jC82OroqWnuqZlmbhWIMkHZqmzEAU0wCHiISHGROBCXGyUq/L/UmOvGeA0u9J/eVCu
-         KKqaDWMCEanAX250kiXGsWv+LMhGOzl6qRGLSZecgXqRqi8CBab/Ipi2dVOZO/dD+DqN
-         9v9smrzmz0Sd3frS7EJXGEXBj58/edw7Y34QDOjNQJGtsGHpdBFRCFBR7vqN/L2jMFIt
-         8UCw==
-X-Forwarded-Encrypted: i=1; AJvYcCVHkKUQWMbsVSi8Rhn3lRiw3zqU0WixCi7Wxw2pn2SvEeOJwdyaAQfd19Zfaea7W4XvVj8Gfg3PJM05ELw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwMKljIqZyhm/09V4KfhFgLfFwe0Zsw4ReeDddB9/7HestUdPM
-	+wy+oVIuEDMNIEWnnNtSXjNGhwtsDWb1iLbkNPLXG8/4vuGtfapwJ1u0kfhk0Jk=
-X-Gm-Gg: ASbGncvHcJNNLi1ZNAruv7qYaOo4+SnApPyWzfQ1g7QF+LeRcWFot2+lSILQFCTxQeS
-	+hpUEKPIX4QgnyjEurHsqMWB/G/W8cdAGCZy+KpS5g5aoQSOPB/djDHTBNtrFtiLEADmNxn1HzU
-	nRszGayDWnz+4nt7dUDQ0KKlO9HXfM9MoTOSOa9vDLJm6npoJwQ8c3Ro+8Z2jM8Jp6U+zKLoRPQ
-	+7ttKTsFXjwe6p9ZOUhyM49PIFyWUrD6IxVaT3CshAlcmKLHk0Y3e24tLOGz4RXXcR9C4AgNKlu
-	W2yHmtXOSiqR1PUEYK4tfuiqHelE0zYv4OP816/5
-X-Google-Smtp-Source: AGHT+IH1GEQtPc3doXxTnYpQvOe64EMdhiCow6f81zGlmJXK3+o6BGbwtqTdcVYdbtsYbbFP1fY7vQ==
-X-Received: by 2002:a05:6a00:148a:b0:736:3fa8:cf7b with SMTP id d2e1a72fcca58-73682beac25mr8907211b3a.13.1741250980111;
-        Thu, 06 Mar 2025 00:49:40 -0800 (PST)
-Received: from ghost ([2601:647:6700:64d0:2536:10cf:d064:60bb])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736982077dfsm799045b3a.35.2025.03.06.00.49.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 00:49:39 -0800 (PST)
-Date: Thu, 6 Mar 2025 00:49:37 -0800
-From: Charlie Jenkins <charlie@rivosinc.com>
-To: Ignacio Encinas Rubio <ignacio@iencinas.com>
-Cc: linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Alexandre Ghiti <alex@ghiti.fr>, linux-kselftest@vger.kernel.org,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: riscv: fix v_exec_initval_nolibc.c
-Message-ID: <Z8lhoTd3BwPWQ0f_@ghost>
-References: <20250305-fix-v_exec_initval_nolibc-v1-1-b87b60e43002@iencinas.com>
- <Z8jG1ViOUbw79cEN@ghost>
- <f3bde84d-b53e-4b81-b995-3b81d614b789@iencinas.com>
+        bh=0orzevFKofVCF3fLmry3ssqra7W/C6VJgcuX8QJRVqo=;
+        b=im0/b2AansSJQEb1ArpoPXBiG9s/w7YRBOeUm9OZk4cz88uf6z9RvEqybGKskgBpo+
+         5NV8WFtoakAaoRqPyEu+UvxLrSCfuaqaSfw1pf+jOxnk8FSVE/Xho0VvDPbTCBm08SsV
+         hJpbjCpbzXe1Ne6wDk8IGmqcKZZI8XJ0a9xQOVb5Hk/ElpKgv3BIjWTjrR9eWZm2Qz0u
+         kBNk/Wf5TDao4njh1Qe354PByKFIuUnjw3zBKKAnmL+eVmjTZgN32RQjgmDsk0UC4WCk
+         TZUZcPG4Zolf+gYYxQHWygzEEl0EhK3oqFy/xENH1oWJfK7BXSrCBec3Qn/Qms3b0PCV
+         vpMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741251025; x=1741855825;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0orzevFKofVCF3fLmry3ssqra7W/C6VJgcuX8QJRVqo=;
+        b=BqldsA7bPhRfdEFmCHh9S5LVCARi/EFtfGu7smOgPoK5LnH2knjXhDcUXsZzdDeiEH
+         ihZfRRwhvZs2052FAhwTmNNn22k2iEic7SVs99/f9uEmPeE99NZCWeVtwmilhalRS9Xw
+         ofbGumwSVXVAkF1namKdKo4sH4OsXlDvZdaQxmj4sIfXcZPM4iuLdz7Rr3TDKWNVT3/X
+         F6RVJGzXxm8SZkf1kVWHKiaPMijQPAR/+FlFW1t3uYFCjsC5Gb9fvyaYvtUQldW8v6N7
+         3tkZRQT60j2vaR8ocE+IouyTpuK+zRDXgK1aPcvvhEnj0w7y1MjIK02PebnnwyJ1gJ0y
+         uJhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWWXsKiGToBM/YXieuYqSElP8+mbDKvzzOatsKFLVWusZC64S0wBPZcj/Cqp3//XW/4DKKqGc3MTrH@vger.kernel.org, AJvYcCVn/r/2Z8iIZUPEzTe0MArwxPPVxpljK+5pou6oRNGpz1h4MgAGiRhMP734TQ8t3VseYtQCPrG4e2Sbkwg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6dVr620Stnd9Anoi+CzQJp0eoTNSXg3OyOKh3ltCRmftK2il/
+	SNVEFtjKn/Z5ADreMOmOdisJGa3KoyW4khdiX//AuL5rkDf/pmhM
+X-Gm-Gg: ASbGncujLosS5JqSoc+TVHtiILBEiE4tGm4aCfnq5/UWXmEUWHf7E8kr/sAsuA19wwB
+	Oa/zi4d/LPPtBVy3N6dsQ6u16dT38uA7kj/IdvJ7vLLy/XHhixt5Fhn7CaGUjVozL3l2rD4ebHt
+	nmCUtHV4wmURqtjv+b8pYmrxdn7lVhcTpDSu72QnMwUbnE6Vq0QcSCvWRcA19atWysONVLbpkpJ
+	b/3AsxZOdfnxW1EguQGz1kxYsc2Ak9Za3f1aYFaKHN4g24Byr/eYvgmgldHZ8ZEW7QKZI9NMatf
+	QcYT2IfbiuU16I39ONAj0H5z3EzxpU+9hW31s58Wl01f8HLzLgxZcTFcqQTTpA==
+X-Google-Smtp-Source: AGHT+IH11m+G5fg7q9nL4VgnNwtmhA8S8Gavr29gxnvuDDmRIaQiwKNbSdXoVwVJd0AVqXxib7OLEw==
+X-Received: by 2002:a17:907:2d20:b0:abf:56e3:e899 with SMTP id a640c23a62f3a-ac20e1d898amr590333466b.40.1741251024200;
+        Thu, 06 Mar 2025 00:50:24 -0800 (PST)
+Received: from foxbook (adts246.neoplus.adsl.tpnet.pl. [79.185.230.246])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac239888261sm57214366b.127.2025.03.06.00.50.23
+        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
+        Thu, 06 Mar 2025 00:50:23 -0800 (PST)
+Date: Thu, 6 Mar 2025 09:50:19 +0100
+From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
+To: Mathias Nyman <mathias.nyman@linux.intel.com>
+Cc: ki.chiang65@gmail.com, gregkh@linuxfoundation.org,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFT PATCH] xhci: Handle spurious events on Etron host isoc
+ enpoints
+Message-ID: <20250306095019.2e354de3@foxbook>
+In-Reply-To: <2a44ee96-25e4-4693-8f43-913942091c51@linux.intel.com>
+References: <41847336-9111-4aaa-b3dc-f3c18bb03508@linux.intel.com>
+	<20250228161824.3164826-1-mathias.nyman@linux.intel.com>
+	<20250303113401.280cb911@foxbook>
+	<2a44ee96-25e4-4693-8f43-913942091c51@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f3bde84d-b53e-4b81-b995-3b81d614b789@iencinas.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 06, 2025 at 07:31:22AM +0100, Ignacio Encinas Rubio wrote:
+On Mon, 3 Mar 2025 17:08:39 +0200, Mathias Nyman wrote:
+> > The hack could almost be removed now, but if there really are HCs
+> > which report Success on the first event, this won't work for them:  
 > 
-> 
-> On 5/3/25 22:49, Charlie Jenkins wrote:
-> > On Wed, Mar 05, 2025 at 05:39:28PM +0100, Ignacio Encinas wrote:
-> >> Vector registers are zero initialized by the kernel. Stop accepting
-> >> "all ones" as a clean value.
-> >>
-> >> Note that this was not working as expected given that
-> >> 	value == 0xff
-> >> can be assumed to be always false by the compiler as value's range is
-> >> [-128, 127]. Both GCC (-Wtype-limits) and clang
-> >> (-Wtautological-constant-out-of-range-compare) warn about this.
-> > 
-> > This check was included because the "dirty" value is an implementation
-> > detail that I believe is not strongly defined in the ABI. Since linux
-> > does always set this value to zero (currently) we can safely remove this
-> > check. 
-> 
-> Thanks for the review. Just after sending the patch I noticed it should
-> also remove some code that becomes useless after this change: 
-> _prev_value_ and _first_ variables were only needed because two "clean" 
-> values were supported.
-> 
-> I'll send a v2 tomorrow. I'm guessing keeping your "Reviewed-by" and
-> "Tested-by" is the appropriate thing to do as the changes are very
-> simple. Let me know if that's not the case.
-> 
-> Thanks again!
+> This looks better, and I agree that the hack/quirk is annoying, but
+> in fear of regression I don't want to touch that in this patch yet.
 
-Yes, those changes seem small so you can keep the tags :)
+For the record, I didn't mean removing support for HCs reporting
+Success with nonzero residual, the problem may be real and the commit
+which introduced this code describes plausible symptoms.
 
-- Charlie
+But handle_tx_event() part of this workaround could be done without
+changing trb_comp_code, like process_xxx_td() are. You are replacing
+practically all of this code already, so it's an opportunity.
 
+And one more thing:
+
+> -				ep_ring->last_td_was_short = false;
+...
+> +				ep_ring->old_trb_comp_code = trb_comp_code;
+
+This is a behavior change, due to the aforementioned hack. You are
+replacing comp_code 13 with 13 and the mechanism stays "armed". It
+will continue silently ignoring arbitrary events because there is
+no validation if they really came from the "old" TD's TRB.
+
+It's a pet peeve of mine, because I have already seen cases when the
+old mechanism "swallows" illegal events which should be reported, and
+now this problem may only get worse.
+
+You can preserve behavior by clearing old_trb_comp_code to 0 or -1
+or otherwise marking this entry as "inactive".
+
+Regards,
+Michal
 
