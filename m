@@ -1,113 +1,142 @@
-Return-Path: <linux-kernel+bounces-549072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E7D3A54CDB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C6BA54CDE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:04:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89085188D618
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:04:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1626D188A444
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E38148FED;
-	Thu,  6 Mar 2025 14:04:32 +0000 (UTC)
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECA7155757;
+	Thu,  6 Mar 2025 14:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RnsN0hbl"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A206D1304BA;
-	Thu,  6 Mar 2025 14:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9511547F3
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 14:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741269872; cv=none; b=Ps//Ea1dKsL9AeE7fIoAeN2864tqLH71/qDu6xtfhnvmuKi+5utYB/Rtgd4Pbk/+vj6DLDHlhELucfrRpadeu7+crw7JGiLAinT13VBJ+Ayj482PrSO1slw+jcyRPaEXD+CeDKo0OATlt/pENVn6zGmhIC/v9u1nUOBYE4EiI9w=
+	t=1741269879; cv=none; b=VR922ErckhSb6cSswnmLYEO8ourDqNI5i5Jhvj90KuNORpLZWUZT0oCeCyc/Cd0NTUTxF7CgAg9J9xSBL5Yri4sMwNXs1fo2z5z5ikuqPqr2sx9bpAbzcKFqPTx/5tQzt4jdtq1bkuUK2BjK+YSHODoNMp2T3OP6ctEFqdd9WEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741269872; c=relaxed/simple;
-	bh=ihsnWaJWrXQ8Rw3BJDgIJH8wRf4rO5PQ3bVhB5xotzU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IIjio/lJBBkv19VXucIrpCANR/7gsJEE2r+o0aLvHGdUuXmYZF5hnqhR+70+42UPzix5DDhRecai8+NgNxqi75oHgLfxlRR7TOGrqBEFMFdZkns24sxd6IvlcBDpN/vr7RJ6l7F0CW224e2AgMdtOLkg5GHcGlTVOJYOGMC5EGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1741269879; c=relaxed/simple;
+	bh=R8Sm3svdW/goUTU5rLDpziJHP2XsdLH8VJwkfv4HNAo=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DEUiGlA9BszusYawAqmNHJd2HI2nNXEbAlx6llyixqETOt1ob9SRPwwo9W+HLNkM0R5wzXTaft16Z/3BJBcESgU3i9kUPNOP6czp7eQ6cG0jrwtPQy2gDl224vvrnTilnOE2gxflzaUPTboY/eUaLBkzD5rl+7PzSXfKxxenjy8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RnsN0hbl; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c3b4c4b409so107649685a.3;
-        Thu, 06 Mar 2025 06:04:30 -0800 (PST)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-54298ec925bso1043568e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 06:04:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741269875; x=1741874675; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9w1loW1D93ByGjxUH+v0w87cRUrgY5imRrAfL3a+uhQ=;
+        b=RnsN0hbl1C4SdiIVzDA4O/tC67+3S3ayKzN6yQVL83K4AAe52gCt3MJgEku2y0H3PF
+         uLWz7Rlnie5Uq81LMZ+JYZpisVmR7Wg38QdAHRBq8wGn2XggNQ/uHt95EQQCFfX864bU
+         FKpyisFEh9IgWckzxiUO1zNvjmOdT40tUs8wUEWPHLVGz7xfmdLnqiq6vN8m1cE+ozeC
+         afFRT9oJTjvgWHjmp9xmnQLgLShHAtrfDqUsjryoW7zpU7zI5aqz5tpaYrBQ1iMBqSFm
+         cR6p+77U5+9kBNa2Gd/Bme6IS80z/H8Si7dVY0FgOMeAUP16ehNob2yzKtKLpduEnoNP
+         9Hnw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741269868; x=1741874668;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OVN3i5PuRzQd5GnIu45kxsywYrlcAkKHUI5lcUWEDuA=;
-        b=eHJsBKxlIvhpYLXZd6LY8ZL9zEDGuMDGNJaN9l8vGbtC0kc7d+JGapZyvr/tJpM6MD
-         XKhgMDd52icbs8oUdxSS9tHfXe7HiUBV8VmZb0DM/M+TeZwQ4uCgW8g6k09Xv9ymHC9h
-         oV6M7ym7gAs9hB8wpgAQuNA9l0bzgiNeTJDerVU69scDWgmxmUlXA4alNbuOsaZKHCZI
-         ga4ePv4WU9X1pWpCaA9nv44ng1jvbkHoThpHQ3vbN/u2v2lso40mySr0jAVO8+V7+HGo
-         C0KCCXBXYMdbjhdNFW+sw5622WsEoLTeVaNG+CXqXfAI8m0yVB1/+rIopQstJgL4mUFW
-         ERsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLAp21LiqUigB1AZPx3+KV411275qV30eChf8R9sgrxu780eyCULZLMoRN2fnRIRJXxfPtfpCJ/l7s@vger.kernel.org, AJvYcCWX2WS0V7vNMuFeZ1XNCJctDmIaZhmkIP0R7aS90EEpm6N3y2IrvsD62VW4gC6XedAjSgK2R2SpqiaiCbcJ@vger.kernel.org, AJvYcCXikA1eSjZB25qK+vB/Qfi80xZ+GP6DYVgBBLQn7FKu41rvl3yr662Qg9446VYtgRcp2dKkDOzbgAAYmbcUZg4ikVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyg4rQRao/hWU60PYbllpivuIseKI0+DJHu5W9qewQ0Zd5k5J9C
-	E6h6V2O+ElaqX++0QM7+JDmYTVWshq4vhY0LXBIWH7djzHmmNP3zaLYlBeVv
-X-Gm-Gg: ASbGnctJ4XRI+uGf73YGMCQ/8MLeaEh2W7JpM+0C17hMIfOAyT3yrBQP+tiP9PYfgOj
-	LOBe3mfxCRmw1k321QhnAogpDzyxC7WN3pdJtFNtl+ZS1oEtXQdlZtEvGdvq0Uwjjs9w+VPiFVy
-	fkxZ1qkxlMqTtjgslRaJOgAWdYi0Cn72TeTy9mgk/Sy9wdZlHFwSARV4d1Zc/M4SuttjBs+to4k
-	Adml9d1BKnsSQRVyjULqIkTr8w50Nzup0H14HtlC7oJH7kbQC5CJspK6ciGDACY5HNhLlTM3SU3
-	ia0pMuQCQRR8WAdBGWs1+ggwzp/t24gKxnN6YTr0/iAG8DB9nQK9Ld7WFaDlRHET430/lpaybTZ
-	vB+2aJs0qvpU=
-X-Google-Smtp-Source: AGHT+IEgnUgiYt4gU8lh39n0ti6trL4CLvTO1Bp36gvAXnTs91f6QVEF54fv+5+jgHuwtxYjUzY/gg==
-X-Received: by 2002:a05:620a:6190:b0:7c3:d280:a67e with SMTP id af79cd13be357-7c3d8e1f787mr1231923885a.7.1741269868228;
-        Thu, 06 Mar 2025 06:04:28 -0800 (PST)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com. [209.85.222.177])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e54ff929sm94788085a.70.2025.03.06.06.04.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 06:04:27 -0800 (PST)
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c0848d475cso84641585a.2;
-        Thu, 06 Mar 2025 06:04:27 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWfqwb7YaX2xINdnRtzJ6FDPfZ/UhsEMSq5qTZ3OkWVpPXg5LEgNJ0asc1sjaymdksAAmkZI7/YFE2pSmcen7fCtc0=@vger.kernel.org, AJvYcCXh+CNg48R68w8HTNtHn4BZZF5GpvWYmg0jFwvqU9u/ZZc8Toddk5o6so/BtchCWUpGForstjXat+Qi@vger.kernel.org, AJvYcCXkcaGGwJ/yweLqFrqUXZquDdw5n7DmP/YHUK21dx6DVV65sMETrnf0A5OhsukT/12wF/ExSJbft893QE91@vger.kernel.org
-X-Received: by 2002:a05:620a:8082:b0:7c3:bdce:d1f7 with SMTP id
- af79cd13be357-7c3d8eec180mr1208781785a.58.1741269867178; Thu, 06 Mar 2025
- 06:04:27 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741269875; x=1741874675;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9w1loW1D93ByGjxUH+v0w87cRUrgY5imRrAfL3a+uhQ=;
+        b=XmakIZ+yd6WF3Hy7gPfEQ1PuebkqWmt2k5RRoxmiLdTNdxAWq8NJNMgJHGV9qL8xPB
+         tMeoE6YxbsvNcJGyAHLUXD/RPLaSlbVj/28vRS2rM85x7TzdgLUbMQ4+s9VSbu0Lx3XX
+         re7exisp0wOBQKaoXo7953UV/Za/hwItpL/vtm3bgvswhod5C6AetrI5HsBlndCLHhf4
+         LDLOaGRH6Eqzwge0QzwuZDmX2OwkQ4z/b/SLm9GpGhZMV4Trga4BxyDlPLRlDdLmOdit
+         DATeNZUVrPomFUNfMPMuJ8wck1XgZCxah6jv7xBEtJJvE+zckV3NkTomrsdqcSHVtl2i
+         w/Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCXZfgQX7pqZVYYTgTWPsA5vmG/ekWF1jw33/P4kwtTuw2lfFjFmxUpYJ6lykzL1vAgJ3E2gDg86nwG+1rU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUxeBwOE4lfSkyvEAd/9Ei2WK351iV1t9T4A7iteIYjgbPkNdj
+	ZI5bFo38fkjasSPxKFnhHub8NVXn7WLdgT14g+k3ON3ZVY4SyH4z
+X-Gm-Gg: ASbGnctKkUpqLBrKp13wp8ltWTLcUqGK820834rJg861HXVyzy4l/9NgaDwjKY+tvKJ
+	EZfn0Bef7Qv/Qwn/GhzSxFgpAjkPvhn85RH2XtdiPlfjk1WdNSfe0adl/0RLVAXlMvx6oaSME02
+	RPyUi+d9G8r6zUN527T/BAr3w3qv7GlU8xa47Lo+IL1w3Rj/r8OtLApvZlzR4LgaROA4cLVVQgN
+	QzEohNE1Bb7zuEZJ8qFvNKnfU9vco/7rSkrg596UZw1YaI23AHIVajkRq/L0dAAgZHz6gTl45My
+	IsEwW+yRxoajFmtQKZ1y+sHAEoI0STUcXSJN9gtE/a7RkD+Q/VCZiqVEgLTq5gpHAdY=
+X-Google-Smtp-Source: AGHT+IGonnW2BIlqC2FdXER3bXAFv4ISuWErmmFhIv+nnElrcZtI1jJxe9rCZw7FGgE21qslHhMlvg==
+X-Received: by 2002:a05:6512:281d:b0:549:5b54:2c66 with SMTP id 2adb3069b0e04-5497d345ea7mr2751359e87.23.1741269875014;
+        Thu, 06 Mar 2025 06:04:35 -0800 (PST)
+Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b0bcf82sm185064e87.154.2025.03.06.06.04.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 06:04:34 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Thu, 6 Mar 2025 15:04:31 +0100
+To: Jocelyn Falempe <jfalempe@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>
+Cc: Matthew Wilcox <willy@infradead.org>,
+	Ryosuke Yasuoka <ryasuoka@redhat.com>,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	kraxel@redhat.com, gurchetansingh@chromium.org, olvaffe@gmail.com,
+	akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
+	dmitry.osipenko@collabora.com, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+	linux-mm@kvack.org
+Subject: Re: [PATCH drm-next 1/2] vmalloc: Add atomic_vmap
+Message-ID: <Z8mrb_zcou6Hn7hF@pc636>
+References: <20250305152555.318159-1-ryasuoka@redhat.com>
+ <20250305152555.318159-2-ryasuoka@redhat.com>
+ <Z8kp9Z9VgTpQmV9d@casper.infradead.org>
+ <3bfd4238-6954-41a3-a5a3-8515a3ac9dce@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218115922.407816-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250218115922.407816-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20250218115922.407816-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Mar 2025 15:04:14 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUmfcJCc9eMYZkROYOsXnwZh9QCNHFzsRKiV41_Jcs=KA@mail.gmail.com>
-X-Gm-Features: AQ5f1JrYPsfu25PIeNIu60xL2O69zif9ZzXRhar4BbB7hfkcOwb3D_-DKEmgPEo
-Message-ID: <CAMuHMdUmfcJCc9eMYZkROYOsXnwZh9QCNHFzsRKiV41_Jcs=KA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] arm64: dts: renesas: r9a09g057: Add Mali-G31 GPU node
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3bfd4238-6954-41a3-a5a3-8515a3ac9dce@redhat.com>
 
-On Tue, 18 Feb 2025 at 12:59, Prabhakar <prabhakar.csengg@gmail.com> wrote:
->
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add Mali-G31 GPU node to SoC DTSI.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, Mar 06, 2025 at 02:24:51PM +0100, Jocelyn Falempe wrote:
+> On 06/03/2025 05:52, Matthew Wilcox wrote:
+> > On Thu, Mar 06, 2025 at 12:25:53AM +0900, Ryosuke Yasuoka wrote:
+> > > Some drivers can use vmap in drm_panic, however, vmap is sleepable and
+> > > takes locks. Since drm_panic will vmap in panic handler, atomic_vmap
+> > > requests pages with GFP_ATOMIC and maps KVA without locks and sleep.
+> > 
+> > In addition to the implicit GFP_KERNEL allocations Vlad mentioned, how
+> > is this supposed to work?
+> > 
+> > > +	vn = addr_to_node(va->va_start);
+> > > +
+> > > +	insert_vmap_area(va, &vn->busy.root, &vn->busy.head);
+> > 
+> > If someone else is holding the vn->busy.lock because they're modifying the
+> > busy tree, you'll corrupt the tree.  You can't just say "I can't take a
+> > lock here, so I won't bother".  You need to figure out how to do something
+> > safe without taking the lock.  For example, you could preallocate the
+> > page tables and reserve a vmap area when the driver loads that would
+> > then be usable for the panic situation.  I don't know that we have APIs
+> > to let you do that today, but it's something that could be added.
+> > 
+> Regarding the lock, it should be possible to use the trylock() variant, and
+> fail if the lock is already taken. (In the panic handler, only 1 CPU remain
+> active, so it's unlikely the lock would be released anyway).
+> 
+> If we need to pre-allocate the page table and reserve the vmap area, maybe
+> it would be easier to just always vmap() the primary framebuffer, so it can
+> be used in the panic handler?
+> 
+We can reserve a vmap space for ATOMIC or NOWAIT allocations. As for PTE
+part, we can also populate reserved space, because after that operation
+those are never get released.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.15.
+The question is how many users need this. As for this particular case i
+am in line with Jocelyn Falempe. Allocate for DRM and write on panic.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--
+Uladzislau Rezki
 
