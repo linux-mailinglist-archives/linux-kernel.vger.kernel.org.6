@@ -1,120 +1,108 @@
-Return-Path: <linux-kernel+bounces-548275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD41A542B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:21:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA1A9A542BB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:23:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F0E9168C6D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:21:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CFBA3AE766
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:23:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F42011A073F;
-	Thu,  6 Mar 2025 06:21:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B531A239D;
+	Thu,  6 Mar 2025 06:23:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WHL9g/gx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dhSnoZrN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE2C1362;
-	Thu,  6 Mar 2025 06:21:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69A81362;
+	Thu,  6 Mar 2025 06:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741242108; cv=none; b=LyXhVAxJhZv672B/Tm6bcbQYbfb7n+vFVvZamdOBakNFBNyeusNtIsrr2D6Ik3bqYr2+iJgi/MEM7XahXbtdEUIQrCJ5vz9Y8E14HnH5LEwvEE22Pk3t73IuNZbYcRmOXETMSGucDuV9e580FYt9taHd5+ck8OWFxUNr1ajUvcA=
+	t=1741242208; cv=none; b=MfISAOB67R8hij5zLB8lFZi6IPHs5+GZ7Z+OgthnzL7wI0EYt5cWN47VYtJRTX1Dz0Vhlm6HFncy0q+ojSV2zLzP5ve6GAizHHZKwF0F8TM144t/+86j2AxmnnNdduIylSvVB1ncwGERXX/GhOKHcqtibEd9BS4tBkgIQMATOvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741242108; c=relaxed/simple;
-	bh=k0buHuc2gsPUWIxA15VpGC2wTTMjDQdRwluGNLhTcH0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ei9ve7Ev7HXdL/GkoPd7NA9FJpAbFZ5FWD5Ms7LGHq0EOhxo0E4xbwmzjEm7Xb2geDDmoXlv9qDyrVgRBfqRMh5GvkXhpeAfTsdGYA87dSaWTjtZ7mTIKsIkzYb/z1hWNoDLx7NVLtlf54FKJ6YNZLqsKhr4uJo4OVSzwX590PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WHL9g/gx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AE62C4CEE4;
-	Thu,  6 Mar 2025 06:21:46 +0000 (UTC)
+	s=arc-20240116; t=1741242208; c=relaxed/simple;
+	bh=42Tqw/AvyybOy6obt+bWEXQQeWJhwDRee8ky/rb6WVQ=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=GuMr1TrGowg26H8fRd+y9tIE/VybQzzLTz0MWyQI91ItAhx+c+d87XDfY7MFCTG/QuZQeeyQUizqpjy1dCX8EjDyEo2ja+4y3g9yR4yY4WnFw9sgEKC5j3AmMHavURdT07H1ar0032uyZVKFF0Wkvw95brv8s1+vcPOfaQ5LcTQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dhSnoZrN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 379BEC4CEE4;
+	Thu,  6 Mar 2025 06:23:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741242107;
-	bh=k0buHuc2gsPUWIxA15VpGC2wTTMjDQdRwluGNLhTcH0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=WHL9g/gxqaL0DNrkW6NbiOvZRLbYg3faNPujzO0i7RKpW6hQZZgrWgyGQOT+MHeee
-	 Pwni4TU6c8+5GArtXkQnAuCi3cW9ey1wHxkp13cf8WrfrdnM2hrkXdI9bXxtcRbTv3
-	 eldI80DUnmd3DlvDn4coQd5MtGk6DCHZJICdYGff/ocV+caVEu8BAp3w4MDVciOAYR
-	 63QwnuURdgDwyv9whZcQlhgLgpEBXP551VwD3hS5QkdWczOPMAkQInPBYaNrb5xURh
-	 RTsOT6x6tmnuDZ7NaxdnLcpSKUkpWZwCr06vnXIewZZYOjOnKQqJN0dODIsREqLZtQ
-	 G395LDgYj0XsA==
-From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org
-Subject: [PATCH] tracing: tprobe-events: Fix to clean up tprobe correctly when module unload
-Date: Thu,  6 Mar 2025 15:21:44 +0900
-Message-ID:  <174124210422.3014222.12363751066695445786.stgit@mhiramat.tok.corp.google.com>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-User-Agent: StGit/0.19
+	s=k20201202; t=1741242207;
+	bh=42Tqw/AvyybOy6obt+bWEXQQeWJhwDRee8ky/rb6WVQ=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=dhSnoZrNcxWVkchSF2xa6uKkHxtspLssP8U/c6HcCnz0rPzeO29/XX1Kn9oeGmyMX
+	 BpXRzmxBSCdwqcvDmxZTHeSY6n3POgC0tmWcbBaCiK4cBOxR7DQv9uSn6dS/IGpaKR
+	 8monrNk4pIAF1d69OmuIuemOLP2PSrsQcq5Hxk/4GWevNVbrDjw4eYq2zggKurtmUJ
+	 JNQxwwCDC9PupcBVr45ffLJjFZIiBlZO54FLFgKAeMCxyq1Jo5xlOr+NEYSZs1W6MM
+	 hf3+jhbBIbjFKcgCXEMdPaHuGZt8gjfTsRg+89DWdpPChTPWpTmzCAAGOSFCsL0o5A
+	 qzCgJxaYLI6vA==
+Date: Thu, 06 Mar 2025 00:23:25 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+ Russell King <linux@armlinux.org.uk>, Paolo Abeni <pabeni@redhat.com>, 
+ devicetree@vger.kernel.org, 
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Philipp Zabel <p.zabel@pengutronix.de>, noltari@gmail.com, 
+ jonas.gorski@gmail.com, Eric Dumazet <edumazet@google.com>, 
+ netdev@vger.kernel.org, Florian Fainelli <florian.fainelli@broadcom.com>, 
+ Heiner Kallweit <hkallweit1@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Jakub Kicinski <kuba@kernel.org>
+To: Kyle Hendry <kylehendrydev@gmail.com>
+In-Reply-To: <20250306053105.41677-4-kylehendrydev@gmail.com>
+References: <20250306053105.41677-1-kylehendrydev@gmail.com>
+ <20250306053105.41677-4-kylehendrydev@gmail.com>
+Message-Id: <174124220560.3504158.13507296530192889296.robh@kernel.org>
+Subject: Re: [PATCH net-next v4 3/3] dt-bindings: net: phy: add BCM63268
+ GPHY
 
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-When unloading module, the tprobe events are not correctly cleaned
-up. Thus it becomes `fprobe-event` and never be enabled again even
-if loading the same module again.
+On Wed, 05 Mar 2025 21:31:00 -0800, Kyle Hendry wrote:
+> Add YAML bindings for BCM63268 internal GPHY
+> 
+> Signed-off-by: Kyle Hendry <kylehendrydev@gmail.com>
+> ---
+>  .../bindings/net/brcm,bcm63268-gphy.yaml      | 52 +++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/brcm,bcm63268-gphy.yaml
+> 
 
-For example;
+My bot found errors running 'make dt_binding_check' on your patch:
 
- # cd /sys/kernel/tracing
- # modprobe trace_events_sample
- # echo 't:my_tprobe foo_bar' >> dynamic_events
- # cat dynamic_events
-t:tracepoints/my_tprobe foo_bar
- # rmmod trace_events_sample
- # cat dynamic_events
-f:tracepoints/my_tprobe foo_bar
+yamllint warnings/errors:
 
-As you can see, the second time my_tprobe starts with 'f' instead
-of 't'.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/brcm,bcm63268-gphy.yaml: maintainers:0: 'TBD' does not match '@'
+	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
 
-This cleans up (unregister) the tprobe events when module is
-unloaded.
+doc reference errors (make refcheckdocs):
 
-Fixes: 57a7e6de9e30 ("tracing/fprobe: Support raw tracepoints on future loaded modules")
-Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
----
- kernel/trace/trace_fprobe.c |   10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250306053105.41677-4-kylehendrydev@gmail.com
 
-diff --git a/kernel/trace/trace_fprobe.c b/kernel/trace/trace_fprobe.c
-index e27305d31fc5..d5fc0c5bf879 100644
---- a/kernel/trace/trace_fprobe.c
-+++ b/kernel/trace/trace_fprobe.c
-@@ -775,7 +775,7 @@ static void __unregister_trace_fprobe(struct trace_fprobe *tf)
- 		if (trace_fprobe_is_tracepoint(tf)) {
- 			tracepoint_probe_unregister(tf->tpoint,
- 					tf->tpoint->probestub, NULL);
--			tf->tpoint = NULL;
-+			tf->tpoint = TRACEPOINT_STUB;
- 			tf->mod = NULL;
- 		}
- 	}
-@@ -1007,12 +1007,8 @@ static int __tracepoint_probe_module_cb(struct notifier_block *self,
- 				    trace_probe_is_enabled(&tf->tp))
- 					reenable_trace_fprobe(tf);
- 			}
--		} else if (val == MODULE_STATE_GOING && tp_mod->mod == tf->mod) {
--			tracepoint_probe_unregister(tf->tpoint,
--					tf->tpoint->probestub, NULL);
--			tf->tpoint = NULL;
--			tf->mod = NULL;
--		}
-+		} else if (val == MODULE_STATE_GOING && tp_mod->mod == tf->mod)
-+			__unregister_trace_fprobe(tf);
- 	}
- 	mutex_unlock(&event_mutex);
- 
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
 
