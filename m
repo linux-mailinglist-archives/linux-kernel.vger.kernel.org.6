@@ -1,139 +1,139 @@
-Return-Path: <linux-kernel+bounces-549525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20AC0A5538B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:53:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57696A5538F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:54:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6A8A1896598
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:54:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 311E61889698
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:54:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3C31FC7F9;
-	Thu,  6 Mar 2025 17:53:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FAF725D54B;
+	Thu,  6 Mar 2025 17:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="k9tOjDmo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="alCf/78u"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB52525B671
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2993525C6E6;
+	Thu,  6 Mar 2025 17:54:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741283632; cv=none; b=VKV6IBR3jgbP3izIy5dcLrNy9xbGsLcB2LzMBFH6Ck57ChfWUpF2vN/Cw6n2df5YwMdR1ZsDOiFrFu8SRtRVVwNOOw1craTvJZx1j6+c7hI2N6tdNQvX9O3DqieQAA+uDxUNfOb00LWv+1nAITPaTE+atyMYCGOQl9Is7yowhQc=
+	t=1741283651; cv=none; b=KSmAfXfSrvJzT7nppZU2UkUGGM8RXWUuXTCNBeQzsh4EflSKf30+V3DTRu7sC8VK/2hm9mTAfpx6LuZkaw4IKeGryaweg60y0AbNu7joXnrUsc4m/9x8bcSpAo8ZbLPwZ4laGvmwN6VZ9fjwzRJ1niBk/B+ES+yaOmqy6p5pvNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741283632; c=relaxed/simple;
-	bh=TsDBzmg+/rLwfKQ/+P27CYwnhvUD4cy1XnVraIMWiyw=;
+	s=arc-20240116; t=1741283651; c=relaxed/simple;
+	bh=QE+LjaL2ZyYUoUH2d1IXBLbqS3fGrTB93p+UI1vbjt8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ui9LjTyHTnDeuqiEX0Bw3TPW2zm+XlYGRv6EzCNdkgE9bNt5RPG1qfMZTO3FvxCsoFC1R/V1rakZ3GjaDkhByYPyAF9uF/iyYcM2DTdBbAUpi+yefO7czMYf0bTpv11BW10a4nK1hWaBemYRChterehXdsGvZvAf5kWK4y+pvqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=k9tOjDmo; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741283631; x=1772819631;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=TsDBzmg+/rLwfKQ/+P27CYwnhvUD4cy1XnVraIMWiyw=;
-  b=k9tOjDmos0HJvnDAdAE9P3d4t9MhmGSx4DvVksMDlxkpbfaJrK+qkmU6
-   EmMCOMBy68iOOKu7Q3Fxdb3WDcN5D3U2/H/ZqgoqNYZAmO90zGn3V7uFi
-   3eeUnVyPbLDwkgInKTbpulZ2cFI5hdBDb6ia8mD/cI5TlxyBvcJep1gRC
-   5QkepGDZCtw4Tjupi1VC0wdhSiq6EPPgU0GWyvIxhcWGz0bO3kn9K48tj
-   mmji+EGKxGHzzM5311F+koMIxGyYQ78jOI1v7EWfuSuJi7LdLaToZHI2S
-   rCDTMZxxGq+mTX01X29GXYbAL7rT4mgKY9ejAzHbPhcKdimXDaBecPayN
-   w==;
-X-CSE-ConnectionGUID: X0ixOdF5Rj+8Wws3G/VQ8Q==
-X-CSE-MsgGUID: kNho4neAR3mdGwRXpj1v1g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42446054"
-X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
-   d="scan'208";a="42446054"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 09:53:50 -0800
-X-CSE-ConnectionGUID: lXk9vUeURSOFzz5QrvGS7w==
-X-CSE-MsgGUID: jvwBAumET9S2eHd1WBwZdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
-   d="scan'208";a="119278800"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 09:53:46 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tqFPi-00000000B5i-2edP;
-	Thu, 06 Mar 2025 19:53:42 +0200
-Date: Thu, 6 Mar 2025 19:53:42 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	David Laight <David.Laight@aculab.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v5 2/7] bits: introduce fixed-type genmasks
-Message-ID: <Z8nhJv36eq11oJOD@smile.fi.intel.com>
-References: <20250306-fixed-type-genmasks-v5-0-b443e9dcba63@wanadoo.fr>
- <20250306-fixed-type-genmasks-v5-2-b443e9dcba63@wanadoo.fr>
- <Z8meY7NS65_d14og@smile.fi.intel.com>
- <1c081c07-2833-4fa9-96fb-88a7295d2c14@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tuaCYz8ojKvsRUPebQFYZBlnr5LlKAJ9VnanEbEX5c+tra6PMgnHaT5N6e1yyTKh0dj12KJ7n/K7IJOknD4exHvaw3/aPOUHYLqUVNd3HOq71lAn4lIio0uyCGgqccaoe5otUHclFYb3S5qbqLjE9sSvfdwzGAB2CoCteWIcKpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=alCf/78u; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-390edaee0cfso745649f8f.2;
+        Thu, 06 Mar 2025 09:54:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741283648; x=1741888448; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=E3tn1nC4FIEWcFvHKdbKDxUQM2tvo3bFJqFt7q3komc=;
+        b=alCf/78uPJtr3RkpDX1ioq7bf6g+DFZoZ/OSVZ6iNSnOtbU6VjMHCvsZh+1/+mULel
+         /oatFM0jEdx1qjY4IrxK25ZoROgvCVyFaJl3r4V6sC14zZGuhOtnjhVrbbDqF3mJgemV
+         z7YYpg4PNB/g9Wg9lZH8wR50haTGw+tiUoulHOHV97LJctGnKEPX3tcvfwyPqLCdN3/n
+         VgUTMcWpAnmng2/S5qJooFz11dobdRdTI+AV5T16cU7ptmjgzJQhtbpUsBB6HMqpszZZ
+         uw0HOC0iAhRrTAHPgTBsrt77aTQBmrKLstkoiIWtH3yB+cEFg4BBGRlXEeJrzxRuF2lq
+         Ucew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741283648; x=1741888448;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E3tn1nC4FIEWcFvHKdbKDxUQM2tvo3bFJqFt7q3komc=;
+        b=vk6ZxiwBiatZj6jCpvkgbJ3HiPCq7tpj/MYfxKa38MtqNvMGRrcsVMyraG8hgf0Tsk
+         8r16E+SarDZQ9JiutW/gjV2CYWY0WZfxbLDZL2Ayby4hQWdEB0fBPxV7UsLtqtfYiKk7
+         g3eart7pS2vnaQ+kVbArMWQiSjqEAd4AuhP/pBygE+YUEuIgNzu4/2JpiNwV3rWoq82Z
+         nkjNWBT5kskmYZbfQ+qrAqFsKiyey6YWMX+N0aDVnYyQr6IyGHFjVMeprLuRMmubJ18h
+         Rvg4NbFonDrbWjndTop/jge6r7GuFqYMfjsk4Uh1pWfLuDcfM75Y9Hhbm3s5seNkbdqB
+         JkIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUamvJld4aE2ZvEdOVYtv0O7M9UaZEz9cZ6zfN32YBq3uli+j/oyoCnF0Wy4nfaRaEl0UiQyxiohT+mYekl@vger.kernel.org, AJvYcCVi77z1WdM84/USqw1Y7DMlyPrdrsEhDbDUT0bzwxsbn4W1YxPGZtde7cX/2Zx4ikOZzuWl4fS5YxqP@vger.kernel.org, AJvYcCWfZXAQWIr1iQUHD1/7b1hP00EH8x2xshuh4X5d1NoPo2KFGUui/R55e9X+Rn4bJzyLGkMiYMDSmaHx6bU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4YU2I6+I8zbs3AvgMDI2QQpPcQdqmh/HAuM3QE1DPiakGCUHa
+	WIXc6jNMHQWfiQUb8tcv+IJ4VqTB0Q4Ikq8O3NTf+NKsQhCzVQ0k
+X-Gm-Gg: ASbGncvg/moD0wJsG2Kg8x3h+1Lrpqdbs0zjt69DUBbpYeNeep/v0uR85FkJlmmBNU9
+	Yo3e70hdJRwjhITiuR3ojxTbGP4qNN1ScHj4mMUI5VYEPtBR47Ujr8Dr8u1G64Wla107bDaI5S7
+	WQK1/Ji5H1IyUDP61LYvU/BJkx5HpJmELqViBzNJHNUl9u2IRA46mEDNEDRXlLK2WqJA+kdJGvZ
+	+Mot94qovI9ak6xdjtupiAzNSjZujOL5byZns+qnyhdXkKmPv2GtQ895KTWWQBeiFt0NWJb3diS
+	7YXEQdABhcRg66lbEVdMHoj+CgHcSXVNioJUeAGzjkQHP9mM0wOshvNLkbeYxR9nstZPAFG3KIe
+	OhtT3VTeuPjCMFHEkVQ3wElFUh/mn/lw=
+X-Google-Smtp-Source: AGHT+IF8JOhotUrzkkAhhUVap8uNQR5LdOejIE5iz1HzD0XBwpr1ACZBG7lQnXoUPEqY9UlVKDHjZA==
+X-Received: by 2002:a5d:5f45:0:b0:391:329b:893e with SMTP id ffacd0b85a97d-39132d06be9mr56725f8f.5.1741283646837;
+        Thu, 06 Mar 2025 09:54:06 -0800 (PST)
+Received: from orome (p200300e41f3a9f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3a:9f00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd8b0425sm26788095e9.3.2025.03.06.09.54.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 09:54:05 -0800 (PST)
+Date: Thu, 6 Mar 2025 18:54:03 +0100
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 4/6] ARM: tegra114: add HDA node
+Message-ID: <kzwr2feo6i653nniemd6omjmdpo5ukqdfcmc5gjik2cyopvoyx@7ua6a3tb7sz4>
+References: <20250226105615.61087-1-clamor95@gmail.com>
+ <20250226105615.61087-5-clamor95@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="adrlf4fwc7byfa5p"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1c081c07-2833-4fa9-96fb-88a7295d2c14@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-
-On Fri, Mar 07, 2025 at 01:08:01AM +0900, Vincent Mailhol wrote:
-> On 06/03/2025 à 22:08, Andy Shevchenko wrote:
-> > On Thu, Mar 06, 2025 at 08:29:53PM +0900, Vincent Mailhol via B4 Relay wrote:
-
-...
-
-> Does this mean I get your Reviewed-by tag? Or will you wait the v6 to
-> formally give it?
-
-I'll wait for v6.
-
-> > but just to be sure: you prepared your series using histogram
-> > diff algo, right?
-> 
-> No, I never used the histogram diff. My git config is extremely boring.
-> Mostly vanilla.
-> 
-> I remember that Linus even commented on this:
-> 
-> https://lore.kernel.org/all/CAHk-=wiUxm-NZ1si8dXWVTTJ9n3c+1SRTC0V+Lk7hOE4bDVwJQ@mail.gmail.com/
-> 
-> But he made it clear this was *not* a requirement, so I just left the
-> diff algorithm to the default. Or did I miss any communication that
-> contributors should now use histogram diff?
-
-Use your common sense, i.e. look at the result and evaluate which one is more
-readable. My guts are telling me that histogram will be slightly better here.
-
-> Regardless, I do not mind activating it. I just did a:
-> 
->   git config diff.algorithm histogram
-> 
-> The v6 will have histogram diffs.
-
--- 
-With Best Regards,
-Andy Shevchenko
+In-Reply-To: <20250226105615.61087-5-clamor95@gmail.com>
 
 
+--adrlf4fwc7byfa5p
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 4/6] ARM: tegra114: add HDA node
+MIME-Version: 1.0
+
+On Wed, Feb 26, 2025 at 12:56:13PM +0200, Svyatoslav Ryhel wrote:
+> Add HDA device binding.
+>=20
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  arch/arm/boot/dts/nvidia/tegra114.dtsi | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+
+The nvidia,tegra114-hda compatible string doesn't exist in the bindings
+yet, but I've applied this for now and added a patch to the Tegra tree
+that adds the compatible string.
+
+Thierry
+
+--adrlf4fwc7byfa5p
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfJ4TsACgkQ3SOs138+
+s6EJ3BAAlMkfh43c2FIlRw7ZM70aUadsuK7Sgbk4J9AYZYBeHskaQ9gbKcmm7YVd
+PAa1xIxmmJUtg5dyZMHUi31wFIZ8Hgk5Rn0MGY4tkMLPA3X+FU1nmVI4h+c+OGnx
+FHc1CInS32PNsDBXjkpkl7sBbhKwyagOlwEUgAGM1ko32avKjFQwfHcNvelF+o69
+CxamH7Ja+WTuXBeidQWQbOOwJxDqb9dDrCDc2NpvlK8A/afS2dXX0k9bYLAxS/5s
+U3T+yS225l8YNAB80AWEA94MtrpYc8FEWaha93MarX5MGKvBANvy7PRhUuZBp8b2
+yNoQlIpZxPFqzWab0n25vOVhJBKpCxCQCszvuOZ3o0pnwnA+f+4ngEEqi90P+M0R
+Gjd/IIjw3QscPUPeVhnM1p7PPF5qzLQZMldHgfkefkiorRPTV/rUQVU70IczgL1U
+g8fRHdft8pbEc+37wZgmpZ+HyFWnuykOmI7AEe2YbYozS9uOwGDbo11DEmkJLsaP
+8/qRgK5D+3yACqrNMeRFjm1uJRPQ/pvL55fVCSwml9BPayn9zEv41pSeomlS0OZt
+PankenQIrOjtUEl7Dbgy+M3AQq7dN9w4yywdnYo3BbshdBPI0ZNdJNqRTIQjgcE+
+PU2kPjbRveUfQ2PgXu/AiAXs8KYDFczyUxlX46IE69s0SZgG8yw=
+=88q4
+-----END PGP SIGNATURE-----
+
+--adrlf4fwc7byfa5p--
 
