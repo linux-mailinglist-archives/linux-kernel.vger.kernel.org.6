@@ -1,233 +1,248 @@
-Return-Path: <linux-kernel+bounces-548744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B44BA548CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:10:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71BE2A548CD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:10:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C03BB189451A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:10:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0362D172FCF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB37420A5D1;
-	Thu,  6 Mar 2025 11:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A4FD20ADE6;
+	Thu,  6 Mar 2025 11:09:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YxLMTK9d"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iFi/bRhc"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4038C1FDE37;
-	Thu,  6 Mar 2025 11:09:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741259361; cv=fail; b=tAXrO2FxdZD1N6gNPZv7OTaDWHJUcGHX+zcdaqfAhSMelFb3WRLzPxdK3GmZdbwX3VQvlAImxGaguPbocAWs9dwY0HILyPoA044gkIGfe8/o/kATb/tcZa4kGl/qYk6UvcIRXrf2zeMdhJ/wZs+Ef4fr2FJf5yFXhfZMeP6D6zg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741259361; c=relaxed/simple;
-	bh=KFaFHqY3sEW+F6oivy+Y6EAT2ZHmvWxv1pWk167WC84=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QOniQAJegBiTVRiphspa+uq0bd4ksupLLwegw4ERaNqZBQDjccLID4AsJpniPGLw0nlmBwwufR5OtGQbf3EFJq3hozxGwv++rugqBHC5XijdgXVwUDSpCUouklibzs89ZKCC9MVRRiMZZOaX+IcXhMMNV/drIXiXRhmHoXyunBU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YxLMTK9d; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741259360; x=1772795360;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=KFaFHqY3sEW+F6oivy+Y6EAT2ZHmvWxv1pWk167WC84=;
-  b=YxLMTK9dOE1Du6g1Bvi8IYRLTuhkNqaIkSxrgNS/Y4vihMM1x8qUL/FP
-   BtvDTxcmwlld7RrsVoZf+T4jzUoEXHUcs/5Cd4VnkcDhuM69ZRf1BubAx
-   194kjqBwFRgK+ss4HKM5Lkwsfo4MRS+K3pJYW+Ia2qano3qva7583usTV
-   3BoZCspRiU4mDAf6WKmxu2/RJKLGS9U6Kz6LF9lkC7z4kzhuVfBB8y+Pb
-   2dFTzfrJgBSlinlk8eiQuKbd+RjPU7fOtk/R8j5fVjbV1lzykH/8SWV4e
-   mjPLRPQ3J+k1nRgsisFxqlDFYXGEmtwATet0r1f0bCaHV5wA4qgkmMpMk
-   Q==;
-X-CSE-ConnectionGUID: YfQqmt3DS6SaW7sBjT5okg==
-X-CSE-MsgGUID: qQa0A7zUTYOlykRuAVP6VQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="46186235"
-X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
-   d="scan'208";a="46186235"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 03:09:19 -0800
-X-CSE-ConnectionGUID: ugcP6VyYRjmuVD2XJfLgVw==
-X-CSE-MsgGUID: m6xwAjGhQn2r2P7gXrNDCw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
-   d="scan'208";a="119000344"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa006.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 Mar 2025 03:09:19 -0800
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 6 Mar 2025 03:09:17 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Thu, 6 Mar 2025 03:09:17 -0800
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.169)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 6 Mar 2025 03:09:16 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qcdo6zhsx0w6jwUeVzx1vleF6fShrTBbEfdAuPYCdsjUatfMAW5TlwSKo69o3PKy6nQRF48YsUkzYCU1Lp6OP39nNUBxVhQJdMtOatS6zPsNxxTTtwKmnAXR/pUHIH+oQrNeKUPbvwSnZCiijD2n/sJ7QzlEMojNWGKGWO7c6CU67VOo9GIST541lH1KFGZHDD1OAxZLxpvnVzp0nVDCfzp19Mku03oB7l5kpH2wM4+m363NpZ/MvuS+zBo5lPsDbDoVIoB15tnSS2LojoM4DJWiFLqt0l2tmZkXaMZgtcgoNZElvet9JqTizRL+PdKpjqZBxhLXWyAGZUCivOLSxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KFaFHqY3sEW+F6oivy+Y6EAT2ZHmvWxv1pWk167WC84=;
- b=lDQ88sde+MT2mArbjz8OGs6O1uEPJrXp/Qn1yWFU7G5EqFOOOrvlcwGAggeuLismE1tEfo90zvhXJHf1/ALDrhqQqCSCGOy4FczFkTflOSNkNJzcezB/FcojUT+ixS6C2qeYED5z9ihgTBiPa9Fh9VrZOQRfV9Fx7DeE30/5n4EOJkgCddE0+gsN/vqtuEFURj0HHwPGj550JLMNW53X+PXR9aU+cwBJcFuU9Cj3jWVPBlWEyu4dx5D34kDj5KGfLZBMwjfT1RvGDJ8Z+5EPb6t0NuD3HI7Wn0l15FgM2mQdM4C/IoWrcbLnCRjdFxK4HoFUtk2NVsEj7NdLZbGu0g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from IA1PR11MB6098.namprd11.prod.outlook.com (2603:10b6:208:3d6::20)
- by PH0PR11MB7585.namprd11.prod.outlook.com (2603:10b6:510:28f::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Thu, 6 Mar
- 2025 11:08:34 +0000
-Received: from IA1PR11MB6098.namprd11.prod.outlook.com
- ([fe80::cbbd:ed55:576c:fd55]) by IA1PR11MB6098.namprd11.prod.outlook.com
- ([fe80::cbbd:ed55:576c:fd55%3]) with mapi id 15.20.8511.015; Thu, 6 Mar 2025
- 11:08:34 +0000
-From: "Xu, Even" <even.xu@intel.com>
-To: Jiri Kosina <jikos@kernel.org>
-CC: "bentiss@kernel.org" <bentiss@kernel.org>,
-	"srinivas.pandruvada@linux.intel.com" <srinivas.pandruvada@linux.intel.com>,
-	"mpearson-lenovo@squebb.ca" <mpearson-lenovo@squebb.ca>,
-	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH RESEND v1] HID: Intel-thc-hid: Intel-quickspi: Correct
- device state after S4
-Thread-Topic: [PATCH RESEND v1] HID: Intel-thc-hid: Intel-quickspi: Correct
- device state after S4
-Thread-Index: AQHbjLTcANInlVCQx0+6PVpmKEX957NjdcAAgABCBRCAAE/SgIAAAGLwgAA0LoCAAboagA==
-Date: Thu, 6 Mar 2025 11:08:33 +0000
-Message-ID: <IA1PR11MB6098AD3A90B92EBAC95D2818F4CA2@IA1PR11MB6098.namprd11.prod.outlook.com>
-References: <20250304032255.1131067-1-even.xu@intel.com>
- <96qpo784-8r1o-sor7-p42q-q06n1p389913@xreary.bet>
- <IA1PR11MB6098ECF413F5F4E8FD120B4EF4CB2@IA1PR11MB6098.namprd11.prod.outlook.com>
- <68roqo71-3887-ro16-0qss-52q455sqoo1s@xreary.bet>
- <IA1PR11MB6098DDEBDF3B7A0160CEBBC2F4CB2@IA1PR11MB6098.namprd11.prod.outlook.com>
- <q70795qp-nq3p-r181-15qn-on41n588s770@xreary.bet>
-In-Reply-To: <q70795qp-nq3p-r181-15qn-on41n588s770@xreary.bet>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: IA1PR11MB6098:EE_|PH0PR11MB7585:EE_
-x-ms-office365-filtering-correlation-id: cea36c82-1f36-4ec8-c97c-08dd5c9f3c6c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?/f0uC+DP2IqPI4FN16SY+NgRzF1VjcYGCdXujTA5WHLleJqPdNDDvvFHw/sI?=
- =?us-ascii?Q?ouxF3dKg+yfxnC65VXJgmK74EeZk/kP6b/G68OSYSVDm4SnsOJ8nLZSJGIv6?=
- =?us-ascii?Q?oX26f7koGixgZCD5hKInljNEdiRtxlvKgE8ZUOpdCB89pmLwKyALiDqYf/Sm?=
- =?us-ascii?Q?moGYqddPHsQfpB9Ry80E5iGO05qvKTw/X48wbRl3H4lAK4eB2OY1e2Id82Pc?=
- =?us-ascii?Q?m96IThmVPte3/BIUR8vRxbfUUy5vw8ZXthBonNQzQ55cST+vUrYlQ0T9q/wt?=
- =?us-ascii?Q?ZYTpmIdqy5p5YmgJQqXy58ZsSlc8ccAquW+2cks6vdS7zKRdk6F5zgm4gLjb?=
- =?us-ascii?Q?O4ylnjlxiSPw5EmeoXEst1EXrp66aeqeUYVLUTkMYJDqLBqeUe915W4b3/Qn?=
- =?us-ascii?Q?mu9ULG57MyzqAYVjCMhCmEA5jbZhdfFYAI8y3lv6dKRFxcGzoCW/UPWCaUxC?=
- =?us-ascii?Q?zOvF1AIlGWlBJv24Bu0gUkebc2eYBWL1sHD33uK8bs5u+VIEKQUJDV3d3f/9?=
- =?us-ascii?Q?NH3Sv32pTNGXp02ZiPX7/2OuNfrsXs7TIH9OLJCb5w/kdTrmIlTuGuUedgI8?=
- =?us-ascii?Q?Mk5NLUZwB4+drX872X7OadPHdeMAwLytrhKxKifSIiHS/DdMpTEd0p83Dy9C?=
- =?us-ascii?Q?Vdasc92ttdI3TuUUysYT5kB3ybx9m9LMcSz3sbiNdHrm/T0jQ5ZWoEzTyliP?=
- =?us-ascii?Q?uusKC6Pu1ZCVWK6FYIx+9ZbjAmevEEyMv061sOj55eTFKnVpqRCRueiwF4aI?=
- =?us-ascii?Q?LSZ9qS0Xg9kLxLfn+K8bs+F2gdJgCg/GQTZZcgkdRPJqfxBnryNuGlcLBNoR?=
- =?us-ascii?Q?XeLq6g6B8dc12hWwbrz7UHMzDTa+VjozywMltVVI8/aL/wa8/RqVmXM/12wY?=
- =?us-ascii?Q?t0GNHLbRDPrsEmmQWvjBKc6u+Cvb8iDgDzOVV8iuTdoWycUkB/LwZ8UHUyIp?=
- =?us-ascii?Q?FxLXiUMV8K2EEQw1qtVG+XJhCWXMgrFPUEtwe9nP+xf5nmeK/4+SFU5y8ehr?=
- =?us-ascii?Q?usLa439Ug6lFyc0jKkKyX7nFlDm3UnYefKrRj6VkBw1sX60MCaLPjGHupLuJ?=
- =?us-ascii?Q?tNOv/XKKG3KqiYv5Tp4ny2qg0S4+N3LJGyj9n1e91ZFii/aNqZgXFsu9M5f8?=
- =?us-ascii?Q?COFiY7aRbcauw/IIX0LqFjMP0D3DyCKtaLmfa8bz88OUwf1W6QfvNnLhjQea?=
- =?us-ascii?Q?86I4LF8W9b9a3w4opVDIbf8qUxsW81pDhRgiyLRxAVMtokdPUC+Kd5MaSssq?=
- =?us-ascii?Q?BtLFDS84ZkxSeFgz0UbLiS6g+61Pn16K/uAXpJ0cNElnZxC1wFhA6XhkQiKW?=
- =?us-ascii?Q?XY3Ld8fMjlPj9Svq7i94O83738s+7nEPLymMk4nAjFhG+g+Lmnekr5oTkaRR?=
- =?us-ascii?Q?OGFWQRyW3+V0LcJcyaoxRQ5/gKl4zUWJRiuuIU6wsaa0RnRQhQC9cPp0rXoC?=
- =?us-ascii?Q?ZIxaiP6uRQ9+6FpPjLMzReCUgxRAm0uv?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB6098.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?/t9/YNrOqveIbtVYP3pgqHYG0tVxvp59YpV0wO04bdIVCwlCAPOv0pSgyTkm?=
- =?us-ascii?Q?IC7Z7PPO3UVsYgNlOSyOSApbWRR0yeIzjSCZNAlvfBoj+B8vZDHF/1Pw4ksX?=
- =?us-ascii?Q?z1JfTJI6NPK2gpueVE5U7+6xECyJgf5sVV2EOzl6cocNLYEM3IawnIDf2EE8?=
- =?us-ascii?Q?I/aiMrKTGwIhpRpKi9NJn4TlDblxOuuw5nEdJLH30tOBqF5crg8duntyZOOy?=
- =?us-ascii?Q?0ZQx8Gs5oe/+0d7KdvwpoyFaO162X7A7JERg3wq8khKCoCq637rRsFMDjAjG?=
- =?us-ascii?Q?uV8WyDarIb9xzo4BPXLMtTRJCGvdutGWf4Qrd76yrQx7fMwkB3+pBMqoGTdP?=
- =?us-ascii?Q?7LBVsBtgD5z8Lk9JZIlKudDsvF/3zBPXFaIvAsNNl1JIBTN1jNl3WW2KWX9r?=
- =?us-ascii?Q?RdJbx0sahTgffpyrS1u1ZLF4cGuFnxR4aYVqK47AH1SONiYuoIXdP7iCi5S7?=
- =?us-ascii?Q?A5ovnvH/nVgoyBEYDHibkDBl94KM9hRo1qNfb9WwoMuPANs9fB1pLiOmeQhB?=
- =?us-ascii?Q?NrSpLpX0LUsmFk35g9IMnf95PjdS5dOKD9Z/7RO9arHU4I5Te9XYD9c8rNKO?=
- =?us-ascii?Q?op3tA7FYHjPaOY3SK0nCMMXnw2MBH1+dSLN4j8c/lcn1AqwNPMy2amhlhSpD?=
- =?us-ascii?Q?AH4+indz9SbRSdaPRLGPLD1BtUk5bRWiDQhd5vrmb9EFZZ4rcq+DlMAns0OV?=
- =?us-ascii?Q?GZsMXk8BJexvvfAYA8Vd9Phs5cJ/9XaVMOaY49D1+1zMyaoKTfRaFnKwAJra?=
- =?us-ascii?Q?mi7qMHQ5Ya8FbgsCnEBlWFd3tPlLXYh30G4bwm6T35nuPdDJK52lz0B0M0tP?=
- =?us-ascii?Q?CH+Z/uiYdIKmjvPDIP7skEgIFC4v5UIMyO8opymCIVEHllFtsiKFOWoNygz0?=
- =?us-ascii?Q?sYdvwYR2HQhDwnZtfSmZeEa3C7FH643u4QBIPyX0LcpngCUmhNMkkkx48ZVa?=
- =?us-ascii?Q?4cNJN1639snPFnug4ga2L25/OwXCQ1jk9XrWmp/v+pUvzvJwqErIcPXnHFDM?=
- =?us-ascii?Q?2ScOkQMmQFyFDxUimx45jxLIbaYery3anYTL3/ykIuIBwPLedhetgnMAgWZl?=
- =?us-ascii?Q?jq6eYx2UTGoJxQdbjy5dMsGvrdTIeLgh+WhYgdSC1YS8KrpRuatc4UGKS52w?=
- =?us-ascii?Q?ifVKcgYq9DOZoj4sXPcpNRqv1a06G43iPTOwPOH0YavmNiLXUTGmrI/YHDb6?=
- =?us-ascii?Q?95b3pzGjJNSj7NqDj3VITnL23DTie+RHT7T9DB/pqOnryWTZ6ryShrIALGnW?=
- =?us-ascii?Q?x3qjZFGj1c2goRSGMfMC8Z9DCkM0/YDHcqHFmZ+QSx03wzwfFyBBvJo4tBpP?=
- =?us-ascii?Q?LAlmhFm+CmC4se06vgzXL0kIZ/boNLVQcUSn5mmjF2Hpg8NRffduqXKiGC0i?=
- =?us-ascii?Q?F0krleE+utk8Nz6pyXQQQkZxp9ugH9I40xDuwH4avMdFcIVuQk3dAhL7YhLn?=
- =?us-ascii?Q?dlzE8JaKaqNdkf94uIorlm6VZ15T7vNxesYtOW97lhxQALnP1OjqbZ+2qApL?=
- =?us-ascii?Q?NwkSa9o+Z7bvr3esN8jGmyRCzIHkKw16UddzcSMeMyuqw7y46pUKgsp8fLq2?=
- =?us-ascii?Q?V8nKgtP2yCQooNOuzBc=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6BF207DE2
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 11:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741259379; cv=none; b=RXMKoeux9CEI/J/jXRYjYUDTkbLwFMOeuxwKPl/Ri9HDixzSjq6QPLXBljMj4OQ7kOC32fftT1wRkscKQqBNdNcO+PFNncxDGmRmgYliFWV/fgo46/9ltzxelez6mY+o7DPNyHme95DN6DbnaU9mNSLSgGlw8fCkuM731R8BVo8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741259379; c=relaxed/simple;
+	bh=pNwD/jCtSIx93BC08iWoA2Gl7Ec0p86LPlXEVkGvFZI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=LIQJpaaxGppGZ1BBWVPtHuv9736pXwzTMQ7S7ztZZlO5R3y6BExMRobtVz80GvbUgDnQ7Wu3Vv4CsG3CW6rG02viouDLsc3+u3N6VFEGOj0LUAD09fFUq6DwzLpGyrfkcguiEoah2zk7b9aOAGQWKI4d1y6rQVsTHy1uiUqzXrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iFi/bRhc; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-390e50c1d00so576849f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 03:09:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741259376; x=1741864176; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/dFYrb2sW0Ny4BYm+P6FPy8/gogBw8ybwCYFPW/5Wfc=;
+        b=iFi/bRhcWL1uTWVB9DO+gCMUGIALNdgJWob/mBx7a4p2pW2898d71bJE37r4Yue30u
+         2AqLSz5FUliDpL5cbQafeOWOwPogGXrXQ4Ka8D5hjr07gZojbDZm9B1KsVF8p+O9gN3e
+         J63PfztOfmsRu0UqT0/89eh0JAE1uKgMN7yxLHDDr0cL0E91GSdQXMqoPgpW/x6IP2Ot
+         LHIq5BqxWlPk3ye+PBESx7RLVVz6LPYg0HZlnyiCxfpvUOXj3yHQZHBEbHXLqQmcDM6A
+         rVIKbUHsg7Id9f+dKPvoGEU3BbH7cMY6ydnAZ1+Z99/7yymJdOv85q6Fy1psvcf+/oHh
+         Qkug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741259376; x=1741864176;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/dFYrb2sW0Ny4BYm+P6FPy8/gogBw8ybwCYFPW/5Wfc=;
+        b=eul9ow5lSvERaiUT25tnGVgCegHphs4ONw1Rrc/gHvdAx+/6FGnqkfrfqPZ9aW3Uva
+         X+WS9oXhSEJ4ZTs5XkrmiqRMpMJHtukllb2K3bQK/53dQF4kYD1WLdiTIqLH8lCUkkOT
+         PqQR3i2PEGGOaxy3oBRqdPDfzsZ1T6ypRk0C2sTmPdOCe2YjTb8lKMlIUNMu9AaJtugi
+         x0uuG8UzfAWXy/ouS6zd3UCzmKb5gLwHC4fuRRoUlBGrt3pC5GCSQc9W2/ufJikCK4Dk
+         nNfR9v4aRZJ3DzftI2ONlVoqqdn8SpNI0TgzPOJ0FuX+iaIbpDpYiwPJAGk1CMP4eS7n
+         SVCw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/15grK265+j8FeZuWA0OyI23gavPX0i4nnkQ13n4nt25eWJDtGaQYLWX0imXd3H7fLmVKxCp4vy4uohY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLlGcpRiJJz3Glr0hPYsBSeRyJL6Hgp8If56ymI6zCmpg/jgt7
+	2DjH4qMs5kRtpE7PKcRvxfjU3brH4TR00bOT9Jorw87ziS1K/p/xy4eHyCgOskae4Uw6cUfNv9i
+	RiIZ/eNXu/yUf0w==
+X-Google-Smtp-Source: AGHT+IGQlRF5ezfZt1wPiVd1C9EMKt6NF+Jo3FrWA4EBhp3pS1use0qAKsHwAt88E/Nw+wGskfdJ4hSuXHpuJoA=
+X-Received: from wrbef7.prod.google.com ([2002:a05:6000:2187:b0:38f:451d:8e9b])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a5d:47a4:0:b0:391:1473:2a08 with SMTP id ffacd0b85a97d-3911f724cd6mr5943042f8f.7.1741259375699;
+ Thu, 06 Mar 2025 03:09:35 -0800 (PST)
+Date: Thu, 6 Mar 2025 11:09:33 +0000
+In-Reply-To: <Z8iFeEWq16pNQdMa@pluto>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB6098.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cea36c82-1f36-4ec8-c97c-08dd5c9f3c6c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Mar 2025 11:08:33.9314
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Kx6/KiT7EOXwGy7zoN9IFtqUq2GettCOyZvUkuSNJvK18zLifjLq6Kmp7T71N+Tf0YVA6yHItxbkx9QRawXmlg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB7585
-X-OriginatorOrg: intel.com
+Mime-Version: 1.0
+References: <Z8g8vhS9rqQ_ez48@google.com> <Z8iFeEWq16pNQdMa@pluto>
+Message-ID: <Z8mCbc2Z2QGd3f8M@google.com>
+Subject: Re: [Bug report] Memory leak in scmi_device_create
+From: Alice Ryhl <aliceryhl@google.com>
+To: Cristian Marussi <cristian.marussi@arm.com>
+Cc: Sudeep Holla <sudeep.holla@arm.com>, linux-arm-kernel@lists.infradead.org, 
+	arm-scmi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Hi, Jiri,
+On Wed, Mar 05, 2025 at 05:10:16PM +0000, Cristian Marussi wrote:
+> On Wed, Mar 05, 2025 at 11:59:58AM +0000, Alice Ryhl wrote:
+> > Dear SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE (SCPI/SCMI) Message
+> > Protocol drivers maintainers,
+> > 
+> > I flashed a v6.13-rc3 kernel onto a Rock5B board and noticed the
+> > following output in my terminal:
+> > 
+> > [  687.694465] kmemleak: 4 new suspected memory leaks (see /sys/kernel/debug/kmemleak)
+> > 
+> > It seems that there is a memory leak for devices created with
+> > scmi_device_create.
+> > 
+> `
+> Hi Alice,
+> 
+> thanks for this report.
+> 
+> > This was with a kernel running v6.13-rc3, but as far as I can tell, no
+> > relevant changes have landed since v6.13-rc3. My tree *does* include
+> > commit 295416091e44 ("firmware: arm_scmi: Fix slab-use-after-free in
+> > scmi_bus_notifier()"). I've only seen this kmemleak report once, so it's
+> > not happening consistently.
+> > 
+> > See below for the full kmemleak report.
+> > 
+> > Alice
+> > 
+> > $ sudo cat /sys/kernel/debug/kmemleak
+> > unreferenced object 0xffffff8106c86000 (size 2048):
+> >   comm "swapper/0", pid 1, jiffies 4294893094
+> >   hex dump (first 32 bytes):
+> >     02 00 00 00 10 00 00 00 c0 01 bc 03 81 ff ff ff  ................
+> >     60 67 ba 03 81 ff ff ff 18 60 c8 06 81 ff ff ff  `g.......`......
+> >   backtrace (crc feae9680):
+> >     [<00000000197aa008>] kmemleak_alloc+0x34/0xa0
+> >     [<0000000056fe02c9>] __kmalloc_cache_noprof+0x1e0/0x450
+> >     [<00000000a8b3dfe1>] __scmi_device_create+0xb4/0x2b4
+> >     [<000000008714917b>] scmi_device_create+0x40/0x194
+> >     [<000000001818f3cf>] scmi_chan_setup+0x144/0x3b8
+> >     [<00000000970bad38>] scmi_probe+0x584/0xa78
+> >     [<000000002600d2fd>] platform_probe+0xbc/0xf0
+> >     [<00000000f6f556b4>] really_probe+0x1b8/0x520
+> >     [<00000000eed93d59>] __driver_probe_device+0xe0/0x1d8
+> >     [<00000000d613b754>] driver_probe_device+0x6c/0x208
+> >     [<00000000187a9170>] __driver_attach+0x168/0x328
+> >     [<00000000e3ff1834>] bus_for_each_dev+0x14c/0x178
+> >     [<00000000984a3176>] driver_attach+0x34/0x44
+> >     [<00000000fc35bf2a>] bus_add_driver+0x1bc/0x358
+> >     [<00000000747fce19>] driver_register+0xc0/0x1a0
+> >     [<0000000081cb8754>] __platform_driver_register+0x40/0x50
+> > unreferenced object 0xffffff8103bc01c0 (size 32):
+> 
+> I could not reproduce on my setup, even though I run a system with
+> all the existent SCMI protocols (and related drivers) enabled (and
+> so a lot of device creations) and a downstream test driver that causes
+> even more SCMI devices to be created/destroyed at load/unload.
+> 
+> Coming down the path from scmi_chan_setup(), it seems something around
+> transport devices creation, but it is not obvious to me where the leak
+> could hide....
+> 
+> ...any particular setup on your side ? ...using LKMs, loading/unloading,
+> any usage pattern that could help me reproduce ?
 
-Just recognized you applied [2/2], could you also pick [1/2] for name fixin=
-g?
+I looked into this a bit more, and actually it does happen consistently.
+It's just that kmemleak doesn't report it until 10 minutes after
+booting, so I did not notice it.
 
-Thanks!
+As for my setup, well, I boot the kernel over pxe and the rootfs is
+mounted over NFSv4. The memory leak happens even if I don't do anything
+at all - I just boot and wait. The device is a Radxa Rock5B.
 
-Best Regards,
-Even Xu
+Not sure what other information there is to give.
 
-> -----Original Message-----
-> From: Jiri Kosina <jikos@kernel.org>
-> Sent: Wednesday, March 5, 2025 4:44 PM
-> To: Xu, Even <even.xu@intel.com>
-> Cc: bentiss@kernel.org; srinivas.pandruvada@linux.intel.com; mpearson-
-> lenovo@squebb.ca; linux-input@vger.kernel.org; linux-kernel@vger.kernel.o=
-rg
-> Subject: RE: [PATCH RESEND v1] HID: Intel-thc-hid: Intel-quickspi: Correc=
-t device
-> state after S4
->=20
-> On Wed, 5 Mar 2025, Xu, Even wrote:
->=20
-> > I didn't realize v1 patch already got applied, just sent out v2 patch
-> > this morning. If so, could you just pick " [PATCH v2 1/2] HID:
-> > Intel-thc-hid: Intel-quickspi: Correct device state names gramatically"
-> > from v2 patch set for the naming fix? Those two patches have no
-> > confliction/dependence.
->=20
-> 2/2 now in hid.git#for-6.15/intel-thc. Thanks,
->=20
-> --
-> Jiri Kosina
-> SUSE Labs
+I tried again with v6.14-rc5, and I still got the leak:
 
+user@rk3588-ci:~$ sudo cat /sys/kernel/debug/kmemleak
+unreferenced object 0xffffff81068c0000 (size 2048):
+  comm "swapper/0", pid 1, jiffies 4294893128
+  hex dump (first 32 bytes):
+    02 00 00 00 10 00 00 00 40 a3 7a 03 81 ff ff ff  ........@.z.....
+    60 c8 79 03 81 ff ff ff 18 00 8c 06 81 ff ff ff  `.y.............
+  backtrace (crc 60df30fb):
+    kmemleak_alloc+0x34/0xa0
+    __kmalloc_cache_noprof+0x1e0/0x450
+    __scmi_device_create+0xb4/0x2b4
+    scmi_device_create+0x40/0x194
+    scmi_chan_setup+0x144/0x3b8
+    scmi_probe+0x51c/0x9fc
+    platform_probe+0xbc/0xf0
+    really_probe+0x1b8/0x520
+    __driver_probe_device+0xe0/0x1d8
+    driver_probe_device+0x6c/0x208
+    __driver_attach+0x168/0x328
+    bus_for_each_dev+0x14c/0x178
+    driver_attach+0x34/0x44
+    bus_add_driver+0x1bc/0x358
+    driver_register+0xc0/0x1a0
+    __platform_driver_register+0x40/0x50
+unreferenced object 0xffffff81037aa340 (size 32):
+  comm "swapper/0", pid 1, jiffies 4294893128
+  hex dump (first 32 bytes):
+    5f 5f 73 63 6d 69 5f 74 72 61 6e 73 70 6f 72 74  __scmi_transport
+    5f 64 65 76 69 63 65 5f 72 78 5f 31 30 00 ff ff  _device_rx_10...
+  backtrace (crc 8dab7ca7):
+    kmemleak_alloc+0x34/0xa0
+    __kmalloc_node_track_caller_noprof+0x234/0x528
+    kstrdup+0x48/0x80
+    kstrdup_const+0x30/0x3c
+    __scmi_device_create+0xd4/0x2b4
+    scmi_device_create+0x40/0x194
+    scmi_chan_setup+0x144/0x3b8
+    scmi_probe+0x51c/0x9fc
+    platform_probe+0xbc/0xf0
+    really_probe+0x1b8/0x520
+    __driver_probe_device+0xe0/0x1d8
+    driver_probe_device+0x6c/0x208
+    __driver_attach+0x168/0x328
+    bus_for_each_dev+0x14c/0x178
+    driver_attach+0x34/0x44
+    bus_add_driver+0x1bc/0x358
+unreferenced object 0xffffff810379c860 (size 16):
+  comm "swapper/0", pid 1, jiffies 4294893128
+  hex dump (first 16 bytes):
+    73 63 6d 69 5f 64 65 76 2e 32 00 03 81 ff ff ff  scmi_dev.2......
+  backtrace (crc ccc21b9a):
+    kmemleak_alloc+0x34/0xa0
+    __kmalloc_node_track_caller_noprof+0x234/0x528
+    kvasprintf+0x90/0x11c
+    kvasprintf_const+0x98/0x138
+    kobject_set_name_vargs+0x68/0x104
+    dev_set_name+0x6c/0x98
+    __scmi_device_create+0x17c/0x2b4
+    scmi_device_create+0x40/0x194
+    scmi_chan_setup+0x144/0x3b8
+    scmi_probe+0x51c/0x9fc
+    platform_probe+0xbc/0xf0
+    really_probe+0x1b8/0x520
+    __driver_probe_device+0xe0/0x1d8
+    driver_probe_device+0x6c/0x208
+    __driver_attach+0x168/0x328
+    bus_for_each_dev+0x14c/0x178
+unreferenced object 0xffffff8105be7400 (size 512):
+  comm "swapper/0", pid 1, jiffies 4294893128
+  hex dump (first 32 bytes):
+    00 00 00 00 ad 4e ad de ff ff ff ff 00 00 00 00  .....N..........
+    ff ff ff ff ff ff ff ff c0 b4 f0 83 c0 ff ff ff  ................
+  backtrace (crc 7b92a969):
+    kmemleak_alloc+0x34/0xa0
+    __kmalloc_cache_noprof+0x1e0/0x450
+    device_add+0x54/0x570
+    device_register+0x20/0x30
+    __scmi_device_create+0x184/0x2b4
+    scmi_device_create+0x40/0x194
+    scmi_chan_setup+0x144/0x3b8
+    scmi_probe+0x51c/0x9fc
+    platform_probe+0xbc/0xf0
+    really_probe+0x1b8/0x520
+    __driver_probe_device+0xe0/0x1d8
+    driver_probe_device+0x6c/0x208
+    __driver_attach+0x168/0x328
+    bus_for_each_dev+0x14c/0x178
+    driver_attach+0x34/0x44
+    bus_add_driver+0x1bc/0x358
 
