@@ -1,147 +1,180 @@
-Return-Path: <linux-kernel+bounces-548314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4984BA54343
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:07:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51405A54347
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:09:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 691E07A685A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:06:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60EE77A5FAF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378BF1C7005;
-	Thu,  6 Mar 2025 07:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12581A9B58;
+	Thu,  6 Mar 2025 07:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RqnP0M5K"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LeAjoiyi"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97F71C6FF3;
-	Thu,  6 Mar 2025 07:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A4017578;
+	Thu,  6 Mar 2025 07:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741244815; cv=none; b=OEFPVzDbA+9DQYWUWBHwGMhTlDGTDERqOcRxFV2bLjvtPU+ujzgCY0wyLxj92lau7ysVUjfRMoyzLZ53dRkIpU+F9kmCWzy4r21Kh4dilrMNo86j2GpSfKNf0044yDltdRGc5S8adzUjUrM7plliuFkdvRCSBz5f3XDShvYqW8U=
+	t=1741244942; cv=none; b=hS8jgRoWLT/2UPCDUERtA6V6prEKBJGk8nVBAxy+eOoP/KWFqJBT6pec01FKsOlfzBbAwKcJPXssYM7Xy+LdB3qFetNQy3h+jU4QfWvoBlY/yJsmDv90G7PxrwbcdVpeJ+WEe/xSAsTJxaCscv0bAjusEh4NgK/nuTc3MR7Pwpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741244815; c=relaxed/simple;
-	bh=G5oqjKQ03OlbMtkRr3PoC89Z6LTisg9v9G3hFW2R3Ig=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kV1LBBIPyZpaexzHtDBoaHSIce+ksv4I5huQsQ+iUiecFou11XomPSqiSSkXQq6K8BagnoYVwMeWKuhWXJ0sNAOYETzeFLeT43XUb11keN111lC8sHoxalf0Aj17qJcp5XvFYJSM31Zk2pDVLCqvvyYXlyVClPelEHT0cOXifeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RqnP0M5K; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-abfe7b5fbe8so50042066b.0;
-        Wed, 05 Mar 2025 23:06:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741244812; x=1741849612; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LJ/JM3QEbP54B+br4sg8MdVS9Z+LacVEvzYVxrXGBAE=;
-        b=RqnP0M5KjAlhwKSz7Q/mPg4b5KliM3/RcMn2vLHKKou6WTrs91/ktDBTWaBt82aHK2
-         efoTCSfBTKOpgphLNunJBeHbNRADKipPncNjSrBhQifF4Ln3LtUQD8ISHf+ATwXZkZE+
-         dWpk8QGqQvbBVzedA8Wtc49xue0yc5kBPumSiypIz5IFJiTQjZA+Q7p1JPwC/z58oBNz
-         SRvVR6o6gIdABUrf+Q+1QfHfRYfRdejakzYFgR8+GDeJe05khm0rdkmxR/bK4ghDIh1X
-         4Y6p5r7Cj2cxQ6h/vyBnbH7PKlGsPxnGynPXHFp/0Tf/AB0A6dn39obKUxrWVOLhlWPB
-         YUeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741244812; x=1741849612;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LJ/JM3QEbP54B+br4sg8MdVS9Z+LacVEvzYVxrXGBAE=;
-        b=w52tp+jFkMrGDjCW1uv19TtP+/w3YtyiqlnEWyt+SSgUoBNuB/2qOxsCOe6Fs7FPEX
-         bLlKNPfPvd3vgJCc3fGmpVyyuLi1/lBGli+uVcWq5CT3Ur8LLoGHkxTNks4fLHH87Wg2
-         m5oSrnzFzN64WpuEJuPJxH8/nP3IojBEyPvN1vKzmcFmyCyvV5xTKetD9S/maFjAKksB
-         0E7sMC0VE/tjZpqJDnLJ2n5IoyLeyDKtXyz8AApO+cbDGgU320/k24AiBwV+p3HDatYG
-         oc6q6Tiz+M+HevYeTPMdAxRTZzuWsLtscAlI6MdxgwvbtssGopUxO6kiBPd5A03a6OUZ
-         DbNw==
-X-Forwarded-Encrypted: i=1; AJvYcCVf6Sceli/XpObIPGjRLuTCswnN6ebL+kyhXoJDc9m8rOcr2ZpkIz3mDllTcXdh2VDc2D20s/SVcUSik08=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOunEddmBSSE+PKDb7YhP1pxbipz0ciVAOmpX50qXJDeMVVkk5
-	BG9UagN/8NbjpzIdgZWZIp9ubRnctnKsfjwXNa7CnYteHuTKuD3RSmmEqIu8AVlYCUubeDPLIbV
-	S5LkWxtcIehGyLBjtnzZH21euums=
-X-Gm-Gg: ASbGncuCGhRLjU6Fb0Z/iQch4afNQYFip/YewOAiUFqSJYBj5XZFPyZqTX9nn5NLAKH
-	08dnyDYjvQrhVS1GObd8dfLLtOEeAB1PLgoHUc0/jQOVKvFqeTPLWXQPJx7hs58roO/3RrOoHXc
-	mH5xhXIsJHxDJLhrG6Pmb8fCErvw==
-X-Google-Smtp-Source: AGHT+IFiKId/s4iGWCCCoPdg4WdFjgQN3IbuGS6b5Pr8Cl60laDu+A9dkfJIVJ+2rA6I1vskKVsjMaP7NHa1sHTg6Ek=
-X-Received: by 2002:a05:6402:1e91:b0:5dc:a44e:7644 with SMTP id
- 4fb4d7f45d1cf-5e59f39d009mr12034112a12.2.1741244811750; Wed, 05 Mar 2025
- 23:06:51 -0800 (PST)
+	s=arc-20240116; t=1741244942; c=relaxed/simple;
+	bh=JHi8UXl8GUqLSAuscmwn6bMuAQ1tJw2Jj/t1j0/pNyo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vDJT3jhDBQx1LpatHDVInqdSx9E/CR4pbG1QP5D0vf4gp7wkQ45TzYyp3h4zgggFsXYB8xrICkh8UEa40vwk14qIa43cXJUb89lH2+nvkx8U3UR3sQv6CLRHQDwVW8AEXGrcnvg1NssWhS64c5APF4IPmntSTJOPM2J0iruhmww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LeAjoiyi; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741244941; x=1772780941;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JHi8UXl8GUqLSAuscmwn6bMuAQ1tJw2Jj/t1j0/pNyo=;
+  b=LeAjoiyicOtxJdOwrEAhHSCWgo+K6h7qayOLIV8+j/2L9gHVUoKu1t9u
+   j+TPoEdFXSZ1p9KjpUmLzblS9Shc6Cvaur7no3pj5y1bnxRbRwiPIn5zB
+   KTtMDI1NdoRbr2NlcqTSwGh+jlUyqUKYkL/Z3TQ1xtVMq9m0SW7tEHxnS
+   1Bi6WPhc+SEOYJRDIzeT4Ie5zMYnEN4ySpNDSU3M+gQAuayRb/HrCjdS0
+   YQJ8NE8WepYdYXCwZxMO7VPiOEDZb+4fMCxacNMOOpLxKi3UBgnDsIyfZ
+   UNv6zeRo6tQv3IlozAUkoQvcsNbEXy+loEBWyocOyXVK0sXcnPFdJTZjI
+   g==;
+X-CSE-ConnectionGUID: VnE/NhqEQ2e5aECzqvzLCQ==
+X-CSE-MsgGUID: VM+6X3LdSVWoCrXvQS3NAg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="59787446"
+X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
+   d="scan'208";a="59787446"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 23:09:00 -0800
+X-CSE-ConnectionGUID: rpYd3w6+RUWDRAvL7JK5AQ==
+X-CSE-MsgGUID: G2PCcL1KTNSzZ9P29oZOyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="156159759"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 05 Mar 2025 23:08:54 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tq5LQ-000Mgg-06;
+	Thu, 06 Mar 2025 07:08:50 +0000
+Date: Thu, 6 Mar 2025 15:07:43 +0800
+From: kernel test robot <lkp@intel.com>
+To: Michal Wilczynski <m.wilczynski@samsung.com>, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com,
+	guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	jszhang@kernel.org, ulf.hansson@linaro.org,
+	m.szyprowski@samsung.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+	Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: Re: [PATCH v1 2/5] firmware: thead: Add AON firmware protocol driver
+Message-ID: <202503061453.DvzBlKdM-lkp@intel.com>
+References: <20250303145901.446791-3-m.wilczynski@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305042930.3453265-1-adamsimonelli@gmail.com>
- <20250305042930.3453265-3-adamsimonelli@gmail.com> <CAHp75Veuo9L8Y7=9XKCeFHzhtNK9x4pQ19kcMoAkL-0mFPq1Hg@mail.gmail.com>
- <4264609.3VsfAaAtOV@nerdopolis2>
-In-Reply-To: <4264609.3VsfAaAtOV@nerdopolis2>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 6 Mar 2025 09:06:14 +0200
-X-Gm-Features: AQ5f1JpXrRLQEJsm9sPXIH8dftDR1R-exc3XvVSq-JgBDKmyRHYgm7fwS2xh4CI
-Message-ID: <CAHp75Ve9RDSLwsEt4a7ugtYNQokiRjyO6BR_rJXvf7r41C2hmw@mail.gmail.com>
-Subject: Re: [PATCH v7 2/3] ttynull: Add an option to allow ttynull to be used
- as a console device
-To: Adam Simonelli <adamsimonelli@gmail.com>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jiri Slaby <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303145901.446791-3-m.wilczynski@samsung.com>
 
-On Thu, Mar 6, 2025 at 3:30=E2=80=AFAM Adam Simonelli <adamsimonelli@gmail.=
-com> wrote:
-> On Wednesday, March 5, 2025 2:18:39 PM EST Andy Shevchenko wrote:
-> > On Wed, Mar 5, 2025 at 6:30=E2=80=AFAM <adamsimonelli@gmail.com> wrote:
+Hi Michal,
 
-...
+kernel test robot noticed the following build errors:
 
-> > >           In order to use this driver, you should redirect the consol=
-e to this
-> > > -         TTY, or boot the kernel with console=3Dttynull.
-> > > +         TTY, boot the kernel with console=3Dttynull, or enable
-> > > +         CONFIG_NULL_TTY_DEFAULT_CONSOLE.
-> >
-> > I haven't checked what it looks like in menuconfig / nconfig / etc,
-> > but I think that CONFIG_ is redundant here.
-> >
-> OK, I didn't know what one is more typical. Doing a loose grep for
-> "^<tab><space><space>" and "[A-Z]_[A-Z]" (excluding CONFIG_) seems like t=
-here
-> are more help text lines that mention other config options (~622) than in=
-clude
-> the CONFIG (174). I will change it
+[auto build test ERROR on robh/for-next]
+[also build test ERROR on linus/master v6.14-rc5 next-20250305]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks, it's better to follow the common practices.
+url:    https://github.com/intel-lab-lkp/linux/commits/Michal-Wilczynski/dt-bindings-firmware-thead-th1520-Add-support-for-firmware-node/20250303-230224
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250303145901.446791-3-m.wilczynski%40samsung.com
+patch subject: [PATCH v1 2/5] firmware: thead: Add AON firmware protocol driver
+config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20250306/202503061453.DvzBlKdM-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250306/202503061453.DvzBlKdM-lkp@intel.com/reproduce)
 
-> > > +         If unsure, say N.
-> > > +
-> > > +config NULL_TTY_DEFAULT_CONSOLE
-> > > +       bool "Support for console on ttynull"
-> > > +       depends on NULL_TTY=3Dy && !VT_CONSOLE
-> > > +       help
-> > > +         Say Y here if you want the NULL TTY to be used as a /dev/co=
-nsole
-> > > +         device.
-> > > +
-> > > +         This is similar to CONFIG_VT_CONSOLE, but without the depen=
-dency on
-> > > +         CONFIG_VT. It uses the ttynull driver as the system console=
-.
-> >
-> > Btw, do those `make nconfig` and friends render the options?
-> Seems like `make nconfig` works, as well as `make xconfig` I will attempt=
- to
-> attach a png screenshot.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503061453.DvzBlKdM-lkp@intel.com/
 
-Thanks. Have you checked the search? I believe it should work with and
-without CONFIG_ in the same way.
+All errors (new ones prefixed by >>):
 
-> > >           If unsure, say N.
+>> drivers/firmware/thead,th1520-aon.c:206:13: error: call to undeclared function 'kzalloc'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     206 |         aon_chan = kzalloc(sizeof(*aon_chan), GFP_KERNEL);
+         |                    ^
+>> drivers/firmware/thead,th1520-aon.c:206:11: error: incompatible integer to pointer conversion assigning to 'struct th1520_aon_chan *' from 'int' [-Wint-conversion]
+     206 |         aon_chan = kzalloc(sizeof(*aon_chan), GFP_KERNEL);
+         |                  ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/firmware/thead,th1520-aon.c:219:3: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     219 |                 kfree(aon_chan);
+         |                 ^
+   drivers/firmware/thead,th1520-aon.c:241:2: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     241 |         kfree(aon_chan);
+         |         ^
+   4 errors generated.
 
---=20
-With Best Regards,
-Andy Shevchenko
+
+vim +206 drivers/firmware/thead,th1520-aon.c
+
+   185	
+   186	/**
+   187	 * th1520_aon_init() - Initialize TH1520 AON firmware protocol interface
+   188	 * @dev: Device pointer for the AON subsystem
+   189	 *
+   190	 * This function initializes the TH1520 AON firmware protocol interface by:
+   191	 * - Allocating and initializing the AON channel structure
+   192	 * - Setting up the mailbox client
+   193	 * - Requesting the AON mailbox channel
+   194	 * - Initializing synchronization primitives
+   195	 *
+   196	 * Return:
+   197	 * * Valid pointer to th1520_aon_chan structure on success
+   198	 * * ERR_PTR(-ENOMEM) if memory allocation fails
+   199	 * * ERR_PTR() with other negative error codes from mailbox operations
+   200	 */
+   201	struct th1520_aon_chan *th1520_aon_init(struct device *dev)
+   202	{
+   203		struct th1520_aon_chan *aon_chan;
+   204		struct mbox_client *cl;
+   205	
+ > 206		aon_chan = kzalloc(sizeof(*aon_chan), GFP_KERNEL);
+   207		if (!aon_chan)
+   208			return ERR_PTR(-ENOMEM);
+   209	
+   210		cl = &aon_chan->cl;
+   211		cl->dev = dev;
+   212		cl->tx_block = true;
+   213		cl->tx_tout = MAX_TX_TIMEOUT;
+   214		cl->rx_callback = th1520_aon_rx_callback;
+   215	
+   216		aon_chan->ch = mbox_request_channel_byname(cl, "aon");
+   217		if (IS_ERR(aon_chan->ch)) {
+   218			dev_err(dev, "Failed to request aon mbox chan\n");
+ > 219			kfree(aon_chan);
+   220			return ERR_CAST(aon_chan->ch);
+   221		}
+   222	
+   223		mutex_init(&aon_chan->transaction_lock);
+   224		init_completion(&aon_chan->done);
+   225	
+   226		return aon_chan;
+   227	}
+   228	EXPORT_SYMBOL_GPL(th1520_aon_init);
+   229	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
