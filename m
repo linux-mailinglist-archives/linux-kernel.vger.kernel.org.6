@@ -1,124 +1,328 @@
-Return-Path: <linux-kernel+bounces-548525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2F41A54617
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:19:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86162A5461B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:20:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C413E3B06E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:19:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD654189464F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529FF20969B;
-	Thu,  6 Mar 2025 09:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ky03cjFU"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06F45209F4D;
+	Thu,  6 Mar 2025 09:19:47 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD78207E12;
-	Thu,  6 Mar 2025 09:19:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13EDA209692;
+	Thu,  6 Mar 2025 09:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741252762; cv=none; b=E6mxFVlE5g41OdLuSwLNyA2e9aUAyeO3PgOxfwPSegZ132WjbnXz4sYk4lkIj7iCVlW57dqWZI/9ECNXV9IPEqIJpqacfin2v4Xz2KYO477CkEmqsEMWdHpxc1xXILgWlUyG1tYCGnjTeKVjgcYyTiKUxS81if1x3P/LwIvZdeg=
+	t=1741252786; cv=none; b=I3rQCs4ffSXr3Pv1+D+khVGFJQUd04GYvx8rT7z/DcL/u5at09jsQewTf9oWUXBYUeJ4a+3mEjPYVcNfBS30pSNgp1o5n+fj10yMeIU6Ase8uNDlO0I2u3YQPn2TVNKu4f4KekZE+0PU6Uv6ucZtJIp5ZlBTmc/ST4r7sb4J+qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741252762; c=relaxed/simple;
-	bh=UDC5YwHosXS413z3xkeJUhvnABGe1BRBfyYOdjylq9g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oc0JEWijzrGMqSsc9h1Jm1EzliO6/mfIo9h3IGGGQTsYMM9CBHh+Th3fLZHSqcH1Q0CurQXwUONp0JcwBXAf0qios+dtVFT7brCCUpZl3P6lp5xvn+i4X6cqrLxslX8I+MAu7YHyWTo7VzFLi4pShjECMCkMRVQV1XgJPlFGllw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ky03cjFU; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43bbb440520so3773915e9.2;
-        Thu, 06 Mar 2025 01:19:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741252759; x=1741857559; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Mxkm6D/oQZJezrbn3M8SnWSt5I0pn2MRcdvwk8MF8x8=;
-        b=Ky03cjFUGWyWg04qw+nWg0VFfiDmZ82u0k2FLnHcaBa1s/82bY4eGbcUcS2OMB0Xfm
-         E4x+UZRbg3SQNFBUs8sA06SySpbn1fal4cqyVwmSlYDPtXU5FjIZxlrP2duIQP8hUWcM
-         b3XFrZjreIx66k+xaEw0LvvejrvWZSkHykFPGsXJzonTKrFwc8CL8RqZVPt4A2fQ8cvD
-         A+rT/Emdqyre1QxB/wBhqDgW9Yhd5xraQApP/r6cSXcxJ+7p/6xyS08ZI22OQ1JsLq8c
-         irjdeAGlAej/BCi3D5/BwUdn36BTe5iSHQdiyv0rQizTSOef8FzYCsNo4DMeqQYNZ76x
-         SZnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741252759; x=1741857559;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mxkm6D/oQZJezrbn3M8SnWSt5I0pn2MRcdvwk8MF8x8=;
-        b=JbPmXz/CwLMzaShyzoh6O+yW0iRDL319FOwjJ16PQq70xxOLr7ZocL4Lw5MxCfGsQF
-         zz3BxMG/gdig85nX5io7qpGWQ3XaIAgejokVqyzgUWfqhbCocJpACEZsX85hjRktScVX
-         rBNGZ5H2ZdXb5+u2rI47+ZD7XRT1Ty2Q3XH0OPQh1CelRJXahGkpdyitaW8MTVhkYsCV
-         GJI30U1Yc4YEBV461mHn2GnAs/fg5YjzcTt17Osdyl22Msn2+lHlBlnNYZhxTgDpHn0r
-         CmXvlN9EmR3jyNtk17nPqCIFax31JsOonhS7vww1WQRqvpJJ4mSb4JG0B396hz6GHm+/
-         ZoBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUmJobqlFqUjt5IZJ84sdpZ/tNDRdISqq7xrPn4cWHNQLDW1tKEEVe2bBRwUiwoW7g8EsONoqZ@vger.kernel.org, AJvYcCUzaR/mxfvFrXr1gfAnfU/ZEuu0kJTHe3I4aJ9u4BB2SDuBC6bYbSVs/ivBML8hTBO3oLi+p00mzESl/Iw=@vger.kernel.org, AJvYcCV/qWHIs2ae0s9DUmBYz6CQkH6Gs0h7pl2jbO5Sj6WkV5pFnf8eHRTuw0cl7VrL3qUA9ryMVE+dLZAH6w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvnaEUzLigfqiM1Q2Dn3vxB+ILBAiynaYkRJLQXDcogGhDQ2jm
-	J+8VdoubFheuoI2apJo+jMlLrXzSURvG/xgkix3wRlGlB8rMYmuY
-X-Gm-Gg: ASbGncu9FzezKwfL6NhnD03EBMv33aLSZkLs2jhOr+jR+lMpxXlHYj+ULIjZpiyq2IJ
-	2IaFQ8zwx2rL4DYJ+yvfC9sR5x5AAk7SIMCJs/KO9lS4el1qxSHgfXiFCTl65DM4MqbZnXKaX8B
-	n31XRWKDWnajFKkhgIZ35yn1Oa5KHMyFnIF0GhSgnw8YXwOsrcUAxYeFFnITPwCCm+bhFAHnyrl
-	92YDmYmGzmTVVDBZ8rtywUiLi1UhyEIyrzuOoVJFMP/cdReMsJFzVhQs09B7XqkaWD9dSwp/hki
-	9ICXgxSai9N5UP6/wRS+yCONF4Rnyn10N8N+DrhseNfhrFP+hD7M0e9eN/Y4gRYScg==
-X-Google-Smtp-Source: AGHT+IHvxrp7OvNbksyH4NexsetiRs1WEtAgahqn/oPDFsxSQWMo+9dlJKmgRBkVVv+oIO3DwkB/gA==
-X-Received: by 2002:a05:600c:35ca:b0:43b:ce86:b31a with SMTP id 5b1f17b1804b1-43bd29bd205mr49158555e9.22.1741252758687;
-        Thu, 06 Mar 2025 01:19:18 -0800 (PST)
-Received: from [172.27.49.130] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd8b0425sm13943855e9.3.2025.03.06.01.19.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 01:19:18 -0800 (PST)
-Message-ID: <90902747-b976-4653-8d9d-0371f168bdbb@gmail.com>
-Date: Thu, 6 Mar 2025 11:19:14 +0200
+	s=arc-20240116; t=1741252786; c=relaxed/simple;
+	bh=PQcQ4pkB0f4T3bhPQP6VeqH0uGP/yGUpWFtoLt2L+GQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TvLU61+FyefgjaDEukgjRjmcrI9BLbnR3PBerBdEDA6mbt7GNGWn7a3BYaWmuEDS/vTIzhxXPreqgi5XPSPsAZyufOgvK5MCYSviZsBbxtN5DLurrxWmg8dWbM/Mv4iApPrG9ClXdaiWzr9OeC5xVaw7SpK7JeU/r9AKoIoUhn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z7kMk5qHMz6K9Q8;
+	Thu,  6 Mar 2025 17:17:22 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 94C32140159;
+	Thu,  6 Mar 2025 17:19:40 +0800 (CST)
+Received: from localhost (10.96.237.92) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 6 Mar
+ 2025 10:19:29 +0100
+Date: Thu, 6 Mar 2025 17:19:25 +0800
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: <shiju.jose@huawei.com>
+CC: <linux-edac@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+	<bp@alien8.de>, <tony.luck@intel.com>, <rafael@kernel.org>,
+	<lenb@kernel.org>, <mchehab@kernel.org>, <leo.duran@amd.com>,
+	<Yazen.Ghannam@amd.com>, <linux-cxl@vger.kernel.org>,
+	<dan.j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
+	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, <rientjes@google.com>,
+	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
+	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
+	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
+	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
+	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
+	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
+	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
+	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
+Subject: Re: [PATCH v2 2/3] ACPI:RAS2: Add ACPI RAS2 driver
+Message-ID: <20250306171925.00002721@huawei.com>
+In-Reply-To: <20250305180225.1226-3-shiju.jose@huawei.com>
+References: <20250305180225.1226-1-shiju.jose@huawei.com>
+	<20250305180225.1226-3-shiju.jose@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2] net/mlx5: handle errors in
- mlx5_chains_create_table()
-To: Wentao Liang <vulab@iscas.ac.cn>, saeedm@nvidia.com, leon@kernel.org,
- tariqt@nvidia.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250306085402.2503-1-vulab@iscas.ac.cn>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20250306085402.2503-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Wed, 5 Mar 2025 18:02:23 +0000
+<shiju.jose@huawei.com> wrote:
 
-
-On 06/03/2025 10:54, Wentao Liang wrote:
-> In mlx5_chains_create_table(), the return value of mlx5_get_fdb_sub_ns()
-> and mlx5_get_flow_namespace() must be checked to prevent NULL pointer
-> dereferences. If either function fails, the function should log error
-> message with mlx5_core_warn() and return error pointer.
+> From: Shiju Jose <shiju.jose@huawei.com>
 > 
-> [v1]->[v2]:
-> Add Fixes tag.
-> Target patch to net.
-> Change return value from NULL to ERR_PTR(-EOPNOTSUPP)
+> Add support for ACPI RAS2 feature table (RAS2) defined in the
+> ACPI 6.5 Specification, section 5.2.21.
+> Driver defines RAS2 Init, which extracts the RAS2 table and driver
+> adds auxiliary device for each memory feature which binds to the
+> RAS2 memory driver.
 > 
+> Driver uses PCC mailbox to communicate with the ACPI HW and the
+> driver adds OSPM interfaces to send RAS2 commands.
+> 
+> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Co-developed-by: A Somasundaram <somasundaram.a@hpe.com>
+> Signed-off-by: A Somasundaram <somasundaram.a@hpe.com>
+> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> Tested-by: Daniel Ferguson <danielf@os.amperecomputing.com>
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
 
-Change history should not be part of the commit message.
-Please move it to under the "---" marker below.
+Hi Shiju,
 
-> Fixes: ae430332557a ("net/mlx5: Refactor multi chains and prios support")
+I took another look through as it's been a while and I've
+pretty much forgotten this code :(
 
-Same problem existed also in mlx5_esw_chains_create_fdb_table(), before 
-the refactoring.
-Please refer to the original patch where issue was introduced, seems to 
-be commit 39ac237ce009 ("net/mlx5: E-Switch, Refactor chains and 
-priorities").
+Anyhow, a few minor comments inline.
+
+Thanks,
+
+Jonathan
+
+> diff --git a/drivers/acpi/ras2.c b/drivers/acpi/ras2.c
+> new file mode 100755
+> index 000000000000..8831a2bd5fab
+> --- /dev/null
+> +++ b/drivers/acpi/ras2.c
 
 
+
+
+> +static int ras2_register_pcc_channel(struct ras2_mem_ctx *ras2_ctx, int pcc_id)
+> +{
+> +	struct ras2_pcc_subspace *pcc_subspace;
+> +	struct pcc_mbox_chan *pcc_chan;
+> +	struct mbox_client *mbox_cl;
+> +
+> +	if (pcc_id < 0)
+> +		return -EINVAL;
+> +
+> +	mutex_lock(&ras2_pcc_lock);
+> +	list_for_each_entry(pcc_subspace, &ras2_pcc_subspaces, elem) {
+> +		if (pcc_subspace->pcc_id != pcc_id)
+> +			continue;
+> +		ras2_ctx->pcc_subspace = pcc_subspace;
+> +		pcc_subspace->ref_count++;
+> +		mutex_unlock(&ras2_pcc_lock);
+> +		return 0;
+> +	}
+> +	mutex_unlock(&ras2_pcc_lock);
+> +
+> +	pcc_subspace = kcalloc(1, sizeof(*pcc_subspace), GFP_KERNEL);
+
+if allocating a count of 1, why not kzalloc?
+
+> +	if (!pcc_subspace)
+> +		return -ENOMEM;
+
+
+
+
+> +static int acpi_ras2_parse(void)
+> +{
+> +	struct acpi_ras2_pcc_desc *pcc_desc_list;
+> +	int pcc_id;
+> +	u8 count = 0;
+> +	int rc, i;
+> +
+> +	if (ras2_tab->header.length  < sizeof(struct acpi_table_ras2)) {
+
+extra space before <
+
+Maybe sizeof(*ras2_tab) is cleaner.
+
+> +		pr_warn(FW_WARN "ACPI RAS2 table present but broken (too short #1)\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!ras2_tab->num_pcc_descs) {
+> +		pr_warn(FW_WARN "No PCC descs in ACPI RAS2 table\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	pcc_desc_list = (struct acpi_ras2_pcc_desc *)(ras2_tab + 1);
+> +	/* Double scan for the case of only one actual controller */
+> +	pcc_id = -1;
+> +	count = 0;
+
+Already set above, so no need to do it again.  I'd do it just here.  Can
+put it in the loop init though.
+
+> +	for (i = 0; i < ras2_tab->num_pcc_descs; i++, pcc_desc_list++) {
+> +		if (pcc_desc_list->feature_type != RAS2_FEAT_TYPE_MEMORY)
+> +			continue;
+> +		if (pcc_id == -1) {
+> +			pcc_id = pcc_desc_list->channel_id;
+> +			count++;
+> +		}
+> +		if (pcc_desc_list->channel_id != pcc_id)
+> +			count++;
+> +	}
+> +
+> +	/*
+> +	 * Workaround for the client platform with multiple scrub devices
+> +	 * but uses single PCC subspace for communication.
+> +	 */
+> +	if (count == 1) {
+> +		/* Add auxiliary device and bind ACPI RAS2 memory driver */
+> +		rc = ras2_add_aux_device(RAS2_MEM_DEV_ID_NAME, pcc_id);
+> +		if (rc)
+> +			return rc;
+> +
+> +		return 0;
+> +	}
+> +
+> +	pcc_desc_list = (struct acpi_ras2_pcc_desc *)(ras2_tab + 1);
+> +	count = 0;
+
+Maybe set in loop init.
+
+> +	for (i = 0; i < ras2_tab->num_pcc_descs; i++, pcc_desc_list++) {
+> +		if (pcc_desc_list->feature_type != RAS2_FEAT_TYPE_MEMORY)
+> +			continue;
+> +		pcc_id = pcc_desc_list->channel_id;
+> +		/* Add auxiliary device and bind ACPI RAS2 memory driver */
+obvious enough to drop the comment I think.
+
+> +		rc = ras2_add_aux_device(RAS2_MEM_DEV_ID_NAME, pcc_id);
+					 pcc_desc_list->channel_id);
+and no local variable.
+
+> +		if (rc)
+> +			return rc;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +void __init acpi_ras2_init(void)
+> +{
+> +	acpi_status status;
+> +	int rc;
+> +
+> +	status = acpi_get_table(ACPI_SIG_RAS2, 0,
+> +				(struct acpi_table_header **)&ras2_tab);
+> +	if (ACPI_FAILURE(status) || !ras2_tab) {
+> +		const char *msg = acpi_format_exception(status);
+> +
+> +		pr_err("Failed to get table, %s\n", msg);
+
+If only going to use it here maybe
+		pr_err("Failed to get table, %s\n",
+		       acpi_format_exception(status));
+and save on the local variable.
+
+> +		return;
+> +	}
+> +
+> +	rc = acpi_ras2_parse();
+> +	if (rc) {
+> +		acpi_put_table((struct acpi_table_header *)ras2_tab); 
+> +		pr_err("Failed to parse RAS2 table\n");
+> +	}
+> +}
+> diff --git a/include/acpi/ras2.h b/include/acpi/ras2.h
+> new file mode 100644
+> index 000000000000..5b27c1f30096
+> --- /dev/null
+> +++ b/include/acpi/ras2.h
+> @@ -0,0 +1,48 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only */
+> +/*
+> + * ACPI RAS2 driver header file
+> + *
+> + * Copyright (c) 2024-2025 HiSilicon Limited
+> + */
+> +
+> +#ifndef _ACPI_RAS2_H
+> +#define _ACPI_RAS2_H
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/mailbox_client.h>
+> +#include <linux/mutex.h>
+> +#include <linux/types.h>
+> +
+> +#define RAS2_PCC_CMD_COMPLETE	BIT(0)
+> +#define RAS2_PCC_CMD_ERROR	BIT(2)
+> +
+I think these bits are from table 14.11 and
+generic to all PCC status registers? Should these
+have more generic names rather than ras2 specific ones?
+
+> +/* RAS2 specific PCC commands */
+> +#define RAS2_PCC_CMD_EXEC 0x01
+Are we mixing commands and field definitions both
+with prefix RAS2_PCC_CMD_ ?  That is somewhat
+confusing. 
+
+> +
+> +#define RAS2_AUX_DEV_NAME "ras2"
+> +#define RAS2_MEM_DEV_ID_NAME "acpi_ras2_mem"
+> +
+I would add a forwards def
+struct device;  
+
+whilst it is really unlikely that headers would ever be reorganized
+such that auxiliary_bus.h would not include device.h given the embedded
+device we shouldn't rely on that here.
+
+> +/* Data structure RAS2 table */
+> +struct ras2_mem_ctx {
+> +	struct auxiliary_device adev;
+> +	/* Lock to provide mutually exclusive access to PCC channel */
+> +	struct mutex lock;
+> +	struct device *dev;
+> +	struct acpi_ras2_shmem __iomem *comm_addr;
+> +	void *pcc_subspace;
+> +	int id;
+> +};
+> +
+> +#ifdef CONFIG_ACPI_RAS2
+> +void __init acpi_ras2_init(void);
+> +int ras2_send_pcc_cmd(struct ras2_mem_ctx *ras2_ctx, u16 cmd);
+> +#else
+> +static inline void acpi_ras2_init(void) { }
+> +
+> +static inline int ras2_send_pcc_cmd(struct ras2_mem_ctx *ras2_ctx, u16 cmd)
+
+Is this stub ever needed?  To me it seems unlikely
+we would have a user that is built without a dependency
+on CONFIG_ACPI_RAS2.  This is different from acpi_ras2_init()
+which makes much more sense to me.
+
+> +{
+> +	return -EOPNOTSUPP;
+> +}
+> +#endif
+> +#endif /* _ACPI_RAS2_H */
 
 
