@@ -1,539 +1,182 @@
-Return-Path: <linux-kernel+bounces-548969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A51F6A54B8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:08:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C603A54B93
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:09:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE442166426
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:08:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55B4F3AA695
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:08:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF19220C46C;
-	Thu,  6 Mar 2025 13:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7161E20CCEF;
+	Thu,  6 Mar 2025 13:08:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="DhJjecco"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UvQEo0ku"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 450B920C009;
-	Thu,  6 Mar 2025 13:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2188120C478;
+	Thu,  6 Mar 2025 13:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741266494; cv=none; b=UD90/m3S7yYq9eR9mJso2Ja4o5c7HlMLPx/Wj3ezKunztjNUeLqW4Vxvfgcga5nVwEGmjBUY8MvledVmny8Ns6WpDmUy8Ix6Pa+WIl6ZJ62Nsji8IkuL4+/Vt/ojScvtuUTUznjsoEIffGjLeHNScKhXGSxBWyOdqMUy1K1r53U=
+	t=1741266524; cv=none; b=Cj1w7MIRF8TpMrAQq0RbIXB3jhvnIENThnlru+Nq6FHMjCrprJBQeRbsaOa4Ej7addzi6ozNgK6EPBh1pLHOXXdy4cNlURfsYeA/gECR4odj9eXYghXwdqw9jjShw2XI3jTpMkH9Gar156jzzZjrSqAUJk9utZe+noA1afcYOnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741266494; c=relaxed/simple;
-	bh=4VH2tK+QU3YhYZw7s4V3IaHAhAPl5z7BMEjep4f94Hw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cQvntbsWT3UQyxvR9WSFIYpI7vxiyVY/WMq+jNR2E0H7iU0T61wOI1g7b46MEy38nbQts7Y3PkQh8jTPwh614O6DGnzx0Nm+htg/aARTXsm+iP+NolV4QjbbafUMt4cXbrnDukZZRo1JwCKGRzfxpvVabSKL0FJsWulEkl7vcCU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=DhJjecco; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741266489;
-	bh=4VH2tK+QU3YhYZw7s4V3IaHAhAPl5z7BMEjep4f94Hw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DhJjeccorupWWnlH1MUXiZk9Lw59escc4DFZbf19Ksm61faHl/ImsrS+Ir0zq6+FP
-	 c8hOGcpR7U/HnkM3d63ObvE1y7ud8OZPqeIYsa3fWYWCuybM/Nf3bRQlwibtsmY5RP
-	 PEWJ6PmGmwJZFCkx2cAcqwRcyCz06QP5V81+XRw4ek7wirt2M28bmzffJ7HN5hxiWt
-	 /4nqVHaSQ6BohWGTW87I6q1hu8xBZtHv4ijr3qvK8TtvxO5G9QrHlqEtfTZZ1kP7yt
-	 FOTvLCrKJAvhY99RqSukK+TFhqfkCCUHQDCX3AacPFpExrN1K6H0hM6C18YW5jQfvt
-	 LYqIwvdMjczqg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2B70E17E0599;
-	Thu,  6 Mar 2025 14:08:08 +0100 (CET)
-Message-ID: <1f9007ed-c978-431d-aab2-c04237d5d117@collabora.com>
-Date: Thu, 6 Mar 2025 14:08:07 +0100
+	s=arc-20240116; t=1741266524; c=relaxed/simple;
+	bh=UQxOtCyjjeVSI1OL9Qw+dMxFi11CeViW/vaw3V+RlBw=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aa1TH/HN3nOMBAXPWznHgPeoPyBZyZ58eqNNkCX7N3tLMy6WSWE+4D6Gf/e5ay0MGAtp5F1n3Q8CZ3EhGroT3SZGCs5eXQ0TJG1g4e9/Sy57KEN81YWlLiV07s5Me4T1Ybcm/B+Cwso1uUSVVJU7JUcKVC9a+Iiv3qDoE3JYQUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UvQEo0ku; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ab771575040so349206266b.1;
+        Thu, 06 Mar 2025 05:08:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741266521; x=1741871321; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RBpr4q0/AOycCkUAiZa/BjvQ502X7W3qJqBvzu0mmtU=;
+        b=UvQEo0kuvnODkwMZ4sFiRY7sFAlsG7r1AjSkfC1QnDyU1Hs/Vhul7aWcDR8H6+Zutp
+         jAKMwGnDFK8tXZP0/g1HDLnnd82SfBJu/9mBn3jnnbmfpR9Rtq1zOl7LjSzYyGGiIl1a
+         gU6v4jM2qyBglY9TmcDC7V7KzIMHQncUtNBj+bim93cIc0LG3N5nzk/q5gbV+9zFR5Ds
+         +xvldXQk6Gsrzy9HDb6u57Pm4VrXoxpECXcqyA9sRtZ7//yyvEXZU0OA97TqgYaUQY2G
+         a2eiYhwm5awfx1Xs2zOpEBCA+SstXhGwuZYtBOdfxuXuuAWk3u/inP3y3FEHCoXObay1
+         Kr1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741266521; x=1741871321;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RBpr4q0/AOycCkUAiZa/BjvQ502X7W3qJqBvzu0mmtU=;
+        b=ZnxnrvXkpvTGMwEw5ryaClllTYGPwXAKBNP4oQUn4oK33p6jmSmKwr73RbGWxEEc1x
+         tJzYqMNit5zrZimOSKpmuRuWxB+EUD+FVC8QSQ0YE0BdRwnKow/QuJTbz+FV5bQsujw7
+         4vRY28DZ55ZYA44W1Y8vmrchGSA3APdqmmHjMBUT1PSmfJYCXZGtChJ3NTMJo8KU+1tP
+         2xT5VPfwGDSu18VFdgYxx+ZweKKLgTQ5MoiJHNMKbJrewJq/TVdFZIoTnIthKo3h0lk8
+         dwvb8KIfIpv5XUtuPzXuEYuPdjfj9xMtKjTh+OqqFTvnfBQgclzyN5eHtvp57Y/mZCq1
+         WQUw==
+X-Forwarded-Encrypted: i=1; AJvYcCX3+vfJPe9LY3FvQMyLTu0MAa58ZJaNUyWU49EKhPyod5nm/Rtp0BMV0fbJgWwFdgXpBmmD76XHlEqSHL+VspK8pw==@vger.kernel.org, AJvYcCXB6P0BkHFR9qhZpHcg3wtgJuL96gSSRiL1YGTF+rW8nYkO9fBySR6P0ev0+mYnjm1JxHfbF2D/LECBCl8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwzPpd6UyzlvvFUYjCEe/slSGrjJ4XsLkqGl5CNWPu5X+MFjcO7
+	NSPL/fL8F2D/AZZzzgyDJCjcNwGUxhYNNrHFmgCVxAi+z6lLmytt
+X-Gm-Gg: ASbGncsNam8/gKbDP1IQRHiqTwI+psWwxyE7mFJO8OaUs7vKeLVhog6XBw07a89ULHc
+	BZP03VOFB5JMWlzhNg+JWr+vkLHsMHb8HTl+DZnB1lsAijxW6F92+LVyYZC5ljUbD/nj7V4rjk0
+	HWP2vCmtuR8pjkLJD06ppX8WyqofKgGhOVat9tbbN04PEBk55VM1+jCCa6qvOrcIgmWoeIVyxiL
+	uFxYRgK+KYjvcXE1fN/2I8HB9mYKPXBKLIgf/Idov1MtPKpoxnzEUHVb/LH7WxNSkFjBTerlQas
+	B3K63DaGM19yKvF/kgvuzR/8xN+Yjy1KEt+oHg==
+X-Google-Smtp-Source: AGHT+IH4d/pbcgd8COO6M8KiuoS/WI/geAVKNETRj+9XKo2UQlZOoHE8m0iodn3MMHoQ0Ft5DwTynQ==
+X-Received: by 2002:a17:907:72ce:b0:abf:48df:bf07 with SMTP id a640c23a62f3a-ac22cb3dd85mr336391466b.15.1741266521096;
+        Thu, 06 Mar 2025 05:08:41 -0800 (PST)
+Received: from krava ([2a00:102a:401e:9b3a:b228:9e66:580a:3bc8])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c768c798sm930867a12.66.2025.03.06.05.08.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 05:08:40 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 6 Mar 2025 14:08:38 +0100
+To: lirongqing <lirongqing@baidu.com>
+Cc: olsajiri@gmail.com, peterz@infradead.org, mingo@redhat.com,
+	acme@kernel.org, namhyung@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, irogers@google.com,
+	adrian.hunter@intel.com, kan.liang@linux.intel.com,
+	tglx@linutronix.de, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, hpa@zytor.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] perf/x86/intel/bts: check if bts_ctx is allocated
+ when call bts functions
+Message-ID: <Z8meVrqd-F7tf44j@krava>
+References: <20250306051102.2642-1-lirongqing@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/8] mailbox: mtk-cmdq: Add driver data to support for
- MT8196
-To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
- =?UTF-8?B?TW91ZHkgSG8gKOS9leWul+WOnyk=?= <Moudy.Ho@mediatek.com>
-Cc: "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>,
- "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- =?UTF-8?B?U2lyaXVzIFdhbmcgKOeOi+eak+aYsSk=?= <Sirius.Wang@mediatek.com>,
- =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
- =?UTF-8?B?WGlhbmRvbmcgV2FuZyAo546L5YWI5YasKQ==?=
- <Xiandong.Wang@mediatek.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "fshao@chromium.org" <fshao@chromium.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
- =?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
- "mchehab@kernel.org" <mchehab@kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- =?UTF-8?B?WGF2aWVyIENoYW5nICjlvLXnjbvmlocp?= <Xavier.Chang@mediatek.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "treapking@chromium.org" <treapking@chromium.org>
-References: <20250218054405.2017918-1-jason-jh.lin@mediatek.com>
- <20250218054405.2017918-4-jason-jh.lin@mediatek.com>
- <652e435c-563b-496a-a4c3-c2e2b665abcf@collabora.com>
- <5aa04ff5fa567468f32921d4014bbae696c6470f.camel@mediatek.com>
- <9d383fc5-8c64-478c-8aab-6c56bf5b45be@collabora.com>
- <0efe42427be4eb619b6ea7db18687b0211d1ec9f.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <0efe42427be4eb619b6ea7db18687b0211d1ec9f.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306051102.2642-1-lirongqing@baidu.com>
 
-Il 06/03/25 12:00, Jason-JH Lin (林睿祥) ha scritto:
-> [snip]
->>
->>> CPR_GSIZE is the setting for allocating the CPR SRAM size to each
->>> VM.
->>
->> Would be awesome if you could then clarify the comment that you have
->> later in
->> the code here, from...
->>
->> /* config cpr size for host vm */
->>
->> to
->>
->> /* Set the amount of CPR SRAM to allocate to each VM */
->>
->> ...that could be a way of more properly describing what the writel
->> there is doing.
->>
+On Thu, Mar 06, 2025 at 01:11:02PM +0800, lirongqing wrote:
+> From: Li RongQing <lirongqing@baidu.com>
 > 
-> OK, I'll change it.
+> bts_ctx maybe not allocated, for example if the cpu has X86_FEATURE_PTI,
+> but intel_bts_disable/enable_local and intel_bts_interrupt are called
+> unconditionally from intel_pmu_handle_irq and exploding on accessing
+> bts_ctx
 > 
->>>
->>>> The GCE stuff isn't even properly described in datasheets - I do
->>>> (probably!)
->>>> understand what those are for, but asking people to get years of
->>>> experience on
->>>> MediaTek to understand what's going on would be a bit rude,
->>>> wouldn't
->>>> it? :-D
->>>>
->>>
->>> I agree with you :-)
->>> I'll put them in the VM patch and add some brief description for
->>> them.
->>>
->>
->> Thanks, much appreciated!
->>
->>>>> +
->>>>>     #define CMDQ_THR_ACTIVE_SLOT_CYCLES 0x3200
->>>>>     #define CMDQ_THR_ENABLED            0x1
->>>>>     #define CMDQ_THR_DISABLED           0x0
->>>>> @@ -87,11 +98,24 @@ struct cmdq {
->>>>>     struct gce_plat {
->>>>>         u32 thread_nr;
->>>>>         u8 shift;
->>>>> +     dma_addr_t mminfra_offset;
->>>>
->>>> It looks like this is exactly the DRAM's iostart... at least, I
->>>> can
->>>> see that in the
->>>> downstream devicetree that's where it starts.
->>>>
->>>>           memory: memory@80000000 {
->>>>                   device_type = "memory";
->>>>                   reg = <0 0x80000000 0 0x40000000>;
->>>>           };
->>>>
->>>> It doesn't really look like being a coincidence, but, for the
->>>> sake of
->>>> asking:
->>>> is this just a coincidence? :-)
->>>>
->>>
->>> As the confirmation with the hardware designer in previous reply
->>> mail
->>> for CK:
->>> https://patchwork.kernel.org/project/linux-mediatek/patch/20250218054405.2017918-4-jason-jh.lin@mediatek.com/*26258463
->>>
->>
->> That explanation was simply wonderful.
->>
->>> Since the MMINFRA remap subtracting 2G is done in the hardware
->>> circuit
->>> and cannot be configured by software, the address +2G adjustment is
->>> necessary to implement in the CMDQ driver.
->>>
->>> So that might not be a coincidence.
->>> But even if DRAM start address changes, this mminfra_offset is
->>> still
->>> subtracting 2G, so I think it is a better choice to define it as
->>> the
->>> driver data for MT8196.
->>>
->>
->> ....so, this makes me think the following:
->>
->> 1. The DRAM start address cannot *ever* be less than 2G, because
->> otherwise the
->>      MMINFRA HW would have a hole in the usable address range;
->>      1a. If the start address changes to less than 2G, then also the
->> IOMMU would
->>          get limitations, not only the mminfra..!
->>      2b. This makes it very very very unlikely for the start address
->> to be changed
->>          to less than 0x80000000
->>
->> 2. If the DRAM start address changes to be ABOVE 2G (so more than
->> 0x80000000),
->>      there would be no point for MMINFRA to start a "config path"
->> write (or read)
->>      in the SMMU DRAM block, would it? ;-)
->>
+> so check if bts_ctx is allocated when call bts functions
 > 
-> GCE is using IOMMU in MT8196, so all the address put into the GCE
-> instruction or GCE register for GCE access should be IOVA.
-> 
-> The DRAM start address is 2G(PA=0x80000000, IOVA=0x0) currently, so
-> when GCE want to access the IOVA=0x0, it will need to +2G into the
-> instruction, then the MMINFRA will see it as data path(IOVA > 2G) and
-> subtract 2G for that IOVA, so GCE can finally access the IOVA=0x0.
-> 
-> I'm not sure if I've misunderstood what you mean by ABOVE 2G. :-)
-> If DRAM start address is changed to 3G(PA=0xc0000000) the IOVA is still
-> 0x0, so GCE still need to + 2G to make MMINFRA go to the data path.
-> 
-> But if you mean PA=0x80000000 and IOVA start address is 3G(0xc0000000),
-> then MMINFRA will go to the data path without GCE +2G.
-> However, MMINFRA will -2G when going to the data path and that will
-> cause GCE access the wrong IOVA.
-> So GCE still need to +2G no matter IOVA start address is already can
-> make MMINFRA go to the data path(IOVA > 2G).
-> 
-> We have already complained to our hardware designer that MMINFRA -2G
-> con not be changed, which will make software operation very
-> troublesome.
-> So in the next few generations of SoC will change this MMINFRA -2G to
-> software configurable. Then we can just make IOVA start address to 2G
-> without adding the mminfra_offset to the IOVA for GCE.
-> 
+> Fixes: 3acfcefa795c "(perf/x86/intel/bts: Allocate bts_ctx only if necessary)"
+> Reported-by: Jiri Olsa <olsajiri@gmail.com>
 
-Okay now I got it, the reality is way worse than I was thinking... eww... :-(
+Tested-by: Jiri Olsa <jolsa@kernel.org>
 
->> I get it - if the DRAM moves up, MMINFRA is still at 2G because
->> that's hard baked
->> into the hardware, but I foresee that it'll be unlikely to see a
->> platform changing
->> the DRAM start address arbitrarily, getting out-of-sync with MMINFRA.
->>
->> I propose to just get the address from the memory node for now, and
->> to add a nice
->> comment in the code that explains that "In at least MT8196, the
->> MMINFRA hardware
->> subtracts xyz etc etc" (and that explanation from the previous email
->> is again
->> wonderful and shall not be lost: either use that in the comment, or
->> add it to
->> the commit description, because it's really that good).
->>
->> Should a new SoC appear in the future requiring an offset from the
->> DRAM start
->> address, we will think about how to make that work in the best
->> possible way: in
->> that case we could either reference something else to get the right
->> address or
->> we can just change this driver to just use the 2G offset statically
->> for all.
->>
->> What I'm trying to do here is to reduce the amount of changes that
->> we'd need for
->> adding new SoCs: since that 2G MMINFRA offset -> 2G DRAM start is not
->> a coincidence
->> I think that, should the DRAM start vary on new SoCs, the MMINFRA
->> offset will
->> follow the trend and vary with it.
->>
->> So what I think is:
->> 1. If I'm right, adding a new SoC (with different MMINFRA + DRAM
->> offset) will be
->>      as easy as adding a compatible string in the bindings, no effort
->> in changing
->>      this driver with new pdata offsets;
->> 2. If I'm wrong, adding a new SoC means adding compat string and
->> adding pdata and
->>      one variable in the cmdq struct.
->>
->> Where N.2 is what we would do anyway if we don't go with my proposed
->> solution...
->>
->> All this is just to give you my considerations about this topic -
->> you're left
->> completely free to disagree with me.
->> If you disagree, I will trust your judgement, no problem here.
->>
-> 
-> Yes, I think your are right. No matter the IOVA start address changing,
-> MMINFRA will still -2G(the start address of DRAM PA).
-> Do you mean we can get the mminfra_offset from the start address of
-> memory in DTS, rather than defining it in pdata?
-> 
-
-After the last explanation... no, it would be wrong to get the start from
-memory in DTS, because then this will still need hacks.
-I was somehow convinced that the DRAM start address and the MMINFRA offset
-were directly related and that it would've been hard to change the DRAM
-start address with the MMINFRA offset being -2G, but it's not, so doing it
-my way will eventually backfire on us.
-
-So my way is not good, as it's not showing the reality of things.
-
-Just go with your current way, as it's really tied to the hardware and it's
-not restricted to that dram start coincidence in the end. That's a pity.
-
-Just instead of writing 0x80000000, use " SZ_2G " instead... and please
-add a comment in the code that explains in brief that there's this strange
-behavior for which we.. need that, and that's a static subtraction, and is
-tied to the MMINFRA hardware, and cannot be changed :-(
-
-btw, being clear..
-
-#include <linux/sizes.h>
-
-.mminfra_offset = SZ_2G,
-
-..that way you don't even need a comment saying /* 2GB */ ....
-
-Cheers!
-
->>>>>         bool control_by_sw;
->>>>>         bool sw_ddr_en;
->>>>> +     bool gce_vm;
->>>>> +     u32 dma_mask_bit;
->>>>>         u32 gce_num;
->>>>>     };
->>>>>
->>>>> +static inline u32 cmdq_reg_shift_addr(dma_addr_t addr, const
->>>>> struct gce_plat *pdata)
->>>>> +{
->>>>> +     return ((addr + pdata->mminfra_offset) >> pdata->shift);
->>>>> +}
->>>>> +
->>>>> +static inline u32 cmdq_reg_revert_addr(dma_addr_t addr, const
->>>>> struct gce_plat *pdata)
->>>>> +{
->>>>> +     return ((addr << pdata->shift) - pdata->mminfra_offset);
->>>>> +}
->>>>
->>>> I'm not sure that you really need those two functions... probably
->>>> it's simply
->>>> cleaner and easier to just write that single line every time...
->>>> and
->>>> I'm
->>>> saying that especially for how you're using those functions, with
->>>> some readl()
->>>> passed directly as param, decreasing human readability by "a
->>>> whole
->>>> lot" :-)
->>>>
->>>
->>> The reason why I use API wrapper instead of writing it directly in
->>> readl() is to avoid missing the shift or mminfra_offset conversion
->>> in
->>> some places.
->>> This problem is not easy to debug, and I have encountered it at
->>> least
->>> twice...
->>>
->>> I think the advantage of using function is that it can be uniformly
->>> modified to all places that need to handle DRAM address conversion.
->>> What do you think? :-)
->>>
->>
->> Eh, if you put it like that... it makes sense, so.. yeah, okay :-)
->>
->> Still, please cleanup those instances of
->>
->> `cmdq_reg_revert_addr(readl(something), pdata)`
->>
->> those might be hard to read, so please just do something like:
->>
->> regval = readl(something);
->> curr_pa = cmdq_revert_addr(regval, pdata);
->>
->> ...reword to your own liking, of course.
->>
-> 
-> OK, I'll refine that. Thanks.
-> 
->>>>> +
->>>>>     static void cmdq_sw_ddr_enable(struct cmdq *cmdq, bool
->>>>> enable)
->>>>>     {
->>>>>         WARN_ON(clk_bulk_enable(cmdq->pdata->gce_num, cmdq-
->>>>>> clocks));
->>>>> @@ -112,6 +136,30 @@ u8 cmdq_get_shift_pa(struct mbox_chan
->>>>> *chan)
->>>>>     }
->>>>>     EXPORT_SYMBOL(cmdq_get_shift_pa);
->>>>>
->>>>> +dma_addr_t cmdq_get_offset_pa(struct mbox_chan *chan)
->>>>> +{
->>>>> +     struct cmdq *cmdq = container_of(chan->mbox, struct cmdq,
->>>>> mbox);
->>>>> +
->>>>> +     return cmdq->pdata->mminfra_offset;
->>>>> +}
->>>>> +EXPORT_SYMBOL(cmdq_get_offset_pa);
->>>>
->>>> I think I remember this get_offset_pa from the old times, then CK
->>>> removed it (and I
->>>> was really happy about that disappearing), or am I confusing this
->>>> with something
->>>> else?
->>>>
->>>> (of course, this wasn't used for mminfra, but for something
->>>> else!)
->>>>
->>>
->>> I can't find any remove history in mtk-cmdq-mailbox.c.
->>>
->>> Maybe you mean the patch in this series?
->>> https://lore.kernel.org/all/171213938049.123698.15573779837703602591.b4-ty@collabora.com/
->>>
->>
->> Uhm, I think I may have confused something here, but yes I was
->> remembering the
->> patch series that you pointed out, definitely.
->>
->> At the end, that series is doing something else, so nevermind, was
->> just confusion.
->>
-> 
-> OK, no problem.
-> 
->>>>> +
->>>>> +bool cmdq_addr_need_offset(struct mbox_chan *chan, dma_addr_t
->>>>> addr)
->>>>> +{
->>>>> +     struct cmdq *cmdq = container_of(chan->mbox, struct cmdq,
->>>>> mbox);
->>>>> +
->>>>> +     if (cmdq->pdata->mminfra_offset == 0)
->>>>> +             return false;
->>>>> +
->>>>> +     /*
->>>>> +      * mminfra will recognize the addr that greater than the
->>>>> mminfra_offset
->>>>> +      * as a transaction to DRAM.
->>>>> +      * So the caller needs to append mminfra_offset for the
->>>>> true
->>>>> case.
->>>>> +      */
->>>>> +     return (addr >= cmdq->pdata->mminfra_offset);
->>>>
->>>>
->>>> /**
->>>>     * cmdq_is_mminfra_gce() - Brief description
->>>>     * @args.....
->>>>     *
->>>>     * The MMINFRA GCE will recognize an address greater than DRAM
->>>> iostart as a
->>>>     * DRAM transaction instead of ....xyz
->>>>     *
->>>>     * In order for callers to perform (xyz) transactions through
->>>> the
->>>> CMDQ, those
->>>>     * need to know if they are using a GCE located in MMINFRA.
->>>>     */
->>>> bool cmdq_is_mminfra_gce(...)
->>>> {
->>>>           return cmdq->pdata->mminfra_offset &&
->>>>                  (addr >= cmdq->pdata->mminfra_offset)
->>>>
->>>>> +}
->>>>> +EXPORT_SYMBOL(cmdq_addr_need_offset);
->>>>> +
->>>>
->>>
->>> OK, I'll modify the API like this.
->>>
->>>> ...but then, is there really no way of just handling the GCE
->>>> being in
->>>> MMINFRA
->>>> transparently from the callers? Do the callers really *need* to
->>>> know
->>>> that they're
->>>> using a new GCE?!
->>>>
->>>
->>> Since the address subtracting is done in MMINFRA hardware, I think
->>> GCE
->>> users really need to handle it in driver.
->>>
->>
->> Since the users of this infrastructure are multimedia related
->> (disp/MDP3),
->> I'd also like to get an opinion from MediaTek engineers familiar with
->> that.
->>
->> CK, Moudy, any opinion on that, please?
->>
->>>> Another way of saying: can't we just handle the address
->>>> translation
->>>> in here instead
->>>> of instructing each and every driver about how to communicate
->>>> with
->>>> the new GCE?!
->>>>
->>>
->>> The DRAM address may not only be the command buffer to GCE, but
->>> also
->>> the working buffer provided by CMDQ users and being a part of GCE
->>> instruction, so we need to handle the address translation in CMDQ
->>> helper driver for the instruction generation.
->>> E.g. ISP drivers may use GCE to write a hardware settings to a DRAM
->>> as
->>> backup buffer. The GCE write instruction will be:
->>> WRITE the value of ISP register to DRAM address + mminfra_offset.
->>>
->>> But most of the CMDQ users only need to use GCE to write hardware
->>> register, so I only keep the translation in cmdq_pkt_mem_move(),
->>> cmdq_pkt_poll_addr() and cmdq_pkt_jump_abs() at the latest series.
->>
->> Yeah you're choosing the best of both worlds in that case, I do
->> agree, but
->> still - if there's a way to avoid drivers to have different handling
->> for
->> mminfra vs no-mminfra, that'd still be preferred.
->>
->> Having the handling for something *centralized* somewhere, instead of
->> it
->> being sparse here and there, would make maintenance way easier...
->>
->> ...and that's why I'm asking for CK and Moudy's opinion, nothing else
->> :-)
->>
-> 
-> Yes, I totally agree with you. Thanks for the asking!
-> 
-> Regards,
-> Jason-JH.Lin
-> 
->> Cheers!
->> Angelo
->>
-> 
+thanks,
+jirka
 
 
-
+> Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
+> Suggested-by: Dave Hansen <dave.hansen@intel.com>
+> Signed-off-by: Li RongQing <lirongqing@baidu.com>
+> ---
+>  arch/x86/events/intel/bts.c | 25 ++++++++++++++++++++-----
+>  1 file changed, 20 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/events/intel/bts.c b/arch/x86/events/intel/bts.c
+> index 8e09319..e8b3e7b 100644
+> --- a/arch/x86/events/intel/bts.c
+> +++ b/arch/x86/events/intel/bts.c
+> @@ -338,9 +338,14 @@ static void bts_event_stop(struct perf_event *event, int flags)
+>  
+>  void intel_bts_enable_local(void)
+>  {
+> -	struct bts_ctx *bts = this_cpu_ptr(bts_ctx);
+> -	int state = READ_ONCE(bts->state);
+> +	struct bts_ctx *bts;
+> +	int state;
+>  
+> +	if (!bts_ctx)
+> +		return;
+> +
+> +	bts = this_cpu_ptr(bts_ctx);
+> +	state = READ_ONCE(bts->state);
+>  	/*
+>  	 * Here we transition from INACTIVE to ACTIVE;
+>  	 * if we instead are STOPPED from the interrupt handler,
+> @@ -358,7 +363,12 @@ void intel_bts_enable_local(void)
+>  
+>  void intel_bts_disable_local(void)
+>  {
+> -	struct bts_ctx *bts = this_cpu_ptr(bts_ctx);
+> +	struct bts_ctx *bts;
+> +
+> +	if (!bts_ctx)
+> +		return;
+> +
+> +	bts = this_cpu_ptr(bts_ctx);
+>  
+>  	/*
+>  	 * Here we transition from ACTIVE to INACTIVE;
+> @@ -450,12 +460,17 @@ bts_buffer_reset(struct bts_buffer *buf, struct perf_output_handle *handle)
+>  int intel_bts_interrupt(void)
+>  {
+>  	struct debug_store *ds = this_cpu_ptr(&cpu_hw_events)->ds;
+> -	struct bts_ctx *bts = this_cpu_ptr(bts_ctx);
+> -	struct perf_event *event = bts->handle.event;
+> +	struct bts_ctx *bts;
+> +	struct perf_event *event;
+>  	struct bts_buffer *buf;
+>  	s64 old_head;
+>  	int err = -ENOSPC, handled = 0;
+>  
+> +	if (!bts_ctx)
+> +		return 0;
+> +
+> +	bts = this_cpu_ptr(bts_ctx);
+> +	event = bts->handle.event;
+>  	/*
+>  	 * The only surefire way of knowing if this NMI is ours is by checking
+>  	 * the write ptr against the PMI threshold.
+> -- 
+> 2.9.4
+> 
 
