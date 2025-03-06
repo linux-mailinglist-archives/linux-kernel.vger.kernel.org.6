@@ -1,75 +1,69 @@
-Return-Path: <linux-kernel+bounces-548649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5CF5A54780
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:15:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15087A54785
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:16:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21B2C189315B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:15:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4BB43AE525
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:15:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10F0D1FF1AA;
-	Thu,  6 Mar 2025 10:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F222200121;
+	Thu,  6 Mar 2025 10:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lrDRY6u/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QAwOtLHa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B265815697B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839C717B50B;
+	Thu,  6 Mar 2025 10:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741256107; cv=none; b=qmvy4+MgnE/gT4VMiXlIqxmqHkti+Okn8VolegQTqn9E4ZVETRCC5s3volEjSveNxYQiRnI4PEcXnCOsRXISd9Xb/KSGwsp2QUqWwoDNXAkKzg4ZIPhR9SCRfZAH+2j5drScf0eRsfsWM364A/QYon1xnKIy5HWPSHxZSePPW18=
+	t=1741256159; cv=none; b=f9qyFQSJFGv6EMAVMFUt9anvh/boqo2b9nehgchV817+E2i4dDD7ZSmU1TDzT768YRAaE8TPNy9yKDZ2b7f3k4r+eHngog1qdFDrY+SbN6i2t27dGsVLXQR9ju8Fz81H/unmYXr1+sncu+JaSVGWNbOJsfNVIDMKB285/tT3zu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741256107; c=relaxed/simple;
-	bh=mzOPU1nRq/bpDwqoFQ2rylDfvUt/eO5QzJ/9Zzsibd0=;
+	s=arc-20240116; t=1741256159; c=relaxed/simple;
+	bh=GyD5rv2egr2dMdLAzHO0FeBEFkCMJ1OAl97tzWJuVcE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fPY41UoyCeObGQuJX7grCsghPUom4YLlvXq4859aG9zpEZsuiGEAIgNYV5bE7ViKLSSRnZKvTmBFsqCP2sjdG/3Bp9YJIUDals+yHDyMsc0Xort63AB5NAW1CU1xhrIro2FucfnTdFBG0O3RjX1WkGU0CofN9vjqsberiiTlYEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lrDRY6u/; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741256106; x=1772792106;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mzOPU1nRq/bpDwqoFQ2rylDfvUt/eO5QzJ/9Zzsibd0=;
-  b=lrDRY6u/JETO4MLuiCaU7L5uz2mxo5zWztevSZlJPwZiLW6fanBF+P9D
-   rSCLV8yVoUqJF3h5MJdZVWyZ/35+aapEbzRxAKJQzc+zZ7g1hOzykl9YD
-   F7d5qH8mLui93A9ydVdhs/TJ9qXjCQqfdzFlyecTwA4aG1tXfudHnIqt3
-   1oTIOeECYBYp5zRJ/ln/zBbq6n73og8zdc62AQqQ6DjyJ04LwzHsv+byO
-   fZDRPRKRfUpaXwkhtJHzzZONsdLVrs4+Ez2slxajqNfQck9xSWqya4D6m
-   YdYkN0m/DCTSqvwNwAbuQFOtldyvB9PomAN/XA50gIEECv1I/VKLCsEl1
-   w==;
-X-CSE-ConnectionGUID: Y8yJ3QzWSdSEAAfV0B2L2w==
-X-CSE-MsgGUID: 9EiO1dEfTvqnyLMeXtbO9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="29841335"
-X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
-   d="scan'208";a="29841335"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 02:15:05 -0800
-X-CSE-ConnectionGUID: pW57NHdPQxSL0gHklTP0ug==
-X-CSE-MsgGUID: +f41jPjLSU6ZDII/HuFRVA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
-   d="scan'208";a="118985851"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 02:15:03 -0800
-Date: Thu, 6 Mar 2025 12:14:59 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
-	bleung@chromium.org, groeck@chromium.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] Convert regulator drivers to use
- devm_kmemdup_array()
-Message-ID: <Z8l1ozUOMTDNQupC@black.fi.intel.com>
-References: <20250228072057.151436-1-raag.jadav@intel.com>
- <174077776750.602863.5336934105237710269.b4-ty@kernel.org>
- <Z8kFW13EyR0YXnJd@black.fi.intel.com>
- <Z8loo-N5byavJLkm@smile.fi.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AALKbeI6voHNJtWx/Ps7MWW06ssQXuoy0PBWPLXxSv09MlbfCV6xr8mj+glcxnmP3C6IJBSda7r0UMwwzNrCDKIfnDZMfBEFhOLZUGDybq2fMr3tlouLFFyRf7Gi3uPr/keakXcbag2j4KQv8OGbVNEvioACD5VXUteUaZPEiL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QAwOtLHa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73FC0C4CEE0;
+	Thu,  6 Mar 2025 10:15:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741256159;
+	bh=GyD5rv2egr2dMdLAzHO0FeBEFkCMJ1OAl97tzWJuVcE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QAwOtLHaszWKb2z40qTZfmkWj0elqbFbgDTWAWlnnJmPwsE83GHvKS39FnQV7SPYR
+	 T2zNPUk/TXzzSyelENHgIPOHOtQJlwZ0sfnqoDPq0EHzH0t8BmfHfDntuhK5UxsiaF
+	 amwC8JcF/NU+7jisf7pDtdeqOHlGmP/YTZk+h+qQYwxAzi3WJgkOxdr5rNGjUc7OfO
+	 eGcciFwbQDCh8fAlo5Jja8gYTso8yrFqO4UPHA+SP8rhSoml84JkH3JbJS/DBYnzFg
+	 1uEeH+9418DNDOK+0O0gSvKi+G10D6q6Q0cSDfQ/aaUIg9eNn4z6rWdB1vaBKl27FZ
+	 annRwzXDVmOLA==
+Date: Thu, 6 Mar 2025 11:15:38 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Kees Cook <kees@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, sparclinux@vger.kernel.org, linux-s390@vger.kernel.org, 
+	linux-acpi@vger.kernel.org
+Subject: Re: [PATCH 3/8] ftrace: Move trace sysctls into trace.c
+Message-ID: <dekaemtglzq5el2omrusxyqntdqbzyllcalzor4jrindici25g@x2bdsiblw6iw>
+References: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
+ <20250218-jag-mv_ctltables-v1-3-cd3698ab8d29@kernel.org>
+ <20250303204455.69723c20@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,38 +72,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8loo-N5byavJLkm@smile.fi.intel.com>
+In-Reply-To: <20250303204455.69723c20@gandalf.local.home>
 
-On Thu, Mar 06, 2025 at 11:19:31AM +0200, Andy Shevchenko wrote:
-> On Thu, Mar 06, 2025 at 04:15:55AM +0200, Raag Jadav wrote:
-> > On Fri, Feb 28, 2025 at 09:22:47PM +0000, Mark Brown wrote:
-> > > On Fri, 28 Feb 2025 12:50:55 +0530, Raag Jadav wrote:
-> > > > This series converts regulator drivers to use the newly introduced[1]
-> > > > devm_kmemdup_array() helper. This depends on changes available on
-> > > > immutable tag[2].
-> > > > 
-> > > > [1] https://lore.kernel.org/r/20250212062513.2254767-1-raag.jadav@intel.com
-> > > > [2] https://lore.kernel.org/r/Z7xGpz3Q4Zj6YHx7@black.fi.intel.com
-> > > > 
-> > > > [...]
-> > > 
-> > > Applied to
-> > > 
-> > >    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-> > 
-> > Thank you.
-> > 
-> > Unless there's a nuance intended in the merge series title that I'm unable
-> > to understand, it probably seems incomplete.
+On Mon, Mar 03, 2025 at 08:44:55PM -0500, Steven Rostedt wrote:
+> On Tue, 18 Feb 2025 10:56:19 +0100
+> Joel Granados <joel.granados@kernel.org> wrote:
 > 
-> I believe it's an issue somewhere in the scripts. The long Subject line is
-> split in the mailbox and that's probably is not supported by the machinery.
+> Nit, change the subject to:
 > 
-> You are not the only one who reports this issue.
+>   tracing: Move trace sysctls into trace.c
+Done. Thx for the feedback 
 
-While I'm not well educated on the machinery, I'm also seeing devm_kmemdup_array()
-introduction commit reordered in -next and thinking perhaps it can cause issues
-with bisect, especially after final merge into Linus' tree?
+Best
+> 
+> as I try to only have the "ftrace:" label for modifications that affect
+> attaching to functions, and "tracing:" for everything else.
+> 
+> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> 
+> -- Steve
+> 
+> 
+> > Move trace ctl tables into their own const array in
+> > kernel/trace/trace.c. The sysctl table register is called with
+> > subsys_initcall placing if after its original place in proc_root_init.
+> > This is part of a greater effort to move ctl tables into their
+> > respective subsystems which will reduce the merge conflicts in
+> > kerenel/sysctl.c.
+> > 
+> > Signed-off-by: Joel Granados <joel.granados@kernel.org>
+> > ---
+...
+> > +	},
+> > +};
+> > +
+> > +static int __init init_trace_sysctls(void)
+> > +{
+> > +	register_sysctl_init("kernel", trace_sysctl_table);
+> > +	return 0;
+> > +}
+> > +subsys_initcall(init_trace_sysctls);
+> >  
+> >  #ifdef CONFIG_TRACE_EVAL_MAP_FILE
+> >  /* Map of enums to their values, for "eval_map" file */
+> > 
+> 
 
-Raag
+-- 
+
+Joel Granados
 
