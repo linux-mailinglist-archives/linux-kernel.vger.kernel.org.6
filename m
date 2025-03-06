@@ -1,84 +1,84 @@
-Return-Path: <linux-kernel+bounces-549095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C04DA54D1C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:12:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CBC7A54D18
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:11:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4807D18979D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:12:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACCD516C7D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466051891AA;
-	Thu,  6 Mar 2025 14:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD521624FA;
+	Thu,  6 Mar 2025 14:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M6S795in"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SOZn289U"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB015175D48
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 14:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20004155308
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 14:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741270277; cv=none; b=FXen2OaCewzrSraUVgZBx4zQ8mZjexgqEMjXZHwOMKxcLBIkg19A99q7u5gMbGHh7a+IBvBX2yEeztW8PCS9j8cmqxQo1ySAxsKbxFGrXLGx3kTRwNIiC3exVMXdfLkHKuQpB/mRbPvQw395qIwq0Qvu8/ka+NCakvI5Ua/nhco=
+	t=1741270274; cv=none; b=NJPaRWwKAgAoqNouy6xtd/RUdk6dXYVX7F24hUGoym2rdnCELoZOk0vFOhfWZ1746Jd6MnOOszdNWFwU1XOVxNAMVDg28o7YhE8cPt9CTt2ryYr/4p9jmNHNqXXk9t3RhmgVr0JUEMOhdbWxgKxJ0nolwqg212abtwiym2rFOn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741270277; c=relaxed/simple;
-	bh=LXp/fN9+DHszGyDRFM3VkrhJz2PUhILAWSbGRUnQ5+A=;
+	s=arc-20240116; t=1741270274; c=relaxed/simple;
+	bh=72vgfzS/NoqpzjzSUDCO8wd5QQDPCLgcmhF+lVelQns=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=naQdmePGS0QErzRLrZEpYuOv7ofhUd/YIkia0/I077xTRCIgXRyGgAhBFycEH7Wx445syaMNOGqP6a2P1lBsrqaW5pOyYgW2V/ZG6U5D+GIN1CLog3wpcfdBpbFWTILf5xqv1EQBlL5tuwDABP3uUks9sCnEzYzhXMJeaWYgahs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M6S795in; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=DmENOv9P/ikWJCWeCBL9GtqZz2MTpV9RXaczfcqExwj4h+BDXtdq0D+nLSTv31i9vOYMcgQNku/pIC1tF85SOd181/KOl6rE8FxIliWvf7LAVH36MzS9O8z9LRsLMNfF42ikfYMG3fAhZjop7XRD0H3N8ldDnPSvF+2ylXbwj/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SOZn289U; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741270274;
+	s=mimecast20190719; t=1741270272;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=X8MV1C1a2+zK79i0XF4CH5NW5o5w8GpCx5XUFIKxutk=;
-	b=M6S795inSkYIwxHkuIDVaSTEQTdBA4fMKXbVA0thkYu+pqoJmEqZL59XEePpnzYVaChRkV
-	5wZfuvAhKZVOCX75y0HKQshEhpoFbxgNMsLdLqXfpIjyWjfOEj/LmUlXnYeFTv5Nb/9ETY
-	WNQNCGzrlUEBwOKjbt01mBHyKABz9MI=
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
- [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=dAqrxFos5baxMMm+58GJv+qJfXrJ7okyTkO5C9Q+Myk=;
+	b=SOZn289UkmRhMI2o+vpqjTCnStpQIlsvdsPAaShLtwuA7lttgugQqxskM2tkLYo+ny+dkH
+	CD6sFM5z2jwHEsfvk73X20WaLrxkTakB+i/PtroKK7M3mlr4B0MmmO6FBusOF74lZMNdum
+	tnag+ntnoYu2FfSie7IFSlB5jR81gSk=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-518-Cp67a2yYNCWWTNWmttBYxQ-1; Thu, 06 Mar 2025 09:10:57 -0500
-X-MC-Unique: Cp67a2yYNCWWTNWmttBYxQ-1
-X-Mimecast-MFC-AGG-ID: Cp67a2yYNCWWTNWmttBYxQ_1741270257
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7bb849aa5fbso167045185a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 06:10:57 -0800 (PST)
+ us-mta-353-xUJKRUB7Nq-868c0ziokpg-1; Thu, 06 Mar 2025 09:11:01 -0500
+X-MC-Unique: xUJKRUB7Nq-868c0ziokpg-1
+X-Mimecast-MFC-AGG-ID: xUJKRUB7Nq-868c0ziokpg_1741270260
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c3c8f8ab79so127831485a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 06:11:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741270255; x=1741875055;
+        d=1e100.net; s=20230601; t=1741270260; x=1741875060;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=X8MV1C1a2+zK79i0XF4CH5NW5o5w8GpCx5XUFIKxutk=;
-        b=CCk7JWmxO2c/z7ZbF/bMZdsioiRyXFqIM7zvrdnmyM5vAKJiz5XQqmkyvE+kJHbyc2
-         Qc+L/9riItTUHXMWsneDAYRoXSK1aQj/HBXYZSHiJzqDzm2pk6Ut8eWunNNkytizAYXx
-         gttPRnLb2HoA4PU2o8PpEwP/sN1pBCDGF5ME5q23ClE2eoQvvINcqQdlLAw9nbFBcSQP
-         1CUdYwy59y1E4fWtjarp8r9ps5bRvdUnPf+0f6+ml7B69zU0S5VamEpsI72vcjGfSbEI
-         63Y2ZnBZqlUPsgQFJAcTzJun+jfo9x+lr+mTE7xndRMw5y/UP/qNEp//FSEHvU+E2g/W
-         okBA==
-X-Gm-Message-State: AOJu0YwjriK1Y0IbmtWhHQuQ407NkIkzsKYySGjz7XyRmvIqCk6/DMe/
-	cpnh+x6WOUMZMRRCEw8GF2fDlsMJnNuBJUu40yOAPMGbFXYKHhxnEufB3pUgvS9il3j2jB/W6TX
-	jUg4J0VUdD9dOpTMRuHe8nlbZGNHrSNzjRU7gc5EE4vvOXzBWwmHa+PZlhGW6XRiHcA9LWk20FJ
-	y+az3G2Db8Lpi/+4Mr5++gVbkp9pkpNnx38JG15Id/ZnyVxAnTlDQ=
-X-Gm-Gg: ASbGncs7x+26z09+A4x9j29LQnLFcwMU1R0DCPZk1/4js1amcZvvreeGC/ppf2SwTZR
-	9IVCOHTrJOieU/9EriBEhPjxQp04C/uGqY8hQPUtrhc5x9R6MoOfsQbe8ImdZK6pOcoqOLqffRF
-	1Kclm26Rc3rozaxopGjkpAMS88B4Srt8Emm+Ub9KF8Q8MCcUzhlxgwKqdYXt8kaK951pwScZ3lD
-	2D+mXYpaRZozNzQCxlf/OiYQl8L9DSPDPhxo1C1nI9Zn9AWF61XWeCRVJLpBu6E3ZiSHdBT1bOe
-	v6GQ68xib/vOLgyANWW+cH6iiCrmcGz+tar4okkxwP5TCOoYnTpQbryJw+jmPBNNhOGItlss0Ih
-	GQUxd
-X-Received: by 2002:a05:620a:2b96:b0:7c3:d79c:9c41 with SMTP id af79cd13be357-7c3d8e65e88mr1377359785a.25.1741270255258;
-        Thu, 06 Mar 2025 06:10:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEPm2LiZgeTapeQ0CT+twt6oVCSWpc9DToEkJrQ8VVx+C5dqhcQTY9tZvJ2sVdV7BX/IR1LFg==
-X-Received: by 2002:a05:620a:2b96:b0:7c3:d79c:9c41 with SMTP id af79cd13be357-7c3d8e65e88mr1377353685a.25.1741270254949;
-        Thu, 06 Mar 2025 06:10:54 -0800 (PST)
+        bh=dAqrxFos5baxMMm+58GJv+qJfXrJ7okyTkO5C9Q+Myk=;
+        b=X4yDBaV6Ih81f23zdD2fSZjFdE2iYuDiAaKDRYzZNTen2HQheg8ouJWQNuehr0gIfg
+         2JKJvLQUP3RN91iWQ6Ltt+H0n32WLw/v3R9QoFIK3NbiXqpfu+tL5Ft98Yu+ptjQO9JY
+         /3EmXY0eWJRXvlZK48zKUGLrmXOjuoQ4d+ecDQUatFOaUOHrVtUImZQamIEjEkdyZ5UY
+         6+2IIVzyYAVGzUBjAy3zubnhn9ZtylAjUPT/quBQ8y467SltM3iUIElu65xPTBhteSWh
+         ORwh7Hvl2uaej1Nmv8dNi+CpUilHBnzjaHWf58dPHvxB1K0QHInChoHlRdI7JKaaVrHq
+         RrwA==
+X-Gm-Message-State: AOJu0Ywslj7lUV9VXtVDE/AubNzh1Qi4NulVMgdDPimzu68m5ZStg/Ua
+	L1Y/TKbMi20BY3yGIueSvokJWMqencl4x/yUxkdhOUcrq3plsDRkU4xzvKqy8AWdUhUvvUNgjN/
+	bGMXFywf17PEs62qG7Z58l8SkYQT0qryZ1iohTPXi3etVZmMrOAkon1MLnivXCsYOoHYygpsqxf
+	TvEQCXNwZt2RVwlqOIFzn2gmEpmIjv8svhxHLkf4rqyMFIUf1vMls=
+X-Gm-Gg: ASbGnctLkxUpNd2ffIgfsImz1NEhPh9zET6USbKgSJzP0AUP8oCpnt9Vukqw/z2Q7lG
+	fzTdYJfDCGNJZe3BoUzTBfiDemp4D5/Cm7hUIfZLbU5bV4oBzaQE70vMYHIACMNL2dBUP83nPnr
+	jq3K9cEW7lpsAHZVav6YzQzgXoyoN0DCfZs6+SXNVEKaGm3vqICHBNNr47wxYdZBnNB+NIzTtLA
+	ZWOQxT4ydN/93VzXaOCB0cHX2m2rHJVQZFLdWj+gMGhR2wgJD07DoeOLC3zWs3Jt39NRTMFMpnh
+	vS8gnuuVCwl7BvD4CkqTxF08zSYhThiFrBczhMKWF6tcfbGmwy0vn54s23ZR2sSoDbEP4htHcnZ
+	UL4cr
+X-Received: by 2002:a05:620a:8085:b0:7c0:ac2a:ec2 with SMTP id af79cd13be357-7c3d8bd2980mr967718885a.2.1741270260275;
+        Thu, 06 Mar 2025 06:11:00 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG771ZEB7JVBEk+ccelxoIpVf1FwI0733+VbrstNGFZVGij6ibDc85fMk4i+GYeD/BM+tseog==
+X-Received: by 2002:a05:620a:8085:b0:7c0:ac2a:ec2 with SMTP id af79cd13be357-7c3d8bd2980mr967713185a.2.1741270259808;
+        Thu, 06 Mar 2025 06:10:59 -0800 (PST)
 Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e551119fsm93658985a.108.2025.03.06.06.10.50
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e551119fsm93658985a.108.2025.03.06.06.10.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 06:10:52 -0800 (PST)
+        Thu, 06 Mar 2025 06:10:57 -0800 (PST)
 From: Juri Lelli <juri.lelli@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	cgroups@vger.kernel.org
@@ -103,9 +103,9 @@ Cc: Ingo Molnar <mingo@redhat.com>,
 	luca.abeni@santannapisa.it,
 	tommaso.cucinotta@santannapisa.it,
 	Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH v2 3/8] sched/deadline: Generalize unique visiting of root domains
-Date: Thu,  6 Mar 2025 14:10:11 +0000
-Message-ID: <20250306141016.268313-4-juri.lelli@redhat.com>
+Subject: [PATCH v2 4/8] sched/deadline: Rebuild root domain accounting after every update
+Date: Thu,  6 Mar 2025 14:10:12 +0000
+Message-ID: <20250306141016.268313-5-juri.lelli@redhat.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250306141016.268313-1-juri.lelli@redhat.com>
 References: <20250306141016.268313-1-juri.lelli@redhat.com>
@@ -117,164 +117,159 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Bandwidth checks and updates that work on root domains currently employ
-a cookie mechanism for efficiency. This mechanism is very much tied to
-when root domains are first created and initialized.
+Rebuilding of root domains accounting information (total_bw) is
+currently broken on some cases, e.g. suspend/resume on aarch64. Problem
+is that the way we keep track of domain changes and try to add bandwidth
+back is convoluted and fragile.
 
-Generalize the cookie mechanism so that it can be used also later at
-runtime while updating root domains. Also, additionally guard it with
-sched_domains_mutex, since domains need to be stable while updating them
-(and it will be required for further dynamic changes).
+Fix it by simplify things by making sure bandwidth accounting is cleared
+and completely restored after root domains changes (after root domains
+are again stable).
 
 Reported-by: Jon Hunter <jonathanh@nvidia.com>
 Fixes: 53916d5fd3c0 ("sched/deadline: Check bandwidth overflow earlier for hotplug")
 Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
 ---
- include/linux/sched/deadline.h |  3 +++
- kernel/sched/deadline.c        | 23 +++++++++++++----------
- kernel/sched/rt.c              |  2 ++
- kernel/sched/sched.h           |  2 +-
- kernel/sched/topology.c        |  2 +-
- 5 files changed, 20 insertions(+), 12 deletions(-)
+ include/linux/sched/deadline.h |  4 ++++
+ include/linux/sched/topology.h |  2 ++
+ kernel/cgroup/cpuset.c         | 16 +++++++++-------
+ kernel/sched/deadline.c        | 16 ++++++++++------
+ kernel/sched/topology.c        |  1 +
+ 5 files changed, 26 insertions(+), 13 deletions(-)
 
 diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
-index 3a912ab42bb5..6ec578600b24 100644
+index 6ec578600b24..a780068aa1a5 100644
 --- a/include/linux/sched/deadline.h
 +++ b/include/linux/sched/deadline.h
-@@ -37,4 +37,7 @@ extern void dl_clear_root_domain(struct root_domain *rd);
+@@ -34,6 +34,10 @@ static inline bool dl_time_before(u64 a, u64 b)
+ struct root_domain;
+ extern void dl_add_task_root_domain(struct task_struct *p);
+ extern void dl_clear_root_domain(struct root_domain *rd);
++extern void dl_clear_root_domain_cpu(int cpu);
++
++extern u64 dl_cookie;
++extern bool dl_bw_visited(int cpu, u64 gen);
  
  #endif /* CONFIG_SMP */
  
-+extern u64 dl_cookie;
-+extern bool dl_bw_visited(int cpu, u64 cookie);
+diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+index 7f3dbafe1817..1622232bd08b 100644
+--- a/include/linux/sched/topology.h
++++ b/include/linux/sched/topology.h
+@@ -166,6 +166,8 @@ static inline struct cpumask *sched_domain_span(struct sched_domain *sd)
+ 	return to_cpumask(sd->span);
+ }
+ 
++extern void dl_rebuild_rd_accounting(void);
 +
- #endif /* _LINUX_SCHED_DEADLINE_H */
+ extern void partition_sched_domains_locked(int ndoms_new,
+ 					   cpumask_var_t doms_new[],
+ 					   struct sched_domain_attr *dattr_new);
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index f87526edb2a4..f66b2aefdc04 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -954,10 +954,12 @@ static void dl_update_tasks_root_domain(struct cpuset *cs)
+ 	css_task_iter_end(&it);
+ }
+ 
+-static void dl_rebuild_rd_accounting(void)
++void dl_rebuild_rd_accounting(void)
+ {
+ 	struct cpuset *cs = NULL;
+ 	struct cgroup_subsys_state *pos_css;
++	int cpu;
++	u64 cookie = ++dl_cookie;
+ 
+ 	lockdep_assert_held(&cpuset_mutex);
+ 	lockdep_assert_cpus_held();
+@@ -965,11 +967,12 @@ static void dl_rebuild_rd_accounting(void)
+ 
+ 	rcu_read_lock();
+ 
+-	/*
+-	 * Clear default root domain DL accounting, it will be computed again
+-	 * if a task belongs to it.
+-	 */
+-	dl_clear_root_domain(&def_root_domain);
++	for_each_possible_cpu(cpu) {
++		if (dl_bw_visited(cpu, cookie))
++			continue;
++
++		dl_clear_root_domain_cpu(cpu);
++	}
+ 
+ 	cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
+ 
+@@ -996,7 +999,6 @@ partition_and_rebuild_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+ {
+ 	sched_domains_mutex_lock();
+ 	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
+-	dl_rebuild_rd_accounting();
+ 	sched_domains_mutex_unlock();
+ }
+ 
 diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-index ab565a151355..339434271cba 100644
+index 339434271cba..17b040c92885 100644
 --- a/kernel/sched/deadline.c
 +++ b/kernel/sched/deadline.c
-@@ -166,14 +166,14 @@ static inline unsigned long dl_bw_capacity(int i)
+@@ -166,7 +166,7 @@ static inline unsigned long dl_bw_capacity(int i)
  	}
  }
  
--static inline bool dl_bw_visited(int cpu, u64 gen)
-+static inline bool dl_bw_visited(int cpu, u64 cookie)
+-static inline bool dl_bw_visited(int cpu, u64 cookie)
++bool dl_bw_visited(int cpu, u64 cookie)
  {
  	struct root_domain *rd = cpu_rq(cpu)->rd;
- 
--	if (rd->visit_gen == gen)
-+	if (rd->visit_cookie == cookie)
- 		return true;
- 
--	rd->visit_gen = gen;
-+	rd->visit_cookie = cookie;
- 	return false;
- }
  
 @@ -207,7 +207,7 @@ static inline unsigned long dl_bw_capacity(int i)
  	return SCHED_CAPACITY_SCALE;
  }
  
--static inline bool dl_bw_visited(int cpu, u64 gen)
-+static inline bool dl_bw_visited(int cpu, u64 cookie)
+-static inline bool dl_bw_visited(int cpu, u64 cookie)
++bool dl_bw_visited(int cpu, u64 cookie)
  {
  	return false;
  }
-@@ -3171,15 +3171,18 @@ DEFINE_SCHED_CLASS(dl) = {
- #endif
- };
+@@ -2981,18 +2981,22 @@ void dl_clear_root_domain(struct root_domain *rd)
+ 	rd->dl_bw.total_bw = 0;
  
--/* Used for dl_bw check and update, used under sched_rt_handler()::mutex */
--static u64 dl_generation;
-+/*
-+ * Used for dl_bw check and update, used under sched_rt_handler()::mutex and
-+ * sched_domains_mutex.
-+ */
-+u64 dl_cookie;
- 
- int sched_dl_global_validate(void)
- {
- 	u64 runtime = global_rt_runtime();
- 	u64 period = global_rt_period();
- 	u64 new_bw = to_ratio(period, runtime);
--	u64 gen = ++dl_generation;
-+	u64 cookie = ++dl_cookie;
- 	struct dl_bw *dl_b;
- 	int cpu, cpus, ret = 0;
- 	unsigned long flags;
-@@ -3192,7 +3195,7 @@ int sched_dl_global_validate(void)
- 	for_each_possible_cpu(cpu) {
- 		rcu_read_lock_sched();
- 
--		if (dl_bw_visited(cpu, gen))
-+		if (dl_bw_visited(cpu, cookie))
- 			goto next;
- 
- 		dl_b = dl_bw_of(cpu);
-@@ -3229,7 +3232,7 @@ static void init_dl_rq_bw_ratio(struct dl_rq *dl_rq)
- void sched_dl_do_global(void)
- {
- 	u64 new_bw = -1;
--	u64 gen = ++dl_generation;
-+	u64 cookie = ++dl_cookie;
- 	struct dl_bw *dl_b;
- 	int cpu;
- 	unsigned long flags;
-@@ -3240,7 +3243,7 @@ void sched_dl_do_global(void)
- 	for_each_possible_cpu(cpu) {
- 		rcu_read_lock_sched();
- 
--		if (dl_bw_visited(cpu, gen)) {
-+		if (dl_bw_visited(cpu, cookie)) {
- 			rcu_read_unlock_sched();
- 			continue;
- 		}
-diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
-index 4b8e33c615b1..8cebe71d2bb1 100644
---- a/kernel/sched/rt.c
-+++ b/kernel/sched/rt.c
-@@ -2910,6 +2910,7 @@ static int sched_rt_handler(const struct ctl_table *table, int write, void *buff
- 	int ret;
- 
- 	mutex_lock(&mutex);
-+	sched_domains_mutex_lock();
- 	old_period = sysctl_sched_rt_period;
- 	old_runtime = sysctl_sched_rt_runtime;
- 
-@@ -2936,6 +2937,7 @@ static int sched_rt_handler(const struct ctl_table *table, int write, void *buff
- 		sysctl_sched_rt_period = old_period;
- 		sysctl_sched_rt_runtime = old_runtime;
- 	}
-+	sched_domains_mutex_unlock();
- 	mutex_unlock(&mutex);
- 
- 	return ret;
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index c8512a9fb022..c978abe38c07 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -998,7 +998,7 @@ struct root_domain {
- 	 * Also, some corner cases, like 'wrap around' is dangerous, but given
- 	 * that u64 is 'big enough'. So that shouldn't be a concern.
- 	 */
--	u64 visit_gen;
-+	u64 visit_cookie;
- 
- #ifdef HAVE_RT_PUSH_IPI
  	/*
+-	 * dl_server bandwidth is only restored when CPUs are attached to root
+-	 * domains (after domains are created or CPUs moved back to the
+-	 * default root doamin).
++	 * dl_servers are not tasks. Since dl_add_task_root_domanin ignores
++	 * them, we need to account for them here explicitly.
+ 	 */
+ 	for_each_cpu(i, rd->span) {
+ 		struct sched_dl_entity *dl_se = &cpu_rq(i)->fair_server;
+ 
+ 		if (dl_server(dl_se) && cpu_active(i))
+-			rd->dl_bw.total_bw += dl_se->dl_bw;
++			__dl_add(&rd->dl_bw, dl_se->dl_bw, dl_bw_cpus(i));
+ 	}
+ }
+ 
++void dl_clear_root_domain_cpu(int cpu)
++{
++	dl_clear_root_domain(cpu_rq(cpu)->rd);
++}
++
+ #endif /* CONFIG_SMP */
+ 
+ static void switched_from_dl(struct rq *rq, struct task_struct *p)
 diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 296ff2acfd32..44093339761c 100644
+index 44093339761c..363ad268a25b 100644
 --- a/kernel/sched/topology.c
 +++ b/kernel/sched/topology.c
-@@ -568,7 +568,7 @@ static int init_rootdomain(struct root_domain *rd)
- 	rd->rto_push_work = IRQ_WORK_INIT_HARD(rto_push_irq_work_func);
- #endif
+@@ -2791,6 +2791,7 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
+ 	ndoms_cur = ndoms_new;
  
--	rd->visit_gen = 0;
-+	rd->visit_cookie = 0;
- 	init_dl_bw(&rd->dl_bw);
- 	if (cpudl_init(&rd->cpudl) != 0)
- 		goto free_rto_mask;
+ 	update_sched_domain_debugfs();
++	dl_rebuild_rd_accounting();
+ }
+ 
+ /*
 -- 
 2.48.1
 
