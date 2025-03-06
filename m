@@ -1,134 +1,140 @@
-Return-Path: <linux-kernel+bounces-549834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FEDBA557C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:50:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C8CFA557C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:51:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 18AD07A9E83
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:49:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DF0D1773A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0EEE206F1F;
-	Thu,  6 Mar 2025 20:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA379221570;
+	Thu,  6 Mar 2025 20:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IYLduU9d"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fXkSQTm1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ob8Mhfv6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E6D205502;
-	Thu,  6 Mar 2025 20:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982E6207DF0
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 20:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741294222; cv=none; b=TpL9wPv8e+2lTuYa6qbfNoItTFj0nH+gmG9tmuagC57DGdlt9WJ1g1My6w7H+OROx1fcMImKjn9fqBiJok6L6+bDFk2u5uIc4XWh/YO5UrtHzypw/HqUlY/xxKqlXUEo6J/HuFCjmK3kkQvvOxAg2teZEzkK4nDRNlWqrBnlv0g=
+	t=1741294229; cv=none; b=TXNBey3R+gYS32k6DNs/WkqLl5TcMbHLzxD0P3g7JA7gM2UzANUFE8I9K+PMeOmoP7YadgfDxyg6u+meN9qpZHEYeRSdsayFCgoRjWyFGKANyJ9X0iMhlx0XJUFmc5+nou8E84oh+tAHKZg9odTktQ4s6y9SNlscXUng/IsrFbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741294222; c=relaxed/simple;
-	bh=cvf/ipSb+K3a68VNt2N4RXjMJlyp30yAxRniCB2UBM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KADt2pWJIln/dT8qqRXEjv4EGdl/Yopd80QKJDvaeqvOS37bsglCiI8SMROGo8rSOQRiXExm5RVdx017siflOtwAF+GPbolna/cj1e/SY4W2loWfkj8QOOtkwc1rOEBHOxsg04guYNd3lbM0OA73nu0W6N1IpO0PfZbG6LoKGas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IYLduU9d; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741294221; x=1772830221;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=cvf/ipSb+K3a68VNt2N4RXjMJlyp30yAxRniCB2UBM8=;
-  b=IYLduU9dQn2RXRnZfTZHeIilSD0zvpt3Lw8CEWmXDR8nnBw3p3qHTJVn
-   Uclgy1gXhEORB03Tjn9sC5TqkCekrnyNZyXeJX3lUiiNhHJpWE/hqQkUu
-   3lFniyvPhKqyeSfg+e0+aSeXatD9oNPD4x2JRtOXsnnbTx+b9nG/ResCP
-   n8sQw9tJ8rDRw17gqJcPwKmhzBFWW/ycsxGCbC92eo/+SGxL9LzOWgITU
-   caOQ95ukKogQ7UOQ2Pghfj1GoGENkAX+rC2CXrVKey5WAoI3501fytPyJ
-   YswMxPJBZ2kP7w8Nu5ioyQnyuUAtdz6FkMNs4A2WZMIX/maA3HyiI7GnV
-   A==;
-X-CSE-ConnectionGUID: fg45Lxw4QvicRNx6RWFggQ==
-X-CSE-MsgGUID: udITrILpS76cgepxiJHRVQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="41502045"
-X-IronPort-AV: E=Sophos;i="6.14,227,1736841600"; 
-   d="scan'208";a="41502045"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 12:50:20 -0800
-X-CSE-ConnectionGUID: ZCMNw3ZDQFC0f7jhlngx6A==
-X-CSE-MsgGUID: qh4lq5bpSq+Xez7Ou7jcRQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119052143"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 06 Mar 2025 12:50:09 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tqIAQ-000NbS-31;
-	Thu, 06 Mar 2025 20:50:06 +0000
-Date: Fri, 7 Mar 2025 04:49:17 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, kernel@collabora.com,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org,
-	=?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
-	Andrew Perepech <andrew.perepech@mediatek.com>
-Subject: Re: [PATCH v3 04/20] ASoC: mediatek: mt6359-accdet: Add compatible
- property
-Message-ID: <202503070421.25fbw6zg-lkp@intel.com>
-References: <20250304-mt6359-accdet-dts-v3-4-5b0eafc29f5b@collabora.com>
+	s=arc-20240116; t=1741294229; c=relaxed/simple;
+	bh=lj/zdMUB/zXUQujBEpe+WVR+k7MIDgNioSQiZ0dB4OA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ce30NT2llUTkwWKDfkiodjd3fBpnMhRT0xxc6w9UI6MT7A2M8rYaipqUWRfkiGp0u7xLn1W1HTrb5Hz9jmcG++hU+3m/DJW0W44GnsFJ9ROMUrM0ochnUQkKQo3yqxKGWzQj8lRBjJF7kj7I1ibQygi9tBNHXboqB6MRzUrxbCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fXkSQTm1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ob8Mhfv6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741294219;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jv+CLkPXJjOH3lPUk/jYdaQez332Q1CoAyi49LlZOUQ=;
+	b=fXkSQTm1A0FbXpilFtJZ9IE5Mu1GDgiGavuGQTVy1JBX3im1pUaKMPGmydkG1kBGgnM+3V
+	prXqKZnF0z5iutY+kIz/6ws8mltObeXM8T5XNM244GDXYM9bzZ2ittuOOIbcxX4GsJOJNi
+	NxMLStlArsnG0lr4uW/t4k/+2LTNpzpul+1iTE2Ot2JgggqYha9Bmac2RauRw4cRc4pJH3
+	Ba7BpbHew1ChHyQDPFwtkFsKf2JCdrS2D7BugZ1lZY52IKqNdLoMP8S644+QuUVxtY3eE2
+	ZqpkQbw4Z4LqXErgOCUWuhcdqFdPsg8Ayi5xcEO/55mlVR7DLqZjGx1QpqIw2g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741294219;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jv+CLkPXJjOH3lPUk/jYdaQez332Q1CoAyi49LlZOUQ=;
+	b=Ob8Mhfv6GJFOtTS5HCTh0+iYlyjOWGJSYb/B4JyIpP1id2b5sAsSYsr25sTmGwz/1t81Yq
+	kQ6VmxdwOeYiFlBw==
+To: Borislav Petkov <bp@alien8.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	x86@kernel.org,
+	John Ogness <john.ogness@linutronix.de>,
+	x86-cpuid@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>,
+	"Ahmed S. Darwish" <darwi@linutronix.de>
+Subject: [PATCH v1 00/12] tools/x86/kcpuid: x86-cpuid-db v2.2 update
+Date: Thu,  6 Mar 2025 21:49:48 +0100
+Message-ID: <20250306205000.227399-1-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250304-mt6359-accdet-dts-v3-4-5b0eafc29f5b@collabora.com>
 
-Hi Nícolas,
+Hi,
 
-kernel test robot noticed the following build warnings:
+This series updates kcpuid's CSV file from v1.0 to v2.2, as generated by
+the x86-cpuid-db project. [*]
 
-[auto build test WARNING on 20d5c66e1810e6e8805ec0d01373afb2dba9f51a]
+The CSV changes include:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/N-colas-F-R-A-Prado/ASoC-dt-bindings-Add-document-for-mt6359-accdet/20250304-233834
-base:   20d5c66e1810e6e8805ec0d01373afb2dba9f51a
-patch link:    https://lore.kernel.org/r/20250304-mt6359-accdet-dts-v3-4-5b0eafc29f5b%40collabora.com
-patch subject: [PATCH v3 04/20] ASoC: mediatek: mt6359-accdet: Add compatible property
-config: s390-randconfig-r133-20250306 (https://download.01.org/0day-ci/archive/20250307/202503070421.25fbw6zg-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce: (https://download.01.org/0day-ci/archive/20250307/202503070421.25fbw6zg-lkp@intel.com/reproduce)
+* New leaves for Transmeta and Centaur/Zhaoxin.
+* New bitfields at leaves 0x7, 0x80000001, 0x80000020, and 0x80000021.
+* A standardized style for all x86 trademarks, registers, opcodes, byte
+  units, hexadecimal digits, and x86 technical terms.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503070421.25fbw6zg-lkp@intel.com/
+More details about the CSV changes are at the actual commit logs.
 
-sparse warnings: (new ones prefixed by >>)
->> sound/soc/codecs/mt6359-accdet.c:1050:27: sparse: sparse: symbol 'accdet_of_match' was not declared. Should it be static?
+PQ Summary:
 
-vim +/accdet_of_match +1050 sound/soc/codecs/mt6359-accdet.c
+* Patch 1 is a generic kcpuid bugfix.
 
-  1049	
-> 1050	const struct of_device_id accdet_of_match[] = {
-  1051		{ .compatible = "mediatek,mt6359-accdet", },
-  1052		{ /* sentinel */ },
-  1053	};
-  1054	MODULE_DEVICE_TABLE(of, accdet_of_match);
-  1055	
+* Patches 2-4 are preparatory cleanups.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+* Patches 5-9 add rudimentary x86 vendor detection and filtering to
+  kcpuid, as the CSV file is updated with indices that are exclusive to
+  certain CPU vendors.
+
+* Patch 10 updates the CSV file to x86-cpuid-db v2.0.
+
+* Patch 11 updates the CSV file to x86-cpuid-db v2.2.
+
+  Patch 10 and 11 are separate on purpose, to make the CSV commit log
+  diffs more sensible.
+
+* Patch 12 puts the whole kcpuid tool under MAINTAINERS' X86 CPUID entry,
+  since changes to the CSV file may require updates to the kcpuid code.
+  I would also like to have myself and the x86-cpuid mailing list CCed
+  for all future kcpuid patches.
+
+Thanks!
+
+[*] https://gitlab.com/x86-cpuid.org/x86-cpuid-db
+    https://x86-cpuid.org
+
+8<-----
+
+Ahmed S. Darwish (12):
+  tools/x86/kcpuid: Fix error handling
+  tools/x86/kcpuid: Remove unused local variable
+  tools/x86/kcpuid: Remove unused global variable
+  tools/x86/kcpuid: Simplify usage() handling
+  tools/x86/kcpuid: Refactor CPUID range handling for future expansion
+  tools/x86/kcpuid: Extend CPUID index mask macro
+  tools/x86/kcpuid: Add rudimentary CPU vendor detection
+  tools/x86/kcpuid: Restrict CPUID scanning to valid vendor ranges
+  tools/x86/kcpuid: Define Transmeta and Centaur index ranges
+  tools/x86/kcpuid: Update bitfields to x86-cpuid-db v2.0
+  tools/x86/kcpuid: Update bitfields to x86-cpuid-db v2.2
+  MAINTAINERS: Include kcpuid under X86 CPUID DATABASE
+
+ MAINTAINERS                     |   2 +-
+ tools/arch/x86/kcpuid/cpuid.csv | 787 +++++++++++++++++++-------------
+ tools/arch/x86/kcpuid/kcpuid.c  | 257 +++++++----
+ 3 files changed, 621 insertions(+), 425 deletions(-)
+
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+--
+2.48.1
 
