@@ -1,126 +1,133 @@
-Return-Path: <linux-kernel+bounces-549133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D7B8A54DE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:34:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09AC5A54DE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:36:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33B9C3A8375
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:34:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43195168B49
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83AB217799F;
-	Thu,  6 Mar 2025 14:34:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyqoTaE+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A4A16D9AA;
+	Thu,  6 Mar 2025 14:35:57 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E018C1632F3;
-	Thu,  6 Mar 2025 14:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCCF70838
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 14:35:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741271680; cv=none; b=Pdx7av9V5PBsezlu2o0SKH8YYTo6epggPnJVXy2pfTwG6Vk55g8EFcsqKwHyETU45dR8YeAMSo+0tLHGBecd3vQ34jIp/9zPWukLKETvSoxVLjG1oKQ2po9hKkjaxlfa7R2eLvinE2V/mNVqtCwCp7u6WLbGa8Zh/LSqFTH+w6I=
+	t=1741271757; cv=none; b=jcbAF8McypfwdciA9xPjwmgYHn83XYS9q98CEcH+3e1SJf2PZxVGLFr48VLxuNyXCozcPm46umXwvg7vNFdlPv6sYIjfJM1gKd8qbANHtbk0my1WDFQ5LMpAl6MlwAIzvWwUB2E6vE/FwBu2cbU/L16B/FTPOj/fvc9me6IMyPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741271680; c=relaxed/simple;
-	bh=0Jc/b+RVcAyArNS0kW+l2wvhg69dAf2fkVEU8cOAqOk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bYoPJ43DsMzoKqEfymoolMppHwBS8wbjVgWqcpH3ARphiW8TejVSvslLEKOpwPef/O2kIWz6udusHTCsh7QTR9eDSZhCeCOisNMWYkIAu/N+SphBt5fvr1AF5x/8R5pELGafS0amJeEcSLc/Q/Np6drGjrlInx0qOAijQvhsPWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyqoTaE+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B17AC4CEEB;
-	Thu,  6 Mar 2025 14:34:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741271679;
-	bh=0Jc/b+RVcAyArNS0kW+l2wvhg69dAf2fkVEU8cOAqOk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hyqoTaE+btD9+IcrJD8FzoHqlORfjxKucfc5RINlt52v7Ugt8K/0nOW8no4SIbmmW
-	 CLVH4mQZjFg2TcNTJmoIKJX/5ju0QJTluDZuI2Zc7hcp6VZaDEPVw7hZiS7PjkyKkO
-	 yA8/k4aqOVPBEqYaoitFqnn51TgukEuG3ahjeKcs/7/DJcLkqUa3sPjcSSC53ByVlT
-	 XGG0qgeUHGAvnCf+g6U8ZGbB/LyAnIuzOtSQ2IFPUN14tn78UI0jlasNGkAgo1VexU
-	 XENkc2mHY2/iFlxOW3sgYGQdksxABHtmQghCCdUvbRUkEdXH9P7leXGZTUfBoLUUYQ
-	 nw3jI9C7tQcig==
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3f6818bec2dso410712b6e.3;
-        Thu, 06 Mar 2025 06:34:39 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVhoPWI3+gIP1HQpjWUbfrgXbqqYtFrf8FMWqPH78GXSn2CpmDlIs8t+WlzLpDu8MOjzfHy9f/aDkSH6KY=@vger.kernel.org, AJvYcCX6Y1HToyHerdyJuNcGoRPOOezYRzTe9GLL8ZB/+pv/EWyxR9D5N1V+ZDLk3BZzubgYdmqKsKrqrZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIaogmzj62AVrA5mvMmWGzfINYE6inds/bGXJd9d1mkSDEJPdx
-	frb94psbOYllfQKq6kZsW6tRjM7LUww+wS9M9qlrFIyMnHgCeIO/LrSqhQKnbdLW3OsqdFUytYc
-	4xl2nfMg2C/XWa4srabnoaAokwHA=
-X-Google-Smtp-Source: AGHT+IFK7agm8Vp8tLIIyi1ZbEYV/pprq1zDLa9CaGXx/0GRq8vrcg476q3BcaaXkcjkQiBv/gJAqs2LqlEYMRdHxF0=
-X-Received: by 2002:a05:6808:13c2:b0:3f6:7ecc:6811 with SMTP id
- 5614622812f47-3f68316cac7mr3850042b6e.19.1741271678628; Thu, 06 Mar 2025
- 06:34:38 -0800 (PST)
+	s=arc-20240116; t=1741271757; c=relaxed/simple;
+	bh=wtFFuTxcfMslv6SxPuzbH2ohFV+Ccz/6dlOARsPXUCo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YPFDUPI3jicT5Njk9R07VxJBgknWgPx/YGcmh4YmzoSxEYxH49L94wvdqyWgtKc/oQINdVPvGs2b7nR4AEyDharE96tfBFZpHBjvte6kmrGRWyqX+OyxIlfQ85rbYJ0kKlhJPqZOV38UBaWhUCGQADrxFbwy5lA/6PPMk/SUA4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Z7sLJ6ZQcz1f08P;
+	Thu,  6 Mar 2025 22:31:36 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9C90F1402C1;
+	Thu,  6 Mar 2025 22:35:51 +0800 (CST)
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 6 Mar 2025 22:35:50 +0800
+Message-ID: <14555bcf-933d-4322-b1a6-d33e37c55500@huawei.com>
+Date: Thu, 6 Mar 2025 22:35:49 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306113549.796524-1-ulf.hansson@linaro.org> <20250306113549.796524-2-ulf.hansson@linaro.org>
-In-Reply-To: <20250306113549.796524-2-ulf.hansson@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 6 Mar 2025 15:34:26 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hhHv7P8UXEqtRMwC66aSqs115e8gN8rzn_QzZgnVULzA@mail.gmail.com>
-X-Gm-Features: AQ5f1JrBt3td-r3vm7NFyydwUVOwMmI3tH-LTfvscYNmbENxVXyiwD3_wcRj1cw
-Message-ID: <CAJZ5v0hhHv7P8UXEqtRMwC66aSqs115e8gN8rzn_QzZgnVULzA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] PM: s2idle: Drop redundant locks when entering s2idle
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 drm-dp 3/8] drm/hisilicon/hibmc: Add dp serdes cfg in
+ dp process
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<shiyongbang@huawei.com>
+References: <20250305112647.2344438-1-shiyongbang@huawei.com>
+ <20250305112647.2344438-4-shiyongbang@huawei.com>
+ <bg5yiyru6fqnm73qctgullgsdnywdnv2zbcy72mvglxf2uttp4@v2cmuekciqgm>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <bg5yiyru6fqnm73qctgullgsdnywdnv2zbcy72mvglxf2uttp4@v2cmuekciqgm>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-On Thu, Mar 6, 2025 at 12:36=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
+> On Wed, Mar 05, 2025 at 07:26:42PM +0800, Yongbang Shi wrote:
+>> From: Baihan Li <libaihan@huawei.com>
+>>
+>> Add dp serdes cfg in link training process, and related adapting
+>> and modificating. Change some init values about training,
+>> because we want completely to negotiation process, so we start with
+>> the maximum rate and the electrical characteristic level is 0.
+> In the commit message there should be a mention, why are you also
+> changing hibmc_kms_init().
 >
-> The calls to cpus_read_lock|unlock() protects us from getting CPUS
-> hotplugged, while entering suspend-to-idle. However, when s2idle_enter() =
-is
-> called we should be far beyond the point when CPUs may be hotplugged.
-> Let's therefore simplify the code and drop the use of the lock.
+>> Signed-off-by: Baihan Li <libaihan@huawei.com>
+>> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+>> ---
+>> ChangeLog:
+>> v3 -> v4:
+>>    - add comments for if-statement of dp_init(), suggested by Dmitry Baryshkov.
+>> v2 -> v3:
+>>    - change commit to an imperative sentence, suggested by Dmitry Baryshkov.
+>>    - put HIBMC_DP_HOST_SERDES_CTRL in dp_serdes.h, suggested by Dmitry Baryshkov.
+>> v1 -> v2:
+>>    - splittting the patch and add more detailed the changes in the commit message, suggested by Dmitry Baryshkov.
+>> ---
+>>   1                                             |  0
+>>   .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  1 +
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    |  5 ++-
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  | 32 ++++++++++++++++---
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |  5 +++
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   | 12 +++----
+>>   6 files changed, 43 insertions(+), 12 deletions(-)
+>>   create mode 100644 1
+>>
+> [...]
 >
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  kernel/power/suspend.c | 4 ----
->  1 file changed, 4 deletions(-)
+>> @@ -121,9 +119,11 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
+>>   		return ret;
+>>   	}
+>>   
+>> -	/* if DP existed, init DP */
+>> -	if ((readl(priv->mmio + HIBMC_DP_HOST_SERDES_CTRL) &
+>> -	     HIBMC_DP_HOST_SERDES_CTRL_MASK) == HIBMC_DP_HOST_SERDES_CTRL_VAL) {
+>> +	/* if the serdes reg is readable and is not equal to 0,
+>> +	 * DP existed, and init DP.
+>> +	 */
+> Nit: A typical format for block comments is:
 >
-> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-> index 09f8397bae15..e7aca4e40561 100644
-> --- a/kernel/power/suspend.c
-> +++ b/kernel/power/suspend.c
-> @@ -98,8 +98,6 @@ static void s2idle_enter(void)
->         s2idle_state =3D S2IDLE_STATE_ENTER;
->         raw_spin_unlock_irq(&s2idle_lock);
+>    /*
+>     * Something Something Something
+>     */
 >
-> -       cpus_read_lock();
-> -
+> Please follow it.
 
-As you said above, this is not expected to be contended, so it mostly
-serves as an annotation.
-
-The correctness of the code "protected" by it in fact depends on the
-number of CPUs not changing while it runs and this needs to be
-documented this way or another.
-
-I guess a comment to that effect can be used here instead of the locking.
+Ok, got it.
 
 
-
-
->         /* Push all the CPUs into the idle loop. */
->         wake_up_all_idle_cpus();
->         /* Make the current CPU wait so it can enter the idle loop too. *=
-/
-> @@ -112,8 +110,6 @@ static void s2idle_enter(void)
->          */
->         wake_up_all_idle_cpus();
->
-> -       cpus_read_unlock();
-> -
->         raw_spin_lock_irq(&s2idle_lock);
->
->   out:
-> --
-> 2.43.0
->
+>> +	ret = readl(priv->mmio + HIBMC_DP_HOST_SERDES_CTRL);
+>> +	if (ret) {
+>>   		ret = hibmc_dp_init(priv);
+>>   		if (ret)
+>>   			drm_err(dev, "failed to init dp: %d\n", ret);
+>> -- 
+>> 2.33.0
+>>
 
