@@ -1,170 +1,310 @@
-Return-Path: <linux-kernel+bounces-549662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4441A55531
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:40:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CDEEA55535
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:40:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFAEF188D93A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:40:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CCAF3A76AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9274826B966;
-	Thu,  6 Mar 2025 18:40:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5B2225A637;
+	Thu,  6 Mar 2025 18:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Miyyzai8"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F34225D54C
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 18:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="RvXAotkX"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D8E1DE4EC;
+	Thu,  6 Mar 2025 18:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741286420; cv=none; b=b6c7sz6DhpW018oFmKtvSmhfHBjQQJ4AE3daIpT0KKMN1ClwNZ4j5OvmiPwneVk+oDH6FEHe/aRHgGJQxMct0FvBXDsfWwgVImZuShOtMvu1tDZNsuyupqy98AI3ggO0H4YcGsM0VT7cDzSIY0oPgM7Q8sPv2V9on6IXjPvhgKo=
+	t=1741286445; cv=none; b=pjUrmp3UThQRBpFubcFz/cSdRrPID0Gw9MmmbMDnAmEYyzSVs41c6ZqE4x0OCzwMeV9XiZkCoWVSwFcX8ccY4/210/ccnDHX9cgqit8Fgo6uXTQQLlB36YW9qh2HyYc29RhLpZiypoRF4tddcl4EqGOOKr42WfBNHfyXxeQCttc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741286420; c=relaxed/simple;
-	bh=LkKR288RE+h611Y9F4OQZCS2oNAv31ZfvfnKlmFsXKM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PJIKCs3c1vGBrtLf0PFctBeVltMzAT/4ZXW05vxPOmnzPdMSAC0dB4dsVuGvrwE7Ag4/79rFQbnAmPBgVq6NAZ3mI1CrCH5KnPCSEUkBwczs69O+d2zC30CRLMwfnFgY2+BdPrm+IYiZ1Zhrwt2LYp64VA4zOV0LRt/sHt9N+vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Miyyzai8; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741286418;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=9Lmst4VUAQQ3LJJdXWEWRCBJzpFOzVT70uwpvEP3i+I=;
-	b=Miyyzai8kfdrFmB4GwGRK0dk4g8iMo7gVUKadGBAt/zzo2RXxQTE5Mm0SosPLWM57mSBWH
-	dZDZuvNa+ZJOFtIHe6VEx2jKkh+mrtQGAC9tU+ZGPjclm3+RUCo6xNcXoALDN/+OslfBwm
-	96xpubaEIPcxtv/D8lGx/vpZwtXJ2is=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-641-UQ2ZaQfMNuy9MuKnYOQxmQ-1; Thu, 06 Mar 2025 13:40:16 -0500
-X-MC-Unique: UQ2ZaQfMNuy9MuKnYOQxmQ-1
-X-Mimecast-MFC-AGG-ID: UQ2ZaQfMNuy9MuKnYOQxmQ_1741286415
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3910b93cb1eso538273f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 10:40:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741286415; x=1741891215;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9Lmst4VUAQQ3LJJdXWEWRCBJzpFOzVT70uwpvEP3i+I=;
-        b=Eh0rCI24XbslcoMC+HHG7zFUPjQiEC2jVafcEhiMM4OCTToSSOhIvE6K9KrRO6oU4p
-         VdCbpqD168rEQEF9GTYyQyx7Gw/mPNLmjo8Kb6cGETubmeqYLh+FmaIprTWRnMUNTllZ
-         Tl3+30rKQY2ucd4f0nUkyjCiWCtj53dIEgp55OWGsRwB2uZ1arNrTS4LVTcDt45r4z4g
-         gwDup2SNTbuwBSchmxk+pYqF9+PG/7Fw4XXuoxcsPUy0WTBzTxRgoiRllcyOQZSatI4l
-         BU9zvLcOAF+TQhbjvsrzgThS+22gpm6sEa8SLBvxXcU//SIa6UgEa1bFibBMYO3dWYyR
-         lAYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXes40kvtZ9b2IDziwRUjNJm3bKKzDUZ/aaCz/CkjnktvT3ub2sXhKo5s21PpQZ/Cg2MULv7I50qUHirP8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi7xwSNl9nLpof74tcAuaWOc0BxIRr0e3WBIXwsQ2FHXdLD0iH
-	lkGYRnTR/hjm2fj9mRAOfed6ukbkJ1Ls+kXbVAyQNWJCV3ITb3UXUUH6ua5p9HK4AqNYSMhc5JQ
-	CKRU8v9oVRV/i0+IDVCrEptaJpnuoFIUm/miJPsHbgtd9YtnRQTOLUc4b+31E6g==
-X-Gm-Gg: ASbGnctzR78dCNGy5sof4c289n8Z+YdNblPMR7h9IxTxi/SH2wwpukd9Bs0PaTg/hwG
-	FfJCwx9teDVdxT0bxH9aCjoRLnFf4Vq/0r0cD3n8b9AMogPbt3nNsThwyotJsANKjSn0TcTQ7/+
-	uQFpW9du9DZw2wzICoSm7Pwqq9xKI00LBWk6aq3jmgWIXr2YTn/xN3YHAOp4xyt55eU2k71ZL3U
-	9N9zXzt2aNMWNDEquVx3aagOSCzX5ssJpxZb3U+qnWpsT/DYajHBWW+tqRQpHUdr2mZ3rjyAqix
-	HciYQ9/cGDUgHaqbthOp/DhePe2psMRJWYBskty46QAcKywSPXMmIR46Ks5T23hFuIXdVeE82is
-	bcA==
-X-Received: by 2002:a5d:47a2:0:b0:391:3150:96fb with SMTP id ffacd0b85a97d-39132d6325bmr200932f8f.23.1741286415179;
-        Thu, 06 Mar 2025 10:40:15 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG+PIlhHHUzNDRAUatrj6r8bLMc9x2BjUmkvzjVG8Z/wDAKyIEVDRSOx3ZM1Q7ROAl8MR6S/Q==
-X-Received: by 2002:a5d:47a2:0:b0:391:3150:96fb with SMTP id ffacd0b85a97d-39132d6325bmr200910f8f.23.1741286414795;
-        Thu, 06 Mar 2025 10:40:14 -0800 (PST)
-Received: from rh.fritz.box (p200300f6af284000f9ca1328aeaacdd4.dip0.t-ipconnect.de. [2003:f6:af28:4000:f9ca:1328:aeaa:cdd4])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfcdasm2767640f8f.23.2025.03.06.10.40.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 10:40:14 -0800 (PST)
-From: Sebastian Ott <sebott@redhat.com>
-To: Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	kvmarm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] KVM: arm64: Writable TGRAN*_2
-Date: Thu,  6 Mar 2025 19:40:13 +0100
-Message-ID: <20250306184013.30008-1-sebott@redhat.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741286445; c=relaxed/simple;
+	bh=sRFO7PCYbFU0nj0ofW9VfqWOBfCazZa4ih1Upbeqg9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aNz9TCLPT5IFkbSrI7yU/QG2AQN/Jhge9IeJtK4DMKER0yRZe2tJnLp63udQC6JJ0rNw74Pl2aL+OK/cBhJ/F6CIYqyATL9knGIJWzNlap+MGNDxzJuXyZxXIE+PfizMJ6ne/yAXtASv7Nkc7FhpYfudH3rfwCQai5jA67QgcnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=RvXAotkX; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id B2CB2210EAFD;
+	Thu,  6 Mar 2025 10:40:41 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B2CB2210EAFD
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741286442;
+	bh=Pt+Q7ht3AhnugEHbu9jM29WLMOV6R6cpgBm7yDdOmI4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RvXAotkXsVNPl95MOg6Uq/Wny/i6873I+B2RsRJbkpebrKLzlP3l6rQlkTVLzn17I
+	 q//txb2AfRgNN+XPBOkUYvbfzveUAIc50dGar7vmFW4VER6m2Rzf3dqZwCzkrQSCvH
+	 QLQbPV68EWDCjrQr27ObjMSZGS38jVXIDV9lUtZk=
+Message-ID: <9123b404-f6f8-464b-bad8-b793ea6fb21e@linux.microsoft.com>
+Date: Thu, 6 Mar 2025 10:40:30 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 01/10] hyperv: Convert Hyper-V status codes to strings
+To: Michael Kelley <mhklinux@outlook.com>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
+ <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
+ "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "hpa@zytor.com" <hpa@zytor.com>,
+ "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+ "joro@8bytes.org" <joro@8bytes.org>,
+ "robin.murphy@arm.com" <robin.murphy@arm.com>, "arnd@arndb.de"
+ <arnd@arndb.de>,
+ "jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+ "muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+ "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+ "mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
+ "ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+ "apais@linux.microsoft.com" <apais@linux.microsoft.com>,
+ "Tianyu.Lan@microsoft.com" <Tianyu.Lan@microsoft.com>,
+ "stanislav.kinsburskiy@gmail.com" <stanislav.kinsburskiy@gmail.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "vkuznets@redhat.com" <vkuznets@redhat.com>,
+ "prapal@linux.microsoft.com" <prapal@linux.microsoft.com>,
+ "muislam@microsoft.com" <muislam@microsoft.com>,
+ "anrayabh@linux.microsoft.com" <anrayabh@linux.microsoft.com>,
+ "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org"
+ <lenb@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-2-git-send-email-nunodasneves@linux.microsoft.com>
+ <SN6PR02MB41577560030C55503D1BAFDCD4CA2@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <SN6PR02MB4157629A6197A8A6C992BB75D4CA2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB4157629A6197A8A6C992BB75D4CA2@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Allow userspace to write the safe (NI) value for ID_AA64MMFR0_EL1.TGRAN*_2.
-Disallow to change these fields for NV since kvm provides a sanitized view
-for them based on the PAGE_SIZE.
-Also add these bits to the set_id_regs selftest.
+On 3/6/2025 10:09 AM, Michael Kelley wrote:
+> From: Michael Kelley <mhklinux@outlook.com> Sent: Thursday, March 6, 2025 9:58 AM
+> 
+>>
+>> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Wednesday, February
+>> 26, 2025 3:08 PM
+>>>
+>>> Introduce hv_result_to_string() for this purpose. This allows
+>>> hypercall failures to be debugged more easily with dmesg.
+>>>
+>>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>>> ---
+>>>  drivers/hv/hv_common.c         | 65 ++++++++++++++++++++++++++++++++++
+>>>  drivers/hv/hv_proc.c           | 13 ++++---
+>>>  include/asm-generic/mshyperv.h |  1 +
+>>>  3 files changed, 74 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+>>> index 9804adb4cc56..ce20818688fe 100644
+>>> --- a/drivers/hv/hv_common.c
+>>> +++ b/drivers/hv/hv_common.c
+>>> @@ -740,3 +740,68 @@ void hv_identify_partition_type(void)
+>>>  			pr_crit("Hyper-V: CONFIG_MSHV_ROOT not enabled!\n");
+>>>  	}
+>>>  }
+>>> +
+>>> +const char *hv_result_to_string(u64 hv_status)
+>>> +{
+>>> +	switch (hv_result(hv_status)) {
+>>> +	case HV_STATUS_SUCCESS:
+>>> +		return "HV_STATUS_SUCCESS";
+>>> +	case HV_STATUS_INVALID_HYPERCALL_CODE:
+>>> +		return "HV_STATUS_INVALID_HYPERCALL_CODE";
+>>> +	case HV_STATUS_INVALID_HYPERCALL_INPUT:
+>>> +		return "HV_STATUS_INVALID_HYPERCALL_INPUT";
+>>> +	case HV_STATUS_INVALID_ALIGNMENT:
+>>> +		return "HV_STATUS_INVALID_ALIGNMENT";
+>>> +	case HV_STATUS_INVALID_PARAMETER:
+>>> +		return "HV_STATUS_INVALID_PARAMETER";
+>>> +	case HV_STATUS_ACCESS_DENIED:
+>>> +		return "HV_STATUS_ACCESS_DENIED";
+>>> +	case HV_STATUS_INVALID_PARTITION_STATE:
+>>> +		return "HV_STATUS_INVALID_PARTITION_STATE";
+>>> +	case HV_STATUS_OPERATION_DENIED:
+>>> +		return "HV_STATUS_OPERATION_DENIED";
+>>> +	case HV_STATUS_UNKNOWN_PROPERTY:
+>>> +		return "HV_STATUS_UNKNOWN_PROPERTY";
+>>> +	case HV_STATUS_PROPERTY_VALUE_OUT_OF_RANGE:
+>>> +		return "HV_STATUS_PROPERTY_VALUE_OUT_OF_RANGE";
+>>> +	case HV_STATUS_INSUFFICIENT_MEMORY:
+>>> +		return "HV_STATUS_INSUFFICIENT_MEMORY";
+>>> +	case HV_STATUS_INVALID_PARTITION_ID:
+>>> +		return "HV_STATUS_INVALID_PARTITION_ID";
+>>> +	case HV_STATUS_INVALID_VP_INDEX:
+>>> +		return "HV_STATUS_INVALID_VP_INDEX";
+>>> +	case HV_STATUS_NOT_FOUND:
+>>> +		return "HV_STATUS_NOT_FOUND";
+>>> +	case HV_STATUS_INVALID_PORT_ID:
+>>> +		return "HV_STATUS_INVALID_PORT_ID";
+>>> +	case HV_STATUS_INVALID_CONNECTION_ID:
+>>> +		return "HV_STATUS_INVALID_CONNECTION_ID";
+>>> +	case HV_STATUS_INSUFFICIENT_BUFFERS:
+>>> +		return "HV_STATUS_INSUFFICIENT_BUFFERS";
+>>> +	case HV_STATUS_NOT_ACKNOWLEDGED:
+>>> +		return "HV_STATUS_NOT_ACKNOWLEDGED";
+>>> +	case HV_STATUS_INVALID_VP_STATE:
+>>> +		return "HV_STATUS_INVALID_VP_STATE";
+>>> +	case HV_STATUS_NO_RESOURCES:
+>>> +		return "HV_STATUS_NO_RESOURCES";
+>>> +	case HV_STATUS_PROCESSOR_FEATURE_NOT_SUPPORTED:
+>>> +		return "HV_STATUS_PROCESSOR_FEATURE_NOT_SUPPORTED";
+>>> +	case HV_STATUS_INVALID_LP_INDEX:
+>>> +		return "HV_STATUS_INVALID_LP_INDEX";
+>>> +	case HV_STATUS_INVALID_REGISTER_VALUE:
+>>> +		return "HV_STATUS_INVALID_REGISTER_VALUE";
+>>> +	case HV_STATUS_OPERATION_FAILED:
+>>> +		return "HV_STATUS_OPERATION_FAILED";
+>>> +	case HV_STATUS_TIME_OUT:
+>>> +		return "HV_STATUS_TIME_OUT";
+>>> +	case HV_STATUS_CALL_PENDING:
+>>> +		return "HV_STATUS_CALL_PENDING";
+>>> +	case HV_STATUS_VTL_ALREADY_ENABLED:
+>>> +		return "HV_STATUS_VTL_ALREADY_ENABLED";
+>>> +	default:
+>>> +		return "Unknown";
+>>> +	};
+>>> +	return "Unknown";
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(hv_result_to_string);
+>>> +
+>>> diff --git a/drivers/hv/hv_proc.c b/drivers/hv/hv_proc.c
+>>> index 2fae18e4f7d2..8fc30f509fa7 100644
+>>> --- a/drivers/hv/hv_proc.c
+>>> +++ b/drivers/hv/hv_proc.c
+>>> @@ -87,7 +87,8 @@ int hv_call_deposit_pages(int node, u64 partition_id, u32
+>>> num_pages)
+>>>  				     page_count, 0, input_page, NULL);
+>>>  	local_irq_restore(flags);
+>>>  	if (!hv_result_success(status)) {
+>>> -		pr_err("Failed to deposit pages: %lld\n", status);
+>>> +		pr_err("%s: Failed to deposit pages: %s\n", __func__,
+>>> +		       hv_result_to_string(status));
+>>>  		ret = hv_result_to_errno(status);
+>>>  		goto err_free_allocations;
+>>>  	}
+>>> @@ -137,8 +138,9 @@ int hv_call_add_logical_proc(int node, u32 lp_index, u32 apic_id)
+>>>
+>>>  		if (hv_result(status) != HV_STATUS_INSUFFICIENT_MEMORY) {
+>>>  			if (!hv_result_success(status)) {
+>>> -				pr_err("%s: cpu %u apic ID %u, %lld\n", __func__,
+>>> -				       lp_index, apic_id, status);
+>>> +				pr_err("%s: cpu %u apic ID %u, %s\n",
+>>> +				       __func__, lp_index, apic_id,
+>>> +				       hv_result_to_string(status));
+>>>  				ret = hv_result_to_errno(status);
+>>>  			}
+>>>  			break;
+>>> @@ -179,8 +181,9 @@ int hv_call_create_vp(int node, u64 partition_id, u32 vp_index,
+>>> u32 flags)
+>>>
+>>>  		if (hv_result(status) != HV_STATUS_INSUFFICIENT_MEMORY) {
+>>>  			if (!hv_result_success(status)) {
+>>> -				pr_err("%s: vcpu %u, lp %u, %lld\n", __func__,
+>>> -				       vp_index, flags, status);
+>>> +				pr_err("%s: vcpu %u, lp %u, %s\n",
+>>> +				       __func__, vp_index, flags,
+>>> +				       hv_result_to_string(status));
+>>>  				ret = hv_result_to_errno(status);
+>>>  			}
+>>>  			break;
+>>> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyperv.h
+>>> index b13b0cda4ac8..dc4729dba9ef 100644
+>>> --- a/include/asm-generic/mshyperv.h
+>>> +++ b/include/asm-generic/mshyperv.h
+>>> @@ -298,6 +298,7 @@ static inline int cpumask_to_vpset_skip(struct hv_vpset *vpset,
+>>>  	return __cpumask_to_vpset(vpset, cpus, func);
+>>>  }
+>>>
+>>> +const char *hv_result_to_string(u64 hv_status);
+>>>  int hv_result_to_errno(u64 status);
+>>>  void hyperv_report_panic(struct pt_regs *regs, long err, bool in_die);
+>>>  bool hv_is_hyperv_initialized(void);
+>>> --
+>>> 2.34.1
+>>
+>> I've read through the other comments on this patch. I definitely vote
+>> for outputting both the hex code along with a string translation, which
+>> could be empty if the hex code is unrecognized by the translation code.
+>>
+>> I can see providing something like hv_hvcall_err() as Nuno proposed, since
+>> that standardizes the text output. But I wonder if it would be too limiting.
+>> For example, in the changes above, both hv_call_add_logical_proc() and
+>> hv_call_create_vp() output additional debugging values, which we probably
+>> don't want to give up.
+>>
+>> Lastly, from an implementation standpoint, rather than using a big
+>> switch statement, build a static array of entries that each have the
+>> hex code and string equivalent. Then hv_result_to_string() loops through
+>> the array looking for a match. This won't be any slower than the big switch
+>> statement. I've seen other places in the kernel where string names are
+>> output, and looking up the strings in a static array is the typical approach.
+>> You'll have to work through the details and see if avoids being too clumsy,
+>> but I think it will be OK.
+>>
+> 
+> Better yet, also include the translated errno in each static array entry.
+> Then hv_result_to_errno() can do the same kind of lookup instead of
+> having its own switch statement. I did a quick look to see if the two
+> functions might be combined to do only a single lookup, but that looks
+> somewhat clumsy unless someone else spots a better way to handle it.
+> The cost of doing two lookups doesn't really matter in an error case.
+> 
+> FWIW, hv_result_to_errno() and the new hv_result_to_string() are both
+> slightly misnamed. The input argument is a full 64-bit hv_status, not the
+> smaller 16-bit result field. hv_status_to_errno() and hv_status_to_string()
+> would be more precise.
+> 
+Hmm, well I'll admit I was and still am rather confused on this point.
 
-Signed-off-by: Sebastian Ott <sebott@redhat.com>
----
- arch/arm64/kvm/sys_regs.c                     | 21 +++++++++++++++----
- .../testing/selftests/kvm/arm64/set_id_regs.c |  3 +++
- 2 files changed, 20 insertions(+), 4 deletions(-)
+In the TLFS (section 3.8) the entire 64-bit return value is called the
+"hypercall result value".
+The 16-bit HV_STATUS part is *also* called the "result" in this section.
+Later, in section 3.12, the 16-bit field is referred to as a "status value
+field".
+Furthermore, the name of the 16-bit value, itself, is HV_STATUS.
 
-diff --git a/arch/arm64/kvm/sys_regs.c b/arch/arm64/kvm/sys_regs.c
-index 14faf213d483..0730ed8314d0 100644
---- a/arch/arm64/kvm/sys_regs.c
-+++ b/arch/arm64/kvm/sys_regs.c
-@@ -1948,6 +1948,21 @@ static int set_id_aa64pfr1_el1(struct kvm_vcpu *vcpu,
- 	return set_id_reg(vcpu, rd, user_val);
- }
- 
-+static int set_id_aa64mmfr0_el1(struct kvm_vcpu *vcpu,
-+				const struct sys_reg_desc *rd, u64 user_val)
-+{
-+	u64 sanitized_val = kvm_read_sanitised_id_reg(vcpu, rd);
-+	u64 tgran2_mask = ID_AA64MMFR0_EL1_TGRAN4_2_MASK |
-+			  ID_AA64MMFR0_EL1_TGRAN16_2_MASK |
-+			  ID_AA64MMFR0_EL1_TGRAN64_2_MASK;
-+
-+	if (vcpu_has_nv(vcpu) &&
-+	    ((sanitized_val & tgran2_mask) != (user_val & tgran2_mask)))
-+		return -EINVAL;
-+
-+	return set_id_reg(vcpu, rd, user_val);
-+}
-+
- static int set_id_aa64mmfr2_el1(struct kvm_vcpu *vcpu,
- 				const struct sys_reg_desc *rd, u64 user_val)
- {
-@@ -2787,10 +2802,8 @@ static const struct sys_reg_desc sys_reg_descs[] = {
- 	ID_UNALLOCATED(6,7),
- 
- 	/* CRm=7 */
--	ID_WRITABLE(ID_AA64MMFR0_EL1, ~(ID_AA64MMFR0_EL1_RES0 |
--					ID_AA64MMFR0_EL1_TGRAN4_2 |
--					ID_AA64MMFR0_EL1_TGRAN64_2 |
--					ID_AA64MMFR0_EL1_TGRAN16_2 |
-+	ID_FILTERED(ID_AA64MMFR0_EL1, id_aa64mmfr0_el1,
-+				      ~(ID_AA64MMFR0_EL1_RES0 |
- 					ID_AA64MMFR0_EL1_ASIDBITS)),
- 	ID_WRITABLE(ID_AA64MMFR1_EL1, ~(ID_AA64MMFR1_EL1_RES0 |
- 					ID_AA64MMFR1_EL1_HCX |
-diff --git a/tools/testing/selftests/kvm/arm64/set_id_regs.c b/tools/testing/selftests/kvm/arm64/set_id_regs.c
-index 1d65f4a09e6f..322b9d3b0125 100644
---- a/tools/testing/selftests/kvm/arm64/set_id_regs.c
-+++ b/tools/testing/selftests/kvm/arm64/set_id_regs.c
-@@ -146,6 +146,9 @@ static const struct reg_ftr_bits ftr_id_aa64pfr1_el1[] = {
- static const struct reg_ftr_bits ftr_id_aa64mmfr0_el1[] = {
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, ECV, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, EXS, 0),
-+	REG_FTR_BITS(FTR_EXACT, ID_AA64MMFR0_EL1, TGRAN4_2, 1),
-+	REG_FTR_BITS(FTR_EXACT, ID_AA64MMFR0_EL1, TGRAN64_2, 1),
-+	REG_FTR_BITS(FTR_EXACT, ID_AA64MMFR0_EL1, TGRAN16_2, 1),
- 	S_REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, TGRAN4, 0),
- 	S_REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, TGRAN64, 0),
- 	REG_FTR_BITS(FTR_LOWER_SAFE, ID_AA64MMFR0_EL1, TGRAN16, 0),
--- 
-2.42.0
+Despite the inconsistency, in my mind it makes the most sense that the
+16-bit HV_STATUS part the "status" and the entire 64-bit return value the
+"result". I am aware that elsewhere (and in the driver patches in this
+series), the name "status" is used to refer to the entire 64-bit return
+value.
+
+These functions were actually called hv_status_to_errno() and hv_status_to_string()
+in the past, but I changed them to use "result" by following my own logic, and I
+thought this also matched the naming of hv_result() and hv_result_success().
+However I now realize that the "result" in these names refers to the *output* of
+these functions... they take a u64 status as a parameter after all..
+
+So in the end I'm rather bothered by this whole situation. I can change these
+names back to "status" (although hv_result_to_errno() is already merged, I
+could send a fixup), or I could keep "result", which I think is a more
+logical name for the 64-bit value, even though it somewhat contradicts how
+the term is already used in the kernel.
+
+Given it doesn't seem to be well-defined in the first place, I'm not really
+sure the best route.
+
+Nuno
+
+> Michael
 
 
