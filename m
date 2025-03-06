@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-548353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88964A543CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:38:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBCA3A543D1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:39:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F0283ACAC5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:38:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 732863AE372
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B291C861B;
-	Thu,  6 Mar 2025 07:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754901D9A79;
+	Thu,  6 Mar 2025 07:39:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I/6gab8a"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S1uzu+FA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E08184E;
-	Thu,  6 Mar 2025 07:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B55184E;
+	Thu,  6 Mar 2025 07:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741246687; cv=none; b=qHhxuHHbW9xc4bn3Ymq0QxxRIC/RCF4rYKtkQcnb4/n7GYdPgG2/Ihgga4LlorKxJm/o06uSb9miUl2JFhk9RJ8n8lBZkiITcfHMO6AS7TMyAFJ+NCmdK7mh77b+5QmhkjrJ09debPQqvK4BWlfsbWjNEb0foe1JirzSox58WKk=
+	t=1741246749; cv=none; b=jqO+kPcbg3caqo9YpbJK8u00gMbL/B/yKsZuBJPXGo3HHYFdAae4nlSi2Rv8NSIKCuv6r78BVy2iQJbiwoE5HraC64Qi0fJOTFU2ngkRQzL7sUHYSZCH98KmTadnPPcPothrxJdUaXJb32ApWLwsUviQ1JIE9E1TT4YCs0vZhpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741246687; c=relaxed/simple;
-	bh=rFPZE20n9wv4t8EMIVt3RGa0RZ2Yy2nLVqSAsVGRS+w=;
+	s=arc-20240116; t=1741246749; c=relaxed/simple;
+	bh=yd3hdP6ibVhZ0o9gpyI7jYeuazV3JKJBYYbwXbdhElQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=k7GBzMW6t6zkPWiHLHC0bYneTlsbJx8XTRcacoijnkSJcjjiPpRxy4ZN/HX9/kqDigh0p5UN53W1rlLhdpz9zHK1ObkRqzVlWQMAllMTL6slqVlzyNFAlTgCOpEWqrgvt0AcLObHuKV4sg1l6x0zI3hyWK7zGaolkvtW9drKuUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I/6gab8a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC65CC4CEE0;
-	Thu,  6 Mar 2025 07:37:57 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=nmkZs/nhCInREpxosgdnl0qrzsa4qHEiwX9ofDXFYbHRm4OLTBxtNEPS/9jab1aXarL1sJdgg7H6fNYhyQ6t0KGyijpzUgyUpzekfvcKIiccy1U/Pnh73RFojGtAWfpmPQ3dhOuBg+aaE3rSo2YxuW2NB4BTCqBu5E12bSLF7UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S1uzu+FA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAA41C4CEE0;
+	Thu,  6 Mar 2025 07:39:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741246685;
-	bh=rFPZE20n9wv4t8EMIVt3RGa0RZ2Yy2nLVqSAsVGRS+w=;
+	s=k20201202; t=1741246749;
+	bh=yd3hdP6ibVhZ0o9gpyI7jYeuazV3JKJBYYbwXbdhElQ=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I/6gab8a+V9MXEtW7WeV9EZmRpdko3E+eujj5dgQCdAyNbG1pUMCDD6/f3761D1ze
-	 isNClkFhOGFJMpaY5F+EH1vkmjF73NO7CQvEYYS42sETIrmfFyrXzCt4hx+88AQGGn
-	 l+yHl6jZXh/WpwT6C7mE4xMhyM/3HFzJfGuANjzGaHYY7dbPOsIq4/CCD8A1cAwJs3
-	 RKL1QFKIuH/AnumyiMcEev5XJegIEw1f+91v+yyh4tUIVRJiJubEANYUINzDaAGcNE
-	 gulwjBxT6pz4t30fYqWW1ByRHs0cX1ieI6jBK8iVHslif1yZvbsqGScL7KMHsc1Zcf
-	 PHwxtBg5ag8Tg==
-Message-ID: <20e4754b-ea9a-404d-b529-ec44a7263cbf@kernel.org>
-Date: Thu, 6 Mar 2025 08:37:54 +0100
+	b=S1uzu+FAiSnXxlTXQGpeLzsWUk7zlQbDkuzmCNlLvoPzLxL+qmXr4LdqcJIrQ8mF7
+	 pZIeq1whJE3PQHITv+La936/noeutrnSBbkLvbKZRV4XupZqV7c4IZXJlR9xkSzj1/
+	 78FZAoiC1/zUNJRq0ACuHdXOsLT9kSa1p1fwFVYtFBDCMwTIog+Rv9ODu/CfbNgQps
+	 4HjycScgYW2NtqizEyqrEw9bHW/XaF9+41I6S+p92aDm+88umt9/FpK27aFfzktG7Y
+	 ALBkCCIdTfvG9ZEfHEF4UwNHteXY9SoSYWJJV0+AJuQcEbgmO+LgkZfZdphimSqGio
+	 g/8hlpArIbDcQ==
+Message-ID: <295caed0-7db6-4b87-9991-e4b7e7621f38@kernel.org>
+Date: Thu, 6 Mar 2025 08:38:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] ASoC: rockchip: add Serial Audio Interface (SAI)
- driver
+Subject: Re: [PATCH 1/7] dt-bindings: clock: rk3576: add IOC gated clocks
 To: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -67,9 +66,9 @@ Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
  linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
 References: <20250305-rk3576-sai-v1-0-64e6cf863e9a@collabora.com>
- <20250305-rk3576-sai-v1-4-64e6cf863e9a@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ <20250305-rk3576-sai-v1-1-64e6cf863e9a@collabora.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -113,138 +112,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250305-rk3576-sai-v1-4-64e6cf863e9a@collabora.com>
+In-Reply-To: <20250305-rk3576-sai-v1-1-64e6cf863e9a@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 05/03/2025 22:24, Nicolas Frattaroli wrote:
-...
+> Certain clocks on the RK3576 are additionally essentially "gated" behind
+> some bit toggles in the IOC GRF range. Downstream ungates these by
+> adding a separate clock driver that maps over the GRF range and leaks
+> their implementation of this into the DT.
+> 
 
-> +
-> +static int rockchip_sai_runtime_resume(struct device *dev)
-> +{
-> +	struct rk_sai_dev *sai = dev_get_drvdata(dev);
-> +	unsigned long flags;
-> +	int ret;
-> +
-> +	dev_dbg(dev, "Runtime resuming device!\n");
-
-Drop probe entry/exit messages. Core already gives you tracing for this.
-
-> +
-> +	ret = clk_prepare_enable(sai->hclk);
-> +	if (ret)
-> +		goto err_hclk;
-> +
-> +	ret = clk_prepare_enable(sai->mclk);
-> +	if (ret)
-> +		goto err_mclk;
-> +
-> +	regcache_cache_only(sai->regmap, false);
-> +	regcache_mark_dirty(sai->regmap);
-> +	ret = regcache_sync(sai->regmap);
-> +	if (ret)
-> +		goto err_regmap;
-> +
-> +	if (sai->quirks & QUIRK_ALWAYS_ON && sai->is_master_mode) {
-> +		spin_lock_irqsave(&sai->xfer_lock, flags);
-> +		regmap_update_bits(sai->regmap, SAI_XFER,
-> +				   SAI_XFER_CLK_MASK |
-> +				   SAI_XFER_FSS_MASK,
-> +				   SAI_XFER_CLK_EN |
-> +				   SAI_XFER_FSS_EN);
-> +		spin_unlock_irqrestore(&sai->xfer_lock, flags);
-> +	}
-> +
-
-...
-
-> +
-> +	ret = devm_snd_dmaengine_pcm_register(&pdev->dev, NULL, 0);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to register PCM: %d\n", ret);
-> +		goto err_runtime_suspend;
-> +	}
-> +
-> +	ret = devm_snd_soc_register_component(&pdev->dev,
-> +					      &rockchip_sai_component,
-> +					      dai, 1);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Failed to register component: %d\n", ret);
-> +		goto err_runtime_suspend;
-> +	}
-> +
-> +	pm_runtime_use_autosuspend(&pdev->dev);
-> +	pm_runtime_put(&pdev->dev);
-> +
-> +	/*
-> +	 * runtime_resume already enabled our hclk again, so we need to also
-> +	 * get rid of the manual enable we did earlier to balance the counts.
-> +	 */
-
-Your way of handling this is extra confusing. You rely on some other
-methods to poke the enable/disable count. It is rather expected that
-each function handles this fully, so it disables what it have enabled.
-You must not rely on PM runtime to do something with clocks which you
-now unwind.
-
-> +	clk_disable_unprepare(sai->hclk);
-> +
-> +	return 0;
-> +
-> +err_runtime_suspend:
-> +	/* If we're !CONFIG_PM, we get -ENOSYS and disable manually */
-> +	if (pm_runtime_put(&pdev->dev))
-> +		rockchip_sai_runtime_suspend(&pdev->dev);
-> +err_disable_hclk:
-> +	clk_disable_unprepare(sai->hclk);
-> +
-> +	return ret;
-> +}
-> +
-
-_device_id tables are supposed to be around probe, not beginning of the
-file.
-
-> +static void rockchip_sai_remove(struct platform_device *pdev)
-> +{
-> +#ifndef CONFIG_PM
-> +	rockchip_sai_runtime_suspend(&pdev->dev);> +#endif
-> +}
-> +
-> +static const struct dev_pm_ops rockchip_sai_pm_ops = {
-> +	SET_RUNTIME_PM_OPS(rockchip_sai_runtime_suspend, rockchip_sai_runtime_resume, NULL)
-> +	SET_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend, pm_runtime_force_resume)
-> +};
-> +
-> +static struct platform_driver rockchip_sai_driver = {
-> +	.probe = rockchip_sai_probe,
-> +	.remove = rockchip_sai_remove,
-> +	.driver = {
-> +		.name = DRV_NAME,
-> +		.of_match_table = of_match_ptr(rockchip_sai_match),
-
-Drop of_match_ptr, you have warning here.
-
-> +		.pm = &rockchip_sai_pm_ops,
-> +	},
-> +};
-> +module_platform_driver(rockchip_sai_driver);
-> +
-> +MODULE_DESCRIPTION("Rockchip SAI ASoC Interface");
-> +MODULE_AUTHOR("Sugar Zhang <sugar.zhang@rock-chips.com>");
-> +MODULE_AUTHOR("Nicolas Frattaroli <nicolas.frattaroli@collabora.com>");
-> +MODULE_LICENSE("GPL");
-> +MODULE_ALIAS("platform:" DRV_NAME);
-
-You should not need MODULE_ALIAS() in normal cases. If you need it,
-usually it means your device ID table is wrong (e.g. misses either
-entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
-for incomplete ID table.
-
-
-> +MODULE_DEVICE_TABLE(of, rockchip_sai_match);
-
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
