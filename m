@@ -1,150 +1,130 @@
-Return-Path: <linux-kernel+bounces-548337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A492A54387
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:20:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 506CAA54389
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:21:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1815F3A9B43
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:19:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 637153AAD2B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:20:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7351C84D0;
-	Thu,  6 Mar 2025 07:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 243411C7015;
+	Thu,  6 Mar 2025 07:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WecRY+Fx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HHHhlJVe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D68018DB04;
-	Thu,  6 Mar 2025 07:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB6118DB04;
+	Thu,  6 Mar 2025 07:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741245601; cv=none; b=ZuZY43jLi0dkynYEeRBcvjGFM53jfg0eD9lRMtG0Ud1AbL4KzWBkCqhcTj4dBuoip9tmWyUVPpbY738XdyZ99/YZPCeeofdja05W5cczS5LabDqqySGTWFVUgHaSyEOmRGz1Zjs+sHGkrMK2PCnOm9+kUEUVg+HM1SpYdf59YHM=
+	t=1741245659; cv=none; b=tlDULXnv9hpvTl9UtUiC/neMBRcaqC5EPF3x5fqpuGx9wt65jcZMyGdzBNjnH3WNT6B2bWbM1Mu8YOrGDeoEiP+Xi0L1nA/kW8C2jnyD5fQXAqmYeR1w74aQo8tk/6WhhUxKG/6r3VQsnUrBSOA21RjCMsBUwMPy4PrcrsR5PYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741245601; c=relaxed/simple;
-	bh=qLuqTZiAoEdE5ZqzkuOEquYAHoFjFE1U9aW4fu6/tYE=;
+	s=arc-20240116; t=1741245659; c=relaxed/simple;
+	bh=viywW8Wo5al4JNCgIcpW82I98bhli2aFf+i7vZPMZ5I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iEa2PKz+1XLXS2mMnFo6QR+E1An0Wb64GPddHudvga5Ky+Qv4ZZr0E27Bw5q+I/bgY8Zu3NZyvQ15AkOVDltMyTUKpvbB08CzYE3huTpnHNiFaJ/RFfkd7Bz4VqwNrp+Xt6lH4gvhyFhkTU9k8ETFkMOuwk0hyANwR1a7XIvogw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WecRY+Fx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 503A9C4CEE0;
-	Thu,  6 Mar 2025 07:20:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741245600;
-	bh=qLuqTZiAoEdE5ZqzkuOEquYAHoFjFE1U9aW4fu6/tYE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WecRY+FxXOJFSeHz07hdLmt4UZKnKWvJEscFSOnyndfNaDgAGzNxTPftEKZTK5Yz1
-	 vBy6K9J5miiQnrj2vHPqMW+Jh5qtFA8JuyKnlMmZYpu2XMEs7TefYNNL8UuMwKcbrs
-	 bQqnF/wwWMjzaxAaVtdgsvr0xBSAd5I/LcLozbtw=
-Date: Thu, 6 Mar 2025 08:18:46 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: David Jander <david@protonic.nl>, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
-Message-ID: <2025030611-embezzle-sacrament-00d9@gregkh>
-References: <20250227162823.3585810-1-david@protonic.nl>
- <20250227162823.3585810-2-david@protonic.nl>
- <6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
- <20250305164046.4de5b6ef@erd003.prtnl>
- <mzxammninwmak5ti4c6is4pbdx3xzzziiwbxiwrldjyxgae4ok@ocec24vu4txa>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sin4W/rJ7G0CjiXVCem+ex2z6awuIPFtxuhqGcbQAdViEwT911D9r6gQY6oOsCnsrC7kBpzyE8FkDekXyU2+1TILlYQLRCnmmLu6vrlcwKcwiAJQzN4fKdt+4vEFz6ZZdCZ3O1JHSc5XL7Xt4pN3UmvcY/gxzEgAJNFBf5tXUEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HHHhlJVe; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741245658; x=1772781658;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=viywW8Wo5al4JNCgIcpW82I98bhli2aFf+i7vZPMZ5I=;
+  b=HHHhlJVeMR8a408kLrhdFp6Xv12qKDEaUiBjF6vBwSA7bR+oG2ikPsjX
+   cirQClsA+eWTs5p/fkVFaEtGFiek+9NRcwJEdQOKcCSAEJ/MzEOiD1NK7
+   Sm5+zaOf1Wawn3PmOVMlQ0OeoANvaYKtW3DGhc+RCKvexI0KMAe4RAEMx
+   BJAdC/IbYYAKTEuiSRblZYPcmaayaANuTdXmLox/1y8U3w9rArDUKJTdt
+   Sqrcyf9wV18Jy1sjUXFO053w0aiIGk2wrC1V9N7J6n3ew6lg0jSfxJujn
+   SkjLgbH0ICd1hvErZh5EWna49hKnz1HlElaU5zeh0398/FfCO8PfD1Bfe
+   g==;
+X-CSE-ConnectionGUID: JU6rAyPQQOWDtL1viji0dQ==
+X-CSE-MsgGUID: BEAXTlkjR2qr8LE0YFm/2A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="53226056"
+X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
+   d="scan'208";a="53226056"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 23:20:58 -0800
+X-CSE-ConnectionGUID: kE678XV/QHOHGv7r6C2NgQ==
+X-CSE-MsgGUID: fpWHKwkfRHiwo2nVkBnzvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="123089173"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa003.fm.intel.com with ESMTP; 05 Mar 2025 23:20:42 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tq5X6-000MhW-16;
+	Thu, 06 Mar 2025 07:20:40 +0000
+Date: Thu, 6 Mar 2025 15:20:39 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Yury V. Zaytsev" <yury@shurup.com>, gregkh@linuxfoundation.org,
+	jirislaby@kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, "Yury V. Zaytsev" <yury@shurup.com>
+Subject: Re: [PATCH RESEND] tty: vt: make defkeymap for shifted F-keys
+ consistent with kbd
+Message-ID: <202503061554.ZQPrGM8H-lkp@intel.com>
+References: <20250301132108.62761-1-yury@shurup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <mzxammninwmak5ti4c6is4pbdx3xzzziiwbxiwrldjyxgae4ok@ocec24vu4txa>
+In-Reply-To: <20250301132108.62761-1-yury@shurup.com>
 
-On Thu, Mar 06, 2025 at 12:21:22AM +0100, Uwe Kleine-König wrote:
-> Hello David,
-> 
-> On Wed, Mar 05, 2025 at 04:40:45PM +0100, David Jander wrote:
-> > On Fri, 28 Feb 2025 17:44:27 +0100
-> > Uwe Kleine-König <u.kleine-koenig@baylibre.com> wrote:
-> > > On Thu, Feb 27, 2025 at 05:28:17PM +0100, David Jander wrote:
-> > > [...]
-> > > > +static int motion_open(struct inode *inode, struct file *file)
-> > > > +{
-> > > > +	int minor = iminor(inode);
-> > > > +	struct motion_device *mdev = NULL, *iter;
-> > > > +	int err;
-> > > > +
-> > > > +	mutex_lock(&motion_mtx);  
-> > > 
-> > > If you use guard(), error handling gets a bit easier.
-> > 
-> > This looks interesting. I didn't know about guard(). Thanks. I see the
-> > benefits, but in some cases it also makes the locked region less clearly
-> > visible. While I agree that guard() in this particular place is nice,
-> > I'm hesitant to try and replace all mutex_lock()/_unlock() calls with guard().
-> > Let me know if my assessment of the intended use of guard() is incorrect.
-> 
-> I agree that guard() makes it harder for non-trivial functions to spot
-> the critical section. In my eyes this is outweight by not having to
-> unlock in all exit paths, but that might be subjective. Annother
-> downside of guard is that sparse doesn't understand it and reports
-> unbalanced locking.
->  
-> > > > +	list_for_each_entry(iter, &motion_list, list) {
-> > > > +		if (iter->minor != minor)
-> > > > +			continue;
-> > > > +		mdev = iter;
-> > > > +		break;
-> > > > +	}  
-> > > 
-> > > This should be easier. If you use a cdev you can just do
-> > > container_of(inode->i_cdev, ...);
-> > 
-> > Hmm... I don't yet really understand what you mean. I will have to study the
-> > involved code a bit more.
-> 
-> The code that I'm convinced is correct is
-> https://lore.kernel.org/linux-pwm/00c9f1181dc351e1e6041ba6e41e4c30b12b6a27.1725635013.git.u.kleine-koenig@baylibre.com/
-> 
-> This isn't in mainline because there is some feedback I still have to
-> address, but I think it might serve as an example anyhow.
-> 
-> > > > [...]
-> > > > +
-> > > > +static const struct class motion_class = {
-> > > > +	.name		= "motion",
-> > > > +	.devnode	= motion_devnode,  
-> > > 
-> > > IIRC it's recommended to not create new classes, but a bus.
-> > 
-> > Interesting. I did some searching, and all I could find was that the chapter
-> > in driver-api/driver-model about classes magically vanished between versions
-> > 5.12 and 5.13. Does anyone know where I can find some information about this?
-> > Sorry if I'm being blind...
-> 
-> Half knowledge on my end at best. I would hope that Greg knows some
-> details (which might even be "no, classes are fine"). I added him to Cc:
+Hi Yury,
 
-A class is there for when you have a common api that devices of
-different types can talk to userspace (i.e. the UAPI is common, not the
-hardware type).  Things like input devices, tty, disks, etc.  A bus is
-there to be able to write different drivers to bind to for that hardware
-bus type (pci, usb, i2c, platform, etc.)
+kernel test robot noticed the following build warnings:
 
-So you need both, a bus to talk to the hardware, and a class to talk to
-userspace in a common way (ignore the fact that we can also talk to
-hardware directly from userspace like raw USB or i2c or PCI config
-space, that's all bus-specific stuff).
+[auto build test WARNING on tty/tty-testing]
+[also build test WARNING on linus/master v6.14-rc5 next-20250305]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Did that help?
+url:    https://github.com/intel-lab-lkp/linux/commits/Yury-V-Zaytsev/tty-vt-make-defkeymap-for-shifted-F-keys-consistent-with-kbd/20250301-214942
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tty-testing
+patch link:    https://lore.kernel.org/r/20250301132108.62761-1-yury%40shurup.com
+patch subject: [PATCH RESEND] tty: vt: make defkeymap for shifted F-keys consistent with kbd
+config: csky-randconfig-r111-20250305 (https://download.01.org/0day-ci/archive/20250306/202503061554.ZQPrGM8H-lkp@intel.com/config)
+compiler: csky-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250306/202503061554.ZQPrGM8H-lkp@intel.com/reproduce)
 
-thanks,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503061554.ZQPrGM8H-lkp@intel.com/
 
-greg k-h
+sparse warnings: (new ones prefixed by >>)
+>> drivers/tty/vt/defkeymap.c:254:42: sparse: sparse: Using plain integer as NULL pointer
+   drivers/tty/vt/defkeymap.c:255:35: sparse: sparse: Using plain integer as NULL pointer
+   drivers/tty/vt/defkeymap.c:255:38: sparse: sparse: Using plain integer as NULL pointer
+   drivers/tty/vt/defkeymap.c:256:18: sparse: sparse: Using plain integer as NULL pointer
+   drivers/tty/vt/defkeymap.c:256:21: sparse: sparse: Using plain integer as NULL pointer
+   drivers/tty/vt/defkeymap.c:256:24: sparse: sparse: Using plain integer as NULL pointer
+   drivers/tty/vt/defkeymap.c:257:25: sparse: sparse: Using plain integer as NULL pointer
+   drivers/tty/vt/defkeymap.c:260:14: sparse: sparse: symbol 'keymap_count' was not declared. Should it be static?
+   drivers/tty/vt/defkeymap.c:268:6: sparse: sparse: symbol 'func_buf' was not declared. Should it be static?
+   drivers/tty/vt/defkeymap.c:303:6: sparse: sparse: symbol 'funcbufptr' was not declared. Should it be static?
+   drivers/tty/vt/defkeymap.c:304:5: sparse: sparse: symbol 'funcbufsize' was not declared. Should it be static?
+   drivers/tty/vt/defkeymap.c:305:5: sparse: sparse: symbol 'funcbufleft' was not declared. Should it be static?
+   drivers/tty/vt/defkeymap.c:335:9: sparse: sparse: Using plain integer as NULL pointer
+   drivers/tty/vt/defkeymap.c:336:9: sparse: sparse: Using plain integer as NULL pointer
+   drivers/tty/vt/defkeymap.c:342:9: sparse: sparse: Using plain integer as NULL pointer
+   drivers/tty/vt/defkeymap.c:307:6: sparse: sparse: symbol 'func_table' was not declared. Should it be static?
+   drivers/tty/vt/defkeymap.c:345:18: sparse: sparse: symbol 'accent_table' was not declared. Should it be static?
+   drivers/tty/vt/defkeymap.c:382:14: sparse: sparse: symbol 'accent_table_size' was not declared. Should it be static?
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
