@@ -1,608 +1,374 @@
-Return-Path: <linux-kernel+bounces-549689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E638A55600
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:55:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6384A555B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:53:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E054173C9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:55:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 035FD7A7CB0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B231D271803;
-	Thu,  6 Mar 2025 18:54:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3670E26BDB6;
+	Thu,  6 Mar 2025 18:53:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fTJWFqAh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GNrsniVJ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE5525D541;
-	Thu,  6 Mar 2025 18:54:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9726325D54E;
+	Thu,  6 Mar 2025 18:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741287276; cv=none; b=fx6hzLufnEkXjD+WXci1gMX+zULdWnDqDgsp4mimeIuKnBNYzRL2K7xuZzy52W7njkO/i0wqpYJfc2qW2GxD+4RIO33LrNO0O5gnkTSBSb28KaerY8lKvCxcGBnEUD83QRRFT+R5pXijsRDDUTveTe+lNGHHHULdiaCEYsdpz6E=
+	t=1741287198; cv=none; b=r/rFYvFBuKnOqWwuZcycTTnZRRbgntdalvIUOtNsYvpRjCFG0gihMe/vWCqXQz/6fzTmH340dNCyDlC3nfKFSbVJUNy589CV4K1QmLAescTO6a+o0bVXcbGqKNKGzKv6RSMT01ie261bsHzPbppvJTG6D71tgD3xR5BX+0T9h/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741287276; c=relaxed/simple;
-	bh=i7YZzIHjlu++jS8DtrmhAxtbfRCM0U79L0Q3tH96qkU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dumncCh0XmC2Noe7sbCwPfMJXGECuC6RHcb1ZiVzZoL8OtFR21sjPpUl3jYlnnJ7tuotBylpaQHbglmRNpVEscW6FKy4qq9Zvigcnev8jJoQxivHA0jpOBvlYhl9JUlJDGMppNEQIbrwQ8wcPBALZH4aPdN4wI3zZt4Rz1DK5/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fTJWFqAh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C2F7C4CEE0;
-	Thu,  6 Mar 2025 18:54:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741287276;
-	bh=i7YZzIHjlu++jS8DtrmhAxtbfRCM0U79L0Q3tH96qkU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=fTJWFqAhSwgDaONoPqxuhnIT2Is0wHT3SJ9NPMkR7fA2iYPIkxFnZjd5M1VKYba3r
-	 dDFOLnBZGbl/UOrasudxdir+GD8gQBx9F/6TlUl+ZQ3ZqU+RuseUBX+1m8gI1shazW
-	 c2YOCkYAPepNIqJzcQ3r560m8/Nz/Jnrm2aaD6yFQV9t6WahulOSxpbL0fc/ChBRD0
-	 d36fBgwjkwhcZg64NkyCm8krI23YIVZTEvin5KonBRkWM6GTgOP36TFx4HMfL+Ekjj
-	 5Mp+97kxK/Ji8jvgsKgn3LoklCa5pvmEb5qHciiN97Crlfe37/SeCqdA5Ua7qpMDx0
-	 d2I10+Nz85pfg==
-From: Mike Rapoport <rppt@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Brian Cain <bcain@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-	Guo Ren <guoren@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Helge Deller <deller@gmx.de>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Matt Turner <mattst88@gmail.com>,
-	Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>,
-	Mike Rapoport <rppt@kernel.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Russell King <linux@armlinux.org.uk>,
-	Stafford Horne <shorne@gmail.com>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Vineet Gupta <vgupta@kernel.org>,
-	Will Deacon <will@kernel.org>,
-	linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-csky@vger.kernel.org,
-	linux-hexagon@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	linux-arch@vger.kernel.org,
-	linux-mm@kvack.org,
-	x86@kernel.org
-Subject: [PATCH 13/13] arch, mm: make releasing of memory to page allocator more explicit
-Date: Thu,  6 Mar 2025 20:51:23 +0200
-Message-ID: <20250306185124.3147510-14-rppt@kernel.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250306185124.3147510-1-rppt@kernel.org>
-References: <20250306185124.3147510-1-rppt@kernel.org>
+	s=arc-20240116; t=1741287198; c=relaxed/simple;
+	bh=HdDCCx5gwVucxugrX/FKfQDpJMt6R/cht/U/5Z0AgDU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=fQRumhR62bsHye+N6MmtKqh9EnJyZ9QaeVhwpRiQiLZwLfD2MDAtXcQWHiE6w15TugGP3pMaIkkGO7t91yjBXYiPhz0d0uBs51zlr+VNE1AGl9pVsOFnkqrQGxNDPm9+uRN41jwhUSou10R1Aw5fUANTORWPphB+axYBlpusx5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GNrsniVJ; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741287196; x=1772823196;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=HdDCCx5gwVucxugrX/FKfQDpJMt6R/cht/U/5Z0AgDU=;
+  b=GNrsniVJvW8hUJZICZSZovEZRs92259dkg4bZAP5BxEebpb5EjFuK1US
+   zBTfIPXWiTZ8TVBwbNjegIRWLf/A8sQuqA0YRWKz/x9mpi3rflnMt5Itl
+   fRVwf+IDEqLLFQUXCyBupdtO9l9o5N9AUW5uS/HyP894PJyRLci9Oy3lx
+   7lJk87ccP2yvP8GR98F23IeL0L/NJedTwzklXMfiB1sqWtTSgV6LLck+I
+   t9XMVrk0a6Nx/etFlhd6yWdt46QYAV3JbScoasQC/3otJ+BXUYHUg9ZfW
+   6f7JV96DkI7Aj9wOdHwW70aXWY5xxMtlRTOY3O6mtnM73PyIpCylb72LK
+   g==;
+X-CSE-ConnectionGUID: /tXZMGn5Q4WbADxAsYHLZw==
+X-CSE-MsgGUID: j8K8lxGDTm6OE8lRr9PvXA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42175617"
+X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
+   d="scan'208";a="42175617"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 10:53:14 -0800
+X-CSE-ConnectionGUID: uHLTloLSSCOx0kjPCcuqSw==
+X-CSE-MsgGUID: q/Ub8q8hSsWlB9RyybGltw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
+   d="scan'208";a="119116316"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 10:53:13 -0800
+Received: from [10.246.136.14] (kliang2-mobl1.ccr.corp.intel.com [10.246.136.14])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by linux.intel.com (Postfix) with ESMTPS id 7311120B5736;
+	Thu,  6 Mar 2025 10:53:12 -0800 (PST)
+Message-ID: <2213a8a8-cc3b-4135-90a4-7f9455375825@linux.intel.com>
+Date: Thu, 6 Mar 2025 13:53:11 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] perf mem: Don't leak mem event names
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Leo Yan <leo.yan@arm.com>, Thomas Falcon <thomas.falcon@intel.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250306175408.852130-1-irogers@google.com>
+Content-Language: en-US
+From: "Liang, Kan" <kan.liang@linux.intel.com>
+In-Reply-To: <20250306175408.852130-1-irogers@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
 
-The point where the memory is released from memblock to the buddy allocator
-is hidden inside arch-specific mem_init()s and the call to
-memblock_free_all() is needlessly duplicated in every artiste cure and
-after introduction of arch_mm_preinit() hook, mem_init() implementation on
-many architecture only contains the call to memblock_free_all().
 
-Pull memblock_free_all() call into mm_core_init() and drop mem_init() on
-relevant architectures to make it more explicit where the free memory is
-released from memblock to the buddy allocator and to reduce code
-duplication in architecture specific code.
+On 2025-03-06 12:54 p.m., Ian Rogers wrote:
+> When preparing the mem events for the argv copies are intentionally
+> made. These copies are leaked and cause runs of perf using address
+> sanitizer to fail. Rather than leak the memory allocate a chunk of
+> memory for the mem event names upfront and build the strings in this -
+> the storage is sized larger than the previous buffer size. The caller
+> is then responsible for clearing up this memory. As part of this
+> change, remove the mem_loads_name and mem_stores_name global buffers
+> then change the perf_pmu__mem_events_name to write to an out argument
+> buffer.
+> 
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/builtin-c2c.c     |  4 ++-
+>  tools/perf/builtin-mem.c     | 12 ++++---
+>  tools/perf/util/mem-events.c | 64 +++++++++++++++++++++---------------
+>  tools/perf/util/mem-events.h |  3 +-
+>  4 files changed, 50 insertions(+), 33 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-c2c.c b/tools/perf/builtin-c2c.c
+> index 15e1fce71c72..5d5bb0f32334 100644
+> --- a/tools/perf/builtin-c2c.c
+> +++ b/tools/perf/builtin-c2c.c
+> @@ -3239,6 +3239,7 @@ static int perf_c2c__record(int argc, const char **argv)
+>  {
+>  	int rec_argc, i = 0, j;
+>  	const char **rec_argv;
+> +	char *event_name_storage = NULL;
+>  	int ret;
+>  	bool all_user = false, all_kernel = false;
+>  	bool event_set = false;
+> @@ -3300,7 +3301,7 @@ static int perf_c2c__record(int argc, const char **argv)
+>  	rec_argv[i++] = "--phys-data";
+>  	rec_argv[i++] = "--sample-cpu";
+>  
+> -	ret = perf_mem_events__record_args(rec_argv, &i);
+> +	ret = perf_mem_events__record_args(rec_argv, &i, &event_name_storage);
+>  	if (ret)
+>  		goto out;
+>  
+> @@ -3327,6 +3328,7 @@ static int perf_c2c__record(int argc, const char **argv)
+>  
+>  	ret = cmd_record(i, rec_argv);
+>  out:
+> +	free(event_name_storage);
+>  	free(rec_argv);
+>  	return ret;
+>  }
+> diff --git a/tools/perf/builtin-mem.c b/tools/perf/builtin-mem.c
+> index 99d5e1491a28..5ec83cd85650 100644
+> --- a/tools/perf/builtin-mem.c
+> +++ b/tools/perf/builtin-mem.c
+> @@ -74,6 +74,7 @@ static int __cmd_record(int argc, const char **argv, struct perf_mem *mem,
+>  	int rec_argc, i = 0, j;
+>  	int start, end;
+>  	const char **rec_argv;
+> +	char *event_name_storage = NULL;
+>  	int ret;
+>  	struct perf_mem_event *e;
+>  	struct perf_pmu *pmu;
+> @@ -140,7 +141,7 @@ static int __cmd_record(int argc, const char **argv, struct perf_mem *mem,
+>  		rec_argv[i++] = "--data-page-size";
+>  
+>  	start = i;
+> -	ret = perf_mem_events__record_args(rec_argv, &i);
+> +	ret = perf_mem_events__record_args(rec_argv, &i, &event_name_storage);
+>  	if (ret)
+>  		goto out;
+>  	end = i;
+> @@ -170,6 +171,7 @@ static int __cmd_record(int argc, const char **argv, struct perf_mem *mem,
+>  
+>  	ret = cmd_record(i, rec_argv);
+>  out:
+> +	free(event_name_storage);
+>  	free(rec_argv);
+>  	return ret;
+>  }
+> @@ -521,6 +523,7 @@ int cmd_mem(int argc, const char **argv)
+>  		NULL,
+>  		NULL
+>  	};
+> +	int ret;
+>  
+>  	argc = parse_options_subcommand(argc, argv, mem_options, mem_subcommands,
+>  					mem_usage, PARSE_OPT_STOP_AT_NON_OPTION);
+> @@ -536,14 +539,15 @@ int cmd_mem(int argc, const char **argv)
+>  	}
+>  
+>  	if (strlen(argv[0]) > 2 && strstarts("record", argv[0]))
+> -		return __cmd_record(argc, argv, &mem, record_options);
+> +		ret = __cmd_record(argc, argv, &mem, record_options);
+>  	else if (strlen(argv[0]) > 2 && strstarts("report", argv[0]))
+> -		return __cmd_report(argc, argv, &mem, report_options);
+> +		ret = __cmd_report(argc, argv, &mem, report_options);
+>  	else
+>  		usage_with_options(mem_usage, mem_options);
+>  
+>  	/* free usage string allocated by parse_options_subcommand */
+>  	free((void *)mem_usage[0]);
+> +	free(sort_order_help);
+>  
+> -	return 0;
+> +	return ret;
+>  }
+> diff --git a/tools/perf/util/mem-events.c b/tools/perf/util/mem-events.c
+> index 0277d3e1505c..1d18a5015eea 100644
+> --- a/tools/perf/util/mem-events.c
+> +++ b/tools/perf/util/mem-events.c
+> @@ -31,9 +31,6 @@ struct perf_mem_event perf_mem_events[PERF_MEM_EVENTS__MAX] = {
+>  
+>  bool perf_mem_record[PERF_MEM_EVENTS__MAX] = { 0 };
+>  
+> -static char mem_loads_name[100];
+> -static char mem_stores_name[100];
+> -
+>  struct perf_mem_event *perf_pmu__mem_events_ptr(struct perf_pmu *pmu, int i)
+>  {
+>  	if (i >= PERF_MEM_EVENTS__MAX || !pmu)
+> @@ -81,7 +78,8 @@ int perf_pmu__mem_events_num_mem_pmus(struct perf_pmu *pmu)
+>  	return num;
+>  }
+>  
+> -static const char *perf_pmu__mem_events_name(int i, struct perf_pmu *pmu)
+> +static const char *perf_pmu__mem_events_name(struct perf_pmu *pmu, int i,
+> +					     char *buf, size_t buf_size)
+>  {
+>  	struct perf_mem_event *e;
+>  
+> @@ -96,31 +94,31 @@ static const char *perf_pmu__mem_events_name(int i, struct perf_pmu *pmu)
+>  		if (e->ldlat) {
+>  			if (!e->aux_event) {
+>  				/* ARM and Most of Intel */
+> -				scnprintf(mem_loads_name, sizeof(mem_loads_name),
+> +				scnprintf(buf, buf_size,
+>  					  e->name, pmu->name,
+>  					  perf_mem_events__loads_ldlat);
+>  			} else {
+>  				/* Intel with mem-loads-aux event */
+> -				scnprintf(mem_loads_name, sizeof(mem_loads_name),
+> +				scnprintf(buf, buf_size,
+>  					  e->name, pmu->name, pmu->name,
+>  					  perf_mem_events__loads_ldlat);
+>  			}
+>  		} else {
+>  			if (!e->aux_event) {
+>  				/* AMD and POWER */
+> -				scnprintf(mem_loads_name, sizeof(mem_loads_name),
+> +				scnprintf(buf, buf_size,
+>  					  e->name, pmu->name);
+> -			} else
+> +			} else {
+>  				return NULL;
+> +			}
+>  		}
+> -
+> -		return mem_loads_name;
+> +		return buf;
+>  	}
+>  
+>  	if (i == PERF_MEM_EVENTS__STORE) {
+> -		scnprintf(mem_stores_name, sizeof(mem_stores_name),
+> +		scnprintf(buf, buf_size,
+>  			  e->name, pmu->name);
+> -		return mem_stores_name;
+> +		return buf;
+>  	}
+>  
+>  	return NULL;
+> @@ -238,55 +236,66 @@ void perf_pmu__mem_events_list(struct perf_pmu *pmu)
+>  	int j;
+>  
+>  	for (j = 0; j < PERF_MEM_EVENTS__MAX; j++) {
+> +		char buf[128];
+>  		struct perf_mem_event *e = perf_pmu__mem_events_ptr(pmu, j);
+>  
+>  		fprintf(stderr, "%-*s%-*s%s",
+>  			e->tag ? 13 : 0,
+>  			e->tag ? : "",
+>  			e->tag && verbose > 0 ? 25 : 0,
+> -			e->tag && verbose > 0 ? perf_pmu__mem_events_name(j, pmu) : "",
+> +			e->tag && verbose > 0
+> +			? perf_pmu__mem_events_name(pmu, j, buf, sizeof(buf))
+> +			: "",
+>  			e->supported ? ": available\n" : "");
+>  	}
+>  }
+>  
+> -int perf_mem_events__record_args(const char **rec_argv, int *argv_nr)
+> +int perf_mem_events__record_args(const char **rec_argv, int *argv_nr, char **event_name_storage_out)
+>  {
+>  	const char *mnt = sysfs__mount();
+>  	struct perf_pmu *pmu = NULL;
+> -	struct perf_mem_event *e;
+>  	int i = *argv_nr;
+> -	const char *s;
+> -	char *copy;
+>  	struct perf_cpu_map *cpu_map = NULL;
+> -	int ret;
+> +	size_t event_name_storage_size =
+> +		perf_pmu__mem_events_num_mem_pmus(NULL) * PERF_MEM_EVENTS__MAX * 128;
+> +	size_t event_name_storage_remaining = event_name_storage_size;
+> +	char *event_name_storage = malloc(event_name_storage_size);
 
-Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
----
- arch/alpha/mm/init.c         |  6 ------
- arch/arc/mm/init.c           | 11 -----------
- arch/arm/mm/init.c           | 11 -----------
- arch/arm64/mm/init.c         | 11 -----------
- arch/csky/mm/init.c          |  5 -----
- arch/hexagon/mm/init.c       | 18 ------------------
- arch/loongarch/kernel/numa.c |  5 -----
- arch/loongarch/mm/init.c     |  5 -----
- arch/m68k/mm/init.c          |  2 --
- arch/microblaze/mm/init.c    |  3 ---
- arch/mips/mm/init.c          |  5 -----
- arch/nios2/mm/init.c         |  6 ------
- arch/openrisc/mm/init.c      |  3 ---
- arch/parisc/mm/init.c        |  2 --
- arch/powerpc/mm/mem.c        |  5 -----
- arch/riscv/mm/init.c         |  5 -----
- arch/s390/mm/init.c          |  6 ------
- arch/sh/mm/init.c            |  2 --
- arch/sparc/mm/init_32.c      |  5 -----
- arch/sparc/mm/init_64.c      |  2 --
- arch/um/kernel/mem.c         |  2 --
- arch/x86/mm/init_32.c        |  3 ---
- arch/x86/mm/init_64.c        |  2 --
- arch/xtensa/mm/init.c        |  9 ---------
- include/linux/memblock.h     |  1 -
- mm/internal.h                |  3 ++-
- mm/mm_init.c                 |  5 +++++
- 27 files changed, 7 insertions(+), 136 deletions(-)
+if (!event_name_storage)
+	return -ENOMEM
 
-diff --git a/arch/alpha/mm/init.c b/arch/alpha/mm/init.c
-index 3ab2d2f3c917..2d491b8cdab9 100644
---- a/arch/alpha/mm/init.c
-+++ b/arch/alpha/mm/init.c
-@@ -273,12 +273,6 @@ srm_paging_stop (void)
- }
- #endif
- 
--void __init
--mem_init(void)
--{
--	memblock_free_all();
--}
--
- static const pgprot_t protection_map[16] = {
- 	[VM_NONE]					= _PAGE_P(_PAGE_FOE | _PAGE_FOW |
- 								  _PAGE_FOR),
-diff --git a/arch/arc/mm/init.c b/arch/arc/mm/init.c
-index 90715b4a0bfa..a73cc94f806e 100644
---- a/arch/arc/mm/init.c
-+++ b/arch/arc/mm/init.c
-@@ -169,17 +169,6 @@ void __init arch_mm_preinit(void)
- 	BUILD_BUG_ON((PTRS_PER_PTE * sizeof(pte_t)) > PAGE_SIZE);
- }
- 
--/*
-- * mem_init - initializes memory
-- *
-- * Frees up bootmem
-- * Calculates and displays memory available/used
-- */
--void __init mem_init(void)
--{
--	memblock_free_all();
--}
--
- #ifdef CONFIG_HIGHMEM
- int pfn_valid(unsigned long pfn)
- {
-diff --git a/arch/arm/mm/init.c b/arch/arm/mm/init.c
-index 7222100b0631..54bdca025c9f 100644
---- a/arch/arm/mm/init.c
-+++ b/arch/arm/mm/init.c
-@@ -263,17 +263,6 @@ void __init arch_mm_preinit(void)
- #endif
- }
- 
--/*
-- * mem_init() marks the free areas in the mem_map and tells us how much
-- * memory is free.  This is done after various parts of the system have
-- * claimed their memory after the kernel image.
-- */
--void __init mem_init(void)
--{
--	/* this will put all unused low memory onto the freelists */
--	memblock_free_all();
--}
--
- #ifdef CONFIG_STRICT_KERNEL_RWX
- struct section_perm {
- 	const char *name;
-diff --git a/arch/arm64/mm/init.c b/arch/arm64/mm/init.c
-index 8eff6a6eb11e..510695107233 100644
---- a/arch/arm64/mm/init.c
-+++ b/arch/arm64/mm/init.c
-@@ -411,17 +411,6 @@ void __init arch_mm_preinit(void)
- 	}
- }
- 
--/*
-- * mem_init() marks the free areas in the mem_map and tells us how much memory
-- * is free.  This is done after various parts of the system have claimed their
-- * memory after the kernel image.
-- */
--void __init mem_init(void)
--{
--	/* this will put all unused low memory onto the freelists */
--	memblock_free_all();
--}
--
- void free_initmem(void)
- {
- 	void *lm_init_begin = lm_alias(__init_begin);
-diff --git a/arch/csky/mm/init.c b/arch/csky/mm/init.c
-index 3914c2b873da..573da66b2543 100644
---- a/arch/csky/mm/init.c
-+++ b/arch/csky/mm/init.c
-@@ -42,11 +42,6 @@ unsigned long empty_zero_page[PAGE_SIZE / sizeof(unsigned long)]
- 						__page_aligned_bss;
- EXPORT_SYMBOL(empty_zero_page);
- 
--void __init mem_init(void)
--{
--	memblock_free_all();
--}
--
- void free_initmem(void)
- {
- 	free_initmem_default(-1);
-diff --git a/arch/hexagon/mm/init.c b/arch/hexagon/mm/init.c
-index d412c2314509..34eb9d424b96 100644
---- a/arch/hexagon/mm/init.c
-+++ b/arch/hexagon/mm/init.c
-@@ -43,24 +43,6 @@ DEFINE_SPINLOCK(kmap_gen_lock);
- /*  checkpatch says don't init this to 0.  */
- unsigned long long kmap_generation;
- 
--/*
-- * mem_init - initializes memory
-- *
-- * Frees up bootmem
-- * Fixes up more stuff for HIGHMEM
-- * Calculates and displays memory available/used
-- */
--void __init mem_init(void)
--{
--	/*  No idea where this is actually declared.  Seems to evade LXR.  */
--	memblock_free_all();
--
--	/*
--	 *  To-Do:  someone somewhere should wipe out the bootmem map
--	 *  after we're done?
--	 */
--}
--
- void sync_icache_dcache(pte_t pte)
- {
- 	unsigned long addr;
-diff --git a/arch/loongarch/kernel/numa.c b/arch/loongarch/kernel/numa.c
-index 8eb489725b1a..30a72fd528c0 100644
---- a/arch/loongarch/kernel/numa.c
-+++ b/arch/loongarch/kernel/numa.c
-@@ -387,11 +387,6 @@ void __init paging_init(void)
- 	free_area_init(zones_size);
- }
- 
--void __init mem_init(void)
--{
--	memblock_free_all();
--}
--
- int pcibus_to_node(struct pci_bus *bus)
- {
- 	return dev_to_node(&bus->dev);
-diff --git a/arch/loongarch/mm/init.c b/arch/loongarch/mm/init.c
-index 6affa3609188..fdb7f73ad160 100644
---- a/arch/loongarch/mm/init.c
-+++ b/arch/loongarch/mm/init.c
-@@ -75,11 +75,6 @@ void __init paging_init(void)
- 
- 	free_area_init(max_zone_pfns);
- }
--
--void __init mem_init(void)
--{
--	memblock_free_all();
--}
- #endif /* !CONFIG_NUMA */
- 
- void __ref free_initmem(void)
-diff --git a/arch/m68k/mm/init.c b/arch/m68k/mm/init.c
-index e03ac556c59e..3d9aa9cce144 100644
---- a/arch/m68k/mm/init.c
-+++ b/arch/m68k/mm/init.c
-@@ -119,7 +119,5 @@ static inline void init_pointer_tables(void)
- 
- void __init mem_init(void)
- {
--	/* this will put all memory onto the freelists */
--	memblock_free_all();
- 	init_pointer_tables();
- }
-diff --git a/arch/microblaze/mm/init.c b/arch/microblaze/mm/init.c
-index 3e664e0efc33..65f0d1fb8a2a 100644
---- a/arch/microblaze/mm/init.c
-+++ b/arch/microblaze/mm/init.c
-@@ -107,9 +107,6 @@ void __init setup_memory(void)
- 
- void __init mem_init(void)
- {
--	/* this will put all memory onto the freelists */
--	memblock_free_all();
--
- 	mem_init_done = 1;
- }
- 
-diff --git a/arch/mips/mm/init.c b/arch/mips/mm/init.c
-index 619e2e394392..6ea27bbd387e 100644
---- a/arch/mips/mm/init.c
-+++ b/arch/mips/mm/init.c
-@@ -453,11 +453,6 @@ void __init arch_mm_preinit(void)
- }
- #endif /* !CONFIG_NUMA */
- 
--void __init mem_init(void)
--{
--	memblock_free_all();
--}
--
- void free_init_pages(const char *what, unsigned long begin, unsigned long end)
- {
- 	unsigned long pfn;
-diff --git a/arch/nios2/mm/init.c b/arch/nios2/mm/init.c
-index 4ba8dfa0d238..94efa3de3933 100644
---- a/arch/nios2/mm/init.c
-+++ b/arch/nios2/mm/init.c
-@@ -60,12 +60,6 @@ void __init paging_init(void)
- 			(unsigned long)empty_zero_page + PAGE_SIZE);
- }
- 
--void __init mem_init(void)
--{
--	/* this will put all memory onto the freelists */
--	memblock_free_all();
--}
--
- void __init mmu_init(void)
- {
- 	flush_tlb_all();
-diff --git a/arch/openrisc/mm/init.c b/arch/openrisc/mm/init.c
-index 72c5952607ac..be1c2eb8bb94 100644
---- a/arch/openrisc/mm/init.c
-+++ b/arch/openrisc/mm/init.c
-@@ -196,9 +196,6 @@ void __init mem_init(void)
- 	/* clear the zero-page */
- 	memset((void *)empty_zero_page, 0, PAGE_SIZE);
- 
--	/* this will put all low memory onto the freelists */
--	memblock_free_all();
--
- 	printk("mem_init_done ...........................................\n");
- 	mem_init_done = 1;
- 	return;
-diff --git a/arch/parisc/mm/init.c b/arch/parisc/mm/init.c
-index 4fbe354dc9b4..14270715d754 100644
---- a/arch/parisc/mm/init.c
-+++ b/arch/parisc/mm/init.c
-@@ -562,8 +562,6 @@ void __init mem_init(void)
- 	BUILD_BUG_ON(TMPALIAS_MAP_START >= 0x80000000);
- #endif
- 
--	memblock_free_all();
--
- #ifdef CONFIG_PA11
- 	if (boot_cpu_data.cpu_type == pcxl2 || boot_cpu_data.cpu_type == pcxl) {
- 		pcxl_dma_start = (unsigned long)SET_MAP_OFFSET(MAP_START);
-diff --git a/arch/powerpc/mm/mem.c b/arch/powerpc/mm/mem.c
-index 68efdaf14e58..d8fe11b64259 100644
---- a/arch/powerpc/mm/mem.c
-+++ b/arch/powerpc/mm/mem.c
-@@ -327,11 +327,6 @@ void __init arch_mm_preinit(void)
- #endif /* CONFIG_PPC32 */
- }
- 
--void __init mem_init(void)
--{
--	memblock_free_all();
--}
--
- void free_initmem(void)
- {
- 	ppc_md.progress = ppc_printk_progress;
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 9efadabf6be1..79b649f6de72 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -196,11 +196,6 @@ void __init arch_mm_preinit(void)
- 	print_vm_layout();
- }
- 
--void __init mem_init(void)
--{
--	memblock_free_all();
--}
--
- /* Limit the memory size via mem. */
- static phys_addr_t memory_limit;
- #ifdef CONFIG_XIP_KERNEL
-diff --git a/arch/s390/mm/init.c b/arch/s390/mm/init.c
-index 6741b38fc864..e8585011fbfc 100644
---- a/arch/s390/mm/init.c
-+++ b/arch/s390/mm/init.c
-@@ -167,12 +167,6 @@ void __init arch_mm_preinit(void)
- 	setup_zero_pages();	/* Setup zeroed pages. */
- }
- 
--void __init mem_init(void)
--{
--	/* this will put all low memory onto the freelists */
--	memblock_free_all();
--}
--
- unsigned long memory_block_size_bytes(void)
- {
- 	/*
-diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
-index 6d459ffba4bc..99e302eeeec1 100644
---- a/arch/sh/mm/init.c
-+++ b/arch/sh/mm/init.c
-@@ -330,8 +330,6 @@ unsigned int mem_init_done = 0;
- 
- void __init mem_init(void)
- {
--	memblock_free_all();
--
- 	/* Set this up early, so we can take care of the zero page */
- 	cpu_cache_init();
- 
-diff --git a/arch/sparc/mm/init_32.c b/arch/sparc/mm/init_32.c
-index e16c32c5728f..fdc93dd12c3e 100644
---- a/arch/sparc/mm/init_32.c
-+++ b/arch/sparc/mm/init_32.c
-@@ -264,11 +264,6 @@ void __init arch_mm_preinit(void)
- 	taint_real_pages();
- }
- 
--void __init mem_init(void)
--{
--	memblock_free_all();
--}
--
- void sparc_flush_page_to_ram(struct page *page)
- {
- 	unsigned long vaddr = (unsigned long)page_address(page);
-diff --git a/arch/sparc/mm/init_64.c b/arch/sparc/mm/init_64.c
-index 34d46adb9571..760818950464 100644
---- a/arch/sparc/mm/init_64.c
-+++ b/arch/sparc/mm/init_64.c
-@@ -2505,8 +2505,6 @@ static void __init register_page_bootmem_info(void)
- }
- void __init mem_init(void)
- {
--	memblock_free_all();
--
- 	/*
- 	 * Must be done after boot memory is put on freelist, because here we
- 	 * might set fields in deferred struct pages that have not yet been
-diff --git a/arch/um/kernel/mem.c b/arch/um/kernel/mem.c
-index cce387438e60..379f33a1babf 100644
---- a/arch/um/kernel/mem.c
-+++ b/arch/um/kernel/mem.c
-@@ -71,8 +71,6 @@ void __init arch_mm_preinit(void)
- 
- void __init mem_init(void)
- {
--	/* this will put all low memory onto the freelists */
--	memblock_free_all();
- 	kmalloc_ok = 1;
- }
- 
-diff --git a/arch/x86/mm/init_32.c b/arch/x86/mm/init_32.c
-index 16664c5464b5..95b2758b4e4d 100644
---- a/arch/x86/mm/init_32.c
-+++ b/arch/x86/mm/init_32.c
-@@ -702,9 +702,6 @@ void __init arch_mm_preinit(void)
- 
- void __init mem_init(void)
- {
--	/* this will put all low memory onto the freelists */
--	memblock_free_all();
--
- 	after_bootmem = 1;
- 	x86_init.hyper.init_after_bootmem();
- 
-diff --git a/arch/x86/mm/init_64.c b/arch/x86/mm/init_64.c
-index f8981e29633c..451e796427d3 100644
---- a/arch/x86/mm/init_64.c
-+++ b/arch/x86/mm/init_64.c
-@@ -1357,8 +1357,6 @@ void __init mem_init(void)
- {
- 	/* clear_bss() already clear the empty_zero_page */
- 
--	/* this will put all memory onto the freelists */
--	memblock_free_all();
- 	after_bootmem = 1;
- 	x86_init.hyper.init_after_bootmem();
- 
-diff --git a/arch/xtensa/mm/init.c b/arch/xtensa/mm/init.c
-index 47ecbe28263e..cc52733a0649 100644
---- a/arch/xtensa/mm/init.c
-+++ b/arch/xtensa/mm/init.c
-@@ -129,15 +129,6 @@ void __init zones_init(void)
- 	print_vm_layout();
- }
- 
--/*
-- * Initialize memory pages.
-- */
--
--void __init mem_init(void)
--{
--	memblock_free_all();
--}
--
- static void __init parse_memmap_one(char *p)
- {
- 	char *oldp;
-diff --git a/include/linux/memblock.h b/include/linux/memblock.h
-index e79eb6ac516f..ef5a1ecc6e59 100644
---- a/include/linux/memblock.h
-+++ b/include/linux/memblock.h
-@@ -133,7 +133,6 @@ int memblock_mark_nomap(phys_addr_t base, phys_addr_t size);
- int memblock_clear_nomap(phys_addr_t base, phys_addr_t size);
- int memblock_reserved_mark_noinit(phys_addr_t base, phys_addr_t size);
- 
--void memblock_free_all(void);
- void memblock_free(void *ptr, size_t size);
- void reset_all_zones_managed_pages(void);
- 
-diff --git a/mm/internal.h b/mm/internal.h
-index 109ef30fee11..26e2e8cea495 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1407,7 +1407,8 @@ static inline bool gup_must_unshare(struct vm_area_struct *vma,
- }
- 
- extern bool mirrored_kernelcore;
--extern bool memblock_has_mirror(void);
-+bool memblock_has_mirror(void);
-+void memblock_free_all(void);
- 
- static __always_inline void vma_set_range(struct vm_area_struct *vma,
- 					  unsigned long start, unsigned long end,
-diff --git a/mm/mm_init.c b/mm/mm_init.c
-index 9cca3d497bf8..545e11f1a3ba 100644
---- a/mm/mm_init.c
-+++ b/mm/mm_init.c
-@@ -2672,6 +2672,10 @@ void __init __weak arch_mm_preinit(void)
- {
- }
- 
-+void __init __weak mem_init(void)
-+{
-+}
-+
- /*
-  * Set up kernel memory allocators
-  */
-@@ -2693,6 +2697,7 @@ void __init mm_core_init(void)
- 	report_meminit();
- 	kmsan_init_shadow();
- 	stack_depot_early_init();
-+	memblock_free_all();
- 	mem_init();
- 	kmem_cache_init();
- 	/*
--- 
-2.47.2
+Others look good to me.
+
+Thanks,
+Kan
+
+> +	char *event_name_storage_ptr = event_name_storage;
+>  
+> +	*event_name_storage_out = NULL;
+>  	while ((pmu = perf_pmus__scan_mem(pmu)) != NULL) {
+>  		for (int j = 0; j < PERF_MEM_EVENTS__MAX; j++) {
+> -			e = perf_pmu__mem_events_ptr(pmu, j);
+> +			const char *s;
+> +			struct perf_mem_event *e = perf_pmu__mem_events_ptr(pmu, j);
+> +			int ret;
+>  
+>  			if (!perf_mem_record[j])
+>  				continue;
+>  
+>  			if (!e->supported) {
+> +				char buf[128];
+> +
+>  				pr_err("failed: event '%s' not supported\n",
+> -					perf_pmu__mem_events_name(j, pmu));
+> +					perf_pmu__mem_events_name(pmu, j, buf, sizeof(buf)));
+> +				free(event_name_storage);
+>  				return -1;
+>  			}
+>  
+> -			s = perf_pmu__mem_events_name(j, pmu);
+> +			s = perf_pmu__mem_events_name(pmu, j, event_name_storage_ptr,
+> +						      event_name_storage_remaining);
+>  			if (!s || !perf_pmu__mem_events_supported(mnt, pmu, e))
+>  				continue;
+>  
+> -			copy = strdup(s);
+> -			if (!copy)
+> -				return -1;
+> -
+>  			rec_argv[i++] = "-e";
+> -			rec_argv[i++] = copy;
+> +			rec_argv[i++] = event_name_storage_ptr;
+> +			event_name_storage_remaining -= strlen(event_name_storage_ptr) + 1;
+> +			event_name_storage_ptr += strlen(event_name_storage_ptr) + 1;
+>  
+>  			ret = perf_cpu_map__merge(&cpu_map, pmu->cpus);
+> -			if (ret < 0)
+> +			if (ret < 0) {
+> +				free(event_name_storage);
+>  				return ret;
+> +			}
+>  		}
+>  	}
+>  
+> @@ -301,6 +310,7 @@ int perf_mem_events__record_args(const char **rec_argv, int *argv_nr)
+>  	}
+>  
+>  	*argv_nr = i;
+> +	*event_name_storage_out = event_name_storage;
+>  	return 0;
+>  }
+>  
+> diff --git a/tools/perf/util/mem-events.h b/tools/perf/util/mem-events.h
+> index 8dc27db9fd52..a5c19d39ee37 100644
+> --- a/tools/perf/util/mem-events.h
+> +++ b/tools/perf/util/mem-events.h
+> @@ -38,7 +38,8 @@ int perf_pmu__mem_events_num_mem_pmus(struct perf_pmu *pmu);
+>  bool is_mem_loads_aux_event(struct evsel *leader);
+>  
+>  void perf_pmu__mem_events_list(struct perf_pmu *pmu);
+> -int perf_mem_events__record_args(const char **rec_argv, int *argv_nr);
+> +int perf_mem_events__record_args(const char **rec_argv, int *argv_nr,
+> +				 char **event_name_storage_out);
+>  
+>  int perf_mem__tlb_scnprintf(char *out, size_t sz, const struct mem_info *mem_info);
+>  int perf_mem__lvl_scnprintf(char *out, size_t sz, const struct mem_info *mem_info);
 
 
