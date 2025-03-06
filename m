@@ -1,237 +1,119 @@
-Return-Path: <linux-kernel+bounces-549961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 484BAA55914
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:51:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C29FA55918
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:52:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43E697A8FFC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:50:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54C6E176CFA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0D9277020;
-	Thu,  6 Mar 2025 21:51:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85DB27701E;
+	Thu,  6 Mar 2025 21:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UAPBjBJj"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gbWkDGSx"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A3B26FD9A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 21:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08AB206F37;
+	Thu,  6 Mar 2025 21:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741297901; cv=none; b=mHMTN+khx1IQuHIreNCKg3J47Pr2qfmpufy3N+UNFEgXMR9UJLH7nJxsh0sSuO0VlKxr5y+oa/xkUZiEH9V9hLrINigh8jG16lv/k7snxXR0yJlQSfGqNvLRKT/k5jzUmLNboQg9nkJ6fTqs3qahzvEmCzob1ABkB+Vbdl3LXYE=
+	t=1741297927; cv=none; b=JUeKqw0qojB5WFkcPtFlc38dKRgxwvuYv35ofvAYTFl+O41Y/Py/e5ekHS/Pu52BHVQdiFoUVlkVCjzTWwWBdrY3JhkbnhqQ2cot9cbBWUlV8sJctu+vSfUZOMkv0ZKE4BlpAKA9GKVqrrJDxzfTQJl3PL8+9jUB9cSeocu+0E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741297901; c=relaxed/simple;
-	bh=JfRLPknr6t/lzKAO4sHgBXmNudQiAB6yND2W6g9u0FE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=joFNrlPgFeRfKUXb6ULJVmV+PAPOQKAuSPcYqyEjDphcYVNNMOAuc5r+TFLemJlXP4o0JxEobfwLgIJGUYIrGfkwtzLph0ndr1NotJGZijVe55mcxmgl6HpHI3orv3SuWOLB1fRvwQF3VGs0I1CUOlc+/2e48V69rne1Gr1EVRc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UAPBjBJj; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741297900; x=1772833900;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=JfRLPknr6t/lzKAO4sHgBXmNudQiAB6yND2W6g9u0FE=;
-  b=UAPBjBJjQFD3/8YwO1q+gc2QvpybNfkhph/mfGVNFVOTrAT5TVSZe4MG
-   TCUAWQI6WeLaHFJZrTRF7GQh+tqIZzHAp70sgHkNgZOx8OO3R2iyE3v64
-   3nyHFaZeDPG6nqZi4dFXlF3INF1Yleps065/xO3OJRV5bo3l+VOrx9BbA
-   Tdczo/HzztxaCF+0hjEekTUm/2Um39JDTL7WdrsyVsqdt00boVJ/7jZke
-   Mx1FzXMRoVtvHlDeJwNa0jsf8x8Kj5VdZ0h9GFGFK4ar5F1qI9HcUTEXd
-   vKL5tnuRN41dOQi8Lb3VQacjnfyK0DJzthUbYqgDBz+Tpv5P/bmCkAsIT
-   Q==;
-X-CSE-ConnectionGUID: bbN/NBGvTIeiuQl3aWLIIw==
-X-CSE-MsgGUID: GOJNnd8DStGEq1AYeYiR0w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="41585483"
-X-IronPort-AV: E=Sophos;i="6.14,227,1736841600"; 
-   d="scan'208";a="41585483"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 13:51:39 -0800
-X-CSE-ConnectionGUID: YDUMy8//RS2tUmWuBQjw2g==
-X-CSE-MsgGUID: UPtH+EtTTQqvEScGDUejUA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="150077493"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa001.fm.intel.com with ESMTP; 06 Mar 2025 13:51:37 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tqJ7v-000NfS-1t;
-	Thu, 06 Mar 2025 21:51:35 +0000
-Date: Fri, 7 Mar 2025 05:50:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Greg Ungerer <gerg@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Palmer Dabbelt <palmer@rivosinc.com>
-Subject: fs/binfmt_elf_fdpic.c:1024:52: warning: variable 'excess1' set but
- not used
-Message-ID: <202503070539.bKnm5hEv-lkp@intel.com>
+	s=arc-20240116; t=1741297927; c=relaxed/simple;
+	bh=M18lmg3jbS0cvipMCmwsKOy9o2ceYd8ajV/LUibTal4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jQQsEuuHIfGdZMC7kypM3CbirAzIcWIQz0u7S9FSC2xEcsyWmgj8uuwFLX+Id92/Oa6RKzpIjXmkyxtfgYLtXej3UQxJ0wg+Q5r5zm/5/W4/9s27zqHfb//kuIz8KpBb2i29tVxYQxUrs7zBQ80wH2gya6EbGHyQvjNuwi8NXso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gbWkDGSx; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22113560c57so22385975ad.2;
+        Thu, 06 Mar 2025 13:52:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741297925; x=1741902725; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WDKro83c60U5TWWT7yKI9Ym3S5pwd6hN8B1wBkncDXs=;
+        b=gbWkDGSxwY/ZBgAbPhN7oF5fsaufbq/ORAotpsyioYDyHnXG/FqIy3C3yF9l8axTqY
+         Hky8wYXmT7inH0b8saenB2j41PQT8DEPIvd1aW3RcY4PcxPBNtAbCytokF7KwaiVLOvz
+         40W00ClWKXNGJ3fcbqIlSuxG5XyCS1mePGQoSoN+jUKusfOJesjtIiOXWSByjozRgACb
+         nTSBzvVlZskQTx1M0DRVFZ0Hw0WqYkMDbrTj95aMP5C8CSZD+FI3IgpN4bv2HGI1S8Zx
+         lK0c4qHFxI6z+2zaf2LRXA9iqc3HSlurZUwuRNRS7pAILKqAPcqyWEsKYOa781KQlIOU
+         RH/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741297925; x=1741902725;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WDKro83c60U5TWWT7yKI9Ym3S5pwd6hN8B1wBkncDXs=;
+        b=W9D5skVIwss+/aomdaZTRqUs8iU40LgcACn+HS6riS6Hs5NgaVEOHLeCJmGOs9nJFs
+         BzRHRhTMmlF1MD7ethYZKPbuEGB+Y1LHc4wL7/EXlV2yZeATLhrvWW7Se0n2N8hWAIzF
+         WjGpYD7e6jgDubv637R7P3dSdaQ4cuLhVLKUdNFnYYGuULLEHgI3MxsaY+w/0R4us4l9
+         XoSFdTNmtgSdu6eq9Csx5l3tjkuYpC4K1C0a3JhbYAjyHMy8fRA1/d1T0tpdWudBlsM1
+         wAY8fSCfkMb46WWFZkhOdkD++o2WbpR26XudXWN2sDaMLDUh+oe9mF0f886VnZJn0MFq
+         jLGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKidl3a14G7LpmxrHhDhjAIx/umcCn7GM8cXURHREKh5AzEwNd1taj7uFwhq/d3P++syTiBjsTa1ljDiw=@vger.kernel.org, AJvYcCVSEYj7cLos3ur6XUQIMn4i0EL7o5tY5r0RIR3ecgTVcMUXpbDP2+Itul72rbv9T7HXn0F62zJ0fwKag9ZHBQLg@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqqLIbi71YJ45+fypbsBd0cYJPNbnyhHUSNsynIcA27ymRvMrh
+	e3YDImfgk40fsi61vOfKCKMlcNv+HB4vcQ0jLy1PcsiqCulj1QFY
+X-Gm-Gg: ASbGncuOMt7PaSZVsdewVAwJ9DcpchTBowULrPV0Ylk3irF2/9MBeog9KLrjrNBAjEk
+	VD5Jc6qYv6atdpsfMlyq98SSfTj5An98qGG3RzcskefJJ+PvjWpoCHSpPUK0mDFFHdTU5aT+bS3
+	AzmBi/dBjDQPbVrGoSPByZIfxJSxszGVqomeBEFZhS+mHrr+LLZN1psgY3Y8/9sx/BTH09P1fLB
+	fj3JaN+R6MEPxxCQJKa5Ia8/aRvYZJXXs9eh6+fQkQ2agfLVZ+1uV60UZ08jNRbN6jhFEMJ+O95
+	shiMU10dPvtX/1rmzdrJkB/JsSfCHHieiUufSpg3ewq9KeXbi4Ib
+X-Google-Smtp-Source: AGHT+IHuxYOLq4TAKe0YaWxaQVSKNweQt763jTASPmjhuo75Pu5xNYSeqX4OQnu58XCFO6DoXhf48g==
+X-Received: by 2002:a05:6a00:194b:b0:736:55ec:ea94 with SMTP id d2e1a72fcca58-736aab13baemr1425776b3a.20.1741297925237;
+        Thu, 06 Mar 2025 13:52:05 -0800 (PST)
+Received: from fedora.local ([2804:d57:4e50:a700:f33d:65d1:e22e:109b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7369824554bsm1923651b3a.69.2025.03.06.13.52.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 13:52:04 -0800 (PST)
+From: Filipe Xavier <felipeaggger@gmail.com>
+Subject: [PATCH 0/2] selftests: livepatch: test if ftrace can trace a
+ livepatched function
+Date: Thu, 06 Mar 2025 18:51:41 -0300
+Message-Id: <20250306-ftrace-sftest-livepatch-v1-0-a6f1dfc30e17@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO0YymcC/x3MQQqAIBBA0avErBswK6OuEi1ExxyICkciiO6et
+ HyL/x8QSkwCU/VAoouFj72gqStw0e4rIfti0Er3qlUGQ07WEUrIJBk3vui02UU0yo/edYPWbQ+
+ lPhMFvv/zvLzvB95KW2NpAAAA
+X-Change-ID: 20250306-ftrace-sftest-livepatch-60d9dc472235
+To: Josh Poimboeuf <jpoimboe@kernel.org>, Jiri Kosina <jikos@kernel.org>, 
+ Miroslav Benes <mbenes@suse.cz>, Petr Mladek <pmladek@suse.com>, 
+ Joe Lawrence <joe.lawrence@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+ Marcos Paulo de Souza <mpdesouza@suse.com>
+Cc: live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, felipe_life@live.com, 
+ Filipe Xavier <felipeaggger@gmail.com>
+X-Mailer: b4 0.14.2
 
-Hi Greg,
+This patchset add ftrace helpers functions and
+add a new test makes sure that ftrace can trace
+a function that was introduced by a livepatch.
 
-FYI, the error/warning still remains.
+Signed-off-by: Filipe Xavier <felipeaggger@gmail.com>
+---
+Filipe Xavier (2):
+      selftests: livepatch: add new ftrace helpers functions
+      selftests: livepatch: test if ftrace can trace a livepatched function
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   1238f0af13495e14e1f40d011b9b7b414bf387fe
-commit: 9549fb354ef1a451ceddfa404ae3e943c5c803d0 riscv: support the elf-fdpic binfmt loader
-date:   1 year, 6 months ago
-config: riscv-randconfig-002-20240701 (https://download.01.org/0day-ci/archive/20250307/202503070539.bKnm5hEv-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 12.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250307/202503070539.bKnm5hEv-lkp@intel.com/reproduce)
+ tools/testing/selftests/livepatch/functions.sh   | 45 ++++++++++++++++++++++++
+ tools/testing/selftests/livepatch/test-ftrace.sh | 35 ++++++++++++++++++
+ 2 files changed, 80 insertions(+)
+---
+base-commit: 848e076317446f9c663771ddec142d7c2eb4cb43
+change-id: 20250306-ftrace-sftest-livepatch-60d9dc472235
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503070539.bKnm5hEv-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   fs/binfmt_elf_fdpic.c: In function 'elf_fdpic_map_file_by_direct_mmap':
->> fs/binfmt_elf_fdpic.c:1024:52: warning: variable 'excess1' set but not used [-Wunused-but-set-variable]
-    1024 |                 unsigned long maddr, disp, excess, excess1;
-         |                                                    ^~~~~~~
-
-
-vim +/excess1 +1024 fs/binfmt_elf_fdpic.c
-
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1001  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1002  /*****************************************************************************/
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1003  /*
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1004   * map a binary by direct mmap() of the individual PT_LOAD segments
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1005   */
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1006  static int elf_fdpic_map_file_by_direct_mmap(struct elf_fdpic_params *params,
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1007  					     struct file *file,
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1008  					     struct mm_struct *mm)
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1009  {
-b922bf04d2c135 Greg Ungerer      2023-07-11  1010  	struct elf_fdpic_loadseg *seg;
-b922bf04d2c135 Greg Ungerer      2023-07-11  1011  	struct elf_phdr *phdr;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1012  	unsigned long load_addr, delta_vaddr;
-e30c7c3b306312 Takuya Yoshikawa  2010-06-01  1013  	int loop, dvset;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1014  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1015  	load_addr = params->load_addr;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1016  	delta_vaddr = 0;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1017  	dvset = 0;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1018  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1019  	seg = params->loadmap->segs;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1020  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1021  	/* deal with each load segment separately */
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1022  	phdr = params->phdrs;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1023  	for (loop = 0; loop < params->hdr.e_phnum; loop++, phdr++) {
-^1da177e4c3f41 Linus Torvalds    2005-04-16 @1024  		unsigned long maddr, disp, excess, excess1;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1025  		int prot = 0, flags;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1026  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1027  		if (phdr->p_type != PT_LOAD)
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1028  			continue;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1029  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1030  		kdebug("[LOAD] va=%lx of=%lx fs=%lx ms=%lx",
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1031  		       (unsigned long) phdr->p_vaddr,
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1032  		       (unsigned long) phdr->p_offset,
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1033  		       (unsigned long) phdr->p_filesz,
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1034  		       (unsigned long) phdr->p_memsz);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1035  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1036  		/* determine the mapping parameters */
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1037  		if (phdr->p_flags & PF_R) prot |= PROT_READ;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1038  		if (phdr->p_flags & PF_W) prot |= PROT_WRITE;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1039  		if (phdr->p_flags & PF_X) prot |= PROT_EXEC;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1040  
-4589ff7ca81516 David Hildenbrand 2021-04-23  1041  		flags = MAP_PRIVATE;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1042  		maddr = 0;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1043  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1044  		switch (params->flags & ELF_FDPIC_FLAG_ARRANGEMENT) {
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1045  		case ELF_FDPIC_FLAG_INDEPENDENT:
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1046  			/* PT_LOADs are independently locatable */
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1047  			break;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1048  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1049  		case ELF_FDPIC_FLAG_HONOURVADDR:
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1050  			/* the specified virtual address must be honoured */
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1051  			maddr = phdr->p_vaddr;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1052  			flags |= MAP_FIXED;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1053  			break;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1054  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1055  		case ELF_FDPIC_FLAG_CONSTDISP:
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1056  			/* constant displacement
-8a2ab7f5df76b9 David Howells     2006-07-10  1057  			 * - can be mapped anywhere, but must be mapped as a
-8a2ab7f5df76b9 David Howells     2006-07-10  1058  			 *   unit
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1059  			 */
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1060  			if (!dvset) {
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1061  				maddr = load_addr;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1062  				delta_vaddr = phdr->p_vaddr;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1063  				dvset = 1;
-8a2ab7f5df76b9 David Howells     2006-07-10  1064  			} else {
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1065  				maddr = load_addr + phdr->p_vaddr - delta_vaddr;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1066  				flags |= MAP_FIXED;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1067  			}
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1068  			break;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1069  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1070  		case ELF_FDPIC_FLAG_CONTIGUOUS:
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1071  			/* contiguity handled later */
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1072  			break;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1073  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1074  		default:
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1075  			BUG();
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1076  		}
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1077  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1078  		maddr &= PAGE_MASK;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1079  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1080  		/* create the mapping */
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1081  		disp = phdr->p_vaddr & ~PAGE_MASK;
-6be5ceb02e98ea Linus Torvalds    2012-04-20  1082  		maddr = vm_mmap(file, maddr, phdr->p_memsz + disp, prot, flags,
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1083  				phdr->p_offset - disp);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1084  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1085  		kdebug("mmap[%d] <file> sz=%lx pr=%x fl=%x of=%lx --> %08lx",
-8a2ab7f5df76b9 David Howells     2006-07-10  1086  		       loop, phdr->p_memsz + disp, prot, flags,
-8a2ab7f5df76b9 David Howells     2006-07-10  1087  		       phdr->p_offset - disp, maddr);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1088  
-8a2ab7f5df76b9 David Howells     2006-07-10  1089  		if (IS_ERR_VALUE(maddr))
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1090  			return (int) maddr;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1091  
-8a2ab7f5df76b9 David Howells     2006-07-10  1092  		if ((params->flags & ELF_FDPIC_FLAG_ARRANGEMENT) ==
-8a2ab7f5df76b9 David Howells     2006-07-10  1093  		    ELF_FDPIC_FLAG_CONTIGUOUS)
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1094  			load_addr += PAGE_ALIGN(phdr->p_memsz + disp);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1095  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1096  		seg->addr = maddr + disp;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1097  		seg->p_vaddr = phdr->p_vaddr;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1098  		seg->p_memsz = phdr->p_memsz;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1099  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1100  		/* map the ELF header address if in this segment */
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1101  		if (phdr->p_offset == 0)
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1102  			params->elfhdr_addr = seg->addr;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1103  
-8a2ab7f5df76b9 David Howells     2006-07-10  1104  		/* clear the bit between beginning of mapping and beginning of
-8a2ab7f5df76b9 David Howells     2006-07-10  1105  		 * PT_LOAD */
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1106  		if (prot & PROT_WRITE && disp > 0) {
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1107  			kdebug("clear[%d] ad=%lx sz=%lx", loop, maddr, disp);
-e30c7c3b306312 Takuya Yoshikawa  2010-06-01  1108  			if (clear_user((void __user *) maddr, disp))
-e30c7c3b306312 Takuya Yoshikawa  2010-06-01  1109  				return -EFAULT;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1110  			maddr += disp;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1111  		}
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1112  
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1113  		/* clear any space allocated but not loaded
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1114  		 * - on uClinux we can just clear the lot
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1115  		 * - on MMU linux we'll get a SIGBUS beyond the last page
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1116  		 *   extant in the file
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1117  		 */
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1118  		excess = phdr->p_memsz - phdr->p_filesz;
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1119  		excess1 = PAGE_SIZE - ((maddr + phdr->p_filesz) & ~PAGE_MASK);
-^1da177e4c3f41 Linus Torvalds    2005-04-16  1120  
-
-:::::: The code at line 1024 was first introduced by commit
-:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
-
-:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
-:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
-
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Filipe Xavier <felipeaggger@gmail.com>
+
 
