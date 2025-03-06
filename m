@@ -1,224 +1,203 @@
-Return-Path: <linux-kernel+bounces-549477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43CF1A55302
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:26:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECD74A55306
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:26:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73B9B1887F4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:26:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 246CC1697DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:26:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3EFA25A632;
-	Thu,  6 Mar 2025 17:26:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F312255E54;
+	Thu,  6 Mar 2025 17:26:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="rtJbS1ij"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c1zoxz25"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16B831FF7C4
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8331922ED
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:26:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741281970; cv=none; b=pLYOo+sP2BdcuG5mLz1mpGu7tbK1iKyVZfRR8x2HZGBKsgtuy3gZ4eXlLOAf8t/jQ/Yxa0Kqa/DUmyR/fZ6XU9NTxWA6fZgrruudf7J4lx1xFoZcW5/53ByFRpzTKcXNMHOqBbnxMx1H2rT5IzBy7jmYReRMN3ulKQa4gJkttug=
+	t=1741282009; cv=none; b=X5YTWkErQuEfki5x6VoibdqP+bOmIeL8l76zwreHmNFwrLWKiBeoZJJOFfDrrEemX7dpGe1QEIDVyWAPp8nw/4jIozky4jWZ4rRYV9PYOJ6WtZfBAJa2sA76jUcOIa+avdPc8KfUFBxnFj64O1mG47jQY8LD7+GvDCG9XcLVirs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741281970; c=relaxed/simple;
-	bh=xXfYB2PcBznFBcxQBHLNsgKgLFZe8o1fEUvFED2NRS8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ip+B1MUQa4qm2io2KZzeeJIHs+wprvI8P+NcdQtQxhYBOFanEZxcgjlSUW4vFj/nxlwE3HtB+2CXRFBLBQl/iRVhP8bD7BBKH3m/Z8e62JZ+Vs+cbSzHZ3GhVPxKgIMCZp2Op7ZlbMVBYF/JXIvlcW+QfEw3KFWlAYdx3mEEgn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=rtJbS1ij; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-390eebcc331so641351f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:26:05 -0800 (PST)
+	s=arc-20240116; t=1741282009; c=relaxed/simple;
+	bh=7M4ReNQ6MsdzfiEljvJghpHsdtA3ty01aDzhlWb9TVo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kXhqLkDrxei5i5OAYf3y8xZ2qsmKOUQ8wj/en/PaOeq8ublDRheRY3zTqei3p4K7ULKCuMSUooWifs/45SRGZpsSUAWlZpqPIrsCLkUUJB6KC3XhihJGnDMcUTzSu4xVWNkr4SQ4Iy8iHnWoMZ2HlQqO+Ehs2KiS2pIQbM/G+hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c1zoxz25; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2240b4de12bso23717565ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:26:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741281964; x=1741886764; darn=vger.kernel.org;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9gBi13oH2YTOQlVLrmxAry8taY7YW2dmM3vhgwkXBio=;
-        b=rtJbS1ij2BRG4Ibgu+2iinHQh/P5uVxm2H4/Q6WsrJwWK11b5Y4dOZCXOzLkoLC/NZ
-         4JdJHmMphBEAFhMeVOtuv14bGEmjh+hxOMfnU9CLf37O9slx2xvjYTvjbi5atoVLDw30
-         jFsJ+7Xdzf4nsMOYhmUnP3T4D0gotlwycUiQFOcA4nrjxxTc/2w+0wNcKJ4dSNa+3GXq
-         wBhQy7w1zkNmcFZUnr7Cdh5Xi8WaFSUwFOFTC74R0mp7tXfyZ6JdjwbNO9TZK/bQSPns
-         9Oci3vRTAOAs2XdJJuk5ijkA6u8UBICQtas51VCD63PB74WUXQBQtnLE1Eojr2X0D/lV
-         Ewbw==
+        d=gmail.com; s=20230601; t=1741282007; x=1741886807; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=uUVuOcA7Xkw74Zp9Xpn/wz9xV/4PaE7REr6k2Oyker4=;
+        b=c1zoxz25jfD1udSHF+4xaad4sGYMGS7CkdcIj4j+QFeihMpUp5sBXdL1RiSbuD/Wgb
+         Ag8q4qkntRC1vWmzWY84QntrsGUEnfdEr/56yeGxMt+DS+7eQi5A36Q7UQlNQ632m9Ox
+         OnxphzGaLTLMFm7Lm890W0cVnbQSf9IvYqQUkYLo2WzHF6W67h8m/gzdj7CRneWo2WjH
+         br324WbbhK6Hyn3QsM1Y7T8/P54EuSFHZf3ECg15sKtonpzd1J83clFixzgD4IF8nuYT
+         GrMBJx85htZXt158nytVkGbY9gYtEaaFiNApSOW40fpG99NeR3qnwv18SSUFPfi4bb7N
+         3ItQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741281964; x=1741886764;
-        h=mime-version:message-id:date:user-agent:references:in-reply-to
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9gBi13oH2YTOQlVLrmxAry8taY7YW2dmM3vhgwkXBio=;
-        b=OOdaYz8aiiBQUK4WIN74AN3NfChOTChNjX4WFZkUEUeBAWwZxsDwZRw/bgkE9zyuwC
-         os7d55LZ0kBWPCz6y3hu2AXtrcOUrGa5DXujsp5ntIlXL1+aXZWqaHjGvhXdrKq8EPuj
-         Snxq+Y/M8qlIGWdGMYi1ucGxrktmisbJpaiqH57PvMShtMtHyEUKfG3HVXfvSYj4JftS
-         y2X10rXZiKiNrg2iMW2ld/O/KVcRt5QcWCM6or5a8xA/FO9WJfVqVLqQ5erGuMubIW7J
-         tzRs54Kp3ht1ly2Xphx688zZ+a6Z2giFiwCKIrNBDNoL9ekZ7yzSr/4WG+mpXhRyQVY6
-         QoZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUATDjUkYomB7CehMyAUPFwSWiYAfaO8kdfCkb3hmR+Z3e3dqSRfPJsFCS4ZuJo9DKpjd8i0e9tMdnqLgM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW6UQzFKoUTRpng4Da2kNFTjqPPl1RNNMSONOw/+5DojSg2VZw
-	dcDtYLNAFxILDkOxbOzk09/NS0w+31QvAE+1mF008KxspTAgRlKFaHGzA7GnnsQ=
-X-Gm-Gg: ASbGncs0fNBsBkAFx9i1VCljqOKLm+PEnBSsSpOEOKUnZgP6unoxM6IkylvaoTNJDjk
-	k8FIC8DpnmKEh/Kb5hJL2en0d7fo6G94LEcThFOz7hEuOOnFqnkjtm3QQe2FE5jujGrhy7uXOiJ
-	R7fx54MMHWbfVvAtDSUvbv00LFtLmnU7dzkTBXUkkswMTTIh/no4TV2YTWBre4EismQsVp+4g1Z
-	ycOGH/b/DN0zOp/CVAiWUGr/UC5eYUE3gQgP+W9JmMd1gxOwDeD45fPlmr7u4zVThbWUsImkMga
-	H+RRSNBgLpq2ha77ubQ3jFZyZ/vqzGzhC5B9hfNHBr0=
-X-Google-Smtp-Source: AGHT+IHDAt6NYWgVgdYHY+auIYwz15KHwMO0sECwAzb9Y48d4oIdn6zdb/5QFSFzH4BHnl8HwsC49Q==
-X-Received: by 2002:a5d:5985:0:b0:391:865:5a93 with SMTP id ffacd0b85a97d-3913211b64fmr247337f8f.22.1741281964164;
-        Thu, 06 Mar 2025 09:26:04 -0800 (PST)
-Received: from localhost ([2a01:e0a:3c5:5fb1:29d4:36d9:5043:acd])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0e4065sm2703591f8f.62.2025.03.06.09.26.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 09:26:03 -0800 (PST)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: <linux@martijnvandeventer.nl>
-Cc: "'Neil Armstrong'" <neil.armstrong@linaro.org>,  "'Michael Turquette'"
- <mturquette@baylibre.com>,  "'Stephen Boyd'" <sboyd@kernel.org>,  "'Kevin
- Hilman'" <khilman@baylibre.com>,  "'Martin Blumenstingl'"
- <martin.blumenstingl@googlemail.com>,
-  <linux-amlogic@lists.infradead.org>,  <linux-clk@vger.kernel.org>,
-  <linux-arm-kernel@lists.infradead.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: meson: g12a: Fix kernel warnings when no display
- attached
-In-Reply-To: <004801db8eb7$99808e20$cc81aa60$@martijnvandeventer.nl>
-	(linux@martijnvandeventer.nl's message of "Thu, 6 Mar 2025 17:48:33
-	+0100")
-References: <20250213221702.606-1-linux@martijnvandeventer.nl>
-	<1jpljkzyf0.fsf@starbuckisacylon.baylibre.com>
-	<003301db888e$8ea84e90$abf8ebb0$@martijnvandeventer.nl>
-	<1jplj3g21q.fsf@starbuckisacylon.baylibre.com>
-	<004801db8eb7$99808e20$cc81aa60$@martijnvandeventer.nl>
-User-Agent: mu4e 1.12.8; emacs 29.4
-Date: Thu, 06 Mar 2025 18:26:03 +0100
-Message-ID: <1j4j065avo.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20230601; t=1741282007; x=1741886807;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uUVuOcA7Xkw74Zp9Xpn/wz9xV/4PaE7REr6k2Oyker4=;
+        b=r2zAHzIVJ9f5uUDZqNQdRgm8jJLvVQ48DIWq0CFER6ZIwt9DE6pI/0/kKFeDPMuj9n
+         pNPkQQym+2JYISvZsbzjJp0n7xk+qbxxwByVP+YZ0cYoBbauCceTUzPPeGVpPZTpXXer
+         0qXM5pRBNfjRSF3vD1+LJ8YarV+6h5lUGOVLGCxq+WcqQ4NNn0/x5gRl7yoSUw3O/J82
+         q9AFovQ4M/NmRTBUwE54Q0JweKwYSoMZxilwsiJyWvKr5rON0Fy8qmMbqFPpRB0wL0fU
+         klrhlULI1sjFGe/aWYpTn0QRaaWS9e5+8f7i66/RGseaAocwF2BQeL5GqT2HJQZ4A13o
+         o0Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCUnSh6abBeghrhTZE+ZLKKGRNWfTbsyZCS70e5BfAcvaWueswOWco5i4/4psIG9CPcCX5J003XSF1ZGjt4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAqtOBWL2pef4omWD7olh9PAyugoA7eZQ6In/uqy8F3xnu8xTD
+	cn05Dv/8UOzo3gUA3jUOUfepTJc6TOZAravX3XplUv+CDIX/KKYc
+X-Gm-Gg: ASbGncseWQPVUeTyeKy9MyDlGXQaKKa/wtsjaTKC8lJBHLPo+z2J6GqRyD5maEGbOKN
+	9jGPhqqBpunvCgQc6eYvoEsgPekwGZJooP3az20JAdX7Uk4UZhOii5dpl/JC/oGti5lIWycDFNV
+	BrwkfTdEQWnsI31J9iIrvWilCBekZoV8cIgxN1yzB6NRYbjRgfy2LUhXvFBhKaAdiV/OWNXVUB0
+	P/oq1sTx7hMtsTprCex8euQ49aAcmYC4kTUlmkU84uGODveQZFfZ0s8hbsAO3+Jk7d/n4eFmTmw
+	lRPmBoCzHonAgQCmoxWfGEd9mX4YuqWTufme73lg9/ByINOf
+X-Google-Smtp-Source: AGHT+IFKdP0qD7QXqNn7oGh20oobzZkggOG/O0IBDwU5pBdo9xJWaSDjC24OS3qtDcYgOWvBmDUaUw==
+X-Received: by 2002:a17:903:8c6:b0:220:be86:a421 with SMTP id d9443c01a7336-22428ab798fmr1452305ad.38.1741282006768;
+        Thu, 06 Mar 2025 09:26:46 -0800 (PST)
+Received: from [10.3.72.248] ([59.152.80.69])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410aa543asm14920025ad.228.2025.03.06.09.26.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 09:26:46 -0800 (PST)
+Message-ID: <cec91b2e-d639-4d9e-ae85-33d27f634800@gmail.com>
+Date: Thu, 6 Mar 2025 22:56:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/panel/synaptics-r63353: Use _multi variants
+To: Anusha Srivatsa <asrivats@redhat.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Maxime Ripard <mripard@kernel.org>,
+ Michael Trimarchi <michael@amarulasolutions.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Doug Anderson <dianders@chromium.org>
+References: <20250305-mipi-synaptic-1-v1-1-92017cd19ef6@redhat.com>
+ <20250306-clever-lime-tanuki-e2fc43@houat>
+ <CAN9Xe3SDyC47HWww1eH63aZOiM-WF9BGxztM3yh9bf6ORuY7VA@mail.gmail.com>
+ <CAA8EJpqBy22eWZjccT5_UM2PQGjiG4ZEfrb6S_1tP1w962rd8w@mail.gmail.com>
+ <CAN9Xe3QQLze9ZBbWG=KLYHzaFLZsmhah6GrYKmKMCd62rYP=OQ@mail.gmail.com>
+Content-Language: en-US
+From: Tejas Vipin <tejasvipin76@gmail.com>
+In-Reply-To: <CAN9Xe3QQLze9ZBbWG=KLYHzaFLZsmhah6GrYKmKMCd62rYP=OQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu 06 Mar 2025 at 17:48, <linux@martijnvandeventer.nl> wrote:
 
-> Hi Jerome,
->
->> >
->> > Thank you for reviewing, and apologies for my late response due to a
->> holiday.
->> >
->> >> On Thu 13 Feb 2025 at 23:17, Martijn van Deventer
->> >> <linux@martijnvandeventer.nl> wrote:
->> >>
->> >> > When booting SM1 or G12A boards without a dislay attached to HDMI,
->> >> > the kernel shows the following warning:
->> >> >
->> >> > [CRTC:46:meson_crtc] vblank wait timed out
->> >> > WARNING: CPU: 2 PID: 265 at
->> drivers/gpu/drm/drm_atomic_helper.c:1682
->> >> drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
->> >> > CPU: 2 UID: 0 PID: 265 Comm: setfont Tainted: G         C
->> >> > Tainted: [C]=CRAP
->> >> > pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->> >> > pc : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
->> >> > lr : drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
->> >> > Call trace:
->> >> >  drm_atomic_helper_wait_for_vblanks.part.0+0x240/0x264
->> >> >  drm_atomic_helper_commit_tail_rpm+0x84/0xa0
->> >> >  commit_tail+0xa4/0x18c
->> >> >  drm_atomic_helper_commit+0x164/0x178
->> >> >  drm_atomic_commit+0xb4/0xec
->> >> >  drm_client_modeset_commit_atomic+0x210/0x270
->> >> >  drm_client_modeset_commit_locked+0x5c/0x188
->> >> >  drm_fb_helper_pan_display+0xb8/0x1d4
->> >> >  fb_pan_display+0x7c/0x120
->> >> >  bit_update_start+0x20/0x48
->> >> >  fbcon_switch+0x418/0x54c
->> >> >  el0t_64_sync+0x194/0x198
->> >> >
->> >> > This happens when the kernel disables the unused clocks.
->> >> > Sometimes this causes the boot to hang.
->> >> >
->> >> > By (re)adding the flag CLK_IGNORE_UNUSED to the VCLK2 clocks, these
->> >> > clocks will not be disabled.
->> >> >
->> >> > This partially reverts commit b70cb1a21a54 ("clk: meson: g12a:
->> >> > make VCLK2 and ENCL clock path configurable by CCF").
->> >>
->> >> It looks like DRM needs those clock enabled regardless of connection
->> >> status on HDMI. Even with this change applied, you would get the same
->> >> problem again if the bootloader does not take of turning the clock on,
->> >> which is not a given.
->> >>
->> >> CLK_IGNORE_UNUSED gives not guarantee a clock will be enabled or stay
->> >> enabled at any point.
->> >>
->> >> A proper fix to this issue should be done in DRM, IMO.
->> >
->> > I know and I totally agree. Unfortunately, I don't have access to any 
->> > vendor
->> > documentation, nor do I have any real knowledge about the DRM/HDMI
->> > subsystem to fix that.
+
+On 3/6/25 9:03 PM, Anusha Srivatsa wrote:
+> On Thu, Mar 6, 2025 at 11:29 AM Dmitry Baryshkov <
+> dmitry.baryshkov@linaro.org> wrote:
+> 
+>> On Thu, 6 Mar 2025 at 17:10, Anusha Srivatsa <asrivats@redhat.com> wrote:
+>>>
+>>>
+>>>
+>>> On Thu, Mar 6, 2025 at 4:31 AM Maxime Ripard <mripard@kernel.org> wrote:
+>>>>
+>>>> Hi Anusha,
+>>>>
+>>>> On Wed, Mar 05, 2025 at 07:01:41PM -0500, Anusha Srivatsa wrote:
+>>>>> Move away from using deprecated API and use _multi
+>>>>> variants if available. Use mipi_dsi_msleep()
+>>>>> and mipi_dsi_usleep_range() instead of msleep()
+>>>>> and usleep_range() respectively.
+>>>>>
+>>>>> Used Coccinelle to find the multiple occurences.
+>>>>> SmPl patch:
+>>>>> @rule@
+>>>>> identifier dsi_var;
+>>>>> identifier r;
+>>>>> identifier func;
+>>>>> type t;
+>>>>> position p;
+>>>>> expression dsi_device;
+>>>>> expression list es;
+>>>>> @@
+>>>>> t func(...) {
+>>>>> ...
+>>>>> struct mipi_dsi_device *dsi_var = dsi_device;
+>>>>> +struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi_var };
+>>>>> <+...
+>>>>> (
+>>>>> -mipi_dsi_dcs_write_seq(dsi_var,es)@p;
+>>>>> +mipi_dsi_dcs_write_seq_multi(&dsi_ctx,es);
+>>>>> |
+>>>>> -mipi_dsi_generic_write_seq(dsi_var,es)@p;
+>>>>> +mipi_dsi_generic_write_seq_multi(&dsi_ctx,es);
+>>>>> |
+>>>>> -mipi_dsi_generic_write(dsi_var,es)@p;
+>>>>> +mipi_dsi_generic_write_multi(&dsi_ctx,es);
+>>>>> |
+>>>>> -r = mipi_dsi_dcs_nop(dsi_var)@p;
+>>>>> +mipi_dsi_dcs_nop_multi(&dsi_ctx);
+>>>>> |
+>>>>> ....rest of API
+>>>>> ..
+>>>>> )
+>>>>> -if(r < 0) {
+>>>>> -...
+>>>>> -}
+>>>>> ...+>
+>>>>
+>>>> The point of sending a single patch was to review the coccinelle script,
+>>>> so you must put the entire script you used here.
+>>>>
+>>>
+>>> I was actually thinking of sending patches per driver this time around
+>> since Tejas also seems to be looking into similar parts....Thoughts?
 >>
->> You have identified which clocks are not properly claimed, by what they
->> are not claimed and even when. 50% of the job is done. Thanks for this.
->
-> You're welcome, no problem.
->
->> >
->> > And I guess if it were as easy as adding a clock to the DT and calling
->> > clk_prepare_enable on it in the probe function, Neil would have done
->> that
->> > already.
->> >
->> > So, all I can do, for now, is revert to the previous situation when it 
->> > did
->> work
->> > for (probably) most boards.
+>> Have you discussed it with Tejas? What is his next target?
 >>
->> Maybe so, but it does not make this change appropriate. The problem
->> is the DRM driver which does not enable what it needs to properly
->> operate. This should be fixed.
+>> I was hoping he will have some feedback on this patch and we could take it
+> from there.....
+> It *should* be okay for me to send all changes in a single series...
+> 
+> Anusha
 >
-> I understand. So I guess that is the end of the line for this patch.
-> Because this patch will not be accepted and if someone else finds the 
-> time and has the knowledge to fix this the proper way, it will be a 
-> completely different patch.
->
-> Although I, of course, agree with you that it should be fixed properly, 
-> I find it a bit difficult to accept that if we accidentally break something,
-> while trying to make things better, we are not allowed to revert it 
-> because it was already somewhat broken. Resulting in a more broken
-> situation than before...
 
-Once again, you are encouraged to fix things up ... where fixes are needed.
+There's 5 more panels that use dcs/generic write_seq(). Maybe I could
+work on those (himax-hx8394, samsung-sofef00, samsung-s6d7aa0,
+boe-bf060y8m-aj0, jdi-lpm102a188a) while you work on transitioning the
+rest of the panels (excluding these) that use other functions in the 
+old API? When either of us finishes before the other we could have 
+another discussion about splitting work if necessary. I'm open to other
+suggestions too.
 
-DRM is hardly immutable. If you don't feel like you can do it on your own,
-you can still engage with the other contributors who may know this
-better and help you.
-
->
-> On the other hand, I also understand that if you, as a maintainer, allow 
-> that, chances are it will never see a proper fix. :-)
->
-> Cheers!
->
->> >
->> >> >
->> >> > Fixes: b70cb1a21a54 ("clk: meson: g12a: make VCLK2 and ENCL clock
->> path
->> >> configurable by CCF").
->> >> > Signed-off-by: Martijn van Deventer <linux@martijnvandeventer.nl>
->> >> > ---
->> >> >  drivers/clk/meson/g12a.c | 12 ++++++------
->> >> >  1 file changed, 6 insertions(+), 6 deletions(-)
->> >> >
->> >> > diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
->> >> > index cfffd434e998..1651898658f5 100644
->> >> > --- a/drivers/clk/meson/g12a.c
->> >> > +++ b/drivers/clk/meson/g12a.c
->> >> > @@ -3234,7 +3234,7 @@ static struct clk_regmap g12a_vclk2_div = {
+>>>>> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+>>>>
+>>>> That hasn't been my email address for 6 years :)
+>>>>
+>>> My bad. Will change this.
+>>
+>>
+>>
+>> --
+>> With best wishes
+>> Dmitry
+>>
+>>
+> 
 
 -- 
-Jerome
+Tejas Vipin
 
