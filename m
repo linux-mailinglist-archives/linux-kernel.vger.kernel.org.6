@@ -1,181 +1,166 @@
-Return-Path: <linux-kernel+bounces-549488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5937BA55328
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:33:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20191A5532A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:33:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83FEA188CC2A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:33:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 407053A9F83
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:33:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DC025BACB;
-	Thu,  6 Mar 2025 17:32:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A18525BACB;
+	Thu,  6 Mar 2025 17:33:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="ERTZkf+6"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cvOBGLps"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE820255252
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D7219D89B
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741282368; cv=none; b=DJDwj7OBY5+f2/Vx8w72M1DVxKJnOH15P6tLQaxcLpSPH56a01QUE+1lE2FkT4G/nXMvXtlTCDBHN/6qjA2MRKSHj+W0m9QYScYrRAvYq67a6dcK6sgOaRViDhehHkO8khBa2rkYMgpL79ASUp67fmicEKbrT/fpNOivPf+4nYg=
+	t=1741282401; cv=none; b=ObIDj4myQStYcXzRlvo7nchQUGm2RyXdRqKynkzL/0oBcDmTG745/OfClzMktzy+MGAgQFfEJ3xIWtMfvGkMa7A3dbFAhSnmwUjAjnRYmJ+TAcWPADpQguhNgNw1UbcbnieV5v4DGKpK5NHDFErtsH55M7XrrB1ApXhsJeZtfTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741282368; c=relaxed/simple;
-	bh=irrH0Nkt3I+c252civKxAxCD3obGOmF/TVZC9QZZlbY=;
+	s=arc-20240116; t=1741282401; c=relaxed/simple;
+	bh=yesNcmtGbNvXrMqb4l4AWjH7Uh6GoBe2YNFgTLAoU2E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L5uIouA667uoKAgLMDVkTt8JbE9gQsD41F9q0B/rwo3LaJhXSJV+aYgIfqzXgsvcdCOTnZdAY+Krpel2Lqt845nM+U8peUYv3S61+iFrxH3j51aD+OM6cBQWfbDw0bign6pIydbQfaVONhyHUSd0vH1s23wXUHIcsYDl8xzg4e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=ERTZkf+6; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7be8f28172dso61899385a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:32:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1741282366; x=1741887166; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=l7+tMCJ7OtJK9Gd69u8t1lDx/CAaXYSFNmDt21Z+gis=;
-        b=ERTZkf+66q/XA/GxjOvX8a6tqZC1jx3c1V+clHzksrBc61iOFluWmZ2i2knIZ/Yw4q
-         oe1sMudhFQrTEgvrWkhEKPx9VJXLbZtucFWgFrWJJTl4tRy7F7YcbASI5lhuhwc7vAZJ
-         hj/eTSJDGqocWphTScFUN+X9B5Ynhg3uZLqhEguLt5OEI7vGE5I2Q2csZ783NtDLlbBw
-         PlDdWBnUskvk0j64vBnWu91CzkAAuA+qcyNu9d8H9zwVsZgspgpd5ijMZrTTVSIha1cW
-         Rja1pFnbEsLvD0KndyOIvo4tfNcY6iCDBSjwQeHramt35cgnY85C1/Lo/wIR5cc3NPJw
-         M5oA==
+	 Content-Type:Content-Disposition:In-Reply-To; b=r2T+Gn9pYUu7mlZYcswMc7ZtoqZUlpDQjLwLCpcGM93EWo8b+ALbfwQ/skMk8nVfc54e8wUflboBKl35ED7QwVXZSTyZFehBqGI9NRuztw9w+y/JoMi+6nbr9zkhuPbebl7aS5yaTTErUCVIGCanEhbtz9KXClD5w98QCSktTuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cvOBGLps; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741282399;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Hp0N3y6evf2yrWiBp62GjhkD2NyHCbEpRbyXBBPihTw=;
+	b=cvOBGLps3Z02wkoofj6QYNkUUPHJN6q98NMeEvkIcQrjSLCvXh5vsWVP84FggZ2aQTi3bD
+	rZfPsBE+z3H76vCZJyhT7mjPIjOpOLEuK1YH9jbcB7YvrIDjbhRmnVAHBjJsHzWiiIA9RJ
+	/9XyaZUOswHIrdYhglbpjc+rUON11vs=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-26-ccmIATjANe28STZy267aWg-1; Thu, 06 Mar 2025 12:33:17 -0500
+X-MC-Unique: ccmIATjANe28STZy267aWg-1
+X-Mimecast-MFC-AGG-ID: ccmIATjANe28STZy267aWg_1741282397
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e8bc58e90dso17376366d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:33:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741282366; x=1741887166;
+        d=1e100.net; s=20230601; t=1741282397; x=1741887197;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=l7+tMCJ7OtJK9Gd69u8t1lDx/CAaXYSFNmDt21Z+gis=;
-        b=QG+c1t7+MrdXEMvy/S3pHSnHTIR4NmsyTKtlijDch9Evb8QvxB1HvuWviXw98GTXeE
-         g0sHEVk/o23www0tK739694liCHl+nu6Kl18LthHBlcfE3QVPuLFklGQ1YL+vl/97Dye
-         YVAJg8FWmAyMQ5vjR/UHXhRfUaR0Ullvwi4UcNzWMQzhMQsYE0jXE+O6+hYJDWr2GBn3
-         3kQuh0yqhNCzYpIdRQcAs5MQ+BahFOAvtBNLOabKPWV45vJzWMa+93MXq4Cj68ZC8PZ7
-         JW/PZyQjGggEBPCRysyYo8TLlkykkz7r9bCRwqIL6+Hh54WQom7sttEEdv/bvXx6khjn
-         hEIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXRZHD81eSWsaHklzvDh7ev1PBusM3qMFjBC19ftD1ug6v5+demAvWfKF4mqsiloR8VluJ2AY9cqOLJYmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw79kpFnSJi9uhyrNUasSPnkvnoRy4CfXGHE+K30pNpLzhXvwEC
-	jSwNF7uRFNHgKJDUlVrrMJyRqaHeuwFHT4g7dg5RFmbquMGTs8TafdcW2aH5fWM=
-X-Gm-Gg: ASbGncs6sub3LNh7Kl9Fj+9Zj6tGurM/lAvrFZcYYdcrQDg1Xa1tI5mEld6RgJXIunP
-	DsZ/199fQ6eL7QXquwWvgCm/AVyHpHHg5hCJe0wolnCin8YiG+yfuea07HWk4MGfF8XNFFju82g
-	UHOiDncB3mD1Vo1K97skpw0jVy/mqdomiOKb3f4CTHWhDrg27AqdKRL1MdVRAB9GhlVLLWl3ntZ
-	oYmqIiYRVcYdjcUqFkoOQBNgHz7UgaKkuA/zqsMVda73GGRtvuw54sItpwxgG9wfmYaC+3q+SBA
-	32d0uqJIWFMueGeM4o3XBjAZtt+Ih4pceNPLxoViKmzFWKz5Lz5B5zUm6pAhLK3jdkBpH/BI1Ee
-	VWQaF616HNH5n94NlMRDBirbvSCI=
-X-Google-Smtp-Source: AGHT+IH3uOwByyoyn3W77J1zHy8yvZSK7GPQs26EVjZnZhtHSMaY2DHWv6MJlU0FC/UTf0LREW6zUw==
-X-Received: by 2002:a05:620a:1d08:b0:7c0:b24c:c3c8 with SMTP id af79cd13be357-7c3d8e46551mr1097540185a.42.1741282365669;
-        Thu, 06 Mar 2025 09:32:45 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e533a032sm115790185a.21.2025.03.06.09.32.44
+        bh=Hp0N3y6evf2yrWiBp62GjhkD2NyHCbEpRbyXBBPihTw=;
+        b=HzkuPFyt2oAPBhXJ9fZhUTEUUL2PTsPgXPv7jzczeFD+xoyM8qnYqQ1cm5xM+o60qo
+         SCSBFXwHvCNM3Dr4L70MId/7wHp/3r3CFRzKyVhxY4WN9qd2qs7iPNF5JHriExEj3/Ag
+         VaQxwUCJy2PEXirXJF7oDTObVg4TCoq5oL3XWMSJOR7cumDZxiD4imzZGE/qrqfm9kgq
+         gwQLOFIp1m0E1YHFp5UEgC0xVtEjlHxmstfsWJRbXK0XMnyXcG+3RoAqkrFiOAkZqm4y
+         f9ZdDaTq1mymyTL7ly/6rmbF7dIPBIDLx7w58Ih156HmAurJRb86T+T7Y1L1Rd2H4Dbk
+         nr1g==
+X-Forwarded-Encrypted: i=1; AJvYcCUehLXZx8hlwyixiivHQ5guQcOXpT2eH71PM68I8vJ0Sai7lXsNlDIjrHjDJ3uGPLdGESNE23zvA1FTemk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZnGbTar+o+yYqaNuRLzb+y9P2e7onNbXX/KlLK46iq6Bz5+vG
+	UIl2HYkFBStGn3KNKchXxhpw85QmGb62GkGgMM1NYrxK/cMmmLJAeXlDq3hWj8kcCQ7UzQ5xhGb
+	GTgUsODDzy8nvY2CvidocTRTHAoQYPcTwP5iAQqI/rQHbtB1il3XbWtuH7Y09IQ==
+X-Gm-Gg: ASbGncs60LSPWwNv7lKwVktZHwSmfvUNbb/CxDQ8h9LV3ApH0Hmy+kwm/KVnGCt6oTp
+	WybQtnjgALhV9wDXT91iFp/BoqaEvZoOR9pIfTrV8oiwfE5+Iy0CfpYr0cmJWi8PcK99hOkIzSJ
+	bapLml5UlkkxXG0z/C6ma8vW1k7ruf0x/1T4baPviXk758pKZrlIfVz6bjsz95kWnO8727hpzd1
+	UNs0A9C/venbeoRW0LnG7Aqc4qmcyx+Kgk3Wi4XjsP2aEKJM5rpW/c+4r7wUNUZntjQOIZdiQCm
+	F+GhK2M=
+X-Received: by 2002:ad4:5dcb:0:b0:6d3:f1ff:f8d6 with SMTP id 6a1803df08f44-6e8e6dd4013mr91007466d6.40.1741282397133;
+        Thu, 06 Mar 2025 09:33:17 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFXGTY2TZuxc/5qoe6G+TjInYEiN1/MY4M3Q3Wi5nBQl7XJwnFgOewPjxKsSfPGwYlCfIdGig==
+X-Received: by 2002:ad4:5dcb:0:b0:6d3:f1ff:f8d6 with SMTP id 6a1803df08f44-6e8e6dd4013mr91007016d6.40.1741282396798;
+        Thu, 06 Mar 2025 09:33:16 -0800 (PST)
+Received: from x1.local ([85.131.185.92])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f70a44b8sm9395206d6.59.2025.03.06.09.33.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 09:32:44 -0800 (PST)
-Date: Thu, 6 Mar 2025 12:32:42 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Honggyu Kim <honggyu.kim@sk.com>
-Cc: kernel_team@skhynix.com, Joshua Hahn <joshua.hahnjy@gmail.com>,
-	harry.yoo@oracle.com, ying.huang@linux.alibaba.com,
-	gregkh@linuxfoundation.org, rakie.kim@sk.com,
-	akpm@linux-foundation.org, rafael@kernel.org, lenb@kernel.org,
-	dan.j.williams@intel.com, Jonathan.Cameron@huawei.com,
-	dave.jiang@intel.com, horen.chuang@linux.dev, hannes@cmpxchg.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-mm@kvack.org, kernel-team@meta.com, yunjeong.mun@sk.com
-Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for
- memoryless nodes
-Message-ID: <Z8ncOp2H54WE4C5s@gourry-fedora-PF4VCD3F>
-References: <20250226213518.767670-1-joshua.hahnjy@gmail.com>
- <20250226213518.767670-2-joshua.hahnjy@gmail.com>
- <b8ac8654-92bd-4c08-a3fc-e28a7be5e0e6@sk.com>
- <Z8cqe3BCdobsV4-2@gourry-fedora-PF4VCD3F>
- <f64819e2-8dc6-4907-b8bf-faec66eecd0e@sk.com>
+        Thu, 06 Mar 2025 09:33:15 -0800 (PST)
+Date: Thu, 6 Mar 2025 12:33:12 -0500
+From: Peter Xu <peterx@redhat.com>
+To: Ackerley Tng <ackerleytng@google.com>
+Cc: tabba@google.com, quic_eberman@quicinc.com, roypat@amazon.co.uk,
+	jgg@nvidia.com, david@redhat.com, rientjes@google.com,
+	fvdl@google.com, jthoughton@google.com, seanjc@google.com,
+	pbonzini@redhat.com, zhiquan1.li@intel.com, fan.du@intel.com,
+	jun.miao@intel.com, isaku.yamahata@intel.com, muchun.song@linux.dev,
+	mike.kravetz@oracle.com, erdemaktas@google.com,
+	vannapurve@google.com, qperret@google.com, jhubbard@nvidia.com,
+	willy@infradead.org, shuah@kernel.org, brauner@kernel.org,
+	bfoster@redhat.com, kent.overstreet@linux.dev, pvorel@suse.cz,
+	rppt@kernel.org, richard.weiyang@gmail.com, anup@brainfault.org,
+	haibo1.xu@intel.com, ajones@ventanamicro.com, vkuznets@redhat.com,
+	maciej.wieczor-retman@intel.com, pgonda@google.com,
+	oliver.upton@linux.dev, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, kvm@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-fsdevel@kvack.org
+Subject: Re: [RFC PATCH 14/39] KVM: guest_memfd: hugetlb: initialization and
+ cleanup
+Message-ID: <Z8ncWAP7ln1St5W-@x1.local>
+References: <cover.1726009989.git.ackerleytng@google.com>
+ <3fec11d8a007505405eadcf2b3e10ec9051cf6bf.1726009989.git.ackerleytng@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <f64819e2-8dc6-4907-b8bf-faec66eecd0e@sk.com>
+In-Reply-To: <3fec11d8a007505405eadcf2b3e10ec9051cf6bf.1726009989.git.ackerleytng@google.com>
 
-On Thu, Mar 06, 2025 at 09:39:26PM +0900, Honggyu Kim wrote:
-> 
-> The memoryless nodes are printed as follows after those ACPI, SRAT,
-> Node N PXM M messages.
-> 
->   [    0.010927] Initmem setup node 0 [mem
-> 0x0000000000001000-0x000000207effffff]
->   [    0.010930] Initmem setup node 1 [mem
-> 0x0000060f80000000-0x0000064f7fffffff]
->   [    0.010992] Initmem setup node 2 as memoryless
->   [    0.011055] Initmem setup node 3 as memoryless
->   [    0.011115] Initmem setup node 4 as memoryless
->   [    0.011177] Initmem setup node 5 as memoryless
->   [    0.011238] Initmem setup node 6 as memoryless
->   [    0.011299] Initmem setup node 7 as memoryless
->   [    0.011361] Initmem setup node 8 as memoryless
->   [    0.011422] Initmem setup node 9 as memoryless
->   [    0.011484] Initmem setup node 10 as memoryless
->   [    0.011544] Initmem setup node 11 as memoryless
-> 
-> This is related why the 12 nodes at sysfs knobs are provided with the
-> current N_POSSIBLE loop.
-> 
+On Tue, Sep 10, 2024 at 11:43:45PM +0000, Ackerley Tng wrote:
+> +static int kvm_gmem_hugetlb_filemap_remove_folios(struct address_space *mapping,
+> +						  struct hstate *h,
+> +						  loff_t lstart, loff_t lend)
+> +{
+> +	const pgoff_t end = lend >> PAGE_SHIFT;
+> +	pgoff_t next = lstart >> PAGE_SHIFT;
+> +	struct folio_batch fbatch;
+> +	int num_freed = 0;
+> +
+> +	folio_batch_init(&fbatch);
+> +	while (filemap_get_folios(mapping, &next, end - 1, &fbatch)) {
+> +		int i;
+> +		for (i = 0; i < folio_batch_count(&fbatch); ++i) {
+> +			struct folio *folio;
+> +			pgoff_t hindex;
+> +			u32 hash;
+> +
+> +			folio = fbatch.folios[i];
+> +			hindex = folio->index >> huge_page_order(h);
+> +			hash = hugetlb_fault_mutex_hash(mapping, hindex);
+> +
+> +			mutex_lock(&hugetlb_fault_mutex_table[hash]);
 
-This isn't actually why, this is another symptom.  This gets printed
-because someone is marking nodes 4-11 as possible and setup_nr_node_ids
-reports 12 total nodes
+I'm debugging some issue and this caught my attention.  IIUC we need to
+unmap the last time here with the fault mutex, right?  Something like:
 
-void __init setup_nr_node_ids(void)
-{
-        unsigned int highest;
+        unmap_mapping_range(mapping, lstart, lend, 0);
 
-        highest = find_last_bit(node_possible_map.bits, MAX_NUMNODES);
-        nr_node_ids = highest + 1;
-}
+Otherwise I don't know what protects a concurrent fault from happening when
+removing the folio from the page cache simultaneously.  Could refer to
+remove_inode_single_folio() for hugetlbfs.  For generic folios, it normally
+needs the folio lock when unmap, iiuc, but here the mutex should be fine.
 
-Given your configuration data so far, we may have a bug somewhere (or
-i'm missing a configuration piece).
+So far, even with the line added, my issue still didn't yet go away.
+However I figured I should raise this up here anyway at least as a pure
+question.
 
-> > Basically I need to know:
-> > 1) Is each CXL device on a dedicated Host Bridge?
-> > 2) Is inter-host-bridge interleaving configured?
-> > 3) Is intra-host-bridge interleaving configured?
-> > 4) Do SRAT entries exist for all nodes?
-> 
-> Are there some simple commands that I can get those info?
-> 
+> +			kvm_gmem_hugetlb_filemap_remove_folio(folio);
+> +			mutex_unlock(&hugetlb_fault_mutex_table[hash]);
+> +
+> +			num_freed++;
+> +		}
+> +		folio_batch_release(&fbatch);
+> +		cond_resched();
+> +	}
+> +
+> +	return num_freed;
+> +}
 
-The content of the CEDT would be sufficient - that will show us the
-number of CXL host bridges.
+-- 
+Peter Xu
 
-> > 5) Why are there 12 nodes but only 10 sources? Are there additional
-> >     devices left out of your diagram? Are there 2 CFMWS but and 8 Memory
-> >     Affinity records - resulting in 10 nodes? This is strange.
-> 
-> My blind guess is that there could be a logic node that combines 4ch of
-> CXL memory so there are 5 nodes per each socket.  Adding 2 nodes for
-> local CPU/DRAM makes 12 nodes in total.
->
-
-The issue is that nodes have associated memory regions.  If there are
-multiple nodes with overlapping memory regions, that seems problematic.
-
-If there are "possible nodes" without memory and no real use case
-(because the memory is associated with the aggregate node) then those
-nodes probably shouldn't be reported as possible.
-
-the tl;dr here is we should figure out what is marking those nodes as
-possible.
-
-> Not sure about this part but our approach with hotplug_memory_notifier()
-> resolves this problem.  Rakie will submit an initial working patchset
-> soonish.
-
-This may just be a bandaid on the issue.  We should get our node
-configuration correct from the get-go.
-
-~Gregory
 
