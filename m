@@ -1,273 +1,368 @@
-Return-Path: <linux-kernel+bounces-549518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FB5CA55371
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:50:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDCA7A55370
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:50:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3838F177DC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:50:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12C211898BAC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF7D4255252;
-	Thu,  6 Mar 2025 17:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rCZw7zEr"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6F01FC7F9;
+	Thu,  6 Mar 2025 17:50:24 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B8C254AF6
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:50:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0541916130C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741283425; cv=none; b=Y/0XVwK+iril9ppI5m+e8ilz0AlFLM+g0zGL4ws1gru7tAS2YJFtYcbYGBAYwvYW7dfx1uMSr9sHGywE+v+bzFqZlbAj0lNc3fFpPhwsKYvfIp9kCD0MpNVoFHf993uQnnHRXBuKlWShBoM6ItGyqTV4oxxoZkSvqphZ7suKBlQ=
+	t=1741283423; cv=none; b=TMulK5VQAZz/Iqn9rGVRePsfcfgoT3B7Ka1E0+vvdYqp0sOqso9CysBx4OjKQLV3uCml3lfbP8XtBnxA6V3AeDSOkzb7PyGyGxYRa6e57+Ykb4U40n6c7Q2zezHHim+0dTATrp1d7S/HL0inSrbCLdW9L+ifXcn5CFPzcvjEyGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741283425; c=relaxed/simple;
-	bh=OYwPTl37kpqpb1obSyEsyaLgdYEvB2tSrap1fnb6oEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uY8wcupz+pU6jMvVw/es0vcnrZ7Cjgr/yFJq3TJZ3DfGVuLecMI5/CiYMq6EwpG9uQf8v6pqQ1lfS3Wjl/9a8PCeJh/3zg/VU1+pOUuMUCEwpL4w9XRZDbu/oAfr7haWsZ4KZiU0elFP9I8PxPG7UUVG7peRPuBJdIu5a9y1DKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rCZw7zEr; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ff187f027fso1804360a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:50:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741283422; x=1741888222; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kBQoogV3j30g7FrMy9Z3NT7u/NY7leEMjZRTS18vRj8=;
-        b=rCZw7zEr7yLvJyd6sTt8XpfyXMROM7xso1Uh94y/jlfaQcnGSRatD4lg6uLKHe+2zK
-         YNmtSDzIU+pJDs/9RMRAla7TYfY8SVYt16tlypexEK1dyRksLYcPaxl5tqmucVtXe/5+
-         Cq8sCN4llmcPmOs73A/2kW6iGM5pQvygFJQKHcb+Wa/j5uTsXEhqScDJYXRhTgy0lxFo
-         hR0tz+viIJRTNHV/UMZ99JmFFFUTh+TrDqODnqFZhZV+25xoZkyQPkMp+7jOCKCguOdz
-         iu1D+VsqSVn2kw38uAxbGRs6IIo0znNELEuhcZ3Nd3JhyCxomykj97tOb3VHH/3lVRdb
-         xDoA==
+	s=arc-20240116; t=1741283423; c=relaxed/simple;
+	bh=cuP/vScxGtaMqppW/h6NaC/dlve9qOgtjc8hq4kp0AU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=TWHt1hTOCKjQ/ZHWJWyWJ/UbL+MFPDgojZN5gvr7U1VIuFVRmMz0/nMSj4aBzjjMG3wZPlYrEvS7rINyJHwpmmnfxN4n+fuzQqzPR/4XEW0hjTRr0rHu/988KOqSNrchYfvVbAPIXtYXzu5ROdeoO+GP46o9kD2kQWUOQF60blc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d43d3338d7so11099245ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:50:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741283422; x=1741888222;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kBQoogV3j30g7FrMy9Z3NT7u/NY7leEMjZRTS18vRj8=;
-        b=br6huoPFPxM2uEwmYK6K0GmFsyg2LNZoGsFvgRGqEgvYXRhZpr3ZPDhYIvz3lrS1It
-         FPL88AbUxwRgkuElUIsEOSNFHHcv+H5D4EyuoHGS4WBGeVEOxnIplE+BwtGQ8RmDq8iJ
-         CgRYspA6xdvEDDncq1eenD8WD8MRNs4hg82Pzs+pLj8oWi+BrfHze/MNDDHlAyuN4M73
-         wbjoRiGH2qDP9BjwfAVcqkOGZXRWnZzMcBrAKGIshu74vrX90eGZJ+Cu/JhGDm5oy6cE
-         jzVnQPnrRPkAHFebf3wAfcPwSxvCz1Fvz1i8MbU3wltmF0gzq2MDpkc30zPcVI/kAgXL
-         5cIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWhjtbrv33W9BmumEcD6I3D382irblTcETgc+Gggz/XEfV9gU2i/JoiGUFmKWzpO9O8ERPeER5fNq3w3TY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuuCMkMXFJHvKVOnfhQf2iuNbr6r+fLKdRZ6wA2BJat+EFBg4L
-	KgtZhJYjKPy3KezOVbMA/kpUiTq55txO3OWtYvsJDvRy4TT6aRh5UlBOfTTSTOk=
-X-Gm-Gg: ASbGncsO0avf0PdjLqT62EKvkAAz1A+NxmkIixskCXJKOgSObfLXXe1GE2BYvr4VyC1
-	1cXSNeWbP7s85v+GLxH4oT3rx2UhOFLm1iDnSnV3sUmwThMp37pD2t2vt60CyuTLvtMQ+5lkHIc
-	NZcbMyjBQYREEbG2FOYPPgo/VbQ50cHrYI8aOSka9akRcMt3Pj0hbPdJj1exAZe4RtD6qzz+NvT
-	f3JEv8xFqMsFsH+lRsTVfdR0DUcsI/PFktnb3h8ch5x5oHCiksVOGOMqnlSlJcrHMjQZitEDRdE
-	ok+Ia+0NwMdpsEn3Q/LjiCWtEtdoJwcVuphLA9kO+g8A2AY=
-X-Google-Smtp-Source: AGHT+IGEuTXsYktLG7Gbe5A2wqYq14IVrHxmlthLo8VbHdBbTToc9qLW5FvoQCp4OUC59CVSGAIxyg==
-X-Received: by 2002:a17:90b:1d4f:b0:2fa:2268:1af4 with SMTP id 98e67ed59e1d1-2ff6175a47dmr6758129a91.7.1741283422491;
-        Thu, 06 Mar 2025 09:50:22 -0800 (PST)
-Received: from p14s ([2604:3d09:148c:c800:d45:b21a:9b36:7bcc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109fda8esm15294235ad.101.2025.03.06.09.50.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 09:50:21 -0800 (PST)
-Date: Thu, 6 Mar 2025 10:50:18 -0700
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	"S.J. Wang" <shengjiu.wang@nxp.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Mpuaudiosw <Mpuaudiosw@nxp.com>,
-	Iuliana Prodan <iuliana.prodan@nxp.com>, imx@lists.linux.dev,
-	linux-remoteproc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>
-Subject: Re: [PATCH] remoteproc: imx_dsp_rproc: conditionally wait for
- FW_READY
-Message-ID: <Z8ngWhbkO2770qMq@p14s>
-References: <20250305123923.514386-1-iuliana.prodan@oss.nxp.com>
+        d=1e100.net; s=20230601; t=1741283421; x=1741888221;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ifMmxd60Hb7OPYrM+DTw5Np2I8L4Y/29uTi+Rh8hpQk=;
+        b=YWzgF4s3IPuDG0J1WjT6MeKkTr1QwpKHufCz9CbG+UTwQQchh5t36Jw+egkLVz38Su
+         /encdUuuDn6cUCfJBmlmh5RJe2qiO6h1TWWMlBzE3GxwrCsRTIgMm3xEpzlp0foeC87q
+         3izo2K0TbvpNH8iECr+LuXgMw4eFpSV0b2D8psEoNhajh2cK6Ve+i2qnMehTjgNoVPSH
+         Gax94/otEJz73gGACSaiyyVc0RUXRyOWJpVGblN1W9ipjpt5+W77y0jvb1pttzgUIN8I
+         RnbfSnUekQw5+B3W6I867MS9SbwHIz4dva7nboVaSzBQy0V6xfIfesx/UrINx/IzHRIm
+         trFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/rY5kXfp76BKx7QQkDhjMm9F1BnYWGqQzpBN1TSV3GAsTEWZhxIpG83KXqxq3GnLAkd7YE/A3dKa6cSs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIp14SBudEfplNDyVG9lwShIKv0EfZuCn/Y6lepM0troFAUn84
+	96T8KZGxvuZVvRxClu5+V6urH3yCImvwXh/jpTwC3EcliUZDBX9RZoBCC0byMM8Uwas21C/ksa7
+	owm6LMWDrJt4kPjPjoZvWro7Yp4//VxoCFLMxPUmxALsYa9yK0q1hMoQ=
+X-Google-Smtp-Source: AGHT+IGfMlhlarPbLxUl3qk/W/DkKFhu0LDgjgnbe+zTJ50LhastyLD/GP1dWNfVxapsSdNdr3quUHUfaAvBsRhtoEi2DkM8QbGk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305123923.514386-1-iuliana.prodan@oss.nxp.com>
+X-Received: by 2002:a05:6e02:b43:b0:3d0:237e:c29c with SMTP id
+ e9e14a558f8ab-3d4418d11d3mr5835615ab.12.1741283421233; Thu, 06 Mar 2025
+ 09:50:21 -0800 (PST)
+Date: Thu, 06 Mar 2025 09:50:21 -0800
+In-Reply-To: <6761bbbd.050a0220.29fcd0.0075.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c9e05d.050a0220.15b4b9.0045.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_connect_cfm
+From: syzbot <syzbot+e9abaabc441d3dd18735@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Good morning,
+syzbot has found a reproducer for the following issue on:
 
-On Wed, Mar 05, 2025 at 02:39:23PM +0200, Iuliana Prodan (OSS) wrote:
-> From: Iuliana Prodan <iuliana.prodan@nxp.com>
-> 
-> Some DSP firmware requires a FW_READY signal before proceeding,
-> while others do not.
-> Introduce imx_dsp_rproc_wait_fw_ready() to check the resource table
-> and determine if waiting is needed.
-> 
-> Use the WAIT_FW_READY flag (bit 1) to distinguish cases where
-> waiting is required, as bit 0 is reserved for VIRTIO_RPMSG_F_NS
-> in OpenAMP and mentioned in rpmsg documentation (not used in Linux,
-> so far).
+HEAD commit:    f66d6acccbc0 Merge tag 'x86_urgent_for_v6.12' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1666b2e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ca2f08f822652bd0
+dashboard link: https://syzkaller.appspot.com/bug?extid=e9abaabc441d3dd18735
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-VIRTIO_RPMSG_F_NS is used in [1].
+Unfortunately, I don't have any reproducer for this issue yet.
 
-[1]. https://elixir.bootlin.com/linux/v6.14-rc5/source/drivers/rpmsg/virtio_rpmsg_bus.c#L1051
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5b28ec7d6aaa/disk-f66d6acc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1999546fff71/vmlinux-f66d6acc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ef848d42ab19/bzImage-f66d6acc.xz
 
-> This flag is set by the remote processor in the dfeatures member of
-> struct fw_rsc_vdev, indicating supported virtio device features.
-> 
-> Update imx_dsp_rproc_start() to handle this condition accordingly.
-> 
-> Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
-> ---
->  drivers/remoteproc/imx_dsp_rproc.c | 84 +++++++++++++++++++++++++++---
->  1 file changed, 77 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
-> index b9bb15970966..8eefaee28061 100644
-> --- a/drivers/remoteproc/imx_dsp_rproc.c
-> +++ b/drivers/remoteproc/imx_dsp_rproc.c
-> @@ -1,5 +1,5 @@
->  // SPDX-License-Identifier: GPL-2.0-only
-> -/* Copyright 2021 NXP */
-> +/* Copyright 2021, 2025 NXP */
->  
->  #include <dt-bindings/firmware/imx/rsrc.h>
->  #include <linux/arm-smccc.h>
-> @@ -38,6 +38,15 @@ MODULE_PARM_DESC(no_mailboxes,
->  #define REMOTE_IS_READY				BIT(0)
->  #define REMOTE_READY_WAIT_MAX_RETRIES		500
->  
-> +/*
-> + * This flag is set by the remote processor in the dfeatures member of
-> + * struct fw_rsc_vdev, indicating supported virtio device features
-> + *
-> + * Use bit 1 since bit 0 is used for VIRTIO_RPMSG_F_NS
-> + * in OpenAMP and mentioned in kernel's rpmsg documentation
-> + */
-> +#define WAIT_FW_READY				BIT(1)
-> +
->  /* att flags */
->  /* DSP own area */
->  #define ATT_OWN					BIT(31)
-> @@ -300,13 +309,74 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
->  	return -ETIMEDOUT;
->  }
->  
-> +/*
-> + * Determines whether we should wait for a FW_READY reply
-> + * from the remote processor.
-> + *
-> + * This function inspects the resource table associated with the remote
-> + * processor to check if the firmware has indicated that waiting
-> + * for a FW_READY signal is necessary.
-> + * By default, wait for FW_READY unless an RSC_VDEV explicitly
-> + * indicates otherwise.
-> + *
-> + * Return:
-> + *   - true: If we should wait for FW READY
-> + *   - false: If FW_READY wait is not required
-> + */
-> +static bool imx_dsp_rproc_wait_fw_ready(struct rproc *rproc)
-> +{
-> +	struct device *dev = &rproc->dev;
-> +	struct fw_rsc_hdr *hdr;
-> +	struct fw_rsc_vdev *rsc;
-> +	int i, offset, avail;
-> +
-> +	/*
-> +	 * If there is no resource table, wait for FW_READY
-> +	 * unless no_mailboxes module param is used
-> +	 */
-> +	if (!rproc->table_ptr)
-> +		return true;
-> +
-> +	/* Iterate over each resource entry in the resource table */
-> +	for (i = 0; i < rproc->table_ptr->num; i++) {
-> +		offset = rproc->table_ptr->offset[i];
-> +		hdr = (void *)rproc->table_ptr + offset;
-> +		avail = rproc->table_sz - offset - sizeof(*hdr);
-> +
-> +		/* Ensure the resource table is not truncated */
-> +		if (avail < 0) {
-> +			dev_err(dev, "Resource table is truncated\n");
-> +			return true;
-> +		}
-> +
-> +		/* Check if the resource type is a virtio device */
-> +		if (hdr->type == RSC_VDEV) {
-> +			rsc = (struct fw_rsc_vdev *)((void *)hdr + sizeof(*hdr));
-> +
-> +			/* vdev does not require waiting for FW_READY */
-> +			return !!(rsc->dfeatures & WAIT_FW_READY);
+Bisection is inconclusive: the issue happens on the oldest tested release.
 
-From a virtIO perspective where one virtIO device pertains to one virtIO driver,
-your approach is valid.  From a remoteproc perspecrtive though, we have one
-virtIO driver [2] used by several implementation (NXP, ST, TI, ...).  So far,
-information conveyed by rsc->dfeatures was applicable to all implementation and
-things need to remain that way.  Otherwise, it is a matter of time before custom
-and global features start clashing.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=147adb78580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=167adb78580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=127adb78580000
 
-Using rsc->dfeatures in the way you do above means the resource table in the FW
-image needs to be mofidied.  As such, you could take advantage of the vendor
-specific resource table entry already supported by the remoteproc framework [3].
-From there you provide a resource handler specific to the iMX DSP driver and
-things just work.  Moreover, you wouldn't have to parse the whole resource table
-every time imx_dsp_rproc_start() is called.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e9abaabc441d3dd18735@syzkaller.appspotmail.com
 
-Hopefully this works for you.
+kobject: kobject_add_internal failed for hci5:201 with -EEXIST, don't try to register things with the same name in the same directory.
+Bluetooth: hci5: failed to register connection device
+==================================================================
+BUG: KASAN: slab-use-after-free in l2cap_conn_ready net/bluetooth/l2cap_core.c:1619 [inline]
+BUG: KASAN: slab-use-after-free in l2cap_connect_cfm+0xdbe/0xf80 net/bluetooth/l2cap_core.c:7278
+Read of size 8 at addr ffff8880780f0480 by task kworker/u9:3/5950
 
-Thanks,
-Mathieu
+CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Not tainted 6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci5 hci_rx_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ l2cap_conn_ready net/bluetooth/l2cap_core.c:1619 [inline]
+ l2cap_connect_cfm+0xdbe/0xf80 net/bluetooth/l2cap_core.c:7278
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-[2]. https://elixir.bootlin.com/linux/v6.14-rc5/source/drivers/rpmsg/virtio_rpmsg_bus.c#L1054
-[3]. https://elixir.bootlin.com/linux/v6.14-rc5/source/drivers/remoteproc/remoteproc_core.c#L1044
+Allocated by task 5950:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ l2cap_chan_create+0x44/0x920 net/bluetooth/l2cap_core.c:449
+ l2cap_sock_alloc.constprop.0+0xf3/0x180 net/bluetooth/l2cap_sock.c:1886
+ l2cap_sock_new_connection_cb+0x101/0x240 net/bluetooth/l2cap_sock.c:1468
+ l2cap_connect_cfm+0x4cc/0xf80 net/bluetooth/l2cap_core.c:7261
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-> +		}
-> +	}
-> +
-> +	/*
-> +	 * By default, wait for the FW_READY
-> +	 * unless a vdev entry disables it
-> +	 */
-> +	return true;
-> +}
-> +
->  /*
->   * Start function for rproc_ops
->   *
-> - * There is a handshake for start procedure: when DSP starts, it
-> - * will send a doorbell message to this driver, then the
-> - * REMOTE_IS_READY flags is set, then driver will kick
+Freed by task 6070:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2342 [inline]
+ slab_free mm/slub.c:4579 [inline]
+ kfree+0x14f/0x4b0 mm/slub.c:4727
+ l2cap_chan_destroy net/bluetooth/l2cap_core.c:495 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ l2cap_chan_put+0x216/0x2c0 net/bluetooth/l2cap_core.c:519
+ l2cap_sock_cleanup_listen+0x4d/0x2a0 net/bluetooth/l2cap_sock.c:1451
+ l2cap_sock_release+0x5c/0x210 net/bluetooth/l2cap_sock.c:1411
+ __sock_release+0xb3/0x270 net/socket.c:658
+ sock_close+0x1c/0x30 net/socket.c:1426
+ __fput+0x3f9/0xb60 fs/file_table.c:431
+ task_work_run+0x151/0x250 kernel/task_work.c:239
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-> - * a message to DSP.
-> + * The start procedure involves a handshake: when the DSP starts, it
-> + * sends a doorbell message to this driver, which sets the
-> + * REMOTE_IS_READY flag. The driver then sends a message to the DSP.
-> + *
-> + * Before proceeding, the driver checks if it needs to wait for a
-> + * firmware ready reply using imx_dsp_rproc_wait_fw_ready().
-> + * If waiting is required, it calls imx_dsp_rproc_ready() to complete
-> + * the initialization.
-> + * If waiting is not required, the start function returns.
->   */
->  static int imx_dsp_rproc_start(struct rproc *rproc)
->  {
-> @@ -335,8 +405,8 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
->  
->  	if (ret)
->  		dev_err(dev, "Failed to enable remote core!\n");
-> -	else
-> -		ret = imx_dsp_rproc_ready(rproc);
-> +	else if (imx_dsp_rproc_wait_fw_ready(rproc))
-> +		return imx_dsp_rproc_ready(rproc);
->  
->  	return ret;
->  }
-> -- 
-> 2.25.1
-> 
+The buggy address belongs to the object at ffff8880780f0000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 1152 bytes inside of
+ freed 2048-byte region [ffff8880780f0000, ffff8880780f0800)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff8880780f6000 pfn:0x780f0
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801b042000 ffffea0001292c00 0000000000000002
+raw: ffff8880780f6000 0000000080080003 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff88801b042000 ffffea0001292c00 0000000000000002
+head: ffff8880780f6000 0000000080080003 00000001f5000000 0000000000000000
+head: 00fff00000000003 ffffea0001e03c01 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 2965, tgid 2965 (kworker/u8:7), ts 97728781507, free_ts 97577158223
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
+ prep_new_page mm/page_alloc.c:1564 [inline]
+ get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
+ __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4751
+ alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
+ alloc_slab_page mm/slub.c:2412 [inline]
+ allocate_slab mm/slub.c:2578 [inline]
+ new_slab+0x2c9/0x410 mm/slub.c:2631
+ ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ __do_kmalloc_node mm/slub.c:4263 [inline]
+ __kmalloc_node_track_caller_noprof+0x355/0x430 mm/slub.c:4283
+ kmalloc_reserve+0xef/0x2c0 net/core/skbuff.c:609
+ __alloc_skb+0x164/0x380 net/core/skbuff.c:678
+ alloc_skb include/linux/skbuff.h:1322 [inline]
+ nlmsg_new include/net/netlink.h:1015 [inline]
+ rtmsg_ifinfo_build_skb+0x81/0x280 net/core/rtnetlink.c:4099
+ unregister_netdevice_many_notify+0x983/0x1e50 net/core/dev.c:11411
+ cleanup_net+0x58c/0xb40 net/core/net_namespace.c:621
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+page last free pid 2965 tgid 2965 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_unref_page+0x661/0x1080 mm/page_alloc.c:2657
+ __folio_put+0x32a/0x450 mm/swap.c:112
+ kvfree+0x47/0x50 mm/util.c:701
+ unix_net_exit+0x61/0xb0 net/unix/af_unix.c:3708
+ ops_exit_list+0xb3/0x180 net/core/net_namespace.c:173
+ cleanup_net+0x5b7/0xb40 net/core/net_namespace.c:626
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Memory state around the buggy address:
+ ffff8880780f0380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880780f0400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff8880780f0480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff8880780f0500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880780f0580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+==================================================================
+BUG: KASAN: wild-memory-access in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: wild-memory-access in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+BUG: KASAN: wild-memory-access in l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+BUG: KASAN: wild-memory-access in l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+BUG: KASAN: wild-memory-access in l2cap_connect_cfm+0x7eb/0xf80 net/bluetooth/l2cap_core.c:7278
+Read of size 4 at addr deacfffffffffc8c by task kworker/u9:3/5950
+
+CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Tainted: G    B              6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
+Tainted: [B]=BAD_PAGE
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci5 hci_rx_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+ l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+ l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+ l2cap_connect_cfm+0x7eb/0xf80 net/bluetooth/l2cap_core.c:7278
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+==================================================================
+Oops: general protection fault, probably for non-canonical address 0xfbd59bffffffff91: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: maybe wild-memory-access in range [0xdeacfffffffffc88-0xdeacfffffffffc8f]
+CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Tainted: G    B              6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
+Tainted: [B]=BAD_PAGE
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci5 hci_rx_work
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
+RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
+RIP: 0010:l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+RIP: 0010:l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+RIP: 0010:l2cap_connect_cfm+0x7f2/0xf80 net/bluetooth/l2cap_core.c:7278
+Code: 80 fb ff ff 49 39 c5 0f 84 29 01 00 00 e8 26 a0 6e f7 49 8d 6f 0c be 04 00 00 00 48 89 ef e8 b5 80 cf f7 48 89 e8 48 c1 e8 03 <0f> b6 14 18 48 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 c5
+RSP: 0018:ffffc90003e0f878 EFLAGS: 00010213
+RAX: 1bd59fffffffff91 RBX: dffffc0000000000 RCX: ffffffff814e821f
+RDX: ffff888030808000 RSI: ffffffff81ee2f8e RDI: 0000000000000007
+RBP: deacfffffffffc8c R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: ffff88804779003b
+R13: ffff88806c83d2c0 R14: 0000000000000080 R15: deacfffffffffc80
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055558a5ef5c8 CR3: 000000007bf02000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
+RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
+RIP: 0010:l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+RIP: 0010:l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+RIP: 0010:l2cap_connect_cfm+0x7f2/0xf80 net/bluetooth/l2cap_core.c:7278
+Code: 80 fb ff ff 49 39 c5 0f 84 29 01 00 00 e8 26 a0 6e f7 49 8d 6f 0c be 04 00 00 00 48 89 ef e8 b5 80 cf f7 48 89 e8 48 c1 e8 03 <0f> b6 14 18 48 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 c5
+RSP: 0018:ffffc90003e0f878 EFLAGS: 00010213
+RAX: 1bd59fffffffff91 RBX: dffffc0000000000 RCX: ffffffff814e821f
+RDX: ffff888030808000 RSI: ffffffff81ee2f8e RDI: 0000000000000007
+RBP: deacfffffffffc8c R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: ffff88804779003b
+R13: ffff88806c83d2c0 R14: 0000000000000080 R15: deacfffffffffc80
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055558a5ef5c8 CR3: 000000007bf02000 CR4: 0000000000350ef0
+----------------
+Code disassembly (best guess), 4 bytes skipped:
+   0:	49 39 c5             	cmp    %rax,%r13
+   3:	0f 84 29 01 00 00    	je     0x132
+   9:	e8 26 a0 6e f7       	call   0xf76ea034
+   e:	49 8d 6f 0c          	lea    0xc(%r15),%rbp
+  12:	be 04 00 00 00       	mov    $0x4,%esi
+  17:	48 89 ef             	mov    %rbp,%rdi
+  1a:	e8 b5 80 cf f7       	call   0xf7cf80d4
+  1f:	48 89 e8             	mov    %rbp,%rax
+  22:	48 c1 e8 03          	shr    $0x3,%rax
+* 26:	0f b6 14 18          	movzbl (%rax,%rbx,1),%edx <-- trapping instruction
+  2a:	48 89 e8             	mov    %rbp,%rax
+  2d:	83 e0 07             	and    $0x7,%eax
+  30:	83 c0 03             	add    $0x3,%eax
+  33:	38 d0                	cmp    %dl,%al
+  35:	7c 08                	jl     0x3f
+  37:	84 d2                	test   %dl,%dl
+  39:	0f                   	.byte 0xf
+  3a:	85 c5                	test   %eax,%ebp
+
+
+---
 
