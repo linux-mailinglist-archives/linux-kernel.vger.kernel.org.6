@@ -1,297 +1,192 @@
-Return-Path: <linux-kernel+bounces-548362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC23CA543E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:45:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87B8DA54467
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:14:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 714FA18887C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:45:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9C6A17174A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:14:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECFCC1D8E01;
-	Thu,  6 Mar 2025 07:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB3A204C1C;
+	Thu,  6 Mar 2025 08:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xF1PzUKC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ENjQ+RBt"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="h+bG3DNl"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A93184E;
-	Thu,  6 Mar 2025 07:44:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD921FF7CB
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:14:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741247090; cv=none; b=Nwo7r54tsF3ETukdERe2ZJZ6/tHlPLcS58L5mi61a+23TKL1rz0AuqyTeXaYPwa2MmFJaXBWKzh5n44hfnpgV2ugiMgKUzDPV+9oFkVBnYGrFrz22NRckA5YPJU+0KxAJFs8ucIeyoRfG7nFYoWojrVkwfz1cqKrvgttgkNLOzo=
+	t=1741248847; cv=none; b=TcGjtrCauljgSElF8EsFTQO2kq1yoEsDb42Tt4FFR5Zx69WSLeDBlZOufx1OmTn4udaFJjil1unA1S0//fMZx5CaEKxNYZIR9APVNB0asfobz0+NnYCM+Z0E2THzOPeiAQ2gD5h5RkM6N3SQPrPv1/n7jBX2Tfn936VqZ37f4yU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741247090; c=relaxed/simple;
-	bh=LnJnlzkgsQ9e3xiWL+DVUUjLDIYo2koWT7+NfZp8T6o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kionqYG01RMhpkphcT4SjvRNTzSVXtQ2Iqf7HA6L6xF3HFAujj5Ei9Qdk+6onQAJTPcDkyCLhnHy3kbpvlct6P9+xJ5VCkwnKOSlbInmjStL7Raay0hC0OyCblsw9ri1ED6Lh/gcqPvtmz0zDsax6rRwTr4tDP7qiPbK9kUnJXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xF1PzUKC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ENjQ+RBt; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741247084;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FgqJzH/WiWSTXeHnklqbcr+j8X29K12DsKKrMK2ivQc=;
-	b=xF1PzUKC19Pl9Sg2Ce8GFz62hT15MYjhWcVqpGmJlYzPBx5gipHPonnqGOKnQZBEoECnsZ
-	dvlXoYVF/T60Q15OCNcmIJXRjAb2FX/0arl1W3Vuyn4jX/HTZqYDWULE7X8OGbvPc7jNU2
-	z/5/GpaEQcodb7dNOTO59wuIMdNDfh/SW58VEZ32VaIp54d/CIzDgdvb3UiHw+fRfP8wcp
-	rbRey1065Mzks0QwQk6A624xYhlCTRPbcNfsqBtwjuhSfuBcMthGEuHtuxYxo4AtQHZl7p
-	PBGP/ZBQUl2CX393FjOvxFXdDDGP1+GpsrtBFE1dXq2zLIZCgxp7r1w9mE3CcQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741247084;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FgqJzH/WiWSTXeHnklqbcr+j8X29K12DsKKrMK2ivQc=;
-	b=ENjQ+RBtvMT41YwHa8IGZn04QHFLYUaEJB5uu/kX6p9s6Phl02SzzsLS8qOcsek/qQKnMg
-	6cCk3iVdpXNDjyDQ==
-To: Tsai Sung-Fu <danielsftsai@google.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
- <kw@linux.com>, Rob Herring
- <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Chant
- <achant@google.com>, Brian Norris <briannorris@google.com>, Sajid Dalvi
- <sdalvi@google.com>, Mark Cheng <markcheng@google.com>, Ben Cheng
- <bccheng@google.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH] PCI: dwc: Chain the set IRQ affinity request back to
- the parent
-In-Reply-To: <CAK7fddAqDPw1CuvBDUsQApbs1ZSE_ruyTAdsp+c4116C0ZjvVw@mail.gmail.com>
-References: <20250303070501.2740392-1-danielsftsai@google.com>
- <87a5a2cwer.ffs@tglx>
- <CAK7fddD4Y5CJ3hKQvppGB2Bof4ibYDX4mBK3N1y8qt-NVoBb7w@mail.gmail.com>
- <87eczd6scg.ffs@tglx>
- <CAK7fddAqDPw1CuvBDUsQApbs1ZSE_ruyTAdsp+c4116C0ZjvVw@mail.gmail.com>
-Date: Thu, 06 Mar 2025 08:44:43 +0100
-Message-ID: <878qpi61sk.ffs@tglx>
+	s=arc-20240116; t=1741248847; c=relaxed/simple;
+	bh=PJnzse8o4iybC7oAf5fv9vExf7AyhrbOZkSMnILPM2M=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=KM8ndrb1Z40U46W+cFSKpuFgCbu3MkAd3M/Pd+01yuIKY36XyQR53dadyNf8ec5WxgCA/Wr4Hjev+mUCl737uIiFWb2sj/lf910sKScLYXLjvEykBGnjvX9e5uekbAPFq2sSwpuDrwKALNOnxH08NCf3qB0Ko+n5tn0AN6u1YwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=h+bG3DNl; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20250306081404epoutp01e9cb0fa3035ca54dadf8913312cc56ff~qKJkhALhE0128601286epoutp01Y
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:14:04 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20250306081404epoutp01e9cb0fa3035ca54dadf8913312cc56ff~qKJkhALhE0128601286epoutp01Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741248844;
+	bh=KECuehhvu0FH3iTK1TaavUX6adMlIsZ1ueFUr/zvens=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=h+bG3DNluo93Sxva40Zkvug64EFuFBRp/Mr4o3Jd4rQ4S+G8b2PrwKYYWLf2D2Ec4
+	 BvIi74ocgo/lXWjvwFOVfijXlR2/BTpMyMfNxHiGrlD3P+H1fgdQdKfrytMYHpNMO9
+	 FLNUB4ftT9AwnfHpOCYCSxhI8+3YO4D9GxpA5sAU=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20250306081403epcas5p4bd3f9c079f1ca24762c19728e468c6d5~qKJjwUkQi2477724777epcas5p4R;
+	Thu,  6 Mar 2025 08:14:03 +0000 (GMT)
+Received: from epsmges5p1new.samsung.com (unknown [182.195.38.182]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Z7hyc6Jcgz4x9Px; Thu,  6 Mar
+	2025 08:14:00 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	12.51.20052.84959C76; Thu,  6 Mar 2025 17:14:00 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250306074556epcas5p1f4f9128afb3d2d912d3679dde2a4ae21~qJxBHOgwj2664726647epcas5p1K;
+	Thu,  6 Mar 2025 07:45:56 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250306074556epsmtrp1301b03234c11231d681ef785ab7d7ad2~qJxBGEdEd3125731257epsmtrp1F;
+	Thu,  6 Mar 2025 07:45:56 +0000 (GMT)
+X-AuditID: b6c32a49-3fffd70000004e54-c2-67c95948db40
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	4A.51.18949.4B259C76; Thu,  6 Mar 2025 16:45:56 +0900 (KST)
+Received: from FDSFTE596 (unknown [107.122.82.131]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250306074553epsmtip2fcf11e3f790316369b21a1e5eb8c2f52~qJw_JvO7Q2300823008epsmtip2M;
+	Thu,  6 Mar 2025 07:45:53 +0000 (GMT)
+From: "Swathi K S" <swathi.ks@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <krzk+dt@kernel.org>,
+	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
+	<conor+dt@kernel.org>, <richardcochran@gmail.com>,
+	<mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>
+Cc: <rmk+kernel@armlinux.org.uk>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<pankaj.dubey@samsung.com>, <ravi.patel@samsung.com>,
+	<gost.dev@samsung.com>, <tools@linux.kernel.org>
+In-Reply-To: <041d55fd-99f0-4b55-92e5-fa46f37096c1@kernel.org>
+Subject: RE: [PATCH v8 0/2] net: stmmac: dwc-qos: Add FSD EQoS support
+Date: Thu, 6 Mar 2025 13:15:45 +0530
+Message-ID: <012801db8e6b$cb835bb0$628a1310$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Mar 05 2025 at 19:21, Tsai Sung-Fu wrote:
-> On Tue, Mar 4, 2025 at 5:46=E2=80=AFPM Thomas Gleixner <tglx@linutronix.d=
-e> wrote:
->> >> > +     ret =3D desc_parent->irq_data.chip->irq_set_affinity(&desc_pa=
-rent->irq_data,
->> >> > +                                                        mask_resul=
-t, force);
->> >>
->> >> Again. Completely unserialized.
->> >>
->> >
->> > The reason why we remove the desc_parent->lock protection is because
->> > the chained IRQ structure didn't export parent IRQ to the user space, =
-so we
->> > think this call path should be the only caller. And since we have &pp-=
->lock hold
->> > at the beginning, so that should help to protect against concurrent
->> > modification here ?
->>
->> "Should be the only caller" is not really a technical argument. If you
->> make assumptions like this, then you have to come up with a proper
->> explanation why this is correct under all circumstances and with all
->> possible variants of parent interrupt chips.
->>
->> Aside of that fiddling with the internals of interrupt descriptors is
->> not really justified here. What's wrong with using the existing
->> irq_set_affinity() mechanism?
->>
-> Using irq_set_affinity() would give us some circular deadlock warning
-> at the probe stage.
-> irq_startup() flow would hold the global lock from irq_setup_affinity(), =
-so
-> deadlock scenario like this below might happen. The irq_set_affinity()
-> would try to acquire &irq_desc_lock_class
-> while the dw_pci_msi_set_affinity() already hold the &pp->lock. To
-> resolve that we would like to reuse the idea to
-> replace the global lock in irq_set_affinity() with PERCPU structure
-> from this patch ->
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit=
-/?id=3D64b6d1d7a84538de34c22a6fc92a7dcc2b196b64
-> Just would like to know if this looks feasible to you ?
-
-It won't help. See below.
-
->   Chain exists of:
->   &irq_desc_lock_class --> mask_lock --> &pp->lock
->   Possible unsafe locking scenario:
->         CPU0                            CPU1
->         ----                                   ----
->    lock(&pp->lock);
->                                                lock(mask_lock);
->                                                lock(&pp->lock);
->    lock(&irq_desc_lock_class);
-
-Indeed.
-
-Back to irq_set_affinity(). I did not think about the more problematic
-issue with calling irq_set_affinity(): The per CPU mask is then used
-recursive, which is a bad idea.
-
-But looking deeper, your implementation breaks some other things, like
-e.g. the affinity coupling of interrupt threads on the MSI side. They
-have to be coupled to the effective affinity of the underlying hard
-interrupt. Solvable problem, but not in the driver.
-
-Aside of the fact that this hardware design is a trainwreck, which
-defeats the intended flexibility of MSI, solving this at the chip driver
-level ends up in a incomplete and hacky solution. Also as this is not
-the only IP block, which was cobbled together mindlessly that way, we
-really don't want to proliferate this horrorshow all over the place.
-
-This really wants a generic infrastructure which handles all aspects of
-this correctly once and for all of these hardware trainwrecks. That
-needs some thoughts and effort, but that's definitely preferred over a
-half baked driver specific hackery, which fiddles in the guts of the
-interrupt descriptors as it sees fit. From a layering POV, a interrupt
-chip driver should not even care about the fact that an interrupt
-descriptor exists. We've spent a lot of effort to decouple these things
-and just because C allows it, does not mean it's a correct or a good
-idea to ignore the layering.
-
-The approach you have taken has a massive downside:
-
-    It forces all (32) MSI interrupts, which are demultiplexed from the
-    underlying parent interrupt, to have the same affinity and the user
-    space interface in /proc/irq/*/affinity becomes more than
-    confusing.
-
-    This is not what user space expects from an interface which controls
-    the affinity of an individual interrupt. No user and no tool expects
-    that it has to deal with conflicting settings for MSI interrupts,
-    which are independent of each other.
-
-    Tools like irqbalanced will be pretty unhappy about the behaviour
-    and you have to teach them about the severe limitations of this.
-
-I'm absolutely not convinced that this solves more problems than it
-creates.
-
-In fact, you can achieve the very same outcome with a clean and straight
-forward ten line change:
-
-   Instead of the hidden chained handlers, request regular interrupts
-   for demultiplexing and give them proper names 'DWC_MSI_DEMUX-0-31',
-   'DWC_MSI_DEMUX-32-63'...
-
-   That provides exactly the same mechanism w/o all the hackery and
-   creates the same (solvable) problem vs. interrupt thread affinity,
-   but provides an understandable user interface.
-
-No?
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-in
+Thread-Index: AQMyDtpN5Ye5e5YD1uDKr3q9BdsruAHcwqSBAgrqhY6wmXxL0A==
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta0xTZxj2O+f0nLZadixMPpqo7LgQIQNaLfVAABdFc3QXcQubbj9KQ09a
+	Qmm7XvCyLNPodOu4DBNcbCoysgEiyB1abjLGIDhWRCiRLYAb4IBhRJ3lYpBRDm78e773e973
+	eZ7vy8tHxRcJCT9Vb2FNepWOwoVY/U+hO8OZ490a6ReXZPTC1GVAF9938uiyFjdCO3rPY/S1
+	DjePnuj8k6CH2lwIPWUfwene3kqCvlOfzaOrxwZ5dH+jA6dtg+M8On+pnEd3Fmyhvb/MALqw
+	7h+C/mO2maA7eiZR+m5OLkIvNzsJ+lv3GO/NLUz/YB/K1F4fQpiJnDqCcdmHCaag2spUl36F
+	M50DX+JMzfefMy7nU4R51OrBmezaUsD82CpjnlZvSxR9lBarZVVq1hTM6lMM6lS9Jo56633l
+	fmWUQioLl0XTe6hgvSqdjaMS3k4MP5iqW0lNBWeodNaVUqLKbKYi42NNBquFDdYazJY4ijWq
+	dUa5McKsSjdb9ZoIPWuJkUmlu6JWiMlp2tahMdxY5XeyruvUGWDbZAMCPiTlsN9+FbEBIV9M
+	NgH4rHYE5Q5PAMyZLkJ8LDHpBXAgK/Blx+NMF8HVWwCc9BzlGiYB7OrIQ30XOBkGC7NbV0kB
+	ZAsCH5xN9GGUbEagbVHmwwIyHi433lnl+JMHoed6D24DfD5Gvg5HnKtaIjIaTvY9BhzeDLuv
+	jGPcmO2w4aED5fwEw4WJIh5XD4Q/L2SinOw+eG/eg/m8QbJJAOf6+hCuIQHOXS7COewPp7tq
+	CQ5L4FTOhTWshDeyPRiHtXB4MXeNvxe2DTgwn0+UDIUVjZFceSvMu30T4Tz4wazn42tSIujM
+	f4l3wKW/B9dGBsH6Hx4R3wDKvi6afV00+7o49v/VCgBWCoJYozldw5qjjDI9e+K/304xpFeD
+	1Y0IO+QEw/dnI9oBwgftAPJRKkDU9263RixSq06dZk0GpcmqY83tIGrluXNRyasphpWV0luU
+	Mnm0VK5QKOTRuxUyKlB0znVeIyY1KgubxrJG1vSyD+ELJGeQq8qEm08c88ujLzDtbYlGoQX2
+	JOvMph3e03suhP9W4u+uvPGJKXlj4CsDwjFYZdwQdqjsg9GkisOx3md+Z0VbR8u3ZQgYxdyH
+	ez/2u9sUK1gOL294bZ+QHP0rCSvpVWaPTF+xH9ssK8KPnBQJS5rFOSGGB5OpFfMAqB+WxOw8
+	kGj0Kyv0D5HzZg1pv4cUJ6Qc+HT7sY06NlKIq3vieSZtWPdSxpH9AyHjzVWdU4MbMnc7kMZk
+	qZu4JsoK8D938Q3d8Xz583n7SF4DP+idEzOLn7nhuNZrLvDcijr8XqjE+92vSOjR1MoXu75u
+	u3VPhS835lvyrTUxWK+hpjjDVZdLYWatShaGmsyqfwEg8MdImgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrIIsWRmVeSWpSXmKPExsWy7bCSvO6WoJPpBvPmq1r8fDmN0WL5gx2s
+	Fmv2nmOymHO+hcVi/pFzrBZPjz1it7h5YCeTxctZ99gszp/fwG5xYVsfq8Wmx9dYLS7vmsNm
+	0XXtCavFvL9rWS2OLRCz+Hb6DaPFoq1f2C0eftjDbnHkzAtmi0v9E5ks/u/ZwW4x/dxjVgcx
+	j8vXLjJ7bFl5k8njaf9Wdo+ds+6yeyzYVOqxaVUnm8exKx1sHpuX1Hvs3PGZyeP9vqtsHn1b
+	VjF6HNxn6PF5k1wAbxSXTUpqTmZZapG+XQJXxr6bj9kKNvJVbD1e2cDYxdPFyMkhIWAi8bFn
+	JzuILSSwm1Hi9ilbiLikxKfmqawQtrDEyn/PgWq4gGqeMUpc236GGSTBJqAlsahvH1hCROA0
+	k8SP9n9gk5gFjjFJ7DvPCdGxn1Hi3aeNTCAJTgE7if+7LoAVCQu4SVxdeYati5GDg0VAReLe
+	DnGQMK+ApcSLix8ZIWxBiZMzn7BAzNSW6H3Yyghhy0tsfzuHGeI6BYmfT5exQsTFJY7+7AGL
+	iwg4Sdz4cZVlAqPwLCSjZiEZNQvJqFlI2hcwsqxilEwtKM5Nzy02LDDKSy3XK07MLS7NS9dL
+	zs/dxAhOFVpaOxj3rPqgd4iRiYPxEKMEB7OSCO9Fv5PpQrwpiZVVqUX58UWlOanFhxilOViU
+	xHm/ve5NERJITyxJzU5NLUgtgskycXBKNTBVWAp3GQcffyCWIxyxc8ext5ISD2xz5e8tyoj7
+	fW7C686G2TdLH2+2mvaOSZY5uFc4srFm80Ir35m/q+xmZi/h0hV946HdeS/Yt3zCbJXAnruL
+	5M4+7JlZ3lyya297pcrdFd8bu1b+EUsrnscyi5fJkbvL/3XwnCPym25duMSzVVnptuJf/gkx
+	F9dIbHuxsHJq1+5rX+pYEjKz3qf2fjZ9nOL4cgnb1r0zih95r9Ta+LJY209FxXl9vsSBFd92
+	6j+yPn6oYfFdvqun/H9q2XDWn9C+qvNs74cPlx9wVPDu2P1GQ9H9YOkKg7xM8doTi5WCThVt
+	mfm6+VvXUg0NDhPfMishKf7616JzFjs2vIhVYinOSDTUYi4qTgQAfyO6KoQDAAA=
+X-CMS-MailID: 20250306074556epcas5p1f4f9128afb3d2d912d3679dde2a4ae21
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250305091845epcas5p1689eda3ba03572377997897271636cfd
+References: <CGME20250305091845epcas5p1689eda3ba03572377997897271636cfd@epcas5p1.samsung.com>
+	<20250305091246.106626-1-swathi.ks@samsung.com>
+	<041d55fd-99f0-4b55-92e5-fa46f37096c1@kernel.org>
 
 
-If you really want to provide a useful and flexible mechanism to steer
-the affinity of the individual MSI interrupts, which are handled by each
-control block, then you have to think about a completely different
-approach.
 
-The underlying interrupt per control block will always be affine to a
-particular CPU. But it's not written in stone, that the demultiplexing
-interrupt actually has to handle the pending interrupts in the context
-of the demultiplexer, at least not for MSI interrupts, which are edge
-type and from the PCI device side considered 'fire and forget'.
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: 06 March 2025 12:40
+> To: Swathi K S <swathi.ks@samsung.com>; krzk+dt@kernel.org;
+> andrew+netdev@lunn.ch; davem@davemloft.net; edumazet@google.com;
+> kuba@kernel.org; pabeni@redhat.com; robh@kernel.org;
+> conor+dt@kernel.org; richardcochran@gmail.com;
+> mcoquelin.stm32@gmail.com; alexandre.torgue@foss.st.com
+> Cc: rmk+kernel@armlinux.org.uk; netdev@vger.kernel.org;
+> devicetree@vger.kernel.org; linux-stm32@st-md-mailman.stormreply.com;
+> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+> pankaj.dubey@samsung.com; ravi.patel@samsung.com;
+> gost.dev@samsung.com; tools@linux.kernel.org
+> Subject: Re: [PATCH v8 0/2] net: stmmac: dwc-qos: Add FSD EQoS support
+> 
+> On 05/03/2025 10:12, Swathi K S wrote:
+> > FSD platform has two instances of EQoS IP, one is in FSYS0 block and
+> > another one is in PERIC block. This patch series add required DT
+> > binding and platform driver specific changes for the same.
+> >
+> > Changes since v1:
+> > 1. Updated dwc_eqos_setup_rxclock() function as per the review
+> > comments given by Andrew.
+> >
+> Please stop referencing some other threads in your email headers via
+> "References". This is neither necessary nor helping our tools. I can never
+> compare your patches because this makes b4 busy 100%:
 
-So right now the demultiplex handler does:
+Will take care in future
 
-   bits =3D read_dbi(...);
-   for_each_bit(bit, bits)
-        generic_handle_domain_irq(domain, base + bit);
+- Swathi
 
-generic_handle_irq_domain() gets the interrupt mapping for the hardware
-interrupt number and invokes the relevant flow handler directly from the
-same context, which means that the affinity of all those interrupts is
-bound to the affinity of the underlying demultiplex interrupt.
+> 
+> b4 diff -C '<20250305091246.106626-2-swathi.ks@samsung.com>'
+> Grabbing thread from
+> lore.kernel.org/all/20250305091246.106626-2-
+> swathi.ks@samsung.com/t.mbox.gz
+> Checking for older revisions
+>   Added from v7: 3 patches
+> ---
+> Analyzing 86 messages in the thread
+> Preparing fake-am for v7: dt-bindings: net: Add FSD EQoS device tree
+> bindings <never ends, 100% CPU>
+> 
+> Best regards,
+> Krzysztof
 
-Iignoring the devil in the details, this can also be handled by
-delegating the handling to a different CPU:
-
-   bits =3D read_dbi(...);
-   for_each_bit(bit, bits)
-        generic_handle_irq_demux_domain(domain, base + bit);
-
-where generic_handle_demux_domain_irq() does:
-
-      desc =3D irq_resolve_mapping(domain, hwirq);
-
-      if (desc->target_cpu =3D=3D smp_processor_id()) {
-      	   handle_irq_desc(desc);
-      } else {
-          // Issue DWC ack() here? - See below
-          irq_work_queue_on(&desc->irq_work, desc->target_cpu);
-      }
-
-The generic irq_work handler does:
-
-      desc =3D container_of(work, struct irq_desc, irq_work);
-      handle_irq_desc(desc);
-
-That's obviously asynchronous, but in case of edge type MSI interrupts,
-that's not a problem at all.
-
-The real problems are:
-
-    1) Handling the pending bit of the interrupt in the DBI, i.e. what
-       dw_pci_bottom_ack() does.
-
-    2) Life time of the interrupt descriptor
-
-    3) Slightly increased latency of the rerouted interrupts
-
-    4) Affinity of the demultiplex interrupt
-
-#1 Needs some thoughts. From the top of my head I think it would require
-   that dw_pci_bottom_ack() is issued in the context of the demultiplex
-   handler as it would otherwise be retriggered, but that just needs
-   some research in the datasheet and experimental validation.
-
-   The actual interrupt flow handler for the MSI interrupt is then not
-   longer handle_edge_irq() as it should not issue the ack() again.
-
-   From a correctness POV vs. interrupt handling of a edge type
-   interrupt, that's perfectly fine.
-
-#2 Trivial enough to solve by flushing and invalidating the irq_work
-   before shutdown/removal.
-
-#3 That might be an issue for some extreme scenarios, but in the general
-   case I claim, that it does not matter at all.
-
-   Those scenarios where it really matters can affine the interrupt to
-   the affinity of the demultiplexing interrupt, which leads to #4
-
-#4 That's a trivial problem to solve. There is absolutely no technical
-   reason to make them hidden. Demultiplexing just works fine from the
-   context of regular interrupts.
-
-There are some other minor issues like CPU hotplug, but I can't see
-anything truly complex in this design right now. Famous last words :)
-
-At the driver level this becomes really simple. Affinity changes are
-just selecting a target CPU and store it for trivial comparison to avoid
-a CPU mask check in the demultiplex path. No fiddling with sibling
-or parent interrupts, no locking issues. Thread affinity and other
-things just work as expected.
-
-I'm really tempted to play with that. Such infrastructure would allow to
-support PCI/multi-MSI on x86 without interrupt remapping, which is on
-the wishlist of a lot of people for many years.
-
-Thanks,
-
-        tglx
 
