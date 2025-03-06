@@ -1,83 +1,105 @@
-Return-Path: <linux-kernel+bounces-549440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA94BA552AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:14:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97CA7A552B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C71A1882F12
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:14:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E773618826ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F194525C705;
-	Thu,  6 Mar 2025 17:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8570925A627;
+	Thu,  6 Mar 2025 17:16:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q0Hmfhh0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Anu++IdA"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A89F25A627;
-	Thu,  6 Mar 2025 17:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5774F946C;
+	Thu,  6 Mar 2025 17:16:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741281250; cv=none; b=nHo8S33XO3se/VWpcKfCEGotwMj82ifZrmNjhOYvhvoHXOCpLEvR886TgTiDibHQwpPnC2KUxiX6YPTxjPC3wWOXmIrVOMp+PORgDm6/3AXXvjX4hg/PKfHlPeuOMO2wTVxH+UST4+pxCQhkVHahWBbH/AipiRguHa3VwCmqMUA=
+	t=1741281366; cv=none; b=nuu8F1SfxgZ/j+lFM0jAdqqZJY7xhrl6yKCrVrUuA5AdvVMpr+8soOjSIdD/2de/CNpKIJFshX4JI/b/z9t2uKghEEdpb3Z6vm3MOoS8AWuq/ZIFOTHxrzyHbZLvCOK+8jpXKffMf4nkWQ661MXc04naDTAsZc1a4MC71oKt6No=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741281250; c=relaxed/simple;
-	bh=LHZaCsmiI1Xxu72j/VFZX4yF42q/3KhljENA52wVHUQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qukvQWDkhzLXXiono2q2RTZPinhw02SQkvNcmzlOVJtOZlJu8EfEgcRsABIzpr6/0VpNAt8ZiJp1U6vR3Vqism5tPByqkmw+faLK+a7+qIeESWkXAUaARzEU+2AgXR1S22mjvwehRnGmTZkIoBcCGn8tZNcvAUi6PVU18jLVO8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q0Hmfhh0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BECAC4CEEA;
-	Thu,  6 Mar 2025 17:14:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741281249;
-	bh=LHZaCsmiI1Xxu72j/VFZX4yF42q/3KhljENA52wVHUQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Q0Hmfhh0ygfhFsrdqbi59TPkzObXa2Z/cpC/8O+HOAQ6uRTBW7lVKywzk1kteqBVQ
-	 WIAJVFEaddth9aHGvVLBgjsfCxcXjVaz7TQiDANPTgf06P+5SjQ+z0gP1thUypE7kw
-	 VL56wzhn0/noW4LwR31sZSlLfDqhRvuNfJjpap0TweKx4Mfv18EGJOWhpKBEqosKSv
-	 bP70HQJpxZmny/9muvAEq6qS7zd0BtXhlonixF/Ulx1Eege2mYPVdVpC5z4NKGAe2J
-	 XPaaq+KqNkqpS9QQRX0qjwoZdF3Tzi7+hlljAEMCmIXzDwSTFzBXXlIeky8fm/Urgy
-	 sQU/+vNSqcF8w==
-From: Namhyung Kim <namhyung@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
- linux-perf-users@vger.kernel.org, acme@kernel.org, yangtiezhu@loongson.cn, 
- Thomas Richter <tmricht@linux.ibm.com>
-Cc: agordeev@linux.ibm.com, gor@linux.ibm.com, sumanthk@linux.ibm.com, 
- hca@linux.ibm.com
-In-Reply-To: <20250304092349.2618082-1-tmricht@linux.ibm.com>
-References: <20250304092349.2618082-1-tmricht@linux.ibm.com>
-Subject: Re: [PATCH] perf/bench: Fix perf bench syscall XXXX loop count
-Message-Id: <174128124901.3835280.12336231396508752051.b4-ty@kernel.org>
-Date: Thu, 06 Mar 2025 09:14:09 -0800
+	s=arc-20240116; t=1741281366; c=relaxed/simple;
+	bh=6yUS0gZqXlr5oXmQWOr2M4/WGsw428RVR3v78Umd2VM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i057KAm9sZqhXPBTyhETIFGpABk0tfAn0QjpRlCSvrpgvL2pUoYCKzGwqD7QgC8gaoYy/pXqZgpDGdIr2telCAzOCJY3doIOH+fDvjeJEfk8EipaO+BkV1RW0KxprtbVFCiBwWtG2tkHxUXhDEfn+/M6vma/cp6zB7Eswd1KixM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Anu++IdA; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6EEDD10381917;
+	Thu,  6 Mar 2025 18:15:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1741281351; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=R9aP1jHlPPht+zv5TUTXYAZBlZqQGAGJO0vabeZpWFY=;
+	b=Anu++IdARFpzsSERi714neoRcgEucGBiXUumxqW8plTtvomn4H/TKviQU5oyEMQM8+WCO/
+	inSdsvuVBeSdTBXq2ajTbMa0YAsoCAH8tOrK6zmXFyNSb1KZfliyLNV53pzwgnJQexC0Pb
+	GSbekj+K9182IL4yQU9Ax0T/zESpG9WgTTZJo330sCz0x6ZMwLokEl7dkWeZ58HsPLK8l7
+	nFUc09EjSFVIm6Upq5VRxSxMM2q9BOCiic7SLuOSycAhNkZ0wY+QBNaXfOVcafU2IDI8YZ
+	ifYcnBdz+Cf/95Yd5A0p59JdDORVJKt9CMLGlNbycrwk0S5K1EGMTNb0F3Mpjg==
+Date: Thu, 6 Mar 2025 18:15:43 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.1 000/161] 6.1.130-rc2 review
+Message-ID: <Z8nYPwPNhfTmMVTi@duo.ucw.cz>
+References: <20250306151414.484343862@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-c04d2
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="Lca3f2Y+x3EMTsjg"
+Content-Disposition: inline
+In-Reply-To: <20250306151414.484343862@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Tue, 04 Mar 2025 10:23:49 +0100, Thomas Richter wrote:
-> Command 'perf bench syscall fork -l 100000' offers option
-> -l to run for a specified number of iterations. However this
-> option is not always observed. The number is silently limited to
-> 10000 iterations as can be seen:
-> 
-> Output before:
->  # perf bench syscall fork -l 100000
->  # Running 'syscall/fork' benchmark:
->  # Executed 10,000 fork() calls
->      Total time: 23.388 [sec]
-> 
-> [...]
-Applied to perf-tools-next, thanks!
+
+--Lca3f2Y+x3EMTsjg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi!
+
+> This is the start of the stable review cycle for the 6.1.130 release.
+> There are 161 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+CIP testing did not find any problems here:
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.1.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
 
 Best regards,
-Namhyung
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
 
+--Lca3f2Y+x3EMTsjg
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ8nYPwAKCRAw5/Bqldv6
+8k5FAKCB1uJENiBD8JrkFDHCf6JFg1RT0gCgk8hqExw36exOjr3algQKxyTGdGo=
+=Hngc
+-----END PGP SIGNATURE-----
+
+--Lca3f2Y+x3EMTsjg--
 
