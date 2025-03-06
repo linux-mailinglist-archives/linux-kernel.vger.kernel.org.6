@@ -1,334 +1,279 @@
-Return-Path: <linux-kernel+bounces-548748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47592A548D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:12:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52592A548E2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:16:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 71B5617325D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:12:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6D71894DE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17A5D2040BD;
-	Thu,  6 Mar 2025 11:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3273D209F4B;
+	Thu,  6 Mar 2025 11:16:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JQrF+/Yq"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="2ALoJCRw"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278FE1946A2
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 11:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FAE817B50B
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 11:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741259571; cv=none; b=nKqm+yZMWdhHJLSCqkV++RQ8kPxeKJB/piyYD6wqkmpAjES4NpwXWSQkrSF1sOLFKPsXbSgwRx01qHFMi6nirpcHURysUCvbEzoA+ZZ/3NTt7NieoU5vbcoFtOjeTrHNxpVaTpeocG+iKIR5uBq6NN0GGBZ0I80yVVhDQ13OT/8=
+	t=1741259760; cv=none; b=krwqwT8aciHeSRz0Ajg7zWganXN19z1eNYOR3Cjpc3V/Leo3VTBkCstCycR6+YnDsSNqFpXMfDjXp+nEJL0iKY/nyc7avmXsI0TW5TZvqVmT72Pcyli4MTy8e1/j/GvmZtvB99Zl3255NSEDTosB0vuveTRARGUS5runJ4PAtJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741259571; c=relaxed/simple;
-	bh=PUiIQxTbPAl6myMVf3n6jYlpzrsKzaCsAkwaHWYA0LA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X3pssaNjy5Oekd+g1yPJSodT2KexOdfIElinm8BkrhiUTOUsO9pyMG1UPTyBZiW5/3XXKBpnIUmTSKlHbGVI9VJtSK6VgdNom19f0p3kGBMupR3fM/8lZYBgWGfc9Wk9jznmI9mj1hPa/mCGwq9n11VykmljEQMldlsap2unPR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JQrF+/Yq; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e5bc066283so700134a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 03:12:48 -0800 (PST)
+	s=arc-20240116; t=1741259760; c=relaxed/simple;
+	bh=YevAipZm/+lyAcJ9AjGTXmRxKhKQj/5yvsZrO88ZVtA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=PliTtvP1ciqvTmZXtPCpNetcXcl28tYliG0S464ZzJXXNPtj4/bXR5n6Cw1f3OuCEAS9ZbykQKI7KSI49wyfSxyGMH91BMZ8Em4aZLphwvE8o2ffyx4cq982S9e9vlCXJNST6FEpim2K+hZvyFSKj1ImxjbGgVfjFnxlfRGTEbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=2ALoJCRw; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e4f88ea298so863295a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 03:15:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741259567; x=1741864367; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wHsetN/4k5BgXz3g/jpETlxzsnoBsy7otMAail05Cdw=;
-        b=JQrF+/YqC+SfY3zTB+DeRYp7F+Lu7Ct1ZNEEO/BLZMnDzBMm3T/wXmysNCH0TYPDW0
-         7F8QqsgQCTra8yvLYY1rFkPUXHgSU5gMxs5ipnMlLxTJuhOdaIBxXZyGNaVsZg6g8cq0
-         wB4dkOXlfZQbqulVwI03cMY89PyCe8mj3KlwfwNJYY0DaXGxOahkIIvqKuZUbZUv8k/k
-         zLgV/Eb3Q3NDCl8lOmVizXFqRyhgxEsHq7De24fTfgKJZNMGZ2Z42xGWRbgitdf/NcEp
-         ansHNty07YDdVfI47lr0LIesxNKea1wqtNbfBMS28S4q+pqq89UpDn0jqrojq27ZomGd
-         Xnkg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741259755; x=1741864555; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dWLJq7ftyKy37p7zHFjkyk8VxM1La8FbGatFxYaxm+o=;
+        b=2ALoJCRw60pO6EnooOS0RR8MD6KUgp+vfENCNjHrrEWFAiBKPCO3k/lK0tjVmIUqpq
+         YTlSyaFjsddYMMKbZqhfU0ZRQ6VDcmhOuJYc2vxWP3cCGArla/NhBkSVo7Mh383Zr4SN
+         tZ+f3pukr36g2jkIl+ojPPc+zCxpYCWH2mW5w5Zh2HFAKFUXnv24ftQaE60139rDnUNf
+         gZsJSyUfaETm5o+t5+9Ujr8QpJcYQ1EfOBdVrscweFi9b7zR1uTmrs8BxhA0Rmh7ODy2
+         gUB0PpSL/X7Fvg/fK0BvHvax8c/tgkki4qJnrERF2cU/Ce8x28m57y8uBMv7E76Iexe6
+         WuUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741259567; x=1741864367;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wHsetN/4k5BgXz3g/jpETlxzsnoBsy7otMAail05Cdw=;
-        b=wjgPbidQRaLw1Hiwtu00N2qBpHS6+bPxX+zDplIipuyGR/CCK8eq+Eiy4Y38wqqUsd
-         1qw+434gNKMnAGAui0/YBg3Q9ezQctVXTmInINfJTkFCS6ApOaSSiaecP1BD5RhOLDyv
-         k1HRWZiDMiahlfphqLAw5R7m134S5B0iIiiFG1vqWKYwecji2UiXpS5UP4JbICoQ7Lci
-         9nlPqz7+aAM09MjQWoULPdHroKsE2XFyI+noOvVcZlb+U9I9+43zrmSqY1WhIzGm4bcG
-         fc804QLr2IDrgiBQRjF1l1hXAd5XBbhC/E9TBpKQxIAkWDsJn2LKddbZT6h6blV4nzeO
-         BRWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHBpzQSafhFUkBQH4h9JKge8lMXOSiGzJHebFhRcVFdURyEywvZ7u2D5ssgeqSx+0M28qBjFvI1jk+9ig=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZpQIvewk23dQ0FZTdTg8u7rjq57AgjSQxUmAGR9vIf+ongDTt
-	sXAkUGPgZmdaqstNAfDK8tsyAWoLTZ64ABaBKxJfAyhJVqBde7MpV45z06VxbBX2mh4b4H4lR3l
-	WTtgxEsQpTpcjLtJ0xSlePQQc9ck=
-X-Gm-Gg: ASbGnctadbvfyey6BQuh0Qk1KExF5qX9NBsALEZXOWVzJMEpo7DrsXe0Z3R2ZRpXwNN
-	JwfMD3fAKMIzdnb/CsihEDj7cS48b1IndMjUifKJU8XSf2y3psTxTGYe+Qjnb6W82qZrpM6mb9W
-	5zjXRJl7B9flPglgOclf+TXWPiT8g=
-X-Google-Smtp-Source: AGHT+IEaBleH3/cM7oX+imORPlfd2sQibCGqk8z/Z5SIx2jCTPdaRhiXFPOabc12N5VgGViUgcAI+QZvRoOZKO9zS5w=
-X-Received: by 2002:a17:907:7245:b0:abf:5fe7:40db with SMTP id
- a640c23a62f3a-ac20da540b4mr697053266b.31.1741259565405; Thu, 06 Mar 2025
- 03:12:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741259755; x=1741864555;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dWLJq7ftyKy37p7zHFjkyk8VxM1La8FbGatFxYaxm+o=;
+        b=dye725wr8OmEhZHNgl45yvWttbXnAGkC8H1j2QaLwi0rH1vDC2gZARaP1Cddl3nRDF
+         1IyCIT8eD1rxjj3EhchDYb3rHu3Z3TPYpxtunzwi3UgjBYIe0qsi4coldWHzeN17SjS5
+         YQOudexdeEvGakLZrH7VHgJ+Gc2eK+trJsFdY7i4AdOv8Mf3qKtaiE3YxHVmV6XXbkXu
+         dpet5Eldao/a7G2G18QHTYKxnImjoDyfukzd3EWlzDmsdDdvmImlY0YqvhTvTNwFnG6o
+         ySCmGjdFgpHKvbsi6vbZ2cciOAsKYsJnlyfDB/d9fFYAcKlqDOOZaFSbvV1XXfCje6dm
+         P9lw==
+X-Forwarded-Encrypted: i=1; AJvYcCXK5H3nUa6NVytNJdtG5ggIz4XkfHzGUPjH35vRymJrdcJQOKUaKxtf/6stxV9X/LgZXw8WXu5MeRZttx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVCR14WEq+OXg4KLfjWkfjNsGv5eMH04Gd9fBGt3cZYsWcMJfA
+	G0VZv56mg+IqJT2Q1za/IwLkM95JspZeN9NNGL0S5RCXuHxHN1wByVSzVfWU1aQ=
+X-Gm-Gg: ASbGnct19Z59gzLrbs6eYnHwRP7X5IHLvXITpZmS/qs30mSX9tRqfZu/5/xupjQhzug
+	JCvHht4JPkMAj+d0Zc0ktHHfWJ4t+98MPJp/ubYXGXzYnkcBNU175yQikqaEuXoq9cRuZ4+geDH
+	4pMqtzWD65Y97SXFKd/c/lRb/3+KhRPxZDlWYvpbTXp6cbtKRaxm7Qsacxvv3LcNydaidhenpPv
+	tGjoxcn5DQBMG+GjF5NwvfiWB1nSuQGj9DNlJUC+vxBtNICSXEUw09LliO2Gh1iCk5qxsEKgQMx
+	Fs6klrnrFvDoVDuU1AAa77+Ts5cw6iRfjSF1B/LDUg==
+X-Google-Smtp-Source: AGHT+IHSKv/iLY4xG1FTSXhFmi2aztkk4M5rcVMuXstlVjF4Qr5KDJ4BrcjybmmrVGWo69K5HXyYQQ==
+X-Received: by 2002:a05:6402:5110:b0:5e5:c1fd:bf56 with SMTP id 4fb4d7f45d1cf-5e5c1fdc40amr2678822a12.26.1741259755275;
+        Thu, 06 Mar 2025 03:15:55 -0800 (PST)
+Received: from localhost ([2001:4091:a245:8327:80ad:8144:3b07:4679])
+        by smtp.gmail.com with UTF8SMTPSA id 4fb4d7f45d1cf-5e5c7472100sm793530a12.27.2025.03.06.03.15.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 03:15:54 -0800 (PST)
+From: Markus Schneider-Pargmann <msp@baylibre.com>
+Subject: [PATCH v5 00/13] firmware: ti_sci: Partial-IO support
+Date: Thu, 06 Mar 2025 12:14:38 +0100
+Message-Id: <20250306-topic-am62-partialio-v6-12-b4-v5-0-f9323d3744a2@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1741091349.git.hongyan.xia2@arm.com>
-In-Reply-To: <cover.1741091349.git.hongyan.xia2@arm.com>
-From: Xuewen Yan <xuewen.yan94@gmail.com>
-Date: Thu, 6 Mar 2025 19:12:33 +0800
-X-Gm-Features: AQ5f1JqVTVVPJkAkomtI5r-Qi2VHFR8lW3hfFzYJhWDyABfGnA8HxzSH-SpPdPE
-Message-ID: <CAB8ipk_AvaOWp9QhmnFDdbFSWcKLhCH151=no6kRO2z+pSJfyQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/8] uclamp sum aggregation
-To: Hongyan Xia <hongyan.xia2@arm.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Morten Rasmussen <morten.rasmussen@arm.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Christian Loehle <christian.loehle@arm.com>, Pierre Gondois <pierre.gondois@arm.com>, 
-	linux-kernel@vger.kernel.org, Xuewen Yan <xuewen.yan@unisoc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJ6DyWcC/4XOQQ6CMBCF4auYrh3TllrQlfcwLto6yCRAsWAjI
+ dzdoiYmLnT5ZvH9M7EeA2HP9quJBYzUk2/T2K5XzFWmvSDQOW0muVSC8wIG35ED02gJnQkDmZo
+ 8RA1CglXgZJ6V1jilVM6S0QUs6f70j6fXDni9pczwOVbUDz6Mzx9itlzfuWT+zsUMOJS500t3p
+ wtxsGasyQbcON+wBY/qA0qx+weqBApnCzT2rHiOX+A8zw/mfljsMwEAAA==
+X-Change-ID: 20241008-topic-am62-partialio-v6-12-b4-c273fbac4447
+To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
+ Santosh Shilimkar <ssantosh@kernel.org>, 
+ Vignesh Raghavendra <vigneshr@ti.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Anand Gadiyar <gadiyar@ti.com>, 
+ Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+ Marc Kleine-Budde <mkl@pengutronix.de>, 
+ Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, Vishal Mahaveer <vishalm@ti.com>, 
+ Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
+ Akashdeep Kaur <a-kaur@ti.com>, Kendall Willis <k-willis@ti.com>, 
+ linux-can@vger.kernel.org, Markus Schneider-Pargmann <msp@baylibre.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7677; i=msp@baylibre.com;
+ h=from:subject:message-id; bh=YevAipZm/+lyAcJ9AjGTXmRxKhKQj/5yvsZrO88ZVtA=;
+ b=owGbwMvMwCGm0rPl0RXRdfaMp9WSGNJPNq88dqfCad2hSYcKoqKzxa1//vJjVhd9eKYs8C3b0
+ bTmqZoSHaUsDGIcDLJiiix3Pyx8Vyd3fUHEukeOMHNYmUCGMHBxCsBE9FMY/gemnDrY/llP1nOu
+ yfIJDAuPxlZ0qOstiHQy1EwIjOzWVGL4H8xiaPcycWb85CeLwt5W7DR/67J+1ekm640PHvcFxK3
+ aygwA
+X-Developer-Key: i=msp@baylibre.com; a=openpgp;
+ fpr=BADD88DB889FDC3E8A3D5FE612FA6A01E0A45B41
 
-Hi Hongyan,
+Hi,
 
-On Tue, Mar 4, 2025 at 10:26=E2=80=AFPM Hongyan Xia <hongyan.xia2@arm.com> =
-wrote:
->
-> This series gives an alternative implementation that addresses some of
-> the problems in uclamp max aggregation. Sum aggregation mostly gives:
->
-> 1. Simplicity. Sum aggregation implements uclamp with less than half of
->    code than max aggregation.
-> 2. Effectiveness. Sum aggregation shows better uclamp effectiveness,
->    either in benchmark scores or sometimes in energy efficiency.
->
-> The key idea of sum aggregation is fairly simple. Each task has a
-> util_avg_bias, which is obtained by:
->
->     util_avg_bias =3D clamp(util_avg, uclamp_min, uclamp_max) - util_avg;
->
-> If a CPU has N tasks, p1, p2, p3... pN, then we sum the biases up and
-> obtain a rq total bias:
->
->     rq_bias =3D util_avg_bias1 + util_avg_bias2... + util_avg_biasN;
->
-> Then we use the biased rq utilization rq_util + rq_bias to select OPP
-> and to schedule tasks.
->
-> PATCH BREAKDOWN:
->
-> Patch 1/6 reverts a patch that accommodate uclamp_max tasks under max
-> aggregation. This patch is not needed and creates other problems for sum
-> aggregation. It is discussed elsewhere that this patch will be improved
-> and there may not be the need to revert it in the future.
->
-> Patch 2, 3 and 4 implement sum aggregation.
->
-> Patch 5 and 6 remove max aggregation.
->
-> Patch 7 applies PELT decay on negative util_avg_bias. This improves
-> energy efficiency and task placement, but is not strictly necessary.
->
-> Patch 8 addresses sum aggregation under-utilization problem.
->
-> TESTING:
->
-> Two notebooks are shared at
->
-> https://nbviewer.org/github/honxia02/notebooks/blob/aac12d9becae2b2fe4690=
-cbb672439fd884ede30/whitebox/max.ipynb
-> https://nbviewer.org/github/honxia02/notebooks/blob/aac12d9becae2b2fe4690=
-cbb672439fd884ede30/whitebox/sum-offset.ipynb
->
-> The experiments done in notebooks are on Arm Juno r2 board. CPU0-3 are
-> little cores with capacity of 383. CPU4-5 are big cores. The rt-app
-> profiles used for these experiments are included in the notebooks.
->
-> Scenario 1: Scheduling 4 tasks with UCLAMP_MAX at 110.
->
-> The scheduling decisions are plotted in Out[11]. Both max and sum
-> aggregation understand the UCLAMP_MAX hint and schedule all 4 tasks on
-> the little cluster. Max aggregation sometimes schedule 2 tasks on 1 CPU,
-> and this is the reason why sum aggregation reverts the 1st commit.
->
-> Scenario 2: Scheduling 4 tasks with UCLAMP_MIN and UCLAMP_MAX at a value
-> slightly above the capacity of the little CPU.
->
-> Results are in Out[17]. The purpose is to use UCLAMP_MIN to place tasks
-> on the big core. Both max and sum aggregation handle this correctly.
->
-> Scenario 3: Task A is a task with a small utilization pinned to CPU4.
-> Task B is an always-running task pinned to CPU5, but UCLAMP_MAX capped
-> at 300. After a while, task A is then pinned to CPU5, joining B.
->
-> Results are in Out[23]. Max aggregation sees a frequency spike at
-> 873.64s. When zoomed in, one can see square-wave-like utilization values
-> because of A periodically going to sleep. When A wakes up, its default
-> UCLAMP_MAX of 1024 will uncap B and reach the highest CPU frequency.
-> When A sleeps, B's UCLAMP_MAX will be in effect and will reduce rq
-> utilization. This happens repeatedly, hence the square wave. In
-> contrast, sum aggregation sees a normal increase in utilization when A
-> joins B, without any square-wave behavior.
->
-> Scenario 4: 4 always-running tasks with UCLAMP_MAX of 110 pinned to the
-> little PD (CPU0-3). 4 same tasks pinned to the big PD (CPU4-5).
-> After a while, remove the CPU pinning of the 4 tasks on the big PD.
->
-> Results are in Out[29]. After unpinning, max aggregation moves all 8
-> tasks to the little cluster, but schedules 5 tasks on CPU0 and 1 each on
-> CPU1-3. In contrast, sum aggregation schedules 2 on each little CPU
-> after unpinning, which is the desired balanced task placement.
->
-> EVALUATION:
->
-> We backport patches to GKI kernel v6.1 on Pixel 9 and run Android
-> benchmarks.
->
-> Speedometer:
->
-> We run Speedometer 2.1 on Chrome v131 to test ADPF/uclamp effectiveness.
-> Because sum aggregation does not circumvent the 25% OPP margin, we
-> reduce uclamp values to 80% to be fair.
->
-> |   score   | score |   %    | CPU power % |
-> |    max    | 192.4 |        |             |
-> |  sum_0.8  | 230.8 | +19.96 |   +31.54    |
-> | sum_tuned | 201.8 |  +4.89 |    -0.41    |
->
-> We see a consistant higher score and higher average power consumption.
-> Note that a higher score also means a reduction in run-time, total
-> energy increase for sum_0.8 is only 9.65%.
->
-> We then reduce uclamp values so that power consumption is roughly
-> the same. If we do so, then sum aggregation achieves slightly better
-> scores, shown in the sum_tuned row.
->
-> UIBench:
->
-> |   score   | jank percentage |   %    | CPU power (mW) |   %   |
-> |    max    |     0.115%      |        |     158.1      |       |
-> |  sum_0.8  |     0.129%      | +11.96 |     154.9      | -4.19 |
->
-> UIBench on Pixel 9 by default already has a low enough jank percentage.
-> Moving to sum aggregation gives slightly higher jank percentage and
-> lower power consumption.
->
-> ---
-> Changed in v2:
-> - Completely separate uclamp component from PELT and util_est.
-> - Separate util_est_uclamp into an individual patch.
-> - Address the under-utilization problem.
-> - Update Python notebooks to reflect the latest sched/tip.
->
-> Hongyan Xia (8):
->   Revert "sched/uclamp: Set max_spare_cap_cpu even if max_spare_cap is
->     0"
->   sched/uclamp: Track a new util_avg_bias signal
->   sched/uclamp: Add util_est_uclamp
->   sched/fair: Use util biases for utilization and frequency
->   sched/uclamp: Remove all uclamp bucket logic
+up to last series, the Partial-IO support consisted of two independent
+series. As this last rework introduced file-based conflicts, I merged
+the mcan series introducing wakeup support into this series:
 
-I=E2=80=99ve recently been looking into the issue with uclamp and
-delayed-dequeue, and I found that uclamp_rq_inc should be placed
-before enqueue_task, which led to a patch.
-Before sending the patch, I came across your series of patches. I
-haven=E2=80=99t fully understood your patch yet, but it seems like
-uclamp_rq_inc is no longer needed.
-Do you think the patch below is still necessary?
+  can: m_can: Add am62 wakeup support
+  https://lore.kernel.org/lkml/20241219-topic-mcan-wakeup-source-v6-12-v6-0-1356c7f7cfda@baylibre.com/
 
---->
+Series
+------
+The series contains three parts:
+ - m_can support for Partial-IO, in particular 'wakeup' pinctrl support.
+ - ti_sci support for Partial-IO, which checks wakeup-sources if they
+   are enabled for Partial-IO
+ - DT description of system states on am62, am62a, am62p and the
+   enabling of wakeup support on the starter kits that support it.
 
-Subject: [PATCH] sched/uclamp: Update the rq's uclamp before enqueue task
+The series is based on v6.14-rc1.
 
-When task's uclamp is set, we hope that the CPU frequency
-can increase as quickly as possible when the task is enqueued.
-Because the cpu frequency updating happens during the enqueue_task(),
-so the rq's uclamp needs to be updated before the task is enqueued.
-For sched-delayed tasks, the rq uclamp should only be updated
-when they are enqueued upon being awakened.
+Partial-IO
+----------
+Partial-IO is a low power system state in which nearly everything is
+turned off except the pins of the CANUART group. CANUART contains the
+mcu_mcan0, mcu_mcan1, wkup_uart0 and mcu_uart0 devices. These can
+trigger a wakeup of the system on pin activity. Note that this does not
+resume the system as the DDR is off as well. So this state can be
+considered a power-off state with wakeup capabilities.
 
-Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+The wakeup capability of a device is described in the devicetree with
+the wakeup-source property. This can hold phandles to system states in
+which the device is capable of wakeup. Additionally a WKUP_EN flag is
+set in the pinctrl of devices that are wakeup enabled.
+
+On poweroff ti_sci checks if potential wakeup-sources for Partial-IO are
+wakeup-enabled by the user. If that is the case, the poweroff is done
+by TI_SCI by sending a PREPARE_SLEEP message with a specific mode. Once
+sent the system will poweroff apart from the CANUART pins.
+
+Dependencies
+------------
+This series requires an updated DT binding for the wakeup-source
+property that allows the use of system-states which are also being added
+in this pullrequest:
+ - dt-schema wakeup-source binding update
+   https://github.com/devicetree-org/dt-schema/pull/150
+
+Testing
+-------
+After enabling Wake-on-LAN the system can be powered off and will enter
+the Partial-IO state in which it can be woken up by activity on the
+specific pins:
+    ethtool -s can0 wol p
+    ethtool -s can1 wol p
+    poweroff
+
+These patches are tested on am62-lp-sk on linux-next.
+
+Best,
+Markus
+
+Previous versions "firmware: ti_sci: Partial-IO support":
+ v1: https://lore.kernel.org/lkml/20240523080225.1288617-1-msp@baylibre.com/
+ v2: https://lore.kernel.org/lkml/20240729080101.3859701-1-msp@baylibre.com/
+ v3: https://lore.kernel.org/r/20241012-topic-am62-partialio-v6-13-b4-v3-0-f7c6c2739681@baylibre.com
+ v4: https://lore.kernel.org/r/20241219-topic-am62-partialio-v6-12-b4-v4-0-1cb8eabd407e@baylibre.com
+
+Previous versions "can: m_can: Add am62 wakeup support":
+ v1: https://lore.kernel.org/lkml/20240523075347.1282395-1-msp@baylibre.com/
+ v2: https://lore.kernel.org/lkml/20240729074135.3850634-1-msp@baylibre.com/
+ v3: https://lore.kernel.org/lkml/20241011-topic-mcan-wakeup-source-v6-12-v3-0-9752c714ad12@baylibre.com
+ v4: https://lore.kernel.org/r/20241015-topic-mcan-wakeup-source-v6-12-v4-0-fdac1d1e7aa6@baylibre.com
+ v5: https://lore.kernel.org/r/20241028-topic-mcan-wakeup-source-v6-12-v5-0-33edc0aba629@baylibre.com
+ v6: https://lore.kernel.org/r/20241219-topic-mcan-wakeup-source-v6-12-v6-0-1356c7f7cfda@baylibre.com
+
+Changes in v5:
+ - Rebased to v6.14-rc1
+ - Merged m_can and ti_sci series to avoid conflicts and show
+   dependencies more easily
+ - Added definitions of system-states for am62/am62a/am62p
+ - Moved wakeup-source definitions into board dts files as they require
+   a bit of support on the board.
+ - Updated ti_sci support to walk through the wakeup-source phandle
+   lists
+ - Added pinctrl settings for mcu_mcan0/1 on all boards
+ - Minor style updates for ti_sci support for transfers without response
+ - Update and move the dt-binding for wakeup-source from the m_can
+   binding to the dt-schema repository
+
+Changes in v4:
+ - Rebased to v6.13-rc1
+ - Removed all regulator related structures from patches and implemented
+   the wakeup-source property use instead.
+
+Changes in v3:
+ - Remove other modes declared for PREPARE_SLEEP as they probably won't
+   ever be used in upstream.
+ - Replace the wait loop after sending PREPARE_SLEEP with msleep and do
+   an emergency_restart if it exits
+ - Remove uarts from DT wakeup sources
+ - Split no response handling in ti_sci_do_xfer() into a separate patch
+   and use goto instead of if ()
+ - Remove DT binding parital-io-wakeup-sources. Instead I am modeling
+   the devices that are in the relevant group that are powered during
+   Partial-IO with the power supplies that are externally provided to
+   the SoC. In this case they are provided through 'vddshv_canuart'. All
+   devices using this regulator can be considered a potential wakeup
+   source if they are wakeup capable and wakeup enabled.
+ - Added devicetree patches adding vcc_3v3_sys regulator and
+   vddshv_canuart for am62-lp-sk
+ - Add pinctrl entries for am62-lp-sk to add WKUP_EN for mcu_mcan0 and
+   mcu_mcan1
+
+Changes in v2:
+ - Rebase to v6.11-rc1
+ - dt-binding:
+    - Update commit message
+    - Add more verbose description of the new binding for a better
+      explanation.
+ - ti_sci driver:
+    - Combine ti_sci_do_send() into ti_sci_do_xfer and only wait on a
+      response if a flag is set.
+    - On failure to enter Partial-IO, do emergency_restart()
+    - Add comments
+    - Fix small things
+
+Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
 ---
- kernel/sched/core.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
+Markus Schneider-Pargmann (13):
+      firmware: ti_sci: Support transfers without response
+      firmware: ti_sci: Partial-IO support
+      dt-bindings: can: m_can: Add wakeup properties
+      can: m_can: Map WoL to device_set_wakeup_enable
+      can: m_can: Return ERR_PTR on error in allocation
+      can: m_can: Support pinctrl wakeup state
+      arm64: dts: ti: k3-pinctrl: Add WKUP_EN flag
+      arm64: dts: ti: k3-am62: Define possible system states
+      arm64: dts: ti: k3-am62a: Define possible system states
+      arm64: dts: ti: k3-am62p: Define possible system states
+      arm64: dts: ti: k3-am62-lp-sk: Set wakeup-source system-states
+      arm64: dts: ti: k3-am62a7-sk: Set wakeup-source system-states
+      arm64: dts: ti: k3-am62p5-sk: Set wakeup-source system-states
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 67189907214d..b07e78910221 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -1747,7 +1747,7 @@ static inline void uclamp_rq_dec_id(struct rq
-*rq, struct task_struct *p,
-        }
- }
-
--static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
-+static inline void uclamp_rq_inc(struct rq *rq, struct task_struct
-*p, int flags)
- {
-        enum uclamp_id clamp_id;
-
-@@ -1763,7 +1763,8 @@ static inline void uclamp_rq_inc(struct rq *rq,
-struct task_struct *p)
-        if (unlikely(!p->sched_class->uclamp_enabled))
-                return;
-
--       if (p->se.sched_delayed)
-+       /* Only inc the delayed task which is being woken up. */
-+       if (p->se.sched_delayed && !(flags & ENQUEUE_DELAYED))
-                return;
-
-        for_each_clamp_id(clamp_id)
-@@ -2031,7 +2032,7 @@ static void __init init_uclamp(void)
- }
-
- #else /* !CONFIG_UCLAMP_TASK */
--static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p) { }
-+static inline void uclamp_rq_inc(struct rq *rq, struct task_struct
-*p, int flags) { }
- static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p) { }
- static inline void uclamp_fork(struct task_struct *p) { }
- static inline void uclamp_post_fork(struct task_struct *p) { }
-@@ -2067,12 +2068,9 @@ void enqueue_task(struct rq *rq, struct
-task_struct *p, int flags)
-        if (!(flags & ENQUEUE_NOCLOCK))
-                update_rq_clock(rq);
-
-+       uclamp_rq_inc(rq, p, flags);
-+
-        p->sched_class->enqueue_task(rq, p, flags);
--       /*
--        * Must be after ->enqueue_task() because ENQUEUE_DELAYED can clear
--        * ->sched_delayed.
--        */
--       uclamp_rq_inc(rq, p);
-
-        psi_enqueue(p, flags);
-
---
-
-Thanks!
-
-BR
+ .../devicetree/bindings/net/can/bosch,m_can.yaml   |  18 +++
+ arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts           |  60 +++++++++
+ arch/arm64/boot/dts/ti/k3-am62.dtsi                |  22 ++++
+ arch/arm64/boot/dts/ti/k3-am62a.dtsi               |  27 +++++
+ arch/arm64/boot/dts/ti/k3-am62a7-sk.dts            |  76 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-am62p.dtsi               |  27 +++++
+ arch/arm64/boot/dts/ti/k3-am62p5-sk.dts            |  76 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-pinctrl.h                |   2 +
+ drivers/firmware/ti_sci.c                          | 134 ++++++++++++++++++++-
+ drivers/firmware/ti_sci.h                          |   5 +
+ drivers/net/can/m_can/m_can.c                      | 111 ++++++++++++++++-
+ drivers/net/can/m_can/m_can.h                      |   4 +
+ drivers/net/can/m_can/m_can_pci.c                  |   4 +-
+ drivers/net/can/m_can/m_can_platform.c             |   4 +-
+ drivers/net/can/m_can/tcan4x5x-core.c              |   4 +-
+ 15 files changed, 562 insertions(+), 12 deletions(-)
 ---
+base-commit: 7ec162622e66a4ff886f8f28712ea1b13069e1aa
+change-id: 20241008-topic-am62-partialio-v6-12-b4-c273fbac4447
 
->   sched/uclamp: Simplify uclamp_eff_value()
->   sched/uclamp: Propagate negative bias
->   sched/uclamp: Solve under-utilization problem
->
->  include/linux/sched.h            |   8 +-
->  init/Kconfig                     |  32 ---
->  kernel/sched/core.c              | 308 ++--------------------
->  kernel/sched/cpufreq_schedutil.c |   6 +-
->  kernel/sched/debug.c             |   2 +-
->  kernel/sched/fair.c              | 430 ++++++++++++++++---------------
->  kernel/sched/pelt.c              |  62 +++++
->  kernel/sched/rt.c                |   4 -
->  kernel/sched/sched.h             | 132 +++-------
->  kernel/sched/syscalls.c          |   2 +
->  10 files changed, 341 insertions(+), 645 deletions(-)
->
-> --
-> 2.34.1
->
->
+Best regards,
+-- 
+Markus Schneider-Pargmann <msp@baylibre.com>
+
 
