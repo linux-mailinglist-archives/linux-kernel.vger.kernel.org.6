@@ -1,172 +1,214 @@
-Return-Path: <linux-kernel+bounces-548087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548088-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8166A53FA8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:12:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED431A53FAE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:13:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1E03A66B9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7A693AF0EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:12:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C167A12D1F1;
-	Thu,  6 Mar 2025 01:12:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8B81304BA;
+	Thu,  6 Mar 2025 01:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Oltz7y2t"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CvwX/Aq7"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A63E487BF
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 01:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF6E7E0FF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 01:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741223535; cv=none; b=Xt7Ktm5tlFwSObGyjpp2c/c44k0r2vqdidxLkFHVkDC/TKXCGd0iOlCNDcs296LGyRAqVP0BmoyNb5mk/ImbkxnHt59f7fXGSvhTKtk5Gdtfxq+kUmVvWYLUHfk8NtNj1qp3GC/uhv2LIcNLtmF4APAIVHpw4h2y4eCTx5BRo/U=
+	t=1741223573; cv=none; b=R6nxx/ybTBHkNvMFeHAWMnHj6FdbHy0PSSVBqutJF96IWvLRoMD3cWBUA3Olu27yOAa/as9ZPm5CBdV/myRwE0+JYl/E1EdvwjP5zZxHOEGBj3uMkQyTErctzpvve7BGoFFapTn4gcpJgrbpx/3br7sS+qD+XlHToK/qsTuxl6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741223535; c=relaxed/simple;
-	bh=V8bDAPc4cr2bLjiiGkoBYZJfi5ZNW7LVUzibc3K48nk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LAOy21Fa9HYJ0AzXbWaASfybBwFUgXseNS/+YhWm84BqPiauXi1PmvspO2oGGuf6EAjQpjcezFEO+cofLZ8gjUAg2tZPtAhZbuphMpuco3WTLiZAX6+xc1ReZc7jwfzBZCZHA++tw7PNNAnJiCZb2ZqZ77/uwAojWJcA9sBQLJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Oltz7y2t; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43bcad638efso285095e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 17:12:12 -0800 (PST)
+	s=arc-20240116; t=1741223573; c=relaxed/simple;
+	bh=iwuGm3ZHGbApYL4XEYwpkiGj6XRB3Wy/awOqe4nijcs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EJmQh/7jeeneBdFnSBYCqJNOsKZg6bXwJL1RWpyr7kLAIjP0JEzm9ytRFGlwcEoUqj2oznw4wXzLs9OzOT02J+qyNbNomErHYecIGvaOAsCNwdd6g9fJ7pDPoNEK7z+AJfnnCm/EuyxaIrpfwtSUgjY997mUmpWodiM90wC2SzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CvwX/Aq7; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e549b0f8d57so89310276.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 17:12:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741223531; x=1741828331; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eQ+iqukiSlMLeu8kSd6ydP0HqsHZUGYTz4P9o72wMC4=;
-        b=Oltz7y2tGSk4ldAVdJ2WwYzVqZcp1tYoGdqhINoOEml+NLIeK0OdJZD6Fjt19KVSVJ
-         4K4Raj0Kgo8w+/t+ISsOmgbs0+5QioiFJ3zD3AEKRXNe5qbCfmAH+7bKqv8ZYhyjdn7g
-         g1DvaT5NvSMs4J5Ioo7Nk2+0UjHNSezrBxDoODdY689F3YDfjGJeQWJC9Wx56lBXCU9X
-         Lx0a+u9Lbp2tiiMMtT5Lzi4L/Wx3SILqDSTILT9zxHHaH1+tvP5z6tNb41mnYXTI12cB
-         0SGIPsC7iq5ogjei/XJqtW0Ijwk3IOeROv6x9XO6cJ7hydLT/msMh2FOvu1uzAaj9D3Z
-         Mxzw==
+        d=paul-moore.com; s=google; t=1741223570; x=1741828370; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ns9OcNLiPQZ46N5SAy+lKQOOPBlD1bg4YL1QETokjIw=;
+        b=CvwX/Aq7UGvh8jKF6amc8L4Pjg9vIASGNnPFQjiOrAY64bsl/bjq5hsENfPkoWOvBV
+         bAUDCN6FkW10z5OU3AHzF4I8P3TZrYGLkIC/wRKaZDdwv7zwOIMDroPhLNO8fpBF6iYE
+         FQvmI6sRSc1SmaD3hsW1pcMuoEl5zWH7+NGxZAX4RjINKp9ZsU25e1fc0FR0YByEWfuD
+         EO0YuKeJHGRVMyIoJseCdaFMhYvY7qWCOkNWNSvnfrcPOV1oHtOgWPXagbgOxdZ1JPvR
+         pcaQ8VUX71UTUBQmg7drw5wC6cqip27x1vIG+C3Lxn9/fKiRO1+TdCfdQo4bAI1IUrku
+         UGUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741223531; x=1741828331;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eQ+iqukiSlMLeu8kSd6ydP0HqsHZUGYTz4P9o72wMC4=;
-        b=PiqJi2F/ubvuqlgrIHWklBwXIBAbuIcjw7b93zZUWwmjxGknQOj8nDvjmsW1brc60n
-         A6jh4JuhSh8foixfyBKwb3w4iCt7LWBODKkZtggvvbK4j/vp9AekYeDfd0+Xynwp4XOI
-         DVy8bNpYvpzI4kWC4AGslbVzgfQ72SL1ICoQZaFHORqtpLCkbhuoFg+ZCFCkyQVTU2Sq
-         03yE7wbcFfqcFseH42oVu+7oN22hHVIyqv1mIgirBb+7C6KrCKXobIQufhTl159vxdvJ
-         WYDgqP1905dP62WNI7iltLjc3sBOXjsdw/wXOJr4+pQSBOq/hMa83K9eB40Ti9tjamyW
-         iOcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVA6zwQQaaxpLDJ5MFG4b3PTz9MHsInG9q25oUacZi9CPBZm73pQZti5sRnfZ2LDD9RsXg5q3WUWWYViBE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyE7Dc2+iok21PuoBV5KowRnwENU4fo6PKetAllG1ChEf19v55t
-	RjC10pP5ZFdoWK2pEdSMwZDF9FXIa/SAq7/elVskd/MoHYnOiv2MlBMclIMM8vE=
-X-Gm-Gg: ASbGncvkrIVVw43RVCs9doY9SAzkXNtjBI7oELVb+GGMqxsY+cOsFVyTmdDvm2yw70s
-	Sr5KpMKXzEOVYSUf6sWzyT5+dPhBvBfepcmTLJtzcOmYkUn1hFUOZIuLcZogPoQy0bgwFj1i9Mj
-	VdGaFJmdE8yRQ9JNtngoGY8T7KeRqjPtU+894TGstn4owRtrSHtY47vfE12sKn/EolJjxU+uhZj
-	PZ4D0BzxII/w7gg0vSgJ33RWG8MRdzHR+O55ay6J5Uo0+MN89cjCiW4728goh7e8WXYttc79fxC
-	wWvMKJvbiECS7sLWLQ5+tdjhJuY2YYCfjMXwzZYLPLhRpIih5hNsIFjgzDJXDH8JdKq3Q1PbuLX
-	q3nhuRBb0TA==
-X-Google-Smtp-Source: AGHT+IHKxmZHEuQ99hkkG0TUhCpLtqRQ2jcyh6L2PyQhB1NnKBtw7TcNNfosP2ySPRu7Ae0J8pjZLQ==
-X-Received: by 2002:a05:6000:2703:b0:391:9b2:f48d with SMTP id ffacd0b85a97d-3911f7706fbmr3732068f8f.33.1741223531434;
-        Wed, 05 Mar 2025 17:12:11 -0800 (PST)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c103f41sm199146f8f.85.2025.03.05.17.12.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 17:12:11 -0800 (PST)
-Message-ID: <8c96d87a-b31a-40a5-880a-242542806f7b@linaro.org>
-Date: Thu, 6 Mar 2025 01:12:10 +0000
+        d=1e100.net; s=20230601; t=1741223570; x=1741828370;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Ns9OcNLiPQZ46N5SAy+lKQOOPBlD1bg4YL1QETokjIw=;
+        b=FKMbzlljnxcNHJullckwLf9/tL5Af+chobHmPlnc38VmDbJMBAueIwy5iRlGmP9y5r
+         EBdQlK8yHXoGFL30WN0tGcfdwujmVbz/PBL12RJ/gHVmLwt7yL5vUFhAs7vDV0UqCtUW
+         SXl70vlLv5BZKZBkVxO7syRanysFRZFTbqkxrh/idvsAn0ryCcBhvLBGuPsEeM5ctMag
+         oNIih4SAvTFbH5uyyPHpTh7+nDPjeVEml2gxm7HO4pwHVDfhXU6xJdjmseYPZZIxQlFl
+         nzLC6bRQRyjS3PKc++HQYe1ZCbFxpL1+dMMvXfVYU8hbjSi4xmfhLsCHimbysq/n+ipN
+         bpqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLkuDHWXad3Do5Z7aj+KlTQBUR4LpRzm5gOMDo+7fJPpB1XVeyzz0DyDO0sZ3ZDU04XBGdD20Wdbjn8Qg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLDrb1WNqE92NmYRDrPqKvORpAjxFRMxCFNWXS/eRB1It8cSlD
+	4ZodZNWDL7nH/LiWFCyYERP6Xw5puPQwSfVPHp3NsYAWupkRF5Ec2VdSHQc+6ecWE0W/8f+EuOs
+	T8jwk4PFe48g5fg0q4VWroX8J0Pz5ix6++xU4
+X-Gm-Gg: ASbGncuanvcJmm9OFhOEhzrn5NmV0k7fJMPSu3seRoVVEVvw9vrcRPwtq8ulQgzkr/T
+	ukNcMXZs8Vq5TDrnKdX/A1J9h7lIAnJoYp+jDUPbgf7onepOa4LuZ6uTeyyYgG0/1yRfcouSnzM
+	jXT65o83pACv9pw/gPPKVIdWTeRQ==
+X-Google-Smtp-Source: AGHT+IF7pO968cQESwSx4d3Cse0SeXvFnLRkVRGiC/k9GOy1btAF+uyGL5ue4Dp5VeWQu3Cdo1ybcXgzsv8nGNGFq8o=
+X-Received: by 2002:a05:6902:2a4a:b0:e5d:dcc5:59bc with SMTP id
+ 3f1490d57ef6-e611e308b67mr7715694276.39.1741223570094; Wed, 05 Mar 2025
+ 17:12:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 07/12] media: iris: Add handling for corrupt and drop
- frames
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>, quic_vgarodia@quicinc.com,
- quic_abhinavk@quicinc.com, mchehab@kernel.org
-Cc: hverkuil@xs4all.nl, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250305104335.3629945-1-quic_dikshita@quicinc.com>
- <20250305104335.3629945-8-quic_dikshita@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20250305104335.3629945-8-quic_dikshita@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+ <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
+ <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com> <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
+ <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
+ <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com> <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
+ <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
+ <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
+ <CAHC9VhTz6U5rRdbJBWq0_U4BSKTsiGCsaX=LTgisNNoZXZokOA@mail.gmail.com>
+ <FD501FB8-72D2-4B10-A03A-F52FC5B67646@oracle.com> <CAHC9VhR961uTFueovLXXaOf-3ZAnvQCWOTfw-wCRuAKOKPAOKw@mail.gmail.com>
+ <73B78CE7-1BB8-4065-9EBA-FB69E327725E@oracle.com> <CAHC9VhRMUkzLVT5GT5c5hgpfaaKubzcPOTWFDpOmhNne0sswPA@mail.gmail.com>
+ <1A222B45-FCC4-4BBD-8E17-D92697FE467D@oracle.com>
+In-Reply-To: <1A222B45-FCC4-4BBD-8E17-D92697FE467D@oracle.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 5 Mar 2025 20:12:39 -0500
+X-Gm-Features: AQ5f1Jodn7KbI0UIW2OdnLduODjPaSZfEKxzP8aA2XiHbTTB_Svl7vi4QeubrRI
+Message-ID: <CAHC9VhTObTee95SwZ+C4EwPotovE9R3vy0gVXf+kATtP3vfXrg@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
+To: Eric Snowberg <eric.snowberg@oracle.com>
+Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
+	Jarkko Sakkinen <jarkko@kernel.org>, 
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
+	David Woodhouse <dwmw2@infradead.org>, 
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
+	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, 
+	"ebiggers@kernel.org" <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 05/03/2025 10:43, Dikshita Agarwal wrote:
-> Firmware attach DATACORRUPT/DROP buffer flags for the frames which
-> needs to be dropped, handle it by setting VB2_BUF_STATE_ERROR for these
-> buffers before calling buf_done.
-> 
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> ---
->   drivers/media/platform/qcom/iris/iris_buffer.c        | 11 ++++++++---
->   .../media/platform/qcom/iris/iris_hfi_gen1_defines.h  |  2 ++
->   .../media/platform/qcom/iris/iris_hfi_gen1_response.c |  6 ++++++
->   3 files changed, 16 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
-> index 305b630ca269..e5180340383b 100644
-> --- a/drivers/media/platform/qcom/iris/iris_buffer.c
-> +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
-> @@ -603,10 +603,13 @@ int iris_vb2_buffer_done(struct iris_inst *inst, struct iris_buffer *buf)
->   
->   	vb2 = &vbuf->vb2_buf;
->   
-> -	if (buf->flags & V4L2_BUF_FLAG_ERROR)
-> +	if (buf->flags & V4L2_BUF_FLAG_ERROR) {
->   		state = VB2_BUF_STATE_ERROR;
-> -	else
-> -		state = VB2_BUF_STATE_DONE;
-> +		vb2_set_plane_payload(vb2, 0, 0);
-> +		vb2->timestamp = 0;
-> +		v4l2_m2m_buf_done(vbuf, state);
-> +		return 0;
-> +	}
->   
->   	vbuf->flags |= buf->flags;
->   
-> @@ -626,6 +629,8 @@ int iris_vb2_buffer_done(struct iris_inst *inst, struct iris_buffer *buf)
->   			v4l2_m2m_mark_stopped(m2m_ctx);
->   		}
->   	}
-> +
-> +	state = VB2_BUF_STATE_DONE;
->   	vb2->timestamp = buf->timestamp;
->   	v4l2_m2m_buf_done(vbuf, state);
->   
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_defines.h b/drivers/media/platform/qcom/iris/iris_hfi_gen1_defines.h
-> index 3bea643068f9..bfeeea643300 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_defines.h
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_defines.h
-> @@ -119,6 +119,8 @@
->   #define HFI_FRAME_NOTCODED				0x7f002000
->   #define HFI_FRAME_YUV					0x7f004000
->   #define HFI_UNUSED_PICT					0x10000000
-> +#define HFI_BUFFERFLAG_DATACORRUPT			0x00000008
-> +#define HFI_BUFFERFLAG_DROP_FRAME			0x20000000
->   
->   struct hfi_pkt_hdr {
->   	u32 size;
-> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
-> index b72d503dd740..91d95eed68aa 100644
-> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
-> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
-> @@ -481,6 +481,12 @@ static void iris_hfi_gen1_session_ftb_done(struct iris_inst *inst, void *packet)
->   	buf->attr |= BUF_ATTR_DEQUEUED;
->   	buf->attr |= BUF_ATTR_BUFFER_DONE;
->   
-> +	if (hfi_flags & HFI_BUFFERFLAG_DATACORRUPT)
-> +		flags |= V4L2_BUF_FLAG_ERROR;
-> +
-> +	if (hfi_flags & HFI_BUFFERFLAG_DROP_FRAME)
-> +		flags |= V4L2_BUF_FLAG_ERROR;
-> +
->   	buf->flags |= flags;
->   
->   	iris_vb2_buffer_done(inst, buf);
+On Wed, Mar 5, 2025 at 4:30=E2=80=AFPM Eric Snowberg <eric.snowberg@oracle.=
+com> wrote:
+> > On Mar 4, 2025, at 5:23=E2=80=AFPM, Paul Moore <paul@paul-moore.com> wr=
+ote:
+> > On Tue, Mar 4, 2025 at 9:47=E2=80=AFAM Eric Snowberg <eric.snowberg@ora=
+cle.com> wrote:
+> >>> On Mar 3, 2025, at 3:40=E2=80=AFPM, Paul Moore <paul@paul-moore.com> =
+wrote:
+> >>> On Fri, Feb 28, 2025 at 12:52=E2=80=AFPM Eric Snowberg <eric.snowberg=
+@oracle.com> wrote:
+> >>>>> On Feb 28, 2025, at 9:14=E2=80=AFAM, Paul Moore <paul@paul-moore.co=
+m> wrote:
+> >>>>> On Fri, Feb 28, 2025 at 9:09=E2=80=AFAM Mimi Zohar <zohar@linux.ibm=
+.com> wrote:
+> >>>>>> On Thu, 2025-02-27 at 17:22 -0500, Paul Moore wrote:
+> >>>>>>>
+> >>>>>>> I'd still also like to see some discussion about moving towards t=
+he
+> >>>>>>> addition of keyrings oriented towards usage instead of limiting
+> >>>>>>> ourselves to keyrings that are oriented on the source of the keys=
+.
+> >>>>>>> Perhaps I'm missing some important detail which makes this
+> >>>>>>> impractical, but it seems like an obvious improvement to me and w=
+ould
+> >>>>>>> go a long way towards solving some of the problems that we typica=
+lly
+> >>>>>>> see with kernel keys.
+> >>>>
+> >>>> The intent is not to limit ourselves to the source of the key.  The =
+main
+> >>>> point of Clavis is to allow the end-user to determine what kernel ke=
+ys
+> >>>> they want to trust and for what purpose, irrespective of the origina=
+ting
+> >>>> source (.builtin_trusted, .secondary, .machine, or .platform). If we=
+ could
+> >>>> go back in time, individual keyrings could be created that are orien=
+ted
+> >>>> toward usage.   The idea for introducing Clavis is to bridge what we
+> >>>> have today with kernel keys and allow them to be usage based.
+> >>>
+> >>> While it is unlikely that the current well known keyrings could be
+> >>> removed, I see no reason why new usage oriented keyrings could not be
+> >>> introduced.  We've seen far more significant shifts in the kernel ove=
+r
+> >>> the years.
+> >>
+> >> Could you further clarify how a usage oriented keyring would work?  Fo=
+r
+> >> example, if a kernel module keyring was added, how would the end-user
+> >> add keys to it while maintaining a root of trust?
+> >
+> > Consider it an exercise left to the reader :)
+> >
+> > I imagine there are different ways one could do that, either using
+> > traditional user/group/capability permissions and/or LSM permissions,
+> > it would depend on the environment and the security goals of the
+> > overall system.
+>
+> These keys are used by the Lockdown LSM to provide signature
+> validation.
+>
+> I realize the contents that follow in this paragraph is outside the
+> boundary of mainline kernel code.  Every distro that wants their
+> shim signed must explain how their kernel enforces lockdown
+> mode.  The minimum requirement is lockdown in integrity mode.
+> Also, the expectation is lockdown enforcement continues on
+> through a kexec.
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+I personally find it very amusing the UEFI Secure Boot shim is reliant
+on an unmaintained and only marginally supported LSM, Lockdown.  Has
+anyone recently verified that Lockdown's protections are still intact
+and comprehensive enough to be worthwhile?  Sorry, this is a bit of a
+digression, but since you were the one to bring up Lockdown I thought
+it would be important to mention that I don't have much faith that it
+is still working to the same level as it originally was intended.  I
+have a TODO list item to draft a policy around deprecating
+unmaintained LSMs after an extended period of time, and once that is
+in place if we don't have a qualified maintainer for Lockdown it will
+likely fall into the deprecation process (whatever that may be).
+
+> When in lockdown integrity mode, features that allow the kernel
+> to be modified at runtime are disabled.  How would what you have
+> suggested above adhere to these goals?
+
+For starters, verify that Lockdown is still comprehensive enough to
+satisfy these requirements on a modern Linux kernel.  After that has
+been done, find someone with some kernel experience to step up and
+maintain Lockdown.  Finally, put a mechanism in place so that
+someone/something is regularly evaluating changes in the upstream
+kernel to ensure that Lockdown is still able to achieve its security
+goals.
+
+After all that, then you can start worrying about keys.
+
+> The point of the Clavis LSM is to use the root of trust provided to
+> the kernel prior to it booting. This maintains the lockdown integrity
+> goals, while also giving the end-user the ability to determine how
+> kernel keys are used.
+
+--=20
+paul-moore.com
 
