@@ -1,48 +1,47 @@
-Return-Path: <linux-kernel+bounces-549630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10892A554C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:21:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88700A554C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:21:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B46217123A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:19:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 793E817328B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0EC9272932;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3ABA274260;
 	Thu,  6 Mar 2025 18:18:26 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6F626BDB6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CB926FD9E
 	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 18:18:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741285105; cv=none; b=Ev4V4CVF5KDdTkjAx8t8XvRAI20+6ORvOVJuV38s5dgez1BNkEarnn0bmB4SwA2MRbE0ZuT8G0qYmCgaejbOvA7q0nJ8y6ULcvS9/63+w9PcW2QajCctDl0sVngmsftdBv1YOUjvPO0ZNXrxtYogOEcnJ5LyPVFhbbWuUxuHJSk=
+	t=1741285105; cv=none; b=b9LVOHRLz46LCmyWnFMDWU75lTwR+EXy7t+t9w7Ot8nzlgXFWlyudiRa9OW5T2kL9fz5pXe6LFl+hEFzskK+uMZOqREjSIafqS/CSXpXBcoEE/7eo0cDRa6d+rGx337cNBEk7cM/o96LadyKC1Nfq1BwatmN/K2lTJLSJLXO7g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741285105; c=relaxed/simple;
-	bh=v29x7EAwZPqoODWj0J0BoDwxSmS05cdGsVA/4rz39mc=;
+	bh=fVbKN+wjjZ4pr7g4zo/O6vgNWA/C+DXje8FsI14Fxt8=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=d7ILSEzrPYx9UEPITF2XBAZ3fTtyjW4p7sdW/0IMQxMvGN7rjzYRqPL7LAeb90YkUQ8GQNOrnwUkC7EZ9dOM4EyjERU61+KlFB4tTmSb1jGzonwanY2dukNFdy9klMi+acUVZPlc899GsQ2Z5SBENEWqqb8apUO7ScZvM1cG+Ko=
+	 Content-Type; b=oAZuvIHN6FIRvwW1+3yX8hTUG2xNodzQLaDi3D1LslIOwmHuTdwsB1Tsj6IiolD5CYsJERzTLkpdo/OwjBXZ9TmhBaWYXplovFECmTZB2VmXlJpwEqXW1uAetMhiqYziSzo+9RoFxpIGwsQ3WDpgj3ZFXrDaYj4iQ6XqXckGO6s=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0AA79C4CEE9;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D7A2C4CEEA;
 	Thu,  6 Mar 2025 18:18:25 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1tqFne-00000000PJ6-39y3;
+	id 1tqFne-00000000PJc-3o1T;
 	Thu, 06 Mar 2025 13:18:26 -0500
-Message-ID: <20250306181826.611132861@goodmis.org>
+Message-ID: <20250306181826.773344269@goodmis.org>
 User-Agent: quilt/0.68
-Date: Thu, 06 Mar 2025 13:18:09 -0500
+Date: Thu, 06 Mar 2025 13:18:10 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Tomas Glozar <tglozar@redhat.com>,
  John Kacur <jkacur@redhat.com>,
  Luis Goncalves <lgoncalv@redhat.com>,
- Gabriele Monaco <gmonaco@redhat.com>,
- Clark Williams <williams@redhat.com>
-Subject: [for-next][PATCH 08/10] rtla/timerlat: Test BPF mode
+ Gabriele Monaco <gmonaco@redhat.com>
+Subject: [for-next][PATCH 09/10] tools/rv: Keep user LDFLAGS in build
 References: <20250306181801.485766945@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -54,55 +53,44 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Tomas Glozar <tglozar@redhat.com>
 
-Using the RTLA_NO_BPF environmental variable, execute rtla-timerlat
-tests both with and without BPF support to cover both paths.
+rv, unlike rtla and perf, drops LDFLAGS supplied by the user and honors
+only EXTRA_LDFLAGS. This is inconsistent with both perf and rtla and
+can lead to all kinds of unexpected behavior.
 
-If rtla is built without BPF or the osnoise:timerlat_sample trace event
-is not available, test only the non-BPF path.
+For example, on Fedora and RHEL, it causes rv to be build without
+PIE, unlike the aforementioned perf and rtla:
+
+$ file /usr/bin/{rv,rtla,perf}
+/usr/bin/rv:   ELF 64-bit LSB executable, ...
+/usr/bin/rtla: ELF 64-bit LSB pie executable, ...
+/usr/bin/perf: ELF 64-bit LSB pie executable, ...
+
+Keep both LDFLAGS and EXTRA_LDFLAGS for the build.
 
 Cc: John Kacur <jkacur@redhat.com>
 Cc: Luis Goncalves <lgoncalv@redhat.com>
 Cc: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Clark Williams <williams@redhat.com>
-Link: https://lore.kernel.org/20250218145859.27762-9-tglozar@redhat.com
+Link: https://lore.kernel.org/20250304142228.767658-1-tglozar@redhat.com
+Fixes: 012e4e77df73 ("tools/verification: Use tools/build makefiles on rv")
 Signed-off-by: Tomas Glozar <tglozar@redhat.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- tools/tracing/rtla/tests/timerlat.t | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ tools/verification/rv/Makefile.rv | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/tracing/rtla/tests/timerlat.t b/tools/tracing/rtla/tests/timerlat.t
-index e86f40e5749e..e939ff71d6be 100644
---- a/tools/tracing/rtla/tests/timerlat.t
-+++ b/tools/tracing/rtla/tests/timerlat.t
-@@ -4,7 +4,20 @@ source tests/engine.sh
- test_begin
+diff --git a/tools/verification/rv/Makefile.rv b/tools/verification/rv/Makefile.rv
+index 161baa29eb86..2497fb96c83d 100644
+--- a/tools/verification/rv/Makefile.rv
++++ b/tools/verification/rv/Makefile.rv
+@@ -27,7 +27,7 @@ endif
  
- set_timeout 2m
-+timerlat_sample_event='/sys/kernel/tracing/events/osnoise/timerlat_sample'
+ INCLUDE		:= -Iinclude/
+ CFLAGS		:= -g -DVERSION=\"$(VERSION)\" $(FOPTS) $(WOPTS) $(EXTRA_CFLAGS) $(INCLUDE)
+-LDFLAGS		:= -ggdb $(EXTRA_LDFLAGS)
++LDFLAGS		:= -ggdb $(LDFLAGS) $(EXTRA_LDFLAGS)
  
-+if ldd $RTLA | grep libbpf >/dev/null && [ -d "$timerlat_sample_event" ]
-+then
-+	# rtla build with BPF and system supports BPF mode
-+	no_bpf_options='0 1'
-+else
-+	no_bpf_options='1'
-+fi
-+
-+# Do every test with and without BPF
-+for option in $no_bpf_options
-+do
-+export RTLA_NO_BPF=$option
- check "verify help page" \
- 	"timerlat --help"
- check "verify -s/--stack" \
-@@ -23,5 +36,6 @@ check "verify -c/--cpus" \
- 	"timerlat hist -c 0 -d 30s"
- check "hist test in nanoseconds" \
- 	"timerlat hist -i 2 -c 0 -n -d 30s"
-+done
- 
- test_end
+ INSTALL		:= install
+ MKDIR		:= mkdir
 -- 
 2.47.2
 
