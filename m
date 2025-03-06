@@ -1,88 +1,48 @@
-Return-Path: <linux-kernel+bounces-549604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8639A5548F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:15:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEE65A55494
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:16:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C0F73B4F4B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:11:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24FFF3B8143
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760372139CD;
-	Thu,  6 Mar 2025 18:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D246126B08A;
+	Thu,  6 Mar 2025 18:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qWy2UugF"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nbs7AZZC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20861198E63
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 18:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24757269AE8;
+	Thu,  6 Mar 2025 18:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741284678; cv=none; b=dSmrW4MvgwYsGb04E8C43xSvJwCpZT2q6plqKSVoF7zLCxQ2QfwUIaE5KX9YBaFeNylXkYpzxyex7sjJqzzkm+socmfYZEFvug4OfMIHj8vGo/UoXjHFnpWq/kATARJJXDDC2OP/RHd43y85uRwTz+M6UKkuYUel+YYApgGM0zo=
+	t=1741284689; cv=none; b=uhdTVlYBIbvx26rCSJcdbpds8+coluMK5vFarz16sQLlohgldg0fUD1Fg0wbSurez1iolwUH8ni70MnyBwmH7ieOio1AlKJ+q3yQW+hxp0UzyDBr0B/zzGmwAhjpNxqFmr/2nJCg5iXCE3mmbIEdN5l5KqV7rjvnqrsrwIeozfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741284678; c=relaxed/simple;
-	bh=JbH8xjfsf6P7OmD9axfTwXfSPdYjRzKgiAuZzz5MlcU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=beodYGusAnXIAO8sWx2WQYtOckl21EDahs+Lq4m7xa5BM7cqdLB4ntoj+iV5VM0oBYGdcLiZYyvWtIfbn7CI60UY83aIopSY2yPbI4xLVlCgu+XtH1qkY0GnnsWE2yiHbRbrbifRgTt+r/0OPQYeMLKyvZaKbAt2G8VuZHbMiqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qWy2UugF; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43bca8cabc8so901035e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 10:11:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741284674; x=1741889474; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1AnLds6lWEOgctovP8rZZIFlWYH7eclRkLDrgHTySwE=;
-        b=qWy2UugF1tUw8XPDYhoHYbJrl0VOPngWhUtJ5xH+7o6fmMcFqmJteyg7MoWekPmjpe
-         Ch0Xo8SF3N51fyqdn5fAUEZopgiT2PBuKrROUTyLNfJcktapgs2f31kkgDNZ4Ahn9nx2
-         RPlJ++L22oSc4MiIv2dY6NgDbWbvkqf2ITqMXbzPGfAVm37f3kz41msk9jEhzH1pswK2
-         RK4RXceUXLS3gHPZVE3WkzekX/G1+ciDEDvD2kSXCFGFD0MbGkaqXEoCXl8C6MsxuawJ
-         7pWLWW0zUzueVBBSZFD/rMhRxMW+0ZL/ygPVvJ4nJEGXKGc7g7K0kTh70I+oNxKQc8eR
-         VF+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741284674; x=1741889474;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1AnLds6lWEOgctovP8rZZIFlWYH7eclRkLDrgHTySwE=;
-        b=b9/Cnef7CVUm7kgDKqtkb99sDa6PUQV5FcvGCvIJ5W4s3OfPgnIP/73ijpYwxcaCKy
-         aSVTJ6cQEhgPGuCJMJxFS+l+63rGQqlYg6ZFlT9iZY0T3XmAyqFcGZowFAjp+69k+qnR
-         pEOqCNeYZksmulRDaRlPVvnWFS18bcQGI1qqWKp/NZMvsZg67/WN5OV5XjmV183Szz45
-         xTd0zfBPYacIiv0UoVwQqFXCUVmcrPsEPmuPNWEeqduDVH/ebuTVnH2ysczS0g+uYfV0
-         yOdTlGna4sJDPGpp/DFnDfNVpABdjZ77Ey4aGkjzd+lB0C1Rsqp4dFiXIt6CTc2zdy2q
-         /ZXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXayeUcFg2pPq/sNhGdATJNy0CvmuyQweOvI9xJBRhN/RaacaV24B5OnOQyXOih0f7xnbkDRvBvoqYzHDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRdDE2y5ZaZCty3NMZRxzGARXx+aAuMpqgjFNqCL6H344hAnup
-	E84w3g2apX/kqYdHxKM3SObxuXJ4QK4slE+sMgAQWWXSEH2kyKfGpNasKEne04A=
-X-Gm-Gg: ASbGncvPFMN5rXuIWY5ML95dndlB6+jZ5Vb54rXfH51tP8PIZ5LFX2C+UuyfaGLvzjB
-	RDh+x/w9jpaiBTvWGtHudu5U4yqUTlFB6sli/KD7nKCtz41Z+/HriDNVLfkSn5krMdinadynddN
-	k02kj832zYpaU6emCu48G/aIEDNs/IwiyRgdVMhcZLDaYKCSQ2trD+w0P2w7/SJItLTSRAtWHzp
-	5ob1rbvNBeQxyaYfI8YdB4aEhQwhGeVIKwMmolxUQ8oWCwSFBi/HR4FO4/uYDOZlG1b5Gj6NaTB
-	648jNEafl1lMDBh6F+TAKYwjQNAL3fzp5f/LWTD/0oSd1DtJSiWbGoWM8Zvh
-X-Google-Smtp-Source: AGHT+IFFRvwmZacRwHe9yk3mbn6KEKhfILWjskick/fV1fIsJkk5zhEz8ZiB5cRx3bewoTl4Sqa/eA==
-X-Received: by 2002:a5d:6d8c:0:b0:38e:48a6:280f with SMTP id ffacd0b85a97d-39132d93f92mr48151f8f.9.1741284674274;
-        Thu, 06 Mar 2025 10:11:14 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c1027d3sm2716967f8f.83.2025.03.06.10.11.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 10:11:13 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Arnd Bergmann <arnd@kernel.org>
-Cc: soc@kernel.org, Arnd Bergmann <arnd@arndb.de>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250305211446.43772-1-arnd@kernel.org>
-References: <20250305211446.43772-1-arnd@kernel.org>
-Subject: Re: [PATCH] soc: samsung: include linux/array_size.h where needed
-Message-Id: <174128467279.252750.12742713284242817976.b4-ty@linaro.org>
+	s=arc-20240116; t=1741284689; c=relaxed/simple;
+	bh=bU5AMb4R/DshyEbA+d2oRecQTp/i83dn8rpMf9Jrb6A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ZMiV8SK1Lf2koSe9TGA2JktdwmTlT+8RIrn/DGr8LkJ6yGT77UqFjaXKSP+KJiNsjnDncxuRMFM0luC4CeedFZe4cMBw+aDZqvK4PFNQCbZnK7I+fpvgxAXQaCMvGF2y1r9wlAOAqnnA6aIipoTygljWETMku1bB1db2kL8EoO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nbs7AZZC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E160C4AF09;
+	Thu,  6 Mar 2025 18:11:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741284688;
+	bh=bU5AMb4R/DshyEbA+d2oRecQTp/i83dn8rpMf9Jrb6A=;
+	h=From:Subject:Date:To:Cc:From;
+	b=nbs7AZZCIkCccljjMQDL/BvTJZTZy6Ke5hFijBsumz7BWz7iuuJxLEnp/DFPoo0El
+	 onvgGJxI6I0pEhgCx31vb/4yhxmUE3+fYLnMYSxo3UYeaFBHIZEwtpsx3t3ZuSUgbp
+	 8CGszMKKT/mTgc0AWFEa4bIoUdM9wKvUg0ovVzSfOVCh2OqUNNcfN/nRVw6NY+2/AC
+	 2rRRlPrD1pnfhqNpkv25bXQnW8pZc9Aaw7CCB2xMtYqVJ6jzXqOyO620TQQ5S7DmZh
+	 dZX4wVQmnEpFuXJugOoJBHd5Ex/9DBc9S/YyRnwSJd9WNEmhJHJmwZ/8+31oPVB8XA
+	 qzVDw6YroewUA==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Subject: [PATCH 00/11] Various dt-bindings fixes
 Date: Thu, 06 Mar 2025 19:11:12 +0100
+Message-Id: <20250306-topic-dt_bindings_fixups-v1-0-0c84aceb0ef9@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,28 +51,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEDlyWcC/x2MQQqAIBAAvxJ7TjBNg74SEaWb7cXErQiivycdh
+ 2HmAcZMyNBXD2S8iGmPBZq6ArfNMaAgXxiUVEZqacWxJ3LCH9NC0VMMPK10n4mFlcq3ndNOWwM
+ lTxmL+dfD+L4fgdDHYmoAAAA=
+X-Change-ID: 20250306-topic-dt_bindings_fixups-602d47c3c365
+To: Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>, 
+ Robin Murphy <robin.murphy@arm.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ Robert Foss <rfoss@kernel.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Wesley Cheng <quic_wcheng@quicinc.com>, 
+ Christian Marangi <ansuelsmth@gmail.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Rohit Agarwal <quic_rohiagar@quicinc.com>, 
+ Kyle Deng <quic_chunkaid@quicinc.com>, Vinod Koul <vkoul@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, iommu@lists.linux.dev, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-usb@vger.kernel.org, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741284679; l=1852;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=bU5AMb4R/DshyEbA+d2oRecQTp/i83dn8rpMf9Jrb6A=;
+ b=Rbjc8lynnoqJxMnMySspJrBir6TO0ftRb/hlYhjDyLT0lbuTVzPYrkP9kJkNdvrmrF5sSirOY
+ OpJClHeQ7/8BgUFoYoOiD3hVI7w1qyfUua0bCJfHAswnznxd0oDPZ94
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
+A set of not quite related bindings warnings fixes.
 
-On Wed, 05 Mar 2025 22:14:02 +0100, Arnd Bergmann wrote:
-> This does not necessarily get included through asm/io.h:
-> 
-> drivers/soc/samsung/exynos3250-pmu.c:120:18: error: use of undeclared identifier 'ARRAY_SIZE'
->   120 |         for (i = 0; i < ARRAY_SIZE(exynos3250_list_feed); i++) {
->       |                         ^
-> drivers/soc/samsung/exynos5250-pmu.c:162:18: error: use of undeclared identifier 'ARRAY_SIZE'
->   162 |         for (i = 0; i < ARRAY_SIZE(exynos5_list_both_cnt_feed); i++) {
->       |                         ^
-> 
-> [...]
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+Konrad Dybcio (11):
+      dt-bindings: iommu: qcom,iommu: Add optional TBU clock
+      dt-bindings: display: msm: sm8350-mdss: Describe the CPU-CFG icc path
+      dt-bindings: power: qcom,kpss-acc-v2: Add MSM8916 compatible
+      arm64: dts: qcom: msm8916: Fix KPSS ACC compatible
+      arm64: dts: qcom: sdx75: Fix up the USB interrupt description
+      arm64: dts: qcom: sdx75: Rename AOSS_QMP to power-management
+      arm64: dts: qcom: qcs615: Rename AOSS_QMP to power-management
+      arm64: dts: qcom: sc8180x: Rename AOSS_QMP to power-management
+      arm64: dts: qcom: x1e80100-dell-xps13-9345: Drop clock-names from PS8830
+      arm64: dts: qcom: x1e80100-romulus: Drop clock-names from PS8830
+      arm64: dts: qcom: x1e001de-devkit: Drop clock-names from PS8830
 
-Applied, thanks!
-
-[1/1] soc: samsung: include linux/array_size.h where needed
-      https://git.kernel.org/krzk/linux/c/4c57930f68d90e0d52c396d058cfa9ed8447a6c4
+ .../bindings/display/msm/qcom,sm8350-mdss.yaml           |  6 +++++-
+ Documentation/devicetree/bindings/iommu/qcom,iommu.yaml  |  4 ++++
+ .../devicetree/bindings/power/qcom,kpss-acc-v2.yaml      |  4 +++-
+ arch/arm64/boot/dts/qcom/msm8916.dtsi                    |  8 ++++----
+ arch/arm64/boot/dts/qcom/qcs615.dtsi                     |  2 +-
+ arch/arm64/boot/dts/qcom/sc8180x.dtsi                    |  2 +-
+ arch/arm64/boot/dts/qcom/sdx75.dtsi                      | 16 +++++++++-------
+ arch/arm64/boot/dts/qcom/x1e001de-devkit.dts             |  3 ---
+ arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts    |  2 --
+ arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi |  2 --
+ 10 files changed, 27 insertions(+), 22 deletions(-)
+---
+base-commit: 565351ae7e0cee80e9b5ed84452a5b13644ffc4d
+change-id: 20250306-topic-dt_bindings_fixups-602d47c3c365
 
 Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
