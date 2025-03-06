@@ -1,253 +1,180 @@
-Return-Path: <linux-kernel+bounces-549193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE8DA54EE3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:25:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F13A54EEB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:26:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DBE73AE8A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:25:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C94C3B3358
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 453B020E016;
-	Thu,  6 Mar 2025 15:25:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067CD20E6F6;
+	Thu,  6 Mar 2025 15:25:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="LL3Rc0r2"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="nVW6BriQ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EDF51898F8
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 15:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6061898F8;
+	Thu,  6 Mar 2025 15:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741274712; cv=none; b=IreyICTN/bxuquSq04WvhkY70lhUffS6/tUY1eadDr4pyzHaC//dbLRXUqehi1nhOzWdfxnwaOCKPcVqBuAp45s6tSe2yZCnZBPL1RorF6gr3ayvuYkuX/pQdIytgV20OcZSu0bitUlDYMeeJWEYPKycHgawSu/R03VJ+qZWweE=
+	t=1741274751; cv=none; b=G/IXBvQu9FpK17uEVpXwkJlxpsjicpRYusOtcnaChh1TBEZyUwa15DogqkdnPQRqc6DcX4QFJfJvpDcMWudJvmOtK343zADVWEMDyD4rdekfZwJDtMHVhzXBoHf54umZ08mM45LYp5iKFTRL8r45h/1yBVZR6ZCV1x+WQ+K5AzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741274712; c=relaxed/simple;
-	bh=rxGcKYRPAvXxIoJan/V3AndTkZ5ib1DzUvC5fkxlMTE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i+IJRYDR2jUjnhdW1JzMFc7ZgHGwjxTLsUj+5l22KVRRf13jblsF/AZXiQkN3WwJuBaM+a/31Gekac4oS2/x/xXdDs9X3Oh3lrWfBlmc2VpqtQ1PC7Bd9F6JKBP7vt32yIEPbm7EBmCT/LOoKENi0m/zHfJZ1cKMY86vUCEqoTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=LL3Rc0r2; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5498c742661so729986e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 07:25:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1741274709; x=1741879509; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yuhLx7uX7YSSKB6DQP0bKdym3whun2vLyOsmh+SSpJM=;
-        b=LL3Rc0r2HIl/Uj26t2VZ+HF00TloJ9ynUTXN3e1jDdUAfykUa/ykjrPFejU4sjz7ny
-         Sj/akkF8f64RfnWfi4B+R9qmUPTYQs5I6cUBHN82tdNU6AT4YBOt8ZOZZg7SDCPaTmvm
-         IFXMJmn0nWMQFgEHao52CWXG0wopD8IOlELdI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741274709; x=1741879509;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yuhLx7uX7YSSKB6DQP0bKdym3whun2vLyOsmh+SSpJM=;
-        b=gVeqrZQvRb+4eiIMMcBrEJAnIYqkFi8SxfnJj+4aw5NAx7MUMPMcOKGY92KsgGkWLJ
-         f2QHnn9zA1epVeX970siXNOqH1bt6yHMkSAnmk+Co9og4yqKclfX76yOzoLC6ULXhVBr
-         EWocVgIkLixKVRrznmvZhuOrx2iVASkZrI2+IVIueD9sD5SVs2XStNmzsGOINRbcIr5E
-         dO7LVbvg0Tzs8RawuQvnNTPswSg6CH0T3KUYY0+B5nHHYwXrNsG+lBf++NbiT1gZdYy1
-         zdoaSOAm5oDordSMYhpFPE3NgZcyH8ZrZTfEM8S3X3WF4t9riRVgCfMhoOo+UpTRoz6Y
-         p47Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWt1FzGcEuxRlO9DkAdn2HpKck/UzTs9C1hsIvNkPGhVfmVH9jEckoNl8Fxb5vzZgRMXzziXfSP6r0QfZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYFRbXq4TNKyCDcUvxuIW/lhOgPoA0Xxl/1l5yvSHK/3c2Chl8
-	aTnYDCQ8JKpHcSHmY5TPxxywZqCfktcJOPvlqOk1tFRSidXl9IUKzngT+fd/kV4vqrc5a3Eh3os
-	7Ud8+7hSKR+5X12uTT1X7MvqxOQ3ayxdIOUMQ
-X-Gm-Gg: ASbGncvHIB2NWEi7W41Y9PGJ1mLKQOqKsRVMwxlWXY377Wmy7BaA24b/sVZ46YAdm+6
-	EU25rxStyKH8yI6Nc3sA4w+i5QeYZuhP534tAC0C/VkeBPiELMAqFpUTQIqlL+9P6jSco+fK3Vp
-	JhX6GSZntImYFlnEfJUB7SlOM5WJw=
-X-Google-Smtp-Source: AGHT+IF2yWz7i9kDki87ltokdbfYDZk0WL+drHziPfedvmVMhVFqp4MF77Rblo9zAoUdSbcuP8JebTt+Wp5PiKUygy0=
-X-Received: by 2002:a05:6512:32a7:b0:549:8c86:7407 with SMTP id
- 2adb3069b0e04-5498c8675b8mr794742e87.52.1741274708598; Thu, 06 Mar 2025
- 07:25:08 -0800 (PST)
+	s=arc-20240116; t=1741274751; c=relaxed/simple;
+	bh=zeiNMfzgxo99+vnMw5coyNY4NMGJVNsOq+fXyJY/CCk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=XUSPI/QdqP/5ArYWpNWDOI6nwW2hvn4p0GWLnMNBJlfNXhglSt/IkF4xd4EWO/BRIjRx9PJlp8yz+a0i2McLm+H2GJOB4Mug3WGKkr1HXb68bimO/2+/ZDOnel/mWXlZib/aoplDO3ORRWO0r323HTV+QYe8GT58Jk34cG48pOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=nVW6BriQ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5268cFK6001014;
+	Thu, 6 Mar 2025 15:25:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=+9o3XrsSCsDhK59r5sKdttZWDrBO
+	VOhUkaFANJsL9n4=; b=nVW6BriQBFr/6MaSgpszG0ssXQ0liQUzTL9WYY2wkkf5
+	LrBry7GDAJeBqqf4kpt/5coVIuJEd8NEHrADyF+eu06OEw3LFqWJ7ZdzhY8Aa7Tm
+	4Y9+4pSyJHTY0qR9TRECyDdMmvbhTll4yapjuf4MjiiqrXUEc7sHNUq4Hti6dqHw
+	GAdIoiCsNn4lQzedBs2opXG5MG5TldCIf30QCJKtTrQkrV4tCQJbIJydlJ+N/O3H
+	9wflNVNabSNpm1ygV7B7x9Undcs6m9PWiDVTs1G47+MwmbfVCnPv+x9bF6xHXxZq
+	nINFdfoXbE46DNKEd+j6P4+yTQ3WOsS8ngEMMenusQ==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 456wspmmb2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Mar 2025 15:25:40 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 526F18BW008958;
+	Thu, 6 Mar 2025 15:25:39 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454cxyshkk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Mar 2025 15:25:39 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 526FPbPc6816440
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 6 Mar 2025 15:25:37 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C10B358054;
+	Thu,  6 Mar 2025 15:25:38 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1CF0C5804E;
+	Thu,  6 Mar 2025 15:25:36 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu,  6 Mar 2025 15:25:35 +0000 (GMT)
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+Date: Thu, 06 Mar 2025 16:25:29 +0100
+Subject: [PATCH] s390/pci: Fix dev.dma_range_map missing sentinel element
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214173944.47506-5-james.quinlan@broadcom.com>
- <20250303184011.GA172021@bhelgaas> <CA+-6iNwsCzf30a0vbgStqA+DCyBnk3bGwoXNv0UNYOThE1Us6Q@mail.gmail.com>
-In-Reply-To: <CA+-6iNwsCzf30a0vbgStqA+DCyBnk3bGwoXNv0UNYOThE1Us6Q@mail.gmail.com>
-From: Jim Quinlan <james.quinlan@broadcom.com>
-Date: Thu, 6 Mar 2025 10:24:56 -0500
-X-Gm-Features: AQ5f1Jq37MLMRA99pCX37UPItYXdqTq2aPqIxfJ0HUR0Zyg-xMJb8gaw-QKhCwg
-Message-ID: <CA+-6iNyXeXhqzwbV+pcizpyXg-c-gihcLEtPv1s1uczdNN_VOQ@mail.gmail.com>
-Subject: Re: [PATCH v2 4/8] PCI: brcmstb: Fix error path upon call of regulator_bulk_get()
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, 
-	Cyril Brulebois <kibi@debian.org>, Stanimir Varbanov <svarbanov@suse.de>, 
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Rob Herring <robh@kernel.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, 
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000007cc3e5062fae1cde"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250306-fix_dma_map_alloc-v1-1-b4fa44304eac@linux.ibm.com>
+X-B4-Tracking: v=1; b=H4sIAGi+yWcC/x2MSQqAMBDAviJztjBaFPQrIqXLqANdpAURxL9bP
+ AaSPFAoMxWYmwcyXVw4xQpd24A9dNxJsKsMPfYDShzFxrdyQaugT6W9T1YYaXCYUDq7Gajdmal
+ K/3NZ3/cDUnlEmmMAAAA=
+X-Change-ID: 20250306-fix_dma_map_alloc-b3b05903dcfb
+To: Matthew Rosato <mjrosato@linux.ibm.com>, Joerg Roedel <jroedel@suse.de>,
+        Will Deacon <will@kernel.org>, Gerd Bayer <gbayer@linux.ibm.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, iommu@lists.linux.dev,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        Niklas Schnelle <schnelle@linux.ibm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2211;
+ i=schnelle@linux.ibm.com; h=from:subject:message-id;
+ bh=zeiNMfzgxo99+vnMw5coyNY4NMGJVNsOq+fXyJY/CCk=;
+ b=owGbwMvMwCX2Wz534YHOJ2GMp9WSGNJP7ss/oL897u6/0AWynRbX3k2I//WT43iLmRPbxtObx
+ E5vEXwk01HKwiDGxSArpsiyqMvZb13BFNM9Qf0dMHNYmUCGMHBxCsBE9LYz/OHSllw5b2Nm3Ju/
+ TNUNHZ11Ob0aXRr8R2v67S9vNk/ZYMTIMPld/6tukUeTl+slsNbvft5xQ9Hw7PNfJ2U2q8oHcZd
+ 2cgMA
+X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
+ fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: h9s9tDUV-G7nmXUHTpACtrSWzqyPSNKY
+X-Proofpoint-ORIG-GUID: h9s9tDUV-G7nmXUHTpACtrSWzqyPSNKY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ mlxlogscore=999 clxscore=1011 priorityscore=1501 phishscore=0
+ impostorscore=0 malwarescore=0 lowpriorityscore=0 mlxscore=0
+ suspectscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503060114
 
---0000000000007cc3e5062fae1cde
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+The fixed commit sets up dev.dma_range_map but missed that this is
+supposed to be an array of struct bus_dma_region with a sentinel element
+with the size field set to 0 at the end. This would lead to overruns in
+e.g. dma_range_map_min(). It could also result in wrong translations
+instead of DMA_MAPPIN_ERROR in translate_phys_to_dma() if the paddr were
+to not fit in the aperture. Fix this by using the dma_direct_set_offset()
+helper which creates a sentinel for us.
 
-On Tue, Mar 4, 2025 at 9:49=E2=80=AFAM Jim Quinlan <james.quinlan@broadcom.=
-com> wrote:
->
-> On Mon, Mar 3, 2025 at 1:40=E2=80=AFPM Bjorn Helgaas <helgaas@kernel.org>=
- wrote:
-> >
-> > On Fri, Feb 14, 2025 at 12:39:32PM -0500, Jim Quinlan wrote:
-> > > If regulator_bulk_get() returns an error, no regulators are created a=
-nd we
-> > > need to set their number to zero.  If we do not do this and the PCIe
-> > > link-up fails, regulator_bulk_free() will be invoked and effect a pan=
-ic.
-> > >
-> > > Also print out the error value, as we cannot return an error upwards =
-as
-> > > Linux will WARN on an error from add_bus().
-> > >
-> > > Fixes: 9e6be018b263 ("PCI: brcmstb: Enable child bus device regulator=
-s from DT")
-> > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-> > > ---
-> > >  drivers/pci/controller/pcie-brcmstb.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/cont=
-roller/pcie-brcmstb.c
-> > > index e0b20f58c604..56b49d3cae19 100644
-> > > --- a/drivers/pci/controller/pcie-brcmstb.c
-> > > +++ b/drivers/pci/controller/pcie-brcmstb.c
-> > > @@ -1416,7 +1416,8 @@ static int brcm_pcie_add_bus(struct pci_bus *bu=
-s)
-> > >
-> > >               ret =3D regulator_bulk_get(dev, sr->num_supplies, sr->s=
-upplies);
-> > >               if (ret) {
-> > > -                     dev_info(dev, "No regulators for downstream dev=
-ice\n");
-> > > +                     dev_info(dev, "Did not get regulators; err=3D%d=
-\n", ret);
-> > > +                     pcie->sr =3D NULL;
-> >
-> > Is alloc_subdev_regulators() buying us something useful?  It seems
-> > like it would be simpler to have:
-> >
-> >   struct brcm_pcie {
-> >     ...
-> >     struct regulator_bulk_data supplies[3];
-> >     ...
-> >   };
-> >
-> > I think that's what most callers of devm_regulator_bulk_get() do.
->
-> Ack.
+Fixes: d236843a6964 ("s390/pci: store DMA offset in bus_dma_region")
+Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+---
+This is based on iommu/next which contains the fixed commit
+---
+ arch/s390/pci/pci_bus.c | 24 +++++++++++-------------
+ 1 file changed, 11 insertions(+), 13 deletions(-)
 
-Hi Bjorn,
+diff --git a/arch/s390/pci/pci_bus.c b/arch/s390/pci/pci_bus.c
+index 0e725039861f92925a38f7ff7cb6de6b0d965ac3..14310c3b48860a16de13536adf95ef99e6af21cc 100644
+--- a/arch/s390/pci/pci_bus.c
++++ b/arch/s390/pci/pci_bus.c
+@@ -287,23 +287,21 @@ static struct zpci_bus *zpci_bus_alloc(int topo, bool topo_is_tid)
+ static void pci_dma_range_setup(struct pci_dev *pdev)
+ {
+ 	struct zpci_dev *zdev = to_zpci(pdev);
+-	struct bus_dma_region *map;
+-	u64 aligned_end;
++	u64 aligned_end, size;
++	dma_addr_t dma_start;
++	int ret;
+ 
+-	map = kzalloc(sizeof(*map), GFP_KERNEL);
+-	if (!map)
+-		return;
+-
+-	map->cpu_start = 0;
+-	map->dma_start = PAGE_ALIGN(zdev->start_dma);
++	dma_start = PAGE_ALIGN(zdev->start_dma);
+ 	aligned_end = PAGE_ALIGN_DOWN(zdev->end_dma + 1);
+-	if (aligned_end >= map->dma_start)
+-		map->size = aligned_end - map->dma_start;
++	if (aligned_end >= dma_start)
++		size = aligned_end - dma_start;
+ 	else
+-		map->size = 0;
+-	WARN_ON_ONCE(map->size == 0);
++		size = 0;
++	WARN_ON_ONCE(size == 0);
+ 
+-	pdev->dev.dma_range_map = map;
++	ret = dma_direct_set_offset(&pdev->dev, 0, dma_start, size);
++	if (ret)
++		pr_err("Failed to allocate DMA range map for %s\n", pci_name(pdev));
+ }
+ 
+ void pcibios_bus_add_device(struct pci_dev *pdev)
 
-Manivannan stated that this series has already been merged.  So shall
-I implement your comments with a commit sometime in the future?
+---
+base-commit: e840414e5a73ac02ffba6299b46f535a0b7cba98
+change-id: 20250306-fix_dma_map_alloc-b3b05903dcfb
 
-Thanks,
-Jim Quinlan
-Broadcom STB/CM
+Best regards,
+-- 
+Niklas Schnelle
 
->
-> Jim Quinlan
-> Broadcom STB/CM
-> >
-> > >                       goto no_regulators;
-> > >               }
-> > >
-> > > --
-> > > 2.43.0
-> > >
-
---0000000000007cc3e5062fae1cde
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-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
-mOAplh6h3nMZUZxBguxG3g2p3iD4EgibUYneEzqOQafIQB/naf2uetKb8y9jKgWJxq2Y4y8Jqg2u
-uVIO1AyOJjWwqdgN+QhuIlat+qZd03P48Gim9ZPEMDUCAwEAAaOCAdswggHXMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJQYDVR0R
-BB4wHIEaamFtZXMucXVpbmxhbkBicm9hZGNvbS5jb20wEwYDVR0lBAwwCgYIKwYBBQUHAwQwHwYD
-VR0jBBgwFoAUljPR5lgXWzR1ioFWZNW+SN6hj88wHQYDVR0OBBYEFGx/E27aeGBP2eJktrILxlhK
-z8f6MA0GCSqGSIb3DQEBCwUAA4IBAQBdQQukiELsPfse49X4QNy/UN43dPUw0I1asiQ8wye3nAuD
-b3GFmf3SZKlgxBTdWJoaNmmUFW2H3HWOoQBnTeedLtV9M2Tb9vOKMncQD1f9hvWZR6LnZpjBIlKe
-+R+v6CLF07qYmBI6olvOY/Rsv9QpW9W8qZYk+2RkWHz/fR5N5YldKlJHP0NDT4Wjc5fEzV+mZC8A
-AlT80qiuCVv+IQP08ovEVSLPhUp8i1pwsHT9atbWOfXQjbq1B/ditFIbPzwmwJPuGUc7n7vpmtxB
-75sSFMj27j4JXl5W9vORgHR2YzuPBzfzDJU1ul0DIofSWVF6E1dx4tZohRED1Yl/T/ZGMYICYDCC
-AlwCAQEwazBbMQswCQYDVQQGEwJCRTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UE
-AxMoR2xvYmFsU2lnbiBHQ0MgUjMgUGVyc29uYWxTaWduIDIgQ0EgMjAyMAIMSO43VW7D5NP1X/KD
-MA0GCWCGSAFlAwQCAQUAoIHHMC8GCSqGSIb3DQEJBDEiBCA6fnUgboztbQshQq3uCu813h9lIcpZ
-VHp9TTWAPTEkajAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yNTAz
-MDYxNTI1MDlaMFwGCSqGSIb3DQEJDzFPME0wCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglg
-hkgBZQMEAQIwCgYIKoZIhvcNAwcwCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0B
-AQEFAASCAQB8lgVR9QlbRy4NCuJQTPEFOYgpD3wq92RP5gUFae0OAYVz4Z34eeIejWqes0E6KpL4
-axrEZMFWoverjhOvA3EQFEd5FSldeiIudDdIqM7jhHrPQbWuFwDnZZGHePCOMM9fnBvf0ZTYCwyh
-ZeFqHY+X4ViA0MKMA5g7v7d9z0k5bE8m02JZEDjmSFphj0KX+C+6IyRS3ntYpmgTOEKK8uQqJ4sI
-d1k3XSBhtgilk5v+oS2mGpz5mJBvKOEMBu26/cab8Jax45DMqx0vUDYk3dII5EaaEpuw3AWtyE5B
-ick+snBjNx21qja9wRpng6FHuRbjedhLbjlPctw83/232BRD
---0000000000007cc3e5062fae1cde--
 
