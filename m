@@ -1,162 +1,208 @@
-Return-Path: <linux-kernel+bounces-548705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8CFFA54868
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:51:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EEBD3A5486A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:52:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D3BE1895519
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:51:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E113B1895966
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:52:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FBE2045A1;
-	Thu,  6 Mar 2025 10:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4C6204699;
+	Thu,  6 Mar 2025 10:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0bjDH/ji";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RvFTdace"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nDw0xTKf"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2041.outbound.protection.outlook.com [40.107.102.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377A853BE;
-	Thu,  6 Mar 2025 10:51:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741258299; cv=none; b=jazst4UPTqdgij0PDWC242E6Q1H50sWkuX5jdcGk3c9jR3/8ITG01/5s0NIdyMZBIwBLvG9X2Q0yTNwFEEd1G0L8ePF/CwRBkrPRJIUntgIUjrvgh2xGbzddSfGrQ3viQl4cRjq6S4sinLzCLceON3dEy8A/ZHtqyfA/KRC9J2Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741258299; c=relaxed/simple;
-	bh=Xa1ea0o3Q74JkzomTfFbykLAOK7vKh87CHWZW1SHmzM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=AI2mA1EVlduUGoGyMAC6wDAJSYsU2Il7wsFErRk7UPzv14ypycJim5tmhgFEIDs47dstsYfvtTTarCiW04uyxVHgkVZe83ZvRn+f4JaAvYK8o4ZTuVeCAze38irNLcZ2ACiCI4MkK66LGcmT2M2qNnuZkhA8HSVvMGRbwJvzOD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0bjDH/ji; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RvFTdace; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 06 Mar 2025 10:51:35 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741258296;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8NBdpfjFRzYCeUlmolcL8ku0hDh3g/6wkN9Q589wB6I=;
-	b=0bjDH/jih6DutXgsHMRP+N2HFTz0kr7k7CUbaOljkWuR2Y5b2Zf66AUIc2ZiTsweT173r/
-	WAYU7LQsP0s5IskN7jufrWk/fE9RlwlZ1YzrU2n0ylY1cI1Kv8hmAZq8enshHmOcwqr1rU
-	XSRbGl3MsGy4rvki1pHFrJ6LPaOq26IfXwjcXrFvhmJeG6F2COTyxFkddnYD63kM0ILuZp
-	aojqe21AKJ8OGuz998ATlXfDdNtN59XKiNHV1hlna+TxWir5hBwHdjjOLMVAdvMRW1PwUM
-	s6EsoMvb8C6Y+Xs1n8GnUSwxBwx0KXUW2YbJmN1GAwC+zO0cqTRWekazSL/BFg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741258296;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8NBdpfjFRzYCeUlmolcL8ku0hDh3g/6wkN9Q589wB6I=;
-	b=RvFTdace0SvLfYPduen/oJbbZjBOUjstWk2HhiC38ZFjwz5YLd7u9TQmQW7qmhtydALNlE
-	5JU+QXXC+H5DZRBQ==
-From: "tip-bot2 for Kirill A. Shutemov" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/asm] x86/runtime-const: Add the RUNTIME_CONST_PTR assembly macro
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Ingo Molnar <mingo@kernel.org>, Brian Gerst <brgerst@gmail.com>,
- "H. Peter Anvin" <hpa@zytor.com>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250304153342.2016569-1-kirill.shutemov@linux.intel.com>
-References: <20250304153342.2016569-1-kirill.shutemov@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 150922045A1
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:51:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741258319; cv=fail; b=lAdkWCWhf3VP0zGjLJhf9/H5uxYXtCWFLIxv72sR8zZJ0Y/ro2K2RsmbAqax/7NbPz69v1qrd0uN62/FNYdyNaKGa45VuAnE4ahYwzGHNXrRCtTDYHV/UTqLXFAJPYasS8s8Sc7qFCIpIzhypz4WTcls6q+bie4jMaVfpC3uRqI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741258319; c=relaxed/simple;
+	bh=+tkmDZ/X38/CdgKQMj0Yarp/pJR2VzS8GuO4yJQTa88=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QZPGnKe8jGmrF4tjlRSLaiY603r+dy0PREoDD1NhmYfCt9AuA6nSmkgyj2k09n3T8oNpi2z5IN9g9zS1zIl91iG7FXgM7c15m5NZ4Qye7JjpVXaqFUl2OZBSHf9ZNJikq3ucvmCprre+qZSgrE3E1m51KBpRWAtqLPyNTbxi1Lo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nDw0xTKf; arc=fail smtp.client-ip=40.107.102.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o7Q99OQF4a995kAfHUwVNcKGXfkG2GohwSxp1tNJePen8y7E+KBOyxwA3DF+4+uV+m4bOe5yYeE7sQTZ5sylM1hdhEmy6QfRYhaTSGNFbRU++4CCkOKuoRjA5HBbfLhYUuvs+yOWAq+sHMMGb7+IO15khlhalz63zl37lTQgbyEqm+LXdt1tq/W0L0bKBiTavfnbMsAgevCTWPvX04h7sLVlMEiaNZOtnopaLb69hQDOiSEN8QEiv5WQICgL3PKK9tG/OO+XSJhFI/KX64R9Vo8TZVjOTtFs4c787PIlP8DaH15yq89GNK8tiZxaOx3PbhLfQWk4yWUKEGDkkJ7hEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cgCTFUGE3dUuZMrTTUeqKR4icmhCsn50MiG6wF9e83k=;
+ b=DeyENR4jWE6DIsEnbptYa4IGARP845qcjvaOZNulU3Wa4QvK0LRw92wAX9NsLES1TXd5iMmWtEAZq27d+ecKrIHx0ZgA2yQkkOZCub3lyRCyGRHkJEw1SnaX+wZzcBUoGKGvQl4AxEsMzNwn+C3ozyDP6eHlNpAd0WmjeK1ctWKyKLAeJFB/LReTER7YMic5jWMgtESC8UsxCjfLywmtXdiXfw6NwE7RDSl6TsNq+zssjK46Yvixax1p5DeX6WuaItPBSDMTdBwPEozOTrUXKJIqZo0Sw6ktwe9P4zYbRXgWt/EQkB2PKe+WblCoEGGBpF2DnI9FXJc/30EYksMquw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cgCTFUGE3dUuZMrTTUeqKR4icmhCsn50MiG6wF9e83k=;
+ b=nDw0xTKfjQ/aoPUHKGme3HPLCjIdP2QKKCkJ3P0Mq0PdqneEAF2IMj4/ww82uwgG2+BfJNy+ysKpIgVrBdpyNt7NT8ZJ+WQI7xoAYK8cSBXtIdUiYUHFNza+aOLi+Cz0Wmbfoy580x0DNWAqUvohv7XIjELBulA9T7ItbzzEPEc=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CY5PR12MB6430.namprd12.prod.outlook.com (2603:10b6:930:3a::12)
+ by DS0PR12MB8043.namprd12.prod.outlook.com (2603:10b6:8:14d::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Thu, 6 Mar
+ 2025 10:51:55 +0000
+Received: from CY5PR12MB6430.namprd12.prod.outlook.com
+ ([fe80::6bfd:fed:d96:c7da]) by CY5PR12MB6430.namprd12.prod.outlook.com
+ ([fe80::6bfd:fed:d96:c7da%5]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
+ 10:51:55 +0000
+Message-ID: <c2d1334f-6f5a-493f-bbf0-3e92789f128a@amd.com>
+Date: Thu, 6 Mar 2025 18:51:47 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/7] virtio-gpu api: add blob userptr resource
+To: Demi Marie Obenour <demiobenour@gmail.com>,
+ David Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Simona Vetter <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>,
+ Huang Rui <ray.huang@amd.com>
+Cc: dri-devel@lists.freedesktop.org, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Dmitry Osipenko <dmitry.osipenko@collabora.com>
+References: <20250228053650.393646-1-honglei1.huang@amd.com>
+ <20250228053650.393646-2-honglei1.huang@amd.com>
+ <cd9f85a5-0d99-4007-bba2-d792ac9d84da@gmail.com>
+Content-Language: en-US
+From: "Huang, Honglei1" <Honglei1.Huang@amd.com>
+In-Reply-To: <cd9f85a5-0d99-4007-bba2-d792ac9d84da@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TY2PR02CA0042.apcprd02.prod.outlook.com
+ (2603:1096:404:a6::30) To CY5PR12MB6430.namprd12.prod.outlook.com
+ (2603:10b6:930:3a::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174125829544.14745.15198540190930233265.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6430:EE_|DS0PR12MB8043:EE_
+X-MS-Office365-Filtering-Correlation-Id: e08b15ae-4b42-436c-c6d5-08dd5c9ce94d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b3dGbzJyYmF0aG11N3djaDlGWWkreXVyd1d1dGF6dk14M1ErOEQvZW9Pa1M4?=
+ =?utf-8?B?czdTLzVmbW9XVVpuRFQ1ZkhCNHJSOXdrTHBZZVJad0ZYNHY4R2dDbWlOYUN5?=
+ =?utf-8?B?cXdXYWdHVUhaNW1sTFUxS2Fka3N2MHloVGJUWW5aSXBHSnZlQmVQRVlTT0NC?=
+ =?utf-8?B?TEdaVlJPODFETktkOTJCWnZETWFLZ2hia205aXkzeVBtb0FqdGlCRkFoaDA2?=
+ =?utf-8?B?ZWE3cnljUkhZQ1ZpSHNnY3hkdXhLZkMrMFNsMGlMOEpsSkJsNUhoTUFzSGN6?=
+ =?utf-8?B?TDRhVnlPS3VFakVrQmRCaFBRZHRvaDdON2FoaEUrWU8rOS9OaUUyRXRBV2U2?=
+ =?utf-8?B?d2ljdVQySG9lQmJ2UUhqUjJubkk4ODkvMXpwL2dkVnh2c1BFUlpRa01aODA3?=
+ =?utf-8?B?OEh3dXUySUxKaEFlclJ1ZFVGVWRMVEQrN0VDa1gzOUtzZlh1WDZ4R1BrLzJR?=
+ =?utf-8?B?MlovdlZpUUowOHRBU3Fsb2lINXoycTQ0em9NaXVkS2NWOHhXcjRxT0lsKzhF?=
+ =?utf-8?B?NG1jWHM0QVNXTExmOThUcEFFNXpRYTVkUFBLY2xJUzR4OStQdHFXRnBMejdC?=
+ =?utf-8?B?dGNrSSsyVVV6UG9ZOWRWQ2g3cVpRMFFWcmhGZURRRzlBczhLd0VpL2lMOTJp?=
+ =?utf-8?B?b1NGdmVTWnB0NDNpeG9CWHZ3RnFNMzlyZUhmRUQvYVVrQVJhUXJhQTVQZWtJ?=
+ =?utf-8?B?aVZuSTBUYU56ZzBKN0pHNE5lbG1RbWdPVVBNQWVhckQ4VWVlVVpUU0diSmxp?=
+ =?utf-8?B?WlgwSWg2R3NVajNiTmFPK0ZQeUxpKytHSUQrcXYxbStodUtIck1zQm0vd2NB?=
+ =?utf-8?B?WTFOYkw4bWFNVlcxU2RFY0dzclkxVWdlTm82UUFnRVNlNmVDY0V1WWVaY1Ja?=
+ =?utf-8?B?VlJkaFNFMklaOHFndEd6SnJXanc5RFh0dWROMjlXY04rdUpCcTQxZzV1V0lI?=
+ =?utf-8?B?amNGV24yQmc0dlhWUU1EQ0JwV0FPaVhDa3JPOWt5ZWNFeE9xdzhWdXp1N0Zq?=
+ =?utf-8?B?LzB6U1ZIdmd5QUFvZWRrZnpweUY2WnNnZ1FUUXI1RmdnUWdpWlkxUUsrQlBX?=
+ =?utf-8?B?WG40QTNuS0xzd25IU05PeTJhaTFZaSs5WUU2V1BWQ3lFOERvQ0ZnMHEyVlY3?=
+ =?utf-8?B?c0IyRUMyY0NXZDRaMVZBUS9mdElaK1hDSXJoelNQU2hvbHZ1L2RacVA3RjA5?=
+ =?utf-8?B?RWRGVU4yaVJWLzM0dGRTdGtSeHlTK0ZFQXg4TGd1VmFielJXMjJUaGt1dWg4?=
+ =?utf-8?B?UnppdHlQVVlCUVBLbWZkQ0hLaDc5ZFRRNWJNZmRHTVJYUXRVQmduT3drWXB5?=
+ =?utf-8?B?QU1ZTHU2Nkw0RzFKbS9mT2kxaFp6OGFUV3g2eGJLOVVDS2J1N1RqUVFPUHQ1?=
+ =?utf-8?B?ZmtVVFI4OEovUUlrblErMlBrUXRWeE5YQ0tBZXdtM3VzVFcwV2xUNmpEbE5Q?=
+ =?utf-8?B?NlBrUGdON3lDdkZJdnpVakpvY3draDRscEtMczBCU29RTVByRmVDOEgweEJh?=
+ =?utf-8?B?STJTaWZsT3d6UC9zTmhVYjg0SXBWZXd6c0I0VEJ1Q1FKYmQ3VmNDa0hjTk50?=
+ =?utf-8?B?S1dId3oxSUl0OTFhRk82dEJpWWdjYVhHQUpSZnhLM0RNVTRFVVdQZFNucWZs?=
+ =?utf-8?B?eUxhdHNiUFZNcExsY2FGdUxGVThFbTNOMHkxcXBMeGxYV0lpSXBpbjBzTzhx?=
+ =?utf-8?B?NFNxN3Q3NlFOdU15NU1vcWZpQUpyZzhJaDVBU0lXMUJ3RlJUdy9wWDhEOGJG?=
+ =?utf-8?B?V215dFZMcGdxc2pRV2N5aVdoUE9BRFRXZy9BcEJnV1k1eHJnY04rbkFDQ1NI?=
+ =?utf-8?B?SnR5QjM2aGdtWlVwdy8wVGFZdzFsS3F4ekhzekxIdmlucWJsRzNQYUMzeEpp?=
+ =?utf-8?B?L3IwdGtxTW5xVENmNUMwNGtkSEc5ajc3bVE1MG9HeGYxODM2cWVBUzRvWmFi?=
+ =?utf-8?Q?q2O7hQHXzTg=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6430.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Y1JrVVVJWXdjUUt0TiszT01ZZXFyUWZlSk9Hc0tONkw3WTdseit3dWM1c1pY?=
+ =?utf-8?B?RnFGeHFsQXVzaUJtcWhXU1EyZVh0RW5YUHF2N2VxYXNUMnVSckIvMVFUaC9Z?=
+ =?utf-8?B?Sk84aWtVZHNvM3V0bVVTUEt1Mnd1N2NFZjFtNlpXcEM4NzVDQVZxakdGSFIw?=
+ =?utf-8?B?eHFYRU1ldlpVRHpqT2srWFN5RU9xN1NLU3NKbG1Sb01yRWp0ZGdCMmxiTmxZ?=
+ =?utf-8?B?aENWMkhyMDVRZUVnVDA3Z2tYa0N2aHd3VTRDamZPT1ZlTDlXMjZqalYyVHBt?=
+ =?utf-8?B?R1FVQTNrSmZsREpoU3Y4TSsyUEdVZi9tNGc5UE56U0xMNENqelB1citDdlQy?=
+ =?utf-8?B?dklPbFYyTnBqdk9MNXI1bG5QNys5RFE5VzFQKzBtL2wxVFZBdTlsVFZkVUFI?=
+ =?utf-8?B?MzFOTTNSUWpmUmVUd2NBUTh5RElkekg3c1hwcnJJcVlSbmRhTmJKbnlROXdx?=
+ =?utf-8?B?NmNtc1BNeUk2bU44SENhZ1BZWHArbDNjaWNxazRTUFdwdERUYUE1ZTFrNVVK?=
+ =?utf-8?B?ZkkrSUdEeWZjN3dVM2hDTk1oeDRpTkRTWHMyVFZQNU5McDNCeXB5Vktmblg1?=
+ =?utf-8?B?RlNyTnlXSEhxNllLZVpzbWhyQ2c3bFBCdysrSEFNZlMxQndzZTJJZFFtOFVU?=
+ =?utf-8?B?eHZTY2lIcW03UWVWN09lNGR3WHdUOGpYMGlNUkJnckpwdlRNZ2drUGNobjBq?=
+ =?utf-8?B?T1NkWDEyMVVDVFBLbUx4c3BCdFdCSngyUGZINXR0YTFaVmhHZnlOSVl0M2N0?=
+ =?utf-8?B?QzlQMG1vazhkR2hMZmVMNS91YXJxdEFNOE0vSFgzeEhmTE5tRktNVG9jSFUy?=
+ =?utf-8?B?VmdWaXdFK2t4d1Zxc2Y1ZUJkaVFNNlA0N1pVdDJGcU5xdjc2Z251U1ZYaHVQ?=
+ =?utf-8?B?WjJ5YVVkcGQ4N2pUeitHb3NUM2NkdjZCODBFNWJ4NVNHZVJ4UFlvcjFsL2Fi?=
+ =?utf-8?B?a1J3aEw0aGVuK2F1bGU4NXpnc0tHK01JRk1IMnJjU3VmcWZFOGQxaFIvbmdW?=
+ =?utf-8?B?MnB5cXRxekQ5NEV0dGloOVhJTDlZYXNHMitjMTdZTWY4dnBTaWl2VTRtMzJk?=
+ =?utf-8?B?TmcvaDdpNzVEb1FieE5oVnpvUkhsK2tnY3ZzN2tiZXZQZTFtMmpWT0hMMDJo?=
+ =?utf-8?B?RmsvRzhZcjNDTFZjc2wxNWtibHpvZFFOZjlQb3gvam1vL0lJRW9LdGZ4UllX?=
+ =?utf-8?B?eW9GQmp6bVlkK0FpUEpCcDZKaEJjREZScWtpbDgzVlkvaER0YXFncHQ1b2Jz?=
+ =?utf-8?B?N0xaVER6VnRnNERocXNxckR3ekFKaTlTSGFPdS8rbzZFeHBpS0NvNWxvcDBK?=
+ =?utf-8?B?SFhaT05VQUFjU2RjZ2dOaldBWk1lUWozNmpLRFpQdzVjdzhYOGNwaG00ZUxL?=
+ =?utf-8?B?Zjh6STBZYVlXcU52MS9RMTZ1M09qTWlFNjlHZ2tSZnJ1SkVxWXF2ejBMVVp0?=
+ =?utf-8?B?MEtVRk9COXd1THU3dmc5M3VUY2VlMzEza1Z2TjNQcmlTU1lnOWYvajNUaEZL?=
+ =?utf-8?B?UTIzbmk3dFRFeG1jYXZ0Y2RlT1dYeXhlVFJYMmFpeWs3bkxFT3FBVjl2dW1J?=
+ =?utf-8?B?OStuVndIWnhHNTZNb0FDNjdVUzdaRm5obk9STHBGRTBRZzU5b043Z09DZitn?=
+ =?utf-8?B?U0Z1R3h0aUdld290SyszamtQT092bThSTWtzL1dLMDVDc2E4WFJ4QUE0MFFr?=
+ =?utf-8?B?SW5oT2txcHQ1SUw3SjlCR2NkOWt2RE12WGJFRFE2eERhd1VabjNSaVMzR2k4?=
+ =?utf-8?B?cjBKamtZcDlMYUx4b1lQYi9Na0R3ejMzeVE2SDNHVk5hRkhLRHBtaG41RXR2?=
+ =?utf-8?B?QkRmU0h5bEJpTVpLWmpuRDFSc1F1NXJtU0JNaG0va2ZsT2xOV00wMGhER3Rm?=
+ =?utf-8?B?ekZvTjUrT0Z5TDRWSkc1eDUrMk83MCtJeW1qZkVEM0pWMDdnRWVGeGdRN25X?=
+ =?utf-8?B?ZEVMTS9GY0lkbzJwOWNGVWFQMWRNbUxEZ21zRitKeTI5VlJWdklIdjVnSDBz?=
+ =?utf-8?B?bk1UeHlVN1BSb0V4ak9QQzF3cEZlV1gyci90WWxvWHgzYmxQdGx2QnlLQTht?=
+ =?utf-8?B?YWQ3cjRGQzJ0V29jWXM0VlVRUFREdlJZVk5EazhhYnI4NUQxbFZ3THk1Z2do?=
+ =?utf-8?Q?rgNEyxkiTG2w2iUOm28pDZZ0U?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e08b15ae-4b42-436c-c6d5-08dd5c9ce94d
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6430.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 10:51:55.7510
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9diDobcI++5RAfLUYkQinK1ojrUc38yhgYJZ9BAPeDJX+3TSHW8Bp/9RycQ0tP3HtMXbK4bnkX/OAkpWiVShLw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8043
 
-The following commit has been merged into the x86/asm branch of tip:
 
-Commit-ID:     c84f87de474c9aec84f706ceb732b70751122746
-Gitweb:        https://git.kernel.org/tip/c84f87de474c9aec84f706ceb732b70751122746
-Author:        Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-AuthorDate:    Tue, 04 Mar 2025 17:33:42 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 06 Mar 2025 11:27:31 +01:00
+On 2025/3/1 5:21, Demi Marie Obenour wrote:
+> On 2/28/25 12:36 AM, Honglei Huang wrote:
+>> From: Honglei Huang <Honglei1.Huang@amd.com>
+>>
+>> Add a new resource for blob resource, called userptr, used for let
+>> host access guest user space memory, to acquire buffer based userptr
+>> feature in virtio GPU.
+>>
+>> - The capset VIRTIO_GPU_CAPSET_HSAKMT used for context init,
+>> in this series patches only HSAKMT context can use the userptr
+>> feature. HSAKMT is a GPU compute library in HSA stack, like
+>> the role libdrm in mesa stack.
+> 
+> Userptr should not be limited to HSMKMT contexts.  Userptr can
+> accelerate shm buffers by avoiding a copy from guest to host, and
+> it can be implemented using grant tables on Xen.
 
-x86/runtime-const: Add the RUNTIME_CONST_PTR assembly macro
+Yes, I totally agree userptr can accelerate shm buffers, but I currently
+don't know if there are any other projects working on similar features,
+or if maintainers have any opinions or better ways to implement them, so
+I temporarily limit this feature to HSAKMT context only.
 
-Add an assembly macro to refer runtime cost. It hides linker magic and
-makes assembly more readable.
+I am waiting for everyone's opinions, please provide your thoughts.
 
-Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Brian Gerst <brgerst@gmail.com>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250304153342.2016569-1-kirill.shutemov@linux.intel.com
----
- arch/x86/include/asm/runtime-const.h | 13 +++++++++++++
- arch/x86/lib/getuser.S               |  7 ++-----
- 2 files changed, 15 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/include/asm/runtime-const.h b/arch/x86/include/asm/runtime-const.h
-index 6652ebd..8d983cf 100644
---- a/arch/x86/include/asm/runtime-const.h
-+++ b/arch/x86/include/asm/runtime-const.h
-@@ -2,6 +2,18 @@
- #ifndef _ASM_RUNTIME_CONST_H
- #define _ASM_RUNTIME_CONST_H
- 
-+#ifdef __ASSEMBLY__
-+
-+.macro RUNTIME_CONST_PTR sym reg
-+	movq	$0x0123456789abcdef, %\reg
-+	1:
-+	.pushsection runtime_ptr_\sym, "a"
-+	.long	1b - 8 - .
-+	.popsection
-+.endm
-+
-+#else /* __ASSEMBLY__ */
-+
- #define runtime_const_ptr(sym) ({				\
- 	typeof(sym) __ret;					\
- 	asm_inline("mov %1,%0\n1:\n"				\
-@@ -58,4 +70,5 @@ static inline void runtime_const_fixup(void (*fn)(void *, unsigned long),
- 	}
- }
- 
-+#endif /* __ASSEMBLY__ */
- #endif
-diff --git a/arch/x86/lib/getuser.S b/arch/x86/lib/getuser.S
-index 89ecd57..853a2e6 100644
---- a/arch/x86/lib/getuser.S
-+++ b/arch/x86/lib/getuser.S
-@@ -34,16 +34,13 @@
- #include <asm/thread_info.h>
- #include <asm/asm.h>
- #include <asm/smap.h>
-+#include <asm/runtime-const.h>
- 
- #define ASM_BARRIER_NOSPEC ALTERNATIVE "", "lfence", X86_FEATURE_LFENCE_RDTSC
- 
- .macro check_range size:req
- .if IS_ENABLED(CONFIG_X86_64)
--	movq $0x0123456789abcdef,%rdx
--  1:
--  .pushsection runtime_ptr_USER_PTR_MAX,"a"
--	.long 1b - 8 - .
--  .popsection
-+	RUNTIME_CONST_PTR USER_PTR_MAX, rdx
- 	cmp %rdx, %rax
- 	cmova %rdx, %rax
- .else
+Regards,
+Honglei
 
