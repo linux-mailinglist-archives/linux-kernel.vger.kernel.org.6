@@ -1,154 +1,147 @@
-Return-Path: <linux-kernel+bounces-548940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B35D7A54B2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:50:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2918A54B31
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:50:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 056147A4065
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:49:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F8553AFBAE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F15CD2040AB;
-	Thu,  6 Mar 2025 12:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fwP9XRNs"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C26199B8;
-	Thu,  6 Mar 2025 12:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA21E20B7ED;
+	Thu,  6 Mar 2025 12:50:38 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257311FF5FF;
+	Thu,  6 Mar 2025 12:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741265406; cv=none; b=RQdNcn1M0xDJvwFsjaKFWst1yh0oy62S0L8g8b+yNR+0kiffG9eDV7A5iuTMf+/eWjC5r1ktfwK/yqsR68PUgUbGi5lyuT3mLV9GJtxPvgGOlElzWHTt6ew7s9+KdnoUWGWVcYm2iX3ODLKh0Jox1hDBE9NTwCXgAon69yGEX30=
+	t=1741265438; cv=none; b=I/BmzRz+R9Tl2rWsQpfScyqkFTbt9+fWzx8m2dbrKBlVkq2+dcescI44QlGNSspUcjQmRntUjZMkOmCc2CSZgbQRRqmCSEanwTtxNDZL2bPWfrKs0D04hkq/WWOt6swQL6DEQH+FyLvYQ0HX+p5sBcZWJJ8SiIPxTTxNHac+d+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741265406; c=relaxed/simple;
-	bh=a+G/Y7rybmvz3hjYnOqJRpDSsIxprsBLD30qBcYSPtk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=rXck9/IRfVBb2DsoTXvb9qo65WtdO8v24VCEMTdkroPTYstWg5Miy+9fsVE5W1cM9YRbtrCAYCGv4reTkJWlEjgyw5QFfbr4u2DdMFt5jsKy77XCSfomjrcASavnd7fxqpffmmL64HWMx/oyf7GE0nX3JMEOCfiM1RLj3zXV4JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fwP9XRNs; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso3641825e9.0;
-        Thu, 06 Mar 2025 04:50:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741265403; x=1741870203; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=a+G/Y7rybmvz3hjYnOqJRpDSsIxprsBLD30qBcYSPtk=;
-        b=fwP9XRNsv2pplL/C9J5oSMdflSeYlC1verlv4BfM1K+Ydruw8J/SPLt9zrWsQsM1AU
-         RTLGFRrqz0qtk4Abaang10QRbp5SZldM2b7tr/JmcmRuk6MLpKfqD44IGfmdU+UtQWHq
-         +tIQV7NeU90QVjGN5s5xtM+EtbVRY2Zrm8O3xid3tkpa0/qAREq71wb6z3YUTaF8VCt3
-         8QWpcUxbmbPmnDL/reyVjakj/KesPprmUFtjK/qbCYI8m0iOtLZdNQXlH1FtEzEL143l
-         qCcVFxkEvtksm0wSdOAp9SSTKI3kC+3W8Pm2PkkWTuAaoL65Hdvho6NhVVbvYPjOWD1Z
-         OgOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741265403; x=1741870203;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a+G/Y7rybmvz3hjYnOqJRpDSsIxprsBLD30qBcYSPtk=;
-        b=XJ0O+g7vlByiDncRyn3n8VsxKPUugdCAn1cFVTyhxyTzlwlEWGeVySTsDwFwd2P2UM
-         YpdWs1w5H0yRiiARPb+iarw3zxygQotp+xFTZQu9+bGybIM9dS95x/GzWj2xzaaYhNwl
-         Qo0NqVjovm/wLCHq+cjhf3hnLqdxJdaCU630YkNVLk5yBsyWDfeoe2fQvFJBgeKLFpf1
-         Zy9393e1i7eNXl+yMKD1W7U2/I33yJTn2O8+9u7wJ8J2Kh22e7bIEJlSTk9t9mYRdNpL
-         5yF//lkiT/QVXAUhFEyKpSRlNn+LMCKCZ7DsKii0Cu4eCi/XQqD3L7xsu4UhjX8N8s7p
-         BLQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+hsF0a4hbOZuwTmTXFxt+ixtphvZGOqweEZRnClOiT2nv3nXN+nccnc4c/GAl4pY8X1IDLwyV7gpsgoM=@vger.kernel.org, AJvYcCXG0GzfgTdPYCsGZ+j8qVmHdBerCexMgxLrGKHZ5UXsaEq+HsZ1lr17b0fglas45A5xoLUGpYXI2WNIZA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfr1GmaLnDQTm+v1dVMK+METFlJtUJiUhUxnGBu1KoUoRpPvx8
-	PzK8k/pklWYBgq4k4sFB6hfdBD6WAHLX/yLm7wz3J54gCN9K7INw
-X-Gm-Gg: ASbGncvOnrcjZYxHFHZrlFix/o1l7oXel8/CxEMfn/ZHoz7UnLn+vEsvIZH22bKMvaT
-	yvF1zqtgxWRNuBN5woHNHIGgMyxT3GtWN93B0x9xHGOomsY9Yo2NwuAPt/Mmlf7fKaDtbAVewhJ
-	zQ6xrG7Y8bDrGweIo/xE0VznVlT18DUfHpElX/OYopivTQTDi19lKdavX4oOBVS3jsYngCs50r8
-	fRFdGvY8+NGpTijqe1Hydxj7ANc18LZmrAAiQ6+R+uwMialZAVylClk7BlIOoDCl9j6psuEHKl4
-	N+UTbGUyPOlpUq7UhBweTKR1dgRGWV2tgNodUJhfkJonWa4=
-X-Google-Smtp-Source: AGHT+IFYKvawQX/rJxkDeqK1TzC/LaGCItw/YHf/7XxfirminJCWvuPVTfeFgRwzh42P3STp9OX4xg==
-X-Received: by 2002:a05:600c:548f:b0:43b:c0fa:f9bc with SMTP id 5b1f17b1804b1-43bd29c75famr57613835e9.12.1741265402883;
-        Thu, 06 Mar 2025 04:50:02 -0800 (PST)
-Received: from [10.176.235.56] ([137.201.254.41])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e2bb7sm1961888f8f.63.2025.03.06.04.50.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 04:50:02 -0800 (PST)
-Message-ID: <bd2e01d8b33413655a4215221c910eaf2cdf6461.camel@gmail.com>
-Subject: Re: [PATCH] ufs: core: bsg: Add hibern8 enter/exit to
- ufshcd_send_bsg_uic_cmd
-From: Bean Huo <huobean@gmail.com>
-To: Arthur Simchaev <arthur.simchaev@sandisk.com>,
- martin.petersen@oracle.com,  quic_mapa@quicinc.com, quic_cang@quicinc.com
-Cc: avri.altman@sandisk.com, Avi.Shchislowski@sandisk.com, 
- linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org, bvanassche@acm.org
-Date: Thu, 06 Mar 2025 13:50:01 +0100
-In-Reply-To: <20250304114652.210395-1-arthur.simchaev@sandisk.com>
-References: <20250304114652.210395-1-arthur.simchaev@sandisk.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1741265438; c=relaxed/simple;
+	bh=qAIaa5YTxPQth20rjdhj3lsn7De7pEvS1miIRXCuVQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vn3mGJmtWvRhgc+zCnHrpUrF7phsmjnuGmYm5fx7Htt5j39QHoFtTVwPhKDmdi63zK7fvdP8zM5VLez4eW/Wrsbz+veaz9jEb5YpIXwXE0KmEpoPyfIqQaIil7uiZM5EonITtFdklZcJUcPix5dZOPqKEh/VHsWNdI72hyOCrYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 43E1E1007;
+	Thu,  6 Mar 2025 04:50:47 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 392143F673;
+	Thu,  6 Mar 2025 04:50:33 -0800 (PST)
+Date: Thu, 6 Mar 2025 12:50:17 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, arm-scmi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [Bug report] Memory leak in scmi_device_create
+Message-ID: <Z8maCX5QJRqODl6u@pluto>
+References: <Z8g8vhS9rqQ_ez48@google.com>
+ <Z8iFeEWq16pNQdMa@pluto>
+ <Z8mCbc2Z2QGd3f8M@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8mCbc2Z2QGd3f8M@google.com>
 
+On Thu, Mar 06, 2025 at 11:09:33AM +0000, Alice Ryhl wrote:
+> On Wed, Mar 05, 2025 at 05:10:16PM +0000, Cristian Marussi wrote:
+> > On Wed, Mar 05, 2025 at 11:59:58AM +0000, Alice Ryhl wrote:
+> > > Dear SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE (SCPI/SCMI) Message
+> > > Protocol drivers maintainers,
+> > > 
+> > > I flashed a v6.13-rc3 kernel onto a Rock5B board and noticed the
+> > > following output in my terminal:
+> > > 
+> > > [  687.694465] kmemleak: 4 new suspected memory leaks (see /sys/kernel/debug/kmemleak)
+> > > 
+> > > It seems that there is a memory leak for devices created with
+> > > scmi_device_create.
+> > > 
+> > `
+> > Hi Alice,
+> > 
+> > thanks for this report.
+> > 
+> > > This was with a kernel running v6.13-rc3, but as far as I can tell, no
+> > > relevant changes have landed since v6.13-rc3. My tree *does* include
+> > > commit 295416091e44 ("firmware: arm_scmi: Fix slab-use-after-free in
+> > > scmi_bus_notifier()"). I've only seen this kmemleak report once, so it's
+> > > not happening consistently.
+> > > 
+> > > See below for the full kmemleak report.
+> > > 
+> > > Alice
+> > > 
+> > > $ sudo cat /sys/kernel/debug/kmemleak
+> > > unreferenced object 0xffffff8106c86000 (size 2048):
+> > >   comm "swapper/0", pid 1, jiffies 4294893094
+> > >   hex dump (first 32 bytes):
+> > >     02 00 00 00 10 00 00 00 c0 01 bc 03 81 ff ff ff  ................
+> > >     60 67 ba 03 81 ff ff ff 18 60 c8 06 81 ff ff ff  `g.......`......
+> > >   backtrace (crc feae9680):
+> > >     [<00000000197aa008>] kmemleak_alloc+0x34/0xa0
+> > >     [<0000000056fe02c9>] __kmalloc_cache_noprof+0x1e0/0x450
+> > >     [<00000000a8b3dfe1>] __scmi_device_create+0xb4/0x2b4
+> > >     [<000000008714917b>] scmi_device_create+0x40/0x194
+> > >     [<000000001818f3cf>] scmi_chan_setup+0x144/0x3b8
+> > >     [<00000000970bad38>] scmi_probe+0x584/0xa78
+> > >     [<000000002600d2fd>] platform_probe+0xbc/0xf0
+> > >     [<00000000f6f556b4>] really_probe+0x1b8/0x520
+> > >     [<00000000eed93d59>] __driver_probe_device+0xe0/0x1d8
+> > >     [<00000000d613b754>] driver_probe_device+0x6c/0x208
+> > >     [<00000000187a9170>] __driver_attach+0x168/0x328
+> > >     [<00000000e3ff1834>] bus_for_each_dev+0x14c/0x178
+> > >     [<00000000984a3176>] driver_attach+0x34/0x44
+> > >     [<00000000fc35bf2a>] bus_add_driver+0x1bc/0x358
+> > >     [<00000000747fce19>] driver_register+0xc0/0x1a0
+> > >     [<0000000081cb8754>] __platform_driver_register+0x40/0x50
+> > > unreferenced object 0xffffff8103bc01c0 (size 32):
+> > 
+> > I could not reproduce on my setup, even though I run a system with
+> > all the existent SCMI protocols (and related drivers) enabled (and
+> > so a lot of device creations) and a downstream test driver that causes
+> > even more SCMI devices to be created/destroyed at load/unload.
+> > 
+> > Coming down the path from scmi_chan_setup(), it seems something around
+> > transport devices creation, but it is not obvious to me where the leak
+> > could hide....
+> > 
+> > ...any particular setup on your side ? ...using LKMs, loading/unloading,
+> > any usage pattern that could help me reproduce ?
+> 
+> I looked into this a bit more, and actually it does happen consistently.
+> It's just that kmemleak doesn't report it until 10 minutes after
+> booting, so I did not notice it.
+> 
+> As for my setup, well, I boot the kernel over pxe and the rootfs is
+> mounted over NFSv4. The memory leak happens even if I don't do anything
+> at all - I just boot and wait. The device is a Radxa Rock5B.
+> 
+> Not sure what other information there is to give.
+> 
 
-Arthur,=20
+My question as stated above was mainly to understand if the SCMI stack
+was built-in or compiled as loadable modules (lsmod|grep -i scmi)...
+...I am just to try to pin down a possible 'more-vulnerable' configuration..
+..I could not see any report even triggering a kmemleak scan on v6.14-rc5
+BUT I only tested with a fully built-in SCMI stack indeed as of now...so
+the question.
 
-At present, we lack a user-space tool to initiate eye monitor
-measurements. Additionally, opening a channel for users in user land to
-send MP commands seems unsafe.
+> I tried again with v6.14-rc5, and I still got the leak:
 
+Ok...thanks I will investigate with different configs.
 
-Kind regards,
-Bean
-
-On Tue, 2025-03-04 at 13:46 +0200, Arthur Simchaev wrote:
-> Eye monitor measurement functionality was added to the M-PHY v5
-> specification. The measurement of the eye monitor signal for the UFS
-> device begins when the link enters the hibernate state.
-> Hence, allow user-layer applications the capability to send the
-> hibern8
-> enter command through the BSG framework. For completion, allow the
-> sibling functionality of hibern8 exit as well.
->=20
-> Signed-off-by: Arthur Simchaev <arthur.simchaev@sandisk.com>
-> ---
-> =C2=A0drivers/ufs/core/ufshcd.c | 10 ++++++++++
-> =C2=A01 file changed, 10 insertions(+)
->=20
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index 4e1e214fc5a2..546ab557a77c 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -4366,6 +4366,16 @@ int ufshcd_send_bsg_uic_cmd(struct ufs_hba
-> *hba, struct uic_command *uic_cmd)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0goto out;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> =C2=A0
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (uic_cmd->command =3D=3D UI=
-C_CMD_DME_HIBER_ENTER) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0ret =3D ufshcd_uic_hibern8_enter(hba);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0goto out;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> +
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (uic_cmd->command =3D=3D UI=
-C_CMD_DME_HIBER_EXIT) {
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0ret =3D ufshcd_uic_hibern8_exit(hba);
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0goto out;
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> +
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0mutex_lock(&hba->uic_cmd_=
-mutex);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0ufshcd_add_delay_before_d=
-me_cmd(hba);
-> =C2=A0
-> --
-> 2.34.1
-
+Thanks,
+Cristian
 
