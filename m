@@ -1,123 +1,173 @@
-Return-Path: <linux-kernel+bounces-548465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44329A54539
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:42:55 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81837A5451A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D01D16CFD2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:42:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE2617A6F52
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6B4207DF0;
-	Thu,  6 Mar 2025 08:42:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBB6D207A34;
+	Thu,  6 Mar 2025 08:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="xAzJdlwn"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C2RuRoQp"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50EBF207A23;
-	Thu,  6 Mar 2025 08:42:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71F0207A0C;
+	Thu,  6 Mar 2025 08:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741250569; cv=none; b=Bh6+A5bO9yqFjjq1bfn/WxxPJDMaU3cYHatwWQe/bO7NwVrlOeVOx2ebsJzhO07on683xmCwpd7pvHnil0osw/LdL32ssbgEVg3LoDxdOu1cnttPt9OujhO8v4eGqO7Vef0Ro82Q039F/yZyP/v++u0/zWvy9/mEwsKU9RQ6w+Q=
+	t=1741250419; cv=none; b=FesnnneNxxzzlALYgPPxYRWxUmQFuzu5ft/RQXP+h1oGCd2rrrxf2TnoSNz6NJQyUMeX2GP2S1a+H/H0QunVlsuFEkFsMRQLAZghVJ/m9xO94OuwMEMub75SFIUrsZ0Bo3mvI3KPo6Pie4CcTruYiUHvN/UCbw2ja89aZ2Pl8kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741250569; c=relaxed/simple;
-	bh=Qn0Y3wq34ma88v52Q0vjPttdvRfgoyqUtiMEV5R6AO4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TaaGReAJWXqqdLK8vnSHipnu4YAQqCFs8GalnTKYuknBjxqx/5Q5FUO89dhgLsoCU4PLcWw1lzFsTn4tEL6adT26D5IlRPgdVSplf4GrNsbnEyQLlEJeZrwGSgY1OqePgNaYqjNgYU42SOBFLBPV2fWhzNxzGhxQ4VGZHOpcYDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=xAzJdlwn; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5267Sk7N015077;
-	Thu, 6 Mar 2025 09:42:28 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	mcl6sGfOXxz2wVCK7AnSLNHITansIH0yOzXR+7u97no=; b=xAzJdlwnXlBNm1Wa
-	7Ife+ee+VgwahclxL70yp7tvaLJa4H1ObaqD15ZCyqlBMH8sFnRdZUvn31Mp/SYY
-	A6pIR/FJjc7B6PXCWpy9ykshds9Lejm8g+cCQeGONwjQjacbntQuag08ox4s2mY8
-	ddSQ/IRWGPpgvpnKCy7O/ZJ9kLoESBL6G08fUFrN7asYyBbMFxOJt7yJNxjYNB+k
-	iILuXTz1faI7GfE3vI91cHBsKtfVb54RKddtFw73nEowe2PMhzDlVNnwOq6/WEbb
-	xLIadHIi8b/hnQpaRc5nb2vNJe8YRQrNEGYudS/Re0U0EgUNScrj9SFkBxGHFMvf
-	Xt/NHA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 456krth50w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 09:42:28 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 54F7C40052;
-	Thu,  6 Mar 2025 09:41:17 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 83009441E5C;
-	Thu,  6 Mar 2025 09:40:12 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
- (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 6 Mar
- 2025 09:40:12 +0100
-Received: from [10.48.86.222] (10.48.86.222) by SAFDAG1NODE1.st.com
- (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 6 Mar
- 2025 09:40:11 +0100
-Message-ID: <32aad66e-a9ae-493a-8bea-a06e096c88f2@foss.st.com>
-Date: Thu, 6 Mar 2025 09:40:10 +0100
+	s=arc-20240116; t=1741250419; c=relaxed/simple;
+	bh=0VpliImmG86Msb5QugbBGL1IxHKkWNHzdJ7tQXOtduc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rt33WZajrrfIW8S9lxs/AZMQey31xgd5cy1bA9W9aaqCz2c7Pcy9A4wrw0mXSz4hAOiGCXwEh8sMZ/ul5NpmzBMOzuwFHJYYTQS09laglJ8sZzuFMsZMgC0iyXUE/2btmVSZlwSe/MA37cqGY7/I5Fw/9X2tHeYXnep/iyEnaoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=C2RuRoQp; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gdO7zNS5LHjDSS9JwviSOHy7H4jHw46+tgqmsiiyB48=; b=C2RuRoQpiDfK931ICvlZ4xT00G
+	kiG2QBuXica1/cWXvJj5kdky1lnBFz5WgSNmkr+qniLG7N3wLYGxW8m+KuMEKcEmgNsiYTpIg+A0k
+	iz5kdMfjVGCKIaeqGqrUWD7Z7k3J9ZUI6jd46aLHmNn90WpO6yal/10+nkF+zJ0q2fAGeVYRsaCQj
+	xVcH7e0NYAmIUKm2cgcSOb58c0F5xMQQlFpSWWve/5VDekqzwoA5CBTVMAefda5m4w1d4EYnq0L90
+	HjSIE2i9aBNcclKaMsPw9k7zRyxwQP9m4RKeMfnt/9yLE/cYT1p+rxErnNdz15/chztFyPLb6TIcj
+	BBpHmPcQ==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tq6m8-00000000yHP-0Esq;
+	Thu, 06 Mar 2025 08:40:16 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 3B58C30057E; Thu,  6 Mar 2025 09:40:15 +0100 (CET)
+Date: Thu, 6 Mar 2025 09:40:15 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <kees@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+	linux-hardening@vger.kernel.org
+Subject: Re: [RFC][PATCH] overflow: Twiddle with struct_size()
+Message-ID: <20250306084015.GP5880@noisy.programming.kicks-ass.net>
+References: <20250305134315.GB16878@noisy.programming.kicks-ass.net>
+ <202503052213.D38DC337@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/8] iio: trigger: stm32-lptimer: add support for
- stm32mp25
-To: Jonathan Cameron <jic23@kernel.org>
-CC: <lee@kernel.org>, <ukleinek@kernel.org>, <alexandre.torgue@foss.st.com>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
-        <catalin.marinas@arm.com>, <will@kernel.org>,
-        <devicetree@vger.kernel.org>, <wbg@kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <olivier.moysan@foss.st.com>
-References: <20250305094935.595667-1-fabrice.gasnier@foss.st.com>
- <20250305094935.595667-4-fabrice.gasnier@foss.st.com>
- <20250305144539.54a75689@jic23-huawei>
-Content-Language: en-US
-From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-In-Reply-To: <20250305144539.54a75689@jic23-huawei>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-06_03,2025-03-06_01,2024-11-22_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202503052213.D38DC337@keescook>
 
-On 3/5/25 15:45, Jonathan Cameron wrote:
-> On Wed, 5 Mar 2025 10:49:30 +0100
-> Fabrice Gasnier <fabrice.gasnier@foss.st.com> wrote:
+On Wed, Mar 05, 2025 at 11:13:00PM -0800, Kees Cook wrote:
+> On Wed, Mar 05, 2025 at 02:43:15PM +0100, Peter Zijlstra wrote:
+> > Hi Kees,
+> > 
+> > I keep getting hit by the struct_size() brigade, and I keep having
+> > trouble reading that macro.
+> > 
+> > I had a wee poke and ended up with the below, WDYT?
 > 
->> From: Olivier Moysan <olivier.moysan@foss.st.com>
->>
->> Add support for STM32MP25 SoC. Use newly introduced compatible to handle
->> this new HW variant. Add new trigger definitions that can be used by the
->> stm32 analog-to-digital converter. Use compatible data to identify them.
->>
->> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
->> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-> Hi. Oops I replied to v1 without looking for other versions.
-> From a quick glance feedback still applies here.
+> Ah, and to clarify, this is just for readability? (There have been
+> some tweaks to reduce the macro depths and other things in other areas,
+> so I just wanted to check that wasn't, or was, part of the rationale.)
 
-Hi Jonathan,
+Yeah, the current thing nests that flex array macro thing, with the very
+same arguments, which means you then have to go read that.
 
-Thanks for reviewing, I've noticed your review comments on V1, I'll take
-care of these in next revision (v4).
+That combined with that nested constexptr toggle makes it a bit of a
+mess.
 
-Best Regards,
-Fabrice
-
+> > (I also tried to create a __must_be_flex_array(), but utterly failed :/)
 > 
+> I spent a lot of time trying to find something for that too. :( If you
+> do ever find it, please share! :)
+> 
+> > ---
+> > diff --git a/include/linux/overflow.h b/include/linux/overflow.h
+> > index 0c7e3dcfe867..2123d0e238bb 100644
+> > --- a/include/linux/overflow.h
+> > +++ b/include/linux/overflow.h
+> > @@ -352,9 +352,10 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+> >   * Return: number of bytes needed or SIZE_MAX on overflow.
+> >   */
+> >  #define flex_array_size(p, member, count)				\
+> > -	__builtin_choose_expr(__is_constexpr(count),			\
+> > -		(count) * sizeof(*(p)->member) + __must_be_array((p)->member),	\
+> > -		size_mul(count, sizeof(*(p)->member) + __must_be_array((p)->member)))
+> > +	(__must_be_array((p)->member) +					\
+> > +	 __builtin_choose_expr(__is_constexpr(count),			\
+> > +			       sizeof(*(p)->member) * (count),		\
+> > +			       size_mul(sizeof(*(p)->member), (count))))
+> 
+> For both, I need to double check that __must_be_array() is
+> always a constant expression. If not, we can't move it out of the
+> __builtin_choose_expr(). But if so, then yeah, this is nice.
+
+__must_be_array() is BUILD_BUG_ON() which must be a constant expression.
+
+> >  
+> >  /**
+> >   * struct_size() - Calculate size of structure with trailing flexible array.
+> > @@ -367,10 +368,12 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+> >   *
+> >   * Return: number of bytes needed or SIZE_MAX on overflow.
+> >   */
+> > -#define struct_size(p, member, count)					\
+> > -	__builtin_choose_expr(__is_constexpr(count),			\
+> > -		sizeof(*(p)) + flex_array_size(p, member, count),	\
+> > -		size_add(sizeof(*(p)), flex_array_size(p, member, count)))
+> > +#define struct_size(p, member, count)					       \
+> > +	(__must_be_array((p)->member) +					       \
+> > +	 __builtin_choose_expr(__is_constexpr(count),			       \
+> > +			       sizeof(*(p)) + (sizeof((p)->member) * (count)), \
+> 
+> typo: above should be                        (sizeof(*(p)->member))
+> 
+> (hint, to test this code use "./tools/testing/kunit/kunit.py run overflow")
+
+D'oh. I sent the old version :-(. I actually did a kernel build and
+fixed this error, and then went and sent the old one :/
+
+> But yeah, this passes the overflow tests which include the constant
+> expression tests, so __must_be_array() is a constant expression. Whee :)
+> 
+> > +			       size_add(sizeof(*(p)),			       \
+> > +					size_mul(sizeof(*(p)->member), count))))
+> 
+> This one I'm not such a fan of. It feels wrong to not use
+> flex_array_size() here -- we're performing exactly the same
+> calculation. 
+
+Yes, but now you can read it without also having to untangle
+flex_array_size().
+
+I did have a version using size_mad(x,y,z) := (x*y)+z, which is more
+compact, but then you have the problem that you forever forget what
+order around those 3 arguments are. (x*y)+z vs x+(y*z) etc.
+
+Much like I can never remember the struct_size() argument order (at
+least neovim's clangd lsp can somewhat help with that -- if I can get it
+tamed).
+
+> But it's possible this has cpp complexity reduction
+> benefits from avoiding the stacking of __builtin_choose_expr() and
+> __must_be_array() macros...
+
+Just so.
+
+> So, yeah, I think I could live with this. :) Especially if it means we can
+> start using struct_size() in code you look at. :P
+> 
+> But please include this selftest update too. Since your patch splits the
+> dependency between struct_size() and flex_array_size(), I'd like to test
+> them separately now:
+
+OK, will do. Thanks!
 
