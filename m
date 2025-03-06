@@ -1,186 +1,162 @@
-Return-Path: <linux-kernel+bounces-548500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7593CA545B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:00:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BB66A545B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:00:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9515D1883992
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:00:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F526164888
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:00:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BCF20897F;
-	Thu,  6 Mar 2025 09:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F308C208981;
+	Thu,  6 Mar 2025 09:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4V3Y0WMi"
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QouKr4Kj"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1B91DB12E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E59D208965
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741251606; cv=none; b=QGh7MKjTkAAc0n3RiKLDnWmAYyVLmV3TXaSXDRVpLfRTzULIjowEbUs93rI1Of3OQZnef9OY84i76o3GHsiSZBN5+2J4vaVpaCcRulYaBx+rWW5lZpVmSEaij/wnf5hx0CngABfrVGnEnYulrS2gDTeQ1Mo8N+d04AwqQi0PUlQ=
+	t=1741251609; cv=none; b=B4u3zLDhMf82shM6KTp41kuoA7gIkmYYgqXHikjTUb9s1TQWoOPgcMztgavFhuxQjCmzUogjI3tmBJMkfgFLrmn077rPz2+jcVE8M5xps5XdXYRvqqgTGWQeYmsNZ83QdnNy05iyN9pUyznUZBul30224Tq+I/lYE6FSsYKdc/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741251606; c=relaxed/simple;
-	bh=4yRhvznFBgbMuZLWODGu7EgS0kIPrxQGpkofvuETjrc=;
+	s=arc-20240116; t=1741251609; c=relaxed/simple;
+	bh=Q3jmA4B46CtoIA9Bhq/jqXZRE1U5Wm6iIcoQ2U+ots8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HjwkDM+o9QtGznWw8EVRycnMbdxg87XUXQHLOzO1inW79e1NLxIr8A5HCuac/sUrV595qxazXREkGLt5QfPnP7IYIIhMQqpxPRTvgYw9+l5+cY/SBa3T11llu5EEsSWcJE/4Xnw6pn/gcAHPc1Z6ZIHYv/o4pbXF/XY25eNJFao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4V3Y0WMi; arc=none smtp.client-ip=209.85.219.51
+	 To:Cc:Content-Type; b=PQfdDnU7feCb7rDEopckX8tPnIcdOlXgFyyVF18nU73qWMlg77eyAgdZQ4J5qiLM6eYhp9XQagad4wNIWA2fjSXvrYqpMFG5HU0HOWWI00Z+uC3N7Zm7bt3sNITskGEgDf4gNObxQOMdqszuMphRN0kuH2vCw1Jjcl8RzC4zuPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QouKr4Kj; arc=none smtp.client-ip=209.85.219.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6ddcff5a823so2688596d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:00:03 -0800 (PST)
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6e8ab9ea2deso1951726d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:00:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741251603; x=1741856403; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741251606; x=1741856406; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=eWfrhJeepfs+0dzUvVv23a0EKmmjjFM6cYDtZX7QITo=;
-        b=4V3Y0WMi2W2vMz2a73JjzuYaPJrECiM9zqPHFPwCqq7zI5VlPmnfmlse0elXhF9Qf7
-         YI4pjLABn8R2YcaeW0QnZu31CjL4KIClL1JAgqZdFqi2X9PUd1bla08zd2L5nS9lxbrl
-         HYF1oO8hgX9o4c3DsceYWH2kwaYUVtjosboJ86FYjz60w3WuV908XnijMfPkNSRQmedy
-         KoFmx5aOQrHVtWH1IgZQNjEWWconHZ0UYW7OQivHw0vvDSfjMBnlGnnjSQt3+WeV+aSs
-         cxuYmL6MmWGkhnk3TIe5bzzyg7/HIW3LoKqbtOeyLySHiY8vLotIZENgLxuMFkAjocPH
-         cNCA==
+        bh=4/Yo35b4m8uOIEq2A6YOuY3UYnR1pg9TvJgtneYSZIQ=;
+        b=QouKr4KjGqUDg0hX0bhmULYBl+L/kasT/6nRZb+N984fgYP6VA0EDowRDVuI5mJhDZ
+         y1uzTPE0RG+hdivaMMtKXXjEfpnPCfKPh6wo/Uk71+07fBXmmqldxyMm6HzMjAbjKgsV
+         i7RY2gVDkW14ML7lJbki/K93/xz6hcQSJmGUbWojPF2Aik4gYDfwuzWlamxMCTnzbxis
+         VR2a4g4kI6Tlm2XUbhO63+gV4DYYX5C1xBYKz3cveB8Ro9B1oMpKnfmfRHsmhRJ9zvU7
+         n83/j74S/ZJZXucb/yE2foUp1xXWMTA7scLZFdDY67jnE1LwAHvQ5jepIpBV1J9ODd/P
+         G++A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741251603; x=1741856403;
+        d=1e100.net; s=20230601; t=1741251606; x=1741856406;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=eWfrhJeepfs+0dzUvVv23a0EKmmjjFM6cYDtZX7QITo=;
-        b=cWl3lL1FIc1fGhRqc6Kp6zF3yEKsysHOuG7zgSbP+VMgbq1f4OfFwlr628CaG1CVal
-         Lty8iBnA3s5CxWtaabwI7cSrlCfSk1uSauIJy0xwaHeyjT/ZqSMbwFeeEDJv+3KkCXdu
-         OBw2lLVKxgKWiUTtkw7pDgKMBi2ONVj37LnP0mtj9PksMQMYIAaIlP7SeeCAEUPQYj59
-         Q8CQT+XLuHWTWplCfg8eqE2QvM5LiYtGI/v4I5OGSJK5tyGkTV2rFAkN9IfDUD2mNd+/
-         3v5UE+e4lJDhSACVuKOTv8cwCd9EQU+sHmuCpRouYLuHr0KUmZwi9wnlfUYN0FC520x4
-         JOzg==
-X-Forwarded-Encrypted: i=1; AJvYcCWir0k6DMA9Sp6zaePOP3ler6Ys4U+Jd4hhjueLQGKQfFDgBw5iop/sfk69A6LlMyR5pfNWczO/OIX8FNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIIkymRZureDulW6ezgme2osAgRWfyrEGEezZG1vRyo4mJ+RMp
-	22k5pYqGcq39heri70L2W6BlvbJ+OnjwQHEoI4S9CKIxBnt12qX5yMOoEO8x+EJEsPTbY2e84Sp
-	5e+c0u5i5dowOnKXitZ+yQtCR41xLUTaYVw0q
-X-Gm-Gg: ASbGnctG8Vt20Z5ocqcuvftsCBxJB16zA2l+TsHQfzuEZfQLwceyxtOhiarQUqMawFd
-	7A2BllyouFqn8LSetwomljZ2tvsfyhxNN6vqfCbZ8hFdoYKkA2Q70nZn4+W0rQQARi+QlcpcCse
-	JRExFDj4QrRj4g/H8GqffUu+IfIR4=
-X-Google-Smtp-Source: AGHT+IEnTFk+qPOlTSbiY7+YUxlqRjEgDgoxk4hAxmHddfCpJ8+QENxWifylJ16vDQJsXnW7ueQYkIbHgErRNL+2GnQ=
-X-Received: by 2002:ad4:5ae9:0:b0:6e8:9a55:8259 with SMTP id
- 6a1803df08f44-6e8e6cfedf3mr93849766d6.9.1741251602571; Thu, 06 Mar 2025
- 01:00:02 -0800 (PST)
+        bh=4/Yo35b4m8uOIEq2A6YOuY3UYnR1pg9TvJgtneYSZIQ=;
+        b=gR0+jkuLKSSWvn0CNZy2BMWuyuFYJaupPqdXR6yxEDe1Ii0TeMpG5AWIePo/hUaAUu
+         LmQUkUpmBdXxtGVIgo7VRzLpxqNZXCcCNIOObpxyxRkxb3YAaTfNzPgf91w2xT23Rf2G
+         YcqICKEOB+nJFAkKkzra84JgoXpmvfikapHoBY1SsQ6mCS2W1PXbN/4Mc7eV+pb+TmVj
+         wGzhq8IJuPJcpPFgzM7jLkrrUC3Nk5UkIFwS723xVibHRVxqGNQXTbgNZLHa7s+uxELw
+         8Nwt5FaHz45wRPh3UhABRyoMe7kVixFYxCi3TIQBZ1rhSeMp9rQL6Yx5dM11gkfjveLj
+         cxww==
+X-Forwarded-Encrypted: i=1; AJvYcCW5VdBlmtez3u5PacBjJwGK4uosHEDfVgQkum27BwSYf8ixH9uFeIIv4gH9AX5QRxe0yMuZ3244qqQzG74=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyalyAdWIkbiwmC5QlWexXDf60pmkDr3PukIoEKGeRzxZmfvOe/
+	9tB43ZEJkANez9QOCN5E/6onyqIQJpkVKLQWMe4qUau2ojWWKYWK14b6O1np5RAGcYfTWthcbnX
+	eR1jg8H5STmXtkCbbJoDiaH4QUotQvWqa4N4h
+X-Gm-Gg: ASbGncu5nhnJVL9SVWbZvGLzjRk2eqgEtaE0kpHnP9Wu7G50RuS1r8AnGWf6LiYPU6V
+	6Orx4f06zBfTHTpwVNeKdYwfjAQW6YlBytjCW19eNz2y6hAkPJ8vU386PeZJnQptUBvABHLrMSG
+	+An7Q8fwryL/3XU7OdhzVCtZJfotc=
+X-Google-Smtp-Source: AGHT+IHNmfIQro8bZ9rUp87wYfOLAinwzxeTujO3aZ6r35YV6zlRbtPOgdgDVVdRdtd9uOyFqAv8LvauzpzlR35Gz9E=
+X-Received: by 2002:ad4:5f87:0:b0:6e6:682b:804d with SMTP id
+ 6a1803df08f44-6e8e6cffda0mr82434036d6.25.1741251605533; Thu, 06 Mar 2025
+ 01:00:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306002933.1893355-1-rmoar@google.com>
-In-Reply-To: <20250306002933.1893355-1-rmoar@google.com>
+References: <20250304162124.it.785-kees@kernel.org>
+In-Reply-To: <20250304162124.it.785-kees@kernel.org>
 From: David Gow <davidgow@google.com>
-Date: Thu, 6 Mar 2025 16:59:49 +0800
-X-Gm-Features: AQ5f1Jry7uhKagxn_pWuMsODdfHkO3aKU3Urde0moQ7csvmBpcY3u_Da2JYfP8Q
-Message-ID: <CABVgOSkwrb36rrhH3H17fhYOnywhTgTh06aDaKXT4jZp474sRQ@mail.gmail.com>
-Subject: Re: [PATCH] kunit: tool: Fix bug in parsing test plan
-To: Rae Moar <rmoar@google.com>
-Cc: shuah@kernel.org, jackmanb@google.com, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Date: Thu, 6 Mar 2025 16:59:53 +0800
+X-Gm-Features: AQ5f1JpXdhcvQ-vxmG77qF-HLwsAihgcrX98W9RgxOkXaeqIx0QIaSB8R88urJY
+Message-ID: <CABVgOSnEaTVUfZB6KACFJE4mM=oSWnUtcrf7ETHFq8h_k=mFTw@mail.gmail.com>
+Subject: Re: [PATCH v2] kbuild: clang: Support building UM with SUBARCH=i386
+To: Kees Cook <kees@kernel.org>
+Cc: Nathan Chancellor <nathan@kernel.org>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Masahiro Yamada <masahiroy@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, llvm@lists.linux.dev, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000440659062fa8bbfd"
+	boundary="000000000000722a38062fa8bb86"
 
---000000000000440659062fa8bbfd
+--000000000000722a38062fa8bb86
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 6 Mar 2025 at 08:29, Rae Moar <rmoar@google.com> wrote:
+On Wed, 5 Mar 2025 at 00:21, Kees Cook <kees@kernel.org> wrote:
 >
-> A bug was identified where the KTAP below caused an infinite loop:
+> The UM builds distinguish i386 from x86_64 via SUBARCH, but we don't
+> support building i386 directly with Clang. To make SUBARCH work for
+> i386 UM, we need to explicitly test for it.
 >
->  TAP version 13
->  ok 4 test_case
->  1..4
+> This lets me run i386 KUnit tests with Clang:
 >
-> The infinite loop was caused by the parser not parsing a test plan
-> if following a test result line.
+> $ ./tools/testing/kunit/kunit.py run \
+>         --make_options LLVM=3D1 \
+>         --make_options SUBARCH=3Di386
+> ...
 >
-> Fix bug to correctly parse test plan and add error if test plan is
-> missing.
->
-> Signed-off-by: Rae Moar <rmoar@google.com>
+> Fixes: c7500c1b53bf ("um: Allow builds with Clang")
+> Signed-off-by: Kees Cook <kees@kernel.org>
 > ---
 
-Thanks for looking into this: I don't think we want to unconditionally
-error if there's no test plan, though. Pretty much no parameterised
-tests include one -- it's not always possible to know how many tests
-there'll be in advance -- so this triggers all of the time.
+Thanks for this -- I'd been using `--kconfig_add CONFIG_64BIT=3Dn` as a
+way to build i386 UML kernels, which seems to work even without this
+patch -- but this is definitely an improvement.
 
-Maybe we can only include an error if we find a test plan line after
-an existing result, or something?
+It may be worth noting that CONFIG_FORTIFY_SOURCE is incompatible with
+clang + i386, which seems to affect UML as well. (That might actually
+not be required, as I think UML doesn't use any of the strange
+-mregparm calling convention stuff which appears to be what breaks
+FORTIFY_SOURCE here.)
 
+Regardless,
+
+Tested-by: David Gow <davidgow@google.com>
+
+Cheers,
 -- David
 
->  tools/testing/kunit/kunit_parser.py    | 12 +++++++-----
->  tools/testing/kunit/kunit_tool_test.py |  5 ++---
->  2 files changed, 9 insertions(+), 8 deletions(-)
+
+> Cc: Nathan Chancellor <nathan@kernel.org>
+> Cc: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> Cc: Bill Wendling <morbo@google.com>
+> Cc: Justin Stitt <justinstitt@google.com>
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Cc: Nicolas Schier <nicolas@fjasle.eu>
+> Cc: llvm@lists.linux.dev
+> Cc: linux-kbuild@vger.kernel.org
+> ---
+>  scripts/Makefile.clang | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/kunit_parser.py
-> index 29fc27e8949b..5dcbc670e1dc 100644
-> --- a/tools/testing/kunit/kunit_parser.py
-> +++ b/tools/testing/kunit/kunit_parser.py
-> @@ -761,20 +761,22 @@ def parse_test(lines: LineStream, expected_num: int, log: List[str], is_subtest:
->                 test.name = "main"
->                 ktap_line = parse_ktap_header(lines, test, printer)
->                 test.log.extend(parse_diagnostic(lines))
-> -               parse_test_plan(lines, test)
-> +               plan_line = parse_test_plan(lines, test)
->                 parent_test = True
->         else:
->                 # If not the main test, attempt to parse a test header containing
->                 # the KTAP version line and/or subtest header line
->                 ktap_line = parse_ktap_header(lines, test, printer)
->                 subtest_line = parse_test_header(lines, test)
-> +               test.log.extend(parse_diagnostic(lines))
-> +               plan_line = parse_test_plan(lines, test)
->                 parent_test = (ktap_line or subtest_line)
->                 if parent_test:
-> -                       # If KTAP version line and/or subtest header is found, attempt
-> -                       # to parse test plan and print test header
-> -                       test.log.extend(parse_diagnostic(lines))
-> -                       parse_test_plan(lines, test)
->                         print_test_header(test, printer)
-> +
-> +       if parent_test and not plan_line:
-> +                       test.add_error(printer, 'missing test plan!')
-> +
->         expected_count = test.expected_count
->         subtests = []
->         test_num = 1
-> diff --git a/tools/testing/kunit/kunit_tool_test.py b/tools/testing/kunit/kunit_tool_test.py
-> index 0bcb0cc002f8..e1e142c1a850 100755
-> --- a/tools/testing/kunit/kunit_tool_test.py
-> +++ b/tools/testing/kunit/kunit_tool_test.py
-> @@ -181,8 +181,7 @@ class KUnitParserTest(unittest.TestCase):
->                         result = kunit_parser.parse_run_tests(
->                                 kunit_parser.extract_tap_lines(
->                                 file.readlines()), stdout)
-> -               # A missing test plan is not an error.
-> -               self.assertEqual(result.counts, kunit_parser.TestCounts(passed=10, errors=0))
-> +               self.assertEqual(result.counts, kunit_parser.TestCounts(passed=10, errors=2))
->                 self.assertEqual(kunit_parser.TestStatus.SUCCESS, result.status)
+> diff --git a/scripts/Makefile.clang b/scripts/Makefile.clang
+> index 2435efae67f5..b67636b28c35 100644
+> --- a/scripts/Makefile.clang
+> +++ b/scripts/Makefile.clang
+> @@ -12,6 +12,8 @@ CLANG_TARGET_FLAGS_riscv      :=3D riscv64-linux-gnu
+>  CLANG_TARGET_FLAGS_s390                :=3D s390x-linux-gnu
+>  CLANG_TARGET_FLAGS_sparc       :=3D sparc64-linux-gnu
+>  CLANG_TARGET_FLAGS_x86         :=3D x86_64-linux-gnu
+> +# This is only for i386 UM builds, which need the 32-bit target not -m32
+> +CLANG_TARGET_FLAGS_i386                :=3D i386-linux-gnu
+>  CLANG_TARGET_FLAGS_um          :=3D $(CLANG_TARGET_FLAGS_$(SUBARCH))
+>  CLANG_TARGET_FLAGS             :=3D $(CLANG_TARGET_FLAGS_$(SRCARCH))
 >
->         def test_no_tests(self):
-> @@ -203,7 +202,7 @@ class KUnitParserTest(unittest.TestCase):
->                 self.assertEqual(
->                         kunit_parser.TestStatus.NO_TESTS,
->                         result.subtests[0].subtests[0].status)
-> -               self.assertEqual(result.counts, kunit_parser.TestCounts(passed=1, errors=1))
-> +               self.assertEqual(result.counts, kunit_parser.TestCounts(passed=1, errors=2))
->
->
->         def test_no_kunit_output(self):
->
-> base-commit: 0619a4868fc1b32b07fb9ed6c69adc5e5cf4e4b2
 > --
-> 2.48.1.711.g2feabab25a-goog
+> 2.34.1
 >
 
---000000000000440659062fa8bbfd
+--000000000000722a38062fa8bb86
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -270,14 +246,14 @@ uFrCoYIRlx4rSVHpBIKgnsgdm0SFQK72MPmIkfhfq9Fh0h8AjhF73sLO7K5BfwWkx1gwMySyNY0e
 PCRYr6WEVOkUJS0a0fui693ymMPFLQAimmz8EpyFok4Ju066StkYO1dIgUIla4x61auxkWHwnzGC
 Al0wggJZAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
 BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAcDMKctW1GQKDKqEUSh4
-pjANBglghkgBZQMEAgEFAKCBxzAvBgkqhkiG9w0BCQQxIgQg2ERQGafR2K3SU77d/gRKgSMUJ8Dc
-6XQa9prbdxBnXSowGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
-MzA2MDkwMDAzWjBcBgkqhkiG9w0BCQ8xTzBNMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
+pjANBglghkgBZQMEAgEFAKCBxzAvBgkqhkiG9w0BCQQxIgQgowr1Rt1dJMtYGOA1ffssayY4JrFB
+siFUgiP7D2SxHsUwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
+MzA2MDkwMDA2WjBcBgkqhkiG9w0BCQ8xTzBNMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
 YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcN
-AQEBBQAEggEABp2uoUthODqlYcwjbnhQK4eN/UJWZQgUdd3lmRBTonA3XZltQdNQqg2W7oLds4ou
-KYUhSwiaQZHP+R45eOdaLHq6w8M4RAzgVXZaNJyZ6TSeR6gUGlZ6CbUyHycG+xc/pOIT5TFEzsyj
-9MkGvQLvUhSoIdAOm6hVLFFSy6FDwVHgfoX1JKDpmt7TgGajWaiby3XtqB3R1qUjOMF7171b4JL2
-5QtvFTRpTL/H6hpMMcQu7V+r7hX/77oXJLmFIWfrW/XoOPgOEyzvMXyBB7tgwizfxvx9YHCbhPoT
-TAnc8dWkomrgZnnCFZX7324qXmlmdnI1Mxezvlt5yysHzM1NqQ==
---000000000000440659062fa8bbfd--
+AQEBBQAEggEAo20B8a3jETsGmAp7DRXv/2Tq/ePr30Istaa3aPQmA0j5WfsVITm1F2ycJfJu2BrK
+1Nxe+3y+qcj0YDHA8eb5nJJyi53x5n4yUoUU7ujz5BkORtK7wAllUCveAf5c2GCO2AC6PgNopFam
+phE1G4sKRf0DYeqQoqWqPHG7WDcxkI3ymXJwiF9nMHTSquRT0araioCKpyyz9bqbCKyO+gKVlO5t
+J1tYPL/kZRA1eKJInJuJMYyPAqV03tFGXbsMoVI75WL6S5wlmANru3qQK0lu/Vvw7Q5ivmOEjaD3
+WbdFXODAYKPPO/OsNB4xV3sj1OMqyc6FSXPJ5ASINN7Y2VBVyQ==
+--000000000000722a38062fa8bb86--
 
