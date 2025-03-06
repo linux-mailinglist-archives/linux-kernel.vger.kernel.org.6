@@ -1,295 +1,119 @@
-Return-Path: <linux-kernel+bounces-548903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66A90A54AB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:27:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64EA5A54AB4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:27:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AD4EE7A80B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:26:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76AA17A84A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:26:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869A920B7EF;
-	Thu,  6 Mar 2025 12:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0AA20C024;
+	Thu,  6 Mar 2025 12:27:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=grabatoulnz.fr header.i=@grabatoulnz.fr header.b="XXtd3COn"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KxoHPM7Z"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F5E420AF96;
-	Thu,  6 Mar 2025 12:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC8920B803;
+	Thu,  6 Mar 2025 12:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741264048; cv=none; b=noOQ4W3x/ZJdEZmWRREnFOCipcfd65Qi/wxRHST/Ie2cyaxA2qMfv9ODfrjkH9aoaT9xo61+nJiEkVPRh0NV7mKIQ8JLLyRMlPfiyqOefSMff29i7TRmxmalq2zD8FxbirJHlXfJLdO77X0QIbF9duU51+o01uWgCrIvV69QjzQ=
+	t=1741264051; cv=none; b=S4R5aQJVOtdvU8BjaWZU4dwaJ/rncImJMkQ5TSfVD6Aw7028DJVk+M3IXebXrBZgvCPVYN/1ScGLePTOcU9vjWK6K7lP5kLYDxg8XOJ+OwRx3L7eegGoF2yVr4LmVQ95q3gS5SO0IfoT2+es6aAf80hiPQm1Jkd9cOTkRwureS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741264048; c=relaxed/simple;
-	bh=V5sCas/re5KB1WJDZeREcuolKMHYLbnme+XnEyGYqtM=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=EeoMOUwO/OeZ3B48JIvGeVVyM9ATKu8mCxaFq5motaLDZIkM1pxgnWOcaxy1wFDHLzUeHQlpR3J6XaGU6yt+EGBkTx60vuz3m5sRHQrKggQPG/rGIj6qBchk5PbpjQfoSZXWVLUky0cnjVibWqWu5qVyICNeuR7f/jLzAcOh0Xo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grabatoulnz.fr; spf=pass smtp.mailfrom=grabatoulnz.fr; dkim=pass (2048-bit key) header.d=grabatoulnz.fr header.i=@grabatoulnz.fr header.b=XXtd3COn; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grabatoulnz.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=grabatoulnz.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 79173433C9;
-	Thu,  6 Mar 2025 12:27:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=grabatoulnz.fr;
-	s=gm1; t=1741264043;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+AsgIvVpL2Pm/oq/32bmIaTO0rCvavU6LbqB7AuIneM=;
-	b=XXtd3COneTenwwBY8WzDo+UO+4I3EZz3qgt1rpZrfCsIOoduqCWGLuNMMwVlAp9RSTcT11
-	zLhoILXxe2ivBJn741F3tLtdg6W5RA6YaEgKHPaYTCZgiX+DbL3nnbWk14dg0yqGYTFwMI
-	QuqtwULEvZTEnHyC/uj+6154DEil2arSYa4X7+ecrCPItDovJiFilRcAGC/JJZPImY2OTB
-	EOPmTfieYbSYX4Y2D7mmcCGaHS29QKTcQ7k+BLd3vcdinbYpOLRpIlusWntYUiGgURoYmi
-	qhsGI+HcwWvxYsQnNxet/lwSuLpbL52HBhIvaeBtxCHZtWSPJLZ0/zbYosA+rA==
-Content-Type: multipart/mixed; boundary="------------DhKS6kFF4k5xkk27sIyHql4b"
-Message-ID: <689f8224-f118-47f0-8ae0-a7377c6ff386@grabatoulnz.fr>
-Date: Thu, 6 Mar 2025 13:27:17 +0100
+	s=arc-20240116; t=1741264051; c=relaxed/simple;
+	bh=i6lhP4dLCbuG+vXuHqvcoEZMh0tGfth+sV3ZOUeeA3I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oYYvUQiqPwBUOq7GpwwNXwC/POYETJNhoq8TAqanexA+v06PKoMkqqttWKUaNlzEfm5DIEOOiIIoUZXBA9xkqnjQIjMQcpENc1XMFAYnxhwAD/v/SogF3q7WocjM41+Zm51SdfAnAkIt33kLG1htXtmxUIJOiT1iXEIVjQ4bdcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KxoHPM7Z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52699B3U028897;
+	Thu, 6 Mar 2025 12:27:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	FNvXtXzlNRsNDmsd+K6pePAdlNt7Cl9S+JRR+eX3utU=; b=KxoHPM7ZvSZqoyF5
+	Bc4MMUoH6byTHr8V/1M9zm4OXYxsqhe2YMsKvsAWXEu/J4SptY6cfb+MwAJs+fGr
+	vFsHswDXCODpEWH7caHTVYKloukOUqhGI3p7da8492jQvucZ0odJJ5rD8Ge+ql0Z
+	J+i+tmi9mgEu0/vhNpgk6+F9n51hvuc4Wm0b+z/sJY0v+Cd9Xo4kPZjzSpgFAJjO
+	QAo0KtNDWIziZ4jbtfM51SN5cd1UeZHtxsostfDOeFjpN572r+Gi2wD9k/ISHof1
+	giR4563BcDaOsEXYAviTXbBTaksYt3Xn4zWsUSZZbYMO91VbmIHUGqou2nj6r0y+
+	MXohVg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6tryex-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Mar 2025 12:27:26 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 526CRPhX016421
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 6 Mar 2025 12:27:25 GMT
+Received: from [10.50.63.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Mar 2025
+ 04:27:22 -0800
+Message-ID: <a74e5ca2-f5ef-3dab-723d-6ed99d1d0d32@quicinc.com>
+Date: Thu, 6 Mar 2025 17:57:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
- board type") on reboot (but not cold boot)
-To: Niklas Cassel <cassel@kernel.org>
-Cc: Salvatore Bonaccorso <carnil@debian.org>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Christoph Hellwig <hch@infradead.org>,
- Mika Westerberg <mika.westerberg@linux.intel.com>,
- Damien Le Moal <dlemoal@kernel.org>, Jian-Hong Pan <jhp@endlessos.org>,
- regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org, linux-ide@vger.kernel.org,
- Dieter Mummenschanz <dmummenschanz@web.de>
-References: <Z8SBZMBjvVXA7OAK@eldamar.lan> <Z8SyVnXZ4IPZtgGN@ryzen>
- <8763ed79-991a-4a19-abb6-599c47a35514@grabatoulnz.fr>
- <Z8VLZERz0FpvpchM@x1-carbon>
- <8b1cbfd4-6877-48ef-b17d-fc10402efbf7@grabatoulnz.fr>
- <Z8l61Kxss0bdvAQt@ryzen> <Z8l7paeRL9szo0C0@ryzen>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [RFC PATCH 06/12] media: iris: Update CAPTURE format info based
+ on OUTPUT format
 Content-Language: en-US
-From: Eric <eric.4.debian@grabatoulnz.fr>
-In-Reply-To: <Z8l7paeRL9szo0C0@ryzen>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdejjeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpegtkfffgggfuffvvehfhfgjsehmtderredtvdejnecuhfhrohhmpefgrhhitgcuoegvrhhitgdrgedruggvsghirghnsehgrhgrsggrthhouhhlnhiirdhfrheqnecuggftrfgrthhtvghrnhepuefflefgudfgudfhheejfedvgfdtffetffeiveegjeekgeehffffgffhfeffudeunecukfhppedvrgdtudemtggstdegmeelgedumegsuddttdemgedvudeimeejvghffhemfhgvvdehmeelhegrudenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggstdegmeelgedumegsuddttdemgedvudeimeejvghffhemfhgvvdehmeelhegruddphhgvlhhopeglkffrggeimedvrgdtudemtggstdegmeelgedumegsuddttdemgedvudeimeejvghffhemfhgvvdehmeelhegrudgnpdhmrghilhhfrhhomhepvghrihgtrdegrdguvggsihgrnhesghhrrggsrghtohhulhhniidrfhhrpdhnsggprhgtphhtthhopeduvddprhgtphhtthhopegtrghsshgvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptggrrhhnihhlseguvggsihgrnhdrohhrghdprhgtphhtthhopehmrghrihhordhlihhmo
- hhntghivghllhhosegrmhgurdgtohhmpdhrtghpthhtohephhgthhesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehmihhkrgdrfigvshhtvghrsggvrhhgsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepughlvghmohgrlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepjhhhphesvghnughlvghsshhoshdrohhrghdprhgtphhtthhopehrvghgrhgvshhsihhonhhssehlihhsthhsrdhlihhnuhigrdguvghv
-X-GND-Sasl: eric.degenetais@grabatoulnz.fr
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <quic_vgarodia@quicinc.com>, <quic_abhinavk@quicinc.com>,
+        <mchehab@kernel.org>, <hverkuil@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250305104335.3629945-1-quic_dikshita@quicinc.com>
+ <20250305104335.3629945-7-quic_dikshita@quicinc.com>
+ <zw42tgyhxedcifrad5i2gam5sbjjczcaopv4iy2fy5hckkjdsj@crawjvp7bdox>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <zw42tgyhxedcifrad5i2gam5sbjjczcaopv4iy2fy5hckkjdsj@crawjvp7bdox>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=PMb1+eqC c=1 sm=1 tr=0 ts=67c994ae cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=JMUmPn8huWlHet3H1LoA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: r0d6DtmSGc0AZEFozAiyInf22UjI0l5o
+X-Proofpoint-GUID: r0d6DtmSGc0AZEFozAiyInf22UjI0l5o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=898
+ phishscore=0 lowpriorityscore=0 malwarescore=0 priorityscore=1501
+ mlxscore=0 adultscore=0 spamscore=0 suspectscore=0 impostorscore=0
+ clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503060094
 
-This is a multi-part message in MIME format.
---------------DhKS6kFF4k5xkk27sIyHql4b
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-Le 06/03/2025 à 11:40, Niklas Cassel a écrit :
-> On Thu, Mar 06, 2025 at 11:37:08AM +0100, Niklas Cassel wrote:
->> On Mon, Mar 03, 2025 at 03:58:30PM +0100, Eric wrote:
->>> Hi Niklas
->>>
->>> Le 03/03/2025 à 07:25, Niklas Cassel a écrit :
->>>> Do you see your SSD in the kexec'd kernel?
->>> Sorry, I've tried that using several methods (systemctl kexec / kexec --load
->>> + kexec -e / kexec --load + shutdown --reboot now) and it failed each time.
->>> I *don't* think it is related to this bug, however, because each time the
->>> process got stuck just after displaying "kexec_core: Starting new kernel".
->> I just tired (as root):
->> # kexec -l /boot/vmlinuz-6.13.5-200.fc41.x86_64 --initrd=/boot/initramfs-6.13.5-200.fc41.x86_64.img --reuse-cmd
->> # kexec -e
+
+On 3/6/2025 2:15 AM, Dmitry Baryshkov wrote:
+> On Wed, Mar 05, 2025 at 04:13:29PM +0530, Dikshita Agarwal wrote:
+>> Update the width, height and buffer size of CAPTURE based on the
+>> resolution set to OUTPUT via VIDIOC_S_FMT. This is required to set the
+>> updated capture resolution to firmware when S_FMT is called only for
+>> OUTPUT.
 >>
->> and FWIW, kexec worked fine.
+>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>> ---
+>>  drivers/media/platform/qcom/iris/iris_vdec.c | 5 +++++
+>>  1 file changed, 5 insertions(+)
 >>
->> Did you specify an initrd ? did you specify --reuse-cmd ?
-
-At one time, I did yes. I can't figure out what's wrong, but working 
-from the assumption that another way of working around the UEFI's 
-failure to wake the disk might yield the same information that you're 
-looking for,
-
-I installed the same system on a USB stick, on which I also installed 
-grub, so that the reboot is made independent of weather the UEFI sees 
-the SSD disk or not. I'll attach dmesg extracts (grep on ata or ahci) to 
-this mail.
-
-One is the dmesg after coldbooting from the USB stick, the other is 
-rebooting on the USB stick. First of all, the visible result : the SSD 
-is not detected by linux at reboot (but is when coldbooting).
-
-Here is what changes :
-
-eric@gwaihir:~$ diff 
-/media/eric/trixieUSB/home/eric/dmesg-ahci-ata-coldboot.untimed.txt 
-/media/eric/trixieUSB/home/eric/dmesg-ahci-ata-reboot.untimed.txt
-
-4c4
-<  ahci 0000:00:11.0: 4/4 ports implemented (port mask 0x3c)
----
- >  ahci 0000:00:11.0: 3/3 ports implemented (port mask 0x38)
-14c14
-<  ata3: SATA max UDMA/133 abar m1024@0xfeb0b000 port 0xfeb0b200 irq 19 
-lpm-pol 3
----
- >  ata3: DUMMY
-27,28d26
-<  ata3: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
-<  ata6: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
-29a28
- >  ata6: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
-31,34d29
-<  ata3.00: Model 'Samsung SSD 870 QVO 2TB', rev 'SVQ02B6Q', applying 
-quirks: noncqtrim zeroaftertrim noncqonati
-<  ata3.00: supports DRM functions and may not be fully accessible
-<  ata3.00: ATA-11: Samsung SSD 870 QVO 2TB, SVQ02B6Q, max UDMA/133
-<  ata3.00: 3907029168 sectors, multi 1: LBA48 NCQ (not used)
-37a33
- >  ata5.00: configured for UDMA/100
-40d35
-<  ata5.00: configured for UDMA/100
-43,46d37
-<  ata3.00: Features: Trust Dev-Sleep
-<  ata3.00: supports DRM functions and may not be fully accessible
-<  ata3.00: configured for UDMA/133
-<  scsi 2:0:0:0: Direct-Access     ATA      Samsung SSD 870 2B6Q PQ: 0 
-ANSI: 5
-50,51d40
-<  ata3.00: Enabling discard_zeroes_data
-<  ata3.00: Enabling discard_zeroes_data
-
-I hope this is useful for diagnosing the problem.
-
-> Sorry, typo:
->
-> s/--reuse-cmd/--reuse-cmdline/
->
->
-> Kind regards,
-> Niklas
-
-Kind regards,
-
-Eric
-
---------------DhKS6kFF4k5xkk27sIyHql4b
-Content-Type: text/plain; charset=UTF-8; name="dmesg-ahci-ata-reboot.txt"
-Content-Disposition: attachment; filename="dmesg-ahci-ata-reboot.txt"
-Content-Transfer-Encoding: base64
-
-c3VkbyBkbWVzZyB8IGdyZXAgLWlFICIoIGF0YXxhaGNpKSIKWyAgICAxLjg4NDI2M10gYWhj
-aSAwMDAwOjAwOjExLjA6IHZlcnNpb24gMy4wClsgICAgMS44ODQ0MDFdIGFoY2kgMDAwMDow
-MDoxMS4wOiBBSENJIHZlcnMgMDAwMS4wMjAwLCAzMiBjb21tYW5kIHNsb3RzLCA2IEdicHMs
-IFNBVEEgbW9kZQpbICAgIDEuODg0NDA0XSBhaGNpIDAwMDA6MDA6MTEuMDogMy8zIHBvcnRz
-IGltcGxlbWVudGVkIChwb3J0IG1hc2sgMHgzOCkKWyAgICAxLjg4NDQwN10gYWhjaSAwMDAw
-OjAwOjExLjA6IGZsYWdzOiA2NGJpdCBuY3Egc250ZiBpbGNrIHBtIGxlZCBjbG8gcG1wIHBp
-byBzbHVtIHBhcnQgClsgICAgMS44OTAzNzJdIHNjc2kgaG9zdDA6IGFoY2kKWyAgICAxLjg5
-MTU4N10gc2NzaSBob3N0MTogYWhjaQpbICAgIDEuODkxNzUxXSBzY3NpIGhvc3QyOiBhaGNp
-ClsgICAgMS44OTE5MjRdIHNjc2kgaG9zdDM6IGFoY2kKWyAgICAxLjg5MjA3OV0gc2NzaSBo
-b3N0NDogYWhjaQpbICAgIDEuODkyMjM0XSBzY3NpIGhvc3Q1OiBhaGNpClsgICAgMS44OTIy
-OThdIGF0YTE6IERVTU1ZClsgICAgMS44OTIzMDBdIGF0YTI6IERVTU1ZClsgICAgMS44OTIz
-MDBdIGF0YTM6IERVTU1ZClsgICAgMS44OTIzMDJdIGF0YTQ6IFNBVEEgbWF4IFVETUEvMTMz
-IGFiYXIgbTEwMjRAMHhmZWIwYjAwMCBwb3J0IDB4ZmViMGIyODAgaXJxIDE5IGxwbS1wb2wg
-MwpbICAgIDEuODkyMzA1XSBhdGE1OiBTQVRBIG1heCBVRE1BLzEzMyBhYmFyIG0xMDI0QDB4
-ZmViMGIwMDAgcG9ydCAweGZlYjBiMzAwIGlycSAxOSBscG0tcG9sIDMKWyAgICAxLjg5MjMw
-N10gYXRhNjogU0FUQSBtYXggVURNQS8xMzMgYWJhciBtMTAyNEAweGZlYjBiMDAwIHBvcnQg
-MHhmZWIwYjM4MCBpcnEgMTkgbHBtLXBvbCAzClsgICAgMS44OTI0ODddIGFoY2kgMDAwMDow
-NDowMC4wOiBTU1MgZmxhZyBzZXQsIHBhcmFsbGVsIGJ1cyBzY2FuIGRpc2FibGVkClsgICAg
-MS44OTI1MDhdIGFoY2kgMDAwMDowNDowMC4wOiBBSENJIHZlcnMgMDAwMS4wMjAwLCAzMiBj
-b21tYW5kIHNsb3RzLCA2IEdicHMsIFNBVEEgbW9kZQpbICAgIDEuODkyNTExXSBhaGNpIDAw
-MDA6MDQ6MDAuMDogMi8yIHBvcnRzIGltcGxlbWVudGVkIChwb3J0IG1hc2sgMHgzKQpbICAg
-IDEuODkyNTEzXSBhaGNpIDAwMDA6MDQ6MDAuMDogZmxhZ3M6IDY0Yml0IG5jcSBzbnRmIHN0
-YWcgbGVkIGNsbyBwbXAgcGlvIHNsdW0gcGFydCBjY2Mgc3hzIApbICAgIDEuODkyOTI3XSBz
-Y3NpIGhvc3Q2OiBhaGNpClsgICAgMS44OTMwNzNdIHNjc2kgaG9zdDc6IGFoY2kKWyAgICAx
-Ljg5MzE0NF0gYXRhNzogU0FUQSBtYXggVURNQS8xMzMgYWJhciBtNTEyQDB4ZmU4MDAwMDAg
-cG9ydCAweGZlODAwMTAwIGlycSA0MyBscG0tcG9sIDAKWyAgICAxLjg5MzE0OF0gYXRhODog
-U0FUQSBtYXggVURNQS8xMzMgYWJhciBtNTEyQDB4ZmU4MDAwMDAgcG9ydCAweGZlODAwMTgw
-IGlycSA0MyBscG0tcG9sIDAKWyAgICAyLjIwMzU4Nl0gYXRhNzogU0FUQSBsaW5rIGRvd24g
-KFNTdGF0dXMgMCBTQ29udHJvbCAzMDApClsgICAgMi4zNTk5ODBdIGF0YTQ6IFNBVEEgbGlu
-ayB1cCAxLjUgR2JwcyAoU1N0YXR1cyAxMTMgU0NvbnRyb2wgMzAwKQpbICAgIDIuMzYwMDE0
-XSBhdGE2OiBTQVRBIGxpbmsgdXAgMy4wIEdicHMgKFNTdGF0dXMgMTIzIFNDb250cm9sIDMw
-MCkKWyAgICAyLjM2MDA0N10gYXRhNTogU0FUQSBsaW5rIHVwIDEuNSBHYnBzIChTU3RhdHVz
-IDExMyBTQ29udHJvbCAzMDApClsgICAgMi4zNjA1OTJdIGF0YTQuMDA6IEFUQS03OiBNQVhU
-T1IgU1RNMzI1MDMxMEFTLCAzLkFBQywgbWF4IFVETUEvMTMzClsgICAgMi4zNjA1OTddIGF0
-YTQuMDA6IDQ4ODM5NzE2OCBzZWN0b3JzLCBtdWx0aSAxNjogTEJBNDggTkNRIChkZXB0aCAz
-MikKWyAgICAyLjM2MDYxMl0gYXRhNS4wMDogQVRBUEk6IEFTVVMgICAgQkMtMTJEMkhULCAx
-LjAwLCBtYXggVURNQS8xMDAKWyAgICAyLjM2MTE1OV0gYXRhNS4wMDogY29uZmlndXJlZCBm
-b3IgVURNQS8xMDAKWyAgICAyLjM2MTE3OV0gYXRhNi4wMDogQVRBLTg6IFNUMzEwMDA1MjhB
-UywgQ0MzOCwgbWF4IFVETUEvMTMzClsgICAgMi4zNjExODRdIGF0YTYuMDA6IDE5NTM1MjUx
-Njggc2VjdG9ycywgbXVsdGkgMTY6IExCQTQ4IE5DUSAoZGVwdGggMzIpClsgICAgMi4zNjEz
-MTddIGF0YTQuMDA6IGNvbmZpZ3VyZWQgZm9yIFVETUEvMTMzClsgICAgMi4zNjI1OTldIGF0
-YTYuMDA6IGNvbmZpZ3VyZWQgZm9yIFVETUEvMTMzClsgICAgMi4zNzQ4MDddIHNjc2kgMzow
-OjA6MDogRGlyZWN0LUFjY2VzcyAgICAgQVRBICAgICAgTUFYVE9SIFNUTTMyNTAzMSBDICAg
-IFBROiAwIEFOU0k6IDUKWyAgICAyLjQyNDUwMV0gc2NzaSA1OjA6MDowOiBEaXJlY3QtQWNj
-ZXNzICAgICBBVEEgICAgICBTVDMxMDAwNTI4QVMgICAgIENDMzggUFE6IDAgQU5TSTogNQpb
-ICAgIDIuNzM1ODYwXSBhdGE4OiBTQVRBIGxpbmsgZG93biAoU1N0YXR1cyAwIFNDb250cm9s
-IDMwMCkK
---------------DhKS6kFF4k5xkk27sIyHql4b
-Content-Type: text/plain; charset=UTF-8; name="dmesg-ahci-ata-coldboot.txt"
-Content-Disposition: attachment; filename="dmesg-ahci-ata-coldboot.txt"
-Content-Transfer-Encoding: base64
-
-c3VkbyBkbWVzZyB8IGdyZXAgLWlFICIoIGF0YXxhaGNpKSIKWyAgICAxLjczOTE4NV0gYWhj
-aSAwMDAwOjAwOjExLjA6IHZlcnNpb24gMy4wClsgICAgMS43MzkzMTNdIGFoY2kgMDAwMDow
-MDoxMS4wOiBBSENJIHZlcnMgMDAwMS4wMjAwLCAzMiBjb21tYW5kIHNsb3RzLCA2IEdicHMs
-IFNBVEEgbW9kZQpbICAgIDEuNzM5MzE2XSBhaGNpIDAwMDA6MDA6MTEuMDogNC80IHBvcnRz
-IGltcGxlbWVudGVkIChwb3J0IG1hc2sgMHgzYykKWyAgICAxLjczOTMxOF0gYWhjaSAwMDAw
-OjAwOjExLjA6IGZsYWdzOiA2NGJpdCBuY3Egc250ZiBpbGNrIHBtIGxlZCBjbG8gcG1wIHBp
-byBzbHVtIHBhcnQgClsgICAgMS43NDA3NDZdIHNjc2kgaG9zdDA6IGFoY2kKWyAgICAxLjc0
-MDk4N10gc2NzaSBob3N0MTogYWhjaQpbICAgIDEuNzQxMTM3XSBzY3NpIGhvc3QyOiBhaGNp
-ClsgICAgMS43NDEyODhdIHNjc2kgaG9zdDM6IGFoY2kKWyAgICAxLjc0MTQzNV0gc2NzaSBo
-b3N0NDogYWhjaQpbICAgIDEuNzQxNTgyXSBzY3NpIGhvc3Q1OiBhaGNpClsgICAgMS43NDE2
-MzVdIGF0YTE6IERVTU1ZClsgICAgMS43NDE2MzddIGF0YTI6IERVTU1ZClsgICAgMS43NDE2
-MzldIGF0YTM6IFNBVEEgbWF4IFVETUEvMTMzIGFiYXIgbTEwMjRAMHhmZWIwYjAwMCBwb3J0
-IDB4ZmViMGIyMDAgaXJxIDE5IGxwbS1wb2wgMwpbICAgIDEuNzQxNjQxXSBhdGE0OiBTQVRB
-IG1heCBVRE1BLzEzMyBhYmFyIG0xMDI0QDB4ZmViMGIwMDAgcG9ydCAweGZlYjBiMjgwIGly
-cSAxOSBscG0tcG9sIDMKWyAgICAxLjc0MTY0NF0gYXRhNTogU0FUQSBtYXggVURNQS8xMzMg
-YWJhciBtMTAyNEAweGZlYjBiMDAwIHBvcnQgMHhmZWIwYjMwMCBpcnEgMTkgbHBtLXBvbCAz
-ClsgICAgMS43NDE2NDZdIGF0YTY6IFNBVEEgbWF4IFVETUEvMTMzIGFiYXIgbTEwMjRAMHhm
-ZWIwYjAwMCBwb3J0IDB4ZmViMGIzODAgaXJxIDE5IGxwbS1wb2wgMwpbICAgIDEuNzQxODQ1
-XSBhaGNpIDAwMDA6MDQ6MDAuMDogU1NTIGZsYWcgc2V0LCBwYXJhbGxlbCBidXMgc2NhbiBk
-aXNhYmxlZApbICAgIDEuNzQxODY3XSBhaGNpIDAwMDA6MDQ6MDAuMDogQUhDSSB2ZXJzIDAw
-MDEuMDIwMCwgMzIgY29tbWFuZCBzbG90cywgNiBHYnBzLCBTQVRBIG1vZGUKWyAgICAxLjc0
-MTg2OV0gYWhjaSAwMDAwOjA0OjAwLjA6IDIvMiBwb3J0cyBpbXBsZW1lbnRlZCAocG9ydCBt
-YXNrIDB4MykKWyAgICAxLjc0MTg3MV0gYWhjaSAwMDAwOjA0OjAwLjA6IGZsYWdzOiA2NGJp
-dCBuY3Egc250ZiBzdGFnIGxlZCBjbG8gcG1wIHBpbyBzbHVtIHBhcnQgY2NjIHN4cyAKWyAg
-ICAxLjc0MjE5MV0gc2NzaSBob3N0NjogYWhjaQpbICAgIDEuNzQyNDIwXSBzY3NpIGhvc3Q3
-OiBhaGNpClsgICAgMS43NDI0ODhdIGF0YTc6IFNBVEEgbWF4IFVETUEvMTMzIGFiYXIgbTUx
-MkAweGZlODAwMDAwIHBvcnQgMHhmZTgwMDEwMCBpcnEgNDMgbHBtLXBvbCAwClsgICAgMS43
-NDI0OTJdIGF0YTg6IFNBVEEgbWF4IFVETUEvMTMzIGFiYXIgbTUxMkAweGZlODAwMDAwIHBv
-cnQgMHhmZTgwMDE4MCBpcnEgNDMgbHBtLXBvbCAwClsgICAgMi4wNTE4MjJdIGF0YTc6IFNB
-VEEgbGluayBkb3duIChTU3RhdHVzIDAgU0NvbnRyb2wgMzAwKQpbICAgIDIuMjA4MTM4XSBh
-dGEzOiBTQVRBIGxpbmsgdXAgNi4wIEdicHMgKFNTdGF0dXMgMTMzIFNDb250cm9sIDMwMCkK
-WyAgICAyLjIwODE3Ml0gYXRhNjogU0FUQSBsaW5rIHVwIDMuMCBHYnBzIChTU3RhdHVzIDEy
-MyBTQ29udHJvbCAzMDApClsgICAgMi4yMDgxOTddIGF0YTQ6IFNBVEEgbGluayB1cCAxLjUg
-R2JwcyAoU1N0YXR1cyAxMTMgU0NvbnRyb2wgMzAwKQpbICAgIDIuMjA4MjI5XSBhdGE1OiBT
-QVRBIGxpbmsgdXAgMS41IEdicHMgKFNTdGF0dXMgMTEzIFNDb250cm9sIDMwMCkKWyAgICAy
-LjIwODM1MV0gYXRhMy4wMDogTW9kZWwgJ1NhbXN1bmcgU1NEIDg3MCBRVk8gMlRCJywgcmV2
-ICdTVlEwMkI2UScsIGFwcGx5aW5nIHF1aXJrczogbm9uY3F0cmltIHplcm9hZnRlcnRyaW0g
-bm9uY3FvbmF0aQpbICAgIDIuMjA4MzkyXSBhdGEzLjAwOiBzdXBwb3J0cyBEUk0gZnVuY3Rp
-b25zIGFuZCBtYXkgbm90IGJlIGZ1bGx5IGFjY2Vzc2libGUKWyAgICAyLjIwODM5NF0gYXRh
-My4wMDogQVRBLTExOiBTYW1zdW5nIFNTRCA4NzAgUVZPIDJUQiwgU1ZRMDJCNlEsIG1heCBV
-RE1BLzEzMwpbICAgIDIuMjA4Mzk2XSBhdGEzLjAwOiAzOTA3MDI5MTY4IHNlY3RvcnMsIG11
-bHRpIDE6IExCQTQ4IE5DUSAobm90IHVzZWQpClsgICAgMi4yMDg3NTFdIGF0YTQuMDA6IEFU
-QS03OiBNQVhUT1IgU1RNMzI1MDMxMEFTLCAzLkFBQywgbWF4IFVETUEvMTMzClsgICAgMi4y
-MDg3NTVdIGF0YTQuMDA6IDQ4ODM5NzE2OCBzZWN0b3JzLCBtdWx0aSAxNjogTEJBNDggTkNR
-IChkZXB0aCAzMikKWyAgICAyLjIwODgyMF0gYXRhNS4wMDogQVRBUEk6IEFTVVMgICAgQkMt
-MTJEMkhULCAxLjAwLCBtYXggVURNQS8xMDAKWyAgICAyLjIwOTI5MF0gYXRhNi4wMDogQVRB
-LTg6IFNUMzEwMDA1MjhBUywgQ0MzOCwgbWF4IFVETUEvMTMzClsgICAgMi4yMDkyOTRdIGF0
-YTYuMDA6IDE5NTM1MjUxNjggc2VjdG9ycywgbXVsdGkgMTY6IExCQTQ4IE5DUSAoZGVwdGgg
-MzIpClsgICAgMi4yMDkzODhdIGF0YTUuMDA6IGNvbmZpZ3VyZWQgZm9yIFVETUEvMTAwClsg
-ICAgMi4yMDk0NjddIGF0YTQuMDA6IGNvbmZpZ3VyZWQgZm9yIFVETUEvMTMzClsgICAgMi4y
-MTA1NzJdIGF0YTYuMDA6IGNvbmZpZ3VyZWQgZm9yIFVETUEvMTMzClsgICAgMi4yMTI4NzFd
-IGF0YTMuMDA6IEZlYXR1cmVzOiBUcnVzdCBEZXYtU2xlZXAKWyAgICAyLjIxMzE4M10gYXRh
-My4wMDogc3VwcG9ydHMgRFJNIGZ1bmN0aW9ucyBhbmQgbWF5IG5vdCBiZSBmdWxseSBhY2Nl
-c3NpYmxlClsgICAgMi4yMTgyMzFdIGF0YTMuMDA6IGNvbmZpZ3VyZWQgZm9yIFVETUEvMTMz
-ClsgICAgMi4yMjg1OTJdIHNjc2kgMjowOjA6MDogRGlyZWN0LUFjY2VzcyAgICAgQVRBICAg
-ICAgU2Ftc3VuZyBTU0QgODcwICAyQjZRIFBROiAwIEFOU0k6IDUKWyAgICAyLjIyODk2MV0g
-c2NzaSAzOjA6MDowOiBEaXJlY3QtQWNjZXNzICAgICBBVEEgICAgICBNQVhUT1IgU1RNMzI1
-MDMxIEMgICAgUFE6IDAgQU5TSTogNQpbICAgIDIuMjg4NjgxXSBzY3NpIDU6MDowOjA6IERp
-cmVjdC1BY2Nlc3MgICAgIEFUQSAgICAgIFNUMzEwMDA1MjhBUyAgICAgQ0MzOCBQUTogMCBB
-TlNJOiA1ClsgICAgMi41OTk3MTddIGF0YTg6IFNBVEEgbGluayBkb3duIChTU3RhdHVzIDAg
-U0NvbnRyb2wgMzAwKQpbICAgIDIuNjA4MzgzXSBhdGEzLjAwOiBFbmFibGluZyBkaXNjYXJk
-X3plcm9lc19kYXRhClsgICAgMi42MDkyMTFdIGF0YTMuMDA6IEVuYWJsaW5nIGRpc2NhcmRf
-emVyb2VzX2RhdGEK
-
---------------DhKS6kFF4k5xkk27sIyHql4b--
+> 
+> This also looks like a fix, so Fixes, cc:stable, move to the top.
+Ack.
+> 
 
