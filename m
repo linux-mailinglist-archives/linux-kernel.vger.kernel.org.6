@@ -1,110 +1,121 @@
-Return-Path: <linux-kernel+bounces-549309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4B62A550C1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:27:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D208AA550B6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:27:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89D323B0A42
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:26:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 035AE3B12B5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:26:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78B3221518C;
-	Thu,  6 Mar 2025 16:25:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 028BA213E7C;
+	Thu,  6 Mar 2025 16:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="BhRt9yrL"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JhNTTJhy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D83C212FAA;
-	Thu,  6 Mar 2025 16:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741278333; cv=pass; b=mvUl7iiAJF74IGPQ3P3RIMpM0VwzEoN6AFWiUTKwLGwyDn4Eq2O6sawtKEl0+09z+HP7TcN48nN8SfHw04O9UxLs4K3BdDb5QyDzWDAGt64G8gfkosvsoER+NTfp71yQuut+IzGR8I12UMxlyZpxXoLYW+RWxp8AL1z8DRv5L+0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741278333; c=relaxed/simple;
-	bh=vr5DAy9ceHLtnLRH99uBpmG5TcbFiqRbRoBO2QRpjzE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tN/P1iJ9yIQiuDVfOVhIHBu8dC8Ut4sI5r4t30K7CnXLJOitt4FCQDdkHiH4uJruxlyEyDG+/OYyc95aAdiEZV4+IMtRp9fbLeaQNRAfM9xH2WiwT4eII+yWSH/Cf0x65m09RKboEEhbW9KWqppLLEz7mR5iYvFYBnuEVbVVjoA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=BhRt9yrL; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741278274; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=fYWr6dlfBopZYtEVg2WVCTt+2CnpilKMolUDQGbPbDpEYZTppAkCSPLfOjrGzbrCIZKbgEyVJKd5KGiOc03qCFzUu7aprWjKuYTu0nZ6Fsc3fk3vlHQ+ONm6OQRCMZTRZhVOLkxJiIG5bQwQb5o3r+WNi5/VExmRlDjJihB2vhM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741278274; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=xvxYduVFYl3X9Opku3Ljw9Ut8BVpYJ9gpFoUg4cVVaE=; 
-	b=SKXmVvEbNZ0LLv1Pppb6Tozb8NfacNKGwR5elYlWEC4tUPaFpTa9h+B+NwDaqFLO1ZJFqXknvgtScjXR0TwYlnQTrd9Xb51JEmy7wuRMu/lIkdbTiHB8LWdh5O7ffn2MP2fIWlvH9STdC59jgNOkXJqpqLamwS6GMBrrdtd0Dlo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741278274;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=xvxYduVFYl3X9Opku3Ljw9Ut8BVpYJ9gpFoUg4cVVaE=;
-	b=BhRt9yrLqCObz9my61SnB8MefVOuVkWvay600WprbHm6cP5+dDDdTlnMNaPAWKAh
-	0Up6eKd/PwW5il+HBFTI5j6ir5z588cjGfh2P+NQ7PBe+hxIUP/6NoNjHfwfcm+hCNc
-	p1yebKmAtrkLg5kSk1LzzDFIP+sVtbazDH5xcb/s=
-Received: by mx.zohomail.com with SMTPS id 1741278271741820.4467682880896;
-	Thu, 6 Mar 2025 08:24:31 -0800 (PST)
-Message-ID: <3f5da931-081a-4859-8833-655a5b5a3b9d@collabora.com>
-Date: Thu, 6 Mar 2025 19:24:25 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB9E1F4188;
+	Thu,  6 Mar 2025 16:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741278284; cv=none; b=XCcGWYd2Q8Vk5N+Vu2raT58AbIsSR/HAna+ees0gAKIjaq+KcVnpI6HMB382KF/NZOwI41t/ssyyOBLMa+GuYPBpKOgdOLWwTxnMidblaUg6g4N8z7hGuf/KnB6zq+lXCQSOEAZ0a2dUGFpMgBXOkLJIEV4KOQ2fhlIjkI3hC1U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741278284; c=relaxed/simple;
+	bh=+kNbwlJsG0d5knwFU8XMrHfRrzZxy6Vq25nHdxqvRjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=MSkIetlw0iQFRNPLAH6RN9HVIBYsohnd9VQ++6SgNwc2eQ4REhqA/6aFqGABJG5pcT9QNJKwxVdR/QLPDLU91fQkh8/U51W6XaMJOgKQqtUqdRX1LcHhbH3Dd4ofyK3Bv1fou6BGHq7Y80aIWU6wjJhuNtfArGjZmy/H6wk6VHM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JhNTTJhy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 886B0C4CEE0;
+	Thu,  6 Mar 2025 16:24:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741278282;
+	bh=+kNbwlJsG0d5knwFU8XMrHfRrzZxy6Vq25nHdxqvRjs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=JhNTTJhyjWlAbu4BZhAXyZuXHFR/dSZu1Tfv00+OsXDcMVd+NHEF5iuf3O3flLXZk
+	 7L67uVL2vsWmXUzX3WyRYJ5A4dkIBzEASjc3dwmLQN5ljvYSRmwEfF0N/s2KQ4WARH
+	 pXeK6gloj2qFlulAjIA0lk90CQM/1Z5WuRch8xxESaY4xyu2CTvxu06wOf48w4zYSA
+	 ZJeWRzvIAXw312j1L26TM/TuecV/2YfGiDwUvB9gEc//O4j2v459NZKGIx6z0IkTBc
+	 cC4rhmwDDRR+c2iRMsXhpJluWYcnWOhLOb2sUPGzjQGipwtzuzWM7qlOGy2SkfkRqP
+	 eatxxgQ1Oakng==
+Date: Thu, 6 Mar 2025 10:24:41 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 4/8] PCI: brcmstb: Fix error path upon call of
+ regulator_bulk_get()
+Message-ID: <20250306162441.GA344031@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 1/3] arm64: dts: rockchip: Add device tree support for
- HDMI RX Controller
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Shreeya Patel <shreeya.patel@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
- <hverkuil@xs4all.nl>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
- shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: kernel@collabora.com, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Diederik de Haas <didi.debian@cknow.org>
-References: <20250306072842.287142-1-dmitry.osipenko@collabora.com>
- <9489391.T7Z3S40VBb@diego>
- <f5f3dd36-0f90-47dd-bc12-1e2f0207fe7d@collabora.com>
- <3216426.Mh6RI2rZIc@diego>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <3216426.Mh6RI2rZIc@diego>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+In-Reply-To: <CA+-6iNyXeXhqzwbV+pcizpyXg-c-gihcLEtPv1s1uczdNN_VOQ@mail.gmail.com>
 
-On 3/6/25 19:16, Heiko Stübner wrote:
->>>> +		pinctrl-0 = <&hdmim1_rx>;
->>>> +		pinctrl-names = "default";
->>> hmm, this might be better living in the board dts?
->> HDMI RX controller is a part of the SoC, it's not specific to a
->> particular board. If you meaning move it into rock5b.dts, then we
->> definitely shouldn't do it. It's like moving PCIe controller node into a
->> board DT 🙂
-> sorry, should've been clearer. I meant the pinctrl.
-> There are two sets of pins hdmim0-rx and hdmim1-rx which one is used is
-> board specific.
+On Thu, Mar 06, 2025 at 10:24:56AM -0500, Jim Quinlan wrote:
+> On Tue, Mar 4, 2025 at 9:49 AM Jim Quinlan <james.quinlan@broadcom.com> wrote:
+> > On Mon, Mar 3, 2025 at 1:40 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+> > > On Fri, Feb 14, 2025 at 12:39:32PM -0500, Jim Quinlan wrote:
+> > > > If regulator_bulk_get() returns an error, no regulators are created and we
+> > > > need to set their number to zero.  If we do not do this and the PCIe
+> > > > link-up fails, regulator_bulk_free() will be invoked and effect a panic.
+> > > >
+> > > > Also print out the error value, as we cannot return an error upwards as
+> > > > Linux will WARN on an error from add_bus().
+> > > >
+> > > > Fixes: 9e6be018b263 ("PCI: brcmstb: Enable child bus device regulators from DT")
+> > > > Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+> > > > ---
+> > > >  drivers/pci/controller/pcie-brcmstb.c | 3 ++-
+> > > >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> > > > index e0b20f58c604..56b49d3cae19 100644
+> > > > --- a/drivers/pci/controller/pcie-brcmstb.c
+> > > > +++ b/drivers/pci/controller/pcie-brcmstb.c
+> > > > @@ -1416,7 +1416,8 @@ static int brcm_pcie_add_bus(struct pci_bus *bus)
+> > > >
+> > > >               ret = regulator_bulk_get(dev, sr->num_supplies, sr->supplies);
+> > > >               if (ret) {
+> > > > -                     dev_info(dev, "No regulators for downstream device\n");
+> > > > +                     dev_info(dev, "Did not get regulators; err=%d\n", ret);
+> > > > +                     pcie->sr = NULL;
+> > >
+> > > Is alloc_subdev_regulators() buying us something useful?  It seems
+> > > like it would be simpler to have:
+> > >
+> > >   struct brcm_pcie {
+> > >     ...
+> > >     struct regulator_bulk_data supplies[3];
+> > >     ...
+> > >   };
+> > >
+> > > I think that's what most callers of devm_regulator_bulk_get() do.
 > 
-> Can you check if "most" boards use the M1 variant?
-> 
-> Rationale being, that if we know that most boards use the same set of
-> pins, it's likely ok to just have the minority boards override it.
+> Manivannan stated that this series has already been merged.  So shall
+> I implement your comments with a commit sometime in the future?
 
-Will check, thanks for the clarification!
+Sorry, I should have mentioned this would be something possible for
+the future.  This current series is all set to go.
 
--- 
-Best regards,
-Dmitry
+Bjorn
 
