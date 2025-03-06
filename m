@@ -1,144 +1,152 @@
-Return-Path: <linux-kernel+bounces-549985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15E8FA55981
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:15:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 521C1A55982
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:16:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A871898E87
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:15:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E20A1177C28
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394B227CB3D;
-	Thu,  6 Mar 2025 22:14:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7539327C17D;
+	Thu,  6 Mar 2025 22:15:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="cQ3qbUZC"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XSJdZh+G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2861E27CB22
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 22:14:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B9F206F18;
+	Thu,  6 Mar 2025 22:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741299272; cv=none; b=cmcQMeO8Pe37g1SBNIiCRZma44+ChaDXPJQJ6tEUSwVRktoQBR2QIHrDQkQ2wybw4cxkNcraaj+0tHZnm+iIh8OgqjDKZZ9AhMjhooAUM3rF8qjFBNYW3HSzMfJl3GAIdrR3zRirWA9lhZEDkzdE1ADO5AP3MEHqmz9vLoBskD0=
+	t=1741299339; cv=none; b=XxZFEs3pKO8r8lbtmhwnsuke9jPuhirxWisWwlipOdEM9Y2dzrFXee33Oav45Te9Jw0qcNxwdaPfctzksOU5Z5NlLJFcVUWvDabNBfs/uPwH+KB5vYShlwQSaxbxJYIMDJ3WaWpUJFCpa5wBw6p4nhGHot6TSznd2vrhvfaUiKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741299272; c=relaxed/simple;
-	bh=nDkDW/2G/un6ApgnlvHac6AAuH6JzuIvEoSxNoxUP48=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SARP1VrgyU/EdH+YpRi5DRU+hBJ25OYwq3/BLCbdwYTMLMOw/Jf/XhlSWWV8CIiLVJb5lWYWFfH0RH71c+tASt1JTGq8pGc8WOH9wjUtE6fImZWlLYhFw5KLGojdOe7va7Wu9dEmp7mQD/l9I2/COqOELPG0sTY6XIJV+j64Yf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=cQ3qbUZC; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
- Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
- t=1741299270; bh=Vz67m0H+Fsmm+X3vntSM32uhdrZ3/NlRzpKG4VSgLhc=;
- b=cQ3qbUZC8LaIyT9es7D4/2bFR6oFqkDCZhIvQ2NBuIUIIxZpPxW3VnTv3AIvRkAhX8dFGjDGQ
- 6doA6GQyErCD0HFMAPRJLRl0Ll3Znfuu/ZRtEt+CgdyNYIDGjotTfPDH69SFIhR8geHKtuPzI4U
- iuNSXw8klYZdWvO9CH8paj3brTikjIC71ASenqXMCiDbf40usRN+8ihnd2mOlynSk9EthbhmUCi
- bfNmKedjVvVuHSKpV4n19dlg+kR8al+A2xYqYugQDKe4cxlPKBNKEV8sGT+oHd3CrNAZUpK1jMK
- pFYkxOLhGh54ZDIZynREg+Pgk+0jsEFaHWca+blP8SFQ==
-X-Forward-Email-ID: 67ca1e42c1763851c065c03d
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-From: Jonas Karlman <jonas@kwiboo.se>
-To: Heiko Stuebner <heiko@sntech.de>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Yao Zi <ziyao@disroot.org>,
-	linux-rockchip@lists.infradead.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH 4/4] arm64: dts: rockchip: Enable Ethernet controller on Radxa E20C
-Date: Thu,  6 Mar 2025 22:13:57 +0000
-Message-ID: <20250306221402.1704196-5-jonas@kwiboo.se>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250306221402.1704196-1-jonas@kwiboo.se>
-References: <20250306221402.1704196-1-jonas@kwiboo.se>
+	s=arc-20240116; t=1741299339; c=relaxed/simple;
+	bh=U44FBg9DYbght3ythigprQZcSpstgrbOFTLWPe8Mp5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ur+vdxaPc6AdXRsu8xpncpUXgwpfUlg0dFacMa89YEV4+TZqxnyw0XgE19PZXjHHDuMd828ngbjYbwe8+Hjf2pCWySMY77f9Cl37/xzXLOAHXpPG4GWHN6GFigyEQ5avYfBRZjZjFSjaHs5n93qA2UKssqFV4+laf3OjIIgViYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XSJdZh+G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8C7DC4CEE0;
+	Thu,  6 Mar 2025 22:15:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741299339;
+	bh=U44FBg9DYbght3ythigprQZcSpstgrbOFTLWPe8Mp5k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XSJdZh+G7Cf4fjIp6ZYJXGRRRYA+fQ5/brfWKxR/BTPM36cnEu861v5hVMj/pfkjT
+	 MbMSHjqbxGDrfLhSRrFebmowdHihYYg0YEw13/WImwG4HG7Eayi4jxPjrvwN0MsY0L
+	 51E16wj1edpqKHWZc9ZROS4a++NW4UBgx0XPPE7yCccOq1oCOXcrR+T4AWXleTfI8J
+	 KsaQdYGcjGmEkw8Say/9fjxFkqr60LZYONOKHXA12Qe4R9cOoGGQe1XCuf2XmP5Dve
+	 9/fk+/wIC7wrGhmrei9xmsBZ3IZR+qH2hk+XM7b4PHel7anRW7vmZVYqwnzJS2NSNF
+	 BoS7wRPkubqWg==
+Date: Fri, 7 Mar 2025 00:15:34 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Thomas Gleixner <tglx@linutronix.de>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
+	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
+	Dionna Glaze <dionnaglaze@google.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [RFC PATCH v2 3/6] tpm: add send_recv() ops in tpm_class_ops
+Message-ID: <Z8oehuPVMXbgjAxz@kernel.org>
+References: <20250228170720.144739-1-sgarzare@redhat.com>
+ <20250228170720.144739-4-sgarzare@redhat.com>
+ <Z8Jmps6AF_geaHUw@kernel.org>
+ <3p5erujbhxw7ozdnfpmresv3dqdh2xszolv6mh4khkagoy3wit@ow5qht4keh4h>
+ <0e156883acf95d31b9358831550d6d675e3ce4ff.camel@kernel.org>
+ <Z8dg46Mj81Q9Z0WV@kernel.org>
+ <jkr5z4thb55gs2jcmtcfipgg6p7z6ikhr6etd6l3nqpf723hf7@3fns3z5cjqk4>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <jkr5z4thb55gs2jcmtcfipgg6p7z6ikhr6etd6l3nqpf723hf7@3fns3z5cjqk4>
 
-The Radxa E20C has two GbE ports, LAN and WAN. The LAN port is provided
-using a GMAC controller and a YT8531C PHY and the WAN port is provided
-by an RTL8111H PCIe Ethernet controller.
+On Wed, Mar 05, 2025 at 10:04:25AM +0100, Stefano Garzarella wrote:
+> On Tue, Mar 04, 2025 at 10:21:55PM +0200, Jarkko Sakkinen wrote:
+> > On Tue, Mar 04, 2025 at 06:56:02PM +0200, Jarkko Sakkinen wrote:
+> > > On Mon, 2025-03-03 at 17:21 +0100, Stefano Garzarella wrote:
+> > > > On Sat, Mar 01, 2025 at 03:45:10AM +0200, Jarkko Sakkinen wrote:
+> > > > > On Fri, Feb 28, 2025 at 06:07:17PM +0100, Stefano Garzarella wrote:
+> > > > > > +	int (*send_recv)(struct tpm_chip *chip, u8 *buf, size_t
+> > > > > > buf_len,
+> > > > > > +			 size_t to_send);
+> > > > >
+> > > > > Please describe the meaning and purpose of to_send.
+> > > >
+> > > > Sure, I'll add in the commit description.
+> > > 
+> > > It's always a command, right? So better be more concerete than
+> > > "to_send", e.g. "cmd_len".
+> 
+> Right!
+> 
+> > > 
+> > > I'd do instead:
+> > > 
+> > > if (!chip->send)
+> > > 	goto out_recv;
+> > > 
+> > > And change recv into:
+> > > 
+> > > int (*recv)(struct tpm_chip *chip, u8 *buf, size_t buf_len,
+> > > 	    cmd_len);
+> > 
+> > I think I went here over the top, and *if* we need a new callback
+> > putting send_recv would be fine. Only thing I'd take from this is to
+> > rename to_len as cmd_len.
+> 
+> Got it.
+> 
+> > 
+> > However, I don't think there are strong enough reasons to add complexity
+> > to the callback interface with the basis of this single driver. You
+> > should deal with this internally inside the driver instead.
+> > 
+> > So do something along the lines of, e.g.:
+> > 
+> > 1. Create dummy send() copying the command to internal
+> >   buffer.
+> > 2. Create ->status() returning zero, and set req_complete_mask and
+> >   req_complete_val to zero.
+> > 3. Performan transaction in recv().
+> > 
+> > How you split send_recv() between send() and recv() is up to you. This
+> > was merely showing that we don't need send_recv() desperately.
+> 
+> We did something similar in v1 [1], but instead of your point 2, we just set
+> `chip->flags |= TPM_CHIP_FLAG_IRQ;` in the probe() after we allocated the
+> chip.
+> 
+> Jason suggested the send_recv() ops [2], which I liked, but if you prefer to
+> avoid that, I can restore what we did in v1 and replace the
+> TPM_CHIP_FLAG_IRQ hack with your point 2 (or use TPM_CHIP_FLAG_IRQ if you
+> think it is fine).
+> 
+> @Jarkko, @Jason, I don't have a strong preference about it, so your choice
+> :-)
 
-Enable support for the LAN port on Radxa E20C.
+I'd say, unless you have actual identified blocker, please go with
+a driver where the complexity is managed within the driver.
 
-Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
----
- .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 30 +++++++++++++++++++
- 1 file changed, 30 insertions(+)
+> 
+> Thanks,
+> Stefano
+> 
+> [1] https://lore.kernel.org/linux-integrity/20241210143423.101774-2-sgarzare@redhat.com/
+> [2] https://lore.kernel.org/linux-integrity/CAGxU2F51EoqDqi6By6eBa7qT+VT006DJ9+V-PANQ6GQrwVWt_Q@mail.gmail.com/
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-index a511e2a2d4a5..61ba0471095a 100644
---- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
-@@ -16,6 +16,7 @@ / {
- 	compatible = "radxa,e20c", "rockchip,rk3528";
- 
- 	aliases {
-+		ethernet0 = &gmac1;
- 		mmc0 = &sdhci;
- 		mmc1 = &sdmmc;
- 	};
-@@ -123,7 +124,36 @@ vccio_sd: regulator-vccio-sd {
- 	};
- };
- 
-+&gmac1 {
-+	clock_in_out = "output";
-+	phy-handle = <&rgmii_phy>;
-+	phy-mode = "rgmii-id";
-+	phy-supply = <&vcc_3v3>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&rgmii_miim>, <&rgmii_tx_bus2>, <&rgmii_rx_bus2>,
-+		    <&rgmii_rgmii_clk>, <&rgmii_rgmii_bus>;
-+	status = "okay";
-+};
-+
-+&mdio1 {
-+	rgmii_phy: ethernet-phy@1 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <0x1>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gmac1_rstn_l>;
-+		reset-assert-us = <20000>;
-+		reset-deassert-us = <100000>;
-+		reset-gpios = <&gpio4 RK_PC2 GPIO_ACTIVE_LOW>;
-+	};
-+};
-+
- &pinctrl {
-+	ethernet {
-+		gmac1_rstn_l: gmac1-rstn-l {
-+			rockchip,pins = <4 RK_PC2 RK_FUNC_GPIO &pcfg_pull_none>;
-+		};
-+	};
-+
- 	gpio-keys {
- 		user_key: user-key {
- 			rockchip,pins = <0 RK_PA0 RK_FUNC_GPIO &pcfg_pull_up>;
--- 
-2.48.1
 
+BR, Jarkko
 
