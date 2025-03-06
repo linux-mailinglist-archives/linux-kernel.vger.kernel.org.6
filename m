@@ -1,122 +1,131 @@
-Return-Path: <linux-kernel+bounces-549713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE8F1A55656
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:13:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2E9A5565A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:14:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F42416E9D4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:13:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 334481898027
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:15:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D7027004F;
-	Thu,  6 Mar 2025 19:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85E41A2391;
+	Thu,  6 Mar 2025 19:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWxDp7q0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jot2Jb5Y"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB2526FD8C;
-	Thu,  6 Mar 2025 19:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A05084F5E0
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 19:14:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741288421; cv=none; b=j69Z0ZZCalcF+ryGdVDtkyFeh8+8ViIILXzUZx1E+21Njd2gsYr35hhTtop5L0kAh+J4zCD21EcVM/y77MwiLuDU+nRQSCVoM7eji0T7BYW+ZAsYtP9x6wFASTptW2385gMYp/goKRbqOScloeqyLZJfj6tNdbWl8q1bevhbKHY=
+	t=1741288488; cv=none; b=PhaQa7rVVW05/63x038HGGOfjX6KSCEloZxNLVdlweKZkFRi7V4dyE0G/5YeKMvGUP4ww/SoiLMeK5+dMa9Z7nmBgDj5gTm+6/pJ2SlTIHMA8Hps8Jhn5HF6+2lwty+Q1hvhssdldzJ4IDrH5VHmExEhVxVYuR7m+Y8kxOQv4Xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741288421; c=relaxed/simple;
-	bh=aSoRZEC9ihe1E97uZreVdlraRGF9Lh8i+uzdQMNL4wY=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Qk82crHXzqnVXgZ/2MH3vvOQcHTlb71seyc3i4EdeMyh/UUfcG1VGCOenYXa44heVOHWuY8QaJeQfv0pUrDESkbmYAroWBA9cBVA4qJcF7MPXnhGM2emuAaBNYB7XD71YCP9ROaE8+BT1RaRmgYCSZq9CHT96VlU7Aznu5UqY2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWxDp7q0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 489C3C4CEE0;
-	Thu,  6 Mar 2025 19:13:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741288419;
-	bh=aSoRZEC9ihe1E97uZreVdlraRGF9Lh8i+uzdQMNL4wY=;
-	h=From:To:Subject:Date:From;
-	b=VWxDp7q0U+sVT3TUavg+ywSCX+7f/tcBP3OqsYp6OMdmLMqvIDvzdItOCV53cDHUV
-	 kjtORyheop+XOZ+ncioQmZZl2Sa65iC4iuxCmbqb/pkTZW0IudxCzps5g6/mgVc0Va
-	 5yp/Pf6Q+KxA861W2bkZNbfIhwG84dCWlXcRiD0Vmg8/uZ5hARAnELbgCyAOZ66vkv
-	 aRfFNhH9objH92eue2FXwpHVNTkgbhkNQAB3oEl80rKL7+5bdeAJvLMWcL0PHYvbjz
-	 +T7YgTujmQmDyztcH0SmAGkGalZNIEtySjhIeHszKHJIijAwfXoK3wwhI7E8aaMoPn
-	 cHI+oHXE1tqyw==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org,
-	Peter Huewe <peterhuewe@gmx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: Remove duplicate documentation
-Date: Thu,  6 Mar 2025 21:13:27 +0200
-Message-ID: <20250306191328.28680-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741288488; c=relaxed/simple;
+	bh=B8EL7mhyV0p6lPu7ySWm8kOK+6RoXFTWH0QdieSVTYA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=M43RjQcuIUZvlA7u2OBCn8PUhqHDujrsmMhAvxlWCLamGkXqkszyNcf6QeL2z9SjFMaun1+84REksc6SsCauo7XYtlF6WRDdixg7Iu84+BDPpMJUF6aHP91r8umbGQMRwBgvs9QOeqnEXsHH1iBY7HofRJAV+qB5qCZeMTUbgwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jot2Jb5Y; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e609cff9927so697498276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 11:14:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741288485; x=1741893285; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y4AdaatWdHTASZtJQVeI4ZLNiFLZxbXI/geRLgGTDtM=;
+        b=Jot2Jb5YjEvmkE4lXcnA/+LouCAQ8fhbDouKpX/pcSyiHkpVQ9RWSNSNKoCR4rbDzJ
+         cd7Lh9UzH1EPqIGOCT8WxO/2bd0tOJuu3wxOaGeQU8JucR3to1dFGphC2RrGsC26XcGu
+         bI9hpeH/DJbIolhkQYc+u6BEkz3NdieVCa6AYVz+vCKArIPRRrhyqyZx5fH0wK3SRR/t
+         ssCrcL0TFJn9iqcui2kVhrFWmr16vBD7BYS3rdwjgAB3tpERrHYNwcNjRfmgjrNDVuok
+         OkzNGFSZH0AHvYhP/KhOsuXtE7C3LfKTo2NdlA178WbpBpsvEXykCcFywCI6Q3qYowyz
+         t5ZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741288485; x=1741893285;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y4AdaatWdHTASZtJQVeI4ZLNiFLZxbXI/geRLgGTDtM=;
+        b=kHg6twjITKo+qWembMOFkyl1V8Q7yC4v8+828DaAEnZw/aXJjdbzfD9p6BX7TX2j5n
+         9KjwB7buV5LuM2fB81Oofzh3t5dc2JN8W9xpP4o5WQKvxKrof4qvamE1gHys1Z84TtxQ
+         z2b3F06BAzE5IxS2P0Umduj0v+j2Wy7flFwhl4XoCVjMnnzfxWCgjgQvJsproKSRg1n0
+         TgYBZL9S3LNdwZO8qSwOzrx2sZSc2Iom/16nBvqrewDCrXJooaoRGNeW5yf8XpvKa2Hz
+         y5M4EAucoRlXH3JhhcdlvVWtyqZMB6kIL97IkqaRr12bzgNXlrFvUKQJKprMmkf9DbdB
+         7VZg==
+X-Forwarded-Encrypted: i=1; AJvYcCV3V7TU3i9Y5R4XbWgciNmVJjQuP7lEbFw0bgLPktm9J7qFM+YlXTV0zFwNOHaB5b7fQCpSwyjcYP3n2bk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA9dZK/TCn9yERGsJE5gav8RCvvlDd3DK/PZjzGbsFdrOW6FWM
+	mdm88erPtI4xZWMyrG3yDzRVuFShZk+KaAmy7Ccr9zhHtrGNo72/a6euM8QxoefU91Ko69Oe9WS
+	qU8K/sPPAHwFlI6YtsA/ekxfn6JTj5J8noHDILA==
+X-Gm-Gg: ASbGnct2kLsRykoJP6uEx/0NvbgxVhSx2r/+oHZ+Eu3cvpsFxrNajDg61mfmyV0VqM9
+	jZGnrAZsX+vP4qU1nCuNXSY084lLA4fhfEkYLpl2mL3xaKaZUAsXwMwLKl5cq9aeGuOEbNfewjI
+	PMAnBHNGGtHUo4HWETO1E4QYIvpzht0ySNvE5tuyTJ5go6HJ8+zvBLZOi/
+X-Google-Smtp-Source: AGHT+IHGIS+ExaQuPe3WrwKhT9iTZlQPHWrqXU+FEi6CZPLDhFRxvRWPAQAyK3eYKCOza74Q/R0L9wmKBH+vKLWHucs=
+X-Received: by 2002:a05:6902:2702:b0:e5a:e897:2846 with SMTP id
+ 3f1490d57ef6-e635c13dc87mr674862276.16.1741288485545; Thu, 06 Mar 2025
+ 11:14:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250225-dts-qcom-wifi-calibration-v1-0-347e9c72dcfc@linaro.org>
+ <174110761299.741733.15423494263862521182.b4-ty@kernel.org>
+ <d5l3bsozn2sauenlyjolb45hqgiiachixxycziuyfsxch3ypvd@mjb6whdyjztw>
+ <64cb6810-4a75-4313-8d66-d773798f5a1b@linaro.org> <fb462c07-8d3e-4220-8394-1f8d9ae587ff@oss.qualcomm.com>
+In-Reply-To: <fb462c07-8d3e-4220-8394-1f8d9ae587ff@oss.qualcomm.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 6 Mar 2025 20:14:34 +0100
+X-Gm-Features: AQ5f1Jqn7g_ZEo4_V4hGSgwIQOP4Ud2cDL4bG4InNCHG7vk3jBCfoZ9M1cuhB9w
+Message-ID: <CAA8EJprNWHgTcWj-_mvg0OzbxeXfLS-S4wM6tsraB+beCSpUvA@mail.gmail.com>
+Subject: Re: [PATCH RFC 00/13] arm: dts: qcom: Switch to undeprecated qcom,calibration-variant
+To: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The functions already have documentation as defined in
+On Thu, 6 Mar 2025 at 19:16, Jeff Johnson <jeff.johnson@oss.qualcomm.com> wrote:
+>
+> On 3/4/2025 10:48 PM, Krzysztof Kozlowski wrote:
+> > On 04/03/2025 21:50, Dmitry Baryshkov wrote:
+> >> On Tue, Mar 04, 2025 at 11:00:10AM -0600, Bjorn Andersson wrote:
+> >>>
+> >>> On Tue, 25 Feb 2025 10:58:57 +0100, Krzysztof Kozlowski wrote:
+> >>>> Dependency
+> >>>> ==========
+> >>>> RFC, because this should be merged release after driver support is
+> >>>> merged:
+> >>>> https://lore.kernel.org/linux-devicetree/20250225-b-wifi-qcom-calibration-variant-v1-0-3b2aa3f89c53@linaro.org/T/#t
+> >>>>
+> >>>> Change will affect out of tree users, like other projects, of this DTS.
+> >>>>
+> >>>> [...]
+> >>>
+> >>> Applied, thanks!
+> >>
+> >> Applying it too early might break WiFi on those boards. I think
+> >
+> > It is just non-bisectable, so that's why I put above remark.
+> >
+> >> Krzysztof explicitly asked for it to be merged in +1 release, when the
+> >> driver changes are in.
+> >
+> > Yeah, that was the point.
+>
+> Driver changes are already in linux-next, and I've sent the pull request to
+> linux-wireless to hopefully have those changes land in the 6.15 merge window.
+> (ath => wireless => net => Linus)
 
-https://www.kernel.org/doc/Documentation/kernel-doc-nano-HOWTO.txt
+But if anything, bisecting over Bjorn's tree might give strange results.
 
-Remove duplicate documentation in order to reduce maintainer overhead.
 
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-This is posted mainly for transparency and will be picked to the next
-PR an all conditions. Ack are still welcome of course.
- drivers/char/tpm/tpm2-sessions.c | 30 ------------------------------
- 1 file changed, 30 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index b70165b588ec..e7d186637664 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -1,5 +1,4 @@
- // SPDX-License-Identifier: GPL-2.0
--
- /*
-  * Copyright (C) 2018 James.Bottomley@HansenPartnership.com
-  *
-@@ -37,35 +36,6 @@
-  * file and never needs to be seen even by the kernel internal user.  To
-  * the user there's an init function tpm2_sessions_init() that needs to
-  * be called once per TPM which generates the NULL seed primary key.
-- *
-- * These are the usage functions:
-- *
-- * tpm2_start_auth_session() which allocates the opaque auth structure
-- *	and gets a session from the TPM.  This must be called before
-- *	any of the following functions.  The session is protected by a
-- *	session_key which is derived from a random salt value
-- *	encrypted to the NULL seed.
-- * tpm2_end_auth_session() kills the session and frees the resources.
-- *	Under normal operation this function is done by
-- *	tpm_buf_check_hmac_response(), so this is only to be used on
-- *	error legs where the latter is not executed.
-- * tpm_buf_append_name() to add a handle to the buffer.  This must be
-- *	used in place of the usual tpm_buf_append_u32() for adding
-- *	handles because handles have to be processed specially when
-- *	calculating the HMAC.  In particular, for NV, volatile and
-- *	permanent objects you now need to provide the name.
-- * tpm_buf_append_hmac_session() which appends the hmac session to the
-- *	buf in the same way tpm_buf_append_auth does().
-- * tpm_buf_fill_hmac_session() This calculates the correct hash and
-- *	places it in the buffer.  It must be called after the complete
-- *	command buffer is finalized so it can fill in the correct HMAC
-- *	based on the parameters.
-- * tpm_buf_check_hmac_response() which checks the session response in
-- *	the buffer and calculates what it should be.  If there's a
-- *	mismatch it will log a warning and return an error.  If
-- *	tpm_buf_append_hmac_session() did not specify
-- *	TPM_SA_CONTINUE_SESSION then the session will be closed (if it
-- *	hasn't been consumed) and the auth structure freed.
-  */
- 
- #include "tpm.h"
 -- 
-2.48.1
-
+With best wishes
+Dmitry
 
