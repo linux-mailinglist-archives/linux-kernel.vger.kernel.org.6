@@ -1,173 +1,153 @@
-Return-Path: <linux-kernel+bounces-548962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46947A54B76
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:05:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF3FA54B71
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:05:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD0343AE9A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:05:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 650C2174A8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A3B20AF7D;
-	Thu,  6 Mar 2025 13:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C107C20A5C9;
+	Thu,  6 Mar 2025 13:05:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="S2JvZ7Zx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GEAE9Iht"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD061C7017;
-	Thu,  6 Mar 2025 13:05:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486A020C009;
+	Thu,  6 Mar 2025 13:05:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741266330; cv=none; b=uEKA53Vsus7rYKY4ceNhgR8XZWTd1tEaKEo8Qpo1ZbBzLrGOp/NGStIy54amacZmc46C1pkHS5GPuDfU2U818zghXSm+o5Evhn3UOkjwtMSvdkIZqCdTNw9fEYQkoJjyPi5tn5F3zUnFuZ2S398wvHmPkpASv3xllWyS6Qp0i/Y=
+	t=1741266303; cv=none; b=dQ9Dr5mXXBevRhpG3Cmwvmws3bsg6dMEpcAOFbJfbu+pfscFhAJWnGOIE8im+SrtmKEhn1WoUHobBWlyg2o3s6vR34AgpYaGD/X5NK0dj0UpQm6CIOcRnplEnumcbOlUj/zpW/AZrl48ZAyZthJnrWtwTG6wkTjYjWGCd6gkkvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741266330; c=relaxed/simple;
-	bh=oit9iCVAzl6xEfiY9pN3rkfZVdyzGi35uF91jaISyAQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KjCVXXo6TgU5sjd9FmWMwFQdyT+76JrnK7Yp3EAedPLPq7qbiDB3XEdcSFshtmjJ/EnviemyfULZuZdutW05IK1ra3GAzvQSTvaT/NWK3W8C2bWnj1nXpoSP4bh6XPzQzSuEHMCVYl7ZVSVAT9xi2RKSETmmVW4fMRnyZLFF9LY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=S2JvZ7Zx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526B3jOd032047;
-	Thu, 6 Mar 2025 13:05:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WBCgeeBjBpJkcmcOMtnpiqIKOmDFRnl5pP0rLltg67E=; b=S2JvZ7ZxxqDLZZpq
-	QTSuaFoOrZ1CPMnvcTXrPl3TvRIXcN3hnVsCOjxn163+g0d2X2QZ3sWzE66+0lX7
-	Cx5aVVovS96ZTkKKIll4DqJd/jWixDNSpaMH1qXgiLeH2+nORzlK3msphISKdju3
-	Jd5Sf2RtcOK4lYXRaXSh91pup9t1aO5xjN5FXSSsAsvqkqQDUWJ4GRfhGQDjUgwM
-	r63+WeNdbENT+RaF56Wqy2p+WWk8bJ3RKgRaLxstK1ONC04m7yXcdnW5xtB+1d4u
-	6TO+SV9IaVnyMF0bvRaPpWuovLViMEkbF98b/U5PyJ6igTIAmTZAsefXmX1Y1de7
-	Y+3GMQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 457aghgcp9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 13:05:12 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 526D5BeQ020402
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 6 Mar 2025 13:05:12 GMT
-Received: from [10.253.35.155] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Mar 2025
- 05:05:08 -0800
-Message-ID: <c3f0d284-07d8-42a2-85d0-f4023b9b6bbc@quicinc.com>
-Date: Thu, 6 Mar 2025 21:04:41 +0800
+	s=arc-20240116; t=1741266303; c=relaxed/simple;
+	bh=YNELi245vPsmcaIKuPOO2R4iHmuof+ZAbfWgXuQSYgQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Av6KxZRvOBj5h2eWTPFch60hOZw4iRxSGV4oUaldFyUGTmTODeACXXeWkXlxtLCswOlitNHsRlTDzDjl61OTzCwnizHuGj7ZaKZXYqXvo8/win1SG3PwxR8908OCbjEBRKRDANPvMlAU7Dy+Y540zZozCC8UXWXeU385DsrzyWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GEAE9Iht; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741266301; x=1772802301;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=YNELi245vPsmcaIKuPOO2R4iHmuof+ZAbfWgXuQSYgQ=;
+  b=GEAE9IhtIZU912xQwtXBXyqfQU8sHOgu4pcAbwv27XTUMYqSQLUmsw95
+   1S1RlscQE1GASv+HtJA510N5DzS3dkXMQy4iFyiR326Zka5CxpZJujtpA
+   ftPJvHoyoaqpuoI50T7tPSHv7q0EIUPYwbD9U1sVeg8wKa0ADXjcvyLuU
+   crW2mjBIXrF6CXE+XKtC0LMiDaRXjy7P9QZeN8rqTArgL6dQpq85kqGeM
+   v7f6XZ7WzSgZiATEcgKNYO+oKkVLBlsSfH9eTRb2FyeisZj506cpe9MWh
+   JZJ85l4NfeSL9YjiFE3a5xOwlHOSDRAqU3fDe74y+/tQOdSZxEbCB6Sdr
+   Q==;
+X-CSE-ConnectionGUID: E5d5eS7gTOGQmua/XHefYQ==
+X-CSE-MsgGUID: yv5XPPWES9SRZ7tCpQ7wPw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="41447285"
+X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
+   d="scan'208";a="41447285"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 05:05:00 -0800
+X-CSE-ConnectionGUID: bwaNFyECQie78jsFcEQlRQ==
+X-CSE-MsgGUID: QkNFBrDxQFWlSj1RB07U9g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
+   d="scan'208";a="149800015"
+Received: from unknown (HELO localhost) ([10.237.66.160])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 05:04:55 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Lyude Paul
+ <lyude@redhat.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Rob Clark <robdclark@gmail.com>, Abhinav Kumar
+ <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, Marijn Suijten
+ <marijn.suijten@somainline.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+Subject: Re: [PATCH RFC v2 0/7] drm/display: dp: add new DPCD access functions
+In-Reply-To: <87a59ywda3.fsf@intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250301-drm-rework-dpcd-access-v2-0-4d92602fc7cd@linaro.org>
+ <87a59ywda3.fsf@intel.com>
+Date: Thu, 06 Mar 2025 15:04:50 +0200
+Message-ID: <877c52wbrh.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ufs: core: bsg: Add hibern8 enter/exit to
- ufshcd_send_bsg_uic_cmd
-To: Bean Huo <huobean@gmail.com>,
-        Arthur Simchaev
-	<arthur.simchaev@sandisk.com>,
-        <martin.petersen@oracle.com>, <quic_mapa@quicinc.com>
-CC: <avri.altman@sandisk.com>, <Avi.Shchislowski@sandisk.com>,
-        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <bvanassche@acm.org>
-References: <20250304114652.210395-1-arthur.simchaev@sandisk.com>
- <bd2e01d8b33413655a4215221c910eaf2cdf6461.camel@gmail.com>
-Content-Language: en-US
-From: Can Guo <quic_cang@quicinc.com>
-In-Reply-To: <bd2e01d8b33413655a4215221c910eaf2cdf6461.camel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: IA1v9K4Lx4Uzjc5inQvHoUOa9fUoyOUO
-X-Authority-Analysis: v=2.4 cv=R5D5GcRX c=1 sm=1 tr=0 ts=67c99d88 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=NEAV23lmAAAA:8 a=VwQbUJbxAAAA:8 a=askNAfbZAAAA:8
- a=InJrZTXqAAAA:8 a=0k5qN4xF1ULUk8dre8gA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=7Vq0anFIkUTOnIa2TtOZ:22 a=WwJ7OKCui7YMbFU4sWpb:22
-X-Proofpoint-GUID: IA1v9K4Lx4Uzjc5inQvHoUOa9fUoyOUO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- suspectscore=0 phishscore=0 mlxscore=0 priorityscore=1501 clxscore=1011
- spamscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0 lowpriorityscore=0
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503060099
+Content-Type: text/plain
 
-Hi Arthur,
-
-On 3/6/2025 8:50 PM, Bean Huo wrote:
-> Arthur,
->
-> At present, we lack a user-space tool to initiate eye monitor
-> measurements. Additionally, opening a channel for users in user land to
-> send MP commands seems unsafe.
->
->
-> Kind regards,
-> Bean
->
-> On Tue, 2025-03-04 at 13:46 +0200, Arthur Simchaev wrote:
->> Eye monitor measurement functionality was added to the M-PHY v5
->> specification. The measurement of the eye monitor signal for the UFS
->> device begins when the link enters the hibernate state.
->> Hence, allow user-layer applications the capability to send the
->> hibern8
->> enter command through the BSG framework. For completion, allow the
->> sibling functionality of hibern8 exit as well.
+On Thu, 06 Mar 2025, Jani Nikula <jani.nikula@linux.intel.com> wrote:
+> On Sat, 01 Mar 2025, Dmitry Baryshkov <dmitry.baryshkov@linaro.org> wrote:
+>> Existing DPCD access functions return an error code or the number of
+>> bytes being read / write in case of partial access. However a lot of
+>> drivers either (incorrectly) ignore partial access or mishandle error
+>> codes. In other cases this results in a boilerplate code which compares
+>> returned value with the size.
 >>
->> Signed-off-by: Arthur Simchaev <arthur.simchaev@sandisk.com>
+>> As suggested by Jani implement new set of DPCD access helpers, which
+>> ignore partial access, always return 0 or an error code. Reimplement
+>> existing helpers using the new functions to ensure backwards
+>> compatibility.
+>
+> I think that description is for earlier versions of the series, it's the
+> other way round now.
+>
+> Regardless, glanced through the series quickly, I like it, this is
+>
+> Acked-by: Jani Nikula <jani.nikula@intel.com>
+
+PS. If you need to send another round, please Cc: intel-gfx and intel-xe
+to run this through CI for both i915 and xe drivers. Thanks!
+
+>
+>
+>>
+>> This series targets only the DRM helpers code. If the approach is found
+>> to be acceptable, each of the drivers should be converted on its own.
+>>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 >> ---
->>   drivers/ufs/core/ufshcd.c | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
+>> Changes in v2:
+>> - Reimplemented new helpers using old ones (Lyude)
+>> - Reworked the drm_dp_dpcd_read_link_status() patch (Lyude)
+>> - Dropped the dp-aux-dev patch (Jani)
+>> - Link to v1: https://lore.kernel.org/r/20250117-drm-rework-dpcd-access-v1-0-7fc020e04dbc@linaro.org
 >>
->> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
->> index 4e1e214fc5a2..546ab557a77c 100644
->> --- a/drivers/ufs/core/ufshcd.c
->> +++ b/drivers/ufs/core/ufshcd.c
->> @@ -4366,6 +4366,16 @@ int ufshcd_send_bsg_uic_cmd(struct ufs_hba
->> *hba, struct uic_command *uic_cmd)
->>                  goto out;
->>          }
->>   
->> +       if (uic_cmd->command == UIC_CMD_DME_HIBER_ENTER) {
->> +               ret = ufshcd_uic_hibern8_enter(hba);
->> +               goto out;
->> +       }
->> +
->> +       if (uic_cmd->command == UIC_CMD_DME_HIBER_EXIT) {
->> +               ret = ufshcd_uic_hibern8_exit(hba);
->> +               goto out;
->> +       }
->> +
->>          mutex_lock(&hba->uic_cmd_mutex);
->>          ufshcd_add_delay_before_dme_cmd(hba);
->>   
->> --
->> 2.34.1
-I can understand that you want to use hibern8 enter&exit to trigger a 
-RCT to kick start the EOM,
-however there is a better/simpler way to do so: you can trigger a power 
-mode change to the
-same power mode (e.g., from HS-G5 to HS-G5) to trigger a RCT (without 
-invoking hibern8 enter&exit)
-from user layer by dme_set(PA_PWRMODE).
+>> ---
+>> Dmitry Baryshkov (7):
+>>       drm/display: dp: implement new access helpers
+>>       drm/display: dp: change drm_dp_dpcd_read_link_status() return value
+>>       drm/display: dp: use new DCPD access helpers
+>>       drm/display: dp-aux-dev: use new DCPD access helpers
+>>       drm/display: dp-cec: use new DCPD access helpers
+>>       drm/display: dp-mst-topology: use new DCPD access helpers
+>>       drm/display: dp-tunnel: use new DCPD access helpers
+>>
+>>  drivers/gpu/drm/amd/amdgpu/atombios_dp.c           |   8 +-
+>>  .../gpu/drm/bridge/cadence/cdns-mhdp8546-core.c    |   2 +-
+>>  drivers/gpu/drm/display/drm_dp_aux_dev.c           |  12 +-
+>>  drivers/gpu/drm/display/drm_dp_cec.c               |  37 ++-
+>>  drivers/gpu/drm/display/drm_dp_helper.c            | 307 +++++++++------------
+>>  drivers/gpu/drm/display/drm_dp_mst_topology.c      | 105 ++++---
+>>  drivers/gpu/drm/display/drm_dp_tunnel.c            |  20 +-
+>>  drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c       |   4 +-
+>>  drivers/gpu/drm/msm/dp/dp_ctrl.c                   |  24 +-
+>>  drivers/gpu/drm/msm/dp/dp_link.c                   |  18 +-
+>>  drivers/gpu/drm/radeon/atombios_dp.c               |   8 +-
+>>  include/drm/display/drm_dp_helper.h                |  92 +++++-
+>>  12 files changed, 322 insertions(+), 315 deletions(-)
+>> ---
+>> base-commit: c0eb65494e59d9834af7cbad983629e9017b25a1
+>> change-id: 20241231-drm-rework-dpcd-access-b0fc2e47d613
+>>
+>> Best regards,
 
-FYI, we have open-sourced Qcom's EOM tool in GitHub and validated the 
-EOM function on most
-UFS4.x devices from UFS vendors, you can find the code for your reference:
-https://github.com/quic/ufs-tools/blob/main/ufs-cli/ufs_eom.c#L266
-
-The recent change from Ziqi Chen is to serve the power mode change 
-purpose I mentioned above:
-https://lore.kernel.org/all/20241212144248.990103107@linuxfoudation.org/
-
-Hope above info can help you.
-
-Thanks,
-Can Guo.
+-- 
+Jani Nikula, Intel
 
