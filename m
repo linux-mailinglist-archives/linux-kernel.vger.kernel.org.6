@@ -1,197 +1,158 @@
-Return-Path: <linux-kernel+bounces-549425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22622A55268
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:09:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAA91A55284
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:11:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07E593A613C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:09:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F44C18871AB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A45C25BACC;
-	Thu,  6 Mar 2025 17:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E6A25A33B;
+	Thu,  6 Mar 2025 17:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="fd1tddVz"
-Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011066.outbound.protection.outlook.com [52.101.70.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="fS5Df75Q"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27E025A2D1;
-	Thu,  6 Mar 2025 17:09:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741280943; cv=fail; b=oaujAoez+gpYokqTYGx7t4N3uCYwvCEwlcBrHjAz1Fe6XmZMDJtL9yW0iFKToh+eVX/st3lv8+tqiVqX4/YSdwboZQWOiqQxVY8AUzNi8+mNRWVTpvKFy3T42/vg0TDWnn7K6v85pEdGP0v/o+3H0MN1pu1ldBYOxO/N4Zb58V8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741280943; c=relaxed/simple;
-	bh=3dcaabYW3YZFr4PLR4tsAt2eT5XbVYC7j9UgDNSu/rE=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=lJeZpVNP9hgdaoR1W4gj+UfnNVhPe5kyW9F4UZjzVTBUU24HeOg807DaNCZFpYOP85gbZkyOQOdzuQLKAGDU1rzWt7HRk451lfuIUYGu5hdbqdzJEQzTFiIFidcYd8KJZT/njhmfEFKcwVchIfZUddZLkdXJ9ry04X+a+Fle6QA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=fd1tddVz; arc=fail smtp.client-ip=52.101.70.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ya/1EuoLs1QfxP1RTcEghwMzj0oXQV0Ru2RvCiaCVyVWD0cNvCh3iKawRp0rslQXEyO92mJD3JsExEZBBO0YJgF+X4I2skcP8Ve96MZVhiIp0GPJmKkpcHe/2hSX9Fq0RYHcR4jMZuOkiFVRuSGtwnZKW27oqd5V2P3yiIuyUV7c8zI32vf2DTI8yr4mjY/GenSHV1ZWLC+xy3+WXqJymL/FPzPjfJ+cIztYYFVFJDx1/WZIAauoXjgxA7JQoAJsYrksKdxBUBp6KmoD1p8CQCQszkskZyIp6bMjLegV6de671R3p3Cgp132ZCGuwkxhFSentpqEdiplda7rdOHbKA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=S8r463Ph4XMAxEo7yNWLnGIKZmih9dHIfDuT1XPFT6A=;
- b=JF6/G8rB/JHjy5tS4lnGS/WbbsK4+bi//c7wPNUbgV7xPFd2UYOK7qadnHH//xdqS3ER5XowSxLBRcIAvm1YSTwkYA1A76QCr38JgVucUfEwsoodjgT7DQ2MstL6389f4SZMsQKXORX6t1b2IFVCfRFc5AXhOwBHXpjmw+BO7H5BtPHRS3DaU/KL6rm/xji0qb3o5Cdxm1p/PhH4olBcdXliQYMvaykQ8DlvFj//DSKKqfcnj3ZWxze9eD1JHdycJ539fFp+yOcyi8GoXHxjty8FpTBnJR5jOFId/zI95aUUZAWnTLA+Mx3oC85bKLnZug6jESnps3P4DQaIRPCiTQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=S8r463Ph4XMAxEo7yNWLnGIKZmih9dHIfDuT1XPFT6A=;
- b=fd1tddVzEd80yFHo2sOKiRsR4Qg2PJY5sE2CwOUDJjj6nopFp7fXdHTXQoUdxxqdOzs7bpc4sl2AYRnn7ITklpz7FCNB8/CSuh65UaZMSCHHdzIFY91GAHnLNv01CBQx6+L0sP0JJcgEue+FL+uKMiP9FWCluratKF9dGyGO4IzLhN6wnafdnIzVF6YsrVhY7ao5rUqnF6SK6P0mviqo570ljjrbnxpZ0mTX0vjzvPE8LOOcHq5H1hYCAHEWKoSU6DoRXLZnz2k9aFqKn0U0fWIee5bbm2aE6tLBZAlmX68mOMb2g3kjNq+6wAoyQW9CqAe6iBmLWvObD9uAc9vPXA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DU2PR04MB9179.eurprd04.prod.outlook.com (2603:10a6:10:2f6::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Thu, 6 Mar
- 2025 17:08:59 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%6]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 17:08:59 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-pwm@vger.kernel.org (open list:PWM SUBSYSTEM),
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	imx@lists.linux.dev (open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH] dt-bindings: pwm: imx: Add i.MX93, i.MX94 and i.MX95 support
-Date: Thu,  6 Mar 2025 12:08:45 -0500
-Message-Id: <20250306170845.240555-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR13CA0191.namprd13.prod.outlook.com
- (2603:10b6:a03:2c3::16) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB8C210F4D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741280937; cv=none; b=PGUJ7ORd9gB1AKKcFs0O3THDBTe1U3wKD0vWgrroN6toPphFBnRmk87B/rGh54Ktar+s7x5oCd2yTPsWIGyy1WSOWHS8i19EySfAUSBZ+4f5yx1Ar3PW5NDEuBiZ/aXsWauf+bqpi9qRp8XtgEApbIt8plYdhq8Ymye9ClYIZWo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741280937; c=relaxed/simple;
+	bh=RUEhFfWhM5UlQ2uov74uy48HBJc5JClctmAaFgriwI4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uom/m3iuRqc4oEVgNYSoAgW1r+l/QCdcWxD5k/rMRi/X5UuUNwTNifjK3V4CAoMYICjNE7MPGc2XXai2fsu4Dw/qoWobrLVk4DhoddetENuXqL6+GMZPzE1TvSvQgvba6ifC6egDqPkXO8t0MBOz8DMXa+dr4OfzMbqSti180HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=fS5Df75Q; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c3d3147b81so103886185a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:08:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1741280934; x=1741885734; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1wNyXxcCEsmV3rMjIVb7Etw5fSJV7UEopsGd2j/hR1s=;
+        b=fS5Df75QuIH6V1NtwQfhY3gI1AGXkZgDYKU3TWbo9wvxTgPt6+hROtfoopNLJvkDXP
+         Mrh1crW1CoQqR3DPB0eFN8P+1XYQdHqf7Xm03r0uvUk6Zg4XD27SWkmWovW8FXobEMwg
+         2z0bjXX8yqXhgvROywDk6eDLjas4Rk/HEje+hDZTp/bwkJ/WXw06LZJfurnm8ARq7fWw
+         8yf3RVIFo11lsQq3N3QcNIS4smPiPetodYzP4x4vNJx8L1PS4N6CEVJHmsLsea7XSO3u
+         wJP0Yh7BpABFQ50Z3xCLIx1gz+P07hh6NS8l8rxL+a//dssZpyZu+/9mch4/YIdPAXS5
+         u4Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741280934; x=1741885734;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1wNyXxcCEsmV3rMjIVb7Etw5fSJV7UEopsGd2j/hR1s=;
+        b=c9gi+M1bycIAaOjoOLL2Ypj6RS2CEhMr9zRB5Hko75S2t2guf6j6cz0DuqqWPxCUFb
+         ydtf29l0Sv7wjNJh3dMmhOMxF1C6huK0QN5dAPAxn4xGroUGC5VisLFpfhb5SG0xIIPv
+         YGvICaNHtVLQHcg/DanATtw163bXt+pLV26aASNv+jXFiBArxtXwEg3A7A/PuQYdD1cN
+         tf+98UQxfCBGjTmb2eQ/g3c/HLeRy8aUc1dd58qP9+0/6dSYPhpJoanr0uCBuTJrpXPu
+         P9tW3hu6/YSkt2bekuCCpYD7wISmW0cED7/HQkaMv7xKS8VZx7V4BSNO1i+rwuupb526
+         8kYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSNhnzQmTPRLhQ16Eq2/H3bRdNKgKcOw7eeMVI1wPoF/dtlI4SnDwcjPvr5uCOJKbPNyBuPtnyjwpAmYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLZytiPE+XnY1N2qVxT9AU0p0l1qA09SGJP0jHFxv2zgT09lJZ
+	KnaUtvNeDJrvIU0IKmeOe1WhgKJo73g0qxuqS276N4xJwAUqqoJze6i+OvIBEKA=
+X-Gm-Gg: ASbGnctqTV/Ph14jD9y8NeeVSEx3agQB4yaK4jQ/BQa7msJlh1VxPfiwfygFVwNln1t
+	tRLkFQBN9R7Xr1m/kS45BXF9QlLgIxZ1R5Qcv58finxwi+BIVmx6RxyHA6bRgDotIxSIFjMgQF8
+	Sp94TarlUgrjt+beZD9dbbmfpdsNi1s1fNk6THsdZ7URJX/kHjQVNqgcvs5VfebhqtyiHOBrvC8
+	Amcx2KGmAKhtyRzAAK8j34E2Iy33XNTIifvDAXZMvFxjyynxLJzvTzYT1fIAJfHpG+kNxEfGjAF
+	qkE/yE8ROSscl2qlU11ZeHrHk+Zerm2SO3k7K3nkVRYIW+dcAf5IyTQK32HgQ9x75kRAsQNoq+U
+	vaPmble6roXLcpD725zCdH1+kcsc=
+X-Google-Smtp-Source: AGHT+IGzXdo+ayTPw4Ob64P9xw3wnYIZAQKLG2XeMD/1+CZlCiHLJrym6jweO9Vd+DG+fYhwPqgi2w==
+X-Received: by 2002:a05:620a:8806:b0:7c0:a357:fe62 with SMTP id af79cd13be357-7c3d8e65564mr986859185a.19.1741280932574;
+        Thu, 06 Mar 2025 09:08:52 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e55116a5sm111483085a.106.2025.03.06.09.08.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 09:08:51 -0800 (PST)
+Date: Thu, 6 Mar 2025 12:08:49 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+Cc: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [LSF/MM] CXL Boot to Bash - Section 0: ACPI and Linux Resources
+Message-ID: <Z8nWobZXQwhtE1nK@gourry-fedora-PF4VCD3F>
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
+ <Z8jORKIWC3ZwtzI4@gourry-fedora-PF4VCD3F>
+ <Z8j8bZ5TS+gDV8+M@phytium.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU2PR04MB9179:EE_
-X-MS-Office365-Filtering-Correlation-Id: 54c4d63a-b4ee-4c37-4a4b-08dd5cd19601
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|7416014|52116014|38350700014|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Xm7p7K3HXTQq3Z1wOWNqpyXLt4ZAB3RukInJA1QlZ83xHBcwVQ7xpmPsyDsC?=
- =?us-ascii?Q?JwSlXaX/IcJX8UogOIK1J94OthUMsU1dKHIDz9oF/OBTqK2JwppjMIK6ApLo?=
- =?us-ascii?Q?UCFSu8K0o8mpqfpSN2s4NIw1I/OT76/o+T8cvfERZzej4zrytyrgaz2albEh?=
- =?us-ascii?Q?OtX7dUrHTmNfA67ySN0Ic4SoJflKZRlQLXB8onC4L5rbFOgvihPwHUMX9gkm?=
- =?us-ascii?Q?eUyHvFirZ4XQYZRcHsqExr36T1zafr48Sew/s2E8YTv3kZDllSYXYaZHO6ac?=
- =?us-ascii?Q?i6ghpIeeQSnukVdiq3pg9vP85wb18Nmo+ByqSOcW/LxqGHshjPyTOQJwiLeW?=
- =?us-ascii?Q?65b17a55p7Q1S2ON5KIKqKpdNJ2DPfK+jP79aJrq3Vj4EXc0BevNSjzunz5z?=
- =?us-ascii?Q?N5mqTtHx9O/U5t3beLch+w9TPYAlNCAyGwyp32AbgB34FRRIGUD2FdyHo1gb?=
- =?us-ascii?Q?7SSSXZv8w3abTzXdqBJTVpE0aSPu6EzjuPvG/P6dhMBAEYZDDkJo5RU43bfR?=
- =?us-ascii?Q?ZwbbaebBx9s78M6Islj+l5Eea1stx43XMe9aSlRwHreZas+nrVrMEXhgj6YZ?=
- =?us-ascii?Q?lh+ajCN+L1/ClBEr3R/rVSQJyTYzxt2gU9kLPyJtvWHJwEzecKb3NM9ZGop2?=
- =?us-ascii?Q?Z4C1zy/G+D33YKv+bStdUzo3LlW8T6j/VP3vzDNbluU2huNBSSN58JFanHeO?=
- =?us-ascii?Q?g5GGi/MQefvpT9wt4Xmszgb2kuT7wootW1viZyk1JsRH/wHOTNPle59AXmg7?=
- =?us-ascii?Q?+fX/qXW16Njx1llFXoY5pOtKfyeFIVGXckDK9XN3a0I2ZKR79dy/JvuUIY8m?=
- =?us-ascii?Q?awSVizDsMwKtylN4sF4UGl7Ci+cbNfTKz8vbrwDwDGcWBHJDAJBCbxHYPJje?=
- =?us-ascii?Q?RrpQVazyglq9FYM6MRO/zx3CEZJj9im69Mnd5BDkz/0xJtBeOxKjVOuvZfsR?=
- =?us-ascii?Q?41PD9JmB7hzJmSt/ZYeaGaI1pbq61E6XtuQjqAaBxymkRxd6yQnLzAQ6AuiT?=
- =?us-ascii?Q?tlxlmYMSZs5QFhP6+M1OfjPoBXLWU7m78cwL6SOaw78ChjzieU3EKIod4IV3?=
- =?us-ascii?Q?lqEZ9JrLDGgC/t5vwJbeEMzxRYqubSu0c7R0TeXAVO57qIIzC5gJMQ13jdvh?=
- =?us-ascii?Q?0sM/zU6NXTuqRdzIEW9wGyFavqY78Z4TuWxqZnuIJrBPD+fvmQry7FH2qi8I?=
- =?us-ascii?Q?9GmvL4V0NFpgRFPv9t4CplIieqNeha9GAal1MrA+uBOY2S4VVa5Z/063Q7BF?=
- =?us-ascii?Q?Y7kZIe7YrXublngjoLBTq5uc5vJTK814otqiCkcUod4hYYEjb0J/AgW0VSOT?=
- =?us-ascii?Q?SeqOZS5S4NmxPe8LUUmqKQJdNlJ0U1jZ9NrUGhURCCm43apxnbOC0KuzzNlG?=
- =?us-ascii?Q?y8LLyuZKKVuSCwgd/5XMpQGSGFCDzWdtSoWzmmIlJHTs8jy3WpnCyhh//GLZ?=
- =?us-ascii?Q?+3Bq03CirT4hEtSXIpCL97XB1uLWaAMI+C83mjAf+i29UhgL8P40qw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(52116014)(38350700014)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?wkvd5iqeUaXJ9jGjSCwVeUd3Uu+P1/tI+YD5H5PIDWnO9/oNDmM3sfOfkBze?=
- =?us-ascii?Q?9eGDjjFUhJ46xnw2xhVPhCqa62kiAie4PxV11ifyTbsUZ5P/hPYNf87SzZS6?=
- =?us-ascii?Q?7nJ51peKTP4ASHIGVXyOMbG33XdwpNfHOq97itTdSaTMQ5B00IzMiDefFE3v?=
- =?us-ascii?Q?lXJeEqK2LrAxkm/t5D4/ssilz42YZJ7kjnrwOeHTWngpBvS+Y/w8SrLmMwwW?=
- =?us-ascii?Q?XZVpzvSJAaswTYlDhVF8U8j1RHtSvs2y+9AYWQPnGYUjeSdfuApD/0E221Hx?=
- =?us-ascii?Q?n3g0XvGxgzemeLWLWfpuOsfVIbG7Lnnf4NTvtNymLMPU/iOHaSynbanVFj90?=
- =?us-ascii?Q?r1qp41mGowiBe2bXyK2/fQ77f775L5jozsMcBQUDs3cL8YgHCw+tAvNQaNKw?=
- =?us-ascii?Q?JQLy5I/7gQ9BjDnQFHXFaYNfA9vfJhn75OKAmDAk9yz0pnJQDIZhYhwhk28B?=
- =?us-ascii?Q?VJQ0wQYedKBmFED9tRNIn4Y3yEDoJ4q3SuAlKM0al1TJKVnWMTwtiCh7gMbu?=
- =?us-ascii?Q?9dWq6VtucvCjZRT6yeYuXFQGaJqUvYyspU4tyKCJm3+JUEx2hLUxOw93wzST?=
- =?us-ascii?Q?/Jv3fFhm659sTMSnxyoz/Ifjel30YfeMeH8ZFBhg/C5QlLxA+KP5DmxjPtmk?=
- =?us-ascii?Q?tA4+fL5YrPy2hUPIO74+x1SDIkTxfIs0UQnU2G6PXX+Xg1D7qgoem1NuJyT5?=
- =?us-ascii?Q?UeBNQpCGY+mrTY2bPy+1H+Fy1NfCNWXz/Un0MF4+iIurPht8vS+p3i3nBMDY?=
- =?us-ascii?Q?VWUNu5MjSi6GzeycfkPXpykZI+NO+HtIGQ9YODFjpheqKTKk1Vmo9sj4o3Qg?=
- =?us-ascii?Q?n7l0IkUQAX6k8Ig0aipxN4VEP0/e7ZzAZz8vDLxZJKVPlaC1b70dzEt0Y2NR?=
- =?us-ascii?Q?qZLDvATSXhZUKjXh1bKavMihu5Qkz4sw8NNDbVIjEiVyNjL1skQPFJLN8ZAN?=
- =?us-ascii?Q?c0ZgE/h0dns5H2PEhA751n367K7noVhaa7A3MxvwBW6LnGaIZyG1FhdBqDjh?=
- =?us-ascii?Q?Z6mugv8Sx594OX6cd29r7ONs7HwGrvmsbgAcjF4mMpXTKl4xxish0kqW5xqN?=
- =?us-ascii?Q?+PUfExD/Z6/lkZFD6FubOSNWXoUbXBjkpNKlVK3Uk+RnAde0wYha9ZbnJ49c?=
- =?us-ascii?Q?6yOyUJ8ouUKmtwFVAXlWu/+pX29kXv5KrhtWfT3Ay0TcrDgrKkk4j+vuTOzV?=
- =?us-ascii?Q?mCXlPw+TdENZJfUBtwAl9We8awFc6WbZyWanh3ANgsNQ8Kh9cYI/QCgegJnt?=
- =?us-ascii?Q?CzXzsrkPX9MKDW8lnC5Xm2gOtoCB87oz7IrsPjvvw6rhq8c6FueFTdNWOpoz?=
- =?us-ascii?Q?07TZTaW2TlX/UJZs9bFpGSVMsTJYMnRhgPNZ52wN9Y+JiT/+XHY1VsxZcFtV?=
- =?us-ascii?Q?fk7C0KYx0HLAnFafiqnGwRC41GpFNkg4QfLGsDWX01Q3PqI+zEKjPxYMzxr9?=
- =?us-ascii?Q?YkxQzyTgpwGPEsRaqarU+s3m83OJXbLsO9aIo0z3EIz0xfUfurnqQX9HHP5I?=
- =?us-ascii?Q?kPg9F33Zl2TKNRQDzBkRuUrytniug7OFCmotK5RzK43KKqubGp6Pjs02OlkZ?=
- =?us-ascii?Q?5g7Bmv/oKAFvN4Fmsosv8UxmWoVkOJGC4FJVWcrq?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 54c4d63a-b4ee-4c37-4a4b-08dd5cd19601
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 17:08:59.4003
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zvnOm7DZvRJu9wi+xh0sg1sObLBlZAssk8quvz8kZdaDFANikYhAemweoGFeXu+uwiqdhPI0K13jhB8OtBbHrA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU2PR04MB9179
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z8j8bZ5TS+gDV8+M@phytium.com.cn>
 
-Add compatible string "fsl,imx93-pwm", "fsl,imx94-pwm" and "fsl,imx95-pwm",
-which is backward compatible with i.MX7ULP. Set it to fall back to
-"fsl,imx7ulp-pwm".
+On Thu, Mar 06, 2025 at 09:37:49AM +0800, Yuquan Wang wrote:
+> On Wed, Mar 05, 2025 at 05:20:52PM -0500, Gregory Price wrote:
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
- .../devicetree/bindings/pwm/imx-tpm-pwm.yaml          | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+First, thank you for bringing this up, this is exactly the type of
+ambiguiuty i was hoping others would contribute.  It's difficult to
+figure out if the ACPI tables are "Correct", if there's unimplemented
+features, or we're doing something wrong - because some of this is
+undocumented theory of operation.
 
-diff --git a/Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml b/Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml
-index ac0a35bf8648c..d5a9340ff9209 100644
---- a/Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml
-+++ b/Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml
-@@ -23,8 +23,15 @@ properties:
-     const: 3
- 
-   compatible:
--    enum:
--      - fsl,imx7ulp-pwm
-+    oneOf:
-+      - enum:
-+          - fsl,imx7ulp-pwm
-+      - items:
-+          - enum:
-+              - fsl,imx93-pwm
-+              - fsl,imx94-pwm
-+              - fsl,imx95-pwm
-+          - const: fsl,imx7ulp-pwm
- 
-   reg:
-     maxItems: 1
--- 
-2.34.1
+> > ==================
+> > NUMA node creation
+> > ===================
+> > NUMA nodes are *NOT* hot-pluggable.  All *POSSIBLE* NUMA nodes are
+> > identified at `__init` time, more specifically during `mm_init`.
+> > 
+> > What this means is that the CEDT and SRAT must contain sufficient
+> > `proximity domain` information for linux to identify how many NUMA
+> > nodes are required (and what memory regions to associate with them).
+> > 
+> Condition:
+> 1) A UMA/NUMA system that SRAT is absence, but it keeps CEDT.CFMWS
+> 2）Enable CONFIG_ACPI_NUMA
+> 
+> Results:
+> 1) acpi_numa_init: the fake_pxm will be 0 and send to acpi_parse_cfmws()
+> 2）If dynamically create cxl ram region, the cxl memory would be assigned
+> to node0 rather than a fake new node.
+>
 
+This is very interesting.  Can I ask a few questions:
+
+1) is this real hardware or a VM?
+2) By `dynamic creation` you mean leveraging cxl-cli (ndctl)?
+2a) Is the BIOS programming decoders, or are you programming the
+    decoder after boot?
+
+
+> Confusions:
+> 1) Does CXL memory usage require a numa system with SRAT? As you
+> mentioned in SRAT section: 
+> 
+> "This table is technically optional, but for performance information
+> to be enumerated by linux it must be present."
+> 
+> Hence, as I understand it, it seems a bug in kernel.
+>
+
+It's hard to say if this is a bug yet.  It's either a bug, or your
+system should have an SRAT to describe what the BIOS has done.
+
+> 2) If it is a bug, could  we forbid this situation by adding fake_pxm
+> check and returning error in acpi_numa_init()?
+> 
+
+> 3）If not,  maybe we can add some kernel logic to allow create these fake
+> nodes on a system without SRAT?
+> 
+
+I think we should at least provide a warning (if the SRAT is expected
+but missing) - but lets get some more information first.
+
+~Gregory
 
