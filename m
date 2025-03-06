@@ -1,107 +1,86 @@
-Return-Path: <linux-kernel+bounces-548974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67481A54B9D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:10:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16BC1A54BA0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:10:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01DC33B2E9A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:09:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DE1B3B2C54
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A099520D517;
-	Thu,  6 Mar 2025 13:09:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="XlRDh/dW"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE07720CCF4;
+	Thu,  6 Mar 2025 13:10:32 +0000 (UTC)
+Received: from mail-m155101.qiye.163.com (mail-m155101.qiye.163.com [101.71.155.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4AAC20B80B;
-	Thu,  6 Mar 2025 13:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774F620C49B;
+	Thu,  6 Mar 2025 13:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=101.71.155.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741266579; cv=none; b=KGfuU+CL0VVqXzGSx58NZqi/HU14BCDD9uBmLAcMvbEHIdrHg5isJIkCeBbNElH0/o6K/6BlLT4spG3kiytbSPigwX+N4PE6wulUVKfCAqcqeBWA8GB0uE0xBMrxMbBr51VNnJxbWSCsPICe5YiJSPDYNyXTIBIr/5y/udU88zw=
+	t=1741266632; cv=none; b=JYPnGU6B4Zn+SaEEbiZzHfd7nutM++k3w7oLpg272rn+QqytDKwA1k0C4IdogOUNqgAnp2Prcqs+rL26ihGucrhYTgWbZLm75bI1qKgBM93B0TvBScWjaApveiAfoPe1hh6kvlEYiaA4QNZB7Pc44KF4dEqVD3/HnyYI5NVV2ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741266579; c=relaxed/simple;
-	bh=yvNDy5o+8gZuKkdtqcqlDd+/DMLt1MmCwIzubU/kfT8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EpPaxPBSzjGzQsxDSJJd0sgNB4q7RMri5GV+tL8fplNi1hUf8MVEuHrO6eLr6xzWKfoecxdkaqugNaTRvSkNZmfZr1rgAN5JCNRe7Q0CaWksJd/mqiPK9Wcw+GZMQgECoUH04QWaUXRQFGUg38EZKC7iXEVRtGkIgO4W7sXzSIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=XlRDh/dW; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=aheBpoWCxDxaoR9qJYcL/Dnzay/8wT76imGpzNigDC0=; b=XlRDh/dWhjgV67cXZemmhiw1Hm
-	F6jT2U+d0EmjtmJkeI2k7bAl50lwQWjKiw+wTprYQz724uUESXUqB3Drq0b94Rs5C7MYiHXnLU9+D
-	uIM5Cw5TpClUDsy9kenCjcyLnH2sTa9yXqHnmg64GlpzaaK91QBo+RpvrfoKixnXnFtmyedmkYsxo
-	2RseqHuV8SispTkct8IxoiSsCqM/kBC/5stLdX3OynmHpMAQLYav3CPHLgCSKQ36dVrvbJBOg13vm
-	ELYMlZJXZLq3ihyE4syXE+V8qHUSA5JJW6a5Y1wWmN1Tc36E7NPCw1v2rZWhgeUYuJjUVxySYZ+LD
-	llCHzE4w==;
-Received: from i53875a38.versanet.de ([83.135.90.56] helo=phil..)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tqAye-0003Cs-Tt; Thu, 06 Mar 2025 14:09:29 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Shreeya Patel <shreeya.patel@collabora.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
+	s=arc-20240116; t=1741266632; c=relaxed/simple;
+	bh=GYGBIOgl7UFkl005dcxMCPflmC58aYjN1lbzXYzm3LE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aFLy/Q+hwvdp49Agp2tzTx7JRhcWlToNGxqA1IZAlZkaSJ/oTaOXb8D1Hg6oE6tgUmxFeJR4TTnhiAN/OA5/ck4F7DCosNncA+WOE+Z3DY3/XshbgFY1ugF8a46oow4Mzia8QbaEf7je0O1SmF3lKrNuPRW03r+DIYcrwD/nBL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=101.71.155.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from localhost.localdomain (unknown [119.122.215.89])
+	by smtp.qiye.163.com (Hmail) with ESMTP id d2ca2cef;
+	Thu, 6 Mar 2025 21:10:24 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: Yao Zi <ziyao@disroot.org>,
 	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	jose.abreu@synopsys.com,
-	nelson.costa@synopsys.com,
-	shawn.wen@rock-chips.com,
-	nicolas.dufresne@collabora.com,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	kernel@collabora.com,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
-	Tim Surber <me@timsurber.de>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Diederik de Haas <didi.debian@cknow.org>
-Subject: Re: (subset) [PATCH v14 0/3] Enable HDMI RX controller on RK3588
-Date: Thu,  6 Mar 2025 14:09:24 +0100
-Message-ID: <174126656188.656541.9478237014030663436.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250306072842.287142-1-dmitry.osipenko@collabora.com>
-References: <20250306072842.287142-1-dmitry.osipenko@collabora.com>
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Subject: [PATCH 0/1] arm64: dts: rockchip: enable SCMI clk for RK3528 SoC
+Date: Thu,  6 Mar 2025 21:10:15 +0800
+Message-Id: <20250306131016.281290-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkaSUoeVk0YSksZTk1JGUJIHlYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKTlVDQllXWRYaDxIVHRRZQVlPS0hVSktISk5MTlVKS0tVSk
+	JLS1kG
+X-HM-Tid: 0a956b941f9d03a2kunmd2ca2cef
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PQw6EAw5KTJWTTMWTkI6Di8x
+	PBMwCTxVSlVKTE9KSU1NTUlOS09KVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
+	QlVKSUlVSUpOVUNCWVdZCAFZQUxISjcG
 
+Same as RK3568, RK3528 uses SCMI clk instead of standard ARMCLK.
+Add SCMI clk for CPU, GPU and RNG will also use it.
 
-On Thu, 06 Mar 2025 10:28:39 +0300, Dmitry Osipenko wrote:
-> This is a follow up to the v13 of HDMI RX patches [1]. Hans queued the
-> driver into the media tree. Now the DT patches are left to apply, could
-> you please take care of this series if it's good to you? Thanks
-> 
-> [1] https://lore.kernel.org/linux-media/20250304085819.108067-1-dmitry.osipenko@collabora.com/
-> 
-> Changelog:
-> 
-> [...]
+dmesg:
+[    0.061333] scmi_core: SCMI protocol bus registered
+[    0.125780] scmi_protocol scmi_dev.1: Enabled polling mode TX channel - prot_id:16
+[    0.126628] arm-scmi firmware:scmi: SCMI Notifications - Core Enabled.
+[    0.127233] arm-scmi firmware:scmi: SCMI Protocol v2.0 'rockchip:' Firmware version 0x0
 
-Applied, thanks!
+CPU frequency: ~# mhz
+count=611657 us50=19994 us250=99945 diff=79951 cpu_MHz=1530.080
 
-[3/3] arm64: defconfig: Enable Synopsys HDMI receiver
-      commit: 97d8fe4b7722104b9abdb9cbeb0e884f864c6477
+Chukun Pan (1):
+  arm64: dts: rockchip: enable SCMI clk for RK3528 SoC
 
-Best regards,
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi | 32 ++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
+
 -- 
-Heiko Stuebner <heiko@sntech.de>
+2.25.1
+
 
