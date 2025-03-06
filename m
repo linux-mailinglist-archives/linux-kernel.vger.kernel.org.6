@@ -1,271 +1,205 @@
-Return-Path: <linux-kernel+bounces-548177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95824A54135
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:23:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39455A54137
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:24:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AAA816C1F5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:23:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 699923AC22C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A25A19993B;
-	Thu,  6 Mar 2025 03:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Esq5hUZa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60870198851;
+	Thu,  6 Mar 2025 03:24:52 +0000 (UTC)
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sg2apc01on2124.outbound.protection.outlook.com [40.107.215.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CFB01990AF;
-	Thu,  6 Mar 2025 03:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A27A1917F1;
+	Thu,  6 Mar 2025 03:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.124
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741231382; cv=fail; b=CQs3GmUHqXGpunGSVGTqBqSUFFftyslnGkvzHzK6hdI8sGAY1kfpPwNXSvwz04f8JnkpBkXqXDlLa+3H7yrpBeqPMeb+QGoYqBbt+9T46GGUCaZwH/OrRBa7V6N8l0I10rMXKsuOqNXEIAUSMQW2TXN96VuBHOdRuluyVA/4Dqk=
+	t=1741231491; cv=fail; b=Xn3pAjmJgMAEKLcZP3mYdAyYK3YDEkczju968G2NP5nf2zRt0l/sJR5FIKfjHOEtt02VrFvZgmYCswU9ms7pM3RVeEXj8CzPqDgZpYkeKXW/fjfKkJTbWh41LyT2mHBPOFbwhAL6cgYZ3px6ubABqi0DlMYdRp0t2/K0toKmBWU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741231382; c=relaxed/simple;
-	bh=G+lYwd3sanZuxF+0n3tVHZEpTzQrxUYqgnHyHlc4PnE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=IAik3J67yRCjIzc+4/wBcJ44luQ8cMyR8oT4pjns4IPIF8fh4rpeT3jDikeMkfYwDL3Yo+lOpgpMhqV4o8Pf+wb5/a3hMtEdmybL4J6/yD9SGWkVG542GXHErp15Hjw/qUFQpRzZ4szYnEbmLDg3Ye7qAhoYPiMZcRpc6q5DdHU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Esq5hUZa; arc=fail smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741231381; x=1772767381;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=G+lYwd3sanZuxF+0n3tVHZEpTzQrxUYqgnHyHlc4PnE=;
-  b=Esq5hUZaqpP3WxbCy5xOI9eBxzZxM6sdBwo5yonttlpF3U0d5FOPq1U2
-   C/QVEVfDKjA39xV5d8HrlHyzk4bv5G2bXKVW9Rf60CH1rOSdWEhu0BgCL
-   gJ+DQw0lQBABsLp43lKUmsYSVAmzLaiLIPp2+TdFPZ1IM/8Y7uVbdtHvO
-   6DHmx0qYqRHb0MCJFa7i9cJ6ID1a4CmpYcheD0ctsbz8ny3HipC0+rRED
-   XL9+N820+A1UbjxBY81SdCWb3DgrQd0+EwjZk5caiaTQPtL9Qj3sxA1U/
-   2MCZNsd6x5GU915W8KuKdK0aANQ3uvmDBCAQetWsm41sW7LkyeDGUxQkM
-   g==;
-X-CSE-ConnectionGUID: TCNOSFyXTjaLznSX+1JgwQ==
-X-CSE-MsgGUID: nOZGJx/ySK6TEpX989Qt0w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42251061"
-X-IronPort-AV: E=Sophos;i="6.14,224,1736841600"; 
-   d="scan'208";a="42251061"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 19:23:00 -0800
-X-CSE-ConnectionGUID: VtEHy9r5RG2YtS52Kdl8ow==
-X-CSE-MsgGUID: lA+jhZ1/Ry6WJnudGqrEvQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,224,1736841600"; 
-   d="scan'208";a="123976799"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 05 Mar 2025 19:22:58 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Wed, 5 Mar 2025 19:22:57 -0800
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Wed, 5 Mar 2025 19:22:57 -0800
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (104.47.57.49) by
- edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Wed, 5 Mar 2025 19:22:56 -0800
+	s=arc-20240116; t=1741231491; c=relaxed/simple;
+	bh=DygZGGTdy2zknfX0SgPBrGFXe84ETEpGyVs8gTOEIh8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OsittlZCGQANrB/ZJpuT8OnG39ry7HUORBDCNMK2O/33+z18P6ln+Ex1021DhOWamzL9tQrYt9Qj69sk8h0AhFGVi8JN7Mwd5NumcWL0CGPkXodWBBuwk0TqBrrYEtq2HieFMhjnA9Anp3szBGcPm9qZbeGpTtfVwenAUqNLXXo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=40.107.215.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=q+EDGk3lX9pu5F1t7xpUBGNTsadWmFKBcFiNe2WSejpXOJ1QpDD5100Cahcd9/Z1rO9kuzZ3e0wF/xbJTIL3UNgjJsWG1S0NTgArTK8zemltOSfIupO7F4XIz2aM1hJtSxhv3SrQoUPCq0n+uUVulcOrmcAbuzNeqO4YV/iWJ5IDMJMsmVFiGnfA54pxBUxg7bxxIGa9fwA56xFJUXhfP+2hFUF6+08dwfVJJnsYE/1Rp8ooA+0xhqiuy0qC2HFKkao8JLzcFINB95n8UbIlB4DeayMg5iOI9gbGI90qmnKrcpTpDacbBssnArr07Oua7xn+k5WUyc7puJeJWZxxeg==
+ b=yrVwBeZ+wRF4KzQV38UMBhtS0fd3Y0s2FlFZByliuZrRnXdzG3TO/cgX/yUypDqu+iIHEphMyZJCehqsU4XOZ0x74z8fqBiafvLlhwEAEisSJbDO6YYQ9BUvA7izq/vBPHwILccMF4i/BICBxSeGhwv5FJQBKWVceBV/6uZX3QcjEs/aHsvoVjOrtTT0Ddwgod9EAWmEmCBZY2S9VQC2IgDSgeoGDnOEofKZjGncx4fG8j8nyx9PlgoaKGLznRi97iXaBzV/aYq+IFprrH59bV6RE/J16j/JruZZ6VNbjt51tWX4Oy486KvpTiLmg554ASLJozbRSJEbpkXUoPxCUg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VnaA6/dsRQEFWn0WwkI4OTlD+5YnzGDH7eiwS0tXjyU=;
- b=SRMX8YAB87C7yryTHr7GrFfOQHJCFChxaJKFzY0OAkBBnHUDnMEfNEjDbXucGo5ybFuTB+JcUsDZ5Eho/OnI2isOpocEkXzRo5AW5+AK7iHu07X1KT7Z4oU/FyEdyMQwVwIr0BWRlJNz9+XrOmjUNDQL2IGjgD9LMBvzEqsNZr55rImYU4KYulfv+mRcS+53FQ7LuMlK72RozdSay3a+DAOAWDDk9dOvObRxZ5YfUOpIRDcuDYT6yXQ+JOlOa88iBeqHPTgGqSwmEVjCIEaozu2uGliYwarnhtfa8M16Dx2O1Wa1uumd8x6Ok+i+eFX1Uk2jqaTic7hAKfXMRrdyGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM8PR11MB5751.namprd11.prod.outlook.com (2603:10b6:8:12::16) by
- SJ2PR11MB8452.namprd11.prod.outlook.com (2603:10b6:a03:574::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Thu, 6 Mar
- 2025 03:22:54 +0000
-Received: from DM8PR11MB5751.namprd11.prod.outlook.com
- ([fe80::4046:430d:f16c:b842]) by DM8PR11MB5751.namprd11.prod.outlook.com
- ([fe80::4046:430d:f16c:b842%5]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 03:22:53 +0000
-From: "Ng, Boon Khai" <boon.khai.ng@intel.com>
-To: Johan Hovold <johan@kernel.org>
-CC: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Ang, Tien
- Sung" <tien.sung.ang@intel.com>, Tien Sung Ang <tien.sung.ang@altera.com>,
-	Boon Khai Ng <boon.khai.ng@altera.com>
-Subject: RE: [PATCH v1] USB: serial: ftdi_sio: add support for Altera USB
- Blaster 3
-Thread-Topic: [PATCH v1] USB: serial: ftdi_sio: add support for Altera USB
- Blaster 3
-Thread-Index: AQHbdhhxthJ4AiCvMUCJLGSIXsfkL7NkyIeAgADAZHA=
-Date: Thu, 6 Mar 2025 03:22:53 +0000
-Message-ID: <DM8PR11MB5751D2151A9FAC30E8647389C1CA2@DM8PR11MB5751.namprd11.prod.outlook.com>
-References: <20250203084822.18356-1-boon.khai.ng@intel.com>
- <Z8hetcRinFXXVAdy@hovoldconsulting.com>
-In-Reply-To: <Z8hetcRinFXXVAdy@hovoldconsulting.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM8PR11MB5751:EE_|SJ2PR11MB8452:EE_
-x-ms-office365-filtering-correlation-id: 23c1f385-cc12-439a-189c-08dd5c5e2ed7
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?PTdUZRRSv1o8Cl0kgWqyJ9HdMc89AINPOVwb50Sm3A7BUxA5BhGlmnkPn2D7?=
- =?us-ascii?Q?rDMFFsXJER3xQucoeeF7MWIIwMitRsX0zDYwOoIVl0JcHapIX7DhM0C1W96s?=
- =?us-ascii?Q?BJ6tDZ4eOsSo9O9E/KW1F1iWBGp815/ZcdF5bTn2r2Q1c/YwAa/FYOdAV+pC?=
- =?us-ascii?Q?rA6XgcZUQyOX0D2L/pffzlQr72Kw02O4MA96MnXknXGBobitXAo/aCKPpOTS?=
- =?us-ascii?Q?amIdaIwc9OzcWEvlzpPULOdZ76nO8ledUw5X467ERezFHGZRIPVaANT9lS35?=
- =?us-ascii?Q?d5RZ6AqR+J8GQObRSYe4wMkyL6ewB4g2gNN2ENzTUQx7Nzzkw9+GRUyTVW59?=
- =?us-ascii?Q?47XnMd7VYJ90c6gwPlylY/xkyuyQfBCpFHm7Ba4H5AgVL/Pf9xwNFkiCHHpZ?=
- =?us-ascii?Q?5jxDK1VvlIdc7FHIHn8t5ANWboGAmNBlAQ6FRzYmv5ZgDiIVBqscjvf/f5c5?=
- =?us-ascii?Q?hicf4Dxgub8bUIIVHhNPdfnH79mYR/JUQjBco/1hpy0400zxMVCYunGhvqZy?=
- =?us-ascii?Q?KcDw1tqgr0br05hvyINt0ZXJ6nz4jogmYni/h7VtkMu8FFf5AZBz/cA4ZeKA?=
- =?us-ascii?Q?yOBcOkjApAmLlhzNL7NMQFMgGVSCsn/CPzQty9MdEFuMtu8Z3xbcak+Yu+l4?=
- =?us-ascii?Q?/9cbpg5/elJzac/2AoRpLtC4ztpDvWsHRD3pr0YH3k9jm+CJ/xU+KgHjhcny?=
- =?us-ascii?Q?BY9WbRqvulw4vVtpABY7oJWOPdpSHwlCiTTSD6DLj2gl52HqJIeGNlDDHZ2E?=
- =?us-ascii?Q?x3F0H6WnpymcrF80ozkqAq7QNcLK5o9N0o+S3/DI696hGOmw1uhUBSlnaFN8?=
- =?us-ascii?Q?/MrWLjd8jNtnBTOTGtpz8VW7kDBcozkdZK8vYGVJwa5BCpGx3vJy4ku/Ialu?=
- =?us-ascii?Q?0tA/RBPWlddAFNUNAhB7JZLajnw9MwRsBtn2TbZOT3PMoRDn9+IGRxTVY830?=
- =?us-ascii?Q?xy30qEcTS7A26epGhB/kJCuSMTjaApE+tXATYKiSg31Ij85tMjAQhuNt+qIv?=
- =?us-ascii?Q?PF9YCZMPFCZuCI7Ybwz+ySiGsSt55/FbyZwi+w/HD4WCen5uwEypvNaNfd/f?=
- =?us-ascii?Q?Ivb/rCdmYM0k7Fr/VuReYftfphgvwLPMzqV8lGq8x53Yhdx0ENzvgNAygYPu?=
- =?us-ascii?Q?mc+o8OkDv5WzD0c3p3x12Yeciy9wOhhwpvNya9BIVKf/M8urq4Rz4K2pI8qv?=
- =?us-ascii?Q?mvJcsp0u22iypQYp8gV4Knv5pmy7H7F/szCn8t0aW/Oljb8GRx7XhoOW88sy?=
- =?us-ascii?Q?CaMb2ITKqnx2zPiOucy/q/+rL95oznSiHrb6kf5Jx6MD/xgO9X8BLXi4cFM7?=
- =?us-ascii?Q?YzcEsluzYjbhKKHSQjRS55adzFXryw0adiw1ZTaToORhZz0kzBoVgJkrXHLT?=
- =?us-ascii?Q?eurpPWaQ3QfkMJDI5umMsm/n6tWo7E4kGexD+Er9lA7kdaH/oJYBHCNls4ko?=
- =?us-ascii?Q?vJI7BjfCjQ9p5OVP1t8XNvZ3ZhA3RLXv?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM8PR11MB5751.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?X+fTIHF7wBLZAc+Gh+a3v5iPaSh5Xp8cDCvHBLJchF1od1PI7u3huIR03mY6?=
- =?us-ascii?Q?JT8ab9iGw7zMLBK9PrW1Y3nOZ4Z5ekmlpSp0rCTSJ3zenuW6gRkRO+JiP/Ei?=
- =?us-ascii?Q?SMWMGa7O0BufXfmrkyvEHEmkaOx5/ZwOEGaEdtSMN9PR5oAFeQomVSSF78Pm?=
- =?us-ascii?Q?xcfdLQ235WhrH2Vnxj2UjfZ6XZzQzRXPbf3brLrKfxJioaKMEcYT3TyjQilu?=
- =?us-ascii?Q?Kxj61/CcHVXMEUv0pKf1GsmTBTMjbOjnnyYVsVVmYzsyyt1QcEITW8aGU8zJ?=
- =?us-ascii?Q?vHItCf30ULb0B/UFSAusql84Lrns1x9UGq0muvR7l3g8J3pD770j9o2yW5QG?=
- =?us-ascii?Q?jfH9poELbLLvIZB8AR7U9C1thoQg6zG6DlM8Nwe1aTwkhbLb6LYe7BtDekW6?=
- =?us-ascii?Q?OQnkxvwpLGNzIuBoaujBS8YrUEK+0zAU1GNX3QmRe9XYQ6pzfaiuUvWFW+py?=
- =?us-ascii?Q?Zdi5ZN7k8NrHPjMnLDsbKImg7BdSPJAOFLuMfkpIbQRYInnUv7uxlzl3GFFL?=
- =?us-ascii?Q?MXPyyDAkoSrjmFD+We8/s/VDlUTqV5fvOzL0wrC0klH+wPBVrjnI9wS77IdW?=
- =?us-ascii?Q?FUStwwCdS+Jl9cJgu4lDVRQQ9hpx2bPlt7ssB3ACX56WAsm9KvB1jB71op8N?=
- =?us-ascii?Q?PzxYV6jncHGvzi4sJD/xoXkFSVY4ZloDV2D2nUwNWbSREaJGqbNzcqqGwRG+?=
- =?us-ascii?Q?yCcUXHgdZYIxhXyPgXpQkjQSjprIK8gMHPTTRPUkJ05qe/n9Hjg4XGcpyUva?=
- =?us-ascii?Q?vm2m4ze5EA3g/4lE04RMgHgiL/iFZjB41tgct3rMQQ+/HsvOJwfv3n936YTu?=
- =?us-ascii?Q?SY2U4r6R8fWZ+eZ/Nf9c8IIwJz3yQ4+rQpaJ707wobvPoYZiJNt2DDBgb317?=
- =?us-ascii?Q?ydpfvfChCuiwXzURwlOSITT/uhrbrUbZ7iZ0DIAQAvrerINscSBpNJQ604Hn?=
- =?us-ascii?Q?DtEm0fitCbivlcIIYwEo5IErPdAPb1NiIO20Ui73G6giZf6c7g5cX3shvkFk?=
- =?us-ascii?Q?CX22mpQ5/3C3jYLhIAXJLPmvebrlRqc/BhEW2LI+8frFc5XVpP8fN5vGVVON?=
- =?us-ascii?Q?qp55/HmTVx0LT2vE/NkTx/Z3KsGZdcE2Qcnr3uNz3Uc9+VoTw9G8BlGT3HVl?=
- =?us-ascii?Q?syL9nsiILjtIrwueqjbYDm6JmldfrYynPHYikHVaBeg2gz31FRMZSLaP95Tc?=
- =?us-ascii?Q?Wv5DhL3DD2Ru3KhmcKxmxT/VD/UAW6RBifH+KK/GoOURNngbIesvt5svn3V7?=
- =?us-ascii?Q?h2qmbZNWNaClYdeYEd6xbkDMtWMEGmSosLrAzIQ+YrWJzRHgprNYAyAgB+Ng?=
- =?us-ascii?Q?JJAWEv+heofIRMXhYyEs/4uRl0YXVyvS8gVVR3zE3qQhIHFxGGx5JOM/0X9W?=
- =?us-ascii?Q?FDyGIwnNIroc7Ia56MSGHkZEbOALm892k7NkCajlFHctQ6g90+pgl0fw5Elf?=
- =?us-ascii?Q?EUnbT+p6VXaR3xR1dpB6BPsPBDlXaiMSW/xAVAYuASWq7oK7GWq2QxxaUx1G?=
- =?us-ascii?Q?VGlTfOZD4enMP2uLdt6fGCsbwzw3EKChk1UwoavxSs+a77nSc6ew/dAaXDfT?=
- =?us-ascii?Q?/+bC4aJ2oVBJe7eHJr2vb7WcSjq2fbMelxo5ie6l?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ bh=RdlnHfRmCJLkoi7nW3b/ahMquVKTpHk9RVBbgIQQMBg=;
+ b=B4H/heEH7YVSTewvSXkfsDiVGukxo9StSPWCwTa9jDCtNS+HSDw3V2Mqz50tVMT8sAvGDjzN/d4jG0BP2JVnFj9QIUf8v0nVn7xv3olKdOzvBXezveyKE/uHlc5gHhOACD1h8aadV7SYh2UQClrHO3Puj93nmqQbkBsaRuKagMaUh5oX9IiEAI88rX4+9tM/kua6XNP2730mRCdOfcRtQ8wHiXxx9pVsrBgKXHFYiffk+QiuSPZj46/fY+lUhyAIAbPaDI8Pa9VPsryCU3HbGnK8paL0Tk6yTmxiTAR6HdROdcVED2C07Z80BtHYWcs4YVwTMZ2uBUVh1t7RSDfOLg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=cixtech.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SI2PR01CA0023.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:192::17) by SEZPR06MB5046.apcprd06.prod.outlook.com
+ (2603:1096:101:46::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Thu, 6 Mar
+ 2025 03:24:43 +0000
+Received: from SG1PEPF000082E3.apcprd02.prod.outlook.com
+ (2603:1096:4:192:cafe::7a) by SI2PR01CA0023.outlook.office365.com
+ (2603:1096:4:192::17) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.16 via Frontend Transport; Thu,
+ 6 Mar 2025 03:24:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG1PEPF000082E3.mail.protection.outlook.com (10.167.240.6) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8511.15 via Frontend Transport; Thu, 6 Mar 2025 03:24:42 +0000
+Received: from [172.16.64.208] (unknown [172.16.64.208])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id 234664160CA0;
+	Thu,  6 Mar 2025 11:24:42 +0800 (CST)
+Message-ID: <2112b1dc-7ac6-4d4b-a9a1-1b57d414aae4@cixtech.com>
+Date: Thu, 6 Mar 2025 11:24:42 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM8PR11MB5751.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 23c1f385-cc12-439a-189c-08dd5c5e2ed7
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Mar 2025 03:22:53.8667
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: pci_ids: Add Cixtech P1 Platforms vendor and device
+ ID
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, cix-kernel-upstream@cixtech.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Peter Chen <peter.chen@cixtech.com>
+References: <20250305174931.GA304679@bhelgaas>
+Content-Language: en-US
+From: "hans.zhang" <hans.zhang@cixtech.com>
+In-Reply-To: <20250305174931.GA304679@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG1PEPF000082E3:EE_|SEZPR06MB5046:EE_
+X-MS-Office365-Filtering-Correlation-Id: e784a718-2c1b-426e-fd21-08dd5c5e6fd1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cUEwQ2NGeWJXaEJDQWZJTkNoTTYxbld3Ymx1ckd5ZUNZYlEyK3dNYS82NEJi?=
+ =?utf-8?B?blpaUXBtVDlRcUQ4bmZFZUxZVkZPWEJTL21zdkE2QUFweVNjb09OSlIyeWtv?=
+ =?utf-8?B?dUxwUy9pZW1hL0FuR3dKRWRaejRTYVJoMHZWeDg3QStoS1p0MGNwZUZFcFlK?=
+ =?utf-8?B?Ni9SQTJSNU5mV0ZxR3lxNGllUFIvcjk1bDhJQy8vbS9UTlBUQlI4Y01lWFd4?=
+ =?utf-8?B?Y1dmRnAyOVlWUE81L2NSckswNG5RQWI1N2drYS9zV2ltZDZ3aHZoRUcwWGZ2?=
+ =?utf-8?B?d2FzOEdaU2JzT20zWVAzU0ZoT1l6OUYwRXlFNCt4VHI2MzJMaVk3dmt5eXBh?=
+ =?utf-8?B?amVGQys5SktTZ21waUtYSUEwZDV0N0VrdklzTUZEc3cyTmhkSG9vK00raldo?=
+ =?utf-8?B?MUhGQXM1dUhTNDFQbmxQbjVtc2s0UlJPUHpsOHpLYU5qblIreE9FbnhkWVB2?=
+ =?utf-8?B?MklBVWlIV2xqL25xdVhCdXJpMTdNMXJDeXRDSlpVbzNSd3k1VTdxRFpoRXhI?=
+ =?utf-8?B?RUZRZ1FMODJmNGR5K00rSDJRanpjODB5N3l2cFVzNENnYkMxb1NQYkhpV0tO?=
+ =?utf-8?B?MkZDK2V2VlhhU3FOZ0pRQ2VOdDMyQWRHUkJNYVl0SlUwZWFqNHAvNFJ4NEJ2?=
+ =?utf-8?B?VEMyZEJ0NjhadUI5ckJqVVIwNzFnUjltbHZPUFR4VmZVOFZqZTM4cS9qQ1Q4?=
+ =?utf-8?B?UU94M2JSbHNKTTVNQXNJOGxpUi91YXE3Y2d6OUdUS0tCc1JqNmJCbktJMzMx?=
+ =?utf-8?B?M3BIWGlsb2QreE8vbzltNUc3bVFWLzJJaEhSK2FuUkZnN3BFbkVuOUc3Y242?=
+ =?utf-8?B?QjJEMDVLS3dLKzFKT2JTemQ4NWlFb05kRFc4NUZ4Vm0rcjNtM2pUamJSM1c3?=
+ =?utf-8?B?S29ZYUZGMmMzWUZWdlFodjdwanFveEZ1YndGTmhPTi90NTFhamlNNDZXK1F1?=
+ =?utf-8?B?MnVOaGpzZkoyMWxlMUlSMUFqUXg1dmQxZnZJNXEySjNONkQxbDExdGR0V2Ft?=
+ =?utf-8?B?dG1FUXhURDJLaGxvM3VoZWc4dTJCdy9Rbld2R1NRSkNiWGwzTWtuamNjazlF?=
+ =?utf-8?B?ejQ3V3hBR1lKbmRZS1REMkpWN0dFdi9qekN4YUR1K25FM1NRWmk3WTloaXdJ?=
+ =?utf-8?B?SjIycmw0ZGQrSWthdjZNbDZWZ3Q4NWdzVHExR3hkUklDVm9vSjU5cDhwbG4v?=
+ =?utf-8?B?NC9ZTkpKbGJsTjVUOTVlaEtBSSsrdzRXb1BLV2FOUmRzOGlNNDh3L1ZrVE1n?=
+ =?utf-8?B?TFZLTkh3VU9kSkgwNTI4UjZoSy9xR3N6ekM4Y0ZiSkZLMkJNb2Rhb0x6Mitx?=
+ =?utf-8?B?NTVLb0tOaWNtTHFRdlpvaVg5MDgwK1ROZTJ4UDhFTzdlN1lXaFB0cUlFbzJ6?=
+ =?utf-8?B?RU5SUGc3TUxMYVJJa2ZyTktlQkx0Q1pFL0x4QStjeUFxbDlYQ21OekNDYklz?=
+ =?utf-8?B?ZW1PT3VJNEQxVjRNUmJ5Z1A0bkZHQ3N6TGJRRjFGSWM4TEdkeFhSWTRLYVJ6?=
+ =?utf-8?B?ZXJVaEFxUWk1eTJDTEhVOEkwOWZ5NHd4M1pWY2MwYjBiaG8xNHN4dTZGR2xt?=
+ =?utf-8?B?bzgwajNZTzNER0l5SWdZYVdQckZ0NFd5SStPK1p2aFFOUUtQb1lOOEc0MFM1?=
+ =?utf-8?B?VTV6dHN5Y0tnL2hIUTdKYWlhNEpkTDV2Ly9nMnRuMU5KOEtwZTRSREJ2MXRq?=
+ =?utf-8?B?MXBQbG9VSWJsTjEwUTFEWUc5N0p6dEFWOGFGZ2FoUy9NMm9KUG1Pd1c4cWpu?=
+ =?utf-8?B?KzNWNUE3dnJMVldsd1V3RXlXeFYwVmZ3U0FyOUxSSTZsSG9Ycnl5eFovaHZT?=
+ =?utf-8?B?TGt1VHNOcEZJUzFPdnRqQjk3VVEzOHFPT3dQRnFaVXY1cTk1bDNvVGpibjd4?=
+ =?utf-8?B?a1Yyd1pXTVV6YXZzUmxSM2hYMy9oVlY1UlFtTXIvTCtBeXNZT1NOdmFzdG5r?=
+ =?utf-8?B?K1hCelE4bVJjdW5sd3Vod1RLQmdZSDhpdFcwZUc2OUkzUy8rNyt5V3lCUkI1?=
+ =?utf-8?Q?FeMyZU89Q/iJ4ex051DsJR2KslsZDw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 03:24:42.7317
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: bsYuA8EgSl8A36ES8iLoBk0TJ9JKIPXrDE89sFznFgjPEiJruiaiQ/9IzO1umbggOeq1di858midR7V9eOqAbA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB8452
-X-OriginatorOrg: intel.com
-
-> I assume it's either an FT2243 or an FT4232 and not both?
-
-Hi John, you are right, it is either FT2243 or FT4232. Will re-word that
-
-> Can you say something more about these devices? I guess they are used for
-> programming FPGAs? Are they embedded in other products?=20
-
-There are 2 type of designs, USB Blaster 3 cable or On-Board USB Blaster 3.
-They are mainly used to connect debug or configuration software. Supported =
-host
-software includes Quartus programmer, System Console, SignalTap,=20
-Nios debugger.
-
-> And can the
-> same PID be used for more than one type of device that they are embedded
-> in?
-> Or are the PIDs tied to different types of "USB Blaster 3"s? If so this, =
-should
-> also be reflected in the naming of the defines.
-
-The PID is associated with how the ports are connected, and
-which FDTI Chip are used for example:
-
-PID: 0x6020
-Description: One JTAG Port
-FTDI Chip FT2232
-Port A: USB Blaster 3
-Port B: Not used
-
-PID: 0x6021
-Description: Two JTAG Port
-FTDI Chip FT2232
-Port A: USB Blaster 3
-Port B: USB Blaster 3
-
-...
-
-PID: 0x602E
-Description: One JTAG Port + UART (Port B, C, D)
-FTDI Chip FT2232
-Port A: USB Blaster 3
-Port B: UART
-Port C: UART=20
-Port D: UART
-
-=20
-> This is a generic Altera VID so should just be name ALTERA_VID.
-
-Will update in the next version.
-
->=20
-> > +#define ALTR_UB3_6022_PID		0x6022
-> > +#define ALTR_UB3_6025_PID		0x6025
-> > +#define ALTR_UB3_6026_PID		0x6026
-> > +#define ALTR_UB3_6029_PID		0x6029
-> > +#define ALTR_UB3_602A_PID		0x602A
-> > +#define ALTR_UB3_602C_PID		0x602C
-> > +#define ALTR_UB3_602D_PID		0x602D
-> > +#define ALTR_UB3_602E_PID		0x602E
->=20
-> Please use lower case hex notation consistently for the values here.
+X-MS-Exchange-CrossTenant-Network-Message-Id: e784a718-2c1b-426e-fd21-08dd5c5e6fd1
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: SG1PEPF000082E3.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5046
 
 
-Will update in the next version.
 
->=20
-> But depending on the answer to my questions above, either these defines
-> should be renamed to reflect the Blaster type or product they are part of=
-, or
-> just be dropped.
+On 2025/3/6 01:49, Bjorn Helgaas wrote:
+> EXTERNAL EMAIL
+> 
+> On Wed, Mar 05, 2025 at 02:30:18PM +0800, hans.zhang@cixtech.com wrote:
+>> From: Hans Zhang <hans.zhang@cixtech.com>
+>>
+>> Add Cixtech P1 (internal name sky1) as a vendor and device ID for PCI
+>> devices so we can use the macro for future drivers.
+> 
+> See note at top of file:
+> 
+>     *      Please keep sorted by numeric Vendor ID and Device ID.
+>     *
+>     *      Do not add new entries to this file unless the definitions
+>     *      are shared between multiple drivers.
+> 
+> Include this patch in a series that shows multiple drivers using it
+> and mention those drivers in the commit log.
 
-The PID are not tied to specific product, however it is tied with how the P=
-ort are connected
-and how which FDTI chip are used. (FT2243 or FT4232).
+OK. I will submit it together and use it in the future when our PCIe 
+controller drives upsteam.
 
->=20
-> Johan
+> 
+> Update the subject line to match the existing style (use "git log
+> --oneline include/linux/pci_ids.h"):
+> 
+>    PCI: Add Cix Technology Vendor and Device ID
+
+Will change.
+
+> 
+>> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+>> Reviewed-by: Peter Chen <peter.chen@cixtech.com>
+>> ---
+>>   include/linux/pci_ids.h | 3 +++
+>>   1 file changed, 3 insertions(+)
+>>
+>> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+>> index 1a2594a38199..531b34c1181a 100644
+>> --- a/include/linux/pci_ids.h
+>> +++ b/include/linux/pci_ids.h
+>> @@ -200,6 +200,9 @@
+>>   #define PCI_DEVICE_ID_COMPAQ_THUNDER 0xf130
+>>   #define PCI_DEVICE_ID_COMPAQ_NETFLEX3B       0xf150
+>>
+>> +#define PCI_VENDOR_ID_CIX               0x1f6c
+>> +#define PCI_DEVICE_ID_CIX_SKY1          0x0001
+> 
+> This is not sorted by Vendor ID.
+
+Will change.
+
+> 
+>>   #define PCI_VENDOR_ID_NCR            0x1000
+>>   #define PCI_VENDOR_ID_LSI_LOGIC              0x1000
+>>   #define PCI_DEVICE_ID_NCR_53C810     0x0001
+>>
+>> base-commit: 99fa936e8e4f117d62f229003c9799686f74cebc
+>> --
+>> 2.47.1
+>>
 
