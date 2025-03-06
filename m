@@ -1,52 +1,53 @@
-Return-Path: <linux-kernel+bounces-549481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6873A5530E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:29:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B60A5530F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:29:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BDE91745E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:29:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04AB1188C909
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB7125CC88;
-	Thu,  6 Mar 2025 17:28:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD9025D90B;
+	Thu,  6 Mar 2025 17:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="nH6943I+"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="R6oGqZEa"
 Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9B22116F2
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5547825A358
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:28:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741282138; cv=none; b=M/smNfrC5GF4WGGZAG86bjab5r1D5+O+hoWVtIaEbXkGH+TvdcXNi6H/FePxQaobP0IQbe2ixNrOquB68rsvCjrEr3jk0gNpipkqaqAGvX+iykhHSiCyUL4EhJBlZsG8JQkNsTnDHXCEPnzxtpTDeN4SYn1Xcoq5yIgk7noi/+o=
+	t=1741282140; cv=none; b=HcBoqxcIxuMLR0jCBbMxMYi69kjKuwhNeAAtFH2TiVr6nGWV1ExURwCM+pAoi+2rCWE7sxEAE8tkZI0Q5hmqg8B7/ULTp1H37uuyRp5Vyngw99pFd7kJLlMLKkoJSrpp5J/7gBbuk3N8OAJp8mVdaPcTg9x1kwyMwoanvY7Zcik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741282138; c=relaxed/simple;
-	bh=iYmrnW2KGfoUzR/WfNzhtQYlqiT2uXd8YrujCGhYouU=;
+	s=arc-20240116; t=1741282140; c=relaxed/simple;
+	bh=/1WVWgPggSWuGIrSLd55uvynL+VrY6GsvlQF8oFxJ0o=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fP27LfORM6riIOGhNe4/QpEQs4O2A8HN7Y3yReqE200QPlVfQJU1nxwf+Ta3zdvwuIf7SOrV9vCc9wZoaKyzDNLN16kIGcmm1k/m2hm/UyRzkKLiwrOsBAtXO32L9R4SmwrxALgmWIiLOyk/Qh/aDdZttn7vFPgSLpByZio6/0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=nH6943I+; arc=none smtp.client-ip=217.70.183.194
+	 In-Reply-To:To:Cc; b=RxMAIUX6wBvpU8+MfWBYBm5sT1jAqTcQk4mlGpLW3sgMLt1xwBL9nrAZpgBhJo/h/BAE/z0xzdvdJIF1/l+9vlU9YZxCQHjrdUhoTpssz1pwSYchOaiwhVx6vnvAHcW+kfuOOlQv60O4FsU2NAsOukCZXtOTSVL9EbN84ucZKz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=R6oGqZEa; arc=none smtp.client-ip=217.70.183.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 59060440EA;
-	Thu,  6 Mar 2025 17:28:47 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E3354441C8;
+	Thu,  6 Mar 2025 17:28:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741282128;
+	t=1741282130;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=3Laz2Cn16VkR2P/S5UiFXMayr4TFVZyfSOe0NaPxNpQ=;
-	b=nH6943I+sBSWjxA/ZaWnc58fkY1HMfoUqyBMvAtiqINvbWsR5gWYz+xCXnycVp420iMqvb
-	BYqdRu0QMatUBGQlcLxBU/BlLzMrT9BGGCx2rEfKsyljGDkhLQByKCUnVkM6BNzJa9Z1Yg
-	hTQaHqPMcYxFFrFeq+YfXduIFCHziySZZyNYAJbwxiXAxwSN1gRu6cp7w2kekIBNPo+Cax
-	p009G0rwEnZfA8Q2r/bcxiRZzHo/gLGmfKmTN3d9TH/+o8cOLMkLNPlq9pqkQlNMaA0huf
-	DmWA34JD7KaFXBwdmmlY/77IAgnPfLg9/BLDSel7mf8v35IXs7rnu03ZCAs4vg==
+	bh=CVNkowULM39sQD4iRepTtrOJX4rosnaiKw0o5ScIYJs=;
+	b=R6oGqZEaXrsGs4X8sof/7YPNpgtIh/xjgsE0XvAmr5kUYc3u8sdhxTscfvpkqkqph5q90v
+	QpADyZ8vzVedw2fmfV6pkwgjuGtOs+Xq4o0kQeWJx3IvBDeAG4km9CNgcUCPlVjLVSgxTl
+	cZwI92sAKlWItgN5iv3W73jL6olmHnbULaee5otrafeGrEf7F0X6ZBMT/Us6TXV4f8d3K2
+	RkiBh7eT7tOeEk/jFk6pNvsJysO/leFxYv4BdrCbaDzoeaDuKnqjd9cZO1+GNOS3EwEXfN
+	GHumXhfB1+V5gDsKYH32NRsTInTtoO2Kp7rVp9sbRt4s91hIx4cohTG/p6osDw==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Thu, 06 Mar 2025 18:28:40 +0100
-Subject: [PATCH 1/2] drm/bridge: imx8qxp-ldb: cleanup return value
+Date: Thu, 06 Mar 2025 18:28:41 +0100
+Subject: [PATCH 2/2] drm/bridge: fsl-ldb: make warning message more
+ informative
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-drm-two-ldb-improvements-v1-1-f139d768b92c@bootlin.com>
+Message-Id: <20250306-drm-two-ldb-improvements-v1-2-f139d768b92c@bootlin.com>
 References: <20250306-drm-two-ldb-improvements-v1-0-f139d768b92c@bootlin.com>
 In-Reply-To: <20250306-drm-two-ldb-improvements-v1-0-f139d768b92c@bootlin.com>
 To: Liu Ying <victor.liu@nxp.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -79,27 +80,33 @@ X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdekfeehucetufdoteggode
  hhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopegrihhrlhhivggusehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhgvrhhnvghlsehpvghnghhuthhrohhnihigrdguvg
 X-GND-Sasl: luca.ceresoli@bootlin.com
 
-'ret' can only be 0 at this point, being preceded by a 'if (ret) return
-ret;'. So return 0 for clarity.
+This warning notifies a clock was set to an inaccurate value. Modify the
+string to also show the clock name.
+
+While doing that also rewrap the entire function call.
 
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/bridge/imx/imx8qxp-ldb.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/bridge/fsl-ldb.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/imx/imx8qxp-ldb.c b/drivers/gpu/drm/bridge/imx/imx8qxp-ldb.c
-index 7bce2305d676714cdec7ce085cb53b25ce42f8e7..bee1c6002d5f84dc33b6d5dc123726703baa427e 100644
---- a/drivers/gpu/drm/bridge/imx/imx8qxp-ldb.c
-+++ b/drivers/gpu/drm/bridge/imx/imx8qxp-ldb.c
-@@ -665,7 +665,7 @@ static int imx8qxp_ldb_probe(struct platform_device *pdev)
+diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
+index 0fc8a14fd80062248a43b8b93272101a7ca6158a..c7c899a9644bb827845fb3fe96a9695d79a91474 100644
+--- a/drivers/gpu/drm/bridge/fsl-ldb.c
++++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+@@ -181,9 +181,9 @@ static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
  
- 	ldb_add_bridge_helper(ldb, &imx8qxp_ldb_bridge_funcs);
+ 	configured_link_freq = clk_get_rate(fsl_ldb->clk);
+ 	if (configured_link_freq != requested_link_freq)
+-		dev_warn(fsl_ldb->dev, "Configured LDB clock (%lu Hz) does not match requested LVDS clock: %lu Hz\n",
+-			 configured_link_freq,
+-			 requested_link_freq);
++		dev_warn(fsl_ldb->dev,
++			 "Configured %pC clock (%lu Hz) does not match requested LVDS clock: %lu Hz\n",
++			 fsl_ldb->clk, configured_link_freq, requested_link_freq);
  
--	return ret;
-+	return 0;
- }
+ 	clk_prepare_enable(fsl_ldb->clk);
  
- static void imx8qxp_ldb_remove(struct platform_device *pdev)
 
 -- 
 2.48.1
