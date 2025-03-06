@@ -1,190 +1,200 @@
-Return-Path: <linux-kernel+bounces-548566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76DE9A54689
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:38:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D670A5469E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:40:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D31503B18F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:38:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A9BF1896DE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:41:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E22EB209F51;
-	Thu,  6 Mar 2025 09:38:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12AD020A5EC;
+	Thu,  6 Mar 2025 09:39:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nZZv2T/F"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2074.outbound.protection.outlook.com [40.107.244.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="VhZSLwRR"
+Received: from out.smtpout.orange.fr (out-14.smtpout.orange.fr [193.252.22.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CDF209F25;
-	Thu,  6 Mar 2025 09:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741253908; cv=fail; b=EBC2By4DuN+DJbH0/K0S6/Lp87xU2GWuazZ5bXQyjoExXbwl2WbQHKruOmW70gmL/TlcDH6TNBea1zM12nWwglPFXjpmAphmBTm3bNw9dlHJYlOyIgHOAJGILqDZlEjU2nbSSOBNBd+NS5vkmcsmSWN88220sAq62RWlM6/5Wzc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741253908; c=relaxed/simple;
-	bh=5GLFz6r0BMJQ40zynLy2T5/hDLrfZu5CLanZp9CcLQg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=lXKjb+Y3Z7pZm7wsqdn3msI3PxX8QJ2Sx1o4zTe4upO/8EpSv8Yl/EELXhgZYKcH1w/+9Ftirvlpny15g3t9h+gz0b9xm/oVSkxKWjpOsvK9Q0wzQCWUaqMk8kq/rMDqswVdz57SxKF6aqfj9HUkI19flHOOYD+TOmDnRkCPPDE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nZZv2T/F; arc=fail smtp.client-ip=40.107.244.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Zs1DdDF8m+rmq799yFeBTEq5RDkeRFf/Lu52Ctv2GHKsHPRb8XDA7R3t20nLsAelyNN3q6l6U5MQDrqNSUFCsLbfV2U5o4A7ecG6bYI+9mMKATOPX+CMA/qQZIA7YgNNYEJT4B+/yrpPJ3y07LWR8mOgXxqiGwmdSo+zp458c1BKmK9ommVL+hJtxJO/OCtDUWJoS9dxN/PomK7BXoD+iYfVHEHjXwH4fPkpfx3ZkHGkupprFKg8TdgOAf+vFQjRvHxR6y7aH+01eeNSr7guD6VyaEpyXtbgChe4WbiUpLmpkH2KKbkxe+V9dyZckcCQIP/4c5RE40JUGuBA7MxD6Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ylY3LqSCk2dnvdxZqHhtPBMveN4DlPbuuxRVQbodGCs=;
- b=f4OnY0GQ4MUKnw28T/NsrPU7+TdFVPFxyhD1AS0oUnv5uSzgJzMpEAOSp+pibh7pOhdD6OxG6VYkQNULqlUcFMQ1EXc0JoJv5rDa+hwzzfy9ob5TQD623DDdLH7TxyeqZOT+zE2HvhanPXKKHZlIqOZAmbtGwI1z14PkL7rN4vryqr4MHnwo9UUK4pcDeNwaIJX4JRYTn84yWlSl2oErFdm3FzL/JFfN/qw7VIovncpG1Pf4HUqAXJKkGhlsivxoxkL5S5uqEuf83ToUqaEEIdxWjZZN+yMfQ9M+tuq+/NqCO8mX3ef3hFOOQZdXqPAUW+tEjJ37tbkM8zl02JE53w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ylY3LqSCk2dnvdxZqHhtPBMveN4DlPbuuxRVQbodGCs=;
- b=nZZv2T/FC7W72Y7i3Jl3m4DI36sOmcwLZKtqPgxxfDBOMnwgcQ/DcCglke2ka90FV/8LVsH33lVwmcuJpoC3Y3JWeCnuF1vc8nRTPXSuizWbIv5EKW2AYQMvx9qFGhLtIKJ4JddClH4VStub49XES0xkHnAVfpqCDiRheycIdMU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
- by SJ2PR12MB8977.namprd12.prod.outlook.com (2603:10b6:a03:539::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Thu, 6 Mar
- 2025 09:38:24 +0000
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a%7]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 09:38:24 +0000
-Date: Thu, 6 Mar 2025 10:38:18 +0100
-From: Robert Richter <rrichter@amd.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Terry Bowman <terry.bowman@amd.com>
-Subject: Re: [PATCH v3 03/18] cxl/pci: cxl_hdm_decode_init: Move comment
-Message-ID: <Z8ltCiUCSagkpa9g@rric.localdomain>
-References: <20250211095349.981096-1-rrichter@amd.com>
- <20250211095349.981096-4-rrichter@amd.com>
- <20250212180910.00005839@huawei.com>
- <Z60-UF3VGPsyqHjX@rric.localdomain>
- <20250214154955.00006b0c@huawei.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214154955.00006b0c@huawei.com>
-X-ClientProxiedBy: FR4P281CA0288.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e7::19) To CYYPR12MB8750.namprd12.prod.outlook.com
- (2603:10b6:930:be::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F84209F38
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741253998; cv=none; b=cBLnZB0YUDw9FejbYLenyoakMVvoFl4NEOYpncVfw1eVsMCA/Fii+RclUWMK4cqs/B2iKei2UrpQC0cWWT83jnGyjYJi9BR6reswb2gmwbuEUo/DOqR/cEm22qGRuKVYe4urPPYaNypWUwFxHyHidxHPGxa88fBomBjVzJ8Dkk8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741253998; c=relaxed/simple;
+	bh=OQs+QxFzpPdbAuOKW0844EhpmrJO5bgxGPL6wccNXhs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j+8yQlT7ioDBhFBRvdXPF/2mB3J1tHzWxOsmI9lmOxYH+U4MbdlApCA4nyKITDs8SZQ30/cs5stLUiRM9kLZsQ2DBU/QZZ5W+NCke5/26abR6BbBTZGMcyC+Eg/LWRN3WsmZPPo2dDgL7pgN09sp0NlC+Hbm+yv0Ct8C1i1ZUhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=VhZSLwRR; arc=none smtp.client-ip=193.252.22.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id q7gWtAq3rM2iXq7gatskzm; Thu, 06 Mar 2025 10:38:43 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1741253923;
+	bh=TeFwuXaI558YeAA2DS3IrxfJgqUdjuY9B494gVS/IMQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=VhZSLwRRGgOF/Ov5Kl4YckowxvwrWf7jCXvU6Vf9CWG1CVBqVGsTP8uAZ/yVFAK3v
+	 zghYZIzWXTYyPwfP0DKsEU565p9l0sv0hi+3pZpptau8JAIRlCtDFmvtpPXRAGnpOY
+	 txvasqxnEOlCaatRtUIp3QTN/7Pn+DRmw/bKlqGwvRmgzdiJhSBM43Xe/ex83MVjBW
+	 EAoPd4rLRNjM2yczQDekkw6TIrqqoPh97YzFB9cOMiGoWJVgo3RbvxWgTX2EbtAMBe
+	 HT+svuqHqHlG47Y49UUFZ+Timcl2yCRhdyoI+wlSL8PjF00vwkR7AndnaDdkLGcDJ1
+	 W9SbT1oRZPdFQ==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Thu, 06 Mar 2025 10:38:43 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <f45a2a23-6833-492e-b331-30766f1370f8@wanadoo.fr>
+Date: Thu, 6 Mar 2025 18:38:31 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|SJ2PR12MB8977:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8e54c311-4924-4195-69e1-08dd5c92a3f6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?s+Tyfs2SvwKGPwJlka+MijYNjx/O0YY/yAXtaVDmIQ5gMx0FLefWW7whjaxp?=
- =?us-ascii?Q?VNVA9Agih0Z5Il+9uKltzimfrTrCTDpj9cW8lESxmj2zXIi5C8Ve6KC26iDQ?=
- =?us-ascii?Q?uIDK6JRNC8wc2Xoqrxt8FyOmcC2QhqRCU37/IZyjqN0gqobTKK1RFb9yilMr?=
- =?us-ascii?Q?kCWFLO242BWovnvibIz/D/3k5wot3gRXFuiqRZMoDYJszQ3MQQ+ZJ0yND7kp?=
- =?us-ascii?Q?QBCe0u+TM/OCptD2hCEWbP0e0HROHYSUlFznPE+tq+Ams1Yahp1kWZ1NgF3+?=
- =?us-ascii?Q?ZucyHqkLOBZoqKkiYW8EjAN/4HQEJT4dsn0rllfavJewg9O3vOxDt5Qd79PS?=
- =?us-ascii?Q?kIbroEcudRlGpwYPR3HOjnU2Rj9LMGROYU70BCUpYI33uIoQ5NxjkHw+oTN4?=
- =?us-ascii?Q?un5KOVFCG1JARJfK3e5AwY3EMWIWCbQNz3RWlYZgrPJYtrTnfK2qSCvIMhha?=
- =?us-ascii?Q?fVZc7douIWmEH3u2G/9a5ruH2Lghk7vCJ1O7TVL2htE9dXFkNuLux1nnKNqa?=
- =?us-ascii?Q?E0PeBEldqxI9RIwfwWHRTNHrtPlP5sha/uNwhZfD+xSBmcfp98tPc9DGlaQr?=
- =?us-ascii?Q?iMAmoDfYXxPoSDlHF077W/95I4UqbQ7uKTv90MtrbzoFFISEUSqTOw2BbuC5?=
- =?us-ascii?Q?V7fjGDkNPt6KosGxpKNGjgx417OBJ+JhCEhCqQ+GlVRraAWv5JTGJVe8wSCX?=
- =?us-ascii?Q?RKK0ESytHseTexxiMAQI8TXeZJRcQDWgWkCJRVStKt11jdgZxe/Oqc5vzhAX?=
- =?us-ascii?Q?FtC/t2u2/yxf5mbyDqzu48n8yIgou6CelKKbS2Qknd7mRRnokhuy6nIcrmGl?=
- =?us-ascii?Q?ME6CEyFvnO4n7GUl27pfX66DnQnvjjmOnunidwvcr2UTUgXWKafc7WTwBgDd?=
- =?us-ascii?Q?4vFmQVZP+2pzuxc5QLD6e+aeIVh4k2Jy6iUa8jTtpHvagU7mgzCqLzwQ1IDi?=
- =?us-ascii?Q?a9t+qmQUBm66Chfk4qhgAU0yg4lAHVta5MuOKfKBEmaBRYk5IlBH1raqxRDh?=
- =?us-ascii?Q?6JXH4+4iQykgpoZ0FY3/uGW0Vn0eL26H5c4MQTjs9qCBJxaSH6Ltr/HC9nUF?=
- =?us-ascii?Q?6Mqwb27W6r4zia9QTE6FAm1ikYlMIp87KfL2kWHejDIIjNBWhPxEw+4NkpGY?=
- =?us-ascii?Q?yERt79OmyZm/3QVGuDGRNrjfGthtt7SCdxx79rfOP1WyYi28abcjSJKDO/Wl?=
- =?us-ascii?Q?eNrnzB8Nl8D6wkiXPjmRyhL3TMW0VB4IXkxPkcv1MLBAo1JsRnbxx3dmz7eI?=
- =?us-ascii?Q?+ymD48ch4bEgfPRHov0tlaYr6Sq2fB5FmpkwTLmWORWbt9BBVlH4GNbxoah3?=
- =?us-ascii?Q?+FeSCY24AGXqTLpFFLTyY/LeEtSThGyOz13hPzOJgkP49A4N+JdOIdAT/zj4?=
- =?us-ascii?Q?yqJX4e/vouUdUoKPJj7MkTNlDD5y?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Q8+P7CgI7R1/+McMaX4fnhuwrZdL2Nh4iW9B2PaObtsokSmmATDC4yNd9Ek/?=
- =?us-ascii?Q?kiKeOBw4B0lf6KSTnk99dfxs2RT/eOJ1tD5mKJ6qyk3ZrgRSWVcNCSHSWEuF?=
- =?us-ascii?Q?jpty/luapLopPwFPrNOdXlUV1VF1PvSNY6Uwt8CN6/ZkMzrROhH77Hbj2Z+o?=
- =?us-ascii?Q?/uAQ9Zg0cUx0sZYqJXZ1xV3xaQX6e7yD1UP2Mh6rJjgtjHmkaXT5SjwrW9Qw?=
- =?us-ascii?Q?nAdah6zdDB74wx8Ma7R8I8fY5mjwbwjgyZWnYlN6t+ewQNxH+hv5yNieRmBa?=
- =?us-ascii?Q?PFLtYk0kaUuuh43U8HfaaliTyU8AEp5fFsT1OF4DwN23HrINtVQFIR1dF8Hf?=
- =?us-ascii?Q?mizWPTCKyJhvjBGCU9k0DpLohnf6hSWcJIGXLGCbazxUw1Vp39rX3/paGiQk?=
- =?us-ascii?Q?mPXTLyrdOrHRRzQEaPUehyHt3bRhlxrMIpZhcjxR59BrckFQkpsA8GwPueCI?=
- =?us-ascii?Q?ZBmaz78LSdHUY3jFC3WrjbifdeXTyfGOX0QHQz/mBSgCAZ8SBoxDSDLODjVm?=
- =?us-ascii?Q?GJ+nGYF7/KjrvuP8G2LvPXRYeqrGg27mg6V2whDz4ZCBm/IzQkOMjmHW7oLi?=
- =?us-ascii?Q?48CR6A8ENi/Mfr0IpCqqxIM2SEH7sYGWhxy0VoKiTSVO7OWbazOzxvTDcz6Q?=
- =?us-ascii?Q?uY3CaRL0CjwiaB7gB/havB9cNdBfFsmW+sSQD9LZTDAZjzClfGENDjkVJKr9?=
- =?us-ascii?Q?k8s+92Asty63p5qqhYEYOm2aRV5dJFw5LpxsLFeMAfn0PfUDQK8tA19HvV/1?=
- =?us-ascii?Q?WDM3DQ+dfrhCJc4SNzL3GRMAjHpiFm1Bf7W/YuT9BpfmR6mXI5XdGRGi30H8?=
- =?us-ascii?Q?MpcFuTybIjXe2kXETiocBYGop2cet286y0xAgmIBp708YhdNwI9oE/zvDT61?=
- =?us-ascii?Q?WiTLy4vIYUWUEa2giLoulwez9C2DBn0Dc+krIrB4Dm8G42jA5SX2LUbgU3OR?=
- =?us-ascii?Q?B2i6r1QRQ3h+Jqp6dY7MvP96EbOIDjAlnP0DnFGRNy/vzkfyVcV1Qke2CrGe?=
- =?us-ascii?Q?ZlvFGZZMrqXucdedLoM+b5qcHFWamIxZI3MmgveC73O7sYIZDZqeXwGw/AFR?=
- =?us-ascii?Q?ET28yMs6PfAiJW26uOPywbxJuocTfI38rwBGYT1jmP6vxzVwIvGf+CakjZmX?=
- =?us-ascii?Q?2lxILZJCxd+GfTRDqwRaQvAtppzcFk920RDRa7YVsbkMT57eaiCexu/zVf7p?=
- =?us-ascii?Q?9wFO9fDbRUtGVshNX6sElxqD/XGtOmqDGo7yFiaw+u5J/at5W/FaVp7EQO1q?=
- =?us-ascii?Q?X3ILobPCK7psC9dPlGvloE4SKwWSziLznU0UCIWqjatktZ4vj1bf8ECRV/8i?=
- =?us-ascii?Q?9aOqwnw7QWmV6+5w06Vvb8QFCecZVM1+Ks5wGp23SJE3AA8BkAYqHQKf2mTx?=
- =?us-ascii?Q?7/6xR6VBHDCxKSvtNYKFKqzoTRKrhlj9ujij7QIsP10+dfFiLM13gDWy/Ebr?=
- =?us-ascii?Q?cpZFPacQY+snng3ASiNOzgt0w+WBhEOhNFyKVBrGBxseVPyO5VtTuqR+lBFV?=
- =?us-ascii?Q?z20ySJ2wImylQvFfgHX3HjIsa4v9pdbEuz4E7lAGPlr9Nnr69ARjvRfcEPmb?=
- =?us-ascii?Q?vtDJTP88m90DzrpWmxQCtzKMu/5p+OtHXeHOAk/K?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8e54c311-4924-4195-69e1-08dd5c92a3f6
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 09:38:24.3895
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: h5boltWYy6gCqTzt3satf90W4puN3tmySzi2dbgOedDccT6qZNG/k2VUAqHfA55nqx4NQ5taaF7MnqDkDmOFCQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8977
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/8] bits: introduce fixed-type BIT
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ David Laight <david.laight.linux@gmail.com>,
+ Yury Norov <yury.norov@gmail.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
+ David Laight <David.Laight@aculab.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Jani Nikula <jani.nikula@intel.com>
+References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
+ <20250305-fixed-type-genmasks-v4-4-1873dcdf6723@wanadoo.fr>
+ <Z8hgqOB5Ym-GGykS@smile.fi.intel.com>
+ <d7f3150d-0167-44be-90b2-17f8a050687c@wanadoo.fr>
+ <Z8hyNXVZxLzhEzNy@smile.fi.intel.com>
+ <824dc1d1-14f0-433e-aa3f-679527b87077@wanadoo.fr>
+ <Z8isZodEqhZw5p7-@smile.fi.intel.com> <20250305215027.5d9be1fa@pumpkin>
+ <Z8lnFpkVTjpFHZtB@smile.fi.intel.com>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <Z8lnFpkVTjpFHZtB@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 14.02.25 15:49:55, Jonathan Cameron wrote:
-> On Thu, 13 Feb 2025 01:35:29 +0100
-> Robert Richter <rrichter@amd.com> wrote:
-> > On 12.02.25 18:09:10, Jonathan Cameron wrote:
-> > > On Tue, 11 Feb 2025 10:53:33 +0100
-> > > Robert Richter <rrichter@amd.com> wrote:
-
-> > > > +	/*
-> > > > +	 * Per CXL 2.0 Section 8.1.3.8.3 and 8.1.3.8.4 DVSEC CXL Range 1 Base
-> > > > +	 * [High,Low] when HDM operation is enabled the range register values
-> > > > +	 * are ignored by the device, but the spec also recommends matching the
-> > > > +	 * DVSEC Range 1,2 to HDM Decoder Range 0,1. So, non-zero info->ranges
-> > > > +	 * are expected even though Linux does not require or maintain that
-> > > > +	 * match. If at least one DVSEC range is enabled and allowed, skip HDM
-> > > > +	 * Decoder Capability Enable.  
-> > > 
-> > > This check is about mem_enabled. Would be fine to add another comment here to
-> > > say.  
-> > 
-> > The next patch extends the comment for more clarification (I hope so).
+On 06/03/2025 at 18:12, Andy Shevchenko wrote:
+> On Wed, Mar 05, 2025 at 09:50:27PM +0000, David Laight wrote:
+>> On Wed, 5 Mar 2025 21:56:22 +0200
+>> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+>>> On Thu, Mar 06, 2025 at 02:17:18AM +0900, Vincent Mailhol wrote:
+>>>> On 06/03/2025 at 00:48, Andy Shevchenko wrote:  
+>>>>> On Wed, Mar 05, 2025 at 11:48:10PM +0900, Vincent Mailhol wrote:  
+>>>>>> On 05/03/2025 at 23:33, Andy Shevchenko wrote:  
+>>>>>>> On Wed, Mar 05, 2025 at 10:00:16PM +0900, Vincent Mailhol via B4 Relay wrote:  
 > 
-> Not to me.  It says 'else' when referring to what happens in the if.
+> ...
+> 
+>>>>>>>> +#define BIT_U8(b) (BIT_INPUT_CHECK(u8, b) + (unsigned int)BIT(b))
+>>>>>>>> +#define BIT_U16(b) (BIT_INPUT_CHECK(u16, b) + (unsigned int)BIT(b))  
+>>>>>>>
+>>>>>>> Why not u8 and u16? This inconsistency needs to be well justified.  
+>>>>>>
+>>>>>> Because of the C integer promotion rules, if casted to u8 or u16, the
+>>>>>> expression will immediately become a signed integer as soon as it is get
+>>>>>> used. For example, if casted to u8
+>>>>>>
+>>>>>>   BIT_U8(0) + BIT_U8(1)
+>>>>>>
+>>>>>> would be a signed integer. And that may surprise people.  
+>>>>>
+>>>>> Yes, but wouldn't be better to put it more explicitly like
+>>>>>
+>>>>> #define BIT_U8(b)	(BIT_INPUT_CHECK(u8, b) + (u8)BIT(b) + 0 + UL(0)) // + ULL(0) ?  
+>>>>
+>>>> OK, the final result would be unsigned. But, I do not follow how this is
+>>>> more explicit.
+>>>>
+>>>> Also, why doing:
+>>>>
+>>>>   (u8)BIT(b) + 0 + UL(0)
+>>>>
+>>>> and not just:
+>>>>
+>>>>   (u8)BIT(b) + UL(0)
+>>>>
+>>>> ?
+>>>>
+>>>> What is that intermediary '+ 0' for?
+>>>>
+>>>> I am sorry, but I am having a hard time understanding how casting to u8
+>>>> and then doing an addition with an unsigned long is more explicit than
+>>>> directly doing a cast to the desired type.  
+>>>
+>>> Reading this again, I think we don't need it at all. u8, aka unsigned char,
+>>> will be promoted to int, but it will be int with a value < 256, can't be signed
+>>> as far as I understand this correctly.
+>>
+>> The value can't be negative, but the type will be a signed one.
+> 
+> Yes, that's what I mentioned above: "int with the value < 256".
+> 
+>> Anything comparing types (and there are a few) will treat it as signed.
+>> It really is bad practise to even pretend you can have an expression
+>> (rather that a variable) that has a type smaller than 'int'.
+>> It wouldn't surprise me if even an 'a = b' assignment promotes 'b' to int.
+> 
+> We have tons of code with u8/u16, what you are proposing here is like
+> "let's get rid of those types and replace all of them by int/unsigned int".
+> We have ISAs that are byte-oriented despite being 32- or 64-bit platforms.
+> 
+>> So it is even questionable whether BIT8() and BIT16() should even exist at all.
+> 
+> The point is to check the boundaries and not in the returned value per se.
 
-I have dropped this patch and updated the comments in the next patch
-along with the patch description.
++1
 
--Robert
+I will also add that this adds to the readability of the code. In a
+driver, if I see:
+
+  #define REG_FOO1_MASK GENMASK(6, 2)
+  #define REG_FOO2_MASK GENMASK(12, 7)
+
+it does not tell me much about the register. Whereas if I see:
+
+  #define REG_FOO1_MASK GENMASK_U16(6, 2)
+  #define REG_FOO2_MASK GENMASK_U16(12, 7)
+
+then I know that this is for a 16 bit register.
+
+>> There can be reasons to return 'unsigned int' rather than 'unsigned long'.
+>> But with the type definitions that Linux uses (and can't really be changed)
+>> you can have BIT32() that is 'unsigned int' and BIT64() that is 'unsigned long
+>> long'. These are then the same on 32bit and 64bit.
+
+So, at the end, my goal when introducing that unsigned int cast was not
+to confuse people. This had the opposite effect. Nearly all the
+reviewers pointed at that cast.
+
+I will revert this in the v5. The U8 and U16 variants of both GENMASK
+and BIT will return an u8 and u16 respectively. And unless someone
+manages to convince Yury otherwise, I will keep it as such.
+
+
+Yours sincerely,
+Vincent Mailhol
+
 
