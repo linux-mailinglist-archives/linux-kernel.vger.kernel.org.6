@@ -1,207 +1,176 @@
-Return-Path: <linux-kernel+bounces-548272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E7CEA542A4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:17:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 081CDA542AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:18:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 121CB3A8B89
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:17:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67DBA7A328B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:17:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EACF1A08AB;
-	Thu,  6 Mar 2025 06:17:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9F51A238A;
+	Thu,  6 Mar 2025 06:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NAkZXR1D"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2065.outbound.protection.outlook.com [40.107.103.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IknMz/Md"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB7019CC1C;
-	Thu,  6 Mar 2025 06:17:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741241834; cv=fail; b=Ecp+x8wBF0+YL7plSQZI8Wo++mjR5IcrShsMWJDx7HCVGM7VqeO+jtlzoo7DGxiH+2YFieUhXG1eyhIFQ8yKpIB9TQed4/H0MaY6la3J2yW4O8VlakC+6d7QPGXYDx4/qzeNht7V2gku8nprBAQNvAvMZbcOt6PjjN67lrhOEpU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741241834; c=relaxed/simple;
-	bh=qkOS3zZe2pCWLkzFuZN2KZ+6+jXmKyTVsdxPuHLUfl0=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=a9XQ42hXoJsBR4a8Qx3opGVsZOLTPJ43o7wXb3qBfLnHUI1KWG81MtqkNo89onGdXIqky+zbx6TIUAqLcF1zSC5Dwlbi0LLx4Ri9E0dYHHi2AjbbHFvlvksS9qJklABnQKyts4WmzqKybnpZf5bvbWmoN+5ka588EtIThPLuQ2g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NAkZXR1D; arc=fail smtp.client-ip=40.107.103.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pRGlYaTrTBM4BXYwGniin+ChcyjS2lpHu1ps3D0papvZ8eYSZ2cuEfMUJndu6Jm2uidBckCW80Y48HJiuPKIxb5Ktub3mEpG/iQpOoSXZQ5RhUFlgjPLf6+xZCRFcxm1UapSI6Y58YkMgzwzM93FrXnL0IZWFU/eM96edN/BLqZf/liWazajq5NwX5EjlQIX0x7W+P6DqV1y9+nxaAaBam/Tyr2xk+CJkr0W/ajTQsoS7bISnijMUNO+tpSupQ87w2uQhQy/bAqgYk5ZBrK2oD5OpIt4QkdJE9fRtaaPcT7/bR+IbX4kv0dPk2ylLM34Rb7z/OyIuePPSyX6xvufzQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rF++icwshe2VtcBT9AWi0iMRQyQPhKF4xSpDMXs35kI=;
- b=v4RmJAgU/oGEP/tbnF0ILHXudm/RlHVbJViE9wyMQIkNBbTh/jComNdGADvFLFz7uYIV6uJbsEi2teFN5Qb85zU+T3I9HoxwZ3fddi0QL7pUPpLeVLzpOw98JengoqniZEx7c0aLs32BKnqQwlhjpDulxqw4hcX6225Q33QKW+GBO0F6t6BIBK/EKpGtvlZltgufHELuSDsi7sLltG6YgsOAv1ZZYh+5UlCGTXWD4QvkvxF2PyxeYxagJP91ZvU97BTVXZDbw8WqrvzWX+spi3Boz4iddSKkU+NzPhxFa2nBIOM80f17AyD7U95GV1G764vqPNl1JoluXYi3441VAg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rF++icwshe2VtcBT9AWi0iMRQyQPhKF4xSpDMXs35kI=;
- b=NAkZXR1DA/0dcClkfo4VTxUGKZfGYHOeL1cBCZtxR1wtk6vX1EobQUor0Rg+0itwbcEo9eAVjEd/J/NF/n3Hij6+tEEBUT5j6BuYuBGqGU0fSeTEci1TjLToRhztjtLtX240swXGpfoYOaHL+M4ZJwuhXS9amHsN91ZtZCIHqN/VBKjNBm+3ZOAOR/6luxTIZf7q+u/xfiLk1ZVSbDkfx4viwld8QKVx4C7BFpStA2u2FK24uQ5POKMKZk0XqSgS3mayqBP0kE2LAvOq8woRiUyVd2F+kxLNzLi/I1r5Ow4LHOQ4EiRENhkUjWBj59ldcav7m4uX4qTQ4tqh+IrsJg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AS8PR04MB8642.eurprd04.prod.outlook.com (2603:10a6:20b:429::24)
- by AM7PR04MB6965.eurprd04.prod.outlook.com (2603:10a6:20b:104::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Thu, 6 Mar
- 2025 06:17:09 +0000
-Received: from AS8PR04MB8642.eurprd04.prod.outlook.com
- ([fe80::50d3:c32a:2a83:34bb]) by AS8PR04MB8642.eurprd04.prod.outlook.com
- ([fe80::50d3:c32a:2a83:34bb%7]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 06:17:09 +0000
-From: Jacky Bai <ping.bai@nxp.com>
-To: lpieralisi@kernel.org,
-	sudeep.holla@arm.com,
-	rafael@kernel.org,
-	ulf.hansson@linaro.org,
-	daniel.lezcano@linaro.org,
-	james.morse@arm.com,
-	d-gole@ti.com
-Cc: linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F96C3B1A2;
+	Thu,  6 Mar 2025 06:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741241918; cv=none; b=NoFm/WyLNRbWMaxZX+v0st+ISCC0/MHLQhPE1OpFYXvZVJSWgGfpA5CB1/PE0549N5jknD9uZIH8ZXldTTVjoXwicNCoCPs6LpRKW7ec3lltEJqbhNzAWAXZvELPI8enOfhfmkUTaQ/qTZogBnkWkA+bRkhmsiSfXNeuc0LvRR4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741241918; c=relaxed/simple;
+	bh=cYptXPy5X+7ifLDzzug9r1UdGIE2gk1bbD05ycCqZ5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cRIVCeUy1rNoL1JLFfBkbjABkYm8lTLUt9CElzkIOOMlkkJP83rArC8aJ2zFeMs/qMtRrtM8fHUNvvm2rHncOJKXbnh6SvEaLIXIWlWoMwV3ete3kVLgoUnkTPVAOu+gbLI9wx6ligBs679noqVGFpzO2RL0TUR0SmylaI/WhVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IknMz/Md; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2240b4de12bso5843385ad.2;
+        Wed, 05 Mar 2025 22:18:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741241916; x=1741846716; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=p1pDx3clou25vOg1BAeTudGjS9gAt5tIU/BJlqO6TXQ=;
+        b=IknMz/MdRk3+nbOEF3GEHsZzUirkS5Id39BzKm1KIDkZubdAz5WakfyPWCNJ4E1+xX
+         CEIKktWFwuVVQDN6xF16HV9AZ1J4nISUqUFs6muRipqY1jq3bFXsAMtmnSOI5TKrcXV9
+         mEXreKYxJRUzAxo00MXKqtfcJ964Cjz4ig3ejk6hW50DP9+UOyuj0We4M38gqvMtJ2sg
+         P5nSeAjBYEj71wipXoMYGEVH/NvwUhs95JWtDw+1XY8XFZmYzHTTQsrA2MDmXKRoWNMZ
+         2jnOcaf9K2YMhreRWsxKJxrIy4Iy6jEMMxenpKNMzU0QYk4NBBxPHXYj41rdLD+lb76Z
+         bRJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741241916; x=1741846716;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p1pDx3clou25vOg1BAeTudGjS9gAt5tIU/BJlqO6TXQ=;
+        b=vX3CwNdbWax26lfwBZMaLNsdu29Trqg2ZUQ8CnNT7Xy+q+Gcz+8H30NjXAOLFBKhEd
+         TPEqtvwx981KZdn1dSDDb5lbZpSv1WPz8j5t5gmQE8OgvhbKFGj9XuMJjUpdy6sx9oOn
+         nq3VVzueqXT2hGzw91+hTWTxe2c/qUyHmzCJ9Qrh21wn+c9WS7xuxZ0+JJ8ViZenzU6d
+         ZVRM8E8ioJ5eUxvxtU73QushVOyNROUNqOyJF39KQ+QDz+Z0+ZNCcB9T0a4ZyoLidecl
+         uBBu5KfNfQRs/GXBUqI6CeUx5nvwpY4JfIawam+9TD5CxCCpjuOAiVKJF0XeDaVmD/yz
+         vDgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUr/dkbwzKf6U2HnGtBd28oeNyVbL8T4SxHIE+9WKY3W0gD3ZO1l9XHj7nsBUVx2mHxBjSdlF7Uz0jCoS4c@vger.kernel.org, AJvYcCWr7BMPKHkroe8FiLuv4IIUxubfvqs1gv1TLmMEfyDShy2gJJSo89BYT1rUM8HhiOTBg6MPHP4UdUc=@vger.kernel.org, AJvYcCXe+DNHkRROSZX/GaMHwRWsdMgpIqNYOdpC6hUT+TV7ZhSC99dMjkrjEDrXbf4sM6/2h3ZjWy1HCTgcF7YnhOV1esE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyL9dkX89xfoqBFAw8SLifUZB9nmJDYVhLze61xT2CYGtf6yXyo
+	79iLKMBmx+XB6VSV1M+GcByG7XlzZ3GB7FJOV/gA11OHBAeyo5n5
+X-Gm-Gg: ASbGncu8gEujNAoAglw3ZXs4XvC+zmtGqsDv9zJeGk0FdfY//3umPrugmMWUcdhsM9I
+	PrxRh8QhwOCqDxMjDw9x6SCMcjhq/nadYp7mi2ZWhPb0xVUHsY3BKWmW6rUYe3mq76Qom1hNlce
+	3N5tfLfmZBKSllvPmDxU7GRgYfqzqAISTD2JHpTEE31I95xDtZ6D2JfejspFJZ+67p0O9rf4g8b
+	SvP42X/NtJOxEJqwmSV7BePVnawZ5fItt2g8hXZ+dlgmRr3TzYxC4vfnj7BrOSph1ScrEOucVPu
+	QtBXnMhnDyfJ+FuJb7oQY8XsCqEMRSxF0W9vWpIrfhP9oQ==
+X-Google-Smtp-Source: AGHT+IGUx+NT37Eom6rOUXlToD8lMehbcU/9o1mF2Cw2MPQNIaBYdlf+wBjth1S4mex8R3KADOw0xA==
+X-Received: by 2002:a17:902:ecc1:b0:21f:3e2d:7d36 with SMTP id d9443c01a7336-223f1c79695mr84953375ad.1.1741241915686;
+        Wed, 05 Mar 2025 22:18:35 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:423c:abab:b1b0:64e8])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736982440d0sm519698b3a.59.2025.03.05.22.18.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 22:18:35 -0800 (PST)
+Date: Wed, 5 Mar 2025 22:18:32 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Claudiu <claudiu.beznea@tuxon.dev>,
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de,
+	linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	khilman@baylibre.com,
-	quic_tingweiz@quicinc.com,
-	quic_yuanjiey@quicinc.com
-Subject: [PATCH v3] cpuidle: psci: Init cpuidle only for present CPUs
-Date: Thu,  6 Mar 2025 14:18:05 +0800
-Message-Id: <20250306061805.2318154-1-ping.bai@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0049.apcprd02.prod.outlook.com
- (2603:1096:4:54::13) To AS8PR04MB8642.eurprd04.prod.outlook.com
- (2603:10a6:20b:429::24)
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	gregkh@linuxfoundation.org
+Subject: Re: [PATCH v3 1/2] iio: adc: rzg2l_adc: Open a devres group
+Message-ID: <Z8k-OHsYvARkf3Rt@google.com>
+References: <20250224120608.1769039-1-claudiu.beznea.uj@bp.renesas.com>
+ <20250224120608.1769039-2-claudiu.beznea.uj@bp.renesas.com>
+ <20250305142122.626336c3@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8642:EE_|AM7PR04MB6965:EE_
-X-MS-Office365-Filtering-Correlation-Id: cf94a3e9-a555-4c99-78a2-08dd5c7686d4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|1800799024|7416014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?3Jl7guTR/pZ1/B21tymFzImfGHErO8OSCWBcvhvpPaElKPX9JAwnmAe0IvbL?=
- =?us-ascii?Q?9IMDTOkFj/paNOpr/IC5EXd+Ci40hLHBvTnm0PwceuN8O3LEE5FaIRqzs0Xq?=
- =?us-ascii?Q?eap2izv/Xgg2Ol4NlwG+49cIXJfoDrFVKbqPmgHKB+HG8PCzWuop2NXinhkc?=
- =?us-ascii?Q?qxuL9KzaYfhmQZBlwAguyNkr4z2pwcbqR4Ey+PqZY42IiJDOWTHp1/glGyCv?=
- =?us-ascii?Q?p/h3pYJ4sZnHH5D0mYf55ZLgtJx77CfAs3RjTJprq4sYbbZx1VKw8TIy9RaZ?=
- =?us-ascii?Q?VIpAsaYJFkyLz9RZhBZ6fNbxoaQsru/KLivKdwo9q81oH7jIamGUxH1OtlEx?=
- =?us-ascii?Q?zAHVb15bfm03Vwei60MdEX2qKe1YZNauGbHpCDPElZ9SG9swOrkOcBdyud7B?=
- =?us-ascii?Q?YT34r++GN/IiMGhIsm2KcZHhmPDQVm4aw9mKxSLZvP/G28WnGez51nKlyQB8?=
- =?us-ascii?Q?p+xTcYdvJNeCMt+SZ1XFsNrL/FKtkgIvBQzkjzqx7hW+xhV7iYwq8pvPACtn?=
- =?us-ascii?Q?CYXN7kgcl00CEwPCyPTa6GJoR/PXWUUtQosBfGamNlMOk/3o9gj4jJaPIrO5?=
- =?us-ascii?Q?CPOg1l8v1YwmE5Rf6yXM6ahau0XXnJsd6z79VbLO/b70rRCl9lpW0ii4OOu5?=
- =?us-ascii?Q?Lh/G/IluSOBYEfMIyVIA5H19DJFX0HjgK8neYnWwQKXm/9A3eCsBNKmA5tgT?=
- =?us-ascii?Q?9uEei5K1JSHEeNA4HLjelpEQY33PR1Z2ztVX4CRIlEHJ3lF1o+17GahdbEWx?=
- =?us-ascii?Q?lwivLum2yKO7lCUsbE0C9Jw48HyzBgSnsTIGAzZRCcbGw2AhwqO8TCiToMNl?=
- =?us-ascii?Q?MSszglhFUxM8Rr/dJBIkl7pcvM/b6zLNZs8oZLCnnEyGb2G2eycuoeu6v0oA?=
- =?us-ascii?Q?ukh8u7P5v8tGNOwJjG6j7BhhHIE3DIucfRWw3iQ1FTkPzPdShLOQHn/SJahn?=
- =?us-ascii?Q?pO0aoeuiNq2fyiQOATA1pMWaeetNsHl9k4nuJqQDRPctbDLhieAZtQ4c6YJo?=
- =?us-ascii?Q?nPAGSsjAByA6Ny95j3qTVwRtRfLYqhW1ER1H03N8Vi393fwC/AU3iyi9UBPQ?=
- =?us-ascii?Q?97ZbIdQgyTzcRu53ZU+stvIEzcc8WskAamlqLvMLyVHLd81hs1808lgqq3tp?=
- =?us-ascii?Q?QVJybW83HjF41pjUAZyxRCiBYeBLqO9EsHvon61X8jlnr8VDATUSb7k9OxgQ?=
- =?us-ascii?Q?k5K5znM8SgfjL6djCPaIq2E4BwivYd0eiw5cTsJfTKQ4Y+aIPvEMtBJxPMir?=
- =?us-ascii?Q?eSAnMKvc8HscqEg2jYwHmGfqEHJsJLUHGsnmqcu29nViOYUprv3F//P9Nwnk?=
- =?us-ascii?Q?GhwNwekiMCNA2Elg1uCOn6EmublLBtdTWl/qH4d3EH5eGtIfVV5vwo6DFXzK?=
- =?us-ascii?Q?0fRo2a7aetTCV1/8hxSCeHgk1iUVXGyUg9SZjkD09LwaFkKk6Oc7WX8gUo+4?=
- =?us-ascii?Q?sy/1CSyLhZrEO/rXRlhNpqHbZIKmRd4N?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(1800799024)(7416014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?3P7wJ5aH3TRAogBBzeUxy+aDVMOHTn6YT5Br0VmH6RKSpFZ9ZjIcfXN6Ptac?=
- =?us-ascii?Q?d1MhP4BI1K6GnnVKCBH2SavlkMGDKHgCf+AJKyQAmWDIjuQGRAqdseXomH6U?=
- =?us-ascii?Q?lf/kERJk8oAuX9b05sSKsGkNymY4sdiKVSNrBoHGMfsriIdoRDs8wO8GzT2A?=
- =?us-ascii?Q?/Owez/Ck37KOLXNkV8hctjt1wqAyRoVhgXuET7xBi68nrJ4wr16Mh+CzVR48?=
- =?us-ascii?Q?H5SgH2UCXQ3SZRsZ2e5FXE5c+1mG+MdkSf0G1+F314zQXBrR2FOE12Z/Qlv9?=
- =?us-ascii?Q?nxImwgLUa63mqNtgwrPSoGEjzbp/C/K5fVm7so/GwbthHidbMHWN4WPWJBWo?=
- =?us-ascii?Q?QjQTJQlk6lZKcxoCuCydqtrHKT6gRsqEjEAjzQGqX9uqTvxKS225Zuf4riCY?=
- =?us-ascii?Q?1vquWziZrQmEjmx2Yme9cM1g8xat8IUhaOqKhh94GLzqAGGbKQkfTNAGm4Xg?=
- =?us-ascii?Q?pYH0z3wZsxyr9OxCQAyySmIigHpRjy+GjInLgA1iel8FgkkRI6/MbOTMRNEv?=
- =?us-ascii?Q?yJQaNBWdB8ixxprW4jazCI6jKBvcz3/T2YADnfTayStbFWoiozL2P1lFZfd5?=
- =?us-ascii?Q?v7fcR+8g/08oBjKCP6Dq0Si+PBL+AVzrPSsmkTMwLgfPi2DUp9V7OooFvKbX?=
- =?us-ascii?Q?A+A6cWAQ1lENNACzLWV1t8yBaCYntmbWoYE9FeaXSHzoK8W06TtNsGAZZYXu?=
- =?us-ascii?Q?oqBitpCBQVpznCAUCAqFtaWUOgM2t8Snji/isFeH0mlW2M4MX4cM0mLfRcgS?=
- =?us-ascii?Q?zjl1P+1QEdXdiuPhRVUe0H9hLZzSi54bDeVC1QP++k1e9x0mbF1VAy7VaZRY?=
- =?us-ascii?Q?dkhQRrrBaDXLErSAITFWvkyBYvXSVxeiHbbDAsj/+/pP6bQtGQ2eg2bO+cqt?=
- =?us-ascii?Q?hmZp+ue7wW1xgDzQfqTmNkH/GbjO/QwDtys3bJyCuC97IXoHrTZ/uEVs59Z7?=
- =?us-ascii?Q?WNc6zZj3ExryxC2JMH/3XqJEmgn3GK9FEF5QWN1n8krq3y3Bzk4JuVySrNo7?=
- =?us-ascii?Q?2zAqN+OonUbpekRu9jwMca2OrOUM465zI371qwUFvMnZpRtJHqhoeWHX6iKH?=
- =?us-ascii?Q?jcn+M/nsvtRkMcF5x1096Ox90txDUuH7n510KE5EJBZlZhgmecDPanY6EPwK?=
- =?us-ascii?Q?vxnkYc6nulrnLu7Uy/o8BnfGKFtVvJeUg1nhalcLzgKIlmBT259zUuBG7nyU?=
- =?us-ascii?Q?OcPK7J/BytnwMiVUf4PRdRw1m6OIk1tnTdMkL2aoTLH5GlhYF+b3DrJU3XDd?=
- =?us-ascii?Q?VgNngGOfpiPPOPW8LJLSkFXQOmLmbWgaNDE7eMAr8WcWIXx9JVe1AabnGK0R?=
- =?us-ascii?Q?6ARWT6eq/mNTe1O5BkFJNJPrpgib3aid07k3FNKMheQ1vX4IPnQxfckL+ZxN?=
- =?us-ascii?Q?65Zc3M9EeGxecci9fcFUXVmUFLCYmpBaraCmytS/2xxtb9DujkzA3ur6X5EC?=
- =?us-ascii?Q?oIsQopwHUQxMlMST7I73dAvZ+YEFsejpctk6VUiJNaSUz9hi6gWrJhO99p37?=
- =?us-ascii?Q?AeuP0eN1RY4MJ++Aj8kmA0f4fiej1hFL0+v2xB7OO3YYRafS/t4rRKQ7A+wa?=
- =?us-ascii?Q?w4jDkxnb/TvIqugHNekdwKeEoG+yHeNeKGtceWHJ?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cf94a3e9-a555-4c99-78a2-08dd5c7686d4
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 06:17:09.6442
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0RuoU7FFPbyLxN8qxHei4Aw0zQkQfTTu8mY7L/7gtUn8GDUFPRWCBgtak1YCcvM9jHCHseHXipETQiOGeaQ8sA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR04MB6965
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305142122.626336c3@jic23-huawei>
 
-for_each_possible_cpu() is currently used to initialize cpuidle
-in the PSCI cpuidle driver.
+On Wed, Mar 05, 2025 at 02:21:22PM +0000, Jonathan Cameron wrote:
+> On Mon, 24 Feb 2025 14:06:06 +0200
+> Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> 
+> > From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > 
+> > On all systems where the rzg2l_adc driver is used, the ADC clocks are part
+> > of a PM domain. The code that implements the PM domains support is in
+> > drivers/clk/renesas/rzg2l-cpg.c, the functions of interest for this commit
+> > being rzg2l_cpg_attach_dev() and rzg2l_cpg_deattach_dev(). The PM
+> > domains support is registered with GENPD_FLAG_PM_CLK which, according to
+> > the documentation, instructs genpd to use the PM clk framework while
+> > powering on/off attached devices.
+> > 
+> > During probe, the ADC device is attached to the PM domain
+> > controlling the ADC clocks. Similarly, during removal, the ADC device is
+> > detached from the PM domain.
+> > 
+> > The detachment call stack is as follows:
+> > 
+> > device_driver_detach() ->
+> >   device_release_driver_internal() ->
+> >     __device_release_driver() ->
+> >       device_remove() ->
+> >         platform_remove() ->
+> >           dev_pm_domain_detach()
+> > 
+> > During driver unbind, after the ADC device is detached from its PM domain,
+> > the device_unbind_cleanup() function is called, which subsequently invokes
+> > devres_release_all(). This function handles devres resource cleanup.
+> > 
+> > If runtime PM is enabled via devm_pm_runtime_enable(), the cleanup process
+> > triggers the action or reset function for disabling runtime PM. This
+> > function is pm_runtime_disable_action(), which leads to the following call
+> > stack of interest when called:
+> > 
+> > pm_runtime_disable_action() ->
+> >   pm_runtime_dont_use_autosuspend() ->
+> >     __pm_runtime_use_autosuspend() ->
+> >       update_autosuspend() ->
+> >         rpm_idle()
+> > 
+> > The rpm_idle() function attempts to runtime resume the ADC device. However,
+> > at the point it is called, the ADC device is no longer part of the PM
+> > domain (which manages the ADC clocks). Since the rzg2l_adc runtime PM
+> > APIs directly modifies hardware registers, the
+> > rzg2l_adc_pm_runtime_resume() function is invoked without the ADC clocks
+> > being enabled. This is because the PM domain no longer resumes along with
+> > the ADC device. As a result, this leads to system aborts.
+> > 
+> > Open a devres group in the driver probe and release it in the driver
+> > remove. This ensures the runtime PM is disabled (though the devres group)
+> > after the rzg2l_adc_remove() finishes its execution avoiding the described
+> > scenario.
+> > 
+> > Fixes: 89ee8174e8c8 ("iio: adc: rzg2l_adc: Simplify the runtime PM code")
+> > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> +CC Greg KH given the in driver suggestion was his and I think
+> this discussion is not necessarily over!  Also Dmitry for his info.
 
-However, in cpu_dev_register_generic(), for_each_present_cpu()
-is used to register CPU devices which means the CPU devices are
-only registered for present CPUs and not all possible CPUs.
+So let's ignore this specific driver. We know that at the moment
+platform_remove() calls dev_pm_domain_detach() without waiting for
+drivers to release their devm-managed resources. This means that devices
+are potentially powered down and unresponsive when devm release handlers
+are run. This behavior affects _all_ platform drivers using devm APIs.
 
-With nosmp or maxcpus=0, only the boot CPU is present, leading
-to the failure:
+We should not and can not go and require a fix to each individual
+driver. This has to be solved at bus level. We have much fewer buses
+than devices.
 
-  |  Failed to register cpuidle device for cpu1
+Driver core might supply helpers, but not all buses need this and like I
+mentioned elsewhere buses themselves may want to switch to devm APIs for
+their resources.
 
-Change for_each_possible_cpu() to for_each_present_cpu() in the
-PSCI cpuidle driver to ensure it only registers cpuidle devices
-for CPUs that are actually present.
+Thanks.
 
-Fixes: b0c69e1214bc ("drivers: base: Use present CPUs in GENERIC_CPU_DEVICES")
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
-Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-Tested-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-Signed-off-by: Jacky Bai <ping.bai@nxp.com>
----
- - v2 changes:
-  - Improve the changelog as suggested by Sudeep
----
- drivers/cpuidle/cpuidle-psci.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/cpuidle/cpuidle-psci.c b/drivers/cpuidle/cpuidle-psci.c
-index 2562dc001fc1..00117e9b33e8 100644
---- a/drivers/cpuidle/cpuidle-psci.c
-+++ b/drivers/cpuidle/cpuidle-psci.c
-@@ -410,7 +410,7 @@ static int psci_cpuidle_probe(struct platform_device *pdev)
- 	struct cpuidle_driver *drv;
- 	struct cpuidle_device *dev;
- 
--	for_each_possible_cpu(cpu) {
-+	for_each_present_cpu(cpu) {
- 		ret = psci_idle_init_cpu(&pdev->dev, cpu);
- 		if (ret)
- 			goto out_fail;
 -- 
-2.34.1
-
+Dmitry
 
