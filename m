@@ -1,139 +1,91 @@
-Return-Path: <linux-kernel+bounces-549534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548E5A553A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:55:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E35C6A553A3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:55:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E5603B500A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:55:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E30C1785AE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:55:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83C3526AA9C;
-	Thu,  6 Mar 2025 17:55:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E981A269D01;
+	Thu,  6 Mar 2025 17:54:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g+DP9tdh"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qgmITw3i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C32F26AA8F;
-	Thu,  6 Mar 2025 17:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49BBC25CC96;
+	Thu,  6 Mar 2025 17:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741283700; cv=none; b=Io1vSOQgNUE6xmdAra0YvOrEwde+2ydBoWLrBOM5fcqgTdS1ZMQBHZSGxJH29WvA+Gu4ON085NqkTZrJ1NhdQlVZEVVJhIPbucmepS3HG7h3Nh+7Ejaft1hTw+vluX4c886SmYIBs6ZIGgWtLO7/Swb30b0UC6PmSbohXIi5m/s=
+	t=1741283697; cv=none; b=d7jLUJ+fO7lWTsPIPyDg7aUxRuK14xyl7i1SJUFhcHJqJqooyeL4sN/YZR0puc0tR6KG7/YQrospWn02hT4HVbkO+UYpTS9fy2WEXro0Jjg0UrfJFh+SX4M+69ywrc0pRPtg5iG9XZjL61sgmw1IUEudy8/p7q99kb7L7Q69Ew0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741283700; c=relaxed/simple;
-	bh=REhyb4FccbElGzNm3frZmucwXlYEVynpDuu3Lg4UsRA=;
+	s=arc-20240116; t=1741283697; c=relaxed/simple;
+	bh=U3xdOAHZKeSPz+aKFdQVzR86S0fcAtL0VWeNwF394GU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rz8kK/LXJUZnGrTgc22CnghbS7aK4lqmeeFY9xA2URnCy+1vv6aZpBQfGn6/B47ih56p36geEgfOkTOOncJli75oF4QCTSW5LHNEvOwKWttDGHwovuFc5aNjEuruuNVdMDOo6TcsnNDq3APeAAZvlp80hyzZnqkt10RCbbjxE+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g+DP9tdh; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-390f69e71c8so674391f8f.0;
-        Thu, 06 Mar 2025 09:54:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741283697; x=1741888497; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TaWoW54M35Iuu4F4hS04rQT24OaUpRD6n4HLK9B7axI=;
-        b=g+DP9tdhg3UNQrskiuecVkDEUy7XhVP62Cs0vjGJwRYshcsVbSVXPw2ro/Dd+TpvfV
-         HK901MTrM94CSER8NVtYvViMvQjk+b9/eu3Czuvs8a/F0X4dMmRlhmSl9IYR1AI85n/8
-         u+te2qc27iDOLqwJ0/UzO0yVhCaaQT97iL80MJ04JjC/AR5bFQxYCFu2G/mevtdBXAlv
-         p43CoR4mlg1sg/O8uuBdI9PzFgvlEkIK4y1TtnkikFWuRKI7SugtSdpQ+N2pCPMSx3x4
-         krv42c3lot4hg1UxYynWpJWF1avcWyaJgmK1cdaAaSK4fGNBkNGcvrnGX2mdlzBM40BS
-         4o+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741283697; x=1741888497;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TaWoW54M35Iuu4F4hS04rQT24OaUpRD6n4HLK9B7axI=;
-        b=YL+dJz2V8XG5fGHSU+IuwnaGUi6N2NgTbDwcBapyDA5AucGqcNKdv/3FdWmUCFzPra
-         EWBTI0dUCpCk65ws0qXsJzsgKvBbj22pJe5ite5JGsml5sQyrSIhXAdPd6h4Y3DCm3d/
-         qWc07i/2NDXWUfCZBJ0oRc7Lo0eo3vsrvMcN4cMzmCjdBRlRnqLmT/Vu6blj8YM06+zm
-         3tgqlPcsfcR8l3uqqWve02KkB75CVU4rx0fHrV6Fxnys6NEy2OOX1wI36hP4bfwV/fXY
-         44rgRkNunnpCvjrCfIgonHXAcY8cVZSjKVM9stlBxop3rHTyfd2HEhD/ZjuVokztnoea
-         kVTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoz/S/CBrcXkA5AenZJTo5gk2tBu42jUZPSEtxwswWH1iFUGHrM9C/jQsBGstWUCxWWhpburG1Sa1k7AY=@vger.kernel.org, AJvYcCVXGrLRes8s+m+OgXUwk9wx4Zo/4q3Z3QP8l13ZAPrgvxq43zJO2bAoWe1ipa1FD+33me12hgaJXgCupNB5@vger.kernel.org, AJvYcCWJA2ZhjmU6LAm9zLZrRx/nRix5e7hFEKpDNUjg3Kzmy0IcOEeeXcQQOazESHp2u3Hn64Bys2J8F7w0@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDPkwo+bpAWg8tcNVYIPuXeVT/Jk5ywDohyBKIilSi79JCKTRO
-	jwrQRMVoMbsGZw6Nm5pH2HTxIbMh5nmVyzhMN4FK01xSDS1hCiAi
-X-Gm-Gg: ASbGnctHXLro3iJnCe/gS/XOa9W1p5pJR0K6TrTAPN1M2MZiu3W/pQDVy7k1tkRAAW+
-	mXLgvc3qF3LQ24FaLfY7lmOX83o2J1+QMsmSd5nnyt+sezqrcpABQxlFVfEzV7am1n2tb2JPYZE
-	B3wvO0WBikhHENwJpKe3dsofU8/umPB9LJCR4smQJO8t16q9TAKqyVsO/qtN1PNaSsADcGt9KDC
-	iwjjrpk4ITlySEV1CsdLTdGPUXWyzp+vejbnjm174E46jfTRXnM6AQJ1GvcrBJBNnseYfCFdxdh
-	0S5T+S2kINlkXoVwJkTn1CB2c9sh5TBB+HpFIZi22jF/cmJaPUW2PwCO4aPgttc28SoK/zMqkSn
-	zcVVGv2DvNNfbNlD1lHC7VFsf/qU8nSs=
-X-Google-Smtp-Source: AGHT+IH9p/W9GdaI6nC625sBnKSWjEo/TKOBD9q53UObDWG/ywsJAcwTGyrJkWGcy4ltiMJnKyzJ/A==
-X-Received: by 2002:a05:6000:18a3:b0:38f:3224:65e5 with SMTP id ffacd0b85a97d-391320682b9mr376713f8f.12.1741283697434;
-        Thu, 06 Mar 2025 09:54:57 -0800 (PST)
-Received: from orome (p200300e41f3a9f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3a:9f00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c11e9desm2656419f8f.101.2025.03.06.09.54.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 09:54:56 -0800 (PST)
-Date: Thu, 6 Mar 2025 18:54:54 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=om1gIx5WXA/CNw+GXQp9nRPNnyUy+DaLOHHS5RQwVXVTnx1D7VTgAxXlR+CJau5MGIdh4AyZJTnqHmwq7STqtVym9IiZfuIXkssroHXRs7lL8SJ16d7qUwXJCS69+kZuOMl5StBig9wNqgYbuaT8d6O0a6PVB7FUN9Lu3fGLLec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qgmITw3i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F90DC4CEE0;
+	Thu,  6 Mar 2025 17:54:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741283696;
+	bh=U3xdOAHZKeSPz+aKFdQVzR86S0fcAtL0VWeNwF394GU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qgmITw3itpG7rB5G4E2ytRfHOf/CZyLWYSRSCbnm+w+AwTfWijs5gy/RdBsSJMK4b
+	 3QzzZ0KTatu2G+qOh5xBDH6GImXzOfG4vVdLGB9tiL1h/3RCBu9FWivFK0FRmVxTU/
+	 RQRBziC0h9xr+87NHjTCvONt//OdhWp+FWnOjIAligvHHuQWxMj6MV+WNuegWpWUou
+	 rwAz+QYFeqA0Wz2+EpZzjsaFAlFblkhd1JIm9kIDiqE+xtrZEgxrsOAhuvMK7zFXyJ
+	 wkJLv+8bdL8G8i8UPoaofgbfY4ZfcNgkP7FOL4aunsdNt3yMlhCzOOwvvjXRoBAspa
+	 Rgbye1eT1DP1w==
+Date: Thu, 6 Mar 2025 11:54:55 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Simona Vetter <simona@ffwll.ch>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	David Airlie <airlied@gmail.com>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 5/6] ARM: tegra124: Add DSI-A and DSI-B nodes
-Message-ID: <y5ascyylqj7xboddxssqf26bsfqipu67ahzbywsuz2nkvjhx5z@qnyovpqfxu3x>
-References: <20250226105615.61087-1-clamor95@gmail.com>
- <20250226105615.61087-6-clamor95@gmail.com>
+Subject: Re: [PATCH 2/2] dt-bindings: display: mitsubishi,aa104xd12: Adjust
+ allowed and required properties
+Message-ID: <174128369455.567749.6557990524216998006.robh@kernel.org>
+References: <20250225210316.3043357-1-robh@kernel.org>
+ <20250225210316.3043357-2-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="lyyhayophj3cktpk"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250226105615.61087-6-clamor95@gmail.com>
+In-Reply-To: <20250225210316.3043357-2-robh@kernel.org>
 
 
---lyyhayophj3cktpk
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 5/6] ARM: tegra124: Add DSI-A and DSI-B nodes
-MIME-Version: 1.0
-
-On Wed, Feb 26, 2025 at 12:56:14PM +0200, Svyatoslav Ryhel wrote:
-> Bind DSI devices and MIPI calibration.
->=20
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+On Tue, 25 Feb 2025 15:03:15 -0600, Rob Herring (Arm) wrote:
+> The Mitsubishi aa104xd12 panel requires an external backlight driver
+> circuit, so allow the "backlight" property.
+> 
+> There are users of this panel without a vcc-supply, so it shouldn't be
+> required.
+> 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
->  arch/arm/boot/dts/nvidia/tegra124.dtsi | 40 ++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
+>  .../devicetree/bindings/display/panel/mitsubishi,aa104xd12.yaml | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
 
-I've added a patch to add the nvidia,tegra124-mipi compatible string and
-applied this patch.
+Applied, thanks!
 
-Thanks,
-Thierry
-
---lyyhayophj3cktpk
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmfJ4W4ACgkQ3SOs138+
-s6GbrxAArXB/xRUKe+jEXnfUxoVkf3HgHgPq6TRfu4Em39fgxr6XBs4I81N8cMOz
-7w5BMHj1obErX0ziyGznmhP6oGb0cAaJU8W9cCwEzgvqKG0s9STe/v3HHsWcwbfm
-pLM2MNrtP7gtF+x20AGBGFrBNXnh6SjQQtFq/8Lw+kRk7O5a8BOiZ8QOpIrOJKst
-TkyUxEdC8U0n32ZCK80JHUVnOlkyRvNfWzOJB3VNnO2Yulnfu0I7ZuPM49zhnbbO
-AxEneN3CRyxNNi0hHZ5mG278sr1GjUUH9TwhJ1crHTrA/6O6aCJb2qrKfi5jai5t
-DXWf11zmucxtTqJGhH5Ai3kC+Hqei5Po3qpvbgdT4knATJKHgOxh6vLlByoeCUEj
-mq7svM/ak61IJ0jL+5UcZNdYxyP490vFzYTSwMEzTd74T9DrL75W6jmZaS+hr8gh
-wrW+/d4sFT0b5Aeg3P9D2Hf+Hbw/GILre/pjY3kfRH1W41pTuMKmg+ZI0KjcYWAp
-KWh+bo0OnXqxa8KSujOEq1IGhmZ9TjLxcBdL0/vg+1J1moyDhS9vhtsMreh3V2BZ
-FFO/gv7xTI5F+MuWgwkb9pU/3ZS7nbL+MGNybwFvCiDtwcpNsBEqt0/jvBXv1gwk
-ggDQfLcL56KNNNqgyXjxELzjeeJpCGSleK82HtK+7S6oKACqE6w=
-=v8FW
------END PGP SIGNATURE-----
-
---lyyhayophj3cktpk--
 
