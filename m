@@ -1,173 +1,206 @@
-Return-Path: <linux-kernel+bounces-548996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA96AA54BE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:19:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09770A54BE3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:18:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0620A3B3B6F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:17:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30F0E1643E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F822135BC;
-	Thu,  6 Mar 2025 13:16:31 +0000 (UTC)
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E0620E6F1;
+	Thu,  6 Mar 2025 13:16:45 +0000 (UTC)
+Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com [209.85.221.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B4E211469;
-	Thu,  6 Mar 2025 13:16:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F63E20CCF3;
+	Thu,  6 Mar 2025 13:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741266991; cv=none; b=YUezALA8s25TeRneGpbFdNm26b3Ba6/TZp+sVum2gqSZc+rSWRkuBg9XABKTWd79ulz9YVKEKquPWfm7BWD1jt3jU0pnzHzP1KMbmp+gofagM1O9Trt3cGNoZEC8MI8jTEJLw3v+TrutXQ89JKDJ8IbuK4dDUcS6tm0q85Qepx0=
+	t=1741267004; cv=none; b=Lh4cidm4pFd/fW6SeVhB1aiHKLUgPK17gqqjexAuwl6Q4xCuaP3uYJvfmmYfOXs+l8xEIAYlyrnpJPstH2TjYm41bS35Sfg9uD/XSbVvmFJ9apZIcK2wn+DYCT6AVDwwAq7TUxKVdpU2U0ylNJm5XZt33aRdmXoNV5NAONUv230=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741266991; c=relaxed/simple;
-	bh=Id/YqAO3zpxcKmfd61Fz8/37PE/mK6E1qlRG89GO/lE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oZVW69HiLF6AfBtcrL4GHSrCkXf3G6EGIoYBXKQN9GqLuFdCEEr6A2dqD3zK0MEBMYzDs561pDQgvA4TIznuxW0DwNB5kkONxt86QTWtP/1kF19Dtg4SCn20+YiYthCJpUXdinDRlRluYQxpb0dsNgedGmKrdf5+9n479nstPdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+	s=arc-20240116; t=1741267004; c=relaxed/simple;
+	bh=geJfl6Tjs0ZMZDhgGE556UpvYRQdcEBtOMPHxo+Ic0g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K/XqBCJcIg+xDVqgnAU4GV0skzAj67GrcFEv2pqKh5DuMEb/shsUhBml8HfxF4ZGaRBFISxoly+EhYljb5KFjliR5tTvQExvnyborjfA7+I/RrzFushhMcCShRJlaz70J5qGsHlpFfVPLYGJ0PO8p4jTotZS8g3Gak679bF9bOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e4ad1d67bdso941340a12.2;
-        Thu, 06 Mar 2025 05:16:28 -0800 (PST)
+Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-523658b61a5so252742e0c.2;
+        Thu, 06 Mar 2025 05:16:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741266987; x=1741871787;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kCEwMcpguVILuRqhPxpMN+D94R4VwDza0OZembQSer0=;
-        b=X5erX6LkpCmP9ULOxt1LaSfv4pvlazwqvoSXi9lRzm1HbJmul1t9tEB47KZmg8fERU
-         t//UjNV5YfFxwtiVUsCkM0XIqS32kQsCtyl3xloJheWbYtlfujJKpuqrh7AoFXF7+zSe
-         YghRkeVjAmNov4Yn5CLNNljC1c1BPxGgYpArKULVhAsmaCxEA6kFxCA3pwwa0ptMozUj
-         OP5ag0HBVN0fR2yOnwXvZfZBHO7R2n7gKjSxi8IT6BqPrPwd1sY/UTnBuraqBUbqG0JI
-         K7h6bB7E1WixldO6L5CkS45AK22+Lq5UrWGctCFJWoCRAuDFGiTZo9/WXyMLryFmjSQv
-         ZlTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVPQtpBMRsAQp/HKhuipSAudW6HMeQGu28MfgcN/KAi7YX3J0OSjXHIWiY4PMpdAbpIMY00sUuBE462V9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVWCgbVBlG04T340z0IKbFnSktIdJxyu1eNJf+qnI1vqKT+D3j
-	Y/c/rZiO+4B0ltHoAmjawnNAZmxXxzsXOoQkj2liJLKrpDMtEz3A8pifbQ==
-X-Gm-Gg: ASbGncuPwj6RcW2vrv3rPEryw1JM7dPOSyInxMRbPXlWMFNvrTQLUrskeoC5je6rlM5
-	ITXmdwuoxMekbIrk52UVXEkJyd2TJTKbWsj0C8JzCC4VyvMC+07XDajVhnktW1FKdiMOVoZAHYW
-	s1MXk9ZxZ1QLJ7jFkaJvgEeML+ww99/W4iQqvONChFfsDHt8R4gEMVthTAotj3cqZFXCWzzbCu5
-	pvLBnjuRSl+n7QMgIswPFgxRNOZZ2dzJ4ea0VWXdVbW2pgIXv8YGB5dHZ82uXGU0x1EdcaV0r7g
-	5mb1UU8IHFicd1zgxazT/1tAz9XwynKJQEJK
-X-Google-Smtp-Source: AGHT+IFufcaw8qwbnHKO1xusmGK7yPkQTo03GQWWeQsSxaOc6Fphrc2FVZdmaNXHcsnSQqTzyYSfiA==
-X-Received: by 2002:a17:907:198b:b0:abf:6f87:c720 with SMTP id a640c23a62f3a-ac20d94a4bemr666410266b.29.1741266987065;
-        Thu, 06 Mar 2025 05:16:27 -0800 (PST)
-Received: from localhost ([2a03:2880:30ff:73::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2397363fasm94937266b.102.2025.03.06.05.16.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 05:16:26 -0800 (PST)
-From: Breno Leitao <leitao@debian.org>
-Date: Thu, 06 Mar 2025 05:16:18 -0800
-Subject: [PATCH net v2] netpoll: hold rcu read lock in __netpoll_send_skb()
+        d=1e100.net; s=20230601; t=1741267001; x=1741871801;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZNeHtAW9iePLKHd5cZPEWpcAxe2OAsXb5VCz3ALcxDA=;
+        b=e9BFNz+PtUtb6Dwp4X9z0tyVzwjI7URq88te0Jann9JIqJLC4+ky1/d0ObmjvLxpul
+         migJMF+DsfMNwXavqTpof1Dbky58Fb5bOPa4I8l3SpLzxDG7bg7Ze5zfdUH5FumIrR3a
+         Ru6GMzZk50WuqYNRSM7XKwILyUERrj+tVc9j+7Rmy2NBA+OwMBZkGMtOiv/xSoqUR7oE
+         U3RV2Qq5vvxCQSogx3fKDK50DB4iiLvouWA64QQjOgm6aTmlOFza+33gSPkKJFv2rn5+
+         Fn8/r1Z00shvBDKUd28Pfv0mql3PpB62OAyYGsDtefqEbomnMf10mw26o8Cvpd/G41Bd
+         NZEA==
+X-Forwarded-Encrypted: i=1; AJvYcCU4r+kbZ3Oj5AQDZcgiWVsWuUyqjVocQXgB0UrP3p9G8F4a1rZgMpjNAVeQxAsMtxzGBQtBCAA1q08=@vger.kernel.org, AJvYcCWibSA+Zy2l6pi5Ej/GAEvIFeE09jhzWnWHvKggoGj9EP1RCxFMw/HcHwUeLLu6fQW7RLsuE7NJAU4oSL7/KwjFUqE=@vger.kernel.org, AJvYcCWtodKDDgJzZQFUt3E7U9+62K2sQRpp2K1sfukXRUjslt2/papYAyG0Vm3xLzcskcpaDYRJZh4LSO/WbBeJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBL1dEgvjRyC2fU8vP0qBgvjPS0e6kr141gWU5so1FUH3vYpln
+	DpfQ+UHskHlE2BKW3iZj4QZ6d8aygQ3nw8ffeWQ3GM4azei1Sd3R7kfn7u+H
+X-Gm-Gg: ASbGncvFX3CiS3sUQ03mxaZ464ELxxncx48s5bUugFR9O06d03CthUESL3G92FWfxl4
+	sfsxYt25j5UWjWvh/GeNxCkfl8aanLnDy2sgx3QOjFS/iAuFpcaaHCBN1fG6etSg0ECJ/BkgbqI
+	io9VFzvih6uVDz1Ltt2oDZK7o0mFzwg8fA2MLtWN+HFzloVttfpQIbxMLq6O7fi1wwdc/5FUZXQ
+	PV1w5IdUBazYEB9U6ZMW2y4zO08P9K8+IB/LozFiTTH24TtTqYhqg6dCtsIepzfPi4Nh8gP1GDj
+	BizM6/JtWAJJosWg5IcF4iqLKmcfUVm7aiObETTMYNPeU3SEOWzsSDZVhDHsbahpQRq0sOUXTpm
+	CDfNJVEuE2Jo=
+X-Google-Smtp-Source: AGHT+IGELfb/Y4vdVdihDGYTOy2cV5i9WIQa/lkI4pfi/bWAl1AP8lHizqJeneckaU6tNBmobAQLlA==
+X-Received: by 2002:a05:6122:904:b0:520:5185:1c77 with SMTP id 71dfb90a1353d-523c6262259mr4262457e0c.7.1741267001379;
+        Thu, 06 Mar 2025 05:16:41 -0800 (PST)
+Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com. [209.85.221.173])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523d8af8d66sm173087e0c.21.2025.03.06.05.16.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 05:16:41 -0800 (PST)
+Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-523a6fbf025so258822e0c.0;
+        Thu, 06 Mar 2025 05:16:41 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUHH2fu/OsJfHDjp0sEUKhPT3qQCKaQMv5zY8TYagasNQja/fSDjSKJr5he9v/Up/mfe2IbjCfogwU=@vger.kernel.org, AJvYcCUYZ8W2ljqjilVSUzDlv5Y9IIq9MTpqi1KAQaIaOlHkMebXmzmqK6hthtnFPA81z7tVanid1XI9FM9dkxYsV0hn1qI=@vger.kernel.org, AJvYcCVtXfu8MUM6Eg5ZX8jZTROqTgpRedC8FMoT/isTjXKyutteFDfyWLI7i95NPnekYq4y92cSNe7b/bphrGM3@vger.kernel.org
+X-Received: by 2002:a05:6122:793:b0:523:dd87:fe86 with SMTP id
+ 71dfb90a1353d-523dd88050fmr469336e0c.6.1741267000695; Thu, 06 Mar 2025
+ 05:16:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-netpoll_rcu_v2-v2-1-bc4f5c51742a@debian.org>
-X-B4-Tracking: v=1; b=H4sIACGgyWcC/3XNyQqDMBRA0V8Jb21Khg7iqv9RRDK86ANJJElDi
- /jvBfddXzh3h4KZsMDAdsjYqFCKMDDVMXCLiTNy8jAwUELdhBaaR6xbWtcpu/fUFA/oHwqtcLb
- X0DHYMgb6nOALIlYYOwYLlZry95w0eaZ/XpNc8rvVV98bIYNRT4+WTLykPMN4HMcPq7vQtLIAA
- AA=
-X-Change-ID: 20250303-netpoll_rcu_v2-fed72eb0cb83
-To: "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
- Amerigo Wang <amwang@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-team@meta.com, Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-42535
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2349; i=leitao@debian.org;
- h=from:subject:message-id; bh=Id/YqAO3zpxcKmfd61Fz8/37PE/mK6E1qlRG89GO/lE=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnyaApynwTtXe9hxL6ZEj+q1834fk/uLfSyHulz
- +ycL+I0IJiJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ8mgKQAKCRA1o5Of/Hh3
- ba8vEACjT3zJbVPv2G4S03YDiL6fNJhhH2p18xOMxykOUMFmS3d8S68f15wvoeYql1chIPv7Kz4
- /d4K6yBGRgKd6r85ZT6DCNwIVzgOHUe+ZZ/+p3ksyF9MZb0lrBMMxfpnucALPoqXCYiXAT38Nv3
- sGLa6GpHgb++7HxrMYdNis9Q1VEqfBRfCinITCaTHPUoHOQto5h60RyvcHoC+e/TC6LF6C7ZbQb
- TtMSMJZ5SFlK6TdoFerQH6JMZGo82uz0HeNEOwkPgvasjjDk+87IM7HKCVyDk6IEruCWZbUv6Sx
- tF8Rib+o87gy0IdAtWomMSQIjLvL7NxKIb0qFLcUxqa7fvw4LQuoSJwj7WEepoVcV1igNDmgjgc
- pXDJXxWRoDu4mMHgCMHjETPn20ukJ2600noebqpkDPwh4gt05HkrI8h8cU1zEx4LhsHT9pK0S06
- qKSBvZp4jpRFNiqK2GqkRB2kTI2OKTbqR7gOBcszrtCwMJaS3WDyIdrY0+XZb/unDjhrfOa+Qya
- XIJjTgRH+4L51TsNPnb9wiyNv54VSunc4gPpWg3oO+Ag2azEIvprH99YRFKRcjFFwrumkxIh2l/
- 0EHTO0bpRxPMeZBWATFFCvYWRxl6ywrnBix9IW2vQeWrGY/wghWyULjPSvB2gFP6Ch2ZQjzj7Al
- YoLOnZiYr1FRa/A==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+References: <20250218114353.406684-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250218114353.406684-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdUhZ_qV=16jnWD6cPfuMmZpDUeRMTUgbqy=Mkzp-29=bA@mail.gmail.com> <CA+V-a8uvfb=a=K1YzGNeZdiAzeXWMpdbxj=6UuL_xQfxKmOBZA@mail.gmail.com>
+In-Reply-To: <CA+V-a8uvfb=a=K1YzGNeZdiAzeXWMpdbxj=6UuL_xQfxKmOBZA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Mar 2025 14:16:28 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXermXD2yCJxYjw-bmWKiazF5LVJ8PHoELKEdp_q2UnfQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JptUoAeUXz4mTgK7gXoOQkLHMd-qd9V8kXJ1S2BLhS2F8KlZRac5gEhngQ
+Message-ID: <CAMuHMdXermXD2yCJxYjw-bmWKiazF5LVJ8PHoELKEdp_q2UnfQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: renesas: rzv2h-cpg: Add support for enabling PLLs
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The function __netpoll_send_skb() is being invoked without holding the
-RCU read lock. This oversight triggers a warning message when
-CONFIG_PROVE_RCU_LIST is enabled:
+Hi Prabhakar,
 
-	net/core/netpoll.c:330 suspicious rcu_dereference_check() usage!
+On Thu, 6 Mar 2025 at 14:04, Lad, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> On Wed, Mar 5, 2025 at 4:42=E2=80=AFPM Geert Uytterhoeven <geert@linux-m6=
+8k.org> wrote:
+> > On Tue, 18 Feb 2025 at 12:44, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Some RZ/V2H(P) SoC variants do not have a GPU, resulting in PLLGPU be=
+ing
+> > > disabled by default in TF-A. Add support for enabling PLL clocks in t=
+he
+> > > RZ/V2H(P) CPG driver to manage this.
+> >
+> > Does it make sense to enable the GPU PLL if no GPU is present?
+> >
+> No it doesn't,  PLLGPU is enabled on needs basis ie if GPU node is
+> enabled the PLLGPU is enabled, if GPU is disabled the PLLGPU will be
+> untouched and will remain OFF. Note I also have a patch which does
+> disable the PLL's but I have not added as this isn't tested with the
+> full system running and I'm not sure if there will be any radiation if
+> we turn ON/OFF PLLs (Im discussing this internally once approved I
+> will add support to disable PLLs too).
 
-	 netpoll_send_skb
-	 netpoll_send_udp
-	 write_ext_msg
-	 console_flush_all
-	 console_unlock
-	 vprintk_emit
+OK. It just sounded a bit strange in the patch description,
 
-To prevent npinfo from disappearing unexpectedly, ensure that
-__netpoll_send_skb() is protected with the RCU read lock.
+> > > Introduce `is_enabled` and `enable` callbacks to handle PLL state
+> > > transitions. With the `enable` callback, PLLGPU will be turned ON onl=
+y
+> > > when the GPU node is enabled; otherwise, it will remain off. Define n=
+ew
+> > > macros for PLL standby and monitor registers to facilitate this proce=
+ss.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> > > ---
+> > >  drivers/clk/renesas/rzv2h-cpg.c | 57 +++++++++++++++++++++++++++++++=
+++
+> > >  1 file changed, 57 insertions(+)
+> > >
+> > > diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rz=
+v2h-cpg.c
+> > > index 1ebaefb36133..d7230a7e285c 100644
+> > > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > > +++ b/drivers/clk/renesas/rzv2h-cpg.c
 
-Fixes: 2899656b494dcd1 ("netpoll: take rcu_read_lock_bh() in netpoll_send_skb_on_dev()")
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-Changes in v2:
-- Use rcu_read_lock() instead of guard() as normal people do (Jakub).
-- Link to v1: https://lore.kernel.org/r/20250303-netpoll_rcu_v2-v1-1-6b34d8a01fa2@debian.org
----
- net/core/netpoll.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+> > >  #define PLL_CLK_ACCESS(n)      (!!((n) & BIT(31)))
+> > >  #define PLL_CLK1_OFFSET(n)     FIELD_GET(GENMASK(15, 0), (n))
+> > >  #define PLL_CLK2_OFFSET(n)     (PLL_CLK1_OFFSET(n) + (0x4))
+> > > +#define PLL_STBY_OFFSET(n)     (PLL_CLK1_OFFSET(n) - (0x4))
+> >
+> > Let's subtract 4...
+> >
+> > > +#define PLL_MON_OFFSET(n)      (PLL_STBY_OFFSET(n) + (0x10))
+> >
+> > ... and add 0x10. Where are we now? ;-)
+> >
+> > I think it would be better to store the PLL base offset instead of the
+> > PLL CLK1 offset in cpg_core_clk.cfg.conf, and define offsets
+> > relative to that:
+> >
+> You mean PLL_STBY offset in cpg_core_clk.cfg.conf and have the below
+> CPG_PLL_XX macros.
 
-diff --git a/net/core/netpoll.c b/net/core/netpoll.c
-index 62b4041aae1ae..0ab722d95a2df 100644
---- a/net/core/netpoll.c
-+++ b/net/core/netpoll.c
-@@ -319,6 +319,7 @@ static int netpoll_owner_active(struct net_device *dev)
- static netdev_tx_t __netpoll_send_skb(struct netpoll *np, struct sk_buff *skb)
- {
- 	netdev_tx_t status = NETDEV_TX_BUSY;
-+	netdev_tx_t ret = NET_XMIT_DROP;
- 	struct net_device *dev;
- 	unsigned long tries;
- 	/* It is up to the caller to keep npinfo alive. */
-@@ -327,11 +328,12 @@ static netdev_tx_t __netpoll_send_skb(struct netpoll *np, struct sk_buff *skb)
- 	lockdep_assert_irqs_disabled();
- 
- 	dev = np->dev;
-+	rcu_read_lock();
- 	npinfo = rcu_dereference_bh(dev->npinfo);
- 
- 	if (!npinfo || !netif_running(dev) || !netif_device_present(dev)) {
- 		dev_kfree_skb_irq(skb);
--		return NET_XMIT_DROP;
-+		goto out;
- 	}
- 
- 	/* don't get messages out of order, and no recursion */
-@@ -370,7 +372,10 @@ static netdev_tx_t __netpoll_send_skb(struct netpoll *np, struct sk_buff *skb)
- 		skb_queue_tail(&npinfo->txq, skb);
- 		schedule_delayed_work(&npinfo->tx_work,0);
- 	}
--	return NETDEV_TX_OK;
-+	ret = NETDEV_TX_OK;
-+out:
-+	rcu_read_unlock();
-+	return ret;
- }
- 
- netdev_tx_t netpoll_send_skb(struct netpoll *np, struct sk_buff *skb)
+Exactly, the PLL_STBY offset is the "base offset" of the various
+CPG_PLL_* registers.
 
----
-base-commit: 848e076317446f9c663771ddec142d7c2eb4cb43
-change-id: 20250303-netpoll_rcu_v2-fed72eb0cb83
+> Or maybe instead of using a conf can I add the below?
 
-Best regards,
--- 
-Breno Leitao <leitao@debian.org>
+Sure, sounds fine!
 
+> +/**
+> + * struct pll - Structure for PLL configuration
+> + *
+> + * @offset: STBY register offset
+> + * @clk: Flag to indicate if CLK1/2 are accessible or not
+> + * @sscen: Flag to indicate if SSCEN bit needs enabling/disabling
+> + */
+> +struct pll {
+> +    unsigned int offset:8;
+> +    unsigned int clk:1;
+> +    unsigned int sscen:1;
+
+This is a new flag?
+
+> +};
+> +
+> +#define PLL_PACK(_offset, _clk, _sscen) \
+> +    ((struct pll){ \
+> +        .offset =3D _offset, \
+> +        .clk =3D _clk \
+> +        .sscen =3D _sscen \
+> +    })
+> +
+> +#define PLLCA55        PLL_PACK(0x64, 1, 0)
+
+0x60
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
