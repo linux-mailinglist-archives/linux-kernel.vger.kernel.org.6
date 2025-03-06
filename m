@@ -1,143 +1,119 @@
-Return-Path: <linux-kernel+bounces-548169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF993A54113
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:13:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B28CA54117
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:14:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B91FB1885B51
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:13:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCEDA188EBC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD9B6194094;
-	Thu,  6 Mar 2025 03:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70E6192D9A;
+	Thu,  6 Mar 2025 03:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Al+nf66H"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="IqsLn+Tj"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9CC192D86
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 03:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 707A9192D86
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 03:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741230815; cv=none; b=Cui6mMuPyJpSHoyHo1/IwWyoBS8hlZAGJtzFT1dyltn9fxNVuls5JATYwcLH0xNzRTSsXj/1NWgd/glyytt45W29YEQcmab0SHWERsezYIenqZh+AraAzSrhREPddC9DweyGWi5Bw2Z68fACm48yLhimPmbKjT14Q+ilTLlGfhU=
+	t=1741230829; cv=none; b=FDuDmzlMbwIcj8Y0t+FU6RTsbstKMUyeK5mLZbKX2ZUlv9XHtKCbrBiksix2TosxHWBLLjx0+2EK6HTaGGyhv2NTPCVzCBC1dm8GAliWua5mPNazGoZo7P8l7WxIgQ438z1gaS7qBqNdHQW8ERE4kjdJfncF1FDQjumYsv+M3+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741230815; c=relaxed/simple;
-	bh=Tveglffe8ZqIwGSYe2WrroPWZ6zSCid8BKA2Rrxbctc=;
+	s=arc-20240116; t=1741230829; c=relaxed/simple;
+	bh=oZj2gcVqtx107nGAwDgWw/kXoOh4Lwz/K/smzUH9Qtw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qPLgTFnXhPjR342cjluZ/RxnBN2avIXUVJgZmDdCnAeIrqTkV9qZwBs71QWXqf9udqhZ2pw1xBbzIR7viruoJsoObiNyNZseOiWAH0RfHZ2BT8l6aY9g1ziUXqj8USSEOeaGwc9xhu1CGBgR3vr+IWMKNR9GlFVpBukd79dWkFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Al+nf66H; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2235189adaeso3299735ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 19:13:33 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bGtRQfO78cyPI+mW90i+xLcMAsAiyEbvWpp+eGOnqvNFJHohjOO1SMTVqB0qP38udf3GDbtnUQkHlLNi3ZCYdWdK24LdPAit1bsfCaFy5gGConpAEd339RUlRRXFoMYpfismBtXI9s+23D4VoFyRvC2cGtS7Asv/z7fEXx0g7Zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=IqsLn+Tj; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2feb9078888so445390a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 19:13:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741230813; x=1741835613; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1xC4B23ZVUrI+v0nWKIC4hRtohRTbUpDYv0ldFM8Y84=;
-        b=Al+nf66HEEs5M50XPaD9As54O3i83iWFQYo4pHJWvRRdBLiBuORBNTX1rjz1znKazc
-         6PzI2oBstzsNXgN0tAnx5zMYiRhxVu1cora1nThZu0mGDN6qeGl29I5d51ly+T01NG7y
-         fMRZ2SnQGqDqGAFgmuXiZoL2AnhVP3mCZqtToEbQRvNcdD/7rr9/U9WmwnECaEmdwu8C
-         pWs8MSWfd3R7RwwaWRjYMHDX1zbBl6QttyeXDQ6pmg8wgOqK0XEz1Yr+vcf8ULWNajd7
-         W3ej8KnWlUYbZ2AX1ieRESyQPK/iakPnJtr8i1nLONAtxlyeLgD5V7+PGCi8aJ7pBCXe
-         zsNA==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1741230826; x=1741835626; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I5RD/anlchtvUN+J2asseqeoYe9S0VGBCfqERf+0yHQ=;
+        b=IqsLn+TjnzVO9kfZQU8c/t0LkueDvnHhFA5o5hi5QjDFgOsVhtPDWOeJnF+UQ+3qn5
+         bjuSZYL+PQ3BuI3b65Lz6RijP6n6wFzRfe7RcZSVM4M78Mh+Lev/cnd91IEmB+xazFWY
+         QFLWaefEEiIlmpHQIsWt5BvEH8hY5v/kb3n+e0dxz2J/5LHk2isr9of7b3NyXCAx77eI
+         CTcFWdAv7GFiMgq6z8joYcQbLSu0x0svPsyJ3DSFEJqiYzo/YnpMYBidl6cWaSzydByG
+         d5xGw+BINq0PDd2uZ5SFeye1/q4Yh4gOGYd5C30ZhM7nPCN1yhc+YGmeyGadYt3NMw2V
+         upKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741230813; x=1741835613;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1xC4B23ZVUrI+v0nWKIC4hRtohRTbUpDYv0ldFM8Y84=;
-        b=cYcl0mzOYF6bGTSo5qS1MPj3KI4dHHfNnvOVLgrNX+wMpHl+V+CqF55aaHdy9OjNSn
-         F0xr8RQhf8yBtOzT9IBNopvHy55xXxnW/7TNywZ5v7o+SrnOOCoEqOad0/X6bYrk1fYs
-         rFmxPcO9YBALPGon1ihGPnltqAOW3wCm6ILQrS2Xlt2L8XqtgIbFFNwAZ6YaltbPhI4R
-         1yM9uYzHvrFq+v78ucWkilkrFZEdh+3seOkaK3GQTBpUMJR7TeCbTwBGHrsPsptBInNC
-         GPpl88yygaCZCjWwUY3ah+trMR52bjSFg8HNCIfAPiDLoiq4ZFjX9RjXJuIoqhu2Rn2c
-         JH1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUd9M0IQpKeHUMdxHhFEWSwcpXElttrJnolwzXw56r9H5Equmg1WflCgPR7cAhqbAsCXn/CggvrIQiVKNE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPpKSo7O4SEBvDznJrquz25EjAfAZB+qyfkBmM4VMp3JyHZt14
-	t121Z2u58dI5YaF6QeN+l6VuMf4MjCZYVD1p6x5AobnLKJYksk9F9zV7tCIUCg==
-X-Gm-Gg: ASbGncsq9Uce4NSaWLqd+aPTxsQh5k8Vnwfa8rs4wyRZor/EIUDSgz2aPvZ7ig8b3lv
-	3HrdIqMTb6qdceNulPsHfmpHeKmocl6D39WKIf0aseDxL70fkmqJZg6YnHXhp267dCOcKb8PNxB
-	GGh56AnPirMBcxdDF8mF2adP/T/3I3cLB7WVIuUJn08aqVHnsrm3iuzu79G3y+kq2IqfS7mSZuL
-	Z89ydbtZMUCe2m4V6ziTNLjldvSnjPiqwaNsTYuQ/wegFnTE0Tod4zILMqCodYrkWB8Gm/92+j5
-	Z175zBNkcMUd58kOFw5IpZ9Ik6F2a4isLz9KuQrPimyLzOcFYwiCjt8=
-X-Google-Smtp-Source: AGHT+IFy40lU01QwIDD6NgP1MWN6uVEbwb2emHO+b5oCOTPTFjpkYhW+N4OcEkblRt9yRpkBHJpIww==
-X-Received: by 2002:a17:902:e5ca:b0:223:517a:d4ed with SMTP id d9443c01a7336-22409457e5dmr21605625ad.15.1741230812657;
-        Wed, 05 Mar 2025 19:13:32 -0800 (PST)
-Received: from thinkpad ([120.56.193.59])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a91c43sm1613815ad.183.2025.03.05.19.13.27
+        d=1e100.net; s=20230601; t=1741230826; x=1741835626;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I5RD/anlchtvUN+J2asseqeoYe9S0VGBCfqERf+0yHQ=;
+        b=nDa0Dt/YoxorwIaCstXTIL4JH+phvqZXZTkMDLmnP+JXIaJ178EUm+ldnMNiMdXrne
+         BCN+zdHUCxYeIMqqSXowuhdQbLJCCiXGtrLVE0ej6u5Bv7G23wZNzTuLScfrEVX3wNWg
+         CaGKrnTRGCLZr7LgJzsSeQQb8qgQJDsuMVNdODKDr8HxWWkqa2ICitbxNcrZx9PxpApR
+         1TteflP59pmPrkklA4nItTTEYCWXN95Xe4DudZrUDHn7BDMvjS8UXTON3ggt3VuT72vi
+         Uwez+oE4cjDxqWvfXxKjIXtGJDBW5OWlQdLhhJGS2Gj1pqSY2gbO+0Tmv18+d/imly/o
+         Zsog==
+X-Forwarded-Encrypted: i=1; AJvYcCUWuaobQXaf49jnnWxQXlIpo8SIfFS0vD3IYipEIFpSl5mBj2l36fcIDLf4C0BFjjxIAl+0OejwhIchhJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzq+h+GEeoGdCHXb/Uz1FtoDQbLZgiNt1U39GZQ8r3/Ymlx/GmR
+	lGHdvg64+Y73U25dlDzZf1FV3vewUq8/lGU15JlrMZhdm6nISxQ7gkCj+YYDGXU=
+X-Gm-Gg: ASbGncs+uwkivoKrnCq+AmBWzWcqbyeyh2ZxNP1SUDdjqnZgqsI6Me/4Je+72K1daJV
+	++2s+m82fQQ29/JF2UmbVVTLWYHPoC4TIs5/Lw//luadHcKyQUCrHygJmx2pNerJ29v8vOohCrb
+	hnxXEzLE6Mb7YG/ae3AfXIBK1QvhDlZnppN+qfuJ9WmzyX6/BIodGtoOfJp/PpX6LJfdkOR0ejR
+	+Yxxx0d6+lbrVn9yFXr3kjg5yUiJGWkDmTI671OGTbE69UVpCTG8i02JxRrzSTP6KhqmxMm+HpS
+	z+yb62Rjy6qT2SdXCtnAPIWaMw2Qzc5ctaeheiMi
+X-Google-Smtp-Source: AGHT+IFAnj1sMagzrkHZedECAW3Sn3VCCOpRuX3Fuszd2qUqpa+SE+imKpqY6qvecbaMRMlKdEZ8Rg==
+X-Received: by 2002:a05:6a21:7881:b0:1ee:ef0b:7bf7 with SMTP id adf61e73a8af0-1f3494d8caamr9973803637.19.1741230825737;
+        Wed, 05 Mar 2025 19:13:45 -0800 (PST)
+Received: from ghost ([2601:647:6700:64d0:9b3c:3246:a388:fe44])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73698538818sm202152b3a.178.2025.03.05.19.13.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 19:13:32 -0800 (PST)
-Date: Thu, 6 Mar 2025 08:43:25 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	quic_mrana@quicinc.com, quic_vbadigan@quicinc.com,
-	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: Re: [PATCH v7 1/4] arm64: dts: qcom: x1e80100: Add PCIe lane
- equalization preset properties
-Message-ID: <20250306031325.bmx3p6htwtb6l6ji@thinkpad>
-References: <20250225-preset_v6-v7-0-a593f3ef3951@oss.qualcomm.com>
- <20250225-preset_v6-v7-1-a593f3ef3951@oss.qualcomm.com>
+        Wed, 05 Mar 2025 19:13:45 -0800 (PST)
+Date: Wed, 5 Mar 2025 19:13:43 -0800
+From: Charlie Jenkins <charlie@rivosinc.com>
+To: I Hsin Cheng <richard120310@gmail.com>
+Cc: corbet@lwn.net, acme@redhat.com, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+Subject: Re: [PATCH] docs: Correct installation instruction
+Message-ID: <Z8kS5yd4znhULlSY@ghost>
+References: <20250306030708.8133-1-richard120310@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250225-preset_v6-v7-1-a593f3ef3951@oss.qualcomm.com>
+In-Reply-To: <20250306030708.8133-1-richard120310@gmail.com>
 
-On Tue, Feb 25, 2025 at 05:15:04PM +0530, Krishna Chaitanya Chundru wrote:
-> Add PCIe lane equalization preset properties for 8 GT/s and 16 GT/s data
-> rates used in lane equalization procedure.
+On Thu, Mar 06, 2025 at 11:07:08AM +0800, I Hsin Cheng wrote:
+> Ammend missing "install" operation keyword after "apt-get", and fix
+> "build-essentials" to "build-essential".
 > 
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> Signed-off-by: I Hsin Cheng <richard120310@gmail.com>
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
 
-One minor nit below.
-
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 > ---
-> This patch depends on the this dt binding pull request which got recently
-> merged: https://github.com/devicetree-org/dt-schema/pull/146
-> ---
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+>  Documentation/admin-guide/workload-tracing.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index 4936fa5b98ff..9a18b8f90145 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -3209,6 +3209,11 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
->  			phys = <&pcie3_phy>;
->  			phy-names = "pciephy";
+> diff --git a/Documentation/admin-guide/workload-tracing.rst b/Documentation/admin-guide/workload-tracing.rst
+> index 6be38c1b9c5b..d6313890ee41 100644
+> --- a/Documentation/admin-guide/workload-tracing.rst
+> +++ b/Documentation/admin-guide/workload-tracing.rst
+> @@ -82,7 +82,7 @@ Install tools to build Linux kernel and tools in kernel repository.
+>  scripts/ver_linux is a good way to check if your system already has
+>  the necessary tools::
 >  
-> +			eq-presets-8gts = /bits/ 16 <0x5555 0x5555 0x5555 0x5555
-> +						     0x5555 0x5555 0x5555 0x5555>;
-> +
-
-Get rid of the newline between eq-presets-8gts and eq-presets-16gts.
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+> -  sudo apt-get build-essentials flex bison yacc
+> +  sudo apt-get install build-essential flex bison yacc
+>    sudo apt install libelf-dev systemtap-sdt-dev libslang2-dev libperl-dev libdw-dev
+>  
+>  cscope is a good tool to browse kernel sources. Let's install it now::
+> -- 
+> 2.43.0
+> 
 
