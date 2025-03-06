@@ -1,158 +1,96 @@
-Return-Path: <linux-kernel+bounces-549424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAA91A55284
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:11:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C3C9A5526B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:09:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F44C18871AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:09:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46CF616DF14
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:09:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5E6A25A33B;
-	Thu,  6 Mar 2025 17:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="fS5Df75Q"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14E525C6EC;
+	Thu,  6 Mar 2025 17:09:04 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB8C210F4D
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D10AD25A62E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741280937; cv=none; b=PGUJ7ORd9gB1AKKcFs0O3THDBTe1U3wKD0vWgrroN6toPphFBnRmk87B/rGh54Ktar+s7x5oCd2yTPsWIGyy1WSOWHS8i19EySfAUSBZ+4f5yx1Ar3PW5NDEuBiZ/aXsWauf+bqpi9qRp8XtgEApbIt8plYdhq8Ymye9ClYIZWo=
+	t=1741280944; cv=none; b=QVJs5ioemk7KbdBS/jhGj7oUoxaov3cHyqV5I0bwhgCBbe68+nN2FR4NN1soBBN21VTB4xWD/mRW26frsXiHxQUYfSwfgdJtV/i/mtKNZStNQfA0TNP1gyrSlTqF4PYYwz1lXv4haQ3yF9e5enyS69rONm53GjrdN1RE15XjxfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741280937; c=relaxed/simple;
-	bh=RUEhFfWhM5UlQ2uov74uy48HBJc5JClctmAaFgriwI4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uom/m3iuRqc4oEVgNYSoAgW1r+l/QCdcWxD5k/rMRi/X5UuUNwTNifjK3V4CAoMYICjNE7MPGc2XXai2fsu4Dw/qoWobrLVk4DhoddetENuXqL6+GMZPzE1TvSvQgvba6ifC6egDqPkXO8t0MBOz8DMXa+dr4OfzMbqSti180HY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=fS5Df75Q; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c3d3147b81so103886185a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:08:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gourry.net; s=google; t=1741280934; x=1741885734; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1wNyXxcCEsmV3rMjIVb7Etw5fSJV7UEopsGd2j/hR1s=;
-        b=fS5Df75QuIH6V1NtwQfhY3gI1AGXkZgDYKU3TWbo9wvxTgPt6+hROtfoopNLJvkDXP
-         Mrh1crW1CoQqR3DPB0eFN8P+1XYQdHqf7Xm03r0uvUk6Zg4XD27SWkmWovW8FXobEMwg
-         2z0bjXX8yqXhgvROywDk6eDLjas4Rk/HEje+hDZTp/bwkJ/WXw06LZJfurnm8ARq7fWw
-         8yf3RVIFo11lsQq3N3QcNIS4smPiPetodYzP4x4vNJx8L1PS4N6CEVJHmsLsea7XSO3u
-         wJP0Yh7BpABFQ50Z3xCLIx1gz+P07hh6NS8l8rxL+a//dssZpyZu+/9mch4/YIdPAXS5
-         u4Gg==
+	s=arc-20240116; t=1741280944; c=relaxed/simple;
+	bh=0S+1lCQx1kTZA4bG5Gj5ODnY9L3DS+L6keI8KNBTmSg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=QnzRzYYnB5L7mkx8LoZX+AWMPhlkFj0BoerKEUhL2X09hPtEHvLniuzyq/0IvpBNYfGFOYhPcMYfjVwQ5xhPhwf8Z/NMdGoodTkzb8S2vatQAXD2ZqHjFqQlhPD4TAUL3MPlK/FAbFr2BSmSoNwbbQPIEMuEe5q69tUlIcphzUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3ce843b51c3so18213485ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:09:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741280934; x=1741885734;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1741280942; x=1741885742;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1wNyXxcCEsmV3rMjIVb7Etw5fSJV7UEopsGd2j/hR1s=;
-        b=c9gi+M1bycIAaOjoOLL2Ypj6RS2CEhMr9zRB5Hko75S2t2guf6j6cz0DuqqWPxCUFb
-         ydtf29l0Sv7wjNJh3dMmhOMxF1C6huK0QN5dAPAxn4xGroUGC5VisLFpfhb5SG0xIIPv
-         YGvICaNHtVLQHcg/DanATtw163bXt+pLV26aASNv+jXFiBArxtXwEg3A7A/PuQYdD1cN
-         tf+98UQxfCBGjTmb2eQ/g3c/HLeRy8aUc1dd58qP9+0/6dSYPhpJoanr0uCBuTJrpXPu
-         P9tW3hu6/YSkt2bekuCCpYD7wISmW0cED7/HQkaMv7xKS8VZx7V4BSNO1i+rwuupb526
-         8kYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSNhnzQmTPRLhQ16Eq2/H3bRdNKgKcOw7eeMVI1wPoF/dtlI4SnDwcjPvr5uCOJKbPNyBuPtnyjwpAmYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLZytiPE+XnY1N2qVxT9AU0p0l1qA09SGJP0jHFxv2zgT09lJZ
-	KnaUtvNeDJrvIU0IKmeOe1WhgKJo73g0qxuqS276N4xJwAUqqoJze6i+OvIBEKA=
-X-Gm-Gg: ASbGnctqTV/Ph14jD9y8NeeVSEx3agQB4yaK4jQ/BQa7msJlh1VxPfiwfygFVwNln1t
-	tRLkFQBN9R7Xr1m/kS45BXF9QlLgIxZ1R5Qcv58finxwi+BIVmx6RxyHA6bRgDotIxSIFjMgQF8
-	Sp94TarlUgrjt+beZD9dbbmfpdsNi1s1fNk6THsdZ7URJX/kHjQVNqgcvs5VfebhqtyiHOBrvC8
-	Amcx2KGmAKhtyRzAAK8j34E2Iy33XNTIifvDAXZMvFxjyynxLJzvTzYT1fIAJfHpG+kNxEfGjAF
-	qkE/yE8ROSscl2qlU11ZeHrHk+Zerm2SO3k7K3nkVRYIW+dcAf5IyTQK32HgQ9x75kRAsQNoq+U
-	vaPmble6roXLcpD725zCdH1+kcsc=
-X-Google-Smtp-Source: AGHT+IGzXdo+ayTPw4Ob64P9xw3wnYIZAQKLG2XeMD/1+CZlCiHLJrym6jweO9Vd+DG+fYhwPqgi2w==
-X-Received: by 2002:a05:620a:8806:b0:7c0:a357:fe62 with SMTP id af79cd13be357-7c3d8e65564mr986859185a.19.1741280932574;
-        Thu, 06 Mar 2025 09:08:52 -0800 (PST)
-Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e55116a5sm111483085a.106.2025.03.06.09.08.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 09:08:51 -0800 (PST)
-Date: Thu, 6 Mar 2025 12:08:49 -0500
-From: Gregory Price <gourry@gourry.net>
-To: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-Cc: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [LSF/MM] CXL Boot to Bash - Section 0: ACPI and Linux Resources
-Message-ID: <Z8nWobZXQwhtE1nK@gourry-fedora-PF4VCD3F>
-References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
- <Z8jORKIWC3ZwtzI4@gourry-fedora-PF4VCD3F>
- <Z8j8bZ5TS+gDV8+M@phytium.com.cn>
+        bh=X4nLQSw420ybtW2kRIdx22c3Jume3TqtRHI8enXJf+U=;
+        b=oqFyZds5/vE7pxaB+ZpqS1GrSNI4bhNCijOA8PzDVkd7JVE3bd8ph0kBiLQtrCoNmO
+         MYg1JusiYLRAC+L2Wd2N5hMoPth95Fiw3ZyLidJw2oA81popCtNmrn7MAMVAN4T7mtCD
+         nvdMZKADKG97NNIV2D/t1nr39XmiGhboyz9FC02q58YuRB1P3VT7HQz5g973aA2bhoZ2
+         DOw7TzjrnYk74N/cksW0ohEpgMNs2O3XKhWbLb95r8hlvqZyFEq02VHHL2ZdyR6Ktl7j
+         ObDVbvlWrpWp5i8nyaifrxpfDEsXHhNHl4OmWJ57UtYOXxwVqvrTyUeR/sE5LOt91vIf
+         TG3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVpXSqmbc5CTv0V1CVOIfAnZdXHcmZ4QUhHRC13wtKIb5bER3svxbzS6zzkVPLxNVxT/bbfxiFX2zEbsQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQvUJnRg+Kb1ION5wAqOvuBa1X5ByfGJIB+Nui9RXEZwXxM3k7
+	5aMz8+IKj31CjLWjMEp0FtfpJ4pOzTYzS/MAd5nwJD0rfjRSFecY13+K4qHXnuVsNU/G6O1vJ9n
+	/qyVZcFDN5fG0NNTPPMPWDINKoUjWCaExuGCh929rDF0xO5a6TyJuynw=
+X-Google-Smtp-Source: AGHT+IFSlWmY7RBkXfYTHzez26gr6XDSYt6SfsTmGP6W7py0kz6AjDNq7sw0S4nAJBjatKuGiYVt1jXM0SDBO0SDA13G1X6sS3jC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z8j8bZ5TS+gDV8+M@phytium.com.cn>
+X-Received: by 2002:a05:6e02:219c:b0:3d0:4c9c:965f with SMTP id
+ e9e14a558f8ab-3d441a13ademr3387865ab.20.1741280941982; Thu, 06 Mar 2025
+ 09:09:01 -0800 (PST)
+Date: Thu, 06 Mar 2025 09:09:01 -0800
+In-Reply-To: <674db1c7.050a0220.ad585.0051.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c9d6ad.050a0220.15b4b9.0039.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] INFO: task hung in vfs_unlink (5)
+From: syzbot <syzbot+6983c03a6a28616e362f@syzkaller.appspotmail.com>
+To: Yuezhang.Mo@sony.com, andy.wu@sony.com, bp@alien8.de, brauner@kernel.org, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, jack@suse.cz, 
+	kent.overstreet@linux.dev, linkinjeon@kernel.org, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mingo@redhat.com, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, viro@zeniv.linux.org.uk, 
+	wataru.aoyama@sony.com, x86@kernel.org, yuezhang.mo@sony.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Mar 06, 2025 at 09:37:49AM +0800, Yuquan Wang wrote:
-> On Wed, Mar 05, 2025 at 05:20:52PM -0500, Gregory Price wrote:
+syzbot has bisected this issue to:
 
-First, thank you for bringing this up, this is exactly the type of
-ambiguiuty i was hoping others would contribute.  It's difficult to
-figure out if the ACPI tables are "Correct", if there's unimplemented
-features, or we're doing something wrong - because some of this is
-undocumented theory of operation.
+commit f55c096f62f100aa9f5f48d86e1b6846ecbd67e7
+Author: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Date:   Tue May 30 09:35:00 2023 +0000
 
-> > ==================
-> > NUMA node creation
-> > ===================
-> > NUMA nodes are *NOT* hot-pluggable.  All *POSSIBLE* NUMA nodes are
-> > identified at `__init` time, more specifically during `mm_init`.
-> > 
-> > What this means is that the CEDT and SRAT must contain sufficient
-> > `proximity domain` information for linux to identify how many NUMA
-> > nodes are required (and what memory regions to associate with them).
-> > 
-> Condition:
-> 1) A UMA/NUMA system that SRAT is absence, but it keeps CEDT.CFMWS
-> 2）Enable CONFIG_ACPI_NUMA
-> 
-> Results:
-> 1) acpi_numa_init: the fake_pxm will be 0 and send to acpi_parse_cfmws()
-> 2）If dynamically create cxl ram region, the cxl memory would be assigned
-> to node0 rather than a fake new node.
->
+    exfat: do not zero the extended part
 
-This is very interesting.  Can I ask a few questions:
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1356fda8580000
+start commit:   bb2281fb05e5 Merge tag 'x86_microcode_for_v6.14_rc6' of gi..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10d6fda8580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1756fda8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=523d3ff8e053340a
+dashboard link: https://syzkaller.appspot.com/bug?extid=6983c03a6a28616e362f
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12cf7078580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10197da8580000
 
-1) is this real hardware or a VM?
-2) By `dynamic creation` you mean leveraging cxl-cli (ndctl)?
-2a) Is the BIOS programming decoders, or are you programming the
-    decoder after boot?
+Reported-by: syzbot+6983c03a6a28616e362f@syzkaller.appspotmail.com
+Fixes: f55c096f62f1 ("exfat: do not zero the extended part")
 
-
-> Confusions:
-> 1) Does CXL memory usage require a numa system with SRAT? As you
-> mentioned in SRAT section: 
-> 
-> "This table is technically optional, but for performance information
-> to be enumerated by linux it must be present."
-> 
-> Hence, as I understand it, it seems a bug in kernel.
->
-
-It's hard to say if this is a bug yet.  It's either a bug, or your
-system should have an SRAT to describe what the BIOS has done.
-
-> 2) If it is a bug, could  we forbid this situation by adding fake_pxm
-> check and returning error in acpi_numa_init()?
-> 
-
-> 3）If not,  maybe we can add some kernel logic to allow create these fake
-> nodes on a system without SRAT?
-> 
-
-I think we should at least provide a warning (if the SRAT is expected
-but missing) - but lets get some more information first.
-
-~Gregory
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
