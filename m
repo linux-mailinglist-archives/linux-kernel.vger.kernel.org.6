@@ -1,56 +1,59 @@
-Return-Path: <linux-kernel+bounces-549281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C8CA55043
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:10:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9654EA5504D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:11:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F3EF17187B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:10:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA49C1756FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 567882116F6;
-	Thu,  6 Mar 2025 16:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116B4214808;
+	Thu,  6 Mar 2025 16:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W9lSzIaJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JCqBfell"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C8E211466
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B452211A2A;
+	Thu,  6 Mar 2025 16:10:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741277434; cv=none; b=bpAeLjc72GKcOaqPpHRQR0j+ZKjLjmMKOgFXp2oDRbr2ggsFSkig1GdYK42H06lGArWpiptPOObIaThSYmsZ1nLtKaSTuH6uFJX7o9IJEZU4XeczAFf2jZfmiOH5QcplNggqyiJ93oTEeR+62X5HQPSQeUJcw3tkda0EzI4NHHQ=
+	t=1741277442; cv=none; b=imrsCciLKZmHXYGNsXIo8i4EFlEEC09RVIAiq5Vkn83U9Nr4IWw+WWg3F6eCfnY4FRADj6lp0HO2iQQf2LwzRIu/L6iMj6vbPFyc0XwB8610IR/cbFSig7YvDeKPdx5j591LTqBGzQLqjoHOotv0ZNh2Ybo9tk0IzZOqe1ofhdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741277434; c=relaxed/simple;
-	bh=Pf13+liKVGmGVGNAfIkFF2enAZK28B5/LLR6a2JACXU=;
+	s=arc-20240116; t=1741277442; c=relaxed/simple;
+	bh=dO5KuEHT5N6JPz0mZT1IGgNKs9grKUWa+Hx4+yx3kc4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=mBdMv2zHQrWQkPJcKgfRSa21BprYwJI1k5RFVN6xGB76Ze1K4Evsbdi0//zcymHA5jNbBjNXRyzhZZZt2L+BsXWgDQvrE06BtJOc06pKkaSggqLrMxnlnSiPKwvj6aFCIi4V+nugw8RrfiYDtPyvx5zeyvlbWcwinLR1R5eN8Jg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W9lSzIaJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60304C4CEEC;
-	Thu,  6 Mar 2025 16:10:33 +0000 (UTC)
+	 MIME-Version:Content-Type; b=tzq5kf39wsFuO3rKle4j8s8rfFBS8vg5tYGsxi6VsK4YyIualovMDnYSDvCmrvksughsCC0kx8FJKYtaiyZsE3FNuergUUDXvoj3bQ+yHJwLD//1ulDbRFU1PQCu6Kcbx7bfyLs3c/8J0RUaoNnOok4WoFQxHnGz0s04p7wIDCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JCqBfell; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11E12C4AF09;
+	Thu,  6 Mar 2025 16:10:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741277434;
-	bh=Pf13+liKVGmGVGNAfIkFF2enAZK28B5/LLR6a2JACXU=;
+	s=k20201202; t=1741277441;
+	bh=dO5KuEHT5N6JPz0mZT1IGgNKs9grKUWa+Hx4+yx3kc4=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=W9lSzIaJTN53uKsFgTARVc90ZFCjwz8h8X99qm+kOVfTChvlClfGgEhcLUS8nEU9P
-	 1EdOv8+nouRP4qzehefAdp0dQHnpJk6n2HffzlsG4f3aWED7/Lzdyf8Ty3NMt8abHb
-	 z/BKnP/3xjDpl4SpUGP0LlMocv5pyIsMib1UyAoC757AHj7MsGUQ/CWcGRIKofjVNw
-	 9I0HhoWzxDqByo/lA2ijwkAwCX9vRAEiWUGs/1KzwiImGK61bdaRLBP/EGJdSVg4/J
-	 jI8bmRaBuF9MznLzoo/4enakzXh+mb+BW9Yv08IkeQgp1iMTTi7TLwZhXlwfmLfvxZ
-	 fYDaPyipwDh5Q==
+	b=JCqBfelle7bd3f+VaMdYkAAJYOLVyqPuRy+iagi9Fuw7JAId6/MsywpvuUBHTwnq1
+	 KvNpYZCs3czm870bWeKDTn0jRE0gxCsoMYcIrC5aYwe5zx/2k9GYF0rw9epTuSDhUV
+	 S0lLbFRV6Ur7yI9KI0CV5CJguD66+/7N1mtPAc6kcrNYarmwS6dTZSHWzB2SZhLc0f
+	 Z+lCGPXOl3bMpSMFPt078zrZtRfxTWL2o3ldBZqMbFYKHtYm4jHknp88vi7GI+GY8V
+	 BuL7zfDzeiyVfRUcZqHoX0TT6Yh8JmS0UYqTnAGpkX09C/tWXrJzOM7bg+FSs6SCkt
+	 wmh0cJSryQ2bA==
 From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, 
- Douglas Anderson <dianders@chromium.org>, 
- David Collins <quic_collinsd@quicinc.com>, 
- =?utf-8?q?Ludvig_P=C3=A4rsson?= <ludvig.parsson@axis.com>
-Cc: linux-kernel@vger.kernel.org, kernel@axis.com
-In-Reply-To: <20250305-regulator_lockdep_fix-v1-1-ab938b12e790@axis.com>
-References: <20250305-regulator_lockdep_fix-v1-1-ab938b12e790@axis.com>
-Subject: Re: [PATCH] regulator: core: Fix deadlock in create_regulator()
-Message-Id: <174127743310.139067.18421528658328591081.b4-ty@kernel.org>
-Date: Thu, 06 Mar 2025 16:10:33 +0000
+To: Patrice Chotard <patrice.chotard@foss.st.com>, 
+ Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-spi@vger.kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <bc4c9123-df43-4616-962f-765801d30b4c@stanley.mountain>
+References: <bc4c9123-df43-4616-962f-765801d30b4c@stanley.mountain>
+Subject: Re: [PATCH next] spi: stm32-ospi: Fix an IS_ERR() vs NULL bug in
+ stm32_ospi_get_resources()
+Message-Id: <174127743980.139137.18227484559909848489.b4-ty@kernel.org>
+Date: Thu, 06 Mar 2025 16:10:39 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,28 +61,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-1b0d6
 
-On Wed, 05 Mar 2025 17:05:04 +0100, Ludvig Pärsson wrote:
-> Currently, we are unnecessarily holding a regulator_ww_class_mutex lock
-> when creating debugfs entries for a newly created regulator. This was
-> brought up as a concern in the discussion in commit cba6cfdc7c3f
-> ("regulator: core: Avoid lockdep reports when resolving supplies").
+On Thu, 06 Mar 2025 12:48:34 +0300, Dan Carpenter wrote:
+> The devm_ioremap() function returns NULL on error, it doesn't return
+> error pointers.  Fix the check to match.
 > 
-> This causes the following lockdep splat after executing
-> `ls /sys/kernel/debug` on my platform:
 > 
-> [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/1] regulator: core: Fix deadlock in create_regulator()
-      commit: 1c81a8c78ae653f3a21cde0f37a91f1b22b7d2fb
+[1/1] spi: stm32-ospi: Fix an IS_ERR() vs NULL bug in stm32_ospi_get_resources()
+      commit: 7dfc9bdde9fa20cf1ac5cbea97b0446622ca74c7
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
