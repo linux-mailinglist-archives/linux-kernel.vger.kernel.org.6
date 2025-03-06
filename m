@@ -1,119 +1,127 @@
-Return-Path: <linux-kernel+bounces-548633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E40A54749
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:05:23 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1781A54757
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:07:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 025DB3A4CBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:04:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 246C57A8847
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C96A2045BC;
-	Thu,  6 Mar 2025 10:04:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A54202971;
-	Thu,  6 Mar 2025 10:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4331FF5FF;
+	Thu,  6 Mar 2025 10:05:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dza/0pup"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DE97E9;
+	Thu,  6 Mar 2025 10:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741255448; cv=none; b=orv5vsHQwislctzef21SwHxY8m3mAg/ETNGqpCfjLNSwVGaXt594gSrMMJe6CLgH6gaC0lRPDNV6bGANvhbcuKfO5vkHwSt1sIOW90BHox+WcSv4m2Kbt7ESfQ/fGE+GTKzyQutPThJAI/hOnV+rf5Z0O5Rs/ExJZtsLaZa8V8g=
+	t=1741255519; cv=none; b=kgE7nnG6oiRTj6vXPiXN92ZYIJFc88PmCHaImEheeqFjlsI8SeaE7BI9EAKG8DVRP1HhcpfOsZeVLw88tjH7RNjHfmmaKzLK6tPqTsLVY1wKHTVf8q7isP1bsuzAZy0/2RfjUUSkNTYD+tb8z/VNdivPZjiMM9eaeFO63aviIh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741255448; c=relaxed/simple;
-	bh=Oy3sdejRyxIC9YUWZWkva5gjh/7c3mBVfg/OHYuRFjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ny0R3jTFbadQ+GVinrgFWfBV05n2iFENyUFY1h+6lyvY5WRvn1ohEiReNPjSvBQv3R2vxRT0RTGtlJvDvcgs4Jb1pz3gXQmcfHrfUKPnAx5pknSnCYQeoFlbY4o1k1v/J4lXhX9v9BBU2nbWqEetNOQ/R03hrLrJqwJQHlZl6ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BAF44FEC;
-	Thu,  6 Mar 2025 02:04:18 -0800 (PST)
-Received: from [10.57.83.26] (unknown [10.57.83.26])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 79E4A3F66E;
-	Thu,  6 Mar 2025 02:04:03 -0800 (PST)
-Message-ID: <67659d9d-f228-42ac-b096-01020bf66b7f@arm.com>
-Date: Thu, 6 Mar 2025 10:04:01 +0000
+	s=arc-20240116; t=1741255519; c=relaxed/simple;
+	bh=DQX5lg3HEIkDGfIdaCFSobFn9jNWVFULDjoXWXHvXzM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LA9pZQXMH5hZJEYKFrWRLsD5moSwrcaaLN+/8LJN0rjuvOgUnaZBcFSTurg+Jvf25wKz40S6lZBAlN4V78vDd2fIIcSJW5qCZ0Bnw0/Do2/XI62heFK+oH/Uqtz0E9CdN92/cd/ukRh4S0Pq2AInMOKDTSEPq8DNjpJGndBwHJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dza/0pup; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78383C4CEE0;
+	Thu,  6 Mar 2025 10:05:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741255518;
+	bh=DQX5lg3HEIkDGfIdaCFSobFn9jNWVFULDjoXWXHvXzM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dza/0pup0UtKgDNsoV7kH1Bxb3D4inSmojbSpyY8HhQSReuuy6MNyosFgweLQaK56
+	 2bIbbHloa0QK/XCmDFzpuADNpbh/LrFlKMTIP/+V2HJojOR0J/qpX6JOoxZm+Iftw8
+	 DKF1XYQBl/m1aB25xTIUdZUiSqsKxmR1tAa97rw0vze24u5ucmzoAL0segs9rPEjgC
+	 Url/qLypDRF0zl45dvzrObMkJYOELtv61lb5/RVVLTGeHBFwrVj+1STaAEKDKW/hyk
+	 YTueA+5s8kU9pA0KYH6PRO+HPRKfhKYLZuq3Jcmf79HNjPFbUILbvnvznfkAg66D8W
+	 vmw9GJu8s6Sfw==
+Date: Thu, 6 Mar 2025 11:05:16 +0100
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] net: ethernet: Remove accidental duplication in Kconfig
+ file
+Message-ID: <Z8lzXDc8V09hz7k9@lore-desk>
+References: <20250306094753.63806-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] thermal: thermal-generic-adc: add temperature
- sensor channel
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- Jonathan Cameron <jic23@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20250303122151.91557-1-clamor95@gmail.com>
- <20250303122151.91557-3-clamor95@gmail.com>
- <3bc7c5a5-8fe7-4c4b-a80e-23522922debb@arm.com>
- <CAPVz0n0yvw4kyYKSve9sSZEvcZrCYZ6RqCjFSO5OCqtvRZSfJg@mail.gmail.com>
- <f56596fe-92e8-481b-b15b-29b531eaec32@arm.com>
- <CAPVz0n2ywjm+nLQ+ZAYbR1P6yCr8FQgOMeDT07s_YHZ7xA_6uA@mail.gmail.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <CAPVz0n2ywjm+nLQ+ZAYbR1P6yCr8FQgOMeDT07s_YHZ7xA_6uA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="XigoDoLbpCnqzKzj"
+Content-Disposition: inline
+In-Reply-To: <20250306094753.63806-1-lukas.bulwahn@redhat.com>
 
 
+--XigoDoLbpCnqzKzj
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 3/6/25 09:49, Svyatoslav Ryhel wrote:
-> ср, 5 бер. 2025 р. о 16:37 Lukasz Luba <lukasz.luba@arm.com> пише:
->>
->>
->>
->> On 3/5/25 10:06, Svyatoslav Ryhel wrote:
->>> ср, 5 бер. 2025 р. о 11:52 Lukasz Luba <lukasz.luba@arm.com> пише:
->>>>
->>>>
->>>>
->>>> On 3/3/25 12:21, Svyatoslav Ryhel wrote:
->>>>> To avoid duplicating sensor functionality and conversion tables, this design
->>>>> allows converting an ADC IIO channel's output directly into a temperature IIO
->>>>> channel. This is particularly useful for devices where hwmon isn't suitable
->>>>> or where temperature data must be accessible through IIO.
->>>>>
->>>>> One such device is, for example, the MAX17040 fuel gauge.
->>>>>
->>>>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
->>>>> ---
->>>>>     drivers/thermal/thermal-generic-adc.c | 54 ++++++++++++++++++++++++++-
->>>>>     1 file changed, 53 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/thermal-generic-adc.c
->>> ...
->>>>>
->>>>> +static const struct iio_chan_spec gadc_thermal_iio_channel[] = {
->>>>> +     {
->>>>> +             .type = IIO_TEMP,
->>>>> +             .info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
->>>>
->>>> I would add the IIO_CHAN_INFO_SCALE and say it's in milli-degrees.
->>>>
->>>
->>> I have hit this issue already with als sensor. This should definitely
->>> be a IIO_CHAN_INFO_PROCESSED since there is no raw temp data we have,
->>> it gets processed into temp data via conversion table. I will add
->>> Jonathan Cameron to list if you don't mind, he might give some good
->>> advice.
->>
->> I'm not talking about 'PROCESSED' vs 'RAW'...
->> I'm asking if you can add the 'SCALE' case to handle and report
->> that this device will report 'processed' temp value in milli-degrees
->> of Celsius.
->>
-> 
-> It seems that SCALE is not applied to PROCESSED channel. I can use RAW
-> which would work as intended and I will add a note in commit
-> description why I used RAW. Would that be acceptable?
-> 
+On Mar 06, Lukas Bulwahn wrote:
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+>=20
+> Commit fb3dda82fd38 ("net: airoha: Move airoha_eth driver in a dedicated
+> folder") accidentally added the line:
+>=20
+>   source "drivers/net/ethernet/mellanox/Kconfig"
+>=20
+> in drivers/net/ethernet/Kconfig, so that this line is duplicated in that
+> file.
+>=20
+> Remove this accidental duplication.
 
-In that case, yes that would be the preferred solution.
+Thx for fixing it, it was in my backlog.
+
+Acked-by: Lorenzo Bianconi <lorenzo@kernel.org>
+
+>=20
+> Fixes: fb3dda82fd38 ("net: airoha: Move airoha_eth driver in a dedicated =
+folder")
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+>  drivers/net/ethernet/Kconfig | 1 -
+>  1 file changed, 1 deletion(-)
+>=20
+> diff --git a/drivers/net/ethernet/Kconfig b/drivers/net/ethernet/Kconfig
+> index 7941983d21e9..f86d4557d8d7 100644
+> --- a/drivers/net/ethernet/Kconfig
+> +++ b/drivers/net/ethernet/Kconfig
+> @@ -21,7 +21,6 @@ source "drivers/net/ethernet/adaptec/Kconfig"
+>  source "drivers/net/ethernet/aeroflex/Kconfig"
+>  source "drivers/net/ethernet/agere/Kconfig"
+>  source "drivers/net/ethernet/airoha/Kconfig"
+> -source "drivers/net/ethernet/mellanox/Kconfig"
+>  source "drivers/net/ethernet/alacritech/Kconfig"
+>  source "drivers/net/ethernet/allwinner/Kconfig"
+>  source "drivers/net/ethernet/alteon/Kconfig"
+> --=20
+> 2.48.1
+>=20
+
+--XigoDoLbpCnqzKzj
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZ8lzXAAKCRA6cBh0uS2t
+rNAtAP9V+Q8UNILqo204AczQON+hWYW+Nxp3hNLk/WODmD+jVgEAyLr8ClMd7Y3l
+NQlj7zTHYDTTZvu0Wg6HnRtRR6MiSww=
+=vhTP
+-----END PGP SIGNATURE-----
+
+--XigoDoLbpCnqzKzj--
 
