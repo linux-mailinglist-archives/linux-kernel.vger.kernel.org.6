@@ -1,232 +1,275 @@
-Return-Path: <linux-kernel+bounces-548857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E63A54A2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:57:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22DC6A54A34
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:00:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 409F47A3CCF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:56:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A8C63A4DBC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EC120AF78;
-	Thu,  6 Mar 2025 11:57:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEA791EE03B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 11:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5DCF2010E2;
+	Thu,  6 Mar 2025 12:00:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q9v+vhmI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WGTpdKVc"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78442E3397;
+	Thu,  6 Mar 2025 12:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741262261; cv=none; b=RxJJiHpi3LMU7Rg+L9vs6ucyFiwkX2th9uMTSyHDtTY9qYjLpfxB7hsSZtuA/S0kEmX+AsLvW5+8aI8eqHn5XauNvhziESjGvSv6rYCL4WvVnMktAgQ2zph6UOkMGHjpsQ6umAFtvMM8T6UYvVgnZCrEkO0JMnPn/CBTyCAfjXY=
+	t=1741262423; cv=none; b=XdBl+IAMTgH9+dfbhqt9hIdydzA6JOiwMxR3U+jOF+uY9dfTlhsDPDJT46GV+5QjQNvZmbrA7+2EvsinQi8nU71JgByUQG2e5Ewtl/W5EvSMYy2aMwmPdA2GUEnEeLeFZ7h6bdiNhvmNQGAkHDrGF3nJTFKxOLfEcUDS9xx0ObQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741262261; c=relaxed/simple;
-	bh=7hK0au45unlHAeUSkndZKafPwMo0WsbkAGoXC+u3dWU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QXzn9rrF2zg3GzoaWG/vOtt0+IVS0zHVyIKaKH9gHUPDueL9re6E+7351+KjJn+4gA5dRk7ckvXLLzRQV/OJFLME9nP6OIy8lgZdcc/BzW8MstlSOfnfnohu/qhAbBnvPVRwN1a5BpzTcewn9JqfDZw39QI9TOm/pTioV9U1fgc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 451121007;
-	Thu,  6 Mar 2025 03:57:52 -0800 (PST)
-Received: from [10.1.37.172] (XHFQ2J9959.cambridge.arm.com [10.1.37.172])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 61B223F673;
-	Thu,  6 Mar 2025 03:57:38 -0800 (PST)
-Message-ID: <5f1b36e2-6455-44d9-97b0-253aefd5024f@arm.com>
-Date: Thu, 6 Mar 2025 11:57:36 +0000
+	s=arc-20240116; t=1741262423; c=relaxed/simple;
+	bh=k/Z3JskPodBWb7rxNqwMFKnqIJPwtUB3Twegd1jUOEg=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=hU3FwJ8Vw0ZOd0UzOGrpGKUFdlJyrquoI93flC9002L+SSymuyZp/keM1Tdx0wqWnzC9pgW+2cdtQlJg8GUxh4KbgIZw90OG0kswDJGnhf0BwM/EPytYW617MubCvo6SIYdM36KoFrZDNItOxkQxJGbXF00emMtjkvj60LmwL7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q9v+vhmI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WGTpdKVc; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 06 Mar 2025 12:00:16 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741262418;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TKYsissuzvT9ielN6X7uJeEG5droGUC8fYTwP7lvPJ0=;
+	b=Q9v+vhmIBX7SlwAa15q4qCci46LQKpUlamCEZ3uXxLPU0pssyiarXHJfXy3VXblvQIpWs+
+	vYyxBgL0RIuT8EJmowLVu/cC9xz0Y2NxGhj8pCWfJY0+0TJ8Lzu5ZhAOExmcDmd3xC39ML
+	4MTT3QFarTCr6Bb+uSxJ57umVYD38oYHhaJ4X2SY9nNRooUoZQcn+pxCbq5qosj2E7AYPs
+	yj0Br6fCNlSxtMuefxjMqyXm6ejhZi/CvsQnWRtZtYIEO0tAzCKOhdIKtvsJ5QFJBd0lln
+	irPetMXmm5W5p4tN4iE970+N1rZ0HaRAA1j/3FLl8iqFWFxMKJYPaUNE+fvhoA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741262418;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TKYsissuzvT9ielN6X7uJeEG5droGUC8fYTwP7lvPJ0=;
+	b=WGTpdKVcTMRxjTCeIyJ5rVn+MA0wDj6C5aVp0vPvz1U1FCfV2Jwv03leeVQ4zxP3YtLBLW
+	1T9L37YelVAGcvAg==
+From: "tip-bot2 for Eric Biggers" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/fpu] x86/fpu: Improve crypto performance by making
+ kernel-mode FPU reliably usable in softirqs
+Cc: Eric Biggers <ebiggers@google.com>, Ingo Molnar <mingo@kernel.org>,
+ Andy Lutomirski <luto@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Oleg Nesterov <oleg@redhat.com>, Uros Bizjak <ubizjak@gmail.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250304204954.3901-1-ebiggers@kernel.org>
+References: <20250304204954.3901-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64/mm: Create level specific section mappings in
- map_range()
-Content-Language: en-GB
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org
-References: <20250303041834.2796751-1-anshuman.khandual@arm.com>
- <0fe6f3b2-1011-4418-bc19-612a3b98c78d@arm.com>
- <e0c2841b-3776-4d78-9514-b03ada39c739@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <e0c2841b-3776-4d78-9514-b03ada39c739@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <174126241675.14745.2521678635311279694.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-On 06/03/2025 03:37, Anshuman Khandual wrote:
-> 
-> 
-> On 3/4/25 21:51, Ryan Roberts wrote:
->> On 03/03/2025 04:18, Anshuman Khandual wrote:
->>> Currently PMD section mapping mask i.e PMD_TYPE_SECT is used while creating
->>> section mapping at all page table levels except the last level. This works
->>> fine as the section mapping masks are exactly the same (0x1UL) for all page
->>> table levels.
->>>
->>> This will change in the future with D128 page tables that have unique skip
->>> level values (SKL) required for creating section mapping at different page
->>> table levels. Hence use page table level specific section mapping macros
->>> instead of the common PMD_TYPE_SECT.
->>>
->>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>> Cc: Will Deacon <will@kernel.org>
->>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>> Cc: Ard Biesheuvel <ardb@kernel.org>
->>> Cc: linux-kernel@vger.kernel.org
->>> Cc: linux-arm-kernel@lists.infradead.org
->>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->>> ---
->>> This patch applies on 6.14-rc5
->>>
->>> PGD_TYPE_SECT for level -1 section map handling has been added for 4K
->>> base pages with 52 bit VA configuration that has 5 page table levels.
->>> In such cases (CONFIG_PGTABLE_LEVELS = 5) early_map_kernel() can call
->>> map_range() eventually with -1 (i.e 4 - CONFIG_PGTABLE_LEVELS) as the
->>> root_level.
->>
->> Table Table D8-16 on page D8-6459 of ARM DDI 0487 L.a says that block mappings
->> at level -1 are not permitted for 4K pages; only levels 0-3 support leaf
->> mappings. Similarly for 16K, table D8-26 says only levels 1-3 permit leaf
->> mappings. And for 64K, table D8-35 says only levels 1-3 permit leaf mappings.
-> 
-> Then seems like the current code is actually wrong because PMD_TYPE_SECT
-> is being set at all levels (except level 3) regardless of the configured
-> page size ?
+The following commit has been merged into the x86/fpu branch of tip:
 
-Yes, I think so. In that case, you should mark it with Fixes: and Cc: stable.
+Commit-ID:     d02198550423a0b695e7a24ec77153209ad45b09
+Gitweb:        https://git.kernel.org/tip/d02198550423a0b695e7a24ec77153209ad45b09
+Author:        Eric Biggers <ebiggers@google.com>
+AuthorDate:    Tue, 04 Mar 2025 12:49:54 -08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 06 Mar 2025 12:44:09 +01:00
 
-But I feel like there might be some subtlely here that means that the problem
-can't happen in practice. Ard might know?
+x86/fpu: Improve crypto performance by making kernel-mode FPU reliably usable in softirqs
 
-> 
->>
->> So I don't think PGD_TYPE_SECT is the right solution. Perhaps we need to
->> explicitly force the unsupported levels to be table entries even if the
->> alignment is correct?
-> 
-> Just wondering - something like the following will work instead ? Tested
-> on both 4K and 64K page sizes.
+Background:
+===========
 
-LGTM!
+Currently kernel-mode FPU is not always usable in softirq context on
+x86, since softirqs can nest inside a kernel-mode FPU section in task
+context, and nested use of kernel-mode FPU is not supported.
 
-> 
-> --- a/arch/arm64/kernel/pi/map_range.c
-> +++ b/arch/arm64/kernel/pi/map_range.c
-> @@ -26,6 +26,21 @@
->   * @va_offset:         Offset between a physical page and its current mapping
->   *                     in the VA space
->   */
-> +static bool sect_supported(int level)
-> +{
-> +       switch(level) {
-> +       case -1:
-> +               return false;
-> +       case 0:
-> +               if(IS_ENABLED(CONFIG_ARM64_16K_PAGES) ||
-> +                  IS_ENABLED(CONFIG_ARM64_64K_PAGES))
-> +                       return false;
-> +               fallthrough;
-> +       default:
-> +               return true;
-> +       }
-> +}
-> +
->  void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
->                       int level, pte_t *tbl, bool may_use_cont, u64 va_offset)
->  {
-> @@ -44,13 +59,30 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
->          * Set the right block/page bits for this level unless we are
->          * clearing the mapping
->          */
-> -       if (protval)
-> -               protval |= (level < 3) ? PMD_TYPE_SECT : PTE_TYPE_PAGE;
-> +       if (protval && sect_supported(level)) {
-> +               switch (level) {
-> +               case 3:
-> +                       protval |= PTE_TYPE_PAGE;
-> +                       break;
-> +               case 2:
-> +                       protval |= PMD_TYPE_SECT;
-> +                       break;
-> +               case 1:
-> +                       protval |= PUD_TYPE_SECT;
-> +                       break;
-> +               case 0:
-> +                       protval |= P4D_TYPE_SECT;
-> +                       break;
-> +               default:
-> +                       break;
-> +               }
-> +       }
->  
->         while (start < end) {
->                 u64 next = min((start | lmask) + 1, PAGE_ALIGN(end));
->  
-> -               if (level < 3 && (start | next | pa) & lmask) {
-> +               if ((level < 3 && (start | next | pa) & lmask) ||
-> +                    !sect_supported(level)){
->                         /*
->                          * This chunk needs a finer grained mapping. Create a
->                          * table mapping if necessary and recurse.
-> 
->>
->> Thanks,
->> Ryan
->>
->>>
->>>  arch/arm64/include/asm/pgtable-hwdef.h |  1 +
->>>  arch/arm64/kernel/pi/map_range.c       | 23 +++++++++++++++++++++--
->>>  2 files changed, 22 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
->>> index a9136cc551cc..fd0a82e8878c 100644
->>> --- a/arch/arm64/include/asm/pgtable-hwdef.h
->>> +++ b/arch/arm64/include/asm/pgtable-hwdef.h
->>> @@ -99,6 +99,7 @@
->>>  #define PGD_TYPE_TABLE		(_AT(pgdval_t, 3) << 0)
->>>  #define PGD_TABLE_BIT		(_AT(pgdval_t, 1) << 1)
->>>  #define PGD_TYPE_MASK		(_AT(pgdval_t, 3) << 0)
->>> +#define PGD_TYPE_SECT		(_AT(pgdval_t, 1) << 0)
->>>  #define PGD_TABLE_AF		(_AT(pgdval_t, 1) << 10)	/* Ignored if no FEAT_HAFT */
->>>  #define PGD_TABLE_PXN		(_AT(pgdval_t, 1) << 59)
->>>  #define PGD_TABLE_UXN		(_AT(pgdval_t, 1) << 60)
->>> diff --git a/arch/arm64/kernel/pi/map_range.c b/arch/arm64/kernel/pi/map_range.c
->>> index 2b69e3beeef8..9ea869f5745f 100644
->>> --- a/arch/arm64/kernel/pi/map_range.c
->>> +++ b/arch/arm64/kernel/pi/map_range.c
->>> @@ -44,8 +44,27 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
->>>  	 * Set the right block/page bits for this level unless we are
->>>  	 * clearing the mapping
->>>  	 */
->>> -	if (protval)
->>> -		protval |= (level < 3) ? PMD_TYPE_SECT : PTE_TYPE_PAGE;
->>> +	if (protval) {
->>> +		switch (level) {
->>> +		case 3:
->>> +			protval |= PTE_TYPE_PAGE;
->>> +			break;
->>> +		case 2:
->>> +			protval |= PMD_TYPE_SECT;
->>> +			break;
->>> +		case 1:
->>> +			protval |= PUD_TYPE_SECT;
->>> +			break;
->>> +		case 0:
->>> +			protval |= P4D_TYPE_SECT;
->>> +			break;
->>> +		case -1:
->>> +			protval |= PGD_TYPE_SECT;
->>> +			break;
->>> +		default:
->>> +			break;
->>> +		}
->>> +	}
->>>  
->>>  	while (start < end) {
->>>  		u64 next = min((start | lmask) + 1, PAGE_ALIGN(end));
->>
+Therefore, x86 SIMD-optimized code that can be called in softirq context
+has to sometimes fall back to non-SIMD code.  There are two options for
+the fallback, both of which are pretty terrible:
 
+  (a) Use a scalar fallback.  This can be 10-100x slower than vectorized
+      code because it cannot use specialized instructions like AES, SHA,
+      or carryless multiplication.
+
+  (b) Execute the request asynchronously using a kworker.  In other
+      words, use the "crypto SIMD helper" in crypto/simd.c.
+
+Currently most of the x86 en/decryption code (skcipher and aead
+algorithms) uses option (b), since this avoids the slow scalar fallback
+and it is easier to wire up.  But option (b) is still really bad for its
+own reasons:
+
+  - Punting the request to a kworker is bad for performance too.
+
+  - It forces the algorithm to be marked as asynchronous
+    (CRYPTO_ALG_ASYNC), preventing it from being used by crypto API
+    users who request a synchronous algorithm.  That's another huge
+    performance problem, which is especially unfortunate for users who
+    don't even do en/decryption in softirq context.
+
+  - It makes all en/decryption operations take a detour through
+    crypto/simd.c.  That involves additional checks and an additional
+    indirect call, which slow down en/decryption for *everyone*.
+
+Fortunately, the skcipher and aead APIs are only usable in task and
+softirq context in the first place.  Thus, if kernel-mode FPU were to be
+reliably usable in softirq context, no fallback would be needed.
+Indeed, other architectures such as arm, arm64, and riscv have already
+done this.
+
+Changes implemented:
+====================
+
+Therefore, this patch updates x86 accordingly to reliably support
+kernel-mode FPU in softirqs.
+
+This is done by just disabling softirq processing in kernel-mode FPU
+sections (when hardirqs are not already disabled), as that prevents the
+nesting that was problematic.
+
+This will delay some softirqs slightly, but only ones that would have
+otherwise been nested inside a task context kernel-mode FPU section.
+Any such softirqs would have taken the slow fallback path before if they
+tried to do any en/decryption.  Now these softirqs will just run at the
+end of the task context kernel-mode FPU section (since local_bh_enable()
+runs pending softirqs) and will no longer take the slow fallback path.
+
+Alternatives considered:
+========================
+
+- Make kernel-mode FPU sections fully preemptible.  This would require
+  growing task_struct by another struct fpstate which is more than 2K.
+
+- Make softirqs save/restore the kernel-mode FPU state to a per-CPU
+  struct fpstate when nested use is detected.  Somewhat interesting, but
+  seems unnecessary when a simpler solution exists.
+
+Performance results:
+====================
+
+I did some benchmarks with AES-XTS encryption of 16-byte messages (which is
+unrealistically small, but this makes it easier to see the overhead of
+kernel-mode FPU...).  The baseline was 384 MB/s.  Removing the use of
+crypto/simd.c, which this work makes possible, increases it to 487 MB/s,
+a +27% improvement in throughput.
+
+CPU was AMD Ryzen 9 9950X (Zen 5).  No debugging options were enabled.
+
+[ mingo: Prettified the changelog and added performance results. ]
+
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>
+Cc: Uros Bizjak <ubizjak@gmail.com>
+Link: https://lore.kernel.org/r/20250304204954.3901-1-ebiggers@kernel.org
+---
+ arch/x86/include/asm/fpu/api.h | 17 +++++++----------
+ arch/x86/kernel/fpu/core.c     | 17 +++++++++++++----
+ 2 files changed, 20 insertions(+), 14 deletions(-)
+
+diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
+index f86ad33..f42de5f 100644
+--- a/arch/x86/include/asm/fpu/api.h
++++ b/arch/x86/include/asm/fpu/api.h
+@@ -16,10 +16,9 @@
+ 
+ /*
+  * Use kernel_fpu_begin/end() if you intend to use FPU in kernel context. It
+- * disables preemption so be careful if you intend to use it for long periods
+- * of time.
+- * If you intend to use the FPU in irq/softirq you need to check first with
+- * irq_fpu_usable() if it is possible.
++ * disables preemption and softirq processing, so be careful if you intend to
++ * use it for long periods of time.  Kernel-mode FPU cannot be used in all
++ * contexts -- see irq_fpu_usable() for details.
+  */
+ 
+ /* Kernel FPU states to initialize in kernel_fpu_begin_mask() */
+@@ -50,10 +49,10 @@ static inline void kernel_fpu_begin(void)
+ }
+ 
+ /*
+- * Use fpregs_lock() while editing CPU's FPU registers or fpu->fpstate.
+- * A context switch will (and softirq might) save CPU's FPU registers to
+- * fpu->fpstate.regs and set TIF_NEED_FPU_LOAD leaving CPU's FPU registers in
+- * a random state.
++ * Use fpregs_lock() while editing CPU's FPU registers or fpu->fpstate, or while
++ * using the FPU in kernel mode.  A context switch will (and softirq might) save
++ * CPU's FPU registers to fpu->fpstate.regs and set TIF_NEED_FPU_LOAD leaving
++ * CPU's FPU registers in a random state.
+  *
+  * local_bh_disable() protects against both preemption and soft interrupts
+  * on !RT kernels.
+@@ -63,8 +62,6 @@ static inline void kernel_fpu_begin(void)
+  * preemptible. Disabling preemption is the right choice here as bottom
+  * half processing is always in thread context on RT kernels so it
+  * implicitly prevents bottom half processing as well.
+- *
+- * Disabling preemption also serializes against kernel_fpu_begin().
+  */
+ static inline void fpregs_lock(void)
+ {
+diff --git a/arch/x86/kernel/fpu/core.c b/arch/x86/kernel/fpu/core.c
+index 36df548..422c98c 100644
+--- a/arch/x86/kernel/fpu/core.c
++++ b/arch/x86/kernel/fpu/core.c
+@@ -60,9 +60,16 @@ bool irq_fpu_usable(void)
+ 	if (WARN_ON_ONCE(in_nmi()))
+ 		return false;
+ 
+-	/* In kernel FPU usage already active? */
+-	if (this_cpu_read(in_kernel_fpu))
++	/*
++	 * In kernel FPU usage already active?  This detects any explicitly
++	 * nested usage in task or softirq context, which is unsupported.  It
++	 * also detects attempted usage in a hardirq that has interrupted a
++	 * kernel-mode FPU section.
++	 */
++	if (this_cpu_read(in_kernel_fpu)) {
++		WARN_ON_FPU(!in_hardirq());
+ 		return false;
++	}
+ 
+ 	/*
+ 	 * When not in NMI or hard interrupt context, FPU can be used in:
+@@ -420,7 +427,8 @@ EXPORT_SYMBOL_GPL(fpu_copy_uabi_to_guest_fpstate);
+ 
+ void kernel_fpu_begin_mask(unsigned int kfpu_mask)
+ {
+-	preempt_disable();
++	if (!irqs_disabled())
++		fpregs_lock();
+ 
+ 	WARN_ON_FPU(!irq_fpu_usable());
+ 	WARN_ON_FPU(this_cpu_read(in_kernel_fpu));
+@@ -448,7 +456,8 @@ void kernel_fpu_end(void)
+ 	WARN_ON_FPU(!this_cpu_read(in_kernel_fpu));
+ 
+ 	this_cpu_write(in_kernel_fpu, false);
+-	preempt_enable();
++	if (!irqs_disabled())
++		fpregs_unlock();
+ }
+ EXPORT_SYMBOL_GPL(kernel_fpu_end);
+ 
 
