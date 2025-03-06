@@ -1,92 +1,88 @@
-Return-Path: <linux-kernel+bounces-549341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39ADCA5516B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:39:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09BC0A55170
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:40:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5020F7A9927
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:38:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B79E9175EF7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:39:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C4F5213E76;
-	Thu,  6 Mar 2025 16:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CAE122B586;
+	Thu,  6 Mar 2025 16:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b="krhmM5S2"
-Received: from meesny.iki.fi (meesny.iki.fi [195.140.195.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PdM0dzHc"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 524A021930B;
-	Thu,  6 Mar 2025 16:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=195.140.195.201
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741278813; cv=pass; b=kH1NQXvUtMgxNesAqzJvGVXqX++bFfJBNlOikXKkzELo2v/vbMJsAdI+3kvvNo9z3MHJ9c6VAbI7KmnK9FwzXV4RWxw7x2NL6hfBobk2oKDERTxbKRZuekt0z6JkY6mGJIiHI9H+XoChJ49CqJL5J/ANx8Z2e7D7NalGiROVX3w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741278813; c=relaxed/simple;
-	bh=4lgMmgfNgoWC+JNlOHQFpGd5xL6R5LMAkgWVRtpFecM=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A4C21ABBF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741278839; cv=none; b=Kw8/Pi3J53f+IoFlc7N79V7n27RwQwOmqP2V18vmRQN1UmMLkpclpm/VijFOpADBxGnM2Ls6az74Yg4n+bBgNeI3ghdUVgXMzAr+rZP2jp6M9wYR4/8vCinSpEJly6w+P6HXGF50p8lESvUiK9RkvY2naSBnYzENr2QJ+8Xsr/E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741278839; c=relaxed/simple;
+	bh=y6MdUL9ENTqiQkRJvJAjh9yExqe14NTvQAxWVkRtBBA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WbklRq9IqaGm59FzjQUL6EKHWdDESg42IKqi/a/lpnAICEb0egu5yNrrEJMnyFLHcuX0ZCN1cYtpudE0h+yuFaGNT46aoRFVJnWYkn46ARUGOEKcyk03Kf2elOjEtq2feQDpLnHcTOARlj7kJa6c/RYVM6OMddZWWQd5SE8rRvI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi; spf=pass smtp.mailfrom=iki.fi; dkim=pass (1024-bit key) header.d=iki.fi header.i=@iki.fi header.b=krhmM5S2; arc=pass smtp.client-ip=195.140.195.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iki.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iki.fi
-Received: from hillosipuli.retiisi.eu (2a00-1190-d1dd-0-c641-1eff-feae-163c.v6.cust.suomicom.net [IPv6:2a00:1190:d1dd:0:c641:1eff:feae:163c])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: sailus)
-	by meesny.iki.fi (Postfix) with ESMTPSA id 4Z7w2l38DYzyNC;
-	Thu,  6 Mar 2025 18:33:19 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi; s=meesny;
-	t=1741278802;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FU1dvFue8oQTK3aBF6A/gGzFXjSlyHzhzEo8txyLQPU=;
-	b=krhmM5S23MXIk6gZMykk21LK/zIPu1rqMfjwHioPy9BIQygmc1k1BDThwP0FfLcyP89/x2
-	b0aFigklgjtgVIa1fNkCUJicde2yBf1DPrUOOBQqqXte5R9EjZlHBKPi1F5ciVNfgWhxbZ
-	ssajOLoE9KXYCbxfbj6bWyiXmGO4Hx8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=iki.fi;
-	s=meesny; t=1741278802;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FU1dvFue8oQTK3aBF6A/gGzFXjSlyHzhzEo8txyLQPU=;
-	b=fUfFyRsoegM4MnO2Zbhp69jDOLRMFOxbStL/SIzzNirCLgtYDC2Sy8jfpZ8B54ZTQdUlJR
-	pXr6Xs+W79Q60zh9PeEfKmcl7h8SK60fKiOSpPsehUU/4U2UJW2KPckIIQqkHYlxtbU0cO
-	CGF1ln7BGgAW/N7ZLiNa46bQmi7OVJM=
-ARC-Authentication-Results: i=1;
-	ORIGINATING;
-	auth=pass smtp.auth=sailus smtp.mailfrom=sakari.ailus@iki.fi
-ARC-Seal: i=1; s=meesny; d=iki.fi; t=1741278802; a=rsa-sha256; cv=none;
-	b=h1BTf/HNzJqS0lWKnc3Auqvdnegs18T2wlEKyb/i7YrmPWa1aNKDa8UP8TGJ9Re43CCWJT
-	zQ+5EQRJRUtf8ogmnHUdgTKLpObuFstm22EUntSsz+sYXKSYmmPYRz9iwiL0YE2FHGZyPX
-	BTX6fQCporPXmRCOrgZwqynpzmSCbcs=
-Received: from valkosipuli.retiisi.eu (valkosipuli.localdomain [192.168.4.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by hillosipuli.retiisi.eu (Postfix) with ESMTPS id CC6CE634C93;
-	Thu,  6 Mar 2025 18:33:18 +0200 (EET)
-Date: Thu, 6 Mar 2025 16:33:18 +0000
-From: Sakari Ailus <sakari.ailus@iki.fi>
-To: Mathis Foerst <mathis.foerst@mt.com>
-Cc: linux-kernel@vger.kernel.org, Steve Longerbeam <slongerbeam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, manuel.traut@mt.com,
-	mathis.foerst@zuehlke.com
-Subject: Re: [PATCH v1 1/1] media: imx: csi: Parse link configuration from
- fw_node
-Message-ID: <Z8nOTrjEW_OYBGlq@valkosipuli.retiisi.eu>
-References: <20250305113802.897087-1-mathis.foerst@mt.com>
- <20250305113802.897087-2-mathis.foerst@mt.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uBWvIEzRCTxX/OahOeqOMS9YDSGc+yNO7WZ8t94bxugpnrNMEoRWkM4yp3c5beNfG9JsZWhG8ccPrRLewBaTGO/Xq+7qJOdCzkC7n+t2//kSWS2BqA5/Ib41lgmD0qc+/KKhGjGC52MQ7te2uj6DJF8JKU388ZZI/FS3xavMFYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PdM0dzHc; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30bee1cb370so5110361fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 08:33:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741278836; x=1741883636; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mcYfZGCaAKvP2JNTvUnndgZpH/B+98c6oldv3E5aRaA=;
+        b=PdM0dzHclw/77Ea3YhyR09FiDVXVxvuO1PXNEaNLbIp114AD3fSj0VdkcFZAvnu8I5
+         icdBp74VfOXKeYuH2yTA+CiveHKH7DNVCcB5az1iSYnpbDot2TWCE8QebLgLT/rFKbbB
+         7FrtQwQIfDHyoO2J8rMwDCfawUEc0MOPmskAwcyB8w6Q5VwCtIpxsPDiVpTBotOC5PCm
+         WyGXPu7dke7CeI8kjLVlmeSOPaqoLPPoAguVaHqjrpcBKMNYI6VvGVYp3IuckACbiCs1
+         fsrGYas4CVCDk7cX66HzmDGt3OU9sGeqH4J9352ZA1N88uk9F8dJIMaQzVOe0oED/HbO
+         mNKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741278836; x=1741883636;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mcYfZGCaAKvP2JNTvUnndgZpH/B+98c6oldv3E5aRaA=;
+        b=dkJWTB7uP3pzrHcHSpLGS++bjzFENamRseWDqpIuhBUCVwVwULwXSXhPK1VfbZ27Sr
+         ClccwP2OvpbZfNFJy/FDQe4jyUj4GeGJ4UoRiK50rmEhjrB5wRQQdvUwTUf7uEJEHZzR
+         aUd+zL173t51FOs/VHgjLLZq9MeF6yQ0N6WRWPvnistUOhP5cFCaZzQVyhULExXrOd9C
+         vmW/5mmvoJqrrLyiDjhkqZkhbAgrAbMr5mxj2nET+j32Zr86BppmmMJvMGiWtyOevqIB
+         20blfUTKkbICeQMbWdOgQhyxr7v4RUJuwXmXu7+Te3bF5GBG8vimYyRtn7/aIDGFY2zw
+         cmCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvcQyGzHc10Fuo3fSnnIOgj0Ei7YDozOhioS/DsOCfVVNTqE5Zxf+HsP9szQnQVMGEEtJwSIhY4XTaMUk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPfBFJIZCveYYGOXzasFRMStIYj9f3Dzg0LJ+kYz/d4HYa9lHg
+	dzwIxMn1FlaTyrOkBWsio7GQ1cHRSe5I4WfWSKLKI2OjGoE0rnyzi7YldognqtU=
+X-Gm-Gg: ASbGnctJ2DChsPQ1T/NxlO0hqMQOaNXJpTF6S2yS3KbLRgetkt1F6R5m1RoP7XUeabn
+	ffOt4qbvZu7Z/HsncsTO0gD55AKEd0gO9PqeVVoh/kOuJ5eulGfC3OWYFuXW1Oih92otgty+gWa
+	qHWhFW+QJSouy9sbMqQG5aGzzKrDYv3IIc1sX/cg7NI1ataiTAYsiuou95XXNrRw8/wYs0/NP3p
+	HX9RjtifUFq7U0qkzbllNikSUTrbz6VGQJyId/CcUTGx6Fy/Dy7ZoVuvAwZzfHHgUED1STOAFDe
+	pgDXQs3izFqsbI7g2feirhZhRKlkEfbj0o8X1v4uo0fx0ho+WvoMG2fDwM4K5WU8Y4gBToyLZgI
+	lOY8RXmNu59pHKmZTbPR3Onst
+X-Google-Smtp-Source: AGHT+IEhK8WPCNQ2ny4wFVJ0Mn/g931J/pH6k2jlLt44c80Y4amsFqDiQ97ufGuuRZNFOtxZQ3FiJA==
+X-Received: by 2002:a2e:be05:0:b0:30b:b852:2f85 with SMTP id 38308e7fff4ca-30bd7a3dbd6mr32951271fa.13.1741278835567;
+        Thu, 06 Mar 2025 08:33:55 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30be98f2f9bsm2526731fa.35.2025.03.06.08.33.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 08:33:54 -0800 (PST)
+Date: Thu, 6 Mar 2025 18:33:51 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: neil.armstrong@linaro.org
+Cc: Tejas Vipin <tejasvipin76@gmail.com>, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	simona@ffwll.ch, lujianhua000@gmail.com, quic_jesszhan@quicinc.com, 
+	dianders@chromium.org, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/panel: novatek-nt36523: transition to mipi_dsi
+ wrapped functions
+Message-ID: <p2esqngynwfrshz5rqfnmx6qgwf4dclpkb3mphwg2vavx2jbcg@clqoy5tjh7bb>
+References: <20250306134350.139792-1-tejasvipin76@gmail.com>
+ <ca5b0825-a485-4bec-bd93-b57a8d7ced99@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,143 +91,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250305113802.897087-2-mathis.foerst@mt.com>
+In-Reply-To: <ca5b0825-a485-4bec-bd93-b57a8d7ced99@linaro.org>
 
-Hi Mathis,
-
-Thanks for the patch.
-
-On Wed, Mar 05, 2025 at 12:38:02PM +0100, Mathis Foerst wrote:
-> The imx-media-csi driver requires upstream camera drivers to implement
-> the subdev-pad-op "get_mbus_config" [0]. Camera drivers that don't
-> implement this function are not usable on the i.MX6.
+On Thu, Mar 06, 2025 at 03:05:10PM +0100, neil.armstrong@linaro.org wrote:
+> On 06/03/2025 14:43, Tejas Vipin wrote:
+> > Changes the novatek-nt36523 panel to use multi style functions for
+> > improved error handling.
+> > 
+> > Signed-off-by: Tejas Vipin <tejasvipin76@gmail.com>
+> > ---
+> >   drivers/gpu/drm/panel/panel-novatek-nt36523.c | 1683 ++++++++---------
+> >   1 file changed, 823 insertions(+), 860 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/panel/panel-novatek-nt36523.c b/drivers/gpu/drm/panel/panel-novatek-nt36523.c
+> > index 04f1d2676c78..922a225f6258 100644
+> > --- a/drivers/gpu/drm/panel/panel-novatek-nt36523.c
+> > +++ b/drivers/gpu/drm/panel/panel-novatek-nt36523.c
+> > @@ -23,10 +23,12 @@
+> >   #define DSI_NUM_MIN 1
+> > -#define mipi_dsi_dual_dcs_write_seq(dsi0, dsi1, cmd, seq...)        \
+> > -		do {                                                 \
+> > -			mipi_dsi_dcs_write_seq(dsi0, cmd, seq);      \
+> > -			mipi_dsi_dcs_write_seq(dsi1, cmd, seq);      \
+> > +#define mipi_dsi_dual_dcs_write_seq_multi(dsi_ctx0, dsi_ctx1, cmd, seq...)      \
+> > +		do {								\
+> > +			mipi_dsi_dcs_write_seq_multi(&dsi_ctx0, cmd, seq);	\
+> > +			dsi_ctx1.accum_err = dsi_ctx0.accum_err;		\
+> > +			mipi_dsi_dcs_write_seq_multi(&dsi_ctx1, cmd, seq);	\
+> > +			dsi_ctx0.accum_err = dsi_ctx1.accum_err;		\
 > 
-> The docs for get_mbus_config [1] say:
-> @get_mbus_config: get the media bus configuration of a remote sub-device.
->             The media bus configuration is usually retrieved from the
->             firmware interface at sub-device probe time, immediately
->             applied to the hardware and eventually adjusted by the
->             driver.
+> Just thinking out loud, but can't we do :
 > 
-> Currently, the imx-media-csi driver is not incorporating the information
-> from the firmware interface and therefore relies on the implementation of
-> get_mbus_config by the camera driver.
+> struct mipi_dsi_multi_context dsi_ctx = { .dsi = NULL };
 > 
-> To be compatible with camera drivers not implementing get_mbus_config
-> (which is the usual case), use the bus information from the fw interface:
+> #define mipi_dsi_dual_dcs_write_seq_multi(dsi_ctx, dsi0, dsi1, cmd, seq...)      \
+> 		do {						
+> 			dsi_ctx.dsi = dsi0;					\
+> 			mipi_dsi_dcs_write_seq_multi(&dsi_ctx, cmd, seq);	\
+> 			dsi_ctx.dsi = dsi1;					\
+> 			mipi_dsi_dcs_write_seq_multi(&dsi_ctx, cmd, seq);	\
 > 
-> The camera does not necessarily has a direct media bus link to the CSI as
-> the video-mux and/or the MIPI CSI-2 receiver of the i.MX6 might be in
-> between them on the media pipeline.
-> The CSI driver already implements the functionality to find the connected
-> camera sub-device to call get_mbus_config on it.
+> ?
 > 
-> At this point the driver is modified as follows:
-> In the case that get_mbus_config is not implemented by the upstream
-> camera, try to get its endpoint configuration from the firmware interface
-> usign v4l2_fwnode_endpoint_parse.
-> For the supported mbus_types (V4L2_MBUS_PARALLEL, V4L2_MBUS_BT656 and
-> V4L2_MBUS_CSI2_DPHY), extract the mbus_config from the endpoint
-> configuration.
-> For all other mbus_types, return an error.
-> 
-> Note that parsing the mbus_config from the fw interface is not done during
-> probing because the camera that's connected to the CSI can change based on
-> the selected input of the video-mux at runtime.
-> 
-> [0] drivers/staging/media/imx/imx-media-csi.c - line 211..216
-> [1] include/media/v4l2-subdev.h - line 814
-> 
-> Signed-off-by: Mathis Foerst <mathis.foerst@mt.com>
-> ---
->  drivers/staging/media/imx/imx-media-csi.c | 36 ++++++++++++++++++++---
->  1 file changed, 32 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-> index 3edbc57be2ca..394a9321a10b 100644
-> --- a/drivers/staging/media/imx/imx-media-csi.c
-> +++ b/drivers/staging/media/imx/imx-media-csi.c
-> @@ -169,6 +169,8 @@ static int csi_get_upstream_mbus_config(struct csi_priv *priv,
->  {
->  	struct v4l2_subdev *sd, *remote_sd;
->  	struct media_pad *remote_pad;
-> +	struct fwnode_handle *ep_node;
-> +	struct v4l2_fwnode_endpoint ep = { .bus_type = 0 };
+> So we have a single accum_err.
 
-Are there any defaults in DT bindings (other than 0's)? Also initialising a
-field to zero this way is redundant, just use {}.
+I'd say that can be counter-prodactive. If only one of the links falls
+apart, then the second link still can be initialized (and by observing a
+half of the screen the user / devloper can make several assumptions).
+In case of using just one context the driver will fail on the first
+error and skip the rest of the init for both halves.
 
->  	int ret;
->  
->  	if (!priv->src_sd)
-> @@ -210,11 +212,37 @@ static int csi_get_upstream_mbus_config(struct csi_priv *priv,
->  
->  	ret = v4l2_subdev_call(remote_sd, pad, get_mbus_config,
->  			       remote_pad->index, mbus_cfg);
-> -	if (ret == -ENOIOCTLCMD)
-> -		v4l2_err(&priv->sd,
-> -			 "entity %s does not implement get_mbus_config()\n",
-> -			 remote_pad->entity->name);
-> +	if (ret == -ENOIOCTLCMD) {
+I'd have a different suggestion though: what about passing two contexts
+to the init_sequence callback and letting nt36523_prepare() handle each
+of the error separately?
 
-	if (!ret)
-		return 0;
-
-And you can unindent the rest.
-
-> +		/*
-> +		 * If the upstream sd does not implement get_mbus_config,
-> +		 * try to parse the link configuration from its fw_node
-> +		 */
-> +		ep_node = fwnode_graph_get_endpoint_by_id(dev_fwnode(remote_sd->dev),
-
-Always parse only local, not remote endpoints.
-
-Also: instead of supporting get_mbus_config() in a driver, we would ideally
-have a helper that optionally uses it and secondarily gets the endpoint
-configuration from a local endpoint. It's better to do that once rather
-than have every driver do this differently, including a different set of
-bugs.
-
-That being said, V4L2 fwnode endpoint parsing is a somewhat driver specific
-task and that should remain with the driver. So I'd think the helper should
-take a driver-parsed struct v4l2_fwnode_endpoint as an argument, for that
-endpoint.
-
-I'm not saying no to this patch though. But in the long run we'll be better
-off with a helper in the framework.
-
-> +							  0, 0,
-> +							  FWNODE_GRAPH_ENDPOINT_NEXT);
-> +		if (!ep_node)
-> +			return -ENOTCONN;
-> +
-> +		ret = v4l2_fwnode_endpoint_parse(ep_node, &ep);
-> +		fwnode_handle_put(ep_node);
-> +		if (ret)
-> +			return ret;
->  
-> +		mbus_cfg->type = ep.bus_type;
-> +		switch (ep.bus_type) {
-> +		case V4L2_MBUS_PARALLEL:
-> +		case V4L2_MBUS_BT656:
-> +			mbus_cfg->bus.parallel = ep.bus.parallel;
-> +			break;
-> +		case V4L2_MBUS_CSI2_DPHY:
-> +			mbus_cfg->bus.mipi_csi2 = ep.bus.mipi_csi2;
-> +			break;
-> +		default:
-> +			v4l2_err(&priv->sd, "Unsupported mbus_type: %i\n",
-> +				 ep.bus_type);
-> +			return -EINVAL;
-> +		}
-> +	}
->  	return ret;
->  }
->  
 
 -- 
-Kind regards,
-
-Sakari Ailus
+With best wishes
+Dmitry
 
