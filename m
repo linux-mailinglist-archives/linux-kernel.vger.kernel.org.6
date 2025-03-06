@@ -1,233 +1,124 @@
-Return-Path: <linux-kernel+bounces-549014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84D86A54C27
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:28:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37010A54C33
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:30:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E333C168DC0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:28:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA561897B33
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 487B420F089;
-	Thu,  6 Mar 2025 13:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137B020E71C;
+	Thu,  6 Mar 2025 13:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Xz5j2vun"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aM6z2hVK"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACC2420E31B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 13:27:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAD820E6FD;
+	Thu,  6 Mar 2025 13:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741267666; cv=none; b=Uau4DtvtwjPSA2ljjRgJAKQTux6cMNIqzMMSCHAyfGu3qlcdycaZI7DgQotdGzqb2Gd6N8lPos1/TK1dJFJeDGvmLQASnkv5huzu9QT0QnpQuNH0rQz2Kwo1BZdkG3MKJ0O8JxWzPWN19vDk0N/WAd+RQFPHX2+YEC1zV75dYLQ=
+	t=1741267777; cv=none; b=Un+X/q1ZqyZOUBje1BfB68Ic0jldWmy1VNjAIzeQ8RCn7vQIXjplOiPxgQN5UaHT0Hbc/m00zJcel1c8Fty4LHY+b+AvVW0ub9xP84Amogt4R/s975pYnnhqzUTF9j9AE5fcKrTqKjbc48ukQNEHbgTMFvp9TRm9m7AK5KuuJ8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741267666; c=relaxed/simple;
-	bh=Jqv28Jm7qzh84U9+lqjLvmKZl6KOXWlqr0fpxkfKg3k=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VQRv+LZZtgaxoLl9FKVXcZR87vd7OzNrax+Y1oJbMSM5vXLCv8Ajx/VSfi7AHmuMp7aYk/b2aTxILrBC/hCksQwKp1tTD2zt3SrOq6sAnVN9kswmeNwtZds5RqDJXnyvNbmWLSWUP25vW0TAsGhcOK59oWNWLCFfKzW642OVJNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Xz5j2vun; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c3bf231660so61283385a.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 05:27:44 -0800 (PST)
+	s=arc-20240116; t=1741267777; c=relaxed/simple;
+	bh=tUjGMr2PNjVqFTHi5r1KwQNDuGEFlQEAFC+BFKW+nzQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jnabF0qHtan2wHsZQV3iOo4yUtE3NXOLHXSNdtHFmfXjrKgrqPaWmdgLbPK78hJeCDJiI7BIR5J6u4uHQvIOZ5wW6YVljoJ4cNiNFTnbgV1sL+KltQZDstu4u7x+D4Kijhmoois9hGodcBCwadHvcJmyPzv/Fouc5BiVWfNCfdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aM6z2hVK; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-223378e2b0dso8410725ad.0;
+        Thu, 06 Mar 2025 05:29:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741267663; x=1741872463; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=k5fyHJOXDgzeVD5N4PQBEWE96deyhJv7YjSge5olLmc=;
-        b=Xz5j2vunbZunWR4eFIIlfpCAHD8yHpmrIuw99rZk1aeDrZWZPh0nlgKwhQMslSjrBP
-         gGixiiqmerG50h+eklBpk0BgSjtlpAN8asxALJKqf4ySSuu2HwRstq6gVcTCWwqYjduT
-         fchzwktU2PVgEeB0q8gzsashLNtqkISqMjEZY=
+        d=gmail.com; s=20230601; t=1741267775; x=1741872575; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=pLwkTL/PfTbIkV/GSELW9k3O0aYAoOxcDfSxjEQxtSI=;
+        b=aM6z2hVKrpRag7OqQoPNqrALc43gMp5PSkE75u8eC/p8tnEK8TkjnnM+OkyXQzq5FT
+         M/3UGVqQaD4/x05J+mxNSDGwPNaWOPKQV7FeRAWjRzXK6XcW9gy4oepOeKIpxR3oSX80
+         BriEWNlvqk+VAxyOtL29O+TM7D4/dHOIXeVO8LKMxR6gJdUkMkRtrvmW1rLzYugLHIp2
+         Mimw8yN5a08l3U39QkFyY6DwabUN33Ij2G6NZOp+PVkFimEQSlvPb4sSVzoXPpKOXpWR
+         p4zHmmLwDmoeUqVUZzBmOEc78ibZy+6L93P14jtwbTZJqQUCMP78Rqi7sqR93IejOVaF
+         tGZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741267663; x=1741872463;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k5fyHJOXDgzeVD5N4PQBEWE96deyhJv7YjSge5olLmc=;
-        b=BayEVuoQPiMTEMNZIo6BXK6HQmFX5dzI/cjZBmTmHtI/ETpu11IgjC5OJJlVYMRmsb
-         fWDiWXC9TBDRGP0eTm3tMaU8hblnjUnbxS140PUYMHmRFCzU+r8Xxm8PHw9G62ceTw0K
-         uKzwdbsow1KqII11L8C7msjlbY0tFxLakeVyqPEzCXguBodaqtJxKTqIivUPh8L30WSt
-         Q3ziufxK/vbKWqfC7rx3N912GrPUsrdr09oI08WpWeZLA2yS/QCESX5wIP2p82009Wlc
-         SpyWQtjvQ1C4Nsa1ibkGFqf01YuahGRhAFc0lKI975a7lQPmEM3j/k/GRNAvAvKRY5S6
-         JmpA==
-X-Forwarded-Encrypted: i=1; AJvYcCWX3zThZC/+Gq8Ypgs+fSJbqFBVbTbVw76PfUzLLw5NajSn2cSum9cbje7AbP6fBk2/wEU5qGgZzqYKTes=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/1LXR+qK+VNUS4kSbFs6ejx3Os+KRfIe3FVQ6AdwXN4jeerAT
-	IIp33wKV96FL3DkJrQ2NGwQUOLshSGWLzZ7oiP1D4Egu75MHbQtT3r9+GiFvyg==
-X-Gm-Gg: ASbGncucS2giJknK3NG4EQhVGzLjAVKIXwXxJwiDKa+NM9zDH6KmoIKg/oYSUfvlpSl
-	/R9zNDkSbp2XwFAq608iw9U6YECztWTFfdpWjdBF6XeJXtSg+HYERuw5HgY9JTDUYoc79pwv1J9
-	SkSEZlkUztkxACu9FTr1ImkTXdWxof2e/hhKUqH7/iq+aqSzxJhAlx4qFQmJ7ewMMHcjdee0yPo
-	f4hq2i5dcG/AZx6QBiz4FUwqLcDn8IqwPe0ESciKwi3lZ/6xb5nOSYWk+QCW0qFzx3ZVH7RnVsY
-	hqkLfj8juJ2JESIJYjfroaodyfK/k0OGb4NBZIqIlfn3U1dJCDH1x7Qq9ewq2RRdhA7C4r80mS5
-	vEdHxKe9zRjUcbIlfJ3GMfA==
-X-Google-Smtp-Source: AGHT+IHq1N4OYDeNoBf2bjvN54GUOf3HZ+YUtSjclkRhroCRuaQUtaXrUfoD8P+jnfCq0HclXR+/KA==
-X-Received: by 2002:a05:620a:1b90:b0:7c0:bf09:405d with SMTP id af79cd13be357-7c3d8ec5f60mr1190072485a.50.1741267663492;
-        Thu, 06 Mar 2025 05:27:43 -0800 (PST)
-Received: from denia.c.googlers.com (15.237.245.35.bc.googleusercontent.com. [35.245.237.15])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e538448fsm91268685a.63.2025.03.06.05.27.42
+        d=1e100.net; s=20230601; t=1741267775; x=1741872575;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pLwkTL/PfTbIkV/GSELW9k3O0aYAoOxcDfSxjEQxtSI=;
+        b=wr9Bn9LFdfdyd4dDGDHUggkDIszVlW8MNp2uSiVmNlp294sdtKJlSQJh+7FhzGVarh
+         906CD730NLIkBkY2+hB7KTrP4a/TEpFC2roMjdS5LbhldaXSeFoGbjYdHwC7YGZSc7JO
+         CjwciHE8tOmYTQ9M+tHV4saRHWrCvcOXsY3zc0rvU7wEUqgzjaMKSt7Jva3SDpBiku0J
+         ge7xG27nzVcME72l3efnpjhrRGG+mxs0WhxT95jDpXUP3ggb+4aTLwNjIuItOARExJgb
+         VeRdVSvL2DBTChP0JYSlPiOFJQGY3qb5lM+i/qsok19hXYvXEaKkfmrPBlPnAg28LWUN
+         atcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXB3w10qj2x2xc5gBcKsUt9ouHWaMRVtI4Wlzi7uW1YEmnTJTONNNNsbRGd6yf1QA1eMvM011YLwb1u9ms=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTPipwJWRSV4KbWLFGHIm6VHjmGjPnyIQUra0U3tb0l4rO04nJ
+	HnuWyDvbZN9USi7AgXjJBgvblteaUi9EX81GeqFqGBjentWVRANq
+X-Gm-Gg: ASbGncsTbRVj0qGl7B1Ua7LN0aduLQxXzoiWZvaQqkPPB2dgF25N/vbqRXUDdOJqmNk
+	IxaOYVPqfLxthrnXZfhTlezA5nOnHJ+DbZKY87r/bi6BkIZAwLmkebat8X6p1sUs39tj9Tm5vSN
+	0a2gy5teDQLTWfamLDq9o8bAAMKjEe8VJQHQV/AyDB/zY88pxgToiRdjEcbmixGLHy49hau11Pb
+	Vkg4GnyYtmQwJqYLkftvK9jHf8L9ZXy315S+eIz0GuZE2gNo97ytkqq+A0Zxozruy/owU5QsRWG
+	anMhtKqyhchv85DerGGRo0zo981JanQ2uQT7k5toUI+VXINLDJAk3CS4K5uF0H0ye424Ja8B5az
+	HEOWbt+QUa00BC1CmI3LWWxL2
+X-Google-Smtp-Source: AGHT+IG5wdj3cx1mmSazMo2hkXpLtYe62gqdLlh0v/Gd5mh3lnljdLXxXUoIT5mERWJy2vY8nYRVaw==
+X-Received: by 2002:a17:902:ec89:b0:224:76f:9e59 with SMTP id d9443c01a7336-224076fa0damr65766745ad.10.1741267775079;
+        Thu, 06 Mar 2025 05:29:35 -0800 (PST)
+Received: from localhost.localdomain ([159.226.94.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a91985sm11881705ad.194.2025.03.06.05.29.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 05:27:43 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Thu, 06 Mar 2025 13:27:31 +0000
-Subject: [PATCH v2 2/2] media: vivid: Introduce VIDEO_VIVID_OSD
+        Thu, 06 Mar 2025 05:29:34 -0800 (PST)
+From: Zhiyu Zhang <zhiyuzhang999@gmail.com>
+To: phillip@squashfs.org.uk,
+	akpm@linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zhiyu Zhang <zhiyuzhang999@gmail.com>
+Subject: [PATCH] squashfs: Fix invalid pointer dereference in squashfs_cache_delete
+Date: Thu,  6 Mar 2025 21:28:55 +0800
+Message-Id: <20250306132855.2030-1-zhiyuzhang999@gmail.com>
+X-Mailer: git-send-email 2.39.1.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-vivid-osd-v2-2-86db53ecb39c@chromium.org>
-References: <20250306-vivid-osd-v2-0-86db53ecb39c@chromium.org>
-In-Reply-To: <20250306-vivid-osd-v2-0-86db53ecb39c@chromium.org>
-To: Hans Verkuil <hverkuil@xs4all.nl>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Slawomir Rosek <srosek@google.com>, 
- Hidenori Kobayashi <hidenorik@google.com>, 
- Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.14.2
+Content-Transfer-Encoding: 8bit
 
-vivid-osd depends on CONFIG_FB, which can be a large dependency. Introduce
-CONFIG_VIDEO_VIVID_OSD to control enabling support for testing output
-overlay.
+When mounting a squashfs fails, squashfs_cache_init() may return an error
+pointer (e.g., -ENOMEM) instead of NULL. However, squashfs_cache_delete()
+only checks for a NULL cache, and attempts to dereference the invalid
+pointer. This leads to a kernel crash (BUG: unable to handle kernel paging
+request in squashfs_cache_delete).
 
-Suggested-by: Slawomir Rosek <srosek@google.com>
-Co-developed-by: Slawomir Rosek <srosek@google.com>
-Signed-off-by: Slawomir Rosek <srosek@google.com>
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+This patch fixes the issue by checking IS_ERR(cache) before accessing it.
+
+Fixes: 49ff29240ebb ("squashfs: make squashfs_cache_init() return ERR_PTR(-ENOMEM)")
+Reported-by: Zhiyu Zhang <zhiyuzhang999@gmail.com>
+Closes: https://lore.kernel.org/linux-fsdevel/CALf2hKvaq8B4u5yfrE+BYt7aNguao99mfWxHngA+=o5hwzjdOg@mail.gmail.com/
+Tested-by: Zhiyu Zhang <zhiyuzhang999@gmail.com>
+Signed-off-by: Zhiyu Zhang <zhiyuzhang999@gmail.com>
 ---
- drivers/media/test-drivers/vivid/Kconfig      | 12 ++++++++++--
- drivers/media/test-drivers/vivid/Makefile     |  5 ++++-
- drivers/media/test-drivers/vivid/vivid-core.c |  4 ++++
- drivers/media/test-drivers/vivid/vivid-core.h |  2 ++
- drivers/media/test-drivers/vivid/vivid-osd.h  | 13 +++++++++++++
- 5 files changed, 33 insertions(+), 3 deletions(-)
+ fs/squashfs/cache.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/test-drivers/vivid/Kconfig b/drivers/media/test-drivers/vivid/Kconfig
-index ec2e71d769659492df698a7e0874ce5e927042ed..e95edc0f22bfb97099f6fdea97402fc8a190f11f 100644
---- a/drivers/media/test-drivers/vivid/Kconfig
-+++ b/drivers/media/test-drivers/vivid/Kconfig
-@@ -1,9 +1,8 @@
- # SPDX-License-Identifier: GPL-2.0-only
- config VIDEO_VIVID
- 	tristate "Virtual Video Test Driver"
--	depends on VIDEO_DEV && !SPARC32 && !SPARC64 && FB
-+	depends on VIDEO_DEV && !SPARC32 && !SPARC64
- 	depends on HAS_DMA
--	select FB_IOMEM_HELPERS
- 	select FONT_SUPPORT
- 	select FONT_8x16
- 	select VIDEOBUF2_VMALLOC
-@@ -31,6 +30,15 @@ config VIDEO_VIVID_CEC
- 	  When selected the vivid module will emulate the optional
- 	  HDMI CEC feature.
+diff --git a/fs/squashfs/cache.c b/fs/squashfs/cache.c
+index 4db0d2b0aab8..181260e72680 100644
+--- a/fs/squashfs/cache.c
++++ b/fs/squashfs/cache.c
+@@ -198,7 +198,7 @@ void squashfs_cache_delete(struct squashfs_cache *cache)
+ {
+ 	int i, j;
  
-+config VIDEO_VIVID_OSD
-+	bool "Enable Framebuffer for testing Output Overlay"
-+	depends on VIDEO_VIVID && FB
-+	default y
-+	select FB_IOMEM_HELPERS
-+	help
-+	  When selected the vivid module will emulate a Framebuffer for
-+	  testing Output Overlay.
-+
- config VIDEO_VIVID_MAX_DEVS
- 	int "Maximum number of devices"
- 	depends on VIDEO_VIVID
-diff --git a/drivers/media/test-drivers/vivid/Makefile b/drivers/media/test-drivers/vivid/Makefile
-index b12ad0152a3e0fde428bd75fd50137bd2ae4d53c..284a59e9733554addabf73944ac9df5116c6c323 100644
---- a/drivers/media/test-drivers/vivid/Makefile
-+++ b/drivers/media/test-drivers/vivid/Makefile
-@@ -3,10 +3,13 @@ vivid-objs := vivid-core.o vivid-ctrls.o vivid-vid-common.o vivid-vbi-gen.o \
- 		vivid-vid-cap.o vivid-vid-out.o vivid-kthread-cap.o vivid-kthread-out.o \
- 		vivid-radio-rx.o vivid-radio-tx.o vivid-radio-common.o \
- 		vivid-rds-gen.o vivid-sdr-cap.o vivid-vbi-cap.o vivid-vbi-out.o \
--		vivid-osd.o vivid-meta-cap.o vivid-meta-out.o \
-+		vivid-meta-cap.o vivid-meta-out.o \
- 		vivid-kthread-touch.o vivid-touch-cap.o
- ifeq ($(CONFIG_VIDEO_VIVID_CEC),y)
-   vivid-objs += vivid-cec.o
- endif
-+ifeq ($(CONFIG_VIDEO_VIVID_OSD),y)
-+  vivid-objs += vivid-osd.o
-+endif
+-	if (cache == NULL)
++	if (IS_ERR(cache) || cache == NULL)
+ 		return;
  
- obj-$(CONFIG_VIDEO_VIVID) += vivid.o
-diff --git a/drivers/media/test-drivers/vivid/vivid-core.c b/drivers/media/test-drivers/vivid/vivid-core.c
-index 10f5bef3f49cca4c3a0ae62dd4704ac4180a7c43..8d56168c72aa09f94ba2f0bdb2415e7247e08c14 100644
---- a/drivers/media/test-drivers/vivid/vivid-core.c
-+++ b/drivers/media/test-drivers/vivid/vivid-core.c
-@@ -125,7 +125,9 @@ MODULE_PARM_DESC(node_types, " node types, default is 0xe1d3d. Bitmask with the
- 			     "\t\t    bit 8: Video Output node\n"
- 			     "\t\t    bit 10-11: VBI Output node: 0 = none, 1 = raw vbi, 2 = sliced vbi, 3 = both\n"
- 			     "\t\t    bit 12: Radio Transmitter node\n"
-+#ifdef CONFIG_VIDEO_VIVID_OSD
- 			     "\t\t    bit 16: Framebuffer for testing output overlays\n"
-+#endif
- 			     "\t\t    bit 17: Metadata Capture node\n"
- 			     "\t\t    bit 18: Metadata Output node\n"
- 			     "\t\t    bit 19: Touch Capture node\n");
-@@ -1071,9 +1073,11 @@ static int vivid_detect_feature_set(struct vivid_dev *dev, int inst,
- 	/* do we have a modulator? */
- 	*has_modulator = dev->has_radio_tx;
- 
-+#ifdef CONFIG_VIDEO_VIVID_OSD
- 	if (dev->has_vid_cap)
- 		/* do we have a framebuffer for overlay testing? */
- 		dev->has_fb = node_type & 0x10000;
-+#endif
- 
- 	/* can we do crop/compose/scaling while capturing? */
- 	if (no_error_inj && *ccs_cap == -1)
-diff --git a/drivers/media/test-drivers/vivid/vivid-core.h b/drivers/media/test-drivers/vivid/vivid-core.h
-index d2d52763b11977d39f630dd9ae9bd9fdb288fd51..571a6c2229692109f5d038029bfd9d38d9e53fc3 100644
---- a/drivers/media/test-drivers/vivid/vivid-core.h
-+++ b/drivers/media/test-drivers/vivid/vivid-core.h
-@@ -403,9 +403,11 @@ struct vivid_dev {
- 	int				display_byte_stride;
- 	int				bits_per_pixel;
- 	int				bytes_per_pixel;
-+#ifdef CONFIG_VIDEO_VIVID_OSD
- 	struct fb_info			fb_info;
- 	struct fb_var_screeninfo	fb_defined;
- 	struct fb_fix_screeninfo	fb_fix;
-+#endif
- 
- 	/* Error injection */
- 	bool				disconnect_error;
-diff --git a/drivers/media/test-drivers/vivid/vivid-osd.h b/drivers/media/test-drivers/vivid/vivid-osd.h
-index 9a7ef83e6eb2e44e20d2a2e98303845703375bcb..b6a618834b65c6547d9ad2b47e4675040a3bf726 100644
---- a/drivers/media/test-drivers/vivid/vivid-osd.h
-+++ b/drivers/media/test-drivers/vivid/vivid-osd.h
-@@ -8,9 +8,22 @@
- #ifndef _VIVID_OSD_H_
- #define _VIVID_OSD_H_
- 
-+#ifdef CONFIG_VIDEO_VIVID_OSD
- int vivid_fb_init(struct vivid_dev *dev);
- void vivid_fb_deinit(struct vivid_dev *dev);
- void vivid_fb_clear(struct vivid_dev *dev);
- unsigned int vivid_fb_green_bits(struct vivid_dev *dev);
-+#else
-+static inline int vivid_fb_init(struct vivid_dev *dev)
-+{
-+	return -ENODEV;
-+}
-+static inline void vivid_fb_deinit(struct vivid_dev *dev) {}
-+static inline void vivid_fb_clear(struct vivid_dev *dev) {}
-+static inline unsigned int vivid_fb_green_bits(struct vivid_dev *dev)
-+{
-+	return 5;
-+}
-+#endif
- 
- #endif
-
+ 	for (i = 0; i < cache->entries; i++) {
 -- 
-2.48.1.711.g2feabab25a-goog
+2.34.1
 
 
