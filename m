@@ -1,105 +1,244 @@
-Return-Path: <linux-kernel+bounces-548516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48945A545FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:12:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEC5FA54600
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:13:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95CA3188FA29
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:12:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECA3416E2E3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22CDB2080F6;
-	Thu,  6 Mar 2025 09:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DED02080E8;
+	Thu,  6 Mar 2025 09:12:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="muKwXhUH"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RefmqvHe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A9A207DEA
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D3912080E4
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:12:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741252357; cv=none; b=XyRtPZTm9Wm7f/MiODTpRv4yQGh6QLb3w18rdpPIw+FPTQhfltf5yJpmAdrKLuTBzhOW5nCKyHcV8gbf2X+Fvrla4xSJSPhCB+I2WKrHmnzVpFyVoQ16Iio9MxLQ7fOZbhPIQmKgElq+JT17STmcgedNMMdJqwGG892jUrwarXY=
+	t=1741252375; cv=none; b=Qi8rYD3b1M1hlMWT/BoPS8/NjGJUyH6DAvajxEZq3MwwAy8mOEI9cDkm8usvSmcXWsRuqMfI6V3bgSNVFZ1fbE38OgbjfCt775/T0OWdiVQvcDquwpcbNA78IuNKRcbiVknji8GAWCe7b4ah6THGQtdXyHPzWxykGIrmNwBbr1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741252357; c=relaxed/simple;
-	bh=GqmM445nk83WSKAnQchwc4aFd3IVUazkzTOEDmZ6Zms=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=M7XFwEB6TaQ8AH6x9zY3t3XbbgSAv31gS7tn9TOqna3M1U5KdkMBs4LgMubR6m8zEwdJEySPeE4JJbugq/9b3qPc2If1YNqmDaXaQiWs/sOrFoGloclf/Vj5EdMO0FNk30gLoTRREHmXRSquSVL5Tu3LaJc9hstO3Czu9WykNWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=muKwXhUH; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3061513d353so4322541fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:12:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741252354; x=1741857154; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GqmM445nk83WSKAnQchwc4aFd3IVUazkzTOEDmZ6Zms=;
-        b=muKwXhUHzOOGfyheW/y2AMH2JSDH155PgxsNHIAFFK+1mP/Rcrn7r2y1Bj2QyFc3Fa
-         ePoMcQWYCrTMGDtulRTk8BzAeyKinZI0a66Cq4woa0BW+JIZw4tDEQlQUxzKCRHrwyLG
-         I0iQenQwxl6Ly8Bf9PK3nXHCpkZSdnb4RArmcmQsM6e90yjFkuzHspWiMfzcffmiOitY
-         jrbeyXyTlq+1SEl2E8B6ELOgshiSy4wWA0vMM8PxI4is4DpNs+LFdWbSkJGxzluyTYRA
-         LP005WtIz3ILy0yvdgg6nQjywUk+eTh30EwP11pY6SYMXER0L0hsfOfP/3Ln06BrHISD
-         T6Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741252354; x=1741857154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GqmM445nk83WSKAnQchwc4aFd3IVUazkzTOEDmZ6Zms=;
-        b=B/yzMUK5pnWUJejgvFlJoMfAyA292RLj6lHzd3BbwPoQAFjq1K69B9MzI3tTawQCad
-         vIi4r00ujfMuDv9UnhDZX6QGXQSb/vYVl+fUaqrS82aUjeLjVrFsW3OUUhZIiLZq0tz5
-         U44LoTr4axVoUtCcCZJxvXkBE8L14d8cvESclaALZhhNfVhmHf03nV8Qy/8CQpLeKgTL
-         kOcieaeZW5pgJZ+bW4qWOOALfyYCaLkP6/RYljmWMpemshfisEe8iW7voYuWchDgZGwB
-         Oh2woGY3tYl9Um/+O151MBymbxyOHLkFlpTkD0sdYkfHfEvSENWltlOcjxroF2xjyM0q
-         y8EA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtoQhNi+wVIKrpl4UVB1bJUCS4qs85cwLXc30K0Xxml9FCwIk0oAhAEQNhaTtd5vuglVL3UZ1s6fqEfN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA2Re00iLOqAtPl8R3PKnt/nMUmCl5DHfdaYWiVqA4e+Aq/YxG
-	H5gwqDR2BkThCMwP56b5bNffi4zqg1FkrKPKk3nFot8wA8vLtLUs/vqyW97H3VNf2QUUiiCxyc+
-	i3XkdIOB6H3QGnMoU1GLOG2wJMSLssD9wB0Luhg==
-X-Gm-Gg: ASbGncsRZm6wv8UKIiqsB7WdO2xyQsd+gy/f/ClH4k/PgL/M9cH1r9hmPrztjimOXdG
-	Wa2XPTkmYAnui578MTVwKbJ16ROfuQ+JYJxd/fetHoRIChuHM2C3Rn+RmaLJhuNudjd60fWGUxg
-	4HLZeRu6/A+l1e2JBkpqt+xZw3Jg==
-X-Google-Smtp-Source: AGHT+IHJbjr7n6MNFdoyJ5OcRjeliVrB+L/QnglEfbXH7bLR2SWadB2qjeLyT4uRMCDJc2UAADFOOmMVPfRkheSpHCU=
-X-Received: by 2002:a2e:b8c9:0:b0:308:efa4:d277 with SMTP id
- 38308e7fff4ca-30bd7a507f6mr21783241fa.15.1741252353675; Thu, 06 Mar 2025
- 01:12:33 -0800 (PST)
+	s=arc-20240116; t=1741252375; c=relaxed/simple;
+	bh=mSmxSodve0PlbUHGBdbSXfSGjnqU4KNXXxkLRgpJjd8=;
+	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
+	 Content-Type:Date:Message-ID; b=DXP7eFsK18tCuGGr7Ek0ef+tTNQfkMKrcMAqrTpEw6geKaO74EaL/Dxg4eOLXYrNuP4f6H74qRJtv2zcdBxw7zMewLAT9Pi4I6yj/w1vImXlVZrW2p3cmb8PqOkQrQZ3eft9WFAMfyEzAe3bMQDwlHXmnGPubKrsICpsLg9emgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RefmqvHe; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741252372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OLLdr9AqfAd99MzyxSvOzi/mUQAgoq76kZjDdYfTJYM=;
+	b=RefmqvHeA0ksNJE4YpF8xWvjuPlpbtuTH+nLSOeGB07mP8s6iL7sh/JPk5r9mFZ/h1wfaq
+	Dm8NTSVEG6Cwd3x/aueofGcVM+0Rq4+4mYctjD73BpUDytt+lLJOfwftaE7bg5f3Kxfnxe
+	VLCi3txc0ot/p3h20lanmLXNWbGJdwM=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-249-pSKpUaHrPQWvv75Yu9GcHw-1; Thu,
+ 06 Mar 2025 04:12:47 -0500
+X-MC-Unique: pSKpUaHrPQWvv75Yu9GcHw-1
+X-Mimecast-MFC-AGG-ID: pSKpUaHrPQWvv75Yu9GcHw_1741252366
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6988C18001F8;
+	Thu,  6 Mar 2025 09:12:45 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 133A418009BC;
+	Thu,  6 Mar 2025 09:12:40 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+In-Reply-To: <3761344.1740995350@warthog.procyon.org.uk>
+References: <3761344.1740995350@warthog.procyon.org.uk>
+To: Christian Brauner <brauner@kernel.org>,
+    Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+    Jakub Kicinski <kuba@kernel.org>,
+    "David S.
+ Miller" <davem@davemloft.net>,
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+    linux-afs@lists.infradead.org, linux-fsdevel@lists.infradead.org,
+    netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [GIT PULL v3] afs, rxrpc: Clean up refcounting on afs_cell and afs_server records
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305221659.1153495-1-alexandre.belloni@bootlin.com>
-In-Reply-To: <20250305221659.1153495-1-alexandre.belloni@bootlin.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 6 Mar 2025 10:12:22 +0100
-X-Gm-Features: AQ5f1JqQwmuBLuVbVlZaXchGO6-cZ55N78DkfVd4KCTXsG2vg1w72ORT3ZwrFbs
-Message-ID: <CACRpkdZKbEXEabB+4uYvbBRXfFR_Jk-hHVtrZYD+cpKXgcMsnA@mail.gmail.com>
-Subject: Re: [PATCH] rtc: pl031: document struct pl031_vendor_data members
-To: alexandre.belloni@bootlin.com
-Cc: kernel test robot <lkp@intel.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <66440.1741252359.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
+Date: Thu, 06 Mar 2025 09:12:39 +0000
+Message-ID: <66441.1741252359@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On Wed, Mar 5, 2025 at 11:17=E2=80=AFPM <alexandre.belloni@bootlin.com> wro=
-te:
+Al spotted another bug (fix below).  Subject to his okaying of the patch, =
+I'll
+fold it down and ask for a repull.
 
-> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
->
-> Document the range related members of struct pl031_vendor_data.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202503011015.SYvdddTc-lkp@i=
-ntel.com/
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+David
+---
+afs: Fix afs_atcell_get_link() to handle RCU pathwalk
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+The ->get_link() method may be entered under RCU pathwalk conditions (in
+which case, the dentry pointer is NULL).  This is not taken account of by
+afs_atcell_get_link() and lockdep will complain when it tries to lock an
+rwsem.
 
-Yours,
-Linus Walleij
+Fix this by marking net->ws_cell as __rcu and using RCU access macros on i=
+t
+and by making afs_atcell_get_link() just return a pointer to the name in
+RCU pathwalk without taking net->cells_lock or a ref on the cell as RCU
+will protect the name storage (the cell is already freed via call_rcu()).
+
+Reported-by: Alexander Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: David Howells <dhowells@redhat.com>
+---
+ fs/afs/cell.c     |   11 ++++++-----
+ fs/afs/dynroot.c  |   21 +++++++++++++++++----
+ fs/afs/internal.h |    2 +-
+ fs/afs/proc.c     |    2 +-
+ 4 files changed, 25 insertions(+), 11 deletions(-)
+
+diff --git a/fs/afs/cell.c b/fs/afs/cell.c
+index 4ca713d3862c..0168bbf53fe0 100644
+--- a/fs/afs/cell.c
++++ b/fs/afs/cell.c
+@@ -57,7 +57,8 @@ static struct afs_cell *afs_find_cell_locked(struct afs_=
+net *net,
+ 		return ERR_PTR(-ENAMETOOLONG);
+ =
+
+ 	if (!name) {
+-		cell =3D net->ws_cell;
++		cell =3D rcu_dereference_protected(net->ws_cell,
++						 lockdep_is_held(&net->cells_lock));
+ 		if (!cell)
+ 			return ERR_PTR(-EDESTADDRREQ);
+ 		goto found;
+@@ -394,8 +395,8 @@ int afs_cell_init(struct afs_net *net, const char *roo=
+tcell)
+ =
+
+ 	/* install the new cell */
+ 	down_write(&net->cells_lock);
+-	old_root =3D net->ws_cell;
+-	net->ws_cell =3D new_root;
++	old_root =3D rcu_replace_pointer(net->ws_cell, new_root,
++				       lockdep_is_held(&net->cells_lock));
+ 	up_write(&net->cells_lock);
+ =
+
+ 	afs_unuse_cell(old_root, afs_cell_trace_unuse_ws);
+@@ -869,8 +870,8 @@ void afs_cell_purge(struct afs_net *net)
+ 	_enter("");
+ =
+
+ 	down_write(&net->cells_lock);
+-	ws =3D net->ws_cell;
+-	net->ws_cell =3D NULL;
++	ws =3D rcu_replace_pointer(net->ws_cell, NULL,
++				 lockdep_is_held(&net->cells_lock));
+ 	up_write(&net->cells_lock);
+ 	afs_unuse_cell(ws, afs_cell_trace_unuse_ws);
+ =
+
+diff --git a/fs/afs/dynroot.c b/fs/afs/dynroot.c
+index 0b66865e3535..9732a1e17db3 100644
+--- a/fs/afs/dynroot.c
++++ b/fs/afs/dynroot.c
+@@ -210,12 +210,23 @@ static const char *afs_atcell_get_link(struct dentry=
+ *dentry, struct inode *inod
+ 	const char *name;
+ 	bool dotted =3D vnode->fid.vnode =3D=3D 3;
+ =
+
+-	if (!net->ws_cell)
++	if (!dentry) {
++		/* We're in RCU-pathwalk. */
++		cell =3D rcu_dereference(net->ws_cell);
++		if (dotted)
++			name =3D cell->name - 1;
++		else
++			name =3D cell->name;
++		/* Shouldn't need to set a delayed call. */
++		return name;
++	}
++
++	if (!rcu_access_pointer(net->ws_cell))
+ 		return ERR_PTR(-ENOENT);
+ =
+
+ 	down_read(&net->cells_lock);
+ =
+
+-	cell =3D net->ws_cell;
++	cell =3D rcu_dereference_protected(net->ws_cell, lockdep_is_held(&net->c=
+ells_lock));
+ 	if (dotted)
+ 		name =3D cell->name - 1;
+ 	else
+@@ -324,12 +335,14 @@ static int afs_dynroot_readdir(struct file *file, st=
+ruct dir_context *ctx)
+ 		return 0;
+ =
+
+ 	if (ctx->pos =3D=3D 2) {
+-		if (net->ws_cell && !dir_emit(ctx, "@cell", 5, 2, DT_LNK))
++		if (rcu_access_pointer(net->ws_cell) &&
++		    !dir_emit(ctx, "@cell", 5, 2, DT_LNK))
+ 			return 0;
+ 		ctx->pos =3D 3;
+ 	}
+ 	if (ctx->pos =3D=3D 3) {
+-		if (net->ws_cell && !dir_emit(ctx, ".@cell", 6, 3, DT_LNK))
++		if (rcu_access_pointer(net->ws_cell) &&
++		    !dir_emit(ctx, ".@cell", 6, 3, DT_LNK))
+ 			return 0;
+ 		ctx->pos =3D 4;
+ 	}
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index addce2f03562..440b0e731093 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -288,7 +288,7 @@ struct afs_net {
+ 	/* Cell database */
+ 	struct rb_root		cells;
+ 	struct idr		cells_dyn_ino;	/* cell->dynroot_ino mapping */
+-	struct afs_cell		*ws_cell;
++	struct afs_cell __rcu	*ws_cell;
+ 	atomic_t		cells_outstanding;
+ 	struct rw_semaphore	cells_lock;
+ 	struct mutex		cells_alias_lock;
+diff --git a/fs/afs/proc.c b/fs/afs/proc.c
+index 0af94c846504..9d4df9e4562b 100644
+--- a/fs/afs/proc.c
++++ b/fs/afs/proc.c
+@@ -207,7 +207,7 @@ static int afs_proc_rootcell_show(struct seq_file *m, =
+void *v)
+ =
+
+ 	net =3D afs_seq2net_single(m);
+ 	down_read(&net->cells_lock);
+-	cell =3D net->ws_cell;
++	cell =3D rcu_dereference_protected(net->ws_cell, lockdep_is_held(&net->c=
+ells_lock));
+ 	if (cell)
+ 		seq_printf(m, "%s\n", cell->name);
+ 	up_read(&net->cells_lock);
+
 
