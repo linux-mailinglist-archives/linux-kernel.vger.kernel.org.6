@@ -1,110 +1,160 @@
-Return-Path: <linux-kernel+bounces-548209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13CA2A541AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:28:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD9B2A541B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:32:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4972C16D584
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:28:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13D8616EAEA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A355F19CC0C;
-	Thu,  6 Mar 2025 04:27:56 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D895D18C035;
+	Thu,  6 Mar 2025 04:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YOYjiP0y"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEAB718FDAA;
-	Thu,  6 Mar 2025 04:27:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33912E3388;
+	Thu,  6 Mar 2025 04:32:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741235276; cv=none; b=EuVmtoQla0nY34/fx5SNtnKO3qQIfzCWgDTUqiwpNfdgkLjdDzNbh14wlvWTAhCXAv27wMUTAmdVd0o84zy0/AJrno7Go1ZDowzxqgeHVrZsPFyis/28xCZs2psm3SF9DmKghnI1cqRCl1NL5rXu6LfVTfQS83fgGCh3kdo/Cow=
+	t=1741235534; cv=none; b=tN7sJb6t6GxTaQBFc/DJG0zCJEnReljIcadrolUfvTe8FGUu7vud35eH4B/oFWcI0P5DzgbSlBZBAe++dg98P1XflYMIpD4WrYp8OLbE7UGsczs8vvbp81zoqh+9DH7s06zdEsePBE47E73FMi2XshlDSHobq/+3RXgcu0bcx8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741235276; c=relaxed/simple;
-	bh=+FVxQn4sdkfmsJ5BFi35qzfI/Ggq/Z4b3+c3bvz3hUY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d9H4HOjALZ+6WLzEH6q18gP/ZVvsQHn+IR9h5DHepXLTh8CPBxdB4W5rpKvCVH+qeSnJG86JO4fAu9vk8grwykB8leDOW/FjjMm5B7/fEHgPV9u42lbsiXjWN0mDK45UiVfsWIww4w6KoCfK8m/uceJs0NnxsnjCCyuWIS+86zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowADn7286JMlno9vFEg--.61141S2;
-	Thu, 06 Mar 2025 12:27:42 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: jani.nikula@linux.intel.com,
-	inki.dae@samsung.com,
-	sw0312.kim@samsung.com,
-	kyungmin.park@samsung.com,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	krzk@kernel.org,
-	alim.akhtar@samsung.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>
-Subject: [PATCH] drm/exynos/vidi: Remove redundant error handling in vidi_get_modes()
-Date: Thu,  6 Mar 2025 12:27:20 +0800
-Message-ID: <20250306042720.2296-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1741235534; c=relaxed/simple;
+	bh=xkhEKkUC7blEgMYB8E+nSpBLpOAnSW6t/WgQrTQH0Cw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Emqo3pBIxrD2cy/vskDvRa4FdMgEneWVKfML/fvdrgzzeRCEnCxlC1m5N9dlCQdBcXdkq4i45DkuX/pmSvMOe7qWAUwUeacFtPsPUM8tY4CujKhfT0UKhQGO5yHAOwNhtTqJcoFVR+XtH5NVxOulms4bTnDjDADk0rFNFg57mqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YOYjiP0y; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4750ca77d47so1832351cf.0;
+        Wed, 05 Mar 2025 20:32:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741235531; x=1741840331; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Oo9vMnshP+gQzXIBd9hFsb1B6YkjwP/ySXah+gVflkw=;
+        b=YOYjiP0yIBJNSfGITnEa5IJ0inm1ZYkiHPfM+wb4AWZpxV96l1hJJP3X2YEBiX1TJ9
+         VCVN3EEXpYwJyR/dCN6AFnWGC8xgBpCYt7WcGJQdZJuSA8Moo5BPdw5YW/Wx/pt3vPeJ
+         G8zUz3ApEqb5MW6wiKUAGBe+kqamF8NKqZU04ZGw/7yNiO8V6bzkjQVR2RmNhS/K1s7p
+         HDmLqqhsR0W62gdghZo7S9223dS1+wuwTduDyZ+fxaVuIgTep7vdasridw0bTQaY7DnK
+         Qu18eaAZH4YJizgBrm1ZVCqIb5KAJTs+eXpFcWuqkL30bspOWE28F139SQExcS1PlKxs
+         9spg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741235531; x=1741840331;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Oo9vMnshP+gQzXIBd9hFsb1B6YkjwP/ySXah+gVflkw=;
+        b=lGRvJY7SzFsyKpiAoUUFbHo4aIRFp5Sm9Gonk3i0bo3Bk7gxlR6BP5WitmILfqNyZ2
+         H1SugAnCrksc3uhpYbIVm9EEdcgyetvGfTVbQl3kPgz00KlBcufecr4wI/NwpxbAJfd9
+         vSv4kV9vouo8/6PAXM8HGGFkRDgel8424vBnkB1xQBR/UEQtAN0DDYqmUyCIKSegjZsI
+         xcwEgRso6JlyHDcQT9gkXSjH6lGf06foWS/o6pzdU4NTFWT106Bm0Y42Hc8sIxQYxvGf
+         VfdHXDPKo0tmaDQsithQIpXG/tZRm+XxUI9atBPpNeQW6/KzLaxruoOTzTNNzLuSotl0
+         tHHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVKLQJm3GnvA1isqRrL6xutb3r1c58t1aa3DqAj4awbLt46RudOI03q+EZY0P+307nHyx287bYfPaJ9QH8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywlh4pe9r4Yo4+mSgkx6B5pSF2u53iga4wP2CU0GILyZaqS5v47
+	c2yyfNQ9uVBtbXMC7bNw5PRHLifto1p0K2mjEi10XoX2Ph4h25qI
+X-Gm-Gg: ASbGncubXf1SHOLOKlLOxe9vlBcmMDmMuWti5rFLkMUlReh6XmfCeEV5DDI/LO29Dpd
+	+/IECdJKzch2i0XCmHkNjo6jl/GsYL+oiU2Wyq9XpSrbYqJ78ezAojMiqm9LyPYyG0olto50RNX
+	FLqABek9nOW4kXDdtNUR9YnK6cWlfhDZ27Lu241IDYZEq9PNOl/lHlfH8JNZmIDaCA7MolOBZgf
+	zDAH9dGR3uQVA8guNzWsSuU0f29p1mpfzCKNfZDP23G+74dQXOKN2ElFDHNd4w+Sc+r5ATGHLa8
+	ntx8QFV0BSQj5rqS+EDkMswTQkvKM2eAV4LxIqgG2k+5z6mMUWBNIwjKmftdaY0U8w==
+X-Google-Smtp-Source: AGHT+IH3w3iQKgLlDu7tnyyWZ+7J7XmX1B0tq1Sdtd/dwUm1EtMnrv/MzSUvz02yVOWFeWNWq5JriQ==
+X-Received: by 2002:a05:622a:386:b0:472:636:f60e with SMTP id d75a77b69052e-4750b4bf362mr68420651cf.34.1741235531475;
+        Wed, 05 Mar 2025 20:32:11 -0800 (PST)
+Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:2726:6286:a126:9027])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4751d96b568sm3123801cf.25.2025.03.05.20.32.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 20:32:11 -0800 (PST)
+From: Adam Simonelli <adamsimonelli@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ John Ogness <john.ogness@linutronix.de>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>
+Subject:
+ Re: [PATCH v7 3/3] tty: Change order of ttynull to be linked sooner if
+ enabled as a console.
+Date: Wed, 05 Mar 2025 23:32:09 -0500
+Message-ID: <8533590.alqRGMn8q6@nerdopolis2>
+In-Reply-To:
+ <CAHp75Ve02Ma1EswjnsxiV5uyh3A9NU0B90QLFGS13ifr594QFw@mail.gmail.com>
+References:
+ <20250305042930.3453265-1-adamsimonelli@gmail.com>
+ <20250305042930.3453265-4-adamsimonelli@gmail.com>
+ <CAHp75Ve02Ma1EswjnsxiV5uyh3A9NU0B90QLFGS13ifr594QFw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowADn7286JMlno9vFEg--.61141S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7urW5Ww1UGr1DurWkXr4fKrg_yoW8GryxpF
-	W7Kr92yryDt3yrAa4jyF1FkFyYya9FkFWqgr4Duwnxur4UArn7ZF4ft3WUXa48Cr95Z34j
-	v3WDtrs8JF1kCr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBj14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26r1I6r4UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1Y6r17McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E
-	8cxan2IY04v7MxkF7I0En4kS14v26r1q6r43MxkIecxEwVAFwVW8XwCF04k20xvY0x0EwI
-	xGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480
-	Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7
-	IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k2
-	6cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUhZ2-UUUUU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiCQ4MA2fIkRkNFQACs1
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 
-In the vidi_get_modes() function, if either drm_edid_dup() or 
-drm_edid_alloc() fails, the function will immediately return 0,
-indicating that no display modes can be retrieved. However, in
-the event of failure in these two functions, it is still necessary
-to call the subsequent drm_edid_connector_update() function with
-a NULL drm_edid as an argument. This ensures that operations such
-as connector settings are performed in its callee function, 
-_drm_edid_connector_property_update. To maintain the integrity of
-the operation, redundant error handling needs to be removed.
+On Wednesday, March 5, 2025 2:22:06 PM EST Andy Shevchenko wrote:
+> On Wed, Mar 5, 2025 at 6:30=E2=80=AFAM <adamsimonelli@gmail.com> wrote:
+> >
+> > From: Adam Simonelli <adamsimonelli@gmail.com>
+> >
+> > If CONFIG_NULL_TTY_DEFAULT_CONSOLE is enabled, and CONFIG_VT is disable=
+d,
+> > ttynull will become the default primary console device, based on the li=
+nk
+> > order.
+> >
+> > Many distributions ship with CONFIG_VT enabled. On tested desktop hardw=
+are
+> > if CONFIG_VT is disabled, the default console device falls back to
+> > /dev/ttyS0 instead of /dev/tty.
+> >
+> > This could cause issues in user space, and hardware problems:
+> >
+> > 1. The user space issues include the case where  /dev/ttyS0 is
+> > disconnected, and the TCGETS ioctl, which some user space libraries use
+> > as a probe to determine if a file is a tty, is called on /dev/console a=
+nd
+> > fails. Programs that call isatty() on /dev/console and get an incorrect
+> > false value may skip expected logging to /dev/console.
+> >
+> > 2. The hardware issues include the case if a user has a science instrum=
+ent
+> > or other device connected to the /dev/ttyS0 port, and they were to upgr=
+ade
+> > to a kernel that is disabling the CONFIG_VT option, kernel logs will th=
+en be
+> > sent to the device connected to /dev/ttyS0 unless they edit their kernel
+> > command line manually.
+> >
+> > The new CONFIG_NULL_TTY_CONSOLE option will give users and distribution
+> > maintainers an option to avoid this. Disabling CONFIG_VT and enabling
+> > CONFIG_NULL_TTY_CONSOLE will ensure the default kernel console behavior
+> > is not dependant on hardware configuration by default, and avoid
+> > unexpected new behavior on devices connected to the /dev/ttyS0 serial
+> > port.
+>=20
+> ...
+>=20
+> Since it touches the link order only under drivers/tty the commit
+> message should mention what the effect will be on the consoles drivers
+> for which are located elsewhere.
+>=20
+>=20
 
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
----
- drivers/gpu/drm/exynos/exynos_drm_vidi.c | 3 ---
- 1 file changed, 3 deletions(-)
+OK, I will think of what to say. Based on what I tested in throwing a prefe=
+rred
+console in x86 though, it seems like ttynull was still at the top of the li=
+st
+of /proc/consoles still, I just have to come up with a good way to mention =
+that
+in the commit message.
 
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-index fd388b1dbe68..a956cdb2f33a 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
-@@ -312,9 +312,6 @@ static int vidi_get_modes(struct drm_connector *connector)
- 	else
- 		drm_edid = drm_edid_alloc(fake_edid_info, sizeof(fake_edid_info));
- 
--	if (!drm_edid)
--		return 0;
--
- 	drm_edid_connector_update(connector, drm_edid);
- 
- 	count = drm_edid_connector_add_modes(connector);
--- 
-2.42.0.windows.2
 
 
