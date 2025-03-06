@@ -1,547 +1,495 @@
-Return-Path: <linux-kernel+bounces-549627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73F81A554C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:21:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7704BA554EB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:26:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65A90163DA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:19:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDFCA1682FA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:26:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD0127603A;
-	Thu,  6 Mar 2025 18:18:27 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56FDC26FA5A;
+	Thu,  6 Mar 2025 18:26:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="px9oXQui"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2069.outbound.protection.outlook.com [40.107.236.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC560265631
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 18:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741285104; cv=none; b=s+ZSGuUhoTcLtEjpVJW6Ul65Dl1uwGvUcpArx4+touDd7sv+DW0LgIz/uqcPaq7VDpSg8uWioLuTbdhkQm1yUEuk0tYvuHnOSq7gta7cheFM+VFi55diqGbc5pkP8Skew1dR3wHQzQ0hv4IXtLoCZVakW56BL0XvuJqJ5a7rZJ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741285104; c=relaxed/simple;
-	bh=Zt8m5vo51F+H0+x6A0yIMVivgwewLLiPvr8APU65bXc=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=i31aCgYqVFSr/MSARJxtNjAjCLj6Wacuz3ceGrIImJF38BCgGC7spE4cLMYy31ndSIAV/PFFDFmwzyFj7nAdVs/1qJFQ85Xw2lXX57V+p9RKCpjM2uzrD6GMDq20I7mHKksERuX9noNFJHGCOHEuKHr1ZhiSOggTpxeVR9RSE08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D967C4CEEA;
-	Thu,  6 Mar 2025 18:18:24 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1tqFne-00000000PH9-0eoi;
-	Thu, 06 Mar 2025 13:18:26 -0500
-Message-ID: <20250306181826.017322348@goodmis.org>
-User-Agent: quilt/0.68
-Date: Thu, 06 Mar 2025 13:18:05 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Tomas Glozar <tglozar@redhat.com>,
- John Kacur <jkacur@redhat.com>,
- Luis Goncalves <lgoncalv@redhat.com>,
- Gabriele Monaco <gmonaco@redhat.com>,
- Clark Williams <williams@redhat.com>
-Subject: [for-next][PATCH 04/10] rtla/timerlat: Add BPF skeleton to collect samples
-References: <20250306181801.485766945@goodmis.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F2D269CF1;
+	Thu,  6 Mar 2025 18:26:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741285583; cv=fail; b=Uer5ysL/vcBaCgH2t7JBZFYJ1N+Ojxlc0QXi2rxiy0FMurfsDnhhsdQoiZae6keDLMZJBWPOeUO3ULFRQjsE82JqcRMH+3oo8ZUVEeMPvZj2VTSESRmaq1u9MkgjcAuENWuX/JbJHFyyN7C7C4IvpO94+UV/vq78Ee62DzXzUHY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741285583; c=relaxed/simple;
+	bh=5jiWaqBqrPiv/in+dAH/eO4Mis12V+lX/uFhnp9WwbU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Dxo8mjZmbJ/pmH0oQqdiuUZUfyLj0Cj/5Uzxey0DEuSyY5LGlq2whvWy19s0o9M0dwvkTLnmAkOjiDrhc4zqutotCqzafpdJv97yRoaj3SiSN6WFA8X5KhUvAEouoP++WOSWg96g0mwKh9QYNYqc6NPJ45IasmlnjbISd5rj9uc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=px9oXQui; arc=fail smtp.client-ip=40.107.236.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=p0TT2M9LppHoLkDyijDi9gFAF5clpZ/h+CuyItK4XHiAmy2ZF1+LYXahv4A0j8oFOragIO/+rIGi+sS58CjV6HsoHEyQtsNt7+XJsexz8NQaJ84WS4XOEMwA7JPyjKLMO1bxTLaWgwmO7dyPGRF2QUQ1or283XDDzv5tTbTPGA+/ObgDch6spRCaT+zJYP5I3FMK8tAyumMdDbL8A3ripGXn4xcQhI5Awz97o7fqmoQWg4QPvtdLXk4Eai8gih1QSjw7ku1195r9EFGPx9BTI/qv8ACskHFYIUhSjzDzjQ2Z/atz89jkUHRjw8picYFSSeYLerkIG6jn3VNqJ+oyaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=giYADNXTv+kDfjvPJ+8gf/jIrDOn7b1dtGdLC0YZako=;
+ b=QwVkxq1WTbXGIMNad8vjKsC1hODNV9rrOIdmMYI1Mzx5HAdEN6u/91ToIL16AxQhXX8UcL5sVkZGsIJulel9PAxYH53Vwzx7YhgsWRfGUZAh+styqzqjumqc5htcO8qdGqpsyRAt71b8pK+F10fOT5kphQJ2a3iQLAJadAngGFNacbxdxT0AvYc8uMrzoqNVT+xYCOStd3Dkxulbu1RFFfWthEIQGMWYfeVj1UfqNpJ5ZR86GexwIk1/YFNmJGg43ngVw3amZomIAovmQJc0xyA3B2LqZyDy60oZ1vg7PVUFyCZknygMz8YeNv+7CI0Ier9QwBUdz2lIc9fM8qxEuw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=giYADNXTv+kDfjvPJ+8gf/jIrDOn7b1dtGdLC0YZako=;
+ b=px9oXQui5Bi99Q7o0VZjLBwGvLsEUb5mgGbXPRR03X1Pahe4zssVRE0u5//cBcRVItqVf2U34hfg+Nb31Iwiw68n1PD7NNX19cL0TCbFBEmFoOH48en3Y9i+x1KmI0VQ4Ah+fkvd2xNdjQttUdhM9mtfEuKwj+gDkuDKcpnTyJVHQ+CdCgZueOMr+Oe9/odJudTit5wOojz9REUz3GtDxkWjD2MQ0XpQRKJXRFJn48+eGC5ouBK+IzdSPbWCz6Bpx8z4Lq9teUf5X5MqCMjppOkuS+k6zZknBjJy8V726iFUZrdwALKqpT/9Wf5X46jZuE1/7sMKLIxlM58yuTAKoA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
+ by CYYPR12MB8921.namprd12.prod.outlook.com (2603:10b6:930:c7::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.20; Thu, 6 Mar
+ 2025 18:26:17 +0000
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5%7]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
+ 18:26:17 +0000
+From: Andrea Righi <arighi@nvidia.com>
+To: Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Changwoo Min <changwoo@igalia.com>
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 2/4] sched_ext: idle: Introduce the concept of preferred CPUs
+Date: Thu,  6 Mar 2025 19:18:05 +0100
+Message-ID: <20250306182544.128649-3-arighi@nvidia.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250306182544.128649-1-arighi@nvidia.com>
+References: <20250306182544.128649-1-arighi@nvidia.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: MI1P293CA0011.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:2::20) To CY5PR12MB6405.namprd12.prod.outlook.com
+ (2603:10b6:930:3e::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|CYYPR12MB8921:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3b0735d3-247c-452c-4a79-08dd5cdc6272
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7lAtmtMq+82sU/31FhgpNkQwObx/43e4mkFHxXJv5++vo29eYg76VvoIrf7S?=
+ =?us-ascii?Q?NcYaSjt4aViRuf8Qz4EXFxpInIqarJ962WsEMA9Y3incv4dMRct7Z/QsrBaS?=
+ =?us-ascii?Q?YxrPi6wvpe2Jbw/ZfFi1xZ7OW0YURsJRDs8+TcG8Ce3uxlqOnlFJdCSD98UM?=
+ =?us-ascii?Q?U+v7mOECp3pDMgJ6xKsCypPI7iHFzn/J0O9A4BkA7ndYaLl2o3nUuV9Q8iKY?=
+ =?us-ascii?Q?KyFxwejekiMxRbpCe5Q/IrH3xJRTuIxfJJupbyrDouSdPQchIzhBf7r7hcXE?=
+ =?us-ascii?Q?uEcCKrCOREsJBsO+qXe8XhzV4xZlhqK0YvID0Krh+YvTQwymqTZfytH0yjDe?=
+ =?us-ascii?Q?TR7AN/LvNZKtS7ygTrWKLESJplZQJqM90pQfAib73Ip6Jerj9ShGBII75tAj?=
+ =?us-ascii?Q?R+SzfBVy9LDhXVgYrYeukT09x/BLkbVPwIaFao/JJ8enSgDiE5u1rycTG1q9?=
+ =?us-ascii?Q?dPWnc0UjpWUUN9XdLIJXfsS9YYsFFrHV0aCQdpELi1NlmEk809oqWYrnlXNS?=
+ =?us-ascii?Q?jJNtNmc9OWq/0JMyCGPRwkmqBj0u/RvixCK/bvciw6t9LHfuQ/9fWR69Lm0Z?=
+ =?us-ascii?Q?dVACcyEYsMJQar5Aty9jE5YiY2uwJ+PI3c5SYWxzsn9uLLD2pGkYi5pzmZU1?=
+ =?us-ascii?Q?D3hArSdr/RXhxx9a7pZq6HKIuVDKzKVpatN01jlFsZj8HQBItWEEHI201UHU?=
+ =?us-ascii?Q?71rn+ouB0I3QQJT3U2at/Lm4UDB2KgZNYZDHwwB5/j5FuzGh18tq4YEw2G5O?=
+ =?us-ascii?Q?fyTYkbxaQbtBXwPNl18JwqJ2NflrU4Rc0ewCQnwVWnAM2dF4BeXTRdjqlEjk?=
+ =?us-ascii?Q?p0re7KpRw1iksgeOqS8Z3x4Z63EPggNdnFHCfhi1YPW4NtCbH4bgi4ibuW4+?=
+ =?us-ascii?Q?3q4i5Zup/IoHqfxgKsRfFu6o54GaKBFYYiMmjEyURdrDhOcxARj+hW6j9KLU?=
+ =?us-ascii?Q?k+DPvL5lz20yKKGcts7TXcadFEHzhvS83v78+UYgoM5kqe8xV81xdCESW5YH?=
+ =?us-ascii?Q?7g+gbLwRU85/xn5KWCKN2uOFrf+LhJK2Nb1p9NmkuiYohR4Fk4ICc/6t855D?=
+ =?us-ascii?Q?2GQFAvhaz6IocbuOTJy2z7Fh0kfKnHk/+gVnu0NlV1Z9DE/cAkmbP8m2S7Hf?=
+ =?us-ascii?Q?RkUURd5E1/ndVS4y0O1rEhMG9rYGXF03p/81ggRmlX4YKHMORSiL4kjBbm73?=
+ =?us-ascii?Q?oKQUCdIO/rmPfW9rx+s8CM+j4U3lH9Hv5sjkoGaP//Cc7HHS9YQ+NpKMScFa?=
+ =?us-ascii?Q?yV67qLtTLd62EVRu4wTQ3qlyRAF3k0HESFDor5h8tBO5NEmz2CdgmeZB1m1Y?=
+ =?us-ascii?Q?bbZtlTu7r1lKev8ke138kDTLZHuO/LGgr5DtxCCo8YY7RsgF+RLChyuwzvgy?=
+ =?us-ascii?Q?loWLGXry7tNPFE0db+koxXD3fqG8?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?yUhR0dn6ncRufcNszSvqPR7BR5ecqB/goPeY3YCXgsfMStunfTZxpAVsB/ty?=
+ =?us-ascii?Q?amGPcCLwbDnPhvlyRW2AXGdBF/UI8TP44xKK6CMnieVaKZ3wF3ldsIG8dTap?=
+ =?us-ascii?Q?wfBxg1C7rKmaiW7Vn73OOXl9BYD6mdB4HGbgwFyCUnxJRfv7MXlUL3wYh8EG?=
+ =?us-ascii?Q?rSNyca/rmWKkqMCqSahrRvGC5KUspa8a2G8N/WsE0E5OIZjgvEMf5dR6Gdqw?=
+ =?us-ascii?Q?yu+dQAUqgPUsSanp+SOOUXhfrcih3ovQPxn57wWH0b+2/3HG3ErTd4AgS7PA?=
+ =?us-ascii?Q?CLi4gysIglHcPUMNBjr3t5EZ7m5eEyxsTJa4xPTFenxCNtySb8foI4nwX1iy?=
+ =?us-ascii?Q?8Gldf5r3kmmhElmx+lIA6yDNExec5YqI4CBVswdqQ38XHNYWsZ/SesmMkPbn?=
+ =?us-ascii?Q?fptB44opvCuBwiBljUG7SCwJAgP5HA0LLCst8OwLes+ARal00FWfPTJvJygg?=
+ =?us-ascii?Q?iFrI80tShhnPNxvEaHvhEpAfcJOaVypOBEVCBHiAdVVl9UtvhJItiTVO+3C1?=
+ =?us-ascii?Q?VY6oGEJkr+CQaxXGZ6VdtsMm0W2oowfSOLtIjRO2o5LWfNyb0A38Kydsqg4+?=
+ =?us-ascii?Q?iCP7NjfsFEN1A21Sho1vaGjfV5+fBb/o90EoE+D/1cSwuLJIokLmk/UoR3YU?=
+ =?us-ascii?Q?vDydcQXeDiOau2RUmRL6kU+KlqZCRsFUNlOWEXIC7qv/EoNvEsaChDrti0bi?=
+ =?us-ascii?Q?p10x1QXUjjDrfbL5lNPPFK/D5g2mudyPL1Pfh532uw/vmVsCs7ge8iklMEH4?=
+ =?us-ascii?Q?OrYT8qVys8UtEoqdIGHihfcQJKFOd57Oa6O1qQf+3Cci2hLSkyjrp71LtKAu?=
+ =?us-ascii?Q?/qk5x7nOfkEIil5jcstjVbV3F5k8rBX4/a2ZYXUeGw4rqSzzkcBT2Pofi3WB?=
+ =?us-ascii?Q?u4PLegGF07VUjBAImHaqdmV6F3UejoaISR7QfEPUWVsC+tI2sMcBaJaJ18w0?=
+ =?us-ascii?Q?eZ3FQYiQjsr80fHALYZYWUo9WSuMLMeqbyTFv/boz0Ws2Ku6dFpr/HhCk8SC?=
+ =?us-ascii?Q?CpEp5AtCsqoI2tKmviSuMmuABbTF/TBxPb+LFqMMCNsIohWdt8M2zGb8pt2G?=
+ =?us-ascii?Q?chLMHe0/kd3K8AAnQ7Qa2qOAINF7gDqbYDm8HuOH48vExqyMJWATvJiNtZ4Y?=
+ =?us-ascii?Q?NffZlQhoFtB58kIFKHyNBobvTPwSdMOq50hDITH09hA2tuGUOnWqaf6oi457?=
+ =?us-ascii?Q?jBGBCbj3HfpbNF7pf+0YoM25+ijiCyfFw/cJa/lM9jtNd+PDaMe3YV9NMmhD?=
+ =?us-ascii?Q?2p9ymQI4O2Ek0tAUnygJE8fzhWN0zpU6q8gIJg9SgwGuq9GOxJIIWo5zjFIn?=
+ =?us-ascii?Q?JBMG1jIgK9fYEEfq8VO1sJt6HXRxa4VnjKkLVZU7fmWMXdpcy6948fkbL1pW?=
+ =?us-ascii?Q?vKOkjqyKS2wbHbE8fx7j41U2QDyQGp5lTHRerffp5yJhSVJLKGClublK3rG2?=
+ =?us-ascii?Q?MDZR1RdyLugCNfUtrStpvp0hynvqwtGmN2DgMnF886Uq10NqL1/8om1/cB86?=
+ =?us-ascii?Q?1OGERChR+aaHdKOp6cWrvy5d7AGF7Kwtv8rJx7+6PhEWGf3QFQnguSNpEbSe?=
+ =?us-ascii?Q?9f0jdLIZTTvxd++jDRTlj6EnDut+CeNrTsntapeH?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b0735d3-247c-452c-4a79-08dd5cdc6272
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 18:26:17.3297
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: KgWN2OX5ScoEKjvLT8ZdZkgD9iPRUQSiLGKefGW6zO46x5kGyJcP8T5fLNbmEW5YmeRiXyMuxUGUEgnAj8KRTw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CYYPR12MB8921
 
-From: Tomas Glozar <tglozar@redhat.com>
+Many scx schedulers define their own concept of scheduling domains to
+represent topology characteristics, such as heterogeneous architectures
+(e.g., big.LITTLE, P-cores/E-cores), or to categorize tasks based on
+specific properties (e.g., setting the soft-affinity of certain tasks to
+a subset of CPUs).
 
-Add BPF program that attaches to the osnoise:timerlat_sample tracepoint
-and collects both the summary and the histogram (if requested) into BPF
-maps (one map of each kind per context).
+Currently, there is no mechanism to share these domains with the
+built-in idle CPU selection policy. As a result, schedulers often
+implement their own idle CPU selection policies, which are typically
+similar to one another, leading to a lot of code duplication.
 
-The program is designed to be used for both timerlat-top and
-timerlat-hist. If using with timerlat-top, the "entries" parameter is
-set to zero, which prevents the BPF program from recording histogram
-entries. In that case, the maps for histograms do not have to be
-created, as the BPF verifier will identify the code using them as
-unreachable.
+To address this, introduce the concept of preferred domain (represented
+as a cpumask) that can be used by the BPF schedulers to apply the
+built-in idle CPU selection policy to a subset of preferred CPUs.
 
-An IRQ or thread latency threshold might be supplied to stop recording
-if hit, similar to the timerlat tracer threshold, which stops ftrace
-tracing if hit. A BPF ringbuffer is used to signal threshold overflow to
-userspace. In aa-only mode, this is the only function of the BPF
-program.
+With this concept the idle CPU selection policy becomes the following:
+ - always prioritize CPUs from fully idle SMT cores (if SMT is enabled),
+ - select the same CPU if it's idle and in the preferred domain,
+ - select an idle CPU within the same LLC domain, if the LLC domain is a
+   subset of the preferred domain,
+ - select an idle CPU within the same node, if the node domain is a
+   subset of the preferred domain,
+ - select an idle CPU within the preferred domain,
+ - select any idle CPU usable by the task.
 
-Cc: John Kacur <jkacur@redhat.com>
-Cc: Luis Goncalves <lgoncalv@redhat.com>
-Cc: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Clark Williams <williams@redhat.com>
-Link: https://lore.kernel.org/20250218145859.27762-5-tglozar@redhat.com
-Signed-off-by: Tomas Glozar <tglozar@redhat.com>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+Moreover, introduce the new idle flag %SCX_PICK_IDLE_IN_PREF, that
+enforces strict selection within the preferred domain. Without this
+flag, the preferred domain is treated as a soft constraint: idle CPUs
+outside the preferred domain can be considered if the preferred domain
+is fully busy.
+
+If the preferred domain is empty or NULL, the behavior of the built-in
+idle CPU selection policy remains unchanged.
+
+This only introduces the core concept of preferred domain. This
+functionality will be exposed through a dedicated kfunc in a separate
+patch.
+
+Signed-off-by: Andrea Righi <arighi@nvidia.com>
 ---
- tools/tracing/rtla/.gitignore         |   1 +
- tools/tracing/rtla/Makefile           |  14 ++-
- tools/tracing/rtla/src/Build          |   1 +
- tools/tracing/rtla/src/timerlat.bpf.c | 149 +++++++++++++++++++++++
- tools/tracing/rtla/src/timerlat_bpf.c | 166 ++++++++++++++++++++++++++
- tools/tracing/rtla/src/timerlat_bpf.h |  59 +++++++++
- 6 files changed, 389 insertions(+), 1 deletion(-)
- create mode 100644 tools/tracing/rtla/src/timerlat.bpf.c
- create mode 100644 tools/tracing/rtla/src/timerlat_bpf.c
- create mode 100644 tools/tracing/rtla/src/timerlat_bpf.h
+ kernel/sched/ext.c                   |   3 +-
+ kernel/sched/ext_idle.c              | 142 ++++++++++++++++++++-------
+ kernel/sched/ext_idle.h              |   3 +-
+ tools/sched_ext/include/scx/compat.h |   1 +
+ 4 files changed, 111 insertions(+), 38 deletions(-)
 
-diff --git a/tools/tracing/rtla/.gitignore b/tools/tracing/rtla/.gitignore
-index 293f0dbb0ca2..1a394ad26cc1 100644
---- a/tools/tracing/rtla/.gitignore
-+++ b/tools/tracing/rtla/.gitignore
-@@ -4,3 +4,4 @@ rtla-static
- fixdep
- feature
- FEATURE-DUMP
-+*.skel.h
-diff --git a/tools/tracing/rtla/Makefile b/tools/tracing/rtla/Makefile
-index 0aa116f7b355..557af322be61 100644
---- a/tools/tracing/rtla/Makefile
-+++ b/tools/tracing/rtla/Makefile
-@@ -73,6 +73,17 @@ CFLAGS		+= $(INCLUDES) $(LIB_INCLUDES)
+diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+index 5cd878bbd0e39..a28ddd7655ba8 100644
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -807,6 +807,7 @@ enum scx_deq_flags {
+ enum scx_pick_idle_cpu_flags {
+ 	SCX_PICK_IDLE_CORE	= 1LLU << 0,	/* pick a CPU whose SMT siblings are also idle */
+ 	SCX_PICK_IDLE_IN_NODE	= 1LLU << 1,	/* pick a CPU in the same target NUMA node */
++	SCX_PICK_IDLE_IN_PREF	= 1LLU << 2,	/* pick a CPU in the preferred domain */
+ };
  
- export CFLAGS OUTPUT srctree
+ enum scx_kick_flags {
+@@ -3396,7 +3397,7 @@ static int select_task_rq_scx(struct task_struct *p, int prev_cpu, int wake_flag
+ 		bool found;
+ 		s32 cpu;
  
-+ifeq ($(BUILD_BPF_SKEL),1)
-+src/timerlat.bpf.o: src/timerlat.bpf.c
-+	$(QUIET_CLANG)$(CLANG) -g -O2 -target bpf -c $(filter %.c,$^) -o $@
-+
-+src/timerlat.skel.h: src/timerlat.bpf.o
-+	$(QUIET_GENSKEL)$(BPFTOOL) gen skeleton $< > $@
-+else
-+src/timerlat.skel.h:
-+	$(Q)echo '/* BPF skeleton is disabled */' > src/timerlat.skel.h
-+endif
-+
- $(RTLA): $(RTLA_IN)
- 	$(QUIET_LINK)$(CC) $(LDFLAGS) -o $(RTLA) $(RTLA_IN) $(EXTLIBS)
+-		cpu = scx_select_cpu_dfl(p, prev_cpu, wake_flags, 0, &found);
++		cpu = scx_select_cpu_dfl(p, NULL, prev_cpu, wake_flags, 0, &found);
+ 		p->scx.selected_cpu = cpu;
+ 		if (found) {
+ 			p->scx.slice = SCX_SLICE_DFL;
+diff --git a/kernel/sched/ext_idle.c b/kernel/sched/ext_idle.c
+index 16981456ec1ed..9b002e109404b 100644
+--- a/kernel/sched/ext_idle.c
++++ b/kernel/sched/ext_idle.c
+@@ -46,6 +46,11 @@ static struct scx_idle_cpus scx_idle_global_masks;
+  */
+ static struct scx_idle_cpus **scx_idle_node_masks;
  
-@@ -83,7 +94,7 @@ static: $(RTLA_IN)
- rtla.%: fixdep FORCE
- 	make -f $(srctree)/tools/build/Makefile.build dir=. $@
++/*
++ * Local per-CPU cpumasks (used to generate temporary idle cpumasks).
++ */
++static DEFINE_PER_CPU(cpumask_var_t, local_idle_cpumask);
++
+ /*
+  * Return the idle masks associated to a target @node.
+  *
+@@ -403,52 +408,80 @@ void scx_idle_update_selcpu_topology(struct sched_ext_ops *ops)
+  *     branch prediction optimizations.
+  *
+  * 3. Pick a CPU within the same LLC (Last-Level Cache):
+- *   - if the above conditions aren't met, pick a CPU that shares the same LLC
+- *     to maintain cache locality.
++ *   - if the above conditions aren't met, pick a CPU that shares the same
++ *     LLC, if the LLC domain is a subset of @preferred_cpus, to maintain
++ *     cache locality.
+  *
+  * 4. Pick a CPU within the same NUMA node, if enabled:
+- *   - choose a CPU from the same NUMA node to reduce memory access latency.
++ *   - choose a CPU from the same NUMA node, if the node domain is a subset
++ *     of @preferred_cpus, to reduce memory access latency.
++ *
++ * 5. Pick a CPU within @preferred_cpus.
+  *
+- * 5. Pick any idle CPU usable by the task.
++ * 6. Pick any idle CPU usable by the task.
+  *
+  * Step 3 and 4 are performed only if the system has, respectively, multiple
+  * LLC domains / multiple NUMA nodes (see scx_selcpu_topo_llc and
+- * scx_selcpu_topo_numa).
++ * scx_selcpu_topo_numa) and their domains don't overlap.
++ *
++ * If %SCX_OPS_BUILTIN_IDLE_PER_NODE is enabled, the search will always
++ * begin in @prev_cpu's node and proceed to other nodes in order of
++ * increasing distance.
++ *
++ * Return the picked CPU with *@found set, indicating whether the picked
++ * CPU is currently idle, or a negative value otherwise.
+  *
+  * NOTE: tasks that can only run on 1 CPU are excluded by this logic, because
+  * we never call ops.select_cpu() for them, see select_task_rq().
+  */
+-s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64 flags, bool *found)
++s32 scx_select_cpu_dfl(struct task_struct *p, const struct cpumask *preferred_cpus,
++		       s32 prev_cpu, u64 wake_flags, u64 flags, bool *found)
+ {
+ 	const struct cpumask *llc_cpus = NULL;
+ 	const struct cpumask *numa_cpus = NULL;
+-	int node = scx_cpu_node_if_enabled(prev_cpu);
++	int node;
+ 	s32 cpu;
  
--$(RTLA_IN): fixdep FORCE
-+$(RTLA_IN): fixdep FORCE src/timerlat.skel.h
- 	make $(build)=rtla
+ 	*found = false;
  
- clean: doc_clean fixdep-clean
-@@ -91,6 +102,7 @@ clean: doc_clean fixdep-clean
- 	$(Q)find . -name '*.o' -delete -o -name '\.*.cmd' -delete -o -name '\.*.d' -delete
- 	$(Q)rm -f rtla rtla-static fixdep FEATURE-DUMP rtla-*
- 	$(Q)rm -rf feature
-+	$(Q)rm -f src/timerlat.bpf.o src/timerlat.skel.h
- check: $(RTLA)
- 	RTLA=$(RTLA) prove -o -f tests/
- .PHONY: FORCE clean check
-diff --git a/tools/tracing/rtla/src/Build b/tools/tracing/rtla/src/Build
-index dbed9e31829b..7bb7e39e391a 100644
---- a/tools/tracing/rtla/src/Build
-+++ b/tools/tracing/rtla/src/Build
-@@ -8,4 +8,5 @@ rtla-y += timerlat_top.o
- rtla-y += timerlat_hist.o
- rtla-y += timerlat_u.o
- rtla-y += timerlat_aa.o
-+rtla-y += timerlat_bpf.o
- rtla-y += rtla.o
-diff --git a/tools/tracing/rtla/src/timerlat.bpf.c b/tools/tracing/rtla/src/timerlat.bpf.c
-new file mode 100644
-index 000000000000..96196d46e170
---- /dev/null
-+++ b/tools/tracing/rtla/src/timerlat.bpf.c
-@@ -0,0 +1,149 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/bpf.h>
-+#include <bpf/bpf_tracing.h>
-+#include <stdbool.h>
-+#include "timerlat_bpf.h"
-+
-+#define nosubprog __always_inline
-+#define MAX_ENTRIES_DEFAULT 4096
-+
-+char LICENSE[] SEC("license") = "GPL";
-+
-+struct trace_event_raw_timerlat_sample {
-+	unsigned long long timer_latency;
-+	int context;
-+} __attribute__((preserve_access_index));
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
-+	__uint(max_entries, MAX_ENTRIES_DEFAULT);
-+	__type(key, unsigned int);
-+	__type(value, unsigned long long);
-+} hist_irq SEC(".maps"), hist_thread SEC(".maps"), hist_user SEC(".maps");
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_PERCPU_ARRAY);
-+	__uint(max_entries, SUMMARY_FIELD_N);
-+	__type(key, unsigned int);
-+	__type(value, unsigned long long);
-+} summary_irq SEC(".maps"), summary_thread SEC(".maps"), summary_user SEC(".maps");
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_RINGBUF);
-+	__uint(max_entries, 1);
-+} signal_stop_tracing SEC(".maps");
-+
-+/* Params to be set by rtla */
-+const volatile int bucket_size = 1;
-+const volatile int output_divisor = 1000;
-+const volatile int entries = 256;
-+const volatile int irq_threshold;
-+const volatile int thread_threshold;
-+const volatile bool aa_only;
-+
-+int stop_tracing;
-+
-+nosubprog unsigned long long map_get(void *map,
-+				     unsigned int key)
-+{
-+	unsigned long long *value_ptr;
-+
-+	value_ptr = bpf_map_lookup_elem(map, &key);
-+
-+	return !value_ptr ? 0 : *value_ptr;
-+}
-+
-+nosubprog void map_set(void *map,
-+		       unsigned int key,
-+		       unsigned long long value)
-+{
-+	bpf_map_update_elem(map, &key, &value, BPF_ANY);
-+}
-+
-+nosubprog void map_increment(void *map,
-+			     unsigned int key)
-+{
-+	map_set(map, key, map_get(map, key) + 1);
-+}
-+
-+nosubprog void update_main_hist(void *map,
-+				int bucket)
-+{
-+	if (entries == 0)
-+		/* No histogram */
-+		return;
-+
-+	if (bucket >= entries)
-+		/* Overflow */
-+		return;
-+
-+	map_increment(map, bucket);
-+}
-+
-+nosubprog void update_summary(void *map,
-+			      unsigned long long latency,
-+			      int bucket)
-+{
-+	if (aa_only)
-+		/* Auto-analysis only, nothing to be done here */
-+		return;
-+
-+	map_set(map, SUMMARY_CURRENT, latency);
-+
-+	if (bucket >= entries)
-+		/* Overflow */
-+		map_increment(map, SUMMARY_OVERFLOW);
-+
-+	if (latency > map_get(map, SUMMARY_MAX))
-+		map_set(map, SUMMARY_MAX, latency);
-+
-+	if (latency < map_get(map, SUMMARY_MIN) || map_get(map, SUMMARY_COUNT) == 0)
-+		map_set(map, SUMMARY_MIN, latency);
-+
-+	map_increment(map, SUMMARY_COUNT);
-+	map_set(map, SUMMARY_SUM, map_get(map, SUMMARY_SUM) + latency);
-+}
-+
-+nosubprog void set_stop_tracing(void)
-+{
-+	int value = 0;
-+
-+	/* Suppress further sample processing */
-+	stop_tracing = 1;
-+
-+	/* Signal to userspace */
-+	bpf_ringbuf_output(&signal_stop_tracing, &value, sizeof(value), 0);
-+}
-+
-+SEC("tp/osnoise/timerlat_sample")
-+int handle_timerlat_sample(struct trace_event_raw_timerlat_sample *tp_args)
-+{
-+	unsigned long long latency, latency_us;
-+	int bucket;
-+
-+	if (stop_tracing)
-+		return 0;
-+
-+	latency = tp_args->timer_latency / output_divisor;
-+	latency_us = tp_args->timer_latency / 1000;
-+	bucket = latency / bucket_size;
-+
-+	if (tp_args->context == 0) {
-+		update_main_hist(&hist_irq, bucket);
-+		update_summary(&summary_irq, latency, bucket);
-+
-+		if (irq_threshold != 0 && latency_us >= irq_threshold)
-+			set_stop_tracing();
-+	} else if (tp_args->context == 1) {
-+		update_main_hist(&hist_thread, bucket);
-+		update_summary(&summary_thread, latency, bucket);
-+
-+		if (thread_threshold != 0 && latency_us >= thread_threshold)
-+			set_stop_tracing();
++	/*
++	 * If @prev_cpu is not in the preferred domain, try to assign a new
++	 * arbitrary CPU in the preferred domain.
++	 */
++	if (preferred_cpus && !cpumask_test_cpu(prev_cpu, preferred_cpus)) {
++		cpu = cpumask_any_and_distribute(p->cpus_ptr, preferred_cpus);
++		if (cpu < nr_cpu_ids) {
++			prev_cpu = cpu;
++			node = scx_cpu_node_if_enabled(prev_cpu);
++		}
 +	} else {
-+		update_main_hist(&hist_user, bucket);
-+		update_summary(&summary_user, latency, bucket);
++		node = scx_cpu_node_if_enabled(prev_cpu);
 +	}
 +
-+	return 0;
-+}
-diff --git a/tools/tracing/rtla/src/timerlat_bpf.c b/tools/tracing/rtla/src/timerlat_bpf.c
-new file mode 100644
-index 000000000000..5abee884037a
---- /dev/null
-+++ b/tools/tracing/rtla/src/timerlat_bpf.c
-@@ -0,0 +1,166 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#ifdef HAVE_BPF_SKEL
-+#include "timerlat.h"
-+#include "timerlat_bpf.h"
-+#include "timerlat.skel.h"
-+
-+static struct timerlat_bpf *bpf;
-+
-+/*
-+ * timerlat_bpf_init - load and initialize BPF program to collect timerlat data
-+ */
-+int timerlat_bpf_init(struct timerlat_params *params)
-+{
-+	int err;
-+
-+	debug_msg("Loading BPF program\n");
-+
-+	bpf = timerlat_bpf__open();
-+	if (!bpf)
-+		return 1;
-+
-+	/* Pass common options */
-+	bpf->rodata->output_divisor = params->output_divisor;
-+	bpf->rodata->entries = params->entries;
-+	bpf->rodata->irq_threshold = params->stop_us;
-+	bpf->rodata->thread_threshold = params->stop_total_us;
-+	bpf->rodata->aa_only = params->aa_only;
-+
-+	if (params->entries != 0) {
-+		/* Pass histogram options */
-+		bpf->rodata->bucket_size = params->bucket_size;
-+
-+		/* Set histogram array sizes */
-+		bpf_map__set_max_entries(bpf->maps.hist_irq, params->entries);
-+		bpf_map__set_max_entries(bpf->maps.hist_thread, params->entries);
-+		bpf_map__set_max_entries(bpf->maps.hist_user, params->entries);
-+	} else {
-+		/* No entries, disable histogram */
-+		bpf_map__set_autocreate(bpf->maps.hist_irq, false);
-+		bpf_map__set_autocreate(bpf->maps.hist_thread, false);
-+		bpf_map__set_autocreate(bpf->maps.hist_user, false);
+ 	/*
+ 	 * This is necessary to protect llc_cpus.
+ 	 */
+ 	rcu_read_lock();
+ 
+ 	/*
+-	 * Determine the scheduling domain only if the task is allowed to run
+-	 * on all CPUs.
+-	 *
+-	 * This is done primarily for efficiency, as it avoids the overhead of
+-	 * updating a cpumask every time we need to select an idle CPU (which
+-	 * can be costly in large SMP systems), but it also aligns logically:
+-	 * if a task's scheduling domain is restricted by user-space (through
+-	 * CPU affinity), the task will simply use the flat scheduling domain
+-	 * defined by user-space.
++	 * Consider node/LLC scheduling domains only if the preferred
++	 * cpumask contains all the CPUs of each particular domain and if
++	 * the domains don't overlap.
+ 	 */
+-	if (p->nr_cpus_allowed >= num_possible_cpus()) {
+-		if (static_branch_maybe(CONFIG_NUMA, &scx_selcpu_topo_numa))
+-			numa_cpus = numa_span(prev_cpu);
++	if (static_branch_maybe(CONFIG_NUMA, &scx_selcpu_topo_numa)) {
++		const struct cpumask *cpus = numa_span(prev_cpu);
++		const struct cpumask *pref = preferred_cpus ?: p->cpus_ptr;
+ 
+-		if (static_branch_maybe(CONFIG_SCHED_MC, &scx_selcpu_topo_llc))
+-			llc_cpus = llc_span(prev_cpu);
++		if (!cpumask_equal(cpus, pref) && cpumask_subset(cpus, pref))
++			numa_cpus = cpus;
 +	}
 +
-+	if (params->aa_only) {
-+		/* Auto-analysis only, disable summary */
-+		bpf_map__set_autocreate(bpf->maps.summary_irq, false);
-+		bpf_map__set_autocreate(bpf->maps.summary_thread, false);
-+		bpf_map__set_autocreate(bpf->maps.summary_user, false);
++	if (static_branch_maybe(CONFIG_SCHED_MC, &scx_selcpu_topo_llc)) {
++		const struct cpumask *cpus = llc_span(prev_cpu);
++		const struct cpumask *pref = preferred_cpus ?: p->cpus_ptr;
++
++		if (!cpumask_equal(cpus, pref) && cpumask_subset(cpus, pref))
++			llc_cpus = cpus;
+ 	}
+ 
+ 	/*
+@@ -486,7 +519,7 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64
+ 		    cpu_rq(cpu)->scx.local_dsq.nr == 0 &&
+ 		    (!(flags & SCX_PICK_IDLE_IN_NODE) || (waker_node == node)) &&
+ 		    !cpumask_empty(idle_cpumask(waker_node)->cpu)) {
+-			if (cpumask_test_cpu(cpu, p->cpus_ptr))
++			if (cpumask_test_cpu(cpu, preferred_cpus ?: p->cpus_ptr))
+ 				goto cpu_found;
+ 		}
+ 	}
+@@ -523,6 +556,20 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64
+ 				goto cpu_found;
+ 		}
+ 
++		/*
++		 * Search for any full-idle core in the preferred domain.
++		 *
++		 * If the node-aware idle CPU selection policy is enabled
++		 * (%SCX_OPS_BUILTIN_IDLE_PER_NODE), the search will always
++		 * begin in prev_cpu's node and proceed to other nodes in
++		 * order of increasing distance.
++		 */
++		if (preferred_cpus) {
++			cpu = scx_pick_idle_cpu(preferred_cpus, node, flags | SCX_PICK_IDLE_CORE);
++			if (cpu >= 0)
++				goto cpu_found;
++		}
++
+ 		/*
+ 		 * Search for any full-idle core usable by the task.
+ 		 *
+@@ -531,9 +578,11 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64
+ 		 * begin in prev_cpu's node and proceed to other nodes in
+ 		 * order of increasing distance.
+ 		 */
+-		cpu = scx_pick_idle_cpu(p->cpus_ptr, node, flags | SCX_PICK_IDLE_CORE);
+-		if (cpu >= 0)
+-			goto cpu_found;
++		if (!(flags & SCX_PICK_IDLE_IN_PREF)) {
++			cpu = scx_pick_idle_cpu(p->cpus_ptr, node, flags | SCX_PICK_IDLE_CORE);
++			if (cpu >= 0)
++				goto cpu_found;
++		}
+ 
+ 		/*
+ 		 * Give up if we're strictly looking for a full-idle SMT
+@@ -571,6 +620,20 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64
+ 			goto cpu_found;
+ 	}
+ 
++	/*
++	 * Search for any idle CPU in the preferred domain.
++	 *
++	 * If the node-aware idle CPU selection policy is enabled
++	 * (%SCX_OPS_BUILTIN_IDLE_PER_NODE), the search will always begin
++	 * in prev_cpu's node and proceed to other nodes in order of
++	 * increasing distance.
++	 */
++	if (preferred_cpus) {
++		cpu = scx_pick_idle_cpu(preferred_cpus, node, flags);
++		if (cpu >= 0)
++			goto cpu_found;
 +	}
 +
-+	/* Load and verify BPF program */
-+	err = timerlat_bpf__load(bpf);
-+	if (err) {
-+		timerlat_bpf__destroy(bpf);
-+		return err;
+ 	/*
+ 	 * Search for any idle CPU usable by the task.
+ 	 *
+@@ -579,9 +642,11 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64
+ 	 * in prev_cpu's node and proceed to other nodes in order of
+ 	 * increasing distance.
+ 	 */
+-	cpu = scx_pick_idle_cpu(p->cpus_ptr, node, flags);
+-	if (cpu >= 0)
+-		goto cpu_found;
++	if (!(flags & SCX_PICK_IDLE_IN_PREF)) {
++		cpu = scx_pick_idle_cpu(p->cpus_ptr, node, flags);
++		if (cpu >= 0)
++			goto cpu_found;
 +	}
+ 
+ 	cpu = prev_cpu;
+ 	goto out_unlock;
+@@ -599,7 +664,7 @@ s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64
+  */
+ void scx_idle_init_masks(void)
+ {
+-	int node;
++	int i;
+ 
+ 	/* Allocate global idle cpumasks */
+ 	BUG_ON(!alloc_cpumask_var(&scx_idle_global_masks.cpu, GFP_KERNEL));
+@@ -610,14 +675,19 @@ void scx_idle_init_masks(void)
+ 				      sizeof(*scx_idle_node_masks), GFP_KERNEL);
+ 	BUG_ON(!scx_idle_node_masks);
+ 
+-	for_each_node(node) {
+-		scx_idle_node_masks[node] = kzalloc_node(sizeof(**scx_idle_node_masks),
+-							 GFP_KERNEL, node);
+-		BUG_ON(!scx_idle_node_masks[node]);
++	for_each_node(i) {
++		scx_idle_node_masks[i] = kzalloc_node(sizeof(**scx_idle_node_masks),
++							 GFP_KERNEL, i);
++		BUG_ON(!scx_idle_node_masks[i]);
+ 
+-		BUG_ON(!alloc_cpumask_var_node(&scx_idle_node_masks[node]->cpu, GFP_KERNEL, node));
+-		BUG_ON(!alloc_cpumask_var_node(&scx_idle_node_masks[node]->smt, GFP_KERNEL, node));
++		BUG_ON(!alloc_cpumask_var_node(&scx_idle_node_masks[i]->cpu, GFP_KERNEL, i));
++		BUG_ON(!alloc_cpumask_var_node(&scx_idle_node_masks[i]->smt, GFP_KERNEL, i));
+ 	}
 +
-+	return 0;
-+}
-+
-+/*
-+ * timerlat_bpf_attach - attach BPF program to collect timerlat data
-+ */
-+int timerlat_bpf_attach(void)
-+{
-+	debug_msg("Attaching BPF program\n");
-+
-+	return timerlat_bpf__attach(bpf);
-+}
-+
-+/*
-+ * timerlat_bpf_detach - detach BPF program to collect timerlat data
-+ */
-+void timerlat_bpf_detach(void)
-+{
-+	timerlat_bpf__detach(bpf);
-+}
-+
-+/*
-+ * timerlat_bpf_detach - destroy BPF program to collect timerlat data
-+ */
-+void timerlat_bpf_destroy(void)
-+{
-+	timerlat_bpf__destroy(bpf);
-+}
-+
-+static int handle_rb_event(void *ctx, void *data, size_t data_sz)
-+{
-+	return 0;
-+}
-+
-+/*
-+ * timerlat_bpf_wait - wait until tracing is stopped or signal
-+ */
-+int timerlat_bpf_wait(int timeout)
-+{
-+	struct ring_buffer *rb;
-+	int retval;
-+
-+	rb = ring_buffer__new(bpf_map__fd(bpf->maps.signal_stop_tracing),
-+			      handle_rb_event, NULL, NULL);
-+	retval = ring_buffer__poll(rb, timeout * 1000);
-+	ring_buffer__free(rb);
-+
-+	return retval;
-+}
-+
-+static int get_value(struct bpf_map *map_irq,
-+		     struct bpf_map *map_thread,
-+		     struct bpf_map *map_user,
-+		     int key,
-+		     long long *value_irq,
-+		     long long *value_thread,
-+		     long long *value_user,
-+		     int cpus)
-+{
-+	int err;
-+
-+	err = bpf_map__lookup_elem(map_irq, &key,
-+				   sizeof(unsigned int), value_irq,
-+				   sizeof(long long) * cpus, 0);
-+	if (err)
-+		return err;
-+	err = bpf_map__lookup_elem(map_thread, &key,
-+				   sizeof(unsigned int), value_thread,
-+				   sizeof(long long) * cpus, 0);
-+	if (err)
-+		return err;
-+	err = bpf_map__lookup_elem(map_user, &key,
-+				   sizeof(unsigned int), value_user,
-+				   sizeof(long long) * cpus, 0);
-+	if (err)
-+		return err;
-+	return 0;
-+}
-+
-+/*
-+ * timerlat_bpf_get_hist_value - get value from BPF hist map
-+ */
-+int timerlat_bpf_get_hist_value(int key,
-+				long long *value_irq,
-+				long long *value_thread,
-+				long long *value_user,
-+				int cpus)
-+{
-+	return get_value(bpf->maps.hist_irq,
-+			 bpf->maps.hist_thread,
-+			 bpf->maps.hist_user,
-+			 key, value_irq, value_thread, value_user, cpus);
-+}
-+
-+/*
-+ * timerlat_bpf_get_summary_value - get value from BPF summary map
-+ */
-+int timerlat_bpf_get_summary_value(enum summary_field key,
-+				   long long *value_irq,
-+				   long long *value_thread,
-+				   long long *value_user,
-+				   int cpus)
-+{
-+	return get_value(bpf->maps.summary_irq,
-+			 bpf->maps.summary_thread,
-+			 bpf->maps.summary_user,
-+			 key, value_irq, value_thread, value_user, cpus);
-+}
-+#endif /* HAVE_BPF_SKEL */
-diff --git a/tools/tracing/rtla/src/timerlat_bpf.h b/tools/tracing/rtla/src/timerlat_bpf.h
-new file mode 100644
-index 000000000000..f1b54dbddb0e
---- /dev/null
-+++ b/tools/tracing/rtla/src/timerlat_bpf.h
-@@ -0,0 +1,59 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#pragma once
-+
-+enum summary_field {
-+	SUMMARY_CURRENT,
-+	SUMMARY_MIN,
-+	SUMMARY_MAX,
-+	SUMMARY_COUNT,
-+	SUMMARY_SUM,
-+	SUMMARY_OVERFLOW,
-+	SUMMARY_FIELD_N
-+};
-+
-+#ifndef __bpf__
-+#ifdef HAVE_BPF_SKEL
-+int timerlat_bpf_init(struct timerlat_params *params);
-+int timerlat_bpf_attach(void);
-+void timerlat_bpf_detach(void);
-+void timerlat_bpf_destroy(void);
-+int timerlat_bpf_wait(int timeout);
-+int timerlat_bpf_get_hist_value(int key,
-+				long long *value_irq,
-+				long long *value_thread,
-+				long long *value_user,
-+				int cpus);
-+int timerlat_bpf_get_summary_value(enum summary_field key,
-+				   long long *value_irq,
-+				   long long *value_thread,
-+				   long long *value_user,
-+				   int cpus);
-+static inline int have_libbpf_support(void) { return 1; }
-+#else
-+static inline int timerlat_bpf_init(struct timerlat_params *params)
-+{
-+	return -1;
-+}
-+static inline int timerlat_bpf_attach(void) { return -1; }
-+static inline void timerlat_bpf_detach(void) { };
-+static inline void timerlat_bpf_destroy(void) { };
-+static inline int timerlat_bpf_wait(int timeout) { return -1; }
-+static inline int timerlat_bpf_get_hist_value(int key,
-+					      long long *value_irq,
-+					      long long *value_thread,
-+					      long long *value_user,
-+					      int cpus)
-+{
-+	return -1;
-+}
-+static inline int timerlat_bpf_get_summary_value(enum summary_field key,
-+						 long long *value_irq,
-+						 long long *value_thread,
-+						 long long *value_user,
-+						 int cpus)
-+{
-+	return -1;
-+}
-+static inline int have_libbpf_support(void) { return 0; }
-+#endif /* HAVE_BPF_SKEL */
-+#endif /* __bpf__ */
++	/* Allocate local per-cpu idle cpumasks */
++	for_each_possible_cpu(i)
++		BUG_ON(!alloc_cpumask_var_node(&per_cpu(local_idle_cpumask, i),
++					       GFP_KERNEL, cpu_to_node(i)));
+ }
+ 
+ static void update_builtin_idle(int cpu, bool idle)
+@@ -829,7 +899,7 @@ __bpf_kfunc s32 scx_bpf_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
+ 		goto prev_cpu;
+ 
+ #ifdef CONFIG_SMP
+-	return scx_select_cpu_dfl(p, prev_cpu, wake_flags, 0, is_idle);
++	return scx_select_cpu_dfl(p, NULL, prev_cpu, wake_flags, 0, is_idle);
+ #endif
+ 
+ prev_cpu:
+diff --git a/kernel/sched/ext_idle.h b/kernel/sched/ext_idle.h
+index 5c1db6b315f7a..386bde7e8ee3e 100644
+--- a/kernel/sched/ext_idle.h
++++ b/kernel/sched/ext_idle.h
+@@ -27,7 +27,8 @@ static inline s32 scx_pick_idle_cpu(const struct cpumask *cpus_allowed, int node
+ }
+ #endif /* CONFIG_SMP */
+ 
+-s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu, u64 wake_flags, u64 flags, bool *found);
++s32 scx_select_cpu_dfl(struct task_struct *p, const struct cpumask *preferred_cpus,
++		       s32 prev_cpu, u64 wake_flags, u64 flags, bool *found);
+ void scx_idle_enable(struct sched_ext_ops *ops);
+ void scx_idle_disable(void);
+ int scx_idle_init(void);
+diff --git a/tools/sched_ext/include/scx/compat.h b/tools/sched_ext/include/scx/compat.h
+index 35c67c5174ac0..f9c06079b3a86 100644
+--- a/tools/sched_ext/include/scx/compat.h
++++ b/tools/sched_ext/include/scx/compat.h
+@@ -120,6 +120,7 @@ static inline bool __COMPAT_struct_has_field(const char *type, const char *field
+ 
+ #define SCX_PICK_IDLE_CORE SCX_PICK_IDLE_FLAG(SCX_PICK_IDLE_CORE)
+ #define SCX_PICK_IDLE_IN_NODE SCX_PICK_IDLE_FLAG(SCX_PICK_IDLE_IN_NODE)
++#define SCX_PICK_IDLE_IN_PREF SCX_PICK_IDLE_FLAG(SCX_PICK_IDLE_IN_PREF)
+ 
+ static inline long scx_hotplug_seq(void)
+ {
 -- 
-2.47.2
-
+2.48.1
 
 
