@@ -1,122 +1,263 @@
-Return-Path: <linux-kernel+bounces-548932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EE8AA54B01
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:43:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35603A54AF7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:42:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65D3C3AEC5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:42:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2331881CF5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:42:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB86520C488;
-	Thu,  6 Mar 2025 12:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196F220C005;
+	Thu,  6 Mar 2025 12:41:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F7b6r05G"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gF+7s/zM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD2D20C463
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 12:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F66190051;
+	Thu,  6 Mar 2025 12:41:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741264929; cv=none; b=h2qCBtcg5Z+hj6dByz/fBfLBCLyWJ6z7pWOn2TTVGw4dZRgm5PfM67dxnsvp7lSdL8MTqkmroE29+mpvrDm9gGzh+FIyEERUTeuW6yJizq0agyz1caubX7qpu709LWXW1Dn1WIGDf1LCIkZClYTTzkg7yw8OEwUUQCdeIhgBmRM=
+	t=1741264914; cv=none; b=mWCDJQw7F4BM0IkRpDEtuq9bvPtSy3cQ/+tqLVOU31sNZiSIw2/ipFkEBRLxHqiQPKOvegWSjzQS/VHej8uI4/DV5A2cyDcjx4TnwuMu/tFnt2nzvVBpoc/jQx9HrL0VyVfwFjZhEib5G23RGRhAGU9vRmoRurtDac4jykSXwJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741264929; c=relaxed/simple;
-	bh=eP1g9nlyYI9CoKkIY1xPDI2Sac0aG/68toWY/f4XmOg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MX00Sg7QKJ2hSsdyX9CWhT5dtlvqwGn5LK35++013DbuivAGcNjqzJVecQ+4KwVG/RNUerLxZHuT2DyyowexhOPaCODG8K+r3AAxmsisyEKmQCF6c7ex8JlX1WscbKnve0Zu8iROx67Kdlwe/pG0mxTIFOy3qHZMijH+9ES0iCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F7b6r05G; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741264926;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OPM/bCOOX2GDDU6yA/rUlU5U2LhtBTM4alZ9ThMJ7Vs=;
-	b=F7b6r05Gcj9li2s2vZbGILYbcKXmMSCXK6BJeAhwLk302NLOY3BADoc8iWDNgBU45qh6zV
-	alAVtYBFVgNcFqjE6gcgY63X8Q5dYFhoTXKb/asS223edBEzAxVLJ5UOL3ICktpR0XuxNA
-	s77RQgX1hEYVt3TmeR9r4Fc3dN2myT4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-654-oZUYr1CKPBuiVKGau2zVhQ-1; Thu,
- 06 Mar 2025 07:42:03 -0500
-X-MC-Unique: oZUYr1CKPBuiVKGau2zVhQ-1
-X-Mimecast-MFC-AGG-ID: oZUYr1CKPBuiVKGau2zVhQ_1741264921
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 53C0C19560B0;
-	Thu,  6 Mar 2025 12:42:00 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.240])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E5570300019E;
-	Thu,  6 Mar 2025 12:41:52 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Thu,  6 Mar 2025 13:41:29 +0100 (CET)
-Date: Thu, 6 Mar 2025 13:41:21 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Miklos Szeredi <miklos@szeredi.hu>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Hugh Dickins <hughd@google.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Jan Kara <jack@suse.cz>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Rasmus Villemoes <ravi@prevas.dk>, Neeraj.Upadhyay@amd.com,
-	Ananth.narayan@amd.com, Swapnil Sapkal <swapnil.sapkal@amd.com>
-Subject: Re: [RFC PATCH 3/3] treewide: pipe: Convert all references to
- pipe->{head,tail,max_usage,ring_size} to unsigned short
-Message-ID: <20250306124120.GF19868@redhat.com>
-References: <CAHk-=wjyHsGLx=rxg6PKYBNkPYAejgo7=CbyL3=HGLZLsAaJFQ@mail.gmail.com>
- <20250306113924.20004-1-kprateek.nayak@amd.com>
- <20250306113924.20004-4-kprateek.nayak@amd.com>
- <20250306123245.GE19868@redhat.com>
+	s=arc-20240116; t=1741264914; c=relaxed/simple;
+	bh=40/PeAeXAjmSJ+HviKd4I8tD+I4pW9r5VSSDdOws/5U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q5DHDXP7trYW2AgtCpLqYKYQkVU6/EPSGShxpLxgnyAW2Os6YW2J6f9qd+u5IOW0ID8Q0m8Jq+gXr33oFtcpd6pJgc4hNcojkyW2EN6r2UOhPVM/VY+2zRFa7ylA3AxXVwiRPtqHLb11Hk/lnxOTP7Fj+xqvPTUMEaEQpZExKVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gF+7s/zM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C0DFC4CEE0;
+	Thu,  6 Mar 2025 12:41:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741264914;
+	bh=40/PeAeXAjmSJ+HviKd4I8tD+I4pW9r5VSSDdOws/5U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gF+7s/zMoiPC27BOey1fWc0EQ/oc5GL0vlN3dpvkBoec3W/x9Epkmvt2dMUYAZ5kN
+	 YwR1nK+EBgNkFNnM2nGlMougBQkKU8vvLiBFhTRKQENEeAkWM+feoyzBkjhBNLfCJL
+	 Yj5jLfW03VKZy+S/A/fuurHAaPPyF66i3oWHIxzuj3mp5/MfwYGFZpOhTwas1PzrAE
+	 kJAB+nk+t9Vfxc6ZfwNtcFRVSlc2iGz9f9eVxr7HJCvwgZQowN5uB1ratl0M9hId95
+	 /zitaRW7vILVR8bcPtzYOB3KyMKX/noGf8IbW+DgZsKYe2+6OK0st6cWlqSC8oSTz8
+	 uaWhO8mnL/dOw==
+Message-ID: <75c17309-3072-4321-ab15-69d60190f2f7@kernel.org>
+Date: Thu, 6 Mar 2025 13:41:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306123245.GE19868@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: Add device tree for TUXEDO Elite 14
+ Gen1
+To: Georg Gottleuber <ggo@tuxedocomputers.com>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Konrad Dybcio
+ <konrad.dybcio@oss.qualcomm.com>, wse@tuxedocomputers.com,
+ cs@tuxedocomputers.com
+References: <57589859-fec1-4875-9127-d1f99e40a827@tuxedocomputers.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <57589859-fec1-4875-9127-d1f99e40a827@tuxedocomputers.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 03/06, Oleg Nesterov wrote:
->
-> On 03/06, K Prateek Nayak wrote:
-> >
-> > @@ -272,9 +272,9 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
-> >  	 */
-> >  	for (;;) {
-> >  		/* Read ->head with a barrier vs post_one_notification() */
-> > -		unsigned int head = smp_load_acquire(&pipe->head);
-> > -		unsigned int tail = pipe->tail;
-> > -		unsigned int mask = pipe->ring_size - 1;
-> > +		unsigned short head = smp_load_acquire(&pipe->head);
-> > +		unsigned short tail = pipe->tail;
-> > +		unsigned short mask = pipe->ring_size - 1;
->
-> I dunno... but if we do this, perhaps we should
-> s/unsigned int/pipe_index_t instead?
->
-> At least this would be more grep friendly.
+On 06/03/2025 13:25, Georg Gottleuber wrote:
+> Initial support for TUXEDO Elite 14 Gen1 based on Qualcomm Snapdragon X
+> Elite SoC (X1E78100).
+> 
+> Working:
+> * Touchpad
+> * Keyboard
+> * eDP (no brightness control yet)
+> * NVMe
+> * USB Type-C port
+> * WiFi (WiFi 7 untested)
+> * GPU (software rendering)
+> 
+> Not working:
+> * GPU (WIP: firmware loading but output is jerky)
+> * USB Type-A (WIP)
+> * Suspend with substantial energy saving
+> * Audio, Speakers, Microphones
+> * Camera
+> * Fingerprint Reader
+> 
+> Signed-off-by: Georg Gottleuber <ggo@tuxedocomputers.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile             |   1 +
+>  .../qcom/x1e80100-tuxedo-elite-14-gen1.dts    | 798 ++++++++++++++++++
+>  2 files changed, 799 insertions(+)
+>  create mode 100644
+> arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index 140b0b2abfb5..f0a9d677d957 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -298,3 +298,4 @@ dtb-$(CONFIG_ARCH_QCOM)     += x1e80100-lenovo-yoga-slim7x.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += x1e80100-microsoft-romulus13.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += x1e80100-microsoft-romulus15.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)        += x1e80100-qcp.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)        += x1e80100-tuxedo-elite-14-gen1.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
+> new file mode 100644
+> index 000000000000..86bdec4a2dd8
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
+> @@ -0,0 +1,798 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+> + * Copyright (c) 2025 TUXEDO Computers GmbH
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> +
+> +#include "x1e80100.dtsi"
+> +#include "x1e80100-pmics.dtsi"
+> +
+> +/ {
+> +       model = "TUXEDO Elite 14 Gen1";
+> +       compatible = "tuxedo,elite14gen1", "qcom,x1e80100";
 
-in any case, I think another cleanup before this change makes sense...
-pipe->ring_size is overused. pipe_read(), pipe_write() and much more
-users do not need "unsigned int mask", they can use pipe_buf(buf, slot)
-instead.
+Please run scripts/checkpatch.pl and fix reported warnings. After that,
+run also `scripts/checkpatch.pl --strict` and (probably) fix more
+warnings. Some warnings can be ignored, especially from --strict run,
+but the code here looks like it needs a fix. Feel free to get in touch
+if the warning is not clear.
 
-Oleg.
+It does not look like you tested the DTS against bindings. Please run
+`make dtbs_check W=1` (see
+Documentation/devicetree/bindings/writing-schema.rst or
+https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+for instructions).
+Maybe you need to update your dtschema and yamllint. Don't rely on
+distro packages for dtschema and be sure you are using the latest
+released dtschema.
 
+
+...
+
+> +
+> +       eusb3_repeater: redriver@47 {
+> +               compatible = "nxp,ptn3222";
+> +               reg = <0x47>;
+> +               #phy-cells = <0>;
+> +
+> +               vdd1v8-supply = <&vreg_l4b_1p8>;
+> +               vdd3v3-supply = <&vreg_l13b_3p0>;
+> +
+> +               reset-gpios = <&tlmm 124 GPIO_ACTIVE_LOW>;
+> +
+> +               pinctrl-0 = <&eusb3_reset_n>;
+> +               pinctrl-names = "default";
+
+No graph? Isn't it needed?
+
+> +       };
+> +
+> +       eusb5_repeater: redriver@43 {
+> +               compatible = "nxp,ptn3222";
+> +               reg = <0x43>;
+> +               #phy-cells = <0>;
+> +
+> +               vdd1v8-supply = <&vreg_l4b_1p8>;
+> +               vdd3v3-supply = <&vreg_l13b_3p0>;
+> +
+> +               reset-gpios = <&tlmm 184 GPIO_ACTIVE_LOW>;
+> +
+> +               pinctrl-0 = <&eusb6_reset_n>;
+> +               pinctrl-names = "default";
+> +       };
+> +
+> +       eusb6_repeater: redriver@4f {
+> +               compatible = "nxp,ptn3222";
+> +               reg = <0x4f>;
+> +               #phy-cells = <0>;
+> +
+> +               vdd1v8-supply = <&vreg_l4b_1p8>;
+> +               vdd3v3-supply = <&vreg_l13b_3p0>;
+> +
+> +               reset-gpios = <&tlmm 111 GPIO_ACTIVE_LOW>;
+> +
+> +               pinctrl-0 = <&eusb6_reset_n>;
+> +               pinctrl-names = "default";
+> +       };
+> +
+
+Stray blank line
+
+> +};
+> +
+> +&mdss {
+> +       status = "okay";
+> +};
+> +
+
+
+> +
+> +&usb_1_ss0_dwc3_hs {
+> +       remote-endpoint = <&pmic_glink_ss0_hs_in>;
+> +};
+> +
+> +&usb_1_ss0_qmpphy_out {
+> +       remote-endpoint = <&pmic_glink_ss0_ss_in>;
+> +};
+> +
+
+Here as well
+
+
+Best regards,
+Krzysztof
 
