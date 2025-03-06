@@ -1,145 +1,214 @@
-Return-Path: <linux-kernel+bounces-548261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD93BA54277
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:55:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB27A5427B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:56:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F00553ADDCC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:55:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AB173ADD71
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A98419D086;
-	Thu,  6 Mar 2025 05:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A71EC19DF48;
+	Thu,  6 Mar 2025 05:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="anvF/6cV"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="gN4Sw5n9"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012034.outbound.protection.outlook.com [52.101.66.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A5917E473
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 05:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741240537; cv=none; b=sTnXGqI7ZBqQmqBarL8EtVpUX5IjdU9qro26W+dSThbvXGOQHnK5KfPGWMJ4VyUNuTZRHS51DqcXH2VpRKeDRneHVIeyzJg47+tqZfV5byI+6PrKtEU7n7pTrpEvOWQ3R4SZpPJxIrAK4VOiborqM3n5INIfiEV9066e2sgWv6Q=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741240537; c=relaxed/simple;
-	bh=fStPxmsCJIjNv3GU3HTZoAXZLVWt4JfQuG8MDVhJlTI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gpBfhLMidfhM2zUoQAD6w0/RZ9hdUqrEv1VwAqFzFPPIq11fGH7jGqX4W/lkdb2hpnyIuD9gZwimM2Q/tYrTnUN5/hY3enoV+BAaCtd02HA9CkEfA3b0dqSkxNDbvWrfczRBdjXQc7BPbnziHtMmZh6D0cLaoLz/YJ7/oByQiww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=anvF/6cV; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223fb0f619dso4153475ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 21:55:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741240534; x=1741845334; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=sUdx3QRyuZIX7/o+JJ2wds9H9VcUk1U/xmQVPBXai18=;
-        b=anvF/6cV9SGBke0ReSodh++QuZwCEU/BnTwRR6j26ZjgYoU1O/KIbl6MgQ53ZnH1Ra
-         2IAkvZsNltj0nILEToutdduayMnLHOQtXqzt6wyrn+oceYEMlwutxNCibv1andkrPPq1
-         p5mM8rFUk+vRD10BUFTAHVjWZitunFie2prYiOLcyAQMSpJZ6F4hRnLgutOyuSE/RaW/
-         /GSWCngVhrUzmgvCgMJP3OW82HB8VN8dbuB5Cyq+AJrS4nv28BXIV9PypGmuZDW6votk
-         WEdC4t212ctL99u9sphpgV4M399X/PlaBdYz1Mv1q3cay/UGUHjCbkXGtG/1AvvRi/cZ
-         iYmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741240534; x=1741845334;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sUdx3QRyuZIX7/o+JJ2wds9H9VcUk1U/xmQVPBXai18=;
-        b=vVea1DeXitgWTeSF2ac5f9tLclm5DjGkFtVdweN8PS0J2E5HhK6gX/OytXXVyaivxj
-         rSSeFa5lDkx9TZFrZ+jOsndkbXpZzYCtcSEpmWQB9Q+oflo0UMina1+LgFgn9j6egsch
-         /TvMwvvbSAeYg53Ipp4Dh5QCSJ09F/I8KWBbpPMRgbqhp73Ofvomd64Tw0yshS9H31wT
-         djzM4N+KpOL2QyDnK0IAF1MLP1LqLRS9c+kcIuWyJoAbydMoOPYKZl1WvZJqiucwemn1
-         7dWppubnNboI95O1wb0kVbcJa7YurWXsc93N36/neL/8bovJMYTf27awsOJcCR8q2eCj
-         RYHA==
-X-Forwarded-Encrypted: i=1; AJvYcCUWN8DbX4UewXUkRRqKKYGoqpiCX2dDY0NCSAZ5InDzd5KbkmULdO3x0Hzt0NRl3aHEaAAg+JFxvwNMoEM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBHNeRKaarMHHVkxMzfyCvnWe+HJceEu0KzWg7BBZtlqGXjTAA
-	tVMfFJ/Fhry2tql6O2QyYtifLhrExkj+X0coTWzOHai7rdWcrcmA3UaLg8zLaS7ne1a8FrHBG8R
-	i8Dk=
-X-Gm-Gg: ASbGncs0tyThP3OEmiWff1YYA5TpGL+GHwNyemsAjiil8hmw9v2PEGcK51c8UooLFI2
-	ofFaFdNI786AK2qnxfLkVyxSayjwp3IscsNTOjFSSy0A71dUH4l4/orjD7jnm3IpOVu8dhbqwpC
-	bjydJQJZ3IeOSV3GzoDWGe7wWcJANdr3ZWQNkhDkh2XwDvAX5wwpnafeTPYbUOL5Seb129ZZEc0
-	xGmF7rd67IOy90w38K4e+42i36VvBvlN57ymPhIPIatfP9iERUdK25Ks6LulFeds93/dl8ineDP
-	Ec/6fzOsfnG8ytYoQ3xuO6vaIpTCtugUlZ0rpIIZgx57npOy
-X-Google-Smtp-Source: AGHT+IHWmtVby/odXZZF6dFxs4Y5suzRcbfsujqB5xfNftQwM4rblktBoE/1Jwu1suHSRVUrEebhQw==
-X-Received: by 2002:a05:6a00:2d1d:b0:736:61c9:f9a6 with SMTP id d2e1a72fcca58-73682b6c31fmr8000931b3a.5.1741240534431;
-        Wed, 05 Mar 2025 21:55:34 -0800 (PST)
-Received: from localhost ([157.82.207.107])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73698515094sm458717b3a.131.2025.03.05.21.55.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 21:55:34 -0800 (PST)
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-Date: Thu, 06 Mar 2025 14:55:19 +0900
-Subject: [PATCH] selftests: Override command line in lib.mk
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1310238DFC;
+	Thu,  6 Mar 2025 05:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.34
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741240597; cv=fail; b=ocaM0cCYVBak1WmJvSYMkUfE8DP0zY4fl0+/AR3EjjDsKiWBEARKUb0yI9PhUbggIvNph2WVlr+gYGwuXXN4Igfw2xxCn6ZKLPm8KtFYT55a9h2ILUYL5i4KbmZ2/9RfgnYqb5i7Evpdu+2UFzeCjb2uU5RtMeZaKRracCmp7jc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741240597; c=relaxed/simple;
+	bh=AO0rXuHVs/I49tiEiPnSnudTWfPplPB1LI1+MJM18qY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=HvkE3NXh6784a6JBS+BIeyfh4/IORiNCfPJ2c4k78ylJyL6q1jKfbH19adivniUO/Tx9JvnTaALlIzCNIJ35wCBxIUhoyI8PuNEbfI06Paywl1wIBmyQXNNtKsh9tx5OB24DeqgBTcSrijYFjj0evtqQXkiKsXEU8bFDuEdxWKU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=gN4Sw5n9; arc=fail smtp.client-ip=52.101.66.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ibVyAd+wm2T1HdNW1q1nMRuHXgDJGbBmJ/47HHcqoELaPvGCEJPgAtwtnZVreJ8NWCqe4cKIlbiQxUd1dSOs3JTZWM7R2iW0NitJBguVDGTdPTbrIdS3eTuDm5ZcJbkAXb0GZ5xKWvEqtXUwTsqpMIY0qcP1lBikfcwd9DZr1W6EYt9GSQ/Auel3xQchBUohSlNn/nq94yPDwMUiy/Af0dYaTb77+sdnK+ZvCZO6QN/+NemuGtprqQNpbLM7OpaDQl5QOUVEl/yq74ucU7zM0TwtWGELsT8S3pPLJJ//Xk8tODASVaLbet2PDh/wC4/IOfeoE+aEOTjuVMeQOt1xaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zSDPxZEaanmGEvh7FLjaMmDMLqqC18bn6641ucb5imw=;
+ b=E3jJ5mk31DsHp4WIkaPU1jJG7BjKhHkNnOCTHwBQWNwnd6UIXm6ZfCCvPxw6qD7T7rJdwMG6d+/N0r5Pkk5HamsNIyFiL57OVGc1APtTyFJDO3uLyIyPPDQ5d+oz6DgtkQ1XaL1hXB0WN27sj2mIHbpm+bv/Vy+sRbtBxKtawPo8jVjOCsyLMAe8HfIhRZWmxkwVefKz1P9M6DN0MkJp0t91k5U0xgdwvliqMehP2khPFW3c7Ov88yY9aHbJRWRS0Rqty52RZ9RtKOKT+jOPmLiDWAMCkR+6npf0zEff6Pm9y5bB1307iArpjZo0vrgk5kY2t8umsCCJg/0j6vX17w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zSDPxZEaanmGEvh7FLjaMmDMLqqC18bn6641ucb5imw=;
+ b=gN4Sw5n9mKUDvLpWPT3uCZ5YrDfHQeS9khj5WcCLeTaFYnJ+WuZcXua2ho8Q5epuPja0Yl2Tt39KkEDkFX7mJpgLfxMP8Zv6Brzf86m04lVizqZ4LTct7qJX2j9DH12CEbmEEKH1R4N2+Lcj6i6khrGLXXZ55VKnwblKseGK9zLe5HeK0fCBfx3bo0AwMWdUmZDSgwWHDCcCf8nEdiL1iffUBT/CXL5TWQ7G6Qhd0ZkGmxiUXFT6fTa6D63pvGyfwfTqn1v6LFT+2144U9nKscBuS0CBJQIUWIFgOZ2bYT1EvwrPJe6XL0VghUbLsfsqzpnf/kp+vH4HGp3DL20G4w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by DBAPR04MB7270.eurprd04.prod.outlook.com (2603:10a6:10:1af::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.16; Thu, 6 Mar
+ 2025 05:56:33 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
+ 05:56:33 +0000
+Message-ID: <c3b64134-a095-4d51-afe5-cef576a98d67@nxp.com>
+Date: Thu, 6 Mar 2025 13:57:45 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] drm/bridge: simple-bridge: Add DPI color encoder
+ support
+To: Maxime Ripard <mripard@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andrzej.hajda@intel.com, neil.armstrong@linaro.org,
+ rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
+References: <20250304101530.969920-1-victor.liu@nxp.com>
+ <20250304101530.969920-5-victor.liu@nxp.com>
+ <20250304-diamond-toucanet-of-pizza-6faa2d@houat>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <20250304-diamond-toucanet-of-pizza-6faa2d@houat>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0015.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::18) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-lib-v1-1-85692f1a7ce4@daynix.com>
-X-B4-Tracking: v=1; b=H4sIAMY4yWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDYwMz3ZzMJF2TxGRLc0PDZEODRCMloMqCotS0zAqwKdGxtbUAszSkVlU
- AAAA=
-X-Change-ID: 20250306-lib-4ac9711c10a2
-To: Shuah Khan <shuah@kernel.org>
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devel@daynix.com, Akihiko Odaki <akihiko.odaki@daynix.com>
-X-Mailer: b4 0.14.2
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DBAPR04MB7270:EE_
+X-MS-Office365-Filtering-Correlation-Id: acaa1407-176d-4b9b-442c-08dd5c73a5fa
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?WStUWlhxQUFUWDZaTnNacVVKMkVqTWZpZ3lVa2FmY2dvb0IvczBLSmx1MlRX?=
+ =?utf-8?B?cDl5bHQ4aHpnWkpjUUNZU0xkdllXUVhhKzRzTDZIYlJsV3doTEhlQmEvb0pN?=
+ =?utf-8?B?QmhUTFNDSkNZeWJZN0FYOTRJVU5KMnpiMlIyV2ZZZzQrMFV6OTZ2Z1oyZHJQ?=
+ =?utf-8?B?YytpR3dOYndzWktsRHRybHRLVi9HQXROSnBYWEpMVVpKK081QVhuaGhmR0NR?=
+ =?utf-8?B?aDg2Z0FDS0lHWHFqaDR2VWhFZ0VXc201ZEpaNWF4L3J2TkhOS3VSNXduRUl6?=
+ =?utf-8?B?M1JibklwRVdLd2J1MkxZeUxDbWhBN3lyVzVvcmw2VGluTEc0ZmtZVXpkUzU3?=
+ =?utf-8?B?aVovWnp1Q2x0djNKYXpOKzNzNlpZeVZkSW4vRWtySmNwajMrQjRBdXJpK0Iw?=
+ =?utf-8?B?QkhudlcwTDJrWDlsNW1UYkpTd0ZYM2ZyZUtTTVpNQzhhRG1wN3NvTkptVWIr?=
+ =?utf-8?B?M05kOFE0L0tMWFRhQVNOelZNUlFpZXNRbXNOR21KT016Vk0ycUhmbkc0Mmkr?=
+ =?utf-8?B?ODZPa3d4ODg0N3FBMzRIbm9UR2pxQ1hHcm01TW9VM0Zsb0VHbThFS05JZGNk?=
+ =?utf-8?B?U01oVC9jKzhpcjk5WnhvUnU3dkNXa3BQano4N1AyVXZvNUpmQlpBR3VuTDA5?=
+ =?utf-8?B?QnZNYXFZM1pNNUIzbnUwdThPQUNTSHRHT3FvOVI2U1dOWVpkT3Q1WktEUGtD?=
+ =?utf-8?B?aDA5NW1CNGRZbUIvM3dPVm4rVnlsYnJiOXJDYlh1OGhCLzNpYWd6QWpWQ3J5?=
+ =?utf-8?B?VVlpaElRaHA4bW5IOW1RTlRJcmwwem5wUXVYUnNzQXNsUDRKUTN5Q2NqN2VH?=
+ =?utf-8?B?M3VjUHZiTUlxcmk5N3hFaGV3dW1GQ2dvUGxyWGpWcFlBejlMY0gvek9VVllB?=
+ =?utf-8?B?VWduU2h5UkZqYnl5NGg2TVdCUCtvTkFjSC9xYm5sNldMYXJmRGt2TU44bDF4?=
+ =?utf-8?B?THFPZWs3OHJwaStpc0tCYWk4M2RIS0JNRmRFTE03ZU9DWDJXNmVyUmw0TWdC?=
+ =?utf-8?B?REc3bUdSTFlCM2RNSS9oS1JkZ284MkFZK3JySXhaM3JSdk1wOE9Mb0g0akto?=
+ =?utf-8?B?VmdXVlpybHhDTEhDZEp5MFBoQ1NuZDltMlpvM01JZ2xhRTdEdXVoS2JESGpK?=
+ =?utf-8?B?VHV1T3hQTmdTU3NVUG43bGFJMXVPYVl6dlc2S1NaSmMrRWNmd0VmSUlBQ1pl?=
+ =?utf-8?B?eHU4dUtEaUtleitRRGhsYW0xaFdHNjdTWkNYNmZ2bVFkSGYxQXI1WmdHUHIz?=
+ =?utf-8?B?VFM4cWh5K09xL1o1ZzNjN2RVTzlEcTBNaGVBV2xiUXNFUVpJQnRzU012Q1RS?=
+ =?utf-8?B?SnBraDZXUXY2TnpQWk55clhnYnloUWhuVDBVN1VXUUgzYk0xbGp6NE5pQkpK?=
+ =?utf-8?B?SEFXdHNnVHdsVVZkcFJkb21neUJTTHdPTmsvWm5DNFlJbkJ1N3YxZWRRd2FQ?=
+ =?utf-8?B?YjZvQS9kUC9SM0pTMko3ckx3TDBwdnBOSDJYQWVUQmozaHdFeEtOSXcxTVAy?=
+ =?utf-8?B?c0N4cGNUMXNXYzEwSzNpbWxTSHhPYXl5UGN3UVo1TGVjWGtRZHkxK01CYUpO?=
+ =?utf-8?B?KzdEMWFmVFhldXE2c2VmY0JRM2xqRmE4M2pSek9PY3l3UHEvUHA3NUViSG1U?=
+ =?utf-8?B?aG13QSs1clBDL0V3MjA0N291YTM1QVUveVlOSzZFWk9tdTdLTFJhcXF6T0RB?=
+ =?utf-8?B?WTV6UmxxT2VlQ3RxTCtmRjBBdkxXT0JhNmFsNU1XcWpCZFMxWTBrZmxjaFNi?=
+ =?utf-8?B?U1NjU1VWVkcxeUdlMzZjblQ0YjZ0YzVWWEdSOW9teFBCOUdIeEJLUUoyQVNl?=
+ =?utf-8?B?aWF0R25COTZwS0N1UkU0UT09?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?bzhqMVZRT1NpaG9IamJiekpmRWVQdG5vYVNTeUlGZ3B5dEhsV0UzK1J4OFIz?=
+ =?utf-8?B?UTMvWFpERysvRGk1b2xFTU1Xa1kveE4yU3ZKRjk1RzlwamtnY2oyb2pjRjN5?=
+ =?utf-8?B?UlR2WDJZeExzN08yaTBBbHorTHNiTmxlb3JOZzBOY21zb1p6YlRUTFJmTHQv?=
+ =?utf-8?B?MG4yNkhRMW1acndXaU0vWGZQcEV0MWx6cCtpSUlQazJQSkVvZUhzQm1FTWNO?=
+ =?utf-8?B?cjJPZFRHSmRSK01xeVNhN3lHZlpaWWFoSVUybUhmRzBDNUl5aGJXOHBEZDVZ?=
+ =?utf-8?B?aFBIZmpyV0JPcnpUbWdhNGlJdE5vcEdURkxGS2pQZ0NaTTlqR2ZoYjc3SGJX?=
+ =?utf-8?B?akVZTzJtM2tEWkJzUmZVWU5kMWhWVkg2aW1hQ24wbGllSlJHMWFhNWVxVWVu?=
+ =?utf-8?B?RVlzRkFGZU0zWXBwNDM1cG1wRnVJQ3JOMlpRdndjM0g4YmEzeEJQc2FKZitC?=
+ =?utf-8?B?UFhYWURrTGd3eWtGR1FCdm1MRk02SFE5SnlYVjlVNjlyM2pNc0NYQ0NvUHZC?=
+ =?utf-8?B?QW03cFF1THVadW1OV3VSRzdVNDhyQm52YnJnRW1iRXU1dGsvWWIyODlwaWVF?=
+ =?utf-8?B?RithWHB5OW1ZVDcrVmhFeDlwSEJ0dXNZQkdFaXUyTXhiRk05Ym5PYXlENi8w?=
+ =?utf-8?B?VjFpK0wvSklDWGMxT3ZzRFF5cGhyb0swbXgyc054b1pUazZESUZrQ2tsMHR1?=
+ =?utf-8?B?cUNKZklyWFRncEVtMHA2bjI0am5RQnBiWlJPQUhMTzFFK1NQV1NuazJjUVZJ?=
+ =?utf-8?B?bTl2OGZTbFV4TjFTVkJoNDVtRVYyODlEK0RtdWpyUTFHVkFMNUhPOG1HQTF3?=
+ =?utf-8?B?MGJKcTdCNUR1WTY1U0NtNit2RHBWQXlCTXBDS21neE1vLzJVUkliY1h1ZUFq?=
+ =?utf-8?B?UzBJTG5MZ3RWZ3JnT1pNZmptRE15RnRqaVEva0RqWDM4UDM4azhKVUQwNUFH?=
+ =?utf-8?B?eThDejdlYkMwOTNRbHUwbnpVMzhNd21vVUZoekhMTW5qYzJHVmtXVzlrMHFM?=
+ =?utf-8?B?dER5NTRWQUJ3bWtpUzhMWWN4TkMzZzlkNEpFaU9icmd2bW5nZFF4UkZ3TGtu?=
+ =?utf-8?B?WnByVDRjbWdhb0hBMGpyaGJXNUdWVzQ0aGZFRGhxU1VyOTdDU1o4ejdpNjVm?=
+ =?utf-8?B?MmQzTmJkTWw4Ny8vV0gyQ2xzMWpZN1Z0TTJwK3lQSUlaWExKMzJ3eWE5SUx5?=
+ =?utf-8?B?ek9USkl4WndrcHIzRFM1UkxzRXlML3p2ZnVBM3NoSitjSFlsSDBOaU5KMHd1?=
+ =?utf-8?B?OGZEWVJ1RTdkNE8wMzhvMmZzRndFd0lvOWZoUDAvQVQvZjZuaGw3M3p1YlMr?=
+ =?utf-8?B?cjdXM3IyOHpSZjU1cTA4YnFVRHRZWEEwbkY0ZkJSWkRiZGt5dHdqQ1JJRk92?=
+ =?utf-8?B?S3dtV280aE5sQUFaSElPYUFkb0RyY3ExQVJnaVRCK3BzRVRkVG1yUVJFWmxL?=
+ =?utf-8?B?SXFuU3N4WXF2RktjN3RjdVZTbE9SUkVxVnp1MHNuT3NEdzRaL3lGV3U5NzdK?=
+ =?utf-8?B?K29iOTMvTnJDVk5MQ2lBRDk2MWY1bm0zVFloUncyaWR1dUwzV3NUWEJVbDc3?=
+ =?utf-8?B?aXE5Ui90aC9Bbnp0OUd5VmdTR3dTa3QzY0pWTzg4V3U2V1lJTzBYSjIyaVlC?=
+ =?utf-8?B?VnZYb2JrTmU3WU1udHc4dWw4TVhNK2UyeVozelRDc0hIeDJOZmRpOGVscnhV?=
+ =?utf-8?B?WVhzdEhvOWRtSGpSd3NNWlpNYk04bmJ0NEgwZlBMeFhTN0o2M0dVOEp5dVI0?=
+ =?utf-8?B?NDlZdCtmZlZHZ3phU0ptT29RLzBMVDBFU2E2cFB5OFFNbCtNNldSL1piczFV?=
+ =?utf-8?B?cHVyZzBZZ2xxWEhneTB3NGU5SUtuYk45RzJlT2lBSGV6Z0ltenNEZXEzWG9p?=
+ =?utf-8?B?cHFCTzZ0dVROb2xUUTJnbUluZkhQdmN2N0pUaWhwMlpmOE9GQnJpNkNsUFFI?=
+ =?utf-8?B?RDhLVFJaaFEzaDFNbS9vY3lDZ1k5YUhLME9yL2FPRmtZZHRXTmJtNktBeGRx?=
+ =?utf-8?B?TG5DRkRCVzRDVzJqTXNLbEdkYXQ2RjJ5Q1V2M1pMUjg2bE9FbE15MHNqSGdh?=
+ =?utf-8?B?OER2QTgyTDlpdEtoZitrK2UwODJ2ZTNCY2xmSS9Pa1lYU2gzdytKRklDNmk4?=
+ =?utf-8?Q?28wKRXTWQq307jgvCebTBu8nz?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: acaa1407-176d-4b9b-442c-08dd5c73a5fa
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 05:56:33.5113
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2wzS3oqKvyYXLZmDHFjHy6MYLNWr0LlQk+cmCSWoFUcZHb4hnQHFzajo45Bv/DTh31DHh4Ol1rf+bjIROWNoeA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBAPR04MB7270
 
-Documentation/dev-tools/kselftest.rst says you can use the "TARGETS"
-variable on the make command line to run only tests targeted for a
-single subsystem:
+On 03/04/2025, Maxime Ripard wrote:
+> On Tue, Mar 04, 2025 at 06:15:29PM +0800, Liu Ying wrote:
+>> A DPI color encoder, as a simple display bridge, converts input DPI color
+>> coding to output DPI color coding, like Adafruit Kippah DPI hat[1] which
+>> converts input 18-bit pixel data to 24-bit pixel data(with 2 low padding
+>> bits in every color component though). Add the DPI color encoder support
+>> in the simple bridge driver.
+>>
+>> [1] https://learn.adafruit.com/adafruit-dpi-display-kippah-ttl-tft/downloads
+>>
+>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+>> ---
+>>  drivers/gpu/drm/bridge/simple-bridge.c | 104 ++++++++++++++++++++++++-
+>>  1 file changed, 102 insertions(+), 2 deletions(-)
+> 
+> Same thing, I think it's easy enough to write a transparent bridge to
+> just put it into another driver.
 
-  $ make TARGETS="size timers" kselftest
+I chose to touch this driver just because it seems that this DPI color
+encoder fits the description of simple-bridge.yaml:
 
-A natural way to narrow down further to a particular test in a subsystem
-is to specify e.g., TEST_GEN_PROGS:
+-8<-
+description: |
+  This binding supports transparent non-programmable bridges that don't
+  require any configuration, with a single input and a single output.
+-8<-
 
-  $ make TARGETS=net TEST_PROGS= TEST_GEN_PROGS=tun kselftest
+Anyway, if you think another driver is really needed and DT maintainers
+accept to document this DPI color encoder, I may try to write one.
 
-However, this does not work well because the following statement in
-tools/testing/selftests/lib.mk gets ignored:
+> 
+> Maxime
 
-  TEST_GEN_PROGS := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS))
-
-Add the override directive to make it and similar ones will be effective
-even when TEST_GEN_PROGS and similar variables are specified in the
-command line.
-
-Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
----
- tools/testing/selftests/lib.mk | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/lib.mk b/tools/testing/selftests/lib.mk
-index d6edcfcb5be832ddee4c3d34b5ad221e9295f878..68116e51f97d62376c63f727ba3fd1f616c67562 100644
---- a/tools/testing/selftests/lib.mk
-+++ b/tools/testing/selftests/lib.mk
-@@ -93,9 +93,9 @@ TOOLS_INCLUDES := -isystem $(top_srcdir)/tools/include/uapi
- # TEST_PROGS are for test shell scripts.
- # TEST_CUSTOM_PROGS and TEST_PROGS will be run by common run_tests
- # and install targets. Common clean doesn't touch them.
--TEST_GEN_PROGS := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS))
--TEST_GEN_PROGS_EXTENDED := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS_EXTENDED))
--TEST_GEN_FILES := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_FILES))
-+override TEST_GEN_PROGS := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS))
-+override TEST_GEN_PROGS_EXTENDED := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_PROGS_EXTENDED))
-+override TEST_GEN_FILES := $(patsubst %,$(OUTPUT)/%,$(TEST_GEN_FILES))
- 
- all: $(TEST_GEN_PROGS) $(TEST_GEN_PROGS_EXTENDED) $(TEST_GEN_FILES) \
- 	$(if $(TEST_GEN_MODS_DIR),gen_mods_dir)
-
----
-base-commit: dd83757f6e686a2188997cb58b5975f744bb7786
-change-id: 20250306-lib-4ac9711c10a2
-
-Best regards,
 -- 
-Akihiko Odaki <akihiko.odaki@daynix.com>
-
+Regards,
+Liu Ying
 
