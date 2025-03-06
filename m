@@ -1,117 +1,167 @@
-Return-Path: <linux-kernel+bounces-548586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB318A546BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:44:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ED6DA546BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:44:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27E403A7738
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:44:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B32A16C576
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0979209F52;
-	Thu,  6 Mar 2025 09:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB82F20AF63;
+	Thu,  6 Mar 2025 09:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="Ib8Tm0jI"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="x0KlARKk"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54680209F24;
-	Thu,  6 Mar 2025 09:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70447209F51;
+	Thu,  6 Mar 2025 09:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741254249; cv=none; b=VVOvVsFTGhsCQaWBVcJaNkE8L2qySWVrvwVX9MJTKCApVIBNjS4cEGdye7WQupMODoQ76K0gFTOiMokEt1aJvfMUjvKzJm4qbaR66/Jw4NjOD7PGv9DkK/YkoevySubxlOdNgbfFR+JsON1IFh6M5ntgk3K/gKhSiVtCAL6Iv/0=
+	t=1741254259; cv=none; b=tnFyip3vPl/IXapzIPMTUmPZ8yrQjsiBxynaxzfsy/GpVGOXEkVrN9o4dSJOpHXi2A4iHTIn/3ZIBXhoqD/1M0y5PpR6d9hEM0FIGIzJAm5g4max1unxTHgfqemhbL4l5JGraHekq73dr+AvBVWMycz4nM170M3n76uXrQOW2ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741254249; c=relaxed/simple;
-	bh=VX2kzKllbsoP91Bapt2Ap7Ihl2O/6a2B1r5piUQLUNM=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NL/p4dhGBK5XqT9X8HC6I7NAnnUsF9rc1BV7VNLusAMqjauLYIONUgXd3/rLQ+8/x58l+yXm4c5ZoJ4mI/r0p006ZRdbni/q50/wKkOJpZs/Ui93rGm074HVdMamTP9k154NN5hIz2wjnb6690KZODRseq04ZLzGndQwvdgxK2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=Ib8Tm0jI; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52611Gqd023438;
-	Thu, 6 Mar 2025 03:43:46 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=zXAUqowniBqDMvitnE
-	LMJZCDJMuQN3t+0nVrR0rbEH8=; b=Ib8Tm0jIBGnxqgBqlviDOahXwQwTC5WZCv
-	KlHtT1enVfLSH86TABQ17szuCQVQusPj2vZWW8/MfpKHLYxwm63iS/N4fVsUxTMS
-	TbfsRvaidcgdHJ49LT31mLxol9UXFauCSJlZfSZvAnHu49BWK5IbDwMu/lModhHe
-	lfxEHIeT3MF0V7uzWY7WKXdvXjdbqLPHY5kvSBqIshRYzx4LO91T8gqxpmfI5FUH
-	AcnDRQUvT3DxNxjQ5N6XTLvDRloJRAMSwVXtXP8eXk1XD7soA+nDsUyaYEWtnCig
-	FBmtdV5gHMS6V8H2EJZWyhEgKMxKAo62OLfjGf8YtpDjtx5qXFIw==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 4571nu0qmt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 03:43:46 -0600 (CST)
-Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 6 Mar
- 2025 09:43:44 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
- 15.2.1544.14 via Frontend Transport; Thu, 6 Mar 2025 09:43:44 +0000
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id B5657820248;
-	Thu,  6 Mar 2025 09:43:44 +0000 (UTC)
-Date: Thu, 6 Mar 2025 09:43:43 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Arnd Bergmann <arnd@kernel.org>
-CC: David Rhodes <david.rhodes@cirrus.com>,
-        Richard Fitzgerald
-	<rf@opensource.cirrus.com>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>,
-        Maciej Strozek <mstrozek@opensource.cirrus.com>,
-        "Arnd
- Bergmann" <arnd@arndb.de>, Greg KH <gregkh@linuxfoundation.org>,
-        "Peter
- Zijlstra" <peterz@infradead.org>,
-        Wolfram Sang
-	<wsa+renesas@sang-engineering.com>,
-        <linux-sound@vger.kernel.org>, <patches@opensource.cirrus.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: cs42l43: convert to SYSTEM_SLEEP_PM_OPS
-Message-ID: <Z8luTwJBC3BdYZ8R@opensource.cirrus.com>
-References: <20250305172738.3437513-1-arnd@kernel.org>
+	s=arc-20240116; t=1741254259; c=relaxed/simple;
+	bh=jcSCTexaWQ24umIDHBo2CI/qbEBSr0EgpMjuTX8NrE8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fvAevuuM/aV0e4ZrbYpeT51VEgAXurbl1rcDcR8l+DL/PAlnV0i4IEWTXx0zhTvxc6jyw7ONPjc0C+Q5gzI3pd+A+6sx9D727hq8/JryuWEZPnvUP78ctH5ADpzxjat9cXY52gNUG57vamuB4JbrUx8xqetrtpNpxxFhgf8OFEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=x0KlARKk; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=A+AoCpj+mam2Hv7JmuwsRJRor7A216pIOlHe7OyVTl8=; b=x0KlARKkaEwkEYUQAlmMaZ6OaQ
+	DWuU+6P0xe9DEu+abQ7xh4VNXtyfY/Ea7IjpIr3fpklDXjFuOG12udhbCwKdck6RB1XCZ1G1/Kf2e
+	h64oPx9KJkm/93PVKb3/59Ae8kDAoM0tlhhY3kqMNZ3p5tFlxfdhAqx1ebdW6wG1TGRsIWITGFzHV
+	AI3KVKYHQ8x6VNjDwWWT1T1qfPjCbT8PmOCMDuWXZaA2lHHJalSmb2Dw/VsMCp/jyTauklU0GzY3t
+	tl6q7ncsda64gfzzZGUIFACAX7gDkEjsosnf/H9W/YUTEcntgYoks2HFpQjtognUBMrhBtwsjYyGV
+	9bZvFCJw==;
+Received: from i53875a38.versanet.de ([83.135.90.56] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tq7lu-0001tC-By; Thu, 06 Mar 2025 10:44:06 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Shreeya Patel <shreeya.patel@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ jose.abreu@synopsys.com, nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
+ nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+ Hans Verkuil <hverkuil@xs4all.nl>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Diederik de Haas <didi.debian@cknow.org>
+Subject: Re: [PATCH v14 0/3] Enable HDMI RX controller on RK3588
+Date: Thu, 06 Mar 2025 10:44:05 +0100
+Message-ID: <14706072.uLZWGnKmhe@diego>
+In-Reply-To: <1105cde1-7557-4104-9652-3527f8d9b599@xs4all.nl>
+References:
+ <20250306072842.287142-1-dmitry.osipenko@collabora.com>
+ <2906773.tdWV9SEqCh@diego> <1105cde1-7557-4104-9652-3527f8d9b599@xs4all.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250305172738.3437513-1-arnd@kernel.org>
-X-Proofpoint-ORIG-GUID: d9JYD0GO_g0eNORQvEZZpeGt52mC5fUv
-X-Authority-Analysis: v=2.4 cv=Lqxoymdc c=1 sm=1 tr=0 ts=67c96e52 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=w1d2syhTAAAA:8 a=pspjf_nruJqWOfkU2jsA:9 a=CjuIK1q_8ugA:10 a=zZCYzV9kfG8A:10
- a=YXXWInSmI4Sqt1AkVdoW:22
-X-Proofpoint-GUID: d9JYD0GO_g0eNORQvEZZpeGt52mC5fUv
-X-Proofpoint-Spam-Reason: safe
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Wed, Mar 05, 2025 at 06:27:32PM +0100, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The custom suspend function causes a build warning when CONFIG_PM_SLEEP
-> is disabled:
-> 
-> sound/soc/codecs/cs42l43.c:2405:12: error: unused function 'cs42l43_codec_runtime_force_suspend' [-Werror,-Wunused-function]
-> 
-> Change SET_SYSTEM_SLEEP_PM_OPS() to the newer SYSTEM_SLEEP_PM_OPS(),
-> to avoid this.
-> 
-> Fixes: 164b7dd4546b ("ASoC: cs42l43: Add jack delay debounce after suspend")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
+Hi Hans,
 
-Apologies I should have spotted that in my review.
+Am Donnerstag, 6. M=C3=A4rz 2025, 10:41:46 MEZ schrieb Hans Verkuil:
+> On 06/03/2025 10:26, Heiko St=C3=BCbner wrote:
+> > Hi Dmitry,
+> >=20
+> > Am Donnerstag, 6. M=C3=A4rz 2025, 08:28:39 MEZ schrieb Dmitry Osipenko:
+> >> This is a follow up to the v13 of HDMI RX patches [1]. Hans queued the
+> >> driver into the media tree. Now the DT patches are left to apply, could
+> >> you please take care of this series if it's good to you? Thanks
+> >>
+> >> [1] https://lore.kernel.org/linux-media/20250304085819.108067-1-dmitry=
+=2Eosipenko@collabora.com/
+> >=20
+> > Linux-Media, has this strange "applied" reporting thing going, so neith=
+er
+> > the thread reports that nor does https://git.linuxtv.org/ show the comm=
+its
+> > yet.
+> >=20
+> > If you see the driver patches appear on https://git.linuxtv.org/ before=
+ I do,
+> > please ping this thread :-)
+>=20
+> Patches are merged here first:
+>=20
+> https://gitlab.freedesktop.org/linux-media/media-committers
 
-Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+aaaah, that was the missing piece of the puzzle.
 
-Thanks,
-Charles
+I remember reading that media also switched to a multi-comitter model,
+but didn't realize that this might entail a different host.
+
+So thanks for the pointer.
+
+Heiko
+
+
+>=20
+> That's where all the new code lands.
+>=20
+> With a two day delay (if I am not mistaken) they will arrive on the
+> https://git.linuxtv.org/media.git/ tree.
+>=20
+> If it is in the media-committers tree, then it is OK to take dts etc.
+> patches.
+>=20
+> Regards,
+>=20
+> 	Hans
+>=20
+> >=20
+> >=20
+> > Thanks a lot
+> > Heiko
+> >=20
+> >=20
+> >>
+> >> Changelog:
+> >>
+> >> v14: - Re-enabled LOAD_DEFAULT_EDID=3Dy option in the defconfig and
+> >>        added ack from Hans Verkuil fot that patch.
+> >>
+> >> Sebastian Reichel (2):
+> >>   arm64: dts: rockchip: Enable HDMI receiver on rock-5b
+> >>   arm64: defconfig: Enable Synopsys HDMI receiver
+> >>
+> >> Shreeya Patel (1):
+> >>   arm64: dts: rockchip: Add device tree support for HDMI RX Controller
+> >>
+> >>  .../dts/rockchip/rk3588-base-pinctrl.dtsi     | 14 +++++
+> >>  .../arm64/boot/dts/rockchip/rk3588-extra.dtsi | 57 +++++++++++++++++++
+> >>  .../boot/dts/rockchip/rk3588-rock-5b.dts      | 18 ++++++
+> >>  arch/arm64/configs/defconfig                  |  2 +
+> >>  4 files changed, 91 insertions(+)
+> >>
+> >>
+> >=20
+> >=20
+> >=20
+> >=20
+>=20
+>=20
+
+
+
+
 
