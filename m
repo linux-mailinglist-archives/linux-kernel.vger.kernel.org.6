@@ -1,208 +1,161 @@
-Return-Path: <linux-kernel+bounces-548207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAB50A541A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:22:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC7F6A541A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:26:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF39C3AC84E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:22:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE50B16D2F2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:26:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E549519B5B1;
-	Thu,  6 Mar 2025 04:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9407C19CC36;
+	Thu,  6 Mar 2025 04:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BDsImsiX"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="myN/k6lZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32E9192D9A;
-	Thu,  6 Mar 2025 04:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F97319C54F;
+	Thu,  6 Mar 2025 04:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741234961; cv=none; b=gwEvyugTl+F3Tz98uY4+3J22ZTekKVgQQ71YUgWy0Kc5otbl8cNx+iRCQ0olusqtiZn+PZaJneBmgBDvCMPiYOcE6T1q+PyfDk7JUbAR0DO89Hj44LDgE9TYIRwT+EuQYlX27836VYjDiKIDEfGXWjHfQFTcJNJdXHwysm2IPDQ=
+	t=1741235159; cv=none; b=C5OWNQEhL+jNG4vwu39t2ZczwUK6cjAoA/yDNCQYhb+qaKN7aVMaP3hBgm9njlVZ8MNWQJgEKZaZr7/cGrMPtx5eym5Cvn8ZteqdSry1oEdDOMuP3o8d+SVd/qdhOWuKJlEn48fRRrl+XU5EAbMLV4nqcqwgmiZ8MaCgqPQE02Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741234961; c=relaxed/simple;
-	bh=H2OVW5hp+pECfwQ8sOJWNwxdv2gjfOiIOLFnUzzbq6k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=F8lP/gKD9T+2CCk8kHmOA5M/AJPnkUD96DNAJTTLnibys29z04+Q3fFY4H9yMOCVuPAeC7mymNof0wDrPJNertgfGEXqfn8QmKAlYldeRhs/M6ltbfdmzHOIHnKC9o+VmPpXWLDvhszX7TxjctaLpgPPLug9Kkyq8HE0Pghs/Qo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BDsImsiX; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c3b4c4b409so37497585a.3;
-        Wed, 05 Mar 2025 20:22:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741234958; x=1741839758; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q/KN0xY9MIh51cXx4wjb4mSWDZdUL41avdYzHlA6zDA=;
-        b=BDsImsiXLht7VBHzBRU8XqOsaOhI+hne/Ob6TvS/PMlMjMXHZ4Pij88OeFCokReTjE
-         46NuP9nEZYXwd6L07SLfJq3di80y7c1gSGnzWUctSq06CSLWjw00FOJxU79Kfo24wj3v
-         KSgM5FAp7Y2W/5AZuPK5ooODmhpObQatnh+58TgxP6DOl1ap590TVdN5Z2a525jYOhPx
-         Nv2d+Qwli8m19r/pSmYOb3UV9VE2wII58UzTo4YqvXbN1uIQohD6oMGrYVpLuoXMyZzV
-         zLs7t7MR2BKL6+hALzJpPJHLUmiBlb4dbrw7NOnFhonL/Ww5v+j2vRCH0CszoZA5oDE2
-         lpEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741234958; x=1741839758;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q/KN0xY9MIh51cXx4wjb4mSWDZdUL41avdYzHlA6zDA=;
-        b=S0pNaPvKiE2Z1OKAJFLBDmy/ixII4T8ifAcO/ldOiviRc53ebUKzUDvD+uO8LspWv5
-         RKMMio/ZOPRutjrbLS0HyALlW1NmHpIAMqft6vnL3MITJ+igpm5oGQhWamyCAW1eVpG4
-         DJxid9S7njTXWVbgGVKAWHXs70/ntsc9ykslo+GkUN3yagjgeL4tZ8UNUiLJNsdTulg+
-         u7JN4S3W5szDZWCBEQC93TEy4cbUgJRhlzbmLrk3ngO0fmzIg8UPtOPNK6BqQ/9ENElP
-         9nPI68nkaJVv7raEymBdpookcuWVTwudoW1u3I65dIo+tK5uRxn4Mu0BX4sOOjfR8bTb
-         Kksw==
-X-Forwarded-Encrypted: i=1; AJvYcCWm+DkZ4GDYmEnJNuGFyloz7NX/JmFQSeR7zmVsE1+qcbhgb+dqe4STzCi8VVJYhns0BOD53NiVs+MkuRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtQi4B9hBR0oYo9lMVwML3NYJusyFw0W0qoGcA4vA6cLwBx6BB
-	wtKphvPbDhb7dgutAHNUfIXdCix+w3LfJcJtxzlfRKhIvio5+kB9
-X-Gm-Gg: ASbGncvsBsOV/Zq8Jzplx8WeNYw7AkxBjPCurzlTr7V8pf4ld5/vHW0zPqzHYhiZ4zJ
-	SIYdHj4MqJs1tmFT0QG/gzg5UNH29iqI6ZM/cLlHJ/TFAs4EwndsSgTLEKMdo0U4Qt+9xZN8ndB
-	ze2rKP99dIQTvgMgkziCwdnoBHng3sHFL2p6ZfoLDfj+4JohBINN75Ss762+oMoPONdkSd9uKhX
-	XlzvOF/uM+JNhHNM62DYiqv1mYS0tajtAP3HOlxiQbmH9gPOCh0shl8CrlmHutRV00XSZ6JeLDP
-	u5sgAMUgCGTUXa5zPJobHz8h8rwuW0QXVc/lkWCjFkp+Gi2Ajm0zyn2wfme0d7oYZQ==
-X-Google-Smtp-Source: AGHT+IH6apQoKwM/9SjFk1i/87DiWodBnnoPXC51KenGbllayxgk7R6It54iIQhW6KT0cb19RfRQxQ==
-X-Received: by 2002:a05:620a:2606:b0:7c0:a236:7183 with SMTP id af79cd13be357-7c3d8eb185dmr800727385a.37.1741234958474;
-        Wed, 05 Mar 2025 20:22:38 -0800 (PST)
-Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:2726:6286:a126:9027])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e551102csm36784785a.101.2025.03.05.20.22.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 20:22:37 -0800 (PST)
-From: Adam Simonelli <adamsimonelli@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jiri Slaby <jirislaby@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Steven Rostedt <rostedt@goodmis.org>,
- John Ogness <john.ogness@linutronix.de>,
- Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>
-Subject:
- Re: [PATCH v6 3/3] tty: Change order of ttynull to be linked sooner if
- enabled as a console.
-Date: Wed, 05 Mar 2025 23:22:35 -0500
-Message-ID: <4451040.8hb0ThOEGa@nerdopolis2>
-In-Reply-To:
- <CAHp75VfadXS8Z2G6U_DcOOZFFmaOSn_9uQN_N7Psse3kiSGj0g@mail.gmail.com>
-References:
- <20250304035447.3138221-1-adamsimonelli@gmail.com>
- <7969025.Sb9uPGUboI@nerdopolis2>
- <CAHp75VfadXS8Z2G6U_DcOOZFFmaOSn_9uQN_N7Psse3kiSGj0g@mail.gmail.com>
+	s=arc-20240116; t=1741235159; c=relaxed/simple;
+	bh=NJCVt2+YUa5c5YJ95PV1i2GlvWFyPhsZJ0jvLUACEOY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u/jECaM+Rke/xuxxeCaVLhkEpP3y2wGIlWvqwwEVw987NcRwYP5Jx+RA0HpeOq/WYnMNOgE4KKD3PH68TepWGasX99KDsjMEUeXjDHu9O+3GuzLaDplEd15v/WA1fDTw6tjwxlaedfS3j4T8FqQARAPwWetiYN18eiWd198Hs9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=myN/k6lZ; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741235157; x=1772771157;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=NJCVt2+YUa5c5YJ95PV1i2GlvWFyPhsZJ0jvLUACEOY=;
+  b=myN/k6lZ7+uYPDMV+Oo+LtUQZTeik9LHDeunELxyNBzxDgTYoNsxcx2Z
+   WvxH8i1zsW+LyYtZ3cmjBsa07J2dSV94NyV8K7c0HJuKnoEn9ZSa2A44X
+   k96YDsv1PbemKxTRr05nSgdoW2rLxDaQHzSammjbposQKtAj9P6/KZTRD
+   nH/IJQt3cmbohFc+Rm7M/b5SJRezwILYoeT7icN9UB7TJdLhwwRL7f4/P
+   ZfJxZi9TRlbMVvd/Ukgc9+idfY4IskXWS7CrgFoyIlt0BE/GUfohZEcit
+   yRUG1HUr/Ea/+S0LXI5LRCnyWUxHc4EHRL411A487ssT1pydgAMhDONu4
+   g==;
+X-CSE-ConnectionGUID: zZeoU5FwSBaUBkojruNjsQ==
+X-CSE-MsgGUID: Av8sX98yT/ykmWBYuj+J3Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="46003572"
+X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
+   d="scan'208";a="46003572"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 20:25:57 -0800
+X-CSE-ConnectionGUID: Wox4vV5jSb64q56XBB+2rg==
+X-CSE-MsgGUID: BmO2x536SbCjV5jLKsr7Dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
+   d="scan'208";a="119075926"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa008.fm.intel.com with ESMTP; 05 Mar 2025 20:25:51 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tq2ns-000MWc-2Z;
+	Thu, 06 Mar 2025 04:25:49 +0000
+Date: Thu, 6 Mar 2025 12:24:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: Manikandan Muralidharan <manikandan.m@microchip.com>, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, tudor.ambarus@linaro.org,
+	pratyush@kernel.org, mwalle@kernel.org, miquel.raynal@bootlin.com,
+	richard@nod.at, vigneshr@ti.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Cc: oe-kbuild-all@lists.linux.dev, manikandan.m@microchip.com,
+	Varshini Rajendran <varshini.rajendran@microchip.com>
+Subject: Re: [PATCH 1/2] mtd: spi-nor: sst: register SFDP region into NVMEM
+ framework to read MAC Address
+Message-ID: <202503061244.wH2sylN8-lkp@intel.com>
+References: <20250305100134.1171124-1-manikandan.m@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305100134.1171124-1-manikandan.m@microchip.com>
 
-On Wednesday, March 5, 2025 1:52:00 PM EST Andy Shevchenko wrote:
-> On Wed, Mar 5, 2025 at 4:06=E2=80=AFAM Adam Simonelli <adamsimonelli@gmai=
-l.com> wrote:
-> > On Tuesday, March 4, 2025 1:51:52 AM EST Andy Shevchenko wrote:
-> > > On Tue, Mar 4, 2025 at 5:55=E2=80=AFAM <adamsimonelli@gmail.com> wrot=
-e:
->=20
-> ...
->=20
-> > > >  obj-y                          +=3D vt/
-> > >
-> > > + blank line.
-> > >
-> > > > +# If ttynull is configured to be a console by default, ensure that=
- it is linked
-> > > > +# earlier before a real one is selected.
-> > > > +obj-$(CONFIG_NULL_TTY_DEFAULT_CONSOLE) \
-> > > > +                               +=3D ttynull.o
-> > >
-> > > Here is the question: are you sure that all console drivers that exist
-> > > in the kernel happen to be here? Have you grepped the source tree for
-> > > checking this?
-> > >
-> > Grepping for console_initcall, the only other places I see outside of
-> > drivers/tty/ is
-> >
-> > arch/mips/fw/arc/arc_con.c
-> > arch/mips/sibyte/common/cfe_console.c
-> > arch/powerpc/kernel/legacy_serial.c
-> > arch/powerpc/kernel/udbg.c
-> > arch/powerpc/platforms/powermac/setup.c
-> > arch/um/drivers/stderr_console.c
-> > arch/xtensa/platforms/iss/console.c
-> > drivers/s390/char/con3215.c
-> > drivers/s390/char/con3270.c
-> > drivers/s390/char/sclp_con.c
-> > drivers/s390/char/sclp_vt220.c
->=20
-> Which means you need to test your stuff on those cases, to see how the
-> linker order is done there. It might be that your change wouldn't work
-> there as expected (quick workaround is to mark the new option as
-> depends on !S390 && !PPC and so on.
->=20
->=20
-It will be difficult to test other arches, I mean I guess it is possible wi=
-th
-QEMU, and cross-building, though I did do an experimental test on x86:
+Hi Manikandan,
 
-Making it temporarily adding an architecture specific console like
-powerpc/some mips/s390/arches with Xen enabled.
-=2D------------------------------------------------------------------------=
-=2D-----
-diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-index 05c5aa951da7..bcd248c44fc8 100644
-=2D-- a/arch/x86/kernel/setup.c
-+++ b/arch/x86/kernel/setup.c
-@@ -1159,6 +1159,8 @@ void __init setup_arch(char **cmdline_p)
-=20
-        e820__setup_pci_gap();
-=20
-+       add_preferred_console("ttyS", 0, NULL);
-+
- #ifdef CONFIG_VT
- #if defined(CONFIG_VGA_CONSOLE)
-        if (!efi_enabled(EFI_BOOT) || (efi_mem_type(0xa0000) !=3D EFI_CONVE=
-NTIONAL_MEMORY))
-=2D------------------------------------------------------------------------=
-=2D-----
-=20
-to see what /proc/consoles will look like, to pretend that x86 is an arch t=
-hat
-sets a console somewhere, and I get:
+kernel test robot noticed the following build warnings:
 
-ttynull0             --- (EC    )  242:0
-ttyS0                -W- (E  p a)    4:64
+[auto build test WARNING on mtd/spi-nor/next]
+[also build test WARNING on robh/for-next abelloni/rtc-next linus/master v6.14-rc5 next-20250305]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-and I got console messages to ttyS0 with no issue.
+url:    https://github.com/intel-lab-lkp/linux/commits/Manikandan-Muralidharan/ARM-dts-microchip-sama5d29_curiosity-Add-nvmem-layout-in-QSPI-to-describe-EUI48-MAC-address-region/20250305-180433
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git spi-nor/next
+patch link:    https://lore.kernel.org/r/20250305100134.1171124-1-manikandan.m%40microchip.com
+patch subject: [PATCH 1/2] mtd: spi-nor: sst: register SFDP region into NVMEM framework to read MAC Address
+config: m68k-stmark2_defconfig (https://download.01.org/0day-ci/archive/20250306/202503061244.wH2sylN8-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250306/202503061244.wH2sylN8-lkp@intel.com/reproduce)
 
-which in my mind is acceptable I would think. ttynull is first in the list,
-which is desired effect of CONFIG_NULL_TTY_DEFAULT_CONSOLE, it doesn't have=
- to
-be _exclusive_ AFAIK, especially if there are long-time default consoles th=
-at.
-users or the hardware expects.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503061244.wH2sylN8-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/mtd/spi-nor/sst.c:75: warning: Function parameter or struct member 'off' not described in 'sst26vf_sfdp_mac_addr_read'
+>> drivers/mtd/spi-nor/sst.c:75: warning: Excess function parameter 'offset' description in 'sst26vf_sfdp_mac_addr_read'
 
 
-The only arch that seems to _unconditionally_ add a console without some ot=
-her
-circumstance, like boot loader env var, and command line option, or firmware
-flag, or suboption (like CONFIG_SERIAL_PMACZILOG_CONSOLE) is Jazz.=20
+vim +75 drivers/mtd/spi-nor/sst.c
 
-Like platforms/powernv adds it if CONFIG_HVC_OPAL is disabled, or the firmw=
-are
-is missing "FW_FEATURE_OPAL". I would assume that a user of this situation
-turning on CONFIG_NULL_TTY_DEFAULT_CONSOLE in addition, will just get ttynu=
-ll
-and hvc in /proc/consoles instead of just hvc. Could that cause something to
-break?
+    61	
+    62	/**
+    63	 * sst26vf_sfdp_mac_addr_read() - check if the EUI-48 MAC Address is programmed
+    64	 * and read the data from the prestored SFDP data
+    65	 *
+    66	 * @priv: User context passed to read callbacks.
+    67	 * @offset: Offset within the NVMEM device.
+    68	 * @val: pointer where to fill the ethernet address
+    69	 * @bytes: Length of the NVMEM cell
+    70	 *
+    71	 * Return: 0 on success, -EINVAL  otherwise.
+    72	 */
+    73	static int sst26vf_sfdp_mac_addr_read(void *priv, unsigned int off,
+    74					      void *val, size_t bytes)
+  > 75	{
+    76		struct spi_nor *nor = priv;
+    77		struct sfdp *sfdp = nor->sfdp;
+    78		loff_t offset = off;
+    79		size_t sfdp_size;
+    80	
+    81		/*
+    82		 * Check if the EUI-48 MAC address is programmed in the next six address
+    83		 * locations.
+    84		 * @off is programmed in the DT and stores the start of MAC Address
+    85		 * byte, (off - 1) stores the bit length of the Extended Unique
+    86		 * Identifier
+    87		 */
+    88		if (SST26VF_SFDP_EUI48 != *((u8 *)sfdp->dwords + (offset - 1)))
+    89			return -EINVAL;
+    90	
+    91		sfdp_size = sfdp->num_dwords * sizeof(*sfdp->dwords);
+    92		memory_read_from_buffer(val, bytes, &offset, sfdp->dwords,
+    93					sfdp_size);
+    94		return 0;
+    95	}
+    96	
 
-
-
-Correct me if I am wrong, I could very very very well be wrong.
-
-
-
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
