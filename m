@@ -1,85 +1,139 @@
-Return-Path: <linux-kernel+bounces-549272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA4BA55026
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:05:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E022A54FE9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:00:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3FF3176905
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:05:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 776397A419F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA7A211A0A;
-	Thu,  6 Mar 2025 16:05:00 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D10D211472;
+	Thu,  6 Mar 2025 16:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RHBvHhi6"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B01B20E71F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:04:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76AD2116E4
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741277100; cv=none; b=STDIry4T0Mc7fxl6/x/+Tm0QApaeIcDH0QgtkeA88mk89fCSY+RFgBmKgKfXeEtd2vX7P/aWGu1ajaWRBVpQoJjGyPtvwx21zgcHazB2c980NyBh/Nc0j78ylRiMC6dgdQ1+5HvXju8Zk0lpvGjhGHb4nLFBCCR8iiALfx1kUug=
+	t=1741276805; cv=none; b=V7zl5DmC6+t/S5QIm6AJHXVTN0vuqxnNpxH5ndD2ur/xBr9JzZpbEyjpESvMONbc3Ok38SVR93I0roLdaTx940KLvtkX6bLWhsPzOpywi1FEgFT8HC7GZx393c5+cAlZ0uSAC3+HcoZGmzgfPmJSlewbETtKCVSX5ncVestK0YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741277100; c=relaxed/simple;
-	bh=cOoGxtcebT3u8VgggsX55aYM+nUJo9Wlfp8eesUGY+M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZvDbboIv7dSoUVIqiyWvPSZ1x20xvALl7150oe//Ry2IIqsu705EY0HH8ubvpjmXYrLQINDVAhrP9+8tAEE/lQjhtIYsm/d0SKQoBTRsBWZdcULU704Z+hXzRBKMC0QIY6N/VGeWFqHSzapMecQbWfEoHXvhsSpQjdGkjnyNGkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-112-92.bstnma.fios.verizon.net [173.48.112.92])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 526FxGlE006357
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 6 Mar 2025 10:59:16 -0500
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 3D1372E010B; Thu, 06 Mar 2025 10:59:16 -0500 (EST)
-Date: Thu, 6 Mar 2025 10:59:16 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>,
-        Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
-Message-ID: <20250306155916.GA279274@mit.edu>
-References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
- <20241121123855.645335-3-ojaswin@linux.ibm.com>
- <Z8lBGaJGnM3SZZ-g@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+	s=arc-20240116; t=1741276805; c=relaxed/simple;
+	bh=8S+kn9eoLFcIV6s94q7ylj8ShiwoJrydVhkVyJ5u72Y=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=QNn3nyCCuanw7Y642It7SGtC/ALjIcOEfg2dYg1xp89FL4CSAMu8DBwaIaYtmCUOKVkkc3tcNiT4vSpD+4+TS0lRT4gdUpWV8BjIJtDMUQF1WSJLN7EVVfCLaV2k4hRYTlwROenNMFQY/4kh1iRGnUOc/Boic60vawzhjyxVCBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RHBvHhi6; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43935e09897so5564985e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 08:00:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741276802; x=1741881602; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tAB6/suJHRre/mBnY4z2mAVnfCiXWv+PUSg8dX32QjI=;
+        b=RHBvHhi6uFOmR3J5yDpTtjiHlMCbynqcb9QyI3HCUoREaGHYBGl8/ZyHNQqunhL/GM
+         TQcke2MVSQ9aBH1d0ZYIGHZBFu1e5rAJf+KWCRQoX3RnfNh+TPFqL61Mx+mdHFj3oDDV
+         uTytlBo3BQnPtdZQEQN+iJis46dtuiMF9VlgC/XhaU5jfRkpqqf1+gwGfi986P7lZL1r
+         Gu6BU4476I2jgzMfExV0UsLPN1Kjm8aMoJ+cSVQH39tiEvr1wceq/2JJnPrE2hASdlvr
+         5xsTAli/mbscULtR4nn04dc3t1Tjvluo6uuO6dHZRmbgswao41MhqNoQDmLatWkPu88M
+         x2xQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741276802; x=1741881602;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tAB6/suJHRre/mBnY4z2mAVnfCiXWv+PUSg8dX32QjI=;
+        b=coPnlxztygFJZXJWfRSYhdu3WZufj7UtLg1XGAf9Grmb0+qIotHjHGzb9ogWcKO44V
+         p+F+yFlAaM3iNIfUGbFuCpvZq6DvMiL80Ut+0v0hzg0/PVIOmcQsJ4wKSmzsqzRXJ8Cp
+         Je0smHnVx2feO/NIUn8uYHq6icT5mbhpEn1UyUhwAVfptNYRQ5bgjpjZ2D7Unc8wPqk0
+         s4ufSME8tAMm2JG1ElJBqOzHQyUZJEEQn0CHrNTqLP7qyFgyzVXf2gPO0pSXkCaZAJZY
+         0XgIyoVpFE3R97v06Icirnb3AcZDiatIw9NPe17NXI3XUXoRfXUBS5i6QycMLLaL2N/e
+         q5iw==
+X-Gm-Message-State: AOJu0YxBNrPM+IiJiKNv0943q+spPqIQ2hsK7TeFTpqX+i5uX0vgRlqC
+	Icrv7Brbku7d9nPFzpKnoX5w1Gb2MHl8StPAUw/wV1uHi4+XB6WA8Kb05PfET3rEUIG+bGK1xOI
+	YDnTYnFI5MyoIOWxjHBR6M2x4DF/5uVLtqTPmEpG68nobwsF8whfLP3SiCExx6bQb2Bcrk/u0qf
+	QqctjQkDA1sAzQc7RBBd5tAOPDSm1wLQ==
+X-Google-Smtp-Source: AGHT+IGsDyZVuVoMjePfqPudE5bSuQ6vDQ2BfMvhJ2lchzVjnxqNAPjMSZLAKW5xDNxWxhEBguihiDLX
+X-Received: from wmbay39.prod.google.com ([2002:a05:600c:1e27:b0:43b:d42e:35b6])
+ (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:5116:b0:439:689b:99eb
+ with SMTP id 5b1f17b1804b1-43c5a5f9569mr241385e9.7.1741276802113; Thu, 06 Mar
+ 2025 08:00:02 -0800 (PST)
+Date: Thu,  6 Mar 2025 16:59:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8lBGaJGnM3SZZ-g@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+Mime-Version: 1.0
+X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2044; i=ardb@kernel.org;
+ h=from:subject; bh=yr5e1p3Qi6PlIBF5j5H9Cs2Lch54/XspKfU9Gt9v1No=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIf3ksZDeBi+tF4KHeBqSLmw9f+WdwccLqlM9jB+JmO+rE
+ VX2vHGgo5SFQYyDQVZMkUVg9t93O09PlKp1niULM4eVCWQIAxenAEwkTIHhf47hKrYwTYvjfnPf
+ aNYv0BcsO1GSaR9k+XejoXJnSOHqNQx/5aqLDt47aznj50qGm433dmg+lO5rsuwNOupu0qKdmJn JDgA=
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <20250306155915.342465-2-ardb+git@google.com>
+Subject: [PATCH] x86/boot: Sanitize boot params before parsing command line
+From: Ard Biesheuvel <ardb+git@google.com>
+To: linux-kernel@vger.kernel.org
+Cc: x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, stable@vger.kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+	Ulrich Gemkow <ulrich.gemkow@ikr.uni-stuttgart.de>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Mar 06, 2025 at 12:00:49PM +0530, Ojaswin Mujoo wrote:
-> On Thu, Nov 21, 2024 at 06:08:55PM +0530, Ojaswin Mujoo wrote:
-> > Protect ext4_release_dquot against freezing so that we
-> > don't try to start a transaction when FS is frozen, leading
-> > to warnings.
-> > 
-> > Further, avoid taking the freeze protection if a transaction
-> > is already running so that we don't need end up in a deadlock
-> > as described in
-> > 
-> >   46e294efc355 ext4: fix deadlock with fs freezing and EA inodes
-> > 
-> > Suggested-by: Jan Kara <jack@suse.cz>
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> 
-> Hey Ted,
-> 
-> Just a ping, I think you might have missed this patch. Let me know if
-> anything else is needed from my side.
+From: Ard Biesheuvel <ardb@kernel.org>
 
-Yes, I did miss this patch; thanks for the reminder. It looks good
-and I've added it to my tree.
+The 5-level paging code parses the command line to look for the 'no5lvl'
+string, and does so very early, before sanitize_boot_params() has been
+called and has been given the opportunity to wipe bogus data from the
+fields in boot_params that are not covered by struct setup_header, and
+are therefore supposed to be initialized to zero by the bootloader.
 
-				- Ted
+This triggers an early boot crash when using syslinux-efi to boot a
+recent kernel built with CONFIG_X86_5LEVEL=y and CONFIG_EFI_STUB=n, as
+the 0xff padding that now fills the unused PE/COFF header is copied into
+boot_params by the bootloader, and interpreted as the top half of the
+command line pointer.
+
+Fix this by sanitizing the boot_params before use. Note that there is no
+harm in calling this more than once; subsequent invocations are able to
+spot that the boot_params have already been cleaned up.
+
+Cc: <stable@vger.kernel.org> # v6.1+
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+Cc: Ulrich Gemkow <ulrich.gemkow@ikr.uni-stuttgart.de>
+Closes: https://lore.kernel.org/all/202503041549.35913.ulrich.gemkow@ikr.uni-stuttgart.de
+Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
+---
+ arch/x86/boot/compressed/pgtable_64.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/boot/compressed/pgtable_64.c b/arch/x86/boot/compressed/pgtable_64.c
+index c882e1f67af0..d8c5de40669d 100644
+--- a/arch/x86/boot/compressed/pgtable_64.c
++++ b/arch/x86/boot/compressed/pgtable_64.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include "misc.h"
+ #include <asm/bootparam.h>
++#include <asm/bootparam_utils.h>
+ #include <asm/e820/types.h>
+ #include <asm/processor.h>
+ #include "pgtable.h"
+@@ -107,6 +108,7 @@ asmlinkage void configure_5level_paging(struct boot_params *bp, void *pgtable)
+ 	bool l5_required = false;
+ 
+ 	/* Initialize boot_params. Required for cmdline_find_option_bool(). */
++	sanitize_boot_params(bp);
+ 	boot_params_ptr = bp;
+ 
+ 	/*
+-- 
+2.48.1.711.g2feabab25a-goog
+
 
