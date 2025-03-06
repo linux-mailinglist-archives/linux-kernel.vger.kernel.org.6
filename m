@@ -1,94 +1,137 @@
-Return-Path: <linux-kernel+bounces-548259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A58F9A54273
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:51:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E663A54275
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:54:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F343F18930D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:51:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BEE11890968
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A220219CC39;
-	Thu,  6 Mar 2025 05:51:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5767C19D086;
+	Thu,  6 Mar 2025 05:54:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WHM+s7re"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0597DA94F;
-	Thu,  6 Mar 2025 05:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="p5RYhwuJ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41FC538DFC;
+	Thu,  6 Mar 2025 05:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741240264; cv=none; b=NiaBJ1zUxaTI2anoMVuvog/4WACwecgTp3g/Ud8r8PgngkyALygT6AmqBGPugAQ2SLlbCsvHIX/KGL397HvKRBIDXRuGSenoIkOBDPVCzSQQj+Ic/HoVtSu5KztN6c0FpgT25DUBRkGzalfChqtpH/wjkB7uHiVSuKjej3UI2uE=
+	t=1741240448; cv=none; b=FJ9eBSd8aQRiX1wx5PPmzEUM92SPiBuDeqVhv3ej5uW+DUbnXbit+54h59Y37JyGDxP7Eef4lO7k72DPuyZARuAye+VTM5EvZT9otxWjYXd5Ci3thCYVVogjwHaNnixvw9lTRiRZmngYtLj4lSsYM6ymVx4gSKiTXqK8VJt6wPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741240264; c=relaxed/simple;
-	bh=mQKtHFDdhQ3Yo3y25Nq5gKNB0XaDYanapvwpAjYjGCE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PbqRMBobdi9m0xLqk187+nEXd5IHthewxNFDnyyPaXT31PC/xOjD870V2OVTSOS7KPAHHJQGSp4RrRaAkHhTKISsCk13ER9XXiqeHb4CrREu1KqF3Gu4ob6OdILK6PjltKffXI7XIboakRZUe+6PJrmTL3tSl4sH4I4VtmA+gxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WHM+s7re; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF60DC4CEE4;
-	Thu,  6 Mar 2025 05:51:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741240263;
-	bh=mQKtHFDdhQ3Yo3y25Nq5gKNB0XaDYanapvwpAjYjGCE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WHM+s7revVxn/DFM1r0AOx7CFBYgPk0FX7CpopgiuFK1PjeWsb/OgQs1SNOcohqJj
-	 W/8Os9yMuKOr5Odk+IuGfk5ZArAT1YQFAk/3OCMrjLL8PIVRKOjaLGqOAsXLmLdYHT
-	 flmbzTJl3fcp89t82nZlntfWO3CU91C1eTxNEcE4YEvcmtWCbNaMGR1JGMS8vkYbFM
-	 0RTXLHFt/ig6mffCXqytD4Fj19Q+VE+TPSYn+aa0MEJTtskE9vOvmT3jIfKfaRS5wQ
-	 wNnYY8uSzebFA+2WO6zqcvkgILegPgPgnNi3pZXQnMjTe+XIwzcqrihgDH4SRmCsIq
-	 2o8jXNE6d3hiQ==
-Date: Thu, 6 Mar 2025 14:51:00 +0900
-From: William Breathitt Gray <wbg@kernel.org>
-To: Bence =?iso-8859-1?B?Q3Pza+Fz?= <csokas.bence@prolan.hu>
-Cc: linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
+	s=arc-20240116; t=1741240448; c=relaxed/simple;
+	bh=RtNMk6CkpnYVHyGLgMRy2qu0U5YISKGT4Rp6VgakTZU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TO77oSJMeXcQPHv9ivVrWK5r3PzE205Gy71eWWhxc412TEas4Ry5Z7Nclwdlypi2lyBTlm+Hz9N/0ogjhXwaOhMeKAQmbYxCwn7/oVExxBpXL9uZ6GMFLALLrJ7EuzbC/C5PT6p9l585E4axLhQdNE+APR/S3HFVDwqJU9+8ce0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=p5RYhwuJ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from namjain-Virtual-Machine.mshome.net (unknown [167.220.238.203])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 5638721104B2;
+	Wed,  5 Mar 2025 21:54:02 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5638721104B2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741240446;
+	bh=c9/w+F2JSYsBy5jmq+6LSxe4kArENwUiG/f1/vGprkM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=p5RYhwuJChFPYPCnQZF/yhcB3lk2e9E9+wmdObF7RQjpYQkxdlYJ2Coe9YAN1bqc9
+	 hV31S+cwIiG1W9Z7LWljOosQeR6FpH0zxxtpiVtPYhyeSXXhz76Qf6vnFyLsjdqhw+
+	 ohwCiWM/4dNyNO4mxoFfTupnSdPuCg3Sbvhrdu94=
+From: Naman Jain <namjain@linux.microsoft.com>
+To: Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Cc: stable@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>
-Subject: Re: [PATCH v7 2/2] counter: microchip-tcb-capture: Add capture
- extensions for registers RA/RB
-Message-ID: <Z8k3xLaR2c1IR9uu@ishi>
-References: <20250304155156.374150-1-csokas.bence@prolan.hu>
- <20250304155156.374150-3-csokas.bence@prolan.hu>
+	Steve Wahl <steve.wahl@hpe.com>,
+	Saurabh Singh Sengar <ssengar@linux.microsoft.com>,
+	srivatsa@csail.mit.edu,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Michael Kelley <mhklinux@outlook.com>,
+	Naman Jain <namjain@linux.microsoft.com>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>
+Subject: [PATCH v4] sched/topology: Enable topology_span_sane check only for debug builds
+Date: Thu,  6 Mar 2025 11:23:54 +0530
+Message-Id: <20250306055354.52915-1-namjain@linux.microsoft.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="9nsbFTYlHPaQ7KFg"
-Content-Disposition: inline
-In-Reply-To: <20250304155156.374150-3-csokas.bence@prolan.hu>
+Content-Transfer-Encoding: 8bit
 
+From: Saurabh Sengar <ssengar@linux.microsoft.com>
 
---9nsbFTYlHPaQ7KFg
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On a x86 system under test with 1780 CPUs, topology_span_sane() takes
+around 8 seconds cumulatively for all the iterations. It is an expensive
+operation which does the sanity of non-NUMA topology masks.
 
-On Tue, Mar 04, 2025 at 04:51:52PM +0100, Bence Cs=F3k=E1s wrote:
-> TCB hardware is capable of capturing the timer value to registers RA and
-> RB. Add these registers as capture extensions.
->=20
-> Signed-off-by: Bence Cs=F3k=E1s <csokas.bence@prolan.hu>
+CPU topology is not something which changes very frequently hence make
+this check optional for the systems where the topology is trusted and
+need faster bootup.
 
-I'm putting my Acked-by line here to be a remainder for myself in the
-next revision that this patch is fine and I already reviewed it.
+Restrict this to sched_verbose kernel cmdline option so that this penalty
+can be avoided for the systems who want to avoid it.
 
-Acked-by: William Breathitt Gray <wbg@kernel.org>
+Cc: stable@vger.kernel.org
+Fixes: ccf74128d66c ("sched/topology: Assert non-NUMA topology masks don't (partially) overlap")
+Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+Co-developed-by: Naman Jain <namjain@linux.microsoft.com>
+Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+---
+Changes since v3:
+https://lore.kernel.org/all/20250203114738.3109-1-namjain@linux.microsoft.com/
+	- Minor typo correction in comment
+	- Added Tested-by tag from Prateek for x86	
+Changes since v2:
+https://lore.kernel.org/all/1731922777-7121-1-git-send-email-ssengar@linux.microsoft.com/
+	- Use sched_debug() instead of using sched_debug_verbose
+	  variable directly (addressing Prateek's comment)
 
---9nsbFTYlHPaQ7KFg
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes since v1:
+https://lore.kernel.org/all/1729619853-2597-1-git-send-email-ssengar@linux.microsoft.com/
+	- Use kernel cmdline param instead of compile time flag.
 
------BEGIN PGP SIGNATURE-----
+Adding a link to the other patch which is under review.
+https://lore.kernel.org/lkml/20241031200431.182443-1-steve.wahl@hpe.com/
+Above patch tries to optimize the topology sanity check, whereas this
+patch makes it optional. We believe both patches can coexist, as even
+with optimization, there will still be some performance overhead for
+this check.
 
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZ8k3xAAKCRC1SFbKvhIj
-K1vkAP9uzi11I3Aa+bUH23E5MRlm7xr1Gf+8eHmAyANXwrZqHAD+IYkv2pqOFQuq
-eMxDEEY7ZcqlYTgk8j7gNoFb72d+oAI=
-=7c47
------END PGP SIGNATURE-----
+---
+ kernel/sched/topology.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
---9nsbFTYlHPaQ7KFg--
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index c49aea8c1025..666f0a18cc6c 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -2359,6 +2359,13 @@ static bool topology_span_sane(struct sched_domain_topology_level *tl,
+ {
+ 	int i = cpu + 1;
+ 
++	/* Skip the topology sanity check for non-debug, as it is a time-consuming operation */
++	if (!sched_debug()) {
++		pr_info_once("%s: Skipping topology span sanity check. Use `sched_verbose` boot parameter to enable it.\n",
++			     __func__);
++		return true;
++	}
++
+ 	/* NUMA levels are allowed to overlap */
+ 	if (tl->flags & SDTL_OVERLAP)
+ 		return true;
+-- 
+2.34.1
+
 
