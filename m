@@ -1,55 +1,61 @@
-Return-Path: <linux-kernel+bounces-549781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6797FA55735
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:00:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28A8A55737
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:01:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77B1B3AB016
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:59:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 422C67A588D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B470827291D;
-	Thu,  6 Mar 2025 20:00:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B58E2080D5;
+	Thu,  6 Mar 2025 20:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujJIvMiR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G7Iolmsw"
+Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22C28221570
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 20:00:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31CB542A8C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 20:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741291203; cv=none; b=qZXlCVhFSFBqXujCSH2iW6m5kBZaNi50KWVGzIl/8FylALAVp3t9Gf+saKOsYZjTN6Y9SIgNe0pmk4U1/+028OPt/WooQunCFgO4s9alS0vvqNlOesBOQ4iarSbJiCWVgKz4cUf9fOdinTbx23qLwbEXaGwzkH7GdKoKxakF+mE=
+	t=1741291285; cv=none; b=Tt8sS22IwjBCQb5mCrUwwcm4lDaMhdHtK3rSTbhY0nQujgfV4mgNDjG5Yz4D2tr9x/03uz5rnm/FGT4WuabEqXpdmuPt51U406LZrHjNX6XuK7O6lHIFF9ndyLBDCQKNyCEr9+wxE1lK5LIGzJF61cGoYMcMbL7yBDlzwIHBnXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741291203; c=relaxed/simple;
-	bh=CGu5XrruTaOTWbm+H8SU4/LST9GYJ3CBnT53RdCtMCo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kv0PHlCH4jRcu7dTh+OS36A3+T/TsQJfeBwkoM0uYn95Gqldx7kD78tNni5EjTrMYE/kmrTe/+Bo0xnyiWd/ybWTN/5vrABj/yO3wqknGfXa91CKvmQL+CNiIBmlLOl8r1aq1e6hiZY33Pz6w20tTxJB8kvbyBAWSIVZCtBspHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujJIvMiR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 992E7C4CEE0;
-	Thu,  6 Mar 2025 20:00:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741291202;
-	bh=CGu5XrruTaOTWbm+H8SU4/LST9GYJ3CBnT53RdCtMCo=;
-	h=Date:From:To:Cc:Subject:Reply-To:From;
-	b=ujJIvMiRCwg43DdCgvoXborsFW6ccPLXvstqOQDcaVVADB9Id894sd34tIrE7iQbe
-	 9sYH5XQDxM3+Wpwy0857u1R0vQWEc52tPgQvgtGoNKRN6Oo1Y4yIsuIcOdo3JJ1TnL
-	 28NRoPTW0dOchpxkc7gmQDnYskRaT+p8DkZagtUJo7mLw/8licTrt3PFF/1VtjqoJ1
-	 4Wclm+u0/w0VOpb5wZp0dn5LTzqkt6ZshipCacepjNJD1t3sHaYfaI8W0T5T9Eqfla
-	 dqpF/i1Xgqy6Al4bT8utXGkVRrZx6gdbQr2eLfRaRxR00fOiN4l8JqqJ+CZuPe46KL
-	 2ELLR1x1/KyxQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 28F70CE1163; Thu,  6 Mar 2025 12:00:02 -0800 (PST)
-Date: Thu, 6 Mar 2025 12:00:02 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, vschneid@redhat.com, neeraj.upadhyay@kernel.org,
-	frederic@kernel.org, kernel-team@meta.com
-Subject: [PATCH] stop-machine: Add comment for rcu_momentary_eqs()
-Message-ID: <9d3f4116-db64-43fb-85f1-0b939038206e@paulmck-laptop>
-Reply-To: paulmck@kernel.org
+	s=arc-20240116; t=1741291285; c=relaxed/simple;
+	bh=p3D36DfA6Q0ab8MTdVKveItYTB107li6XDhZ7rP21fU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=InK8LZjFeXCrP577kozcuYnzbAQj1lxdJJEJK5Ltc+TB10w1fLHb4qkqmdxCM5KMJc0VdROLPEwcGMf14jVKeRcQjGMRzC4RD4UPSdphkZHCEIZWT6N0pVMMz0S7V3Z5KIB93+mK/oIfyJz2W/r1UWkMP762Ay3V2vfmQoPMHMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G7Iolmsw; arc=none smtp.client-ip=95.215.58.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 6 Mar 2025 20:00:58 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741291269;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KIQjkd+El4xk0mW5CsC/gYtOwzQYTEyP0qN+CtiWc2Y=;
+	b=G7IolmswqePx/eqlqvXsVVauUbL96WQHy2/ONPb50ME3/+r34UmLYN5mHQUbBnHHOKV9gl
+	rCSRKAYPr6hYZMWnAJ4Jq77npiF9+OF7AWBXSAgub073C8SXhTgcj+5s0Fj8fEkCTkrbIJ
+	1PdZjwsg24HBUN4JjKGeWnK+4bGkLHE=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org,
+	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com,
+	ryan.roberts@arm.com, 21cnbao@gmail.com,
+	ying.huang@linux.alibaba.com, akpm@linux-foundation.org,
+	linux-crypto@vger.kernel.org, herbert@gondor.apana.org.au,
+	davem@davemloft.net, clabbe@baylibre.com, ardb@kernel.org,
+	ebiggers@google.com, surenb@google.com, kristen.c.accardi@intel.com,
+	wajdi.k.feghali@intel.com, vinodh.gopal@intel.com
+Subject: Re: [PATCH v8 13/14] mm: zswap: Allocate pool batching resources if
+ the compressor supports batching.
+Message-ID: <Z8n--rF3H2-uWhEc@google.com>
+References: <20250303084724.6490-1-kanchana.p.sridhar@intel.com>
+ <20250303084724.6490-14-kanchana.p.sridhar@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,31 +64,182 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250303084724.6490-14-kanchana.p.sridhar@intel.com>
+X-Migadu-Flow: FLOW_OUT
 
-Add a comment to explain the purpose of the rcu_momentary_eqs() call
-from multi_cpu_stop(), which is to suppress false-positive RCU CPU
-stall warnings.
+On Mon, Mar 03, 2025 at 12:47:23AM -0800, Kanchana P Sridhar wrote:
+> This patch adds support for the per-CPU acomp_ctx to track multiple
+> compression/decompression requests and multiple compression destination
+> buffers. The zswap_cpu_comp_prepare() CPU onlining code will get the
+> maximum batch-size the compressor supports. If so, it will allocate the
+> necessary batching resources.
+> 
+> However, zswap does not use more than one request yet. Follow-up patches
+> will actually utilize the multiple acomp_ctx requests/buffers for batch
+> compression/decompression of multiple pages.
+> 
+> The newly added ZSWAP_MAX_BATCH_SIZE limits the amount of extra memory used
+> for batching. There is a small extra memory overhead of allocating the
+> "reqs" and "buffers" arrays for compressors that do not support batching.
 
-Reported-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/87wmeuanti.ffs@tglx/
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Valentin Schneider <vschneid@redhat.com>
-Cc: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>
-Cc: Frederic Weisbecker <frederic@kernel.org>
----
- stop_machine.c |    1 +
- 1 file changed, 1 insertion(+)
+That's two pointers per-CPU (i.e. 16 bytes on x86_64), right? Please
+call that out in the commit log.
 
-diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-index 8896d844d738f..5d2d0562115b3 100644
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -250,6 +250,7 @@ static int multi_cpu_stop(void *data)
- 			 * be detected and reported on their side.
- 			 */
- 			touch_nmi_watchdog();
-+			/* Also suppress RCU CPU stall warnings. */
- 			rcu_momentary_eqs();
- 		}
- 	} while (curstate != MULTI_STOP_EXIT);
+> 
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> ---
+>  mm/zswap.c | 99 +++++++++++++++++++++++++++++++++++++-----------------
+>  1 file changed, 69 insertions(+), 30 deletions(-)
+> 
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index cff96df1df8b..fae59d6d5147 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -78,6 +78,16 @@ static bool zswap_pool_reached_full;
+>  
+>  #define ZSWAP_PARAM_UNSET ""
+>  
+> +/*
+> + * For compression batching of large folios:
+> + * Maximum number of acomp compress requests that will be processed
+> + * in a batch, iff the zswap compressor supports batching.
+> + * This limit exists because we preallocate enough requests and buffers
+> + * in the per-cpu acomp_ctx accordingly. Hence, a higher limit means higher
+> + * memory usage.
+> + */
+
+That's too verbose. Let's do something like:
+
+/* Limit the batch size to limit per-CPU memory usage for reqs and buffers */
+#define ZSWAP_MAX_BATCH_SIZE 8U
+
+> +#define ZSWAP_MAX_BATCH_SIZE 8U
+> +
+>  static int zswap_setup(void);
+>  
+>  /* Enable/disable zswap */
+> @@ -143,8 +153,8 @@ bool zswap_never_enabled(void)
+>  
+>  struct crypto_acomp_ctx {
+>  	struct crypto_acomp *acomp;
+> -	struct acomp_req *req;
+> -	u8 *buffer;
+> +	struct acomp_req **reqs;
+> +	u8 **buffers;
+>  	u8 nr_reqs;
+>  	struct crypto_wait wait;
+>  	struct mutex mutex;
+> @@ -251,13 +261,22 @@ static void __zswap_pool_empty(struct percpu_ref *ref);
+>  static void acomp_ctx_dealloc(struct crypto_acomp_ctx *acomp_ctx)
+>  {
+>  	if (!IS_ERR_OR_NULL(acomp_ctx) && acomp_ctx->nr_reqs) {
+> +		u8 i;
+> +
+> +		if (acomp_ctx->reqs) {
+> +			for (i = 0; i < acomp_ctx->nr_reqs; ++i)
+> +				if (!IS_ERR_OR_NULL(acomp_ctx->reqs[i]))
+
+Hmm I just realized we check IS_ERR_OR_NULL() here for the requests, but
+only a NULL check in zswap_cpu_comp_prepare(). We also check
+IS_ERR_OR_NULL here for acomp, but only IS_ERR() in
+zswap_cpu_comp_prepare().
+
+This doesn't make sense. Would you be able to include a patch before
+this one to make these consistent? I can also send a follow up patch.
+
+> +					acomp_request_free(acomp_ctx->reqs[i]);
+
+Please add braces for the for loop here for readability, since the body
+has more than one line, even if it's technically not required.
+
+> +			kfree(acomp_ctx->reqs);
+> +			acomp_ctx->reqs = NULL;
+> +		}
+>  
+> -		if (!IS_ERR_OR_NULL(acomp_ctx->req))
+> -			acomp_request_free(acomp_ctx->req);
+> -		acomp_ctx->req = NULL;
+> -
+> -		kfree(acomp_ctx->buffer);
+> -		acomp_ctx->buffer = NULL;
+> +		if (acomp_ctx->buffers) {
+> +			for (i = 0; i < acomp_ctx->nr_reqs; ++i)
+> +				kfree(acomp_ctx->buffers[i]);
+> +			kfree(acomp_ctx->buffers);
+> +			acomp_ctx->buffers = NULL;
+> +		}
+>  
+>  		if (!IS_ERR_OR_NULL(acomp_ctx->acomp))
+>  			crypto_free_acomp(acomp_ctx->acomp);
+> @@ -271,6 +290,7 @@ static int zswap_cpu_comp_prepare(unsigned int cpu, struct hlist_node *node)
+>  	struct zswap_pool *pool = hlist_entry(node, struct zswap_pool, node);
+>  	struct crypto_acomp_ctx *acomp_ctx = per_cpu_ptr(pool->acomp_ctx, cpu);
+>  	int ret = -ENOMEM;
+> +	u8 i;
+>  
+>  	/*
+>  	 * Just to be even more fail-safe against changes in assumptions and/or
+> @@ -292,22 +312,41 @@ static int zswap_cpu_comp_prepare(unsigned int cpu, struct hlist_node *node)
+>  		goto fail;
+>  	}
+>  
+> -	acomp_ctx->nr_reqs = 1;
+> +	acomp_ctx->nr_reqs = min(ZSWAP_MAX_BATCH_SIZE,
+> +				 crypto_acomp_batch_size(acomp_ctx->acomp));
+>  
+> -	acomp_ctx->req = acomp_request_alloc(acomp_ctx->acomp);
+> -	if (!acomp_ctx->req) {
+> -		pr_err("could not alloc crypto acomp_request %s\n",
+> -		       pool->tfm_name);
+> -		ret = -ENOMEM;
+> +	acomp_ctx->reqs = kcalloc_node(acomp_ctx->nr_reqs, sizeof(struct acomp_req *),
+> +				       GFP_KERNEL, cpu_to_node(cpu));
+> +	if (!acomp_ctx->reqs)
+>  		goto fail;
+> +
+> +	for (i = 0; i < acomp_ctx->nr_reqs; ++i) {
+> +		acomp_ctx->reqs[i] = acomp_request_alloc(acomp_ctx->acomp);
+> +		if (!acomp_ctx->reqs[i]) {
+> +			pr_err("could not alloc crypto acomp_request reqs[%d] %s\n",
+> +				i, pool->tfm_name);
+> +			goto fail;
+> +		}
+>  	}
+>  
+> -	acomp_ctx->buffer = kmalloc_node(PAGE_SIZE * 2, GFP_KERNEL, cpu_to_node(cpu));
+> -	if (!acomp_ctx->buffer) {
+> -		ret = -ENOMEM;
+> +	acomp_ctx->buffers = kcalloc_node(acomp_ctx->nr_reqs, sizeof(u8 *),
+> +					  GFP_KERNEL, cpu_to_node(cpu));
+> +	if (!acomp_ctx->buffers)
+>  		goto fail;
+> +
+> +	for (i = 0; i < acomp_ctx->nr_reqs; ++i) {
+> +		acomp_ctx->buffers[i] = kmalloc_node(PAGE_SIZE * 2, GFP_KERNEL,
+> +						     cpu_to_node(cpu));
+> +		if (!acomp_ctx->buffers[i])
+> +			goto fail;
+>  	}
+>  
+> +	/*
+> +	 * The crypto_wait is used only in fully synchronous, i.e., with scomp
+> +	 * or non-poll mode of acomp, hence there is only one "wait" per
+> +	 * acomp_ctx, with callback set to reqs[0], under the assumption that
+> +	 * there is at least 1 request per acomp_ctx.
+> +	 */
+
+I am not sure I understand. Does this say that we assume that scomp or
+non-poll acomp will never use batching so having a single "wait" is
+fine?
+
+If so, this needs to be enforced at runtime or at least have a warning,
+and not just mentioned in a comment, in case batching support is ever
+added for these. Please clarify.
+
+We should also probably merge the comments above crypto_init_wait() and
+acomp_request_set_callback() now.
+
+>  	crypto_init_wait(&acomp_ctx->wait);
+>  
+>  	/*
 
