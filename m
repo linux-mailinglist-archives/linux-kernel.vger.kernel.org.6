@@ -1,214 +1,178 @@
-Return-Path: <linux-kernel+bounces-548088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED431A53FAE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:13:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD17A53FBA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:17:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7A693AF0EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:12:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 180781738F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8B81304BA;
-	Thu,  6 Mar 2025 01:12:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 331F170838;
+	Thu,  6 Mar 2025 01:17:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="CvwX/Aq7"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF6E7E0FF
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 01:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="l6ZTXAIn"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95FCB33FD
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 01:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741223573; cv=none; b=R6nxx/ybTBHkNvMFeHAWMnHj6FdbHy0PSSVBqutJF96IWvLRoMD3cWBUA3Olu27yOAa/as9ZPm5CBdV/myRwE0+JYl/E1EdvwjP5zZxHOEGBj3uMkQyTErctzpvve7BGoFFapTn4gcpJgrbpx/3br7sS+qD+XlHToK/qsTuxl6s=
+	t=1741223856; cv=none; b=euFIwwP3yPiDBVMq56Mx33jpmLsHvQMBu0QowZVG92JmyqU2y0GAGB5gA+A59tIkSIAcKmyzIqeBknXzbGLE4gynSDRqMGwkc+ylRaG0+ut3GEpwkle5BC6Z7SURc9D4z6q/N8mJiN+1DwdacXYeBuDCSk9GldQL5GIHgr3avz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741223573; c=relaxed/simple;
-	bh=iwuGm3ZHGbApYL4XEYwpkiGj6XRB3Wy/awOqe4nijcs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EJmQh/7jeeneBdFnSBYCqJNOsKZg6bXwJL1RWpyr7kLAIjP0JEzm9ytRFGlwcEoUqj2oznw4wXzLs9OzOT02J+qyNbNomErHYecIGvaOAsCNwdd6g9fJ7pDPoNEK7z+AJfnnCm/EuyxaIrpfwtSUgjY997mUmpWodiM90wC2SzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=CvwX/Aq7; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e549b0f8d57so89310276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 17:12:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1741223570; x=1741828370; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ns9OcNLiPQZ46N5SAy+lKQOOPBlD1bg4YL1QETokjIw=;
-        b=CvwX/Aq7UGvh8jKF6amc8L4Pjg9vIASGNnPFQjiOrAY64bsl/bjq5hsENfPkoWOvBV
-         bAUDCN6FkW10z5OU3AHzF4I8P3TZrYGLkIC/wRKaZDdwv7zwOIMDroPhLNO8fpBF6iYE
-         FQvmI6sRSc1SmaD3hsW1pcMuoEl5zWH7+NGxZAX4RjINKp9ZsU25e1fc0FR0YByEWfuD
-         EO0YuKeJHGRVMyIoJseCdaFMhYvY7qWCOkNWNSvnfrcPOV1oHtOgWPXagbgOxdZ1JPvR
-         pcaQ8VUX71UTUBQmg7drw5wC6cqip27x1vIG+C3Lxn9/fKiRO1+TdCfdQo4bAI1IUrku
-         UGUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741223570; x=1741828370;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ns9OcNLiPQZ46N5SAy+lKQOOPBlD1bg4YL1QETokjIw=;
-        b=FKMbzlljnxcNHJullckwLf9/tL5Af+chobHmPlnc38VmDbJMBAueIwy5iRlGmP9y5r
-         EBdQlK8yHXoGFL30WN0tGcfdwujmVbz/PBL12RJ/gHVmLwt7yL5vUFhAs7vDV0UqCtUW
-         SXl70vlLv5BZKZBkVxO7syRanysFRZFTbqkxrh/idvsAn0ryCcBhvLBGuPsEeM5ctMag
-         oNIih4SAvTFbH5uyyPHpTh7+nDPjeVEml2gxm7HO4pwHVDfhXU6xJdjmseYPZZIxQlFl
-         nzLC6bRQRyjS3PKc++HQYe1ZCbFxpL1+dMMvXfVYU8hbjSi4xmfhLsCHimbysq/n+ipN
-         bpqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLkuDHWXad3Do5Z7aj+KlTQBUR4LpRzm5gOMDo+7fJPpB1XVeyzz0DyDO0sZ3ZDU04XBGdD20Wdbjn8Qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLDrb1WNqE92NmYRDrPqKvORpAjxFRMxCFNWXS/eRB1It8cSlD
-	4ZodZNWDL7nH/LiWFCyYERP6Xw5puPQwSfVPHp3NsYAWupkRF5Ec2VdSHQc+6ecWE0W/8f+EuOs
-	T8jwk4PFe48g5fg0q4VWroX8J0Pz5ix6++xU4
-X-Gm-Gg: ASbGncuanvcJmm9OFhOEhzrn5NmV0k7fJMPSu3seRoVVEVvw9vrcRPwtq8ulQgzkr/T
-	ukNcMXZs8Vq5TDrnKdX/A1J9h7lIAnJoYp+jDUPbgf7onepOa4LuZ6uTeyyYgG0/1yRfcouSnzM
-	jXT65o83pACv9pw/gPPKVIdWTeRQ==
-X-Google-Smtp-Source: AGHT+IF7pO968cQESwSx4d3Cse0SeXvFnLRkVRGiC/k9GOy1btAF+uyGL5ue4Dp5VeWQu3Cdo1ybcXgzsv8nGNGFq8o=
-X-Received: by 2002:a05:6902:2a4a:b0:e5d:dcc5:59bc with SMTP id
- 3f1490d57ef6-e611e308b67mr7715694276.39.1741223570094; Wed, 05 Mar 2025
- 17:12:50 -0800 (PST)
+	s=arc-20240116; t=1741223856; c=relaxed/simple;
+	bh=Asb1tVt0R+2PVuzu9vwJKCs5UPe4up8SUva1c5FR3zc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=PwG6uzD4I9oEFzg9lJXRn7p7c+HvBRl9dMMopbx2NFO9uv+tLbmYXG/SmmCCivhJ1/k6imHcIoHMkSj9jngLd8j3tX98P0xSmoadRILK4c47mr5x8QaH8ZBKHSjFr9H98MoZIVJ0rC0g25dVXtRucqQiedzsBBLYHoGbXDJ/JC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=l6ZTXAIn; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=Asb1tVt0R+2PVuzu9vwJKCs5UPe4up8SUva1c5FR3zc=; b=l
+	6ZTXAInlHySLIGVftlX9HAM2mBsgaIAQqF0Oh0DXRVsgr4kIlTXCoXGQu0/9tcwy
+	cvjMXikpgNGKBOTCgjN6Ue2+//BLq73HRnJpaAisj7xG/HWmpcaHCLGuTMVmryEZ
+	IxO8PYG/E1RTphS+VPSGtYwh8wS7RCZYiRCxkFb4kE=
+Received: from andyshrk$163.com ( [103.29.142.67] ) by
+ ajax-webmail-wmsvr-40-118 (Coremail) ; Thu, 6 Mar 2025 09:16:24 +0800 (CST)
+Date: Thu, 6 Mar 2025 09:16:24 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>
+Cc: "Maxime Ripard" <mripard@kernel.org>,
+	"Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+	"Thomas Zimmermann" <tzimmermann@suse.de>,
+	"David Airlie" <airlied@gmail.com>,
+	"Simona Vetter" <simona@ffwll.ch>,
+	"Andrzej Hajda" <andrzej.hajda@intel.com>,
+	"Neil Armstrong" <neil.armstrong@linaro.org>,
+	"Robert Foss" <rfoss@kernel.org>,
+	"Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>,
+	"Jonas Karlman" <jonas@kwiboo.se>,
+	"Jernej Skrabec" <jernej.skrabec@gmail.com>,
+	"Douglas Anderson" <dianders@chromium.org>,
+	"Herve Codina" <herve.codina@bootlin.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	"Simona Vetter" <simona.vetter@ffwll.ch>
+Subject: Re:Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
+ connector by encoder
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <mqh4wedfokuta2tmyctoi6jrzol7mqzm27nj3ylu6yj2vjy22j@mexke5x2o7a2>
+References: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
+ <20250304-bridge-connector-v5-4-aacf461d2157@kernel.org>
+ <5180089f.a640.19566290538.Coremail.andyshrk@163.com>
+ <20250305-ruddy-nightingale-of-wealth-db100a@houat>
+ <mqh4wedfokuta2tmyctoi6jrzol7mqzm27nj3ylu6yj2vjy22j@mexke5x2o7a2>
+X-NTES-SC: AL_Qu2fA/6ZvE8j4iSQZ+kfmkcVgOw9UcO5v/Qk3oZXOJF8jDDp2ycwUUJSDXLaweO0FQ+OmgmGXTtC9/R7f4VTVaQNVQrcdePLOYL6u5hRII2AKA==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
- <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
- <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com> <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
- <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
- <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com> <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
- <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
- <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
- <CAHC9VhTz6U5rRdbJBWq0_U4BSKTsiGCsaX=LTgisNNoZXZokOA@mail.gmail.com>
- <FD501FB8-72D2-4B10-A03A-F52FC5B67646@oracle.com> <CAHC9VhR961uTFueovLXXaOf-3ZAnvQCWOTfw-wCRuAKOKPAOKw@mail.gmail.com>
- <73B78CE7-1BB8-4065-9EBA-FB69E327725E@oracle.com> <CAHC9VhRMUkzLVT5GT5c5hgpfaaKubzcPOTWFDpOmhNne0sswPA@mail.gmail.com>
- <1A222B45-FCC4-4BBD-8E17-D92697FE467D@oracle.com>
-In-Reply-To: <1A222B45-FCC4-4BBD-8E17-D92697FE467D@oracle.com>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 5 Mar 2025 20:12:39 -0500
-X-Gm-Features: AQ5f1Jodn7KbI0UIW2OdnLduODjPaSZfEKxzP8aA2XiHbTTB_Svl7vi4QeubrRI
-Message-ID: <CAHC9VhTObTee95SwZ+C4EwPotovE9R3vy0gVXf+kATtP3vfXrg@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
-To: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: Mimi Zohar <zohar@linux.ibm.com>, David Howells <dhowells@redhat.com>, 
-	Jarkko Sakkinen <jarkko@kernel.org>, 
-	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
-	David Woodhouse <dwmw2@infradead.org>, 
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
-	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>, 
-	"Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, 
-	"ebiggers@kernel.org" <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Message-ID: <7c1c61e7.10e1.19569067029.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:digvCgD33_5o98hniRR3AA--.6430W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0ggIXmfI7EjOUAADsa
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-On Wed, Mar 5, 2025 at 4:30=E2=80=AFPM Eric Snowberg <eric.snowberg@oracle.=
-com> wrote:
-> > On Mar 4, 2025, at 5:23=E2=80=AFPM, Paul Moore <paul@paul-moore.com> wr=
-ote:
-> > On Tue, Mar 4, 2025 at 9:47=E2=80=AFAM Eric Snowberg <eric.snowberg@ora=
-cle.com> wrote:
-> >>> On Mar 3, 2025, at 3:40=E2=80=AFPM, Paul Moore <paul@paul-moore.com> =
-wrote:
-> >>> On Fri, Feb 28, 2025 at 12:52=E2=80=AFPM Eric Snowberg <eric.snowberg=
-@oracle.com> wrote:
-> >>>>> On Feb 28, 2025, at 9:14=E2=80=AFAM, Paul Moore <paul@paul-moore.co=
-m> wrote:
-> >>>>> On Fri, Feb 28, 2025 at 9:09=E2=80=AFAM Mimi Zohar <zohar@linux.ibm=
-.com> wrote:
-> >>>>>> On Thu, 2025-02-27 at 17:22 -0500, Paul Moore wrote:
-> >>>>>>>
-> >>>>>>> I'd still also like to see some discussion about moving towards t=
-he
-> >>>>>>> addition of keyrings oriented towards usage instead of limiting
-> >>>>>>> ourselves to keyrings that are oriented on the source of the keys=
-.
-> >>>>>>> Perhaps I'm missing some important detail which makes this
-> >>>>>>> impractical, but it seems like an obvious improvement to me and w=
-ould
-> >>>>>>> go a long way towards solving some of the problems that we typica=
-lly
-> >>>>>>> see with kernel keys.
-> >>>>
-> >>>> The intent is not to limit ourselves to the source of the key.  The =
-main
-> >>>> point of Clavis is to allow the end-user to determine what kernel ke=
-ys
-> >>>> they want to trust and for what purpose, irrespective of the origina=
-ting
-> >>>> source (.builtin_trusted, .secondary, .machine, or .platform). If we=
- could
-> >>>> go back in time, individual keyrings could be created that are orien=
-ted
-> >>>> toward usage.   The idea for introducing Clavis is to bridge what we
-> >>>> have today with kernel keys and allow them to be usage based.
-> >>>
-> >>> While it is unlikely that the current well known keyrings could be
-> >>> removed, I see no reason why new usage oriented keyrings could not be
-> >>> introduced.  We've seen far more significant shifts in the kernel ove=
-r
-> >>> the years.
-> >>
-> >> Could you further clarify how a usage oriented keyring would work?  Fo=
-r
-> >> example, if a kernel module keyring was added, how would the end-user
-> >> add keys to it while maintaining a root of trust?
-> >
-> > Consider it an exercise left to the reader :)
-> >
-> > I imagine there are different ways one could do that, either using
-> > traditional user/group/capability permissions and/or LSM permissions,
-> > it would depend on the environment and the security goals of the
-> > overall system.
->
-> These keys are used by the Lockdown LSM to provide signature
-> validation.
->
-> I realize the contents that follow in this paragraph is outside the
-> boundary of mainline kernel code.  Every distro that wants their
-> shim signed must explain how their kernel enforces lockdown
-> mode.  The minimum requirement is lockdown in integrity mode.
-> Also, the expectation is lockdown enforcement continues on
-> through a kexec.
+CkhpIE1heGltZSBhbmQgRG1pdHJ5OgoKQXQgMjAyNS0wMy0wNiAwNDoxMzo1MywgIkRtaXRyeSBC
+YXJ5c2hrb3YiIDxkbWl0cnkuYmFyeXNoa292QGxpbmFyby5vcmc+IHdyb3RlOgo+T24gV2VkLCBN
+YXIgMDUsIDIwMjUgYXQgMDI6MTk6MzZQTSArMDEwMCwgTWF4aW1lIFJpcGFyZCB3cm90ZToKPj4g
+SGkgQW5keSwKPj4gCj4+IE9uIFdlZCwgTWFyIDA1LCAyMDI1IGF0IDA3OjU1OjE5UE0gKzA4MDAs
+IEFuZHkgWWFuIHdyb3RlOgo+PiA+IEF0IDIwMjUtMDMtMDQgMTk6MTA6NDcsICJNYXhpbWUgUmlw
+YXJkIiA8bXJpcGFyZEBrZXJuZWwub3JnPiB3cm90ZToKPj4gPiA+V2l0aCB0aGUgYnJpZGdlcyBz
+d2l0Y2hpbmcgb3ZlciB0byBkcm1fYnJpZGdlX2Nvbm5lY3RvciwgdGhlIGRpcmVjdAo+PiA+ID5h
+c3NvY2lhdGlvbiBiZXR3ZWVuIGEgYnJpZGdlIGRyaXZlciBhbmQgaXRzIGNvbm5lY3RvciB3YXMg
+bG9zdC4KPj4gPiA+Cj4+ID4gPlRoaXMgaXMgbWl0aWdhdGVkIGZvciBhdG9taWMgYnJpZGdlIGRy
+aXZlcnMgYnkgdGhlIGZhY3QgeW91IGNhbiBhY2Nlc3MKPj4gPiA+dGhlIGVuY29kZXIsIGFuZCB0
+aGVuIGNhbGwgZHJtX2F0b21pY19nZXRfb2xkX2Nvbm5lY3Rvcl9mb3JfZW5jb2RlcigpIG9yCj4+
+ID4gPmRybV9hdG9taWNfZ2V0X25ld19jb25uZWN0b3JfZm9yX2VuY29kZXIoKSB3aXRoIGRybV9h
+dG9taWNfc3RhdGUuCj4+ID4gPgo+PiA+ID5UaGlzIHdhcyBhbHNvIG1hZGUgZWFzaWVyIGJ5IHBy
+b3ZpZGluZyBkcm1fYXRvbWljX3N0YXRlIGRpcmVjdGx5IHRvIGFsbAo+PiA+ID5hdG9taWMgaG9v
+a3MgYnJpZGdlcyBjYW4gaW1wbGVtZW50Lgo+PiA+ID4KPj4gPiA+SG93ZXZlciwgYnJpZGdlIGRy
+aXZlcnMgZG9uJ3QgaGF2ZSBhIHdheSB0byBhY2Nlc3MgZHJtX2F0b21pY19zdGF0ZQo+PiA+ID5v
+dXRzaWRlIG9mIHRoZSBtb2Rlc2V0IHBhdGgsIGxpa2UgZnJvbSB0aGUgaG90cGx1ZyBpbnRlcnJ1
+cHQgcGF0aCBvciBhbnkKPj4gPiA+aW50ZXJydXB0IGhhbmRsZXIuCj4+ID4gPgo+PiA+ID5MZXQn
+cyBpbnRyb2R1Y2UgYSBmdW5jdGlvbiB0byByZXRyaWV2ZSB0aGUgY29ubmVjdG9yIGN1cnJlbnRs
+eSBhc3NpZ25lZAo+PiA+ID50byBhbiBlbmNvZGVyLCB3aXRob3V0IHVzaW5nIGRybV9hdG9taWNf
+c3RhdGUsIHRvIG1ha2UgdGhlc2UgZHJpdmVycycKPj4gPiA+bGlmZSBlYXNpZXIuCj4+ID4gPgo+
+PiA+ID5SZXZpZXdlZC1ieTogRG1pdHJ5IEJhcnlzaGtvdiA8ZG1pdHJ5LmJhcnlzaGtvdkBsaW5h
+cm8ub3JnPgo+PiA+ID5Dby1kZXZlbG9wZWQtYnk6IFNpbW9uYSBWZXR0ZXIgPHNpbW9uYS52ZXR0
+ZXJAZmZ3bGwuY2g+Cj4+ID4gPlNpZ25lZC1vZmYtYnk6IE1heGltZSBSaXBhcmQgPG1yaXBhcmRA
+a2VybmVsLm9yZz4KPj4gPiA+LS0tCj4+ID4gPiBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5j
+IHwgNDUgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPj4gPiA+
+IGluY2x1ZGUvZHJtL2RybV9hdG9taWMuaCAgICAgfCAgMyArKysKPj4gPiA+IDIgZmlsZXMgY2hh
+bmdlZCwgNDggaW5zZXJ0aW9ucygrKQo+PiA+ID4KPj4gPiA+ZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS9kcm1fYXRvbWljLmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jCj4+ID4g
+PmluZGV4IDllYTI2MTE3NzBmNDNjZTdjY2JhNDEwNDA2ZDVmMmM1MjhhYWIwMjIuLmI5MjZiMTMy
+NTkwZTc4ZjhkNDFkNDhlYjRkYTRiY2NmMTcwZWUyMzYgMTAwNjQ0Cj4+ID4gPi0tLSBhL2RyaXZl
+cnMvZ3B1L2RybS9kcm1fYXRvbWljLmMKPj4gPiA+KysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9h
+dG9taWMuYwo+PiA+ID5AQCAtOTg1LDEwICs5ODUsNTUgQEAgZHJtX2F0b21pY19nZXRfbmV3X2Nv
+bm5lY3Rvcl9mb3JfZW5jb2Rlcihjb25zdCBzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZSAqc3RhdGUs
+Cj4+ID4gPiAKPj4gPiA+IAlyZXR1cm4gTlVMTDsKPj4gPiA+IH0KPj4gPiA+IEVYUE9SVF9TWU1C
+T0woZHJtX2F0b21pY19nZXRfbmV3X2Nvbm5lY3Rvcl9mb3JfZW5jb2Rlcik7Cj4+ID4gPiAKPj4g
+PiA+Ky8qKgo+PiA+ID4rICogZHJtX2F0b21pY19nZXRfY29ubmVjdG9yX2Zvcl9lbmNvZGVyIC0g
+R2V0IGNvbm5lY3RvciBjdXJyZW50bHkgYXNzaWduZWQgdG8gYW4gZW5jb2Rlcgo+PiA+ID4rICog
+QGVuY29kZXI6IFRoZSBlbmNvZGVyIHRvIGZpbmQgdGhlIGNvbm5lY3RvciBvZgo+PiA+ID4rICog
+QGN0eDogTW9kZXNldCBsb2NraW5nIGNvbnRleHQKPj4gPiA+KyAqCj4+ID4gPisgKiBUaGlzIGZ1
+bmN0aW9uIGZpbmRzIGFuZCByZXR1cm5zIHRoZSBjb25uZWN0b3IgY3VycmVudGx5IGFzc2lnbmVk
+IHRvCj4+ID4gPisgKiBhbiBAZW5jb2Rlci4KPj4gPiA+KyAqCj4+ID4gPisgKiBSZXR1cm5zOgo+
+PiA+ID4rICogVGhlIGNvbm5lY3RvciBjb25uZWN0ZWQgdG8gQGVuY29kZXIsIG9yIGFuIGVycm9y
+IHBvaW50ZXIgb3RoZXJ3aXNlLgo+PiA+ID4rICogV2hlbiB0aGUgZXJyb3IgaXMgRURFQURMSywg
+YSBkZWFkbG9jayBoYXMgYmVlbiBkZXRlY3RlZCBhbmQgdGhlCj4+ID4gPisgKiBzZXF1ZW5jZSBt
+dXN0IGJlIHJlc3RhcnRlZC4KPj4gPiA+KyAqLwo+PiA+ID4rc3RydWN0IGRybV9jb25uZWN0b3Ig
+Kgo+PiA+ID4rZHJtX2F0b21pY19nZXRfY29ubmVjdG9yX2Zvcl9lbmNvZGVyKGNvbnN0IHN0cnVj
+dCBkcm1fZW5jb2RlciAqZW5jb2RlciwKPj4gPiA+KwkJCQkgICAgIHN0cnVjdCBkcm1fbW9kZXNl
+dF9hY3F1aXJlX2N0eCAqY3R4KQo+PiA+ID4rewo+PiA+ID4rCXN0cnVjdCBkcm1fY29ubmVjdG9y
+X2xpc3RfaXRlciBjb25uX2l0ZXI7Cj4+ID4gPisJc3RydWN0IGRybV9jb25uZWN0b3IgKm91dF9j
+b25uZWN0b3IgPSBFUlJfUFRSKC1FSU5WQUwpOwo+PiA+ID4rCXN0cnVjdCBkcm1fY29ubmVjdG9y
+ICpjb25uZWN0b3I7Cj4+ID4gPisJc3RydWN0IGRybV9kZXZpY2UgKmRldiA9IGVuY29kZXItPmRl
+djsKPj4gPiA+KwlpbnQgcmV0Owo+PiA+ID4rCj4+ID4gPisJcmV0ID0gZHJtX21vZGVzZXRfbG9j
+aygmZGV2LT5tb2RlX2NvbmZpZy5jb25uZWN0aW9uX211dGV4LCBjdHgpOwo+PiA+ID4rCWlmIChy
+ZXQpCj4+ID4gPisJCXJldHVybiBFUlJfUFRSKHJldCk7Cj4+ID4gCj4+ID4gSXQgc2VlbXMgdGhh
+dCB0aGlzIHdpbGwgY2F1c2UgYSBkZWFkbG9jayB3aGVuIGNhbGxlZCBmcm9tIGEgaG90cGx1Zwo+
+PiA+IGhhbmRsaW5nIHBhdGgsIEkgaGF2ZSBhIFdJUCBEUCBkaXZlclswXSwgd2hpY2ggc3VnZ2Vz
+dGVkIGJ5IERtaXRyeSB0bwo+PiA+IHVzZSB0aGlzIEFQSSBmcm9tIGEgJmRybV9icmlkZ2VfZnVu
+Y3MuZGV0ZWN0IGNhbGxiYWNrIHRvIGdldCB0aGUKPj4gPiBjb25uZWN0b3IsIGFzIGRldGVjdCBp
+cyBjYWxsZWQgYnkgZHJtX2hlbHBlcl9wcm9iZV9kZXRlY3QsIHdoaWNoIHdpbGwKPj4gPiBob2xk
+IGNvbm5lY3Rpb25fbXV0ZXggZmlyc3QsIHNvIHRoZSBkZWFrbG9jayBoYXBwZW5zOgo+PiA+Cj4+
+ID4gZHJtX2hlbHBlcl9wcm9iZV9kZXRlY3Qoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3Rv
+ciwKPj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgZHJtX21vZGVzZXRfYWNxdWly
+ZV9jdHggKmN0eCwKPj4gPiAgICAgICAgICAgICAgICAgICAgICAgICBib29sIGZvcmNlKQo+PiA+
+IHsKPj4gPiAgICAgICAgIGNvbnN0IHN0cnVjdCBkcm1fY29ubmVjdG9yX2hlbHBlcl9mdW5jcyAq
+ZnVuY3MgPSBjb25uZWN0b3ItPmhlbHBlcl9wcml2YXRlOwo+PiA+ICAgICAgICAgc3RydWN0IGRy
+bV9kZXZpY2UgKmRldiA9IGNvbm5lY3Rvci0+ZGV2Owo+PiA+ICAgICAgICAgaW50IHJldDsKPj4g
+PiAKPj4gPiAgICAgICAgIGlmICghY3R4KQo+PiA+ICAgICAgICAgICAgICAgICByZXR1cm4gZHJt
+X2hlbHBlcl9wcm9iZV9kZXRlY3RfY3R4KGNvbm5lY3RvciwgZm9yY2UpOwo+PiA+IAo+PiA+ICAg
+ICAgICAgcmV0ID0gZHJtX21vZGVzZXRfbG9jaygmZGV2LT5tb2RlX2NvbmZpZy5jb25uZWN0aW9u
+X211dGV4LCBjdHgpOwo+PiA+ICAgICAgICAgaWYgKHJldCkKPj4gPiAgICAgICAgICAgICAgICAg
+cmV0dXJuIHJldDsKPj4gPiAKPj4gPiAgICAgICAgIGlmIChmdW5jcy0+ZGV0ZWN0X2N0eCkKPj4g
+PiAgICAgICAgICAgICAgICAgcmV0ID0gZnVuY3MtPmRldGVjdF9jdHgoY29ubmVjdG9yLCBjdHgs
+IGZvcmNlKTsKPj4gPiAgICAgICAgIGVsc2UgaWYgKGNvbm5lY3Rvci0+ZnVuY3MtPmRldGVjdCkK
+Pj4gPiAgICAgICAgICAgICAgICAgcmV0ID0gY29ubmVjdG9yLT5mdW5jcy0+ZGV0ZWN0KGNvbm5l
+Y3RvciwgZm9yY2UpOwo+PiA+ICAgICAgICAgZWxzZQo+PiA+ICAgICAgICAgICAgICAgICByZXQg
+PSBjb25uZWN0b3Jfc3RhdHVzX2Nvbm5lY3RlZDsKPj4gPiAKPj4gPiAgICAgICAgIGlmIChyZXQg
+IT0gY29ubmVjdG9yLT5zdGF0dXMpCj4+ID4gICAgICAgICAgICAgICAgIGNvbm5lY3Rvci0+ZXBv
+Y2hfY291bnRlciArPSAxOwo+PiA+IAo+PiA+IFNvIEkgd29uZGVyIGNhbiB3ZSBsZXQgZHJtX2Jy
+aWRnZV9mdW5jcy5kZXRlY3QgcGFzcyBhIGNvbm5lY3RvciBmb3IKPj4gPiB0aGlzIGNhc2UgPwo+
+PiAKPj4gRG8geW91IGFjdHVhbGx5IHNlZSBhIGRlYWRsb2NrIG9jY3VycmluZz8gQUZBSUssIGRy
+bV9tb2Rlc2V0X2xvY2sgaXMKPj4gZmluZSB3aXRoIHJlZW50cmFuY3kgZnJvbSB0aGUgc2FtZSBj
+b250ZXh0LCBzbyBpdCBzaG91bGQgd29yayBqdXN0IGZpbmUuCj4KPkFuZHksIHRoYXQgcHJvYmFi
+bHkgbWVhbnMgdGhhdCB5b3Ugc2hvdWxkIHVzZSAuZGV0ZWN0X2N0eCgpIGFuZCBwYXNzIHRoZQo+
+Y29udGV4dCB0byBkcm1fYXRvbWljX2dldF9jb25uZWN0b3JfZm9yX2VuY29kZXIoKS4KClVuZm9y
+dHVuYXRlbHksIHRoZSBkcm1fYnJpZGdlX2Z1bmNzIGRvZXMgbm90IGhhdmUgYSAuZGV0ZWN0X2N0
+eCgpICB2ZXJzaW9uIC4KVGhlIGNhbGwgY2hhaW4gaXM6CiBkcm1faGVscGVyX3Byb2JlX2RldGVj
+dCAKIC0tPiBkcm1fYnJpZGdlX2Nvbm5lY3Rvcl9kZXRlY3Qoc3RydWN0IGRybV9jb25uZWN0b3Ig
+KmNvbm5lY3RvciwgYm9vbCBmb3JjZSkKLS0+IGRybV9icmlkZ2VfZnVuY3MuZGV0ZWN0KGJyaWRn
+ZSkKVGhlIGN0eCBnb3QgZHJvcHBlZCB3aGVuIGRybV9oZWxwZXJfcHJvYmVfZGV0ZWN0IGNhbGwg
+IGRybV9icmlkZ2VfY29ubmVjdG9yX2RldGVjdApUaGUgY29ubmVjdG9yIGdvdCBkcm9wcGVkICB3
+aGVuIGNvbm5lY3RvciBjYWxsIGl0J3MgYnJpZGVnZS5kZXRlY3QKClNvIEkgdGhpbmsgdGhlIHNp
+bXBsZXN0IHNvbHV0aW9uIGlzIHRvIGhhdmUgZHJtX2JyaWRnZV9mdW5jcy5kZXRlY3QgZGlyZWN0
+bHkgcGFzcyB0aGUgY29ubmVjdG9yCgo+Cj4tLSAKPldpdGggYmVzdCB3aXNoZXMKPkRtaXRyeQo=
 
-I personally find it very amusing the UEFI Secure Boot shim is reliant
-on an unmaintained and only marginally supported LSM, Lockdown.  Has
-anyone recently verified that Lockdown's protections are still intact
-and comprehensive enough to be worthwhile?  Sorry, this is a bit of a
-digression, but since you were the one to bring up Lockdown I thought
-it would be important to mention that I don't have much faith that it
-is still working to the same level as it originally was intended.  I
-have a TODO list item to draft a policy around deprecating
-unmaintained LSMs after an extended period of time, and once that is
-in place if we don't have a qualified maintainer for Lockdown it will
-likely fall into the deprecation process (whatever that may be).
-
-> When in lockdown integrity mode, features that allow the kernel
-> to be modified at runtime are disabled.  How would what you have
-> suggested above adhere to these goals?
-
-For starters, verify that Lockdown is still comprehensive enough to
-satisfy these requirements on a modern Linux kernel.  After that has
-been done, find someone with some kernel experience to step up and
-maintain Lockdown.  Finally, put a mechanism in place so that
-someone/something is regularly evaluating changes in the upstream
-kernel to ensure that Lockdown is still able to achieve its security
-goals.
-
-After all that, then you can start worrying about keys.
-
-> The point of the Clavis LSM is to use the root of trust provided to
-> the kernel prior to it booting. This maintains the lockdown integrity
-> goals, while also giving the end-user the ability to determine how
-> kernel keys are used.
-
---=20
-paul-moore.com
 
