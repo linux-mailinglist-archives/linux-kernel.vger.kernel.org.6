@@ -1,105 +1,131 @@
-Return-Path: <linux-kernel+bounces-549672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F7E9A55546
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:45:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38AA8A55548
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:45:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 943653ADD5D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:45:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2556F16F36B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909D3269CE8;
-	Thu,  6 Mar 2025 18:45:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAD5269AE9;
+	Thu,  6 Mar 2025 18:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="i4KvGV7u"
-Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="lOjurV0U"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F3326D5C0
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 18:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B08B667;
+	Thu,  6 Mar 2025 18:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741286709; cv=none; b=aqti6we5WW0JB9qOdyNmL697pf0tSxFROgyW4gjYVVNh1f3LuJdY83CnLZM5c+qUV+bxylsvZ8Fq3/ajvs+iQZKG63ckRNrkrblYegdUB7K1evxvKHApt0ZTvtm0hMriIpUJ8MTcaBW+IGDmeazAzy+GiLtr0tA6vljmdGov/wg=
+	t=1741286750; cv=none; b=OjjmIZKltu+fzeK7/HTlJyIsYLe5JTUQIY3bevk6w1RxE/SYEN5P9URPe5aarnsNRiG51lBQpFZUvMSCpqQTebCjqbNZJX0jzxZvOB1Kjh9fq0J8pqHCGeOQVzuIDasp9faTJR6BnW102bfmvUOMvhYxvhQPE1iVmhkT8Tjz/Uk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741286709; c=relaxed/simple;
-	bh=E6fUOgeux7kG3VuWbyjnZEP2/f/bAMiuVboTVqH2JPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=etAOfzv3pgqG1qZPcxH2ziPEGQ2bGs8eNDvFPabZh0EH8SZE9+9D+BaHzSKWke7My4Jf3HExetx8RgdGkEuLwpuCG0feDVG7wsH5QOugONwK0EE2NTb6FR4xLnamDOfsHqyHPvnCdPfodTgaWodbdxIHJ5tgYDiu9nVi7/IBsHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=i4KvGV7u; arc=none smtp.client-ip=91.218.175.186
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 6 Mar 2025 10:45:01 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741286705;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3hkf7euT/vaY2Nx8txG1P4pKgdK1/0zs8dcUAeUZimI=;
-	b=i4KvGV7udlvq/n9zorZlenUNvq9v7B9hg5u+7HMPAvnmzR1HOH6ulDR+ov7mEFogwwlgVc
-	2anmZpuEmOb+If/MpcMGpzzB2rRVgtXs8zfZbb5lH/ZuJO9MGzLWfS3Fry3yhGgQUPPhX/
-	om70b0btLbq9PeUB4UonOTkCiD1EgBQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: SeongJae Park <sj@kernel.org>
-Cc: "Liam R. Howlett" <howlett@gmail.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, kernel-team@meta.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH 09/16] mm/memory: split non-tlb flushing part from
- zap_page_range_single()
-Message-ID: <7rnj5pt7uaftvvf6sqge4vowvcht7n4cqb4hxh3o6kzxtqumqi@p7ugsoqh6iiz>
-References: <20250305181611.54484-1-sj@kernel.org>
- <20250305181611.54484-10-sj@kernel.org>
+	s=arc-20240116; t=1741286750; c=relaxed/simple;
+	bh=vpj02Xcibt1fcSHiLyj+EWeG4DG8e1S9LTnMiIS0l4Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ze1tNQETndIH9PJ+I0mioBuvovMSsM+zUJYx0FfPawZw5TDw9MLoIOW2PeWJW4Sn+DEScDIo/+Cv/SfTa0yLY2xQRvBBo90w+yVBpWFfQ3nNPmxPRFtDOpJNFLqXR/kBjG6mg5zQEfOEpq9SBvWO7zSVuohTRnoZ5OpBuPsjre0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=lOjurV0U; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=9qD6hhzVShQ+yvnvzEbzDxl+ULTsOh6MSm995HpgMyA=; b=lOjurV0UivhNfL5G
+	J6XMGKBbMgP6zpc5jF33X9lJ1DnS6sP8uVl5HMFAlmyH40aMZYO4Awlph23M+DKK5hdrX8CBXv7zd
+	67TKVfys0XQAJooYY5/QJabVYt9wXwDAjIvgdo2d0cTPoqzNADfWiSkRI4gv08a6ASUkIpD/W4qgU
+	fwALpnJY5w3CYAlkjg6tRNSDZ0xUScERTQ/9HdAEQBvk2b0SuNcVNTd9Sw+D011VmMPhvInXi8Ob2
+	2muv4QZJlu6IgDQ+iSKHcSsrVCwma0irOTdQ0PL+LI+aCWipmpaxfEcofIzjHqV5sjZnTzmcxgZDb
+	JvyiG0qa8JN9lN0+bw==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tqGDv-003CiH-2q;
+	Thu, 06 Mar 2025 18:45:35 +0000
+From: linux@treblig.org
+To: linux@armlinux.org.uk,
+	andrew@lunn.ch,
+	hkallweit1@gmail.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH net-next] net: phylink: Remove unused phylink_init_eee
+Date: Thu,  6 Mar 2025 18:45:34 +0000
+Message-ID: <20250306184534.246152-1-linux@treblig.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305181611.54484-10-sj@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 05, 2025 at 10:16:04AM -0800, SeongJae Park wrote:
-> Some of zap_page_range_single() callers such as [process_]madvise() with
-> MADV_DONEED[_LOCKED] cannot batch tlb flushes because
-> zap_page_range_single() does tlb flushing for each invocation.  Split
-> out core part of zap_page_range_single() except mmu_gather object
-> initialization and gathered tlb entries flushing part for such batched
-> tlb flushing usage.
-> 
-> Signed-off-by: SeongJae Park <sj@kernel.org>
-> ---
->  mm/memory.c | 36 ++++++++++++++++++++++--------------
->  1 file changed, 22 insertions(+), 14 deletions(-)
-> 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index a838c8c44bfd..aadb2844c701 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -2011,38 +2011,46 @@ void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
->  	mmu_notifier_invalidate_range_end(&range);
->  }
->  
-> -/**
-> - * zap_page_range_single - remove user pages in a given range
-> - * @vma: vm_area_struct holding the applicable pages
-> - * @address: starting address of pages to zap
-> - * @size: number of bytes to zap
-> - * @details: details of shared cache invalidation
-> - *
-> - * The range must fit into one VMA.
-> - */
-> -void zap_page_range_single(struct vm_area_struct *vma, unsigned long address,
-> +static void unmap_vma_single(struct mmu_gather *tlb,
-> +		struct vm_area_struct *vma, unsigned long address,
->  		unsigned long size, struct zap_details *details)
->  {
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Please add kerneldoc for this function and explicitly specify that tlb
-can not be NULL. Maybe do that in the patch where you make it
-non-static.
+phylink_init_eee() is currently unused.
+
+It was last added in 2019 by
+commit 86e58135bc4a ("net: phylink: add phylink_init_eee() helper")
+but it didn't actually wire a use up.
+
+It had previous been removed in 2017 by
+commit 939eae25d9a5 ("phylink: remove phylink_init_eee()").
+
+Remove it again.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/net/phy/phylink.c | 18 ------------------
+ include/linux/phylink.h   |  1 -
+ 2 files changed, 19 deletions(-)
+
+diff --git a/drivers/net/phy/phylink.c b/drivers/net/phy/phylink.c
+index b00a315de060..734869ec6f74 100644
+--- a/drivers/net/phy/phylink.c
++++ b/drivers/net/phy/phylink.c
+@@ -3159,24 +3159,6 @@ int phylink_get_eee_err(struct phylink *pl)
+ }
+ EXPORT_SYMBOL_GPL(phylink_get_eee_err);
+ 
+-/**
+- * phylink_init_eee() - init and check the EEE features
+- * @pl: a pointer to a &struct phylink returned from phylink_create()
+- * @clk_stop_enable: allow PHY to stop receive clock
+- *
+- * Must be called either with RTNL held or within mac_link_up()
+- */
+-int phylink_init_eee(struct phylink *pl, bool clk_stop_enable)
+-{
+-	int ret = -EOPNOTSUPP;
+-
+-	if (pl->phydev)
+-		ret = phy_init_eee(pl->phydev, clk_stop_enable);
+-
+-	return ret;
+-}
+-EXPORT_SYMBOL_GPL(phylink_init_eee);
+-
+ /**
+  * phylink_ethtool_get_eee() - read the energy efficient ethernet parameters
+  * @pl: a pointer to a &struct phylink returned from phylink_create()
+diff --git a/include/linux/phylink.h b/include/linux/phylink.h
+index 898b00451bbf..7fbabd8b96fe 100644
+--- a/include/linux/phylink.h
++++ b/include/linux/phylink.h
+@@ -694,7 +694,6 @@ void phylink_ethtool_get_pauseparam(struct phylink *,
+ int phylink_ethtool_set_pauseparam(struct phylink *,
+ 				   struct ethtool_pauseparam *);
+ int phylink_get_eee_err(struct phylink *);
+-int phylink_init_eee(struct phylink *, bool);
+ int phylink_ethtool_get_eee(struct phylink *link, struct ethtool_keee *eee);
+ int phylink_ethtool_set_eee(struct phylink *link, struct ethtool_keee *eee);
+ int phylink_mii_ioctl(struct phylink *, struct ifreq *, int);
+-- 
+2.48.1
+
 
