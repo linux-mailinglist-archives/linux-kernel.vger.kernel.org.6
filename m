@@ -1,321 +1,123 @@
-Return-Path: <linux-kernel+bounces-548818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B7C7A549A6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:40:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A936A549B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:41:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EC2E3AEE52
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:38:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A19F83B44B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E798C20C46A;
-	Thu,  6 Mar 2025 11:32:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885F120AF78
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 11:32:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E2820D50A;
+	Thu,  6 Mar 2025 11:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KwOmASA5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB8120AF8D;
+	Thu,  6 Mar 2025 11:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741260761; cv=none; b=h/Zc7PDggLC/tw5KUOECRT5pAytEw2jR3vvfuiqDMqA6AEp38l5lfKE3SGo7YORvVmyN4XE/yWpz36vrvz8tnYqcZQGFFmhzZYWfSvrPwaWpAJfm64PfZuq1qj5P9AnsFfsa7A7YvR4vSPLeCpgCxasOTE9HTyYMdrckNnqwdGA=
+	t=1741260861; cv=none; b=qRpBOSxussn/3uQPZxnIrbRe2myOxD6aMME/WdhzAowWhm6YIpm3oww0iRCD1YkPIXYRqPxsCZZmPw+stQRUrZU/Q5Xh4TwAG++WYToJiCXQPyEo5lDCUwHwwG2CIb6sKLlYVAtre/nOOw6mmRYaCpSnSgF/+GE0KvY9vzZJqQU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741260761; c=relaxed/simple;
-	bh=fGxSMZNIXHn7sNKVZBLMpXB80R8qnu2vP3THUDn00vM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nOhIs6jdPZI6WducWamzZNNEd0guYUG+kvyYw2ygbxysXdEcl7X8U3sfxUTN9//Bv1HEOEAV4Jvv0Efhh7We3xh4pjXnVi5hB//JQh+ZnR1gKaOyDcwiDaA3e48f8LT4GjwEVXfLva+QCqER5TOfxRoFZLG6nktTeXqD5jx0l2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E4E31007;
-	Thu,  6 Mar 2025 03:32:50 -0800 (PST)
-Received: from [10.57.40.132] (unknown [10.57.40.132])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AE5243F66E;
-	Thu,  6 Mar 2025 03:32:35 -0800 (PST)
-Message-ID: <6eb93af8-e239-44d7-a132-2932f260e792@arm.com>
-Date: Thu, 6 Mar 2025 11:32:33 +0000
+	s=arc-20240116; t=1741260861; c=relaxed/simple;
+	bh=nGIlFjPYnDd6KjV6z/AEdHqnp7KJ+f7+nfAoiU0G0/8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SwPDV3Hfo67uyNI4xcYuoPaGwd6yzCf0hK5Aw47uSGkfREaYZT82qJRz8RVOdQeC0J03VKi0H4kCnMMGqqjyOrnVmtQCDZimPj7IFId7bw11M+a7GC7oN7+Xhng/xC+hoELTCc2ATY7Sbk6Upr07GQC4ZCjncen4IURWMpAhKLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KwOmASA5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5269522S020153;
+	Thu, 6 Mar 2025 11:34:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=m38iNQD4koMGK2VXT+LG9Q
+	CzgpS3c5nrGPsF+OFZWTo=; b=KwOmASA5DV8ODUd4xZgvQLXf6pN/urZmhJofkO
+	SMCUz0NLM8Kw8gOcXmcPBMtOqEhTqMXeI6Q1MpZaZg6dQWyEFpxZIibjHytAjSjS
+	kna/WkOKlBWSZP+Wai6lggs3K/eUmP1XtRaISLILBbIOHahyNG35xCyKXIoy6EjL
+	4IPQ74/F3ngJEsyF8jKrqKMocyZ4drbpFy2c6+L2rjYl7JAuBKyW4g68gJvZBM5H
+	m4q1DifgokZ57Za3LiEVMgi3+4NehODoItMuuYB+fgRicdhhTa3IKM17AUdLV0QX
+	PxZ4erfz6Ola1kdSeHrSvVjPPIkNvl5YvyUY/+J7srj6rqBQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 456xcuj1kc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Mar 2025 11:34:15 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 526BYExZ030294
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 6 Mar 2025 11:34:14 GMT
+Received: from hu-mdalam-blr.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 6 Mar 2025 03:34:11 -0800
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 0/3] Add SPI nand support in IPQ9574
+Date: Thu, 6 Mar 2025 17:03:54 +0530
+Message-ID: <20250306113357.126602-1-quic_mdalam@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/8] uclamp sum aggregation
-To: Xuewen Yan <xuewen.yan94@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Morten Rasmussen <morten.rasmussen@arm.com>,
- Lukasz Luba <lukasz.luba@arm.com>,
- Christian Loehle <christian.loehle@arm.com>,
- Pierre Gondois <pierre.gondois@arm.com>, linux-kernel@vger.kernel.org,
- Xuewen Yan <xuewen.yan@unisoc.com>
-References: <cover.1741091349.git.hongyan.xia2@arm.com>
- <CAB8ipk_AvaOWp9QhmnFDdbFSWcKLhCH151=no6kRO2z+pSJfyQ@mail.gmail.com>
-Content-Language: en-US
-From: Hongyan Xia <hongyan.xia2@arm.com>
-In-Reply-To: <CAB8ipk_AvaOWp9QhmnFDdbFSWcKLhCH151=no6kRO2z+pSJfyQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: GTzxqXOLvvF-6sqFjlQLN_I6h6dYZdQ8
+X-Proofpoint-GUID: GTzxqXOLvvF-6sqFjlQLN_I6h6dYZdQ8
+X-Authority-Analysis: v=2.4 cv=eeXHf6EH c=1 sm=1 tr=0 ts=67c98837 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=sZtYx3W4YspbH7VN3wYA:9
+ a=NqO74GWdXPXpGKcKHaDJD/ajO6k=:19 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=739 mlxscore=0
+ impostorscore=0 malwarescore=0 bulkscore=0 phishscore=0 adultscore=0
+ priorityscore=1501 suspectscore=0 clxscore=1015 lowpriorityscore=0
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503060087
 
-Hi Xuewen,
+v2:
+ * Added Reviewed-by tag
+ * Added new line befroe "status = okay" in qpic_nand node
+ * Added "qcom,bam-v1.7.4" compatible in qpic_bam node
+ * sorted qpic_nand and qpic_bam entry in dt
 
-On 06/03/2025 11:12, Xuewen Yan wrote:
-> Hi Hongyan,
-> 
-> On Tue, Mar 4, 2025 at 10:26 PM Hongyan Xia <hongyan.xia2@arm.com> wrote:
->>
->> This series gives an alternative implementation that addresses some of
->> the problems in uclamp max aggregation. Sum aggregation mostly gives:
->>
->> 1. Simplicity. Sum aggregation implements uclamp with less than half of
->>     code than max aggregation.
->> 2. Effectiveness. Sum aggregation shows better uclamp effectiveness,
->>     either in benchmark scores or sometimes in energy efficiency.
->>
->> The key idea of sum aggregation is fairly simple. Each task has a
->> util_avg_bias, which is obtained by:
->>
->>      util_avg_bias = clamp(util_avg, uclamp_min, uclamp_max) - util_avg;
->>
->> If a CPU has N tasks, p1, p2, p3... pN, then we sum the biases up and
->> obtain a rq total bias:
->>
->>      rq_bias = util_avg_bias1 + util_avg_bias2... + util_avg_biasN;
->>
->> Then we use the biased rq utilization rq_util + rq_bias to select OPP
->> and to schedule tasks.
->>
->> PATCH BREAKDOWN:
->>
->> Patch 1/6 reverts a patch that accommodate uclamp_max tasks under max
->> aggregation. This patch is not needed and creates other problems for sum
->> aggregation. It is discussed elsewhere that this patch will be improved
->> and there may not be the need to revert it in the future.
->>
->> Patch 2, 3 and 4 implement sum aggregation.
->>
->> Patch 5 and 6 remove max aggregation.
->>
->> Patch 7 applies PELT decay on negative util_avg_bias. This improves
->> energy efficiency and task placement, but is not strictly necessary.
->>
->> Patch 8 addresses sum aggregation under-utilization problem.
->>
->> TESTING:
->>
->> Two notebooks are shared at
->>
->> https://nbviewer.org/github/honxia02/notebooks/blob/aac12d9becae2b2fe4690cbb672439fd884ede30/whitebox/max.ipynb
->> https://nbviewer.org/github/honxia02/notebooks/blob/aac12d9becae2b2fe4690cbb672439fd884ede30/whitebox/sum-offset.ipynb
->>
->> The experiments done in notebooks are on Arm Juno r2 board. CPU0-3 are
->> little cores with capacity of 383. CPU4-5 are big cores. The rt-app
->> profiles used for these experiments are included in the notebooks.
->>
->> Scenario 1: Scheduling 4 tasks with UCLAMP_MAX at 110.
->>
->> The scheduling decisions are plotted in Out[11]. Both max and sum
->> aggregation understand the UCLAMP_MAX hint and schedule all 4 tasks on
->> the little cluster. Max aggregation sometimes schedule 2 tasks on 1 CPU,
->> and this is the reason why sum aggregation reverts the 1st commit.
->>
->> Scenario 2: Scheduling 4 tasks with UCLAMP_MIN and UCLAMP_MAX at a value
->> slightly above the capacity of the little CPU.
->>
->> Results are in Out[17]. The purpose is to use UCLAMP_MIN to place tasks
->> on the big core. Both max and sum aggregation handle this correctly.
->>
->> Scenario 3: Task A is a task with a small utilization pinned to CPU4.
->> Task B is an always-running task pinned to CPU5, but UCLAMP_MAX capped
->> at 300. After a while, task A is then pinned to CPU5, joining B.
->>
->> Results are in Out[23]. Max aggregation sees a frequency spike at
->> 873.64s. When zoomed in, one can see square-wave-like utilization values
->> because of A periodically going to sleep. When A wakes up, its default
->> UCLAMP_MAX of 1024 will uncap B and reach the highest CPU frequency.
->> When A sleeps, B's UCLAMP_MAX will be in effect and will reduce rq
->> utilization. This happens repeatedly, hence the square wave. In
->> contrast, sum aggregation sees a normal increase in utilization when A
->> joins B, without any square-wave behavior.
->>
->> Scenario 4: 4 always-running tasks with UCLAMP_MAX of 110 pinned to the
->> little PD (CPU0-3). 4 same tasks pinned to the big PD (CPU4-5).
->> After a while, remove the CPU pinning of the 4 tasks on the big PD.
->>
->> Results are in Out[29]. After unpinning, max aggregation moves all 8
->> tasks to the little cluster, but schedules 5 tasks on CPU0 and 1 each on
->> CPU1-3. In contrast, sum aggregation schedules 2 on each little CPU
->> after unpinning, which is the desired balanced task placement.
->>
->> EVALUATION:
->>
->> We backport patches to GKI kernel v6.1 on Pixel 9 and run Android
->> benchmarks.
->>
->> Speedometer:
->>
->> We run Speedometer 2.1 on Chrome v131 to test ADPF/uclamp effectiveness.
->> Because sum aggregation does not circumvent the 25% OPP margin, we
->> reduce uclamp values to 80% to be fair.
->>
->> |   score   | score |   %    | CPU power % |
->> |    max    | 192.4 |        |             |
->> |  sum_0.8  | 230.8 | +19.96 |   +31.54    |
->> | sum_tuned | 201.8 |  +4.89 |    -0.41    |
->>
->> We see a consistant higher score and higher average power consumption.
->> Note that a higher score also means a reduction in run-time, total
->> energy increase for sum_0.8 is only 9.65%.
->>
->> We then reduce uclamp values so that power consumption is roughly
->> the same. If we do so, then sum aggregation achieves slightly better
->> scores, shown in the sum_tuned row.
->>
->> UIBench:
->>
->> |   score   | jank percentage |   %    | CPU power (mW) |   %   |
->> |    max    |     0.115%      |        |     158.1      |       |
->> |  sum_0.8  |     0.129%      | +11.96 |     154.9      | -4.19 |
->>
->> UIBench on Pixel 9 by default already has a low enough jank percentage.
->> Moving to sum aggregation gives slightly higher jank percentage and
->> lower power consumption.
->>
->> ---
->> Changed in v2:
->> - Completely separate uclamp component from PELT and util_est.
->> - Separate util_est_uclamp into an individual patch.
->> - Address the under-utilization problem.
->> - Update Python notebooks to reflect the latest sched/tip.
->>
->> Hongyan Xia (8):
->>    Revert "sched/uclamp: Set max_spare_cap_cpu even if max_spare_cap is
->>      0"
->>    sched/uclamp: Track a new util_avg_bias signal
->>    sched/uclamp: Add util_est_uclamp
->>    sched/fair: Use util biases for utilization and frequency
->>    sched/uclamp: Remove all uclamp bucket logic
-> 
-> I’ve recently been looking into the issue with uclamp and
-> delayed-dequeue, and I found that uclamp_rq_inc should be placed
-> before enqueue_task, which led to a patch.
-> Before sending the patch, I came across your series of patches. I
-> haven’t fully understood your patch yet, but it seems like
-> uclamp_rq_inc is no longer needed.
-> Do you think the patch below is still necessary?
-> 
+v1:
+ * This was a part of 'Add QPIC SPI NAND driver' - [1]. Have split it out
+   into a separate series based on the community feedback [2].
+ * Additionally, address comments. Please see individual patches for
+   details
+ * The 'dt' and 'dtsi' portions of 'arm64: dts: qcom: ipq9574: Add SPI
+   nand support' are split and posted as separate patches in this series. 
 
-I posted a fix of the issue you mentioned days ago here
+ 1 - https://lore.kernel.org/linux-arm-msm/20241120091507.1404368-1-quic_mdalam@quicinc.com/
+ 2 - https://lore.kernel.org/linux-arm-msm/4c1fe789-5190-465d-bb41-3fe1534d2523@oss.qualcomm.com/
 
-https://lore.kernel.org/lkml/84441660bef0a5e67fd09dc3787178d0276dad31.1740664400.git.hongyan.xia2@arm.com/
 
-I think we found the same issue, but our approaches are different. I 
-fear that as more complexity goes into each sched_class like delayed 
-dequeue, it's better to just let the sched_class handle how uclamp is 
-enqueued and dequeued within itself rather than leaking into core.c. 
-Would be nice if you could take a look at my fix.
 
-Your patch is definitely necessary. The thing with this uclamp sum 
-aggregation series is that there are still debates around it and it 
-might take a while before everything is settled. So, at the moment we 
-should view this series and the uclamp enqueue fix as separate things.
+Md Sadre Alam (3):
+  arm64: dts: qcom: ipq9574: Add SPI nand support
+  arm64: dts: qcom: ipq9574: Enable SPI NAND for ipq9574
+  arm64: dts: qcom: ipq9574: Remove eMMC node
 
-> --->
-> 
-> Subject: [PATCH] sched/uclamp: Update the rq's uclamp before enqueue task
-> 
-> When task's uclamp is set, we hope that the CPU frequency
-> can increase as quickly as possible when the task is enqueued.
-> Because the cpu frequency updating happens during the enqueue_task(),
-> so the rq's uclamp needs to be updated before the task is enqueued.
-> For sched-delayed tasks, the rq uclamp should only be updated
-> when they are enqueued upon being awakened.
-> 
-> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
-> ---
->   kernel/sched/core.c | 14 ++++++--------
->   1 file changed, 6 insertions(+), 8 deletions(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index 67189907214d..b07e78910221 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -1747,7 +1747,7 @@ static inline void uclamp_rq_dec_id(struct rq
-> *rq, struct task_struct *p,
->          }
->   }
-> 
-> -static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p)
-> +static inline void uclamp_rq_inc(struct rq *rq, struct task_struct
-> *p, int flags)
->   {
->          enum uclamp_id clamp_id;
-> 
-> @@ -1763,7 +1763,8 @@ static inline void uclamp_rq_inc(struct rq *rq,
-> struct task_struct *p)
->          if (unlikely(!p->sched_class->uclamp_enabled))
->                  return;
-> 
-> -       if (p->se.sched_delayed)
-> +       /* Only inc the delayed task which is being woken up. */
-> +       if (p->se.sched_delayed && !(flags & ENQUEUE_DELAYED))
->                  return;
-> 
->          for_each_clamp_id(clamp_id)
-> @@ -2031,7 +2032,7 @@ static void __init init_uclamp(void)
->   }
-> 
->   #else /* !CONFIG_UCLAMP_TASK */
-> -static inline void uclamp_rq_inc(struct rq *rq, struct task_struct *p) { }
-> +static inline void uclamp_rq_inc(struct rq *rq, struct task_struct
-> *p, int flags) { }
->   static inline void uclamp_rq_dec(struct rq *rq, struct task_struct *p) { }
->   static inline void uclamp_fork(struct task_struct *p) { }
->   static inline void uclamp_post_fork(struct task_struct *p) { }
-> @@ -2067,12 +2068,9 @@ void enqueue_task(struct rq *rq, struct
-> task_struct *p, int flags)
->          if (!(flags & ENQUEUE_NOCLOCK))
->                  update_rq_clock(rq);
-> 
-> +       uclamp_rq_inc(rq, p, flags);
-> +
->          p->sched_class->enqueue_task(rq, p, flags);
-> -       /*
-> -        * Must be after ->enqueue_task() because ENQUEUE_DELAYED can clear
-> -        * ->sched_delayed.
-> -        */
-> -       uclamp_rq_inc(rq, p);
-> 
->          psi_enqueue(p, flags);
-> 
-> --
-> 
-> Thanks!
-> 
-> BR
-> ---
-> 
->>    sched/uclamp: Simplify uclamp_eff_value()
->>    sched/uclamp: Propagate negative bias
->>    sched/uclamp: Solve under-utilization problem
->>
->>   include/linux/sched.h            |   8 +-
->>   init/Kconfig                     |  32 ---
->>   kernel/sched/core.c              | 308 ++--------------------
->>   kernel/sched/cpufreq_schedutil.c |   6 +-
->>   kernel/sched/debug.c             |   2 +-
->>   kernel/sched/fair.c              | 430 ++++++++++++++++---------------
->>   kernel/sched/pelt.c              |  62 +++++
->>   kernel/sched/rt.c                |   4 -
->>   kernel/sched/sched.h             | 132 +++-------
->>   kernel/sched/syscalls.c          |   2 +
->>   10 files changed, 341 insertions(+), 645 deletions(-)
->>
->> --
->> 2.34.1
->>
->>
+ .../boot/dts/qcom/ipq9574-rdp-common.dtsi     | 44 +++++++++++++++++++
+ arch/arm64/boot/dts/qcom/ipq9574-rdp433.dts   | 12 -----
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 27 ++++++++++++
+ 3 files changed, 71 insertions(+), 12 deletions(-)
+
+-- 
+2.34.1
 
 
