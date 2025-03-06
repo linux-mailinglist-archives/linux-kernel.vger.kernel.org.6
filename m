@@ -1,234 +1,148 @@
-Return-Path: <linux-kernel+bounces-548382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DBDA54414
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:56:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A8AA54403
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:54:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B4013B0E8C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:55:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26E331712E9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:54:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9771FBEB1;
-	Thu,  6 Mar 2025 07:55:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 083F81DDC18;
+	Thu,  6 Mar 2025 07:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j5MWJKJp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R3h3oMTu"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFA31DD889;
-	Thu,  6 Mar 2025 07:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32011DC9A2;
+	Thu,  6 Mar 2025 07:54:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741247711; cv=none; b=rQo6F045Ex2QrqH3Ba0zkYNfXC6MwwVcc9ALYhPwPPAHfP/L2f6j8y+HWi6/QLrzRGkbKedwr1MuP08xVGYPMdXKpcfZ5hcsXdDqawIlb30eK3S1VpFo/hFj+4rQfk1LKRn7Qo5Tz2fFK7uGw0O7wKHe/YYM7QTD2P/EYSXNbbI=
+	t=1741247678; cv=none; b=ntfH/MIjh/oNaGMySU7NBMBBUKjArZaOlVm/14DXwmqM4qEXwIuXhpx+a6PAODLW2hPdIN8bDV5YQBs/RuarGhjMqoiKUAWhBLzLrdg3fJoRNAWaBHxXGS8HgSc7KzIxKOGKfoyRtTbYXf/s8613chLKDixkCWH6lY0uob4mTdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741247711; c=relaxed/simple;
-	bh=A0ylyEZSt4tfTskDEXOaB+s6R9eX48Oemn4l6IgDSD4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P60UzuRRxsU5Z79YeZ80PcIDe+lB2u5bro2axk1wGzwAtn7AHD4UVudveuSMnsv+ybtKn04lDvx1K0JqiFLOWt0hKNJ0XljV/hD6J1LJ1foDj+zIr4704gFeVD1O/xRBtRfJDiDyfsgO/L6b4xNWQpAxLMMP7s0gMZHy8VeETEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j5MWJKJp; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741247710; x=1772783710;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=A0ylyEZSt4tfTskDEXOaB+s6R9eX48Oemn4l6IgDSD4=;
-  b=j5MWJKJpOt4LTBGHNg0mqRV73KWK8dRJczy1BhdgUPJEeK8rGxMqC8Mz
-   C+3HHD/Di2CrYN6mxRpOCW+MXBdMngbJX1LfOE2eeCgbhfxDR2MAM8aDY
-   bLnOpEb/T81iJ7mhcL+MEMEfZotuxN4dw67BSCpl9UbkXmY105cu7vsk6
-   PaWhYAZQmv8p3cL91tVgvBiq+BhPRfXgJmSbBiunNAzu6rvJDJkNwrz5A
-   sr2L5KzUzWUfJpWaqLvXB3nxCkQcCbqwLcgYAYz5/auNt3MVbCQjzAHHa
-   07SKsACEs4l71ZEFXDjoOLQsNGpoatsNhPwTaXC+brrtuQ/8U4kT/Gbqw
-   Q==;
-X-CSE-ConnectionGUID: TbR+kV/UTEuVQ2gDjIY8ZQ==
-X-CSE-MsgGUID: 0l9j1kDyQO+QOUMVUCiH6g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="64691545"
-X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
-   d="scan'208";a="64691545"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 23:55:08 -0800
-X-CSE-ConnectionGUID: VDtXCk1RQbCJchYy/0U69w==
-X-CSE-MsgGUID: zt4KIOt6Tri4+kavlfbkMQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="156171827"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa001.jf.intel.com with ESMTP; 05 Mar 2025 23:55:04 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tq63q-000Mj8-1I;
-	Thu, 06 Mar 2025 07:54:38 +0000
-Date: Thu, 6 Mar 2025 15:53:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Sricharan R <quic_srichara@quicinc.com>, jassisinghbrar@gmail.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, andersson@kernel.org,
-	konradybcio@kernel.org, manivannan.sadhasivam@linaro.org,
-	dmitry.baryshkov@linaro.org
-Cc: oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH V3 2/2] mailbox: tmelite-qmp: Introduce TMEL QMP mailbox
- driver
-Message-ID: <202503061517.ZTyZF7qx-lkp@intel.com>
-References: <20250228045356.3527662-3-quic_srichara@quicinc.com>
+	s=arc-20240116; t=1741247678; c=relaxed/simple;
+	bh=rLvSj0m7lt9GSmkHEVmYftlYBxfKuzUISvzOImEt8sw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=u7YtWJwf/k1XoD3ikCWyWjQyMCfKABPGJJW6lVCRayfETZKIB2h/u8/Lsx1ZCEgfdcftzNUIju3FCzHdH44d43ugFNg/4Z0mAZ85I2Y+bRG7+EOn3NAICqF5m6wpm744TURbcra8hLuXuAVDcAPnNf5h73ZEB1wBCANIU4U8mPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R3h3oMTu; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2240b4de12bso7210195ad.2;
+        Wed, 05 Mar 2025 23:54:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741247676; x=1741852476; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8EoWjrryM3cnb80aR51wUjGslugRyRcpKgUlsMR7wQo=;
+        b=R3h3oMTu3MlcJceEprt3oNEl5FIZAX2ypCbS59aGpmdQ1ItYMiwnzMJTZ4vEGx26dC
+         EyPUNHDnA8VHwwLLnui4QQKJSWprelIZkB3Z9nzFfM+6J0I8MDO6rAP2aN65N7SvnAW6
+         OsU2zM8xGg0FoZWFlqZ2Z9uozil03YjYhDlc2vahOnbUBq7zQ0VgiORsdNHwF9pZePOT
+         KjWsUwAAGYwL8rQ0+xMGYTECaOnnsjCV1v6amyT5oKoLCqi2RijBlwIvAEYVzw3aMwkc
+         2fD8+sOZNB88q3hMxsa/DicWaApuvcVcUTrJ2o15jTldR4Hri/t4pDE8VgpvGGuo9jjy
+         ukkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741247676; x=1741852476;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8EoWjrryM3cnb80aR51wUjGslugRyRcpKgUlsMR7wQo=;
+        b=cz8Lc0JhjIB3So8xWjvxyC6rrhipUFlqCO84pr3wv5WtipkXmYAHviVeVpT5eNxg9m
+         mZrs5XGdm2OIy1BlWhozYTkncIOswwoTf9YYUi1yZWExnuT+rlttJRdB1zhecIjKjR+4
+         ra++6IjiEPRRLjgzfzxjPK4rzkSK/EIASLPwfVVtiOsD7/OjFSFx7gRBm5CL1tj+fnpY
+         71EobADordyhKsGK4wVinzp+8twHCcOWsUzdsNsBNOHvwM9DVv7sIeP09B32x2804AEr
+         chyzE9X8GHJEtfYKqAP0Rv1ShjVU37EtIrAmyvxAcEIlQp3nrR/f+Ga0aumnpTD5wLeo
+         oa7g==
+X-Forwarded-Encrypted: i=1; AJvYcCXQZqNPWuuldng2s5i/fkeobxNQ7t5J+4HdIYrfLPmGG4BkcPgNYxzlbCUL/g1Es1kNUKYTm4T/RZ9M@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywywy70liiRbJF6IoKINYyxB2e5upCFk4XeDrKGZHpkx0YzN7tm
+	hga1OWrm/ZQT7ctqrSrjDVq/TXL/0ST5AJYocsLYuGKTpFCWwcxW
+X-Gm-Gg: ASbGncuHBMkAa4NcHXjY2k/gvZT6m6SLj6LjNJhCuORAT2vN69SkJCfLg3puMlGjOfB
+	HnIh9OzZvc6DvORsdH2qc8FpX0kaXWAxafiBNcgBn7d+3X1QjJXBrpcdf9w7jV6yb+DFkDpoc6O
+	KULwNwGpAyBESMFpR9/Mr7TqbC88XHjLOiLVTaQQYDzEPhqYexDP10DQJxfyzRIVs7IWG7r81Qc
+	CAPD2MQ6uBzAUtEE3h4YucHL0bhXGykRGcTid9Rtk/p27MXLv4pn4QArzzA3gdfCi5YVFUNqCKd
+	nR9yrZ/uvqjj30PAePVhkd83ucpkw+n747RAlzF2aQbzzdMWfwCACUA=
+X-Google-Smtp-Source: AGHT+IFkTNb1TU8QOGhJBLtwLetrv/CPBoiu/a8Jxcw799EbGPWM9Mv0kQTZHRXkBK37PQl1oBhQbQ==
+X-Received: by 2002:a17:902:ec82:b0:223:5c33:56a8 with SMTP id d9443c01a7336-223f1d26109mr108359395ad.35.1741247676124;
+        Wed, 05 Mar 2025 23:54:36 -0800 (PST)
+Received: from cs20-buildserver.lan ([2403:c300:d305:9d26:2e0:4cff:fe68:863])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410aa448dsm6085485ad.210.2025.03.05.23.54.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 23:54:35 -0800 (PST)
+From: Stanley Chu <stanley.chuys@gmail.com>
+X-Google-Original-From: Stanley Chu <yschu@nuvoton.com>
+To: frank.li@nxp.com,
+	miquel.raynal@bootlin.com,
+	alexandre.belloni@bootlin.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-i3c@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	tomer.maimon@nuvoton.com,
+	kwliu@nuvoton.com,
+	yschu@nuvoton.com
+Subject: [PATCH v7 0/5] Add support for Nuvoton npcm845 i3c controller
+Date: Thu,  6 Mar 2025 15:54:24 +0800
+Message-Id: <20250306075429.2265183-1-yschu@nuvoton.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228045356.3527662-3-quic_srichara@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Sricharan,
+This patchset adds support for the Nuvoton npcm845
+Board Management controller (BMC) SoC family.
 
-kernel test robot noticed the following build warnings:
+The Nuvoton npcm845 uses the same Silvico IP but an older version.
+This patchset adds fixes for the npcm845 specific hardware issues.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on linus/master v6.14-rc5 next-20250305]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+--
+v7:
+ - Fix kernel test robot build warning.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Sricharan-R/dt-bindings-mailbox-Document-qcom-tmel-qmp/20250228-125707
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250228045356.3527662-3-quic_srichara%40quicinc.com
-patch subject: [PATCH V3 2/2] mailbox: tmelite-qmp: Introduce TMEL QMP mailbox driver
-config: sh-allyesconfig (https://download.01.org/0day-ci/archive/20250306/202503061517.ZTyZF7qx-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250306/202503061517.ZTyZF7qx-lkp@intel.com/reproduce)
+v6:
+ - Define QUIRK when it is really used in the separate patches.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503061517.ZTyZF7qx-lkp@intel.com/
+v5:
+ - Add default driver data
+ - Add helper function svc_has_daa_corrupt()
+ - Revise SVC_I3C_QUIRK_FIFO_EMPTY fix and add comments
 
-All warnings (new ones prefixed by >>):
+v4:
+ - Fix kernel test robot build warning.
+ - Add SVC_I3C_QUIRK_DAA_CORRUPT fix
 
-   In file included from include/linux/device.h:15,
-                    from include/linux/dma-mapping.h:5,
-                    from drivers/mailbox/qcom-tmel-qmp.c:6:
-   drivers/mailbox/qcom-tmel-qmp.c: In function 'qmp_send_data':
->> drivers/mailbox/qcom-tmel-qmp.c:196:36: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
-     196 |                 dev_err(mdev->dev, "Unsupported packet size %ld\n", pkt->iov_len);
-         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ^~~
-   include/linux/dev_printk.h:154:56: note: in expansion of macro 'dev_fmt'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                        ^~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c:196:17: note: in expansion of macro 'dev_err'
-     196 |                 dev_err(mdev->dev, "Unsupported packet size %ld\n", pkt->iov_len);
-         |                 ^~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c:196:63: note: format string is defined here
-     196 |                 dev_err(mdev->dev, "Unsupported packet size %ld\n", pkt->iov_len);
-         |                                                             ~~^
-         |                                                               |
-         |                                                               long int
-         |                                                             %d
-   In file included from drivers/mailbox/qcom-tmel-qmp.c:10:
-   drivers/mailbox/qcom-tmel-qmp.c: In function 'tmel_prepare_msg':
-   include/linux/mailbox/tmelcom-qmp.h:16:41: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
-      16 | #define TMEL_MSG_UID_MSG_TYPE(v)        FIELD_GET(GENMASK(15, 8), v)
-         |                                         ^~~~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c:406:29: note: in expansion of macro 'TMEL_MSG_UID_MSG_TYPE'
-     406 |         msg_hdr->msg_type = TMEL_MSG_UID_MSG_TYPE(msg_uid);
-         |                             ^~~~~~~~~~~~~~~~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c: In function 'tmel_process_request':
-   drivers/mailbox/qcom-tmel-qmp.c:501:36: warning: format '%ld' expects argument of type 'long int', but argument 3 has type 'size_t' {aka 'unsigned int'} [-Wformat=]
-     501 |                 dev_err(tdev->dev, "Invalid pkt.size received size: %ld, expected: %zu\n",
-         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dev_printk.h:110:30: note: in definition of macro 'dev_printk_index_wrap'
-     110 |                 _p_func(dev, fmt, ##__VA_ARGS__);                       \
-         |                              ^~~
-   include/linux/dev_printk.h:154:56: note: in expansion of macro 'dev_fmt'
-     154 |         dev_printk_index_wrap(_dev_err, KERN_ERR, dev, dev_fmt(fmt), ##__VA_ARGS__)
-         |                                                        ^~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c:501:17: note: in expansion of macro 'dev_err'
-     501 |                 dev_err(tdev->dev, "Invalid pkt.size received size: %ld, expected: %zu\n",
-         |                 ^~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c:501:71: note: format string is defined here
-     501 |                 dev_err(tdev->dev, "Invalid pkt.size received size: %ld, expected: %zu\n",
-         |                                                                     ~~^
-         |                                                                       |
-         |                                                                       long int
-         |                                                                     %d
-   drivers/mailbox/qcom-tmel-qmp.c: In function 'tmel_secboot_sec_auth':
-   include/linux/mailbox/tmelcom-qmp.h:13:10: error: implicit declaration of function 'FIELD_PREP_CONST' [-Wimplicit-function-declaration]
-      13 |         (FIELD_PREP_CONST((0xff << 8), msg_type) | FIELD_PREP_CONST(0xff, action_id))
-         |          ^~~~~~~~~~~~~~~~
-   include/linux/mailbox/tmelcom-qmp.h:55:45: note: in expansion of macro 'TMEL_MSG_UID_CREATE'
-      55 | #define TMEL_MSG_UID_SECBOOT_SEC_AUTH       TMEL_MSG_UID_CREATE(TMEL_MSG_SECBOOT,\
-         |                                             ^~~~~~~~~~~~~~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c:541:42: note: in expansion of macro 'TMEL_MSG_UID_SECBOOT_SEC_AUTH'
-     541 |         ret = tmel_process_request(tdev, TMEL_MSG_UID_SECBOOT_SEC_AUTH, msg,
-         |                                          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/mailbox/qcom-tmel-qmp.c: In function 'tmel_qmp_send_work':
-   drivers/mailbox/qcom-tmel-qmp.c:595:9: error: case label does not reduce to an integer constant
-     595 |         case TMEL_MSG_UID_SECBOOT_SEC_AUTH:
-         |         ^~~~
-   drivers/mailbox/qcom-tmel-qmp.c:598:9: error: case label does not reduce to an integer constant
-     598 |         case TMEL_MSG_UID_SECBOOT_SS_TEAR_DOWN:
-         |         ^~~~
+v3:
+ - Add more description in dt-binging commit message
+ - Add the svc_i3c_drvdata structure in struct svc_i3c_master
+ - Improve the do_daa
 
+v2:
+ - Add a new compatible string in dt-binding doc.
+ - Add driver data for npcm845 to address the quirks.
+ - Modify svc_i3c_master_write to be reused by SVC_I3C_QUIRK_FIFO_EMPTY fix
+ - Fix typo of SVC_I3C_QUIRK_FALSE_SLVSTART fix.
+ - Remove the code changes in svc_i3c_master_do_daa_locked, will add it in
+   another patch series for common improvement.
+---
 
-vim +196 drivers/mailbox/qcom-tmel-qmp.c
+Stanley Chu (5):
+  dt-bindings: i3c: silvaco: Add npcm845 compatible string
+  i3c: master: svc: Add support for Nuvoton npcm845 i3c
+  i3c: master: svc: Fix npcm845 FIFO empty issue
+  i3c: master: svc: Fix npcm845 invalid slvstart event
+  i3c: master: svc: Fix npcm845 DAA process corruption
 
-   177	
-   178	/**
-   179	 * qmp_send_data() - Copy the data to the channel's mailbox and notify
-   180	 *		     remote subsystem of new data. This function will
-   181	 *		     return an error if the previous message sent has
-   182	 *		     not been read. Cannot Sleep.
-   183	 * @mdev: qmp_device to send the data to.
-   184	 * @data: Data to be sent to remote processor, should be in the format of
-   185	 *	  a kvec.
-   186	 *
-   187	 * Return: 0 on success or standard Linux error code.
-   188	 */
-   189	static int qmp_send_data(struct qmp_device *mdev, void *data)
-   190	{
-   191		struct kvec *pkt = (struct kvec *)data;
-   192		void __iomem *addr;
-   193		unsigned long flags;
-   194	
-   195		if (pkt->iov_len > QMP_MAX_PKT_SIZE) {
- > 196			dev_err(mdev->dev, "Unsupported packet size %ld\n", pkt->iov_len);
-   197			return -EINVAL;
-   198		}
-   199	
-   200		if (atomic_read(&mdev->tx_sent))
-   201			return -EAGAIN;
-   202	
-   203		dev_dbg(mdev->dev, "%s: mcore 0x%x ucore 0x%x", __func__,
-   204			mdev->mcore.val, mdev->ucore.val);
-   205	
-   206		addr = mdev->mcore_desc + QMP_CTRL_DATA_SIZE;
-   207		memcpy_toio(addr, pkt->iov_base, pkt->iov_len);
-   208	
-   209		mdev->mcore.bits.frag_size = pkt->iov_len;
-   210		mdev->mcore.bits.rem_frag_count = 0;
-   211	
-   212		dev_dbg(mdev->dev, "Copied buffer to mbox, sz: %d",
-   213			mdev->mcore.bits.frag_size);
-   214	
-   215		atomic_set(&mdev->tx_sent, 1);
-   216	
-   217		spin_lock_irqsave(&mdev->tx_lock, flags);
-   218		mdev->mcore.bits.tx = !(mdev->mcore.bits.tx);
-   219		qmp_send_irq(mdev);
-   220		spin_unlock_irqrestore(&mdev->tx_lock, flags);
-   221	
-   222		return 0;
-   223	}
-   224	
+ .../bindings/i3c/silvaco,i3c-master.yaml      |   4 +-
+ drivers/i3c/master/svc-i3c-master.c           | 127 ++++++++++++++++--
+ 2 files changed, 120 insertions(+), 11 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
