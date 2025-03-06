@@ -1,142 +1,123 @@
-Return-Path: <linux-kernel+bounces-549409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA79A55224
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:02:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9635A55229
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:03:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21CD71659EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:02:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F268165D91
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4450026B966;
-	Thu,  6 Mar 2025 17:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC2125D1FA;
+	Thu,  6 Mar 2025 17:01:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="j+nlG+qS"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="CVZB7ph+"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F51825B695;
-	Thu,  6 Mar 2025 17:00:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0AA025B69E;
+	Thu,  6 Mar 2025 17:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741280422; cv=none; b=Vrt4O8Os9R0869OXb2fRrUa+AfbHJiO2oneoYZbbziysCa2vORMmy+97Hks7QfVFjSGG3LnHszFr7cf6uzgZqbAx/W9e+lyAjHWMx38d5FZfQIRQ/Rlg6jrQrrHd5uYL4DGXmmyS/RZ7rjILSetjKA28g4MJcdOzZfPcYnj9iO4=
+	t=1741280491; cv=none; b=bbr1utrSlN72C09l3ellh4xq6gG2uQnAMZBEBVdKoYryqYAfSOm6WSOt5AXqy89hrqpyqVhozpAnbZP7rQ8TPHYWum01PvCWcEuo0rDrbXCZHVwBI8xeR9TcqwMh7Z9sq67cJnpGh6grXVFNnJ/SX5hqqZZLF6KTgAyxt+4ctLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741280422; c=relaxed/simple;
-	bh=QnceLVnf5feN1aKAcL7nUss5U3kRaifnpXy1wKKSbFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iYKQsMDaxSB0QonjgPJ+0GjdJ1xSac5ZmmYMVpBATrTJd03RA0ef0/eG0Gei3zYdxofPpy+8oFZkW3ETinZjOdHFrKWWwg50Bmy28jitVp+CMcKwF9Eee+HnkXaLcrkdBeOMA3iqzOF2G86I0xfYimXnebAsoDQR50v55A0kjIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=j+nlG+qS; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1741280418;
-	bh=QnceLVnf5feN1aKAcL7nUss5U3kRaifnpXy1wKKSbFE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=j+nlG+qS2CwYyJbo9TVOSh+8yghMw507glcf+47HIYU0jOMGpzM5sI8ThQcw3lr4d
-	 laG3M7bs6fdVefIXMwtKV4oXTvzJlvvZHyLLDufYGW5uti4Q6+RT+bvA1lbXxXPvuc
-	 FOv2O9bbIt3dqa0a6gJhd/4z3H5bv0JJiXvmRcjw=
-Date: Thu, 6 Mar 2025 18:00:17 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Louis Taylor <louis@kragniz.eu>
-Cc: Willy Tarreau <w@1wt.eu>, Shuah Khan <shuah@kernel.org>, 
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/5] tools/nolibc: mark more test functions as static
-Message-ID: <61636d83-8154-4e7b-850b-1c4ed9a2c2f2@t-8ch.de>
-References: <20250304075846.66563-1-louis@kragniz.eu>
- <20250304075846.66563-5-louis@kragniz.eu>
+	s=arc-20240116; t=1741280491; c=relaxed/simple;
+	bh=0bG+xsvVA43Tj04NjYI8l6dTopg/wLEDMHxrsSVIdBQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S0YmWoCNyZJVNZPn/wDeMQPGYZTJjZTuTywaY7RIXWfQSv76Zl74HAFP3jAu3MVvMK9KG1fXIsNQ7CkmPnrwf+Lz9grbK3/poVd3abHt44Py2iGb8nBEYEmH2bClTVXU2PCoLTXqokBL2hrDYACePOYtnuyvYel9UcimBOr8cpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=CVZB7ph+; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4Z7wg668C9zlgrtp;
+	Thu,  6 Mar 2025 17:01:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1741280480; x=1743872481; bh=9/EC2f3UG/oS/+8VXzx/tS1v
+	HUYjgPed0E+QLpjuj9o=; b=CVZB7ph+QCcWq+r/qJMWPnFmDjolmS+ML+SCq5Ie
+	fd2rzDR/JjK5IabvsFiQsWQQ8hms9nFOPc1iwIv6hOtuFCwrihrDxaBio+ZvLxvA
+	biWgyC8zwmR+umf/a7f/z61VAUGqOGdzpJYG5wKWFiMM8Q5qV7SqKZxSNo7G6r4i
+	g5hogrKsq0joAU8d7+jrlbUxfXcB02T2VcUl+ccsPjNuX7JvuKY3HzxKPb7kxdbb
+	SR5rW/cOMZL7gSr7R2h4pRQkMLlz4eMBKUUgk0Q/WnheWfKcNd/FcXgSQHUXt/DR
+	JYxdT5Ua+aYmFniGJIfvJOhM3oxZ8v9n+x/k6UeoNzv4DQ==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id zrJYGK11rEh9; Thu,  6 Mar 2025 17:01:20 +0000 (UTC)
+Received: from [172.20.25.222] (unknown [192.80.0.131])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4Z7wfw6l4nzlgrtN;
+	Thu,  6 Mar 2025 17:01:12 +0000 (UTC)
+Message-ID: <7ff50e9c-8556-4b55-9457-03ee45ee07c0@acm.org>
+Date: Thu, 6 Mar 2025 09:01:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304075846.66563-5-louis@kragniz.eu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 2/3] scsi: ufs-qcom: Add support for dumping MCQ
+ registers
+To: Manish Pandey <quic_mapa@quicinc.com>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_nitirawa@quicinc.com,
+ quic_cang@quicinc.com, quic_nguyenb@quicinc.com
+References: <20250305120355.16834-1-quic_mapa@quicinc.com>
+ <20250305120355.16834-3-quic_mapa@quicinc.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250305120355.16834-3-quic_mapa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2025-03-04 07:58:19+0000, Louis Taylor wrote:
-> It was mentioned that a new test_ function should be static, so go back
-> over existing functions and mark those static as well.
+On 3/5/25 4:03 AM, Manish Pandey wrote:
+> +static void ufs_qcom_dump_mcq_hci_regs(struct ufs_hba *hba)
+> +{
+> +	/* RES_MCQ_1 */
+> +	ufshcd_dump_regs(hba, 0x0, 256 * 4, "MCQ HCI 1da0000-1da03f0 ");
+> +	usleep_range(1000, 1100);
 
-Actually Willy wants these non-static for debugging purposes.
-I can't seem to get that into my head -.-
-Let's drop this one.
+Please add a comment that explains why the usleep_range() calls are
+present.
 
-> Signed-off-by: Louis Taylor <louis@kragniz.eu>
-> ---
->  tools/testing/selftests/nolibc/nolibc-test.c | 14 +++++++-------
->  1 file changed, 7 insertions(+), 7 deletions(-)
-> 
-> diff --git a/tools/testing/selftests/nolibc/nolibc-test.c b/tools/testing/selftests/nolibc/nolibc-test.c
-> index 2a1629938dd6..b5464ca8d050 100644
-> --- a/tools/testing/selftests/nolibc/nolibc-test.c
-> +++ b/tools/testing/selftests/nolibc/nolibc-test.c
-> @@ -807,7 +807,7 @@ static int test_dirent(void)
->  	return 0;
->  }
->  
-> -int test_getpagesize(void)
-> +static int test_getpagesize(void)
->  {
->  	int x = getpagesize();
->  	int c;
-> @@ -836,7 +836,7 @@ int test_getpagesize(void)
->  	return !c;
->  }
->  
-> -int test_fork(void)
-> +static int test_fork(void)
->  {
->  	int status;
->  	pid_t pid;
-> @@ -861,7 +861,7 @@ int test_fork(void)
->  	}
->  }
->  
-> -int test_stat_timestamps(void)
-> +static int test_stat_timestamps(void)
->  {
->  	struct stat st;
->  
-> @@ -883,7 +883,7 @@ int test_stat_timestamps(void)
->  	return 0;
->  }
->  
-> -int test_uname(void)
-> +static int test_uname(void)
->  {
->  	struct utsname buf;
->  	char osrelease[sizeof(buf.release)];
-> @@ -922,7 +922,7 @@ int test_uname(void)
->  	return 0;
->  }
->  
-> -int test_mmap_munmap(void)
-> +static int test_mmap_munmap(void)
->  {
->  	int ret, fd, i, page_size;
->  	void *mem;
-> @@ -980,7 +980,7 @@ int test_mmap_munmap(void)
->  	return !!ret;
->  }
->  
-> -int test_pipe(void)
-> +static int test_pipe(void)
->  {
->  	const char *const msg = "hello, nolibc";
->  	int pipefd[2];
-> @@ -1001,7 +1001,7 @@ int test_pipe(void)
->  	return !!memcmp(buf, msg, len);
->  }
->  
-> -int test_rlimit(void)
-> +static int test_rlimit(void)
->  {
->  	struct rlimit rlim = {
->  		.rlim_cur = 1 << 20,
-> -- 
-> 2.45.2
-> 
+> @@ -1624,6 +1670,19 @@ static void ufs_qcom_dump_dbg_regs(struct ufs_hba *hba)
+>   
+>   	reg = ufs_qcom_get_debug_reg_offset(host, UFS_DBG_RD_REG_TMRLUT);
+>   	ufshcd_dump_regs(hba, reg, 9 * 4, "UFS_DBG_RD_REG_TMRLUT ");
+> +
+> +	if (hba->mcq_enabled) {
+> +		reg = ufs_qcom_get_debug_reg_offset(host, UFS_RD_REG_MCQ);
+> +		ufshcd_dump_regs(hba, reg, 64 * 4, "HCI MCQ Debug Registers ");
+> +	}
+> +
+> +	if (in_task()) {
+> +		/* Dump MCQ Host Vendor Specific Registers */
+> +		if (hba->mcq_enabled) {
+> +			ufs_qcom_dump_mcq_hci_regs(hba);
+> +			usleep_range(1000, 1100);
+> +		}
+> +	}
+>   }
+
+Please either combine the two "if (hba->mcq_enabled)" tests or combine
+the "in_task()" and "hba->mcq_enabled" tests.
+
+Please also add a comment that explains why the in_task() call is
+present and a comment that explains why the usleep_range() call is
+present.
+
+Thanks,
+
+Bart.
 
