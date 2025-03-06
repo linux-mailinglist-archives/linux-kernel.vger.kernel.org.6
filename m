@@ -1,151 +1,129 @@
-Return-Path: <linux-kernel+bounces-549244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D674FA54F82
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:49:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3258A54F92
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:51:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7C6C18964A7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:49:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38351169697
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:51:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A0B20F071;
-	Thu,  6 Mar 2025 15:49:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6079F12F5A5;
+	Thu,  6 Mar 2025 15:51:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SD3nG1NI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Xu7wHIDE"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3FA17BEBF;
-	Thu,  6 Mar 2025 15:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4634B148FF5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 15:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741276159; cv=none; b=rv9VGs5bguSUmMuoKFd1X1qARQ2PYmTimUTXbQdccloU20X4JDxadcmH/pGKkaH8Yd4rFCRy5oaVQlPOReF18SMhPhOHIFC99WnAgyJ7qwJFY5pWJg8q7v9E/fX8tS5YvaQwOI1Y6G8aNSJM5MEAgYHmtLyDQuAcjBaTp8wdVvA=
+	t=1741276266; cv=none; b=WLj/Q54zVlJJwD1zLfb2Go4x9hLDRpqkQPMGQyRLJeA/ht18zCYb+u5HC4l9gh721Any8rOkeFJWaIKi6fVrkZsrFhXGCWJKWPNy0W8+gQinU/rYfiMHzstNes+b7g7jAKBX7UYmEaloKi7D+YKp5lj/EYMfi8r0mZ5I0nPSEfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741276159; c=relaxed/simple;
-	bh=V8m7lTHXESyngTkQx4PrrLs0arK+hpFdrsu8fI4KcGc=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PvHnOSIc/mBzWG1IErEqSw7jv2O6kbB5E6ka24u9OXOH91cQ1ICXiZU5c1Ug8CHwMDhjhu1k5b6/xbxj+5eqe0SKPDwyZ1h6vIAQaJJg1GSIO/hSmctEs7qi4DHxeFNb2yskcktCS66/nn68UzLX18y9uU1CVICZePOfdo/VNp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SD3nG1NI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89313C4CEE0;
-	Thu,  6 Mar 2025 15:49:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741276157;
-	bh=V8m7lTHXESyngTkQx4PrrLs0arK+hpFdrsu8fI4KcGc=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=SD3nG1NIjcZx2ZSpK9j4AqGIWemIYjlZ/zI48eCe/GiQHF5fTt4KOODVAK74LI4Ym
-	 59tpOXNF2ZQg/xBHFwIzqtRPOCnjnE3p1N7CviyOSrzRSbXC8voTdN59Q/ZEE+XaUo
-	 5BFrzI2/8RMbYf93LGTvzEEwyjJP4TLGyGbNy8ZtLjXuSG2quQDQL7kb5RlIcxDYK+
-	 1vVln/tvr8uZpwlU7MoPac3tr8FkpedmEJqHpSXuP4NgMe+u5bjPfrrk8aRvAb4/lu
-	 LGMw7m5Z4YAGjCD2ar5yMZd3eS+MgMdfec+nk4gHmTwwr2CUmk05rc/wil/Tedg5pE
-	 hEIiL3s/REI6A==
-Date: Thu, 6 Mar 2025 16:49:10 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>, aliceryhl@google.com,
-	robin.murphy@arm.com, daniel.almeida@collabora.com,
-	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Valentin Obst <kernel@valentinobst.de>,
-	open list <linux-kernel@vger.kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
-	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
-Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
-Message-ID: <Z8nD9iJanaXTHjUh@cassiopeiae>
-References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
- <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
- <20250305174118.GA351188@nvidia.com>
- <Z8mlAxsszdOH-ow8@cassiopeiae>
- <Z8m9j3SwWHqaCTXo@phenom.ffwll.local>
+	s=arc-20240116; t=1741276266; c=relaxed/simple;
+	bh=6/eshPQTJ88U2E8tAaABEc0mBxrlK9eSvRujOfacHCU=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=coaRvAv/e4dq/eteqrG1s9la19ZpkgukoiSfmfbkMM8dTRyjiv6HSY+5+8S7OSntk3AZ1U+b2CdS3o4Dz8r7gKudEddS/Mlgq2HvWuZGg+FfBidSJwUAUDsM3ohhMXG9syJeF2apqQvbcp8eNLnWd/f9CjGF9XaGm9ClJwzHDG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Xu7wHIDE; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c3b63dfee1so89654285a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 07:51:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1741276264; x=1741881064; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RMbnC32xMkkNtpNE5OTsWUJHP+Zfh4wWIQQTgHHZzVc=;
+        b=Xu7wHIDENqS09TMlJ8kpd7PYRqY5kXbNVLeAHyjW9VFS/MtDqwAEoqAYI9EqLswSw5
+         lcc2fmnhSGXscSlFFJerbgn/51ajt+dpi21jTFfFxksQUNT05DtairqWkYOSaSF6QyTN
+         HHk597kq26E1w52L7HyBK1mCAHwnYp/DJLtDg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741276264; x=1741881064;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RMbnC32xMkkNtpNE5OTsWUJHP+Zfh4wWIQQTgHHZzVc=;
+        b=HTh89owPrH/HUU+HR2UJ6QqWyDIzkUPy2wMCpG7F97MIVj9heGRjsFVLUh6xAz8dwU
+         UZq/+AthqKTFXQjlYEmYYMWcQMtk0vGGI3ybU/YJw14mJ3y5APkcCjhFcd4b/6PNkFBe
+         E/+o++qIXUsP0PFclDjhn3zmt25YVYtVF8P98L8eQgAiIRAhFYDc1dQkCA/Gym6qEI4p
+         dC5pWYz94519Bxsy14PHsjb0thhunT82pLIBQUqSjvR4ZB00lKhxw9Jw7lhyh/gmqxMC
+         rFuxS0yDUxd4pRSqTPrsAYVrRYdbx9FjiWwmlyYWZwms3BoJ/SoUToIOxT97jXMFC9xU
+         LlWA==
+X-Forwarded-Encrypted: i=1; AJvYcCVI9uPLjrHrVQKaHF+I2GJl7Cq2qA+lqK9fGHuKv/UNEamIoqLuRPAFYjKH/epNKsDb/yItspi27lC0JaU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKUXW+g0zMACENun4JMsM9eRp+GdjOjwLLi7mDDnWFkn0RHofC
+	PxwEsiiRvcCwVUwKE3hrdvZVEosuw8qOd5A4WFqiMqOWsyVh2QMTcMqJT6fSHw==
+X-Gm-Gg: ASbGncvfVzVwBbFa/lUdOT7h4zdmkvO1A9aeSLJ0Er6VhTdPZHF0in+HG18UPKhjMnj
+	UTh/VP/L6osFQwbkFk8HnF9jT3BHYkmdrTiZx2qqenUvzBSIo9QWwYZT0GFLUUl86zO3asplWXg
+	pvGYHp377hx7LuRA8t478cRGMwBQ8w/TD1rOaTplFucIrCWBALkdsEh6sCwYZDHuITbGzRBq8Zf
+	HuJpWkTtSxXoAUBlmLTriNoQe2LIMJWzM0bZPuJoPE/H23SKyA83OFOLiGWGcHjtJhf0C3bkLnb
+	5pHWUoKiwj6L8oKhPrBbMXBkssbTJJ6lt+hlMBXiocu4UIzfkVlECU4e6QkDfNEpDkpl5yRw/AD
+	SbTa9FdWnHnr3Pz65kOZL2w==
+X-Google-Smtp-Source: AGHT+IH24KmuxGN+n2gl5zVRmv9+jF9yqy4bvzwQUqbaRmvUqLbrFB/O+ZtC7Gu9XeQA0kdFZZGpLg==
+X-Received: by 2002:a05:620a:6190:b0:7c3:d2f7:ca5e with SMTP id af79cd13be357-7c3d8bd27e5mr1112875785a.12.1741276264174;
+        Thu, 06 Mar 2025 07:51:04 -0800 (PST)
+Received: from denia.c.googlers.com (15.237.245.35.bc.googleusercontent.com. [35.245.237.15])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e533a1a1sm106257585a.6.2025.03.06.07.51.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 07:51:03 -0800 (PST)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Subject: [PATCH v2 0/3] media: uvcvideo: Introduce V4L2_META_FMT_UVC_CUSTOM
+ + other meta fixes
+Date: Thu, 06 Mar 2025 15:51:00 +0000
+Message-Id: <20250306-uvc-metadata-v2-0-7e939857cad5@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8m9j3SwWHqaCTXo@phenom.ffwll.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGTEyWcC/3XMQQ7CIBCF4as0sxbTTgpGV97DdIEwLbOgGKBE0
+ 3B3sXuX/0vet0OiyJTg1u0QqXDisLbAUwfG6XUhwbY1YI+yR1RiK0Z4ytrqrAXShcZRXpWyBO3
+ yijTz++AeU2vHKYf4OfQy/NY/UBnEIJSxaiZJBs3zblwMnjd/DnGBqdb6BaBrwdKrAAAA
+X-Change-ID: 20250226-uvc-metadata-2e7e445966de
+To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>, stable@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-On Thu, Mar 06, 2025 at 04:21:51PM +0100, Simona Vetter wrote:
-> On Thu, Mar 06, 2025 at 02:37:07PM +0100, Danilo Krummrich wrote:
-> > On Wed, Mar 05, 2025 at 01:41:19PM -0400, Jason Gunthorpe wrote:
-> > > On Mon, Feb 24, 2025 at 01:49:06PM +0200, Abdiel Janulgue wrote:
-> > > 
-> > > > +impl<T: AsBytes + FromBytes> Drop for CoherentAllocation<T> {
-> > > > +    fn drop(&mut self) {
-> > > > +        let size = self.count * core::mem::size_of::<T>();
-> > > > +        // SAFETY: the device, cpu address, and the dma handle is valid due to the
-> > > > +        // type invariants on `CoherentAllocation`.
-> > > > +        unsafe {
-> > > > +            bindings::dma_free_attrs(
-> > > > +                self.dev.as_raw(),
-> > > > +                size,
-> > > > +                self.cpu_addr as _,
-> > > > +                self.dma_handle,
-> > > > +                self.dma_attrs.as_raw(),
-> > > > +            )
-> > > 
-> > > I mentioned this in another thread..
-> > > 
-> > > There is an additional C API restriction here that the DMA API
-> > > functions may only be called by a driver after probe() starts and
-> > > before remove() completes. This applies to dma_free_attrs().
-> > > 
-> > > It is not enough that a refcount is held on device.
-> > > 
-> > > Otherwise the kernel may crash as the driver core allows resources
-> > > used by the DMA API to be changed once the driver is removed.
-> > > 
-> > > See the related discussion here, with an example of what the crash can
-> > > look like:
-> > > 
-> > > https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/#m0c7dda0fb5981240879c5ca489176987d688844c
-> > > 
-> > >  > a device with no driver bound should not be passed to the DMA API,
-> > >  > much less a dead device that's already been removed from its parent
-> > >  > bus.
-> > 
-> > Thanks for bringing this up!
-> > 
-> > I assume that's because of potential iommu mappings, the memory itself should
-> > not be critical.
-> > 
-> > > 
-> > > My rust is non-existent, but I did not see anything about this
-> > > point.
-> > 
-> > Indeed, this needs to be fixed. It means that a CoherentAllocation also needs to
-> > be embedded in a Devres container.
-> > 
-> > > 
-> > > Also note that any HW configured to do DMA must be halted before the
-> > > free is allowed otherwise it is a UAF bug. It is worth mentioning that
-> > > in the documentation.
-> > 
-> > Agreed, makes sense to document. For embedding the CoherentAllocation into
-> > Devres this shouldn't be an issue, since a driver must stop operating the device
-> > in remove() by definition.
-> 
-> I think for basic driver allocations that you just need to run the device
-> stuffing it all into devres is ok.
+This series introduces a new metadata format for UVC cameras and adds a
+couple of improvements to the UVC metadata handling.
 
-What exactly do you mean with that? DMA memory allocations or "normal" memory
-allocations?
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+Changes in v2:
+- Add metadata invalid fix
+- Move doc note to a separate patch
+- Introuce V4L2_META_FMT_UVC_CUSTOM (thanks HdG!).
+- Link to v1: https://lore.kernel.org/r/20250226-uvc-metadata-v1-1-6cd6fe5ec2cb@chromium.org
 
-The latter should never be in a Devres container. The Devres container should
-only hold things that, for safety reasons, are not allowed to out-live device
-/ driver unbind.
+---
+Ricardo Ribalda (3):
+      media: uvcvideo: Do not mark valid metadata as invalid
+      media: Documentation: Add note about UVCH length field
+      media: uvcvideo: Introduce V4L2_META_FMT_UVC_CUSTOM
 
-> But for dma mappings at runtime this will be too slow.
+ .../userspace-api/media/v4l/meta-formats.rst       |  1 +
+ .../userspace-api/media/v4l/metafmt-uvc-custom.rst | 30 ++++++++++++++++
+ .../userspace-api/media/v4l/metafmt-uvc.rst        |  4 ++-
+ MAINTAINERS                                        |  1 +
+ drivers/media/usb/uvc/uvc_metadata.c               | 40 ++++++++++++++++++----
+ drivers/media/usb/uvc/uvc_video.c                  | 12 +++----
+ drivers/media/v4l2-core/v4l2-ioctl.c               |  1 +
+ include/uapi/linux/videodev2.h                     |  1 +
+ 8 files changed, 77 insertions(+), 13 deletions(-)
+---
+base-commit: 36cef585e2a31e4ddf33a004b0584a7a572246de
+change-id: 20250226-uvc-metadata-2e7e445966de
 
-What exactly do you mean with "DMA mappings at runtime"? What to you think is
-is slow in this aspect?
+Best regards,
+-- 
+Ricardo Ribalda <ribalda@chromium.org>
+
 
