@@ -1,146 +1,173 @@
-Return-Path: <linux-kernel+bounces-548559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F06A5466E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:35:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E38AA5466F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:36:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16EF83B0EC8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:35:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4F463B0FD5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 137DF2080EE;
-	Thu,  6 Mar 2025 09:35:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D90F209F4D;
+	Thu,  6 Mar 2025 09:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YYc6XZMe"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RZ6hLYq6"
+Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADE6201270
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:35:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FB2720968E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741253738; cv=none; b=IJo/cnCgK3XTKE6PbcuUVuLPBPZyeYgBX1kJEVi1jlC198l2EsZNRak3Py5ljUHypu4cgOT0/VzUSCN2uVZt/Q24AMmZHBEKwBrIfU05IjBp/OBPITo4zThzQAmksrHi79JcitoYX3QfIEUVzxv5m0znItpK9JhNmZ94SGPta3M=
+	t=1741253759; cv=none; b=Ke9JDSLdSo2Ot4uA19PoCIpj0ARgEyjMAMSy3Q8sj4mnao4wpm8xmetN1+r08jTXEn8jqG6VrxRKhECqFf/eBc5zJVhlm/6hQNaRd1LYAcmhqfiSp3GIuJKlGLV+rpiHzIyYMnTc+ySimfztHLYv2r+gLqSWTOAqa8MlV+H4SeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741253738; c=relaxed/simple;
-	bh=d0zVXr+v/Wgiq9owufdrl0TSiKuAeBy/lLTh6slUbYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qmv3W8BzeRerXVgpXEWeIdPHwCesMXQ1+MXgLSKbUDWOCMijBoiQTw+6TETHL3TjU3VvMLp3sX6BN9Ubl3g+fYAwM3sW3HqcHXQnwrN+FOrquUBr8s18Rtow2moH7eo/2Xl0e+b/WwItNv3txEi575vXRAkTusmx0a23iMzQaGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YYc6XZMe; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741253734;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Q4Gn6RsFLMWYDAgd1mOSGDSxptCBTGDRt0g2HKO+JxY=;
-	b=YYc6XZMehntATG0W9uPSCmIO2tIhEfoSCbaVmGP7hOhIk8gyDmzK0pJ1NmPbEYsZNl6ZI2
-	VCyNjtjoSJCwRR79c4TWqOh47QACwkDUE2vTeTZmItQbJ8k50ZxWA5ktjoD2GEL4xkdcyr
-	HipMYRdJmS2eV/U+F7AeWZEmSed6RZc=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-681-7gi-7KGFMxykCg-wqEzRJw-1; Thu, 06 Mar 2025 04:35:33 -0500
-X-MC-Unique: 7gi-7KGFMxykCg-wqEzRJw-1
-X-Mimecast-MFC-AGG-ID: 7gi-7KGFMxykCg-wqEzRJw_1741253732
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6e8cf10d1c2so11515356d6.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:35:33 -0800 (PST)
+	s=arc-20240116; t=1741253759; c=relaxed/simple;
+	bh=zAfupfnmXgAPKBf7N+VUINqI3bvcjO+DlUy81THOReY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=mx+UC+Mvl4G1ejRd3Qdd7McOMLyJ6MAaGzWkDb+b88r2ymJY/YdfSpXxHyW4JRx0rV6ikyZbpQCioKnL4vhwpEQiyQlyQdNwIUSd/yh+a6BOfdCdcjHBQvchsNGApVCh3RY92Njs/EWB8K3a8QH2wJz4iU0MfxlLLS6tqhezmDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RZ6hLYq6; arc=none smtp.client-ip=209.85.128.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-4394c489babso1883165e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:35:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741253756; x=1741858556; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=80/MuYHXzFOlY04/5DfNbTTbOenEqnxQ83fIcfIWstI=;
+        b=RZ6hLYq6FQnB3CTlZ+3pQYLBpPUkVcwBgmSmq8fiMCuyxHif/0+sGbcS+ZamZIyryQ
+         xtzQwckV1kD8BVGwH4P3UuMQdb/Ik3Y6buuEaYmkSIrPAasHPBdv+1MW8U0+6pQrFust
+         rmdNYQJBXiU2nn/EWFPSg0YrGAZUOuenLkJfYKEIQ3GbCt6rnEYtagR2UGA7Vwy3NMbf
+         5j3EYrIGa2FkJi+epdyRFi0ZMyMWmHnIzoXpUE1LNIrF5hyo0PsgcYqCU3ouqAWgeNiW
+         PIP5YUjd9BuZ4uPqphQV1RgC4/xOxH9301u0epVjnxqKjNDHSzTfxeD/e9Az3+5Z6eGg
+         AbkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741253732; x=1741858532;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q4Gn6RsFLMWYDAgd1mOSGDSxptCBTGDRt0g2HKO+JxY=;
-        b=RV4z/LWgH/9ZvmTXir20PWG01emIT/UjZoroZgl9M1lNkp9RJl6L5pF6MFLAH9bbGI
-         Qct1NVFxbBGCGctQgN2qCBBf6cFCN6lT4VOYfdPGIS+FObXI6sZbX0Rrk5Fh41RSotZD
-         63UGWY86MEzBNWyQunSze+BORiPXeVgvfbzXc3qodHE2BGz+R+WcUG8MySgqUHJ2Vy2o
-         wSvHojplKAtJ2fJpEg8M9s77JZVdboV1aKcZElOy8zhII/QieYl4j9OGtZw/pexDZtPV
-         /hvEhwfNp+YI/XPy/MrFBynaf7nTaNUreL5F+dWHw9uHN64NyX74rmk9xGYSGQISclGy
-         GMWw==
-X-Forwarded-Encrypted: i=1; AJvYcCWc0vui8FZFB6Ms/cxG0wMr46mBjGEB/RQbaD3iQcJD/cRcY8NFb1NrEqTjbaC+x46pclYKbLyh5iIlV9M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+xr9J75g+VffVv1UZCjbmaUcFvtco2q+uIdShaDql4ux1xZHT
-	ol2WhXDnhfRK+ggdHYyHV6Xoli2TbFo/F64NtFBb5+WFmbT6xvNI3DH2MFRm5KbTMSsD5L9eLYa
-	TbidrahKPv/FaPjTRaZGR7spCkPxxyGdqAZUB4zii7bkadaA5J88faLbxg7wLqg==
-X-Gm-Gg: ASbGnctvhXAc97q+1yy0mw/6N0qLKoEMhA7kpqRsvG2EmWD6NzYXCIdA1qEhBmDK6E+
-	C9KnqVc2Z6z9UVLq3Y29Sgd6swbIlWHDw1CSd0X+Pj53Yl4z1dvsp/oUY0syXg3yLizbzpiZ8Fi
-	/kAv66IbMXFExg4Xt6mqBcSaoBm+O6ItAwAMbPEi6wLGsOWUtxmS5EJPY3GE9xokIixDzhcB3IK
-	eht0Aue+JKk84dUKHGPK/qjvhqnjKwUmbegEzdowElxfrpLuK8eK4eTfZd64xaqmu8RG4uV7jU2
-	aROdCAJ1cBVgFf5sdIKgZTtquf/39E33XGyhSvrKyP+jrlEKoF9fV/tqe8zsMn6SGzx6FRDFdsx
-	RzQ7q
-X-Received: by 2002:a05:6214:2685:b0:6e8:fb7e:d33b with SMTP id 6a1803df08f44-6e8fb7ed69bmr5852676d6.33.1741253732648;
-        Thu, 06 Mar 2025 01:35:32 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH9D2PvqOQ0l2XmU4Rpj97A53jhU4Fn7KveyE0/a4OKM8y07aCbsVmiHy1x6Z7yx/4binaK1g==
-X-Received: by 2002:a05:6214:2685:b0:6e8:fb7e:d33b with SMTP id 6a1803df08f44-6e8fb7ed69bmr5852426d6.33.1741253732352;
-        Thu, 06 Mar 2025 01:35:32 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f715b5f9sm5383796d6.81.2025.03.06.01.35.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 01:35:31 -0800 (PST)
-Date: Thu, 6 Mar 2025 09:35:27 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, stable@vger.kernel.org,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sched/fair: Disable DL server on
- rcu_torture_disable_rt_throttle()
-Message-ID: <Z8lsX0GDrx7Pa8vd@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250306011014.2926917-1-joelagnelf@nvidia.com>
+        d=1e100.net; s=20230601; t=1741253756; x=1741858556;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=80/MuYHXzFOlY04/5DfNbTTbOenEqnxQ83fIcfIWstI=;
+        b=A6+mr3e2htX/k7zNRk0snvU5z83yLEaAcCi3vHdZns1QXYqlMtEpI1+RTO3pGrjPvc
+         opIN6VnlDno/R22lqrYHkiOEY1ULVcLACZKnpZOYpi/jTZu1PpXMNEE47bC1DSAJskBO
+         douD4xCRsHYPUkufjjdgCjZK+xwWM1yagK7nvyAs+a+Oa5qSC1pl/W0dDStd33KN+OhD
+         FoSehd1OQNZCwDwCwpDHcVzAggNGsvM3T8lKP7FDkNWZXYt3KW+DTNBJSsJQ73uQQPgK
+         deaCo/UTBHsITogXDkUi0do6vq4dMS+CYuCbCCNzGUOaQ+KddtUeHLeZ3Rcf5P5GpnGT
+         28Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFF0g+w4lEpVr+XWl49rCA25/eBcwrfSiwmc9GI3NNg/lkFmH4L4SZFa2O1e21ca5n6Fov5wNqfnIPTZ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtlimyZ8LekrPxBbr7jAMhoul1FnQS8XDQ8MZdwm1z9MP2folx
+	X24PV7qJ/kFETsyVMGddNAhPsnrRKNryihlyIbgvdZairjbQzohDKxpzUKMOOY2lQDwrZoSGn2T
+	0eSzlv1N6A3jLdg==
+X-Google-Smtp-Source: AGHT+IFxl8xciWrl2CQHn8RoJKN3DeV4Zim2lKi3GQnZzsbzv7UugqHqo9gKtYFc9LBV4rU4WNoxZYH203ol5XE=
+X-Received: from wmbek10.prod.google.com ([2002:a05:600c:3eca:b0:43b:c450:ea70])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4ed2:b0:439:a5e6:73ff with SMTP id 5b1f17b1804b1-43bd29d8441mr46790355e9.17.1741253756313;
+ Thu, 06 Mar 2025 01:35:56 -0800 (PST)
+Date: Thu, 6 Mar 2025 09:35:54 +0000
+In-Reply-To: <875xkn8k5z.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306011014.2926917-1-joelagnelf@nvidia.com>
+Mime-Version: 1.0
+References: <20250305-unique-ref-v4-1-a8fdef7b1c2c@pm.me> <Z8hUIPtE_9P60fAf@google.com>
+ <Z8hmCkeZGPwc5MuU@mango> <mE_To6ll96gFJQD9YKkT-mwa2KCHFCgOaZFxxczeDVJd0hr1rZCKFHD-vHQfm6deCjlUJIu4U-reNMtrwfyT7w==@protonmail.internalid>
+ <CAH5fLgjFBknTmhxQBPUdB-iNMjEkcyuLiu22-Nj-DGB1Gb7NkA@mail.gmail.com>
+ <87ldtj8p2m.fsf@kernel.org> <JPqvzrz3Zy0HgwNoHh2psup7imFItiN_j_VmmjVPBfwJzf040DTvZAwUDjNv1FQiLXFiSAANIxc2IegeKGCJvA==@protonmail.internalid>
+ <CAH5fLgirYTV6K2QoH9LLwhHxJzz=h1R0jB4G2kpKQ_pBtBgePg@mail.gmail.com> <875xkn8k5z.fsf@kernel.org>
+Message-ID: <Z8lsetLbHvn-6cai@google.com>
+Subject: Re: [PATCH v4] rust: adding UniqueRefCounted and UniqueRef types
+From: Alice Ryhl <aliceryhl@google.com>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Oliver Mangold <oliver.mangold@pm.me>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Joel,
+On Wed, Mar 05, 2025 at 06:24:56PM +0100, Andreas Hindborg wrote:
+> "Alice Ryhl" <aliceryhl@google.com> writes:
+>=20
+> > On Wed, Mar 5, 2025 at 4:39=E2=80=AFPM Andreas Hindborg <a.hindborg@ker=
+nel.org> wrote:
+> >>
+> >> "Alice Ryhl" <aliceryhl@google.com> writes:
+> >>
+> >> > On Wed, Mar 5, 2025 at 3:56=E2=80=AFPM Oliver Mangold <oliver.mangol=
+d@pm.me> wrote:
+> >> >>
+> >> >> Hi Alice,
+> >> >>
+> >> >> On 250305 1339, Alice Ryhl wrote:
+> >> >> > On Wed, Mar 05, 2025 at 11:31:44AM +0000, Oliver Mangold wrote:
+> >> >> >
+> >> >> > > +impl<T: UniqueRefCounted> Deref for UniqueRef<T> {
+> >> >> > > +    type Target =3D T;
+> >> >> > > +
+> >> >> > > +    fn deref(&self) -> &Self::Target {
+> >> >> > > +        // SAFETY: The type invariants guarantee that the obje=
+ct is valid.
+> >> >> > > +        unsafe { self.ptr.as_ref() }
+> >> >> > > +    }
+> >> >> > > +}
+> >> >> >
+> >> >> > What stops people from doing this?
+> >> >> >
+> >> >> > let my_unique: UniqueRef<T> =3D ...;
+> >> >> > let my_ref: &T =3D &*my_unique;
+> >> >> > let my_shared: ARef<T> =3D ARef::from(my_ref);
+> >> >> >
+> >> >> > Now it is no longer unique.
+> >> >> >
+> >> >> Oh, indeed. That's a serious problem. I see 2 options to deal with =
+that:
+> >> >>
+> >> >> 1. remove ARef::From<&T>
+> >> >>
+> >> >> I checked the users of this, and it looks to me like there is rathe=
+r
+> >> >> a limited number and they are easy to fix by replacing the &T with =
+ARef<T>.
+> >> >> But I assume that wouldn't be welcome as it is intrusive nonetheles=
+s
+> >> >> and of course there is ergonomic value in having the function aroun=
+d.
+> >> >
+> >> > Definitely not an option. There are many users of this function that
+> >> > are in the process of being upstreamed. The ability to go &T ->
+> >> > ARef<T> is pretty fundamental for ARef.
+> >>
+> >> Not having `impl From<&T> for UniqueArc` seems to work out fine.
+> >>
+> >> It would be unfortunate if `impl From<&T> for ARef<T>` would prevent u=
+s
+> >> from having a unique version of `ARef`. I would say that is a valid
+> >> reason to consider removing that impl.
+> >
+> > I think the impl is really important. It's required to do things such a=
+s:
+> >
+> > let mm =3D ARef::from(&*current!().mm());
+> >
+> > Without the impl (or something equivalent), it's not possible to
+> > increment the refcount of the &Mm returned by `current!().mm()`. There
+> > are many other examples of this.
+>=20
+> Right. Let's see what we can figure out of other solutions then.
 
-On 05/03/25 20:10, Joel Fernandes wrote:
-> Currently, RCU boost testing in rcutorture is broken because it relies on
-> having RT throttling disabled. This means the test will always pass (or
-> rarely fail). This occurs because recently, RT throttling was replaced
-> by DL server which boosts CFS tasks even when rcutorture tried to
-> disable throttling (see rcu_torture_disable_rt_throttle()). However, the
-> systctl_sched_rt_runtime variable is not considered thus still allowing
-> RT tasks to be preempted by CFS tasks.
-> 
-> Therefore this patch prevents DL server from starting when RCU torture
-> sets the sysctl_sched_rt_runtime to -1.
-> 
-> With this patch, boosting in TREE09 fails reliably if RCU_BOOST=n.
-> 
-> Steven also mentioned that this could fix RT usecases where users do not
-> want DL server to be interfering.
-> 
-> Cc: stable@vger.kernel.org
-> Cc: Paul E. McKenney <paulmck@kernel.org>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Fixes: cea5a3472ac4 ("sched/fair: Cleanup fair_server")
-> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
-> ---
-> v1->v2:
-> 	Updated Fixes tag (Steven)
-> 	Moved the stoppage of DL server to fair (Juri)
+Ultimately, if a struct implements AlwaysRefcounted, then you can always
+increments its refcount. If you want a version of the struct where that
+is not the case, then you need a different struct that does *not*
+implement AlwaysRefcounted.
 
-I think what I suggested/wondered (sorry if I wasn't clear) is that we
-might need a link between sched_rt_runtime and the fair_server per-cpu
-runtime under sched/debug (i.e., sched_fair_write(), etc), otherwise one
-can end up with DL server disabled and still non zero runtime on the
-debug interface. This is only if we want to make that link, though;
-which I am not entirely sure it is something we want to do, as we will
-be stuck with an old/legacy interface if we do. Peter?
+I do things like that in the mm_struct series. The VmaNew struct is an
+example of that.
 
-Thanks,
-Juri
-
+Alice
 
