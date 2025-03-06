@@ -1,192 +1,317 @@
-Return-Path: <linux-kernel+bounces-548138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F05A540B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:32:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F8F3A540B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:32:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87099188DF4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:32:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB494188DE06
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B66E018DF89;
-	Thu,  6 Mar 2025 02:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176D61624C7;
+	Thu,  6 Mar 2025 02:32:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="dCm/d1N7"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eEJMaPYB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55356150997
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 02:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476C280BFF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 02:32:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741228316; cv=none; b=EUruxiQ6hGORiDrcEsz2yEFZUsv7WmsIabdJqT9b0CNA3p1wFMT9ADE+GJ03vNXxYaI+o4TWoBLvhvmv3S8kbRNxbzJh3qL2zABfyTZFMMvkwWrdDhvz86d9dcthW0XtzK8Kn16RxPN5ooKIP+N0LJ3y2dmaGi2kaqtQCIu44+0=
+	t=1741228360; cv=none; b=kzPKi05YG0F3ADrFYhv1eBr3Fwz/0YWGXA11GQMh+17BK1ClhC6ogU8A/GMvxoHT/FpNZW3OizuZp7pcx27QyNiFuxBCCBnE2JBR4fZxPuvu3dlGhgjbbT7M8P9bekpk8/vCYeQrZqRFy6bq5Ry4xXgUzZeUCsXuSZey/jnhiJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741228316; c=relaxed/simple;
-	bh=W1tcb7tlttKSGSGcmJVIThQ+ztQfMVdTvzNQlwimA1k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EXJcO+i5SjoXH0ditywwwyCk+iZhLqQHlzI7POXuBV6ku2dzf8oxVHBgwExLeCPAYfi6g2d5k4IvHiBLqSAQwZdl0R7WLYbYD/je4AKlriLRnkg9c4P6Zq/tT91hfTLMhfXA7wEdYV7jJreoIyheEqn2Drp3L8hf2DYrguswMNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=dCm/d1N7; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223fb0f619dso2158115ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 18:31:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1741228313; x=1741833113; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=iO6wA6XWmxnHhVJNEGwMRLVJm1A8Q49xyow/a4mczm0=;
-        b=dCm/d1N7dDe2NPkJ6Jya2T99qQvSQqcVohRzYDzooC1TwgQXwUjR2mp3beEQEPjufO
-         bMX29nCjbNnYi53u5O5+LOHAvi/JMLXbvGn0mAARYfmnripixu/pZ08xH9qb0Z7h2iNN
-         fLR3l7w0oDd+jdNmbOhuBQB4n+cIbYZEt+kptHRB5QN9/r/uADD5NhCho2GcV+iLDSy4
-         gQf2IVuFR2GQinBMykau1tO2cPB+6x16i6SDPh6ucMMreeq5H8wNB1CW8sWf5F6tjDNC
-         rUnuD5sjGE9S0YxfEmIoPG4NJq/PSvxYB1Apruun/3/Nqr067yjSmDHVREtE8l1XWZEc
-         AdAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741228313; x=1741833113;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iO6wA6XWmxnHhVJNEGwMRLVJm1A8Q49xyow/a4mczm0=;
-        b=cSdix3W+s2PiTniAEEtfMjbG5250EMtdLsJHplt56LGxSV8Fhmq4lXA2LcGAHpwtKo
-         Rix7vL4Boh1A/syyNXAgpsi3gAu3xC9hZ5M5fMFgWojcCmQeW3ZUCVzM9cDZ2SXA1QzR
-         bBbxeXAJUDobb/cp19wIVYXGeSzT8i3LwCQeFaoWnrTdZc8HzrXhDSznI6hnL8/bMcdA
-         PWbeqRR30UYv6ewrZUXC6z0+OwbJVMhMXnclAB97jGG0/XjElQiBNBpw0ecdK5ODozoh
-         ZKIcpM/QqDHAZlS8T8luTVYzpMccjDTkqyC8VNpZlbxhlf5eqTjeeGcJt53Y5DA3L2IZ
-         FlFw==
-X-Gm-Message-State: AOJu0Yzb0XUA0hNL6WmbgB2rpBnbg44044ByNur5eoPuIJvlZ/1K4Yuf
-	EURiLdQ0sZodLVxprGAkIUkq7rtjp/aLbG02ryvBuy3AxiztEowTP9iDN/AxWg8=
-X-Gm-Gg: ASbGnctgxHCtU6Uo3ZAGeaOAqIrfl5uwAGDPqYfiq2HM9IVeIBKCCWt4syWBfM9980L
-	zijNQm+pV+mDT+Ha07zc8SgVG8dmTzJNGjzzZga8VM32036mYPql8OPLsuvhiP0zQnn5e0OGwir
-	REaVWddKJt4g1oSpaw2XuKBP/4HzAV56+SLKVbuZsNpNoGpP0PyyeHO0/T+NHfZ+OmyysHmEm9J
-	eTDo6DF9eAul8+BGtrRAq0iG5og4iJznVTEULDu6WITn1FFy+rdgzpPNV0ZzCp3n5x0VEeE+WJ5
-	FWer1ytI8J+agUqz+w1AafE9EI+b+NCFj9OJpCFtdchV6LxEEfqFYhGOzTYN6jT3eGUkm+776I1
-	7OXtJ
-X-Google-Smtp-Source: AGHT+IFwn29sDeYBmdp4CEswbdIWIO0mgSzC0Fu02o+1MLOPwdvWyiKyshtyKjhFx5G7dBzbMS/5rQ==
-X-Received: by 2002:a17:902:f683:b0:223:5c77:7ef1 with SMTP id d9443c01a7336-223f1c982c4mr86775385ad.21.1741228313590;
-        Wed, 05 Mar 2025 18:31:53 -0800 (PST)
-Received: from PXLDJ45XCM.bytedance.net ([139.177.225.250])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109ddcaesm1318185ad.28.2025.03.05.18.31.48
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Wed, 05 Mar 2025 18:31:52 -0800 (PST)
-From: Muchun Song <songmuchun@bytedance.com>
-To: hannes@cmpxchg.org,
-	mhocko@kernel.org,
-	roman.gushchin@linux.dev,
-	shakeel.butt@linux.dev,
-	muchun.song@linux.dev,
-	akpm@linux-foundation.org,
-	kasong@tencent.com,
-	chrisl@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org,
-	Muchun Song <songmuchun@bytedance.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] mm: memcontrol: fix swap counter leak from offline cgroup
-Date: Thu,  6 Mar 2025 10:31:33 +0800
-Message-Id: <20250306023133.44838-1-songmuchun@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1741228360; c=relaxed/simple;
+	bh=yPuzLhwJWJRA34ud7Qm8us+vDdu+bYihr2XlYy37T8I=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=iITCTLmT41lzTngg5lGeTrYVv/U264i/u8SYSHei7z8poPcOi23ER49WGgOgAhjbyxlvEd85jxBilFe7BV2xWHRcnpdyr/aMpid9DlcaIT2+9mGeXRekvI5MIMIiSYJytDq3dvW3z9opDxZEiN5xFy4SenvMB02k0D9o1ztTwRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eEJMaPYB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE88BC4CED1;
+	Thu,  6 Mar 2025 02:32:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741228359;
+	bh=yPuzLhwJWJRA34ud7Qm8us+vDdu+bYihr2XlYy37T8I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=eEJMaPYBEjflyqIehutfptMXBR4QIIdLSHaVpVuCEFBnxghpT1Rd0hwWCKIi9iucC
+	 /4rR5RDatHwMGCdWGM2gyUvA/33elR5ZuvKchONgtmIRURc5AjLO7tMYdg3w/SO2yu
+	 uaOMQUzrM59m6uIgOzfGTbfrmEYJHrX8ej9lmyYhnXyedvqU4ArsoM920ZiSTmsOb7
+	 XMJ1MbQkytw3bd+9Lb1/CHteNO7CpwFGpD8tCTtbVT2o/oh7cxnCpArLoV6OwR0k/Z
+	 bZoPVKQOhHwE8l5Rs7YB3GYrEXstOyt1rMjr0xNLmpZfXaam/Aier1l3roud2wQHSY
+	 UoDuMeo7PzwZw==
+Date: Thu, 6 Mar 2025 11:32:36 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>, Waiman Long
+ <llong@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Joel
+ Granados <joel.granados@kernel.org>, Anna Schumaker
+ <anna.schumaker@oracle.com>, Lance Yang <ioworker0@gmail.com>, Kent
+ Overstreet <kent.overstreet@linux.dev>, Yongliang Gao
+ <leonylgao@tencent.com>, Steven Rostedt <rostedt@goodmis.org>, Tomasz Figa
+ <tfiga@chromium.org>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] hung_task: Show the blocker task if the task is
+ hung on mutex
+Message-Id: <20250306113236.aa39a5928c8106c13144df4d@kernel.org>
+In-Reply-To: <21a692ce-3fa4-48f2-8d1c-5542c1cfb15c@redhat.com>
+References: <174046694331.2194069.15472952050240807469.stgit@mhiramat.tok.corp.google.com>
+	<174046695384.2194069.16796289525958195643.stgit@mhiramat.tok.corp.google.com>
+	<21a692ce-3fa4-48f2-8d1c-5542c1cfb15c@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The commit 6769183166b3 has removed the parameter of id from
-swap_cgroup_record() and get the memcg id from
-mem_cgroup_id(folio_memcg(folio)). However, the caller of it
-may update a different memcg's counter instead of
-folio_memcg(folio). E.g. in the caller of mem_cgroup_swapout(),
-@swap_memcg could be different with @memcg and update the counter
-of @swap_memcg, but swap_cgroup_record() records the wrong memcg's
-ID. When it is uncharged from __mem_cgroup_uncharge_swap(), the
-swap counter will leak since the wrong recorded ID. Fix it by
-bring the parameter of id back.
+On Tue, 25 Feb 2025 20:23:41 -0500
+Waiman Long <llong@redhat.com> wrote:
 
-Fixes: 6769183166b3 ("mm/swap_cgroup: decouple swap cgroup recording and clearing")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Muchun Song <songmuchun@bytedance.com>
----
- include/linux/swap_cgroup.h | 4 ++--
- mm/memcontrol.c             | 4 ++--
- mm/swap_cgroup.c            | 7 ++++---
- 3 files changed, 8 insertions(+), 7 deletions(-)
+> On 2/25/25 2:02 AM, Masami Hiramatsu (Google) wrote:
+> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> >
+> > The "hung_task" shows a long-time uninterruptible slept task, but most
+> > often, it's blocked on a mutex acquired by another task. Without
+> > dumping such a task, investigating the root cause of the hung task
+> > problem is very difficult.
+> >
+> > This introduce task_struct::blocker_mutex to point the mutex lock
+> > which this task is waiting for. Since the mutex has "owner"
+> > information, we can find the owner task and dump it with hung tasks.
+> >
+> > Note: the owner can be changed while dumping the owner task, so
+> > this is "likely" the owner of the mutex.
+> >
+> > With this change, the hung task shows blocker task's info like below;
+> >
+> >   INFO: task cat:115 blocked for more than 122 seconds.
+> >         Not tainted 6.14.0-rc3-00003-ga8946be3de00 #156
+> >   "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> >   task:cat             state:D stack:13432 pid:115   tgid:115   ppid:106    task_flags:0x400100 flags:0x00000002
+> >   Call Trace:
+> >    <TASK>
+> >    __schedule+0x731/0x960
+> >    ? schedule_preempt_disabled+0x54/0xa0
+> >    schedule+0xb7/0x140
+> >    ? __mutex_lock+0x51b/0xa60
+> >    ? __mutex_lock+0x51b/0xa60
+> >    schedule_preempt_disabled+0x54/0xa0
+> >    __mutex_lock+0x51b/0xa60
+> >    read_dummy+0x23/0x70
+> >    full_proxy_read+0x6a/0xc0
+> >    vfs_read+0xc2/0x340
+> >    ? __pfx_direct_file_splice_eof+0x10/0x10
+> >    ? do_sendfile+0x1bd/0x2e0
+> >    ksys_read+0x76/0xe0
+> >    do_syscall_64+0xe3/0x1c0
+> >    ? exc_page_fault+0xa9/0x1d0
+> >    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >   RIP: 0033:0x4840cd
+> >   RSP: 002b:00007ffe99071828 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> >   RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004840cd
+> >   RDX: 0000000000001000 RSI: 00007ffe99071870 RDI: 0000000000000003
+> >   RBP: 00007ffe99071870 R08: 0000000000000000 R09: 0000000000000000
+> >   R10: 0000000001000000 R11: 0000000000000246 R12: 0000000000001000
+> >   R13: 00000000132fd3a0 R14: 0000000000000001 R15: ffffffffffffffff
+> >    </TASK>
+> >   INFO: task cat:115 is blocked on a mutex likely owned by task cat:114.
+> >   task:cat             state:S stack:13432 pid:114   tgid:114   ppid:106    task_flags:0x400100 flags:0x00000002
+> >   Call Trace:
+> >    <TASK>
+> >    __schedule+0x731/0x960
+> >    ? schedule_timeout+0xa8/0x120
+> >    schedule+0xb7/0x140
+> >    schedule_timeout+0xa8/0x120
+> >    ? __pfx_process_timeout+0x10/0x10
+> >    msleep_interruptible+0x3e/0x60
+> >    read_dummy+0x2d/0x70
+> >    full_proxy_read+0x6a/0xc0
+> >    vfs_read+0xc2/0x340
+> >    ? __pfx_direct_file_splice_eof+0x10/0x10
+> >    ? do_sendfile+0x1bd/0x2e0
+> >    ksys_read+0x76/0xe0
+> >    do_syscall_64+0xe3/0x1c0
+> >    ? exc_page_fault+0xa9/0x1d0
+> >    entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> >   RIP: 0033:0x4840cd
+> >   RSP: 002b:00007ffe3e0147b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+> >   RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00000000004840cd
+> >   RDX: 0000000000001000 RSI: 00007ffe3e014800 RDI: 0000000000000003
+> >   RBP: 00007ffe3e014800 R08: 0000000000000000 R09: 0000000000000000
+> >   R10: 0000000001000000 R11: 0000000000000246 R12: 0000000000001000
+> >   R13: 000000001a0a93a0 R14: 0000000000000001 R15: ffffffffffffffff
+> >    </TASK>
+> >
+> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> > ---
+> >   Changes in v4:
+> >    - Make this option depends on !PREEMPT_RT because it changes mutex to
+> >      rt_mutex.
+> > ---
+> >   include/linux/mutex.h  |    2 ++
+> >   include/linux/sched.h  |    4 ++++
+> >   kernel/hung_task.c     |   36 ++++++++++++++++++++++++++++++++++++
+> >   kernel/locking/mutex.c |   14 ++++++++++++++
+> >   lib/Kconfig.debug      |   11 +++++++++++
+> >   5 files changed, 67 insertions(+)
+> >
+> > diff --git a/include/linux/mutex.h b/include/linux/mutex.h
+> > index 2bf91b57591b..2143d05116be 100644
+> > --- a/include/linux/mutex.h
+> > +++ b/include/linux/mutex.h
+> > @@ -202,4 +202,6 @@ DEFINE_GUARD(mutex, struct mutex *, mutex_lock(_T), mutex_unlock(_T))
+> >   DEFINE_GUARD_COND(mutex, _try, mutex_trylock(_T))
+> >   DEFINE_GUARD_COND(mutex, _intr, mutex_lock_interruptible(_T) == 0)
+> >   
+> > +extern unsigned long mutex_get_owner(struct mutex *lock);
+> > +
+> >   #endif /* __LINUX_MUTEX_H */
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index 9632e3318e0d..0cebdd736d44 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -1217,6 +1217,10 @@ struct task_struct {
+> >   	struct mutex_waiter		*blocked_on;
+> >   #endif
+> >   
+> > +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+> > +	struct mutex			*blocker_mutex;
+> > +#endif
+> > +
+> >   #ifdef CONFIG_DEBUG_ATOMIC_SLEEP
+> >   	int				non_block_count;
+> >   #endif
+> > diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+> > index 04efa7a6e69b..ccd7217fcec1 100644
+> > --- a/kernel/hung_task.c
+> > +++ b/kernel/hung_task.c
+> > @@ -93,6 +93,41 @@ static struct notifier_block panic_block = {
+> >   	.notifier_call = hung_task_panic,
+> >   };
+> >   
+> > +
+> > +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+> > +static void debug_show_blocker(struct task_struct *task)
+> > +{
+> > +	struct task_struct *g, *t;
+> > +	unsigned long owner;
+> > +	struct mutex *lock;
+> > +
+> > +	RCU_LOCKDEP_WARN(!rcu_read_lock_held(), "No rcu lock held");
+> > +
+> > +	lock = READ_ONCE(task->blocker_mutex);
+> > +	if (!lock)
+> > +		return;
+> > +
+> > +	owner = mutex_get_owner(lock);
+> > +	if (unlikely(!owner)) {
+> > +		pr_err("INFO: task %s:%d is blocked on a mutex, but the owner is not found.\n",
+> > +			task->comm, task->pid);
+> > +		return;
+> > +	}
+> > +
+> > +	/* Ensure the owner information is correct. */
+> > +	for_each_process_thread(g, t) {
+> > +		if ((unsigned long)t == owner) {
+> > +			pr_err("INFO: task %s:%d is blocked on a mutex likely owned by task %s:%d.\n",
+> > +				task->comm, task->pid, t->comm, t->pid);
+> > +			sched_show_task(t);
+> > +			return;
+> > +		}
+> > +	}
+> > +}
+> > +#else
+> > +#define debug_show_blocker(t)	do {} while (0)
+> > +#endif
+> > +
+> >   static void check_hung_task(struct task_struct *t, unsigned long timeout)
+> >   {
+> >   	unsigned long switch_count = t->nvcsw + t->nivcsw;
+> > @@ -152,6 +187,7 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+> >   		pr_err("\"echo 0 > /proc/sys/kernel/hung_task_timeout_secs\""
+> >   			" disables this message.\n");
+> >   		sched_show_task(t);
+> > +		debug_show_blocker(t);
+> >   		hung_task_show_lock = true;
+> >   
+> >   		if (sysctl_hung_task_all_cpu_backtrace)
+> > diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
+> > index b36f23de48f1..6a543c204a14 100644
+> > --- a/kernel/locking/mutex.c
+> > +++ b/kernel/locking/mutex.c
+> > @@ -72,6 +72,14 @@ static inline unsigned long __owner_flags(unsigned long owner)
+> >   	return owner & MUTEX_FLAGS;
+> >   }
+> >   
+> > +/* Do not use the return value as a pointer directly. */
+> > +unsigned long mutex_get_owner(struct mutex *lock)
+> > +{
+> > +	unsigned long owner = atomic_long_read(&lock->owner);
+> > +
+> > +	return (unsigned long)__owner_task(owner);
+> > +}
+> > +
+> >   /*
+> >    * Returns: __mutex_owner(lock) on failure or NULL on success.
+> >    */
+> > @@ -180,6 +188,9 @@ static void
+> >   __mutex_add_waiter(struct mutex *lock, struct mutex_waiter *waiter,
+> >   		   struct list_head *list)
+> >   {
+> > +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+> > +	WRITE_ONCE(current->blocker_mutex, lock);
+> > +#endif
+> >   	debug_mutex_add_waiter(lock, waiter, current);
+> >   
+> >   	list_add_tail(&waiter->list, list);
+> > @@ -195,6 +206,9 @@ __mutex_remove_waiter(struct mutex *lock, struct mutex_waiter *waiter)
+> >   		__mutex_clear_flag(lock, MUTEX_FLAGS);
+> >   
+> >   	debug_mutex_remove_waiter(lock, waiter, current);
+> > +#ifdef CONFIG_DETECT_HUNG_TASK_BLOCKER
+> > +	WRITE_ONCE(current->blocker_mutex, NULL);
+> > +#endif
+> >   }
+> >   
+> >   /*
+> > diff --git a/lib/Kconfig.debug b/lib/Kconfig.debug
+> > index 1af972a92d06..77d8c7e5ce96 100644
+> > --- a/lib/Kconfig.debug
+> > +++ b/lib/Kconfig.debug
+> > @@ -1260,6 +1260,17 @@ config BOOTPARAM_HUNG_TASK_PANIC
+> >   
+> >   	  Say N if unsure.
+> >   
+> > +config DETECT_HUNG_TASK_BLOCKER
+> > +	bool "Dump Hung Tasks Blocker"
+> > +	depends on DETECT_HUNG_TASK
+> > +	depends on !PREEMPT_RT
+> > +	default y
+> > +	help
+> > +	  Say Y here to show the blocker task's stacktrace who acquires
+> > +	  the mutex lock which "hung tasks" are waiting.
+> > +	  This will add overhead a bit but shows suspicious tasks and
+> > +	  call trace if it comes from waiting a mutex.
+> > +
+> >   config WQ_WATCHDOG
+> >   	bool "Detect Workqueue Stalls"
+> >   	depends on DEBUG_KERNEL
+> >
+> Reviewed-by: Waiman Long <longman@redhat.com>
+> 
 
-diff --git a/include/linux/swap_cgroup.h b/include/linux/swap_cgroup.h
-index b5ec038069dab..91cdf12190a03 100644
---- a/include/linux/swap_cgroup.h
-+++ b/include/linux/swap_cgroup.h
-@@ -6,7 +6,7 @@
- 
- #if defined(CONFIG_MEMCG) && defined(CONFIG_SWAP)
- 
--extern void swap_cgroup_record(struct folio *folio, swp_entry_t ent);
-+extern void swap_cgroup_record(struct folio *folio, unsigned short id, swp_entry_t ent);
- extern unsigned short swap_cgroup_clear(swp_entry_t ent, unsigned int nr_ents);
- extern unsigned short lookup_swap_cgroup_id(swp_entry_t ent);
- extern int swap_cgroup_swapon(int type, unsigned long max_pages);
-@@ -15,7 +15,7 @@ extern void swap_cgroup_swapoff(int type);
- #else
- 
- static inline
--void swap_cgroup_record(struct folio *folio, swp_entry_t ent)
-+void swap_cgroup_record(struct folio *folio, unsigned short id, swp_entry_t ent)
- {
- }
- 
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index a5d870fbb4321..a5ab603806fbb 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -4988,7 +4988,7 @@ void mem_cgroup_swapout(struct folio *folio, swp_entry_t entry)
- 		mem_cgroup_id_get_many(swap_memcg, nr_entries - 1);
- 	mod_memcg_state(swap_memcg, MEMCG_SWAP, nr_entries);
- 
--	swap_cgroup_record(folio, entry);
-+	swap_cgroup_record(folio, mem_cgroup_id(swap_memcg), entry);
- 
- 	folio_unqueue_deferred_split(folio);
- 	folio->memcg_data = 0;
-@@ -5050,7 +5050,7 @@ int __mem_cgroup_try_charge_swap(struct folio *folio, swp_entry_t entry)
- 		mem_cgroup_id_get_many(memcg, nr_pages - 1);
- 	mod_memcg_state(memcg, MEMCG_SWAP, nr_pages);
- 
--	swap_cgroup_record(folio, entry);
-+	swap_cgroup_record(folio, mem_cgroup_id(memcg), entry);
- 
- 	return 0;
- }
-diff --git a/mm/swap_cgroup.c b/mm/swap_cgroup.c
-index be39078f255be..1007c30f12e2c 100644
---- a/mm/swap_cgroup.c
-+++ b/mm/swap_cgroup.c
-@@ -58,9 +58,11 @@ static unsigned short __swap_cgroup_id_xchg(struct swap_cgroup *map,
-  * entries must not have been charged
-  *
-  * @folio: the folio that the swap entry belongs to
-+ * @id: mem_cgroup ID to be recorded
-  * @ent: the first swap entry to be recorded
-  */
--void swap_cgroup_record(struct folio *folio, swp_entry_t ent)
-+void swap_cgroup_record(struct folio *folio, unsigned short id,
-+			swp_entry_t ent)
- {
- 	unsigned int nr_ents = folio_nr_pages(folio);
- 	struct swap_cgroup *map;
-@@ -72,8 +74,7 @@ void swap_cgroup_record(struct folio *folio, swp_entry_t ent)
- 	map = swap_cgroup_ctrl[swp_type(ent)].map;
- 
- 	do {
--		old = __swap_cgroup_id_xchg(map, offset,
--					    mem_cgroup_id(folio_memcg(folio)));
-+		old = __swap_cgroup_id_xchg(map, offset, id);
- 		VM_BUG_ON(old);
- 	} while (++offset != end);
- }
+Thanks Waiman! BTW, who will pick this patch?
+Andrew, could you pick this series?
+
+Thank you,
+
+
+
 -- 
-2.20.1
-
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
