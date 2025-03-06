@@ -1,117 +1,114 @@
-Return-Path: <linux-kernel+bounces-549859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67A41A557EE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:57:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD55DA557ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:57:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 680253A959E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:57:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF31D1890C06
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6400320469E;
-	Thu,  6 Mar 2025 20:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C0291FECD1;
+	Thu,  6 Mar 2025 20:57:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QB7XleiF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OJqbMD7I"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2C81A23BD;
-	Thu,  6 Mar 2025 20:57:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A91651448E3
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 20:57:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741294660; cv=fail; b=cPPJFqUDXX2cVV0bQn8dW8M5QOt5mYFt8p4D0yQUInBkr4kEH/eJnTSHd75QaApaXy72rAYi+EUjCCn3tYIy4d9rmuBHVoYuabkgASrMDlZClEr13/gJGMSuKaHdqTS/a+m2R48tSWUJU4t4TYPuFWLXYJ4eoXXB0/SrCFnyKcE=
+	t=1741294631; cv=fail; b=eB7poki8bvN4K58FLlkyAYS9SIVU6ToiSJ1NjXAjQ94zFG+01VmK1NAZCaOamluuJKRmJFNwd67/YdOXDzlV8FM+2FkIOMKnSq9J44m6tYzi+4NooYEOWoApLqbTS5DD5/FCyDCWS88hqU6RGCOuXEkpeoBXPJY+URomybnk2d8=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741294660; c=relaxed/simple;
-	bh=zdQ7pyBLoVcS372hvsFNH7I2eDn6qQPM9wYoHD59/qA=;
+	s=arc-20240116; t=1741294631; c=relaxed/simple;
+	bh=+Jca9lHWIKszEc9Y3Ty+i9h4VhgrgaJcfXO70UFws6Y=;
 	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=c7hz2M+NfoCJEfkelyQjwu54w23as1RV1AbsBTRdjocO07TSTjNN3CA3kAErFaSVUpTO9K9OIjsoYBjZbcNlnbcyJ6IBgWjZI67k0o/rRaohLJwOpzQBu49kVaZVpxdg9/rfQjvc2SZTDnosq58OnZ3onhubn8h02L2XIbl9kAs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QB7XleiF; arc=fail smtp.client-ip=198.175.65.9
+	 Content-Disposition:In-Reply-To:MIME-Version; b=k/5UzpK5qh0FJg9A3NMW1+lNqWLLBaLU+y45iR3QtVIQQ455Vk5YLxWiBVhz4BQWsf7zUc2FPsbpvEhOMK0jHThHi2sLP0znXYYEpYWudSNhHHX0O81yhRBpn+X7NWAxLMjEcjg0Dt+xrvyYtMP9VAGNIMkVP8fs1IP8okEZzAo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OJqbMD7I; arc=fail smtp.client-ip=198.175.65.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741294660; x=1772830660;
+  t=1741294630; x=1772830630;
   h=date:from:to:cc:subject:message-id:references:
    in-reply-to:mime-version;
-  bh=zdQ7pyBLoVcS372hvsFNH7I2eDn6qQPM9wYoHD59/qA=;
-  b=QB7XleiFJtie3uS5e9IXcQpQ4Bq9blAI20Q6O8SNu6od2rqY1S5izS/P
-   UJ2YnIRzS+E4EkalxdK/BgLN/wXbacDZIL90AscTLOOyLNZRtNqiDWzCg
-   Dxp2vGXLWyqzdPheJiQrGXUehzNkBWRddxjpYp5WQ2Nm8QM/NEQRssXqi
-   E5kPRkNTYtR3aI3jSRCD+aNObpv1jwv2QbXnZi5k0l9UjyK/4Yw3+4ruj
-   ugDQvZyERAhjAHuxffrDOXnBOf86jkbinsZbbax8aCSDrEoPFDxMRcyqr
-   2v2WnnmESdi7SSKullDJMYr7SmOMyki4JCmcwPwQAglLJl/dohCG542a+
-   Q==;
-X-CSE-ConnectionGUID: kTOTGhJpSXGOxkSehumlQA==
-X-CSE-MsgGUID: WEDGIcNzTY6vtQxi2U+HzA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="64775031"
+  bh=+Jca9lHWIKszEc9Y3Ty+i9h4VhgrgaJcfXO70UFws6Y=;
+  b=OJqbMD7ItVG5pA3hamwKo7bEpIgh/hogObn82+4RBuO+G/OUH29SGchv
+   15aWvv7V6mcLcfHMYVOh+6iIsAEXFghNPyCUVgy8C5mV3/McZnO5B8pej
+   RItFTPfxc3LkW22uFQWcOPpd8MAxqIbV5hB+BixOrkCnOkEWDRq86vUYS
+   TZHrH4bDLp0V9X3eehvWyFZKCP9pDj8jSM87+0DkH70HLbDwdTa0Rc/yL
+   rDcgEA+clXLuW8l7s5wKMdYv7jkQI3g5a3KP8aUQo6yievCRYX5bjZEQq
+   Z7Js4KDE2QFA34J4AnZAK2QrKqCUJGqQFKBEVZZZKEkcwuwbNmohs2dfe
+   A==;
+X-CSE-ConnectionGUID: xEnxeaFQTrCUROya9QU6kg==
+X-CSE-MsgGUID: iy5Rcxz2Qg6gwQfO+Cnvrg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="46101340"
 X-IronPort-AV: E=Sophos;i="6.14,227,1736841600"; 
-   d="scan'208";a="64775031"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 12:57:39 -0800
-X-CSE-ConnectionGUID: JXQAbK+LQUuCWX6fnlUz4w==
-X-CSE-MsgGUID: 5SsDO0IXRgeR/Wtu3WZ3vA==
+   d="scan'208";a="46101340"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 12:57:09 -0800
+X-CSE-ConnectionGUID: lQbiUAs5SPeXkVfKn3cj3w==
+X-CSE-MsgGUID: kiRfK3lxQXuyg+8J/ZsE/A==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="124338293"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 Mar 2025 12:57:38 -0800
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 6 Mar 2025 12:57:37 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Thu, 6 Mar 2025 12:57:37 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+X-IronPort-AV: E=Sophos;i="6.14,227,1736841600"; 
+   d="scan'208";a="149928326"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 12:57:09 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 6 Mar 2025 12:57:37 -0800
+ 15.2.1544.14; Thu, 6 Mar 2025 12:57:08 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 6 Mar 2025 12:57:08 -0800
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.47) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 6 Mar 2025 12:57:08 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=GhHq6paHWZomtT/DRrXJ2bnN2DJ9mHi2wOdw98gQnCP1UQk1FciiSMT4VdjiBT1A2PNaLU+Z4WHokJ3UjzMrgxkzqBTRgw44dl7MtCB/rN097oAa45YqFpdM8OIQfktCifEk3Mzc/gV6PElkNntkmhJisJo/e0ObO+bxSyQ3FMKRSCwztutAydHhp+0QawfItV8GeG/nCPNncOcdKE0UE2H77ODRj3IrwuIGWSJ6Jd4XqYw5Rlw8FfP3EzZjwMhZh1ruXZ8MNAhqUOgsMZ1lxPwPojOdenTKiSpPIyFKtAiQk17cNs5fZlUzeO0e1wzRycM1NzQEsoAyxWPHVVpa7w==
+ b=Njeo6LlvNTIFBbaVCyHF6GQSMwzf1VP1Z4MhSwTWOGvVfxk/HF4FXQiu2S0Oia811FeGzlKiUY6BKWKn5QaKdGk54RMSPmFmfhqMhjyE+irDdbDby3uytnBpzuy/rYrjZGj7yzLi5JrJyEkhrqkpeyxyxdUGQ4E+a3RmAaZ4ZoeTMGxTJuzJY36a8o/crK/9VYBt7/cxtshP6hwHYZjNfJkC+tQ2A965adnnkxpKvTbadMS5Th3TYlNCblKpnAhvzVPOeg7ZZpxWUXCuM99BOZhHeno+z4UUTmypz4cC9v5AP8gE0VZKXZAJdG7yGXWfBLpiMlS2VVoKvK7cIoibjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V9HdY9yQiU14m7WUEhQZPiQqG39gmqL9zabg1HImA4I=;
- b=wa6FCxSRZ4ndE41aWTFgxGVYUjkLNNE62gSioCdvnWRJU/qzs0KsbyYxLKhF0VXkhrB51tSEJNZR/dJZad6+ke1mioW8YGw3BRGELjYS27BO+MiZH/CqhKgevv+Y94AA5Ss+d1dIOpZU3GdWZqUBNUBqsVjwx5vOIGRxuTc1wELafUOcSgJQxnG59B/LnCkdcSYQSvbdW6k/dNjots9OBArA6JHmoCii+PM9lLSqNDTzCvdkjVBL5Ttj8ljkxkEPLehTQmHetFWlP/cqxsZCPtWE+rQ3zLlbc0z88dqD1c2ChrZ8zhsDh2PMyWwujVXQLBUx6nkuG0c3jWA+/HaK7A==
+ bh=OqLwkKZ6/4Ed+B08i9Gqf76jl7JotCWUAh7Lb81VX60=;
+ b=czVoX5mGzoak9DVQCdiik8kfWz+jByk75ui2dA0XcL/DXtVLdr20M+zuccz+/cMq18HlBzrE7g2M2WcUXcl1jMNGhinlY9ViZsHRybAX9lfFeT1XfcutD7Khd9pom/0H+EP86YY0uMgGDoZYNzl9RbmlrAL0L9D5SxSO/eKJi8xo7nKRKeI1L8MVDK449NjHqcvFKSPLUjyuwK0Ljq1bkCl0nrtsms+S18CdPFtQdrkTyVweNc+hyWvk9exS4eBR9jZiHLS20MFGxkVrzx8PRDDOQ594AQNUhTOBGmX1DltyugnZMrV8xeObaLzpHWsVbs4Z4VzlexsH1uzQSrspCw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by SJ0PR11MB4848.namprd11.prod.outlook.com (2603:10b6:a03:2af::5) with
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com (2603:10b6:510:212::12)
+ by SA1PR11MB6894.namprd11.prod.outlook.com (2603:10b6:806:2b1::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.20; Thu, 6 Mar
- 2025 20:57:21 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%4]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 20:57:21 +0000
-Date: Thu, 6 Mar 2025 12:57:19 -0800
-From: Dan Williams <dan.j.williams@intel.com>
-To: Robert Richter <rrichter@amd.com>, Alison Schofield
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
- Weiny" <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Dave Jiang
-	<dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gregory Price
-	<gourry@gourry.net>, "Fabio M. De Francesco"
-	<fabio.m.de.francesco@linux.intel.com>, Terry Bowman <terry.bowman@amd.com>,
-	Robert Richter <rrichter@amd.com>
-Subject: Re: [PATCH v4 11/14] cxl/region: Add a dev_warn() on registration
- failure
-Message-ID: <67ca0c2fc9f6_1a7729461@dwillia2-xfh.jf.intel.com.notmuch>
-References: <20250306164448.3354845-1-rrichter@amd.com>
- <20250306164448.3354845-12-rrichter@amd.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.18; Thu, 6 Mar
+ 2025 20:56:39 +0000
+Received: from PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332]) by PH7PR11MB6522.namprd11.prod.outlook.com
+ ([fe80::9e94:e21f:e11a:332%3]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
+ 20:56:38 +0000
+Date: Thu, 6 Mar 2025 12:57:45 -0800
+From: Matthew Brost <matthew.brost@intel.com>
+To: Philipp Stanner <phasta@kernel.org>
+CC: Danilo Krummrich <dakr@kernel.org>, Christian =?iso-8859-1?Q?K=F6nig?=
+	<ckoenig.leichtzumerken@gmail.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Sumit Semwal <sumit.semwal@linaro.org>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 3/3] drm/sched: Update timedout_job()'s documentation
+Message-ID: <Z8oMSWulN0mF43aB@lstrano-desk.jf.intel.com>
+References: <20250305130551.136682-2-phasta@kernel.org>
+ <20250305130551.136682-5-phasta@kernel.org>
 Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250306164448.3354845-12-rrichter@amd.com>
-X-ClientProxiedBy: MW2PR16CA0039.namprd16.prod.outlook.com
- (2603:10b6:907:1::16) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+In-Reply-To: <20250305130551.136682-5-phasta@kernel.org>
+X-ClientProxiedBy: MW4PR03CA0216.namprd03.prod.outlook.com
+ (2603:10b6:303:b9::11) To PH7PR11MB6522.namprd11.prod.outlook.com
+ (2603:10b6:510:212::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -119,102 +116,221 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|SJ0PR11MB4848:EE_
-X-MS-Office365-Filtering-Correlation-Id: 49933dab-39b2-4f88-fcf6-08dd5cf17d23
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-TrafficTypeDiagnostic: PH7PR11MB6522:EE_|SA1PR11MB6894:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0b6c7261-4239-4236-b1c5-08dd5cf163b3
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?XypQCs1VsoHoxxPd8UUrPyEoPnV7n3FemWylZt10+/bfe4p5dXL5TJlQSUyN?=
- =?us-ascii?Q?jAqVXKT4HzHGcCB+ZvDWH6KDdRi7cIrLEH7QbyVvdV7dJ1r7foREzPC5+Cml?=
- =?us-ascii?Q?GDxd9i2/J00EW5ILXKXnnYga7NUXjgZ7rzJy4x8bSPYiYah5fyP5nkVP4rmG?=
- =?us-ascii?Q?/Flu80nsBp13BCE8HKwqxRZABtJiiJOAm7QJS0doEFR6NpbogRTLkR0WhUeg?=
- =?us-ascii?Q?DyuCC3ViVi6jGLfKtiUDbDtrtrYfrNZt6NtgIEeqxKGqeqw9919yF6MhUT9d?=
- =?us-ascii?Q?crDOI532M+PDhxbn0Hv7GlJXKiTbfkxH9yq6SLtfU1Q4zUVNJMujnV0jqciJ?=
- =?us-ascii?Q?Y9lJFraKfgqzWTcPiad8MpuTRNigMKYxyT8lyPFlRLXQRErSNv6kCa3hLb7d?=
- =?us-ascii?Q?7fnUhX7pmy2EpC0xrP7Sr87LSdIjyRwprnvVbT7bFGWIJaZbBjjI0wzLPDDo?=
- =?us-ascii?Q?yqItEM/PUM/M84y37yklWxkQzrxQ7sW61mBmnWoVKNXYhk8YbpbwRs470sAq?=
- =?us-ascii?Q?vUnFmf6HQNuWxuNGgflnJX2mk0Nf+UpSMPG3oBl1goLMbOjvDdhZ/3GbH+ua?=
- =?us-ascii?Q?yvRXkcywzjCz32f7eONzBDhjhAeQQkFexDMZpX6axr1ji9O/f+3WQo+jcdqG?=
- =?us-ascii?Q?cLtJpA6A4g0lmPnux0f9gpEi1qcdn/A8UsfTDyNsqm1SVTvkw58K3OE3igGI?=
- =?us-ascii?Q?068Vnd9vixTyFZfckJYLP6qeGJJCNoWHngLWgdKRfvS3J6xfcpb5TeeME1cq?=
- =?us-ascii?Q?F813vQ1WFaXPvUKdag9MKDr8kXgcbgjxSjUegECWXH5WlsrfkDlx71rbWQ9u?=
- =?us-ascii?Q?uxIxsP7ng8QLWTq0k4igykUYCevbuTYwzNMA281ljfeuDiEhehQ+Km2ybKnR?=
- =?us-ascii?Q?uWe+5PiBQt8TQhP/WC1c54mVMO6QbcdJcHnbG4PnEuRXaIttvQ6I72r5dhFk?=
- =?us-ascii?Q?ZYUK463oIUc0xgQTGUKPMwLURMoN7ZiEbok33BGQKOhMclw9AVWieUma1PG9?=
- =?us-ascii?Q?EGHaaQXGRfocu5CBRo7XvaktmNhyrLK2ekxF/lLEde+reHqfqlPsB6uoS3du?=
- =?us-ascii?Q?ZGiae0G9b9if364OChq0/YjzL1Mi1HEYjF8eg02cSKHMQVGpGEjJYBuAiQZc?=
- =?us-ascii?Q?e0KkYsp8e0N55/Y0IgXz7Om/Z9v2wYqJUL6TdYw++GGwXGINxOP32ld1yg3M?=
- =?us-ascii?Q?IxfTq8MfwmGpSfEUIfusjQqMDb5GilSXJgz9QLTvQYYO2jgJpjvRJeBbqm9f?=
- =?us-ascii?Q?AeSgNnGVsIBehBbApl5t4/BfrBudt//pMdASBsqPIsY6zidXcah3ChqqPdqG?=
- =?us-ascii?Q?ALF6yYRsjvs1YR8cCX+obgCMohX/iMS9Z6in5swCpGT30f6xu3SMe47Nu9hR?=
- =?us-ascii?Q?8gMKuhbHU21cbmMJTPBVM+eqIkpI?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?H43LTvxDVO+944DJmnYvX1j7XnmUP+xPOHtSTmRKnmiSHamXe9Z73ZpyblV2?=
+ =?us-ascii?Q?Z5BJ1dkHey5TDxiDOwyS5cFcbswi1BsbStuNjDXlSqbrAIOiLR71jnE5BOkS?=
+ =?us-ascii?Q?KDAGmvoLPs+rOHkleYQtkq0ydUywsmpJyK3YQluPLj59snKYsKGL+uyAckQn?=
+ =?us-ascii?Q?gaWuD9P9gpRQ6T04NDD8OfbN6ZUWv0DdjBr5HZS1l51sbsOf85KDauFuYgBC?=
+ =?us-ascii?Q?KnfVpNgLulDQNy682c2nMXuDTXnXvdIOSLS8Z2oczOfC7JAXDS3iS/Wmira4?=
+ =?us-ascii?Q?JM+cJ6futAH0HemruwX51qK5nKoeOzkQ6nHp00AldG3buGGPHUArGgOJ67o/?=
+ =?us-ascii?Q?Ra5j5VT+EMgE55fb5n8ttMxSwiCN6Cv86MQILnXqJ2yNzey1rvmy0qqpc8v4?=
+ =?us-ascii?Q?kf3X5wzD1RvUppfUN42doyVXwxdjjulhRyWb0//b4EafATn/FSN1vN/32F5Q?=
+ =?us-ascii?Q?oHi3PCjWBHd85xPojMuOlCRtfP7fkdCxE0wLPaApxyyfWxRKw8AsTUU9FO+D?=
+ =?us-ascii?Q?oj58l5WmmrxdYR/qfPubur111nCbXMJYydroM4IABHgBVCVVX59vd6tFneqf?=
+ =?us-ascii?Q?tqpYvzmXDw8X5V+4o/Dh29NXgUc9exEXzu5PcRoRLBqY8b2bR/Vba6rPo3OP?=
+ =?us-ascii?Q?Tj6QLj26k7F4uZ2Pze3M6Zv7713Yg7irGLIyzKkggpC6MUaqglrp4yMLRukY?=
+ =?us-ascii?Q?4AaBDi4JtoZ6gcpvUu3H+CN2ioOT9li0W/fxlpApPTJ3BkII0ftkTWYCTpIx?=
+ =?us-ascii?Q?X1Kyi6y6j7iBOdtQy13ZfPg8m56/eIucDdpdfRteWW5bW3RfmOeK0SW+oi/y?=
+ =?us-ascii?Q?xCvlmPJgH6vB7OUagAXWDPKfqfy0snOA0jKOysrJiI+RBqnpydBuuOjywdDZ?=
+ =?us-ascii?Q?3vnFL1lEtTgqsJwyS48OrSYL28BpNtEnw5JguUYK1jIPhpD8WP1aXjd8MvHa?=
+ =?us-ascii?Q?PX1a9Ue30kJcHMxXVVlR7sOZ4ZxiX6bBRjFlyt3ciiiy0+wosFx/9OeI41yr?=
+ =?us-ascii?Q?9mhm/V6Bl5swH6PIf6cWeaRaF2rpMLjsiQikEM80Rk9/bfGsP8yRYZhvAzNd?=
+ =?us-ascii?Q?asJAIJIAFg+a3SKvmjL8q/D8oRz/X62ampmIuN81u8sVSG+KbcuVa9Y+uKGk?=
+ =?us-ascii?Q?hfknr1M7Vj9EEZJII/0LFwNiv6/A8lT4XVyWe2hThafSmSOQmznb7OIxEg9W?=
+ =?us-ascii?Q?+QO7BQ1PmDOxwEwIIBStaaUrUzA4uzuVoamrvWOZgS+bZBV7u4y6Ovt0NYTu?=
+ =?us-ascii?Q?flHCr4/LGR4WJ7N68ytziNXpLyp8YhsSQjBjGOGyRYnyCO75mbviAAealbdP?=
+ =?us-ascii?Q?Ze/mCtHtGqqLv3G7drmrDJt/G73NcCabLPnM+OokH9ozh4DF1rQ46rHFky46?=
+ =?us-ascii?Q?WvIVuE3Xc4zIk/SpvO9ScYXY+cje?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB6522.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VNGibJOju4Ukf7KBv0tjGuBphobAyq+B442AN/6JdB5nVHe6TN0SLTxL99Tk?=
- =?us-ascii?Q?pSG2OmJmynw0O07Oh4LED+FIrdbOsFn0/+3DXT7XkokRRvWLVu5m6XOSuU0Y?=
- =?us-ascii?Q?CwlvDhh5j2nNcwzdOphmUSMPruF343uj+OaNpn+yLOCPZnzWzkiHWYnmeXaa?=
- =?us-ascii?Q?RSC12Ktpkey/AS85jwzeVMUB3DXXTDMFBYWsLoKMKrG5PSoMdOHXCFHcH/Ud?=
- =?us-ascii?Q?9SoWdzsm5zKoCZtCZFZkQPgV4+D+5q3t7ovUnFIV4cd9J4tyoPypekTAWvQz?=
- =?us-ascii?Q?xMvxlXaBZvG9zOBrxCywvMKhWJ+wY0BnKatwyW9NXVKcD0k0cAa080qmUZVE?=
- =?us-ascii?Q?VherIje8fyPvYxyK+VKAVyfvDbt+HNSVxJ7BqNJ9oTv/ohptWWq4SefXO8vO?=
- =?us-ascii?Q?lTrkxkuUDm+GARmqofYrfZxR9cyVm2qZ5hftrlU4Ab5B5jK2uguvXVP5BaqC?=
- =?us-ascii?Q?sy1j+MlO/60/aB83nnHaeLRmUZR7eTHWwp8Ng6lZTtFfWc+ZKZYAvGpyI2Bx?=
- =?us-ascii?Q?87Kq09sGyIRDqZUmwtWOI8z4586rbZGUDyRdwrWVED/3eo9ZllycLghT3hIN?=
- =?us-ascii?Q?Z26HSIKrfo2l7tYeYUNjISL4N1Cf5Ji2H6mnOSI9ozNlR5xy5hqEAj5kMWpI?=
- =?us-ascii?Q?LtNlLCfcxqgTBUD017h6bFgWB9kCh4znibxgkNyaqRVas+yPJiO6qiOXXZfJ?=
- =?us-ascii?Q?jrLu0nyu8kWSU7Mir0AicS2LNyoU8A071jGVEpAggW0H3TgSwWzk/aRZad4e?=
- =?us-ascii?Q?T16xWrJ57J45NPVIS/0EyQecuTawXzcB/vbWG3Nlx2zLot8qS21MVVumXV+5?=
- =?us-ascii?Q?SnJoBpSiN/lD9ju3YUstf3KRI2lwWvW+QTwAngMXlKWdHGa7HAeXCF4ChMJe?=
- =?us-ascii?Q?wuyjbTh0aBne/oyLzSakFsjyIiiyM6z2vUtYCIlSoGT4GYIFn0vwTmxtA14D?=
- =?us-ascii?Q?i7znRr6zj2Wy7LtHuvcirULA817XQCzn14QQPVb6AVoCknDWnP4CxLmwXCUA?=
- =?us-ascii?Q?idZN1+GvEiSNEsT+eZvV4UdytHrTzmvANp/C6Yy/caKmGYJsHdIUiDGBjX/k?=
- =?us-ascii?Q?2SPfIKCjT3g2n+UWOJ7A658+oJ5rnn/u2GkrN9gSUvOCoaJ8LeAuJDYliImb?=
- =?us-ascii?Q?asmkv2JK5BOMXSbl1yHPd+28+jCp7TQkRm3DWP31II3R3iL8wdCGvIptjuA9?=
- =?us-ascii?Q?EjZjKa+JUXFplvcRkvBsnFtUFJs29frogbNYEI1gNMNEvwKHERObx+yLsmtj?=
- =?us-ascii?Q?OQ1q5iT8oePBYbpfH3XYR2Q3zLy5N8uQ6fFSyLmm0pIb7CDzCe1l+uUF5y4U?=
- =?us-ascii?Q?3sp1PksgMCWagiOjDrYpRRgbmlgM3GUg0P8TeF1T4i2lvwY3qXc2rq90/mG+?=
- =?us-ascii?Q?jJtykbtcysWFJP7Ps1U5eamps7/mWlipK+p33I4WN/mZinUUPZyOyopB89lU?=
- =?us-ascii?Q?IK+grlmqJ2Sv34Y/16tvsPMvVikhcZTpkch6z/C9TO+jYM0cMW3jmddamo6R?=
- =?us-ascii?Q?Y2dBYxThfL89Hymgt9k2Q2f4G5VeXXuJcF9Rk8cV9pyhTiAoDz9A+8Bic++e?=
- =?us-ascii?Q?8OLqVdvRq4zLuPOkr+FZL4ZuAzIst/SH/nAH8SDg90QM1d6mgyQa8D93GqVc?=
- =?us-ascii?Q?iA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 49933dab-39b2-4f88-fcf6-08dd5cf17d23
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?NFu/Mn6R22Nps/pOowScHHdFCkxVJeCUUFWUsPeThvMwexikT/OGkr3gqtIz?=
+ =?us-ascii?Q?Uv3rpjut3lnElBr2ANQMcLiH8G2m8tkihrbie6UuR9SeJro9NyxzXlfsXQzX?=
+ =?us-ascii?Q?9mSSa48260O7GrkJbg+6WlfMKkVQitGT312fZBqUILUa47EUugn+ymOLIozp?=
+ =?us-ascii?Q?s7qUUz6R9yYv3yXg3eYzIDig0eSoINZTlz7i5q5Q8wAyt9JiiHZcdTk8+UMo?=
+ =?us-ascii?Q?mOfN8aijCCBALg8nLWm3yVo90lv9+0epn3NR6fjzqJAgRUnlExIp/bY94+oy?=
+ =?us-ascii?Q?L5eSLC0SVXo2PovMdb4ifOjm962btD/pqITrnpYGbL2AsTc/Jvn9krRuYSVz?=
+ =?us-ascii?Q?5fk95OeAGVu69UBmF8YaF8Zp3aTMD9GCKYfLI932NKFrT4dgoe1zwp6lPE5+?=
+ =?us-ascii?Q?7uqA8TxumN6oeBItbAQ4tUr0SPreuw3KdIi8mfLbsyCTF54NNXrYbkV8f9i8?=
+ =?us-ascii?Q?uGofig6S9fJPFXvtXYWFcTFwsNVgwADXG4VsRGmgPUBbg7amdOeuvUd2kICO?=
+ =?us-ascii?Q?7JA8BXE6jiR3j8cnobBlOY6uSpvxe/pyOILSgRjKTzVXvHYLLgKojR73Mwt4?=
+ =?us-ascii?Q?sehm+sjkeR24Z8ZzuVtcXiMnB8crCh07JYZ1Kx0DCDTu7leynPmqE0s4Wm1d?=
+ =?us-ascii?Q?LR9Ps156lYcK5lU350ArLREKurVPBXuZTTW84VLA2ZC+EZffl1PWC25V3yhW?=
+ =?us-ascii?Q?DMA4GWY2ivQexdwMB0hLHmLp0zJ4v3bLehV0ta24s2V6gUWbGr7FRrgsgAeg?=
+ =?us-ascii?Q?3QladiOMkfcY2kFVq5xp10K+s/DHjek/ucl8XHV9WLJaV6lMNEjXcyjQqW0K?=
+ =?us-ascii?Q?vLgqgULBoUPt2YXob8Yl2/+UDylA3eRe8xXPyCzHa1fiCxEgRgHWk5/5kAHQ?=
+ =?us-ascii?Q?rA2zgUDUVV+3Nv39LR+BQUM634G0aXLzmmNPDTTM04k3oRG4zYU0BFetykWI?=
+ =?us-ascii?Q?frXTYWTrdIguzvVGAgZIDcs6f7l8JGdf/3ie0DPSjcKowYXY07+po6XqiP2x?=
+ =?us-ascii?Q?SVOPOf8/Op9tSQ4UA84l1vb/xpvrmieET0MF7uelpCNc41F2+5emUSbuzb/b?=
+ =?us-ascii?Q?PQP8mAvbxFoRZe+cqREtwwYZdOK/xyNKaBzbc13GAI3Ia7DybA8KLvD+q8il?=
+ =?us-ascii?Q?JTIkzuBPVf0gkz636n2UgUx4Xk72vze+tpVXQr+ecjvsYqaJFREB9UgkWcbs?=
+ =?us-ascii?Q?WQxMZCitMe5XA6wFXi29xqdkq5wLGS7rjz5NfClJegVIhbtZpN7rxdLnq/od?=
+ =?us-ascii?Q?gxxQGeC+exrflYQl7Fc6r3VWvUaNXDHLx/h62M+opWVPBE0jkclu3/xgY6ck?=
+ =?us-ascii?Q?ka2gSsuZ4J0KhZ5YDfYyR4zJ3qx5RU8CZ/DxqGGDnElvs5Vo7ZYBIVxeYpO2?=
+ =?us-ascii?Q?IRQpFp1SIVIMZcMo/Cmws881Yl7tJQqqsl1KkJ9s1FgONr+oBL52+dTrP6SI?=
+ =?us-ascii?Q?HBJN3nvxg3ys/BtUurOPM0t0oGereWG8H9r3DRwbu86fcsAQfdGvM842bi+v?=
+ =?us-ascii?Q?V/Nhtai4GtIIUNTcBCX94rk471by6e6+gGyBY62Cyky9nXC9Go37RPZrFp4p?=
+ =?us-ascii?Q?IEYg/XKssR3WdsRlO7XX6M3w0J5OHSwcgw8xWxLtOuhNs15v9hK/Q/UCQ3Mu?=
+ =?us-ascii?Q?JA=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0b6c7261-4239-4236-b1c5-08dd5cf163b3
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB6522.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 20:57:21.4735
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 20:56:38.8070
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 55lPY6Iip4VYKoJkEm7442UsQYJyosVUK+cy4ZXmsaWvcV/nULbZdGSwuZ5wl88pZy2fIoHtCQbdIp2V/VHV+lGjvK5n+s/pwLw0G2zF2ns=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4848
+X-MS-Exchange-CrossTenant-UserPrincipalName: /Z1Dln2TDcp30bl0+oLZhmiZZgrezsX76GFoAeBXZ5MVzkbTkgKI4aQD3SZCPyol4HOkoL5h/UddsoYFeBPsXA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6894
 X-OriginatorOrg: intel.com
 
-Robert Richter wrote:
-> Esp. in complex system configurations with multiple endpoints and
-> interleaving setups it is hard to detect region setup failures as its
-> registration may silently fail. Add messages to show registration
-> failures.
+On Wed, Mar 05, 2025 at 02:05:52PM +0100, Philipp Stanner wrote:
+> drm_sched_backend_ops.timedout_job()'s documentation is outdated. It
+> mentions the deprecated function drm_sched_resubmit_jobs(). Furthermore,
+> it does not point out the important distinction between hardware and
+> firmware schedulers.
 > 
-> Example log message:
+> Since firmware schedulers typically only use one entity per scheduler,
+> timeout handling is significantly more simple because the entity the
+> faulted job came from can just be killed without affecting innocent
+> processes.
 > 
->   cxl region5: region sort successful
->   cxl region5: mem0:endpoint5 decoder5.0 add: mem0:decoder5.0 @ 0 next: none nr_eps: 1 nr_targets: 1
->   cxl_port endpoint5: decoder5.0: range: 0x22350000000-0x2634fffffff iw: 1 ig: 256
->   cxl region5: pci0000:e0:port1 decoder1.2 add: mem0:decoder5.0 @ 0 next: mem0 nr_eps: 1 nr_targets: 1
->   cxl region5: pci0000:e0:port1 iw: 1 ig: 256
->   cxl region5: pci0000:e0:port1: decoder1.2 expected 0000:e0:01.2 at 0
->   cxl endpoint5: failed to attach decoder5.0 to region5: -6
->   cxl_port endpoint5: probe: 0
+> Update the documentation with that distinction and other details.
 > 
-> Signed-off-by: Robert Richter <rrichter@amd.com>
-> Reviewed-by: Gregory Price <gourry@gourry.net>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Tested-by: Gregory Price <gourry@gourry.net>
+> Reformat the docstring to work to a unified style with the other
+> handles.
+> 
 
-LGTM
+Looks really good, one suggestion.
 
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> ---
+>  include/drm/gpu_scheduler.h | 78 ++++++++++++++++++++++---------------
+>  1 file changed, 47 insertions(+), 31 deletions(-)
+> 
+> diff --git a/include/drm/gpu_scheduler.h b/include/drm/gpu_scheduler.h
+> index 6381baae8024..1a7e377d4cbb 100644
+> --- a/include/drm/gpu_scheduler.h
+> +++ b/include/drm/gpu_scheduler.h
+> @@ -383,8 +383,15 @@ struct drm_sched_job {
+>  	struct xarray			dependencies;
+>  };
+>  
+> +/**
+> + * enum drm_gpu_sched_stat - the scheduler's status
+> + *
+> + * @DRM_GPU_SCHED_STAT_NONE: Reserved. Do not use.
+> + * @DRM_GPU_SCHED_STAT_NOMINAL: Operation succeeded.
+> + * @DRM_GPU_SCHED_STAT_ENODEV: Error: Device is not available anymore.
+> + */
+>  enum drm_gpu_sched_stat {
+> -	DRM_GPU_SCHED_STAT_NONE, /* Reserve 0 */
+> +	DRM_GPU_SCHED_STAT_NONE,
+>  	DRM_GPU_SCHED_STAT_NOMINAL,
+>  	DRM_GPU_SCHED_STAT_ENODEV,
+>  };
+> @@ -447,43 +454,52 @@ struct drm_sched_backend_ops {
+>  	 * @timedout_job: Called when a job has taken too long to execute,
+>  	 * to trigger GPU recovery.
+>  	 *
+> -	 * This method is called in a workqueue context.
+> +	 * @sched_job: The job that has timed out
+>  	 *
+> -	 * Drivers typically issue a reset to recover from GPU hangs, and this
+> -	 * procedure usually follows the following workflow:
+> +	 * Drivers typically issue a reset to recover from GPU hangs.
+> +	 * This procedure looks very different depending on whether a firmware
+> +	 * or a hardware scheduler is being used.
+>  	 *
+> -	 * 1. Stop the scheduler using drm_sched_stop(). This will park the
+> -	 *    scheduler thread and cancel the timeout work, guaranteeing that
+> -	 *    nothing is queued while we reset the hardware queue
+> -	 * 2. Try to gracefully stop non-faulty jobs (optional)
+> -	 * 3. Issue a GPU reset (driver-specific)
+> -	 * 4. Re-submit jobs using drm_sched_resubmit_jobs()
+> -	 * 5. Restart the scheduler using drm_sched_start(). At that point, new
+> -	 *    jobs can be queued, and the scheduler thread is unblocked
+> +	 * For a FIRMWARE SCHEDULER, each ring has one scheduler, and each
+> +	 * scheduler has one entity. Hence, the steps taken typically look as
+> +	 * follows:
+> +	 *
+> +	 * 1. Stop the scheduler using drm_sched_stop(). This will pause the
+> +	 *    scheduler workqueues and cancel the timeout work, guaranteeing
+> +	 *    that nothing is queued while the ring is being removed.
+> +	 * 2. Remove the ring. The firmware will make sure that the
+> +	 *    corresponding parts of the hardware are resetted, and that other
+> +	 *    rings are not impacted.
+> +	 * 3. Kill the entity and the associated scheduler.
+
+Xe doesn't do step 3.
+
+It does:
+- Ban entity / scheduler so futures submissions are a NOP. This would be
+  submissions with unmet dependencies. Submission at the IOCTL are
+  disallowed 
+- Signal all job's fences on the pending list
+- Restart scheduler so free_job() is naturally called
+
+I'm unsure if this how other firmware schedulers do this, but it seems
+to work quite well in Xe.
+
+Matt
+
+> +	 *
+> +	 *
+> +	 * For a HARDWARE SCHEDULER, a scheduler instance schedules jobs from
+> +	 * one or more entities to one ring. This implies that all entities
+> +	 * associated with the affected scheduler cannot be torn down, because
+> +	 * this would effectively also affect innocent userspace processes which
+> +	 * did not submit faulty jobs (for example).
+> +	 *
+> +	 * Consequently, the procedure to recover with a hardware scheduler
+> +	 * should look like this:
+> +	 *
+> +	 * 1. Stop all schedulers impacted by the reset using drm_sched_stop().
+> +	 * 2. Kill the entity the faulty job stems from.
+> +	 * 3. Issue a GPU reset on all faulty rings (driver-specific).
+> +	 * 4. Re-submit jobs on all schedulers impacted by re-submitting them to
+> +	 *    the entities which are still alive.
+> +	 * 5. Restart all schedulers that were stopped in step #1 using
+> +	 *    drm_sched_start().
+>  	 *
+>  	 * Note that some GPUs have distinct hardware queues but need to reset
+>  	 * the GPU globally, which requires extra synchronization between the
+> -	 * timeout handler of the different &drm_gpu_scheduler. One way to
+> -	 * achieve this synchronization is to create an ordered workqueue
+> -	 * (using alloc_ordered_workqueue()) at the driver level, and pass this
+> -	 * queue to drm_sched_init(), to guarantee that timeout handlers are
+> -	 * executed sequentially. The above workflow needs to be slightly
+> -	 * adjusted in that case:
+> +	 * timeout handlers of different schedulers. One way to achieve this
+> +	 * synchronization is to create an ordered workqueue (using
+> +	 * alloc_ordered_workqueue()) at the driver level, and pass this queue
+> +	 * as drm_sched_init()'s @timeout_wq parameter. This will guarantee
+> +	 * that timeout handlers are executed sequentially.
+>  	 *
+> -	 * 1. Stop all schedulers impacted by the reset using drm_sched_stop()
+> -	 * 2. Try to gracefully stop non-faulty jobs on all queues impacted by
+> -	 *    the reset (optional)
+> -	 * 3. Issue a GPU reset on all faulty queues (driver-specific)
+> -	 * 4. Re-submit jobs on all schedulers impacted by the reset using
+> -	 *    drm_sched_resubmit_jobs()
+> -	 * 5. Restart all schedulers that were stopped in step #1 using
+> -	 *    drm_sched_start()
+> +	 * Return: The scheduler's status, defined by &enum drm_gpu_sched_stat
+>  	 *
+> -	 * Return DRM_GPU_SCHED_STAT_NOMINAL, when all is normal,
+> -	 * and the underlying driver has started or completed recovery.
+> -	 *
+> -	 * Return DRM_GPU_SCHED_STAT_ENODEV, if the device is no longer
+> -	 * available, i.e. has been unplugged.
+>  	 */
+>  	enum drm_gpu_sched_stat (*timedout_job)(struct drm_sched_job *sched_job);
+>  
+> -- 
+> 2.48.1
+> 
 
