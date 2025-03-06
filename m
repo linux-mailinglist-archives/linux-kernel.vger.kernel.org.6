@@ -1,136 +1,125 @@
-Return-Path: <linux-kernel+bounces-548542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ED7BA54641
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:27:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C7711A5463F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:26:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7AFF171949
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:27:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02CD9171C25
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:26:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53FC220968E;
-	Thu,  6 Mar 2025 09:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7E25209F2A;
+	Thu,  6 Mar 2025 09:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E9xwnJsH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="t33nFIPn"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60DCF20101A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789161A83ED;
+	Thu,  6 Mar 2025 09:26:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741253229; cv=none; b=lR9ROz27gRQbww3axZsE1O5jb0mBGhGxpATFhkqmzoBrx3eHvXETY6KBH8f6V5RK6vHCPvv8tvgAuqyVNy6RO7iDmd+zOxBGQ4OsB5xnuyOYN5Y7wnMwbQu5tNZemTWQmRUMUKQdL+qdmGqjDDaGuzILLq+6tHWeTyN9INBXnWY=
+	t=1741253190; cv=none; b=mw9UNac/SwWTvm+y5xo3SSmITgwHM7c8+tpi4Z/m1cvMsPx1nYgja0biMLvZP7ikO+XkwP7vrXOV0e2zVE8JyL6/MLCjRMONojWu6gE6OfBwDU7v50rjyvdhrv5EPj0CqzijDmGwFadlPX5so83PKRXxJDdiztiD1Umbv3iuwyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741253229; c=relaxed/simple;
-	bh=xPaxoD+qKt9qygkNfIjSAyVeHaeHQjVmhU/zMf8dK1g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bqV75fgxNl61DMcwiILSZAu6AsMol4hIXNrSei9+ygCWI0ZFjCethjh6tjGF/hGBntGXdZXW5qii7DYONE6Xiu1F3qZpJikXUJ5V9zwwnegCPPIBwjNkIabnVAM+R38WkEVdarSQAX8HgEaLY8t8gN7MSNGtr9rTO+31LM2gs+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E9xwnJsH; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741253228; x=1772789228;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=xPaxoD+qKt9qygkNfIjSAyVeHaeHQjVmhU/zMf8dK1g=;
-  b=E9xwnJsHDorx8xLzytiHYJgxfw3FM6zvc0xuOZ4b/HKK/JVbds36OcXI
-   l3dZkpPQGh/d17Iw+aiPJqIgg9bbO8cEm8jP+sJQ3gMOXmFzbFH15ziD8
-   8opThmOLEo92vVo3kcDZKWfaB3s8EBYeJgfCEDBh3daBB29+C7DJ7gNIV
-   Kqn9lLUxUnZJY3/snBBUA+evjabhyZMfZgACByqYRhCFCfV1Z+3M30hcv
-   JTyxvfIpu6q4bldFAesYWf9iiFVjXy6IRazO9OZFcTz0Q3CAtUlNRg+/B
-   x6RPbb/QH3F7tQf9S3l9p75BO26U4QPfV6X7tNF97tW1yIF507iY6WXRD
-   Q==;
-X-CSE-ConnectionGUID: DeuTnQFCTI642eZ01Nq5lg==
-X-CSE-MsgGUID: b25Q7N20RYuuxMamU3tpxg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="53236646"
-X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
-   d="scan'208";a="53236646"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 01:27:08 -0800
-X-CSE-ConnectionGUID: L5PFff7LQJG9ifCA3gAfNw==
-X-CSE-MsgGUID: 2Q8n90kgStO3AdOBCahUYQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="156191783"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP; 06 Mar 2025 01:27:04 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 2E68720B; Thu, 06 Mar 2025 11:27:03 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH v2 1/1] x86/mm: Check if PTRS_PER_PMD is defined before use
-Date: Thu,  6 Mar 2025 11:25:41 +0200
-Message-ID: <20250306092658.378837-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1741253190; c=relaxed/simple;
+	bh=UkYBMSyVx9mB9EYLj4kAZNlJQpO9fE0jrQdWxZo0isk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LLmWl9PQzXFnn4mqRHGXpOr28wki+ef7WjrfPCZ1TR45DYyJ6dpW3fEt9AvCoFrGhdn4EIAEyD4MqF/QuzGtekA/xrDNl9kGzqOZaxx6Yjum16Vz3pEPW5lS6F+kttGKT/qIth7lAhKvWGj7ru8+44TlNRoJCcmagTIS0kBQAV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=t33nFIPn; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=i03ZXI+7609AAGbV95Aop1hWrPoWoth/Ke5U6QVdYNo=; b=t33nFIPnkd+ZsGPfSAax83vcuK
+	yRvYE8KeWFPLsLOG9s059CaYk2lNnlVKO82ARaVr7jvgD2QOiYhf72h1/UWswpkIxewsM3+LQ6DH0
+	RGEUDqsQIcGOxwHtsVVZgbu659VQTG4L7PRCWGsDhxxY2s5IloBkwDPCjRe2CW0UST+aPP9oR/tpK
+	iXECCMrImzkqkHXJQQ/UYavW5NUKD2BA+OY9EjxVc1ZypOH6P8ythIU1FLrsV6KvNMMtUGY5j2LDk
+	h6K2RmpKE19tOhyOTsZq0M41IcoWW0QspVpMW61TghH8b6HB06IGT6BYRK5vj3TrnecozDAdxdPWa
+	/nj2qnzA==;
+Received: from i53875a38.versanet.de ([83.135.90.56] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tq7Ub-0001kw-KD; Thu, 06 Mar 2025 10:26:13 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Shreeya Patel <shreeya.patel@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Hans Verkuil <hverkuil@xs4all.nl>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ jose.abreu@synopsys.com, nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
+ nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Diederik de Haas <didi.debian@cknow.org>
+Subject: Re: [PATCH v14 0/3] Enable HDMI RX controller on RK3588
+Date: Thu, 06 Mar 2025 10:26:07 +0100
+Message-ID: <2906773.tdWV9SEqCh@diego>
+In-Reply-To: <20250306072842.287142-1-dmitry.osipenko@collabora.com>
+References: <20250306072842.287142-1-dmitry.osipenko@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Compiler (GCC) is not happy about PTRS_PER_PMD being undefined
-(note, clang also issues the quite similar warning)
+Hi Dmitry,
 
-In file included from arch/x86/kernel/head_32.S:29:
-arch/x86/include/asm/pgtable_32.h:59:5: error: "PTRS_PER_PMD" is not defined, evaluates to 0 [-Werror=undef]
-   59 | #if PTRS_PER_PMD > 1
+Am Donnerstag, 6. M=C3=A4rz 2025, 08:28:39 MEZ schrieb Dmitry Osipenko:
+> This is a follow up to the v13 of HDMI RX patches [1]. Hans queued the
+> driver into the media tree. Now the DT patches are left to apply, could
+> you please take care of this series if it's good to you? Thanks
+>=20
+> [1] https://lore.kernel.org/linux-media/20250304085819.108067-1-dmitry.os=
+ipenko@collabora.com/
 
-Add a check to make sure PTRS_PER_PMD is defined before use.
+Linux-Media, has this strange "applied" reporting thing going, so neither
+the thread reports that nor does https://git.linuxtv.org/ show the commits
+yet.
 
-The documentation for GCC 7.5.0+ says that:
+If you see the driver patches appear on https://git.linuxtv.org/ before I d=
+o,
+please ping this thread :-)
 
-	if defined BUFSIZE && BUFSIZE >= 1024
 
-    can generally be simplified to just #if BUFSIZE >= 1024, since if BUFSIZE
-    is not defined, it will be interpreted as having the value zero.
+Thanks a lot
+Heiko
 
-But in the same time the last paragraph points out that
 
-    It will warn wherever your code uses this feature.
+>=20
+> Changelog:
+>=20
+> v14: - Re-enabled LOAD_DEFAULT_EDID=3Dy option in the defconfig and
+>        added ack from Hans Verkuil fot that patch.
+>=20
+> Sebastian Reichel (2):
+>   arm64: dts: rockchip: Enable HDMI receiver on rock-5b
+>   arm64: defconfig: Enable Synopsys HDMI receiver
+>=20
+> Shreeya Patel (1):
+>   arm64: dts: rockchip: Add device tree support for HDMI RX Controller
+>=20
+>  .../dts/rockchip/rk3588-base-pinctrl.dtsi     | 14 +++++
+>  .../arm64/boot/dts/rockchip/rk3588-extra.dtsi | 57 +++++++++++++++++++
+>  .../boot/dts/rockchip/rk3588-rock-5b.dts      | 18 ++++++
+>  arch/arm64/configs/defconfig                  |  2 +
+>  4 files changed, 91 insertions(+)
+>=20
+>=20
 
-which is what we met here.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/r/202412152358.l9RJiVaH-lkp@intel.com/
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
 
-v2: made the commit message more accurate by citing the documentation (Dave)
-
- arch/x86/include/asm/pgtable_32.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/pgtable_32.h b/arch/x86/include/asm/pgtable_32.h
-index 7d4ad8907297..3c0523588f59 100644
---- a/arch/x86/include/asm/pgtable_32.h
-+++ b/arch/x86/include/asm/pgtable_32.h
-@@ -56,7 +56,7 @@ do {						\
-  * With PAE paging (PTRS_PER_PMD > 1), we allocate PTRS_PER_PGD == 4 pages for
-  * the PMD's in addition to the pages required for the last level pagetables.
-  */
--#if PTRS_PER_PMD > 1
-+#if defined(PTRS_PER_PMD) && (PTRS_PER_PMD > 1)
- #define PAGE_TABLE_SIZE(pages) (((pages) / PTRS_PER_PMD) + PTRS_PER_PGD)
- #else
- #define PAGE_TABLE_SIZE(pages) ((pages) / PTRS_PER_PGD)
--- 
-2.47.2
 
 
