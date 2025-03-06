@@ -1,136 +1,172 @@
-Return-Path: <linux-kernel+bounces-548086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44526A53FA5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:12:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8166A53FA8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:12:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E9303AE5F2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:11:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1E03A66B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5510286344;
-	Thu,  6 Mar 2025 01:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C167A12D1F1;
+	Thu,  6 Mar 2025 01:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qY0cJZRW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Oltz7y2t"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA129487BF;
-	Thu,  6 Mar 2025 01:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A63E487BF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 01:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741223522; cv=none; b=O/gq3Yjd4XV8FW7Bfp8HYmeJWsVk9qKP14npqFtOrN1P5m69R9Nt5VZdcgoIuPaczzUECTKj8B6ZmPvnZDVs6dZtwafUrU9uXhAuHf4jhvzbEskFztUEVebbeMLXA6DMIh94Emb89qBiGhPcSdPi/PodXtg24Dq8SppCPV/Ya3U=
+	t=1741223535; cv=none; b=Xt7Ktm5tlFwSObGyjpp2c/c44k0r2vqdidxLkFHVkDC/TKXCGd0iOlCNDcs296LGyRAqVP0BmoyNb5mk/ImbkxnHt59f7fXGSvhTKtk5Gdtfxq+kUmVvWYLUHfk8NtNj1qp3GC/uhv2LIcNLtmF4APAIVHpw4h2y4eCTx5BRo/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741223522; c=relaxed/simple;
-	bh=NoaY4nFPkc9jT0zrJ9Xqr6WgodFiRPcr1e1s7E7/B/0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=A3VMxZpg9Ri5qioRBm6Xf5v8juKAB8N1ZvGp2PYPMDc+JP4P6ZXjH9681TWtyKRPOtW8hIluLERzxEqHk3IGfpDi5A09dFpKmEVN5gybvMXPW8tf76f40YAXwF94LrtIT6Lsyx3Ew6IuE98pCSJAzMzBwtaTuMj+KGlhEZJa9Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qY0cJZRW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC0B1C4CED1;
-	Thu,  6 Mar 2025 01:12:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741223522;
-	bh=NoaY4nFPkc9jT0zrJ9Xqr6WgodFiRPcr1e1s7E7/B/0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qY0cJZRWYfBzu7DG3UlndBDX/g0DkHEfFZYAdbcBfCZddJVUEM6kommfOvP2wAT6U
-	 4+d7Vyscsw084MQz0omvL01PVR9lqXXA5JWEb6O3MNpQIYpMZY4YgOH6qnUYXeF14m
-	 l70wBht+08/Mk3zsf+fu8lR3GcqvfG81EkHs/OXVEg+U8THtsDZgAUZ8nB4ujgBuvm
-	 gp/9i3v2c76zfUEi0zhj8YZ++LcBHqDqaD+szvdQWT8R99Tje8dB66RaEVr1kE+iaM
-	 fa69RfIiI7I8qF+xuLIl6OCKTXafaxJ1+JDFW+wB/AXe9fZh5Vowxj3Gln3MqzmYBM
-	 t5IKxEy8aWUBg==
-From: SeongJae Park <sj@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	stable@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	torvalds@linux-foundation.org,
-	akpm@linux-foundation.org,
-	linux@roeck-us.net,
-	shuah@kernel.org,
-	patches@kernelci.org,
-	lkft-triage@lists.linaro.org,
-	pavel@denx.de,
-	jonathanh@nvidia.com,
-	f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com,
-	srw@sladewatkins.net,
-	rwarsow@gmx.de,
-	conor@kernel.org,
-	hargar@microsoft.com,
-	broonie@kernel.org,
-	damon@lists.linux.dev
-Subject: Re: [PATCH 6.13 000/157] 6.13.6-rc1 review
-Date: Wed,  5 Mar 2025 17:11:59 -0800
-Message-Id: <20250306011200.138999-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250305174505.268725418@linuxfoundation.org>
-References: 
+	s=arc-20240116; t=1741223535; c=relaxed/simple;
+	bh=V8bDAPc4cr2bLjiiGkoBYZJfi5ZNW7LVUzibc3K48nk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LAOy21Fa9HYJ0AzXbWaASfybBwFUgXseNS/+YhWm84BqPiauXi1PmvspO2oGGuf6EAjQpjcezFEO+cofLZ8gjUAg2tZPtAhZbuphMpuco3WTLiZAX6+xc1ReZc7jwfzBZCZHA++tw7PNNAnJiCZb2ZqZ77/uwAojWJcA9sBQLJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Oltz7y2t; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43bcad638efso285095e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 17:12:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741223531; x=1741828331; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eQ+iqukiSlMLeu8kSd6ydP0HqsHZUGYTz4P9o72wMC4=;
+        b=Oltz7y2tGSk4ldAVdJ2WwYzVqZcp1tYoGdqhINoOEml+NLIeK0OdJZD6Fjt19KVSVJ
+         4K4Raj0Kgo8w+/t+ISsOmgbs0+5QioiFJ3zD3AEKRXNe5qbCfmAH+7bKqv8ZYhyjdn7g
+         g1DvaT5NvSMs4J5Ioo7Nk2+0UjHNSezrBxDoODdY689F3YDfjGJeQWJC9Wx56lBXCU9X
+         Lx0a+u9Lbp2tiiMMtT5Lzi4L/Wx3SILqDSTILT9zxHHaH1+tvP5z6tNb41mnYXTI12cB
+         0SGIPsC7iq5ogjei/XJqtW0Ijwk3IOeROv6x9XO6cJ7hydLT/msMh2FOvu1uzAaj9D3Z
+         Mxzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741223531; x=1741828331;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eQ+iqukiSlMLeu8kSd6ydP0HqsHZUGYTz4P9o72wMC4=;
+        b=PiqJi2F/ubvuqlgrIHWklBwXIBAbuIcjw7b93zZUWwmjxGknQOj8nDvjmsW1brc60n
+         A6jh4JuhSh8foixfyBKwb3w4iCt7LWBODKkZtggvvbK4j/vp9AekYeDfd0+Xynwp4XOI
+         DVy8bNpYvpzI4kWC4AGslbVzgfQ72SL1ICoQZaFHORqtpLCkbhuoFg+ZCFCkyQVTU2Sq
+         03yE7wbcFfqcFseH42oVu+7oN22hHVIyqv1mIgirBb+7C6KrCKXobIQufhTl159vxdvJ
+         WYDgqP1905dP62WNI7iltLjc3sBOXjsdw/wXOJr4+pQSBOq/hMa83K9eB40Ti9tjamyW
+         iOcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVA6zwQQaaxpLDJ5MFG4b3PTz9MHsInG9q25oUacZi9CPBZm73pQZti5sRnfZ2LDD9RsXg5q3WUWWYViBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE7Dc2+iok21PuoBV5KowRnwENU4fo6PKetAllG1ChEf19v55t
+	RjC10pP5ZFdoWK2pEdSMwZDF9FXIa/SAq7/elVskd/MoHYnOiv2MlBMclIMM8vE=
+X-Gm-Gg: ASbGncvkrIVVw43RVCs9doY9SAzkXNtjBI7oELVb+GGMqxsY+cOsFVyTmdDvm2yw70s
+	Sr5KpMKXzEOVYSUf6sWzyT5+dPhBvBfepcmTLJtzcOmYkUn1hFUOZIuLcZogPoQy0bgwFj1i9Mj
+	VdGaFJmdE8yRQ9JNtngoGY8T7KeRqjPtU+894TGstn4owRtrSHtY47vfE12sKn/EolJjxU+uhZj
+	PZ4D0BzxII/w7gg0vSgJ33RWG8MRdzHR+O55ay6J5Uo0+MN89cjCiW4728goh7e8WXYttc79fxC
+	wWvMKJvbiECS7sLWLQ5+tdjhJuY2YYCfjMXwzZYLPLhRpIih5hNsIFjgzDJXDH8JdKq3Q1PbuLX
+	q3nhuRBb0TA==
+X-Google-Smtp-Source: AGHT+IHKxmZHEuQ99hkkG0TUhCpLtqRQ2jcyh6L2PyQhB1NnKBtw7TcNNfosP2ySPRu7Ae0J8pjZLQ==
+X-Received: by 2002:a05:6000:2703:b0:391:9b2:f48d with SMTP id ffacd0b85a97d-3911f7706fbmr3732068f8f.33.1741223531434;
+        Wed, 05 Mar 2025 17:12:11 -0800 (PST)
+Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c103f41sm199146f8f.85.2025.03.05.17.12.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Mar 2025 17:12:11 -0800 (PST)
+Message-ID: <8c96d87a-b31a-40a5-880a-242542806f7b@linaro.org>
+Date: Thu, 6 Mar 2025 01:12:10 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 07/12] media: iris: Add handling for corrupt and drop
+ frames
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>, quic_vgarodia@quicinc.com,
+ quic_abhinavk@quicinc.com, mchehab@kernel.org
+Cc: hverkuil@xs4all.nl, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250305104335.3629945-1-quic_dikshita@quicinc.com>
+ <20250305104335.3629945-8-quic_dikshita@quicinc.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20250305104335.3629945-8-quic_dikshita@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
-
-On Wed,  5 Mar 2025 18:47:16 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-
-> This is the start of the stable review cycle for the 6.13.6 release.
-> There are 157 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 05/03/2025 10:43, Dikshita Agarwal wrote:
+> Firmware attach DATACORRUPT/DROP buffer flags for the frames which
+> needs to be dropped, handle it by setting VB2_BUF_STATE_ERROR for these
+> buffers before calling buf_done.
 > 
-> Responses should be made by Fri, 07 Mar 2025 17:44:26 +0000.
-> Anything received after that time might be too late.
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> ---
+>   drivers/media/platform/qcom/iris/iris_buffer.c        | 11 ++++++++---
+>   .../media/platform/qcom/iris/iris_hfi_gen1_defines.h  |  2 ++
+>   .../media/platform/qcom/iris/iris_hfi_gen1_response.c |  6 ++++++
+>   3 files changed, 16 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_buffer.c b/drivers/media/platform/qcom/iris/iris_buffer.c
+> index 305b630ca269..e5180340383b 100644
+> --- a/drivers/media/platform/qcom/iris/iris_buffer.c
+> +++ b/drivers/media/platform/qcom/iris/iris_buffer.c
+> @@ -603,10 +603,13 @@ int iris_vb2_buffer_done(struct iris_inst *inst, struct iris_buffer *buf)
+>   
+>   	vb2 = &vbuf->vb2_buf;
+>   
+> -	if (buf->flags & V4L2_BUF_FLAG_ERROR)
+> +	if (buf->flags & V4L2_BUF_FLAG_ERROR) {
+>   		state = VB2_BUF_STATE_ERROR;
+> -	else
+> -		state = VB2_BUF_STATE_DONE;
+> +		vb2_set_plane_payload(vb2, 0, 0);
+> +		vb2->timestamp = 0;
+> +		v4l2_m2m_buf_done(vbuf, state);
+> +		return 0;
+> +	}
+>   
+>   	vbuf->flags |= buf->flags;
+>   
+> @@ -626,6 +629,8 @@ int iris_vb2_buffer_done(struct iris_inst *inst, struct iris_buffer *buf)
+>   			v4l2_m2m_mark_stopped(m2m_ctx);
+>   		}
+>   	}
+> +
+> +	state = VB2_BUF_STATE_DONE;
+>   	vb2->timestamp = buf->timestamp;
+>   	v4l2_m2m_buf_done(vbuf, state);
+>   
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_defines.h b/drivers/media/platform/qcom/iris/iris_hfi_gen1_defines.h
+> index 3bea643068f9..bfeeea643300 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_defines.h
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_defines.h
+> @@ -119,6 +119,8 @@
+>   #define HFI_FRAME_NOTCODED				0x7f002000
+>   #define HFI_FRAME_YUV					0x7f004000
+>   #define HFI_UNUSED_PICT					0x10000000
+> +#define HFI_BUFFERFLAG_DATACORRUPT			0x00000008
+> +#define HFI_BUFFERFLAG_DROP_FRAME			0x20000000
+>   
+>   struct hfi_pkt_hdr {
+>   	u32 size;
+> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
+> index b72d503dd740..91d95eed68aa 100644
+> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
+> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
+> @@ -481,6 +481,12 @@ static void iris_hfi_gen1_session_ftb_done(struct iris_inst *inst, void *packet)
+>   	buf->attr |= BUF_ATTR_DEQUEUED;
+>   	buf->attr |= BUF_ATTR_BUFFER_DONE;
+>   
+> +	if (hfi_flags & HFI_BUFFERFLAG_DATACORRUPT)
+> +		flags |= V4L2_BUF_FLAG_ERROR;
+> +
+> +	if (hfi_flags & HFI_BUFFERFLAG_DROP_FRAME)
+> +		flags |= V4L2_BUF_FLAG_ERROR;
+> +
+>   	buf->flags |= flags;
+>   
+>   	iris_vb2_buffer_done(inst, buf);
 
-This rc kernel passes DAMON functionality test[1] on my test machine.
-Attaching the test results summary below.  Please note that I retrieved the
-kernel from linux-stable-rc tree[2].
-
-Tested-by: SeongJae Park <sj@kernel.org>
-
-[1] https://github.com/damonitor/damon-tests/tree/next/corr
-[2] 30be4aa8b957 ("Linux 6.13.6-rc1")
-
-Thanks,
-SJ
-
-[...]
-
----
-
-ok 9 selftests: damon: damos_tried_regions.py
-ok 10 selftests: damon: damon_nr_regions.py
-ok 11 selftests: damon: reclaim.sh
-ok 12 selftests: damon: lru_sort.sh
-ok 13 selftests: damon: debugfs_empty_targets.sh
-ok 14 selftests: damon: debugfs_huge_count_read_write.sh
-ok 15 selftests: damon: debugfs_duplicate_context_creation.sh
-ok 16 selftests: damon: debugfs_rm_non_contexts.sh
-ok 17 selftests: damon: debugfs_target_ids_read_before_terminate_race.sh
-ok 18 selftests: damon: debugfs_target_ids_pid_leak.sh
-ok 19 selftests: damon: sysfs_update_removed_scheme_dir.sh
-ok 20 selftests: damon: sysfs_update_schemes_tried_regions_hang.py
-ok 1 selftests: damon-tests: kunit.sh
-ok 2 selftests: damon-tests: huge_count_read_write.sh
-ok 3 selftests: damon-tests: buffer_overflow.sh
-ok 4 selftests: damon-tests: rm_contexts.sh
-ok 5 selftests: damon-tests: record_null_deref.sh
-ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
-ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
-ok 8 selftests: damon-tests: damo_tests.sh
-ok 9 selftests: damon-tests: masim-record.sh
-ok 10 selftests: damon-tests: build_i386.sh
-ok 11 selftests: damon-tests: build_arm64.sh # SKIP
-ok 12 selftests: damon-tests: build_m68k.sh # SKIP
-ok 13 selftests: damon-tests: build_i386_idle_flag.sh
-ok 14 selftests: damon-tests: build_i386_highpte.sh
-ok 15 selftests: damon-tests: build_nomemcg.sh
- [33m
- [92mPASS [39m
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
