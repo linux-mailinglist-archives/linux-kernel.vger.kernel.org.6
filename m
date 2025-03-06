@@ -1,179 +1,94 @@
-Return-Path: <linux-kernel+bounces-548507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE87A545C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:03:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABFF5A545C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:04:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1B81884A83
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:03:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAB5316BFBA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF362080F5;
-	Thu,  6 Mar 2025 09:03:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kXmdeiK/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D732080ED;
+	Thu,  6 Mar 2025 09:04:06 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69050202C4D;
-	Thu,  6 Mar 2025 09:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D7F202C4D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741251810; cv=none; b=khZ3/pujczy4kiXcIie9GWjmMmMEhZ4gON8OBaF3cCActCgTUuQb2Al86PE8M/Wt7wBHl/BE+iQW9GZi/yjiF8AZnfspXTOO9oupHfs07FrdwWTbq3UF0d6PZRYhGdJI10vF3+HenflzgaIB2nQn1XmhtmZ6sRztYAXSTmkhm+0=
+	t=1741251846; cv=none; b=hmJtKD0fVMTiYg6/c5oEbJTbi02w43ElYDmUJ56nQ3G8o0KxFAPFzhq+0+cxq4kh51dOnRKujfotYMZvm+YNO9vvGSUZ9TM7Uo5Tg4xkj+p32ckyRSFBgVSmaS6WH/xkT9VXppblR7eHkSoMKSqRCVOrgPnWNVfA0hIvfPWXCDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741251810; c=relaxed/simple;
-	bh=cpIhfzRQfyAuBaafeZo6QXxygGLDe7ulLKTftDugqOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CtRE3Z47jhT44M/6oZFVOy+KXiEajTeypsWJMpkrTnEeg/5fSVao8oklXH4u9ked1YiyGeg5/00NAinwsfKxaL2b2T/W3f+8MOjhIcOn4w9MYTKdtwhETFULHKH2+F86hxqWPVPKND8o7idDG6saDiXtV45zcJylloaXg5ez33Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kXmdeiK/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C6F8C4CEE0;
-	Thu,  6 Mar 2025 09:03:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741251809;
-	bh=cpIhfzRQfyAuBaafeZo6QXxygGLDe7ulLKTftDugqOM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kXmdeiK/PSu5WC7U2LW7pvdm4dRSvDK8TGVY/KXqJI1K1kXFcPNPvL1c5fQhJiuWB
-	 X1ob1NDcwRw9PaNqmiL2koEbNzyCP900K66TSXNEuwBoFMhBagmpC+4BZu6TAlTyrV
-	 /ROLVgjlKNI7PRN6B2X/3o+FfmuQ/QApUxepU3yA=
-Date: Thu, 6 Mar 2025 10:03:26 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: David Jander <david@protonic.nl>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-doc@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Oleksij Rempel <o.rempel@pengutronix.de>
-Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
-Message-ID: <2025030638-wavy-napkin-41ab@gregkh>
-References: <20250227162823.3585810-1-david@protonic.nl>
- <20250227162823.3585810-2-david@protonic.nl>
- <6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
- <20250305164046.4de5b6ef@erd003.prtnl>
- <mzxammninwmak5ti4c6is4pbdx3xzzziiwbxiwrldjyxgae4ok@ocec24vu4txa>
- <2025030611-embezzle-sacrament-00d9@gregkh>
- <20250306092013.1147f27e@erd003.prtnl>
+	s=arc-20240116; t=1741251846; c=relaxed/simple;
+	bh=ruAfKKuJv4D//haITjZ4loefKlVdbyEM29MI7QA1oWg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oViZGK1HNcOx33YVyw/bZKWBoBopg92SGXVIDWZPo+sQUdAu8fZDBLgmoxZ5rM6KoLKQA970nZ9mDvBoC3ZbXCUOFgIHGRgSf+9t+FULDN/BiIzMflpWsRJ0GkdpG70ydA2HDIc9uJQZzQDdpnWKr3eqGj3h8XOuL2eVl3ybrKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d054d79dacso8483195ab.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:04:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741251844; x=1741856644;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6PlUf2EDtc8+GWdOxIDmfUU+aGd5sbW4hhN7UakkYqw=;
+        b=fOK8y+lJYTRqkmIjoJvkYqeQGlNj6BDN+4datFRy6aHhmY3JfOyffiXB9e2q/Aryyw
+         DjjOHfWOty1W98nrWEf+pEZgOs+EO0iREjDS1Vup+mFWmFap2JuyFNom2LCBR+8Cvtbu
+         2HrzIh/KU03qCy9mQ4tJF1K3AU7DhtVBu4oAf/RnSnKKIqZv5XNDbWLZiUwMuYKTtfoA
+         x7BRszLXPilPZ8UxIM/p8eZtj8YsvBprl+kVeK7XKyQiHKbEBeI1puuuStzObqfSNpZP
+         WAx/ooFVQmjq4TRr0nIRpivA7mhHuDcbk+1ly07yGd/3nUNe3KeVz6TX6m/0h/kvr/4I
+         FB0g==
+X-Forwarded-Encrypted: i=1; AJvYcCXi2Y+QujPzeTpoIPVogutOIlCmUoI4G4UX8QAgR2V0NfQv1/O/WL9xjSe9Wy7smR1HETtuxHLbuz8n75g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq3V4eubPUHPcFmQIdUOF5eOfCV2RCWiOz2owLpk99O0bAkiwd
+	OtJpKO9yEQFPC5QOyf2xgV0DnWhh10t9F0h1VtrNR7wdCZ44cO7QSBbODAfO1YpzDyakkrnQgKP
+	tmzI52PnjoDj4KCCq4I1b61VdxZKcASm+MjzdWkq2ScXilcIyGVpm9rw=
+X-Google-Smtp-Source: AGHT+IGTBLARltXQf7oengpyI6p3Xjnj/feG2ACDCutrMgIXebFL36ZwMXTWYi4jeppRR1zG6cu4U/sqPkb1QpRrtRzIkxgmvrIo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250306092013.1147f27e@erd003.prtnl>
+X-Received: by 2002:a05:6e02:190e:b0:3d3:e09d:2a9f with SMTP id
+ e9e14a558f8ab-3d42b891005mr83529435ab.8.1741251843985; Thu, 06 Mar 2025
+ 01:04:03 -0800 (PST)
+Date: Thu, 06 Mar 2025 01:04:03 -0800
+In-Reply-To: <67a11d8a.050a0220.163cdc.0051.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c96503.050a0220.15b4b9.0030.GAE@google.com>
+Subject: Re: [syzbot] [udf?] general protection fault in d_splice_alias
+From: syzbot <syzbot+a9c0867e4d1dd0c7ab19@syzkaller.appspotmail.com>
+To: amir73il@gmail.com, asmadeus@codewreck.org, brauner@kernel.org, 
+	corbet@lwn.net, eadavis@qq.com, ericvh@kernel.org, jack@suse.com, 
+	jack@suse.cz, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
+	mjguzik@gmail.com, syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev, 
+	viro@zeniv.linux.org.uk, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Mar 06, 2025 at 09:20:13AM +0100, David Jander wrote:
-> On Thu, 6 Mar 2025 08:18:46 +0100
-> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> 
-> > On Thu, Mar 06, 2025 at 12:21:22AM +0100, Uwe Kleine-König wrote:
-> > > Hello David,
-> > > 
-> > > On Wed, Mar 05, 2025 at 04:40:45PM +0100, David Jander wrote:  
-> > > > On Fri, 28 Feb 2025 17:44:27 +0100
-> > > > Uwe Kleine-König <u.kleine-koenig@baylibre.com> wrote:  
-> > > > > On Thu, Feb 27, 2025 at 05:28:17PM +0100, David Jander wrote:
-> > > > > [...]  
-> > > > > > +static int motion_open(struct inode *inode, struct file *file)
-> > > > > > +{
-> > > > > > +	int minor = iminor(inode);
-> > > > > > +	struct motion_device *mdev = NULL, *iter;
-> > > > > > +	int err;
-> > > > > > +
-> > > > > > +	mutex_lock(&motion_mtx);    
-> > > > > 
-> > > > > If you use guard(), error handling gets a bit easier.  
-> > > > 
-> > > > This looks interesting. I didn't know about guard(). Thanks. I see the
-> > > > benefits, but in some cases it also makes the locked region less clearly
-> > > > visible. While I agree that guard() in this particular place is nice,
-> > > > I'm hesitant to try and replace all mutex_lock()/_unlock() calls with guard().
-> > > > Let me know if my assessment of the intended use of guard() is incorrect.  
-> > > 
-> > > I agree that guard() makes it harder for non-trivial functions to spot
-> > > the critical section. In my eyes this is outweight by not having to
-> > > unlock in all exit paths, but that might be subjective. Annother
-> > > downside of guard is that sparse doesn't understand it and reports
-> > > unbalanced locking.
-> > >    
-> > > > > > +	list_for_each_entry(iter, &motion_list, list) {
-> > > > > > +		if (iter->minor != minor)
-> > > > > > +			continue;
-> > > > > > +		mdev = iter;
-> > > > > > +		break;
-> > > > > > +	}    
-> > > > > 
-> > > > > This should be easier. If you use a cdev you can just do
-> > > > > container_of(inode->i_cdev, ...);  
-> > > > 
-> > > > Hmm... I don't yet really understand what you mean. I will have to study the
-> > > > involved code a bit more.  
-> > > 
-> > > The code that I'm convinced is correct is
-> > > https://lore.kernel.org/linux-pwm/00c9f1181dc351e1e6041ba6e41e4c30b12b6a27.1725635013.git.u.kleine-koenig@baylibre.com/
-> > > 
-> > > This isn't in mainline because there is some feedback I still have to
-> > > address, but I think it might serve as an example anyhow.
-> > >   
-> > > > > > [...]
-> > > > > > +
-> > > > > > +static const struct class motion_class = {
-> > > > > > +	.name		= "motion",
-> > > > > > +	.devnode	= motion_devnode,    
-> > > > > 
-> > > > > IIRC it's recommended to not create new classes, but a bus.  
-> > > > 
-> > > > Interesting. I did some searching, and all I could find was that the chapter
-> > > > in driver-api/driver-model about classes magically vanished between versions
-> > > > 5.12 and 5.13. Does anyone know where I can find some information about this?
-> > > > Sorry if I'm being blind...  
-> > > 
-> > > Half knowledge on my end at best. I would hope that Greg knows some
-> > > details (which might even be "no, classes are fine"). I added him to Cc:  
-> > 
-> > A class is there for when you have a common api that devices of
-> > different types can talk to userspace (i.e. the UAPI is common, not the
-> > hardware type).  Things like input devices, tty, disks, etc.  A bus is
-> > there to be able to write different drivers to bind to for that hardware
-> > bus type (pci, usb, i2c, platform, etc.)
-> > 
-> > So you need both, a bus to talk to the hardware, and a class to talk to
-> > userspace in a common way (ignore the fact that we can also talk to
-> > hardware directly from userspace like raw USB or i2c or PCI config
-> > space, that's all bus-specific stuff).
-> 
-> Thanks for chiming in. Let me see if I understand this correctly: In this
-> case, I have a UAPI that is common to different types of motion control
-> devices. So I need a class. check.
+syzbot suspects this issue was fixed by commit:
 
-Correct.
+commit 902e09c8acde117b00369521f54df817a983d4ab
+Author: Al Viro <viro@zeniv.linux.org.uk>
+Date:   Mon Feb 3 21:16:09 2025 +0000
 
-> Do I need a bus? If one can conceive other drivers or kernel parts that talk to
-> motion drivers, I would need a bus. If that doesn't make sense, I don't. Right?
+    fix braino in "9p: fix ->rename_sem exclusion"
 
-Correct.
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11d77078580000
+start commit:   69e858e0b8b2 Merge tag 'uml-for-linus-6.14-rc1' of git://g..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d1a6d4df5fcc342f
+dashboard link: https://syzkaller.appspot.com/bug?extid=a9c0867e4d1dd0c7ab19
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=125d0eb0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a595f8580000
 
-> I actually can think of a new motion device that acts as an aggregator of
-> several single-channel motion devices into a single "virtual" multi-channel
-> device... so do I need also a bus? I suppose...?
+If the result looks correct, please mark the issue as fixed by replying with:
 
-Nope, that should just be another class driver.  Think about how input
-does this, some input /dev/ nodes are the sum of ALL input /dev/ nodes
-together, while others are just for individual input devices.
+#syz fix: fix braino in "9p: fix ->rename_sem exclusion"
 
-> Then the question remains: why did the chapter about classes vanish?
-
-What are you specifically referring to?  I don't remember deleting any
-documentation, did files move around somehow and the links not get
-updated?
-
-thanks,
-
-greg k-h
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
