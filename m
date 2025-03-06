@@ -1,122 +1,162 @@
-Return-Path: <linux-kernel+bounces-548704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548705-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 064A0A54864
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:50:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8CFFA54868
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:51:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59AC01735AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:50:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D3BE1895519
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C59922080D4;
-	Thu,  6 Mar 2025 10:50:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FBE2045A1;
+	Thu,  6 Mar 2025 10:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qCGd7UPZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0bjDH/ji";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RvFTdace"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F39202F92
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377A853BE;
+	Thu,  6 Mar 2025 10:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741258208; cv=none; b=iLZPjyq2/fLtHLURRrsITCpt3PiUpe+/Bs1jRPA9Nr5BWepbUMee6E8x/IBzPpwBKpG0LXktf90tei9d8mBGfkFZhbGCQ/3+YE7tFNH6ijYHLNogE6cdn3BvLF9zgi5Fb0uUifMwPf54r5NOyRUpRNWd4FctKv5wuhhb/NHseM0=
+	t=1741258299; cv=none; b=jazst4UPTqdgij0PDWC242E6Q1H50sWkuX5jdcGk3c9jR3/8ITG01/5s0NIdyMZBIwBLvG9X2Q0yTNwFEEd1G0L8ePF/CwRBkrPRJIUntgIUjrvgh2xGbzddSfGrQ3viQl4cRjq6S4sinLzCLceON3dEy8A/ZHtqyfA/KRC9J2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741258208; c=relaxed/simple;
-	bh=x8cdoj2sXfZyVOu2dEaZ2Iy4JESTAPjkP2XLqVhHdHg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g6wuyOUPlA7vQvQ9N5UMRkaysZfbfb+hGILFmyOu5Ux0IpAK2i77HTCrXIux3f8qwA7zjI6f7pUcmGwz8SBS6Z0NTz+iDg5xZA5ZfifU90kWFDtWyIVNwRW4c6nk8ihkbXMqVhHOw3YEtCZm6b3L1jXwKJtYFN+2WtxQrZMHyX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qCGd7UPZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 645BAC4CEE2;
-	Thu,  6 Mar 2025 10:50:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741258207;
-	bh=x8cdoj2sXfZyVOu2dEaZ2Iy4JESTAPjkP2XLqVhHdHg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qCGd7UPZhBFnbpW74MDbqLozBEGVSyCWFqmMDSh5gHv3W09BTeguZN+1o9+rrdiSR
-	 Zh6gyAd/oHYeGlSRF0lqikMh3U6pdOYkQEBYRtAMqoH839f98aK2dLWoMe5aMfqHso
-	 Z+Bvvx9wvtnp1mMkPH0Aia3rV/fBHs+/DSK4v9PI3UjgZqpeklBVdB4XJ5+qtNqGqy
-	 ndeRpu6/DuQT1wi/5hyIhR9jfMJE/EHooJVKrYWiS3yfPnBKl+7e7ZhZ3KKT/ANfF8
-	 MEYtWYowErygwkVVQ2YW8oimYdDDe4v/dKaw0Qeg0WxlelZ2c024GSHvBcj98yFzOr
-	 FGlfviWlb28hA==
-Date: Thu, 6 Mar 2025 11:50:03 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
- locking insns
-Message-ID: <Z8l922t-QoYGyuXq@gmail.com>
-References: <20250228123825.2729925-1-ubizjak@gmail.com>
- <Z8lxmPmnJhBmPRvl@gmail.com>
- <CAFULd4btTdUrF6fTqafyViuaB+V8QD-s0pLE6XWb7BYzYAPmZA@mail.gmail.com>
- <Z8l7KeVvvHvmPmRc@gmail.com>
+	s=arc-20240116; t=1741258299; c=relaxed/simple;
+	bh=Xa1ea0o3Q74JkzomTfFbykLAOK7vKh87CHWZW1SHmzM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=AI2mA1EVlduUGoGyMAC6wDAJSYsU2Il7wsFErRk7UPzv14ypycJim5tmhgFEIDs47dstsYfvtTTarCiW04uyxVHgkVZe83ZvRn+f4JaAvYK8o4ZTuVeCAze38irNLcZ2ACiCI4MkK66LGcmT2M2qNnuZkhA8HSVvMGRbwJvzOD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0bjDH/ji; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RvFTdace; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 06 Mar 2025 10:51:35 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741258296;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8NBdpfjFRzYCeUlmolcL8ku0hDh3g/6wkN9Q589wB6I=;
+	b=0bjDH/jih6DutXgsHMRP+N2HFTz0kr7k7CUbaOljkWuR2Y5b2Zf66AUIc2ZiTsweT173r/
+	WAYU7LQsP0s5IskN7jufrWk/fE9RlwlZ1YzrU2n0ylY1cI1Kv8hmAZq8enshHmOcwqr1rU
+	XSRbGl3MsGy4rvki1pHFrJ6LPaOq26IfXwjcXrFvhmJeG6F2COTyxFkddnYD63kM0ILuZp
+	aojqe21AKJ8OGuz998ATlXfDdNtN59XKiNHV1hlna+TxWir5hBwHdjjOLMVAdvMRW1PwUM
+	s6EsoMvb8C6Y+Xs1n8GnUSwxBwx0KXUW2YbJmN1GAwC+zO0cqTRWekazSL/BFg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741258296;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8NBdpfjFRzYCeUlmolcL8ku0hDh3g/6wkN9Q589wB6I=;
+	b=RvFTdace0SvLfYPduen/oJbbZjBOUjstWk2HhiC38ZFjwz5YLd7u9TQmQW7qmhtydALNlE
+	5JU+QXXC+H5DZRBQ==
+From: "tip-bot2 for Kirill A. Shutemov" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: x86/asm] x86/runtime-const: Add the RUNTIME_CONST_PTR assembly macro
+Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Ingo Molnar <mingo@kernel.org>, Brian Gerst <brgerst@gmail.com>,
+ "H. Peter Anvin" <hpa@zytor.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250304153342.2016569-1-kirill.shutemov@linux.intel.com>
+References: <20250304153342.2016569-1-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8l7KeVvvHvmPmRc@gmail.com>
+Message-ID: <174125829544.14745.15198540190930233265.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the x86/asm branch of tip:
 
-* Ingo Molnar <mingo@kernel.org> wrote:
+Commit-ID:     c84f87de474c9aec84f706ceb732b70751122746
+Gitweb:        https://git.kernel.org/tip/c84f87de474c9aec84f706ceb732b70751122746
+Author:        Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+AuthorDate:    Tue, 04 Mar 2025 17:33:42 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 06 Mar 2025 11:27:31 +01:00
 
-> Also, to shorten build & test times you can use the x86-64 defconfig. 
-> It's a config more or less representative of what major distros 
-> enable, and it's even bootable on some systems and in VMs, but it 
-> builds in far less time.
+x86/runtime-const: Add the RUNTIME_CONST_PTR assembly macro
 
-And if your primary test method is KVM+Qemu, then the following build 
-method will give you a representative core kernel bzImage that will 
-boot most cloud VM images as-is:
+Add an assembly macro to refer runtime cost. It hides linker magic and
+makes assembly more readable.
 
-  $ make -j128 ARCH=x86 defconfig kvm_guest.config bzImage
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/20250304153342.2016569-1-kirill.shutemov@linux.intel.com
+---
+ arch/x86/include/asm/runtime-const.h | 13 +++++++++++++
+ arch/x86/lib/getuser.S               |  7 ++-----
+ 2 files changed, 15 insertions(+), 5 deletions(-)
 
-  $ ll arch/x86/boot/bzImage 
-    -rw-rw-r-- 1 mingo mingo 13788160 Mar  6 11:42 arch/x86/boot/bzImage
-
-And you can boot up a .raw distro image in an xterm:
-
-  $ RAW=your_cloud_image.raw
-  $ PARTUID=your_target_root_partition_UUID
-
-  $ qemu-system-x86_64 \
-   -enable-kvm \
-   -smp cpus=4 \
-   -m 2048 \
-   -machine q35 \
-   -cpu host \
-   -global ICH9-LPC.disable_s3=1 \
-   -net nic,model=virtio \
-   -net user,hostfwd=tcp::8022-:22,hostfwd=tcp::8090-:80  \
-   -drive "file=$RAW",if=none,format=raw,id=disk1 \
-   -device virtio-blk-pci,drive=disk1,bootindex=1 \
-   -serial mon:stdio \
-   -nographic \
-   -append "root=PARTUUID=$ID ro console=tty0 console=ttyS0,115200 earlyprintk=ttyS0,115200 consoleblank=0 ignore_loglevel" \
-   -kernel arch/x86/boot/bzImage
-
-This way you don't need any initrd build or modules nonsense - 
-everything necessary is built in.
-
-Bootable raw distro images can be found in numerous places, for example 
-at:
-
-  https://cloud.debian.org/images/cloud/bookworm-backports/
-
-( And since I'm lazy to figure it out the 'cloud way', I usually read the 
-  root UUID from the bootlog of the first unsuccessful attempt. )
-
-Thanks,
-
-	Ingo
+diff --git a/arch/x86/include/asm/runtime-const.h b/arch/x86/include/asm/runtime-const.h
+index 6652ebd..8d983cf 100644
+--- a/arch/x86/include/asm/runtime-const.h
++++ b/arch/x86/include/asm/runtime-const.h
+@@ -2,6 +2,18 @@
+ #ifndef _ASM_RUNTIME_CONST_H
+ #define _ASM_RUNTIME_CONST_H
+ 
++#ifdef __ASSEMBLY__
++
++.macro RUNTIME_CONST_PTR sym reg
++	movq	$0x0123456789abcdef, %\reg
++	1:
++	.pushsection runtime_ptr_\sym, "a"
++	.long	1b - 8 - .
++	.popsection
++.endm
++
++#else /* __ASSEMBLY__ */
++
+ #define runtime_const_ptr(sym) ({				\
+ 	typeof(sym) __ret;					\
+ 	asm_inline("mov %1,%0\n1:\n"				\
+@@ -58,4 +70,5 @@ static inline void runtime_const_fixup(void (*fn)(void *, unsigned long),
+ 	}
+ }
+ 
++#endif /* __ASSEMBLY__ */
+ #endif
+diff --git a/arch/x86/lib/getuser.S b/arch/x86/lib/getuser.S
+index 89ecd57..853a2e6 100644
+--- a/arch/x86/lib/getuser.S
++++ b/arch/x86/lib/getuser.S
+@@ -34,16 +34,13 @@
+ #include <asm/thread_info.h>
+ #include <asm/asm.h>
+ #include <asm/smap.h>
++#include <asm/runtime-const.h>
+ 
+ #define ASM_BARRIER_NOSPEC ALTERNATIVE "", "lfence", X86_FEATURE_LFENCE_RDTSC
+ 
+ .macro check_range size:req
+ .if IS_ENABLED(CONFIG_X86_64)
+-	movq $0x0123456789abcdef,%rdx
+-  1:
+-  .pushsection runtime_ptr_USER_PTR_MAX,"a"
+-	.long 1b - 8 - .
+-  .popsection
++	RUNTIME_CONST_PTR USER_PTR_MAX, rdx
+ 	cmp %rdx, %rax
+ 	cmova %rdx, %rax
+ .else
 
