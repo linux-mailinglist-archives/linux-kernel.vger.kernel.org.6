@@ -1,138 +1,147 @@
-Return-Path: <linux-kernel+bounces-548312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D23A5433D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:06:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4984BA54343
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:07:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D14B71894645
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:06:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 691E07A685A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 744951DDA14;
-	Thu,  6 Mar 2025 07:05:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378BF1C7005;
+	Thu,  6 Mar 2025 07:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LngcmC5h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RqnP0M5K"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42121DB375;
-	Thu,  6 Mar 2025 07:05:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97F71C6FF3;
+	Thu,  6 Mar 2025 07:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741244756; cv=none; b=sU/ILHgstT/F2YyoiAzXYk9I5wLuVAh5ujSCvabOXAa+LNY5nJT13akC2eVJocs4qJ//95aHkvGrruWOv7AamXFxMydn5qNCsuutbCnqQdX4pz2lRicXZ1trqcSKUddrs5A62rbN20PlihuZ/2kVbJvusTVTMa+PJpqgAymv8GY=
+	t=1741244815; cv=none; b=OEFPVzDbA+9DQYWUWBHwGMhTlDGTDERqOcRxFV2bLjvtPU+ujzgCY0wyLxj92lau7ysVUjfRMoyzLZ53dRkIpU+F9kmCWzy4r21Kh4dilrMNo86j2GpSfKNf0044yDltdRGc5S8adzUjUrM7plliuFkdvRCSBz5f3XDShvYqW8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741244756; c=relaxed/simple;
-	bh=0pW/AzRF/RuX+cwE3R6LyUhFONr4bslHUHFeHtCPcU8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jFAQ3H5yTGeQohiYdOF8bIvHS8iFgO+WO3Jt6+G+fiZwfNMYvjrsQmC6qYb22ittcN7bAaT1T1qIR/rghT1hHRrURTOdJ8JdLEfj2vR/wh1SXKpZETN9V6gRjI9mlpfi8nh9fWAU7HoHxeEKZHLV+XqrVIZ9Puybgmblxkmngmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LngcmC5h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46D99C4CEED;
-	Thu,  6 Mar 2025 07:05:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741244756;
-	bh=0pW/AzRF/RuX+cwE3R6LyUhFONr4bslHUHFeHtCPcU8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=LngcmC5hlaMxZxKui39ZWm3OV7a8sOWHNSWyRPVrCBcU5tgJpETNKoILjc2V0v7Ft
-	 B5ARU6Mq3XMQhSytdSe/GTY7/AAgHbFJ9ThhpJwws0kVBImfTYqL54bS6ZnEx2lAPs
-	 NmYMDhSZmJFHtwbXfZo6DxyEvK/qeaJuJb2YQcjR2kTnIKSghdhUU3r0atc8q4c0Ju
-	 D6QVS5goosTY45uzv0oW6QxlCxRCvWKSDbe2uJ5aWBTxHDeYbzeFbcAJz19OC6hvlo
-	 bxz461xpxbEzGUNO+1/VgJe6qo7QTawxnlj/If1wFr9RTY3CW2eZ4cSlv+qkGhxyVy
-	 Ouoyas0f4ld1w==
-From: William Breathitt Gray <wbg@kernel.org>
-Date: Thu, 06 Mar 2025 16:05:44 +0900
-Subject: [PATCH 2/2] counter: microchip-tcb-capture: Add support for RC
- Compare
+	s=arc-20240116; t=1741244815; c=relaxed/simple;
+	bh=G5oqjKQ03OlbMtkRr3PoC89Z6LTisg9v9G3hFW2R3Ig=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kV1LBBIPyZpaexzHtDBoaHSIce+ksv4I5huQsQ+iUiecFou11XomPSqiSSkXQq6K8BagnoYVwMeWKuhWXJ0sNAOYETzeFLeT43XUb11keN111lC8sHoxalf0Aj17qJcp5XvFYJSM31Zk2pDVLCqvvyYXlyVClPelEHT0cOXifeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RqnP0M5K; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-abfe7b5fbe8so50042066b.0;
+        Wed, 05 Mar 2025 23:06:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741244812; x=1741849612; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LJ/JM3QEbP54B+br4sg8MdVS9Z+LacVEvzYVxrXGBAE=;
+        b=RqnP0M5KjAlhwKSz7Q/mPg4b5KliM3/RcMn2vLHKKou6WTrs91/ktDBTWaBt82aHK2
+         efoTCSfBTKOpgphLNunJBeHbNRADKipPncNjSrBhQifF4Ln3LtUQD8ISHf+ATwXZkZE+
+         dWpk8QGqQvbBVzedA8Wtc49xue0yc5kBPumSiypIz5IFJiTQjZA+Q7p1JPwC/z58oBNz
+         SRvVR6o6gIdABUrf+Q+1QfHfRYfRdejakzYFgR8+GDeJe05khm0rdkmxR/bK4ghDIh1X
+         4Y6p5r7Cj2cxQ6h/vyBnbH7PKlGsPxnGynPXHFp/0Tf/AB0A6dn39obKUxrWVOLhlWPB
+         YUeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741244812; x=1741849612;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LJ/JM3QEbP54B+br4sg8MdVS9Z+LacVEvzYVxrXGBAE=;
+        b=w52tp+jFkMrGDjCW1uv19TtP+/w3YtyiqlnEWyt+SSgUoBNuB/2qOxsCOe6Fs7FPEX
+         bLlKNPfPvd3vgJCc3fGmpVyyuLi1/lBGli+uVcWq5CT3Ur8LLoGHkxTNks4fLHH87Wg2
+         m5oSrnzFzN64WpuEJuPJxH8/nP3IojBEyPvN1vKzmcFmyCyvV5xTKetD9S/maFjAKksB
+         0E7sMC0VE/tjZpqJDnLJ2n5IoyLeyDKtXyz8AApO+cbDGgU320/k24AiBwV+p3HDatYG
+         oc6q6Tiz+M+HevYeTPMdAxRTZzuWsLtscAlI6MdxgwvbtssGopUxO6kiBPd5A03a6OUZ
+         DbNw==
+X-Forwarded-Encrypted: i=1; AJvYcCVf6Sceli/XpObIPGjRLuTCswnN6ebL+kyhXoJDc9m8rOcr2ZpkIz3mDllTcXdh2VDc2D20s/SVcUSik08=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOunEddmBSSE+PKDb7YhP1pxbipz0ciVAOmpX50qXJDeMVVkk5
+	BG9UagN/8NbjpzIdgZWZIp9ubRnctnKsfjwXNa7CnYteHuTKuD3RSmmEqIu8AVlYCUubeDPLIbV
+	S5LkWxtcIehGyLBjtnzZH21euums=
+X-Gm-Gg: ASbGncuCGhRLjU6Fb0Z/iQch4afNQYFip/YewOAiUFqSJYBj5XZFPyZqTX9nn5NLAKH
+	08dnyDYjvQrhVS1GObd8dfLLtOEeAB1PLgoHUc0/jQOVKvFqeTPLWXQPJx7hs58roO/3RrOoHXc
+	mH5xhXIsJHxDJLhrG6Pmb8fCErvw==
+X-Google-Smtp-Source: AGHT+IFiKId/s4iGWCCCoPdg4WdFjgQN3IbuGS6b5Pr8Cl60laDu+A9dkfJIVJ+2rA6I1vskKVsjMaP7NHa1sHTg6Ek=
+X-Received: by 2002:a05:6402:1e91:b0:5dc:a44e:7644 with SMTP id
+ 4fb4d7f45d1cf-5e59f39d009mr12034112a12.2.1741244811750; Wed, 05 Mar 2025
+ 23:06:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-introduce-compare-component-v1-2-93993b3dca9c@kernel.org>
-References: <20250306-introduce-compare-component-v1-0-93993b3dca9c@kernel.org>
-In-Reply-To: <20250306-introduce-compare-component-v1-0-93993b3dca9c@kernel.org>
-To: csokas.bence@prolan.hu, Kamel Bouhara <kamel.bouhara@bootlin.com>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- William Breathitt Gray <wbg@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2155; i=wbg@kernel.org;
- h=from:subject:message-id; bh=0pW/AzRF/RuX+cwE3R6LyUhFONr4bslHUHFeHtCPcU8=;
- b=owGbwMvMwCW21SPs1D4hZW3G02pJDOknPQN+hHXN4+LN2LD/lehFfe9NrXdmsbyaqhYsbN4xL
- 90pVNC6o5SFQYyLQVZMkaXX/OzdB5dUNX68mL8NZg4rE8gQBi5OAZiIvhDDH449rk1dhyMEJCZL
- Wz9msHgacf+Mt/CddxPzrnw//7RUNJnhf6Fr2Ra7ySGTe6PP/C6+9vOr06yGC2cSWqSZdBeVqnJ
- 4MgMA
-X-Developer-Key: i=wbg@kernel.org; a=openpgp;
- fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
+References: <20250305042930.3453265-1-adamsimonelli@gmail.com>
+ <20250305042930.3453265-3-adamsimonelli@gmail.com> <CAHp75Veuo9L8Y7=9XKCeFHzhtNK9x4pQ19kcMoAkL-0mFPq1Hg@mail.gmail.com>
+ <4264609.3VsfAaAtOV@nerdopolis2>
+In-Reply-To: <4264609.3VsfAaAtOV@nerdopolis2>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Thu, 6 Mar 2025 09:06:14 +0200
+X-Gm-Features: AQ5f1JpXrRLQEJsm9sPXIH8dftDR1R-exc3XvVSq-JgBDKmyRHYgm7fwS2xh4CI
+Message-ID: <CAHp75Ve9RDSLwsEt4a7ugtYNQokiRjyO6BR_rJXvf7r41C2hmw@mail.gmail.com>
+Subject: Re: [PATCH v7 2/3] ttynull: Add an option to allow ttynull to be used
+ as a console device
+To: Adam Simonelli <adamsimonelli@gmail.com>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jiri Slaby <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In Capture mode, the RC register serves as a compare register for the
-Timer Counter Channel. When a the Counter Value reaches the RC value, a
-RC Compare event occurs (COUNTER_EVENT_THRESHOLD). This patch exposes
-the RC register to userspace as the 'compare' Count extension, thus
-allowing users to configure the threshold condition for these events.
+On Thu, Mar 6, 2025 at 3:30=E2=80=AFAM Adam Simonelli <adamsimonelli@gmail.=
+com> wrote:
+> On Wednesday, March 5, 2025 2:18:39 PM EST Andy Shevchenko wrote:
+> > On Wed, Mar 5, 2025 at 6:30=E2=80=AFAM <adamsimonelli@gmail.com> wrote:
 
-Signed-off-by: William Breathitt Gray <wbg@kernel.org>
----
- drivers/counter/microchip-tcb-capture.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
+...
 
-diff --git a/drivers/counter/microchip-tcb-capture.c b/drivers/counter/microchip-tcb-capture.c
-index 2f096a5b973d18edf5de5a2b33f2f72571deefb7..e32f8d324cb373909e0a093b14d742fa0a93e07e 100644
---- a/drivers/counter/microchip-tcb-capture.c
-+++ b/drivers/counter/microchip-tcb-capture.c
-@@ -247,6 +247,37 @@ static int mchp_tc_count_read(struct counter_device *counter,
- 	return 0;
- }
- 
-+static int mchp_tc_count_compare_read(struct counter_device *counter, struct counter_count *count,
-+				      u64 *val)
-+{
-+	struct mchp_tc_data *const priv = counter_priv(counter);
-+	u32 cnt;
-+	int ret;
-+
-+	ret = regmap_read(priv->regmap, ATMEL_TC_REG(priv->channel[0], RC), &cnt);
-+	if (ret < 0)
-+		return ret;
-+
-+	*val = cnt;
-+
-+	return 0;
-+}
-+
-+static int mchp_tc_count_compare_write(struct counter_device *counter, struct counter_count *count,
-+				       u64 val)
-+{
-+	struct mchp_tc_data *const priv = counter_priv(counter);
-+
-+	if (val > U32_MAX)
-+		return -ERANGE;
-+
-+	return regmap_write(priv->regmap, ATMEL_TC_REG(priv->channel[0], RC), val);
-+}
-+
-+static struct counter_comp mchp_tc_count_ext[] = {
-+	COUNTER_COMP_COMPARE(mchp_tc_count_compare_read, mchp_tc_count_compare_write),
-+};
-+
- static struct counter_count mchp_tc_counts[] = {
- 	{
- 		.id = 0,
-@@ -255,6 +286,8 @@ static struct counter_count mchp_tc_counts[] = {
- 		.num_functions = ARRAY_SIZE(mchp_tc_count_functions),
- 		.synapses = mchp_tc_count_synapses,
- 		.num_synapses = ARRAY_SIZE(mchp_tc_count_synapses),
-+		.ext = mchp_tc_count_ext,
-+		.num_ext = ARRAY_SIZE(mchp_tc_count_ext),
- 	},
- };
- 
+> > >           In order to use this driver, you should redirect the consol=
+e to this
+> > > -         TTY, or boot the kernel with console=3Dttynull.
+> > > +         TTY, boot the kernel with console=3Dttynull, or enable
+> > > +         CONFIG_NULL_TTY_DEFAULT_CONSOLE.
+> >
+> > I haven't checked what it looks like in menuconfig / nconfig / etc,
+> > but I think that CONFIG_ is redundant here.
+> >
+> OK, I didn't know what one is more typical. Doing a loose grep for
+> "^<tab><space><space>" and "[A-Z]_[A-Z]" (excluding CONFIG_) seems like t=
+here
+> are more help text lines that mention other config options (~622) than in=
+clude
+> the CONFIG (174). I will change it
 
--- 
-2.48.1
+Thanks, it's better to follow the common practices.
 
+> > > +         If unsure, say N.
+> > > +
+> > > +config NULL_TTY_DEFAULT_CONSOLE
+> > > +       bool "Support for console on ttynull"
+> > > +       depends on NULL_TTY=3Dy && !VT_CONSOLE
+> > > +       help
+> > > +         Say Y here if you want the NULL TTY to be used as a /dev/co=
+nsole
+> > > +         device.
+> > > +
+> > > +         This is similar to CONFIG_VT_CONSOLE, but without the depen=
+dency on
+> > > +         CONFIG_VT. It uses the ttynull driver as the system console=
+.
+> >
+> > Btw, do those `make nconfig` and friends render the options?
+> Seems like `make nconfig` works, as well as `make xconfig` I will attempt=
+ to
+> attach a png screenshot.
+
+Thanks. Have you checked the search? I believe it should work with and
+without CONFIG_ in the same way.
+
+> > >           If unsure, say N.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
