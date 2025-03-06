@@ -1,105 +1,260 @@
-Return-Path: <linux-kernel+bounces-548307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81AF1A5432F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:02:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45E59A5432D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:01:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C677018943CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:02:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 529953AF9DB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985F01A5BAC;
-	Thu,  6 Mar 2025 07:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41BE1A5BA1;
+	Thu,  6 Mar 2025 07:01:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="RdmqlPGo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Eu/y4Xe0"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2084.outbound.protection.outlook.com [40.107.241.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA5819DF4D;
-	Thu,  6 Mar 2025 07:02:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741244546; cv=none; b=jA+A6hIGLhjGgJkOfMAGn89NY+Nr7KjpdcCsEThK+vPKM9XIoofrWXf6cb6L6vfMeefphynt+9dSALs9vQy1prfLQwYGgiuO8DuaxToPLC3bjVhzCnwKTauSE8x9dPiU31rRycttBHAKysDASE0z7WKhhp9QPDuT3FpZaFVenuE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741244546; c=relaxed/simple;
-	bh=Zg6JBzN0mj2pZVjDAg7PAPRHG1G0yRHfC36Vs3T6Or0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TI5diJP6uV5b1Xhd1/Uq4/Ot8kck05SQh4CeY2EpYBiqbRhp7/kareFSdl8fthjuuIooGuUxTcFx4v5a2dXNAlYSjaltz+Z90NyXSrM9tMLUMvGO2DQGNH4yxnCn1KkXY8/lAsWiqZEf6gIPUA+IShn876+qMNib5FLVM0ZWOzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=RdmqlPGo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C415EC4CEE4;
-	Thu,  6 Mar 2025 07:02:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741244545;
-	bh=Zg6JBzN0mj2pZVjDAg7PAPRHG1G0yRHfC36Vs3T6Or0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RdmqlPGoNu+0Mc88XT7qAyuQrCqZ1aC/UhucS5XyFW/vzGavy0WV7NE8kc3DRN3KH
-	 JIKY18q65cPMMrb26LGsTa1NHEtdpi5mekzCUTge00GC5NhoUoGlAi8AfAONQ5xHmL
-	 6h2gmJzfP4WdP+uX2SS/zbIZtweF92HSTMJ/FsS4=
-Date: Thu, 6 Mar 2025 08:01:10 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Siddharth Chintamaneni <sidchintamaneni@gmail.com>
-Cc: stable@vger.kernel.org, joro@8bytes.org, suravee.suthikulpanit@amd.com,
-	will@kernel.org, robin.murphy@arm.com, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, wei.huang2@amd.com,
-	apais@microsoft.com
-Subject: Re: [PATCH 6.6.y] iommu/amd: Fixes refcount bug in iommu_v2 driver
-Message-ID: <2025030602-trowel-cartridge-fbf0@gregkh>
-References: <20250306051822.4267-1-sidchintamaneni@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC5919DF4D;
+	Thu,  6 Mar 2025 07:01:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741244494; cv=fail; b=BDi8gBgB0xGxjSowCqlbuqjAT2llatJDbAfw5yj64eLv0SPUAhRt4ESoRWxL3NrnQCqpDZq2lL2QL7q6VnBsMTE86Anlr1nT1t4gQOIkJx/5rbjZMcuqLFy2jW+RFnL+L+xONY6WM0AauGe+Be2Y3EPhyGDUqx04kYg/R83BL0s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741244494; c=relaxed/simple;
+	bh=bpZR2g0vHLi4hHg6f0BlDIfJg7kRCH3FyjhCOVfIfkk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=n5sMqd2OjKeiAildeo/8oTOG9XeIMuU9Fx0v0sznFtuwEDypSLlxUten6r0b4mPym8QNKvJ/Ld4xKHU4/JMwYTcVR31WMXU811QT2nM9bXl2vMC9VF24rxpcitRoXf+jV318mrOA2ucKEiDbx2wi9XoFVco8yumgkbsoqMSIl1A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Eu/y4Xe0; arc=fail smtp.client-ip=40.107.241.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P+5cc7e/99Y18VZX40S/aM9IVxBuckYQO2A0LC3+Zc0xBVMRdjOiou/xaJ3xS7h5Y7leucVRl7pI3yqNyhQfRn3kfHV7+bkmpxwiclEYBWzUArQYxIy6ZiTOkOlS0P3Y0urcazPv2RGN6tpPNdJGCSMcngNJdPAFdfeiuo7FQtRmnd29zVxZyTyR2XslbotnDzSPUxK6dmlMvTsiib1frFuRZ+KLqr5NMhWLNkbHKsBL3fQX58iZWl8ytPuiG1/42ffHDPyEqXNFoq1DAqsuqJGQ9/LJ+w42yjez41CrGVa4o6Wo0Q3z8jqO17S6UOrb3fC+VdYuclrSE7BYORN1/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=W9/UpD9T1Rcyv7GXufVhrwh/y2oPj75HiCc8tPDnj1I=;
+ b=tjrTekVIarRvG071RuUwX+nIctyqgcu53zqDxcHVZmc+fTPPCrhLVHh4ywCr6MVow80HE/nnF/Qpi369RLaGAHBOoe5GEM9uey3dtqfvNKkgZ0g/+68YLjz+8imrcceg3d82yzHYnnLClnnLMXGY1jZlsmCOt6zoVnlFfyfEvNb3nLxMwfOBUQGotETmikl4eRvdVRXO/SxIo4AVO7zIKcvazX3h793gPjlUX5QG1fe91w1YMKsLjkgyH9YfbxFkxbvKn3Y65+L+/e6xnKgzxzA3WBBeuKYiGfwQ4S77jQUEx+DmWLkyZxZeWc2FnugmViC/ZCqCoSc7xFEujF97KA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=W9/UpD9T1Rcyv7GXufVhrwh/y2oPj75HiCc8tPDnj1I=;
+ b=Eu/y4Xe0OFqMlf3UzP3RQC6Q9X4icKOT8ILUA2yWESt2Ab0tzcQv8PTlZMOdS0NGStymhC3Eo1Ma82MyFib0vORvob5e1YKTqV/c8NAcJwqfvZengoGUBe6ChUgFAvZVMHeh8Vbr4v0VVnB6WSP6Sz+cF+O4tKWwcF9xRLGy5+maRVpAEaN4C2isahRcODic3o14QtbAOe4ACycsalSYK3LJ2sXDapAu6xbxAatgvZiRRulI5yBACEsiNrnkHuO/kIrzF7U7M9g4IV9s6uzLr3R8mBkkT5tGNFGsKoch8IgJSYjGDLAiRk7VQzG4F/omc3Roo6kEDjEPwxeWVSWu5w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by DU4PR04MB10863.eurprd04.prod.outlook.com (2603:10a6:10:588::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Thu, 6 Mar
+ 2025 07:01:29 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
+ 07:01:29 +0000
+Message-ID: <7d98163d-10c8-457d-92e7-6a1d6e379beb@nxp.com>
+Date: Thu, 6 Mar 2025 15:02:41 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] dt-bindings: display: simple-bridge: Document DPI
+ color encoder
+To: Rob Herring <robh@kernel.org>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
+References: <20250304101530.969920-1-victor.liu@nxp.com>
+ <20250304101530.969920-4-victor.liu@nxp.com>
+ <20250304152320.GA2630063-robh@kernel.org> <1891036.atdPhlSkOF@steina-w>
+ <20250305163805.GA2071011-robh@kernel.org>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <20250305163805.GA2071011-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI1PR02CA0041.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::18) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306051822.4267-1-sidchintamaneni@gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DU4PR04MB10863:EE_
+X-MS-Office365-Filtering-Correlation-Id: 88d7f74a-2c49-4bec-30cc-08dd5c7cb7d0
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?Y1BWWHdmejFzVDRBb2h5cU02azZ1SjRJeDJ2RGE5eWRBek1vTThXYzh4Wll6?=
+ =?utf-8?B?R2Ftd0w2dDNLNW1GVHhZRnRZOWdweGx4c2ljTU9lWlR3cXhlQTJpbGpnd0Mw?=
+ =?utf-8?B?Y1U3Y2F1SEt4NGJJUGtCb3FHbWExM2dRa1prenJzZS95TjByUUdMemFGTDc5?=
+ =?utf-8?B?KzBZQVJJV0kzNzBPUFBWdVAwZWxBM2p1alE3ZlI5MUVUZ1l0RDRqejVteDNm?=
+ =?utf-8?B?ZjBaYWxvOW4xY1FmazNkMkQzOVZ5VVNaLzE4M2RDQUZFYkVNbStJdHUzdzVH?=
+ =?utf-8?B?WUo1ME9KUzFqUEl3eUpoZkwvTlArQks4QU9lT21tN2RwUVBMZHNMZ3pINnk2?=
+ =?utf-8?B?d3hmUUN2eUZ2VVVDTkkvUzUrelBxa3puMkFNa2JpSG5RaXlQYTBML2lVSG5P?=
+ =?utf-8?B?R3h2VmFBb3E0ZktZWXBrak1yZVA5SGczMmxBSU5QakJGNlZGOHd3ZnRERG91?=
+ =?utf-8?B?N3lsKzg2OGRyK05vUFhQZWt3a3RMOE5nNnp4dk56UTJWcmRueFkwcHpWY3B1?=
+ =?utf-8?B?YUVaUTVnWUZPY1F2M2NqTUtYcjdhOXA5TDlwTk01Q0x0WWw0a2pEVXVtRk9G?=
+ =?utf-8?B?VEFYWmNJS0d4TjVRREc2SG5FVTBkNmRmR1pKTjRJdWppd2NmNGx4UDlsZGtu?=
+ =?utf-8?B?UjJRdFN2TnFEMUJWYjlQR2NDdVpFYkQ4OFpXM0tVeFR3SHF1OTZhNlBkQmhh?=
+ =?utf-8?B?QW8xYy9VaGs2VnhWRmdDR3JTbXFmMm8yaUNuZkx6ZEhBem1BM3ZCVUQ0YVhr?=
+ =?utf-8?B?czZQc3hZUkIzVlE1d3hQd1NJbTFWUFRUanhIR0x3aDBGeTVsWG9pZE5wOE9y?=
+ =?utf-8?B?TFEyck52RWFYanJqWGRRRGkzYytXaHltKzl1L3Y1eWx6YW5ickZWWkVadmd2?=
+ =?utf-8?B?ZGw4dzljSmRNdXIwRENLVjdFdW45OVlZN2hVZFg0Z1dpbjI2TUF5WUNyU3RN?=
+ =?utf-8?B?Tmh2WGk1UmNOSmNpNzU1MHFzaDgyWWIyY3oyaFM3QnNMTFRtV0Y0L05SK0Jw?=
+ =?utf-8?B?R2JORVJSSGxCU0lGR2NFU1gvK1l2OVVDZGh6cWFvY2QzQmpMMlkwRGJsc1hj?=
+ =?utf-8?B?bkpLN0pSWDQvendiS1JCd3JoZ29Sajg0Tkhmb0NQWlcrSVpLT1NNc3d0OVRO?=
+ =?utf-8?B?VDZJQVc3a0NKdlV3eTJzV3ExajRvNHliVTlLYW5KOTg3QzlwaXd3clJnK3Fv?=
+ =?utf-8?B?RFhSRjZEMlZhazgvWExZOTJQUjVCYlJURktoWFMwbTVkRXdXVWxEdmxlQnRa?=
+ =?utf-8?B?b2RFaXdmVDRkVHFpOVRKTU5LOXBucHFYY25CZ2hLUE42VXhvVFFUcUVQVVA0?=
+ =?utf-8?B?RW0zTDJkM1h4cUFRSjFkSFNqV3pUWDdIR2Fncll6TEU2MS9tZlJVZXpWZGR2?=
+ =?utf-8?B?WlBGbVJPWm4vV09xYUhUVGtSMmZTU3Z5TVhBc1poSVhFM2RtRklxYnlRSTNJ?=
+ =?utf-8?B?Z0VkSUVqWlRaU3p6dFpkTlNab1dsdUswenZKbmVYOHd3NTBhRndld25yY2xw?=
+ =?utf-8?B?a3BOWmcvdXoxNDVsMmJrWVBtTjBRZ0w4QjA4TzViUkhoVTNGSHg4cU1ETnN6?=
+ =?utf-8?B?V1V4bUdqanVzR1Z6L1FuY2tmeTVLRkxtd1ZDaHU4MzhrdHFGWlVUYjBrYk9j?=
+ =?utf-8?B?b0pkNmhMMko3VytJTEF3VGdLc3cxbTQxU2NaakV1NFUyRjF4NlRKeGI1cXdS?=
+ =?utf-8?B?d3d5WUxTQnBITUczdGJTK1h3aGYyU3hxNFpvanE1VDFISHBEeHllZ2F5enBr?=
+ =?utf-8?B?V3pmV2ppcmVhNHdzRXFKNUNHNE4zZ2o1TUdwZ2VuVGMwaWF3b2Rwck5Pc2lW?=
+ =?utf-8?B?SGhBdXN5QUNvdTBJNWZnZGZlMmtGZys2cmp5aERWaUJaeEpzbDMrdE9aV1gv?=
+ =?utf-8?Q?LMPn6IHuh2w/d?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?T0hXSkxSdzBrVmJpSXd5d0VnMTg5c1BVaHZZL3dyelBRcy9HcStKNFBqbW1T?=
+ =?utf-8?B?d2NvN09zTDdndldwb3FJMjFzUnFETGFiQVNVTjBuNnNFY0VraUpDaFRLUitk?=
+ =?utf-8?B?ako3TllUWVhOMEpJYk02SVRicjdGTmxFWUJleUd0NTJGNUcvUWZMMGpVTGU2?=
+ =?utf-8?B?dy85N0IyWkU3TTMweWIrMXN2NmFnSzB1YTJaTFdPVkdrZzltdHVBZE0yMzl5?=
+ =?utf-8?B?c3F3bWFyWDlxUWR4ZWxLeDl0YVBXWWowbmcwWEUwN3dTY0g1Rm9laWRvKzUz?=
+ =?utf-8?B?eXk2UTE3QnIwTTQ1Sko5bTdNcnNISlN2ZU1sRHB6enZBMUZIWmkyVm1nYmU4?=
+ =?utf-8?B?azk5YVlqaCtZL2ZsWEwvMWtVMS9vYU96T0JMRXdpVnV3andCVmhLRGJLSFFI?=
+ =?utf-8?B?TS9CYlRucGlTbG0xOXlhUDBqV0dCa25yMzY5VlprYzQ2b2djWEI1bVUwcWMw?=
+ =?utf-8?B?TzVDblV2WWpqWWNqOHlsbHB4aGttWUw0c3owV3dyNTJtMXEvWWVnQUorcUpt?=
+ =?utf-8?B?a2RFRDlzM3l4RUlUUmhWVmF4eU95Wlk4bXhpSG1uencyaVIrbytEOHlNUUhL?=
+ =?utf-8?B?dEYvVkc4RUlBSFZWUnhUQVZneXNnUFE2V2xuM2JwTVNoeU9COVN4SW96MlVv?=
+ =?utf-8?B?cUFIYUw5QXZGUDV6dzZ4SXo3cXlvcFdNaFNReEg1Sk01OWhaWTU5Y01SaE4x?=
+ =?utf-8?B?SC8waXhNTFhmZ21CUjI5cWRibHYzdWFrOXJRb3Ziem9HYUFVVG4zUVMrQ1Ir?=
+ =?utf-8?B?NGFWVzRsUG1KWWoyWEI0ZjNiZHl2MnZCcDdlN3NObkxmQ3BhbFlnbW5jUm12?=
+ =?utf-8?B?dnRtZTFqbVBoVlhYSnRYZVNrQXFNb1cvbG9HRkpMQTByQkRLS0xQZklkWmJu?=
+ =?utf-8?B?RTBCNllobUhKWWc3L0YrcytKc0lKRlhwV2dRM1lOZjZFMU9xaG5QVk01c255?=
+ =?utf-8?B?YXNnbm9EWEhydUFKTXo3S29penFFSmRmMnNtVytadGlhN3htNDhkU05aelIz?=
+ =?utf-8?B?ZUd3d0VsOHdkTFZNWFViclVUbythbDJyVnlvZWJFQnZxTHZXS2JWK3B1RUJx?=
+ =?utf-8?B?YjJUbzlhUVM1WEd6N01Oa2tLa3ZvQW1wbHY1YjNHSTJTSDByUnBMSFBUMnVl?=
+ =?utf-8?B?YXdQUTF2QmdscHpVMUFHREk1K3Y1K090MllQRzZyZzZnVkVsRWpnZmNjT0du?=
+ =?utf-8?B?SWgrR2lKa2RWYXI4ZUpVaWJWa1NxeEh0ZDR2ZklsVThjWk91WFJSSHBrY3dB?=
+ =?utf-8?B?UnpJRktWaGVrSHdrQmlqbHc3UmplYW56NXQyMWhDclRtMG14cjJ4VUU0ODRS?=
+ =?utf-8?B?TmUrWkp0THVRemVtb2p0d1d6WTJYOEU0WThuNy8yaDdZVjMwUk11c0NjRndU?=
+ =?utf-8?B?blFMTHd0aUw3SnNBTzBLUkw5UmxjVGR2cGp2ZGdPZ3BUa0hrTG9Qc0IwSVd2?=
+ =?utf-8?B?dlg5Ly9ZTVU0dG5WaHF2dmpjY2lJWllOTStPRnV5RHZrT1VrZXQvZ1pyajJj?=
+ =?utf-8?B?Nm41NnRKN3VLYmRIN2UveUtxUEdJTFhEZHZXalFtQ0NsUFJzNWg2WHQzTHBv?=
+ =?utf-8?B?KzdnSm0vaWhHYnJrK28vUGh3eUpOTlBXbVJQdzZKV1lIbno5WFNCV3haVWxy?=
+ =?utf-8?B?aDFaNjNjbnM2KzFBanpxNnlWTklBWWRwdE1od1NzQUNQYlVDVU5rRGE1cW5X?=
+ =?utf-8?B?M0VJWkFKdEhEdk1YczAyVHpsN3IvckRLRE4yOUdLdE9LaXFXd2l1SHNySlpz?=
+ =?utf-8?B?Z0NnS0J6MUsxWnJJRUtoTkZJckwwMWxrUlRScndiL1Ezd1cycm1zR1FIbjVu?=
+ =?utf-8?B?WHBjODhzQlk1b2d5TXpCeTBXK1lGb3RmM0pHRUQveDE4d1AvdDVTNTdUZHN3?=
+ =?utf-8?B?YjVGcWxrQUdDZHlCYWlybnZlRE9ySEtSMWpIWDNPVk5weWcxem5JalJOSE5x?=
+ =?utf-8?B?UHlaZTllckc4d2FZekxkWWFKVkJVbEhtakFCaGc2S3IwU3hWY3lhTVlwL0Jz?=
+ =?utf-8?B?RFJtZjhFdks2S0M2YmhNTmtFSVNkRG1sQm5tYzdtdXFlVWQyNVZ1d2pyZk4r?=
+ =?utf-8?B?MnBJZnBER1BYUHl0d3Awc2I3T1kyYTNKK09pbXByOVZ1eFBET21GdUdDRGV4?=
+ =?utf-8?Q?6yzQ8wNRlLkyNmeIwdKoKGfX7?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88d7f74a-2c49-4bec-30cc-08dd5c7cb7d0
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 07:01:29.0138
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Bnt+c1J956efYm9LfNBA06Xs+Hqcqz1maARnnvaHaf8skO0WCSW6xSvCUEl0UFpBKwYtGODwA+Ozhn1xyMU/wQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10863
 
-On Thu, Mar 06, 2025 at 05:18:22AM +0000, Siddharth Chintamaneni wrote:
-> This fix addresses a refcount bug where the reference count was not
-> properly decremented due to the mmput function not being called when
-> mmu_notifier_register fails.
+On 03/06/2025, Rob Herring wrote:
+> On Wed, Mar 05, 2025 at 10:35:26AM +0100, Alexander Stein wrote:
+>> Hi,
+>>
+>> Am Dienstag, 4. März 2025, 16:23:20 CET schrieb Rob Herring:
+>>> On Tue, Mar 04, 2025 at 06:15:28PM +0800, Liu Ying wrote:
+>>>> A DPI color encoder, as a simple display bridge, converts input DPI color
+>>>> coding to output DPI color coding, like Adafruit Kippah DPI hat[1] which
+>>>> converts input 18-bit pixel data to 24-bit pixel data(with 2 low padding
+>>>> bits in every color component though). Document the DPI color encoder.
+>>>
+>>> Why do we need a node for this? Isn't this just wired how it is wired 
+>>> and there's nothing for s/w to see or do? I suppose if you are trying to 
+>>> resolve the mode with 24-bit on one end and 18-bit on the other end, you 
+>>> need to allow that and not require an exact match. You still might need 
+>>> to figure out which pins the 18-bit data comes out on, but you have that 
+>>> problem with an 18-bit panel too. IOW, how is this any different if you 
+>>> have an 18-bit panel versus 24-bit panel?
+>>
+>> Especially panel-simple.c has a fixed configuration for each display, such as:
+>>> .bus_format = MEDIA_BUS_FMT_RGB666_1X18
+>>
+>> How would you allow or even know it should be addressed as
+>> MEDIA_BUS_FMT_RGB888_1X24 instead? I see different ways:
+>> 1. Create a new display setting/compatible
+>> 2. Add an overwrite property to the displays
+>> 3. Use a (transparent) bridge (this series)
+>>
+>> Number 1 is IMHO out of question. 
 > 
-> Signed-off-by: Siddharth Chintamaneni <sidchintamaneni@gmail.com>
-> ---
->  drivers/iommu/amd/iommu_v2.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> Agreed.
 > 
-> diff --git a/drivers/iommu/amd/iommu_v2.c b/drivers/iommu/amd/iommu_v2.c
-> index 57c2fb1146e2..bce21e266d64 100644
-> --- a/drivers/iommu/amd/iommu_v2.c
-> +++ b/drivers/iommu/amd/iommu_v2.c
-> @@ -645,7 +645,7 @@ int amd_iommu_bind_pasid(struct pci_dev *pdev, u32 pasid,
->  
->  	ret = mmu_notifier_register(&pasid_state->mn, mm);
->  	if (ret)
-> -		goto out_free;
-> +		goto out_mmput;
->  
->  	ret = set_pasid_state(dev_state, pasid_state, pasid);
->  	if (ret)
-> @@ -673,6 +673,8 @@ int amd_iommu_bind_pasid(struct pci_dev *pdev, u32 pasid,
->  
->  out_unregister:
->  	mmu_notifier_unregister(&pasid_state->mn, mm);
-> +
-> +out_mmput:
->  	mmput(mm);
->  
->  out_free:
-> -- 
-> 2.43.0
+>> I personally don't like number 2 as this
+>> feels like adding quirks to displays, which they don't have.
 > 
-> 
+> This is what I would do except apply it to the controller side. We know 
+> the panel side already. This is a board variation, so a property makes 
+> sense. I don't think you need any more than knowing what's on each end. 
 
-<formletter>
+With option 2, no matter putting a property in source side or sink side,
+impacted display drivers and DT bindings need to be changed, once a board
+manipulates the DPI color coding.  This adds burdens and introduces new
+versions of those DT bindings.  Is this what we want?
 
-This is not the correct way to submit patches for inclusion in the
-stable kernel tree.  Please read:
-    https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.html
-for how to do this properly.
+> 
+>> Number 3 actually describe the hardware connection. The only impact for
+>> software is to know which bus format it should use.
+> 
+> I'm not opposed to this, but only if it provides *something* that option 
+> 2 does not. I'm not seeing what that is.
 
-</formletter>
+Option 3 provides an intermediate bridge for both DT and OSes.  It makes
+the DPI color coding manipulation transparent to source side and sink side.
+
+> 
+> Node or not, either case needs a format property. We already have a 
+> variety of bus/pixel format related properties. I've rejected new ones 
+> because we need something common here that's flexible enough to handle 
+> any situation. That's either something that can describe any bit layout 
+> or something enumerating the formats (as MEDIA_BUS_FMT_* does). The 
+> former is hard to get right and there's always something else you can't 
+> handle. I'm not opposed to just reusing MEDIA_BUS_FMT_ if that works.
+
+Agree that the former is hard to get right.
+
+Since this is all about DPI and we have that MIPI DPI standard document
+which specifies color codings, maybe it's fine to start with those limited
+color codings.
+
+BTW, I'd admit that the artificial paddings are not described by this patch
+set, though maybe no one cares about that.  The paddings could be floating/
+low/high/other component bits.
+
+> 
+> Rob
+
+-- 
+Regards,
+Liu Ying
 
