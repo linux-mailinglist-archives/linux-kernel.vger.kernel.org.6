@@ -1,184 +1,149 @@
-Return-Path: <linux-kernel+bounces-548099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A45AA53FEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:27:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A041AA53FF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:29:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DC991893C7A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:27:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCB7D16A163
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 068181607B7;
-	Thu,  6 Mar 2025 01:27:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55151624C4;
+	Thu,  6 Mar 2025 01:29:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="NTwlkOkD"
-Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CIxAk0i+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE11E224FA
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 01:27:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476F8224FA;
+	Thu,  6 Mar 2025 01:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741224458; cv=none; b=HtVO5cYpGGhF0CNQrY9y2bQoMhgYSRjKCNKJD80D/NELhBykR8FAmaPtj8IKcVLM3Lm7s/3MemkktyiE0Ot7QSJWr+hPeUaXDCMCWiCV+kwOO0NkZ1+ZACWTfaQyk+YULSmcY7BbC+ymSDKhzuCgPaMh8kT7RyjTlHSVZGYg7IQ=
+	t=1741224572; cv=none; b=iovJj384dxw+PY3qDu+86bIWVsSLYwe5ggTkJrLyIZ5/3KDvDI75GTQ9iNKe+hQlGXRsmT2WTnrejUU5o9AYzIfGHVWvkd/diDttcstexRyASVPR3fCmhCnpyNLK6BO2x7YTaIVW4y7AZFiFWp+fxhz3lHTs0z1ga2lud7ODg6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741224458; c=relaxed/simple;
-	bh=hkt/EnK1T6OhXU/W0wLc5XfxbJo5SrDohfYNXjpLDuI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FJVaF43bORGhZTByYiEHs9ZwegH8kcoUolbiv5IS/1oyWvChpOPEu+ReqWQgFpWWpHuS0OMVDSBfJa8TLOPkZGQ62236I6YJRfdm8cjkOCbAR07IHen+O4razBQ/mDjJD1YJ1lKyEyuGsAXPAQXzRn6rLbMdCBPpGFy6Z+IThkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=NTwlkOkD; arc=none smtp.client-ip=79.135.106.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=edku7nt35faorprsmlxm5ocgsm.protonmail; t=1741224448; x=1741483648;
-	bh=Ws+c8tX/OnH0cVp71OPD005wzVChpRlLpSiShc1Bnaw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=NTwlkOkDtaj4+D1c+spPsEqV1T2sz4jaTiFJWvG8esBMoZW6jAhHG2dFn8f4NNhjr
-	 5T6yUSEcBAWhmDfhb6F5jiQm9Afkf1ygrUvOeYuV8AdzHGwJBzInppzxTCX77+ljZR
-	 1mCeScRP+eist+ERR6eJ8wqFvWpUTpTxGaAW9yIZNj82JJLlNU1TEkFWs+XXdJ/mIT
-	 DvN1zLqRWiPnr04V4OZwGlrtgvfFby54rwhkDnmOdZeHcEb34I31O3hLKFKoYl5eNU
-	 ADi/4gs9y3iPY3qrvgafYQOksDS05rO1LVLM3SHhAYzb1BGYMXITj0NbRrxLb86dEl
-	 KOQpj5Cdgwarw==
-Date: Thu, 06 Mar 2025 01:27:19 +0000
-To: Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: airlied@gmail.com, simona@ffwll.ch, corbet@lwn.net, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, ajanulgu@redhat.com, lyude@redhat.com, pstanner@redhat.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, gregkh@linuxfoundation.org, mcgrof@kernel.org, russ.weight@linux.dev, dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v5 3/5] rust: firmware: add `module_firmware!` macro
-Message-ID: <D88SJOTH9GN4.3OVO4JFYAF9R2@proton.me>
-In-Reply-To: <Z8j0otfkVtnMXIRQ@pollux>
-References: <20250304173555.2496-1-dakr@kernel.org> <20250304173555.2496-4-dakr@kernel.org> <D88RCQTNVD7B.3RIN253F8LODY@proton.me> <Z8j0otfkVtnMXIRQ@pollux>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: a23028189b279d338045c4e4876c48aa813105ba
+	s=arc-20240116; t=1741224572; c=relaxed/simple;
+	bh=dJlANX6sAseVQ82aST6VrHKfnrfmDH28jV7K8jzluCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BKj7IVkh4qiM+wH65P/NFu+FNnVVraJQxg8NCiX62QAgVqiWp2QqYXDdZRkXZf1PDnbxQ+Yt/ZJ2x6wWlfNtr6RxvXBVr9vLEYYjrhENBAUqOQ9LxyVXARk/8SL4ygf2YdDEB6O0GdD0d7ON1SA6Rvtv238WCRlUehfWIjD8O6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CIxAk0i+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8424C4CED1;
+	Thu,  6 Mar 2025 01:29:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741224571;
+	bh=dJlANX6sAseVQ82aST6VrHKfnrfmDH28jV7K8jzluCo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CIxAk0i+iwHHX3sEoNk1IxumZkXWViAVZV2acku/awxDPy+gl+YzahGURwoMXw83x
+	 Ck0e/vC1BzSQ5eRjXZeqBpGCxE7i5g0bCJd7eCSf6xA4+4+6LeTN158H/PDqEajra1
+	 DST1xE5667opKpTpyTswj7Ea84pVmftGXag1xkyDi6RM2Sv/sXOopQlGcN6NSjLXZG
+	 E3jj265/l/EupkA+TpM4ryz4YqSss3RGlA14zmHwwwbGqFtH18hVspBVqQwWY+LRic
+	 tWEi8fioKcNSWsfGipR0NIkS4Lp3I7qHd0hlxJNWiigOggZVZX5jZzdW2grupehWMn
+	 2HYcIRbjQbOFw==
+Date: Thu, 6 Mar 2025 02:29:22 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: airlied@gmail.com, simona@ffwll.ch, corbet@lwn.net,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, ajanulgu@redhat.com, lyude@redhat.com,
+	pstanner@redhat.com, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
+	aliceryhl@google.com, tmgross@umich.edu, gregkh@linuxfoundation.org,
+	mcgrof@kernel.org, russ.weight@linux.dev,
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] rust: firmware: introduce
+ `firmware::ModInfoBuilder`
+Message-ID: <Z8j6ckpD6JVY4m-p@pollux>
+References: <20250304173555.2496-1-dakr@kernel.org>
+ <20250304173555.2496-3-dakr@kernel.org>
+ <D88OSC9XJXZL.C5HXWFYCG9U6@proton.me>
+ <Z8jSV5CpZDcXrviY@pollux>
+ <D88Q7503C8FF.2TMMBSEMOGKU1@proton.me>
+ <Z8jk3qs6nCIJz-39@pollux>
+ <D88R7HI1Z6GG.ZOQ9A1VQOR28@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D88R7HI1Z6GG.ZOQ9A1VQOR28@proton.me>
 
-On Thu Mar 6, 2025 at 2:04 AM CET, Danilo Krummrich wrote:
-> On Thu, Mar 06, 2025 at 12:31:14AM +0000, Benno Lossin wrote:
->> On Tue Mar 4, 2025 at 6:34 PM CET, Danilo Krummrich wrote:
->>
->> > +#[macro_export]
->> > +macro_rules! module_firmware {
->> > +    ($($builder:tt)*) =3D> {
->>
->> This should probably be `$builder:expr` instead.
->
-> That doesn't work, the compiler then complains, since it's not an express=
-ion:
->
-> 193  |         static __MODULE_FIRMWARE: [u8; $builder::create(__module_n=
-ame()).build_length()] =3D
->      |                                                ^^ expected one of =
-`.`, `?`, `]`, or an operator
+On Thu, Mar 06, 2025 at 12:24:21AM +0000, Benno Lossin wrote:
+> On Thu Mar 6, 2025 at 12:57 AM CET, Danilo Krummrich wrote:
+> > On Wed, Mar 05, 2025 at 11:36:54PM +0000, Benno Lossin wrote:
+> >> On Wed Mar 5, 2025 at 11:38 PM CET, Danilo Krummrich wrote:
+> >> > On Wed, Mar 05, 2025 at 10:30:31PM +0000, Benno Lossin wrote:
+> >> >> On Tue Mar 4, 2025 at 6:34 PM CET, Danilo Krummrich wrote:
+> >> >> > +    /// Push an additional path component.
+> >> >> > +    ///
+> >> >> > +    /// After a new [`ModInfoBuilder`] instance has been created, [`ModInfoBuilder::prepare`] must
+> >> >> > +    /// be called before adding path components.
+> >> >> > +    pub const fn push(self, s: &str) -> Self {
+> >> >> > +        if N != 0 && self.n == 0 {
+> >> >> > +            crate::build_error!("Must call prepare() before push().");
+> >> >>
+> >> >> This will only prevent the first `prepare` call being missed, right?
+> >> >
+> >> > Correct, unfortunately there's no way to detect subsequent ones.
+> >>
+> >> Does it make sense to do that one in the constructor?
+> >>
+> >> (After looking at the example below) Ah maybe you can't do that, since
+> >> then you would have two `prepare()` calls for the example below...?
+> >
+> > Exactly.
+> >
+> >> >> If you always have to call this before `push`, why not inline it there?
+> >> >
+> >> > You can push() multiple times to compose the firmware path string (which is the
+> >> > whole purpose :).
+> >>
+> >> Ah I see, I only looked at the example you have in the next patch. All
+> >> in all, I think this patch could use some better documentation, since I
+> >> had to read a lot of the code to understand what everything is supposed
+> >> to do...
+> >
+> > I can expand the example in module_firmware! to make things a bit more obvious.
+> >
+> > Otherwise, what information do you think is missing?
+> 
+> Abstractly: what `ModInfoBuilder` *does*, concretely:
+> - why the generic constant `N` exists,
 
-Does `<$builder>::create` work (with the `expr` fragment)?
+It doesn't really matter to the user, since the user never needs to supply it.
+That happens in the module_firmware! macro.
 
-> `ty` doesn't work either, since then the compiler expects the caller to a=
-dd the
-> const generic, which we want the macro to figure out instead.
->
->>
->> > +
->> > +        #[cfg(not(MODULE))]
->> > +        const fn __module_name() -> &'static kernel::str::CStr {
->> > +            <LocalModule as kernel::ModuleMetadata>::NAME
->>
->> Please either use `::kernel::` or `$crate::` instead of `kernel::`.
->
-> Good catch, thanks.
->
->>
->> Hmm, I am not 100% comfortable with the `LocalModule` way of accessing
->> the current module for some reason, no idea if there is a rational
->> argument behind that, but it just doesn't sit right with me.
->>
->> Essentially you're doing this for convenience, right? So you don't want
->> to have to repeat the name of the module type every time?
->
-> No, it's really that I can't know the type name here, please see the prev=
-ious
-> patch commit message that introduces `LocalModule` for explanation.
+I agree it not good to not mention anything about it at all, but I wouldn't want
+to bother the user with all implemention details.
 
-Gotcha.
+We can probably just mention that it's used internally and is supplied by
+module_firmware!. (That module_firmware! does that by doing a dry run of the
+builder itself, isn't necessary to know for the user I think.)
 
->> > +        }
->> > +
->> > +        #[cfg(MODULE)]
->> > +        const fn __module_name() -> &'static kernel::str::CStr {
->> > +            kernel::c_str!("")
->>
->> Ditto.
->>
->> > +        }
->>
->> Are these two functions used outside of the `static` below? If no, then
->> you can just move them into the static? You can also probably use a
->> `const` instead of a function, that way you only have 4 lines instead
->> of 8.
->
-> Is this what you're proposing?
->
-> =09#[macro_export]
-> =09macro_rules! module_firmware {
-> =09    ($($builder:tt)*) =3D> {
-> =09        const __MODULE_FIRMWARE_PREFIX: &'static $crate::str::CStr =3D=
- if cfg!(MODULE) {
-> =09            $crate::c_str!("")
-> =09        } else {
-> =09            <LocalModule as $crate::ModuleMetadata>::NAME
-> =09        };
->
-> =09        #[link_section =3D ".modinfo"]
-> =09        #[used]
-> =09        static __MODULE_FIRMWARE: [u8; $($builder)*::create(__MODULE_F=
-IRMWARE_PREFIX)
-> =09            .build_length()] =3D $($builder)*::create(__MODULE_FIRMWAR=
-E_PREFIX).build();
+> - what `prepare()` does,
 
-I meant to also move the `const` into the expression, but I guess that
-leads to duplication:
+Same here, it's an implementation detail not relevant to the user. All the user
+needs to know is that prepare() acts as a separator to be able to supply the
+next firmware path.
 
-    #[link_section =3D ".modinfo"]
-    #[used]
-    static __MODULE_FIRMWARE: [u8; {
-        const PREFIX: &'static $crate::str::CStr =3D if cfg!(MODULE) {
-            $crate::c_str!("")
-        } else {
-            <LocalModule as $crate::ModuleMetadata>::NAME
-        };
-        <$builder>::create(PREFIX).build_length()
-    }] =3D {
-        const PREFIX: &'static $crate::str::CStr =3D if cfg!(MODULE) {
-            $crate::c_str!("")
-        } else {
-            <LocalModule as $crate::ModuleMetadata>::NAME
-        };
-        <$builder>::create(PREFIX)
-    };
+> - what happens with the `module_name` parameter of `new`
 
-But then the advantage is that only the `__MODULE_FIRMWARE` static will
-be in-scope.
+Should probably just mention it's supplied by module_firmware! and used
+internally.
 
-Do you think that its useful to have the static be accessible? I.e. do
-users need to access it (I would think they don't)? If they don't, then
-we could put all of those things into a `const _: () =3D { /* ... */ };`.
-But then people can invoke `module_firmware!` multiple times in the same
-module, is that a problem?
+> - answer the question "I want that the builder outputs the string `???`
+>   can it do that? If yes, how do I do it?"
 
----
-Cheers,
-Benno
+All it does is concatenating multiple &str in const context, which I thought is
+clear since there are only push() and prepare() as public methods.
 
-> =09    };
-> =09}
-
-
+May it be that your request is more about can we add more hints on the
+implementation details rather than user focused documentation?
 
