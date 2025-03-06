@@ -1,365 +1,253 @@
-Return-Path: <linux-kernel+bounces-549600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4504A5547E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:14:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77331A5545D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:12:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C6F03BA074
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:10:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABF6F3B96CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:08:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F1726E62D;
-	Thu,  6 Mar 2025 18:09:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2958326AA8A;
+	Thu,  6 Mar 2025 18:07:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="GzeA/g1N"
-Received: from SA9PR02CU001.outbound.protection.outlook.com (mail-southcentralusazolkn19011029.outbound.protection.outlook.com [52.103.14.29])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RvcFUeYn"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2088.outbound.protection.outlook.com [40.107.22.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46A917799F;
-	Thu,  6 Mar 2025 18:09:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.14.29
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96B626FD99;
+	Thu,  6 Mar 2025 18:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.88
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741284558; cv=fail; b=AGRDnPcNeG0lmYq2V+NIvshRa5aQqyYDP/S9H/wD8+du53KAGR2mBTQwDDjovK7aa/1a5s4IlodOO3rE0rptV6IFeABZRWhKQafO4nmw4LCPE9yoQDfBbZMZQzxwnWq/FKAY78Dfh/J+p67BlYyUq5VLDYm6OGoqbMk9J7s9Q0E=
+	t=1741284466; cv=fail; b=FBLlEofkiGkwSbjn1AsLz3w0rxAE/zkXbImCGxT5E84BwXNVcMt9AYi2fg2/PyosILTrUcgLUyiwo7zE1v7IoiW3iZU+kPGR9GFewq/uTz9xtMsN7k9uYx0mpCO0WN4cZ+95JfFaNEY0P4ClVfTFdmw/yN5g6iOyMI/W82uUs9Y=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741284558; c=relaxed/simple;
-	bh=jT63kX9RS5DVT1U3sdxy8GovlJz0RPT22wXTjyq4uWQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=B0jE0t9MORRuXGqtNxoShjVPP4KnaGC+miyf95Xu55Ko+Dzim3HBVk6UwhNzQTxFrS6HZSJqtgOPgoQ5tK8y3LtcByjflALwag7LxPWPjrPvCDNdBvSNdsnDhsOUzt7kFjW/4tm1D+Qthox+NnSas7hPSWWfI94oN6RmJwFysyE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=GzeA/g1N; arc=fail smtp.client-ip=52.103.14.29
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	s=arc-20240116; t=1741284466; c=relaxed/simple;
+	bh=1/jR9CYISle8eUo4WHf9ycLSTcDJYf+Ly+Gn3OEJzZQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=bZw+Q3sTUhRMzJHvfoQy9v6LwB5QxLx6KdbAU1bkYFVluaAfLGS647yCfQ0+DZY8vxAVS3XowaCjvWhyA3z0wBFaao+Vjcna4HKMpN5rcdd7OZbAJDtPu8Bm6vRT6aQz0fr6cHbh0hjzih0a1465q9b0hPONxbP57uAI7gyRKmw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RvcFUeYn; arc=fail smtp.client-ip=40.107.22.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kHdNrbxo6NWhZ5Uhz+yEi56SA5lwL/jea6gDg75jqfsP6hLfq39bxfOK/l3HXvQ11Wm6psYL0o1yYEGlFAi49Os0pwQ1ylU1NqCQHJLdXZekaEaQTtggtb3e8JEFMKjC0vidolkUVdQXQRs/nnH2u4KmTahzIin/wmV75fLO5oJ0VkxNPl7PYMvTUjWtofjpoiZhgvPHL3upqXMRT6jLsneKsX0fBtn3ajCDv/+msqOuh+4+GgwR7r3DMEU/1qmiEm60ALG3BQr3H0GTZn5TDnyjnfAhGdU1RAffHTu8c4xstwag30cqrMzXp9frQXM9zSwGbJS5BNEdIdLPaveEXQ==
+ b=CptSelw/AsK4HjSopZrg0cnlwTVG9YpNIMdlANo8e8Boe49PO/OpZogG+vM9ncSGrQzaSHM46bNmwSOOHtIUtyNmMHh0QDgJqLPDGFrabKYCYaHBKjTE8ACGnUAdhdXdxn4RGhGjj1KJCzsEfslCwQW/iSo/zYHuCegirPJ4tBb1+0QKQfc9a1/e6T+jCQNxMRenZ7pnkBATd0LVZl7PuFegObWP8UwszKGVgDTxOwSZPZgZmtEvKPy5H4qIJuupi7N3t2T5pQDUEorjERvYVOrsJgXFeXa7vQ57syF6plgPeUtY4J+wrJN4lsLJFpEQNbbLiQhloFEN24+cxcnynQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nA5tjKdt26omMaaVaYhFvvU1G2Zc3CunBlT5Uls6vXk=;
- b=ISOwYaS4x64bJfhNquKgU0xnjiVb0a0NI0h0CjZBXyrfvZNdJCdz1cvbL4oOeVsblplpP9j6qGrjpkXE6H/rH/Pp7C2MOk3q3RjntzhBlmebkHvcLXj++fThw6jzlI6AZODvgii+7Bj9NJ+K9J9WWpbFwymP7uKiz2A8gvqYaBdgx4W5RgP/Uucf555e+RhBi0XJtTB9xhz4MGFej6+sQsrCwE+Uqjo3HN2qJpUhJqt17572wMWYFZY7Ac+wSkvooojEhvxaOlegxZHNNjsOHDKufMDxRcV4Y1H2jzS1afq1XoslbFnEQzyDhrAs9mTS5u4G5tw4mSjd78fTKqi3Kg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
+ bh=XirvluISeAskvpLn4Zp9T7aOtGLrRQbthOjlybDRx7k=;
+ b=IAGap9jZCD6IgyONIGvH0sGtjf3o4rxzVvv7BzSUrn0Z0+oY/tdZTRq5Z9bRWx00qWHa8lCEuz8cOU+Ng/ddXrxM/15ojCV8jZKI8qfQYShkr1+JEVxmTSztGYtdYUGWhUZAbJYoIdnQPT67yNzCeAatG4+ulCWtITspFt4FMQ/Cx1htC44beO2bsNzijsjuJGulFvtaoRPfWfyaH/sdClsPnujBTJMLbnUzRjXr5HvpKy6XLGcV8RgCSxpISQvENmMgOMVjxq7d5Y02bk/pWr6AhupAEFz+Ph1aLOdbccJLvdvtxcGATJrr8wN/129clVYATrSLQL5JpFfiqqDtsg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nA5tjKdt26omMaaVaYhFvvU1G2Zc3CunBlT5Uls6vXk=;
- b=GzeA/g1NOqG+xNrgKr12AcoskVBnPJrKiPsxYuvaTOFtQFyPb+anWfw03xKyo0zH2YEt0xb46NB9zKTTimZq2Veb9Rc18qWhQCk2oxkjdD2roTIF2Ujkqf4rFN/Ee8vRruibrXmVEtWqHw5yewh9zC5tpdY5wz1fqUxSOufOqk2vz0w674hffkgXCWyxSE2SsmHqDtNI5m0A+na7tEmRrpgQGD3rw3tkQvDb+2q2So39qKELjS4IuF4bE2iBJa/1fcrmtJiNjOjuhXXRhgwIC3cwuu3NadzkuMNH3/Xgv964xy4pRT6P5WX//4nM9OC6LhfQPhraLNLq3+eDjZl6pw==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by PH0PR02MB7127.namprd02.prod.outlook.com (2603:10b6:510:1b::10) with
+ bh=XirvluISeAskvpLn4Zp9T7aOtGLrRQbthOjlybDRx7k=;
+ b=RvcFUeYnWQILRIdWVIUuaH7yeOuvsZ+7mnlYmFZLa0XcOuDPpxnQp/PBDA4UfLmbSOlQVgMb0R2Zz5XyRcZQjNevKM/6QsZevlm5PH9V2MF/JUGaF+s0DPwldydYcMmToaMfvKgFzzQuGLkpLqB23MdaHUpyGH47js+an3U8o7oDV1je6mEGzEmw9IssFEYYZ4pEYRB7zwSAX5+BOqWgYC8NuESxvkyttXIY9zchvp1Jd+BjeNLPpph95uVdnN1l5+V3hOwo28iOxYq74AL42e2E8b8FpOWdlvgDRf+zeUbprYdnQ503SpwImU8rRRZEatuzDqdu84I4P3cs/txuPg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9692.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::20)
+ by PA1PR04MB10603.eurprd04.prod.outlook.com (2603:10a6:102:484::8) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Thu, 6 Mar
- 2025 18:09:11 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 18:09:11 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Michael Kelley <mhklinux@outlook.com>, Nuno Das Neves
-	<nunodasneves@linux.microsoft.com>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org"
-	<linux-arch@vger.kernel.org>, "linux-acpi@vger.kernel.org"
-	<linux-acpi@vger.kernel.org>
-CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
-	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>, "catalin.marinas@arm.com"
-	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
-	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com"
-	<hpa@zytor.com>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-	"joro@8bytes.org" <joro@8bytes.org>, "robin.murphy@arm.com"
-	<robin.murphy@arm.com>, "arnd@arndb.de" <arnd@arndb.de>,
-	"jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
-	"muminulrussell@gmail.com" <muminulrussell@gmail.com>,
-	"skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
-	"mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
-	"ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
-	"apais@linux.microsoft.com" <apais@linux.microsoft.com>,
-	"Tianyu.Lan@microsoft.com" <Tianyu.Lan@microsoft.com>,
-	"stanislav.kinsburskiy@gmail.com" <stanislav.kinsburskiy@gmail.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"vkuznets@redhat.com" <vkuznets@redhat.com>, "prapal@linux.microsoft.com"
-	<prapal@linux.microsoft.com>, "muislam@microsoft.com"
-	<muislam@microsoft.com>, "anrayabh@linux.microsoft.com"
-	<anrayabh@linux.microsoft.com>, "rafael@kernel.org" <rafael@kernel.org>,
-	"lenb@kernel.org" <lenb@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
-Subject: RE: [PATCH v5 01/10] hyperv: Convert Hyper-V status codes to strings
-Thread-Topic: [PATCH v5 01/10] hyperv: Convert Hyper-V status codes to strings
-Thread-Index: AQHbiKNs/uCEZOh33UCUZSZ5oZ+szbNma5PQgAAGYrA=
-Date: Thu, 6 Mar 2025 18:09:11 +0000
-Message-ID:
- <SN6PR02MB4157629A6197A8A6C992BB75D4CA2@SN6PR02MB4157.namprd02.prod.outlook.com>
-References:
- <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-2-git-send-email-nunodasneves@linux.microsoft.com>
- <SN6PR02MB41577560030C55503D1BAFDCD4CA2@SN6PR02MB4157.namprd02.prod.outlook.com>
-In-Reply-To:
- <SN6PR02MB41577560030C55503D1BAFDCD4CA2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|PH0PR02MB7127:EE_
-x-ms-office365-filtering-correlation-id: a44c7b4d-670a-463c-fa53-08dd5cd9feee
-x-microsoft-antispam:
- BCL:0;ARA:14566002|15080799006|12121999004|19110799003|461199028|8062599003|8060799006|13041999003|3412199025|440099028|102099032|41001999003|12091999003|1710799026;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?WzKCo1NYh2eDir5PEF3NBwXnBihAEqWXfMVnAm5jGdWhUEmB+bHgftRQQ6eJ?=
- =?us-ascii?Q?lskD7Ktd8I3HnQtKUg8fv1wBXV973UR1f415sRfwoS+CitqiUTP3QK4D9yvh?=
- =?us-ascii?Q?X3lVmUv9ove5yi+djhCTh4oPQ7j53wyimFvy3St7UmCOiz6LWhIxZC1xApjq?=
- =?us-ascii?Q?w9ZOaZ/7mLrjOe0jPyEMQ0FGgcIqOeoybY85persVDjUxBHu3ZX/Cd3saTvj?=
- =?us-ascii?Q?CA8LE6NGKg1eUeDJnjU/fzpEniNaL681M/TI7vedsEcCLQAmsJlkDdC3spx8?=
- =?us-ascii?Q?LrwM1Ewv1IwhwWZwgFdKYuo3rJm65KgekgCw5oQlp5a/gz+Rs/mWYxcQO+dO?=
- =?us-ascii?Q?+rmBEomXe7qtQxBsm8t68nCuM2R5BeXvHzSNhx/BitJqlFx08/bQ1Mbw3/rN?=
- =?us-ascii?Q?rC5mMr5IWyzdegpgY7fbGnO0RCwN9OSRkxCN00lNA2ZOfNDpaYOKxRIWH/cC?=
- =?us-ascii?Q?jxgdeB+Bt3KZnJXyO6rjJiavNlhtZyaPgiqN/lfqUiBeVG7o1lUlnVaSETMv?=
- =?us-ascii?Q?8Qa9b7cZ+gdJ0BoLUVbSzi7qSRpKjQ+q+bWp2+Vdv7qrC4n1PjIbg2mGrxDO?=
- =?us-ascii?Q?kLvmR8oqEDeck39feav1EAUHvN8jhlBHxFZsSYJFfcgGj0iVoLIYpBWDzyIV?=
- =?us-ascii?Q?23ViaNNgoTa//Rwg1HbHnUIktMHfKq/S7kqSlf12oJAmpT44Kpbl8QCMAh8M?=
- =?us-ascii?Q?AYTjx+KN+vmYPcc4+jkAXuoHxmxO6Tsl6ohRYkKogCK9jlyPO1qy09X8kzmf?=
- =?us-ascii?Q?XOIx7mmKNCoP5YCziC+nptUrj0pWKE30/qz+Ber2vQb7bWx0L8IYMlj425sF?=
- =?us-ascii?Q?5bAlp4ZzUPpeiH8bNUbthGBTvO1SF/dpWfTQngpM02hFtivsSIR1E6lt4wGQ?=
- =?us-ascii?Q?0mKSe4dXH4ohPB+Vxij87BcHPl0qsLqmNa+JHHJREixMhDRn8yIjQ5s767DA?=
- =?us-ascii?Q?9YrQ1XTjH2qmJh5HoVMx4x/PvGRdbsQqXscPEPe1yGIe1fOSkjv93hVB2HiK?=
- =?us-ascii?Q?CCJIpMybRgUR4rGoT3IBKiKTURHQrlCCYriW6aHFmUCvJ7CnUTXC6cJsjquA?=
- =?us-ascii?Q?UitgkZG4Bg2FQlbLSevN3Bpi5JAO22DZgsIxbRK19zApgVXhgzBygizIEnyK?=
- =?us-ascii?Q?vdJIazHYC9L8S6Fm5CWZFsByOigFyQv3oZzpzqk+0JobZqsVTBJaGJ9vnUjR?=
- =?us-ascii?Q?qmwL3U7Dg59f+kVbFW0X0i/fObJDaqJrKyDhOw=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?4DsHk5D2Up16GtNMcaZa7QJOhge3xdogAmwaZVxNHXVAwORYUG7k2ZUR8xfe?=
- =?us-ascii?Q?Yp1vsr8vuc+Xu9HV38m8NlvxCP4ov4MA50Rn+y/Aoz72mpsOnlWS6gCSpaWI?=
- =?us-ascii?Q?z2DeN2NARiHsBvtxUI12LwHl5Ki2m0pSJKyK2q4xJgw3GBdTKqFo0VVcZdxV?=
- =?us-ascii?Q?QTRvfZZJ7c491yXPfMSQOwo47Pv7ILsPI6o6mbrqyzRb56bglwGAILPjechf?=
- =?us-ascii?Q?S6YMOCxQZ43O8mIhPj1KozPRjp/4zBVnICuzZZ1WXbEbEH2LxhZn4uhoOuHz?=
- =?us-ascii?Q?K90bWeO5G42ztYpWHF357yFF4TTPIZOdJvGkpy4m0vXWF0K5SzNHJBTbMg8b?=
- =?us-ascii?Q?0ZlEvL6cdvFUpaZSQpQ7On/tQV1bgn5ejCgZVgfHdp/v4ly9MHT/astIPwyZ?=
- =?us-ascii?Q?YIwFiDyP88rAGlEyETZnvVaRrV3AXpcgiJBW7u5H10/i71PxIcZ8saX+AlO9?=
- =?us-ascii?Q?E4jqEpt80VxrBLq4zIhbeRojLNpLNOpb4JiheECGE/jaPkZWBxyTQVHce6HR?=
- =?us-ascii?Q?efxLsmFSWqNp9UHEat27J/07+aDfjRXQYsRvQQXnEkW8QCXOE/nn+RNfyumq?=
- =?us-ascii?Q?CUdI8uBKHr6K3FTJTXGIbjOU8aUKtGGiXjVrIKp5JrpYC6FbLHBh5pU71piS?=
- =?us-ascii?Q?QHemqrUwgaCVLuuO45lY/3ulPgsxFt/nwH+McYVJmFh9rDfM+SfKkQyB61b3?=
- =?us-ascii?Q?NdumZaPF/LHyVDlTuE1dt/1DK0y0yrbvJd13+VI6TPJnP2zxHwispsRqX6bV?=
- =?us-ascii?Q?ocWdXveHND9P/0+/FlAm6RujWDf7whTeagQbZAR9HqkB/g5ytWQq6MdyRsK1?=
- =?us-ascii?Q?A4K4wtgFKNlQNJxHGXdagXyPdBU4H6pQggkXvfgPerSk4+tjQ1iC6Alvnnon?=
- =?us-ascii?Q?LJRb+0iEuntCGjc5z+g6JVt+ZpROmGtQVWhjIog4Y39DsFn0WF+D0D/0Qeru?=
- =?us-ascii?Q?8v+7NuGQx4oRSd//LGW3ygQiiT2SJc+yOapgOUS7NxiSWrEUs+4XDp2crUWS?=
- =?us-ascii?Q?cJaeGE2myi1ckJHRPQ2ULhO0brWbcCIBlPnKXMG7pHMi3EXNDKWEvAQABVyH?=
- =?us-ascii?Q?GB+MozAKMkqlocED1YpB+v36HPVVhxxRJD5Plm60JfzEyGxiU90CprrMBbwT?=
- =?us-ascii?Q?mdN5lrziZhk2dtpeuHx89YZd979zPVS3pMcRn79jsCSAQan69fUKIFjlURB5?=
- =?us-ascii?Q?rm38iLMRGnAwmDlougQBKUcTH3myvOqu5p5zEkgIo6seXQdy3Rd/2RGT64s?=
- =?us-ascii?Q?=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Thu, 6 Mar
+ 2025 18:07:41 +0000
+Received: from AS4PR04MB9692.eurprd04.prod.outlook.com
+ ([fe80::a2bf:4199:6415:f299]) by AS4PR04MB9692.eurprd04.prod.outlook.com
+ ([fe80::a2bf:4199:6415:f299%4]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
+ 18:07:41 +0000
+From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	amitkumar.karwar@nxp.com,
+	neeraj.sanjaykale@nxp.com
+Subject: [PATCH v2 1/3] Bluetooth: btnxpuart: Add correct bootloader error codes
+Date: Thu,  6 Mar 2025 23:39:29 +0530
+Message-Id: <20250306180931.57705-1-neeraj.sanjaykale@nxp.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2P153CA0006.APCP153.PROD.OUTLOOK.COM
+ (2603:1096:4:140::22) To AS4PR04MB9692.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4fe::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9692:EE_|PA1PR04MB10603:EE_
+X-MS-Office365-Filtering-Correlation-Id: 85ebf39a-b517-46ce-c77e-08dd5cd9c938
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|52116014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3ZNERO+zxGersm5E6B3HfltvR4DmzwxFW221KvkZHflLScH8FGTxK1T7cXpO?=
+ =?us-ascii?Q?VQ1WYeASA5RO3LZZCdGf4gMSZdS55FZYMXfHRvwWMRdXEwfjdcp2JLOFeOr4?=
+ =?us-ascii?Q?A6rAYOltYvjH5UxJ7LSe5iysBQdMSosA50m0NrLVwZQRpnY6Qdenp8SeMpk0?=
+ =?us-ascii?Q?B3tCzBDt5ZRRwU0VZ5fMjQxnL9ACOJzaPaYdLZYKiYVlLWdR34ElDWBOQu3B?=
+ =?us-ascii?Q?umqMgpA1fpFcbt7SgvJaJiLh51zqltSwBMd79aSQWJJaqXLHN3LAq6kU+3JU?=
+ =?us-ascii?Q?/zRBjwgMYAPcZRVcx7zFr46utSc7KKL7yLISFeuoVmzcQ7h2SsOvLJd19W51?=
+ =?us-ascii?Q?lLpdNVagAU6CmnH4z6eWh1OPKU9MPxrulm4gRguIiGjjOl7zqMPJxROjHe+3?=
+ =?us-ascii?Q?37USJGGyJ9SjpWDvB2dtdI8TRwg0loBjkvF8cyxpMNbkFpzvra5sBvufDtXo?=
+ =?us-ascii?Q?RWhIXVHt7SxwWgbnJMO4RvbmHunJbwuSsyr+tjsvz8YTGWNOH2zY3hkh/w+5?=
+ =?us-ascii?Q?/LHF/Nldr3AsPtQ7pHJEjEolz6pvdOXI/3PdiVSvf1V5328y/QCD36LAo3CR?=
+ =?us-ascii?Q?f/Qk/l1ISJfituqqOhZXi49jb/tPi0zAkSx7vjzquCw8TZ90ITM2E+mV8lJ4?=
+ =?us-ascii?Q?sSC1d6oDb4U+wIYodsKTfYGEa9+YjV1WYFQybdU9bndY5Tl0SrfBQseFFuLt?=
+ =?us-ascii?Q?m5OO+uWB8WtZF0sRmMTBDT89gYiv+cMPyNV34Dnfa/RpjRFJak7Vzavm9nXe?=
+ =?us-ascii?Q?pm8kSegKH9J7UargUEX0eqaXcpIn00jCp69qyeF0WnR/3EPGNPZ5+QLMATwd?=
+ =?us-ascii?Q?9kVitBDBv/RiMmwtqIEF32MCkg7E/IF10OhJj310MuYzKhSv4qz4aFP2wop8?=
+ =?us-ascii?Q?1SI9D8n4QnY5djq7+Np+wYtJOo8v1J0NV+HIXvsffUFNkcfljWcAw0LvrOB8?=
+ =?us-ascii?Q?QdeODoqxPqzAIGPopPrpbvTVMw+NTHhOLUboE5abqhGKulzVRrEiU0B1jFUQ?=
+ =?us-ascii?Q?Je4e4dSpp+a5MYpUA0uU33nloOA2mqztQ0jeh6NEUQsRo4H5D3tVJyGqZU1f?=
+ =?us-ascii?Q?HWdaPQYOR60DvAZXLKmDNVpa3cdrPAeLFzWlKhFP5Qd6NtTzatCOz/iw+fky?=
+ =?us-ascii?Q?tknf0BkxtazyyIuo4a+dliYctXAKSAYLhSSNh/xxof9B1G2/HAdGwKB59Zrz?=
+ =?us-ascii?Q?3iI7slbPBGInMSwItu6jt9fYiFSWD7nE2TSI3/TFDcxfvly6FkOdd3d8mgva?=
+ =?us-ascii?Q?T8k5bre1jp5vXmBue2MmtDec2+VbtlcgfQR3yQ3db0hQLmuohAIfXEcqkmMt?=
+ =?us-ascii?Q?klvljQohK2JRMEJO+teQFiMQJ2PuIGTu1XFArtHvW2e+xnHNhRl7oAifcj47?=
+ =?us-ascii?Q?9wZnix4W3yapQfO9sfwZcjN3h3BeAhgft/tfoAIoN2IJ5bxW3mk1ntDC+0dr?=
+ =?us-ascii?Q?HpEB7h8yvpVTwIAm+7DnmKhVbYDr2Mbp?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9692.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(52116014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?9cpRjVoyNpDVg2jPVWN35skebW34q2F2rPO6frR0/Lsy0v2vL9KOSeZPklBV?=
+ =?us-ascii?Q?1+UkjdTd84UIYNPWwtsUS52j1N+/FjWtNYDc6cTPQq3q+2PkqFBAFgI2dQFp?=
+ =?us-ascii?Q?8fal4B8ZRoYdq+pS+PEkWKbPzGGWAZfDHq9YaRNl3qP+p2Wtt7XEK1z8Qc/n?=
+ =?us-ascii?Q?Ff3hbF7yM0tFXCPRtpJXZPfEWZj/kCXaCNOw95MXkvfjvpRO9oT33NLCCU82?=
+ =?us-ascii?Q?3EVlVqxIBnDeyOD/EMFIGfRpMHuVcrruuD/fwUOLOL0tFDJvK+RsufXX4wP6?=
+ =?us-ascii?Q?5jvXB50liV9K4C1K4kqqsw1glr2dM0f2MIXWt48TE12RbC+uAy0mkUR7pmxR?=
+ =?us-ascii?Q?1ihGv3DWVrZD5uTwBa8mmFNUZgLcFyXW3wFc73smgxDzV7VoyH0IKlVnEIHL?=
+ =?us-ascii?Q?wAWojxPhYZYzy3bBgPhMeWzn/qVseJ8xG/O197GxzXszhzEZm9CxkQ3uxP75?=
+ =?us-ascii?Q?FARwyNcBZY15fahd90yftwzDQsTicaCWgssiMjIDYHOupP/0QmtHTBYZDTWD?=
+ =?us-ascii?Q?2vXBYtmiWXNUrWeIjpT+2mnCxGNvLh0J4YsnBplNF1FVjM+aDbR3fkXq2Ft9?=
+ =?us-ascii?Q?y5MsgLfcsdvrlZOwQ4y52JXZTECjjiHHHtF+iKMBo+LcKCJYP/Hjn5hsAU2f?=
+ =?us-ascii?Q?YV2B0bTcK9AYT+yQkMn0Rn1bnyhx/h7RswJ7qaTft5KfwGo+aMLU4wUflmbS?=
+ =?us-ascii?Q?tHW6mNR7azBSAsflhnmC51QZMyad4dw3kRC+vgharjuV3ZMY0FPwDwwDYRpe?=
+ =?us-ascii?Q?4TT6FJTSwK8ay1Wf8WKXMs70+Rsad26tcwe4XTagjuBzCxSPleF8BHixA0k2?=
+ =?us-ascii?Q?w+WG7E2R5OA3a8XdmH7mW9lshcPf2tF/PdPNOzUCeKGIXrQKVDkBmmG1ci5s?=
+ =?us-ascii?Q?Knh8KRFbv3U0gttjVwAzHCleM8CEUJwsLtnkCbjKeDaLtZx7XOaFCIjX4Zs2?=
+ =?us-ascii?Q?SMiRhkqTdE+w8ZOFfpgRICyTS76YRi2fTmD1YDlECnDOPeChHp9uhqYJYH3C?=
+ =?us-ascii?Q?T7aMM7UcjYoJpDJdM2i6O2rnWsth6b9X+Qoc6Q54Fe4vpg5bExx/BK71W9of?=
+ =?us-ascii?Q?XuIXdDnCfbESjmeJ0GnmoveFXLdXRaL4QKabLqDzYeqzIWWBgZcnyu2qFEnJ?=
+ =?us-ascii?Q?HxUm3OZt03tPKuYFwCn44f4UyCGUz49zuocQGx/z2PgdamwBsFeqGf1ibSA5?=
+ =?us-ascii?Q?oSNlmKcsmxJfV6QZKEQCi0D6TJ2WL6dRhFy1dI67imETtF3h34R3/C+ry3mo?=
+ =?us-ascii?Q?LGYChRv7kyyI6j/Sifos+NzJnbAni+tFJukk3a6vrtuLcPGrm0TH4C+K/S2C?=
+ =?us-ascii?Q?tSk2yyMQPTGKHEsYCDpOULHmvAb3KhbVX+PHE8MTjmzH2Zx/Czgy8KPviluH?=
+ =?us-ascii?Q?Q48Bmfpg2HTYOXbKYdr+kB1D++Cqg8A8qUlvVoUpkGTGywec3VQ+hoC8u6nY?=
+ =?us-ascii?Q?OYHQomEBgjbE9QpDSoNALLrA1rRnBBuDhfrAVcJnzozWvYHxF9Q8CfwsMagm?=
+ =?us-ascii?Q?JwBWo4qzmwn0xRXC3u+lwXFS6H8MyVsz6lv0GKEyxgZqnVwfgaBc+U9squHD?=
+ =?us-ascii?Q?88BezrYMM2z9tUrr82BCIjFYiNyxr06WSl3W1gQsPyA3G1W3E165K9sRp2tN?=
+ =?us-ascii?Q?Ag=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 85ebf39a-b517-46ce-c77e-08dd5cd9c938
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9692.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: a44c7b4d-670a-463c-fa53-08dd5cd9feee
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Mar 2025 18:09:11.0949
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 18:07:41.2018
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR02MB7127
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: oaodfj/uXVhh4cH95Ji6NB7Lh2QybMgPmAwVfym59Z6m9uz8E2o38yVbAeEAPUYswhFPPmpLvPuomPBfkhs9S4DnQaUL6BlekCb90N1UjG8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10603
 
-From: Michael Kelley <mhklinux@outlook.com> Sent: Thursday, March 6, 2025 9=
-:58 AM
+This corrects the bootloader error codes for NXP chipsets.
+Since we have a common handling for all error codes, there is no backward
+compatibility issue.
+Added error handling for CRC error code in V3 bootloader signature.
 
->=20
-> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Wednesday, =
-February
-> 26, 2025 3:08 PM
-> >
-> > Introduce hv_result_to_string() for this purpose. This allows
-> > hypercall failures to be debugged more easily with dmesg.
-> >
-> > Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> > ---
-> >  drivers/hv/hv_common.c         | 65 ++++++++++++++++++++++++++++++++++
-> >  drivers/hv/hv_proc.c           | 13 ++++---
-> >  include/asm-generic/mshyperv.h |  1 +
-> >  3 files changed, 74 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
-> > index 9804adb4cc56..ce20818688fe 100644
-> > --- a/drivers/hv/hv_common.c
-> > +++ b/drivers/hv/hv_common.c
-> > @@ -740,3 +740,68 @@ void hv_identify_partition_type(void)
-> >  			pr_crit("Hyper-V: CONFIG_MSHV_ROOT not enabled!\n");
-> >  	}
-> >  }
-> > +
-> > +const char *hv_result_to_string(u64 hv_status)
-> > +{
-> > +	switch (hv_result(hv_status)) {
-> > +	case HV_STATUS_SUCCESS:
-> > +		return "HV_STATUS_SUCCESS";
-> > +	case HV_STATUS_INVALID_HYPERCALL_CODE:
-> > +		return "HV_STATUS_INVALID_HYPERCALL_CODE";
-> > +	case HV_STATUS_INVALID_HYPERCALL_INPUT:
-> > +		return "HV_STATUS_INVALID_HYPERCALL_INPUT";
-> > +	case HV_STATUS_INVALID_ALIGNMENT:
-> > +		return "HV_STATUS_INVALID_ALIGNMENT";
-> > +	case HV_STATUS_INVALID_PARAMETER:
-> > +		return "HV_STATUS_INVALID_PARAMETER";
-> > +	case HV_STATUS_ACCESS_DENIED:
-> > +		return "HV_STATUS_ACCESS_DENIED";
-> > +	case HV_STATUS_INVALID_PARTITION_STATE:
-> > +		return "HV_STATUS_INVALID_PARTITION_STATE";
-> > +	case HV_STATUS_OPERATION_DENIED:
-> > +		return "HV_STATUS_OPERATION_DENIED";
-> > +	case HV_STATUS_UNKNOWN_PROPERTY:
-> > +		return "HV_STATUS_UNKNOWN_PROPERTY";
-> > +	case HV_STATUS_PROPERTY_VALUE_OUT_OF_RANGE:
-> > +		return "HV_STATUS_PROPERTY_VALUE_OUT_OF_RANGE";
-> > +	case HV_STATUS_INSUFFICIENT_MEMORY:
-> > +		return "HV_STATUS_INSUFFICIENT_MEMORY";
-> > +	case HV_STATUS_INVALID_PARTITION_ID:
-> > +		return "HV_STATUS_INVALID_PARTITION_ID";
-> > +	case HV_STATUS_INVALID_VP_INDEX:
-> > +		return "HV_STATUS_INVALID_VP_INDEX";
-> > +	case HV_STATUS_NOT_FOUND:
-> > +		return "HV_STATUS_NOT_FOUND";
-> > +	case HV_STATUS_INVALID_PORT_ID:
-> > +		return "HV_STATUS_INVALID_PORT_ID";
-> > +	case HV_STATUS_INVALID_CONNECTION_ID:
-> > +		return "HV_STATUS_INVALID_CONNECTION_ID";
-> > +	case HV_STATUS_INSUFFICIENT_BUFFERS:
-> > +		return "HV_STATUS_INSUFFICIENT_BUFFERS";
-> > +	case HV_STATUS_NOT_ACKNOWLEDGED:
-> > +		return "HV_STATUS_NOT_ACKNOWLEDGED";
-> > +	case HV_STATUS_INVALID_VP_STATE:
-> > +		return "HV_STATUS_INVALID_VP_STATE";
-> > +	case HV_STATUS_NO_RESOURCES:
-> > +		return "HV_STATUS_NO_RESOURCES";
-> > +	case HV_STATUS_PROCESSOR_FEATURE_NOT_SUPPORTED:
-> > +		return "HV_STATUS_PROCESSOR_FEATURE_NOT_SUPPORTED";
-> > +	case HV_STATUS_INVALID_LP_INDEX:
-> > +		return "HV_STATUS_INVALID_LP_INDEX";
-> > +	case HV_STATUS_INVALID_REGISTER_VALUE:
-> > +		return "HV_STATUS_INVALID_REGISTER_VALUE";
-> > +	case HV_STATUS_OPERATION_FAILED:
-> > +		return "HV_STATUS_OPERATION_FAILED";
-> > +	case HV_STATUS_TIME_OUT:
-> > +		return "HV_STATUS_TIME_OUT";
-> > +	case HV_STATUS_CALL_PENDING:
-> > +		return "HV_STATUS_CALL_PENDING";
-> > +	case HV_STATUS_VTL_ALREADY_ENABLED:
-> > +		return "HV_STATUS_VTL_ALREADY_ENABLED";
-> > +	default:
-> > +		return "Unknown";
-> > +	};
-> > +	return "Unknown";
-> > +}
-> > +EXPORT_SYMBOL_GPL(hv_result_to_string);
-> > +
-> > diff --git a/drivers/hv/hv_proc.c b/drivers/hv/hv_proc.c
-> > index 2fae18e4f7d2..8fc30f509fa7 100644
-> > --- a/drivers/hv/hv_proc.c
-> > +++ b/drivers/hv/hv_proc.c
-> > @@ -87,7 +87,8 @@ int hv_call_deposit_pages(int node, u64 partition_id,=
- u32
-> > num_pages)
-> >  				     page_count, 0, input_page, NULL);
-> >  	local_irq_restore(flags);
-> >  	if (!hv_result_success(status)) {
-> > -		pr_err("Failed to deposit pages: %lld\n", status);
-> > +		pr_err("%s: Failed to deposit pages: %s\n", __func__,
-> > +		       hv_result_to_string(status));
-> >  		ret =3D hv_result_to_errno(status);
-> >  		goto err_free_allocations;
-> >  	}
-> > @@ -137,8 +138,9 @@ int hv_call_add_logical_proc(int node, u32 lp_index=
-, u32 apic_id)
-> >
-> >  		if (hv_result(status) !=3D HV_STATUS_INSUFFICIENT_MEMORY) {
-> >  			if (!hv_result_success(status)) {
-> > -				pr_err("%s: cpu %u apic ID %u, %lld\n", __func__,
-> > -				       lp_index, apic_id, status);
-> > +				pr_err("%s: cpu %u apic ID %u, %s\n",
-> > +				       __func__, lp_index, apic_id,
-> > +				       hv_result_to_string(status));
-> >  				ret =3D hv_result_to_errno(status);
-> >  			}
-> >  			break;
-> > @@ -179,8 +181,9 @@ int hv_call_create_vp(int node, u64 partition_id, u=
-32 vp_index,
-> > u32 flags)
-> >
-> >  		if (hv_result(status) !=3D HV_STATUS_INSUFFICIENT_MEMORY) {
-> >  			if (!hv_result_success(status)) {
-> > -				pr_err("%s: vcpu %u, lp %u, %lld\n", __func__,
-> > -				       vp_index, flags, status);
-> > +				pr_err("%s: vcpu %u, lp %u, %s\n",
-> > +				       __func__, vp_index, flags,
-> > +				       hv_result_to_string(status));
-> >  				ret =3D hv_result_to_errno(status);
-> >  			}
-> >  			break;
-> > diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyp=
-erv.h
-> > index b13b0cda4ac8..dc4729dba9ef 100644
-> > --- a/include/asm-generic/mshyperv.h
-> > +++ b/include/asm-generic/mshyperv.h
-> > @@ -298,6 +298,7 @@ static inline int cpumask_to_vpset_skip(struct hv_v=
-pset *vpset,
-> >  	return __cpumask_to_vpset(vpset, cpus, func);
-> >  }
-> >
-> > +const char *hv_result_to_string(u64 hv_status);
-> >  int hv_result_to_errno(u64 status);
-> >  void hyperv_report_panic(struct pt_regs *regs, long err, bool in_die);
-> >  bool hv_is_hyperv_initialized(void);
-> > --
-> > 2.34.1
->=20
-> I've read through the other comments on this patch. I definitely vote
-> for outputting both the hex code along with a string translation, which
-> could be empty if the hex code is unrecognized by the translation code.
->=20
-> I can see providing something like hv_hvcall_err() as Nuno proposed, sinc=
-e
-> that standardizes the text output. But I wonder if it would be too limiti=
-ng.
-> For example, in the changes above, both hv_call_add_logical_proc() and
-> hv_call_create_vp() output additional debugging values, which we probably
-> don't want to give up.
->=20
-> Lastly, from an implementation standpoint, rather than using a big
-> switch statement, build a static array of entries that each have the
-> hex code and string equivalent. Then hv_result_to_string() loops through
-> the array looking for a match. This won't be any slower than the big swit=
-ch
-> statement. I've seen other places in the kernel where string names are
-> output, and looking up the strings in a static array is the typical appro=
-ach.
-> You'll have to work through the details and see if avoids being too clums=
-y,
-> but I think it will be OK.
->=20
+Fixes: 27489364299a ("Bluetooth: btnxpuart: Add handling for boot-signature timeout errors")
+Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+---
+ drivers/bluetooth/btnxpuart.c | 57 +++++++++++++++++++++--------------
+ 1 file changed, 35 insertions(+), 22 deletions(-)
 
-Better yet, also include the translated errno in each static array entry.
-Then hv_result_to_errno() can do the same kind of lookup instead of
-having its own switch statement. I did a quick look to see if the two
-functions might be combined to do only a single lookup, but that looks
-somewhat clumsy unless someone else spots a better way to handle it.
-The cost of doing two lookups doesn't really matter in an error case.
+diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+index 021983686cb3..b8a00bf062e2 100644
+--- a/drivers/bluetooth/btnxpuart.c
++++ b/drivers/bluetooth/btnxpuart.c
+@@ -204,10 +204,11 @@ struct btnxpuart_dev {
+ #define NXP_NAK_V3		0x7b
+ #define NXP_CRC_ERROR_V3	0x7c
+ 
+-/* Bootloader signature error codes */
+-#define NXP_ACK_RX_TIMEOUT	0x0002	/* ACK not received from host */
+-#define NXP_HDR_RX_TIMEOUT	0x0003	/* FW Header chunk not received */
+-#define NXP_DATA_RX_TIMEOUT	0x0004	/* FW Data chunk not received */
++/* Bootloader signature error codes: Refer AN12820 from nxp.com */
++#define NXP_CRC_RX_ERROR	BIT(0)	/* CRC error in previous packet */
++#define NXP_ACK_RX_TIMEOUT	BIT(2)	/* ACK not received from host */
++#define NXP_HDR_RX_TIMEOUT	BIT(3)	/* FW Header chunk not received */
++#define NXP_DATA_RX_TIMEOUT	BIT(4)	/* FW Data chunk not received */
+ 
+ #define HDR_LEN			16
+ 
+@@ -310,6 +311,16 @@ union nxp_v3_rx_timeout_nak_u {
+ 	u8 buf[6];
+ };
+ 
++struct nxp_v3_crc_nak {
++	u8 nak;
++	u8 crc;
++} __packed;
++
++union nxp_v3_crc_nak_u {
++	struct nxp_v3_crc_nak pkt;
++	u8 buf[2];
++};
++
+ static u8 crc8_table[CRC8_TABLE_SIZE];
+ 
+ /* Default configurations */
+@@ -1059,25 +1070,27 @@ static void nxp_handle_fw_download_error(struct hci_dev *hdev, struct v3_data_re
+ 	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+ 	__u32 offset = __le32_to_cpu(req->offset);
+ 	__u16 err = __le16_to_cpu(req->error);
+-	union nxp_v3_rx_timeout_nak_u nak_tx_buf;
+-
+-	switch (err) {
+-	case NXP_ACK_RX_TIMEOUT:
+-	case NXP_HDR_RX_TIMEOUT:
+-	case NXP_DATA_RX_TIMEOUT:
+-		nak_tx_buf.pkt.nak = NXP_NAK_V3;
+-		nak_tx_buf.pkt.offset = __cpu_to_le32(offset);
+-		nak_tx_buf.pkt.crc = crc8(crc8_table, nak_tx_buf.buf,
+-				      sizeof(nak_tx_buf) - 1, 0xff);
+-		serdev_device_write_buf(nxpdev->serdev, nak_tx_buf.buf,
+-					sizeof(nak_tx_buf));
+-		break;
+-	default:
+-		bt_dev_dbg(hdev, "Unknown bootloader error code: %d", err);
+-		break;
+-
++	union nxp_v3_rx_timeout_nak_u timeout_nak_buf;
++	union nxp_v3_crc_nak_u crc_nak_buf;
++
++	if (err & NXP_CRC_RX_ERROR) {
++		crc_nak_buf.pkt.nak = NXP_CRC_ERROR_V3;
++		crc_nak_buf.pkt.crc = crc8(crc8_table, crc_nak_buf.buf,
++					   sizeof(crc_nak_buf) - 1, 0xff);
++		serdev_device_write_buf(nxpdev->serdev, crc_nak_buf.buf,
++					sizeof(crc_nak_buf));
++	} else if (err & NXP_ACK_RX_TIMEOUT ||
++		   err & NXP_HDR_RX_TIMEOUT ||
++		   err & NXP_DATA_RX_TIMEOUT) {
++		timeout_nak_buf.pkt.nak = NXP_NAK_V3;
++		timeout_nak_buf.pkt.offset = __cpu_to_le32(offset);
++		timeout_nak_buf.pkt.crc = crc8(crc8_table, timeout_nak_buf.buf,
++					       sizeof(timeout_nak_buf) - 1, 0xff);
++		serdev_device_write_buf(nxpdev->serdev, timeout_nak_buf.buf,
++					sizeof(timeout_nak_buf));
++	} else {
++		bt_dev_err(hdev, "Unknown bootloader error code: %d", err);
+ 	}
+-
+ }
+ 
+ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
+-- 
+2.25.1
 
-FWIW, hv_result_to_errno() and the new hv_result_to_string() are both
-slightly misnamed. The input argument is a full 64-bit hv_status, not the
-smaller 16-bit result field. hv_status_to_errno() and hv_status_to_string()
-would be more precise.
-
-Michael
 
