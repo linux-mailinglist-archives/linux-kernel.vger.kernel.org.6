@@ -1,144 +1,129 @@
-Return-Path: <linux-kernel+bounces-549144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A91AAA54E06
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:43:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA60A54DFF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:42:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D7C63AC1DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:42:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C51D1896B61
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D0161891AA;
-	Thu,  6 Mar 2025 14:42:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A06D16F0E8;
+	Thu,  6 Mar 2025 14:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XWwLPYyb"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kARYBte8"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4738E17799F;
-	Thu,  6 Mar 2025 14:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84E4DF71
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 14:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741272146; cv=none; b=BD7z1x7WgqSmfoMipFk3mdsrRTZB8cik61xgJkTBJc6wa5FxVqK+7ASFMKN3GYuxgJ9qH8axvV8AsA0QHAl4RFzlolJysOmzzylTjROZwTcI0S6dYnpkYD6h41jYswTZd4vJU0duifRBVP6h2eLtfgDL6xIZthI0eEtwx+zIw+k=
+	t=1741272126; cv=none; b=N43TETzBS/b3EG61jDhliAxPXmyvwlBzb5FhirG8KFeYFPIRTpW9BZlGDOVAlmr90OBa2mbdQOfWDoRIgqmTPyS8HuMtcBuQu8xv6ECze3RbWsj7y59uD45XFBdxZsTqy4TcGjoavMksmgst2o8pFsHoLWdey7ORVkzyMHuPOQo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741272146; c=relaxed/simple;
-	bh=ONcS+jkAz8j6DNU4Ezy9NisVJDwwpANbFadbPYOR5JQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pJjElZeOsMty8RZ/GvdB8oiFXcWzdbcKhsGlK6qhMz54V2dEddnqGLcNpsROPuVcEuM+Vxsz/ffalDEkh1tyLMPbUQZJ5bMKaD5Uu3d+lonpoJMIsZRDV/oyXY1K9G1W3SZZXD1dCFH+XIZiPaitxesqNLDn2gUTWP4sH10Py+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XWwLPYyb; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30761be8fcfso8403311fa.0;
-        Thu, 06 Mar 2025 06:42:23 -0800 (PST)
+	s=arc-20240116; t=1741272126; c=relaxed/simple;
+	bh=KRUy/oNwOb2/xHP/CNXIPpF2zWth57GB5LAkf0uAKlA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dRmG6LZ7sjcuywcVLX5ncow0it2TZJ9X5sLkFpHo9OAHgu0AgmEgNKnnw72RLc9kiDFKGG2O/cNvcnQdqIBAu/0wPecj17kfuLlaoAF14R6Q34fpvjl8hcgfdTnxQ4bjpgIkhBkLEDfalR6qHxoiE8alK1P41gQwF70fwgTSgFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kARYBte8; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e52c1c3599so1141195a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 06:42:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741272142; x=1741876942; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VCk+JJxMuH+7Xc7MK7xCQnQ/UASRlAowqMx07w+Zybg=;
-        b=XWwLPYyb9AJOYco4ocQT+fsr2PH2egBF7p37w9CuDUJow8sFwlk7T6RasFSYWHCCkt
-         onlj3xZjQQOl1fV7jCJmOgTNZMgwkTDUO6otPJ0wufNxF9dXsPbAx/t7ZVOs3xPXl0Vx
-         gCoMeJvzu/5ZfVwmm17RT4XlE34NRk1oEGbm4MiQorMYr59HuDwnZl5souRPNGJLPIyX
-         dAJKpnSjZdfcRhzleN+zQZT+QT+xZaM2+0IUSQSHiRGaD+e5cwcy5aaA2EQzp4d/9jun
-         DiVG5GVhhWfHiHV+xrPSGTgsECq/EXx4mBSFSSrvXiAia6QEeNpGk2/JVzO6GRy/tr0y
-         VFfw==
+        d=linaro.org; s=google; t=1741272123; x=1741876923; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KzC8U5Vx4XxENcWpcmaqiUt/gKOGnuEvw78Wov3AGl0=;
+        b=kARYBte8cuOehrOtJB340gHYpcJ+mGjQE7V23o28fR9xBh83Hrt9Qpihs94ozyceVx
+         c2ojG/5cvdyM4G4PzDBjS34ym3FXLsLFZVmODpZU/sXhc8wPZTA8E0gBbblq3g6h/OFa
+         uWeU922UaI2khU6fIjBKGe1Tv8/PYL2v924sSuFa5l5OpOQXcjz96grUDwTZkuExiUB9
+         UZfs0xH/9Jslc4Tpd1GGVE/VTjjbgEGMOiumdKhP3uAT8kleQrqmRfShNr8LSV8VsZCS
+         u0J1LTrGstn6ebCJ1/9MlikdJ/M3+2kU1KL46s+Nxv7SqnbwtCBaT//8izztYg1fpSO7
+         Yhww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741272142; x=1741876942;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VCk+JJxMuH+7Xc7MK7xCQnQ/UASRlAowqMx07w+Zybg=;
-        b=dxRg8XbsneEv9nXbiPBragMtb1Rryh1SOyuF3s1jMQpq4QsC0tAqdvtfJKOb0Fx694
-         Ov7ZhQkGNc13JcXfwIZqr42+MAVM4sGQzi7uzSvXfY73C4nLOO92DUWDjLfWpIVYgLi7
-         jVSQh4QN+TrG4M5+yQv93qffJktc24WwKcDEF+wxIc50XfIKGhW1CiNDrKjmMBapYERb
-         7GQSg5Ex88A8u9+di8NyI5QfXabtDUsDk2aJQJVysBGOd21b7GrbAxMJ/FBWkUfXnL4s
-         MjrocAz4nphT//VHR8vGO7RaXVUzK4epW6u8UmIrRkMHc6zMIULovg2YA/SiKD0L1HYZ
-         3a4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUCAznIonnVTzgR4Q2K/oUrVKAyIjg4Y7dsxQl6fIip7RUL67og8hVnXc/IiRapK1y5+C2CHYnIa3FltI7U@vger.kernel.org, AJvYcCV0hiXtnTCCCAuoBAQu3tNJj1cW2aLhEFm5uZFsf51zRv9oDUYZUL1XNE0CWq2H1AX962UuLr3gbbo=@vger.kernel.org, AJvYcCWFxhu+ITYde+xNAYwEl2ttCx8J0FoE1N3R5AeUlfAdNsZYHKWw6phVwVZshbigB4/P9w/U4menGhGhAOUFGUnw@vger.kernel.org
-X-Gm-Message-State: AOJu0YywuS2x/kkTlQUQtMOJjHyMvxKHI8SO9jlpxgPUFlxGO0SRrf4F
-	pqJF/Dh+3b8lKnHMK7DnNbYG2xoucq6dJaAOn30krhJ+dpKD/YpM4Tp6Ooc+33T0L7vVCbcDm+L
-	qpX1n21WB5LxZCcLXqlyRKgvBgrM=
-X-Gm-Gg: ASbGncu8awxkeJQZKzQzWD7WHgtVuAUtyLP3rNrlNolhtSZNlgUfqbMCaJKW/9GJUnu
-	/z8p4Q3DtKe3TBUanMyQ/xhwKNtnGNZxjRsE8s3lDetsv+yS3LYTFRZOl376lRMDe3+jvy72HZR
-	VcjO4gHUSQrG6LpNYRThSWipdJArmZo86l9WMNpMPLXw==
-X-Google-Smtp-Source: AGHT+IGOs0tm+vlePSriOvo4exloY4uff5hQyhMGSFCdw9I6NO0PFz3l856QvBjOCsMzUglvlxiovip4pW93x04X3AQ=
-X-Received: by 2002:a2e:a78a:0:b0:306:1524:4a65 with SMTP id
- 38308e7fff4ca-30bd7a5453bmr26242801fa.20.1741272141974; Thu, 06 Mar 2025
- 06:42:21 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741272123; x=1741876923;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KzC8U5Vx4XxENcWpcmaqiUt/gKOGnuEvw78Wov3AGl0=;
+        b=gOq5Oq9f208wxnzOiZKVOyUn+bRpFGAPY238J3XjiZuu4AoSC8CG1/uqibKB051Gwl
+         7XYZNnVzBmqDmHuW1zYXcO8rEvBo4u/CQHb3b27plVxzPmdQXd6xFJRvGV2Nk6h54GM9
+         UAfjFS14r8x01iFxeTw/bUp7/3Ld4M+j0OQEnh3yhOCYAbsiugm005+K2ZgAl8O7N1FV
+         zWkGb04FhmuLPIlQURW2OKBwWqpYncDUtldgpRyNU+PeX2NPtOtsQr2gEkRN68f4Nl8x
+         cz2+9nRr0B8nfe7QsDRZpHoQ30t6O4KFDrpIF1ag8Qkyh7P0CTHVrI9L23DV/sopSt0/
+         6JuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXsXJNkqNawlAGO5g7Nw+Vh/X4cKYWOBsdFZH4IgAp+4wuwWDkIFw1PeKrdRj0FEh+SH3uB8o2S9kNStlE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjhK6goNrERHl/Ca5IoMCEriQoDlpgh90E5mY2pt40CXwSQdga
+	nZvVFDmqYCfdwI+x3toGRBeedgjJT1xWk/BP9K0oUL/xVvxN2wVeIMwVozP5aNc=
+X-Gm-Gg: ASbGncvpVZwcXQQJgX31EUsIBpdXn77kxWG5nCxnePoiXGrH0g2RUZNpxnPoINB3KsR
+	JeOCb8U74G8Z+4jSB+HL0lXf5isWDsVaVkxqsEpNK3DH2BIsWOHFGopRajCGHfV5wqoLhGjBLhH
+	ed8ibWySresu4aZhq59xdkib2fTsKMAdGmtYHiCz4hBATZdHNLGnHKVceRb1bqvbZP3kwJUVuod
+	+PYNfjRkgsgFlkFT+Whgm6uVxcPevsBRZ7JjOLFmhiWQ2jOvJsZYSOeYMBV9CXQaTi3258+IWi7
+	1wFxIy6A6VPuT40tmVZFsbGdHfxvJRilwo/Azn4ArT3Hb4bdU/Pg6g==
+X-Google-Smtp-Source: AGHT+IHfceypMXflxij/F6RMQ9oZmVEMDniJh1Ac33s6vhrs2mCfTc4dmPRbZTDckaO3mSjcRB0VJQ==
+X-Received: by 2002:a17:907:d92:b0:abf:4bde:51b1 with SMTP id a640c23a62f3a-ac20d9e8f1cmr619555866b.21.1741272122939;
+        Thu, 06 Mar 2025 06:42:02 -0800 (PST)
+Received: from [192.168.0.14] ([79.115.63.206])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2390fe76csm106804366b.0.2025.03.06.06.42.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 06:42:02 -0800 (PST)
+Message-ID: <d674f1bc-b596-46d5-b56d-1e2fb509c684@linaro.org>
+Date: Thu, 6 Mar 2025 14:42:01 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221-printf-kunit-convert-v5-0-5db840301730@gmail.com>
- <20250221-printf-kunit-convert-v5-1-5db840301730@gmail.com>
- <Z8mUH0comOCpycpK@pathway.suse.cz> <CAJ-ks9nFSzRXFauavzSWhvhr2Rou7qqkWi_LZ=4e1Tyr4_bn3g@mail.gmail.com>
-In-Reply-To: <CAJ-ks9nFSzRXFauavzSWhvhr2Rou7qqkWi_LZ=4e1Tyr4_bn3g@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 6 Mar 2025 09:41:44 -0500
-X-Gm-Features: AQ5f1JpJWKoqf6Ad0yhsZAI6HTLS5t2uCBoOGMRrpWewZnGmz7aTZFflUPyKXMo
-Message-ID: <CAJ-ks9nDLGvzZ+NDAJsk2Hy1=hsCzayg4-65gk60T_WJZzOUzA@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] printf: convert self-test to KUnit
-To: Petr Mladek <pmladek@suse.com>
-Cc: Arpitha Raghunandan <98.arpi@gmail.com>, David Gow <davidgow@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
-	linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mtd: spi-nor: macronix: Add post_sfdp fixups for
+ Quad Input Page Program
+To: Cheng Ming Lin <linchengming884@gmail.com>
+Cc: pratyush@kernel.org, mwalle@kernel.org, miquel.raynal@bootlin.com,
+ richard@nod.at, vigneshr@ti.com, linux-mtd@lists.infradead.org,
+ linux-kernel@vger.kernel.org, alvinzhou@mxic.com.tw, leoyu@mxic.com.tw,
+ Cheng Ming Lin <chengminglin@mxic.com.tw>
+References: <20250211063028.382169-1-linchengming884@gmail.com>
+ <20250211063028.382169-2-linchengming884@gmail.com>
+ <e5458a0e-528f-44ec-a0f0-543472ad3b85@linaro.org>
+ <bb9f8a80-4662-4ab1-b9ad-6899977c3827@linaro.org>
+ <CAAyq3SamyhtCkd47939dKWCZN3ejaDvM6EJzwizWVqhNW=27bA@mail.gmail.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <CAAyq3SamyhtCkd47939dKWCZN3ejaDvM6EJzwizWVqhNW=27bA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 6, 2025 at 9:25=E2=80=AFAM Tamir Duberstein <tamird@gmail.com> =
-wrote:
->
-> On Thu, Mar 6, 2025 at 7:25=E2=80=AFAM Petr Mladek <pmladek@suse.com> wro=
-te:
-> >
-> > On Fri 2025-02-21 15:34:30, Tamir Duberstein wrote:
-> > > Convert the printf() self-test to a KUnit test.
-> > >
-> > > [...]
-> > >
->
-> > 2. What was the motivation to remove the trailing '\n', please?
-> >
-> >    It actually makes a difference from the printk() POV. Messages witho=
-ut
-> >    the trailing '\n' are _not_ flushed to the console until another
-> >    message is added. The reason is that they might still be appended
-> >    by pr_cont(). And printk() emits only complete lines to the
-> >    console.
-> >
-> >    In general, messages should include the trailing '\n' unless the
-> >    code wants to append something later or the trailing '\n' is
-> >    added by another layer of the code. It does not seem to be this case=
-.
-> >
-> >
-> > >                       bufsize, fmt, ret, elen);
-> > > -             return 1;
-> > > +             return;
-> > >       }
-> >
-> > [...]
->
-> I noticed in my testing that the trailing \n didn't change the test
-> output, but I didn't know the details you shared about the trailing
-> \n. I'll restore them, unless we jump straight to the KUNIT macros per
-> the discussion above.
 
-Ah, I forgot that `tc_fail` already delegates to KUNIT_FAIL. This was
-the reason I removed the trailing newlines -- there is a mix of
-present and absent trailing newlines in KUNIT_* macros, and it's not
-clear to me what the correct thing is. For instance, the examples in
-Documentation/dev-tools/kunit/{start,usage}.rst omit the trailing newlines.
+
+On 3/6/25 11:39 AM, Cheng Ming Lin wrote:
+> Hi Tudor,
+> 
+> Tudor Ambarus <tudor.ambarus@linaro.org> 於 2025年3月6日 週四 下午7:01寫道：
+>>
+>>
+>>
+>> On 2/11/25 7:20 AM, Tudor Ambarus wrote:
+>>> On 2/11/25 6:30 AM, Cheng Ming Lin wrote:
+>>>>              .fixup_flags = SPI_NOR_4B_OPCODES,
+>>>> +            .fixups = &macronix_qpp4b_fixups,
+>>> For your next patch that'll drop the redundant flash info fields, you
+>>> can drop SPI_NOR_4B_OPCODES as well if these flashes define the 4bait
+>>> sfdp table.
+>>
+>> Any plan in doing this, please?
+> 
+> Sorry for the late reply.
+> 
+> This matter is currently in progress. Since collecting all the chips
+> will take some more time, the project has been delayed. Once I
+> have all the chips, I will start the verification process immediately.
+> Thanks for the reminder.
+> 
+
+Thanks, Cheng. Switching them one by one is fine too.
 
