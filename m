@@ -1,132 +1,138 @@
-Return-Path: <linux-kernel+bounces-548685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E723A547FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:39:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2416A547F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:38:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C7EA3B22D2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:37:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD1E51728F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:38:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3871B20468E;
-	Thu,  6 Mar 2025 10:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FDA1205513;
+	Thu,  6 Mar 2025 10:38:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m4FZlG2A"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlqhKDkb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5013204C31
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68605204F75;
+	Thu,  6 Mar 2025 10:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741257457; cv=none; b=NHjhk03Rw03RdLGD4YmiTkOQUqxMrUoxyoP16REu20zofMtTleZWNhGLaHV4a78zWCG7jdlc5t+EDk4yvn9NbOWGal/vVwEUYnvWrDGhfKiz7a82OofIzfgQAx4AEejEgDtvaZJvC6WE1+zmD6w5/Tyuuuszj8AhMPLyMW6AXdE=
+	t=1741257479; cv=none; b=hF8EpsvzkmdHboNFF5QwbnjoXUuW1k0ybetRDoO4EiVVuFwaxZw/uaLUNla3e+VootKzprGQGqPWpneEgcxXGceyFZ3XtZvsANLeNrznWNkdM0K0G3w0nzCHeMZpo/KPCSKh3tbbIW3n10+cwuLdp/4zmtFdeXhhZv6UcBCMGOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741257457; c=relaxed/simple;
-	bh=JJPVJ6pmf25iDWADk8kpgLM82yed2tP9+xavB158RRI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qu1JhonpvZUM/rE6FSO4aArjzvJpyj3o85eoG8PB73gaFhgPzvKjQa9jfu3v8dFaOG54wmh5EHTcVFbhGRcXFDuMwhKNIh+3n2xFzjNxnSXrC4xpSuRFpHfsm4n2Az74b9siKjiZC4ytcEAjQ5iYcKBw1eiHqvCWJ7GVjd2RN9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m4FZlG2A; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741257456; x=1772793456;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JJPVJ6pmf25iDWADk8kpgLM82yed2tP9+xavB158RRI=;
-  b=m4FZlG2A6Ic4FgAb4cXgak7SNF3Al1yIxX6NTbDmGCE42azuVWJlgr2H
-   FlaO/CrLqyOMzC2eFZvaOpUv4P6vWNVbN9MktpmxeO3Vl7t2qKULGqexv
-   q2NhV36Wfy67oz8iO28kXpsOVRvLANB1KHoT4np0twoaRhqqI3jbfMucS
-   mLmNjGiH1mobJ+/tGGbsaa1nNl9wWBp8LlpMG/3E4/RDtFqvvkVqDiUBS
-   +rmwWf21nsQIQuzeO7Va3BIR4eRYy6MkZMHHzDV2AfI9YKmthbWOkcF/+
-   szhkc5iYUr77uKsIW/rIVdNu+oTQ364nJMcbyTe08c3dKE/LaLrWZR6Zg
-   A==;
-X-CSE-ConnectionGUID: bTuvFVNjSEaaFiSlY0l6yw==
-X-CSE-MsgGUID: uX4C+FcFRySyRaKeD92J0w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="41509392"
-X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
-   d="scan'208";a="41509392"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 02:37:34 -0800
-X-CSE-ConnectionGUID: c+rR+hCgTf2Ya4rRw8Ylgw==
-X-CSE-MsgGUID: i092fs6YQ4SmKrJu55ba+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
-   d="scan'208";a="119173393"
-Received: from agladkov-desk.ger.corp.intel.com (HELO agladkov-desk) ([10.125.110.41])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 02:37:31 -0800
-Date: Thu, 6 Mar 2025 11:37:28 +0100
-From: "Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>
-To: Joerg Roedel <joro@8bytes.org>
-Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bp@alien8.de>,
-	Joerg Roedel <jroedel@suse.de>, Ingo Molnar <mingo@kernel.org>,
-	x86@kernel.org, hpa@zytor.com,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	Larry.Dewey@amd.com
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <Z8l66FFgPu5hWtuI@agladkov-desk>
-References: <20250305111251.GBZ8gxs_6O7g3gLVEh@fat_crate.local>
- <Z8g01YhM_FtdB5n6@gmail.com>
- <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
- <Z8g4sU_dsZgY0PuS@gmail.com>
- <20250305115035.GEZ8g6i7NTiSfkxk7J@fat_crate.local>
- <Z8hYEsHvwUwlOold@suse.de>
- <20250305153705.GKZ8hvoaz2GPt2rGtu@fat_crate.local>
- <b0cf4bfc-bf22-4986-9e76-62e3f54179ea@intel.com>
- <2koe2zg26fndx6d6jcmbg6dzybbgldgrjufupj74nvmav2dmqg@w6bknhosl64h>
- <Z8le_TWUJNebrfs7@8bytes.org>
+	s=arc-20240116; t=1741257479; c=relaxed/simple;
+	bh=YNg+XgZ1AZ6kclyonPJqBkYdvbYBqR4ivmV7p6WuUlA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=iCEUGDFYpgBTHemw45p23cJUBt3rCTAtIQlr1eJMU3HUDNCAQddS8q4TGJA90tguOknEzGUNlFvIV/R+jP8KzipuMVnVXWtt8Z+eaCpmpQYqabKbH0aKn1OO+NadlRL/beSNuXO8vKLX1nCj+WtcxkFmG6rZkYpglME0uaAi4pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YlqhKDkb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D94BFC4CEED;
+	Thu,  6 Mar 2025 10:37:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741257478;
+	bh=YNg+XgZ1AZ6kclyonPJqBkYdvbYBqR4ivmV7p6WuUlA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=YlqhKDkb7hvLHzOkt9B+0yyFkJi5QXGdSZOtv7A76rs16rcPAk/UCBLkzUxVEcL14
+	 //gp0MwZRSS5liC75reC4ytfwXss59R2UwbT5BftrMLZKpoXNcH6k195Tc63Ztnuq3
+	 y99Voq8B/U3hFw3iUwy8MzahPS5lCyNy9Zaypu0mLvm7rRgGbesHdTHKa7P01ALn2e
+	 /IYXatGyKSg/mHU1C8CdJsUSIKE2+oVfTqfn5MrtUm9QRM7kqW895Y8DqwNV9VNVxr
+	 Vy8C07s3rhWPHdzsynP8fUberGlizGjnLYAfczxCGdJ594CFJ27gbGzpocHnNFTwqO
+	 6oRLMc8AOJyDQ==
+Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2bcca6aae0bso333422fac.1;
+        Thu, 06 Mar 2025 02:37:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWDv5F1Usw8EPcKi0CTSY1K6HKSK/MC1WcmZ8dYTA/LmgOOn/n71TMkVgLbB9R9zY0WokA2yHKBKW8=@vger.kernel.org, AJvYcCWmS8rRWgMKRg0hUfAWqpfumI80CjfT7MYtR63IMDtASr9zj3vFABs0IEzHnQVwSrgHrpABargEDaMZ2wQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNnZsqjETlqXX+T1skrf27Raxt1MMoswzB5Wn39oHWUbNdkgM+
+	9Ux4i6c/7otnh2/DCaakDwPK7Rz5CsS3nE9WGvGLWG2WhEf4sf71RT/PJPZK27HnhXolsrxo4fS
+	BAFN7pZC+Q6IsNHMNefHxdh+DvcY=
+X-Google-Smtp-Source: AGHT+IH3MUzd3IYGjGngSPT3jt28qznhOZYfbjOgCKDZoTXI1A16WoPmO0MWUmbYmN8AFuZ5cx0hgDeNPJplg4UOXto=
+X-Received: by 2002:a05:6871:588:b0:29e:5522:8ee4 with SMTP id
+ 586e51a60fabf-2c21cd1f13emr3716612fac.25.1741257478205; Thu, 06 Mar 2025
+ 02:37:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8le_TWUJNebrfs7@8bytes.org>
+References: <5880743.DvuYhMxLoT@rjwysocki.net> <1929404.tdWV9SEqCh@rjwysocki.net>
+ <92699eb4-8495-4ccd-a9dc-120b14271f9d@arm.com>
+In-Reply-To: <92699eb4-8495-4ccd-a9dc-120b14271f9d@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 6 Mar 2025 11:37:46 +0100
+X-Gmail-Original-Message-ID: <CAJZ5v0id8ZF+8Q9vaBZfXXhwyiZzbX0NWz0t+4iYTWLo7-X5KA@mail.gmail.com>
+X-Gm-Features: AQ5f1JpCJatDg4H_4G0HO3_y4n_KtbONzf6jVYjuP1cxb-3t01EiCBuwp0JKDMY
+Message-ID: <CAJZ5v0id8ZF+8Q9vaBZfXXhwyiZzbX0NWz0t+4iYTWLo7-X5KA@mail.gmail.com>
+Subject: Re: [PATCH v1 2/3] PM: EM: Make three functions static
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux PM <linux-pm@vger.kernel.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 06, 2025 at 09:38:21AM +0100, Joerg Roedel wrote:
-> On Thu, Mar 06, 2025 at 10:01:17AM +0200, Kirill A. Shutemov wrote:
-> > Alexey looking into exposing TDX module version in sysfs for both guest
-> > and host.
-> > 
-> > I think it would be useful for guest to make attributes and TD_CTLS
-> > available via sysfs. So far, we only dump them in dmesg on boot (see
-> > 564ea84c8c14).
-> 
-> Okay, do you have ideas already on where to put this information in
-> SYSFS?
+On Thu, Mar 6, 2025 at 11:01=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.com> w=
+rote:
+>
+> Hi Rafael,
+>
+> On 3/5/25 21:11, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Three functions in the Energy Model code, em_dev_update_perf_domain(),
+> > em_table_alloc() and em_table_free(), have no users outside that code a=
+nd
+> > so make them static, remove their headers from the Energy Model header
+> > file and remove a piece of documentation associated with them.
+> >
+> > This also helps to clean up RCU handling in the Energy Model code that
+> > will be done subsequently.
+> >
+> > No intentional functional impact.
+> >
+> > Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> > ---
+> >
+> > This essentially follow the rules that all functions without users in t=
+he
+> > files where they are defined should be static (with all due respect to =
+any
+> > out-of-the-tree users of them).
+> >
+> > This change can be reversed when any new users of these functions appea=
+r,
+> > but it will have to take changes made by the subsequent patch into acco=
+unt.
+> >
+>
+> I see your point and it's valid.
+>
+> Although, please give me a few days and I will send some patches which
+> add a client for this API. It will be a modification of the EM for
+> CPUs while the GPU is producing heat to the SoC. Then IPA and EAS
+> will get the updated total power values (doe to this this leakage power)
+> in the EM.
 
-I was thinking to suggest something like that
+OK, so I'll need to change the headers in the next patch and I'll drop this=
+ one.
 
-/sys/firmware/coco/tdx/...
-/sys/firmware/coco/sev/...
+> As of now, I had some code downstream for research, that I share with
+> partners in the Android world [1].
+> I believe the user-space sysfs (like in that top patch) which allows
+> such EM modification would not be accepted?
 
--- 
-Rgrds, legion
+Well, if there's a good enough reason for its existence, then it can
+be added I think.  It all depends on how this is expected to be used.
 
----------------------------------------------------------------------
-Intel Czech Tradings, Inc., organizacni slozka 
-Registered Office: Prague 8, Pobrezni Street, No. 620/3, 
-Postal Code 186 00, Czech Republic
-Identification No: 60165898
-Entered in the Commercial Register 
-kept by the Municipal Court in Prague, Section A, Inset 8332
+> Such approach might also help the Middle-ware in the OS to influence the
+> kernel decisions, mainly on phones, where the app just occupies the
+> screen and Middle-ware knows about it.
 
-The above is a branch office of:
+You need to be cautious about changing the EM too often though as that
+would only lead to thrashing and nothing beneficial.
 
-Intel Czech Tradings, Inc.
-A Corporation registered in California, USA
-Registered Office: 818 West 7th Street, Los Angeles, CA 90017, USA
-Registered No: 1828841
-
-This e-mail and any attachments may contain confidential material for
-the sole use of the intended recipient(s). Any review or distribution
-by others is strictly prohibited. If you are not the intended
-recipient, please contact the sender and delete all copies.
-
+> [1]
+> https://gitlab.arm.com/linux-arm/linux-power/-/commits/dynamic_energy_mod=
+el/android14-v6.1/v6.1.75/?ref_type=3Dheads
 
