@@ -1,205 +1,139 @@
-Return-Path: <linux-kernel+bounces-549783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB973A5573B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:02:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A92AA5573E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:03:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 179C8188EFA7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:02:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 518D9173693
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:03:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5328A271805;
-	Thu,  6 Mar 2025 20:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="WbvfaxZX"
-Received: from DM1PR04CU001.outbound.protection.outlook.com (mail-centralusazon11020142.outbound.protection.outlook.com [52.101.61.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F1527004F;
+	Thu,  6 Mar 2025 20:03:19 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 235BA14658B;
-	Thu,  6 Mar 2025 20:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.61.142
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741291312; cv=fail; b=TiOlPiCI5AHrQ50CWCpeNYiTaxsiH0enbqx3wAeGM58MSuvHnjttROcc72sUch+bM9aG5mPK3vMcwhhgN8mSjgb0p6jI2cww2wdv/AblIr+5CrPRkEKB7nAr51tD5qb1yjX33sO7qQUQujgQIhtgf+Q4duQmzWN0DF1Fn0OSX3g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741291312; c=relaxed/simple;
-	bh=ZqJs94kQKEGgKau7tG1BYHeuctA33hD68lOjllkoJh4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=VFUxzDKT4cWTfxX1Sd3K+lzqAVj11Urh5NQ+ujwxNDjCatqOKXdjJKgTlaicYLLPn8dH1ZYMGxEnUV0Ep1Fdnx1UJsKuqOJ+cnJIlhQoV96B0NswdND/oBmxnyyabzk7yATnRJscHDdpw0E0Y+5ZlMeywy37lSS/i626N8AJw3A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=WbvfaxZX; arc=fail smtp.client-ip=52.101.61.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=zOnSaLXV7V1BLVCQyDvSk1ZpQzEVweoNBQNsp+u+Dt/poeXxcroETMIQJztH9QWoDEmuJTFK3hRzUOW2BMi9CMzBWsa1wuFvTTxwd7XY4JWPkivOUob9OKTuNuqgqWIr3nvXQ/GJZ0xsXzinmDshRPE5pVlvuCqI5J8MI9I2gedNaOSlEt8NHQVCy34yPcOwW+NY7FVXscwuL1r+43h7NDIrIgX8kvPu+MEoMPaDukeVheq1j1/FSkkDcYvihJsQRhUDUMMzJDIVIK9l+vdYs5z2NL7AdjtCDSZxEUj7kjQpeOT9mXTRq9cI+oY4a+TWRWfbHgk8zIv7KirseNfLjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YoJbAOd1OgbJxi4MyNjtTQBn8uc+v/NFe6MTZbPfZLY=;
- b=weLib7fvXwUqrsOXY0nxEaG5XUO6yURIKnKbC58FO/AHGMlB6vKmueAHhV1ZCAs7Kj0QGO1mivsyBP6DBadipBohrr3Y6P4zaa/474dXOeFlcBxZx/62tZbV1ifbtJPElneQJZesEg7kO8iPlQRt77OAXIFmk4bzqIu7zgYhFZjghMK66H+TNBZPgRKycN/lg4RpXK+V6UMWK/Fx4hNRfVCZMBPvCwwkqr7NYBZ4J7rTYUSaYxrUNt+X8a6cZmtj0HRRIdWjihrZhh5GhlyV9vUmRimr/owmKwL4F+6rLXnCyNtm6tSiAcvUkLJjM7f5YiAFKXMSLPuHHJPG4kEQzw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YoJbAOd1OgbJxi4MyNjtTQBn8uc+v/NFe6MTZbPfZLY=;
- b=WbvfaxZX8+DW+yKtoFEyMrxQP/BiPXflSzurmZUhU0RlrKCjq106Kfkg5KHzKdOZ64mvYHf0cg30n3Mw3m/E9RMn2lt0rTgY4JXR/PD4848zp3Ns/JAfoqOLk7LxJS46Ond98Rqx7KKGzvrHLmk1WGcD9buQgbsWnvWlXYhORww=
-Received: from SA6PR21MB4231.namprd21.prod.outlook.com (2603:10b6:806:412::20)
- by SA6PR21MB4208.namprd21.prod.outlook.com (2603:10b6:806:415::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Thu, 6 Mar
- 2025 20:01:45 +0000
-Received: from SA6PR21MB4231.namprd21.prod.outlook.com
- ([fe80::5c62:d7c6:4531:3aff]) by SA6PR21MB4231.namprd21.prod.outlook.com
- ([fe80::5c62:d7c6:4531:3aff%4]) with mapi id 15.20.8511.012; Thu, 6 Mar 2025
- 20:01:45 +0000
-From: Long Li <longli@microsoft.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>, "longli@linuxonhyperv.com"
-	<longli@linuxonhyperv.com>
-CC: Leon Romanovsky <leon@kernel.org>, Konstantin Taranov
-	<kotaranov@microsoft.com>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
-	<pabeni@redhat.com>, "linux-rdma@vger.kernel.org"
-	<linux-rdma@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>
-Subject: RE: [EXTERNAL] Re: [patch rdma-next v5 2/2] RDMA/mana_ib: Handle net
- event for pointing to the current netdev
-Thread-Topic: [EXTERNAL] Re: [patch rdma-next v5 2/2] RDMA/mana_ib: Handle net
- event for pointing to the current netdev
-Thread-Index: AQHbjtGAHu5I1ObjAEGtSbYSnlR/rrNmhdBg
-Date: Thu, 6 Mar 2025 20:01:45 +0000
-Message-ID:
- <SA6PR21MB4231E9B17697BFE4857A7E55CECA2@SA6PR21MB4231.namprd21.prod.outlook.com>
-References: <1741289079-18744-1-git-send-email-longli@linuxonhyperv.com>
- <1741289079-18744-2-git-send-email-longli@linuxonhyperv.com>
- <20250306195354.GG354403@ziepe.ca>
-In-Reply-To: <20250306195354.GG354403@ziepe.ca>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=d3c7ae03-0f2c-4013-b7e7-807bf0e3f508;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-03-06T19:55:35Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA6PR21MB4231:EE_|SA6PR21MB4208:EE_
-x-ms-office365-filtering-correlation-id: acc9b32c-1966-45ab-90bb-08dd5ce9b8f4
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?QpOQ2MyQTCfLMSNWNlVqCqgPFoF3paXo9NJjFNAqWJe4WshA16nyNUfKF2gZ?=
- =?us-ascii?Q?hHqLgihat8n9vsBfPv626IM+z/jYrTQ6nADH4f6O3rJSRHRqyjyVwEYbB98t?=
- =?us-ascii?Q?yh1ezSxul7aEohmBmFoD4FY8apgiGhdxNLFMGZT5fjVSTn08Ogmbid7xXXBc?=
- =?us-ascii?Q?+f7FH0idBQ4czzrBowFMVcppS99hmtu0qFAEtp+r2i9B4MQ7fzV9ZhqyNPAF?=
- =?us-ascii?Q?/Ikw7aYViCfTgy8uN0lQfXwd3ZDLinmH8v+U5wUZxO8CFEqONjp6txq8CY5g?=
- =?us-ascii?Q?5fg7lUzmh03/X2EPjUqzOAkdbV1cMjolvZ89MZ2A0hYKp+qBVIi4Xj1nhARF?=
- =?us-ascii?Q?0jGTOPwnCABBbsy0MbFdHjhCC56RtBPQGp4rrl4kfcLibI4j7ZI+eXGZpCS4?=
- =?us-ascii?Q?6JvUDuucUUlWEIzGv642VEbBbV1KVapbPyrsM1KqLwuejMJYIPhwWf7SEZYE?=
- =?us-ascii?Q?b00NSOS7QgGFEPTNJT1rpfPOsNb1CnYSTNDvKD5dnzDhOJc1kJV2D/uWl12s?=
- =?us-ascii?Q?VuVVL1hJA6V7AbBhaOWa6Qbl/fpzXQ37N9DXY8ubC9AzfBVqSrngiZT4S53s?=
- =?us-ascii?Q?WGIBqc+6R2UJV18s23nsLr+c+6vUbkV+0YTnCxt9ruN8iyEitsUZQ25V1Vf0?=
- =?us-ascii?Q?vomEhEUu0EiKVrNRXIO3bLI9dPIhgSz5womxzIUdTdRca8lmuH0dh0FxoZWV?=
- =?us-ascii?Q?WpeBi4p5dJlX32CP+xRL1AOVqeDBTvF3ZMKLwseNxWp0v3nx9UcUP33+SFej?=
- =?us-ascii?Q?iTazzOcJt1hmTQjVUVUk8WOw/4Osit1dzG2H8pd86Ne1D97RCM9873FeDq+d?=
- =?us-ascii?Q?xmq6awbjrjjyJmmGMqX8FPzWTjtIWSLyCo6SG3fuRBMsNTAKLXToVAM4GXl5?=
- =?us-ascii?Q?chqCyTltlFQlqdKcvqf3e6TDCNxVxF/KVy0jGcaK21SIsye7DbcKTdq3tuXN?=
- =?us-ascii?Q?S23edR+koGiIGLhuPr4vYriRsj3tcspfYnHWZRp4C1Fp43FbBYlnrHgeB3ft?=
- =?us-ascii?Q?K4Jql56n/kWMpi5HB4ZSb0aV07wqHUGu1rZLvxaWsUL4hwU6the3nTRrNQnu?=
- =?us-ascii?Q?xsLCijFriNakDs7IGTw4Sg1SJLNmt1rs0wpetpSVX1KGMzQR/yIDejBfx88f?=
- =?us-ascii?Q?gjmBdwh9pAR5kKxknl3TIgp0jMdOZU3thF++ibMfFLy6P/LzQRq0/+g3fqC6?=
- =?us-ascii?Q?LZQoS4LCJ169QUUhN0g0R77EQ0i6ld3mQiOrelwCZQJLraxcokQxamn0+kjG?=
- =?us-ascii?Q?axyu+xbnD7KEU3HbIlGkfPgOPdVS/JRmdxpwAaw6LDCodEHVt9OkJX7mJDSm?=
- =?us-ascii?Q?LEt0l0qYOCoLhb0JMM6zjjchvwS1w3mwOADFa9tiCBqJ+icAxtvCgaoI74+4?=
- =?us-ascii?Q?rJNg5wgy8goKjNACGyxfqJQcuHiaFp1rBKl0JQ0129/NrfqfWPlGXrqN6Wx+?=
- =?us-ascii?Q?1j/kd+qjeSXJcCqxra7uUY0v0QFAkFQs?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA6PR21MB4231.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?0bpXdM2556QAZ7yOItFFMnMv7BzhcmoWA2phbUU6LvM8wi+RECeAGsIz6x4q?=
- =?us-ascii?Q?4ZRiRLQ0EwDUL13kgL2O7fUVs72JF5IfuZ7K/09BfoO5S45VOmT2w4TE6L+g?=
- =?us-ascii?Q?mBo+RmwCW5imlWExGYsTnn9QtMaIS1DXlMr+USxLG769mF1vjtp1VXVBkcLK?=
- =?us-ascii?Q?wRvoqUeoY+TlW8ODBaMYt+PuGuX6qrG+lAzjQ1tOIzy2LM9vOKY4wB7VgZQ/?=
- =?us-ascii?Q?DU19T7VQx5nIj0QorQrSwSeUzV6Jy0tx12ahdIEUAypSjWjmoVPGW7vjT9tN?=
- =?us-ascii?Q?U9SzSRAMS082yQry2VRo9/6+3gzDnAQvYGbdLWa2RValjFfPvm8vAyRCvAZP?=
- =?us-ascii?Q?EKdGo31N6/X64fOF9rSuvRrT3p1mYFW//+c1lPMjWmmGcBsD5tFcVkXOY3A5?=
- =?us-ascii?Q?pMetPtIJNJ4H+KhQX3gg9TSvATxyXTeA58Tfh9Z++vHahHRF4vi4ikjDEZEG?=
- =?us-ascii?Q?J77Z0swLwlrC8qsYtA7P0I1Tqade4IGUvWwULkCTQNJrjBOlbfpVlQqkuuVA?=
- =?us-ascii?Q?ruj7eWP+Joz1XPxIGvsK+Vq8LbNby9sEVCt0M6aqAcRe7HMaz3YEvNOgoe9K?=
- =?us-ascii?Q?BKQz+FIysstfiKRZjmEFwysZbg8LPAPX9d0HEOdFAOuhYSz2sy/PjgwWyqhQ?=
- =?us-ascii?Q?ZXfnLAg2IjzzKMKW+EbZ9tE67dFN0DQFovPNpy8HbiO7YZhDFHugbL17B6LH?=
- =?us-ascii?Q?Eunc/cRhCcuHaH9MUfqTG9+EFmwePc/C5Tw0vM9HL4QzRhj/VK2XbOGp9gJt?=
- =?us-ascii?Q?iuIc92nPnIQCQsAMYSL/YGVGxgGBx8no+TK76eedOBI2mQBRhqDSzWuZe9zx?=
- =?us-ascii?Q?FHExWbrnXrNU/Xj7ideRBA0eQEAdqjHGh+S5iiJjqO1CJ7Ifg6K6SBDbeE+T?=
- =?us-ascii?Q?1eJFyZ2m3/YxafVnNly/iRHZywEWZbGDqXMxmsh2YuRhPra615daSv0YD5Re?=
- =?us-ascii?Q?P6oM/h0dQUNr0gvt9xjA1XRsthj8bmGm70EKjhRSn5mooOnklNfCq+/7Yfc9?=
- =?us-ascii?Q?wbbJdFgy7Q8Y9BnS9E0hLvEI+0wMp3SSKkMPbi2rMkfEoqJBcxn9gI8rJAGK?=
- =?us-ascii?Q?kVXdmI0/Lf0Sv/n2egvLRHJEYE5C60EGIMc9Vw805Dl8ay2qd8k0XH4hzrfZ?=
- =?us-ascii?Q?eYZwlK3oBAo0wiKAfJDv8N5EEjESuPy05+07zo5qDrrpaAHaFTaNCECb7jT6?=
- =?us-ascii?Q?jRgjO9xbKUqYB9wdmUvEGYy2QjnTfqmkP2Iy+TMZzbkvrNJCLit/vic0RKK0?=
- =?us-ascii?Q?DCNwBiyu2+qKW0P5HXF/GCYUJeAg7jVLhQ1RTrWvDiGqvaJcoMtUUPF+ylXE?=
- =?us-ascii?Q?B4ckvpYDQmfExCrHGeurj5NzIFr0pI4HZhhMoAwMWbkw5akVzmRCjgUHZh0X?=
- =?us-ascii?Q?4zZ4tz5akEUdQ2qJOA2s/J/aobNwu/Dedkm1MVHMj5Teun54iHwNZwqLwOBS?=
- =?us-ascii?Q?IlftrPRLCFiK4xSSy227anIY8cV/3CUIYDemwrxPynwmDPps8JaSQ2+WlHj+?=
- =?us-ascii?Q?jv4nJfJgcavBxeSsZ2FL4abZgRhOC4IY4z4KUcY5l41mWZgNC8zwGBGpO5ss?=
- =?us-ascii?Q?lK6fz3JLpMRZ5YqLwda+p8te3YvAGf3Lpyw+a54l?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9591C42A8C;
+	Thu,  6 Mar 2025 20:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741291399; cv=none; b=VPk1CtbPYQvhB/UF19KBicaPppy5O43PRLe5uikM35eD5RGP4VHCnDAiW/pyd7oFbbfbqA2GS+402Edkl+oysxZ3oLbQzXdhve4BU0mnyKS9Gv7KdiFXSX/YR6Viyl4igCIZb6nZIXuL9nyOWVh5b95pQGCF0XsWD89r1rQoK7M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741291399; c=relaxed/simple;
+	bh=k1K7V2WHq5y3Nh1hc+GDfA1sX0sXquQbiGfIGmnHIiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g3iHxn8Tj3EdWQ9DSu2LkFRIB1pTHN7tWQNnsN+higk7qUIe2i2+9FtWAHk0NVyUw9EqKow/hoJhLsBZqrVEO/xmh8oWtk29YjcZJMW2xTXcNvmVAjPzMXD2ecJAjpr3wfqIMhjksh2s3/k2/a3XpU4O+OalrNfVn2LtYjnmbG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26B28C4CEE0;
+	Thu,  6 Mar 2025 20:03:17 +0000 (UTC)
+Message-ID: <e191da0c-7d63-43e6-adf6-bf39364b8583@xs4all.nl>
+Date: Thu, 6 Mar 2025 21:03:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA6PR21MB4231.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: acc9b32c-1966-45ab-90bb-08dd5ce9b8f4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Mar 2025 20:01:45.6216
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: I2y5roHcvj3jb87NfBxZtLKpBzht4Vpm89sN4ZlKCfru1ZRE3A7xZRyHmG/FJao5uzRivt8UY/WAiv6OGpnPHQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA6PR21MB4208
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] Linux Media vimc update for Linux 6.15-rc1
+To: Shuah Khan <skhan@linuxfoundation.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <a3344fc3-c7ea-44ae-8fc8-86184315a58f@linuxfoundation.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <a3344fc3-c7ea-44ae-8fc8-86184315a58f@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> Subject: [EXTERNAL] Re: [patch rdma-next v5 2/2] RDMA/mana_ib: Handle net
-> event for pointing to the current netdev
->=20
-> On Thu, Mar 06, 2025 at 11:24:39AM -0800, longli@linuxonhyperv.com wrote:
-> > +	switch (event) {
-> > +	case NETDEV_CHANGEUPPER:
-> > +		ndev =3D mana_get_primary_netdev(mc, 0, &dev->dev_tracker);
-> > +		/*
-> > +		 * RDMA core will setup GID based on updated netdev.
-> > +		 * It's not possible to race with the core as rtnl lock is being
-> > +		 * held.
-> > +		 */
-> > +		ib_device_set_netdev(&dev->ib_dev, ndev, 1);
-> > +
-> > +		/* mana_get_primary_netdev() returns ndev with refcount held
-> */
-> > +		netdev_put(ndev, &dev->dev_tracker);
->=20
-> ? What is the point of a tracker in dev if it never lasts outside this sc=
-ope?
->=20
-> ib_device_set_netdev() already has a tracker built into it.
->=20
-> Jason
+On 06/03/2025 20:46, Shuah Khan wrote:
+> Hi Mauro,
+> 
+> Please pull the following vimc update for Linux 6.15-rc1.
+> 
+> Fixes a bug in vimc streamer pipeline init code found by syzbot.
 
-I was asked to use a tracker for netdev_hold()/netdev_put(). But this code =
-(and the code in mana_ib_probe() of the 1st patch) is simple enough that ev=
-erything is done in one scope.
+Ah, I merged that vimc fix already, so I'll just mark this PR as Obsoleted.
 
-Jakub, do you think it's okay to use NULL as the tracker in both patches?
+Regards,
 
-Long
+	Hans
+
+> 
+> diff is attached.
+> 
+> thanks,
+> -- Shuah
+> 
+> ----------------------------------------------------------------
+> The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
+> 
+>    Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
+> 
+> are available in the Git repository at:
+> 
+>    git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-vimc-6.15-rc1
+> 
+> for you to fetch changes up to d6813eb9c3de01307801f253d89d777b4669a0d0:
+> 
+>    media: vimc: skip .s_stream() for stopped entities (2025-03-06 09:11:39 -0700)
+> 
+> ----------------------------------------------------------------
+> linux-vimc-6.15-rc1
+> 
+> Fixes a bug in vimc streamer pipeline init code found by syzbot.
+> 
+> ----------------------------------------------------------------
+> Nikita Zhandarovich (1):
+>        media: vimc: skip .s_stream() for stopped entities
+> 
+>   drivers/media/test-drivers/vimc/vimc-streamer.c | 6 ++++++
+>   1 file changed, 6 insertions(+)
+> ----------------------------------------------------------------
+
 
