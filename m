@@ -1,93 +1,112 @@
-Return-Path: <linux-kernel+bounces-549151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4710BA54E3C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:50:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69503A54E3F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99AD57A4854
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:49:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1E7316C370
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:51:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69EA4188724;
-	Thu,  6 Mar 2025 14:50:35 +0000 (UTC)
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12110188A3A;
+	Thu,  6 Mar 2025 14:51:02 +0000 (UTC)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F1E116DEB3;
-	Thu,  6 Mar 2025 14:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D63B316DEB3;
+	Thu,  6 Mar 2025 14:50:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741272635; cv=none; b=LUUUXxxTQMJv8mYIkXX/vaoQB0Yv8TQJonR5AvKE+bGuzgk0dnc80Rg+Cui7BYFVJHIqfxnVgCaJ0gagFt7TwxPXzBbNQOwvKsKtZyLHkdJT4oV2BCZRayXwJrnTG7lBK4yonxNrTdj2Kl0k7lmSm5doynlOkcuMqlVsFBD4+1c=
+	t=1741272661; cv=none; b=qQrVF/43AX12GFBJMar6ZvPXwoe87Jw757krxrqhwJPBfOVHKpP7Dx75LFyNdugRcUhIB7kL7jDy2ysSdbJgNL3BtfqFhL6b1G89X1wvuHkLv7bfuORBTAtHCE8ySOdPy70exzsbi+v6oYX9cBUpIhwMyTcKaqJ2777r9M2UFMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741272635; c=relaxed/simple;
-	bh=j97JksIKx3BW75S25iH9OOG7m9btHK59Zoup7ZeDAvA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gQkRn4cDpAm5a7m/1UQuu2+G4UHBLA4pYiOYU8YpIM1KZCPzSYkQh8R0y8eH1psWY7SuYGKbLRkkjT/vb2CoGr5OiUzsXKVoYK/3XB2dZyie94zIKs7l0DtT6ek2YeZCxBkASjzU9wBZkN70YWIBhGprG8Eqt/iYHmOAiNufbOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from localhost.localdomain (unknown [119.122.215.89])
-	by smtp.qiye.163.com (Hmail) with ESMTP id d2dcd0ed;
-	Thu, 6 Mar 2025 22:50:27 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: heiko@sntech.de
-Cc: amadeus@jmu.edu.cn,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	jonas@kwiboo.se,
-	krzk+dt@kernel.org,
-	krzk@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 1/1] arm64: dts: rockchip: enable SCMI clk for RK3528 SoC
-Date: Thu,  6 Mar 2025 22:50:20 +0800
-Message-Id: <20250306145020.485848-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <24848438.6Emhk5qWAg@diego>
-References: <24848438.6Emhk5qWAg@diego>
+	s=arc-20240116; t=1741272661; c=relaxed/simple;
+	bh=ke8/Udv2ONTLwbYAqaGUgJ6YbVMVtZSz1tjDVT+Q1J0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EAIDd6zwg43rt1oqoKu43kgneuwVR5hWuRpIH4FzFeNhri7XuORwOx+xdWm8q8HS9zwpZon6v7MukwUjRZMBu+9W+DVDRA5egTJ+y35vIGsAWZo/zfGNJQB/A/WuBOJrFlAYqedtqb2cRekCbt5z+RUdiONqBDT/0nyvlhGtcKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-51f22008544so282370e0c.1;
+        Thu, 06 Mar 2025 06:50:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741272658; x=1741877458;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Bx5qOB6bVQO4HOrFczhWmkow5FSTIcCYjLMwOTlD/gY=;
+        b=opmTb5CiCya1N9OKxk6IQs36WzkzhPVeYJ3S4d0fbpI1WONqzEIftXCHJIACSgyi3W
+         Ztbs+8fQaw3gIITBMlU7t1lNw7Rbb3LeWyWPINTTQGp959V80xoO4C4Yb8MoRJdoxT2K
+         XvdgzZ1B+gM0mfDdMbp4ZZEER+y43OY9TDH7U1RK60y2jHn2ZlXK+037kUJAuQ/DC00C
+         FIxCCAA/VYrHZ1phZUFEGoHjCTVH4WDYLZN4UZj0BMgP0Wo5jOtIygpz+WQtdjrN0kwK
+         TbRc43EpMTtxSHjS1nA2dEnDFIH45ZpRNg3fVF32JBqVXQozXelWDFQEm74AYFP7HJiQ
+         2HoA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOC7bGrYN9A6hN1+f8TLxFkcSLkuCGzkCAVcbzdtgsTgcqCpjH6fXY6I4rTc6jgZY4roYvD6lR42C0@vger.kernel.org, AJvYcCUtKb4QyL7X1Tp9pyP4xXydf1cATN1Oz2PJTOrkdEiovzf9q+zuL1uSpt+Wdkf710kRKmVvA8YMf6izyKGwUblZ1zQ=@vger.kernel.org, AJvYcCWKH32poHUOaBTTxgI7SVu1TRYiB0EYpaOn9UuVzWCj0Y8U52+IDFf7fbIQskS7Oqg8FkZkiTiHFKK8XpEf@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgUkilN/YSC5tFCRkJpKi0Iny8A2CWddtFUQ7s1pyAub8phaDF
+	GzTfXAl6UhUMczmA5oF/DWL2twiPbROh0atDml2xRr2hUL+FGdbQr+8eAoNVtbA=
+X-Gm-Gg: ASbGnct3QlHApjJ+bhd3zoprh7uvQPF4nXG1y2SertSxFpp0dyDnD0TaAKb9EVRqLqn
+	5iUUvwpvVSGJFheXQ1ySkjuRuwD6ngy7uWa9A2DCuWG5XSZP5CudNGU5cKHCArBiFDeRbdnzgMt
+	nCvcaZuipbvx9dNSwTL4Mx8hh8l6PAHKj/1oNkFsUGcaUJXwDlcGBZNcEg+ZyindQL2tBoMdHKI
+	s4wKlBtOG38afBaLaqMjkLGUPZsOsriuCnQSB4UtM/sgjFKi9SWNr7bZpHS8zVqYOODpCCc63Iw
+	V/hyjggt5my4v770SVftptj0xjOvvN45YlZU3mbcuSD1DD+kniV0+I6anoiHYNpL4cvFwh73peq
+	8vI7ywy3qrrs=
+X-Google-Smtp-Source: AGHT+IF9rZPid5mfT94iFv57Du/XDEzUg7k0UUGEg5qZezdy2uIsJzU2OWyu2uCA2MjlwY+0OTV/8Q==
+X-Received: by 2002:a05:6122:3c42:b0:51b:b750:8303 with SMTP id 71dfb90a1353d-523c62ee91amr4570937e0c.11.1741272658431;
+        Thu, 06 Mar 2025 06:50:58 -0800 (PST)
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com. [209.85.221.177])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523d8cbab47sm194569e0c.44.2025.03.06.06.50.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 06:50:58 -0800 (PST)
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-51eb181331bso363705e0c.0;
+        Thu, 06 Mar 2025 06:50:58 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUCy2co+ReJ91Y7ss+mMjHZEOHrx6J0Ez38kaX5Q7mGs3riVpMmer3p2nngTR6ZUwqUFI5zjWRa95EMVtLnnEJTFbg=@vger.kernel.org, AJvYcCVq1N6Wl0clNmOeoKzGYFGh8t9I9NSDKYM63FjZEubN+4R553cEDsEbRsecXzcJ6qx2Fnjv9dztwSMz@vger.kernel.org, AJvYcCWWKbhGZa2N+IlVqQ2qUq7qgtLSSdlGiE/0ARA9uapvY9zuYPw1BM6qVyfZZ09g1DWPMS9k7M5FPM+PKjVQ@vger.kernel.org
+X-Received: by 2002:a05:6122:1e14:b0:520:60c2:3fd with SMTP id
+ 71dfb90a1353d-523c6150c8bmr4229347e0c.3.1741272658016; Thu, 06 Mar 2025
+ 06:50:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZHxpIVk0aT0MfT0oZT0JIGlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKTlVDQllXWRYaDxIVHRRZQVlPS0hVSktJQk1KSlVKS0tVS1
-	kG
-X-HM-Tid: 0a956befb78e03a2kunmd2dcd0ed
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OAg6Pzo5HjIDLjNOTAlJITAW
-	TBlPCj1VSlVKTE9KSUxJTUlMQ0lDVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
-	QlVKSUlVSUpOVUNCWVdZCAFZQU1CQjcG
+References: <20250305163753.34913-1-fabrizio.castro.jz@renesas.com> <20250305163753.34913-2-fabrizio.castro.jz@renesas.com>
+In-Reply-To: <20250305163753.34913-2-fabrizio.castro.jz@renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 6 Mar 2025 15:50:46 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdULNxTx=2n5221jFNdF0xFepWRzv1oC+kB1RofupokQNw@mail.gmail.com>
+X-Gm-Features: AQ5f1JqXD9PXyINl0UFnu4MoAmn6VxGFJ3TxdZnbHiqhDh-CSh0d5cYwGlWxK1Q
+Message-ID: <CAMuHMdULNxTx=2n5221jFNdF0xFepWRzv1oC+kB1RofupokQNw@mail.gmail.com>
+Subject: Re: [PATCH 1/4] gpio: rcar: Fix missing of_node_put() call
+To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Simon Horman <horms+renesas@verge.net.au>, 
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi,
-
-> are you really sure about that?
+On Wed, 5 Mar 2025 at 17:38, Fabrizio Castro
+<fabrizio.castro.jz@renesas.com> wrote:
+> of_parse_phandle_with_fixed_args() requires its caller to
+> call into of_node_put() on the node pointer from the output
+> structure, but such a call is currently missing.
 >
-> Looking at Jonas' recent rk3528 u-boot series [0]
-> 0x0 _to_ 0xfc000000 is the SDRAM memory area
-> so 0x10f000 is a carveout of the main sdram.
+> Call into of_node_put() to rectify that.
+>
+> Fixes: 159f8a0209af ("gpio-rcar: Add DT support")
+> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
 
-Sorry, I was misled by the dtsi of rk3568.
-Put it in reserved-memory works on rk3528:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-~# dmesg | grep scmi
-[    0.061452] scmi_core: SCMI protocol bus registered
-[    0.125903] scmi_protocol scmi_dev.1: Enabled polling mode TX channel - prot_id:16
-[    0.126763] arm-scmi firmware:scmi: SCMI Notifications - Core Enabled.
-[    0.127368] arm-scmi firmware:scmi: SCMI Protocol v2.0 'rockchip:' Firmware version 0x0
+Gr{oetje,eeting}s,
 
-Should we change this for rk3568 as well?
-
-Thanks,
-Chukun
+                        Geert
 
 -- 
-2.25.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
