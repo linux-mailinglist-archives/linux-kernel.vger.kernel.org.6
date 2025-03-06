@@ -1,97 +1,207 @@
-Return-Path: <linux-kernel+bounces-549313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D4AA550CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:28:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2A5A550EC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:31:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4505188E6E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:28:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 207203A47D2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A9F1221F0E;
-	Thu,  6 Mar 2025 16:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61002144B5;
+	Thu,  6 Mar 2025 16:26:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="E5frRR+L"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61768221709;
-	Thu,  6 Mar 2025 16:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SIzzk/VY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D548D214215;
+	Thu,  6 Mar 2025 16:26:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741278386; cv=none; b=AaqI7RRhJ45QdPq9D/jfbwHL8zBOlqxEAb+ROom2D7JDemkitzkr1/WyZb4/ZtkyBRaLJMSpy1fAVXwO2a6ReZxgRIRz1AazYQB5O9MGmvT+oHZ5ULy1WPDyMUafeKv+JqnjsXBxd5OMoOXFbBtwXK8wWgldaYQnZLag1LYqmhU=
+	t=1741278398; cv=none; b=dPPmvL654Ur99OqL/i5vfY3/k6EPE+NiaXWy5e9gc1L5WxvbG4Np+kDMfnEGHwJxSGQ01/aBa7dAUIjsgqQiFz2uvQXYIqs6PM18P+k41Mb5MDP1K7nNoxn0tfKRQDtv/RAe0EhuqcoA4yOnhuCnqtpdZIm0bTktzCMk8ONTudc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741278386; c=relaxed/simple;
-	bh=9cpEhC+ki2l6Yht/wjynUsUcQvr+j1ftFSHd8Q7RNgs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=RPdJdC9R5tWZXRElqs6oK2ViHjhXMLGCte5UmQKrO5ZKjZxL88bIiIaqXQVn+V2SXaVZezlubrX2lWP1M8nFlwGQoa9/j+XZalnbvNsFumSy0QNpnjFsh8K2zyehqkdlP9uqlbTTO5QrdxXA1kXrtdhFBALweybD239Us91UcSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=E5frRR+L; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1158)
-	id 0676C208A7B8; Thu,  6 Mar 2025 08:26:25 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0676C208A7B8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741278385;
-	bh=kNfr/L670GSDlHM0Leth2bBQUkfW2x4tORl2rQ1OFpg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=E5frRR+Lb7WMr+bunrIF0hRXKNyY+kOxABZhvFCAK/3jayUb3rl9BgxWqCOWHiDQH
-	 vwf+Aef1XkCW/u18Ik41iGJW+vM94V5mVKY+t5Qm0HOHBUSZ7QAiFvGW541qidgszk
-	 GJKozX0VBe0a58ywhwIX2rMSah8RlmcedztqeAuM=
-From: Hardik Garg <hargar@linux.microsoft.com>
-To: gregkh@linuxfoundation.org
-Cc: akpm@linux-foundation.org,
-	broonie@kernel.org,
-	conor@kernel.org,
-	f.fainelli@gmail.com,
-	hargar@microsoft.com,
-	jonathanh@nvidia.com,
-	linux-kernel@vger.kernel.org,
-	linux@roeck-us.net,
-	lkft-triage@lists.linaro.org,
-	patches@kernelci.org,
-	patches@lists.linux.dev,
-	pavel@denx.de,
-	rwarsow@gmx.de,
-	shuah@kernel.org,
-	srw@sladewatkins.net,
-	stable@vger.kernel.org,
-	sudipm.mukherjee@gmail.com,
-	torvalds@linux-foundation.org
-Subject: Re: [PATCH 6.13 000/157] 6.13.6-rc1 review
-Date: Thu,  6 Mar 2025 08:26:24 -0800
-Message-Id: <1741278384-31251-1-git-send-email-hargar@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <20250305174505.268725418@linuxfoundation.org>
-References: <20250305174505.268725418@linuxfoundation.org>
+	s=arc-20240116; t=1741278398; c=relaxed/simple;
+	bh=p1xxl5U+OpWnSGGhMDfZZryJ7dgXJL+8/fxRSuOy6tA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Emk5JRgwX5+/XuPCiJM/64hh+4+Te0qeFKKGbwiOYjBoJDNET4mgJwIJN6UEE6uPiJWbNXTO4dkuPFi8uD9nJ2RRdCZE9zChwKy8vzncVJeFzPD2NRLA4jA2GjXgatLaQOkcfVmTavMarzo3xjA33QHh1DaifONxOvdNhPe5Mn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SIzzk/VY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7A77C4CEE0;
+	Thu,  6 Mar 2025 16:26:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741278397;
+	bh=p1xxl5U+OpWnSGGhMDfZZryJ7dgXJL+8/fxRSuOy6tA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SIzzk/VY6Vgd2uPb6a3xN8O3a9SNzgSLtHnGLiUktfMIk0F3urhpDtwwNZsg3Gwqt
+	 rDbb5VIwdBD8IT8aiuMxMp4tgYcnZLcAxOg6kdiT7N+M8bY/wMy7490LwJYKPuDl8+
+	 UmMLVzdWE8rX/mSBctB+ce9oOpdSpmVQqi8xIu/Vjko9TL4lVjPCs4TdlIHrG46So/
+	 pnm3iGVLlK812LAfJFEp9GC8fh5VxbUSf5a3n5aq94YcZazqxF3dDAV3o9dUDHbMN+
+	 VIZOjcMr7uIfKe2or1eRdogLf0KceWKRNeH8MtSBVQy0RItfjWnAIboZq1nCpc7UJk
+	 FFmqXEOieXoGA==
+Date: Thu, 6 Mar 2025 16:26:32 +0000
+From: Conor Dooley <conor@kernel.org>
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: reset: Document RZ/V2H(P) USB2PHY
+ Control
+Message-ID: <20250306-slather-audition-a6b28ba1483e@spud>
+References: <20250305123915.341589-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250305123915.341589-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250305-cesspool-headlock-4d28a2a1333e@spud>
+ <CA+V-a8uQTL+SHYqVU_J0th4PT6YPF7q6ypzDu33nS_6onWLoOQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-
-The kernel, bpf tool, perf tool, and kselftest builds fine for v6.13.6-rc1 on x86 Azure VM.
-
-Kernel binary size for x86 build:
-text      data      bss      dec       hex      filename
-29936840  17836986  6320128  54093954  3396882  vmlinux
-
-arm64 build on Azure VM fails with the following error:
-
-CC      security/keys/request_key_auth.o
-arch/arm64/mm/hugetlbpage.c: In function 'huge_ptep_get_and_clear':
-arch/arm64/mm/hugetlbpage.c:397:35: error: 'sz' undeclared (first use in this function); did you mean 's8'?
-  397 |         ncontig = num_contig_ptes(sz, &pgsize);
-      |                                   ^~
-      |                                   s8
-arch/arm64/mm/hugetlbpage.c:397:35: note: each undeclared identifier is reported only once for each function it appears in
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DOLIzUy4BmDDCltF"
+Content-Disposition: inline
+In-Reply-To: <CA+V-a8uQTL+SHYqVU_J0th4PT6YPF7q6ypzDu33nS_6onWLoOQ@mail.gmail.com>
 
 
+--DOLIzUy4BmDDCltF
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Tested-by: Hardik Garg <hargar@linux.microsoft.com>
+On Wed, Mar 05, 2025 at 09:35:13PM +0000, Lad, Prabhakar wrote:
+> Hi Conor,
+>=20
+> Thank you for the review.
+>=20
+> On Wed, Mar 5, 2025 at 4:26=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
+ote:
+> >
+> > On Wed, Mar 05, 2025 at 12:39:13PM +0000, Prabhakar wrote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Add device tree binding document for the Renesas RZ/V2H(P) USB2PHY Co=
+ntrol
+> > > Device. It mainly controls reset and power down of the USB2.0 PHY (for
+> > > both host and function).
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > ---
+> > >  .../reset/renesas,rzv2h-usb2phy-ctrl.yaml     | 56 +++++++++++++++++=
+++
+> > >  1 file changed, 56 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/reset/renesas,r=
+zv2h-usb2phy-ctrl.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/reset/renesas,rzv2h-us=
+b2phy-ctrl.yaml b/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb=
+2phy-ctrl.yaml
+> > > new file mode 100644
+> > > index 000000000000..ed156a1d3eb3
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-c=
+trl.yaml
+> > > @@ -0,0 +1,56 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/reset/renesas,rzv2h-usb2phy-ctrl.=
+yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Renesas RZ/V2H(P) USB2PHY Control
+> > > +
+> > > +maintainers:
+> > > +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > +
+> > > +description:
+> > > +  The RZ/V2H(P) USB2PHY Control mainly controls reset and power down=
+ of the
+> > > +  USB2.0 PHY.
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: renesas,r9a09g057-usb2phy-ctrl  # RZ/V2H(P)
+> > > +
+> > > +  reg:
+> > > +    maxItems: 1
+> > > +
+> > > +  clocks:
+> > > +    maxItems: 1
+> > > +
+> > > +  resets:
+> > > +    maxItems: 1
+> > > +
+> > > +  power-domains:
+> > > +    maxItems: 1
+> > > +
+> > > +  '#reset-cells':
+> > > +    const: 0
+> > > +
+> > > +required:
+> > > +  - compatible
+> > > +  - reg
+> > > +  - clocks
+> > > +  - resets
+> > > +  - power-domains
+> > > +  - '#reset-cells'
+> > > +
+> > > +additionalProperties: false
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    #include <dt-bindings/clock/renesas,r9a09g057-cpg.h>
+> > > +
+> > > +    usbphy-ctrl@15830000 {
+> >
+> > How come your nodename isn't "reset-controller"?
+> This is to keep consistency with the other similar IP blocks found on
+> Renesas SoCs [0].
 
+That sounds awfully like "it was wrong before, and I want to keep using
+the wrong node name"... If you're claiming to be some other class of
+device, "ctrl" should really be "controller" like all the other sorts of
+controllers ;)
 
+>=20
+> [0] https://elixir.bootlin.com/linux/v6.14-rc5/source/Documentation/devic=
+etree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml#L66
+>=20
+> > Otherwise,
+> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> >
+> > > +        compatible =3D "renesas,r9a09g057-usb2phy-ctrl";
+> > > +        reg =3D <0x15830000 0x10000>;
+> > > +        clocks =3D <&cpg CPG_MOD 0xb6>;
+> > > +        resets =3D <&cpg 0xaf>;
+> > > +        power-domains =3D <&cpg>;
+> > > +        #reset-cells =3D <0>;
+> > > +    };
+> > > --
+> > > 2.43.0
+> > >
+>=20
+> Cheers,
+> Prabhakar
 
+--DOLIzUy4BmDDCltF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks,
-Hardik
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8nMuAAKCRB4tDGHoIJi
+0oGbAQD1DEsVJ26txgtMwHVJFjjyDvTc4QPtoSqHjqDxyI68/wEApouaX/KT91rL
+yXazIwVT6hH2o50iPf/75oKx00Mlvgc=
+=ry25
+-----END PGP SIGNATURE-----
+
+--DOLIzUy4BmDDCltF--
 
