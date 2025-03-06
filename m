@@ -1,97 +1,56 @@
-Return-Path: <linux-kernel+bounces-548597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB1B4A546D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:49:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F02A546D3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:49:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95549173412
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:49:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 541FD1669BD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:48:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0B020C005;
-	Thu,  6 Mar 2025 09:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UyV81C9d"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBB520B7EB
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8139820B210;
+	Thu,  6 Mar 2025 09:48:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4199620ADE9
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741254497; cv=none; b=bTCWIC/2foY3MBkhS3RVVk7RlotRHKBB4ydM627iXb+mcRgxGG44E80oVxJnVyLg1gBLTdFQHiDI+Avh7DdUzQiYQ5RfTE6LYO2LHBAIwZT7ntrbUxhfkxARrzBhlvOS7yPt241R2lAUREJlbWNyA0DFNeTkvXhTnU/+yOCzmvI=
+	t=1741254494; cv=none; b=JGX3EEmLalqCZ9UKHvvqOJEkOijVFc7oyNfjvyFzw9Dane5YhZiEhxiJNauj+8bzcQaJ5qjyFvCseBNDdWN9C+qBik7JkOBjWnxbgsz0FA24718LOvZCuNP6ec8f6Js+3at2dtTFMFFP8Nmw90Io7Cwm2t/FJLKmMjWEE0hyWy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741254497; c=relaxed/simple;
-	bh=3ho3qGo1lVmXuX2dMlnltG2fGWa3E3AUvtUOA6OLNpk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b7vaviS9bm4imNk68CMiYzRYsVLhDAISRMZdYAzUNv89gSnIR91U35gUEXeb/vWdQ+BcJRYd79VnK4y/NegERtELBNBq/Qsko+put4EuNlPQYeelhdN70b6zLYb98oQ+6WBvsN04I3y2ZcxpDkgcroDEndE4PAzHIIk0+DgnRAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UyV81C9d; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741254494;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=qhoIeIC0J8+KZetLEFZda/wAPxtts5eJjpdjM7DSGkg=;
-	b=UyV81C9dvG7nv+zEu55kJkQD+/9vxN6I7TyEGdnzR48dbL85WMalQdNlCe7/V6KE80ZEAD
-	1sMTCsvwcVb1gzK4FQKH0vLs6FTRggaSTD9Hgg6X59IN1UGgRwd2cNj9hKQvPXV3+Q1hgB
-	Fd1Hwo2s9rF/SJy2AXEtODyQeF4vkDc=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-592-rWx8FyLEMPGlhpifgBu7Pg-1; Thu, 06 Mar 2025 04:48:02 -0500
-X-MC-Unique: rWx8FyLEMPGlhpifgBu7Pg-1
-X-Mimecast-MFC-AGG-ID: rWx8FyLEMPGlhpifgBu7Pg_1741254481
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-390fd681712so215773f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:48:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741254481; x=1741859281;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qhoIeIC0J8+KZetLEFZda/wAPxtts5eJjpdjM7DSGkg=;
-        b=sBpX7ZJUbhnlZ1IbYtD2zWJ9lkyw79r/sRowIPn50a4BCU4vqXH+trwQct5uZ0e4K5
-         2xMCqDJz3uZ/Ekp5Q4w2h1tAEEJ+CAn/61FDa+rJNUvQiZkTxL/QuQLoM9m5vuF9DEKH
-         KZXqw0A/lr0jVMYhFLUrahVnAOLlSqMl4mum9Wlzv13zc2N1GnPFjJg938oucfMQDXi+
-         8TQs+1tSWbdmtxAimc2QsCWltdcYQI5pjXR264FPOu0pJBDZP4sZVpkrYXPe5j7m3FfM
-         BHJUApAALsdiEDpCxVi1T/cBmkX1EFURhWkmV2/otXhFnkL2vJUIxFSFEx6WLSbIlpmU
-         LT8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUNupGqCSMMnquDbYnX4YK50T0VF75OpdcMjhkL36oDFJQkEKIMc/AEjd3YQflCyxCw9AjIqPwVMAXPwHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU49LqPB0tEhHrPEjJQfYLcX5LdKFt1aUMQkSSkV3A1Gftmn7X
-	KuwBl3dSmBcwOgcLyPMLbUzkp3B7hRb93QqHv+ghfY0SbmgPqn6kA1ZG0sJCvc+aD4k777fxOa7
-	iQxcqfTSQDUZ6liSkHrGcFpxSuKZEp2SGc1o4ui9H6l+6pLP8x6yG65r8Udo+70KvPV9itfW4
-X-Gm-Gg: ASbGncs4ywBbLxZLfm+fTW24TNboavg6owbleopUGeNLsd8gzZH5UoPTdbTYvlp1vWO
-	YwVnn6PtVXLQ/X3rocYQBnKz/WbDxAxwFp31+kBU+pb52wuZ3SYUa+vBK2AZZ18zDU9BSpLcVjy
-	wz9dITf579Sh80fY5GUTvD6vF+FLWnjKdIO/T0ucRCCy3y/vGYESzGuu0V+eODqNuu+hR3sUE2J
-	tb5rZD5j5fSuPg6KDsHcjfHqjF8CGRmx0Qh08fNyOae8ZV1j7Z/HNj0aQbZOyL23fQPwy7aeWDR
-	cOaVKHOQ0H8HK92uHcJ//u55UviQIeym6V/7x+4j/GUyzlNhajVHNTxW73AyAiM=
-X-Received: by 2002:a5d:5850:0:b0:391:4f9:a039 with SMTP id ffacd0b85a97d-3911f7400aamr6723544f8f.16.1741254480848;
-        Thu, 06 Mar 2025 01:48:00 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEaiIHXbccL0gmNV8J9au35MPia1hghbbM07U8lOSRBfu151n9eSAZV97mDiHYuec/YepoOoQ==
-X-Received: by 2002:a5d:5850:0:b0:391:4f9:a039 with SMTP id ffacd0b85a97d-3911f7400aamr6723518f8f.16.1741254480467;
-        Thu, 06 Mar 2025 01:48:00 -0800 (PST)
-Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c10437dsm1507462f8f.99.2025.03.06.01.47.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 01:47:59 -0800 (PST)
-From: Lukas Bulwahn <lbulwahn@redhat.com>
-X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
-To: Lorenzo Bianconi <lorenzo@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
+	s=arc-20240116; t=1741254494; c=relaxed/simple;
+	bh=0SjD4y2lb8a1yDuiYxladzJFWaK70WOkGkG9TdoOQU0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=feBhbWPlojF+SWPnZnhUY+EBQaSpQQJxX8yh0gmXxHa18YnA8u+S1HbGIyNYoAwRDEw9FVep/p/wXlkcPM794YzIwIHCvgoZrekWL3Ng32km5bArXXA2KATXe8ue2fkEkKVguyuouffx+WKTI3W6jrrDISEP1YhF6eCvPSXT684=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A065D1AED;
+	Thu,  6 Mar 2025 01:48:23 -0800 (PST)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id DD8613F673;
+	Thu,  6 Mar 2025 01:48:08 -0800 (PST)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: suzuki.poulose@arm.com,
+	mike.leach@linaro.org,
+	james.clark@linaro.org,
+	alexander.shishkin@linux.intel.com,
+	bigeasy@linutronix.de,
+	clrkwllms@kernel.org,
+	rostedt@goodmis.org
+Cc: coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: [PATCH] net: ethernet: Remove accidental duplication in Kconfig file
-Date: Thu,  6 Mar 2025 10:47:53 +0100
-Message-ID: <20250306094753.63806-1-lukas.bulwahn@redhat.com>
-X-Mailer: git-send-email 2.48.1
+	linux-rt-devel@lists.linux.dev,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v5 3/9] coresight: change coresight_trace_id_map's lock type to raw_spinlock_t
+Date: Thu,  6 Mar 2025 09:47:54 +0000
+Message-Id: <20250306094800.1082950-4-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250306094800.1082950-1-yeoreum.yun@arm.com>
+References: <20250306094800.1082950-1-yeoreum.yun@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,37 +59,134 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+coresight_trace_id_map->lock can be acquired while coresight devices'
+drvdata_lock.
 
-Commit fb3dda82fd38 ("net: airoha: Move airoha_eth driver in a dedicated
-folder") accidentally added the line:
+But the drvdata_lock can be raw_spinlock_t (i.e) coresight-etm4x.
 
-  source "drivers/net/ethernet/mellanox/Kconfig"
+To address this, change type of coresight_trace_id_map->lock to
+raw_spinlock_t
 
-in drivers/net/ethernet/Kconfig, so that this line is duplicated in that
-file.
-
-Remove this accidental duplication.
-
-Fixes: fb3dda82fd38 ("net: airoha: Move airoha_eth driver in a dedicated folder")
-Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+Reviewed-by: James Clark <james.clark@linaro.org>
+Reviewed-by: Mike Leach <mike.leach@linaro.org>
 ---
- drivers/net/ethernet/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/hwtracing/coresight/coresight-core.c  |  2 +-
+ .../hwtracing/coresight/coresight-trace-id.c  | 22 +++++++++----------
+ include/linux/coresight.h                     |  2 +-
+ 3 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/net/ethernet/Kconfig b/drivers/net/ethernet/Kconfig
-index 7941983d21e9..f86d4557d8d7 100644
---- a/drivers/net/ethernet/Kconfig
-+++ b/drivers/net/ethernet/Kconfig
-@@ -21,7 +21,6 @@ source "drivers/net/ethernet/adaptec/Kconfig"
- source "drivers/net/ethernet/aeroflex/Kconfig"
- source "drivers/net/ethernet/agere/Kconfig"
- source "drivers/net/ethernet/airoha/Kconfig"
--source "drivers/net/ethernet/mellanox/Kconfig"
- source "drivers/net/ethernet/alacritech/Kconfig"
- source "drivers/net/ethernet/allwinner/Kconfig"
- source "drivers/net/ethernet/alteon/Kconfig"
+diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
+index bd0a7edd38c9..90649837c29e 100644
+--- a/drivers/hwtracing/coresight/coresight-core.c
++++ b/drivers/hwtracing/coresight/coresight-core.c
+@@ -1296,7 +1296,7 @@ struct coresight_device *coresight_register(struct coresight_desc *desc)
+ 
+ 	if (csdev->type == CORESIGHT_DEV_TYPE_SINK ||
+ 	    csdev->type == CORESIGHT_DEV_TYPE_LINKSINK) {
+-		spin_lock_init(&csdev->perf_sink_id_map.lock);
++		raw_spin_lock_init(&csdev->perf_sink_id_map.lock);
+ 		csdev->perf_sink_id_map.cpu_map = alloc_percpu(atomic_t);
+ 		if (!csdev->perf_sink_id_map.cpu_map) {
+ 			kfree(csdev);
+diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
+index 378af743be45..7ed337d54d3e 100644
+--- a/drivers/hwtracing/coresight/coresight-trace-id.c
++++ b/drivers/hwtracing/coresight/coresight-trace-id.c
+@@ -22,7 +22,7 @@ enum trace_id_flags {
+ static DEFINE_PER_CPU(atomic_t, id_map_default_cpu_ids) = ATOMIC_INIT(0);
+ static struct coresight_trace_id_map id_map_default = {
+ 	.cpu_map = &id_map_default_cpu_ids,
+-	.lock = __SPIN_LOCK_UNLOCKED(id_map_default.lock)
++	.lock = __RAW_SPIN_LOCK_UNLOCKED(id_map_default.lock)
+ };
+ 
+ /* #define TRACE_ID_DEBUG 1 */
+@@ -131,11 +131,11 @@ static void coresight_trace_id_release_all(struct coresight_trace_id_map *id_map
+ 	unsigned long flags;
+ 	int cpu;
+ 
+-	spin_lock_irqsave(&id_map->lock, flags);
++	raw_spin_lock_irqsave(&id_map->lock, flags);
+ 	bitmap_zero(id_map->used_ids, CORESIGHT_TRACE_IDS_MAX);
+ 	for_each_possible_cpu(cpu)
+ 		atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), 0);
+-	spin_unlock_irqrestore(&id_map->lock, flags);
++	raw_spin_unlock_irqrestore(&id_map->lock, flags);
+ 	DUMP_ID_MAP(id_map);
+ }
+ 
+@@ -144,7 +144,7 @@ static int _coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map
+ 	unsigned long flags;
+ 	int id;
+ 
+-	spin_lock_irqsave(&id_map->lock, flags);
++	raw_spin_lock_irqsave(&id_map->lock, flags);
+ 
+ 	/* check for existing allocation for this CPU */
+ 	id = _coresight_trace_id_read_cpu_id(cpu, id_map);
+@@ -171,7 +171,7 @@ static int _coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map
+ 	atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), id);
+ 
+ get_cpu_id_out_unlock:
+-	spin_unlock_irqrestore(&id_map->lock, flags);
++	raw_spin_unlock_irqrestore(&id_map->lock, flags);
+ 
+ 	DUMP_ID_CPU(cpu, id);
+ 	DUMP_ID_MAP(id_map);
+@@ -188,12 +188,12 @@ static void _coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_ma
+ 	if (!id)
+ 		return;
+ 
+-	spin_lock_irqsave(&id_map->lock, flags);
++	raw_spin_lock_irqsave(&id_map->lock, flags);
+ 
+ 	coresight_trace_id_free(id, id_map);
+ 	atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), 0);
+ 
+-	spin_unlock_irqrestore(&id_map->lock, flags);
++	raw_spin_unlock_irqrestore(&id_map->lock, flags);
+ 	DUMP_ID_CPU(cpu, id);
+ 	DUMP_ID_MAP(id_map);
+ }
+@@ -204,9 +204,9 @@ static int coresight_trace_id_map_get_system_id(struct coresight_trace_id_map *i
+ 	unsigned long flags;
+ 	int id;
+ 
+-	spin_lock_irqsave(&id_map->lock, flags);
++	raw_spin_lock_irqsave(&id_map->lock, flags);
+ 	id = coresight_trace_id_alloc_new_id(id_map, preferred_id, traceid_flags);
+-	spin_unlock_irqrestore(&id_map->lock, flags);
++	raw_spin_unlock_irqrestore(&id_map->lock, flags);
+ 
+ 	DUMP_ID(id);
+ 	DUMP_ID_MAP(id_map);
+@@ -217,9 +217,9 @@ static void coresight_trace_id_map_put_system_id(struct coresight_trace_id_map *
+ {
+ 	unsigned long flags;
+ 
+-	spin_lock_irqsave(&id_map->lock, flags);
++	raw_spin_lock_irqsave(&id_map->lock, flags);
+ 	coresight_trace_id_free(id, id_map);
+-	spin_unlock_irqrestore(&id_map->lock, flags);
++	raw_spin_unlock_irqrestore(&id_map->lock, flags);
+ 
+ 	DUMP_ID(id);
+ 	DUMP_ID_MAP(id_map);
+diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+index 4541bfc1cc6b..d79a242b271d 100644
+--- a/include/linux/coresight.h
++++ b/include/linux/coresight.h
+@@ -239,7 +239,7 @@ struct coresight_trace_id_map {
+ 	DECLARE_BITMAP(used_ids, CORESIGHT_TRACE_IDS_MAX);
+ 	atomic_t __percpu *cpu_map;
+ 	atomic_t perf_cs_etm_session_active;
+-	spinlock_t lock;
++	raw_spinlock_t lock;
+ };
+ 
+ /**
 -- 
-2.48.1
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
 
