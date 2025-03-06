@@ -1,141 +1,113 @@
-Return-Path: <linux-kernel+bounces-548553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36C06A54660
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:31:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46765A54662
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:32:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00DD61724CA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:31:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FBA01722B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:32:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FEF20967A;
-	Thu,  6 Mar 2025 09:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXW+x91I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5FF20896C
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA9720969D;
+	Thu,  6 Mar 2025 09:31:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A26F201270;
+	Thu,  6 Mar 2025 09:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741253493; cv=none; b=Q9CsiEaprrTAhuIV4Tv/NrzoPsV2mNdTssZ08XkEp2QDBfKXK+A+1jPFpp5+MBbKuuG0rqxopIk7zA/4QKDIyajxCvsTrJvIw87JgaPsdGApu+JB+8TysgEkhwo6mj+O9HSLrMKd14bgAb4fnyLpLI877xKxPLXLvbxzkDFybSA=
+	t=1741253518; cv=none; b=XNCA9nPzWZ+7SMEiVdx4LswXTb0B9xUcRWzyxjuN88VEkZaYSTKYnjQkk2EWscVxwPVi87LWcayO0eFNarCZf67JktcP32mG1y+/UTqiTO8I4YgwJclF6pDExnuO2BObKSSWeYQLWtGsBnJOzZXZRm8d5FL4exiPChv7S1rTZ2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741253493; c=relaxed/simple;
-	bh=RhcDDbYqlRBXEgeviCGhkae++jF6e3/y3yy+fAu92Aw=;
+	s=arc-20240116; t=1741253518; c=relaxed/simple;
+	bh=zU7pYtEsrKBjmyhSdvtjjV3yw8jWlxYS0uX4y/6HHoE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T6U/WoE2WoZXZbUdGgSwhNkAbYR+YkhT6n6ZoUyCKp8X5MsjhPoPtK6abMKEvL/ciwBxRTIunkmkwQ5zupMMxU6zHHBef6CeMLxi9/mCUqze/B1/tR9M0p+SRVch8bXjZdo6FgrZtzUv9IjS8IOXEnofs7lapTpd5CtmX9sxFWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXW+x91I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42121C4CEE0;
-	Thu,  6 Mar 2025 09:31:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741253492;
-	bh=RhcDDbYqlRBXEgeviCGhkae++jF6e3/y3yy+fAu92Aw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EXW+x91IoVRFninODxYne2YbBmlqlsTHW3sGFyByZGaCeASs0ct6s8pk8I4s3wqsu
-	 9XJZ3coGodUHS6w1BXRkc/cU8cMpQwaOLOZDFcGvWs79taEpdNQb8A/vq4ELQgDnKp
-	 Fvs8BI8oRBb3uM40xJrFHgdpHeUACjhB04IjFi/wyGLafe1KXihv9/ISQQVsb+EdA+
-	 xEFnEtvHCzTKj1EAQjwf5flOWbeSshoNuqTBdOWdxADodqALwP0QcBHp3P9HUChw/p
-	 GauPOZUiD38NSzsYSJyFfUdvLjXP+D9iNCZ7TplkcWaE8NgX3xcBcUue/90OhfRzw9
-	 ILtIzMRpQdwpg==
-Date: Thu, 6 Mar 2025 10:31:29 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Michael Trimarchi <michael@amarulasolutions.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Tejas Vipin <tejasvipin76@gmail.com>, Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] drm/panel/synaptics-r63353: Use _multi variants
-Message-ID: <20250306-clever-lime-tanuki-e2fc43@houat>
-References: <20250305-mipi-synaptic-1-v1-1-92017cd19ef6@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gXFFeu6OhHWvyOBfFInzkl1EEcreNAHT3DyA4v9WQjikD2LXD3RD/xhIa3kq1UPfhlYtflPo85lfLObwPLGN8h7IVS9jwbpt8rTvp6S+PkR/xuwqMlMVyh/2sCuSOKO+ReZF8lKXXyla4t2XCwj9XNsqjvL2Mev8sF0j+6AGnuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3B1CAFEC;
+	Thu,  6 Mar 2025 01:32:09 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 35B943F673;
+	Thu,  6 Mar 2025 01:31:55 -0800 (PST)
+Date: Thu, 6 Mar 2025 09:31:52 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: "lihuisong (C)" <lihuisong@huawei.com>
+Cc: <linux-acpi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Adam Young <admiyo@os.amperecomputing.com>
+Subject: Re: [PATCH 10/14] soc: hisilicon: kunpeng_hccs: Simplify PCC shared
+ memory region handling
+Message-ID: <Z8lriBJQyk-8eOZ_@bogus>
+References: <20250303-pcc_fixes_updates-v1-0-3b44f3d134b1@arm.com>
+ <20250303-pcc_fixes_updates-v1-10-3b44f3d134b1@arm.com>
+ <1e7560ab-2545-843a-e42a-2d37f6b7ef93@huawei.com>
+ <20250305113426.bt2lebp2rfyngcpl@bogus>
+ <9eb0cd8b-00aa-e304-5b10-850c41b0c0c4@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="iwh2orhppfbbgi4c"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250305-mipi-synaptic-1-v1-1-92017cd19ef6@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9eb0cd8b-00aa-e304-5b10-850c41b0c0c4@huawei.com>
 
+On Thu, Mar 06, 2025 at 11:55:41AM +0800, lihuisong (C) wrote:
+> 
+> 在 2025/3/5 19:34, Sudeep Holla 写道:
+> > On Wed, Mar 05, 2025 at 03:14:50PM +0800, lihuisong (C) wrote:
+> > > 在 2025/3/3 18:51, Sudeep Holla 写道:
+> > > > The PCC driver now handles mapping and unmapping of shared memory
+> > > > areas as part of pcc_mbox_{request,free}_channel(). Without these before,
+> > > > this Kunpeng HCCS driver did handling of those mappings like several
+> > > > other PCC mailbox client drivers.
+> > > > 
+> > > > There were redundant operations, leading to unnecessary code. Maintaining
+> > > > the consistency across these driver was harder due to scattered handling
+> > > > of shmem.
+> > > > 
+> > > > Just use the mapped shmem and remove all redundant operations from this
+> > > > driver.
+> > > > 
+> > > > Cc: Huisong Li <lihuisong@huawei.com>
+> > > > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > > With belows to change,
+> > > Reviewed-by: Huisong Li <lihuisong@huawei.com>
+> > Thanks!
+> > 
+> > [...]
+> > 
+> > > > -	if (!pcc_chan->shmem_base_addr ||
+> > > > -	    pcc_chan->shmem_size != HCCS_PCC_SHARE_MEM_BYTES) {
+> > > > +	if (pcc_chan->shmem_size != HCCS_PCC_SHARE_MEM_BYTES) {
+> > > >    		dev_err(dev, "The base address or size (%llu) of PCC communication region is invalid.\n",
+> > > >    			pcc_chan->shmem_size);
+> > > Now the check of shared base address is not here. The log about this address
+> > > no need to be printed.
+> > > 
+> > > Can you help me fix it like:
+> > > 
+> > > dev_err(dev, "The base size (%llu) of PCC communication region must be %d Byte.\n",
+> > >   			pcc_chan->shmem_size, HCCS_PCC_SHARE_MEM_BYTES
+> > > );
+> > Sure.
+> > 
+> > Did you get a chance to validate this driver and any other users of PCC
+> > on your platform with these changes + the error handling fix you pointed
+> > out ? That would be very useful as I don't have any set up to test.
+> Sure, I'll test this series.
+> >
 
---iwh2orhppfbbgi4c
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] drm/panel/synaptics-r63353: Use _multi variants
-MIME-Version: 1.0
+I have posted v2 [1] with your feedback incorporated. Please use the same.
 
-Hi Anusha,
+-- 
+Regards,
+Sudeep
 
-On Wed, Mar 05, 2025 at 07:01:41PM -0500, Anusha Srivatsa wrote:
-> Move away from using deprecated API and use _multi
-> variants if available. Use mipi_dsi_msleep()
-> and mipi_dsi_usleep_range() instead of msleep()
-> and usleep_range() respectively.
->=20
-> Used Coccinelle to find the multiple occurences.
-> SmPl patch:
-> @rule@
-> identifier dsi_var;
-> identifier r;
-> identifier func;
-> type t;
-> position p;
-> expression dsi_device;
-> expression list es;
-> @@
-> t func(...) {
-> ...
-> struct mipi_dsi_device *dsi_var =3D dsi_device;
-> +struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D dsi_var };
-> <+...
-> (
-> -mipi_dsi_dcs_write_seq(dsi_var,es)@p;
-> +mipi_dsi_dcs_write_seq_multi(&dsi_ctx,es);
-> |
-> -mipi_dsi_generic_write_seq(dsi_var,es)@p;
-> +mipi_dsi_generic_write_seq_multi(&dsi_ctx,es);
-> |
-> -mipi_dsi_generic_write(dsi_var,es)@p;
-> +mipi_dsi_generic_write_multi(&dsi_ctx,es);
-> |
-> -r =3D mipi_dsi_dcs_nop(dsi_var)@p;
-> +mipi_dsi_dcs_nop_multi(&dsi_ctx);
-> |
-> ....rest of API
-> ..
-> )
-> -if(r < 0) {
-> -...
-> -}
-> ...+>
-
-The point of sending a single patch was to review the coccinelle script,
-so you must put the entire script you used here.
-
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-
-That hasn't been my email address for 6 years :)
-
-Maxime
-
---iwh2orhppfbbgi4c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ8lrbAAKCRAnX84Zoj2+
-dpoXAYCV7yoFxitIbgh6uFkLyZ4VLQvsKHGErE0qO7lLyAP6UpBiI05K1CHnneTr
-hK5luskBgIRKzxdKeBfGYM99W/seenjHAXgFqBIfp/tOG+FtKuJ2lhIQbycDFiVd
-H3tx2dKHIg==
-=Ufys
------END PGP SIGNATURE-----
-
---iwh2orhppfbbgi4c--
+[1] https://lore.kernel.org/r/20250305-pcc_fixes_updates-v2-0-1b1822bc8746@arm.com
 
