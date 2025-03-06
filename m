@@ -1,72 +1,67 @@
-Return-Path: <linux-kernel+bounces-548112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 641BEA5401F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:48:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E3A5A54022
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:49:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9498F188FB22
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:48:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A74EC3AA09F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DE41865E3;
-	Thu,  6 Mar 2025 01:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386BB186287;
+	Thu,  6 Mar 2025 01:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qh0nO1oD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="UZcK1kch"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1C2179A3;
-	Thu,  6 Mar 2025 01:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282A6EEA9
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 01:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741225709; cv=none; b=PwcU2QZI2JbnNrDF3gvboL5TfRwD9qL6gD2JV5kvuCW48bNRtfppcnSPFk7OIz7WQXcrQMe19HeowTugoUcaxnIeflpgaCmwkSmPYviXIW2DD1seDrX7rhkj8gxqp4A5YlOGiGwcGkgFnEZBeWnINSVj6wj09t8Ihscd2S7GOsI=
+	t=1741225770; cv=none; b=eNN4HGZIswesvGxbREbTB3pRMLwzwjOdNWO29RKzFwBxhyNLkh4OMTB6ksh7S2GKUgYwrrYM2kp/VGW4lQ5sVo6JMMIai0gQ7mNhS7EHg3109tLKgx25IY2jR2d587/5YvbkW5OzZCdWK0OlTkQPnQiYGIw4tZvPeybOUy1PKL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741225709; c=relaxed/simple;
-	bh=INgt2WVKj31q2syCqzCQ45mlr1DmXGyw6zo0gKcdDWA=;
+	s=arc-20240116; t=1741225770; c=relaxed/simple;
+	bh=4CnsPaTl0WIRzszl0f0cpVVeSGyBM4NDYeiErRoiIkQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bFA6jxziKOfVHSlOYDUaDItLk4xu9SY/C6k9yP2TQ0FsULzw/PZY2E/4bkUXDVPxfK192p7mXM2s5NH2ohrAimYmVKTpUGUt2RFfYr9BjzZWLUpn+Fct5f4BMmJ2Aa6pUC4LVX9PCcGW3flKKFwv3lQSsJFaczyD+yiVaM3hdm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qh0nO1oD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E8AFC4CED1;
-	Thu,  6 Mar 2025 01:48:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741225709;
-	bh=INgt2WVKj31q2syCqzCQ45mlr1DmXGyw6zo0gKcdDWA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qh0nO1oDVAS7f/23vg/R5TTIoi6cfB+GEegxzD1CZzxD/GuXZXCakJzh+o8yNEfPm
-	 sfwHZKGrAn3cL2Y0QoGdctOCObO1pDbOhNjULdWibyIqrVjnyFLWQk1NddrmsbVrSu
-	 dy0lMY8p9kwSxpKPg7TyM+Fu6JwNgo8JdA5O/a7/5KA3iepQoeX1FOaAg3IrIY9n5Y
-	 4IggFkLqbgwlDZVlIsgHm1ConOkBB7GJdRRATzAKTdbiRYdl09UqRxmC4Qf3F0DdqQ
-	 kcymirmw96/XP+xNmj7PQUpXvoW+tLl4VB6YphBQDfkik8JTot43mgODavoTMzrtg5
-	 aKqiKiyyd0Zsg==
-Date: Thu, 6 Mar 2025 02:48:20 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: airlied@gmail.com, simona@ffwll.ch, corbet@lwn.net,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, ajanulgu@redhat.com, lyude@redhat.com,
-	pstanner@redhat.com, zhiw@nvidia.com, cjia@nvidia.com,
-	jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
-	aliceryhl@google.com, tmgross@umich.edu, gregkh@linuxfoundation.org,
-	mcgrof@kernel.org, russ.weight@linux.dev,
-	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v5 2/5] rust: firmware: introduce
- `firmware::ModInfoBuilder`
-Message-ID: <Z8j-5HDl3loFNXSn@pollux>
-References: <20250304173555.2496-1-dakr@kernel.org>
- <20250304173555.2496-3-dakr@kernel.org>
- <D88OSC9XJXZL.C5HXWFYCG9U6@proton.me>
- <Z8jSV5CpZDcXrviY@pollux>
- <D88Q7503C8FF.2TMMBSEMOGKU1@proton.me>
- <Z8jk3qs6nCIJz-39@pollux>
- <D88R7HI1Z6GG.ZOQ9A1VQOR28@proton.me>
- <Z8j6ckpD6JVY4m-p@pollux>
- <D88SQ87X0OHX.1ZD8LM8LKUQ8J@proton.me>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dowxyG/3Hp3jGEwfpddP7pFlkNw4uv1HM4neCUpuTFssBPXTqU6+5O4y+rKN7lMvxyejOFxXwTkE+52Fznbm1SB7kePos/ARixTe2QjWkr5ChXWfydOb/CkBdma2r5GeiFF5JhIEKRTaSgOmeCEvJ2rf5A+QvYoR8JhqI6Xa1A8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=UZcK1kch; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=QGHyxqVCGkNrl7QPpS/xhP2GAEWWzYY4bM8dIlqPpgA=; b=UZcK1kchFYH6J+A93W4k6rnhLt
+	LH65Pm9XuzMFGE77kgMkmuXXQnRCBKnKpaBXl0OlMM5snP6cK9PBnuLiHWeOgTjPlB5mXZTszIHRx
+	bKIt0xNbCOl++pIoBNRhTzgw34VXtlkZ0Jygkq0crc1CRbuYMUilCzVe5AYkzGoj2SOj5VA/3b5p9
+	U/O78Kc9IqgI0NQ/dkMJusqR+qTBh1Nmo0qtEiPZ4snLD92I1lIndbYNt52dTW+h0tQgYcrHtokCW
+	BS5KDkoBDq0ULvu7FGy33Ux5cI9t/1NGgF211OPRfHsK8U9Zitku3y3MlX8zlGvsIDSoa1McmVVEf
+	SczVM9ow==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tq0M6-0049Wr-0P;
+	Thu, 06 Mar 2025 09:48:59 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 06 Mar 2025 09:48:58 +0800
+Date: Thu, 6 Mar 2025 09:48:58 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH mm-unstable 3/5] mm: zpool: Remove object mapping APIs
+Message-ID: <Z8j_Ct0hTwAnd2-w@gondor.apana.org.au>
+References: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
+ <20250305061134.4105762-4-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,108 +70,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <D88SQ87X0OHX.1ZD8LM8LKUQ8J@proton.me>
+In-Reply-To: <20250305061134.4105762-4-yosry.ahmed@linux.dev>
 
-On Thu, Mar 06, 2025 at 01:35:52AM +0000, Benno Lossin wrote:
-> On Thu Mar 6, 2025 at 2:29 AM CET, Danilo Krummrich wrote:
-> > On Thu, Mar 06, 2025 at 12:24:21AM +0000, Benno Lossin wrote:
-> >> On Thu Mar 6, 2025 at 12:57 AM CET, Danilo Krummrich wrote:
-> >> > On Wed, Mar 05, 2025 at 11:36:54PM +0000, Benno Lossin wrote:
-> >> >> On Wed Mar 5, 2025 at 11:38 PM CET, Danilo Krummrich wrote:
-> >> >> > On Wed, Mar 05, 2025 at 10:30:31PM +0000, Benno Lossin wrote:
-> >> >> >> On Tue Mar 4, 2025 at 6:34 PM CET, Danilo Krummrich wrote:
-> >> >> >> > +    /// Push an additional path component.
-> >> >> >> > +    ///
-> >> >> >> > +    /// After a new [`ModInfoBuilder`] instance has been created, [`ModInfoBuilder::prepare`] must
-> >> >> >> > +    /// be called before adding path components.
-> >> >> >> > +    pub const fn push(self, s: &str) -> Self {
-> >> >> >> > +        if N != 0 && self.n == 0 {
-> >> >> >> > +            crate::build_error!("Must call prepare() before push().");
-> >> >> >>
-> >> >> >> This will only prevent the first `prepare` call being missed, right?
-> >> >> >
-> >> >> > Correct, unfortunately there's no way to detect subsequent ones.
-> >> >>
-> >> >> Does it make sense to do that one in the constructor?
-> >> >>
-> >> >> (After looking at the example below) Ah maybe you can't do that, since
-> >> >> then you would have two `prepare()` calls for the example below...?
-> >> >
-> >> > Exactly.
-> >> >
-> >> >> >> If you always have to call this before `push`, why not inline it there?
-> >> >> >
-> >> >> > You can push() multiple times to compose the firmware path string (which is the
-> >> >> > whole purpose :).
-> >> >>
-> >> >> Ah I see, I only looked at the example you have in the next patch. All
-> >> >> in all, I think this patch could use some better documentation, since I
-> >> >> had to read a lot of the code to understand what everything is supposed
-> >> >> to do...
-> >> >
-> >> > I can expand the example in module_firmware! to make things a bit more obvious.
-> >> >
-> >> > Otherwise, what information do you think is missing?
-> >>
-> >> Abstractly: what `ModInfoBuilder` *does*, concretely:
-> >> - why the generic constant `N` exists,
-> >
-> > It doesn't really matter to the user, since the user never needs to supply it.
-> > That happens in the module_firmware! macro.
-> >
-> > I agree it not good to not mention anything about it at all, but I wouldn't want
-> > to bother the user with all implemention details.
-> >
-> > We can probably just mention that it's used internally and is supplied by
-> > module_firmware!. (That module_firmware! does that by doing a dry run of the
-> > builder itself, isn't necessary to know for the user I think.)
-> >
-> >> - what `prepare()` does,
-> >
-> > Same here, it's an implementation detail not relevant to the user. All the user
-> > needs to know is that prepare() acts as a separator to be able to supply the
-> > next firmware path.
+On Wed, Mar 05, 2025 at 06:11:31AM +0000, Yosry Ahmed wrote:
+> zpool_map_handle(), zpool_unmap_handle(), and zpool_can_sleep_mapped()
+> are no longer used. Remove them with the underlying driver callbacks.
 > 
-> How about calling it `new_path`/`new_entry` or similar?
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> ---
+>  include/linux/zpool.h | 30 ---------------------
+>  mm/zpool.c            | 61 -------------------------------------------
+>  mm/zsmalloc.c         | 27 -------------------
+>  3 files changed, 118 deletions(-)
 
-Sure, new_entry() sounds good!
+This patch breaks zbud and z3fold because they haven't been converted
+to the new interface.
 
-> 
-> >> - what happens with the `module_name` parameter of `new`
-> >
-> > Should probably just mention it's supplied by module_firmware! and used
-> > internally.
-> 
-> IIUC, that's not the case, the `module_firmware!` macro will call the
-> `create` function with the name and you're supposed to just pass it onto
-> the builder.
-
-Yes, but this part is documented by module_firmware!, which I think is the
-correct place.
-
-> 
-> >> - answer the question "I want that the builder outputs the string `???`
-> >>   can it do that? If yes, how do I do it?"
-> >
-> > All it does is concatenating multiple &str in const context, which I thought is
-> > clear since there are only push() and prepare() as public methods.
-> >
-> > May it be that your request is more about can we add more hints on the
-> > implementation details rather than user focused documentation?
-> 
-> I am not familiar with MODULE_FIRMWARE in C, and I'd think that someone
-> that uses this API would know what to put into the `.modinfo` section,
-> so like "foo\0bar\0\0baz" (no idea if that makes sense, but just add
-> `firmware` or whatever is needed to make it make sense). And then the
-> question would be how to translate that into the builder.
-> 
-> I wouldn't be able to piece it together without looking at the
-> implementation.
-
-I believe if you come from the perspective of writing a driver, you reach
-module_firmware! first and then the subsequent stuff makes sense.
-
-But I recognize your feedback and will try to make things a bit more obvious by
-expanding the example of module_firmware! and expanding a few comments here and
-there. I also think that s/prepare/new_entry/ will help a lot.
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
