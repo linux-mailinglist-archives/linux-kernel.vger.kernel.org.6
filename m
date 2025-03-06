@@ -1,147 +1,284 @@
-Return-Path: <linux-kernel+bounces-548652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA284A5478B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:17:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96D7CA547A1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:23:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0072217207E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:17:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A89C11893E5A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B101FCCFA;
-	Thu,  6 Mar 2025 10:17:26 +0000 (UTC)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 708811946C3;
+	Thu,  6 Mar 2025 10:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kspa7tyK"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC7C184E;
-	Thu,  6 Mar 2025 10:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D505417B50B;
+	Thu,  6 Mar 2025 10:23:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741256245; cv=none; b=Bry/XYgprn7c/3GlyFU522sQ7JnTb8E2Pw1w1/XLBQszjtRIG4qkyKN6JhjJk/gzVaHmMemGll8XbTfMpDkYDtWvss55mY0J/vAsy4yDFTheIFbg/cCGPaN/RgMz33pYsJYi7i2/iMtpQXO2mOCMFcFLt1yGq6yerM2hXwXBe+k=
+	t=1741256586; cv=none; b=aHxSmF9p+ebA4/vBdt//JmJYyHHeYsB2PxP+LJWDR1PjEmo54Jb/CgH0a+CoeeAb0eB1Lk5k2ERm2lW/5aEOpI7CpJB1eyg5O8b6yDZ6jwlolbEWAeX/7XH0WsG+ZgLyLx6A5uFB8vnOf/KnBZhGM7UxAf9Db+0UzQTXBlaTDGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741256245; c=relaxed/simple;
-	bh=M4NQD7fKonPOadpqponUO/eOxoe35epmgZqcnhpbox4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VfXG+s66B+cFTaKEzzHicm0QrpU3wH7023kc4qNYC8qx5ZitXofDXw2Bcv2seEMxIhnrTuipKjk6MDUhVbSKPupLlhTfgjHAUO8hLf7d7R9ZKk55emat/wFiyGOIMrMo0Up+YV5k15vPS85A5Qb+ZKURx1v88iW5US6FsOdSwn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1741256586; c=relaxed/simple;
+	bh=Fk+ptxHPo0zL9VKayPmWGSh7ru2griwlnIjrUJwnVzQ=;
+	h=From:Content-Type:Mime-Version:Subject:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=f7n6LNgwFblkReleBkwN7Je6soC0m4MGhmTdQCEh1cOyRZc9V36G7tKmWZT+O5bvflidqol2U84E+lJYwfh0WfEzPpYHF0Et1fltuGyFz56cHTBeWmBRv03gw5JHJu6kRdCRMurhxT9GVH0MqVK2lpuLTVrcp/FY2IKmq311m20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kspa7tyK; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-523cbce3fecso466400e0c.0;
-        Thu, 06 Mar 2025 02:17:23 -0800 (PST)
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so1031664a12.0;
+        Thu, 06 Mar 2025 02:23:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741256583; x=1741861383; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:subject:mime-version:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YSreNIH4adMVMjlthJ/Tlzvq8nw1Qi3pxgZbONEY0EE=;
+        b=Kspa7tyKYXS4GgjSfsmfXWAADS6XOrrpDzE2lLqxCtJlQ07wO1ktV7PlVHdB/MbdkR
+         +IVCgQg3EOB9KU4yLcxTq8/6hv2FjHYbAWZVjYHdbWFl0BX9+UROxG9MB/tOi84oyAqp
+         V1OqCW6LWD0pDv7Qa/dLLpfDAWn1IF4MrJGyovN33nxFx9pb2CXOQRLar7Udp/pvOBo0
+         BNUSUQ1uLkXRfZwNQ3Oo0xyJVJ4PbWs20GoQXEsEnqkmfbHNVTOk969M1iomaFC9d49m
+         s194JmOzROeCEGEebMIywYzDWwsLJkCGTazlTdENk/QxtWQ7guqPCMsxO3++zxeB1NoE
+         aYBg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741256242; x=1741861042;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qcEz2LyBncALLQ4u6Y5IbzKtdzlkgMXNLDU3Z8nhKrM=;
-        b=pbJwfJcisxev4Q83E3U6BrszIewEVzg68dj196Shf4YWrGxdaaUVDMl7SwXsSFCy/Z
-         oos/bM+ePhSG2yK0DyWAUUb0FqZT6f5ixbU8/D4Od/2ILXdAB2OJcMSULYrUhpzZAjN8
-         +MDYL8/7dz3yGtwoU5qneRn8hLKYUjdbXy8w6ARFwMAYzMp8yICWnrLJwSqdrkuAYFBU
-         LHLZeubPsbsnnS7X5HIU05traTRgXp22G1PJzF4Db7s//ZjHuKOPB7rshQxeQnWeyJpD
-         Q9kLGr2bZK5re2bSRLh2ke7HekpSUkMb4lMrkfA8SxBNepVhR1o2v8kMTiSfil1J8HrH
-         T+cA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDSOnygtNbBWzzPDhbM+Lahj/N6lxsd5M9GyflTiC9zQWRxad7XQXiqTLXFopbgx43sfWDmEsKEqruUuQl@vger.kernel.org, AJvYcCUe3IYx4vpSJYiOLbAfeIhzKQgtrJvwpHp4A0cb9Y9SZyGMYhDAV6sMLBVAQOJM/V1eDbQNTKs9H6XjdAWS3Ttbld4=@vger.kernel.org, AJvYcCW8uXxCIf5iFDcCyOu8/AQj0cib4KZR57uPDL/6zrm5ZHm+gejSntU5zqdBX9RWf5gFaWTZO10muqVCQfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypaDJs8VdXRKsOOWyX/UdWHT04HKZRJ0zoKJCytks3S2I01TR+
-	uC/J5YPnhYQ9jgHMyHB2k7U0mbZyuvpVCzmeqERYbBXpojpq/Tm1JroXSfDw
-X-Gm-Gg: ASbGncsblJENYGfo/bf8Kv2Ns7JQ+sqA5ao5QGLFZ/zam7jKnJQtQjVwgNE4rkWlPdE
-	Pra5c3O5919PomSO/Sqw87iLbR4GCY2lQV4AlCCtL0HmsT9skq6eJ+RZKExjJxhvO8az9EEvMX4
-	4tUuEVbyaNxgNbiFry0K2IEyv6xkZXgjLfhYLZrf7RoWc0lxn3LJ2AzQtn1SMx/Th5wu3rKXaKY
-	93PN/AhF+zCzSKwk2lbsPGTjahqcGrCGUcdPLX/SqPt+NuS44/2SggDWpj2Ol00rUCTr0svhrN1
-	IYjF0u+i4AXNI7c7DG75o15EvUbh8s7E3fO+JDdMd8Euau96Yutm+X3lJj1AaObmKpfir+Wv7Hu
-	Qu6dVZ5Y=
-X-Google-Smtp-Source: AGHT+IHAt1f4QoDAXQwnMH0ATPb1Lds2D7R5NpT5LiXUaQfisOeKv+Ice1sImuQOdj3xSULoPP/xaA==
-X-Received: by 2002:a05:6122:3208:b0:520:9688:d1bb with SMTP id 71dfb90a1353d-523c611e546mr4434454e0c.2.1741256242216;
-        Thu, 06 Mar 2025 02:17:22 -0800 (PST)
-Received: from mail-ua1-f45.google.com (mail-ua1-f45.google.com. [209.85.222.45])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523d8afbd23sm134665e0c.25.2025.03.06.02.17.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 02:17:22 -0800 (PST)
-Received: by mail-ua1-f45.google.com with SMTP id a1e0cc1a2514c-867129fdb0aso443895241.1;
-        Thu, 06 Mar 2025 02:17:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU7NQgLzrQEqLSCU6TGjokuNlTwkLbdJpKCO+0UiNyWTpmm8u0FpEvbtF3v5TvARuNG0hoRmCM2Buu/dgtF@vger.kernel.org, AJvYcCVyDEA9/OggdSfo82rl8brwmUUVVaIOIBbnZVdiU5OUXnfj4rQOVBtgiOBqD4/4bz5KEKQ79b2PRLRdaKx/xVIi9No=@vger.kernel.org, AJvYcCWAMNf4CwHTXWlhVInlpI3GaTaNOuYxED2jvYY3yEfLGiXA1fnhjFgJ/J8K7LmnwUt79zGYHJGxX/JWnN8=@vger.kernel.org
-X-Received: by 2002:a05:6102:2914:b0:4c1:b2c2:61a with SMTP id
- ada2fe7eead31-4c2e29aee24mr3252939137.25.1741256241769; Thu, 06 Mar 2025
- 02:17:21 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741256583; x=1741861383;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:subject:mime-version:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YSreNIH4adMVMjlthJ/Tlzvq8nw1Qi3pxgZbONEY0EE=;
+        b=TsoqWzdzFH2GS5Bg3jnnKRpOzQobdV3N59yVgqy+jQjIwXSdWaWdOLFFN/ZBivxju1
+         R8R9GFXbcSxt6YAxa8Ir3ozlvH7X6YsfFlsDU6msIN4pRhbECgR5f/at1RLIMX4BTy25
+         HuAG3vE6lWMECQgpEp30+BPcb0inJwQRxdvExKhPm++85pTyDCj++j01OPmP9jWgExQO
+         y74EoLnq4tLZislH3cbipgyzPcVscdsqeniWnfA6wmcMCEieNeZkUqYkbt6BOQFtqBRo
+         4yFtNuqh/w1LChRNzmsU3jByp4mKWgA6PCdADGrgvDou73cLwkX6BHCZnnhnIHPBUmNw
+         Fj6g==
+X-Forwarded-Encrypted: i=1; AJvYcCVj04xPzp1Pu0M/wZ6jHuzTYMgE0+pp2tzijWohs4IymmLdbVDAVrxCQgN1+AGpjD2uQrsk@vger.kernel.org, AJvYcCW3h3ZDOBym01feVNZTp4pKgg8CZOkEbdGXDlTmS0MFq8yfH0dXEceYvcEKNEjp8rtFPGOHX72BVicXG1vg@vger.kernel.org, AJvYcCXkgAmJN5izOcF7cd90GyhStvq7dx970fY0RVH8XU0Zxqi9nPHoWaVnVzJvNWiLT6uXq2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+jB9G5kGLGckkdOWGPVDw3BoPFraYGTUgW1Bt11/1/6ihNvMX
+	6nnP5UcmZT6MU5gLfAa/cLhXQVM2364mTTwLnstvk1WVDkE5FUfG
+X-Gm-Gg: ASbGncuveLWfu8TB7fUU43UH6yDxxMPA+6A3hpiX9aV0zrnyfmQ2pH0C+TvyDoeqRWi
+	E9s+CI7Gh46YjNvujNv7LH6nmkH61NKpwObS/XBFPP98fRa0p8la7UOknjqVpsXMKA1BB4O2l7Z
+	0n2k4gYFQ2bidcAPQ3yLT+ClV9fBCVuIJZ4RX2bXl215u222XxSud+mk95dkVJJ+c9KZq2hNd8y
+	tEuneWoa7hK6VwFFmprMczg6k7iJfafFLDDHBjOlCZ2x1akTW/oCiCnW0rn61xjSq/jT6DQ8YIs
+	oLxb9mxlokjPUMQKS/1Lfv7cLe8mQ9RR0GtmFd3tRTxXbkmk//zt640f6A==
+X-Google-Smtp-Source: AGHT+IFMBMMD1hiit+xZF2Scen4nqwH8NOgCkmQvow1VZWtTjkkHspCV+WaQcKHmLYtLT7YOayoUUw==
+X-Received: by 2002:a05:6402:3581:b0:5e0:8a34:3b5c with SMTP id 4fb4d7f45d1cf-5e5c1a7786emr2354367a12.0.1741256582607;
+        Thu, 06 Mar 2025 02:23:02 -0800 (PST)
+Received: from smtpclient.apple ([209.38.224.166])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c76913bbsm709630a12.78.2025.03.06.02.23.00
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Mar 2025 02:23:01 -0800 (PST)
+From: Nick Zavaritsky <mejedi@gmail.com>
+X-Google-Original-From: Nick Zavaritsky <MeJedi@gmail.com>
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250226130935.3029927-1-thierry.bultel.yh@bp.renesas.com> <20250226130935.3029927-10-thierry.bultel.yh@bp.renesas.com>
-In-Reply-To: <20250226130935.3029927-10-thierry.bultel.yh@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 6 Mar 2025 11:17:10 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWEQue1eqX7AE+WQ1OrdpMNVU7PXfprYaSGHQV0ofpB4A@mail.gmail.com>
-X-Gm-Features: AQ5f1JoJvgWlKwwGYmoeowmZpOBO1Rl0odlx56brJYK22pPVHXovdCly3eNimAg
-Message-ID: <CAMuHMdWEQue1eqX7AE+WQ1OrdpMNVU7PXfprYaSGHQV0ofpB4A@mail.gmail.com>
-Subject: Re: [PATCH v3 09/13] serial: sh-sci: Introduced sci_of_data
-To: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-Cc: thierry.bultel@linatsea.fr, linux-renesas-soc@vger.kernel.org, 
-	paul.barker.ct@bp.renesas.com, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [RESEND] [PATCH bpf-next 2/3] bpf: Overwrite the element in hash
+ map atomically
+In-Reply-To: <CAADnVQLev2V-ARjPc9EPYaSssCev_87Lc0NWkLvL-5tuy=3Veg@mail.gmail.com>
+Date: Thu, 6 Mar 2025 11:22:48 +0100
+Cc: Hou Tao <houtao@huaweicloud.com>,
+ Zvi Effron <zeffron@riotgames.com>,
+ =?utf-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@kernel.org>,
+ bpf <bpf@vger.kernel.org>,
+ rcu@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>,
+ Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>,
+ Andrii Nakryiko <andrii@kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>,
+ Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>,
+ KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>,
+ "Paul E . McKenney" <paulmck@kernel.org>,
+ Cody Haas <chaas@riotgames.com>,
+ Hou Tao <hotforest@gmail.com>,
+ Charalampos Stylianopoulos <charalampos.stylianopoulos@emnify.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <4243FBB4-693E-4740-BECE-FDB32322BD97@gmail.com>
+References: <20250204082848.13471-1-hotforest@gmail.com>
+ <20250204082848.13471-3-hotforest@gmail.com>
+ <cca6daf2-48f4-57b9-59a9-75578bb755b9@huaweicloud.com>
+ <8734gr3yht.fsf@toke.dk>
+ <d191084a-4ab4-8269-640f-1ecf269418a6@huaweicloud.com>
+ <CAADnVQKD94q-G4N=w9PJU+k6gPhM8GmUYcyfj=33B_mKX6Qbjw@mail.gmail.com>
+ <6a84a878-0728-0a19-73d2-b5871e10e120@huaweicloud.com>
+ <CAADnVQLrJBOSXP41iO+-FtH+XC9AmuOne7xHzvgXop3DUC5KjQ@mail.gmail.com>
+ <CAC1LvL0ntdrWh_1y0EcVR6C1_WyqOQ15EhihfQRs=ai7pcE-Sw@mail.gmail.com>
+ <7e614d80-b45b-e2f9-5a39-39086c2392dc@huaweicloud.com>
+ <CAADnVQJU9OWAWFk89P6i1RK6vXkuee5s76suHjF+uP+V4iepqQ@mail.gmail.com>
+ <e1b65f13-a426-d707-0319-f57e8b15575a@huaweicloud.com>
+ <CAADnVQLev2V-ARjPc9EPYaSssCev_87Lc0NWkLvL-5tuy=3Veg@mail.gmail.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
 
-Hi Thierry,
 
-On Wed, 26 Feb 2025 at 14:10, Thierry Bultel
-<thierry.bultel.yh@bp.renesas.com> wrote:
-> The aim here is to provide an easier support to more different SCI
-> controllers, like the RZ/T2H one.
->
-> The existing .data field of_sci_match is changed to a structure containing
-> all what that can be statically initialized, and avoid a call to
-> 'sci_probe_regmap', in both 'sci_init_single', and 'early_console_setup'.
->
-> 'sci_probe_regmap' is now assumed to be called in the only case where the
-> device description is from a board file instead of a dts.
->
-> In this way, there is no need to patch 'sci_probe_regmap' for adding new
-> SCI type, and also, the specific sci_port_params for a new SCI type can be
-> provided by an external file.
->
-> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
-> Reviewed-by: Paul Barker <paul.barker.ct@bp.renesas.com>
+> On 27. Feb 2025, at 04:17, Alexei Starovoitov =
+<alexei.starovoitov@gmail.com> wrote:
+>=20
+> On Wed, Feb 26, 2025 at 6:43=E2=80=AFPM Hou Tao =
+<houtao@huaweicloud.com> wrote:
+>>=20
+>>>>=20
+>>>> lookup procedure A
+>>>> A: find the old element (instead of the new old)
+>>>>=20
+>>>>              update procedure B
+>>>>              B: delete the old element
+>>>>              update procedure C on the same CPU:
+>>>>              C: reuse the old element (overwrite its key and insert =
+in
+>>>> the same bucket)
+>>>>=20
+>>>> A: the key is mismatched and return -ENOENT.
+>>> This is fine. It's just normal reuse.
+>>> Orthogonal to 'update as insert+delete' issue.
+>>=20
+>> OK. However, it will break the lookup procedure because it expects it
+>> will return an valid result instead of -ENOENT.
+>=20
+> What do you mean 'breaks the lookup' ?
+> lookup_elem_raw() matches hash, and then it memcmp(key),
+> if the element is reused anything can happen.
+> Either it succeeds in memcmp() and returns an elem,
+> or miscompares in memcmp().
+> Both are expected, because elems are reused in place.
+>=20
+> And this behavior is expected and not-broken,
+> because bpf prog that does lookup on one cpu and deletes
+> the same element on the other cpu is asking for trouble.
+> bpf infra guarantees the safety of the kernel.
+> It doesn't guarantee that bpf progs are sane.
+>=20
+>>> It's been a long time since I looked into rcu_nulls details.
+>>> Pls help me understand that this new replace_rcu_nulls()
+>>> is correct from nulls pov,
+>>> If it is then this patch set may be the right answer to non-atomic =
+update.
+>>=20
+>> If I understand correctly, only the manipulations of ->first pointer =
+and
+>> ->next pointer need to take care of nulls pointer.
+>=20
+> hmm. I feel we're still talking past each other.
+> See if (get_nulls_value() =3D=3D ...) in lookup_nulls_elem_raw().
+> It's there because of reuse. The lookup can start in one bucket
+> and finish in another.
+>=20
+>>>=20
+>>> And for the future, please please focus on "why" part in
+>>> the cover letter and commit logs instead of "what".
+>>>=20
+>>> Since the only thing I got from the log was:
+>>> "Currently, the update is not atomic
+>>> because the overwrite of existing element happens in a two-steps =
+way,
+>>> but the support of atomic update is feasible".
+>>>=20
+>>> "is feasible" doesn't explain "why".
+>>>=20
+>>> Link to xdp-newbie question is nice for additional context,
+>>> but reviewers should not need to go and read some thread somewhere
+>>> to understand "why" part.
+>>> All of it should be in the commit log.
+>>=20
+>> OK. My original thought is that is a reported problem, so an extra =
+link
+>> will be enough. Will try to add more context next time.
+>>>=20
+>>>> map may still be incorrect (as shown long time ago [1]), so I think
+>>>> maybe for other types of map, the atomic update doesn't matter too =
+much.
+>>>>=20
+>>>> [1]:
+>>>> =
+https://lore.kernel.org/bpf/20221230041151.1231169-1-houtao@huaweicloud.co=
+m/
+>>> A thread from 3 years ago ?! Sorry, it's not helpful to ask
+>>> people to page-in such an old context with lots of follow ups
+>>> that may or may not be relevant today.
+>> Let me reuse part of the diagram above to explain how does the lookup
+>> procedure may return a incorrect value:
+>>=20
+>> lookup procedure A
+>> A: find the old element (instead of the new element)
+>>=20
+>>=20
+>>              update procedure B
+>>              B: delete the old element
+>>              update procedure C on the same CPU:
+>>=20
+>>=20
+>> A: the key is matched and return the value in the element
+>>=20
+>>              C: reuse the old element (overwrite its key and value)
+>>=20
+>> A: read the value (it is incorrect, because it has been reused and
+>> overwritten)
+>=20
+> ... and it's fine. It's by design. It's an element reuse behavior.
+>=20
+> Long ago hashmap had two modes: prealloc (default) and
+> NO_PREALLOC (call_rcu + kfree)
+>=20
+> The call_rcu part was there to make things safe.
+> The memory cannot be kfree-ed to the kernel until RCU GP.
+> With bpf_mem_alloc hashmap elements are freed back to bpf_ma
+> right away. Hashmap is doing bpf_mem_cache_free()
 
-Thanks for your patch!
+We (emnify.com) missed this change and kept writing code with an
+assumption that NO_PREALLOC implies rcu.
 
-> --- a/drivers/tty/serial/sh-sci.c
-> +++ b/drivers/tty/serial/sh-sci.c
-> @@ -3250,12 +3247,17 @@ static struct console early_serial_console = {
->  static int sci_probe_earlyprintk(struct platform_device *pdev)
->  {
->         const struct plat_sci_port *cfg = dev_get_platdata(&pdev->dev);
-> +       struct sci_port *sp = pdev->id;
+Is there something we can do as of today to reduce the likelihood of an
+item getting reused immediately? We are concerned with lookups yielding
+bogus results when racing with updates. Worse, a program could corrupt
+an unrelated item when writing via a pointer obtained from lookup.
 
-"sp = &sci_ports[pdev->id]" makes it going again on QEMU RTS7751R2D.
+You wrote that "lookup on one cpu and deletes the same element on the
+other cpu is asking for trouble.=E2=80=9D It puzzles me since user space
+updating a map while (say) TC program is consulting the map to make a
+routing decision look like a supported and widespread use case.
 
->
->         if (early_serial_console.data)
->                 return -EEXIST;
->
->         early_serial_console.index = pdev->id;
->
-> +       sp->params = sci_probe_regmap(cfg, sp);
-> +       if (!sp->params)
-> +               return -ENODEV;
-> +
->         sci_init_single(pdev, &sci_ports[pdev->id], pdev->id, cfg, true);
+For us, implications vary in severity, e.g.:
+ - 1-in-1e? packet mis-delivered (bogus lookup: LOW)
+ - a tenant getting billed for a packet of another tenant delivered via
+   satellite and costing USD 0.10 (writing into unrelated item: LOW)
+ - a network flow state corrupted (writing into unrelated item: MEDIUM)
 
-Here you can reuse sp.
+We need to audit our code to ensure that e.g. a flow state getting
+corrupted self-corrects and the damage doesn=E2=80=99t spread.
 
->
->         if (!strstr(early_serial_buf, "keep"))
+It would be nice if we as eBPF users could decide whether we wish to
+live dangerously or prefer to trade speed for safety, on a case-by-case
+basis.
 
-Gr{oetje,eeting}s,
+> (instead of bpf_mem_cache_free_rcu()) because users need speed.
+> So since 2022 both prealloc and no_prealloc reuse elements.
+> We can consider a new flag for the hash map like F_REUSE_AFTER_RCU_GP
+> that will use _rcu() flavor of freeing into bpf_ma,
+> but it has to have a strong reason.
+> And soon as we add it the default with prealloc would need
+> to use call_rcu() too, right?
+> and that becomes nightmare, since bpf prog can easily DoS the system.
+> Even if we use bpf_mem_cache_free_rcu() only, the DoS is a concern.
+> Unlike new things like bpf_obj_new/obj_drop the hashmap
+> is unpriv, so concerns are drastically different.
 
-                        Geert
+Would it be an option to gate F_REUSE_AFTER_RCU under CAP_BPF?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+It looks like sleepable programs would need to bpf_rcu_read_lock
+explicitly to reap the benefits, but why not.=
 
