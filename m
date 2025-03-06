@@ -1,92 +1,177 @@
-Return-Path: <linux-kernel+bounces-548281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3827A542CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:31:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AC6BA542CB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:31:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2750A16BA61
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:31:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3775E3AD6E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70CC21A5BA1;
-	Thu,  6 Mar 2025 06:31:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C2791A23BD
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 06:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080FB1A239D;
+	Thu,  6 Mar 2025 06:31:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QCZq/oGh"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F28578F45;
+	Thu,  6 Mar 2025 06:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741242676; cv=none; b=WrZCvvi/FxRNITELQphTK3Ik7nF1MDzyL7ubGhv/hopcAoUoOUaVM6t4OeBCdS4V1HBJqaMP/B3O9DVn5qTU3WCpsgGcrHZUdQZCs+y3KyrrbtMc/9w9JBW2Jje/xe707ebTCxYSahYsKrFEws59HEQ9T8QW5BPpNbaUU6JZZl8=
+	t=1741242673; cv=none; b=I8SYKj8JkTlVF0ZxwnhiADSWuJrJU9iXf0OFeVpxAa5HtXUwWLtoU3Yc12zakOHYK41L/gkfXEo9d7Qf0Y/q0+vQpQFP3HSW34hl/NMIh8XnvaWMTD7T1S1sbo45kC/SzJizMxsmvJxvaqHlCXt4XoCYxx6ZUSqwxWuQ1VWhGlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741242676; c=relaxed/simple;
-	bh=cxT47ijM+0vYDh0CvTEqDA5OOZLhZdqFfLxf6rOhvwo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Yx6cRMvH6Tpd0UTzIwMDnj2RqYkIbVmelc0NxcWDfG59oTGvBSB34fCIboJ/sC9foDhF2McSrLdGoqy/zAkmQicpra28m04syaaSz9HrO6FrJjUWnvxpYXr2MPTF7kTo/2JG6nkKol1JqID6FI0X84ONrRoiNMNgBXKKvLWnBiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 087B8FEC;
-	Wed,  5 Mar 2025 22:31:25 -0800 (PST)
-Received: from K4MQJ0H1H2.emea.arm.com (K4MQJ0H1H2.blr.arm.com [10.162.43.28])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0CDD83F673;
-	Wed,  5 Mar 2025 22:31:06 -0800 (PST)
-From: Dev Jain <dev.jain@arm.com>
-To: akpm@linux-foundation.org,
-	Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com,
-	vbabka@suse.cz,
-	jannh@google.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Cc: ryan.roberts@arm.com,
-	anshuman.khandual@arm.com,
-	aneesh.kumar@kernel.org,
-	yang@os.amperecomputing.com,
-	david@redhat.com,
-	willy@infradead.org,
-	hughd@google.com,
-	ziy@nvidia.com,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH] mm/vma: Do not register private-anon mappings with khugepaged during mmap
-Date: Thu,  6 Mar 2025 12:00:37 +0530
-Message-Id: <20250306063037.16299-1-dev.jain@arm.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1741242673; c=relaxed/simple;
+	bh=1RM+XKiz2InHZKwcemv4fAzqpEQpi7paLLvTAQeR/Og=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bRSKHQl8P1NvHn6q7mizO8tOep/enqWqMzr6bJDRkwj0xUw0mdJF0CpLV52GufW6x2sTA3PFzaKK/BrzGSd5QeTd2lmNryiRlkgdOrR9DSuTlX59OcouF6Ra7boTEiP8iLUmMAPmQ5Z4lZAWkUprPC0fb3wiTnsvPYHGceWWUgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QCZq/oGh; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 525KcxsN028695;
+	Thu, 6 Mar 2025 06:30:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=7qufjD/TfK5MxuwDXYkHpEzCdUsv3a
+	nqlYbsR18my/0=; b=QCZq/oGhIWsV/P0X6bkmtEov1Xv4lzeTcinJ6x4o8BxIfy
+	vMjzZB3X+DFrMZ6sC5LXNWXmJYiRUbyNjP7g8JMehPPnWeX06eE7htAHGrvHjmSm
+	9uav9ohtkMimKYn09096cfN0dfFhbMEMf3UrD5E4gL/R/FHmRw3lbChGwx03KNSM
+	X5eIQgsNqTOBmHPiJLfzOPIEbLFZbX3k00Fj0a4Q+lP1Meka/VL68mwWmoJaAjJ+
+	N/04qtTmPa1gd/dHTvygKRCtMMXVpCPL8CDW9QCudqG9OZ434MiP735hEepVPSV5
+	QwM2uyYtFUZ2TCFjoHN+VN6kIjfxyUNNoA1gAWCA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 456wu0236j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Mar 2025 06:30:57 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5266Lla2013261;
+	Thu, 6 Mar 2025 06:30:57 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 456wu0236e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Mar 2025 06:30:56 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5265HGWu020841;
+	Thu, 6 Mar 2025 06:30:56 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454djnq5pm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Mar 2025 06:30:56 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5266UsaF21037458
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 6 Mar 2025 06:30:54 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 42F982004B;
+	Thu,  6 Mar 2025 06:30:54 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5A49220040;
+	Thu,  6 Mar 2025 06:30:52 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.249])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu,  6 Mar 2025 06:30:52 +0000 (GMT)
+Date: Thu, 6 Mar 2025 12:00:49 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: linux-ext4@vger.kernel.org, Jan Kara <jack@suse.com>, tytso@mit.edu
+Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Baokun Li <libaokun1@huawei.com>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v2 2/2] ext4: protect ext4_release_dquot against freezing
+Message-ID: <Z8lBGaJGnM3SZZ-g@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <20241121123855.645335-1-ojaswin@linux.ibm.com>
+ <20241121123855.645335-3-ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241121123855.645335-3-ojaswin@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: lOF2C5IGhBKrbxO3AofFh7cOFvT-pvek
+X-Proofpoint-ORIG-GUID: z8x8t88IJ8EpnKqv000xgbHE-aHZbNeS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-06_03,2025-03-06_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 suspectscore=0 clxscore=1015 lowpriorityscore=0 mlxscore=0
+ bulkscore=0 adultscore=0 spamscore=0 mlxlogscore=927 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503060046
 
-We already are registering private-anon VMAs with khugepaged during fault
-time, in do_huge_pmd_anonymous_page(). Commit "register suitable readonly
-file vmas for khugepaged" moved the khugepaged registration logic from
-shmem_mmap to the generic mmap path. Make this logic specific for non-anon
-mappings.
+On Thu, Nov 21, 2024 at 06:08:55PM +0530, Ojaswin Mujoo wrote:
+> Protect ext4_release_dquot against freezing so that we
+> don't try to start a transaction when FS is frozen, leading
+> to warnings.
+> 
+> Further, avoid taking the freeze protection if a transaction
+> is already running so that we don't need end up in a deadlock
+> as described in
+> 
+>   46e294efc355 ext4: fix deadlock with fs freezing and EA inodes
+> 
+> Suggested-by: Jan Kara <jack@suse.cz>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-Fixes: 613bec092fe7 ("mm: mmap: register suitable readonly file vmas for khugepaged")
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- mm/vma.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Hey Ted,
 
-diff --git a/mm/vma.c b/mm/vma.c
-index af1d549b179c..730a26bf14a5 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -2377,7 +2377,8 @@ static int __mmap_new_vma(struct mmap_state *map, struct vm_area_struct **vmap)
- 	 * vma_merge_new_range() calls khugepaged_enter_vma() too, the below
- 	 * call covers the non-merge case.
- 	 */
--	khugepaged_enter_vma(vma, map->flags);
-+	if (!vma_is_anonymous(vma))
-+		khugepaged_enter_vma(vma, map->flags);
- 	ksm_add_vma(vma);
- 	*vmap = vma;
- 	return 0;
--- 
-2.30.2
+Just a ping, I think you might have missed this patch. Let me know if
+anything else is needed from my side.
 
+Regards,
+ojaswin
+
+> ---
+>  fs/ext4/super.c | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+> 
+> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> index 16a4ce704460..f7437a592359 100644
+> --- a/fs/ext4/super.c
+> +++ b/fs/ext4/super.c
+> @@ -6887,12 +6887,25 @@ static int ext4_release_dquot(struct dquot *dquot)
+>  {
+>  	int ret, err;
+>  	handle_t *handle;
+> +	bool freeze_protected = false;
+> +
+> +	/*
+> +	 * Trying to sb_start_intwrite() in a running transaction
+> +	 * can result in a deadlock. Further, running transactions
+> +	 * are already protected from freezing.
+> +	 */
+> +	if (!ext4_journal_current_handle()) {
+> +		sb_start_intwrite(dquot->dq_sb);
+> +		freeze_protected = true;
+> +	}
+>  
+>  	handle = ext4_journal_start(dquot_to_inode(dquot), EXT4_HT_QUOTA,
+>  				    EXT4_QUOTA_DEL_BLOCKS(dquot->dq_sb));
+>  	if (IS_ERR(handle)) {
+>  		/* Release dquot anyway to avoid endless cycle in dqput() */
+>  		dquot_release(dquot);
+> +		if (freeze_protected)
+> +			sb_end_intwrite(dquot->dq_sb);
+>  		return PTR_ERR(handle);
+>  	}
+>  	ret = dquot_release(dquot);
+> @@ -6903,6 +6916,10 @@ static int ext4_release_dquot(struct dquot *dquot)
+>  	err = ext4_journal_stop(handle);
+>  	if (!ret)
+>  		ret = err;
+> +
+> +	if (freeze_protected)
+> +		sb_end_intwrite(dquot->dq_sb);
+> +
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.43.5
+> 
 
