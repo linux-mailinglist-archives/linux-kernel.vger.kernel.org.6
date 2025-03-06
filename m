@@ -1,139 +1,131 @@
-Return-Path: <linux-kernel+bounces-549785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A92AA5573E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:03:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D32A5573F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:03:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 518D9173693
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:03:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6774B1896B7F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:04:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F1527004F;
-	Thu,  6 Mar 2025 20:03:19 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FC626E976;
+	Thu,  6 Mar 2025 20:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="iKLvFsIX"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9591C42A8C;
-	Thu,  6 Mar 2025 20:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C8742A8C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 20:03:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741291399; cv=none; b=VPk1CtbPYQvhB/UF19KBicaPppy5O43PRLe5uikM35eD5RGP4VHCnDAiW/pyd7oFbbfbqA2GS+402Edkl+oysxZ3oLbQzXdhve4BU0mnyKS9Gv7KdiFXSX/YR6Viyl4igCIZb6nZIXuL9nyOWVh5b95pQGCF0XsWD89r1rQoK7M=
+	t=1741291432; cv=none; b=LMFt0oiV+NQiwx2P5U0P1uGvpdAwbKacldHTCOCw3O2QYn4K44hUg5o2sQKO3YrfumE9GeJL56AX1O+VYVU06CS+0s3dIfhodCbIutLZY3z7IlrhYj6TXIwRaSrhqbWIKQs+sGnaoBUf+0+hUfpObzzpCDs4/ZQIBFyTexxWlhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741291399; c=relaxed/simple;
-	bh=k1K7V2WHq5y3Nh1hc+GDfA1sX0sXquQbiGfIGmnHIiA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g3iHxn8Tj3EdWQ9DSu2LkFRIB1pTHN7tWQNnsN+higk7qUIe2i2+9FtWAHk0NVyUw9EqKow/hoJhLsBZqrVEO/xmh8oWtk29YjcZJMW2xTXcNvmVAjPzMXD2ecJAjpr3wfqIMhjksh2s3/k2/a3XpU4O+OalrNfVn2LtYjnmbG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26B28C4CEE0;
-	Thu,  6 Mar 2025 20:03:17 +0000 (UTC)
-Message-ID: <e191da0c-7d63-43e6-adf6-bf39364b8583@xs4all.nl>
-Date: Thu, 6 Mar 2025 21:03:16 +0100
+	s=arc-20240116; t=1741291432; c=relaxed/simple;
+	bh=p3mEiT69hY7Z3a6igK2ww7wQ55pRqxW3KmPL+9d5HFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XsXHmDMF0f9NSIrnIVEYmx62A4iSy3aGXEVEUvacxd2k1jq9K1zepdsu/1kdB8FLBxi/io4nzR+T2tPZaAFzHnHCbIS5i8mgXiYravRekG9xtMxsAyIIAsEuqTkJpEk8XPw3+hC1N5uqddqsfUqilQ/av588pOYsfX87MNg2V+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=iKLvFsIX; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c3b63dfebfso115220085a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 12:03:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1741291429; x=1741896229; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0MbNwuefREW0z/A6atfnqBSiJwlp+t2aCSqE0SODKX0=;
+        b=iKLvFsIXNBxJiULlvjlJnWVt6kVnKiKuV9Lu6W4r+XdwPv7qL7HCR8lM3YmGdx64XN
+         0tjPTBw2jrJX9hnPphZGL6haIflpp8ynJaZOEhXNRXSzyU0c0wit/Gq5YXFCLC9UrwNz
+         bknrLrMkog6MRQAtMtDxjQ9qIy3gk1WoOuqCfnBPydQ5EjWf0YxFNBASCks2Vr9At4pZ
+         2qn1X6RZ2Gbpib5ZPD+RGzM4PEJ79i/NXL/9eYzLHer8/00RaVDVtyGIsIUfxIAXPf7Z
+         LddhdKAPawZcQT+WFY3Sjp6XaW7K56FOtbyyJbXO9RQf40JWSjCXwlR0td2Rf/Cr7iEH
+         613w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741291429; x=1741896229;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0MbNwuefREW0z/A6atfnqBSiJwlp+t2aCSqE0SODKX0=;
+        b=Yi+eA7J27h47k0i5t+8ZEceBKTjm82EWnaZw5qazBCDYmpySan8+OFHmYEiZAvHRmd
+         c6QmZjjTxbShTiBbAlWx5sGEslBhFPK/8jhWMRHCXadLw+qqXfBISzBOt+cJkzJvbGhR
+         cE4vyDZucwrPQCEvb6WvHTk2FiwAOO0u4UcFAkXMsw8NFhPUTUu4Ay/kXlsvp3IagEs1
+         NdY/0jBUJZxAMw3B7qniNxoLX8JUyfHyjRQPbs7V+bE5efPw/qPJ5vnCxLRgKYZsm2lj
+         uI4EFXJmb4b2Jw8xJyfWoS+H7Iq37o8rEu0MnYujReBgxulovhAWxIKZXqwb1rfektqC
+         RSZg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1WQwdiyeDlY3UFJE8GO6Im1H+f/pmqHya8g6JO2OS3ok6VCf5mJ68duLXXIjeEZpA/t3Lm8+Le6mLjpQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkQAMTNRnPROFOix1jHURmQSEcrIkNMDv5c/qGYiA+Aa6Ka6gl
+	Fnio28jW8qMvMF2mwLW7IYZOAVPx2pswftoSNTXJOkeLH43VFzWfjnT+ooDz4IU=
+X-Gm-Gg: ASbGncsCs1Sp96+Vn14DsMXQVbnEHTpsJPxEcXkcsKLrBsy8GAhgwD8Hz1Z5qqkPw8l
+	djrbHQPlO5l1d25JJvc1sC9c79MCd8fFzKPyZVx3bKVB27WM2HgPjFVZcKWEXcp4mk54bhEjeeR
+	jEm0EH2hA9G/U8JqtcM4bIl1+qRDJT6ydduZnTBcR5DkkCaEhV2mrF3CughjEnwYlziamleo1Sn
+	TWF8xMhp0mSxwMXt6im/8etc660+kWsCoNxhIl8I/2NWSAfuwyXIxNCnm1nA1vgpJJEOpHI4FNU
+	Of6aod7un1Wh6EBaUc6rfduz2ljJNBhicsaXTx3EDSBex+EODGR/xiyxfClrT9h94TdRgBOd+gC
+	2aOaRco3CuRJT/M1PGt/necU2AB8=
+X-Google-Smtp-Source: AGHT+IGhkQOOVMenfM3GitVhl69x4GBmyzWsOGMbhpZQZQyGPXd6L9GExsMzBcxeUvicNsCSpoFPIg==
+X-Received: by 2002:a05:620a:8017:b0:7c3:c1b4:c8f5 with SMTP id af79cd13be357-7c4e168267fmr80757785a.15.1741291429597;
+        Thu, 06 Mar 2025 12:03:49 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e534bb1esm130728385a.31.2025.03.06.12.03.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 12:03:49 -0800 (PST)
+Date: Thu, 6 Mar 2025 15:03:46 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Matthew Wilcox <willy@infradead.org>
+Cc: Bharata B Rao <bharata@amd.com>, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, AneeshKumar.KizhakeVeetil@arm.com,
+	Hasan.Maruf@amd.com, Jonathan.Cameron@huawei.com,
+	Michael.Day@amd.com, akpm@linux-foundation.org,
+	dave.hansen@intel.com, david@redhat.com, feng.tang@intel.com,
+	hannes@cmpxchg.org, honggyu.kim@sk.com, hughd@google.com,
+	jhubbard@nvidia.com, k.shutemov@gmail.com, kbusch@meta.com,
+	kmanaouil.dev@gmail.com, leesuyeon0506@gmail.com, leillc@google.com,
+	liam.howlett@oracle.com, mgorman@techsingularity.net,
+	mingo@redhat.com, nadav.amit@gmail.com, nphamcs@gmail.com,
+	peterz@infradead.org, raghavendra.kt@amd.com, riel@surriel.com,
+	rientjes@google.com, rppt@kernel.org, shivankg@amd.com,
+	shy828301@gmail.com, sj@kernel.org, vbabka@suse.cz,
+	weixugc@google.com, ying.huang@linux.alibaba.com, ziy@nvidia.com,
+	dave@stgolabs.net, yuanchu@google.com, hyeonggon.yoo@sk.com
+Subject: Re: [RFC PATCH 1/4] mm: migrate: Allow misplaced migration without
+ VMA too
+Message-ID: <Z8n_ovXcdAzcUNrw@gourry-fedora-PF4VCD3F>
+References: <20250306054532.221138-1-bharata@amd.com>
+ <20250306054532.221138-2-bharata@amd.com>
+ <Z8naQNirs4HfTX0O@gourry-fedora-PF4VCD3F>
+ <Z8nfPlJu8kxUvB8m@casper.infradead.org>
+ <Z8nnPYldSXs5TYND@gourry-fedora-PF4VCD3F>
+ <Z8nsgr46eVH7W7SJ@casper.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] Linux Media vimc update for Linux 6.15-rc1
-To: Shuah Khan <skhan@linuxfoundation.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <a3344fc3-c7ea-44ae-8fc8-86184315a58f@linuxfoundation.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <a3344fc3-c7ea-44ae-8fc8-86184315a58f@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8nsgr46eVH7W7SJ@casper.infradead.org>
 
-On 06/03/2025 20:46, Shuah Khan wrote:
-> Hi Mauro,
+On Thu, Mar 06, 2025 at 06:42:10PM +0000, Matthew Wilcox wrote:
+> On Thu, Mar 06, 2025 at 01:19:41PM -0500, Gregory Price wrote:
+> > Divorced from the tiering mechanisms, is making misplaced migration able
+> > to migrate unmapped pages not generally useful?
 > 
-> Please pull the following vimc update for Linux 6.15-rc1.
+> The only thing I can think of is if you have a process or set of
+> processes on node A calling read() and the file is cached on node B.
+> But in order to decide if the page is on the wrong node, you'd need
+> to track a lot of information about which nodes the page is being
+> accessed from.  Which is probably why we've never bothered to do it.
 > 
-> Fixes a bug in vimc streamer pipeline init code found by syzbot.
+> This is not a large patch for you to carry as part of your patchset.
+> There's nothing intrinsically wrong with it; it just has no users in
+> mainline and no real prospect of any being added soon.
 
-Ah, I merged that vimc fix already, so I'll just mark this PR as Obsoleted.
+That's fair, I'm just tracking 3-4 different RFCs that are going to butt
+up against this, so wanted to assess whether getting the patches out
+ahead would save some strife.
 
-Regards,
-
-	Hans
-
-> 
-> diff is attached.
-> 
-> thanks,
-> -- Shuah
-> 
-> ----------------------------------------------------------------
-> The following changes since commit a64dcfb451e254085a7daee5fe51bf22959d52d3:
-> 
->    Linux 6.14-rc2 (2025-02-09 12:45:03 -0800)
-> 
-> are available in the Git repository at:
-> 
->    git://git.kernel.org/pub/scm/linux/kernel/git/shuah/linux tags/linux-vimc-6.15-rc1
-> 
-> for you to fetch changes up to d6813eb9c3de01307801f253d89d777b4669a0d0:
-> 
->    media: vimc: skip .s_stream() for stopped entities (2025-03-06 09:11:39 -0700)
-> 
-> ----------------------------------------------------------------
-> linux-vimc-6.15-rc1
-> 
-> Fixes a bug in vimc streamer pipeline init code found by syzbot.
-> 
-> ----------------------------------------------------------------
-> Nikita Zhandarovich (1):
->        media: vimc: skip .s_stream() for stopped entities
-> 
->   drivers/media/test-drivers/vimc/vimc-streamer.c | 6 ++++++
->   1 file changed, 6 insertions(+)
-> ----------------------------------------------------------------
-
+~Gregory
 
