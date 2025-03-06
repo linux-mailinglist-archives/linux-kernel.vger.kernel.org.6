@@ -1,224 +1,283 @@
-Return-Path: <linux-kernel+bounces-548499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4254FA545B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:59:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7593CA545B3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:00:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1950F1724D8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:59:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9515D1883992
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11FEC208965;
-	Thu,  6 Mar 2025 08:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94BCF20897F;
+	Thu,  6 Mar 2025 09:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tdOqRN92"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4V3Y0WMi"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B622063F8;
-	Thu,  6 Mar 2025 08:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF1B91DB12E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741251560; cv=none; b=umSo49/D3jdiwndlUqgKfnDPlua4sIhkPqPyKriruYTQip2/6m4pXqqNv5qStP4PCdElqF6cju8WhfspKREHe/3t17d50ORwGGo47oZKwCVJx8uN3+rPsCUzJSxlcyxO9yPs0CwTuamJFfQunRGbG8b4MVqKlzaU6zXbamp+V9o=
+	t=1741251606; cv=none; b=QGh7MKjTkAAc0n3RiKLDnWmAYyVLmV3TXaSXDRVpLfRTzULIjowEbUs93rI1Of3OQZnef9OY84i76o3GHsiSZBN5+2J4vaVpaCcRulYaBx+rWW5lZpVmSEaij/wnf5hx0CngABfrVGnEnYulrS2gDTeQ1Mo8N+d04AwqQi0PUlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741251560; c=relaxed/simple;
-	bh=w6Dn2/qTCu57870nK+uZAVm2dN+cuocLCxSK1mHE6HE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qy9OZ7lFylztRk5Z0gOxfp4M4y9DjH3+okZvGS8SYU3+Jzy+FtJfFN4V9E3Fph2tJ0OEyIFvcMzh8mG6PcFECeYz6I9rqtDczpIaa4OtYg4y853iACNC9dwH9rSOCUc71zIAi/q+XWPTgoYJKZOJuON9nc15+8h+yAINgSzwQm0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tdOqRN92; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5052C4CEE0;
-	Thu,  6 Mar 2025 08:59:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741251559;
-	bh=w6Dn2/qTCu57870nK+uZAVm2dN+cuocLCxSK1mHE6HE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tdOqRN92Ep0AQ/tPCJAzKM2hSvhWkyywYZZYaTNEDfO45ZtcBL7tBA8R/LEccME2y
-	 KJHqApA4Am1WOSr9l6TMbMcyexBCVhLtuKB05WS7PvMGUPWIIX2Gkpm95X/hZMQHCc
-	 57/Rel6d5bVGQxu10DNNnvfJsdkLQtyykmup5RrxpHV/zZJ41eia4UT6hZvkiLVTMn
-	 qJMfjq/m48Ni2ZL5h/N1WwAZLAX5ZvI/w3E1mrSLiwTfvdBCj7Jpuy3U/0KvYsdFut
-	 OBMd4zkRmnvjQOZx1I6UfbmI96hKZbu/uc6/apC4HEYeWgfUl+bvp9zPR7TMOQyaXJ
-	 nOCRCB7WRCoew==
-Date: Thu, 6 Mar 2025 09:59:13 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-Cc: Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-trace-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Eric W . Biederman" <ebiederm@xmission.com>, 
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH 2/2] pid: Optional first-fit pid allocation
-Message-ID: <20250306-esskultur-sitzheizung-d482c4a35f80@brauner>
-References: <20250221170249.890014-1-mkoutny@suse.com>
- <20250221170249.890014-3-mkoutny@suse.com>
+	s=arc-20240116; t=1741251606; c=relaxed/simple;
+	bh=4yRhvznFBgbMuZLWODGu7EgS0kIPrxQGpkofvuETjrc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HjwkDM+o9QtGznWw8EVRycnMbdxg87XUXQHLOzO1inW79e1NLxIr8A5HCuac/sUrV595qxazXREkGLt5QfPnP7IYIIhMQqpxPRTvgYw9+l5+cY/SBa3T11llu5EEsSWcJE/4Xnw6pn/gcAHPc1Z6ZIHYv/o4pbXF/XY25eNJFao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4V3Y0WMi; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6ddcff5a823so2688596d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:00:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741251603; x=1741856403; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=eWfrhJeepfs+0dzUvVv23a0EKmmjjFM6cYDtZX7QITo=;
+        b=4V3Y0WMi2W2vMz2a73JjzuYaPJrECiM9zqPHFPwCqq7zI5VlPmnfmlse0elXhF9Qf7
+         YI4pjLABn8R2YcaeW0QnZu31CjL4KIClL1JAgqZdFqi2X9PUd1bla08zd2L5nS9lxbrl
+         HYF1oO8hgX9o4c3DsceYWH2kwaYUVtjosboJ86FYjz60w3WuV908XnijMfPkNSRQmedy
+         KoFmx5aOQrHVtWH1IgZQNjEWWconHZ0UYW7OQivHw0vvDSfjMBnlGnnjSQt3+WeV+aSs
+         cxuYmL6MmWGkhnk3TIe5bzzyg7/HIW3LoKqbtOeyLySHiY8vLotIZENgLxuMFkAjocPH
+         cNCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741251603; x=1741856403;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eWfrhJeepfs+0dzUvVv23a0EKmmjjFM6cYDtZX7QITo=;
+        b=cWl3lL1FIc1fGhRqc6Kp6zF3yEKsysHOuG7zgSbP+VMgbq1f4OfFwlr628CaG1CVal
+         Lty8iBnA3s5CxWtaabwI7cSrlCfSk1uSauIJy0xwaHeyjT/ZqSMbwFeeEDJv+3KkCXdu
+         OBw2lLVKxgKWiUTtkw7pDgKMBi2ONVj37LnP0mtj9PksMQMYIAaIlP7SeeCAEUPQYj59
+         Q8CQT+XLuHWTWplCfg8eqE2QvM5LiYtGI/v4I5OGSJK5tyGkTV2rFAkN9IfDUD2mNd+/
+         3v5UE+e4lJDhSACVuKOTv8cwCd9EQU+sHmuCpRouYLuHr0KUmZwi9wnlfUYN0FC520x4
+         JOzg==
+X-Forwarded-Encrypted: i=1; AJvYcCWir0k6DMA9Sp6zaePOP3ler6Ys4U+Jd4hhjueLQGKQfFDgBw5iop/sfk69A6LlMyR5pfNWczO/OIX8FNE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIIkymRZureDulW6ezgme2osAgRWfyrEGEezZG1vRyo4mJ+RMp
+	22k5pYqGcq39heri70L2W6BlvbJ+OnjwQHEoI4S9CKIxBnt12qX5yMOoEO8x+EJEsPTbY2e84Sp
+	5e+c0u5i5dowOnKXitZ+yQtCR41xLUTaYVw0q
+X-Gm-Gg: ASbGnctG8Vt20Z5ocqcuvftsCBxJB16zA2l+TsHQfzuEZfQLwceyxtOhiarQUqMawFd
+	7A2BllyouFqn8LSetwomljZ2tvsfyhxNN6vqfCbZ8hFdoYKkA2Q70nZn4+W0rQQARi+QlcpcCse
+	JRExFDj4QrRj4g/H8GqffUu+IfIR4=
+X-Google-Smtp-Source: AGHT+IEnTFk+qPOlTSbiY7+YUxlqRjEgDgoxk4hAxmHddfCpJ8+QENxWifylJ16vDQJsXnW7ueQYkIbHgErRNL+2GnQ=
+X-Received: by 2002:ad4:5ae9:0:b0:6e8:9a55:8259 with SMTP id
+ 6a1803df08f44-6e8e6cfedf3mr93849766d6.9.1741251602571; Thu, 06 Mar 2025
+ 01:00:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250221170249.890014-3-mkoutny@suse.com>
+References: <20250306002933.1893355-1-rmoar@google.com>
+In-Reply-To: <20250306002933.1893355-1-rmoar@google.com>
+From: David Gow <davidgow@google.com>
+Date: Thu, 6 Mar 2025 16:59:49 +0800
+X-Gm-Features: AQ5f1Jry7uhKagxn_pWuMsODdfHkO3aKU3Urde0moQ7csvmBpcY3u_Da2JYfP8Q
+Message-ID: <CABVgOSkwrb36rrhH3H17fhYOnywhTgTh06aDaKXT4jZp474sRQ@mail.gmail.com>
+Subject: Re: [PATCH] kunit: tool: Fix bug in parsing test plan
+To: Rae Moar <rmoar@google.com>
+Cc: shuah@kernel.org, jackmanb@google.com, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="000000000000440659062fa8bbfd"
 
-On Fri, Feb 21, 2025 at 06:02:49PM +0100, Michal Koutný wrote:
-> Noone would need to use this allocation strategy (it's slower, pid
-> numbers collide sooner). Its primary purpose are pid namespaces in
-> conjunction with pids.max cgroup limit which keeps (virtual) pid numbers
-> below the given limit. This is for 32-bit userspace programs that may
-> not work well with pid numbers above 65536.
-> 
-> Link: https://lore.kernel.org/r/20241122132459.135120-1-aleksandr.mikhalitsyn@canonical.com/
-> Signed-off-by: Michal Koutný <mkoutny@suse.com>
+--000000000000440659062fa8bbfd
+Content-Type: text/plain; charset="UTF-8"
+
+On Thu, 6 Mar 2025 at 08:29, Rae Moar <rmoar@google.com> wrote:
+>
+> A bug was identified where the KTAP below caused an infinite loop:
+>
+>  TAP version 13
+>  ok 4 test_case
+>  1..4
+>
+> The infinite loop was caused by the parser not parsing a test plan
+> if following a test result line.
+>
+> Fix bug to correctly parse test plan and add error if test plan is
+> missing.
+>
+> Signed-off-by: Rae Moar <rmoar@google.com>
 > ---
->  Documentation/admin-guide/sysctl/kernel.rst |  2 ++
->  include/linux/pid_namespace.h               |  3 +++
->  kernel/pid.c                                | 12 +++++++--
->  kernel/pid_namespace.c                      | 28 +++++++++++++++------
->  4 files changed, 36 insertions(+), 9 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/sysctl/kernel.rst b/Documentation/admin-guide/sysctl/kernel.rst
-> index a43b78b4b6464..f5e68d1c8849f 100644
-> --- a/Documentation/admin-guide/sysctl/kernel.rst
-> +++ b/Documentation/admin-guide/sysctl/kernel.rst
-> @@ -1043,6 +1043,8 @@ The last pid allocated in the current (the one task using this sysctl
->  lives in) pid namespace. When selecting a pid for a next task on fork
->  kernel tries to allocate a number starting from this one.
->  
-> +When set to -1, first-fit pid numbering is used instead of the next-fit.
 
-I strongly disagree with this approach. This is way worse then making
-pid_max per pid namespace.
+Thanks for looking into this: I don't think we want to unconditionally
+error if there's no test plan, though. Pretty much no parameterised
+tests include one -- it's not always possible to know how many tests
+there'll be in advance -- so this triggers all of the time.
 
-I'm fine if you come up with something else that's purely based on
-cgroups somehow and is uniform across 64-bit and 32-bit. Allowing to
-change the pid allocation strategy just for 32-bit is not the solution
-and not mergable.
+Maybe we can only include an error if we find a test plan line after
+an existing result, or something?
 
+-- David
+
+>  tools/testing/kunit/kunit_parser.py    | 12 +++++++-----
+>  tools/testing/kunit/kunit_tool_test.py |  5 ++---
+>  2 files changed, 9 insertions(+), 8 deletions(-)
+>
+> diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/kunit_parser.py
+> index 29fc27e8949b..5dcbc670e1dc 100644
+> --- a/tools/testing/kunit/kunit_parser.py
+> +++ b/tools/testing/kunit/kunit_parser.py
+> @@ -761,20 +761,22 @@ def parse_test(lines: LineStream, expected_num: int, log: List[str], is_subtest:
+>                 test.name = "main"
+>                 ktap_line = parse_ktap_header(lines, test, printer)
+>                 test.log.extend(parse_diagnostic(lines))
+> -               parse_test_plan(lines, test)
+> +               plan_line = parse_test_plan(lines, test)
+>                 parent_test = True
+>         else:
+>                 # If not the main test, attempt to parse a test header containing
+>                 # the KTAP version line and/or subtest header line
+>                 ktap_line = parse_ktap_header(lines, test, printer)
+>                 subtest_line = parse_test_header(lines, test)
+> +               test.log.extend(parse_diagnostic(lines))
+> +               plan_line = parse_test_plan(lines, test)
+>                 parent_test = (ktap_line or subtest_line)
+>                 if parent_test:
+> -                       # If KTAP version line and/or subtest header is found, attempt
+> -                       # to parse test plan and print test header
+> -                       test.log.extend(parse_diagnostic(lines))
+> -                       parse_test_plan(lines, test)
+>                         print_test_header(test, printer)
 > +
->  
->  powersave-nap (PPC only)
->  ========================
-> diff --git a/include/linux/pid_namespace.h b/include/linux/pid_namespace.h
-> index f9f9931e02d6a..10bf66ca78590 100644
-> --- a/include/linux/pid_namespace.h
-> +++ b/include/linux/pid_namespace.h
-> @@ -41,6 +41,9 @@ struct pid_namespace {
->  #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
->  	int memfd_noexec_scope;
->  #endif
-> +#ifdef CONFIG_IA32_EMULATION
-> +	bool pid_noncyclic;
-> +#endif
->  } __randomize_layout;
->  
->  extern struct pid_namespace init_pid_ns;
-> diff --git a/kernel/pid.c b/kernel/pid.c
-> index aa2a7d4da4555..e9da1662b8821 100644
-> --- a/kernel/pid.c
-> +++ b/kernel/pid.c
-> @@ -191,6 +191,10 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
->  
->  	for (i = ns->level; i >= 0; i--) {
->  		int tid = 0;
-> +		bool pid_noncyclic = 0;
-> +#ifdef CONFIG_IA32_EMULATION
-> +		pid_noncyclic = READ_ONCE(tmp->pid_noncyclic);
-> +#endif
->  
->  		if (set_tid_size) {
->  			tid = set_tid[ns->level - i];
-> @@ -235,8 +239,12 @@ struct pid *alloc_pid(struct pid_namespace *ns, pid_t *set_tid,
->  			 * Store a null pointer so find_pid_ns does not find
->  			 * a partially initialized PID (see below).
->  			 */
-> -			nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
-> -					      pid_max, GFP_ATOMIC);
-> +			if (likely(!pid_noncyclic))
-> +				nr = idr_alloc_cyclic(&tmp->idr, NULL, pid_min,
-> +						      pid_max, GFP_ATOMIC);
-> +			else
-> +				nr = idr_alloc(&tmp->idr, NULL, pid_min,
-> +						      pid_max, GFP_ATOMIC);
->  		}
->  		spin_unlock_irq(&pidmap_lock);
->  		idr_preload_end();
-> diff --git a/kernel/pid_namespace.c b/kernel/pid_namespace.c
-> index 0f23285be4f92..ceda94a064294 100644
-> --- a/kernel/pid_namespace.c
-> +++ b/kernel/pid_namespace.c
-> @@ -113,6 +113,9 @@ static struct pid_namespace *create_pid_namespace(struct user_namespace *user_ns
->  	ns->pid_allocated = PIDNS_ADDING;
->  #if defined(CONFIG_SYSCTL) && defined(CONFIG_MEMFD_CREATE)
->  	ns->memfd_noexec_scope = pidns_memfd_noexec_scope(parent_pid_ns);
-> +#endif
-> +#ifdef CONFIG_IA32_EMULATION
-> +	ns->pid_noncyclic = READ_ONCE(parent_pid_ns->pid_noncyclic);
->  #endif
->  	return ns;
->  
-> @@ -260,7 +263,7 @@ void zap_pid_ns_processes(struct pid_namespace *pid_ns)
->  	return;
->  }
->  
-> -#ifdef CONFIG_CHECKPOINT_RESTORE
-> +#if defined(CONFIG_CHECKPOINT_RESTORE) || defined(CONFIG_IA32_EMULATION)
->  static int pid_ns_ctl_handler(const struct ctl_table *table, int write,
->  		void *buffer, size_t *lenp, loff_t *ppos)
->  {
-> @@ -271,12 +274,23 @@ static int pid_ns_ctl_handler(const struct ctl_table *table, int write,
->  	if (write && !checkpoint_restore_ns_capable(pid_ns->user_ns))
->  		return -EPERM;
->  
-> -	next = idr_get_cursor(&pid_ns->idr) - 1;
-> +	next = -1;
-> +#ifdef CONFIG_IA32_EMULATION
-> +	if (!pid_ns->pid_noncyclic)
-> +#endif
-> +		next += idr_get_cursor(&pid_ns->idr);
->  
->  	tmp.data = &next;
->  	ret = proc_dointvec_minmax(&tmp, write, buffer, lenp, ppos);
-> -	if (!ret && write)
-> -		idr_set_cursor(&pid_ns->idr, next + 1);
-> +	if (!ret && write) {
-> +		if (next > -1)
-> +			idr_set_cursor(&pid_ns->idr, next + 1);
-> +		else if (!IS_ENABLED(CONFIG_IA32_EMULATION))
-> +			ret = -EINVAL;
-> +#ifdef CONFIG_IA32_EMULATION
-> +		WRITE_ONCE(pid_ns->pid_noncyclic, next == -1);
-> +#endif
-> +	}
->  
->  	return ret;
->  }
-> @@ -288,11 +302,11 @@ static const struct ctl_table pid_ns_ctl_table[] = {
->  		.maxlen = sizeof(int),
->  		.mode = 0666, /* permissions are checked in the handler */
->  		.proc_handler = pid_ns_ctl_handler,
-> -		.extra1 = SYSCTL_ZERO,
-> +		.extra1 = SYSCTL_NEG_ONE,
->  		.extra2 = &pid_max,
->  	},
->  };
-> -#endif	/* CONFIG_CHECKPOINT_RESTORE */
-> +#endif	/* CONFIG_CHECKPOINT_RESTORE || CONFIG_IA32_EMULATION */
->  
->  int reboot_pid_ns(struct pid_namespace *pid_ns, int cmd)
->  {
-> @@ -449,7 +463,7 @@ static __init int pid_namespaces_init(void)
->  {
->  	pid_ns_cachep = KMEM_CACHE(pid_namespace, SLAB_PANIC | SLAB_ACCOUNT);
->  
-> -#ifdef CONFIG_CHECKPOINT_RESTORE
-> +#if defined(CONFIG_CHECKPOINT_RESTORE) || defined(CONFIG_IA32_EMULATION)
->  	register_sysctl_init("kernel", pid_ns_ctl_table);
->  #endif
->  
-> -- 
-> 2.48.1
-> 
+> +       if parent_test and not plan_line:
+> +                       test.add_error(printer, 'missing test plan!')
+> +
+>         expected_count = test.expected_count
+>         subtests = []
+>         test_num = 1
+> diff --git a/tools/testing/kunit/kunit_tool_test.py b/tools/testing/kunit/kunit_tool_test.py
+> index 0bcb0cc002f8..e1e142c1a850 100755
+> --- a/tools/testing/kunit/kunit_tool_test.py
+> +++ b/tools/testing/kunit/kunit_tool_test.py
+> @@ -181,8 +181,7 @@ class KUnitParserTest(unittest.TestCase):
+>                         result = kunit_parser.parse_run_tests(
+>                                 kunit_parser.extract_tap_lines(
+>                                 file.readlines()), stdout)
+> -               # A missing test plan is not an error.
+> -               self.assertEqual(result.counts, kunit_parser.TestCounts(passed=10, errors=0))
+> +               self.assertEqual(result.counts, kunit_parser.TestCounts(passed=10, errors=2))
+>                 self.assertEqual(kunit_parser.TestStatus.SUCCESS, result.status)
+>
+>         def test_no_tests(self):
+> @@ -203,7 +202,7 @@ class KUnitParserTest(unittest.TestCase):
+>                 self.assertEqual(
+>                         kunit_parser.TestStatus.NO_TESTS,
+>                         result.subtests[0].subtests[0].status)
+> -               self.assertEqual(result.counts, kunit_parser.TestCounts(passed=1, errors=1))
+> +               self.assertEqual(result.counts, kunit_parser.TestCounts(passed=1, errors=2))
+>
+>
+>         def test_no_kunit_output(self):
+>
+> base-commit: 0619a4868fc1b32b07fb9ed6c69adc5e5cf4e4b2
+> --
+> 2.48.1.711.g2feabab25a-goog
+>
+
+--000000000000440659062fa8bbfd
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIIUnQYJKoZIhvcNAQcCoIIUjjCCFIoCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
+ghIEMIIGkTCCBHmgAwIBAgIQfofDAVIq0iZG5Ok+mZCT2TANBgkqhkiG9w0BAQwFADBMMSAwHgYD
+VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSNjETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
+AxMKR2xvYmFsU2lnbjAeFw0yMzA0MTkwMzUzNDdaFw0zMjA0MTkwMDAwMDBaMFQxCzAJBgNVBAYT
+AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
+IFI2IFNNSU1FIENBIDIwMjMwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQDYydcdmKyg
+4IBqVjT4XMf6SR2Ix+1ChW2efX6LpapgGIl63csmTdJQw8EcbwU9C691spkltzTASK2Ayi4aeosB
+mk63SPrdVjJNNTkSbTowej3xVVGnYwAjZ6/qcrIgRUNtd/mbtG7j9W80JoP6o2Szu6/mdjb/yxRM
+KaCDlloE9vID2jSNB5qOGkKKvN0x6I5e/B1Y6tidYDHemkW4Qv9mfE3xtDAoe5ygUvKA4KHQTOIy
+VQEFpd/ZAu1yvrEeA/egkcmdJs6o47sxfo9p/fGNsLm/TOOZg5aj5RHJbZlc0zQ3yZt1wh+NEe3x
+ewU5ZoFnETCjjTKz16eJ5RE21EmnCtLb3kU1s+t/L0RUU3XUAzMeBVYBEsEmNnbo1UiiuwUZBWiJ
+vMBxd9LeIodDzz3ULIN5Q84oYBOeWGI2ILvplRe9Fx/WBjHhl9rJgAXs2h9dAMVeEYIYkvW+9mpt
+BIU9cXUiO0bky1lumSRRg11fOgRzIJQsphStaOq5OPTb3pBiNpwWvYpvv5kCG2X58GfdR8SWA+fm
+OLXHcb5lRljrS4rT9MROG/QkZgNtoFLBo/r7qANrtlyAwPx5zPsQSwG9r8SFdgMTHnA2eWCZPOmN
+1Tt4xU4v9mQIHNqQBuNJLjlxvalUOdTRgw21OJAFt6Ncx5j/20Qw9FECnP+B3EPVmQIDAQABo4IB
+ZTCCAWEwDgYDVR0PAQH/BAQDAgGGMDMGA1UdJQQsMCoGCCsGAQUFBwMCBggrBgEFBQcDBAYJKwYB
+BAGCNxUGBgkrBgEEAYI3FQUwEgYDVR0TAQH/BAgwBgEB/wIBADAdBgNVHQ4EFgQUM7q+o9Q5TSoZ
+18hmkmiB/cHGycYwHwYDVR0jBBgwFoAUrmwFo5MT4qLn4tcc1sfwf8hnU6AwewYIKwYBBQUHAQEE
+bzBtMC4GCCsGAQUFBzABhiJodHRwOi8vb2NzcDIuZ2xvYmFsc2lnbi5jb20vcm9vdHI2MDsGCCsG
+AQUFBzAChi9odHRwOi8vc2VjdXJlLmdsb2JhbHNpZ24uY29tL2NhY2VydC9yb290LXI2LmNydDA2
+BgNVHR8ELzAtMCugKaAnhiVodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL3Jvb3QtcjYuY3JsMBEG
+A1UdIAQKMAgwBgYEVR0gADANBgkqhkiG9w0BAQwFAAOCAgEAVc4mpSLg9A6QpSq1JNO6tURZ4rBI
+MkwhqdLrEsKs8z40RyxMURo+B2ZljZmFLcEVxyNt7zwpZ2IDfk4URESmfDTiy95jf856Hcwzdxfy
+jdwx0k7n4/0WK9ElybN4J95sgeGRcqd4pji6171bREVt0UlHrIRkftIMFK1bzU0dgpgLMu+ykJSE
+0Bog41D9T6Swl2RTuKYYO4UAl9nSjWN6CVP8rZQotJv8Kl2llpe83n6ULzNfe2QT67IB5sJdsrNk
+jIxSwaWjOUNddWvCk/b5qsVUROOuctPyYnAFTU5KY5qhyuiFTvvVlOMArFkStNlVKIufop5EQh6p
+jqDGT6rp4ANDoEWbHKd4mwrMtvrh51/8UzaJrLzj3GjdkJ/sPWkDbn+AIt6lrO8hbYSD8L7RQDqK
+C28FheVr4ynpkrWkT7Rl6npWhyumaCbjR+8bo9gs7rto9SPDhWhgPSR9R1//WF3mdHt8SKERhvtd
+NFkE3zf36V9Vnu0EO1ay2n5imrOfLkOVF3vtAjleJnesM/R7v5tMS0tWoIr39KaQNURwI//WVuR+
+zjqIQVx5s7Ta1GgEL56z0C5GJoNE1LvGXnQDyvDO6QeJVThFNgwkossyvmMAaPOJYnYCrYXiXXle
+A6TpL63Gu8foNftUO0T83JbV/e6J8iCOnGZwZDrubOtYn1QwggWDMIIDa6ADAgECAg5F5rsDgzPD
+hWVI5v9FUTANBgkqhkiG9w0BAQwFADBMMSAwHgYDVQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBS
+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
+YE9NAgMBAAGjggHgMIIB3DAeBgNVHREEFzAVgRNkYXZpZGdvd0Bnb29nbGUuY29tMA4GA1UdDwEB
+/wQEAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIwHQYDVR0OBBYEFHgsCGkO2Hex
+N6ybc+GeQEb6790qMFgGA1UdIARRME8wCQYHZ4EMAQUBAjBCBgorBgEEAaAyCgMDMDQwMgYIKwYB
+BQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2JhbHNpZ24uY29tL3JlcG9zaXRvcnkvMAwGA1UdEwEB/wQC
+MAAwgZoGCCsGAQUFBwEBBIGNMIGKMD4GCCsGAQUFBzABhjJodHRwOi8vb2NzcC5nbG9iYWxzaWdu
+LmNvbS9jYS9nc2F0bGFzcjZzbWltZWNhMjAyMzBIBggrBgEFBQcwAoY8aHR0cDovL3NlY3VyZS5n
+bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3J0MB8GA1UdIwQYMBaA
+FDO6vqPUOU0qGdfIZpJogf3BxsnGMEYGA1UdHwQ/MD0wO6A5oDeGNWh0dHA6Ly9jcmwuZ2xvYmFs
+c2lnbi5jb20vY2EvZ3NhdGxhc3I2c21pbWVjYTIwMjMuY3JsMA0GCSqGSIb3DQEBCwUAA4ICAQAs
+exV05yVDmPhHRqOq9lAbfWOUvEf8zydxabZUHna6bayb83jD2eb9nMGGEprfuNBRmFg35sgF1TyN
++ieuQakvQYmY8tzK49hhHa2Y3qhGCTqYTHO3ypHvhHsZiGbL0gmdgB9P8ssVIws//34ae99GUOxo
+XKTxPwwsQ5Arq42besv3/HXAW+4nRAT8d3ht5ZWCHc5rjL/vdGzu7PaYo3u0da69AZ8Sh4Gf5yoc
+QANr2ZkMrxXbLmSmnRvbkQrzlZp2YbTFnczx46429D6q75/FNFOL1vAjxtRAPzkyACvW0eKvchza
+TMvvD3IWERLlcBL5yXpENc3rI8/wVjqgAWYxlFg1b/4b/TCgYe2MZC0rx4Uh3zTIbmPNiHdN6QZ9
+oDiYzWUcqWZ5jCO4bMKNlVJXeCvdANLHuhcC8FONj5VzNgYXs6gWkp9/Wt6XnQPX4dF4JBa8JdL/
+cT46RJIzoiJHEx/8syO5FparZHIKbkunoq6niPsRaQUGeqWc56H4Z1sQXuBJN9fhqkIkG0Ywfrwt
+uFrCoYIRlx4rSVHpBIKgnsgdm0SFQK72MPmIkfhfq9Fh0h8AjhF73sLO7K5BfwWkx1gwMySyNY0e
+PCRYr6WEVOkUJS0a0fui693ymMPFLQAimmz8EpyFok4Ju066StkYO1dIgUIla4x61auxkWHwnzGC
+Al0wggJZAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
+BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAcDMKctW1GQKDKqEUSh4
+pjANBglghkgBZQMEAgEFAKCBxzAvBgkqhkiG9w0BCQQxIgQg2ERQGafR2K3SU77d/gRKgSMUJ8Dc
+6XQa9prbdxBnXSowGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
+MzA2MDkwMDAzWjBcBgkqhkiG9w0BCQ8xTzBNMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
+YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcN
+AQEBBQAEggEABp2uoUthODqlYcwjbnhQK4eN/UJWZQgUdd3lmRBTonA3XZltQdNQqg2W7oLds4ou
+KYUhSwiaQZHP+R45eOdaLHq6w8M4RAzgVXZaNJyZ6TSeR6gUGlZ6CbUyHycG+xc/pOIT5TFEzsyj
+9MkGvQLvUhSoIdAOm6hVLFFSy6FDwVHgfoX1JKDpmt7TgGajWaiby3XtqB3R1qUjOMF7171b4JL2
+5QtvFTRpTL/H6hpMMcQu7V+r7hX/77oXJLmFIWfrW/XoOPgOEyzvMXyBB7tgwizfxvx9YHCbhPoT
+TAnc8dWkomrgZnnCFZX7324qXmlmdnI1Mxezvlt5yysHzM1NqQ==
+--000000000000440659062fa8bbfd--
 
