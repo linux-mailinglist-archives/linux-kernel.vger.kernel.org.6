@@ -1,200 +1,153 @@
-Return-Path: <linux-kernel+bounces-548907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C63BA54ABE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:33:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63505A54AC3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:33:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B622F188F458
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:33:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D497F7A584C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD6020B803;
-	Thu,  6 Mar 2025 12:33:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD0720B803;
+	Thu,  6 Mar 2025 12:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VcoGXBbn"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1g5NbEl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D19038DD1;
-	Thu,  6 Mar 2025 12:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FEC1EDA1F;
+	Thu,  6 Mar 2025 12:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741264381; cv=none; b=iEgotslVc7bx07mM4AIFnw5fLeKdfC+0A2txHFnoBv9FgPTUAWQ3DSXyFA8BEC8lBF0/9Vt7nVNMLj7E2fqWOk3SBlu8C+glFG8uDUIm1a7yfYOjfJ6D25OCGM/JaAgeGGFBBLbJhSTDTOetJh6vH5ckf8RQ5ChinEWD8RSV80Y=
+	t=1741264429; cv=none; b=WTZ4+X564LW3ZaDtqE0eqZUJzX6WIWW7Xrgx7xalUmn85LTW5Rdn15RjM1zdJCSz9v/fslz+fsbOAp18vi/C7/4kTFTxS8OPWgkmpiZlEUHfrfgcNr9DNPENh1LHxJrjrL4rBshabC+4GjSskVe8bP9E9LH29J2JhUuqoa/h9us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741264381; c=relaxed/simple;
-	bh=QVeZ5GletvUdnT+/b5y2odd813HtDcAzt88hxqfsids=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CvagnkTKYaPRxyKJ+Xux8PSJalec+LSw9bWFXyDEozvPDrd26Lw9CAIG41YgGe6MSW0RPrL65/Fe2uspfFlG3eVEKHVOHzy0I+MGUnMQ8b5C0hzizeOF62IwJHVL66O6ZvL5as95jwVFc26u414Tx1cCCncmbzly03Rg+MPe9NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VcoGXBbn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5266mXQ3030823;
-	Thu, 6 Mar 2025 12:32:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zJavz6JLrReC2fziH5lae7L+Imkq+YUyygM4Om1eXBo=; b=VcoGXBbnrjANr6t5
-	dWxH7eTwJdsPaVZQHcBnP2RiKlNcNuOOXFfOyefgpP0hczfGo6039pgpllbvBfJK
-	l5r6DXaaiXzQRfVbmN1rfhCo2WtFf7D8A16ApQYxPUbz49xhmaOOij9iBwfdgIQB
-	K0pUFjFRtUroJZ6TmhrlVySlCtGC3D4XoTPparkDBplfd2Jdec/zSxtFWMDhkebi
-	nC9/aoGQMds+Lon98BD1qlmEiOaJe/1Ma9tpe/AYJNPuH4AbDFHSikvakgZSlPwq
-	/k5X7DGdxVasTzdbub2iu4J4YISaeiXKx4pyOJQ+pBxg1T4hJsJSMZlXM2o31hrl
-	1s6AJw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 456uy0aq5n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 12:32:53 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 526CWr5F009869
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 6 Mar 2025 12:32:53 GMT
-Received: from [10.50.63.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Mar 2025
- 04:32:50 -0800
-Message-ID: <3d93b47b-4d68-8626-2b32-4840ea9925db@quicinc.com>
-Date: Thu, 6 Mar 2025 18:02:47 +0530
+	s=arc-20240116; t=1741264429; c=relaxed/simple;
+	bh=P5/bQBujci4UcWFgDKpxgC7L6tOL6QdQ90C1u/6ZuWM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JUf5mF/4Db4jbhLvniyR1vMGKZFCO4Ry7UImS6KYwuSkYTApaseNBfRThqrOzDD1KWehsBVp2GWubi+iwTTzK32Pr8SXdIqrF6yTgMnMkhnanmRcSY55GNbMAbkJw2TW7cNmr8DiOUHsXXxf6zjCOh9Ks88fRbMeyBgNyX4HQhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1g5NbEl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24169C4CEE4;
+	Thu,  6 Mar 2025 12:33:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741264428;
+	bh=P5/bQBujci4UcWFgDKpxgC7L6tOL6QdQ90C1u/6ZuWM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=P1g5NbEl7bkSKYa7caiviUHuN6Lyuqm0/Qep0kyaOrJs7oMLo/CdWuOXYMO9ZJp02
+	 8HjTStp7fZPtK3ZhYZzrUaDkBxMUjtXFj+zxBL0SeE6MGjeUWwn+ByCTs33+BWuQPa
+	 hmRup15H4PeRfDBD+a9vitj0bivxiSIuqHLMKBFN+Zak7+kwtz1eIGgOIS/9esC6Ni
+	 o7NEG7xqW2WUC0QNEHPH2q5FHEWB4ZHGNTMLriPau/f89AWycPObq9NXFI5I8WWHMS
+	 s0cl+lnWOAhKCU9hyeOC3ZoW5Iey8aNuzjzMey8thWBe/zkZC9NuATaLG0p3pLCUGy
+	 XWhQuaFAhhVbQ==
+Date: Thu, 6 Mar 2025 13:33:42 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>
+Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
+Message-ID: <Z8mWJox-0IyP1uUo@cassiopeiae>
+References: <cover.1740995194.git.viresh.kumar@linaro.org>
+ <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
+ <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
+ <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [RFC PATCH 08/12] media: iris: Avoid updating frame size to
- firmware during reconfig
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <quic_vgarodia@quicinc.com>,
-        <quic_abhinavk@quicinc.com>, <mchehab@kernel.org>
-CC: <hverkuil@xs4all.nl>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250305104335.3629945-1-quic_dikshita@quicinc.com>
- <20250305104335.3629945-9-quic_dikshita@quicinc.com>
- <39f566fc-9cc9-44be-9b14-7ced0607464f@linaro.org>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <39f566fc-9cc9-44be-9b14-7ced0607464f@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Pq5pbxM3 c=1 sm=1 tr=0 ts=67c995f5 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=Z7P0-oMRu0xCxirkbW8A:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: --YkU6TDJIAkryp86pAdcs4k8gpBGpdP
-X-Proofpoint-GUID: --YkU6TDJIAkryp86pAdcs4k8gpBGpdP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 clxscore=1015 spamscore=0 mlxscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 suspectscore=0 phishscore=0
- mlxlogscore=999 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503060094
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
 
+On Tue, Mar 04, 2025 at 02:23:51PM +0530, Viresh Kumar wrote:
+> +/// This structure represents the Rust abstraction for a C [`struct clk`].
+> +///
+> +/// # Invariants
+> +///
+> +/// A [`Clk`] instance always corresponds to a valid [`struct clk`] created by the C portion of the
+> +/// kernel.
+> +///
+> +/// Instances of this type are reference-counted. Calling `get` ensures that the allocation remains
+> +/// valid for the lifetime of the [`Clk`].
+> +///
+> +/// ## Example
+> +///
+> +/// The following example demonstrates how to obtain and configure a clock for a device.
+> +///
+> +/// ```
+> +/// use kernel::clk::{Clk, Hertz};
+> +/// use kernel::device::Device;
+> +/// use kernel::error::Result;
+> +///
+> +/// fn configure_clk(dev: &Device) -> Result {
+> +///     let clk = Clk::get(dev, "apb_clk")?;
+> +///
+> +///     clk.prepare_enable()?;
+> +///
+> +///     let expected_rate = Hertz::new(1_000_000_000);
+> +///
+> +///     if clk.rate() != expected_rate {
+> +///         clk.set_rate(expected_rate)?;
+> +///     }
+> +///
+> +///     clk.disable_unprepare();
+> +///     Ok(())
+> +/// }
+> +/// ```
+> +///
+> +/// [`struct clk`]: https://docs.kernel.org/driver-api/clk.html
+> +#[repr(transparent)]
+> +pub struct Clk(*mut bindings::clk);
+> +
+> +impl Clk {
+> +    /// Gets `Clk` corresponding to a [`Device`] and a connection id.
+> +    pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
+> +        let con_id = if let Some(name) = name {
+> +            name.as_ptr() as *const _
+> +        } else {
+> +            ptr::null()
+> +        };
+> +
+> +        // SAFETY: It is safe to call `clk_get()` for a valid device pointer.
+> +        Ok(Self(from_err_ptr(unsafe {
+> +            bindings::clk_get(dev.as_raw(), con_id)
+> +        })?))
+> +    }
+> +
+> +    /// Obtain the raw `struct clk *`.
+> +    #[inline]
+> +    pub fn as_raw(&self) -> *mut bindings::clk {
+> +        self.0
+> +    }
+> +
+> +    /// Enable the clock.
+> +    #[inline]
+> +    pub fn enable(&self) -> Result {
+> +        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
+> +        // by `clk_get()`.
 
+You may want to add an invariant for this, i.e. something along the lines of
+"Clk always holds either a pointer to a valid struct clk or a NULL pointer".
 
-On 3/6/2025 6:56 AM, Bryan O'Donoghue wrote:
-> On 05/03/2025 10:43, Dikshita Agarwal wrote:
->> During the reconfig, firmware sends the resolution aligned by 8 byte,
->> if driver set the same resoluton to firmware, it will be aligned to 16
->> byte causing another sequence change which would be incorrect.
-> 
-> During reconfig the firmware sends the resolution aligned to 8 bytes. If
-> the driver sends the same resolution back to the firmware the resolution
-> will be aligned to 16 bytes not 8.
-> 
-> The alignment mismatch would then subsequently cause the firmware to send
-> another redundant sequence change.
-> 
->> Fix this by not setting the updated resolution to firmware during
->> reconfig.
-> 
-> Fix this by not setting the resolution property during reconfig.
-Ack.
->>
->> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
->> ---
->>   .../platform/qcom/iris/iris_hfi_gen1_command.c    | 15 ++++++++-------
->>   .../platform/qcom/iris/iris_hfi_gen1_response.c   |  1 +
->>   drivers/media/platform/qcom/iris/iris_instance.h  |  2 ++
->>   drivers/media/platform/qcom/iris/iris_vdec.c      |  4 ++++
->>   4 files changed, 15 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
->> b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
->> index a160ae915886..d5e81049d37e 100644
->> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
->> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_command.c
->> @@ -562,14 +562,15 @@ static int iris_hfi_gen1_set_resolution(struct
->> iris_inst *inst)
->>       struct hfi_framesize fs;
->>       int ret;
->>   -    fs.buffer_type = HFI_BUFFER_INPUT;
->> -    fs.width = inst->fmt_src->fmt.pix_mp.width;
->> -    fs.height = inst->fmt_src->fmt.pix_mp.height;
->> -
->> -    ret = hfi_gen1_set_property(inst, ptype, &fs, sizeof(fs));
->> -    if (ret)
->> -        return ret;
->> +    if (!inst->in_reconfig) {
->> +        fs.buffer_type = HFI_BUFFER_INPUT;
->> +        fs.width = inst->fmt_src->fmt.pix_mp.width;
->> +        fs.height = inst->fmt_src->fmt.pix_mp.height;
->>   +        ret = hfi_gen1_set_property(inst, ptype, &fs, sizeof(fs));
->> +        if (ret)
->> +            return ret;
->> +    }
->>       fs.buffer_type = HFI_BUFFER_OUTPUT2;
->>       fs.width = inst->fmt_dst->fmt.pix_mp.width;
->>       fs.height = inst->fmt_dst->fmt.pix_mp.height;
->> diff --git a/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
->> b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
->> index 91d95eed68aa..6576496fdbdf 100644
->> --- a/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
->> +++ b/drivers/media/platform/qcom/iris/iris_hfi_gen1_response.c
->> @@ -155,6 +155,7 @@ static void iris_hfi_gen1_read_changed_params(struct
->> iris_inst *inst,
->>           inst->crop.height = event.height;
->>       }
->>   +    inst->in_reconfig = true;
-> 
-> This flag can be changed by iris_hfi_isr_handler() down the chain.
-> 
-> 
->> @@ -453,6 +453,8 @@ static int iris_vdec_process_streamon_input(struct
->> iris_inst *inst)
->>       if (ret)
->>           return ret;
->>   +    inst->in_reconfig = false;
->> +
->>       return iris_inst_change_sub_state(inst, 0, set_sub_state);
->>   }
->>   @@ -544,6 +546,8 @@ static int iris_vdec_process_streamon_output(struct
->> iris_inst *inst)
->>       if (ret)
->>           return ret;
->>   +    inst->in_reconfig = false;
->> +
-> 
-> Are these usages of the in_reconfig flag then thread-safe ?
-> 
-> i.e. are both iris_vdec_process_streamon_input() and
-> iris_vdec_process_streamon_output() guaranteed not to run @ the same time ?
-> 
-> I don't see any obvious locking here.
-> 
-Since reconfig handling is only relevant to capture port, the usage of
-in_reconfig flag in output port is unnecessary. I'll remove the redundant
-flag from output stream_on to simplify the code.
+In this safety comment you can then say that by the type invariant of Clk
+self.as_raw() is a valid argument for $func.
 
-Thanks,
-Dikshita
-> ---
-> bod
+Not that your type invariant needs the NULL case, since OptionalClk may set Clk
+to hold a NULL pointer.
+
+I still think that a new type MaybeNull<T> would be nice to encapsulate this
+invariant, but we can also wait until we get another use-case for it.
 
