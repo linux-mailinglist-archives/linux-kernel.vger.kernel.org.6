@@ -1,127 +1,120 @@
-Return-Path: <linux-kernel+bounces-548678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CDF8A547E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:36:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7B2CA547E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:36:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E6AA1891A2E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:36:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F070B170C2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:36:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9485820468E;
-	Thu,  6 Mar 2025 10:36:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C101F63E1;
+	Thu,  6 Mar 2025 10:36:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lomBbTCl"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RddjQ8eS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300CD1F63E1;
-	Thu,  6 Mar 2025 10:36:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AD771A76BC
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:36:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741257375; cv=none; b=fO93bkNQUYAESgYVJ0yIV4+BXRKcvSSA2/bMT6jc4E3I+x6qDL3UK1OYiZ92LTwnTEAKEvjSeeHtk6Hv9xqIGG3W0+osQ2hqC6hhxwYzKri50ZN9TpB3usaCmv286hbYK/oTWWwfmufzPP7x7tIXxiMFkEmNs3UZjy3G+PlFbJs=
+	t=1741257402; cv=none; b=ahp8ZAwTpUDxC5CvEYbwzBeyk9cCEuRACAmGjv/SOr8lBhgXejYygiN2spSDzQ2ibG10ruk8uZJr4hliPODluBOLKv3wf32qsVpq0Ua9XFg0CEuyWv3brBwY4dSH0hYSWUUgi6GpV588Si1YWpiyR//XCWclJVa51V4h8XbSR58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741257375; c=relaxed/simple;
-	bh=NW1/Cnt0mU7lWyczndd18IHQ1wItqkAw6BNi0vaR/hE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=q/KXrPBEBi3/WYekYl8iBhLKVOF2RHsYhk/tpvInFC1fqvyVJVrM0qa7kMs3Uxi6dTRALVv51BLW5rvXc97ZDZIc2osspct44ifCIZltbjYf8F6/MwMoGYZJDid9tGw16h8dWB1Z88JTgiXtQEIWgDBCsWkjJqRWgVZtQERNXRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lomBbTCl; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5495078cd59so597537e87.1;
-        Thu, 06 Mar 2025 02:36:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741257371; x=1741862171; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6MVkXRPG0DPog78nLFqW2ZPXVGeJ5h1mmD/8HDt9MY4=;
-        b=lomBbTClcpedUKKLuBc+FYJbMZM3QwTclXoA707+HoW3XsGsYo0eJLUDPJS5Hjm4c0
-         XU85FZVi7mMXPWXCQHcDx8WrnhvUEmrndTSk8vC11TGxSVnmqJ+dEyNw2AXtHZsT3Ux5
-         yuTRISUBOWCju8rS4kpyGuyYIhtZySUCy+r/a5me9/TwdOg58ooiwrvH8MqpsX12CPkX
-         Wf4VIPHJ4X9b2i2wB5RfzmOXcFe3jFwD38+Dsfnl1CZVxKQND2o5F4DcFORmtT5JNyZT
-         GHct6HCyG9D7wx/WiLDjSx9Yd48TMgVy+UCt9/+pb43z766qM/UbiGpwAn1iV2+0CDxw
-         pXqA==
+	s=arc-20240116; t=1741257402; c=relaxed/simple;
+	bh=eIviFgFwPx2HwSUMq5kkwtsNyVo5QezffE+/FRZmj/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UZRpwKmGRk/169l+lnmBrVcwpsmZakfIDToJKSeh5fX8gZeWLLkdyB/Xvt5Mr8zi9jEMQIfKO6b91rSFu1U+9VKMt81n8ss2ET8q/OfTKFjn++k9K56moHR29CvXw/di8vuXHEZofy0oRVjtpCcUkuD80obEVTHTTLZr1WCvQ/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RddjQ8eS; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741257399;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jnglbAYEIKKaWGbc5/Ze6UFS6cRYwDkRCxuVuAD5S7Q=;
+	b=RddjQ8eSVs7JuMUGuaPulc0h5IdDOf0daNyK7Sx+6837SIdBjGBYq0IPm98Zj2y2Upt32u
+	YZL9YV2m6MRqLw1F5G+ujtqnNA1USCfrWPitOOCTH24Bb+mrisUOE4v0UTkV2LUpClTZe+
+	vIITf6dT4KNOnd1V3nE6ab5CVihrTq8=
+Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
+ [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-355-t3jiLCL0PgaxlBsLVMT97A-1; Thu, 06 Mar 2025 05:36:38 -0500
+X-MC-Unique: t3jiLCL0PgaxlBsLVMT97A-1
+X-Mimecast-MFC-AGG-ID: t3jiLCL0PgaxlBsLVMT97A_1741257397
+Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3912fc9861cso48043f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 02:36:37 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741257371; x=1741862171;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6MVkXRPG0DPog78nLFqW2ZPXVGeJ5h1mmD/8HDt9MY4=;
-        b=WXl19fNAdp7OmbWMAJnqZjdvmoX+O9fmGeuEHYsj85MvNu7YCTxJIwe9QVnMEfU1gV
-         SdcaL1UTV4vS1HUkvNdB2nh/M/1fdTlWuLcPTmIvEyg6j2E5GLLIuL3baCRMOte1iS8G
-         5VlvIz1jjzK9xlY5f9x6BFUw6ibDmkapqnDsDV1uONjOufbJHZcYAnFf/z2VBSypK7Bc
-         VpfJTtO+cbydPqlCZRP+l98RLFrf0S5fyvQjARyyu0ibUJJHyHDCVjQF1Tnm28bqn78x
-         9acDg3JIFEjDHnWCCYvk78xerkb2Yzf1ByNwOag98XVL0Qk0CQ7oNzUbkW72C/SRNIk1
-         SeKA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDmNxnyw2hvpp3EKaW0OBk2fYbOOpEVAnS6Exv88O4//zUHZaXnwlzB+LC5D/KSeMZnzDWYaHA@vger.kernel.org, AJvYcCUbY/+PtRPRC1eqenJMRrpwGzVsUN4VnYRDrL0KFK9b8gOe9EocofZ/XRy/6ipiEegVCWU2v3xEPLfEOHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy37kuJqPEexVXO2lTjZK9KJTU94Seezs7po+jluY87UdJv9jy8
-	CQJ1H5NopSdtCaKt/aOwRO/jMn8Kj4a8ycHByV3OfPRMaKRx5uyd
-X-Gm-Gg: ASbGncudFvVcSaUbaou5o1dEZXQqvIfUy85WUY1iEILc53mvoxHlt5g3Og8HsZeQXG+
-	Qws/Ydoz+UrLsRI2PdxHK4Hom0q35wq026xiEThxNI32dNhHNrR/cjCsZvQWgVmv8kQQ6v+TIQl
-	InvZ2xKUybUpY+gZfD6nmL0yD30K7bC/sKDWM4nx40D/Y+hOLYErVsCiQwgbKukF15PejrGG9k/
-	rffd+DTzT10GRmQVBo8iZa5UHnE1eW+PPiY6om4Nqo5r+l+cmDmFBO0aBwR+PWytbyV6TZtDome
-	FxncwiuGJDo0Y+ZzLDb8K02SnzyBC7NpMcSbeSm2FDXLWnTx0tNN8AQW8xVA+bChdxVlyb2I5LW
-	IZOKpLO/LX6JEVQ9RKJqYpDB3B7KVB+HNt0xN64iApmE=
-X-Google-Smtp-Source: AGHT+IG6KtRDh+F69rV7hy/nuHw4J4sKnbzSyyuUdpRjtB7N7ZDfH8cEooEy0RcqsW/KaB1XUi9UXA==
-X-Received: by 2002:a05:6512:1392:b0:549:8d60:ca76 with SMTP id 2adb3069b0e04-5498d60cb90mr341916e87.38.1741257370731;
-        Thu, 06 Mar 2025 02:36:10 -0800 (PST)
-Received: from localhost.localdomain (mm-87-36-215-37.mfilial.dynamic.pppoe.byfly.by. [37.215.36.87])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae46646sm138150e87.46.2025.03.06.02.36.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 02:36:10 -0800 (PST)
-From: Aliaksei Urbanski <aliaksei.urbanski@gmail.com>
-To: Aliaksei Urbanski <aliaksei.urbanski@gmail.com>
-Cc: Wenjing Liu <wenjing.liu@amd.com>,
-	Daniel Wheeler <daniel.wheeler@amd.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	Harry Wentland <harry.wentland@amd.com>,
-	Leo Li <sunpeng.li@amd.com>,
-	amd-gfx@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Rosen Penev <rosenp@gmail.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] drm/amd/display: fix missing .is_two_pixels_per_container
-Date: Thu,  6 Mar 2025 13:36:03 +0300
-Message-ID: <20250306103603.23350-1-aliaksei.urbanski@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1741257397; x=1741862197;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jnglbAYEIKKaWGbc5/Ze6UFS6cRYwDkRCxuVuAD5S7Q=;
+        b=CxxQubLxbDYmxglJ7i2tBkNglvxlb3A8cjom5xf6E3Wuq2KHoRvZlxYEQhZFygNghd
+         keKgsMCLcGb4ameC6edcQv+6wzK2YVrCSGHcustjR4Mwqp97bEHFL+yXDS027ZhiPFpd
+         QYHbKNSU/NcdYM1FKRRQghq0afp/aLMsYB8FFUJ8IBT7/fA48kZM/SoAc6oBta9U/8d9
+         wgnHndOxNBr6AZ+9YU1YVoF/ASUfpsWpsOxQ5c9QJc62d5AUdYe9SWIhCxGih/JviUs3
+         mlfWP9VK6MNdzQ8duSkV/GaPNOQk0XhII0MvM2ibuMP6AJerlt49BHdA2uXcie11pOQx
+         a5lA==
+X-Forwarded-Encrypted: i=1; AJvYcCU9taYordOlS37wwbEhzSRPOSxMlq/fZ5TZWO8KFTYcZOeq5AdWZOJGfTLOaYmQruOEcqjjHhA9FIvVU1Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5CqEAmjwdr645onb86/Cpq3bYd4NjEDYDFBLZVuovrfFxwJ0i
+	4kWWlJ834eC/0+cQ99NJLASvAj/gb3DwuuKwZFy2SiY4rnRNL0WfKN7kJjZ/KjJfPdKleAXq2Al
+	YGnJtJio+10FO+BoT3HRcqg7lK986q7sSRPrlfOzDOuXphd2c3Vq6Qku4Ym6vNA==
+X-Gm-Gg: ASbGncuTRhyILqbCOaOc/HiYXhDs8sPPV2fbOp1TwKf+X5wQI+BbiXSZxNRFsAT9uqj
+	6Sqi+VMbMci0KEDgNFM8CSaiNMNwCMuLKny9OGMPBjR60MZtJLMp7Lf84sV4RV7lsWiNYL5okyw
+	NkL7gWmkiAWOX085le5fQdhQcWjPipGtbwdvQ3p8tgb0oywbFVr/NYNtvNmLMFj9mIRitzf0urO
+	/715qarxgXc0BAzR3jKJ6I19I2fkUsJgoqYWorHaYpIoNkva4YXgykEhO2/xBCTbhHFpCFUIeag
+	Y2dHNxzifseSUOfRSekaLVN1TlWGeE0qGT1juL02TpU11g==
+X-Received: by 2002:a5d:47cd:0:b0:38f:260f:b319 with SMTP id ffacd0b85a97d-3911f7bd90bmr6778425f8f.44.1741257396878;
+        Thu, 06 Mar 2025 02:36:36 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFxqUdlV1rQR47fVsjY5mR2qgd1ZZUfY4cR3vuzXwjWACsfsXX/46BAzCY25BIGbrKimMUnRg==
+X-Received: by 2002:a5d:47cd:0:b0:38f:260f:b319 with SMTP id ffacd0b85a97d-3911f7bd90bmr6778406f8f.44.1741257396568;
+        Thu, 06 Mar 2025 02:36:36 -0800 (PST)
+Received: from [192.168.88.253] (146-241-81-153.dyn.eolo.it. [146.241.81.153])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfba66esm1658819f8f.18.2025.03.06.02.36.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 02:36:36 -0800 (PST)
+Message-ID: <7e4122c2-0c0b-4d55-a3aa-e4c15e28c5d5@redhat.com>
+Date: Thu, 6 Mar 2025 11:36:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] qlcnic: fix a memory leak in __qlcnic_pci_sriov_enable()
+To: Haoxiang Li <haoxiang_li2024@163.com>, shshaikh@marvell.com,
+ manishc@marvell.com, GR-Linux-NIC-Dev@marvell.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ jiasheng@iscas.ac.cn
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250305101831.4003106-1-haoxiang_li2024@163.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250305101831.4003106-1-haoxiang_li2024@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Starting from 6.11, AMDGPU driver, while being loaded with amdgpu.dc=1,
-due to lack of .is_two_pixels_per_container function in dce60_tg_funcs,
-causes a NULL pointer dereference on PCs with old GPUs, such as R9 280X.
+On 3/5/25 11:18 AM, Haoxiang Li wrote:
+> Add qlcnic_sriov_free_vlans() to free the memory allocated by
+> qlcnic_sriov_alloc_vlans() if qlcnic_sriov_alloc_vlans() fails.
+> 
+> Fixes: 60ec7fcfe768 ("qlcnic: potential dereference null pointer of rx_queue->page_ring")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
 
-So this fix adds missing .is_two_pixels_per_container to dce60_tg_funcs.
+I think we are better off addressing the problem in
+qlcnic_sriov_alloc_vlans(), so that eventual future callers of such
+fuction will not need special handling.
 
-Reported-by: Rosen Penev <rosenp@gmail.com>
-Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3942
-Fixes: e6a901a00822 ("drm/amd/display: use even ODM slice width for two pixels per container")
-Cc: <stable@vger.kernel.org> # 6.11+
-Signed-off-by: Aliaksei Urbanski <aliaksei.urbanski@gmail.com>
----
- drivers/gpu/drm/amd/display/dc/dce60/dce60_timing_generator.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks,
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce60/dce60_timing_generator.c b/drivers/gpu/drm/amd/display/dc/dce60/dce60_timing_generator.c
-index e5fb0e8333..e691a1cf33 100644
---- a/drivers/gpu/drm/amd/display/dc/dce60/dce60_timing_generator.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce60/dce60_timing_generator.c
-@@ -239,6 +239,7 @@ static const struct timing_generator_funcs dce60_tg_funcs = {
- 				dce60_timing_generator_enable_advanced_request,
- 		.configure_crc = dce60_configure_crc,
- 		.get_crc = dce110_get_crc,
-+		.is_two_pixels_per_container = dce110_is_two_pixels_per_container,
- };
- 
- void dce60_timing_generator_construct(
--- 
-2.48.1
+Paolo
 
 
