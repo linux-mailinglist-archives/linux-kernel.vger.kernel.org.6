@@ -1,93 +1,115 @@
-Return-Path: <linux-kernel+bounces-550061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1187FA55AE3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:25:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C92AA55AE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:29:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 089041776B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:25:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6F5717775F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7381627CB12;
-	Thu,  6 Mar 2025 23:25:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97E9F27D771;
+	Thu,  6 Mar 2025 23:28:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h6Qjbsm4"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lZbVxBka"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5630259C9F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 23:25:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E28B259C9F;
+	Thu,  6 Mar 2025 23:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741303539; cv=none; b=fv4UWAximlboVsbWVVbUJ4n6mCLoM+yNLVSrv6OlkfRAaqkkjozlSx4BKkVQglvnOQVBUVoZX2lh4kxbchScF6G+4UUIA2oHvQbIVQCMzusyYtqhWQO/fg2sRaCEY8CqfEX1MwVMaUnXsjp3pMaz8GZ3EXlpoc4kHLEsMtQECnk=
+	t=1741303736; cv=none; b=unOCFHJRgnvwwfx3bMFmvxurJeeO12YMoDScH3yPw2aTtozKR2gc4K2Quz0su3TEaNLe+7C+rBsFdKkAitTqdelt7CegsP0btxmAyc/WdiHxH8+mpVOw5e1uV+MQCSkxBLOg58nuK3qdiELx/2FkrQaYAB8eS+mMQsYkK0Cl5TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741303539; c=relaxed/simple;
-	bh=pdN6FrzsJA5IzqA1/486ZuvCyc3XEYEHvWiUVKeLFiQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kz26O9GWFbBkrMir4acYhZLplujaniK7LpSPmXKFKRxiR6g6MPrgc77fDvPbLPGp/yXtLUH/uWC1YdoUQA0L7jrnpTIYXHK8KBBOHALj5cynuiG6cpJyzMRuq38rX2haG3PL/vyyoZTHT4AZlcryKnktuQS9d729+oaA/EMrSYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h6Qjbsm4; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 6 Mar 2025 18:25:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741303534;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=ngSD2sW6trZI0t+VBXHdmR5g+7y+JC2jU9Hbm6ucJZE=;
-	b=h6Qjbsm4Vm0+xwEjGGaEtk74NOtLl3FaaUSTW14GpdmTXGW5mdRI+IIoNxV8K3C1ERY4Mq
-	ST77wGs+OLx/69btU/alzJ4iI8GxR2zWjNJ0W2W5u58upPHeqcScB9Pm4Msq9W7q6W96li
-	Ce2b3trjW7AvdRbOwWvu9Cix4KzmplI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] bcachefs fixes for 6.14-rc6
-Message-ID: <ww7iqi2mto3fvyhrgpyxcdzcndcr527evvzktb5xp56o32lwg4@zlvkrwuiki6i>
+	s=arc-20240116; t=1741303736; c=relaxed/simple;
+	bh=nh7ClG5xpB7iVPUSC5b9cR+XtRGFSg8uFU+sQmc5mHs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gJhTTdlywn++wTfgVdhVmXGIOYTPR/hHtBZG7aJLH8SLpOobuJ0iuMThp5H2uHv8sjMtoUscnxhn2bROhaizVsJXXfvhbTjaaDR41U4Wf+OxM18uLdmowigmO5An5Ciy6OPjo1KBjqoZJyjONpMEpVkTRL7GYSpjVxVH08tgp/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lZbVxBka; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4394036c0efso7269515e9.2;
+        Thu, 06 Mar 2025 15:28:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741303732; x=1741908532; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EZl2HOj5CnuXTvILYduxJ5ao1DJjyVJeLLF8l6J639c=;
+        b=lZbVxBka06BAUL3hn+A8qmBwAXa6lBSIhu+SIVOSSzAouI0F2zGruGY/lcDa3lv622
+         V/2Jou9bde95w4+m8a0IYPlyXp5amvTZ/hRCyO9OM3ELzNT7WIWvqpaQkw5fpvdDODEs
+         DdN415Tn79/PB2XS8IgKjFLBIwpfWESp+LFGLeQl9ecr8KjXXnrbVbPQa3X0+eMiI5Q7
+         MxvF4ZhnXXcpMsTdwl/vEcYJttzwwTuLFcjDlYt05gyY1wGkT6t0t0JuOzaFO0KBaWGI
+         jXjjAWHF6JESIClop0ay5OA8HR5MfYaXUyOC0OPaUDwshSr+6wZh6KLednmc4Z831B0C
+         92LA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741303732; x=1741908532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EZl2HOj5CnuXTvILYduxJ5ao1DJjyVJeLLF8l6J639c=;
+        b=HlDZxetRYvSljn7rh/Zi5Q9tWUdL78tsrs2Wdc6i397qZzEoDmHqbM6VuKUDDfT1qK
+         QrH3lmt5/NVzevim/iO1v//qPhkBEaRMxnM8C+dOBBwUfJfC1h838BrXyOGqGlMW82uI
+         MVibd7Qr4kmXN4W4o+/4b7oznutKiy6toLttpRY6rDUVp5uOMsoAvUTQ7jsDE4U4Mmmn
+         4kLoUADpE1XXUNQYWDeKIuCB8+Oj41A83irO5ZeWLcfrYhfv7xJwUUrdmumRxZ/sEJSH
+         rtKMr7PY+OkEWquCnwuBLnmjllRK5S165imTQob6LiUgtIp6QzmoVvEOSM+Mdh0YJA5v
+         LuZw==
+X-Forwarded-Encrypted: i=1; AJvYcCVw5mYgLZMMxTp/X8yvEP3hZ1OJ7BJZNtZIsTdhMX9FlXnN7ikiouR2DwpygzvhhkBEs3ibX2dB5uBS3A==@vger.kernel.org, AJvYcCXuUWNNfIkdTuaCU9NQ1XJjoIieMPrLySws4JLNW/1ZkrOxo5Hnols5Sss0I3nn9s2z1xadwIPT40ejjxX3@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSQ7/yKx6HXusrreo6Z1klHSxeQvm2GB90AwjDp6nMcu7ZUuSN
+	21Z/ivkqDtK00eBkMFsss/8oMVTz821T8d10VJJibkBbrbDya+6gIVkCnipqx25Losp7Q2bVWY5
+	pqfYblOyBgfDqxN0CCkmAiWOalRc=
+X-Gm-Gg: ASbGncuIaOfdvOGedfSnwdMa00PiVMFpn+/XimFhEwS54zpXH3p3eSniVZSkJ7MIOji
+	34lqdUMRv99XB7XpmGwjp9VtwDwTEyQMpRqmNs2VjGv03UiGHtqvvJfCUndnsiZh69cWTDs0LQ9
+	fN9A6Wo963DYc75DosU8qX3g==
+X-Google-Smtp-Source: AGHT+IEQmCH6dK55zXOkds/ZHDMnczRyVqU6As+1fkm66BRqyj6QpVHUWogFcNW2HSeh3J4QkVBTphwhdwBXfd/xI2o=
+X-Received: by 2002:a05:6000:1fa4:b0:391:319c:1950 with SMTP id
+ ffacd0b85a97d-39132d0539dmr704892f8f.8.1741303732207; Thu, 06 Mar 2025
+ 15:28:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Migadu-Flow: FLOW_OUT
+References: <CGME20250306074101epcas1p4b24ac546f93df2c7fe3176607b20e47f@epcas1p4.samsung.com>
+ <20250306074056.246582-1-s.suk@samsung.com> <Z8m-vJ6mP1Sh2pt3@infradead.org>
+In-Reply-To: <Z8m-vJ6mP1Sh2pt3@infradead.org>
+From: Jaewon Kim <jaewon31.kim@gmail.com>
+Date: Fri, 7 Mar 2025 08:28:41 +0900
+X-Gm-Features: AQ5f1JopaLOUpTwxdPg5AfqwLDYqWbHBUyR2VJnXqln5-8Dd2-m6QI-_lvHe4-8
+Message-ID: <CAJrd-UuLvOPLC2Xr=yOzZYvOw9k8qwbNa0r9oNjne31x8Pmnhw@mail.gmail.com>
+Subject: Re: [RFC PATCH] block, fs: use FOLL_LONGTERM as gup_flags for direct IO
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Sooyong Suk <s.suk@samsung.com>, viro@zeniv.linux.org.uk, 
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, 
+	spssyr@gmail.com, "axboe@kernel.dk" <axboe@kernel.dk>, linux-block@vger.kernel.org, 
+	dhavale@google.com, surenb@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following changes since commit eb54d2695b57426638fed0ec066ae17a18c4426c:
+On Fri, Mar 7, 2025 at 12:26=E2=80=AFAM Christoph Hellwig <hch@infradead.or=
+g> wrote:
+>
+> On Thu, Mar 06, 2025 at 04:40:56PM +0900, Sooyong Suk wrote:
+> > There are GUP references to pages that are serving as direct IO buffers=
+.
+> > Those pages can be allocated from CMA pageblocks despite they can be
+> > pinned until the DIO is completed.
+>
+> direct I/O is eactly the case that is not FOLL_LONGTERM and one of
+> the reasons to even have the flag.  So big fat no to this.
+>
 
-  bcachefs: Fix truncate sometimes failing and returning 1 (2025-02-26 19:31:05 -0500)
+Hello, thank you for your comment.
+We, Sooyong and I, wanted to get some opinions about this
+FOLL_LONGTERM for direct I/O as CMA memory got pinned pages which had
+been pinned from direct io.
 
-are available in the Git repository at:
+> You also completely failed to address the relevant mailinglist and
+> maintainers.
 
-  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-06
-
-for you to fetch changes up to 8ba73f53dc5b7545776e09e6982115dcbcbabec4:
-
-  bcachefs: copygc now skips non-rw devices (2025-03-06 18:15:01 -0500)
-
-----------------------------------------------------------------
-bcachefs fixes for 6.14-rc6
-
-- Fix a compatibility issue: we shouldn't be setting incompat feature
-  bits unless explicitly requested
-- Fix another bug where the journal alloc/resize path could spuriously
-  fail with -BCH_ERR_open_buckets_empty
-- Copygc shouldn't run on read-only devices: fragmentation isn't an
-  issue if we're not currently writing to a given device, and it may not
-  have anywhere to move the data to.
-
-----------------------------------------------------------------
-Kent Overstreet (3):
-      bcachefs: Don't set BCH_FEATURE_incompat_version_field unless requested
-      bcachefs: Fix bch2_dev_journal_alloc() spuriously failing
-      bcachefs: copygc now skips non-rw devices
-
- fs/bcachefs/journal.c  | 59 +++++++++++++++++++++++++++-----------------------
- fs/bcachefs/movinggc.c | 25 ++++++++++-----------
- fs/bcachefs/super-io.c | 24 +++++++++++++-------
- fs/bcachefs/super-io.h | 11 ++++------
- 4 files changed, 64 insertions(+), 55 deletions(-)
+I added block maintainer Jens Axboe and the block layer maillinst
+here, and added Suren and Sandeep, too.
 
