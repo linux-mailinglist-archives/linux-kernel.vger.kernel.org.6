@@ -1,218 +1,129 @@
-Return-Path: <linux-kernel+bounces-548427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3DA6A544BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:24:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 823F8A544C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:25:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A234160961
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:24:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDC023B08FD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9302063F1;
-	Thu,  6 Mar 2025 08:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07F8B1EF0BC;
+	Thu,  6 Mar 2025 08:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dG++pnu/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="vCrNJf/L"
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EBB81FC11D
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C36F1A9B3F
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741249403; cv=none; b=Eya+S/sNKL0wma42ydGM/OOq+B39yaEMXaaW3XPEsMrI0Z8flSUlyn6uf3LP3sCNrhO01ms3RzuN2LdGdJj2F5XlRT9jmKq8oZJ1VSuJhwLVVYQqAwhjDgRyR9tMHFEsYYgr9xtfHKVjohD89W9yDo2VUDU6qtjgQPqruW9Hh/8=
+	t=1741249442; cv=none; b=c0GMWKqiGG7LFHfKywvMB6FfDZnmwXemD7r/m8mGT8uZy3gqsovL4AeZ0XSzoC80CGBL/ZA9dZYeCYcr4JRFs8PWwMqo6D79VqOqffNc+lznbGT3k3rYbbhHv+hEa8TLQE1HLL5BCVbvNYzVkSZR10WcA0CZWlC7+yx2KCUOex8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741249403; c=relaxed/simple;
-	bh=LAESgKwjsOolqILQ7EFqXdhdFKselMeHOYpzQPd3EDs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=K2y1lL4VsQ0mqfLPsHpaZEJw6NtW8Tk1gOA7fRKSAMUDb6YhaIGgH/fRarOLzf866vxPj5P6inNDPKrG4tCuY1YyNvZTlvDJb+gL7URRaglmYAC81pLJlbMGBehbSMG1r3/aleepM3ow136GkS6JJIHgMDdBV/IFQpQN9B86tBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dG++pnu/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741249400;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p7r18lDDaYnSU7d2JOl6qmtUJzAYao+io6UYl9OANnk=;
-	b=dG++pnu/zC2++ehDgE1RgC0FE0V+zAUyT04mwcMidClFcTRvtm+UgCNb9lYe9rUEgSK2h4
-	b4eqJXlFkVrxmm0NBtHHBHRD6/8JtKBcSnHpb+UkjBOtR7202xRWJtaJXEH9dRLcAiRjna
-	kb7lYehEpjCsVbfaxqpj7/gGJH1VIQQ=
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
- [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-557-zO1NBHmPNbSfzxFikJ0TFw-1; Thu, 06 Mar 2025 03:23:18 -0500
-X-MC-Unique: zO1NBHmPNbSfzxFikJ0TFw-1
-X-Mimecast-MFC-AGG-ID: zO1NBHmPNbSfzxFikJ0TFw_1741249398
-Received: by mail-yb1-f199.google.com with SMTP id 3f1490d57ef6-e60aebf48e8so453349276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 00:23:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741249398; x=1741854198;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p7r18lDDaYnSU7d2JOl6qmtUJzAYao+io6UYl9OANnk=;
-        b=Dy3B36X1UZDNZ9AaT9miX+/m66Z+QyUMzIJ+vv5yIVXNfsZQQYmo7/DFYdtFZXSQq7
-         /HP4ak3U0aG7TPNcmVkp3A6Sj+3eEWRGeS+mm3zd/vIvKf7ER1obBtSn7r65/rgnAaDp
-         xEpFxIIMcbaBDo8Hfcic8CNEwgJZv5dBmvvmNhy746iklKvzBo9LhCMAI2V0Bm7LLuLi
-         oz3kJVYPuRRHZr/A7PyuftgehgriohUEzGUa0if+TZVkfaPwgxgbEAD7GVu9YX7OfL9l
-         BgAdlSmyTqnv94PKsvbpkJOSCWTPPV9ftOQbKacH1qOB9JvbX689zpyJFDjZfE0IUgiM
-         nmtw==
-X-Forwarded-Encrypted: i=1; AJvYcCVielL62KXNxOd0nWFjgTpYJkBZx6dQ4wTwVcDpoNmX+bsYroEvmRs5tFZ4V7MAFPEyeoZ/fvV7aLF6QVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOJk9qD+oH77mSkF4qJ1jRkHMT4+yxiF2MEZKaTwmpXgo323SI
-	52C79Db7esEVdEdxvbSjM1lEX4h7Bk6I0DxM1LsWuTowidhI/gDf6zf52mwVgkQ+SNqsW1aIKFN
-	+PhMbl3NqVlgytdzQCmKQ3YJGxn9xb8mwxwMYMT/TXaUFIl0FNKsn6GEZEZoxSJXuyWIadhfcTQ
-	kioCL7ShCq9KSW8b2y1ePDBeGUDoSDPSgkjFqa
-X-Gm-Gg: ASbGncuPCpHXxqjr5TtrnTc9tX4sN1IAGgrfDDNY0hWcpA4KKilBY3IH6pFUSo0K48t
-	7Vn+tA6aUgB6Egxdrksg6V0gmiJNjbzFeF0589sBHoczNpjk4nbV5MZK4WXH+lBjo7BLZIpY=
-X-Received: by 2002:a25:1ec2:0:b0:e63:474e:c861 with SMTP id 3f1490d57ef6-e634eef0b1fmr718515276.25.1741249398217;
-        Thu, 06 Mar 2025 00:23:18 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF7nJyNaHwTKfCFf2zsd6PiaEGoXlfFh+yzGhdtdq5/XYd3bHYtIZ0oKB/mltmXYT1qA2ZSl8TLqva2zRpXEPU=
-X-Received: by 2002:a25:1ec2:0:b0:e63:474e:c861 with SMTP id
- 3f1490d57ef6-e634eef0b1fmr718493276.25.1741249397848; Thu, 06 Mar 2025
- 00:23:17 -0800 (PST)
+	s=arc-20240116; t=1741249442; c=relaxed/simple;
+	bh=e76/5N42UTY8yUCJgY0iayZEdEKtDnC0YQDXiChOLsM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LUZEANHEBJjiL8B3ckKZf3ZJqwN1zxu0U8WqQSmpwf/PwOykmIxzHA8wyeQ4+WHkzJUsACoA4Squ5SWCwB+jHHfqkdEkU7egaEQs7A0n9QfB56rESGfhSli1S6q7DS/mTpql3GmUnXkii/wmfp2hOUPRjESE9OXxY52WP32BLwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=vCrNJf/L; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5006a.ext.cloudfilter.net ([10.0.29.179])
+	by cmsmtp with ESMTPS
+	id q05ZtWZfeiuzSq6WNt2Jg2; Thu, 06 Mar 2025 08:23:59 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id q6WMtdMfidTeZq6WNtQ4MF; Thu, 06 Mar 2025 08:23:59 +0000
+X-Authority-Analysis: v=2.4 cv=XZCPzp55 c=1 sm=1 tr=0 ts=67c95b9f
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=L7QhEJsNy9/Z0iFlznz0qO7b7iPa0NTNjo1Ex6WjagM=; b=vCrNJf/Lyugu67vBBgEfwFnpz0
+	J+b2ejigEOCmjxpKXuQeRx6hh2ZefXZGL2eYD5wtFp5Qs0jmpg0UB4SycC6XPUkRfb0Mf44fSxhFc
+	4wX1NusFrdXzCqzoupiyjGo9SfAyaimeqyNmA8NlL3gMpRxPw5LyAsk0TNNUTlHD3TMmWLs1QoznN
+	Mq/7cAw28N+TgInu1tOXApo2bZHVdSQy2RMWzS8SPIOY6o70jaYJkNvnye8wTV7oPqnqxVPyBKEN1
+	oYOjh/EhbRxifnVfJWSDy3jrpz/F9KryiTNx5vv/nK0A92XOEk282F53Nw4O2F2eiVw10riXei7ms
+	BASpajJQ==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:33428 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1tq6WL-000000035Qd-01dW;
+	Thu, 06 Mar 2025 01:23:57 -0700
+Message-ID: <158982f9-291d-4a24-af5a-0c8c2d94e9cd@w6rz.net>
+Date: Thu, 6 Mar 2025 00:23:54 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20200116172428.311437-1-sgarzare@redhat.com> <20200427142518.uwssa6dtasrp3bfc@steredhat>
- <224cdc10-1532-7ddc-f113-676d43d8f322@redhat.com> <20200428160052.o3ihui4262xogyg4@steredhat>
- <Z8edJjqAqAaV3Vkt@devvm6277.cco0.facebook.com> <20250305022248-mutt-send-email-mst@kernel.org>
- <v5c32aounjit7gxtwl4yxo2q2q6yikpb5yv3huxrxgfprxs2gk@b6r3jljvm6mt>
- <CACGkMEvms=i5z9gVRpnrXXpBnt3KGwM4bfRc46EztzDi4pqOsw@mail.gmail.com> <CAPpAL=xsDM4ffe9kpAnvL3AfQrKg9tpbDdbTGgSwecHFf5wSLA@mail.gmail.com>
-In-Reply-To: <CAPpAL=xsDM4ffe9kpAnvL3AfQrKg9tpbDdbTGgSwecHFf5wSLA@mail.gmail.com>
-From: Stefano Garzarella <sgarzare@redhat.com>
-Date: Thu, 6 Mar 2025 09:23:05 +0100
-X-Gm-Features: AQ5f1JohM_t7j7Fpc0COSkCeLVhsbQLpCfbrtS-97yp_c3OjYm5Amp7QVm4NzL8
-Message-ID: <CAGxU2F7_0hXc-0hasa-_p_0z6nGCY6bsF_49ZRRN2mKZEJcziw@mail.gmail.com>
-Subject: Re: [PATCH net-next 0/3] vsock: support network namespace
-To: Lei Yang <leiyang@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net, 
-	Stefan Hajnoczi <stefanha@redhat.com>, linux-kernel@vger.kernel.org, 
-	Jorgen Hansen <jhansen@vmware.com>, kvm@vger.kernel.org, 
-	virtualization@lists.linux-foundation.org, 
-	Bobby Eshleman <bobbyeshleman@gmail.com>, linux-hyperv@vger.kernel.org, 
-	Dexuan Cui <decui@microsoft.com>, netdev@vger.kernel.org, 
-	Jason Wang <jasowang@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/176] 6.1.130-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250305174505.437358097@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250305174505.437358097@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1tq6WL-000000035Qd-01dW
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:33428
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 73
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfFHhSgua2HRZO48cLEeeJTGDhWX2CM0dfmkQdgVl+/mrNpgtWq/AQpLXG0J7K4tvTLnjJZcktug3uUjnekA2SKIAHK/jgdsm40Qt5h9qDf5Tzu1lqSjQ
+ OC5QBG1596NX1c2hhN4pOnOCTikcyjZk8NmllJFcP9QHl5OSTqXxM8GpGhgJXWjwPDQiQaogMA6E7R4lymoH9tdWhMTAEgRZq2M=
 
-On Thu, 6 Mar 2025 at 02:37, Lei Yang <leiyang@redhat.com> wrote:
+On 3/5/25 09:46, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.130 release.
+> There are 176 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> QE tested this series patch with virtio-net regression tests,
-> everything works fine.
+> Responses should be made by Fri, 07 Mar 2025 17:44:26 +0000.
+> Anything received after that time might be too late.
 >
-> Tested-by: Lei Yang <leiyang@redhat.com>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.130-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Sorry, but this test doesn't involve virtio-net at all, so what is the
-point on testing it with virtio-net?
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-Thanks,
-Stefano
-
->
-> On Thu, Mar 6, 2025 at 8:17=E2=80=AFAM Jason Wang <jasowang@redhat.com> w=
-rote:
-> >
-> > On Wed, Mar 5, 2025 at 5:30=E2=80=AFPM Stefano Garzarella <sgarzare@red=
-hat.com> wrote:
-> > >
-> > > On Wed, Mar 05, 2025 at 02:27:12AM -0500, Michael S. Tsirkin wrote:
-> > > >On Tue, Mar 04, 2025 at 04:39:02PM -0800, Bobby Eshleman wrote:
-> > > >> I think it might be a lot of complexity to bring into the picture =
-from
-> > > >> netdev, and I'm not sure there is a big win since the vsock device=
- could
-> > > >> also have a vsock->net itself? I think the complexity will come fr=
-om the
-> > > >> address translation, which I don't think netdev buys us because th=
-ere
-> > > >> would still be all of the work work to support vsock in netfilter?
-> > > >
-> > > >Ugh.
-> > > >
-> > > >Guys, let's remember what vsock is.
-> > > >
-> > > >It's a replacement for the serial device with an interface
-> > > >that's easier for userspace to consume, as you get
-> > > >the demultiplexing by the port number.
-> >
-> > Interesting, but at least VSOCKETS said:
-> >
-> > """
-> > config VSOCKETS
-> >         tristate "Virtual Socket protocol"
-> >         help
-> >          Virtual Socket Protocol is a socket protocol similar to TCP/IP
-> >           allowing communication between Virtual Machines and hyperviso=
-r
-> >           or host.
-> >
-> >           You should also select one or more hypervisor-specific transp=
-orts
-> >           below.
-> >
-> >           To compile this driver as a module, choose M here: the module
-> >           will be called vsock. If unsure, say N.
-> > """
-> >
-> > This sounds exactly like networking stuff and spec also said something =
-similar
-> >
-> > """
-> > The virtio socket device is a zero-configuration socket communications
-> > device. It facilitates data transfer between the guest and device
-> > without using the Ethernet or IP protocols.
-> > """
-> >
-> > > >
-> > > >The whole point of vsock is that people do not want
-> > > >any firewalling, filtering, or management on it.
-> >
-> > We won't get this, these are for ethernet and TCP/IP mostly.
-> >
-> > > >
-> > > >It needs to work with no configuration even if networking is
-> > > >misconfigured or blocked.
-> >
-> > I don't see any blockers that prevent us from zero configuration, or I
-> > miss something?
-> >
-> > >
-> > > I agree with Michael here.
-> > >
-> > > It's been 5 years and my memory is bad, but using netdev seemed like =
-a
-> > > mess, especially because in vsock we don't have anything related to
-> > > IP/Ethernet/ARP, etc.
-> >
-> > We don't need to bother with that, kernel support protocols other than =
-TCP/IP.
-> >
-> > >
-> > > I see vsock more as AF_UNIX than netdev.
-> >
-> > But you have a device in guest that differs from the AF_UNIX.
-> >
-> > >
-> > > I put in CC Jakub who was covering network namespace, maybe he has so=
-me
-> > > advice for us regarding this. Context [1].
-> > >
-> > > Thanks,
-> > > Stefano
-> > >
-> > > [1] https://lore.kernel.org/netdev/Z8edJjqAqAaV3Vkt@devvm6277.cco0.fa=
-cebook.com/
-> > >
-> >
-> > Thanks
-> >
-> >
->
+Tested-by: Ron Economos <re@w6rz.net>
 
 
