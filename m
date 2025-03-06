@@ -1,72 +1,60 @@
-Return-Path: <linux-kernel+bounces-548395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14FFEA54444
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:10:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D231A5444A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:11:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 026513AA3AA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:10:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8CA1892479
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C0851FCF7C;
-	Thu,  6 Mar 2025 08:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DEB1FC103;
+	Thu,  6 Mar 2025 08:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F4M+35nL";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="N7CEoUMz"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="qRwsTV1J"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9511B1FC103
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:10:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543911F3FF8;
+	Thu,  6 Mar 2025 08:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741248614; cv=none; b=UHn5pqwwU53E3WFOSjl1/7B5CYuwDd3q9k3835NbSho7Gocmiw1d3tY8dtw8DUVhZrH8EBadPiM1TzWbT0TXGDePO09xDhUDBpMP0x+HOay6vDXrrRgNUKFbHHXuzfLWleOqHV8KAGGHj29mY9UZWQ0+XGNkvboaW6CBUhS6HvI=
+	t=1741248648; cv=none; b=fb2U81d6jDMflJdN0gCPzRrBxJt+TsJR/zNyxZQSCr1/fpIFE6PyywMV5GBcL8Gw1TuPXlJ3TyxWXknNsr1JNR6f22XADWgwoBoS9Qt7SmbDhPftNTNZbbSDcsGnclWzNK5lbVw6g+/yIuIJFhK9+aoc4leTKuLxoDRtRCErTPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741248614; c=relaxed/simple;
-	bh=t5i41aTPSu2X8IHa0yeNUP4630Oc/G7SoR3xy5EMZeY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=d9re3/fKUkQK747iNctRKxss+KSZLKHatzppoFf5hmHGVOU6yhMd+IX/jHPBtXhzLvLfvY57UWirZvgQnIcvwFatBmcWfWCID4TyrUGjz3xG4vCPucY/HsKSyT1756DgJJl9/p68gTaq3ZuV9Fq2neUVSgTiq6aFF0bhr2A1PqY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F4M+35nL; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=N7CEoUMz; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741248610;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FCw0HXhg+OcR5bTQZOtf1N65af8vNWr6z4Mmvv6sC1E=;
-	b=F4M+35nLES0vVjhJgYIuelEf/gFETU2F75kxQOAJ6lMNZveAjDDzsmoG6n6MDDA1r31HTi
-	U/Xk8o7SReTgwH53nBlMc0eJs8Y0sYFSiY0J75Muck08uQgBcw/uprBUa5Bt0XQdrKek5H
-	tRygrcK6OVw6ljWRjJYyrwlTCxBMp7zZM41Hz/vkEeG71youZBeXbJcTc4MUFD9jmJSIxz
-	TrzdNDgWR3XQZzU9DB4c5U9hqeyn6sj8IEadYDDAuWhe2W6ngYDpO1x7T0qOMloglhR/hy
-	P/a4Hm2lB4pxaOdWXkW3NqYi0cwTpvQfzr/GipnU9oA87nLb7awoXM/m50uL6g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741248610;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FCw0HXhg+OcR5bTQZOtf1N65af8vNWr6z4Mmvv6sC1E=;
-	b=N7CEoUMzM5WNwADfgQQiczj2wLr0P6R+TM+V0gH8xxjyxigS+ML9Ovn873rihhIltGTOkc
-	7bDJbslqu21scyDQ==
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
- <anna-maria@linutronix.de>, Benjamin Segall <bsegall@google.com>, Eric
- Dumazet <edumazet@google.com>, Andrey Vagin <avagin@openvz.org>, Pavel
- Tikhomirov <ptikhomirov@virtuozzo.com>, Peter Zijlstra
- <peterz@infradead.org>
-Subject: Re: [patch V2 01/17] posix-timers: Initialise timer before adding
- it to the hash table
-In-Reply-To: <Z8iJBXFQLUkcndsI@localhost.localdomain>
-References: <20250302185753.311903554@linutronix.de>
- <20250302193626.974094734@linutronix.de>
- <Z8iJBXFQLUkcndsI@localhost.localdomain>
-Date: Thu, 06 Mar 2025 09:10:09 +0100
-Message-ID: <875xkm60m6.ffs@tglx>
+	s=arc-20240116; t=1741248648; c=relaxed/simple;
+	bh=y1jyoG2OYZHXc+mxM9f2meBVTyx6le840P9TMgyFh+4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNtKVkwyC0W6JwfiYD5yhcQVOb6/9ju+4ZTzRA+rdfbvZKQS7j+ML97FTcxxo+55hKu2Qoej30Z+sh3wcsJAqO4kz0UjSUTPWYvFfk/BunmqZnVoXhpUYx+4HS217L/FLUKhmDSmXU82S0L/3EjxUrYSrWbL5gnzQMOg/9SFf6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=qRwsTV1J; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1741248635;
+	bh=y1jyoG2OYZHXc+mxM9f2meBVTyx6le840P9TMgyFh+4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qRwsTV1JFdbocyf1I4u0uZdJYpMNpU7YnRpWkjEymYyU/qjJaRTnyO247BZyPCYHx
+	 9qGCfQl7ZMx7HfKGRxzkyuZOYpmKVvvtO9E02kRtH4CGtEulfvKF6QG95dwbDGGg2J
+	 PiH8iQpi5J0HzxwVFa/ff1p3xgrxiRgkkRbMu+s8=
+Date: Thu, 6 Mar 2025 09:10:34 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: kpcyrd <kpcyrd@archlinux.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
+	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
+	Daniel Gomez <da.gomez@samsung.com>, Paul Moore <paul@paul-moore.com>, 
+	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Fabian =?utf-8?Q?Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>, 
+	Arnout Engelen <arnout@bzzt.net>, Mattia Rizzolo <mattia@mapreri.org>, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] module: Introduce hash-based integrity checking
+Message-ID: <169f0e30-a8b2-494d-917e-eade8340cf67@t-8ch.de>
+References: <20250120-module-hashes-v2-0-ba1184e27b7f@weissschuh.net>
+ <20250120-module-hashes-v2-6-ba1184e27b7f@weissschuh.net>
+ <8e5b171d-78fa-4cba-8217-1a661d23785b@archlinux.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,86 +62,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8e5b171d-78fa-4cba-8217-1a661d23785b@archlinux.org>
 
-On Wed, Mar 05 2025 at 18:25, Frederic Weisbecker wrote:
-> Le Sun, Mar 02, 2025 at 08:36:44PM +0100, Thomas Gleixner a =C3=A9crit :
-> Looking at this more or less lockless whole thing again, is the
-> ordering between creation and subsequent operations sufficiently guarante=
-ed?
->
->     T0                                                T1
-> ---------                                             -----------
-> do_timer_create()
->     posix_timer_add()
->         spin_lock(hash_lock)
->         // A
->         timer->it_id =3D ...
->         spin_unlock(hash_lock)
->     // Initialize timer fields
->     // B
->     new_timer->.... =3D ....
->     common_timer_create()
->         // C
->         hrtimer_init()
->     spin_lock(current->sighand)
->     // D
->     WRITE_ONCE(new_timer->it_signal, current->signal)
->     spin_unlock(current->sighand)
->                                                       do_timer_settime()
->                                                           lock_timer()
->                                                               // observes=
- A && D
->                                                               posix_timer=
-_by_id()
->                                                               spin_lock_i=
-rqsave(&timr->it_lock)
->                                                               // recheck =
-ok
->                                                               if (timr->i=
-t_signal =3D=3D current->signal)
->                                                                   return =
-timr
->                                                               common_time=
-r_get()
->                                                                   // fidd=
-le with timer fields
->                                                                   // but =
-doesn't observe B
->                                                                   // for =
-example doesn't observe SIGEV_NONE
->                                                                   sig_non=
-e =3D timr->it_sigev_notify =3D=3D SIGEV_NONE;
->                                                                   ...
->                                                                   // does=
-n't observe C
->                                                                   // hrti=
-mer_init() isn't visible yet
->                                                                   // It m=
-ight mess up after the hrtimer_start()
->                                                                   hrtimer=
-_start()
+On 2025-01-23 00:28:40+0100, kpcyrd wrote:
+> Thanks for reaching out, also your work on this is much appreciated and
+> followed with great interest. <3
+> 
+> On 1/20/25 6:44 PM, Thomas Weißschuh wrote:
+> > diff --git a/kernel/module/main.c b/kernel/module/main.c
+> > index effe1db02973d4f60ff6cbc0d3b5241a3576fa3e..094ace81d795711b56d12a2abc75ea35449c8300 100644
+> > --- a/kernel/module/main.c
+> > +++ b/kernel/module/main.c
+> > @@ -3218,6 +3218,12 @@ static int module_integrity_check(struct load_info *info, int flags)
+> >   {
+> >   	int err = 0;
+> > +	if (IS_ENABLED(CONFIG_MODULE_HASHES)) {
+> > +		err = module_hash_check(info, flags);
+> > +		if (!err)
+> > +			return 0;
+> > +	}
+> > +
+> >   	if (IS_ENABLED(CONFIG_MODULE_SIG))
+> >   		err = module_sig_check(info, flags);
+> 
+> From how I'm reading this (please let me know if I'm wrong):
 
-Pretty far fetched and I did not think it fully through whether it can
-really happen. But that's trivial enough to solve without this
-hlist_hashed() indirection:
+<snip>
 
-+      spin_lock(new_timer->lock);
-       spin_lock(current->sighand);
-       WRITE_ONCE(new_timer->it_signal, current->signal);
-       spin_unlock(current->sighand);
-+      spin_unlock(new_timer->lock);
+This is how it is intended, thanks for checking.
 
-Simply because the release of timer::lock guarantees that the memory
-operations before the release have been completed before the release
-completes.
+> This all seems reasonable to me, maybe the check for
+> is_module_sig_enforced() could be moved from kernel/module/signing.c to
+> kernel/module/main.c, otherwise `sig_enforce=1` would not have any effect
+> for a `CONFIG_MODULE_HASHES && !CONFIG_MODULE_SIG` kernel.
 
-Consequently the other CPU must observe a consistent set A - D after it
-acquired the lock.
+Moving the check would complicate the logic and shouldn't make a
+difference. In signing.c it ensures that a validation failure is
+propagated. However that is the default behaviour in hashes.c.
 
-No?
 
-Thanks,
-
-        tglx
+Thomas
 
