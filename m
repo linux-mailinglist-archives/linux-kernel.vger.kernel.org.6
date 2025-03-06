@@ -1,75 +1,101 @@
-Return-Path: <linux-kernel+bounces-548313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A448A54340
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:07:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A734A54337
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:06:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3EC0189451A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:07:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 772767A5192
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F0A31A9B23;
-	Thu,  6 Mar 2025 07:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CEA1A727D;
+	Thu,  6 Mar 2025 07:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KJWQwjEO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DFfLBx3N"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCA419DF4D;
-	Thu,  6 Mar 2025 07:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D3B1A38E1;
+	Thu,  6 Mar 2025 07:05:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741244808; cv=none; b=O00SojbCNXRM7JvnG3PucFG7RP8JankwRG9C1xpjFtnqmxsuY7XbBU2dbUjYJ0H+WVGwV2ujobFVz7ypdNMjulk28IGlDj9k5w3/hxv2BhC1VwzrHvPGIf9dM5IM8E+8hygCts1pL5SIjh2TJ3XaYtdLwo2Ih6XRo/rnxt0Jrsc=
+	t=1741244754; cv=none; b=dA25xwkLB/1VkXDEhtWdcfuCyCz/RxSpKnYihFYba1NvlAaqa+LM26maBsnQYRCbHPoykYh26soN87DBT4T2md/APThyDVBrJKfRW8+UxmQoq06Vezf5VSj2fWTHu4oCRHMsl8InSyJdpzcXSL3hW2qBRbNanqbmULtlKpr65oY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741244808; c=relaxed/simple;
-	bh=TPHLV7UHKuf3IzBVO5JpmSCDRfQpTpWNmkLIv6ixv3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oXfUbtt7gM0aZhWIEq7xPIFj5xaa0rL/61SoHpO14eCOPm9eBI7L503IGzFIArZXS7j+k1N1fgmYoz84SmOpftSM2n43jL+/NQKhPTZPkWNBy3Pc2Y2UBPawXjQCCyfSkJDwMuD6yrIfSJ5Ot4eMOnV35IjGe+/tLf/9XI/vx1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KJWQwjEO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2A98C4CEE4;
-	Thu,  6 Mar 2025 07:06:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741244808;
-	bh=TPHLV7UHKuf3IzBVO5JpmSCDRfQpTpWNmkLIv6ixv3M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KJWQwjEOGIt9/gFgeaCTjmeE+/X8TH4tFo2FNsDIzsh41e/Q5Tzvljo4LOrKjl/bT
-	 2v9zJdVYUGyj83wp2WwjfTFD450ReFMiCHZTOr23WO9tjijfmvJc2+L+RTe4WB2TQB
-	 2l3v+wsubzwWxJc8eCWfsMOwqEdXoEh/6rtojfPY=
-Date: Thu, 6 Mar 2025 08:05:33 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: xiaopeitux@foxmail.com
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-	xiaopei01 <xiaopei01@kylinos.cn>
-Subject: Re: [PATCH] serial: 8250: Optimize port function assignment with
- generic macro
-Message-ID: <2025030602-frays-profusely-0656@gregkh>
-References: <tencent_50535E8627177335AEA311C5DC0A54609008@qq.com>
+	s=arc-20240116; t=1741244754; c=relaxed/simple;
+	bh=El74G6/NI0u0FdRCimXmohZXkOMOrBaMbRBx6pb9WWY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=btCiWDkUOMcWYPY5QYldf1+44P9JvAXyLdXMV+u+zUhLE/jveHJeq0Ddv/S+uCMPJfKV5/y7A8075WxBalVsuP8zsky7zLib6CbBaPZ704SAND3I1RdtoRu5nJXJ+kVznVx4RTETRaspIOWhHE6kb36+dXlloF/C2yGySKiDdrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DFfLBx3N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73CA4C4CEE4;
+	Thu,  6 Mar 2025 07:05:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741244753;
+	bh=El74G6/NI0u0FdRCimXmohZXkOMOrBaMbRBx6pb9WWY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=DFfLBx3NgfryZifDyoUEj913Py+XsgKqdaYhDhgmNRfM1L7AVrl7X6DAxSuLuWtqP
+	 q/X+nPVpQvVppmgSLhkH/r7OfPfeHaVbVnbnHi26Ll7OEpxNh9tjOwU3cWFFYZRky8
+	 WSaWangG70YS3ALg6G04e9ebvxkZKWTOpmHNM6OQXCjfLWtUKcChmznmmCaIqTEuB9
+	 3qEMN6u1aHw+yywmbWQd+sRDcaX1MMdRliUv1RtxpVTEkNoU83gkRG8V+eczGzN3fr
+	 hV9v//r9lc+6B87OocbFVygZe62ARX+NyS5fE7XIFvh0agUQDf3azkUb84oUOFmncw
+	 lvG/3jHjOOPEw==
+From: William Breathitt Gray <wbg@kernel.org>
+Subject: [PATCH 0/2] counter: Introduce the compare component
+Date: Thu, 06 Mar 2025 16:05:42 +0900
+Message-Id: <20250306-introduce-compare-component-v1-0-93993b3dca9c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_50535E8627177335AEA311C5DC0A54609008@qq.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEZJyWcC/yXMMQqAMAxA0atIZgttRRGvIg61Rs1gKqmKULy7R
+ afPW36CiEIYoSsSCF4UKXCGKQvwq+MFFU3ZYLWtdaUbRXxImE6Pyodtd/I3MPKhjJmtdR7bdjS
+ QD7vgTPd374fneQG4+V/kbQAAAA==
+X-Change-ID: 20250306-introduce-compare-component-11f22ace88b1
+To: csokas.bence@prolan.hu, Kamel Bouhara <kamel.bouhara@bootlin.com>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ William Breathitt Gray <wbg@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1213; i=wbg@kernel.org;
+ h=from:subject:message-id; bh=El74G6/NI0u0FdRCimXmohZXkOMOrBaMbRBx6pb9WWY=;
+ b=owGbwMvMwCW21SPs1D4hZW3G02pJDOknPQMExE5tV31i2jGxe7kHk/5q6fR/Ni/P1tno/Eme3
+ ZCu9PNNRykLgxgXg6yYIkuv+dm7Dy6pavx4MX8bzBxWJpAhDFycAjARw+sM//TvJyhZxTBUSFSc
+ 4oi4Ff0z5RZf8crN2f9+/g6oYN0w4zMjw6rmnOCHEQ3zc28wXpz0aPLBXe8y5jk4lEsu2XJUPmg
+ rIxcA
+X-Developer-Key: i=wbg@kernel.org; a=openpgp;
+ fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
 
-On Thu, Mar 06, 2025 at 11:00:32AM +0800, xiaopeitux@foxmail.com wrote:
-> From: xiaopei01 <xiaopei01@kylinos.cn>
+In previous drivers, we have exposed compare operations as part of a
+larger set of functionalities; such as preseting a Count channel,
+defining ceiling and floor boundaries, etc. However, we've lacked a
+standard way to expose the compare operation in its strict sense as a
+threshold comparison.
 
-Sorry, as per the documentation we need a name, not just an email alias.
+The need has become apparent in the microchip-tcb-capture module, which
+requires a way to configure the threshold value provided by the RC
+register for compare operations. To that end, a new compare component is
+introduced with a helper macro COUNTER_COMP_COMPARE() to create such.
 
-> Refactor repetitive conditional function pointer assignments using a
-> generic macro ASSIGN_IF_EXIST. This consolidates 15+ conditional
-> checks into a consistent pattern while maintaining type safety.
+Signed-off-by: William Breathitt Gray <wbg@kernel.org>
+---
+William Breathitt Gray (2):
+      counter: Introduce the compare component
+      counter: microchip-tcb-capture: Add support for RC Compare
 
-But why?  Macros are a pain and hide what is happening here.  Do you
-think this makes the code more maintainable over time?  Does it fix any
-existing bugs?
+ Documentation/ABI/testing/sysfs-bus-counter |  9 ++++++++
+ drivers/counter/microchip-tcb-capture.c     | 33 +++++++++++++++++++++++++++++
+ include/linux/counter.h                     |  3 +++
+ 3 files changed, 45 insertions(+)
+---
+base-commit: c2a756660324fceca26780a50950e6d91dfdc210
+change-id: 20250306-introduce-compare-component-11f22ace88b1
 
-thanks,
+Best regards,
+-- 
+William Breathitt Gray <wbg@kernel.org>
 
-greg k-h
 
