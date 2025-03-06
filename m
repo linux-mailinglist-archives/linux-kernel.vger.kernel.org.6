@@ -1,94 +1,104 @@
-Return-Path: <linux-kernel+bounces-550000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71EFCA559BB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:25:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF418A559C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:28:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 352F018964C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:26:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 22C6F7A7918
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F68827C868;
-	Thu,  6 Mar 2025 22:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A1427C867;
+	Thu,  6 Mar 2025 22:28:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="aEbE1vfv"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HXrYt4Jr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4512B27C84F;
-	Thu,  6 Mar 2025 22:25:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896B6208990;
+	Thu,  6 Mar 2025 22:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741299944; cv=none; b=N65FP0NwqnhGnthyjtq5o0m4hsErO5661JeSkGy9aOCrHDhsunfaMfkyh8aBWt1lcjqIISLEBLoSMu86cfFhL1dDgAlzVSNGOI9QmiZia85aYggvJ7vOLZEiplDc49wRfuKpV5F/L8cpC8bnAymMCj3g+rgSBbIX5bf+qhxqDMg=
+	t=1741300124; cv=none; b=KcsDMAzlolJo4GiAEzFUabtYo/weVrKxv3JrLskxo8dzBOnkgaETv5YwZf5vsEB2jVf+9iJ+qd2gSnolZW4Uvsj9IgtJSxOwFMk7HYSkn1/WrUBt0lHEDaCma+VhyQlPCqvd56oRfFTXmY46aJWSr7sQcPae5qmiSO4m5dkVEr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741299944; c=relaxed/simple;
-	bh=ODNkFsouAB0zbMg27325e5pEmsJgKLlSe0Vl9ayg0pw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=asUV6rlNrTiQF//G4Brv6G2Zpq4aZbmM7vLtlmFNEvzNATWnaydvVJ5IIeVLIEQYDyYOjPIUoeCNgBCfrwIRIyMC3q6MAZsYv4H+wnZWXFeak6lolZh9+aeVjIb1U4fuGaYc6umr8Gqx51dBl53/EIYwqErIXO5RN1SvqmyoWvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=aEbE1vfv; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=bRSDAzfZLY2i8MApo1JUO6NM3IHVWAv/taEIFNyzysc=; b=aEbE1vfv1e3AU8SHMntOcjLfhO
-	o4jRVQLRSpwkGCUp9Ka9Ne7bx/lv00Lx+rnidJ1w5Twskz7BRBRgip3wtBDguPkSh4Ttw8HPM4it1
-	VbDb6vldTX9eINY76jtGbL99YaW2g9QycS+Br/QGig7TFoO/MSJjV019m3VjwxztKinY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tqJeV-002w7o-Cf; Thu, 06 Mar 2025 23:25:15 +0100
-Date: Thu, 6 Mar 2025 23:25:15 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Wadim Egorov <w.egorov@phytec.de>, netdev@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 1/3] net: stmmac: dwmac-rk: Use DELAY_ENABLE macro for
- RK3328
-Message-ID: <d6b15dc2-f6b2-4703-a4da-07618eaed4db@lunn.ch>
-References: <20250306203858.1677595-1-jonas@kwiboo.se>
- <20250306203858.1677595-2-jonas@kwiboo.se>
+	s=arc-20240116; t=1741300124; c=relaxed/simple;
+	bh=2ABLlxIoMSQNDKV1phjvCwSi0BkSICv6/GcMMhHQews=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=E+J9Q6KHZ8IbdKTBt0ZS1BcxXzR45KOn8GLPOYmLXvOS98q6PeG/PeAyMz2WXQ3XypyvBEA7ezQxHM4SD7eWH9tBmbvGqfkseSmDPkMRo+FeVwWIwSspB8YMEblwaSmZjaRPGMmutGWtR+O7fhFZ0ljgyr5mp+Eqs5ewqonhyos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HXrYt4Jr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AAC2C4CEE0;
+	Thu,  6 Mar 2025 22:28:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741300123;
+	bh=2ABLlxIoMSQNDKV1phjvCwSi0BkSICv6/GcMMhHQews=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=HXrYt4Jr8Ujw+I6ULk6lGN2aJq67C6kOW7bkoi+HYdokVxAaUNiqBmlKFwKMIrUzV
+	 /r+awFkHB42epS4kjHahTJMSz8SCh5iVUfVp7FUF05c4R3e9WFYlvMcQd6pvb/PIRG
+	 RPh6M60eNx8EDbdYyajwTtECC9oIg1VLkSS2sAtzN1NhfrH6nFqXSNLOwz3GkCZA6+
+	 KBsYqC6pbbEcQeaiauNhnDRWjLY/616Ldj2jYEknJuPovaqTvDRBAhnxlU1dt3Clii
+	 EjJjm2Sm/NmPQXdT+3s2pzy3QpcISUN6EqKKfSGJqwg5Ac6K0ooKjpz/lAeLt3vPaX
+	 XCTRScQhSUdUA==
+Date: Thu, 6 Mar 2025 14:28:42 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, xiaoning.wang@nxp.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, christophe.leroy@csgroup.eu, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 net-next 01/13] net: enetc: add initial netc-lib
+ driver to support NTMP
+Message-ID: <20250306142842.476db52c@kernel.org>
+In-Reply-To: <20250304072201.1332603-2-wei.fang@nxp.com>
+References: <20250304072201.1332603-1-wei.fang@nxp.com>
+	<20250304072201.1332603-2-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306203858.1677595-2-jonas@kwiboo.se>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 06, 2025 at 08:38:52PM +0000, Jonas Karlman wrote:
-> Support for Rockchip RK3328 GMAC and addition of the DELAY_ENABLE macro
-> was merged in the same merge window. This resulted in RK3328 not being
-> converted to use the new DELAY_ENABLE macro.
-> 
-> Change to use the DELAY_ENABLE macro to help disable MAC delay when
-> RGMII_ID/RXID/TXID is used.
-> 
-> Fixes: eaf70ad14cbb ("net: stmmac: dwmac-rk: Add handling for RGMII_ID/RXID/TXID")
+On Tue,  4 Mar 2025 15:21:49 +0800 Wei Fang wrote:
+> +config NXP_NETC_LIB
+> +	tristate "NETC Library"
 
-Please add a description of the broken behaviour. How would i know i
-need this fix? What would i see?
+Remove the string after "tristate", the user should not be prompted
+to make a choice for this, since the consumers "select" this config
+directly.
 
-We also need to be careful with backwards compatibility. Is there the
-potential for double bugs cancelling each other out? A board which has
-the wrong phy-mode in DT, but because of this bug, the wrong register
-is written and it actually works because of reset defaults?
+> +	help
+> +	  This module provides common functionalities for both ENETC and NETC
+> +	  Switch, such as NETC Table Management Protocol (NTMP) 2.0, common tc
+> +	  flower and debugfs interfaces and so on.
+> +
+> +	  If compiled as module (M), the module name is nxp-netc-lib.
 
-    Andrew
+Not sure if the help makes sense for an invisible symbol either.
 
----
-pw-bot: cr
+>  config FSL_ENETC
+>  	tristate "ENETC PF driver"
+>  	depends on PCI_MSI
+> @@ -40,6 +50,7 @@ config NXP_ENETC4
+>  	select FSL_ENETC_CORE
+>  	select FSL_ENETC_MDIO
+>  	select NXP_ENETC_PF_COMMON
+> +	select NXP_NETC_LIB
+>  	select PHYLINK
+>  	select DIMLIB
+>  	help
+
+> +#pragma pack(1)
+
+please don't blindly pack all structs, only if they are misaligned 
+or will otherwise have holes.
+
+> +#if IS_ENABLED(CONFIG_NXP_NETC_LIB)
+
+why the ifdef, all callers select the config option
+
 
