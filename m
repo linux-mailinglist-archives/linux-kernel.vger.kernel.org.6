@@ -1,141 +1,217 @@
-Return-Path: <linux-kernel+bounces-548115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D879A54034
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:59:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D18B4A54038
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:02:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D3CA16DEF9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:59:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01BEA1890D2C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:02:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB98818DB07;
-	Thu,  6 Mar 2025 01:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d4e7NjmB"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27B9BE46;
-	Thu,  6 Mar 2025 01:59:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DB118DB2A;
+	Thu,  6 Mar 2025 02:02:33 +0000 (UTC)
+Received: from vmicros1.altlinux.org (vmicros1.altlinux.org [194.107.17.57])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6865B18DB1D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 02:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.107.17.57
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741226357; cv=none; b=Bklgn1QmUfYbF/YnePwnY7itAFqK0IrXTRPbl7ckaPYp/WFteGdbLUBTTk6jURX4Dc+V3fcyI2XsC+ZqCaCR1OazWbw2vyPzA+vNoxy5Ltt1OC4Fmy6st/VvCnQgVgeHLDJI8OaZ5oUjN9/pngM+riejmSVuoSCARI90+Uab2m8=
+	t=1741226553; cv=none; b=hv7acAH5Ql83DDmbn/ZYBmkB3TJzMxyjnch+fCGzzZFg2piS7L1DtbukD6w0DlrW70UVMMYsi4l3yp9ii1/3li9XmN2wYOL6ausKhkfr+UHk8qc2Rst3XjN8KXACWGdVuan0xZw9NCA+bKnaMa92BwYI7JID7r28CxXyXIScb3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741226357; c=relaxed/simple;
-	bh=ZYAGVBJMfEUjNiE4J8nxMlWEvkEwAdGZtJwHCRZ/iK0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oWXuaOTX4pVuqDB9XzY2ikjN/uVAle98/xz1VceXDJZ1ZeH7XmGlFKQbXSecu0V8pn3SzrBYEXxB6tIaAUYXHI6H77cu+RDzio+DoFCIUK+ax51aWuIODrA3pCM4q/ct+mNkHzNrgUJb2u4Kwd6HGS2OlrVNoezEHCeaXSSckeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d4e7NjmB; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2235189adaeso2720725ad.0;
-        Wed, 05 Mar 2025 17:59:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741226354; x=1741831154; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QYsJK23daKHgIm6j07dlmIybSXF/ZOZ0EpP1y1aEC/0=;
-        b=d4e7NjmBYP95FsDAySQDAZbG69ms+N7RnhQO1ShTNs5rin2epvPAIQE0M3Qqw5QWWQ
-         J59RbCBDoll7+VAA8yTU0sqXREVwxMbz2Jdvra5gosAQZ+daZucPX9wTizlByWFU0XDd
-         Z0EWEgVOOM4443ERJPjNiNSi7Fjfsr3GzeJPGxvkUqK4oFb6Q1hNRTJdkMEfC1jQp+xT
-         o15v2rmwbagsG+kUTxxIBhesfffrKj/oMKX3/FH7G93zHFwJ6gI1YS8gV8rt1e3aft3A
-         om+pFNr2HcOGz8ZwZKbRhXQvSojRzLVBZg08yvS9/IeSVEv2CV//sAhlqO414hVpJ9ks
-         /zIw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741226354; x=1741831154;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QYsJK23daKHgIm6j07dlmIybSXF/ZOZ0EpP1y1aEC/0=;
-        b=o2x/ixtpLxyVR3q4vjk4MHkxNmbknCy3xKw83XvRnX4G/XyGczwpzqoH+bK28B8htg
-         xHVaYOR4hCOFIwmupScPE4BIoVFbu9vw2XhDdhv1v0lKp0uOJshmkPVRBaoW2oYf7Gyt
-         KMBxw+fPTltFmtTG+Tez3/XyUpZuCTB2y4FIgWhpaL1n6r3v38dyZWP1INIzT3NSjzal
-         jJ15Vi8vS4U8V3JG3SLe3iZaxAJlh9CAkm0T+8RI1gXj3EfiaqlJ7t6iYVSfhXn3qF3x
-         nWKlnsLwI3yanbYmbd5K233HO4lPw+6tKDtR24xNYpqdflQxeQ6mn17o12N+nnHyUdJQ
-         TjXw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7/sj9NHlx/0lMZFk7S0ixKDAXWp8OarkTvbvLsH/yeU4LlAwwXjxX1nlFXNft83jufjeycB8y9RPNXSw=@vger.kernel.org, AJvYcCU9OA3vHwtWdBaIV20KiUoe4c6f12Rja5s0ORUZtW39P93rtBeO/stOVN9Onw+OvcZKxPTshpIEWpOVRfi54sQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynRz+ONLNTjVALJ0pn6igF9TiIX2rRXMGFFoBTR4RwlKIr7Yod
-	el3TL9EJ7xxieMe3j55ekhx3C1R25FZUKawFYwLMRgC9NYS+f7aL
-X-Gm-Gg: ASbGncsv3xI+3A9okux6bTbi4OWOp3eI6SFynRDJUBdfcxM5OyjcfNaQSKLmmWT9zUY
-	rbT+vbxRXNGgVl3uGFKLoyAiXEvh6Vv8VEHywmNTcHsfNk36FMsMtEM5T6J5Isjm0Oa708bdGDX
-	5g2A+O1qOfP1VKTisCfUiqg9cLl/xbWTQkii7j0DJTB8V4BWOIn876c3l05/Cb1xoDAlSuEht9Z
-	BDAOVdN2mLWXAayHGwSododyqzY6N2ebBCKHHmvX9WIedvYz9RoxbQJiVmuVSsc1DGrYVkV8DPL
-	TSt2Hx39Qj3wx/kaXF9fhWBbbgD/Hb7vneq6olAE/HMUg5mqXqgn
-X-Google-Smtp-Source: AGHT+IE+/gyM0vU9hETwsdOynHzppu/S/lzqiPffh2GwcPFmJVHns7NdvfByvMvDHRBCl8nLNqSulQ==
-X-Received: by 2002:a17:902:e74c:b0:223:807f:7f92 with SMTP id d9443c01a7336-2240948d29dmr22486625ad.20.1741226353955;
-        Wed, 05 Mar 2025 17:59:13 -0800 (PST)
-Received: from linuxsimoes.. ([187.120.156.44])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109e84desm1040095ad.70.2025.03.05.17.59.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 17:59:13 -0800 (PST)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: miguel.ojeda.sandonis@gmail.com
-Cc: a.hindborg@kernel.org,
-	alex.gaynor@gmail.com,
-	aliceryhl@google.com,
-	apw@canonical.com,
-	arnd@arndb.de,
-	aswinunni01@gmail.com,
-	axboe@kernel.dk,
-	benno.lossin@proton.me,
-	bhelgaas@google.com,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	dakr@kernel.org,
-	dwaipayanray1@gmail.com,
-	ethan.twardy@gmail.com,
-	fujita.tomonori@gmail.com,
-	gary@garyguo.net,
-	gregkh@linuxfoundation.org,
-	joe@perches.com,
-	linux-kernel@vger.kernel.org,
-	lukas.bulwahn@gmail.com,
-	ojeda@kernel.org,
-	pbonzini@redhat.com,
-	rust-for-linux@vger.kernel.org,
-	tmgross@umich.edu,
-	trintaeoitogc@gmail.com,
-	walmeida@microsoft.com
-Subject: Re: [PATCH V6 2/2] checkpatch: check format of Vec<String> in modules
-Date: Wed,  5 Mar 2025 22:59:01 -0300
-Message-Id: <20250306015901.241800-1-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CANiq72koDba445gMYtC_VEcFk2+O-Xg2-2y6uMyp7onBy=7rcw@mail.gmail.com>
-References: <CANiq72koDba445gMYtC_VEcFk2+O-Xg2-2y6uMyp7onBy=7rcw@mail.gmail.com>
+	s=arc-20240116; t=1741226553; c=relaxed/simple;
+	bh=WlJP3bvdaedk1RE+kYkYB9tM7ilflJ/O+x+XG75hb74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JDNOqNstm9XvbkbX41axw3mxcfRkNFG/XmycFBET8GUUDUGWOe0gSwBFpcZqWEguOzfzzB6dVef/AkoLcxilyZUcDMr+mjlYn2iTUWnWOvKzPiVUyelGueL1fywDtSPau2wAiWTLlhDUEVDCszG2u4TUuDPAHLwwN3es8cnrVko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=194.107.17.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strace.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from mua.local.altlinux.org (mua.local.altlinux.org [192.168.1.14])
+	by vmicros1.altlinux.org (Postfix) with ESMTP id F1E6872C8CC;
+	Thu,  6 Mar 2025 05:02:22 +0300 (MSK)
+Received: by mua.local.altlinux.org (Postfix, from userid 508)
+	id E1F517CCB3A; Thu,  6 Mar 2025 04:02:22 +0200 (IST)
+Date: Thu, 6 Mar 2025 04:02:22 +0200
+From: "Dmitry V. Levin" <ldv@strace.io>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, strace-devel@lists.strace.io,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 0/6] ptrace: introduce PTRACE_SET_SYSCALL_INFO API
+Message-ID: <20250306020222.GA24365@strace.io>
+References: <20250303111910.GA24170@strace.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303111910.GA24170@strace.io>
 
-Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
-> No, Andreas means a script written in Rust, rather than a binary that
-> comes from the toolchain.
+Andrew, could you take this patchset into your tree, please?
+
+It has been under review for almost two months, the last reply was two
+weeks ago, and by now all activity seems to be over.  The ptrace maintainer
+approved the ptrace-related patches of this patchset more than a month ago.
+Admittedly, most of architecture maintainers ignored the
+architecture-specific patches from this series, but this is expected,
+so I don't think it's worth waiting for their reaction any longer.
+
+v7: https://lore.kernel.org/all/20250303111910.GA24170@strace.io/
+
+[trimmed Cc list to save people from irrelevant ping messages.]
+
+On Mon, Mar 03, 2025 at 01:19:10PM +0200, Dmitry V. Levin wrote:
+> PTRACE_SET_SYSCALL_INFO is a generic ptrace API that complements
+> PTRACE_GET_SYSCALL_INFO by letting the ptracer modify details of
+> system calls the tracee is blocked in.
 > 
-> I think it could be a good idea (it would be lovely to write the
-> checker in Rust -- I also had a checker bot in Python from the old
-> days of the old `rust` branch in GitHub), but `checkpatch.pl` doesn't
-> need a built kernel, so it would be a disadvantage or at least a
-> difference w.r.t. the usual `checkpatch.pl`, and we may not be able to
-> call it from `checkpatch.pl`.
-I don't know if I really understand how this would is do.
+> This API allows ptracers to obtain and modify system call details in a
+> straightforward and architecture-agnostic way, providing a consistent way
+> of manipulating the system call number and arguments across architectures.
+> 
+> As in case of PTRACE_GET_SYSCALL_INFO, PTRACE_SET_SYSCALL_INFO also
+> does not aim to address numerous architecture-specific system call ABI
+> peculiarities, like differences in the number of system call arguments
+> for such system calls as pread64 and preadv.
+> 
+> The current implementation supports changing only those bits of system call
+> information that are used by strace system call tampering, namely, syscall
+> number, syscall arguments, and syscall return value.
+> 
+> Support of changing additional details returned by PTRACE_GET_SYSCALL_INFO,
+> such as instruction pointer and stack pointer, could be added later if
+> needed, by using struct ptrace_syscall_info.flags to specify the additional
+> details that should be set.  Currently, "flags" and "reserved" fields of
+> struct ptrace_syscall_info must be initialized with zeroes; "arch",
+> "instruction_pointer", and "stack_pointer" fields are currently ignored.
+> 
+> PTRACE_SET_SYSCALL_INFO currently supports only PTRACE_SYSCALL_INFO_ENTRY,
+> PTRACE_SYSCALL_INFO_EXIT, and PTRACE_SYSCALL_INFO_SECCOMP operations.
+> Other operations could be added later if needed.
+> 
+> Ideally, PTRACE_SET_SYSCALL_INFO should have been introduced along with
+> PTRACE_GET_SYSCALL_INFO, but it didn't happen.  The last straw that
+> convinced me to implement PTRACE_SET_SYSCALL_INFO was apparent failure
+> to provide an API of changing the first system call argument on riscv
+> architecture [1].
+> 
+> ptrace(2) man page:
+> 
+> long ptrace(enum __ptrace_request request, pid_t pid, void *addr, void *data);
+> ...
+> PTRACE_SET_SYSCALL_INFO
+>        Modify information about the system call that caused the stop.
+>        The "data" argument is a pointer to struct ptrace_syscall_info
+>        that specifies the system call information to be set.
+>        The "addr" argument should be set to sizeof(struct ptrace_syscall_info)).
+> 
+> [1] https://lore.kernel.org/all/59505464-c84a-403d-972f-d4b2055eeaac@gmail.com/
+> 
+> Notes:
+>     v7:
+>     * csky: Fix typo in comment
+>     * mips: syscall_set_arguments: Remove mips_syscall_is_indirect check
+>     * mips: syscall_set_nr: Reword comment
+>     * mips: Add Reviewed-by
+>     * v6: https://lore.kernel.org/all/20250217090834.GA18175@strace.io/
+> 
+>     v6:
+>     * mips: Submit mips_get_syscall_arg() o32 fix via mips tree
+>       to get it merged into v6.14-rc3
+>     * Rebase to v6.14-rc3
+>     * v5: https://lore.kernel.org/all/20250210113336.GA887@strace.io/
+> 
+>     v5:
+>     * ptrace: Extend the commit message to say that the new API does not aim
+>       to address numerous architecture-specific syscall ABI peculiarities
+>     * selftests: Add a workaround for s390 16-bit syscall numbers
+>     * parisc: Add Acked-by
+>     * v4: https://lore.kernel.org/all/20250203065849.GA14120@strace.io/
+> 
+>     v4:
+>     * Split out syscall_set_return_value() for hexagon into a separate patch
+>     * s390: Change the style of syscall_set_arguments() implementation as
+>       requested
+>     * ptrace: Add Reviewed-by
+>     * v3: https://lore.kernel.org/all/20250128091445.GA8257@strace.io/
+> 
+>     v3:
+>     * powerpc: Submit syscall_set_return_value() fix for "sc" case separately
+>     * mips: Do not introduce erroneous argument truncation on mips n32,
+>       add a detailed description to the commit message of the
+>       mips_get_syscall_arg() change
+>     * ptrace: Add explicit padding to the end of struct ptrace_syscall_info,
+>       simplify obtaining of user ptrace_syscall_info,
+>       do not introduce PTRACE_SYSCALL_INFO_SIZE_VER0
+>     * ptrace: Change the return type of ptrace_set_syscall_info_* functions
+>       from "unsigned long" to "int"
+>     * ptrace: Add -ERANGE check to ptrace_set_syscall_info_exit(),
+>       add comments to -ERANGE checks
+>     * ptrace: Update comments about supported syscall stops
+>     * selftests: Extend set_syscall_info test, fix for mips n32
+>     * riscv: Add Tested-by and Reviewed-by
+> 
+>     v2:
+>     * Add patch to fix syscall_set_return_value() on powerpc
+>     * Add patch to fix mips_get_syscall_arg() on mips
+>     * Add syscall_set_return_value() implementation on hexagon
+>     * Add syscall_set_return_value() invocation to syscall_set_nr()
+>       on arm and arm64.
+>     * Fix syscall_set_nr() and mips_set_syscall_arg() on mips
+>     * Add a comment to syscall_set_nr() on arc, powerpc, s390, sh,
+>       and sparc
+>     * Remove redundant ptrace_syscall_info.op assignments in
+>       ptrace_get_syscall_info_*
+>     * Minor style tweaks in ptrace_get_syscall_info_op()
+>     * Remove syscall_set_return_value() invocation from
+>       ptrace_set_syscall_info_entry()
+>     * Skip syscall_set_arguments() invocation in case of syscall number -1
+>       in ptrace_set_syscall_info_entry() 
+>     * Split ptrace_syscall_info.reserved into ptrace_syscall_info.reserved
+>       and ptrace_syscall_info.flags
+>     * Use __kernel_ulong_t instead of unsigned long in set_syscall_info test
+> 
+> Dmitry V. Levin (6):
+>   hexagon: add syscall_set_return_value()
+>   syscall.h: add syscall_set_arguments()
+>   syscall.h: introduce syscall_set_nr()
+>   ptrace_get_syscall_info: factor out ptrace_get_syscall_info_op
+>   ptrace: introduce PTRACE_SET_SYSCALL_INFO request
+>   selftests/ptrace: add a test case for PTRACE_SET_SYSCALL_INFO
+> 
+>  arch/arc/include/asm/syscall.h                |  25 +
+>  arch/arm/include/asm/syscall.h                |  37 ++
+>  arch/arm64/include/asm/syscall.h              |  29 +
+>  arch/csky/include/asm/syscall.h               |  13 +
+>  arch/hexagon/include/asm/syscall.h            |  21 +
+>  arch/loongarch/include/asm/syscall.h          |  15 +
+>  arch/m68k/include/asm/syscall.h               |   7 +
+>  arch/microblaze/include/asm/syscall.h         |   7 +
+>  arch/mips/include/asm/syscall.h               |  43 ++
+>  arch/nios2/include/asm/syscall.h              |  16 +
+>  arch/openrisc/include/asm/syscall.h           |  13 +
+>  arch/parisc/include/asm/syscall.h             |  19 +
+>  arch/powerpc/include/asm/syscall.h            |  20 +
+>  arch/riscv/include/asm/syscall.h              |  16 +
+>  arch/s390/include/asm/syscall.h               |  21 +
+>  arch/sh/include/asm/syscall_32.h              |  24 +
+>  arch/sparc/include/asm/syscall.h              |  22 +
+>  arch/um/include/asm/syscall-generic.h         |  19 +
+>  arch/x86/include/asm/syscall.h                |  43 ++
+>  arch/xtensa/include/asm/syscall.h             |  18 +
+>  include/asm-generic/syscall.h                 |  30 +
+>  include/uapi/linux/ptrace.h                   |   7 +-
+>  kernel/ptrace.c                               | 179 +++++-
+>  tools/testing/selftests/ptrace/Makefile       |   2 +-
+>  .../selftests/ptrace/set_syscall_info.c       | 519 ++++++++++++++++++
+>  25 files changed, 1138 insertions(+), 27 deletions(-)
+>  create mode 100644 tools/testing/selftests/ptrace/set_syscall_info.c
+> 
+> 
+> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
 
-> Did you check? i.e. is it something we noticed, or something that
-> generally happens but maybe not in this case? Is there a way to
-> workaround or disable that (e.g. a `rustfmt` config value)?
-The rustfmt have a array_width parameter [1], but with this, all arrays in rust
-code will have the formatting that we set. (In this case, is 1 per line).
-
-If we set the max_width, for limit the width of line, it seens for me, that
-arrays don't are affected.
-
-[1] https://github.com/rust-lang/rustfmt/blob/master/Configurations.md#array_width
-
-Thanks,
-Guilherme
+-- 
+ldv
 
