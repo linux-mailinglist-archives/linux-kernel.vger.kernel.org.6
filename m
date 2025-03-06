@@ -1,137 +1,152 @@
-Return-Path: <linux-kernel+bounces-548947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548948-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D16A54B3F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:55:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A69F5A54B43
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:56:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AFE5171BBB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:55:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D1E81896C8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:56:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FBA208989;
-	Thu,  6 Mar 2025 12:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284F120A5D3;
+	Thu,  6 Mar 2025 12:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b="jQi8hZqX"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YkGS9KPG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078F71D9A79
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 12:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE64F1F5FD;
+	Thu,  6 Mar 2025 12:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741265717; cv=none; b=atOZrOlst0Q+bx8W19kqKTLiCgTsuT7F79YpgUMrlwibgbP5TW0dV7OHyz7HnIQTthNgkb+MpMali5hSLJSATZ9SZ7P0IUtd1RDXbueS7pHgQGGyEtWzhK/3SiNeCw1aMD58umv59zTl6BW9q080GLQ9H9oIVGmYahH1OX1oono=
+	t=1741265778; cv=none; b=bT6ayd0rLI2MKXLWyncItDJrm+0uvjB4zSQL9/ycxXWP9vItmq4Doug9wwLYZ1XzhAxdvvhuOCLwoh2Vitte/IYo/rlbEgtg0homQpYxp3GSS2Og9vOHobjnxV5aG8WLBBAWhz4xIFXD2mTXOqd82nu7lsytRqBmsPHxQ6AVBNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741265717; c=relaxed/simple;
-	bh=CL8xqMbDSfXJhqryd6RGNfCVZzu0ssYGv1JLaVXfKDw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KRb/prV3Y3dTxs/SEXm5R0v1Grmf3e41Ax40lUg2K9sqERKICe0Vej9IacglEB/bvVJ3nVsq0jnlgoLOK2iK92i/0jK312rImCRwwV1qvdArF/Q8vGB6ZLNDxyY4+Buus8hkNoyk71EFkT7G+hKGHtleGnizjHABPvxFopQH6wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b=jQi8hZqX; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2f44353649aso986258a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 04:55:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl.com; s=google; t=1741265714; x=1741870514; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ccc/H2dnyXMFfYeHkIhobLxEoO1aevmdpjSTBRDha2k=;
-        b=jQi8hZqX+1fmPbgQm5Cxx8eDfA9IEDvxuZXTmdqS1PclWw+rp5Zs12L3KhE5Gj5wjk
-         Eb1L+yGE+J5z4vHP3ISDoFMaAXGmChxxGUm3r13QhHsVmAcygKlQdow8Y1A93z1lZCHY
-         0My/e0PGIxH2idRBNMhWC28qVLg/sB/xmeeuMDDCl3PjZ6EVK5KNEvssHuZy3M2cT2GB
-         FomNtajXkrpT6CKtjDP5EJAkL53MClvHlyfJQ37lNXhOR9c6ZWXFsldaYXzuBJ79RRc0
-         Fp56QFfG+4Gw+dYxg+AUFUwlgjNqZLuZjSsKeZqO/nimAxxxctoT5HzSdwtSGyps28SG
-         qVPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741265714; x=1741870514;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ccc/H2dnyXMFfYeHkIhobLxEoO1aevmdpjSTBRDha2k=;
-        b=pNYOFyM6TouBZvq093ntKxiRHmscZNuyq6lZefNz/ceFd8N4q1SvBXaGZAM8pshBJn
-         +Kd1G6heOAVtvDrFAd00cUCXF6E6GrF6j1+zCLGSS4qS++yRuLi0v9QwNpsSOAxtWd3W
-         kIrVExhjUi08A7dah0WhBoHxHyeQU+NjELNtvqCxT0L/f+KZSDzDlnY01D+Z+wiAHow5
-         6st6D2BxpYjBigX2DkqDbptoszp8het/XzuMhnEI4QDVPBtR+p7jOD/mqM5B8Wy1fNNd
-         7KsRAMpLIUr8pEyF+o4QeDIx0zKP1/G53EpzOzhkwGIo4tzCFSHW0avHZMyQyealGjM9
-         viHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUeHX5lCDqRpqZxoPd1Nn3F1TWDMKfeg/dcD+uSKf/fUN3Q/YRaZ6fmSMVFOHPKpm6ps3VytaHPizwal+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEu+eyURX9i9oGH0GL+fh6DzHYOQTBQgq3bZ6rSsFgknGyZGzY
-	12nGTMBoWZdGWjy9Vj/KMbZ0TeTflCGvDS1LFklqFpISGSPObJZqoZGu2sbD8vX7MEQ9ozPQu5K
-	TloWVCPwRfDz4dokxnU217Nc3a0LPcbganx9o0g==
-X-Gm-Gg: ASbGncsR8monyQG+BvsZaE9Dsrt61jr7P79EihQoaneC1bfUzVJ2PfowyC3DkfhBWdj
-	/DOKHRfaWh2vQSAo//SJYmLW+FYDcy+I3zVF4oX9bO6CIVUoMOzZvK3EUZeYTt57xHJos604DT1
-	5Q/AP1S9o3dTFkSDLK5wp80YQq
-X-Google-Smtp-Source: AGHT+IF7OiPlaCSQEnsXNBjhCDFUemUvQa+NRtTs/JSJ9+1Qyh4+kePAcg2WzwOWcgqtz8B61BAqo3R1eMqK+BSPwLY=
-X-Received: by 2002:a17:90a:8c18:b0:2ff:5e4e:861 with SMTP id
- 98e67ed59e1d1-2ff5e4e0a25mr6281780a91.24.1741265713650; Thu, 06 Mar 2025
- 04:55:13 -0800 (PST)
+	s=arc-20240116; t=1741265778; c=relaxed/simple;
+	bh=9MvqC8ylQ6fQhKk8+WzF1GyYLgjYDw11/grvnNkl7YI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n0Z0mR/ZPdSUNstBo1urwP+QTIbpQ420Xvyc6zXJbIT75mjFIN4v/NaSD4ZP4mDczIcVeSkRFoscPmUCtVB3xqk5iXoND5WlaWhF3YZzQUjMmsEz+lDy0QhbqsYYghR4lHGjx0wvlcgEPP59yGmiCmlmRWjXMVSqgPQUl68d4n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YkGS9KPG; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741265777; x=1772801777;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=9MvqC8ylQ6fQhKk8+WzF1GyYLgjYDw11/grvnNkl7YI=;
+  b=YkGS9KPGJEj5L8AKuEil9/dec2W8/vrKlVBzcx35Mjpauq7LQVriOket
+   UFzm3uW2KRFsavALsmV2lvwH5jP05JZYMtjXaLuxadLYnCWikiY0+grxO
+   UXPhSldBhXSGlEKK55FF47NeH5FTUH5XKRTVEzXgxdTi5e7XSsimPVaQ9
+   JYPTpdqYBwPgo9Orxsc9exYDdHXkpitA1kQtpI0PnXc3czY13wNT9FBds
+   B6QZab4+9rg6G00VSo6UITvOhbXABoP/bfVzyJaSRSm9dSzNPMLNmWTaV
+   6IhjHUXxvJF4xuc9kdnSYiqC3kT6RW9j2lZnlw+8lpDN/8RcOqyHIoLUO
+   A==;
+X-CSE-ConnectionGUID: DI0nW+UsRRee2JU5r19tLQ==
+X-CSE-MsgGUID: g9o+OhD9QJCPoApFnJqhBQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42405062"
+X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
+   d="scan'208";a="42405062"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 04:56:15 -0800
+X-CSE-ConnectionGUID: L3j3voWzQZmgIzwPQH5Lpw==
+X-CSE-MsgGUID: ExOupyuzT1OX+QCLAmrCfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="149940256"
+Received: from choongyo-mobl.gar.corp.intel.com (HELO [10.247.67.95]) ([10.247.67.95])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 04:56:07 -0800
+Message-ID: <d7c0094e-7fd3-4113-8d00-91b7a83ffd1f@linux.intel.com>
+Date: Thu, 6 Mar 2025 20:56:05 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305174505.268725418@linuxfoundation.org>
-In-Reply-To: <20250305174505.268725418@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Thu, 6 Mar 2025 21:54:56 +0900
-X-Gm-Features: AQ5f1Jpv_EZBxAwkR3XhpjU0MlJG0w8trjkFHUomYWnS5F4PAVsYZYvVmcl5D4U
-Message-ID: <CAKL4bV4TstXsNOuvqKb7shhdykg73r+zAP3MLQsf0nvGYYT0Rg@mail.gmail.com>
-Subject: Re: [PATCH 6.13 000/157] 6.13.6-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 5/6] net: stmmac: configure SerDes according
+ to the interface mode
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Simon Horman <horms@kernel.org>, Jose Abreu <joabreu@synopsys.com>,
+ Jose Abreu <Jose.Abreu@synopsys.com>,
+ David E Box <david.e.box@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H . Peter Anvin" <hpa@zytor.com>,
+ Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>,
+ David E Box <david.e.box@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Maxime Coquelin
+ <mcoquelin.stm32@gmail.com>, Alexandre Torgue
+ <alexandre.torgue@foss.st.com>, Jiawen Wu <jiawenwu@trustnetic.com>,
+ Mengyuan Lou <mengyuanlou@net-swift.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Serge Semin <fancer.lancer@gmail.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+References: <20250227121522.1802832-1-yong.liang.choong@linux.intel.com>
+ <20250227121522.1802832-6-yong.liang.choong@linux.intel.com>
+ <Z8lLm9Ze9VAx3cE_@surfacebook.localdomain>
+ <601c88fb-8ec8-4866-a45d-f28dea6d9625@linux.intel.com>
+ <CAHp75VeOKbAsvSuf5+VQnGFmUcN92TNnR2eF1+70h3PjaMdMqA@mail.gmail.com>
+Content-Language: en-US
+From: Choong Yong Liang <yong.liang.choong@linux.intel.com>
+In-Reply-To: <CAHp75VeOKbAsvSuf5+VQnGFmUcN92TNnR2eF1+70h3PjaMdMqA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Greg
 
-On Thu, Mar 6, 2025 at 3:14=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.13.6 release.
-> There are 157 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 07 Mar 2025 17:44:26 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.13.6-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.13.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
 
-6.13.6-rc1 tested.
+On 6/3/2025 5:05 pm, Andy Shevchenko wrote:
+> On Thu, Mar 6, 2025 at 10:39 AM Choong Yong Liang
+> <yong.liang.choong@linux.intel.com> wrote:
+>> On 6/3/2025 3:15 pm, Andy Shevchenko wrote:
+>>> Thu, Feb 27, 2025 at 08:15:21PM +0800, Choong Yong Liang kirjoitti:
+> ...
+> 
+>>>> config DWMAC_INTEL
+>>>>       default X86
+>>>>       depends on X86 && STMMAC_ETH && PCI
+>>>>       depends on COMMON_CLK
+>>>> +    depends on ACPI
+>>> Stray and unexplained change. Please, fix it. We don't need the dependencies
+>>> which are not realised in the compile time.
+>> The dependency on ACPI is necessary because the intel_pmc_ipc.h header
+>> relies on ACPI functionality to interact with the Intel PMC.
+> So, that header has to be fixed as ACPI here is really unneeded
+> dependency for the cases when somebody (for whatever reasons) want to
+> build a kernel without ACPI support but with the driver enabled for
+> let's say PCI device.
+> 
+> 
+> -- With Best Regards, Andy Shevchenko
 
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
+Hi Andy,
 
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+Thank you for your feedback, Andy.
+I appreciate your insights regarding the ACPI dependency.
+The intel_pmc_ipc.h header is under the ownership of David E Box, who 
+focuses on the platform code, while my focus is on the netdev.
 
-[    0.000000] Linux version 6.13.6-rc1rv-g30be4aa8b957
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20250207, GNU ld (GNU
-Binutils) 2.44) #1 SMP PREEMPT_DYNAMIC Thu Mar  6 20:52:49 JST 2025
+Hi David,
 
-Thanks
+if you could kindly look into making the ACPI dependency optional in the 
+intel_pmc_ipc.h header, it would be greatly appreciated.
+I am more than willing to provide any support necessary to ensure a smooth 
+resolution.
 
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+This patch series has already been accepted, but we recognize the 
+importance of addressing this issue in the next patch series for upstream.
+Our goal is to ensure that the driver can be compiled and function 
+correctly in both ACPI and non-ACPI environments.
+
+Thank you both for your understanding and collaboration.
 
