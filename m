@@ -1,109 +1,170 @@
-Return-Path: <linux-kernel+bounces-548917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 721BAA54AD6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:36:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62213A54AD8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:38:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 182833AF7B4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:36:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90B591891626
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B5E420B1F3;
-	Thu,  6 Mar 2025 12:35:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8232920B1E4;
+	Thu,  6 Mar 2025 12:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b="UKIrSAgW"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G10FoJKX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6C620C03C;
-	Thu,  6 Mar 2025 12:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780061FC0E5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 12:38:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741264537; cv=none; b=hLcNNrGqEz228g8zysyrs6cZkDoDZuiGhg5tML1j6lbSxzjlQxccrT5P96zDQgAfyEitZ0nGBKBg+QV6XIqeWoRqFpNA4AMrSwrl8gPMuKBiFiJiPmsiR4lQ49oSsWGOMbK9j9MB2CxLeqLjMfwb4lx1UnVVa7HpBzMASB86J6k=
+	t=1741264683; cv=none; b=tl+6MwwBjzs7spoMmbVqJoGuhx1RliRq2d5KLnJCvfMqxJTpO6ZhrY9+/v280ERaG8p5two8WckiUAIaknmdiRTW8kLLsL/6/RstNJeeuN6ZYPQBMySRI0/A23HbZVfk48ldAM/gK2SIjlEkZzzCsJD3rXu1katG4e2cdygHHO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741264537; c=relaxed/simple;
-	bh=hEdnDwVJYm+8ExpU7Gb8sRVeW+r5/QBiFQu5n+BciFc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sEtGXEsHQz5F5lF18zUeqc84/oXcFH7M5gWfi44gJVwD1CEKPpYY4A2qobrtRaW+AB9QmLwzIgb+7pUoZoQUjav5RMWdVi9F06SdzEsdz0UDPaNpcjCrXpmfY9yEJRQpcREIBtGYSlBMF+TZA5ZJy2hdHmQumY1GEJBkdP/phPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org; spf=pass smtp.mailfrom=clip-os.org; dkim=pass (2048-bit key) header.d=clip-os.org header.i=@clip-os.org header.b=UKIrSAgW; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=clip-os.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=clip-os.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0C37B44251;
-	Thu,  6 Mar 2025 12:35:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=clip-os.org; s=gm1;
-	t=1741264533;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DZX6+XiM6OJ3HGkhOxfUk7v+ByCTdttaIt3fhOvtZ1o=;
-	b=UKIrSAgWvAWf7ebts3IU6CXQztXJeLemf0lDgxFLUNAfE7LaxCHyQhYzwzh8zKJFuvbk99
-	RbykJYW4ySJOUC+Mabg8lepOlc4f1Vw7PjGlwbl33/IEOFQBO4XzcEvTmhHhF7l6J+XFpI
-	/I4nUsfcT6XoVA8qqNCZD2RrQKRR0PNPc9Qg5ZvcofLwqSFAjvDpUp3KUwauTxavAGm/a4
-	8V61qtFjof0lc1/VYO7Em8635XiDXMkUPN93woX2zFBea6iYv7K19nlSK8xgEvpf2ymccG
-	ZBzkaFQoQC4IzaQbC2nKrTGNuSZNjRxw8UO6qdvKonCreSaFBkIFSDmGAU/rUg==
-From: nicolas.bouchinet@clip-os.org
-To: coda@cs.cmu.edu,
-	linux-kernel@vger.kernel.org,
-	codalist@coda.cs.cmu.edu,
-	linux-nfs@vger.kernel.org
-Cc: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>,
-	Joel Granados <j.granados@samsung.com>,
-	Clemens Ladisch <clemens@ladisch.de>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jan Harkes <jaharkes@cs.cmu.edu>,
-	Trond Myklebust <trondmy@kernel.org>,
-	Anna Schumaker <anna@kernel.org>
-Subject: [PATCH v3 3/3] sysctl: Fixes max-user-freq bounds
-Date: Thu,  6 Mar 2025 13:35:10 +0100
-Message-ID: <20250306123514.386434-4-nicolas.bouchinet@clip-os.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250306123514.386434-1-nicolas.bouchinet@clip-os.org>
-References: <20250306123514.386434-1-nicolas.bouchinet@clip-os.org>
+	s=arc-20240116; t=1741264683; c=relaxed/simple;
+	bh=zauPh/FxCkM1LLQh0HklNveqEdMXSZj8H+5pd4/Y3lA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SpE21q0Izm8w19rv69jETRLnjBHVd3EcFG2gVi9AE2JriGocedVIShb0F9t5TC/fm22WdqvRrXPeSNurS54OvnZwdppLcbsBXhocOUJ8IcyxWZ8oOiSaPv/8htwDvMdOvkpkD2YvsIIsfdYsvkYgdKJihTqbEKb8I26BzrItP9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G10FoJKX; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741264683; x=1772800683;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zauPh/FxCkM1LLQh0HklNveqEdMXSZj8H+5pd4/Y3lA=;
+  b=G10FoJKXbwZ5RjQS1HECSBtc3sQ09QPyxs9DMTpd8G9Wz/bbPbk0gz6k
+   I3ifJ2H9RKxD2WU9GFgwbt6MOYRl4/2e0CBV9waYEBHLmue5uK/Rt7ldf
+   d6fe5+kxPXWzO0fzJzID0u46lhDcp7rN4kfTFx3Tr0vnvKDC+Kfkj0oPz
+   y0YimaN7J26I5yzYYlvT/RJhHNXqOCh5yXim/Hwdu8zlpyVUSmRNApioD
+   TGNbuxO065ew472smpoBGCyptelyqEok0+cwjYQQ31sqKWHlVE0tsQE6/
+   MBlMg5oqPpglbP2utY54D/eHT+XaNoZqH5oaopCX0Er2NAJv0msCZM5U+
+   A==;
+X-CSE-ConnectionGUID: xOS0cIdmTg6+6WCVJM6Jmw==
+X-CSE-MsgGUID: Yu4/ndqVTyiS1BuYyYMdEA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42466927"
+X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
+   d="scan'208";a="42466927"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 04:38:02 -0800
+X-CSE-ConnectionGUID: SqIkQi8MQ2StcqiExmbZaQ==
+X-CSE-MsgGUID: +r7KQ3LSSqWkCBjXNYkdVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
+   d="scan'208";a="119019708"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 04:38:00 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tqAU9-000000007Gz-2KHf;
+	Thu, 06 Mar 2025 14:37:57 +0200
+Date: Thu, 6 Mar 2025 14:37:57 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Raag Jadav <raag.jadav@intel.com>
+Cc: Mark Brown <broonie@kernel.org>, lgirdwood@gmail.com,
+	bleung@chromium.org, groeck@chromium.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Convert regulator drivers to use
+ devm_kmemdup_array()
+Message-ID: <Z8mXJUwt4q2NY059@smile.fi.intel.com>
+References: <20250228072057.151436-1-raag.jadav@intel.com>
+ <174077776750.602863.5336934105237710269.b4-ty@kernel.org>
+ <Z8kFW13EyR0YXnJd@black.fi.intel.com>
+ <Z8loo-N5byavJLkm@smile.fi.intel.com>
+ <Z8l1ozUOMTDNQupC@black.fi.intel.com>
+ <Z8mBQEKAJfZd6a7G@smile.fi.intel.com>
+ <Z8mHw_W1xT9Mcilt@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdejjeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpehnihgtohhlrghsrdgsohhutghhihhnvghtsegtlhhiphdqohhsrdhorhhgnecuggftrfgrthhtvghrnhepteehfeetkeeujeethfehieelhfejfeduteejieelveegfeefieeuheeiteethfevnecukfhppeeltddrieefrddvgeeirddukeejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdeifedrvdegiedrudekjedphhgvlhhopegrrhgthhhlihhnuhigrddrpdhmrghilhhfrhhomhepnhhitgholhgrshdrsghouhgthhhinhgvthestghlihhpqdhoshdrohhrghdpnhgspghrtghpthhtohepuddvpdhrtghpthhtoheptghouggrsegtshdrtghmuhdrvgguuhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegtohgurghlihhsthestghouggrrdgtshdrtghmuhdrvgguuhdprhgtphhtthhopehlihhnuhigqdhnfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnhhitgholhgrshdrsghouhgthhhinhgvthesshhsihdrghhou
- hhvrdhfrhdprhgtphhtthhopehjrdhgrhgrnhgrughoshesshgrmhhsuhhnghdrtghomhdprhgtphhtthhopegtlhgvmhgvnhhssehlrgguihhstghhrdguvgdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggv
-X-GND-Sasl: nicolas.bouchinet@clip-os.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8mHw_W1xT9Mcilt@black.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+On Thu, Mar 06, 2025 at 01:32:19PM +0200, Raag Jadav wrote:
+> On Thu, Mar 06, 2025 at 01:04:32PM +0200, Andy Shevchenko wrote:
+> > On Thu, Mar 06, 2025 at 12:14:59PM +0200, Raag Jadav wrote:
+> > > On Thu, Mar 06, 2025 at 11:19:31AM +0200, Andy Shevchenko wrote:
+> > > > On Thu, Mar 06, 2025 at 04:15:55AM +0200, Raag Jadav wrote:
+> > > > > On Fri, Feb 28, 2025 at 09:22:47PM +0000, Mark Brown wrote:
+> > > > > > On Fri, 28 Feb 2025 12:50:55 +0530, Raag Jadav wrote:
+> > > > > > > This series converts regulator drivers to use the newly introduced[1]
+> > > > > > > devm_kmemdup_array() helper. This depends on changes available on
+> > > > > > > immutable tag[2].
+> > > > > > > 
+> > > > > > > [1] https://lore.kernel.org/r/20250212062513.2254767-1-raag.jadav@intel.com
+> > > > > > > [2] https://lore.kernel.org/r/Z7xGpz3Q4Zj6YHx7@black.fi.intel.com
+> > > > > > > 
+> > > > > > > [...]
+> > > > > > 
+> > > > > > Applied to
+> > > > > > 
+> > > > > >    https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+> > > > > 
+> > > > > Thank you.
+> > > > > 
+> > > > > Unless there's a nuance intended in the merge series title that I'm unable
+> > > > > to understand, it probably seems incomplete.
+> > > > 
+> > > > I believe it's an issue somewhere in the scripts. The long Subject line is
+> > > > split in the mailbox and that's probably is not supported by the machinery.
+> > > > 
+> > > > You are not the only one who reports this issue.
+> > > 
+> > > While I'm not well educated on the machinery, I'm also seeing devm_kmemdup_array()
+> > > introduction commit reordered in -next and thinking perhaps it can cause issues
+> > > with bisect, especially after final merge into Linus' tree?
+> > 
+> > I;m not sure what you exactly pointing out here. Mark seems applied only
+> > necessary part of the immutable tag, which have the same effect. The Git merges
+> > only once the stuff as long as it has the same hash.
+> 
+> $ git describe
+> next-20250306
+> 
+> $ git log --oneline --grep raag
 
-Bound max-user-freq sysctl writings between SYSCTL_ZERO
-and SYSCTL_INT_MAX.
+--author="Raag ..."
 
-The proc_handler has thus been updated to proc_dointvec_minmax.
+...
 
-Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
----
- drivers/char/hpet.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+> 1f4c7f3b3afa Merge patch series "Split devres APIs to device/devres.h and introduce devm_kmemdup_array()"
+> a103b833ac38 devres: Introduce devm_kmemdup_array()
+> b8c38ccb2ca5 input: ipaq-micro-keys: use devm_kmemdup_array()
+> cdcc09a495a4 input: sparse-keymap: use devm_kmemdup_array()
+> a0d78eec8839 iio: adc: xilinx-xadc-core: use devm_kmemdup_array()
+> 86068aca7548 pinctrl: pxa2xx: use devm_kmemdup_array()
+> 91bfcc7a2fdb pinctrl: tangier: use devm_kmemdup_array()
+> d795fb90d6c6 pinctrl: cherryview: use devm_kmemdup_array()
+> f192c8447f4e pinctrl: baytrail: copy communities using devm_kmemdup_array()
+> 753764aa8eb5 pinctrl: intel: copy communities using devm_kmemdup_array()
+> a21cad931276 driver core: Split devres APIs to device/devres.h
+> 18311a766c58 err.h: move IOMEM_ERR_PTR() to err.h
+> 
+> I'm expecting commit a103b833ac38 to be before its users, or perhaps I'm
+> doing something wrong here?
 
-diff --git a/drivers/char/hpet.c b/drivers/char/hpet.c
-index e110857824fcb..528b43e893d49 100644
---- a/drivers/char/hpet.c
-+++ b/drivers/char/hpet.c
-@@ -730,7 +730,9 @@ static const struct ctl_table hpet_table[] = {
- 	 .data = &hpet_max_freq,
- 	 .maxlen = sizeof(int),
- 	 .mode = 0644,
--	 .proc_handler = proc_dointvec,
-+	 .proc_handler = proc_dointvec_minmax,
-+	 .extra1 = SYSCTL_ZERO,
-+	 .extra2 = SYSCTL_INT_MAX,
- 	 },
- };
- 
+$ git tag --contains a103b833ac38
+ib-devres-iio-input-pinctrl-v6.15
+next-20250225
+next-20250226
+next-20250227
+next-20250228
+next-20250303
+next-20250304
+next-20250305
+next-20250306
+
 -- 
-2.48.1
+With Best Regards,
+Andy Shevchenko
+
 
 
