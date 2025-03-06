@@ -1,170 +1,199 @@
-Return-Path: <linux-kernel+bounces-548891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50BEDA54A8E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:22:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 963FBA54A91
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:22:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A70D03A0522
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:22:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C12ED169F1F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 607C120ADEE;
-	Thu,  6 Mar 2025 12:22:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1FF20B210;
+	Thu,  6 Mar 2025 12:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lhZooeJG"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WF3Z+R9l"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9451853
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 12:22:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1E420A5C6
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 12:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741263731; cv=none; b=PEEZlbH2dYUA/xmQsQvHwOj0Cfnej8uGI2d70gx7wRB/7EiR2XiXM742jFHl/klPCc2ADC90Mxgz/PMSPJhZFut3PNdt+J4uXTPh8cluBdruDoKMoZOXUe2PVg0b4Ka93tRVpsARwUO4lM45AncjfdSBb5TarWq99o6Rp57lHIo=
+	t=1741263764; cv=none; b=SDmfdbA6NcQL7ksVuJj66FmXhoPE5ITcqllzf4o2ETCcFHN5xJizAPdPpNpXIXMaUjgxz6Vj6jrzmRh7wFGD7LPg2S1TmNWOJbIJ/qzezXF32U7Gt/QgrVPWImdss+cy3D+EqZzaCRgI4gmAkbvDQQS/GXVWhFAaO1h/bsyCOrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741263731; c=relaxed/simple;
-	bh=8WpiNtP4SUsV2btOYYsU6TNjuaweKXpboF/a4bcaaGY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jn91OIULtm6xXYGM4UaZ6L2NJoJIf5Fp2S8FnLkMAwLsEsifCTK4Z63BSJ3DAJAQOzPPl6ozi1aXUmMJF3GEbllz5wWs7OX9ejfcj3hYjYd5HNev1MPINhuP1f1BmrvdzD7xU0pteDH73VIDF9Od0sLpmINCSJLXRWaIavgsGUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lhZooeJG; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-523c67dba31so247730e0c.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 04:22:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741263729; x=1741868529; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=NMaFzP48YFinEhiZrVchmGEvLHB/ao+cnP7Dht42RRM=;
-        b=lhZooeJGKHcWX2pgKIrhdsCMV/xzmLFp4cdRGNcr7F5lsq6bGufTMT+029mcA6zmA/
-         sS0Dhw+3hXO7lJu4Nk8YOujzswLtrFVJEq8z5DzE9EpDZMSRpS21VJx/WLhrD1aHcLu6
-         HUnNTBTyqhzcW0hitGyqb0BJqAEWExi8WiE1ZVKxZAbjyNlscXlv8FeQg2ABysM2wqOI
-         SAMtWD+cwBzaeQuN9I9bJ84tyqOBGWRv0fyBzXJ4LOd6n9QbzYipcITRoxxrF3EdKWfx
-         aNodIWdmKxEx5JMIUyQ7q5KIOo2QOK6nICF2dFcW1ECS3zjdr99C423yi8eUElK+FRfE
-         vktg==
+	s=arc-20240116; t=1741263764; c=relaxed/simple;
+	bh=IYwcKZ9klDpKqc3WNYt4WS/F7VHj1QpFPAqLoaQc6DY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eo/pfEJHgBrxEAK9Uld/eXKKZw4Oy+Pjv6MZjDAi22NFVTmCnfweunbL37AspAc6xiF+REtMUFC8GO0htRGyqF96zEMOgKgi3f0YPuLlIYM41eDixYua7E0ICvbrCnKRUUV8Y8Aay/ActwvD6DfoPLmYDPwFaSxOdsL/7J9f8t8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WF3Z+R9l; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5267MW7m017916
+	for <linux-kernel@vger.kernel.org>; Thu, 6 Mar 2025 12:22:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	z5Gq4UTjbsFKwuk0lyvFU281mi+Wp78KDLHWxM5Eb88=; b=WF3Z+R9lVIJeH3b5
+	PSJ9sfrXXS1Y2MH5IbpWq22g6QQ+gJpqHAKT5b/0wfzcbMVjLtUGGPDkRW+XjYlV
+	xq1PEHBl2HfnCyF/g2X8y/j78xS8mD9BeXgCD6wFWi55XcZOwW6k5XZ7B9OWNxI9
+	tN8SGOmyqKE2JUV+/YP8Maz8916C+AprTRFTAQq58Lp/3Lnc3XdW3tuFQ4IpqZTd
+	TR6Uxvlb7xDucyLttyyWb/R7YLa6LhirkJOGUCqGE9kIUlBOBR7XRe+8KjtQ5vMM
+	sS2i7k0W7yVxS0vvn4k+PUBgyxys5yxcBdUneXj7By/pjVDa8n9lPBMa9sgyGav/
+	uIBmvw==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45778t8vu2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 12:22:41 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c3c147e8caso6336285a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 04:22:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741263729; x=1741868529;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NMaFzP48YFinEhiZrVchmGEvLHB/ao+cnP7Dht42RRM=;
-        b=adIEoI8VcmUbjqty6xSgBDvC1S8VsthKtFf6+XXYgDehz9Bxl3P/o+KYNKd1zace6H
-         FV2a6PvYZNaf8Frw+RvrUBT59qMKRb1EHaB6rUbuy2MiZXMHtAHcyJz21xoB4tCVgXO2
-         VS/z7MX0eTJ+/NBwDkDvVG/RXwJ9yoJA7Zm82c4703uDAjhEHk12QYeHwHFM/kHKloFX
-         txq1MebOSeV4fm5AAVfGu01xSkdn0N6DNOROeQYfuCuCepMij50o/1JWPgoozaB+0Rxt
-         /+5iWZGLe8TeoI38nb8TNTLFChKCDwF3wnLYE8vCbNnOXJIUvz/wCpVrAJ8nNf+teAiB
-         gC/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUkRlLFqEHcAmQOo24Pbm5w1rCKbzCRmUbTmfd5mah6hmn3k6EMMvNuKGFO9qozLzJkMjrqMaVuXwCz6iw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yza/9aJWdxa9QPuGGFiyf2s/skzisTVw+qyzpEPMpJxOwsil2Dc
-	XoJVcT2B/Du0jE2z5pX8T5dfnokdKcXfVuZQPZhxle0KQPgEfX2poJxDnBjoEKqWMVAHZzgg6qz
-	PSJZv9cqfKgWEt5U/IcGa142cj5NBCEXHWVvCvg==
-X-Gm-Gg: ASbGncvaTy0T2YrQWu8z9ubyFMIhOOhNHb1vQFehP1If+9WhmoKtc5VLCiF508cSTOU
-	rdTzt6mcx5+IBxkCInmh4OMhkzUROZGKjlJzD+aKzs2cYY4m4A+eMvt+G9+Cps+5uEMUBTiVB+N
-	6kW0+hRKThY0eH5TijZTJig5lAkbTWcj6p/9iv16plok7eUiGo8AF1r50enA==
-X-Google-Smtp-Source: AGHT+IFYww1kZHMpxt5rfe7etSrcj4Kd67QgSomHrhxf7n7GkfeEsvd0m/xOfmDxwX0pwVAOrU/zMPkV6Cfa8MEglrY=
-X-Received: by 2002:a05:6122:d21:b0:520:5185:1c31 with SMTP id
- 71dfb90a1353d-523c6281025mr4217547e0c.9.1741263728875; Thu, 06 Mar 2025
- 04:22:08 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741263760; x=1741868560;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z5Gq4UTjbsFKwuk0lyvFU281mi+Wp78KDLHWxM5Eb88=;
+        b=Sf9C3t2VmSMcRUEt1T40yX9uaHQ3tvHqSThKBFq2G2QQozzkf8lTdm11TL4G4/10Le
+         IaBrEBrQU6PtMMEKSdYCGnIu4/IXRW1kVQkOfQF/ZeadL+K5y0TC8TtLabH0kKIk2lBC
+         yOG0cMCBuUbyju+FCaxyZHJGd3Krs/SDGlBILGJl41GWmO/Q9qA6W00u535E8g2wfPEH
+         M1o7I4m3GZfuHNWDi9UlM/qcRPw32C8aw3xBer06JwMIxTpdSagYGNAqZ2SOWM1/jQy5
+         yxvu71kxTUWbMKmjp/Ds+py+v/8Z/eX69DmKh/Qz9UnQA9FmYso6LCPnNbbxFxKKk2iB
+         JrAw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNH3TPlATRjaAWmTPjYQ8w9/lAvnq7Gd2ygAXGOpKrf3tOLkYjq8U1xUJFJC0Hb0HkuT132n10fKFGfLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdO+EXTVbKdyOh0AQHRk0nK8HEmlNiV4YBXtYJ/do+WOxMPQSM
+	r4KjBEAYV4eh1D5bu3a6qLZoKCwDKIV8//oDK1Vw5JZjsZEM4FOdcjaH4Z3YXqkg54pb3hFsL3K
+	tJpGGDtBb84cZm1vBJSILgSBXmPLrQLvbZJ1PghxyX2VxRae6I+5iIhYEcaC9mJY=
+X-Gm-Gg: ASbGncv9FQlRtERRLTAQLxgoaKWij3ND92z4FblA8LHgdJ7vVLBVKnGQiNVpqRCWvNP
+	uiXBnHkufyVU4KvK9cf4hR0pvTxAWuTTIW+0sJntWJKTBZ5orDNgIqUcEHlXI5XcLaNmsaJmYeV
+	Wvs6kesdQ99aouPXMNITzq9xR6nmKNyO34lNOHT4iK6g4z0m+0TpjIQ8Drb6LrzuivBO+zP3Qs2
+	fUNEEWX9gRpJ8dr33s9g4F6O55HFJPVjCM7yDixE4pz8CbXTwJeNhM2jPHHLzof6Ngrm2ybDKIz
+	Fr2wyQXDbJHjEdhbxV5YfU5rda9jPKgkiFO7rsdRoFz6RGnr1RXxSflrSzKUMcKc1p70Bg==
+X-Received: by 2002:a05:6214:624:b0:6e6:5cad:6080 with SMTP id 6a1803df08f44-6e8e6dab467mr34449766d6.10.1741263759560;
+        Thu, 06 Mar 2025 04:22:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG/QTh0Ug1a5mDs5OMzwOybRslK0jLL6FOkoHx+QI3mLk6kOxx2Z10MrUe5swv+Xyw15xDHmA==
+X-Received: by 2002:a05:6214:624:b0:6e6:5cad:6080 with SMTP id 6a1803df08f44-6e8e6dab467mr34449586d6.10.1741263759099;
+        Thu, 06 Mar 2025 04:22:39 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac239516eb5sm87810466b.84.2025.03.06.04.22.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 04:22:38 -0800 (PST)
+Message-ID: <91561f37-5309-45f1-a1d7-20228ba68c2e@oss.qualcomm.com>
+Date: Thu, 6 Mar 2025 13:22:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305174505.268725418@linuxfoundation.org>
-In-Reply-To: <20250305174505.268725418@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 6 Mar 2025 17:51:55 +0530
-X-Gm-Features: AQ5f1JoHOMnMdoj85LLhhqMa2z8QuDprDq4v5xGuh6PRQjSvUsaQu0qsUl8-2Ow
-Message-ID: <CA+G9fYv9CcsWEywck9qivOVtThrmr9UUiu-RdPnrjVs9k5JxTA@mail.gmail.com>
-Subject: Re: [PATCH 6.13 000/157] 6.13.6-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org, Ryan Roberts <ryan.roberts@arm.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/8] clk: qcom: common: Add support to configure PLL
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250306-videocc-pll-multi-pd-voting-v2-0-0cd00612bc0e@quicinc.com>
+ <20250306-videocc-pll-multi-pd-voting-v2-2-0cd00612bc0e@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250306-videocc-pll-multi-pd-voting-v2-2-0cd00612bc0e@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-ORIG-GUID: v6lkd7BVZGmIM0K99kt-iQs7dwNgG6Eo
+X-Authority-Analysis: v=2.4 cv=U5poDfru c=1 sm=1 tr=0 ts=67c99391 cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=AIv-xuq51RFgKBoQvIEA:9 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: v6lkd7BVZGmIM0K99kt-iQs7dwNgG6Eo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
+ mlxlogscore=990 adultscore=0 clxscore=1015 malwarescore=0 bulkscore=0
+ mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503060093
 
-On Wed, 5 Mar 2025 at 23:44, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.13.6 release.
-> There are 157 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Fri, 07 Mar 2025 17:44:26 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.6-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+On 6.03.2025 9:55 AM, Jagadeesh Kona wrote:
+> From: Taniya Das <quic_tdas@quicinc.com>
+> 
+> Integrate PLL configuration into clk_alpha_pll structure and add support
+> for qcom_cc_clk_alpha_pll_configure() function which can be used to
+> configure the clock controller PLLs from common core code.
+> 
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> ---
 
-Regressions on arm64 the defconfig builds failed with clang-20 and gcc-13
-the stable-rc d 6.13.6-rc1 and 6.12.18-rc1.
+[...]
 
-First seen on the 6.13.6-rc1
- Good: v6.13.3
- Bad: 6.13.6-rc1
+> +static void qcom_cc_clk_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap)
+> +{
+> +	if (!pll->config || !pll->regs)
+> +		return;
 
-* arm64, build
-  - clang-20-defconfig
-  - clang-nightly-defconfig
-  - gcc-13-defconfig
-  - gcc-8-defconfig
+This should probably throw some sort of a warning
 
-Regression Analysis:
- - New regression? Yes
- - Reproducibility? Yes
+> +
+> +	switch (GET_PLL_TYPE(pll)) {
+> +	case CLK_ALPHA_PLL_TYPE_LUCID_OLE:
+> +		clk_lucid_ole_pll_configure(pll, regmap, pll->config);
+> +		break;
+> +	case CLK_ALPHA_PLL_TYPE_LUCID_EVO:
+> +		clk_lucid_evo_pll_configure(pll, regmap, pll->config);
+> +		break;
+> +	case CLK_ALPHA_PLL_TYPE_TAYCAN_ELU:
+> +		clk_taycan_elu_pll_configure(pll, regmap, pll->config);
+> +		break;
+> +	case CLK_ALPHA_PLL_TYPE_RIVIAN_EVO:
+> +		clk_rivian_evo_pll_configure(pll, regmap, pll->config);
+> +		break;
+> +	case CLK_ALPHA_PLL_TYPE_TRION:
+> +		clk_trion_pll_configure(pll, regmap, pll->config);
+> +		break;
+> +	case CLK_ALPHA_PLL_TYPE_HUAYRA_2290:
+> +		clk_huayra_2290_pll_configure(pll, regmap, pll->config);
+> +		break;
+> +	case CLK_ALPHA_PLL_TYPE_FABIA:
+> +		clk_fabia_pll_configure(pll, regmap, pll->config);
+> +		break;
+> +	case CLK_ALPHA_PLL_TYPE_AGERA:
+> +		clk_agera_pll_configure(pll, regmap, pll->config);
+> +		break;
+> +	case CLK_ALPHA_PLL_TYPE_PONGO_ELU:
+> +		clk_pongo_elu_pll_configure(pll, regmap, pll->config);
+> +		break;
+> +	case CLK_ALPHA_PLL_TYPE_ZONDA:
+> +	case CLK_ALPHA_PLL_TYPE_ZONDA_OLE:
+> +		clk_zonda_pll_configure(pll, regmap, pll->config);
+> +		break;
+> +	case CLK_ALPHA_PLL_TYPE_STROMER:
+> +	case CLK_ALPHA_PLL_TYPE_STROMER_PLUS:
+> +		clk_stromer_pll_configure(pll, regmap, pll->config);
+> +		break;
+> +	case CLK_ALPHA_PLL_TYPE_DEFAULT:
+> +	case CLK_ALPHA_PLL_TYPE_DEFAULT_EVO:
+> +	case CLK_ALPHA_PLL_TYPE_HUAYRA:
+> +	case CLK_ALPHA_PLL_TYPE_HUAYRA_APSS:
+> +	case CLK_ALPHA_PLL_TYPE_BRAMMO:
+> +	case CLK_ALPHA_PLL_TYPE_BRAMMO_EVO:
+> +		clk_alpha_pll_configure(pll, regmap, pll->config);
+> +		break;
+> +	default:
+> +		break;
 
-This commit is causing build regressions,
-  arm64: hugetlb: Fix huge_ptep_get_and_clear() for non-present ptes
-  commit 49c87f7677746f3c5bd16c81b23700bb6b88bfd4 upstream.
+And so should the 'default' case
 
-Build regression: arm64 hugetlbpage.c undeclared identifier 'sz'
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Build log
-arch/arm64/mm/hugetlbpage.c:397:28: error: use of undeclared identifier 'sz'
-  397 |         ncontig = num_contig_ptes(sz, &pgsize);
-      |                                   ^
-1 error generated.
-
-## Source
-* Kernel version: 6.13.6-rc1
-* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-* Git sha: 30be4aa8b95762886fc27cf2a9931e14bce269d4
-* Git describe: v6.13.3-555-g30be4aa8b957
-* Project details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.3-555-g30be4aa8b957
-
-## Build
-* Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.3-555-g30be4aa8b957/testrun/27516541/suite/build/test/clang-20-defconfig/log
-* Build history:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.3-555-g30be4aa8b957/testrun/27516541/suite/build/test/clang-20-defconfig/history/
-* Build details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.13.y/build/v6.13.3-555-g30be4aa8b957/testrun/27516541/suite/build/test/clang-20-defconfig/details/
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2tuRCFN4wc8W1MqNki1qddcwCF3/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2tuRCFN4wc8W1MqNki1qddcwCF3/config
-
-## Steps to reproduce
- - tuxmake --runtime podman --target-arch arm64 --toolchain clang-20
---kconfig defconfig LLVM=1 LLVM_IAS=1
-
---
-Linaro LKFT
-https://lkft.linaro.org
+Konrad
 
