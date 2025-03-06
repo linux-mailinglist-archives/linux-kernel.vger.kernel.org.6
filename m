@@ -1,220 +1,196 @@
-Return-Path: <linux-kernel+bounces-549383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70DF2A551E2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:54:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3541A551E5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:55:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C769188A387
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:54:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 171E51678E1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:55:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645E62561DB;
-	Thu,  6 Mar 2025 16:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6900F259CBE;
+	Thu,  6 Mar 2025 16:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ykTewuk+"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2062.outbound.protection.outlook.com [40.107.220.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="g30lr/yk"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2DB13635B;
-	Thu,  6 Mar 2025 16:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741280074; cv=fail; b=TEJ/8G6Xi4dkl1xTv6XqOI1SxQ+Sc1soJxvQMzfC6ePuBfkyeiiCxv1xltlmM5QtziD2rSDpi0k/yOSaqtiisNMEd336/Brto+ioxgxdndwnr2tJsblvx2vYoy8v9ALpLu/IfPpc3QOf4wgD2xWepEFaFmunU1c0YA3PORtoH0k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741280074; c=relaxed/simple;
-	bh=lmlbEVWOYn9QfOBJnpdBCTl1VKubQvz7audukvEutWw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OAjAz2Yws4sFP15tTCb49YTUHX7/MD4mjR52g9e3nHjef6xa5iMzRUWoAeBpi0245kGelBiVOIR4Vnfng4yFyn8J7JTPZedqr4s1IwcSP6wcP4VSmdH+HK1HxFDwHEFCHSXDlJS5wT16um+6pHZTObzRpYK2SFRSuL0i/Ll/Bm0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ykTewuk+; arc=fail smtp.client-ip=40.107.220.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G8ROtU232YWQsmHD5WlnA+/LojAs3GLpwcO1hURj6QX9jiRlyrDUDbYFpEoBIstpuucZMbxKwS0RvIm91cZbqWKRQlW6x56PXC4Ni5dZqDVG+CgcXcGdApqoHhAv0K1ZX65WbCbQt5BW1yKtF7LvkQ1Lfkq2hncvtzObhIx/kFLQpkee7PMiy4NxIH1gqyBNU4QYqA/+OvaNys3UHiQfFTqeAXVmL2nQNPGQsn8FNKE9M5K4c36m5YWWwbNBPtHaHWJosKlmgKOF3viOGcu8Dig+T5LEcMyTNSSL6AWGpA2e/lXdHRauA1Ts6aztFWZk6hZIxmkIwE+P2Z1wtdB6Zw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h21yGgz9qoQGdRHPIRPx5Y82NsGljG+GZFA0k/PpRMY=;
- b=fBuw2F7ixtvYCddt5q0IHuBTYTpK46h5vHY5oDcAJrEyM62qcEVr3h6LB+2Di2sh+iab6EHu4uyx8cqJDqeynypVV5lE+zg5kUmcY1Hd0IleCrwPjH1YC4XUznfveW2azViHZbw+ilfS6cJBy9kBoSQKjlG8TwwPsbZgU5boeMxqJBy4g7UDB5HzLad1A/KOI0uHyc5+xFlB9NVePPQlRL0gO4k9M0kpdItcwTtsGeK1KNnuKhxeESiG9E58cJyoOWyu2psHMiDmziWbUN0Q8qh1rDQmM5nOiaxicLEVky/GFjLENhDRh9T7D63169NK++wPxkhZdLy4pxmF/ejl8A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h21yGgz9qoQGdRHPIRPx5Y82NsGljG+GZFA0k/PpRMY=;
- b=ykTewuk+X8cGInRvX90zU+b9XN2dL6cZH9C9XrdI3FiA2bCh1APaudDdXHk5Gl2pMJTWTpvi2XtSmYvXI5kwc5NjvZFYYJ9XWKHpn2N3zGyji9COxYvmTNO87tG6mUbL8AD4jk/bkouLjSbFU2vn8rILM3wpYbPxknw2pIWlECM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by CH3PR12MB7498.namprd12.prod.outlook.com (2603:10b6:610:143::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Thu, 6 Mar
- 2025 16:54:30 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 16:54:30 +0000
-Message-ID: <2a21b54a-fe2a-48ab-8d22-0f8a7e6b02e5@amd.com>
-Date: Thu, 6 Mar 2025 10:54:29 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: Fixes tag needs some work in the pm tree
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-References: <20250306082858.70e08bc7@canb.auug.org.au>
- <8664c2f4-122c-4798-8a12-3797d07a9522@amd.com>
- <5011851.31r3eYUQgx@rjwysocki.net>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <5011851.31r3eYUQgx@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN6PR05CA0005.namprd05.prod.outlook.com
- (2603:10b6:805:de::18) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47A4224166A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741280119; cv=none; b=V5Og9Nb3Q0bqts8zzXISJzy21WbfniDM6Wi9nGomNVcB2sbB67SaRdDixibkDbNeOqt5W0CzTQTaOOh8QynHYzYCSYd0IA69L87sLEIylmgLxbmZKtZ4CsWEvfsqmcrZJxQDdmuk8+bbMRurxpbwTEkZLAoNxfJ4FR1z2ahxmXo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741280119; c=relaxed/simple;
+	bh=A1cLMm/rRtTJu3o30/XbaiexFMSeVAOcT21ZnNpF9HU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BjAODbCItyZ3k9sQsZIk0useQKNmxIw1pEYu7xWrcrSj43kgPEcHNWkfpP+vgyO5KBKOK2yvy1tlNJC+NgK8NyVv/ba8CGLKKkCiToXvFI49Js/FHlXns3BsJP3ZNPXn+WaAaNhgiw64Cb76bOhr7hcaSZYkq5nZJTfufRy5fdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=g30lr/yk; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-223a0da61easo189805ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 08:55:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741280117; x=1741884917; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XGPTfeCWeF4i6ufv6n34mMSCAIJVic/m06/TER4ZKg8=;
+        b=g30lr/yk+kFGN7QTlEoaexiugPC6zifUe1VezYP8jqaHdsyrlV0nyvat01pa9gb5bD
+         9rfSpeTz+k9RYT2l1khDw5vitnpkhCIYkvYE0cxVGq9RvZZjMY7Te4IxfcPZUDxPqCEZ
+         DJGHYIvXFrvObvZQi2l8w5QtFYeFIm5C8/IM1TvoHhGMPT5LvfpqffCA4YeDIa1x0LjV
+         j+Kk+RqoxwPlWKSq+QNYOAgNHdutLEj6AkxKT4PVJNOMGh+JwkyEcvgBEUS/6VYzIZKl
+         ygsIQYsU3hT1EB1xq46VRC30/rA1XLd7A+av4xq0qTIk2PauhWMfUgnLU6dRHSNbxKw/
+         zWhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741280117; x=1741884917;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XGPTfeCWeF4i6ufv6n34mMSCAIJVic/m06/TER4ZKg8=;
+        b=OjJQf7UPRQBPisGN9Hx7CBjDjo7yIb3z6+XRuABLcjZBJiITradpZiTV5DWcllvvWs
+         wEjebgkuRUHdzsbibIW2IRxhIkJQBjHaMgJOk8dZkOXYbEQp278LW2+TJYaX67izBFr4
+         kFRXV9I+PWwm/3+cN+PvWS4rS+ZmIVT5Qu5QWNasZ0RpvPcEomZWtq6TAsqU4c7L52wI
+         XVughI8urYA39Jvu5i/tuhU8MFQDYTxGmmsg4kt5n1mC8JOEg6wE3ZYZ1DqjJG7MkDDy
+         3G1tgT3Dx6EWNawZZsFl0WLvh/izW5lO5P7xxuKSJQGLAjZoxRqRTs+O/IDWtVVlNZxK
+         oFtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVr2SRvQ6L3awdXj89ymSkWVOQhgXt8eNK7jb/HzdCFxjTbvmWDduJZ2F4xwyqxSQ0A6QjBDo2K311YwDQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4H3s+2HhaSgQSZ5rHD25/a5LWzD7aQNOArpwa1EpfvFjejBOj
+	EzwphO0dMNDzgXtu1++J72alsycwfwiuHr+/h94uo4/chCQzgxwm1MvxvrR+xWU4iarpl9sGVE3
+	DCFRx+S1dCQ4OUcfTiUM9GfjPXMm/oeU5Ro46
+X-Gm-Gg: ASbGncuXj8JURppu9f+KoS39cuts1L7wQtEbzwTbgZ1QzFiqZKb1Du0vqPveilfZvSu
+	O17O67JLJjZ2qJjcuB1ymaruGlH/6TOmtKwoX7Eup3/iroE62jLQGYFEk0C4EU/JoBTkzn8eGz+
+	p9VR2u2wVfdZ702TrriDTzkb1a22paDL2RirXKacI3FoKV9hps8ymHZCM=
+X-Google-Smtp-Source: AGHT+IG7VYKcPSJdNPDtzXRMrhi3PHqP9/H7o2SFOhAfQZu8ErWsr2svswtqD0x0WBKS4GgmTFEyB2NO3kZnl42VbYI=
+X-Received: by 2002:a17:903:1670:b0:216:5e53:d055 with SMTP id
+ d9443c01a7336-2240e496477mr2665035ad.9.1741280117182; Thu, 06 Mar 2025
+ 08:55:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CH3PR12MB7498:EE_
-X-MS-Office365-Filtering-Correlation-Id: cacfc0d0-dfc6-41aa-2cc5-08dd5ccf903e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WkdwWVdEUGEyZGQzaFY4RlQ1TGhTdHozZG11YndLcjFYWTIrV3k5bnZXMG01?=
- =?utf-8?B?U3FiTmtzWVNvUXRhb2tsamtEMUZYNzUzYlJhS241MXlqV0pHc0lTNVZYMXg1?=
- =?utf-8?B?eGtxVkhWRlZ1bk1jbjJta2ZpNEI3TVVmSVowVmgwMVp2cThPRXZoelFVVlcy?=
- =?utf-8?B?NlZjbTdaQzFIUkZuM3d3WThTd0M5WDFia2FLQzFlQVlDN0VOczVPZ3EvY0VM?=
- =?utf-8?B?eGkwcDVNR1g4Ylg1SVRJandnQVR5VHo1elRqbEZmbGhjU21sci9DRjNKcGVR?=
- =?utf-8?B?cVNOQVJMeE5UMXU5S3Y5b3NqZzNTUXBVRFBjblpVczEwd0RFS1Y1T1pwYlhT?=
- =?utf-8?B?RW9OZmxDdUswMWhQb0VESGRWY1BRcU55VG1VMGRXZUtnS0Z0c1pYZSszNStW?=
- =?utf-8?B?WkVSYkY5VzhXRzRxa0tzSlZJS1VGMFVBd3JDcXp1bkVRbU0vbWEyVVhoYXJv?=
- =?utf-8?B?anFhNSsxM3lFSmVvUDBPd3dtK3Zha0g2ckl0QXI3R2lrVVhyUnlraWROWis2?=
- =?utf-8?B?UWM1bzRBUWNtNTk4aUFDVFJmRnVLZ2xSNTV0WUpwbGtHRk9Fbk5WQ29rK1c0?=
- =?utf-8?B?dzR4amdMQlMxcWljMzBtVk5QMlFmblhiRW1XcXdNZ2lPNnovbUlwdzB0YUM3?=
- =?utf-8?B?OVlFdktlMWFBWHZ6M05PZ0VCMUFTRU1xaml4RDJWQzdzU3pwdmFjTVRDdTBP?=
- =?utf-8?B?eHFoUm1DZEljaURaeC9MTC8yaUlvcE9ScmFjb25vRUlnSnBaWHNsK1hacWdY?=
- =?utf-8?B?OTZ4YkxEQ1lkRE5qcTRXQVdGOTcyQlFpWWg5cWdwV2lwR0xZekFlQzlPa1Bo?=
- =?utf-8?B?aFFCKzZGMmFFV0JkTU1Qbkk0dFZVTjJ0eDZoeDlqSmI2SzJ1dTN2a2xZSjNo?=
- =?utf-8?B?Wm5ZMDhvZnhwOXdJWGQ3YUg5VkRpa1JUOXVjU3ZwNVpjbEcvaHE1YVFxeFEv?=
- =?utf-8?B?cytQOEJtY3lJZVMwYlpVMjBLMEtmczh3NGU1a2hjaG9QMWwvay8yZnRWTkFC?=
- =?utf-8?B?NHpwVUtsT2RkK2F2WjI0eGlISnVaV1pSeDkyM1JwUXBGcGNyK3A1aUxUWHY2?=
- =?utf-8?B?R0YxZ01ZRHZPd1gxU3diZnBYTHpzcmtUc3N5MWJyTmExaGFkblllWVBWakkv?=
- =?utf-8?B?YXlaRk9kRWRKVGo0U2kvNnBPcE5nZlVsY1NlQkJWU0YzTnBIMEptOGVQT09p?=
- =?utf-8?B?S3VTNmoyem1kMjFBMHU0TzRkUmNsMUJXaHc0RXVieHVta2hqblJrV29GTDBK?=
- =?utf-8?B?MlRHVzZtcUpsWEVFYWxnRDBTS05BUUlzRGdpdSsyaE1rL2NWQ2w0NmpRaVF3?=
- =?utf-8?B?dURXRGUwMHd2L0NQODRVVGluVWxsQUxaak41Z2tadnVIWStkRi9iSVhJcWg1?=
- =?utf-8?B?YUhuWTh0NlpTU3AwVktyd1gzYWwxdEhRbFJNWkZwbW1wbkZXbmZtWE9hZUtX?=
- =?utf-8?B?SkJHODFrZnVQN2pBS3ZoSmp0N29ZRWJublA4V2t1VmtYT1VlaStnVS9pS2xh?=
- =?utf-8?B?OWhSTG8xYmhpWWhwdHpXZTRpUWx0KzZxTnRRUEFkT3lZK2tubytYQnZacXBo?=
- =?utf-8?B?MEJSZ2Q5QnJaZmxDelVWTXVSZG53aFZRK25YaUwrb3pBb1lEalRuRFk3UW42?=
- =?utf-8?B?ZGdja3k2ZnNuei8wZlJHaUR0SGsxeUJvb0JGSmUwZFoxaFg3SDNSVTNZam1T?=
- =?utf-8?B?WkVsa3grQ1hwekZOdzdkQXUwTG0zVWpQcWI0YzlCZ0FGakkvY2tHeDkvbkFJ?=
- =?utf-8?B?L21OenZ4eUZOV0hISkZ5ajVHb3YwRGRaZm9ZNTRKVnhhL01YYjY5RzN6Z1ly?=
- =?utf-8?B?RG1yYitKd2VsNXpJOUx6UEg1RGRJTmxJY1phQUs5OXNMVWphckliNXJ1VUJ5?=
- =?utf-8?Q?NFQybA906XTio?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MUw4UXBPQUUrZHc5aHoxMUVIN01udUExaVhaVUZNYmJvcnZNNStqOU9yOUlx?=
- =?utf-8?B?WFF4bHo0STcrOHlKN0pNSW9mQUJkQ2Z4TXloYXpWUDRLendKbnJPZEhONTA1?=
- =?utf-8?B?VWhrWkNJdTdlS1FlRVRzV0VOS216VmVEc2VFelE5STBFY0ozcC82SXUxd3l6?=
- =?utf-8?B?V2k4ZTZzZm05QWNXZjRidStWblNramt3SVp3Wmo4OFRBMW5TL2FtV0lyVFpS?=
- =?utf-8?B?eE4rM2NGUDFNUHpvWDdIVHI5cDlCMzA1WkxaQWFNaVNvRTNsZE41YWJEWG5m?=
- =?utf-8?B?MVhQRzlkTFJzWUxpYTUzbTJVY0RCWkp3ODZnRGl1ZWFYb0ZDcER1TXZsMUd1?=
- =?utf-8?B?MEFPS1J1cnBCUWpjVmdhQTJoemt6MDYxdzB0NFJ1T0VXOFNBcjQvUWF3aGFH?=
- =?utf-8?B?TXg4SzVZdmhkYlJhd0ZKR0NDT3lQaHdUOStmMVV1bFg1N1pWeDkrSG9WTFB0?=
- =?utf-8?B?SkRCeXJIbGREVkgrYVpOb1hNbklSVkJPUjhLUWtGMTFXT2h3MTc2WDdEUm5h?=
- =?utf-8?B?S2VlYXllYmRMSkhTUGFiMzJ1VThldlNwZkY3K2dSVGREVnMvSW1OWGhtS0JX?=
- =?utf-8?B?aFZxUnViUGFMUTlDVGwrVHpUMFhFek0vTVRYYndDNTRkYlAxQ2JiNWV1enpX?=
- =?utf-8?B?M3FGbEkrYkZoRGRwaVFCQmJIRGRlRE1XTllRQVJndzhaaWZwWFpvUGVlVDhU?=
- =?utf-8?B?VUFmaGI2QnRXbkh5L291NGlORFVucUVUVnl5Yk5FMzlvbTFrNjZPS01YdEtR?=
- =?utf-8?B?UjZBUkVxTUdocFgxRzFQRzRkOWk1dnlKSnluZlpTaGp0QjFzUXJlY0Z4TnZ6?=
- =?utf-8?B?U2JKL1Q1bVpBcnVQS2h1am5LaElXd3JOdGV3SVdwR1VCcU56OTZPdEtjTWYy?=
- =?utf-8?B?SDBKMzdRZi9PMEx5bTB2VEp4K3diOUhXL3lCSTBiZmliS3N1TDJSMnYycFFB?=
- =?utf-8?B?cFhsRFVYZGQrVlA2OEVmMTFIeWdxclpQSHhONFlRVGxiYXcyYjBQc2hWUWhy?=
- =?utf-8?B?bVdsdCs1N0FHemdQVjlXdUkzWDgvdExLclF3dk5xdHlTMENYTzdhdXd5VkFs?=
- =?utf-8?B?ZzZXOGVLWmc1WitMbnEvYjJxS1NsSEVpSC9zNjhiMWFuQk8wa0ZUTXVRSHpK?=
- =?utf-8?B?YUVHblpvUXM4KzF1ODFPbU1Ga3R0YXBJdFVvcXdlYWJZSmtrc3hTbWREcmht?=
- =?utf-8?B?UzRhSTRkajdzbytPYXc1RVREZng3TGMxSDNZWUV6T2dTVEdDUFpTMEtYWHFn?=
- =?utf-8?B?djZHeDZON1lHZi9aS01vdHY2NjFxbG00aVF5dytkS0lHR0IwMWdWR3R3QUlR?=
- =?utf-8?B?d1MySGpzN3FBU1UyV0RLRm41TlNMM291R3l0c3E5cGkyZy9lR0pteGJOUjJK?=
- =?utf-8?B?eE8zbldnc01PUjVqMS9nbHA2WkJQQjZIUUJGTlpVQmEvaDJwRk5iM2pFOVVD?=
- =?utf-8?B?NzRjd1RtNTQwT21UQ2dYYkRTVXNzN3ZLc3VIVXVBMlp0dkk2bXBSSGhwWHF2?=
- =?utf-8?B?Ti9POXZpMlhZczl2aVNVMGJydkI0RkRNQlI1Z21Od251ck43SzFuYzY3d0ZX?=
- =?utf-8?B?aXZhdThsOTVtVVg4eGVPb2NtVUpYUDlEKzJlVjAzNit5TGVSbkNSQ0F2UXl0?=
- =?utf-8?B?Rk0vWjYwUkNhOHo0TEFENC93YVRmNWhyOUN3c0d4NjRHWW9hNzJ1WFV2dHdI?=
- =?utf-8?B?MXYvczN6VUs5Qm5udW84ckZVYTVManB6Vm5SVWZDRk9YWTNKZko2OWZFVU5E?=
- =?utf-8?B?TGMxNEIxallJd3UzTWxhOWJvU3dEVmVWZStTbEk3YjE5SnphckNqT3Zra2pZ?=
- =?utf-8?B?cWduNGNaY1dOK1B2YWVrZDVYRlZ1NjJteUMyNy9GazhKWkttVnJzYVhMZ1hr?=
- =?utf-8?B?SjFOT2lNUG5FTW4ydE1RdW8welJxWGZvREVxTGRtSEJxTG1MZWJXSlNRUVVS?=
- =?utf-8?B?ZGhIQUVyT21yZTdYUXkzei9Vd05yd1lHcDA2ejk2Ykp2ZDRWNkxoQUNHWDhz?=
- =?utf-8?B?aWxoM1U3cmNIa1dxMUdHSVBOUHdwMVZXdzVpQng3eXpkOFU3U01YQmhSZ1U2?=
- =?utf-8?B?RFQ3VWl0NEdtZEdKTkJUY25qcUg5anAwaHNRaFJ5Y2NhQVd6ZVFUZ1RtY1FH?=
- =?utf-8?Q?imHGBFmDSXaWwqTmfBnA7a4RA?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cacfc0d0-dfc6-41aa-2cc5-08dd5ccf903e
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 16:54:30.6030
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KY4g6sMna9GvhH5nOALuhY7NTPUj0mV1iRfii+ZHHiAQsBTvBaayXQM26bcyn+yL3du+0AisU/F9dcePZEJutA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7498
+References: <20250306075147.195435-1-namhyung@kernel.org> <20250306075147.195435-2-namhyung@kernel.org>
+In-Reply-To: <20250306075147.195435-2-namhyung@kernel.org>
+From: Ian Rogers <irogers@google.com>
+Date: Thu, 6 Mar 2025 08:55:05 -0800
+X-Gm-Features: AQ5f1Jro2absOUzAa1tYd-i-Ic6Yvfz43s385OY1qtm3Om5lPsqwFwr2Uif_sQY
+Message-ID: <CAP-5=fW=Gs2ATy8DhcZFjGP5tcEemoZp9q=voFV8HRisY9ki7w@mail.gmail.com>
+Subject: Re: [PATCH 2/2] perf report: Fix memory leaks in the hierarchy mode
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/6/2025 10:52, Rafael J. Wysocki wrote:
-> On Thursday, March 6, 2025 7:15:57 AM CET Dhananjay Ugwekar wrote:
->> Hello Stephen,
->>
->> On 3/6/2025 2:58 AM, Stephen Rothwell wrote:
->>> Hi all,
->>>
->>> In commit
->>>
->>>    f6c0b7602909 ("cpufreq/amd-pstate: Fix the clamping of perf values")
->>>
->>> Fixes tag
->>>
->>>    Fixes: 305621eb6a8b ("cpufreq/amd-pstate: Modularize perf<->freq conversion")
->>>
->>> has these problem(s):
->>>
->>>    - Target SHA1 does not exist
->>>
->>> Maybe you meant
->>>
->>> Fixes: 620136ced35a ("cpufreq/amd-pstate: Modularize perf<->freq conversion")
->>
->> Yes, you're right, I was referring to that commit,
->> https://web.git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/commit/?h=bleeding-edge&id=620136ced35a9329f4d1ea90e51bee2dfd7ee5b0
->>
->> Rafael, will you be able to fix the tag it in your tree?, or should I send the amended patch separately?
-> 
-> No, I'm not, this was pulled from Mario.
-> 
-> Mario, can you please fix this and send a new pull request to me for the
-> same material?
-> 
-> Thanks!
-> 
-> 
-> 
+On Wed, Mar 5, 2025 at 11:51=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> Ian told me that there are many memory leaks in the hierarchy mode.  I
+> can easily reproduce it with the follwing command.
+>
+>   $ make DEBUG=3D1 EXTRA_CFLAGS=3D-fsanitize=3Dleak
+>
+>   $ perf record --latency -g -- ./perf test -w thloop
+>
+>   $ perf report -H --stdio
+>   ...
+>   Indirect leak of 168 byte(s) in 21 object(s) allocated from:
+>       #0 0x7f3414c16c65 in malloc ../../../../src/libsanitizer/lsan/lsan_=
+interceptors.cpp:75
+>       #1 0x55ed3602346e in map__get util/map.h:189
+>       #2 0x55ed36024cc4 in hist_entry__init util/hist.c:476
+>       #3 0x55ed36025208 in hist_entry__new util/hist.c:588
+>       #4 0x55ed36027c05 in hierarchy_insert_entry util/hist.c:1587
+>       #5 0x55ed36027e2e in hists__hierarchy_insert_entry util/hist.c:1638
+>       #6 0x55ed36027fa4 in hists__collapse_insert_entry util/hist.c:1685
+>       #7 0x55ed360283e8 in hists__collapse_resort util/hist.c:1776
+>       #8 0x55ed35de0323 in report__collapse_hists /home/namhyung/project/=
+linux/tools/perf/builtin-report.c:735
+>       #9 0x55ed35de15b4 in __cmd_report /home/namhyung/project/linux/tool=
+s/perf/builtin-report.c:1119
+>       #10 0x55ed35de43dc in cmd_report /home/namhyung/project/linux/tools=
+/perf/builtin-report.c:1867
+>       #11 0x55ed35e66767 in run_builtin /home/namhyung/project/linux/tool=
+s/perf/perf.c:351
+>       #12 0x55ed35e66a0e in handle_internal_command /home/namhyung/projec=
+t/linux/tools/perf/perf.c:404
+>       #13 0x55ed35e66b67 in run_argv /home/namhyung/project/linux/tools/p=
+erf/perf.c:448
+>       #14 0x55ed35e66eb0 in main /home/namhyung/project/linux/tools/perf/=
+perf.c:556
+>       #15 0x7f340ac33d67 in __libc_start_call_main ../sysdeps/nptl/libc_s=
+tart_call_main.h:58
+>   ...
+>
+>   $ perf report -H --stdio 2>&1 | grep -c '^Indirect leak'
+>   93
+>
+> I found that hist_entry__delete() missed to release child entries in the
+> hierarchy tree (hroot_{in,out}).  It needs to iterate the child entries
+> and call hist_entry__delete() recursively.
+>
+> After this change:
+>
+>   $ perf report -H --stdio 2>&1 | grep -c '^Indirect leak'
+>   0
+>
+> Reported-by: Ian Rogers <irogers@google.com>
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/util/hist.c | 9 +++++++++
+>  1 file changed, 9 insertions(+)
+>
+> diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+> index fbf131aeae7ffe9b..bbc6a299b5106c3b 100644
+> --- a/tools/perf/util/hist.c
+> +++ b/tools/perf/util/hist.c
+> @@ -1385,6 +1385,15 @@ void hist_entry__delete(struct hist_entry *he)
+>  {
+>         struct hist_entry_ops *ops =3D he->ops;
+>
+> +       while (!RB_EMPTY_ROOT(&he->hroot_out.rb_root)) {
+> +               struct rb_node *node =3D rb_first(&he->hroot_out.rb_root)=
+;
+> +               struct hist_entry *child =3D rb_entry(node, struct hist_e=
+ntry, rb_node);
+> +
+> +               rb_erase_init(node, &he->hroot_out.rb_root);
+> +
+> +               hist_entry__delete(child);
+> +       }
 
-The tag WAS right originally, but I the sha changed when I rebased on a 
-later RC and I still had the old sha in my tree so I missed it.
+Thanks for the fix! A nit, iterating the rbtree of N nodes and calling
+erase on the first entry, an O(log N) operation, means this is a O(N *
+log N). rbtree.h has rbtree_postorder_for_each_entry_safe:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
+t/tree/tools/include/linux/rbtree.h?h=3Dperf-tools-next#n81
+```
+ * rbtree_postorder_for_each_entry_safe - iterate in post-order over rb_roo=
+t of
+ * given type allowing the backing memory of @pos to be invalidated
+```
+which is O(N). I think this code would be better something like:
+```
+struct hist_entry *pos, *tmp;
+rbtree_postorder_for_each_entry_safe(pos, tmp, he->hroot_out.rb_root, rb_no=
+de)
+        hist_entry__delete(pos);
+```
 
-I'll make a replacement tag for you and you can repull.
+Thanks!
+Ian
 
-Thanks,
+> +
+>         thread__zput(he->thread);
+>         map_symbol__exit(&he->ms);
+>
+> --
+> 2.48.1.711.g2feabab25a-goog
+>
 
