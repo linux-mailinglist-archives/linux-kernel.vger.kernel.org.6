@@ -1,264 +1,106 @@
-Return-Path: <linux-kernel+bounces-549827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB92DA557AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:44:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BE7DA557AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:44:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A9C07AA183
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:43:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CDF57AA762
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209CE27933E;
-	Thu,  6 Mar 2025 20:43:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 284A0276D2A;
+	Thu,  6 Mar 2025 20:43:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lVU6z45i"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qz08cqIJ"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4924227814C
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 20:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F14520458B
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 20:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741293793; cv=none; b=jJ9D3kMHN2rqACEwW9kZVLpBQS2uEWxpB3z/OHEq2lBoxgsLuRaKA9yh5mnCuhEfzZ5/UKmTFGSieZ6NWResXBzG9j16EMUosLrf6/rl/Q6f+XUKNkcCtXet9IoVluWhCr6yw2skASeIa3HGkHvR9rC6tzFdzOC+bnqR3iKTg50=
+	t=1741293832; cv=none; b=m/Ym46Vs7B4Cz1IA10m+LN1eeCMetMjMCMNaQ7i/620NPywgwpi2GKskWSqrWc3EzpIgimwQy1+3ejs3bjLq7Kelxw5mRCHos6a4QLVOQxgwS3R51u94T8ifbP+gN5FrWCtwFJowADHTCcOCM+lIFVjNwesCs9ofzGq/aqCCTO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741293793; c=relaxed/simple;
-	bh=AamfFD2BRSllOH2t+3HFL8aEOK6cAWC0xj27tH28/zs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HFUF3AzVD57g7QwZ+YBD6dZJMJL1FRa/N916lAfoRe2gLnYvQqEEIJIzG9wyxa6j/UkjlR+n6nxjfqFbEQJOUTJLFUQ6vazYjQKaOKtTP0481axtuFG3JSuxmST6hm8gvGRnqtXldXXIenzEvNw8y00lkFMSjFDwc4we/0qAIrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lVU6z45i; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-391342fc148so30019f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 12:43:10 -0800 (PST)
+	s=arc-20240116; t=1741293832; c=relaxed/simple;
+	bh=l7uz8/UlAi3FlKusi7zzoCQaS1kZZ4iwULRX6B1RPGA=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=tmKt/A48rYeVoO++aXeMGNDKXdw6eLhh5BaOYOaZZkIdUyc1pFQcIePdCGBg71aDm02A4hN6ZqLSuSHRjf5sjj3RJJhuQqVoIbgDA4jjo1Rvb3zUZIpZ7jzCoSOBQ3ejYBrH2iyo7AA8vH9HUpUIT9uKHP6h0MmZaEm5BVdSFn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qz08cqIJ; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff6943febeso1798669a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 12:43:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741293788; x=1741898588; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fem2BHJ56Zg047K6qtXL+URWCBpvNsPCC9PMf7iwoqY=;
-        b=lVU6z45ikXYeqpXzSrmAXQDt/jBu14hrJGlzy24hJctpnWBiOHc13kAKAboX2pCzwW
-         ce9PILSU4oIhQdNbVYHNQ7AtxpVa0MUNqcDzrLPKTlQmrlaSBBcPzPrNle6ysBU274WG
-         /xEdZjd5+U2t2zgXordznhPPz/Om/JhvTbVRzEK8l6RBAdg/K0Y/HPaIO2lEOlIAqh1G
-         uZNM5igXSjqLRh42O5zi9gebX40ZiKtDeHffYS4mSUO7H4f7gDejtDmAOuIZNFcGRE2T
-         GrAjbfAkXDUQaysTXP8UV+oJ6D7hrYqmt+ohUQ5KU0M4H8wSK73olVUChHxWu1r58Zpu
-         XhMA==
+        d=google.com; s=20230601; t=1741293830; x=1741898630; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UcU+57bF2nKIJKG40WdcNh71zD/thfdwbbX5KGrnw6s=;
+        b=qz08cqIJhUfR5e9PQCdl5tA9apfxTNzEfROGuDSS3FltADSWa7By0LItqzKJK7tNFY
+         b65G8IKCzxr8QFstzCBqtAyHIpYSzHLPf0+caS9J0n1fQJv/JFsMvbF/vjrwCOumxJdq
+         N9iP9QBpZr2jGV4rEyMYeJIypEpELoKu/xk+IouFyKFbsp9006IBubprtkOnjaOAFRzy
+         D5zsj25UPVB9YqYvpQFQu5ywrSmS06SELTz4mPmFpa6unfEhuPSRyHi7q9GwroTT+K4p
+         BheXgojvs9FjWBuJsW9g3d0S9bv8QuQYaahM1m7EPc+Gz/uuwoAVzPlhSdSdE3p+LZuX
+         CCmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741293788; x=1741898588;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fem2BHJ56Zg047K6qtXL+URWCBpvNsPCC9PMf7iwoqY=;
-        b=xDWkN2c2PU8870rfpCC+qjQy1VrcDvJqKlnEP4E1Wuzitl7HdCqiHqYz3BgEZUBIwO
-         hT7RZYoPkY5qWGY1IR2ff4jp2Wo4LocHlp9H8kT8e485kIRfxXFRtkWbDJ9RG9n+2pfr
-         dVXq3Ny5F/jSxyFEuV7NOOp5v8rYw14wZ0ljJrdflvgmwHHjjY3D4uY7CpGhrR5+WvqY
-         N3uhqK2ly9PFFvA0YHUZjdgkJRSJwzDFwZMSZUV5fOcz7TSZmyCELathf0ew6hm4BqCB
-         9yUhhFB6J9IWvYd2tF9M1e7DdH2FboI3gPUWbYRr/o0NWuZAGFiwuqUmYx00uIbZQ5H8
-         FSSA==
-X-Forwarded-Encrypted: i=1; AJvYcCV61Drrg/GA67m7OhFngzKWbAfxzIsuSUnoiYP8cqTwCfuipfY4QdfXXXX0Fkdk8IlsuT7nlxxXObxcmFA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNj4YDRVSYNaPpH9GtgI7g/4yTwJhzVYqcRYf/fpUQsGpggQSA
-	bMtwebtX1pVgC9HHOflDVjhsrwl7cBjb2CgJuucAzOM4yVv27Clyd1y4tPBrDXg=
-X-Gm-Gg: ASbGncuSzl0HHyFPJYWCC/jj+rvPPyZEDbw90SUbTPd2khi5H3bWtZbXL/6g5upjDVP
-	M4LelaD7R09t3aLmxqcxYcqUQEnNN3gecWtu0dyoBa72WzqqH8uOQKF0O5uQt4TEAMOTz95aAPU
-	g5cuyR+F9CnqC1yO1a2ravAVDwDKY9vZ4KosxOIj1NwjAX+tt+IWsZ3bumq1Wc3vMER+QK1zy9j
-	0XJEykrWy3IQeJB8DfxBjZSlKPoqo+n9d6FzOiSzbyF8FHcIsMvsbN5A3Jv9DkOFugQvcYC2tr3
-	Zy+A3izT+x1hn58gQnkYtCle5g9ocn5S/j3ENUfzImJ0HoXjKSnCu02pL5B4UgmfX5H2OlaDTf8
-	=
-X-Google-Smtp-Source: AGHT+IHrEeyZfY9AxpVM023cb5jmtDaJMaJBllSguHY5Co+8WkZqWGk8TEfsF2KY220yHb4QBK80CA==
-X-Received: by 2002:a5d:47a2:0:b0:38f:28dc:db58 with SMTP id ffacd0b85a97d-39132d66aecmr438953f8f.10.1741293788547;
-        Thu, 06 Mar 2025 12:43:08 -0800 (PST)
-Received: from gpeter-l.roam.corp.google.com ([145.224.67.211])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd9470e2sm30081715e9.33.2025.03.06.12.43.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 12:43:08 -0800 (PST)
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 06 Mar 2025 20:42:38 +0000
-Subject: [PATCH v3 4/4] pinctrl: samsung: Add filter selection support for
- alive bank on gs101
+        d=1e100.net; s=20230601; t=1741293830; x=1741898630;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UcU+57bF2nKIJKG40WdcNh71zD/thfdwbbX5KGrnw6s=;
+        b=Op1VmTMa5/GK540E9EtzZbz+j7hvpFwaYpd66kAan4eUz9p25NfC9gRm10TxFLLxZP
+         CQqsDucepamzqUU8HW8bdxnkKD2AIAeKqwbaM5ndBHnl7C1qkWyZDgmGZdWyhmulWHQJ
+         KaP640Lkv29gZ1ELf5/7pwoQIHuR5vPKuCx8g+rHMX1Tyn7KVmw33SOL/2GNRuc0kGC+
+         Y8BzsX7J+WL7r5wuod0qIkI+1Y6/knRq8HvEs3b1f7kBslRdYsDhE9ebtfduGSHMzDF+
+         aKxolRcIoGbdy//qIX4DITTwKuhnsY3DJ23TkRL64FeiJLR7V9SNvUWqCvT3ih91NCJg
+         JVPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCFsDAv4ezxtQrNULAo+bYy39VEq5KlXhkXgQPy0rOsTKgMsjUH94sjDO2Fsfs8gTEhfdu9JZuMU0c0+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLExx24BNXjARC9zetNrxpAqtzukGgV7d7EtZbo/0sytCMagWI
+	aZGjKNJQ0MfzfEYaNJerCIgz1FoaUjakEuB43mdXm5gom3LQueidQz8aiG3m9lgfdyO+DfXSmoL
+	New==
+X-Google-Smtp-Source: AGHT+IE6M3i30Kw8orX/zf/qVCY180adq6TxVjCLhFUYj1qM1cqjupTsMC6KzI6E/lQ2YGzlrmN6mwMILjQ=
+X-Received: from pjyf12.prod.google.com ([2002:a17:90a:ec8c:b0:2fc:1356:bcc3])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4cc9:b0:2fc:aaf:74d3
+ with SMTP id 98e67ed59e1d1-2ff6172aef7mr7145660a91.4.1741293830396; Thu, 06
+ Mar 2025 12:43:50 -0800 (PST)
+Date: Thu, 6 Mar 2025 12:43:49 -0800
+In-Reply-To: <0745c6ee-9d8b-4936-ab1f-cfecceb86735@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-pinctrl-fltcon-suspend-v3-4-f9ab4ff6a24e@linaro.org>
-References: <20250306-pinctrl-fltcon-suspend-v3-0-f9ab4ff6a24e@linaro.org>
-In-Reply-To: <20250306-pinctrl-fltcon-suspend-v3-0-f9ab4ff6a24e@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>, 
- Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- andre.draszik@linaro.org, tudor.ambarus@linaro.org, willmcvicker@google.com, 
- semen.protsenko@linaro.org, kernel-team@android.com, 
- jaewon02.kim@samsung.com, Peter Griffin <peter.griffin@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5693;
- i=peter.griffin@linaro.org; h=from:subject:message-id;
- bh=AamfFD2BRSllOH2t+3HFL8aEOK6cAWC0xj27tH28/zs=;
- b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBnygjTd1L6tDY6tRfMy0W1Arkbde2BmYW/fNK57
- 3LRpgrGNY+JAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ8oI0wAKCRDO6LjWAjRy
- ustdD/9DYc5Hd2mErlBUZrqIzZpcf+Q0IYKa0auc+0N87j/47bOmaMPx1hEu0GSshAnlowCjF7t
- 61QDuP1Nr9Eoib8h+icCOG0QiA5vH7eQl7C1/qh56hxP+c831MkFjzTUsusftjriFZl7wzLSMHf
- m6qJB65lCvM1aWVqBd9j9LYs8EYDxSeO7WMr42P3TqU6k0D5gRN2RcHNetdqnkehHhPKLXna/Vw
- UjKfGET2XoIsSGHpB96dTcnaCRgnCIExBYg5guwlMXYGpZrVKinAEzd38U/zKlNbY9aAtZS+s9z
- CRRVhRDeK1VX3P4s4+D1YQrvfAKD5TYZMLhxlJ8vC5XWhqYpxi4rRNvR2K+l5iG9r1EbU0sbeGU
- n86EPTTH94NCpkZ/UYPeIZrNqI1c/8dcjXNBD3IpcgIUpRmIGFgrkogIpQptIc/kzGdNbbBY1Y6
- 1gKWbtVVz2nKIrvd0Kt2LMrOa32cjYoP7KbuPq36q2jeus2t9cra0Bdb2cPbdPl/BwquIzfId8A
- O2NIp4jqEnBVc6+Djh1M//DsbyTOD+6cjaaFax9bfP0vXWBDtqQ2A0k4VNkiDAgIMpR2cwqp7l0
- w1d4AFBRUI9lXQjg7n1vDBmFk5qnH46qchc+oRmcPuXXppTzfZTlEzA4MiiCDSBKXYFs7XWWwNo
- hrak8vzTgUVOlQA==
-X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
- fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
+Mime-Version: 1.0
+References: <20250129095902.16391-1-adrian.hunter@intel.com>
+ <20250129095902.16391-3-adrian.hunter@intel.com> <01e85b96-db63-4de2-9f49-322919e054ec@intel.com>
+ <0745c6ee-9d8b-4936-ab1f-cfecceb86735@redhat.com>
+Message-ID: <Z8oImITJahUiZbwj@google.com>
+Subject: Re: [PATCH V2 02/12] KVM: x86: Allow the use of kvm_load_host_xsave_state()
+ with guest_state_protected
+From: Sean Christopherson <seanjc@google.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Xiaoyao Li <xiaoyao.li@intel.com>, Adrian Hunter <adrian.hunter@intel.com>, kvm@vger.kernel.org, 
+	rick.p.edgecombe@intel.com, kai.huang@intel.com, reinette.chatre@intel.com, 
+	tony.lindgren@linux.intel.com, binbin.wu@linux.intel.com, dmatlack@google.com, 
+	isaku.yamahata@intel.com, nik.borisov@suse.com, linux-kernel@vger.kernel.org, 
+	yan.y.zhao@intel.com, chao.gao@intel.com, weijiang.yang@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-Newer Exynos based SoCs have a filter selection bitfield in the filter
-configuration registers on alive bank pins. This allows the selection of
-a digital or analog delay filter for each pin. Add support for selecting
-and enabling the filter.
+On Thu, Mar 06, 2025, Paolo Bonzini wrote:
+> I agree with Xiaoyao that this change is sensible but should be proposed
+> separately for both SNP and TDX.
+> 
+> Allowing the use of kvm_load_host_xsave_state() is really ugly, especially
+> since the corresponding code is so simple:
+> 
+>         if (cpu_feature_enabled(X86_FEATURE_PKU) && vcpu->arch.pkru != 0)
+>                         wrpkru(vcpu->arch.host_pkru);
 
-On suspend we set the analog filter to all pins in the bank (as the
-digital filter relies on a clock). On resume the digital filter is
-reapplied to all pins in the bank. The digital filter is working via
-a clock and has an adjustable filter delay flt_width bitfield, whereas
-the analog filter uses a fixed delay.
+It's clearly not "so simple", because this code is buggy.
 
-The filter determines to what extent signal fluctuations received through
-the pad are considered glitches.
-
-The code path can be exercised using
-echo mem > /sys/power/state
-And then wake the device using a eint gpio
-
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
-
-Changes since v2:
-* Ensure EXYNOS_FLTCON_DIGITAL bit is cleared (Andre)
-* Make it obvious that exynos_eint_set_filter() is conditional on bank type (Andre)
-
-Changes since v1:
-* Remove eint_flt_selectable bool as it can be deduced from EINT_TYPE_WKUP (Peter)
-* Move filter config comment to header (Andre)
-* Rename EXYNOS_FLTCON_DELAY to EXYNOS_FLTCON_ANALOG (Andre)
-* Remove misleading old comment (Andre)
-* Refactor exynos_eint_update_flt_reg() into a loop (Andre)
-
-Note: this patch was previously sent as part of the initial gs101/ Pixel 6
-series and was dropped in v6. This new version incorporates the review
-feedback from Sam Protsenko here in v5.
-
-Link: https://lore.kernel.org/all/20231201160925.3136868-1-peter.griffin@linaro.org/T/#m79ced98939e895c840d812c8b4c2b3f33ce604c8
-
-Changes since previous version
-* Drop fltcon_type enum and use bool eint_flt_selectable (Sam)
-* Refactor and add exynos_eint_update_flt_reg() (Sam)
-* Rename function to exynos_eint_set_filter() for easier readability (Sam)
-* Remove comments and `if bank->fltcon_type != FLT_DEFAULT)` checks and indentation (Sam)
----
- drivers/pinctrl/samsung/pinctrl-exynos.c | 37 +++++++++++++++++++++++++++++++-
- drivers/pinctrl/samsung/pinctrl-exynos.h | 20 +++++++++++++++++
- 2 files changed, 56 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/samsung/pinctrl-exynos.c
-index 9cffbe9ee64aa5236026978ac2466b709da5bffc..1176efc0ef0464d1a6fc70b0a04f5ddd73ef88a4 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.c
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
-@@ -369,6 +369,37 @@ struct exynos_eint_gpio_save {
- 	u32 eint_mask;
- };
- 
-+static void exynos_eint_update_flt_reg(void __iomem *reg, int cnt, int con)
-+{
-+	unsigned int val, shift;
-+	int i;
-+
-+	val = readl(reg);
-+	for (i = 0; i < cnt; i++) {
-+		shift = i * EXYNOS_FLTCON_LEN;
-+		val &= ~(EXYNOS_FLTCON_DIGITAL << shift);
-+		val |= con << shift;
-+	}
-+	writel(val, reg);
-+}
-+
-+/*
-+ * Set the desired filter (digital or analog delay) and enable it to
-+ * every pin in the bank. Note the filter selection bitfield is only
-+ * found on alive banks. The filter determines to what extent signal
-+ * fluctuations received through the pad are considered glitches.
-+ */
-+static void exynos_eint_set_filter(struct samsung_pin_bank *bank, int filter)
-+{
-+	unsigned int off = EXYNOS_GPIO_EFLTCON_OFFSET + bank->eint_fltcon_offset;
-+	void __iomem *reg = bank->drvdata->virt_base + off;
-+	unsigned int con = EXYNOS_FLTCON_EN | filter;
-+
-+	for (int n = 0; n < bank->nr_pins; n += 4)
-+		exynos_eint_update_flt_reg(reg + n,
-+					   min(bank->nr_pins - n, 4), con);
-+}
-+
- /*
-  * exynos_eint_gpio_init() - setup handling of external gpio interrupts.
-  * @d: driver data of samsung pinctrl driver.
-@@ -828,8 +859,10 @@ void gs101_pinctrl_suspend(struct samsung_pin_bank *bank)
- 				 bank->name, save->eint_fltcon1);
- 		pr_debug("%s: save    mask %#010x\n",
- 			 bank->name, save->eint_mask);
--	} else if (bank->eint_type == EINT_TYPE_WKUP)
-+	} else if (bank->eint_type == EINT_TYPE_WKUP) {
- 		exynos_set_wakeup(bank);
-+		exynos_eint_set_filter(bank, EXYNOS_FLTCON_ANALOG);
-+	}
- }
- 
- void exynosautov920_pinctrl_suspend(struct samsung_pin_bank *bank)
-@@ -883,6 +916,8 @@ void gs101_pinctrl_resume(struct samsung_pin_bank *bank)
- 			writel(save->eint_fltcon1, eint_fltcfg0 + 4);
- 		writel(save->eint_mask, regs + bank->irq_chip->eint_mask
- 		       + bank->eint_offset);
-+	} else if (bank->eint_type == EINT_TYPE_WKUP) {
-+		exynos_eint_set_filter(bank, EXYNOS_FLTCON_DIGITAL);
- 	}
- }
- 
-diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/samsung/pinctrl-exynos.h
-index 773f161a82a38cbaad05fcbc09a936300f5c7595..66acbd08d3445ca6ee7358d3c4a6cb2be5d82842 100644
---- a/drivers/pinctrl/samsung/pinctrl-exynos.h
-+++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
-@@ -52,6 +52,26 @@
- #define EXYNOS_EINT_MAX_PER_BANK	8
- #define EXYNOS_EINT_NR_WKUP_EINT
- 
-+/*
-+ * EINT filter configuration register (on alive banks) has
-+ * the following layout.
-+ *
-+ * BitfieldName[PinNum][Bit:Bit]
-+ * FLT_EN[3][31] FLT_SEL[3][30] FLT_WIDTH[3][29:24]
-+ * FLT_EN[2][23] FLT_SEL[2][22] FLT_WIDTH[2][21:16]
-+ * FLT_EN[1][15] FLT_SEL[1][14] FLT_WIDTH[1][13:8]
-+ * FLT_EN[0][7]  FLT_SEL[0][6]  FLT_WIDTH[0][5:0]
-+ *
-+ * FLT_EN	0x0 = Disable, 0x1=Enable
-+ * FLT_SEL	0x0 = Analog delay filter, 0x1 Digital filter (clock count)
-+ * FLT_WIDTH	Filtering width. Valid when FLT_SEL is 0x1
-+ */
-+
-+#define EXYNOS_FLTCON_EN		BIT(7)
-+#define EXYNOS_FLTCON_DIGITAL		BIT(6)
-+#define EXYNOS_FLTCON_ANALOG		(0 << 6)
-+#define EXYNOS_FLTCON_LEN		8
-+
- #define EXYNOS_PIN_BANK_EINTN(pins, reg, id)		\
- 	{						\
- 		.type		= &bank_type_off,	\
-
--- 
-2.49.0.rc0.332.g42c0ae87b1-goog
-
+The justification for using kvm_load_host_xsave_state() is that either KVM gets
+the TDX state model correct and the existing flows Just Work, or we handle all
+that state as one-offs and at best replicate concepts and flows, and at worst
+have bugs that are unique to TDX, e.g. because we get the "simple" code wrong,
+we miss flows that subtly consume state, etc.
 
