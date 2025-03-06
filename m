@@ -1,132 +1,122 @@
-Return-Path: <linux-kernel+bounces-548777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7B2A5493C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:29:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A40CA54941
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:30:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73348173541
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:29:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9FC71737A0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4950D20A5C6;
-	Thu,  6 Mar 2025 11:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A571209F4B;
+	Thu,  6 Mar 2025 11:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oSPqkvZn"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VLlrPblq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 405062063E8;
-	Thu,  6 Mar 2025 11:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88ECF1FC0F9;
+	Thu,  6 Mar 2025 11:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741260560; cv=none; b=R0W7fzaQB6hqAa/p/yRrVc3tYU/75qDv82F7NQY83P8cfMOZLaYjWQ0Y9LFbzF4K2nlr9Uvu+vzED9+MXJMzxH9DZPUqSFGLOg1iiyHahPfwRinTeL4YHZSF75D2yufaXCI7Rlp5k0lTfztHr14g4Xsd86PFMTSx4JLL6eXlMDE=
+	t=1741260632; cv=none; b=RspTpGqS+Dy8oF4Xjqsyl1ngDYXznkd+ac0JCuy7V0O86j2bd5s2GbgEV4/v9nh2/055mfXOqfMcB4/PEtFUvhDtKMkcddWPzWcJn3pUDjcG9ucprjgTFMwxju5y6XIFzaVZ6RScM7CaZwvseeKhPkuDA9DO9Ur4zSmGylo7574=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741260560; c=relaxed/simple;
-	bh=ElzB3DuPBRiTLKUz/1G4RQ3IeosBY5hIKAZ7kA57ygA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aIK3cQsC1/jWV/ByI9PBZ7vyTf0U6Bpg38c5z7Owwd0E9nNkkAaHxP7XPgD1PqetlmSen7CayYcQBT35nAxdZ94wLt0C8ugBDpFGdOQrXaWr6KtyJiLlX6sMB6xjCV3wWedaS+MPnhNKrVUPLJNM2CqB9M5uYuGImeKNfnBPN10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oSPqkvZn; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5267mNcn005530;
-	Thu, 6 Mar 2025 11:29:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=2H9MZ+wuyKLTvka/vs+A8B
-	rH5oQwxB1fktDD7A9jEj8=; b=oSPqkvZnEkOSkH737o7HzhZHHUJ9eIAWFksuNO
-	1aWvhEM75Y0ibcqg1J1BmH85sg78YjsNs5KFS1ndCp3a/YTNeXsrn0G+L8DYLRi9
-	3zMaouLOOIQMii8x705uBKLhu17m9Uei5LFMt8xIbE2IIaNP7mXNHPuSHUnJ4HJq
-	7pT0MjYvxWaoukx2N662AxoSQWPOismi2tNc2GazzIzttDdNDlGGMDDL+F1Zw60M
-	10qVtxbC3qY8kjh03NnocCZ1Pi95hzBSOmRoVUkW4bba8GvHhfIQZQVmJrufBjY+
-	ZFx1HeLHVEwRTCEa7wJZvwf2Yq5oIFAtZbM5I6JxI7amZZ9w==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4577mx8myj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 11:29:14 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 526BTDOQ010452
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 6 Mar 2025 11:29:13 GMT
-Received: from hu-mmanikan-blr.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 6 Mar 2025 03:29:10 -0800
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <dmitry.baryshkov@linaro.org>, <quic_srichara@quicinc.com>,
-        <quic_varada@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1] drivers: clk: qcom: ipq5424: fix the freq table of sdcc1_apps clock
-Date: Thu, 6 Mar 2025 16:59:00 +0530
-Message-ID: <20250306112900.3319330-1-quic_mmanikan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741260632; c=relaxed/simple;
+	bh=Qr0sGyrLmQ6es4CO43+zm0fmuYxQlueRct9R+BrDTHM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Owmq1aN9xBm3Sw8OIcssyxL8+SAgBKGyX9AyErczHex8fzbowWVyZrNwqv++gWVuw3JRSmaymEygw5cM3UOvJMuXOC7xnqotTHDh1wYg+dQh4x/oF+9EWw+Jzr2mH8cDNKjzc+Q1hlsq7l98/6UUP1tHeQpzB7f52hveJC8PY3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VLlrPblq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEF0DC4CEE0;
+	Thu,  6 Mar 2025 11:30:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741260632;
+	bh=Qr0sGyrLmQ6es4CO43+zm0fmuYxQlueRct9R+BrDTHM=;
+	h=From:Subject:Date:To:Cc:From;
+	b=VLlrPblqXk0hvw/yfgsRaMg7o5ZGImnJKiCuHLCBcG5Mqphl/n2sah0y7Oz2WmTYw
+	 6/1RtIoHcJivpGewzX0z9TKosnc5fW25xB0mDnYpDKeRLVUjCCGqm+pR6IyDs1YL/N
+	 Z4kn00rF4QlKmvRkMsrxzIJmD5+T67Z8W9ZhqhAoBPMGKEuxEt+UdE7ZmQNvyFejTQ
+	 59EY6aHMlyies9499Fm0HLbomJASWb/sZJ27jvEQWfxFNfJc1VXTS3kTWQGLBCjX7e
+	 SJLvNhDegscin37BW5i6u3Uf7vR83/eXwRLmQHvBWmnisqrydCoWU7w220NNbXN7CB
+	 /lNvr+4cjWNdg==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Subject: [PATCH net-next 0/2] tcp: ulp: diag: expose more to non net admin
+ users
+Date: Thu, 06 Mar 2025 12:29:26 +0100
+Message-Id: <20250306-net-next-tcp-ulp-diag-net-admin-v1-0-06afdd860fc9@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: oLxJ3pwSi9Wgl_KiwPI4dRIonyJVGN3n
-X-Authority-Analysis: v=2.4 cv=cOIaskeN c=1 sm=1 tr=0 ts=67c9870a cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=3yUitucLZDAhSqLVeBgA:9 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: oLxJ3pwSi9Wgl_KiwPI4dRIonyJVGN3n
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- priorityscore=1501 suspectscore=0 adultscore=0 phishscore=0 spamscore=0
- lowpriorityscore=0 bulkscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503060087
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABaHyWcC/zWNQQqEMBAEvyJz3oFEUXG/InuIzqgDbgxJFCH4d
+ 4PgoQ/VUN0JAnvhAN8igedDgmw2g/4UMC7GzoxCmaFUZa0q1aDlmHNGjKPDfXVIYuanNfQXi0Z
+ TQ+3UdVoNkFec50nO56GHV4bfdd3TPyaMewAAAA==
+X-Change-ID: 20250306-net-next-tcp-ulp-diag-net-admin-a1d6d7f9910b
+To: mptcp@lists.linux.dev, Eric Dumazet <edumazet@google.com>, 
+ Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+ "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>, Boris Pismenny <borisp@nvidia.com>, 
+ John Fastabend <john.fastabend@gmail.com>
+Cc: Davide Caratti <dcaratti@redhat.com>, netdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1345; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=Qr0sGyrLmQ6es4CO43+zm0fmuYxQlueRct9R+BrDTHM=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnyYdUFD9xJyEeInj0DwaLM9fl53Png/7uclYVV
+ UZl0Quc64mJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ8mHVAAKCRD2t4JPQmmg
+ c14cD/9YQKASsBE+hbG+LjxHAejiXxM0uvZgu3sb+9gffexHJ7p4nYpx4zkaBVJoMsTocGGgRQB
+ zwOeW0nF82mw6c7EHS2jzr+tsVPNxEaZsRCY6rBauhqvHBeeMO6sNUmTJXlzECOYLu1/cHCeZmO
+ 2wBPIKc0uJ8/cELc9pssBdlW3R16CCOetIGZautRkYaGugXlw4Ogt1qQUNYuZVdLwdA5O5eI9B8
+ w7ERjpp3SYeSAG0tLJI4uEaStAUhcwUsDVt0CmdYPuujNoVfm5KocNboYs9bx9n9KnfVWloZgaY
+ 4KmWfxgdLIRkpYAA/P078JW79z0WgJZLZWUfySC1P2wzzKIln6OoTVCnpAgjATXJ4pCgV6i8Hdb
+ OSitbgYSL+3SXAl+bc1CgQr62CpLgjVOqAqfCUOKhQ4zMmg/hk5bKi8xDvWy3Y6YOG3Lykjrjc7
+ wUzkFD1Ni4bWrm/k2x1AyFWy9TfquEYhv86roMwHeuLhJayR/cGc+d0JcpareggUhZUbME6uN9E
+ 5jrKKcsncpjR9QV0YDyNfZua4MfxyrmHoRBQo8meSc6qUhO/acVfDdQbzZGvmxPb4CLWp1tP0jI
+ M77US5hS592ptolW65hESWOFRw26LJ+rFMfwpKpzSSpN4d6vXAHcLw58v8r1w5RDTC0lYiFBa15
+ vNToL/Qv38ZRcmQ==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-The divider values in the sdcc1_apps frequency table were incorrectly
-updated, assuming the frequency of gpll2_out_main to be 1152MHz.
-However, the frequency of the gpll2_out_main clock is actually 576MHz
-(gpll2/2).
+Since its introduction in commit 61723b393292 ("tcp: ulp: add functions
+to dump ulp-specific information"), the ULP diag info have been exported
+only to users with CAP_NET_ADMIN capability.
 
-Due to these incorrect divider values, the sdcc1_apps clock is running
-at half of the expected frequency.
+Not everything is sensitive, and some info can be exported to all users
+in order to ease the debugging from the userspace side without requiring
+additional capabilities.
 
-Fixing the frequency table of sdcc1_apps allows the sdcc1_apps clock to
-run according to the frequency plan.
+First, the ULP name can be easily exported. Then more depending on each
+layer:
 
-Fixes: 21b5d5a4a311 ("clk: qcom: add Global Clock controller (GCC) driver for IPQ5424 SoC")
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+ - On kTLS side, it looks like everything can be exported to all users:
+   version, cipher type, tx/rx user config type, plus some flags.
+
+ - On MPTCP side, everything but the sequence numbers are exported to
+   all non net admin users, similar to TCP.
+
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 ---
- drivers/clk/qcom/gcc-ipq5424.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Matthieu Baerts (NGI0) (2):
+      tcp: ulp: diag: always print the name if any
+      tcp: ulp: diag: more info without CAP_NET_ADMIN
 
-diff --git a/drivers/clk/qcom/gcc-ipq5424.c b/drivers/clk/qcom/gcc-ipq5424.c
-index 37b1a3ff8f4e..3d42f3d85c7a 100644
---- a/drivers/clk/qcom/gcc-ipq5424.c
-+++ b/drivers/clk/qcom/gcc-ipq5424.c
-@@ -640,11 +640,11 @@ static struct clk_rcg2 gcc_qupv3_uart1_clk_src = {
- static const struct freq_tbl ftbl_gcc_sdcc1_apps_clk_src[] = {
- 	F(144000, P_XO, 16, 12, 125),
- 	F(400000, P_XO, 12, 1, 5),
--	F(24000000, P_XO, 1, 0, 0),
--	F(48000000, P_GPLL2_OUT_MAIN, 12, 1, 2),
--	F(96000000, P_GPLL2_OUT_MAIN, 6, 1, 2),
-+	F(24000000, P_GPLL2_OUT_MAIN, 12, 1, 2),
-+	F(48000000, P_GPLL2_OUT_MAIN, 12, 0, 0),
-+	F(96000000, P_GPLL2_OUT_MAIN, 6, 0, 0),
- 	F(177777778, P_GPLL0_OUT_MAIN, 4.5, 0, 0),
--	F(192000000, P_GPLL2_OUT_MAIN, 6, 0, 0),
-+	F(192000000, P_GPLL2_OUT_MAIN, 3, 0, 0),
- 	F(200000000, P_GPLL0_OUT_MAIN, 4, 0, 0),
- 	{ }
- };
+ include/net/tcp.h   |  4 ++--
+ net/ipv4/tcp_diag.c | 21 ++++++++++-----------
+ net/mptcp/diag.c    | 42 ++++++++++++++++++++++++++----------------
+ net/tls/tls_main.c  |  4 ++--
+ 4 files changed, 40 insertions(+), 31 deletions(-)
+---
+base-commit: f130a0cc1b4ff1ef28a307428d40436032e2b66e
+change-id: 20250306-net-next-tcp-ulp-diag-net-admin-a1d6d7f9910b
 
-base-commit: 7ec162622e66a4ff886f8f28712ea1b13069e1aa
+Best regards,
 -- 
-2.34.1
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
 
