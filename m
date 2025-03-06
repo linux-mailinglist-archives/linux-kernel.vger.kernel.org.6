@@ -1,48 +1,81 @@
-Return-Path: <linux-kernel+bounces-548014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7253FA53ECF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:04:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30156A53EE6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:08:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05B447A4280
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:03:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 535E21893424
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5C61853;
-	Thu,  6 Mar 2025 00:03:57 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999922114;
+	Thu,  6 Mar 2025 00:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YSGyQeHY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825B7376
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 00:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61673366;
+	Thu,  6 Mar 2025 00:08:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741219437; cv=none; b=C4XJxV/qsDQc0mIRau06FudwlDFedLqfNZpO/E1XdNrav++/p64iq3cTIpkCvqSct4seHuOXmd6qcIDGWC/NcGs70qn5zeLknTA2Ccgv9XmXlZA/pLoQ1RK0vpLNOT3Euw2HTt9qqDd2xZ/w7NbpchotpQZozuwuUTOv3y9MlTs=
+	t=1741219693; cv=none; b=rIvDt/lS6ZMPydIr8Zm1AoIdAoZ69tXnnrpDvkB10cThjJdgBR4D67CfuySauvKKBftJPorPYv7952kO/dziQ0JalF3UwV31DFRSkUBIfuPzB/BA4wU/AdXqArnFmwyFirUWykSzmkfxoSqwFf+7LZNtLEy5CxAQ4HnFEanaOZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741219437; c=relaxed/simple;
-	bh=kjp8x1ytnycfKo+KUkfRyVWWh0PRBeKDaQEeW9/9CJk=;
+	s=arc-20240116; t=1741219693; c=relaxed/simple;
+	bh=XmkEAc+/w2Dkxu/1TNTvMeosZ3tOVAg+QYljZPhFBjc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aLpm9Z1ts98ibUxNclZF4Ge/s4LFDaP4eiy84fje1rEGmYdgNd6VEQJU0PWzkbteU4LBPCqyqiXWRJperSQyitlhH/GlPGqWE42D9++97xY9RwbYXE6DHaPg9+PjKn7LaFm4O7oE7cjOV4Gz44K3SEjiWnYvy4RbFkbN/yeaueo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 18EF568BEB; Thu,  6 Mar 2025 01:03:49 +0100 (CET)
-Date: Thu, 6 Mar 2025 01:03:48 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>, Hannes Reinecke <hare@suse.de>,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Nilay Shroff <nilay@linux.ibm.com>,
-	John Meneghini <jmeneghi@redhat.com>, bmarzins@redhat.com,
-	Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Marco Patalano <mpatalan@redhat.com>,
-	axboe@kernel.dk
-Subject: Re: [PATCH] nvme: remove multipath module parameter
-Message-ID: <20250306000348.GA1233@lst.de>
-References: <8a1730a1-1faf-4722-99e1-c3a85257b6f4@redhat.com> <Z7TARX-tFY3mnuU7@kbusch-mbp> <2ff87386-c6db-4f2e-be91-213504d99a78@linux.ibm.com> <0656b66c-dd9c-495d-b1fc-4f09e763fa66@grimberg.me> <Z7dct_AbaSO7uZ2h@kbusch-mbp> <91ae613a-7b56-4ca0-b91c-6bc1eee798b8@suse.de> <20250305141554.GA18065@lst.de> <Z8hrJ5JVqi7TgFCn@kbusch-mbp> <20250305235119.GB896@lst.de> <Z8jk-D3EjEdyBIU5@kbusch-mbp>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TQ/lUSzBaDqS6PDVexIHBbZn0L8bwCM4rcAVK4F+eGGB72iVRlcxMCOFvbbG8g0bsAAoh1QwiL7PShDebQFiNLVR6fPKTKYUHaxSPSRXdPnxGgTp6/3j681+InDL1NJ1RJlHnHGiIE9AL6MxCDVjPLvizrooKWQ7MiZXe5F3GlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YSGyQeHY; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741219692; x=1772755692;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XmkEAc+/w2Dkxu/1TNTvMeosZ3tOVAg+QYljZPhFBjc=;
+  b=YSGyQeHYdoUNPvRIFBRAPZnPaKMd+rxh08PCBS9imL31ht5nHuvGY9G/
+   xQWCjcn1gfy22MP+O+aJT02DVRQ+0So59oaT24hJF/RZe7T1i9yJj3OT6
+   X8ebJDZG7gZB0g23EFkWdsm0tZf/tKa4DfUO0y/9NJQyeqBXmiSnG2hVJ
+   AovSNX8K3bKXkAek4oSu17uBv/LXuMsrb+dk1NqT29QvACMLGR5nFBcsn
+   rztdqK5aGNthh8s62QbAJA+cRhVTjksgQ1+B31+DryTl9fSJvINsBO3J1
+   wHo3Hqfh+sChcHt6oKzQPNMRUQrW6uEc8X6+GsJKGVdbZ1upzcXp/vWkd
+   g==;
+X-CSE-ConnectionGUID: 8VsXSkovQ86/RTBQMBd0nQ==
+X-CSE-MsgGUID: U7vsS2ckS2G9VH5+ixXtyQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42341118"
+X-IronPort-AV: E=Sophos;i="6.14,224,1736841600"; 
+   d="scan'208";a="42341118"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 16:05:55 -0800
+X-CSE-ConnectionGUID: QY7iUrB3R0C/1HrbrZxxLg==
+X-CSE-MsgGUID: 3ucTVqz5SF+bWZZ35HJ1vQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,224,1736841600"; 
+   d="scan'208";a="149619719"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa002.jf.intel.com with ESMTP; 05 Mar 2025 16:05:47 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tpyju-000MLA-0L;
+	Thu, 06 Mar 2025 00:05:27 +0000
+Date: Thu, 6 Mar 2025 08:04:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: Michal Wilczynski <m.wilczynski@samsung.com>, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com,
+	guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com,
+	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
+	jszhang@kernel.org, ulf.hansson@linaro.org,
+	m.szyprowski@samsung.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: Re: [PATCH v1 2/5] firmware: thead: Add AON firmware protocol driver
+Message-ID: <202503060707.a8CwuQbH-lkp@intel.com>
+References: <20250303145901.446791-3-m.wilczynski@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,56 +84,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8jk-D3EjEdyBIU5@kbusch-mbp>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20250303145901.446791-3-m.wilczynski@samsung.com>
 
-On Wed, Mar 05, 2025 at 04:57:44PM -0700, Keith Busch wrote:
-> > > Obviously he's not talking about multiported PCIe.
-> > 
-> > Why is that obvious?  
-> 
-> No one here would think a multiported device *wouldn't* report CMIC.
+Hi Michal,
 
-I hopes so.
+kernel test robot noticed the following build warnings:
 
-> The
-> fact Hannes thinks that's a questionable feature for his device gives
-> away that it is single ported.
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on linus/master v6.14-rc5 next-20250305]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Well, his quote reads like he doesn't know about multiport PCIe devices.
-But maybe he just meant to say "despite being single-ported"
+url:    https://github.com/intel-lab-lkp/linux/commits/Michal-Wilczynski/dt-bindings-firmware-thead-th1520-Add-support-for-firmware-node/20250303-230224
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250303145901.446791-3-m.wilczynski%40samsung.com
+patch subject: [PATCH v1 2/5] firmware: thead: Add AON firmware protocol driver
+config: arc-allmodconfig (https://download.01.org/0day-ci/archive/20250306/202503060707.a8CwuQbH-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250306/202503060707.a8CwuQbH-lkp@intel.com/reproduce)
 
-> > At least based on the stated works he talks about
-> > PCIe and not about multi-port.  The only not multiported devices I've
-> > seen that report NMIC and CMIC are a specific firmware so that the
-> > customer would get multipath behavior, which is a great workaround for
-> > instable heavily switched fabrics.  Note that multiported isn't always
-> > obvious as there are quite a few hacks using lane splitting around that
-> > a normal host can't really see.
-> 
-> In my experience, it's left enabled because of SRIOV, which many of
-> these devices end up shipping without supporting in PCI space anyway.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503060707.a8CwuQbH-lkp@intel.com/
 
-If a device supports SR-IO setting CMIC and NMIC is corret, but I've
-actually seen surprisingly few production controllers actually supporting
-SR-IOV despite what the datasheets say.
+All warnings (new ones prefixed by >>):
 
-> 
-> > > And he's right, the
-> > > behavior of a PCIe hot plug is very different and often undesirable when
-> > > it's under native multipath.
-> > 
-> > If you do actual hotplug and expect the device to go away it's indeed
-> > not desirable.  If you want the same device to come back after switched
-> > fabric issues it is so desirable that people hack to devices to get it.
-> > People talked about adding a queue_if_no_path-like parameter to control
-> > keeping the multipath node alive a lot, but no one has ever invested
-> > work into actually implementing it.
-> 
-> Not quite the same thing, but kind of related: I proposed this device
-> missing debounce thing about a year ago:
-> 
-> https://lore.kernel.org/linux-nvme/Y+1aKcQgbskA2tra@kbusch-mbp.dhcp.thefacebook.com/
+   drivers/firmware/thead,th1520-aon.c: In function 'th1520_aon_init':
+   drivers/firmware/thead,th1520-aon.c:206:20: error: implicit declaration of function 'kzalloc' [-Werror=implicit-function-declaration]
+     206 |         aon_chan = kzalloc(sizeof(*aon_chan), GFP_KERNEL);
+         |                    ^~~~~~~
+>> drivers/firmware/thead,th1520-aon.c:206:18: warning: assignment to 'struct th1520_aon_chan *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     206 |         aon_chan = kzalloc(sizeof(*aon_chan), GFP_KERNEL);
+         |                  ^
+   drivers/firmware/thead,th1520-aon.c:219:17: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
+     219 |                 kfree(aon_chan);
+         |                 ^~~~~
+   cc1: some warnings being treated as errors
 
-Yes, that somehow fell off the cliff.
+
+vim +206 drivers/firmware/thead,th1520-aon.c
+
+   185	
+   186	/**
+   187	 * th1520_aon_init() - Initialize TH1520 AON firmware protocol interface
+   188	 * @dev: Device pointer for the AON subsystem
+   189	 *
+   190	 * This function initializes the TH1520 AON firmware protocol interface by:
+   191	 * - Allocating and initializing the AON channel structure
+   192	 * - Setting up the mailbox client
+   193	 * - Requesting the AON mailbox channel
+   194	 * - Initializing synchronization primitives
+   195	 *
+   196	 * Return:
+   197	 * * Valid pointer to th1520_aon_chan structure on success
+   198	 * * ERR_PTR(-ENOMEM) if memory allocation fails
+   199	 * * ERR_PTR() with other negative error codes from mailbox operations
+   200	 */
+   201	struct th1520_aon_chan *th1520_aon_init(struct device *dev)
+   202	{
+   203		struct th1520_aon_chan *aon_chan;
+   204		struct mbox_client *cl;
+   205	
+ > 206		aon_chan = kzalloc(sizeof(*aon_chan), GFP_KERNEL);
+   207		if (!aon_chan)
+   208			return ERR_PTR(-ENOMEM);
+   209	
+   210		cl = &aon_chan->cl;
+   211		cl->dev = dev;
+   212		cl->tx_block = true;
+   213		cl->tx_tout = MAX_TX_TIMEOUT;
+   214		cl->rx_callback = th1520_aon_rx_callback;
+   215	
+   216		aon_chan->ch = mbox_request_channel_byname(cl, "aon");
+   217		if (IS_ERR(aon_chan->ch)) {
+   218			dev_err(dev, "Failed to request aon mbox chan\n");
+   219			kfree(aon_chan);
+   220			return ERR_CAST(aon_chan->ch);
+   221		}
+   222	
+   223		mutex_init(&aon_chan->transaction_lock);
+   224		init_completion(&aon_chan->done);
+   225	
+   226		return aon_chan;
+   227	}
+   228	EXPORT_SYMBOL_GPL(th1520_aon_init);
+   229	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
