@@ -1,684 +1,188 @@
-Return-Path: <linux-kernel+bounces-549258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39788A54FC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:56:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2794A54FDD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:58:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E99481894608
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:56:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FCD616E307
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:58:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B626211A02;
-	Thu,  6 Mar 2025 15:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFE02116E0;
+	Thu,  6 Mar 2025 15:58:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZIeosD5s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="QvwurLY0"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012032.outbound.protection.outlook.com [52.101.71.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EA162116EE;
-	Thu,  6 Mar 2025 15:56:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741276593; cv=none; b=Fp6dp+BxFgE2U+/ghiO1ZK7FaGaj6QnzPNlFbuFLZRDRkVvtJRTrIUIjb+K5mz4p8DZPEx3YtdwAsvX3Y/8Ho0PUAOSvefBFEvQWEha5dD8NcA4Ads4CS8WiVGfH2gu07gTmKRctA4YgOkLFPKhG+zodC8N9hZ46hHkSAssd7zQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741276593; c=relaxed/simple;
-	bh=Y2v+zonvtDUEfPSUQyxZNb0Jg2huFhiLI2K20gtZM8M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lPgdLtkTuT88hPWY4ZPoMJyOuOsm5QZVsHqOYw9h/R6KzslkUsY4HB533gpRCTQeK7bJ+x0NrnQYylBF+7xnS9gyJUEPYyp4s0hYx8DemUvJ+qnge4FH7/WoxyGk4cREXxjuUpHFNIj9P+d85wSWiddrD5AKBSXzsEoEPVlOwvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZIeosD5s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 057B3C4CEE4;
-	Thu,  6 Mar 2025 15:56:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741276592;
-	bh=Y2v+zonvtDUEfPSUQyxZNb0Jg2huFhiLI2K20gtZM8M=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZIeosD5s4sAvMrf0NH34IJqA0cQKYf8yxJ1nk7Rmk133xG8yg7K8/+WIgPmAALZ1b
-	 rvrnr1yC4XmFNL5QyJC5C7rRqzJ+4oAz4A3W9c5de+H9dIRYuKcFgtgRVuiC/Thg6e
-	 eiXYcwOaGBAYqEQc73H5SmcJEHnfkW7sIEaW3sNuaRgb14hRJpkq0MoyQJUVEZytEh
-	 3kLxLz61XTBGqX25whyr83+LS1IyQq+2W++wK1BWmQ5ihiugPIUSyzm1aBTiKk3lF/
-	 NfVjj6hqdj0eSHVLF8aNJHhTtr+Seiqa4xAac29PZOG2rwSi045yBZ540CB8+eiNLM
-	 ZPHl0/1msbTyw==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <n.schier@avm.de>
-Subject: [PATCH v2] kbuild: add Kbuild bash completion
-Date: Fri,  7 Mar 2025 00:56:22 +0900
-Message-ID: <20250306155623.2262725-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319A920B1E4;
+	Thu,  6 Mar 2025 15:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741276713; cv=fail; b=DeTLmXg3O9CBwHZZQaH8TvG1/KikZfB4a+tEXl9FOstXuC2iy+7O+EQsunNOQDWddOI91jxbzYCjM72rn3naMmlU4tqaEeLSGAPLu4Z5ScHdEgvd6Ampp4mk0oDMMExSzcJQjHMrFZvQme6G2mBvB9/532jZaM5dLQ5UwnoOer4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741276713; c=relaxed/simple;
+	bh=uCCBYbLkEClWyEkuRabYib7JXqlKp0TUDGNhwdR8rOA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=PTuoTxgq2k1UG4t2csnQbGgjsWEfds2pi8H+v1iP1FHiZRs0Ioa9ZUcfjpB8D0KccPH208+oAH5ojLaMbAfOFcqEnkb6aLr+vIPQUAaJdV5jSBSQRXJWyx1Bi2wJwaqUrppBNAEo3ZKweM4+BeRBlgltVRKVLNwjYOQf15ahrW8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=QvwurLY0; arc=fail smtp.client-ip=52.101.71.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=RwFsHksBAkGAV+hr3M7ycoH/dDwXWl/ocuDJUACYFvtf6tsDiIqIcuNbUjxMnIUAzlIEmdHvuZe39mwUMCxOxUdTT9uoQzdvPcH2m1/lJbhlLUVEWuHceolTofdPyBca1ZTynDxEVb4WyjIvPmI9wAzLNLoJZ0WUxPWzlpWxBj7LdqE+pGrzx+Xt+I3j11e+cjuPc/KJkYYYQwlHh4NgNShxQ/HPNMqtKH2N4UAR442IBpAQPCVVyZWdSwYmEcEfRTAvGUvWs6f1GEoVg7SNGv2gCzmwT+I7PAePREHztbNXcY1elyZF4jczHEkI2XXl9zoZvBbIzfJWBt890Mp2bA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=eKLQOo+h6wkMC29fzswqSWk9MTt9qVypWoHFeqmEG58=;
+ b=v9T/OIR0FgH8Nl4pNf1lWGKb+3PM9Jr3dKMEmSJlO5RHfs3VMgMfwdPNWoEFZwRx3PJ0p9LEcABPMk27IIyhYlOn2KOYTMNwYRjLDv3luDfiPRy+jcyTYJzlK/CCeeWfiguWqFcx6gFGU028tne7myXGBeAsymApW6heNx8viSP8hibr0oCM2giZ4gwr/4nESnWTV7euNQAE/7j7T76JmvLD3Y7+CuLCsBDasu7VGepeyi7DxQ8rqK5lNjsspNZNqb+/hN0SE+LvEVrnbUHLckW38swv//I5rbuT+trKIfYEaS0Zo4IeelSMIELx7mHTMCDocvYli4GnWDH1OS9kLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eKLQOo+h6wkMC29fzswqSWk9MTt9qVypWoHFeqmEG58=;
+ b=QvwurLY0k4T6MNNsxWhYlBmoArhDBn8iVdY9dPeolod6XTGoTNP3UWsR3BMv958V/TypMJm4VqHIhmTJgJJpz2RzVhRErsfPcZdVOi3e3TXCc2RTn3q6KllsGw3m3UrdGsUNXgjyyMEpJmjvNqOCJ4h7A+3eqtxOdK8m2eae4LvEbo9qFctbUHcpF841iS7lXYyDMU0nIBkpMxZ3OklnHsM1Tq3vbHhEeOE4JT9VliA99ovCs9dNNI75OO1wDXQRmVjlBY7BNJWH69/Lnb85oHTe3bJIU7bmi75bq9edj6bX0aWZMSpPc0PdSHAJA+V5DKopBN14xxqLDAIszR4pZw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DB9PR04MB9330.eurprd04.prod.outlook.com (2603:10a6:10:36e::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Thu, 6 Mar
+ 2025 15:58:29 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%6]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
+ 15:58:29 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Dong Aisheng <aisheng.dong@nxp.com>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	linux-i2c@vger.kernel.org (open list:FREESCALE IMX LPI2C DRIVER),
+	imx@lists.linux.dev (open list:FREESCALE IMX LPI2C DRIVER),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] dt-bindings: i2c: imx-lpi2c: add i.MX94 LPI2C
+Date: Thu,  6 Mar 2025 10:58:15 -0500
+Message-Id: <20250306155815.110514-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY5PR17CA0022.namprd17.prod.outlook.com
+ (2603:10b6:a03:1b8::35) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DB9PR04MB9330:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e76b1b7-de1b-4248-2d35-08dd5cc7bca1
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|52116014|376014|366016|1800799024|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hcBuNtGhykuoHr1HOLPeCy/bgT9lVV24SMeREzvKvHrzEc3WBjGquPMNhlb9?=
+ =?us-ascii?Q?Ly2smjP2D/0yCUAayJErFKGrrSxvgQl/GefAqlSgixsJFpNTTEuqOI2z8gzD?=
+ =?us-ascii?Q?ngL6Qa1ZYsaniX16FthwyMK/l9zVscFUlDuR5NQigeyKNtkET/TJhDfcHPgZ?=
+ =?us-ascii?Q?hypmiR/nx+zw37EYbB5djiwEIjUGL6WPlUQRfa1pYZUOSAfTpTGIETXNXL2o?=
+ =?us-ascii?Q?2cmqlATnhMGNUldlTsvNFRvF9Cayyl04gfDHS52UPFEEsA1qW0s5v5DrkFWG?=
+ =?us-ascii?Q?erECGu0p/p98Lvs7XOHJ9jwizl0rsCGfdgSEZKJ7Zei7/GzqXN7bjTm8DiVp?=
+ =?us-ascii?Q?om0zR9PyA/J0oh6JB7Kq1Ty71zRPUe91K/HeCtR5ZCsKbiGNa3lsPA16b9ob?=
+ =?us-ascii?Q?pedBnfnzl6/Da09vGexVczKE3gC8WvBPFg3CVteOL2YgBtYHtZfNDfaAZcMM?=
+ =?us-ascii?Q?DrZw597BUhYu9B+Z1adnH8ajp2Vptn/Flx8X2CBPnUsFYwvLBuGZAXsKooQ0?=
+ =?us-ascii?Q?Uoz/LFunrKtFCufDNcwzUL2c9cwVef75ucPHgLnDXlnwMuHzmohWPk2nlklo?=
+ =?us-ascii?Q?KRkFjOzGQI3MlPdRcpRGObc6N5kGDgBAMfsfubEUVQn/2SwxctqynilSRDfT?=
+ =?us-ascii?Q?nKnLDCkn+VSO5miGX9h9M6a2iQEgbdCdcYOGTmSCSZFqtLR4mYNFHOu3KrU4?=
+ =?us-ascii?Q?6l707151+n5OJQcVAnYIZDHWlG8AR1rNlOM/WGE9GiAmOdSsVz/TD6EpbXS7?=
+ =?us-ascii?Q?xpN5jOtYHPfNU54W1wfPxTBjZeopGZb3LnaNWj+rRiTDVIS7xiOT1xNtEb0A?=
+ =?us-ascii?Q?iDKuAf66FAE09WUljEXFVB5gTV5nzsUDsZihx5Kl5Z9lw6MVGxFaY8X1CB09?=
+ =?us-ascii?Q?+0v0BJPAculJVNd4D8FFhlI46I7zjUMXocrALk8zJrqWeCoX14uRdZdMijNk?=
+ =?us-ascii?Q?1GJ5K7HX4AJgK+NPx9GRNShQG8cQdt0P75PeFmLpo5Q7xpPPLF6iXWk+4G8+?=
+ =?us-ascii?Q?96745ckfNJn5SAu+6Od13kbdIb3KqCdyj47Q9+7hqjjHZmSpSKVV/Unw65Pz?=
+ =?us-ascii?Q?sSo75Ii0S/hKw00SFwhn0LU62vib7xAxFdCCRhsUIV7aeOx7Q41ry83zijnf?=
+ =?us-ascii?Q?TXOEbjYdvyie0rf7WHdi1yt4ZeSzW2oM0G+MqzGnVZpjNtg1SEjeHY3Q2fjR?=
+ =?us-ascii?Q?D4zzdgT8gFOl9mncdovL7evIweTMJGQabKDwxM5NLrLgnsky/UNjUxo3RrNd?=
+ =?us-ascii?Q?tpKKsK6H/mAgQnilVFZncHEDw6V4AJca0LTjapxh4FHFQpC/cIY4himV/Sf1?=
+ =?us-ascii?Q?SCMnD19T8mXqvSAHyo8CBHt9rBBmVPCbjHq7C+lGVIzQJgSyNQJr+n7cu2k+?=
+ =?us-ascii?Q?w3xM6vrPFGAyxHSjbZK7pODLC6MbFuFYBiHKmv8NzcWA/eD6BnD8oZ5n/rVT?=
+ =?us-ascii?Q?MJazUecZdAlNYdAVjS0DgBOp5Vn6h6zTt8kUjw82pQ7wIpc3LxuiSg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(376014)(366016)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?BegnxSriWLAhDvxmDYv4ghCVYF45Qorwu7x3300r4+oKugXuRcwLrkZKFeC6?=
+ =?us-ascii?Q?mX7WexCQq68bSKBDGuQvJXzCqKbfsiiYQw5L568fc6S+wPQSqlVB1BDHtv/x?=
+ =?us-ascii?Q?0lxoh2HW1HN2zk4P4ho8G8s76+5zA48ISv0JqHyq7LIuCO83USUFKogZqKRW?=
+ =?us-ascii?Q?/UNWlwLuothmpT3b/tXCxFl14THDEVN9QPIv4Lc4L/L61J8uBn+cmYh/logW?=
+ =?us-ascii?Q?IzNuyZVrgmvNpMdvS2+5WW3AI1PuLLYdLfl6Mr2GVPU2CLgKbZAXhAuuoOyj?=
+ =?us-ascii?Q?AvDiPKoXG0j3ERU6RkSYJXPhQXBeuYleZW7CuX3Q9r9wrwJPlzw8Tqtey7+3?=
+ =?us-ascii?Q?IoT4dMtuy93UL1y4zkbrL5PSJnSmHU18TWXvGsT1wMhkOEN1n/vAXUBP+gsY?=
+ =?us-ascii?Q?xgDSVEhVV09qfhlrUW6ObIdAwQ4YEBY7iaMlcNugKO/ooIjDEzYflAqH13uK?=
+ =?us-ascii?Q?l0ylwwsficEowVvGU6KGJoZsWniQCgsHpodwXCkZAn0co1Sh8j6MQJNyLZs/?=
+ =?us-ascii?Q?+T5u9Y1lSD1KnlYst1JdOIzTKGEzjqqZNAS3AN7Cyzks3AoYmdhX+RHuuRqC?=
+ =?us-ascii?Q?08KtkiVuh6tTdAD20Z4nzJTZccIlgXxtd4c0lv9pZAddK8xsQDgulnHKqFxR?=
+ =?us-ascii?Q?870niuVjSbvibR4PkAtq3agkABG0x6Z//pnBwa4RlNGxQJxWr38R/hP/2FSr?=
+ =?us-ascii?Q?t1FTsd16G8yFZEpfnB1bCQy91Zo4nQEXNF+6FU4agQ5aQdXYSpNhegOmBY9J?=
+ =?us-ascii?Q?n+421voxwtm4NbhRLs6K4ZwKbUKACtADfe/EQEMWW5NmT6xEOki4kBOwtI1/?=
+ =?us-ascii?Q?14jcsDM1h9LCFi1TX8Uqby73uJeWV5XA9h/xVnB1gAP3y6sjhi1/+p8AnDut?=
+ =?us-ascii?Q?FpJ32oW6m1AVQ1o20/yJBRHleatmt7xpNzpvw2oPos6GxBdJZoaEM9eQbfD/?=
+ =?us-ascii?Q?VJT486SiGFTsPCyJ58tBwAf8fv81STapIc/CaCPpx/SVUPzRd+yAiVe4lN/m?=
+ =?us-ascii?Q?bcDtRCF8h7wMUx7LYTGGHKzdlFnwIA1gXcb2wbIFXoVUJFCLxh0sTFNlYqQs?=
+ =?us-ascii?Q?oPvoLJHkjzN2JviTkNknWaAJvjTprgIEch7yG7fdUQrj5lcSyHD7eTNQpQoz?=
+ =?us-ascii?Q?E2GWD4id+N4xba8J35/O0+pzZfHMZeFBqeEBzrKRdbl9Nr/hsqY/1g0oYXKs?=
+ =?us-ascii?Q?KYkTI6qF8/Wa9twdh1jwrxoZ7uAyqHctk/+f/AD5645g5ISpMvC5Pw9DKA0R?=
+ =?us-ascii?Q?9owYjxqBEiVQvel59VGTBrvCKB2bkqGynoG99e9HkX1f+DoDy+44FW91KQ2c?=
+ =?us-ascii?Q?iCo+SXxTJoFgmVhtnrwPMVhNIRzLeFDJxQV3+ZSjyRBGSrxvrL8kDyXFyNZs?=
+ =?us-ascii?Q?ExigfVMKvhpcojIuELX4EmnMobaFLSbNRlcixy0xfeKL8k8mFM22SthS7auX?=
+ =?us-ascii?Q?xtzQzOXT4IWGP4IVRpbSvfIeW0lBXz7xEWGzYI0KIjd0Q5UZTA4rTpGggKiL?=
+ =?us-ascii?Q?GtzkL+Y0i3nVdasWh+LWtsWlDoObHzWuuvOjvd0ti+awsh988V+257+7zGCa?=
+ =?us-ascii?Q?RaChGnaQCrodr7vdzE7t9c7LFetxzLhslHXid+ak?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e76b1b7-de1b-4248-2d35-08dd5cc7bca1
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 15:58:29.2604
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rdTVcv2mC0hojZHk25/TyA0fDL/Wx3F0hcrpCjlL1JE2HqPWj5z0A81g+FpbFkFlxWiJpdIUMJwJ5tl8U8i8yw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9330
 
-Kernel build commands can sometimes be long, particularly when
-cross-compiling, making them tedious to type and prone to mistypes.
+Add compatible string "fsl,imx94-lpi2c" for the i.MX94 chip, which is
+backward compatible with i.MX7ULP. Set it to fall back to
+"fsl,imx7ulp-lpi2c".
 
-This commit introduces bash completion support for common variables
-and targets in Kbuild.
-
-For installation instructions, please refer to the documentation in
-Documentation/kbuild/bash-completion.rst.
-
-The following examples demonstrate how this saves typing.
-
-[Example 1] a long command line for cross-compiling
-
-  $ make A<TAB>
-   -> completes 'A' to 'ARCH='
-
-  $ make ARCH=<TAB>
-   -> displays all supported architectures
-
-  $ make ARCH=arm64 CR<TAB>
-   -> completes 'CR' to 'CROSS_COMPILE='
-
-  $ make ARCH=arm64 CROSS_COMPILE=<TAB>
-   -> displays installed toolchains
-
-  $ make ARCH=arm64 CROSS_COMPILE=aa<TAB>
-   -> completes 'CROSS_COMPILE=aa' to 'CROSS_COMPILE=aarch64-linux-gnu-'
-
-  $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- def<TAB>
-   -> completes 'def' to 'defconfig'
-
-[Example 2] a single build target
-
-  $ make f<TAB>
-   -> completes 'f' to 'fs/'
-
-  $ make fs/<TAB>
-   -> displays objects and sub-directories in fs/
-
-  $ make fs/xf<TAB>
-   -> completes 'fs/xf' to 'fs/xfs/'
-
-  $ make fs/xfs/l<TAB>
-   -> completes 'fs/xfs/l' to 'fs/xfs/libxfs/xfs_'
-
-  $ make fs/xfs/libxfs/xfs_g<TAB>
-   -> completes 'fs/xfs/libxfs/xfs_g' to 'fs/xfs/libxfs/xfs_group.o'
-
-This does not aim to provide a complete list of variables and targets,
-as there are too many. However, it covers variables and targets used
-in common scenarios, and I hope this is useful enough.
-
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-Reviewed-by: Nicolas Schier <n.schier@avm.de>
-Tested-by: Nicolas Schier <n.schier@avm.de>
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
+ Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Changes in v2:
-  - Fix indentation
-  - Add KBUILD_OUTPUT=
-
- Documentation/kbuild/bash-completion.rst |  65 ++++
- Documentation/kbuild/index.rst           |   2 +
- MAINTAINERS                              |   1 +
- scripts/bash-completion/make             | 451 +++++++++++++++++++++++
- 4 files changed, 519 insertions(+)
- create mode 100644 Documentation/kbuild/bash-completion.rst
- create mode 100644 scripts/bash-completion/make
-
-diff --git a/Documentation/kbuild/bash-completion.rst b/Documentation/kbuild/bash-completion.rst
-new file mode 100644
-index 000000000000..2b52dbcd0933
---- /dev/null
-+++ b/Documentation/kbuild/bash-completion.rst
-@@ -0,0 +1,65 @@
-+.. SPDX-License-Identifier: GPL-2.0-only
-+
-+==========================
-+Bash completion for Kbuild
-+==========================
-+
-+The kernel build system is written using Makefiles, and Bash completion
-+for the `make` command is available through the `bash-completion`_ project.
-+
-+However, the Makefiles for the kernel build are complex. The generic completion
-+rules for the `make` command do not provide meaningful suggestions for the
-+kernel build system, except for the options of the `make` command itself.
-+
-+To enhance completion for various variables and targets, the kernel source
-+includes its own completion script at `scripts/bash-completion/make`.
-+
-+This script provides additional completions when working within the kernel tree.
-+Outside the kernel tree, it defaults to the generic completion rules for the
-+`make` command.
-+
-+Prerequisites
-+=============
-+
-+The script relies on helper functions provided by `bash-completion`_ project.
-+Please ensure it is installed on your system. On most distributions, you can
-+install the `bash-completion` package through the standard package manager.
-+
-+How to use
-+==========
-+
-+You can source the script directly::
-+
-+  $ source scripts/bash-completion/make
-+
-+Or, you can copy it into the search path for Bash completion scripts.
-+For example::
-+
-+  $ mkdir -p ~/.local/share/bash-completion/completions
-+  $ cp scripts/bash-completion/make ~/.local/share/bash-completion/completions/
-+
-+Details
-+=======
-+
-+The additional completion for Kbuild is enabled in the following cases:
-+
-+ - You are in the root directory of the kernel source.
-+ - You are in the top-level build directory created by the O= option
-+   (checked via the `source` symlink pointing to the kernel source).
-+ - The -C make option specifies the kernel source or build directory.
-+ - The -f make option specifies a file in the kernel source or build directory.
-+
-+If none of the above are met, it falls back to the generic completion rules.
-+
-+The completion supports:
-+
-+  - Commonly used targets, such as `all`, `menuconfig`, `dtbs`, etc.
-+  - Make (or environment) variables, such as `ARCH`, `LLVM`, etc.
-+  - Single-target builds (`foo/bar/baz.o`)
-+  - Configuration files (`*_defconfig` and `*.config`)
-+
-+Some variables offer intelligent behavior. For instance, `CROSS_COMPILE=`
-+followed by a TAB displays installed toolchains. The list of defconfig files
-+shown depends on the value of the `ARCH=` variable.
-+
-+.. _bash-completion: https://github.com/scop/bash-completion/
-diff --git a/Documentation/kbuild/index.rst b/Documentation/kbuild/index.rst
-index e82af05cd652..3731ab22bfe7 100644
---- a/Documentation/kbuild/index.rst
-+++ b/Documentation/kbuild/index.rst
-@@ -23,6 +23,8 @@ Kernel Build System
-     llvm
-     gendwarfksyms
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml b/Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml
+index 1dcb9c78de3b5..969030a6f82ab 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml
++++ b/Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml
+@@ -26,6 +26,7 @@ properties:
+               - fsl,imx8qm-lpi2c
+               - fsl,imx8ulp-lpi2c
+               - fsl,imx93-lpi2c
++              - fsl,imx94-lpi2c
+               - fsl,imx95-lpi2c
+           - const: fsl,imx7ulp-lpi2c
  
-+    bash-completion
-+
- .. only::  subproject and html
- 
-    Indices
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8e0736dc2ee0..8f784529f8bb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -12568,6 +12568,7 @@ F:	Makefile
- F:	scripts/*vmlinux*
- F:	scripts/Kbuild*
- F:	scripts/Makefile*
-+F:	scripts/bash-completion/
- F:	scripts/basic/
- F:	scripts/clang-tools/
- F:	scripts/dummy-tools/
-diff --git a/scripts/bash-completion/make b/scripts/bash-completion/make
-new file mode 100644
-index 000000000000..42e8dcead25a
---- /dev/null
-+++ b/scripts/bash-completion/make
-@@ -0,0 +1,451 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+# bash completion for GNU make with kbuild extension       -*- shell-script -*-
-+
-+# Load the default completion script for make. It is typically located at
-+# /usr/share/bash-completion/completions/make, but we do not rely on it.
-+__kbuild_load_default_make_completion()
-+{
-+	local -a dirs=("${BASH_COMPLETION_USER_DIR:-${XDG_DATA_HOME:-$HOME/.local/share}/bash-completion}/completions")
-+	local ifs=$IFS IFS=: dir compfile this_dir
-+
-+	for dir in ${XDG_DATA_DIRS:-/usr/local/share:/usr/share}; do
-+	        dirs+=("$dir"/bash-completion/completions)
-+	done
-+	IFS=$ifs
-+
-+	this_dir="$(realpath "$(dirname "${BASH_SOURCE[0]}")")"
-+
-+	for dir in "${dirs[@]}"; do
-+		if [[ ! -d ${dir} || ${dir} = "${this_dir}" ]]; then
-+			continue
-+		fi
-+
-+		for compfile in make make.bash _make; do
-+			compfile=$dir/$compfile
-+			# Avoid trying to source dirs; https://bugzilla.redhat.com/903540
-+			if [[ -f ${compfile} ]] && . "${compfile}" &>/dev/null; then
-+
-+				__kbuild_default_make_completion=$(
-+					# shellcheck disable=SC2046 # word splitting is the point here
-+					set -- $(complete -p make)
-+
-+					while [[ $# -gt 1 && "$1" != -F ]]; do
-+						shift
-+					done
-+
-+					if [[ "$1" = -F ]]; then
-+						echo "$2"
-+					fi
-+				)
-+
-+				return
-+			fi
-+		done
-+	done
-+}
-+
-+__kbuild_load_default_make_completion
-+
-+__kbuild_handle_variable()
-+{
-+	local var=${1%%=*}
-+	local cur=${cur#"${var}"=}
-+	local srctree=$2
-+	local keywords=()
-+
-+	case $var in
-+	ARCH)
-+		# sub-directories under arch/
-+		keywords+=($(find "${srctree}/arch" -mindepth 1 -maxdepth 1 -type d -printf '%P\n'))
-+		# architectures hard-coded in the top Makefile
-+		keywords+=(i386 x86_64 sparc32 sparc64 parisc64)
-+		;;
-+	CROSS_COMPILE)
-+		# toolchains with a full path
-+		local cross_compile=()
-+		local c c2
-+		_filedir
-+
-+		for c in "${COMPREPLY[@]}"; do
-+			# eval for tilde expansion
-+			# suppress error, as this fails when it contains a space
-+			eval "c2=${c}" 2>/dev/null || continue
-+			if [[ ${c} == *-elfedit && ! -d ${c2} && -x ${c2} ]]; then
-+				cross_compile+=("${c%elfedit}")
-+			fi
-+		done
-+
-+		# toolchains in the PATH environment
-+		while read -r c; do
-+			if [[ ${c} == *-elfedit ]]; then
-+				keywords+=("${c%elfedit}")
-+			fi
-+		done < <(compgen -c)
-+
-+		COMPREPLY=()
-+		_filedir -d
-+
-+		# Add cross_compile directly without passing it to compgen.
-+		# Otherwise, toolchain paths with a tilde do not work.
-+		# e.g.)
-+		#   CROSS_COMPILE=~/0day/gcc-14.2.0-nolibc/aarch64-linux/bin/aarch64-linux-
-+		COMPREPLY+=("${cross_compile[@]}")
-+		;;
-+	LLVM)
-+		# LLVM=1 uses the default 'clang' etc.
-+		keywords+=(1)
-+
-+		# suffix for a particular version. LLVM=-18 uses 'clang-18' etc.
-+		while read -r c; do
-+			if [[ ${c} == clang-[0-9]* ]]; then
-+				keywords+=("${c#clang}")
-+			fi
-+		done < <(compgen -c)
-+
-+		# directory path to LLVM toolchains
-+		_filedir -d
-+		;;
-+	KCONFIG_ALLCONFIG)
-+		# KCONFIG_ALLCONFIG=1 selects the default fragment
-+		keywords+=(1)
-+		# or the path to a fragment file
-+		_filedir
-+		;;
-+	C | KBUILD_CHECKSRC)
-+		keywords+=(1 2)
-+		;;
-+	V | KBUILD_VERBOSE)
-+		keywords+=({,1}{,2})
-+		;;
-+	W | KBUILD_EXTRA_WARN)
-+		keywords+=({,1}{,2}{,3}{,c}{,e})
-+		;;
-+	KBUILD_ABS_SRCTREE | KBUILD_MODPOST_NOFINAL | KBUILD_MODPOST_WARN | \
-+		CLIPPY | KBUILD_CLIPPY | KCONFIG_NOSILENTUPDATE | \
-+		KCONFIG_OVERWRITECONFIG | KCONFIG_WARN_UNKNOWN_SYMBOL | \
-+		KCONFIG_WERROR )
-+		keywords+=(1)
-+		;;
-+	INSTALL_MOD_STRIP)
-+		keywords+=(1 --strip-debug --strip-unneeded)
-+		;;
-+	O | KBUILD_OUTPUT | M | KBUILD_EXTMOD | MO | KBUILD_EXTMOD_OUTPUT | *_PATH)
-+		# variables that take a directory.
-+		_filedir -d
-+		return
-+		;;
-+	KBUILD_EXTRA_SYMBOL | KBUILD_KCONFIG | KCONFIG_CONFIG)
-+		# variables that take a file.
-+		_filedir
-+		return
-+	esac
-+
-+	COMPREPLY+=($(compgen -W "${keywords[*]}" -- "${cur}"))
-+}
-+
-+# Check the -C, -f options and 'source' symlink. Return the source tree we are
-+# working in.
-+__kbuild_get_srctree()
-+{
-+	local words=("$@")
-+	local cwd makef_dir
-+
-+	# see if a path was specified with -C/--directory
-+	for ((i = 1; i < ${#words[@]}; i++)); do
-+		if [[ ${words[i]} == -@(C|-directory) ]]; then
-+			# eval for tilde expansion.
-+			# suppress error, as this fails when it contains a space
-+			eval "cwd=${words[i + 1]}" 2>/dev/null
-+			break
-+		fi
-+	done
-+
-+	if [[ -z ${cwd} ]]; then
-+		cwd=.
-+	fi
-+
-+	# see if a Makefile was specified with -f/--file/--makefile
-+	for ((i = 1; i < ${#words[@]}; i++)); do
-+		if [[ ${words[i]} == -@(f|-?(make)file) ]]; then
-+			# eval for tilde expansion
-+			# suppress error, as this fails when it contains a space
-+			eval "makef_dir=${words[i + 1]%/*}" 2>/dev/null
-+			break
-+		fi
-+	done
-+
-+	if [ -z "${makef_dir}" ]; then
-+		makef_dir=${cwd}
-+	elif [[ ${makef_dir} != /* ]]; then
-+		makef_dir=${cwd}/${makef_dir}
-+	fi
-+
-+	# If ${makef_dir} is a build directory created by the O= option, there
-+	# is a symbolic link 'source', which points to the kernel source tree.
-+	if [[ -L ${makef_dir}/source ]]; then
-+		makef_dir=$(readlink "${makef_dir}/source")
-+	fi
-+
-+	echo "${makef_dir}"
-+}
-+
-+# Get SRCARCH to do a little more clever things
-+__kbuild_get_srcarch()
-+{
-+	local words=("$@")
-+	local arch srcarch uname_m
-+
-+	# see if ARCH= is explicitly specified
-+	for ((i = 1; i < ${#words[@]}; i++)); do
-+		if [[ ${words[i]} == ARCH=* ]]; then
-+			arch=${words[i]#ARCH=}
-+			break
-+		fi
-+	done
-+
-+	# If ARCH= is not specified, check the build marchine's architecture
-+	if [[ -z ${arch} ]]; then
-+		uname_m=$(uname -m)
-+
-+		# shellcheck disable=SC2209 # 'sh' is SuperH, not a shell command
-+		case ${uname_m} in
-+		arm64 | aarch64*) arch=arm64 ;;
-+		arm* | sa110)     arch=arm ;;
-+		i?86 | x86_64)    arch=x86 ;;
-+		loongarch*)       arch=loongarch ;;
-+		mips*)            arch=mips ;;
-+		ppc*)             arch=powerpc ;;
-+		riscv*)           arch=riscv ;;
-+		s390x)            arch=s390 ;;
-+		sh[234]*)         arch=sh ;;
-+		sun4u)            arch=sparc64 ;;
-+		*)                arch=${uname_m} ;;
-+		esac
-+	fi
-+
-+	case ${arch} in
-+		parisc64)          srcarch=parisc ;;
-+		sparc32 | sparc64) srcarch=sparc ;;
-+		i386 | x86_64)     srcarch=x86 ;;
-+		*)                 srcarch=${arch} ;;
-+	esac
-+
-+	echo "$srcarch"
-+}
-+
-+# small Makefile to parse obj-* syntax
-+__kbuild_tmp_makefile()
-+{
-+cat <<'EOF'
-+.PHONY: __default
-+__default:
-+	$(foreach m,$(obj-y) $(obj-m) $(obj-),$(foreach s, -objs -y -m -,$($(m:%.o=%$s))) $(m))
-+EOF
-+echo "include ${1}"
-+}
-+
-+_make_for_kbuild ()
-+{
-+	# shellcheck disable=SC2034 # these are set by _init_completion
-+	local cur prev words cword split
-+	_init_completion -s || return
-+
-+	local srctree
-+	srctree=$(__kbuild_get_srctree "${words[@]}")
-+
-+	# If 'kernel' and 'Documentation' directories are found, we assume this
-+	# is a kernel tree. Otherwise, we fall back to the generic rule provided
-+	# by the bash-completion project.
-+	if [[ ! -d ${srctree}/kernel || ! -d ${srctree}/Documentation ]]; then
-+		if [ -n "${__kbuild_default_make_completion}" ]; then
-+			"${__kbuild_default_make_completion}" "$@"
-+		fi
-+		return
-+	fi
-+
-+	# make options with a parameter (copied from the bash-completion project)
-+	case ${prev} in
-+	--file | --makefile | --old-file | --assume-old | --what-if | --new-file | \
-+		--assume-new | -!(-*)[foW])
-+		_filedir
-+		return
-+		;;
-+	--include-dir | --directory | -!(-*)[ICm])
-+		_filedir -d
-+		return
-+		;;
-+	-!(-*)E)
-+		COMPREPLY=($(compgen -v -- "$cur"))
-+		return
-+		;;
-+	--eval | -!(-*)[DVx])
-+		return
-+		;;
-+	--jobs | -!(-*)j)
-+		COMPREPLY=($(compgen -W "{1..$(($(_ncpus) * 2))}" -- "$cur"))
-+		return
-+		;;
-+	esac
-+
-+	local keywords=()
-+
-+	case ${cur} in
-+	-*)
-+		# make options (copied from the bash-completion project)
-+		local opts
-+		opts="$(_parse_help "$1")"
-+		COMPREPLY=($(compgen -W "${opts:-$(_parse_usage "$1")}" -- "$cur"))
-+		if [[ ${COMPREPLY-} == *= ]]; then
-+			compopt -o nospace
-+		fi
-+		return
-+		;;
-+	*=*)
-+		__kbuild_handle_variable "${cur}" "${srctree}"
-+		return
-+		;;
-+	KBUILD_*)
-+		# There are many variables prefixed with 'KBUILD_'.
-+		# Display them only when 'KBUILD_' is entered.
-+		# shellcheck disable=SC2191 # '=' is appended for variables
-+		keywords+=(
-+			KBUILD_{CHECKSRC,EXTMOD,EXTMOD_OUTPUT,OUTPUT,VERBOSE,EXTRA_WARN,CLIPPY}=
-+			KBUILD_BUILD_{USER,HOST,TIMESTAMP}=
-+			KBUILD_MODPOST_{NOFINAL,WARN}=
-+			KBUILD_{ABS_SRCTREE,EXTRA_SYMBOLS,KCONFIG}=
-+		)
-+		;;
-+	KCONFIG_*)
-+		# There are many variables prefixed with 'KCONFIG_'.
-+		# Display them only when 'KCONFIG_' is entered.
-+		# shellcheck disable=SC2191 # '=' is appended for variables
-+		keywords+=(
-+			KCONFIG_{CONFIG,ALLCONFIG,NOSILENTUPDATE,OVERWRITECONFIG}=
-+			KCONFIG_{SEED,PROBABILITY}=
-+			KCONFIG_WARN_UNKNOWN_SYMBOL=
-+			KCONFIG_WERROR=
-+		)
-+		;;
-+	*)
-+		# By default, hide KBUILD_* and KCONFIG_* variables.
-+		# Instead, display only the prefix parts.
-+		keywords+=(KBUILD_ KCONFIG_)
-+		;;
-+	esac
-+
-+	if [[ ${cur} != /* && ${cur} != *//* ]]; then
-+		local dir srcarch kbuild_file tmp
-+		srcarch=$(__kbuild_get_srcarch "${words[@]}")
-+
-+		# single build
-+		dir=${cur}
-+		while true; do
-+			if [[ ${dir} == */* ]]; then
-+				dir=${dir%/*}
-+			else
-+				dir=.
-+			fi
-+
-+			# Search for 'Kbuild' or 'Makefile' in the parent
-+			# directories (may not be a direct parent)
-+			if [[ -f ${srctree}/${dir}/Kbuild ]]; then
-+				kbuild_file=${srctree}/${dir}/Kbuild
-+				break
-+			fi
-+			if [[ -f ${srctree}/${dir}/Makefile ]]; then
-+				kbuild_file=${srctree}/${dir}/Makefile
-+				break
-+			fi
-+
-+			if [[ ${dir} == . ]]; then
-+				break
-+			fi
-+		done
-+
-+		if [[ -n ${kbuild_file} ]]; then
-+			tmp=($(__kbuild_tmp_makefile "${kbuild_file}" |
-+			       SRCARCH=${srcarch} obj=${dir} src=${srctree}/${dir} \
-+			       "${1}" -n -f - 2>/dev/null))
-+
-+			# Add $(obj)/ prefix
-+			if [[ ${dir} != . ]]; then
-+				tmp=("${tmp[@]/#/${dir}\/}")
-+			fi
-+
-+			keywords+=("${tmp[@]}")
-+		fi
-+
-+		# *_defconfig and *.config files. These might be grouped into
-+		# subdirectories, e.g., arch/powerpc/configs/*/*_defconfig.
-+		if [[ ${cur} == */* ]]; then
-+			dir=${cur%/*}
-+		else
-+			dir=.
-+		fi
-+
-+		tmp=($(find "${srctree}/arch/${srcarch}/configs/${dir}" \
-+		       "${srctree}/kernel/configs/${dir}" \
-+		       -mindepth 1 -maxdepth 1 -type d -printf '%P/\n' \
-+		       -o -printf '%P\n' 2>/dev/null))
-+
-+		if [[ ${dir} != . ]]; then
-+			tmp=("${tmp[@]/#/${dir}\/}")
-+		fi
-+
-+		keywords+=("${tmp[@]}")
-+	fi
-+
-+	# shellcheck disable=SC2191 # '=' is appended for variables
-+	keywords+=(
-+		#
-+		# variables (append =)
-+		#
-+		ARCH=
-+		CROSS_COMPILE=
-+		LLVM=
-+		C= M= MO= O= V= W=
-+		INSTALL{,_MOD,_HDR,_DTBS}_PATH=
-+		KERNELRELEASE=
-+
-+		#
-+		# targets
-+		#
-+		all help
-+		clean mrproper distclean
-+		clang-{tidy,analyzer} compile_commands.json
-+		coccicheck
-+		dtbs{,_check,_install} dt_binding_{check,schemas}
-+		headers{,_install}
-+		vmlinux install
-+		modules{,_prepare,_install,_sign}
-+		vdso_install
-+		tags TAGS cscope gtags
-+		rust{available,fmt,fmtcheck}
-+		kernel{version,release} image_name
-+		kselftest{,-all,-install,-clean,-merge}
-+
-+		# configuration
-+		{,old,olddef,sync,def,savedef,rand,listnew,helpnew,test,tiny}config
-+		{,build_}{menu,n,g,x}config
-+		local{mod,yes}config
-+		all{no,yes,mod,def}config
-+		{yes2mod,mod2yes,mod2no}config
-+
-+		# docs
-+		{html,textinfo,info,latex,pdf,epub,xml,linkcheck,refcheck,clean}docs
-+
-+		# package
-+		{,bin,src}{rpm,deb}-pkg
-+		{pacman,dir,tar}-pkg
-+		tar{,gz,bz2,xz,zst}-pkg
-+		perf-tar{,gz,bz2,xz,zst}-src-pkg
-+	)
-+
-+	COMPREPLY=($(compgen -W "${keywords[*]}" -- "${cur}"))
-+
-+	# Do not append a space for variables, subdirs, "KBUILD_", "KCONFIG_".
-+	if [[ ${COMPREPLY-} == *[=/] || ${COMPREPLY-} =~ ^(KBUILD|KCONFIG)_$ ]]; then
-+		compopt -o nospace
-+	fi
-+
-+} && complete -F _make_for_kbuild make
 -- 
-2.43.0
+2.34.1
 
 
