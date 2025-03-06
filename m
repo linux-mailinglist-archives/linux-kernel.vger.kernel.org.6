@@ -1,179 +1,120 @@
-Return-Path: <linux-kernel+bounces-550069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E29AA55B03
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:42:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47F52A55B07
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:42:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF8B5189421B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:42:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADAA018945D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:42:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B086427D77A;
-	Thu,  6 Mar 2025 23:42:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFAF27E1DE;
+	Thu,  6 Mar 2025 23:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bSNq+nD1"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="FQ/Qn62y"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A7A27811E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 23:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A09027D77A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 23:42:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741304542; cv=none; b=PVPQVRMg5RcqQZHcSHnD2w0UcXOK7LQGmC7iv3NO2hYvIlmcAgbzDHFsbYuS8nNMqRo99ZGU7tYtirCetXZys4qXvZ+IFUev0+2wWksC1FO5NM3GRP7YyEm6VNKbmbgXZKLKaRufAAkiOHCKIY2tCUv+VYS56Ud0PUllFBZUiK8=
+	t=1741304553; cv=none; b=VJTSLRfCRGtvNcTVm3U0puiHgUvO84wGArN0gzOO3bSDaR5tRLWETXNpp28k52Onae4E9D2ud2zqzuZI5oJHOpkqNjSCsPIEZA+edqUmOWF4brrwBU5hBN9z23bf7b9bNS8+PCsHeRefl4E4dQ1pXJpWq20rAjoAbfQ4DcwLk2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741304542; c=relaxed/simple;
-	bh=LtCL5Wa78a/OLv3g+IY7kOW6zY+LdenxnBgMM/9q5fA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y/E9nUWKsm3vtPkI9SLqP+Yddw+ppND+R2hGnpJwoNV5+QgsMoXb0ShBaCPGr6SKfg9ixluR9dmiVBPziASYztWeHQhtFdy1P7YU65dkfJem1WUClQSIlKzYwBFhadFW1xve7hc29atcNGz22hNNyH7IW52GA7jr/uVystLJzuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bSNq+nD1; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 6 Mar 2025 23:42:08 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741304534;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fU6cPBemXEC5vkZEvT/CCIy/jzWhHpo6npFWGn/8iRI=;
-	b=bSNq+nD1O3vZsgkjn7awJJ37l2cfr7+cFXTCbKGFr854zjuC25z94Ey3ogM7Nwvj5hnuB+
-	wa1rA4qoXjZTxqL1Eadkf1PdzqrSQn2LWuqUt3o6koSmCVbSG/9j4SOhLOo5mpL92/BFHQ
-	8AOOM2y3mFvAYh0rOi217HSy2TSW/Lw=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, chengming.zhou@linux.dev,
-	linux-mm@kvack.org, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] page_io: return proper error codes for
- swap_read_folio_zeromap()
-Message-ID: <Z8oy0A-vBbGI6ux9@google.com>
-References: <20250306230015.1456794-1-nphamcs@gmail.com>
+	s=arc-20240116; t=1741304553; c=relaxed/simple;
+	bh=tJEJfQjhxKeAqPrvSWuWasiFZZaUalkdDqunLHyvNDQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F79BLO4rZnUt5QHDyPq/PxawvgJHXMuejiLgtYmNaA8lcp0heu/OcTMslDZkX3UST2Nd+VSRfyiIEa1DMTUyJ1AouatMGruAp3jRYbvWM8mm/HK7SlgvgzpJvBFnHyMHmJU4cmj9N3ZhrV38XvlyvNkgGZQLZ15nqrAehvSO2yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=FQ/Qn62y; arc=none smtp.client-ip=121.127.44.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1741304550;
+ bh=hK36UdkUAC80MW7rI32wQbKkvzzOhAooKnorAx3Xf5w=;
+ b=FQ/Qn62yhfaawlmV87Y9HKuHV1xOnSpm0/Y3rwCxdut+mZbXUaIslnwCGtsOBIjRqLSMIET0D
+ a7DsCfrcgfQAg4ipSi+4oaVe+9ZnyCO6pO4mpCWJQsrxkgXHUdbHqOciObjEpteRmPn9VPDbgwF
+ ABvmZ+Z+0r0tzq3HWY27D3j3ZDbuvtNB+eMzLjOgtqyfAx1TYHSxox1kfGCwEIRBkQkCGai7DVg
+ TEGGJEI/+EdkvOlaLakEjo7s2KKBLLcLJK4N2hLhh4uW6XHZsg8ktRRj/MeIWd8fxdpqkzftBHq
+ dMdcBHBElBU8QIDSacLMNzL+h1IY58DU4aRLeINT6wgA==
+X-Forward-Email-ID: 67ca32e3c1763851c065d3ce
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.59
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <3f341b96-1add-4eeb-b185-b4bfe0bf0250@kwiboo.se>
+Date: Fri, 7 Mar 2025 00:42:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306230015.1456794-1-nphamcs@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: net: rockchip-dwmac: Require
+ rockchip,grf and rockchip,php-grf
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, David Wu <david.wu@rock-chips.com>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250306210950.1686713-1-jonas@kwiboo.se>
+ <20250306210950.1686713-2-jonas@kwiboo.se>
+ <5d69f4a2-511a-4e7e-bafe-5ce6171cb1d5@lunn.ch>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <5d69f4a2-511a-4e7e-bafe-5ce6171cb1d5@lunn.ch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 06, 2025 at 03:00:15PM -0800, Nhat Pham wrote:
-> Similar to zswap_load(), also return proper error codes for
-> swap_read_folio_zeromap():
+Hi Andrew,
+
+On 2025-03-06 23:32, Andrew Lunn wrote:
+> On Thu, Mar 06, 2025 at 09:09:45PM +0000, Jonas Karlman wrote:
+>> All Rockchip GMAC variants require writing to GRF to configure e.g.
+>> interface mode and MAC rx/tx delay.
+>>
+>> Change binding to require rockchip,grf and rockchip,php-grf to reflect
+>> that GRF (and PHP-GRF for RK3576/RK3588) control part of GMAC.
 > 
-> * 0 on success. The folio is unlocked and marked up-to-date.
-> * -ENOENT, if the folio is entirely not zeromapped.
-> * -EINVAL (with the follio unlocked but not marked to date), if the
->   folio is partially zeromapped. This is not supported, and will SIGBUS
->   the faulting process.
+> It is pretty unusual to change the binding such that something
+> optional becomes mandatory. I would expect a bit more of a comment
+> explaining why this does not cause backwards compatibility
+> issues. Have all the .dtsi files always had these properties?
+
+rockchip,grf was listed under required properties prior to the commit
+b331b8ef86f0 ("dt-bindings: net: convert rockchip-dwmac to json-schema"),
+maybe this was just lost during the conversion to yaml schema.
+
+The DT's I have managed to check all seem to have the rockchip,grf prop
+and the old .txt schema listed "phandle to the syscon grf used to
+control speed and mode".
+
+Without the rockchip,grf the driver just logged an error and ignored
+trying to configure speed or mode.
+
+We could possible leave it as optional, but when it is missing speed and
+mode cannot be configured by the driver. Today this just result in an
+error message, after this series there will instead be a probe error.
+
+Regards,
+Jonas
+
 > 
-> This patch is purely a clean-up, and should not have any behavioral
-> change. It is based on (and should be applied on top of) [1].
+>     Andrew
 > 
-> [1]: https://lore.kernel.org/linux-mm/20250306205011.784787-1-nphamcs@gmail.com/
-> 
-> Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Nhat Pham <nphamcs@gmail.com>
 > ---
->  mm/page_io.c | 35 ++++++++++++++++++++++++++---------
->  1 file changed, 26 insertions(+), 9 deletions(-)
-> 
-> diff --git a/mm/page_io.c b/mm/page_io.c
-> index 4bce19df557b..48ed1e810392 100644
-> --- a/mm/page_io.c
-> +++ b/mm/page_io.c
-> @@ -511,7 +511,23 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
->  	mempool_free(sio, sio_pool);
->  }
->  
-> -static bool swap_read_folio_zeromap(struct folio *folio)
-> +/**
-> + * swap_read_folio_zeromap - check if the folio was zeromapped, and if so,
-> + *                           zero-fill it.
-> + * @folio: the folio.
-> + *
-> + * Return: 0 on success, with the folio zero-filled, unlocked, and marked
-> + * up-to-date, or one of the following error codes:
-> + *
-> + *  -ENOENT: the folio is entirely not zeromapped. The folio remains locked.
-> + *
-> + *  -EINVAL: some of the subpages in the folio are zeromaped, but not all of
-> + *  them. This is an error because we don't currently support a large folio
-> + *  that is partially in the zeromap. The folio is unlocked, but NOT marked
-> + *  up-to-date, so that an IO error is emitted (e.g. do_swap_page() will
-> + *  sigbus).
+> pw-bot: cr
 
-This is a bit repetitive. Maybe:
-
- *  -EINVAL: The folio is partially in the zeromap, which is not
- *  currently supported. The folio is unlocked, but NOT marked
- *  up-to-date, so that an IO error is emitted (e.g. do_swap_page() will
- *  sigbus).
-
-
-> + */
-> +static int swap_read_folio_zeromap(struct folio *folio)
->  {
->  	int nr_pages = folio_nr_pages(folio);
->  	struct obj_cgroup *objcg;
-> @@ -519,15 +535,17 @@ static bool swap_read_folio_zeromap(struct folio *folio)
->  
->  	/*
->  	 * Swapping in a large folio that is partially in the zeromap is not
-> -	 * currently handled. Return true without marking the folio uptodate so
-> +	 * currently handled. Return -EINVAL without marking the folio uptodate so
->  	 * that an IO error is emitted (e.g. do_swap_page() will sigbus).
->  	 */
-
-I would drop this whole comment now because it's mostly repeating what's
-now documneted above.
-
-With the comments fixed up:
-
-Reviewed-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-
->  	if (WARN_ON_ONCE(swap_zeromap_batch(folio->swap, nr_pages,
-> -			&is_zeromap) != nr_pages))
-> -		return true;
-> +			&is_zeromap) != nr_pages)) {
-> +		folio_unlock(folio);
-> +		return -EINVAL;
-> +	}
->  
->  	if (!is_zeromap)
-> -		return false;
-> +		return -ENOENT;
->  
->  	objcg = get_obj_cgroup_from_folio(folio);
->  	count_vm_events(SWPIN_ZERO, nr_pages);
-> @@ -538,7 +556,8 @@ static bool swap_read_folio_zeromap(struct folio *folio)
->  
->  	folio_zero_range(folio, 0, folio_size(folio));
->  	folio_mark_uptodate(folio);
-> -	return true;
-> +	folio_unlock(folio);
-> +	return 0;
->  }
->  
->  static void swap_read_folio_fs(struct folio *folio, struct swap_iocb **plug)
-> @@ -635,10 +654,8 @@ void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
->  	}
->  	delayacct_swapin_start();
->  
-> -	if (swap_read_folio_zeromap(folio)) {
-> -		folio_unlock(folio);
-> +	if (swap_read_folio_zeromap(folio) != -ENOENT)
->  		goto finish;
-> -	}
->  
->  	if (zswap_load(folio) != -ENOENT)
->  		goto finish;
-> -- 
-> 2.43.5
-> 
 
