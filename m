@@ -1,135 +1,113 @@
-Return-Path: <linux-kernel+bounces-548291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1BC2A542FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:45:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E3FA54300
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:45:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E068B3AF7B2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:44:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A00B1893ECE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B1F1A5BAF;
-	Thu,  6 Mar 2025 06:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E5E1A5BA8;
+	Thu,  6 Mar 2025 06:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zWRdOsAb"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fqnZooV7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEDD1A238F
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 06:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411B71A0BE0;
+	Thu,  6 Mar 2025 06:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741243504; cv=none; b=pt6um6zjRmfLErzX8Ci1nloZARZUFtTmuZv+hzlWWs5/vhyPx1QXa5mNKrGV3k44rRi0T6nhvt35aeRi2L831QZ7DBKABx8e81pL3+hB8YoiU9UZTvZvCS/FbwITquvMutb8zEHeRstLqST0yfgUUYUWUnRdFUIJMPGSqH1nNyI=
+	t=1741243512; cv=none; b=JCBqS3vCd/XspFY/nzwIYww5YMdlc0QI04lPlPz3CyL0BKWXPlF1uc25fzFF1jJsZytw8kgU0Jcn+V4ArPW3hi5sBJnsmdfoFjiGMmvxPUkK+z8KtPxzrepLzcNl5C0Hh/XsUqT5QdB0Cuq3mGPzKW2AfmyLFk0bWDFwFwRBPNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741243504; c=relaxed/simple;
-	bh=y5E08rWlMslvB/K+XX3+OWFa9aCDHykKOGuGEwH0wPY=;
+	s=arc-20240116; t=1741243512; c=relaxed/simple;
+	bh=GLDFpWa9p6ur71vANNFod64M62p+KiTefovBzlACU4Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s/Z90eHdP/WZlcTK5o8IkCtDoiQBEFj1slPAi8O6VRAf8uZps+w86gFDy4KSLbET/VfNbo3uCFO/gcnzAaACe46de4NkzooS9sJ92UwyfR1dw1iEBFgT7L3FgCgY3YfQIHeuh7RmK+K5HF7E1xSw/3VMreTuLfUDV+SZd2DNhog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zWRdOsAb; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30bee1cb370so547551fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 22:45:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741243500; x=1741848300; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vJcWTKFiNofQSBl8Y+/9Hv1NdwHNGxMC5GhCSRQfHSY=;
-        b=zWRdOsAbSpLP57bPSWoFMx0r+zQrQGiv5gboBIy9QBL4fZIKFGoeHIJASrjL6i9E/V
-         Xdt0nF8fERTaS0HUh//Z3i0fn1XkC8RIxL2s2sPDu8zU7dWb9fWx5TmnC9IHXUkED8VQ
-         bCFkKOgy0+T+Ed4xGlaVpo+bLc69zbp/IxcWPzb6vM5QbDlRCUQP3YKmumM04IctHTem
-         ar6wMqzqim7Q0jWFM5SKcRVZLY0uPnilGBF/CaidUVluPRNwjLM2GcLVa3WUahlCUWTu
-         K2yxPBaSG+2sBmHfUaFqJdJVHYQGS2qW4t2jssy1FhJmY88U+93DLVrnqn5beEaXpR21
-         wNxQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741243500; x=1741848300;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vJcWTKFiNofQSBl8Y+/9Hv1NdwHNGxMC5GhCSRQfHSY=;
-        b=M7YA/6j1ZROGTolDNBFRpytZEz7GdEADb6RiFNC8d408nVrdTDyhGULidrRs+NvpiY
-         X4uAxIko67tWOb491bonsH6LPonqIrUg2/w/d5Y8ChiNS0yfJ+vkgJQlD3D6URUYlCDh
-         kFOK+leYG0BsG997n/1Zrq3jcOq22oo+j/sr1IyiJCItdqMMxuT5fXcHFtUV+tiFGJJS
-         oq9UVPw7qt39m6hxI8Q6LGvhuu9vB0j20N5Zgn14Qw/kQGi77U+1XpbAzbA1qJDHyCIV
-         2eNtwxDyskCh2xFhi/8+d4/cXGwLjQoSm49cLZI2tKbRyJvuN1h9/GMvKfjNOxk3S2+0
-         LRdg==
-X-Forwarded-Encrypted: i=1; AJvYcCVcHL5kVzNly0m0QLWeGRxh+d7FP57t1fQG7aYQ3V+DTnnR0/p83HZDKlDNKXDHwZMvbzMmyqehfPtIcjQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1QbqXxvNuHAp007hObEhDxp1ZrI8n5QRTml58RxMjsBRZQe8o
-	ChCftcufgJd1GReFGEZDmnYya/e9cSkoKLyG49TQFgnFGKd/V6+WKmH/uh9/BxM=
-X-Gm-Gg: ASbGncteVtwTxSD5awJ0ImP0m+VHao9nQAEvomKw8B0klbDUJ/0pmrK3N4d5n/GL1b1
-	sHTxpIrqWKQq82vZn0rJPab7zYc/9ojccMZZmKv8Tx7FkKBUaZi7oUH5AVFVpQ2TEEcwXI6zUSH
-	cBJzMq/magPWpa9PE5hbiUb1XxRU3Jl7H/DdO1ghsrvp/vBgP9WMxgRVMcnviZbnlifIx48XVrp
-	qnH63sCW7u0mq5+uvZwQZweuS/Xa/uiR4/8zmYeJqoD20zXK2Bu9bK99Xxy/c31iUweAbkk289r
-	xRWRIuZdncnQwLd89WuJw1U2m37X3io1KQDpEo09O1x+iV9eCkd1lrAmIkcKiSnYy5r6Prbe40p
-	F051smViVtPBqAbSpgEg+amsk
-X-Google-Smtp-Source: AGHT+IGKZmSCFgA/R9sb1yzYNL1vBOalW8LPwb3ZSbsOkodGM8bD2zIilQTAga0vyIRSmk9t4Oethg==
-X-Received: by 2002:a05:651c:4cb:b0:30b:ee44:b692 with SMTP id 38308e7fff4ca-30bee44d138mr619121fa.33.1741243499788;
-        Wed, 05 Mar 2025 22:44:59 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30be99c8319sm1034191fa.76.2025.03.05.22.44.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 22:44:58 -0800 (PST)
-Date: Thu, 6 Mar 2025 08:44:56 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/dpu: Adjust CDM_MUX to support CWB PINGPONG
-Message-ID: <vjufkcrkungrwy7w4pxzsac57ilzk2dt3eeypzy6pna2z5ocxg@uf237ixu6kqq>
-References: <20250305-cdm-cwb-mux-fix-v1-1-16148ca6e4d2@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=urHnHniNan81lf4X8kTTlYpdDmu4AFSzZjkn3luJ0SrrDinW5tcp1jBHMtA+aNVXCM7ZhK7eqA/zdMoVqYtxLNQbzWbtEE3xplECrJwpKxrReGyfVd2IRGlwNt8K0EQ7e15nzdgusG+zBUT53AULNL4v8Ay4hiZrgc4DvAvFskw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fqnZooV7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37EFBC4CEE4;
+	Thu,  6 Mar 2025 06:45:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741243511;
+	bh=GLDFpWa9p6ur71vANNFod64M62p+KiTefovBzlACU4Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fqnZooV7JonBPPbUC8OkkmA3A8hxkP/IdURpSFSEdeG5nSzC1L6PT2B2J+ApQPIV5
+	 CKsVvxVYXjxjemTNZli8ZnlpkDS4Qc1BtdZmaQ45EClQsrWW9M1rbx2DzmvLGua3Pa
+	 VQghnGbEIjZ45noMgUy4aP81OrVgOSu7yelz4OWQOSopXvRZp5CPgb08iloKJmxK86
+	 CnUNL15yIR2N8njPWRpqDahOKNMcnPWbE4Xfi4v71CCpdqdcEQ6XA2PI2g307R0Aqs
+	 BT6fucET9B3P6Bl/Vxpog57t8oslkrPDfb7Ar5enQTZ7gYJSXBvhoONe5m5gIkGK12
+	 i/HOtuFjApH8w==
+Date: Wed, 5 Mar 2025 22:45:09 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
+	Kevin Nomura <nomurak@google.com>, Song Liu <song@kernel.org>
+Subject: Re: [PATCH] perf report: Do not process non-JIT BPF ksymbol events
+Message-ID: <Z8lEdWxt8CKepTJ3@google.com>
+References: <20250305232838.128692-1-namhyung@kernel.org>
+ <d962792a-c852-494b-b35c-e8f83cac7218@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250305-cdm-cwb-mux-fix-v1-1-16148ca6e4d2@quicinc.com>
+In-Reply-To: <d962792a-c852-494b-b35c-e8f83cac7218@intel.com>
 
-On Wed, Mar 05, 2025 at 07:16:51PM -0800, Jessica Zhang wrote:
-> Similar to WB_MUX, CDM_MUX also needs to be adjusted to support
-> dedicated CWB PINGPONGs
-> 
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_cdm.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_cdm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_cdm.c
-> index ae1534c49ae0..3f88c3641d4a 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_cdm.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_cdm.c
-> @@ -214,7 +214,9 @@ static void dpu_hw_cdm_bind_pingpong_blk(struct dpu_hw_cdm *ctx, const enum dpu_
->  	mux_cfg = DPU_REG_READ(c, CDM_MUX);
->  	mux_cfg &= ~0xf;
->  
-> -	if (pp)
-> +	if (pp >= PINGPONG_CWB_0)
-> +		mux_cfg |= 0xd;
+Hello,
 
-Shouldn't it be 0xb for PINGPONG_CWB_2 and 3?
+On Thu, Mar 06, 2025 at 08:25:01AM +0200, Adrian Hunter wrote:
+> On 6/03/25 01:28, Namhyung Kim wrote:
+> > The length of PERF_RECORD_KSYMBOL for BPF is a size of JITed code so
+> > it'd be 0 when it's not JITed.  The ksymbol is needed to symbolize the
+> > code when it gets samples in the region but non-JITed code cannot get
+> > samples.  Thus it'd be ok to ignore them.
+> > 
+> > Actually it caused a performance issue in the perf tools on old ARM
+> > kernels where it can refuse to JIT some BPF codes.  It ended up
+> > splitting the existing kernel map (kallsyms).  And later lookup for a
+> > kernel symbol would create a new kernel map from kallsyms and then
+> > split it again and again. :(
+> > 
+> > Probably there's a bug in the kernel map/symbol handling in perf tools.
+> > But I think we need to fix this anyway.
+> > 
+> > Reported-by: Kevin Nomura <nomurak@google.com>
+> > Cc: Song Liu <song@kernel.org>
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/util/machine.c | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+> > index 3f1faf94198dbe56..c7d27384f0736408 100644
+> > --- a/tools/perf/util/machine.c
+> > +++ b/tools/perf/util/machine.c
+> > @@ -779,6 +779,10 @@ int machine__process_ksymbol(struct machine *machine __maybe_unused,
+> >  	if (dump_trace)
+> >  		perf_event__fprintf_ksymbol(event, stdout);
+> >  
+> > +	/* no need to process non-JIT BPF as it cannot get samples */
+> > +	if (event->ksymbol.len == 0)
+> > +		return 0;
+> 
+> Are all ksymbol events BPF?  Maybe it is OK
+> for PERF_RECORD_KSYMBOL_TYPE_OOL also.  Perhaps adjust the
+> comment in that case.
 
-> +	else if (pp)
->  		mux_cfg |= (pp - PINGPONG_0) & 0x7;
->  	else
->  		mux_cfg |= 0xf;
-> 
-> ---
-> base-commit: 6d3175a72cc07e90f81fb35841048a8a9b5134cb
-> change-id: 20250305-cdm-cwb-mux-fix-69ed5297d4f7
-> 
-> Best regards,
-> -- 
-> Jessica Zhang <quic_jesszhan@quicinc.com>
-> 
+Probably, but I didn't see OOL with zero length yet.  Is it possible?
 
--- 
-With best wishes
-Dmitry
+Thanks,
+Namhyung
+
 
