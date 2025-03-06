@@ -1,162 +1,143 @@
-Return-Path: <linux-kernel+bounces-548991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC3CA54BCD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:16:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C21D9A54BD7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:17:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94B901897C09
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:16:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF6B33B3C23
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B46222331;
-	Thu,  6 Mar 2025 13:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C8820F08C;
+	Thu,  6 Mar 2025 13:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LDGW3yh7"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="c8ESAFFV"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634B420E6F8
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 13:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9871220E30A;
+	Thu,  6 Mar 2025 13:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741266948; cv=none; b=bG0OJXfyQUXCgle1/QdR82WX09VBC7h+FLK6EvSGldRIPXQUIv8LKwICMIUafVNwscqujXc8meC31Q/GjvTRZ+cSuAZ3+O8SeuVv8I+mSgVIpz0e7/rXRRptVErI6iOVhywUGv42LyEdrabgyTujFaJGzpIr7LNandZwfB8fVHU=
+	t=1741266975; cv=none; b=lYmG/Gea+lQ0P/ynurcUveK2N1E+5MIGi90XM2J6Hx+uJBOegL1YO2yWcXQVrmHcmJh3+z8jKNc/poo8Mzx23fV1BHe6cVvR/gGhaKCNTDDN2GdF+J11gb2grCJcvRWGCP6OzGTMl+wCW5XFwoQv4V6ex1wqwXGUTfCRdMFhE+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741266948; c=relaxed/simple;
-	bh=iCLwruORYDxCtsWv+hcP88C3gvbW1fbzcoS5L/5ij9g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LN5UJH8eyYkTbVhrsbo2acwse7REdZ1aqTVx48eeSZVoX9d7bRMBKCEG2uWVAhp3Ll58pDR9+HYoJTmsHlxpk6MX1UYjG4zp48V+fgU+9Sap1p049Z12hVcvDszPsrRZnjS3knafX/08MHVjMxkSyut0vFC99L+syZ0SSzgIM6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LDGW3yh7; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso132392566b.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 05:15:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741266944; x=1741871744; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=odFKhUpOD0oBGtCw0Lzrsic1VmySccICXYvC2207ePM=;
-        b=LDGW3yh7Szy45/wsV/IUGCy955wA2YdwhlkObqZXBdaFySMt+6CxeTpxiKstDcZCZI
-         AY3D+v9gSjK9h80eTPYUtwL9wLJUKC9/LFX0w/I6Zj7HO/1ia3R+Etrw4PCbBP0Bfm4c
-         +ymNGYklrLlgrqYXIaLJqwba2yFWTMaSfks0mUIDPLqgj/8t2nSt+Fr9bN01T0J5/3f6
-         g0dpGSF1Sc8BqUkmP2Fixw/mvwGixhdZmm7MJ9sQMGV/LITE3mCm5wBcTiJxMu3AsLUE
-         xu72cyYprwaDj5bAXMvh2QyzBEMEftvj3cWObJai4GBLchItmKjt2/2DMfUc5S/e6D2g
-         V1XQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741266944; x=1741871744;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=odFKhUpOD0oBGtCw0Lzrsic1VmySccICXYvC2207ePM=;
-        b=vkNabSMoG7rJXMsdb7ToQMMEU8Mr7ysFy7Ju83+GP/BI1hHhz/aO376QHV/oZrhEdz
-         jSCrznubXAQFKgNMkOZYOcFKxiDJaPWEa2Ke6pn0XEWm8RYfOpDNMD3EroAnw46DAqvZ
-         qQEWS5QfzbPH68KGDJHhU77Kmc/iV+EXhS6k95yppnkBNLRw9YZZxhHGS28tQ+geXRch
-         5Zf+2u/WT8Bl7sBSqg73R3aFmBTBYHSCryWiNEnU/Jg2u5ZLQa/bYXFMAXjU04G/wRC3
-         PleP2QRr0Rvrwk0Ny7IVziiRIlGdbL3Y6lsdJ1bvmJ7ICZOY/Wv7hcVsI3Cng9/Lcvu0
-         kJIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjd0C0YFqskFzOTzrQq6kHKiVeLG/rlPp0v8ZNIQeRMwfI2dhY8tbRncgmlpWQrJHpzi97ikc68Hs+1LM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwawXruL2DcfLICbbJBTRf28aUzXZAl15ziEuYxfU3tM2V82YIB
-	TOpCRmuvwrfHfJXoNOqwdA+dp22+79ajbwawUmRQgD8Mmf3jw0MYcoboPE55myg=
-X-Gm-Gg: ASbGncsyO+FmG6aos+ugRsJCqzdUpVssRoyLXHfA4214vBLABdOC9pwZOirNlOVDiCF
-	lAG6G/WJwhfXTsNx+00ARzZNuBSnxyKryNS1A/Cm1cvyop+0XP5zqc2bWN7l7bRgPk0IOLP/RBq
-	uhzRVrrUUD1MkYEBcEa5fAtrgiGCnEp5mFRZMPd0GFEL0+xELlB+GqqE2COhPRwSJ0DNiBDsnyT
-	fXQrvg5FTMR4DOPBdldlwZHoz8Skzqo1j7GCHoWIYkM/6wheGex7l5wEVFa/LD8kJ2I/mcF/lWK
-	Cjh41a5lybS9VsxGfDQ+WoizaH89na8+IVGggpy0vcLPHfbzV+UA372Tbmxefqg=
-X-Google-Smtp-Source: AGHT+IHMPmbTge6zDjHa6859H1+k4sdDZ/gMAiX6FUPawQ8PGqqQPLxpyvCVwbjTBKNQwMK3CnzSHA==
-X-Received: by 2002:a17:907:72d6:b0:ac1:daba:c6c with SMTP id a640c23a62f3a-ac20d8bf12dmr589079966b.24.1741266944582;
-        Thu, 06 Mar 2025 05:15:44 -0800 (PST)
-Received: from [192.168.68.113] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-ac2394fd578sm94632366b.81.2025.03.06.05.15.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 05:15:44 -0800 (PST)
-Message-ID: <9b4fd423-a463-4d50-a597-dbda532b6b61@linaro.org>
-Date: Thu, 6 Mar 2025 13:15:43 +0000
+	s=arc-20240116; t=1741266975; c=relaxed/simple;
+	bh=RPvn/9JHKv0KUET0yq7JeqWzZgiTqKGfU9kbzBYO3Aw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lXLrssDE0FbviUvoZ7ZXsKAAGbxyIv9bs2ejUgdvwAkq09LvipbaEu45Nv3vjlvcyxM4fj2zgd201li1RRwv1OGo8JnJksAwE9Ifa7v2BnixIke+ClxVu3DuZxz5s5z/W2+FjtsE1qdkE9IA0JNM/NsZeyoOgaMtWlZXiqN2I3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=c8ESAFFV; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=2oMXT75K3tzJGkfzmknyPEa8yvFgjeDBRC2ukbCyplw=; b=c8ESAFFVd02/xr5SomVhTmc89w
+	YoUUchGt/lkfyW2b09wdC10EQCGMHV6KeL5v6yLZiWlR7+U0HLnRv6XhiOmmVbk2ffwsrBPlkemBF
+	nU668o8bpTsXIAWBbK1RsoqAbRD6z7rDWPuHi06+FlITALCNFMoycse38x+0scUPa/YeVVWR2wxfU
+	ZP4TjBOaWz4xEK/9eQoMJXiNRmCoVTUpcCZ1IhXiEgA27S+WM9yQ4qvdFJe00/jVhdk0xXLR6bTMD
+	sfupizO8tLft/pF2tlSXjE2GJ5L8lQVLb58Tr4AhPrBei/Fs9ezNpdWUXK4lwfkgKLbSyHcNmGhlZ
+	5VSCaxaw==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1tqB4u-004kVa-Vw; Thu, 06 Mar 2025 14:16:02 +0100
+From: Luis Henriques <luis@igalia.com>
+To: Bernd Schubert <bernd@bsbernd.com>
+Cc: Miklos Szeredi <miklos@szeredi.hu>,  linux-fsdevel@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  kernel-dev@igalia.com
+Subject: Re: [PATCH] fuse: fix possible deadlock if rings are never initialized
+In-Reply-To: <1dc28f9d-c453-42f4-8edb-1d5c8084d576@bsbernd.com> (Bernd
+	Schubert's message of "Thu, 6 Mar 2025 12:45:59 +0100")
+References: <20250306111218.13734-1-luis@igalia.com>
+	<1dc28f9d-c453-42f4-8edb-1d5c8084d576@bsbernd.com>
+Date: Thu, 06 Mar 2025 13:16:02 +0000
+Message-ID: <87bjue2tbh.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/6] ASoC: q6apm: fix under runs and fragment sizes
-To: Caleb Connolly <caleb.connolly@linaro.org>, broonie@kernel.org
-Cc: perex@perex.cz, tiwai@suse.com, krzysztof.kozlowski@linaro.org,
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, dmitry.baryshkov@linaro.org,
- johan+linaro@kernel.org
-References: <20250304105723.10579-1-srinivas.kandagatla@linaro.org>
- <ea047098-2baf-456a-a57f-b698c0ce1b6e@linaro.org>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <ea047098-2baf-456a-a57f-b698c0ce1b6e@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Mar 06 2025, Bernd Schubert wrote:
 
+> On 3/6/25 12:12, Luis Henriques wrote:
+>> When mounting a user-space filesystem using io_uring, the initialization
+>> of the rings is done separately in the server side.  If for some reason
+>> (e.g. a server bug) this step is not performed it will be impossible to
+>> unmount the filesystem if there are already requests waiting.
+>>=20
+>> This issue is easily reproduced with the libfuse passthrough_ll example,
+>> if the queue depth is set to '0' and a request is queued before trying to
+>> unmount the filesystem.  When trying to force the unmount, fuse_abort_co=
+nn()
+>> will try to wake up all tasks waiting in fc->blocked_waitq, but because =
+the
+>> rings were never initialized, fuse_uring_ready() will never return 'true=
+'.
+>>=20
+>> Fixes: 3393ff964e0f ("fuse: block request allocation until io-uring init=
+ is complete")
+>> Signed-off-by: Luis Henriques <luis@igalia.com>
+>> ---
+>>  fs/fuse/dev.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>=20
+>> diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+>> index 7edceecedfa5..2fe565e9b403 100644
+>> --- a/fs/fuse/dev.c
+>> +++ b/fs/fuse/dev.c
+>> @@ -77,7 +77,7 @@ void fuse_set_initialized(struct fuse_conn *fc)
+>>  static bool fuse_block_alloc(struct fuse_conn *fc, bool for_background)
+>>  {
+>>  	return !fc->initialized || (for_background && fc->blocked) ||
+>> -	       (fc->io_uring && !fuse_uring_ready(fc));
+>> +	       (fc->io_uring && fc->connected && !fuse_uring_ready(fc));
+>>  }
+>>=20=20
+>>  static void fuse_drop_waiting(struct fuse_conn *fc)
+>>=20
+>
+> Oh yes, I had missed that.
+>
+> Reviewed-by: Bernd Schubert <bschubert@ddn.com>
 
-On 05/03/2025 22:17, Caleb Connolly wrote:
-> Hi Srini,
-> 
-> On 3/4/25 10:57, srinivas.kandagatla@linaro.org wrote:
->> From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>
->> On Qualcomm Audioreach setup, some of the audio artifacts are seen in
->> both recording and playback. These patches fix issues by
->> 1. Adjusting the fragment size that dsp can service.
->> 2. schedule available playback buffers in time for dsp to not hit 
->> under runs
->> 3. remove some of the manual calculations done to get hardware pointer.
->>
->> With these patches, am able to see Audio quality improvements.
->>
->> Any testing would be appreciated.
-> 
-> This totally breaks audio on SDM845, and often results in a hard-crash 
-> to crashdump mode on my OnePlus 6.
+Thanks!  And... by the way, Bernd:
 
-Its not possible.. as SDM845 is Elite DSP architecture, all of these 
-patches changes are very specific to Audioreach DSP architecture.
+I know io_uring support in libfuse isn't ready yet, but I think there's
+some error handling missing in your uring branch.  In particular, the
+return of fuse_uring_start() is never checked, and thus if the rings
+initialization fails, the server will not get any error.
 
-Could you please share the crash logs if you have any. It highly likely 
-that something else is triggering the hard-crash that you reported.
+I found that out because I blindly tried the patch below, and I was
+surprised that the server was started just fine.
 
-thanks,
-Srini
-> 
-> Unfortunately I can't get UART logs right now. But I imagine this is 
-> reproducible on RB3.
-> 
-> Kind regards,
->>
->> thanks,
->> Srini
->>
->> Changes since v2:
->>     - dropped patch which is causing regression with pluseaudio.
->>     - setup period sizes only for capture path
->>     - fix underruns/overruns in dsp pipelines.
->>     - add fixes tag
->>     - add patch to fix buffer alignment
->>
->> Changes since v1:
->>     - added new patches to fix the fragment size, pointer
->>       calculations
->>     - updated to schedule only available buffers.
->>
->> Srinivas Kandagatla (6):
->>    ASoC: q6apm-dai: schedule all available frames to avoid dsp under-runs
->>    ASoC: q6apm: add q6apm_get_hw_pointer helper
->>    ASoC: q6apm-dai: make use of q6apm_get_hw_pointer
->>    ASoC: qdsp6: q6apm-dai: set correct period and buffer alignment.
->>    ASoC: qdsp6: q6apm-dai: fix capture pipeline overruns.
->>    ASoC: qdsp6: q6apm-dai: fix playback dsp pipeline underruns
->>
->>   sound/soc/qcom/qdsp6/q6apm-dai.c | 63 +++++++++++++++++---------------
->>   sound/soc/qcom/qdsp6/q6apm.c     | 18 ++++++++-
->>   sound/soc/qcom/qdsp6/q6apm.h     |  3 ++
->>   3 files changed, 53 insertions(+), 31 deletions(-)
->>
-> 
+Cheers,
+--=20
+Lu=C3=ADs
+
+diff --git a/lib/fuse_uring.c b/lib/fuse_uring.c
+index 312aa5dbc735..2258cf0d4259 100644
+--- a/lib/fuse_uring.c
++++ b/lib/fuse_uring.c
+@@ -498,6 +498,11 @@ static struct fuse_ring_pool *fuse_create_ring(struct =
+fuse_session *se)
+ 		fuse_log(FUSE_LOG_DEBUG, "starting io-uring q-depth=3D%d\n",
+ 			 se->uring.q_depth);
+=20
++	if (!se->uring.q_depth) {
++		fuse_log(FUSE_LOG_ERR, "Invalid ring queue depth value\n");
++		goto err;
++	}
++
+ 	fuse_ring =3D calloc(1, sizeof(*fuse_ring));
+ 	if (fuse_ring =3D=3D NULL) {
+ 		fuse_log(FUSE_LOG_ERR, "Allocating the ring failed\n");
 
