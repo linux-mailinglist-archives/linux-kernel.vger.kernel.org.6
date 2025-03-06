@@ -1,35 +1,68 @@
-Return-Path: <linux-kernel+bounces-548453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70AE4A54507
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:37:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2B5BA5450F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:38:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C084D1892671
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:37:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9189F3A2DB6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:38:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5164207E04;
-	Thu,  6 Mar 2025 08:37:12 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24EF01DF24E;
+	Thu,  6 Mar 2025 08:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="RRnXXZam"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C97207DE0;
-	Thu,  6 Mar 2025 08:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E00207675
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:38:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741250232; cv=none; b=oheuKZLDtfGd0tSztPMjqkabrdeXEMuCNjKNcK/oS/E2XHXB6TVQgEmUAydLya29wFPqnN5wGDQODur72gncItQNYWnsmGuRgDcCVxMoYx14+TcjB2Y4PwKav2WamJrS3Fnpacs/BVfnrSO6+IjMpZe5HK4DOEGzD2HMPKBp5tE=
+	t=1741250329; cv=none; b=eT76qViPk3CI+x9xOYaycll6ApblEEyoezH8pPC7IhocU7rzOl53/0eqzoFjWMq86ur4TLb3r8/v8epuuHtF0xcrbHXIdxb7T6Jc3lrF5DyUJEynXnTkRTsf5VODae+uEpr/cXBISq62GshfJRRfAXc34AI91zuffN/dMiZKK7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741250232; c=relaxed/simple;
-	bh=qzjXpCQjZyUGD9d9LRO+IYdghIyJg3tcoivgKSkjov4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D7kE15rCjvg83oDnXB9e9icgl5gps1uKtkS3vMd4KTt1nlYrmtN5mfCBVg/qSq6VNuWQIJIANoMaZbsizQZCmxlDVuO9Qszvpn7F76I/JA8T8zs/Hgn8XKJiH2Z73gk6eaGSD3XsOhC9tlziOla8zYNyP9djceSqc5x3PCqgufs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9E03C4CEE0;
-	Thu,  6 Mar 2025 08:37:10 +0000 (UTC)
-Message-ID: <06766086-b148-436c-b6d4-975c26493233@xs4all.nl>
-Date: Thu, 6 Mar 2025 09:37:09 +0100
+	s=arc-20240116; t=1741250329; c=relaxed/simple;
+	bh=Mq9QBnk98lCZMXWRu+BTLCtai6PJmcayz0HR+BYAgfk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bmrmt5HxLjejhBokZ9blDegiUBhWDDaDbIZvWAQigUZkMC2wB/Tq/QwgcezzHsXDNhYGA7LJYxgqX9J0DD1xlf1kwfiGnItSlLIJXHhQVps+2ku7cFegUDsAlwz6f0t6/ZQgZmxY2QIj0TkHdVdkXwce3PHSTgbqOJBhptTx+pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=RRnXXZam; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52675g1x027727;
+	Thu, 6 Mar 2025 09:38:23 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	THTPti0GSVkJ4Cd75xheL2m4nwMeiJGZ76Ql1T7hNSg=; b=RRnXXZamHslG4g3e
+	Uj+5ddeHAS1FF0PnwSRao4wSH4kqc1blP1txTUwJjJ1OVy5EIqkdi2gabTmdPF28
+	UAbwr3nRHkwDUN2laKtxlY4xfiKlVQtDdXBavK4Sn57Hs5+DwHVzQvXq24kizUp3
+	rI9XT0Em724nOCx2sDMTh9kBwcS0LzZsaP1aiJc5bS6o86AVz+JFBdmWCed+ETkW
+	ADpZLcqFMXsMTW7u2l+WJyZ6ek2QHy5Q8urrPmrgxU3TFNF1HO9TXUlW4dNSsLy4
+	h19IrDtz40YnMlhQ/J4lMc5tZ9zS3uPi7c/Hm2+Ets5anIUPnCmc1LswiPHZ6F5S
+	7ZaMHw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 454cp8x3cp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Mar 2025 09:38:23 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 6EF8740049;
+	Thu,  6 Mar 2025 09:37:38 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id EC809411871;
+	Thu,  6 Mar 2025 09:37:16 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 6 Mar
+ 2025 09:37:16 +0100
+Received: from [10.48.86.222] (10.48.86.222) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 6 Mar
+ 2025 09:37:16 +0100
+Message-ID: <4081d99c-1283-45a4-9cb8-8e6f8dbd635d@foss.st.com>
+Date: Thu, 6 Mar 2025 09:37:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -37,108 +70,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: vim2m: print device name after registering device
-To: Shuah Khan <skhan@linuxfoundation.org>,
- Matthew Majewski <mattwmajewski@gmail.com>,
- Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250219190501.295976-1-mattwmajewski@gmail.com>
- <ym5q2cpn2lxk7sarylnf4o3ztvtnb47wroxdiibdsp6yz4gt2y@jfyfo2ekmdmj>
- <5051c252-f1ef-4731-b0cb-fedfcda04d98@linuxfoundation.org>
- <61bd42742ff8a8e5f409b0f2ccc4ab8875dfe7a4.camel@gmail.com>
- <fdd0356f-d91e-400e-9598-d34e0862c9cb@linuxfoundation.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <fdd0356f-d91e-400e-9598-d34e0862c9cb@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] clocksource: stm32-lptimer: use wakeup capable instead of
+ init wakeup
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, <tglx@linutronix.de>
+CC: <alexandre.torgue@foss.st.com>, <olivier.moysan@foss.st.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20250305125146.1858978-1-fabrice.gasnier@foss.st.com>
+ <a7489f16-ca31-4530-8ef1-33079b3c99a9@linaro.org>
+Content-Language: en-US
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+In-Reply-To: <a7489f16-ca31-4530-8ef1-33079b3c99a9@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-06_03,2025-03-06_01,2024-11-22_01
 
-Hi Shuah,
-
-On 20/02/2025 17:27, Shuah Khan wrote:
-> On 2/20/25 08:29, Matthew Majewski wrote:
->> On Wed, 2025-02-19 at 17:21 -0700, Shuah Khan wrote:
->>> On 2/19/25 14:58, Uwe Kleine-Konig wrote:
->>>> On Wed, Feb 19, 2025 at 02:05:01PM -0500, Matthew Majewski wrote:
->>>>> Move the v4l2_info() call displaying the video device name after
->>>>> the
->>>>> device is actually registered.
->>>>>
->>>>> This fixes a bug where the driver was always displaying
->>>>> "/dev/video0"
->>>>> since it was reading from the vfd before it was registered.
->>>>>
->>>>> Signed-off-by: Matthew Majewski <mattwmajewski@gmail.com>
->>>>
->>>> A Fixes: tag would be great.
->>>
->>> Matthew, there is no need to resend the patch. Just send me the
->>> Fixes tag and I will update the repo.
->>>
->>>
+On 3/5/25 18:23, Daniel Lezcano wrote:
+> On 05/03/2025 13:51, Fabrice Gasnier wrote:
+>> From: Alexandre Torgue <alexandre.torgue@foss.st.com>
 >>
->> Ok, here is the fixes tag:
+>> "wakeup-source" property describes a device which has wakeup capability
+>> but should not force this device as a wakeup source.
+> 
+> Is that a fix to be carried on ?
+
+Hi Daniel,
+
+Thanks for reviewing,
+I just have sent a V2 with Fixes tag, and have CC'ed stable.
+
+Please review there,
+Best Regards,
+Fabrice
+
+Fixes: 48b41c5e2de6 ("clocksource: Add Low Power STM32 timers driver")
+> 
+>> Signed-off-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
+>> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+>> ---
+>>   drivers/clocksource/timer-stm32-lp.c | 4 +---
+>>   1 file changed, 1 insertion(+), 3 deletions(-)
 >>
->> Fixes: cf7f34777a5b4100a ("media: vim2m: Register video device after
->> setting up internals")
->>
+>> diff --git a/drivers/clocksource/timer-stm32-lp.c
+>> b/drivers/clocksource/timer-stm32-lp.c
+>> index 96d975adf7a4..f08baa6720f8 100644
+>> --- a/drivers/clocksource/timer-stm32-lp.c
+>> +++ b/drivers/clocksource/timer-stm32-lp.c
+>> @@ -186,9 +186,7 @@ static int stm32_clkevent_lp_probe(struct
+>> platform_device *pdev)
+>>       }
+>>         if (of_property_read_bool(pdev->dev.parent->of_node,
+>> "wakeup-source")) {
+>> -        ret = device_init_wakeup(&pdev->dev, true);
+>> -        if (ret)
+>> -            goto out_clk_disable;
+>> +        device_set_wakeup_capable(&pdev->dev, true);
+>>             ret = dev_pm_set_wake_irq(&pdev->dev, irq);
+>>           if (ret)
 > 
-> Thank you. commit is now updated.
 > 
-> thanks,
-> -- Shuah
-> 
-
-Please post your PR today, if possible. Otherwise it might slip to the
-v6.16. Alternatively, I can take this patch myself.
-
-Also, why did you pick up this vim2m patch? I was a bit surprised by that.
-
-Regards,
-
-	Hans
 
