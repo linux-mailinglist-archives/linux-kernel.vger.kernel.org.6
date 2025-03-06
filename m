@@ -1,209 +1,195 @@
-Return-Path: <linux-kernel+bounces-549242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E444A54F81
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:49:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 703E2A54F7B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:48:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A39151893F1A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:48:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94F873B08C9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:48:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB79211469;
-	Thu,  6 Mar 2025 15:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1BB1DF988;
+	Thu,  6 Mar 2025 15:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n4ztF5JV"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="c34HdYyH"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72641FF7CC
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 15:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7049148FF5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 15:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741276115; cv=none; b=tJ2nEWnp7ony+sZKPtNNU2I182m4Cv950ep9MXQItym99E0DP5acdT+P3TTee7qQZlq+UbzAtPbcSUaXq0KKPvLhTj94piNU+5tz7q/b23K2GlHTCFdfEOX3eXAhPmeMDzvN69klUSTikwdJgQ11kCfZ0du1Ss0YifelstGqPp4=
+	t=1741276112; cv=none; b=QssMcubH3GG3vxDIV/K1Lza/ndpl1FxRusBxqSVTLa0Sq8f3sy7wq4lR+KYy1HwsGZwFL8nV2so3YWzGwfUB+rqV1o1vj7y9VrvjZ3BGHYTQayAmDi8YYi9cWTRTq9TjVMaq9R6YmZhS6ttk46IlEilquaL82xaEwJCbMUIn0Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741276115; c=relaxed/simple;
-	bh=9nc+nlHVLzbF+an9SP1BN1fDldEWWVM2GaTD/JHD38Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BoNGwsfuutFI6lcIpm4/av0fTq7tomHgwBihYMVcfiQCW0uY+BpfjSVLtbin5FFXrv+m20iJvdmyTCaYI6FAe5nvHwghlmVK4s0rfScZYVQO5sMomayFnhAqLPAPJfbNnaIXZPvsBZni2FrtPDXjwgpPx43ZVKuIQKdgkBojHVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n4ztF5JV; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e8fce04655so2999456d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 07:48:33 -0800 (PST)
+	s=arc-20240116; t=1741276112; c=relaxed/simple;
+	bh=yf7T/a3IP7hPYcHXyZeLyZdksDQc4IhVkqRtJTXfFuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p2OpFVH6skv9kLkcMUa5pO1IJSrkxQwmAwCZT/7Ep+9txV1fvUKrhwGv+DNpZVArh3BzILI9w9UOguMSsI7MpHDapWl+qbxMmpV3hSUJlHBIAQ5F7zkIbF1sE4V1tmg/xpQygqUAo5E1UuH/agMqr1gde4Qa2T4vKNQdQA5a9Ow=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=c34HdYyH; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-390f69e71c8so583362f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 07:48:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741276112; x=1741880912; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F/vdOVrt2gpTAE6Qt1Fy4CDkFxCZzAdyeoHIg8U7v4Y=;
-        b=n4ztF5JVqy+7XL09j0fZ9Tqjp9FyAYVAPUvOXfPXv3dXgY+J38APnM+dwz9r9PquXE
-         otBHGyl+iCV/96kY6tudZkY8r7rgf7UY/IAUYN5DyDg0w9VX3axCB5v1XPsRi8nq6M8l
-         338stSAUBceEfR498ndsJ4dSwhaEPwYjSbYg0iJp88aeUB8pO5/LzNbPmedQ9n5oYJt4
-         jBH+9Fk/LDpNuAyJwZwy+5dlnInGhtXsxdPl5gtNCkhOVMZkjzV2l4YuC6OZNP/foLGh
-         Hiwe6ElnaIKkm/F+Hut/+HGYu1oVPL7r/km4VueLyKfAChmWnBqT5qB+gAvNbgNrcxJ7
-         Jf2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741276112; x=1741880912;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=ffwll.ch; s=google; t=1741276109; x=1741880909; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F/vdOVrt2gpTAE6Qt1Fy4CDkFxCZzAdyeoHIg8U7v4Y=;
-        b=q5GrIK/RZuS+Txk6ZpkDT1HJrKL56bGfu6tuPIARP2YvbR/J4h6uWnhUQ3Wm9uhHin
-         Ekmn+aNeXS9rSJrt4uBL7T8JETfAe2J6GicG9WP6Sos2oKmUnAdNlwUX66vw1GCbFbOT
-         fpiLnEzWtfq+X1Lk5UP0fYHEqwPD5MXL+Z3m7mkaQ5LFUPj3Wl+Qfiu89gpcOiM5sLqW
-         wNyD9PyGkH6+JFZLkf/iV7bKDBFOY90INdCcG0hBSCwPu6Ez5eieTncB/Mp/qQ0ZuC/I
-         iLU4tipkzhqU5CYtR+JYzTGZViwy9qybYjDE6/a5HmZEgUyYWV6rszfPc1FWlNTnm+6L
-         vArA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhLlU5Y9KpLy2K0ridtbhEzvWjfz+84dz5OkfwnqJqlH2l130b/YlJAHHSusKLsLaPI4mJD85eE7Y/V5k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvUIhTNks9qUGagCShG3tjxafhmLS6dXqTaY3vRQRJbyVMqMDN
-	9QAIKCrMjQ+o/7IdhMERSyHS1pzraGQByhkUgkFx+xSt6kbC/YTQ7zWOToZypaNR5DAWCbUamZ5
-	NHONgVtlz++CjL5FGLBm945AhSHgyiu6UdrxT
-X-Gm-Gg: ASbGncswoe8IlScoHLHqEQBW20GLlb/nahYjM5ExWtUmAIVi8KuuhIPFAM7XGghdkbY
-	eUCK+DaIby1+LMiL3bQ2rETYbMqAKl0+WK3EoLA2mQRiDDpKkOVw1ES/PU+lXbEt17GvkWnO1sE
-	d5pPmO0A38cTsa8eGY4Z8jTVSjP0eg7c8qHVm54nbKWW22diijoZCWl07B
-X-Google-Smtp-Source: AGHT+IG2NjbsvKGXcwADdAlgVYJgxqLNzRndRMUdTycXQdYU++VkUBDx6MSDbLgKNWOXyJqjCBJAmuRGX/H6gseJcss=
-X-Received: by 2002:a05:6214:d05:b0:6e6:6699:7e58 with SMTP id
- 6a1803df08f44-6e8e6d1551fmr101200616d6.1.1741276112191; Thu, 06 Mar 2025
- 07:48:32 -0800 (PST)
+        bh=ZMlvZVmGmfe9jET5j6AVC1Iu+TuVwvxBrNk+geFYLL4=;
+        b=c34HdYyH40XSKtpuxXx6fjCn6UmJODnfumXTt5dRd4d2pX2vDh5e4zuFwUDz412OFw
+         XdjZkstBtn1YbZPTFzo8wu0Nr/62ukxUuBDi2BIGUF34si2Usv7tyRHDh4sQBYA5Vi81
+         ghek6RolJ6vZ8xdsDsuePcEJ7+D7mmS6832+E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741276109; x=1741880909;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZMlvZVmGmfe9jET5j6AVC1Iu+TuVwvxBrNk+geFYLL4=;
+        b=CYxLwcxIsk5B7gpQTPykCxenjf+UYq1+aX0r+RKzedeLlf43RXZNzlaP7xhrBJYUpI
+         V67vIgGuq5MgF6Uk+ypDkD3LBJvqdjhU26qCHFNVu7oq+yd9kLMGVFTPPcaHgqRpFRNQ
+         rLWR9q3TcXYgM8vZwWo+F1d3bLT6fVbZQUU0swy4kQJ7r+f2rDk0IB4V+5Fyay8kGVQE
+         zMK2GNUAdaNVMr3+mX52M4n+yFVKL6b083nx85QqtVKnaYABrmNMNNUF6skjeeuUq2SJ
+         GKkg6ZuaC8CCdnZZFct+8phe8ti1eJC2Z5gOgLy/nYSgEtALAXivTnr4vEmzpDTStngx
+         tVRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXm8A3XtfMNicDJNosE9SUmZtg1ZVpFRllU2JYkJKIGfzwZQS73HlkzhhnLk9AzlfyWD5+O7v6j8bHP9FI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3H0Ep5LAUZkAvWrRjUBHFmJNmQV7TdXay8zLkvA15Pi1xgXFm
+	tacDTeuYP1yiP4lXLJZm/8o9ei/sRshhlGpfuMdPq6MZR8HI6JT83f+xs3+6U8E=
+X-Gm-Gg: ASbGncu3suDmt3a4ZlwcuMc2V+XuBB4bnJOlCut9Vwee/bSdTfZBDzgIJNGxOOHawDP
+	kiLP++cKgMuLfHUbolbrYwHpuPAO+QgRxaYtV8LjxrsrgWq6Hl2XR7u48kmVf614eI74B926ubF
+	TDITd4LvPBf+D3/zBznwzhEWyBs8AIXQfYKcuaoFFuwjyrIHVyGAn1akAGCVNIrDkCSjnanzkD0
+	FqGTS1GGkgI9ImIYRXDqDmE8ww6cnMiBzO7nspnH4aVRX60/yaxUGHADKmOOF244G2uz5GiFbif
+	BAETkLoUCO+8TY3AKTXiiCGbHQLu8Htrl7Hdo7NxNpN6MpPDnm6gkGCN
+X-Google-Smtp-Source: AGHT+IFtOXpx6jiep5HwmWGtbHwDrBT4bMHCGPI0ael0tguvlAKpS/nUPea89z2t6vc5g9hpe7v3ew==
+X-Received: by 2002:a05:6000:18a8:b0:38a:4184:14ec with SMTP id ffacd0b85a97d-391296d3cefmr3990555f8f.1.1741276107354;
+        Thu, 06 Mar 2025 07:48:27 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c10437dsm2433714f8f.99.2025.03.06.07.48.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 07:48:26 -0800 (PST)
+Date: Thu, 6 Mar 2025 16:48:24 +0100
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v5 14/16] drm/bridge: tc358768: Stop disabling when
+ failing to enable
+Message-ID: <Z8nDyNVQ5p007Mw6@phenom.ffwll.local>
+Mail-Followup-To: Maxime Ripard <mripard@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Douglas Anderson <dianders@chromium.org>,
+	Herve Codina <herve.codina@bootlin.com>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
+ <20250304-bridge-connector-v5-14-aacf461d2157@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306002933.1893355-1-rmoar@google.com> <CABVgOSkwrb36rrhH3H17fhYOnywhTgTh06aDaKXT4jZp474sRQ@mail.gmail.com>
-In-Reply-To: <CABVgOSkwrb36rrhH3H17fhYOnywhTgTh06aDaKXT4jZp474sRQ@mail.gmail.com>
-From: Rae Moar <rmoar@google.com>
-Date: Thu, 6 Mar 2025 10:48:20 -0500
-X-Gm-Features: AQ5f1JoJuxVIlo73mw7OMRvVa5L4ygXshyFART2BLs53CpfZgjhb5b6nVql4vZQ
-Message-ID: <CA+GJov6A1dr4PHkV3jSyptKc6PvhA4Zx7=jjFBVOa08=PwKRMQ@mail.gmail.com>
-Subject: Re: [PATCH] kunit: tool: Fix bug in parsing test plan
-To: David Gow <davidgow@google.com>
-Cc: shuah@kernel.org, jackmanb@google.com, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304-bridge-connector-v5-14-aacf461d2157@kernel.org>
+X-Operating-System: Linux phenom 6.12.11-amd64 
 
-On Thu, Mar 6, 2025 at 4:00=E2=80=AFAM David Gow <davidgow@google.com> wrot=
-e:
->
-> On Thu, 6 Mar 2025 at 08:29, Rae Moar <rmoar@google.com> wrote:
-> >
-> > A bug was identified where the KTAP below caused an infinite loop:
-> >
-> >  TAP version 13
-> >  ok 4 test_case
-> >  1..4
-> >
-> > The infinite loop was caused by the parser not parsing a test plan
-> > if following a test result line.
-> >
-> > Fix bug to correctly parse test plan and add error if test plan is
-> > missing.
-> >
-> > Signed-off-by: Rae Moar <rmoar@google.com>
-> > ---
->
-> Thanks for looking into this: I don't think we want to unconditionally
-> error if there's no test plan, though. Pretty much no parameterised
-> tests include one -- it's not always possible to know how many tests
-> there'll be in advance -- so this triggers all of the time.
->
-> Maybe we can only include an error if we find a test plan line after
-> an existing result, or something?
+On Tue, Mar 04, 2025 at 12:10:57PM +0100, Maxime Ripard wrote:
+> The tc358768 bridge driver, if enabling it fails, tries to disable it.
+> This is pretty uncommon in bridge drivers, and also stands in the way
+> for further reworks.
+> 
+> Worse, since pre_enable and enable aren't expected to fail, disable and
+> post_disable might be called twice: once to handle the failure, and once
+> to actually disable the bridge.
+> 
+> Since post_disable uses regulators and clocks, this would lead to enable
+> count imbalances.
+> 
+> In order to prevent that imbalance, and to allow further reworks, let's
+> drop the calls to disable and post_disable, but keep the warning to let
+> users know about what's going on.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
 
-Hi David!
+Yeah proper way to clear these would be like any other link failure:
+- Launch async worker to do a bridge reset with the fancy new helper.
+- Set the link-status attribute if you can't automatically fix it and let
+  userspace sort out the mess.
 
-I thought I'd include the error in the first version but I figured it
-might not be accepted. Technically it is improper KTAP for the test
-plan to be missing so the error would be correct but because it fires
-on parameterized tests which is not ideal.
+Maybe we need to improve the docs a bit more?
+-Sima
 
-I wonder for parameterized tests if we could output a test plan:
-"1..X" indicating an unknown number of tests or something similar. I'd
-be happy to implement this. However, I am happy to remove the error
-for the second version.
+> ---
+>  drivers/gpu/drm/bridge/tc358768.c | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/tc358768.c b/drivers/gpu/drm/bridge/tc358768.c
+> index 6db18d1e8824dd7d387211d6d1e668645cf88bbe..6b65ba8aed86012bc0f464bd5ee44325dae677c6 100644
+> --- a/drivers/gpu/drm/bridge/tc358768.c
+> +++ b/drivers/gpu/drm/bridge/tc358768.c
+> @@ -1075,15 +1075,12 @@ static void tc358768_bridge_pre_enable(struct drm_bridge *bridge)
+>  	val = TC358768_DSI_CONFW_MODE_CLR | TC358768_DSI_CONFW_ADDR_DSI_CONTROL;
+>  	val |= TC358768_DSI_CONTROL_DIS_MODE; /* DSI mode */
+>  	tc358768_write(priv, TC358768_DSI_CONFW, val);
+>  
+>  	ret = tc358768_clear_error(priv);
+> -	if (ret) {
+> +	if (ret)
+>  		dev_err(dev, "Bridge pre_enable failed: %d\n", ret);
+> -		tc358768_bridge_disable(bridge);
+> -		tc358768_bridge_post_disable(bridge);
+> -	}
+>  }
+>  
+>  static void tc358768_bridge_enable(struct drm_bridge *bridge)
+>  {
+>  	struct tc358768_priv *priv = bridge_to_tc358768(bridge);
+> @@ -1099,15 +1096,12 @@ static void tc358768_bridge_enable(struct drm_bridge *bridge)
+>  
+>  	/* set PP_en */
+>  	tc358768_update_bits(priv, TC358768_CONFCTL, BIT(6), BIT(6));
+>  
+>  	ret = tc358768_clear_error(priv);
+> -	if (ret) {
+> +	if (ret)
+>  		dev_err(priv->dev, "Bridge enable failed: %d\n", ret);
+> -		tc358768_bridge_disable(bridge);
+> -		tc358768_bridge_post_disable(bridge);
+> -	}
+>  }
+>  
+>  #define MAX_INPUT_SEL_FORMATS	1
+>  
+>  static u32 *
+> 
+> -- 
+> 2.48.1
+> 
 
-Thanks!
--Rae
-
->
-> -- David
->
-> >  tools/testing/kunit/kunit_parser.py    | 12 +++++++-----
-> >  tools/testing/kunit/kunit_tool_test.py |  5 ++---
-> >  2 files changed, 9 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/=
-kunit_parser.py
-> > index 29fc27e8949b..5dcbc670e1dc 100644
-> > --- a/tools/testing/kunit/kunit_parser.py
-> > +++ b/tools/testing/kunit/kunit_parser.py
-> > @@ -761,20 +761,22 @@ def parse_test(lines: LineStream, expected_num: i=
-nt, log: List[str], is_subtest:
-> >                 test.name =3D "main"
-> >                 ktap_line =3D parse_ktap_header(lines, test, printer)
-> >                 test.log.extend(parse_diagnostic(lines))
-> > -               parse_test_plan(lines, test)
-> > +               plan_line =3D parse_test_plan(lines, test)
-> >                 parent_test =3D True
-> >         else:
-> >                 # If not the main test, attempt to parse a test header =
-containing
-> >                 # the KTAP version line and/or subtest header line
-> >                 ktap_line =3D parse_ktap_header(lines, test, printer)
-> >                 subtest_line =3D parse_test_header(lines, test)
-> > +               test.log.extend(parse_diagnostic(lines))
-> > +               plan_line =3D parse_test_plan(lines, test)
-> >                 parent_test =3D (ktap_line or subtest_line)
-> >                 if parent_test:
-> > -                       # If KTAP version line and/or subtest header is=
- found, attempt
-> > -                       # to parse test plan and print test header
-> > -                       test.log.extend(parse_diagnostic(lines))
-> > -                       parse_test_plan(lines, test)
-> >                         print_test_header(test, printer)
-> > +
-> > +       if parent_test and not plan_line:
-> > +                       test.add_error(printer, 'missing test plan!')
-> > +
-> >         expected_count =3D test.expected_count
-> >         subtests =3D []
-> >         test_num =3D 1
-> > diff --git a/tools/testing/kunit/kunit_tool_test.py b/tools/testing/kun=
-it/kunit_tool_test.py
-> > index 0bcb0cc002f8..e1e142c1a850 100755
-> > --- a/tools/testing/kunit/kunit_tool_test.py
-> > +++ b/tools/testing/kunit/kunit_tool_test.py
-> > @@ -181,8 +181,7 @@ class KUnitParserTest(unittest.TestCase):
-> >                         result =3D kunit_parser.parse_run_tests(
-> >                                 kunit_parser.extract_tap_lines(
-> >                                 file.readlines()), stdout)
-> > -               # A missing test plan is not an error.
-> > -               self.assertEqual(result.counts, kunit_parser.TestCounts=
-(passed=3D10, errors=3D0))
-> > +               self.assertEqual(result.counts, kunit_parser.TestCounts=
-(passed=3D10, errors=3D2))
-> >                 self.assertEqual(kunit_parser.TestStatus.SUCCESS, resul=
-t.status)
-> >
-> >         def test_no_tests(self):
-> > @@ -203,7 +202,7 @@ class KUnitParserTest(unittest.TestCase):
-> >                 self.assertEqual(
-> >                         kunit_parser.TestStatus.NO_TESTS,
-> >                         result.subtests[0].subtests[0].status)
-> > -               self.assertEqual(result.counts, kunit_parser.TestCounts=
-(passed=3D1, errors=3D1))
-> > +               self.assertEqual(result.counts, kunit_parser.TestCounts=
-(passed=3D1, errors=3D2))
-> >
-> >
-> >         def test_no_kunit_output(self):
-> >
-> > base-commit: 0619a4868fc1b32b07fb9ed6c69adc5e5cf4e4b2
-> > --
-> > 2.48.1.711.g2feabab25a-goog
-> >
+-- 
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
