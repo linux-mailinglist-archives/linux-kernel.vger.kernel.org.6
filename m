@@ -1,124 +1,209 @@
-Return-Path: <linux-kernel+bounces-548650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15087A54785
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:16:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8A13A54787
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:16:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4BB43AE525
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:15:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1898171ACB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F222200121;
-	Thu,  6 Mar 2025 10:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 149291FF1AA;
+	Thu,  6 Mar 2025 10:16:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QAwOtLHa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qyxkpxqo"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839C717B50B;
-	Thu,  6 Mar 2025 10:15:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6301A4E70
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:16:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741256159; cv=none; b=f9qyFQSJFGv6EMAVMFUt9anvh/boqo2b9nehgchV817+E2i4dDD7ZSmU1TDzT768YRAaE8TPNy9yKDZ2b7f3k4r+eHngog1qdFDrY+SbN6i2t27dGsVLXQR9ju8Fz81H/unmYXr1+sncu+JaSVGWNbOJsfNVIDMKB285/tT3zu8=
+	t=1741256187; cv=none; b=SGcr4bW996wdlPkOJYi83loO3VRTw6W5PD8ibw/8P+DWzgqqUHOAEnQTfi2QLQFkJvv0HJ/qdjQYx56M9Ed5HyIRG28eneazq25ZQcXX3ZQXgbFd1oslKVdw0VYu8EMcmGKK6pXNnXoI5aS+7CIJicpeKVfHQHsnO5Gae6AYCgs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741256159; c=relaxed/simple;
-	bh=GyD5rv2egr2dMdLAzHO0FeBEFkCMJ1OAl97tzWJuVcE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AALKbeI6voHNJtWx/Ps7MWW06ssQXuoy0PBWPLXxSv09MlbfCV6xr8mj+glcxnmP3C6IJBSda7r0UMwwzNrCDKIfnDZMfBEFhOLZUGDybq2fMr3tlouLFFyRf7Gi3uPr/keakXcbag2j4KQv8OGbVNEvioACD5VXUteUaZPEiL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QAwOtLHa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73FC0C4CEE0;
-	Thu,  6 Mar 2025 10:15:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741256159;
-	bh=GyD5rv2egr2dMdLAzHO0FeBEFkCMJ1OAl97tzWJuVcE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QAwOtLHaszWKb2z40qTZfmkWj0elqbFbgDTWAWlnnJmPwsE83GHvKS39FnQV7SPYR
-	 T2zNPUk/TXzzSyelENHgIPOHOtQJlwZ0sfnqoDPq0EHzH0t8BmfHfDntuhK5UxsiaF
-	 amwC8JcF/NU+7jisf7pDtdeqOHlGmP/YTZk+h+qQYwxAzi3WJgkOxdr5rNGjUc7OfO
-	 eGcciFwbQDCh8fAlo5Jja8gYTso8yrFqO4UPHA+SP8rhSoml84JkH3JbJS/DBYnzFg
-	 1uEeH+9418DNDOK+0O0gSvKi+G10D6q6Q0cSDfQ/aaUIg9eNn4z6rWdB1vaBKl27FZ
-	 annRwzXDVmOLA==
-Date: Thu, 6 Mar 2025 11:15:38 +0100
-From: Joel Granados <joel.granados@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Kees Cook <kees@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
-	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
-	Sven Schnelle <svens@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, sparclinux@vger.kernel.org, linux-s390@vger.kernel.org, 
-	linux-acpi@vger.kernel.org
-Subject: Re: [PATCH 3/8] ftrace: Move trace sysctls into trace.c
-Message-ID: <dekaemtglzq5el2omrusxyqntdqbzyllcalzor4jrindici25g@x2bdsiblw6iw>
-References: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
- <20250218-jag-mv_ctltables-v1-3-cd3698ab8d29@kernel.org>
- <20250303204455.69723c20@gandalf.local.home>
+	s=arc-20240116; t=1741256187; c=relaxed/simple;
+	bh=zJOxIERmDv9lRPIRZxu/dcgTaemp0XEgJ4ApfDIrvI4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HSKT/bq6L/ERtatbzqZ+rmvbHPkVHiJYtkZOS8XBiw0zMatnZT+1chqpgPftpk8gD7QWjSwOvjDOy/ro1b3BZmvJf5h3yKObVqPkovKHaW2vqOxxLT1hG3lPPWs4SUERgTPJTskml6UsAy4Ftje2kYVmpI5ZrqNULnKwjOKFh18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qyxkpxqo; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7be6fdeee35so87014585a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 02:16:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741256184; x=1741860984; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kQt/BfhTxYuS+EBnPleIhhn/3jC1g/esNWyydIaIFe8=;
+        b=QyxkpxqoYynHIudiWnGj9BY4lgnq3aCPSbW/Y2LrEzeP2IoUkR3fyyylZFqi/+FDYL
+         9O+l3NBlbpOz28pH9HTCeus7dDoNwPmaiOchHm+MM45D4c79aYRDrqY1EDZ71JZ7TfZP
+         3j7t57ArR8d++9YSWShCiFS8tavmXhzcYw5bgm477lfKkv+CtMIlrKu5pRYi2/Lv9Vb2
+         8P2YwP7OU3fsT6kSQDBNZ0ZKJlCJ1M19fK0/qag3aj9TxG//WSsVMgGgT8qB0vdLcznc
+         p2dpnDH4qEw7LY5DmhnOzpcww6hVi2bu2EhAU4/gpKwwB/hoNZbXm26KsipwiVkT6QBy
+         Bbaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741256184; x=1741860984;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kQt/BfhTxYuS+EBnPleIhhn/3jC1g/esNWyydIaIFe8=;
+        b=oabXpItj2gaHPeoEYaVNXyCKOUojojAYx63lVL3ylI1KrKUaTDBpHsHk+Lne7mQT3D
+         o3Es0lOExlzZCoZjXJrpJNW/nIZRsFyYJKvw0UrvCh4GO0kMjZxRdF6KpV9jpqXch2df
+         NHRHufMBvfmwCI18RnMj39zDznmt3tXuMstQ32HrVYObELfRGQohS5D0d8X/ZbQuET5a
+         jEsBzKByLiqzJJD/rVkDUnf8mWHohso02kbn0fxWnJtt/lN+HKaRvZ/eQnyn43TXIZ8S
+         fwBFG/1wHOiVfFW1fnwxDgQl2oE9bbf9Hr0gPROmkDjv1VD5Mj/ZhUuJGr7jWkZHhbcB
+         e19Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUvNsMQbMsAGkZBBhgW74Ba96NaI+dLoP0v+ig3ZlddS4BCqgFj/wCcVGccbhANV/yLX7SKaa3KUT/4Bgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlMGzOe9dL83XVD4tY/qrBXfoi1QZGbfoDyA0oH8nNrUYyH5tV
+	g7nSMmI/DKpep7Ab7IuwLikqXj5oj4TiGcS/vGChga9uMVklfXXVF+NWFXscOFd3NSiJVCPyy7M
+	ixnXHUalRIzbyLW5xnBRx50pp3EOuFB0T9ebF
+X-Gm-Gg: ASbGncu9J7ivrQ05iMyrkoBBrA6GCt6VJKzSit1YvsFewZxDD5325SQlyM1nlCd5mEL
+	CACOU9ACWO9LJ1eZDoqNrjHEgnrZXS/6Z6rUBsAExGlgnJrQRjBOVDynq1H5ytmx1kZ7HPVl8Z+
+	KnGcFENmf28jn04JsJlnWAx/kUhfc=
+X-Google-Smtp-Source: AGHT+IFIyxpUjrd9WxdFyirbhUezvLRXpmbvDGuaJZtrUstaXDaMXQa7ztzPLXzThpEXAVbrrXxOHf4f/xYzmK4dxMU=
+X-Received: by 2002:ad4:5aae:0:b0:6e8:f60b:9396 with SMTP id
+ 6a1803df08f44-6e8f60b96cemr21205236d6.29.1741256184340; Thu, 06 Mar 2025
+ 02:16:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303204455.69723c20@gandalf.local.home>
+References: <20250305-net-next-fix-tcp-win-clamp-v1-1-12afb705d34e@kernel.org>
+ <CAL+tcoAqZmeV0-4rjH-EPmhBBaS=ZSwgcXhU8ZsBCr_aXS3Lqw@mail.gmail.com>
+ <CANn89iLqgi5byZd+Si7jTdg7zrLNn13ejWAQjMRurvrQPeg3zg@mail.gmail.com>
+ <281edb3a-4679-4c75-9192-a5f0ef6952ea@kernel.org> <CANn89iKVsDrL9YFx883wTfRSAe6tOR7x2U5zk=TcgHBMr+VtkQ@mail.gmail.com>
+ <a3266974-d561-4e8f-a23a-9c0774ee2bbe@kernel.org>
+In-Reply-To: <a3266974-d561-4e8f-a23a-9c0774ee2bbe@kernel.org>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 6 Mar 2025 11:16:13 +0100
+X-Gm-Features: AQ5f1Jqiuu0ZT24oat4cYsDxkIEWiPGyUJLvby7DpzG1svevab4S2cjJEd9IEXk
+Message-ID: <CANn89iJ4DyC8OSEA2Qn3WhWHAUr9Bpo_ZmJdcx3ofM-qKvEU=g@mail.gmail.com>
+Subject: Re: [PATCH net-next] tcp: clamp window like before the cleanup
+To: Matthieu Baerts <matttbe@kernel.org>
+Cc: Jason Xing <kerneljasonxing@gmail.com>, mptcp@lists.linux.dev, 
+	Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 03, 2025 at 08:44:55PM -0500, Steven Rostedt wrote:
-> On Tue, 18 Feb 2025 10:56:19 +0100
-> Joel Granados <joel.granados@kernel.org> wrote:
-> 
-> Nit, change the subject to:
-> 
->   tracing: Move trace sysctls into trace.c
-Done. Thx for the feedback 
+On Thu, Mar 6, 2025 at 11:12=E2=80=AFAM Matthieu Baerts <matttbe@kernel.org=
+> wrote:
+>
+> On 06/03/2025 11:02, Eric Dumazet wrote:
+> > On Thu, Mar 6, 2025 at 10:55=E2=80=AFAM Matthieu Baerts <matttbe@kernel=
+.org> wrote:
+> >>
+> >> Hi Eric,
+> >>
+> >> On 06/03/2025 10:45, Eric Dumazet wrote:
+> >>> On Thu, Mar 6, 2025 at 6:22=E2=80=AFAM Jason Xing <kerneljasonxing@gm=
+ail.com> wrote:
+> >>>>
+> >>>> On Wed, Mar 5, 2025 at 10:49=E2=80=AFPM Matthieu Baerts (NGI0)
+> >>>> <matttbe@kernel.org> wrote:
+> >>>>>
+> >>>>> A recent cleanup changed the behaviour of tcp_set_window_clamp(). T=
+his
+> >>>>> looks unintentional, and affects MPTCP selftests, e.g. some tests
+> >>>>> re-establishing a connection after a disconnect are now unstable.
+> >>>>>
+> >>>>> Before the cleanup, this operation was done:
+> >>>>>
+> >>>>>   new_rcv_ssthresh =3D min(tp->rcv_wnd, new_window_clamp);
+> >>>>>   tp->rcv_ssthresh =3D max(new_rcv_ssthresh, tp->rcv_ssthresh);
+> >>>>>
+> >>>>> The cleanup used the 'clamp' macro which takes 3 arguments -- value=
+,
+> >>>>> lowest, and highest -- and returns a value between the lowest and t=
+he
+> >>>>> highest allowable values. This then assumes ...
+> >>>>>
+> >>>>>   lowest (rcv_ssthresh) <=3D highest (rcv_wnd)
+> >>>>>
+> >>>>> ... which doesn't seem to be always the case here according to the =
+MPTCP
+> >>>>> selftests, even when running them without MPTCP, but only TCP.
+> >>>>>
+> >>>>> For example, when we have ...
+> >>>>>
+> >>>>>   rcv_wnd < rcv_ssthresh < new_rcv_ssthresh
+> >>>>>
+> >>>>> ... before the cleanup, the rcv_ssthresh was not changed, while aft=
+er
+> >>>>> the cleanup, it is lowered down to rcv_wnd (highest).
+> >>>>>
+> >>>>> During a simple test with TCP, here are the values I observed:
+> >>>>>
+> >>>>>   new_window_clamp (val)  rcv_ssthresh (lo)  rcv_wnd (hi)
+> >>>>>       117760   (out)         65495         <  65536
+> >>>>>       128512   (out)         109595        >  80256  =3D> lo > hi
+> >>>>>       1184975  (out)         328987        <  329088
+> >>>>>
+> >>>>>       113664   (out)         65483         <  65536
+> >>>>>       117760   (out)         110968        <  110976
+> >>>>>       129024   (out)         116527        >  109696 =3D> lo > hi
+> >>>>>
+> >>>>> Here, we can see that it is not that rare to have rcv_ssthresh (lo)
+> >>>>> higher than rcv_wnd (hi), so having a different behaviour when the
+> >>>>> clamp() macro is used, even without MPTCP.
+> >>>>>
+> >>>>> Note: new_window_clamp is always out of range (rcv_ssthresh < rcv_w=
+nd)
+> >>>>> here, which seems to be generally the case in my tests with small
+> >>>>> connections.
+> >>>>>
+> >>>>> I then suggests reverting this part, not to change the behaviour.
+> >>>>>
+> >>>>> Fixes: 863a952eb79a ("tcp: tcp_set_window_clamp() cleanup")
+> >>>>> Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/551
+> >>>>> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> >>>>
+> >>>> Tested-by: Jason Xing <kerneljasonxing@gmail.com>
+> >>>>
+> >>>> Thanks for catching this. I should have done more tests :(
+> >>>>
+> >>>> Now I use netperf with TCP_CRR to test loopback and easily see the
+> >>>> case where tp->rcv_ssthresh is larger than tp->rcv_wnd, which means
+> >>>> tp->rcv_wnd is not the upper bound as you said.
+> >>>>
+> >>>> Thanks,
+> >>>> Jason
+> >>>>
+> >>>
+> >>> Patch looks fine to me but all our tests are passing with the current=
+ kernel,
+> >>> and I was not able to trigger the condition.
+> >>
+> >> Thank you for having looked at this patch!
+> >>
+> >>
+> >>> Can you share what precise test you did ?
+> >>
+> >> To be able to get a situation where "rcv_ssthresh > rcv_wnd", I simply
+> >> executed MPTCP Connect selftest. You can also force creating TCP only
+> >> connections with '-tt', e.g.
+> >>
+> >>   ./mptcp_connect.sh -tt
+> >
+> > I was asking Jason about TCP tests. He mentioned TCP_CRR
+>
+> Oops, I'm sorry, I didn't look at the "To:" field.
+>
+> > I made several of them, with temporary debug in the kernel that did
+> > not show the issue.
+> >
+> >
+> > I am wondering if this could hide an issue in MPTCP ?
+> Indeed, I was wondering the same thing. I didn't see anything obvious
+> when looking at this issue. The behaviours around the window clamping,
+> with MPTCP single flow, and "plain" TCP were quite similar I think.
 
-Best
-> 
-> as I try to only have the "ftrace:" label for modifications that affect
-> attaching to functions, and "tracing:" for everything else.
-> 
-> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> 
-> -- Steve
-> 
-> 
-> > Move trace ctl tables into their own const array in
-> > kernel/trace/trace.c. The sysctl table register is called with
-> > subsys_initcall placing if after its original place in proc_root_init.
-> > This is part of a greater effort to move ctl tables into their
-> > respective subsystems which will reduce the merge conflicts in
-> > kerenel/sysctl.c.
-> > 
-> > Signed-off-by: Joel Granados <joel.granados@kernel.org>
-> > ---
-...
-> > +	},
-> > +};
-> > +
-> > +static int __init init_trace_sysctls(void)
-> > +{
-> > +	register_sysctl_init("kernel", trace_sysctl_table);
-> > +	return 0;
-> > +}
-> > +subsys_initcall(init_trace_sysctls);
-> >  
-> >  #ifdef CONFIG_TRACE_EVAL_MAP_FILE
-> >  /* Map of enums to their values, for "eval_map" file */
-> > 
-> 
-
--- 
-
-Joel Granados
+OK, let me run mptcp tests just in case I see something dubious.
 
