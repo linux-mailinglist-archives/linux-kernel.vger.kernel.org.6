@@ -1,171 +1,119 @@
-Return-Path: <linux-kernel+bounces-548715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3D92A5488A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:57:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC1D9A5488D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:57:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1033D171B97
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:57:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33C457A5770
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632FA207DEA;
-	Thu,  6 Mar 2025 10:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBEF20551E;
+	Thu,  6 Mar 2025 10:57:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PmjxlUG6"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Sybzewpp"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00ED8202984;
-	Thu,  6 Mar 2025 10:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D47202984
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:57:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741258640; cv=none; b=DJqGgOXvvbfyPydLnHE8JuyYD0PR9cq2EDIUBF0nhE4r0H5vPNSKRLtPccQLpLgEupIqiD4AdbG2uIKi4c8seqXB/8jwtIAK6Yv7Vs70V+L5S4n1Dp9ojvv1h5Vr2VadsnElM6KT17nIwEONqpb3Vhr6DN1PpqOpcH/99RoBvLo=
+	t=1741258663; cv=none; b=P19VyQwBKPSbjbNqG+7XoBUlLOxdQYw+d0lzN+Wvh2M4UF870/rt1ppYYgNx8P5nHyaF9XPSmBkG+6NBlRF1mjkM13A3z9BBLL/+6QzNg4TCRocToOH002yx3/nGLPaFd0jgf+Tl1kjwOWYJHdB9dcSJiTeyxVzVUpaWQnHyoiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741258640; c=relaxed/simple;
-	bh=I9pdTKoLaw+6AaESsv4LPJeCEfXkPMTSZEKG9PY9KuY=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g2tpscL3q/9zV5OtjIJOKPigWmLbCNTlAh84qb2rwTIQSYwyFbF6Pw4+CKa++3dGsZFVbMXv/fWxFzDzXJ6yFTTwaoAmPUVcwEAKTziK0+ht43cfuCM69VVCbRQqSzOg2652Bsfh7eXNb3YVchJ7Es10on0dzUTqZPGpUKYik3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PmjxlUG6; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394a823036so4252855e9.0;
-        Thu, 06 Mar 2025 02:57:18 -0800 (PST)
+	s=arc-20240116; t=1741258663; c=relaxed/simple;
+	bh=HUzA5Pu2VpXIYuAhDxgWPL7oFqKDgn6WYCQ3x4sKcJs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=OmIDRxCzicclP7JO091CuQyCFWV0LKP9CJtpawMqABQn8GfFArwBW3PM1lZdEXzziiB64Mpyno21oazNkAP6crZyt18DeGhy1dTvXrSUp9T7OUAPcjri3UwC4WMYjlBhHUaSYopgOD3V6fQMTusYg8aJab3095bDsQnIdrEPR04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Sybzewpp; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abf42913e95so75604366b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 02:57:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741258637; x=1741863437; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=lgkMBhBzFh4GMW6txcVgpWsBqFCCmiQ9SftChtsfc9M=;
-        b=PmjxlUG6VrJKmJPC6cd+uEun1KdKE+THkC4GWs67ZKj2jbJp/1g4JtGtXbsqEQmeZo
-         xa3NRg9xSZua+CuuTFilX3ZZj70RrSuwKLd6xEf+GeWD1VfSnMb7FdW7kLrOSg/LoykZ
-         2w8Rh8dbIebmg7XsXQ1nR8kMKK76/uQTMkQYjtlMC5TPrNqTzL/1418qAFJFTeUy3+Hy
-         UiF/XXAKb1hMM2SDXGs+7e7QleH0G2atTD4k/aZ7h+JyDKraohBWjZk73mfAedKx5toq
-         fSiOlHRm1Wx8Db4gFsxnyczi81ms358608cQYGQ1BtyZXODHeLlgGVEpK96hp7EZeida
-         +0dw==
+        d=linaro.org; s=google; t=1741258660; x=1741863460; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=HUzA5Pu2VpXIYuAhDxgWPL7oFqKDgn6WYCQ3x4sKcJs=;
+        b=SybzewppP+syPgdAproUY/UYNOHa+oKAKVn58hK1cGBbPtCe+Rdnv56fNJfPZObh8H
+         25tA6MnxUhQ+Ajl/IFb7RyAsnZFsbzk31W0Vzlz27KPqB7KFpWFClaXIpMwl/OTT21o7
+         MuMX1W73iBU5mJ21jnzY1vRSPvhTr2k22UfyrbQq69u4aS0No3lGILoAncFxEv/AcNxD
+         C743Y4C6maxL8PHBpei3VYtAkxQ+RQwh0zleuUVQ7Q7o0exIupNv0VYRyNmusr6HeSJf
+         WRhryFA1na4qUZtBGYMPFA67Z1ICgRfDnoY6pijJWdcLtQcP032BohQwbEwiiBq5Z5OR
+         7Eow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741258637; x=1741863437;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lgkMBhBzFh4GMW6txcVgpWsBqFCCmiQ9SftChtsfc9M=;
-        b=DnmU+AmyGQUJvIQc43ZrWedLu8YVNK9IR4A0Vsbmi0hA5QZJbYt3LcsS7ke46ajTlc
-         8IHCFRWZEimj8N5O6rr0HJ57uVd9D3mi4XZgdfiOHw9aPG5e6343PeZBJhD77hfcN3Qt
-         zvU5rSSrXTthQDFHkVDHao0CJborEMP6o+MlQS3whJ3+tL47D8KXT0zKGfLzMoIzeSxF
-         7GEimLqRQ8thTr/BPy6sZiEx1uXsqeZJwkRorTZ0n/oJajEpTdvTptQof0qeLDZY3bFq
-         t73cgZBVUtiVRXXRQ2jCNFak8iy3eHfBd5Ha1b+gvaOvjwGAR08PYkOT3AB+UfV4Oy+M
-         lUPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGGlg/GpDKulMPxPPZOmAhAi2kZFmO7RBSwXjYHCZlIJEWrG3AAQ9U5wy6S7F9f2bUtcEXWgXYqg4WF2V/@vger.kernel.org, AJvYcCUUY7hdyTI3q6ZNSmFmsyEhMdTOoys+7fXiuKTERsR8crdAz7hQLjUuSl6BcUPRsDvYkSZG1SOVIxWr@vger.kernel.org, AJvYcCVbJD9ckb7u53lcssV+yJrRPsBlwkWf9fm1/Lm9sKbxrvZPT3Y6O/kUyr8WAUJMS35IUrE=@vger.kernel.org, AJvYcCW0f4jWFDk/A+hgw9YIcmobkKkhdA4w41HRa+P7Kd/R7wVtox2hIvcrMB+AeMNd+J9+hW5nThci@vger.kernel.org, AJvYcCWdblM5mYu3Od982WBbTNg/c/KNToMio0epDMGyVi8t0WAWW81TuB/rnUOba6EE9J5+2MwRVLC71FtsmCrBfBPAGqFJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyol0cm7lv0K1Av3qib7fXvRlSgpgyRJEIcOXcTYDYYbfYyXQkU
-	NSAzOBEQyk15M9907URiY8qmKTSWwu+SMlkmXSRjIKOUHbpfAcIadlX+wTaGHis=
-X-Gm-Gg: ASbGnctErop6Lcri2Leua4OkAor+I/vMrdmOn+Afky7YaADGvIiDekz+36KQeiDPm95
-	0dEWuVxvXPiKNr8tCZJs9LYYpa6YD1kMCcsECOAmqiIqq7THFj7ETWXhpDQgvYjMNsOI7Jk0UPd
-	nly83edHLcjBLhpr7BHQr5RCpgnX7Sn95rdPuVEpkw5/k4IfMzO3WfYDbjz8pFMsO2H8m3677ni
-	GDq8bEw8FiS2WqoluuLT0nYJVwJKATFesF7/FQQEg76rSo1cZ1DwSXu6fLAU9jcbwnhgPymvSyo
-	A0UHij5u+GvXXH440irrcZTvl+CxWORITxtuxQ==
-X-Google-Smtp-Source: AGHT+IGLhJA7BskK5ld+jvgOXMpsvckCM2ZvvuLBgJH2nBAC7Z74GOkDTinBbaMSWaLdw5nhhGwZtQ==
-X-Received: by 2002:a05:600c:3205:b0:439:969e:d80f with SMTP id 5b1f17b1804b1-43be1d8de13mr4102405e9.31.1741258636883;
-        Thu, 06 Mar 2025 02:57:16 -0800 (PST)
-Received: from krava ([2a00:102a:401e:9b3a:b228:9e66:580a:3bc8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfb79adsm1674487f8f.7.2025.03.06.02.57.15
+        d=1e100.net; s=20230601; t=1741258660; x=1741863460;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HUzA5Pu2VpXIYuAhDxgWPL7oFqKDgn6WYCQ3x4sKcJs=;
+        b=V/KPwvWYwAmzzxfg03/AS9Lpj0O/49moUhOYU1gaVH4BCEUwsgYmrWb6pc1wNctRXK
+         ZmjR9LwiQ7KInlM2XmQPgZJCteCMKrFB4Z78cc87+lix7/S9nHSTIpzU0tK9g1Vey66B
+         5w7XNyO9t0VfjuyzkMerFgFD0jMaBZDH0zrgf5kMR6Yb+zbniotKpwmN3nbEhPJ+zq1O
+         WBzWGBVLMVGD+H1uHnBZmBIpGbrjXAifHMXsQYH14LJQikRW0fZFFsp76rrcK6TCroxZ
+         fQ6nxB9PjKWHLPF049/CtGC/m9Zw0jMcsfKgUe4wRuhngxGEBY9LUCfzrQzKLSTH1ap+
+         Dukg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzmzVgfxvJ4k5YG5LTBObck+9n3h0UlRX6L933Tzi2Yj9wknxbpPeBi7mSCvyuzYbhelCesoZXlBlCZGk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvPHRbfZN5PEhMSw3EFIO+aMkMD5PxE+KG9rBtcginRKjOxE3E
+	pnuCrsqP6mSDhxDsfkAcvq1trCPZjh4ZgauLg3QfSaMQC/kmpnsyw+e46nq0y/M=
+X-Gm-Gg: ASbGnct5YV+2K1ONzi9U6u07WN12eHtV1514Fqnu+Vr606iZaqdY4uWunFkffosYAsC
+	3wesIk9hT0exqryKTrGUN/M23ryVZLZ438UBYthx9OQR4W0z3xyJHFLh42oN086yTvyVj18AMP3
+	KrNu/NyaEcUf3MRwaY7vnIoEeLcJekSkoly+jmXgJuw4R0T68xiycFiaZYPwkJV11OBIq91Z3Tx
+	+Bc9TdjcW3SLD1wEAZ8WrWkqrJM1oF8pBHPY5iq0gbKYOqw2XNlnTXNmgoolDw5j+2GZEoY1K1O
+	oIK52k2M/1tgj8aBdxLwPTA49/OriK/DEAa35+IX8aCyiBKM
+X-Google-Smtp-Source: AGHT+IGeZOiaY1aJKJjqtYueXhMP1BS31yX+hr4PezJXUBtQPVrMxRBsSKLnYFZO+vtwvwtDRkBuEA==
+X-Received: by 2002:a17:906:29c4:b0:ac2:29b8:1f21 with SMTP id a640c23a62f3a-ac229b8202cmr306641066b.49.1741258659698;
+        Thu, 06 Mar 2025 02:57:39 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2399d47b5sm74174966b.168.2025.03.06.02.57.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 02:57:16 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 6 Mar 2025 11:57:14 +0100
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Kees Cook <kees@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eyal Birger <eyal.birger@gmail.com>, stable@vger.kernel.org,
-	Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-	x86@kernel.org, bpf@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Deepak Gupta <debug@rivosinc.com>,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: Re: [PATCHv3 perf/core] uprobes: Harden uretprobe syscall trampoline
- check
-Message-ID: <Z8l_ipCn8tBE1d9Q@krava>
-References: <20250212220433.3624297-1-jolsa@kernel.org>
- <CALCETrVFdAFVinbpPK+q7pSQHo3=JgGxZSPZVz-y7oaG=xP3fA@mail.gmail.com>
- <Z623ZcZj6Wsbnrhs@krava>
- <CALCETrVt=N-QG3zGyPspNCF=8tA4icC75RVVe70-DvJfsh7Sww@mail.gmail.com>
- <Z7MnB3yf2u9eR1yp@krava>
+        Thu, 06 Mar 2025 02:57:39 -0800 (PST)
+Message-ID: <b70f17589b91730ecf6080c626492368283ce7a1.camel@linaro.org>
+Subject: Re: [PATCH 0/3] gs101 max77759 enablement (DT)
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>,  Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus
+ <tudor.ambarus@linaro.org>, Rob Herring	 <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley	 <conor+dt@kernel.org>, Alim
+ Akhtar <alim.akhtar@samsung.com>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
+Date: Thu, 06 Mar 2025 10:57:38 +0000
+In-Reply-To: <20250306-b4-max77759-mfd-dts-v1-0-9fe8b0eb8123@linaro.org>
+References: <20250306-b4-max77759-mfd-dts-v1-0-9fe8b0eb8123@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z7MnB3yf2u9eR1yp@krava>
 
-On Mon, Feb 17, 2025 at 01:09:43PM +0100, Jiri Olsa wrote:
-> On Thu, Feb 13, 2025 at 09:58:29AM -0800, Andy Lutomirski wrote:
-> > On Thu, Feb 13, 2025 at 1:16 AM Jiri Olsa <olsajiri@gmail.com> wrote:
-> > >
-> > > On Wed, Feb 12, 2025 at 05:37:11PM -0800, Andy Lutomirski wrote:
-> > > > On Wed, Feb 12, 2025 at 2:04 PM Jiri Olsa <jolsa@kernel.org> wrote:
-> > > > >
-> > > > > Jann reported [1] possible issue when trampoline_check_ip returns
-> > > > > address near the bottom of the address space that is allowed to
-> > > > > call into the syscall if uretprobes are not set up.
-> > > > >
-> > > > > Though the mmap minimum address restrictions will typically prevent
-> > > > > creating mappings there, let's make sure uretprobe syscall checks
-> > > > > for that.
-> > > >
-> > > > It would be a layering violation, but we could perhaps do better here:
-> > > >
-> > > > > -       if (regs->ip != trampoline_check_ip())
-> > > > > +       /* Make sure the ip matches the only allowed sys_uretprobe caller. */
-> > > > > +       if (unlikely(regs->ip != trampoline_check_ip(tramp)))
-> > > > >                 goto sigill;
-> > > >
-> > > > Instead of SIGILL, perhaps this should do the seccomp action?  So the
-> > > > logic in seccomp would be (sketchily, with some real mode1 mess):
-> > > >
-> > > > if (is_a_real_uretprobe())
-> > > >     skip seccomp;
-> > >
-> > > IIUC you want to move the address check earlier to the seccomp path..
-> > > with the benefit that we would kill not allowed caller sooner?
-> > 
-> > The benefit would be that seccomp users that want to do something
-> > other than killing a process (returning an error code, getting
-> > notified, etc) could retain that functionality without the new
-> > automatic hole being poked for uretprobe() in cases where uprobes
-> > aren't in use or where the calling address doesn't match the uprobe
-> > trampoline.  IOW it would reduce the scope to which we're making
-> > seccomp behave unexpectedly.
-> 
-> Kees, any thoughts about this approach?
+On Thu, 2025-03-06 at 10:14 +0000, Andr=C3=A9 Draszik wrote:
+> Hi,
+>=20
+> This series enables the recently submitted Maxim max77759 driver and
+> updates the DT for the Google Pixel 6 / Pro (oriole / raven) boards
+> accordingly.
+>=20
+> !!! Dependency note !!!
+>=20
+> This series depends on the corresponding driver and DT bindings
+> proposed in
+> https://lore.kernel.org/r/20250228-max77759-mfd-v3-0-0c3627d42526@linaro.=
+org
+>=20
+> Note that in that series bindings and gpio driver are accepted, but mfd
+> and nvmem drivers are still waiting for review comments.
 
-ping, any idea?
+To avoid ambiguity... with 'accepted' I meant reviewed, but not merged!
 
-thanks,
-jirka
+A.
 
-> 
-> thanks,
-> jirka
-> 
-> 
-> > 
-> > >
-> > > jirka
-> > >
-> > > >
-> > > > where is_a_real_uretprobe() is only true if the nr and arch match
-> > > > uretprobe *and* the address is right.
-> > > >
-> > > > --Andy
-> > >
 
