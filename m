@@ -1,147 +1,134 @@
-Return-Path: <linux-kernel+bounces-549754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B8BDA556EA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:38:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16A2DA556EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:38:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 705C9173FFE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:38:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 427047A606F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:37:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D556F31E;
-	Thu,  6 Mar 2025 19:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB3E271284;
+	Thu,  6 Mar 2025 19:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dl/CvLJc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Is6E4Hs0"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5291DDA8;
-	Thu,  6 Mar 2025 19:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7DE26FDB4;
+	Thu,  6 Mar 2025 19:38:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741289913; cv=none; b=NX8ILdyCmUskGyru3T9RfxjWyxCTFyLhThIf+v4mM9if5Z0vjy+H1gBSL0ALgs4S0esAAUunuSBI6ICmb2pV+JeBxOec8OOv1P6tdP+B/fsX/9oDqbg6J38t63BsFFn9e31KzXWWcLQqd/gEiXo532QjWBNGiLnSCUS6NbiNLR8=
+	t=1741289916; cv=none; b=JubVqBT/E9K2Tu58hKX38vSxBS51HCpw/flQDErnMma7zwkm9VF5InyKEwC8mPCnk6GnQagWPXXB2QlCg1FO3R/53iWP3QF+6EXOdf/fXsvEyvxCJEuhZyGQ+oPfl0Z4+/f+a3S1GQuWAuojGkEUzy97PslReXVyASLTSqqk+Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741289913; c=relaxed/simple;
-	bh=CLkizdwL2PaxijEb/elPuRAA2i2qQxIVszjmlvOsl8o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ffmDiELLtJ1dTQM0VW4MbI/8X7RncfgmY+ZpH3xjOYxYEYSZktNVf6LXDGQGe4ljZN/0p8RhlxuSDb0IvxlkjiDYTr32IyA5/B7qvHDLIMAWWsVhLFonQFep0IA6q8SVaeQT80j0YTHasFvJgZ9LcymG51SLOX0YtnWh72+3CJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dl/CvLJc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E5F8C4CEE4;
-	Thu,  6 Mar 2025 19:38:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741289912;
-	bh=CLkizdwL2PaxijEb/elPuRAA2i2qQxIVszjmlvOsl8o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Dl/CvLJcCi7v/BW+oxmiPU88yLPDXQV4kXCGbLxAnO5u2WK/oQcQNCXD5CogMvOws
-	 9B7UtkCyB8qDScj0my5w2B5/7i4GoOnzV3edusNRI51ExZ9XQFfuPtQKr28/p2sozc
-	 aERr619V6vC45NJEm/z3FSCN+2AvFXkReG6embswvsCIpsk3nE3qQg32HXgz/LvZMJ
-	 gZ3T1xc6Bi8vZyxawdVp88tRTqH2KOsVtFf8u0ZO5tJ4gcYfp/3MD+8ARC1Qrv7aHC
-	 YnIrHriQ1WbI4pRREOQQVRafiiUvBmiKwiFm8/F0qTptrdrFEBNvC2qU1ALBn9Yltd
-	 6th1iHdyk9JmA==
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-6001060115bso512318eaf.3;
-        Thu, 06 Mar 2025 11:38:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVLLUw3ZxgJxC5R2psPt8TQxuwpHKQNv/VqRXjDn5NEEMIn66hh1xtrELAuavwGRGzZFWLoZ2wKfQM=@vger.kernel.org, AJvYcCXJNCg9z5KfeLRYZQqaAdv6+HZSlLrclHi/a6eZ6nd5MchnL3Punmas7pgZVACHaKSXXrXFB+iW3u28AmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjywean+E1gnAjtz3G3yMQBuQ/+QcYVXelGblE5Ttxeu9jULuX
-	wWKfLm15u3mvi7kyNrdoYC0e8TnPkuqx6VwGFpxDm/NqH+WEpCNwbErFuqV5M3uVFSfuuw8l/37
-	CT+tbPL3wjeSYeWwzX+172yO7dR8=
-X-Google-Smtp-Source: AGHT+IFVJh7lbhZA9B1w8khGnBS8dollYchSr5l3VYxVvpUTw11EPsEEWMnV52SHqpY7jGbHpGATgr1grisJWk8GAbQ=
-X-Received: by 2002:a05:6820:209:b0:600:2ad1:5f3f with SMTP id
- 006d021491bc7-6004a78c51cmr374542eaf.2.1741289911576; Thu, 06 Mar 2025
- 11:38:31 -0800 (PST)
+	s=arc-20240116; t=1741289916; c=relaxed/simple;
+	bh=nOtK01glKrGG8fuEMZiCN8DLp0nf98FDqZ183uM/Bss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I+A8F4EFnP1Q6TMyP7dYa4jslcxuCuxHB4Twt6Flj2UQVOcXc/NDI36DyG4PUs9cdvtEtLS4pSsM4DGhXNyXDyzYGZJWVNqp4M1IOgiShFf1Me48rFqA0lISSAZr/4xB6BcUeKQa7pCEeM6JOknWuZlx8P91GTUzpLSiR7nyOV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Is6E4Hs0; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43948021a45so9571795e9.1;
+        Thu, 06 Mar 2025 11:38:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741289912; x=1741894712; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CGMiB37BFnD1cTo/Z8BxHm2wPrhG5rwdIKGIZoCVwxw=;
+        b=Is6E4Hs0Y9kqEd+7kzu9BaCSmiUQ49H8qgs4k7XOyKCsr7V8ZwNgXypVnspqr27PTa
+         OOSOI6oZcByZ9bjUsazxA5/FwWdVtHIPAEKTbSdQDP9ON9O81ti/B7YgT3BmMHZdZ3cg
+         Oya67Kfckm6vyufeSKVRs3mA8uOFpDI1Usp2wcVGWkOsxomjqnAxaYB0p6ZU1TrdzTeT
+         IR4HTn0XkcBkh2pOkQGAV7QZAh+tG/S+uDujA/4bPVOj6SOnY1ITdILRiFBqtijb4Bt7
+         VbvLRCGkL/+R/CKeHbnIqiKp91GwtbzeJul4dN3fnhNq1D+JmvxGr5YVfywP3i2UHA6C
+         Mqtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741289912; x=1741894712;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CGMiB37BFnD1cTo/Z8BxHm2wPrhG5rwdIKGIZoCVwxw=;
+        b=ogiFFIOq7yZ4md/RCsLYtr3v8cO+h8SOaqc5Ar5f2YTetba8lPqUco68hUPbFSttzL
+         OxlbR0Wmf6iZ8Ww1a/f9+siutVIAIUTOLltjW0Iy0ZozDZGkarjxqAmNkn4NXdJ3y3AK
+         09mw+qxHb3JPYTRBFHd8eBDJEeC2M873oWNHg1LuYtk81imFsTkqyp9TNLZBQ+96t5SZ
+         WICuZ4GngB9bTG/70DyORHMv9bqBJJP0jApgxUTmhik7wpJyY1CCj/Rs3iFbDYNXn7Qt
+         ao4VK4CiW8m/QSU1dYfrHIgENmAOlYm4mWi2ewP+fbLSHw5q6CPOjQ0b6bA6+Li2/QPs
+         4e4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUD5Jhq6tTgh2rLW8fMd/yenhNUUDnny2BJIxMug/t6mLH1rZ2HRJB7J49nCVg9T70RsJSAql8YjZNWWh0=@vger.kernel.org, AJvYcCUqLnB9s7ztpsdJgK8oHE8ubnc6PCo7mcAbRiP6TVE44BAWSg1yL3V+mixo8F+82AZ4k0mjaTXmd+X6sA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLHtZMktk2WKsWswwcmXepJ1wRY6ftgbfg93XGD2b9unbl9tLL
+	HMoJYQEg5IhmTz1XlVlTWji+grWa9TivQs5lCZj65f74ZrUBZA3b
+X-Gm-Gg: ASbGncsx7Oi2OZ1CDvpI0x2ardZfq4eHtMDrCo4dG8W+yYuAcMn0n90yAU5v+hXbYzL
+	85hnpjXK+YZC/YAwsA9dYWOGlemqFV6PSGF4ibJTZ/98hLgh5HD1LdosQdFfh3tpsIEv0RNcDQA
+	+NvDYXaQJGaugukIBAfk/U3crNVCR501hGoVmUa1hmN5PCsBcryIbMxiV9z+d83WDko23RjSzXx
+	rQk0hHp9kGvKEvtxcA/z6vgh3UB6NuUaRxkfJu+sPP6sQzFTKBRjP4xZ0uNPDHU4B/L+m5wLvXD
+	cx9QyoBmFRFaX9mkvuPMfOCbvGiPDESueP7buKSU9GC78bDVfKx2rGLW2+h591W/nA==
+X-Google-Smtp-Source: AGHT+IGD/0SyHrWKAspEG39gZ6q7sFCG09cAYiqP92WJT//Fk9Phl43SI1M/Va8OZeVnbOyMgmj6uQ==
+X-Received: by 2002:a05:600c:3553:b0:439:8bc3:a698 with SMTP id 5b1f17b1804b1-43c601cdc45mr6119185e9.6.1741289911674;
+        Thu, 06 Mar 2025 11:38:31 -0800 (PST)
+Received: from [172.27.49.130] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd8c3d3esm28587725e9.16.2025.03.06.11.38.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 11:38:31 -0800 (PST)
+Message-ID: <a1e7b180-a3f8-4faf-8815-4b9a76fe2e4f@gmail.com>
+Date: Thu, 6 Mar 2025 21:38:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241219091109.10050-1-xuewen.yan@unisoc.com> <a43ebb14-be7f-4f8a-8892-cdb63eec4043@arm.com>
- <CAB8ipk-qYR4LncOi2ue6Rbdc6CqX67_OydcOp14Yj=afYZPe=Q@mail.gmail.com>
- <7bc89310-c0db-4940-8cd7-86566ecb5c65@arm.com> <CAJZ5v0j3+TFB22FKcGMdy6bfvczAcp+egWv5WjY9dWmHKh8fpA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0j3+TFB22FKcGMdy6bfvczAcp+egWv5WjY9dWmHKh8fpA@mail.gmail.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 6 Mar 2025 20:38:20 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0i1v7AEycKDB_U4mQYP-JUQoqC1Nw3Dm16UGA8Hab_fWw@mail.gmail.com>
-X-Gm-Features: AQ5f1JpPSnt76r5uMJlaUcLw0txveon_4t5IrqZsuWQ8TVLiv5MIQxa2-szJ-iU
-Message-ID: <CAJZ5v0i1v7AEycKDB_U4mQYP-JUQoqC1Nw3Dm16UGA8Hab_fWw@mail.gmail.com>
-Subject: Re: [PATCH] power: energy_model: Rework the depends on for CONFIG_ENERGY_MODEL
-To: Lukasz Luba <lukasz.luba@arm.com>, Xuewen Yan <xuewen.yan94@gmail.com>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, linux-pm@vger.kernel.org, len.brown@intel.com, 
-	linux-kernel@vger.kernel.org, ke.wang@unisoc.com, jeson.gao@unisoc.com, 
-	di.shen@unisoc.com, pavel@ucw.cz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] net/mlx5: handle errors in mlx5_chains_create_table()
+To: Wentao Liang <vulab@iscas.ac.cn>, saeedm@nvidia.com, leon@kernel.org,
+ tariqt@nvidia.com, andrew+netdev@lunn.ch, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250306104337.2581-1-vulab@iscas.ac.cn>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20250306104337.2581-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 5, 2025 at 3:57=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.org=
-> wrote:
->
-> Hi,
->
-> On Wed, Mar 5, 2025 at 10:51=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.com>=
- wrote:
-> >
-> > Hi Rafael,
-> >
-> > On 2/13/25 02:18, Xuewen Yan wrote:
-> > > Hi Rafael,
-> > >
-> > > I noticed that this patch has not been merged yet. Do you have any co=
-mments?
-> > >
-> > > BR
-> > >
-> > > On Thu, Dec 19, 2024 at 5:17=E2=80=AFPM Lukasz Luba <lukasz.luba@arm.=
-com> wrote:
-> > >>
-> > >>
-> > >>
-> > >> On 12/19/24 09:11, Xuewen Yan wrote:
-> > >>> From: Jeson Gao <jeson.gao@unisoc.com>
-> > >>>
-> > >>> Now not only CPUs can use energy efficiency models, but GPUs
-> > >>> can also use. On the other hand, even with only one CPU, we can als=
-o
-> > >>> use energy_model to align control in thermal.
-> > >>> So remove the dependence of SMP, and add the DEVFREQ.
-> > >>
-> > >> That's true, there are 1-CPU platforms supported. Also, GPU can have
-> > >> the EM alone.
-> > >>
-> > >>>
-> > >>> Signed-off-by: Jeson Gao <jeson.gao@unisoc.com>
-> > >>> ---
-> > >>>    kernel/power/Kconfig | 3 +--
-> > >>>    1 file changed, 1 insertion(+), 2 deletions(-)
-> > >>>
-> > >>> diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
-> > >>> index afce8130d8b9..c532aee09e12 100644
-> > >>> --- a/kernel/power/Kconfig
-> > >>> +++ b/kernel/power/Kconfig
-> > >>> @@ -361,8 +361,7 @@ config CPU_PM
-> > >>>
-> > >>>    config ENERGY_MODEL
-> > >>>        bool "Energy Model for devices with DVFS (CPUs, GPUs, etc)"
-> > >>> -     depends on SMP
-> > >>> -     depends on CPU_FREQ
-> > >>> +     depends on CPU_FREQ || PM_DEVFREQ
-> > >>>        help
-> > >>>          Several subsystems (thermal and/or the task scheduler for =
-example)
-> > >>>          can leverage information about the energy consumed by devi=
-ces to
-> > >>
-> > >> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
-> >
-> > Gentle ping. You probably have missed that change for the v6.15 queue
->
-> Indeed, I have missed this one.
->
-> Now applied as 6.15 material, thanks!
 
-And dropped because of
 
-https://lore.kernel.org/linux-pm/202503070326.9hEUez42-lkp@intel.com/
+On 06/03/2025 12:43, Wentao Liang wrote:
+> In mlx5_chains_create_table(), the return value of mlx5_get_fdb_sub_ns()
+> and mlx5_get_flow_namespace() must be checked to prevent NULL pointer
+> dereferences. If either function fails, the function should log error
+> message with mlx5_core_warn() and return error pointer.
+> 
+> Fixes: 39ac237ce009 ("net/mlx5: E-Switch, Refactor chains and priorities")
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>   drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c | 5 +++++
+>   1 file changed, 5 insertions(+)
+> 
 
-Thanks!
+You totally dropped the change log, and the branch target.
+Other than that, the patch itself LGTM.
+
+Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
+
+
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c
+> index a80ecb672f33..711d14dea248 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c
+> @@ -196,6 +196,11 @@ mlx5_chains_create_table(struct mlx5_fs_chains *chains,
+>   		ns = mlx5_get_flow_namespace(chains->dev, chains->ns);
+>   	}
+>   
+> +	if (!ns) {
+> +		mlx5_core_warn(chains->dev, "Failed to get flow namespace\n");
+> +		return ERR_PTR(-EOPNOTSUPP);
+> +	}
+> +
+>   	ft_attr.autogroup.num_reserved_entries = 2;
+>   	ft_attr.autogroup.max_num_groups = chains->group_num;
+>   	ft = mlx5_create_auto_grouped_flow_table(ns, &ft_attr);
+
 
