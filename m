@@ -1,336 +1,368 @@
-Return-Path: <linux-kernel+bounces-549500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1684EA5534B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:43:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7165A5534D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:43:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B792176813
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:43:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CD7A7A8512
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D00525CC88;
-	Thu,  6 Mar 2025 17:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="Ad96yJ+2"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B160325CC9B;
+	Thu,  6 Mar 2025 17:43:28 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDA52147FD;
-	Thu,  6 Mar 2025 17:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E338B25A35E
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:43:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741282994; cv=none; b=uV62fFhAHY51u3CBIMMKLs7nGhg36ptzZIILENTImO3wxQr2hFfgSx76tdIWK/ve1jw6wJO2O2e2Us38eRZN+B4wq42qyRDjzFKObkZwJ2d/ZK50QFGJHxD0/TxcQbLVuwXpEEUXXCpE5ZcniK8pJw5f8440YvvB9VLZMn/ltks=
+	t=1741283007; cv=none; b=sJvF2phas39KsoVgqzLWfHB55U4ifX8GMzJENgCS2z8Wh0Bjh1RW2CmztaxJsVKTSeNxrQJ+uUClsfq3cd/vj6ln3ngzhVZmXVBp32jLdMrnpglGYTnUzBO4bn4Hf4yH1vODthk8KD47GiXuRYDC+QLSazo7S6YQP7smddmJhZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741282994; c=relaxed/simple;
-	bh=m5G5ImChXblzOK16r3EN8cvkLdg3wQdP3CsMuUEnf84=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=agSyteauY/U4dRTj7NtLPDWda4EL3C/R3GUVd7J8ju6R4A9ZnLwxAjQpo8SE0RZRR3N8GtXHMDxV1KpdrOFDwuDZghyc9yIN2HjBPMcjW1ESBt/G6ElnHp9+Okq9rM4aHqSbXDFFp4st4x7gV46AGFlSCFYJEsOjsdh1HHCgRL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=Ad96yJ+2; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (pd9e59f4f.dip0.t-ipconnect.de [217.229.159.79])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 2D5012FC0048;
-	Thu,  6 Mar 2025 18:43:07 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1741282987;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ztPP88OHRGNbxkdavb7bi4jX3Ap7eHSxKC1RPRuKmsI=;
-	b=Ad96yJ+2kt3c1wRHuweMFL0Wx5RktsNwXTf8RtzUG3PTmooP02IegXFnrp0riXHLIYyLp2
-	nb1pZQRoHUIEpRGSr9Hq7gD9nc8AINKsveYDiLISzRcc0X3yMj4XsQTcYpdITpjykwKfsv
-	aRuxvbtkGi7lqQhMu/wH01tUm+hU/Bs=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <6c8a2fe4-1254-4df0-bd58-348b48b94854@tuxedocomputers.com>
-Date: Thu, 6 Mar 2025 18:43:06 +0100
+	s=arc-20240116; t=1741283007; c=relaxed/simple;
+	bh=cuP/vScxGtaMqppW/h6NaC/dlve9qOgtjc8hq4kp0AU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VLl3QUoGYoxPa1pl3sF5F9aSPG2uUGXA2geKJeEZrIcdpNo1w+DzcomQBJCX30hur//Eq+UYPFPIvjlXPzbo5J2JeMbWhYXSq5XF3j6gr7Ji+DkaqDKCDSrrSE1lAsDC5rDUOaH/OLOA6EuT0V0X6cVtCMdGWKZpc781fdvOiMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d3d949fd42so14481915ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:43:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741283005; x=1741887805;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ifMmxd60Hb7OPYrM+DTw5Np2I8L4Y/29uTi+Rh8hpQk=;
+        b=kf/6ifBmZIiJ2RRRyY6+R6Yor6FWPZisNZyNaMBAaQjwq9Od9WY3APQHwKPNCbMZaT
+         EMnhh5g23KAgC5JBGOflk+eBvQ4yKA4qwjKQA+mRn81Kr7P/zsQXIi5DpD9v+MBX4nqm
+         BoTpZei8KQzFqT6OTN/vQI4HSGhcH/bqjh9Bvzkib0cTXAswbFSyH/2rThXW4IKu3Lhk
+         WPRJ/6csBMWCr5xwbj8mO+cVPTq+l9vUMZinyfktkNCWxVsx7lALC5BsB5OSr8sJT6s9
+         krj9QTU8lyMbJhsNc3rUqWopcFWW0LTatBaZo9iIXZ04DscEPrHi2d1d+Zmme8dsxWZf
+         gYAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUzOkAntfKuDZcfl9yfBgE7ciIsK7dP51vA+/tsxcR309OhnBr8sC+/q1kv3RPyAd/2Ni1nYwIAtxDrMWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI0aomQUZUN21FNM2h2/aoNxL/M0aIn9cdjtKxj3b674No1HKL
+	TGHzc61HjxTZCO8/TF1k/YwBPm6i4g8r6ZXiNBoNK0A2nBUNfM1DGkhIno0UCWM+UyJ8CGt5MuS
+	q6fY2ZlbNZ0WkgIORSHlcqzjLKPXTYHsLX1inDPYpwI1gW6Y9lOy1wcs=
+X-Google-Smtp-Source: AGHT+IHTJp/ZM/fkYLMo3tXEoI3jr+/p2/e/7JiwdBj/cDvKKz/vblcYLUokI2aJWgTfbrm9G1OUKsSFAKuhLf1rqDz114yr/duZ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Input: atkbd - Fix TUXEDO NB02 notebook keyboards
- FN-keys
-To: Hans de Goede <hdegoede@redhat.com>, mario.limonciello@amd.com,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20250303190442.551961-1-wse@tuxedocomputers.com>
- <20250303190442.551961-2-wse@tuxedocomputers.com>
- <1bee0a62-058b-482a-8eec-d45b8aca1614@redhat.com>
- <d74c348d-474a-4871-8b94-d836e8d054e8@tuxedocomputers.com>
- <1fbdfe7f-0f25-4de0-805c-b712663f7681@redhat.com>
- <e6f5234c-98ab-4a06-aa1a-59726f395ea4@tuxedocomputers.com>
- <b0d0eac1-76e5-462b-9ff5-605536fa00b4@redhat.com>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <b0d0eac1-76e5-462b-9ff5-605536fa00b4@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a92:cdaf:0:b0:3d4:38a4:388e with SMTP id
+ e9e14a558f8ab-3d44187c0f4mr6839195ab.1.1741283005074; Thu, 06 Mar 2025
+ 09:43:25 -0800 (PST)
+Date: Thu, 06 Mar 2025 09:43:25 -0800
+In-Reply-To: <6761bbbd.050a0220.29fcd0.0075.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c9debd.050a0220.15b4b9.003d.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_connect_cfm
+From: syzbot <syzbot+e9abaabc441d3dd18735@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Hans,
+syzbot has found a reproducer for the following issue on:
 
-Am 06.03.25 um 15:46 schrieb Hans de Goede:
-> Hi Werner,
->
-> On 5-Mar-25 4:41 PM, Werner Sembach wrote:
->> Hi Hans,
->>
->> Am 05.03.25 um 15:18 schrieb Hans de Goede:
->>> Hi Werner,
->>>
->>> On 5-Mar-25 1:07 PM, Werner Sembach wrote:
->>>> Am 05.03.25 um 12:25 schrieb Hans de Goede:
->>>>> Hi Werner,
->>>>>
->>>>> On 3-Mar-25 8:04 PM, Werner Sembach wrote:
->>>>>> This small driver does 2 things:
->>>>>>
->>>>>> It remaps the touchpad toggle key from Control + Super + Hangaku/Zenkaku to
->>>>>> F21 to conform with established userspace defaults. Note that the
->>>>>> Hangaku/Zenkaku scancode used here is usually unused, with real
->>>>>> Hangaku/Zenkaku keys using the tilde scancode.
->>>>> So this control + super + scancode 0x76 sending is also seen on
->>>>> quite a few other laptops and I think we need a generic fix for this.
->>>>>
->>>>> I recently noticed that KDE's keyboard-shortcut settings actually has
->>>>> a  control + super + Hangaku/Zenkaku -> touchpad-toggle key binding
->>>>> in its default bindings (IIRC). But that cannot work because xkb actually
->>>>> has no mapping for evdev code 85 / KEY_ZENKAKUHANKAKU if you look in:
->>>>>
->>>>> /usr/share/X11/xkb/keycodes/evdev and then look for 93 (*) you will
->>>>> find no mapping. I think this KDE default binding may be from a long
->>>>> time ago when this did work. Or maybe KDE uses the FOO part of KEY_FOO
->>>>> as symbolic when there is no xkb mapping ?
->>>> It does not work on X11, but it does work on Wayland (there xev also sees the Zenkaku/Hankaku keypress). Don't ask me why.
->>> Interesting, so in xev under Wayland you see something like this
->>> on release:
->>>
->>>       state 0x0, keycode 38 (keysym 0x61, a), same_screen YES,
->>>
->>> With there actually being a keysym of "Zenkaku_Hankaku" there ?
->> No. Sorry I got it a little bit wrong above, I didn't know it exactly anymore and had to retest:
->>
->>
->> With the keyboard shortcut deactivated, xev on wayland shows this:
->>
->> KeyPress event, serial 39, synthetic NO, window 0x1200001,
->>      root 0x4f7, subw 0x0, time 246681, (83,3), root:(1273,701),
->>      state 0x0, keycode 133 (keysym 0xffeb, Super_L), same_screen YES,
->>      XLookupString gives 0 bytes:
->>      XmbLookupString gives 0 bytes:
->>      XFilterEvent returns: False
->>
->> KeyPress event, serial 39, synthetic NO, window 0x1200001,
->>      root 0x4f7, subw 0x0, time 246682, (83,3), root:(1273,701),
->>      state 0x40, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
->>      XLookupString gives 0 bytes:
->>      XmbLookupString gives 0 bytes:
->>      XFilterEvent returns: False
->>
->> KeyPress event, serial 39, synthetic NO, window 0x1200001,
->>      root 0x4f7, subw 0x0, time 246686, (83,3), root:(1273,701),
->>      state 0x44, keycode 93 (keysym 0x0, NoSymbol), same_screen YES,
->>      XLookupString gives 0 bytes:
->>      XmbLookupString gives 0 bytes:
->>      XFilterEvent returns: False
->>
->> KeyRelease event, serial 39, synthetic NO, window 0x1200001,
->>      root 0x4f7, subw 0x0, time 246690, (83,3), root:(1273,701),
->>      state 0x44, keycode 93 (keysym 0x0, NoSymbol), same_screen YES,
->>      XLookupString gives 0 bytes:
->>      XFilterEvent returns: False
->>
->> KeyRelease event, serial 39, synthetic NO, window 0x1200001,
->>      root 0x4f7, subw 0x0, time 246696, (83,3), root:(1273,701),
->>      state 0x44, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
->>      XLookupString gives 0 bytes:
->>      XFilterEvent returns: False
->>
->> KeyRelease event, serial 39, synthetic NO, window 0x1200001,
->>      root 0x4f7, subw 0x0, time 246703, (83,3), root:(1273,701),
->>      state 0x40, keycode 133 (keysym 0xffeb, Super_L), same_screen YES,
->>      XLookupString gives 0 bytes:
->>      XFilterEvent returns: False
->>
->>
->> With the shortcut active, xev on wayland shows this (and the shortcut works):
->>
->> KeyPress event, serial 39, synthetic NO, window 0x1200001,
->>      root 0x4f7, subw 0x0, time 365034, (83,3), root:(1273,701),
->>      state 0x0, keycode 133 (keysym 0xffeb, Super_L), same_screen YES,
->>      XLookupString gives 0 bytes:
->>      XmbLookupString gives 0 bytes:
->>      XFilterEvent returns: False
->>
->> KeyPress event, serial 39, synthetic NO, window 0x1200001,
->>      root 0x4f7, subw 0x0, time 365036, (83,3), root:(1273,701),
->>      state 0x40, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
->>      XLookupString gives 0 bytes:
->>      XmbLookupString gives 0 bytes:
->>      XFilterEvent returns: False
->>
->> KeyRelease event, serial 39, synthetic NO, window 0x1200001,
->>      root 0x4f7, subw 0x0, time 365060, (83,3), root:(1273,701),
->>      state 0x44, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
->>      XLookupString gives 0 bytes:
->>      XFilterEvent returns: False
->>
->> KeyRelease event, serial 39, synthetic NO, window 0x1200001,
->>      root 0x4f7, subw 0x0, time 365060, (83,3), root:(1273,701),
->>      state 0x40, keycode 133 (keysym 0xffeb, Super_L), same_screen YES,
->>      XLookupString gives 0 bytes:
->>      XFilterEvent returns: False
-> Ah ok, so in KDE the shortcut somehow works under Wayland despite
-> the lack of xkb keysym mapping (maybe match on keycode?) and then
-> the compositor absorbs / eats the Zenkaku_Hankaku key-press +
-> release as it does with other compositor handled hotkeys leaving
-> apps like xev to just see the modifier press/release events
-> (which the compositor cannot delay / filter for the same reasons
-> as why an i8042 kbd filter won't work).
->
->>> Because that is not working on Wayland on my laptop with the same
->>> issue (after disabling the hwdb mapping) and I don't understand
->>> how that could work at all given that /usr/share/X11/xkb/keycodes/evdev
->>> has no mapping for EV keycode 85 (93 in that file) ?
->>>
->>>> Also: Other DEs don't have this binding.
->>> Yes that is an issue, but see below.
->>>
->>>>> *) 85 + 8 all codes there are shifted up 8 compared to the KEY_FOO
->>>>> defines because codes 0-7 are reserved for modifier.
->>>>>
->>>>> I hit the same issue years ago on "T-boa Tbook air" laptop and
->>>>> their I fixed this by mapping Hangaku/Zenkaku -> f21 in
->>>>> /lib/udev/hwdb.d/60-keyboard.hwdb :
->>>>>
->>>>> ###########################################################
->>>>> # T-bao
->>>>> ###########################################################
->>>>>
->>>>> evdev:atkbd:dmi:bvn*:bvr*:bd*:svnT-bao:pnTbookair:*
->>>>>     KEYBOARD_KEY_76=f21                                    # Touchpad toggle
->>>>>
->>>>> + teaching GNOME to also accept Ctrl + Super + XF86TouchpadToggle
->>>>> as touchpad-toggle:
->>>>>
->>>>> https://gitlab.gnome.org/GNOME/gnome-settings-daemon/-/blob/master/data/org.gnome.settings-daemon.plugins.media-keys.gschema.xml.in?ref_type=heads#L577
->>>> Yeah KDE would need a similar fix and other DEs probably too. I hoped for a generic fix that does not need adjustments in so many projects.
->>>>
->>>> My first try was to do it on the XKB level but on Wayland the RedirectKey action is not implemented https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config/-/merge_requests/794#note_2803713 (and probably wont be even in the future https://github.com/xkbcommon/libxkbcommon/issues/18#issuecomment-72728366) so I can't "unpress" control and super.
->>>>
->>>> If it is a more general issue, why not fix it on a more general level in the kernel? Maybe a generic filter applyable via a command line quirk and/or a quirk list?
->>> The problem is that filtering keys with modifiers like you are doing
->>> here just does not work.
->>>
->>> Your filter is seriously messing with the timing of the keypresses
->>> which can be a real issue when not actually using the toggle touchpad
->>> hotkey.
->>>
->>> Lets say the user is playing a game and has mapped super to
->>> one of the fire buttons and is using an in game weapon with
->>> some sort of auto-repeat firing.
->>>
->>> And your seqpos variable likely is 0 when super gets pressed,
->>> now the keyboard sends 0xe0, 0x5b which your filter filters
->>> out, and the user keeps super pressed because they expect
->>> the weapon to start firing on auto-repeat. But the super
->>> press is never send until super is released or another key
->>> is pressed so things don't work.
->>>
->>> Likewise if the DE, an app or accessibility settings want to
->>> differentiate between a short and a long super press all
->>> presses now become super (pun not intended) short because
->>> you insert the press directly in front of the release, losing
->>> any timing information about how long the key was pressed.
->>>
->>> This is why using an i8042 filter for filtering key-combinations
->>> (and the EC emulates a key-combination here) can never work reliably.
->> Ok, thought I had a clean solution, but doesn't seems so xD.
-> Yeah these single key which the EC makes send a whole key sequence
-> EC level key-bindings are a pain to deal with. Some for some other
-> keys emulating Windows hotkey presses like "Super + P", but those
-> are simply send unmodified to the DE to let the DE deal with them.
->
-> Sending these unmodified to the DE pretty much is the only thing
-> we can do.
->
->>> OTOH desktop environments already allow having Ctrl+Super+something
->>> keybindings for DE actions. So we can re-use the tried and trusted
->>> modifier handling in the DE to deal with combi part leaving just
->>> the issue of mapping PS/2 scancode 0x76 aka evdev code
->>> 85 / KEY_ZENKAKUHANKAKU to something usable by the DE.
->>>
->>> ATM both GNOME and KDE already have support for
->>> Ctrl+Super+something for touchpad-toggle except that KDE expects
->>> a "Zenkaku_Hankaku" keysym where as GNOME expects "XF86TouchpadToggle"
->>> arguably the GNOME solution is slightly better because Japanese
->>> keyboard layouts already use/send the "Zenkaku_Hankaku" keysym
->>> unrelated to touchpad-toggle use. And I don't know what happens
->>> when pressing ctrl+super+Zenkaku_Hankaku while using a Japanese
->>> layout.
->> When I interpret the xkb-config correctly, JIS keyboards use the tilde scancode/keycode for the physical zenkaku/hankaku keys, at least in the default config HZTG (henkaku/zankaku toggle) is aliased to TLDE
-> Yes I don't think the 0x76 ps/2 scancode is used on any actual
-> keyboards other then for this toggle touchpad key thing.
->
->>> I think maybe we just need to patch atkbd.c at the kernel to
->>> map scancode 0x76 -> KEY_TOUCHPAD_TOGGLE since normal PS/2
->>> keyboards never generate 0x76, this would lose the mapping to
->>> KEY_ZENKAKUHANKAKU but since /usr/share/X11/xkb/keycodes/evdev
->>> does not even map KEY_ZENKAKUHANKAKU I don't think loosing that
->>> mapping will do a big deal.
->> At least from kernel side this would be a very small patch, are there any objections to it?
-> Well it would break the currently working touchpad toggle in KDE,
-> but the same applies to doing the mapping in hwdb.
+HEAD commit:    f66d6acccbc0 Merge tag 'x86_urgent_for_v6.12' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1666b2e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ca2f08f822652bd0
+dashboard link: https://syzkaller.appspot.com/bug?extid=e9abaabc441d3dd18735
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-So I looked into KDE: They use whatever Qt is doing: 
-https://invent.kde.org/plasma/kwin/-/blob/be91df80ef44386f98a831a5f4dfdfd4a3b6e83e/src/plugins/touchpadshortcuts/touchpadshortcuts.cpp#L41
+Unfortunately, I don't have any reproducer for this issue yet.
 
-After thinking about it a little bit: If we need to touch multiple userspace 
-projects anyway, I tend to not touch the kernel at all. After all: From kernel 
-side the key is mapped in a way that both X11 and Wayland can see it (given the 
-right xkeyboard-config).
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5b28ec7d6aaa/disk-f66d6acc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1999546fff71/vmlinux-f66d6acc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ef848d42ab19/bzImage-f66d6acc.xz
 
-Thought dump below for userspace only solutions:
+Bisection is inconclusive: the issue happens on the oldest tested release.
 
-- Map KEY_ZENKAKUHANKAKU to XF86TouchpadToggle using xkeyboard-config
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=147adb78580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=167adb78580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=127adb78580000
 
-- Add Qt::ControlModifier | Qt::MetaModifier | Qt::Key_TouchpadToggle to KDE
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e9abaabc441d3dd18735@syzkaller.appspotmail.com
 
-- Possible regression: If user updates xkb without updating KDE the formerly 
-working shortcut stops working
+kobject: kobject_add_internal failed for hci5:201 with -EEXIST, don't try to register things with the same name in the same directory.
+Bluetooth: hci5: failed to register connection device
+==================================================================
+BUG: KASAN: slab-use-after-free in l2cap_conn_ready net/bluetooth/l2cap_core.c:1619 [inline]
+BUG: KASAN: slab-use-after-free in l2cap_connect_cfm+0xdbe/0xf80 net/bluetooth/l2cap_core.c:7278
+Read of size 8 at addr ffff8880780f0480 by task kworker/u9:3/5950
 
-or
+CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Not tainted 6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci5 hci_rx_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ l2cap_conn_ready net/bluetooth/l2cap_core.c:1619 [inline]
+ l2cap_connect_cfm+0xdbe/0xf80 net/bluetooth/l2cap_core.c:7278
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
-- Map KEY_ZENKAKUHANKAKU to Zenkaku_Hankaku using xkeyboard-config
+Allocated by task 5950:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ l2cap_chan_create+0x44/0x920 net/bluetooth/l2cap_core.c:449
+ l2cap_sock_alloc.constprop.0+0xf3/0x180 net/bluetooth/l2cap_sock.c:1886
+ l2cap_sock_new_connection_cb+0x101/0x240 net/bluetooth/l2cap_sock.c:1468
+ l2cap_connect_cfm+0x4cc/0xf80 net/bluetooth/l2cap_core.c:7261
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-- See if that fixes the X11 binding of KDE
+Freed by task 6070:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2342 [inline]
+ slab_free mm/slub.c:4579 [inline]
+ kfree+0x14f/0x4b0 mm/slub.c:4727
+ l2cap_chan_destroy net/bluetooth/l2cap_core.c:495 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ l2cap_chan_put+0x216/0x2c0 net/bluetooth/l2cap_core.c:519
+ l2cap_sock_cleanup_listen+0x4d/0x2a0 net/bluetooth/l2cap_sock.c:1451
+ l2cap_sock_release+0x5c/0x210 net/bluetooth/l2cap_sock.c:1411
+ __sock_release+0xb3/0x270 net/socket.c:658
+ sock_close+0x1c/0x30 net/socket.c:1426
+ __fput+0x3f9/0xb60 fs/file_table.c:431
+ task_work_run+0x151/0x250 kernel/task_work.c:239
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-- Add Control + Super + Zenkaku_Hankaku to GNOME
+The buggy address belongs to the object at ffff8880780f0000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 1152 bytes inside of
+ freed 2048-byte region [ffff8880780f0000, ffff8880780f0800)
 
-- If user updates xkb without updating GNOME the formerly working shortcut stops 
-working
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff8880780f6000 pfn:0x780f0
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801b042000 ffffea0001292c00 0000000000000002
+raw: ffff8880780f6000 0000000080080003 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff88801b042000 ffffea0001292c00 0000000000000002
+head: ffff8880780f6000 0000000080080003 00000001f5000000 0000000000000000
+head: 00fff00000000003 ffffea0001e03c01 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 2965, tgid 2965 (kworker/u8:7), ts 97728781507, free_ts 97577158223
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
+ prep_new_page mm/page_alloc.c:1564 [inline]
+ get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
+ __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4751
+ alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
+ alloc_slab_page mm/slub.c:2412 [inline]
+ allocate_slab mm/slub.c:2578 [inline]
+ new_slab+0x2c9/0x410 mm/slub.c:2631
+ ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ __do_kmalloc_node mm/slub.c:4263 [inline]
+ __kmalloc_node_track_caller_noprof+0x355/0x430 mm/slub.c:4283
+ kmalloc_reserve+0xef/0x2c0 net/core/skbuff.c:609
+ __alloc_skb+0x164/0x380 net/core/skbuff.c:678
+ alloc_skb include/linux/skbuff.h:1322 [inline]
+ nlmsg_new include/net/netlink.h:1015 [inline]
+ rtmsg_ifinfo_build_skb+0x81/0x280 net/core/rtnetlink.c:4099
+ unregister_netdevice_many_notify+0x983/0x1e50 net/core/dev.c:11411
+ cleanup_net+0x58c/0xb40 net/core/net_namespace.c:621
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+page last free pid 2965 tgid 2965 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_unref_page+0x661/0x1080 mm/page_alloc.c:2657
+ __folio_put+0x32a/0x450 mm/swap.c:112
+ kvfree+0x47/0x50 mm/util.c:701
+ unix_net_exit+0x61/0xb0 net/unix/af_unix.c:3708
+ ops_exit_list+0xb3/0x180 net/core/net_namespace.c:173
+ cleanup_net+0x5b7/0xb40 net/core/net_namespace.c:626
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-- Possible regression: I tend to the first version as there might be at least a 
-change that other DEs work out of the box with it.
+Memory state around the buggy address:
+ ffff8880780f0380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880780f0400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff8880780f0480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff8880780f0500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880780f0580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+==================================================================
+BUG: KASAN: wild-memory-access in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: wild-memory-access in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+BUG: KASAN: wild-memory-access in l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+BUG: KASAN: wild-memory-access in l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+BUG: KASAN: wild-memory-access in l2cap_connect_cfm+0x7eb/0xf80 net/bluetooth/l2cap_core.c:7278
+Read of size 4 at addr deacfffffffffc8c by task kworker/u9:3/5950
 
-Best regards,
+CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Tainted: G    B              6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
+Tainted: [B]=BAD_PAGE
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci5 hci_rx_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+ l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+ l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+ l2cap_connect_cfm+0x7eb/0xf80 net/bluetooth/l2cap_core.c:7278
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+==================================================================
+Oops: general protection fault, probably for non-canonical address 0xfbd59bffffffff91: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: maybe wild-memory-access in range [0xdeacfffffffffc88-0xdeacfffffffffc8f]
+CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Tainted: G    B              6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
+Tainted: [B]=BAD_PAGE
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci5 hci_rx_work
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
+RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
+RIP: 0010:l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+RIP: 0010:l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+RIP: 0010:l2cap_connect_cfm+0x7f2/0xf80 net/bluetooth/l2cap_core.c:7278
+Code: 80 fb ff ff 49 39 c5 0f 84 29 01 00 00 e8 26 a0 6e f7 49 8d 6f 0c be 04 00 00 00 48 89 ef e8 b5 80 cf f7 48 89 e8 48 c1 e8 03 <0f> b6 14 18 48 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 c5
+RSP: 0018:ffffc90003e0f878 EFLAGS: 00010213
+RAX: 1bd59fffffffff91 RBX: dffffc0000000000 RCX: ffffffff814e821f
+RDX: ffff888030808000 RSI: ffffffff81ee2f8e RDI: 0000000000000007
+RBP: deacfffffffffc8c R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: ffff88804779003b
+R13: ffff88806c83d2c0 R14: 0000000000000080 R15: deacfffffffffc80
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055558a5ef5c8 CR3: 000000007bf02000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
+RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
+RIP: 0010:l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+RIP: 0010:l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+RIP: 0010:l2cap_connect_cfm+0x7f2/0xf80 net/bluetooth/l2cap_core.c:7278
+Code: 80 fb ff ff 49 39 c5 0f 84 29 01 00 00 e8 26 a0 6e f7 49 8d 6f 0c be 04 00 00 00 48 89 ef e8 b5 80 cf f7 48 89 e8 48 c1 e8 03 <0f> b6 14 18 48 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 c5
+RSP: 0018:ffffc90003e0f878 EFLAGS: 00010213
+RAX: 1bd59fffffffff91 RBX: dffffc0000000000 RCX: ffffffff814e821f
+RDX: ffff888030808000 RSI: ffffffff81ee2f8e RDI: 0000000000000007
+RBP: deacfffffffffc8c R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: ffff88804779003b
+R13: ffff88806c83d2c0 R14: 0000000000000080 R15: deacfffffffffc80
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055558a5ef5c8 CR3: 000000007bf02000 CR4: 0000000000350ef0
+----------------
+Code disassembly (best guess), 4 bytes skipped:
+   0:	49 39 c5             	cmp    %rax,%r13
+   3:	0f 84 29 01 00 00    	je     0x132
+   9:	e8 26 a0 6e f7       	call   0xf76ea034
+   e:	49 8d 6f 0c          	lea    0xc(%r15),%rbp
+  12:	be 04 00 00 00       	mov    $0x4,%esi
+  17:	48 89 ef             	mov    %rbp,%rdi
+  1a:	e8 b5 80 cf f7       	call   0xf7cf80d4
+  1f:	48 89 e8             	mov    %rbp,%rax
+  22:	48 c1 e8 03          	shr    $0x3,%rax
+* 26:	0f b6 14 18          	movzbl (%rax,%rbx,1),%edx <-- trapping instruction
+  2a:	48 89 e8             	mov    %rbp,%rax
+  2d:	83 e0 07             	and    $0x7,%eax
+  30:	83 c0 03             	add    $0x3,%eax
+  33:	38 d0                	cmp    %dl,%al
+  35:	7c 08                	jl     0x3f
+  37:	84 d2                	test   %dl,%dl
+  39:	0f                   	.byte 0xf
+  3a:	85 c5                	test   %eax,%ebp
 
-Werner
 
->
-> I think it would be best to just post the patch + create
-> a KDE issue and then see from there.
->
-> Regards,
->
-> Hans
->
->
+---
 
