@@ -1,129 +1,407 @@
-Return-Path: <linux-kernel+bounces-548772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86E3FA54924
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:22:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 679CCA54926
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:22:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 899ED3A49AE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:22:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85AB33AE979
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43A9E20AF98;
-	Thu,  6 Mar 2025 11:21:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="LaTTcecW"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2CF8209F4B;
+	Thu,  6 Mar 2025 11:21:58 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47D40204F7E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 11:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4BC2054E6;
+	Thu,  6 Mar 2025 11:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741260071; cv=none; b=swmeI7kn9/XAdq8TO3Tn2jtgRGRch/kVK8rz7x96Hn14rjOJW84tGSXQdFpgjtey0nlA3FxEdDsLFOO9g+D7tS1fqbEfkCuCK3Rfzc+xr0jAAxSQL/zL1l9xblJcYOgF5Hf4gbZZvkKs5AnwdkGo7r8DGYK5QkCw4prZ0ocJkqU=
+	t=1741260118; cv=none; b=oqCvZHr26U+Ths71r9iWZ6SQZSlMoaAMyx95nkcEyR5xUuAAVJGZrsKL8yMDUtIT4Ps92CbvS4DloB1DhcL5ObMkhENrtxNgRrGO5pOJmqis+rEQFQB+NLoLpuF2GL0nWgnkkf8h7exMvX51UxIheyVqVlHLPKKCuhWoJ4lRH2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741260071; c=relaxed/simple;
-	bh=f4Yy7DJ1yVrAxPXmR/Za4lrtNw7vJc1w+zSuASxO8bk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EUgRSSVl5Hz8PEe/CFWajXCv2n8CItD/sSJDJGfr0r99nfc+J4KOC4aTVggP2lZ7/IDjDwFG0hIR0iklz8iCaGeYbXl6214TyFBe18twFXBLsWKT+UhwPm1N1wpUWdJ2enBzeBzY5iTHP1EJlY5E1DKfEVjPBxx8wpPDnkBFl/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=LaTTcecW; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id C30F3C001C;
-	Thu,  6 Mar 2025 14:21:03 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru C30F3C001C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1741260063; bh=MmWbnkvxTWpWb2whbf/jOtIqexvkM+1MV4X5/egi+Ms=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=LaTTcecWlQAOWV78/EKG2DvRG2JHubMsnXdleXHduJtZm6B2y88rc9U9HBg2AE1Ze
-	 u//H0hKaM9qIKsAk1QJ9l27Y8X91WlEC85HAaYfm2cM/wZBA4JNhoLL0C4LBAec8q5
-	 O4UOuzxkXvY2/uhVt+RBOLQ4b6kUwUwOtD2fHgzgPe1kvt1znRBqtwV+Y+BPvIHP/Z
-	 F1bTvaP2kYcbYrAaX0VW/VS8DFNHxzP7kd7vEKJxUKcZ0dq1Hz2Xg8y3DUriDAstEb
-	 rIC4zHVrxh8WqsmdG/MJHxtfB/l/d7Lk3E3CkMo5MJP4H/V7Bi4QbPqi3X5lXza673
-	 lN80NpEguXaLg==
-Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Thu,  6 Mar 2025 14:21:03 +0300 (MSK)
-Received: from localhost.localdomain (94.19.79.228) by mmail-p-exch01.mt.ru
- (81.200.124.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Thu, 6 Mar 2025
- 14:21:02 +0300
-From: Ivan Abramov <i.abramov@mt-integration.ru>
-To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-CC: Ivan Abramov <i.abramov@mt-integration.ru>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Alan Cox <alan@linux.intel.com>, Dave Airlie
-	<airlied@redhat.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH v2] drm/gma500: Add NULL check for pci_gfx_root in mid_get_vbt_data()
-Date: Thu, 6 Mar 2025 14:20:45 +0300
-Message-ID: <20250306112046.17144-1-i.abramov@mt-integration.ru>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741260118; c=relaxed/simple;
+	bh=F1gT/Y0PtPKhMaUsbc7IMab+4kGCUja253A9grKICHc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=huR0FCSHDaVmrNVDQWUW91UH3xYOmc0tIptnVLNPFLXgF6BZyZeHsJbI6vOcUnQQpmMejdg2rurNKigrXnkhssVTK0hauxF9AymzdErq3NXjyCh0iK1zP5bzFjojJphdI/fUhDaTLaSTBKItbJJPpV6i4rdS9jBwSP/WiraMNC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z7n2Z3c3mz6L5Qc;
+	Thu,  6 Mar 2025 19:17:42 +0800 (CST)
+Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
+	by mail.maildlp.com (Postfix) with ESMTPS id C1C11140593;
+	Thu,  6 Mar 2025 19:21:51 +0800 (CST)
+Received: from frapeml500007.china.huawei.com (7.182.85.172) by
+ frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 6 Mar 2025 12:21:51 +0100
+Received: from frapeml500007.china.huawei.com ([7.182.85.172]) by
+ frapeml500007.china.huawei.com ([7.182.85.172]) with mapi id 15.01.2507.039;
+ Thu, 6 Mar 2025 12:21:51 +0100
+From: Shiju Jose <shiju.jose@huawei.com>
+To: Jonathan Cameron <jonathan.cameron@huawei.com>
+CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "bp@alien8.de"
+	<bp@alien8.de>, "tony.luck@intel.com" <tony.luck@intel.com>,
+	"rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "leo.duran@amd.com"
+	<leo.duran@amd.com>, "Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"dan.j.williams@intel.com" <dan.j.williams@intel.com>, "dave@stgolabs.net"
+	<dave@stgolabs.net>, "dave.jiang@intel.com" <dave.jiang@intel.com>,
+	"alison.schofield@intel.com" <alison.schofield@intel.com>,
+	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>, "ira.weiny@intel.com"
+	<ira.weiny@intel.com>, "david@redhat.com" <david@redhat.com>,
+	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>, "linux-mm@kvack.org"
+	<linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "rientjes@google.com" <rientjes@google.com>,
+	"jiaqiyan@google.com" <jiaqiyan@google.com>, "Jon.Grimm@amd.com"
+	<Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "naoya.horiguchi@nec.com"
+	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
+	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
+	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
+	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
+	<duenwen@google.com>, "gthelen@google.com" <gthelen@google.com>,
+	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
+	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
+	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
+	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, tanxiaofei
+	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>, "Roberto
+ Sassu" <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
+	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
+	Linuxarm <linuxarm@huawei.com>
+Subject: RE: [PATCH v2 2/3] ACPI:RAS2: Add ACPI RAS2 driver
+Thread-Topic: [PATCH v2 2/3] ACPI:RAS2: Add ACPI RAS2 driver
+Thread-Index: AQHbjfjU3SdB6rbarkWzBYMyJX3PgbNlxP+AgAAg7jA=
+Date: Thu, 6 Mar 2025 11:21:51 +0000
+Message-ID: <a0b319b4f42c4286a120fbb88a88adeb@huawei.com>
+References: <20250305180225.1226-1-shiju.jose@huawei.com>
+	<20250305180225.1226-3-shiju.jose@huawei.com>
+ <20250306171925.00002721@huawei.com>
+In-Reply-To: <20250306171925.00002721@huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
- (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: i.abramov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;ksmg01.maxima.ru:7.1.1;81.200.124.61:7.1.2;mt-integration.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191533 [Mar 06 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/06 10:27:00 #27639335
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
 
-Since pci_get_domain_bus_and_slot() can return NULL, add NULL check for
-pci_gfx_root in the mid_get_vbt_data().
+>-----Original Message-----
+>From: Jonathan Cameron <jonathan.cameron@huawei.com>
+>Sent: 06 March 2025 09:19
+>To: Shiju Jose <shiju.jose@huawei.com>
+>Cc: linux-edac@vger.kernel.org; linux-acpi@vger.kernel.org; bp@alien8.de;
+>tony.luck@intel.com; rafael@kernel.org; lenb@kernel.org;
+>mchehab@kernel.org; leo.duran@amd.com; Yazen.Ghannam@amd.com; linux-
+>cxl@vger.kernel.org; dan.j.williams@intel.com; dave@stgolabs.net;
+>dave.jiang@intel.com; alison.schofield@intel.com; vishal.l.verma@intel.com=
+;
+>ira.weiny@intel.com; david@redhat.com; Vilas.Sridharan@amd.com; linux-
+>mm@kvack.org; linux-kernel@vger.kernel.org; rientjes@google.com;
+>jiaqiyan@google.com; Jon.Grimm@amd.com; dave.hansen@linux.intel.com;
+>naoya.horiguchi@nec.com; james.morse@arm.com; jthoughton@google.com;
+>somasundaram.a@hpe.com; erdemaktas@google.com; pgonda@google.com;
+>duenwen@google.com; gthelen@google.com;
+>wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
+>wbs@os.amperecomputing.com; nifan.cxl@gmail.com; tanxiaofei
+><tanxiaofei@huawei.com>; Zengtao (B) <prime.zeng@hisilicon.com>; Roberto
+>Sassu <roberto.sassu@huawei.com>; kangkang.shen@futurewei.com;
+>wanghuiqiang <wanghuiqiang@huawei.com>; Linuxarm
+><linuxarm@huawei.com>
+>Subject: Re: [PATCH v2 2/3] ACPI:RAS2: Add ACPI RAS2 driver
+>
+>On Wed, 5 Mar 2025 18:02:23 +0000
+><shiju.jose@huawei.com> wrote:
+>
+>> From: Shiju Jose <shiju.jose@huawei.com>
+>>
+>> Add support for ACPI RAS2 feature table (RAS2) defined in the ACPI 6.5
+>> Specification, section 5.2.21.
+>> Driver defines RAS2 Init, which extracts the RAS2 table and driver
+>> adds auxiliary device for each memory feature which binds to the
+>> RAS2 memory driver.
+>>
+>> Driver uses PCC mailbox to communicate with the ACPI HW and the driver
+>> adds OSPM interfaces to send RAS2 commands.
+>>
+>> Acked-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>> Co-developed-by: A Somasundaram <somasundaram.a@hpe.com>
+>> Signed-off-by: A Somasundaram <somasundaram.a@hpe.com>
+>> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>> Tested-by: Daniel Ferguson <danielf@os.amperecomputing.com>
+>> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+>
+>Hi Shiju,
+>
+>I took another look through as it's been a while and I've pretty much forg=
+otten
+>this code :(
+>
+>Anyhow, a few minor comments inline.
 
-This change is similar to the checks implemented in mid_get_fuse_settings()
-and mid_get_pci_revID(), which were introduced by commit 0cecdd818cd7
-("gma500: Final enables for Oaktrail") as "additional minor
-bulletproofing".
+Hi Jonathan,
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Thanks for the feedbacks.
 
-Fixes: f910b411053f ("gma500: Add the glue to the various BIOS and firmware interfaces")
-Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
----
-v2: Update Fixes tag as per Patrik Jakobsson's observation.
+Please find reply inline.
 
- drivers/gpu/drm/gma500/mid_bios.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Thanks,
+Shiju
+>
+>Thanks,
+>
+>Jonathan
+>
+>> diff --git a/drivers/acpi/ras2.c b/drivers/acpi/ras2.c new file mode
+>> 100755 index 000000000000..8831a2bd5fab
+>> --- /dev/null
+>> +++ b/drivers/acpi/ras2.c
+>
+>
+>
+>
+>> +static int ras2_register_pcc_channel(struct ras2_mem_ctx *ras2_ctx, int
+>pcc_id)
+>> +{
+>> +	struct ras2_pcc_subspace *pcc_subspace;
+>> +	struct pcc_mbox_chan *pcc_chan;
+>> +	struct mbox_client *mbox_cl;
+>> +
+>> +	if (pcc_id < 0)
+>> +		return -EINVAL;
+>> +
+>> +	mutex_lock(&ras2_pcc_lock);
+>> +	list_for_each_entry(pcc_subspace, &ras2_pcc_subspaces, elem) {
+>> +		if (pcc_subspace->pcc_id !=3D pcc_id)
+>> +			continue;
+>> +		ras2_ctx->pcc_subspace =3D pcc_subspace;
+>> +		pcc_subspace->ref_count++;
+>> +		mutex_unlock(&ras2_pcc_lock);
+>> +		return 0;
+>> +	}
+>> +	mutex_unlock(&ras2_pcc_lock);
+>> +
+>> +	pcc_subspace =3D kcalloc(1, sizeof(*pcc_subspace), GFP_KERNEL);
+>
+>if allocating a count of 1, why not kzalloc?
 
-diff --git a/drivers/gpu/drm/gma500/mid_bios.c b/drivers/gpu/drm/gma500/mid_bios.c
-index 7e76790c6a81..cba97d7db131 100644
---- a/drivers/gpu/drm/gma500/mid_bios.c
-+++ b/drivers/gpu/drm/gma500/mid_bios.c
-@@ -279,6 +279,11 @@ static void mid_get_vbt_data(struct drm_psb_private *dev_priv)
- 					    0, PCI_DEVFN(2, 0));
- 	int ret = -1;
- 
-+	if (pci_gfx_root == NULL) {
-+		WARN_ON(1);
-+		return;
-+	}
-+
- 	/* Get the address of the platform config vbt */
- 	pci_read_config_dword(pci_gfx_root, 0xFC, &addr);
- 	pci_dev_put(pci_gfx_root);
--- 
-2.48.1
+Will use kzalloc.
+>
+>> +	if (!pcc_subspace)
+>> +		return -ENOMEM;
+>
+>
+>
+>
+>> +static int acpi_ras2_parse(void)
+>> +{
+>> +	struct acpi_ras2_pcc_desc *pcc_desc_list;
+>> +	int pcc_id;
+>> +	u8 count =3D 0;
+>> +	int rc, i;
+>> +
+>> +	if (ras2_tab->header.length  < sizeof(struct acpi_table_ras2)) {
+>
+>extra space before <
+
+Will fix.=20
+>
+>Maybe sizeof(*ras2_tab) is cleaner.
+Sure.
+>
+>> +		pr_warn(FW_WARN "ACPI RAS2 table present but broken (too
+>short #1)\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	if (!ras2_tab->num_pcc_descs) {
+>> +		pr_warn(FW_WARN "No PCC descs in ACPI RAS2 table\n");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	pcc_desc_list =3D (struct acpi_ras2_pcc_desc *)(ras2_tab + 1);
+>> +	/* Double scan for the case of only one actual controller */
+>> +	pcc_id =3D -1;
+>> +	count =3D 0;
+>
+>Already set above, so no need to do it again.  I'd do it just here.  Can
+>put it in the loop init though.
+Will change.
+>
+>> +	for (i =3D 0; i < ras2_tab->num_pcc_descs; i++, pcc_desc_list++) {
+>> +		if (pcc_desc_list->feature_type !=3D RAS2_FEAT_TYPE_MEMORY)
+>> +			continue;
+>> +		if (pcc_id =3D=3D -1) {
+>> +			pcc_id =3D pcc_desc_list->channel_id;
+>> +			count++;
+>> +		}
+>> +		if (pcc_desc_list->channel_id !=3D pcc_id)
+>> +			count++;
+>> +	}
+>> +
+>> +	/*
+>> +	 * Workaround for the client platform with multiple scrub devices
+>> +	 * but uses single PCC subspace for communication.
+>> +	 */
+>> +	if (count =3D=3D 1) {
+>> +		/* Add auxiliary device and bind ACPI RAS2 memory driver */
+>> +		rc =3D ras2_add_aux_device(RAS2_MEM_DEV_ID_NAME, pcc_id);
+>> +		if (rc)
+>> +			return rc;
+>> +
+>> +		return 0;
+>> +	}
+>> +
+>> +	pcc_desc_list =3D (struct acpi_ras2_pcc_desc *)(ras2_tab + 1);
+>> +	count =3D 0;
+>
+>Maybe set in loop init.
+Sure.
+>
+>> +	for (i =3D 0; i < ras2_tab->num_pcc_descs; i++, pcc_desc_list++) {
+>> +		if (pcc_desc_list->feature_type !=3D RAS2_FEAT_TYPE_MEMORY)
+>> +			continue;
+>> +		pcc_id =3D pcc_desc_list->channel_id;
+>> +		/* Add auxiliary device and bind ACPI RAS2 memory driver */
+>obvious enough to drop the comment I think.
+Will do.
+>
+>> +		rc =3D ras2_add_aux_device(RAS2_MEM_DEV_ID_NAME, pcc_id);
+>					 pcc_desc_list->channel_id);
+>and no local variable.
+Ok.
+>
+>> +		if (rc)
+>> +			return rc;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +void __init acpi_ras2_init(void)
+>> +{
+>> +	acpi_status status;
+>> +	int rc;
+>> +
+>> +	status =3D acpi_get_table(ACPI_SIG_RAS2, 0,
+>> +				(struct acpi_table_header **)&ras2_tab);
+>> +	if (ACPI_FAILURE(status) || !ras2_tab) {
+>> +		const char *msg =3D acpi_format_exception(status);
+>> +
+>> +		pr_err("Failed to get table, %s\n", msg);
+>
+>If only going to use it here maybe
+>		pr_err("Failed to get table, %s\n",
+>		       acpi_format_exception(status));
+>and save on the local variable.
+Will change.
+>
+>> +		return;
+>> +	}
+>> +
+>> +	rc =3D acpi_ras2_parse();
+>> +	if (rc) {
+>> +		acpi_put_table((struct acpi_table_header *)ras2_tab);
+>> +		pr_err("Failed to parse RAS2 table\n");
+>> +	}
+>> +}
+>> diff --git a/include/acpi/ras2.h b/include/acpi/ras2.h
+>> new file mode 100644
+>> index 000000000000..5b27c1f30096
+>> --- /dev/null
+>> +++ b/include/acpi/ras2.h
+>> @@ -0,0 +1,48 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * ACPI RAS2 driver header file
+>> + *
+>> + * Copyright (c) 2024-2025 HiSilicon Limited
+>> + */
+>> +
+>> +#ifndef _ACPI_RAS2_H
+>> +#define _ACPI_RAS2_H
+>> +
+>> +#include <linux/acpi.h>
+>> +#include <linux/auxiliary_bus.h>
+>> +#include <linux/mailbox_client.h>
+>> +#include <linux/mutex.h>
+>> +#include <linux/types.h>
+>> +
+>> +#define RAS2_PCC_CMD_COMPLETE	BIT(0)
+>> +#define RAS2_PCC_CMD_ERROR	BIT(2)
+>> +
+>I think these bits are from table 14.11 and
+>generic to all PCC status registers? Should these
+>have more generic names rather than ras2 specific ones?
+Yes.
+Instead will use PCC_STATUS_CMD_ COMPLETE and  PCC_STATUS_ ERROR
+from include/acpi/pcc.h.=20
+
+>
+>> +/* RAS2 specific PCC commands */
+>> +#define RAS2_PCC_CMD_EXEC 0x01
+>Are we mixing commands and field definitions both
+>with prefix RAS2_PCC_CMD_ ?  That is somewhat
+>confusing.
+Will add Table 5.82: .. here in the comment and=20
+Is rename to PCC_CMD_ EXEC_RAS2  better?
+>
+>> +
+>> +#define RAS2_AUX_DEV_NAME "ras2"
+>> +#define RAS2_MEM_DEV_ID_NAME "acpi_ras2_mem"
+>> +
+>I would add a forwards def
+>struct device;
+Sure.
+>
+>whilst it is really unlikely that headers would ever be reorganized
+>such that auxiliary_bus.h would not include device.h given the embedded
+>device we shouldn't rely on that here.
+>
+>> +/* Data structure RAS2 table */
+>> +struct ras2_mem_ctx {
+>> +	struct auxiliary_device adev;
+>> +	/* Lock to provide mutually exclusive access to PCC channel */
+>> +	struct mutex lock;
+>> +	struct device *dev;
+>> +	struct acpi_ras2_shmem __iomem *comm_addr;
+>> +	void *pcc_subspace;
+>> +	int id;
+>> +};
+>> +
+>> +#ifdef CONFIG_ACPI_RAS2
+>> +void __init acpi_ras2_init(void);
+>> +int ras2_send_pcc_cmd(struct ras2_mem_ctx *ras2_ctx, u16 cmd);
+>> +#else
+>> +static inline void acpi_ras2_init(void) { }
+>> +
+>> +static inline int ras2_send_pcc_cmd(struct ras2_mem_ctx *ras2_ctx, u16
+>cmd)
+>
+>Is this stub ever needed?  To me it seems unlikely
+>we would have a user that is built without a dependency
+>on CONFIG_ACPI_RAS2.  This is different from acpi_ras2_init()
+>which makes much more sense to me.
+Ok will remove.
+>
+>> +{
+>> +	return -EOPNOTSUPP;
+>> +}
+>> +#endif
+>> +#endif /* _ACPI_RAS2_H */
+
+Thanks,
+Shiju
 
 
