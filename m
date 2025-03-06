@@ -1,138 +1,117 @@
-Return-Path: <linux-kernel+bounces-548841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E5A9A549E7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:48:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A416EA549DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2873A3B0DBC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:43:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD49616C18C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9846020AF78;
-	Thu,  6 Mar 2025 11:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uce4HYjC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EE120C015;
+	Thu,  6 Mar 2025 11:43:33 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D72209F2E;
-	Thu,  6 Mar 2025 11:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5261A20B7F1;
+	Thu,  6 Mar 2025 11:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741261399; cv=none; b=AuQPp1sW9BiddIzmTfBZF+Xfv5R7ZuPWidlbs5e9IXdzECZQCFEdMe7ZcAgHTQrpqoBtdurt+paQimKhoGMXO4Cipi/Twdkoyn9heMRQUN7ojynexkjwzJMP0n1NNoccc98kq+YczbSv3NhBCSKJPFfRBfsM3xd5iDY5nxoUp8U=
+	t=1741261413; cv=none; b=X23PlnI0ircUjs7WULp35xxzJiZ3zXScQQ1U3ncuyvBO+x+yh23PmvOmkHJlo5lxlgoUiASBevdQHnGMncHNU1eCofaiI8IcjZS0FcehHUTIiNYKD3A38tLRW9Nv41TroNhGdncRBQJQ2pu1nMIOJX/BRfp+8BII/xPjTpcZLiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741261399; c=relaxed/simple;
-	bh=73Kz4vOyVWj227Yhemy+fCXD4RhBV9RiNDvIfbtbyg0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d/3r/cPcGUb8C5E9ZiiZlZG1hMkAF67LUyw4bJfabmPh/0DIfiO1j0k8+MRcjLqCParL5pMCHVkCt3LLEHZIeIyxpjyG1Cem+Ev1pRuH6Xoz+XRet4Xnw7qXJaxJDNUorMYIWrLqO6IiZbGUfbD9cBVNcf3VXzGW6GqtbQDIiRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uce4HYjC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8F77C4AF09;
-	Thu,  6 Mar 2025 11:43:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741261398;
-	bh=73Kz4vOyVWj227Yhemy+fCXD4RhBV9RiNDvIfbtbyg0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Uce4HYjC07XO/Sz5dW8TQqhJX2EitPyPsP3UjhLHGnupAn4YZzyAQoB9RkIKZbcmX
-	 SJDaotMoRKOVJK7X3ZrLKDPfa0Z1OyUsyZHJ2QP6tB47QYTIGa0QR4GZs3vbdfisz8
-	 UzHIFuglt8eTOpJJvgaOLOnbwkpfAcdXSMVlgyPG1Uflf8cL97iKSCf7A9F6O58nXH
-	 ldHcEka7E+0JQ53sV1rjSDDXsLejy2csM4qRM6Q6wcx+Xk1eH/Ea/A/ENi5fdIgUoe
-	 QAEFEQdr6BUJsnEwYOlNYCdJZgH/8FprOk5f6nU/aAn+dMda/y2l8UBoGAzfcimiLl
-	 x6hcqy9dRWlGw==
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-307d1ab59c6so5639181fa.1;
-        Thu, 06 Mar 2025 03:43:18 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX/Eoz2ONBltjo/FayhknD27S2/y7Dw3UNxHHxkXubYjapVteluSC47xSSv0ddNfp1bTyEbtcDWUNCFxyAz@vger.kernel.org, AJvYcCXda+gQddA/3y+cjHwfLWemkT1d/J+vg31NAhqZ7tEMjSlwp1c/iW2DwzQnew8pJJPhiWwIyYaq/Sl8G28=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2zXKiV1UGA+y4CrW02481jR750IaDxAJz1ohTHrKFUY7OLtr4
-	HOam2gCmo9333bYlw650uphrM5mfi4t9epk+6MfZhcNUgjW4He1EWnQQzUKDvXJN9gjReh26lvH
-	W0mMmV7I7W453OPgxVBPHjno8M1E=
-X-Google-Smtp-Source: AGHT+IGjMAa/qEtJfjdpD+WVYbFqmh4clT7SUIZ4FQL0tXvQgzBuTlv+GSTeL/cczv6ZTNTeeXGzYV05x2rIzp9bUgU=
-X-Received: by 2002:a05:651c:b10:b0:30b:f138:1b9f with SMTP id
- 38308e7fff4ca-30bf138602emr523701fa.17.1741261397493; Thu, 06 Mar 2025
- 03:43:17 -0800 (PST)
+	s=arc-20240116; t=1741261413; c=relaxed/simple;
+	bh=Q3McjjKLJ/px/KaPolwOtAzJP+Ph3x4mOmHfpx1Kogc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kjZQzQMQfR8BpALv6E0eInDkfBHQVaiOtkSEzcWF8kfL9z3O1/0H2tvrnywO6GNdH8G6YlbGHj0wQecWMLbr3RD+Hf6oOqyd89qnuNsmNjZwYIJKOPJRGklY20SutqVqA/PpY4nmNGQNtkXCxHWk8kRBT6VVfNkeUukTa+MW17I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z7nZM3B73z1R5yB;
+	Thu,  6 Mar 2025 19:41:47 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id EF1211A0171;
+	Thu,  6 Mar 2025 19:43:25 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 6 Mar 2025 19:43:23 +0800
+Message-ID: <f834a7cd-ca0a-4495-a787-134810aa0e4d@huawei.com>
+Date: Thu, 6 Mar 2025 19:43:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306063952.1029900-1-inochiama@gmail.com>
-In-Reply-To: <20250306063952.1029900-1-inochiama@gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 6 Mar 2025 20:42:41 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAToVPMYpF9HdP=Fr2nkE9Edjog2LrqPBy19zsS4PZhfww@mail.gmail.com>
-X-Gm-Features: AQ5f1Jq7-KwG0MixZESszoCiBT7onWhRWaAvLA1RyjSsMLY7V5_URHxYdUsf7WE
-Message-ID: <CAK7LNAToVPMYpF9HdP=Fr2nkE9Edjog2LrqPBy19zsS4PZhfww@mail.gmail.com>
-Subject: Re: [PATCH v2] kbuild: install-extmod-build: Fix build when
- specifying KBUILD_OUTPUT
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Yixun Lan <dlan@gentoo.org>, 
-	Longbin Li <looong.bin@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: alloc_pages_bulk: remove assumption of populating
+ only NULL elements
+To: NeilBrown <neilb@suse.de>
+CC: Qu Wenruo <wqu@suse.com>, Yishai Hadas <yishaih@nvidia.com>, Jason
+ Gunthorpe <jgg@ziepe.ca>, Shameer Kolothum
+	<shameerali.kolothum.thodi@huawei.com>, Kevin Tian <kevin.tian@intel.com>,
+	Alex Williamson <alex.williamson@redhat.com>, Chris Mason <clm@fb.com>, Josef
+ Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, Gao Xiang
+	<xiang@kernel.org>, Chao Yu <chao@kernel.org>, Yue Hu <zbestahu@gmail.com>,
+	Jeffle Xu <jefflexu@linux.alibaba.com>, Sandeep Dhavale <dhavale@google.com>,
+	Carlos Maiolino <cem@kernel.org>, "Darrick J. Wong" <djwong@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>, Jesper Dangaard Brouer
+	<hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+	<horms@kernel.org>, Trond Myklebust <trondmy@kernel.org>, Anna Schumaker
+	<anna@kernel.org>, Chuck Lever <chuck.lever@oracle.com>, Jeff Layton
+	<jlayton@kernel.org>, Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo
+	<Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, Luiz Capitulino
+	<luizcap@redhat.com>, Mel Gorman <mgorman@techsingularity.net>, Dave Chinner
+	<david@fromorbit.com>, <kvm@vger.kernel.org>,
+	<virtualization@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-btrfs@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+	<linux-xfs@vger.kernel.org>, <linux-mm@kvack.org>, <netdev@vger.kernel.org>,
+	<linux-nfs@vger.kernel.org>
+References: <> <18c68e7a-88c9-49d1-8ff8-17c63bcc44f4@huawei.com>
+ <174121808436.33508.1242845473359255682@noble.neil.brown.name>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <174121808436.33508.1242845473359255682@noble.neil.brown.name>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On Thu, Mar 6, 2025 at 3:40=E2=80=AFPM Inochi Amaoto <inochiama@gmail.com> =
-wrote:
->
-> Since commit 5f73e7d0386d ("kbuild: refactor cross-compiling
-> linux-headers package"), the linux-headers pacman package fails
-> to build when "O=3D" is set. The build system complains:
->
-> /mnt/chroot/linux/scripts/Makefile.build:41: mnt/chroots/linux-mainline/p=
-acman/linux-upstream/pkg/linux-upstream-headers/usr//lib/modules/6.14.0-rc3=
--00350-g771dba31fffc/build/scripts/Makefile: No such file or directory
->
-> This is because the "srcroot" variable is set to "." and the
-> "build" variable is set to the absolute path. This makes the
-> "src" variables point to wrong directory.
->
-> Change the "build" variable to a relative path to "." to
-> fix build.
->
-> Fixes: 5f73e7d0386d ("kbuild: refactor cross-compiling linux-headers pack=
-age")
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> ---
-> Changed from v1:
-> - https://lore.kernel.org/all/20250223011944.902904-1-inochiama@gmail.com=
-/
-> 1. fix shellcheck warning C2086
+On 2025/3/6 7:41, NeilBrown wrote:
+> On Wed, 05 Mar 2025, Yunsheng Lin wrote:
+>>
+>> For the existing btrfs and sunrpc case, I am agreed that there
+>> might be valid use cases too, we just need to discuss how to
+>> meet the requirements of different use cases using simpler, more
+>> unified and effective APIs.
+> 
+> We don't need "more unified".
 
+What I meant about 'more unified' is how to avoid duplicated code as
+much as possible for two different interfaces with similar‌ functionality.
 
-Applied to linux-kbuild/fixes.
-Thanks.
+The best way I tried to avoid duplicated code as much as possible is
+to defragment the page_array before calling the alloc_pages_bulk()
+for the use case of btrfs and sunrpc so that alloc_pages_bulk() can
+be removed of the assumption populating only NULL elements, so that
+the API is simpler and more efficient.
 
+> 
+> If there are genuinely two different use cases with clearly different
+> needs - even if only slightly different - then it is acceptable to have
+> two different interfaces.  Be sure to choose names which emphasise the
+> differences.
 
-> ---
->  scripts/package/install-extmod-build | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/scripts/package/install-extmod-build b/scripts/package/insta=
-ll-extmod-build
-> index 2966473b4660..b96538787f3d 100755
-> --- a/scripts/package/install-extmod-build
-> +++ b/scripts/package/install-extmod-build
-> @@ -63,7 +63,7 @@ if [ "${CC}" !=3D "${HOSTCC}" ]; then
->         # Clear VPATH and srcroot because the source files reside in the =
-output
->         # directory.
->         # shellcheck disable=3DSC2016 # $(MAKE) and $(build) will be expa=
-nded by Make
-> -       "${MAKE}" run-command KBUILD_RUN_COMMAND=3D'+$(MAKE) HOSTCC=3D'"$=
-{CC}"' VPATH=3D srcroot=3D. $(build)=3D'"${destdir}"/scripts
-> +       "${MAKE}" run-command KBUILD_RUN_COMMAND=3D'+$(MAKE) HOSTCC=3D'"$=
-{CC}"' VPATH=3D srcroot=3D. $(build)=3D'"$(realpath --relative-base=3D. "${=
-destdir}")"/scripts
->
->         rm -f "${destdir}/scripts/Kbuild"
->  fi
-> --
-> 2.48.1
->
+The best name I can come up with for the use case of btrfs and sunrpc
+is something like alloc_pages_bulk_refill(), any better suggestion about
+the naming?
 
-
---=20
-Best Regards
-Masahiro Yamada
+> 
+> Thanks,
+> NeilBrown
 
