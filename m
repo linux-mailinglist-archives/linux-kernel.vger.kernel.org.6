@@ -1,178 +1,318 @@
-Return-Path: <linux-kernel+bounces-548994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34411A54BD3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:17:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E8E6A54BD2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:17:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E8B07A14E6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:16:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3036F3B37E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F6A21170B;
-	Thu,  6 Mar 2025 13:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4C520E71E;
+	Thu,  6 Mar 2025 13:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kMBoDsU1"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="c3uyANqh";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="c3uyANqh"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E9C210180;
-	Thu,  6 Mar 2025 13:16:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0DA20E319
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 13:15:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741266981; cv=none; b=ka29uVyeYZNiZ/H/n4DXVC3+ZAuIanSFegnaEr5XgYwfyypSgTl5Y3L3fE4V6WdPWWf07FnRZhgJcsfPO+a8Cst13d5l5zJ/6m23T0VPGhQonVzBLu4+cX89lLNUV9iBUuTUHMPgqdRkdZEgEV6kmJ/Ucyd9LbLIwgnKXcnuIss=
+	t=1741266959; cv=none; b=jSuzOVy/p1eVdmxiiMA77sfwfpt81j+n52KUqcHWUMAs/LwMy7/uhyWkjWSw9PBbyrxI36oWX6x6r4pEiR6t/q+dHd7I8CncBfHJ3qigaNVmaDbRJgwBhYrEz+hiS10LFEE/Vz6DE4z4rE1XEbZTZruWiLm9bhasLex5zrFwryU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741266981; c=relaxed/simple;
-	bh=8ZZqQrq8U/ip7fmy3k0FKs7lmTjCF1yWU9LYT4w/A+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Szp1nrxrvGQ3q9uk0m4ei7S9a/1NR9WP9pvYUPovZpkfOUXTt8ipRGcHUEKcAkpMHtZxXDRiSnlQO+hCG7s33/1iaYDfKbHBmglim0k9DpGXtMZx5hEyg02HZgefboj91C9MBURCey30kwVQ1lMa/pG9EQiN6MxG03KCdK4+JJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kMBoDsU1; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741266980; x=1772802980;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8ZZqQrq8U/ip7fmy3k0FKs7lmTjCF1yWU9LYT4w/A+Q=;
-  b=kMBoDsU11rT28NFE2AIevDHJ3nwmNxCqvez5F87Bxmu1Wbky5U7UubjX
-   kQEuWRrQoIwzgymHCGJNQnFi7us86CXekCDZLlR3bPp3OrSoZ0WMOM2o0
-   wiZwbfGESI5X7d52Gs4OlDy4X7Z2Ja3upN2zsebbPH7PR6M5dztGx6jYC
-   s6XgTlmpLCntdjfpKi0ufe82/02O1x2F8CbuI1DSIkZxGqEiXC+pVXfPW
-   FslY9idi1I373RMvqIYjf0bLjaEjLV54kt4jSUDjyUNPaeaacyMnW13RA
-   WF1UxMyx/cMB7SLO28IG53wyhxPChvzD04i4EQS111rMVw/b945SDpMJ+
-   A==;
-X-CSE-ConnectionGUID: 3p+kjUw3SuKtcafHdrLwlg==
-X-CSE-MsgGUID: A1GIaoafQOK8wq5AqmJUgw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42188740"
-X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
-   d="scan'208";a="42188740"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 05:16:19 -0800
-X-CSE-ConnectionGUID: +P/ybUpGQnKelY8wY6WiBg==
-X-CSE-MsgGUID: BHWOhwHVSMGSXeKOi8Dp8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
-   d="scan'208";a="119519929"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 06 Mar 2025 05:16:15 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tqB5A-000N5y-0f;
-	Thu, 06 Mar 2025 13:16:12 +0000
-Date: Thu, 6 Mar 2025 21:15:30 +0800
-From: kernel test robot <lkp@intel.com>
-To: Michal Wilczynski <m.wilczynski@samsung.com>, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com,
-	guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	jszhang@kernel.org, ulf.hansson@linaro.org,
-	m.szyprowski@samsung.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Michal Wilczynski <m.wilczynski@samsung.com>
-Subject: Re: [PATCH v1 2/5] firmware: thead: Add AON firmware protocol driver
-Message-ID: <202503062029.bHmgxF2Q-lkp@intel.com>
-References: <20250303145901.446791-3-m.wilczynski@samsung.com>
+	s=arc-20240116; t=1741266959; c=relaxed/simple;
+	bh=b/nTQuiJ6tkcqrMX2q2IHWkXdEKyOiHz3z9XcPTi/Ls=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FWZz1jx1HPepAskpsW58ITAaDm/LIjevN5Hpcd2vvWhBhNqeX+mkoPXugsPYqm+zbuFX1nBeBVN42ubY6lXSOOpvkSmzgIvTcECYVYMAv0yntmYBCwRMTeSevC1ukReJnvq+N0/i7CdLKKiZbqU5TZ5byNe/t11ivp3g5Im8N7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=c3uyANqh; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=c3uyANqh; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 617E621197;
+	Thu,  6 Mar 2025 13:15:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1741266955; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QEUHzZZSoKo1XGYHNRligw25cwzSd1/JmpfQQQIdeXs=;
+	b=c3uyANqhdeAMMWETFjjVtK5rBflMcYDOChewz6TK7D0pr4i8/ZA1th/kU3+Digvhu7Jn3s
+	zWILBU5Euc6NzdYVHDl74x8oUFbPxRKeruXbiv4uwCIxaJaaxCBvykFRPE9vCJ+Nn+Xymo
+	xKpEPIqF96DIVAoF1G69wjqM4SsHIHc=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=c3uyANqh
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1741266955; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=QEUHzZZSoKo1XGYHNRligw25cwzSd1/JmpfQQQIdeXs=;
+	b=c3uyANqhdeAMMWETFjjVtK5rBflMcYDOChewz6TK7D0pr4i8/ZA1th/kU3+Digvhu7Jn3s
+	zWILBU5Euc6NzdYVHDl74x8oUFbPxRKeruXbiv4uwCIxaJaaxCBvykFRPE9vCJ+Nn+Xymo
+	xKpEPIqF96DIVAoF1G69wjqM4SsHIHc=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4093113A61;
+	Thu,  6 Mar 2025 13:15:55 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id QoLyDgugyWfLYgAAD6G6ig
+	(envelope-from <neelx@suse.com>); Thu, 06 Mar 2025 13:15:55 +0000
+From: Daniel Vacek <neelx@suse.com>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	Nick Terrell <terrelln@fb.com>
+Cc: Daniel Vacek <neelx@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] btrfs/defrag: implement compression levels
+Date: Thu,  6 Mar 2025 14:15:35 +0100
+Message-ID: <20250306131537.972377-1-neelx@suse.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250304171403.571335-1-neelx@suse.com>
+References: <20250304171403.571335-1-neelx@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303145901.446791-3-m.wilczynski@samsung.com>
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 617E621197
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,suse.com:email];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	TO_DN_SOME(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Michal,
+The zstd and zlib compression types support setting compression levels.
+Enhance the defrag interface to specify the levels as well.
 
-kernel test robot noticed the following build errors:
+Signed-off-by: Daniel Vacek <neelx@suse.com>
+---
+v3: Validate the level instead of clamping and fix the comment of the
+    btrfs_ioctl_defrag_range_args structure.
 
-[auto build test ERROR on robh/for-next]
-[also build test ERROR on linus/master v6.14-rc5 next-20250306]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+v2: Fixed the commit message and added an explicit level range clamping.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Michal-Wilczynski/dt-bindings-firmware-thead-th1520-Add-support-for-firmware-node/20250303-230224
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250303145901.446791-3-m.wilczynski%40samsung.com
-patch subject: [PATCH v1 2/5] firmware: thead: Add AON firmware protocol driver
-config: sh-allyesconfig (https://download.01.org/0day-ci/archive/20250306/202503062029.bHmgxF2Q-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250306/202503062029.bHmgxF2Q-lkp@intel.com/reproduce)
+ fs/btrfs/btrfs_inode.h     |  1 +
+ fs/btrfs/compression.c     | 10 ++++++++++
+ fs/btrfs/compression.h     |  1 +
+ fs/btrfs/defrag.c          | 24 +++++++++++++++++++-----
+ fs/btrfs/fs.h              |  2 +-
+ fs/btrfs/inode.c           |  9 ++++++---
+ include/uapi/linux/btrfs.h | 16 +++++++++++++---
+ 7 files changed, 51 insertions(+), 12 deletions(-)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503062029.bHmgxF2Q-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/firmware/thead,th1520-aon.c: In function 'th1520_aon_init':
->> drivers/firmware/thead,th1520-aon.c:206:20: error: implicit declaration of function 'kzalloc' [-Wimplicit-function-declaration]
-     206 |         aon_chan = kzalloc(sizeof(*aon_chan), GFP_KERNEL);
-         |                    ^~~~~~~
->> drivers/firmware/thead,th1520-aon.c:206:18: error: assignment to 'struct th1520_aon_chan *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-     206 |         aon_chan = kzalloc(sizeof(*aon_chan), GFP_KERNEL);
-         |                  ^
->> drivers/firmware/thead,th1520-aon.c:219:17: error: implicit declaration of function 'kfree'; did you mean 'kvfree'? [-Wimplicit-function-declaration]
-     219 |                 kfree(aon_chan);
-         |                 ^~~~~
-         |                 kvfree
-
-
-vim +206 drivers/firmware/thead,th1520-aon.c
-
-   185	
-   186	/**
-   187	 * th1520_aon_init() - Initialize TH1520 AON firmware protocol interface
-   188	 * @dev: Device pointer for the AON subsystem
-   189	 *
-   190	 * This function initializes the TH1520 AON firmware protocol interface by:
-   191	 * - Allocating and initializing the AON channel structure
-   192	 * - Setting up the mailbox client
-   193	 * - Requesting the AON mailbox channel
-   194	 * - Initializing synchronization primitives
-   195	 *
-   196	 * Return:
-   197	 * * Valid pointer to th1520_aon_chan structure on success
-   198	 * * ERR_PTR(-ENOMEM) if memory allocation fails
-   199	 * * ERR_PTR() with other negative error codes from mailbox operations
-   200	 */
-   201	struct th1520_aon_chan *th1520_aon_init(struct device *dev)
-   202	{
-   203		struct th1520_aon_chan *aon_chan;
-   204		struct mbox_client *cl;
-   205	
- > 206		aon_chan = kzalloc(sizeof(*aon_chan), GFP_KERNEL);
-   207		if (!aon_chan)
-   208			return ERR_PTR(-ENOMEM);
-   209	
-   210		cl = &aon_chan->cl;
-   211		cl->dev = dev;
-   212		cl->tx_block = true;
-   213		cl->tx_tout = MAX_TX_TIMEOUT;
-   214		cl->rx_callback = th1520_aon_rx_callback;
-   215	
-   216		aon_chan->ch = mbox_request_channel_byname(cl, "aon");
-   217		if (IS_ERR(aon_chan->ch)) {
-   218			dev_err(dev, "Failed to request aon mbox chan\n");
- > 219			kfree(aon_chan);
-   220			return ERR_CAST(aon_chan->ch);
-   221		}
-   222	
-   223		mutex_init(&aon_chan->transaction_lock);
-   224		init_completion(&aon_chan->done);
-   225	
-   226		return aon_chan;
-   227	}
-   228	EXPORT_SYMBOL_GPL(th1520_aon_init);
-   229	
-
+diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
+index aa1f55cd81b79..238e4a08a52ae 100644
+--- a/fs/btrfs/btrfs_inode.h
++++ b/fs/btrfs/btrfs_inode.h
+@@ -145,6 +145,7 @@ struct btrfs_inode {
+ 	 * different from prop_compress and takes precedence if set.
+ 	 */
+ 	u8 defrag_compress;
++	s8 defrag_compress_level;
+ 
+ 	/*
+ 	 * Lock for counters and all fields used to determine if the inode is in
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index 6d073e69af4e3..4191e9efc6951 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -980,6 +980,16 @@ static int btrfs_compress_set_level(unsigned int type, int level)
+ 	return level;
+ }
+ 
++/*
++ * Check whether the @level is within the valid range for the given type.
++ */
++bool btrfs_compress_level_valid(unsigned int type, int level)
++{
++	const struct btrfs_compress_op *ops = btrfs_compress_op[type];
++
++	return ops->min_level <= level && level <= ops->max_level;
++}
++
+ /* Wrapper around find_get_page(), with extra error message. */
+ int btrfs_compress_filemap_get_folio(struct address_space *mapping, u64 start,
+ 				     struct folio **in_folio_ret)
+diff --git a/fs/btrfs/compression.h b/fs/btrfs/compression.h
+index 933178f03d8f8..df198623cc084 100644
+--- a/fs/btrfs/compression.h
++++ b/fs/btrfs/compression.h
+@@ -83,6 +83,7 @@ static inline u32 btrfs_calc_input_length(u64 range_end, u64 cur)
+ int __init btrfs_init_compress(void);
+ void __cold btrfs_exit_compress(void);
+ 
++bool btrfs_compress_level_valid(unsigned int type, int level);
+ int btrfs_compress_folios(unsigned int type, int level, struct address_space *mapping,
+ 			  u64 start, struct folio **folios, unsigned long *out_folios,
+ 			 unsigned long *total_in, unsigned long *total_out);
+diff --git a/fs/btrfs/defrag.c b/fs/btrfs/defrag.c
+index 968dae9539482..513089b91b7b6 100644
+--- a/fs/btrfs/defrag.c
++++ b/fs/btrfs/defrag.c
+@@ -1363,6 +1363,7 @@ int btrfs_defrag_file(struct inode *inode, struct file_ra_state *ra,
+ 	u64 last_byte;
+ 	bool do_compress = (range->flags & BTRFS_DEFRAG_RANGE_COMPRESS);
+ 	int compress_type = BTRFS_COMPRESS_ZLIB;
++	int compress_level = 0;
+ 	int ret = 0;
+ 	u32 extent_thresh = range->extent_thresh;
+ 	pgoff_t start_index;
+@@ -1376,10 +1377,21 @@ int btrfs_defrag_file(struct inode *inode, struct file_ra_state *ra,
+ 		return -EINVAL;
+ 
+ 	if (do_compress) {
+-		if (range->compress_type >= BTRFS_NR_COMPRESS_TYPES)
+-			return -EINVAL;
+-		if (range->compress_type)
+-			compress_type = range->compress_type;
++		if (range->flags & BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL) {
++			if (range->compress.type >= BTRFS_NR_COMPRESS_TYPES)
++				return -EINVAL;
++			if (range->compress.type) {
++				compress_type  = range->compress.type;
++				compress_level = range->compress.level;
++				if (!btrfs_compress_level_valid(compress_type, compress_level))
++					return -EINVAL;
++			}
++		} else {
++			if (range->compress_type >= BTRFS_NR_COMPRESS_TYPES)
++				return -EINVAL;
++			if (range->compress_type)
++				compress_type = range->compress_type;
++		}
+ 	}
+ 
+ 	if (extent_thresh == 0)
+@@ -1430,8 +1442,10 @@ int btrfs_defrag_file(struct inode *inode, struct file_ra_state *ra,
+ 			btrfs_inode_unlock(BTRFS_I(inode), 0);
+ 			break;
+ 		}
+-		if (do_compress)
++		if (do_compress) {
+ 			BTRFS_I(inode)->defrag_compress = compress_type;
++			BTRFS_I(inode)->defrag_compress_level = compress_level;
++		}
+ 		ret = defrag_one_cluster(BTRFS_I(inode), ra, cur,
+ 				cluster_end + 1 - cur, extent_thresh,
+ 				newer_than, do_compress, &sectors_defragged,
+diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
+index be6d5a24bd4e6..2dae7ffd37133 100644
+--- a/fs/btrfs/fs.h
++++ b/fs/btrfs/fs.h
+@@ -485,7 +485,7 @@ struct btrfs_fs_info {
+ 	u64 last_trans_log_full_commit;
+ 	unsigned long long mount_opt;
+ 
+-	unsigned long compress_type:4;
++	int compress_type;
+ 	int compress_level;
+ 	u32 commit_interval;
+ 	/*
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index fa04b027d53ac..dd27992ecb431 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -925,6 +925,7 @@ static void compress_file_range(struct btrfs_work *work)
+ 	unsigned int poff;
+ 	int i;
+ 	int compress_type = fs_info->compress_type;
++	int compress_level = fs_info->compress_level;
+ 
+ 	inode_should_defrag(inode, start, end, end - start + 1, SZ_16K);
+ 
+@@ -1007,13 +1008,15 @@ static void compress_file_range(struct btrfs_work *work)
+ 		goto cleanup_and_bail_uncompressed;
+ 	}
+ 
+-	if (inode->defrag_compress)
++	if (inode->defrag_compress) {
+ 		compress_type = inode->defrag_compress;
+-	else if (inode->prop_compress)
++		compress_level = inode->defrag_compress_level;
++	} else if (inode->prop_compress) {
+ 		compress_type = inode->prop_compress;
++	}
+ 
+ 	/* Compression level is applied here. */
+-	ret = btrfs_compress_folios(compress_type, fs_info->compress_level,
++	ret = btrfs_compress_folios(compress_type, compress_level,
+ 				    mapping, start, folios, &nr_folios, &total_in,
+ 				    &total_compressed);
+ 	if (ret)
+diff --git a/include/uapi/linux/btrfs.h b/include/uapi/linux/btrfs.h
+index d3b222d7af240..dd02160015b2b 100644
+--- a/include/uapi/linux/btrfs.h
++++ b/include/uapi/linux/btrfs.h
+@@ -615,7 +615,9 @@ struct btrfs_ioctl_clone_range_args {
+  */
+ #define BTRFS_DEFRAG_RANGE_COMPRESS 1
+ #define BTRFS_DEFRAG_RANGE_START_IO 2
++#define BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL 4
+ #define BTRFS_DEFRAG_RANGE_FLAGS_SUPP	(BTRFS_DEFRAG_RANGE_COMPRESS |		\
++					 BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL |	\
+ 					 BTRFS_DEFRAG_RANGE_START_IO)
+ 
+ struct btrfs_ioctl_defrag_range_args {
+@@ -640,10 +642,18 @@ struct btrfs_ioctl_defrag_range_args {
+ 
+ 	/*
+ 	 * which compression method to use if turning on compression
+-	 * for this defrag operation.  If unspecified, zlib will
+-	 * be used
++	 * for this defrag operation. If unspecified, zlib will be
++	 * used. If compression level is also being specified, set the
++	 * BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL flag and fill the compress
++	 * member structure instead of the compress_type field.
+ 	 */
+-	__u32 compress_type;
++	union {
++		__u32 compress_type;
++		struct {
++			__u8 type;
++			__s8 level;
++		} compress;
++	};
+ 
+ 	/* spare for later */
+ 	__u32 unused[4];
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.2
+
 
