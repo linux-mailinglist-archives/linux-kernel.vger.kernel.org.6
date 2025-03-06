@@ -1,127 +1,100 @@
-Return-Path: <linux-kernel+bounces-548663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BB49A547C7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:28:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97ED9A547C3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B66FC3AFB2F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:28:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFB63188ADBF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB4F202F92;
-	Thu,  6 Mar 2025 10:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC01D20297E;
+	Thu,  6 Mar 2025 10:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wfBPq9TJ"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="mpXhhjB7"
+Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF97018A6B5;
-	Thu,  6 Mar 2025 10:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4665A200BB2
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741256926; cv=none; b=HYlTiKnLV9zAUn+KhFSyhlxKJ779hQaKL5bJNhilRCCw9AI4+AJOKskoEwLD1Y6VaPO51Inj6G0vNv0NXORPXfLrQ25YvhBUHwq0qJyo3EDqBVR4m+TmeUJrMDv0kq2bQsYhjtYqKjaISnzMFKk40Vz6oAfUv+3Dz1jed1Dqv28=
+	t=1741256907; cv=none; b=N261xKGUxlmZLi9m4QCVQRyVAhXV4rcZ7dSRkeg5kcz8/hNyUhfP7MvXkKfhm+nsWBvCkZvIYsl3YUNt2b8571co8DD7vgDiLoHlyRM8OZY9Zjm72STSqA+SWNnhMQA80XiIO7MifBjptI179ScXGz6/GU9BENj32w/gfKFWWfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741256926; c=relaxed/simple;
-	bh=syoPIVjbFQmqD3mbzC8x+6wk935HiQWfR8keZLGGyIM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=vFhRWH/znf7+yKd7QFcMysRTDxPpNMKNxW0HANiVz+Eskqb4hSX5be6qaJorTNyVvrHGNlbNuCdWQrVmroAho/wf2O803QeOm1M16kGtybslGe6lMVjbw5XZY/+i/0+BJtlMldDmFwDZ1EzNlBF/HlmxVqTM62s4TI6dyQh0XMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wfBPq9TJ; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526ACxeE029564;
-	Thu, 6 Mar 2025 11:28:32 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	rZJvAb4lK5uj98yPaFX83j04iTuIZ3/ioDN8111skDE=; b=wfBPq9TJ5MvlEFn3
-	mZA90YzxSdloBvCkeNRJhxamXLJU4+sZWPZqkSOZtK8iTa3ICqGl4deYzBahNLuR
-	EuaSEgCCGqEH72P7AUtfBIS/yh+5tq9pptsgmrEJG67FjmPos7s/Cw2fc0IrG9UH
-	4Quo29IpeYsJGvIfNqT0UcKZ15C5QD7CvB4KlhraJ2FbRo/9xg4JADacOHbihn98
-	fX3fSWjEMbCIhLE3TctrV8AW/ieOEWsYCBSjxheqssJvx1XnGDmqxniM1osO1oJd
-	yODNHZ3DoLCdq2cPMo/h4B9u6wfOyKwZw+p9SCG0j9E+i3YEjzWlnt127bYg3c4I
-	5zIVpQ==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 457286kh4n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 11:28:32 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1C3BF4007F;
-	Thu,  6 Mar 2025 11:27:33 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 665CD51A119;
-	Thu,  6 Mar 2025 11:27:00 +0100 (CET)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 6 Mar
- 2025 11:26:59 +0100
-Message-ID: <f681046c-449f-42fd-8c97-36c459fdb3e6@foss.st.com>
-Date: Thu, 6 Mar 2025 11:26:58 +0100
+	s=arc-20240116; t=1741256907; c=relaxed/simple;
+	bh=qI8it5A5hlwyHuUSeuaxgIYo1Ohc1NWkDcH6Dn5NCdE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WGdzl23PL2Du4qjSKetGgeawc5EpIVv6o2GKfQnfNbxO9nlYF0cAOlc5GqkYBHJomjkBv/J2m1oM5sF9QxIsdeksrFkEtX4Sk1cy2+56sMclAeQRCqshRRRR5JX/4Z0xh8ELc59YaT5T4GweSjWbIcxdJp7/fkA0Gtm1g4sQUZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=mpXhhjB7; arc=none smtp.client-ip=91.218.175.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <6b4c0c8f-8d3a-4e10-840f-7f2fa1bc8800@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741256903;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=pqWU0pywSUoU0LqWrGdm1CtIEy9jCGEQBVNyKe4FV4o=;
+	b=mpXhhjB77skez3U0Dqjj8qBhagUhFdG0P5QdWkme940gWN7wKyYbLhQkkPUtt7auyoiNIM
+	uFWxa84h9QxNhDghxTFH+wblg9cEs0doLCTFSRBWr6vlpUeOUMQKhkbEtrLtZlW8sSzbs9
+	eBQd1AWoEKNCnkTIw9v/SghrYyOSquI=
+Date: Thu, 6 Mar 2025 10:28:19 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] spi: stm32-ospi: Fix an IS_ERR() vs NULL bug in
- stm32_ospi_get_resources()
-To: Dan Carpenter <dan.carpenter@linaro.org>
-CC: Mark Brown <broonie@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        <linux-spi@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <bc4c9123-df43-4616-962f-765801d30b4c@stanley.mountain>
+Subject: Re: [PATCH] ptp: ocp: Remove redundant check in _signal_summary_show
+To: Ivan Abramov <i.abramov@mt-integration.ru>,
+ Richard Cochran <richardcochran@gmail.com>
+Cc: Jonathan Lemon <jonathan.lemon@gmail.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ lvc-project@linuxtesting.org
+References: <20250305092520.25817-1-i.abramov@mt-integration.ru>
 Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <bc4c9123-df43-4616-962f-765801d30b4c@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20250305092520.25817-1-i.abramov@mt-integration.ru>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 3/6/25 10:48, Dan Carpenter wrote:
-> The devm_ioremap() function returns NULL on error, it doesn't return
-> error pointers.  Fix the check to match.
+On 05/03/2025 09:25, Ivan Abramov wrote:
+> In the function _signal_summary_show(), there is a NULL-check for
+> &bp->signal[nr], which cannot actually be NULL.
 > 
-> Fixes: 79b8a705e26c ("spi: stm32: Add OSPI driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Therefore, this redundant check can be removed.
+> 
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+> 
+> Signed-off-by: Ivan Abramov <i.abramov@mt-integration.ru>
 > ---
->  drivers/spi/spi-stm32-ospi.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>   drivers/ptp/ptp_ocp.c | 3 ---
+>   1 file changed, 3 deletions(-)
 > 
-> diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
-> index 8eadcb64f34a..a544d7897edf 100644
-> --- a/drivers/spi/spi-stm32-ospi.c
-> +++ b/drivers/spi/spi-stm32-ospi.c
-> @@ -835,10 +835,10 @@ static int stm32_ospi_get_resources(struct platform_device *pdev)
->  	if (rmem) {
->  		ospi->mm_size = rmem->size;
->  		ospi->mm_base = devm_ioremap(dev, rmem->base, rmem->size);
-> -		if (IS_ERR(ospi->mm_base)) {
-> +		if (!ospi->mm_base) {
->  			dev_err(dev, "unable to map memory region: %pa+%pa\n",
->  				&rmem->base, &rmem->size);
-> -			ret = PTR_ERR(ospi->mm_base);
-> +			ret = -ENOMEM;
->  			goto err_dma;
->  		}
->  
+> diff --git a/drivers/ptp/ptp_ocp.c b/drivers/ptp/ptp_ocp.c
+> index b651087f426f..34c616bd0a02 100644
+> --- a/drivers/ptp/ptp_ocp.c
+> +++ b/drivers/ptp/ptp_ocp.c
+> @@ -3959,9 +3959,6 @@ _signal_summary_show(struct seq_file *s, struct ptp_ocp *bp, int nr)
+>   	bool on;
+>   	u32 val;
+>   
+> -	if (!signal)
+> -		return;
+> -
+>   	on = signal->running;
+>   	sprintf(label, "GEN%d", nr + 1);
+>   	seq_printf(s, "%7s: %s, period:%llu duty:%d%% phase:%llu pol:%d",
 
+Thanks,
 
-Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
-
-Thanks
-Patrice
+Reviewed-by: Vadim Fedorenko <vadim.fedorenko@linux.dev>
 
