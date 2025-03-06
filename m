@@ -1,130 +1,88 @@
-Return-Path: <linux-kernel+bounces-549707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F670A55636
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:10:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 708B9A55647
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:11:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59CE817481F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:10:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E9CD175080
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC3E26E15E;
-	Thu,  6 Mar 2025 19:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A65A26D5C3;
+	Thu,  6 Mar 2025 19:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZBT4JZk"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o98WtyeM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0BEA25A652;
-	Thu,  6 Mar 2025 19:10:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3DA25A652
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 19:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741288235; cv=none; b=H87pa1MurhL5xL18TMd6bOZ6/RMtzMGaUcC0thBNeYOrOcBsAef4aqJjfy0h7szv7f7SV5oUf4mrR9wY9Kl4Usb20qs7Sd/nIsdTHnYy03ytdhm32b37RSvuCLw9XDHLZ1+pGQgpM1hoyVGmqKdSPhP0noaxIaTUMPxVeFJFnaU=
+	t=1741288309; cv=none; b=ngiketoUN7BQ2TBjI4C3J38iGN81ctfKpMPCBnviKScSxgsWjkmWM7/5lMF0zos4Q4tGYFw3ljHRIeJqy+/mKvUIC/C9zUOMp17je9MyZzXmpEmDUZ2fQSwyMiSVDfCNMI9ai70PdigByL/GewfIBLGt6tNTLwz8lAYvMSqdMc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741288235; c=relaxed/simple;
-	bh=oV8hyuLlA5PGqTkENu/a9ltQ1UmevbTI1lsTJsvT4nU=;
+	s=arc-20240116; t=1741288309; c=relaxed/simple;
+	bh=kgh4N9HlQC6vss0XDSqgF+GANv+K6u/7NfhVoAsKOMI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W5Y3H7+WIjF/Jz+VR1w1ejZjDG8jx1zFXetjwPK+Uvd1JRMJhQMKvjMP/6fgWGsn/EqDkpSeZY5LfAROvfby9aBtNan6RqVJOh3d9pl6jF5rzBG/QXCkOdgrTE3h11MY4otVnzW1SExs8D/0CdIjpMpCmKVKFHPYK2CxHLrYLqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZBT4JZk; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43bc48ff815so7176065e9.0;
-        Thu, 06 Mar 2025 11:10:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741288232; x=1741893032; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xjrt17JBvJuhNsbcwVa1ka0lA6TlmXZsKVnB1ivDePA=;
-        b=TZBT4JZkPwsMiGEfPxibjb1glvhWe8dFXIAoQK04uDHaGH5Bxt8lIfCMGeO0TSb1oJ
-         hBuQjjbcKi2UjROIvQqKzc4q783KFmtFgGJxD8n7CANlhQ7YgLv6nWgS4Qpv1l++vtbk
-         CfFhUVy6Dda3vtF1QpMppY1VJkKwgRFehE/XRNjQfvDj4Pjsg3Mp0dh4Kfwj+mZdoq1V
-         MGvYTA7kkTW7cSygmGHftpJN4IMFvMmdqm5IzQ2kfipOqOc5nRtuzNHyf9VZCGChg/i0
-         Hzlfa2eKdQvgHZ0eZHg7hsYVHpve6z5xPZ1RcAtLhOfCLe6u85xm7zxnRQGwpU2a1k62
-         cJkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741288232; x=1741893032;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xjrt17JBvJuhNsbcwVa1ka0lA6TlmXZsKVnB1ivDePA=;
-        b=f/XqgNY+qfH0s2lSXjGaI+tyb/Kjcn1VwOawgusNjrsNChdW7ZUEbCM8BZfYrbyKVD
-         4sQ4mZdC2+1t92/1vSCF+dv9xilYZyFvvBtPTD60mChm9Mp5E00J5uO3I4gOdU4TMpU5
-         ct4Uj7Np8QzG1/y2TXj9/Jh+N7yQ+hyJMMsr62IL27HusMu2X3kDQ+9XC1qk/kuX2+Ro
-         IqMih0iZCcabtMxODKxjWO/l12q7kHe01Wwn9d3f/U7D9upEcBzvwRDyGAPlG0nclh8t
-         f9NERgxwa8yTS0CONxRQpHE9i3ozm5khlj5u/M2HQQ4UD1o34QgiPWdKRSs9uC05OMMf
-         Z1NA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1Pcd/Z4jCqNB8JAOXvN2hLdRg23H951ndJxk+UdOJvoHqXG/oDl9dHq2WxIimVrteXAsLHT03dGqVN4k=@vger.kernel.org, AJvYcCXnlq/Gy7o1BssYYCdUZQ1dlfDbMdGV/GMq6+zoK5MakSSYty/nABfy3kNkGErR+xehtqNxMm1tigACkKM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzL0dCM8YFLGgzYwu2+azUelRdxIojSoj5v8dpedByqACIgirxg
-	C3chtGAEcVMB8F/lwBVP9IphWX/5vEnJUESsHG09gBqkh3eNnp27
-X-Gm-Gg: ASbGncscZSInzy0RKTadZbjdRftJH2E20u7SxaeijX2kJtm455YVLNsqQJEzBkBCcLP
-	jJ1CF1jez5AD+LvgzjCFFv4hmhYQBeh8hHK7k7MHbRGcctYMqzIhJS4aMtxMJ+EItBv1FLpvZX/
-	iOo70M+7ab3as3KY2FazbUWCbRorcypnLweRZ95pCPSjmqi8+PD5lhMC/TV0UdJ5bGdnhD9vDFk
-	ydgzrgCxo8sroOwykcfXH2IAiJedj++p3H+zbooARZqusUJdZ8+AmPBpaLfj6MdX2bq1D2egIo6
-	4buoMO5JCm4TYaXIEtDIKRHq4uMrPtrdsjZLoyxs+O/jQtH2QjZGK4EYJB/pC2lbgGzdxYSocVp
-	roaVFT04hg1iSIRrSHMcZ7hUEGMHeZwxsKbvO
-X-Google-Smtp-Source: AGHT+IHl5my+4Jw09Cr0qE6JdlC8og7QhNPFlC4yTy6FzLxXNp880EZuro7EiKsKog1QP0e7H+TucA==
-X-Received: by 2002:a05:600c:6cf:b0:43b:dcc8:557c with SMTP id 5b1f17b1804b1-43bdcc85609mr31000225e9.13.1741288231597;
-        Thu, 06 Mar 2025 11:10:31 -0800 (PST)
-Received: from localhost (p200300e41f3a9f00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f3a:9f00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bd42c5b33sm60765615e9.22.2025.03.06.11.10.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 11:10:30 -0800 (PST)
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Diogo Ivo <diogo.ivo@tecnico.ulisboa.pt>
-Cc: devicetree@vger.kernel.org,
-	linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] arm64: tegra: Small hardware enablement for Jetson TX1
-Date: Thu,  6 Mar 2025 20:10:27 +0100
-Message-ID: <174128819704.2033996.10633125430100883471.b4-ty@nvidia.com>
+	 MIME-Version; b=SeB5oQnaooWqf2YCFqia21DxnoPe6CrFVru0tKJFllAUQX2XQFsnbM4hqyx1uOBfo5w1JW2LQL1AO8dxRawHTygYdAMcgl1LzyPrG4yV1mb8MDYks2uzxC0mOhzclqUyk/pO9lOi8qze9/Aq2BQTQdEBST5uUKBvswWEuHF9KAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o98WtyeM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4DEAC4CEE0;
+	Thu,  6 Mar 2025 19:11:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741288309;
+	bh=kgh4N9HlQC6vss0XDSqgF+GANv+K6u/7NfhVoAsKOMI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=o98WtyeM8QrVCidJbd1zVPexrNtnhbR2GfswRQkDsr1qI6RuB9bkesh++UrAyHOy5
+	 GMMBbARpkS0DX+fqtz1/xd+kZ52TD3AtFYSsyrRoFPY/tet424+xOLteG4xbJvwNSW
+	 WtkXa1z748WL4Q1SCL8nbqujj8FYZ2C79c3F8ycREoYvZgG2X2zcHxQcIAOBTqCdnY
+	 0EX6ibI2JKjGQK1PSJjHhUEia0PZ8APn/HLlQ1gRgdIQXiSfMsTiWoQDAe3Kf9a6M8
+	 a0fnDB9fAd9FeggDnJZLU8VxJtxhqFqRodFR3/l/5UtrI9OAB147qelNVRxeO4Qqf4
+	 wCsasW+kRG8iA==
+From: SeongJae Park <sj@kernel.org>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: SeongJae Park <sj@kernel.org>,
+	"Liam R. Howlett" <howlett@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH 12/16] mm/madvise: batch tlb flushes for process_madvise(MADV_DONTNEED[_LOCKED])
+Date: Thu,  6 Mar 2025 11:11:46 -0800
+Message-ID: <20250306191147.843453-1-sj@kernel.org>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250224-diogo-gpio_exp-v1-0-80fb84ac48c6@tecnico.ulisboa.pt>
-References: <20250224-diogo-gpio_exp-v1-0-80fb84ac48c6@tecnico.ulisboa.pt>
+In-Reply-To: <qloyhszjm4v44lfocb5wjnmmylz4n7co2v6iqbxz335i3ybsru@arcmuuiwahkh>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Thierry Reding <treding@nvidia.com>
+On Thu, 6 Mar 2025 10:36:43 -0800 Shakeel Butt <shakeel.butt@linux.dev> wrote:
 
-
-On Mon, 24 Feb 2025 12:17:35 +0000, Diogo Ivo wrote:
-> This series consists of Device Tree changes enabling two features:
->  - Using both TCA9539 GPIO expanders found on P2597 as IRQ controllers
->  - TMP451 temperature sensor found on P2180
+> On Wed, Mar 05, 2025 at 10:16:07AM -0800, SeongJae Park wrote:
+> > MADV_DONTNEED[_LOCKED] internal logic can be invoked with batched tlb
+> > flushes.  Update vector_madvise(), which is called for
+> > process_madvise(), to use that in the way, by passing an mmu_gather
+> > object that it initializes before starting the internal works, and
+> > flushing the gathered tlb entries at once after all the internal works
+> > are done.
+> > 
+> > Signed-off-by: SeongJae Park <sj@kernel.org>
 > 
-> For the first feature some preparation is needed:
->  - Patch 01: fix the enable GPIO line number for a regulator, freeing an
->    	     exposed line on P2597 expansion header J21
->  - Patch 02: add voltage level pinctrl information
->  - Patch 03: fill the TCA9539 DT nodes for IRQ controller operation
-> 
-> [...]
+> Please squash 12, 13 and 14 patches.
 
-Applied, thanks!
+Surely I will do so in the next spin, for all your squash requests, inlcuding
+that for 15th and 16th patches.
 
-[1/4] arm64: tegra: p2597: Fix gpio for vdd-1v8-dis regulator
-      commit: 67aa377b37f90c6fd8f6e9ede68e1e11f5def2e9
-[2/4] arm64: tegra: Define pinmuxing for gpio pads on Tegra210
-      commit: b9dd925d67d2d50667a2f3be275996dcca03e485
-[3/4] arm64: tegra: p2597: Enable TCA9539 as IRQ controllers
-      commit: 8f4897dac543a571a3dab432a3fcdffb12661f14
-[4/4] arm64: tegra: p2180: Add TMP451 temperature sensor node
-      commit: a2d23ef4c179aebdcace4c2406b798cdecf05d35
 
-Best regards,
--- 
-Thierry Reding <treding@nvidia.com>
+Thanks,
+SJ
 
