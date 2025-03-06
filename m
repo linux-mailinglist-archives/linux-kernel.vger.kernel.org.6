@@ -1,97 +1,110 @@
-Return-Path: <linux-kernel+bounces-549508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52A93A55358
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:45:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D07A5535C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:46:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A856618975E5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:46:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA3FB1897660
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:46:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8808C21481E;
-	Thu,  6 Mar 2025 17:45:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D990C25CC9F;
+	Thu,  6 Mar 2025 17:46:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Io/iSVav"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QIgf5j6v"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA51625A35E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F2A21129C;
+	Thu,  6 Mar 2025 17:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741283147; cv=none; b=q5pwmb9sw4w0n6e0CFkBv5nnfrpYxRCVTWEaWxGC44G9KQsYUYKzdCE8jXR0I53GgTrAxw5KQeZG1EOwJrRStVcaUwS8zfQS1VnQy1GvRuv37TMTq81nIaiWeuR3DIx1nuu1kMcaE+yy5sQlqUjsqarG5TcpFX0ClN9K3O1pvQo=
+	t=1741283194; cv=none; b=dEA8xHbMv9HKqxruDpHlg7lwt/hep+pkj/EJRQ2plgMBXmmNdAato8i1x0IncdQjxAE//LFDYnRZ7oCeGiSMYHWukWhtJHWlSKw4K8Ko5nPged1Akqxc7gwCEN9xO2tBkjQf+vDB5X8i2aBJMgC0Zxc0rVyEBlavYRWzPysRwf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741283147; c=relaxed/simple;
-	bh=y4M5ynrGMyWZMdUdelT3YznOA5+eCD4PkFDDx8U/srE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s4uAOhe6M0pGx4PwYjp9+OEKHjpPBRux1CRx6k+O+xK3otI5mOLVZeNwX9vsNQRFZjsPTt8V1nnsWGwmANeRXOsH09tCNGuhExupPWspy3D+6bQutznr3aZ3M01Bhki0acxWkUPSF0+HMO28i3liUslHq4441oP+Lelxld2Rx18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Io/iSVav; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=9d9NpVxantETeGmL2S6sYCKYZHWuzJYRDFAMqz+Hxio=; b=Io/iSVaveAQ3kSlHzXEB9ZC6Wd
-	Rj1IzSIxG2945NJZgFWX3zmR/tUBt3gm989dO6f8VLT2z7x5nKJxZMHghMTqHYdrWg8RDDWLDuIxN
-	lXVxDWqivRWRYyD2IaZd4+wqDPcpQiZ5VGlunLatRDVh6aPhbaF3I1AFor+6M6eROTlTLnFjLX3/o
-	McactVWsCfLe7GzNq45rLKXI61IvP9qJrhB8KMT/STxsJyjsWjkYkFw+YcaFjeZnk94/1cWbXesXv
-	ZlfKjxEr5gyrLbjUIUB+CHbxbDkgfmP2XUGE6J+vTdiu3y0KtZbuHtii8xfQmfGuwle7sie8pr5Kv
-	G1Cj9H7w==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tqFHq-0000000B1wN-1Esf;
-	Thu, 06 Mar 2025 17:45:34 +0000
-Date: Thu, 6 Mar 2025 17:45:34 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Gregory Price <gourry@gourry.net>
-Cc: Bharata B Rao <bharata@amd.com>, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, AneeshKumar.KizhakeVeetil@arm.com,
-	Hasan.Maruf@amd.com, Jonathan.Cameron@huawei.com,
-	Michael.Day@amd.com, akpm@linux-foundation.org,
-	dave.hansen@intel.com, david@redhat.com, feng.tang@intel.com,
-	hannes@cmpxchg.org, honggyu.kim@sk.com, hughd@google.com,
-	jhubbard@nvidia.com, k.shutemov@gmail.com, kbusch@meta.com,
-	kmanaouil.dev@gmail.com, leesuyeon0506@gmail.com, leillc@google.com,
-	liam.howlett@oracle.com, mgorman@techsingularity.net,
-	mingo@redhat.com, nadav.amit@gmail.com, nphamcs@gmail.com,
-	peterz@infradead.org, raghavendra.kt@amd.com, riel@surriel.com,
-	rientjes@google.com, rppt@kernel.org, shivankg@amd.com,
-	shy828301@gmail.com, sj@kernel.org, vbabka@suse.cz,
-	weixugc@google.com, ying.huang@linux.alibaba.com, ziy@nvidia.com,
-	dave@stgolabs.net, yuanchu@google.com, hyeonggon.yoo@sk.com
-Subject: Re: [RFC PATCH 1/4] mm: migrate: Allow misplaced migration without
- VMA too
-Message-ID: <Z8nfPlJu8kxUvB8m@casper.infradead.org>
-References: <20250306054532.221138-1-bharata@amd.com>
- <20250306054532.221138-2-bharata@amd.com>
- <Z8naQNirs4HfTX0O@gourry-fedora-PF4VCD3F>
+	s=arc-20240116; t=1741283194; c=relaxed/simple;
+	bh=f2kzlgGHz5DJlPqLZ0PVUDZLi28fgrfy/MFPVQ25PHc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ir11DAIiHJKx70vJ1DAT3BTnzMi8SIqIwouKtQqBBHRcNW6ZOYB1M1h7/09nA2CSeN1jD82A2vUTwGCh/21EptMftYZAFZS7Q5wF1yP+lE3CNZKIi0KnNVIg4P8c9g6FIsEsTthfl8M0SKZeJgVdJItG+/LHYUooPEbL1MlVrIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QIgf5j6v; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43bdc607c16so7733665e9.1;
+        Thu, 06 Mar 2025 09:46:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741283191; x=1741887991; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aUrSbxsEvJj8SXyjEPV/R12/Jv2EEwFN9+C1T+zZXQc=;
+        b=QIgf5j6vsISF+tJNLMZt1OVCusmRbGmBhWGEZQ9uPZGMBP82nRIEJKKT5KY96hAsRm
+         1F+jmzwIu0D7iKlhgUXCf5UK+4Qb5vkxIknHG0hcIPqVfH/sT28aisnVgtG9br0A3d9M
+         QeFjP8Kg7gS9mRXzB1VrUC/AObTNNBvpsJOb2bO6TpcQnpFDFaSJ6gkgVXnbnTbaPPeQ
+         0XtlTQrH/cBw6Ao6VSPm43LLoDLkiejg0pAG0WNea+oFUIJ2AB+tQooPgDc9VP7xu8LA
+         bZFfa4w0r6ensJCfmCiJgof602H4BOtIUkag2cvGMK/+g4xTeE/VPOeFUbXbhPfSQvp4
+         DIpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741283191; x=1741887991;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aUrSbxsEvJj8SXyjEPV/R12/Jv2EEwFN9+C1T+zZXQc=;
+        b=O33tlwo5zqDWsZNVA4QM4Vdbyfy2tVnDYYwV9LXRbngG7XmMs4XDNlHd7qPNwpmDef
+         qBL0yh7+EKLNbdmuKENzOE9u9sQu86pDY9CX7bL+2RVkrVQfTqGW8heA0BqHvo/w+Kcp
+         xluPb2X6cUY2+5ZhgLfLT+c+WPLMlf9IwfAoCr1PXHErdKLluuxfBzS+H6+0MwoR/qdl
+         AyrE68Kf6mSDlMMZl7sWhp/1gwZVfAVJGiEpBBTV2ST85glm4iqCTjVUv+QF7SiMCc/v
+         AWzMOTzISpgiPKrPmvLJbVPGMjgXq23PSYmzBoERdKO7aS2VU9NAlplIze0ste3rvUc7
+         Oyzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVSajoRMEkL9Ht6QtCFzGZxwGEw80Fo+py6Vzwk0IeBcNCz81yI+PSHlK5kKxpztinsObF+8tO1jSG6DDg=@vger.kernel.org, AJvYcCVz91lnLIVRtZPOMoiUVcI/BcVNizvCi228huBuROyRo3TRpThDZ+sDD5JjTIcPXKqCQMziPgDzV1oFEfLp@vger.kernel.org, AJvYcCXERoJ05HheHrRvUf0v9Z2MTwBzx3nEyq4rkrvzytwBrXMsCwQLW+O7s6JiPkJZTsObZqotIjpwIENc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzakwiR1UlA/jlD6IKocvlGLf8bltV7wwMa2wWVOUPlhhTP8po1
+	dR7YQ/RVWlsG4gXP2289rWy/h3wd09DOmTZ1RzAqBOU0FocdxU9h/we0UrmTjUDsw9k12AlIxMS
+	0hWaT3OFKakB9RvecYMI7QGNiU5k=
+X-Gm-Gg: ASbGncvIUr2AzvSCHDL+Z0aLmTLE4XKMPAExF0djd2QR+4roT9SSyc+MiYkGiKD//wO
+	iMndFbxoRDCeAZaHD0hoeDHliKKJszglWVe/TkIwN12drI3/JUil5/7KGnEHr5IwOs1erDWfvBd
+	ERfiHL9lCDHKGAo+2KNR5rR6/X6SI=
+X-Google-Smtp-Source: AGHT+IF+Z+McyKCt0tY0iwvAfiYpK54AW+0yD8k4T9lQt6vf9W8VUA0as302U0SNTCEHO/HXH5POp/UjI8PXfQZp7/k=
+X-Received: by 2002:a05:600c:1ca7:b0:43b:da57:9f5d with SMTP id
+ 5b1f17b1804b1-43c5a5f70b2mr4187465e9.10.1741283190646; Thu, 06 Mar 2025
+ 09:46:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8naQNirs4HfTX0O@gourry-fedora-PF4VCD3F>
+References: <20250226105615.61087-1-clamor95@gmail.com> <20250226105615.61087-2-clamor95@gmail.com>
+ <hs62xcv5t6dupjelauzhytvjyosyjy2pmpk2cf53dmastma7d4@clug3pqdi734>
+In-Reply-To: <hs62xcv5t6dupjelauzhytvjyosyjy2pmpk2cf53dmastma7d4@clug3pqdi734>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Thu, 6 Mar 2025 19:46:18 +0200
+X-Gm-Features: AQ5f1JpvoAaBdSbBWHrxEstKgTCjrlWvxD4lWEk_9HloV5D3x9h_zS4BDs2CoWc
+Message-ID: <CAPVz0n1Y59bv4-oro=KHcA21jQppHOzOfK8uC9GgMMynGpxrVQ@mail.gmail.com>
+Subject: Re: [PATCH v1 1/6] ARM: tegra114: complete HOST1X devices binding
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 06, 2025 at 12:24:16PM -0500, Gregory Price wrote:
-> On Thu, Mar 06, 2025 at 11:15:29AM +0530, Bharata B Rao wrote:
-> > migrate_misplaced_folio_prepare() can be called from a
-> > context where VMA isn't available. Allow the migration
-> > to work from such contexts too.
-> > 
-> > Signed-off-by: Bharata B Rao <bharata@amd.com>
-> 
-> I have a similar patch in the unmapped pagecache RFC
-> 
-> we may also need this:
-> https://lore.kernel.org/linux-mm/20250107000346.1338481-4-gourry@gourry.net/
-> 
-> May be worth just pulling these ahead to avoid conflict.
+=D1=87=D1=82, 6 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 19:42 Thier=
+ry Reding <thierry.reding@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Wed, Feb 26, 2025 at 12:56:10PM +0200, Svyatoslav Ryhel wrote:
+> > Add nodes for devices on the HOST1X bus: VI, EPP, ISP, MSENC and TSEC.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >  arch/arm/boot/dts/nvidia/tegra114.dtsi | 65 ++++++++++++++++++++++++++
+> >  1 file changed, 65 insertions(+)
+>
+> It looks like we're missing device tree bindings for ISP, MSENC and
+> TSEC. I didn't see those posted anywhere. Can you add them?
+>
 
-Or not putting them in at all because this whole thing is a magnificent
-waste of time?
+You mean schema? Yes, sure, will do.
+
+> Thanks,
+> Thierry
 
