@@ -1,59 +1,78 @@
-Return-Path: <linux-kernel+bounces-549220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7444A54F23
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:32:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF7FA54F30
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:33:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEDBF3B56CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:30:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E42F53B5448
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BBA21171D;
-	Thu,  6 Mar 2025 15:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5660D21147B;
+	Thu,  6 Mar 2025 15:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sI6NcA05"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="fZezFYM7"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1658B22576A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 15:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD68C20E6F6;
+	Thu,  6 Mar 2025 15:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741274816; cv=none; b=g8dV31OowAzecT79en/f1rykWkq7343RhEMtT8jd3rdzoFxzKAuzzHtSdmtOn/+2KOj3KEfsYQPKT2dfmhGyX3X7HhSY1wIzZaPXWX23UMLE4Z0IBvNnfGYJ2aIGGSCH2+ozMrpinB290Vhye6YNUhJl5oejr5wfuWpjIWZDOgU=
+	t=1741274977; cv=none; b=IRHIIxnhHTSu4z+FUG1jnPL+DVjQ/+l8hBSPywd9glphIjDkRCWbkQ8G5a+S/7Mk8tJB2b+z6KSWsVnBfiByUe8t1BN4ZvywEhm7IIROE4YZ7K6krfQ1xn1r54Jki0kEDI+5b1GHr6pJL5bNYu9ArHZ94AU4TqorZ9xSrau2TEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741274816; c=relaxed/simple;
-	bh=nvJRaj+K8dARRU9iy0o2abF8QxEH+WyKBIUE7J+Q3P8=;
+	s=arc-20240116; t=1741274977; c=relaxed/simple;
+	bh=fOOQowHJHtW+gHqQRw+cobzO7tlDBCXQk58mod4OwP4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j4NGtG3ZzCh+2pszFH9tJgwX0GK5azxsyIpVCkUNx6/HwE1OQrjXc6ZiclwOcGb8yATwaYCmnmhazrWJYLeOTHiHm6GeyxjUUGZWYh74TKKV6xKHJRDOtuGPzKZ7/MDZqxNlna9Ct5DLJIsLbzq6jXOxXLmxnz0haBe8B8F6ThA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sI6NcA05; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5T9N2ceD22uhoxgQHNN1kfiGf/LRNSJbimPTyWXF3I8=; b=sI6NcA052+NV1hoDKNnd5OUSzY
-	DQKXgRufvgJahYNPLuwWljgFcC94Ad05DdEN5UmzXxrIIMDTjXCLENcnnoXR0o91YQcvXkiZf23ff
-	my9jo9Ixt48xbBFDQXZ4E2/5KN42U+nTY1+IbjPSVFq3HR5ctdBCTBRFy6CfrA3zedCOfgqIxq4bd
-	NLQ1u2YZp+FPxanq8ElxF0Lrq7JAnR0b0D0fiVwYw/cmyIJ78urr09YUKQtc3PrLOFQHdiJpD8yFg
-	Rpn+GkKvd5e3SBEs85Yw5smpf2p6ZVbhfZABiCKx3GoV/oM5zZsclzP/8vWrTuFPP4GywF9xAlybR
-	Uk5O+8tQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tqD7c-0000000BJhb-1v7n;
-	Thu, 06 Mar 2025 15:26:52 +0000
-Date: Thu, 6 Mar 2025 07:26:52 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Sooyong Suk <s.suk@samsung.com>
-Cc: viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
-	akpm@linux-foundation.org, linux-mm@kvack.org,
-	jaewon31.kim@gmail.com, spssyr@gmail.com
-Subject: Re: [RFC PATCH] block, fs: use FOLL_LONGTERM as gup_flags for direct
- IO
-Message-ID: <Z8m-vJ6mP1Sh2pt3@infradead.org>
-References: <CGME20250306074101epcas1p4b24ac546f93df2c7fe3176607b20e47f@epcas1p4.samsung.com>
- <20250306074056.246582-1-s.suk@samsung.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H8XHDjItxwBtyNG7qjOXWb9c/m+sKqC1WMdiuoxZio+iEGRqslPGQuiM5HidzP6EP+lLRbnrFegQKg65waUh8yJi+1/zDEAr/52f0ftO8Hwij3R5WDD/0Pcc9evkJAqhsdzkBxaC3fkHzrl5b3RRA3HAtYj9u0HS0J2Wq/8wHsA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=fZezFYM7; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=+IzmAbgju3FDk0Ryltpo+ejh+hoS4Rf/7x9rJ3Yw0EU=; b=fZezFYM7Q7hsuSZ7fLNC1YsWMD
+	DMwJd4MIBQUfPVlx1hne+poqp2G3TNmrhsdZ10bbkAJkvrwOoaKZRJI6Frn1wp/XUr/I4vKrB3sgN
+	XPoJWax9YeByq6lz1rUci/uJ0sZ1jzmG+TQ3rdi1O35pli7N37Qp6ofYEqu27pc6pHGs=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tqDA0-002pzB-Ms; Thu, 06 Mar 2025 16:29:20 +0100
+Date: Thu, 6 Mar 2025 16:29:20 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jie Luo <quic_luoj@quicinc.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lei Wei <quic_leiwei@quicinc.com>,
+	Suruchi Agarwal <quic_suruchia@quicinc.com>,
+	Pavithra R <quic_pavir@quicinc.com>,
+	Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-hardening@vger.kernel.org,
+	quic_kkumarcs@quicinc.com, quic_linchen@quicinc.com,
+	srinivas.kandagatla@linaro.org, bartosz.golaszewski@linaro.org,
+	john@phrozen.org
+Subject: Re: [PATCH net-next v3 04/14] net: ethernet: qualcomm: Initialize
+ PPE buffer management for IPQ9574
+Message-ID: <74f89e1e-c440-42cb-9d8e-be213a3d83a4@lunn.ch>
+References: <20250209-qcom_ipq_ppe-v3-0-453ea18d3271@quicinc.com>
+ <20250209-qcom_ipq_ppe-v3-4-453ea18d3271@quicinc.com>
+ <a79027ed-012c-4771-982c-b80b55ab0c8a@lunn.ch>
+ <c592c262-5928-476f-ac2a-615c44d67277@quicinc.com>
+ <33529292-00cd-4a0f-87e4-b8127ca722a4@lunn.ch>
+ <cffdd8e8-76bc-4424-8cdb-d48f5010686d@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,17 +81,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250306074056.246582-1-s.suk@samsung.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <cffdd8e8-76bc-4424-8cdb-d48f5010686d@quicinc.com>
 
-On Thu, Mar 06, 2025 at 04:40:56PM +0900, Sooyong Suk wrote:
-> There are GUP references to pages that are serving as direct IO buffers.
-> Those pages can be allocated from CMA pageblocks despite they can be
-> pinned until the DIO is completed.
+> Thanks for the suggestion. Just to clarify, we preferred
+> u32p_replace_bits() over FIELD_PREP() because the former does
+> a clear-and-set operation against a given mask, where as with
+> FIELD_PREP(), we need to clear the bits first before we use the
+> macro and then set it. Due to this, we preferred using
+> u32_replace_bits() since it made the macro definitions to modify
+> the registers simpler. Given this, would it be acceptable to
+> document u32p_replace_bits() better, as it is already being used
+> by other drivers as well?
 
-direct I/O is eactly the case that is not FOLL_LONGTERM and one of
-the reasons to even have the flag.  So big fat no to this.
+I suggest you submit a patch to those who maintain that file and see
+what they say.
 
-You also completely failed to address the relevant mailinglist and
-maintainers.
+But maybe also look at how others are using u32p_replace_bits() and
+should it be wrapped up in a macro? FIELD_MOD()? These macros do a lot
+of build time checking that you are not overflowing the type. It would
+be good to have that to catch bugs at build time, rather than years
+later at runtime.
+
+      Andrew
 
