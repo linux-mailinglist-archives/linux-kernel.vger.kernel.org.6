@@ -1,86 +1,55 @@
-Return-Path: <linux-kernel+bounces-549974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7440DA55960
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:07:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EBC6A55963
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:07:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F80D16EEB8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:07:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E6B2170C6D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:07:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A89327605B;
-	Thu,  6 Mar 2025 22:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4044276D16;
+	Thu,  6 Mar 2025 22:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LbqZbiDK"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="O49Galcy"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9246207DEB
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 22:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54A7727BF7B
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 22:07:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741298832; cv=none; b=Jj17gLMQmxJhNxg27m7KWrTvef/SYs5y8hwfo29g4e48JNWaXMCwRmF9k49a0H96Erq634YOc5oUb/ygZdoUW2JrBzcVo5WT2EjvyF8j2tVE3GC1B9ckaW86r9xItu7igXocEBw05DsVD0Mh34CeNDV/ITrTPbQ/9ZsNZgSnkIM=
+	t=1741298855; cv=none; b=pg9teg92amGr3HU6xQf54mIMZmB+4MFqH2FGfN73uOEgHezINYModu0JkHrd+0ULV1ai2R98cQ2pr9nSaXsXsRxllQIOK4uAY5vM5zcaVd9A6Nzvoixiis62//oTIsVCMLtLHud1pf4wqlO6ufW2HMhSXUQzzVLnTVi9uxeALx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741298832; c=relaxed/simple;
-	bh=/J29JQjFq9DVthLpXYU+deAdS67GpsHp9FybRPwUr8A=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Jh/vaeeml47CTYBkS1b6QModsxUQ1dhkGbtI23M4GP2K7/WzZi3JApVIqRoaAJG9nrJTzR8ql0ynBVaHKEXo/zZE+AEtTb+FSRTUmbarPKZtWT0Y7I64Ozb9+2jlfW4XHx7PLyn8FgnZqsdrvXtrYweOOMhEFisqPtoYVhaasdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LbqZbiDK; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741298829;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vswehmZDeJdez/iK9wxg1S+wJpaT13TRqOb2nQ8xIJQ=;
-	b=LbqZbiDKruYH6IfOhrDIloGcX/MsKzSUIy5qOavWNUY/HS2c0A3IBgVar5opIOPoq0bzLC
-	QD8WCPjeDCsLjV7g28H7vyoednxextjPXhrSm4KcGTFfGmB0Fgz/RzqmV/AZ9SnxEsqGYi
-	jPeXoWmSyHtvIn43M4kWSmHR7+UgWxw=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-641-BJFEhpUsM3e3PXrAu6-ReA-1; Thu, 06 Mar 2025 17:07:08 -0500
-X-MC-Unique: BJFEhpUsM3e3PXrAu6-ReA-1
-X-Mimecast-MFC-AGG-ID: BJFEhpUsM3e3PXrAu6-ReA_1741298827
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-390f365274dso584127f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 14:07:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741298827; x=1741903627;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vswehmZDeJdez/iK9wxg1S+wJpaT13TRqOb2nQ8xIJQ=;
-        b=A+avcOrFnyHq8EhKeGNtMyaDHMn+3cxzh9TbH+MYlKoHBsqN0I5lrwjxcDWSs/4hZh
-         29o9wOgnrlyhsvwGvc9edWfJSgT8UXW5ey9o37BHpFb2pNrQ3gTzUbX/ZllCe45/Ou3p
-         QblJpRza/7VJnK+XZ1pJjqdqGq/eanm466re4EbM3cBrpvJWymbfr4nw4dJCcOkd5R7s
-         xjXVp5wrqDfnAnVnOwVJOLSIk75PtzA5PDHnbqHWRDIqP6QRr+I0sDIIx9ru+yqaldZu
-         1X5TY09kBD8YmwA6DQjaxWST4ymddCv+SVNcyS+fOeJdfcSkY1LJ1ADf+MdZEV/aoT+N
-         6fDA==
-X-Gm-Message-State: AOJu0YwN3PJ20NZCsJw50F59BfHgIgQKZ9ECKyCKjhd22sy6L+xqf6K1
-	iy4kamSfymG2AgKnyPE1sKl2iQsW/fVC7+ZMNjWSl2UEWWt89tUHMb9ZkNqjb19BoprCop7DGWy
-	ZtSVNuwzQVxDSVgUfvJ9SLYnVkNQyidmDGJ7FKq7Z90bWklPSoHKzv416lyD1Lw==
-X-Gm-Gg: ASbGncsmRlUlAfVl0llKuP5QuWSFOZnLYqQCeBzipzdN3WUk3PqeMj4jtltDpO7EeLV
-	rT3Cs+MJbXmMkj+BgGZxw0A22pBbl/k8pNSTxQ+yMxqPVtB5LyULN1YKColeoBWVgPDTyXfm9lS
-	2518Fd4kynDx51QPSHvn03HD1YfD57fcVPXSiCd8c41HyoaB3k/hW4BclasJI60n0ToHSv9kfPk
-	7wItQ8VVx/dD522Hj8YYB0bIE1bAFkIfkYM6foRzOe4q7/HsQZNCYzvQvmrrQqpPEM9UsckZghB
-	94CzVIR1dXMFdsjd0j2G24NfDW/aE6sixijBI6xNptZxPXOHcsKZAkTt1k4YoGnZkmDopd9T/ZT
-	EClm64NqmnBxJww6CatZXiFd9eO9jBFj9ZpQgVy8mKIQ=
-X-Received: by 2002:a5d:64a4:0:b0:38f:23c4:208c with SMTP id ffacd0b85a97d-3912982ea9amr3805365f8f.18.1741298827162;
-        Thu, 06 Mar 2025 14:07:07 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGjSSUspi6t7LatAF5FmGFjjgPEDpC9HE5gf7TeC3+eZMgqEZWok0ozSSnXd6nKqbn0l165QA==
-X-Received: by 2002:a5d:64a4:0:b0:38f:23c4:208c with SMTP id ffacd0b85a97d-3912982ea9amr3805357f8f.18.1741298826747;
-        Thu, 06 Mar 2025 14:07:06 -0800 (PST)
-Received: from ?IPV6:2003:cb:c74d:4400:2f98:9b35:6822:ce54? (p200300cbc74d44002f989b356822ce54.dip0.t-ipconnect.de. [2003:cb:c74d:4400:2f98:9b35:6822:ce54])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c015a29sm3189021f8f.42.2025.03.06.14.07.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 14:07:05 -0800 (PST)
-Message-ID: <af3739da-771a-4987-86b7-d6f7f82252f6@redhat.com>
-Date: Thu, 6 Mar 2025 23:07:04 +0100
+	s=arc-20240116; t=1741298855; c=relaxed/simple;
+	bh=7tDo5DWEMkYG3zcoTZWVRr+FxxU6j/PboeVsoG8JLU0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=i+MOH5U8zi8jI2SgwiNRdk3PS8di1knz4Wpgs6GtfkHk+5MBaLNz/kDE1fbnK2VvOn5e9Rar8xiaak3pN6Nv98ynGhmDH7bOdK7UpsWIjnSA+O7umA6GiDuiixjqK66KfIDnBu3zB85pmv8OVhkp3cFZlvZLFct/Vuqg1I+Mi0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=O49Galcy; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1741298851;
+ bh=0HCYfVxow/nYeBfs/TuiH44ZuKNSPm8doYeM7l980w8=;
+ b=O49GalcyoaCyVCNa4IEn9iDmdhjKIdJuDpbieBTkvB7FgL1643d8f1JeNNqQ170SbryoZq2MY
+ rPuFNlRJL6Ph8qLSlSPvmIf/rl7W19yw5Sp2EuMkFmlISxp3wT6jOMCNPFYOUIou9brPxEV/+Yp
+ iPO3xg8c953BBGM1jefAm1b6vXzwqKuprLIsBCpDochhaYh9JtY93JQ/6XS8RNsxaAmTNTcOWT+
+ lcSTorJaEn9Xqkn11WS94q1tVCF9PuDnpOX5gdYx8D6wr4gQ+Gu1zBvKMS0G4PnaBrgKjksSZbV
+ MMlNq3NJMkx+Z2ebWKgITJ0aI4DmCZXBrVXSc5SN14GQ==
+X-Forward-Email-ID: 67ca1ca0c1763851c065bef2
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <3ab13afd-0a9f-485e-bdf2-7b413d418065@kwiboo.se>
+Date: Thu, 6 Mar 2025 23:07:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,257 +57,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/1] KVM: s390: pv: fix race when making a page secure
-From: David Hildenbrand <david@redhat.com>
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>, kvm@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
- frankja@linux.ibm.com, borntraeger@de.ibm.com, nrb@linux.ibm.com,
- seiden@linux.ibm.com, nsg@linux.ibm.com, schlameuss@linux.ibm.com,
- hca@linux.ibm.com
-References: <20250304182304.178746-1-imbrenda@linux.ibm.com>
- <20250304182304.178746-2-imbrenda@linux.ibm.com>
- <c60e60a2-07ed-4692-8952-c125c34122f8@redhat.com>
+Subject: Re: [PATCH 0/3] Use DELAY_ENABLE macro for RK3328, RK3566/RK3568 and
+ RK3588
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20250306203858.1677595-1-jonas@kwiboo.se>
+ <41bb2c8d963e890768bceb477488250e@manjaro.org>
 Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <c60e60a2-07ed-4692-8952-c125c34122f8@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <41bb2c8d963e890768bceb477488250e@manjaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06.03.25 11:23, David Hildenbrand wrote:
->>    /**
->> - * make_folio_secure() - make a folio secure
->> + * __make_folio_secure() - make a folio secure
->>     * @folio: the folio to make secure
->>     * @uvcb: the uvcb that describes the UVC to be used
->>     *
->> @@ -243,14 +276,13 @@ static int expected_folio_refs(struct folio *folio)
->>     *         -EINVAL if the UVC failed for other reasons.
->>     *
->>     * Context: The caller must hold exactly one extra reference on the folio
->> - *          (it's the same logic as split_folio())
->> + *          (it's the same logic as split_folio()), and the folio must be
->> + *          locked.
->>     */
->> -int make_folio_secure(struct folio *folio, struct uv_cb_header *uvcb)
->> +static int __make_folio_secure(struct folio *folio, struct uv_cb_header *uvcb)
+Hi Dragan,
+
+On 2025-03-06 22:41, Dragan Simic wrote:
+> Hello Jonas,
 > 
-> One more nit: -EBUSY can no longer be returned from his function, so you
-> might just remove it from the doc above.
+> On 2025-03-06 21:38, Jonas Karlman wrote:
+>> Almost all Rockchip GMAC variants use the DELAY_ENABLE macro to help
+>> enable or disable use of MAC rx/tx delay. However, RK3328, 
+>> RK3566/RK3568
+>> and RK3588 GMAC driver does not.
+>>
+>> Use of the DELAY_ENABLE macro help ensure the MAC rx/tx delay is
+>> disabled, instead of being enabled and using a zero delay, when
+>> RGMII_ID/RXID/TXID is used.
+>>
+>> RK3328 driver was merged around the same time as when DELAY_ENABLE was
+>> introduced so it is understandable why it was missed. Both 
+>> RK3566/RK3568
+>> and RK3588 support were introduced much later yet they also missed 
+>> using
+>> the DELAY_ENABLE macro (so did vendor kernel at that time).
+>>
+>> This series fixes all these cases to unify how GMAC delay feature is
+>> enabled or disabled across the different GMAC variants.
+>>
+>> Jonas Karlman (3):
+>>   net: stmmac: dwmac-rk: Use DELAY_ENABLE macro for RK3328
+>>   net: stmmac: dwmac-rk: Use DELAY_ENABLE macro for RK3566/RK3568
+>>   net: stmmac: dwmac-rk: Use DELAY_ENABLE macro for RK3588
+>>
+>>  .../net/ethernet/stmicro/stmmac/dwmac-rk.c    | 19 ++++++++++---------
+>>  1 file changed, 10 insertions(+), 9 deletions(-)
 > 
+> As far as I can tell, the RV1126 GMAC should also be converted to use
+> the DELAY_ENABLE macro, which the vendor kernel already does. [*]  
+> Perhaps
+> that could be performed in new patch 4/4 in this series?
+
+Good catch, the RV1126 seem to use a slight different M0/M1 variant and
+unfortunately I do not have access to any RV1126 board to do any runtime
+testing. For RK3328, RK356x and RK3588 I could at least do runtime
+testing.
+
+I can add an untested patch for RV1126 in a v2 if needed :-)
+
 > 
-> While chasing a very weird folio split bug that seems to result in late
-> validation issues (:/), I was wondering if __gmap_destroy_page could
-> similarly be problematic.
+> BTW, it would be quite neat to introduce the DELAY_VALUE macro, which
+> makes the function calls a bit more compact. [*]
+
+Personally, I do not see a real need for the DELAY_VALUE macro, current
+use of the soc_GMAC_CLK_yX_DL_CFG() macro is readable enough.
+
+The ENABLE_DELAY at least helps remove an otherwise more complex enable
+or disable conditional handling.
+
+Regards,
+Jonas
+
 > 
-> We're now no longer holding the PTL while performing the operation.
-> 
-> (not that that would explain the issue I am chasing, because
-> gmap_destroy_page() is never called in my setup)
-> 
-
-Okay, I've been debugging for way to long the weird issue I am seeing, and I
-did not find the root cause yet. But the following things are problematic:
-
-1) To walk the page tables, we need the mmap lock in read mode.
-
-2) To walk the page tables, we must know that a VMA exists
-
-3) get_locked_pte() must not be used on hugetlb areas.
-
-Further, the following things should be cleaned up
-
-4) s390_wiggle_split_folio() is only used in that file
-
-5) gmap_make_secure() likely should be returning -EFAULT
-
-
-See below, I went with a folio_walk (which also checks for pte_present()
-like the old code did, but that should not matter here) so we can get rid of the
-get_locked_pte() usage completely.
-
-
- From 1b9a4306b79a352daf80708252d166114e7335de Mon Sep 17 00:00:00 2001
-From: David Hildenbrand <david@redhat.com>
-Date: Thu, 6 Mar 2025 22:43:43 +0100
-Subject: [PATCH] merge
-
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
-  arch/s390/include/asm/uv.h |  1 -
-  arch/s390/kernel/uv.c      | 41 ++++++++++++++++++--------------------
-  arch/s390/kvm/gmap.c       |  2 +-
-  3 files changed, 20 insertions(+), 24 deletions(-)
-
-diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
-index fa33a6ff2fabf..46fb0ef6f9847 100644
---- a/arch/s390/include/asm/uv.h
-+++ b/arch/s390/include/asm/uv.h
-@@ -634,7 +634,6 @@ int uv_convert_from_secure_pte(pte_t pte);
-  int make_hva_secure(struct mm_struct *mm, unsigned long hva, struct uv_cb_header *uvcb);
-  int uv_convert_from_secure(unsigned long paddr);
-  int uv_convert_from_secure_folio(struct folio *folio);
--int s390_wiggle_split_folio(struct mm_struct *mm, struct folio *folio, bool split);
-  
-  void setup_uv(void);
-  
-diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
-index 63420a5f3ee57..11a1894e63405 100644
---- a/arch/s390/kernel/uv.c
-+++ b/arch/s390/kernel/uv.c
-@@ -270,7 +270,6 @@ static int expected_folio_refs(struct folio *folio)
-   *
-   * Return: 0 on success;
-   *         -EBUSY if the folio is in writeback or has too many references;
-- *         -E2BIG if the folio is large;
-   *         -EAGAIN if the UVC needs to be attempted again;
-   *         -ENXIO if the address is not mapped;
-   *         -EINVAL if the UVC failed for other reasons.
-@@ -324,17 +323,6 @@ static int make_folio_secure(struct mm_struct *mm, struct folio *folio, struct u
-  	return rc;
-  }
-  
--static pte_t *get_locked_valid_pte(struct mm_struct *mm, unsigned long hva, spinlock_t **ptl)
--{
--	pte_t *ptep = get_locked_pte(mm, hva, ptl);
--
--	if (ptep && (pte_val(*ptep) & _PAGE_INVALID)) {
--		pte_unmap_unlock(ptep, *ptl);
--		ptep = NULL;
--	}
--	return ptep;
--}
--
-  /**
-   * s390_wiggle_split_folio() - try to drain extra references to a folio and optionally split
-   * @mm:    the mm containing the folio to work on
-@@ -344,7 +332,7 @@ static pte_t *get_locked_valid_pte(struct mm_struct *mm, unsigned long hva, spin
-   * Context: Must be called while holding an extra reference to the folio;
-   *          the mm lock should not be held.
-   */
--int s390_wiggle_split_folio(struct mm_struct *mm, struct folio *folio, bool split)
-+static int s390_wiggle_split_folio(struct mm_struct *mm, struct folio *folio, bool split)
-  {
-  	int rc;
-  
-@@ -361,20 +349,28 @@ int s390_wiggle_split_folio(struct mm_struct *mm, struct folio *folio, bool spli
-  	}
-  	return -EAGAIN;
-  }
--EXPORT_SYMBOL_GPL(s390_wiggle_split_folio);
-  
-  int make_hva_secure(struct mm_struct *mm, unsigned long hva, struct uv_cb_header *uvcb)
-  {
-+	struct vm_area_struct *vma;
-+	struct folio_walk fw;
-  	struct folio *folio;
--	spinlock_t *ptelock;
--	pte_t *ptep;
-  	int rc;
-  
--	ptep = get_locked_valid_pte(mm, hva, &ptelock);
--	if (!ptep)
-+	mmap_read_lock(mm);
-+
-+	vma = vma_lookup(mm, hva);
-+	if (!vma) {
-+		mmap_read_unlock(mm);
-+		return -EFAULT;
-+	}
-+
-+	folio = folio_walk_start(&fw, vma, hva, 0);
-+	if (!folio) {
-+		mmap_read_unlock(mm);
-  		return -ENXIO;
-+	}
-  
--	folio = page_folio(pte_page(*ptep));
-  	folio_get(folio);
-  	/*
-  	 * Secure pages cannot be huge and userspace should not combine both.
-@@ -385,14 +381,15 @@ int make_hva_secure(struct mm_struct *mm, unsigned long hva, struct uv_cb_header
-  	 * KVM_RUN will return -EFAULT.
-  	 */
-  	if (folio_test_hugetlb(folio))
--		rc =  -EFAULT;
-+		rc = -EFAULT;
-  	else if (folio_test_large(folio))
-  		rc = -E2BIG;
--	else if (!pte_write(*ptep))
-+	else if (!pte_write(fw.pte) || (pte_val(fw.pte) & _PAGE_INVALID))
-  		rc = -ENXIO;
-  	else
-  		rc = make_folio_secure(mm, folio, uvcb);
--	pte_unmap_unlock(ptep, ptelock);
-+	folio_walk_end(&fw, vma);
-+	mmap_read_unlock(mm);
-  
-  	if (rc == -E2BIG || rc == -EBUSY)
-  		rc = s390_wiggle_split_folio(mm, folio, rc == -E2BIG);
-diff --git a/arch/s390/kvm/gmap.c b/arch/s390/kvm/gmap.c
-index 21580cfecc6ac..1a88b32e7c134 100644
---- a/arch/s390/kvm/gmap.c
-+++ b/arch/s390/kvm/gmap.c
-@@ -41,7 +41,7 @@ int gmap_make_secure(struct gmap *gmap, unsigned long gaddr, void *uvcb)
-  
-  	vmaddr = gfn_to_hva(kvm, gpa_to_gfn(gaddr));
-  	if (kvm_is_error_hva(vmaddr))
--		rc = -ENXIO;
-+		rc = -EFAULT;
-  	else
-  		rc = make_hva_secure(gmap->mm, vmaddr, uvcb);
-  
--- 
-2.48.1
-
-
-
--- 
-Cheers,
-
-David / dhildenb
+> [*] 
+> https://raw.githubusercontent.com/rockchip-linux/kernel/refs/heads/develop-5.10/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.c
 
 
