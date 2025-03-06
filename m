@@ -1,234 +1,173 @@
-Return-Path: <linux-kernel+bounces-548995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA7B6A54BD9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:17:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA96AA54BE5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:19:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A4F9E7A326F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:16:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0620A3B3B6F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A58212D7D;
-	Thu,  6 Mar 2025 13:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CVOa4SZ6"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F822135BC;
+	Thu,  6 Mar 2025 13:16:31 +0000 (UTC)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86617210F5B;
-	Thu,  6 Mar 2025 13:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B4E211469;
+	Thu,  6 Mar 2025 13:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741266984; cv=none; b=FJakL4p89rMFy1fs890wS8Z+vkhEfTYtLtakDUyeDHcahrsELKyRnVq+x32NUWCo2SlOF9PiqABrUl40/E5v0CK214yohykljRHlnwsvBTE/z47s3lx/oaFqdTJJusKQTzqKISytaOOpygewU6bymq1lB2g0Qqo3glVGP9SdKS0=
+	t=1741266991; cv=none; b=YUezALA8s25TeRneGpbFdNm26b3Ba6/TZp+sVum2gqSZc+rSWRkuBg9XABKTWd79ulz9YVKEKquPWfm7BWD1jt3jU0pnzHzP1KMbmp+gofagM1O9Trt3cGNoZEC8MI8jTEJLw3v+TrutXQ89JKDJ8IbuK4dDUcS6tm0q85Qepx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741266984; c=relaxed/simple;
-	bh=DH84FFsst4rTl71ErFsSV5nN9QN9azV2zCDNHg/9Zzc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=h7WHbEYD361OKrWbUcjtaggELZ8+GZhlNVPdBaWDBqKaW0zSWdbNUwZ1HTv0q4n2cgNow95qrqSwbnuIEvIy+yEEWE7L8b2j1TVN29TrAO9y7X1NJETbnyFoDtOQpn6yfXwOQU4qFNsFrhLe3X/Gv3ytsBHQF6joR9rUZbVMrv8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CVOa4SZ6; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5267Mfh7017954;
-	Thu, 6 Mar 2025 13:16:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WMs9v8KjOG4v5v0BJmhTd3qeTYh7hV+U8VJ1PN1W6C8=; b=CVOa4SZ6Dgk6P3C9
-	/j1vKEN9YJ8jc/9aCvMS5R9iZrntZbrMFLwQ7Pf2L4Cb4gM468ZdLZA7w12ZiQBq
-	ALXWcrPuZwWaxYfyWNMTLzxhbFo12/IYMKADQw1mM1N+p+JGLXbJU/avw9w2Bicp
-	5lnbs9ZgDjEtkqXVngxOs/uLCgvow29hAuU/jxRc20oSED1nfBinVVc/RLHXfdVG
-	ijcjglo9LySoCEtiVnEf76N1Zvgvkl95YT9VRW6tzA32LpTtNN9+tHajSk7TG8HS
-	IWoBlj19GknA+f14YhCFLjbOkfG5MVkpnHIl0aekE+Gfk9NmHmp6MjnFKf2j5PwJ
-	Dgzpbw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45778t9242-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 13:16:14 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 526DGDCP030013
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 6 Mar 2025 13:16:13 GMT
-Received: from [10.50.63.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Mar 2025
- 05:16:09 -0800
-Message-ID: <feea4c41-d3cf-4dc7-d197-6d91313d90ff@quicinc.com>
-Date: Thu, 6 Mar 2025 18:46:06 +0530
+	s=arc-20240116; t=1741266991; c=relaxed/simple;
+	bh=Id/YqAO3zpxcKmfd61Fz8/37PE/mK6E1qlRG89GO/lE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oZVW69HiLF6AfBtcrL4GHSrCkXf3G6EGIoYBXKQN9GqLuFdCEEr6A2dqD3zK0MEBMYzDs561pDQgvA4TIznuxW0DwNB5kkONxt86QTWtP/1kF19Dtg4SCn20+YiYthCJpUXdinDRlRluYQxpb0dsNgedGmKrdf5+9n479nstPdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e4ad1d67bdso941340a12.2;
+        Thu, 06 Mar 2025 05:16:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741266987; x=1741871787;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kCEwMcpguVILuRqhPxpMN+D94R4VwDza0OZembQSer0=;
+        b=X5erX6LkpCmP9ULOxt1LaSfv4pvlazwqvoSXi9lRzm1HbJmul1t9tEB47KZmg8fERU
+         t//UjNV5YfFxwtiVUsCkM0XIqS32kQsCtyl3xloJheWbYtlfujJKpuqrh7AoFXF7+zSe
+         YghRkeVjAmNov4Yn5CLNNljC1c1BPxGgYpArKULVhAsmaCxEA6kFxCA3pwwa0ptMozUj
+         OP5ag0HBVN0fR2yOnwXvZfZBHO7R2n7gKjSxi8IT6BqPrPwd1sY/UTnBuraqBUbqG0JI
+         K7h6bB7E1WixldO6L5CkS45AK22+Lq5UrWGctCFJWoCRAuDFGiTZo9/WXyMLryFmjSQv
+         ZlTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVPQtpBMRsAQp/HKhuipSAudW6HMeQGu28MfgcN/KAi7YX3J0OSjXHIWiY4PMpdAbpIMY00sUuBE462V9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVWCgbVBlG04T340z0IKbFnSktIdJxyu1eNJf+qnI1vqKT+D3j
+	Y/c/rZiO+4B0ltHoAmjawnNAZmxXxzsXOoQkj2liJLKrpDMtEz3A8pifbQ==
+X-Gm-Gg: ASbGncuPwj6RcW2vrv3rPEryw1JM7dPOSyInxMRbPXlWMFNvrTQLUrskeoC5je6rlM5
+	ITXmdwuoxMekbIrk52UVXEkJyd2TJTKbWsj0C8JzCC4VyvMC+07XDajVhnktW1FKdiMOVoZAHYW
+	s1MXk9ZxZ1QLJ7jFkaJvgEeML+ww99/W4iQqvONChFfsDHt8R4gEMVthTAotj3cqZFXCWzzbCu5
+	pvLBnjuRSl+n7QMgIswPFgxRNOZZ2dzJ4ea0VWXdVbW2pgIXv8YGB5dHZ82uXGU0x1EdcaV0r7g
+	5mb1UU8IHFicd1zgxazT/1tAz9XwynKJQEJK
+X-Google-Smtp-Source: AGHT+IFufcaw8qwbnHKO1xusmGK7yPkQTo03GQWWeQsSxaOc6Fphrc2FVZdmaNXHcsnSQqTzyYSfiA==
+X-Received: by 2002:a17:907:198b:b0:abf:6f87:c720 with SMTP id a640c23a62f3a-ac20d94a4bemr666410266b.29.1741266987065;
+        Thu, 06 Mar 2025 05:16:27 -0800 (PST)
+Received: from localhost ([2a03:2880:30ff:73::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2397363fasm94937266b.102.2025.03.06.05.16.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 05:16:26 -0800 (PST)
+From: Breno Leitao <leitao@debian.org>
+Date: Thu, 06 Mar 2025 05:16:18 -0800
+Subject: [PATCH net v2] netpoll: hold rcu read lock in __netpoll_send_skb()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v2 7/7] media: platform: qcom/iris: add sm8650 support
-Content-Language: en-US
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250305-topic-sm8x50-iris-v10-v2-0-bd65a3fc099e@linaro.org>
- <20250305-topic-sm8x50-iris-v10-v2-7-bd65a3fc099e@linaro.org>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <20250305-topic-sm8x50-iris-v10-v2-7-bd65a3fc099e@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: J6r7M2itE_A9dJvmYZaDh6AxpB8eRTlp
-X-Authority-Analysis: v=2.4 cv=U5poDfru c=1 sm=1 tr=0 ts=67c9a01e cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=1rntOs83oLOrlNc53msA:9 a=QEXdDO2ut3YA:10
- a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: J6r7M2itE_A9dJvmYZaDh6AxpB8eRTlp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- mlxlogscore=999 adultscore=0 clxscore=1015 malwarescore=0 bulkscore=0
- mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503060100
+Message-Id: <20250306-netpoll_rcu_v2-v2-1-bc4f5c51742a@debian.org>
+X-B4-Tracking: v=1; b=H4sIACGgyWcC/3XNyQqDMBRA0V8Jb21Khg7iqv9RRDK86ANJJElDi
+ /jvBfddXzh3h4KZsMDAdsjYqFCKMDDVMXCLiTNy8jAwUELdhBaaR6xbWtcpu/fUFA/oHwqtcLb
+ X0DHYMgb6nOALIlYYOwYLlZry95w0eaZ/XpNc8rvVV98bIYNRT4+WTLykPMN4HMcPq7vQtLIAA
+ AA=
+X-Change-ID: 20250303-netpoll_rcu_v2-fed72eb0cb83
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Amerigo Wang <amwang@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel-team@meta.com, Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-42535
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2349; i=leitao@debian.org;
+ h=from:subject:message-id; bh=Id/YqAO3zpxcKmfd61Fz8/37PE/mK6E1qlRG89GO/lE=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBnyaApynwTtXe9hxL6ZEj+q1834fk/uLfSyHulz
+ +ycL+I0IJiJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCZ8mgKQAKCRA1o5Of/Hh3
+ ba8vEACjT3zJbVPv2G4S03YDiL6fNJhhH2p18xOMxykOUMFmS3d8S68f15wvoeYql1chIPv7Kz4
+ /d4K6yBGRgKd6r85ZT6DCNwIVzgOHUe+ZZ/+p3ksyF9MZb0lrBMMxfpnucALPoqXCYiXAT38Nv3
+ sGLa6GpHgb++7HxrMYdNis9Q1VEqfBRfCinITCaTHPUoHOQto5h60RyvcHoC+e/TC6LF6C7ZbQb
+ TtMSMJZ5SFlK6TdoFerQH6JMZGo82uz0HeNEOwkPgvasjjDk+87IM7HKCVyDk6IEruCWZbUv6Sx
+ tF8Rib+o87gy0IdAtWomMSQIjLvL7NxKIb0qFLcUxqa7fvw4LQuoSJwj7WEepoVcV1igNDmgjgc
+ pXDJXxWRoDu4mMHgCMHjETPn20ukJ2600noebqpkDPwh4gt05HkrI8h8cU1zEx4LhsHT9pK0S06
+ qKSBvZp4jpRFNiqK2GqkRB2kTI2OKTbqR7gOBcszrtCwMJaS3WDyIdrY0+XZb/unDjhrfOa+Qya
+ XIJjTgRH+4L51TsNPnb9wiyNv54VSunc4gPpWg3oO+Ag2azEIvprH99YRFKRcjFFwrumkxIh2l/
+ 0EHTO0bpRxPMeZBWATFFCvYWRxl6ywrnBix9IW2vQeWrGY/wghWyULjPSvB2gFP6Ch2ZQjzj7Al
+ YoLOnZiYr1FRa/A==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
+The function __netpoll_send_skb() is being invoked without holding the
+RCU read lock. This oversight triggers a warning message when
+CONFIG_PROVE_RCU_LIST is enabled:
 
+	net/core/netpoll.c:330 suspicious rcu_dereference_check() usage!
 
-On 3/6/2025 12:35 AM, Neil Armstrong wrote:
-> Add support for the SM8650 platform by re-using the SM8550
-> definitions and using the vpu33 ops.
-> 
-> The SM8650/vpu33 requires more reset lines, but the H.284
-> decoder capabilities are identical.
-> 
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  .../platform/qcom/iris/iris_platform_common.h      |  1 +
->  .../platform/qcom/iris/iris_platform_sm8550.c      | 64 ++++++++++++++++++++++
->  drivers/media/platform/qcom/iris/iris_probe.c      |  4 ++
->  3 files changed, 69 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> index fdd40fd80178c4c66b37e392d07a0a62f492f108..6bc3a7975b04d612f6c89206eae95dac678695fc 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
-> @@ -35,6 +35,7 @@ enum pipe_type {
->  
->  extern struct iris_platform_data sm8250_data;
->  extern struct iris_platform_data sm8550_data;
-> +extern struct iris_platform_data sm8650_data;
->  
->  enum platform_clk_type {
->  	IRIS_AXI_CLK,
-> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
-> index 35d278996c430f2856d0fe59586930061a271c3e..d0f8fa960d53367023e41bc5807ba3f8beae2efc 100644
-> --- a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
-> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
-> @@ -144,6 +144,10 @@ static const struct icc_info sm8550_icc_table[] = {
->  
->  static const char * const sm8550_clk_reset_table[] = { "bus" };
->  
-> +static const char * const sm8650_clk_reset_table[] = { "bus", "core" };
-> +
-> +static const char * const sm8650_controller_reset_table[] = { "xo" };
-> +
->  static const struct bw_info sm8550_bw_table_dec[] = {
->  	{ ((4096 * 2160) / 256) * 60, 1608000 },
->  	{ ((4096 * 2160) / 256) * 30,  826000 },
-> @@ -264,3 +268,63 @@ struct iris_platform_data sm8550_data = {
->  	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
->  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
->  };
-> +
-> +/*
-> + * Shares most of SM8550 data except:
-> + * - vpu_ops to iris_vpu33_ops
-> + * - clk_rst_tbl to sm8650_clk_reset_table
-> + * - controller_rst_tbl to sm8650_controller_reset_table
-> + * - fwname to "qcom/vpu/vpu33_p4.mbn"
-> + */
-> +struct iris_platform_data sm8650_data = {
-> +	.get_instance = iris_hfi_gen2_get_instance,
-> +	.init_hfi_command_ops = iris_hfi_gen2_command_ops_init,
-> +	.init_hfi_response_ops = iris_hfi_gen2_response_ops_init,
-> +	.vpu_ops = &iris_vpu33_ops,
-> +	.set_preset_registers = iris_set_sm8550_preset_registers,
-> +	.icc_tbl = sm8550_icc_table,
-> +	.icc_tbl_size = ARRAY_SIZE(sm8550_icc_table),
-> +	.clk_rst_tbl = sm8650_clk_reset_table,
-> +	.clk_rst_tbl_size = ARRAY_SIZE(sm8650_clk_reset_table),
-> +	.controller_rst_tbl = sm8650_controller_reset_table,
-> +	.controller_rst_tbl_size = ARRAY_SIZE(sm8650_controller_reset_table),
-> +	.bw_tbl_dec = sm8550_bw_table_dec,
-> +	.bw_tbl_dec_size = ARRAY_SIZE(sm8550_bw_table_dec),
-> +	.pmdomain_tbl = sm8550_pmdomain_table,
-> +	.pmdomain_tbl_size = ARRAY_SIZE(sm8550_pmdomain_table),
-> +	.opp_pd_tbl = sm8550_opp_pd_table,
-> +	.opp_pd_tbl_size = ARRAY_SIZE(sm8550_opp_pd_table),
-> +	.clk_tbl = sm8550_clk_table,
-> +	.clk_tbl_size = ARRAY_SIZE(sm8550_clk_table),
-> +	/* Upper bound of DMA address range */
-> +	.dma_mask = 0xe0000000 - 1,
-> +	.fwname = "qcom/vpu/vpu33_p4.mbn",
-> +	.pas_id = IRIS_PAS_ID,
-> +	.inst_caps = &platform_inst_cap_sm8550,
-> +	.inst_fw_caps = inst_fw_cap_sm8550,
-> +	.inst_fw_caps_size = ARRAY_SIZE(inst_fw_cap_sm8550),
-> +	.tz_cp_config_data = &tz_cp_config_sm8550,
-> +	.core_arch = VIDEO_ARCH_LX,
-> +	.hw_response_timeout = HW_RESPONSE_TIMEOUT_VALUE,
-> +	.ubwc_config = &ubwc_config_sm8550,
-> +	.num_vpp_pipe = 4,
-> +	.max_session_count = 16,
-> +	.max_core_mbpf = ((8192 * 4352) / 256) * 2,
-> +	.input_config_params =
-> +		sm8550_vdec_input_config_params,
-> +	.input_config_params_size =
-> +		ARRAY_SIZE(sm8550_vdec_input_config_params),
-> +	.output_config_params =
-> +		sm8550_vdec_output_config_params,
-> +	.output_config_params_size =
-> +		ARRAY_SIZE(sm8550_vdec_output_config_params),
-> +	.dec_input_prop = sm8550_vdec_subscribe_input_properties,
-> +	.dec_input_prop_size = ARRAY_SIZE(sm8550_vdec_subscribe_input_properties),
-> +	.dec_output_prop = sm8550_vdec_subscribe_output_properties,
-> +	.dec_output_prop_size = ARRAY_SIZE(sm8550_vdec_subscribe_output_properties),
-> +
-> +	.dec_ip_int_buf_tbl = sm8550_dec_ip_int_buf_tbl,
-> +	.dec_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_ip_int_buf_tbl),
-> +	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
-> +	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
-> +};
-This approach looks good to me, reusing the platform data like this keeps
-the code cleaner and avoids duplication. I think this is a good way to
-handle the differences while sharing the common parts.
+	 netpoll_send_skb
+	 netpoll_send_udp
+	 write_ext_msg
+	 console_flush_all
+	 console_unlock
+	 vprintk_emit
 
-Thanks,
-Dikshita
-> diff --git a/drivers/media/platform/qcom/iris/iris_probe.c b/drivers/media/platform/qcom/iris/iris_probe.c
-> index 4f8bce6e2002bffee4c93dcaaf6e52bf4e40992e..7cd8650fbe9c09598670530103e3d5edf32953e7 100644
-> --- a/drivers/media/platform/qcom/iris/iris_probe.c
-> +++ b/drivers/media/platform/qcom/iris/iris_probe.c
-> @@ -345,6 +345,10 @@ static const struct of_device_id iris_dt_match[] = {
->  			.data = &sm8250_data,
->  		},
->  #endif
-> +	{
-> +		.compatible = "qcom,sm8650-iris",
-> +		.data = &sm8650_data,
-> +	},
->  	{ },
->  };
->  MODULE_DEVICE_TABLE(of, iris_dt_match);
-> 
+To prevent npinfo from disappearing unexpectedly, ensure that
+__netpoll_send_skb() is protected with the RCU read lock.
+
+Fixes: 2899656b494dcd1 ("netpoll: take rcu_read_lock_bh() in netpoll_send_skb_on_dev()")
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changes in v2:
+- Use rcu_read_lock() instead of guard() as normal people do (Jakub).
+- Link to v1: https://lore.kernel.org/r/20250303-netpoll_rcu_v2-v1-1-6b34d8a01fa2@debian.org
+---
+ net/core/netpoll.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/net/core/netpoll.c b/net/core/netpoll.c
+index 62b4041aae1ae..0ab722d95a2df 100644
+--- a/net/core/netpoll.c
++++ b/net/core/netpoll.c
+@@ -319,6 +319,7 @@ static int netpoll_owner_active(struct net_device *dev)
+ static netdev_tx_t __netpoll_send_skb(struct netpoll *np, struct sk_buff *skb)
+ {
+ 	netdev_tx_t status = NETDEV_TX_BUSY;
++	netdev_tx_t ret = NET_XMIT_DROP;
+ 	struct net_device *dev;
+ 	unsigned long tries;
+ 	/* It is up to the caller to keep npinfo alive. */
+@@ -327,11 +328,12 @@ static netdev_tx_t __netpoll_send_skb(struct netpoll *np, struct sk_buff *skb)
+ 	lockdep_assert_irqs_disabled();
+ 
+ 	dev = np->dev;
++	rcu_read_lock();
+ 	npinfo = rcu_dereference_bh(dev->npinfo);
+ 
+ 	if (!npinfo || !netif_running(dev) || !netif_device_present(dev)) {
+ 		dev_kfree_skb_irq(skb);
+-		return NET_XMIT_DROP;
++		goto out;
+ 	}
+ 
+ 	/* don't get messages out of order, and no recursion */
+@@ -370,7 +372,10 @@ static netdev_tx_t __netpoll_send_skb(struct netpoll *np, struct sk_buff *skb)
+ 		skb_queue_tail(&npinfo->txq, skb);
+ 		schedule_delayed_work(&npinfo->tx_work,0);
+ 	}
+-	return NETDEV_TX_OK;
++	ret = NETDEV_TX_OK;
++out:
++	rcu_read_unlock();
++	return ret;
+ }
+ 
+ netdev_tx_t netpoll_send_skb(struct netpoll *np, struct sk_buff *skb)
+
+---
+base-commit: 848e076317446f9c663771ddec142d7c2eb4cb43
+change-id: 20250303-netpoll_rcu_v2-fed72eb0cb83
+
+Best regards,
+-- 
+Breno Leitao <leitao@debian.org>
+
 
