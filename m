@@ -1,198 +1,209 @@
-Return-Path: <linux-kernel+bounces-549240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1AAA54F75
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:47:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E444A54F81
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:49:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7B7A3B0F60
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:47:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A39151893F1A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9A5192D8F;
-	Thu,  6 Mar 2025 15:47:50 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0975C148FF5;
-	Thu,  6 Mar 2025 15:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CB79211469;
+	Thu,  6 Mar 2025 15:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n4ztF5JV"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A72641FF7CC
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 15:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741276069; cv=none; b=pk+D+hue2UFMyysvC03sdYwYFsyPyetvvESykDhoAOkWewDeYnQW3W03U5J/O3ZhSUv4KS3hkJ2ccKuZ5gFyATwpPBnte00/gbczxR6YXxRm9eoAAwkbOQkZQwEkG+amAn8sv0lYpVDAAahL41beX2A1ymWD5b5NmYJUlf4tvE4=
+	t=1741276115; cv=none; b=tJ2nEWnp7ony+sZKPtNNU2I182m4Cv950ep9MXQItym99E0DP5acdT+P3TTee7qQZlq+UbzAtPbcSUaXq0KKPvLhTj94piNU+5tz7q/b23K2GlHTCFdfEOX3eXAhPmeMDzvN69klUSTikwdJgQ11kCfZ0du1Ss0YifelstGqPp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741276069; c=relaxed/simple;
-	bh=WIZBv40mWlqcIydIqglr2m4fLMN4do/AmNfg9Mw2EhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DzO/+zUBxVkvKisZh9ueqikMBmR1F3T4BFk2GFWKVAvTbDIb5j4iPT0nkuA80i46UrnELrOKEd1aLr0uTXnjvsChi6IJCoMRWY0+FrxmRTDamwZG6e9VCPqchhp1vbPA1f2eF2uRck5YWbVB0z/3vTRz7NxhuK6yTt8McBZwsGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2FB111007;
-	Thu,  6 Mar 2025 07:47:51 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D3C213F66E;
-	Thu,  6 Mar 2025 07:47:36 -0800 (PST)
-Date: Thu, 6 Mar 2025 15:47:27 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Alice Ryhl <aliceryhl@google.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org, arm-scmi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [Bug report] Memory leak in scmi_device_create
-Message-ID: <Z8nDj129ZVeZBVSp@pluto>
-References: <Z8g8vhS9rqQ_ez48@google.com>
- <Z8iFeEWq16pNQdMa@pluto>
- <Z8mCbc2Z2QGd3f8M@google.com>
- <Z8my4MZ-In0ibxVY@arm.com>
+	s=arc-20240116; t=1741276115; c=relaxed/simple;
+	bh=9nc+nlHVLzbF+an9SP1BN1fDldEWWVM2GaTD/JHD38Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BoNGwsfuutFI6lcIpm4/av0fTq7tomHgwBihYMVcfiQCW0uY+BpfjSVLtbin5FFXrv+m20iJvdmyTCaYI6FAe5nvHwghlmVK4s0rfScZYVQO5sMomayFnhAqLPAPJfbNnaIXZPvsBZni2FrtPDXjwgpPx43ZVKuIQKdgkBojHVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=n4ztF5JV; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e8fce04655so2999456d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 07:48:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741276112; x=1741880912; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=F/vdOVrt2gpTAE6Qt1Fy4CDkFxCZzAdyeoHIg8U7v4Y=;
+        b=n4ztF5JVqy+7XL09j0fZ9Tqjp9FyAYVAPUvOXfPXv3dXgY+J38APnM+dwz9r9PquXE
+         otBHGyl+iCV/96kY6tudZkY8r7rgf7UY/IAUYN5DyDg0w9VX3axCB5v1XPsRi8nq6M8l
+         338stSAUBceEfR498ndsJ4dSwhaEPwYjSbYg0iJp88aeUB8pO5/LzNbPmedQ9n5oYJt4
+         jBH+9Fk/LDpNuAyJwZwy+5dlnInGhtXsxdPl5gtNCkhOVMZkjzV2l4YuC6OZNP/foLGh
+         Hiwe6ElnaIKkm/F+Hut/+HGYu1oVPL7r/km4VueLyKfAChmWnBqT5qB+gAvNbgNrcxJ7
+         Jf2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741276112; x=1741880912;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=F/vdOVrt2gpTAE6Qt1Fy4CDkFxCZzAdyeoHIg8U7v4Y=;
+        b=q5GrIK/RZuS+Txk6ZpkDT1HJrKL56bGfu6tuPIARP2YvbR/J4h6uWnhUQ3Wm9uhHin
+         Ekmn+aNeXS9rSJrt4uBL7T8JETfAe2J6GicG9WP6Sos2oKmUnAdNlwUX66vw1GCbFbOT
+         fpiLnEzWtfq+X1Lk5UP0fYHEqwPD5MXL+Z3m7mkaQ5LFUPj3Wl+Qfiu89gpcOiM5sLqW
+         wNyD9PyGkH6+JFZLkf/iV7bKDBFOY90INdCcG0hBSCwPu6Ez5eieTncB/Mp/qQ0ZuC/I
+         iLU4tipkzhqU5CYtR+JYzTGZViwy9qybYjDE6/a5HmZEgUyYWV6rszfPc1FWlNTnm+6L
+         vArA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhLlU5Y9KpLy2K0ridtbhEzvWjfz+84dz5OkfwnqJqlH2l130b/YlJAHHSusKLsLaPI4mJD85eE7Y/V5k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvUIhTNks9qUGagCShG3tjxafhmLS6dXqTaY3vRQRJbyVMqMDN
+	9QAIKCrMjQ+o/7IdhMERSyHS1pzraGQByhkUgkFx+xSt6kbC/YTQ7zWOToZypaNR5DAWCbUamZ5
+	NHONgVtlz++CjL5FGLBm945AhSHgyiu6UdrxT
+X-Gm-Gg: ASbGncswoe8IlScoHLHqEQBW20GLlb/nahYjM5ExWtUmAIVi8KuuhIPFAM7XGghdkbY
+	eUCK+DaIby1+LMiL3bQ2rETYbMqAKl0+WK3EoLA2mQRiDDpKkOVw1ES/PU+lXbEt17GvkWnO1sE
+	d5pPmO0A38cTsa8eGY4Z8jTVSjP0eg7c8qHVm54nbKWW22diijoZCWl07B
+X-Google-Smtp-Source: AGHT+IG2NjbsvKGXcwADdAlgVYJgxqLNzRndRMUdTycXQdYU++VkUBDx6MSDbLgKNWOXyJqjCBJAmuRGX/H6gseJcss=
+X-Received: by 2002:a05:6214:d05:b0:6e6:6699:7e58 with SMTP id
+ 6a1803df08f44-6e8e6d1551fmr101200616d6.1.1741276112191; Thu, 06 Mar 2025
+ 07:48:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8my4MZ-In0ibxVY@arm.com>
+References: <20250306002933.1893355-1-rmoar@google.com> <CABVgOSkwrb36rrhH3H17fhYOnywhTgTh06aDaKXT4jZp474sRQ@mail.gmail.com>
+In-Reply-To: <CABVgOSkwrb36rrhH3H17fhYOnywhTgTh06aDaKXT4jZp474sRQ@mail.gmail.com>
+From: Rae Moar <rmoar@google.com>
+Date: Thu, 6 Mar 2025 10:48:20 -0500
+X-Gm-Features: AQ5f1JoJuxVIlo73mw7OMRvVa5L4ygXshyFART2BLs53CpfZgjhb5b6nVql4vZQ
+Message-ID: <CA+GJov6A1dr4PHkV3jSyptKc6PvhA4Zx7=jjFBVOa08=PwKRMQ@mail.gmail.com>
+Subject: Re: [PATCH] kunit: tool: Fix bug in parsing test plan
+To: David Gow <davidgow@google.com>
+Cc: shuah@kernel.org, jackmanb@google.com, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 06, 2025 at 02:36:16PM +0000, Catalin Marinas wrote:
-> On Thu, Mar 06, 2025 at 11:09:33AM +0000, Alice Ryhl wrote:
-> > On Wed, Mar 05, 2025 at 05:10:16PM +0000, Cristian Marussi wrote:
-> > > On Wed, Mar 05, 2025 at 11:59:58AM +0000, Alice Ryhl wrote:
-> > > > This was with a kernel running v6.13-rc3, but as far as I can tell, no
-> > > > relevant changes have landed since v6.13-rc3. My tree *does* include
-> > > > commit 295416091e44 ("firmware: arm_scmi: Fix slab-use-after-free in
-> > > > scmi_bus_notifier()"). I've only seen this kmemleak report once, so it's
-> > > > not happening consistently.
-> > > > 
-> > > > See below for the full kmemleak report.
-> > > > 
-> > > > Alice
-> > > > 
-> > > > $ sudo cat /sys/kernel/debug/kmemleak
-> > > > unreferenced object 0xffffff8106c86000 (size 2048):
-> > > >   comm "swapper/0", pid 1, jiffies 4294893094
-> > > >   hex dump (first 32 bytes):
-> > > >     02 00 00 00 10 00 00 00 c0 01 bc 03 81 ff ff ff  ................
-> > > >     60 67 ba 03 81 ff ff ff 18 60 c8 06 81 ff ff ff  `g.......`......
-> > > >   backtrace (crc feae9680):
-> > > >     [<00000000197aa008>] kmemleak_alloc+0x34/0xa0
-> > > >     [<0000000056fe02c9>] __kmalloc_cache_noprof+0x1e0/0x450
-> > > >     [<00000000a8b3dfe1>] __scmi_device_create+0xb4/0x2b4
-> > > >     [<000000008714917b>] scmi_device_create+0x40/0x194
-> > > >     [<000000001818f3cf>] scmi_chan_setup+0x144/0x3b8
-> > > >     [<00000000970bad38>] scmi_probe+0x584/0xa78
-> > > >     [<000000002600d2fd>] platform_probe+0xbc/0xf0
-> > > >     [<00000000f6f556b4>] really_probe+0x1b8/0x520
-> > > >     [<00000000eed93d59>] __driver_probe_device+0xe0/0x1d8
-> > > >     [<00000000d613b754>] driver_probe_device+0x6c/0x208
-> > > >     [<00000000187a9170>] __driver_attach+0x168/0x328
-> > > >     [<00000000e3ff1834>] bus_for_each_dev+0x14c/0x178
-> > > >     [<00000000984a3176>] driver_attach+0x34/0x44
-> > > >     [<00000000fc35bf2a>] bus_add_driver+0x1bc/0x358
-> > > >     [<00000000747fce19>] driver_register+0xc0/0x1a0
-> > > >     [<0000000081cb8754>] __platform_driver_register+0x40/0x50
-> > > > unreferenced object 0xffffff8103bc01c0 (size 32):
-> > > 
-> > > I could not reproduce on my setup, even though I run a system with
-> > > all the existent SCMI protocols (and related drivers) enabled (and
-> > > so a lot of device creations) and a downstream test driver that causes
-> > > even more SCMI devices to be created/destroyed at load/unload.
-> > > 
-> > > Coming down the path from scmi_chan_setup(), it seems something around
-> > > transport devices creation, but it is not obvious to me where the leak
-> > > could hide....
-> > > 
-> > > ...any particular setup on your side ? ...using LKMs, loading/unloading,
-> > > any usage pattern that could help me reproduce ?
-> > 
-> > I looked into this a bit more, and actually it does happen consistently.
-> > It's just that kmemleak doesn't report it until 10 minutes after
-> > booting, so I did not notice it.
-> 
-> You can force the scanning with:
-> 
->   echo scan > /sys/kernel/debug/kmemleak
-> 
-> Just do it a couple of times after boot, no need to wait 10 min for the
-> default background scanning.
-> 
-> > user@rk3588-ci:~$ sudo cat /sys/kernel/debug/kmemleak
-> > unreferenced object 0xffffff81068c0000 (size 2048):
-> >   comm "swapper/0", pid 1, jiffies 4294893128
-> >   hex dump (first 32 bytes):
-> >     02 00 00 00 10 00 00 00 40 a3 7a 03 81 ff ff ff  ........@.z.....
-> >     60 c8 79 03 81 ff ff ff 18 00 8c 06 81 ff ff ff  `.y.............
-> >   backtrace (crc 60df30fb):
-> >     kmemleak_alloc+0x34/0xa0
-> >     __kmalloc_cache_noprof+0x1e0/0x450
-> >     __scmi_device_create+0xb4/0x2b4
-> 
-> Is this the kzalloc() for sizeof(*scmi_dev)? It's surprisingly large, I
-> thought it would go for the kmalloc-1k slab as struct device is below
-> this side, at least for my builds. Anyway...
-> 
-> >     scmi_device_create+0x40/0x194
-> >     scmi_chan_setup+0x144/0x3b8
-> >     scmi_probe+0x51c/0x9fc
-> >     platform_probe+0xbc/0xf0
-> >     really_probe+0x1b8/0x520
-> >     __driver_probe_device+0xe0/0x1d8
-> >     driver_probe_device+0x6c/0x208
-> >     __driver_attach+0x168/0x328
-> >     bus_for_each_dev+0x14c/0x178
-> >     driver_attach+0x34/0x44
-> >     bus_add_driver+0x1bc/0x358
-> >     driver_register+0xc0/0x1a0
-> >     __platform_driver_register+0x40/0x50
-> > unreferenced object 0xffffff81037aa340 (size 32):
-> >   comm "swapper/0", pid 1, jiffies 4294893128
-> >   hex dump (first 32 bytes):
-> >     5f 5f 73 63 6d 69 5f 74 72 61 6e 73 70 6f 72 74  __scmi_transport
-> >     5f 64 65 76 69 63 65 5f 72 78 5f 31 30 00 ff ff  _device_rx_10...
-> >   backtrace (crc 8dab7ca7):
-> >     kmemleak_alloc+0x34/0xa0
-> >     __kmalloc_node_track_caller_noprof+0x234/0x528
-> >     kstrdup+0x48/0x80
-> >     kstrdup_const+0x30/0x3c
-> 
-> These are referenced from the main structure above, so they'd be
-> reported as leaks as well.
-> 
-> This loop in scmi_device_create() looks strange:
-> 
-> 	list_for_each_entry(rdev, phead, node) {
-> 		struct scmi_device *sdev;
-> 
-> 		sdev = __scmi_device_create(np, parent,
-> 					    rdev->id_table->protocol_id,
-> 					    rdev->id_table->name);
-> 		/* Report errors and carry on... */
-> 		if (sdev)
-> 			scmi_dev = sdev;
-> 		else
-> 			pr_err("(%s) Failed to create device for protocol 0x%x (%s)\n",
-> 			       of_node_full_name(parent->of_node),
-> 			       rdev->id_table->protocol_id,
-> 			       rdev->id_table->name);
-> 	}
-> 
-> We can override scmi_dev a few times in the loop and lose the previous
-> sdev allocations. Is this intended?
+On Thu, Mar 6, 2025 at 4:00=E2=80=AFAM David Gow <davidgow@google.com> wrot=
+e:
+>
+> On Thu, 6 Mar 2025 at 08:29, Rae Moar <rmoar@google.com> wrote:
+> >
+> > A bug was identified where the KTAP below caused an infinite loop:
+> >
+> >  TAP version 13
+> >  ok 4 test_case
+> >  1..4
+> >
+> > The infinite loop was caused by the parser not parsing a test plan
+> > if following a test result line.
+> >
+> > Fix bug to correctly parse test plan and add error if test plan is
+> > missing.
+> >
+> > Signed-off-by: Rae Moar <rmoar@google.com>
+> > ---
+>
+> Thanks for looking into this: I don't think we want to unconditionally
+> error if there's no test plan, though. Pretty much no parameterised
+> tests include one -- it's not always possible to know how many tests
+> there'll be in advance -- so this triggers all of the time.
+>
+> Maybe we can only include an error if we find a test plan line after
+> an existing result, or something?
 
-Yes...it is weird..but by design I would say :P ...
+Hi David!
 
-...because this is called to instantiate one single device OR instantiate at
-once all the multiple devices needed for a protocol: in this latter case it
-returns just one of the created devices to signal success or NULL if all the
-devices' creation failed....we dont need to keep the allocated devices references
-anyway here since on success those devices are now referenced and kept on the
-SCMI bus, so they can be searched/scanned/destroyed from there.
+I thought I'd include the error in the first version but I figured it
+might not be accepted. Technically it is improper KTAP for the test
+plan to be missing so the error would be correct but because it fires
+on parameterized tests which is not ideal.
 
-But maybe this is the crux of the matter, or what fools kmemleak...I
-will try to reproduce again.
+I wonder for parameterized tests if we could output a test plan:
+"1..X" indicating an unknown number of tests or something similar. I'd
+be happy to implement this. However, I am happy to remove the error
+for the second version.
 
-Thanks,
-Cristian
+Thanks!
+-Rae
+
+>
+> -- David
+>
+> >  tools/testing/kunit/kunit_parser.py    | 12 +++++++-----
+> >  tools/testing/kunit/kunit_tool_test.py |  5 ++---
+> >  2 files changed, 9 insertions(+), 8 deletions(-)
+> >
+> > diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/=
+kunit_parser.py
+> > index 29fc27e8949b..5dcbc670e1dc 100644
+> > --- a/tools/testing/kunit/kunit_parser.py
+> > +++ b/tools/testing/kunit/kunit_parser.py
+> > @@ -761,20 +761,22 @@ def parse_test(lines: LineStream, expected_num: i=
+nt, log: List[str], is_subtest:
+> >                 test.name =3D "main"
+> >                 ktap_line =3D parse_ktap_header(lines, test, printer)
+> >                 test.log.extend(parse_diagnostic(lines))
+> > -               parse_test_plan(lines, test)
+> > +               plan_line =3D parse_test_plan(lines, test)
+> >                 parent_test =3D True
+> >         else:
+> >                 # If not the main test, attempt to parse a test header =
+containing
+> >                 # the KTAP version line and/or subtest header line
+> >                 ktap_line =3D parse_ktap_header(lines, test, printer)
+> >                 subtest_line =3D parse_test_header(lines, test)
+> > +               test.log.extend(parse_diagnostic(lines))
+> > +               plan_line =3D parse_test_plan(lines, test)
+> >                 parent_test =3D (ktap_line or subtest_line)
+> >                 if parent_test:
+> > -                       # If KTAP version line and/or subtest header is=
+ found, attempt
+> > -                       # to parse test plan and print test header
+> > -                       test.log.extend(parse_diagnostic(lines))
+> > -                       parse_test_plan(lines, test)
+> >                         print_test_header(test, printer)
+> > +
+> > +       if parent_test and not plan_line:
+> > +                       test.add_error(printer, 'missing test plan!')
+> > +
+> >         expected_count =3D test.expected_count
+> >         subtests =3D []
+> >         test_num =3D 1
+> > diff --git a/tools/testing/kunit/kunit_tool_test.py b/tools/testing/kun=
+it/kunit_tool_test.py
+> > index 0bcb0cc002f8..e1e142c1a850 100755
+> > --- a/tools/testing/kunit/kunit_tool_test.py
+> > +++ b/tools/testing/kunit/kunit_tool_test.py
+> > @@ -181,8 +181,7 @@ class KUnitParserTest(unittest.TestCase):
+> >                         result =3D kunit_parser.parse_run_tests(
+> >                                 kunit_parser.extract_tap_lines(
+> >                                 file.readlines()), stdout)
+> > -               # A missing test plan is not an error.
+> > -               self.assertEqual(result.counts, kunit_parser.TestCounts=
+(passed=3D10, errors=3D0))
+> > +               self.assertEqual(result.counts, kunit_parser.TestCounts=
+(passed=3D10, errors=3D2))
+> >                 self.assertEqual(kunit_parser.TestStatus.SUCCESS, resul=
+t.status)
+> >
+> >         def test_no_tests(self):
+> > @@ -203,7 +202,7 @@ class KUnitParserTest(unittest.TestCase):
+> >                 self.assertEqual(
+> >                         kunit_parser.TestStatus.NO_TESTS,
+> >                         result.subtests[0].subtests[0].status)
+> > -               self.assertEqual(result.counts, kunit_parser.TestCounts=
+(passed=3D1, errors=3D1))
+> > +               self.assertEqual(result.counts, kunit_parser.TestCounts=
+(passed=3D1, errors=3D2))
+> >
+> >
+> >         def test_no_kunit_output(self):
+> >
+> > base-commit: 0619a4868fc1b32b07fb9ed6c69adc5e5cf4e4b2
+> > --
+> > 2.48.1.711.g2feabab25a-goog
+> >
 
