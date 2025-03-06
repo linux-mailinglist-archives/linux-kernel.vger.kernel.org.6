@@ -1,164 +1,146 @@
-Return-Path: <linux-kernel+bounces-549756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4C9A556F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:40:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE832A556F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:40:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 215F1176517
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:40:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52F05189816C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2A626FA62;
-	Thu,  6 Mar 2025 19:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA18270EB7;
+	Thu,  6 Mar 2025 19:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b="POgOjkl7";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="fMA7NqF4"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOfGrryq"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD20DDA8;
-	Thu,  6 Mar 2025 19:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2482DDA8;
+	Thu,  6 Mar 2025 19:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741290004; cv=none; b=eTmOU6A5evSfejpkaYk44rLjVtCZcn+LfzwFL2aW7P0gJk8b3xYYMPwBwhsm0DbWW8/txvMdICPLJX0bhS/KbH81J0P6Yzg/Kfnw5M5MsI8TlLsMqK8XfhMoK5CL3b38Phi5GI24G7kqWzyLX6UsBnlq6QwjRCIyYOXP+R7IPMo=
+	t=1741290012; cv=none; b=tY59qxdE5ZnYni5yUHI9VHMlJExq7+T94AbB1xfcu8UQVeEQKr3NJTl4F1w7Td57R0sJkDkJ1zE/FlKQUb1XwQ5QMWId+w8H3pragInVT2sH9fKRviSdW9XEgwd2ba36VW3Zlwrl7Q7j+M1S9ZaXGeOAbDnc9nF3495FzQOHLHA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741290004; c=relaxed/simple;
-	bh=WW62Pr+2vyiq34TRqGp71vBMBra8C0VpXJwzu86jBNQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=IaS4c/zWLnB7b2l7FlvlEvhJxRpSbLIclNyY6hwfmRATbCpzcGsXZz2IiGO8No7LhFvhwR310WIxPooaMivI4AWa1N2ossuBuhPkvbk+YTfSik+7oWGgDuoEgFpJe/GS4feFFE6RVLcCpZ4ty53UXBdDTaEMfmCz0LfxwkVitPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev; spf=pass smtp.mailfrom=svenpeter.dev; dkim=pass (2048-bit key) header.d=svenpeter.dev header.i=@svenpeter.dev header.b=POgOjkl7; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=fMA7NqF4; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=svenpeter.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=svenpeter.dev
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 3A9501140177;
-	Thu,  6 Mar 2025 14:40:01 -0500 (EST)
-Received: from phl-imap-07 ([10.202.2.97])
-  by phl-compute-12.internal (MEProxy); Thu, 06 Mar 2025 14:40:01 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=svenpeter.dev;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:in-reply-to:message-id
-	:mime-version:references:reply-to:subject:subject:to:to; s=fm2;
-	 t=1741290001; x=1741376401; bh=MwAYJwbtPEdvfmZY6by4HNRxoaKm4GTn
-	paPzZObN9tw=; b=POgOjkl7OAfw52Cv025UP30xbZr94NZXHkPoIXvNoGZEfSx/
-	hZvBEvXL4NgsF0pa4iGJPP7D8haTTOYKI3KtNkYa9Bx/7c0T4KOK10t49gRLd5WK
-	ShuXr9YwNMEqRWtmXPJdDvw+/9KFuIEYtP14K2Gqarsa42Q255rH6rOQ7KmRnSQk
-	xx7hTh2vblyBYcagwW42G8gBCOPaB4qotOKqrw8aA+UCFMWxOEcEkRXqj3hhD/qY
-	/imLgake66Cj/i6N9r/aCQI4w4LYDw2el+0ImSvm8rI8kVFoS6siCCSGOPbq76Lt
-	0cksjZLChEQDEa4MiSFH+sKrNqzx/CyEOFZnMg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741290001; x=
-	1741376401; bh=MwAYJwbtPEdvfmZY6by4HNRxoaKm4GTnpaPzZObN9tw=; b=f
-	MA7NqF4MkY/RtzPDcsWYcZNmtgku9vIzYrbREBghwRAh3yTw8cvIAnV2rVsl9qbD
-	ZLDxDKRRzAf03uNSkHM9NZ2zkSIlTpJiZIWZi0ewrAATUEeKwcRnn57AHRi5Ffo9
-	OaKn4yAWWZYUde3huF4FFSSOPpewwQC7j4YgDrU7flom2rhhy076ivdFvV49DNfH
-	jhXGrDbrpDjYyC2d09cXjKGGD8Prs8Cmp0tXrveaidVU75M3p/Tq0BvHBR/Mo4jo
-	P0cmCNwwT4M1BR2bl1rj+3FQ1+L5QTO8Af9fWkr2VJcLZIOcDvAysPeedh7EX1JE
-	Qn+xjoWFROPisHpd938fA==
-X-ME-Sender: <xms:EPrJZ1lpCVd-emq655nbe36q_MoCMaRBi1HjA5mNl3ba3YU0KGTy1g>
-    <xme:EPrJZw3tqRfIH4VbFKHSoRtHGIwH60cR0ZFXlGSyQU2OcHAIhEHQ2xZxNWyBJxavQ
-    Z9S3SGi4C49vSsxing>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdekieduucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertder
-    tdejnecuhfhrohhmpedfufhvvghnucfrvghtvghrfdcuoehsvhgvnhesshhvvghnphgvth
-    gvrhdruggvvheqnecuggftrfgrthhtvghrnhepuddvieeutdelvdekkefgtdfftddugeeu
-    vdeuffeiuedttefggedtfeeiteehjeeunecuffhomhgrihhnpegvtghlvggtthhitghlih
-    hghhhtrdgtohenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhr
-    ohhmpehsvhgvnhesshhvvghnphgvthgvrhdruggvvhdpnhgspghrtghpthhtohepkedpmh
-    houggvpehsmhhtphhouhhtpdhrtghpthhtohepvghrnhgvshhtohestghorhgvlhhlihhu
-    mhdrtghomhdprhgtphhtthhopegvthhhrghnsegvthhhrghntggvugifrghrughsrdgtoh
-    hmpdhrtghpthhtoheprghsrghhiheslhhishhtshdrlhhinhhugidruggvvhdprhgtphht
-    thhopehlihhnuhigqdhsthgrghhinhhgsehlihhsthhsrdhlihhnuhigrdguvghvpdhrtg
-    hpthhtohepghgrrhhgrgguihhthigrtdeksehlihhvvgdrtghomhdprhgtphhtthhopeht
-    hihtshhosehmihhtrdgvughupdhrtghpthhtoheplhhinhhugidqfhhsuggvvhgvlhesvh
-    hgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhes
-    vhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:EPrJZ7r0r4P-trjNVV3fb-R4etwnOa6A6HnSY0SgZ1_1u-4UNTippg>
-    <xmx:EPrJZ1m7JVQM1qj8EBsqefzv82ihFzJwaA3XF2hboiTmI1r6fjJb9A>
-    <xmx:EPrJZz1_stq9GQ-ZEzpMYUmtc2SjntFCUmn8MF9yowwgrjBDD9Je3Q>
-    <xmx:EPrJZ0uXcy9_O5c1-r-yfc67V3-cH3BKizF54kWib7ZlJ8al5nIkFA>
-    <xmx:EfrJZ4nUTJL8ax2nFQP2PylfRi6GQVwe8ZBRvusUVxClZYKAb9WjibcZ>
-Feedback-ID: i51094778:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A6518BA006F; Thu,  6 Mar 2025 14:40:00 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1741290012; c=relaxed/simple;
+	bh=CFtDuLIpuU03+nhtMAtX9r4UPxfCF/bDqSWeFl/X5vQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=c9He2uyBHZxAoTPeHxSV3PtOJyWXBMYNfoN2KmJDcRCYbT6VKltOcrCZH1VMgRP98fNnz+d2BEJlBM0PRB6XaTl7XEwtOEwwMhhElNOIvu40aHSPSO8VfIq9LAEldvL+9Y1rovJnW8bJilSzZHh9qIpcIx3OzI/s4UumY8xrVT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOfGrryq; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-223f4c06e9fso21134605ad.1;
+        Thu, 06 Mar 2025 11:40:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741290010; x=1741894810; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=ewCB/nm+A9ngd0jnoOxdtVcsF/YbNlLGD5eMN+wHgAQ=;
+        b=DOfGrryqhsvUzUrcX9Tmg22AtyKvTGuTxsIyAzNx9dY0y5J/VB8L51QCmEXwbK5OkC
+         A0X/KI6DR8R+g4EEXdDSUjLwpzKw4Pr5DufQ/rR/RNewHCx7qCZCORm+BrQ1kzOM5ubS
+         KrR58S4xqPiwZEIVresT6x96KHzte43t1QhWwJXz2mCIq9W7207r0oETY7J47qJjbyaP
+         sWz8J66cfaX66lesjcMOr398QRIZuzuiB31akNLJvQDhc2vNWkC2+wQ8tv5RHLhtmPHj
+         1SPGKjwh30EmBO8W0N3cURWcS1bhLTftpmcZdej/xhKQR5NJANNJxA1hQDWio8HcDTg7
+         nFHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741290010; x=1741894810;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ewCB/nm+A9ngd0jnoOxdtVcsF/YbNlLGD5eMN+wHgAQ=;
+        b=eoKxulrFb+nkMiyigFM6GR3TuBynozEVdzqlrmC5ZuutM2wzIFf8LaeO4ZIXMw3C61
+         97QvNctC2qMiCf4G3CYBXTRuvdEIOgwioETSdD9acU/KnXsdluxUHRbCflDuLpXiHTZF
+         vYz39mzm2b8EZDTwx9GOZjUUCqk2hs+SLVqIRhv4J77232T+HNueKsEhLLJv68wYIjs8
+         tKy9frN6mQFOrLPcPOX7CHdvxbmCFA4LhQHnOeGA66U7J20iKiA4VkyaJfARuF8uVrrv
+         7abntL3oI9HwxTnRI0tjJAtWcRFhGbS04uGtHtC6L7BLrEQOZIxgDCbq+nxzBfU9J2na
+         Oqvg==
+X-Forwarded-Encrypted: i=1; AJvYcCXb8kKuOjO4QNkeqLL8Y5k8xzEOZJN2v9AO7AsN3bERNnBetjwng1MGs2uyPcd83eHmc/Ue3qK7zJBsgy4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoI/dPivPqLbJUBiauZeNgPygyHAkzGUbaf7YLkt9eFtW8Bzqt
+	OFOzwDPtQX5N8tqSXY3BqGWfCFl02+Z3QAsuOpaRO93rBSF/NWzB
+X-Gm-Gg: ASbGncs2BBnSJreHonI2r3+A2m1XwwEuhSScQOHq0vtkzPWYVqIToDP0m7IqyLvuAqN
+	3A5lEZw+zSlQLi69006S1Sx8p/61jTJ0qBvD3ZHN6C2N88DmGhJ2WIs4jTPFWrmOePuA4l6xkdz
+	vkVWsShR9Q494Fm0KAKhPa7Aov4Qhe8b1TsoM56o/8lyhiT9tQqlUs1ndz0FwLAukPgA9Td4fkk
+	ZI7KZcRXTRj4BeKzF2cHPPZYd2vGHtOe6QDiG+0bsmLVzP1ZF+hpTX9beJPVHS/cU559mNHkR5B
+	M+2ZShpT05to153ZMbViTLPaybGlMInrZceekQy7/BRF3oTBqAtBq7AIkpQFqMxngf8/v+rdeuA
+	H4GmznR5dPyyjbLu18bA=
+X-Google-Smtp-Source: AGHT+IEQMyjX97Nt8KzVYICwQGtL7t0fOwHtki0gYYS+FzmLNhfE7q4pmhk2ZkcLJLMumQ0lloKrXQ==
+X-Received: by 2002:a17:903:292:b0:215:58be:334e with SMTP id d9443c01a7336-22426fd8525mr13145525ad.10.1741290009936;
+        Thu, 06 Mar 2025 11:40:09 -0800 (PST)
+Received: from ?IPv6:2804:7f0:3f4:754:40b4:b78f:5cfc:8620? ([2804:7f0:3f4:754:40b4:b78f:5cfc:8620])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410aa448dsm16304945ad.210.2025.03.06.11.40.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 11:40:09 -0800 (PST)
+Message-ID: <635f849e14854b0db1f53a0d0bf329c3070e5859.camel@gmail.com>
+Subject: Re: [PATCH] staging: sm750fb: Fix CamelCase variable naming
+From: Gabriel Lima Luz <lima.gabriel.luz@gmail.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: linux-fbdev@vger.kernel.org, linux-staging@lists.linux.dev, 
+ linux-kernel@vger.kernel.org, Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+  Teddy Wang <teddy.wang@siliconmotion.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  ~lkcamp/patches@lists.sr.ht
+Date: Thu, 06 Mar 2025 16:40:05 -0300
+In-Reply-To: <ba45d980-c6b1-482a-8bfd-457a92d3e24b@stanley.mountain>
+References: <20250228162359.14029-1-lima.gabriel.luz@gmail.com>
+	 <ba45d980-c6b1-482a-8bfd-457a92d3e24b@stanley.mountain>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 06 Mar 2025 20:39:14 +0100
-From: "Sven Peter" <sven@svenpeter.dev>
-To: "Theodore Ts'o" <tytso@mit.edu>, "Aditya Garg" <gargaditya08@live.com>
-Cc: "Ethan Carter Edwards" <ethan@ethancedwards.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
- "linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
- "asahi@lists.linux.dev" <asahi@lists.linux.dev>,
- "ernesto@corellium.com" <ernesto@corellium.com>
-Message-Id: <4e41ef2b-7bc3-439c-9260-8a0ae835ca02@app.fastmail.com>
-In-Reply-To: <20250306180427.GB279274@mit.edu>
-References: <rxefeexzo2lol3qph7xo5tgnykp5c6wcepqewrze6cqfk22leu@wwkiu7yzkpvp>
- <d0be518b-3abf-497a-b342-ff862dd985a7@app.fastmail.com>
- <upqd7zp2cwg2nzfuc7spttzf44yr3ylkmti46d5udutme4cpgv@nbi3tpjsbx5e>
- <795A00D4-503C-4DCB-A84F-FACFB28FA159@live.com>
- <20250306180427.GB279274@mit.edu>
-Subject: Re: [RFC] apfs: thoughts on upstreaming an out-of-tree module
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Em sex, 2025-02-28 =C3=A0s 20:40 +0300, Dan Carpenter escreveu:
+> On Fri, Feb 28, 2025 at 01:23:54PM -0300, Gabriel Lima Luz wrote:
+> > Adhere to Linux kernel coding style.
+> >=20
+> > Reported by checkpatch:
+> >=20
+> > CHECK: Avoid CamelCase
+> >=20
+> > Signed-off-by: Gabriel Lima Luz <lima.gabriel.luz@gmail.com>
+> > ---
+> > =C2=A0drivers/staging/sm750fb/ddk750_power.h | 8 ++++----
+> > =C2=A01 file changed, 4 insertions(+), 4 deletions(-)
+> >=20
+> > diff --git a/drivers/staging/sm750fb/ddk750_power.h
+> > b/drivers/staging/sm750fb/ddk750_power.h
+> > index 63c9e8b6ffb3..33e852fe6949 100644
+> > --- a/drivers/staging/sm750fb/ddk750_power.h
+> > +++ b/drivers/staging/sm750fb/ddk750_power.h
+> > @@ -3,10 +3,10 @@
+> > =C2=A0#define DDK750_POWER_H__
+> > =C2=A0
+> > =C2=A0enum dpms {
+> > -	crtDPMS_ON =3D 0x0,
+> > -	crtDPMS_STANDBY =3D 0x1,
+> > -	crtDPMS_SUSPEND =3D 0x2,
+> > -	crtDPMS_OFF =3D 0x3,
+> > +	crt_DPMS_ON =3D 0x0,
+> > +	crt_DPMS_STANDBY =3D 0x1,
+> > +	crt_DPMS_SUSPEND =3D 0x2,
+> > +	crt_DPMS_OFF =3D 0x3,
+> > =C2=A0};
+> > =C2=A0
+>=20
+> It seems these are not used.=C2=A0 Just delete them.
+>=20
+> regards,
+> dan carpenter
+>=20
+The dpms enum is used in the definition of the=20
+ddk750_set_dpms function in ddk750_power.h file and
+this function is called in ddk750_display.c on line 158.
 
-On Thu, Mar 6, 2025, at 19:04, Theodore Ts'o wrote:
-> On Wed, Mar 05, 2025 at 07:23:55AM +0000, Aditya Garg wrote:
->>=20
->> This driver tbh will not =E2=80=98really=E2=80=99 be helpful as far a=
-s T2 Macs are
->> concerned.
->>=20
->> On these Macs, the T2 Security Chip encrypts all the APFS partitions
->> on the internal SSD, and the key is in the T2 Chip. Even proprietary
->> APFS drivers cannot read these partitions.  I dunno how it works in
->> Apple Silicon Macs.
->
-> How this workings on Apple Silicon Macs is described in this article:
->
->    https://eclecticlight.co/2022/04/23/explainer-filevault/
->
-> It appears such a driver will also be useful if there are external
-> SSD's using APFS.  (Although I suspect many external SSD's would end
-> up using some other file system that might be more portable like VFS.)
->
-> In terms of making it work with the internal SSD, it sounds like Linux
-> would need to talk to the secure enclave on the T2 Security Chip and
-> convince it to upload the encryption key into the hardware in-line
-> encryption engine.  I don't know if presenting the user's password is
-> sufficient, or if there is a requirement that the OS prove that it is
-> "approved" software that was loaded via a certified boot chain, which
-> various secure enclaves (such as TPM) are wont to do.
+If I were to delete it, what changes should I make to=20
+the function mentioned above ?=20
 
-At least on Apple Silicon all you need is the user password (and a worki=
-ng
-Secure Enclave driver and a way to forward entangled keys from the Secure
-Enclave to the NVMe co-processor). It's still possible to unlock the
-encryption keys inside the Secure Enclave when booting into a secondary
-macOS installation with all security features disabled (and with a
-modified kernel). I'd assume the same applies to T2/x86 machines since
-the T2 is an ancestor of the M-series Apple Silicon SoCs.
+this is my first contribution, thanks for all the help.
 
-The only limitation that I'm aware of is that access to DRM keys
-(HDCP, FairPlay for video streaming, etc.) is only allowed via a
-certified boot chain.
-
-
-Sven
-
+best regards,
+Gabriel Lima
 
