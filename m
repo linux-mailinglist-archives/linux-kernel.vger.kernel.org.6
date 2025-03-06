@@ -1,202 +1,272 @@
-Return-Path: <linux-kernel+bounces-549210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A759A54F09
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:29:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B8A0A54F13
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:30:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 586643B424F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:28:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E347C3B43B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:29:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEB2D2185A0;
-	Thu,  6 Mar 2025 15:26:21 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5644D21B9EC;
+	Thu,  6 Mar 2025 15:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ckbFkW3L"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF4A213223
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 15:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DAD20F089
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 15:26:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741274778; cv=none; b=kgG01RQqHqapLa+mwBUZjxMOpA+1ri6Nj09N8PjQw3UVm2c+pDK6UnxEHf+Mz0KUQUS3NvcMMV+exmjcLSlhFVF8KO52DeAaN3Rle6oX/mhOVjwYcBcVg+bKnm9gmDSkyJyAnX8X0DdBJkXdvGrhrXEcs9yYxeSjmSTYTgHtee8=
+	t=1741274794; cv=none; b=uvrP7wVzkENTk3ScxgXiRZONERHPLbhIPeco4qXSpUXO+OYb6qkK9fLEfcPXonqaG2dtblJ/PdnvKaAwTZuLl3bCMB4dK/hmUoagEbQUotPqD7MeC4xloMzBZ+6fcjIz3qpL827C49nCoODBwWYYJML8nfMRaGwd80WAdyFuBj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741274778; c=relaxed/simple;
-	bh=hmVTWzJvwcl7UKEbBo0QbDKDQiiSJC6olJ+mLh8IrR4=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=uJDhxIs/1IuO3AqMFDHXt348FTn4Gd6Gl1+OjoPlAML61v8GBWnSkG//nMS7uIgu7K5pv3N6x8MPxQCodvIyTI/ABLXS1HJsJ0fKBmutgs8SDeay/63xo3A7+Y48FO+hzp9u01Q/0wWcDXxjVIB3riGUyBNIJTSbNj/9dZvbhvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A0E8C4CEEE;
-	Thu,  6 Mar 2025 15:26:18 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1tqD75-00000000MfH-3KtL;
-	Thu, 06 Mar 2025 10:26:19 -0500
-Message-ID: <20250306152619.664308982@goodmis.org>
-User-Agent: quilt/0.68
-Date: Thu, 06 Mar 2025 10:25:58 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 10/10] tracing: Update modules to persistent instances when loaded
-References: <20250306152548.763044302@goodmis.org>
+	s=arc-20240116; t=1741274794; c=relaxed/simple;
+	bh=rq3ebekspowb+RTf0p8oYZyBTCEKc4l+e107QAknleI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jkIly/KevgsfqRsOde9gJHKgLjw2jp6QUelyBMy8jHJdzQbPRY0qWMUpXxR6R7UAk66XRWMg2bZpZQLc9iTgYDdQ5lbwAzntqy3qk2VwYWcJaO9rQrVFWb9TqaYWQeIMcvonW7y6lv4aOVTHGxIWypdG7Ap0kaU3Dm0zAQxyqDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ckbFkW3L; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e4ad1d67bdso1208106a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 07:26:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741274790; x=1741879590; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iIFvuaqHhFntvQlpRTIvoKjIOarKQMOq9Ag0pcr/34A=;
+        b=ckbFkW3LarT0Ylf2YXvXcU34exZ+nwldcYVSAjGMUQi0HxplMr6t4e8yeFluPYo98P
+         6N0R/qQ5ELj9Z+CRJvmGIblisqyG1LQMB5ovpTNHhoX4zkNsmbiNoPukpC6Bc1UdjfRO
+         9eyHSxVi9oyDUUcapn+hiLnk3IS7oaDriw0SFTvOiOdYhHWiZ9uCeBlIJoNVpLoi/0lQ
+         7ME5PYORNJuedKqLDWxtZNlM/PXF1ZZ68N0Lp+C/SWZUB5JGnN5AxUymLXCGgtmZ5Vpx
+         YwGTQr+YDpXaQBJHVePHzgJge/A3EbL+zmCgw4fL9ZRGphCcJsXgE2HnO17JIzk+xHOB
+         NfHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741274790; x=1741879590;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iIFvuaqHhFntvQlpRTIvoKjIOarKQMOq9Ag0pcr/34A=;
+        b=pYxtQbeE44ZlfJm+zbR6Pr8vNMnLcx7aqP7uKsImOOzX+NUluVZdGOe9caJjkA+8NN
+         m+qibBBX8EjjASuuj6qgLEpsxnBxNx85gw9quLEM3bIHXqWc3SRx5ZhH+2ZTxQjvTO9x
+         BAtsKha20PV4Xh4c1gLyvj5LZ6HihmvQPXGcRwR1loRG3wG+wqH1QTlpOk7LLD6U/8Hs
+         l20Nku+ngCwIjbb7ZLRwe3mE98vzOLS6mrVbtXibzip2Fg299m1lwg+sc1tToNH8o24w
+         H9ZNQFX5bpcUy8P+OFok2sSMB11H6+KNvdA3LE+qhPHQOZLNl5IvHqG1MnhMey4JQSYc
+         Yxqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWu0fHpWF2AFnRbJzmevUCsri7nT5JkYCerYEuwLJYiX0RuCNdUkagZveQzrWZvUAyfZD5w2rRH4baiwc4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHsCRp65p6YZoxDZal87m2Vux/LX4iMOog4Psa3u4gGoNQHp7f
+	DEMOaNDoqFVyVpylP8rM71bwX4hX6POt+uJP614KAh6blZhe5oS8AIuCTGMbZDQ=
+X-Gm-Gg: ASbGncsGMuJ5TttJRR+lQN1pAfLgi8KzUEApnrMJSrR+Jd1DqZBopS8Z/D2dJzjCeqa
+	rmQFS2euUDcjlwkOKNaC2ktR/e/ygwfwYzk/NdxJi7CMPbQWxU5uqJofqF8OXdGdfcdiMCo7X7k
+	umQierWMtOhglVu9KoUmBE7WOArCIdipFHUMubQADzozywFe/XN56dxDp/GpwZE0WeYcXvJjQve
+	tcjgZrFQBilc/b6Rml5Z3H9HFnYg38/lxa9UGuMF02sHHIZBQKg3KUB6nJT1gvYfhY1Xa3mH6uf
+	sxZWr79ibxX651ScxsiPQvRQReks3WwZzE9FoWIlFVm7D5Hc
+X-Google-Smtp-Source: AGHT+IH0jkdkKlxaqF3wkqHwudjs10mK4wes1NDX4QS5VUliT9VayRAZEVO93js8rAurkPGvYT2syQ==
+X-Received: by 2002:a05:6402:234a:b0:5d0:8197:7ab3 with SMTP id 4fb4d7f45d1cf-5e59f353369mr8529169a12.3.1741274790139;
+        Thu, 06 Mar 2025 07:26:30 -0800 (PST)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c766a5bcsm1078630a12.52.2025.03.06.07.26.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 07:26:29 -0800 (PST)
+Message-ID: <ac831e724393dd928d3e62a4cfe2d9d30af7a081.camel@linaro.org>
+Subject: Re: [PATCH v2 4/4] pinctrl: samsung: Add filter selection support
+ for alive bank on gs101
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, Krzysztof Kozlowski	
+ <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Alim Akhtar
+	 <alim.akhtar@samsung.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ 	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	tudor.ambarus@linaro.org, willmcvicker@google.com,
+ semen.protsenko@linaro.org, 	kernel-team@android.com,
+ jaewon02.kim@samsung.com
+Date: Thu, 06 Mar 2025 15:26:28 +0000
+In-Reply-To: <20250301-pinctrl-fltcon-suspend-v2-4-a7eef9bb443b@linaro.org>
+References: <20250301-pinctrl-fltcon-suspend-v2-0-a7eef9bb443b@linaro.org>
+	 <20250301-pinctrl-fltcon-suspend-v2-4-a7eef9bb443b@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.53.2-1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Sat, 2025-03-01 at 11:43 +0000, Peter Griffin wrote:
+> Newer Exynos based SoCs have a filter selection bitfield in the filter
+> configuration registers on alive bank pins. This allows the selection of
+> a digital or analog delay filter for each pin. Add support for selecting
+> and enabling the filter.
+>=20
+> On suspend we set the analog filter to all pins in the bank (as the
+> digital filter relies on a clock). On resume the digital filter is
+> reapplied to all pins in the bank. The digital filter is working via
+> a clock and has an adjustable filter delay flt_width bitfield, whereas
+> the analog filter uses a fixed delay.
+>=20
+> The filter determines to what extent signal fluctuations received through
+> the pad are considered glitches.
+>=20
+> The code path can be exercised using
+> echo mem > /sys/power/state
+> And then wake the device using a eint gpio
+>=20
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>=20
+> Changes since v1:
+> * Remove eint_flt_selectable bool as it can be deduced from EINT_TYPE_WKU=
+P (Peter)
+> * Move filter config comment to header (Andre)
+> * Rename EXYNOS_FLTCON_DELAY to EXYNOS_FLTCON_ANALOG (Andre)
+> * Remove misleading old comment (Andre)
+> * Refactor exynos_eint_update_flt_reg() into a loop (Andre)
+>=20
+> Note: this patch was previously sent as part of the initial gs101/ Pixel =
+6
+> series and was dropped in v6. This new version incorporates the review
+> feedback from Sam Protsenko here in v5.
+>=20
+> Link: https://lore.kernel.org/all/20231201160925.3136868-1-peter.griffin@=
+linaro.org/T/#m79ced98939e895c840d812c8b4c2b3f33ce604c8
+>=20
+> Changes since previous version
+> * Drop fltcon_type enum and use bool eint_flt_selectable (Sam)
+> * Refactor and add exynos_eint_update_flt_reg() (Sam)
+> * Rename function to exynos_eint_set_filter() for easier readability (Sam=
+)
+> * Remove comments and `if bank->fltcon_type !=3D FLT_DEFAULT)` checks and=
+ indentation (Sam)
+> ---
+> =C2=A0drivers/pinctrl/samsung/pinctrl-exynos.c | 35 +++++++++++++++++++++=
++++++++++++
+> =C2=A0drivers/pinctrl/samsung/pinctrl-exynos.h | 21 +++++++++++++++++++
+> =C2=A02 files changed, 56 insertions(+)
+>=20
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.c b/drivers/pinctrl/s=
+amsung/pinctrl-exynos.c
+> index ddc7245ec2e5..4c467651b034 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.c
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.c
+> @@ -369,6 +369,39 @@ struct exynos_eint_gpio_save {
+> =C2=A0	u32 eint_mask;
+> =C2=A0};
+> =C2=A0
+> +static void exynos_eint_update_flt_reg(void __iomem *reg, int cnt, int c=
+on)
+> +{
+> +	unsigned int val, shift;
+> +	int i;
+> +
+> +	val =3D readl(reg);
+> +	for (i =3D 0; i < cnt; i++) {
+> +		shift =3D i * EXYNOS_FLTCON_LEN;
+> +		val |=3D con << shift;
 
-When a module is loaded and a persistent buffer is actively tracing, add
-it to the list of modules in the persistent memory.
+EXYNOS_FLTCON_ANALOG =3D=3D 0, so this code still needs to clear
+bit 6 to undo a previous enabling of digital filter:
 
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Link: https://lore.kernel.org/20250305164609.469844721@goodmis.org
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace.c        | 27 +++++++++++++++++++++++++
- kernel/trace/trace.h        |  2 ++
- kernel/trace/trace_events.c | 40 ++++++++++++++++++++++++++-----------
- 3 files changed, 57 insertions(+), 12 deletions(-)
+    val &=3D ~(EXYNOS_FLTCON_DIGITAL << shift);
+    val |=3D con << shift;
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index e1f053ffe887..177a7d921ff6 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -10083,6 +10083,32 @@ static void trace_module_remove_evals(struct module *mod)
- static inline void trace_module_remove_evals(struct module *mod) { }
- #endif /* CONFIG_TRACE_EVAL_MAP_FILE */
- 
-+static bool trace_array_active(struct trace_array *tr)
-+{
-+	if (tr->current_trace != &nop_trace)
-+		return true;
-+
-+	/* 0 is no events, 1 is all disabled */
-+	return trace_events_enabled(tr, NULL) > 1;
-+}
-+
-+static void trace_module_record(struct module *mod)
-+{
-+	struct trace_array *tr;
-+
-+	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
-+		/* Update any persistent trace array that has already been started */
-+		if ((tr->flags & (TRACE_ARRAY_FL_BOOT | TRACE_ARRAY_FL_LAST_BOOT)) ==
-+		    TRACE_ARRAY_FL_BOOT) {
-+			/* Only update if the trace array is active */
-+			if (trace_array_active(tr)) {
-+				guard(mutex)(&scratch_mutex);
-+				save_mod(mod, tr);
-+			}
-+		}
-+	}
-+}
-+
- static int trace_module_notify(struct notifier_block *self,
- 			       unsigned long val, void *data)
- {
-@@ -10091,6 +10117,7 @@ static int trace_module_notify(struct notifier_block *self,
- 	switch (val) {
- 	case MODULE_STATE_COMING:
- 		trace_module_add_evals(mod);
-+		trace_module_record(mod);
- 		break;
- 	case MODULE_STATE_GOING:
- 		trace_module_remove_evals(mod);
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 3a020fb82a34..90493220c362 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -786,6 +786,8 @@ extern void trace_find_cmdline(int pid, char comm[]);
- extern int trace_find_tgid(int pid);
- extern void trace_event_follow_fork(struct trace_array *tr, bool enable);
- 
-+extern int trace_events_enabled(struct trace_array *tr, const char *system);
-+
- #ifdef CONFIG_DYNAMIC_FTRACE
- extern unsigned long ftrace_update_tot_cnt;
- extern unsigned long ftrace_number_of_pages;
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 513de9ceb80e..7b3ef1d26167 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -1818,28 +1818,28 @@ event_enable_write(struct file *filp, const char __user *ubuf, size_t cnt,
- 	return cnt;
- }
- 
--static ssize_t
--system_enable_read(struct file *filp, char __user *ubuf, size_t cnt,
--		   loff_t *ppos)
-+/*
-+ * Returns:
-+ *   0 : no events exist?
-+ *   1 : all events are disabled
-+ *   2 : all events are enabled
-+ *   3 : some events are enabled and some are enabled
-+ */
-+int trace_events_enabled(struct trace_array *tr, const char *system)
- {
--	const char set_to_char[4] = { '?', '0', '1', 'X' };
--	struct trace_subsystem_dir *dir = filp->private_data;
--	struct event_subsystem *system = dir->subsystem;
- 	struct trace_event_call *call;
- 	struct trace_event_file *file;
--	struct trace_array *tr = dir->tr;
--	char buf[2];
- 	int set = 0;
--	int ret;
- 
--	mutex_lock(&event_mutex);
-+	guard(mutex)(&event_mutex);
-+
- 	list_for_each_entry(file, &tr->events, list) {
- 		call = file->event_call;
- 		if ((call->flags & TRACE_EVENT_FL_IGNORE_ENABLE) ||
- 		    !trace_event_name(call) || !call->class || !call->class->reg)
- 			continue;
- 
--		if (system && strcmp(call->class->system, system->name) != 0)
-+		if (system && strcmp(call->class->system, system) != 0)
- 			continue;
- 
- 		/*
-@@ -1855,7 +1855,23 @@ system_enable_read(struct file *filp, char __user *ubuf, size_t cnt,
- 		if (set == 3)
- 			break;
- 	}
--	mutex_unlock(&event_mutex);
-+
-+	return set;
-+}
-+
-+static ssize_t
-+system_enable_read(struct file *filp, char __user *ubuf, size_t cnt,
-+		   loff_t *ppos)
-+{
-+	const char set_to_char[4] = { '?', '0', '1', 'X' };
-+	struct trace_subsystem_dir *dir = filp->private_data;
-+	struct event_subsystem *system = dir->subsystem;
-+	struct trace_array *tr = dir->tr;
-+	char buf[2];
-+	int set;
-+	int ret;
-+
-+	set = trace_events_enabled(tr, system ? system->name : NULL);
- 
- 	buf[0] = set_to_char[set];
- 	buf[1] = '\n';
--- 
-2.47.2
 
+> +	}
+> +	writel(val, reg);
+> +}
+> +
+> +/*
+> + * Set the desired filter (digital or analog delay) and enable it to
+> + * every pin in the bank. Note the filter selection bitfield is only
+> + * found on alive banks. The filter determines to what extent signal
+> + * fluctuations received through the pad are considered glitches.
+> + */
+> +static void exynos_eint_set_filter(struct samsung_pin_bank *bank, int fi=
+lter)
+> +{
+> +	unsigned int off =3D EXYNOS_GPIO_EFLTCON_OFFSET + bank->eint_fltcon_off=
+set;
+> +	void __iomem *reg =3D bank->drvdata->virt_base + off;
+> +	unsigned int con =3D EXYNOS_FLTCON_EN | filter;
+> +
+> +	if (bank->eint_type !=3D EINT_TYPE_WKUP)
+> +		return;
+> +
+> +	for (int n =3D 0; n < bank->nr_pins; n +=3D 4)
+> +		exynos_eint_update_flt_reg(reg + n,
+> +					=C2=A0=C2=A0 min(bank->nr_pins - n, 4), con);
+> +}
+> +
+> =C2=A0/*
+> =C2=A0 * exynos_eint_gpio_init() - setup handling of external gpio interr=
+upts.
+> =C2=A0 * @d: driver data of samsung pinctrl driver.
+> @@ -834,6 +867,7 @@ void gs101_pinctrl_suspend(struct samsung_pin_bank *b=
+ank)
+> =C2=A0		pr_debug("%s: save=C2=A0=C2=A0=C2=A0 mask %#010x\n",
+> =C2=A0			 bank->name, save->eint_mask);
+> =C2=A0	}
+> +	exynos_eint_set_filter(bank, EXYNOS_FLTCON_ANALOG);
+
+Similar to patch 2, might be nicer to have this all if / else if to
+make it more obvious that set_filter() is not unconditional.
+
+
+> =C2=A0}
+> =C2=A0
+> =C2=A0void exynosautov920_pinctrl_suspend(struct samsung_pin_bank *bank)
+> @@ -889,6 +923,7 @@ void gs101_pinctrl_resume(struct samsung_pin_bank *ba=
+nk)
+> =C2=A0		writel(save->eint_mask, regs + bank->irq_chip->eint_mask
+> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 + bank->eint_offset);
+> =C2=A0	}
+> +	exynos_eint_set_filter(bank, EXYNOS_FLTCON_DIGITAL);
+
+dito.
+
+Cheers,
+Andre'
+
+> =C2=A0}
+> =C2=A0
+> =C2=A0void exynos_pinctrl_resume(struct samsung_pin_bank *bank)
+> diff --git a/drivers/pinctrl/samsung/pinctrl-exynos.h b/drivers/pinctrl/s=
+amsung/pinctrl-exynos.h
+> index 773f161a82a3..203d4b76a956 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-exynos.h
+> +++ b/drivers/pinctrl/samsung/pinctrl-exynos.h
+> @@ -52,6 +52,27 @@
+> =C2=A0#define EXYNOS_EINT_MAX_PER_BANK	8
+> =C2=A0#define EXYNOS_EINT_NR_WKUP_EINT
+> =C2=A0
+> +/*
+> + * EINT filter configuration register (on alive banks) has
+> + * the following layout.
+> + *
+> + * BitfieldName[PinNum][Bit:Bit]
+> + * FLT_EN[3][31] FLT_SEL[3][30] FLT_WIDTH[3][29:24]
+> + * FLT_EN[2][23] FLT_SEL[2][22] FLT_WIDTH[2][21:16]
+> + * FLT_EN[1][15] FLT_SEL[1][14] FLT_WIDTH[1][13:8]
+> + * FLT_EN[0][7]=C2=A0 FLT_SEL[0][6]=C2=A0 FLT_WIDTH[0][5:0]
+> + *
+> + * FLT_EN	0x0 =3D Disable, 0x1=3DEnable
+> + * FLT_SEL	0x0 =3D Analog delay filter, 0x1 Digital filter (clock count)
+> + * FLT_WIDTH	Filtering width. Valid when FLT_SEL is 0x1
+> + */
+> +
+> +#define EXYNOS_FLTCON_EN		BIT(7)
+> +#define EXYNOS_FLTCON_DIGITAL		BIT(6)
+> +#define EXYNOS_FLTCON_ANALOG		(0 << 6)
+> +#define EXYNOS_FLTCON_MASK		GENMASK(7, 0)
+> +#define EXYNOS_FLTCON_LEN		8
+> +
+> =C2=A0#define EXYNOS_PIN_BANK_EINTN(pins, reg, id)		\
+> =C2=A0	{						\
+> =C2=A0		.type		=3D &bank_type_off,	\
+>=20
 
 
