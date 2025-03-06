@@ -1,168 +1,231 @@
-Return-Path: <linux-kernel+bounces-548406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5C3DA5445F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:14:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A691A54470
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:16:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2A6B7A246C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:13:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 783243ACD4D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF37E1FC7DA;
-	Thu,  6 Mar 2025 08:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885A01FE465;
+	Thu,  6 Mar 2025 08:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="ZU6l3dcK"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="XPFlizap"
+Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012039.outbound.protection.outlook.com [52.101.71.39])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479121FAC52
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741248830; cv=none; b=SDJJNtCoo/gYNcFvb1EAX1AqtvkC+leZcvFIPpCE6++t/siFOD4w51YV1pN1HwNiwmi6GBJQGsde7Pprd+cuf/UkhfBIRazeVOszFvxw1NWrR6OzMywqWFMbBdvfNEXetDYmE0QoD30nY3QR8KA7iRUfDd5wieCtfuRh/5RMtqk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741248830; c=relaxed/simple;
-	bh=RmZfOZv9mSU7muKmuICqF7kMncNlxjNLjpCX8r/rE20=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZaJoF5ezyX4L4Ms4itXhGZ9Ab4f/G9p9aL8L+aFEhnyn26jvlSBIg9un4uJieOQP2Tx8Ig2ZzwD9Z0bZ3ow9ppyu6ZQb3pnq5i4uTT4lfcnbAsbXhUikU8I+TRKjoIT4tID8b8bZB0T+X8pZkQUlMEYJlOQWDujA+9OrRPyB4Wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=ZU6l3dcK; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43bdc607c3fso1794005e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 00:13:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1741248825; x=1741853625; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gLj5XWg7CIE0WfrqZc/tm6IHxyhmUxBPEQxl5xJpjbY=;
-        b=ZU6l3dcKui5HpnluuvhRRRr6ihSgUF+VqdR0xI0uWtKO63tVKVIP2EozrAMrYmJw7l
-         ugb1AHDTobNPgsPSC3x/sJE5euc+MjbK4GH8NPq8BubRCcDhLr/GvodttT4tbNSncbz8
-         iVamZgHbBS6yBpKk+cv0CMpOUA1QZLZ5OHrahrstxITZyCEtSnPvILnH4V6OsxPY1CVH
-         T+K8ButUBRnuxpovbVeHcWLxuLJZ8lcbE51jHDm3qxsOdJTnxOjOxaCBzHrIQRwFWm4u
-         cViGZqp/5Ieu3WbcpzYxmbUPuDoAxU4E51aIy/ACNR+Y16pUXoBKQegB0icyLdijUJMX
-         4TNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741248825; x=1741853625;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gLj5XWg7CIE0WfrqZc/tm6IHxyhmUxBPEQxl5xJpjbY=;
-        b=qxLb8S/yz0LA8Tf5PbxDoO0lIqJJkeQrupN1NAwkEsmBoLcSnwfjRPC6KW64ggpnwH
-         WstuK8E3DPdq4fBN/MwIFcEOC6Px5cXyV0yLbAJwvpXcFjnxHhJ00F+jX8AYhsc0V0ez
-         VHoQLUP+J+OmXkrp0z2VjCHZ/QOjU1F081ewvN0WkPMkuoP6AkZdSso3hQQqLSAnaJ9B
-         ktJrEzrWDLdZGHxS+IoyhVqQ7Dr3ZcpPCHVgrEIn+p7IuF/pM4CuS6xfbGI7xDxlzQou
-         3CxOu0w7iaaX1gZJQRrC6PfwAeoBQ1fawfl7NsrI5pFqVTacSJyQomYr7BI0kFkQjgJR
-         GxZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJxHWngmo2Hk08QdHpfuHuajDUL0lhKtnZvDcgrVmPGWWPVLKh7bh40p9Yx7WcvdYZXXucVNgsaI/7Ueg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9iuMO8m66HxwAyTmwjPzwy9iyT43ayuNatcPsuuJkljjclbzP
-	yXMSZFGCcoHL/aeLYdObZtg8JDjMoQWA57FQyG1LylatW7cIpB8TBD6zFS1/ENg=
-X-Gm-Gg: ASbGncvnVkuRM2tl6uHp1BbNAx93L/BUNpH1lnehcLjpPu0mQ8z1OKRdMUSMieK2UlD
-	zdL2Ale2zV5Fd639dLcyyI7tW9shDbgd5ymkdJDOoboQ81r0i+Vg+lSmUx8d1hCfcjEsFaklv6X
-	kNf7QpymRYSE8dmpj1m7R4QemMM/bEvbFK49mPj52i1Jwj0JanNSptszvUkgvkxkRNrCXC1bGES
-	4FXFF4yhu1EJcs0m1kmjH252/2EduN7C/ySMte10QvS7D0IDxNGROGGnIgFqacfLOYQdJUdF3/N
-	QzU24zDhxBuZJA6NNcSgZNxmsyrzP+/EJ4lUMEqoShW0TcWOy0/G7mL2HEWTe7QKsS/EXNk5Xw=
-	=
-X-Google-Smtp-Source: AGHT+IEizEhonB9j6mrELEVT2fWpqMYrBXgXdwXsHsJznxRDUYEH+hFr9DD372KDSR8Qo+hFwnpfNA==
-X-Received: by 2002:a05:600c:198f:b0:43b:c309:da40 with SMTP id 5b1f17b1804b1-43bd294de7dmr48473505e9.4.1741248825382;
-        Thu, 06 Mar 2025 00:13:45 -0800 (PST)
-Received: from localhost (cst2-173-28.cust.vodafone.cz. [31.30.173.28])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c019557sm1262734f8f.50.2025.03.06.00.13.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 00:13:44 -0800 (PST)
-Date: Thu, 6 Mar 2025 09:13:43 +0100
-From: Andrew Jones <ajones@ventanamicro.com>
-To: Charlie Jenkins <charlie@rivosinc.com>
-Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, paul.walmsley@sifive.com, palmer@dabbelt.com, 
-	cleger@rivosinc.com, alex@ghiti.fr, Anup Patel <apatel@ventanamicro.com>, 
-	corbet@lwn.net
-Subject: Re: [PATCH v3 0/8] riscv: Unaligned access speed probing fixes and
- skipping
-Message-ID: <20250306-3f25ee3d4686442bd215a0fa@orel>
-References: <20250304120014.143628-10-ajones@ventanamicro.com>
- <Z8jU2i5d3e4Dv4vk@ghost>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C48E1FC7FF;
+	Thu,  6 Mar 2025 08:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.39
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741248901; cv=fail; b=muuLu5QBC6kypbkeMZZZYec87kpEaADoKRKPq22tltaITX7kXfCY6+ZbbSx42gWxCWrFDSvn4VBqPgLXFWD5NsIlXsPsb5PBLC/vPud/ncy7OP9/eYRvMUIOFCTfLoAcE/+GDhm3bYy8tlLPUo3t0C62cvf1zjW4fXb8qJn11+M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741248901; c=relaxed/simple;
+	bh=Ki6rApT97dsLgXgZoMGAgK0r3FY1vzR5VOSHKJNfK1Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=RDvKZM38VB5eIhAEo8ARf0SR7AyaHMs5wxN+svjZDPlHVcR21KH62/i0Hl06FjfuopFA0utCeIWI7PXLyde3/KEbvyMdmFVXwXH9DoiNQA294jdCDeGHexnHzjMqvnF4SQLWQ23R3OtHHnYJ8MP9/3+T8+imBgGmBr877/+9aYk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=fail (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=XPFlizap reason="signature verification failed"; arc=fail smtp.client-ip=52.101.71.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vrQPMwyCvrtrr0RJjWLdYVzc0wx2Q9JmIktZZieHYLsGeC9MZ94MtfjzMhCEY4Ul4fD+R+U2Ia8/Bo3zwrzKPAltax89mSLoL9s6mAR93L/6GEiBaPpN66hP01HUm8uHMuirhUszorneESR1jeIy1qm6Gs9ufYDa5S6gryimeozKVbaxrMwN4gPKgoBWBkSrwjCn5ujiE/kZmbqSlCNFuyQGax5r6FDYaM4zAXKSpaUIoGMNYPC/SsM/ZYW7l3wVyNuk1JB4rqBJXLH49g458rEsBH7euhHO2hveDEkLETLKXk49WDyUhjo6NVQPQEXbEhm1vvYEp/OXPYqQfUzVzg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VvRZtRwmOjdMgAgMglw+9ots5sw7Uwyxu9QPdesDkrU=;
+ b=nLT83ft0TYpKcqirClJsLdq5mHvxROheGVRx4JV2m+Ep9uL3LeltsrgfVYeAyM6Rfbrqu7n5OEWHFm6NyUP7GEAXq6CThC8n/1K2XKsX4u+zi9BnxmTTJYrWHctaNjhr2lrlHYwSc7vVYS702/dIq/VVEtUVRqcG7+N1oIw58zhR9ss8qFgLhgc2jQC4XEZKc5npmzrpTCG3qObmNyIilqkpDgMT6GSjqVsyEyCXfBHfiJiYVx3WKxbSJZkxkj0pj6xxAhyFm6SIl9JDQ/YWzdifFer8yyaE2UeTiaYOhkrvtTxQVRp9AQ5fuKjVGKali+frHJRRqAV61DKE80Cr2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VvRZtRwmOjdMgAgMglw+9ots5sw7Uwyxu9QPdesDkrU=;
+ b=XPFlizappvKUyLfhtqIpnPHr0rt52TX2Ff0kbuQzudnAZrOCV2YBtIsdWyWkbAyE2PAV0gaGMIV/SBL8NN42nS7xVM7MOW6fb4zv6NFwAHJxAJc74VtK53aMQqOoM5tJN3WuoFZtx0+svCi26lHlRv4iBhD8HVWtPiM3RmT6ZVF/XHl1KTJGwSY6JX/s+5D7I0twWOUg//yz6yNeg8tEPdNJEuPf1DPWuOjGYwmQKda1UBqW3tTCdDz8vxTp85e+Kh195g5ISXxGBAGbjm52cQa1zxFTJKJz0+mrqnmJYUkV4mJTyVMFfv2kVLkTSAx/2oJisx1nNW+rxQNHFHFMAg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AS4PR04MB9576.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::12)
+ by AS8PR04MB8676.eurprd04.prod.outlook.com (2603:10a6:20b:42b::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Thu, 6 Mar
+ 2025 08:14:55 +0000
+Received: from AS4PR04MB9576.eurprd04.prod.outlook.com
+ ([fe80::9cf2:8eae:c3d1:2f30]) by AS4PR04MB9576.eurprd04.prod.outlook.com
+ ([fe80::9cf2:8eae:c3d1:2f30%4]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
+ 08:14:54 +0000
+Date: Thu, 6 Mar 2025 10:14:51 +0200
+From: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+To: Julien Massot <julien.massot@collabora.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 2/5] media/i2c: max96717: implement the .get_frame_desc()
+ operation
+Message-ID: <iowx7ej5qfkwhoqvdocpuvjzytihukephb7lpuazll754e45kf@yo22sxya5n36>
+References: <20250207112958.2571600-1-laurentiu.palcu@oss.nxp.com>
+ <20250207112958.2571600-3-laurentiu.palcu@oss.nxp.com>
+ <f5940c764af6587b97d39fdb9b64ec9bfe09b4e8.camel@collabora.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f5940c764af6587b97d39fdb9b64ec9bfe09b4e8.camel@collabora.com>
+X-ClientProxiedBy: AM0PR07CA0031.eurprd07.prod.outlook.com
+ (2603:10a6:208:ac::44) To AS4PR04MB9576.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4fe::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8jU2i5d3e4Dv4vk@ghost>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9576:EE_|AS8PR04MB8676:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1f096ac0-5148-4dec-89ca-08dd5c86fa02
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?iso-8859-1?Q?Pt1CzQinm+N0fXY2ll6jyFiMMA0JgwJU5UlEQKevjZ9bXOfaqHo9YBCSJ/?=
+ =?iso-8859-1?Q?CCeaQQUdbAgsHSqpdL8UrmuhmiZNuzZedPabFHTJWC8dJ2u6RuGGky7xMn?=
+ =?iso-8859-1?Q?sqKSe1loRvuocLthWfZkX1RczCdaAUHvEJiNzjDMfQ1cezJDixdutriNSE?=
+ =?iso-8859-1?Q?IMcFeKqKn9Kdk0c9vWhTSqNN3Hnfr4RIn/gSa5EyOO3s/DyIoeLDQeuS3w?=
+ =?iso-8859-1?Q?bgtUr5oWaym0XpDBq2jdCPvjrsAZQRgFl0Hy3g6J7eGz5X73SiwAn+Wpv9?=
+ =?iso-8859-1?Q?D8s7tiMqiGYmaPI2nUAp+rClfqQZBKuF8pzdXyAWiuO1eAY17krORobN8F?=
+ =?iso-8859-1?Q?YPOSRLYL67sAUlZXZlLERzYa2Zt+aCgUpJLpyGExgQYuOHLzfPdsXghqL0?=
+ =?iso-8859-1?Q?BOdbz9AXfznQwsX0SByvlIbNu7MSvpxvSW8HScnyCzZ2SEcDqvX0NwtDe2?=
+ =?iso-8859-1?Q?Re5e412FIug62Bli8azjM+zMO859ec5Ymiup0QCRF8b2WGn2LzQ1dWDKTY?=
+ =?iso-8859-1?Q?yOLMBh/cqWVWw9W3Ip7JR/Cz2p2cVzh1hcZvMJfEXN3T9tEon0CSrSX/+j?=
+ =?iso-8859-1?Q?rFW25MmHynSiN95LAOq84ZgBxrbzvM5a4x9742sZao5kf0P9HAJPvOu7NB?=
+ =?iso-8859-1?Q?SlrskM1/oHwpVV1rjQ2xgw2xgk7bVs1evNxSPI5P6np3Hnt0FESn+33l7+?=
+ =?iso-8859-1?Q?5FTSe1XjtPdqgPWTctzeUE3ciVOgpmXKEc8Ak1E1jjqswAcwf128nkHkZZ?=
+ =?iso-8859-1?Q?hp4SmGH2uVH9TADe+OaSGkhEoWJeZhs1PQi3riElmPNC6l74I5b7wt2wiM?=
+ =?iso-8859-1?Q?F3Fzw6bbJnJMIsXTQ0sohPdxWZyxPOm8YypZUv+y63NrJ+IaMQ96PH8Gq8?=
+ =?iso-8859-1?Q?ji+qtmKy202wg3cmydNFIRx4xpFvlfT9FbsDP/0WHtDeq96F9IZmyROdXB?=
+ =?iso-8859-1?Q?0FYZFsnBLzbNK7hQBIFYrwVOuKfGS456e5vrlEsU9zpqtmksDv+Q+aqGMm?=
+ =?iso-8859-1?Q?bAiimpY9urUVFrTsCctdc71a8VFMzRqF9nUXqflnO0JvZxD3zvMUxVT7tJ?=
+ =?iso-8859-1?Q?Sapah3CsogENhoW/iGU0h8FjCrgIqhG01EacW2UqaP3ol5QYk4QF8Y2Qgc?=
+ =?iso-8859-1?Q?1b84v8fW4k1bKRYl2nb86uBJ7rhLvXch1Lf1v7o32pT986FFypV0jFw8AQ?=
+ =?iso-8859-1?Q?sgyG80izd0pcJsQr82GKq/QE3Pm9YB0NlJ2wuXNPyIkAWFe/WOj+ESWhEI?=
+ =?iso-8859-1?Q?nG1jJakWxiLxFOdHpSS1pC1so5Sse0mFQBrOgz33BzqlW8MCh/5k6Z6B3T?=
+ =?iso-8859-1?Q?VLbO8Y5ZNaVopaBCIW6Teq2ZMF/bbebtJ6jBWjZehti0sk7UzqoFNKyrwn?=
+ =?iso-8859-1?Q?yhIJcrNQs0tjnoZxlk9mn8kB9sojKBuKq/DeL/hAfLCTqCY/UYYs6bAo/e?=
+ =?iso-8859-1?Q?veA2PqexzwpEHJYI?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9576.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?iso-8859-1?Q?1Ev8VC+EUnTchQRRA7XEC4DdnnHnbTxHMsAUF58+4MN82E8TfFh+hBkvzs?=
+ =?iso-8859-1?Q?tuzf246XD8j+kNjuUJ7IKlnyTz4BrvV5p3DzS4MLa3cMgyJhMYAljhvNwo?=
+ =?iso-8859-1?Q?rwYFs2tJxrSfdNLiAK2EnCZC3JuIDf2LqXFtF2jSOvzqeIGUHd22GnRRrs?=
+ =?iso-8859-1?Q?CbEikVlvJVjOV8btwRfS6oCWk+6DulXvKyV6LH083sheMvHX++uPH4plUH?=
+ =?iso-8859-1?Q?HCsq6s81aG1n0KhVg103W1bEQJo0xeLWeIxBtpI53DkXewEzUdFRB00yNC?=
+ =?iso-8859-1?Q?FAmdEJFMl+SoSlC79rNw7h6pEWUz1HBmv45fNdmoQZADreyzCbszuntgwS?=
+ =?iso-8859-1?Q?MYkEoPFNwXQnZh/f49GF5uzbPYPNjRjiYLVGxx9ZIKy3aNSP0EMb9Gkipq?=
+ =?iso-8859-1?Q?+KcmVJzN3KLk9OWVPC2ZQju5ZkYjcR8cPLKD+Gr4l/UVoAevCRoxMc42T+?=
+ =?iso-8859-1?Q?IN/5/+SS7MAQQNOLaPtqoXoQFZkHpU9VJZ6rD/dsHcJX4Ii6cQXMg+svcD?=
+ =?iso-8859-1?Q?Oz58SFpt5TGOruEHD4I5f6vZp/PSbCeYighe8ZOqJf6yLnPk2rJoReVOEK?=
+ =?iso-8859-1?Q?5jJcqkIcd1HyqmoUO6q6/JxVP1IyhkqTgKaepCq8mKUtUZrY8k/G+bPKgF?=
+ =?iso-8859-1?Q?6Drna9hnbN5Fb1q3UEW5UtriYUDJQaheGDKWayYE5VMRrnNdCZpqpnOwqE?=
+ =?iso-8859-1?Q?y2zc8OJXtSinCTuHdeBz4eiZYf/IhVwOz4xb+pUE/yrbJVQBUHkFnWmiTL?=
+ =?iso-8859-1?Q?XF6qXpTOGjELOpvjeqZD1dHlpJ8PGHRrQcXTsTMA3v1kQsD9ieKXP2FWXT?=
+ =?iso-8859-1?Q?lT4I1swuLIXlbvnxrcLd8r2RE7ky0YlWwy8Sh3unCQMO8TvxOv1TR622rx?=
+ =?iso-8859-1?Q?d09UoSrcmdpTCf0s9HTVHZK433byevi0dDC2jt4bvwFolO7UxmdAWGNZ7s?=
+ =?iso-8859-1?Q?oLcygFcVrZtg3dQEe1a/t6AVgDXKBDhLltzlWEoRassOETBuKSkKU7rasZ?=
+ =?iso-8859-1?Q?zAqsVPD3X/zxexY91RnwskHu+hnrk88JhCAC4K6urk7D+i4//SHgmfjVcF?=
+ =?iso-8859-1?Q?lIUg9JpT8OXmp/RyFagwAjtLJSLNpNARjDxj3sd5GYIKynSx1G9myMyv3g?=
+ =?iso-8859-1?Q?rNho0L1WJG8NMo7Rjnw65U77eUGQKfO8R9y3UB/ET+tEt/7dvb2/WdTCH1?=
+ =?iso-8859-1?Q?ztJz2YBHCQmOj+qwxg44N+8zCJZyqly45WmIRNNTedycHSoZNYl5fcm/Qw?=
+ =?iso-8859-1?Q?rk/Fm5BBoTq6hXoCYsKm4KkGaHdqUqjj9UYLRSMVwlqd8pZsnwI5ALcN2d?=
+ =?iso-8859-1?Q?z2j0fLN5cj2uJdJ13+0fc8ZfIfca/tQsHSBksEQV7icPGYoapU7KykpInx?=
+ =?iso-8859-1?Q?7bUphLBEBVFvmO6SPju2OWtDrRoHfSCzcU3aGL2PKeEE9jmP1OsEFY64B4?=
+ =?iso-8859-1?Q?uBi4XwApju+fEZChEFDLzf3vSdylQAf0XtcXHdEcq0vXPeLvJya8XRtxHy?=
+ =?iso-8859-1?Q?gXeILSzdVFqy8ISoiRD84ehFnRZSZjoxlz5RV2369EgxmGZhBhoPOel4Eg?=
+ =?iso-8859-1?Q?UPcL24LL47NBigVq5dC3A1C06nYcgq+PCoP4N3tErmSosjqiHEetvXnrNj?=
+ =?iso-8859-1?Q?1R4ZH/rnYZQYzVtzm6iV3CaE96N+J8WUJyR1L2IYXQ4U8Z6hL/FssfHA?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1f096ac0-5148-4dec-89ca-08dd5c86fa02
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9576.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 08:14:54.7657
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: p7SaIlihkZF90kCxqvgbNlTizJMLcy+rQKgKIQQnrDx6sjgIdsF9bf+YFG49aNfdquxtzXad5RBoBV+Ykm41Kg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8676
 
-On Wed, Mar 05, 2025 at 02:48:58PM -0800, Charlie Jenkins wrote:
-> On Tue, Mar 04, 2025 at 01:00:15PM +0100, Andrew Jones wrote:
-> > The first six patches of this series are fixes and cleanups of the
-> > unaligned access speed probing code. The next patch introduces a
-> > kernel command line option that allows the probing to be skipped.
-> > This command line option is a different approach than Jesse's [1].
-> > [1] takes a cpu-list for a particular speed, supporting heterogeneous
-> > platforms. With this approach, the kernel command line should only
-> > be used for homogeneous platforms. [1] also only allowed 'fast' and
-> > 'slow' to be selected. This parameter also supports 'unsupported',
-> > which could be useful for testing code paths gated on that. The final
-> > patch adds the documentation.
+Hi,
+
+On Tue, Feb 18, 2025 at 02:29:30PM +0100, Julien Massot wrote:
+> Hi,
 > 
-> Why constrain the command line option to homogeneous platforms?
+> On Fri, 2025-02-07 at 13:29 +0200, Laurentiu Palcu wrote:
+> > Since the max96717 serializer can work with various sensors, we need to
+> > implement the .get_frame_desc() callback to get the VCs and DTs for the
+> > incoming stream(s).
+> > 
+> > Signed-off-by: Laurentiu Palcu <laurentiu.palcu@oss.nxp.com>
+> > ---
+> >  drivers/media/i2c/max96717.c | 21 +++++++++++++++++++++
+> >  1 file changed, 21 insertions(+)
+> > 
+> > diff --git a/drivers/media/i2c/max96717.c b/drivers/media/i2c/max96717.c
+> > index b1116aade0687..6a668a004c717 100644
+> > --- a/drivers/media/i2c/max96717.c
+> > +++ b/drivers/media/i2c/max96717.c
+> > @@ -575,12 +575,33 @@ static int max96717_disable_streams(struct v4l2_subdev *sd,
+> >  	return 0;
+> >  }
+> >  
+> > +static int max96717_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
+> > +				   struct v4l2_mbus_frame_desc *fd)
+> > +{
+> > +	struct max96717_priv *priv = sd_to_max96717(sd);
+> > +	int ret;
+> > +	struct v4l2_mbus_frame_desc source_fd;
+> > +
+> > +	if (pad != MAX96717_PAD_SOURCE)
+> > +		return -EINVAL;
+> > +
+> Please check priv->source_sd first, we support the case where we only have a test pattern from
+> the serializer. Then we can simply return the result of v4l2_subdev_call.
+> 
+>         return v4l2_subdev_call(priv->source_sd, pad, get_frame_desc,
+> 			       priv->source_sd_pad, fd);
 
-Based on feedback at the last Plumber's, we've decided not to go out of
-our way to support heterogeneous platforms unless they start to
-materialize. With that in mind, and the fact that heterogeneous platforms
-can use the probing mechanism instead of the command line, then I didn't
-think the cpu-list support was worth it yet. Also, we can introduce
-support for an optional [,<cpu-list>] attribute later, since the
-definition of the parameters would stay the same for when the cpu-list
-attribute is absent. Indeed, even if I was to introduce the cpu-list
-support now, I would make it optional with the absence of it behaving
-as this patch series implements.
+Ok, I guess I missed the test pattern functionality completely.
 
 Thanks,
-drew
-
+Laurentiu
 
 > 
-> - Charlie
+> > +	ret = v4l2_subdev_call(priv->source_sd, pad, get_frame_desc,
+> > +			       priv->source_sd_pad, &source_fd);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	*fd = source_fd;
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >  static const struct v4l2_subdev_pad_ops max96717_pad_ops = {
+> >  	.enable_streams = max96717_enable_streams,
+> >  	.disable_streams = max96717_disable_streams,
+> >  	.set_routing = max96717_set_routing,
+> >  	.get_fmt = v4l2_subdev_get_fmt,
+> >  	.set_fmt = max96717_set_fmt,
+> > +	.get_frame_desc = max96717_get_frame_desc,
+> >  };
+> >  
+> >  static const struct v4l2_subdev_core_ops max96717_subdev_core_ops = {
 > 
-> > 
-> > (I'd be happy to split the fixes from the new skip support if we want to
-> > discuss the skip support independently, but I want to base on the fixes
-> > and I'm not sure if patchwork supports Based-on: $MESSAGE_ID/$LORE_URL
-> > or not at the moment, so I'm just posting together for now in order to
-> > be able to check for my patchwork green lights!)
-> > 
-> > [1] https://lore.kernel.org/linux-riscv/20240805173816.3722002-1-jesse@rivosinc.com/
-> > 
-> > Thanks,
-> > drew
-> > 
-> > ---
-> > v3:
-> >  - Fix compile when RISCV_PROBE_UNALIGNED_ACCESS is not selected
-> > 
-> > v2:
-> >  - Change to command line option from table
-> > 
-> > 
-> > Andrew Jones (8):
-> >   riscv: Annotate unaligned access init functions
-> >   riscv: Fix riscv_online_cpu_vec
-> >   riscv: Fix check_unaligned_access_all_cpus
-> >   riscv: Change check_unaligned_access_speed_all_cpus to void
-> >   riscv: Fix set up of cpu hotplug callbacks
-> >   riscv: Fix set up of vector cpu hotplug callback
-> >   riscv: Add parameter for skipping access speed tests
-> >   Documentation/kernel-parameters: Add riscv unaligned speed parameters
-> > 
-> >  .../admin-guide/kernel-parameters.txt         |  16 ++
-> >  arch/riscv/include/asm/cpufeature.h           |   4 +-
-> >  arch/riscv/kernel/traps_misaligned.c          |  14 +-
-> >  arch/riscv/kernel/unaligned_access_speed.c    | 237 +++++++++++-------
-> >  4 files changed, 168 insertions(+), 103 deletions(-)
-> > 
-> > -- 
-> > 2.48.1
-> > 
+> Regards,
+> -- 
+> Julien
 
