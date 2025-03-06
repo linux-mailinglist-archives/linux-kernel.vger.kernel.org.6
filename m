@@ -1,126 +1,191 @@
-Return-Path: <linux-kernel+bounces-548302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D15A5A54322
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:57:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F5BA54324
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:58:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E7B37A4B95
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:56:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2839516F698
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEC91A316C;
-	Thu,  6 Mar 2025 06:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9181A5B92;
+	Thu,  6 Mar 2025 06:58:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Frk96SLE"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="dzP234fM"
+Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013004.outbound.protection.outlook.com [52.101.67.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED96018DB04;
-	Thu,  6 Mar 2025 06:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741244268; cv=none; b=c3Tdj55hWxMh3QY/XOxfhfvw1SwSP/+OplXe9awvdbP+42tBPFTs2aK90OSnGZEZaI6GD55RZIYyofV0/2T/xWSO44fQJK+Eza/Ho/rDAveLz2epUNBOvzqGRhEKMgO8GiX7WbWkfWGZRxIYmdNWms1EA2VLz8s8xnjlHOJ/7LI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741244268; c=relaxed/simple;
-	bh=weI/kwSBsrQsHpQ8px4HMhGgp73aX2Uq1ONCo9dVmW0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n/kpM/3qhF9Nqc8gcUgmeOZBbNBbGd76g9HO2sBu0ILYwGaoSi5j+lu00M9kLplSXF9VeMXYOcMCFqWvk0IgTOTFbDO83XtIg/Mawh4ltexG7ijShWhXNGsVlhl5TrrER99MP9BHjO7lyLK9p0ulD5bzpDOTSSschjBUCVsT0h4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Frk96SLE; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741244267; x=1772780267;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=weI/kwSBsrQsHpQ8px4HMhGgp73aX2Uq1ONCo9dVmW0=;
-  b=Frk96SLERu0XMDV+OTWGomq6sO/pmeSKpZ6h0oPjBWuwy64WDNFXnayp
-   GIew258qLveFlqSEOsM1oVRF5kQc5X41vrg3IOWg/R2SppdICJb4Djsjn
-   KbJI6vYGVBBEcusG7FfdBQ0MFiJhR84u1yRFoz4wTAC5F1eczwFLcVxSC
-   Fi2KA4dJolT7ih9tbt/Kd3CwjKmueKJOwhsN07ajKc5hk1jcvIUKC9BvR
-   Wjv3A28ppdCEJ+ZxIy0oi+aVLYmpAhdvxG8UNNPARojvGBKIgI+pRbUPR
-   aWD0Xp175SMrB3jnupp4jHoOBpCu6RNUqtI5nrtAZa6v17JEZORxNuTXN
-   A==;
-X-CSE-ConnectionGUID: 5zCScHmbRLmEWlDHpGP03w==
-X-CSE-MsgGUID: VlvtVbvhQ0GQhuazY70xVA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="41947969"
-X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
-   d="scan'208";a="41947969"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 22:57:46 -0800
-X-CSE-ConnectionGUID: a4th9ztnTA+EfE0LcPrpNQ==
-X-CSE-MsgGUID: cy620EDBRQeGbwMOaavjKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
-   d="scan'208";a="119107579"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa008.fm.intel.com with ESMTP; 05 Mar 2025 22:57:42 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tq5Aq-000MfU-2r;
-	Thu, 06 Mar 2025 06:57:40 +0000
-Date: Thu, 6 Mar 2025 14:56:57 +0800
-From: kernel test robot <lkp@intel.com>
-To: Stanley Chu <stanley.chuys@gmail.com>, frank.li@nxp.com,
-	miquel.raynal@bootlin.com, alexandre.belloni@bootlin.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-i3c@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, tomer.maimon@nuvoton.com,
-	kwliu@nuvoton.com, yschu@nuvoton.com
-Subject: Re: [PATCH v6 2/5] i3c: master: svc: Add support for Nuvoton npcm845
- i3c
-Message-ID: <202503061400.GGr64rkR-lkp@intel.com>
-References: <20250305034414.2246870-3-yschu@nuvoton.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137BD1A238E;
+	Thu,  6 Mar 2025 06:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.4
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741244309; cv=fail; b=c5BynrDv8N5fdQ10qM7m22PQ/zqAdaKXZRYAt9pC6KvuMyHwUlPhmUbQnRfCdLVQVMdLb1KuEyF0uS0LIfUSOhspuilIOPKQ00Q4EjVcI8j/NQcLzRHT0cWv5M6Jssf749WuV6jo8YfQGodLzVB8DisXy8wEGZ1SLSNeEJInfCQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741244309; c=relaxed/simple;
+	bh=wkCKlLwYWtRshW+u66KWT3Qhrjc0FhgaN0QwKbygaCA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=cv8s3g6Ewe2EJH0ja3+1SNSnTRwWLnBU7AGs2RHjsuz7+8kaDfq5Z2AwWCmdH0RZWu3Ped2f0h2N0+DT0svOMKcJXAMselvPVGxc1jH8w9EDlkKN5D5akhl1lJ5ymicq3qsn++EzuTKy4j67+ezySe8m1r2a6865nsu41B6Tm6I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=dzP234fM; arc=fail smtp.client-ip=52.101.67.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mZvRpivLI3XCIeZ9bVnEDb2wqbP/P3IM6rqBqObU9l+KS8TX2W6P03b7oXGAMooqQHm11eM/3HsXrHGs2eqI1j1gIrM2irWszrC2Ohwk4G3P6rSRASpnTyoZzOfx0NQ449+agXId/T/QVG39B5E0ll+XtM8btZCumkVbhXusn5k+8eWthz+xRYQmLKYrz4wkYwT2rftT1kv6JNkHCI+ay8mKFOfPWrQltOxoDq3IaQxr2TzhElSqQMtowFI0RGc3d4mDhrID6KgpYedsgT2nKfeLVctR6sRIVJrPA9jgCGVrbLEm2YCcDnX++GKv/jRApSwkFbXcVt/XbcUXTzHw/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uc1tlJ6WfouTFbMdQrw+mLhl1x52UzEqk5vuHa/vqOc=;
+ b=hi2cg+farYKuCg/kLpoWwyz2/4xm4bwmNeiHTeG1cl3QtCLfNuI3Qgkdl2mavklgG8QmgofntL4hDWqj37MVrI+RrHhSxPiiKYQO5kQyrjGDRhEIZ0TN97U/1LiNGexhgD9tfizdKFMg+n+glxI/ptrT22TEYzcujxczOcQUeNtp7A24f3N+U9tbiYxmTLA4p3v8gLNWf1uWY+/UheSQfsWMyX4emLKMtoHJyUfefDTcS2DOUXOSJTIMeRUmrd/rhlwBwBbg8wNA9POgJgUG8aZyV+kUPpPKhwvfTtd1Nq1cI3bRvrSbZV3Hh0CaCXuvMXZ6c6imgzW2+ZeZLmqOYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uc1tlJ6WfouTFbMdQrw+mLhl1x52UzEqk5vuHa/vqOc=;
+ b=dzP234fMh8ubkWXBZyddw4lNnZqaRvbDVmpN/wQmva7icM9HR0BXReJJP4ZYRZxRXc3cTOsLrOKTC6ifb57/YELXFqiAsCXa3mQIR8ZcbDTAFBiv1s3s/ByVXiONK8B9MG9d6uIHCwMczucqFLHSQl1wwiSRCzgQR0o2PenV8NXYwXd1gUjo6jw/hHFr0SXUYLcxzohthh1yzacjqXFLfVN6Iwf67xzkj9rUf0JB4M2t5Sac7inFwdzRQgKydG8mqu5ORDFBDq6Ek68Sd7P/+D8VqYDWSOvxS88jgrdOlo+p+FfqoYUkwkg07w/2f2ZnJRnKxR1FbwJxFWncQahBZQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com (2603:10a6:10:32d::19)
+ by GV1PR04MB10584.eurprd04.prod.outlook.com (2603:10a6:150:210::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Thu, 6 Mar
+ 2025 06:58:23 +0000
+Received: from DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334]) by DU0PR04MB9496.eurprd04.prod.outlook.com
+ ([fe80::4fa3:7420:14ed:5334%4]) with mapi id 15.20.8489.025; Thu, 6 Mar 2025
+ 06:58:23 +0000
+From: haibo.chen@nxp.com
+To: mkl@pengutronix.de,
+	mailhol.vincent@wanadoo.fr
+Cc: haibo.chen@nxp.com,
+	ciprianmarian.costea@oss.nxp.com,
+	han.xu@nxp.com,
+	u.kleine-koenig@baylibre.com,
+	linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: [PATCH 1/2] can: flexcan: only set CAN_STATE_ERROR_ACTIVE when resume has no issue
+Date: Thu,  6 Mar 2025 14:59:20 +0800
+Message-Id: <20250306065921.2329517-1-haibo.chen@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SI2PR02CA0014.apcprd02.prod.outlook.com
+ (2603:1096:4:194::19) To DU0PR04MB9496.eurprd04.prod.outlook.com
+ (2603:10a6:10:32d::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305034414.2246870-3-yschu@nuvoton.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9496:EE_|GV1PR04MB10584:EE_
+X-MS-Office365-Filtering-Correlation-Id: 19100719-74fc-4bf8-93a3-08dd5c7c48ef
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|1800799024|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xGk3AhSl7bUk7JUqHox3OjIRXEKPHlPn1jZ/w7bRoP08G9w7FxxNVmaRWm4+?=
+ =?us-ascii?Q?oqOlEUtGv2UffSaMxEXGLSMk+P1WsNyYLgIWwTNYyPZw91wIMuz+hX6sH8Mv?=
+ =?us-ascii?Q?Wm0Yjs99evBBGDkB9T5m5m4w9SYXfSalOJnfc6HXHYAKGpvhpBEt3QiJO8X2?=
+ =?us-ascii?Q?msHrxXtKEDft9mNqmhul4OYnbwMPiIfMSxEt30Oa/GCr4Zfs2jKfQiY+eV22?=
+ =?us-ascii?Q?OPqKcNi4Hqqoo4YLoeEcByoJzoERxheeYQNAbV/Vl6Mr6CUre8WeF10QxZLh?=
+ =?us-ascii?Q?KVRwtleDdH8Xm6ILlI0Pa23k8LdE3nesF2fGrZFqf/HjFV/YXxrKcMoN2cXo?=
+ =?us-ascii?Q?NvljW2MuVo5U6NzutKxuk2CGGyYamzJ1Ljglwq+wTXl7MFbuno/m+3b+psFa?=
+ =?us-ascii?Q?4/qyoGo1yVSFySYQ/OlZyxsuxzwZBeFDyyyBsuf0QNLuNIqy8n6vDH9mu7rK?=
+ =?us-ascii?Q?KR24B14ZLq9g+d5JHALbn5I8iSNoXvuJ8aRIDeTPjvcq01PCI+0YK0e+z/av?=
+ =?us-ascii?Q?/0kx8KY6TE7N7A2+Gyp5n0SruHd+6o5GNDmKqklcp5hhWCVAg28s6+ZQXtIw?=
+ =?us-ascii?Q?jNX+UciUPd5rsG+/kxa8mCyGVxE0WUwxOzNgiS+ivf5hnfG9YVm2eZ2yCt8T?=
+ =?us-ascii?Q?VDXpyYdiCYByQfNb7Sse3iocWAKDoTy8FXchis+UyyAuy1LK/giXl8A2jaJk?=
+ =?us-ascii?Q?7yWKL7I6RXEonJ/Zf1pUhtsRn817E61SJ6coI8Z4BDYG7teS1fupoz8DFzDr?=
+ =?us-ascii?Q?n4Vf0Fz2+Tb2v7H+3PrfKSxjkuYIZYzj6T93JoJ5VgplPFKWw34os9xDqkQI?=
+ =?us-ascii?Q?A1c6yXZLHDFVDHyjBQ3w34ELQYQUOnALi5xw5NpElKr564aMvGexWgbs+WUq?=
+ =?us-ascii?Q?rz7Gr3fwwr3gO61INgtYsBoclommzgyQNuNb5OpYfyVi/NhZ9ViVqpaOUVYT?=
+ =?us-ascii?Q?E/zCHY2MhA6zCRtIRchrNENjqejwNDsNH808RXfEKsLXl0/2tSgmNVvocUIu?=
+ =?us-ascii?Q?i5FBtCTFdcGA0zAZnF2rgNNHmiCD9RhwvsaubbCUUkEmyNc6lBYXonAAmdvi?=
+ =?us-ascii?Q?vo1ZsZr26rHGsM3epuy6u94SKwUqsVKbaU5ylahYBJyAB+sN2haP1EgdVMHp?=
+ =?us-ascii?Q?UsXqdY3QjBNAHD12UGnSLx1ip1TrxOFTLVe5FXlGRVf4K1I09HRJaJZU8sbF?=
+ =?us-ascii?Q?PuPNnzRrslI92F4KTOavX7o4UzPiocRdErdPCDNwDsWjo+6s1VgnFcy3uJ4r?=
+ =?us-ascii?Q?iWCikqMslDS8YMl18kLulZV7DVIbT+w8aRfTykCT3kQ26b8yqEq+zJRvS6rK?=
+ =?us-ascii?Q?s+4WNdR7Pfd/YjsotUZ+UwyU73jbl4U/k09bw/dIZRFO/tJxkSO5VOqLwDnY?=
+ =?us-ascii?Q?6iAnKkxbIiGo/rQ47sWFyAijqgsR8o8NN+KBU8I/+YtFQo9wbkX0xQLwAbKd?=
+ =?us-ascii?Q?JsvhmNS97utR1ilgpbANclQ7/0v3rOhy?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9496.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(1800799024)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?CE+lIqED5a+nLcdfpcG6V2i8Gmw6HtB8RqgRqOyT/K8Ijz+pN4Ec28wx5ONo?=
+ =?us-ascii?Q?l8WzJ1aUktuqV5nQdoYUEclfwg4z3+7/7hmp+j5JAjyTLlNVA0KZC4Lqm03V?=
+ =?us-ascii?Q?qeRWVmMucOsTYUVGtEhT3HDs6N2F8nzlSjGSDP7iR1Ng2lGDTVe/C1j0Hh5w?=
+ =?us-ascii?Q?diCfrwPkqX6D6/YkXSXTW70lc4JgbsQkGGyQwqk2czEEOwECL+fmfaM5mCc5?=
+ =?us-ascii?Q?dSMdl3sIZtSsbib7zg4smH6CHq+Rrn1X81MLEBjktmXODhSpfnhr6ZMCbZ6k?=
+ =?us-ascii?Q?QYLFf2U3EDNdy9VxoY49oVG480ntqXssWBfx0FD0/qGrfQPXR/vbovqaWUZk?=
+ =?us-ascii?Q?Z+dPOnYcwC7PA2JnZG6VY9aWrC4qycRoqA+pc7dqMOUAvBoTpArm/weMxLX5?=
+ =?us-ascii?Q?N+vmZIxxyhEzSy3b/xNAYbJoCGpkml+ni9UlNRM2RrKLe/S4DwHe2tmxscQp?=
+ =?us-ascii?Q?NlQrxaG1jv4ynUju0AljrvOTLjRUOpYg1o7ygU52vGF25FFMNW4efTHfPdfe?=
+ =?us-ascii?Q?ON4GtwQTApVTblZhGh+aWUOxrpYOHVXxJITSz/2MnlH/Kf6/KTlJ3Ge56Q/+?=
+ =?us-ascii?Q?EB3xlwROh1ra713tKWwnM2gyEiOVZyhyDXt4KLlQXTvoNjr2QryIe7k3MfLl?=
+ =?us-ascii?Q?Es7vvfJJZGMCL0DlEWEwxWQ8fUCxcLrxDZmmGWAPdNfNAKYkSFSjcFWGSXn6?=
+ =?us-ascii?Q?gismR/1+h4OhhMOnYXjohBvwPXCxO9plAJ4+4J3DBjxZP/ruXIUhnO/SyCjp?=
+ =?us-ascii?Q?ZxIs7veuqmI4+EFKZaosIz8a+6x4BqwWFj1yjBJ4rT2/b+eH8IpvHIe8vMiH?=
+ =?us-ascii?Q?9AqsIgMxluOeW/pRa8W0IWZzHoEvK8IfRzSfsJ7BKxVi/bM6dS4B1q+M04bB?=
+ =?us-ascii?Q?dqV7v9fnhI1F1RxvACv3evnH83xiLAtNBDnomPrRqpDB1V0OAHG+FikDY8kV?=
+ =?us-ascii?Q?bsiq4yPx4r+2/f5hRHMcfRv7k4NOqZIawPz9m/JqxFA7xKBbkcKNgK4Ji7m/?=
+ =?us-ascii?Q?5iNGt06Ib/l4btMuen2E6zW6VRi1joFDT5AzKzBrlGuh4YEHLAJnxSafLd5t?=
+ =?us-ascii?Q?yUaYTwN0x6jUH9XZf51FDQKnN4ohIkf+sv/4aI/xHI9L4cOI4z66aKRJrZnM?=
+ =?us-ascii?Q?gVVJOQsO1vQ4crhgQdqJ2kHZrqvq4vzHm6VoDij52lLsplYSeylaGSuNm/18?=
+ =?us-ascii?Q?JMuXUmDBzdXDef5cv/cu3PtibtaKCmnUno1PdTbqtlYc+C+xe173qlpO5y3u?=
+ =?us-ascii?Q?qCnlalx6UqXRKBfz4h99NJqCqjZeNOuLZW/5kVMcbe/Ek3x8sFgxIpK34l5E?=
+ =?us-ascii?Q?Z7HlWGIFh+Y+E9a/Jnvf+QXdnow3c3as9nZg4XMQz7olms3IU1G3GFuaJy2z?=
+ =?us-ascii?Q?FoLWvE4x5UkN1khIQy4H9Vo0zDdHPeiQaVxrOLg80Zmg5EEQHjrCTeSHFfGo?=
+ =?us-ascii?Q?UQQl0Gzaos1LaQTRWd5cx8T2TGtqC7dVslGGvMdU4HdV7kFig3hl/JOgGHs1?=
+ =?us-ascii?Q?kUMDiCawtoS7WT2SK1lyVE3uLdj/neENnPXOOSVHF/3DfPgt1Y8q3aaly3h0?=
+ =?us-ascii?Q?oA3Rni//70ApJKMLWMfV1oiYsEHJ9RxxdCy5usMk?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 19100719-74fc-4bf8-93a3-08dd5c7c48ef
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9496.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 06:58:22.9973
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pdr2ynXEd+ciHlspVHmfhsZXsHjr1INofb3E/sDVBP+13niLHRyGEn7nPz/yIZbowfRvqBgwgrvybM65+0/Yyw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10584
 
-Hi Stanley,
+From: Haibo Chen <haibo.chen@nxp.com>
 
-kernel test robot noticed the following build warnings:
+Only set CAN state to CAN_STATE_ERROR_ACTIVE when resume process has
+no issue, otherwise keep in CAN_STATE_SLEEPING as suspend did.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on linus/master v6.14-rc5 next-20250305]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Haibo Chen <haibo.chen@nxp.com>
+---
+ drivers/net/can/flexcan/flexcan-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Stanley-Chu/dt-bindings-i3c-silvaco-Add-npcm845-compatible-string/20250305-114705
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250305034414.2246870-3-yschu%40nuvoton.com
-patch subject: [PATCH v6 2/5] i3c: master: svc: Add support for Nuvoton npcm845 i3c
-config: sparc-randconfig-r121-20250306 (https://download.01.org/0day-ci/archive/20250306/202503061400.GGr64rkR-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20250306/202503061400.GGr64rkR-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503061400.GGr64rkR-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
-   drivers/i3c/master/svc-i3c-master.c:1971:30: sparse: sparse: symbol 'npcm845_drvdata' was not declared. Should it be static?
->> drivers/i3c/master/svc-i3c-master.c:1973:30: sparse: sparse: symbol 'svc_default_drvdata' was not declared. Should it be static?
-   drivers/i3c/master/svc-i3c-master.c:559:9: sparse: sparse: context imbalance in 'svc_i3c_master_ibi_work' - wrong count at exit
-   drivers/i3c/master/svc-i3c-master.c: note: in included file (through include/linux/mutex.h, include/linux/notifier.h, include/linux/clk.h):
-   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
-
-vim +/svc_default_drvdata +1973 drivers/i3c/master/svc-i3c-master.c
-
-  1972	
-> 1973	const struct svc_i3c_drvdata svc_default_drvdata = {};
-  1974	
-
+diff --git a/drivers/net/can/flexcan/flexcan-core.c b/drivers/net/can/flexcan/flexcan-core.c
+index b347a1c93536..8415ef71f1b1 100644
+--- a/drivers/net/can/flexcan/flexcan-core.c
++++ b/drivers/net/can/flexcan/flexcan-core.c
+@@ -2311,7 +2311,6 @@ static int __maybe_unused flexcan_resume(struct device *device)
+ 	struct flexcan_priv *priv = netdev_priv(dev);
+ 	int err;
+ 
+-	priv->can.state = CAN_STATE_ERROR_ACTIVE;
+ 	if (netif_running(dev)) {
+ 		netif_device_attach(dev);
+ 		netif_start_queue(dev);
+@@ -2332,6 +2331,7 @@ static int __maybe_unused flexcan_resume(struct device *device)
+ 			flexcan_chip_interrupts_enable(dev);
+ 		}
+ 	}
++	priv->can.state = CAN_STATE_ERROR_ACTIVE;
+ 
+ 	return 0;
+ }
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.34.1
+
 
