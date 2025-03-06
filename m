@@ -1,213 +1,182 @@
-Return-Path: <linux-kernel+bounces-548320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA860A54356
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:11:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D03EEA54358
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:12:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8FCD3A6AF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:11:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0610A170789
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:12:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DB7F19DF4D;
-	Thu,  6 Mar 2025 07:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDCAD1A840E;
+	Thu,  6 Mar 2025 07:12:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F8XyFjF4"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NUj1C150";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YNfY1JPx";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NUj1C150";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YNfY1JPx"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C181A5BB5;
-	Thu,  6 Mar 2025 07:11:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D2D19D892
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 07:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741245070; cv=none; b=ue7uHwolOFkC/RAJryJ4XKddapVK3qPPewG5rhWf6quvOShyfN76U8sriwGPGw3jGqJwQka6e7FWr99lPwmexry86EZc9xIOFrUjoKL2EnFLCbNXjofZ1KPp6vH2nIGiSCBmuKr+SXhkzoktOhrN/TDd7DjkiVaPoXBP7z08eFw=
+	t=1741245129; cv=none; b=bCSIErb9iPYhFtfAyh79jc8Hcke/yzysUzGrJgt/eQ2Me6UHsUcFQk5ywWu8hiWpuATlCVzajVYFP7QRR/8ZTS/RaXe7bIKCrayS8As2yeZTS1IGr+wYtd+KZiNHSz0EjL0xjUIKsip13uEvczepHuG+y06LKPkxE/Gg/qLy7dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741245070; c=relaxed/simple;
-	bh=xN0GSgo1YgrQ84SnN1b56MUMz5jIvfTrI3SY/kuEBRc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eQUThN0o9US/qDAGEJB6tREAkZU0RMagzTPF6e8GzF3RLpYYEwy9K6HiVE2tIdFmEmBb8DBvUH2EPQ/WA9kk5p5tA8hcvVg0kJbIibmjwg+5IYW/L6LVjhUlkKmWjJsJ/WSEs3ca1Lw+Fp/e2IBY1qZ05Ual2f5fLDQSeqTMiBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F8XyFjF4; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ac202264f9cso59264266b.0;
-        Wed, 05 Mar 2025 23:11:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741245066; x=1741849866; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eq1N4bGBvJPpN/I5LSt/1X49Dltjy7IGKVFQlpiMSBE=;
-        b=F8XyFjF4VtFA97UkJnYTKGICrWR80aPq3Gtt8smyJ+os8yI0eheA+N9I5071qSeeUe
-         loG2q7N7E+kY2OQoY4/1dJaOFRtRFdgzKiUnMbU+L0Ir/mptkz4zyNBP1kAGO7UPeMRG
-         r55sMr/8C/rpo5dpdapqegypWARy75bb7rZZZNwD1F8xlFDC/6kdlInw7tRx2UlexrVI
-         Pr5a0e75MeRhusr6gZkX3J85hic/xKSR8KRtMF8n13d0hZK4j6yy8bUTTPEcWCMKL3kS
-         nRyFlawu5+861cm/xr+dKwabv9XWfcilhGneIjkCyU7qRKujbxDMVSYqumk6H7sHKXfA
-         5N+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741245066; x=1741849866;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eq1N4bGBvJPpN/I5LSt/1X49Dltjy7IGKVFQlpiMSBE=;
-        b=aNYP4STKsqLPDbZQi1vS5zNKQqORaNsq+a7sn5/DQMZdzNlbZSBcPtcQ50S4vbiEpy
-         9Vu/DaDaZBt2sOmghv2ypxBR8AqLsdUlfAJdXQ2mRAUbbWTE7II/AAUTyiccRhYlVgY/
-         kMtmiKUvtt1b9IDdYCjr8oo5xpK7Z38aXq8l2+PJ5vN4fsRpTbqBVhfDzT/8vos6M7xO
-         tSAog+Tzoj+/0oM5tPPDfPZdxXASTLoTnCC5v8ziU4MlA0fCt2lf9OGTJRUum2qFhIjs
-         QthYNcwmQ11Lo7yVlGX71PB+bCR99EbI1MTpK2E78x0uK43e+hyIjoD/djwdcoZdFbvB
-         nr9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWaepUHYWrl8yxJWFXiS5xlyAufDQ2YnmuN+l6G6FGIf5TRUjC0fgcg0W3Dv3CT626hjYFvzfifrfd/vHU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7y7+2MHBSR2QaTJoMFLVAMmFy7nX6vNWACfCJjS7DR3wBzZlY
-	3/wrsXayFhuhsQVZQBuWlozrmRQiOYgmex9ecpXeWj9lzWdA6GM5JLv6iMzU1YSKMFY/tdmnOPh
-	A6DsnKWjGTYNiKYqGtA+QInLindM=
-X-Gm-Gg: ASbGnctvd9aEvUgFwJkvQkHO1TR1625kyF3l8QLsZmuSlL5Z+QCFwxVq850Z24eev8A
-	XSDaOlbmLHfAw6WCKKhPJznJkZ5PoJVx5jOGm6Cy86XsvtkkxuZhmREHIbXY9Tt2qzaK0mo7JPG
-	zFFukb+JpF6B6nUNOpl96kV3zzlw==
-X-Google-Smtp-Source: AGHT+IFsFFd0j9Nf6TtQ26FR2dBi3ZDy5r4JM229KJ++sWK2cR1afB18UmXezAYMjkZDOPQ3/RT7d/rbS5d+t+ddxVc=
-X-Received: by 2002:a17:907:d092:b0:abf:56e3:e88b with SMTP id
- a640c23a62f3a-ac20e152abdmr549115066b.38.1741245065891; Wed, 05 Mar 2025
- 23:11:05 -0800 (PST)
+	s=arc-20240116; t=1741245129; c=relaxed/simple;
+	bh=NyNM+qYK2C/JsmQenpPWiWO0RxEmy36xN73x4kjhlhs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ca++q+6NYndzhEtbuPXUOsdaG53VUf6LCWfUM+Zrg608aWkXPbYGAOM/e5PMoYDMByU+fmEnP8mFIrOVnuSZqh6d33/+IxskvvepdjzPwQ1XJUkmLH2/Aeot67B/wamHyQaBpsybOTV1oR7+KYh/VcA9ZPIoiTmFOZdR1IgZdMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NUj1C150; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YNfY1JPx; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NUj1C150; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YNfY1JPx; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8898421197;
+	Thu,  6 Mar 2025 07:12:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741245125; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btwXWJeiuH6RkYwrUlziz8O8gADeHxdSBWZsmqwxI20=;
+	b=NUj1C150ROtfb0iZ36i67LHLiHH1eEabFacd/bXWJByThNGFmryJwibIBuaF3VgBL2YiR4
+	wORKlBKUHjrqTlXtBYWMPBkxdsF6QfFjOK76DYIQQWQWGXFJKUMIShJS8dvKwFSuTRgHC9
+	sCzax4Jt9z31HwZNbc/Z+BGL0g5A9aE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741245125;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btwXWJeiuH6RkYwrUlziz8O8gADeHxdSBWZsmqwxI20=;
+	b=YNfY1JPxqvEGDwpGH3kW4pYy7R6CrxSV+7ILxcGHbCTQSE/IeAKyVR96bTXan7VKsknDBq
+	oHiYRRlk4La25uDw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=NUj1C150;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=YNfY1JPx
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741245125; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btwXWJeiuH6RkYwrUlziz8O8gADeHxdSBWZsmqwxI20=;
+	b=NUj1C150ROtfb0iZ36i67LHLiHH1eEabFacd/bXWJByThNGFmryJwibIBuaF3VgBL2YiR4
+	wORKlBKUHjrqTlXtBYWMPBkxdsF6QfFjOK76DYIQQWQWGXFJKUMIShJS8dvKwFSuTRgHC9
+	sCzax4Jt9z31HwZNbc/Z+BGL0g5A9aE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741245125;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=btwXWJeiuH6RkYwrUlziz8O8gADeHxdSBWZsmqwxI20=;
+	b=YNfY1JPxqvEGDwpGH3kW4pYy7R6CrxSV+7ILxcGHbCTQSE/IeAKyVR96bTXan7VKsknDBq
+	oHiYRRlk4La25uDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8C71D13A61;
+	Thu,  6 Mar 2025 07:12:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YUgnIMRKyWfAaQAAD6G6ig
+	(envelope-from <hare@suse.de>); Thu, 06 Mar 2025 07:12:04 +0000
+Message-ID: <1ffebf60-5672-4cd0-bb5a-934376c16694@suse.de>
+Date: Thu, 6 Mar 2025 08:12:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304035447.3138221-1-adamsimonelli@gmail.com>
- <7969025.Sb9uPGUboI@nerdopolis2> <CAHp75VfadXS8Z2G6U_DcOOZFFmaOSn_9uQN_N7Psse3kiSGj0g@mail.gmail.com>
- <4451040.8hb0ThOEGa@nerdopolis2>
-In-Reply-To: <4451040.8hb0ThOEGa@nerdopolis2>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Thu, 6 Mar 2025 09:10:29 +0200
-X-Gm-Features: AQ5f1JogMmQH0eE_du27Z5fWg-tESulb8jPOXXKpWslA7vl3W4sc_8S8SYErBKo
-Message-ID: <CAHp75VdogqwA2qJBp5Sp-tuJbKvmj9mLuop8GZP+vLVeJNg2DQ@mail.gmail.com>
-Subject: Re: [PATCH v6 3/3] tty: Change order of ttynull to be linked sooner
- if enabled as a console.
-To: Adam Simonelli <adamsimonelli@gmail.com>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jiri Slaby <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvme: remove multipath module parameter
+To: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>
+Cc: Sagi Grimberg <sagi@grimberg.me>, Nilay Shroff <nilay@linux.ibm.com>,
+ John Meneghini <jmeneghi@redhat.com>, bmarzins@redhat.com,
+ Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Marco Patalano <mpatalan@redhat.com>,
+ axboe@kernel.dk
+References: <8a1730a1-1faf-4722-99e1-c3a85257b6f4@redhat.com>
+ <Z7TARX-tFY3mnuU7@kbusch-mbp>
+ <2ff87386-c6db-4f2e-be91-213504d99a78@linux.ibm.com>
+ <0656b66c-dd9c-495d-b1fc-4f09e763fa66@grimberg.me>
+ <Z7dct_AbaSO7uZ2h@kbusch-mbp> <91ae613a-7b56-4ca0-b91c-6bc1eee798b8@suse.de>
+ <20250305141554.GA18065@lst.de> <Z8hrJ5JVqi7TgFCn@kbusch-mbp>
+ <20250305235119.GB896@lst.de> <Z8jk-D3EjEdyBIU5@kbusch-mbp>
+ <20250306000348.GA1233@lst.de>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250306000348.GA1233@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 8898421197
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On Thu, Mar 6, 2025 at 6:22=E2=80=AFAM Adam Simonelli <adamsimonelli@gmail.=
-com> wrote:
->
-> On Wednesday, March 5, 2025 1:52:00 PM EST Andy Shevchenko wrote:
-> > On Wed, Mar 5, 2025 at 4:06=E2=80=AFAM Adam Simonelli <adamsimonelli@gm=
-ail.com> wrote:
-> > > On Tuesday, March 4, 2025 1:51:52 AM EST Andy Shevchenko wrote:
-> > > > On Tue, Mar 4, 2025 at 5:55=E2=80=AFAM <adamsimonelli@gmail.com> wr=
-ote:
+On 3/6/25 01:03, Christoph Hellwig wrote:
+> On Wed, Mar 05, 2025 at 04:57:44PM -0700, Keith Busch wrote:
+>>>> Obviously he's not talking about multiported PCIe.
+>>>
+>>> Why is that obvious?
+>>
+>> No one here would think a multiported device *wouldn't* report CMIC.
+> 
+> I hopes so.
+> 
+>> The
+>> fact Hannes thinks that's a questionable feature for his device gives
+>> away that it is single ported.
+> 
+> Well, his quote reads like he doesn't know about multiport PCIe devices.
+> But maybe he just meant to say "despite being single-ported"
+> 
+Single ported.
+There is a range of Samsung NVMe where one is a normal, single ported,
+NVMe, and one with a nearly identical model number reporting CMIC.
 
-...
+Causing _quite_ a lot of confusion with the customer (and L3) when
+used under MD, as for the first hotplug works, for the second ... not so 
+much.
 
-> > > > >  obj-y                          +=3D vt/
-> > > >
-> > > > + blank line.
-> > > >
-> > > > > +# If ttynull is configured to be a console by default, ensure th=
-at it is linked
-> > > > > +# earlier before a real one is selected.
-> > > > > +obj-$(CONFIG_NULL_TTY_DEFAULT_CONSOLE) \
-> > > > > +                               +=3D ttynull.o
-> > > >
-> > > > Here is the question: are you sure that all console drivers that ex=
-ist
-> > > > in the kernel happen to be here? Have you grepped the source tree f=
-or
-> > > > checking this?
-> > > >
-> > > Grepping for console_initcall, the only other places I see outside of
-> > > drivers/tty/ is
-> > >
-> > > arch/mips/fw/arc/arc_con.c
-> > > arch/mips/sibyte/common/cfe_console.c
-> > > arch/powerpc/kernel/legacy_serial.c
-> > > arch/powerpc/kernel/udbg.c
-> > > arch/powerpc/platforms/powermac/setup.c
-> > > arch/um/drivers/stderr_console.c
-> > > arch/xtensa/platforms/iss/console.c
-> > > drivers/s390/char/con3215.c
-> > > drivers/s390/char/con3270.c
-> > > drivers/s390/char/sclp_con.c
-> > > drivers/s390/char/sclp_vt220.c
-> >
-> > Which means you need to test your stuff on those cases, to see how the
-> > linker order is done there. It might be that your change wouldn't work
-> > there as expected (quick workaround is to mark the new option as
-> > depends on !S390 && !PPC and so on.
+Cheers,
 
-> It will be difficult to test other arches, I mean I guess it is possible =
-with
-> QEMU, and cross-building, though I did do an experimental test on x86:
->
-> Making it temporarily adding an architecture specific console like
-> powerpc/some mips/s390/arches with Xen enabled.
-
-Thanks. Make sure the summary of this gets into the commit message.
-Also consider updating the relevant documentation under
-Documentation/, if any.
-
-> -------------------------------------------------------------------------=
-------
-> diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
-> index 05c5aa951da7..bcd248c44fc8 100644
-> --- a/arch/x86/kernel/setup.c
-> +++ b/arch/x86/kernel/setup.c
-> @@ -1159,6 +1159,8 @@ void __init setup_arch(char **cmdline_p)
->
->         e820__setup_pci_gap();
->
-> +       add_preferred_console("ttyS", 0, NULL);
-> +
->  #ifdef CONFIG_VT
->  #if defined(CONFIG_VGA_CONSOLE)
->         if (!efi_enabled(EFI_BOOT) || (efi_mem_type(0xa0000) !=3D EFI_CON=
-VENTIONAL_MEMORY))
-> -------------------------------------------------------------------------=
-------
->
-> to see what /proc/consoles will look like, to pretend that x86 is an arch=
- that
-> sets a console somewhere, and I get:
->
-> ttynull0             --- (EC    )  242:0
-> ttyS0                -W- (E  p a)    4:64
->
-> and I got console messages to ttyS0 with no issue.
->
-> which in my mind is acceptable I would think. ttynull is first in the lis=
-t,
-> which is desired effect of CONFIG_NULL_TTY_DEFAULT_CONSOLE, it doesn't ha=
-ve to
-> be _exclusive_ AFAIK, especially if there are long-time default consoles =
-that.
-> users or the hardware expects.
->
->
-> The only arch that seems to _unconditionally_ add a console without some =
-other
-> circumstance, like boot loader env var, and command line option, or firmw=
-are
-> flag, or suboption (like CONFIG_SERIAL_PMACZILOG_CONSOLE) is Jazz.
->
-> Like platforms/powernv adds it if CONFIG_HVC_OPAL is disabled, or the fir=
-mware
-> is missing "FW_FEATURE_OPAL". I would assume that a user of this situatio=
-n
-> turning on CONFIG_NULL_TTY_DEFAULT_CONSOLE in addition, will just get tty=
-null
-> and hvc in /proc/consoles instead of just hvc. Could that cause something=
- to
-> break?
-
-> Correct me if I am wrong, I could very very very well be wrong.
-
-I leave this to Petr to comment as I'm not that expert in the area.
-
---=20
-With Best Regards,
-Andy Shevchenko
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
