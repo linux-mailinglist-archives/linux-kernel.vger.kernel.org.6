@@ -1,161 +1,105 @@
-Return-Path: <linux-kernel+bounces-549671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55FE6A55545
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:44:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F7E9A55546
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:45:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75A643ADD14
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:44:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 943653ADD5D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E7926BD84;
-	Thu,  6 Mar 2025 18:44:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 909D3269CE8;
+	Thu,  6 Mar 2025 18:45:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGua7ODp"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="i4KvGV7u"
+Received: from out-186.mta0.migadu.com (out-186.mta0.migadu.com [91.218.175.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FFF25EFBD;
-	Thu,  6 Mar 2025 18:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F3326D5C0
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 18:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741286649; cv=none; b=BoZuvaKdQKnQcUjSXIM0HyaLzuuv0WvqQ22P0XGHH4qxQw0hgSa9dp2Cc4HiJDzFnXl4F1qDzAxkAfL7g5RYRscucy6BES85t4TROTxc0GBDSOLohybuDLJQCxcK5z7qvIt3UgvxChtOmG1/2jBzH96rXMPZiEIg8ZWY4a32lvU=
+	t=1741286709; cv=none; b=aqti6we5WW0JB9qOdyNmL697pf0tSxFROgyW4gjYVVNh1f3LuJdY83CnLZM5c+qUV+bxylsvZ8Fq3/ajvs+iQZKG63ckRNrkrblYegdUB7K1evxvKHApt0ZTvtm0hMriIpUJ8MTcaBW+IGDmeazAzy+GiLtr0tA6vljmdGov/wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741286649; c=relaxed/simple;
-	bh=VK5KC+x1pv/lq7ntuIGz6PwD7O044LcrlelG1xAIMxc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=G/XJHBRWS0VD6AwXWk7QLleeVbi0u3O0yhp5seKfjj4M/gna7layl8dHdzJKMMz7/4NQIB7kuEkd88+rfAvyVUIN3h8FOgQP9r+FjVXjsQ3BbpGg3twYsrs8erUc59bHYIWDoNj/Syp3dud3IhsvKpk7Ytm2q40hcxOTEeKEXao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VGua7ODp; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2bcceee7b40so729434fac.3;
-        Thu, 06 Mar 2025 10:44:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741286647; x=1741891447; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=vVpug70gfz2HOif/JIKANwhTW6xxPDf4IUYvwA4URGE=;
-        b=VGua7ODpEthD4tDh/AMS9rRR31RsWx/E9ePajsvdio2mu6SMCt1NdUwxnGxZ8TnTox
-         iETKGwYf9+TMEfckEAeE0ypqe0XJ1bGWfShhUApge4sNzS8Z8LFtEkfHkWeW3DLLmWOn
-         8062VlMXH6tOsH+U9nK07xsWfBFuMh8SUTyjFqXFhMBxH24rgcyBJJZBNp89VEsnYowg
-         xnHxJWpPzPtTJNtMrvb8iklhaNoKhWQ60r88bl/lm0YuzWtPup9nwGzsoMwcOEe0a0W1
-         iAlrSam0N/mK4S840F1GCDoDAQIvrTVzZeQiSHZht9mLJ2SlplyFErSBgC6tsYpQSEiA
-         4ykA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741286647; x=1741891447;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :references:cc:to:subject:from:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vVpug70gfz2HOif/JIKANwhTW6xxPDf4IUYvwA4URGE=;
-        b=ZO0+jlcovX8ksBpa4zO7nxFKJAhnRxS9ydVpky4FwO+wxhdvsbdu89rDooa/8TTnKj
-         vbJrlrdSkfAdDkIyzvN9ZDPTzkqBIZs/KiFzWFeXdwZJpb40o9SNrXEXyUv7Y9mkkDaL
-         +izbGGFIOMYyIi1NAEh2OFzb4rNDWXkgXQngTlkfm+G6qncA/JiT0w9EQOnRJaNcohFu
-         Nc095JQLR6LNmm8zO2GaO0tvkwatHsuV3VhUFvCq3wH5VsbDMbpSLCq3/tzg3YrqrhyS
-         5wwmIaN/+YwnUjVcs1nOEDN65y58gVDTx4aP7wb4gFlKDc6SFo9qtahBjIpY+Q86oERx
-         xBGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVI2N8HIxmXBu8D0sU1GOkWci2h5DpFtTgrhyVl/RXHPHKCbLqRJxvID+Z8vjnLsxXxt2x3xuk4wC/hjwg=@vger.kernel.org, AJvYcCXucfveswrBDVx/d8bIsje3KaU2kyP5HGkle2OCiKr3d5dcDN+w85KU1bkXxbSAvKVwIUEBj2mK@vger.kernel.org
-X-Gm-Message-State: AOJu0YyF2YWPl5A3qUlxaM0gdeEhZdz1oO8ypG5PCUbXSHuQ6pkSR5Ri
-	u1bHJuLiPP5z/hKaqM3p6eWHFUGn1b4IEzBH8jHAvb6wd/etL/Gy
-X-Gm-Gg: ASbGncuulXACkKd4DAgpwrEKhYIVq0Nfz3PWhUjymPkMgv8KsyQpp6KWAA+t2T556s/
-	b2cYkptKMF4LQuZhEqUfiqcj6xvRtNz26IhoSpk8ijSp7RfJSpz6n7/pkonqE/LHWIJ6iSbKyZK
-	o8Ba9KW/kTw7glOITyF8aUBlEadkNZS0Gx8NBZo4xG+elxPcJGaOiSFXcfgcO/gcbL0xxHU5TRa
-	+BN5ffZuHToK22r7JZ9nAhyln+oBYpP/BVDk75cUA0f/TUNaQD4zI4Wq0I3vSzHIznAVeUBTNpz
-	SehO5A8XN2Fan3VSsA0l3dJM05FArDnEbpde39pCp0egJLbjvUcAFnmV9ifIpFJtEJuxLquT
-X-Google-Smtp-Source: AGHT+IFnenMncEl3AoHYxDb4oauoKUdwdgpZOBfioXbP9pBj/UHxG79JLgSMCFzC9WqQiNYVUhIxzQ==
-X-Received: by 2002:a05:6871:110:b0:2b8:fab0:33c with SMTP id 586e51a60fabf-2c261132f0fmr222255fac.23.1741286647379;
-        Thu, 06 Mar 2025 10:44:07 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c248de95b9sm342545fac.46.2025.03.06.10.44.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 10:44:06 -0800 (PST)
-Message-ID: <64d11e0b-e964-4c55-a0ba-d3227871cb26@gmail.com>
-Date: Thu, 6 Mar 2025 10:44:02 -0800
+	s=arc-20240116; t=1741286709; c=relaxed/simple;
+	bh=E6fUOgeux7kG3VuWbyjnZEP2/f/bAMiuVboTVqH2JPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=etAOfzv3pgqG1qZPcxH2ziPEGQ2bGs8eNDvFPabZh0EH8SZE9+9D+BaHzSKWke7My4Jf3HExetx8RgdGkEuLwpuCG0feDVG7wsH5QOugONwK0EE2NTb6FR4xLnamDOfsHqyHPvnCdPfodTgaWodbdxIHJ5tgYDiu9nVi7/IBsHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=i4KvGV7u; arc=none smtp.client-ip=91.218.175.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 6 Mar 2025 10:45:01 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741286705;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3hkf7euT/vaY2Nx8txG1P4pKgdK1/0zs8dcUAeUZimI=;
+	b=i4KvGV7udlvq/n9zorZlenUNvq9v7B9hg5u+7HMPAvnmzR1HOH6ulDR+ov7mEFogwwlgVc
+	2anmZpuEmOb+If/MpcMGpzzB2rRVgtXs8zfZbb5lH/ZuJO9MGzLWfS3Fry3yhGgQUPPhX/
+	om70b0btLbq9PeUB4UonOTkCiD1EgBQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: SeongJae Park <sj@kernel.org>
+Cc: "Liam R. Howlett" <howlett@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, kernel-team@meta.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH 09/16] mm/memory: split non-tlb flushing part from
+ zap_page_range_single()
+Message-ID: <7rnj5pt7uaftvvf6sqge4vowvcht7n4cqb4hxh3o6kzxtqumqi@p7ugsoqh6iiz>
+References: <20250305181611.54484-1-sj@kernel.org>
+ <20250305181611.54484-10-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 6.13 000/154] 6.13.6-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250306151416.469067667@linuxfoundation.org>
-Content-Language: en-US
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- WlfRzlpjIPmdjgoicA==
-In-Reply-To: <20250306151416.469067667@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305181611.54484-10-sj@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-
-
-On 3/6/2025 7:21 AM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.6 release.
-> There are 154 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Mar 05, 2025 at 10:16:04AM -0800, SeongJae Park wrote:
+> Some of zap_page_range_single() callers such as [process_]madvise() with
+> MADV_DONEED[_LOCKED] cannot batch tlb flushes because
+> zap_page_range_single() does tlb flushing for each invocation.  Split
+> out core part of zap_page_range_single() except mmu_gather object
+> initialization and gathered tlb entries flushing part for such batched
+> tlb flushing usage.
 > 
-> Responses should be made by Sat, 08 Mar 2025 15:13:38 +0000.
-> Anything received after that time might be too late.
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>  mm/memory.c | 36 ++++++++++++++++++++++--------------
+>  1 file changed, 22 insertions(+), 14 deletions(-)
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.6-rc2.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+> diff --git a/mm/memory.c b/mm/memory.c
+> index a838c8c44bfd..aadb2844c701 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -2011,38 +2011,46 @@ void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
+>  	mmu_notifier_invalidate_range_end(&range);
+>  }
+>  
+> -/**
+> - * zap_page_range_single - remove user pages in a given range
+> - * @vma: vm_area_struct holding the applicable pages
+> - * @address: starting address of pages to zap
+> - * @size: number of bytes to zap
+> - * @details: details of shared cache invalidation
+> - *
+> - * The range must fit into one VMA.
+> - */
+> -void zap_page_range_single(struct vm_area_struct *vma, unsigned long address,
+> +static void unmap_vma_single(struct mmu_gather *tlb,
+> +		struct vm_area_struct *vma, unsigned long address,
+>  		unsigned long size, struct zap_details *details)
+>  {
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
-
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
-
-
+Please add kerneldoc for this function and explicitly specify that tlb
+can not be NULL. Maybe do that in the patch where you make it
+non-static.
 
