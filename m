@@ -1,122 +1,186 @@
-Return-Path: <linux-kernel+bounces-548118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BCCEA5403D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:04:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1AE6A54040
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:06:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 311D43AAA90
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:04:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 035F0189127E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725C118DB1B;
-	Thu,  6 Mar 2025 02:04:12 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065A218C930;
+	Thu,  6 Mar 2025 02:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wz6R0vb3"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73F9029CE1;
-	Thu,  6 Mar 2025 02:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72491BE46
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 02:06:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741226652; cv=none; b=iGsV0o/pzyNAIzarlci7fQ2d+FUfOf/+98ba8yf4zt7FtO9jE44OaUXPULnlFBFO5C8cyEyGvdGsAySFS3tzFboo5fCj1sGtEbL8pjD2xbVd8zz6kx1GaAu0a5lpbhwReqdw+7Y4O+2MGds9/JBsBBsyIeYwQdD78rmYxFQZx0s=
+	t=1741226790; cv=none; b=HPjCMiyv1xdHyqWydGY6oxi/CNe7WYGXNhdwzOYCLJ+zjSx7ju/jEgYmFijkT4MBZUrAQcSL5wr5UaImEHbINtXnS4aMcXKD9sd0Tw6HjERGxGUZzf4p3laBJ2aX0SF1NvUMsUw0V3IcQdvNu0IGfBxgatxmo1FZ2G3tHCWxTNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741226652; c=relaxed/simple;
-	bh=rzbu8rtSAZpB33a90IoRrnVMFYxmkb1XMg20yDSrOPc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nudgYUkIyI7IDv0jfR4FQS8OwOApnS88avg0WEShyAj2z1BdrwYe07MFaGc9VN8H7hYIyIE9rKH+niTsbNYAc6+J5WptfNZXx4Gf+G6zpp6xMqTMnfA6mR5lj3Fy9cuDAMZDy3Y4ccueaguLVyXHfwZUQLPCCDcQcGNMEYap6W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z7Xj95yfRz6K5rg;
-	Thu,  6 Mar 2025 10:01:49 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id B5CC6140CB1;
-	Thu,  6 Mar 2025 10:04:06 +0800 (CST)
-Received: from localhost (10.96.237.92) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 6 Mar
- 2025 03:03:56 +0100
-Date: Thu, 6 Mar 2025 10:03:51 +0800
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: "Luck, Tony" <tony.luck@intel.com>
-CC: "shiju.jose@huawei.com" <shiju.jose@huawei.com>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "bp@alien8.de"
-	<bp@alien8.de>, "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org"
-	<lenb@kernel.org>, "mchehab@kernel.org" <mchehab@kernel.org>,
-	"leo.duran@amd.com" <leo.duran@amd.com>, "Yazen.Ghannam@amd.com"
-	<Yazen.Ghannam@amd.com>, "linux-cxl@vger.kernel.org"
-	<linux-cxl@vger.kernel.org>, "Williams, Dan J" <dan.j.williams@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>, "Jiang, Dave"
-	<dave.jiang@intel.com>, "Schofield, Alison" <alison.schofield@intel.com>,
-	"Verma, Vishal L" <vishal.l.verma@intel.com>, "Weiny, Ira"
-	<ira.weiny@intel.com>, "david@redhat.com" <david@redhat.com>,
-	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>, "linux-mm@kvack.org"
-	<linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "rientjes@google.com" <rientjes@google.com>,
-	"jiaqiyan@google.com" <jiaqiyan@google.com>, "Jon.Grimm@amd.com"
-	<Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
-	<dave.hansen@linux.intel.com>, "naoya.horiguchi@nec.com"
-	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>, Somasundaram A
-	<somasundaram.a@hpe.com>, "Aktas, Erdem" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
-	<duenwen@google.com>, "gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, "tanxiaofei@huawei.com"
-	<tanxiaofei@huawei.com>, "prime.zeng@hisilicon.com"
-	<prime.zeng@hisilicon.com>, "roberto.sassu@huawei.com"
-	<roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
-	<kangkang.shen@futurewei.com>, "wanghuiqiang@huawei.com"
-	<wanghuiqiang@huawei.com>, "linuxarm@huawei.com" <linuxarm@huawei.com>
-Subject: Re: [PATCH v2 1/3] ACPI: ACPI 6.5: RAS2: Shorten RAS2 table
- structure and variable names
-Message-ID: <20250306100351.00006035@huawei.com>
-In-Reply-To: <SJ1PR11MB6083959730C8EBC504C05ACEFCCB2@SJ1PR11MB6083.namprd11.prod.outlook.com>
-References: <20250305180225.1226-1-shiju.jose@huawei.com>
-	<20250305180225.1226-2-shiju.jose@huawei.com>
-	<SJ1PR11MB6083959730C8EBC504C05ACEFCCB2@SJ1PR11MB6083.namprd11.prod.outlook.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1741226790; c=relaxed/simple;
+	bh=+BcOWd+eKkUGYlUjOMq2ynW3kiA0RuDGuslOf3cowCM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SXpmHcXBEQc/7awZ/5/LKe9a2BHauzJzY5IjHw7gHDUl6fGwXkuqAkTdHn4ArL7oZV2t5lOwX66Xf1gN9KfGpUX0IFeuRokcrvFwWCeW5YOw4MYjya1YSyC9phKjG6Smrf7JJXTZAwBu9I7Sg9Qg8K2Mt3CCySDMVVAMNP9Q/BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wz6R0vb3; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54943bb8006so183770e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 18:06:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741226786; x=1741831586; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oxbxNY786YrsKRIbDHKdRfexTZ85j7EEsRpteNUREfI=;
+        b=wz6R0vb3xMS8gAjs0EfBz/IybrNHKPPC47CkZk1mgO5VcrXAImJ7vjDLBB7mhf7MLd
+         TVF+udmKiPJ/nf3kcAUDTFeZkE4dQnoudayN1tXzVhLz0eK7Mh2PHlxDyKT4sptz3K9x
+         qssEp9vvxJzR5OxxPNM0DfHAg4KcWj5EXFQJNIho1E8RyQkDxQPJxGhCMyFjqwhRg2A5
+         xsxnU6zWpj8OOeos+Ru7RRSaNr8KxNCSR1wNxC88Zb+VW4PEbnlBcFMydz9VvJAVM5pP
+         B0DHrTrmAt/cCDgvbPxVVFw27TpNIFE8Y1IbnRBiDEE0G9QGQSIcP3zLq8uSUopMk5mH
+         PJOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741226786; x=1741831586;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oxbxNY786YrsKRIbDHKdRfexTZ85j7EEsRpteNUREfI=;
+        b=YL3WgfKOXq2QND8vbLhPV3P1vKSxqFqxJpVmdjAekifMfHy/d5ojdYqcT98F4GDXze
+         EYpXfMiUl0laOEBJkTXp7XhxW2elRjPwST0VvlWvsoNboX0xJDkczXC1acDIK68IZuZR
+         wmmG5WlKb6S+rTsh+ETwSorlsvcmePvT8sNqez5gJxhPnSK0Ut1ks0rOCNlTZtlucmsu
+         d394WYXFI2d0Mw9g/o1ro6vTPoLjtEUecx91Rn+bst4zwbUuc4Xx8e82Rl221ABv/5za
+         HwjFuihCCTyoLHXdvTIQw9E6cB4LtrU6fnCQygxYBXR/sibW5QEH4iwdXkcIhaicshIb
+         swAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBufFVq5Chfc0t3BiS61wJw1EWw+2RyyZ5iA/eHoPCX6yly8vX/7We/cLuZrt/CSA7OU5Pn7eNERDG8ws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEMLctAcEl2DHrrJaeyd3xtm531YI/2e7ht7a9U/D7izhUIh6b
+	0hOZN4V1vynbpo9ZGMyEkI1gfZWopCR0PceKlq1RDXbmnh3S/HXp16waI/FF9c4=
+X-Gm-Gg: ASbGncvbMdmnOqTAR5JBFRFvWLiplnMyBjLWN9N6qMHV+0bgi36lOdTM4CgV7peKwzF
+	j4zOX4GA/5jaCjTx6P7bfkMj8+jMYnkNqHNDeRMBUNNkgS8U4D+j5oN/5HpK57NRgLaN9ctD+87
+	6Iz54094cD52EGqH2pZlunR/tjwN5y+sEZcA77thQj4Jr57KC40+I7oFoAQXP00F5acJhkUXZFY
+	PlDkvshQ/ttAZVAtIdkyHyPjnCQJ3Q31cv1Fbftr7D1dWVZw9Q7CsChqL6/FutR699yu4cjlnrC
+	7HDI8Mnx7E6ane4EqGnarAIeevMUilOhlkyEIxMqeaeQ8wWdfqdUz3Ox1vPJM9UWuesK7PVfnqA
+	i+keWEYm3chummUljdFXBjMr1
+X-Google-Smtp-Source: AGHT+IHWHRcySCxYc1B0y6PhF0rI3/lSPzlG5f7R9rUTKQMeZ07z2qQaZyArRoFRqnnRWxqa+VOdOg==
+X-Received: by 2002:a05:6512:1386:b0:545:81b:1510 with SMTP id 2adb3069b0e04-5497d32f4ffmr1641136e87.2.1741226786379;
+        Wed, 05 Mar 2025 18:06:26 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b0bcf30sm27665e87.115.2025.03.05.18.06.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 18:06:24 -0800 (PST)
+Date: Thu, 6 Mar 2025 04:06:22 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Michael Trimarchi <michael@amarulasolutions.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Tejas Vipin <tejasvipin76@gmail.com>, Doug Anderson <dianders@chromium.org>
+Subject: Re: [PATCH] drm/panel/synaptics-r63353: Use _multi variants
+Message-ID: <sbimsyq2xrcxpp2ha2vequtwfl5bss7clw2snkqsbgitosnkub@it35hzscp3jc>
+References: <20250305-mipi-synaptic-1-v1-1-92017cd19ef6@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100001.china.huawei.com (7.191.160.183) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305-mipi-synaptic-1-v1-1-92017cd19ef6@redhat.com>
 
-On Wed, 5 Mar 2025 18:51:57 +0000
-"Luck, Tony" <tony.luck@intel.com> wrote:
-
-> [+Rafael]
-
-Now he gets two copies :)
-
+On Wed, Mar 05, 2025 at 07:01:41PM -0500, Anusha Srivatsa wrote:
+> Move away from using deprecated API and use _multi
+> variants if available. Use mipi_dsi_msleep()
+> and mipi_dsi_usleep_range() instead of msleep()
+> and usleep_range() respectively.
 > 
-> > include/acpi/actbl2.h | 38 +++++++++++++++++++-------------------
-> >  1 file changed, 19 insertions(+), 19 deletions(-)  
+> Used Coccinelle to find the multiple occurences.
+> SmPl patch:
+> @rule@
+> identifier dsi_var;
+> identifier r;
+> identifier func;
+> type t;
+> position p;
+> expression dsi_device;
+> expression list es;
+> @@
+> t func(...) {
+> ...
+> struct mipi_dsi_device *dsi_var = dsi_device;
+> +struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi_var };
+> <+...
+> (
+> -mipi_dsi_dcs_write_seq(dsi_var,es)@p;
+> +mipi_dsi_dcs_write_seq_multi(&dsi_ctx,es);
+> |
+> -mipi_dsi_generic_write_seq(dsi_var,es)@p;
+> +mipi_dsi_generic_write_seq_multi(&dsi_ctx,es);
+> |
+> -mipi_dsi_generic_write(dsi_var,es)@p;
+> +mipi_dsi_generic_write_multi(&dsi_ctx,es);
+> |
+> -r = mipi_dsi_dcs_nop(dsi_var)@p;
+> +mipi_dsi_dcs_nop_multi(&dsi_ctx);
+> |
+> ....rest of API
+> ..
+> )
+> -if(r < 0) {
+> -...
+> -}
+> ...+>
 > 
-> This file is (somewhat) automatically generated from the ACPICA github repository.
+> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: Tejas Vipin <tejasvipin76@gmail.com>
+> Cc: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
+> ---
+> Previous attempt for this change was addressed in:[1]
+> The series did not handle returns properly and still
+> used msleep() and usleep_range() API.
+> It also collided with an Tejas's similar efforts.
 > 
-> https://github.com/acpica/acpica
+> Will be sending the patches per driver instead of
+> major haul of changes.
 > 
-> I'm not sure how much divergence from the original is allowed.
+> Following [2] for reference.
+> 
+> [1] -> https://patchwork.freedesktop.org/series/144824/
+> [2] -> https://lore.kernel.org/dri-devel/20250220045721.145905-1-tejasvipin76@gmail.com/#iZ31drivers:gpu:drm:panel:panel-sony-td4353-jdi.c
+> ---
+>  drivers/gpu/drm/panel/panel-synaptics-r63353.c | 64 +++++++-------------------
+>  1 file changed, 17 insertions(+), 47 deletions(-)
+> 
+>  
+> -	ret = mipi_dsi_dcs_set_display_on(dsi);
+> -	if (ret < 0) {
+> -		dev_err(dev, "Failed to set display ON (%d)\n", ret);
+> -		goto fail;
+> -	}
+> -
+> -	return 0;
+> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
+>  
+> -fail:
+> -	gpiod_set_value(rpanel->reset_gpio, 0);
+> +	return dsi_ctx.accum_err;
 
-Yup, this was basically fishing for Rafael to tell us what we can
-get away with or not.
+You've lost panel reset in case of an error. The rest LGTM.
 
-Thanks
+>  
+> -	return ret;
+>  }
+>  
+>  static int r63353_panel_prepare(struct drm_panel *panel)
 
-Jonathan
-> 
-> -Tony
-> 
-
+-- 
+With best wishes
+Dmitry
 
