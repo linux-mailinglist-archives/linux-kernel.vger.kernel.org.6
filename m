@@ -1,175 +1,193 @@
-Return-Path: <linux-kernel+bounces-548584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A3AA546B7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:43:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ABAAA546B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:43:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 277321897070
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:43:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B35BD7A630F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D15920A5EE;
-	Thu,  6 Mar 2025 09:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E491120ADF9;
+	Thu,  6 Mar 2025 09:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gMcrM5eS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RIWme3yQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0D6209F51
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337F3199935
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741254208; cv=none; b=SF941Ch6iUsdvAc9Se3Quj0z61h9ZXJNk6DSy176hMOZc4UnvjDMQ1NOH259l2Z9JhrQ5wGreGllPyW47VYsXRFgiKf40ZRZZxBYzjPSeATN8suTIlR3bTTUUx6X0ZiYvDwoLFmVsjM7H91IXxQG4SUVZu+u9fksE8c7SU0pPWg=
+	t=1741254213; cv=none; b=pS0OY1mVZrwUGdsEpjM+F7cE1yCW/K+/eu0Z72x5vY/Sxd08Vxrhq+dKIQjBjpTTxlIWTKmfJmKnGi3VWVmh0kHT3/GE9oBJF8m6Fhj96sOO4u7X6mnm5hGaCZJuHgwQGa2L18VSMR5TG416W5iYfr+ykF83apMBPb0NRocSxz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741254208; c=relaxed/simple;
-	bh=ij6pw+xGtu8hU4opSEKUyYQbYkETiMrkgi1ZrVOSFIA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n36zSW9mv3HXOJ9GUoR8AjeuULnXGXtVFv/XscB+psED59MaGSyadUCN9knh294fplLe22BrkipF9YBOoSSFZ3pE4Nx/PHelIrvDqIgve63UOpY2cBPGTrdjUc6ACMuTZ8BdIBxfvSwNCTetqMk2p7VAZrbc5KZnA802i/4SroY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gMcrM5eS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741254205;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XX3dakY8scOT7Ne2j8d44b9U4MvBllULAE0kKWIQm8s=;
-	b=gMcrM5eSJlyr7/ocMVePdC0Zk2xP04hLyXI8Hok1W+x+1ZryHIZnZIsilpdYVmAuaBglKu
-	YlgJXDfmi+1ai/+MQByuNl9sy1aV/7+TuGW0rpjvwhAXPuYXiMtdG8BAvIjT5mkuO92R94
-	uGyUgn8kowpEvqbTIr5OO6ZIrvNmV0g=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-376-Fer2u3LGNhK0kKFTCpJjuA-1; Thu, 06 Mar 2025 04:43:12 -0500
-X-MC-Unique: Fer2u3LGNhK0kKFTCpJjuA-1
-X-Mimecast-MFC-AGG-ID: Fer2u3LGNhK0kKFTCpJjuA_1741254191
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-390f365274dso222998f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:43:12 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741254191; x=1741858991;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XX3dakY8scOT7Ne2j8d44b9U4MvBllULAE0kKWIQm8s=;
-        b=sRmMrcn/ldCO8ItKbNetZr8I9yF1/zXUJ14gajBRUwlBGad7IpNzqW/+F9rbAFy5WR
-         HqTC0y37NctvnGasmbv0PxhMOwQhGQqKbdvlzfxmILKf0fxmGHjPZiO55zStnBmtrf8O
-         aGyFVl2sNsC2HOJazivsbJzMIRKb4xNTRFy5tEVS9xuH4JGw5s2V+JsVWUrU0g17OII1
-         owwnKecPlr3Y+tx5aexjSWbSWtsXmimi852YNtz+QaUPACuf5XdtxaQwCusyJbT6sh/D
-         XjhTXz3ovRaJE4Gka7XRpITpMaFgWgSxUbarX4S+sK/M/ernUPOGrJ4yziU/5sqn6Tc6
-         jwPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQaDkYBi0tV7VDl2vifIpAoBacHBHAYOZarilIdyV8QEEuU2tH7oXNXSsm5sooAFPcnfL053OEbOaRgO4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFvinCeqKjtNE2qP2ulr66NZyfXHlH01ttPIsqAu6C1buYEhTg
-	A5sNa3UFLbLAeHq1jQ+7vDX/yHHPWwkYTU/CHMecOqG6+2d7JuorsIcDUnHrwf+72YY3sIRXBVB
-	Wt5Kotm+gj22nMVXq9qAKts9u5xnd3EPhqBesIr5ublwZeBdqA1MWJ7XT0ZIFOA==
-X-Gm-Gg: ASbGncsVTzuGnh1DJ+gHofoZwu80d2EI5to4J/KaXwJTcuwbSsfKDsKmMbPNR+36D6c
-	PuZ5r7RnbyPpletsQK0VlS+pNRctGZ1QuPHMJquYNbHYxujs4oYvDhUyt+Y5L7Q9rHKuC4QWOLp
-	041JeqYaIL6uQOXlVutbckjRy1OpmsnzSbgjLbJC6ccKv0iJv2iiOCl57hA1UcKwZX4yMx3hGKp
-	ZwNCP3pSqyJYv7PcFOdapjdJklk+izXdzfbmVk8SDy61I/HYTfhsqox1P8C+0nfVO2jiw9XL8DR
-	JTBN40FPlNqSCDP0qg/CyTeZImCTk/Dp1uUO+/w784KvIQ==
-X-Received: by 2002:a05:6000:1888:b0:391:b93:c971 with SMTP id ffacd0b85a97d-3912982e94amr1698932f8f.20.1741254191201;
-        Thu, 06 Mar 2025 01:43:11 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGuWB1xxLyGYJud3m2Orc+jQD9bwgMtC8fEkj+pgDtO5dg4XKxw8lCcj7dXngVsWSVLL5GgjQ==
-X-Received: by 2002:a05:6000:1888:b0:391:b93:c971 with SMTP id ffacd0b85a97d-3912982e94amr1698907f8f.20.1741254190790;
-        Thu, 06 Mar 2025 01:43:10 -0800 (PST)
-Received: from [192.168.88.253] (146-241-81-153.dyn.eolo.it. [146.241.81.153])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfde7sm1507615f8f.32.2025.03.06.01.43.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 01:43:10 -0800 (PST)
-Message-ID: <7c14179c-0262-47e5-a13e-a53c2061da9b@redhat.com>
-Date: Thu, 6 Mar 2025 10:43:09 +0100
+	s=arc-20240116; t=1741254213; c=relaxed/simple;
+	bh=jw6s+y+D9IZycuqaU4Du3dwxt58LD9HEaTS2UQM4s48=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mFv/TZVZNlJZ66XZHQ9yFoy8bacKAt+v5dQDfGENNoXnMOgk6Phd8HZDrAF65oPV41XfU2uUYjfxopZKw3T6Js3xqZWG/9hD+HKIH2a62SEkSx+mgzQ8zb/C7Ef2ZcMLLLsaPUPgFbpl2CvFnu8mymS6+sMmxL3nFaG7pBw37D8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RIWme3yQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B83D4C4CEE4;
+	Thu,  6 Mar 2025 09:43:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741254212;
+	bh=jw6s+y+D9IZycuqaU4Du3dwxt58LD9HEaTS2UQM4s48=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RIWme3yQ6WAIuhaYRixCD9n/Bf0aFcP6DydhjYqkHv9b+YTndXLcex94E0nrwVXmj
+	 R6j5qCeBII6GEYoa/RrieeI7NYoMOD2WNGxBVVIat9HRWGk8Resg6aueur3c857VoD
+	 XDWp63EFzIWRRSaDc1htA/cJz7UmB8TN0qAtpvOTAfIBPWRncr55HE8GkruMz3Vnj1
+	 hShWxgZeWj9fjkU1t/XNdLFJLaaldZde10Xr3NWN8vlmyWise6b1g1g9Z/flOQeMQj
+	 aPTzAxoXS1ebFBg5sPzB4MYSyNN1PG69CJStEofh5H8Tm0XMrSZ2WUEbDQIA4tjPyE
+	 HdRPJTR616Aww==
+Date: Thu, 6 Mar 2025 10:43:26 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Linus Torvalds <torvalds@linuxfoundation.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: kernel: Current status of CONFIG_CC_OPTIMIZE_FOR_SIZE=y (was: Re:
+ [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic locking insns)
+Message-ID: <Z8luPgXr9hcO7jDz@gmail.com>
+References: <20250228123825.2729925-1-ubizjak@gmail.com>
+ <20f1af22-71dc-4d62-9615-03030012222e@intel.com>
+ <CAFULd4bpHGE83qc37sbh=rpGj+SFqQrsNDLzL_-NQpo6pQH3jw@mail.gmail.com>
+ <c4aca08a-95c1-48ee-b4da-55a69b74101c@intel.com>
+ <CAFULd4YVOEtT+bsp9H7ijaoJn2e2108tWhiFarRv=QxoUMZaiw@mail.gmail.com>
+ <20250301123802.GCZ8L_qsv7-WwUwqt5@fat_crate.local>
+ <CAFULd4b=4rHcVAVSg_3yMb8=3ReiSriw_rM4vJL9_HvheXE92w@mail.gmail.com>
+ <20250305203633.GNZ8i10cVCCnhhULis@fat_crate.local>
+ <20250305212638.GC35526@noisy.programming.kicks-ass.net>
+ <CAFULd4ZsHKA4Yh9CsxPjdoW-fa7yD1-Ov7xDN4E3J3c8O8yQ7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v2 1/2] net: phy: nxp-c45-tja11xx: add TJA112X PHY
- configuration errata
-To: Andrei Botila <andrei.botila@oss.nxp.com>, Andrew Lunn <andrew@lunn.ch>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, s32@nxp.com,
- Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
- Enric Balletbo <eballetb@redhat.com>, stable@vger.kernel.org
-References: <20250304160619.181046-1-andrei.botila@oss.nxp.com>
- <20250304160619.181046-2-andrei.botila@oss.nxp.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250304160619.181046-2-andrei.botila@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFULd4ZsHKA4Yh9CsxPjdoW-fa7yD1-Ov7xDN4E3J3c8O8yQ7g@mail.gmail.com>
 
-On 3/4/25 5:06 PM, Andrei Botila wrote:
-> diff --git a/drivers/net/phy/nxp-c45-tja11xx.c b/drivers/net/phy/nxp-c45-tja11xx.c
-> index 34231b5b9175..709d6c9f7cba 100644
-> --- a/drivers/net/phy/nxp-c45-tja11xx.c
-> +++ b/drivers/net/phy/nxp-c45-tja11xx.c
-> @@ -22,6 +22,11 @@
->  #define PHY_ID_TJA_1103			0x001BB010
->  #define PHY_ID_TJA_1120			0x001BB031
->  
-> +#define VEND1_DEVICE_ID3		0x0004
-> +#define TJA1120_DEV_ID3_SILICON_VERSION	GENMASK(15, 12)
-> +#define TJA1120_DEV_ID3_SAMPLE_TYPE	GENMASK(11, 8)
-> +#define DEVICE_ID3_SAMPLE_TYPE_R	0x9
-> +
->  #define VEND1_DEVICE_CONTROL		0x0040
->  #define DEVICE_CONTROL_RESET		BIT(15)
->  #define DEVICE_CONTROL_CONFIG_GLOBAL_EN	BIT(14)
-> @@ -1593,6 +1598,50 @@ static int nxp_c45_set_phy_mode(struct phy_device *phydev)
->  	return 0;
->  }
->  
-> +/* Errata: ES_TJA1120 and ES_TJA1121 Rev. 1.0 — 28 November 2024 Section 3.1 */
-> +static void nxp_c45_tja1120_errata(struct phy_device *phydev)
-> +{
-> +	int silicon_version, sample_type;
-> +	bool macsec_ability;
-> +	int phy_abilities;
-> +	int ret = 0;
-> +
-> +	ret = phy_read_mmd(phydev, MDIO_MMD_VEND1, VEND1_DEVICE_ID3);
-> +	if (ret < 0)
-> +		return;
-> +
-> +	sample_type = FIELD_GET(TJA1120_DEV_ID3_SAMPLE_TYPE, ret);
-> +	if (sample_type != DEVICE_ID3_SAMPLE_TYPE_R)
-> +		return;
-> +
-> +	silicon_version = FIELD_GET(TJA1120_DEV_ID3_SILICON_VERSION, ret);
-> +
-> +	phy_abilities = phy_read_mmd(phydev, MDIO_MMD_VEND1,
-> +				     VEND1_PORT_ABILITIES);
-> +	macsec_ability = !!(phy_abilities & MACSEC_ABILITY);
-> +	if ((!macsec_ability && silicon_version == 2) ||
-> +	    (macsec_ability && silicon_version == 1)) {
-> +		/* TJA1120/TJA1121 PHY configuration errata workaround.
-> +		 * Apply PHY writes sequence before link up.
-> +		 */
-> +		if (!macsec_ability) {
-> +			phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x01F8, 0x4b95);
-> +			phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x01F9, 0xf3cd);
-> +		} else {
-> +			phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x01F8, 0x89c7);
-> +			phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x01F9, 0x0893);
-> +		}
-> +
-> +		phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x0476, 0x58a0);
-> +
-> +		phy_write_mmd(phydev, MDIO_MMD_PMAPMD, 0x8921, 0xa3a);
-> +		phy_write_mmd(phydev, MDIO_MMD_PMAPMD, 0x89F1, 0x16c1);
-> +
-> +		phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x01F8, 0x0);
-> +		phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x01F9, 0x0);
 
-Please add macro with meaningful names for all the magic numbers used
-above, thanks!
+* Uros Bizjak <ubizjak@gmail.com> wrote:
 
-Paolo
+> On Wed, Mar 5, 2025 at 10:26 PM Peter Zijlstra <peterz@infradead.org> wrote:
+> >
+> > On Wed, Mar 05, 2025 at 09:36:33PM +0100, Borislav Petkov wrote:
+> > > On Wed, Mar 05, 2025 at 09:54:11AM +0100, Uros Bizjak wrote:
+> > > > The -Os argument was to show the effect of the patch when the compiler
+> > > > is instructed to take care of the overall size. Giving the compiler
+> > > > -O2 and then looking at the overall size of the produced binary is
+> > > > just wrong.
+> > >
+> > > No one cares about -Os AFAICT. It might as well be non-existent. So the effect
+> > > doesn't matter.
+> >
+> > Well, more people would care if it didn't stand for -Ostupid I suppose.
+> > That is, traditionally GCC made some very questionable choices with -Os,
+> > quite horrendous code-gen.
+> 
+> Size optimizations result in 15% code size reduction (x86_64
+> defconfig, gcc-14.2), so they reflect what user wanted:
+> 
+>   text    data     bss     dec     hex filename
+> 27478996        4635807  814660 32929463        1f676b7 vmlinux-O2.o
+> 23859143        4617419  814724 29291286        1bef316 vmlinux-Os.o
+> 
+> The compiler heuristics depend on tradeoffs, and -Os uses different
+> tradeoffs than -O2. Unfortunately, there is no
+> -Os-but-I-really-want-performace switch, but OTOH, tradeoffs can be
+> adjusted. The compiler is open-source, and these adjustments can be
+> discussed in public spaces (mailing lists and bugzilla) and eventually
+> re-tuned. We are aware that the world around us changes, so tunings
+> are not set in stone, but we also depend on user feedback.
 
+So the best way to drive -Os forward is not to insist that it's good 
+(it might still be crap), and not to insist that it's crap (it might 
+have become better), but to dig out old problems and to look at what 
+kind of code current compilers generate in the kernel with -Os.
+
+There's been a few pathological GCC optimizations in the past, but also 
+other problems, such as this one 9 years ago that hid useful warnings:
+
+  =================>
+  877417e6ffb9 Kbuild: change CC_OPTIMIZE_FOR_SIZE definition
+  =================>
+
+  From: Arnd Bergmann <arnd@arndb.de>
+  Date: Mon, 25 Apr 2016 17:35:27 +0200
+  Subject: [PATCH] Kbuild: change CC_OPTIMIZE_FOR_SIZE definition
+
+    CC_OPTIMIZE_FOR_SIZE disables the often useful -Wmaybe-unused warning,
+    because that causes a ridiculous amount of false positives when combined
+    with -Os. 
+      
+    This means a lot of warnings don't show up in testing by the developers
+    that should see them with an 'allmodconfig' kernel that has
+    CC_OPTIMIZE_FOR_SIZE enabled, but only later in randconfig builds
+    that don't.
+
+And this one by Linus, 14 years ago:
+
+  =================>
+  281dc5c5ec0f ("Give up on pushing CC_OPTIMIZE_FOR_SIZE")
+  =================>
+
+  From: Linus Torvalds <torvalds@linux-foundation.org>
+  Date: Sun, 22 May 2011 14:30:36 -0700
+  Subject: [PATCH] Give up on pushing CC_OPTIMIZE_FOR_SIZE
+
+    I still happen to believe that I$ miss costs are a major thing, but
+    sadly, -Os doesn't seem to be the solution.  With or without it, gcc
+    will miss some obvious code size improvements, and with it enabled gcc
+    will sometimes make choices that aren't good even with high I$ miss
+    ratios.
+
+    For example, with -Os, gcc on x86 will turn a 20-byte constant memcpy
+    into a "rep movsl".  While I sincerely hope that x86 CPU's will some day
+    do a good job at that, they certainly don't do it yet, and the cost is
+    higher than a L1 I$ miss would be.
+
+    Some day I hope we can re-enable this.
+
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+
+I'm quite sure there were more, but these were that popped up in a 
+quick Git archeology.
+
+And yeah, it was me who pushed for -Os originally 17 years ago, due to 
+the positive I$ impact, in theory:
+
+  =================>
+  96fffeb4b413 ("make CC_OPTIMIZE_FOR_SIZE non-experimental")
+  =================>
+
+  From: Ingo Molnar <mingo@elte.hu>
+  Date: Mon, 28 Apr 2008 01:39:43 +0200
+  Subject: [PATCH] make CC_OPTIMIZE_FOR_SIZE non-experimental
+
+    this option has been the default on a wide range of distributions
+    for a long time - time to make it non-experimental.
+
+    Signed-off-by: Ingo Molnar <mingo@elte.hu>
+    Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+
+But practice disagreed with theory, and obviously in the kernel 
+practice has supremacy.
+
+But yes, I'd cautiously agree that reduced kernel size with a -Os build 
+is a stochastic proxy metric for better code and better performance - 
+but it comes with caveats and needs to be backed by other data or 
+robust first principles arguments too.
+
+Thanks,
+
+	Ingo
 
