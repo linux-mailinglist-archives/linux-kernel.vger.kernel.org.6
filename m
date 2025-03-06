@@ -1,118 +1,117 @@
-Return-Path: <linux-kernel+bounces-548703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A701A54862
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:50:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CDC4A547C1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:28:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59B033ABC71
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:50:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CCDD3AF9F4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C65318A6B5;
-	Thu,  6 Mar 2025 10:50:06 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56352202F92
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6808D200BBD;
+	Thu,  6 Mar 2025 10:28:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="6yEaehPb"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0418441C92;
+	Thu,  6 Mar 2025 10:27:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741258206; cv=none; b=j+E5Vm9azN59GyFqObjHslB66PlDnYhKAK6nGix0Dzt61gag7qvrOwaHkcfSzCj80NgfyMJoxuWVFCU5KK5tI0MzPQ6rjjiQImPYQ3UEFLgHMhhzyPgMrOqhxG/gXNU0XA0kzqNxKqLG0z+Xqjdq5U6E/1Wwsce/sqaIQKTyW2E=
+	t=1741256881; cv=none; b=FHccurTdz56PGVkvw/x+GiVJi0RBemr3g84K1jfqd69pQFfyTbm7SJdL62eWiSeiei9S8iM3V3AyOQdpm+8cdX64YSDhkCed/nMTKDc3lHWTXt66WI/JgI7OrOpx3jb7/JwEu5+/37FYRe+mAsCaHY/GzsX6BhmaIFIRx/q7lMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741258206; c=relaxed/simple;
-	bh=aOImr5/U4ykbLTFYU0AB+Akmi9BbY0kGzfkbj74bCbw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jTYVWp9a02RyJvnOp3RBUorLrwdw5Sl3NccVa3onq1TNzKx4nSs5iKY6edsgKfvtlTeDi7XLkj5zn/UaJ4B4mnk7tYo/P0Wa0hnFBYKqGZNXBmf+i4HVgv17QJpUHD+c4a4ZbSvNONFU1OIra4JFAY9ObTJm4hbgb9XsXZv8iUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Z7lsP5KYTz9stG;
-	Thu,  6 Mar 2025 11:24:41 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id e4vbfzpb9Tx7; Thu,  6 Mar 2025 11:24:41 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z7lsP4K5zz9rvV;
-	Thu,  6 Mar 2025 11:24:41 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5A1338B766;
-	Thu,  6 Mar 2025 11:24:41 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id cLeejrd8zjee; Thu,  6 Mar 2025 11:24:41 +0100 (CET)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id E9DD58B763;
-	Thu,  6 Mar 2025 11:24:40 +0100 (CET)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH v2] powerpc/kexec: fix physical address calculation in clear_utlb_entry()
-Date: Thu,  6 Mar 2025 11:24:28 +0100
-Message-ID: <dc4f9616fba9c05c5dbf9b4b5480eb1c362adc17.1741256651.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1741256881; c=relaxed/simple;
+	bh=flrCX/rCJtDx/E++7ipB9X4Vopq10cRi90vHAAc6oT4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aV5vInVPmCf59nItWmrTpPvsfvsBb/G/2Nq7ONdkGuv+of8umaM0/mh5d3qgKcAm9LQjkxPOiE2onK1t0/PqFRKMyV6SfWORxKvYvD4WdJaRk1qF8ebrbkVppYClo8N95frnZU8FwLgQtS9VNjlshGjDl4z5W5orGzNp18a5agQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=6yEaehPb; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5269eKPN004190;
+	Thu, 6 Mar 2025 11:27:49 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=i25B/fkLHK1RU/fdbGdLWB
+	Tmc+3G1OzFRZKpzvCLdcA=; b=6yEaehPbAGe8dSomZdSHXcohOXUVft84bzsuF0
+	zETvDRTOJJwstQ0rx+kmm664rnn7Z7YWjHf1OB9eYhqxP9f7zSAXb+4kPeq6gmen
+	fLgEiKkuAE7PUhni5xVZdQRqW+LBfup4t9VjHI3tEDsJoE5ULCXuoX6xY4Z+b2Wc
+	C9t1ZQcGw1a14B/zmTdFSIHXw//obKPgNtGnMWJKtPaTamkbuPVsfZajqcnzM2rm
+	8tsC68rerQdn6bI3nZNb4avp6JuPv+tpl7GtZHn2ypQ9dxy9dn4Ds31GMYRqfma+
+	Q//axTsua7QIAcAOW3+yXpxyktM5C9QOPYyi6N0SnB8jMvzg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 454e2sxkf9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Mar 2025 11:27:49 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 20D0C4009D;
+	Thu,  6 Mar 2025 11:26:21 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 8AD8151DA64;
+	Thu,  6 Mar 2025 11:25:22 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 6 Mar
+ 2025 11:25:22 +0100
+Received: from localhost (10.48.86.222) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 6 Mar
+ 2025 11:25:22 +0100
+From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+To: <daniel.lezcano@linaro.org>, <tglx@linutronix.de>
+CC: <stable@vger.kernel.org>, <alexandre.torgue@foss.st.com>,
+        <olivier.moysan@foss.st.com>, <fabrice.gasnier@foss.st.com>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH v3] clocksource: stm32-lptimer: use wakeup capable instead of init wakeup
+Date: Thu, 6 Mar 2025 11:25:01 +0100
+Message-ID: <20250306102501.2980153-1-fabrice.gasnier@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741256668; l=1671; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=aOImr5/U4ykbLTFYU0AB+Akmi9BbY0kGzfkbj74bCbw=; b=63/dW0ZW/45Bs9gOVtFdTdT4ylZccTHf357VIIIUuXR8lbn4iNW72GNZX4ilfWq8C5hADM0qG TBMsNMy1qQRDXRvsnpovR4/UyApzga3NB8oKN3M68m5tr8+cuj4rQJ4
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
 
-In relocate_32.S, function clear_utlb_entry() goes into real mode. To
-do so, it has to calculate the physical address based on the virtual
-address. To get the virtual address it uses 'bl' which is problematic
-(see commit c974809a26a1 ("powerpc/vdso: Avoid link stack corruption
-in __get_datapage()")). In addition, the calculation is done on a
-wrong address because 'bl' loads LR with the address of the following
-instruction, not the address of the target. So when the target is not
-the instruction following the 'bl' instruction, it may lead to
-unexpected behaviour.
+From: Alexandre Torgue <alexandre.torgue@foss.st.com>
 
-Fix it by re-writing the code so that is goes via another path which
-is based 'bcl 20,31,.+4' which is the right instruction to use for that.
+"wakeup-source" property describes a device which has wakeup capability
+but should not force this device as a wakeup source.
 
-Fixes: 683430200315 ("powerpc/47x: Kernel support for KEXEC")
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+Fixes: 48b41c5e2de6 ("clocksource: Add Low Power STM32 timers driver")
+Cc: stable@vger.kernel.org
+Signed-off-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
+Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
 ---
-v2: Fixed patch description and added Fixes: tag.
-[Previous patch subject was "powerpc: Fix address calculation in clear_utlb_entry()"]
----
- arch/powerpc/kexec/relocate_32.S | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/clocksource/timer-stm32-lp.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/kexec/relocate_32.S b/arch/powerpc/kexec/relocate_32.S
-index 104c9911f406..dd86e338307d 100644
---- a/arch/powerpc/kexec/relocate_32.S
-+++ b/arch/powerpc/kexec/relocate_32.S
-@@ -348,16 +348,13 @@ write_utlb:
- 	rlwinm	r10, r24, 0, 22, 27
+diff --git a/drivers/clocksource/timer-stm32-lp.c b/drivers/clocksource/timer-stm32-lp.c
+index a4c95161cb22..193e4f643358 100644
+--- a/drivers/clocksource/timer-stm32-lp.c
++++ b/drivers/clocksource/timer-stm32-lp.c
+@@ -168,9 +168,7 @@ static int stm32_clkevent_lp_probe(struct platform_device *pdev)
+ 	}
  
- 	cmpwi	r10, PPC47x_TLB0_4K
--	bne	0f
- 	li	r10, 0x1000			/* r10 = 4k */
--	ANNOTATE_INTRA_FUNCTION_CALL
--	bl	1f
-+	beq	0f
+ 	if (of_property_read_bool(pdev->dev.parent->of_node, "wakeup-source")) {
+-		ret = device_init_wakeup(&pdev->dev, true);
+-		if (ret)
+-			goto out_clk_disable;
++		device_set_wakeup_capable(&pdev->dev, true);
  
--0:
- 	/* Defaults to 256M */
- 	lis	r10, 0x1000
- 
--	bcl	20,31,$+4
-+0:	bcl	20,31,$+4
- 1:	mflr	r4
- 	addi	r4, r4, (2f-1b)			/* virtual address  of 2f */
- 
+ 		ret = dev_pm_set_wake_irq(&pdev->dev, irq);
+ 		if (ret)
 -- 
-2.47.0
+2.25.1
 
 
