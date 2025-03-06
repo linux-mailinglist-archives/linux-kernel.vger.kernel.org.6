@@ -1,94 +1,114 @@
-Return-Path: <linux-kernel+bounces-548455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CD98A5450B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:38:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77F99A5450D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:38:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB211893CFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:38:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A7A316829F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:38:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CC820767C;
-	Thu,  6 Mar 2025 08:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25962207DF5;
+	Thu,  6 Mar 2025 08:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="4KbLu+fR"
-Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E54E6224FA
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741250310; cv=none; b=bkcE9241dnEE/yhtfAKY6yNNY+W5b6slrl+kxzln0eWTdzv7oqLb4fU4DddQYpaBmg0pbHhFvG9S/6fZa2oWaU2zl6neamvL2cQ/bHlf1TBjUGyCDWJQfEdiENqj8+z/BuTQn033YsTBh0Hb/tx+nVvZkk5pyZrc/SmyGCgUyTM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741250310; c=relaxed/simple;
-	bh=e3zB1SRexAvSOxKceijLlQepb4BVkWWKRzflYMQeI3M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BzZj1aGWgK1ZoqPggkf/wyQbUA1ldgg3gYSv9N2ZQquk5rT1lyIsYHZ5NnbJbAorK3wBV/OQZErabDyracmj5wokM8+ZbseZm1wv8XGIbGaFSZGhJ1rAVLbgHXilVnOwNCVLBKe/9oQjrul4JRjbSMNRkYA+r5SDMKqvw2ni1Xk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=4KbLu+fR; arc=none smtp.client-ip=85.214.250.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
-Received: from 8bytes.org (p4ffe03ae.dip0.t-ipconnect.de [79.254.3.174])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LeSbsgD7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.8bytes.org (Postfix) with ESMTPSA id 792D6413AD;
-	Thu,  6 Mar 2025 09:38:22 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
-	s=default; t=1741250302;
-	bh=e3zB1SRexAvSOxKceijLlQepb4BVkWWKRzflYMQeI3M=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8437A224FA;
+	Thu,  6 Mar 2025 08:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741250316; cv=none; b=faNQUeJvFUk2Gicuum+DUW9u0EZj+ypc3POxWCJFX+HC1FB/a7MGQ1DxvtN2MsxC2/HFaAfbCoUPNW3/JSCPxmEt6rPH8rGtITfpeD12mxL7ACG2u0fLXuZBLAsPkNJ+x1/8kh3nU79wBik6EFDPJAnPOGa74IH5km2n5A1iHl8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741250316; c=relaxed/simple;
+	bh=SVc8DKxbNt+l+FxYP2MLjnyozd9se439KWELWFr8Zyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ODqxZxGKfrHekSTGbP5DS3yel4q9R8cRIDlUE2re+ygKUxj5PVlSuBB/1ZtQ7ewMYhsyBmdqX+0OjlMloBVDamfPKvfGMMJuL/GcDVMOaur8wHC/ZM+GGs6IVUncAp5J7ISxSDsQR/I2OfT4Qka8PHpuZMkfB79d9nkR6ZFO3eg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LeSbsgD7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44DACC4CEE0;
+	Thu,  6 Mar 2025 08:38:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741250316;
+	bh=SVc8DKxbNt+l+FxYP2MLjnyozd9se439KWELWFr8Zyc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=4KbLu+fRtZe6OIx/LFQTsVdVj9nuPFQzQDKRfOF6v+752onzGxtbpiAUH0Wk7fVVe
-	 KC8FjHWKec/HH112QLLKcNYgFamupREFUNCdks2/jZaNAnQjVDP4e+2WHzDhoN5rjz
-	 N+kNUCqHdpdRnVahxKvH5781P+C3i1u+8iuQPnK4FEjPYy8NirLwfbaNNk9PQA9uaH
-	 EApUD+0rWaNYbpeteNg4gEbNT971s/kJbMoVl8Bzy+xqjU5rQvVueN53T3Cot0aos5
-	 41WQnUknaG2weRm2ACKMKsrPDb+7nWTOKXSIGKg+tU9s/NbT1+SaL2lZBJd9Lw8M5E
-	 Z81gIJ449l0uw==
-Date: Thu, 6 Mar 2025 09:38:21 +0100
-From: Joerg Roedel <joro@8bytes.org>
-To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bp@alien8.de>,
-	Joerg Roedel <jroedel@suse.de>, Ingo Molnar <mingo@kernel.org>,
-	x86@kernel.org, hpa@zytor.com,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	Larry.Dewey@amd.com,
-	"Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <Z8le_TWUJNebrfs7@8bytes.org>
-References: <20250305105234.235553-1-joro@8bytes.org>
- <20250305111251.GBZ8gxs_6O7g3gLVEh@fat_crate.local>
- <Z8g01YhM_FtdB5n6@gmail.com>
- <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
- <Z8g4sU_dsZgY0PuS@gmail.com>
- <20250305115035.GEZ8g6i7NTiSfkxk7J@fat_crate.local>
- <Z8hYEsHvwUwlOold@suse.de>
- <20250305153705.GKZ8hvoaz2GPt2rGtu@fat_crate.local>
- <b0cf4bfc-bf22-4986-9e76-62e3f54179ea@intel.com>
- <2koe2zg26fndx6d6jcmbg6dzybbgldgrjufupj74nvmav2dmqg@w6bknhosl64h>
+	b=LeSbsgD7wyHuMUS84+iH9lebnsQen3fmbxfxfkSaZKqdq/4bxSTNedS3mAO4fpa3b
+	 ku0nLe+VmSIyCTXs3lGRgmphqyAco00SC6IkFsW5yWrfD6ERuRqV4N+KSSO7SMRsiZ
+	 xdS8Ag4oFSpVewaSfYYSon7bH2K0u0gVP9dacK8R0G/xgAwGc1uL6mEI3Bxd6xuPYq
+	 D1hco7zVUKbLp6PVgTynVuaseVPLcL35+SukkmNGslPV687nGp4F/d5y55myZrp7mR
+	 yhRH8C+O5SXX7oYU6YAOE4sbu9feFGJL1WNx77PoL3iz3I6ed0pw2CBXThzab/cf4W
+	 Jnd9Tf+eXCYRg==
+Date: Thu, 6 Mar 2025 09:38:32 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	heiko@sntech.de, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] docs: dt-bindings: Specify ordering for properties
+ within groups
+Message-ID: <20250306-dexterous-goshawk-of-aptitude-e4f1f6@krzk-bin>
+References: <47c51c10098f089e52fb14c5c5527611dc8daf32.1741164239.git.dsimic@manjaro.org>
+ <166a7b77-74e3-40b7-a536-ee56850d9318@kernel.org>
+ <f05919742c34f5d4489d2cd711c7736f@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <2koe2zg26fndx6d6jcmbg6dzybbgldgrjufupj74nvmav2dmqg@w6bknhosl64h>
+In-Reply-To: <f05919742c34f5d4489d2cd711c7736f@manjaro.org>
 
-On Thu, Mar 06, 2025 at 10:01:17AM +0200, Kirill A. Shutemov wrote:
-> Alexey looking into exposing TDX module version in sysfs for both guest
-> and host.
+On Wed, Mar 05, 2025 at 10:53:48AM +0100, Dragan Simic wrote:
+> Hello Krzysztof,
 > 
-> I think it would be useful for guest to make attributes and TD_CTLS
-> available via sysfs. So far, we only dump them in dmesg on boot (see
-> 564ea84c8c14).
+> On 2025-03-05 10:36, Krzysztof Kozlowski wrote:
+> > On 05/03/2025 09:45, Dragan Simic wrote:
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/dts-coding-style.rst
+> > > b/Documentation/devicetree/bindings/dts-coding-style.rst
+> > > index 8a68331075a0..15de3ede2d9c 100644
+> > > --- a/Documentation/devicetree/bindings/dts-coding-style.rst
+> > > +++ b/Documentation/devicetree/bindings/dts-coding-style.rst
+> > > @@ -133,6 +133,12 @@ The above-described ordering follows this
+> > > approach:
+> > >  3. Status is the last information to annotate that device node is
+> > > or is not
+> > >     finished (board resources are needed).
+> > > 
+> > > +The above-described ordering specifies the preferred ordering of
+> > > property
+> > > +groups, while the individual properties inside each group shall use
+> > > natural
+> > > +sort order by the property name.  More specifically, natural sort
+> > > order shall
+> > > +apply to multi-digit numbers found inside the property names, while
+> > > alpha-
+> > > +numerical ordering shall apply otherwise.
+> > 
+> > The last sentence was not here and I don't get the point. Natural sort
+> > order should be always preferred over alpha-numerical for properties.
+> > About which other case ("...apply otherwise.") are you thinking?
+> 
+> Yes, I added that sentence in the v2 to, hopefully, clarify the natural
+> sort order itself a bit.  I've researched the natural sort order a bit
+> further, and it technically applies only to the multi-digit numbers found
+> inside the sorted strings.  That's what I wanted to explain, and "shall
 
-Okay, do you have ideas already on where to put this information in
-SYSFS?
+Natural sort applies to everywhere. It's just the same as
+alpha-numerical sort for single digits.
 
-Regards,
+> apply otherwise" refers to applying the alpha-numerical sort order to the
+> remainders of the sorted strings, i.e. to everything but the multi-digit
+> numbers found in the property names.
 
-	Joerg
+Sorry, still don't get. What would be the difference if for remainders
+of properties you would also apply natural sort instead of
+alphanumerical sort?
+
+Best regards,
+Krzysztof
 
 
