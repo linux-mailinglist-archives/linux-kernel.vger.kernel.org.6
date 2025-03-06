@@ -1,94 +1,135 @@
-Return-Path: <linux-kernel+bounces-548508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABFF5A545C9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:04:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28ADA545CC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:05:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAB5316BFBA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:04:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3ACE3A657C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D732080ED;
-	Thu,  6 Mar 2025 09:04:06 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5ED519D071;
+	Thu,  6 Mar 2025 09:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ThygRnQD"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D7F202C4D
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:04:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8589F20297F
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:05:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741251846; cv=none; b=hmJtKD0fVMTiYg6/c5oEbJTbi02w43ElYDmUJ56nQ3G8o0KxFAPFzhq+0+cxq4kh51dOnRKujfotYMZvm+YNO9vvGSUZ9TM7Uo5Tg4xkj+p32ckyRSFBgVSmaS6WH/xkT9VXppblR7eHkSoMKSqRCVOrgPnWNVfA0hIvfPWXCDI=
+	t=1741251923; cv=none; b=rDhSRg3NwqtYE8ogBaVmOPM6QbRv2iW+qcLt0sqE1WW6P59tZwpJEEx/MLPvyojZ4p5P1YU109S573MtkaLNNjBdbWSd75U68ZrOM866HTCJ+Tl2MsuselWoW4Cl9SR584/Zyh5NUm95Ghm0VPApRPwQIq7/OLBrsAEJBJza84Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741251846; c=relaxed/simple;
-	bh=ruAfKKuJv4D//haITjZ4loefKlVdbyEM29MI7QA1oWg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=oViZGK1HNcOx33YVyw/bZKWBoBopg92SGXVIDWZPo+sQUdAu8fZDBLgmoxZ5rM6KoLKQA970nZ9mDvBoC3ZbXCUOFgIHGRgSf+9t+FULDN/BiIzMflpWsRJ0GkdpG70ydA2HDIc9uJQZzQDdpnWKr3eqGj3h8XOuL2eVl3ybrKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d054d79dacso8483195ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:04:04 -0800 (PST)
+	s=arc-20240116; t=1741251923; c=relaxed/simple;
+	bh=JvhKk3j6bzUfojj0ONyioWlTV4mog5yq3Mn6X6smoCk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tXVu0iUilXHKCgCpHwyb0egEnK2jAp4YB7hfDD/JEQw95rXOOVB1zCLzPtQu9uk1R2meH0DU1SGV5lIrCZMXJS85z1rgsRWvytip1JSrjJsIRAqSJcI17n9Wn1XAtrBiCsUtrrcK9/s0EJR0TD9mvgAaLEnXiGRqw+IozfDNXg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ThygRnQD; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-abf4cebb04dso85432766b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:05:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741251920; x=1741856720; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MAX58En/Hb1n0GC+JRkiHWBwbQ4TWebixhTAU0+fOXw=;
+        b=ThygRnQDG2Qx03PRK56Kc2J8x8VUAsHZB65HWvdAfr6CpETxWydOTrcqdrcBZk6Fzq
+         YHkMeHR65JQIUGHdTFVd8HVnZryDUfuQo/UE39Pvv4cpFBMdrKxFhS6cC+sFSwWY5tAB
+         DlYC0apQ2XHAXd5U00Ng3H4LyBeWioukLuKa42bWYmx8qULJu3OFtGGMywLZFmzMTkEy
+         ZF2D8YENn7P1VX/0ivlcxPaUUrKE+CrzraWNitniQd+6WH3DvYkwOn628gyuT7naXzvm
+         bNcThKWj36pS07j580L/e1W3ABYyYs/4ZpYXl5UGAKdJutkLiHloaZIpTDK7H2GgPF67
+         jCMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741251844; x=1741856644;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6PlUf2EDtc8+GWdOxIDmfUU+aGd5sbW4hhN7UakkYqw=;
-        b=fOK8y+lJYTRqkmIjoJvkYqeQGlNj6BDN+4datFRy6aHhmY3JfOyffiXB9e2q/Aryyw
-         DjjOHfWOty1W98nrWEf+pEZgOs+EO0iREjDS1Vup+mFWmFap2JuyFNom2LCBR+8Cvtbu
-         2HrzIh/KU03qCy9mQ4tJF1K3AU7DhtVBu4oAf/RnSnKKIqZv5XNDbWLZiUwMuYKTtfoA
-         x7BRszLXPilPZ8UxIM/p8eZtj8YsvBprl+kVeK7XKyQiHKbEBeI1puuuStzObqfSNpZP
-         WAx/ooFVQmjq4TRr0nIRpivA7mhHuDcbk+1ly07yGd/3nUNe3KeVz6TX6m/0h/kvr/4I
-         FB0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXi2Y+QujPzeTpoIPVogutOIlCmUoI4G4UX8QAgR2V0NfQv1/O/WL9xjSe9Wy7smR1HETtuxHLbuz8n75g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywq3V4eubPUHPcFmQIdUOF5eOfCV2RCWiOz2owLpk99O0bAkiwd
-	OtJpKO9yEQFPC5QOyf2xgV0DnWhh10t9F0h1VtrNR7wdCZ44cO7QSBbODAfO1YpzDyakkrnQgKP
-	tmzI52PnjoDj4KCCq4I1b61VdxZKcASm+MjzdWkq2ScXilcIyGVpm9rw=
-X-Google-Smtp-Source: AGHT+IGTBLARltXQf7oengpyI6p3Xjnj/feG2ACDCutrMgIXebFL36ZwMXTWYi4jeppRR1zG6cu4U/sqPkb1QpRrtRzIkxgmvrIo
+        d=1e100.net; s=20230601; t=1741251920; x=1741856720;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MAX58En/Hb1n0GC+JRkiHWBwbQ4TWebixhTAU0+fOXw=;
+        b=ASngTAOatqbMu34OKY6yJ03d23BM9yE8c3lCWI3p8rUqg3iaHes5sLqQ0q0bG+y7Op
+         N14Zv/VwQsntxKOhe5huErpJWuFyL+j9+V4Ik+Q6ZosWX9GiS6cHCVpXszPwBbCkk6oR
+         WoqfqaHNqplLMV9Iv5k97fps8+cXZw/yprgzfn23eE1wBllYKHzoByyqBEs1MpH5EZZ9
+         6OZUjkZP9++MEXDTnmH8xcxJGMMLCXn+sjf2Yv+iZdzOF03lIkX/3EE7DPenanHmQfRr
+         6ACELTLHYGTPh2Y4t15JlmO/N1Pf84fCtXYYtAUjo3xgCQIxTFavnv1JeD16Z293uXiu
+         LzSw==
+X-Forwarded-Encrypted: i=1; AJvYcCX5tdibPQiAB6iMQY/q5myuHsIRvIJicQPi85hGB+N3zyM7pQTy/XwJWKf2QQL1cQfqRuzXbc/HN9E62LY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKPNd+81+v3zg6iDrRmsiQHg5YZqaLncPC8WKGU2EmOeiK7BL+
+	5lvHjDLiLs9jKtT/Qoc6t6789f2y1BfBUCvQSaUBnEptoSmR0FVA2rxI4uZxTKQ=
+X-Gm-Gg: ASbGncvb5YSuJM4u3aWnlwkh0eBJp+nF64BvnETaUlqMkhZbFXceVBWjXEsceTah3wM
+	dx8C7ExIpoZpU07t/jHAC68QOeDlh8/4hUzTJuj4cHAwkOWZN2IzrWkxJ/Mwv4aJcl8837/KQ6W
+	yeRWWTfGNp+DpGoqiy6LtdoCelojdNxHshKHLODBQtk5YBqXLWT9jzqyWo6R3spBirenUwKNyLt
+	oOYk3XyvuIH1LmzR9tLr7Z8q5OlJ18vt3zKhb3JLxAZtN6u+gA/6RW+AI44oORfci1F8PlyhVy5
+	1uOMTg0fKh+MZ6h6EVGJNIvXlY6qYPNtBhEsucPIGM4=
+X-Google-Smtp-Source: AGHT+IFBF85ne/IZkMGc2B/0aHOH+ZFaKTA8+EhhThtignsfXZxxEqemHN79VLEWyfsCNJMyXOwolQ==
+X-Received: by 2002:a17:907:608d:b0:ac1:e18d:a738 with SMTP id a640c23a62f3a-ac22ca9e8fdmr254010966b.3.1741251919650;
+        Thu, 06 Mar 2025 01:05:19 -0800 (PST)
+Received: from hackbox.lan ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac23943a194sm61606866b.37.2025.03.06.01.05.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 01:05:19 -0800 (PST)
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Sebastian Reichel <sre@kernel.org>
+Subject: [RFC 0/2] arm64: dts: qcom: x1e78100-t14s: Rework devicetree for LCD and OLED SKUs
+Date: Thu,  6 Mar 2025 11:05:01 +0200
+Message-Id: <20250306090503.724390-1-abel.vesa@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:190e:b0:3d3:e09d:2a9f with SMTP id
- e9e14a558f8ab-3d42b891005mr83529435ab.8.1741251843985; Thu, 06 Mar 2025
- 01:04:03 -0800 (PST)
-Date: Thu, 06 Mar 2025 01:04:03 -0800
-In-Reply-To: <67a11d8a.050a0220.163cdc.0051.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c96503.050a0220.15b4b9.0030.GAE@google.com>
-Subject: Re: [syzbot] [udf?] general protection fault in d_splice_alias
-From: syzbot <syzbot+a9c0867e4d1dd0c7ab19@syzkaller.appspotmail.com>
-To: amir73il@gmail.com, asmadeus@codewreck.org, brauner@kernel.org, 
-	corbet@lwn.net, eadavis@qq.com, ericvh@kernel.org, jack@suse.com, 
-	jack@suse.cz, linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
-	mjguzik@gmail.com, syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev, 
-	viro@zeniv.linux.org.uk, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot suspects this issue was fixed by commit:
+The Lenovo Thinkpad T14s Gen6 comes in different SKUs when it comes to
+panels. The only difference that is important is whether it is an OLED
+or an LCD. The way that backlight is handled in devicetree between OLED
+and LCD forces the need of two separate DTBs.
 
-commit 902e09c8acde117b00369521f54df817a983d4ab
-Author: Al Viro <viro@zeniv.linux.org.uk>
-Date:   Mon Feb 3 21:16:09 2025 +0000
+So create a common T14s dtsi that describes everything except the
+backlight handling, by renaming the existent dts to dtsi. Then make the
+legacy dts the LCD version, while adding a prepended oled dts. Both
+include the generic T14s dtsi.
 
-    fix braino in "9p: fix ->rename_sem exclusion"
+For the OLED version, I do not have HW to test it on, so OLED specific
+bits will come at a later stage. Still, add the OLED dts in order to set
+the stage for it.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=11d77078580000
-start commit:   69e858e0b8b2 Merge tag 'uml-for-linus-6.14-rc1' of git://g..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d1a6d4df5fcc342f
-dashboard link: https://syzkaller.appspot.com/bug?extid=a9c0867e4d1dd0c7ab19
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=125d0eb0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13a595f8580000
+Sending this as an RFC in order to get an agreement on the way this will
+be handled from now on.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Had to format it using "git format-patch" since b4 doesn't currently
+support -B when formatting the patch, and the renaming of the dts into
+dtsi (plus the panel properties being dropped) would've not been visible
+enough for reviewers.
 
-#syz fix: fix braino in "9p: fix ->rename_sem exclusion"
+Abel Vesa (2):
+  arm64: dts: qcom: x1e78100-t14s: Add LCD variant with backlight
+    support
+  arm64: dts: qcom: x1e78100-t14s: Add OLED variant
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+ arch/arm64/boot/dts/qcom/Makefile             |    1 +
+ .../x1e78100-lenovo-thinkpad-t14s-oled.dts    |    6 +
+ .../qcom/x1e78100-lenovo-thinkpad-t14s.dts    | 1190 +----------------
+ ...dts => x1e78100-lenovo-thinkpad-t14s.dtsi} |    6 +-
+ 4 files changed, 64 insertions(+), 1139 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s-oled.dts
+ rewrite arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts (98%)
+ copy arch/arm64/boot/dts/qcom/{x1e78100-lenovo-thinkpad-t14s.dts => x1e78100-lenovo-thinkpad-t14s.dtsi} (99%)
+
+-- 
+2.34.1
+
 
