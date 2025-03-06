@@ -1,121 +1,220 @@
-Return-Path: <linux-kernel+bounces-548364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79C0CA543EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:50:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AADA2A543EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:51:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF2313A73FC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:50:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE86F16B9BA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2C1B1DD889;
-	Thu,  6 Mar 2025 07:50:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC9761DC9AC;
+	Thu,  6 Mar 2025 07:51:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n+76IBHS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yyjkv1hQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="2YTDgmY9";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="IpenPWf1";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="FEMmyrsI"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 477464315F;
-	Thu,  6 Mar 2025 07:50:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B731A0BFA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 07:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741247439; cv=none; b=hpwtgflIjF8mjIMmhojXr1sYQW/srDLvDXCcgdGz/5bUOxXqC3FAvDPHZb6o0VPHb3D22L8Pu+KmWfPWIOJAHq2RvLD3QxT6e1A8LLU3DzB1KI36OV4+O73+uzRi4TUVDvhd13ScmCodHjXSc1LfbPg1bUn02wjjWBRM0prgdkU=
+	t=1741247505; cv=none; b=R2BtTXIKbUu8S25n4s6gxCFMyPtQ0sgyiheGvnFchV5xGDVLywpA7CZLjQRNwZmr98Y3Hs2CWLTt6KXI8HaAmwqHARgyCT0x5mpaxRcUTplMSQGObQ68SVJrCTBzDS9JEoizLBwTERlcWk/j7ZrNnAnJleGN0EfYm48mH92KC8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741247439; c=relaxed/simple;
-	bh=+vY9chWknPilNLXzUNVH0RQBHIclGuBPcRv00El1Mic=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dWVMbp++AltcGSMruzlyR93tsgx15ZZpvFZJlYXz2K5rE163prVcCOxjKy+wtr255dKoulvgdvRMgLM2+ITusTax1K7nfRgsgu9otOdj9K9Duya2N7uA3q7MAfgaBWMfCzOFKapwy62NCKPPinlwePNSALw2NNQ5B7qNZgnw8pk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n+76IBHS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FCBBC4CEE0;
-	Thu,  6 Mar 2025 07:50:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741247439;
-	bh=+vY9chWknPilNLXzUNVH0RQBHIclGuBPcRv00El1Mic=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n+76IBHSey2Hl/uLOgeRuzvGWedhUr7g944Y+vmd9t10P+wm2qr6VjouCpOmlZ7Du
-	 4fTz/t7CiOPYIMyOlG/loK2xsH45yOKDGt01X6tqBsPXifxQ1izu/YBWQvrTNeY9VP
-	 Y3bmvgxHZMnT6uZKHRZ6cHy0n1mI0trGy0o3UH09i63Wzr7R9cvyjMjzg//gYhaHoa
-	 Okwl64Yzxnrd+DRpOCCWNQdVrLA+qT3uphstEajsaKF+jD5FMLZMnDLfhTUzoaCOo/
-	 iK5EVCDZ/57x72SE8R3ECozZmF8hrMrxI3Sw3kVSArEjxR4C/az20hJZMj5RKU7Asc
-	 TuKx4IlagHsfg==
-Date: Wed, 5 Mar 2025 23:50:37 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org,
-	Kevin Nomura <nomurak@google.com>, Song Liu <song@kernel.org>
-Subject: Re: [PATCH] perf report: Do not process non-JIT BPF ksymbol events
-Message-ID: <Z8lTzROPDcoPQXFZ@google.com>
-References: <20250305232838.128692-1-namhyung@kernel.org>
- <d962792a-c852-494b-b35c-e8f83cac7218@intel.com>
- <Z8lEdWxt8CKepTJ3@google.com>
- <bb2b30a1-8ce3-4565-b17a-27148234c10b@intel.com>
+	s=arc-20240116; t=1741247505; c=relaxed/simple;
+	bh=gjUcrqFcFI1ybL3DB1TbJViwYlIo9rMDGUyEZ0/f13g=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XurCNrVfT7Z/lGjVyS+Js7SMPBBXMSFtoPPyUxV2A5IcOm4r92sg7xXB8feJHzIuc8ehdiwfRw8BnQ4NHwxQHU9yaQ0p64ALBEmGo5zMKujFJn5k3wXa2WO1s/v46r9OPbism5kEXkMHCf7dvF4XWZ83jYmHNWGK/mbV4dJMyP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yyjkv1hQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=2YTDgmY9; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=IpenPWf1; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=FEMmyrsI; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B87401F385;
+	Thu,  6 Mar 2025 07:51:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741247501; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5iXPMp1dfiNbGtgtS9kQ0M8cK0gbrvN137GP+WnYpOk=;
+	b=yyjkv1hQcdqQ1bFhmMLhFONh4JNMQURDDMqARtnKqePfsHfSTgNo3dMgqrf4yPGD+OTsEo
+	+uL3Qj5P64LNSyAgSrNg5dqg9635f88tXimfxq2AVe5os5vDxXp7pvJdAO1m0k1XlXHFF8
+	xOqbcbwEgdgWunZTxsXnL/Wn6QD0sW4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741247501;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5iXPMp1dfiNbGtgtS9kQ0M8cK0gbrvN137GP+WnYpOk=;
+	b=2YTDgmY9z+jWBZa0RnOxvBdMWiPtOwfx2SUKaqDN1POxJ7+rWAwnR2QQKYehScDYqhGizv
+	zz3uSGPwPtCIVFAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741247500; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5iXPMp1dfiNbGtgtS9kQ0M8cK0gbrvN137GP+WnYpOk=;
+	b=IpenPWf1Pg2cGBV0xueTnpFyzXp2rIahRwLLE0/0r0FztFxGsPbi9+h9D22l9qEocoJ1oz
+	7X+0bZoV5nxEKBRJA2CR+x4mY6ppw5SHtpdUmG+IIRs3gtMhnJu3QFqHbWpx1z5W+F0zFY
+	DB/+mErUCKf7djZK3grEDu6bOMlHMlA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741247500;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5iXPMp1dfiNbGtgtS9kQ0M8cK0gbrvN137GP+WnYpOk=;
+	b=FEMmyrsIxcgCe8VJa4y953YyaRHpZ16A7C+kpxLxPw/Cu9APgwfTN6uWu+TGOjjjOfW7cT
+	hmI116P1+prGz5Dg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7F2DE13A61;
+	Thu,  6 Mar 2025 07:51:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id rXwyHQxUyWcldgAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 06 Mar 2025 07:51:40 +0000
+Date: Thu, 06 Mar 2025 08:51:40 +0100
+Message-ID: <87h646r3zn.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Lizhi Xu <lizhi.xu@windriver.com>
+Cc: <syzbot+2d373c9936c00d7e120c@syzkaller.appspotmail.com>,
+	<linux-kernel@vger.kernel.org>,
+	<linux-sound@vger.kernel.org>,
+	<perex@perex.cz>,
+	<syzkaller-bugs@googlegroups.com>,
+	<tiwai@suse.com>
+Subject: Re: [PATCH] ALSA: seq: Use atomic to prevent data races in total_elements
+In-Reply-To: <20250306011745.100014-1-lizhi.xu@windriver.com>
+References: <67c88903.050a0220.15b4b9.0028.GAE@google.com>
+	<20250306011745.100014-1-lizhi.xu@windriver.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <bb2b30a1-8ce3-4565-b17a-27148234c10b@intel.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -1.80
+X-Spamd-Result: default: False [-1.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	TAGGED_RCPT(0.00)[2d373c9936c00d7e120c];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu, Mar 06, 2025 at 08:48:20AM +0200, Adrian Hunter wrote:
-> On 6/03/25 08:45, Namhyung Kim wrote:
-> > Hello,
-> > 
-> > On Thu, Mar 06, 2025 at 08:25:01AM +0200, Adrian Hunter wrote:
-> >> On 6/03/25 01:28, Namhyung Kim wrote:
-> >>> The length of PERF_RECORD_KSYMBOL for BPF is a size of JITed code so
-> >>> it'd be 0 when it's not JITed.  The ksymbol is needed to symbolize the
-> >>> code when it gets samples in the region but non-JITed code cannot get
-> >>> samples.  Thus it'd be ok to ignore them.
-> >>>
-> >>> Actually it caused a performance issue in the perf tools on old ARM
-> >>> kernels where it can refuse to JIT some BPF codes.  It ended up
-> >>> splitting the existing kernel map (kallsyms).  And later lookup for a
-> >>> kernel symbol would create a new kernel map from kallsyms and then
-> >>> split it again and again. :(
-> >>>
-> >>> Probably there's a bug in the kernel map/symbol handling in perf tools.
-> >>> But I think we need to fix this anyway.
-> >>>
-> >>> Reported-by: Kevin Nomura <nomurak@google.com>
-> >>> Cc: Song Liu <song@kernel.org>
-> >>> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> >>> ---
-> >>>  tools/perf/util/machine.c | 4 ++++
-> >>>  1 file changed, 4 insertions(+)
-> >>>
-> >>> diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-> >>> index 3f1faf94198dbe56..c7d27384f0736408 100644
-> >>> --- a/tools/perf/util/machine.c
-> >>> +++ b/tools/perf/util/machine.c
-> >>> @@ -779,6 +779,10 @@ int machine__process_ksymbol(struct machine *machine __maybe_unused,
-> >>>  	if (dump_trace)
-> >>>  		perf_event__fprintf_ksymbol(event, stdout);
-> >>>  
-> >>> +	/* no need to process non-JIT BPF as it cannot get samples */
-> >>> +	if (event->ksymbol.len == 0)
-> >>> +		return 0;
-> >>
-> >> Are all ksymbol events BPF?  Maybe it is OK
-> >> for PERF_RECORD_KSYMBOL_TYPE_OOL also.  Perhaps adjust the
-> >> comment in that case.
-> > 
-> > Probably, but I didn't see OOL with zero length yet.  Is it possible?
+On Thu, 06 Mar 2025 02:17:45 +0100,
+Lizhi Xu wrote:
 > 
-> Probably not
+> syzbot reported a data-race in snd_seq_poll / snd_seq_pool_init. [1]
+> 
+> Just use atomic_set/atomic_read for handling this case.
+> 
+> [1]
+> BUG: KCSAN: data-race in snd_seq_poll / snd_seq_pool_init
+> 
+> write to 0xffff888114535610 of 4 bytes by task 7006 on cpu 1:
+>  snd_seq_pool_init+0x1c1/0x200 sound/core/seq/seq_memory.c:469
+>  snd_seq_write+0x17f/0x500 sound/core/seq/seq_clientmgr.c:1022
+>  vfs_write+0x27d/0x920 fs/read_write.c:677
+>  ksys_write+0xe8/0x1b0 fs/read_write.c:731
+>  __do_sys_write fs/read_write.c:742 [inline]
+>  __se_sys_write fs/read_write.c:739 [inline]
+>  __x64_sys_write+0x42/0x50 fs/read_write.c:739
+>  x64_sys_call+0x287e/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:2
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> read to 0xffff888114535610 of 4 bytes by task 7005 on cpu 0:
+>  snd_seq_total_cells sound/core/seq/seq_memory.h:83 [inline]
+>  snd_seq_write_pool_allocated sound/core/seq/seq_clientmgr.c:95 [inline]
+>  snd_seq_poll+0x103/0x170 sound/core/seq/seq_clientmgr.c:1139
+>  vfs_poll include/linux/poll.h:82 [inline]
+>  __io_arm_poll_handler+0x1e5/0xd50 io_uring/poll.c:582
+>  io_arm_poll_handler+0x464/0x5b0 io_uring/poll.c:707
+>  io_queue_async+0x89/0x320 io_uring/io_uring.c:1925
+>  io_queue_sqe io_uring/io_uring.c:1954 [inline]
+>  io_req_task_submit+0xb9/0xc0 io_uring/io_uring.c:1373
+>  io_handle_tw_list+0x1b9/0x200 io_uring/io_uring.c:1059
+>  tctx_task_work_run+0x6e/0x1c0 io_uring/io_uring.c:1123
+>  tctx_task_work+0x40/0x80 io_uring/io_uring.c:1141
+>  task_work_run+0x13a/0x1a0 kernel/task_work.c:227
+>  get_signal+0xe78/0x1000 kernel/signal.c:2809
+>  arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:337
+>  exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+>  exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+>  __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+>  syscall_exit_to_user_mode+0x62/0x120 kernel/entry/common.c:218
+>  do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> value changed: 0x00000000 -> 0x000001f4
 
-Then I think it's ok to leave the comment as is.
+This is harmless as it's only a reference in poll() and that's rather
+volatile.  So changing the whole with atomic_t is an overkill only for
+that.
 
-Thanks,
-Namhyung
+OTOH, the check of pool size in the caller side is fragile, and it can
+purely rely on snd_seq_pool_poll_wait().  And, there, it should take
+the pool->lock for the data consistency.
+
+So, if any, an alternative fix would be something like below.
+
+
+thanks,
+
+Takashi
+
+-- 8< --
+--- a/sound/core/seq/seq_clientmgr.c
++++ b/sound/core/seq/seq_clientmgr.c
+@@ -1150,8 +1150,7 @@ static __poll_t snd_seq_poll(struct file *file, poll_table * wait)
+ 	if (snd_seq_file_flags(file) & SNDRV_SEQ_LFLG_OUTPUT) {
+ 
+ 		/* check if data is available in the pool */
+-		if (!snd_seq_write_pool_allocated(client) ||
+-		    snd_seq_pool_poll_wait(client->pool, file, wait))
++		if (snd_seq_pool_poll_wait(client->pool, file, wait))
+ 			mask |= EPOLLOUT | EPOLLWRNORM;
+ 	}
+ 
+--- a/sound/core/seq/seq_memory.c
++++ b/sound/core/seq/seq_memory.c
+@@ -427,6 +427,7 @@ int snd_seq_pool_poll_wait(struct snd_seq_pool *pool, struct file *file,
+ 			   poll_table *wait)
+ {
+ 	poll_wait(file, &pool->output_sleep, wait);
++	guard(spinlock_irq)(&pool->lock);
+ 	return snd_seq_output_ok(pool);
+ }
+ 
 
 
