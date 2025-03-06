@@ -1,196 +1,341 @@
-Return-Path: <linux-kernel+bounces-549540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C739BA553B8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:57:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C961A553BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:58:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFE2717905E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:57:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7C2B3B429E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:57:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586B725D1FA;
-	Thu,  6 Mar 2025 17:57:30 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8896725B686;
+	Thu,  6 Mar 2025 17:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="SgIWpIeD"
+Received: from CY4PR02CU008.outbound.protection.outlook.com (mail-westcentralusazolkn19011035.outbound.protection.outlook.com [52.103.7.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DA525CC88
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:57:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741283849; cv=none; b=SrxyKbrdlvVyXhpBDkPLOoqNnWKZABmAESAXbnPnOPBOxkMz6+2sP6VqEEdaGrPTRwutuL45geBeachfwX8Mx4xGESuNdrsokMumOe39iy/9awX3wocRbzbaeHrB7qRB4RJ3Rjparar12JTk/aTddMAMlBFtJ9hn1dOeBx4Z6s0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741283849; c=relaxed/simple;
-	bh=fSPPLLdbFMrjw42HSo7FxlrVq+IJnvj8aGe9QfWdx/s=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=f5EQsM6scjsMr+jqVq3jk3QBT91Rmmg/mxqbagpbv1EEuFrnT8nIF89C4v4t4ZftVptS1nHAwm/c1l1XnRl7UOixkzvpKaxWVnt6eLVErZl6bzZ04UlyOopVeR33hsJ6py1Mvtm9grOW3qzqO1oCbE0lT7tk7AaF010OV17YhIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d43b460962so14506155ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:57:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741283847; x=1741888647;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vns/ne93NHxIB/erDfxxQpTeGm8dJSlvc8YFbKDR674=;
-        b=JhDqnmACHQeP/ZU4QoFN9zGzaiQGqUFBZwnv0GAEXLHRY3ffNkSNKsGFobEQm54zLh
-         nkLiPCx1hb3FQOn+QnDYKtMnD5YfKEbOludNBa284vM1ovZhq0jO3b8Kw9n6qknMbbvh
-         KDOl3QD5w4XWcu0+96b4r8avMfRaHTQNEPbt1AcoLcuoNFb70RefLOffXTk5vuqyXUFz
-         syQ38vtJHd6wSCOiqTemRimK/zfFwlfa55gAz1VLzFB7AhjZhJASpuIh8i3sbaijCI33
-         5NHah5Y3Wj6r5+VqQdozwA5an+RRPah3CHWRrI9BHfoayiTMiJfVz/pWad074ylIvRn+
-         /7Sg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHGq4dzxepbzDo9OeCesZ5kcyUJa3lCf048rUdDrcTNB+JEkrOTeyEPPkETZC9w1lwWFG0eojV9pWKnPU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyOBwVRzj8cSjigQYq1Odc/bFxGF5qLkB2pdczvog55+v9Rynn
-	fdE/7O5F28wH+yA9+BTMrpcwHzmPaRSomfW+lfgW4z6Sw/9nyYrC8eJkzmtWyI9i/No47gjNPWo
-	TwgT4lbHGbI/YZjVVO4MmYRvi/QhirSbiMKMAg2YDv/GN244DxezJNRY=
-X-Google-Smtp-Source: AGHT+IFZ4OVuy4uXXbNddxzWOEcAcBNdQKWG8w77vZ5toRF601QTyPqlMAEfqargpHJVB+mPrrU05g03IGSdzjNFbV/X1PODO5m3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60C0625D52E;
+	Thu,  6 Mar 2025 17:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.7.35
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741283871; cv=fail; b=CGPq0t0RyHIB5P24EKJUt1oWGZg60ZlISCQM27K8zFqMwE/jcKPFgSQ77cMUVAw3bTcJUdXBnbDWAoaWpZ/P8n7a1sNQuBZ0GmfvpoakhnYQT/DytxzJrpnu1+WkpNllSqKLZCebQbg792h1ZKpjhL+tKojxSxORtTpvf5MxB9Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741283871; c=relaxed/simple;
+	bh=U+N1ZE/ugkoSnYupmmzt5mtTJ38sCREUBNFYEo7OlNs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=AiKm/34UStwuX4qNP0REu+6XnRkit5pbeYl5tvwUjsnk+6GLCVUjBdXNXugzEX4TlKy7fS+H5Zy6bN+r1+Lpc/HNTHQnP7WOIZdHkp5XFy1ThIwud9zeqKVd93aPIoQ0h25tOW+vZADepQlBK6l3NPEG54AmJw6k14VnBT7m1X8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=SgIWpIeD; arc=fail smtp.client-ip=52.103.7.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yXo2uVHTOn86yTEowS3SYfnh2m0RZ27YpzW5E4GVHrKvwzzuYCZzJAERi1jqY6mr+LWn3Bf15MfZkORUpqskzcluoWulhyhH2nYci1/ZUAC8tH/bNa/N2p9blGnwHkohFyMpWwXn8LsRwsLDbST9/NhSVnYUqYTtQbuZXehi56/6mGjxH9rKhhsdkptbkiOnlSBck7ZmtIC905hcMNKS596zviOF/9HcLc8ousDCxSZf9vaoPN3SDVEnPfdqvyu4YIOgPnI8Z11I7MzWsr8lUQYwXxrNslYZ5Ie191pziSQebGKdMsXInPy+ON5Rm6Ra8D2rYqfjU3XbFeXdnFByvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+dxMXgDLbrG32/f38i9JjHZIUrjfzGchsc4HHXcuLRk=;
+ b=dBer98fmClbIxHFnj/3WpFD5upK7ilSE6mHrICRSwjdjvLIuo0zDIiyig9/Atq3/DYfk2yfDItQGtkt6MPxxRg6v+i6q5+lvw7MgeXtnqhKCYxC/tcTKNs7V2RCwmUb1jEp6JCGpguFHlw6Qg0dD6cIwEgn3OQ1RBVKmOXy7RyOzo2VJq1CaoWwMPWO2lTcV2UprKMMO3BltLq10ktQzc7SG8rRcuAYnS3PDdqBArWBXpm5jYPFF1c5KIADkfx7thyOAbIqStg6ZZra1O2gKu3VtlzpdkLFSxbYKPfS5cDGVSKl0qEjpMjBXSlBCauNIbAAhVg792KUlPv3pu0UdpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+dxMXgDLbrG32/f38i9JjHZIUrjfzGchsc4HHXcuLRk=;
+ b=SgIWpIeDCe03d7bYR9Xj0g12bELvYQpubTs1ZDvmMo5ToMCGeDqqg8XRZIswWrP+HLJBK2cIGsicgOTNsxHsbMSNx85bDg25LhgRQkP4hM8rWwiT/GN5nP3rSiOxsq7r796NBauVJzkJQ+jTmn6Lp6xBldXoQwScSQ7MiaoGE4djDOcjrkR15w8/ZbIrqeqxGCKF7cJiIfOu/xswhJM1SdOOLnDl6KLP03UKsV8uOUyMeGfFYfwnB+YeKaJ4caxjbq3QcOY2G6Y3zE2lfb04j6Ve0Bh71CyzCQ2K1M03NKOj/u6/hxM80vEw11VUf45fc3GaqEhvjRkMgD1brnsXZg==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by MW4PR02MB7476.namprd02.prod.outlook.com (2603:10b6:303:67::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.18; Thu, 6 Mar
+ 2025 17:57:45 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
+ 17:57:45 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org"
+	<linux-arch@vger.kernel.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>
+CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
+	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com"
+	<hpa@zytor.com>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "arnd@arndb.de" <arnd@arndb.de>,
+	"jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+	"muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+	"skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+	"mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
+	"ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+	"apais@linux.microsoft.com" <apais@linux.microsoft.com>,
+	"Tianyu.Lan@microsoft.com" <Tianyu.Lan@microsoft.com>,
+	"stanislav.kinsburskiy@gmail.com" <stanislav.kinsburskiy@gmail.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"vkuznets@redhat.com" <vkuznets@redhat.com>, "prapal@linux.microsoft.com"
+	<prapal@linux.microsoft.com>, "muislam@microsoft.com"
+	<muislam@microsoft.com>, "anrayabh@linux.microsoft.com"
+	<anrayabh@linux.microsoft.com>, "rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
+Subject: RE: [PATCH v5 01/10] hyperv: Convert Hyper-V status codes to strings
+Thread-Topic: [PATCH v5 01/10] hyperv: Convert Hyper-V status codes to strings
+Thread-Index: AQHbiKNs/uCEZOh33UCUZSZ5oZ+szbNma5PQ
+Date: Thu, 6 Mar 2025 17:57:44 +0000
+Message-ID:
+ <SN6PR02MB41577560030C55503D1BAFDCD4CA2@SN6PR02MB4157.namprd02.prod.outlook.com>
+References:
+ <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-2-git-send-email-nunodasneves@linux.microsoft.com>
+In-Reply-To:
+ <1740611284-27506-2-git-send-email-nunodasneves@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|MW4PR02MB7476:EE_
+x-ms-office365-filtering-correlation-id: f39e481c-b6cf-469d-7ccf-08dd5cd865e7
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|19110799003|8060799006|8062599003|15080799006|12121999004|102099032|13041999003|440099028|3412199025|12091999003|41001999003;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?hZzawpkJrxmSN/MDMpqJGDgz26ApBWsnXLI5x0U4/XkTjI1q9IVpRRQvkMWL?=
+ =?us-ascii?Q?vrWVv8g2o8Lw9aTzkq9AWmL6+cwNm93Gc4tF3yZY9UBiAQx4j0BiZ/FnCxW0?=
+ =?us-ascii?Q?tMUflixfjkNyx2gWXYjvW5gOOl5YwZlio9ul9Cx0NdNclh6grJPau2O2tZaX?=
+ =?us-ascii?Q?SVhFtvEp9IMCqB9F1K6zCLefjQ9FNZF5y5yWDwOXFJBAKHKud9Mqkbjda4HA?=
+ =?us-ascii?Q?SEbk00BpWX4MHGpEHPZCusRRkSNfdO/VTXpmAbyR9oomkFwN3iuxm77ul7xd?=
+ =?us-ascii?Q?SfOnoJ3FKiJ04vvt16QAFZkMeALRVi2WE1paXpBeehucYh5LwHyBSexxlf4y?=
+ =?us-ascii?Q?Dxwqb+ng/bq1TNBzkA4WKbBqEb97J7TRGrImPPmkJi4Ht7n4K2TsD8z9RUhT?=
+ =?us-ascii?Q?riXBIbsA9X65pzFpSCduwUBjG2kletHbOKn/ju8SxwY8mxFx/BtfkLWf8MUf?=
+ =?us-ascii?Q?RL/LRr6od4HXnU+HcQeUTbrdrE6KoDjanHww3KULdydT/j4mtT1ICKIDBLH3?=
+ =?us-ascii?Q?29cm8L/vlG0FeHDsQ60u3e3sf5lg2Cj7hSqF9C7RBZdgu234OZCkA4IrGh4A?=
+ =?us-ascii?Q?0tYHkBomS/Xf1mWHgRBT6O1snwDcxTZftwl+w4XQHPqIKqIWRnn0ocVdLv3c?=
+ =?us-ascii?Q?7c3lXquV02UJRtoOgHl/qs6WMb3rCZjGnLHi63b5ub5v9LLt7BEwQlS8ToHR?=
+ =?us-ascii?Q?heMwuH50i0lj/F8WlKX7lb1tRUeGdNzRPbXsNDlQBJILKNxrD1IO7uB5frP0?=
+ =?us-ascii?Q?+hZ/tNa51CvWIzae+HLjiVZcJpsGIdLMr3arcFSKBMcxTWYrSBGnygYdDhZN?=
+ =?us-ascii?Q?Ei4Urd9OK5GWppmvL4er1GV8S0awQdJnLnxefezCY+vByxEvHjk786Y9t/2f?=
+ =?us-ascii?Q?D3VefSrhkDXpK/BCorfgIE3TpCjqnTLXmeJcI4c5sgUA3v9mTkSWunuJqSUs?=
+ =?us-ascii?Q?i+1+Htdmr/ULiIvaXrMaY0s6ZxRdgkuYIWzBjL7dbUS9VeQycN7zxvaQ+QZR?=
+ =?us-ascii?Q?UW70FBiDi5ylJBs7mAI1ZaVOC1BOLfsY5LRvP4jfL7k//1fDat7xJuJs0fYK?=
+ =?us-ascii?Q?TjNGr9cLfvz7PdFUfIl3vXvAnjYk69SRvhXtLQyym3lGjv4VUFtymZ25JokA?=
+ =?us-ascii?Q?jCpDw9pfpCf4wr0f9t0zODiRX1xwefxlQnI5qlsrMaiDjUidVUt9sJg=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?u8uFEyIWHgowUZWtSLKihC7OUItTGqk5jLQrSN4Yzgei/QZYkkolKC+mLlQl?=
+ =?us-ascii?Q?C6VDRknmVuwqyGOKnQuzFfMtNWm+0Zjh1T9cYD4z7KnTies/6UKOxJcfK1eY?=
+ =?us-ascii?Q?mX4PaCpE/dcSx6lL6MP9OkURUlNFoxIfxCLXcKWDt9yfDHHLHOkYKp1tkKtL?=
+ =?us-ascii?Q?YagMyKg0Jw8pmESgmmXnDkeCxupTB7Pl26yovhUAfFWm9hIFJ6Qjyo+ywz7T?=
+ =?us-ascii?Q?k4914ThSBjujDdfIoq/lu2U98jT9xdc3fN9LAW5KJ3929P61MxIDccVF24yN?=
+ =?us-ascii?Q?7ro5i5uoWPrZ7GGIvK8ovITMKnULeN3XtmBsO7dOsod1MSBayYstl/zSu1Sb?=
+ =?us-ascii?Q?PVZXLSULsSdV6TCipyfRN8z+uZ/w+fY5IOdmqwMMV7nXX/rjD0WgUOX8m9+D?=
+ =?us-ascii?Q?p6/qIITJCMPKEO4AQ8KZtp4c+5fI3lZzQgEMVeRXBbS+U57oBlsraazGbQZC?=
+ =?us-ascii?Q?Y399uqJ4oQuZoX1OaVs67GktJa992PzHEY0yqXKWk2uOQdCOpK6b+eXdPm1n?=
+ =?us-ascii?Q?pDB9VB8KDaXh7qMU6jIUXsXR6jC8Um5Bq6yemC7jHiFGaFqcSTekOzKWzDiv?=
+ =?us-ascii?Q?7RGgtkh52L8v2ORN9AP7BHFr6HRgGPQ6r6eBjrwRklvz+N5++CTF4g1Yt1To?=
+ =?us-ascii?Q?97KXY3yTtsHcY2gq5IKBbTAWoiCry5rlHzXku6ePxOgEIR0rzH580S1guBDs?=
+ =?us-ascii?Q?LEJfrD5yTYV+HsoVW+dV1H2TVnjbkMndBm2gYKelrojAfijjyFxhyecN47lL?=
+ =?us-ascii?Q?Qojy0HJSjAxzMdbyKT9VkSge0tSGuZl1dTS+vn0OH5q9QfWPCPjPZ4795Fr4?=
+ =?us-ascii?Q?95tLyZXx1wroLqsrUoBZiYEoGfw9ki53R2mk0yPvVuXBJeZj2wF1btZ36icd?=
+ =?us-ascii?Q?MFAbJqm1uBRFLJ5eW0snTOk/Pp8Xh7CFj9jVK8ZzR7BPBJ9i2J3G3KjzvdeZ?=
+ =?us-ascii?Q?LzwNCLt3scQLwbgkkVrAqLEPj2pg4IV9Poeqfp0BhMD7FwdiwthCSiEEHUUs?=
+ =?us-ascii?Q?8GfzzU420jCciRRuY4UsjXrSs3l8oLLKedkDmTmhI/S6Ws/PFwpiFUyoLFbM?=
+ =?us-ascii?Q?t8Q4BBXeJEzgv0MNQ/i6V4ANH/gwssAzOvg4/OT8a9bUiNzNAdo9tLyev2yh?=
+ =?us-ascii?Q?BMeiFf1I7qcP9NYwX3sbU4uxC3MGNOZfEwa0tzUTYiN20yOeUL/FBLgM9+Z5?=
+ =?us-ascii?Q?vAmsgeQc5ErDkzd7Z+1GDvJxSpTqrlwTb5ERbDv8KCO4X0e1ZCW/6+IOLBE?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2144:b0:3d3:e296:1c1c with SMTP id
- e9e14a558f8ab-3d441960cbcmr4717055ab.9.1741283847278; Thu, 06 Mar 2025
- 09:57:27 -0800 (PST)
-Date: Thu, 06 Mar 2025 09:57:27 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c9e207.050a0220.15b4b9.004c.GAE@google.com>
-Subject: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Read in __bch2_bkey_unpack_key
-From: syzbot <syzbot+b9d9de2aa46b1bbe575a@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: f39e481c-b6cf-469d-7ccf-08dd5cd865e7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Mar 2025 17:57:44.8379
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR02MB7476
 
-Hello,
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Wednesday, Fe=
+bruary 26, 2025 3:08 PM
+>=20
+> Introduce hv_result_to_string() for this purpose. This allows
+> hypercall failures to be debugged more easily with dmesg.
+>=20
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> ---
+>  drivers/hv/hv_common.c         | 65 ++++++++++++++++++++++++++++++++++
+>  drivers/hv/hv_proc.c           | 13 ++++---
+>  include/asm-generic/mshyperv.h |  1 +
+>  3 files changed, 74 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> index 9804adb4cc56..ce20818688fe 100644
+> --- a/drivers/hv/hv_common.c
+> +++ b/drivers/hv/hv_common.c
+> @@ -740,3 +740,68 @@ void hv_identify_partition_type(void)
+>  			pr_crit("Hyper-V: CONFIG_MSHV_ROOT not enabled!\n");
+>  	}
+>  }
+> +
+> +const char *hv_result_to_string(u64 hv_status)
+> +{
+> +	switch (hv_result(hv_status)) {
+> +	case HV_STATUS_SUCCESS:
+> +		return "HV_STATUS_SUCCESS";
+> +	case HV_STATUS_INVALID_HYPERCALL_CODE:
+> +		return "HV_STATUS_INVALID_HYPERCALL_CODE";
+> +	case HV_STATUS_INVALID_HYPERCALL_INPUT:
+> +		return "HV_STATUS_INVALID_HYPERCALL_INPUT";
+> +	case HV_STATUS_INVALID_ALIGNMENT:
+> +		return "HV_STATUS_INVALID_ALIGNMENT";
+> +	case HV_STATUS_INVALID_PARAMETER:
+> +		return "HV_STATUS_INVALID_PARAMETER";
+> +	case HV_STATUS_ACCESS_DENIED:
+> +		return "HV_STATUS_ACCESS_DENIED";
+> +	case HV_STATUS_INVALID_PARTITION_STATE:
+> +		return "HV_STATUS_INVALID_PARTITION_STATE";
+> +	case HV_STATUS_OPERATION_DENIED:
+> +		return "HV_STATUS_OPERATION_DENIED";
+> +	case HV_STATUS_UNKNOWN_PROPERTY:
+> +		return "HV_STATUS_UNKNOWN_PROPERTY";
+> +	case HV_STATUS_PROPERTY_VALUE_OUT_OF_RANGE:
+> +		return "HV_STATUS_PROPERTY_VALUE_OUT_OF_RANGE";
+> +	case HV_STATUS_INSUFFICIENT_MEMORY:
+> +		return "HV_STATUS_INSUFFICIENT_MEMORY";
+> +	case HV_STATUS_INVALID_PARTITION_ID:
+> +		return "HV_STATUS_INVALID_PARTITION_ID";
+> +	case HV_STATUS_INVALID_VP_INDEX:
+> +		return "HV_STATUS_INVALID_VP_INDEX";
+> +	case HV_STATUS_NOT_FOUND:
+> +		return "HV_STATUS_NOT_FOUND";
+> +	case HV_STATUS_INVALID_PORT_ID:
+> +		return "HV_STATUS_INVALID_PORT_ID";
+> +	case HV_STATUS_INVALID_CONNECTION_ID:
+> +		return "HV_STATUS_INVALID_CONNECTION_ID";
+> +	case HV_STATUS_INSUFFICIENT_BUFFERS:
+> +		return "HV_STATUS_INSUFFICIENT_BUFFERS";
+> +	case HV_STATUS_NOT_ACKNOWLEDGED:
+> +		return "HV_STATUS_NOT_ACKNOWLEDGED";
+> +	case HV_STATUS_INVALID_VP_STATE:
+> +		return "HV_STATUS_INVALID_VP_STATE";
+> +	case HV_STATUS_NO_RESOURCES:
+> +		return "HV_STATUS_NO_RESOURCES";
+> +	case HV_STATUS_PROCESSOR_FEATURE_NOT_SUPPORTED:
+> +		return "HV_STATUS_PROCESSOR_FEATURE_NOT_SUPPORTED";
+> +	case HV_STATUS_INVALID_LP_INDEX:
+> +		return "HV_STATUS_INVALID_LP_INDEX";
+> +	case HV_STATUS_INVALID_REGISTER_VALUE:
+> +		return "HV_STATUS_INVALID_REGISTER_VALUE";
+> +	case HV_STATUS_OPERATION_FAILED:
+> +		return "HV_STATUS_OPERATION_FAILED";
+> +	case HV_STATUS_TIME_OUT:
+> +		return "HV_STATUS_TIME_OUT";
+> +	case HV_STATUS_CALL_PENDING:
+> +		return "HV_STATUS_CALL_PENDING";
+> +	case HV_STATUS_VTL_ALREADY_ENABLED:
+> +		return "HV_STATUS_VTL_ALREADY_ENABLED";
+> +	default:
+> +		return "Unknown";
+> +	};
+> +	return "Unknown";
+> +}
+> +EXPORT_SYMBOL_GPL(hv_result_to_string);
+> +
+> diff --git a/drivers/hv/hv_proc.c b/drivers/hv/hv_proc.c
+> index 2fae18e4f7d2..8fc30f509fa7 100644
+> --- a/drivers/hv/hv_proc.c
+> +++ b/drivers/hv/hv_proc.c
+> @@ -87,7 +87,8 @@ int hv_call_deposit_pages(int node, u64 partition_id, u=
+32
+> num_pages)
+>  				     page_count, 0, input_page, NULL);
+>  	local_irq_restore(flags);
+>  	if (!hv_result_success(status)) {
+> -		pr_err("Failed to deposit pages: %lld\n", status);
+> +		pr_err("%s: Failed to deposit pages: %s\n", __func__,
+> +		       hv_result_to_string(status));
+>  		ret =3D hv_result_to_errno(status);
+>  		goto err_free_allocations;
+>  	}
+> @@ -137,8 +138,9 @@ int hv_call_add_logical_proc(int node, u32 lp_index, =
+u32 apic_id)
+>=20
+>  		if (hv_result(status) !=3D HV_STATUS_INSUFFICIENT_MEMORY) {
+>  			if (!hv_result_success(status)) {
+> -				pr_err("%s: cpu %u apic ID %u, %lld\n", __func__,
+> -				       lp_index, apic_id, status);
+> +				pr_err("%s: cpu %u apic ID %u, %s\n",
+> +				       __func__, lp_index, apic_id,
+> +				       hv_result_to_string(status));
+>  				ret =3D hv_result_to_errno(status);
+>  			}
+>  			break;
+> @@ -179,8 +181,9 @@ int hv_call_create_vp(int node, u64 partition_id, u32=
+ vp_index,
+> u32 flags)
+>=20
+>  		if (hv_result(status) !=3D HV_STATUS_INSUFFICIENT_MEMORY) {
+>  			if (!hv_result_success(status)) {
+> -				pr_err("%s: vcpu %u, lp %u, %lld\n", __func__,
+> -				       vp_index, flags, status);
+> +				pr_err("%s: vcpu %u, lp %u, %s\n",
+> +				       __func__, vp_index, flags,
+> +				       hv_result_to_string(status));
+>  				ret =3D hv_result_to_errno(status);
+>  			}
+>  			break;
+> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyper=
+v.h
+> index b13b0cda4ac8..dc4729dba9ef 100644
+> --- a/include/asm-generic/mshyperv.h
+> +++ b/include/asm-generic/mshyperv.h
+> @@ -298,6 +298,7 @@ static inline int cpumask_to_vpset_skip(struct hv_vps=
+et *vpset,
+>  	return __cpumask_to_vpset(vpset, cpus, func);
+>  }
+>=20
+> +const char *hv_result_to_string(u64 hv_status);
+>  int hv_result_to_errno(u64 status);
+>  void hyperv_report_panic(struct pt_regs *regs, long err, bool in_die);
+>  bool hv_is_hyperv_initialized(void);
+> --
+> 2.34.1
 
-syzbot found the following issue on:
+I've read through the other comments on this patch. I definitely vote
+for outputting both the hex code along with a string translation, which
+could be empty if the hex code is unrecognized by the translation code.
 
-HEAD commit:    99fa936e8e4f Merge tag 'affs-6.14-rc5-tag' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11f08078580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2040405600e83619
-dashboard link: https://syzkaller.appspot.com/bug?extid=b9d9de2aa46b1bbe575a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13b69464580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15f08078580000
+I can see providing something like hv_hvcall_err() as Nuno proposed, since
+that standardizes the text output. But I wonder if it would be too limiting=
+.
+For example, in the changes above, both hv_call_add_logical_proc() and
+hv_call_create_vp() output additional debugging values, which we probably
+don't want to give up.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-99fa936e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ef04f83d96f6/vmlinux-99fa936e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/583a7eea5c8e/bzImage-99fa936e.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/4d401321a7e1/mount_6.gz
+Lastly, from an implementation standpoint, rather than using a big
+switch statement, build a static array of entries that each have the
+hex code and string equivalent. Then hv_result_to_string() loops through
+the array looking for a match. This won't be any slower than the big switch
+statement. I've seen other places in the kernel where string names are
+output, and looking up the strings in a static array is the typical approac=
+h.
+You'll have to work through the details and see if avoids being too clumsy,
+but I think it will be OK.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b9d9de2aa46b1bbe575a@syzkaller.appspotmail.com
-
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq c6c25c03258c59c5 written 48 min_key 0:36028797018963968:0 durability: 1 ptr: 0:27:0 gen 0  
-  node offset 8/48 bset u64s 2088 bset byte offset 360: bad k->u64s 0 (min 3 max 253), fixing
-==================================================================
-BUG: KASAN: slab-out-of-bounds in unpack_state_init fs/bcachefs/bkey.c:151 [inline]
-BUG: KASAN: slab-out-of-bounds in __bch2_bkey_unpack_key+0x66/0xdd0 fs/bcachefs/bkey.c:269
-Read of size 8 at addr ffff888053574140 by task kworker/0:1H/36
-
-CPU: 0 UID: 0 PID: 36 Comm: kworker/0:1H Not tainted 6.14.0-rc5-syzkaller-00013-g99fa936e8e4f #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: bcachefs_btree_read_complete btree_node_read_work
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0x16e/0x5b0 mm/kasan/report.c:521
- kasan_report+0x143/0x180 mm/kasan/report.c:634
- unpack_state_init fs/bcachefs/bkey.c:151 [inline]
- __bch2_bkey_unpack_key+0x66/0xdd0 fs/bcachefs/bkey.c:269
- __bkey_unpack_key_format_checked fs/bcachefs/bkey.h:407 [inline]
- __bkey_unpack_key fs/bcachefs/bkey.h:426 [inline]
- __bkey_disassemble fs/bcachefs/bkey.h:477 [inline]
- bkey_packed_valid+0x21e/0x6c0 fs/bcachefs/btree_io.c:875
- validate_bset_keys+0xeb5/0x1af0 fs/bcachefs/btree_io.c:987
- bch2_btree_node_read_done+0x2298/0x6180 fs/bcachefs/btree_io.c:1164
- btree_node_read_work+0x6dc/0x1380 fs/bcachefs/btree_io.c:1358
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3319
- worker_thread+0x870/0xd30 kernel/workqueue.c:3400
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-Last potentially related work creation:
-------------[ cut here ]------------
-pool index 16319 out of bounds (797) for stack id 9a6c3fc0
-WARNING: CPU: 0 PID: 36 at lib/stackdepot.c:452 depot_fetch_stack+0x86/0xc0 lib/stackdepot.c:451
-Modules linked in:
-CPU: 0 UID: 0 PID: 36 Comm: kworker/0:1H Not tainted 6.14.0-rc5-syzkaller-00013-g99fa936e8e4f #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: bcachefs_btree_read_complete btree_node_read_work
-RIP: 0010:depot_fetch_stack+0x86/0xc0 lib/stackdepot.c:451
-Code: 83 7c 18 1c 00 74 38 48 01 d8 eb 24 90 0f 0b 90 44 39 f5 72 ca 90 48 c7 c7 63 fc 3a 8e 89 ee 44 89 f2 89 d9 e8 ab e2 53 fc 90 <0f> 0b 90 90 31 c0 5b 41 5e 5d c3 cc cc cc cc 90 0f 0b 90 eb ef 90
-RSP: 0000:ffffc90000576d08 EFLAGS: 00010046
-RAX: a98b856e26fe2600 RBX: 000000009a6c3fc0 RCX: ffff88801e00c880
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000003fbf R08: ffffffff81817e32 R09: 1ffff11003f8519a
-R10: dffffc0000000000 R11: ffffed1003f8519b R12: ffff888053574140
-R13: ffffea00014d5d00 R14: 000000000000031d R15: ffffc90000576de0
-FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fabca6ea000 CR3: 0000000012240000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- stack_depot_fetch lib/stackdepot.c:714 [inline]
- stack_depot_print+0x16/0x50 lib/stackdepot.c:752
- kasan_print_aux_stacks+0x38/0x70 mm/kasan/report_generic.c:199
- describe_object_stacks mm/kasan/report.c:347 [inline]
- describe_object mm/kasan/report.c:353 [inline]
- print_address_description mm/kasan/report.c:412 [inline]
- print_report+0x22b/0x5b0 mm/kasan/report.c:521
- kasan_report+0x143/0x180 mm/kasan/report.c:634
- unpack_state_init fs/bcachefs/bkey.c:151 [inline]
- __bch2_bkey_unpack_key+0x66/0xdd0 fs/bcachefs/bkey.c:269
- __bkey_unpack_key_format_checked fs/bcachefs/bkey.h:407 [inline]
- __bkey_unpack_key fs/bcachefs/bkey.h:426 [inline]
- __bkey_disassemble fs/bcachefs/bkey.h:477 [inline]
- bkey_packed_valid+0x21e/0x6c0 fs/bcachefs/btree_io.c:875
- validate_bset_keys+0xeb5/0x1af0 fs/bcachefs/btree_io.c:987
- bch2_btree_node_read_done+0x2298/0x6180 fs/bcachefs/btree_io.c:1164
- btree_node_read_work+0x6dc/0x1380 fs/bcachefs/btree_io.c:1358
- process_one_work kernel/workqueue.c:3238 [inline]
- process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3319
- worker_thread+0x870/0xd30 kernel/workqueue.c:3400
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Michael
 
