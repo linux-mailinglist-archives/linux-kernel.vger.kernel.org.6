@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-548340-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F565A54391
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:24:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA3FA543A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:25:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62DE53AFDBE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:24:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6F41894B04
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC92318DB04;
-	Thu,  6 Mar 2025 07:24:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F89C1D7E4A;
+	Thu,  6 Mar 2025 07:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rM7Ruas4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RovJvzoc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BBB1A840E;
-	Thu,  6 Mar 2025 07:24:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F311C8602;
+	Thu,  6 Mar 2025 07:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741245857; cv=none; b=DVLhC0HIjLFCx9cx1fzrfiQa6K2UgofLtHcAWZiuy0UZOSY/ktMGJQ93ShO12vMKxfT3nI7uuJkW5RHEGwWJLVsoltZ1H8KEtSjCCjFHRksgYVJhgFsWls8qH7O+yaeYHO1goEoAqMfcIxeryS8o5ds4gKGhC51WoVs+CHBNyuQ=
+	t=1741245935; cv=none; b=KuG1jmTOioB9mS6w0oR5CA5Ze5htaIOOu4bb4/kuLtvkzc5lZnVqUI2JipvghAiES2nMCCf0V6MIJMK59ckR+xKJCOcAcbO7+Ulb+uUEVhn9FsE5R0yFSLI9V+3RtPxhhv4EEMtxnPlDbXA9KNoEZEIvwXvB+LWxCgvzgxtpHqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741245857; c=relaxed/simple;
-	bh=fufvW07eBLoyK26nh7xqxSSJVeU193rLs4MeIXNWyt4=;
+	s=arc-20240116; t=1741245935; c=relaxed/simple;
+	bh=T5qWqm2djeTcFnXRYxS12AAAMDmjV0lcdUINtVuEEhc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZlClCBdRZd8MDyHyGlt9oaeIycKQrxpP76xgNbLEgJtI5zZMaeoUw3/4JXgY/eQdnNDsbHO7xiLO4zIaodJjg0xk8WJ3gmWRW91Q+24jjBI2qljyzn4dGuFGL2oxZgZPmOJYaD41T7ROXwEfkJLLaSZ1UOsEH9FP0vuTjpUpd4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rM7Ruas4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD243C4CEE4;
-	Thu,  6 Mar 2025 07:24:08 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=lklyah9hu0aKYK//0lZfQyO6ZTq57d/xpez0xwGjsnnAd9QXngby7Ax14dQG2nVhJemdR7jaFdxpNCLy3/eQy5IoSSG9MLbcFG3EwO+NyPMpQwPkQsOSR/j0Y+X/8gULEXYfdmsVmvuAxWi521BpQiLZ5GO/0fbd3AklvZHzc4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RovJvzoc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3142C4CEE4;
+	Thu,  6 Mar 2025 07:25:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741245856;
-	bh=fufvW07eBLoyK26nh7xqxSSJVeU193rLs4MeIXNWyt4=;
+	s=k20201202; t=1741245934;
+	bh=T5qWqm2djeTcFnXRYxS12AAAMDmjV0lcdUINtVuEEhc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rM7Ruas4RD+YHhFuiYZO7582WtCK+aYXHRB+fFIxw3Z2Gf3F0DEeBNQds59DTngNq
-	 /H5nT49qstGD40L0ce8nJtaatWsGT3HdJeMy8+fkMWtDFgwGAi3Q3tsDPRXE5zzRbA
-	 0fgXcOav8LTwgqOMB6rDa6kI1IcHADI2aGZ38VGZVgoEhlTyr4v9QyEZRTEP0DC1ZZ
-	 JJ6fA+42g/qxfO4j+DCCFA4zISFZizG+SAVuorVarttdyT2csN3V+UBGvTJvcm2iEQ
-	 vs/ZSUO46aEhrE0rTdVb4XaFJ+qX674/lz2fzLxH7m3lbn7xhsKC8gKZUDsKNTJ9ms
-	 0kZerVwlE//QQ==
-Message-ID: <2ef018c4-884a-4390-906c-8898b31228a5@kernel.org>
-Date: Thu, 6 Mar 2025 08:24:06 +0100
+	b=RovJvzocXm31/zUuGuVxKBBpweZJ+xKRslcOfNI80Vhgw4gCmc02bAPXE3DB/PQZ4
+	 cvIk0ubVDkgRpGqwUXtXONTZcNr92AUWx5lC/uJO4p7u7Qx/UwZ8dZaO+AdQdCQZJc
+	 tvFoaY7q4SZudwmR7akKJ50dlhLMHWPoK060aFMdeaSJWNaqYNvwswbDheJMZFjJG2
+	 Gx+dNR/EwXPVD2I6lxEgZQBT0NP8T6mv031hws0q+NJp4OSLdpsJNM/LEDgmCf3l6s
+	 VcEymhanPyJ36dO8Kskn4D0y5vVoheJtogv0FI3hK+hAU0n3KwQffPPDAlKOYEkaBt
+	 hb5BuT0dqf3oQ==
+Message-ID: <acea75f2-337e-4125-88d8-fbb07c8bf6c3@kernel.org>
+Date: Thu, 6 Mar 2025 08:25:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,22 +49,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/6] dt-bindings: PCI: qcom: Add IPQ5018 SoC
-To: George Moussalem <george.moussalem@outlook.com>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
- andersson@kernel.org, bhelgaas@google.com, conor+dt@kernel.org,
- devicetree@vger.kernel.org, dmitry.baryshkov@linaro.org, kishon@kernel.org,
- konradybcio@kernel.org, krzk+dt@kernel.org, kw@linux.com,
- lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
- p.zabel@pengutronix.de, quic_nsekar@quicinc.com, robh@kernel.org,
- robimarko@gmail.com, vkoul@kernel.org
-Cc: quic_srichara@quicinc.com
-References: <20250305134239.2236590-1-george.moussalem@outlook.com>
- <DS7PR19MB8883E7167E44F92DBC29FF3C9DCB2@DS7PR19MB8883.namprd19.prod.outlook.com>
- <a95b4c01-9d8c-49eb-8242-93ae411caec0@linaro.org>
- <DS7PR19MB888309B506D25ABA03F218EB9DCB2@DS7PR19MB8883.namprd19.prod.outlook.com>
+Subject: Re: [PATCH v6 2/9] regulator: dt-bindings: Add TI TPS65214 PMIC
+ bindings
+To: Shree Ramamoorthy <s-ramamoorthy@ti.com>, lgirdwood@gmail.com,
+ broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, aaro.koskinen@iki.fi, andreas@kemnade.info,
+ khilman@baylibre.com, rogerq@kernel.org, tony@atomide.com, lee@kernel.org,
+ linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: m-leonard@ti.com, praneeth@ti.com
+References: <20250305210351.249811-1-s-ramamoorthy@ti.com>
+ <20250305210351.249811-3-s-ramamoorthy@ti.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -110,25 +105,22 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <DS7PR19MB888309B506D25ABA03F218EB9DCB2@DS7PR19MB8883.namprd19.prod.outlook.com>
+In-Reply-To: <20250305210351.249811-3-s-ramamoorthy@ti.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/03/2025 17:41, George Moussalem wrote:
-> 
-> 
-> On 3/5/25 19:51, Krzysztof Kozlowski wrote:
->> On 05/03/2025 14:41, George Moussalem wrote:
->>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->>>
->>> From: Nitheesh Sekar <quic_nsekar@quicinc.com>
->> Nope, that's not a correct chain. Apply it yourself and check results.
-> this series is dependent on the series to add support for IPQ5332:
-> https://lore.kernel.org/all/20250220094251.230936-1-quic_varada@quicinc.com/
-> which was applied to dt-bindings
+On 05/03/2025 22:03, Shree Ramamoorthy wrote:
+>  
+> @@ -102,7 +106,9 @@ allOf:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: ti,tps65215
+> +            enum:
+> +              - ti,tps65214
+> +              - ti,tps65215
 
-Your comment is not relevant to reported problem. Instead of
-disagreeing, why can't you try it yourself and see?
+I do not see improvements and you did not respond to my comment.
 
 Best regards,
 Krzysztof
