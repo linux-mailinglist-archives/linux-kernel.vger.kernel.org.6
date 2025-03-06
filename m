@@ -1,176 +1,180 @@
-Return-Path: <linux-kernel+bounces-550064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 973DCA55AEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:33:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30689A55B01
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:41:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1D77177736
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:33:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6337B1897AEC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:41:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D2D27D77A;
-	Thu,  6 Mar 2025 23:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A9FAyKy8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537E613D897;
-	Thu,  6 Mar 2025 23:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D498628040F;
+	Thu,  6 Mar 2025 23:40:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB4BF27F4D1;
+	Thu,  6 Mar 2025 23:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741304016; cv=none; b=IHrXtG/92mShk3HgyHAOaKcPuhCeU/NhNWXe2r3BJwM06v6ktGxfEMT5BiJZ68TZ4Fe66qiggYIx2egICdWGRtAJfnNqvoSTR6+0wH98VO8ajpbbq5XATtPHmMKxbyR9t+qXXb19stoxI7EQyAhiTNq489GiBkA/UBEIyeAoZPk=
+	t=1741304410; cv=none; b=tOP0rAZYTwmwmSRR8/N+PB8no5D4Ty7t2w1qry5R4HRg1Xsxc6lA8slTYWTkF4n8+pInsXF2YUV4xQSb7KaXqlCH2uh9VUgXeArdYjy1vGyYMHZZBICNqFIiur9zqUM9bd/Ui/AlPvDVcMQFHxaL1haSwt8g8F6x97gjPchJR7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741304016; c=relaxed/simple;
-	bh=kCdbLq4MKXLwDRdTHw76PigGCWnhj7eKDSPYYqRZntY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EgeOv4AnfZVU4ARZReYuu4S0G+z7luwKfTVezun+HDHHeGSH1vYNQ+wOES4U1HJuSlSaZAWUKCr3WCvhg8oRiLtkKg29DBEqENoyv5lJitvoN6+oLX6Vkq/MXYlJaHlDjh5CWLC/3If1jfZJosyLp67Iag6hHZApr5yYmQNxMUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A9FAyKy8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E9EFC4CEE5;
-	Thu,  6 Mar 2025 23:33:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741304015;
-	bh=kCdbLq4MKXLwDRdTHw76PigGCWnhj7eKDSPYYqRZntY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A9FAyKy8ohb1PeLj1EqmWd1zPedYvgckso3d73bNbfFKOExw3imTL95t3pTSiWZ9O
-	 Gw6RsY01zRa5tsmxukA1MTzSs3B4bFP58eyeqKRoT1Y8sfLRhxQaUpM83sZhBuVEzQ
-	 2QogVagOJ+ysSDFkXqeRtKLc7wArWKBU2z7tPbV+4AwIgXmhDl1neVPVO2YnyQg6ky
-	 VlqnQXopv9kiQQR5XVzarpjkkx36xWsLAO5kDarYQ7Yc74AdWgX4s7LJBc11gSM8qi
-	 areNCTtOUsOgSAKrRYxxHesMCrTswH27mP2gnO5+ad9yIOM7FU9ysSFIJoFOMsuazB
-	 Ada39tJXebrRA==
-Date: Fri, 7 Mar 2025 00:33:32 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>, Lee Jones <lee@kernel.org>, 
-	Pavel Machek <pavel@kernel.org>, Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>, 
-	Kamal Wadhwa <quic_kamalw@quicinc.com>, Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Johan Hovold <johan@kernel.org>, Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] leds: rgb: leds-qcom-lpg: Compute PWM value based on
- period instead
-Message-ID: <fnxx2tduww5m3ljs3g5po23ucr4qfytzipgspcf2udkusg7ys6@semr224oy56d>
-References: <20250303-leds-qcom-lpg-compute-pwm-value-using-period-v1-1-833e729e3da2@linaro.org>
- <ylnkjxnukss7askv7ip5htrb4tyjzhpw7jim2se6rloleq5h6w@ngk7lbk26hxj>
- <dbfb17df-90e2-4a7c-9921-9dff5e9382f4@kernel.org>
- <ovnmhbzwwimil3opuv6e2ayyntlx7upxfkzm5qdfskx2x7hl7x@wmtul33ttow5>
- <bdca9e9f-7e0d-4ca7-8e8b-f27ea8bb3b54@kernel.org>
+	s=arc-20240116; t=1741304410; c=relaxed/simple;
+	bh=LE6Y75buJxrkZK3eTiY9vZJQdFYr8tXNgoDl3nQ0z6E=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WJKWB1/o3pSS8z8mt7mVwpgGpcG8Lt9IfT9HcMYOJdo37fcD4yTYvm+kWyP2/6Ixd3/Tu7hvho8dm4wxVGEDedQFfupzpq2FwkAZytGyS5CTuzu6+7/gLHGp//kefVcCJ8RleGsndHFg4EzTqU58HJJjG7tLao//dvhSsLkup9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA1DA169E;
+	Thu,  6 Mar 2025 15:40:18 -0800 (PST)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7EC033F5A1;
+	Thu,  6 Mar 2025 15:40:04 -0800 (PST)
+Date: Thu, 6 Mar 2025 23:39:49 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Samuel Holland
+ <samuel@sholland.org>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/8] pinctrl: sunxi: support moved power
+ configuration registers
+Message-ID: <20250306233949.23924567@minigeek.lan>
+In-Reply-To: <6028746.MhkbZ0Pkbq@jernej-laptop>
+References: <20250227231447.20161-1-andre.przywara@arm.com>
+	<20250227231447.20161-5-andre.przywara@arm.com>
+	<6028746.MhkbZ0Pkbq@jernej-laptop>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="h3wax27yl7jges3z"
-Content-Disposition: inline
-In-Reply-To: <bdca9e9f-7e0d-4ca7-8e8b-f27ea8bb3b54@kernel.org>
-
-
---h3wax27yl7jges3z
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RFC] leds: rgb: leds-qcom-lpg: Compute PWM value based on
- period instead
-MIME-Version: 1.0
 
-Hello Krzysztof,
+On Wed, 05 Mar 2025 18:50:34 +0100
+Jernej =C5=A0krabec <jernej.skrabec@gmail.com> wrote:
 
-On Tue, Mar 04, 2025 at 05:30:40PM +0100, Krzysztof Kozlowski wrote:
-> On 04/03/2025 17:03, Uwe Kleine-K=F6nig wrote:
-> > On Tue, Mar 04, 2025 at 10:53:53AM +0100, Krzysztof Kozlowski wrote:
-> >> On 04/03/2025 07:24, Uwe Kleine-K=C3=B6nig wrote:
-> >>>> [...]
-> >>>> ---
-> >>>> base-commit: 0067a4b21c9ab441bbe6bf3635b3ddd21f6ca7c3
-> >>>
-> >>> My git repo doesn't know that commit. Given that you said your patch
-> >>> bases on that other series, this isn't surprising. Please use a publi=
-cly
-> >>> available commit as base parameter, otherwise you (and I) don't benef=
-it
-> >>> from the armada of build bots because they just silently fail to test=
- in
-> >>
-> >> As you can easily see in the signature, this patchset was generated by
-> >> b4 and such tag was added automatically. No point in stripping it even
-> >> if it is not useful (life, happens).
+Hi,
+
+> Dne petek, 28. februar 2025 ob 00:14:43 Srednjeevropski standardni =C4=8D=
+as je Andre Przywara napisal(a):
+> > The Allwinner pincontroller IP features some registers to control the
+> > withstand voltage of each pin group. So far those registers were always
+> > located at the same offset, but the A523 SoC has moved them (probably to
+> > accommodate all eleven pin banks).
 > >=20
-> > My request was not about stripping it, but making it useful. I don't
-> > know the b4 patch sending side, but git send-email has the capability to
-> > make it more useful in this scenario. I didn't check, but
-> > `b4 --edit-deps` which Abel mentioned sounds about right.
+> > Add a flag to note this feature, and use that to program the registers
+> > either at offset 0x340 or 0x380. So far no pincontroller driver uses
+> > this flag, but we need it for the upcoming A523 support.
 > >=20
-> > The relevant documentation for the git side is the paragraph "BASE TREE
-> > INFORMATION" in git-format-patch(1).
+> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> > ---
+> >  drivers/pinctrl/sunxi/pinctrl-sunxi.c | 15 +++++++++++----
+> >  drivers/pinctrl/sunxi/pinctrl-sunxi.h |  7 +++++--
+> >  2 files changed, 16 insertions(+), 6 deletions(-)
+> >=20
+> > diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.c b/drivers/pinctrl/su=
+nxi/pinctrl-sunxi.c
+> > index 83a031ceb29f2..fc12e6f807e4d 100644
+> > --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> > +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.c
+> > @@ -736,9 +736,9 @@ static int sunxi_pinctrl_set_io_bias_cfg(struct sun=
+xi_pinctrl *pctl,
+> >  		val =3D uV > 1800000 && uV <=3D 2500000 ? BIT(bank) : 0;
+> > =20
+> >  		raw_spin_lock_irqsave(&pctl->lock, flags);
+> > -		reg =3D readl(pctl->membase + PIO_POW_MOD_CTL_REG);
+> > +		reg =3D readl(pctl->membase + pctl->pow_mod_sel_offset);
+> >  		reg &=3D ~BIT(bank);
+> > -		writel(reg | val, pctl->membase + PIO_POW_MOD_CTL_REG);
+> > +		writel(reg | val, pctl->membase + pctl->pow_mod_sel_offset); =20
 >=20
-> Useful how? The dependency is on the lists, so there is no base-commit
-> you would know.
+> These two are missing "+ PIO_POW_MOD_CTL_OFS" right?
 
-Have you tried to understand the part of the manpage I pointed out? It
-seems to me "base-commit" has different semantics for us and only mine
-is aligned to git's (and consequently b4's) meaning.
-The correct base commit would have been
-cd3215bbcb9d4321def93fea6cfad4d5b42b9d1d.
+Ah, you are right, I mixed that up. Nice catch!
 
-> And regardless of edit-deps, that base-commit tag is standard from b4,
-> so what do you expect from all submitters even if this was not RFC?
+> >  		raw_spin_unlock_irqrestore(&pctl->lock, flags);
+> > =20
+> >  		fallthrough;
+> > @@ -746,9 +746,12 @@ static int sunxi_pinctrl_set_io_bias_cfg(struct su=
+nxi_pinctrl *pctl,
+> >  		val =3D uV <=3D 1800000 ? 1 : 0;
+> > =20
+> >  		raw_spin_lock_irqsave(&pctl->lock, flags);
+> > -		reg =3D readl(pctl->membase + PIO_POW_MOD_SEL_REG);
+> > +		reg =3D readl(pctl->membase + pctl->pow_mod_sel_offset +
+> > +			    PIO_POW_MOD_CTL_OFS);
+> >  		reg &=3D ~(1 << bank);
+> > -		writel(reg | val << bank, pctl->membase + PIO_POW_MOD_SEL_REG);
+> > +		writel(reg | val << bank,
+> > +		       pctl->membase + pctl->pow_mod_sel_offset +
+> > +		       PIO_POW_MOD_CTL_OFS); =20
+>=20
+> And these two have "+ PIO_POW_MOD_CTL_OFS" too much, right?
 
-I don't understand this question. I expect from submitters to pick a
-publicly known commit as base no matter if the series is an RFC or who's
-standard this is.
+Indeed, fixed now.
 
-> Always base on known commit?
+Thanks,
+Andre
 
-Yes please. The manpage isn't explicit about that but the above
-referenced commit has:
+> Best regards,
+> Jernej
+>=20
+> >  		raw_spin_unlock_irqrestore(&pctl->lock, flags);
+> >  		return 0;
+> >  	default:
+> > @@ -1520,6 +1523,10 @@ int sunxi_pinctrl_init_with_flags(struct platfor=
+m_device *pdev,
+> >  		pctl->pull_regs_offset =3D PULL_REGS_OFFSET;
+> >  		pctl->dlevel_field_width =3D DLEVEL_FIELD_WIDTH;
+> >  	}
+> > +	if (flags & SUNXI_PINCTRL_ELEVEN_BANKS)
+> > +		pctl->pow_mod_sel_offset =3D PIO_11B_POW_MOD_SEL_REG;
+> > +	else
+> > +		pctl->pow_mod_sel_offset =3D PIO_POW_MOD_SEL_REG;
+> > =20
+> >  	pctl->irq_array =3D devm_kcalloc(&pdev->dev,
+> >  				       IRQ_PER_BANK * pctl->desc->irq_banks,
+> > diff --git a/drivers/pinctrl/sunxi/pinctrl-sunxi.h b/drivers/pinctrl/su=
+nxi/pinctrl-sunxi.h
+> > index 6cf721876d89d..742fc795c7664 100644
+> > --- a/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> > +++ b/drivers/pinctrl/sunxi/pinctrl-sunxi.h
+> > @@ -87,9 +87,11 @@
+> >  #define SUNXI_PINCTRL_VARIANT_MASK	GENMASK(7, 0)
+> >  #define SUNXI_PINCTRL_NEW_REG_LAYOUT	BIT(8)
+> >  #define SUNXI_PINCTRL_PORTF_SWITCH	BIT(9)
+> > +#define SUNXI_PINCTRL_ELEVEN_BANKS	BIT(10)
+> > =20
+> > -#define PIO_POW_MOD_SEL_REG	0x340
+> > -#define PIO_POW_MOD_CTL_REG	0x344
+> > +#define PIO_POW_MOD_SEL_REG		0x340
+> > +#define PIO_11B_POW_MOD_SEL_REG		0x380
+> > +#define PIO_POW_MOD_CTL_OFS		0x004
+> > =20
+> >  #define PIO_BANK_K_OFFSET		0x500
+> > =20
+> > @@ -173,6 +175,7 @@ struct sunxi_pinctrl {
+> >  	u32				bank_mem_size;
+> >  	u32				pull_regs_offset;
+> >  	u32				dlevel_field_width;
+> > +	u32				pow_mod_sel_offset;
+> >  };
+> > =20
+> >  #define SUNXI_PIN(_pin, ...)					\
+> >  =20
+>=20
+>=20
+>=20
+>=20
+>=20
 
-    The base tree info consists of the "base commit", which is a well-known
-    commit that is part of the stable part of the project history everybody
-    else works off of, and zero or more "prerequisite patches", which are
-    well-known patches in flight that is not yet part of the "base commit"
-    that need to be applied on top of "base commit" in topological order
-    before the patches can be applied.
-
-> But for most of the cases this is
-> irrelevant. I can have intermediate commit between linux-next tip and my
-> patch, thus base-commit will be bogus for you, but it does not matter
-> for the patch - it's based on linux-next.
-
-I agree, linux-next is the base. So the respective tip of linux-next is
-the right thing to pass to git format-patch --base (independent of if
-it's called directly or through b4). Ideally you also drop the
-irrelevant intermediate patches to make the build bots test exactly the
-changes you suggest with your series. I would expect that this is the
-tree you actually tested, so it shouldn't be a big hurdle.
-
-So summarizing we have: Iff you use --base with a non-public commit, it's
-useless and irrelevant. I fully agree. Our conclusion is different
-though. You accept it's useless (and even request from me that I do the
-same), and I asked the submitter to use --base as intended to make the
-resulting information usable.
-
-Best regards
-Uwe
-
---h3wax27yl7jges3z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfKMMcACgkQj4D7WH0S
-/k7Lygf/Wa8FyPopVUtLVV8RF+FamEmr7aP28fWYMpJ9idhxmdffTkrUmF7NiT4J
-0pFxztHcSNJ1a9jZ9SGJ8EPovbz3fhwrvo9bvsmKRVWOaqC+YdnysBEzPbehBroo
-YM7YnPZNLXy2Z/sgAh9a7w3A83gr+Uy86LfE8x6CQIuSM9byW50qgRZoDOIkmTuv
-IzenAuIx7nt9Q4GM6toaaenlm8E/eze4pM8Yo6p9emHXPfqyGnm0UOqM9pc0uuoq
-Lp5pjLpMjKOuaon2utLIGH10Yd2uM98v/ky3Iu0s9OrfjBMhmIJr/dFuWbHB+CwB
-qul6dih0nSTcXdrI/m9B2txhPsxPJA==
-=F+Te
------END PGP SIGNATURE-----
-
---h3wax27yl7jges3z--
 
