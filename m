@@ -1,150 +1,161 @@
-Return-Path: <linux-kernel+bounces-549263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B2FAA54FFD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:01:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC43FA55002
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:02:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2F423A88FA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:01:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B3AB3A66BF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA7B20E710;
-	Thu,  6 Mar 2025 16:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1DF219B5B4;
+	Thu,  6 Mar 2025 16:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h5Ji2W+h"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Im1WvO6k"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1394EC2
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E06731A89
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:02:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741276903; cv=none; b=dE0rlz4O3RWSy+vxE84dqCm9/6/Yyzz0F/oYcTR675yKXhuJ2G9kPbFreG1Nm2VuX3EgBC9/+5UusikyzThroIComjRH+IDe5BbyIFAT75PYDqk0rHw84P9xiJd467ixpWery+1TDVhpPhynjFrB6XHVCMioilYMqKFgYouoC38=
+	t=1741276949; cv=none; b=MkFbxd6QnPLhkUQlfUSMou5f94X4JIwYd+Qmw6uCH8MqwPXLET+Xht72xoO50a/2KJM1dcwv1yH7J3nCTo/8uOoqTRxVPOA8mz46R63BtNhcmICEBpzF23JaYg+B068Y++WkxBLTAeeRyxzpomminywQz4uQcI0CNtDo7SZaEKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741276903; c=relaxed/simple;
-	bh=E8ASYo3UrMPC3hDewAZmOcmnA1im+L9mOOJf1TCKZ2k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UC+LNEFK/FARS4n83eyOm5uHAHDWw0X0/Gmf+wIxLskLUlzuLX6PdaMYUiuyTUivT8imoZzPUeVIi5u3wNvc6vKC48zzJ7v6jeMt3+YRuA+9Dojj6TKvt2M0f41wLy1pUkiPPcOCVkPmPJWxmj0eJTrFkFOv6tzc7LF1SB/DgRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h5Ji2W+h; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d3e28e6bb4so6524775ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 08:01:40 -0800 (PST)
+	s=arc-20240116; t=1741276949; c=relaxed/simple;
+	bh=6aKgQ+tug2/1fc1q/T01kVpV17q2c5r3wjQoFm7zsF4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mAm58qzqLW1RpagFfkMngl+fpdUzVoQwOOdc2EbU3Hda3esylt/JZFGXaCQxSTn5kLg4s2ofF3eyB6Hl5fMVglbpDehjrB/tVHbgliDvT+oquQ4QNATrqpGfLWitwXd0XE7mTg9H1mCN3flYHYgjth33IMWfjuYLTSAjqxJJxaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Im1WvO6k; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6e8f254b875so6391896d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 08:02:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1741276900; x=1741881700; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZVnnzRabgTQCEUIYr+F/94B5+FAwfZoxZsQ8xoGHCek=;
-        b=h5Ji2W+hiTaUSbj4Gs2KjMb/Q9pE+8MAb4zF6ypplJuHTux906qAx2tEwIvD0KFvDi
-         qoiFGqEUGO1/+k8QyuaTaCTulniW00KJq5cN+lAQFG2Jjgj+8y/eBTvC0bHPnMkDrIVN
-         rxtQQSQLIvdSRuyBYB0X0SvP/pLjQ5erv2t20=
+        d=google.com; s=20230601; t=1741276945; x=1741881745; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uMo/M/d0EFIcvJgavIcd9kpQdMrMPexMxRrHFLPNiR4=;
+        b=Im1WvO6k745BRyomEtOi0hyirMxpv1cuQ2QxLiqWaP9dkj5qKSrvkqgtBxUou13fUg
+         FTG1aYOiIibnu+Qk4MARgpffMUUArOWb7HkeW8gS5OY3xBuAVZCtVeAI9qZruH9QqcBD
+         bPIbiUWUoapNz3O5TPcAtLWxus6ebyJnewxEsfKccK6KQUEDoJKYyGwUpYoNFhkOoYTD
+         heUyBVACk/COHH3dx31gwlEis2Jb/Kvbj1fcVqvgatlhPeeKtKHqUuFhvSnaAZDSi2UF
+         Yb5uuqv7CJnW0yUPfPL65krGFke78RxqlUQf27T0tyLwjG11nwlxF6hB5VgS954N4dyf
+         dQ2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741276900; x=1741881700;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZVnnzRabgTQCEUIYr+F/94B5+FAwfZoxZsQ8xoGHCek=;
-        b=B63RGiHoqkQItUlhwnajJjeheD70K0DQDJG6xHaiZUVPWrliJQX7SUwM83d+gPioQR
-         M0h7GHYCDSxm1dWyfirNRa0cH/wGUjIOKwtjQxvUrL1FsQAvklYQuDPTur/zdd3f70Sr
-         3LPWmwB8/TuZA1sX2W8MvAWnMMGABOjdJYlq9jswASeUU/8yGOIir0NxJEUOvEyA5PRp
-         W63x/BRwiu3E4CUHCbcZ2FUyqyXJn/qSLTlRRWrqqOj5ulEO5jX6EvIoC4+8Y8SoR3rr
-         EHHtR4yAp4bXkyCM/Itdgsbkbq5LHBaCcKT7hA2X66vMO0MwOx260iOjG72BejgmMf9E
-         P5wA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWDY/e7ol6gCwg/C3JMdw676d/CGbG2qjHiIrGy+B/K6lHsEpm2fb+0xqRfJRTK6r3UnLfIXtZyiJkzA4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1na31CaOVfHfmzfsDT3z29v0tzlwyzHIc4WBEMa0ygNsmuEQC
-	1Lw2IWp4SPFv1g1iVsAMLrtn3uMciGcyZCf4eWZRKQ/UoNIsmQxazpEHwqa8A+c=
-X-Gm-Gg: ASbGncuEp1Pws+Vqz0J81HaB4+XwT0sKR21m9UP+4rEuLhZr4ax5Wk+nrZIENaY3syL
-	/GD0FHjIhGoN4o9eBZrHyPJd3h17iHaq/3v+TS/n+aUWtnJ9xeKMbGJzAbJzmuDavJdCXK7UUXh
-	+CaVOrdVU0S5QGyFHN96Hmpdheb3qzrz3qiIVniMRYfsQnf/A5CJJxw8IcAfd2dSoC+laWvZU4q
-	pIZyaND0CEEJe703+sXAs6ZZBHbf48MTL6EroIybpjyTCyXgJSKtU275C5IkaNOnAfAG6eAZxyr
-	wCsgeNKrojT6toHu+FX6YKi7xr3StgGlx5omu/Hb10UK8P7ntEBB7y8=
-X-Google-Smtp-Source: AGHT+IFqVDoMxQ+ybV14JJzOP/UeroC4pF5340mvSNaJjPqDwHb3xmlejwbzaVxMkbTTC6Lh4W+Qrg==
-X-Received: by 2002:a92:3603:0:b0:3d4:3aba:954a with SMTP id e9e14a558f8ab-3d43aba962emr23771405ab.15.1741276899710;
-        Thu, 06 Mar 2025 08:01:39 -0800 (PST)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d43b510102sm3335975ab.37.2025.03.06.08.01.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 08:01:39 -0800 (PST)
-Message-ID: <287521e2-afaf-4ed9-bcd6-bac610aab564@linuxfoundation.org>
-Date: Thu, 6 Mar 2025 09:01:38 -0700
+        d=1e100.net; s=20230601; t=1741276945; x=1741881745;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uMo/M/d0EFIcvJgavIcd9kpQdMrMPexMxRrHFLPNiR4=;
+        b=qPqwRBGTi7iw6XHs3w/bu+XvUcZPaShxg5tzkyshATadA9CzdNqIZWy6RZNVoHvDLL
+         7dhmfUKFfpL2QcdTMyb7GUtKyv2Hy8f8FK6QsXVPsUgXDWV4RXfyyqiB2eBUJxCkm3Ql
+         r2WCn6jmxplBjLKd0RCakfm204khMmlboxnEs21vd6MbV0cEsXa4639CXkoGc/AXl9wA
+         kT6FZsO9r0oOEMvzSRk+w8+yu2IfH0qoqTVhtzXQbCtj8wjpOBpVG6+ZFyFVbzgGQjAU
+         b3cpJ8JSDYzqMAf1pxGl4HmlEpAWWOXTWgDD2Rpa8GdC+XAx2cM8YEijY6vD/dD5cUoy
+         hN3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVRY/H/8KtLu4/uhk0HNFWN9aSrA9w8rcRW5agC7iVIfAiPKEEbsv6mddamC0awwZy30BDXrwijaFzl818=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjI3TerKk0ePQ+keFVTt9B28m1nFDEA6D+ZGW5KTG0tkTP5hr3
+	QtJHKfrtMn9mtGcjtezCuYMHrJwK+VE1HS7KGZRqrnUhuXmdiJW3kBER2iGKc6TCc0qc0JEbWIo
+	RDajAW9ozF4wiiW6uga/2z+/rbuT85akloefe
+X-Gm-Gg: ASbGnct8Pt/D43xhH+M4Eo/CZ/PVqKdNtqGK2AUh7NQ0iajZqSU7skSHNDOvOPmlUNq
+	u7WhKey59TaFMURy9Cr++MDHM4kKPycpF2YRXNPL34eLqGqS4INXbQ/8gwPIytbdSwdb9F1kAWg
+	QwCUS4reWehlNn1gB1Ho0OI7RTTg9czeip6VVjaYBMr37BMedIDWacDbZc
+X-Google-Smtp-Source: AGHT+IGX/E2PHF/+YLwoVkYYiH/aSpMz8sD+kNIhAFRSQzVHlUIXuGHEMDAwEmby3tNrlm1sVt67699NsHmIFr4orEo=
+X-Received: by 2002:a05:6214:d05:b0:6e6:6699:7e58 with SMTP id
+ 6a1803df08f44-6e8e6d1551fmr101937866d6.1.1741276945215; Thu, 06 Mar 2025
+ 08:02:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: vim2m: print device name after registering device
-To: Hans Verkuil <hverkuil@xs4all.nl>,
- Matthew Majewski <mattwmajewski@gmail.com>,
- Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20250219190501.295976-1-mattwmajewski@gmail.com>
- <ym5q2cpn2lxk7sarylnf4o3ztvtnb47wroxdiibdsp6yz4gt2y@jfyfo2ekmdmj>
- <5051c252-f1ef-4731-b0cb-fedfcda04d98@linuxfoundation.org>
- <61bd42742ff8a8e5f409b0f2ccc4ab8875dfe7a4.camel@gmail.com>
- <fdd0356f-d91e-400e-9598-d34e0862c9cb@linuxfoundation.org>
- <06766086-b148-436c-b6d4-975c26493233@xs4all.nl>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <06766086-b148-436c-b6d4-975c26493233@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250306002933.1893355-1-rmoar@google.com> <CABVgOSkwrb36rrhH3H17fhYOnywhTgTh06aDaKXT4jZp474sRQ@mail.gmail.com>
+ <CA+i-1C12kG9t=jqnVaKnvN4xCn58cTeph4QHOTL0+eg98rn52w@mail.gmail.com>
+In-Reply-To: <CA+i-1C12kG9t=jqnVaKnvN4xCn58cTeph4QHOTL0+eg98rn52w@mail.gmail.com>
+From: Rae Moar <rmoar@google.com>
+Date: Thu, 6 Mar 2025 11:02:13 -0500
+X-Gm-Features: AQ5f1JqAFBgL17msmF4WXZwSYJ4ufzR46Gs0RyKsZz7of0uvV6CYwmBsv3o3TjM
+Message-ID: <CA+GJov5kKD+QX+kdEG3LQun=zo_aPwbA7=1NUw0dTLSGg-h=mw@mail.gmail.com>
+Subject: Re: [PATCH] kunit: tool: Fix bug in parsing test plan
+To: Brendan Jackman <jackmanb@google.com>
+Cc: David Gow <davidgow@google.com>, shuah@kernel.org, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/6/25 01:37, Hans Verkuil wrote:
-> Hi Shuah,
-> 
-> On 20/02/2025 17:27, Shuah Khan wrote:
->> On 2/20/25 08:29, Matthew Majewski wrote:
->>> On Wed, 2025-02-19 at 17:21 -0700, Shuah Khan wrote:
->>>> On 2/19/25 14:58, Uwe Kleine-Konig wrote:
->>>>> On Wed, Feb 19, 2025 at 02:05:01PM -0500, Matthew Majewski wrote:
->>>>>> Move the v4l2_info() call displaying the video device name after
->>>>>> the
->>>>>> device is actually registered.
->>>>>>
->>>>>> This fixes a bug where the driver was always displaying
->>>>>> "/dev/video0"
->>>>>> since it was reading from the vfd before it was registered.
->>>>>>
->>>>>> Signed-off-by: Matthew Majewski <mattwmajewski@gmail.com>
->>>>>
->>>>> A Fixes: tag would be great.
->>>>
->>>> Matthew, there is no need to resend the patch. Just send me the
->>>> Fixes tag and I will update the repo.
->>>>
->>>>
->>>
->>> Ok, here is the fixes tag:
->>>
->>> Fixes: cf7f34777a5b4100a ("media: vim2m: Register video device after
->>> setting up internals")
->>>
->>
->> Thank you. commit is now updated.
->>
->> thanks,
->> -- Shuah
->>
-> 
-> Please post your PR today, if possible. Otherwise it might slip to the
-> v6.16. Alternatively, I can take this patch myself.
+On Thu, Mar 6, 2025 at 7:26=E2=80=AFAM Brendan Jackman <jackmanb@google.com=
+> wrote:
+>
+> On Thu, 6 Mar 2025 at 10:00, David Gow <davidgow@google.com> wrote:
+> >
+> > On Thu, 6 Mar 2025 at 08:29, Rae Moar <rmoar@google.com> wrote:
+> > >
+> > > A bug was identified where the KTAP below caused an infinite loop:
+> > >
+> > >  TAP version 13
+> > >  ok 4 test_case
+> > >  1..4
+> > >
+> > > The infinite loop was caused by the parser not parsing a test plan
+> > > if following a test result line.
+> > >
+> > > Fix bug to correctly parse test plan and add error if test plan is
+> > > missing.
+> > >
+> > > Signed-off-by: Rae Moar <rmoar@google.com>
+>
+> Thanks for taking a look at this Rae! I tried to take a look myself
+> but I could not really get a grip on the parsing logic in the time I
+> had.
+>
+> > Thanks for looking into this: I don't think we want to unconditionally
+> > error if there's no test plan, though. Pretty much no parameterised
+> > tests include one -- it's not always possible to know how many tests
+> > there'll be in advance -- so this triggers all of the time.
+> >
+> > Maybe we can only include an error if we find a test plan line after
+> > an existing result, or something?
+>
+> Since I reported this bug, I discovered that the example above is in
+> fact valid TAP:
+>
+> > The plan [...] must appear once, whether at the beginning or end of the=
+ output.
+>
+> From https://testanything.org/tap-version-13-specification.html
 
-Thanks for the reminder - I have to send a vimc PR
+Hi!
+This brings up an interesting question because the parser has been
+mainly geared towards parsing KTAP
+(https://docs.kernel.org/dev-tools/ktap.html) rather than TAP.
+(Although we do try to have backwards compatibility with TAP v14
+"Subtest" lines)
 
-Please take this through your tree.
+For example,
 
-> 
-> Also, why did you pick up this vim2m patch? I was a bit surprised by that.
+TAP version 13
+1..1
+  TAP version 13
+  1..1
+  ok 1 test_case
+ok 1 test_suite
 
-By mistake - Blame it on jet lag - sorry. Explains why Matthew sent series
-for my review.
+This would be accepted by the parser without error because it is valid
+KTAP even though it is not valid TAP v13.
 
-thanks,
--- Shuah
+The scenario above that caused the infinite loop would be incorrect
+KTAP (which requires the test plan to follow a version line) but
+correct TAP v13. So do we accept it without error? Ideally, we would
+parse based on the version given in the version line.
+
+Just an interesting thought. Either way, I will remove the error for
+now as our parameterized tests don't properly produce a test plan,
+which causes errors.
+
+Thanks!
+-Rae
 
