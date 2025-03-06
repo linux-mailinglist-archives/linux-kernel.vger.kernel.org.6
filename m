@@ -1,120 +1,110 @@
-Return-Path: <linux-kernel+bounces-550070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F52A55B07
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:42:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D19DA55B09
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:47:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADAA018945D5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:42:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCEE91897223
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFAF27E1DE;
-	Thu,  6 Mar 2025 23:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C2AB200BB2;
+	Thu,  6 Mar 2025 23:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="FQ/Qn62y"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eA7lO/5C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A09027D77A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 23:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.59
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9B717B418;
+	Thu,  6 Mar 2025 23:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741304553; cv=none; b=VJTSLRfCRGtvNcTVm3U0puiHgUvO84wGArN0gzOO3bSDaR5tRLWETXNpp28k52Onae4E9D2ud2zqzuZI5oJHOpkqNjSCsPIEZA+edqUmOWF4brrwBU5hBN9z23bf7b9bNS8+PCsHeRefl4E4dQ1pXJpWq20rAjoAbfQ4DcwLk2U=
+	t=1741304850; cv=none; b=py0a6l2iStZ4tupBmi7ASFuNvo/PvLccaC+lss60E1VvlUeeJ/O6pevODf0L66txJ2zIFXX32gIemMxXpmh0SRCl4F6P58f6K5XW5HcGfbNkCjrhkGEnJW1OclA1ngG34Y9xPXzeCoSQHGSSL40z49fyOGGgxbQDH/idi/MJqz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741304553; c=relaxed/simple;
-	bh=tJEJfQjhxKeAqPrvSWuWasiFZZaUalkdDqunLHyvNDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F79BLO4rZnUt5QHDyPq/PxawvgJHXMuejiLgtYmNaA8lcp0heu/OcTMslDZkX3UST2Nd+VSRfyiIEa1DMTUyJ1AouatMGruAp3jRYbvWM8mm/HK7SlgvgzpJvBFnHyMHmJU4cmj9N3ZhrV38XvlyvNkgGZQLZ15nqrAehvSO2yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=FQ/Qn62y; arc=none smtp.client-ip=121.127.44.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1741304550;
- bh=hK36UdkUAC80MW7rI32wQbKkvzzOhAooKnorAx3Xf5w=;
- b=FQ/Qn62yhfaawlmV87Y9HKuHV1xOnSpm0/Y3rwCxdut+mZbXUaIslnwCGtsOBIjRqLSMIET0D
- a7DsCfrcgfQAg4ipSi+4oaVe+9ZnyCO6pO4mpCWJQsrxkgXHUdbHqOciObjEpteRmPn9VPDbgwF
- ABvmZ+Z+0r0tzq3HWY27D3j3ZDbuvtNB+eMzLjOgtqyfAx1TYHSxox1kfGCwEIRBkQkCGai7DVg
- TEGGJEI/+EdkvOlaLakEjo7s2KKBLLcLJK4N2hLhh4uW6XHZsg8ktRRj/MeIWd8fxdpqkzftBHq
- dMdcBHBElBU8QIDSacLMNzL+h1IY58DU4aRLeINT6wgA==
-X-Forward-Email-ID: 67ca32e3c1763851c065d3ce
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.59
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <3f341b96-1add-4eeb-b185-b4bfe0bf0250@kwiboo.se>
-Date: Fri, 7 Mar 2025 00:42:22 +0100
+	s=arc-20240116; t=1741304850; c=relaxed/simple;
+	bh=DPDFHwOuWeOLRB0gTOXwmS/u3WIBFvvLf2LIRRk9fW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JEI+00bwTqXl2YxK6/TYa+mE3xF/jm55e6UdJbm1vq3etUlShhJ3qRiT3UsOCKrvF6mX6ixHqpe1BYYhMda+Gw8nP35eaLi4qsEB0l2hREE/scewAELQOMnnXX6bZCsEdURrWuTD7kWvcWaaEnPKj8+a7o9//MaDG1TASFxhNG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eA7lO/5C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49890C4CEE0;
+	Thu,  6 Mar 2025 23:47:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741304849;
+	bh=DPDFHwOuWeOLRB0gTOXwmS/u3WIBFvvLf2LIRRk9fW4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eA7lO/5CpDHSPlzxC0XqkWWtik1M4eXuqJMwc2VlezS62y8PmW4Assa+im9ZRUmeC
+	 HS1G3R7d7JJEEK42n/JYVMWiORQ+NrS11OUrDR+d8xw/FNHR8lrkkFm3n0tyhsL9VJ
+	 mzIvIQBfkYhdLGgnvKMaCmnEmjtYjpajQcy78FyTNbdTwRUDJT6jIViOG0bvpAwxjD
+	 gBg35seW6OgR8jHGch56NrkXnX2H59YBRL5FPcF+h770mHdwWYxe2P39TYk5A6nW6C
+	 /zmMDOINhkmqoSYlzMN5DaDPUstiG8oXLH0iyW4VgErM4hh+3ZS7ecdxlxpcxl73e/
+	 zXwJodT0dJ9ww==
+Date: Thu, 6 Mar 2025 15:47:27 -0800
+From: Lee Jones <lee@kernel.org>
+To: Manuel Fombuena <fombuena@outlook.com>
+Cc: pavel@ucw.cz, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] leds: Kconfig: leds-st1202: add select for required
+ LEDS_TRIGGER_PATTERN
+Message-ID: <20250306234727.GD8350@google.com>
+References: <CWLP123MB54739F38EF9CFA057021BC2DC5C22@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
+ <CWLP123MB5473F4DF3A668F7DD057A280C5C22@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: net: rockchip-dwmac: Require
- rockchip,grf and rockchip,php-grf
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, David Wu <david.wu@rock-chips.com>,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250306210950.1686713-1-jonas@kwiboo.se>
- <20250306210950.1686713-2-jonas@kwiboo.se>
- <5d69f4a2-511a-4e7e-bafe-5ce6171cb1d5@lunn.ch>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <5d69f4a2-511a-4e7e-bafe-5ce6171cb1d5@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CWLP123MB5473F4DF3A668F7DD057A280C5C22@CWLP123MB5473.GBRP123.PROD.OUTLOOK.COM>
 
-Hi Andrew,
+On Wed, 26 Feb 2025, Manuel Fombuena wrote:
 
-On 2025-03-06 23:32, Andrew Lunn wrote:
-> On Thu, Mar 06, 2025 at 09:09:45PM +0000, Jonas Karlman wrote:
->> All Rockchip GMAC variants require writing to GRF to configure e.g.
->> interface mode and MAC rx/tx delay.
->>
->> Change binding to require rockchip,grf and rockchip,php-grf to reflect
->> that GRF (and PHP-GRF for RK3576/RK3588) control part of GMAC.
+> leds-st1202 requires the LED Pattern Trigger (LEDS_TRIGGER_PATTERN), which
+> is not selected when LED Trigger support is (LEDS_TRIGGERS).
 > 
-> It is pretty unusual to change the binding such that something
-> optional becomes mandatory. I would expect a bit more of a comment
-> explaining why this does not cause backwards compatibility
-> issues. Have all the .dtsi files always had these properties?
-
-rockchip,grf was listed under required properties prior to the commit
-b331b8ef86f0 ("dt-bindings: net: convert rockchip-dwmac to json-schema"),
-maybe this was just lost during the conversion to yaml schema.
-
-The DT's I have managed to check all seem to have the rockchip,grf prop
-and the old .txt schema listed "phandle to the syscon grf used to
-control speed and mode".
-
-Without the rockchip,grf the driver just logged an error and ignored
-trying to configure speed or mode.
-
-We could possible leave it as optional, but when it is missing speed and
-mode cannot be configured by the driver. Today this just result in an
-error message, after this series there will instead be a probe error.
-
-Regards,
-Jonas
-
+> To reproduce this:
 > 
->     Andrew
+> - make menuconfig KCONFIG_CONFIG=
+> - select LEDS_ST1202 dependencies OF, I2C and LEDS_CLASS.
+> - select LEDS_ST1202
+> - LEDS_TRIGGERS is selected but LEDS_TRIGGER_PATTERN isn't.
 > 
+> The absence of LEDS_TRIGGER_PATTERN explicitly required can lead to builds
+> in which LEDS_ST1202 is selected while LEDS_TRIGGER_PATTERN isn't. The direct
+> result of that would be that /sys/class/leds/<led>/hw_pattern wouldn't be
+> available and there would be no way of interacting with the driver and
+> hardware from user space.
+> 
+> Add select LEDS_TRIGGER_PATTERN to Kconfig to meet the requirement and
+> indirectly document it as well.
+> 
+> Signed-off-by: Manuel Fombuena <fombuena@outlook.com>
 > ---
-> pw-bot: cr
+>  drivers/leds/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
+> index 2b27d043921c..8859e8fe292a 100644
+> --- a/drivers/leds/Kconfig
+> +++ b/drivers/leds/Kconfig
+> @@ -971,6 +971,7 @@ config LEDS_ST1202
+>  	depends on I2C
+>  	depends on OF
+>  	select LEDS_TRIGGERS
+> +	select LEDS_TRIGGER_PATTERN
 
+Don't you need both?
+
+>  	help
+>  	  Say Y to enable support for LEDs connected to LED1202
+>  	  LED driver chips accessed via the I2C bus.
+> -- 
+> 2.48.1
+> 
+
+-- 
+Lee Jones [李琼斯]
 
