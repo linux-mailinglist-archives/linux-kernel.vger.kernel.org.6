@@ -1,196 +1,169 @@
-Return-Path: <linux-kernel+bounces-549081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A5F0A54CFB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:06:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0A7A54CFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:07:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F094F17509F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:06:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E60DE18981D9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EAAA14F9C4;
-	Thu,  6 Mar 2025 14:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABF8156236;
+	Thu,  6 Mar 2025 14:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IYMiic+x"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jZimUz2u"
+Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D2914EC7E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 14:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0151519A5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 14:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741269982; cv=none; b=e2zgUimM7quk2WrTAwqW99/v8c/Ums1IsGe0ODcLJRaDoe84lMR2asDevsGsSu1rIQQumJGEDCFlVO3BVg2BjuK7PZMlq26DVWYVxatOQ4maF6E0cLkd/KQoKXLkuZkMkEj2nEHQHYDxwImo6wW9zyDjrpVSWEhhQe9cOT5je2I=
+	t=1741269989; cv=none; b=FwgM69RqHV0X32JLVln2pYwuBKlDzQifc97CHpyZqvUJN0F+YlR2rcM2Yobe5sBXN6GGqS4jDrN4LoROJoxoZlFGsCVdtsI57ZGgEbxcvfOTOhCKNIVEEJPuXJGIYdL+cGHuppgYrzrdUCIlatfP5Tc8YmTosA9ZZXEdPqNlKfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741269982; c=relaxed/simple;
-	bh=fJ3JMRmMLxdUgb+fMz5KSefNbQ+us26eCtHGqQ1uUBs=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OdJ4ecgpJo8ND7bZO6Ytnj53IekUO/dSu5HDZCrzU3RvaDcmh7OyKufWmIAIG93DmfWP9m1lZ2O6EZAKcJgfEIJ9yWqPVRZm74eZzr4qFxm/NodJY8XEzkLk1nCgyM/ZRdHLLk379diTEkfPmVm1OQDw+SI1C3z1sKiBbvl82bQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IYMiic+x; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5439a6179a7so737584e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 06:06:20 -0800 (PST)
+	s=arc-20240116; t=1741269989; c=relaxed/simple;
+	bh=8vWkfwZ9uoFTAqFoovaPX7Bjye6a8c5yTgefFSZ3pCo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rII0DXGvkssKDstL9cNKzWWIKu7KgmFeTEMqeiWRj9hNsdlc0lybLbkqi1osH5Yuffsx/69Fdc7Q2kbyD7FS+bpi8OjYnAIkj26AEPdX6kDGPsB9pt7WGXYVzZ2A3vEH+AMJPWRCaTjPbt9920WlEYpfO7ujJkou5lgzCG/UZUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jZimUz2u; arc=none smtp.client-ip=209.85.221.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-52378c0c2b1so305982e0c.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 06:06:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741269979; x=1741874779; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=NjOu9pJBQoqmr0DjbFobF0iHjAynNdClTtCuCIosMZo=;
-        b=IYMiic+xilQWvAvR/m4ogl4pEXpDh4u+lFc23GA0JjyJOgjZXb9mN6aEblmTSm68rA
-         SJOb8bEDkJMvn42uDIQk1Gbk6vs+/IXEc/ZU7dtnTr+50du1yX+3bshTbfpYkpYXwJir
-         0T2X7ErULe4yAJSW2ygomXOu7OSlq/t0yGvAavOmIuTyW7YEBEg0vGNI7OM5BhB+GZXB
-         PAov656pWYMkQWQRe30WGPcxTiRaOzq6pzWjLjY08RQExDHoSmbT1PYDSGGLIQr1VCw7
-         IHMaoCgoIgzQEUfQAyxCP1/49IX4w5ceqdnsUitvVoR/9jTdPLEW4wm+VO0sNYCZnF3L
-         hy7Q==
+        d=linaro.org; s=google; t=1741269987; x=1741874787; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hnDdSUGNxHZHOtmoWx7c7YzOTo1FiWV3Vqxq9lxjEQc=;
+        b=jZimUz2u+EsC5z1+bCdpdbXbq3rLfEKxwAb6lp36SSyn4GQihR7udWM5lKFhJmyybi
+         5jj8IgYXpKxCAVARFYXi3AqwdQe+vDlEobZstK1rfMUdAauZidsN7zOb5TejnFshJbCt
+         880cXjqjCf9kdmDAx0UD+rJHqdezwmzXy8jwaY9W3cYIb4VkgotqINql5w1gU/PuJzgH
+         z+P8bXQcYuuP+I9ovhbJMnpSxEmCcuwXu99/zptLJsdkkeefBtmjooShvdgG+BQCFpb9
+         aBmMMS0Ba/lOvreVCt2L1+TYuUSwDIb7rDm80DIIlA1VHAPN3i/TCQoqK38b/wfZZOkH
+         0/VQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741269979; x=1741874779;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NjOu9pJBQoqmr0DjbFobF0iHjAynNdClTtCuCIosMZo=;
-        b=G1kGVx1C5BdXfUjGTo5juAkbE4hkd4fuDaBHiEnC0YWGYp7lGCcOylMz27r7s/Iljp
-         BmAJv0gCrBREm4ehbTCmoJoKN0HQEQQECPqAP8yvaRuse+rVOx5yMytKNJRzmVTewofn
-         PZGDvQIi0GOVcxN7CdLhRoNCrQabyEEGI2csbg+ZNXFweqePKcxUN/Fe5iapTn6/Ig8V
-         ZBgJa0BsgGm4r3MN44EfkPgNF6to4XZWIiXy2qD2t1CjIlZOdjrc+VwYbcLXBRpizMxG
-         O83sFyutb2TxK2WDTmXMDm0NreMZ6F6kKQE6MIQQ3ToeFOhlU8LxQW+Iv9Jf91WwuRnh
-         5W1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVBQ/NAqyDGFiqyayhEALxU/DK6BkeFLWxTUIIXjIAl/SGA67PQVZxWnc5IsYe0GX5PAQ9OQmJOGg6tACA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznCDRVKEf04kZPv46pEdcu5zvMhoguq7NwUdEO2+IodO2SyZ8e
-	SbmNHtSuzc8qbXmJguINIr0Qt99QuWq4vlVCLpW7sYlSwwn3h+50wcZEeA==
-X-Gm-Gg: ASbGncs+W5igy69itfzD3YQJHelgoOAx2KBkBoij0ExA0fZsOEZ33BLexhXw8qaRYBD
-	5qItR87g0hdJjU69lsFU/ImiNCFlTTRWH65jL6TGZhgKwScXG+ILBDRRQkeNiG/Ncr+f/Vb8fkK
-	S4fT6IHbZrz2PGh8he/RRrrHSu1U7L3ApOfYLmoyxvmUbxyF0UmOA2AQRPKJx26G5YTVmPEJV/t
-	/Qa4317MQ6orybewJGWJsPZDss+0nK9Q6IES7wdvHCucEWz7gIlUUpNF1jjiT67R21nqVdfDm8+
-	36X58VPNYSNn2Ock9q2DDwFoBKFxBiUWFVtHNKAmF1FGJ5A0uPJD+b5x9TeIt24Uvhs=
-X-Google-Smtp-Source: AGHT+IHHVLXdst00gmesr3Hvy0rJTfIZKopEN1MEoKgO30uOIMCKMIfH16pDR2jSB3ZXUFL7oD6adQ==
-X-Received: by 2002:a05:6512:2829:b0:549:74a7:12ce with SMTP id 2adb3069b0e04-54984bd24fbmr1117746e87.14.1741269978188;
-        Thu, 06 Mar 2025 06:06:18 -0800 (PST)
-Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae46dfesm186431e87.37.2025.03.06.06.06.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 06:06:17 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Thu, 6 Mar 2025 15:06:15 +0100
-To: Liu Ye <liuye@kylinos.cn>
-Cc: akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/vmalloc: Refactoring function
- __vmalloc_node_range_noprof
-Message-ID: <Z8mr12PilC00Wcvg@pc636>
-References: <20250306072131.800499-1-liuye@kylinos.cn>
+        d=1e100.net; s=20230601; t=1741269987; x=1741874787;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hnDdSUGNxHZHOtmoWx7c7YzOTo1FiWV3Vqxq9lxjEQc=;
+        b=qaucZtlOtpAPXnq4/iAcwH9iZTU0hLrnG7rK1wuW8i/sLVEsW8h4vSma8fIE808MRm
+         E47rqHcrOtacq2q5zqraZCCO2bbxvBGgbzErpSxFCTW5yDBMXFDcsf1htK2RfUwjMGMY
+         0EDDBQ2QN59nmUy/5QrmzCCE6AQJADMFy8+Ntchu26wyGAMxUsmzncrGCp+iYAtHUf2t
+         xBDLioY4RGM+mWORAJHAKOfGyyLF6RuH4rwuG7QycCxo4qUQpaJYg7eTB5bC8urYL7YE
+         gKrCsUWGeojc1Jv2CLrXGwZLlNUwj/eQoJoZ58LDCvTMgott+wLP4ElD3lN1ObOGDcU6
+         uDYg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/SzLmNVZQ+RiPIyn9d0ZYuq9vMZz35aBCVdnkwKFhKZJQCL5EtNwGTaCuuZz5HTtB7mfERlr0Eqf9mFw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwT7YKfJAa90iCDzLXEXoK4/O8RZVHgJFeTNaxo3khXYekwb1Yq
+	l+LnWa+sViJc+lSYkZCGAlWQW25U+iyPVyesgRwNeRvcrOADA7AfsQM8m4mua3sQAavZiHE6RmO
+	AS5JN0a6ei9lrTKp1rSlACJlEpy6NZG9WzD2Wxw==
+X-Gm-Gg: ASbGnctC4S4t/BRQGiYi43+XIkRgBI40hGPnWc+2fvF2LWyXn7+8Wnde2omy1m0qxbu
+	SYU1/lw4iJDYBQNSqpFxJPvm1it6QiLyq1d5Z7Y8CLq2hJdn9D0vr2O+xdV9ZfOa5Dc1BpUutpI
+	4OIIjmNycG/o52yz7MGIIP8FMm15C2rQeS+crS6CdiOC14ErArSOH8bV5CGaw=
+X-Google-Smtp-Source: AGHT+IFYYVIMAXWvuGMo7KhLWndEUFvJgOqbF7iDEk1iAt4N1mORmaJKT3kVe35xC4vstbek2/qR99nsdifAiR58JMA=
+X-Received: by 2002:a05:6122:658d:b0:520:4539:4b4c with SMTP id
+ 71dfb90a1353d-523c6289f5bmr4380467e0c.9.1741269986969; Thu, 06 Mar 2025
+ 06:06:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306072131.800499-1-liuye@kylinos.cn>
+References: <20250305174500.327985489@linuxfoundation.org>
+In-Reply-To: <20250305174500.327985489@linuxfoundation.org>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 6 Mar 2025 19:36:15 +0530
+X-Gm-Features: AQ5f1Jrk2nyka3XPmEIXPsBdkX75IZVBh9HDyYyhUqxg9qoZ6sVv7JRLz0R3L_c
+Message-ID: <CA+G9fYufChZpBjB_WG6Qy-L8Gmj-zBbs+PyydaADcsrB42ec0Q@mail.gmail.com>
+Subject: Re: [PATCH 6.6 000/142] 6.6.81-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org, clang-built-linux <llvm@lists.linux.dev>, 
+	Nathan Chancellor <nathan@kernel.org>, Borislav Petkov <bp@alien8.de>, Thomas Gleixner <tglx@linutronix.de>, 
+	nik.borisov@suse.com, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Anders Roxell <anders.roxell@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Mar 06, 2025 at 03:21:31PM +0800, Liu Ye wrote:
-> According to the code logic, the first parameter of the sub-function
-> __get_vm_area_node should be size instead of real_size.
-> 
-> Then in the function __get_vm_area_node, the size will be aligned,
-> so the redundant alignment operation is deleted.
-> 
-> The use of the real_size variable causes code redundancy,
-> so it is removed to simplify the code.
-> 
-> The real prefix is generally used to indicate the adjusted value of a
-> parameter, but according to the code logic, it should indicate the
-> original value, so it is recommended to rename it to original_align.
-> 
-> Signed-off-by: Liu Ye <liuye@kylinos.cn>
-> ---
->  mm/vmalloc.c | 20 ++++++++------------
->  1 file changed, 8 insertions(+), 12 deletions(-)
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index dc658d4af181..a8488452b70b 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -3770,8 +3770,7 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
->  	struct vm_struct *area;
->  	void *ret;
->  	kasan_vmalloc_flags_t kasan_flags = KASAN_VMALLOC_NONE;
-> -	unsigned long real_size = size;
-> -	unsigned long real_align = align;
-> +	unsigned long original_align = align;
->  	unsigned int shift = PAGE_SHIFT;
->  
->  	if (WARN_ON_ONCE(!size))
-> @@ -3780,7 +3779,7 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
->  	if ((size >> PAGE_SHIFT) > totalram_pages()) {
->  		warn_alloc(gfp_mask, NULL,
->  			"vmalloc error: size %lu, exceeds total pages",
-> -			real_size);
-> +			size);
->  		return NULL;
->  	}
->  
-> @@ -3797,19 +3796,18 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
->  		else
->  			shift = arch_vmap_pte_supported_shift(size);
->  
-> -		align = max(real_align, 1UL << shift);
-> -		size = ALIGN(real_size, 1UL << shift);
-> +		align = max(original_align, 1UL << shift);
->  	}
->  
->  again:
-> -	area = __get_vm_area_node(real_size, align, shift, VM_ALLOC |
-> +	area = __get_vm_area_node(size, align, shift, VM_ALLOC |
->  				  VM_UNINITIALIZED | vm_flags, start, end, node,
->  				  gfp_mask, caller);
->  	if (!area) {
->  		bool nofail = gfp_mask & __GFP_NOFAIL;
->  		warn_alloc(gfp_mask, NULL,
->  			"vmalloc error: size %lu, vm_struct allocation failed%s",
-> -			real_size, (nofail) ? ". Retrying." : "");
-> +			size, (nofail) ? ". Retrying." : "");
->  		if (nofail) {
->  			schedule_timeout_uninterruptible(1);
->  			goto again;
-> @@ -3861,7 +3859,7 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
->  	    (gfp_mask & __GFP_SKIP_ZERO))
->  		kasan_flags |= KASAN_VMALLOC_INIT;
->  	/* KASAN_VMALLOC_PROT_NORMAL already set if required. */
-> -	area->addr = kasan_unpoison_vmalloc(area->addr, real_size, kasan_flags);
-> +	area->addr = kasan_unpoison_vmalloc(area->addr, size, kasan_flags);
->  
->  	/*
->  	 * In this function, newly allocated vm_struct has VM_UNINITIALIZED
-> @@ -3870,17 +3868,15 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
->  	 */
->  	clear_vm_uninitialized_flag(area);
->  
-> -	size = PAGE_ALIGN(size);
->  	if (!(vm_flags & VM_DEFER_KMEMLEAK))
-> -		kmemleak_vmalloc(area, size, gfp_mask);
-> +		kmemleak_vmalloc(area, PAGE_ALIGN(size), gfp_mask);
->  
->  	return area->addr;
->  
->  fail:
->  	if (shift > PAGE_SHIFT) {
->  		shift = PAGE_SHIFT;
-> -		align = real_align;
-> -		size = real_size;
-> +		align = original_align;
->  		goto again;
->  	}
->  
-> -- 
-> 2.25.1
-> 
-This one looks good to me:
+On Wed, 5 Mar 2025 at 23:28, Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> This is the start of the stable review cycle for the 6.6.81 release.
+> There are 142 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 07 Mar 2025 17:44:26 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.81-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-Reviewed-by: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Regressions on x86_64 and i386 the defconfig builds failed with clang-20
+and gcc-13 the stable-rc v6.6.78-437-g9f243f9dd268
+
+First seen on the v6.6.78-437-g9f243f9dd268
+ Good: v6.6.78
+ Bad: v6.6.78-437-g9f243f9dd268
+
+* x86_64 and i386, build
+  - clang-20-defconfig
+  - clang-nightly-defconfig
+  - gcc-13-defconfig
+  - gcc-8-defconfig
+
+Regression Analysis:
+ - New regression? Yes
+ - Reproducibility? Yes
+
+Build regression: x86_64 i386  microcode amd.c 'equiv_id' is used uninitialized
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+## Build log
+arch/x86/kernel/cpu/microcode/amd.c:820:6: error: variable 'equiv_id'
+is used uninitialized whenever 'if' condition is false
+[-Werror,-Wsometimes-uninitialized]
+  820 |         if (x86_family(bsp_cpuid_1_eax) < 0x17) {
+      |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+## Source
+* Kernel version: 6.6.81-rc1
+* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
+* Git sha: 9f243f9dd2684b4b27f8be0cbed639052bc9b22e
+* Git describe: v6.6.78-437-g9f243f9dd268
+* Project details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.78-437-g9f243f9dd268
+
+## Build
+* Build log: https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.78-437-g9f243f9dd268/testrun/27508291/suite/build/test/clang-20-lkftconfig/log
+* Build history:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.78-437-g9f243f9dd268/testrun/27508300/suite/build/test/clang-20-lkftconfig/history/
+* Build details:
+https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.78-437-g9f243f9dd268/testrun/27508291/suite/build/test/clang-20-lkftconfig/
+* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2tuO7pCGJaGnX0ygcbTOaEDzr9M/
+* Kernel config:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2tuO7pCGJaGnX0ygcbTOaEDzr9M/config
+
+## Steps to reproduce
+- tuxmake --runtime podman --target-arch x86_64 --toolchain clang-20
+--kconfig defconfig LLVM=1 LLVM_IAS=1
 
 --
-Uladzislau Rezki
+Linaro LKFT
+https://lkft.linaro.org
 
