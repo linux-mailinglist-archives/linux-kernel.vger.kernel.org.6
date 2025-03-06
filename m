@@ -1,49 +1,52 @@
-Return-Path: <linux-kernel+bounces-548784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CF21A54957
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:31:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F9E7A54972
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:34:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F3C23A953F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:31:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F12A5161D96
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3F020CCC2;
-	Thu,  6 Mar 2025 11:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3543211719;
+	Thu,  6 Mar 2025 11:30:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XZPNKcRM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BzWvNgsx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75CB20C03B;
-	Thu,  6 Mar 2025 11:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3CEC20FABA;
+	Thu,  6 Mar 2025 11:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741260640; cv=none; b=lb4Nt5KQHI3Swha1wVENcYPfNgxZX6F3Qx85vJ/1kQxamCyGZ6jFGHgzijPONUt/it4z2HHENSHn7bHC41SfDzXiG5Jov3Rmnjz/uvyzTUcf9yHgRrCKmvWG2JMjyvNjvLmPIrL6uVobOOjT6zI8Z8hEgRESaDEvi9uw8n53Z0g=
+	t=1741260651; cv=none; b=TKueu+U3oSZA5pGv5jqxnYxIP3zyukp6tjUBHggDhquQLA6TzD2U7yadvGgBwEr4hyW5+sUY8pMMCgd717QTYAs7RxKOBr/oLOtkbz3BH88Wg4kYCHbzKem43IBwhznwbEi7E8kkbWfNfIBVGElhVt1fhCN6vz86un8soY6tpTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741260640; c=relaxed/simple;
-	bh=yhMS1w6Qo37ABqlbxVoPYaQ/5By/4/GAkmJVfu0AuF8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=dFReA4jVNemWrXN6gWBLXArpyyAlLY4veHRVkQfuuvalg/4gbI9QRitlhdTrPbgQ2nuXKKJZ/DkaijtMilp812u7Toj5OvatV0SLforxqxURJS+oWzuNdn6cL4aEMqyU8Tvq7VFV/h2Qfxj/expBhjFHkD0ujNhnRDeCCAzqxXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XZPNKcRM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1A7BC4CEF5;
-	Thu,  6 Mar 2025 11:30:36 +0000 (UTC)
+	s=arc-20240116; t=1741260651; c=relaxed/simple;
+	bh=BmDtc+FyqXKq5Ekj07+RwoaOM9j4PHP6W+rOCluL/1o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=E6Dc6bjXA14xbZ+wxwQm5uXvo9ABhYBsbSmCCdGo5a2zwzui391lPWeA8ztBkU31LpDChQ0yqH4wT0lYWVLi1I2+Qekbyi1kA3bs7snuBgMV84gNwLX4akwhby2LUOY8CMxwkIDfVPwXGhJWzeQuP2MfE1tI8vco80ytCPjd6HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BzWvNgsx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 54646C113CF;
+	Thu,  6 Mar 2025 11:30:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741260640;
-	bh=yhMS1w6Qo37ABqlbxVoPYaQ/5By/4/GAkmJVfu0AuF8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=XZPNKcRMWlRtft0Ctt6/POlNyzFhtDlnk5Yt+JrkBWWIRKAoab1M0vB3baWb3NDEp
-	 cH4juvkKatXcL9oW5+mN9GGMdzjxmOYbr+u2uUeEgI6NuVKfe7im6GxdI2DCDgRL6u
-	 bgfsWcy8ij+XFATJy8At1uoKI8TAhpZm0m/BXXlb0rmV7wc4khrMAwtdLFZ+w2rr4V
-	 f3+BBDeYwodnmWBiN063t4bC4xPAAoYw2Q59aKh8hBRc5MFFVWCZili323kkXW+MRn
-	 5wyO9wFWL/VoOGRDke50n93hlwWOAGvaMP2FMBB3Bgv7bEISpcDZIwFrVyfggtmhXN
-	 qIEM2yxoAZv0w==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Thu, 06 Mar 2025 12:29:28 +0100
-Subject: [PATCH net-next 2/2] tcp: ulp: diag: more info without
- CAP_NET_ADMIN
+	s=k20201202; t=1741260650;
+	bh=BmDtc+FyqXKq5Ekj07+RwoaOM9j4PHP6W+rOCluL/1o=;
+	h=From:Subject:Date:To:Cc:From;
+	b=BzWvNgsxSnhAXfFfPnOLbO5BVSKh2r2JZHaf9vxvhneiM8Xvs0f3eq4kQyHWZumH9
+	 v8MJ7Q1zhzIGZHHOcyv0QC7q5oiXv8h8Ar4VrPGA1+sK/gbM849Ut00p5DNq4lrjsY
+	 t6Jv1CwpFSd4kNT364cPAKwNeRy2OQSF8c1CfkopGEZsseMz2pu58eSGuFYvS+0Rf2
+	 duXfyQSaZGdp8RgRwnESzxfNn4I2NTE9QpV7QfwHZjpp19znku7RS0Wsqz4JtuAmFJ
+	 ylaPw0rkD/5x9MTYiFcpfMZjGNKxB8o4gLkCktHtk8r6IUpiYWpzks96Z2DFVDsZoa
+	 bMAozsERu9vQQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF57C282D1;
+	Thu,  6 Mar 2025 11:30:50 +0000 (UTC)
+From: Joel Granados <joel.granados@kernel.org>
+Subject: [PATCH v2 0/6] sysctl: Move sysctls from kern_table into their
+ respective subsystems
+Date: Thu, 06 Mar 2025 12:29:40 +0100
+Message-Id: <20250306-jag-mv_ctltables-v2-0-71b243c8d3f8@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,218 +55,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-net-next-tcp-ulp-diag-net-admin-v1-2-06afdd860fc9@kernel.org>
-References: <20250306-net-next-tcp-ulp-diag-net-admin-v1-0-06afdd860fc9@kernel.org>
-In-Reply-To: <20250306-net-next-tcp-ulp-diag-net-admin-v1-0-06afdd860fc9@kernel.org>
-To: mptcp@lists.linux.dev, Eric Dumazet <edumazet@google.com>, 
- Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
- "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, Boris Pismenny <borisp@nvidia.com>, 
- John Fastabend <john.fastabend@gmail.com>
-Cc: Davide Caratti <dcaratti@redhat.com>, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+X-B4-Tracking: v=1; b=H4sIACSHyWcC/2WNQQ7CIBQFr9L8tRhAsdSV9zCNofDborQYaIim4
+ e5iE1cuZ5I3b4WIwWKEc7VCwGSj9XMBvqtAj2oekFhTGDjlgnJWk7sayJRuenGL6hxGovta4LG
+ mSKWAMnsG7O1rS17bwqONiw/v7SGxr/3F5H8sMUKJNodTI1UnDW8uDwwzur0PA7Q55w/EtyoXs
+ QAAAA==
+X-Change-ID: 20250217-jag-mv_ctltables-cf75e470e085
+To: Kees Cook <kees@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Andreas Larsson <andreas@gaisler.com>, Heiko Carstens <hca@linux.ibm.com>, 
+ Vasily Gorbik <gor@linux.ibm.com>, 
+ Alexander Gordeev <agordeev@linux.ibm.com>, 
+ Christian Borntraeger <borntraeger@linux.ibm.com>, 
+ Sven Schnelle <svens@linux.ibm.com>, 
+ Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
+ linux-s390@vger.kernel.org, Joel Granados <joel.granados@kernel.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7443; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=yhMS1w6Qo37ABqlbxVoPYaQ/5By/4/GAkmJVfu0AuF8=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnyYdUEEYv1cOiGQDt6Iv/zXtQ8ZTlE3GmEM/wx
- cLVfzOu26iJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ8mHVAAKCRD2t4JPQmmg
- c61lEACErGicQcawp+cHJ6ylYIZceszFnKXWN4dH4s0y0xYDi7n9OUMU40ZauZ6EnIGK9EAw69U
- CB2bKdmk6VEwYWxkueJRaoXSfccyZ8Gap0tuT/ShfBdZ7TyKVtdCD2XxSo8RImplMqHwieiDIXz
- ZvDvA9QHFDZB4HladyLPqD3S1juoqAik4ORC2lvYZGVoc0EaxaERCJojgANMg+BJFMKg6LGOzA9
- OjAHWUAB7bAy/ToT7WYhjMXWyFbxv7yCwINg6Hfcbb9IMWVkvQ7+F7P10YkKyjaMb5ZpsaLKVR1
- 419z5nYqbC/1Qhucwyn37Yd/XEPdqMliDb8WC8em+Ihk/bq96Et3zPzen0ZqvW9qw7Ok/ZAqM5+
- JSiA+h7/3+vzzzPUbb92hELS/VGjS/zqO+1/IL0u4klqAh2/php5TmHoamlrJmmWaSjl+CukF/F
- a0tRoRsXfruXc7oO9wa+7fb3MBC8oXeINz05CVJMaPnD7sR535kLUmwS+PBnWRIeFvuJ2VjPnx4
- nOEnC9h2R72EX8fpYnMJG5SWcr4wOQWujb3pRO1ZtF47jRuENa4vPezUlhFSPVP5w8FMmERkEaD
- A1tv0kdYwAVVpNSjeDAeDscJFIIEW/v1kBrtFuE/izaDcH3SF8ddQeovpPffD171lz/JDvTxYy9
- A4FalpZMzdfG5UA==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2670;
+ i=joel.granados@kernel.org; h=from:subject:message-id;
+ bh=BmDtc+FyqXKq5Ekj07+RwoaOM9j4PHP6W+rOCluL/1o=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGfJhz0pXhCw8tJC7aq0JL8ffmfIACv+dko10
+ KYUtpwbFikijokBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJnyYc9AAoJELqXzVK3
+ lkFPtk4MAIpWsMgmVxyhJ6wKBpjaEYZOheqIKr6SQhHOLorhW96JeBB9DUG+0WdzSPAfH+NMxac
+ AhYpnsugPC1HCuh1B71jLYrAakkFaL6ICRAatsS6Pt2Rm6rlmMZkcp/A8IkTiZ0jYbesFJ3fQh0
+ AUdGpWYyQ18QIqQ+GR7RgT/IKnGdlMmIWNuuAKEbnNF/VoR8gPFfoCF8sJWvrpl2pV+earsiqr9
+ 4JpCEmwNlZbyzDuFqQNQXGsl7Men+LmxIWzynDbdaAobW8w8F8h4aHF2+RBKF2N+i1cl1p/UaLt
+ CeUJ9/MzGhKA43O9yK74TmDjzqindrTkHgPh5f1DLcFGltgu1JGmZQjVAG7DtW5WZdKfiPkpS/f
+ EaWJRoXEZQW1hvPsQDoe1RWGEBnn3ikZVugt998Vwozrmw/CD16lkIkl022Ds/K3IKkrDXEhaU3
+ X2MIUPmf0WDi5AkBkgVNkFR6C2UcmG4I5hj7xpjAyQpd/QIwV+wijsGaG6otJ25mwxa+FwaQw35
+ hw=
+X-Developer-Key: i=joel.granados@kernel.org; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for joel.granados@kernel.org/default with
+ auth_id=239
 
-When introduced in commit 61723b393292 ("tcp: ulp: add functions to dump
-ulp-specific information"), the whole ULP diag info has been exported
-only if the requester had CAP_NET_ADMIN.
+This series relocates sysctl tables from kern_table to their respective
+subsystems. To keep the scope manageable, this patchset focuses on
+architecture-specific and core kernel sysctl tables. Further relocations
+will follow once this series progresses.
 
-It looks like not everything is sensitive, and some info can be exported
-to all users in order to ease the debugging from the userspace side
-without requiring additional capabilities. Each layer should then decide
-what can be exposed to everybody. The 'net_admin' boolean is then passed
-to the different layers.
+By decentralizing sysctl registrations, subsystem maintainers regain
+control over their sysctl interfaces, improving maintainability and
+reducing the likelihood of merge conflicts. All this is made possible by
+the work done to reduce the ctl_table memory footprint in commit
+d7a76ec87195 ("sysctl: Remove check for sentinel element in ctl_table
+arrays").
 
-On kTLS side, it looks like there is nothing sensitive there: version,
-cipher type, tx/rx user config type, plus some flags. So, only some
-metadata about the configuration, no cryptographic info like keys, etc.
-Then, everything can be exported to all users.
+* Birds eye view of what has changed:
+    - Archs: sparc, s390 and x86
+        arch/s390/{lib/spinlock.c,mm/fault.c}
+        arch/sparc/kernel/{Makefile,setup.c}
+        arch/x86/include/asm/{setup.h,traps.h}
+    - Kernel core:
+        kernel/{panic.c,signal.c,trace/trace.c}
+        kernel/events/{core.c,callchain.c}
 
-On MPTCP side, that's different. The MPTCP-related sequence numbers per
-subflow should certainly not be exposed to everybody. For example, the
-DSS mapping and ssn_offset would give all users on the system access to
-narrow ranges of values for the subflow TCP sequence numbers and
-MPTCP-level DSNs, and then ease packet injection. The TCP diag interface
-doesn't expose the TCP sequence numbers for TCP sockets, so best to do
-the same here. The rest -- token, IDs, flags -- can be exported to
-everybody.
+* Testing was done by running sysctl selftests on x86_64 and 0-day.
 
-Acked-by: Mat Martineau <martineau@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+Comments are greatly appreciated
+
+Changes in v2:
+- Dropped the perf and x86 patches as they are making their way
+  upstream. Removed relevant ppl from To: and Cc: mail header.
+- "ftrace:..." -> "tracing:..." for patch 3
+- Moved stac_tracer_enabled to trace_stack.c instead of trace.c
+- s390: fixed typo and removed the CONFIG_SMP ifdefs
+- Updated trailers
+- Link to v1: https://lore.kernel.org/r/20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org
+
+Signed-off-by: Joel Granados <joel.granados@kernel.org>
 ---
- include/net/tcp.h   |  4 ++--
- net/ipv4/tcp_diag.c |  8 ++++----
- net/mptcp/diag.c    | 42 ++++++++++++++++++++++++++----------------
- net/tls/tls_main.c  |  4 ++--
- 4 files changed, 34 insertions(+), 24 deletions(-)
+---
+Joel Granados (5):
+      panic: Move panic ctl tables into panic.c
+      signal: Move signal ctl tables into signal.c
+      tracing: Move trace sysctls into trace.c
+      stack_tracer: move sysctl registration to kernel/trace/trace_stack.c
+      sparc: mv sparc sysctls into their own file under arch/sparc/kernel
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index a9bc959fb102fc6697b4a664b3773b47b3309f13..7207c52b1fc9ce3cd9cf2a8580310d0e629f82d6 100644
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -2598,8 +2598,8 @@ struct tcp_ulp_ops {
- 	/* cleanup ulp */
- 	void (*release)(struct sock *sk);
- 	/* diagnostic */
--	int (*get_info)(struct sock *sk, struct sk_buff *skb);
--	size_t (*get_info_size)(const struct sock *sk);
-+	int (*get_info)(struct sock *sk, struct sk_buff *skb, bool net_admin);
-+	size_t (*get_info_size)(const struct sock *sk, bool net_admin);
- 	/* clone ulp */
- 	void (*clone)(const struct request_sock *req, struct sock *newsk,
- 		      const gfp_t priority);
-diff --git a/net/ipv4/tcp_diag.c b/net/ipv4/tcp_diag.c
-index d8bba37dbffd8c6cc7fab2328a88b6ce6ea3e9f4..45e174b8cd22173b6b8eeffe71df334c45498b15 100644
---- a/net/ipv4/tcp_diag.c
-+++ b/net/ipv4/tcp_diag.c
-@@ -96,8 +96,8 @@ static int tcp_diag_put_ulp(struct sk_buff *skb, struct sock *sk,
- 	if (err)
- 		goto nla_failure;
- 
--	if (net_admin && ulp_ops->get_info)
--		err = ulp_ops->get_info(sk, skb);
-+	if (ulp_ops->get_info)
-+		err = ulp_ops->get_info(sk, skb, net_admin);
- 	if (err)
- 		goto nla_failure;
- 
-@@ -170,8 +170,8 @@ static size_t tcp_diag_get_aux_size(struct sock *sk, bool net_admin)
- 		if (ulp_ops) {
- 			size += nla_total_size(0) +
- 				nla_total_size(TCP_ULP_NAME_MAX);
--			if (net_admin && ulp_ops->get_info_size)
--				size += ulp_ops->get_info_size(sk);
-+			if (ulp_ops->get_info_size)
-+				size += ulp_ops->get_info_size(sk, net_admin);
- 		}
- 	}
- 	return size;
-diff --git a/net/mptcp/diag.c b/net/mptcp/diag.c
-index 02205f7994d752cc505991efdf7aa0bbbfd830db..70cf9ebce8338bde3b0bb10fc8620905b15f5190 100644
---- a/net/mptcp/diag.c
-+++ b/net/mptcp/diag.c
-@@ -12,7 +12,7 @@
- #include <net/netlink.h>
- #include "protocol.h"
- 
--static int subflow_get_info(struct sock *sk, struct sk_buff *skb)
-+static int subflow_get_info(struct sock *sk, struct sk_buff *skb, bool net_admin)
- {
- 	struct mptcp_subflow_context *sf;
- 	struct nlattr *start;
-@@ -56,15 +56,6 @@ static int subflow_get_info(struct sock *sk, struct sk_buff *skb)
- 
- 	if (nla_put_u32(skb, MPTCP_SUBFLOW_ATTR_TOKEN_REM, sf->remote_token) ||
- 	    nla_put_u32(skb, MPTCP_SUBFLOW_ATTR_TOKEN_LOC, sf->token) ||
--	    nla_put_u32(skb, MPTCP_SUBFLOW_ATTR_RELWRITE_SEQ,
--			sf->rel_write_seq) ||
--	    nla_put_u64_64bit(skb, MPTCP_SUBFLOW_ATTR_MAP_SEQ, sf->map_seq,
--			      MPTCP_SUBFLOW_ATTR_PAD) ||
--	    nla_put_u32(skb, MPTCP_SUBFLOW_ATTR_MAP_SFSEQ,
--			sf->map_subflow_seq) ||
--	    nla_put_u32(skb, MPTCP_SUBFLOW_ATTR_SSN_OFFSET, sf->ssn_offset) ||
--	    nla_put_u16(skb, MPTCP_SUBFLOW_ATTR_MAP_DATALEN,
--			sf->map_data_len) ||
- 	    nla_put_u32(skb, MPTCP_SUBFLOW_ATTR_FLAGS, flags) ||
- 	    nla_put_u8(skb, MPTCP_SUBFLOW_ATTR_ID_REM, sf->remote_id) ||
- 	    nla_put_u8(skb, MPTCP_SUBFLOW_ATTR_ID_LOC, subflow_get_local_id(sf))) {
-@@ -72,6 +63,21 @@ static int subflow_get_info(struct sock *sk, struct sk_buff *skb)
- 		goto nla_failure;
- 	}
- 
-+	/* Only export seq related counters to user with CAP_NET_ADMIN */
-+	if (net_admin &&
-+	    (nla_put_u32(skb, MPTCP_SUBFLOW_ATTR_RELWRITE_SEQ,
-+			 sf->rel_write_seq) ||
-+	     nla_put_u64_64bit(skb, MPTCP_SUBFLOW_ATTR_MAP_SEQ, sf->map_seq,
-+			       MPTCP_SUBFLOW_ATTR_PAD) ||
-+	     nla_put_u32(skb, MPTCP_SUBFLOW_ATTR_MAP_SFSEQ,
-+			 sf->map_subflow_seq) ||
-+	     nla_put_u32(skb, MPTCP_SUBFLOW_ATTR_SSN_OFFSET, sf->ssn_offset) ||
-+	     nla_put_u16(skb, MPTCP_SUBFLOW_ATTR_MAP_DATALEN,
-+			 sf->map_data_len))) {
-+		err = -EMSGSIZE;
-+		goto nla_failure;
-+	}
-+
- 	rcu_read_unlock();
- 	unlock_sock_fast(sk, slow);
- 	nla_nest_end(skb, start);
-@@ -84,22 +90,26 @@ static int subflow_get_info(struct sock *sk, struct sk_buff *skb)
- 	return err;
- }
- 
--static size_t subflow_get_info_size(const struct sock *sk)
-+static size_t subflow_get_info_size(const struct sock *sk, bool net_admin)
- {
- 	size_t size = 0;
- 
- 	size += nla_total_size(0) +	/* INET_ULP_INFO_MPTCP */
- 		nla_total_size(4) +	/* MPTCP_SUBFLOW_ATTR_TOKEN_REM */
- 		nla_total_size(4) +	/* MPTCP_SUBFLOW_ATTR_TOKEN_LOC */
--		nla_total_size(4) +	/* MPTCP_SUBFLOW_ATTR_RELWRITE_SEQ */
--		nla_total_size_64bit(8) +	/* MPTCP_SUBFLOW_ATTR_MAP_SEQ */
--		nla_total_size(4) +	/* MPTCP_SUBFLOW_ATTR_MAP_SFSEQ */
--		nla_total_size(4) +	/* MPTCP_SUBFLOW_ATTR_SSN_OFFSET */
--		nla_total_size(2) +	/* MPTCP_SUBFLOW_ATTR_MAP_DATALEN */
- 		nla_total_size(4) +	/* MPTCP_SUBFLOW_ATTR_FLAGS */
- 		nla_total_size(1) +	/* MPTCP_SUBFLOW_ATTR_ID_REM */
- 		nla_total_size(1) +	/* MPTCP_SUBFLOW_ATTR_ID_LOC */
- 		0;
-+
-+	if (net_admin)
-+		size += nla_total_size(4) +	/* MPTCP_SUBFLOW_ATTR_RELWRITE_SEQ */
-+			nla_total_size_64bit(8) +	/* MPTCP_SUBFLOW_ATTR_MAP_SEQ */
-+			nla_total_size(4) +	/* MPTCP_SUBFLOW_ATTR_MAP_SFSEQ */
-+			nla_total_size(4) +	/* MPTCP_SUBFLOW_ATTR_SSN_OFFSET */
-+			nla_total_size(2) +	/* MPTCP_SUBFLOW_ATTR_MAP_DATALEN */
-+			0;
-+
- 	return size;
- }
- 
-diff --git a/net/tls/tls_main.c b/net/tls/tls_main.c
-index 99ca4465f70216c5a44e4ca7477df0e93df6b76d..cb86b0bf9a53e1ff060d8e69eddbd6acfbee5194 100644
---- a/net/tls/tls_main.c
-+++ b/net/tls/tls_main.c
-@@ -1057,7 +1057,7 @@ static u16 tls_user_config(struct tls_context *ctx, bool tx)
- 	return 0;
- }
- 
--static int tls_get_info(struct sock *sk, struct sk_buff *skb)
-+static int tls_get_info(struct sock *sk, struct sk_buff *skb, bool net_admin)
- {
- 	u16 version, cipher_type;
- 	struct tls_context *ctx;
-@@ -1115,7 +1115,7 @@ static int tls_get_info(struct sock *sk, struct sk_buff *skb)
- 	return err;
- }
- 
--static size_t tls_get_info_size(const struct sock *sk)
-+static size_t tls_get_info_size(const struct sock *sk, bool net_admin)
- {
- 	size_t size = 0;
- 
+joel granados (1):
+      s390: mv s390 sysctls into their own file under arch/s390 dir
 
+ arch/s390/lib/spinlock.c   |  18 +++++++
+ arch/s390/mm/fault.c       |  17 ++++++
+ arch/sparc/kernel/Makefile |   1 +
+ arch/sparc/kernel/setup.c  |  46 +++++++++++++++++
+ include/linux/ftrace.h     |   7 ---
+ kernel/panic.c             |  30 +++++++++++
+ kernel/signal.c            |  11 ++++
+ kernel/sysctl.c            | 126 ---------------------------------------------
+ kernel/trace/trace.c       |  36 ++++++++++++-
+ kernel/trace/trace_stack.c |  20 +++++++
+ 10 files changed, 178 insertions(+), 134 deletions(-)
+---
+base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+change-id: 20250217-jag-mv_ctltables-cf75e470e085
+
+Best regards,
 -- 
-2.47.1
+Joel Granados <joel.granados@kernel.org>
+
 
 
