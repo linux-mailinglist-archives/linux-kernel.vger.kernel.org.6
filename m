@@ -1,122 +1,93 @@
-Return-Path: <linux-kernel+bounces-550060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724E6A55AE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:24:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1187FA55AE3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:25:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49051177701
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:24:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 089041776B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:25:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A902927C868;
-	Thu,  6 Mar 2025 23:24:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7381627CB12;
+	Thu,  6 Mar 2025 23:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="6A2bATzE"
-Received: from fout-a6-smtp.messagingengine.com (fout-a6-smtp.messagingengine.com [103.168.172.149])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="h6Qjbsm4"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A087027C850
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 23:24:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5630259C9F
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 23:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741303469; cv=none; b=u3LE6LS8e9GJoyuBqyJb0Gjb3i9dAMfnZvd5HTBgfmVIUrWcrYN117rEaOk+ZG8r+imma/TYaxrmU1qaW3mzMFupcYx1Vkn/zalZBepqIHwvFx48SK+pQq7XnkeqRh5l5pZfzws6OwPWh4MpMPUet/RkZs5rV2KKERyQnhOTlLs=
+	t=1741303539; cv=none; b=fv4UWAximlboVsbWVVbUJ4n6mCLoM+yNLVSrv6OlkfRAaqkkjozlSx4BKkVQglvnOQVBUVoZX2lh4kxbchScF6G+4UUIA2oHvQbIVQCMzusyYtqhWQO/fg2sRaCEY8CqfEX1MwVMaUnXsjp3pMaz8GZ3EXlpoc4kHLEsMtQECnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741303469; c=relaxed/simple;
-	bh=s4wXsJyCt3WEpZdDnf0LYOrj5A0I/v+C9Z/YioEK024=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=WkaDPJQZARZ0VVfDQfSL8+ASVamh7ooPlGQVNkHOtHX/i/1H8iJqToqCyGH9aw9/b+rU5/cHDJJHW8o3k1lPKzL7u/l5zQOrNfKDLNwpPZB8l+cTHefWX2+O06QlBQnL3eV3d7etpwDl59/pzbcOdy4/6cyBuBlzCZJpuV+KsMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=6A2bATzE; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfout.phl.internal (Postfix) with ESMTP id 91F761380F05;
-	Thu,  6 Mar 2025 18:24:25 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-08.internal (MEProxy); Thu, 06 Mar 2025 18:24:25 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1741303465; x=1741389865; bh=KhDwqtCpAd7VH12gvzsh/kOm4+lf9ccAyj5
-	jKcTiiHs=; b=6A2bATzEeCGfau9XjfdAcYFUA4bk2R5d7lvE9P3BUNjZM63sQDx
-	CANjspaTlSWtPwDKaItzg9GQRxmsLLbTZoqgTvaPLRY2SB73KgbYFZx4nyMMtmlo
-	9MZpAvqNuUqS8hK/bpxDH1kfgn4VnHezlYuaRSdK5E0T5i/XFHUF+TxKpoJhU/6I
-	T28Ae+MswW7zgMIjQgxRZd6ak4OkqVguVRANxZ150IESGlwMupCp1I0pswJ+JMpx
-	1P6i5vtrHBfT5Uwvk5a7/ciSfAVpQQBI82CHrT5vAyQ4e5vaS3PFmO/KRliHjm2q
-	e2qmHKUaVBQAHd/CXf/MYP8vEykDmxIt8lg==
-X-ME-Sender: <xms:qC7KZ5LYIB8sQvnQEnt0PgSX3WBW0pvlP6Yasih_ezQ-ccnas9x4Ng>
-    <xme:qC7KZ1J-HU79hC_xhEgJgHcYjY44T_dDmL38l60rDI-In-X9jI3Vy94MHykGCr70j
-    kTEAcWEM171dnl7mc8>
-X-ME-Received: <xmr:qC7KZxvNBEnOxps_mT4QzxoXBuIRJ4KV4xhRGoZWG3OGzUNtTgVkyg_Xwb754e2ZNO6amTIL6Rg4QhrgZA-rwf7jmGGvCX7aO9U>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdeltdejucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddv
-    necuhfhrohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheike
-    hkrdhorhhgqeenucggtffrrghtthgvrhhnpeelueehleehkefgueevtdevteejkefhffek
-    feffffdtgfejveekgeefvdeuheeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgpdhn
-    sggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehgvggvrh
-    htsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehthhhorhhsthgvnhdrsghl
-    uhhmsehlihhnuhigrdguvghvpdhrtghpthhtohepjhgvrghnmhhitghhvghlrdhhrghuth
-    gsohhisheshihoshgvlhhirdhorhhgpdhrtghpthhtoheplhhinhhugidqmheikehksehl
-    ihhsthhsrdhlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvg
-    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:qC7KZ6YCGSugpACtRqyvnxxqOkGh-Xxukp4T4v4w6ORA58OsQQDOMw>
-    <xmx:qC7KZwYJU3MEc0rm_uTa8eSBizjpxfcM5rlq33WW3B9ApGx3Ab1HcQ>
-    <xmx:qC7KZ-DX5LqMlgLcZbsKAst6xzAo270csrxzmcBbbJAzrS9o_ksY2w>
-    <xmx:qC7KZ-a7gOJmf8xeAHDcItLgX3UpMUJnhU6FzIkUMoSv_nQeFOtWLQ>
-    <xmx:qS7KZ3Whe36ZD67poxIJUrmoks7_-G0trfP3RejCFJ_7TYANH6WpFOsX>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 6 Mar 2025 18:24:21 -0500 (EST)
-Date: Fri, 7 Mar 2025 10:24:22 +1100 (AEDT)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-cc: Thorsten Blum <thorsten.blum@linux.dev>, 
-    Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>, 
-    linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] m68k: mm: Remove size argument when calling strscpy()
-In-Reply-To: <CAMuHMdUonC54g-XSt-EkNbEGxhkOWMxBc87Qtw0MyeXoPqDD4A@mail.gmail.com>
-Message-ID: <e5e10808-5cca-243b-304f-4aa8db1d30b6@linux-m68k.org>
-References: <20250302230532.245884-2-thorsten.blum@linux.dev> <CAMuHMdUonC54g-XSt-EkNbEGxhkOWMxBc87Qtw0MyeXoPqDD4A@mail.gmail.com>
+	s=arc-20240116; t=1741303539; c=relaxed/simple;
+	bh=pdN6FrzsJA5IzqA1/486ZuvCyc3XEYEHvWiUVKeLFiQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=kz26O9GWFbBkrMir4acYhZLplujaniK7LpSPmXKFKRxiR6g6MPrgc77fDvPbLPGp/yXtLUH/uWC1YdoUQA0L7jrnpTIYXHK8KBBOHALj5cynuiG6cpJyzMRuq38rX2haG3PL/vyyoZTHT4AZlcryKnktuQS9d729+oaA/EMrSYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=h6Qjbsm4; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 6 Mar 2025 18:25:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741303534;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=ngSD2sW6trZI0t+VBXHdmR5g+7y+JC2jU9Hbm6ucJZE=;
+	b=h6Qjbsm4Vm0+xwEjGGaEtk74NOtLl3FaaUSTW14GpdmTXGW5mdRI+IIoNxV8K3C1ERY4Mq
+	ST77wGs+OLx/69btU/alzJ4iI8GxR2zWjNJ0W2W5u58upPHeqcScB9Pm4Msq9W7q6W96li
+	Ce2b3trjW7AvdRbOwWvu9Cix4KzmplI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] bcachefs fixes for 6.14-rc6
+Message-ID: <ww7iqi2mto3fvyhrgpyxcdzcndcr527evvzktb5xp56o32lwg4@zlvkrwuiki6i>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
 
+The following changes since commit eb54d2695b57426638fed0ec066ae17a18c4426c:
 
-On Thu, 6 Mar 2025, Geert Uytterhoeven wrote:
+  bcachefs: Fix truncate sometimes failing and returning 1 (2025-02-26 19:31:05 -0500)
 
-> On Mon, 3 Mar 2025 at 00:07, Thorsten Blum <thorsten.blum@linux.dev> wrote:
-> > The size parameter of strscpy() is optional and specifying the size of
-> > the destination buffer is unnecessary. Remove it to simplify the code.
-> >
-> > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> i.e. will queue in the m68k tree for v6.15.
-> 
+are available in the Git repository at:
 
-The commit message says "simplify the code" which is only true if you 
-never scratch the surface (i.e. it's simple code if the reader is simple 
-too...)
+  git://evilpiepirate.org/bcachefs.git tags/bcachefs-2025-03-06
 
-Commit 30035e45753b ("string: provide strscpy()") was a good idea. It was 
-easily auditable. But that's not what we have now.
+for you to fetch changes up to 8ba73f53dc5b7545776e09e6982115dcbcbabec4:
 
-Patches like this one (which appear across the whole tree) need reviewers 
-(lots of them) that know what kind of a bounds check you end up with when 
-you ask an arbitary compiler to evaluate this:
+  bcachefs: copygc now skips non-rw devices (2025-03-06 18:15:01 -0500)
 
-sizeof(dst) + __must_be_array(dst) + __must_be_cstr(dst) + __must_be_cstr(src)
+----------------------------------------------------------------
+bcachefs fixes for 6.14-rc6
 
-Frankly, I can't be sure. But it's a serious question, and not what I'd 
-call a "simple" one.
+- Fix a compatibility issue: we shouldn't be setting incompat feature
+  bits unless explicitly requested
+- Fix another bug where the journal alloc/resize path could spuriously
+  fail with -BCH_ERR_open_buckets_empty
+- Copygc shouldn't run on read-only devices: fragmentation isn't an
+  issue if we're not currently writing to a given device, and it may not
+  have anywhere to move the data to.
+
+----------------------------------------------------------------
+Kent Overstreet (3):
+      bcachefs: Don't set BCH_FEATURE_incompat_version_field unless requested
+      bcachefs: Fix bch2_dev_journal_alloc() spuriously failing
+      bcachefs: copygc now skips non-rw devices
+
+ fs/bcachefs/journal.c  | 59 +++++++++++++++++++++++++++-----------------------
+ fs/bcachefs/movinggc.c | 25 ++++++++++-----------
+ fs/bcachefs/super-io.c | 24 +++++++++++++-------
+ fs/bcachefs/super-io.h | 11 ++++------
+ 4 files changed, 64 insertions(+), 55 deletions(-)
 
