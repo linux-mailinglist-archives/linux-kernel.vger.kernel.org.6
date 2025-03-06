@@ -1,275 +1,163 @@
-Return-Path: <linux-kernel+bounces-548268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05C01A54298
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:11:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6EFCA5429A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:13:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 339393AE33A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:11:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 471E37A6BCC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:12:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D8A21A0BC9;
-	Thu,  6 Mar 2025 06:11:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423BE1A08AB;
+	Thu,  6 Mar 2025 06:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SP9aphnF"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nebOxELY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB0AC199E88;
-	Thu,  6 Mar 2025 06:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D133199E88;
+	Thu,  6 Mar 2025 06:12:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741241499; cv=none; b=MiR8jbCdS0wBnOD8HCnHhFMu1/P8g9pwXaUVBDW3DOELJMuPxcGWUXrJLJ042p8Qn+Q4oZztNafwf1sDmiYQd0NBMekmaTD5GSIfmOFlfjcOxAQKhQ0a/xx0lu7Xrek0rr7a81BcXu6rjYA+C6gTPL8sqaZjw8eBeCFuhnCE6JI=
+	t=1741241571; cv=none; b=RoT+c+iLrG3L6rhTu4vjivPrqp/ts9P9qgtEHXw7p/AXviAo6GuwVQv0BstuqpbDuzN5c5rVo3wGCVP8yIYJR211w7grnwZPvic3Jb7WiwYzkXX3cfsVZubb3LUQgt1GZsAgilXM5nrkWfn7Q9ZmUTgxP0XkgbfiWlEr4OG54kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741241499; c=relaxed/simple;
-	bh=ei1+/3pNAoKCfDids2GIkiEwFfJgQrBzJx/gdVvtS+0=;
+	s=arc-20240116; t=1741241571; c=relaxed/simple;
+	bh=4iDBRxTwji7W2TQy4yPD5QDaGlyxwd8lWIRxM9oQpQA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WBoMG1hWNfhmT9VW2EO4bgF5hFWMK87PxYHzFU700eKP4/Jie+aClgurzcC5DHfF2L5VhPewJBoLy7sX1R2fB6cBmqhZ5Sq8vpLclqMnkKvPH3B6oSNRpzBYWT9fnp6YuTd9xEzYRlCiQ0uWgemfcifL8ajgoOAQOXoLb3Ls6RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SP9aphnF; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2f9d3d0f55dso472439a91.1;
-        Wed, 05 Mar 2025 22:11:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741241497; x=1741846297; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dkWm0QuhqxjNcZB7EyUE4PLFKrbQuhRvZKwwayUqK28=;
-        b=SP9aphnFg9Bt3GFR6xwdbgfWNp+eMWzBIzpuhs1ncUPkAPGfLZb3iQEzLaBfrQ8/45
-         MVIIlT/XyLjwqlCwsWs0TqfVTBO0hBr453K8sAKdd/CtzbeJtD0HYZ6+pPAyq2YAotxZ
-         CxOCjYUR87IYV18f9duw34ZvnqqcCVfHUlP6ecbibciDSL9ITy4aYg/gYs/RHd6pbNN3
-         cc3nX2Wx0xXEdZNXEQKgeeDp1Gnf2oCJHWSDmpO3DcAJBdqFmlcgxux3EIroN48/wWRr
-         g+z+p5ct+to1vwp2CKXKnnB7lRf8YDZt/qFjolr8FqXSeoQdZSIVLt0Hv6nPcST48cFx
-         avpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741241497; x=1741846297;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dkWm0QuhqxjNcZB7EyUE4PLFKrbQuhRvZKwwayUqK28=;
-        b=t80WR7KPrhyCazAM1XMwbhJ4wnPzhFU6JuHk8DGLChCEc8YdLpXeyyriskz63zlp9j
-         dJgIyWF3HZviuCwvPvWkMGvaGxDmcjvSTAAHPGrYqLN+653071N28VKrVIcbeHeKqYqH
-         jc4x7AyTKher9J38e+P2TY+CvHZz9H/DlJ71VCZNHNW5Zq56IsQiGkjB/sJ1uW7nIBO/
-         CJuIpD1IdcwxKh9K5RG3D0Dm1fk9Xo0y8/2hBgwvfvoTovj6/vBPzCipWq33R/uMsmI+
-         KOqXsG7blIHWU4SgAkqiAV5/TWihYPjKaIxlvlets9FTICX+zpTg7hwfPCp4S09IhoTB
-         ZyAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUH/zLdUZIOh0DFhbBVHTwXfDQr7W5rZmh7DigWXE69myrpcBi7VzMtwHB+Wqzoeut2/eMszVSb5Oo=@vger.kernel.org, AJvYcCV7en8N0VyL09RLM2HBzqBp2p/zrhXZKP7CJHpllrpVcDE1P/VWXW+MZd7zuMLwUuc2fk5ZvvXPL2Q=@vger.kernel.org, AJvYcCVugpA79hoT7/zCfhA9nTuXjPyktJS96aXmpyq/t+mGqPmszBPMq5BNaWgfyrbBBk0k5GHsJp3CWg3olYd8@vger.kernel.org, AJvYcCWFN7+THbJnEitiEnc88QY27Z961lB30wY2wNWdxGH7n/QBzNYKD317AXg34ESjEj9WkTjTH3SGc5UKzt9v4+1OvUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyP+hxluOXL/OT7H1qI0nzMx7ccmnLdtlZrPfYRSUve/sXBvu/X
-	G1GJqBe2YwH37Sf42b9/L121Ng+T3m0Gplb+2x0d62J4VBLdkNEdG1GqkA==
-X-Gm-Gg: ASbGncsPqne0Fg0q/gb3orsrlnWQfQRGIRE8ImKaWpzeQ32RQuxY7CXHK63PUgBfRUZ
-	sS1fcJQmK45uridxAaXxxtrNUdjIOO21dL5ILW6QGWTWnzxRsk7s9DbicVknzF/wpqGt9uRp2NE
-	lhZO+wbra9Rh30cO2SuhEHqZ6nK/Z7v0R5ZWxttxlKb9j+ikK5rWAd3as32R56Y6f8TAsb+6SLr
-	JLcuaW7epzJo7w5h6V537TAwQK0+Z8PD/VDMW24s4u53eX2rMFutbU05pr4vnbK5om/nF91EdEz
-	fM/YQJ0+XH39wCI+Bm1j7U/CMGIka+k0TJpSqxV967t65A==
-X-Google-Smtp-Source: AGHT+IHdfafGauLvn1MT/jJjAnr6oLjiusoYXSi01nU2drwDh34FcbF0ln8yvQwWcDckUbZiGT37jg==
-X-Received: by 2002:a17:90a:d64e:b0:2fe:9fd4:58f4 with SMTP id 98e67ed59e1d1-2ff497533d7mr11156646a91.16.1741241496693;
-        Wed, 05 Mar 2025 22:11:36 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:423c:abab:b1b0:64e8])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff35966689sm2585833a91.0.2025.03.05.22.11.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 22:11:36 -0800 (PST)
-Date: Wed, 5 Mar 2025 22:11:32 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>, rafael@kernel.org,
-	dakr@kernel.org, ulf.hansson@linaro.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, geert@linux-m68k.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH] driver core: platform: Use devres group to free driver
- probe resources
-Message-ID: <Z8k8lDxA53gUJa0n@google.com>
-References: <20250215130849.227812-1-claudiu.beznea.uj@bp.renesas.com>
- <2025021539-untrained-prompter-a48f@gregkh>
- <4bf01946-90e3-4169-91fa-10d9f90310e9@tuxon.dev>
- <8d83ea72-bb81-4c63-bf69-28cf5848ae20@tuxon.dev>
- <20250305140309.744866b2@jic23-huawei>
+	 Content-Type:Content-Disposition:In-Reply-To; b=osY5NEKDDEHtYwRxFWNv7AgODqa6mTCvqGgdEzN3VCu1mvlCO4jkZScu7e8UVHSW4gbLu19UomAoJMC1Ah8NTrKGnooYuQhZ7qevyWNHK2qjqUOrvt5EJ9pJGtM4Wd1FiY9hcHbnCt+eDQyAz6EENUFgzgos8dSV7EXTueJMuCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nebOxELY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8AEFC4CEE4;
+	Thu,  6 Mar 2025 06:12:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741241571;
+	bh=4iDBRxTwji7W2TQy4yPD5QDaGlyxwd8lWIRxM9oQpQA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nebOxELYtScjRAAYyHTl3X/sJuEPF7zfO2N7x2Dd/YHYOSh9rLuy0PrXBW1ZJY++y
+	 249KaGGqJPRm1wE4mUHwVGrZK1jDlfFSUKHe54JcX2lR5lMd3QFwUCJjBnwLxxFdCR
+	 3r5wCG4r4dcXD3fXJb72WoSDKeDND3LkS/EhKcyvMSouv5iYn81VmSdvpLPgonKw1T
+	 YPnqfQBbY4kk5wsC69DQyg1w8XbDSyu2FppTuGvoNOhCXgoqwrjINnhOFv9ZL1C/NE
+	 Ka2dOWuANApqbiRpi9LgSOOMvJe1oUri3M9JaEAdqNbh9Pkoz7QTu+qf5HnbfaHdhW
+	 bNJHOstZKNS4A==
+Date: Wed, 5 Mar 2025 22:12:47 -0800
+From: Kees Cook <kees@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, llvm@lists.linux.dev,
+	linux-kbuild@vger.kernel.org, David Gow <davidgow@google.com>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] kbuild: clang: Support building UM with SUBARCH=i386
+Message-ID: <202503052208.8CC5A355A7@keescook>
+References: <20250303215240.work.379-kees@kernel.org>
+ <05a25510-ab44-4eb1-a878-71e84c8aff0d@t-8ch.de>
+ <20250304102536.GB2529736@ax162>
+ <e1a1531d-6968-4ae8-a3b5-5ea0547ec4b3@t-8ch.de>
+ <202503040842.1177A1F15B@keescook>
+ <20250305144554.GA3574115@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250305140309.744866b2@jic23-huawei>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250305144554.GA3574115@ax162>
 
-On Wed, Mar 05, 2025 at 02:03:09PM +0000, Jonathan Cameron wrote:
-> On Wed, 19 Feb 2025 14:45:07 +0200
-> Claudiu Beznea <claudiu.beznea@tuxon.dev> wrote:
-> 
-> > Hi, Daniel, Jonathan,
+On Wed, Mar 05, 2025 at 03:45:54PM +0100, Nathan Chancellor wrote:
+> On Tue, Mar 04, 2025 at 09:07:57AM -0800, Kees Cook wrote:
+> > On Tue, Mar 04, 2025 at 03:51:19PM +0100, Thomas Weißschuh wrote:
+> > > No, it doesn't.
+> > > 
+> > > Running tests with:
+> > > $ .kunit/linux kunit.filter_glob=overflow.DEFINE_FLEX_test kunit.enable=1 mem=1G console=tty kunit_shutdown=halt
+> > > [15:48:30] =================== overflow (1 subtest) ===================
+> > > [15:48:30] # DEFINE_FLEX_test: EXPECTATION FAILED at lib/overflow_kunit.c:1200
+> > > [15:48:30] Expected __builtin_dynamic_object_size(two_but_zero, 0) == expected_raw_size, but
+> > > [15:48:30]     __builtin_dynamic_object_size(two_but_zero, 0) == 12 (0xc)
+> > > [15:48:30]     expected_raw_size == 8 (0x8)
+> > > [15:48:30] [FAILED] DEFINE_FLEX_test
+> > > [15:48:30] # module: overflow_kunit
+> > > [15:48:30] ==================== [FAILED] overflow =====================
+> > > [15:48:30] ============================================================
+> > > [15:48:30] Testing complete. Ran 1 tests: failed: 1
+> > > [15:48:31] Elapsed time: 43.985s total, 0.001s configuring, 43.818s building, 0.133s running
+> > > 
+> > > If I force CONFIG_CC_HAS_COUNTED_BY=n then the test succeeds.
+> > > Clang 19.1.7 from the Arch Linux repos.
 > > 
-> > On 15.02.2025 15:51, Claudiu Beznea wrote:
-> > > Hi, Greg,
-> > > 
-> > > On 15.02.2025 15:25, Greg KH wrote:  
-> > >> On Sat, Feb 15, 2025 at 03:08:49PM +0200, Claudiu wrote:  
-> > >>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > >>>
-> > >>> On the Renesas RZ/G3S (and other Renesas SoCs, e.g., RZ/G2{L, LC, UL}),
-> > >>> clocks are managed through PM domains. These PM domains, registered on
-> > >>> behalf of the clock controller driver, are configured with
-> > >>> GENPD_FLAG_PM_CLK. In most of the Renesas drivers used by RZ SoCs, the
-> > >>> clocks are enabled/disabled using runtime PM APIs. The power domains may
-> > >>> also have power_on/power_off support implemented. After the device PM
-> > >>> domain is powered off any CPU accesses to these domains leads to system
-> > >>> aborts.
-> > >>>
-> > >>> During probe, devices are attached to the PM domain controlling their
-> > >>> clocks and power. Similarly, during removal, devices are detached from the
-> > >>> PM domain.
-> > >>>
-> > >>> The detachment call stack is as follows:
-> > >>>
-> > >>> device_driver_detach() ->
-> > >>>   device_release_driver_internal() ->
-> > >>>     __device_release_driver() ->
-> > >>>       device_remove() ->
-> > >>>         platform_remove() ->
-> > >>> 	  dev_pm_domain_detach()
-> > >>>
-> > >>> During driver unbind, after the device is detached from its PM domain,
-> > >>> the device_unbind_cleanup() function is called, which subsequently invokes
-> > >>> devres_release_all(). This function handles devres resource cleanup.
-> > >>>
-> > >>> If runtime PM is enabled in driver probe via devm_pm_runtime_enable(), the
-> > >>> cleanup process triggers the action or reset function for disabling runtime
-> > >>> PM. This function is pm_runtime_disable_action(), which leads to the
-> > >>> following call stack of interest when called:
-> > >>>
-> > >>> pm_runtime_disable_action() ->
-> > >>>   pm_runtime_dont_use_autosuspend() ->
-> > >>>     __pm_runtime_use_autosuspend() ->
-> > >>>       update_autosuspend() ->
-> > >>>         rpm_idle()
-> > >>>
-> > >>> The rpm_idle() function attempts to resume the device at runtime. However,
-> > >>> at the point it is called, the device is no longer part of a PM domain
-> > >>> (which manages clocks and power states). If the driver implements its own
-> > >>> runtime PM APIs for specific functionalities - such as the rzg2l_adc
-> > >>> driver - while also relying on the power domain subsystem for power
-> > >>> management, rpm_idle() will invoke the driver's runtime PM API. However,
-> > >>> since the device is no longer part of a PM domain at this point, the PM
-> > >>> domain's runtime PM APIs will not be called. This leads to system aborts on
-> > >>> Renesas SoCs.
-> > >>>
-> > >>> Another identified case is when a subsystem performs various cleanups
-> > >>> using device_unbind_cleanup(), calling driver-specific APIs in the process.
-> > >>> A known example is the thermal subsystem, which may call driver-specific
-> > >>> APIs to disable the thermal device. The relevant call stack in this case
-> > >>> is:
-> > >>>
-> > >>> device_driver_detach() ->
-> > >>>   device_release_driver_internal() ->
-> > >>>     device_unbind_cleanup() ->
-> > >>>       devres_release_all() ->
-> > >>>         devm_thermal_of_zone_release() ->
-> > >>> 	  thermal_zone_device_disable() ->
-> > >>> 	    thermal_zone_device_set_mode() ->
-> > >>> 	      struct thermal_zone_device_ops::change_mode()
-> > >>>
-> > >>> At the moment the driver-specific change_mode() API is called, the device
-> > >>> is no longer part of its PM domain. Accessing its registers without proper
-> > >>> power management leads to system aborts.
-> > >>>
-> > >>> Open a devres group before calling the driver probe, and close it
-> > >>> immediately after the driver remove function is called and before
-> > >>> dev_pm_domain_detach(). This ensures that driver-specific devm actions or
-> > >>> reset functions are executed immediately after the driver remove function
-> > >>> completes. Additionally, it prevents driver-specific runtime PM APIs from
-> > >>> being called when the device is no longer part of its power domain.
-> > >>>
-> > >>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > >>> ---
-> > >>>
-> > >>> Hi,
-> 
-> Hi Claudiu, Greg,
-> 
-> Sorry, I missed this thread whilst travelling and only saw it because
-> of reference from the in driver solution.
-> 
-> > >>>
-> > >>> Although Ulf gave its green light for the approaches on both IIO [1],
-> > >>> [2] and thermal subsystems [3], Jonathan considered unacceptable the
-> > >>> approaches in [1], [2] as he considered it may lead to dificult to
-> > >>> maintain code and code opened to subtle bugs (due to the potential of
-> > >>> mixing devres and non-devres calls). He pointed out a similar approach
-> > >>> that was done for the I2C bus [4], [5].
-> > >>>
-> > >>> As the discussions in [1], [2] stopped w/o a clear conclusion, this
-> > >>> patch tries to revive it by proposing a similar approach that was done
-> > >>> for the I2C bus.
-> > >>>
-> > >>> Please let me know you input.  
-> > >>
-> > >> I'm with Jonathan here, the devres stuff is getting crazy here and you
-> > >> have drivers mixing them and side affects happening and lots of
-> > >> confusion.  Your change here is only going to make it even more
-> > >> confusing, and shouldn't actually solve it for other busses (i.e. what
-> > >> about iio devices NOT on the platform bus?)  
-> 
-> In some cases they are already carrying the support as per the link
-> above covering all i2c drivers.  I'd like to see a generic solution and
-> I suspect pushing it to the device drivers rather than the bus code
-> will explode badly and leave us with subtle bugs where people don't
-> realise it is necessary. 
-> 
-> https://lore.kernel.org/all/20250224120608.1769039-1-claudiu.beznea.uj@bp.renesas.com/
-> is a lot nastier looking than what we have here. I'll review that in a minute
-> to show that it need not be that bad, but none the less not pleasant.
-> 
-> +CC linux-iio to join up threads and Dmitry wrt to i2c case (and HID that does
-> similar)
-
-We should not expect individual drivers handle this, because this is a
-layering violation: they need to know implementation details of the bus
-code to know if the bus is using non-devres managed resources, and
-adjust their behavior. Moving this into driver core is also not
-feasible, as not all buses need it. So IMO this should belong to
-individual bus code.
-
-Instead of using devres group a bus may opt to use
-devm_add_action_or_reset() and other devm APIs to make sure bus'
-resource unwinding is carried in the correct order relative to freeing
-driver-owned resources.
-
-> 
-> > > 
-> > > You're right, other busses will still have this problem.
-> > >   
-> > >>
-> > >> Why can't your individual driver handle this instead?  
-> 
-> In my mind because it's the bus code that is doing the unexpected part by
-> making calls in the remove path that are effectively not in the same order
-> as probe because they occur between driver remove and related devres cleanup
-> for stuff registered in probe.
-> 
-> > > 
-> > > Initially I tried it at the driver level by using non-devres PM runtime
-> > > enable API but wasn't considered OK by all parties.
-> > > 
-> > > I haven't thought about having devres_open_group()/devres_close_group() in
-> > > the driver itself but it should work.  
+> > I wasn't seeing with Clang 20 from git:
+> > ClangBuiltLinux clang version 20.0.0git (git@github.com:llvm/llvm-project.git 72901fe19eb1e55d0ee1c380ab7a9f57d2f187c5)
 > > 
-> > Are you OK with having the devres_open_group()/devres_close_group() in the
-> > currently known affected drivers (drivers/iio/adc/rzg2l_adc.c and the
-> > proposed drivers/thermal/renesas/rzg3s_thermal.c [1]) ?
+> > But I do see the error with ToT Clang:
+> > ClangBuiltLinux clang version 21.0.0git (git@github.com:llvm/llvm-project.git eee3db5421040cfc3eae6e92ed714650a6f741fa)
+> > 
+> > Clang 17.1: (does not support counted_by)
+> > 
+> >     # DEFINE_FLEX_test: missing counted_by
+> >     # DEFINE_FLEX_test: sizeof(two_but_zero): 8
+> >     # DEFINE_FLEX_test: __struct_size(two_but_zero): 12
+> >     # DEFINE_FLEX_test: __member_size(two_but_zero): 12
+> >     # DEFINE_FLEX_test: __member_size(two_but_zero->array): 4
+> > 
+> > Clang 19.1.1: (actually is _does_ support counted_by, but Linux disables it)
+> > 
+> >     # DEFINE_FLEX_test: missing counted_by
+> >     # DEFINE_FLEX_test: sizeof(two_but_zero): 8
+> >     # DEFINE_FLEX_test: __struct_size(two_but_zero): 12
+> >     # DEFINE_FLEX_test: __member_size(two_but_zero): 12
+> >     # DEFINE_FLEX_test: __member_size(two_but_zero->array): 4
+> > 
+> > GCC 13.3:
+> > 
+> >     # DEFINE_FLEX_test: missing counted_by
+> >     # DEFINE_FLEX_test: sizeof(two_but_zero): 8
+> >     # DEFINE_FLEX_test: __struct_size(two_but_zero): 12
+> >     # DEFINE_FLEX_test: __member_size(two_but_zero): 12
+> >     # DEFINE_FLEX_test: __member_size(two_but_zero->array): 4
+> > 
+> > Clang 21 (ToT):
+> > 
+> >     # DEFINE_FLEX_test: has counted_by
+> >     # DEFINE_FLEX_test: sizeof(two_but_zero): 8
+> >     # DEFINE_FLEX_test: __struct_size(two_but_zero): 12
+> >     # DEFINE_FLEX_test: __member_size(two_but_zero): 12
+> >     # DEFINE_FLEX_test: __member_size(two_but_zero->array): 0
+> > 
+> > GCC 15 (ToT):
+> > 
+> >     # DEFINE_FLEX_test: has counted_by
+> >     # DEFINE_FLEX_test: sizeof(two_but_zero): 8
+> >     # DEFINE_FLEX_test: __struct_size(two_but_zero): 12
+> >     # DEFINE_FLEX_test: __member_size(two_but_zero): 12
+> >     # DEFINE_FLEX_test: __member_size(two_but_zero->array): 0
+> > 
+> > It seems like the on-stack sizes with __bdos all agree now, regardless
+> > of the used compiler features. It is only the array size calculation
+> > that now gets masked by counted_by. (i.e. the stack size is overridden
+> > by the zero "count" for the array elements.)
+> > 
+> > I'll send a fix for the test...
 > 
-> I guess it may be the best of a bunch of not particularly nasty solutions...
+> Just for my own understanding, is this because of the adjustment that
+> Bill did to the __bdos() calculation in [1]? I think that tracks because
+> the version of LLVM 20 that you have is pretty old and does not have
+> that change. I know for a fact I tested the original change to the
+> overflow KUnit test to adjust the expected calculation result and it
+> passed but it was before that change as well. If I use a current version
+> of LLVM 20, I see the failure. If I allow LLVM 18 to use __counted_by(),
+> the test passes with it. Not that it truly matters but it does explain
+> how we got to this point.
 
-We need to update _ALL_ platform drivers using devm then, and this is
-clearly not scalable.
-
-Thanks.
+Yes, totally! This is exactly how I got there too. Great; thank you for
+summarizing! :)
 
 -- 
-Dmitry
+Kees Cook
 
