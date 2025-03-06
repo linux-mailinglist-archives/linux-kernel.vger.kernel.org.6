@@ -1,143 +1,244 @@
-Return-Path: <linux-kernel+bounces-549957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9514A55901
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:43:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC87A55908
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:44:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDA2B3B2EB1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:43:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA8AD175105
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DB127700A;
-	Thu,  6 Mar 2025 21:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB46127605B;
+	Thu,  6 Mar 2025 21:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Njr0imto"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KwVhrkrc";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QNFICH44"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980EB27602D
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 21:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6232770B;
+	Thu,  6 Mar 2025 21:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741297398; cv=none; b=lAgGadJAyW1j4EqgzUpHb2hVK4yo7sK6nxLrXszkcakL6tTfGY1Zw0R4VnxDZU7nQnoiQ4eU8NbURWg4spV/6a6Dn/kt81etpvozfNHl04Cesgcfzu2oK49IwvF7zVErGKNaOvCHfDO0I0Bu0L62I4xgvzQe8c5sNi85uCHzkIk=
+	t=1741297448; cv=none; b=G5E4GaHrLcrVQjfj3J/BMExOMOYss2MdLV+pM0mHsn03XfPK8ekpwVPuyTUit9vk4h8b1w1e1U2I5YzUbPchqJBX/B58530m2Z9bK+Wjp2l2aMDwGSj6VfxNkKt8TTSp/5bbrQ3Tp+If3D6Zd46PMAgj/+Ju7uNxlcWGJNJqoRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741297398; c=relaxed/simple;
-	bh=SNFuNCfIgcF5/PptKRJ7JhAvv9sk7R7PiUdz8a1KQGw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DVNI1zZUUgTgwg3i9e4+lkTrB7d6LhOVMFnsTyDfDqvadGDrSIJPqWFTz0UTZHBsYPBC4kvhQvdEoahkBd/JFP/Dy2aL8+2e+662/P6vcYFk+Q84XL/RADzxjyMS98e61UEvUPCBl4Nw9iivg0dq6Q9w3Gdpbk79Rzz4DFQ0wEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Njr0imto; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4750a85ce4eso10609421cf.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 13:43:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1741297395; x=1741902195; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Oyv98J/VYPy+XUbKLqkeEBWOqmDRWz3461BxBi5DFCU=;
-        b=Njr0imtoJOUjnvbUL0e1CSQDd6qGyevwMpHbE4eVRW6i6Z/NM/O0654wyHiGdtv2O/
-         8sjQFDVG2TfSY5THuNaM5NnO0DoTjzWWC+wHuTRGkeYYQw3F/Tc0YXoCVgqJzVALtmrF
-         PyG2c75sLcULwaBZyeM46TAY6Ffdm5yoY1Q3rk4D0TBw8Xv5fBpRWGeMai0bH7qzdFQ/
-         4JzX5ZcmqtqTgNIlzugtnQ+b4khj1T82lrbZM9DlD1eVFWV7wNRrsKQC3W8943438m8B
-         IJ4dZjUoe5/6rI2dUjyDupDdf3o6ObvgRWaFSHy6z/k9HiRDSgcb73dFG0Q5DcTa9bjw
-         kGTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741297395; x=1741902195;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Oyv98J/VYPy+XUbKLqkeEBWOqmDRWz3461BxBi5DFCU=;
-        b=WnTv8FusVdUdDvdXBpVW+ObPjlCUV0jYMgh281OEK0QK6N92ZAdBpU5H+bHgk7qV04
-         RCZOfk747elMyT4FrGmGhgjYQZtbYgcYZeUotE+g+W2xY8MigiDioQicwTzdfc7ZYvZI
-         xvlN5CafvhkLHW5kRQZyk4962q6Jq3GCTYgWh7gV5KvqLNgIhL1dPDseIL8xrbldSiIl
-         Hv4/pyY3xxxEfR+uMP4VhZi+GiHVJapT/eweBsyCrYjY579oh6WXOPV+Oni8+rkX8gYo
-         oz6KQHHnGWJTDmAKbAqXwBn+A81Wv4/iyjB0hvOjxBWuQUqe+qTPA/PdoKa/35LYjQz+
-         vizA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfRfD+sXPafHac0LJLm3FGuib1k7Doiz4CqOSFwmWhkXnubjqWkbeji57G4FWSCe1RWRm/5Q9xuLBsGYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwuRJiTM1YaioQ6PsPHqXfSZzSpwHQrfb9Uul0ve2jqJe08dse6
-	VSRvTLR9+DCrBKd3hjXzezxEXhG364coE1si7GkLQf7BF4u+gp/dn97Cth/GLw==
-X-Gm-Gg: ASbGncvUAh59N7KoKnzl++D0qZjEPXEUDjumPXzSWAFA0REJWNX+87q1PysC9Se5sge
-	nkU3zGSXss0Hn0JQeJ1Mp7Qr/mlKG68J1bFoFfBrB1eU0PQhpFX4Eoauj3cV8D7jnyqyBGDHF/o
-	zjGIDboy1jiRi5KRdNvhpJK0lOFxFOkzfU7R4R4hyBjgCgygGfsE4vNlcrhxzfztxbKnW8VH09S
-	EJJphJQvzyI1B6KOcFX7tZFV6PepEdGeFAfVWbKBsG5Iprq+8SPO9ZVkpHDnOvXASj8a8kx6vEg
-	Bn/sq4jnI2YhRkd9sFU3Lqumql/NXywGAJzfk7O3RF/Quw==
-X-Google-Smtp-Source: AGHT+IFnAgDNioiavSEVVuQAtbRWHZD2jSHEVT25d3GoKqWLqtEkZCF1Iwjtf2+iqzJNvvEeQHrmnw==
-X-Received: by 2002:ac8:5852:0:b0:475:819:27ec with SMTP id d75a77b69052e-47618b38b3dmr11877871cf.50.1741297395363;
-        Thu, 06 Mar 2025 13:43:15 -0800 (PST)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::3ca7])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4751d9ad29asm12223241cf.46.2025.03.06.13.43.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 13:43:14 -0800 (PST)
-Date: Thu, 6 Mar 2025 16:43:12 -0500
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Colin Evans <colin.evans.parkstone@gmail.com>
-Cc: eichest@gmail.com, francesco.dolcini@toradex.com,
-	gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, stable@vger.kernel.org,
-	stefan.eichenberger@toradex.com
-Subject: Re: [PATCH v1] usb: core: fix pipe creation for get_bMaxPacketSize0
-Message-ID: <04cb3076-6e34-432f-9400-0df84c054e5c@rowland.harvard.edu>
-References: <Z6HxHXrmeEuTzE-c@eichest-laptop>
- <857c8982-f09f-4788-b547-1face254946d@gmail.com>
- <1005263f-0a07-4dae-b74f-28e6ae3952bf@rowland.harvard.edu>
- <cf6c9693-49ae-4511-8f16-30168567f877@gmail.com>
+	s=arc-20240116; t=1741297448; c=relaxed/simple;
+	bh=vIDPFdcIQsK2yn6F8srF6rsyapyfD7uRrCI/ehlgppA=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=uvz7VwvgxeqZwfyREFy5CuKvLJzCqmXCO+EzIq1Clp0Bkuizlx8ciuQ4M/UflwkSfDkhPI1zxmdxfv4wZehiORL/xR3sQS/S+tobrvv3ZyqHu+4175gvWBmEvX2ntMsq3BwrloJLsrqBnfFvawi+GLoO7FQ0Up9EyweF5baZ5E4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KwVhrkrc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QNFICH44; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 06 Mar 2025 21:44:00 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741297444;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bBbX+unALGmbgkrG93JWzPul4iVf1dsagdd6bL2PSEA=;
+	b=KwVhrkrc/KOoSfhRiOGR3cqftXyQ5YXvZnmxkVClJyphT/fguUSZebYCzzQeIoYPHQDzFY
+	8nBVniK9ME++g/OX9JaH2nVljlaxS7d9bqw5RpGxvjjKW5U4zEiYeDUQSEC9pv7h2CJlIJ
+	DHSQAJfVIS7Gf9vDztGYrtqy4cerQi/5w7xResyEgSlDNQPnMMgpoTF8M1TNa1jyDAyeAl
+	0ZzXFluSh14nGolIhONJewu8klqTLQUXeoFTg8S1w5hfDxExmvXadubXK9PhkX8BlLtDhL
+	iGrv5vZAT7BeYEWPFqdiPyma0XETlOmVpx5zASXrH63gtHnhv4btBJtoqgULpw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741297444;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bBbX+unALGmbgkrG93JWzPul4iVf1dsagdd6bL2PSEA=;
+	b=QNFICH442JPbOPk9FunC/NuJIuplCql2SnCKfjLC3NIp8ibsGx5dup5s5rZFZkMMFzlxQS
+	5rQL8EW9EwcriZDQ==
+From: "tip-bot2 for Michael Jeanson" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: sched/core] rseq: Fix segfault on registration when rseq_cs is non-zero
+Cc: Michael Jeanson <mjeanson@efficios.com>, Ingo Molnar <mingo@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Peter Zijlstra <peterz@infradead.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250306211223.109455-1-mjeanson@efficios.com>
+References: <20250306211223.109455-1-mjeanson@efficios.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cf6c9693-49ae-4511-8f16-30168567f877@gmail.com>
+Message-ID: <174129744100.14745.4036542013398635459.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 06, 2025 at 09:06:23PM +0000, Colin Evans wrote:
-> > Please try collecting a usbmon trace for bus 2 showing the problem.
-> > Ideally the trace should show what happens from system boot-up, but
-> > there's no way to do that.  Instead, you can do this (the first command
-> > below disables the bus, the second starts the usbmon trace, and the
-> > third re-enables the bus):
-> > 
-> > 	echo 0 >/sys/bus/usb/devices/usb2/bConfigurationValue
-> > 	cat /sys/kernel/debug/usb/usbmon/2u >usbmon.txt &
-> > 	echo 1 >/sys/bus/usb/devices/usb2/bConfigurationValue
-> > 
-> > Then after enough time has passed for the errors to show up, kill the
-> > "cat" process and post the resulting trace file.  (Note: If your
-> > keyboard is attached to bus 2, you won't be able to use it to issue the
-> > second and third commands.  You could use a network login, or put the
-> > commands into a shell file and run them that way.)
-> > 
-> > In fact, you should do this twice: The second time, run it on machine 2
-> > with the powered hub plugged in to suppress the errors.
-> > 
-> > Alan Stern
-> 
-> Happy to try this, but as it stands there is no such file, or file-like
-> thing, on my machine-
-> 
-> # ls /sys/kernel/debug/usb/usbmon/2u
-> ls: cannot access '/sys/kernel/debug/usb/usbmon/2u': No such file or
-> directory
-> 
-> # find /sys/kernel/debug/usb -name "2u"
-> #
-> 
-> # ls /sys/kernel/debug/usb
-> devices  ehci  ohci  uhci  uvcvideo  xhci
-> 
-> 
-> It seems something is missing?
+The following commit has been merged into the sched/core branch of tip:
 
-Ah -- you have to load the usbmon module first:
+Commit-ID:     fd881d0a085fc54354414aed990ccf05f282ba53
+Gitweb:        https://git.kernel.org/tip/fd881d0a085fc54354414aed990ccf05f282ba53
+Author:        Michael Jeanson <mjeanson@efficios.com>
+AuthorDate:    Thu, 06 Mar 2025 16:12:21 -05:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 06 Mar 2025 22:26:49 +01:00
 
-	modprobe usbmon
+rseq: Fix segfault on registration when rseq_cs is non-zero
 
-Some distributions do this for you automatically.
+The rseq_cs field is documented as being set to 0 by user-space prior to
+registration, however this is not currently enforced by the kernel. This
+can result in a segfault on return to user-space if the value stored in
+the rseq_cs field doesn't point to a valid struct rseq_cs.
 
-Alan Stern
+The correct solution to this would be to fail the rseq registration when
+the rseq_cs field is non-zero. However, some older versions of glibc
+will reuse the rseq area of previous threads without clearing the
+rseq_cs field and will also terminate the process if the rseq
+registration fails in a secondary thread. This wasn't caught in testing
+because in this case the leftover rseq_cs does point to a valid struct
+rseq_cs.
+
+What we can do is clear the rseq_cs field on registration when it's
+non-zero which will prevent segfaults on registration and won't break
+the glibc versions that reuse rseq areas on thread creation.
+
+Signed-off-by: Michael Jeanson <mjeanson@efficios.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/20250306211223.109455-1-mjeanson@efficios.com
+---
+ kernel/rseq.c | 60 ++++++++++++++++++++++++++++++++++++++++----------
+ 1 file changed, 48 insertions(+), 12 deletions(-)
+
+diff --git a/kernel/rseq.c b/kernel/rseq.c
+index a7d8122..b7a1ec3 100644
+--- a/kernel/rseq.c
++++ b/kernel/rseq.c
+@@ -236,6 +236,29 @@ efault:
+ 	return -EFAULT;
+ }
+ 
++/*
++ * Get the user-space pointer value stored in the 'rseq_cs' field.
++ */
++static int rseq_get_rseq_cs_ptr_val(struct rseq __user *rseq, u64 *rseq_cs)
++{
++	if (!rseq_cs)
++		return -EFAULT;
++
++#ifdef CONFIG_64BIT
++	if (get_user(*rseq_cs, &rseq->rseq_cs))
++		return -EFAULT;
++#else
++	if (copy_from_user(rseq_cs, &rseq->rseq_cs, sizeof(*rseq_cs)))
++		return -EFAULT;
++#endif
++
++	return 0;
++}
++
++/*
++ * If the rseq_cs field of 'struct rseq' contains a valid pointer to
++ * user-space, copy 'struct rseq_cs' from user-space and validate its fields.
++ */
+ static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
+ {
+ 	struct rseq_cs __user *urseq_cs;
+@@ -244,17 +267,16 @@ static int rseq_get_rseq_cs(struct task_struct *t, struct rseq_cs *rseq_cs)
+ 	u32 sig;
+ 	int ret;
+ 
+-#ifdef CONFIG_64BIT
+-	if (get_user(ptr, &t->rseq->rseq_cs))
+-		return -EFAULT;
+-#else
+-	if (copy_from_user(&ptr, &t->rseq->rseq_cs, sizeof(ptr)))
+-		return -EFAULT;
+-#endif
++	ret = rseq_get_rseq_cs_ptr_val(t->rseq, &ptr);
++	if (ret)
++		return ret;
++
++	/* If the rseq_cs pointer is NULL, return a cleared struct rseq_cs. */
+ 	if (!ptr) {
+ 		memset(rseq_cs, 0, sizeof(*rseq_cs));
+ 		return 0;
+ 	}
++	/* Check that the pointer value fits in the user-space process space. */
+ 	if (ptr >= TASK_SIZE)
+ 		return -EINVAL;
+ 	urseq_cs = (struct rseq_cs __user *)(unsigned long)ptr;
+@@ -330,7 +352,7 @@ static int rseq_need_restart(struct task_struct *t, u32 cs_flags)
+ 	return !!event_mask;
+ }
+ 
+-static int clear_rseq_cs(struct task_struct *t)
++static int clear_rseq_cs(struct rseq __user *rseq)
+ {
+ 	/*
+ 	 * The rseq_cs field is set to NULL on preemption or signal
+@@ -341,9 +363,9 @@ static int clear_rseq_cs(struct task_struct *t)
+ 	 * Set rseq_cs to NULL.
+ 	 */
+ #ifdef CONFIG_64BIT
+-	return put_user(0UL, &t->rseq->rseq_cs);
++	return put_user(0UL, &rseq->rseq_cs);
+ #else
+-	if (clear_user(&t->rseq->rseq_cs, sizeof(t->rseq->rseq_cs)))
++	if (clear_user(&rseq->rseq_cs, sizeof(rseq->rseq_cs)))
+ 		return -EFAULT;
+ 	return 0;
+ #endif
+@@ -375,11 +397,11 @@ static int rseq_ip_fixup(struct pt_regs *regs)
+ 	 * Clear the rseq_cs pointer and return.
+ 	 */
+ 	if (!in_rseq_cs(ip, &rseq_cs))
+-		return clear_rseq_cs(t);
++		return clear_rseq_cs(t->rseq);
+ 	ret = rseq_need_restart(t, rseq_cs.flags);
+ 	if (ret <= 0)
+ 		return ret;
+-	ret = clear_rseq_cs(t);
++	ret = clear_rseq_cs(t->rseq);
+ 	if (ret)
+ 		return ret;
+ 	trace_rseq_ip_fixup(ip, rseq_cs.start_ip, rseq_cs.post_commit_offset,
+@@ -453,6 +475,7 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
+ 		int, flags, u32, sig)
+ {
+ 	int ret;
++	u64 rseq_cs;
+ 
+ 	if (flags & RSEQ_FLAG_UNREGISTER) {
+ 		if (flags & ~RSEQ_FLAG_UNREGISTER)
+@@ -507,6 +530,19 @@ SYSCALL_DEFINE4(rseq, struct rseq __user *, rseq, u32, rseq_len,
+ 		return -EINVAL;
+ 	if (!access_ok(rseq, rseq_len))
+ 		return -EFAULT;
++
++	/*
++	 * If the rseq_cs pointer is non-NULL on registration, clear it to
++	 * avoid a potential segfault on return to user-space. The proper thing
++	 * to do would have been to fail the registration but this would break
++	 * older libcs that reuse the rseq area for new threads without
++	 * clearing the fields.
++	 */
++	if (rseq_get_rseq_cs_ptr_val(rseq, &rseq_cs))
++	        return -EFAULT;
++	if (rseq_cs && clear_rseq_cs(rseq))
++		return -EFAULT;
++
+ #ifdef CONFIG_DEBUG_RSEQ
+ 	/*
+ 	 * Initialize the in-kernel rseq fields copy for validation of
 
