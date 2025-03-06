@@ -1,141 +1,127 @@
-Return-Path: <linux-kernel+bounces-549770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4240A5571A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:50:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7744EA5571C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:50:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 385A21898D78
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:50:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFD3D16E687
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A6A2702CF;
-	Thu,  6 Mar 2025 19:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D751D270EBF;
+	Thu,  6 Mar 2025 19:50:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="Woqq7Kca"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="U/CyXPeL"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822F018B47D
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 19:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1131918B47D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 19:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741290595; cv=none; b=uk/MKXXOFSYKGaxG/vV941MNRzCXlK/ekbKNCIAbMX6V6nFMbnjTb4o/QN0mpQJoeV4QD57mfiup5GusPrwqdOHssvnow65WVPABtt6+iM2Kc6NdRRSjfTNxUKhN3vCcQppNB6HQtk75u5sqGmck/YycSmnqLFIZSyW4cbef5Ho=
+	t=1741290613; cv=none; b=a8EAg0UlrNZ2qGtI4yb/2DpfcwMiTbrI/KT5WE3arKK0BEkxeOjQ1VsnFpJGeEVeAbVTY7cKXpv0+cGuHxt6HHgJHKamWUrFAOva7HA/wZxQlRdM6XW3HqtPVz2OcOI0FycEWJSX0SKRoJAXdiB5rAXurewvZZiYVoQNsjag6ZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741290595; c=relaxed/simple;
-	bh=I7/pS/ZjDOrhdm0B+91sVfRepedE7aeBt8yijFHJB38=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=acSSik2Mbkj0KLgHAZzZgvdTqFyvZIB0+wvn94VNy2gH9RID18GN9gRxeOUcu1mY4957PtpAw/hUVukiXLwGYnT40DdtZguTHZ/UCO7edSW6isS1WxI4KqkU0i/ztzDp0HNciZcJAoNPgWjzhaQmzxZxWeA6GtbvtGSd6/Oj9g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=Woqq7Kca; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
-	s=key1; t=1741290581;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=1pLENHPcmZUPIKEuLyD6Q5KL/3y3ps8NKG8+iORBPzI=;
-	b=Woqq7KcaOuw73MND/CJ+dS09hGfOAOtzBgcT+dtblRLADUAHmiaT1Q0L4JXXvkCGBjvoeR
-	z7d0fU0PyBnqDdsD8ZhIlk1gtGs6QEcWfg+XYtMSj5tLjWyKjqruCC2J8Sod6yp2aPyka1
-	hKQcUH+4oo7XThVmvI0AyRJ1z5JbO6Q1SnKVJJnRHsBivZcFn1G5wbW/CjFeOjETE3vaph
-	9k9tGJvGYMG6aYdYg621dQnntElEgRy6l3VMQyvFeQPESZHTlWKr7d7Hu8VkexFqIswLti
-	wZu8tAr56eMwCruUdBCcSBA3qRRyEC0ysv6RcicjIoFxpiuDaH2CaSGLAFkTTQ==
-From: Ignacio Encinas <ignacio@iencinas.com>
-Date: Thu, 06 Mar 2025 20:49:27 +0100
-Subject: [PATCH v2] selftests: riscv: fix v_exec_initval_nolibc.c
+	s=arc-20240116; t=1741290613; c=relaxed/simple;
+	bh=SeYj+5vmQMk9Qek2o0j+zoxvhCMdTopO/yz69EP+B5A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qhcgzdcfysm6h2rOxIl4fLlQxsA6jns8FMX31KM4JCorYOh6q8k1tnJCGZebSZ3rS136+Yea0uoHzLNG7CHUambsROFXaL3FhuV9Fn/Zhv2e2t+c3cDTz+FJNGzc1LgFBiIJ8eT/Wkb4FgD5x4MHf+Qx28+2pDF0pU4AS05qSVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=U/CyXPeL; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e04cb346eeso1801682a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 11:50:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1741290609; x=1741895409; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y5UzXSAjCTYVMhmStXClPBVrbuKzccqNEtXPxciKvgg=;
+        b=U/CyXPeLw37zbeKGg4GBk9NtEWOj9VXAykiAWOyYZeJ92RZSOTuahf5g4qSKZI6TTy
+         FGV3uBbnV7Nm1KzyXvhd9eG4echjxN1wq0JWST0rHlC4egzt4Y5PNyFqE1eXnQB1aprh
+         iZXMLYeLvgz3p7rHZyAU1TwFjGELFmYcmg6bc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741290609; x=1741895409;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y5UzXSAjCTYVMhmStXClPBVrbuKzccqNEtXPxciKvgg=;
+        b=iN7XfeAvWQcVVPBVRvR3w4w9Wz400zagWgSLdPrv/LV7ZrSRJvRaGXeM1gqanOYlk1
+         8b1kX7N4uX0txSWCdFh12fTcUblorMrTIIX4vi9/uNX6qeo5zT/nATuV19mi7nXIZbeP
+         gbr41I7XP6rQJbDfO+xX2YVwoDuKa0Tuq8/6uVJ93hUsiMH1GmSlWkEjwvevIyoO8oye
+         ePnWx45cdw6dppnXEWY7+VArAW3Xaai2LWVbuK+X+OJIKFYu+v8PfrfLJabr+YYdUoSJ
+         xIERgHNN46/Uuz+Bk+GnoFEc2PwpZhcGeAvKeuY4DyTUlZ8U+Q4WsLYkbeD7D6yuNLr/
+         ybuA==
+X-Gm-Message-State: AOJu0Yw0A9uNfxAEA2IhEwP2tNrQD/DVpsY43QWdBgEDC4ezOV/LGLRg
+	uLSa+QwijJo1y51e+lzXzwDtzJkmUN2415sionCI9k53aL9D7lQ1RtXeVFNg9y/GaYlF4x/kYgW
+	XQG4=
+X-Gm-Gg: ASbGncsgTMB48bfKd/ceaJlPcasThSiwaRIfq3C6GsDoB3xQWNNF54gJ4JaQOmoD3go
+	LdkT9G2o8EhZe1t2iObW8mO1Rt9CumpOHTtD+JhC//II6lJg+ye8oqd24FEnu5sesi370kW8aQ5
+	vTReWuZiJWsQxS1FxOQMAzw0QIafU51G6VKuk5C71ydVRgx2ICUK/1BWSKCKjjG6/1ti/wuJzjl
+	tjkPlscbaKAzzhOLneUQLmC+8Nlv0zFQmpCNCdYHYc+LjOFNqXQDuMA8xcJ3mhuoDzH8hdnV9k0
+	RcIjgiCEbAqUCwDUTQR08deHkJGWCfM00jU3goMApKgp/Y+JrBtSog85ISV9wPWOE8vWoVcRbEc
+	sBRxnB0F82qUEUVu8lJQ=
+X-Google-Smtp-Source: AGHT+IF8TdYVj78+9MQ7qrZsC6n2nepy0y4GvQ8CeVFo7ruUNf3dbFqxobv2/pji6RAAs0Fpaf/T6Q==
+X-Received: by 2002:a05:6402:1e8e:b0:5e4:cfe8:3502 with SMTP id 4fb4d7f45d1cf-5e5e22d90e0mr545016a12.17.1741290608818;
+        Thu, 06 Mar 2025 11:50:08 -0800 (PST)
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com. [209.85.208.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c76be409sm1368778a12.81.2025.03.06.11.50.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 11:50:07 -0800 (PST)
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5dee07e51aaso1961577a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 11:50:06 -0800 (PST)
+X-Received: by 2002:a17:907:9455:b0:abf:425d:5d3 with SMTP id
+ a640c23a62f3a-ac252f4b12dmr39156866b.40.1741290605907; Thu, 06 Mar 2025
+ 11:50:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-fix-v_exec_initval_nolibc-v2-1-97f9dc8a7faf@iencinas.com>
-X-B4-Tracking: v=1; b=H4sIAEb8yWcC/32NywrCMBREf6XctZE8+nTlf0gpSXq1F2oiSQmV0
- n83Fty6PMPMmQ0iBsIIl2KDgIkieZdBngqwk3YPZDRmBsllxRUX7E4rSwOuaAdytCQ9D87PZCw
- ru3bsmtqqRo6Q96+AuXy4b33mieLiw/u4SuKb/qzVH2sSTDDTNqbmWCrO5ZXQWXI6nq1/Qr/v+
- wdmehr5xQAAAA==
-X-Change-ID: 20250301-fix-v_exec_initval_nolibc-498d976c372d
-To: linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, 
- Charlie Jenkins <charlie@rivosinc.com>
-Cc: linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Ignacio Encinas <ignacio@iencinas.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20250306092658.378837-1-andriy.shevchenko@linux.intel.com> <174125602814.14745.12946945836213678532.tip-bot2@tip-bot2>
+In-Reply-To: <174125602814.14745.12946945836213678532.tip-bot2@tip-bot2>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 6 Mar 2025 09:49:49 -1000
+X-Gmail-Original-Message-ID: <CAHk-=whTGVy1aaEashu3K49wuG7-hARh02xbAr_hMm3844Ec7Q@mail.gmail.com>
+X-Gm-Features: AQ5f1Jrmr_jLOp0tlshhDmwAms2O84ODqe4i1s4V7Wh5J5oNtXIjYzua0O7oZ3M
+Message-ID: <CAHk-=whTGVy1aaEashu3K49wuG7-hARh02xbAr_hMm3844Ec7Q@mail.gmail.com>
+Subject: Re: [tip: x86/mm] x86/mm: Check if PTRS_PER_PMD is defined before use
+To: linux-kernel@vger.kernel.org
+Cc: linux-tip-commits@vger.kernel.org, kernel test robot <lkp@intel.com>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Vector registers are zero initialized by the kernel. Stop accepting
-"all ones" as a clean value.
+On Thu, 6 Mar 2025 at 00:13, tip-bot2 for Andy Shevchenko
+<tip-bot2@linutronix.de> wrote:
+>
+> x86/mm: Check if PTRS_PER_PMD is defined before use
 
-Note that this was not working as expected given that
-	value == 0xff
-can be assumed to be always false by the compiler as value's range is
-[-128, 127]. Both GCC (-Wtype-limits) and clang
-(-Wtautological-constant-out-of-range-compare) warn about this.
+I'm not at all happy with this one.
 
-Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
-Tested-by: Charlie Jenkins <charlie@rivosinc.com>
-Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
----
-Changes in v2:
+> -#if PTRS_PER_PMD > 1
+> +#if defined(PTRS_PER_PMD) && (PTRS_PER_PMD > 1)
 
-Remove code that becomes useless now that the only "clean" value for
-vector registers is 0.
+Honestly, I feel that if PTRS_PER_PMD isn't defined, we've missed some
+include, and now the code is making random decisions based on lack of
+information.
 
-- Link to v1: https://lore.kernel.org/r/20250305-fix-v_exec_initval_nolibc-v1-1-b87b60e43002@iencinas.com
----
- tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+That's not correct. You can't say "I don't know the size, so I'm just
+assuming it's 1".
 
-diff --git a/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c b/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c
-index 35c0812e32de0c82a54f84bd52c4272507121e35..4dde05e45a04122b566cedc36d20b072413b00e2 100644
---- a/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c
-+++ b/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c
-@@ -6,7 +6,7 @@
-  * the values. To further ensure consistency, this file is compiled without
-  * libc and without auto-vectorization.
-  *
-- * To be "clean" all values must be either all ones or all zeroes.
-+ * To be "clean" all values must be all zeroes.
-  */
- 
- #define __stringify_1(x...)	#x
-@@ -14,9 +14,8 @@
- 
- int main(int argc, char **argv)
- {
--	char prev_value = 0, value;
-+	char value = 0;
- 	unsigned long vl;
--	int first = 1;
- 
- 	if (argc > 2 && strcmp(argv[2], "x"))
- 		asm volatile (
-@@ -44,14 +43,11 @@ int main(int argc, char **argv)
- 			"vsrl.vi " __stringify(register) ", " __stringify(register) ", 8\n\t" \
- 			".option pop\n\t"					\
- 			: "=r" (value));					\
--		if (first) {							\
--			first = 0;						\
--		} else if (value != prev_value || !(value == 0x00 || value == 0xff)) { \
-+		if (value != 0x00) {						\
- 			printf("Register " __stringify(register)		\
- 				" values not clean! value: %u\n", value);	\
- 			exit(-1);						\
- 		}								\
--		prev_value = value;						\
- 	}									\
- })
- 
+It should always be defined, because it's normally used
+unconditionally (just grep for it in mm code, eg mm/pagewalk.c:
+real_depth()).
 
----
-base-commit: 03d38806a902b36bf364cae8de6f1183c0a35a67
-change-id: 20250301-fix-v_exec_initval_nolibc-498d976c372d
+So the undefined case really is broken.
 
-Best regards,
--- 
-Ignacio Encinas <ignacio@iencinas.com>
+It should be defined either by the architecture pgtable_types.h
+header, or if the PMD is folded away, the architecture should have
+included <asm-generic/pgtable-nopmd.h>.
 
+So I'm *really* thinking this patch is completely bogus and is hiding
+a serious problem, and making PAGE_TABLE_SIZE() have random values.
+
+                Linus
 
