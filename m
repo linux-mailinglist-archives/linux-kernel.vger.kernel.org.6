@@ -1,182 +1,118 @@
-Return-Path: <linux-kernel+bounces-549375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56848A551C8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:49:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F21BA551B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:47:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53C561887563
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:49:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D22227A878E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1880E25D558;
-	Thu,  6 Mar 2025 16:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="C3c4/UnH"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2067.outbound.protection.outlook.com [40.107.220.67])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D4F256C7A;
+	Thu,  6 Mar 2025 16:45:31 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28FE25C6F6;
-	Thu,  6 Mar 2025 16:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.67
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741279568; cv=fail; b=SYhC4FiYOHkxJjZdfdVcuv6Coie4+8Hk9Iokwvw5ULvNZ6ClRkWVz3CP3YIgskNT5dVq3SGhbhZexBXtrs6xy9N7OfO3bQN9HF/bPR/kUGuUQjt4H5mwM135r+rtKuGB9G31L9A/23JkodG+Wpcy3TqAuzHLsqyNaaL/1VQgHyU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741279568; c=relaxed/simple;
-	bh=q68rvYXccMhnMN9whFw9DLYKUKZJISHBMsSpyc/META=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s3+Ut408PBKAVW3eQjM8UUr3ibk/l2ME4LpzhxNLPYKyITmMYNeS2zTnolpQc6LsZyKV4rZgsK5CqPFW64eeceB5mbknGdwe19sbtVnkeCsT9iJQpf8KY24PF1jzYa0A3nUVvmbGRk5sGoUrENwVTHz3k0c+AKV8dXjODRZzk7M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=C3c4/UnH; arc=fail smtp.client-ip=40.107.220.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CrHNBHuDdK1wFuEoZZOhXdp0iT3b3ogb6QMWTKuBY1KI32q8/W42vXIbiF7LqhQIxNbhptDyfpEb2x+/avs1Y1KOWWNvgxDg0HOfh3eJtPmoGRHJ6+yooPo758IF0zW/9lLSX9TwPX6L1wKFv+mvS+f6SLYniDJB+SQEFJxin7NJA7dxKUIr9BdnZ6v7A/k+teeqb6wumLFQSCOodMIPOOxLWdFGa8eIoiJqO0ALEOYaAHJgksyHtNVz8mTEc85WV9aHM6qRGv8Sn7PF9qIuUJLLL5zbXVYjy94cDCyaee1UUZh2TWGL6uzs/42y/vQcBGE8wMbjwGM+AEX7BAf6xQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gH2eEhoqySD5sLD+wp42rTKAEOvnJqS0yXkr1HBWN1o=;
- b=dxym5Ur3DAYgQdF6iClXJ+7awPiSksQXREIg42I6So1Hw3HfjJn9SJBOoXstYnP5Q2PIpLxvMj1TCbkeU7gg1vZb0kQvs53vSMj5RlukBJ2EAyfPUyp/zOW7benkTqMZEliWq106Wbi3F42l+Npb9Fmj5FJJCgjo/KYDn93DgJOORO1LlVPNeqvblaWpnPOTdxVAZS+Zp7+LtG9ihwoBu3CNYWzkXEGlE7jFeTAScG8bJzOSxJ8llPU3WYdyU8sacgO9SL4YMGMIOQtzVSfBS19pkpbOt7fLIXxO3Vb62E4DZoTcrQdarBsiD/ed1beh8nVkWAPyuefUDBZYd3571g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gH2eEhoqySD5sLD+wp42rTKAEOvnJqS0yXkr1HBWN1o=;
- b=C3c4/UnHAYhcs9Xkll4cMFKrTRqsjxyktGHqD1c06xjqF54mEHGlMhaYqc5sS3xTD+Wt7WHiP5NkZFpJ13x8qDNTsBwqmkWWCegky5b0JCYWnfrsyUdFbuDAcvRRf9hfjmxm4CpWqG2DioAdjgGfj9daRGtYrDFBDQFb43jV6XU=
-Received: from MW4PR03CA0350.namprd03.prod.outlook.com (2603:10b6:303:dc::25)
- by LV3PR12MB9402.namprd12.prod.outlook.com (2603:10b6:408:213::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Thu, 6 Mar
- 2025 16:46:03 +0000
-Received: from SJ1PEPF00001CE8.namprd03.prod.outlook.com
- (2603:10b6:303:dc:cafe::55) by MW4PR03CA0350.outlook.office365.com
- (2603:10b6:303:dc::25) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.18 via Frontend Transport; Thu,
- 6 Mar 2025 16:46:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00001CE8.mail.protection.outlook.com (10.167.242.24) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8511.15 via Frontend Transport; Thu, 6 Mar 2025 16:46:02 +0000
-Received: from rric.localdomain (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 6 Mar
- 2025 10:45:58 -0600
-From: Robert Richter <rrichter@amd.com>
-To: Alison Schofield <alison.schofield@intel.com>, Vishal Verma
-	<vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>, Dan Williams
-	<dan.j.williams@intel.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>, Davidlohr Bueso <dave@stgolabs.net>
-CC: <linux-cxl@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Gregory Price
-	<gourry@gourry.net>, "Fabio M. De Francesco"
-	<fabio.m.de.francesco@linux.intel.com>, Terry Bowman <terry.bowman@amd.com>,
-	Robert Richter <rrichter@amd.com>
-Subject: [PATCH v4 14/14] cxl/acpi: Unify CFMWS memory log messages with SRAT messages
-Date: Thu, 6 Mar 2025 17:44:48 +0100
-Message-ID: <20250306164448.3354845-15-rrichter@amd.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250306164448.3354845-1-rrichter@amd.com>
-References: <20250306164448.3354845-1-rrichter@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2AD6254AFD;
+	Thu,  6 Mar 2025 16:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741279531; cv=none; b=ess6mMMtXu72P4ur4k+QeJ36CFd0HJNsVNlXVhEcddE2ezOkxJwAX/inzcM0m/TsKxQRzecJRefDNjBHUb6ERH36xbTfzDNVNV/w1aspBTcde1a83Vw7xbFiRbrvyFktsvEK1vHMrImH90Gh40NZyzF0uxFY9JkeQhA0lH/c6Lo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741279531; c=relaxed/simple;
+	bh=7UuuaaVSz9RlMCDVG+AMp+rHVx/CzDpvcvHma9J+E3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LdhsHk7/MvLEzrd4reZcZscvYTsu2kVr9goV7n6a8tYYh8sYErK0q+N/IfgLqZcnwhw9AE+YyJv+A9UKwe17fZNaUjlFD+aHG5pKObEoUwJOBOrV4IVAzs3L+v6jaPkvugochVUbNtuGDJ8x2hNjNvmsuzAXl+tyBWncN24WGtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 186F6300115FC;
+	Thu,  6 Mar 2025 17:45:24 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id EC69F1D3C2; Thu,  6 Mar 2025 17:45:23 +0100 (CET)
+Date: Thu, 6 Mar 2025 17:45:23 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: Kenneth Crudup <kenny@panix.com>, Bjorn Helgaas <helgaas@kernel.org>,
+	ilpo.jarvinen@linux.intel.com, Bjorn Helgaas <bhelgaas@google.com>,
+	Jian-Hong Pan <jhp@endlessos.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nikl??vs Ko??es??ikovs <pinkflames.linux@gmail.com>,
+	Andreas Noever <andreas.noever@gmail.com>,
+	Michael Jamet <michael.jamet@intel.com>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
+Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
+ Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
+Message-ID: <Z8nRI6xjGl3frMe5@wunner.de>
+References: <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
+ <20250213135911.GG3713119@black.fi.intel.com>
+ <a8d6ca75-8f50-4c46-8c67-fcf20d870dcc@panix.com>
+ <20250214162948.GJ3713119@black.fi.intel.com>
+ <661459dd-67d0-4e1c-bb28-9adf1417f660@panix.com>
+ <20250226084404.GM3713119@black.fi.intel.com>
+ <Z77ak-4YsdAKXbHr@wunner.de>
+ <20250226091958.GN3713119@black.fi.intel.com>
+ <Z8YKXC1IXYXctQrZ@wunner.de>
+ <20250304082314.GE3713119@black.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00001CE8:EE_|LV3PR12MB9402:EE_
-X-MS-Office365-Filtering-Correlation-Id: 90889276-e85a-4fba-df69-08dd5cce615b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|7416014|376014|36860700013|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?t8xkCRvlazIE82uEWG5om0ryuJ+RS+ZpRySAn9yNoK4lumdiC2m0kI6KXF+Q?=
- =?us-ascii?Q?3NHgOWd+2YRSk3ppCVS3cdoMeybPF/eWoFJnBeFqjQlnnBMX7/atbRdPaWhR?=
- =?us-ascii?Q?xKIMXoBeyNjPhVtY4uGkG0srCWXu7Or/qsekgTOrk6TClScQaNTQCyj4D6uD?=
- =?us-ascii?Q?zq89xRXYNjJHQdeRlDgNPCqvTbAe7ns7dviBcsJwT8PYsred0ZsTqTE9LlMW?=
- =?us-ascii?Q?S/NnmkspGVMjf9qvnKFykDHBcJH+ebGYTO152Kkz4FghQ+TdsVSDZEOy4ro/?=
- =?us-ascii?Q?WRLAPJc3BntX+8tBf++kM+ohwlw8wG4oLqFdNgXpS3+Zy5iTOqdfkCRXisE6?=
- =?us-ascii?Q?DuOTzjeJQXgHlr+z67GSJe2lmooUKTKWU5YHrunrb7jpExlU2oxz0qNZavEm?=
- =?us-ascii?Q?cdZo+khruf74mVhMES5i3bJwinqaokfcePUYuhsF5bj1fFZITH1jECaFzbvq?=
- =?us-ascii?Q?Iq8YumSt7pZRd54IbMg3VGjL/w/SKMdjy0B7rr2xVinG2QbRglBPbMwvKleM?=
- =?us-ascii?Q?PrxE2a1ea96s3VP36DIAdyJ0ldduYMEJie7gFwrPsVaPaf5hjOE9hlOCp0Su?=
- =?us-ascii?Q?dOMFJpa6MdAcRXgQD9r6Vm1SDNDPsXywZPRtaWebXhZtgBfLV4tSjHhSyyfn?=
- =?us-ascii?Q?92ZEEDmuVp6wCzvW6L7U8Htj14MyLxyGSrpB70prLT0FHT+G4uwWYN988ih6?=
- =?us-ascii?Q?wN5viA5BXaCAWur4TNFHk3Xq2ztQZw5IoGjzrWvTeK9BlHXJWKJKEq/fEYpv?=
- =?us-ascii?Q?SVC77Zxm8kSffiHSwUsBPj+Xn9VLxSYGXar6+b6/Rx88eCc2Y2/DB567GvmJ?=
- =?us-ascii?Q?jrPGtMhibFr1VGxZ7UuONdZdyJAIaCmWodvmDK9BmyO4dXTTQLZVuxovqBbr?=
- =?us-ascii?Q?qLR1XOVLNIQ0ybY2ZNNUaF5lYnQ6NDbS/vCV5S/fBhNG50cuJx1FeQnAAL7R?=
- =?us-ascii?Q?LDzl9pLss2sF1WKDCJwSUJXtbScApC9FxkooW4+RACFLL6GSQRANbtkVh+Kt?=
- =?us-ascii?Q?XREKVnL3m235nODe4weQvJqsFFnSaOrCg31bhzpeBg2a7Qmu9fbscRABsWrq?=
- =?us-ascii?Q?q56zPRRs52gZoIVB6SkEAH3uSGrMfyL+3NB8vFCqBYph02iEzk9rlopWya1q?=
- =?us-ascii?Q?tUaoFGuIMtpxKGHbPW3kZ6uPmEbJwn9OrnS/fzEPMobbnXzpsenaLF/m/m2J?=
- =?us-ascii?Q?FelxGgsRT0WWaOJfS0ms/p+Xvb0vmqRmz6Tlyz+7mWU7ZMEidCPmWJErjybM?=
- =?us-ascii?Q?PbMJllVoTkBUenuC0ZKH/jGqpVyn8YLflBEWMNRX6NkOEh49DyF0w6RdwlrA?=
- =?us-ascii?Q?EC16tdzixNq2W1PEjyW1PBa+0JpbzkFGMXFwlMGyjR5QmqYJ9GaXls96MS5F?=
- =?us-ascii?Q?lAAK8/Dtg5Z3EROkIPuP0/5mwA9FXYfyGKKC6nBw/hP2a26uj90bRpt534jb?=
- =?us-ascii?Q?WLaiNIn0yj7M1yG6DUovYoc/dT12zD3yKfXCRg1JtEM1xvzG/2vZHvj8m4xM?=
- =?us-ascii?Q?eFkSV2ePzXaNyhc=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(7416014)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 16:46:02.1188
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90889276-e85a-4fba-df69-08dd5cce615b
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00001CE8.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR12MB9402
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304082314.GE3713119@black.fi.intel.com>
 
-CFMWS entries have a similar importance as SRAT table entries to
-describe memory regions. For CXL error analysis and memory debugging
-information of both is needed. Unify output of both messages to
-improve logging. Change the style of CFMWS message according to SRAT
-output. Also, turn messages into a dev_info() same as for SRAT.
+On Tue, Mar 04, 2025 at 10:23:14AM +0200, Mika Westerberg wrote:
+> Unfortunately I still see the same hang. I double checked, with revert the
+> problem goes a way and with this patch I still see it.
+> 
+> Steps:
+> 
+> 1. Boot the system, nothing connected.
+> 2. Connect TBT 4 dock to the host.
+> 3. Connect TBT 3 NVMe to the TBT4 doc.
+> 4. Authorize both PCIe tunnels, verify devices are there.
+> 5. Enter s2idle.
+> 6. Unplug the TBT 4 dock from the host.
+> 7. Exit s2idle.
 
-SRAT pr_info() for reference:
+Thanks for testing.  Would you mind giving the below a spin?
 
-drivers/acpi/numa/srat.c:
-  pr_info("SRAT: Node %u PXM %u [mem %#010Lx-%#010Lx]%s%s\n",
+I've realized this can likely be solved in a much easier way:
 
-Signed-off-by: Robert Richter <rrichter@amd.com>
-Reviewed-by: Gregory Price <gourry@gourry.net>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-Tested-by: Gregory Price <gourry@gourry.net>
----
- drivers/cxl/acpi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The ->resume_noirq callback is invoked while traversing down
+the hierarchy and the topmost slot which detects device replacement
+already marks everything below as disconnected.  Hence any nested
+hotplug ports can just skip the replacement check because they're
+disconnected as well.
 
-diff --git a/drivers/cxl/acpi.c b/drivers/cxl/acpi.c
-index 3e75e612cbc4..93c73b163c28 100644
---- a/drivers/cxl/acpi.c
-+++ b/drivers/cxl/acpi.c
-@@ -447,7 +447,7 @@ static int cxl_parse_cfmws(union acpi_subtable_headers *header, void *arg,
- 			cfmws->base_hpa,
- 			cfmws->base_hpa + cfmws->window_size - 1, rc);
- 	else
--		dev_dbg(dev, "decode range: node: %d range [%#llx - %#llx]\n",
-+		dev_info(dev, "ACPI: CFMWS: Node %u [mem %#010Lx-%#010Lx]\n",
- 			phys_to_target_node(cfmws->base_hpa), cfmws->base_hpa,
- 			cfmws->base_hpa + cfmws->window_size - 1);
+-- >8 --
+
+diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
+index ff458e6..997841c 100644
+--- a/drivers/pci/hotplug/pciehp_core.c
++++ b/drivers/pci/hotplug/pciehp_core.c
+@@ -286,9 +286,12 @@ static int pciehp_suspend(struct pcie_device *dev)
  
--- 
-2.39.5
-
+ static bool pciehp_device_replaced(struct controller *ctrl)
+ {
+-	struct pci_dev *pdev __free(pci_dev_put);
++	struct pci_dev *pdev __free(pci_dev_put) = NULL;
+ 	u32 reg;
+ 
++	if (pci_dev_is_disconnected(ctrl->pcie->port))
++		return false;
++
+ 	pdev = pci_get_slot(ctrl->pcie->port->subordinate, PCI_DEVFN(0, 0));
+ 	if (!pdev)
+ 		return true;
 
