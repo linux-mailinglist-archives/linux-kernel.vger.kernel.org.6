@@ -1,105 +1,85 @@
-Return-Path: <linux-kernel+bounces-549442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97CA7A552B0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:16:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AFBEA552B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:16:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E773618826ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:16:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C4C01882FBA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:16:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8570925A627;
-	Thu,  6 Mar 2025 17:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A05825C71F;
+	Thu,  6 Mar 2025 17:16:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Anu++IdA"
-Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LlDBSjo3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5774F946C;
-	Thu,  6 Mar 2025 17:16:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A928F25C702;
+	Thu,  6 Mar 2025 17:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741281366; cv=none; b=nuu8F1SfxgZ/j+lFM0jAdqqZJY7xhrl6yKCrVrUuA5AdvVMpr+8soOjSIdD/2de/CNpKIJFshX4JI/b/z9t2uKghEEdpb3Z6vm3MOoS8AWuq/ZIFOTHxrzyHbZLvCOK+8jpXKffMf4nkWQ661MXc04naDTAsZc1a4MC71oKt6No=
+	t=1741281368; cv=none; b=PmhnK5u6Cd82/ypmsq+caqfRiUJbmopNmixOucOqVNnUsTRkkUOs5uPCtuDrvhyqzIEH11HsTE2CsO+qspujvREokoEuVFpojP8qJTiScNNjU6TL4N3c+utdwaeAcnatz+3n+pcxaFnd1nZq3fD7UEh6U4UWjbM82dzdHYOua70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741281366; c=relaxed/simple;
-	bh=6yUS0gZqXlr5oXmQWOr2M4/WGsw428RVR3v78Umd2VM=;
+	s=arc-20240116; t=1741281368; c=relaxed/simple;
+	bh=Xuv1Bvf/aDmrlO89xjqbFHHL3xuT0+Dv5kCum5OqEF0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i057KAm9sZqhXPBTyhETIFGpABk0tfAn0QjpRlCSvrpgvL2pUoYCKzGwqD7QgC8gaoYy/pXqZgpDGdIr2telCAzOCJY3doIOH+fDvjeJEfk8EipaO+BkV1RW0KxprtbVFCiBwWtG2tkHxUXhDEfn+/M6vma/cp6zB7Eswd1KixM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Anu++IdA; arc=none smtp.client-ip=89.58.32.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 6EEDD10381917;
-	Thu,  6 Mar 2025 18:15:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
-	t=1741281351; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=R9aP1jHlPPht+zv5TUTXYAZBlZqQGAGJO0vabeZpWFY=;
-	b=Anu++IdARFpzsSERi714neoRcgEucGBiXUumxqW8plTtvomn4H/TKviQU5oyEMQM8+WCO/
-	inSdsvuVBeSdTBXq2ajTbMa0YAsoCAH8tOrK6zmXFyNSb1KZfliyLNV53pzwgnJQexC0Pb
-	GSbekj+K9182IL4yQU9Ax0T/zESpG9WgTTZJo330sCz0x6ZMwLokEl7dkWeZ58HsPLK8l7
-	nFUc09EjSFVIm6Upq5VRxSxMM2q9BOCiic7SLuOSycAhNkZ0wY+QBNaXfOVcafU2IDI8YZ
-	ifYcnBdz+Cf/95Yd5A0p59JdDORVJKt9CMLGlNbycrwk0S5K1EGMTNb0F3Mpjg==
-Date: Thu, 6 Mar 2025 18:15:43 +0100
-From: Pavel Machek <pavel@denx.de>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.1 000/161] 6.1.130-rc2 review
-Message-ID: <Z8nYPwPNhfTmMVTi@duo.ucw.cz>
-References: <20250306151414.484343862@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vlb1bexpXUIAICxJOdktNXwXyRufO1rSzzg4YLdKJceopT55AhGuGDlejj5mh120KMWxXGHjKf8F/aWCHpo0xuXbmPAAU/z8fsQrQj1HktsEfgzNmxzdbWIwkc7oKnk1taMEHfREugVlPhPbA5lAytARbNz60+FUhrhNZhtlqc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LlDBSjo3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB4C7C4CEE0;
+	Thu,  6 Mar 2025 17:16:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741281366;
+	bh=Xuv1Bvf/aDmrlO89xjqbFHHL3xuT0+Dv5kCum5OqEF0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LlDBSjo3CXe9xWZWJ/UgZ/q7oBbUN4eo2z/XiaRjhyRwTYO//RrCt82ttKAl8mk1T
+	 pY+wTbO9d22mRKqD98XzQydBy2aeSl+ZzYsZ8VM2aLjdhEhQvet0SCZBX8XXbyuSVA
+	 EqaZEgy7ecKu+rAKdwXIebqnFdZxOnT4I4I16urYWQyXszfKaCLJC9AI1i5QHA7rue
+	 rLlQ27wFbBuLD+KZacOH9VRyllIxCxRbZCVvoQhoGqtEdhBPo0kF25ACyZ9O5yueZA
+	 SnpTDoc0GhCLsImOBOyp17XLvEpOvO/MIC+BQqcbP30m0lo4xpuM6OnUq6XpjAA+Me
+	 SM6IQwdSrU0fg==
+Date: Thu, 6 Mar 2025 09:16:04 -0800
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jason Baron <jbaron@akamai.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/3] module: Make .static_call_sites read-only after
+ init
+Message-ID: <Z8nYVOIkUX5IXo-P@bombadil.infradead.org>
+References: <20250306131430.7016-1-petr.pavlu@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="Lca3f2Y+x3EMTsjg"
-Content-Disposition: inline
-In-Reply-To: <20250306151414.484343862@linuxfoundation.org>
-X-Last-TLS-Session-Version: TLSv1.3
-
-
---Lca3f2Y+x3EMTsjg
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250306131430.7016-1-petr.pavlu@suse.com>
 
-Hi!
+On Thu, Mar 06, 2025 at 02:13:51PM +0100, Petr Pavlu wrote:
+> Section .static_call_sites holds data structures that need to be sorted and
+> processed only at module load time. The section is never modified
+> afterwards. Make it therefore read-only after module initialization to
+> avoid any (non-)accidental modifications.
+> 
+> Changes since v1 [1]:
+> * Rebase the patches. The kernel now has commit 110b1e070f1d ("module:
+>   Don't fail module loading when setting ro_after_init section RO failed")
+>   which addresses a previous problem with handling ro_after_init sections.
+> 
+> [1] https://lore.kernel.org/linux-modules/20241223093840.29417-1-petr.pavlu@suse.com/
 
-> This is the start of the stable review cycle for the 6.1.130 release.
-> There are 161 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Reviewed-by: Luis Chamberlain <mcgrof@kernel.org>
 
-CIP testing did not find any problems here:
-
-https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
-6.1.y
-
-Tested-by: Pavel Machek (CIP) <pavel@denx.de>
-
-Best regards,
-                                                                Pavel
---=20
-DENX Software Engineering GmbH,        Managing Director: Erika Unter
-HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
-
---Lca3f2Y+x3EMTsjg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ8nYPwAKCRAw5/Bqldv6
-8k5FAKCB1uJENiBD8JrkFDHCf6JFg1RT0gCgk8hqExw36exOjr3algQKxyTGdGo=
-=Hngc
------END PGP SIGNATURE-----
-
---Lca3f2Y+x3EMTsjg--
+  Luis
 
