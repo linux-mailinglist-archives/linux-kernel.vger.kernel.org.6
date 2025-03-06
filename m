@@ -1,84 +1,144 @@
-Return-Path: <linux-kernel+bounces-548452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C9AA54505
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:37:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70AE4A54507
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:37:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C29B189343B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:37:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C084D1892671
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:37:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04640207A22;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5164207E04;
 	Thu,  6 Mar 2025 08:37:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="wk8K2XWF"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156D61DF24E;
-	Thu,  6 Mar 2025 08:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C97207DE0;
+	Thu,  6 Mar 2025 08:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741250231; cv=none; b=S08myfeBq6tP5OYr/WiJob4rYR2X72slF8Hg2vg96nu7UvWjEvSreTyhARr/MBv6aGICCrbHDKP0z2cW61XZjCLRzGh86EPqo4y2S+WkPC9DrC6SDPDWIQ1Gl8kIKmJtLXZ4zWf7CjBvZLZYUWwMVbRttJj/3LakgoMk7ZtHS04=
+	t=1741250232; cv=none; b=oheuKZLDtfGd0tSztPMjqkabrdeXEMuCNjKNcK/oS/E2XHXB6TVQgEmUAydLya29wFPqnN5wGDQODur72gncItQNYWnsmGuRgDcCVxMoYx14+TcjB2Y4PwKav2WamJrS3Fnpacs/BVfnrSO6+IjMpZe5HK4DOEGzD2HMPKBp5tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741250231; c=relaxed/simple;
-	bh=Ijp/uqr7w1PYskq3jPI6hjykLFdcqE59PKhO5ibO9Mg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kT9exbY+yarq7pOEE+T53R57oUukroltjJ9Wk/uzTa0ds/b4+n5UCkCxIAJSfp/YOiYNKBPo88v2nYmCJYUb9fgrvla5/rp+LXGmIkA0d7y+hgNp2QcbCVWsWTP9JygHMZ7mRpgMrBHe/e2M8vPNi2HNFJmrB6VObztRJ3UT3qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=wk8K2XWF; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=Ijp/uqr7w1PYskq3jPI6hjykLFdcqE59PKhO5ibO9Mg=;
-	t=1741250230; x=1742459830; b=wk8K2XWFSpNZtblWKZWXViFgz2WDo+4gKX5ufBBXSHJmQ8s
-	zvPnuGjnLnLXu6Z/3WDIqIZ1UnD23Rn0WwX5AVroGD3PDbOZ+NMnkKZFyaLep52hOzUT7WElTnI/k
-	oi4elOmETS/xxchUkGLoWcD1NLFhCkC3DNB5oIb/xnEn7zr2kgeJMVOyu+JaxrZhFC3ufriAmyZ1u
-	tZT6SeAK2fYllYDrExmpyiP9UmEas6Vo5zxnKV51RVa7EzzFSY9qdf40CtHJmE3RcC10I82pZQPhT
-	dQA32MpVBAbbvpjtJUsFH93AY/1A1IqQkCpKCbUDqVV0yD67/Pk8wDswX9mP0onA==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1tq6j3-00000002j6f-1zcs;
-	Thu, 06 Mar 2025 09:37:06 +0100
-Message-ID: <348c5c7840db255e6cdccb566f7cc3042dd18799.camel@sipsolutions.net>
-Subject: Re: [PATCH v2 0/5] wfx: add support for WoWLAN on Silabs WF200
-From: Johannes Berg <johannes@sipsolutions.net>
-To: =?ISO-8859-1?Q?J=E9r=F4me?= Pouiller <jerome.pouiller@silabs.com>, 
-	linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Kalle Valo <kvalo@kernel.org>, 
-	linux-devel@silabs.com
-Date: Thu, 06 Mar 2025 09:37:04 +0100
-In-Reply-To: <47066295.fMDQidcC6G@nb0018864>
-References: <20250302144731.117409-1-jerome.pouiller@silabs.com>
-	 <23857370.6Emhk5qWAg@nb0018864>
-	 <98b872e270bf2d03700b39ec5b62f2746eb46e88.camel@sipsolutions.net>
-	 <47066295.fMDQidcC6G@nb0018864>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1741250232; c=relaxed/simple;
+	bh=qzjXpCQjZyUGD9d9LRO+IYdghIyJg3tcoivgKSkjov4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D7kE15rCjvg83oDnXB9e9icgl5gps1uKtkS3vMd4KTt1nlYrmtN5mfCBVg/qSq6VNuWQIJIANoMaZbsizQZCmxlDVuO9Qszvpn7F76I/JA8T8zs/Hgn8XKJiH2Z73gk6eaGSD3XsOhC9tlziOla8zYNyP9djceSqc5x3PCqgufs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9E03C4CEE0;
+	Thu,  6 Mar 2025 08:37:10 +0000 (UTC)
+Message-ID: <06766086-b148-436c-b6d4-975c26493233@xs4all.nl>
+Date: Thu, 6 Mar 2025 09:37:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: vim2m: print device name after registering device
+To: Shuah Khan <skhan@linuxfoundation.org>,
+ Matthew Majewski <mattwmajewski@gmail.com>,
+ Uwe Kleine-Konig <u.kleine-koenig@baylibre.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250219190501.295976-1-mattwmajewski@gmail.com>
+ <ym5q2cpn2lxk7sarylnf4o3ztvtnb47wroxdiibdsp6yz4gt2y@jfyfo2ekmdmj>
+ <5051c252-f1ef-4731-b0cb-fedfcda04d98@linuxfoundation.org>
+ <61bd42742ff8a8e5f409b0f2ccc4ab8875dfe7a4.camel@gmail.com>
+ <fdd0356f-d91e-400e-9598-d34e0862c9cb@linuxfoundation.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <fdd0356f-d91e-400e-9598-d34e0862c9cb@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 2025-03-06 at 09:35 +0100, J=C3=A9r=C3=B4me Pouiller wrote:
->=20
-> I though the missing target tree name was a blocker.
->=20
+Hi Shuah,
 
-Ah, no. That's just because it doesn't _always_ manage to apply it. It's
-only a blocker if that's the only thing it reported, but here it just
-said it was missing but went ahead anyway.
+On 20/02/2025 17:27, Shuah Khan wrote:
+> On 2/20/25 08:29, Matthew Majewski wrote:
+>> On Wed, 2025-02-19 at 17:21 -0700, Shuah Khan wrote:
+>>> On 2/19/25 14:58, Uwe Kleine-Konig wrote:
+>>>> On Wed, Feb 19, 2025 at 02:05:01PM -0500, Matthew Majewski wrote:
+>>>>> Move the v4l2_info() call displaying the video device name after
+>>>>> the
+>>>>> device is actually registered.
+>>>>>
+>>>>> This fixes a bug where the driver was always displaying
+>>>>> "/dev/video0"
+>>>>> since it was reading from the vfd before it was registered.
+>>>>>
+>>>>> Signed-off-by: Matthew Majewski <mattwmajewski@gmail.com>
+>>>>
+>>>> A Fixes: tag would be great.
+>>>
+>>> Matthew, there is no need to resend the patch. Just send me the
+>>> Fixes tag and I will update the repo.
+>>>
+>>>
+>>
+>> Ok, here is the fixes tag:
+>>
+>> Fixes: cf7f34777a5b4100a ("media: vim2m: Register video device after
+>> setting up internals")
+>>
+> 
+> Thank you. commit is now updated.
+> 
+> thanks,
+> -- Shuah
+> 
 
-Honestly, I have no idea why all that is, sorry.
+Please post your PR today, if possible. Otherwise it might slip to the
+v6.16. Alternatively, I can take this patch myself.
 
-johannes
+Also, why did you pick up this vim2m patch? I was a bit surprised by that.
+
+Regards,
+
+	Hans
 
