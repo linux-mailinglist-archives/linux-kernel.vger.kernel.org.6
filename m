@@ -1,132 +1,134 @@
-Return-Path: <linux-kernel+bounces-548220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3946A541E8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:06:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7141A541ED
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:09:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DD723AF3E3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:06:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B12431697C0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC70619B5B1;
-	Thu,  6 Mar 2025 05:06:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B7619D89B;
+	Thu,  6 Mar 2025 05:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="opJeeLev"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=deepin.org header.i=@deepin.org header.b="tBPd+AZy"
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7FD67E9;
-	Thu,  6 Mar 2025 05:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAAD319CC3A;
+	Thu,  6 Mar 2025 05:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741237580; cv=none; b=OIUzg+6yMIwxzkUU8Gf1i8NOgQSIVmHpNQvZ9AqVgUOzy7XzPRy7eXmJfgJ8NNPm7unIqFolxbT2bP0Mc7uxTGR6kf/7bJTMJWTOtQjReQ0jl6Fl13nUxpcM1j7Vvbl1aNkx/nbDn529uzbgq/CTfC5LfUCee25RQHiRIiJb5Ro=
+	t=1741237738; cv=none; b=TLDHaDCdtVzO/IzC0YxZ+3eDbaPG8UuLR99pabONiDX7IT2mZWIMZf5tRqlnN3ksDhTx/3IVEMrDwnkdO0xU5vahoVx6YMEJlDeXrR+Fbtd2oGnMqGYq6t5mXsjoTUmQobCsNzXuPFAnfjUyWBKawyCtvegODg0ByxXP97eY+68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741237580; c=relaxed/simple;
-	bh=SO/06DDnaC/Px/YRUqD5q6hRbKV/kkL7x+tlzsOZFTA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=m5Uq/kgak8TeE64mpEKU+Nh8rCTD8PmNp77NN4x3IbgYrYpRihbQ/tMIR7CFPo1uc2PQFTJSdUxLVqRzx0dpuj1KQfJfPGJK0blj9/+3//Q5yH13qEpSWm98XK72XCDDlOf9z+43g5HTCDVKWiHhbiSyq0hJDUPLPmo3cRJluTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=opJeeLev; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5260HJ1u004209;
-	Thu, 6 Mar 2025 05:06:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VvrPLb27ydwGab1Okt1U/gVJpJQA7HTVXHJRSFUowIs=; b=opJeeLevCgLP3Kim
-	mtKjW4w4LBTvEy+v4B6yULVkE2T0jfWj/kBp1/EjRg88uhPQueTCVijtdAOMngXb
-	s0RrrmSbfuUQkMa6xXIFXqvLcYgEYMLFS+mEB3vjIsRx+3yVkynaTMWTqki8zO/l
-	WlZoqaQB4N8FKJq0+pnfu9KQ30sTgoDS5bPHZOOjqvrw86P8DXuO5WeuXoH/gHDW
-	64jYO9ifyb2Jim4AmoIwFvT3tPE0cRVhNtEhDWs8+CI55rSHesHPw1z9afcl0rF7
-	TBBKE63DqNWAQbnYJvZxZIW7ygWnizWaV8GaO1MErPeu/GqLgOgI4IWKv/RhLsQe
-	Y9qK/g==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6uqp8k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 05:06:10 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5265693E021759
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 6 Mar 2025 05:06:09 GMT
-Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Mar 2025
- 21:06:08 -0800
-Message-ID: <d1162f8d-5977-42f6-931b-266a2f25049f@quicinc.com>
-Date: Wed, 5 Mar 2025 21:06:08 -0800
+	s=arc-20240116; t=1741237738; c=relaxed/simple;
+	bh=r4cqq92u4QrOP26bPzQzQ44NQlShBXBS0KDKN4ZO3aE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jKJW+AAadzgKDn3bnulHoIcucNe0GjEXLEKXKP8a9pfxUMtFMUl7DNdbqJr96MsoRylftaYsWcttLUNXZy+GBJWmDCAXXehn3JtsJiCaP0RTcv+vYabHP1aKaqrFslD/qhHrKsoChH1LFDQxEJMUvmhqfOgzzJALfjLH7A0S8Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepin.org; spf=none smtp.mailfrom=deepin.org; dkim=pass (1024-bit key) header.d=deepin.org header.i=@deepin.org header.b=tBPd+AZy; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deepin.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=deepin.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=deepin.org;
+	s=ukjg2408; t=1741237663;
+	bh=gXGZGJxxTGiGEquhpVC2RxsSuokp9eU5juqlOjiyPCg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=tBPd+AZy769/Tgtp3Ygvvq16i/fcX4cALb17vjbjcp6WO/1wxCa9uLkEzG405jlkp
+	 ecn2MemzkdYlm5XRlCPQ9NYO87QHjqiEr3u3l05iiSokNg9yFJtliBipkn51O8bvCp
+	 i4prHl49KT1Y7ebdDDGcK85twKwAy8RFdPczVJzI=
+X-QQ-mid: bizesmtp88t1741237654ti749i3s
+X-QQ-Originating-IP: eUplNXEW/+zR+b+IrjvomDkK5HrJhM4U3n06ZpEZ/So=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 06 Mar 2025 13:07:32 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 6009695757988680814
+From: Chen Linxuan <chenlinxuan@deepin.org>
+To: Sasha Levin <sashal@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Jann Horn <jannh@google.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	Chen Linxuan <chenlinxuan@deepin.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>
+Cc: stable@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org
+Subject: [PATCH] lib/buildid: Handle memfd_secret() files in build_id_parse()
+Date: Thu,  6 Mar 2025 13:06:58 +0800
+Message-ID: <0E394E84CB1C5456+20250306050701.314895-1-chenlinxuan@deepin.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/dpu: Support YUV formats on writeback for DPU
- 5.x+
-To: Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Rob Clark
-	<robdclark@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        "Sean
- Paul" <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David Airlie" <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20250305-cdm-yuv-fix-v1-1-5f1dd8ecf76c@quicinc.com>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20250305-cdm-yuv-fix-v1-1-5f1dd8ecf76c@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: QlhczLXY_3b_uayw41YfajSo9oE7xRkh
-X-Authority-Analysis: v=2.4 cv=H40hw/Yi c=1 sm=1 tr=0 ts=67c92d42 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=nCll1-u-4TY5cO6HX5sA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: QlhczLXY_3b_uayw41YfajSo9oE7xRkh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-06_02,2025-03-05_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=720
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503060034
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:deepin.org:qybglogicsvrgz:qybglogicsvrgz7a-0
+X-QQ-XMAILINFO: M+0YV038q5N1MIWhZIbdnp8w8lLWqZ5KrdpfI4F458ZrmhoYwgAnQbOR
+	PKEJFC7xq+KJJWoWfmJn5KEmihDSWO4461R0WBwXI6lp0ZYwr7YfXFI+sKqzLY2Hhx2ysxo
+	s0U1sqYsoK5iP3rRCxCrQRqUJN7iMUOavKLtxvFUQRA3qJ0xt/1RhhsIN1CNCYLOxgdXL2E
+	hdtr4yda9Fa9ATI0rxojhEOXVp0V1G3ViukYllNhPkn3up9uctLoH4Ww08+27CYqpKrMO9M
+	R+MSr4ZYe0Ay3Df1cJftMJYkyBty556aCPUk3+bpvISWLmDVejfENm0Q7OnueEUDy/ic8cH
+	7JM2L+flfdiq/t4L5s9zanCuHLdK+hIJVQguWGQQo+MpksFJQpEf5oK6Pru6yTwgn+iF2qk
+	XUpZUyJOgzJ+fuw7y6xvKQrxzZivR9GKlbyuMf9evMG7dEILFafuseprhWMqSVvwERj92vA
+	MAA20dQbENRhN9YyV7xEWI0ejQ3IOHIsX61/x89PNDPMVj7OpPmdXcrne+Y5N9+yluoOAfQ
+	mHEbxyxH2nyO3vNp9GVye+SKtdpIS6bt6qDPKIsJenBBF2FE9XRFLrA5Ryiz6D+3qbgl+W3
+	1pBk4AUPaGMqXeKOtrdNXCKNpt+Wa0L8MJWcyr3hpzwexP0ambFf/mwmPsmr3NBdGTqqvL5
+	MUltjNyuRGCmoaf2XlJtunU0a2423vWcwdEN66peBQLorfK3ShXvdn2AUX3MaJq0FXAyz7Z
+	O8m7pzY/nDhnfErgJ1rqiemY7b+5jt31WY8eZfnZXmGz7MGYv+r09JN9kOoBCSPPJjcnPNr
+	+hJuy6ACsicbM6mrRmN91AoDAzEFdNXck7C1nteCan/2rCMa7c73+A9kEuk4J3ucmzRABQ7
+	dUu8EzNl3/QpT93ki5Nk4RPM/iSqH2lK9TSyvUpxgpbE7D1lHw4zngze14dptgiMDFxXNW/
+	JsmZrazv99ykv38mZRhrBqrcAHt15XvqhSjO9iXYigB/qFA==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+X-QQ-RECHKSPAM: 0
 
+Backport of a similar change from commit 5ac9b4e935df ("lib/buildid:
+Handle memfd_secret() files in build_id_parse()") to address an issue
+where accessing secret memfd contents through build_id_parse() would
+trigger faults.
 
+Original report and repro can be found in [0].
 
-On 3/5/2025 7:15 PM, Jessica Zhang wrote:
-> Now that CDM_0 has been enabled for DPU 5.x+, add support for YUV formats
-> on writeback
-> 
-> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h  | 4 ++--
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h   | 4 ++--
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h  | 4 ++--
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h   | 4 ++--
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_3_sm6150.h   | 4 ++--
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_5_4_sm6125.h   | 4 ++--
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_2_sc7180.h   | 4 ++--
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_6_4_sm6350.h   | 4 ++--
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h   | 4 ++--
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h   | 4 ++--
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h   | 4 ++--
->   drivers/gpu/drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h | 4 ++--
->   12 files changed, 24 insertions(+), 24 deletions(-)
-> 
+  [0] https://lore.kernel.org/bpf/ZwyG8Uro%2FSyTXAni@ly-workstation/
 
-Good catch!
+This repro will cause BUG: unable to handle kernel paging request in
+build_id_parse in 5.15/6.1/6.6.
 
-Fixes: 15f2825defeb ("drm/msm/dpu: enable CDM_0 for DPUs 5.x+")
+Some other discussions can be found in [1].
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+  [1] https://lore.kernel.org/bpf/20241104175256.2327164-1-jolsa@kernel.org/T/#u
+
+Cc: stable@vger.kernel.org
+Fixes: 88a16a130933 ("perf: Add build id data in mmap2 event")
+Signed-off-by: Chen Linxuan <chenlinxuan@deepin.org>
+---
+ lib/buildid.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/lib/buildid.c b/lib/buildid.c
+index 9fc46366597e..b78d119ed1f7 100644
+--- a/lib/buildid.c
++++ b/lib/buildid.c
+@@ -157,6 +157,12 @@ int build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
+ 	if (!vma->vm_file)
+ 		return -EINVAL;
+ 
++#ifdef CONFIG_SECRETMEM
++	/* reject secretmem folios created with memfd_secret() */
++	if (vma->vm_file->f_mapping->a_ops == &secretmem_aops)
++		return -EFAULT;
++#endif
++
+ 	page = find_get_page(vma->vm_file->f_mapping, 0);
+ 	if (!page)
+ 		return -EFAULT;	/* page not mapped */
+-- 
+2.48.1
 
 
