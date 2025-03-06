@@ -1,107 +1,129 @@
-Return-Path: <linux-kernel+bounces-548396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D231A5444A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:11:00 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E033A5444B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:11:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8CA1892479
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:11:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6521A7A43C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DEB1FC103;
-	Thu,  6 Mar 2025 08:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC7F1F8736;
+	Thu,  6 Mar 2025 08:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="qRwsTV1J"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="W6iagh7c"
+Received: from omta34.uswest2.a.cloudfilter.net (omta34.uswest2.a.cloudfilter.net [35.89.44.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543911F3FF8;
-	Thu,  6 Mar 2025 08:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63B371F63F0
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741248648; cv=none; b=fb2U81d6jDMflJdN0gCPzRrBxJt+TsJR/zNyxZQSCr1/fpIFE6PyywMV5GBcL8Gw1TuPXlJ3TyxWXknNsr1JNR6f22XADWgwoBoS9Qt7SmbDhPftNTNZbbSDcsGnclWzNK5lbVw6g+/yIuIJFhK9+aoc4leTKuLxoDRtRCErTPs=
+	t=1741248672; cv=none; b=Uaj8avZPRz5vg0XnUiq1x66NjsVKe5A1fFULLpZvrCGP2W5/edJ4dgpQK0gKJ7tb85wqzJliOFp9FHuDt3rqFFY75s5AlS3Be1d4aH/8vTv6kgb1JvjHa1GNCtQh03mFGyAezw1XPUQa9u/jd3CwjJn/Zedg+7W+BR5X0bK6ybI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741248648; c=relaxed/simple;
-	bh=y1jyoG2OYZHXc+mxM9f2meBVTyx6le840P9TMgyFh+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sNtKVkwyC0W6JwfiYD5yhcQVOb6/9ju+4ZTzRA+rdfbvZKQS7j+ML97FTcxxo+55hKu2Qoej30Z+sh3wcsJAqO4kz0UjSUTPWYvFfk/BunmqZnVoXhpUYx+4HS217L/FLUKhmDSmXU82S0L/3EjxUrYSrWbL5gnzQMOg/9SFf6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=qRwsTV1J; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1741248635;
-	bh=y1jyoG2OYZHXc+mxM9f2meBVTyx6le840P9TMgyFh+4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qRwsTV1JFdbocyf1I4u0uZdJYpMNpU7YnRpWkjEymYyU/qjJaRTnyO247BZyPCYHx
-	 9qGCfQl7ZMx7HfKGRxzkyuZOYpmKVvvtO9E02kRtH4CGtEulfvKF6QG95dwbDGGg2J
-	 PiH8iQpi5J0HzxwVFa/ff1p3xgrxiRgkkRbMu+s8=
-Date: Thu, 6 Mar 2025 09:10:34 +0100
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: kpcyrd <kpcyrd@archlinux.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Arnd Bergmann <arnd@arndb.de>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Daniel Gomez <da.gomez@samsung.com>, Paul Moore <paul@paul-moore.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Fabian =?utf-8?Q?Gr=C3=BCnbichler?= <f.gruenbichler@proxmox.com>, 
-	Arnout Engelen <arnout@bzzt.net>, Mattia Rizzolo <mattia@mapreri.org>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-security-module@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v2 6/6] module: Introduce hash-based integrity checking
-Message-ID: <169f0e30-a8b2-494d-917e-eade8340cf67@t-8ch.de>
-References: <20250120-module-hashes-v2-0-ba1184e27b7f@weissschuh.net>
- <20250120-module-hashes-v2-6-ba1184e27b7f@weissschuh.net>
- <8e5b171d-78fa-4cba-8217-1a661d23785b@archlinux.org>
+	s=arc-20240116; t=1741248672; c=relaxed/simple;
+	bh=2WtO7fJdmpFUBWwBkow+awaZg0rcq+XOh/tCzbCjYkY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XUzhrhlaZG9hGDBOq+VamgscwRKAk3GQYIAb5z11h1OLTZBPXnf8heTnnxcGsPb9c0Eo8O4EFAs2/FY9UvzXRo1cEG4sD4Hd7NHTHLCuVE3GooP2s0LsPyjovYNSh3F0KhYWM6vToSoeXceChhZuoOCIh69pwYf/izZvOwpeFlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=W6iagh7c; arc=none smtp.client-ip=35.89.44.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
+	by cmsmtp with ESMTPS
+	id pyeitsPdSWuHKq6JstEmSI; Thu, 06 Mar 2025 08:11:04 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id q6JqtxakbSiAOq6JrtKa6P; Thu, 06 Mar 2025 08:11:03 +0000
+X-Authority-Analysis: v=2.4 cv=RJ61HZi+ c=1 sm=1 tr=0 ts=67c95897
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=rErLWITuNZXW3qYkC4siHHzOtOybG/26/N5SxBLh8+o=; b=W6iagh7cg9JLvNaCZV29txXbOM
+	o2qfbekY864xfHULVpGe1FcLvNDm9HfWKbvtnILZIJA0dFy4Af0GRvFw6dhbrAGK72cSO/txYoXYu
+	gDBCk8emQ/uJjYKi1NKIyp1tZvP8ZWg4DAoareBA/lButdMYWl11RZ+KDttRhEjm5k/ORmqQa5MDI
+	AxrK/r5PxZdoJC9hQ/sCJ0ZyMn6o2MLs4OAWJl15puXthr+3DOgbtKIysIroc+McqDwwZcRquUjtY
+	GMy010teShK0wpagOMHfkLacQQnvg5RUXVtufAGBIn7l7tLCt/FFhqkcno7DBF2Sjwc+0ldd3yclH
+	TIPe0rVA==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:55354 helo=[10.0.1.116])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.98.1)
+	(envelope-from <re@w6rz.net>)
+	id 1tq6Jo-00000002zZq-3ifH;
+	Thu, 06 Mar 2025 01:11:00 -0700
+Message-ID: <d698d4fa-85a2-4566-a940-af5dbf1fdfc6@w6rz.net>
+Date: Thu, 6 Mar 2025 00:10:57 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8e5b171d-78fa-4cba-8217-1a661d23785b@archlinux.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/150] 6.12.18-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250305174503.801402104@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20250305174503.801402104@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1tq6Jo-00000002zZq-3ifH
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.116]) [73.223.253.157]:55354
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 35
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfOQY14HsyEuOvdyc6hvqGCCyNrA02R3eczu5ukD6Gd7JAI85jth6yHHEOt+AaFTT8DUVCG+NE6ffaijyeJkk7ipBK0TkEWbjRl5Xpu/6LVQkP5MCD710
+ k47Pa//4eBWkINJOe0lxjmT+UCYEs1vEsoCNt2wP5Q/ahd22LJUN1+jGzeetk5IHbt8NUsHopaxZwGai20zr6GjariZzrQuGA0M=
 
-On 2025-01-23 00:28:40+0100, kpcyrd wrote:
-> Thanks for reaching out, also your work on this is much appreciated and
-> followed with great interest. <3
-> 
-> On 1/20/25 6:44 PM, Thomas Weißschuh wrote:
-> > diff --git a/kernel/module/main.c b/kernel/module/main.c
-> > index effe1db02973d4f60ff6cbc0d3b5241a3576fa3e..094ace81d795711b56d12a2abc75ea35449c8300 100644
-> > --- a/kernel/module/main.c
-> > +++ b/kernel/module/main.c
-> > @@ -3218,6 +3218,12 @@ static int module_integrity_check(struct load_info *info, int flags)
-> >   {
-> >   	int err = 0;
-> > +	if (IS_ENABLED(CONFIG_MODULE_HASHES)) {
-> > +		err = module_hash_check(info, flags);
-> > +		if (!err)
-> > +			return 0;
-> > +	}
-> > +
-> >   	if (IS_ENABLED(CONFIG_MODULE_SIG))
-> >   		err = module_sig_check(info, flags);
-> 
-> From how I'm reading this (please let me know if I'm wrong):
+On 3/5/25 09:47, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.18 release.
+> There are 150 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Fri, 07 Mar 2025 17:44:26 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.18-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-<snip>
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-This is how it is intended, thanks for checking.
+Tested-by: Ron Economos <re@w6rz.net>
 
-> This all seems reasonable to me, maybe the check for
-> is_module_sig_enforced() could be moved from kernel/module/signing.c to
-> kernel/module/main.c, otherwise `sig_enforce=1` would not have any effect
-> for a `CONFIG_MODULE_HASHES && !CONFIG_MODULE_SIG` kernel.
-
-Moving the check would complicate the logic and shouldn't make a
-difference. In signing.c it ensures that a validation failure is
-propagated. However that is the default behaviour in hashes.c.
-
-
-Thomas
 
