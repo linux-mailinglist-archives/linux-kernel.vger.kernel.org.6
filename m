@@ -1,67 +1,69 @@
-Return-Path: <linux-kernel+bounces-548418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81B38A54495
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:21:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EEEEA54498
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:21:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFD68171DE3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:20:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EBC1188A234
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:21:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC771D8DEE;
-	Thu,  6 Mar 2025 08:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339C11FBEB1;
+	Thu,  6 Mar 2025 08:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="btdUpXCk"
-Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cotuQ391"
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980FF1C8625
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C1C192D9D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741249221; cv=none; b=ksyKFMlKKqmH0ghz5D2p+uYEdeHq8Qi47SmAZ5ogBXyP388obQCHqkqR8Q21TnwMDD/Fpf5hX8RIkaIyeKLP2Kj2lT/JLxopJpvZ4Tgzn3CkLPKDOktz0Y4C5mGaqx1hLsGflF9gqrNjjR3RLyhNwnqLjpnWSI4//bQjkCj48Tg=
+	t=1741249268; cv=none; b=l7u703j9501XjlZmwbJTGj5eBxpXuuA2p5iZOhy0PbytBoGnaS3IdmfTwdyLxWRWkb2l/YqxWoOqwtStbw7qUHywSBjqP+n1KvBa9ScWwvGOJm+i7WnEWFSl/zQE0ZSbF6rq+/GY6g+Y2k+x4Ub77SNiI5XF49uRj21wkOaTYpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741249221; c=relaxed/simple;
-	bh=kceH0gTrTRVWZzXH93HjhlGVBTj2mbk4AUyaS4+UToM=;
+	s=arc-20240116; t=1741249268; c=relaxed/simple;
+	bh=waGNypVG8QBKLqjVvp6fgOObN1x5Fb4QVWKFnsMd65E=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HtKqj7FIdHuWXHEuovbNBkC0QYcyrOMVV6dnUD1J5Och5P8lLp4o2ZtpPvEIK9YEM3kCyvrlUyWSHizBSmcDUoB24YpBSqD7n0sVKYnu3MfYGm2tKOHlCOPystYl2hzGfv2vT7D1ZsO5Sr9pfucT6xxYxCNwWllZFNKt6PyR4ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=btdUpXCk; arc=none smtp.client-ip=94.124.121.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=protonic.nl; s=202111;
-	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
-	 message-id:subject:cc:to:from:date:from;
-	bh=+lejcC24gc0iyhaiB1u+hyb9XJFYxfRXSIGs4t6bvk4=;
-	b=btdUpXCkXyXHybWKKSrI8Spk1EYJ4kyvUqTVl9D31+thMsJf8szZRebmNpC56qJzKaa2Q3UKGufYy
-	 aypgWEnSRAMbMCiCiNYYlJStMZB3LF57Mg9UH32m8NNGn+5FNiDG4aLbjiAuYAsxtaJyhwwuDsmUhi
-	 E3VXpsLoRKerGAJFqs7NTx6PyTU74X/w8gx3TMre+W50NOCVxRMIdjBNb7tRk42iDhtRmVfHavD6Xy
-	 Jhjk1pW63KFs0ifHfQqvzi2jjXaHhvFADwlycqOkGPU4VOxwfbmGTTaSjbnpPBK1aXV830Vg6MbhG1
-	 ycw8Zs1X01zsYZLIX7zxM7PO1JnrJoQ==
-X-MSG-ID: d4355bb4-fa63-11ef-a39e-00505681446f
-Date: Thu, 6 Mar 2025 09:20:13 +0100
-From: David Jander <david@protonic.nl>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
- <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
- <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>
-Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
-Message-ID: <20250306092013.1147f27e@erd003.prtnl>
-In-Reply-To: <2025030611-embezzle-sacrament-00d9@gregkh>
-References: <20250227162823.3585810-1-david@protonic.nl>
-	<20250227162823.3585810-2-david@protonic.nl>
-	<6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
-	<20250305164046.4de5b6ef@erd003.prtnl>
-	<mzxammninwmak5ti4c6is4pbdx3xzzziiwbxiwrldjyxgae4ok@ocec24vu4txa>
-	<2025030611-embezzle-sacrament-00d9@gregkh>
-Organization: Protonic Holland
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=git/943S/Td6YYLMIWCs69PwE/GKFqD48azjAsUqrrKYOADvZixSJViPP/Uhi2BzJITMcMSH6z7JAM1DjCkbMfkcOvuWQ8Gu3xFmbiiIvFzLkx4Ri/YLEy1uAZm7uL1fiG6Bwek8JrwvWhQNZFUOnm4YyWKHlp+icCFIdC7gTTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cotuQ391; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1775F443EF;
+	Thu,  6 Mar 2025 08:21:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741249264;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=477azTeILJMHJbPuzL3O9g7l+T0x51meEHGTEhodXtI=;
+	b=cotuQ391r97jESnp54sLMEE/H58/aOC+YaNt0GWbUCOhBIKRPh2DZb1p2QqO5cm3n+o/R/
+	VHxzTmUT+HV5il0Bk+aVQ88ZKoe/AZZl8kEFvbtHJJ9uOrQJnyDQpXaSAweu2egzT6qL56
+	4K5v8ldvhVLzDGfljPGSWWR0NMCRKpUpiIk+q8b0DoMP5zGD4pCcuJ8j0pJYMMKakElz6l
+	CzqhwAxtfOq5IG9igj6kVGlr1Oe35QEPSAHAYFU4m7BpDFZOVMFoSkIvPT9gBi9uUNFwfN
+	Fr6FxvT9PfpYU/VDKkOh4thfmoycPng+1Q3vUX80rfg3b9lvwlIxsFRQdA54AQ==
+Date: Thu, 6 Mar 2025 09:21:02 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Douglas
+ Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>, Simona Vetter <simona.vetter@ffwll.ch>
+Subject: Re: [PATCH v5 04/16] drm/atomic: Introduce helper to lookup
+ connector by encoder
+Message-ID: <20250306092102.77583816@bootlin.com>
+In-Reply-To: <20250304-bridge-connector-v5-4-aacf461d2157@kernel.org>
+References: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
+	<20250304-bridge-connector-v5-4-aacf461d2157@kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,114 +71,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdejvdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtkeeftdertdejnecuhfhrohhmpefjvghrvhgvucevohguihhnrgcuoehhvghrvhgvrdgtohguihhnrgessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveefkeegteduhedvgeffieejfffgtdffgfduvedtveelkeegvedufedutdevveffnecukfhppedvrgdtudemvgdtrgemvdegieemjeejledtmedviegtgeemvgdvvdemiedtfegumeehkegrnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegvtdgrmedvgeeimeejjeeltdemvdeitgegmegvvddvmeeitdefugemheekrgdphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomhephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeduiedprhgtphhtthhopehmrhhiphgrrhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopegrihhrlhhiv
+ ggusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhimhhonhgrsehffhiflhhlrdgthhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhmshhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrgh
+X-GND-Sasl: herve.codina@bootlin.com
 
-On Thu, 6 Mar 2025 08:18:46 +0100
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+Hi Maxime,
+Hi Maxime,
 
-> On Thu, Mar 06, 2025 at 12:21:22AM +0100, Uwe Kleine-K=C3=B6nig wrote:
-> > Hello David,
-> >=20
-> > On Wed, Mar 05, 2025 at 04:40:45PM +0100, David Jander wrote: =20
-> > > On Fri, 28 Feb 2025 17:44:27 +0100
-> > > Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> wrote: =20
-> > > > On Thu, Feb 27, 2025 at 05:28:17PM +0100, David Jander wrote:
-> > > > [...] =20
-> > > > > +static int motion_open(struct inode *inode, struct file *file)
-> > > > > +{
-> > > > > +	int minor =3D iminor(inode);
-> > > > > +	struct motion_device *mdev =3D NULL, *iter;
-> > > > > +	int err;
-> > > > > +
-> > > > > +	mutex_lock(&motion_mtx);   =20
-> > > >=20
-> > > > If you use guard(), error handling gets a bit easier. =20
-> > >=20
-> > > This looks interesting. I didn't know about guard(). Thanks. I see the
-> > > benefits, but in some cases it also makes the locked region less clea=
-rly
-> > > visible. While I agree that guard() in this particular place is nice,
-> > > I'm hesitant to try and replace all mutex_lock()/_unlock() calls with=
- guard().
-> > > Let me know if my assessment of the intended use of guard() is incorr=
-ect. =20
-> >=20
-> > I agree that guard() makes it harder for non-trivial functions to spot
-> > the critical section. In my eyes this is outweight by not having to
-> > unlock in all exit paths, but that might be subjective. Annother
-> > downside of guard is that sparse doesn't understand it and reports
-> > unbalanced locking.
-> >   =20
-> > > > > +	list_for_each_entry(iter, &motion_list, list) {
-> > > > > +		if (iter->minor !=3D minor)
-> > > > > +			continue;
-> > > > > +		mdev =3D iter;
-> > > > > +		break;
-> > > > > +	}   =20
-> > > >=20
-> > > > This should be easier. If you use a cdev you can just do
-> > > > container_of(inode->i_cdev, ...); =20
-> > >=20
-> > > Hmm... I don't yet really understand what you mean. I will have to st=
-udy the
-> > > involved code a bit more. =20
-> >=20
-> > The code that I'm convinced is correct is
-> > https://lore.kernel.org/linux-pwm/00c9f1181dc351e1e6041ba6e41e4c30b12b6=
-a27.1725635013.git.u.kleine-koenig@baylibre.com/
-> >=20
-> > This isn't in mainline because there is some feedback I still have to
-> > address, but I think it might serve as an example anyhow.
-> >  =20
-> > > > > [...]
-> > > > > +
-> > > > > +static const struct class motion_class =3D {
-> > > > > +	.name		=3D "motion",
-> > > > > +	.devnode	=3D motion_devnode,   =20
-> > > >=20
-> > > > IIRC it's recommended to not create new classes, but a bus. =20
-> > >=20
-> > > Interesting. I did some searching, and all I could find was that the =
-chapter
-> > > in driver-api/driver-model about classes magically vanished between v=
-ersions
-> > > 5.12 and 5.13. Does anyone know where I can find some information abo=
-ut this?
-> > > Sorry if I'm being blind... =20
-> >=20
-> > Half knowledge on my end at best. I would hope that Greg knows some
-> > details (which might even be "no, classes are fine"). I added him to Cc=
-: =20
->=20
-> A class is there for when you have a common api that devices of
-> different types can talk to userspace (i.e. the UAPI is common, not the
-> hardware type).  Things like input devices, tty, disks, etc.  A bus is
-> there to be able to write different drivers to bind to for that hardware
-> bus type (pci, usb, i2c, platform, etc.)
->=20
-> So you need both, a bus to talk to the hardware, and a class to talk to
-> userspace in a common way (ignore the fact that we can also talk to
-> hardware directly from userspace like raw USB or i2c or PCI config
-> space, that's all bus-specific stuff).
+On Tue, 04 Mar 2025 12:10:47 +0100
+Maxime Ripard <mripard@kernel.org> wrote:
 
-Thanks for chiming in. Let me see if I understand this correctly: In this
-case, I have a UAPI that is common to different types of motion control
-devices. So I need a class. check.
+> With the bridges switching over to drm_bridge_connector, the direct
+> association between a bridge driver and its connector was lost.
+> 
+> This is mitigated for atomic bridge drivers by the fact you can access
+> the encoder, and then call drm_atomic_get_old_connector_for_encoder() or
+> drm_atomic_get_new_connector_for_encoder() with drm_atomic_state.
+> 
+> This was also made easier by providing drm_atomic_state directly to all
+> atomic hooks bridges can implement.
+> 
+> However, bridge drivers don't have a way to access drm_atomic_state
+> outside of the modeset path, like from the hotplug interrupt path or any
+> interrupt handler.
+> 
+> Let's introduce a function to retrieve the connector currently assigned
+> to an encoder, without using drm_atomic_state, to make these drivers'
+> life easier.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Co-developed-by: Simona Vetter <simona.vetter@ffwll.ch>
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/gpu/drm/drm_atomic.c | 45 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/drm/drm_atomic.h     |  3 +++
+>  2 files changed, 48 insertions(+)
+> 
 
-Do I need a bus? If one can conceive other drivers or kernel parts that tal=
-k to
-motion drivers, I would need a bus. If that doesn't make sense, I don't. Ri=
-ght?
+Tested the drm_atomic_get_connector_for_encoder() in the context of the
+ti-sn65dsi83 driver recovery process (later modification in this series).
 
-I actually can think of a new motion device that acts as an aggregator of
-several single-channel motion devices into a single "virtual" multi-channel
-device... so do I need also a bus? I suppose...?
-
-Then the question remains: why did the chapter about classes vanish?
+Tested-by: Herve Codina <herve.codina@bootlin.com>
 
 Best regards,
-
---=20
-David Jander
-
+Hervé
 
