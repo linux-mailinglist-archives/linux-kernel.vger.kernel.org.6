@@ -1,170 +1,153 @@
-Return-Path: <linux-kernel+bounces-548714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA11A54886
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:57:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7DCEA5487E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:56:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4FF33B0B8A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:57:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C72513B032F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA4F207DF5;
-	Thu,  6 Mar 2025 10:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE962202984;
+	Thu,  6 Mar 2025 10:56:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OWqBMR5k"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D3nZXF5/"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6802040B3;
-	Thu,  6 Mar 2025 10:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA0F1F63E1
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741258606; cv=none; b=tSvw/Mz1D9Cj6l9lBkZCOYuuU7b9tzz4X6Sq+rv7nRvAhveHNIP0wrtC5aASi3pr0XmOubo4HD8M5DoYTOkLdL259RJ+eS7qwN6uTobdSd48XZk+FJUlvGowZs2RUV2JdezkxpnL0nEP1A0slawMsnxnogb9VOcpsvaX0piF+2I=
+	t=1741258586; cv=none; b=snzxX0TuHhvdSz4Ha0hTwJ1iTd+Mwxy5wVuEbtoZA1HFdtuiWSHQ8SlkNo31iyIeU//ajH0h0Im0Q3MyXrhgcMvp2Uuam7NRtR3yMbSXotp4dK2GYdUwJn2FbArgc4/XMEFEY6pJuth78/Utc+RUGrDLItpaESaSBmNESLU5bFA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741258606; c=relaxed/simple;
-	bh=OZOz4ppa2x3js0XKm0w8nNkZ/jFIt9LsQCdsSo8qZhE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LEmCpa6uEdraFEFe3CmA49DRl1J8Zzj1C1ZfNTBadQL+c1m/oF7/wVHGheipZLA8F5wOLPH15D+8wfXdFcI+epkn/1z+WmpAfHoaZq+OzpM0kHuvk+cwqgDSVYSQgTrE+umO4j1aEs7GLrTIM/Kv6+aaJi1hAk/GvGt/CAiGiV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OWqBMR5k; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30bb64a4060so4606481fa.2;
-        Thu, 06 Mar 2025 02:56:44 -0800 (PST)
+	s=arc-20240116; t=1741258586; c=relaxed/simple;
+	bh=wdLF9WAxR22XqcYA7gK8+yGhNvwlObpcwbXvFtZiEFs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=FYOzePoROvuU9bZ4csYJFyHA+gCqrqacjhHdxdd4ttrKis0mYhUG6HccaGugqRg6L7FFlLsftOGCy74f+ozVc0QHbOE8XddTo3QpFO+OUzAsYmiXtlEJCuFj7+zestexgIFCBOLCp/3wslkThz83qEZw5wzlirfKSS2iAOlgJlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D3nZXF5/; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so2959575e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 02:56:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741258602; x=1741863402; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hMHaQ1o6v21KrrkkRtJmLVVRwtGp3fBs93qM6xwU+Zc=;
-        b=OWqBMR5kn4NdrkiO+NDSHKuO1N58vjfEVSFNaxcMbyx8xWXSDk7NrtiSp/ii6yGQfH
-         YTrHEZobUdlJPF6M57NExpcXo5/9OCP3oncm4ftMxWoK+l1igkGT471zxVDr/auOjJpI
-         3W+s9Yoxr1PuxGI6Pj+EZurz0H1t7evkP/6yHrfSf2feEo6fyp+CU88kg4LkIqdoRT/X
-         6fmNthjN8pIqIUjT6wwHgAUJIqw8fiIG7Y+Dzp1a+tkxCVuxQbYsMVTyUTDuPK1ebnBn
-         fPQciSJ7O+idn48If9WDGMB7TGM85y2kqw4v3eD0P8TaV81VY2+H4YSa4fp4mXieGEWV
-         E5Cg==
+        d=linaro.org; s=google; t=1741258583; x=1741863383; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ntfm4QuEvNugJ4xYbOkC0QKXHv8rdJmW1XkWNgsvim8=;
+        b=D3nZXF5/EgmrpyRYvBHvXgqQwreMtdW7zYzSUkjRcUyZhSQDGq0a6hTe6RCQ7Vix7j
+         P2LDfsYrOR2prJdlpe7zZMpjr88e2KIBGZMcjg8PYRksQlNYeRw61n4ns410TZP09T/N
+         X3a6Mv0yB6/0Ia5JmZeUopkD/Qi9yUucM3iWluMBdgV9q6drpTQMSyqIivK9X0qBN9GI
+         wvySesvU115luFCgGGSQbJU+w2OX9U1pE694urQrIHmSdHvGNOAdMoQzg5XzASBU+CnU
+         YSq4jvSMfuhp4xOUjdBqRKLZAc1ESr90iRfUj7WJq9yxRx+s32+CQo/vz44R2X+kaIhf
+         vdDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741258602; x=1741863402;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hMHaQ1o6v21KrrkkRtJmLVVRwtGp3fBs93qM6xwU+Zc=;
-        b=S1igTMqc4xWP6+jTXgi5IvaPpz1ImAwzGsFGYXo74aRH+KlNX4b+Fx/xVHFsXnZFNX
-         HI9fxkf1gwWsThnbKflYmLJbNTe7n5cgCN5Je+rz+K6fsQ4AqyB/Vy/f19zVjDtn8bfC
-         ZMcy+zPVLm4EFsiYsgDVbwaXVJgPrnnyJGvD67I+dEQ3y9fMZ2m8lybc0O8n/MygE/4F
-         dXLLQqA1iOzVpdyPUb+o7un9WHWL3Xa0cBwGTOzQxixOQitG+j3v6QTuVgz+E3I4P65i
-         yq1BuMAHmZJDD43ge6uwsKAjOC2ysc/2Bzr2E2YJ/6lY9V6Qnh6DRzXC+6OT3T9IdAOX
-         A3Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9liOGYsIhWGgIwytmAp+vxALeOAvfmHe7Plc8iYAMwVxRJBnNGPzXGyVnjM192SaGAEP+fXaWJ+dXHtY=@vger.kernel.org, AJvYcCWoCJF/Gu/CGPs0wDmPI0eCBw5TPSNHpwxL9kSVZqCREWIQ4rOnntpIaDHPVbnInp2Jm9hMIeS/WWSr8QmoTWoy@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuaMw2Ni6QhQ4eaNyq7A/OkJN6GYZ2bC6KPPwtc6BSY+x7HeJm
-	cuv2Yewv+cH5NbEED8LQsQ/nmlmPMrWlHbqFEoRnV+NwzNKa/zcY+DQ1UXhPIECzlZMLV3q8HVk
-	tMw36zJhD+ANBavQHO6ZvRyn8bbLkNxSgKG8=
-X-Gm-Gg: ASbGncsyDrX0646S69D6rYLK93evpR6Ap/iI8vVgK/z2LwIHQNlWD9BTaIyX90/FLlb
-	E6JJ7H04u2rOqxa1v+G9A+gS2L8CSXykIxpzfAMW6UR8sgh+14WtFBTd6sq9xqQsbqRKFAHvKIV
-	8V5RuIQVHVFWExsDsaJJaWxXtDieod5G3LK8JpTThY7KzC9TYi9bz8z5ji3e+U
-X-Google-Smtp-Source: AGHT+IG/TO5T0n0wIvdg1Tm0CVBvk9K3gHk3VYPGFJfuz5YDgYf4G5nntM0CP18nSr2vF+yrV9bLaUe/sBClD35k5FE=
-X-Received: by 2002:a2e:bc06:0:b0:30b:cc6a:ffd9 with SMTP id
- 38308e7fff4ca-30bd789238amr28340571fa.0.1741258602110; Thu, 06 Mar 2025
- 02:56:42 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741258583; x=1741863383;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ntfm4QuEvNugJ4xYbOkC0QKXHv8rdJmW1XkWNgsvim8=;
+        b=L1JeCyhTTgIaeuvYVj3h/WFvkSE15gnCfqAqH5oewX3yyXXRX2RNWgWfmXnA7cKxcf
+         fdc6Hi6zM1CPhVQjJM1S7HFTSi95SpkOvtG82bO8P/oEsZXDCt78Ut72JQCntzDs7Del
+         6mS+LSsuHZCB9c8RbDnUZ0EvlIdBXeQuQIwO79SH0cuFSM+PJhZbtDhtfn4/WeUwo8Vf
+         IJyP7AyatGVf3rPji+JqOcrRruD9R2m3VZJ6F1RccP2CM1NM9N/4qmg0846JmtscNA6C
+         Py4wEIuTZRIvj3P0KwMsNKezQsJJhm9FMMWdVfc7Wep0aMd6fBv/tAEFrjXKO7lA93h+
+         AzVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBxcrcFJr/8dg1I5gKmZZ6+upuyLLl1x1MhXXSqcZWPhshTYXldr/lv9edDduFJU9+7T6+0UC5IVm5msk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRsWEWs5sHqIufB6q0285M972LhwFpwzeY54hHWwjHwUGJ1xld
+	Xn6Vx0A6I16be6iMlwSWixhIGaHtySF2P8z3ZGwS8d2HVf6ZsudgxB21J4TwcLk=
+X-Gm-Gg: ASbGncuWmOHeGEgr4/IpNjM1DTO++aw0D30+FTgix7k7U0Z+EFYzFkhcYpK+boGMwXe
+	JsrVcqDGpjWkY1L5DJAGbmfSn5+pEi564asG5YOAtKNDwuI1zEDvrc9qsNlplLsBQ8k9Ry0nstR
+	YH1fEttmPn0b7ZAAXEy3kY8oP4ff+V61AZpoQSv9eVHk3sJ52UkUm42PGxu0ZO+If6s3o3fKWc6
+	I3asarPCLVg9KiC2IkqUQrzemIcjThfLbLw17kF4Z0pddFlxzhOk2O4Lm6bS3t+ndRBGC9Mkh4F
+	OqpURMfnYcgzvqHtYzj3FbB8Mu314Q7BS9H5O/ov8RlRlHqR5v48ASvXjRwZNxClbw==
+X-Google-Smtp-Source: AGHT+IGfTbr6JhO0xYsYYnKUYMZiygPSfbhn9Cgj55ShmF4I2gr2O9JfOHtuext0rfjHkqMFS1qAtw==
+X-Received: by 2002:a05:600c:2d16:b0:43b:cc3c:60bc with SMTP id 5b1f17b1804b1-43bd2989f68mr54496775e9.15.1741258582923;
+        Thu, 06 Mar 2025 02:56:22 -0800 (PST)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd831719sm17406675e9.0.2025.03.06.02.56.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 02:56:22 -0800 (PST)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: [PATCH v4 0/2] input: convert dlg,da7280.txt to dt-schema & update
+ MAINTAINERS
+Date: Thu, 06 Mar 2025 11:56:18 +0100
+Message-Id: <20250306-topic-misc-da7280-convert-v4-0-2972c4e81cb5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214-scanf-kunit-convert-v8-0-5ea50f95f83c@gmail.com>
- <20250214-scanf-kunit-convert-v8-4-5ea50f95f83c@gmail.com>
- <Z8hnXIrMV0ct1YR6@pathway.suse.cz> <CAJ-ks9k7G31uBqygXNtfXcwVQXWvkaAWJh1vkFw2_VZ5bAz=Vg@mail.gmail.com>
- <Z8hz8-Sa6XRC0W5Z@smile.fi.intel.com> <CAJ-ks9kz-fEH1YLiCn3fHR9AtYQLCZS77GKfOObifEL4GLwk8A@mail.gmail.com>
- <Z8ltGEp7NmhTwPRW@pathway.suse.cz>
-In-Reply-To: <Z8ltGEp7NmhTwPRW@pathway.suse.cz>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Thu, 6 Mar 2025 05:56:04 -0500
-X-Gm-Features: AQ5f1JpKo5Ng2Vlq-qCIgYpgDnzhnALdfZF8-xRNElx2CsSV5d1QAgxLDHkcU1E
-Message-ID: <CAJ-ks9=6qM2nn9eGZirtEUa=WifdToFRr=kE0gXw3OjFoqi4zA@mail.gmail.com>
-Subject: Re: [PATCH v8 4/4] scanf: break kunit into test cases
-To: Petr Mladek <pmladek@suse.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, David Gow <davidgow@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Shuah Khan <shuah@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFJ/yWcC/43NQQrCMBCF4atI1o5k0rRNXXkPcRHTRAe0KUkJS
+ undTbuqCMXl/2C+GVm0gWxkx93Igk0UyXc55H7HzF13NwvU5maCC4mCSxh8TwaeFA20uhaKg/F
+ dsmEAwa3Tui2VMprl+z5YR6/FPl9y3ykOPryXVwnn9R81ISBwp5qmxqs1ujk9qNPBH3y4sZlNY
+ k1VW5TIFJqiLBpXlxWXP1SxohC3qAI4yNapWhuulMIvapqmD9zoqKRZAQAA
+X-Change-ID: 20241204-topic-misc-da7280-convert-20efaad588ca
+To: Support Opensource <support.opensource@diasemi.com>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Roy Im <roy.im.opensource@diasemi.com>
+Cc: linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ kernel test robot <lkp@intel.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1401;
+ i=neil.armstrong@linaro.org; h=from:subject:message-id;
+ bh=wdLF9WAxR22XqcYA7gK8+yGhNvwlObpcwbXvFtZiEFs=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBnyX9UgiMec+Jkuqwmb/vnRfNsJpglm2TjPIvifTXq
+ caV2I/CJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZ8l/VAAKCRB33NvayMhJ0ZyGD/
+ 9JLMH75fDc+JZn3kyPSoLWA6NUk1y5pD4d24VcPcnhtBhsGJmuETnH5218iWGyXllL2t3satA1jrR1
+ 2ZMjU8d8ErEUvLCpO1gEz3t0MebOQcyZ4IsWqzl3kTXDashCCJ5ateMN54HRgJoS2yPK6uq5zRV2sH
+ vJyhPHsL9z2R4JaYxJPGRVChone4axmtRW3Xhm2C1HOljtKBOlwdpnZp2675EAIA6Omcinz2lmVi7e
+ x1XMGoS3WKLFVTmpGGa90UAUfQeGxvULMT4znYhASyxQAy1LuSuxBuAuSTOg1UGWnDJ7/iSzTMXV4E
+ zukKRCQjnq1BIzLGzpL1USpd+jRTFV2xLRpfshZK53opT2+u8ROuqAMf1AUiMTeoplHMY5eemjwDsc
+ durFUsp0f7K4l0wLEzRpkMAIfKPuzaXSZ2/AFfbIm9+JcVs0BS0NyJ9ZpWL7OYXBvFrDiDvY2Sorae
+ wEKUZspv//O0Q4mZ/4Gt2PD3IE+/2IU+1SI4fw6ImPECBCbsuzPFKLHn4XBIxVw5R/5q/d7laE9Brs
+ /TNOAxHDy237B5K08kBoya8ptoPqKv0GBpLoDgpvnlGsDigAEFKgRRtXtVVc74EvapkWZ3pM6EWouW
+ y7+tgtDUGz/iNpYVIqsKDrECVP1hE96H/VUaM6JPfrLFWiDBIqx65mLBOuqw==
+X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
+ fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-On Thu, Mar 6, 2025 at 4:38=E2=80=AFAM Petr Mladek <pmladek@suse.com> wrote=
-:
->
-> On Wed 2025-03-05 10:57:47, Tamir Duberstein wrote:
-> > On Wed, Mar 5, 2025 at 10:55=E2=80=AFAM Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > >
-> > > On Wed, Mar 05, 2025 at 10:25:51AM -0500, Tamir Duberstein wrote:
-> > > > On Wed, Mar 5, 2025 at 10:01=E2=80=AFAM Petr Mladek <pmladek@suse.c=
-om> wrote:
-> > > > > On Fri 2025-02-14 11:20:01, Tamir Duberstein wrote:
-> > >
-> > > ...
-> > >
-> > > > > >  #include <kunit/test.h>
-> > > > > > -#include <linux/bitops.h>
-> > > > > > -#include <linux/kernel.h>
-> > > > > >  #include <linux/module.h>
-> > > > > > -#include <linux/overflow.h>
-> > > > > > -#include <linux/printk.h>
-> > > > > >  #include <linux/prandom.h>
-> > > > > >  #include <linux/slab.h>
-> > > > > > -#include <linux/string.h>
-> > > > > > +#include <linux/sprintf.h>
-> > > > > >
-> > > > > >  #define BUF_SIZE 1024
-> > > > >
-> > > > > It would make more sense to do this clean up in the 3rd patch
-> > > > > where some code was replaced by the kunit macros.
-> > > > >
-> > > > > I would personally prefer to keep the explicit includes when the
-> > > > > related API is still used. It helps to optimize nested includes
-> > > > > in the header files which helps to speedup build. AFAIK, there
-> > > > > are people working in this optimization and they might need
-> > > > > to revert this change.
-> > > >
-> > > > Yeah, I don't feel strongly. I'll just restore all the includes.
-> > >
-> > > It will be blind approach. Please, try to look at them closely and in=
-clude what
-> > > you use (IWYU principle). I don't think anybody uses kernel.h here, f=
-or
-> > > example.
-> > >
-> > I think I'm getting conflicting instructions here. IWYU is indeed what
-> > I did: bitops, kernel, overflow, printk are all unused;
->
-> I believe that the headers were added for a reason. And this patchset
-> keeps most of the code. This is why the change look suspicious.
-> And I see in the patched lib/tests/scanf_kunit.c:
->
->   + hweight32(), BITS_PER_TYPE(), BITS_PER_LONG which looks like bitops s=
-tuff
->   + is_signed_type(), type_min(), type_max() from overflow.h
->
-> So, I would keep bitops.h and overflow.h.
+Convert the Dialog Semiconductor DA7280 Low Power High-Definition
+Haptic Driver bindings to dt-schema. and update the corresponding
+MAINTAINERS entry.
 
-Thanks for checking.
+Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Changes in v4:
+- Rebase on next-20250306
+- Link to v3: https://lore.kernel.org/r/20241211-topic-misc-da7280-convert-v3-0-4df87ac08881@linaro.org
 
-> The printk() calls were obviously removed in the 3rd patch so printk.h
-> include should be removed there.
->
-> I do not see any obvious reason for kernel.h, so I would remove it
-> in a separate patch.
->
-> >  string is used only for sprintf, so I made that replacement.
->
-> Makes sense. But please do this in a separate patch with this
-> explanation. It might be done together with the kernel.h removal.
+Changes in v3:
+- Add conor's review
+- Also fix the MAINTAINERS entry
+- Link to v2: https://lore.kernel.org/r/20241206-topic-misc-da7280-convert-v2-1-1c3539f75604@linaro.org
 
-Will do.
+Changes in v2:
+- Switched to flag instead of boolean
+- Switched the array to unit32_t, because this is how it was defined in the txt, DT and driver
+- Link to v1: https://lore.kernel.org/r/20241204-topic-misc-da7280-convert-v1-1-0f89971beca9@linaro.org
 
-Thanks again.
-Tamir
+---
+Neil Armstrong (2):
+      dt-bindings: input: convert dlg,da7280.txt to dt-schema
+      MAINTAINERS: update dlg,da72??.txt to yaml
+
+ .../devicetree/bindings/input/dlg,da7280.txt       | 108 ---------
+ .../devicetree/bindings/input/dlg,da7280.yaml      | 248 +++++++++++++++++++++
+ MAINTAINERS                                        |   2 +-
+ 3 files changed, 249 insertions(+), 109 deletions(-)
+---
+base-commit: 565351ae7e0cee80e9b5ed84452a5b13644ffc4d
+change-id: 20241204-topic-misc-da7280-convert-20efaad588ca
+
+Best regards,
+-- 
+Neil Armstrong <neil.armstrong@linaro.org>
+
 
