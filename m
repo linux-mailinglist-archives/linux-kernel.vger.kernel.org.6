@@ -1,100 +1,170 @@
-Return-Path: <linux-kernel+bounces-548710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA55FA54875
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:54:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DA11A54886
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:57:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 206C53B058A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:54:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4FF33B0B8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8889D204C17;
-	Thu,  6 Mar 2025 10:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA4F207DF5;
+	Thu,  6 Mar 2025 10:56:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Adxdai4B"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OWqBMR5k"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05367202F92
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C6802040B3;
+	Thu,  6 Mar 2025 10:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741258439; cv=none; b=jP+W6v7hYalMta4/5rOB4bX0DLuMNKc/MPXPuqW2OlmVwhFhRUk5vixAkW7OPhOnOMv9GsgBZ5nQweVuSAX8ECZh8uVjE7u3u8fpe0pFzyjd8CWM//t/dPEQbYsc+seAheEa5scu8FtMwQynw11p2SiR6HbVVxbPaE/NM6SutQw=
+	t=1741258606; cv=none; b=tSvw/Mz1D9Cj6l9lBkZCOYuuU7b9tzz4X6Sq+rv7nRvAhveHNIP0wrtC5aASi3pr0XmOubo4HD8M5DoYTOkLdL259RJ+eS7qwN6uTobdSd48XZk+FJUlvGowZs2RUV2JdezkxpnL0nEP1A0slawMsnxnogb9VOcpsvaX0piF+2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741258439; c=relaxed/simple;
-	bh=mlfJGkDy4TYPN23XQOALun4gCtktQqPl5OUILFcu94g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KR0KhaE4/ReBZ80CHk9BZT/aGJyvsZJUkrmrIJARbN8FX4W3xfNUoZcrFP6ZSHr1oJ021KqN1hTqse7nl4NJXxt37CWZpszdMl+3v9Ri96mYUBfC7ZdgFlgabHpWTS9h0h9PiXSPf404iromMokF65hHEAS3MHQDEyOGSipoEfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Adxdai4B; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741258434;
-	bh=mlfJGkDy4TYPN23XQOALun4gCtktQqPl5OUILFcu94g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Adxdai4BHQ0nrk+Y8TguTPs3jteQqha22poRWLoQgrvVF+zA3MyEMhAgziIOIy+2y
-	 OjHxAw4IRwy/8GS9KDxEmtD1zT8HvYL/FgVIGbjfuYQ/x6WrDiLPMSXffgT/+oLvCn
-	 ldiABCy7QePDBPP3N77tk/wEL2QI5UDBKC9y4tbGsCf1AdZ/ttOYfaX2DTtEcFql0R
-	 R5KLzKh8zzlBWO1L+/6verr1o91S4KpSsMRqf83LsDREgjMLRGi1Zq4JEFifA9YL8C
-	 nAFJTxWfJmIchSeZFDGM5oQPnzBLPEXGEzLC+hu16nS+sOOi9war6JjdgCsKnlqAVJ
-	 f2Tyj6DiY7lhg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1037F17E0599;
-	Thu,  6 Mar 2025 11:53:54 +0100 (CET)
-Message-ID: <7af26747-34cd-4088-a6b5-865de9e87fba@collabora.com>
-Date: Thu, 6 Mar 2025 11:53:53 +0100
+	s=arc-20240116; t=1741258606; c=relaxed/simple;
+	bh=OZOz4ppa2x3js0XKm0w8nNkZ/jFIt9LsQCdsSo8qZhE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LEmCpa6uEdraFEFe3CmA49DRl1J8Zzj1C1ZfNTBadQL+c1m/oF7/wVHGheipZLA8F5wOLPH15D+8wfXdFcI+epkn/1z+WmpAfHoaZq+OzpM0kHuvk+cwqgDSVYSQgTrE+umO4j1aEs7GLrTIM/Kv6+aaJi1hAk/GvGt/CAiGiV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OWqBMR5k; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30bb64a4060so4606481fa.2;
+        Thu, 06 Mar 2025 02:56:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741258602; x=1741863402; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hMHaQ1o6v21KrrkkRtJmLVVRwtGp3fBs93qM6xwU+Zc=;
+        b=OWqBMR5kn4NdrkiO+NDSHKuO1N58vjfEVSFNaxcMbyx8xWXSDk7NrtiSp/ii6yGQfH
+         YTrHEZobUdlJPF6M57NExpcXo5/9OCP3oncm4ftMxWoK+l1igkGT471zxVDr/auOjJpI
+         3W+s9Yoxr1PuxGI6Pj+EZurz0H1t7evkP/6yHrfSf2feEo6fyp+CU88kg4LkIqdoRT/X
+         6fmNthjN8pIqIUjT6wwHgAUJIqw8fiIG7Y+Dzp1a+tkxCVuxQbYsMVTyUTDuPK1ebnBn
+         fPQciSJ7O+idn48If9WDGMB7TGM85y2kqw4v3eD0P8TaV81VY2+H4YSa4fp4mXieGEWV
+         E5Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741258602; x=1741863402;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hMHaQ1o6v21KrrkkRtJmLVVRwtGp3fBs93qM6xwU+Zc=;
+        b=S1igTMqc4xWP6+jTXgi5IvaPpz1ImAwzGsFGYXo74aRH+KlNX4b+Fx/xVHFsXnZFNX
+         HI9fxkf1gwWsThnbKflYmLJbNTe7n5cgCN5Je+rz+K6fsQ4AqyB/Vy/f19zVjDtn8bfC
+         ZMcy+zPVLm4EFsiYsgDVbwaXVJgPrnnyJGvD67I+dEQ3y9fMZ2m8lybc0O8n/MygE/4F
+         dXLLQqA1iOzVpdyPUb+o7un9WHWL3Xa0cBwGTOzQxixOQitG+j3v6QTuVgz+E3I4P65i
+         yq1BuMAHmZJDD43ge6uwsKAjOC2ysc/2Bzr2E2YJ/6lY9V6Qnh6DRzXC+6OT3T9IdAOX
+         A3Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9liOGYsIhWGgIwytmAp+vxALeOAvfmHe7Plc8iYAMwVxRJBnNGPzXGyVnjM192SaGAEP+fXaWJ+dXHtY=@vger.kernel.org, AJvYcCWoCJF/Gu/CGPs0wDmPI0eCBw5TPSNHpwxL9kSVZqCREWIQ4rOnntpIaDHPVbnInp2Jm9hMIeS/WWSr8QmoTWoy@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuaMw2Ni6QhQ4eaNyq7A/OkJN6GYZ2bC6KPPwtc6BSY+x7HeJm
+	cuv2Yewv+cH5NbEED8LQsQ/nmlmPMrWlHbqFEoRnV+NwzNKa/zcY+DQ1UXhPIECzlZMLV3q8HVk
+	tMw36zJhD+ANBavQHO6ZvRyn8bbLkNxSgKG8=
+X-Gm-Gg: ASbGncsyDrX0646S69D6rYLK93evpR6Ap/iI8vVgK/z2LwIHQNlWD9BTaIyX90/FLlb
+	E6JJ7H04u2rOqxa1v+G9A+gS2L8CSXykIxpzfAMW6UR8sgh+14WtFBTd6sq9xqQsbqRKFAHvKIV
+	8V5RuIQVHVFWExsDsaJJaWxXtDieod5G3LK8JpTThY7KzC9TYi9bz8z5ji3e+U
+X-Google-Smtp-Source: AGHT+IG/TO5T0n0wIvdg1Tm0CVBvk9K3gHk3VYPGFJfuz5YDgYf4G5nntM0CP18nSr2vF+yrV9bLaUe/sBClD35k5FE=
+X-Received: by 2002:a2e:bc06:0:b0:30b:cc6a:ffd9 with SMTP id
+ 38308e7fff4ca-30bd789238amr28340571fa.0.1741258602110; Thu, 06 Mar 2025
+ 02:56:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mailbox: mtk-cmdq: Refine GCE_GCTL_VALUE setting
-To: Jason-JH Lin <jason-jh.lin@mediatek.com>,
- Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Cc: Nancy Lin <nancy.lin@mediatek.com>, Singo Chang
- <singo.chang@mediatek.com>, Yongqiang Niu <yongqiang.niu@mediatek.com>,
- Sirius Wang <sirius.wang@mediatek.com>,
- Xavier Chang <xavier.chang@mediatek.com>, Fei Shao <fshao@chromium.org>,
- Chen-yu Tsai <wenst@chromium.org>, Pin-yen Lin <treapking@chromium.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- linux-mediatek@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20250224105414.3576243-1-jason-jh.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250224105414.3576243-1-jason-jh.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250214-scanf-kunit-convert-v8-0-5ea50f95f83c@gmail.com>
+ <20250214-scanf-kunit-convert-v8-4-5ea50f95f83c@gmail.com>
+ <Z8hnXIrMV0ct1YR6@pathway.suse.cz> <CAJ-ks9k7G31uBqygXNtfXcwVQXWvkaAWJh1vkFw2_VZ5bAz=Vg@mail.gmail.com>
+ <Z8hz8-Sa6XRC0W5Z@smile.fi.intel.com> <CAJ-ks9kz-fEH1YLiCn3fHR9AtYQLCZS77GKfOObifEL4GLwk8A@mail.gmail.com>
+ <Z8ltGEp7NmhTwPRW@pathway.suse.cz>
+In-Reply-To: <Z8ltGEp7NmhTwPRW@pathway.suse.cz>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Thu, 6 Mar 2025 05:56:04 -0500
+X-Gm-Features: AQ5f1JpKo5Ng2Vlq-qCIgYpgDnzhnALdfZF8-xRNElx2CsSV5d1QAgxLDHkcU1E
+Message-ID: <CAJ-ks9=6qM2nn9eGZirtEUa=WifdToFRr=kE0gXw3OjFoqi4zA@mail.gmail.com>
+Subject: Re: [PATCH v8 4/4] scanf: break kunit into test cases
+To: Petr Mladek <pmladek@suse.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, David Gow <davidgow@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <shuah@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 24/02/25 11:50, Jason-JH Lin ha scritto:
-> Add cmdq_gctl_value_toggle() to configure GCE_CTRL_BY_SW and GCE_DDR_EN
-> together in the same GCE_GCTL_VALUE register.
-> 
-> For the SoCs whose GCE is located in MMINFRA and uses MMINFRA_AO power,
-> this allows it to be written without enabling the clocks. Otherwise, all
-> GCE registers should be written after the GCE clocks are enabled.
-> Move this function into cmdq_runtime_resume() and cmdq_runtime_suspend()
-> to ensure it is called when the GCE clock is enabled.
-> 
-> Fixes: 7abd037aa581 ("mailbox: mtk-cmdq: add gce ddr enable support flow")
-> Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
+On Thu, Mar 6, 2025 at 4:38=E2=80=AFAM Petr Mladek <pmladek@suse.com> wrote=
+:
+>
+> On Wed 2025-03-05 10:57:47, Tamir Duberstein wrote:
+> > On Wed, Mar 5, 2025 at 10:55=E2=80=AFAM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > >
+> > > On Wed, Mar 05, 2025 at 10:25:51AM -0500, Tamir Duberstein wrote:
+> > > > On Wed, Mar 5, 2025 at 10:01=E2=80=AFAM Petr Mladek <pmladek@suse.c=
+om> wrote:
+> > > > > On Fri 2025-02-14 11:20:01, Tamir Duberstein wrote:
+> > >
+> > > ...
+> > >
+> > > > > >  #include <kunit/test.h>
+> > > > > > -#include <linux/bitops.h>
+> > > > > > -#include <linux/kernel.h>
+> > > > > >  #include <linux/module.h>
+> > > > > > -#include <linux/overflow.h>
+> > > > > > -#include <linux/printk.h>
+> > > > > >  #include <linux/prandom.h>
+> > > > > >  #include <linux/slab.h>
+> > > > > > -#include <linux/string.h>
+> > > > > > +#include <linux/sprintf.h>
+> > > > > >
+> > > > > >  #define BUF_SIZE 1024
+> > > > >
+> > > > > It would make more sense to do this clean up in the 3rd patch
+> > > > > where some code was replaced by the kunit macros.
+> > > > >
+> > > > > I would personally prefer to keep the explicit includes when the
+> > > > > related API is still used. It helps to optimize nested includes
+> > > > > in the header files which helps to speedup build. AFAIK, there
+> > > > > are people working in this optimization and they might need
+> > > > > to revert this change.
+> > > >
+> > > > Yeah, I don't feel strongly. I'll just restore all the includes.
+> > >
+> > > It will be blind approach. Please, try to look at them closely and in=
+clude what
+> > > you use (IWYU principle). I don't think anybody uses kernel.h here, f=
+or
+> > > example.
+> > >
+> > I think I'm getting conflicting instructions here. IWYU is indeed what
+> > I did: bitops, kernel, overflow, printk are all unused;
+>
+> I believe that the headers were added for a reason. And this patchset
+> keeps most of the code. This is why the change look suspicious.
+> And I see in the patched lib/tests/scanf_kunit.c:
+>
+>   + hweight32(), BITS_PER_TYPE(), BITS_PER_LONG which looks like bitops s=
+tuff
+>   + is_signed_type(), type_min(), type_max() from overflow.h
+>
+> So, I would keep bitops.h and overflow.h.
 
-I have erroneously picked this patch in the MediaTek tree, as I had misread the
-changed file, thought that it was mtk-cmdq-helper.c.
+Thanks for checking.
 
-This patch also has the wrong recipients, as this should not go through the
-MediaTek trees, but through the mailbox one.
+> The printk() calls were obviously removed in the 3rd patch so printk.h
+> include should be removed there.
+>
+> I do not see any obvious reason for kernel.h, so I would remove it
+> in a separate patch.
+>
+> >  string is used only for sprintf, so I made that replacement.
+>
+> Makes sense. But please do this in a separate patch with this
+> explanation. It might be done together with the kernel.h removal.
 
-Therefore, I dropped this patch from the MediaTek tree - sorry for the confusion.
+Will do.
 
-Regards,
-Angelo
+Thanks again.
+Tamir
 
