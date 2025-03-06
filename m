@@ -1,106 +1,132 @@
-Return-Path: <linux-kernel+bounces-549030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F55AA54C53
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:36:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE13A54C54
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:37:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA433AF901
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:36:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6530F1898250
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B601C20E6E1;
-	Thu,  6 Mar 2025 13:36:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0C4220E334;
+	Thu,  6 Mar 2025 13:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="A+w0f7Rv"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jcSENJSI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98DA20B7F8;
-	Thu,  6 Mar 2025 13:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4072120B21F;
+	Thu,  6 Mar 2025 13:37:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741268200; cv=none; b=ggulcX1mKvK1etfyEi7g0C6YC9g5RfhzT3m679QkhUpT+h2W8um1c99seJA8Zg3qeZkD5ThrJzbLxRyss1PTAJyVQFQGdr0u84NfHWQurrjDNxyoP6TPo6AhKSkD6L7PxKwU/T0zQXKLiY5qgiBf0xq7BX2wRDH7hNVioYsV+W0=
+	t=1741268234; cv=none; b=Zde+rSm2ghSL2fTgWgVmfc7AHE8J/9+YCq+6UcC6677mHDRWprOD2xFr0EjLDlL+CG7ij+EQ2TE4zpxuMBzbEGZhShDgzQ0MjsszyjO8Efi6ogwev6iCtlCXx5hCwVL+n8ANmkyhoFCXQQV15XzonCJXy3FOviebucbKM4wL1/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741268200; c=relaxed/simple;
-	bh=89na8aEyy6PeC9priobZs3cNkeHT5uhFC166aKaR6Us=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JecGv0Wvpv3LR0XnFIz+reQDdQoCoO9No6CiNulORXELopK8UT/Mu9HY6hV3bm5N0FKAgfp0kMdkzV2Gbh7AwQaO3zv4ymSL5WzOYKTIO8BF1XDdZJgFFAql9cb5m74H9WkEnNFCeZ1nuVSNAhTT3syjyZPDQBHpaDZysiJV1ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=A+w0f7Rv; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=p2MHZq557DZLmu8HoDAX+Ak6NqSl7I/7w5qQt+/fGYg=; b=A+w0f7RvRtsuAyx5NFTDD8uU2l
-	mNPisZuKkW+KoACpYl1xCpSqeUiK71ycK4fKV14rQOEtNw7Drgj9TN8xCfek9MZ+B2wguVybUZ6fR
-	E7H1siM4ZsCfyA+gfYw8g9mTzLYAu7AXPyCXO7n+hqm4LI4YRQLJtEY5V0AYo7yG+tHtDcbqv3daw
-	LDT64gyOShAlzBZriEXPoJGanytmsW7GDPtByasV2gwXgcBVkqElh1Z1EFNCdj82SFyWPCpJ4lbiN
-	RaWgzVN5DRps4RsJ4+9guH48ioSpXJVpdyknlc5eq+tfyB4jmBQNOdKb4+xZqZgXYAf/W9DuIwmYq
-	9sqCXMeQ==;
-Received: from i53875a38.versanet.de ([83.135.90.56] helo=phil..)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tqBOm-0003OH-Hz; Thu, 06 Mar 2025 14:36:28 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Chukun Pan <amadeus@jmu.edu.cn>,
-	Yao Zi <ziyao@disroot.org>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 0/8] Support SD/SDIO controllers on RK3528
-Date: Thu,  6 Mar 2025 14:36:26 +0100
-Message-ID: <174126816885.664640.17521271236710485903.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250305194217.47052-1-ziyao@disroot.org>
-References: <20250305194217.47052-1-ziyao@disroot.org>
+	s=arc-20240116; t=1741268234; c=relaxed/simple;
+	bh=rzOfApeJGqJEIginki9w8q6sXfd76VZXAbGUG9H1704=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gJCbgqDvpNAji409BJaFarMem1nqVXt31CtjKWYh1mhBsdKS7s+H2Q+VLz3zP9dSp9Bc6r+zVShIEZxYtyMSi5EaySG+vN4ayl3bLwdjcIiZ7u/uPO7WRd0wd2FKR/rPeq5IW+SvRzW6wcGfyIpljAholE1yjnPa4w+RZoSHH7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jcSENJSI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 055D4C4CEE0;
+	Thu,  6 Mar 2025 13:37:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741268233;
+	bh=rzOfApeJGqJEIginki9w8q6sXfd76VZXAbGUG9H1704=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jcSENJSIiYYYXfIaNQrPD3q/RlbkFjsuCz/86Ht9nIybAKwdxS7mwQu3486e4xtn2
+	 y7qu/duip67qpWqDC9ANkWDW/IrGwZWd02Pn/Ho2oGZ1NNDpsbzy5UdC5c8XCPTPWb
+	 xXc3I1rFmn+CK7quF5Lyr1ezrk1F/CRVOYcHlz1OsZPfizQQO7amLeUCiwonPnaYxn
+	 if9BBJUamC6IllfCuiyaE6pRy5jTkpNCdzTSkPgZji/hrIYeWMlL16alD9vhYrjGWG
+	 6YZUYqnod2TSYRyuTZclS1Xf0YZFy8guRSQ+6IWcsmvMVuzkhLQ9QJ792yRJtHab3+
+	 6sQs28c2df3WQ==
+Date: Thu, 6 Mar 2025 14:37:07 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, aliceryhl@google.com,
+	robin.murphy@arm.com, daniel.almeida@collabora.com,
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+Message-ID: <Z8mlAxsszdOH-ow8@cassiopeiae>
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+ <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+ <20250305174118.GA351188@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305174118.GA351188@nvidia.com>
 
-
-On Wed, 05 Mar 2025 19:42:09 +0000, Yao Zi wrote:
-> RK3528 features two SDIO controllers and one SD/MMC controller. This
-> series adds essential support for their tuning clocks, document the
-> controller in dt-bindings and bring the SD/MMC one up on Radxa E20C
-> board. Both HS and SDR104 mode are verified.
+On Wed, Mar 05, 2025 at 01:41:19PM -0400, Jason Gunthorpe wrote:
+> On Mon, Feb 24, 2025 at 01:49:06PM +0200, Abdiel Janulgue wrote:
 > 
-> This is based on v2 of the SARADC series[1]
+> > +impl<T: AsBytes + FromBytes> Drop for CoherentAllocation<T> {
+> > +    fn drop(&mut self) {
+> > +        let size = self.count * core::mem::size_of::<T>();
+> > +        // SAFETY: the device, cpu address, and the dma handle is valid due to the
+> > +        // type invariants on `CoherentAllocation`.
+> > +        unsafe {
+> > +            bindings::dma_free_attrs(
+> > +                self.dev.as_raw(),
+> > +                size,
+> > +                self.cpu_addr as _,
+> > +                self.dma_handle,
+> > +                self.dma_attrs.as_raw(),
+> > +            )
 > 
-> [...]
+> I mentioned this in another thread..
+> 
+> There is an additional C API restriction here that the DMA API
+> functions may only be called by a driver after probe() starts and
+> before remove() completes. This applies to dma_free_attrs().
+> 
+> It is not enough that a refcount is held on device.
+> 
+> Otherwise the kernel may crash as the driver core allows resources
+> used by the DMA API to be changed once the driver is removed.
+> 
+> See the related discussion here, with an example of what the crash can
+> look like:
+> 
+> https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/#m0c7dda0fb5981240879c5ca489176987d688844c
+> 
+>  > a device with no driver bound should not be passed to the DMA API,
+>  > much less a dead device that's already been removed from its parent
+>  > bus.
 
-Applied, thanks!
+Thanks for bringing this up!
 
-[1/8] dt-bindings: soc: rockchip: Add RK3528 VO GRF syscon
-      commit: efc1bc1f36568a4297d20a691758b68c121cf982
-[2/8] dt-bindings: soc: rockchip: Add RK3528 VPU GRF syscon
-      commit: 8f814d7c9f6cdffc1f5cc97637e12cd699ff9085
+I assume that's because of potential iommu mappings, the memory itself should
+not be critical.
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+> 
+> My rust is non-existent, but I did not see anything about this
+> point.
+
+Indeed, this needs to be fixed. It means that a CoherentAllocation also needs to
+be embedded in a Devres container.
+
+> 
+> Also note that any HW configured to do DMA must be halted before the
+> free is allowed otherwise it is a UAF bug. It is worth mentioning that
+> in the documentation.
+
+Agreed, makes sense to document. For embedding the CoherentAllocation into
+Devres this shouldn't be an issue, since a driver must stop operating the device
+in remove() by definition.
 
