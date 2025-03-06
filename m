@@ -1,211 +1,191 @@
-Return-Path: <linux-kernel+bounces-549696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC118A55619
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:02:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C16CEA5561B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:02:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D99853A8DC3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:01:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22FA61894B7B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595E626BDB5;
-	Thu,  6 Mar 2025 19:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F336526B0BE;
+	Thu,  6 Mar 2025 19:02:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="ET2LSxvO"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4B513B791;
-	Thu,  6 Mar 2025 19:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="egscfVf1"
+Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FF225A652
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 19:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741287720; cv=none; b=LS61wVs5IXXnS4oPG8noQ6eprydegQqWUPXbREucfstZhKdV4fh58Im4NF8ESIUMEdr94SsJJIaOPcsCoYJsQNPk2yRzGpliEf0MTUM/c4cJQQtUkx6il0KIAIeN9LRvsXyBgX9yZpucyWdzvp/sfzTnImrzRtLQ0u3R5wksH50=
+	t=1741287761; cv=none; b=PG8O9cMg3RCi61xqkjmuoGv2DQfZ4iGIpn1WlWAXlxARyX0PXXcwvEygprpdacIKegsaeGLUfbUxuhNwcvpwJNEK33BWVqMzhQqTyCRRfOk4sVhYMj06acfItjT9jfvdFqsl4b17PPNtAXJc2K08JZd+NCzSimJEUYOZ+7xwlHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741287720; c=relaxed/simple;
-	bh=2GUy9c0Fp47qaNghIUFQ7uC7AKBpYxEeyN9JkZzEBow=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=s6yurxpc7cA/7MMVinSS076UJ9myDRXnyEgpAtSpX7jXA+KOFN4KfsfzfxMn/jpWHpyFzivJh27OL52OpydUavqAnRo2nhKQ9VOUO6HAbfSn6lLFqu9aL4Qd6f/WxcKrL9R5wHJl8Z22uIe2NvUGtNQTjeCyWhrKScFRYHiqyt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=ET2LSxvO; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
-	by linux.microsoft.com (Postfix) with ESMTPSA id BE9D1210EAFF;
-	Thu,  6 Mar 2025 11:01:58 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BE9D1210EAFF
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741287718;
-	bh=geTq2s7qAZPY7wuOn3Tp2rejisU2kA66dHe+A4j6rx0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ET2LSxvO7fy+HJ+ac//4b1P3R5JRhckGJOm8QvdykAFrMzzhzjiZtX9JbSlbHk39i
-	 mDjTOAJbBMMcdfRnN0E74yNH/kun3XHyV7Uv87yhqLYt0b1Q2UT5dfPz60RIa3nRVu
-	 FFQCq6UCJzoLMtHrsbdykpHIuzotKHKEgmtsaP5E=
-From: Konstantin Taranov <kotaranov@linux.microsoft.com>
-To: kotaranov@microsoft.com,
-	shirazsaleem@microsoft.com,
-	longli@microsoft.com,
-	jgg@ziepe.ca,
-	leon@kernel.org
-Cc: linux-rdma@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH rdma-next 1/1] RDMA/mana_ib: Fix integer overflow during queue creation
-Date: Thu,  6 Mar 2025 11:01:53 -0800
-Message-Id: <1741287713-13812-1-git-send-email-kotaranov@linux.microsoft.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1741287761; c=relaxed/simple;
+	bh=GVN2aFj9ynGOiRpUvlU/RzAprE6afIL6NFtCCRNh+Ws=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MFpyLsp2o30AoJO+aryX7/wJZLEMvm0mCtGY86YQVM8BjGLLlW0vQhatgY7vw/vhJvzdsypyYN59+7fVqjmJmuZxfRrSShGA9yZWxmj8LgRMj/Wz3jAHQisuqshPY0T3x3prtzIY7U32Rdtp7yM6aHSqE0xVeS24PoTQFOJhQ3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=egscfVf1; arc=none smtp.client-ip=95.215.58.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 6 Mar 2025 19:02:21 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741287756;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=szZEP27dn4yWr8sJmNMilKVFtWeJegfQAPwNWoyBPvM=;
+	b=egscfVf1IQ1ZMNVzPNyutGBZVHAri6lBJ7YxI6SYHHhTKmhbn/3uYif/d9t7HB0Gz9OcRp
+	EqWG+/PaLIWVjYPUPUa25c3d2FWERbC8lcnYuqJEWdeUYWIAun2zI+i+anS0/KzTLub7DV
+	XhpsVOHBJhxkuohYm1rskugC/FYlYgI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Herbert Xu <herbert@gondor.apana.org.au>, linux-mm@kvack.org,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2] mm: zswap: fix crypto_free_acomp() deadlock in
+ zswap_cpu_comp_dead()
+Message-ID: <Z8nxPVbmV-HVVFfC@google.com>
+References: <20250226185625.2672936-1-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226185625.2672936-1-yosry.ahmed@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-From: Konstantin Taranov <kotaranov@microsoft.com>
+On Wed, Feb 26, 2025 at 06:56:25PM +0000, Yosry Ahmed wrote:
+> Currently, zswap_cpu_comp_dead() calls crypto_free_acomp() while holding
+> the per-CPU acomp_ctx mutex. crypto_free_acomp() then holds scomp_lock
+> (through crypto_exit_scomp_ops_async()).
+> 
+> On the other hand, crypto_alloc_acomp_node() holds the scomp_lock
+> (through crypto_scomp_init_tfm()), and then allocates memory.
+> If the allocation results in reclaim, we may attempt to hold the per-CPU
+> acomp_ctx mutex.
+> 
+> The above dependencies can cause an ABBA deadlock. For example in the
+> following scenario:
+> 
+> (1) Task A running on CPU #1:
+>     crypto_alloc_acomp_node()
+>       Holds scomp_lock
+>       Enters reclaim
+>       Reads per_cpu_ptr(pool->acomp_ctx, 1)
+> 
+> (2) Task A is descheduled
+> 
+> (3) CPU #1 goes offline
+>     zswap_cpu_comp_dead(CPU #1)
+>       Holds per_cpu_ptr(pool->acomp_ctx, 1))
+>       Calls crypto_free_acomp()
+>       Waits for scomp_lock
+> 
+> (4) Task A running on CPU #2:
+>       Waits for per_cpu_ptr(pool->acomp_ctx, 1) // Read on CPU #1
+>       DEADLOCK
+> 
+> Since there is no requirement to call crypto_free_acomp() with the
+> per-CPU acomp_ctx mutex held in zswap_cpu_comp_dead(), move it after the
+> mutex is unlocked. Also move the acomp_request_free() and kfree() calls
+> for consistency and to avoid any potential sublte locking dependencies
+> in the future.
+> 
+> With this, only setting acomp_ctx fields to NULL occurs with the mutex
+> held. This is similar to how zswap_cpu_comp_prepare() only initializes
+> acomp_ctx fields with the mutex held, after performing all allocations
+> before holding the mutex.
+> 
+> Opportunistically, move the NULL check on acomp_ctx so that it takes
+> place before the mutex dereference.
+> 
+> Fixes: 12dcb0ef5406 ("mm: zswap: properly synchronize freeing resources during CPU hotunplug")
+> Reported-by: syzbot+1a517ccfcbc6a7ab0f82@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/67bcea51.050a0220.bbfd1.0096.GAE@google.com/
+> Cc: <stable@vger.kernel.org>
+> Co-developed-by: Herbert Xu <herbert@gondor.apana.org.au>
+> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> Acked-by: Herbert Xu <herbert@gondor.apana.org.au>
+> ---
+> 
+> v1 -> v2:
+> - Explained the problem more clearly in the commit message.
+> - Moved all freeing calls outside the lock critical section.
+> v1: https://lore.kernel.org/all/Z72FJnbA39zWh4zS@gondor.apana.org.au/
+> 
+> ---
 
-Use size_t instead of u32 in helpers for queue creations
-to detect overflow of queue size. The queue size cannot
-exceed size of u32.
+Hi Andrew,
 
-Fixes: bd4ee700870a ("RDMA/mana_ib: UD/GSI QP creation for kernel")
-Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
----
- drivers/infiniband/hw/mana/cq.c      |  9 +++++----
- drivers/infiniband/hw/mana/main.c    | 15 +++++++++++++--
- drivers/infiniband/hw/mana/mana_ib.h |  4 ++--
- drivers/infiniband/hw/mana/qp.c      | 11 ++++++-----
- 4 files changed, 26 insertions(+), 13 deletions(-)
+I don't see this patch in any MM tree, I think it's because there were
+discussions about whether this should be fixed on the zswap side or the
+crypto side.
 
-diff --git a/drivers/infiniband/hw/mana/cq.c b/drivers/infiniband/hw/mana/cq.c
-index 5c325ef..07b97da 100644
---- a/drivers/infiniband/hw/mana/cq.c
-+++ b/drivers/infiniband/hw/mana/cq.c
-@@ -18,7 +18,7 @@ int mana_ib_create_cq(struct ib_cq *ibcq, const struct ib_cq_init_attr *attr,
- 	struct gdma_context *gc;
- 	bool is_rnic_cq;
- 	u32 doorbell;
--	u32 buf_size;
-+	size_t buf_size;
- 	int err;
- 
- 	mdev = container_of(ibdev, struct mana_ib_dev, ib_dev);
-@@ -45,7 +45,8 @@ int mana_ib_create_cq(struct ib_cq *ibcq, const struct ib_cq_init_attr *attr,
- 		}
- 
- 		cq->cqe = attr->cqe;
--		err = mana_ib_create_queue(mdev, ucmd.buf_addr, cq->cqe * COMP_ENTRY_SIZE,
-+		buf_size = (size_t)cq->cqe * COMP_ENTRY_SIZE;
-+		err = mana_ib_create_queue(mdev, ucmd.buf_addr, buf_size,
- 					   &cq->queue);
- 		if (err) {
- 			ibdev_dbg(ibdev, "Failed to create queue for create cq, %d\n", err);
-@@ -57,8 +58,8 @@ int mana_ib_create_cq(struct ib_cq *ibcq, const struct ib_cq_init_attr *attr,
- 		doorbell = mana_ucontext->doorbell;
- 	} else {
- 		is_rnic_cq = true;
--		buf_size = MANA_PAGE_ALIGN(roundup_pow_of_two(attr->cqe * COMP_ENTRY_SIZE));
--		cq->cqe = buf_size / COMP_ENTRY_SIZE;
-+		cq->cqe = attr->cqe;
-+		buf_size = MANA_PAGE_ALIGN(roundup_pow_of_two((size_t)attr->cqe * COMP_ENTRY_SIZE));
- 		err = mana_ib_create_kernel_queue(mdev, buf_size, GDMA_CQ, &cq->queue);
- 		if (err) {
- 			ibdev_dbg(ibdev, "Failed to create kernel queue for create cq, %d\n", err);
-diff --git a/drivers/infiniband/hw/mana/main.c b/drivers/infiniband/hw/mana/main.c
-index 091e6b2..cc9de4b 100644
---- a/drivers/infiniband/hw/mana/main.c
-+++ b/drivers/infiniband/hw/mana/main.c
-@@ -240,7 +240,7 @@ void mana_ib_dealloc_ucontext(struct ib_ucontext *ibcontext)
- 		ibdev_dbg(ibdev, "Failed to destroy doorbell page %d\n", ret);
- }
- 
--int mana_ib_create_kernel_queue(struct mana_ib_dev *mdev, u32 size, enum gdma_queue_type type,
-+int mana_ib_create_kernel_queue(struct mana_ib_dev *mdev, size_t size, enum gdma_queue_type type,
- 				struct mana_ib_queue *queue)
- {
- 	struct gdma_context *gc = mdev_to_gc(mdev);
-@@ -249,6 +249,12 @@ int mana_ib_create_kernel_queue(struct mana_ib_dev *mdev, u32 size, enum gdma_qu
- 
- 	queue->id = INVALID_QUEUE_ID;
- 	queue->gdma_region = GDMA_INVALID_DMA_REGION;
-+
-+	if (size > U32_MAX) {
-+		ibdev_dbg(&mdev->ib_dev, "Queue size exceeding limit %zu\n", size);
-+		return -EINVAL;
-+	}
-+
- 	spec.type = type;
- 	spec.monitor_avl_buf = false;
- 	spec.queue_size = size;
-@@ -261,7 +267,7 @@ int mana_ib_create_kernel_queue(struct mana_ib_dev *mdev, u32 size, enum gdma_qu
- 	return 0;
- }
- 
--int mana_ib_create_queue(struct mana_ib_dev *mdev, u64 addr, u32 size,
-+int mana_ib_create_queue(struct mana_ib_dev *mdev, u64 addr, size_t size,
- 			 struct mana_ib_queue *queue)
- {
- 	struct ib_umem *umem;
-@@ -271,6 +277,11 @@ int mana_ib_create_queue(struct mana_ib_dev *mdev, u64 addr, u32 size,
- 	queue->id = INVALID_QUEUE_ID;
- 	queue->gdma_region = GDMA_INVALID_DMA_REGION;
- 
-+	if (size > U32_MAX) {
-+		ibdev_dbg(&mdev->ib_dev, "Queue size exceeding limit %zu\n", size);
-+		return -EINVAL;
-+	}
-+
- 	umem = ib_umem_get(&mdev->ib_dev, addr, size, IB_ACCESS_LOCAL_WRITE);
- 	if (IS_ERR(umem)) {
- 		err = PTR_ERR(umem);
-diff --git a/drivers/infiniband/hw/mana/mana_ib.h b/drivers/infiniband/hw/mana/mana_ib.h
-index bd47b7f..282b0ae 100644
---- a/drivers/infiniband/hw/mana/mana_ib.h
-+++ b/drivers/infiniband/hw/mana/mana_ib.h
-@@ -589,9 +589,9 @@ int mana_ib_create_dma_region(struct mana_ib_dev *dev, struct ib_umem *umem,
- int mana_ib_gd_destroy_dma_region(struct mana_ib_dev *dev,
- 				  mana_handle_t gdma_region);
- 
--int mana_ib_create_kernel_queue(struct mana_ib_dev *mdev, u32 size, enum gdma_queue_type type,
-+int mana_ib_create_kernel_queue(struct mana_ib_dev *mdev, size_t size, enum gdma_queue_type type,
- 				struct mana_ib_queue *queue);
--int mana_ib_create_queue(struct mana_ib_dev *mdev, u64 addr, u32 size,
-+int mana_ib_create_queue(struct mana_ib_dev *mdev, u64 addr, size_t size,
- 			 struct mana_ib_queue *queue);
- void mana_ib_destroy_queue(struct mana_ib_dev *mdev, struct mana_ib_queue *queue);
- 
-diff --git a/drivers/infiniband/hw/mana/qp.c b/drivers/infiniband/hw/mana/qp.c
-index c92465d..36050e7 100644
---- a/drivers/infiniband/hw/mana/qp.c
-+++ b/drivers/infiniband/hw/mana/qp.c
-@@ -377,18 +377,18 @@ static u32 mana_ib_wqe_size(u32 sge, u32 oob_size)
- 	return ALIGN(wqe_size, GDMA_WQE_BU_SIZE);
- }
- 
--static u32 mana_ib_queue_size(struct ib_qp_init_attr *attr, u32 queue_type)
-+static size_t mana_ib_queue_size(struct ib_qp_init_attr *attr, u32 queue_type)
- {
--	u32 queue_size;
-+	size_t queue_size;
- 
- 	switch (attr->qp_type) {
- 	case IB_QPT_UD:
- 	case IB_QPT_GSI:
- 		if (queue_type == MANA_UD_SEND_QUEUE)
--			queue_size = attr->cap.max_send_wr *
-+			queue_size = (size_t)attr->cap.max_send_wr *
- 				mana_ib_wqe_size(attr->cap.max_send_sge, INLINE_OOB_LARGE_SIZE);
- 		else
--			queue_size = attr->cap.max_recv_wr *
-+			queue_size = (size_t)attr->cap.max_recv_wr *
- 				mana_ib_wqe_size(attr->cap.max_recv_sge, INLINE_OOB_SMALL_SIZE);
- 		break;
- 	default:
-@@ -608,7 +608,8 @@ static int mana_ib_create_ud_qp(struct ib_qp *ibqp, struct ib_pd *ibpd,
- 	struct mana_ib_dev *mdev = container_of(ibpd->device, struct mana_ib_dev, ib_dev);
- 	struct mana_ib_qp *qp = container_of(ibqp, struct mana_ib_qp, ibqp);
- 	struct gdma_context *gc = mdev_to_gc(mdev);
--	u32 doorbell, queue_size;
-+	size_t queue_size;
-+	u32 doorbell;
- 	int i, err;
- 
- 	if (udata) {
--- 
-2.43.0
+I am not sure what the status of the crypto fix is, but if no one
+objects I'd like to get this zswap fix merged anyway if possible.
 
+>  mm/zswap.c | 30 ++++++++++++++++++++++--------
+>  1 file changed, 22 insertions(+), 8 deletions(-)
+> 
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index ac9d299e7d0c1..adf745c66aa1d 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -881,18 +881,32 @@ static int zswap_cpu_comp_dead(unsigned int cpu, struct hlist_node *node)
+>  {
+>  	struct zswap_pool *pool = hlist_entry(node, struct zswap_pool, node);
+>  	struct crypto_acomp_ctx *acomp_ctx = per_cpu_ptr(pool->acomp_ctx, cpu);
+> +	struct acomp_req *req;
+> +	struct crypto_acomp *acomp;
+> +	u8 *buffer;
+> +
+> +	if (IS_ERR_OR_NULL(acomp_ctx))
+> +		return 0;
+>  
+>  	mutex_lock(&acomp_ctx->mutex);
+> -	if (!IS_ERR_OR_NULL(acomp_ctx)) {
+> -		if (!IS_ERR_OR_NULL(acomp_ctx->req))
+> -			acomp_request_free(acomp_ctx->req);
+> -		acomp_ctx->req = NULL;
+> -		if (!IS_ERR_OR_NULL(acomp_ctx->acomp))
+> -			crypto_free_acomp(acomp_ctx->acomp);
+> -		kfree(acomp_ctx->buffer);
+> -	}
+> +	req = acomp_ctx->req;
+> +	acomp = acomp_ctx->acomp;
+> +	buffer = acomp_ctx->buffer;
+> +	acomp_ctx->req = NULL;
+> +	acomp_ctx->acomp = NULL;
+> +	acomp_ctx->buffer = NULL;
+>  	mutex_unlock(&acomp_ctx->mutex);
+>  
+> +	/*
+> +	 * Do the actual freeing after releasing the mutex to avoid subtle
+> +	 * locking dependencies causing deadlocks.
+> +	 */
+> +	if (!IS_ERR_OR_NULL(req))
+> +		acomp_request_free(req);
+> +	if (!IS_ERR_OR_NULL(acomp))
+> +		crypto_free_acomp(acomp);
+> +	kfree(buffer);
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.48.1.658.g4767266eb4-goog
+> 
 
