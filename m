@@ -1,154 +1,126 @@
-Return-Path: <linux-kernel+bounces-549276-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72FD1A55037
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:08:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3D19A55038
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:09:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97C6E3A8AE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:08:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68D103AA077
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0741211A3C;
-	Thu,  6 Mar 2025 16:08:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F984211479;
+	Thu,  6 Mar 2025 16:08:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="WiFKufXs"
-Received: from out.smtpout.orange.fr (out-17.smtpout.orange.fr [193.252.22.17])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJ5xiwMU"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6443F19B5B4
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:08:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DFB6145A0B;
+	Thu,  6 Mar 2025 16:08:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741277305; cv=none; b=Pc984Ckw7mmO9Q6pbEUzocR4Zpt0rl3rGlA4wHX2TCC8iH/B8UzspXrP8VGaE/B/uJd3PAhSHMQZQVKPMdISlAEE/0ngZ0KNxH+FvdW3rbIl4OawGs+iDgj6Rj7LpX2DrfvgwmxS4tvcdJ2rXF74RYNozD8dS1Ru3UdwwWSSA+o=
+	t=1741277338; cv=none; b=XqUHWkp/aYN8SXpZhG4sQ+h0enWgRDQe7j29hp2P+EBzz0XJjjEwcMqTz9LJvSa87j8eFSQvyzNls/yUtsUHYGfwuVPWCue7gvOOmGNXHOMGkDat2hlOlJbm0BNysVBhKXX4fTWgodYFa/GPrvrlC4oU8lylmye7/D79TKfJYhI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741277305; c=relaxed/simple;
-	bh=Pi3p6v85jCk2h58XRr0tIfb4nAr/BVfm4E1zLWaVWzQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=imz3CDMucqcvLDA4hrHpLUDyWuQEhNsZaRe7Is2QYx9C4o7frz8mUGUR0ujWkrAkqG8kBxHVpyqOFPiu3QeiGIy48GMP+xAy0Ydt5KUde9LmBqFtVnHQ0g+yTsqLFJpyplHNqnLa4AhIk4j+pnLDERx5SG6siP0eISkTeNP3hfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=WiFKufXs; arc=none smtp.client-ip=193.252.22.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id qDlStMikP0ogTqDlftO2fs; Thu, 06 Mar 2025 17:08:20 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1741277300;
-	bh=uGTIrVl9lBU8APAWKpcHUHguIxwD0cUIqzO9NpuCA9I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=WiFKufXslWpe8Su6MzkgZj/f0j05oabHMLX4jrXOmX36bhPnZ02Wu+8QlXPhNvnFr
-	 OYgBA1Z2f00apfEeoSqtVxS6cAYRKYhaLOh2A/ndwwooQY6WcY0IMjDI5U8W871PDn
-	 ZWW+FhLixYxLN6zTaiSmDt0cKxio4xK1rLs2/xQqZvE8HDf1Z3FFbHhN6wJIGde7TF
-	 7t+m2MqTQO1UVZbi9x0SmlvVIZ2zQVOaBiVQJwPsSU+P/bCAbl3jzfWB0RJb7+Widf
-	 g0+TjI7zmxhK5gTN0Mnq+HrJ9xEKhF+lDhErVKkOAc4LbJ0Hw7iG62thiVtro+mpuF
-	 pKeEIVkUIJ6aQ==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Thu, 06 Mar 2025 17:08:20 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <722e147b-fdd1-4098-8d60-48c83e36a7f7@wanadoo.fr>
-Date: Fri, 7 Mar 2025 01:08:15 +0900
+	s=arc-20240116; t=1741277338; c=relaxed/simple;
+	bh=6inTVkTcpGwvmg6llHOj2dPDvxgSjLoa3hpVklIUPbs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=EQi4NfuQ/UkUcJnIw6SYAWKxbr9UbzrFybyIss49Szb7b+I4PcNiZwWpPjiC6ABmW7sqnXGfZsauzfL9NV0Tm/O7fNxgC0nFNcS/7BJUr6Aa6mvH0PF56mzviQ3Oj0yaykw3O69P0t26fsepI12GQfMUebt29ko+tz5vUYcdvOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cJ5xiwMU; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22401f4d35aso15849875ad.2;
+        Thu, 06 Mar 2025 08:08:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741277336; x=1741882136; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E15Ou/Ag38gHJBr4kh5fGeP0yT1X2+13TRGZu8RxeNc=;
+        b=cJ5xiwMUCxVmCU28Og1z/xo4RFgpXiQ1bj1ZqGg0SgydpKExnQJ1sNprFgTlpCn4sz
+         QgHERhR/q/CI2bvB8EARO1FOqYP8+Jh5mzJphNxDrbXZLeztUQhDP/KRfEI1z/flOcoL
+         dusYgNY9qrcBzb7Ni8uYrCbt3B6tkmu5ROXyexGFmS8/bpvbZpFh5ZEKXJrsYMkyf5k+
+         wsBb6Ioo+Yrv39Vq1OnyJiOK61QtnbRoFlIW2wlTGesdoyMFXPiU1Js5X+SFQg7591Yv
+         TAklU+EPnP9otaAzvDaZayblbKNLf5cVMunN79u+8RR92QmbkjpVncaKAmPz6zojVtoR
+         Xmmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741277336; x=1741882136;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E15Ou/Ag38gHJBr4kh5fGeP0yT1X2+13TRGZu8RxeNc=;
+        b=WFyIYEPedSy6btGJ6dD7k4xU66WWLh2dHk50pvc/QxyFB1J0d8sY7W1RItLUimjpPT
+         82YghiKFmKbYvDYmq8+Gr4Zuofqh+vhlsAFplVfAQLeep0oRe7rM4ZZ/jx/KWHWTwzo7
+         VgG58A4moKZ4cX8p5xLL9rEN72JOuG+TBdOvWBAcjBifu5lbiQpG0kTWY+Eh4nBxYo0c
+         3f8HhRyD3TMazIBFmx47bGQ0IfQDxoDetHx7J6ZHKB6PNRsOF3tOr5nGFvGwtD+akxCb
+         cN1aOdFtvyZI8zDyL85eDm9R8RoXyGWY2p4FeovZVSYoHib2FWRli8jpt0HSaWfR+q8v
+         8/PA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGwqFHBSLkECc0LBmv2Tqyw0IFLR9dMXBdN7SRzcLZ9gHy/V81BQCtBOomDSzGUO357dkWLYXSSXO+D1Y=@vger.kernel.org, AJvYcCXIJm0yw38vapZAKRggUVzjTsY8jThWXEpftCr69kgEHEPWrsiTeeVK1jlkL+4HTpyWaT3TL/mu7YgSrenYHMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyENTjTL5/m5wFKFkpIx8qvta/MT/8jUAdWDesGFi0Z4iquiuT2
+	GhZPRtnXx4a9KaT38Uyv+kgV7gXXmBnOEFJU/wQWANFugrGUtxQy
+X-Gm-Gg: ASbGnctX5mjR/424eI4MLt97kc35W4CRdjgPNBTO3ZgxySUAHx/UX34USc9/dYWI6EY
+	0RbpwARybgRXf8wXNurHKpCCURHkz5JCcSojP4LFaITkJ7OKM2O8tMEVRIQ74j0A8aJvpsBInw4
+	AxuKOEOYZm/v5XBC2L+S6cmOlEsezmfbrYcLrD9uYgenFqRHrttPBEYeVnB8a9dmZbqerzqjEoN
+	bw+W8KQAt4x0SFn1+Alr9QR4vl0xuRsAYXmeAW/Xhdq1frRKVY6tLKWbpxvM2gt5LzAubxGW8h+
+	a/b27AmORV5jHoaYoxuX1bCW4nbfb5mq8UvL3cJRu/v2HklW8XmI
+X-Google-Smtp-Source: AGHT+IGWtCYPtPKvA9ytZNWDmsaikYLXtYMxsOG12S/GFmGoPi/hKI+9bFGk5HyAWTh506wT+dZJiA==
+X-Received: by 2002:a17:903:244d:b0:223:5ada:88ff with SMTP id d9443c01a7336-223f1c982dbmr145065475ad.24.1741277335621;
+        Thu, 06 Mar 2025 08:08:55 -0800 (PST)
+Received: from linuxsimoes.. ([187.120.156.44])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109dd5f8sm14203695ad.52.2025.03.06.08.08.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 08:08:55 -0800 (PST)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: miguel.ojeda.sandonis@gmail.com
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	apw@canonical.com,
+	arnd@arndb.de,
+	aswinunni01@gmail.com,
+	axboe@kernel.dk,
+	benno.lossin@proton.me,
+	bhelgaas@google.com,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	dakr@kernel.org,
+	dwaipayanray1@gmail.com,
+	ethan.twardy@gmail.com,
+	fujita.tomonori@gmail.com,
+	gary@garyguo.net,
+	gregkh@linuxfoundation.org,
+	joe@perches.com,
+	linux-kernel@vger.kernel.org,
+	lukas.bulwahn@gmail.com,
+	ojeda@kernel.org,
+	pbonzini@redhat.com,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu,
+	trintaeoitogc@gmail.com,
+	walmeida@microsoft.com
+Subject: Re: [PATCH V6 2/2] checkpatch: check format of Vec<String> in modules
+Date: Thu,  6 Mar 2025 13:08:44 -0300
+Message-Id: <20250306160844.269308-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CANiq72n=gFWrv9yFmzntaeR+RH5=qeD_uOs6NiW4dHkdaopKKw@mail.gmail.com>
+References: <CANiq72n=gFWrv9yFmzntaeR+RH5=qeD_uOs6NiW4dHkdaopKKw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 7/7] test_bits: add tests for BIT_U*()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Yury Norov <yury.norov@gmail.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@aculab.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20250306-fixed-type-genmasks-v5-0-b443e9dcba63@wanadoo.fr>
- <20250306-fixed-type-genmasks-v5-7-b443e9dcba63@wanadoo.fr>
- <Z8mfAQGUvm3z86kE@smile.fi.intel.com>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <Z8mfAQGUvm3z86kE@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 06/03/2025 at 22:11, Andy Shevchenko wrote:
-> On Thu, Mar 06, 2025 at 08:29:58PM +0900, Vincent Mailhol via B4 Relay wrote:
->> From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
->>
->> Add some additional tests in lib/test_bits.c to cover the expected
->> results of the fixed type BIT_U*() macros.
-> 
-> Still would be good to have a small assembly test case for GENMASK*() as they
-> went split and it will be a good regression test in case somebody decides to
-> unify both without much thinking..
+Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
+> In any case, without changing the configuration, i.e. the current
+> status, what happens in the different cases? e.g. 1 item, 2 items, 10
+> items...?
+In current config, the formatting seems don't have a effect for arrays. 
+i.e. this array: authors: [ "author_1", "author_2", "author_3", "author_4","author_5","author_6","author_7" ]
+don't is fixed by rustfmt for no format.
 
-Let me confirm that I correctly understood your ask. Would something
-like this meet your expectations?
-
-diff --git a/lib/test_bits.c b/lib/test_bits.c
-index 72984fae7b81..869b291587e6 100644
---- a/lib/test_bits.c
-+++ b/lib/test_bits.c
-@@ -136,6 +136,29 @@ static void genmask_input_check_test(struct kunit
-*test)
- 	KUNIT_EXPECT_EQ(test, 0, GENMASK_INPUT_CHECK(127, 0));
- }
-
-+#undef __LINUX_BITS_H
-+#undef GENMASK
-+#undef GENMASK_ULL
-+#define __ASSEMBLY__
-+#include <linux/bits.h>
-+static void asm_genmask_test(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, 1ul, GENMASK(0, 0));
-+	KUNIT_EXPECT_EQ(test, 3ul, GENMASK(1, 0));
-+	KUNIT_EXPECT_EQ(test, 6ul, GENMASK(2, 1));
-+	KUNIT_EXPECT_EQ(test, 0xFFFFFFFFul, GENMASK(31, 0));
-+}
-+
-+static void asm_genmask_ull_test(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, 1ull, GENMASK_ULL(0, 0));
-+	KUNIT_EXPECT_EQ(test, 3ull, GENMASK_ULL(1, 0));
-+	KUNIT_EXPECT_EQ(test, 0x000000ffffe00000ull, GENMASK_ULL(39, 21));
-+	KUNIT_EXPECT_EQ(test, 0xffffffffffffffffull, GENMASK_ULL(63, 0));
-+}
-+#undef __ASSEMBLY__
-+#undef GENMASK
-+#undef GENMASK_ULL
-
- static struct kunit_case bits_test_cases[] = {
-        KUNIT_CASE(__genmask_test),
-@@ -144,6 +167,8 @@ static struct kunit_case bits_test_cases[] = {
- 	KUNIT_CASE(genmask_ull_test),
- 	KUNIT_CASE(genmask_u128_test),
- 	KUNIT_CASE(genmask_input_check_test),
-+	KUNIT_CASE(asm_genmask_test),
-+	KUNIT_CASE(asm_genmask_ull_test),
- 	{}
- };
-
-
-Yours sincerely,
-Vincent Mailhol
-
+Thanks,
+Guilherme
 
