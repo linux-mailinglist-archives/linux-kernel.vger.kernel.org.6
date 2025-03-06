@@ -1,147 +1,151 @@
-Return-Path: <linux-kernel+bounces-549243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13EEEA54F80
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:49:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D674FA54F82
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:49:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7C1516C2EF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:48:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7C6C18964A7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30702148FF5;
-	Thu,  6 Mar 2025 15:48:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8A0B20F071;
+	Thu,  6 Mar 2025 15:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gxh7bD2K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SD3nG1NI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FF6B17995E;
-	Thu,  6 Mar 2025 15:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3FA17BEBF;
+	Thu,  6 Mar 2025 15:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741276115; cv=none; b=XhfvHywiaGg7RoUvWj+YGYBOZw4TEnDVxDWPTXR11hiSJccKbQ61xLT01fhGgo0O+KYsefkdfqpx+Tbq/uuU6i272YHtI4Ejc1too1aGGrNZxRLKWzCWRpMyJAAldFW3xiRGoZ0wbaMiy1u0D9x7AiMT+Dcdv90Q1aqOYgk/Bhw=
+	t=1741276159; cv=none; b=rv9VGs5bguSUmMuoKFd1X1qARQ2PYmTimUTXbQdccloU20X4JDxadcmH/pGKkaH8Yd4rFCRy5oaVQlPOReF18SMhPhOHIFC99WnAgyJ7qwJFY5pWJg8q7v9E/fX8tS5YvaQwOI1Y6G8aNSJM5MEAgYHmtLyDQuAcjBaTp8wdVvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741276115; c=relaxed/simple;
-	bh=PDJ75QttWLXTpda8lbsTkqPOcwBPVsB29z11KajauSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eMDchWSVaE8kC/s+Fkiy8nMuuUeVqwg5MAh74/ZJDZbWuxG8mTv+uhhIzpHMkKqB/KbS7mMW1xR7rtctOCMiQYkn72/ym+Y3WJVCshTfGXCbcKx0bwmsGS0nHUrbvldLP6dkQ60CaSHO8qQznyi7RZgUjvuAGojN4sBIzqhRBmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gxh7bD2K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 923FBC4CEE8;
-	Thu,  6 Mar 2025 15:48:33 +0000 (UTC)
+	s=arc-20240116; t=1741276159; c=relaxed/simple;
+	bh=V8m7lTHXESyngTkQx4PrrLs0arK+hpFdrsu8fI4KcGc=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PvHnOSIc/mBzWG1IErEqSw7jv2O6kbB5E6ka24u9OXOH91cQ1ICXiZU5c1Ug8CHwMDhjhu1k5b6/xbxj+5eqe0SKPDwyZ1h6vIAQaJJg1GSIO/hSmctEs7qi4DHxeFNb2yskcktCS66/nn68UzLX18y9uU1CVICZePOfdo/VNp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SD3nG1NI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89313C4CEE0;
+	Thu,  6 Mar 2025 15:49:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741276113;
-	bh=PDJ75QttWLXTpda8lbsTkqPOcwBPVsB29z11KajauSM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gxh7bD2KfRm/zIyyBKVZGuPR0ZdEqMVyIayfMUtF/umRbiPCARd3V7xr6v2YMMyiI
-	 BcyJAwHsZl0d8D6Yb4CAx2KLXX7nPP25rLuRSZs3HxBTeXTMIfDOdpZ3WrdUVUqZGB
-	 g5xetXuZnsaut08DyRv5hD/9Nhj3YfBO91UFFwiY85mia7pH6SR2j50btdgBfBO4th
-	 qzZQSKBahdPiAS7DfapsPnexmRpoPn22OixcY2501EYfaIa8T6X0xz1sZTAM5Ob3l7
-	 n/HJR98hiUYL8uKHKfhMI+qettf9qggSF6IB30cyHm/lxxCVxWJYcbBuMH8cdKE5ZF
-	 bYM7czwLWHTmQ==
-Date: Thu, 6 Mar 2025 16:48:31 +0100
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Silvano Seva <s.seva@4sigma.it>
-Cc: a.greco@4sigma.it, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	"open list:ST LSM6DSx IMU IIO DRIVER" <linux-iio@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iio: imu: st_lsm6dsx: fix possible lockup during FIFO
- read
-Message-ID: <Z8nDzyVO596rW0Mf@lore-desk>
-References: <20250303132124.52811-2-s.seva@4sigma.it>
+	s=k20201202; t=1741276157;
+	bh=V8m7lTHXESyngTkQx4PrrLs0arK+hpFdrsu8fI4KcGc=;
+	h=Date:From:To:Subject:References:In-Reply-To:From;
+	b=SD3nG1NIjcZx2ZSpK9j4AqGIWemIYjlZ/zI48eCe/GiQHF5fTt4KOODVAK74LI4Ym
+	 59tpOXNF2ZQg/xBHFwIzqtRPOCnjnE3p1N7CviyOSrzRSbXC8voTdN59Q/ZEE+XaUo
+	 5BFrzI2/8RMbYf93LGTvzEEwyjJP4TLGyGbNy8ZtLjXuSG2quQDQL7kb5RlIcxDYK+
+	 1vVln/tvr8uZpwlU7MoPac3tr8FkpedmEJqHpSXuP4NgMe+u5bjPfrrk8aRvAb4/lu
+	 LGMw7m5Z4YAGjCD2ar5yMZd3eS+MgMdfec+nk4gHmTwwr2CUmk05rc/wil/Tedg5pE
+	 hEIiL3s/REI6A==
+Date: Thu, 6 Mar 2025 16:49:10 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>, aliceryhl@google.com,
+	robin.murphy@arm.com, daniel.almeida@collabora.com,
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+Message-ID: <Z8nD9iJanaXTHjUh@cassiopeiae>
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+ <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+ <20250305174118.GA351188@nvidia.com>
+ <Z8mlAxsszdOH-ow8@cassiopeiae>
+ <Z8m9j3SwWHqaCTXo@phenom.ffwll.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jIYADJ6xeaDfrRk2"
-Content-Disposition: inline
-In-Reply-To: <20250303132124.52811-2-s.seva@4sigma.it>
-
-
---jIYADJ6xeaDfrRk2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Z8m9j3SwWHqaCTXo@phenom.ffwll.local>
 
-> Prevent st_lsm6dsx_read_fifo and st_lsm6dsx_read_tagged_fifo functions
-> from falling in an infinite loop in case pattern_len is equal to zero and
-> the device FIFO is not empty.
->=20
-> Signed-off-by: Silvano Seva <s.seva@4sigma.it>
-> ---
->  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
->=20
-> diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c b/drivers/iio=
-/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-> index 0a7cd8c1aa33..7f343614f8a5 100644
-> --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-> +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
-> @@ -395,12 +395,17 @@ int st_lsm6dsx_read_fifo(struct st_lsm6dsx_hw *hw)
->  	fifo_len =3D (le16_to_cpu(fifo_status) & fifo_diff_mask) *
->  		   ST_LSM6DSX_CHAN_SIZE;
->  	fifo_len =3D (fifo_len / pattern_len) * pattern_len;
-> +	if (!fifo_len)
-> +		return 0;
+On Thu, Mar 06, 2025 at 04:21:51PM +0100, Simona Vetter wrote:
+> On Thu, Mar 06, 2025 at 02:37:07PM +0100, Danilo Krummrich wrote:
+> > On Wed, Mar 05, 2025 at 01:41:19PM -0400, Jason Gunthorpe wrote:
+> > > On Mon, Feb 24, 2025 at 01:49:06PM +0200, Abdiel Janulgue wrote:
+> > > 
+> > > > +impl<T: AsBytes + FromBytes> Drop for CoherentAllocation<T> {
+> > > > +    fn drop(&mut self) {
+> > > > +        let size = self.count * core::mem::size_of::<T>();
+> > > > +        // SAFETY: the device, cpu address, and the dma handle is valid due to the
+> > > > +        // type invariants on `CoherentAllocation`.
+> > > > +        unsafe {
+> > > > +            bindings::dma_free_attrs(
+> > > > +                self.dev.as_raw(),
+> > > > +                size,
+> > > > +                self.cpu_addr as _,
+> > > > +                self.dma_handle,
+> > > > +                self.dma_attrs.as_raw(),
+> > > > +            )
+> > > 
+> > > I mentioned this in another thread..
+> > > 
+> > > There is an additional C API restriction here that the DMA API
+> > > functions may only be called by a driver after probe() starts and
+> > > before remove() completes. This applies to dma_free_attrs().
+> > > 
+> > > It is not enough that a refcount is held on device.
+> > > 
+> > > Otherwise the kernel may crash as the driver core allows resources
+> > > used by the DMA API to be changed once the driver is removed.
+> > > 
+> > > See the related discussion here, with an example of what the crash can
+> > > look like:
+> > > 
+> > > https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/#m0c7dda0fb5981240879c5ca489176987d688844c
+> > > 
+> > >  > a device with no driver bound should not be passed to the DMA API,
+> > >  > much less a dead device that's already been removed from its parent
+> > >  > bus.
+> > 
+> > Thanks for bringing this up!
+> > 
+> > I assume that's because of potential iommu mappings, the memory itself should
+> > not be critical.
+> > 
+> > > 
+> > > My rust is non-existent, but I did not see anything about this
+> > > point.
+> > 
+> > Indeed, this needs to be fixed. It means that a CoherentAllocation also needs to
+> > be embedded in a Devres container.
+> > 
+> > > 
+> > > Also note that any HW configured to do DMA must be halted before the
+> > > free is allowed otherwise it is a UAF bug. It is worth mentioning that
+> > > in the documentation.
+> > 
+> > Agreed, makes sense to document. For embedding the CoherentAllocation into
+> > Devres this shouldn't be an issue, since a driver must stop operating the device
+> > in remove() by definition.
+> 
+> I think for basic driver allocations that you just need to run the device
+> stuffing it all into devres is ok.
 
-I do not think this check is necessary since if fifo_len is 0 we will not r=
-un
-the for loop, right?
+What exactly do you mean with that? DMA memory allocations or "normal" memory
+allocations?
 
-> =20
->  	acc_sensor =3D iio_priv(hw->iio_devs[ST_LSM6DSX_ID_ACC]);
->  	gyro_sensor =3D iio_priv(hw->iio_devs[ST_LSM6DSX_ID_GYRO]);
->  	if (hw->iio_devs[ST_LSM6DSX_ID_EXT0])
->  		ext_sensor =3D iio_priv(hw->iio_devs[ST_LSM6DSX_ID_EXT0]);
-> =20
-> +	if (!pattern_len)
-> +		pattern_len =3D ST_LSM6DSX_SAMPLE_SIZE;
+The latter should never be in a Devres container. The Devres container should
+only hold things that, for safety reasons, are not allowed to out-live device
+/ driver unbind.
 
-same here, I do not think pattern_len can be 0 since hw->sip must be greater
-than 0 in order to enable the FIFO. Moreover, this check should be some lin=
-es
-above since we have already divided fifo_len by pattern_len here.
+> But for dma mappings at runtime this will be too slow.
 
-> +
->  	for (read_len =3D 0; read_len < fifo_len; read_len +=3D pattern_len) {
->  		err =3D st_lsm6dsx_read_block(hw, ST_LSM6DSX_REG_FIFO_OUTL_ADDR,
->  					    hw->buff, pattern_len,
-> @@ -623,6 +628,9 @@ int st_lsm6dsx_read_tagged_fifo(struct st_lsm6dsx_hw =
-*hw)
->  	if (!fifo_len)
->  		return 0;
-> =20
-> +	if (!pattern_len)
-> +		pattern_len =3D ST_LSM6DSX_TAGGED_SAMPLE_SIZE;
-
-for the reason above, this is not necessary.
-
-Regards,
-Lorenzo
-
-> +
->  	for (read_len =3D 0; read_len < fifo_len; read_len +=3D pattern_len) {
->  		err =3D st_lsm6dsx_read_block(hw,
->  					    ST_LSM6DSX_REG_FIFO_OUT_TAG_ADDR,
-> --=20
-> 2.48.1
->=20
-
---jIYADJ6xeaDfrRk2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZ8nDzwAKCRA6cBh0uS2t
-rNrsAQCt/2kEIeYw3RhVJeUiSsUinpgqHklJ0PLaJocnRAdqDgEA/pIyU/bbKsjl
-Wv0S0zV2oJ09LA/ZJ1AVOlSvLtNUjgw=
-=UeEg
------END PGP SIGNATURE-----
-
---jIYADJ6xeaDfrRk2--
+What exactly do you mean with "DMA mappings at runtime"? What to you think is
+is slow in this aspect?
 
