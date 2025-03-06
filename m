@@ -1,364 +1,199 @@
-Return-Path: <linux-kernel+bounces-548359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548407-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CB31A543DC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:43:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE549A54469
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:15:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B76F11683CD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:43:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 254233B110F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F661DB153;
-	Thu,  6 Mar 2025 07:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6102A1FDE2F;
+	Thu,  6 Mar 2025 08:14:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KjyRzcC+"
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TRRYU3YQ"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 656C01DA634
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 07:43:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879FF1C8602
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741247013; cv=none; b=N8Qi2p3/cVfXTYbN7M1WEg46JUUa7YTmoL//9hmQyJe9gFmbfREPoF3ZayxWRUhdEJ8BkqTfWtY4xTE6bT/NZbtaJZrQm4g0ZFV+lXtmegvmec1oi5brFThpyE/OSIugj+l5ToaTHAYE1P1tMFfcY03oKBz2FjaE0hViTuPgIoE=
+	t=1741248843; cv=none; b=q7GClvfO2G/Is7Z+xKUaRn4UR8QUKWDD2geyTs3a3XHYRfmzbwjkepPU+lmRxqk7gzChXQqX+9kdL0Fgyy8qLRJ1RdXxBO9PcOSH9eOJuBG762+CzEOibRxGiboC/dXGZub9EiZpPVTBDsG8M9ZNpkDWfjsEQoL0W/iR+wog8M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741247013; c=relaxed/simple;
-	bh=Pi5NlVNm/rltwm6mYcylZqOiE1Fe/3aCEI2yFGKYAWM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Sb39LMM/Dm+6e2JmnaFYmc4jH7z2SFYn82Gj6PwYiwE01LvMNbWc/+ukaZHU+0e+1/KixzNAYZvik7gLlC84danP+siNsaemT6sz01T4wtC8n04HtfGtOHkau5CZIKP2FkI7f+A05+6wz3OhE0V2M9IPTB7mjYBmG1QhfloagPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KjyRzcC+; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-86712bc0508so130194241.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 23:43:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741247008; x=1741851808; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=f8Dvz/7sO8hMEWomCti/xqwSI3nDVRwoSfwLBCt5iKs=;
-        b=KjyRzcC+jjkjjZ0LioBHd8k8x7nO6H4M+Iy7Zma+Z2mdkbSh/3gJr55cewaq5vSKvE
-         vDRp8tE0rvEukjPD8jokBkraOl9AjInQ4WIrCWK0c53CMpFvuJtpJKRRdfYu9eDceD8j
-         +T69nJfbJgejAtK/Mlx/ClLfveo+0+CEEfunCZmRcC72XAS65csYF0jS22rzdmrnL55h
-         6h/VoOf42NUlYCs+ki5vGPWpNJwl0MdtpnABe9BaMJED/LDQkaHwMVrOEVtchw/O57T7
-         Y7unvusI/uhwvialXbXTpNtxjQuTBJJk0puHei0330VH5KVCiaMlAlFrkpg3e3TUqYOX
-         nQOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741247008; x=1741851808;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=f8Dvz/7sO8hMEWomCti/xqwSI3nDVRwoSfwLBCt5iKs=;
-        b=BwRnT6SXc7RpREn7wqT1izRuKxL/0neTfc+GnSX3yjMN98+bCaOMWn4dVoyO/wnyj4
-         nO6UUpgN9yAThTl4hvNy7T23dMZCHHdgR6oKAOWj0kvlpMAnkgn/4w8KHpVaATZbakiB
-         nPUUE9cSZBUyHY/o1RwHj/AL1l6k/JmjmVVCJbE29jT8USOiSeE/4oqk8u4f2vkK3fbF
-         lNB3zj7dXoIhhmqnXjcRr1yUKQ4z35w8TZ1RF3rlUsypgynEqUkyAH0tSOxp26BzVlsB
-         NZltZHsKPXGpl6AGKcPSr/GvehTMjxgCl4WYOuadhc05PxqkFQtHZHvxmGabrA6Y2OIk
-         Vl/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWuWtYl4BOM/3GbMjMXyqL7S1z187x/hEBmpZSxPF0p1obUiNJ0ySoOfEzder7TYXJik+nuLnbbseH6EoY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhovrnUC2Alq/1ZYQH/Aicp/G8oCLTM+Mw4WWzA8Tu8RoBrgSW
-	nFrhCuxwrjualF2l8huz56RIC444Rj7OUlMDc1ZBI5E0p1OFHMprL87VWwYxJ2FK5UQgMVvuHR9
-	QL8bikgBQPSai22CT5AkjAmBWgrhYViE9akN4tWbiyzkYVp6q+UU=
-X-Gm-Gg: ASbGncss0JmA82Cps1SKuMlx1vNQRBTvZ2l9Aq0MGlFiRPQtvMp4LatN2EnI7oxbdsB
-	D8+9qzoWVWANpxE1eiTJWfq4RNPelYFMoVXKNAvNPsYI59j6uIr7MC1Iw7q7NmNW89iiKjBjQdi
-	nt1pDDIFbA9WVZx+M+6TuxT+pxjVnde40aU1pUtBgRUyeFjEjSbuh+EepP96c=
-X-Google-Smtp-Source: AGHT+IFCeuFwk9j8vSJUY4VHl93BKrc/RzqL6Bv4GsNnLvaSOuMd4a+uHqaFLvjJ1SRrJcOoTcInKFZtooGmILaXwuQ=
-X-Received: by 2002:a05:6102:ccc:b0:4c1:706f:92a1 with SMTP id
- ada2fe7eead31-4c2e276618bmr3018833137.5.1741247008163; Wed, 05 Mar 2025
- 23:43:28 -0800 (PST)
+	s=arc-20240116; t=1741248843; c=relaxed/simple;
+	bh=TkDcozBHBnKIV2auGGkHeHlQgJZ4HaUOFBQ63/NI+P8=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=WT8lmouAOhYHgc6dEJaz+ZsGNlfsRy1V3ionQoFThXdknw1KweSM6XbzDXeIw7aKSiAF1+0Vu6lbQLRIXY/6V6EMulAOFfuEy6h1klFJh/mvsYTa/ZenO3WkQB+kWpZ4qxjexnkwg6xKansXm1zGl9HW0whpVXMciaDHVRHOLR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TRRYU3YQ; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250306081359epoutp02e821fa98cf4963b5db15a68bbc0a3909~qKJgTacQi2511125111epoutp02i
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:13:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250306081359epoutp02e821fa98cf4963b5db15a68bbc0a3909~qKJgTacQi2511125111epoutp02i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741248839;
+	bh=GFNB3GQfHuZhgoLh28ySpFkcndevRW3IQZO7WqPJuLc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=TRRYU3YQJPsGxLk2/M/mc9QNMWkBFVrclJD3t50D40EOYKrvT8TDLWlMOay0wXKA+
+	 Cvn5BD+p9d/jW2OA35+xZx/jx9gzRV3uTqqcOy9l8Z9sarGrw6cZc2wn/Hp/BoKEdE
+	 5v69T4r3M1hrNZNFg4nGR8JhCcKWe4n3pA6twuPg=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20250306081358epcas5p45839d254f72b81c22b1854bf49ddf2bd~qKJfudMFH3180531805epcas5p4j;
+	Thu,  6 Mar 2025 08:13:58 +0000 (GMT)
+Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.179]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Z7hyY07Xjz4x9Q7; Thu,  6 Mar
+	2025 08:13:57 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0A.75.19710.44959C76; Thu,  6 Mar 2025 17:13:56 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250306074425epcas5p20a08ef2dbd5705a1044fafb8c4a9ec15~qJvr5Zkdd1625216252epcas5p22;
+	Thu,  6 Mar 2025 07:44:25 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250306074425epsmtrp13d2eb93faea97f50364276552d52caec~qJvr4VzDQ3019030190epsmtrp1-;
+	Thu,  6 Mar 2025 07:44:25 +0000 (GMT)
+X-AuditID: b6c32a44-36bdd70000004cfe-fa-67c959443956
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	41.8E.18729.95259C76; Thu,  6 Mar 2025 16:44:25 +0900 (KST)
+Received: from FDSFTE596 (unknown [107.122.82.131]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250306074422epsmtip18b4df393bbcbb9f3899d26f119ba0546~qJvpHt7NI2008120081epsmtip1a;
+	Thu,  6 Mar 2025 07:44:22 +0000 (GMT)
+From: "Swathi K S" <swathi.ks@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, <krzk+dt@kernel.org>,
+	<andrew+netdev@lunn.ch>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <robh@kernel.org>,
+	<conor+dt@kernel.org>, <richardcochran@gmail.com>,
+	<mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>
+Cc: <rmk+kernel@armlinux.org.uk>, <netdev@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<pankaj.dubey@samsung.com>, <ravi.patel@samsung.com>, <gost.dev@samsung.com>
+In-Reply-To: <789ecb2f-dddc-491b-b9f8-5fb89058fd1b@kernel.org>
+Subject: RE: [PATCH v8 1/2] dt-bindings: net: Add FSD EQoS device tree
+ bindings
+Date: Thu, 6 Mar 2025 13:14:13 +0530
+Message-ID: <012701db8e6b$950550c0$bf0ff240$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 6 Mar 2025 13:13:17 +0530
-X-Gm-Features: AQ5f1Jq0IuOElt6LkapirWtEVl2Mi3VZsosq658XD0TPtmeB7_YSwPygLW3yIlU
-Message-ID: <CA+G9fYvp_oAxeDFj88Tk2rfEZ7jtYKAKSwfYS66=57Db9TBdyA@mail.gmail.com>
-Subject: riscv: WARNING: kernel/trace/fgraph.c:755 ftrace_return_to_handler
-To: linux-riscv <linux-riscv@lists.infradead.org>, 
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, alex@ghiti.fr, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Anders Roxell <anders.roxell@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-
-On riscv while running LTP tracing ftrace_stress_test.sh the
-Bad frame pointer, kernel warning and kernel panic noticed.
-
-## Devices Affected:
-The following DUTs / qemus experience these failures:
-  -  qemu-riscv
-
-Regression Analysis:
- - New regression? No (these failures have been observed for months/years).
- - Reproducibility? Yes, the failures occur consistently more than 80%
-
-Test regression: ftrace_stress_test.sh Bad frame pointer kernel panic
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-
-## Test log:
-command: ftrace_stress_test.sh 90
-<12>[   49.329931] /usr/local/bin/kirk[266]: starting test
-ftrace-stress-test (ftrace_stress_test.sh 90)
-ftrace-stress-test 1 TINFO: Ftrace Stress Test Begin
-ftrace-stress-test 1 TINFO: Test targets:  trace_pipe current_tracer
-ftrace_enabled function_profile_enabled set_event set_ftrace_pid
-stack_max_size stack_trace trace trace_clock trace_options trace_stat
-tracing_enabled tracing_max_latency tracing_on
-function_profile_enabled buffer_size_kb tracing_cpumask
-set_ftrace_filter
-ftrace-stress-test 1 TINFO: tracing_enabled is not supported. Skip it.
-ftrace-stress-test 1 TINFO: Start pid0=301
-/opt/ltp/testcases/bin/ftrace_stress/ftrace_trace_pipe.sh
-ftrace-stress-test 1 TINFO: Start pid1=302
-/opt/ltp/testcases/bin/ftrace_stress/ftrace_current_tracer.sh
-ftrace-stress-test 1 TINFO: Start pid2=303
-/opt/ltp/testcases/bin/ftrace_stress/ftrace_ftrace_enabled.sh
-trap: SIGUSR1: bad trap
-ftrace-stress-test 1 TINFO: Start pid3=306
-/opt/ltp/testcases/bin/ftrace_stress/ftrace_function_profile_enabled.sh
-ftrace-stress-test 1 TINFO: Start pid4=307
-/opt/ltp/testcases/bin/ftrace_stress/ftrace_set_event.sh
-ftrace-stress-test 1 TINFO: Start pid5=309
-/opt/ltp/testcases/bin/ftrace_stress/ftrace_set_ftrace_pid.sh
-<4>[   51.266264] ------------[ cut here ]------------
-<4>[   51.266294] ------------[ cut here ]------------
-<4>[   51.268785] Bad frame pointer: expected ff200000005f2d10,
-received ffffffff815e3a18
-<4>[   51.268785]   from func __might_sleep return to ffffffff8004c380
-<4>[   51.267055] Bad frame pointer: expected ff20000000662ed0,
-received ffffffff80081bce
-<4>[   51.267055]   from func cpus_read_lock return to ffffffff8021bfda
-<4>[ 51.273594] WARNING: CPU: 0 PID: 306 at kernel/trace/fgraph.c:755
-ftrace_return_to_handler (kernel/trace/fgraph.c:755 (discriminator 1)
-kernel/trace/fgraph.c:820 (discriminator 1) kernel/trace/fgraph.c:874
-(discriminator 1))
-<4>[ 51.273624] WARNING: CPU: 1 PID: 309 at kernel/trace/fgraph.c:755
-ftrace_return_to_handler (kernel/trace/fgraph.c:755 (discriminator 1)
-kernel/trace/fgraph.c:820 (discriminator 1) kernel/trace/fgraph.c:874
-(discriminator 1))
-<4>[   51.273856] Modules linked in:
-<4>[   51.273888] Modules linked in: drm drm_panel_orientation_quirks configfs
-<4>[   51.274071]  drm
-<4>[   51.274234]  backlight ip_tables
-<4>[   51.274236]  drm_panel_orientation_quirks configfs
-<4>[   51.274285]  x_tables
-<4>[   51.274306]  backlight
-<4>[   51.274328]
-<4>[   51.274331]  ip_tables
-<4>[   51.274351]  x_tables
-<4>[   51.274758] CPU: 1 UID: 0 PID: 309 Comm: sh Not tainted
-6.14.0-rc5-next-20250305 #1
-<4>[   51.274817] CPU: 0 UID: 0 PID: 306 Comm: sh Not tainted
-6.14.0-rc5-next-20250305 #1
-<4>[   51.274954] Hardware name: riscv-virtio,qemu (DT)
-<4>[   51.275009] Hardware name: riscv-virtio,qemu (DT)
-<4>[ 51.275231] epc : ftrace_return_to_handler
-(kernel/trace/fgraph.c:755 (discriminator 1) kernel/trace/fgraph.c:820
-(discriminator 1) kernel/trace/fgraph.c:874 (discriminator 1))
-<4>[ 51.275224] epc : ftrace_return_to_handler
-(kernel/trace/fgraph.c:755 (discriminator 1) kernel/trace/fgraph.c:820
-(discriminator 1) kernel/trace/fgraph.c:874 (discriminator 1))
-<4>[ 51.275291] ra : ftrace_return_to_handler
-(kernel/trace/fgraph.c:755 (discriminator 1) kernel/trace/fgraph.c:820
-(discriminator 1) kernel/trace/fgraph.c:874 (discriminator 1))
-<4>[ 51.275304] ra : ftrace_return_to_handler
-(kernel/trace/fgraph.c:755 (discriminator 1) kernel/trace/fgraph.c:820
-(discriminator 1) kernel/trace/fgraph.c:874 (discriminator 1))
-<4>[   51.275374] epc : ffffffff8016e9ee ra : ffffffff8016e9ee sp :
-ff200000005f2c30
-<4>[   51.275393] epc : ffffffff8016e9ee ra : ffffffff8016e9ee sp :
-ff20000000662de0
-<4>[   51.275418]  gp : ffffffff81c70828 tp : ff60000080a45700 t0 :
-ffffffff800b84c2
-<4>[   51.275422]  gp : ffffffff81c70828 tp : ff60000082b0ab80 t0 :
-ffffffff800b84c2
-<4>[   51.275460]  t1 : 0000000000000000 t2 : 20636e7566206d6f s0 :
-ff200000005f2cb0
-<4>[   51.275474]  t1 : 0000000000000000 t2 : 20636e7566206d6f s0 :
-ff20000000662e60
-<4>[   51.275504]  s1 : 00000000000001dd a0 : 000000000000007c a1 :
-0000000000000001
-<4>[   51.275518]  s1 : 00000000000001dd a0 : 000000000000007d a1 :
-0000000000000001
-<4>[   51.275545]  a2 : 0000000000000000 a3 : 0000000000000000 a4 :
-0000000000000000
-<4>[   51.275547]  a2 : 00000000000000e8 a3 : 0000000000000008 a4 :
-0000000000000000
-<4>[   51.275587]  a5 : 0000000000000000 a6 : 000000000000003f a7 :
-0000000000000010
-<4>[   51.275615]  a5 : 0000000000000000 a6 : 0000000000000030 a7 :
-0000000000000010
-<4>[   51.275654]  s2 : ff60000086e43ee8 s3 : ffffffff815e3a18 s4 :
-ffffffff815e6728
-<4>[   51.275684]  s2 : ff60000086e46ee8 s3 : ffffffff80081bce s4 :
-ffffffff815e6728
-<4>[   51.275700]  s5 : 0000000000000000 s6 : 0000000000000000 s7 :
-ffffffff81c70160
-<4>[   51.275715]  s5 : 0000000000000000 s6 : 0000000000000000 s7 :
-ffffffff81c70160
-<4>[   51.275743]  s8 : 00005555822950b0 s9 : ffffffffffffc000 s10:
-ffffffff80d5100a
-<4>[   51.275758]  s8 : 0000000000000003 s9 : ffffffffffffc000 s10:
-ffffffff80d5100a
-<4>[   51.275786]  s11: ff200000005f3aa0 t3 : 0000000000000000 t4 :
-0000000000ff0100
-<4>[   51.275786]  s11: ff20000000663d60 t3 : 0000000000000000 t4 :
-0000000000ff0100
-<4>[   51.275826]  t5 : ffffffff81c87c38 t6 : ffffffff81c87c34
-<4>[   51.275842]  t5 : ffffffff81c87c38 t6 : ff20000000662be8
-<4>[   51.275867] status: 0000000200000100 badaddr: ffffffff8016e9ee
-cause: 0000000000000003
-<4>[   51.275868] status: 0000000200000100 badaddr: ffffffff8016e9ee
-cause: 0000000000000003
-<4>[ 51.275996] ftrace_return_to_handler (kernel/trace/fgraph.c:755
-(discriminator 1) kernel/trace/fgraph.c:820 (discriminator 1)
-kernel/trace/fgraph.c:874 (discriminator 1))
-<4>[ 51.276009] ftrace_return_to_handler (kernel/trace/fgraph.c:755
-(discriminator 1) kernel/trace/fgraph.c:820 (discriminator 1)
-kernel/trace/fgraph.c:874 (discriminator 1))
-<4>[ 51.276157] return_to_handler (arch/riscv/kernel/mcount.S:78)
-<4>[ 51.276164] return_to_handler (arch/riscv/kernel/mcount.S:78)
-<4>[ 51.276348] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.276357] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.276408] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.276454] return_to_handler (arch/riscv/kernel/mcount.S:78)
-<4>[ 51.276500] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.276545] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[   51.276571] ---[ end trace 0000000000000000 ]---
-<4>[ 51.276590] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.276645] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.276689] return_to_handler (arch/riscv/kernel/mcount.S:78)
-<4>[ 51.276733] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.276779] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.276824] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.276869] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.276914] return_to_handler (arch/riscv/kernel/mcount.S:78)
-<4>[ 51.276959] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.277004] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.277049] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.277094] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.277139] return_to_handler (arch/riscv/kernel/mcount.S:78)
-<4>[ 51.277181] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.277222] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[   51.277238] ------------[ cut here ]------------
-<4>[ 51.277268] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.277274] WARNING: CPU: 0 PID: 306 at kernel/trace/fgraph.c:824
-ftrace_return_to_handler (kernel/trace/fgraph.c:824 (discriminator 1)
-kernel/trace/fgraph.c:874 (discriminator 1))
-<4>[ 51.277314] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[   51.277331] Modules linked in: drm drm_panel_orientation_quirks
-<4>[ 51.277362] return_to_handler (arch/riscv/kernel/mcount.S:78)
-<4>[   51.277395]  configfs backlight
-<4>[ 51.277409] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[   51.277437]  ip_tables x_tables
-<4>[ 51.277455] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[   51.277472]
-<4>[ 51.277505] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.277550] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.277595] return_to_handler (arch/riscv/kernel/mcount.S:78)
-<4>[ 51.277659] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.277705] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.277751] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[   51.277770] CPU: 0 UID: 0 PID: 306 Comm: sh Tainted: G        W
-        6.14.0-rc5-next-20250305 #1
-<4>[ 51.277795] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.277840] return_to_handler (arch/riscv/kernel/mcount.S:78)
-<4>[ 51.277885] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[   51.277895] Tainted: [W]=WARN
-<4>[   51.277923] Hardware name: riscv-virtio,qemu (DT)
-<4>[ 51.277932] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.277947] epc : ftrace_return_to_handler
-(kernel/trace/fgraph.c:824 (discriminator 1) kernel/trace/fgraph.c:874
-(discriminator 1))
-<4>[ 51.277977] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.277993] ra : ftrace_return_to_handler
-(kernel/trace/fgraph.c:824 (discriminator 1) kernel/trace/fgraph.c:874
-(discriminator 1))
-<4>[ 51.278024] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[   51.278037] epc : ffffffff8016e862 ra : ffffffff8016e862 sp :
-ff200000005f2c30
-<4>[   51.278063]  gp : ffffffff81c70828 tp : ff60000080a45700 t0 :
-ffffffff8004c3fe
-<4>[ 51.278070] return_to_handler (arch/riscv/kernel/mcount.S:78)
-<4>[   51.278090]  t1 : 0000000000000000 t2 : 20636e7566206d6f s0 :
-ff200000005f2cb0
-<4>[   51.278118]  s1 : 00000000000001dd a0 : ffffffff81cb4998 a1 :
-0000000000000031
-<4>[ 51.278116] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[   51.278144]  a2 : 0000000000000000 a3 : 0000000000000000 a4 :
-0000000000000000
-<4>[   51.278170]  a5 : 0000000000000000 a6 : 0000000000000030 a7 :
-0000000000000010
-<4>[ 51.278162] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[   51.278196]  s2 : ff60000086e43e10 s3 : ffffffff815e3a18 s4 :
-ffffffff815e6728
-<4>[ 51.278209] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[   51.278222]  s5 : 0000000000000000 s6 : 0000000000000000 s7 :
-ffffffff81c70160
-<4>[   51.278248]  s8 : 00005555822950b0 s9 : ffffffffffffc000 s10:
-ffffffff80d5100a
-<4>[ 51.278256] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[   51.278274]  s11: ff200000005f3aa0 t3 : 0000000000000000 t4 :
-0000000000ff0100
-<4>[   51.278301]  t5 : ffffffff81c87c38 t6 : ffffffff81c87c34
-<4>[ 51.278305] return_to_handler (arch/riscv/kernel/mcount.S:78)
-<4>[   51.278325] status: 0000000200000100 badaddr: ffffffff8016e862
-cause: 0000000000000003
-<4>[ 51.278351] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.278354] ftrace_return_to_handler (kernel/trace/fgraph.c:824
-(discriminator 1) kernel/trace/fgraph.c:874 (discriminator 1))
-<4>[ 51.278397] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.278402] return_to_handler (arch/riscv/kernel/mcount.S:78)
-<4>[ 51.278444] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.278450] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.278492] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[   51.278503] ---[ end trace 0000000000000000 ]---
-<4>[ 51.278537] return_to_handler (arch/riscv/kernel/mcount.S:78)
-<4>[ 51.278584] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.278642] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<4>[ 51.278686] return_to_handler (arch/riscv/kernel/mcount.S:75)
-<0>[   51.278907] Kernel panic - not syncing: include/linux/percpu-rwsem.h
-<4>[   51.350558] CPU: 0 UID: 0 PID: 306 Comm: sh Tainted: G        W
-        6.14.0-rc5-next-20250305 #1
-<4>[   51.351855] Tainted: [W]=WARN
-<4>[   51.352213] Hardware name: riscv-virtio,qemu (DT)
-<4>[   51.353333] Call Trace:
-<4>[ 51.353947] dump_backtrace (arch/riscv/kernel/stacktrace.c:133)
-<4>[ 51.354543] show_stack (arch/riscv/kernel/stacktrace.c:139)
-<4>[ 51.355094] dump_stack_lvl (lib/dump_stack.c:122)
-<4>[ 51.356791] dump_stack (lib/dump_stack.c:130)
-<4>[ 51.358139] panic (kernel/panic.c:258 kernel/panic.c:375)
-<4>[ 51.359243] return_to_handler (??:?)
-<2>[   51.360158] SMP: stopping secondary CPUs
-<4>[   53.526474] SMP: failed to stop secondary CPUs 0-1
-<0>[   53.528165] ---[ end Kernel panic - not syncing:
-include/linux/percpu-rwsem.h ]---
-
-## Source
-* Kernel version: 6.14.0-rc5-next-20250305
-* Git tree: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-* Git sha: 7ec162622e66a4ff886f8f28712ea1b13069e1aa
-* Git describe: 6.14.0-rc5-next-20250305
-* Project details:
-https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250305/
-* Architectures: riscv
-
-## Test data
-* Test log: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250305/testrun/27501921/suite/log-parser-test/test/exception-cut-here/log
-* Test history:
-https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250305/testrun/27501921/suite/log-parser-test/test/panic-multiline-kernel-panic-not-syncing-includelinuxpercpu-rwsemh/history/
-* Test details:
-https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20250305/testrun/27501921/suite/log-parser-test/test/exception-cut-here/details/
-* Build link: https://storage.tuxsuite.com/public/linaro/lkft/builds/2ttVEZncyQq7CkHBSKLG3bD6Ajk/
-* Kernel config:
-https://storage.tuxsuite.com/public/linaro/lkft/builds/2ttVEZncyQq7CkHBSKLG3bD6Ajk/config
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: en-in
+Thread-Index: AQHcwqSBZNYxUrKMqce/4F1P5N/GfgGyT6S5AetEnA8CiHKSMrMyHirw
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf1CTdRzH/T7bs2eQs0cE+cIdtKZk4oFbbOuBE5AkeiJJUq+7uro54Gns
+	gG23jQg9L6ydCelwpl48oBArLYSIMWAT+REhNuRARBZw4oGAB04Owp1FKbXxQPHf6/v+vj/f
+	z+f9/d6Xy/IrwIK5SpWe0qrk2QKOL7vxl+0vRyS+51AIz3ZKiMWZ84C4PGZDieqWXoQo6zOw
+	ifLOXpSY6rqPEcPtdoSYoe9xiL6+nzDiVqMRJSwTTpQYuFrGIYqckyhx8VkNSnRVbCae3HwE
+	iMoGN0aMz1/DiM6eaRZxu9iEEP9cs2G7A8gBZz+LtP4wjJBTxQ0YaadHMbLCkktaqgo5ZP23
+	n5J222OEnGsd5JBGaxUgf24VkY8toanr38/alUnJMygtn1KlqzOUKkWs4K0Dsj0yiVQoihBF
+	E68K+Cp5DhUrSNybGpGkzPZkFfA/lmfneqRUuU4n2Bm3S6vO1VP8TLVOHyugNBnZGrEmUifP
+	0eWqFJEqSh8jEgpfkXiMh7IyF2+eA5pZ/JOm3yvRAnBqQxHw4UJcDB+Y/8CKgC/XD28G0Oly
+	c5jFAoDdfzahzOIJgE/dNGe1pMjQvOJqAbD2af2KaxrAOkf7souDh8NKYyvmZX+8BYEPjqV6
+	TSy8AoF1N8yId8MHj4MlxvPLvAl/B5Z13QVeZuNbofWrJraXeXg0vNM1jDK8ETpKJpd1Fr4D
+	XvrGxWJG4sPFqUsoowfC64snPTrX0zgJTvSkeftC/LIPPOamUa8O8UT45UAUU7oJPrxhxRgO
+	hjPFx1dYBq8YB9kMZ8LRv0wr6eNh+50ytvcYFr4d1l7dycgh8Fz3jwgzwQZ46u9JhNF50HZx
+	lbfAZy7nypFBsPG7Oew0ENBrgtFrgtFrwtD/d6sA7CoQRGl0OQoqXaIRqai8/x48XZ1jActf
+	ITzRBobKlyI7AMIFHQByWQJ/Xv/bDoUfL0Oef5jSqmXa3GxK1wEknts2sYID0tWev6TSy0Ti
+	aKFYKpWKo6OkIkEg73O7QeGHK+R6KouiNJR2tQ7h+gQXICnJUXD8tnR+JN+fL90ygiydeS2O
+	jhweS3jRlsi6sOCwTtVmWGOyjrr6267Ub3gj4GCb9jNh7Im8NoO9KbU5eDCiq/T5+UZrWK95
+	Nr/v3f3K5+C8pRtoHoXVG6uFmPU6ht27NTA7ZXSOhP42ML3kyz9dfkb5kXTY5l6Ijy81xplF
+	+WGLyTGmaWRo/cbAWV153lKoa3/Cm3OlLsmOD8a3YuLol3qG8l6XrQsK4R13m/d9P56C7TGf
+	TJLtXafcd//h16FHqg0hh2t3d/psq+ksjD9R8mGaoeHIoRo/+tcDKWkJphatZcw0ykk+GzJx
+	oXQz/2Be+hdL2+oK7Udldx359AsCti5TLgpnaXXyfwEUJ5spkwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHec9l52w2PM3KVyOREZZGq3V9lZIssfOlC33ToFp6WNNNbWul
+	flG8dJm5kspwaU3RldNIp+nmvKSZZVrTMm2rJDNLK1A0RAW7uCH47ff8/+/z4/nw0rhonPCn
+	FYnnOHWiTCnmCYj6p+KAzdHHuuRbdU4vNDdeAND9z1YSVTW/xlCRI5tA9zpek2i08wuFnE9s
+	GBo3DPGQw1FNod56PYksIwMkettYxEO6ga8kurvwkESdxjVopvsXQKWPf1NoeLKJQh09Yzh6
+	cy0fQ3+brNS+1ezbgT6cratwYuzotccUazN8olijRctazFd4bG1ZOmuzTmPsRMs7HquvMwO2
+	rUXKTlsCjq6IEeyJ45SK85x6S/gpwZm2NzYyuYZJGZx/SWSAPqEO8GnI7IC6bDtPBwS0iLED
+	+HliEPMUfnAq6xbpYR9Y8ec75Xn0DcDnd2qJxYLHhMBSfYu7WMV0Y3D20h/3gDNmDNaXv3Sr
+	RMwEgOYH8YvMZ8Jhob7AnfswR2DmUCG+yASzHtbdaHBbhUwo7O90kh5eCbsKv7pznNkE84Zz
+	wBKbSn7invMC4dyoifTkvvDZ3NX/Of3/oig40nP6OvAxLDMZlpkMy0yGZdtGQJiBH5esUclV
+	GmmyNJG7INHIVBptolwSm6SyAPdvCAm2ggbzpKQdYDRoB5DGxauEfYe75CJhnCw1jVMnnVRr
+	lZymHaylCbGv0HcsL07EyGXnuASOS+bUSy1G8/0zsPQ1uxUHXxl6dilwVWp2eHTQiQfB0t1Y
+	calr0tWtzGlsYsiRv67cgwHM2j4q9pA65fLT1hmN4sLs7Rc2emVQUGhW2PC2/qqZR/vvVy5Q
+	Bfn2VJN8qCLzkry5Oubk1up3rbXes86Ujcpcr+OyAUfWhvxwW781bPhma+RURGRwrPG9qyej
+	/XuT7KLJGJ1QY0zJL7fP4/HrJOSGwZ3jHzNnS8szH/7+4M2vcOiLVuT6pN0UyBsnjof1cr3p
+	tPeTtobisqmo7cUuQUOgVhkNCyQfCVNSmLbqgJNfkxBin6Gn2iJS/Tuq05uJY5VlMA+NqUN1
+	XiV7j0z/4J39NRrvEBOaMzJpCK7WyP4BMmZmenwDAAA=
+X-CMS-MailID: 20250306074425epcas5p20a08ef2dbd5705a1044fafb8c4a9ec15
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250305091852epcas5p18a0853e85a5ed3d36d5d42ef89735ca6
+References: <20250305091246.106626-1-swathi.ks@samsung.com>
+	<CGME20250305091852epcas5p18a0853e85a5ed3d36d5d42ef89735ca6@epcas5p1.samsung.com>
+	<20250305091246.106626-2-swathi.ks@samsung.com>
+	<789ecb2f-dddc-491b-b9f8-5fb89058fd1b@kernel.org>
 
 
---
-Linaro LKFT
-https://lkft.linaro.org
+
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk=40kernel.org>
+> Sent: 06 March 2025 12:45
+> To: Swathi K S <swathi.ks=40samsung.com>; krzk+dt=40kernel.org;
+> andrew+netdev=40lunn.ch; davem=40davemloft.net; edumazet=40google.com;
+> kuba=40kernel.org; pabeni=40redhat.com; robh=40kernel.org;
+> conor+dt=40kernel.org; richardcochran=40gmail.com;
+> mcoquelin.stm32=40gmail.com; alexandre.torgue=40foss.st.com
+> Cc: rmk+kernel=40armlinux.org.uk; netdev=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-stm32=40st-md-mailman.stormreply.com;
+> linux-arm-kernel=40lists.infradead.org; linux-kernel=40vger.kernel.org;
+> pankaj.dubey=40samsung.com; ravi.patel=40samsung.com;
+> gost.dev=40samsung.com
+> Subject: Re: =5BPATCH v8 1/2=5D dt-bindings: net: Add FSD EQoS device tre=
+e
+> bindings
+>=20
+> On 05/03/2025 10:12, Swathi K S wrote:
+> > Add FSD Ethernet compatible in Synopsys dt-bindings document. Add FSD
+> > Ethernet YAML schema to enable the DT validation.
+> >
+> > Signed-off-by: Pankaj Dubey <pankaj.dubey=40samsung.com>
+> > Signed-off-by: Ravi Patel <ravi.patel=40samsung.com>
+> > Signed-off-by: Swathi K S <swathi.ks=40samsung.com>
+> > ---
+> >  .../devicetree/bindings/net/snps,dwmac.yaml   =7C   5 +-
+> >  .../bindings/net/tesla,fsd-ethqos.yaml        =7C 118 ++++++++++++++++=
+++
+> >  2 files changed, 121 insertions(+), 2 deletions(-)  create mode
+> > 100644 Documentation/devicetree/bindings/net/tesla,fsd-ethqos.yaml
+> >
+>=20
+> I tried and did not see any differences, so point me exactly to any diffe=
+rence
+> in the binding (binding=21) which would justify dropping review?
+
+Added the following in the example given in DT binding doc:
+
+assigned-clocks =3D <&clock_peric PERIC_EQOS_PHYRXCLK_MUX>,
+                                <&clock_peric PERIC_EQOS_PHYRXCLK>;
+assigned-clock-parents =3D <&clock_peric PERIC_EQOS_PHYRXCLK>;
+
+Given the significance of these changes, I assumed the changes need to be r=
+eviewed again.
+That was why the tag was removed. Please correct me if I am wrong and provi=
+de your feedback on this patch.
+
+- Swathi
+
+>=20
+> Best regards,
+> Krzysztof
+
 
