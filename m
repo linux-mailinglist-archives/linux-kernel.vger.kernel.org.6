@@ -1,241 +1,170 @@
-Return-Path: <linux-kernel+bounces-548476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D257A5455C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:51:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AD14A54568
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:52:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37BEF16B901
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:51:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58C7D7A3888
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F992080EC;
-	Thu,  6 Mar 2025 08:50:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF542080D3;
+	Thu,  6 Mar 2025 08:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ild6cuZq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WYL/lECD"
+Received: from mail-yw1-f193.google.com (mail-yw1-f193.google.com [209.85.128.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C002B207A05;
-	Thu,  6 Mar 2025 08:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EE71A83ED;
+	Thu,  6 Mar 2025 08:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741251049; cv=none; b=gzn4cLbYB+wQe0XGSP5NRkUI9sggLvakwEKq6Qz9ZPEaF8qpG2XFUuvu7018xAcqZC50i/OxGBwdST0iZfqomI+IeI6dgg/RQ1cCwiuFtsjdin+oIAv1APONF9DP5Aw9cqwOiFMJkBGSV9mf5aXzcNzkJLQlg/YCcq1Yrj8p15U=
+	t=1741251161; cv=none; b=MtE5NQtFSxRV2E1M1P8XQ728rUNMnsq6M88ghogEct2SK6iBD5A4zBC8DTQuYxtwFV9uuQttlSuqzRR/D2sxmKKXMJC0OR/WKDKTgrjJHQC23HsZvMo2fbYuZdaw7NsqxqR+7qlUmbPs0vL7CRH71jXHbwi+GSb8P5GNeJrwKFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741251049; c=relaxed/simple;
-	bh=vKM1MMSoy2IDAm4XNuPTAz/yyPszNBX0fQkGrN6Ybm0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fxeIwYd3Vy2RAEUCfO8Z0DgZdkc/UInvABvwpcNNjSxlBmmvYy/aOLVwvQNX6RD/KBmvBnZZ1YK2PHXnPWh5h7bxYvAzN2YyJEJymbSPz/IqtoW+9TY4pN2xJLCcgJ7B3c7WqUMjKIQYRuHIOwfCLu/vDNeZIGRR6syBXxW6IrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ild6cuZq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 958FDC4CEE0;
-	Thu,  6 Mar 2025 08:50:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741251049;
-	bh=vKM1MMSoy2IDAm4XNuPTAz/yyPszNBX0fQkGrN6Ybm0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ild6cuZqrqhRSccQN+axzjgQyJkdNe1tFss8POiFyTbaMn4az8WhsrukeusDJHcBc
-	 N9B7p0mRIKWTL2/lHzP28YHGimTgRAMlFbMVuinZsOsmWWxBsifmrePDq24z8df82k
-	 Gwid2BmvFrn0cN/qwnruuVkhMsMuJa4GpChVgRuRvPF0F5F6q1ezXk/uQOoHN5HRV+
-	 udoopgt3O/pzogFv89aSLMDEdT6Lj1pTAvuhxTNjSNG+LrHD6k5V6h6zggDjpk9YCE
-	 ElgMp3dW209PavhdcD1qZ6j+dhl/YJqLo5jVdc6tr8BMhFHrJZDD22N+oBmTO12eCn
-	 rM9LV305fKVzw==
-Date: Thu, 6 Mar 2025 09:50:43 +0100
-From: Christian Brauner <brauner@kernel.org>
-To: Carlos Maiolino <cem@kernel.org>
-Cc: djwong@kernel.org, linux-xfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, 
-	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu, 
-	linux-ext4@vger.kernel.org
-Subject: Re: [PATCH v4 02/12] iomap: Rename IOMAP_ATOMIC -> IOMAP_ATOMIC_HW
-Message-ID: <20250306-parabel-lernprogramm-abb674f8f75f@brauner>
-References: <20250303171120.2837067-1-john.g.garry@oracle.com>
- <UQF0E8blbU4wMo9RdB7-nRkNAIJHtPkzDsTrQEOkNRLjG2CGbKe97G8XenXN1DSkhoWhipJrN956Enqgk9Ewkg==@protonmail.internalid>
- <20250303171120.2837067-3-john.g.garry@oracle.com>
- <mefv3axgsk567xwwwuoonvo7bncvdgu547ycvin5zjlztslotm@qu4fxqi3fave>
+	s=arc-20240116; t=1741251161; c=relaxed/simple;
+	bh=XXs8uZWN9WWnGCHphGrfM+z/OKcBjkW6AX8J7E+t69Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nvWLY5dgc4v0EKiA4C0lVkR/6N00tWO9qOTVlp/SuUlo6DmYh2VwZyBd2mUG8smMFksk1f2HMDf8CNNSybkPjNeLjZJcstoIHMI59nin+VopCXeZM3FEIJUYt668ENrHPmMVXyGWi7+621HjOEuzYs/LcQI3unY/tji+TATz/54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WYL/lECD; arc=none smtp.client-ip=209.85.128.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f193.google.com with SMTP id 00721157ae682-6ef7c9e9592so3532527b3.1;
+        Thu, 06 Mar 2025 00:52:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741251158; x=1741855958; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XXs8uZWN9WWnGCHphGrfM+z/OKcBjkW6AX8J7E+t69Y=;
+        b=WYL/lECD/6JlqWhX9RYHhAA2g2y+5llFJmL2bkMLkoS9yuVVPljQgSBG8lICn7iD5k
+         otAGDP15oBIQJjrIC24CJZzYBsvLOEyQrgGvmQ7VXKcVDRy0g1v7JFQ1B0x2b/VO0K8M
+         PZ71h/h1I4gAmn2qp9sGFGGJkCwA1ecOwplWxIsjcf7NB5/UnVMnYf5yw1Dx6WiR1OM+
+         1fVsBlh5a96tjMCUFlk5TS1ujPv0CU2VMMwhfgIdcRrSfq2Ue2JD1JLzvSReg3IVUylk
+         ZQA38y7nR4jlJvwfdAEoJMfzYsW5ER/GpedU2kcRw5YoLb73lFk3eti19JbUrMctagTg
+         QmBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741251158; x=1741855958;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XXs8uZWN9WWnGCHphGrfM+z/OKcBjkW6AX8J7E+t69Y=;
+        b=u3Dm5FrTpVtpxvABx06usUJrYAaw0N3wKuRjnqil+hPpcW7WQExz6/Q4o9v06YQTC2
+         s2EgxO18p/jf/XFzL/t7ewCJ8U/jipMHpeybkF0RKjur85gRHcRAiPpvontZiQSUOSdn
+         soiK2Zcuar6CKHm/xPss9PelYZj05BULPJKYNh+igm/+TzH5O2P4BBSExUMYM1h7DLy6
+         w9NGlfQZ6MajglCrGfwh8IhmHBnoiLbGkDPsiVFJY2iA3QdMWhqzVqclzteyOYTTdEgp
+         czOiYuT5cldeDXtzD//fK929N6aU1ZO38u8QplBSJeMSIJVnrjvZcI5zjU4sRyZ95uTA
+         dPmg==
+X-Forwarded-Encrypted: i=1; AJvYcCW1mOWHaOXmP0IapArRnt7tDHoD72lI2BCDKwSQhPTLlUbi7U6tnBk/226X1BqWo7Nd7PQ=@vger.kernel.org, AJvYcCW3oOT3+XjTnVzUTrOu66fw8EDk5m249DysahljvLIiFTe0SdiHlcrKDdSpqCosGJPVApEQoJPH@vger.kernel.org, AJvYcCW5U6SwoQBuoQpQaRxEbBHEvyqjC6N6k80NpNuxLGFct4Wzv98hF46094VdvpuCk63GDprx44MIcAaJbmzF@vger.kernel.org, AJvYcCWyAesTNLAt4b9i8uxF11/HZVY6LzLXP/iOirqrtUa1YbkNCLHWengE4RTC/gUGaoWv5hD+oqgYM4MQPFX3oN64PfX0@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxASEINJGo1aZ5GbPoQPI2XBp0zr2pYOBDXjKgSCrSos3de4ES
+	cdpVjSdFCGApbWwMQ7JhhQw8BkjLQieqXksxygWAQ8U1GGUjipCQThVCElCyqTCe5pZDDt2V+eV
+	HScX1S1czCauYJHvvU6WGop1lmzg=
+X-Gm-Gg: ASbGncs3WXbzpAca2FJtMZnGMcNAlzivcKQtm/HWVqHHFkh0UCp7Av27ru56FLc+EcK
+	nLYVOlDnpMT8hPXOfExWI7ufY+25evVbRo4n+izPqMlABodjEvXbfoOYaJc3TqtplDMOEqu7KhE
+	KxlZSBvxUeToq8zLhrwDaW2TEWrA==
+X-Google-Smtp-Source: AGHT+IHUPHaw0YZdo+mDMRAkSmdnWIm6D16Vg79ihR5A4Mv8LJil7rF/h/OfZk/ywEv5+Ey8+JWj4dl2X5zMiVr1zBQ=
+X-Received: by 2002:a05:690c:2b03:b0:6fe:b88e:4d82 with SMTP id
+ 00721157ae682-6feb88e57c7mr3700567b3.28.1741251158459; Thu, 06 Mar 2025
+ 00:52:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <mefv3axgsk567xwwwuoonvo7bncvdgu547ycvin5zjlztslotm@qu4fxqi3fave>
+References: <20250303132837.498938-1-dongml2@chinatelecom.cn>
+ <20250303132837.498938-2-dongml2@chinatelecom.cn> <20250303165454.GB11590@noisy.programming.kicks-ass.net>
+ <CADxym3aVtKx_mh7aZyZfk27gEiA_TX6VSAvtK+YDNBtuk_HigA@mail.gmail.com>
+ <20250304053853.GA7099@noisy.programming.kicks-ass.net> <20250304061635.GA29480@noisy.programming.kicks-ass.net>
+ <CADxym3bS_6jpGC3vLAAyD20GsR+QZofQw0_GgKT8nN3c-HqG-g@mail.gmail.com>
+ <20250304094220.GC11590@noisy.programming.kicks-ass.net> <6F9EF5C3-4CAE-4C5E-B70E-F73462AC7CA0@zytor.com>
+ <CADxym3busXZKtX=+FY_xnYw7e1CKp5AiHSasZGjVJTdeCZao-g@mail.gmail.com>
+ <20250305100306.4685333a@gandalf.local.home> <CADxym3ZB_eQny=-aO4AwrHiwT264NXitdKwjRUYrnGJ2tH=Qwg@mail.gmail.com>
+ <CAADnVQJ0_+Hij=kf9eVPX_ZND=2=uDHaYPWvv1x-WmR5sZRSmA@mail.gmail.com>
+In-Reply-To: <CAADnVQJ0_+Hij=kf9eVPX_ZND=2=uDHaYPWvv1x-WmR5sZRSmA@mail.gmail.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Thu, 6 Mar 2025 16:50:58 +0800
+X-Gm-Features: AQ5f1JpgFvunO0OQTqf93RDkyeUwF-IllYoHkeBCNOU1pNT2c-N8DSTxA6mOAMI
+Message-ID: <CADxym3YMeAPpc+ozM2E7yW1qpB_arKJiDyAcRs8pW8sRqJZOZw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/4] x86/ibt: factor out cfi and fineibt offset
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, X86 ML <x86@kernel.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eddy Z <eddyz87@gmail.com>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Jiri Olsa <jolsa@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, Bill Wendling <morbo@google.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>, dongml2@chinatelecom.cn, 
+	Andrew Morton <akpm@linux-foundation.org>, Rik van Riel <riel@surriel.com>, 
+	Mike Rapoport <rppt@kernel.org>, linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	linux-trace-kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Network Development <netdev@vger.kernel.org>, clang-built-linux <llvm@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 05, 2025 at 01:57:26PM +0100, Carlos Maiolino wrote:
-> Hi Christian,
-> On Mon, Mar 03, 2025 at 05:11:10PM +0000, John Garry wrote:
-> > In future xfs will support a SW-based atomic write, so rename
-> > IOMAP_ATOMIC -> IOMAP_ATOMIC_HW to be clear which mode is being used.
-> > 
-> > Also relocate setting of IOMAP_ATOMIC_HW to the write path in
-> > __iomap_dio_rw(), to be clear that this flag is only relevant to writes.
-> > 
-> > Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
-> > Signed-off-by: John Garry <john.g.garry@oracle.com>
-> 
-> I pushed the patches in this series into this branch:
-> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git xfs-6.15-atomicwrites
-> 
-> Do you plan to send the iomap patches in this series yourself or is it ok with
-> you if they go through xfs tree?
+On Thu, Mar 6, 2025 at 11:39=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Wed, Mar 5, 2025 at 6:59=E2=80=AFPM Menglong Dong <menglong8.dong@gmai=
+l.com> wrote:
+> >
+> > I'm not sure if it works. However, indirect call is also used
+> > in function graph, so we still have better performance. Isn't it?
+> >
+> > Let me have a look at the code of the function graph first :/
+>
+> Menglong,
+>
+> Function graph infra isn't going to help.
+> "call foo" isn't a problem either.
+>
+> But we have to step back.
+> per-function metadata is an optimization and feels like
+> we're doing a premature optimization here without collecting
+> performance numbers first.
+>
+> Let's implement multi-fentry with generic get_metadata_by_ip() first.
+> get_metadata_by_ip() will be a hashtable in such a case and
+> then we can compare its performance when it's implemented as
+> a direct lookup from ip-4 (this patch) vs hash table
+> (that does 'ip' to 'metadata' lookup).
 
-Ok, so this will have merge conflicts with vfs-6.15.iomap. I put the
-preliminary iomap patches of this series onto vfs-6.15.iomap.
+Hi, Alexei
 
-Please simply pull vfs-6.15.iomap instead of vfs-6.15.shared.iomap.
-Nothing changes for you as everything has been kept stable. There'll be
-no merge conflicts for us afterwards.
+You are right, I should do such a performance comparison.
 
-Thanks for the ping!
+>
+> If/when we decide to do this per-function metadata we can also
+> punt to generic hashtable for cfi, IBT, FineIBT, etc configs.
+> When mitigations are enabled the performance suffers anyway,
+> so hashtable lookup vs direct ip-4 lookup won't make much difference.
+> So we can enable per-function metadata only on non-mitigation configs
+> when FUNCTION_ALIGNMENT=3D16.
+> There will be some number of bytes available before every function
+> and if we can tell gcc/llvm to leave at least 5 bytes there
+> the growth of vmlinux .text will be within a noise.
 
-> 
-> Cheers,
-> Carlos
-> 
-> > ---
-> >  Documentation/filesystems/iomap/operations.rst |  4 ++--
-> >  fs/ext4/inode.c                                |  2 +-
-> >  fs/iomap/direct-io.c                           | 18 +++++++++---------
-> >  fs/iomap/trace.h                               |  2 +-
-> >  include/linux/iomap.h                          |  2 +-
-> >  5 files changed, 14 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
-> > index d1535109587a..0b9d7be23bce 100644
-> > --- a/Documentation/filesystems/iomap/operations.rst
-> > +++ b/Documentation/filesystems/iomap/operations.rst
-> > @@ -514,8 +514,8 @@ IOMAP_WRITE`` with any combination of the following enhancements:
-> >     if the mapping is unwritten and the filesystem cannot handle zeroing
-> >     the unaligned regions without exposing stale contents.
-> > 
-> > - * ``IOMAP_ATOMIC``: This write is being issued with torn-write
-> > -   protection.
-> > + * ``IOMAP_ATOMIC_HW``: This write is being issued with torn-write
-> > +   protection based on HW-offload support.
-> >     Only a single bio can be created for the write, and the write must
-> >     not be split into multiple I/O requests, i.e. flag REQ_ATOMIC must be
-> >     set.
-> > diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> > index 7c54ae5fcbd4..ba2f1e3db7c7 100644
-> > --- a/fs/ext4/inode.c
-> > +++ b/fs/ext4/inode.c
-> > @@ -3467,7 +3467,7 @@ static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
-> >  		return false;
-> > 
-> >  	/* atomic writes are all-or-nothing */
-> > -	if (flags & IOMAP_ATOMIC)
-> > +	if (flags & IOMAP_ATOMIC_HW)
-> >  		return false;
-> > 
-> >  	/* can only try again if we wrote nothing */
-> > diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> > index e1e32e2bb0bf..c696ce980796 100644
-> > --- a/fs/iomap/direct-io.c
-> > +++ b/fs/iomap/direct-io.c
-> > @@ -317,7 +317,7 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
-> >   * clearing the WRITE_THROUGH flag in the dio request.
-> >   */
-> >  static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
-> > -		const struct iomap *iomap, bool use_fua, bool atomic)
-> > +		const struct iomap *iomap, bool use_fua, bool atomic_hw)
-> >  {
-> >  	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
-> > 
-> > @@ -329,7 +329,7 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
-> >  		opflags |= REQ_FUA;
-> >  	else
-> >  		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
-> > -	if (atomic)
-> > +	if (atomic_hw)
-> >  		opflags |= REQ_ATOMIC;
-> > 
-> >  	return opflags;
-> > @@ -340,8 +340,8 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
-> >  	const struct iomap *iomap = &iter->iomap;
-> >  	struct inode *inode = iter->inode;
-> >  	unsigned int fs_block_size = i_blocksize(inode), pad;
-> > +	bool atomic_hw = iter->flags & IOMAP_ATOMIC_HW;
-> >  	const loff_t length = iomap_length(iter);
-> > -	bool atomic = iter->flags & IOMAP_ATOMIC;
-> >  	loff_t pos = iter->pos;
-> >  	blk_opf_t bio_opf;
-> >  	struct bio *bio;
-> > @@ -351,7 +351,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
-> >  	u64 copied = 0;
-> >  	size_t orig_count;
-> > 
-> > -	if (atomic && length != fs_block_size)
-> > +	if (atomic_hw && length != fs_block_size)
-> >  		return -EINVAL;
-> > 
-> >  	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
-> > @@ -428,7 +428,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
-> >  			goto out;
-> >  	}
-> > 
-> > -	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic);
-> > +	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic_hw);
-> > 
-> >  	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
-> >  	do {
-> > @@ -461,7 +461,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
-> >  		}
-> > 
-> >  		n = bio->bi_iter.bi_size;
-> > -		if (WARN_ON_ONCE(atomic && n != length)) {
-> > +		if (WARN_ON_ONCE(atomic_hw && n != length)) {
-> >  			/*
-> >  			 * This bio should have covered the complete length,
-> >  			 * which it doesn't, so error. We may need to zero out
-> > @@ -652,9 +652,6 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> >  	if (iocb->ki_flags & IOCB_NOWAIT)
-> >  		iomi.flags |= IOMAP_NOWAIT;
-> > 
-> > -	if (iocb->ki_flags & IOCB_ATOMIC)
-> > -		iomi.flags |= IOMAP_ATOMIC;
-> > -
-> >  	if (iov_iter_rw(iter) == READ) {
-> >  		/* reads can always complete inline */
-> >  		dio->flags |= IOMAP_DIO_INLINE_COMP;
-> > @@ -689,6 +686,9 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
-> >  			iomi.flags |= IOMAP_OVERWRITE_ONLY;
-> >  		}
-> > 
-> > +		if (iocb->ki_flags & IOCB_ATOMIC)
-> > +			iomi.flags |= IOMAP_ATOMIC_HW;
-> > +
-> >  		/* for data sync or sync, we need sync completion processing */
-> >  		if (iocb_is_dsync(iocb)) {
-> >  			dio->flags |= IOMAP_DIO_NEED_SYNC;
-> > diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
-> > index 9eab2c8ac3c5..69af89044ebd 100644
-> > --- a/fs/iomap/trace.h
-> > +++ b/fs/iomap/trace.h
-> > @@ -99,7 +99,7 @@ DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
-> >  	{ IOMAP_FAULT,		"FAULT" }, \
-> >  	{ IOMAP_DIRECT,		"DIRECT" }, \
-> >  	{ IOMAP_NOWAIT,		"NOWAIT" }, \
-> > -	{ IOMAP_ATOMIC,		"ATOMIC" }
-> > +	{ IOMAP_ATOMIC_HW,	"ATOMIC_HW" }
-> > 
-> >  #define IOMAP_F_FLAGS_STRINGS \
-> >  	{ IOMAP_F_NEW,		"NEW" }, \
-> > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> > index ea29388b2fba..87cd7079aaf3 100644
-> > --- a/include/linux/iomap.h
-> > +++ b/include/linux/iomap.h
-> > @@ -189,7 +189,7 @@ struct iomap_folio_ops {
-> >  #else
-> >  #define IOMAP_DAX		0
-> >  #endif /* CONFIG_FS_DAX */
-> > -#define IOMAP_ATOMIC		(1 << 9)
-> > +#define IOMAP_ATOMIC_HW		(1 << 9)
-> >  #define IOMAP_DONTCACHE		(1 << 10)
-> > 
-> >  struct iomap_ops {
-> > --
-> > 2.31.1
-> > 
+Sounds great! It's so different to make the per-function metadata
+work in all the cases. Especially, we can't implement it in arm64
+if CFI_CLANG is enabled. And the fallbacking to the hash table makes
+it much easier in these cases.
+
+>
+> So let's figure out the design of multi-fenty first with a hashtable
+> for metadata and decide next steps afterwards.
+
+Ok, I'll develop a version for fentry multi-link with both hashtable
+and function metadata, and do some performance testing. Thank
+you for your advice :/
+
+Thanks!
+Menglong Dong
 
