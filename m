@@ -1,328 +1,185 @@
-Return-Path: <linux-kernel+bounces-548108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66BA3A54010
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:38:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D070CA5400D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:38:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75FE63ABE99
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:38:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E7D17A3793
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:37:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84AB18B477;
-	Thu,  6 Mar 2025 01:38:39 +0000 (UTC)
-Received: from zg8tmja5ljk3lje4ms43mwaa.icoremail.net (zg8tmja5ljk3lje4ms43mwaa.icoremail.net [209.97.181.73])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C90F17E473;
-	Thu,  6 Mar 2025 01:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.97.181.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D9B18B499;
+	Thu,  6 Mar 2025 01:38:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m8fBaVdQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B50C012D1F1;
+	Thu,  6 Mar 2025 01:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741225119; cv=none; b=lwlWqpNq+z5SLEpImLCMF4z30Xofao9gAnvg9uCnjjeTw7pPCKWhP38f6qSqL2NBQkmcdirjE6e/nqjWilgdncawDU26bKvJwPru97xlCPIQUEhpb/YmvRxUpDq9PdvWalqIoOPN8o1ZrXCUbXzfAlpq8CY1LT/l1wguff52+VY=
+	t=1741225100; cv=none; b=iPh/BefbsfM87qXjounX72w0pT6A88tPukEnrmGOb7tMMSECL5d1efNWv5Zvvf152LKH89tgoFU3vMvtdw5+X9OEftDViIyNV+CscWnZUjkNWRqK4LxlRFHdOqZoYWgB4FEqI3L6bunKrYReDFZozCjKBHiPN/R6zlajeI8GdFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741225119; c=relaxed/simple;
-	bh=n37GYU1TrA94POxtjoQVj6BwqVafhkocGlcUk6vjz1U=;
+	s=arc-20240116; t=1741225100; c=relaxed/simple;
+	bh=UrM87g5D3UWDiuKi4KaePsOLKzw0YeiUZ6UGIXP/nmc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FWq923YOB7Yxx1iftrz7zf/PE+nmzKskJpBcU46/FY2pk/jvdHT6fNIKvl36xL9zCrMsC2pUZvoKsM1tWlqsOn+uUVhdCw8T1QOdNrdQgB1XQ2vpWDAFQ2Ood6ilvTRPFRPGU9T5JoBfxs3QSC9AtVNnsBfH+rxaOlDv6AoCywU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=209.97.181.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
-Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
-	by hzbj-icmmx-7 (Coremail) with SMTP id AQAAfwA3vS2L_MhnlAzuBg--.29477S2;
-	Thu, 06 Mar 2025 09:38:19 +0800 (CST)
-Received: from localhost (unknown [123.150.8.50])
-	by mail (Coremail) with SMTP id AQAAfwBHS4d9_MhnaOY7AA--.2066S2;
-	Thu, 06 Mar 2025 09:38:15 +0800 (CST)
-Date: Thu, 6 Mar 2025 09:37:49 +0800
-From: Yuquan Wang <wangyuquan1236@phytium.com.cn>
-To: Gregory Price <gourry@gourry.net>
-Cc: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [LSF/MM] CXL Boot to Bash - Section 0: ACPI and Linux Resources
-Message-ID: <Z8j8bZ5TS+gDV8+M@phytium.com.cn>
-References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
- <Z8jORKIWC3ZwtzI4@gourry-fedora-PF4VCD3F>
+	 Content-Type:Content-Disposition:In-Reply-To; b=b6ndg+3yvvFutXBxW8U4Zmnaq+ECFOIhCDqDLSFpIWX4huLkq4Dz38yP98c5nthds6feu+6LNQcmD79H66SBLU8YzmCi3XmTnVynda45o/Jel/HxfnIMvyDD8kv99aqa4j1ieOlKnJ3siAy5u3IRU0J0WQ2wbBbbrYE6BkEeUW0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m8fBaVdQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CD3DC4CED1;
+	Thu,  6 Mar 2025 01:38:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741225100;
+	bh=UrM87g5D3UWDiuKi4KaePsOLKzw0YeiUZ6UGIXP/nmc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m8fBaVdQPpH5BGqnqZgzsQcGmB+yJ4tkSOFBXFNUoeokAkoh02hbJQXS59dUbc3vp
+	 XrsyGCnQe9Loq1vPnpPmHK6VER2iahCfyQl6+nNw2y3//hnVABiDk6GtJyvghx8Ujz
+	 KhfZZpngm0p3H02I/5x5kt79DXZCtAG7yH0/NQPJb1irylxXqdTQ5oEm7KtMjhtWhb
+	 39ZTWUh4/uYn5F81WhLnWagqcDTbBb1o2j5UqgMNBst4US6p3s/uf8zzsm/PbiSuYc
+	 eicQAXz18Ar/ZbKSnkQ8EKNhKc4di8QVDVYyeoENpchA/BnW7wsIcrcS+r/6M3lI6Y
+	 fSB6ueacX/vEw==
+Date: Thu, 6 Mar 2025 02:38:11 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: airlied@gmail.com, simona@ffwll.ch, corbet@lwn.net,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, ajanulgu@redhat.com, lyude@redhat.com,
+	pstanner@redhat.com, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
+	aliceryhl@google.com, tmgross@umich.edu, gregkh@linuxfoundation.org,
+	mcgrof@kernel.org, russ.weight@linux.dev,
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v5 3/5] rust: firmware: add `module_firmware!` macro
+Message-ID: <Z8j8gwvnmKF9ZymM@pollux>
+References: <20250304173555.2496-1-dakr@kernel.org>
+ <20250304173555.2496-4-dakr@kernel.org>
+ <D88RCQTNVD7B.3RIN253F8LODY@proton.me>
+ <Z8j0otfkVtnMXIRQ@pollux>
+ <D88SJOTH9GN4.3OVO4JFYAF9R2@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z8jORKIWC3ZwtzI4@gourry-fedora-PF4VCD3F>
-X-CM-TRANSID:AQAAfwBHS4d9_MhnaOY7AA--.2066S2
-X-CM-SenderInfo: 5zdqw5pxtxt0arstlqxsk13x1xpou0fpof0/1tbiAQABAWfIrdcBhQAAsQ
-Authentication-Results: hzbj-icmmx-7; spf=neutral smtp.mail=wangyuquan
-	1236@phytium.com.cn;
-X-Coremail-Antispam: 1Uk129KBjvJXoW3Ww1UWr1UZryxGFW3Kr48WFg_yoWfJF4fpF
-	s3JrZ7Krs3GrWxCw1xtay09w1fJa4xCayUJryxGryxCws09ryjvr43K3W8ZFWDGryUCF15
-	Xa17tF1jvay8AaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
-	UUUUU
+In-Reply-To: <D88SJOTH9GN4.3OVO4JFYAF9R2@proton.me>
 
-On Wed, Mar 05, 2025 at 05:20:52PM -0500, Gregory Price wrote:
-> ====
-> SRAT
-> ====
-> The System/Static Resource Affinity Table describes resource (CPU,
-> Memory) affinity to "Proximity Domains". This table is technically
-> optional, but for performance information (see "HMAT") to be enumerated
-> by linux it must be present.
+On Thu, Mar 06, 2025 at 01:27:19AM +0000, Benno Lossin wrote:
+> On Thu Mar 6, 2025 at 2:04 AM CET, Danilo Krummrich wrote:
+> > On Thu, Mar 06, 2025 at 12:31:14AM +0000, Benno Lossin wrote:
+> >> On Tue Mar 4, 2025 at 6:34 PM CET, Danilo Krummrich wrote:
+> >>
+> >> > +#[macro_export]
+> >> > +macro_rules! module_firmware {
+> >> > +    ($($builder:tt)*) => {
+> >>
+> >> This should probably be `$builder:expr` instead.
+> >
+> > That doesn't work, the compiler then complains, since it's not an expression:
+> >
+> > 193  |         static __MODULE_FIRMWARE: [u8; $builder::create(__module_name()).build_length()] =
+> >      |                                                ^^ expected one of `.`, `?`, `]`, or an operator
 > 
-> 
-> # Proximity Domain
-> A proximity domain is ROUGHLY equivalent to "NUMA Node" - though a
-> 1-to-1 mapping is not guaranteed.  There are scenarios where "Proximity
-> Domain 4" may map to "NUMA Node 3", for example.  (See "NUMA Node Creation")
-> 
-> # Memory Affinity
-> Generally speaking, if a host does any amount of CXL fabric (decoder)
-> programming in BIOS - an SRAT entry for that memory needs to be present.
-> 
-> ```
->         Subtable Type : 01 [Memory Affinity]
->                Length : 28
->      Proximity Domain : 00000001          <- NUMA Node 1
->             Reserved1 : 0000
->          Base Address : 000000C050000000  <- Physical Memory Region
->        Address Length : 0000003CA0000000
->             Reserved2 : 00000000
-> Flags (decoded below) : 0000000B
->              Enabled : 1
->        Hot Pluggable : 1
->         Non-Volatile : 0
-> ```
-> 
-> # Generic Initiator / Port
-> In the scenario where CXL devices are not present or configured by
-> BIOS, we may still want to generate proximity domain configurations
-> for those devices.   The Generic Initiator interfaces are intended to
-> fill this gap, so that performance information can still be utilized
-> when the devices become available at runtime.
-> 
-> I won't cover the details here, for now, but I will link to the
-> proosal from Dan Williams and Jonathan Cameron if you would like
-> more information.
-> https://lore.kernel.org/all/e1a52da9aec90766da5de51b1b839fd95d63a5af.camel@intel.com/
-> 
-> ====
-> HMAT
-> ====
-> The Heterogeneous Memory Attributes Table contains information such as
-> cache attributes and bandwidth and latency details for memory proximity
-> domains.  For the purpose of this document, we will only discuss the
-> SSLIB entry.
-> 
-> # SLLBI
-> The System Locality Latency and Bandwidth Information records latency
-> and bandwidth information for proximity domains. This table is used by
-> Linux to configure interleave weights and memory tiers.
-> 
-> ```
-> Heavily truncated for brevity
->               Structure Type : 0001 [SLLBI]
->                    Data Type : 00         <- Latency
-> Target Proximity Domain List : 00000000
-> Target Proximity Domain List : 00000001
->                        Entry : 0080       <- DRAM LTC
->                        Entry : 0100       <- CXL LTC
-> 
->               Structure Type : 0001 [SLLBI]
->                    Data Type : 03         <- Bandwidth
-> Target Proximity Domain List : 00000000
-> Target Proximity Domain List : 00000001
->                        Entry : 1200       <- DRAM BW
->                        Entry : 0200       <- CXL BW
-> ```
-> 
-> 
-> ---------------------------------
-> Part 00: Linux Resource Creation.
-> ---------------------------------
-> 
-> ==================
-> NUMA node creation
-> ===================
-> NUMA nodes are *NOT* hot-pluggable.  All *POSSIBLE* NUMA nodes are
-> identified at `__init` time, more specifically during `mm_init`.
-> 
-> What this means is that the CEDT and SRAT must contain sufficient
-> `proximity domain` information for linux to identify how many NUMA
-> nodes are required (and what memory regions to associate with them).
-> 
-Hi, Gregory.
+> Does `<$builder>::create` work (with the `expr` fragment)?
 
-Recently, I found a corner case in CXL numa node creation.
+No, the compiler then explicitly complains that it expects a type.
 
-Condition:
-1) A UMA/NUMA system that SRAT is absence, but it keeps CEDT.CFMWS
-2）Enable CONFIG_ACPI_NUMA
+> 
+> > `ty` doesn't work either, since then the compiler expects the caller to add the
+> > const generic, which we want the macro to figure out instead.
+> >
+> >>
+> >> > +
+> >> > +        #[cfg(not(MODULE))]
+> >> > +        const fn __module_name() -> &'static kernel::str::CStr {
+> >> > +            <LocalModule as kernel::ModuleMetadata>::NAME
+> >>
+> >> Please either use `::kernel::` or `$crate::` instead of `kernel::`.
+> >
+> > Good catch, thanks.
+> >
+> >>
+> >> Hmm, I am not 100% comfortable with the `LocalModule` way of accessing
+> >> the current module for some reason, no idea if there is a rational
+> >> argument behind that, but it just doesn't sit right with me.
+> >>
+> >> Essentially you're doing this for convenience, right? So you don't want
+> >> to have to repeat the name of the module type every time?
+> >
+> > No, it's really that I can't know the type name here, please see the previous
+> > patch commit message that introduces `LocalModule` for explanation.
+> 
+> Gotcha.
+> 
+> >> > +        }
+> >> > +
+> >> > +        #[cfg(MODULE)]
+> >> > +        const fn __module_name() -> &'static kernel::str::CStr {
+> >> > +            kernel::c_str!("")
+> >>
+> >> Ditto.
+> >>
+> >> > +        }
+> >>
+> >> Are these two functions used outside of the `static` below? If no, then
+> >> you can just move them into the static? You can also probably use a
+> >> `const` instead of a function, that way you only have 4 lines instead
+> >> of 8.
+> >
+> > Is this what you're proposing?
+> >
+> > 	#[macro_export]
+> > 	macro_rules! module_firmware {
+> > 	    ($($builder:tt)*) => {
+> > 	        const __MODULE_FIRMWARE_PREFIX: &'static $crate::str::CStr = if cfg!(MODULE) {
+> > 	            $crate::c_str!("")
+> > 	        } else {
+> > 	            <LocalModule as $crate::ModuleMetadata>::NAME
+> > 	        };
+> >
+> > 	        #[link_section = ".modinfo"]
+> > 	        #[used]
+> > 	        static __MODULE_FIRMWARE: [u8; $($builder)*::create(__MODULE_FIRMWARE_PREFIX)
+> > 	            .build_length()] = $($builder)*::create(__MODULE_FIRMWARE_PREFIX).build();
+> 
+> I meant to also move the `const` into the expression, but I guess that
+> leads to duplication:
+> 
+>     #[link_section = ".modinfo"]
+>     #[used]
+>     static __MODULE_FIRMWARE: [u8; {
+>         const PREFIX: &'static $crate::str::CStr = if cfg!(MODULE) {
+>             $crate::c_str!("")
+>         } else {
+>             <LocalModule as $crate::ModuleMetadata>::NAME
+>         };
+>         <$builder>::create(PREFIX).build_length()
+>     }] = {
+>         const PREFIX: &'static $crate::str::CStr = if cfg!(MODULE) {
+>             $crate::c_str!("")
+>         } else {
+>             <LocalModule as $crate::ModuleMetadata>::NAME
+>         };
+>         <$builder>::create(PREFIX)
+>     };
+> 
+> But then the advantage is that only the `__MODULE_FIRMWARE` static will
+> be in-scope.
+> 
+> Do you think that its useful to have the static be accessible? I.e. do
+> users need to access it (I would think they don't)? If they don't, then
+> we could put all of those things into a `const _: () = { /* ... */ };`.
+> But then people can invoke `module_firmware!` multiple times in the same
+> module, is that a problem?
 
-Results:
-1) acpi_numa_init: the fake_pxm will be 0 and send to acpi_parse_cfmws()
-2）If dynamically create cxl ram region, the cxl memory would be assigned
-to node0 rather than a fake new node.
-
-Confusions:
-1) Does CXL memory usage require a numa system with SRAT? As you
-mentioned in SRAT section: 
-
-"This table is technically optional, but for performance information
-to be enumerated by linux it must be present."
-
-Hence, as I understand it, it seems a bug in kernel.
-
-2) If it is a bug, could  we forbid this situation by adding fake_pxm
-check and returning error in acpi_numa_init()?
-
-3）If not,  maybe we can add some kernel logic to allow create these fake
-nodes on a system without SRAT?
-
-Yuquan
-> The relevant code exists in: linux/drivers/acpi/numa/srat.c
-> ```
-> static int __init
-> acpi_parse_memory_affinity(union acpi_subtable_headers *header,
->                            const unsigned long table_end)
-> {
-> ... heavily truncated for brevity
->         pxm = ma->proximity_domain;
->         node = acpi_map_pxm_to_node(pxm);
->         if (numa_add_memblk(node, start, end) < 0)
->             ....
->         node_set(node, numa_nodes_parsed);    <--- mark node N_POSSIBLE
-> }
-> 
-> static int __init acpi_parse_cfmws(union acpi_subtable_headers *header,
->                                    void *arg, const unsigned long table_end)
-> {
-> ... heavily truncated for brevity
->         /*
->          * The SRAT may have already described NUMA details for all,
->          * or a portion of, this CFMWS HPA range. Extend the memblks
->          * found for any portion of the window to cover the entire
->          * window.
->          */
->         if (!numa_fill_memblks(start, end))
->                 return 0;
-> 
->         /* No SRAT description. Create a new node. */
->         node = acpi_map_pxm_to_node(*fake_pxm);
->         if (numa_add_memblk(node, start, end) < 0)
-> 	        ....
->         node_set(node, numa_nodes_parsed);    <--- mark node N_POSSIBLE
-> }
-> 
-> int __init acpi_numa_init(void)
-> {
-> ...
->     if (!acpi_table_parse(ACPI_SIG_SRAT, acpi_parse_srat)) {
->         cnt = acpi_table_parse_srat(ACPI_SRAT_TYPE_MEMORY_AFFINITY,
->                                     acpi_parse_memory_affinity, 0);
->     }
->     /* fake_pxm is the next unused PXM value after SRAT parsing */
->     acpi_table_parse_cedt(ACPI_CEDT_TYPE_CFMWS, acpi_parse_cfmws,
->                           &fake_pxm);
-> 
-> ```
-> 
-> Basically, the heuristic is as follows:
-> 1) Add one NUMA node per Proximity Domain described in SRAT
-> 2) If the SRAT describes all memory described by all CFMWS
->    - do not create nodes for CFMWS
-> 3) If SRAT does not describe all memory described by CFMWS
->    - create a node for that CFMWS
-> 
-> Generally speaking, you will see one NUMA node per Host bridge, unless
-> inter-host-bridge interleave is in use (see Section 4 - Interleave).
-> 
-> 
-> ============
-> Memory Tiers
-> ============
-> The `abstract distance` of a node dictates what tier it lands in (and
-> therefore, what tiers are created).  This is calculated based on the
-> following heuristic, using HMAT data:
-> 
-> ```
-> int mt_perf_to_adistance(struct access_coordinate *perf, int *adist)
-> {
->  ...
->     /*
->      * The abstract distance of a memory node is in direct proportion to
->      * its memory latency (read + write) and inversely proportional to its
->      * memory bandwidth (read + write).  The abstract distance, memory
->      * latency, and memory bandwidth of the default DRAM nodes are used as
->      * the base.
->      */
->     *adist = MEMTIER_ADISTANCE_DRAM *
->         (perf->read_latency + perf->write_latency) /
->         (default_dram_perf.read_latency + default_dram_perf.write_latency) *
->         (default_dram_perf.read_bandwidth + default_dram_perf.write_bandwidth) /
->         (perf->read_bandwidth + perf->write_bandwidth);
->     return 0;
-> }
-> ```
-> 
-> Debugging hint: If you have DRAM and CXL memory in separate numa nodes
->                 but only find 1 memory tier, validate the HMAT!
-> 
-> 
-> ============================
-> Memory Tier Demotion Targets
-> ============================
-> When `demotion` is enabled (see Section 5 - allocation), the reclaim
-> system may opportunistically demote a page from one memory tier to
-> another.  The selection of a `demotion target` is partially based on
-> Abstract Distance and Performance Data.
-> 
-> ```
-> An example of demotion targets from memory-tiers.c
-> /* Example 1:
->  *
->  * Node 0 & 1 are CPU + DRAM nodes, node 2 & 3 are PMEM nodes.
->  *
->  * node distances:
->  * node   0    1    2    3
->  *    0  10   20   30   40
->  *    1  20   10   40   30
->  *    2  30   40   10   40
->  *    3  40   30   40   10
->  *
->  * memory_tiers0 = 0-1
->  * memory_tiers1 = 2-3
->  *
->  * node_demotion[0].preferred = 2
->  * node_demotion[1].preferred = 3
->  * node_demotion[2].preferred = <empty>
->  * node_demotion[3].preferred = <empty>
->  */
-> ```
-> 
-> =============================
-> Mempolicy Weighted Interleave
-> =============================
-> The `weighted interleave` functionality of `mempolicy` utilizes weights
-> to distribute memory across NUMA nodes according to some set weight.
-> There is a proposal to auto-configure these weights based on HMAT data.
-> 
-> https://lore.kernel.org/linux-mm/20250305200506.2529583-1-joshua.hahnjy@gmail.com/T/#u
-> 
-> See Section 4 - Interleave, for more information on weighted interleave.
-> 
-> 
-> 
-> --------------
-> Build Options.
-> --------------
-> We can add these build configurations to our complexity picture.
-> 
-> CONFIG_NUMA        - req for ACPI numa, mempolicy, and memory tiers
-> CONFIG_ACPI_NUMA   -- enables srat and cedt parsing
-> CONFIG_ACPI_HMAT   -- enables hmat parsing
-> 
-> 
-> ~Gregory
-
+Didn't know that's possible (const _; () = { ... };). That's pretty nice, I will
+go with my above proposal wrapped into the anonymous const. Thanks.
 
