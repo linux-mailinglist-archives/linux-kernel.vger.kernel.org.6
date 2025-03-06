@@ -1,158 +1,161 @@
-Return-Path: <linux-kernel+bounces-549670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 074E9A55543
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:44:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55FE6A55545
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:44:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD3B3189311F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:44:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75A643ADD14
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A89A26B957;
-	Thu,  6 Mar 2025 18:43:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBED269CE8;
-	Thu,  6 Mar 2025 18:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E7926BD84;
+	Thu,  6 Mar 2025 18:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGua7ODp"
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FFF25EFBD;
+	Thu,  6 Mar 2025 18:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741286635; cv=none; b=e/aHlsXDQjVkjGzmfDD5+wy405tvqV2CgOrDm9jxG5ZK+ibqwl/NT1TROJUmnkjqEciigzIVqM2mQ++/ezyIEQzw9UFjMADpTtAeFSwLwI5a8uUy43ER1iOYXaKq7hZyhA8bdWiGh2tnQwvVj1xG7Ac9I1VyIvAtdEAQ3URzkbU=
+	t=1741286649; cv=none; b=BoZuvaKdQKnQcUjSXIM0HyaLzuuv0WvqQ22P0XGHH4qxQw0hgSa9dp2Cc4HiJDzFnXl4F1qDzAxkAfL7g5RYRscucy6BES85t4TROTxc0GBDSOLohybuDLJQCxcK5z7qvIt3UgvxChtOmG1/2jBzH96rXMPZiEIg8ZWY4a32lvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741286635; c=relaxed/simple;
-	bh=CnUH+VX9AF2B3Qo/OiIZWOtpvxNv168dZVeCLZvdv6s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=InbOZWWFYCrHMJYJznHq5CXAOrtr05K2Rr+Uqiep+iW9R6LW3oNLz1pfm5Xs1StmavJyzFitPOI4YfPNWymB0hT30zLdtu/G77gh0nnPt7jIMy8i5LBgOx90Kj2oRCS9XjVSaX4iHG/X7997xa1mlzt/FgWel32cU40pI+SnsUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59F68169E;
-	Thu,  6 Mar 2025 10:44:03 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DE5EE3F673;
-	Thu,  6 Mar 2025 10:43:48 -0800 (PST)
-Date: Thu, 6 Mar 2025 18:43:45 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Cristian Marussi <cristian.marussi@arm.com>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	linux-arm-kernel@lists.infradead.org, arm-scmi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [Bug report] Memory leak in scmi_device_create
-Message-ID: <Z8ns4T6pas9DEy8B@pluto>
-References: <Z8g8vhS9rqQ_ez48@google.com>
- <Z8iFeEWq16pNQdMa@pluto>
- <Z8mCbc2Z2QGd3f8M@google.com>
- <Z8my4MZ-In0ibxVY@arm.com>
- <Z8nDj129ZVeZBVSp@pluto>
- <Z8nK3uFkspy61yjP@arm.com>
+	s=arc-20240116; t=1741286649; c=relaxed/simple;
+	bh=VK5KC+x1pv/lq7ntuIGz6PwD7O044LcrlelG1xAIMxc=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=G/XJHBRWS0VD6AwXWk7QLleeVbi0u3O0yhp5seKfjj4M/gna7layl8dHdzJKMMz7/4NQIB7kuEkd88+rfAvyVUIN3h8FOgQP9r+FjVXjsQ3BbpGg3twYsrs8erUc59bHYIWDoNj/Syp3dud3IhsvKpk7Ytm2q40hcxOTEeKEXao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VGua7ODp; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-2bcceee7b40so729434fac.3;
+        Thu, 06 Mar 2025 10:44:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741286647; x=1741891447; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=vVpug70gfz2HOif/JIKANwhTW6xxPDf4IUYvwA4URGE=;
+        b=VGua7ODpEthD4tDh/AMS9rRR31RsWx/E9ePajsvdio2mu6SMCt1NdUwxnGxZ8TnTox
+         iETKGwYf9+TMEfckEAeE0ypqe0XJ1bGWfShhUApge4sNzS8Z8LFtEkfHkWeW3DLLmWOn
+         8062VlMXH6tOsH+U9nK07xsWfBFuMh8SUTyjFqXFhMBxH24rgcyBJJZBNp89VEsnYowg
+         xnHxJWpPzPtTJNtMrvb8iklhaNoKhWQ60r88bl/lm0YuzWtPup9nwGzsoMwcOEe0a0W1
+         iAlrSam0N/mK4S840F1GCDoDAQIvrTVzZeQiSHZht9mLJ2SlplyFErSBgC6tsYpQSEiA
+         4ykA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741286647; x=1741891447;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :references:cc:to:subject:from:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vVpug70gfz2HOif/JIKANwhTW6xxPDf4IUYvwA4URGE=;
+        b=ZO0+jlcovX8ksBpa4zO7nxFKJAhnRxS9ydVpky4FwO+wxhdvsbdu89rDooa/8TTnKj
+         vbJrlrdSkfAdDkIyzvN9ZDPTzkqBIZs/KiFzWFeXdwZJpb40o9SNrXEXyUv7Y9mkkDaL
+         +izbGGFIOMYyIi1NAEh2OFzb4rNDWXkgXQngTlkfm+G6qncA/JiT0w9EQOnRJaNcohFu
+         Nc095JQLR6LNmm8zO2GaO0tvkwatHsuV3VhUFvCq3wH5VsbDMbpSLCq3/tzg3YrqrhyS
+         5wwmIaN/+YwnUjVcs1nOEDN65y58gVDTx4aP7wb4gFlKDc6SFo9qtahBjIpY+Q86oERx
+         xBGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVI2N8HIxmXBu8D0sU1GOkWci2h5DpFtTgrhyVl/RXHPHKCbLqRJxvID+Z8vjnLsxXxt2x3xuk4wC/hjwg=@vger.kernel.org, AJvYcCXucfveswrBDVx/d8bIsje3KaU2kyP5HGkle2OCiKr3d5dcDN+w85KU1bkXxbSAvKVwIUEBj2mK@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF2YWPl5A3qUlxaM0gdeEhZdz1oO8ypG5PCUbXSHuQ6pkSR5Ri
+	u1bHJuLiPP5z/hKaqM3p6eWHFUGn1b4IEzBH8jHAvb6wd/etL/Gy
+X-Gm-Gg: ASbGncuulXACkKd4DAgpwrEKhYIVq0Nfz3PWhUjymPkMgv8KsyQpp6KWAA+t2T556s/
+	b2cYkptKMF4LQuZhEqUfiqcj6xvRtNz26IhoSpk8ijSp7RfJSpz6n7/pkonqE/LHWIJ6iSbKyZK
+	o8Ba9KW/kTw7glOITyF8aUBlEadkNZS0Gx8NBZo4xG+elxPcJGaOiSFXcfgcO/gcbL0xxHU5TRa
+	+BN5ffZuHToK22r7JZ9nAhyln+oBYpP/BVDk75cUA0f/TUNaQD4zI4Wq0I3vSzHIznAVeUBTNpz
+	SehO5A8XN2Fan3VSsA0l3dJM05FArDnEbpde39pCp0egJLbjvUcAFnmV9ifIpFJtEJuxLquT
+X-Google-Smtp-Source: AGHT+IFnenMncEl3AoHYxDb4oauoKUdwdgpZOBfioXbP9pBj/UHxG79JLgSMCFzC9WqQiNYVUhIxzQ==
+X-Received: by 2002:a05:6871:110:b0:2b8:fab0:33c with SMTP id 586e51a60fabf-2c261132f0fmr222255fac.23.1741286647379;
+        Thu, 06 Mar 2025 10:44:07 -0800 (PST)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c248de95b9sm342545fac.46.2025.03.06.10.44.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 10:44:06 -0800 (PST)
+Message-ID: <64d11e0b-e964-4c55-a0ba-d3227871cb26@gmail.com>
+Date: Thu, 6 Mar 2025 10:44:02 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8nK3uFkspy61yjP@arm.com>
+User-Agent: Mozilla Thunderbird
+From: Florian Fainelli <f.fainelli@gmail.com>
+Subject: Re: [PATCH 6.13 000/154] 6.13.6-rc2 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250306151416.469067667@linuxfoundation.org>
+Content-Language: en-US
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ WlfRzlpjIPmdjgoicA==
+In-Reply-To: <20250306151416.469067667@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 06, 2025 at 04:18:38PM +0000, Catalin Marinas wrote:
-> On Thu, Mar 06, 2025 at 03:47:27PM +0000, Cristian Marussi wrote:
-> > On Thu, Mar 06, 2025 at 02:36:16PM +0000, Catalin Marinas wrote:
-> > > This loop in scmi_device_create() looks strange:
-> > > 
-> > > 	list_for_each_entry(rdev, phead, node) {
-> > > 		struct scmi_device *sdev;
-> > > 
-> > > 		sdev = __scmi_device_create(np, parent,
-> > > 					    rdev->id_table->protocol_id,
-> > > 					    rdev->id_table->name);
-> > > 		/* Report errors and carry on... */
-> > > 		if (sdev)
-> > > 			scmi_dev = sdev;
-> > > 		else
-> > > 			pr_err("(%s) Failed to create device for protocol 0x%x (%s)\n",
-> > > 			       of_node_full_name(parent->of_node),
-> > > 			       rdev->id_table->protocol_id,
-> > > 			       rdev->id_table->name);
-> > > 	}
-> > > 
-> > > We can override scmi_dev a few times in the loop and lose the previous
-> > > sdev allocations. Is this intended?
-> > 
-> > Yes...it is weird..but by design I would say :P ...
-> > 
-> > ...because this is called to instantiate one single device OR instantiate at
-> > once all the multiple devices needed for a protocol: in this latter case it
-> > returns just one of the created devices to signal success or NULL if all the
-> > devices' creation failed....we dont need to keep the allocated devices references
-> > anyway here since on success those devices are now referenced and kept on the
-> > SCMI bus, so they can be searched/scanned/destroyed from there.
+
+
+On 3/6/2025 7:21 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.13.6 release.
+> There are 154 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Not sure why the pointer isn't found, device_add() should link it with
-> the parent. Unless something else fails, the parent is freed and the
-> linked devices unreachable. I'm not familiar at all with this code, I
-> just saw kmemleak and thought of replying.
+> Responses should be made by Sat, 08 Mar 2025 15:13:38 +0000.
+> Anything received after that time might be too late.
 > 
-> The loop is still weird, scmi_chan_setup() seems to use the pointer to
-> scmi_device for something more meaningful than a pass/fail check. Also
-> the overall result is based only on what the last __scmi_device_create()
-> return value was, irrespective of the previous iterations of the loop.
-> You do have a pr_err() but no early bailing out of the loop on failure.
-> I'm curious if there are any SCMI errors in the Alice's kernel log.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.6-rc2.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
+> and the diffstat can be found below.
 > 
+> thanks,
+> 
+> greg k-h
 
-Yes, the weirdness comes from the fact such function is used alternatively
-to create a single named device (and make some use of it, like in
-scmi_chan_setup) OR to create a bunch of devices for the same protocol
-when no specific device is asked for (name==NULL)...anyway the case at
-hand that kmemleak complains about does NOT pass through that weird loop...
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-...good news is, I was able to reproduce a similar report consistently
-with a load/unload/load sequence....the culprit is that when looking for
-a device to destroy on unload, the SCMI bus uses device_find_child()
-and that bumps the device refcnt implicitly...as a result when the device
-is destroyed the refcnt is NEVER found as zero and so NO device_release
-is ever called...this results in dev->p private_data to be never released
-and that is what kmemleak spotted (at the start of teh chain):
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
 
-unreferenced object 0xffff00000f583800 (size 512):
-      comm "insmod", pid 227, jiffies 4294912190
-      hex dump (first 32 bytes):
-        00 00 00 00 ad 4e ad de ff ff ff ff 00 00 00 00  .....N..........
-        ff ff ff ff ff ff ff ff 60 36 1d 8a 00 80 ff ff  ........`6......
-      backtrace (crc 114e2eed):
-        kmemleak_alloc+0xbc/0xd8
-        __kmalloc_cache_noprof+0x2dc/0x398
-        device_add+0x954/0x12d0
-        device_register+0x28/0x40
-        __scmi_device_create.part.0+0x1bc/0x380
-        scmi_device_create+0x2d0/0x390
-        scmi_create_protocol_devices+0x74/0xf8
-        scmi_device_request_notifier+0x1f8/0x2a8
-        notifier_call_chain+0x110/0x3b0
-        blocking_notifier_call_chain+0x70/0xb0
-        scmi_driver_register+0x350/0x7f0
-        0xffff80000a3b3038
-        do_one_initcall+0x12c/0x730
-        do_init_module+0x1dc/0x640
-        load_module+0x4b20/0x5b70
-        init_module_from_file+0xec/0x158
-    
-    $ ./scripts/faddr2line ./vmlinux device_add+0x954/0x12d0
-    device_add+0x954/0x12d0:
-    kmalloc_noprof at include/linux/slab.h:901
-    (inlined by) kzalloc_noprof at include/linux/slab.h:1037
-    (inlined by) device_private_init at drivers/base/core.c:3510
-    (inlined by) device_add at drivers/base/core.c:3561
-
-I am posting a fix.
-
-Thanks for the report and the help.
-Any feedback and testing is much welcomed :D
-
-Cristian
 
