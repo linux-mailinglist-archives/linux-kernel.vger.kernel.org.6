@@ -1,169 +1,110 @@
-Return-Path: <linux-kernel+bounces-549922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9A1EA558A8
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:21:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 554A4A558AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:21:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 078311898D59
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:21:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44D02189489C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:21:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8D0213253;
-	Thu,  6 Mar 2025 21:21:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 117F72702B8;
+	Thu,  6 Mar 2025 21:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IdcUPmwH"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="guMhklL/"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FAD320469E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 21:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0E620469E;
+	Thu,  6 Mar 2025 21:21:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741296066; cv=none; b=eHrANCFKSw87ITQODTUf/1Q2lyWGINlanGw97Er50f0/9rFEUBzL/IAlVMrhhmuNAd+HtWdlxNFG7adNMdVVVtMdqiLYTS2ChC9BXDIJtOsNsXoo4dCfkGSBcTq0Og77M/mEq8Al6P6OKToAOHPQLhNDGFWPkrG2R9lf8acdSbc=
+	t=1741296102; cv=none; b=DiEDcjvzhgFteC76fVzOorit8Po8lT2ZbeSt4rY0LoQQvVGBpWGNPFwptXkd8+or9m/yI/ahKB5ADNdr4d5m6S0D8hhsQS2l68zl2c2V5r59YRIYxy2p8+HEIhJfLB+W0T0VJMQ9XMOuQ88JpZ5R11O7KXvuuqB8DNOprRpEUr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741296066; c=relaxed/simple;
-	bh=QwtTDEYAnNwj0jO5A7hwwJCo0R5apTOt+3h+jokZPyU=;
+	s=arc-20240116; t=1741296102; c=relaxed/simple;
+	bh=dG3d9aBGMx3DfnzuFFKM0PvgEVAcQQKTYUoYLJZ2bfw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H6fcA67uYL/rou8IjFUFRnx2ZEV33pwh53l6zZHFTHEqUR+B8vVArL2EmLLc0Ihv8AqMzuzurjZrW6ovCQKp3sFUMsSc4OeGZAldyTXJggNUv9ypj/vhDeVIXevnvF7JbG4HaDERv5zo09aZgKmT2Hw+OyoumBMLnpoLkD2F48I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IdcUPmwH; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 6 Mar 2025 21:20:48 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741296062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lJvaHPzJT7/lU+BeSLL68xR7OTi5kIy1KlaEzXrMnR8=;
-	b=IdcUPmwHqIZR9E0XtWbE4Ood0ckZDEBhIMJN9pQ1RPRvqJ9vkaikVt6R4REfmrV5CKak3Z
-	d6K9DcBzTHIfov1zamF+8M0YK4qS6HctAZ7eV4dt9vJbrQub1DkU1npt7k/s9zLvRLp/zW
-	tIRMiRO+jYZ+ozeKFPuHCcBlsPs/Tzg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: Nhat Pham <nphamcs@gmail.com>, lkp <lkp@intel.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
-	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
-	"21cnbao@gmail.com" <21cnbao@gmail.com>,
-	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	"clabbe@baylibre.com" <clabbe@baylibre.com>,
-	"ardb@kernel.org" <ardb@kernel.org>,
-	"ebiggers@google.com" <ebiggers@google.com>,
-	"surenb@google.com" <surenb@google.com>,
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>,
-	"oe-kbuild-all@lists.linux.dev" <oe-kbuild-all@lists.linux.dev>,
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
-	"Gopal, Vinodh" <vinodh.gopal@intel.com>
-Subject: Re: [PATCH v8 14/14] mm: zswap: Compress batching with request
- chaining in zswap_store() of large folios.
-Message-ID: <Z8oRsGHmt2E4diKK@google.com>
-References: <20250303084724.6490-15-kanchana.p.sridhar@intel.com>
- <202503031847.j1iReOtf-lkp@intel.com>
- <CAKEwX=MgV22UBNi-2dNBDgNM2DRfrngk_4gO7z9t-O0KrpdPUw@mail.gmail.com>
- <SA3PR11MB8120445C8DBDBB9945231B66C9C92@SA3PR11MB8120.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gpxH2YtPeLbSPFeG7XI+1y0btE78hs2KV8g4qh5I+ENIpjoWxM7/OtEb/tbl54mPuz4a+k72Fd1iY+14xuTtGwy3KvtQNgF8v8M9TEsDv8BqO4ZQyoEusMYkdW2xpaEj/V9m9/EdM/yliq/xMdAxivPZ7+yhCS8jfU0QKbrXCj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=guMhklL/; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9H78NGtDgrJN8almAooGMPfIHicQD7QyEml+BfISIgg=; b=guMhklL/+BIxtizh+xS6aUCkcs
+	xiqV6+jRMkvDCFI1Sdi2vxBbaC8HFPmkFSPNomuM1DaFuR9gXBO5W5pyVze8dw4T1rail/m4jEtUx
+	Sl+bfrPyvulBDrN60FqU93ZP8sEOV2aYu0DUfALLj08VQcaukP31Ov9Z/eDXCzgNeMYfJ7JgOoYxm
+	LPp2dr+vWeNh/k4dbT3BM/AH62dODYTy86qE4hCFZTafmDcEGEjAArTWjqtWhJCGRgRQU2TGorsuO
+	lhbZjQJ6ndCqIFdVoMdRuVoKtIzDJrHoh05ZDgdAg/TKTa1NWtUgxeKTc/aq5QAwqsoVm3sVyDVdT
+	vzH1AxrA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44602)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tqIeb-0006Vr-05;
+	Thu, 06 Mar 2025 21:21:17 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tqIeW-00078z-38;
+	Thu, 06 Mar 2025 21:21:12 +0000
+Date: Thu, 6 Mar 2025 21:21:12 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 2/2] net: stmmac: dwmac-rk: Validate rockchip,grf and
+ php-grf during probe
+Message-ID: <Z8oRyHThun9mLgx8@shell.armlinux.org.uk>
+References: <20250306210950.1686713-1-jonas@kwiboo.se>
+ <20250306210950.1686713-3-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <SA3PR11MB8120445C8DBDBB9945231B66C9C92@SA3PR11MB8120.namprd11.prod.outlook.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250306210950.1686713-3-jonas@kwiboo.se>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Mar 03, 2025 at 09:34:04PM +0000, Sridhar, Kanchana P wrote:
-> 
-> > -----Original Message-----
-> > From: Nhat Pham <nphamcs@gmail.com>
-> > Sent: Monday, March 3, 2025 10:22 AM
-> > To: lkp <lkp@intel.com>
-> > Cc: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>; linux-
-> > kernel@vger.kernel.org; linux-mm@kvack.org; hannes@cmpxchg.org;
-> > yosry.ahmed@linux.dev; chengming.zhou@linux.dev;
-> > usamaarif642@gmail.com; ryan.roberts@arm.com; 21cnbao@gmail.com;
-> > ying.huang@linux.alibaba.com; akpm@linux-foundation.org; linux-
-> > crypto@vger.kernel.org; herbert@gondor.apana.org.au;
-> > davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
-> > ebiggers@google.com; surenb@google.com; Accardi, Kristen C
-> > <kristen.c.accardi@intel.com>; llvm@lists.linux.dev; oe-kbuild-
-> > all@lists.linux.dev; Feghali, Wajdi K <wajdi.k.feghali@intel.com>; Gopal,
-> > Vinodh <vinodh.gopal@intel.com>
-> > Subject: Re: [PATCH v8 14/14] mm: zswap: Compress batching with request
-> > chaining in zswap_store() of large folios.
-> > 
-> > On Mon, Mar 3, 2025 at 3:07 AM kernel test robot <lkp@intel.com> wrote:
-> > >
-> > > Hi Kanchana,
-> > >
-> > > kernel test robot noticed the following build errors:
-> > >
-> > > > 1166                          prefetchw(entries[j]);
-> > > --
-> > 
-> > Why are we doing this anyway? Does it have a notable performance
-> > difference? At the very least, leave a comment explaining why we're
-> > prefetching this (although the build error suggests that we have to
-> > remove it anyway).
-> 
-> Hi Nhat,
-> 
-> Yes, it does. The use of prefetchw reduces sys time by ~1.5% because
-> it minimizes cache-miss latency by moving the zswap entry to the cache
-> before it is written to. 
-> 
-> This is data with kernel compilation test, v8 without prefetchw and v8 as-is:
-> 
-> --------------------------------------------------------------------------------
->  Kernel compile       v8 without               v8      v8 without              v8
->  allmodconfig          prefetchw                        prefetchw
->  2M folios
->  --------------------------------------------------------------------------------
->  zswap compressor    deflate-iaa      deflate-iaa            zstd            zstd   
->  --------------------------------------------------------------------------------
->  real_sec                 732.89           735.63          768.53          758.21
->  user_sec              15,708.37        15,699.84       15,702.64       15,678.73
->  sys_sec                4,632.58         4,563.70        5,735.06        5,635.69
->  --------------------------------------------------------------------------------
->  Max_Res_Set_Size_KB   1,874,672        1,867,516       1,874,684       1,872,888
->  --------------------------------------------------------------------------------
->  memcg_high                    0                0               0               0
->  memcg_swap_fail               0                0               0               0
->  zswpout             114,742,930      112,836,725      92,904,961      89,596,085
->  zswpin               41,184,897       39,983,793      31,018,149      29,163,932
->  pswpout                     625            1,069             558           1,059
->  pswpin                      599            1,056             540           1,051
->  thp_swpout                    1                2               1               2
->  thp_swpout_fallback      10,967           10,195           6,918           6,141
->  pgmajfault           42,588,331       41,349,069      31,931,882      30,006,422
->  ZSWPOUT-2048kB            7,661            8,710           6,799           7,480
->  SWPOUT-2048kB                 1                2               1               2
->  --------------------------------------------------------------------------------
-> 
-> 
-> Sure, I will add a comment, and also "#include <linux/prefetch.h>" in zswap.c
-> that will resolve the build error. This is similar to how these files handle prefetchw:
-> mm/vmscan.c, kernel/locking/qspinlock.c, include/asm-generic/xor.h, etc.
+On Thu, Mar 06, 2025 at 09:09:46PM +0000, Jonas Karlman wrote:
+> @@ -1813,8 +1564,24 @@ static struct rk_priv_data *rk_gmac_setup(struct platform_device *pdev,
+>  
+>  	bsp_priv->grf = syscon_regmap_lookup_by_phandle(dev->of_node,
+>  							"rockchip,grf");
+> -	bsp_priv->php_grf = syscon_regmap_lookup_by_phandle(dev->of_node,
+> -							    "rockchip,php-grf");
+> +	if (IS_ERR(bsp_priv->grf)) {
+> +		ret = PTR_ERR(bsp_priv->grf);
+> +		dev_err_probe(dev, ret, "failed to lookup rockchip,grf\n");
+> +		return ERR_PTR(ret);
 
-Please also explicitly mention that the prefetch and likely/unlikely
-annotations prevent regressions with software compression like zstd, and
-generally improve the performance with the batching code by ~1.5%.
+Did you consider using ERR_CAST() for these, which would look like this:
 
-> 
-> Thanks,
-> Kanchana
-> 
+		dev_err_probe(dev, PTR_ERR(bsp_priv->grf),
+			      "failed to lookup rockchip,grf\n");
+		return ERR_CAST(bsp_priv->grf);
+
+?
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
