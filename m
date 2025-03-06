@@ -1,118 +1,102 @@
-Return-Path: <linux-kernel+bounces-548578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA7C4A546A3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:41:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 265D7A546AA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:42:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 413D51747D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:41:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3B413B31CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:41:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67DF120AF97;
-	Thu,  6 Mar 2025 09:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rXPt/AWs"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EF920AF66
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282DE20A5DC;
+	Thu,  6 Mar 2025 09:40:52 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A13D2080C5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741254008; cv=none; b=f9YvhMge0TQl+4etMUcDa7LrDKMrCb2XW+3zhWQIS5BfuE0/ILvSVfGmM9pfQVgZ07EfJlzIVNpoYJBuq2E+w1OqLrg9g63HW+lXOlY0eRrN9GDgP/zxa7P7lBROH1gckYLpe/N5CEX9Rx/tVaeEctM+B8/tSmOWlksRCbhFBi8=
+	t=1741254051; cv=none; b=tn7mLLZvVi3UOS68iM12prWiLuKaTEtNgfHhQn3YQnyByOuymOIow2AfN5QCS/P45esMFw5eHzBebUMQuCjIY5KP0B10Cu44u55DoGRWg/Gv5RkAge/EWsabJJbAICthr+CScFrUA6vxxxxmmQDYV3JBGwgzorGhcaDBiNC5MMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741254008; c=relaxed/simple;
-	bh=E/HLOCPPolZoPIVQBIEbh+eA5DoNHzTGqfwY2lcY4Yw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YX3p4ZHAYk0Zw5C1IzJY8zoyk8kL3pKVJhrST12DieBY3j0HbXZrfccuK5bVWmK7ScqO74YgPvM9q5nsM3mbPfez+LCqoTvXdE5NPzdXCjU2+6m4OuuNgHgP3Mu6HeWNWautntpseybT5KJo56TB+JObCtZ3CXB+VUZYFzNSf0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rXPt/AWs; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43bcf9612f4so3465675e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:40:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741254005; x=1741858805; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oWy06ZU1rvCMAS6Oepxaxa7BjLic+0Q37gto1sXjZ9k=;
-        b=rXPt/AWsMZ0Il8KwOaVhoEFc4GfGV0PlcibBlNgGO8c4PeQTmcI4FydM2T4nZuHwU0
-         9yfK6GPrOXOL7NeREfkRq84YyBdkbt4Mnd6QpmUzQB5JXOAWvt2pXbz9o5GMe10R+B8t
-         awnw1wtMZcLvBfml957K2H8SN9viqEMbSooyLzH4+q4hT3dzGT+eSaQ7dtzgnf6wI9FC
-         H6hHvOQtsztSLIpk/Cn2Qg/cI1aBqYQ9FfBz3Fk9maxhESDNVfbeauXWzCPxQ//h9VkE
-         6+YHJMQheYgzqK3G40qg4q/lhwu8Jb4vmSOJbm7vwoXD8C4lZMNmtmxVnz2NmEoV6kYt
-         Pu9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741254005; x=1741858805;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oWy06ZU1rvCMAS6Oepxaxa7BjLic+0Q37gto1sXjZ9k=;
-        b=Xo1q/i0Za8IvySf3kx406SvzEN0jCIriUCjUSqfJzBA4JGnZhhqC7LY88CGlx9oAWU
-         zLuTKVVjbxa3s2oe7rEEEPuCNf9So0CbkU69QqarMTcgbbPjDejcL3A6rpDqoGaNVMM8
-         RwuDgVOyDLqKlUNQk2xFZ3dtuITJm+LgK6CLoff+GoVkzT3L0l2L8NkP0zBrbGker7xe
-         pl0iecrBi4DHT6ykXCXG7C2pcQ03RtRmYbdkbsjy+7ZWkvmB5tK+EnZncKPdxPpTJqHn
-         7Vly91CoASkddgLSSDPQLlIt4a7T/aQkuKOARZ9LnYjX6jGBB9q5ehjBihBadkOhqPoz
-         57Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCUe8OyHoMqfexWU0gVbylTVXrRSy3c7QlqkUrsq/fm8oSGsV/jR5guBMx8U/HiJ1jgQ1DHN4Q9cuSn1B8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7SZOKlEKg06foCQtu2KxbslyBAM/QUeA2AGIFHDBLehgvlkQv
-	yn4vppk7T9YMDZHxca3RJ55gX3nVrZdRjNt6pr7twZBdxeP+CRkc9NKKLE9BVow=
-X-Gm-Gg: ASbGncvmxAVzJVkRN9SH1tunru2728haBC3Vqrl3LdMAfs7Vn2Njabp2kvmNfLHcwWa
-	60Z7kIanX4lxr5s5CFbtZ8CxvgnZiTue/55wHAZbZLqNt2s0mmzhY03p+J3pxZW6AD8R97r9hvn
-	0vnuyOGEXGdXuxGrxivQWEHBjVf9H8L3yegZhVXt7YqjIdiVitps0zMaVGdwYFuyZFbH/DCly7q
-	+Q1x+yZs4/zd5pkMkzpJJRx3Trt8HrqbRLmkut/GpR3Lr+Wm4P6IN9ZsGoarxCVLnQNx5K+DfXj
-	Cm4ThGv2Qv1F+te2RZZgnuHE9vPIVP32HN6gbcn9XP7uxX/xTA==
-X-Google-Smtp-Source: AGHT+IGuGJLNcho++arjKdFrJpv00rKH3wDvZRWW3PMXVOeUD58q0a3r8mqAyfvuFDAa6Dfhm44YnA==
-X-Received: by 2002:a05:600c:3ba8:b0:43b:cd0d:944f with SMTP id 5b1f17b1804b1-43bd2945f10mr63350985e9.5.1741254005165;
-        Thu, 06 Mar 2025 01:40:05 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bd4293250sm43986635e9.16.2025.03.06.01.40.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 01:40:04 -0800 (PST)
-Date: Thu, 6 Mar 2025 12:40:01 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Sricharan Ramabadhran <quic_srichara@quicinc.com>,
-	Varadarajan Narayanan <quic_varada@quicinc.com>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] spi: spi-qpic-snand: Fix ECC_CFG_ECC_DISABLE shift in
- qcom_spi_read_last_cw()
-Message-ID: <2f4b0a0b-2c03-41c0-8a4a-3d789a83832d@stanley.mountain>
+	s=arc-20240116; t=1741254051; c=relaxed/simple;
+	bh=lHzQ/pK6Ei8uZQYcKUxRemCcZhkOdbNoDAUoz5W3/GI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VqHze4uso23HHcsjt2Hah81dHbIokWh6tNFBhwKjAFJL7xRn29vWEGmbFVbUXlVczRwpSTZO3pNryCI43dQJ3b01YpOOYHMm20Ys9n7El9w+ygQCy6uVrexNx+/NWqDIzSb6VOaXC8aWuHNuU+zg6B9NPiVERMMyiS1F9bUBZNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 44C30FEC;
+	Thu,  6 Mar 2025 01:41:02 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9CA433F673;
+	Thu,  6 Mar 2025 01:40:46 -0800 (PST)
+Date: Thu, 6 Mar 2025 09:40:43 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Will Deacon <will@kernel.org>
+Cc: Sebastian Ene <sebastianene@google.com>, catalin.marinas@arm.com,
+	Sudeep Holla <sudeep.holla@arm.com>, joey.gouly@arm.com,
+	maz@kernel.org, oliver.upton@linux.dev, snehalreddy@google.com,
+	suzuki.poulose@arm.com, vdonnefort@google.com, yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	Andrei Homescu <ahomescu@google.com>
+Subject: Re: [PATCH v2 4/4] KVM: arm64: Release the ownership of the hyp rx
+ buffer to Trustzone
+Message-ID: <Z8ltm55D1jrv8QtX@bogus>
+References: <20250227181750.3606372-1-sebastianene@google.com>
+ <20250227181750.3606372-5-sebastianene@google.com>
+ <20250305004522.GC31667@willie-the-truck>
+ <20250305094104.vctshdtgdukno2aj@bogus>
+ <20250305193425.GA32246@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250305193425.GA32246@willie-the-truck>
 
-The ECC_CFG_ECC_DISABLE define is BIT(0).  It's supposed to be used
-directly instead of used as a shifter.
+On Wed, Mar 05, 2025 at 07:34:26PM +0000, Will Deacon wrote:
+> On Wed, Mar 05, 2025 at 09:41:04AM +0000, Sudeep Holla wrote:
+> > On Wed, Mar 05, 2025 at 12:45:23AM +0000, Will Deacon wrote:
+> > > Hmm, the FFA spec is characteristically unclear as to whether or not we
+> > > need to release the rx buffer in the case that the flags indicate use of
+> > > the rx buffer but the returned partition count is 0.
+> > > 
+> > > Sudeep -- do you know what we should be doing in that case?
+> > > 
+> > 
+> > We need to call RX_RELEASE here. I went back to the spec to confirm the
+> > same again.
+> > 
+> > v1.2 EAC0 spec Section 7.2.2.4.2 Transfer of buffer ownership
+> > (Or just look for the section title in any version of the spec)
+> > "
+> > 2. Ownership transfer for the RX buffer takes place as follows.
+> >     2. For a framework message,
+> >        1. Completion of the FFA_PARTITION_INFO_GET ABI transfers the ownership
+> >        of the caller’s RX buffer from the Producer to the Consumer.
+> > 3. For both types of messages, an invocation of the following FF-A ABIs
+> >     transfers the ownership from the Consumer to the Producer.
+> >        1. FFA_MSG_WAIT ...
+> >        2. FFA_RX_RELEASE.
+> > "
+> > 
+> > Hope that helps, can dig deeper if there are any ambiguities around this.
+> 
+> Thanks Sudeep, but that also makes it sound like we need the RX_RELEASE
+> even if we're not using the RX buffer per the input flags. :/
+> 
 
-Fixes: 7304d1909080 ("spi: spi-qpic: add driver for QCOM SPI NAND flash Interface")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/spi/spi-qpic-snand.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Good spot, I had forgotten about the input flags that can avoid using the
+buffer. I will see if we can improve the spec in that regards.
 
-diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
-index 8c413a6a5152..ffb2b6ec685c 100644
---- a/drivers/spi/spi-qpic-snand.c
-+++ b/drivers/spi/spi-qpic-snand.c
-@@ -514,7 +514,7 @@ static int qcom_spi_read_last_cw(struct qcom_nand_controller *snandc,
- 	cfg0 = (ecc_cfg->cfg0_raw & ~(7U << CW_PER_PAGE)) |
- 		0 << CW_PER_PAGE;
- 	cfg1 = ecc_cfg->cfg1_raw;
--	ecc_bch_cfg = 1 << ECC_CFG_ECC_DISABLE;
-+	ecc_bch_cfg = ECC_CFG_ECC_DISABLE;
- 
- 	snandc->regs->cmd = snandc->qspi->cmd;
- 	snandc->regs->cfg0 = cpu_to_le32(cfg0);
 -- 
-2.47.2
-
+Regards,
+Sudeep
 
