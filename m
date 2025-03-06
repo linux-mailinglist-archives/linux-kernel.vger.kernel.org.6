@@ -1,246 +1,138 @@
-Return-Path: <linux-kernel+bounces-548981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2999A54BB4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:14:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E00A54BB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:14:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8CE21897B21
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:14:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C26787A6025
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F62920D4F2;
-	Thu,  6 Mar 2025 13:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2BF20CCF0;
+	Thu,  6 Mar 2025 13:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="jLTo6eWu"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="ITfpgfrL"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B96481CD;
-	Thu,  6 Mar 2025 13:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741266850; cv=pass; b=aM+4PQ8c+MdsmQVTcuW+dm5KRwTgX1madNCFteCk8ot6pF5rrK8xVFBModz6mVfMG7IzBTTLPim6fhE2HoK9wI0uTap7FaTO1SNKbQK9/EYmhvFSM8zoKS5G3Ae6SAFrzvWO/PzLcLhUtry3VbQoSrSCYBsqBCkQ9IRkGzppisI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741266850; c=relaxed/simple;
-	bh=qC1sceAvf4HSV+PgAQjk9PSnSGXQBhmv0v7HGXQXzXs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rhd3qa5I9gfJucLoSbjX0QC69dNN1/TGeRICr8QgdbqvHCJ+6YpnH3hvNQXAmAPdu5+8jtiRa8FeDdhrEFyysR9gLjTA90dVtlQnw5djaRGypZBA75njjbLI5F+pquNOnsIs0BRdRnF/Op20hbL797AgbxCuHCwPlYM3oN0y3Wo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=jLTo6eWu; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741266806; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Ln67D7B8R/emwNovVLhkaz7xbVh04EGL2fSTkLDhliu0yFF5HPOStn0Fyk7RGUSm6kz3daWv2CrhBsEXy5NJydyy2CaaXI30XHo8uo38Ng0OYX1igVJcmSzIsV3OL1w4E/4RfOr0qKK6iJs+ZrcRuTffIcpmK0FAp0SAVAEM4YQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741266806; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=R/l3297Aly6n/qBAueWz12hEPxnEHvfm6GKPejWJ/Vw=; 
-	b=MMm0eR+LmbNeSFSuObeLJGIE34hmTdHHG+dO6tTDWE1hVzlgVjE9tnZIEqsZbRWhIdFXkx/nPiRl+PTGYUaqS22megAsU4oUjwdDdVt9zrkcXLANi2CANfUR3Gl8dxw14v2w/5zlrF3Qc5vLy8dmkkS2IHvEtTwDHQGaMpvi4Vg=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741266806;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=R/l3297Aly6n/qBAueWz12hEPxnEHvfm6GKPejWJ/Vw=;
-	b=jLTo6eWuwglmC71EtgyEJQ8kL0bFRLESM9jvJbnBxLKoc4vQBGYlIU3eCrW82lcq
-	VVceuFNVewMSvTKT54YH8U8WN8NraGIPvbNxZ0XrB47XCseCv3JRCN2U7fAQVMb90wI
-	M0/ZAU/gqUDRQ3YvHFtJeQdvnxMJgFKwn+UZxeV0=
-Received: by mx.zohomail.com with SMTPS id 1741266806086596.4769996246168;
-	Thu, 6 Mar 2025 05:13:26 -0800 (PST)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
- Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Sugar Zhang <sugar.zhang@rock-chips.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
-Subject:
- Re: [PATCH 3/7] ASoC: dt-bindings: add schema for rockchip SAI controllers
-Date: Thu, 06 Mar 2025 14:13:18 +0100
-Message-ID: <2376575.ElGaqSPkdT@workhorse>
-In-Reply-To: <ffd6287c-cbfd-4ba8-9332-45bad4e60583@kernel.org>
-References:
- <20250305-rk3576-sai-v1-0-64e6cf863e9a@collabora.com>
- <20250305-rk3576-sai-v1-3-64e6cf863e9a@collabora.com>
- <ffd6287c-cbfd-4ba8-9332-45bad4e60583@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35891481CD;
+	Thu,  6 Mar 2025 13:13:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741266834; cv=none; b=YYFnrkH/dqLkT2Z0Pc6rivV1Wa0z5UPn13xPn8fYg5ytQn47fI4rtUDj7dkB3OINxDUHc3bJHy2pNtiKvz/JNa1FtCBwDANApO0YD4SP98+neBpcZZqpEca6ragkFZo4Kp6chEBtj34AVED+/5SZP1U5MeY+AJsMZ6rNwyT3BWw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741266834; c=relaxed/simple;
+	bh=2YjvzfsrPBho1H6DlpucDv/WaTUvDWx6KTif97I7bcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LcS4JE46xS/ALd2yVHLg05sIVP+p91ek++tHARYvUwxG2XHuMTYw2Cnud4odkf84NnMR0H2ih2Q8Os/HY80nYmWtYxAaNa6qkMg5ScwSQkI/dmWluoLqwbFOU1y0gtAUrbrZvaiMv3652eFup4Rjj2SNekjcYmgnrMAuJ8CUD3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=ITfpgfrL; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=7y8rhhxB5lSjyrM3hesew8uHt000MTVpnFFEqf0Dw1A=; b=ITfpgfrLtCmV2mM3
+	fFInvO2lVuVoaUbsrMCUNT933VW6xgvo+SIpL9rTFMI2eFEYx+ip5EGf3dwgbLtiqO1ot9WZlX185
+	qaDahRdNx++1Pu02y5G/LALsB0M/0IRcPChAgN5tdbVRrlr9U/fnOwR8OeOn7F2KMFKy+GuspO+6c
+	LEkLAsoa8NwKw/aKoBEU5kyjADoqYxAUVF1Q+gQF6On/Vsty/qjKCCJfPufGWfH/BUwlTna7wEBbF
+	t9fIZkI+bnalgys03OQ2PT/6gLwZ04X3bGrVIgPVnMknAEFRl3EhkL7jzlj0P23dmca568oy+Navz
+	ja01gF/C5mZPzEejtA==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tqB2e-00370y-32;
+	Thu, 06 Mar 2025 13:13:36 +0000
+Date: Thu, 6 Mar 2025 13:13:36 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Ian Rogers <irogers@google.com>
+Cc: mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, namhyung@kernel.org,
+	peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/6] perf: Deadcode - the P's
+Message-ID: <Z8mfgA4C26MiG54N@gallifrey>
+References: <20250305023120.155420-1-linux@treblig.org>
+ <CAP-5=fUpqfWcQAi8231fdofZ-f_bOTi=t8sdLUenvvXjQ3OfGA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fUpqfWcQAi8231fdofZ-f_bOTi=t8sdLUenvvXjQ3OfGA@mail.gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 13:12:48 up 302 days, 26 min,  1 user,  load average: 0.00, 0.00,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Thursday, 6 March 2025 08:42:54 Central European Standard Time Krzysztof 
-Kozlowski wrote:
-> On 05/03/2025 22:24, Nicolas Frattaroli wrote:
-> > Rockchip introduced a new audio controller called the "Serial Audio
-> > Interface", or "SAI" for short, on some of their newer SoCs. In
-> > particular, this controller is used several times on the RK3576 SoC.
-> > 
-> > Add a schema for it, with only an RK3576 compatible for now. Other SoCs
-> > may follow as mainline support for them lands.
-> > 
-> > Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-> > ---
-> > 
-> >  .../devicetree/bindings/sound/rockchip,sai.yaml    | 151
-> >  +++++++++++++++++++++
-> Filename based on compatible.
+* Ian Rogers (irogers@google.com) wrote:
+> On Tue, Mar 4, 2025 at 6:32 PM <linux@treblig.org> wrote:
 
-Sure, but more compatibles will follow. Are you certain you want a file named 
-rockchip,rk3576-sai.yaml to then contain rockchip,rk3528-sai? If so then I do 
-not understand the reason behind this policy.
+Hi Ian,
+  Thanks for the review,
+
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >
+> > Hi,
+> >   This is another set of perf deadcode, this is my set
+> > all starting with 'p'.  It was built on top of
+> > perf-tools-next as of a few days ago (7788ad59d1d9).
+> >
+> > Dave
+> >
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> >
+> >
+> >
+> > Dr. David Alan Gilbert (6):
+> >   perf core: Remove perf_event_attrs and perf_event_refresh
+> 
+> This will need to go into tip.git.
+
+OK, do I need to split that out of the series, resend or do
+anything else?
+
+> >   perf util: Remove unused perf_color_default_config
+> >   perf util: Remove unused pstack__pop
+> >   perf util: Remove unused perf_data__update_dir
+> >   perf util: Remove unused perf_pmus__default_pmu_name
+> >   perf util: Remove unused perf_config__refresh
+> 
+> Reviewed-by: Ian Rogers <irogers@google.com>
+
+Thanks,
+
+Dave
 
 > 
-> >  MAINTAINERS                                        |   6 +
-> >  2 files changed, 157 insertions(+)
+> Thanks,
+> Ian
 > 
-> ...
-> 
-> > +
-> > +  dma-names:
-> > +    minItems: 1
-> > +    maxItems: 2
-> > +    oneOf:
-> > +      - const: tx
-> > +      - const: rx
-> > +      - items:
-> > +          - const: tx
-> > +          - const: rx
-> 
-> Why all combinations are possible?
-
-Because they are. sai5 in rk3576 is rx only. sai7 is tx only. Others are both 
-tx and rx. Do you want me to enforce that those with both are always tx 
-followed by rx?
-
-> 
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: master audio clock
-> > +      - description: AHB clock driving the interface
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: mclk
-> > +      - const: hclk
-> > +
-> > +  resets:
-> > +    minItems: 1
-> > +    maxItems: 2
-> > +    description: resets for the mclk domain and ahb domain
-> 
-> List the items instead with description and minItems: 1.
-
-Will do
-
-> 
-> > +
-> > +  reset-names:
-> > +    minItems: 1
-> > +    items:
-> > +      - const: m
-> > +      - const: h
-> > +
-> > +  port:
-> > +    $ref: audio-graph-port.yaml#
-> > +    unevaluatedProperties: false
-> > +
-> > +  power-domains:
-> > +    maxItems: 1
-> > +
-> > +  "#sound-dai-cells":
-> > +    const: 0
-> > +
-> > +  rockchip,sai-rx-route:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +    description:
-> > +      Defines the mapping of the controller's SDI ports to actual input
-> > lanes, +      as well as the number of input lanes.
-> > +      rockchip,sai-rx-route = <3> would mean sdi3 is receiving from
-> > data0, and +      that there is only one receiving lane.
-> > +      This property's absence is to be understood as only one receiving
-> > lane +      being used if the controller has capture capabilities.
-> > +    maxItems: 4
-> > +    items:
-> > +      enum: [0, 1, 2, 3]
-> > +
-> > +  rockchip,sai-tx-route:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> > +    description:
-> > +      Defines the mapping of the controller's SDO ports to actual output
-> > lanes, +      as well as the number of output lanes.
-> > +      rockchip,sai-tx-route = <3> would mean sdo3 is sending to data0,
-> > and
-> 
-> I understand this is only example because = <3> would not be allowed
-> (test it).
-
-I'll have to look into that, I was fairly certain I tested it, but maybe I 
-forgot to run a CHECK_DTBS with it in.
-
-> 
-> > +      that there is only one transmitting lane.
-> > +      This property's absence is to be understood as only one
-> > transmitting lane +      being used if the controller has playback
-> > capabilities.
-> > +    maxItems: 4
-> > +    items:
-> > +      enum: [0, 1, 2, 3]
-> > +
-> > +  rockchip,always-on:
-> > +    type: boolean
-> > +    description:
-> > +      The hardware requires this controller to remain turned on.
-> 
-> How hardware requires this? You rather miss proper PM domain handling or
-> some other resources.
-
-This isn't about power domains. It's about the FS/SCLK generator inside the 
-IP. I'll remove it in the next revision since downstream only uses it for a 
-different IP on the RK3588, and I'd rather not get bogged down by discussions 
-as to whether SAI should be modelled as a clock provider.
-
-> 
-> > +
-> > +
-> 
-> Just one blank line.
-
-Will do
-
-> 
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - dmas
-> > +  - dma-names
-> > +  - clocks
-> > +  - clock-names
-> > +  - "#sound-dai-cells"
-> > +
-> > +unevaluatedProperties: false
-> 
-> Best regards,
-> Krzysztof
-
-Cheers,
-Nicolas Frattaroli
-
-
-
+> >  include/linux/perf_event.h     | 10 ----------
+> >  kernel/events/core.c           | 24 ------------------------
+> >  tools/perf/util/color.h        |  5 -----
+> >  tools/perf/util/color_config.c | 11 -----------
+> >  tools/perf/util/config.c       |  6 ------
+> >  tools/perf/util/config.h       |  1 -
+> >  tools/perf/util/data.c         | 20 --------------------
+> >  tools/perf/util/data.h         |  1 -
+> >  tools/perf/util/pmus.c         | 29 -----------------------------
+> >  tools/perf/util/pmus.h         |  1 -
+> >  tools/perf/util/pstack.c       | 14 --------------
+> >  tools/perf/util/pstack.h       |  1 -
+> >  12 files changed, 123 deletions(-)
+> >
+> > --
+> > 2.48.1
+> >
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
