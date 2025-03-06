@@ -1,326 +1,149 @@
-Return-Path: <linux-kernel+bounces-549136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D2EEA54DEF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:36:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DCA5A54DF0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:37:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3920218965C4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:36:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABA9518969AD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F8416DEB3;
-	Thu,  6 Mar 2025 14:36:41 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9877916A95B;
+	Thu,  6 Mar 2025 14:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="o08iJocy"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA3B01624C8
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 14:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9B0814658B
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 14:37:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741271800; cv=none; b=sqAQTUPxJvSYFAuJ4FRLaZu2E+URt2P7IO/jLLogINKdZqOS5dIxwBK3F/rNLIdq6UUaOXeRU5k+j1nwACl3T6TdLAar7xvq0rR8pS1LKIqPHByF4w50WMmOBB17p/seyj7hLDRG1/hvzbOnR7sRzBobV0uwFdDMuglqFPnB7AI=
+	t=1741271864; cv=none; b=X+vPDjbKMB5dXOkD73LflSCoovwPEhk6BqnFyESrMPGRQjOHG0T7NGLYvbSXUNEiN6bUFVo7eWxQ2PQ0cbb8i5e+DWREBH8GxP7i6/cCWy4/04RCGeDIjTieNdWS/xoPruFcnixNxzbYcmq+fUiOnRKkM8f3m7NwG+Owk+KjlVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741271800; c=relaxed/simple;
-	bh=ChbQc1QCQUlYz7lGMlwLTx1/y0yzLhM2T/AnPH2wxi0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fUNdptEJCTNz0JwKKz4WHAHEvuX5yNauEqpIbTFh2t7CXIdOUfYVfQrLTq/2AAhEMKdda8nM/FjbSrnNG0VQ7UIfqkqE4D9xJq108lisa9TTBP25BXJX1UNLB/sZuhhb2ofA063NSrc74Kaj2cETpTkI2J+rq4tNVgq9cOzBgOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z7sLL28FgzyRqT;
-	Thu,  6 Mar 2025 22:31:38 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 43387140521;
-	Thu,  6 Mar 2025 22:36:34 +0800 (CST)
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 6 Mar 2025 22:36:32 +0800
-Message-ID: <79ad8faa-02ce-470b-a01b-a7fb5dc5ba23@huawei.com>
-Date: Thu, 6 Mar 2025 22:36:31 +0800
+	s=arc-20240116; t=1741271864; c=relaxed/simple;
+	bh=gF3YkWOhDXWK+rQ4xDnI05H9mTCsTY1efQ9MZ8j7GiE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MdVTIC3cFHOowZyksfzHxAilcQvasP2l6e1lWN+4Pm5S9pSX9U2Ea+dACO5i9cfRCpiE1qCRbBycVcnZ7HIHYzuxirYeuNTm424RV3XTcUWa7RTcSPVH9SKuzkKGIBW+N5vpDxK+coteOLOadOhfl3wcIrF/RkgqOXsmNX2J38Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=o08iJocy; arc=none smtp.client-ip=209.85.219.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6e8efefec89so5943796d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 06:37:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1741271860; x=1741876660; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=GkwQ0oLvEDj707o8NQ6UwhxGkpQaxXqiDQ8oga7M5qc=;
+        b=o08iJocyF4q6cQLocHMoKYohAiOO/tgkRZH2jr/h51nK+Y0zJ5NqByHA8ow+NkCcsl
+         ZATDyTW9YUSMmf426xyHRbZ9iiyNvgNdYiHkMPqTpBYdwCjgpgQUZLdtX+DL2E8DMbBE
+         f8Z7K3KsvAOlGhWiKcUS2Ow6C0xLyrzydBUr7Apdk1vvwtanO5uotYkA5oPd+5pTjWVT
+         kgDYTUhh/7P8A2FQqSVaiRb9LERiayjW93frFWlJdtvMGKyKFlePWBmm5Ct/G0ucwdQt
+         cKLBeeI87/+PPX1T7R0Oa/r1QCs/+CCLd46zsbGiojhdjuJukHtx5Qrn557npW8+zw+V
+         BmzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741271860; x=1741876660;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GkwQ0oLvEDj707o8NQ6UwhxGkpQaxXqiDQ8oga7M5qc=;
+        b=ojKYzq7a3LbC4hyFc57LXXCu8c25kB7jPf4yhJGJ/+4b0mBYXi1Z2gqSv3GIYSgCo6
+         yxCPYt/XOABlg8N+KJLA32XFqQ8PxyuNUPD3tdAHqWJwMuq8xvFhU/B2y47a2GwJ8yCd
+         eD+5JwVgfs2IHOo51TxFhTweMEIufHJ8h5SL23N3w+TvhYZlfbi/KI4oNKwBn4bxkKB2
+         XJ5Gc2H+j8tl2pNnaPriRecbYrdxD2QZabZ3hKqNx6UUFW3zaIV+qSUzhH2J0+FqJFUL
+         whl3irEiPLZkt1cvmUKY6lBEU2+lF8FJklGkTcJ2BUHD+h7SgfPs5X5PBPBTdTtzr5R9
+         OoAA==
+X-Forwarded-Encrypted: i=1; AJvYcCXHEW6fSZs4wWZw2WjSTqrOIicaaUUMvOdxCLSnh7bk0jNKnpUqScAUFRoJyhziDki3miw1QdFiMN0mArA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGVASVznKW9lfsav6BHcLWvGMIfwi6f/8a1pVQFZ3QpyrV+/AP
+	nnhmT8H+yYe+7BgVpjEGfn3us30eoDZr4s6fml/Ma3+mObD7h10K/GDWLzqGHwhs1JChooGqzHa
+	Y
+X-Gm-Gg: ASbGncsbwu46Di+gQvJWnX1VtKYlFxx+Ijwl/AKapYCCr4Lrw433ZRTA4vUPDyydIbR
+	N61ZoTV02hvLduNPXKegOLR19uNZGmmLmaoKPQ/hgF0nfOgdBh/B++TXSV9ktmvn3outUkEsZgt
+	BDE+2qPfIwZFi/RU/BaAbYvZEQJqKf/mocfFmhgt7TjLqd73Oekez+uadtDoKu8ORpx+MCjvE/Y
+	P3mUumzriOpEzpEuQLL+sXwmJyVQZf56/2rchB7IkTm1HnjIeAFkGcrEqx9NuoOnY9pHo8ZtoV1
+	2Q7+lHAmFK533CZyFnevK5sthlhZkcJ0nI8eBhabWkE=
+X-Google-Smtp-Source: AGHT+IE69KzW444Tq3MFt1OkLKjayfvH3XmFTp4VbrSWCKV4Vo0xqPzJpBTl6QpVk0gBd6/iM0+Njg==
+X-Received: by 2002:a05:6214:f61:b0:6e8:fb8c:e6dd with SMTP id 6a1803df08f44-6e8fb8ce9b4mr14514736d6.5.1741271860418;
+        Thu, 06 Mar 2025 06:37:40 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e8f70a4495sm7760056d6.52.2025.03.06.06.37.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 06:37:39 -0800 (PST)
+Date: Thu, 6 Mar 2025 09:37:35 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Kairui Song <ryncsn@gmail.com>
+Cc: Muchun Song <songmuchun@bytedance.com>, mhocko@kernel.org,
+	roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+	muchun.song@linux.dev, akpm@linux-foundation.org, chrisl@kernel.org,
+	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, stable@vger.kernel.org
+Subject: Re: [PATCH] mm: memcontrol: fix swap counter leak from offline cgroup
+Message-ID: <20250306143735.GB290530@cmpxchg.org>
+References: <20250306023133.44838-1-songmuchun@bytedance.com>
+ <CAMgjq7B5SyqYFbLhbgNCvQejqxVs5C6SaV_iot4P64EZLHZ8Gg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 drm-dp 7/8] drm/hisilicon/hibmc: Enable this hot plug
- detect of irq feature
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
-	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<shiyongbang@huawei.com>
-References: <20250305112647.2344438-1-shiyongbang@huawei.com>
- <20250305112647.2344438-8-shiyongbang@huawei.com>
- <3ylvvfee5yekzunxctsmqrk2rw6awyvgryl6nhzprgrlvjsknt@mgabeirg3s2r>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <3ylvvfee5yekzunxctsmqrk2rw6awyvgryl6nhzprgrlvjsknt@mgabeirg3s2r>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMgjq7B5SyqYFbLhbgNCvQejqxVs5C6SaV_iot4P64EZLHZ8Gg@mail.gmail.com>
 
+On Thu, Mar 06, 2025 at 10:54:12AM +0800, Kairui Song wrote:
+> On Thu, Mar 6, 2025 at 10:32 AM Muchun Song <songmuchun@bytedance.com> wrote:
+> >
+> > The commit 6769183166b3 has removed the parameter of id from
+> > swap_cgroup_record() and get the memcg id from
+> > mem_cgroup_id(folio_memcg(folio)). However, the caller of it
+> > may update a different memcg's counter instead of
+> > folio_memcg(folio). E.g. in the caller of mem_cgroup_swapout(),
+> > @swap_memcg could be different with @memcg and update the counter
+> > of @swap_memcg, but swap_cgroup_record() records the wrong memcg's
+> > ID. When it is uncharged from __mem_cgroup_uncharge_swap(), the
+> > swap counter will leak since the wrong recorded ID. Fix it by
+> > bring the parameter of id back.
+> >
+> > Fixes: 6769183166b3 ("mm/swap_cgroup: decouple swap cgroup recording and clearing")
+> > Cc: <stable@vger.kernel.org>
+> > Signed-off-by: Muchun Song <songmuchun@bytedance.com>
 
-> On Wed, Mar 05, 2025 at 07:26:46PM +0800, Yongbang Shi wrote:
->> From: Baihan Li <libaihan@huawei.com>
->>
->> Add HPD interrupt enable functions in drm framework. Add link reset
->> process to reset link status when a new connector pulgged in. Because the
->> connected VGA connector would make driver can't get the userspace
->> call, adding detect_ctx in vga connector to make HPD active userspace.
->>
->> Signed-off-by: Baihan Li <libaihan@huawei.com>
->> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
->> ---
->> ChangeLog:
->> v3 -> v4:
->>    - add link reset of rates and lanes in pre link training process, suggested by Dmitry Baryshkov.
->>    - add vdac detect and connected/disconnected status to enable HPD process, suggested by Dmitry Baryshkov.
->>    - remove a drm_client, suggested by Dmitry Baryshkov.
->>    - fix build errors reported by kernel test robot <lkp@intel.com>
->>      Closes: https://lore.kernel.org/oe-kbuild-all/202502231304.BCzV4Y8D-lkp@intel.com/
->> v2 -> v3:
->>    - remove mdelay(100) hpd function in ISR, suggested by Dmitry Baryshkov.
->>    - remove enble_display in ISR, suggested by Dmitry Baryshkov.
->>    - change drm_kms_helper_connector_hotplug_event() to
->>      drm_connector_helper_hpd_irq_event(), suggested by Dmitry Baryshkov.
->>    - move macros to dp_reg.h, suggested by Dmitry Baryshkov.
->>    - remove struct irqs, suggested by Dmitry Baryshkov.
->>    - split this patch into two parts, suggested by Dmitry Baryshkov.
->>    - add a drm client dev to handle HPD event.
->> v1 -> v2:
->>    - optimizing the description in commit message, suggested by Dmitry Baryshkov.
->>    - add mdelay(100) comments, suggested by Dmitry Baryshkov.
->>    - deleting display enable in hpd event, suggested by Dmitry Baryshkov.
->> ---
->>   .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  1 +
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 36 +++++++++++++++++++
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  5 +++
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  |  3 ++
->>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 33 +++++++++++++++++
->>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  2 ++
->>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c  |  3 ++
->>   7 files changed, 83 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
->> index c5feef8dc27d..08f9e1caf7fc 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_config.h
->> @@ -16,5 +16,6 @@
->>   #define HIBMC_DP_SYNC_EN_MASK		0x3
->>   #define HIBMC_DP_LINK_RATE_CAL		27
->>   #define HIBMC_DP_SYNC_DELAY(lanes)	((lanes) == 0x2 ? 86 : 46)
->> +#define HIBMC_DP_INT_ENABLE		0xc
->>   
->>   #endif
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
->> index ce7cb07815b2..8f0daec7d174 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
->> @@ -189,6 +189,36 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
->>   	return 0;
->>   }
->>   
->> +void hibmc_dp_enable_int(struct hibmc_dp *dp)
->> +{
->> +	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
->> +
->> +	writel(HIBMC_DP_INT_ENABLE, dp_dev->base + HIBMC_DP_INTR_ENABLE);
->> +}
->> +
->> +void hibmc_dp_disable_int(struct hibmc_dp *dp)
->> +{
->> +	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
->> +
->> +	writel(0, dp_dev->base + HIBMC_DP_INTR_ENABLE);
->> +	writel(HIBMC_DP_INT_RST, dp_dev->base + HIBMC_DP_INTR_ORIGINAL_STATUS);
->> +}
->> +
->> +void hibmc_dp_hpd_cfg(struct hibmc_dp *dp)
->> +{
->> +	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
->> +
->> +	hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_SYNC_LEN_SEL, 0x0);
->> +	hibmc_dp_reg_write_field(dp_dev, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_TIMER_TIMEOUT, 0x1);
->> +	hibmc_dp_reg_write_field(dp->dp_dev, HIBMC_DP_AUX_REQ, HIBMC_DP_CFG_AUX_MIN_PULSE_NUM, 0x9);
->> +	writel(HIBMC_DP_HDCP, dp_dev->base + HIBMC_DP_HDCP_CFG);
->> +	writel(0, dp_dev->base + HIBMC_DP_INTR_ENABLE);
->> +	writel(HIBMC_DP_INT_RST, dp_dev->base + HIBMC_DP_INTR_ORIGINAL_STATUS);
->> +	writel(HIBMC_DP_INT_ENABLE, dp_dev->base + HIBMC_DP_INTR_ENABLE);
->> +	writel(HIBMC_DP_DPTX_RST, dp_dev->base + HIBMC_DP_DPTX_RST_CTRL);
->> +	writel(HIBMC_DP_CLK_EN, dp_dev->base + HIBMC_DP_DPTX_CLK_CTRL);
->> +}
->> +
->>   void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable)
->>   {
->>   	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
->> @@ -227,6 +257,12 @@ int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode)
->>   	return 0;
->>   }
->>   
->> +void hibmc_dp_reset_link(struct hibmc_dp *dp)
->> +{
->> +	dp->dp_dev->link.status.clock_recovered = false;
->> +	dp->dp_dev->link.status.channel_equalized = false;
->> +}
->> +
->>   static const struct hibmc_dp_color_raw g_rgb_raw[] = {
->>   	{CBAR_COLOR_BAR, 0x000, 0x000, 0x000},
->>   	{CBAR_WHITE,     0xfff, 0xfff, 0xfff},
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
->> index 83a53dae8012..665f5b166dfb 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
->> @@ -49,11 +49,16 @@ struct hibmc_dp {
->>   	void __iomem *mmio;
->>   	struct drm_dp_aux aux;
->>   	struct hibmc_dp_cbar_cfg cfg;
->> +	u32 irq_status;
->>   };
->>   
->>   int hibmc_dp_hw_init(struct hibmc_dp *dp);
->>   int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode);
->>   void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable);
->>   void hibmc_dp_set_cbar(struct hibmc_dp *dp, const struct hibmc_dp_cbar_cfg *cfg);
->> +void hibmc_dp_reset_link(struct hibmc_dp *dp);
->> +void hibmc_dp_hpd_cfg(struct hibmc_dp *dp);
->> +void hibmc_dp_enable_int(struct hibmc_dp *dp);
->> +void hibmc_dp_disable_int(struct hibmc_dp *dp);
->>   
->>   #endif
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
->> index f6e722d063de..54a09e7565ec 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
->> @@ -45,6 +45,9 @@ static int hibmc_dp_link_training_configure(struct hibmc_dp_dev *dp)
->>   	if (ret)
->>   		drm_err(dp->dev, "dp aux read dpcd failed, ret: %d\n", ret);
->>   
->> +	dp->link.cap.link_rate = dp->dpcd[DP_MAX_LINK_RATE];
->> +	dp->link.cap.lanes = 0x2;
->> +
->>   	return ret;
->>   }
->>   
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->> index a7f611e82f73..31f1e8970265 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
->> @@ -13,6 +13,8 @@
->>   #include "hibmc_drm_drv.h"
->>   #include "dp/dp_hw.h"
->>   
->> +#define DP_MASKED_SINK_HPD_PLUG_INT	BIT(2)
->> +
->>   static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
->>   {
->>   	struct hibmc_dp *dp = to_hibmc_dp(connector);
->> @@ -39,6 +41,8 @@ static int hibmc_dp_late_register(struct drm_connector *connector)
->>   {
->>   	struct hibmc_dp *dp = to_hibmc_dp(connector);
->>   
->> +	hibmc_dp_enable_int(dp);
->> +
->>   	return drm_dp_aux_register(&dp->aux);
->>   }
->>   
->> @@ -47,6 +51,8 @@ static void hibmc_dp_early_unregister(struct drm_connector *connector)
->>   	struct hibmc_dp *dp = to_hibmc_dp(connector);
->>   
->>   	drm_dp_aux_unregister(&dp->aux);
->> +
->> +	hibmc_dp_disable_int(dp);
->>   }
->>   
->>   static const struct drm_connector_funcs hibmc_dp_conn_funcs = {
->> @@ -98,6 +104,31 @@ static const struct drm_encoder_helper_funcs hibmc_dp_encoder_helper_funcs = {
->>   	.atomic_disable = hibmc_dp_encoder_disable,
->>   };
->>   
->> +irqreturn_t hibmc_dp_hpd_isr(int irq, void *arg)
->> +{
->> +	struct drm_device *dev = (struct drm_device *)arg;
->> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
->> +	int idx;
->> +
->> +	if (!drm_dev_enter(dev, &idx))
->> +		return -ENODEV;
->> +
->> +	if (priv->dp.irq_status & DP_MASKED_SINK_HPD_PLUG_INT) {
->> +		drm_dbg_dp(&priv->dev, "HPD IN isr occur!\n");
->> +		hibmc_dp_hpd_cfg(&priv->dp);
->> +	} else {
->> +		drm_dbg_dp(&priv->dev, "HPD OUT isr occur!\n");
->> +		hibmc_dp_reset_link(&priv->dp);
->> +	}
->> +
->> +	if (dev->registered)
->> +		drm_connector_helper_hpd_irq_event(&priv->dp.connector);
->> +
->> +	drm_dev_exit(idx);
->> +
->> +	return IRQ_HANDLED;
->> +}
->> +
->>   int hibmc_dp_init(struct hibmc_drm_private *priv)
->>   {
->>   	struct drm_device *dev = &priv->dev;
->> @@ -138,5 +169,7 @@ int hibmc_dp_init(struct hibmc_drm_private *priv)
->>   
->>   	drm_connector_attach_encoder(connector, encoder);
->>   
->> +	connector->polled = DRM_CONNECTOR_POLL_HPD;
->> +
->>   	return 0;
->>   }
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
->> index bc89e4b9f4e3..daed1330b961 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
->> @@ -71,4 +71,6 @@ int hibmc_dp_init(struct hibmc_drm_private *priv);
->>   
->>   void hibmc_debugfs_init(struct drm_connector *connector, struct dentry *root);
->>   
->> +irqreturn_t hibmc_dp_hpd_isr(int irq, void *arg);
->> +
->>   #endif
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
->> index 05e19ea4c9f9..e8a527ede854 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_vdac.c
-> Separate commit, please. It concerns your VGA connector, not the DP
-> connector.
->
-> LGTM otherwise.
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
-Okay!
+Looking at the original commit again, we also should do this:
 
+---
 
->> @@ -60,6 +60,7 @@ static void hibmc_connector_destroy(struct drm_connector *connector)
->>   static const struct drm_connector_helper_funcs
->>   	hibmc_connector_helper_funcs = {
->>   	.get_modes = hibmc_connector_get_modes,
->> +	.detect_ctx = drm_connector_helper_detect_from_ddc,
->>   };
->>   
->>   static const struct drm_connector_funcs hibmc_connector_funcs = {
->> @@ -127,5 +128,7 @@ int hibmc_vdac_init(struct hibmc_drm_private *priv)
->>   
->>   	drm_connector_attach_encoder(connector, encoder);
->>   
->> +	connector->polled = DRM_CONNECTOR_POLL_CONNECT | DRM_CONNECTOR_POLL_DISCONNECT;
->> +
->>   	return 0;
->>   }
->> -- 
->> 2.33.0
->>
+From 2685ca87d73d0c2b91cfd6959e381a40db235119 Mon Sep 17 00:00:00 2001
+From: Johannes Weiner <hannes@cmpxchg.org>
+Date: Thu, 6 Mar 2025 09:31:42 -0500
+Subject: [PATCH] mm: swap_cgroup: remove double initialization of locals
+
+Fixes: 6769183166b3 ("mm/swap_cgroup: decouple swap cgroup recording and clearing")
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
+---
+ mm/swap_cgroup.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/mm/swap_cgroup.c b/mm/swap_cgroup.c
+index 1007c30f12e2..de779fed8c21 100644
+--- a/mm/swap_cgroup.c
++++ b/mm/swap_cgroup.c
+@@ -92,8 +92,7 @@ void swap_cgroup_record(struct folio *folio, unsigned short id,
+  */
+ unsigned short swap_cgroup_clear(swp_entry_t ent, unsigned int nr_ents)
+ {
+-	pgoff_t offset = swp_offset(ent);
+-	pgoff_t end = offset + nr_ents;
++	pgoff_t offset, end;
+ 	struct swap_cgroup *map;
+ 	unsigned short old, iter = 0;
+ 
+-- 
+2.48.1
 
