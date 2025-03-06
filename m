@@ -1,227 +1,175 @@
-Return-Path: <linux-kernel+bounces-548910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE978A54AC4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:34:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE533A54AC9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:34:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90BDF16C694
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:34:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2511416C78B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9D620B7F3;
-	Thu,  6 Mar 2025 12:33:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A9F1FC0E5;
-	Thu,  6 Mar 2025 12:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D0C20B80E;
+	Thu,  6 Mar 2025 12:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pb+3C9Nd"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1AA1FC0E5;
+	Thu,  6 Mar 2025 12:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741264439; cv=none; b=WRdFQmF+/wpdJAVnBwth7ZEiRn8LwYnA1OKbUZXHrz/85ssSg6KmYOnf9lVy+tsCljeX69hsuhT6TqJFKWIGQ7g9K77u/rw6jm082o8Wunpfw1Sly0IbyofwKkTW54F+Cnoi76xOH/B0MeH88eW2EDPVTUUMRoiD7AUKvuvLtVE=
+	t=1741264475; cv=none; b=Q9imjkj36MH3mXX/O+uNZHRx3YmPJJkEr6dNQHrkMWzyB2SgIumK5avRP02DssAcJswb0um9Q4/RA2VK2GV4MBzac+GbzLWcO3mg+6PFdOliqPhE2Ul/csXVN2CrSDkP+htvpISGDUnHzc/cMKAkuz/AXI7E5RD3w+y9qzYJ3Wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741264439; c=relaxed/simple;
-	bh=aGjzBpT0G0t8eJj0mKb/W8C/c3s44EYZ+Jb75+aXYak=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CEoi/ke9l+wXu5Q6N11p75oFGIBgfSYpsnrCZyojNqeeWtL+mU6XgOkeuOMmP7OwCyTb35mDrjXIfp/i7kmAowrMorZqB3f6oyLwsVBJrfA61g2HlMXGOiZ4yapc9CmcNmwyZOKvA5zutA8SmN5jjKR775fiAdU85akLLINHg9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9601C1007;
-	Thu,  6 Mar 2025 04:34:09 -0800 (PST)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7FB523F673;
-	Thu,  6 Mar 2025 04:33:54 -0800 (PST)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: mingo@kernel.org,
-	peterz@infradead.org,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	Mark.Rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	leo.yan@arm.com,
-	james.clark@linaro.org
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v4] events/core: fix acoount failure for event's child_total_enable_time at task exit
-Date: Thu,  6 Mar 2025 12:33:50 +0000
-Message-Id: <20250306123350.1650114-1-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741264475; c=relaxed/simple;
+	bh=65hdsP0lwELLMQE1D/Mi/b7L044+bM80dXXbMcA8cPY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qxmRUSp8beL8wzYvsZss2DbYUYT6PDQY4yMl6H5qyONmcepEda0UwTsSh+am++5SqEEqeqQcHEBamlKrTyyfhu+xjQq0clQFhFZKpGl4N0myGVbWwLKg7EcANqOTAAZGTjNuKBbKXl9ncZd3I4b18nJOGI6jWkWlsnQcN7Y3mdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pb+3C9Nd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5268gFYA020886;
+	Thu, 6 Mar 2025 12:34:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	36bXT+WM5K9bw4Zb40hn1wj4HKhtjhNBCzHSZ6DFiyw=; b=Pb+3C9NdQ/KizQVs
+	MTZyGm+7n5bB6glwy/EGUqzsaYj3jmsGbjvaAws9t3seJGq3Tf/l3sGckPSrbn8m
+	uH0xcHOOpHBpNZLXnY5W+PN3RwsuLSJXPZq0IsVE13/j98jrAFhMQQFKEU7hxeLd
+	PD8c4xNLD3aOpomtwlC0N6m+L0Vv597YwG0eJ03f8RxohRnW5zQDyO17no22sQ9B
+	k4h5tE7HfiAokNhTV2cIOVTZqJU1mqFs9hamxEZVSv/YsxF6J6Jo+1fFaJTzSFvm
+	6PXMlJs2XVgNFOXWRTD3mP+C+3nJtOkGP/wNkkWPMjxlm48tm4+WK99ijkTYgLR7
+	x9OZ7Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 456xcuj82s-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 06 Mar 2025 12:34:29 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 526CYSnQ010317
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 6 Mar 2025 12:34:28 GMT
+Received: from [10.50.63.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Mar 2025
+ 04:34:25 -0800
+Message-ID: <31cfacfc-fd69-d488-e2f7-7399bd5a680a@quicinc.com>
+Date: Thu, 6 Mar 2025 18:04:22 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [RFC PATCH 00/12] Add support for HEVC and VP9 codecs in decoder
+Content-Language: en-US
+To: <neil.armstrong@linaro.org>, <quic_vgarodia@quicinc.com>,
+        <quic_abhinavk@quicinc.com>, <mchehab@kernel.org>
+CC: <hverkuil@xs4all.nl>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250305104335.3629945-1-quic_dikshita@quicinc.com>
+ <6d88effc-2aed-4f92-89a7-17d48f43ccd3@linaro.org>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <6d88effc-2aed-4f92-89a7-17d48f43ccd3@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: lQkEYeVp8Fd49uyUhCKtBKVFHdnmPP9n
+X-Proofpoint-GUID: lQkEYeVp8Fd49uyUhCKtBKVFHdnmPP9n
+X-Authority-Analysis: v=2.4 cv=eeXHf6EH c=1 sm=1 tr=0 ts=67c99655 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=9FZtKMY-L_oLx9VXxCsA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-06_05,2025-03-06_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 mlxscore=0
+ impostorscore=0 malwarescore=0 bulkscore=0 phishscore=0 adultscore=0
+ priorityscore=1501 suspectscore=0 clxscore=1015 lowpriorityscore=0
+ spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503060095
 
-The perf core code fails to account for total_enable_time of event
-when its state is inactive.
 
-Here is the error case for failure to account for total_enable_time for
-core event:
 
-sudo ./perf stat -vvv -e armv8_pmuv3_0/event=0x08/ -e armv8_pmuv3_1/event=0x08/ -- stress-ng --pthread=2 -t 2s
-...
+On 3/5/2025 7:52 PM, neil.armstrong@linaro.org wrote:
+> Hi,
+> 
+> On 05/03/2025 11:43, Dikshita Agarwal wrote:
+>> Hi all,
+>>
+>> This patch series adds initial support for the HEVC(H.265) and VP9
+>> codecs in iris decoder. The objective of this work is to extend the
+>> decoder's capabilities to handle HEVC and VP9 codec streams,
+>> including necessary format handling and buffer management.
+>> In addition, the series also includes a set of fixes to address issues
+>> identified during testing of these additional codecs.
+>>
+>> I'm sharing this series as an RFC because compliance and conformance
+>> testing are still in progress.
+>> While initial functional tests show positive results, I would
+>> appreciate early feedback on the design, implementation, and fixes
+>> before moving to a formal submission.
+>>
+>> I plan to submit a formal patch series after completing all compliance
+>> checks. Meanwhile, any feedback or suggestion to improve this work are
+>> very welcome.
+>>
+>> Thanks,
+>> Dikshita
+>>
+>> Dikshita Agarwal (12):
+>>    media: iris: Add HEVC and VP9 formats for decoder
+>>    media: iris: Add platform capabilities for HEVC and VP9 decoders
+>>    media: iris: Set mandatory properties for HEVC and VP9 decoders.
+>>    media: iris: Add internal buffer calculation for HEVC and VP9 decoders
+>>    media: iris: Skip destroying internal buffer if not dequeued
+>>    media: iris: Update CAPTURE format info based on OUTPUT format
+>>    media: iris: Add handling for corrupt and drop frames
+>>    media: iris: Avoid updating frame size to firmware during reconfig
+>>    media: iris: Avoid sending LAST flag multiple times
+>>    media: iris: Send V4L2_BUF_FLAG_ERROR for buffers with 0 filled length
+>>    media: iris: Fix handling of eos buffer during drain
+>>    media: iris: Add handling for no show frames
+> 
+> I should be better to move patches 1, 2 & 3 at the end, after the patches
+> adding support for specific hecv & h265 features, and please check that
+> none of the patches breaks h264 at any time to keep bisectability.
+> 
+Noted.
 
-/*
- * three number represetns each
- *   scaled count / total_enable_time / total_total_running_time
- */
-armv8_pmuv3_0/event=0x08/: 1138698008 2289429840 2174835740
-                                      ^^^^^^^^^^
-armv8_pmuv3_1/event=0x08/: 1826791390 1950025700 847648440
-                                      ^^^^^^^^^^
-
- Performance counter stats for 'stress-ng --pthread=2 -t 2s':
-
-     1,138,698,008      armv8_pmuv3_0/event=0x08/                                               (94.99%)
-     1,826,791,390      armv8_pmuv3_1/event=0x08/                                               (43.47%)
-
-Since above two events are belong to the same task context and
-mutually-exclusive per cpu (they couldn't be active at the same time on the same cpu),
-the total_enable_time should be the same (marked with ^^^^^^^^^^^)
-and the summation of ratio should be 100%.
-
-This account failure of total_enable_time because of
-account failure of child_total_enable_time of child event when
-child task exit.
-
-Below table explains how the child_total_enable_time is failed to account at
-exiting child task which switch cpus as time passes by (CPU0 -> CPU1 -> CPU0)
-
- - in means sched_in.
- - out means sched_out.
- - exit means at the exit of child task.
-   NOTE: the value is before calling list_del_event(). which mean
-         the value at exit column will be added at parent event's
-          child_total_enable_time when child task exit.
- - ctx is the child_task_ctx,
- - e0 is the child_event which set with cpu == -1 and opened with pmu0 only
-   added in CPU0,
- - e1 is the child_event which set with cpu == -1 and opened with pmu1 only
-   added in CPU1,
- - e0 and e1 belongs to same child_task_ctx.
-
-          CPU0 (run t1)        CPU1 (run t2)          CPU0 (run t3)
-          |  in | out |       | in  | out     |       | in      | exit        |
-------------------------------------------------------------------------------
-ctx->time |  0  | t1  |       | t1  | t1 + t2 |       | t1 + t2 | t1 + t2 + t3|
-------------------------------------------------------------------------------
-e0->ena   |  0  | t1  |       | t1  | t1     *|       | t1 + t2 | t1 + t2 + t3|
-------------------------------------------------------------------------------
-e0->run   |  0  | t1  |       | t1  | t1     *|       | t1      | t1 + t3     |
-------------------------------------------------------------------------------
-e1->ena   |  0  | 0  *|       | t1  | t1 + t2 |       | t1 + t2 | t1 + t2    X|
-------------------------------------------------------------------------------
-e1->run   |  0  | 0  *|       | 0   | t2      |       | t2      | t2         X|
-------------------------------------------------------------------------------
-
-The value marked with * means it doesn't updates since event->state was
-INACTIVE.
-
-Please see the last CPU0's column with exit (marked with X).
-Since e1's state is INACTIVE its total_enable_time doesn't update
-and it remains with former value without accounting t3 time.
-
-In this situation, at __perf_remove_from_context() while exit child_task,
-sync_child_event() where adds child_event's total_enable_time to
-parent event's child_total_enable_time in perf_child_detach() is called
-before list_del_event() in which event time is updated by setting
-the event state as OFF.
-That means child_total_enable_time is added with missing
-amount of last enable time -- t3.
-
-In case of parent event's total_enable_time is updated properly in
-list_del_event() when the task exit.
-However, the child_total_enable_time is missed when child_task exited,
-the perf prints error amount of enable_time (which is summation of
-total_enable_time + child_total_enable_time).
-
-To address this, update event state via perf_event_state() in
-__perf_remove_from_context() and call it before perf_child_detach()
-where parent's total_enable_time is updated.
-
-After this patch, this problem is gone like:
-
-sudo ./perf stat -vvv -e armv8_pmuv3_0/event=0x08/ -e armv8_pmuv3_1/event=0x08/ -- stress-ng --pthread=2 -t 10s
-...
-armv8_pmuv3_0/event=0x08/: 15396770398 32157963940 21898169000
-armv8_pmuv3_1/event=0x08/: 22428964974 32157963940 10259794940
-
- Performance counter stats for 'stress-ng --pthread=2 -t 10s':
-
-    15,396,770,398      armv8_pmuv3_0/event=0x08/                                               (68.10%)
-    22,428,964,974      armv8_pmuv3_1/event=0x08/                                               (31.90%)
-
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
-Suggsted-by: Peter Zijlstra <peterz@infradead.org>
----
- kernel/events/core.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 6364319e2f88..058533a50493 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -2407,6 +2407,7 @@ ctx_time_update_event(struct perf_event_context *ctx, struct perf_event *event)
- #define DETACH_GROUP	0x01UL
- #define DETACH_CHILD	0x02UL
- #define DETACH_DEAD	0x04UL
-+#define DETACH_EXIT	0x08UL
-
- /*
-  * Cross CPU call to remove a performance event
-@@ -2421,6 +2422,7 @@ __perf_remove_from_context(struct perf_event *event,
- 			   void *info)
- {
- 	struct perf_event_pmu_context *pmu_ctx = event->pmu_ctx;
-+	enum perf_event_state state = PERF_EVENT_STATE_OFF;
- 	unsigned long flags = (unsigned long)info;
-
- 	ctx_time_update(cpuctx, ctx);
-@@ -2429,16 +2431,19 @@ __perf_remove_from_context(struct perf_event *event,
- 	 * Ensure event_sched_out() switches to OFF, at the very least
- 	 * this avoids raising perf_pending_task() at this time.
- 	 */
--	if (flags & DETACH_DEAD)
-+	if (flags & DETACH_EXIT)
-+		state = PERF_EVENT_STATE_EXIT;
-+	if (flags & DETACH_DEAD) {
- 		event->pending_disable = 1;
-+		state = PERF_EVENT_STATE_DEAD;
-+	}
- 	event_sched_out(event, ctx);
-+	perf_event_set_state(event, min(event->state, state));
- 	if (flags & DETACH_GROUP)
- 		perf_group_detach(event);
- 	if (flags & DETACH_CHILD)
- 		perf_child_detach(event);
- 	list_del_event(event, ctx);
--	if (flags & DETACH_DEAD)
--		event->state = PERF_EVENT_STATE_DEAD;
-
- 	if (!pmu_ctx->nr_events) {
- 		pmu_ctx->rotate_necessary = 0;
-@@ -13424,12 +13429,7 @@ perf_event_exit_event(struct perf_event *event, struct perf_event_context *ctx)
- 		mutex_lock(&parent_event->child_mutex);
- 	}
-
--	perf_remove_from_context(event, detach_flags);
--
--	raw_spin_lock_irq(&ctx->lock);
--	if (event->state > PERF_EVENT_STATE_EXIT)
--		perf_event_set_state(event, PERF_EVENT_STATE_EXIT);
--	raw_spin_unlock_irq(&ctx->lock);
-+	perf_remove_from_context(event, detach_flags | DETACH_EXIT);
-
- 	/*
- 	 * Child events can be freed.
---
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
-
+Thanks,
+Dikshita
+> Neil
+> 
+> Neil
+> 
+>>
+>>   .../media/platform/qcom/iris/iris_buffer.c    |  22 +-
+>>   drivers/media/platform/qcom/iris/iris_ctrls.c |  28 +-
+>>   .../platform/qcom/iris/iris_hfi_common.h      |   1 +
+>>   .../qcom/iris/iris_hfi_gen1_command.c         |  38 +-
+>>   .../qcom/iris/iris_hfi_gen1_defines.h         |   4 +
+>>   .../qcom/iris/iris_hfi_gen1_response.c        |  11 +
+>>   .../qcom/iris/iris_hfi_gen2_command.c         | 129 +++++-
+>>   .../qcom/iris/iris_hfi_gen2_defines.h         |   5 +
+>>   .../qcom/iris/iris_hfi_gen2_response.c        |  56 ++-
+>>   .../media/platform/qcom/iris/iris_instance.h  |   6 +
+>>   .../platform/qcom/iris/iris_platform_common.h |  25 +-
+>>   .../platform/qcom/iris/iris_platform_sm8250.c |   4 +-
+>>   .../platform/qcom/iris/iris_platform_sm8550.c | 141 ++++++-
+>>   drivers/media/platform/qcom/iris/iris_vb2.c   |   3 +-
+>>   drivers/media/platform/qcom/iris/iris_vdec.c  |  80 +++-
+>>   drivers/media/platform/qcom/iris/iris_vdec.h  |  11 +
+>>   drivers/media/platform/qcom/iris/iris_vidc.c  |   3 -
+>>   .../platform/qcom/iris/iris_vpu_buffer.c      | 397 +++++++++++++++++-
+>>   .../platform/qcom/iris/iris_vpu_buffer.h      |  46 +-
+>>   19 files changed, 931 insertions(+), 79 deletions(-)
+>>
+> 
 
