@@ -1,142 +1,172 @@
-Return-Path: <linux-kernel+bounces-548443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9E0A544EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:32:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B5C9A544EE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:32:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B5223A7168
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:31:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95D4E1698C4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:32:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7CF420764E;
-	Thu,  6 Mar 2025 08:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2977207DEB;
+	Thu,  6 Mar 2025 08:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="wrJTbzNt"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AuL6yP09"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D24C1BC20
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:32:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1B11BC20;
+	Thu,  6 Mar 2025 08:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741249924; cv=none; b=rx93/aXKYRv+ta4CAkdhSxxrLDpR+RyjJGA3ofUsCAgr/n8Hz/MenWdcZJG/533upfbpiES9rypaAtyH5weXrbFMOybUVV7tDEkjVkDAeMYb4nJVkbvOF9mqWbcJ6psgnb7dfWy+0ECJ/Cn2ZardkfjkBET4J/Pgm/bfyrarHBo=
+	t=1741249929; cv=none; b=sMicovJhFzLlZlyIJqXFuFBILx29RI9ZJxg880sqGAV7LLF8lsvWglsSO2lr2uNl/Ps4ibjkF3s0u4wnFoCz1hNuQ/RbSXZUKUmUREnoVUROJITnLdyLY8LW662fsWjYALpadbSDxEmX0xfsO9q2xtvofvdjAV+uGUrngCb6mG8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741249924; c=relaxed/simple;
-	bh=SwvE53D8LO9O66Du6/G6NXlLZ1dfuMWV9VLqaZWM5f8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mk2GjvIwHbEv3/gT2D662BqinE/jckF9WgwXadu8vlRI9ptyqB9nVoi+oyAMsCxYxXNKIfTC6aXsOSmUUy9wlxzFqPgqL17WtVEyX4nxRzXW54er64BXdLTCKKrKhQAjLATl8NJnitqvN99iDahcgN8WJAGmXraMFJKaknypnsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=wrJTbzNt; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394a823036so2903205e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 00:32:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741249919; x=1741854719; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SwvE53D8LO9O66Du6/G6NXlLZ1dfuMWV9VLqaZWM5f8=;
-        b=wrJTbzNtcoKkBt4kz8wc3LTje4bNgPaaK/KW9h1B7tj4ImHJBV3UWsxZ8tVDOoNCuh
-         yu737YxHnZIXnCu4NdQc38n25ZGp0/thnDpoqY1Tq8iPDkdW8RodQjiOl3WHxqjz9QhQ
-         6vqgRwyoFM2yQi1qdcyr48ac3G46XuCxJdf09nTazYZ943dHaSdaeW21JxMOHAqaSlqR
-         wZIgYXYfPA15vcaOOggw6jUn1dn8Cs39kn81PaPxpl94KwjUvyV1mwrJgaA2l0LqNBa4
-         4vhuQCkUYk4flbwL8fA/muQZPl2cAPnHV4dQcQrwXQBv6/0fiuAetS1nI5Ek/ANKceV3
-         RX7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741249919; x=1741854719;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SwvE53D8LO9O66Du6/G6NXlLZ1dfuMWV9VLqaZWM5f8=;
-        b=XUMHeCaLxhdVCS4x5XFnPRjGGAaVhcA+woIa0yMPiIaEX9VDBE6If6HHe/0ZxQWZpz
-         hTRst7Hdzj8BkpLFrLpeJMM4SjjFTRhTZvvyK8WoDvap9qkRt4jCS8ncJHmSZMJMdLsK
-         pcYNqOoAlpgyAFEe9BiVLOPf7momNjmpW/85+K8FBHUTrG0lw4fhwNdb6nrBo5Imn6/I
-         KnT8rDmcqVnvk86Xd7d/fC+0fFmtFnSoO+faMBDz+FEpdKc7tzoJCAob7BFgH/do8Oca
-         lwJzi+20hN5N9BeNpaNzc5WD1q64uJKhAGmRcV5MiGXfeUipZt8SESpW3mncHH9JC8rq
-         1QKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWsxKZq4qd1OoqvelxlEPUJvKfg5YgVps/qODfMLqRsQsvSynd9LStldegbZE0MYwp53ApyvR+1EfXVEio=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLaq80VD05jwVHVuS353e4Xf4yrJdlOtnW8eYcw45dItRNhNKL
-	6fL/OOLcr8iW0FS+C5cCvjdw04EHaNGgSKXQx4aySavj0O8HdeSSOVbfubmKCuo=
-X-Gm-Gg: ASbGncvv5azwBEamM4W8UNvEH+hcxv8dHmy8z4SydMoEBF42LVl3zbqhCS/2gFEUeOl
-	d+H9HAmD188t5GNt4fnKuETT9HruRKwvZnPM0mjR7EpFTO2YUSc1iBuUdoJ/D/sMK6FZg5wqb6D
-	JkEKKfmre8co5gY7DOxDXUfFXOPE3cAZRQJFO7goC/BUaszKmJcJUhamR0u9Ken9pCTL2wcBJxG
-	i84xSLpy/4GKpQ5k2pPWf7CVqs+XhJJAKXdEZAqE4Xdq+6Ui4HLERApnDAN8MWKAQnBPQWCFN3N
-	1L6g+ZeGaZ12DJrACmHZuasDDFCGUjil2pleYbsWuV8dg/ed1n375GKK2OYU120OJY8xj3L7yzi
-	KY5FIg3hIKq/OA/zB0CZxgz3xRQ==
-X-Google-Smtp-Source: AGHT+IH6emTBfuS6zYPJHpRkTM8aN/IAHFmDZVmPdQiHiAOmQcw3zT+zE5ArnNtVc6O2TACIlk7aSw==
-X-Received: by 2002:a05:600c:3ba8:b0:43b:c0fa:f9dc with SMTP id 5b1f17b1804b1-43bd298f98fmr56970425e9.10.1741249919415;
-        Thu, 06 Mar 2025 00:31:59 -0800 (PST)
-Received: from localhost (amontpellier-556-1-148-206.w109-210.abo.wanadoo.fr. [109.210.4.206])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd8c314asm12381045e9.10.2025.03.06.00.31.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 00:31:58 -0800 (PST)
-Date: Thu, 6 Mar 2025 09:31:56 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Cosmin Tanislav <cosmin.tanislav@analog.com>, Dumitru Ceclan <mitrutzceclan@gmail.com>, 
-	Guillaume Ranquet <granquet@baylibre.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Michael Walle <michael@walle.cc>, Nuno Sa <nuno.sa@analog.com>, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 9/8] iio: adc: ad7124: Benefit of dev =
- indio_dev->dev.parent in ad7124_parse_channel_config()
-Message-ID: <guodm26yvsrihuznuw27ff44iy2xt3bklpwaazbzvrbdky4ffi@3c6tyyzofo7c>
-References: <v7l2skqj65vbku3ebjsfndfj3atl6iqpodamios2do6q6kcagf@whmuir6fwede>
- <20250306001013.7cd5d00c@jic23-huawei>
+	s=arc-20240116; t=1741249929; c=relaxed/simple;
+	bh=Asa+Q9Dadytnu7IE9OxlqukGoe3IuAv6i5AaA0FHBGk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XnN+bFZhjleSJTK+oMD4LwvHCOV1TrM/gZMDIAk1dpCW4YgvkM54imxAC6K4piQPTexHFPG5QzYWLoAc/+GnfSwATgpoXDDwPzQ1mW743+SwhK8bx1LPD+eb7nVwEFM75ocqpO116Fvill4ZkQYwp/88ApWQB9y3fXnZIaVRLys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AuL6yP09; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D1A6C4CEE4;
+	Thu,  6 Mar 2025 08:32:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741249928;
+	bh=Asa+Q9Dadytnu7IE9OxlqukGoe3IuAv6i5AaA0FHBGk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AuL6yP092N4mZZp4lPZrPmir5Z0U1OP8VCaF3OvFoWFlwHXcR7zwaz0Tjy60P+VXS
+	 LE6RgdmuzLV1/8aRbMJlrm4nhinol3hhizwCOGZ+TTEu39zsVtwl5ETW+w6f5r/wmI
+	 RRB7jbefUMLD9GhAQLcU3wzlsuPGocOxrGOUC5cnK49qBSQvAuJwd6MJtKcq2Osj7P
+	 xQ9CR+dv2Rco8rfKTkePMbob+wUoO1Nk8/Z9jq0ynY4wJoX9hSBF2WiksKa0+1OgQD
+	 KG9mvAIviuc4xFGBBKleov7vBsfAstwQhmQoTEgZo/Hj2Hn7ZixWrzb6To4Vn6St7i
+	 Q8ks3xoloqH/g==
+Message-ID: <1f14fdfe-379b-4718-812b-820c90f58e27@kernel.org>
+Date: Thu, 6 Mar 2025 09:31:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="g6tlflhbd5cz6eft"
-Content-Disposition: inline
-In-Reply-To: <20250306001013.7cd5d00c@jic23-huawei>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 1/2] dt-bindings: net: Add FSD EQoS device tree
+ bindings
+To: Swathi K S <swathi.ks@samsung.com>, krzk+dt@kernel.org,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, robh@kernel.org, conor+dt@kernel.org,
+ richardcochran@gmail.com, mcoquelin.stm32@gmail.com,
+ alexandre.torgue@foss.st.com
+Cc: rmk+kernel@armlinux.org.uk, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ pankaj.dubey@samsung.com, ravi.patel@samsung.com, gost.dev@samsung.com
+References: <20250305091246.106626-1-swathi.ks@samsung.com>
+ <CGME20250305091852epcas5p18a0853e85a5ed3d36d5d42ef89735ca6@epcas5p1.samsung.com>
+ <20250305091246.106626-2-swathi.ks@samsung.com>
+ <789ecb2f-dddc-491b-b9f8-5fb89058fd1b@kernel.org>
+ <012701db8e6b$950550c0$bf0ff240$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <012701db8e6b$950550c0$bf0ff240$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+
+On 06/03/2025 08:44, Swathi K S wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: 06 March 2025 12:45
+>> To: Swathi K S <swathi.ks@samsung.com>; krzk+dt@kernel.org;
+>> andrew+netdev@lunn.ch; davem@davemloft.net; edumazet@google.com;
+>> kuba@kernel.org; pabeni@redhat.com; robh@kernel.org;
+>> conor+dt@kernel.org; richardcochran@gmail.com;
+>> mcoquelin.stm32@gmail.com; alexandre.torgue@foss.st.com
+>> Cc: rmk+kernel@armlinux.org.uk; netdev@vger.kernel.org;
+>> devicetree@vger.kernel.org; linux-stm32@st-md-mailman.stormreply.com;
+>> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org;
+>> pankaj.dubey@samsung.com; ravi.patel@samsung.com;
+>> gost.dev@samsung.com
+>> Subject: Re: [PATCH v8 1/2] dt-bindings: net: Add FSD EQoS device tree
+>> bindings
+>>
+>> On 05/03/2025 10:12, Swathi K S wrote:
+>>> Add FSD Ethernet compatible in Synopsys dt-bindings document. Add FSD
+>>> Ethernet YAML schema to enable the DT validation.
+>>>
+>>> Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
+>>> Signed-off-by: Ravi Patel <ravi.patel@samsung.com>
+>>> Signed-off-by: Swathi K S <swathi.ks@samsung.com>
+>>> ---
+>>>  .../devicetree/bindings/net/snps,dwmac.yaml   |   5 +-
+>>>  .../bindings/net/tesla,fsd-ethqos.yaml        | 118 ++++++++++++++++++
+>>>  2 files changed, 121 insertions(+), 2 deletions(-)  create mode
+>>> 100644 Documentation/devicetree/bindings/net/tesla,fsd-ethqos.yaml
+>>>
+>>
+>> I tried and did not see any differences, so point me exactly to any difference
+>> in the binding (binding!) which would justify dropping review?
+> 
+> Added the following in the example given in DT binding doc:
+
+OK, but that's an example, not the binding, so no new properties in the
+binding.
+
+> 
+> assigned-clocks = <&clock_peric PERIC_EQOS_PHYRXCLK_MUX>,
+>                                 <&clock_peric PERIC_EQOS_PHYRXCLK>;
+> assigned-clock-parents = <&clock_peric PERIC_EQOS_PHYRXCLK>;
+> 
+> Given the significance of these changes, I assumed the changes need to be reviewed again.
+
+Adding standard properties to the example is not significant change. It
+is really a minor change.
 
 
---g6tlflhbd5cz6eft
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v4 9/8] iio: adc: ad7124: Benefit of dev =
- indio_dev->dev.parent in ad7124_parse_channel_config()
-MIME-Version: 1.0
 
-On Thu, Mar 06, 2025 at 12:10:13AM +0000, Jonathan Cameron wrote:
-> On Tue, 4 Mar 2025 10:41:09 +0100
-> Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> wrote:
-> > this is a patch opportunity I noticed while backporting my original
-> > series to an older kernel to please my customer.
-> > I chose to sneak it into the series in the hope to not offend maintainer
-> > tools :-)
-> Leads to b4 getting rather confused, but doing the right thing in the end.
-
-Oh, I failed to pass
-`--in-reply-to 20250303114659.1672695-10-u.kleine-koenig@baylibre.com`
-to really do what I intended. =F0=9F=99=84
-
-Anyhow, good that it didn't confuse b4 enough to refuse application even
-the way I did it.
-
-Thanks
-Uwe
-
---g6tlflhbd5cz6eft
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfJXXoACgkQj4D7WH0S
-/k5EswgArOTpP0RPKXnd/syJq+w2+iwB6i9Ajk6iY976qSkSIDeRLTRshq7WvYYG
-b8RNmZSkU9scmJsS333+DMOsTN9G+u2wySdfsgWYnJefRFtW5cPw/ePkig8rlSYn
-t8xPKL8gxyCjvDWszUipxZR0SjFMl4fLC8HGtlmYR+FGzQyc4dnLptDiA/pjWqA0
-BjJLGIPLolQH8hD27VWFIVFInOF5kzEN/1WQHpefy+K8NKRDJBcOaY1QG0DWGNKH
-sal6Q2sFZEo0hknQ5ExZR6vLs5Ueq33oTf3GkfyCJT/l4mIK9U8e+zaPyuuET/0X
-91A4RiTGdMd3B5FCJFhDSHx5XNys+Q==
-=XpdY
------END PGP SIGNATURE-----
-
---g6tlflhbd5cz6eft--
+Best regards,
+Krzysztof
 
