@@ -1,90 +1,87 @@
-Return-Path: <linux-kernel+bounces-548299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A52A5431B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:51:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 347ABA5431F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:56:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBCD11893FE2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:51:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5869B16D03F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:56:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0E4E1A727D;
-	Thu,  6 Mar 2025 06:51:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9D31A23BC;
+	Thu,  6 Mar 2025 06:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FIakNPIH"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=g-sokol-info.20230601.gappssmtp.com header.i=@g-sokol-info.20230601.gappssmtp.com header.b="C7kBcNzH"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEC11A0BE0;
-	Thu,  6 Mar 2025 06:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 902763FB9C
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 06:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741243873; cv=none; b=pUeX/oCTOBe5hWAxHJOnFI8k/SfpVvaGqM/ytPnFtHBHVNIPQj+93gEXK+JKjF14jQiW/dkGlRz1X2R7kJ3hQxDZk3Xa+T0mDtEyRZpo9BA1ngBrBcKa+MgGzM8UL8xnDQLk6IgWbhyZ23z5gGA9XG/jA3idHAZI9vJL4vFr08I=
+	t=1741244186; cv=none; b=rpBt+vGN0RcB1b70/4fRLhdoulJFpULaF3vgJw+x1YMxEZGVQuXW3QqG/O4Cmx1cZi24adXqQ3ydc3IfcsfTy15a/wsqI8IxwF8uhrkH375A90XN9kd2TKAUOi9GQvB4E1mhYP3jJzPHRylh/qHf/Kl/lA/0zRWe2nkpvgvZ0zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741243873; c=relaxed/simple;
-	bh=48fyZdr8LwCW3XqX4inBDjw6e7KJXj02tbZfat8AGiQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fgu0JunHUsHsyiTV8QBWEsswG6y4w+xMXQQ1x6OZMyQ1xDT9yWD52vYvrS8Gp3FkIVYcn2gBjKj8igrAqQ9xidGLzKXi7ujanRAd0og0UqEVM3OEOqYnvt0AiK4mLKCiEte7Lho0YBbYpoH0CdFLKyiVxz7h2p15wRecli9iO/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FIakNPIH; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fe98d173daso487229a91.1;
-        Wed, 05 Mar 2025 22:51:11 -0800 (PST)
+	s=arc-20240116; t=1741244186; c=relaxed/simple;
+	bh=84F6xy6gw1rvRcDsIfhxQ100b6HsmDruweAtANwXhto=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WBp29jguCBEqtU3Gglr8TRSmOv1O1ZFqURvXj5gomp6LlmEsLHsEQlgF7HZBnpu/u+J0Zd8Qk+ulS6dQ8jknQQql3WaHy2zpn45HmGi1jKN9D4rXADQwl+vxvoAguy6C223bnDXIPcy4DwVXHcu/c/SvMMiNf9qXHHovoQzIRYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=g-sokol.info; spf=none smtp.mailfrom=g-sokol.info; dkim=pass (2048-bit key) header.d=g-sokol-info.20230601.gappssmtp.com header.i=@g-sokol-info.20230601.gappssmtp.com header.b=C7kBcNzH; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=g-sokol.info
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=g-sokol.info
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5494bc4d741so327774e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 22:56:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741243871; x=1741848671; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E5KXdFHm+WLhg5HazhkZYKY/D4ntZshhlZ1/ip2PDg0=;
-        b=FIakNPIHSbdST+KfQ/aWZwTbNCFHWNoWm3mkmhrgzv9jCfaGGXzTU5aLbUzRn2QCDu
-         CwZ0UEnntIsMgJd76eKykMlTQuj5XTK6PJF02shePksu/l9Ap5ce1UC3Ebi7c1tUvvUU
-         JQulwvXBtOc2Th26IC/N7UtyVmFTOb5P9s/1hvveTqD9HyrlNE9zedcto1bILchFhe5n
-         zaMfobH8EqjhYMj3XPI7hRXl+Z3VDzbsSfyAb7sHJ5zTK41DXRVd7raNE1p4edKBgAm7
-         d8DUAQ6l00yveFIx0NY8lMw4WKGDsZzBBiKPe8aQ7VQHZSGWocx9CYKSwh1HKVB2NPY0
-         +xZA==
+        d=g-sokol-info.20230601.gappssmtp.com; s=20230601; t=1741244182; x=1741848982; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=9J1UAFxuft6AB5He5eDNnL2NYFVVFehRdJNW0D9EciM=;
+        b=C7kBcNzHSF7Q3vticWxLpqr56/RuXeskgx7hqSWgajARqfSou2I+JDAl2KDVgPNwUi
+         5gEOCeeT+i1d070izS4Oq77tHjs6hHw+GMTpgR3AL9AMy/YoYn2mVYQbNqzwkzoj5vqD
+         RP7jZydA0JECPhhB/Vd5IkJPyM5GBssXxtfJ9rQH2U3H0L+4afYDs/gNiKfjVesPRHQL
+         fxu8e7xoR+zNTbWeU2aQykxT0td0ndT4mfjwy2N1+hBaDwz0RbXBgLefTBxGruOLvAXa
+         7zVt7g1Yn49GQpAxzzJ4sJ9e+GHctXqLtJuel0DKVRQaRtV9cAb9j3dp60/ArL3pliLe
+         PyRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741243871; x=1741848671;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E5KXdFHm+WLhg5HazhkZYKY/D4ntZshhlZ1/ip2PDg0=;
-        b=bWOtN761mRUP0FGzX+rkbyK3tiHoj50l8S9b+Ob4b8tb+5eeeBh6GqXSLWv0Z5LO2n
-         VrswL4otvoSlMISKjpXsDEcnCThl71qeP41/B2lGMkt1qzRnKGqLVTwmFq1FiC/efc7D
-         WM6Osb6e3MX/n7mNIrrgiH3vKprty/LLjywIMsDOMeRa/0afmKBVNdJxpBZBgwOK1wt1
-         b0acMOjaKHvcIutl7abAcrslF19k2gDI/o0XFYz45sY5xUd9uuSxi2yCzN9JdysftTd5
-         JKXjZtl7Sam3azlCnrravIkIOWhxQdqSYCFk4oapzb/TPrtRiEm2PDReCFLSoV9eBTvK
-         RB/g==
-X-Forwarded-Encrypted: i=1; AJvYcCUeqmibX9rrAQ1rZVWphhekNzw8WquKc+tUCdiF2z0ALNWZYqFLQz4qnnsFJLtHl6GOBpgkbx1+dpli0Qg=@vger.kernel.org, AJvYcCVj2DGG83zLKpVtHwdV0L6qJunOs/adK0x6V/8Z8jd0Z9vphcux9S6F3oYiZhpykKueJpg7Rlql@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEjRqmt4W1iecWt4oQiEAXJRqVDJXPpuJjUB6QDfJqMMu1Rdku
-	cnN+5W05HqWNywW6kdUiDl/kFJMrs1lFn6Mr6uprsgy7OOXE0Z1gClU/Zw==
-X-Gm-Gg: ASbGncto2klVG58x2UNT20fAIS3fGegZwUu0BpTtiX7QsYWW4FYX26UYv9K3tR+bY5Q
-	8c8XkN+axHsYeT/ueWwimZkjEYJ7z5u3LWqZ4oMvXGGdxfKv6KIzMtZVNiHTQITUWIfPr8IE96H
-	lbQENvo1KbNlMm5flDk/eN5YOuEyl2Df4IuZqgEG1ua+5EN0so7UcVqX6oDqBhjAzB/i5j5b9Qt
-	jXcTjhgwQwSFbRQ5UfHBj6YLoycizPB2OTTifc+mYsEWRjkda2uiGOvEavTkrTzY1/US+PScvqG
-	5IpwF4MRgjJiVHjf9dg8c4WzdMvmXtGFAPfbaBCNpC1E4xfMg8eHF0KFVBOqpHv5b1b8
-X-Google-Smtp-Source: AGHT+IE7eCrq9SK2Pfac4zWn9MHIncypmmcfKGX3e+Q1kyeVbtOCbySVTeP+/it0zVCScV4mu6y9OA==
-X-Received: by 2002:a17:90b:2502:b0:2ff:570d:88c5 with SMTP id 98e67ed59e1d1-2ff570d8b87mr5799087a91.9.1741243870499;
-        Wed, 05 Mar 2025 22:51:10 -0800 (PST)
-Received: from dtor-ws.sjc.corp.google.com ([2620:15c:9d:2:423c:abab:b1b0:64e8])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e823b98sm2402982a91.46.2025.03.05.22.51.09
+        d=1e100.net; s=20230601; t=1741244182; x=1741848982;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9J1UAFxuft6AB5He5eDNnL2NYFVVFehRdJNW0D9EciM=;
+        b=IDEzeNcpHEvsYxegxEjD3rRuDJLoZ0DjAkFfMv477p05t16X4WEm3DaNtI+9SwUi9S
+         I27vFAVIeke9IfAaCQkvnNf8gycMnKf5Xrc0vv17BnBY3EyMjYHg6TPJIi7/fljy5AUo
+         q3Pw0S8DZ1PMnqtluggNNBZQMqoZkb0svfV7jKFc4JVfXu77mCgZZMJNvWbZAkk7RbYE
+         9sqglVnSeitWZixp5WDu34jyRTPcTi/6k4v3mvLOmASyM+yoGbGawZW/s+Yt1Lnty8xb
+         AK6A9Cueo10HzG4Y61Z5aSMI+LGRYLTX4A2/StipsyqD+nziRlcxnEtDHPOpc7aEJXp6
+         +ELg==
+X-Gm-Message-State: AOJu0YxH4mDSRxlWvMSPVQAgVR6dInvRIYSEzoBVZDe5lEP+smcDbYKp
+	Gj3eCqXCBCh6ZLUZ5vf9AWQAFYegDTfMkv/lf+AZ5VfVMhOOvRBEG0S2R0i2WM0=
+X-Gm-Gg: ASbGncunznP00MTPoGuCZMCs++6d3GT0erDQaA7AJrQa9tb1ZyrhhvT7zjDMHrZWEqn
+	vLlOJWH/GURGXBhTpv/hH6FtpSFQZjerVlgXZyxs6NDpnXvsQFgBl7cIKPKFvxKIeF4NlvOgzO0
+	sF3u0Pb5KRrIpAdLGskHyMXwVzczemnSsrY8wGZIrH5E5mE1WKtFotiW9fZb5dpUvX6c57vpyL4
+	UgIYlfcuhiblp7DIVoAyv/YEp9EAU2+J/z3s8MEfnis5Mly25xTYT1jAZ6pSgXSowzD13Vvq4hB
+	abGFFaStY7pg8R4HNvOXJUha6CX0W2VtKGrcztkLTGnmIlS3TZHkE0zn8wUDDMdmpSxQc/Dl89i
+	w+5555jnJkG04+fc=
+X-Google-Smtp-Source: AGHT+IFvVfRLJSn5mQdzcVB2sUFONLX0Xfg8aHov4Ik+qJ2iXLUu/+JXjO/C2S56dl+Sg0B7Ar2yjw==
+X-Received: by 2002:a05:6512:1248:b0:549:4bf7:6463 with SMTP id 2adb3069b0e04-5497d389d13mr2515113e87.44.1741244180973;
+        Wed, 05 Mar 2025 22:56:20 -0800 (PST)
+Received: from localhost.localdomain (185-11-210-173.s1networks.fi. [185.11.210.173])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae59398sm85905e87.92.2025.03.05.22.56.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 22:51:09 -0800 (PST)
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 2/2] driver core: fix potential NULL pointer dereference in dev_uevent()
-Date: Wed,  5 Mar 2025 22:50:52 -0800
-Message-ID: <20250306065055.1220699-2-dmitry.torokhov@gmail.com>
-X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
-In-Reply-To: <20250306065055.1220699-1-dmitry.torokhov@gmail.com>
-References: <20250306065055.1220699-1-dmitry.torokhov@gmail.com>
+        Wed, 05 Mar 2025 22:56:20 -0800 (PST)
+From: Grigorii Sokolik <g.sokol99@g-sokol.info>
+To: jikos@kernel.org,
+	jkosina@suse.com,
+	jkosina@suse.cz,
+	benjamin.tissoires@redhat.com,
+	bentiss@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-input@vger.gernel.org,
+	Ievgen Vovk <YevgenVovk@ukr.net>
+Subject: [PATCH 1/2] HID: hid-apple: Apple Magic Keyboard a3203 USB-C support (backporting)
+Date: Thu,  6 Mar 2025 08:56:07 +0200
+Message-ID: <20250306065608.531205-1-g.sokol99@g-sokol.info>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,176 +90,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If userspace reads "uevent" device attribute at the same time as another
-threads unbinds the device from its driver, change to dev->driver from a
-valid pointer to NULL may result in crash. Fix this by using READ_ONCE()
-when fetching the pointer, and take bus' drivers klist lock to make sure
-driver instance will not disappear while we access it.
+From: Ievgen Vovk <YevgenVovk@ukr.net>
 
-Use WRITE_ONCE() when setting the driver pointer to ensure there is no
-tearing.
+Backporting of Ievgen Vovk's commit 2813e00dcd748cef47d2bffaa04071de93fddf00
+From 6.14-rc5 to 6.13
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by Grigorii Sokolik <g.sokol99@g-sokol.info>
 ---
+[PATCH] HID: hid-apple: Apple Magic Keyboard a3203 USB-C support
+Add Apple Magic Keyboard 2024 model (with USB-C port) device ID (0320)
+to those recognized by the hid-apple driver. Keyboard is otherwise
+compatible with the existing implementation for its earlier 2021 model.
 
-v2: addressed Rafael's feedback by introducing device_set_driver()
-helper that does WRITE_ONCE() to prevent tearing. 
+Signed-off-by: Ievgen Vovk <YevgenVovk@ukr.net>
+Signed-off-by: Jiri Kosina <jkosina@suse.com>
+---
+ drivers/hid/hid-apple.c | 5 +++++
+ drivers/hid/hid-ids.h   | 1 +
+ 2 files changed, 6 insertions(+)
 
-I added Cc: stable however I do not think we need to worry too much
-about backporting it to [very] old kernels: the race window is very
-small, and in real life we do not unbind devices that often.
-
-I believe there are more questionable places where we read dev->driver
-pointer, those need to be adjusted separately.
-
- drivers/base/base.h | 18 ++++++++++++++++++
- drivers/base/bus.c  |  2 +-
- drivers/base/core.c | 34 +++++++++++++++++++++++++++++++---
- drivers/base/dd.c   |  7 +++----
- 4 files changed, 53 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/base/base.h b/drivers/base/base.h
-index 8cf04a557bdb..ed2d7ccc7354 100644
---- a/drivers/base/base.h
-+++ b/drivers/base/base.h
-@@ -73,6 +73,7 @@ static inline void subsys_put(struct subsys_private *sp)
- 		kset_put(&sp->subsys);
- }
- 
-+struct subsys_private *bus_to_subsys(const struct bus_type *bus);
- struct subsys_private *class_to_subsys(const struct class *class);
- 
- struct driver_private {
-@@ -179,6 +180,23 @@ int driver_add_groups(const struct device_driver *drv, const struct attribute_gr
- void driver_remove_groups(const struct device_driver *drv, const struct attribute_group **groups);
- void device_driver_detach(struct device *dev);
- 
-+static inline void device_set_driver(struct device *dev, const struct device_driver *drv)
-+{
-+
-+	/*
-+	 * Majority (all?) read accesses to dev->driver happens either
-+	 * while holding device lock or in bus/driver code that is only
-+	 * invoked when the device is bound to a driver and there is no
-+	 * concern of the pointer being changed while it is being read.
-+	 * However when reading device's uevent file we read driver pointer
-+	 * without taking device lock (so we do not block there for
-+	 * arbitrary amount of time). We use WRITE_ONCE() here to prevent
-+	 * tearing so that READ_ONCE() can safely be used in uevent code.
-+	 */
-+	// FIXME - this cast should not be needed "soon"
-+	WRITE_ONCE(dev->driver, (struct device_driver *)drv);
-+}
-+
- int devres_release_all(struct device *dev);
- void device_block_probing(void);
- void device_unblock_probing(void);
-diff --git a/drivers/base/bus.c b/drivers/base/bus.c
-index 6b9e65a42cd2..c8c7e0804024 100644
---- a/drivers/base/bus.c
-+++ b/drivers/base/bus.c
-@@ -57,7 +57,7 @@ static int __must_check bus_rescan_devices_helper(struct device *dev,
-  * NULL.  A call to subsys_put() must be done when finished with the pointer in
-  * order for it to be properly freed.
-  */
--static struct subsys_private *bus_to_subsys(const struct bus_type *bus)
-+struct subsys_private *bus_to_subsys(const struct bus_type *bus)
- {
- 	struct subsys_private *sp = NULL;
- 	struct kobject *kobj;
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 9f4d4868e3b4..27fe69d06765 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -2623,6 +2623,34 @@ static const char *dev_uevent_name(const struct kobject *kobj)
- 	return NULL;
- }
- 
-+/*
-+ * Try filling "DRIVER=<name>" uevent variable for a device. Because this
-+ * function may race with binding and unbinding device from a driver we need to
-+ * be careful. Binding is generally safe, at worst we miss the fact that device
-+ * is already bound to a driver (but the driver information that is delivered
-+ * through uevents is best-effort, it may become obsolete as soon as it is
-+ * generated anyways). Unbinding is more risky as driver transitioning to NULL,
-+ * so READ_ONCE() should be used to make sure we are dealing with the same
-+ * pointer, and to ensure that driver structure is not going to disappear from
-+ * under us we take bus' drivers klist lock. The assumption that only registered
-+ * driver can be bound to a device, and to unregister a driver bus code will
-+ * take the same lock.
-+ */
-+static void dev_driver_uevent(const struct device *dev, struct kobj_uevent_env *env)
-+{
-+	struct subsys_private *sp = bus_to_subsys(dev->bus);
-+
-+	if (sp) {
-+		scoped_guard(spinlock, &sp->klist_drivers.k_lock) {
-+			struct device_driver *drv = READ_ONCE(dev->driver);
-+			if (drv)
-+				add_uevent_var(env, "DRIVER=%s", drv->name);
-+		}
-+
-+		subsys_put(sp);
-+	}
-+}
-+
- static int dev_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
- {
- 	const struct device *dev = kobj_to_dev(kobj);
-@@ -2654,8 +2682,8 @@ static int dev_uevent(const struct kobject *kobj, struct kobj_uevent_env *env)
- 	if (dev->type && dev->type->name)
- 		add_uevent_var(env, "DEVTYPE=%s", dev->type->name);
- 
--	if (dev->driver)
--		add_uevent_var(env, "DRIVER=%s", dev->driver->name);
-+	/* Add "DRIVER=%s" variable if the device is bound to a driver */
-+	dev_driver_uevent(dev, env);
- 
- 	/* Add common DT information about the device */
- 	of_device_uevent(dev, env);
-@@ -3696,7 +3724,7 @@ int device_add(struct device *dev)
- 	device_pm_remove(dev);
- 	dpm_sysfs_remove(dev);
-  DPMError:
--	dev->driver = NULL;
-+	device_set_driver(dev, NULL);
- 	bus_remove_device(dev);
-  BusError:
- 	device_remove_attrs(dev);
-diff --git a/drivers/base/dd.c b/drivers/base/dd.c
-index f0e4b4aba885..b526e0e0f52d 100644
---- a/drivers/base/dd.c
-+++ b/drivers/base/dd.c
-@@ -550,7 +550,7 @@ static void device_unbind_cleanup(struct device *dev)
- 	arch_teardown_dma_ops(dev);
- 	kfree(dev->dma_range_map);
- 	dev->dma_range_map = NULL;
--	dev->driver = NULL;
-+	device_set_driver(dev, NULL);
- 	dev_set_drvdata(dev, NULL);
- 	if (dev->pm_domain && dev->pm_domain->dismiss)
- 		dev->pm_domain->dismiss(dev);
-@@ -629,8 +629,7 @@ static int really_probe(struct device *dev, const struct device_driver *drv)
- 	}
- 
- re_probe:
--	// FIXME - this cast should not be needed "soon"
--	dev->driver = (struct device_driver *)drv;
-+	device_set_driver(dev, drv);
- 
- 	/* If using pinctrl, bind pins now before probing */
- 	ret = pinctrl_bind_pins(dev);
-@@ -1014,7 +1013,7 @@ static int __device_attach(struct device *dev, bool allow_async)
- 		if (ret == 0)
- 			ret = 1;
- 		else {
--			dev->driver = NULL;
-+			device_set_driver(dev, NULL);
- 			ret = 0;
- 		}
- 	} else {
+diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
+index 7e1ae2a2bc..3c3f67d0bf 100644
+--- a/drivers/hid/hid-apple.c
++++ b/drivers/hid/hid-apple.c
+@@ -474,6 +474,7 @@ static int hidinput_apple_event(struct hid_device *hid, struct input_dev *input,
+ 			 hid->product == USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2015)
+ 			table = magic_keyboard_2015_fn_keys;
+ 		else if (hid->product == USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2021 ||
++			 hid->product == USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024 ||
+ 			 hid->product == USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2021 ||
+ 			 hid->product == USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2021)
+ 			table = apple2021_fn_keys;
+@@ -1150,6 +1151,10 @@ static const struct hid_device_id apple_devices[] = {
+ 		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK | APPLE_RDESC_BATTERY },
+ 	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2021),
+ 		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK },
++	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024),
++		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK | APPLE_RDESC_BATTERY },
++	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024),
++		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2021),
+ 		.driver_data = APPLE_HAS_FN | APPLE_ISO_TILDE_QUIRK | APPLE_RDESC_BATTERY },
+ 	{ HID_BLUETOOTH_DEVICE(BT_VENDOR_ID_APPLE, USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2021),
+diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
+index 1f47fda809..4f583d6f2e 100644
+--- a/drivers/hid/hid-ids.h
++++ b/drivers/hid/hid-ids.h
+@@ -184,6 +184,7 @@
+ #define USB_DEVICE_ID_APPLE_IRCONTROL4	0x8242
+ #define USB_DEVICE_ID_APPLE_IRCONTROL5	0x8243
+ #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2021   0x029c
++#define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_2024   0x0320
+ #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_FINGERPRINT_2021   0x029a
+ #define USB_DEVICE_ID_APPLE_MAGIC_KEYBOARD_NUMPAD_2021   0x029f
+ #define USB_DEVICE_ID_APPLE_TOUCHBAR_BACKLIGHT 0x8102
 -- 
-2.49.0.rc0.332.g42c0ae87b1-goog
+2.48.1
 
 
