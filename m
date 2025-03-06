@@ -1,81 +1,80 @@
-Return-Path: <linux-kernel+bounces-548944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3FDEA54B36
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:51:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E780EA54B3A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:52:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4B73188E493
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:51:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 435DA7A489A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD84208989;
-	Thu,  6 Mar 2025 12:51:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="Wym7Z1pz"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE81320ADD5;
+	Thu,  6 Mar 2025 12:51:51 +0000 (UTC)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553AE1F03D2;
-	Thu,  6 Mar 2025 12:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D2781F5FD;
+	Thu,  6 Mar 2025 12:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741265487; cv=none; b=RnSn8Z9wjPyc+g4Klr0CFHi3+HROAw3YFXxdia8YyGAwKJ73H4xJov84RotEgdCft6p0G9MmQOFsAuOpuctE5LJpvnNVf8xyy984y0gGyu3YGS2BDc1tq4tRipXPEs0ZA4Yo0/qwg/C+vgPbjhtPHhjNU2HcEpDj+9YOw3u4heg=
+	t=1741265511; cv=none; b=cwmvavMlWyzEN6zzrqmi+KdB87q6krbSYC51JgM+FvJjqDx0Ves7rxdIwNxh3ttJultk9R3peFhkyzhP4Rj1b4u+XVeKYtRbqOj789JfUe+FXbwYKHMVsk735oBw4QKi/NaiCv6BKZDfLZrFO0AGAQ554NE6xIAdaWGFvJHrzQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741265487; c=relaxed/simple;
-	bh=34VAN2OFOmsWfmTeP0xj7Z0r9E9H+lY0gnxU2rmVX9E=;
+	s=arc-20240116; t=1741265511; c=relaxed/simple;
+	bh=Zz0u44CTQSns6sJk7jghxEbeUrI7Oc+e6U/ixES3qVY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q+z/M7Sbgrc9cpkRua8t5s/LfaI100hlhiEr3wYt9VMk7xieutSHocIUgLB9a4utmPPbNIwwgolZHKFjjiOsKtnRvHzyMBLsmudULF9vl2zxhuLKJfZJMxECb9GvDorR/s/cTPZm4u2f405eWIUlDparhRHgQEL7joY/o7ixtzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=Wym7Z1pz; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=JhXEF+8ubYhO3s0wOnwv4NQl+UAMbcESvejL8PtfgWE=; b=Wym7Z1pzeGNrdZxFtFrLtDnnhy
-	XSd5wTO0pvEQ8OCTyz3tnz/MX+8cXXsI+6i4N4dqufKLYmo3LDFpO6bEUY1Wu4Jr7/qSPcqPakMkO
-	rC/lbF+DhtmmEgSdj7qc+UKfPhDnre+mt2DC67fno6CdBrpQjSqA/hs81FnlWOZOUvyHjZmpcUnMg
-	r49QypYYxWFe+4USv9tnYmCqkSdpyeSafrc6XsQOodvlfdGh1BOXXzrOrHNZMQzxdwDep7cHvxwwV
-	ixLJJa/exIopKtbLp3r3So7mdoVKrmdXseJVI24IWVOZVu+LrjCAarlfOHTlE4X2Vb6wcdcx9UGNp
-	HSPjCCPQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48006)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tqAh4-0005sB-2f;
-	Thu, 06 Mar 2025 12:51:18 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tqAh3-0006nz-0O;
-	Thu, 06 Mar 2025 12:51:17 +0000
-Date: Thu, 6 Mar 2025 12:51:16 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, davem@davemloft.net,
-	Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?iso-8859-1?Q?K=F6ry?= Maincent <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>
-Subject: Re: [PATCH net-next v4 09/13] net: phylink: Use phy_caps_lookup for
- fixed-link configuration
-Message-ID: <Z8maRNYsn1LzjryX@shell.armlinux.org.uk>
-References: <20250303090321.805785-1-maxime.chevallier@bootlin.com>
- <20250303090321.805785-10-maxime.chevallier@bootlin.com>
- <350bb4f6-f4b5-44c3-a821-ac53c8641705@redhat.com>
- <20250306111220.28798e6b@fedora.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=R1pKPfcB1LvcZRNQw/OYTLo8oBhyc6l3f/q8OA9/hSmO818LBl2D6QBRNW0mSNIXjrs9x5VnU4/+kR67GSSbHw773gjLqODE1NWEuSyMnW1RbwewGCV9uOMJXf4gptm5ukUp8qY/YD6XxsP6WkT0WmJ1GTL3c+G37yiQFI4Mso0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2234e4b079cso9182195ad.1;
+        Thu, 06 Mar 2025 04:51:49 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741265509; x=1741870309;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=H4cM1T3UuNpNu/U2G8pNowOEoTdTHEWvrKuxbrr/y/s=;
+        b=rrRzV8mztwuHf1pSFYbG6MMbfQslgMYCG7z91QLZD/5FzfW2Z/KdPbXo83inWxdEeD
+         2CbtdFqMF3RW1iQ5WHVMxrh9SfH1oR/0eDg/9Vs2yGExZ3jGuAIAE0mYLe/Z58ZHPYNR
+         Alx6+YurLKmW/T9fqR0Hb4sjVqEVFG2yF7cHGmjAAcUepMaeH129MqxdJ7rBpHYJ79cQ
+         PXc+7kn7lwdT4jg+jFI93zh6M0DmLrM/YirmoasEgES+RVgNwYhIlsL8KcO1y8jtUrba
+         FMmqVD5wgZMEfSAhXynaVst9XdEfeOBC54eflpyqYl+Es/Ah3vj3EGesKVtL0oIvhgNg
+         StVg==
+X-Forwarded-Encrypted: i=1; AJvYcCUnPFQ6e8KQDEPuG7EKXgu7LZImllZp2i5hMFP3xKPq4VMnK5O2di7GsEgsgRGNVroimPQf5hqxUH1c@vger.kernel.org, AJvYcCUvdZrbnkL0pC7fXbvmbfP4rohaLRwXXJ3uBXvinkw7HpNyIi7Yq7+6KuCdd8tF/W0SYPY9CxwWbHhSwwsr@vger.kernel.org, AJvYcCVRZWSn6v+yrdK8KLnkKNGuroESIHq1mrO4lPo6jK3Iv6PiyL4rvC0bT4xekI5nvlpsjiVSRV+xH9pc@vger.kernel.org, AJvYcCX5O6MsFO0aYONyv2hWKRX/3oJodOoNOeVxzN1zjQ+R4iBPG+N3ixJa3UI0JFe+oXSWPJLAd3t5r0V/Tchn5A==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlbJ2b7V4Dv/NCu6/qxj+r36yaJUHjnF1L1Y1/wYkmb4usWHRL
+	K3mhKbqkS3vORKOOnePFwUC0ACyGC6OJZEAs2H+ANJxZwjpRPydo
+X-Gm-Gg: ASbGncuk2ba+wD8gw5DYc3pinaN4ANs/nwLiOpm1AsjBlLipNGK+W8s5oACdTKhX71h
+	cgkFK/waH0KUt5qpuDK/U0DOlqXjUlJfvWweyth0N7MTi1Q6gsIJ8y1A9Olv0ylqxC13ieu2vAI
+	WWZCXWGGyN8ettWFOoXmZ3QgulPzTI8UXJjX2/MaPC30vfytlxeOYNtLsokcml1VxgOmzNEDAuR
+	fs+BooM2/+3IFhrQ2R7Oe7g4m4VLwz+kNLSnyRoiSdeC22K/Fh9Ke2DwK9hAxvnkBVWQJqp1lUP
+	MPLqhQXDrH2o9peQITlGTI0ioJy35YY3fg4vVOn9cw2fu996uqvHXbVerW42CbnKJGELsEeUatT
+	NN5c=
+X-Google-Smtp-Source: AGHT+IHlKKib+yNPGnND+D+ePJ/13KrkYSmXwFybdYM1CzCFTjspnrAFaPc8IvV3IWlpLQYFhO77rQ==
+X-Received: by 2002:a05:6a00:cc7:b0:736:5725:59b4 with SMTP id d2e1a72fcca58-73682b5a0b6mr11753649b3a.3.1741265509412;
+        Thu, 06 Mar 2025 04:51:49 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-736984f8611sm1272908b3a.98.2025.03.06.04.51.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 04:51:48 -0800 (PST)
+Date: Thu, 6 Mar 2025 21:51:47 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Varadarajan Narayanan <quic_varada@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Subject: Re: [PATCH v2] dt-bindings: PCI: Revert "dt-bindings: PCI: qcom: Use
+ SDX55 'reg' definition for IPQ9574"
+Message-ID: <20250306125147.GB478887@rocinante>
+References: <20250306120359.200369-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,56 +83,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250306111220.28798e6b@fedora.home>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250306120359.200369-1-krzysztof.kozlowski@linaro.org>
 
-On Thu, Mar 06, 2025 at 11:12:20AM +0100, Maxime Chevallier wrote:
-> On Thu, 6 Mar 2025 09:56:32 +0100
-> Paolo Abeni <pabeni@redhat.com> wrote:
-> 
-> > On 3/3/25 10:03 AM, Maxime Chevallier wrote:
-> > > @@ -879,8 +880,10 @@ static int phylink_parse_fixedlink(struct phylink *pl,
-> > >  	linkmode_copy(pl->link_config.advertising, pl->supported);
-> > >  	phylink_validate(pl, pl->supported, &pl->link_config);
-> > >  
-> > > -	s = phy_lookup_setting(pl->link_config.speed, pl->link_config.duplex,
-> > > -			       pl->supported, true);
-> > > +	c = phy_caps_lookup(pl->link_config.speed, pl->link_config.duplex,
-> > > +			    pl->supported, true);
-> > > +	if (c)
-> > > +		linkmode_and(match, pl->supported, c->linkmodes);  
-> > 
-> > How about using only the first bit from `c->linkmodes`, to avoid
-> > behavior changes?
-> 
-> If what we want is to keep the exact same behaviour, then we need to
-> go one step further and make sure we keep the same one as before, and
-> it's not guaranteed that the first bit in c->linkmodes is this one.
-> 
-> We could however have a default supported mask for fixed-link in phylink
-> that contains all the linkmodes we allow for fixed links, then filter
-> with the lookup, something like :
-> 
-> 
-> -       linkmode_fill(pl->supported);
-> +       /* (in a dedicated helper) Linkmodes reported for fixed links below
-> +        * 10G */
-> +       linkmode_zero(pl->supported);
-> +
-> +       linkmode_set_bit(ETHTOOL_LINK_MODE_10baseT_Half_BIT, pl->supported);
-> +       linkmode_set_bit(ETHTOOL_LINK_MODE_10baseT_Full_BIT, pl->supported);
-> +       linkmode_set_bit(ETHTOOL_LINK_MODE_100baseT_Half_BIT, pl->supported);
-> +       linkmode_set_bit(ETHTOOL_LINK_MODE_100baseT_Full_BIT, pl->supported);
-> +       linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseT_Half_BIT, pl->supported);
-> +       linkmode_set_bit(ETHTOOL_LINK_MODE_1000baseT_Full_BIT, pl->supported);
-> +       linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT, pl->supported);
-> +       linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT, pl->supported);
-> +       linkmode_set_bit(ETHTOOL_LINK_MODE_10000baseT_Full_BIT, pl->supported);
+Hello,
 
-Good idea, but do we have some way to automatically generate the baseT
-link modes?
+> Revert commit 829aa3693f8d ("dt-bindings: PCI: qcom: Use SDX55 'reg'
+> definition for IPQ9574") because it affected existing DTS (already
+> released), without any valid reason and without explanation.
+> 
+> Reverted commit 829aa3693f8d ("dt-bindings: PCI: qcom: Use SDX55 'reg'
+> definition for IPQ9574") also introduces new warnings:
+> 
+>   ipq9574-rdp449.dtb: pcie@10000000: reg-names:0: 'parf' was expected
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+I removed the offending commit from the dt-bindings branch.
+
+The next branch will be updated in due course.
+
+Thank you!
+
+	Krzysztof
 
