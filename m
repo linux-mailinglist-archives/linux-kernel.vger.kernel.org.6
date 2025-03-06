@@ -1,126 +1,141 @@
-Return-Path: <linux-kernel+bounces-548641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 564FEA5476A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:13:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68585A5476D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:14:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BBC516B239
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 605573A9A3B
 	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1A91FFC70;
-	Thu,  6 Mar 2025 10:13:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062C31FF7D2;
+	Thu,  6 Mar 2025 10:13:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K4uA7Gb5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z6LxtbVa";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ppDqGDiw"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081E741C92;
-	Thu,  6 Mar 2025 10:13:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B8919DF49;
+	Thu,  6 Mar 2025 10:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741256024; cv=none; b=P8OPMqLLnkCz5nmro/4USD6mz/yz3cf9BpTdMFqB1FD7tXmuaNb5ltrEO29TQSaawys90a3xO4o/2uYYgvp2+fCMsNFQdbvJATy51xryw1kTIOno4eNKYmjOgLd+B+kuFnhNNM8ayp39vXaa377XYpDibaWGPGWQfil4yKHkNLo=
+	t=1741256032; cv=none; b=Wsv9ZAezP1nYgbkpyI72Z9tUMEC732B+HQPPhVwJxkRFTS2nkYy9F7QLvf+VlXpmJbdarQAMXLc9x+GcrTCmhEW86NLIsW0ZyAysZ8eUaOyC50v65MEAyLVhHXmEQ7SZjPJ+f4fMJpsEv0RyXKWQJlqF7l+xn7VL1RHV1Jwjbfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741256024; c=relaxed/simple;
-	bh=lDR+NcZh6r7M5vLbNyksGzmR5l3ZCpRBHAlvAU3OEqk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b2vL/Qq99vZS+9V6S/rjpmH22MET4jG6QpK3p30Qchn1y5N6nfrO2cTHdIjqabYklClBWkL8MpVbLxRwhMm+02+P7WPV/PwQe27B9BgLdDgA0qMkN0xXfukJWin7kdXxTM94vPskML6bS89wuIukMm4FLHudsjJgYwnXKtYH91E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K4uA7Gb5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4350AC4CEE0;
-	Thu,  6 Mar 2025 10:13:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741256023;
-	bh=lDR+NcZh6r7M5vLbNyksGzmR5l3ZCpRBHAlvAU3OEqk=;
-	h=From:To:Cc:Subject:Date:From;
-	b=K4uA7Gb5jmsZ4S3BOsidaEosFt2citthca0bmi5U2y9l5jmEct49VE89iA4w061a1
-	 1E8yZ+SAo4+l9WXpzoUJ8TS6rMkgVOGFZVqsWPhcWqsXeXtczXfKsD21ynaGOCZjq1
-	 iKzxUU5D4CoNLpgVIxfcOgb7HroWc/0CaaGs+no67t1vnKKd/B4A0y+mi7chiGSA58
-	 2h5FC/bAiJVn/6fVW8hU5+sBTgw4Bl+VZr6e7t0vVPyvo7Lz/SFlQ2guSXiw/CGPdw
-	 yMKULPf9Nqixy1UG9py1vwY7FYGF4SasqsqbdEV6fuYKvIJbC/D0Tx/dlt4J2MOj5/
-	 sfoq8Xbg2WFJA==
-From: Christian Brauner <brauner@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] vfs fixes
-Date: Thu,  6 Mar 2025 11:13:28 +0100
-Message-ID: <20250306-vfs-fixes-290b2e462d9c@brauner>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1741256032; c=relaxed/simple;
+	bh=df5gGnvs9z79Sddw7nzLHTjjjG5yNbKcZptAnRxlKSo=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=dDo6AKLSRXB7ucPxBg6h+SnpOKDUvQFAHIY8k+j1wYKMNYRSnOwnbsLJNObj0dEkCpZpqubUA31p5xpxxrT196Ogd8NbK3Vo1FH3Z0oZVOnmLWBf4L50DRhPq9KgrHDEXvqlrDSR2rVBuh7akYMQ1e/+pMXCsB9Q+tZBzom+ZgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z6LxtbVa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ppDqGDiw; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 06 Mar 2025 10:13:48 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741256029;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5EhcSOaHj8qjHFqnzylinI18wubMEWxY4nGcaetKP6s=;
+	b=z6LxtbVa7r74gdNccPHjbmqkCF8GeZXY5tFQWIIdbJJh+WfNkwUl1rlNYCbmcAAFFBiqcV
+	V4jzlWzzV6bXnVAD+/us5rqX8I/Ng6AcGbtn+fg7NYRoeQYW32GhQMM2NBe+1tQfvD/8vL
+	Dwkz2fKP9V63dVCgL/+4K6tCLJVbgycLY6pU6cufKVo19QMcz25jhoIEfmOR+wtQ1f95FG
+	1sRJZZs9Fbu36C+kfHr/doQ4PlvCPmIvcJ6+mwhKUcQT5I2mPqyU6P4TFpvT4MwEhzMvsa
+	UAQVCSaajjWJgKWYhgNYQyBCxSu8h/bCb76NnPJZ2vIPjUAGSzUoMnnWDjGf7g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741256029;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5EhcSOaHj8qjHFqnzylinI18wubMEWxY4nGcaetKP6s=;
+	b=ppDqGDiwNouqUeXGF0+avN0aRwA9vTbL1KYjCvJ9l7Jc0rYsd/oJEAr2cprCodjWqQx0Hz
+	u4luXe9hN5cc6NCw==
+From: "tip-bot2 for Andy Shevchenko" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/mm] x86/mm: Check if PTRS_PER_PMD is defined before use
+Cc: kernel test robot <lkp@intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Ingo Molnar <mingo@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250306092658.378837-1-andriy.shevchenko@linux.intel.com>
+References: <20250306092658.378837-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1699; i=brauner@kernel.org; h=from:subject:message-id; bh=lDR+NcZh6r7M5vLbNyksGzmR5l3ZCpRBHAlvAU3OEqk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSfLA1wnuOT8H6+Y8obs16Jq3GV21nmdRhemeLHd/SVb mDSBzH9jlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIkc+8vwT+9vzK6LGgvCWd3e mumkFweGBujzBOtcOHj5fcSjs6ucpzMyfH5lcOfjQaUg1/8m0j9iNBQqDQrO+jkFWldGd+qpHwz kBQA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Message-ID: <174125602814.14745.12946945836213678532.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-/* Summary */
+The following commit has been merged into the x86/mm branch of tip:
 
-This contains various fixes for this cycle:
+Commit-ID:     74a6c5103f8c27df056227e9e3bfe1ffeb7fc3f3
+Gitweb:        https://git.kernel.org/tip/74a6c5103f8c27df056227e9e3bfe1ffeb7fc3f3
+Author:        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+AuthorDate:    Thu, 06 Mar 2025 11:25:41 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 06 Mar 2025 11:03:59 +01:00
 
-- Fix spelling mistakes in idmappings.rst.
+x86/mm: Check if PTRS_PER_PMD is defined before use
 
-- Fix RCU warnings in override_creds()/revert_creds().
+Compiler (GCC) is not happy about PTRS_PER_PMD being undefined
+(note, clang also issues the quite similar warning):
 
-- Create new pid namespaces with default limit now that pid_max is namespaced.
+  In file included from arch/x86/kernel/head_32.S:29:
+  arch/x86/include/asm/pgtable_32.h:59:5: error: "PTRS_PER_PMD" is not defined, evaluates to 0 [-Werror=undef]
+     59 | #if PTRS_PER_PMD > 1
 
-/* Testing */
+Add a check to make sure PTRS_PER_PMD is defined before use.
 
-gcc version (Debian 14.2.0-8) 14.2.0
-Debian clang version 19.1.4 (1)
+The documentation for GCC 7.5.0+ says that:
 
-No build failures or warnings were observed.
+	if defined BUFSIZE && BUFSIZE >= 1024
 
-/* Conflicts */
+    can generally be simplified to just #if BUFSIZE >= 1024, since if BUFSIZE
+    is not defined, it will be interpreted as having the value zero.
 
-Merge conflicts with mainline
-=============================
+But in the same time the last paragraph points out that
 
-No known conflicts.
+    It will warn wherever your code uses this feature.
 
-Merge conflicts with other trees
-================================
+which is what we met here.
 
-No known conflicts.
+Reported-by: kernel test robot <lkp@intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Link: https://lore.kernel.org/r/20250306092658.378837-1-andriy.shevchenko@linux.intel.com
 
+Closes: https://lore.kernel.org/r/202412152358.l9RJiVaH-lkp@intel.com/
+---
+ arch/x86/include/asm/pgtable_32.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-The following changes since commit d082ecbc71e9e0bf49883ee4afd435a77a5101b6:
-
-  Linux 6.14-rc4 (2025-02-23 12:32:57 -0800)
-
-are available in the Git repository at:
-
-  git@gitolite.kernel.org:pub/scm/linux/kernel/git/vfs/vfs tags/vfs-6.14-rc6.fixes
-
-for you to fetch changes up to d385c8bceb14665e935419334aa3d3fac2f10456:
-
-  pid: Do not set pid_max in new pid namespaces (2025-03-06 10:18:36 +0100)
-
-Please consider pulling these changes from the signed vfs-6.14-rc6.fixes tag.
-
-Thanks!
-Christian
-
-----------------------------------------------------------------
-vfs-6.14-rc6.fixes
-
-----------------------------------------------------------------
-Aiden Ma (1):
-      doc: correcting two prefix errors in idmappings.rst
-
-Herbert Xu (1):
-      cred: Fix RCU warnings in override/revert_creds
-
-Michal Koutný (1):
-      pid: Do not set pid_max in new pid namespaces
-
- Documentation/filesystems/idmappings.rst |  4 ++--
- include/linux/cred.h                     | 10 ++--------
- kernel/pid_namespace.c                   |  2 +-
- 3 files changed, 5 insertions(+), 11 deletions(-)
+diff --git a/arch/x86/include/asm/pgtable_32.h b/arch/x86/include/asm/pgtable_32.h
+index 7d4ad89..3c05235 100644
+--- a/arch/x86/include/asm/pgtable_32.h
++++ b/arch/x86/include/asm/pgtable_32.h
+@@ -56,7 +56,7 @@ do {						\
+  * With PAE paging (PTRS_PER_PMD > 1), we allocate PTRS_PER_PGD == 4 pages for
+  * the PMD's in addition to the pages required for the last level pagetables.
+  */
+-#if PTRS_PER_PMD > 1
++#if defined(PTRS_PER_PMD) && (PTRS_PER_PMD > 1)
+ #define PAGE_TABLE_SIZE(pages) (((pages) / PTRS_PER_PMD) + PTRS_PER_PGD)
+ #else
+ #define PAGE_TABLE_SIZE(pages) ((pages) / PTRS_PER_PGD)
 
