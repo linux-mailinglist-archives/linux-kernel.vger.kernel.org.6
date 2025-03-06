@@ -1,132 +1,141 @@
-Return-Path: <linux-kernel+bounces-549769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF3A2A55717
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:49:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4240A5571A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:50:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 068423A6584
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:49:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 385A21898D78
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6D1270EDA;
-	Thu,  6 Mar 2025 19:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A6A2702CF;
+	Thu,  6 Mar 2025 19:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AVyteuIh"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="Woqq7Kca"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAC81FC0F9
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 19:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822F018B47D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 19:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741290554; cv=none; b=NICUDcFQZbeFYdmMGXNGYRFvrcCJ9SoJ7R07cegdq3jaqx2VJmNTz1JT63trb9fnVJNJEr46k3WVhOrPbJn734VBYjEmE3brJRIv1XfYxFUWyKQ8GXV6FjNC7lXAIGc5JHghEYb9Aej9cKaxExq4ixMQjPb9kxCbdJ6I/e++mqc=
+	t=1741290595; cv=none; b=uk/MKXXOFSYKGaxG/vV941MNRzCXlK/ekbKNCIAbMX6V6nFMbnjTb4o/QN0mpQJoeV4QD57mfiup5GusPrwqdOHssvnow65WVPABtt6+iM2Kc6NdRRSjfTNxUKhN3vCcQppNB6HQtk75u5sqGmck/YycSmnqLFIZSyW4cbef5Ho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741290554; c=relaxed/simple;
-	bh=XJfj2IjX+cfbBfCUZB15uM51uhBAxMUtheYDfRvrsG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=H2oyjEGc96jiJ/G4M4Z6z/fzrL3F3LZ6bydMFmcHn/70i5P+kLgFmo1Vi8jugH8mv3ELl5tuNAu8Pxar1aH92XjnMQyAS5EWAZaYTJeAgO+dDt555PRdqzYzNmcB1Ja90wJwBWMtlIUbNZuFyHMDwSRW5NN23EhL0I4f2Nl6eok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AVyteuIh; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-390e6ac844fso953269f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 11:49:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741290551; x=1741895351; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=12HOUV0N5LQ2gOm+72FrFChkl6gwbWnu1Vh8fRPsrGk=;
-        b=AVyteuIhnvCmOWtB8xDnGN7AoQjB/ZixK8AXKWqiBM49ds/a59/XAWlGmALEwapeAV
-         XH0w3zJtNUtGOA4kWDnAckb1EdkT9gjoNH8TH1XC7UuszbDgWeDkLppRxPkYC9+a9M0v
-         ldwxyvkCV7w6Xooj0+pfe6bw68tOX251ygnZcH/7Fq//9A27s4L2mQYUCMSE8vruSURC
-         fUNoU/ZSI9OpM3dsoXTguVtw87ngXax+OEkNNTbzYzV1sLLmLaay6NkTrlDKOFicdhAG
-         o0C7h6XjuQzUhzhKoOeA5Z9693rXZz6IDJQ6SdCTf8KJsaNK2KNOnftwxpMbyvOhyYw7
-         qV5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741290551; x=1741895351;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=12HOUV0N5LQ2gOm+72FrFChkl6gwbWnu1Vh8fRPsrGk=;
-        b=PPzHBa/4lDxg52+JCEX6G6gOA3ZgpNVTlub5MeexwXzGq6xfaRTXCcHsLZl1PJg7C2
-         vXNb/3h7mMAAT3Kl5/8TIneRyGcr8FmjkyBUtApdO6IcTgE0M3SmliSiUspVOORBa+Ha
-         LrqeNHL7YU9l3mG7lYPS6HEziMzxz0aIB4THo/OWzkYoD5/Wl4vSO9rxtA6Jt141abqR
-         2iFujXGFtgTWVYW4uPjqkIfR6HNHB+AbLUwYQM7ml/uWZJ7w0h6z1pFELnt0vWNvPTQE
-         5W8zLgl2sEPcaa1AdqAkP+5ZuH0R4I1XLNoMX4q+XnGGHfHguRorAtftfEMQSIVDkWx7
-         MpWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ6YTTJ62fCx56zkCKhUQxftF08YTSh9/5ovHp/3VEqxFq4PqX+zqcZeQm2yc82fecPztu8imtzBrRSjs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze9mD50BcnAYDNOZ5qb7Wzt2/Amq206vd/5KL6zu/88f/VaB7e
-	ihtAiQS+C2CB14iveoyQa3AVixd1SzmnyqXeQ4CXCAQK4QUofkJZKd0nTbAmnwg=
-X-Gm-Gg: ASbGncsiA5aN4aVEI1Uw6EqcjL4yVewhh2pGh/2PoT1zP+6F8kdeJhwj8LOz+8kkEgt
-	i3t79MWTw7za1eEKEugdrvc9qgapHg6BgoeYHyoq0kOaJiVlb25NwrcxcApNZXd4hoK2Z3ngGFw
-	RbWoHwi9kare3p8UY5ToeCypHDV3H/cDaI8XO0G578eeE/Zd4IsJH4a5ul3n0DdKwgtj5+cdcJt
-	ET5oqs1mrmKte2bHnQl1ApgqShEF+6RVBdKUo0Ms17qLVm3vyRXkZHXa6uGX9BSDlaAWrtCtDGP
-	ugyr8c57gN2dYDcCojBroO5zKek9E0o0qah/PIiC77CqZtHiKQ==
-X-Google-Smtp-Source: AGHT+IGs4Yei7Uj3yACj+GZktDDXIAXgpcENDsnATVmO5YWfHDh8m1kzphPMYmCnef1sPY9l6157dQ==
-X-Received: by 2002:a5d:6d09:0:b0:38f:4d20:4a17 with SMTP id ffacd0b85a97d-39132d1f8acmr264061f8f.13.1741290551233;
-        Thu, 06 Mar 2025 11:49:11 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912bfdff72sm3009082f8f.36.2025.03.06.11.49.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 11:49:10 -0800 (PST)
-Date: Thu, 6 Mar 2025 22:49:06 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Konstantin Taranov <kotaranov@microsoft.com>
-Cc: Long Li <longli@microsoft.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>,
-	Shiraz Saleem <shirazsaleem@microsoft.com>,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] RDMA/mana_ib: Use safer allocation function()
-Message-ID: <58439ac0-1ee5-4f96-a595-7ab83b59139b@stanley.mountain>
+	s=arc-20240116; t=1741290595; c=relaxed/simple;
+	bh=I7/pS/ZjDOrhdm0B+91sVfRepedE7aeBt8yijFHJB38=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=acSSik2Mbkj0KLgHAZzZgvdTqFyvZIB0+wvn94VNy2gH9RID18GN9gRxeOUcu1mY4957PtpAw/hUVukiXLwGYnT40DdtZguTHZ/UCO7edSW6isS1WxI4KqkU0i/ztzDp0HNciZcJAoNPgWjzhaQmzxZxWeA6GtbvtGSd6/Oj9g8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=Woqq7Kca; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
+	s=key1; t=1741290581;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1pLENHPcmZUPIKEuLyD6Q5KL/3y3ps8NKG8+iORBPzI=;
+	b=Woqq7KcaOuw73MND/CJ+dS09hGfOAOtzBgcT+dtblRLADUAHmiaT1Q0L4JXXvkCGBjvoeR
+	z7d0fU0PyBnqDdsD8ZhIlk1gtGs6QEcWfg+XYtMSj5tLjWyKjqruCC2J8Sod6yp2aPyka1
+	hKQcUH+4oo7XThVmvI0AyRJ1z5JbO6Q1SnKVJJnRHsBivZcFn1G5wbW/CjFeOjETE3vaph
+	9k9tGJvGYMG6aYdYg621dQnntElEgRy6l3VMQyvFeQPESZHTlWKr7d7Hu8VkexFqIswLti
+	wZu8tAr56eMwCruUdBCcSBA3qRRyEC0ysv6RcicjIoFxpiuDaH2CaSGLAFkTTQ==
+From: Ignacio Encinas <ignacio@iencinas.com>
+Date: Thu, 06 Mar 2025 20:49:27 +0100
+Subject: [PATCH v2] selftests: riscv: fix v_exec_initval_nolibc.c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250306-fix-v_exec_initval_nolibc-v2-1-97f9dc8a7faf@iencinas.com>
+X-B4-Tracking: v=1; b=H4sIAEb8yWcC/32NywrCMBREf6XctZE8+nTlf0gpSXq1F2oiSQmV0
+ n83Fty6PMPMmQ0iBsIIl2KDgIkieZdBngqwk3YPZDRmBsllxRUX7E4rSwOuaAdytCQ9D87PZCw
+ ru3bsmtqqRo6Q96+AuXy4b33mieLiw/u4SuKb/qzVH2sSTDDTNqbmWCrO5ZXQWXI6nq1/Qr/v+
+ wdmehr5xQAAAA==
+X-Change-ID: 20250301-fix-v_exec_initval_nolibc-498d976c372d
+To: linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, 
+ Charlie Jenkins <charlie@rivosinc.com>
+Cc: linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Ignacio Encinas <ignacio@iencinas.com>
+X-Migadu-Flow: FLOW_OUT
 
-My static checker says this multiplication can overflow.  I'm not an
-expert in this code but the call tree would be:
+Vector registers are zero initialized by the kernel. Stop accepting
+"all ones" as a clean value.
 
-ib_uverbs_handler_UVERBS_METHOD_QP_CREATE() <- reads cap from the user
--> ib_create_qp_user()
-   -> create_qp()
-      -> mana_ib_create_qp()
-         -> mana_ib_create_ud_qp()
-            -> create_shadow_queue()
+Note that this was not working as expected given that
+	value == 0xff
+can be assumed to be always false by the compiler as value's range is
+[-128, 127]. Both GCC (-Wtype-limits) and clang
+(-Wtautological-constant-out-of-range-compare) warn about this.
 
-It can't hurt to use safer interfaces.
-
-Cc: stable@vger.kernel.org
-Fixes: c8017f5b4856 ("RDMA/mana_ib: UD/GSI work requests")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
+Tested-by: Charlie Jenkins <charlie@rivosinc.com>
+Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
 ---
-There seems to be another integer overflow bug in mana_ib_queue_size() as
-well?  It's basically the exact same issue.  Maybe we could put a cap on
-attr->cap.max_send/recv_wr at a lower level.  Maybe there already is some
-bounds checking that I have missed...
+Changes in v2:
 
- drivers/infiniband/hw/mana/shadow_queue.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Remove code that becomes useless now that the only "clean" value for
+vector registers is 0.
 
-diff --git a/drivers/infiniband/hw/mana/shadow_queue.h b/drivers/infiniband/hw/mana/shadow_queue.h
-index d8bfb4c712d5..a4b3818f9c39 100644
---- a/drivers/infiniband/hw/mana/shadow_queue.h
-+++ b/drivers/infiniband/hw/mana/shadow_queue.h
-@@ -40,7 +40,7 @@ struct shadow_queue {
+- Link to v1: https://lore.kernel.org/r/20250305-fix-v_exec_initval_nolibc-v1-1-b87b60e43002@iencinas.com
+---
+ tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c b/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c
+index 35c0812e32de0c82a54f84bd52c4272507121e35..4dde05e45a04122b566cedc36d20b072413b00e2 100644
+--- a/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c
++++ b/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c
+@@ -6,7 +6,7 @@
+  * the values. To further ensure consistency, this file is compiled without
+  * libc and without auto-vectorization.
+  *
+- * To be "clean" all values must be either all ones or all zeroes.
++ * To be "clean" all values must be all zeroes.
+  */
  
- static inline int create_shadow_queue(struct shadow_queue *queue, uint32_t length, uint32_t stride)
+ #define __stringify_1(x...)	#x
+@@ -14,9 +14,8 @@
+ 
+ int main(int argc, char **argv)
  {
--	queue->buffer = kvmalloc(length * stride, GFP_KERNEL);
-+	queue->buffer = kvmalloc_array(length, stride, GFP_KERNEL);
- 	if (!queue->buffer)
- 		return -ENOMEM;
+-	char prev_value = 0, value;
++	char value = 0;
+ 	unsigned long vl;
+-	int first = 1;
  
+ 	if (argc > 2 && strcmp(argv[2], "x"))
+ 		asm volatile (
+@@ -44,14 +43,11 @@ int main(int argc, char **argv)
+ 			"vsrl.vi " __stringify(register) ", " __stringify(register) ", 8\n\t" \
+ 			".option pop\n\t"					\
+ 			: "=r" (value));					\
+-		if (first) {							\
+-			first = 0;						\
+-		} else if (value != prev_value || !(value == 0x00 || value == 0xff)) { \
++		if (value != 0x00) {						\
+ 			printf("Register " __stringify(register)		\
+ 				" values not clean! value: %u\n", value);	\
+ 			exit(-1);						\
+ 		}								\
+-		prev_value = value;						\
+ 	}									\
+ })
+ 
+
+---
+base-commit: 03d38806a902b36bf364cae8de6f1183c0a35a67
+change-id: 20250301-fix-v_exec_initval_nolibc-498d976c372d
+
+Best regards,
 -- 
-2.47.2
+Ignacio Encinas <ignacio@iencinas.com>
 
 
