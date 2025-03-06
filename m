@@ -1,85 +1,53 @@
-Return-Path: <linux-kernel+bounces-548324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91E09A5435F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:13:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2592CA54360
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:13:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4AA737A7F55
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:12:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 383373AE2E6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:13:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4171C701C;
-	Thu,  6 Mar 2025 07:12:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13271C6FEC;
+	Thu,  6 Mar 2025 07:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FE8stspL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f5ggZ6ou"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5C851917CD;
-	Thu,  6 Mar 2025 07:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 037541A8F79;
+	Thu,  6 Mar 2025 07:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741245171; cv=none; b=V7tJxsWA5I/8kLkkvg5ceOA765IGXaJeJx4SnTaOeqQlQKUC83cELDGnKec9m58Vq6WKZdsYsLt2UqDsIp9kwn3zK6y/jBQdU2Fo3gShR5TbW1P9ydyZ14vF4Uru6c7P8HSoRbBRP8kKxl8sV+BeU5zw5X1L2Ma5Uq25ceaTO78=
+	t=1741245187; cv=none; b=ahpL5zSJZUYZCU3BcwuBBZW8tdEfQuEoN69P2T6ZMYPvqmSZ5qayB2mDOrZGsuyMI02m27u9/xxlXCA9Bk+rr8dazZwnDQeNnBibTu1j9pO5mRw7Q/jpKx8A9k0Pr5Hq0LCE5bs1KSJzNTmUEadjiCJI1lKm8IYDndyQT3b99/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741245171; c=relaxed/simple;
-	bh=BfCpvXPQPn7mcskR6IEtxlwl46LOxQ6OOV0rkXcU5do=;
+	s=arc-20240116; t=1741245187; c=relaxed/simple;
+	bh=3IAZxUPLr9Ucc24crqAABK/8tnWE32ICxSrbEhhWwww=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AHRhM8au6JZhcLhJ5Y+cBcRLe/8wbRmv2h0IzK0gnOWoCkj0v9wkvR5dQ4CzoBGeqA93mUs8UqevbB6kDWvpxO4YvtpCnzG/UES5wVg0FtTZiDWYejdv3Hay8eq1E1Z9NyNQUd3dO8OTsnb2AtkprIbhuic9k5xmwYgAyA2DV7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FE8stspL; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741245170; x=1772781170;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=BfCpvXPQPn7mcskR6IEtxlwl46LOxQ6OOV0rkXcU5do=;
-  b=FE8stspL8jmm79iAUz0l+IlwzYfLAQB2tcnmNfei8wXl681Few6sg7+U
-   5k7TxAx9inYKnIyGT1ElifhjsYPfaQv2P9ML3M+ma1Z6NaIFVjQ5HuUJy
-   aBy42mL0mnsCrnjz+K0nq4OEhKMqldOF8knIOVZx6DfZZ+kf7cmCZRkye
-   WoA5zPBFW8SJNv3DXcrtLC9QZtY9fQIrqdY3r+5XUwnyRjucVQphpWwNJ
-   tzsttjLp6kVgZRvajIFGHuCcljaaeAwOe3itqd1gZHSEQHdJIkEcy6q38
-   dXF967VbmT0uuiSH5yr6rG8xyDkYI9HDtJIyZ3M337+vl9fMBB3cZ/5Gj
-   w==;
-X-CSE-ConnectionGUID: 16BdQ/ZbSyeAaHUORHAR4g==
-X-CSE-MsgGUID: QRrWPt8FS3eh/LzrBGs7aQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="41490161"
-X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
-   d="scan'208";a="41490161"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 23:12:49 -0800
-X-CSE-ConnectionGUID: 2xfomYqyTUG2CkFXqS9P+w==
-X-CSE-MsgGUID: AWk+Tr2AQOybelNYBXIKMg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
-   d="scan'208";a="124032134"
-Received: from sho10-mobl1.amr.corp.intel.com (HELO desk) ([10.125.145.178])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 23:12:48 -0800
-Date: Wed, 5 Mar 2025 23:12:47 -0800
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org
-Cc: daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Brice Goglin <brice.goglin@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Perry Yuan <Perry.Yuan@amd.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [PATCH v6 1/5] x86/cpu: Name CPU matching macro more generically
- (and shorten)
-Message-ID: <20250305-add-cpu-type-v6-1-4741735bcd75@linux.intel.com>
-X-Mailer: b4 0.14.1
-References: <20250305-add-cpu-type-v6-0-4741735bcd75@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=UvExTPIn9je6Fvj5M8sq3BFzFO8RF/aZxlnikpf1dRSXBpFhfDEWStACAILHf2wEJ+RZfgOaWTyCEFm0lfNb7WX1dWY3eiOftVypOkRmwtDRzd6cUwRfItnCVc8V01X3zKfpNzT0g3k7jycp0AT04kLeuTG9biPOBwUhD0niSbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f5ggZ6ou; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A4B5C4CEE4;
+	Thu,  6 Mar 2025 07:13:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741245185;
+	bh=3IAZxUPLr9Ucc24crqAABK/8tnWE32ICxSrbEhhWwww=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f5ggZ6ouBgiHmyn7ZuhL7t+eeGW/7EMWSRaFC4Q13IBQmnnJx4sGq3yI2IDLYThI5
+	 z67v0HIsWbltqk9gxDejVS+EH9ucGSaOftNJvRtpzGrgo6LV1W6u7w2QyixhzQ7phJ
+	 AEAzmSXQwrTPX67MgjLrkXoq8uPwS031sPJw481lbWVZr/OlyQ4kVLhRJPueYCs4Jk
+	 6r/9oS1hVYgFRgouP49uVI4WtM8rv4LSC9ibYeSv51g2mPq9ZZz13C4nz9vQRrQheb
+	 LsQPdWMVvodzWoJnKrkQp3J0bmggWRq5GjH8UiaDJMJIS1Rpnfdbim6vpEZs95CfTD
+	 KoFlxOTYf2fJA==
+Date: Wed, 5 Mar 2025 23:13:00 -0800
+From: Kees Cook <kees@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: linux-kernel@vger.kernel.org, Borislav Petkov <bp@alien8.de>,
+	linux-hardening@vger.kernel.org
+Subject: Re: [RFC][PATCH] overflow: Twiddle with struct_size()
+Message-ID: <202503052213.D38DC337@keescook>
+References: <20250305134315.GB16878@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,218 +56,130 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250305-add-cpu-type-v6-0-4741735bcd75@linux.intel.com>
+In-Reply-To: <20250305134315.GB16878@noisy.programming.kicks-ass.net>
 
-To add cpu-type to the existing CPU matching infrastructure, the base macro
-X86_MATCH_VENDOR_FAM_MODEL_STEPPINGS_FEATURE need to append _CPU_TYPE. This
-makes an already long name longer, and somewhat incomprehensible.
+On Wed, Mar 05, 2025 at 02:43:15PM +0100, Peter Zijlstra wrote:
+> Hi Kees,
+> 
+> I keep getting hit by the struct_size() brigade, and I keep having
+> trouble reading that macro.
+> 
+> I had a wee poke and ended up with the below, WDYT?
 
-To avoid this, rename the base macro to X86_MATCH_CPU. The macro name
-doesn't need to explicitly tell everything that it matches. The arguments
-to the macro already hints that.
+Ah, and to clarify, this is just for readability? (There have been
+some tweaks to reduce the macro depths and other things in other areas,
+so I just wanted to check that wasn't, or was, part of the rationale.)
 
-For consistency, use this base macro to define X86_MATCH_VFM and friends.
+> (I also tried to create a __must_be_flex_array(), but utterly failed :/)
 
-Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
----
- arch/x86/include/asm/cpu_device_id.h | 101 ++++++++++-------------------------
- 1 file changed, 29 insertions(+), 72 deletions(-)
+I spent a lot of time trying to find something for that too. :( If you
+do ever find it, please share! :)
 
-diff --git a/arch/x86/include/asm/cpu_device_id.h b/arch/x86/include/asm/cpu_device_id.h
-index ba32e0f44cba..bb5acba69bd1 100644
---- a/arch/x86/include/asm/cpu_device_id.h
-+++ b/arch/x86/include/asm/cpu_device_id.h
-@@ -57,7 +57,7 @@
- #define X86_CPU_ID_FLAG_ENTRY_VALID	BIT(0)
+> ---
+> diff --git a/include/linux/overflow.h b/include/linux/overflow.h
+> index 0c7e3dcfe867..2123d0e238bb 100644
+> --- a/include/linux/overflow.h
+> +++ b/include/linux/overflow.h
+> @@ -352,9 +352,10 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+>   * Return: number of bytes needed or SIZE_MAX on overflow.
+>   */
+>  #define flex_array_size(p, member, count)				\
+> -	__builtin_choose_expr(__is_constexpr(count),			\
+> -		(count) * sizeof(*(p)->member) + __must_be_array((p)->member),	\
+> -		size_mul(count, sizeof(*(p)->member) + __must_be_array((p)->member)))
+> +	(__must_be_array((p)->member) +					\
+> +	 __builtin_choose_expr(__is_constexpr(count),			\
+> +			       sizeof(*(p)->member) * (count),		\
+> +			       size_mul(sizeof(*(p)->member), (count))))
+
+For both, I need to double check that __must_be_array() is
+always a constant expression. If not, we can't move it out of the
+__builtin_choose_expr(). But if so, then yeah, this is nice.
+
+>  
+>  /**
+>   * struct_size() - Calculate size of structure with trailing flexible array.
+> @@ -367,10 +368,12 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+>   *
+>   * Return: number of bytes needed or SIZE_MAX on overflow.
+>   */
+> -#define struct_size(p, member, count)					\
+> -	__builtin_choose_expr(__is_constexpr(count),			\
+> -		sizeof(*(p)) + flex_array_size(p, member, count),	\
+> -		size_add(sizeof(*(p)), flex_array_size(p, member, count)))
+> +#define struct_size(p, member, count)					       \
+> +	(__must_be_array((p)->member) +					       \
+> +	 __builtin_choose_expr(__is_constexpr(count),			       \
+> +			       sizeof(*(p)) + (sizeof((p)->member) * (count)), \
+
+typo: above should be                        (sizeof(*(p)->member))
+
+(hint, to test this code use "./tools/testing/kunit/kunit.py run overflow")
+
+But yeah, this passes the overflow tests which include the constant
+expression tests, so __must_be_array() is a constant expression. Whee :)
+
+> +			       size_add(sizeof(*(p)),			       \
+> +					size_mul(sizeof(*(p)->member), count))))
+
+This one I'm not such a fan of. It feels wrong to not use
+flex_array_size() here -- we're performing exactly the same
+calculation. But it's possible this has cpp complexity reduction
+benefits from avoiding the stacking of __builtin_choose_expr() and
+__must_be_array() macros...
+
+So, yeah, I think I could live with this. :) Especially if it means we can
+start using struct_size() in code you look at. :P
+
+But please include this selftest update too. Since your patch splits the
+dependency between struct_size() and flex_array_size(), I'd like to test
+them separately now:
+
+
+diff --git a/lib/tests/overflow_kunit.c b/lib/tests/overflow_kunit.c
+index 894691b4411a..ee29f1f8f528 100644
+--- a/lib/tests/overflow_kunit.c
++++ b/lib/tests/overflow_kunit.c
+@@ -705,18 +705,28 @@ struct __test_flex_array {
  
- /**
-- * X86_MATCH_VENDOR_FAM_MODEL_STEPPINGS_FEATURE - Base macro for CPU matching
-+ * X86_MATCH_CPU -  Base macro for CPU matching
-  * @_vendor:	The vendor name, e.g. INTEL, AMD, HYGON, ..., ANY
-  *		The name is expanded to X86_VENDOR_@_vendor
-  * @_family:	The family number or X86_FAMILY_ANY
-@@ -74,19 +74,7 @@
-  * into another macro at the usage site for good reasons, then please
-  * start this local macro with X86_MATCH to allow easy grepping.
-  */
--#define X86_MATCH_VENDOR_FAM_MODEL_STEPPINGS_FEATURE(_vendor, _family, _model, \
--						    _steppings, _feature, _data) { \
--	.vendor		= X86_VENDOR_##_vendor,				\
--	.family		= _family,					\
--	.model		= _model,					\
--	.steppings	= _steppings,					\
--	.feature	= _feature,					\
--	.flags		= X86_CPU_ID_FLAG_ENTRY_VALID,			\
--	.driver_data	= (unsigned long) _data				\
--}
--
--#define X86_MATCH_VENDORID_FAM_MODEL_STEPPINGS_FEATURE(_vendor, _family, _model, \
--						    _steppings, _feature, _data) { \
-+#define X86_MATCH_CPU(_vendor, _family, _model, _steppings, _feature, _data) { \
- 	.vendor		= _vendor,					\
- 	.family		= _family,					\
- 	.model		= _model,					\
-@@ -106,13 +94,10 @@
-  * @_data:	Driver specific data or NULL. The internal storage
-  *		format is unsigned long. The supplied value, pointer
-  *		etc. is casted to unsigned long internally.
-- *
-- * The steppings arguments of X86_MATCH_VENDOR_FAM_MODEL_STEPPINGS_FEATURE() is
-- * set to wildcards.
-  */
--#define X86_MATCH_VENDOR_FAM_MODEL_FEATURE(vendor, family, model, feature, data) \
--	X86_MATCH_VENDOR_FAM_MODEL_STEPPINGS_FEATURE(vendor, family, model, \
--						X86_STEPPING_ANY, feature, data)
-+#define X86_MATCH_VENDOR_FAM_MODEL_FEATURE(vendor, family, model, feature, data)	\
-+	X86_MATCH_CPU(X86_VENDOR_##vendor, family, model, X86_STEPPING_ANY,		\
-+		      feature, data)
+ static void overflow_size_helpers_test(struct kunit *test)
+ {
+-	/* Make sure struct_size() can be used in a constant expression. */
+-	u8 ce_array[struct_size_t(struct __test_flex_array, data, 55)];
++	/* Verify struct_size() family can be used as constant expressions. */
+ 	struct __test_flex_array *obj;
++	u8 ce_flex[flex_array_size(obj, data, 22)];
++	u8 ce_array[struct_size(obj, data, 55)];
++	u8 ce_array_t[struct_size_t(typeof(*obj), data, 99)];
+ 	int count = 0;
+ 	int var;
+ 	volatile int unconst = 0;
  
- /**
-  * X86_MATCH_VENDOR_FAM_FEATURE - Macro for matching vendor, family and CPU feature
-@@ -123,13 +108,10 @@
-  * @data:	Driver specific data or NULL. The internal storage
-  *		format is unsigned long. The supplied value, pointer
-  *		etc. is casted to unsigned long internally.
-- *
-- * All other missing arguments of X86_MATCH_VENDOR_FAM_MODEL_FEATURE() are
-- * set to wildcards.
-  */
--#define X86_MATCH_VENDOR_FAM_FEATURE(vendor, family, feature, data)	\
--	X86_MATCH_VENDOR_FAM_MODEL_FEATURE(vendor, family,		\
--					   X86_MODEL_ANY, feature, data)
-+#define X86_MATCH_VENDOR_FAM_FEATURE(vendor, family, feature, data)		\
-+	X86_MATCH_CPU(X86_VENDOR_##vendor, family, X86_MODEL_ANY,		\
-+		      X86_STEPPING_ANY, feature, data)
+-	/* Verify constant expression against runtime version. */
++	/* Verify constant expression versions against runtime versions. */
++	var = 22;
++	OPTIMIZER_HIDE_VAR(var);
++	KUNIT_EXPECT_EQ(test, sizeof(ce_flex), flex_array_size(obj, data, var));
++
+ 	var = 55;
+ 	OPTIMIZER_HIDE_VAR(var);
+ 	KUNIT_EXPECT_EQ(test, sizeof(ce_array), struct_size(obj, data, var));
  
- /**
-  * X86_MATCH_VENDOR_FEATURE - Macro for matching vendor and CPU feature
-@@ -139,12 +121,10 @@
-  * @data:	Driver specific data or NULL. The internal storage
-  *		format is unsigned long. The supplied value, pointer
-  *		etc. is casted to unsigned long internally.
-- *
-- * All other missing arguments of X86_MATCH_VENDOR_FAM_MODEL_FEATURE() are
-- * set to wildcards.
-  */
--#define X86_MATCH_VENDOR_FEATURE(vendor, feature, data)			\
--	X86_MATCH_VENDOR_FAM_FEATURE(vendor, X86_FAMILY_ANY, feature, data)
-+#define X86_MATCH_VENDOR_FEATURE(vendor, feature, data)				\
-+	X86_MATCH_CPU(X86_VENDOR_##vendor, X86_FAMILY_ANY, X86_MODEL_ANY,	\
-+		      X86_STEPPING_ANY, feature, data)
- 
- /**
-  * X86_MATCH_FEATURE - Macro for matching a CPU feature
-@@ -152,12 +132,10 @@
-  * @data:	Driver specific data or NULL. The internal storage
-  *		format is unsigned long. The supplied value, pointer
-  *		etc. is casted to unsigned long internally.
-- *
-- * All other missing arguments of X86_MATCH_VENDOR_FAM_MODEL_FEATURE() are
-- * set to wildcards.
-  */
--#define X86_MATCH_FEATURE(feature, data)				\
--	X86_MATCH_VENDOR_FEATURE(ANY, feature, data)
-+#define X86_MATCH_FEATURE(feature, data)					\
-+	X86_MATCH_CPU(X86_VENDOR_ANY, X86_FAMILY_ANY, X86_MODEL_ANY,		\
-+		      X86_STEPPING_ANY, feature, data)
- 
- /**
-  * X86_MATCH_VENDOR_FAM_MODEL - Match vendor, family and model
-@@ -168,13 +146,10 @@
-  * @data:	Driver specific data or NULL. The internal storage
-  *		format is unsigned long. The supplied value, pointer
-  *		etc. is casted to unsigned long internally.
-- *
-- * All other missing arguments of X86_MATCH_VENDOR_FAM_MODEL_FEATURE() are
-- * set to wildcards.
-  */
--#define X86_MATCH_VENDOR_FAM_MODEL(vendor, family, model, data)		\
--	X86_MATCH_VENDOR_FAM_MODEL_FEATURE(vendor, family, model,	\
--					   X86_FEATURE_ANY, data)
-+#define X86_MATCH_VENDOR_FAM_MODEL(vendor, family, model, data)			\
-+	X86_MATCH_CPU(X86_VENDOR_##vendor, family, model, X86_STEPPING_ANY,	\
-+		      X86_FEATURE_ANY, data)
- 
- /**
-  * X86_MATCH_VENDOR_FAM - Match vendor and family
-@@ -184,12 +159,10 @@
-  * @data:	Driver specific data or NULL. The internal storage
-  *		format is unsigned long. The supplied value, pointer
-  *		etc. is casted to unsigned long internally.
-- *
-- * All other missing arguments to X86_MATCH_VENDOR_FAM_MODEL_FEATURE() are
-- * set of wildcards.
-  */
--#define X86_MATCH_VENDOR_FAM(vendor, family, data)			\
--	X86_MATCH_VENDOR_FAM_MODEL(vendor, family, X86_MODEL_ANY, data)
-+#define X86_MATCH_VENDOR_FAM(vendor, family, data)				\
-+	X86_MATCH_CPU(X86_VENDOR_##vendor, family, X86_MODEL_ANY,		\
-+		      X86_STEPPING_ANY, X86_FEATURE_ANY, data)
- 
- /**
-  * X86_MATCH_VFM - Match encoded vendor/family/model
-@@ -197,15 +170,10 @@
-  * @data:	Driver specific data or NULL. The internal storage
-  *		format is unsigned long. The supplied value, pointer
-  *		etc. is cast to unsigned long internally.
-- *
-- * Stepping and feature are set to wildcards
-  */
--#define X86_MATCH_VFM(vfm, data)			\
--	X86_MATCH_VENDORID_FAM_MODEL_STEPPINGS_FEATURE(	\
--		VFM_VENDOR(vfm),			\
--		VFM_FAMILY(vfm),			\
--		VFM_MODEL(vfm),				\
--		X86_STEPPING_ANY, X86_FEATURE_ANY, data)
-+#define X86_MATCH_VFM(vfm, data)						\
-+	X86_MATCH_CPU(VFM_VENDOR(vfm), VFM_FAMILY(vfm),	VFM_MODEL(vfm),		\
-+		      X86_STEPPING_ANY, X86_FEATURE_ANY, data)
- 
- #define __X86_STEPPINGS(mins, maxs)    GENMASK(maxs, mins)
- /**
-@@ -215,16 +183,10 @@
-  * @data:	Driver specific data or NULL. The internal storage
-  *		format is unsigned long. The supplied value, pointer
-  *		etc. is cast to unsigned long internally.
-- *
-- * feature is set to wildcard
-  */
--#define X86_MATCH_VFM_STEPS(vfm, min_step, max_step, data)	\
--	X86_MATCH_VENDORID_FAM_MODEL_STEPPINGS_FEATURE(		\
--		VFM_VENDOR(vfm),				\
--		VFM_FAMILY(vfm),				\
--		VFM_MODEL(vfm),					\
--		__X86_STEPPINGS(min_step, max_step),		\
--		X86_FEATURE_ANY, data)
-+#define X86_MATCH_VFM_STEPS(vfm, min_step, max_step, data)			\
-+	X86_MATCH_CPU(VFM_VENDOR(vfm), VFM_FAMILY(vfm), VFM_MODEL(vfm),		\
-+		      __X86_STEPPINGS(min_step, max_step), X86_FEATURE_ANY, data)
- 
- /**
-  * X86_MATCH_VFM_FEATURE - Match encoded vendor/family/model/feature
-@@ -233,15 +195,10 @@
-  * @data:	Driver specific data or NULL. The internal storage
-  *		format is unsigned long. The supplied value, pointer
-  *		etc. is cast to unsigned long internally.
-- *
-- * Steppings is set to wildcard
-  */
--#define X86_MATCH_VFM_FEATURE(vfm, feature, data)	\
--	X86_MATCH_VENDORID_FAM_MODEL_STEPPINGS_FEATURE(	\
--		VFM_VENDOR(vfm),			\
--		VFM_FAMILY(vfm),			\
--		VFM_MODEL(vfm),				\
--		X86_STEPPING_ANY, feature, data)
-+#define X86_MATCH_VFM_FEATURE(vfm, feature, data)				\
-+	X86_MATCH_CPU(VFM_VENDOR(vfm), VFM_FAMILY(vfm), VFM_MODEL(vfm),		\
-+		      X86_STEPPING_ANY, feature, data)
- 
- extern const struct x86_cpu_id *x86_match_cpu(const struct x86_cpu_id *match);
- extern bool x86_match_min_microcode_rev(const struct x86_cpu_id *table);
++	var = 99;
++	OPTIMIZER_HIDE_VAR(var);
++	KUNIT_EXPECT_EQ(test, sizeof(ce_array_t), struct_size_t(typeof(*obj), data, var));
++
+ #define check_one_size_helper(expected, func, args...)	do {	\
+ 	size_t _r = func(args);					\
+ 	KUNIT_EXPECT_EQ_MSG(test, _r, expected,			\
+
+
+
+(And note that the above patch is against -next, where the lib/ kunit
+tests have moved into the lib/tests/ subdirectory now.)
+
+-Kees
 
 -- 
-2.34.1
-
-
+Kees Cook
 
