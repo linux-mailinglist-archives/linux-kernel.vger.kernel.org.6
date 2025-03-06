@@ -1,116 +1,138 @@
-Return-Path: <linux-kernel+bounces-550032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 504F3A55A3C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:55:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B03A55A41
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:57:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88E0A16FF3D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:55:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B29F16F9C6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:57:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C703E27CB33;
-	Thu,  6 Mar 2025 22:55:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E3327CB39;
+	Thu,  6 Mar 2025 22:57:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RpvMlfrE"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eK/2Vjt4"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F383206F22;
-	Thu,  6 Mar 2025 22:55:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2172E206F22;
+	Thu,  6 Mar 2025 22:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741301753; cv=none; b=OA8+x9UBQz4nuPp1KYaEJUMzDtikUMo/cewT4Mn853Bux3Agp3sAmlCNAjJHhyW5pzlGgu8akMBZZIM7cQnB+sHjfjX9HP/PzKBZ2c9EMbdQ9xVbseCAv2a7sZU2PqxoaE9H6EDLxl4KrvIT1ywMTmxgqclM+0wGTxUqsj+RQto=
+	t=1741301837; cv=none; b=N78yKz8dkJyq5dQdBlKY8OC6iZGr17D+mQlOoUkGu9RwBV5ByJQ++j0ggxj0JSQgTwS+03n6ZLPG3MaiAQgBSQX81T5Q1j3Ct0TNMRgIEQGhpdRDPG4c166gyBZnD3oXmgdMjLk2RNwyRbuKp1nSYHU4FiM3vYCCJjZ0uevooRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741301753; c=relaxed/simple;
-	bh=a+MtALUVY91zVDdEmvlAj9f3BESzAhxgQRJBbEz3RJs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SNWuzt3Wap43In2wNQbJsk0362eR6WFWwtdI4nS4WpWHjTIL5KaTt7bgBHi0FE43xQJ58SF+m1bi3XqmKdEm6S15K8QASpB+gv2os/DFQyVaeE4+U+/cSAQ0k+NCpLNk3xhy4TmJz8HaZmVzrXFl1yq4dSRpZg+zXB6wXw8PN/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RpvMlfrE; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5497e7bf2e0so1369392e87.3;
-        Thu, 06 Mar 2025 14:55:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741301748; x=1741906548; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nm2qV+PayrFKZi2Qr9jDYU/KnrvQXtIuUzSZ0SYEFfA=;
-        b=RpvMlfrEOR/qLi9vCfwbfE7onQMdygwkzTu2HfhIPvozm8m+OPNcnkqnGiw1c+kETz
-         ubi0SvfY2FZsCpmDkL7UgbTe3+YALTI3KzvQm423qEraynzOHlM/fFrRZPYk5CSoBGw6
-         /IRzGo/mc4zmXARZ8wzEklqp6pnrVOrihXHpWEeuCpZsa2gSmXr1rOrcqewp4UThu0Q+
-         8ovTqx7VtxWADXqHjkNw5IkLtwta78be7a4tc0vG4dwZB1cygWzYcmeuJ3VKgFgNjtTy
-         tvPHG0XfcdxT4F7HHIhuSmwAsIPwfZap9zxfBoq/8oY23ajRSHhDP8cpA0r2lOmegn7Y
-         sYdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741301748; x=1741906548;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nm2qV+PayrFKZi2Qr9jDYU/KnrvQXtIuUzSZ0SYEFfA=;
-        b=RtqTwLA7u5tm3LTnC7CXC55Q3m5qFm3wuwBA7jIceiwJ2Lmjm3ghMoovCAkObJ7aJf
-         wV0H8QVIoXoOr9V2OnqcViEd5jjup6JCPg89ic6KPtmr2ArFiv3ofDMu9iwdll0GW/27
-         7FOFgOm+ocT3hRhihxr67i+ULH2fa7vxA3UCeDYHpbM6SByzryBpUKgNiHO5Q/MMbgeG
-         zN66CVafa7Rbt3SH5ccMamd9WyvfikGLcN8XaNv1ujpN/Mq3xHwUhZ6piN4TD3P4NCBv
-         HQAPBkVVC1DDTGiUC5f/ILysIXR9RvGmFMHa5fResplrrFxNWvrFBgArY5SVDb173ARJ
-         as5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXFE7bjpS6QXF93wkAQcyhnWw8QpJB+MHJfQrtZr3pHRLfNpx0IB7MWTYCYI5A/D2ObVvfEAMMtHcqlfGSo@vger.kernel.org, AJvYcCXfsSnqvsYl3x5Js8x9x+g0zQ+Lj2jAazp+f0pOv2VtwxbjkfwM1lUjSkJXyrWOn4UzJijbDq5rtBs1@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqLvS1+MNU9qwsN3AmrMgpRrnRM2H3aJ9cvHLS7DybNj3sK4Ol
-	KkL7C2yCdEvdpDsryQ/mF049mAS1HcVZRGyzccfCc15/OF4FefuwhnL+n6yOdJOZDjj4fHUDMMr
-	BkDNm+9BYcyH+d6drTiWIQeJefyBqkzpS
-X-Gm-Gg: ASbGncvogUv9/4tCauFT7/j/94RWc58uUUB072I1LjE86jDQYozOQIn/0k1/HcNtxQa
-	OYKuGdzApxshBPX4Mw6JHWg42ToWLyjPd5nxdxmKPOe5zYvVR+8hk9ViAdGgReBbgfgsSez+sIR
-	Jc4JtRseSIHihTHgGO62MOx+Lx802cmevo8gxABTMSGotrQ89Sy1SxGi31Jg==
-X-Google-Smtp-Source: AGHT+IELLnqdwKJ1evQmnO6miMjCOF6kWpjNInySnrLYVu8W39JXHce4tfrcyF/HH/vVvtpBmKUXlY5IKpjWjhg+MpM=
-X-Received: by 2002:a05:6512:1112:b0:549:4d7d:b61b with SMTP id
- 2adb3069b0e04-54990eab0f1mr333594e87.35.1741301747365; Thu, 06 Mar 2025
- 14:55:47 -0800 (PST)
+	s=arc-20240116; t=1741301837; c=relaxed/simple;
+	bh=S+6FO9HIm+is6xlTUsl3PW1047Cte8SauuoCrskzDq8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=e+8qzSFblNYRT9aALQ1B0oVTaGgeKqKJX89SyWoI1CCtHrLjw2XCc1Weru3FjyaN67tBpYEEgCRdT/MrImwLwSuppSyYaB5xPphk8cysiaCh/WExkGtdCmlZgPtGloWGWEfkV7he2bRPq/mnlCpDMQnw096JatOZyHC3yZfWYoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=eK/2Vjt4; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 526Muve6088276
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Thu, 6 Mar 2025 16:56:57 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741301817;
+	bh=bYwYTAQz3+wTUvn8VajZxAuhwOkXkPbWMk9F6b/kN40=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=eK/2Vjt4gR+V/nSonmyaHFI0HEDI1shBhipQegw2PhaC91ypL7qVhstLor+0DpfBW
+	 //4qgsyMRzqTafBabIkM4nadb+qxlJ6w+wPSe4I1x24lOOc8pOWHC28lTpQOB/Fhr2
+	 x476mBI1kequnrp+eAoTGOV8YFX/sCogs5ADcEN8=
+Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 526Muv00116311;
+	Thu, 6 Mar 2025 16:56:57 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 6
+ Mar 2025 16:56:56 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 6 Mar 2025 16:56:56 -0600
+Received: from [10.247.26.234] (lt5cd3040qtn.dhcp.ti.com [10.247.26.234])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 526MuuOB130990;
+	Thu, 6 Mar 2025 16:56:56 -0600
+Message-ID: <c0f28cb1-d2a8-4583-937d-4908e4b70b4a@ti.com>
+Date: Thu, 6 Mar 2025 16:56:56 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306222359.797855-1-Frank.Li@nxp.com>
-In-Reply-To: <20250306222359.797855-1-Frank.Li@nxp.com>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Thu, 6 Mar 2025 19:55:36 -0300
-X-Gm-Features: AQ5f1Jrc9-FFNpCeyDExi95YGo2Kn5IirxDCaG51gdscsys4mOsD1AzjUc9N6UE
-Message-ID: <CAOMZO5CL-qQSHuSoCtb+f_mqNG8vu4tTVDi-ThoHq+m9SeagxA@mail.gmail.com>
-Subject: Re: [PATCH] ARM64: dts: imx8mp-evk: add ecspi2 support
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
-	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
-	open list <linux-kernel@vger.kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 0/5] Add TI TPS65214 & TPS65215 PMIC MFD Driver Support
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: <m-leonard@ti.com>, <praneeth@ti.com>, <conor+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <khilman@baylibre.com>, <rogerq@kernel.org>, <lgirdwood@gmail.com>,
+        <linux-omap@vger.kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <tony@atomide.com>, <andreas@kemnade.info>, <aaro.koskinen@iki.fi>,
+        <broonie@kernel.org>, Lee Jones <lee@kernel.org>
+References: <20250206173725.386720-1-s-ramamoorthy@ti.com>
+ <173928615760.2233464.12306998726512431222.b4-ty@kernel.org>
+ <7f33b5c7-b1a7-4db9-9e19-e30cbb0066ab@ti.com>
+ <471cdd13-3250-46b1-b7a0-a4f236a47773@kernel.org>
+Content-Language: en-US
+From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+In-Reply-To: <471cdd13-3250-46b1-b7a0-a4f236a47773@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Mar 6, 2025 at 7:24=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
+Hi,
 
-> +&ecspi2 {
-> +       #address-cells =3D <1>;
-> +       #size-cells =3D <0>;
-> +       num-cs =3D <1>;
-> +       pinctrl-names =3D "default";
-> +       pinctrl-0 =3D <&pinctrl_ecspi2 &pinctrl_ecspi2_cs>;
-> +       cs-gpios =3D <&gpio5 13 GPIO_ACTIVE_LOW>;
-> +       status =3D "okay";
-> +
-> +       spidev1: spi@0 {
-> +               compatible =3D "rohm,dh2228fv";
+On 3/6/2025 1:26 AM, Krzysztof Kozlowski wrote:
+> On 05/03/2025 22:09, Shree Ramamoorthy wrote:
+>> Hi Lee,
+>>
+>>
+>> On 2/11/25 9:02 AM, Lee Jones wrote:
+>>> On Thu, 06 Feb 2025 11:37:20 -0600, Shree Ramamoorthy wrote:
+>>>> TPS65214 and TPS65215 are Power Management Integrated Circuits (PMICs) that
+>>>> have significant register map overlap with TPS65219 and each other. The
+>>>> series introduces the 2 new PMICs and restructures the existing driver to
+>>>> support multiple devices.
+>>>>
+>>>> - TPS65214, TPS65215, and TPS65219 each have 3 Buck regulators
+>>>> - TPS65214 has 2 LDOS and 1 GPO, whereas TPS65219 has 4 LDOs and 2 GPOs.
+>>>> - TPS65214's LDO1 maps to TPS65219's LDO3.
+>>>> - A key difference between TPS65215 & TPS65214 are the LDO current and
+>>>>    voltage output ranges and the configurable options available.
+>>>> - TPS65215 has 2 LDOs, whereas TPS65219 has 4 LDOs.
+>>>> - TPS65215's LDO2 maps to TPS65219's LDO3.
+>>>> - TPS65215 has 1 GPO, whereas TPS65219 has 2 GPOs.
+>>>>
+>>>> [...]
+>>> Applied, thanks!
+>>>
+>>> [1/5] regulator: dt-bindings: Add TI TPS65215 PMIC bindings
+>>>        commit: 85e7aef57a9e057545017d55b02073e3c4756b2c
+>>> [2/5] regulator: dt-bindings: Add TI TPS65214 PMIC bindings
+>>>        commit: 34beb3c87cbb8747f521db5cf1b2a608833f3967
+>>> [3/5] mfd: tps65219: Remove regmap_read check
+>>>        commit: 5342c8a9e04fc05f485a3886605b803a5180bd64
+>>> [4/5] mfd: tps65219: Add support for TI TPS65215 PMIC
+>>>        commit: ebcbd21550853b16f307d7da8c846b862e138a98
+>>> [5/5] mfd: tps65219: Add support for TI TPS65214 PMIC
+>>>        commit: c9878d8d9ac2ecfadfa4fa3543730026c66ad843
+>>>
+>>> --
+>>> Lee Jones [李琼斯]
+>> Would you be able to remove this series from your branch & replace it with this v6 [0],
+>> so Mark Brown will be able to apply the dependent regulator series [1]? Thank you!
+> You replied 3 weeks later. If something was applied not as it should,
+> you ought to reply IMMEDIATELY, not 3 weeks after.
+>
+> The trees are mostly immutable after publishing.
+>
+> Best regards,
+> Krzysztof
 
-That's not a correct description of the hardware.
+Completely understand, sorry for re-sending the first 5 patches that were already applied!
+I'll wait for the next merge window, so there won't be dependencies between the MFD and regulator tree then.
 
-Conor's effort was to clean up the abuses of using "rohm,dh2228fv" to
-get spidev support.
-
-Please check:
-
-fc28d1c1fe3b3 ("spi: spidev: add correct compatible for Rohm BH2228FV")
 
