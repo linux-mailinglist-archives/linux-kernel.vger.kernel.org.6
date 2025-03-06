@@ -1,184 +1,130 @@
-Return-Path: <linux-kernel+bounces-548227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB509A541FE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:17:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F91A54202
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:18:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B58253AF8FF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:17:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 546E7169AEA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:18:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141AE19D071;
-	Thu,  6 Mar 2025 05:17:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D4EF19D88F;
+	Thu,  6 Mar 2025 05:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mew+9OEY"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kWcaqQFn"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8931CD2B;
-	Thu,  6 Mar 2025 05:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B08AB199E84;
+	Thu,  6 Mar 2025 05:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741238268; cv=none; b=qff6djZCF2YVOahwnQTEZAWwGhMJ5r5ndr5/GInOaADZBo5Uj7i7NKI9ni4YPoqeemBbETKbU305BJI8RHApWBkhv/eVG69mDSevXUivFqVcYN85+W6LLvzSV1JTXETe0NifLBNp0ASVYb+q+OCLw5BZ3Lh39XNRa9sQwpOVpiw=
+	t=1741238323; cv=none; b=Ayx4yjckJwnDy0Sm+wlUnjUgItA3TOSbP+xE8EJe98sKIkgPlC/VriqynpkMsp9yj5KT6H/cQsjxhOBBavzt1OlkQJQ1jIzcNcm2iRfLitbCV6FkU+myA3vhMS8Z/U0gqXLy9ngfrEgin1I//2MMXlKCUdHTBKKAgL/LcXNYqas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741238268; c=relaxed/simple;
-	bh=WYFWuMsvQGQ7/YrFeFoyl61Xj9FhjYRgqlpD086BI+I=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K0tdjwE3xWJ/7vYUJNLPH+fkUb3MKfhoPgDsn859CjfHicDyyoRVx60W826j2UhPm6yh1sOpvUYFkFkP7DgYazARXh7Fk9HV1OFe7O3zAGfJrw4DWXcUmHpY6/APoMGEFtemFsp1sh7xIrO4WQ5+vamwC77EpwAgYgy41rtTHZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mew+9OEY; arc=none smtp.client-ip=209.85.221.46
+	s=arc-20240116; t=1741238323; c=relaxed/simple;
+	bh=bqnnQoj67Yy7FVaCgMfaUiRBSx45piKOGM6OjRIjMd4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ldKc6Gf/SwVBiccy2RhX6aXBqyYxZAq7ZY5M7+3DcpolnQ+ZSDglBP7CoGI0iKamfDl4B16eHpVdxOYUqWVJkBPsIP7TIKCJiucZDk9qVM6AARJwkXEgT5egJoYCRxjk2M2QvrYl4TfCUACP5lL1mWMHsDL+Fn05hO8ArjNllVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kWcaqQFn; arc=none smtp.client-ip=209.85.214.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3911748893aso164343f8f.3;
-        Wed, 05 Mar 2025 21:17:46 -0800 (PST)
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-223785beedfso3124425ad.1;
+        Wed, 05 Mar 2025 21:18:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741238265; x=1741843065; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/XTve7yZUkpJ6I7Ayk3GGXKo8U7zE5G1KYgy4s9AqZw=;
-        b=mew+9OEYgXvAw57igyaKcaKPnlKby8eH6pZtokWnRTYyIzNuUeCTi6mUOQDAg+ZPGW
-         HRx+ODg+YhUYWkeeAe7z9PxdGL6gVdbK8VqGPR22q+I9mxREgIUe1MG/39rVwQWerF0j
-         Mf2ienwLpz0U8X8vvDVVJdo6BsMypbj42xUsKbNu4RroYRspjQ3Bo/ujPRmSVvUd6V2G
-         4oLRDJyskNYhfdV8IjyYBrXI7ZiTPEBorUcqsfU0nUC4zPlc/VCCV/N2gMDFxGpyzdT8
-         u85QrCCHTpQgN0aUssBNXjIoQBoQtECVVbW/al6ABwogtu7fU12zchiLsS5nrb66wB6q
-         b9gA==
+        d=gmail.com; s=20230601; t=1741238321; x=1741843121; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lNP741CtQxhlrtQYl+bTHrt0/2VLrt4PvoQqY1xd1+k=;
+        b=kWcaqQFnB9GhODjYEESGGmfUdKJ0nLV/6pFAfwYtVYcfZTMlRnvhUPPpOWZMsJWvSK
+         XH6ib2KSaClTs2enHghXqbSmFUP0jCq9uO1QB+kY7qzfcQy9nkLxdvZ0OYLh8mfeLZUz
+         OPe15GCY25YqNidgFJVQY7XF1KFjMsckMZRl/i3aAnuxMYFFHw6wUMW/LgW7JAECCCV0
+         NrQ08YRmmWh8pjGn6v1juCUBIM9avNd3h7IZ6xa9cCfT5CvoZOR7PsWWuEu//hEgQkw1
+         jUJezdTTC/yMEACff5T4LjlMC3xadkTfoHYxn4S1PeKXbVAu3i4VAodjO4kwsegIVCft
+         PbTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741238265; x=1741843065;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/XTve7yZUkpJ6I7Ayk3GGXKo8U7zE5G1KYgy4s9AqZw=;
-        b=uYtU8dFFLSSvTWkqh86CwQ9mB83TkCMcUt+jw8VBkA6OiPoIHUKCoC89ZSEKK2ngf5
-         ZSVo/7X6iy1vhOE0OjVnmE7CXLioyPH1nvh/+N7tpvIXKXro/e/EAOVmCwdG1zO4+yVq
-         AItsFkZ3zfVFeUPnUv7oXk1DQiTlqYV4h639fhFysaO7009OLxSSbVngDXuvjZXwqiT4
-         USRfYnoQFlDDKXzjFAOkOEgM38/LZu9Q7HoQxfvwEh8AaDLm/AbEy4knvUCMZLlP8auk
-         c/3B3jyspk4dVedvCFg/b2ye9Bqs6P1uiQbE/B3EWka+QF2bn0EaKEJgZ7+idl5Q5yCM
-         Bv/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVx6N3HqOroan/xMWrlZSBNRsOf2Dym8Im1+XdCdpV7BdvhBe/TxgYFGmnOF9HP+awXZiRzEPGUwB+wx8A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYxe9NUjnUOHOls0wVWYp9uxwRYWjx+QQQMo9dwMeUazitXy3W
-	Gwbjv/UcccUvV09pMZk6+C1MZyeK0PF9yiQ0eY2vYwihmhh1iyGy
-X-Gm-Gg: ASbGncuemBH+0Y+lMbN9+jVMBtN5JHxE22GSCnAcifwXoaWX+jQ6Tmuc88JAo+2mbkX
-	MeDRB1pCjNp/Saa6l7eUuMGz62AxVXC8MdJmL9w468RDoh4Yy4yUHNjNTZpyNmuNtNhJ8gAeQP4
-	a2SWDAHdKR/7CwG/qey0mRr1ScXgJrpXuWWsNCj4CF71iWvsV9gsAKYqKp8Q+zDzMhZjhx9U3S3
-	WOWl4F7hqeaqjsIp3/X6MMdziWsCT2Ox42yviIRhMkW1Rg/6qVMHEE/6l2a7DXrNz6SrfuXGwqs
-	s7n7Nce/SK44WKsspSbKoASDBI636/8zJsCrqsrEwkYD+O/tSpkPepS9JVHlVXtru2c4kLKSa03
-	Wus626I0=
-X-Google-Smtp-Source: AGHT+IHpz5lBCH2fwxlrTq59pWzTqiDyJY2lKmLmc1eX8A6erOeXEL+wiJGEzur2GcgaqjZkCdZM0g==
-X-Received: by 2002:a5d:5984:0:b0:391:1f9:c59a with SMTP id ffacd0b85a97d-3911f7c4cf6mr4482893f8f.46.1741238264481;
-        Wed, 05 Mar 2025 21:17:44 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd4352eccsm37431535e9.27.2025.03.05.21.17.43
+        d=1e100.net; s=20230601; t=1741238321; x=1741843121;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lNP741CtQxhlrtQYl+bTHrt0/2VLrt4PvoQqY1xd1+k=;
+        b=C9jDaFDqzRUUzURTmCshWnL/iL5OfAGMP9+nn2JW2KiJDtnrUN714VUJkXX7LIjMJP
+         asPtgFKRjm1nJ56JQM1UifhKBEiZxc+2YVldv39OEkE32u+cNiw/gCObay8I6dN3QTm8
+         3DJykBaieMByJAl0nl+/INquiUS2WPWxnhR+eppctvpHNf/ea1FMn8KOEtq2y4tNhxjI
+         V/KYWJcTdbyF1/Aqxagyk9WQfVqeoUPD54wKMSxnKyWHS5oedKtdzjmK7BQv7yZy2HfV
+         sn4Qt3TWY+pD8Qwog4Q+j7vc5ddNSrGApBEfsp12FCzD494DDuVHvxtboEkLfsYIhHFF
+         F2QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXiZpoomMxNfNklAsYk97hPfamnirrtXXuWaLF6uW66Zr6FSOnXpq+4WBajBdK6eUwIc0FX81uKtANZYzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJlwhCpN0m9Z0rGqBcY1psxFX8gvy1IB6kNFRLHx9NYZf9AzaU
+	aIkAdroBF+4Vi2vRth9oHHqzR7y6ihm/4VmTuqYdWHTh5cdy4ip6so2AbzCW
+X-Gm-Gg: ASbGncscd+q3WaqjY0yTdrVTeuD3kg5Rnu9xnKqsT05NlEYI5febu4P2NHh8O6ioM8C
+	CykOdaVlgkjyUuEH61PvfESs/p6C5JmjnL0npMFq1eJ8PaY7W+T55gsx4fRq63w0RXBsZR6mmuG
+	N7VBo3u9ISDtzWsv7u3lk6RACTkWx/i4QPtV8v8Gvr8t8vCRnNHaszmpHlnbCkDs0cxuLAZYzwq
+	ix4UrYF/S4AH8D/0YgW8zMP9yGACTaQNsj+74hsvUKNeilVzasjJ1XDO0Hr9lccAbPqytDRuNZ7
+	QzoiBsdBYAQD1jNlfcb86O+QKGqiMYBydkEMsgt9hzfYvuJrDDfIRqDvBk3PaxkTVlYqKoDCzcy
+	JJPwqSELi4m2XRfen/V+N/Dyu6qNi9tIHzMoAuI6Fsly2NQ==
+X-Google-Smtp-Source: AGHT+IGmB5z3KokiR0t+qvpxsDCS1ZtXYiH0T0OZsd2nmtwUeBX2F4OmXpBlbHbee6eDUemX0A/peA==
+X-Received: by 2002:a17:903:191:b0:220:c4e8:3b9d with SMTP id d9443c01a7336-223f1d0ff79mr79888065ad.37.1741238320728;
+        Wed, 05 Mar 2025 21:18:40 -0800 (PST)
+Received: from sid-dev-env.cgrhrlrrq2nuffriizdlnb1x4b.xx.internal.cloudapp.net ([20.120.208.174])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109ddcfesm3332345ad.29.2025.03.05.21.18.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 21:17:43 -0800 (PST)
-Date: Thu, 6 Mar 2025 05:17:40 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Bill Wendling <morbo@google.com>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel
- <ardb@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
- <nick.desaulniers+lkml@gmail.com>, Justin Stitt <justinstitt@google.com>,
- linux-crypto@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] x86/crc32: optimize tail handling for crc32c short
- inputs
-Message-ID: <20250306051740.6f454cac@pumpkin>
-In-Reply-To: <20250306025643.GA1592@sol.localdomain>
-References: <20250304213216.108925-1-ebiggers@kernel.org>
-	<20250305142653.751d9840@pumpkin>
-	<20250305191608.GA19889@sol.localdomain>
-	<20250305220739.1cb4b61e@pumpkin>
-	<20250306025643.GA1592@sol.localdomain>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Wed, 05 Mar 2025 21:18:40 -0800 (PST)
+From: Siddharth Chintamaneni <sidchintamaneni@gmail.com>
+To: stable@vger.kernel.org
+Cc: joro@8bytes.org,
+	suravee.suthikulpanit@amd.com,
+	will@kernel.org,
+	robin.murphy@arm.com,
+	iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	wei.huang2@amd.com,
+	apais@microsoft.com,
+	Siddharth Chintamaneni <sidchintamaneni@gmail.com>
+Subject: [PATCH 6.6.y] iommu/amd: Fixes refcount bug in iommu_v2 driver
+Date: Thu,  6 Mar 2025 05:18:22 +0000
+Message-ID: <20250306051822.4267-1-sidchintamaneni@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 5 Mar 2025 18:56:43 -0800
-Eric Biggers <ebiggers@kernel.org> wrote:
+This fix addresses a refcount bug where the reference count was not
+properly decremented due to the mmput function not being called when
+mmu_notifier_register fails.
 
-> On Wed, Mar 05, 2025 at 10:07:39PM +0000, David Laight wrote:
-> > On Wed, 5 Mar 2025 11:16:08 -0800
-> > Eric Biggers <ebiggers@kernel.org> wrote:
-> >   
-> > > On Wed, Mar 05, 2025 at 02:26:53PM +0000, David Laight wrote:  
-> > > > On Tue,  4 Mar 2025 13:32:16 -0800
-> > > > Eric Biggers <ebiggers@kernel.org> wrote:
-> > > >     
-> > > > > From: Eric Biggers <ebiggers@google.com>
-> > > > > 
-> > > > > For handling the 0 <= len < sizeof(unsigned long) bytes left at the end,
-> > > > > do a 4-2-1 step-down instead of a byte-at-a-time loop.  This allows
-> > > > > taking advantage of wider CRC instructions.  Note that crc32c-3way.S
-> > > > > already uses this same optimization too.    
-> > > > 
-> > > > An alternative is to add extra zero bytes at the start of the buffer.
-> > > > They don't affect the crc and just need the first 8 bytes shifted left.
-> > > > 
-> > > > I think any non-zero 'crc-in' just needs to be xor'ed over the first
-> > > > 4 actual data bytes.
-> > > > (It's over 40 years since I did the maths of CRC.)  
-> > ...  
-> > > > 	David    
-> > > 
-> > > Sure, but that only works when len >= sizeof(unsigned long).  Also, the initial
-> > > CRC sometimes has to be divided between two unsigned longs.  
-> > 
-> > Yes, I was thinking that might make it a bit more tricky.
-> > I need to find some spare time :-)
-> > 
-> > I wasn't taught anything about using non-carry multiplies either.
-> > And I can't remember the relevant 'number field' stuff either.
-> > But (with no-carry maths) I think you have:
-> > 	crc(n + 1) = (crc(n) + data(n)) * poly
-> > If data(n+1) and data(n+2) are zero (handled elsewhere) you have:
-> > 	crc(n + 3) = (((crc(n) + data(n)) * poly) * poly) * poly
-> > I think that because it is a field this is the same as
-> > 	crc(n + 3) = (crc(n) + data(n)) * (poly * poly * poly)
-> > which is just a different crc polynomial.
-> > If true your '3-way' cpu doesn't have to use big blocks.  
-> 
-> Well, to extend by some constant number of bits 'n', you can carryless-multiply
-> by the polynomial x^n, pre-reduced by the CRC's generator polynomial.  That's
-> basically how all the CRC implementations using carryless multiplication work.
-> Take a look at the x86 and riscv optimized code, for example -- especially my
-> new versions in the crc-next tree at
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=crc-next.
-> 
-> But x86 does not have a scalar carryless multiplication instruction, only vector
-> (PCLMULQDQ).  It does have a scalar CRC instruction, for crc32c *specifically*,
-> and that is what the code we're discussing is taking advantage of.  Given that
-> there is overhead associated with using kernel-mode FPU (i.e. vector), it makes
-> sense to do that, at least on short messages.
-> 
-> On longer messages a PCLMULQDQ-only implementation would work well, but so does
-> interleaving the crc32c scalar instruction on multiple chunks, which is what is
-> currently wired up in the kernel via crc32c-3way.S.  And yes, the chunks for
-> that do not *have* to be long, but you still need to use pclmulqdq instructions
-> to combine them
+Signed-off-by: Siddharth Chintamaneni <sidchintamaneni@gmail.com>
+---
+ drivers/iommu/amd/iommu_v2.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-You should be able to use lookup tables to jump over the other chunks
-(so processing a block of zero bytes).
-Possibly 8 lookup tables of 16 entries each for each nibble (512 bytes).
-Not nice for the d-cache though.
+diff --git a/drivers/iommu/amd/iommu_v2.c b/drivers/iommu/amd/iommu_v2.c
+index 57c2fb1146e2..bce21e266d64 100644
+--- a/drivers/iommu/amd/iommu_v2.c
++++ b/drivers/iommu/amd/iommu_v2.c
+@@ -645,7 +645,7 @@ int amd_iommu_bind_pasid(struct pci_dev *pdev, u32 pasid,
+ 
+ 	ret = mmu_notifier_register(&pasid_state->mn, mm);
+ 	if (ret)
+-		goto out_free;
++		goto out_mmput;
+ 
+ 	ret = set_pasid_state(dev_state, pasid_state, pasid);
+ 	if (ret)
+@@ -673,6 +673,8 @@ int amd_iommu_bind_pasid(struct pci_dev *pdev, u32 pasid,
+ 
+ out_unregister:
+ 	mmu_notifier_unregister(&pasid_state->mn, mm);
++
++out_mmput:
+ 	mmput(mm);
+ 
+ out_free:
+-- 
+2.43.0
 
-> (unless you do a really slow bit-at-a-time carryless
-> multiplication), and you have to enter a kernel-mode FPU section to do that.
-
-That pseudo-code is probably completely wrong.
-I suspect that since it is 'just' doing 'data % poly' it relies on the fact that
-	327 % 7 == 3 * (100 % 7) + 27
-and reduces the length by one digit.
-(Where a 'digit' could be 64 bits)
-I need to look up pclmulqdq.
-Trying to do anything with the simd instructions makes my head hurt.
-
-	David
 
