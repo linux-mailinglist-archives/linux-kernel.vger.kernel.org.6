@@ -1,106 +1,132 @@
-Return-Path: <linux-kernel+bounces-549768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63FCBA55715
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:48:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF3A2A55717
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 599FF1887EAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:48:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 068423A6584
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 19:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E95270EBF;
-	Thu,  6 Mar 2025 19:48:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6D1270EDA;
+	Thu,  6 Mar 2025 19:49:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c9RiLJkP"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AVyteuIh"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2FD20E71B;
-	Thu,  6 Mar 2025 19:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAC81FC0F9
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 19:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741290517; cv=none; b=l+D0o9RJTHd+nI5AWB8voPN/iff8Tg4Gp1Ck5TTEbmiiqCSIGOGD0J7ac4ciXBHrm5lBnUFDfKZ8+Wvo5U4C1zb827ns6nLVjvbE69AXZUipMSQ+/WOauSzoynT0wrXKCQrrjm1NbHrp0W4tjM+n1nY0P6mQhxeLO8l7+JDwjso=
+	t=1741290554; cv=none; b=NICUDcFQZbeFYdmMGXNGYRFvrcCJ9SoJ7R07cegdq3jaqx2VJmNTz1JT63trb9fnVJNJEr46k3WVhOrPbJn734VBYjEmE3brJRIv1XfYxFUWyKQ8GXV6FjNC7lXAIGc5JHghEYb9Aej9cKaxExq4ixMQjPb9kxCbdJ6I/e++mqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741290517; c=relaxed/simple;
-	bh=6KlhLZJHxbMl3/LmwbEXaHYfqXDA8ofy5GnbEx0QOjk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cSZJ7+Af72kW08V25q2WPc4F4UretoGTVBClCURmlSsYbx4aAdKyfAaBtHiV+aEogGRPRWiaKVEPBboZPBVcb7GNwcAeNlr4ZSVIF3lyhWswD/pZQ9o1xmgn5FuRwuk3ybV5JCapFI1J3XCQ1WhEPtpFrjiEwjOJCHnNitYxkrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c9RiLJkP; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-390e702d481so574975f8f.1;
-        Thu, 06 Mar 2025 11:48:34 -0800 (PST)
+	s=arc-20240116; t=1741290554; c=relaxed/simple;
+	bh=XJfj2IjX+cfbBfCUZB15uM51uhBAxMUtheYDfRvrsG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=H2oyjEGc96jiJ/G4M4Z6z/fzrL3F3LZ6bydMFmcHn/70i5P+kLgFmo1Vi8jugH8mv3ELl5tuNAu8Pxar1aH92XjnMQyAS5EWAZaYTJeAgO+dDt555PRdqzYzNmcB1Ja90wJwBWMtlIUbNZuFyHMDwSRW5NN23EhL0I4f2Nl6eok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AVyteuIh; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-390e6ac844fso953269f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 11:49:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741290513; x=1741895313; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IwABPoxBGNDDl4dsMEfG8YvhAybcbbsFvKADV+Rz3OA=;
-        b=c9RiLJkPxSHYpMSWc46rBTixTQHmDgNUt2SufKVa2mjvUDax0agHYc3VcYVOcZwjBw
-         qz04KIZSo8D66JKVWhLxR7yw/jdMAzZZkBFEqTpfsNr1XgQyI4hPt7hHeMqNBjYUnunX
-         NGEIsLdGTMTjwX+Fa5JNsm/fTyzLThmuWYG1i8X6OKsKmYYxlcPqCJ/8mtArqe1zhqat
-         CE6VyjjBkzRxtExfAIsfTiNXsjrVJMtdDb43Za3HMxwX19mmpkN2RZ6j8zUlso9FslKK
-         tOCX8c/CMiParJQkExrjNANMYEPG3LnD3nmxLaaojOHj1V3Er1U8gWJg71C1OQN59GN2
-         +dQw==
+        d=linaro.org; s=google; t=1741290551; x=1741895351; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=12HOUV0N5LQ2gOm+72FrFChkl6gwbWnu1Vh8fRPsrGk=;
+        b=AVyteuIhnvCmOWtB8xDnGN7AoQjB/ZixK8AXKWqiBM49ds/a59/XAWlGmALEwapeAV
+         XH0w3zJtNUtGOA4kWDnAckb1EdkT9gjoNH8TH1XC7UuszbDgWeDkLppRxPkYC9+a9M0v
+         ldwxyvkCV7w6Xooj0+pfe6bw68tOX251ygnZcH/7Fq//9A27s4L2mQYUCMSE8vruSURC
+         fUNoU/ZSI9OpM3dsoXTguVtw87ngXax+OEkNNTbzYzV1sLLmLaay6NkTrlDKOFicdhAG
+         o0C7h6XjuQzUhzhKoOeA5Z9693rXZz6IDJQ6SdCTf8KJsaNK2KNOnftwxpMbyvOhyYw7
+         qV5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741290513; x=1741895313;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IwABPoxBGNDDl4dsMEfG8YvhAybcbbsFvKADV+Rz3OA=;
-        b=Zg1oP4NaCO3YnD3+dVUt9OBPWg1Ob1a1+yTFUE5yYoInxfy2g7gNK3KjafccQeLA7b
-         gVla0S+96yIFnDfdDUGYpfDzMx+hI3Z+Lc1DEYycN5VlZ8ptnc1AcQMuTRRr3I5fap6R
-         0WfRl1hTET921RrwdU3JTSAXaMDXbefF6oPf41mAa+7mMfXCUyb6vvhaeg7P4DtrqZRE
-         tOvc4JJgA1cKYgMYOi58vrPp7LsX55SEhLC70p1gsOrCNzCO2LMlml09eVwcJCdRDQJL
-         0vaKwMA9AQXI6Js8g4FrHbIRhVsn2ZxdZJx9G0xGmLkNlLvMTpzguqNbCcUC9KkyqyWZ
-         Ydgg==
-X-Forwarded-Encrypted: i=1; AJvYcCUO34sqNeScP86u9xozTZkVOxe04tFFGY6EqbwsCXblBPlnDZg9l9GUH4gqfCy/VxMlDipEECEepmQV/xnK@vger.kernel.org, AJvYcCUfn/4NOYW4Jn6BZDGjtHaLJZI1hs5fjHvbMocwZQglKx85/b9gpMPlI7yKU2XTN0PyAeg8fwotAWdF@vger.kernel.org, AJvYcCVdNOHx7jF+eyB8ZBK3Sfjj0BTr4gFF7l5kpfvhu83xpeKLtrdL7XENaBnWu3ynL5OoJMPKcuVBJRFl@vger.kernel.org, AJvYcCWq8Suh+9rRX9UOQaOzrDweq2O6T45/jc16MXyOdlcO5SbtHgOlfHDpNpn43pwLuKxA7FmmVrEvh2jcEWY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKc+U3IyI0xK4wcbOmcHKdInziaVWp83yYF1xRLJaL63k4pnJH
-	4qQGn7vQilqVmrqKCj9hV3W5cDVPtOpl5BwET6yfxmXEPs9vDksLM9tHzJNd5xtH5/sq437hJLI
-	o1XArJj+SsXIl4b2ZPM1nTrVsq4M=
-X-Gm-Gg: ASbGncsQ6prBK6bECUJ0fFHjDMR/604+9g1hnZOXNkwkiXVgYmQEbQwPs2OoEN1RjCc
-	u6aNoVKUJIwgaqozd41lAPOfg3OQpncbNgobSxQm82l2WfIiMT/tfOSfjTtt4iB9Od+T38Gcwka
-	8EhL2MYdbhT1ut81uMuRsp/aju72o=
-X-Google-Smtp-Source: AGHT+IESx6J0fQPhrHzv5lys/ppFZv5l4yXAH23ndOkrFvwzwq/OeoVrFxPPglCoCuorF3oRyYLsUiZIFyRXuk0r6ks=
-X-Received: by 2002:a5d:64c3:0:b0:391:31c8:ba58 with SMTP id
- ffacd0b85a97d-39132d16dd6mr307761f8f.10.1741290512846; Thu, 06 Mar 2025
- 11:48:32 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741290551; x=1741895351;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=12HOUV0N5LQ2gOm+72FrFChkl6gwbWnu1Vh8fRPsrGk=;
+        b=PPzHBa/4lDxg52+JCEX6G6gOA3ZgpNVTlub5MeexwXzGq6xfaRTXCcHsLZl1PJg7C2
+         vXNb/3h7mMAAT3Kl5/8TIneRyGcr8FmjkyBUtApdO6IcTgE0M3SmliSiUspVOORBa+Ha
+         LrqeNHL7YU9l3mG7lYPS6HEziMzxz0aIB4THo/OWzkYoD5/Wl4vSO9rxtA6Jt141abqR
+         2iFujXGFtgTWVYW4uPjqkIfR6HNHB+AbLUwYQM7ml/uWZJ7w0h6z1pFELnt0vWNvPTQE
+         5W8zLgl2sEPcaa1AdqAkP+5ZuH0R4I1XLNoMX4q+XnGGHfHguRorAtftfEMQSIVDkWx7
+         MpWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXJ6YTTJ62fCx56zkCKhUQxftF08YTSh9/5ovHp/3VEqxFq4PqX+zqcZeQm2yc82fecPztu8imtzBrRSjs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze9mD50BcnAYDNOZ5qb7Wzt2/Amq206vd/5KL6zu/88f/VaB7e
+	ihtAiQS+C2CB14iveoyQa3AVixd1SzmnyqXeQ4CXCAQK4QUofkJZKd0nTbAmnwg=
+X-Gm-Gg: ASbGncsiA5aN4aVEI1Uw6EqcjL4yVewhh2pGh/2PoT1zP+6F8kdeJhwj8LOz+8kkEgt
+	i3t79MWTw7za1eEKEugdrvc9qgapHg6BgoeYHyoq0kOaJiVlb25NwrcxcApNZXd4hoK2Z3ngGFw
+	RbWoHwi9kare3p8UY5ToeCypHDV3H/cDaI8XO0G578eeE/Zd4IsJH4a5ul3n0DdKwgtj5+cdcJt
+	ET5oqs1mrmKte2bHnQl1ApgqShEF+6RVBdKUo0Ms17qLVm3vyRXkZHXa6uGX9BSDlaAWrtCtDGP
+	ugyr8c57gN2dYDcCojBroO5zKek9E0o0qah/PIiC77CqZtHiKQ==
+X-Google-Smtp-Source: AGHT+IGs4Yei7Uj3yACj+GZktDDXIAXgpcENDsnATVmO5YWfHDh8m1kzphPMYmCnef1sPY9l6157dQ==
+X-Received: by 2002:a5d:6d09:0:b0:38f:4d20:4a17 with SMTP id ffacd0b85a97d-39132d1f8acmr264061f8f.13.1741290551233;
+        Thu, 06 Mar 2025 11:49:11 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912bfdff72sm3009082f8f.36.2025.03.06.11.49.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 11:49:10 -0800 (PST)
+Date: Thu, 6 Mar 2025 22:49:06 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Konstantin Taranov <kotaranov@microsoft.com>
+Cc: Long Li <longli@microsoft.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	Shiraz Saleem <shirazsaleem@microsoft.com>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] RDMA/mana_ib: Use safer allocation function()
+Message-ID: <58439ac0-1ee5-4f96-a595-7ab83b59139b@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250225143501.68966-1-clamor95@gmail.com> <20250225143501.68966-8-clamor95@gmail.com>
- <04be5106-0d93-449c-b8a9-d8b3dc15ef24@gmail.com>
-In-Reply-To: <04be5106-0d93-449c-b8a9-d8b3dc15ef24@gmail.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Thu, 6 Mar 2025 21:48:21 +0200
-X-Gm-Features: AQ5f1JqPM8VmWqKAvqMUUYrU16-NlerNF4D8twXr8-KoJ5UNMcvW9sCYiBK9Y9U
-Message-ID: <CAPVz0n1ZTDZnZHu6R_YVfhDqkjcMV0xH1UHVih=bgv9DGoZ2nw@mail.gmail.com>
-Subject: Re: [PATCH v1 7/9] memory: tegra: Add Tegra114 EMC driver
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-	Georgi Djakov <djakov@kernel.org>, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-=D1=87=D1=82, 6 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 21:42 Dmitr=
-y Osipenko <digetx@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> 25.02.2025 17:34, Svyatoslav Ryhel =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > +     /* Read register to wait until programming has settled */
-> > +     readl(emc->regs + EMC_INTSTATUS);
->
-> Tegra4 TRM says this must be MC register and not EMC
->
+My static checker says this multiplication can overflow.  I'm not an
+expert in this code but the call tree would be:
 
-Are you sure? Tegra4 has no MC_INTSTATUS but it has EMC_INTSTATUS
+ib_uverbs_handler_UVERBS_METHOD_QP_CREATE() <- reads cap from the user
+-> ib_create_qp_user()
+   -> create_qp()
+      -> mana_ib_create_qp()
+         -> mana_ib_create_ud_qp()
+            -> create_shadow_queue()
+
+It can't hurt to use safer interfaces.
+
+Cc: stable@vger.kernel.org
+Fixes: c8017f5b4856 ("RDMA/mana_ib: UD/GSI work requests")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+There seems to be another integer overflow bug in mana_ib_queue_size() as
+well?  It's basically the exact same issue.  Maybe we could put a cap on
+attr->cap.max_send/recv_wr at a lower level.  Maybe there already is some
+bounds checking that I have missed...
+
+ drivers/infiniband/hw/mana/shadow_queue.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/infiniband/hw/mana/shadow_queue.h b/drivers/infiniband/hw/mana/shadow_queue.h
+index d8bfb4c712d5..a4b3818f9c39 100644
+--- a/drivers/infiniband/hw/mana/shadow_queue.h
++++ b/drivers/infiniband/hw/mana/shadow_queue.h
+@@ -40,7 +40,7 @@ struct shadow_queue {
+ 
+ static inline int create_shadow_queue(struct shadow_queue *queue, uint32_t length, uint32_t stride)
+ {
+-	queue->buffer = kvmalloc(length * stride, GFP_KERNEL);
++	queue->buffer = kvmalloc_array(length, stride, GFP_KERNEL);
+ 	if (!queue->buffer)
+ 		return -ENOMEM;
+ 
+-- 
+2.47.2
+
 
