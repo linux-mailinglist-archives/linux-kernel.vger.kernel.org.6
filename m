@@ -1,212 +1,143 @@
-Return-Path: <linux-kernel+bounces-549006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A13CA54C16
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:25:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ADF6A54C15
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:25:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76C727A5F5E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:24:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8D018948B1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:25:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C54B20E33F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A149D20E6E1;
 	Thu,  6 Mar 2025 13:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJ5mqzPr"
-Received: from mail-vk1-f173.google.com (mail-vk1-f173.google.com [209.85.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Vw2pCUUh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A31020E037;
-	Thu,  6 Mar 2025 13:25:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCB920E30A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 13:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741267509; cv=none; b=d0tTLc/h8GlHohsODcKsLj1W675L7z3cA99dcKdvmOgo2Pzas54haaBF0OTNj0UnIBSnebcyNxRP1fzDlS31PgNv0gPOHAvdhtqdg8Kr4exvHdKelBa/3nJkW7lFI+3B+Rb2qqnH5Ho+X/z8pHGhhnQMhWgWR1K7BvXKCtnl73U=
+	t=1741267510; cv=none; b=KiPSAoIxRduPy9EZc4jlu5WENv4E3YeiGZPf7N7KJhxKnC9hq0cZmefBi7NlLFw/pz7urClIeh3Gtk0vzW7dRLZyWopMq30mGQdvQoT7QGIv6OJUHlWXA/ICD1I0IScpzRO5PNWgeKH+CUJjrxzYBVJVQRkKOAnhzw+p3q6HNfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741267509; c=relaxed/simple;
-	bh=hFWuuPdbuYxcb+LTn5HhjxwnaOnWLb+LGyugAIBeud4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D8gibK0fdveCdiWE1uPwva32I9wrwR7DpzoyxCu4crTh/+DCsfHtCMgJ4pzKpZb+aZX5VW/ObQ4ItwkdFhCVFP92D2VTstv3GubhtI+zDnRt/J6kb8p140tw3rvGMuR2mni5QBbKtx6w1mtNinfZ2AevittaQkOc2IqrvJn66VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJ5mqzPr; arc=none smtp.client-ip=209.85.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f173.google.com with SMTP id 71dfb90a1353d-5237c18a97eso222833e0c.2;
-        Thu, 06 Mar 2025 05:25:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741267507; x=1741872307; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pczLQVMYKQNjopy0MycJrlivlSAhMtMp/TTkHXcLHZw=;
-        b=fJ5mqzPrLwuD6gjTJ3d4L2HrAE64bH89pLqeNHJ7YV3ffTpCH4xRzsYro1QdvpAxZy
-         pfSlx1+aqUMZwr/UYAxiQ2Bd9ViyBB/oMDNLwcqnY9kJtTafvBpw+31uX+wRluKLIxoN
-         xvwRPQ5W23W75WBrf3jHF50rCSt9HraNq7sGfHCjYMi8LvSyOSj5AiwgneUYvJ7S0gwl
-         gmM3vdpr7a9oEI0aQwTov7BlmYsLnWhRs13N/cdpw+LKz8+j/jolmlU0J3ccYg0RonwP
-         Vw1cK0N2KM1VpAzyItY5dUSqeXhoDJmG8HXxUybtKtvgQ/W9IIkHogWKGdgXDM8IyoBw
-         FTnw==
+	s=arc-20240116; t=1741267510; c=relaxed/simple;
+	bh=BaUEKFsnt/oGux8kiRaCu0JFUJtBvq84zkV5ZqVRACA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mmKrhz5+xoRfdF0cTfhdG2Kl80DZIqoz6OxuQ8Q7RTE5tyEqQPJzcusJ1P1/C/TzdVPzpk9qibgV5TmbGEDP+Vfrpmu4MgCXo0ZiIg5YzhnPMlWdc8daEQg3N6ufGkIOBADJ+EUlPE/DKD328c7qSpfQgtkPIUxRIhNgJk/ULcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Vw2pCUUh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741267507;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=AMe2L544kp/d38WLjn3xMcZvhSWCOUekm7mNyssXwXc=;
+	b=Vw2pCUUhjY8aXJ6JGkj6HVUbkga7b7M6e3g8LRAh4To14aoxmGjO9q1IjBNVNtPylaW1Ub
+	GMo8VESZL8cYobIWOqyrNfYDceK1A6HX4lHw1UHrOvB7zH6i/9RXoX02lvRwgumv8UMJO7
+	t9oEx1Q9+px1VkbIss2lg83fggLjel0=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-537-lVVALDmNMKqwxf9GqNZxjQ-1; Thu, 06 Mar 2025 08:24:56 -0500
+X-MC-Unique: lVVALDmNMKqwxf9GqNZxjQ-1
+X-Mimecast-MFC-AGG-ID: lVVALDmNMKqwxf9GqNZxjQ_1741267495
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-391079c9798so310643f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 05:24:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741267507; x=1741872307;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pczLQVMYKQNjopy0MycJrlivlSAhMtMp/TTkHXcLHZw=;
-        b=edckGIrDFmrbeFgWD5vU0YvL+51awJC/ncqtxeVihDR+RI4YKVx6zKeTGvqMZkk7cA
-         jjCPYXX9hf2FleMY4ryrlgegiBZpQO7TLGlawk/eh4Lpgc8Bh/9jaP1vpy3WaVcPaRlP
-         TJ5Vp5sPb0fSuiM3GH3VfGJNYAtd34t1KXhO+qiMcQOKoW0LWzcxRdee5VpUC3k0myrN
-         QvwzU8ZLAsl+Ty+Zw8R9sE4DBgpX95LaHtZRH9KeIkLogPGxsmrwB8wdiTn7jHJIsGYP
-         XF+h9ZL0JLYH2kRVQCIjpYmsSoG7SZzpYLLyA+vqGtXrXm9Fpc9uIRUk1lHoZxpiGS8e
-         vA7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVaf8dAil7I1D7TOooMeDeUl5eKpLnTVabw2uwiMgeCQ5/jxgAnz4c40y49PorjeNqvzcfpbQkXRbS3xRWz@vger.kernel.org, AJvYcCVt6XZVXdmWKQ3PH66jfja7Wlv9sYLrGJem8Y04s52tpkJ2EFiLY+9JQfGZDV410BSoe8vTCbJX/2A=@vger.kernel.org, AJvYcCWXELQmbfq5OsK8yoEvMatNeJJsOWsKwchDWaPo/YZgmJESSP4Ct+Zw0HgHyZM3WlqZutPo7nEuJpKcLr/xoGY4yjU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYhB5BaVv08BTgEj2uKhgAuiPUHmuVKrQLXvUehbesbIoClaZI
-	HpcQpYh/cjsJki97rMA23ECCP9ZCJ2FpVYq1RB6uW51AXiiUXKLGAY7i4eZLGDqPAOfZpJNZQWF
-	ClKcP9COssVIYm/Tr+jp0XrvdrkY=
-X-Gm-Gg: ASbGncsQk6btX+NyFCs3e7sF8rc84Bq3/xH4QM1Nks4mG+nhL6vd49TU3eQPm5AMWlq
-	D4IixpEIdj1r8AWeUATO5GllYIkdizHIJXJnajNavJ7t8I2yLnsX44fer7Qd4CXAzKIAFqw2ZNU
-	/sEHAQVdrA3LS317JriEAMjMOJ8w==
-X-Google-Smtp-Source: AGHT+IHgiM4ICdjafzmTABqUctgFSAnbeftgAaTIqLRQol12JOmBumy+PQVI/b3uj4OJSh5eWKjsIrneXRlQI/vMI3s=
-X-Received: by 2002:a05:6122:1d55:b0:520:652b:cdf9 with SMTP id
- 71dfb90a1353d-523c617d306mr4101936e0c.5.1741267506786; Thu, 06 Mar 2025
- 05:25:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741267495; x=1741872295;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AMe2L544kp/d38WLjn3xMcZvhSWCOUekm7mNyssXwXc=;
+        b=fow3kR5xNjHGwdkYmmUqqG2xdUqePallkWU+1f4uLtT1wAsWvKNZWRN44ygHAmyNbx
+         1yCSVMnobrBRJVUxeB+IUT5AiCAhiTaVp75Z8jsiuuXQmPNxDCdBdkrJZDAWyt3QV3BG
+         YJxvOr78UE068y6bEu9zcfYvr5SMQ7kNMQ5yid+4bvKhwXmUm4P52OpuF0tNg9HT+low
+         oeIgYNt7v1LdNzMZOkyQhUULPkin0QudkfU0C8aFMt0S6YiRwQBfpjjrh1JweqnzIDA2
+         +8QodC0oM0dJExCknnOHRYRj2EAPNYqGKAQcdVIqKdO2uFN5GXAHkxGWiKbQzFCz6mwH
+         V4mw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9uMNcArIfBq9XxJH952x8tYZTQ1eXX0w3G5/8Vz+4/R8+sYS883NShhycKi3iL0d5DsTZGN0sbZU1tks=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytVXxFEptZOY8kG+DBrV8KCKLZ+mayx4I4ZQ/j4lRTFP3Ieo0W
+	Qz7Gu4sEo+obXT9snljFCoG4TMDur7EGBY8TrQ29Sa+T3uMU1jRnIftMORivOYDl43HkOlJC0Pl
+	MYa8CMq/TYBzMf1o6PVWmVg7FJ075PxunqlqmKEsOmmHsDnq00oAV6qh5PCSBBA==
+X-Gm-Gg: ASbGncsf+seqJYT9VokEztEb3SgB0jv5bICsjLocTqnsndeCVv9D8IcLBN7xFyRyF7j
+	+W+d4a6VuasaPP08nWsh2q6HsHP3BFZ1SOb54yRI7uPcjj4EjNlwp48JZtlvVPGZToNOu6fEKAN
+	LpS2euihj8458m8v+strRUy5qc+9hPlRa16bX863MreCgB0lWLGoo063xljEPlUXWuHgPFodP3T
+	NQDOK3DWphkQrbXPyACqsOskQtwOCAV6/e5tuGQGvhaprowtUyNeMomyiuIIp766TVEyDMawQW3
+	+gB986Kg0AdESIeLeAIJBvaFHNZbFZnG0sW1Nj/WKclplzooNohix30=
+X-Received: by 2002:a05:6000:42c7:b0:390:f9d0:5e4 with SMTP id ffacd0b85a97d-3911f741261mr5096853f8f.21.1741267494952;
+        Thu, 06 Mar 2025 05:24:54 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEIwqvoLsZ7nWE/oVtc7eKMKzGDa6NvX7GYnOgsSJBfK4lxmD7NxGmoi2sk4zoXn8lH+Jx7Gg==
+X-Received: by 2002:a05:6000:42c7:b0:390:f9d0:5e4 with SMTP id ffacd0b85a97d-3911f741261mr5096838f8f.21.1741267494530;
+        Thu, 06 Mar 2025 05:24:54 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfdfdsm2117782f8f.34.2025.03.06.05.24.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 05:24:53 -0800 (PST)
+Message-ID: <3bfd4238-6954-41a3-a5a3-8515a3ac9dce@redhat.com>
+Date: Thu, 6 Mar 2025 14:24:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218114353.406684-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250218114353.406684-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdUhZ_qV=16jnWD6cPfuMmZpDUeRMTUgbqy=Mkzp-29=bA@mail.gmail.com>
- <CA+V-a8uvfb=a=K1YzGNeZdiAzeXWMpdbxj=6UuL_xQfxKmOBZA@mail.gmail.com> <CAMuHMdXermXD2yCJxYjw-bmWKiazF5LVJ8PHoELKEdp_q2UnfQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdXermXD2yCJxYjw-bmWKiazF5LVJ8PHoELKEdp_q2UnfQ@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 6 Mar 2025 13:24:40 +0000
-X-Gm-Features: AQ5f1JrbmqE4Ljn85aeM0u0c_u1ndtYdv9GmzW5Js2FPoUxJ69rtGqH1qcFxjY0
-Message-ID: <CA+V-a8tRptyKJ2fmawvyN89bEMeN==7EeA7VXW24EpXenkUK_w@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: renesas: rzv2h-cpg: Add support for enabling PLLs
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH drm-next 1/2] vmalloc: Add atomic_vmap
+To: Matthew Wilcox <willy@infradead.org>,
+ Ryosuke Yasuoka <ryasuoka@redhat.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, kraxel@redhat.com,
+ gurchetansingh@chromium.org, olvaffe@gmail.com, akpm@linux-foundation.org,
+ urezki@gmail.com, hch@infradead.org, dmitry.osipenko@collabora.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-mm@kvack.org
+References: <20250305152555.318159-1-ryasuoka@redhat.com>
+ <20250305152555.318159-2-ryasuoka@redhat.com>
+ <Z8kp9Z9VgTpQmV9d@casper.infradead.org>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <Z8kp9Z9VgTpQmV9d@casper.infradead.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Geert
+On 06/03/2025 05:52, Matthew Wilcox wrote:
+> On Thu, Mar 06, 2025 at 12:25:53AM +0900, Ryosuke Yasuoka wrote:
+>> Some drivers can use vmap in drm_panic, however, vmap is sleepable and
+>> takes locks. Since drm_panic will vmap in panic handler, atomic_vmap
+>> requests pages with GFP_ATOMIC and maps KVA without locks and sleep.
+> 
+> In addition to the implicit GFP_KERNEL allocations Vlad mentioned, how
+> is this supposed to work?
+> 
+>> +	vn = addr_to_node(va->va_start);
+>> +
+>> +	insert_vmap_area(va, &vn->busy.root, &vn->busy.head);
+> 
+> If someone else is holding the vn->busy.lock because they're modifying the
+> busy tree, you'll corrupt the tree.  You can't just say "I can't take a
+> lock here, so I won't bother".  You need to figure out how to do something
+> safe without taking the lock.  For example, you could preallocate the
+> page tables and reserve a vmap area when the driver loads that would
+> then be usable for the panic situation.  I don't know that we have APIs
+> to let you do that today, but it's something that could be added.
+> 
+Regarding the lock, it should be possible to use the trylock() variant, 
+and fail if the lock is already taken. (In the panic handler, only 1 CPU 
+remain active, so it's unlikely the lock would be released anyway).
 
-On Thu, Mar 6, 2025 at 1:16=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
-.org> wrote:
->
-> Hi Prabhakar,
->
-> On Thu, 6 Mar 2025 at 14:04, Lad, Prabhakar <prabhakar.csengg@gmail.com> =
-wrote:
-> > On Wed, Mar 5, 2025 at 4:42=E2=80=AFPM Geert Uytterhoeven <geert@linux-=
-m68k.org> wrote:
-> > > On Tue, 18 Feb 2025 at 12:44, Prabhakar <prabhakar.csengg@gmail.com> =
-wrote:
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >
-> > > > Some RZ/V2H(P) SoC variants do not have a GPU, resulting in PLLGPU =
-being
-> > > > disabled by default in TF-A. Add support for enabling PLL clocks in=
- the
-> > > > RZ/V2H(P) CPG driver to manage this.
-> > >
-> > > Does it make sense to enable the GPU PLL if no GPU is present?
-> > >
-> > No it doesn't,  PLLGPU is enabled on needs basis ie if GPU node is
-> > enabled the PLLGPU is enabled, if GPU is disabled the PLLGPU will be
-> > untouched and will remain OFF. Note I also have a patch which does
-> > disable the PLL's but I have not added as this isn't tested with the
-> > full system running and I'm not sure if there will be any radiation if
-> > we turn ON/OFF PLLs (Im discussing this internally once approved I
-> > will add support to disable PLLs too).
->
-> OK. It just sounded a bit strange in the patch description,
->
-I'll reword it to make it clear.
+If we need to pre-allocate the page table and reserve the vmap area, 
+maybe it would be easier to just always vmap() the primary framebuffer, 
+so it can be used in the panic handler?
 
-> > > > Introduce `is_enabled` and `enable` callbacks to handle PLL state
-> > > > transitions. With the `enable` callback, PLLGPU will be turned ON o=
-nly
-> > > > when the GPU node is enabled; otherwise, it will remain off. Define=
- new
-> > > > macros for PLL standby and monitor registers to facilitate this pro=
-cess.
-> > > >
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
-om>
-> > > > ---
-> > > >  drivers/clk/renesas/rzv2h-cpg.c | 57 +++++++++++++++++++++++++++++=
-++++
-> > > >  1 file changed, 57 insertions(+)
-> > > >
-> > > > diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/=
-rzv2h-cpg.c
-> > > > index 1ebaefb36133..d7230a7e285c 100644
-> > > > --- a/drivers/clk/renesas/rzv2h-cpg.c
-> > > > +++ b/drivers/clk/renesas/rzv2h-cpg.c
->
-> > > >  #define PLL_CLK_ACCESS(n)      (!!((n) & BIT(31)))
-> > > >  #define PLL_CLK1_OFFSET(n)     FIELD_GET(GENMASK(15, 0), (n))
-> > > >  #define PLL_CLK2_OFFSET(n)     (PLL_CLK1_OFFSET(n) + (0x4))
-> > > > +#define PLL_STBY_OFFSET(n)     (PLL_CLK1_OFFSET(n) - (0x4))
-> > >
-> > > Let's subtract 4...
-> > >
-> > > > +#define PLL_MON_OFFSET(n)      (PLL_STBY_OFFSET(n) + (0x10))
-> > >
-> > > ... and add 0x10. Where are we now? ;-)
-> > >
-> > > I think it would be better to store the PLL base offset instead of th=
-e
-> > > PLL CLK1 offset in cpg_core_clk.cfg.conf, and define offsets
-> > > relative to that:
-> > >
-> > You mean PLL_STBY offset in cpg_core_clk.cfg.conf and have the below
-> > CPG_PLL_XX macros.
->
-> Exactly, the PLL_STBY offset is the "base offset" of the various
-> CPG_PLL_* registers.
->
-> > Or maybe instead of using a conf can I add the below?
->
-> Sure, sounds fine!
->
-Thanks.
+Best regards,
 
-> > +/**
-> > + * struct pll - Structure for PLL configuration
-> > + *
-> > + * @offset: STBY register offset
-> > + * @clk: Flag to indicate if CLK1/2 are accessible or not
-> > + * @sscen: Flag to indicate if SSCEN bit needs enabling/disabling
-> > + */
-> > +struct pll {
-> > +    unsigned int offset:8;
-> > +    unsigned int clk:1;
-> > +    unsigned int sscen:1;
->
-> This is a new flag?
->
-I was experimenting with this so just included this hunk but I wont
-add it as part of the current submission.
+-- 
 
-> > +};
-> > +
-> > +#define PLL_PACK(_offset, _clk, _sscen) \
-> > +    ((struct pll){ \
-> > +        .offset =3D _offset, \
-> > +        .clk =3D _clk \
-> > +        .sscen =3D _sscen \
-> > +    })
-> > +
-> > +#define PLLCA55        PLL_PACK(0x64, 1, 0)
->
-> 0x60
-Ouch.
+Jocelyn
 
-Cheers,
-Prabhakar
 
