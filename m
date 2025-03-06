@@ -1,186 +1,1000 @@
-Return-Path: <linux-kernel+bounces-548119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1AE6A54040
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:06:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 709FAA54043
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:07:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 035F0189127E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:06:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86A103AA9F0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065A218C930;
-	Thu,  6 Mar 2025 02:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wz6R0vb3"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72491BE46
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 02:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4A8F18DB10;
+	Thu,  6 Mar 2025 02:07:03 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197CD18C930;
+	Thu,  6 Mar 2025 02:06:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741226790; cv=none; b=HPjCMiyv1xdHyqWydGY6oxi/CNe7WYGXNhdwzOYCLJ+zjSx7ju/jEgYmFijkT4MBZUrAQcSL5wr5UaImEHbINtXnS4aMcXKD9sd0Tw6HjERGxGUZzf4p3laBJ2aX0SF1NvUMsUw0V3IcQdvNu0IGfBxgatxmo1FZ2G3tHCWxTNU=
+	t=1741226822; cv=none; b=d9CTbLCXbQ5tPwt7c880G0fr5vxP6coFp0F5Po+9Yg+3iDChgDlMGbqoFjFxT2Y9BrcK+DiRVocpqSx0LMbpoI9mCrMO98p2vpteZ0kFnUdBFSkY/w58Ou/XN6lxqhT82yJ32JcvxMoOdkdJkd4CViU8dZbKdD1pGTa6xDOalIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741226790; c=relaxed/simple;
-	bh=+BcOWd+eKkUGYlUjOMq2ynW3kiA0RuDGuslOf3cowCM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SXpmHcXBEQc/7awZ/5/LKe9a2BHauzJzY5IjHw7gHDUl6fGwXkuqAkTdHn4ArL7oZV2t5lOwX66Xf1gN9KfGpUX0IFeuRokcrvFwWCeW5YOw4MYjya1YSyC9phKjG6Smrf7JJXTZAwBu9I7Sg9Qg8K2Mt3CCySDMVVAMNP9Q/BI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wz6R0vb3; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-54943bb8006so183770e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 18:06:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741226786; x=1741831586; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oxbxNY786YrsKRIbDHKdRfexTZ85j7EEsRpteNUREfI=;
-        b=wz6R0vb3xMS8gAjs0EfBz/IybrNHKPPC47CkZk1mgO5VcrXAImJ7vjDLBB7mhf7MLd
-         TVF+udmKiPJ/nf3kcAUDTFeZkE4dQnoudayN1tXzVhLz0eK7Mh2PHlxDyKT4sptz3K9x
-         qssEp9vvxJzR5OxxPNM0DfHAg4KcWj5EXFQJNIho1E8RyQkDxQPJxGhCMyFjqwhRg2A5
-         xsxnU6zWpj8OOeos+Ru7RRSaNr8KxNCSR1wNxC88Zb+VW4PEbnlBcFMydz9VvJAVM5pP
-         B0DHrTrmAt/cCDgvbPxVVFw27TpNIFE8Y1IbnRBiDEE0G9QGQSIcP3zLq8uSUopMk5mH
-         PJOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741226786; x=1741831586;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oxbxNY786YrsKRIbDHKdRfexTZ85j7EEsRpteNUREfI=;
-        b=YL3WgfKOXq2QND8vbLhPV3P1vKSxqFqxJpVmdjAekifMfHy/d5ojdYqcT98F4GDXze
-         EYpXfMiUl0laOEBJkTXp7XhxW2elRjPwST0VvlWvsoNboX0xJDkczXC1acDIK68IZuZR
-         wmmG5WlKb6S+rTsh+ETwSorlsvcmePvT8sNqez5gJxhPnSK0Ut1ks0rOCNlTZtlucmsu
-         d394WYXFI2d0Mw9g/o1ro6vTPoLjtEUecx91Rn+bst4zwbUuc4Xx8e82Rl221ABv/5za
-         HwjFuihCCTyoLHXdvTIQw9E6cB4LtrU6fnCQygxYBXR/sibW5QEH4iwdXkcIhaicshIb
-         swAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVBufFVq5Chfc0t3BiS61wJw1EWw+2RyyZ5iA/eHoPCX6yly8vX/7We/cLuZrt/CSA7OU5Pn7eNERDG8ws=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEMLctAcEl2DHrrJaeyd3xtm531YI/2e7ht7a9U/D7izhUIh6b
-	0hOZN4V1vynbpo9ZGMyEkI1gfZWopCR0PceKlq1RDXbmnh3S/HXp16waI/FF9c4=
-X-Gm-Gg: ASbGncvbMdmnOqTAR5JBFRFvWLiplnMyBjLWN9N6qMHV+0bgi36lOdTM4CgV7peKwzF
-	j4zOX4GA/5jaCjTx6P7bfkMj8+jMYnkNqHNDeRMBUNNkgS8U4D+j5oN/5HpK57NRgLaN9ctD+87
-	6Iz54094cD52EGqH2pZlunR/tjwN5y+sEZcA77thQj4Jr57KC40+I7oFoAQXP00F5acJhkUXZFY
-	PlDkvshQ/ttAZVAtIdkyHyPjnCQJ3Q31cv1Fbftr7D1dWVZw9Q7CsChqL6/FutR699yu4cjlnrC
-	7HDI8Mnx7E6ane4EqGnarAIeevMUilOhlkyEIxMqeaeQ8wWdfqdUz3Ox1vPJM9UWuesK7PVfnqA
-	i+keWEYm3chummUljdFXBjMr1
-X-Google-Smtp-Source: AGHT+IHWHRcySCxYc1B0y6PhF0rI3/lSPzlG5f7R9rUTKQMeZ07z2qQaZyArRoFRqnnRWxqa+VOdOg==
-X-Received: by 2002:a05:6512:1386:b0:545:81b:1510 with SMTP id 2adb3069b0e04-5497d32f4ffmr1641136e87.2.1741226786379;
-        Wed, 05 Mar 2025 18:06:26 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b0bcf30sm27665e87.115.2025.03.05.18.06.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 18:06:24 -0800 (PST)
-Date: Thu, 6 Mar 2025 04:06:22 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Anusha Srivatsa <asrivats@redhat.com>
-Cc: Michael Trimarchi <michael@amarulasolutions.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	Tejas Vipin <tejasvipin76@gmail.com>, Doug Anderson <dianders@chromium.org>
-Subject: Re: [PATCH] drm/panel/synaptics-r63353: Use _multi variants
-Message-ID: <sbimsyq2xrcxpp2ha2vequtwfl5bss7clw2snkqsbgitosnkub@it35hzscp3jc>
-References: <20250305-mipi-synaptic-1-v1-1-92017cd19ef6@redhat.com>
+	s=arc-20240116; t=1741226822; c=relaxed/simple;
+	bh=Z8hp8gLY0imR15AQ07IhombHFKv2EjsvF5zpx0vXjjY=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=PhkMpFK8K+r3tKHX/DF3VLVEqSr4lyp7eoD8s1MwvycBdCfm+CQkkkEIDpT53CDwVOmmdw/SVng35unlWq87Q30+CAGPPWFmFJvaXCA3xgSxpLYowtXxQ+zgvbPX3/PGwKrnzBNEQE8DIPSd/Cpd2pvomCp5Qlj/2QSG40vcTUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.24])
+	by gateway (Coremail) with SMTP id _____8AxGHE4A8lnbceLAA--.43202S3;
+	Thu, 06 Mar 2025 10:06:48 +0800 (CST)
+Received: from [10.20.42.24] (unknown [10.20.42.24])
+	by front1 (Coremail) with SMTP id qMiowMAxDcUyA8lnRJ04AA--.11306S3;
+	Thu, 06 Mar 2025 10:06:45 +0800 (CST)
+Subject: Re: [PATCH 2/2] irq/irq-loongarch-ir:Add Redirect irqchip support
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: kernel@xen0n.name, corbet@lwn.net, alexs@kernel.org,
+ si.yanteng@linux.dev, tglx@linutronix.de, jiaxun.yang@flygoat.com,
+ peterz@infradead.org, wangliupu@loongson.cn, lvjianmin@loongson.cn,
+ maobibo@loongson.cn, siyanteng@cqsoftware.com.cn, gaosong@loongson.cn,
+ yangtiezhu@loongson.cn, loongarch@lists.linux.dev,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250303101533.31462-1-zhangtianyang@loongson.cn>
+ <20250303101533.31462-3-zhangtianyang@loongson.cn>
+ <CAAhV-H4G2qk69LF41VFoFgd7ZBAqAFB=hA7PMkaxXdNVEX-WyA@mail.gmail.com>
+From: Tianyang Zhang <zhangtianyang@loongson.cn>
+Message-ID: <ce2e8576-42de-2a5d-3a6a-2d4aede88567@loongson.cn>
+Date: Thu, 6 Mar 2025 10:06:23 +0800
+User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305-mipi-synaptic-1-v1-1-92017cd19ef6@redhat.com>
+In-Reply-To: <CAAhV-H4G2qk69LF41VFoFgd7ZBAqAFB=hA7PMkaxXdNVEX-WyA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-CM-TRANSID:qMiowMAxDcUyA8lnRJ04AA--.11306S3
+X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
+X-Coremail-Antispam: 1Uk129KBj9fXoWfWr15GF1rKry7Xr1fKr47Jrc_yoW5Ar4xWo
+	WfJF4xtw4fWr18CrW5K3y2qFy2v34rCr48Aa1fJrsrZFn8tay5CrW7G3yYvFWagF1qqF47
+	Ja4xtwn8CFW2qwn3l-sFpf9Il3svdjkaLaAFLSUrUUUU5b8apTn2vfkv8UJUUUU8wcxFpf
+	9Il3svdxBIdaVrn0xqx4xG64xvF2IEw4CE5I8CrVC2j2Jv73VFW2AGmfu7bjvjm3AaLaJ3
+	UjIYCTnIWjp_UUUOb7kC6x804xWl14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI
+	8IcIk0rVWrJVCq3wAFIxvE14AKwVWUXVWUAwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xG
+	Y2AK021l84ACjcxK6xIIjxv20xvE14v26r4j6ryUM28EF7xvwVC0I7IYx2IY6xkF7I0E14
+	v26r4j6F4UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v2
+	6rxl6s0DM2kKe7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
+	XwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
+	k0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l
+	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI
+	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+	4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU2pVbDUUUU
 
-On Wed, Mar 05, 2025 at 07:01:41PM -0500, Anusha Srivatsa wrote:
-> Move away from using deprecated API and use _multi
-> variants if available. Use mipi_dsi_msleep()
-> and mipi_dsi_usleep_range() instead of msleep()
-> and usleep_range() respectively.
-> 
-> Used Coccinelle to find the multiple occurences.
-> SmPl patch:
-> @rule@
-> identifier dsi_var;
-> identifier r;
-> identifier func;
-> type t;
-> position p;
-> expression dsi_device;
-> expression list es;
-> @@
-> t func(...) {
-> ...
-> struct mipi_dsi_device *dsi_var = dsi_device;
-> +struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi_var };
-> <+...
-> (
-> -mipi_dsi_dcs_write_seq(dsi_var,es)@p;
-> +mipi_dsi_dcs_write_seq_multi(&dsi_ctx,es);
-> |
-> -mipi_dsi_generic_write_seq(dsi_var,es)@p;
-> +mipi_dsi_generic_write_seq_multi(&dsi_ctx,es);
-> |
-> -mipi_dsi_generic_write(dsi_var,es)@p;
-> +mipi_dsi_generic_write_multi(&dsi_ctx,es);
-> |
-> -r = mipi_dsi_dcs_nop(dsi_var)@p;
-> +mipi_dsi_dcs_nop_multi(&dsi_ctx);
-> |
-> ....rest of API
-> ..
-> )
-> -if(r < 0) {
-> -...
-> -}
-> ...+>
-> 
-> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Cc: Tejas Vipin <tejasvipin76@gmail.com>
-> Cc: Doug Anderson <dianders@chromium.org>
-> Signed-off-by: Anusha Srivatsa <asrivats@redhat.com>
-> ---
-> Previous attempt for this change was addressed in:[1]
-> The series did not handle returns properly and still
-> used msleep() and usleep_range() API.
-> It also collided with an Tejas's similar efforts.
-> 
-> Will be sending the patches per driver instead of
-> major haul of changes.
-> 
-> Following [2] for reference.
-> 
-> [1] -> https://patchwork.freedesktop.org/series/144824/
-> [2] -> https://lore.kernel.org/dri-devel/20250220045721.145905-1-tejasvipin76@gmail.com/#iZ31drivers:gpu:drm:panel:panel-sony-td4353-jdi.c
-> ---
->  drivers/gpu/drm/panel/panel-synaptics-r63353.c | 64 +++++++-------------------
->  1 file changed, 17 insertions(+), 47 deletions(-)
-> 
->  
-> -	ret = mipi_dsi_dcs_set_display_on(dsi);
-> -	if (ret < 0) {
-> -		dev_err(dev, "Failed to set display ON (%d)\n", ret);
-> -		goto fail;
-> -	}
-> -
-> -	return 0;
-> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
->  
-> -fail:
-> -	gpiod_set_value(rpanel->reset_gpio, 0);
-> +	return dsi_ctx.accum_err;
+Hi, Huacai
 
-You've lost panel reset in case of an error. The rest LGTM.
+在 2025/3/3 下午10:34, Huacai Chen 写道:
+> Hi, Tianyang,
+>
+> The title can be "irq/loongarch-ir: Add Redirect irqchip support".
+OK, I got it
+>
+> On Mon, Mar 3, 2025 at 6:15 PM Tianyang Zhang <zhangtianyang@loongson.cn> wrote:
+>> The main function of the Redirected interrupt controller is to manage the
+>> redirected-interrupt table, which consists of many redirected entries.
+>> When MSI interrupts are requested, the driver creates a corresponding
+>> redirected entry that describes the target CPU/vector number and the
+>> operating mode of the interrupt. The redirected interrupt module has an
+>> independent cache, and during the interrupt routing process, it will
+>> prioritize the redirected entries that hit the cache. The driver
+>> invalidates certain entry caches via a command queue.
+>>
+>> Co-developed-by: Liupu Wang <wangliupu@loongson.cn>
+>> Signed-off-by: Liupu Wang <wangliupu@loongson.cn>
+>> Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
+>> ---
+>>   arch/loongarch/include/asm/cpu-features.h |   1 +
+>>   arch/loongarch/include/asm/cpu.h          |   2 +
+>>   arch/loongarch/include/asm/loongarch.h    |   7 +
+>>   arch/loongarch/kernel/cpu-probe.c         |   2 +
+>>   drivers/irqchip/Makefile                  |   2 +-
+>>   drivers/irqchip/irq-loongarch-avec.c      |  24 +-
+>>   drivers/irqchip/irq-loongarch-ir.c        | 576 ++++++++++++++++++++++
+>>   drivers/irqchip/irq-loongson.h            |  12 +
+>>   include/linux/cpuhotplug.h                |   1 +
+>>   9 files changed, 612 insertions(+), 15 deletions(-)
+>>   create mode 100644 drivers/irqchip/irq-loongarch-ir.c
+>>
+>> diff --git a/arch/loongarch/include/asm/cpu-features.h b/arch/loongarch/include/asm/cpu-features.h
+>> index fc83bb32f9f0..03f7e93e81e0 100644
+>> --- a/arch/loongarch/include/asm/cpu-features.h
+>> +++ b/arch/loongarch/include/asm/cpu-features.h
+>> @@ -68,5 +68,6 @@
+>>   #define cpu_has_ptw            cpu_opt(LOONGARCH_CPU_PTW)
+>>   #define cpu_has_lspw           cpu_opt(LOONGARCH_CPU_LSPW)
+>>   #define cpu_has_avecint                cpu_opt(LOONGARCH_CPU_AVECINT)
+>> +#define cpu_has_redirectint    cpu_opt(LOONGARCH_CPU_REDIRECTINT)
+>>
+>>   #endif /* __ASM_CPU_FEATURES_H */
+>> diff --git a/arch/loongarch/include/asm/cpu.h b/arch/loongarch/include/asm/cpu.h
+>> index 98cf4d7b4b0a..33cd96e569d8 100644
+>> --- a/arch/loongarch/include/asm/cpu.h
+>> +++ b/arch/loongarch/include/asm/cpu.h
+>> @@ -102,6 +102,7 @@ enum cpu_type_enum {
+>>   #define CPU_FEATURE_PTW                        27      /* CPU has hardware page table walker */
+>>   #define CPU_FEATURE_LSPW               28      /* CPU has LSPW (lddir/ldpte instructions) */
+>>   #define CPU_FEATURE_AVECINT            29      /* CPU has AVEC interrupt */
+>> +#define CPU_FEATURE_REDIRECTINT                30      /* CPU has interrupt remmap */
+>>
+>>   #define LOONGARCH_CPU_CPUCFG           BIT_ULL(CPU_FEATURE_CPUCFG)
+>>   #define LOONGARCH_CPU_LAM              BIT_ULL(CPU_FEATURE_LAM)
+>> @@ -133,5 +134,6 @@ enum cpu_type_enum {
+>>   #define LOONGARCH_CPU_PTW              BIT_ULL(CPU_FEATURE_PTW)
+>>   #define LOONGARCH_CPU_LSPW             BIT_ULL(CPU_FEATURE_LSPW)
+>>   #define LOONGARCH_CPU_AVECINT          BIT_ULL(CPU_FEATURE_AVECINT)
+>> +#define LOONGARCH_CPU_REDIRECTINT      BIT_ULL(CPU_FEATURE_REDIRECTINT)
+>>
+>>   #endif /* _ASM_CPU_H */
+>> diff --git a/arch/loongarch/include/asm/loongarch.h b/arch/loongarch/include/asm/loongarch.h
+>> index 52651aa0e583..3a27a5f6e460 100644
+>> --- a/arch/loongarch/include/asm/loongarch.h
+>> +++ b/arch/loongarch/include/asm/loongarch.h
+>> @@ -1130,6 +1130,7 @@
+>>   #define  IOCSRF_FLATMODE               BIT_ULL(10)
+>>   #define  IOCSRF_VM                     BIT_ULL(11)
+>>   #define  IOCSRF_AVEC                   BIT_ULL(15)
+>> +#define  IOCSRF_REDIRECTINT            BIT_ULL(16)
+>>
+>>   #define LOONGARCH_IOCSR_VENDOR         0x10
+>>
+>> @@ -1142,6 +1143,7 @@
+>>   #define  IOCSR_MISC_FUNC_TIMER_RESET   BIT_ULL(21)
+>>   #define  IOCSR_MISC_FUNC_EXT_IOI_EN    BIT_ULL(48)
+>>   #define  IOCSR_MISC_FUNC_AVEC_EN       BIT_ULL(51)
+>> +#define  IOCSR_MISC_FUNC_REDIRECT_EN   IOCSR_MISC_FUNC_AVEC_EN
+> Don't define IOCSR_MISC_FUNC_REDIRECT_EN, since redirect cannot exist
+> without avec, you just need to enable avec in its own driver.
 
->  
-> -	return ret;
->  }
->  
->  static int r63353_panel_prepare(struct drm_panel *panel)
+OK,   I initially planned to enable interrupts after the software 
+completes all initialization. But there's some redundant logic here.
 
--- 
-With best wishes
-Dmitry
+Your suggestion is more appropriate. I'll modify the code and test this 
+part, thanks
+
+>
+>>   #define LOONGARCH_IOCSR_CPUTEMP                0x428
+>>
+>> @@ -1189,6 +1191,11 @@
+>>
+>>   #define LOONGARCH_IOCSR_EXTIOI_NODEMAP_BASE    0x14a0
+>>   #define LOONGARCH_IOCSR_EXTIOI_IPMAP_BASE      0x14c0
+>> +#define LOONGARCH_IOCSR_REDIRECT_CFG           0x15e0
+>> +#define LOONGARCH_IOCSR_REDIRECT_TBR           0x15e8  /* IRT BASE REG*/
+>> +#define LOONGARCH_IOCSR_REDIRECT_CQB           0x15f0  /* IRT CACHE QUEUE BASE */
+>> +#define LOONGARCH_IOCSR_REDIRECT_CQH           0x15f8  /* IRT_CACHE_QUEUE_HEAD 32bit */
+>> +#define LOONGARCH_IOCSR_REDIRECT_CQT           0x15fc  /* IRT_CACHE_QUEUE_TAIL 32bit */
+> Keep the same style for all definitions, remove "_" in the comments,
+> and you can add "," before 32bit (or remove 32bit).
+OK, I got it
+>
+>>   #define LOONGARCH_IOCSR_EXTIOI_EN_BASE         0x1600
+>>   #define LOONGARCH_IOCSR_EXTIOI_BOUNCE_BASE     0x1680
+>>   #define LOONGARCH_IOCSR_EXTIOI_ISR_BASE                0x1800
+>> diff --git a/arch/loongarch/kernel/cpu-probe.c b/arch/loongarch/kernel/cpu-probe.c
+>> index fedaa67cde41..543474fd1399 100644
+>> --- a/arch/loongarch/kernel/cpu-probe.c
+>> +++ b/arch/loongarch/kernel/cpu-probe.c
+>> @@ -289,6 +289,8 @@ static inline void cpu_probe_loongson(struct cpuinfo_loongarch *c, unsigned int
+>>                  c->options |= LOONGARCH_CPU_EIODECODE;
+>>          if (config & IOCSRF_AVEC)
+>>                  c->options |= LOONGARCH_CPU_AVECINT;
+>> +       if (config & IOCSRF_REDIRECTINT)
+>> +               c->options |= LOONGARCH_CPU_REDIRECTINT;
+>>          if (config & IOCSRF_VM)
+>>                  c->options |= LOONGARCH_CPU_HYPERVISOR;
+>>   }
+>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+>> index 25e9ad29b8c4..5dd7d6b151d9 100644
+>> --- a/drivers/irqchip/Makefile
+>> +++ b/drivers/irqchip/Makefile
+>> @@ -113,7 +113,7 @@ obj-$(CONFIG_LS1X_IRQ)                      += irq-ls1x.o
+>>   obj-$(CONFIG_TI_SCI_INTR_IRQCHIP)      += irq-ti-sci-intr.o
+>>   obj-$(CONFIG_TI_SCI_INTA_IRQCHIP)      += irq-ti-sci-inta.o
+>>   obj-$(CONFIG_TI_PRUSS_INTC)            += irq-pruss-intc.o
+>> -obj-$(CONFIG_IRQ_LOONGARCH_CPU)                += irq-loongarch-cpu.o irq-loongarch-avec.o
+>> +obj-$(CONFIG_IRQ_LOONGARCH_CPU)                += irq-loongarch-cpu.o irq-loongarch-avec.o irq-loongarch-ir.o
+>>   obj-$(CONFIG_LOONGSON_LIOINTC)         += irq-loongson-liointc.o
+>>   obj-$(CONFIG_LOONGSON_EIOINTC)         += irq-loongson-eiointc.o
+>>   obj-$(CONFIG_LOONGSON_HTPIC)           += irq-loongson-htpic.o
+>> diff --git a/drivers/irqchip/irq-loongarch-avec.c b/drivers/irqchip/irq-loongarch-avec.c
+>> index 80e55955a29f..101bae6f981c 100644
+>> --- a/drivers/irqchip/irq-loongarch-avec.c
+>> +++ b/drivers/irqchip/irq-loongarch-avec.c
+>> @@ -24,7 +24,6 @@
+>>   #define VECTORS_PER_REG                64
+>>   #define IRR_VECTOR_MASK                0xffUL
+>>   #define IRR_INVALID_MASK       0x80000000UL
+>> -#define AVEC_MSG_OFFSET                0x100000
+>>
+>>   #ifdef CONFIG_SMP
+>>   struct pending_list {
+>> @@ -47,15 +46,6 @@ struct avecintc_chip {
+>>
+>>   static struct avecintc_chip loongarch_avec;
+>>
+>> -struct avecintc_data {
+>> -       struct list_head        entry;
+>> -       unsigned int            cpu;
+>> -       unsigned int            vec;
+>> -       unsigned int            prev_cpu;
+>> -       unsigned int            prev_vec;
+>> -       unsigned int            moving;
+>> -};
+>> -
+>>   static inline void avecintc_enable(void)
+>>   {
+>>          u64 value;
+>> @@ -85,7 +75,7 @@ static inline void pending_list_init(int cpu)
+>>          INIT_LIST_HEAD(&plist->head);
+>>   }
+>>
+>> -static void avecintc_sync(struct avecintc_data *adata)
+>> +void avecintc_sync(struct avecintc_data *adata)
+>>   {
+>>          struct pending_list *plist;
+>>
+>> @@ -109,7 +99,7 @@ static int avecintc_set_affinity(struct irq_data *data, const struct cpumask *de
+>>                          return -EBUSY;
+>>
+>>                  if (cpu_online(adata->cpu) && cpumask_test_cpu(adata->cpu, dest))
+>> -                       return 0;
+>> +                       return IRQ_SET_MASK_OK_DONE;
+>>
+>>                  cpumask_and(&intersect_mask, dest, cpu_online_mask);
+>>
+>> @@ -121,7 +111,8 @@ static int avecintc_set_affinity(struct irq_data *data, const struct cpumask *de
+>>                  adata->cpu = cpu;
+>>                  adata->vec = vector;
+>>                  per_cpu_ptr(irq_map, adata->cpu)[adata->vec] = irq_data_to_desc(data);
+>> -               avecintc_sync(adata);
+>> +               if (!cpu_has_redirectint)
+>> +                       avecintc_sync(adata);
+>>          }
+>>
+>>          irq_data_update_effective_affinity(data, cpumask_of(cpu));
+>> @@ -136,7 +127,8 @@ static int avecintc_cpu_online(unsigned int cpu)
+>>
+>>          guard(raw_spinlock)(&loongarch_avec.lock);
+>>
+>> -       avecintc_enable();
+>> +       if (!cpu_has_redirectint)
+>> +               avecintc_enable();
+> You can do it unconditionally, as said before (then no need to enable
+> in the ir driver).
+OK , I got it
+>
+>>          irq_matrix_online(loongarch_avec.vector_matrix);
+>>
+>> @@ -242,6 +234,7 @@ static void avecintc_irq_dispatch(struct irq_desc *desc)
+>>                  d = this_cpu_read(irq_map[vector]);
+>>                  if (d) {
+>>                          generic_handle_irq_desc(d);
+>> +
+>>                  } else {
+>>                          spurious_interrupt();
+>>                          pr_warn("Unexpected IRQ occurs on CPU#%d [vector %ld]\n", smp_processor_id(), vector);
+>> @@ -412,6 +405,9 @@ static int __init pch_msi_parse_madt(union acpi_subtable_headers *header,
+>>
+>>   static inline int __init acpi_cascade_irqdomain_init(void)
+>>   {
+>> +       if (cpu_has_redirectint)
+>> +               return loongarch_irq_redirect_init(loongarch_avec.domain);
+>> +
+>>          return acpi_table_parse_madt(ACPI_MADT_TYPE_MSI_PIC, pch_msi_parse_madt, 1);
+>>   }
+>>
+>> diff --git a/drivers/irqchip/irq-loongarch-ir.c b/drivers/irqchip/irq-loongarch-ir.c
+>> new file mode 100644
+>> index 000000000000..d3c664d6f98e
+>> --- /dev/null
+>> +++ b/drivers/irqchip/irq-loongarch-ir.c
+>> @@ -0,0 +1,576 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (C) 2020 Loongson Technologies, Inc.
+>> + */
+>> +
+>> +#include <linux/cpuhotplug.h>
+>> +#include <linux/init.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/irq.h>
+>> +#include <linux/irqchip.h>
+>> +#include <linux/irqdomain.h>
+>> +#include <linux/spinlock.h>
+>> +#include <linux/msi.h>
+>> +
+>> +#include <asm/irq.h>
+>> +#include <asm/loongarch.h>
+>> +#include <asm/setup.h>
+>> +#include <larchintrin.h>
+>> +
+>> +#include "irq-loongson.h"
+>> +#include "irq-msi-lib.h"
+>> +
+>> +#define IRD_ENTRIES                    65536
+>> +
+>> +/* redirect entry size 128bits */
+>> +#if (defined(CONFIG_PAGE_SIZE_4KB))
+>> +#define IRD_PAGE_ORDER                 8
+>> +#elif (defined(CONFIG_PAGE_SIZE_16KB))
+>> +#define IRD_PAGE_ORDER                 6
+>> +#endif
+> #define IRD_PAGE_ORDER (20 - PAGE_SHIFT)
+OK , I got it
+>
+>> +
+>> +/* irt cache invalid queue */
+>> +#define        INVALID_QUEUE_SIZE              4096
+>> +
+>> +#if (defined(CONFIG_PAGE_SIZE_4KB))
+>> +#define INVALID_QUEUE_PAGE_ORDER       4
+>> +#elif (defined(CONFIG_PAGE_SIZE_16KB))
+>> +#define INVALID_QUEUE_PAGE_ORDER       2
+>> +#endif
+> #define  INVALID_QUEUE_PAGE_ORDER (16 - PAGE_SHIFT)
+OK , I got it
+>
+>> +
+>> +#define GPID_ADDR_MASK                 0x3ffffffffffULL
+>> +#define GPID_ADDR_SHIFT                        6
+>> +
+>> +#define CQB_SIZE_SHIFT                 0
+>> +#define CQB_SIZE_MASK                  0xf
+>> +#define CQB_ADDR_SHIFT                 12
+>> +#define CQB_ADDR_MASK                  (0xfffffffffULL)
+>> +
+>> +#define CFG_DISABLE_IDLE               2
+>> +#define INVALID_INDEX                  0
+>> +
+>> +#define MAX_IR_ENGINES                 16
+>> +
+>> +struct irq_domain *redirect_domain;
+>> +struct redirect_entry {
+>> +       struct  {
+>> +               __u64   valid   : 1,
+>> +                       res1    : 5,
+>> +                       gpid    : 42,
+>> +                       res2    : 8,
+>> +                       vector  : 8;
+>> +       } lo;
+>> +       __u64 hi;
+>> +};
+>> +
+>> +struct redirect_gpid {
+> What does gpid stand for?
+
+The global process interrupt descriptor(GPID)is a secondary descriptor 
+of an interrupt redirect entry. It mainly describes the relevant 
+information of the target CPU for interrupt routing.
+
+The relationship between redirect_entry and redirect_gpid is some 
+similar to that between PMD and PTE. this driver code submitted here 
+only uses part of the functionality, and will be gradually improved later.
+
+>> +       u64     pir[4];      /* Pending interrupt requested */
+>> +       u8      en      : 1, /* doorbell */
+>> +               res0    : 7;
+>> +       u8      irqnum;
+>> +       u16     res1;
+>> +       u32     dst;
+>> +       u32     rsvd[6];
+>> +} __aligned(64);
+>> +
+>> +struct irde_inv_cmd {
+> What does irde stand for?
+
+Interrupt redirect enqueue.....maybe it's a bit awkward.
+
+Actually, this is a descriptor for an interrupt controller's command 
+queue. Do you have any suggestions?
+
+>
+>> +       union {
+>> +               __u64 cmd_info;
+>> +               struct {
+>> +                       __u64   res1            : 4,
+>> +                               type            : 1,
+>> +                               need_notice     : 1,
+>> +                               pad             : 2,
+>> +                               index           : 16,
+>> +                               pad2            : 40;
+>> +               } index;
+>> +       };
+>> +       __u64 notice_addr;
+>> +};
+>> +
+>> +struct redirect_item {
+>> +       int index;
+>> +       struct redirect_entry *entry;
+>> +       struct redirect_gpid *gpid;
+>> +       struct redirect_table *table;
+>> +};
+>> +
+>> +struct redirect_table {
+>> +       int node;
+>> +       struct redirect_entry *table;
+>> +       unsigned long   *bitmap;
+>> +       unsigned int    nr_ird;
+>> +       struct page     *page;
+>> +       raw_spinlock_t  lock;
+>> +};
+>> +
+>> +struct redirect_queue {
+>> +       int node;
+>> +       u64 base;
+>> +       u32 max_size;
+>> +       int head;
+>> +       int tail;
+>> +       struct page *page;
+>> +       raw_spinlock_t  lock;
+>> +};
+>> +
+>> +struct la_irde_desc {
+>> +       struct redirect_table ird_table;
+>> +       struct redirect_queue inv_queue;
+>> +};
+> Remove the la_ prefix, and then change the order of these structures as:
+> redirect_entry, redirect_gpid, redirect_table, redirect_item,
+> redirect_queue, irde_desc, irde_inv_cmd.
+OK, I got it
+>
+>> +
+>> +struct smp_invalid_arg {
+>> +       struct redirect_queue *queue;
+>> +       struct irde_inv_cmd *cmd;
+>> +};
+>> +
+>> +static struct la_irde_desc irde_descs[MAX_IR_ENGINES];
+>> +static phys_addr_t msi_base_addr;
+>> +
+>> +static inline void redirect_enable(int node)
+>> +{
+>> +       u64 value;
+>> +
+>> +       if (redirect_domain) {
+>> +               value = iocsr_read64(LOONGARCH_IOCSR_MISC_FUNC);
+>> +               value |= IOCSR_MISC_FUNC_REDIRECT_EN;
+>> +               iocsr_write64(value, LOONGARCH_IOCSR_MISC_FUNC);
+>> +       }
+>> +}
+> This function can be removed, as said before.
+OK, I got it
+>
+>> +
+>> +static inline bool invalid_queue_is_full(int node_id, u32 *tail)
+>> +{
+>> +       u32 head;
+>> +
+>> +       head = iocsr_read32(LOONGARCH_IOCSR_REDIRECT_CQH);
+>> +       *tail = iocsr_read32(LOONGARCH_IOCSR_REDIRECT_CQT);
+>> +
+>> +       return !!(head == ((*tail + 1) % INVALID_QUEUE_SIZE));
+>> +}
+>> +
+>> +static void invalid_enqueue(struct redirect_queue *rqueue, struct irde_inv_cmd *cmd)
+>> +{
+>> +       struct irde_inv_cmd *inv_addr;
+>> +       u32 tail;
+>> +
+>> +       guard(raw_spinlock_irqsave)(&rqueue->lock);
+>> +
+>> +       while (invalid_queue_is_full(rqueue->node, &tail))
+>> +               cpu_relax();
+>> +
+>> +       inv_addr = (struct irde_inv_cmd *)(rqueue->base + tail * sizeof(struct irde_inv_cmd));
+>> +       memcpy(inv_addr, cmd, sizeof(struct irde_inv_cmd));
+>> +       tail = (tail + 1) % INVALID_QUEUE_SIZE;
+>> +
+>> +       wmb();
+>> +
+>> +       iocsr_write32(tail, LOONGARCH_IOCSR_REDIRECT_CQT);
+>> +}
+>> +
+>> +static void smp_call_invalid_enqueue(void *arg)
+>> +{
+>> +       struct smp_invalid_arg *s_arg = (struct smp_invalid_arg *)arg;
+>> +
+>> +       invalid_enqueue(s_arg->queue, s_arg->cmd);
+>> +}
+>> +
+>> +static void irde_invlid_entry_node(struct redirect_item *item)
+>> +{
+>> +       struct redirect_queue *rqueue;
+>> +       struct smp_invalid_arg arg;
+>> +       struct irde_inv_cmd cmd;
+>> +       volatile u64 raddr = 0;
+>> +       int node = item->table->node, cpu;
+>> +
+>> +       rqueue = &(irde_descs[node].inv_queue);
+>> +       cmd.cmd_info = 0;
+>> +       cmd.index.type = INVALID_INDEX;
+>> +       cmd.index.need_notice = 1;
+>> +       cmd.index.index = item->index;
+>> +       cmd.notice_addr = (u64)(__pa(&raddr));
+>> +
+>> +       if (cpu_to_node(smp_processor_id()) == node)
+>> +               invalid_enqueue(rqueue, &cmd);
+>> +       else {
+>> +               for_each_cpu(cpu, cpumask_of_node(node)) {
+>> +                       if (cpu_online(cpu))
+>> +                               break;
+>> +               }
+>> +               arg.queue = rqueue;
+>> +               arg.cmd = &cmd;
+>> +               smp_call_function_single(cpu, smp_call_invalid_enqueue, &arg, 0);
+>> +       }
+>> +
+>> +       while (!raddr)
+>> +               cpu_relax();
+>> +
+>> +}
+>> +
+>> +static inline struct avecintc_data *irq_data_get_avec_data(struct irq_data *data)
+>> +{
+>> +       return data->parent_data->chip_data;
+>> +}
+>> +
+>> +static int redirect_table_alloc(struct redirect_item *item, struct redirect_table *ird_table)
+>> +{
+>> +       int index;
+>> +
+>> +       guard(raw_spinlock_irqsave)(&ird_table->lock);
+>> +
+>> +       index = find_first_zero_bit(ird_table->bitmap, IRD_ENTRIES);
+>> +       if (index > IRD_ENTRIES) {
+>> +               pr_err("No redirect entry to use\n");
+>> +               return -ENOMEM;
+>> +       }
+>> +
+>> +       __set_bit(index, ird_table->bitmap);
+>> +
+>> +       item->index = index;
+>> +       item->entry = &ird_table->table[index];
+>> +       item->table = ird_table;
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static int redirect_table_free(struct redirect_item *item)
+>> +{
+>> +       struct redirect_table *ird_table;
+>> +       struct redirect_entry *entry;
+>> +       unsigned long flags;
+>> +
+>> +       ird_table = item->table;
+>> +
+>> +       entry = item->entry;
+>> +       memset(entry, 0, sizeof(struct redirect_entry));
+>> +
+>> +       raw_spin_lock_irqsave(&ird_table->lock, flags);
+>> +       bitmap_release_region(ird_table->bitmap, item->index, 0);
+>> +       raw_spin_unlock_irqrestore(&ird_table->lock, flags);
+>> +
+>> +       kfree(item->gpid);
+>> +
+>> +       irde_invlid_entry_node(item);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static inline void redirect_domain_prepare_entry(struct redirect_item *item, struct avecintc_data *adata)
+>> +{
+>> +       struct redirect_entry *entry = item->entry;
+>> +
+>> +       item->gpid->en = 1;
+>> +       item->gpid->irqnum = adata->vec;
+>> +       item->gpid->dst = adata->cpu;
+>> +
+>> +       entry->lo.valid = 1;
+>> +       entry->lo.gpid = ((long)item->gpid >> GPID_ADDR_SHIFT) & (GPID_ADDR_MASK);
+>> +       entry->lo.vector = 0xff;
+>> +       wmb();
+>> +}
+>> +
+>> +static int loongarch_redirect_set_affinity(struct irq_data *data, const struct cpumask *dest, bool force)
+> Remove the loongarch_ prefix since it is an internal function.
+OK, I got it
+>
+>> +{
+>> +       struct redirect_item *item = data->chip_data;
+>> +       struct avecintc_data *adata;
+>> +       int ret;
+>> +
+>> +       ret = irq_chip_set_affinity_parent(data, dest, force);
+>> +       if (ret == IRQ_SET_MASK_OK_DONE)
+>> +               return IRQ_SET_MASK_OK;
+>> +       else if (ret) {
+>> +               pr_err("IRDE:set_affinity error %d\n", ret);
+>> +               return ret;
+>> +       }
+>> +
+>> +       adata = irq_data_get_avec_data(data);
+>> +
+>> +       redirect_domain_prepare_entry(item, adata);
+>> +
+>> +       irde_invlid_entry_node(item);
+>> +
+>> +       avecintc_sync(adata);
+>> +       return IRQ_SET_MASK_OK;
+>> +}
+>> +
+>> +static void loongarch_redirect_compose_msg(struct irq_data *d, struct msi_msg *msg)
+> Use redirect_compose_msi_msg() to keep consistency with other
+> loongarch-specific drivers.
+OK, I got it
+>
+>> +{
+>> +       struct redirect_item *item;
+>> +
+>> +       item = irq_data_get_irq_chip_data(d);
+>> +       msg->address_lo = (msi_base_addr | 1 << 2 | ((item->index & 0xffff) << 4));
+>> +       msg->address_hi = 0x0;
+>> +       msg->data = 0x0;
+>> +}
+>> +
+>> +static inline void loongarch_redirect_ack_irq(struct irq_data *d)
+>> +{
+>> +}
+>> +
+>> +static inline void loongarch_redirect_unmask_irq(struct irq_data *d)
+>> +{
+>> +}
+>> +
+>> +static inline void loongarch_redirect_mask_irq(struct irq_data *d)
+>> +{
+>> +}
+> Remove the loongarch_ prefix since they are internal functions.
+OK, I got it
+>
+>> +
+>> +static struct irq_chip loongarch_redirect_chip = {
+> Use redirect_irq_controller to keep consistency with other
+> loongarch-specific drivers.
+>
+>> +       .name = "redirect",
+> Use "REDIRECT" for consistency, too.
+OK, I got it
+>
+>> +       .irq_ack                = loongarch_redirect_ack_irq,
+>> +       .irq_mask               = loongarch_redirect_mask_irq,
+>> +       .irq_unmask             = loongarch_redirect_unmask_irq,
+>> +       .irq_set_affinity       = loongarch_redirect_set_affinity,
+>> +       .irq_compose_msi_msg    = loongarch_redirect_compose_msg,
+>> +};
+>> +
+>> +static void loongarch_irq_redirect_free_resources(struct irq_domain *domain,
+>> +                                               unsigned int virq, unsigned int nr_irqs)
+>> +{
+>> +       struct irq_data *irq_data;
+>> +       struct redirect_item *item;
+>> +
+>> +       for (int i = 0; i < nr_irqs; i++) {
+>> +               irq_data = irq_domain_get_irq_data(domain, virq  + i);
+>> +               if (irq_data && irq_data->chip_data) {
+>> +                       item = irq_data->chip_data;
+>> +                       redirect_table_free(item);
+>> +                       kfree(item);
+>> +               }
+>> +       }
+>> +}
+>> +
+>> +static int loongarch_irq_redirect_alloc(struct irq_domain *domain,
+>> +                                       unsigned int virq, unsigned int nr_irqs,
+>> +                                        void *arg)
+>> +{
+>> +       struct redirect_table *ird_table;
+>> +       struct avecintc_data *avec_data;
+>> +       struct irq_data *irq_data;
+>> +       int ret, i, node;
+>> +
+>> +       node = ((msi_alloc_info_t *)arg)->desc->dev->numa_node;
+>> +       ird_table = &irde_descs[node].ird_table;
+>> +       ret = irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, arg);
+>> +       if (ret < 0)
+>> +               return ret;
+>> +
+>> +       for (i = 0; i < nr_irqs; i++) {
+>> +               struct redirect_item *item;
+>> +
+>> +               item = kzalloc(sizeof(struct redirect_item), GFP_KERNEL);
+>> +               if (!item) {
+>> +                       pr_err("Alloc redirect descriptor failed\n");
+>> +                       goto out_free_resources;
+>> +               }
+>> +
+>> +               irq_data = irq_domain_get_irq_data(domain, virq + i);
+>> +
+>> +               avec_data = irq_data_get_avec_data(irq_data);
+>> +               ret = redirect_table_alloc(item, ird_table);
+>> +               if (ret) {
+>> +                       pr_err("Alloc redirect table entry failed\n");
+>> +                       goto out_free_resources;
+>> +               }
+>> +
+>> +               item->gpid = kzalloc_node(sizeof(struct redirect_gpid), GFP_KERNEL, node);
+>> +               if (!item->gpid) {
+>> +                       pr_err("Alloc redirect GPID failed\n");
+>> +                       goto out_free_resources;
+>> +               }
+>> +
+>> +               irq_data->chip_data = item;
+>> +               irq_data->chip = &loongarch_redirect_chip;
+>> +               redirect_domain_prepare_entry(item, avec_data);
+>> +       }
+>> +       return 0;
+>> +
+>> +out_free_resources:
+>> +       loongarch_irq_redirect_free_resources(domain, virq, nr_irqs);
+>> +       irq_domain_free_irqs_common(domain, virq, nr_irqs);
+>> +
+>> +       return -EINVAL;
+>> +}
+>> +
+>> +static void loongarch_irq_redirect_free(struct irq_domain *domain,
+>> +                                    unsigned int virq, unsigned int nr_irqs)
+>> +{
+>> +       loongarch_irq_redirect_free_resources(domain, virq, nr_irqs);
+>> +       return irq_domain_free_irqs_common(domain, virq, nr_irqs);
+>> +}
+>> +
+>> +static const struct irq_domain_ops loongarch_redirect_domain_ops = {
+>> +       .alloc = loongarch_irq_redirect_alloc,
+>> +       .free = loongarch_irq_redirect_free,
+>> +       .select = msi_lib_irq_domain_select,
+>> +};
+> For consistency, please use:
+> static const struct irq_domain_ops redirect_domain_ops = {
+>         .alloc          = redirect_domain_alloc,
+>         .free           = redirect_domain_free,
+>         .select         = msi_lib_irq_domain_select,
+> };
+OK, I got it, thanks
+>
+>> +
+>> +static int redirect_queue_init(int node)
+>> +{
+>> +       struct redirect_queue *rqueue = &(irde_descs[node].inv_queue);
+>> +       struct page *pages;
+>> +
+>> +       pages = alloc_pages_node(0, GFP_KERNEL | __GFP_ZERO, INVALID_QUEUE_PAGE_ORDER);
+>> +       if (!pages) {
+>> +               pr_err("Node [%d] Invalid Queue alloc pages failed!\n", node);
+>> +               return -ENOMEM;
+>> +       }
+>> +
+>> +       rqueue->page = pages;
+>> +       rqueue->base = (u64)page_address(pages);
+>> +       rqueue->max_size = INVALID_QUEUE_SIZE;
+>> +       rqueue->head = 0;
+>> +       rqueue->tail = 0;
+>> +       rqueue->node = node;
+>> +       raw_spin_lock_init(&rqueue->lock);
+>> +
+>> +       iocsr_write32(0, LOONGARCH_IOCSR_REDIRECT_CQH);
+>> +       iocsr_write32(0, LOONGARCH_IOCSR_REDIRECT_CQT);
+>> +       iocsr_write64(((rqueue->base & (CQB_ADDR_MASK << CQB_ADDR_SHIFT)) |
+>> +                               (CQB_SIZE_MASK << CQB_SIZE_SHIFT)), LOONGARCH_IOCSR_REDIRECT_CQB);
+>> +       return 0;
+>> +}
+>> +
+>> +static int redirect_table_init(int node)
+>> +{
+>> +       struct redirect_table *ird_table = &(irde_descs[node].ird_table);
+>> +       struct page *pages;
+>> +       unsigned long *bitmap;
+>> +
+>> +       pages = alloc_pages_node(node, GFP_KERNEL | __GFP_ZERO, IRD_PAGE_ORDER);
+>> +       if (!pages) {
+>> +               pr_err("Node [%d] redirect table alloc pages failed!\n", node);
+>> +               return -ENOMEM;
+>> +       }
+>> +       ird_table->page = pages;
+>> +       ird_table->table = page_address(pages);
+>> +
+>> +       bitmap = bitmap_zalloc(IRD_ENTRIES, GFP_KERNEL);
+>> +       if (!bitmap) {
+>> +               pr_err("Node [%d] redirect table bitmap alloc pages failed!\n", node);
+>> +               return -ENOMEM;
+>> +       }
+>> +
+>> +       ird_table->bitmap = bitmap;
+>> +       ird_table->nr_ird = IRD_ENTRIES;
+>> +       ird_table->node = node;
+>> +
+>> +       raw_spin_lock_init(&ird_table->lock);
+>> +
+>> +       if (redirect_queue_init(node))
+>> +               return -EINVAL;
+>> +
+>> +       iocsr_write64(CFG_DISABLE_IDLE, LOONGARCH_IOCSR_REDIRECT_CFG);
+>> +       iocsr_write64(__pa(ird_table->table), LOONGARCH_IOCSR_REDIRECT_TBR);
+>> +
+>> +       return 0;
+>> +}
+>> +
+>> +static void redirect_table_fini(int node)
+>> +{
+>> +       struct redirect_table *ird_table = &(irde_descs[node].ird_table);
+>> +       struct redirect_queue *rqueue = &(irde_descs[node].inv_queue);
+>> +
+>> +       if (ird_table->page) {
+>> +               __free_pages(ird_table->page, IRD_PAGE_ORDER);
+>> +               ird_table->table = NULL;
+>> +               ird_table->page = NULL;
+>> +       }
+>> +
+>> +       if (ird_table->page) {
+>> +               bitmap_free(ird_table->bitmap);
+>> +               ird_table->bitmap = NULL;
+>> +       }
+>> +
+>> +       if (rqueue->page) {
+>> +               __free_pages(rqueue->page, INVALID_QUEUE_PAGE_ORDER);
+>> +               rqueue->page = NULL;
+>> +               rqueue->base = 0;
+>> +       }
+>> +
+>> +       iocsr_write64(0, LOONGARCH_IOCSR_REDIRECT_CQB);
+>> +       iocsr_write64(0, LOONGARCH_IOCSR_REDIRECT_TBR);
+>> +}
+>> +
+>> +static int redirect_cpu_online(unsigned int cpu)
+>> +{
+>> +       int ret, node = cpu_to_node(cpu);
+>> +
+>> +       if (cpu != cpumask_first(cpumask_of_node(node)))
+>> +               return 0;
+>> +
+>> +       ret = redirect_table_init(node);
+>> +       if (ret) {
+>> +               redirect_table_fini(node);
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       redirect_enable(node);
+>> +       return 0;
+>> +}
+>> +
+>> +#if defined(CONFIG_ACPI)
+>> +static int __init pch_msi_parse_madt(union acpi_subtable_headers *header,
+>> +               const unsigned long end)
+>> +{
+>> +       struct acpi_madt_msi_pic *pchmsi_entry = (struct acpi_madt_msi_pic *)header;
+>> +
+>> +       msi_base_addr = pchmsi_entry->msg_address - AVEC_MSG_OFFSET;
+>> +
+>> +       return pch_msi_acpi_init_avec(redirect_domain);
+>> +}
+>> +
+>> +static int __init acpi_cascade_irqdomain_init(void)
+>> +{
+>> +       return acpi_table_parse_madt(ACPI_MADT_TYPE_MSI_PIC, pch_msi_parse_madt, 1);
+>> +}
+>> +
+>> +int __init loongarch_irq_redirect_init(struct irq_domain *parent)
+> Use redirect_acpi_init() for consistency.
+>
+>
+OK, I got it
+>
+>
+>
+>
+> Huacai
+
+Thank you
+
+Tianyang
+
+>
+>> +{
+>> +       struct fwnode_handle *fwnode;
+>> +       struct irq_domain *domain;
+>> +       int ret;
+>> +
+>> +       fwnode = irq_domain_alloc_named_fwnode("redirect");
+>> +       if (!fwnode) {
+>> +               pr_err("Unable to alloc redirect domain handle\n");
+>> +               goto fail;
+>> +       }
+>> +
+>> +       domain = irq_domain_create_hierarchy(parent, 0, IRD_ENTRIES, fwnode,
+>> +                       &loongarch_redirect_domain_ops, irde_descs);
+>> +       if (!domain) {
+>> +               pr_err("Unable to alloc redirect domain\n");
+>> +               goto out_free_fwnode;
+>> +       }
+>> +
+>> +       redirect_domain = domain;
+>> +
+>> +       ret = redirect_table_init(0);
+>> +       if (ret)
+>> +               goto out_free_table;
+>> +
+>> +       ret = acpi_cascade_irqdomain_init();
+>> +       if (ret < 0) {
+>> +               pr_err("Failed to cascade IRQ domain, ret=%d\n", ret);
+>> +               goto out_free_table;
+>> +       }
+>> +
+>> +       cpuhp_setup_state_nocalls(CPUHP_AP_IRQ_REDIRECT_STARTING,
+>> +                                 "irqchip/loongarch/redirect:starting",
+>> +                                 redirect_cpu_online, NULL);
+>> +
+>> +       pr_info("loongarch irq redirect modules init succeeded\n");
+>> +       redirect_enable(0);
+>> +       return 0;
+>> +
+>> +out_free_table:
+>> +       redirect_table_fini(0);
+>> +       irq_domain_remove(redirect_domain);
+>> +       redirect_domain = NULL;
+>> +out_free_fwnode:
+>> +       irq_domain_free_fwnode(fwnode);
+>> +fail:
+>> +       return -EINVAL;
+>> +}
+>> +#endif
+>> diff --git a/drivers/irqchip/irq-loongson.h b/drivers/irqchip/irq-loongson.h
+>> index 11fa138d1f44..f29ab8ec368e 100644
+>> --- a/drivers/irqchip/irq-loongson.h
+>> +++ b/drivers/irqchip/irq-loongson.h
+>> @@ -5,6 +5,15 @@
+>>
+>>   #ifndef _DRIVERS_IRQCHIP_IRQ_LOONGSON_H
+>>   #define _DRIVERS_IRQCHIP_IRQ_LOONGSON_H
+>> +#define AVEC_MSG_OFFSET                0x100000
+>> +struct avecintc_data {
+>> +       struct list_head        entry;
+>> +       unsigned int            cpu;
+>> +       unsigned int            vec;
+>> +       unsigned int            prev_cpu;
+>> +       unsigned int            prev_vec;
+>> +       unsigned int            moving;
+>> +};
+>>
+>>   int find_pch_pic(u32 gsi);
+>>
+>> @@ -24,4 +33,7 @@ int pch_msi_acpi_init(struct irq_domain *parent,
+>>                                          struct acpi_madt_msi_pic *acpi_pchmsi);
+>>   int pch_msi_acpi_init_avec(struct irq_domain *parent);
+>>
+>> +int loongarch_irq_redirect_init(struct irq_domain *parent);
+>> +
+>> +void avecintc_sync(struct avecintc_data *adata);
+>>   #endif /* _DRIVERS_IRQCHIP_IRQ_LOONGSON_H */
+>> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+>> index 6cc5e484547c..2fd5531fa378 100644
+>> --- a/include/linux/cpuhotplug.h
+>> +++ b/include/linux/cpuhotplug.h
+>> @@ -146,6 +146,7 @@ enum cpuhp_state {
+>>          CPUHP_AP_IRQ_MIPS_GIC_STARTING,
+>>          CPUHP_AP_IRQ_EIOINTC_STARTING,
+>>          CPUHP_AP_IRQ_AVECINTC_STARTING,
+>> +       CPUHP_AP_IRQ_REDIRECT_STARTING,
+>>          CPUHP_AP_IRQ_SIFIVE_PLIC_STARTING,
+>>          CPUHP_AP_IRQ_THEAD_ACLINT_SSWI_STARTING,
+>>          CPUHP_AP_IRQ_RISCV_IMSIC_STARTING,
+>> --
+>> 2.43.0
+>>
+
 
