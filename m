@@ -1,61 +1,59 @@
-Return-Path: <linux-kernel+bounces-549439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1537A552AB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:14:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C60A5A552A8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:14:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 652777A5506
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:13:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B00F73A6CC0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:14:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F187225C703;
-	Thu,  6 Mar 2025 17:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E0E25CC68;
+	Thu,  6 Mar 2025 17:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h5N9qq0I"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UCqpgRZS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A83D2144BF;
-	Thu,  6 Mar 2025 17:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B73825B671;
+	Thu,  6 Mar 2025 17:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741281250; cv=none; b=W+0VkMu9PUPn8JAcoEymQ5CUge3TlGYKWtEBWRCbIUujZIMerkRdvAFN/BkTZyTwCfBPTEVY0duLKu7+QPSOYnySmaZkBrvxewgehtaUW//twHr/eHFIYnxP2XOCgcg8bu9vX6NxMCGIeKOyDDYEYRmIBfj1KNOfIdXwVyUqu+w=
+	t=1741281250; cv=none; b=ukanGO9OCMgd3gkHEO3z1am23XZ1TalROdZvnE8ao3AKx9EExpJHca6KJzp5pdDlEU72KYUQGQJk/OLVdwIvFQxAGjHuk9k/+p5A9RA57CSlnGzaIybNfOYFfELN/mKOl5+GgmC8GkBwbpAVtSgtt9dyXkci+Zl/AQzXDDQcp7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741281250; c=relaxed/simple;
-	bh=NPUYXr/d1bwO11II4JoeaNIFdDgaiz/ixDVzQSUkWNo=;
+	bh=13Ku3wN3uQXnYrvmHehtgkgvGYEQWkz1kUnyMFVrpOw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=s0Q1wTAxQ01wAHC2mq3GnglD682Nl2g/g3ui+ewzVtCD4O7r9epfv0G8ZQjeknRChXw42eUI5P/vfbbSPfW47K2nCdDwuHyJfsrdZ3XkjuhXSqMV9DY5OaN90i4zsBDfe19yAb7OLIiIWMRyzK6M2rOMUDGJm1hD0ivbo9XzwLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h5N9qq0I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75625C4CEE9;
+	 MIME-Version:Content-Type; b=daYC6AP3KIDICXrRFnaXVfHyltpcubKPxGosI+s193kDHmPqUYXKERyYFmmmUfuAmYiXyIJiE/PL3wB3B0zTgVDYLpFPBrm4iMf5expnAUOMQHI2gj/QA7uXNW/Lp9P+UtpG+OaJdTvQw0wobgPC+FfpRW+XlB/cICg0+sVxHWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UCqpgRZS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00E41C4CEE0;
 	Thu,  6 Mar 2025 17:14:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741281249;
-	bh=NPUYXr/d1bwO11II4JoeaNIFdDgaiz/ixDVzQSUkWNo=;
+	s=k20201202; t=1741281250;
+	bh=13Ku3wN3uQXnYrvmHehtgkgvGYEQWkz1kUnyMFVrpOw=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=h5N9qq0IYuGnq89Q5ANcSL8n+k9EyqZuutGEef8v00xS1mNAAxFxZcEvk5/PVk9Nr
-	 yLZ19fGw64/4wBg5uZLG91KTuLFcYAgwSl8a/UdoGWc+/RbmGf/2qcibeG5O3Tg/YJ
-	 T2/o1B7aejcSG/pDFsbkyi6Ep60Ozna4RNi2zeeqZ4EvKVNzFQlObrJN31tGukCVCe
-	 2HzDTH9LEQBPAYH4biBztnEyipG1apNwBlue/awtPwCrnQiY0eLpEyggGRrkBH2EZF
-	 g6WncyRWnz5e7AMgDqLICvLKeznX4CDU+oLOvEfULuHLBIhDRtQLSTv0y/IpgW+xVl
-	 ScUnZ6KhhT0oQ==
+	b=UCqpgRZSAF3buJWySWgDDI+DiBCMZMf6yKC61bDZdciurclGK40NrS83O0aDfTy80
+	 n4hfBSGyKSpXy2VJmV4rcJcUunsh3uH6F4J3UZRhpT+aJAlqtge7BNoSuoPMR9vX5q
+	 oKfxiOJnwPrieN4NFYJJ26bIUblxMs2t+kgd5x4b1aD8ZSLG5cnP9BguoriUixVFnN
+	 fxD3ZZherc0kb2ieDRS6/z8bIvwp8ZgRB+gO/URZRBkQKYueF5A4UPKBVK1DYnBrLr
+	 2Fvm9xNL7aZk8PgF1RxoaP5/c9vG040q2BJnUekyEIrAK/3K44nwL/VsOq3MVjtDCe
+	 8wOMIrhYQFi8w==
 From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
- Arnaldo Carvalho de Melo <acme@kernel.org>, 
- Mark Rutland <mark.rutland@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, 
- Adrian Hunter <adrian.hunter@intel.com>, 
- Kan Liang <kan.liang@linux.intel.com>, 
- Thomas Falcon <thomas.falcon@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
- Kan Liang <kan.liang@intel.com>
-In-Reply-To: <20250305163935.1605312-1-thomas.falcon@intel.com>
-References: <20250305163935.1605312-1-thomas.falcon@intel.com>
-Subject: Re: [PATCH v6] perf script: Fix output type for dynamically
- allocated core PMU's
-Message-Id: <174128124944.3835280.16855059248236595784.b4-ty@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+ James Clark <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>, 
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+ Kan Liang <kan.liang@linux.intel.com>, Clark Williams <williams@redhat.com>, 
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+ Arnaldo Carvalho de Melo <acme@redhat.com>, 
+ Peter Zijlstra <peterz@infradead.org>, 
+ Stephane Eranian <eranian@google.com>
+In-Reply-To: <20250228211734.33781-1-acme@kernel.org>
+References: <20250228211734.33781-1-acme@kernel.org>
+Subject: Re: [PATCH 0/6 v2] Fixups for kernel maps insertion
+Message-Id: <174128124996.3835280.12530365732339018502.b4-ty@kernel.org>
 Date: Thu, 06 Mar 2025 09:14:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -67,14 +65,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c04d2
 
-On Wed, 05 Mar 2025 10:39:35 -0600, Thomas Falcon wrote:
-> This patch was originally posted here:
+On Fri, 28 Feb 2025 18:17:28 -0300, Arnaldo Carvalho de Melo wrote:
+>         Here are the patches from the recent session on fixing the build
+> when DEBUG=1 is used, please take a look.
 > 
-> https://lore.kernel.org/all/20241213215421.661139-1-thomas.falcon@intel.com/
+>         I think that since there are no reported problems and ended up
+> being a sizeable series, we better apply it to perf-tools-next,
 > 
-> I have rebased on top of Arnaldo's patch here:
-> 
-> https://lore.kernel.org/all/Z2XCi3PgstSrV0SE@x1/
+> Best Regards,
 > 
 > [...]
 Applied to perf-tools-next, thanks!
