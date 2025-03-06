@@ -1,112 +1,272 @@
-Return-Path: <linux-kernel+bounces-549346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68070A55182
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:41:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44187A55188
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:42:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D77927A9976
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:39:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EB297AAE66
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:40:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DB9221573;
-	Thu,  6 Mar 2025 16:36:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FBB022759C;
+	Thu,  6 Mar 2025 16:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TZEwTeG1"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KcIRlrAO"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DC08221561;
-	Thu,  6 Mar 2025 16:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66183221F10;
+	Thu,  6 Mar 2025 16:37:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741278979; cv=none; b=Gr40j/4iRB6m5CSYoeaWesAyRgUHQ2lWubGCIfp7G+qJgx76yke9bIJje4Ip2Gdtjf7Y8L67yNxvnTdeOwV5o1woZjkQQrFEGhy4nPSECo3B8fCN6EG4aJfMrqHIc7H3Mpo3dO0sx3vwimAQxBz/E+Xpw0a++EMn40lpwpFLJuQ=
+	t=1741279081; cv=none; b=nPttkcBBNNjR6boVpBV+TCWKGzjyM/wyomtnQorq5LpPHFHXNlk925YCrF0TB11Vold6hGRUHGcm3deAppH8TJeeJYcTal/mcgpVjm4PbqvqTCPrikT49n4cO4huM3AUOGxKyzn0U8403KW5LRYmSGVzIGUBvoYQs1/v/4Z6jr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741278979; c=relaxed/simple;
-	bh=Rre3tsQ7P67NIH1eBWiW6QiBSh4za0d+d/ZYpmd2TsI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IFUrQZly+Zu4ORM5qmS0/Os1HSOhaZhLg2nWIP3ikqlSjIfOteVdJUhpEr83zkpbZOMZd4vv9qQOw3ouUsv9ea7LYv9NNPXP5Qv2hBkuZZfe2Uru26o9KxJBCgt14g9Drfq9qd+L3HKMkwjU/B8QFvSdjv6V8yKS1pt5PGj9kX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TZEwTeG1; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff6ce72844so154389a91.2;
-        Thu, 06 Mar 2025 08:36:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741278977; x=1741883777; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Rre3tsQ7P67NIH1eBWiW6QiBSh4za0d+d/ZYpmd2TsI=;
-        b=TZEwTeG1B9f+OHZBmOATuwhwxDBSUdAsxV5mnICQV4ilSM39WbuYPlUr4fDBDDqKZ/
-         lF1G/Jr3tFlitLPbJWRaX6RFVcGEZRLrsgdQPl/04JoyZnEpDgoP7Bt3teXmDW8B1HE8
-         jTqmB3Pgb9Thm8Enjen5t2IPT2QV9KGE3At8vTXXnPd68KAIleKO1VQW9mqdBxGS1imB
-         7+7Pn+kkfkLySr52PozyKIwnB/AAnKDAFsMQrWJHhshcl1GWeyegkcuenxId7GQyPcbt
-         9e8qnnbtCQwB23PY7WUSly8HocSgABO9opciZiSEMt8wxrjT2bQiJFdyVkoe9quWkad2
-         /iWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741278977; x=1741883777;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Rre3tsQ7P67NIH1eBWiW6QiBSh4za0d+d/ZYpmd2TsI=;
-        b=BggQr5pyBLO5DkW0YOARyDNpdqYO7t+QuCQf8WamAZpmiVZdy+NA1gHb0Yuyw96Xnv
-         SIAYhytma6FW0ZponU2+hix62qddVLf4fpIKFmFQ3pslX172MxE7/c+NH6mDH431/97u
-         SPZILG+ilV76yc6+Rq2qxKpJg/INICtb7inULijrw8usl46mgAitctzrkeEfiSFQTAby
-         F8aiURady1XvcqfY7hqVYkifM4KQQg8M9lU3pzs6wXsEnql3S5q/ZUKqiryrtw8rYCY2
-         xMJaXtDqQdEQnfx2zKn0iE0xDKfYC6p9U257bG4gzGxEOc1vgod27cOD2KV0IfmTj0ri
-         buOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUh63Mvwpx89NQw42drX4JRv0jvsyQA7L/B++sOt5rwObSxlASGZS5c9sTXQagqrQPPt/jgf38l+1wSZv8=@vger.kernel.org, AJvYcCVqrN7ah0petqFTTPUJL7FX4MIxM8LVSZ5ldw4163zxTyWfKKpV+YmxzBqVxizbNUPkQEcQA5mQW0+RxhhEoNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO9kbU3JWFdjBfbO6IVwpet6C1HMi/9trLXRCW5WdrXcyFly2i
-	Wx/J6ZbrvZLt7+bEeJLIm14qPg96S2/sTpkTALVR3yqbUET7btbX6FGNIp0F0jE0K9RTbW6GS+u
-	MjDcAGyU9Jzfp34BounX5vxJHctI=
-X-Gm-Gg: ASbGncsg/VeRI77pSE/E5c/Ytw9TSP5E7vJvWHe6bNixifLi0gs6cy9AVRgq9sdcA6t
-	GbugxfK2w9Mj/dBmlAuMo9oklvkBC0xCVDKcN+Mtl+qcoAo2pnC2T11sj/llH9vPD3WBe6BwE9f
-	FhZiUgbnd7j4ghiqZkZrPQRr/bmg==
-X-Google-Smtp-Source: AGHT+IHohoEXH/Px6pI4TKEWpzlyZTq0CWYULx0ZUFd4G/eQPh82YnhefvCcDjTbmvIW+sgNbb8eocKWnxh8dmxzsMc=
-X-Received: by 2002:a17:90b:3504:b0:2ee:f59a:94d3 with SMTP id
- 98e67ed59e1d1-2ff49634f33mr5130208a91.0.1741278977492; Thu, 06 Mar 2025
- 08:36:17 -0800 (PST)
+	s=arc-20240116; t=1741279081; c=relaxed/simple;
+	bh=IsYlA1pLnu2lPgka8Es27hJXGLId8UclLTRhAvqtl8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wus85pHDpkDecNJBrsMvYY7fM4cylTLuC1bLybtrsRB/XFx+ZMxWRIq7cN/C+m4uyc9SQGQyLv8B0vSQRzVzPIrq6eQDBGGgJ4q3DbAWrHDbgUiXCS6yZhIpAWYYrmnhNZukh+5qUD8IIwL9FgbgHmKrv873oLwaYqXuEGl4e1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KcIRlrAO; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741279080; x=1772815080;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=IsYlA1pLnu2lPgka8Es27hJXGLId8UclLTRhAvqtl8M=;
+  b=KcIRlrAOEAZjib2uZWmpjlNsxFsU78c5/CS/1fIn6SVKVu8mwJgijPcB
+   3bDaEPDQjAZC2Bhp1p7USdcdVOfd7QwAy5j0yP6zHRDB3+BXwyEaO8dpY
+   6esWpinfhqEteN0N0uGsxp/nP8B3dFRcd5/dzGdsJpGhE+G9AYY2GeZUj
+   Mh9Is2AM5luIfqio6VsBZ5NsHUFRjwNCCfaK1x+WJcNXrFVC6j0bzVRRb
+   4lcEbVE+fFzFZZawT1EOwVHlGqbT/hlR1DlW666L2ciuEZvuUhxwTplkV
+   hnAlW0kV4NKVPg1s1Y0Csf9A2FXY7oKO33NcBRGzqXOT7MtrTz+nYDgl6
+   A==;
+X-CSE-ConnectionGUID: YMV6RP5IQqeCojx6iqPTRQ==
+X-CSE-MsgGUID: HuI0S3qgQSCWmGudMR085g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42327332"
+X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
+   d="scan'208";a="42327332"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 08:37:59 -0800
+X-CSE-ConnectionGUID: gg3mW5X9R8iM0K5KgoVBdw==
+X-CSE-MsgGUID: MTPC3i0RR5mJXDT9hO30xg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
+   d="scan'208";a="123659819"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa005.fm.intel.com with ESMTP; 06 Mar 2025 08:37:56 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tqEE7-000NIg-2g;
+	Thu, 06 Mar 2025 16:37:46 +0000
+Date: Fri, 7 Mar 2025 00:36:27 +0800
+From: kernel test robot <lkp@intel.com>
+To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>, marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+	amitkumar.karwar@nxp.com, neeraj.sanjaykale@nxp.com
+Subject: Re: [PATCH v1 2/3] Bluetooth: btnxpuart: Handle bootloader error
+ during change baudrate
+Message-ID: <202503070049.8e6dNvjC-lkp@intel.com>
+References: <20250305134523.40111-2-neeraj.sanjaykale@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CANiq72n=gFWrv9yFmzntaeR+RH5=qeD_uOs6NiW4dHkdaopKKw@mail.gmail.com>
- <20250306160844.269308-1-trintaeoitogc@gmail.com>
-In-Reply-To: <20250306160844.269308-1-trintaeoitogc@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 6 Mar 2025 17:36:05 +0100
-X-Gm-Features: AQ5f1JpfqmxFwyJn6hhiA6K_0j7V5ITxtazc-jBTJPEMb_lr1T8GOjC3CLOVtvQ
-Message-ID: <CANiq72nXzY_j38ytE7KwHpH3Cy4sDw85WU2MyUe5u74oB2UP+Q@mail.gmail.com>
-Subject: Re: [PATCH V6 2/2] checkpatch: check format of Vec<String> in modules
-To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, aliceryhl@google.com, 
-	apw@canonical.com, arnd@arndb.de, aswinunni01@gmail.com, axboe@kernel.dk, 
-	benno.lossin@proton.me, bhelgaas@google.com, bjorn3_gh@protonmail.com, 
-	boqun.feng@gmail.com, dakr@kernel.org, dwaipayanray1@gmail.com, 
-	ethan.twardy@gmail.com, fujita.tomonori@gmail.com, gary@garyguo.net, 
-	gregkh@linuxfoundation.org, joe@perches.com, linux-kernel@vger.kernel.org, 
-	lukas.bulwahn@gmail.com, ojeda@kernel.org, pbonzini@redhat.com, 
-	rust-for-linux@vger.kernel.org, tmgross@umich.edu, walmeida@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305134523.40111-2-neeraj.sanjaykale@nxp.com>
 
-On Thu, Mar 6, 2025 at 5:08=E2=80=AFPM Guilherme Giacomo Simoes
-<trintaeoitogc@gmail.com> wrote:
->
-> In current config, the formatting seems don't have a effect for arrays.
-> i.e. this array: authors: [ "author_1", "author_2", "author_3", "author_4=
-","author_5","author_6","author_7" ]
-> don't is fixed by rustfmt for no format.
+Hi Neeraj,
 
-So if I understand correctly, `rustfmt` will simply not do anything,
-i.e. it will always keep the array as it was -- that sounds good
-enough to me! Most people will write it correctly, and for those that
-don't, `checkpatch.pl` will likely catch the mistake -- that is all we
-need.
+kernel test robot noticed the following build warnings:
 
-Cheers,
-Miguel
+[auto build test WARNING on bluetooth/master]
+[also build test WARNING on bluetooth-next/master linus/master v6.14-rc5 next-20250306]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Neeraj-Sanjay-Kale/Bluetooth-btnxpuart-Handle-bootloader-error-during-change-baudrate/20250305-214856
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth.git master
+patch link:    https://lore.kernel.org/r/20250305134523.40111-2-neeraj.sanjaykale%40nxp.com
+patch subject: [PATCH v1 2/3] Bluetooth: btnxpuart: Handle bootloader error during change baudrate
+config: i386-buildonly-randconfig-001-20250306 (https://download.01.org/0day-ci/archive/20250307/202503070049.8e6dNvjC-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250307/202503070049.8e6dNvjC-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503070049.8e6dNvjC-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/bluetooth/btnxpuart.c:1104:6: warning: variable 'len' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
+    1104 |         if (!req->error) {
+         |             ^~~~~~~~~~~
+   drivers/bluetooth/btnxpuart.c:1168:28: note: uninitialized use occurs here
+    1168 |         nxpdev->fw_v3_prev_sent = len;
+         |                                   ^~~
+   drivers/bluetooth/btnxpuart.c:1104:2: note: remove the 'if' if its condition is always true
+    1104 |         if (!req->error) {
+         |         ^~~~~~~~~~~~~~~~
+    1105 |                 nxp_send_ack(NXP_ACK_V3, hdev);
+    1106 |                 if (nxpdev->timeout_changed == cmd_sent)
+    1107 |                         nxpdev->timeout_changed = changed;
+    1108 |                 if (nxpdev->baudrate_changed == cmd_sent)
+    1109 |                         nxpdev->baudrate_changed = changed;
+    1110 |         } else {
+         |           ~~~~~~
+    1111 |                 nxp_handle_fw_download_error(hdev, req);
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    1112 |                 if (nxpdev->timeout_changed == cmd_sent &&
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    1113 |                     req->error == NXP_CRC_RX_ERROR) {
+         |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    1114 |                         nxpdev->fw_v3_offset_correction -= nxpdev->fw_v3_prev_sent;
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    1115 |                         nxpdev->timeout_changed = not_changed;
+         |                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    1116 |                 }
+         |                 ~
+    1117 |                 /* After baudrate change, it is normal to get ACK Timeout error */
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    1118 |                 if (nxpdev->baudrate_changed == cmd_sent &&
+         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    1119 |                     req->error == NXP_CRC_RX_ERROR) {
+         |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/bluetooth/btnxpuart.c:1101:6: warning: variable 'len' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+    1101 |         if (!req || !nxpdev->fw)
+         |             ^~~~~~~~~~~~~~~~~~~
+   drivers/bluetooth/btnxpuart.c:1168:28: note: uninitialized use occurs here
+    1168 |         nxpdev->fw_v3_prev_sent = len;
+         |                                   ^~~
+   drivers/bluetooth/btnxpuart.c:1101:2: note: remove the 'if' if its condition is always false
+    1101 |         if (!req || !nxpdev->fw)
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~
+    1102 |                 goto free_skb;
+         |                 ~~~~~~~~~~~~~
+>> drivers/bluetooth/btnxpuart.c:1101:6: warning: variable 'len' is used uninitialized whenever '||' condition is true [-Wsometimes-uninitialized]
+    1101 |         if (!req || !nxpdev->fw)
+         |             ^~~~
+   drivers/bluetooth/btnxpuart.c:1168:28: note: uninitialized use occurs here
+    1168 |         nxpdev->fw_v3_prev_sent = len;
+         |                                   ^~~
+   drivers/bluetooth/btnxpuart.c:1101:6: note: remove the '||' if its condition is always false
+    1101 |         if (!req || !nxpdev->fw)
+         |             ^~~~~~~
+   drivers/bluetooth/btnxpuart.c:1097:6: warning: variable 'len' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+    1097 |         if (!process_boot_signature(nxpdev))
+         |             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/bluetooth/btnxpuart.c:1168:28: note: uninitialized use occurs here
+    1168 |         nxpdev->fw_v3_prev_sent = len;
+         |                                   ^~~
+   drivers/bluetooth/btnxpuart.c:1097:2: note: remove the 'if' if its condition is always false
+    1097 |         if (!process_boot_signature(nxpdev))
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    1098 |                 goto free_skb;
+         |                 ~~~~~~~~~~~~~
+   drivers/bluetooth/btnxpuart.c:1094:11: note: initialize the variable 'len' to silence this warning
+    1094 |         __u16 len;
+         |                  ^
+         |                   = 0
+   4 warnings generated.
+
+
+vim +1104 drivers/bluetooth/btnxpuart.c
+
+27489364299a2d Neeraj Sanjay Kale     2024-06-14  1089  
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1090  static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1091  {
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1092  	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1093  	struct v3_data_req *req;
+9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1094  	__u16 len;
+9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1095  	__u32 offset;
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1096  
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1097  	if (!process_boot_signature(nxpdev))
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1098  		goto free_skb;
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1099  
+9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1100  	req = skb_pull_data(skb, sizeof(*req));
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16 @1101  	if (!req || !nxpdev->fw)
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1102  		goto free_skb;
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1103  
+27489364299a2d Neeraj Sanjay Kale     2024-06-14 @1104  	if (!req->error) {
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1105  		nxp_send_ack(NXP_ACK_V3, hdev);
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1106  		if (nxpdev->timeout_changed == cmd_sent)
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1107  			nxpdev->timeout_changed = changed;
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1108  		if (nxpdev->baudrate_changed == cmd_sent)
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1109  			nxpdev->baudrate_changed = changed;
+27489364299a2d Neeraj Sanjay Kale     2024-06-14  1110  	} else {
+27489364299a2d Neeraj Sanjay Kale     2024-06-14  1111  		nxp_handle_fw_download_error(hdev, req);
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1112  		if (nxpdev->timeout_changed == cmd_sent &&
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1113  		    req->error == NXP_CRC_RX_ERROR) {
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1114  			nxpdev->fw_v3_offset_correction -= nxpdev->fw_v3_prev_sent;
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1115  			nxpdev->timeout_changed = not_changed;
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1116  		}
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1117  		/* After baudrate change, it is normal to get ACK Timeout error */
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1118  		if (nxpdev->baudrate_changed == cmd_sent &&
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1119  		    req->error == NXP_CRC_RX_ERROR) {
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1120  			nxpdev->fw_v3_offset_correction -= nxpdev->fw_v3_prev_sent;
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1121  			nxpdev->baudrate_changed = not_changed;
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1122  		}
+27489364299a2d Neeraj Sanjay Kale     2024-06-14  1123  		goto free_skb;
+27489364299a2d Neeraj Sanjay Kale     2024-06-14  1124  	}
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1125  
+9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1126  	len = __le16_to_cpu(req->len);
+9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1127  
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1128  	if (nxpdev->timeout_changed != changed) {
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1129  		nxp_fw_change_timeout(hdev, len);
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1130  		nxpdev->timeout_changed = cmd_sent;
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1131  		goto free_skb;
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1132  	}
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1133  
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1134  	if (nxpdev->baudrate_changed != changed) {
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1135  		if (nxp_fw_change_baudrate(hdev, len)) {
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1136  			nxpdev->baudrate_changed = cmd_sent;
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1137  			serdev_device_set_baudrate(nxpdev->serdev,
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1138  						   HCI_NXP_SEC_BAUDRATE);
+b0310d6ed684b8 Neeraj Sanjay Kale     2023-04-19  1139  			serdev_device_set_flow_control(nxpdev->serdev, true);
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1140  			nxpdev->current_baudrate = HCI_NXP_SEC_BAUDRATE;
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1141  		}
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1142  		goto free_skb;
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1143  	}
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1144  
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1145  	if (req->len == 0) {
+2684dd614ccf08 Neeraj Sanjay Kale     2024-05-15  1146  		bt_dev_info(hdev, "FW Download Complete: %zu bytes",
+9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1147  			   nxpdev->fw->size);
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1148  		clear_bit(BTNXPUART_FW_DOWNLOADING, &nxpdev->tx_state);
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1149  		wake_up_interruptible(&nxpdev->fw_dnld_done_wait_q);
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1150  		goto free_skb;
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1151  	}
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1152  
+9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1153  	offset = __le32_to_cpu(req->offset);
+9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1154  	if (offset < nxpdev->fw_v3_offset_correction) {
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1155  		/* This scenario should ideally never occur. But if it ever does,
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1156  		 * FW is out of sync and needs a power cycle.
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1157  		 */
+9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1158  		bt_dev_err(hdev, "Something went wrong during FW download");
+9e080b53dafae5 Luiz Augusto von Dentz 2023-04-17  1159  		bt_dev_err(hdev, "Please power cycle and try again");
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1160  		goto free_skb;
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1161  	}
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1162  
+e3c4891098c875 Neeraj Sanjay Kale     2024-05-15  1163  	nxpdev->fw_dnld_v3_offset = offset - nxpdev->fw_v3_offset_correction;
+e3c4891098c875 Neeraj Sanjay Kale     2024-05-15  1164  	serdev_device_write_buf(nxpdev->serdev, nxpdev->fw->data +
+e3c4891098c875 Neeraj Sanjay Kale     2024-05-15  1165  				nxpdev->fw_dnld_v3_offset, len);
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1166  
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1167  free_skb:
+5bf71799df5728 Neeraj Sanjay Kale     2025-03-05  1168  	nxpdev->fw_v3_prev_sent = len;
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1169  	kfree_skb(skb);
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1170  	return 0;
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1171  }
+689ca16e523278 Neeraj Sanjay Kale     2023-03-16  1172  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
