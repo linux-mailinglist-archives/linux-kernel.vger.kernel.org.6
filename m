@@ -1,89 +1,59 @@
-Return-Path: <linux-kernel+bounces-548221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA9A4A541EC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:08:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CADC5A541EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:11:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE9141891144
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:08:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B938169CA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A22B19CC3A;
-	Thu,  6 Mar 2025 05:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A4619D88B;
+	Thu,  6 Mar 2025 05:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XKASTT9E"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="i88gzM5F"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46AD19ADB0
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 05:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080C37E9;
+	Thu,  6 Mar 2025 05:10:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741237720; cv=none; b=QsXYhkl5Gj7v7CVFCYjgbQ1M1LrTahX3Y783Ca9kMgbLDJvtQj0IEbNBRkplVg4qIAS2YUunioZSLtPPqgXuVDXPIzL4otAEMtXR2Sib7mJHTnOUxR29dJVEx9ejjMhD42kEcZNU1mW+W3XuJ6UuNW3AxIXcowwnHtwTr4WDRZo=
+	t=1741237858; cv=none; b=iVpJoiOgnjG4NLVZTo14ylNTDguCxn2Esjx4PRR0PLpzzBq4aOHAeQkuFXdU3ZdjWtMTi4hr10IIki66SZsfzdoW8WKKG0f6j/B7X7jS77Zxe6tiJVbmPcGmXF2GJ4q8dJguM3FZrp+9V9ZXpTXdrlhJWj6id9QWrZHcslQwz0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741237720; c=relaxed/simple;
-	bh=+viV11nQBG/pa4OYx4X5/r1x+AdDiOmvsrgtAtgFNcs=;
+	s=arc-20240116; t=1741237858; c=relaxed/simple;
+	bh=4DbueHlttFV8uEm6cha8MpMRQjUVM93gk8BRNUSWEk4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=krSaI0swqTnSAzLm7+ntcZ9luZeplDWb9lJTe08fo6SG3maMt3aq8c29Ot3D5YrkD60D/uI84CUc1rBAJVs1MGKCxlgVQ3+DviKnu+t3RApkQ5KVHAQD3+AqynS/E4WaK40f5y6XY0KJ6KNw0nTrmQW5qBJH2SKOqpJG76i365k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XKASTT9E; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741237719; x=1772773719;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=+viV11nQBG/pa4OYx4X5/r1x+AdDiOmvsrgtAtgFNcs=;
-  b=XKASTT9EAdxp1XFPKhgENYlaU4XQWwa0gQW6fw95RM+7ihGGlzIqcIwx
-   kTUmF9rpfScKdATXOZnuYb3Lc7clxZo+iG/gCe8KI+Xoyr7SOvSXCQVo3
-   kDWX+vSD+ieyqLdH9y/2lhS/QSznxdCFO+8CtiDyqissFfKmU8tiErn4M
-   4WnYuArd8O/ZdUqQYyCFG2c5hOGELdNFRNIVeTtV1UTPi9/4SFeQShFRs
-   gXoyWa89W+VowEVZtvlTABiGXzhxDLjXxrfGaqJTmZU07UW8ebCLC7/mL
-   vtefeAxaFgcd0J7j00ASaZoBeSb11Zo104puNpn92kiQjdwNsHPgcaIx4
-   w==;
-X-CSE-ConnectionGUID: j2T0p3JeT3+aroMHIpwbPA==
-X-CSE-MsgGUID: 76nbbCKHQ22pLmN32ooJag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="53216191"
-X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
-   d="scan'208";a="53216191"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 21:08:39 -0800
-X-CSE-ConnectionGUID: 3xZfakiyQbySmXPipKosRQ==
-X-CSE-MsgGUID: oTR3TydRSpSUiPDMcps1RA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119822472"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa008.jf.intel.com with ESMTP; 05 Mar 2025 21:08:34 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tq3TD-000MYs-1d;
-	Thu, 06 Mar 2025 05:08:31 +0000
-Date: Thu, 6 Mar 2025 13:08:16 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ryan Roberts <ryan.roberts@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Pasha Tatashin <pasha.tatashin@soleen.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Christoph Hellwig <hch@infradead.org>,
-	David Hildenbrand <david@redhat.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 04/11] arm64/mm: Refactor __set_ptes() and
- __ptep_get_and_clear()
-Message-ID: <202503061237.QurSXHSC-lkp@intel.com>
-References: <20250304150444.3788920-5-ryan.roberts@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zit/9ZMNVgrhT4LuFeJsY/ShgvmtRlorT0AUzBlom/ts9YrgZnsT6xZmMgxsJexWL4aM9P5vrrzRCtqFlDW2XEZyYCKl6Do7aj7Ai2oCxiBL8BAk5iEcd84V3HbU1Z9dDu+tQP2ySdH6SBzTWZmxEWuCkCvXEQZl0Q4+mbpqB6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=i88gzM5F; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XST+jheb705ZIJsJQQajySkT5tEWK7OqP/Yr2rYjQZc=; b=i88gzM5F9CHlNSXhYSF3Tg+OBk
+	gP3SH4qseRy7Hnw+Uoix0oDZSbCOeYKzIuADYKD/p+muY6mZaDl+0V8DTj8TepAyIryfbzMj/VkQD
+	+myqIK1SG80bEr6iQmWG01YFOR1U0nbvT+80auQANjWrt9uz1+9Ni0OCe6aCLxqRAu8faM7hGyLu2
+	Om2zOqTPVCleHOs8qoVcvXBfH0D5J/NZmagFYMLMo9v9ht5Y+d+hJ4uOVpCrwYZ8qV837G/TQo07b
+	LOmps4qOHTvGwKi1cmzyjr8V8FLLm1U0WEe1vrq3vkcHi7bK+KHjAPd0gApTGslYGkf9kGwBu8Bv5
+	eiE5X8fw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tq3VT-00000006qKX-1UEm;
+	Thu, 06 Mar 2025 05:10:51 +0000
+Date: Thu, 6 Mar 2025 05:10:51 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Luka <luka.2016.cs@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+	linux-fsdevel@vger.kernel.org
+Subject: Potential Linux Crash: WARNING in __getblk_slow in Linux kernel
+ v6.13-rc5
+Message-ID: <Z8kuWyqj8cS-stKA@casper.infradead.org>
+References: <CALm_T+3j+dyK02UgPiv9z0f1oj-HM63oxhsB0JF9gVAjeVfm1Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,127 +62,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250304150444.3788920-5-ryan.roberts@arm.com>
+In-Reply-To: <CALm_T+3j+dyK02UgPiv9z0f1oj-HM63oxhsB0JF9gVAjeVfm1Q@mail.gmail.com>
 
-Hi Ryan,
+On Thu, Mar 06, 2025 at 10:54:13AM +0800, Luka wrote:
+> Dear Linux Kernel Experts,
+> 
+> Hello!
+> 
+> I am a security researcher focused on testing Linux kernel
+> vulnerabilities. Recently, while testing the v6.13-rc5 Linux kernel,
+> we encountered a crash related to the mm kernel module. We have
+> successfully captured the call trace information for this crash.
+> 
+> Unfortunately, we have not been able to reproduce the issue in our
+> local environment, so we are unable to provide a PoC (Proof of
+> Concept) at this time.
+> 
+> We fully understand the complexity and importance of Linux kernel
+> maintenance, and we would like to share this finding with you for
+> further analysis and confirmation of the root cause. Below is a
+> summary of the relevant information:
 
-kernel test robot noticed the following build errors:
+You're a "security researcher" ... but you're not even going to do a
+cursory look at the code to figure out what's going on?
 
-[auto build test ERROR on linus/master]
-[also build test ERROR on v6.14-rc5 next-20250305]
-[cannot apply to arm64/for-next/core akpm-mm/mm-everything arm-perf/for-next/perf]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+        if (unlikely(nofail)) {
+...
+                WARN_ON_ONCE(current->flags & PF_MEMALLOC);
+^^^ that's the line which triggered the warning.  So it's not a
+problem in the memory allocator at all, it's the memory allocator
+reporting that someone's asked it to satisfy some impossible
+constraints.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Roberts/arm64-hugetlb-Cleanup-huge_pte-size-discovery-mechanisms/20250304-230647
-base:   linus/master
-patch link:    https://lore.kernel.org/r/20250304150444.3788920-5-ryan.roberts%40arm.com
-patch subject: [PATCH v3 04/11] arm64/mm: Refactor __set_ptes() and __ptep_get_and_clear()
-config: arm64-randconfig-001-20250305 (https://download.01.org/0day-ci/archive/20250306/202503061237.QurSXHSC-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250306/202503061237.QurSXHSC-lkp@intel.com/reproduce)
+>  alloc_pages_mpol_noprof+0xda/0x300 mm/mempolicy.c:2269
+>  folio_alloc_noprof+0x1e/0x70 mm/mempolicy.c:2355
+>  filemap_alloc_folio_noprof+0x2b2/0x2f0 mm/filemap.c:1009
+>  __filemap_get_folio+0x16d/0x3d0 mm/filemap.c:1951
+>  grow_dev_folio fs/buffer.c:1039 [inline]
+>  grow_buffers fs/buffer.c:1105 [inline]
+>  __getblk_slow+0x138/0x430 fs/buffer.c:1131
+>  bdev_getblk fs/buffer.c:1431 [inline]
+>  __bread_gfp+0xea/0x2c0 fs/buffer.c:1485
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503061237.QurSXHSC-lkp@intel.com/
+__bread_gfp is who sets GFP_NOFAIL.
 
-All errors (new ones prefixed by >>):
+>  sb_bread include/linux/buffer_head.h:346 [inline]
+>  fat12_ent_bread+0x231/0x3f0 fs/fat/fatent.c:86
+>  fat_ent_read+0x624/0xaa0 fs/fat/fatent.c:368
+>  fat_free_clusters+0x19c/0x860 fs/fat/fatent.c:568
+>  fat_free.isra.0+0x377/0x850 fs/fat/file.c:376
+>  fat_truncate_blocks+0x10d/0x190 fs/fat/file.c:394
+>  fat_free_eofblocks fs/fat/inode.c:633 [inline]
+>  fat_evict_inode+0x1b1/0x260 fs/fat/inode.c:658
+>  evict+0x337/0x7c0 fs/inode.c:796
+>  dispose_list fs/inode.c:845 [inline]
+>  prune_icache_sb+0x189/0x290 fs/inode.c:1033
+>  super_cache_scan+0x33d/0x510 fs/super.c:223
+>  do_shrink_slab mm/shrinker.c:437 [inline]
+>  shrink_slab+0x43e/0x930 mm/shrinker.c:664
+>  shrink_node_memcgs mm/vmscan.c:5931 [inline]
+>  shrink_node+0x4dd/0x15c0 mm/vmscan.c:5970
+>  shrink_zones mm/vmscan.c:6215 [inline]
+>  do_try_to_free_pages+0x284/0x1160 mm/vmscan.c:6277
+>  try_to_free_pages+0x1ee/0x3e0 mm/vmscan.c:6527
+>  __perform_reclaim mm/page_alloc.c:3929 [inline]
 
-   In file included from arch/arm64/kernel/asm-offsets.c:12:
-   In file included from include/linux/ftrace.h:10:
-   In file included from include/linux/trace_recursion.h:5:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/arm64/include/asm/hardirq.h:17:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/arm64/include/asm/io.h:12:
-   In file included from include/linux/pgtable.h:6:
->> arch/arm64/include/asm/pgtable.h:639:7: error: duplicate case value '536870912'
-           case PUD_SIZE:
-                ^
-   include/asm-generic/pgtable-nopud.h:20:20: note: expanded from macro 'PUD_SIZE'
-   #define PUD_SIZE        (1UL << PUD_SHIFT)
-                           ^
-   arch/arm64/include/asm/pgtable.h:636:7: note: previous case defined here
-           case PMD_SIZE:
-                ^
-   include/asm-generic/pgtable-nopmd.h:22:20: note: expanded from macro 'PMD_SIZE'
-   #define PMD_SIZE        (1UL << PMD_SHIFT)
-                           ^
-   In file included from arch/arm64/kernel/asm-offsets.c:12:
-   In file included from include/linux/ftrace.h:10:
-   In file included from include/linux/trace_recursion.h:5:
-   In file included from include/linux/interrupt.h:11:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/arm64/include/asm/hardirq.h:17:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/arm64/include/asm/io.h:12:
-   In file included from include/linux/pgtable.h:6:
-   arch/arm64/include/asm/pgtable.h:1303:7: error: duplicate case value '536870912'
-           case PUD_SIZE:
-                ^
-   include/asm-generic/pgtable-nopud.h:20:20: note: expanded from macro 'PUD_SIZE'
-   #define PUD_SIZE        (1UL << PUD_SHIFT)
-                           ^
-   arch/arm64/include/asm/pgtable.h:1300:7: note: previous case defined here
-           case PMD_SIZE:
-                ^
-   include/asm-generic/pgtable-nopmd.h:22:20: note: expanded from macro 'PMD_SIZE'
-   #define PMD_SIZE        (1UL << PMD_SHIFT)
-                           ^
-   2 errors generated.
-   make[3]: *** [scripts/Makefile.build:102: arch/arm64/kernel/asm-offsets.s] Error 1 shuffle=4064171735
-   make[3]: Target 'prepare' not remade because of errors.
-   make[2]: *** [Makefile:1264: prepare0] Error 2 shuffle=4064171735
-   make[2]: Target 'prepare' not remade because of errors.
-   make[1]: *** [Makefile:251: __sub-make] Error 2 shuffle=4064171735
-   make[1]: Target 'prepare' not remade because of errors.
-   make: *** [Makefile:251: __sub-make] Error 2 shuffle=4064171735
-   make: Target 'prepare' not remade because of errors.
+And __perform_reclaim() is where PF_MEMALLOC gets set.
 
+>  __alloc_pages_direct_reclaim mm/page_alloc.c:3951 [inline]
+>  __alloc_pages_slowpath mm/page_alloc.c:4382 [inline]
+>  __alloc_pages_noprof+0xa48/0x2040 mm/page_alloc.c:4766
+>  alloc_pages_mpol_noprof+0xda/0x300 mm/mempolicy.c:2269
+>  pagetable_alloc_noprof include/linux/mm.h:2899 [inline]
+>  __pte_alloc_one_noprof include/asm-generic/pgalloc.h:70 [inline]
+>  pte_alloc_one+0x20/0x1b0 arch/x86/mm/pgtable.c:33
+>  do_fault_around mm/memory.c:5274 [inline]
+>  do_read_fault mm/memory.c:5313 [inline]
+>  do_fault mm/memory.c:5456 [inline]
+>  do_pte_missing mm/memory.c:3979 [inline]
+>  handle_pte_fault mm/memory.c:5801 [inline]
+>  __handle_mm_fault+0x15b9/0x2380 mm/memory.c:5944
+>  handle_mm_fault+0x1c6/0x4c0 mm/memory.c:6112
+>  faultin_page mm/gup.c:1196 [inline]
+>  __get_user_pages+0x421/0x2550 mm/gup.c:1494
+>  populate_vma_page_range+0x16b/0x200 mm/gup.c:1932
+>  __mm_populate+0x1c2/0x360 mm/gup.c:2035
+>  mm_populate include/linux/mm.h:3396 [inline]
+>  vm_mmap_pgoff+0x25d/0x2f0 mm/util.c:585
+>  ksys_mmap_pgoff+0x5a/0x480 mm/mmap.c:542
 
-vim +/536870912 +639 arch/arm64/include/asm/pgtable.h
-
-   626	
-   627	static inline void set_ptes_anysz(struct mm_struct *mm, pte_t *ptep, pte_t pte,
-   628					  unsigned int nr, unsigned long pgsize)
-   629	{
-   630		unsigned long stride = pgsize >> PAGE_SHIFT;
-   631	
-   632		switch (pgsize) {
-   633		case PAGE_SIZE:
-   634			page_table_check_ptes_set(mm, ptep, pte, nr);
-   635			break;
-   636		case PMD_SIZE:
-   637			page_table_check_pmds_set(mm, (pmd_t *)ptep, pte_pmd(pte), nr);
-   638			break;
- > 639		case PUD_SIZE:
-   640			page_table_check_puds_set(mm, (pud_t *)ptep, pte_pud(pte), nr);
-   641			break;
-   642		default:
-   643			VM_WARN_ON(1);
-   644		}
-   645	
-   646		__sync_cache_and_tags(pte, nr * stride);
-   647	
-   648		for (;;) {
-   649			__check_safe_pte_update(mm, ptep, pte);
-   650			__set_pte(ptep, pte);
-   651			if (--nr == 0)
-   652				break;
-   653			ptep++;
-   654			pte = pte_advance_pfn(pte, stride);
-   655		}
-   656	}
-   657	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Now, I'm not sure how best to solve this.  Should FAT decline to read
+entries if it's called from reclaim?  I know XFS goes to some trouble to
+not do that kind of thing.  Or should buffer head allocation do
+something to access the emergency reserves?
 
