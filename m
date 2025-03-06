@@ -1,210 +1,118 @@
-Return-Path: <linux-kernel+bounces-548657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33AE5A547B1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:24:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A701A54862
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:50:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EC5B16C4AC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:24:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59B033ABC71
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B9892040BE;
-	Thu,  6 Mar 2025 10:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GKk6CSsL"
-Received: from out-174.mta0.migadu.com (out-174.mta0.migadu.com [91.218.175.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355411FF61B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C65318A6B5;
+	Thu,  6 Mar 2025 10:50:06 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56352202F92
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741256655; cv=none; b=oaZkdZogql8nw9t2WQYkn9h+zfHjmWiejP1eZaNVlBseiBLcz3ZUvcZ5DG3pDXtTjfdh/7EL7u/SYuyiP9TXhm3rdlxAoJZa69s3BZlhpU+zIQ3mZB3HrciX/IUsqM2TxhE9/GE29HT8r7C0BQe5VA2LOIthRVV8yq8mXkCTj34=
+	t=1741258206; cv=none; b=j+E5Vm9azN59GyFqObjHslB66PlDnYhKAK6nGix0Dzt61gag7qvrOwaHkcfSzCj80NgfyMJoxuWVFCU5KK5tI0MzPQ6rjjiQImPYQ3UEFLgHMhhzyPgMrOqhxG/gXNU0XA0kzqNxKqLG0z+Xqjdq5U6E/1Wwsce/sqaIQKTyW2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741256655; c=relaxed/simple;
-	bh=Uo69lXKS0GaN/wbhkOYfWNI6Y6MihgXFm+nP4SXRWVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=okQawN1/tcg+22KI7aaHOwCxL3iOMZx1nKRbYLEFm89+VtTi+ttc4o5uB7G5reREmzDAxiVaLAKyIiyzRw2E9K5a3sYhFmxG+ZaA3g5TOaes06kCPiLMCII7/doDSWXmBRuVCgjsLG89vPNLWSgzagTAhaRyI4e0LG47ISYa14k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GKk6CSsL; arc=none smtp.client-ip=91.218.175.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <6d589863-1eba-46dc-a9ff-905d5380cd53@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741256649;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sos9IN0yeAPRIxW6qwHtKttNUd7BC/DSQbq25FgfCoo=;
-	b=GKk6CSsLLsLhNaZuPDw1eyZC33Jukyga7WFDO4/D87gsR/GZaaHgaeM5qUAiIcFIbqCrPu
-	+3adOWT3LALN/GapAEKqm8HarQ5DDPEevWFmWSxL0INJqTBsfsShC/XUSwJ+HUj4KbcVuZ
-	ECrx2q9XUydvjQo9q4eJq6k44OiDKKE=
-Date: Thu, 6 Mar 2025 11:24:08 +0100
+	s=arc-20240116; t=1741258206; c=relaxed/simple;
+	bh=aOImr5/U4ykbLTFYU0AB+Akmi9BbY0kGzfkbj74bCbw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jTYVWp9a02RyJvnOp3RBUorLrwdw5Sl3NccVa3onq1TNzKx4nSs5iKY6edsgKfvtlTeDi7XLkj5zn/UaJ4B4mnk7tYo/P0Wa0hnFBYKqGZNXBmf+i4HVgv17QJpUHD+c4a4ZbSvNONFU1OIra4JFAY9ObTJm4hbgb9XsXZv8iUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Z7lsP5KYTz9stG;
+	Thu,  6 Mar 2025 11:24:41 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id e4vbfzpb9Tx7; Thu,  6 Mar 2025 11:24:41 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z7lsP4K5zz9rvV;
+	Thu,  6 Mar 2025 11:24:41 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5A1338B766;
+	Thu,  6 Mar 2025 11:24:41 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id cLeejrd8zjee; Thu,  6 Mar 2025 11:24:41 +0100 (CET)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E9DD58B763;
+	Thu,  6 Mar 2025 11:24:40 +0100 (CET)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH v2] powerpc/kexec: fix physical address calculation in clear_utlb_entry()
+Date: Thu,  6 Mar 2025 11:24:28 +0100
+Message-ID: <dc4f9616fba9c05c5dbf9b4b5480eb1c362adc17.1741256651.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: linux-next: manual merge of the rdma tree with the rdma-fixes
- tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
- Doug Ledford <dledford@redhat.com>, Jason Gunthorpe <jgg@mellanox.com>
-Cc: Leon Romanovsky <leon@kernel.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20250306123733.5212bf69@canb.auug.org.au>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20250306123733.5212bf69@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741256668; l=1671; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=aOImr5/U4ykbLTFYU0AB+Akmi9BbY0kGzfkbj74bCbw=; b=63/dW0ZW/45Bs9gOVtFdTdT4ylZccTHf357VIIIUuXR8lbn4iNW72GNZX4ilfWq8C5hADM0qG TBMsNMy1qQRDXRvsnpovR4/UyApzga3NB8oKN3M68m5tr8+cuj4rQJ4
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Hi, Stephen
+In relocate_32.S, function clear_utlb_entry() goes into real mode. To
+do so, it has to calculate the physical address based on the virtual
+address. To get the virtual address it uses 'bl' which is problematic
+(see commit c974809a26a1 ("powerpc/vdso: Avoid link stack corruption
+in __get_datapage()")). In addition, the calculation is done on a
+wrong address because 'bl' loads LR with the address of the following
+instruction, not the address of the target. So when the target is not
+the instruction following the 'bl' instruction, it may lead to
+unexpected behaviour.
 
-I am the author of the commit 8ce2eb9dfac8 ("RDMA/rxe: Fix the failure 
-of ibv_query_device() and ibv_query_device_ex() tests").
+Fix it by re-writing the code so that is goes via another path which
+is based 'bcl 20,31,.+4' which is the right instruction to use for that.
 
-My replies are inline. Thanks a lot.
+Fixes: 683430200315 ("powerpc/47x: Kernel support for KEXEC")
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
+---
+v2: Fixed patch description and added Fixes: tag.
+[Previous patch subject was "powerpc: Fix address calculation in clear_utlb_entry()"]
+---
+ arch/powerpc/kexec/relocate_32.S | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
-"
-
-diff --cc drivers/infiniband/sw/rxe/rxe.c
-index e27478fe9456,4e56a371deb5..000000000000
---- a/drivers/infiniband/sw/rxe/rxe.c
-+++ b/drivers/infiniband/sw/rxe/rxe.c
-@@@ -72,10 -71,45 +69,39 @@@ static void rxe_init_device_param(struc
-       rxe->attr.max_pkeys            = RXE_MAX_PKEYS;
-       rxe->attr.local_ca_ack_delay        = RXE_LOCAL_CA_ACK_DELAY;
-
-  -    ndev = rxe_ib_device_get_netdev(&rxe->ib_dev);
-  -    if (!ndev)
-  -        return;
-  -
-+     if (ndev->addr_len) {
-+         memcpy(rxe->raw_gid, ndev->dev_addr,
-+             min_t(unsigned int, ndev->addr_len, ETH_ALEN));
-+     } else {
-+         /*
-+          * This device does not have a HW address, but
-+          * connection mangagement requires a unique gid.
-+          */
-+         eth_random_addr(rxe->raw_gid);
-+     }
-+
-       addrconf_addr_eui48((unsigned char *)&rxe->attr.sys_image_guid,
--             ndev->dev_addr);
-+             rxe->raw_gid);
-
-  -    dev_put(ndev);
-  -
-
-
-------The above snippet is fine with me.
-
-
-       rxe->max_ucontext            = RXE_MAX_UCONTEXT;
-+
-+     if (IS_ENABLED(CONFIG_INFINIBAND_ON_DEMAND_PAGING)) {
-+         rxe->attr.kernel_cap_flags |= IBK_ON_DEMAND_PAGING;
-+
-+         /* IB_ODP_SUPPORT_IMPLICIT is not supported right now. */
-+         rxe->attr.odp_caps.general_caps |= IB_ODP_SUPPORT;
-+
-+         rxe->attr.odp_caps.per_transport_caps.ud_odp_caps |= 
-IB_ODP_SUPPORT_SEND;
-+         rxe->attr.odp_caps.per_transport_caps.ud_odp_caps |= 
-IB_ODP_SUPPORT_RECV;
-+         rxe->attr.odp_caps.per_transport_caps.ud_odp_caps |= 
-IB_ODP_SUPPORT_SRQ_RECV;
-+
-+         rxe->attr.odp_caps.per_transport_caps.rc_odp_caps |= 
-IB_ODP_SUPPORT_SEND;
-+         rxe->attr.odp_caps.per_transport_caps.rc_odp_caps |= 
-IB_ODP_SUPPORT_RECV;
-+         rxe->attr.odp_caps.per_transport_caps.rc_odp_caps |= 
-IB_ODP_SUPPORT_WRITE;
-+         rxe->attr.odp_caps.per_transport_caps.rc_odp_caps |= 
-IB_ODP_SUPPORT_READ;
-+         rxe->attr.odp_caps.per_transport_caps.rc_odp_caps |= 
-IB_ODP_SUPPORT_ATOMIC;
-+         rxe->attr.odp_caps.per_transport_caps.rc_odp_caps |= 
-IB_ODP_SUPPORT_SRQ_RECV;
-+     }
-   }
-
-
-
----------The above snippet is from on_demand paging commits. I do not 
-why it is involved in this commit.
-
----------It should appear in on_demand_paging patchset.
-
-
-   /* initialize port attributes */
-@@@ -107,13 -141,18 +133,13 @@@ static void rxe_init_port_param(struct
-   /* initialize port state, note IB convention that HCA ports are always
-    * numbered from 1
-    */
-  -static void rxe_init_ports(struct rxe_dev *rxe)
-  +static void rxe_init_ports(struct rxe_dev *rxe, struct net_device *ndev)
-
-
-----------In this snippet, the variable "struct net_device *ndev" is not 
-used in the function rxe_init_ports, it should be removed.
-
-----------Thanks a lot.
-
-Zhu Yanjun
-
-
-   {
-       struct rxe_port *port = &rxe->port;
-  -    struct net_device *ndev;
-
-       rxe_init_port_param(port);
-  -    ndev = rxe_ib_device_get_netdev(&rxe->ib_dev);
-  -    if (!ndev)
-  -        return;
-       addrconf_addr_eui48((unsigned char *)&port->port_guid,
--                 ndev->dev_addr);
-+                 rxe->raw_gid);
-  -    dev_put(ndev);
-       spin_lock_init(&port->port_lock);
-   }
-
-"
-
-On 06.03.25 02:37, Stephen Rothwell wrote:
-> Hi all,
->
-> Today's linux-next merge of the rdma tree got a conflict in:
->
->    drivers/infiniband/sw/rxe/rxe.c
->
-> between commit:
->
->    8ce2eb9dfac8 ("RDMA/rxe: Fix the failure of ibv_query_device() and ibv_query_device_ex() tests")
->
-> from the rdma-fixes tree and commit:
->
->    d34d0bdb500e ("RDMA/rxe: Replace netdev dev addr with raw_gid")
->
-> from the rdma tree.
->
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->
+diff --git a/arch/powerpc/kexec/relocate_32.S b/arch/powerpc/kexec/relocate_32.S
+index 104c9911f406..dd86e338307d 100644
+--- a/arch/powerpc/kexec/relocate_32.S
++++ b/arch/powerpc/kexec/relocate_32.S
+@@ -348,16 +348,13 @@ write_utlb:
+ 	rlwinm	r10, r24, 0, 22, 27
+ 
+ 	cmpwi	r10, PPC47x_TLB0_4K
+-	bne	0f
+ 	li	r10, 0x1000			/* r10 = 4k */
+-	ANNOTATE_INTRA_FUNCTION_CALL
+-	bl	1f
++	beq	0f
+ 
+-0:
+ 	/* Defaults to 256M */
+ 	lis	r10, 0x1000
+ 
+-	bcl	20,31,$+4
++0:	bcl	20,31,$+4
+ 1:	mflr	r4
+ 	addi	r4, r4, (2f-1b)			/* virtual address  of 2f */
+ 
 -- 
-Best Regards,
-Yanjun.Zhu
+2.47.0
 
 
