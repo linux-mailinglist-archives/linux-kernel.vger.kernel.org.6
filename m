@@ -1,263 +1,211 @@
-Return-Path: <linux-kernel+bounces-549115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74972A54DAB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:25:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA56AA54DAD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:25:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8206C3A8C0D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:25:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2592216B559
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:25:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 599AE16CD1D;
-	Thu,  6 Mar 2025 14:25:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D857917995E;
+	Thu,  6 Mar 2025 14:25:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="eQwCDqkL"
-Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aeOLBcDx"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C681624DC
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 14:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FC1414F9FF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 14:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741271136; cv=none; b=nimCPE9TW6NjTkBl65kFJebIj2dRHlpIY6DANgl9gLSDKNLCNjXPWplyldb2ujZYiDOzYeEZxQ9nWBTR+KxsxLm7JoZioKoM0KMP1biRRWO8Mj77fZ6GT7zN3Cu2lAH14nT3wjlLXzstKgXbFULD2Iatb8T9TAhdiZfBFWkKoUM=
+	t=1741271139; cv=none; b=c7ZKM6hwV624hJaAiLUMIkQO+ROokPpi4bELfMH0UmZqXnay9jGJifdvXPZ+mgL+5Clp+iv4P6ER7u4BgTv8bpHy3pd5+Trqo2LI0PZOwvWQl2QnsEpnDJIHxdSE5mqKf4GBvmZF5e1gu999qLlSMLNKq6GR594Wu3ZZcBinRZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741271136; c=relaxed/simple;
-	bh=rewbDqtOzkoRQWXlMx1uF1dSYCNyFmWtML0qp55+0Io=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bXuDZ8sUWn42+eNBgeA0FV7FDq7zuXOKSI9PAhNbBTDD8yDnjHcFIBQbADxJ5zERsyL2eamsqqhqV1AUMsCs1Q2Tofz/CSEWPa8qMZu6l5G63Izd0rP1ZIXY6C6NjvfbHcNq0EpsL2J2yxYREsd4sg09QPDtlpL9wBMXSrjVij0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=eQwCDqkL; arc=none smtp.client-ip=94.124.121.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
+	s=arc-20240116; t=1741271139; c=relaxed/simple;
+	bh=wkuR6V7yX4FWV69BoRi9f9igrdPVM6MN9Y5OKyuLTKY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EQEq6Hb8+6dwn+uqHRjei8Ls54hRB1ruM2Gi5jiSa5A1ks2VN8WOC0vqF4fNQzwK7kNYt+XPLgB+OIt4t0DYbfc8A/PneNuy+SyiL9e6QGeQgApFGPjdnfmN9CFD0oY3e8k7pDA38qCGLGgTGIhIx545mwm8AqpbmRE5flvxKRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aeOLBcDx; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-30797730cbdso6889051fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 06:25:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=protonic.nl; s=202111;
-	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
-	 message-id:subject:cc:to:from:date:from;
-	bh=Muv0tidnHLtV2deO81+NbGyTlOS+APQ2U35gCWqb6N0=;
-	b=eQwCDqkLRQhan6nnkk+SYJeicRcs5KSan9ERkS6JqfB3D8+uF5OeLQEG8Z14QvCUrAJ3apgFnDSxa
-	 hvS5/L0InHPOmAjWO4gi/Go59M0C6WcWewdlfiAM50DOg9m03r4XEmRKgo+daVCwQgMymFUiEOj4Kh
-	 zwGDPwdQ1QYmgFiu9WwPHZou7zN9lMy0IdseXFt3vK3T94UGbzoHNj1mnlUuTH8zZqZGKzz5adL5Yw
-	 Cb5qhR2zEnnwxMrVNNc6FzHylZ4uWcNR6Y1jtZ3EUq+mKJ9dJA1D8duyYxw2tDipGzsNFOVYRo/Uyn
-	 CGxZBLXiIootXbkXmvjrBJ2IU8LwVKQ==
-X-MSG-ID: db25a176-fa96-11ef-a39e-00505681446f
-Date: Thu, 6 Mar 2025 15:25:29 +0100
-From: David Jander <david@protonic.nl>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
- <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
- <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>
-Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
-Message-ID: <20250306152529.31dbfef2@erd003.prtnl>
-In-Reply-To: <2025030633-covenant-bootlace-7163@gregkh>
-References: <20250227162823.3585810-1-david@protonic.nl>
-	<20250227162823.3585810-2-david@protonic.nl>
-	<6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
-	<20250305164046.4de5b6ef@erd003.prtnl>
-	<mzxammninwmak5ti4c6is4pbdx3xzzziiwbxiwrldjyxgae4ok@ocec24vu4txa>
-	<2025030611-embezzle-sacrament-00d9@gregkh>
-	<20250306092013.1147f27e@erd003.prtnl>
-	<2025030638-wavy-napkin-41ab@gregkh>
-	<20250306103402.2b9e51d7@erd003.prtnl>
-	<2025030633-covenant-bootlace-7163@gregkh>
-Organization: Protonic Holland
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+        d=gmail.com; s=20230601; t=1741271135; x=1741875935; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pwbv0t6uK6SvbcukPPqIRzqkIicD6618q2LOrpZbTpQ=;
+        b=aeOLBcDxkpWQB+BIlUV4C+Dsa3Lq004+2vBntJeFCkL2p8NtxLgGOabr6oApeN51Jg
+         JELjE9Q6HkWr/Q7yOtbh6RL393om/WpR6oszZkJcnYa7NmonUtll+5iARwkzSPG+uBlp
+         JtXXmYUwo5kGAZBJamNG47PrKlMLTg2DP8x5rICGItfxyIM0qihMn6+rKkFeyLd0vFtm
+         oXBMiBqmo3Y6+bRxxMEfNNTQMmGR0CzVK7w+1nLxLI1jUHeBwrM+Cs6OhJb8sPgg5PI+
+         pS9OOcuXnlrp0mHv++kbrTZxJ2S5BiPHmwF1QNBHH1zsb6M4Pg8xON1oKiImyvjRGB+b
+         KyZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741271135; x=1741875935;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pwbv0t6uK6SvbcukPPqIRzqkIicD6618q2LOrpZbTpQ=;
+        b=AqLnu3Dna6j1KqMFnhkxtSPTSYHLK2b0zYyrteVyKcjLGLrTR+qS2uhlq7mMLKaKVk
+         ZOHhs/ONhUZLoJ/hgNtqepLiZP4LAYkwVTAEZJ6yVQkGCehrLwWkp6bQC3SJGptMzfTI
+         6nGsQi/rjM4DUUJIh8WSPAcTJerwkN3ox4bhzP5dY8JwTPIUnjFdKjew36IdsqtUn9zH
+         hf5Yxbwe0wMNsqtEz2L9quK0J1iC33eUaebHFf1wiUzaIUyYf/O9M7Lhjq7s4709kA5Q
+         4W23BujJeZ2/r0vC6TeMEPEyYPjqYEfmrUC02RIBeAi2lWTEV2ybTw49jTgLR5RxgRPE
+         z2ng==
+X-Forwarded-Encrypted: i=1; AJvYcCUz5D66LXp+2Pwqq0pDqOKjPqe/GAfEBf3FtQoviRCFtSn8ytQFmljeedVVcWn8dwt4TEUDrDv0AVC7aao=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyduHH+tCBYLMKoSvPbhKtvb0tkZV9I2Z3QIY0oTEg3k5D8MtDu
+	jkaH4QYH8ieUz/ZHkzz0WY9z6ymZG/UoY2eUgZgMGg4yliG3EbLweEOb1DfgWrDnZ2DlsHq3THv
+	FOxxjPvtbwHpT/q0TI5Jp0vbjws8=
+X-Gm-Gg: ASbGncuFsDg6ibgK5BxmVfgpOsdMg12THWeZKMCuRYkePAjRqfYs4MgLwO4rLMuP7td
+	cMQoMLX4ndt5YOUf8IzOj0qEdn2JfNs/L2niN1KBtZhFD2x/+hGvoMuvWpiHJVCUW0EEuIFEabz
+	vEYPB39+jSeE5/eTBWWdH8aRJu0A==
+X-Google-Smtp-Source: AGHT+IHN8O5OpTzZU49TK7paMaeNy/5cRAh7/eGnGuA3MPMyjnk0sSQeNE8QuVdqC681J0asdg6GZ9AdwPFpd4EXTWU=
+X-Received: by 2002:a05:651c:544:b0:30b:c637:fcc3 with SMTP id
+ 38308e7fff4ca-30bd7a1e327mr24522161fa.6.1741271134841; Thu, 06 Mar 2025
+ 06:25:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20250305162649.130270-1-ubizjak@gmail.com> <1A02CCC5-8D03-44B0-A927-3BEC671C7744@zytor.com>
+In-Reply-To: <1A02CCC5-8D03-44B0-A927-3BEC671C7744@zytor.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Thu, 6 Mar 2025 15:25:34 +0100
+X-Gm-Features: AQ5f1JqX8bwSa4ZqpmSYq2r0I4Gr-tMYR4UkQqMR4mkbQdqPaLkNFRzjMINBsbg
+Message-ID: <CAFULd4a2wxyr_=j6S_3kBKdX3AbF-9fUEyXLjt_M8jwv6T3j0A@mail.gmail.com>
+Subject: Re: [PATCH] x86/kexec: Merge x86_32 and x86_64 code using macros from asm.h
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, 6 Mar 2025 14:39:16 +0100
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+On Thu, Mar 6, 2025 at 3:14=E2=80=AFPM H. Peter Anvin <hpa@zytor.com> wrote=
+:
+>
+> On March 5, 2025 8:26:37 AM PST, Uros Bizjak <ubizjak@gmail.com> wrote:
+> >Merge common x86_32 and x86_64 code in crash_setup_regs()
+> >using macros from asm/asm.h.
+> >
+> >The compiled object files before and after the patch are unchanged.
+> >
+> >Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> >Cc: Thomas Gleixner <tglx@linutronix.de>
+> >Cc: Ingo Molnar <mingo@kernel.org>
+> >Cc: Borislav Petkov <bp@alien8.de>
+> >Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> >Cc: "H. Peter Anvin" <hpa@zytor.com>
+> >---
+> > arch/x86/include/asm/asm.h   |  2 ++
+> > arch/x86/include/asm/kexec.h | 44 +++++++++++++++---------------------
+> > 2 files changed, 20 insertions(+), 26 deletions(-)
+> >
+> >diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+> >index 975ae7a9397e..2bccc063d30b 100644
+> >--- a/arch/x86/include/asm/asm.h
+> >+++ b/arch/x86/include/asm/asm.h
+> >@@ -41,6 +41,8 @@
+> > #define _ASM_SUB      __ASM_SIZE(sub)
+> > #define _ASM_XADD     __ASM_SIZE(xadd)
+> > #define _ASM_MUL      __ASM_SIZE(mul)
+> >+#define _ASM_PUSHF    __ASM_SIZE(pushf)
+> >+#define _ASM_POP      __ASM_SIZE(pop)
+> >
+> > #define _ASM_AX               __ASM_REG(ax)
+> > #define _ASM_BX               __ASM_REG(bx)
+> >diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
+> >index 8ad187462b68..56040ae6bda0 100644
+> >--- a/arch/x86/include/asm/kexec.h
+> >+++ b/arch/x86/include/asm/kexec.h
+> >@@ -18,6 +18,7 @@
+> > #include <linux/string.h>
+> > #include <linux/kernel.h>
+> >
+> >+#include <asm/asm.h>
+> > #include <asm/page.h>
+> > #include <asm/ptrace.h>
+> >
+> >@@ -71,29 +72,15 @@ static inline void crash_setup_regs(struct pt_regs *=
+newregs,
+> >       if (oldregs) {
+> >               memcpy(newregs, oldregs, sizeof(*newregs));
+> >       } else {
+> >-#ifdef CONFIG_X86_32
+> >-              asm volatile("movl %%ebx,%0" : "=3Dm"(newregs->bx));
+> >-              asm volatile("movl %%ecx,%0" : "=3Dm"(newregs->cx));
+> >-              asm volatile("movl %%edx,%0" : "=3Dm"(newregs->dx));
+> >-              asm volatile("movl %%esi,%0" : "=3Dm"(newregs->si));
+> >-              asm volatile("movl %%edi,%0" : "=3Dm"(newregs->di));
+> >-              asm volatile("movl %%ebp,%0" : "=3Dm"(newregs->bp));
+> >-              asm volatile("movl %%eax,%0" : "=3Dm"(newregs->ax));
+> >-              asm volatile("movl %%esp,%0" : "=3Dm"(newregs->sp));
+> >-              asm volatile("movl %%ss, %%eax;" :"=3Da"(newregs->ss));
+> >-              asm volatile("movl %%cs, %%eax;" :"=3Da"(newregs->cs));
+> >-              asm volatile("movl %%ds, %%eax;" :"=3Da"(newregs->ds));
+> >-              asm volatile("movl %%es, %%eax;" :"=3Da"(newregs->es));
+> >-              asm volatile("pushfl; popl %0" :"=3Dm"(newregs->flags));
+> >-#else
+> >-              asm volatile("movq %%rbx,%0" : "=3Dm"(newregs->bx));
+> >-              asm volatile("movq %%rcx,%0" : "=3Dm"(newregs->cx));
+> >-              asm volatile("movq %%rdx,%0" : "=3Dm"(newregs->dx));
+> >-              asm volatile("movq %%rsi,%0" : "=3Dm"(newregs->si));
+> >-              asm volatile("movq %%rdi,%0" : "=3Dm"(newregs->di));
+> >-              asm volatile("movq %%rbp,%0" : "=3Dm"(newregs->bp));
+> >-              asm volatile("movq %%rax,%0" : "=3Dm"(newregs->ax));
+> >-              asm volatile("movq %%rsp,%0" : "=3Dm"(newregs->sp));
+> >+              asm volatile(_ASM_MOV " %%" _ASM_BX ",%0" : "=3Dm"(newreg=
+s->bx));
+> >+              asm volatile(_ASM_MOV " %%" _ASM_CX ",%0" : "=3Dm"(newreg=
+s->cx));
+> >+              asm volatile(_ASM_MOV " %%" _ASM_DX ",%0" : "=3Dm"(newreg=
+s->dx));
+> >+              asm volatile(_ASM_MOV " %%" _ASM_SI ",%0" : "=3Dm"(newreg=
+s->si));
+> >+              asm volatile(_ASM_MOV " %%" _ASM_DI ",%0" : "=3Dm"(newreg=
+s->di));
+> >+              asm volatile(_ASM_MOV " %%" _ASM_BP ",%0" : "=3Dm"(newreg=
+s->bp));
+> >+              asm volatile(_ASM_MOV " %%" _ASM_AX ",%0" : "=3Dm"(newreg=
+s->ax));
+> >+              asm volatile(_ASM_MOV " %%" _ASM_SP ",%0" : "=3Dm"(newreg=
+s->sp));
+> >+#ifdef CONFIG_X86_64
+> >               asm volatile("movq %%r8,%0" : "=3Dm"(newregs->r8));
+> >               asm volatile("movq %%r9,%0" : "=3Dm"(newregs->r9));
+> >               asm volatile("movq %%r10,%0" : "=3Dm"(newregs->r10));
+> >@@ -102,10 +89,15 @@ static inline void crash_setup_regs(struct pt_regs =
+*newregs,
+> >               asm volatile("movq %%r13,%0" : "=3Dm"(newregs->r13));
+> >               asm volatile("movq %%r14,%0" : "=3Dm"(newregs->r14));
+> >               asm volatile("movq %%r15,%0" : "=3Dm"(newregs->r15));
+> >-              asm volatile("movl %%ss, %%eax;" :"=3Da"(newregs->ss));
+> >-              asm volatile("movl %%cs, %%eax;" :"=3Da"(newregs->cs));
+> >-              asm volatile("pushfq; popq %0" :"=3Dm"(newregs->flags));
+> > #endif
+> >+              asm volatile("movl %%ss,%k0" :"=3Da"(newregs->ss));
+> >+              asm volatile("movl %%cs,%k0" :"=3Da"(newregs->cs));
+> >+#ifdef CONFIG_X86_32
+> >+              asm volatile("movl %%ds,%k0" :"=3Da"(newregs->ds));
+> >+              asm volatile("movl %%es,%k0" :"=3Da"(newregs->es));
+> >+#endif
+> >+              asm volatile(_ASM_PUSHF "\n\t"
+> >+                           _ASM_POP " %0" : "=3Dm"(newregs->flags));
+> >               newregs->ip =3D _THIS_IP_;
+> >       }
+> > }
+>
+> There is no reason to stick a size suffix on if it is unambiguous. Normal=
+ly pushf/popf never are, since stack operations are promoted automatically.
 
-> On Thu, Mar 06, 2025 at 10:34:02AM +0100, David Jander wrote:
-> > On Thu, 6 Mar 2025 10:03:26 +0100
-> > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> >  =20
-> > > On Thu, Mar 06, 2025 at 09:20:13AM +0100, David Jander wrote: =20
-> > > > On Thu, 6 Mar 2025 08:18:46 +0100
-> > > > Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-> > > >    =20
-> > > > > On Thu, Mar 06, 2025 at 12:21:22AM +0100, Uwe Kleine-K=C3=B6nig w=
-rote:   =20
-> > > > > > Hello David,
-> > > > > >=20
-> > > > > > On Wed, Mar 05, 2025 at 04:40:45PM +0100, David Jander wrote:  =
-   =20
-> > > > > > > On Fri, 28 Feb 2025 17:44:27 +0100
-> > > > > > > Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> wrote:  =
-   =20
-> > > > > > > > On Thu, Feb 27, 2025 at 05:28:17PM +0100, David Jander wrot=
-e:
-> > > > > > > > [...]     =20
-> > > > > > > > > +static int motion_open(struct inode *inode, struct file =
-*file)
-> > > > > > > > > +{
-> > > > > > > > > +	int minor =3D iminor(inode);
-> > > > > > > > > +	struct motion_device *mdev =3D NULL, *iter;
-> > > > > > > > > +	int err;
-> > > > > > > > > +
-> > > > > > > > > +	mutex_lock(&motion_mtx);       =20
-> > > > > > > >=20
-> > > > > > > > If you use guard(), error handling gets a bit easier.     =
-=20
-> > > > > > >=20
-> > > > > > > This looks interesting. I didn't know about guard(). Thanks. =
-I see the
-> > > > > > > benefits, but in some cases it also makes the locked region l=
-ess clearly
-> > > > > > > visible. While I agree that guard() in this particular place =
-is nice,
-> > > > > > > I'm hesitant to try and replace all mutex_lock()/_unlock() ca=
-lls with guard().
-> > > > > > > Let me know if my assessment of the intended use of guard() i=
-s incorrect.     =20
-> > > > > >=20
-> > > > > > I agree that guard() makes it harder for non-trivial functions =
-to spot
-> > > > > > the critical section. In my eyes this is outweight by not havin=
-g to
-> > > > > > unlock in all exit paths, but that might be subjective. Annother
-> > > > > > downside of guard is that sparse doesn't understand it and repo=
-rts
-> > > > > > unbalanced locking.
-> > > > > >       =20
-> > > > > > > > > +	list_for_each_entry(iter, &motion_list, list) {
-> > > > > > > > > +		if (iter->minor !=3D minor)
-> > > > > > > > > +			continue;
-> > > > > > > > > +		mdev =3D iter;
-> > > > > > > > > +		break;
-> > > > > > > > > +	}       =20
-> > > > > > > >=20
-> > > > > > > > This should be easier. If you use a cdev you can just do
-> > > > > > > > container_of(inode->i_cdev, ...);     =20
-> > > > > > >=20
-> > > > > > > Hmm... I don't yet really understand what you mean. I will ha=
-ve to study the
-> > > > > > > involved code a bit more.     =20
-> > > > > >=20
-> > > > > > The code that I'm convinced is correct is
-> > > > > > https://lore.kernel.org/linux-pwm/00c9f1181dc351e1e6041ba6e41e4=
-c30b12b6a27.1725635013.git.u.kleine-koenig@baylibre.com/
-> > > > > >=20
-> > > > > > This isn't in mainline because there is some feedback I still h=
-ave to
-> > > > > > address, but I think it might serve as an example anyhow.
-> > > > > >      =20
-> > > > > > > > > [...]
-> > > > > > > > > +
-> > > > > > > > > +static const struct class motion_class =3D {
-> > > > > > > > > +	.name		=3D "motion",
-> > > > > > > > > +	.devnode	=3D motion_devnode,       =20
-> > > > > > > >=20
-> > > > > > > > IIRC it's recommended to not create new classes, but a bus.=
-     =20
-> > > > > > >=20
-> > > > > > > Interesting. I did some searching, and all I could find was t=
-hat the chapter
-> > > > > > > in driver-api/driver-model about classes magically vanished b=
-etween versions
-> > > > > > > 5.12 and 5.13. Does anyone know where I can find some informa=
-tion about this?
-> > > > > > > Sorry if I'm being blind...     =20
-> > > > > >=20
-> > > > > > Half knowledge on my end at best. I would hope that Greg knows =
-some
-> > > > > > details (which might even be "no, classes are fine"). I added h=
-im to Cc:     =20
-> > > > >=20
-> > > > > A class is there for when you have a common api that devices of
-> > > > > different types can talk to userspace (i.e. the UAPI is common, n=
-ot the
-> > > > > hardware type).  Things like input devices, tty, disks, etc.  A b=
-us is
-> > > > > there to be able to write different drivers to bind to for that h=
-ardware
-> > > > > bus type (pci, usb, i2c, platform, etc.)
-> > > > >=20
-> > > > > So you need both, a bus to talk to the hardware, and a class to t=
-alk to
-> > > > > userspace in a common way (ignore the fact that we can also talk =
-to
-> > > > > hardware directly from userspace like raw USB or i2c or PCI config
-> > > > > space, that's all bus-specific stuff).   =20
-> > > >=20
-> > > > Thanks for chiming in. Let me see if I understand this correctly: I=
-n this
-> > > > case, I have a UAPI that is common to different types of motion con=
-trol
-> > > > devices. So I need a class. check.   =20
-> > >=20
-> > > Correct.
-> > >  =20
-> > > > Do I need a bus? If one can conceive other drivers or kernel parts =
-that talk to
-> > > > motion drivers, I would need a bus. If that doesn't make sense, I d=
-on't. Right?   =20
-> > >=20
-> > > Correct.
-> > >  =20
-> > > > I actually can think of a new motion device that acts as an aggrega=
-tor of
-> > > > several single-channel motion devices into a single "virtual" multi=
--channel
-> > > > device... so do I need also a bus? I suppose...?   =20
-> > >=20
-> > > Nope, that should just be another class driver.  Think about how input
-> > > does this, some input /dev/ nodes are the sum of ALL input /dev/ nodes
-> > > together, while others are just for individual input devices. =20
-> >=20
-> > Understood. Thanks!
-> >  =20
-> > > > Then the question remains: why did the chapter about classes vanish=
-?   =20
-> > >=20
-> > > What are you specifically referring to?  I don't remember deleting any
-> > > documentation, did files move around somehow and the links not get
-> > > updated? =20
-> >=20
-> > This:
-> > https://www.kernel.org/doc/html/v5.12/driver-api/driver-model/index.html
-> >=20
-> > vs this:
-> > https://www.kernel.org/doc/html/v5.13/driver-api/driver-model/index.html
-> >=20
-> > Maybe it moved somewhere else, but I can't find it... I'd have to git b=
-isect
-> > or git blame between the two releases maybe. =20
->=20
-> Ah, this was removed in:
-> 	1364c6787525 ("docs: driver-model: Remove obsolete device class document=
-ation")
-> as the information there was totally incorrect, since the 2.5.69 kernel
-> release.  "device classes" aren't a thing, "classes" are a thing :)
+Thanks, I'll provide a v2 with removed suffixes.
 
-Aha. Thanks for pointing this out. The sheer removal of this, combined with
-other indirect indications, such as /sys/class/gpio being replaced with
-/sys/bus/gpio in the new api, Uwe's comment, etc... derailed my interpretat=
-ion.
-:-)
-
-Btw, sorry to ask here and now @Greg: I didn't CC you with this whole series
-while I probably should have... now I am tempted to move V2 of this series =
-to
-staging, due to higher chances of potentially breaking UAPI changes during
-initial development, and in order to have a more flexible discussions over =
-the
-UAPI of LMC in general. Is that advisable or should we better make sure that
-the version to get merged upstream (I hope it eventually will be) is set in
-stone?
-
-Best regards,
-
---=20
-David Jander
+BR,
+Uros.
 
