@@ -1,60 +1,65 @@
-Return-Path: <linux-kernel+bounces-549354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC2DA551A5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:45:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C1BBA551B8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:47:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF9CD188A086
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:43:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78CDC3B057A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:44:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5462405E3;
-	Thu,  6 Mar 2025 16:43:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B3B42405F2;
+	Thu,  6 Mar 2025 16:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f63+H2di"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="Jf8ScI9j"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C1423FC4C;
-	Thu,  6 Mar 2025 16:43:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 600BE2135CF;
+	Thu,  6 Mar 2025 16:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741279409; cv=none; b=ogCtn7fkdZ4/iH2QxDjdLzBfN0yBA02JFT0kmj7Ijn6WlpcKJdFN+81Gp2cv5dIZhCji+m39Otru1ZFNaVem+pdNMXxquXEr8awbGnt4/uCSAMNH81X/dMTNEsTYSjXdYpROc8bP5hVGEtml1WcwYt0WhDSMgqELRiTyjLBCsI4=
+	t=1741279469; cv=none; b=X8vqUYUYaQNOM0s/UyLFORNYrXVhwxMFYO/MVBNhFnDmV1snurkJVc3kCcAM4rdcZt7TnAC+Mtfa3dGwLRZgByMI2XkPNzT3qO+eY2WqcoQVtVUXC7nE+uctVITivYsaGGot59EYRw0y4VaWZXnp06ofqJ4e8QS9Dxbq+d6/HJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741279409; c=relaxed/simple;
-	bh=2XKxCns3kXFvBAxhquUJVwabD6paWBBQ9HcLo0UhYZc=;
+	s=arc-20240116; t=1741279469; c=relaxed/simple;
+	bh=7IP4WYiQ3uqZxjps9WZ0ItIBn+105bQ4pKd1dSZCV54=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l/KMBHAGe8tNu/tNx5aTpZ5YK4HQjPFT9GQOUPFGZ0c5M6XIj9jj9UnCxFvCBWCPywLZpIzpjJBLVZusZH27ijQyRXjfi7d3XHX3veUEAdR8nk02RCPfVkPsvRs1uInmPW5AMjuLcZn1lJ6DPyKHiMir5+AyiMIoTWULhnG/scw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f63+H2di; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9762C4CEE0;
-	Thu,  6 Mar 2025 16:43:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741279408;
-	bh=2XKxCns3kXFvBAxhquUJVwabD6paWBBQ9HcLo0UhYZc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f63+H2dixTDpO6BLeaDYs/vxjxaQuGabs6addvjRLdA9t6xcKtnjJ9w2oQI2wrvSx
-	 AdozKcwOtRZWxkPtZH4PM4Dzq2FkUightt1SbZtvGDdSKtgXJgwbuj82L7H97nZqSV
-	 uyodVbYS9NZlPwxVB/bIPPmykJuwXoDXcwfHQpynhluIVqen+ySrgz/YDTA6DP0xaN
-	 LlhQZQ4g3fqKdLWSYkWHuJOv8HPBBepRE8vva+NXqM4ezw5ChuChWwt8DrIq6pESJ0
-	 yJqikXEdLIda8MNgACPkn4XCsiEpckC/AgkACOOHjKijj++UBFj3MRNwsjKwrlF/8Z
-	 7DBRGC8b1Vz+A==
-Date: Thu, 6 Mar 2025 16:43:22 +0000
-From: Simon Horman <horms@kernel.org>
-To: Sai Krishna <saikrishnag@marvell.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, sgoutham@marvell.com,
-	gakula@marvell.com, lcherian@marvell.com, jerinj@marvell.com,
-	hkelam@marvell.com, sbhatta@marvell.com, andrew+netdev@lunn.ch,
-	bbhushan2@marvell.com, nathan@kernel.org, ndesaulniers@google.com,
-	morbo@google.com, justinstitt@google.com, llvm@lists.linux.dev,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [net-next PATCH v2] octeontx2-af: fix build warnings flagged by
- clang, sparse ,kernel test robot
-Message-ID: <20250306164322.GC3666230@kernel.org>
-References: <20250305094623.2819994-1-saikrishnag@marvell.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KrBHsXn2wPZTQpMCyW9vDJhLPIDFwwNudnC9MZR4PMa9INfL0koOf4DvGj5FpHQCGlWQdDc3vgNvBJa0oqHucKar+KOVqsp8gnDdVuFTtxkbP1IzkKk5umg8fyxL1WN/+x6yTCSApf+VqN6b2OT6FC44jbP1xNC4F2xgWB1WHVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=Jf8ScI9j; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id BD6D02024D;
+	Thu,  6 Mar 2025 17:44:23 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id dSLASKqzoBGZ; Thu,  6 Mar 2025 17:44:19 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1741279459; bh=7IP4WYiQ3uqZxjps9WZ0ItIBn+105bQ4pKd1dSZCV54=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=Jf8ScI9jkEuLiR/sOtykcPvGSgXJ8+inW3qRRiIdlp/sxGRUyevCKvAsAZcbAFGQR
+	 BbU895Oxz+Lxg7MULJW1vdE+AzEoAAZPVRbw0L8biaaaWthW7Q6d0mPfl2jkqMAoPN
+	 8FT8KXjH//vrtkR4LGJWJwoR40wQ9QSmTkfgGGaHENKCm57Wua+d1ShJBLnKS/cDOz
+	 5Vg3S5nSqtEkWFKQgzirDV2umLYIP9/4kICm/iH4CxucZsn/laSVkvJ8K3MntZMC+C
+	 PZCWaAHnWlBSYJnsdfNBnjcvkkF4nd2eO+uRjVavp4dU5/auz0LwTgKT22+MYP05hp
+	 f1P9lVdmK7Zhg==
+Date: Thu, 6 Mar 2025 16:43:54 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: conor+dt@kernel.org, cristian.ciocaltea@collabora.com,
+	detlev.casanova@collabora.com, devicetree@vger.kernel.org,
+	heiko@sntech.de, jonas@kwiboo.se, krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v2 7/8] arm64: dts: rockchip: Add SDMMC/SDIO controllers
+ for RK3528
+Message-ID: <Z8nPjjbZvpRJ2R5B@pie.lan>
+References: <20250305194612.47171-1-ziyao@disroot.org>
+ <20250306140009.384469-1-amadeus@jmu.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,113 +68,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250305094623.2819994-1-saikrishnag@marvell.com>
+In-Reply-To: <20250306140009.384469-1-amadeus@jmu.edu.cn>
 
-On Wed, Mar 05, 2025 at 03:16:23PM +0530, Sai Krishna wrote:
-> This cleanup patch avoids build warnings flagged by clang,
-> sparse, kernel test robot.
+On Thu, Mar 06, 2025 at 10:00:09PM +0800, Chukun Pan wrote:
+> Hi,
 > 
-> Warning reported by clang:
-> drivers/net/ethernet/marvell/octeontx2/af/rvu.c:2993:47:
-> warning: arithmetic between different enumeration types
-> ('enum rvu_af_int_vec_e' and 'enum rvu_pf_int_vec_e')
-> [-Wenum-enum-conversion]
->  2993 | return (pfvf->msix.max >= RVU_AF_INT_VEC_CNT +
-> RVU_PF_INT_VEC_CNT) &&
-
-Hi Sai,
-
-I think it would be good to address each set of errors in separate patches.
-And in each case include a report of the errors the tools reported.
-
-And I think that the subject(s) could be tightened up a bit.
-E.g.:
-
-	Subject: octeontx2-af: correct __iomem annotations
-
-	Sparse flags a number of inconsistent usage of __iomem annotations:
-
-	  .../otx2_pf.c:611:24: sparse:     expected void [noderef] __iomem *hwbase
-          .../otx2_pf.c:611:24: sparse:     got void *
-          .../otx2_pf.c:620:56: sparse: sparse: cast removes address space '__iomem' of expression
-          .../otx2_pf.c:671:35: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got void *hwbase @@
-          .../otx2_pf.c:671:35: sparse:     expected void volatile [noderef] __iomem *addr
-          .../otx2_pf.c:671:35: sparse:     got void *hwbase
-          .../otx2_pf.c:1344:21: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected unsigned long long [usertype] *ptr @@     got void [noderef] __iomem * @@
-          .../otx2_pf.c:1344:21: sparse:     expected unsigned long long [usertype] *ptr
-          .../otx2_pf.c:1344:21: sparse:     got void [noderef] __iomem *
-          .../otx2_pf.c:1383:21: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected unsigned long long [usertype] *ptr @@     got void [noderef] __iomem * @@
-          .../otx2_pf.c:1383:21: sparse:     expected unsigned long long [usertype] *ptr
-          .../otx2_pf.c:1383:21: sparse:     got void [noderef] __iomem *
-          .../otx2_pf.c: note: in included file (through .../mbox.h, .../otx2_common.h):
-
-	Address this by, ...
-
-	Reported-by: ...
-	...
-
+> > +		sdio0: mmc@ffc10000 {
+> > +			compatible = "rockchip,rk3528-dw-mshc",
+> > +				     "rockchip,rk3288-dw-mshc";
+> > +			reg = <0x0 0xffc10000 0x0 0x4000>;
+> > +			clocks = <&cru HCLK_SDIO0>,
+> > +				 <&cru CCLK_SRC_SDIO0>,
+> > +				 <&cru SCLK_SDIO0_DRV>,
+> > +				 <&cru SCLK_SDIO0_SAMPLE>;
+> > +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+> > +			fifo-depth = <0x100>;
+> > +			interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
+> > +			max-frequency = <150000000>;
+> > +			pinctrl-names = "default";
+> > +			pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>,
+> > +				    <&sdio0_det>, <&sdio0_pwren>;
 > 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes:
-> https://lore.kernel.org/oe-kbuild-all/202410221614.07o9QVjo-lkp@intel.com/
-> Signed-off-by: Sai Krishna <saikrishnag@marvell.com>
-> ---
->  drivers/net/ethernet/marvell/octeontx2/af/common.h |  2 +-
->  drivers/net/ethernet/marvell/octeontx2/af/rvu.c    | 14 ++++++++------
->  .../ethernet/marvell/octeontx2/nic/otx2_common.c   | 10 +++++-----
->  .../net/ethernet/marvell/octeontx2/nic/otx2_pf.c   |  9 ++++-----
->  4 files changed, 18 insertions(+), 17 deletions(-)
+> The sdio module is usually "non-removable", no need det,
+> and pwren may be other gpio (use mmc-pwrseq). So it should
+> be `pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>;`
+
+This doesn't affect the fact that these two pins are assigned as
+functional pins for SDIO0, as pointed out by the datasheet[1].
+
+But with more digging, I found the reference design[2] of Rockchip
+actually uses the two pins as normal GPIOs. This is more obvious in
+downstream devicetree of an EVB[3]. Most of the existing boards (Radxa
+2A, ArmSOM Sige 1) follow the reference design.
+
+For me, it's kind of surprising that the SDIO IP functions with two
+functional pins assigned as different modes. I'm not sure whether we
+should apply pin configuration for these two pins in the SoC devicetree.
+Jonas, what do you think about it?
+
+> > +			resets = <&cru SRST_H_SDIO0>;
+> > +			reset-names = "reset";
+> > +			status = "disabled";
+> > +		};
+> > +
+> > +		sdio1: mmc@ffc20000 {
+> > +			compatible = "rockchip,rk3528-dw-mshc",
+> > +				     "rockchip,rk3288-dw-mshc";
+> > +			reg = <0x0 0xffc20000 0x0 0x4000>;
+> > +			clocks = <&cru HCLK_SDIO1>,
+> > +				 <&cru CCLK_SRC_SDIO1>,
+> > +				 <&cru SCLK_SDIO1_DRV>,
+> > +				 <&cru SCLK_SDIO1_SAMPLE>;
+> > +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+> > +			fifo-depth = <0x100>;
+> > +			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
+> > +			max-frequency = <150000000>;
+> > +			pinctrl-names = "default";
+> > +			pinctrl-0 = <&sdio1_bus4>, <&sdio1_clk>, <&sdio1_cmd>,
+> > +				    <&sdio1_det>, <&sdio1_pwren>;
 > 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/common.h b/drivers/net/ethernet/marvell/octeontx2/af/common.h
-> index 406c59100a35..8a08bebf08c2 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/common.h
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/common.h
-> @@ -39,7 +39,7 @@ struct qmem {
->  	void            *base;
->  	dma_addr_t	iova;
->  	int		alloc_sz;
-> -	u16		entry_sz;
-> +	u32		entry_sz;
->  	u8		align;
->  	u32		qsize;
->  };
+> Same here.
+> 
+> > +			resets = <&cru SRST_H_SDIO1>;
+> > +			reset-names = "reset";
+> > +			status = "disabled";
+> > +		};
+> 
+> Thanks,
+> Chukun
+> 
+> -- 
+> 2.25.1
+> 
 
-Further to my point above, I am unsure what problem this is addressing.
+Best regards,
+Yao Zi
 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-> index cd0d7b7774f1..c850ea5d1960 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-> @@ -591,7 +591,7 @@ static void rvu_check_min_msix_vec(struct rvu *rvu, int nvecs, int pf, int vf)
->  
->  check_pf:
->  	if (pf == 0)
-> -		min_vecs = RVU_AF_INT_VEC_CNT + RVU_PF_INT_VEC_CNT;
-> +		min_vecs = (int)RVU_AF_INT_VEC_CNT + (int)RVU_PF_INT_VEC_CNT;
->  	else
->  		min_vecs = RVU_PF_INT_VEC_CNT;
->  
-
-I think that in the light of Linus's feedback and the subsequent patch
-that demoted -Wenum-enum-conversion from W=1 to W=1 this is not necessary.
-
-[1] https://lore.kernel.org/all/CAHk-=wjMux0w49bTdSbC3DOoc9FRctDrRvaqFUS4KFTmkbtKWg@mail.gmail.com/
-[2] 8f6629c004b1 ("kbuild: Move -Wenum-enum-conversion to W=2")
-
-> @@ -819,13 +819,14 @@ static int rvu_fwdata_init(struct rvu *rvu)
->  		goto fail;
->  
->  	BUILD_BUG_ON(offsetof(struct rvu_fwdata, cgx_fw_data) > FWDATA_CGX_LMAC_OFFSET);
-> -	rvu->fwdata = ioremap_wc(fwdbase, sizeof(struct rvu_fwdata));
-> +	rvu->fwdata = (__force struct rvu_fwdata *)
-> +		ioremap_wc(fwdbase, sizeof(struct rvu_fwdata));
-
-I am concerned that this and similar changes in this patch are masking
-problems. In my view __iomem annotations are there for a reason, to help
-use the correct access mechanism for iomem. So my question is why is that
-not the case for fwdata?
-
-Similarly for other cases in this patch where __iomem is cast or cast-away.
-
-...
+[1]: https://github.com/DeciHD/rockchip_docs/blob/main/rk3528/Rockchip%C2%A0RK3528%C2%A0Datasheet%C2%A0V1.0-20230522.pdf
+[2]: https://github.com/DeciHD/rockchip_docs/blob/main/rk3528/RK3528_BOX_REF_V10_20230525.pdf
+[3]: https://github.com/rockchip-linux/kernel/blob/604cec4004abe5a96c734f2fab7b74809d2d742f/arch/arm64/boot/dts/rockchip/rk3528-evb1-ddr4-v10.dtsi#L128
 
