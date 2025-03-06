@@ -1,163 +1,159 @@
-Return-Path: <linux-kernel+bounces-548040-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548041-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DDAEA53F1E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:29:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F0ACA53F21
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:30:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62BEB3A4A9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:29:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3219216FDD6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:30:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 962A4E567;
-	Thu,  6 Mar 2025 00:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF471863E;
+	Thu,  6 Mar 2025 00:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="rnePR2hw"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CmTNL66w"
+Received: from mail-qt1-f201.google.com (mail-qt1-f201.google.com [209.85.160.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C88FF9E8;
-	Thu,  6 Mar 2025 00:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF10A5672
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 00:29:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741220986; cv=none; b=c+iSgCo7VwfD0UnJC6W1p2dFO7SKZYMfP936W9zCxmNJivGdhBs4uITob/LDqcdYbpJGesrkF2XOQ/T/RsP+sBjIadOHFViawDabs0vPcCXxLtrBlRVG8fGGvu7VZEYYdccb5yW8x1MH1vmIEQt39E7sl91eOSrmi/LRNH6wPGs=
+	t=1741220988; cv=none; b=CKPH9Mx3bmlgfHa6DfDsaaUDaNPLF0WIccfLbnNp7RGF8akpTLIGyuXY0kQrJCe2miG4qZbNgHNinnnoS7/tedldcMj3kUo+Zstv7AKsDh5BjX8IXojkuY6uIQ3QPWNcwancgvX8B816mgr9h9APG2lNMsSMB1iHwPRFLYNknTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741220986; c=relaxed/simple;
-	bh=K0hpXmBIeWACuRqHPWQt5Zf2GMFn3E5zMQxaMAaoKZw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tjsktFNE3UIUaAN2AQj6p3jOjc6bjqDvGbyaAAmuqN+F+BcXQD+GqzvSGkq2k+89B/ayxm7/ich0Z0Bu7Lx/Fz/adD/BMlcjBJUbc8BBL2JjeDjMp6w+w4HkbTXycceCmaDfuG+iYLxWPUjlGjjfkrl7x5g1DMEcRq6C6bgZ3EY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=rnePR2hw; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5260TRbF3519988
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 5 Mar 2025 16:29:28 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5260TRbF3519988
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1741220968;
-	bh=nyfZtjxpwWEfPD2aWtSJVU9prs0awbhhMdouVBIRD14=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=rnePR2hwJuXY5FmWXVv6sKakKb16gqY6la25fcNXD75cRQVpa2ZRcjCrKVOuukjCB
-	 hRqstDX2y33m5xXuD7NVQPXDQYLTAplDaBg1xcMyt+j959umpzmuK30mLTDge0cGXp
-	 bnvazkO/OsgotjsN+4A03SGz9l8AUI6QO/4BJ9vha8pm3FY247UsUaf91Izo6cffrQ
-	 olDvEOmJ3YNx2I/0aCLbw3SAefG82cytvU9inPCFtN7bbjw/fVGuZWrUfEKeWiHKih
-	 mJwYNN1fefggEc2XOBAauB3RKE/hvo3PoSnUZaFsHLKmVg/yGvEbQYRrnL4xbRkR89
-	 uKCAqqVibBGfw==
-Message-ID: <ab26bb7f-4466-4136-a6d7-2c239bf204b2@zytor.com>
-Date: Wed, 5 Mar 2025 16:29:26 -0800
+	s=arc-20240116; t=1741220988; c=relaxed/simple;
+	bh=ziq0xBIus4AsP0MAEhRZlaF5Q0/wNBHEHmE1QRquNaw=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=lQYS+Du8HY0rGMoV6nNRUN7Z8YbLb1bp1QBU+1cgiye+82Ou4EqNawOXvsYaPdJeXIiWtOrcK5ShO/sfRdvS7vUjB5gUV20rIY5KoPsOLgrr9oOt+lVu7+DTjiKdj/pqpNFRzhN4cpYuacDnlRA2p/raXjvMmKY+vH8L6YAgmr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CmTNL66w; arc=none smtp.client-ip=209.85.160.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--rmoar.bounces.google.com
+Received: by mail-qt1-f201.google.com with SMTP id d75a77b69052e-4750860c479so1456801cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 16:29:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741220985; x=1741825785; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6xhsSPxuSohpJxu6VEhaDPeanwnvjNd7JZQ1spnJKlE=;
+        b=CmTNL66wtXj5HThDh7rK8ybjeIYSmUq7Qc9KMpFuThDIDqP0gKuP4ZW8AAL7doWByk
+         KwHejYM0oZfqkC0oFLvNjTbM2L2FFk/i4yhayzMx0sysWVekaiX5I3vT84q1d6ddSPuY
+         f12XkFV8y/mABR1F6lFAPUTlWQaIlHn188MingNAALk8K14T/01/iyufDw8Wp0lma4yd
+         L6iFl5/24GwttvEX5T1ElCX/q629JEHRiHm/BcFYoU8AArPOjck01IGTtUDULluoiEKt
+         X9qtce45krY0JYubP6qh4XoFQkqNsX0On4pvt5b0fH1QlOZ5uIxccUnGLJj3+9yCEIUt
+         AmlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741220985; x=1741825785;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6xhsSPxuSohpJxu6VEhaDPeanwnvjNd7JZQ1spnJKlE=;
+        b=iAZOJO+nYSnw7BP/77ggs4Ek5ZIICFQZ7ZIuo4tiALbr2mBRO2hYovcKSlnGqQ6i/j
+         MFH2VYzeGGUi6iQxpThEMuTxvDPZK26jpLBVsGPfxmKpbwBb0WcmWD9QeZgAmJ39JVxY
+         Ya5pWEs2R4ZbbIe77gX9PuTJ/2XKgpCeushOf2jqbTOzHTMLx0TebGbV5G4fpZneTdv6
+         RERbsXqtNsG/ilFwXPwfeWJZBzALTief48Vi38FhuttfXrpOBtmAXqxB3KwOMWdHxMKh
+         Wk/RjXmzEu+C9NlbRT7beerCsw+shIcJYMZDKErB0TBo0bJUQSFDQD1vZ+CrcghiYXpn
+         AZWg==
+X-Forwarded-Encrypted: i=1; AJvYcCWslDG5U9AgZFPmF+h0rA9/TgUvONygcxih/XtjIUDF0Hj7105iHl9kCJVa1/s6RSRwuO3uejwm27OMEAM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL1RCGLFlgpKux0ATpPfJSlxalhimTn3k0eLE1O/mVqTT6KtE/
+	T2Jj4keFOm/PiJ9UqLMNWuq8gqF/+2McQ3I2TwenNqMctXMFFD6NOKScskSKH5FtQ8SiwaOvBA=
+	=
+X-Google-Smtp-Source: AGHT+IGQjNo4lN1P5zRh1fyBQsEtXPbc2Ycfqs8s5lHQF6PgzcuYgO0wVNg9KhbJjX9tsH4zw+AK64EGJA==
+X-Received: from qtbfx7.prod.google.com ([2002:a05:622a:4ac7:b0:474:e6e7:bab8])
+ (user=rmoar job=prod-delivery.src-stubby-dispatcher) by 2002:a05:622a:394:b0:475:74c:c874
+ with SMTP id d75a77b69052e-4750b43d325mr81781871cf.21.1741220985719; Wed, 05
+ Mar 2025 16:29:45 -0800 (PST)
+Date: Thu,  6 Mar 2025 00:29:33 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] x86/msr: Rename the WRMSRNS opcode macro to
- ASM_WRMSRNS (for KVM)
-From: Xin Li <xin@zytor.com>
-To: Sean Christopherson <seanjc@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250227010111.3222742-1-seanjc@google.com>
- <20250227010111.3222742-2-seanjc@google.com>
- <ab5ded74-91b4-46ae-b360-b372ff790fa6@zytor.com>
-Content-Language: en-US
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <ab5ded74-91b4-46ae-b360-b372ff790fa6@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <20250306002933.1893355-1-rmoar@google.com>
+Subject: [PATCH] kunit: tool: Fix bug in parsing test plan
+From: Rae Moar <rmoar@google.com>
+To: shuah@kernel.org, davidgow@google.com, jackmanb@google.com
+Cc: linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, Rae Moar <rmoar@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/26/2025 5:14 PM, Xin Li wrote:
-> On 2/26/2025 5:01 PM, Sean Christopherson wrote:
->> Rename the WRMSRNS instruction opcode macro so that it doesn't collide
->> with X86_FEATURE_WRMSRNS when using token pasting to generate references
->> to X86_FEATURE_WRMSRNS.  KVM heavily uses token pasting to generate KVM's
->> set of support feature bits, and adding WRMSRNS support in KVM will run
->> will run afoul of the opcode macro.
->>
->>    arch/x86/kvm/cpuid.c:719:37: error: pasting "X86_FEATURE_" and "" 
->> "" does not
->>                                        give a valid preprocessing token
->>    719 |         u32 __leaf = 
->> __feature_leaf(X86_FEATURE_##name);                \
->>        |                                     ^~~~~~~~~~~~
->>
->> KVM has worked around one such collision in the past by #undef'ing the
->> problematic macro in order to avoid blocking a KVM rework, but such games
->> are generally undesirable, e.g. requires bleeding macro details into KVM,
->> risks weird behavior if what KVM is #undef'ing changes, etc.
->>
->> Signed-off-by: Sean Christopherson <seanjc@google.com>
->> ---
->>   arch/x86/include/asm/msr.h | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/x86/include/asm/msr.h b/arch/x86/include/asm/msr.h
->> index 001853541f1e..60b80a36d045 100644
->> --- a/arch/x86/include/asm/msr.h
->> +++ b/arch/x86/include/asm/msr.h
->> @@ -300,7 +300,7 @@ do {                            \
->>   #endif    /* !CONFIG_PARAVIRT_XXL */
->>   /* Instruction opcode for WRMSRNS supported in binutils >= 2.40 */
->> -#define WRMSRNS _ASM_BYTES(0x0f,0x01,0xc6)
->> +#define ASM_WRMSRNS _ASM_BYTES(0x0f,0x01,0xc6)
->>   /* Non-serializing WRMSR, when available.  Falls back to a 
->> serializing WRMSR. */
->>   static __always_inline void wrmsrns(u32 msr, u64 val)
->> @@ -309,7 +309,7 @@ static __always_inline void wrmsrns(u32 msr, u64 val)
->>        * WRMSR is 2 bytes.  WRMSRNS is 3 bytes.  Pad WRMSR with a 
->> redundant
->>        * DS prefix to avoid a trailing NOP.
->>        */
->> -    asm volatile("1: " ALTERNATIVE("ds wrmsr", WRMSRNS, 
->> X86_FEATURE_WRMSRNS)
->> +    asm volatile("1: " ALTERNATIVE("ds wrmsr", ASM_WRMSRNS, 
->> X86_FEATURE_WRMSRNS)
->>                "2: " _ASM_EXTABLE_TYPE(1b, 2b, EX_TYPE_WRMSR)
->>                : : "c" (msr), "a" ((u32)val), "d" ((u32)(val >> 32)));
->>   }
-> 
-> I hit the same build issue, thanks for fixing it.
-> 
-> Reviewed-by: Xin Li (Intel) <xin@zytor.com>
-> 
+A bug was identified where the KTAP below caused an infinite loop:
 
-Do we need an ack from x86 maintainers?
+ TAP version 13
+ ok 4 test_case
+ 1..4
+
+The infinite loop was caused by the parser not parsing a test plan
+if following a test result line.
+
+Fix bug to correctly parse test plan and add error if test plan is
+missing.
+
+Signed-off-by: Rae Moar <rmoar@google.com>
+---
+ tools/testing/kunit/kunit_parser.py    | 12 +++++++-----
+ tools/testing/kunit/kunit_tool_test.py |  5 ++---
+ 2 files changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/tools/testing/kunit/kunit_parser.py b/tools/testing/kunit/kunit_parser.py
+index 29fc27e8949b..5dcbc670e1dc 100644
+--- a/tools/testing/kunit/kunit_parser.py
++++ b/tools/testing/kunit/kunit_parser.py
+@@ -761,20 +761,22 @@ def parse_test(lines: LineStream, expected_num: int, log: List[str], is_subtest:
+ 		test.name = "main"
+ 		ktap_line = parse_ktap_header(lines, test, printer)
+ 		test.log.extend(parse_diagnostic(lines))
+-		parse_test_plan(lines, test)
++		plan_line = parse_test_plan(lines, test)
+ 		parent_test = True
+ 	else:
+ 		# If not the main test, attempt to parse a test header containing
+ 		# the KTAP version line and/or subtest header line
+ 		ktap_line = parse_ktap_header(lines, test, printer)
+ 		subtest_line = parse_test_header(lines, test)
++		test.log.extend(parse_diagnostic(lines))
++		plan_line = parse_test_plan(lines, test)
+ 		parent_test = (ktap_line or subtest_line)
+ 		if parent_test:
+-			# If KTAP version line and/or subtest header is found, attempt
+-			# to parse test plan and print test header
+-			test.log.extend(parse_diagnostic(lines))
+-			parse_test_plan(lines, test)
+ 			print_test_header(test, printer)
++
++	if parent_test and not plan_line:
++			test.add_error(printer, 'missing test plan!')
++
+ 	expected_count = test.expected_count
+ 	subtests = []
+ 	test_num = 1
+diff --git a/tools/testing/kunit/kunit_tool_test.py b/tools/testing/kunit/kunit_tool_test.py
+index 0bcb0cc002f8..e1e142c1a850 100755
+--- a/tools/testing/kunit/kunit_tool_test.py
++++ b/tools/testing/kunit/kunit_tool_test.py
+@@ -181,8 +181,7 @@ class KUnitParserTest(unittest.TestCase):
+ 			result = kunit_parser.parse_run_tests(
+ 				kunit_parser.extract_tap_lines(
+ 				file.readlines()), stdout)
+-		# A missing test plan is not an error.
+-		self.assertEqual(result.counts, kunit_parser.TestCounts(passed=10, errors=0))
++		self.assertEqual(result.counts, kunit_parser.TestCounts(passed=10, errors=2))
+ 		self.assertEqual(kunit_parser.TestStatus.SUCCESS, result.status)
+ 
+ 	def test_no_tests(self):
+@@ -203,7 +202,7 @@ class KUnitParserTest(unittest.TestCase):
+ 		self.assertEqual(
+ 			kunit_parser.TestStatus.NO_TESTS,
+ 			result.subtests[0].subtests[0].status)
+-		self.assertEqual(result.counts, kunit_parser.TestCounts(passed=1, errors=1))
++		self.assertEqual(result.counts, kunit_parser.TestCounts(passed=1, errors=2))
+ 
+ 
+ 	def test_no_kunit_output(self):
+
+base-commit: 0619a4868fc1b32b07fb9ed6c69adc5e5cf4e4b2
+-- 
+2.48.1.711.g2feabab25a-goog
 
 
