@@ -1,252 +1,120 @@
-Return-Path: <linux-kernel+bounces-548921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 634B1A54AE0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:39:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A14C5A54AE4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:39:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E3593AF142
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:38:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95D133AEF8A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D786420C48D;
-	Thu,  6 Mar 2025 12:38:27 +0000 (UTC)
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8F620D4EE;
+	Thu,  6 Mar 2025 12:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qUdeU5A5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B531FC0E5;
-	Thu,  6 Mar 2025 12:38:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B2B20B1F3;
+	Thu,  6 Mar 2025 12:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741264707; cv=none; b=ejjvRauIvIcks2boFco+zXVKWifNMe2dtl+LX8TpMltzb9+5KdckSaiVHAWj9020hxSWld4WHJO3BjSfnKAq5tKQvv8Hn2MLcYIHvaZ74omR/iLrXO65jKgMQ/HrCcqKc9yPLrLu524xtvKnC5qqZ0jY50rZfj9ZhpChPMWHcss=
+	t=1741264711; cv=none; b=Ky/vakEgLASGGDVDypAx5W3ozVJRDLUt3GW/VHplZv/6Mzajt5iq6BQwzujdojNQocHpNhWq8MB//ZI8a0axfD0531WODavjHejbVF2PXYwGTGYS73UKzAJHcnIKV5uEtt+vzS+2ElaPyY6Bmf67ipAQW1w1eVG1nMKnsWzklzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741264707; c=relaxed/simple;
-	bh=xxOvVK9Sks7tUoVjapi3LlbR4PhZGDeFV3rJrw00MF8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=A2KstlmQwYSL/DFMi12w+a2SlGdCTvY7dH4oQ8h/KbYNhjYDlAjn+yspnRybh96PkmgD8ABQ0077kgSdlcqm1HDpcWvW9eXZlgtj/WQxMLrfAfge9jLT4TuPzA2m5ueq6F6OyJUnM7ux0L5VJKCJsMQXCt2bppqOCG/46hlvOGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from localhost.localdomain (unknown [119.122.215.89])
-	by smtp.qiye.163.com (Hmail) with ESMTP id d2b83ca7;
-	Thu, 6 Mar 2025 20:38:21 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Chukun Pan <amadeus@jmu.edu.cn>
-Subject: [PATCH v2 2/2] arm64: dts: rockchip: Add rk3528 QoS register node
-Date: Thu,  6 Mar 2025 20:38:09 +0800
-Message-Id: <20250306123809.273655-3-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250306123809.273655-1-amadeus@jmu.edu.cn>
-References: <20250306123809.273655-1-amadeus@jmu.edu.cn>
+	s=arc-20240116; t=1741264711; c=relaxed/simple;
+	bh=VB81pVidViM68Ro2j4IG6kZ5N4FBbkZoUJAi27RI5Ew=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=d/PdTzD/vE2OwBk8ko9Ij6crK73NzeGfBP4TGGiaTDGwLy6X4yxzQCZ8JOx2wS5+h/lUITHXIVqQHBRmAp+Hxo+fG3bmXOfdy3qXPenn7JXSYfLGRsl2lAlIlPuH51lMQeYao5N5sfsro5XsW/p0DAzgvTGQRN2ksWfL/wAUNhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qUdeU5A5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DECCEC4CEE0;
+	Thu,  6 Mar 2025 12:38:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741264711;
+	bh=VB81pVidViM68Ro2j4IG6kZ5N4FBbkZoUJAi27RI5Ew=;
+	h=From:Subject:Date:To:Cc:From;
+	b=qUdeU5A5hKrJAjDzroaVNybJRfpSkgs9Di2o9qdt2FTFVftGnXiCW6ddPs4PJ1duJ
+	 2B1g7CK7+o9J8NuxVsTtOs1d9yLZ+mpprNwcdR6dHLVS3SHjzT1gNTeuHTRjs9PSYm
+	 bWrA7NmVc9b42UC+W7N0yb+IuM6xY5G9IzKc3xAouGX+K2/hVAy3CpZxmp9zBUg6Zg
+	 wH7tFriLPcdnRMDCkJVER407keSYDCDL6liI4m80lgo2HypjiNQeYaQHmU+qNdDUcq
+	 32kCoETnul1netH7ix363U1pcO/vYtYLY1o7/CAu62EFGL0vAfDQKExmMsL7t+bOhd
+	 T1y+HPRYNABUg==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH 0/4] nfsd: observability improvements
+Date: Thu, 06 Mar 2025 07:38:12 -0500
+Message-Id: <20250306-nfsd-tracepoints-v1-0-4405bf41b95f@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZTxkZVk9ISx9LGEtCHUsZTlYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKSkJVSklJVUlKTlVDQllXWRYaDxIVHRRZQVlPS0hVSktJT09PS1VKS0tVS1
-	kG
-X-HM-Tid: 0a956b76c86d03a2kunmd2b83ca7
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6PAg6Hio4QzJMKjM#GiJLIwpN
-	PiIwCTBVSlVKTE9KSU1PTEtJSU9OVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUpK
-	QlVKSUlVSUpOVUNCWVdZCAFZQU9CTUk3Bg++
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADSXyWcC/x3MQQqAIBBA0avErBPUMKqrRAvRsWaj4kgE0t2Tl
+ m/xfwPGQsiwDQ0K3sSUYocaB3CXjScK8t2gpTZykpOIgb2oxTrMiWJl4RZtvV+VMXaGnuWCgZ5
+ /uR/v+wGK4Xk3YgAAAA==
+X-Change-ID: 20250303-nfsd-tracepoints-c82add9155a6
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>, 
+ Anna Schumaker <anna@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
+Cc: Sargun Dillon <sargun@meta.com>, linux-nfs@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1448; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=VB81pVidViM68Ro2j4IG6kZ5N4FBbkZoUJAi27RI5Ew=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnyZc+CcnVyd0tRtcIR+Xc2I/xp5G1Nof4NIAGn
+ Yybm2RcbsqJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZ8mXPgAKCRAADmhBGVaC
+ FRvBD/9HPUpR8PqpT58yIHakSh7KWcZzGqpPvbbFoV+Tsu9Ltn31Odf2a1C0yf8Q3uB6ji3AAYO
+ L7z0f84v2Nzfx7ccy5IRFf8vKbpAvtPyNo6iEncbrMBDAnVo3TJzVU2ONiEMpJ9thuR2UMEPHEV
+ LJVxQ9K3GtLiNdvdvQN3oinp+mEKH+H+iNzzCSO0hVQhc+h9IROGLJLl1hM32MSCpE1kkVbcI+1
+ FzC2rucq03hkXxs7YQHjwtcPlKdEEiCTAYo+cKBhAKu6GRmLv0Imk87a+tGw6qevp+9fUvhvqPw
+ ERUnqMsBUW//MiFEhGkBipUKqTu7R2XVQlEAD6LfMjFBVhSdoBcIUztnzcc1XuoLo3v7XZ8+2BV
+ zbnevoT9IpK15I+6REQSBm7sPUnZhXyoRdQQMpfFkmc8QHmMYFi3TM/HdjWpWU2iVke+l9IU/Mu
+ 9ufmXcMBvIP1SHCVDGoslC1ych0r/7S13vOACQZMtk3gYqp62n7bcDySsqZDdgsTV1FgEhT01FY
+ 6/3PsqsWrD/AUnxtjTVu5dMzfwj74PFuKFYToBvWaRWnPSUy7jOHmlu09J275FYhvgXk9PmOMxL
+ oSN+aTb0Ib7+tDFxB14bXhKiL0MpDo6susIM/m6H0tBDo0O4PIVuemAEtiZQArDoJmtJNz79gzT
+ TeWf+a/KCQDlrew==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-The Quality-of-Service (QsS) node stores/restores specific
-register contents when the power domains is turned off/on.
-Add QoS node so that they can connect to the power domain.
+While troubleshooting a performance problem internally, it became
+evident that we needed tracepoints in nfsd_commit. The first patch adds
+that. While discussing that, Sargun pointed out some tracepoints he
+added using kprobes. Those are converted to static tracepoints here.
 
-Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+Lastly, this adds a new counter to the pool_stats for counting the number
+of times that the kernel tried to wake a svc thread, but there were none
+available. I think this may be useful info for determining whether we're
+bumping up against the size of the thread pool.
+
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- arch/arm64/boot/dts/rockchip/rk3528.dtsi | 160 +++++++++++++++++++++++
- 1 file changed, 160 insertions(+)
+Jeff Layton (4):
+      nfsd: add commit start/done tracepoints around nfsd_commit()
+      nfsd: add a tracepoint for nfsd_setattr
+      nfsd: add some stub tracepoints around key vfs functions
+      sunrpc: keep a count of when there are no threads available
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-index b1713ed4d7e2..0c0e7f151462 100644
---- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-@@ -129,6 +129,166 @@ gic: interrupt-controller@fed01000 {
- 			#interrupt-cells = <3>;
- 		};
- 
-+		qos_crypto_a: qos@ff200000 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff200000 0x0 0x20>;
-+		};
-+
-+		qos_crypto_p: qos@ff200080 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff200080 0x0 0x20>;
-+		};
-+
-+		qos_dcf: qos@ff200100 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff200100 0x0 0x20>;
-+		};
-+
-+		qos_dft2apb: qos@ff200200 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff200200 0x0 0x20>;
-+		};
-+
-+		qos_dma2ddr: qos@ff200280 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff200280 0x0 0x20>;
-+		};
-+
-+		qos_dmac: qos@ff200300 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff200300 0x0 0x20>;
-+		};
-+
-+		qos_keyreader: qos@ff200380 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff200380 0x0 0x20>;
-+		};
-+
-+		qos_cpu: qos@ff210000 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff210000 0x0 0x20>;
-+		};
-+
-+		qos_debug: qos@ff210080 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff210080 0x0 0x20>;
-+		};
-+
-+		qos_gpu_m0: qos@ff220000 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff220000 0x0 0x20>;
-+		};
-+
-+		qos_gpu_m1: qos@ff220080 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff220080 0x0 0x20>;
-+		};
-+
-+		qos_pmu_mcu: qos@ff240000 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff240000 0x0 0x20>;
-+		};
-+
-+		qos_rkvdec: qos@ff250000 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff250000 0x0 0x20>;
-+		};
-+
-+		qos_rkvenc: qos@ff260000 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff260000 0x0 0x20>;
-+		};
-+
-+		qos_gmac0: qos@ff270000 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff270000 0x0 0x20>;
-+		};
-+
-+		qos_hdcp: qos@ff270080 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff270080 0x0 0x20>;
-+		};
-+
-+		qos_jpegdec: qos@ff270100 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff270100 0x0 0x20>;
-+		};
-+
-+		qos_rga2_m0ro: qos@ff270200 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff270200 0x0 0x20>;
-+		};
-+
-+		qos_rga2_m0wo: qos@ff270280 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff270280 0x0 0x20>;
-+		};
-+
-+		qos_sdmmc0: qos@ff270300 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff270300 0x0 0x20>;
-+		};
-+
-+		qos_usb2host: qos@ff270380 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff270380 0x0 0x20>;
-+		};
-+
-+		qos_vdpp: qos@ff270480 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff270480 0x0 0x20>;
-+		};
-+
-+		qos_vop: qos@ff270500 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff270500 0x0 0x20>;
-+		};
-+
-+		qos_emmc: qos@ff280000 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff280000 0x0 0x20>;
-+		};
-+
-+		qos_fspi: qos@ff280080 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff280080 0x0 0x20>;
-+		};
-+
-+		qos_gmac1: qos@ff280100 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff280100 0x0 0x20>;
-+		};
-+
-+		qos_pcie: qos@ff280180 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff280180 0x0 0x20>;
-+		};
-+
-+		qos_sdio0: qos@ff280200 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff280200 0x0 0x20>;
-+		};
-+
-+		qos_sdio1: qos@ff280280 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff280280 0x0 0x20>;
-+		};
-+
-+		qos_tsp: qos@ff280300 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff280300 0x0 0x20>;
-+		};
-+
-+		qos_usb3otg: qos@ff280380 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff280380 0x0 0x20>;
-+		};
-+
-+		qos_vpu: qos@ff280400 {
-+			compatible = "rockchip,rk3528-qos", "syscon";
-+			reg = <0x0 0xff280400 0x0 0x20>;
-+		};
-+
- 		cru: clock-controller@ff4a0000 {
- 			compatible = "rockchip,rk3528-cru";
- 			reg = <0x0 0xff4a0000 0x0 0x30000>;
+ fs/nfsd/nfs3proc.c         |  3 ++
+ fs/nfsd/nfs4proc.c         |  2 +
+ fs/nfsd/nfsproc.c          |  2 +
+ fs/nfsd/trace.h            | 91 ++++++++++++++++++++++++++++++++++++++++++++++
+ fs/nfsd/vfs.c              | 31 ++++++++++++++++
+ include/linux/sunrpc/svc.h |  1 +
+ net/sunrpc/svc.c           |  4 +-
+ net/sunrpc/svc_xprt.c      |  7 ++--
+ 8 files changed, 137 insertions(+), 4 deletions(-)
+---
+base-commit: 7dc86d35a5f8a7ac24b53792c704b101e5041842
+change-id: 20250303-nfsd-tracepoints-c82add9155a6
+
+Best regards,
 -- 
-2.25.1
+Jeff Layton <jlayton@kernel.org>
 
 
