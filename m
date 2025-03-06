@@ -1,104 +1,119 @@
-Return-Path: <linux-kernel+bounces-548023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD888A53EEC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:11:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD64A53EEE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:12:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 234D5167A12
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:11:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 692223A8358
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:11:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6682EB652;
-	Thu,  6 Mar 2025 00:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3727FD;
+	Thu,  6 Mar 2025 00:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EzoGPSBl"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PjB/8pEH"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83E2A63CB
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 00:10:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3342A2D;
+	Thu,  6 Mar 2025 00:12:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741219857; cv=none; b=VR9yO9WOYtGlU/9nafK8fpaDsgkZKleQNW4AJtieIOfllQxOb5OAzi7irzuE0m+nRYnbyTWMSn2lEf157WpLGoIVGiwwCfxxtvjaLx/w/lcDq/bUWn5O1te0QyIdaNUiOHmpOd+bZtbXPpdZaSZB59R5QUlnxDhPVI6p9LJtMjo=
+	t=1741219923; cv=none; b=RDnACRfFjVbcqMHTVMPXZf/oFSUXPr+6uJZnZl3h57T5qCcKUzhRwwcMgx7KGiGDd+v6E2GKkZoGtF9iDvlwcWms9T+iZKcHz6wzHWI6Tm4P2NDrXKDjzRc3ZZ5dgu5tcaitAB1J7nX5U8qdVd1SU5r1BDt4QIrj9CEtxbsJP+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741219857; c=relaxed/simple;
-	bh=BMP2Cu6ueAsVg5DJpgRqTk8AwwWjlXRp7w4LMew/LV8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=bKoTMNXrhLonpWTeC0gtcJ8B3nMw50KPcmOkjGHGVaYREZFG9ooc3DedUZQgjs0W8TKENip1laB1wnzs0KmjESUTEU4MSI4Tx9uNp+o1SA7dKPUmrdNrqjHpWcyoXH1X1aMAVsxZ/WT3Va9g9yzXdW/SMl/D5wshUu9z2N6qhD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EzoGPSBl; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ff6167e9ccso367299a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 16:10:56 -0800 (PST)
+	s=arc-20240116; t=1741219923; c=relaxed/simple;
+	bh=QY/dbxRn2hSPG9sYCiIb3RtHikmICWWUJa/v3LRP3ow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aJ7eLbtAoGt6Ro0Q/2A8y47TV2Ynai7XUCIewc+rZf7llLf1QdDWaaFknRl+CnmglB3j2g6mW60/nSTmP4C+z6fqKjP76/+KBTU0GsPCfkuNS4KSO6LyOUIn6TWXTgQ8xk7EcnbmobiDYXbyinBhvOqIYjjIZAiqhAN6xzxGBXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PjB/8pEH; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2239aa5da08so464775ad.3;
+        Wed, 05 Mar 2025 16:12:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741219856; x=1741824656; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gkAf3bS5L3Hu0wBjNyDNUVwPUQfV/Y/RYDcUi88Gr00=;
-        b=EzoGPSBltRNgWqmAvubPiemJfJKN+oSRo/Lm1vtE4dUTihdF9Vaeo6b1/dvtLRR4i7
-         MdwGnkebHX5Qdso3kpe/BU/4ABhN+oUyZzhBI4tsuN1zDcM1Rxr3RaugyPZVUJxgm0bH
-         VBlLJR8KzAy/vAyLOwBV9tR05Ehq/aUkWFW012Tc93kiwjXH6yxE6XuIT2sCjWORhTaU
-         ALfZlL2W4+k+YIzUfI4CSR27cVgAzgnJn8zhzOvJ+cYwRGzoBG5ZWMrlUhdtfjIUcB69
-         6ApH/hCEvQZaqKu/koWbewYH4xr/5RpwOLjIr7POr8+NIus2paLCCwULiYcZGjPiAnc1
-         8fsQ==
+        d=gmail.com; s=20230601; t=1741219921; x=1741824721; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/ZCYeLObjn8U5GWeXbTtQ5qHg8nodz5oZEbI2evLUOg=;
+        b=PjB/8pEHwzHvRaB7HzIamIbfu/8WTkSp2Nt4wZU+fNdfAog3SWIpaRvOP8T/9vEbmi
+         UXGrnLdyYEPEPryu0iYpwb5m7i5zDPxegPix0p/7Yoar69hMCceEHOvr7bT+q162y93V
+         MpuyFuHzjZPq/AreUssPXKIodaebrcxIS0SuqviZu6ZrYsZsjQwvnqUDlmeC2EwkCGG/
+         m7IJnipJFYqRgNA34mAjKOZV8+oh865WFzq9lm4Zcc/H4f75ooTXQSDc85Cv0PzV6NMB
+         D6xZc5CuFqLA5dE5o0woWX55o48YMTfnAZrVw0nP9uo0OdofIr55p2hcxqCAIzvccGtf
+         EEew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741219856; x=1741824656;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gkAf3bS5L3Hu0wBjNyDNUVwPUQfV/Y/RYDcUi88Gr00=;
-        b=aYtVoYTI+xHeVZpFW8AfTW/w5/tGEGH4Qp896XbN1rHeuSwEToEtDMpsgwmJ2QobW8
-         dVPFLW5HGohFTOjkLHoz1KRiL0/Va4UyYmcxPMNeB7WmliR8fD4YFd0YfRWc8nX2h4rs
-         aeLNh7PeBX4S2sl2loJMf3sEzpzbTq41yXSP6CVIJNYAkxdfcjNtwwl/eFRKTsA9m0+q
-         87oUqx/7jiVsvpMhdP733oq26vWV8KXusCoZEePdqD8XXkY3jHcYbwXmbwy+q9AluQnu
-         0v99fTSIYzAC7duympXTTkMrLBLzSw7XvqgNw5c+2XMflWbV24e2h20rBpIMZ00hPVPa
-         xwSw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwb0yygoX+8hK2o8VW4oSzjai6LQ8rkueiWIfi2imInlVQIzYVXSx2phd/z0pHcB2Y2uhwCWWexxEhsy4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAILnW0InfzH3yrwaDjNrdp5yJ37uR82nrk7OhuwJgOzXiDu+T
-	Z+tBPJ8JlY5awUdr7efE+gEWyZ+/Xmj1ktabXGcKte/d7obK3IrLejS37wj7MrZ6MHLrwYmHIA2
-	1Dw==
-X-Google-Smtp-Source: AGHT+IH6mtvWi524iNsh5MnZ9uVRt0uAQkqtI0o5+FBM2OSWGK6g8TOWH1A2818hUQq2ucNbEVa/38GArX4=
-X-Received: from pjbqo11.prod.google.com ([2002:a17:90b:3dcb:b0:2fa:1b0c:4150])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2712:b0:2f2:a664:df1a
- with SMTP id 98e67ed59e1d1-2ff4978fd9cmr8922776a91.2.1741219855851; Wed, 05
- Mar 2025 16:10:55 -0800 (PST)
-Date: Wed, 5 Mar 2025 16:10:54 -0800
-In-Reply-To: <e5f56fd2-b2e2-48c1-bb3d-e00b61807893@intel.com>
+        d=1e100.net; s=20230601; t=1741219921; x=1741824721;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/ZCYeLObjn8U5GWeXbTtQ5qHg8nodz5oZEbI2evLUOg=;
+        b=CtKzW7l57vPTRVChumqsOAlknOFQNjPAWyi7wWYV4FnOEW9WDk5DQ1f0s36i/a30YS
+         4wBDgA5kjh1SfoyLTX7n+rlJfltJgZaJjllkfuTpNmOR47WfkvQ1SmyEphxc6DiWiALI
+         eIvEU10gNMcyDRhs1PcWcvc6s2cU/nfHyReb/31onnm7WeJf+TMR4PVCEwMT+E+Fti2E
+         I01SbW+EPLhM8VT0Lm8zXjd2rHssSzfUbB2Tn/AUukVUuVXnJOW/zpkaFxRRUHX7CKeQ
+         Uak0567f6tcuWsn6PZRRBLZTnAGN5ayBTI9+IDl9Vq83Y/oHbF7Hnxvcr1BgFbj8Dnw5
+         ID9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWDKG+JvmvLmr8tsCW7b4H83sfw6/8lQHE0fLahbmvHO8Y6tadcXaFzck5fdjZckSChADPEYBqUiJE/uTjq@vger.kernel.org, AJvYcCXDcr/UZ5l//pGqA9jFm/f1LvxlfBnXnSnohZzATsMN/fReGkAQny5z325kjDcVto73MxXnp3kPebM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJvVAWoCP3y8HIH3T/M0+zA3vcwh0GQ3cibaSa8GNF9gji93NJ
+	a8jBA95BDQoz8g1c/O75kmKM2MwTEjdYFtcqGe4bsTSjDLOZ9Qm2
+X-Gm-Gg: ASbGncvYXkD9J3vbGStJUz4gVRNEx665FQDPCrsWR6qAEZkO/DSW18BGno0PSQOT+nE
+	9um9cPSxa1owSgJee+DE24+JGfFLQjGb1Y5P6Aoeoay7LgMTexUno04JcFbfA+TFsqu16NrxF9Z
+	ERJkU8pIxlXvu3IoFJeBwt1wtLKh+ZpaqQVhmT47iDqNnwpZqiYUtecdmEGq55Nq/EeP84NazkL
+	mK7yARQHIsYkmtKD+MVG/uUrKZ0SdacLfIz0PkKryrOTOn2EzoSx7twk3JgC4ID3tsII+BH2jx+
+	1W6r31eyOlvMzisiL0UvkOUo0BLRm20nw96dm37V614VLWg=
+X-Google-Smtp-Source: AGHT+IG4syzW4hfKzfRcA9XqhvNMuuxQLjzpBCzPV0TJVG9JpYb89BuAofOHLw5MUEjgzgF8AcR+rQ==
+X-Received: by 2002:a05:6a21:7308:b0:1f3:45cc:c6fb with SMTP id adf61e73a8af0-1f349496a41mr9296459637.19.1741219921109;
+        Wed, 05 Mar 2025 16:12:01 -0800 (PST)
+Received: from archlinux ([189.101.161.220])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af281075eb9sm45371a12.9.2025.03.05.16.11.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 16:12:00 -0800 (PST)
+Date: Wed, 5 Mar 2025 21:11:54 -0300
+From: Gustavo Silva <gustavograzs@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: imu: bmi270: fix initial sampling frequency
+ configuration
+Message-ID: <5se4isw4f6xpbub62tna53ah2qjcf3mwks23ifc2yn4u462lpn@u53frmcgjth2>
+References: <20250304-bmi270-odr-fix-v1-1-384dbcd699fb@gmail.com>
+ <20250305144928.1b9b483a@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <CAMEKE0Hd3S0-25afhWQhNNitbc7njp0ftO+Y3QmgS6CyFQh4ww@mail.gmail.com>
- <7a212431-5320-464b-a357-507fa6511586@intel.com> <e5f56fd2-b2e2-48c1-bb3d-e00b61807893@intel.com>
-Message-ID: <Z8joDnLe-A3zdwu6@google.com>
-Subject: Re: [REGRESSION][BISECTED] Some applications under Windows 11 libvirt
- VM crash since commit 408eb7417a92c5354c7be34f7425b305dfe30ad9
-From: Sean Christopherson <seanjc@google.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Miguel Ruiz <miguelies.ruiz@gmail.com>, ravi.bangoria@amd.com, tglx@linutronix.de, 
-	thomas.lendacky@amd.com, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, xin@zytor.com, 
-	tony.luck@intel.com, pawan.kumar.gupta@linux.intel.com, 
-	andriy.shevchenko@linux.intel.com, jgross@suse.com, 
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
-	christian@heusel.eu, Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305144928.1b9b483a@jic23-huawei>
 
-On Wed, Mar 05, 2025, Dave Hansen wrote:
-> On 3/5/25 15:42, Dave Hansen wrote:
-> > I'm also cc'ing the KVM folks. I don't actually know how the #GP from
-> > the split lock detection will manifest to KVM guests. I'm kinda
-> > surprised it crashes the guest app and doesn't do anything more noisy.
+On Wed, Mar 05, 2025 at 02:49:28PM +0000, Jonathan Cameron wrote:
+> On Tue, 04 Mar 2025 15:01:02 -0300
+> Gustavo Silva <gustavograzs@gmail.com> wrote:
 > 
-> I've got my wires crossed somewhere. It's not a #GP, it's an #AC.
+> > In the bmi270_configure_imu() function, the accelerometer and gyroscope
+> > configuration registers are incorrectly written with the mask
+> > BMI270_PWR_CONF_ADV_PWR_SAVE_MSK, which is unrelated to these registers.
+> > 
+> > As a result, the accelerometer's sampling frequency is set to 200 Hz
+> > instead of the intended 100 Hz.
+> > 
+> > Remove the mask to ensure the correct bits are set in the configuration
+> > registers.
+> > 
+> > Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
+> 
+> Hi Gustavo,
+> 
+> Please reply to this thread with a suitable fixes tag.
+> 
+> Thanks,
+> 
+> Jonathan
+> 
 
-Heh, nope.  Third time's the charm.  It's a #DB.
-
-I've got the fixes queued in kvm-x86 (and tagged for stable@), I'll make sure
-they get to Linus' tree this week.
-
-https://lore.kernel.org/all/20250227222411.3490595-1-seanjc@google.com
+Fixes: 3ea51548d6b2 ("iio: imu: Add i2c driver for bmi270 imu")
 
