@@ -1,129 +1,421 @@
-Return-Path: <linux-kernel+bounces-550082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDAE0A55B21
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:51:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0235A55B2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:56:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3333A18965C2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:51:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D62FE3B3FF4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078CE1FFC70;
-	Thu,  6 Mar 2025 23:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F23027CCE8;
+	Thu,  6 Mar 2025 23:56:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="GpgPu2AU"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="lDVTKEa+"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01C12010FD
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 23:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1577C200BB2
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 23:56:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741304990; cv=none; b=m5ne8Jr9AsFus93cl/aOOhXgkv7D5XowsL5rwETOuxfhOmJ6xB44eP3PEGyG2ZBSiESAJijL4af6XXiAxxlfFOORtBAN6xc/zJ6CvodR9dIohyScLWXtzJxKG4nVGAIbgRIN5DEq2xIwfwV3yhSo+7+B+Yieg1C6nvq4wGQGIdk=
+	t=1741305380; cv=none; b=YC6mq9gmr8ceK5SssdcyRVSVtG3mqypSInyUMJVrSiRCr8dQ4YSkolz6ZEMxW23tPpQuBUqsBZNkyE+uC0dCGnZEXK/tV3crOLHLEFioal6xwaVQ9mKHinNAm3lHXMBZIJy07kUY73EEvGXPyUU1FItiWbV0+xQYNpOHtaSiEQk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741304990; c=relaxed/simple;
-	bh=TjTyGrcYB8Jm7rM3KapsODrBwAs8Avyb2414zXyldW4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QTJ6WZZP9vpX5L0s5WeunApwe1jWSftZIn1jS9MOEdcQtfwAlkfvbvPwL04n+h27hqqgb7ynaHJp2/1STCvd0HN+ZYmUx9+mfgUdDBY2u9K84ML/Obxl+89XMWjuD7/5hT/TeDY/jU1oNjMHOJVVjaj4+GD0VXrdJQMpfl7limg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=GpgPu2AU; arc=none smtp.client-ip=121.127.44.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1741304988;
- bh=oDJmvAX7nAqa4Vhl4U1zjfFrd0jhOQ7wzffB0eGRfkE=;
- b=GpgPu2AUbNHWX+mccsHZrxMS9C0kNVY/jogO8MGd7AU16uNQp1F2ta7r2T0DUxb7T+PeDDll2
- ZhFMpb7A8SJgrQAfzUIlYRzT7O7vqWAvJmEDEE8BvZdFRmwJgxtkaw8JghJESJam7daGsqJzb7B
- itd8zx5mo/o1lupzrdlLlbdUNNp0DCBEM82XvhTmd6v2n11R27aTnLQ3rsSf3m8S/Qw38SFaRHf
- mmylCyhyGnqqWXXwDP+ppOZ4bR06jiWHE13mBRAEhKPpVGdEJx4ec3350Kt4dj1oe5NsHFnPMy5
- TxuWYmGucI9HRylCH870G9CPRGm3R0DIPJUxFzEKeZSQ==
-X-Forward-Email-ID: 67ca3498c1763851c065d4e9
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.73
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <1dd9e663-561e-4d6c-b9d9-6ded22b9f81b@kwiboo.se>
-Date: Fri, 7 Mar 2025 00:49:38 +0100
+	s=arc-20240116; t=1741305380; c=relaxed/simple;
+	bh=EDnut2JJw9QS/vdLIDWZgoog/uv+W8+/FbSRiwqOeC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OAl76lV6Pjc71HdNWDHX/o6ZjLvgIvgF5AIcdMQLMUk8iG+vTt6JsKUbOjQKH8Sz92gmfbQHnYBuxwbxlkZW1fXzNDneO419DopFZzZmmXiFRKb1pVuSs8+c+m5xuraofM1jE1HLbSuYemYDIt8Mbg4RtnNlxok2qyr2uJNDNuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=lDVTKEa+; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4750bc8d102so12276561cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 15:56:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1741305376; x=1741910176; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8SxknEtouNK3Zjilzhs/nL72q1E1f2BQDuWYXogJJkI=;
+        b=lDVTKEa+F3tj7cXw2K6Bghl1Dg1D/gefEUD5zdYV/+TT8Kmzhpl6GTlKFoFVnK18Rr
+         am+jPCJodvCnlInvcXyJELD8aGYd0LZ8aseV44WWoiHYlVOJwniZSYJqgCknAkZor2j7
+         /f9CyA7Vz8ACTT+5giPPOeqt4zuvKRzl210uQHTTuqKRxq8oII740r8AEB4QtMRE66Uq
+         9bIkl91YKqOFqcw7LuxzxuZeK6Ce59ne0uzXlhddu1euHHcQ5lC5nmK2xDvoTZ3i/Oge
+         rXfk8ZBliB+LMe+u25nnXU2dLNgX5u1Rle147QuxLKhBtGlRcz7AbO39ihiuaCzPNUQ8
+         puFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741305376; x=1741910176;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8SxknEtouNK3Zjilzhs/nL72q1E1f2BQDuWYXogJJkI=;
+        b=EOWbvtPZbJCFXHVzkOFI0AaFs6YiQ/JuUMbvany3b9JWgR/gXOieuuJbCZ2HSCfz44
+         vWRsdH9/LWnPY7n7BQFZFw3uabBWMU8sTFvLonyWhTyL6cE/nLNtEYFDnqTrjppy/p87
+         q5LI7YiOIgNZlmmyomec4bb5MlC5NqUynWeEh68jwsfTb32rPK50aJw7Sp6mFogoyovY
+         B8eXjL5YD6p9OyfGw5UtNjmHZIVesOT5e9v0spagvJ5oLIYEYG1Thsm28GX2peDSS9nM
+         0QbxbFPWTbqLX+SmLhbIaR7trbLbVBsAGuH1REAbuoGYSPIn04h4m1/mbi2CODr5ewsN
+         cCUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZMPQWpnf2dsZmU47HI95V15mLh7/DSlzNZtx5TnHGUmso7tfAvpKEIc90Gs+B/FZY8LAoeSO6O1j0lkg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUIYs/Tnx8cEChZMfaNX+N/uIFhC9wgrPt0McdBHvjKBGaAsQx
+	apDvasWin/V9Z6T70XM1JkciBOg9PQEw21Ix2q2nyaGqYEBwZjlLEY3kEg/PwDk=
+X-Gm-Gg: ASbGncs6QuOKcNHYpNX5j1lLPTx/v5+fCBH7SQw7bH9mBzcEw9HyKJfcGCm/NGsrABo
+	CDwqxwbSpgomfQ7qzFEZElaEqeBTaWa820Olxg2UIMBc/BsS8woiRZ4fpY0d1to0vnSKM4Y9hut
+	2SjthW8WAk9uqOxMzlbbD4FjaeKAbSKvMh8VNpQZJIeXXwSsj3h3v1DcTUzuNUKJNSSRD2hCnOT
+	BiDIXi86vXRPbExFRGTOSfxzPIgVVOAiX6HRDgmRKbggj3D9q7u+DKBQyc3jUrblvUB04oZBl6o
+	LmHU8gMcZV4I+D6g+ze9SqKOcoysodR1vl458NegdhlyD9YLlSA6dkiqtGsxnK58fvSujj9t/Sz
+	dhtEpGlOObcMs3gb84BjlGou6A30=
+X-Google-Smtp-Source: AGHT+IHMfvSB5jDUQA+ycqlh2nLaumrbN/QnnIspplIKXIwSEH68cURXntQcFrU/O3HWCHFOeXosag==
+X-Received: by 2002:ad4:500c:0:b0:6e6:6c7c:984a with SMTP id 6a1803df08f44-6e9006776admr10608846d6.29.1741305375656;
+        Thu, 06 Mar 2025 15:56:15 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f707c39dsm12780056d6.23.2025.03.06.15.56.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 15:56:15 -0800 (PST)
+Date: Thu, 6 Mar 2025 18:56:13 -0500
+From: Gregory Price <gourry@gourry.net>
+To: lsf-pc@lists.linux-foundation.org
+Cc: linux-mm@kvack.org, linux-cxl@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: CXL Boot to Bash - Section 2a (Drivers): CXL Decoder Programming
+Message-ID: <Z8o2HfVd0P_tMhV2@gourry-fedora-PF4VCD3F>
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
+ <Z6OMcLt3SrsZjgvw@gourry-fedora-PF4VCD3F>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] net: stmmac: dwmac-rk: Validate rockchip,grf and
- php-grf during probe
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, netdev@vger.kernel.org,
- devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250306210950.1686713-1-jonas@kwiboo.se>
- <20250306210950.1686713-3-jonas@kwiboo.se>
- <bab793bb-1cbe-4df6-ba6b-7ac8bfef989d@lunn.ch>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <bab793bb-1cbe-4df6-ba6b-7ac8bfef989d@lunn.ch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z6OMcLt3SrsZjgvw@gourry-fedora-PF4VCD3F>
 
-Hi Andrew,
+I decided to dig into decoder programming as as an addendum to the
+Driver section - where I said I *wouldn't* do this. It's important
+though, when discussing interleave. So alas, we should at least have
+some base understanding of what the heck decoders are actually doing.
 
-On 2025-03-06 23:37, Andrew Lunn wrote:
-> On Thu, Mar 06, 2025 at 09:09:46PM +0000, Jonas Karlman wrote:
->> All Rockchip GMAC variants require writing to GRF to configure e.g.
->> interface mode and MAC rx/tx delay. The GRF syscon regmap is located
->> with help of a rockchip,grf and rockchip,php-grf phandle.
-> 
->> @@ -1813,8 +1564,24 @@ static struct rk_priv_data *rk_gmac_setup(struct platform_device *pdev,
->>  
->>  	bsp_priv->grf = syscon_regmap_lookup_by_phandle(dev->of_node,
->>  							"rockchip,grf");
->> -	bsp_priv->php_grf = syscon_regmap_lookup_by_phandle(dev->of_node,
->> -							    "rockchip,php-grf");
->> +	if (IS_ERR(bsp_priv->grf)) {
->> +		ret = PTR_ERR(bsp_priv->grf);
->> +		dev_err_probe(dev, ret, "failed to lookup rockchip,grf\n");
->> +		return ERR_PTR(ret);
->> +	}
->> +
->> +	bsp_priv->php_grf =
->> +		syscon_regmap_lookup_by_phandle_optional(dev->of_node,
->> +							 "rockchip,php-grf");
->> +	if ((of_device_is_compatible(dev->of_node, "rockchip,rk3588-gmac") ||
->> +	     of_device_is_compatible(dev->of_node, "rockchip,rk3576-gmac")) &&
->> +	    !bsp_priv->php_grf)
->> +		bsp_priv->php_grf = ERR_PTR(-ENODEV);
-> 
-> It seems odd you say all variants need this property, and then you
-> look for two specific variants here and do something different? Why
-> are these two special?
+This is not a regutitation of the spec, you can think of it closer to
+a "Theory of Operation" or whatever.  I will show discrete examples of
+how ACPI tables, system memory map, and decoders relate.
 
-rockchip,grf is required for all GMACs, rockchip,php-grf is also needed
-on rk3576 and rk3588 (+rk3562 that has been posted on ML) :-S
+----------------------------------------
+Definitions: Addresses and HDM Decoders.
+----------------------------------------
 
-Above use of of_device_is_compatible() was my attempt at requiring the
-syscon regmap for those variants that make use of php_grf. And still not
-break rk3562 depending on the order these would land.
+An HDM Decoder can be thought shorthand as a "routing" mechanism,
+where the a Physical Address is used to determine one of:
 
-Should probably clarify a little bit with a code comment in a v2.
+  1) Fabric routing (i.e. which pipe to send a request down)
+  2) Address translation (Host to Device Physical Address)
 
-Regards,
-Jonas
+In section 2, I referenced a simple device-to-decoder mapping:
 
-> 
-> 	Andrew
+    root    ---  decoder0.0   -- Root Port Decoder
+     |               |
+   port1    ---  decoder1.0   -- Host Bridge Decoder
+     |               |
+  endpoint0 ---  decoder2.0   -- Endpoint Decoder
 
+Barring any special innovations (cough) - endpoint decoders should
+be the only decoders that actually "Translation" addresses - at least
+for basic volatile memory devices.
+
+All other decoders (Root, Host Bridge, Switch, etc) should simply
+forward DMA requests with the original Physical Address intact to
+the correct downstream device.
+
+For extra confusion, there are now 3 "Physical Address" domains
+
+System Physical Address (SPA)
+  The physical address of some location according to linux.
+  This is the address you see in the system memory map.
+
+Host Physical Address   (HPA)
+  An abstract address used by decoders (I'll explain later)
+
+Device Physical Address (DPA)
+  A device-local physical address (e.g. if a device has 1TB of
+  memory, it's DPA range might be 0-0x10000000000)
+
+
+----------------------------
+DMA Routing (No Interleave).
+----------------------------
+Ok, we have some decoders and confusing physical address definitions,
+how does a DMA actually go from processor to DRAM via these decoders?
+
+Lets consider our simple fabric with 256MB of memory at SPA base 4GB.
+
+Lets assume this was all set up statically by BIOS.  We'd have the
+following CEDT CFMWS (See Section 0 - ACPI) and decoder programming.
+
+```
+CEDT
+           Subtable Type : 01 [CXL Fixed Memory Window Structure]
+                Reserved : 00
+                  Length : 002C
+                Reserved : 00000000
+     Window base address : 0000000100000000   <- Memory Region
+             Window size : 0000000010000000   <- 256MB
+Interleave Members (2^n) : 00                 <- Not interleaved
+
+Memory Map:
+  [mem 0x0000000100000000-0x0000000110000000] usable    <- SPA
+
+Decoders
+  root    ---  decoder0.0   -- range=[0x100000000, 0x110000000]
+   |               |
+ port1    ---  decoder1.0   -- range=[0x100000000, 0x110000000]
+   |               |
+endpoint0 ---  decoder2.0   -- range=[0x100000000, 0x110000000]
+```
+
+When the CPU accessed an address in this range, the memory controller
+will send the request down the CXL fabric. The following steps occur:
+
+  0) CPU accesses SPA(0x101234567)
+
+  1) root decoder identifies HPA(0x101234567) is valid and forwards
+     to host bridge associated with that address (port 1)
+
+  2) host bridge decoder identifies HPA(0x101234567) is valid and
+     forwards to endpoint associated with that address (endpoint0)
+
+  3) endpoint decoder identifies HPA(0x101234567) is valid and
+     translates that address to DPA(0x01234567).
+
+  4) The endpoint device uses DPA(0x01234567) to fulfill the request.
+
+In this scenario, our endpoint has a DPA range of (0, 0x10000000),
+but technically DPA address space is device-defined and may be sparse.
+
+As you can see, the root and host bridge decoders simply "route" the
+access to the next appropriate hop, while the endpoint decoder actually
+does the translation work.
+
+
+What if instead, we had two 256MB endpoints on the same host bridge?
+
+```
+CEDT
+           Subtable Type : 01 [CXL Fixed Memory Window Structure]
+                Reserved : 00
+                  Length : 002C
+                Reserved : 00000000
+     Window base address : 0000000100000000   <- Memory Region
+             Window size : 0000000020000000   <- 512MB
+Interleave Members (2^n) : 00                 <- Not interleaved
+
+Memory Map:
+  [mem 0x0000000100000000-0x0000000120000000] usable  <- SPA
+
+Decoders
+                            decoder0.0
+                  range=[0x100000000, 0x120000000]
+                                |
+                            decoder1.0
+                  range=[0x100000000, 0x120000000]
+                  /                              \
+            decoded2.0                        decoder3.0
+  range=[0x100000000, 0x110000000]   range=[0x110000000, 0x120000000]
+```
+
+We still only have a single root port and host bridge decoder that
+covers the entire 512MB range, but there are now 2 differently
+programmed endpoint decoders.
+
+This makes the routing a little more obvious.  The root and host bridge
+decoders cover the entire SPA space (512MB), while the endpoint decoders
+only cover their own address space (256MB).
+
+The host bridge in this case is responsible for routing the request to
+the correct endpoint.
+
+
+What if we had 2 endpoints, each attached to their own host bridges? 
+In this case We'd have 2 root ports and host bridge decoders.
+
+```
+CEDT
+           Subtable Type : 01 [CXL Fixed Memory Window Structure]
+                Reserved : 00
+                  Length : 002C
+                Reserved : 00000000
+     Window base address : 0000000100000000   <- Memory Region 1
+             Window size : 0000000010000000   <- 256MB
+Interleave Members (2^n) : 00                 <- Not interleaved
+            First Target : 00000007           <- Host Bridge _UID
+
+           Subtable Type : 01 [CXL Fixed Memory Window Structure]
+                Reserved : 00
+                  Length : 002C
+                Reserved : 00000000
+     Window base address : 0000000110000000   <- Memory Region 1
+             Window size : 0000000010000000   <- 256MB
+Interleave Members (2^n) : 00                 <- Not interleaved
+            First Target : 00000006           <- Host Bridge _UID
+
+Memory Map - this may or may not be collapsed depending on Linux arch
+  [mem 0x0000000100000000-0x0000000110000000] usable  <- System Phys Address
+  [mem 0x0000000110000000-0x0000000120000000] usable  <- System Phys Address
+
+Decoders
+            decoder0.0                     decoder1.0   - roots
+    [0x100000000, 0x110000000]     [0x110000000, 0x120000000]
+                |                              |
+            decoder2.0                     decoder3.0   - host bridges
+    [0x100000000, 0x110000000]     [0x110000000, 0x120000000]
+                |                              |
+            decoder4.0                     decoder5.0   - endpoints
+    [0x100000000, 0x110000000]     [0x110000000, 0x120000000]
+```
+
+This scenario looks functionally same as the first - with two distinct,
+non-overlapping sets of decoders (any given SPA may only be services by
+one device).  The platform memory controller is responsible for routing
+the address to the correct root decoder.
+
+In Section 4 (Interleave) we'll discuss a bit how the interleave is
+accomplished - as this depends whether you are interleaving across
+host bridges (aggregation) or within a host bridge (bifurcation).
+
+
+
+---------------------------------------------
+Nuance: Host Physical Address... translation?
+---------------------------------------------
+
+You might have noticed that all the addresses in the examples I showed
+are direct subsets of their parent decoder address ranges.  The root is
+assigned a System Physical Address according to the system memory map,
+and all decoders under it are a subset of that range.
+
+You may have even noticed routing steps suddenly change from SPA to HPA
+
+  0) CPU accesses SPA(0x101234567)
+
+  1) root decoder identifies HPA(0x101234567) is valid and forwards
+     to host bridge associated with that address (port 1)
+
+So what the heck is a "Host Physical Address"?
+Why isn't everything just described as a "System Physical Address"?
+
+CXL HDM decoders *definitionally* handle HPA to DPA translations.
+
+That's it, that's the definition of an HPA.
+
+On MOST systems, what you see in the memory map is an SPA, and SPA=HPA,
+so all the decoders will appear to be programmed with SPA.  The platform
+MAY perform translation before a request is routed to decoder complex.
+
+I will cover an example of this in-depth in an interleave addendum.
+
+So the answer is that some ambiguity exists regarding whether platforms
+can/should do translation prior to HDM decoders even being utilized.  So
+for the sake of making everything more complicated and confusing for very
+little value:
+
+1) decoders definitionally do "HPA to DPA" translation
+2) most of the time "SPA=HPA"
+3) so decoders mostly do "SPA to DPA" translation
+
+If you're confused, that's ok, I was too - and still am.  But Hopefully
+between this section and Section 4 (Interleave) we can be marginally
+less confused together.
+
+
+-----------------------------------------------
+Nuance: Memory Holes and Hotplug Memory Blocks!
+-----------------------------------------------
+Help, BIOS split my memory device across non-contiguous memory regions!
+
+```
+CEDT
+           Subtable Type : 01 [CXL Fixed Memory Window Structure]
+                Reserved : 00
+                  Length : 002C
+                Reserved : 00000000
+     Window base address : 0000000100000000   <- Memory Region 1
+             Window size : 0000000080000000   <- 128MB
+Interleave Members (2^n) : 00                 <- Not interleaved
+            First Target : 00000007           <- Host Bridge _UID
+
+CEDT
+           Subtable Type : 01 [CXL Fixed Memory Window Structure]
+                Reserved : 00
+                  Length : 002C
+                Reserved : 00000000
+     Window base address : 0000000110000000   <- Memory Region 1
+             Window size : 0000000080000000   <- 128MB
+Interleave Members (2^n) : 00                 <- Not interleaved
+            First Target : 00000007           <- Host Bridge _UID
+
+Memory Map
+  [mem 0x0000000100000000-0x0000000107FFFFFF] usable  <- SPA
+  [mem 0x0000000108000000-0x000000010FFFFFFF] reserved
+  [mem 0x0000000110000000-0x0000000118000000] usable  <- SPA
+```
+
+Take a breath. Everything will be ok. 
+
+You can have multiple decoders at each point in the decoder complex!
+(Most devices should implement for multiple decoders).
+
+```
+Decoders
+                              Root Port 0
+                             /          \
+                    decoder0.0          decoder0.1
+    [0x100000000, 0x108000000]          [0x110000000, 0x118000000]
+                             \          /
+                            Host Bridge 7
+                             /          \
+                    decoder1.0          decoder1.1
+    [0x100000000, 0x108000000]          [0x110000000, 0x118000000]
+                             \          /
+                              Endpoint 0
+                             /          \
+                    decoder2.0          decoder2.1
+    [0x100000000, 0x108000000]          [0x110000000, 0x118000000]
+```
+
+If your BIOS adds a memory hole, it better also use multiple decoders.
+
+Oh, wait, Section 2 and Section 3 allude to hotplug memory blocks
+having size and alignment issues!
+
+If your BIOS adds a memory hole, it better also do it on Linux hotplug
+memory block alignment (2GB on x86) or you'll lose 1 hotplug memory
+block of capacity per CFMWS.
+
+Oi, talk about some rough edges, right? :[
+
+---------------------------------------
+Nuance: BIOS vs OS Programmed Decoders.
+---------------------------------------
+The driver can (and does) program these decoders.  However, it's
+entirely normal for BIOS/EFI to program decoders prior to OS init.
+
+Earlier in section 2 I said:
+  Most associations built by the driver are done by validating decoders
+
+What I meant by this is the driver does one of two things with decoders:
+
+   1) Detects BIOS programmed decoders and sanity checks them.
+      If an unexpected configuration is found, it bails out.
+      This memory is not accessible if EFI_MEMORY_SP is set.
+
+   2) Provide an interface for user policy configuration of the decoders
+
+For the most part, the mechanism is the same.  This carve-out is to tell
+you if something isn't working, you should check whether the BIOS/EFI or
+driver programmed the decoders. It will help debug the issue quicker.
+
+        In my experience, it's USUALLY a bad ACPI table.
+
+This distinction will be more important in Section 4 (Interleave) when
+we discuss Inter-Host-Bridge and Intra-Host-Bridge interleave.
+
+~Gregory
 
