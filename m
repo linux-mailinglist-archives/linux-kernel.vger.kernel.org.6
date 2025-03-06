@@ -1,185 +1,144 @@
-Return-Path: <linux-kernel+bounces-548611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19C96A546F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:56:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 239D3A54708
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:58:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69DBE18929DF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:56:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C28D03A7AE7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C103820ADC9;
-	Thu,  6 Mar 2025 09:56:38 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F8C920C012;
+	Thu,  6 Mar 2025 09:57:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="1f4Gjbzb"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A2E2080D4;
-	Thu,  6 Mar 2025 09:56:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0160720B814
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:57:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741254998; cv=none; b=TZvFCtZRV0W5a81X3A8V3FuMFcrY/CMC3sAQy/F8tDbpVWjTSqtribcmmEsw3Xx+4GjN39jil3iE3KJWQ3PQ0naZvfcn60g9ijqrTGHceMR5bSAivVFufRvC7jHGmOqNR79FXqXMPMqajbeTjCsZeRv2Pgt5+VRqlNK3Og/DaM0=
+	t=1741255034; cv=none; b=r1bwv1KjR+TkYxKS/i9Twupx2AK3ADTg9cfVnMbYkTWhvufv7YvUsLixfDaK6vvzR0AZGtJkgROohvtUKyXnUeC4H6/M1T2dQ3OLZncmL4brE+jZpWPgg9Kt0RYJjwQPw7moXdhS5ShX/0ER2Oyev0XxTBR6PDiB0m5v+2t9pD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741254998; c=relaxed/simple;
-	bh=immmqccZpgWh0VqDZp5BiUC+ppJSTASF8em54h17xLQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LPMUnrB/NzB06zLqwMkYRyGzkPcFcvfvYr9fje6W36E1pJ2qd30FowZD8oyMNVugNPpJn76pWzBY4scE5+EObwaa7JLwqnLnicZE4OzeHWgR8cMjCxRmPoAaN5E0iD4U8z9EMselSfXkPxFSoQ15nQ3MFOUapMCsJehCvJSqPYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z7lBH3LRGz6K9Q3;
-	Thu,  6 Mar 2025 17:54:15 +0800 (CST)
-Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
-	by mail.maildlp.com (Postfix) with ESMTPS id 54B2C140159;
-	Thu,  6 Mar 2025 17:56:33 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (7.182.85.71) by
- frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 6 Mar 2025 10:56:33 +0100
-Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
- frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
- Thu, 6 Mar 2025 10:56:33 +0100
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Christoffer Dall
-	<cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>
-CC: Oliver Upton <oliver.upton@linux.dev>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, Linux Next Mailing List
-	<linux-next@vger.kernel.org>
-Subject: RE: linux-next: build failure after merge of the kvm-arm tree
-Thread-Topic: linux-next: build failure after merge of the kvm-arm tree
-Thread-Index: AQHbjlsd0TXa7xMo1EGEgdIX5w5serNl3gnw
-Date: Thu, 6 Mar 2025 09:56:32 +0000
-Message-ID: <6027e05e03474a87826217ee56f12761@huawei.com>
-References: <20250306164614.4ccb2e9d@canb.auug.org.au>
-In-Reply-To: <20250306164614.4ccb2e9d@canb.auug.org.au>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1741255034; c=relaxed/simple;
+	bh=6JPnLhL8s35dB03n039XAvB3PJPp3xjiscDs8gfFdqE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To; b=HgzzWs3igSHvUMj8Lmwbn0iUIDdWBEjYpDe2oLQBerkjFec7+5entA4MyJH5f61gAAE7U6aRFtpyY4UgX2QlrknrADSXMPAot88/sf6itSHK9pwXUnaLc4A4X287yMjD/UU9vPTWWo/506Zt2qPXIqrT/3Mqve2Pm16egZKRxts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=1f4Gjbzb; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2240b4de12bso9165445ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:57:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741255032; x=1741859832; darn=vger.kernel.org;
+        h=to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hY0V7oey/1irsg/oxeJVyzd/IX234qFLR74EBUPiqoM=;
+        b=1f4GjbzbUQc2p7rObP8Rffq2hgjmxG5ITm/OnltgmggFk1HeiI5d00OnQ/FuL2k2Iz
+         Nh8YEBYAXNdVn//VjatBjYFbzbE1QQjDVJ/HV7bS9fFT9c21xAVJnv9rztsSNfjXBGtb
+         Noyz7bxrPpGYFGCCVSf9QkbrekXZBREZYZ9zSD3Xj3wOldG4JEx8dwfT+ThnhBCJfi2v
+         7p3iBBJF6UnuMv/7xID6Z9X9OGWyltMqGOwjDT3ynAdbnnK8gc1KarD6KmCJtbEu8q2P
+         0vdcHjZNfJGx5yhTI7hBtvdCru9KbRVRjBc5/C1lOdisJOjKoWjds+vieOUjWtaQ2Nrm
+         0MSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741255032; x=1741859832;
+        h=to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hY0V7oey/1irsg/oxeJVyzd/IX234qFLR74EBUPiqoM=;
+        b=i8f0+A5Ovr8GwTNIWvXJULF4lIsGvtKUxS113VBteq+b/JvZzFXye4OxwwI+p813v/
+         FTOzJj0xCNAXG+6OPm3UtOfu1hXDaFAzvwAuYB3svy/R7MQRKgWL+oNTcfmftH1L24RN
+         tZoPd483zwaVgOfctnTPvHBK3PWDTlW+vT8Mx1OIIpvcViiOb2jjqX3lWVzGF14/aztv
+         6naO4/u+bAqCg/qd6Cf6t4z15OkHB7g5xvP2pfL42LGbjjYCSZDkOQoutaW8LUmp46G6
+         orZj5Bed/lpFYgzm6uUCkTHkBxbTzsED+5BsLuyoWXmhCbUaXiyvBeHrq/T/Msvv9KDI
+         Hdbw==
+X-Forwarded-Encrypted: i=1; AJvYcCUNceQj7AyN2baTSGUu/3QQp2/IQgGXxAmExtbwJOV+oXLjfUHWDHuX2hF82Y56wekRtIgQEfmjH5NB700=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOWEgQbde3FUX8DFMjBXUviLfgjhl4oEDi/Vl5S+ctrWu1uyU6
+	7VS6eHAj5EWnGdhr6thhzjZKTuxJgsIecGBiMI4DAkLmEmyIBFgH8DDjXIqjZQo=
+X-Gm-Gg: ASbGnct7HFni8AuH9y8ljN4mBhP94Kke0DklIPGaqz7SKKdTlQB6r7E2Sj2TpmCN/OQ
+	7KXMnRamFvohc8PtiyoTqtRlIit8KspWNUIU4HYPtly/bW0wcKvMO3rD2N87ETTImah0Es0DrVm
+	f3b+p56yawNhgc5ZVOCrkFI7SCMPyuP7hsSvopsaKwngDRYvap3jN75xB/9YM5FDrpCHvajUvHj
+	r4rEvu3SckMpfVUptIQ27bc6mRZh1sMUbcO94/kIwdl6s7exbfCuI8P8T9l55yus44+BpOFqHdA
+	rbARwyka/kmPtJXo8/htE9CgLNzDmSDdJ14uukuyvzHmyAMU
+X-Google-Smtp-Source: AGHT+IGlvJ3QJNQ7zdOmSl6WruunBWchSJlMnXfPdh91/T3HMnxY+JOOEGUyqA7YRqbtPgOIa/y+WA==
+X-Received: by 2002:a17:902:ea03:b0:223:f928:4553 with SMTP id d9443c01a7336-223f928486bmr88417775ad.44.1741255032170;
+        Thu, 06 Mar 2025 01:57:12 -0800 (PST)
+Received: from localhost ([157.82.207.107])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22410a7fc55sm8314515ad.138.2025.03.06.01.57.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 01:57:11 -0800 (PST)
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+Date: Thu, 06 Mar 2025 18:56:32 +0900
+Subject: [PATCH net-next v8 2/6] net: flow_dissector: Export
+ flow_keys_dissector_symmetric
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250306-rss-v8-2-7ab4f56ff423@daynix.com>
+References: <20250306-rss-v8-0-7ab4f56ff423@daynix.com>
+In-Reply-To: <20250306-rss-v8-0-7ab4f56ff423@daynix.com>
+To: Jonathan Corbet <corbet@lwn.net>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Jason Wang <jasowang@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>, 
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, kvm@vger.kernel.org, 
+ virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+ Yuri Benditovich <yuri.benditovich@daynix.com>, 
+ Andrew Melnychenko <andrew@daynix.com>, 
+ Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
+ Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Akihiko Odaki <akihiko.odaki@daynix.com>
+X-Mailer: b4 0.14.2
 
+flow_keys_dissector_symmetric is useful to derive a symmetric hash
+and to know its source such as IPv4, IPv6, TCP, and UDP.
 
+Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+---
+ include/net/flow_dissector.h | 1 +
+ net/core/flow_dissector.c    | 3 ++-
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-> -----Original Message-----
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Sent: Thursday, March 6, 2025 5:46 AM
-> To: Christoffer Dall <cdall@cs.columbia.edu>; Marc Zyngier
-> <maz@kernel.org>
-> Cc: Oliver Upton <oliver.upton@linux.dev>; Shameerali Kolothum Thodi
-> <shameerali.kolothum.thodi@huawei.com>; Linux Kernel Mailing List
-> <linux-kernel@vger.kernel.org>; Linux Next Mailing List <linux-
-> next@vger.kernel.org>
-> Subject: linux-next: build failure after merge of the kvm-arm tree
->=20
-> Hi all,
->=20
-> After merging the kvm-arm tree, today's linux-next build (arm
-> multi_v7_defconfig) failed like this:
->=20
-> drivers/firmware/smccc/kvm_guest.c:58:14: warning: no previous prototype
-> for 'kvm_arm_target_impl_cpu_init' [-Wmissing-prototypes]
->    58 | void  __init kvm_arm_target_impl_cpu_init(void)
->       |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/firmware/smccc/kvm_guest.c: In function
-> 'kvm_arm_target_impl_cpu_init':
-> drivers/firmware/smccc/kvm_guest.c:89:39: error: invalid application of
-> 'sizeof' to incomplete type 'struct target_impl_cpu'
->    89 |         target =3D memblock_alloc(sizeof(*target) * max_cpus,
-> __alignof__(*target));
->       |                                       ^
-> drivers/firmware/smccc/kvm_guest.c:89:62: error: invalid application of
-> '__alignof__' to incomplete type 'struct target_impl_cpu'
->    89 |         target =3D memblock_alloc(sizeof(*target) * max_cpus,
-> __alignof__(*target));
->       |                                                              ^~~~=
-~~~~~~~
-> drivers/firmware/smccc/kvm_guest.c:102:23: error: invalid use of undefine=
-d
-> type 'struct target_impl_cpu'
->   102 |                 target[i].midr =3D res.a1;
->       |                       ^
-> drivers/firmware/smccc/kvm_guest.c:102:26: error: invalid use of undefine=
-d
-> type 'struct target_impl_cpu'
->   102 |                 target[i].midr =3D res.a1;
->       |                          ^
-> drivers/firmware/smccc/kvm_guest.c:103:23: error: invalid use of undefine=
-d
-> type 'struct target_impl_cpu'
->   103 |                 target[i].revidr =3D res.a2;
->       |                       ^
-> drivers/firmware/smccc/kvm_guest.c:103:26: error: invalid use of undefine=
-d
-> type 'struct target_impl_cpu'
->   103 |                 target[i].revidr =3D res.a2;
->       |                          ^
-> drivers/firmware/smccc/kvm_guest.c:104:23: error: invalid use of undefine=
-d
-> type 'struct target_impl_cpu'
->   104 |                 target[i].aidr =3D res.a3;
->       |                       ^
-> drivers/firmware/smccc/kvm_guest.c:104:26: error: invalid use of undefine=
-d
-> type 'struct target_impl_cpu'
->   104 |                 target[i].aidr =3D res.a3;
->       |                          ^
-> drivers/firmware/smccc/kvm_guest.c:107:14: error: implicit declaration of
-> function 'cpu_errata_set_target_impl' [-Wimplicit-function-declaration]
->   107 |         if (!cpu_errata_set_target_impl(max_cpus, target)) {
->       |              ^~~~~~~~~~~~~~~~~~~~~~~~~~
-> drivers/firmware/smccc/kvm_guest.c:116:37: error: invalid application of
-> 'sizeof' to incomplete type 'struct target_impl_cpu'
->   116 |         memblock_free(target, sizeof(*target) * max_cpus);
->       |                                     ^
->=20
-> Caused by commit
->=20
->   86edf6bdcf05 ("smccc/kvm_guest: Enable errata based on implementation
-> CPUs")
->=20
-> I have used the kvm-arm tree from next-20250305 for today.
-
-Thanks for reporting this.
-
-Hmm..kvm_guest.c gets build through HAVE_ARM_SMCCC_DISCOVERY=20
-which is selected by ARM_GIC_V3.
-
-We could limit the kvm_arm_target_impl_cpu_init() to ARM64 to fix this
-like below as these hypercall is only supported for KVM/ARM64.
-
-Or is there a better way to handle this?
-
-Thanks,
-Shameer
-
----8---
-diff --git a/drivers/firmware/smccc/kvm_guest.c
-b/drivers/firmware/smccc/kvm_guest.c
-index 2f03b582c298..5767aed25cdc 100644
---- a/drivers/firmware/smccc/kvm_guest.c
-+++ b/drivers/firmware/smccc/kvm_guest.c
-@@ -55,6 +55,7 @@ bool kvm_arm_hyp_service_available(u32 func_id)
+diff --git a/include/net/flow_dissector.h b/include/net/flow_dissector.h
+index ced79dc8e8560e25a4dd567a04f5710b53452b45..d01c1ec77b7d21b17c14b05c47e3cdda39651bec 100644
+--- a/include/net/flow_dissector.h
++++ b/include/net/flow_dissector.h
+@@ -423,6 +423,7 @@ __be32 flow_get_u32_src(const struct flow_keys *flow);
+ __be32 flow_get_u32_dst(const struct flow_keys *flow);
+ 
+ extern struct flow_dissector flow_keys_dissector;
++extern struct flow_dissector flow_keys_dissector_symmetric;
+ extern struct flow_dissector flow_keys_basic_dissector;
+ 
+ /* struct flow_keys_digest:
+diff --git a/net/core/flow_dissector.c b/net/core/flow_dissector.c
+index 9cd8de6bebb543c3d672f576e03b29aa86b9d34a..32c7ee31330cf52df05d7a23b3e50d1a1bed9908 100644
+--- a/net/core/flow_dissector.c
++++ b/net/core/flow_dissector.c
+@@ -1862,7 +1862,8 @@ void make_flow_keys_digest(struct flow_keys_digest *digest,
  }
- EXPORT_SYMBOL_GPL(kvm_arm_hyp_service_available);
-
-+#ifdef CONFIG_ARM64
- void  __init kvm_arm_target_impl_cpu_init(void)
+ EXPORT_SYMBOL(make_flow_keys_digest);
+ 
+-static struct flow_dissector flow_keys_dissector_symmetric __read_mostly;
++struct flow_dissector flow_keys_dissector_symmetric __read_mostly;
++EXPORT_SYMBOL(flow_keys_dissector_symmetric);
+ 
+ u32 __skb_get_hash_symmetric_net(const struct net *net, const struct sk_buff *skb)
  {
-        int i;
-@@ -115,3 +116,4 @@ void  __init kvm_arm_target_impl_cpu_init(void)
- mem_free:
-        memblock_free(target, sizeof(*target) * max_cpus);
- }
-+#endif
 
+-- 
+2.48.1
 
 
