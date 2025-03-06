@@ -1,169 +1,158 @@
-Return-Path: <linux-kernel+bounces-548580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1E80A546A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:42:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECE5EA546B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:42:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 287CD1738CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:42:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF4D47A3608
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9341220A5CA;
-	Thu,  6 Mar 2025 09:41:52 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F203420ADD1;
+	Thu,  6 Mar 2025 09:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dpLafwmc"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17A5C19B3CB;
-	Thu,  6 Mar 2025 09:41:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94BA120A5CF;
+	Thu,  6 Mar 2025 09:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741254112; cv=none; b=dk9kPqs+Nc2r7LtYX3vyKFEQ8nUVp+ekD/L0TxrZOgVsj+6Cqm6VS9FDgzDccGRAhV41LrUhgRf3Li+5ji1v8oXx7Jhubnh8cC97XRAXJG09OBsRpY0SfwsXYRf+U/eRzJ6pNWJm0bna5GQr6ZvrG2jGfU4pLbEtipZ+UlnLTDo=
+	t=1741254144; cv=none; b=ikMTSnp2hLWrOFAzBz2D+PCYjqOUKfPd8xwcXonI1EBvqhhO7c/yN2IXToZqPY+r/xfynDXZR8cV/4aM9hP7Vl9/2FXH/kK0hzM43xYz8RwfsyPG9yHWZghzQMzcHEUP4YDV+k/iO2hy0Sw6QAlk6hm6qjYItP5eTZTPlwU3xZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741254112; c=relaxed/simple;
-	bh=B1EM+YFv+UHHglKiOFYnj0NGXsozABC6GeVnHzsGVjs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BSDwLJpVA9Ij6rNIdQJcOOOxMvuXw1oFHHMVo1dxwbhIE0rR6lhaJ9vJaeYw1kywnFB5Y5dVh+O5oOhU6i0AgMx5QlOJirIPKpjQR4am5UaK5unZKmnCZxoZvJbQa23U3lkAUTUjzI/fr0Px3/lOigUtXSOfAL8ybWGrFWDnJ/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66D9BC4CEE0;
-	Thu,  6 Mar 2025 09:41:48 +0000 (UTC)
-Message-ID: <1105cde1-7557-4104-9652-3527f8d9b599@xs4all.nl>
-Date: Thu, 6 Mar 2025 10:41:46 +0100
+	s=arc-20240116; t=1741254144; c=relaxed/simple;
+	bh=qgAL/rqV2yuyE+RUXMmy4rkUVwXU7w6M3wrqaHA5JGE=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WAm+LUlVh0QunrpOC9jmoZzNpFlOpks29n3H0m1fTXKW7QBw5y0dQcp1jHhtWaw9Ohe2Enxtvkbx7c2OhPkGzMGZKJWrW7xPB0BoDaGqey8+GHGQJHCBe+8W71JCQCTwo4annKFUEyyQWq1M1qbVswO5zC0Nx7B9xEm9Rsvt1wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dpLafwmc; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso89617666b.3;
+        Thu, 06 Mar 2025 01:42:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741254141; x=1741858941; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T4lnHb9qdu1TBKioUS3a347jyWbtNj/owKNfUkwY+ok=;
+        b=dpLafwmcZDoeOH4aeVFZP7XpTvV4vAty+lAGU3V6ymfkNGxXIt5nlrZ3AZ5lvQGZHH
+         dGTBg5E/9zidptIgdU0vHIVwQaQ7oiOck1Mpypv4YFljZk7rsCzrXYacewGJtL2Bz+Qz
+         MzQoQPHMHeW8UKAc0oEKJbom1gIHfZVCYDLU9O+zxpt4bpYnK3pNLiAClE4ArVeY7S8m
+         JTzRA8n57S7i1m2Llj+PhWUtQ3l3o/mmreaRFcGSn1t2hUDfuEKd0Z8MtJw4ICM+Qhrx
+         aPkzo65KCLA76DGS8GX1m8ksShNfkvdTktJVXUY3TA3gWEFofh3SOYSBsKdh8hdpAtra
+         /DYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741254141; x=1741858941;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=T4lnHb9qdu1TBKioUS3a347jyWbtNj/owKNfUkwY+ok=;
+        b=ilXj377jdrweOErFUJ1y7YFuCg1KAzQsAgQnXShKi6xK1zeOfMwttAQBKRQsGktJPg
+         UykfRVswJ75z43h7rDub/sQUc65LEvAedE30583lcpJy58BZyi0gk1+QCs6jaDYKNKEJ
+         Vs5uV6bs4PzbDW4G+zrhhrXW+HPpGTxGu9OZax/dpW9rqJXy7+/HpEM5coVmBlsDNeon
+         RJQwdACbMxbsR2xuQMAnIkfsjOc/vTVkfIY77413mJrhgec94Pz+JwMlwHjB20Lla+4U
+         +ae2ZB/FQ/zDWrCiz40Uz43AMyI7H76IWiIQtMygW+KFdRO8SyKRb+Rc1o5QZ1Om3ZJx
+         97ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgyJDXS34Jt4o5isAj4jfjzttyjwsFPiZ/daGfkD+Nqy49S1klf/W75O4qZsAu9Iwh7Augkxza@vger.kernel.org, AJvYcCWUxfXGDqyx3qyPqD1IchnsuqvnDNeN7hGmNk2W6h3r4MSUz9eX+MU3p98xkGPrMIdl2ugNzL6ZiQiQ3te0@vger.kernel.org, AJvYcCXEzvTQOgPFc+a4mANJW3l7ASZFTDN2CBZmUy6KBBh1oCOjcBo9QO+Y/8p9pnqi5dMP/gE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHlyGo0lavqqnEVP9fklOp2NWcK/u+HTwSseZGjBnZTgwiyjuQ
+	N/amF4BDJyYl/dPtVjA63rucKIs/nlt30UhtitT+f/l8+CzU5Fht
+X-Gm-Gg: ASbGncuiRWqIB1LPcGG8CDRbUIBKLDlxpTgmWGHS9J+wo5lBIH0K1mU+4jaIHocd4Sc
+	y2IJObDAnFXAnpu8nTb/HiZsP4luVKUfe8jxm2tRfApIH6Fnl7deAnKlgjqhD/Y8kgAh9Bl3vba
+	pMNSJvg+KvM135j/ktMYh0mVEcN7mL3YSinDV+IbgNs64wJ0A0AVv9DlSnowcyV0qyay5f8IQyp
+	RUlScZhzPWcAhhw44Vcp/XsvFOh/zF01pdGgUmyKSzp6YzeBcFBuMubryyzAA6dRuGB/pXD/de1
+	9QFDmmaoJeMFR0qTqTb6MmaN4Y1j1Qw=
+X-Google-Smtp-Source: AGHT+IFrPcY0lrj9hG+4Y/pg0PftN6YiW/IgVjN3D/G0eNKrvex5TMsd21ZA9mYagzX3a+00QQ5ttg==
+X-Received: by 2002:a17:907:7241:b0:ac1:791c:1526 with SMTP id a640c23a62f3a-ac20db00b0emr623854666b.56.1741254140487;
+        Thu, 06 Mar 2025 01:42:20 -0800 (PST)
+Received: from krava ([173.38.220.57])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac239481685sm67119666b.58.2025.03.06.01.42.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 01:42:19 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Thu, 6 Mar 2025 10:42:17 +0100
+To: Chen Linxuan <chenlinxuan@deepin.org>
+Cc: Sasha Levin <sashal@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+	Jann Horn <jannh@google.com>, Alexei Starovoitov <ast@kernel.org>,
+	Alexey Dobriyan <adobriyan@gmail.com>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	stable@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH] lib/buildid: Handle memfd_secret() files in
+ build_id_parse()
+Message-ID: <Z8lt-X7yyhjKMTR7@krava>
+References: <0E394E84CB1C5456+20250306050701.314895-1-chenlinxuan@deepin.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 0/3] Enable HDMI RX controller on RK3588
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
- Shreeya Patel <shreeya.patel@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, jose.abreu@synopsys.com, nelson.costa@synopsys.com,
- shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc: kernel@collabora.com, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, Tim Surber <me@timsurber.de>,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Diederik de Haas <didi.debian@cknow.org>
-References: <20250306072842.287142-1-dmitry.osipenko@collabora.com>
- <2906773.tdWV9SEqCh@diego>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <2906773.tdWV9SEqCh@diego>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0E394E84CB1C5456+20250306050701.314895-1-chenlinxuan@deepin.org>
 
-On 06/03/2025 10:26, Heiko Stübner wrote:
-> Hi Dmitry,
+On Thu, Mar 06, 2025 at 01:06:58PM +0800, Chen Linxuan wrote:
+> Backport of a similar change from commit 5ac9b4e935df ("lib/buildid:
+> Handle memfd_secret() files in build_id_parse()") to address an issue
+> where accessing secret memfd contents through build_id_parse() would
+> trigger faults.
 > 
-> Am Donnerstag, 6. März 2025, 08:28:39 MEZ schrieb Dmitry Osipenko:
->> This is a follow up to the v13 of HDMI RX patches [1]. Hans queued the
->> driver into the media tree. Now the DT patches are left to apply, could
->> you please take care of this series if it's good to you? Thanks
->>
->> [1] https://lore.kernel.org/linux-media/20250304085819.108067-1-dmitry.osipenko@collabora.com/
+> Original report and repro can be found in [0].
 > 
-> Linux-Media, has this strange "applied" reporting thing going, so neither
-> the thread reports that nor does https://git.linuxtv.org/ show the commits
-> yet.
+>   [0] https://lore.kernel.org/bpf/ZwyG8Uro%2FSyTXAni@ly-workstation/
 > 
-> If you see the driver patches appear on https://git.linuxtv.org/ before I do,
-> please ping this thread :-)
+> This repro will cause BUG: unable to handle kernel paging request in
+> build_id_parse in 5.15/6.1/6.6.
 
-Patches are merged here first:
+hi,
+so this patch is meant for one of 5.15/6.1/6.6?
 
-https://gitlab.freedesktop.org/linux-media/media-committers
+if so you need to send it separately and add that to the subject,
+please check Documentation/process/stable-kernel-rules.rst
 
-That's where all the new code lands.
+and you can check other stable kernel patches on the mailing list
+like [1][2]
 
-With a two day delay (if I am not mistaken) they will arrive on the
-https://git.linuxtv.org/media.git/ tree.
+thanks,
+jirka
 
-If it is in the media-committers tree, then it is OK to take dts etc.
-patches.
 
-Regards,
-
-	Hans
+[1] https://lore.kernel.org/bpf/20241206153403.273068-2-daniel@iogearbox.net/
+[2] https://lore.kernel.org/bpf/20241104175256.2327164-3-jolsa@kernel.org/
 
 > 
+> Some other discussions can be found in [1].
 > 
-> Thanks a lot
-> Heiko
+>   [1] https://lore.kernel.org/bpf/20241104175256.2327164-1-jolsa@kernel.org/T/#u
 > 
+> Cc: stable@vger.kernel.org
+> Fixes: 88a16a130933 ("perf: Add build id data in mmap2 event")
+> Signed-off-by: Chen Linxuan <chenlinxuan@deepin.org>
+> ---
+>  lib/buildid.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
->>
->> Changelog:
->>
->> v14: - Re-enabled LOAD_DEFAULT_EDID=y option in the defconfig and
->>        added ack from Hans Verkuil fot that patch.
->>
->> Sebastian Reichel (2):
->>   arm64: dts: rockchip: Enable HDMI receiver on rock-5b
->>   arm64: defconfig: Enable Synopsys HDMI receiver
->>
->> Shreeya Patel (1):
->>   arm64: dts: rockchip: Add device tree support for HDMI RX Controller
->>
->>  .../dts/rockchip/rk3588-base-pinctrl.dtsi     | 14 +++++
->>  .../arm64/boot/dts/rockchip/rk3588-extra.dtsi | 57 +++++++++++++++++++
->>  .../boot/dts/rockchip/rk3588-rock-5b.dts      | 18 ++++++
->>  arch/arm64/configs/defconfig                  |  2 +
->>  4 files changed, 91 insertions(+)
->>
->>
+> diff --git a/lib/buildid.c b/lib/buildid.c
+> index 9fc46366597e..b78d119ed1f7 100644
+> --- a/lib/buildid.c
+> +++ b/lib/buildid.c
+> @@ -157,6 +157,12 @@ int build_id_parse(struct vm_area_struct *vma, unsigned char *build_id,
+>  	if (!vma->vm_file)
+>  		return -EINVAL;
+>  
+> +#ifdef CONFIG_SECRETMEM
+> +	/* reject secretmem folios created with memfd_secret() */
+> +	if (vma->vm_file->f_mapping->a_ops == &secretmem_aops)
+> +		return -EFAULT;
+> +#endif
+> +
+>  	page = find_get_page(vma->vm_file->f_mapping, 0);
+>  	if (!page)
+>  		return -EFAULT;	/* page not mapped */
+> -- 
+> 2.48.1
 > 
-> 
-> 
-> 
-
 
