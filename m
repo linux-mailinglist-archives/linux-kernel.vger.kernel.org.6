@@ -1,141 +1,93 @@
-Return-Path: <linux-kernel+bounces-548642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68585A5476D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:14:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29957A5476E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:14:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 605573A9A3B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:13:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 719291893112
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:14:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062C31FF7D2;
-	Thu,  6 Mar 2025 10:13:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B8D1FCFE6;
+	Thu,  6 Mar 2025 10:14:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z6LxtbVa";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ppDqGDiw"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="SB6szdr7"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8B8919DF49;
-	Thu,  6 Mar 2025 10:13:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B0419DF49;
+	Thu,  6 Mar 2025 10:14:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741256032; cv=none; b=Wsv9ZAezP1nYgbkpyI72Z9tUMEC732B+HQPPhVwJxkRFTS2nkYy9F7QLvf+VlXpmJbdarQAMXLc9x+GcrTCmhEW86NLIsW0ZyAysZ8eUaOyC50v65MEAyLVhHXmEQ7SZjPJ+f4fMJpsEv0RyXKWQJlqF7l+xn7VL1RHV1Jwjbfg=
+	t=1741256056; cv=none; b=rL31/x2+EpLLXpt1L2cSPBGmO9MiLrbMlrjKwTVPIgcKZHSI5+Xt4sX+HrKxt4SY8vQlMnNfmlu+Y419hDb/d/Uc+e/cqrtpe9zZM3YpQi8R/T9cVKSY5+Zv9AK1CLYxG/nWF7K1+7xGe0kK300BN8LazuTtNNc1jbKjBQi12MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741256032; c=relaxed/simple;
-	bh=df5gGnvs9z79Sddw7nzLHTjjjG5yNbKcZptAnRxlKSo=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=dDo6AKLSRXB7ucPxBg6h+SnpOKDUvQFAHIY8k+j1wYKMNYRSnOwnbsLJNObj0dEkCpZpqubUA31p5xpxxrT196Ogd8NbK3Vo1FH3Z0oZVOnmLWBf4L50DRhPq9KgrHDEXvqlrDSR2rVBuh7akYMQ1e/+pMXCsB9Q+tZBzom+ZgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z6LxtbVa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ppDqGDiw; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 06 Mar 2025 10:13:48 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741256029;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5EhcSOaHj8qjHFqnzylinI18wubMEWxY4nGcaetKP6s=;
-	b=z6LxtbVa7r74gdNccPHjbmqkCF8GeZXY5tFQWIIdbJJh+WfNkwUl1rlNYCbmcAAFFBiqcV
-	V4jzlWzzV6bXnVAD+/us5rqX8I/Ng6AcGbtn+fg7NYRoeQYW32GhQMM2NBe+1tQfvD/8vL
-	Dwkz2fKP9V63dVCgL/+4K6tCLJVbgycLY6pU6cufKVo19QMcz25jhoIEfmOR+wtQ1f95FG
-	1sRJZZs9Fbu36C+kfHr/doQ4PlvCPmIvcJ6+mwhKUcQT5I2mPqyU6P4TFpvT4MwEhzMvsa
-	UAQVCSaajjWJgKWYhgNYQyBCxSu8h/bCb76NnPJZ2vIPjUAGSzUoMnnWDjGf7g==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741256029;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5EhcSOaHj8qjHFqnzylinI18wubMEWxY4nGcaetKP6s=;
-	b=ppDqGDiwNouqUeXGF0+avN0aRwA9vTbL1KYjCvJ9l7Jc0rYsd/oJEAr2cprCodjWqQx0Hz
-	u4luXe9hN5cc6NCw==
-From: "tip-bot2 for Andy Shevchenko" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/mm] x86/mm: Check if PTRS_PER_PMD is defined before use
-Cc: kernel test robot <lkp@intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Ingo Molnar <mingo@kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250306092658.378837-1-andriy.shevchenko@linux.intel.com>
-References: <20250306092658.378837-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1741256056; c=relaxed/simple;
+	bh=Ji84DnUxZPaZjWugH0NqsXEiI73Lt2LMDG3qx2jTb9o=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xdgc/sX+AVNlosUD+tfOpgYutc3v1CC0wepWUeR+1JD9++d5XheaUlgmwaIjYMOpt6H+VZpn/gHPTiBKHw2CtgSENShcvhaoKIn6w795kf2sbhhW0lF30wiJfwIfWhP7eX3zdDpJAZf2k/bxwSI0+KEzvvg0qpGr4skQay1U9+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=SB6szdr7; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1741256052; x=1741515252;
+	bh=Ji84DnUxZPaZjWugH0NqsXEiI73Lt2LMDG3qx2jTb9o=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=SB6szdr7Gp6dUs8hgrPjccFk3qFPln2m29hwmDy4SPD1aYSGtxaEQVy0H50uYX9Im
+	 omEMsdu+iJL3sovHiPicLlaZEMJotcFs2amy7X2aRPf5hcz1Mbt+XxzuqSZe3XH1yt
+	 qFLuRmaZErzuK6HH/6S267rJioKx91DwNV3UgDkD4B1eKuDYfn5Bc1Rxfq64BEK++V
+	 qN33UFkeBXIuw4O0dWiaHAZqdiWOqTmDFiQzcvZGIgocGpkSZkPV7Qr0Y/tvSRbAUi
+	 sJ706qktR/buQoe/h67z6Xc/E7080XFHyWx5Pax3hUlgkWilu5QcRt3tqkluvqo9mt
+	 Gb+FhqiAnxwAg==
+Date: Thu, 06 Mar 2025 10:14:05 +0000
+To: Alice Ryhl <aliceryhl@google.com>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] rust: adding UniqueRefCounted and UniqueRef types
+Message-ID: <Z8l1Zt3ibanzBhnX@mango>
+In-Reply-To: <Z8lsetLbHvn-6cai@google.com>
+References: <20250305-unique-ref-v4-1-a8fdef7b1c2c@pm.me> <Z8hUIPtE_9P60fAf@google.com> <Z8hmCkeZGPwc5MuU@mango> <mE_To6ll96gFJQD9YKkT-mwa2KCHFCgOaZFxxczeDVJd0hr1rZCKFHD-vHQfm6deCjlUJIu4U-reNMtrwfyT7w==@protonmail.internalid> <CAH5fLgjFBknTmhxQBPUdB-iNMjEkcyuLiu22-Nj-DGB1Gb7NkA@mail.gmail.com> <87ldtj8p2m.fsf@kernel.org> <JPqvzrz3Zy0HgwNoHh2psup7imFItiN_j_VmmjVPBfwJzf040DTvZAwUDjNv1FQiLXFiSAANIxc2IegeKGCJvA==@protonmail.internalid> <CAH5fLgirYTV6K2QoH9LLwhHxJzz=h1R0jB4G2kpKQ_pBtBgePg@mail.gmail.com> <875xkn8k5z.fsf@kernel.org> <Z8lsetLbHvn-6cai@google.com>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: e40e2afc114c2974bd3c93371cd758f2bc37229b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174125602814.14745.12946945836213678532.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/mm branch of tip:
+On 250306 0935, Alice Ryhl wrote:
+>=20
+> Ultimately, if a struct implements AlwaysRefcounted, then you can always
+> increments its refcount.
 
-Commit-ID:     74a6c5103f8c27df056227e9e3bfe1ffeb7fc3f3
-Gitweb:        https://git.kernel.org/tip/74a6c5103f8c27df056227e9e3bfe1ffeb7fc3f3
-Author:        Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-AuthorDate:    Thu, 06 Mar 2025 11:25:41 +02:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Thu, 06 Mar 2025 11:03:59 +01:00
+> If you want a version of the struct where that
+> is not the case, then you need a different struct that does *not*
+> implement AlwaysRefcounted.
+>
+I guess so, but it would be possible to make 'From<&T> for ARef<T>' opt-in,
+by requiring a separate marker trait.
 
-x86/mm: Check if PTRS_PER_PMD is defined before use
+That you can call 'AlwaysRefCounted::inc_ref()' directly doesn't seem a
+problem to me, as it will only leak the object, not create a reference.
 
-Compiler (GCC) is not happy about PTRS_PER_PMD being undefined
-(note, clang also issues the quite similar warning):
+A quick grep shows me that there are currently 7 implementers:
 
-  In file included from arch/x86/kernel/head_32.S:29:
-  arch/x86/include/asm/pgtable_32.h:59:5: error: "PTRS_PER_PMD" is not defined, evaluates to 0 [-Werror=undef]
-     59 | #if PTRS_PER_PMD > 1
+unsafe impl AlwaysRefCounted for Credential {
+unsafe impl AlwaysRefCounted for File {
+unsafe impl AlwaysRefCounted for LocalFile {
+unsafe impl<T: Operations> AlwaysRefCounted for Request<T> {
+unsafe impl crate::types::AlwaysRefCounted for Device {
+unsafe impl crate::types::AlwaysRefCounted for Task {
+unsafe impl AlwaysRefCounted for PidNamespace {
 
-Add a check to make sure PTRS_PER_PMD is defined before use.
+So it looks doable to me.
 
-The documentation for GCC 7.5.0+ says that:
+Oliver
 
-	if defined BUFSIZE && BUFSIZE >= 1024
-
-    can generally be simplified to just #if BUFSIZE >= 1024, since if BUFSIZE
-    is not defined, it will be interpreted as having the value zero.
-
-But in the same time the last paragraph points out that
-
-    It will warn wherever your code uses this feature.
-
-which is what we met here.
-
-Reported-by: kernel test robot <lkp@intel.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250306092658.378837-1-andriy.shevchenko@linux.intel.com
-
-Closes: https://lore.kernel.org/r/202412152358.l9RJiVaH-lkp@intel.com/
----
- arch/x86/include/asm/pgtable_32.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/include/asm/pgtable_32.h b/arch/x86/include/asm/pgtable_32.h
-index 7d4ad89..3c05235 100644
---- a/arch/x86/include/asm/pgtable_32.h
-+++ b/arch/x86/include/asm/pgtable_32.h
-@@ -56,7 +56,7 @@ do {						\
-  * With PAE paging (PTRS_PER_PMD > 1), we allocate PTRS_PER_PGD == 4 pages for
-  * the PMD's in addition to the pages required for the last level pagetables.
-  */
--#if PTRS_PER_PMD > 1
-+#if defined(PTRS_PER_PMD) && (PTRS_PER_PMD > 1)
- #define PAGE_TABLE_SIZE(pages) (((pages) / PTRS_PER_PMD) + PTRS_PER_PGD)
- #else
- #define PAGE_TABLE_SIZE(pages) ((pages) / PTRS_PER_PGD)
 
