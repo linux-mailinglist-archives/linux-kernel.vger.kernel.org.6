@@ -1,111 +1,275 @@
-Return-Path: <linux-kernel+bounces-549384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9049AA551E4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:55:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 082BEA551E7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:55:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8DF916743C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:55:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A76F3A4A48
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:55:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E572E2566F8;
-	Thu,  6 Mar 2025 16:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AFE52566F8;
+	Thu,  6 Mar 2025 16:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="vQsIxCqt"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="j4U/3HjK"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D93713635B
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664AE2144BC
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741280119; cv=none; b=FnacHWMRGkwlnZvKfOoAzFwGth5yVKzsw+1PgM8mj7E+k0zF1sW7m+bh4T9kHG1b3kiODSKe0wfXQO0uFHY73ofg83pTK4zoLhq7oAzfpQYnVJqqvSGBgutGRG5Rfq+LhOLm19vVV+9RkF4cNqsz5G3v+pSSCdOTCBrVfadGmlg=
+	t=1741280137; cv=none; b=K6+MAm8GBBqD1pTlCFzpT99XLsBKK6eEKYzKXet9bgFwbBWuZ5hoh1YBLwdnRRJ0UmbPzl5aLxpWrtZeSRpZ9Bu5JvrR3Kk3rA7eAUsQekRMvBAzFWFoNgXiLjynj8hRg3uABusE6pPuUfjkuCvTKPVW/Lb1vmTNSfD8+q7TYzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741280119; c=relaxed/simple;
-	bh=ojDLRfmuqq9GPR5jEUbYNGGbiERxN/yA2YCWiVfKxJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EZXd0DDXzPSZvZzBpABXIaSWgc7T2P+F5y/8o/W2C3shRtAAL1WTQ4+79z4D4NZUTt5hZ5tyQPICArc7R5c7tfYsGgT5h5oR2X5c89lbWSFr63vwpk3IgYr5WjVW5z1r+Nv4PA6IuOi+ac6W9p3Q8zo17+JnNW4UFmm9K3RWj3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=vQsIxCqt; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 6 Mar 2025 16:55:07 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741280112;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Kwhx/mtOi1GHi7BWSEe20K0H0IJsKkOByjdFjZj3bKc=;
-	b=vQsIxCqtKLzZDN2FoDbwBZ2U/BVPqjwidfkrceSl4A798NuUB19lgu1wZEi7kwHPakRhDP
-	ssQA/ydZeQ3uErvGo9p7CSJ4b0V9D+rGJbDkfxpWmJpixhunt341epOTV0C+2JPSqobLkz
-	EL6msC+6vtKG1sarEevBM/MFeofyaPM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH mm-unstable 3/5] mm: zpool: Remove object mapping APIs
-Message-ID: <Z8nTa1yut6I0RS0a@google.com>
-References: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
- <20250305061134.4105762-4-yosry.ahmed@linux.dev>
- <Z8j_Ct0hTwAnd2-w@gondor.apana.org.au>
- <Z8kiRym1hS9fB2mE@gondor.apana.org.au>
+	s=arc-20240116; t=1741280137; c=relaxed/simple;
+	bh=cNmccHvTTMSoTFUGW5G92HYWRzCGPOazWKInDL47LPo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=O7HJPXz7pUytb/EHYDP19WzUFrleIojrrrDou93mZqc5ty4KWAnf4MjwDkNDHbybwk6KezfFolf8L0wwTpT1Af3ac6GFoS51pNkStgXGW7yCCrxDzir4pXNF3faZ9Z88B4bDN1SCbAFUZXZzCNFdTsNhZ0DktNww+TwYNGZnrJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=j4U/3HjK; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1741280134;
+ bh=6bMGhfu3cKthCvL1T3G+dPSizYb8EcgG80qlrt/kJJ8=;
+ b=j4U/3HjKIlIV0GDb6nSJD/eAMPCeps+0sI81Ny4k++X013ANHaM9kaL4iMBXdz/vIsC6qqbKa
+ Of4mjCmVaWQxz+sJGfRNBloR0WCkjuSBe5VK4VV9bxlVoilDh95UGM5hIiR/XAnsBNByhAuykxJ
+ n1J0s//3SsoM3ZChWgpzYmANw/k+twrQAE5QESJk7Dvi59cHEWuqfGh8jHYAOY9qsDkFWwv0h6R
+ Y58Ey+aS6LO6Kn1nj3zdXqQD6kbc9Kl7ljUy9F5IvOUeWZRuoX6ONN/PSyBzT3izi7hS0nto7gh
+ A3ljRy57mSaNRb033lh10ayhWMQ1cVhwhlQHa4PlCR1g==
+X-Forward-Email-ID: 67c9d3797d53aa09926043e9
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <cdbc1556-4662-4078-a4d6-33545e2e2491@kwiboo.se>
+Date: Thu, 6 Mar 2025 17:55:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8kiRym1hS9fB2mE@gondor.apana.org.au>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: rockchip: Add rk3528 QoS register node
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: Yao Zi <ziyao@disroot.org>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250306123809.273655-1-amadeus@jmu.edu.cn>
+ <20250306123809.273655-3-amadeus@jmu.edu.cn>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20250306123809.273655-3-amadeus@jmu.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 06, 2025 at 12:19:19PM +0800, Herbert Xu wrote:
-> On Thu, Mar 06, 2025 at 09:48:58AM +0800, Herbert Xu wrote:
-> >
-> > This patch breaks zbud and z3fold because they haven't been converted
-> > to the new interface.
-> 
-> I've rebased my zswap SG patch on top of your series.  I've removed
-> all the mapping code from zpool/zsmalloc and pushed it out to zram
-> instead.
-> 
-> This patch depends on a new memcpy_sglist function which I've just
-> posted a patch for:
-> 
-> https://patchwork.kernel.org/project/linux-crypto/patch/Z8kXhLb681E_FLzs@gondor.apana.org.au/
-> 
-> From a77ee529b831e7e606ed2a5b723b74ce234a3915 Mon Sep 17 00:00:00 2001
-> From: Herbert Xu <herbert@gondor.apana.org.au>
-> Date: Thu, 6 Mar 2025 12:13:58 +0800
-> Subject: [PATCH] mm: zswap: Give non-linear objects to Crypto API
-> 
-> Instead of copying non-linear objects into a buffer, use the
-> scatterlist to give them directly to the Crypto API.
-> 
-> Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Hi Chukun,
 
-The zswap and zsmalloc look good and the code is simpler. I am fine with
-this approach if Sergey is fine with it, although I wonder if we should
-update Sergey's patches in mm-unstable do this directly. Currently we
-are switching from mapping APIs to read/write APIs, and then quickly to
-the pinning APIs. The history will be confusing.
+On 2025-03-06 13:38, Chukun Pan wrote:
+> The Quality-of-Service (QsS) node stores/restores specific
+> register contents when the power domains is turned off/on.
+> Add QoS node so that they can connect to the power domain.
+> 
+> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 160 +++++++++++++++++++++++
+>  1 file changed, 160 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> index b1713ed4d7e2..0c0e7f151462 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> @@ -129,6 +129,166 @@ gic: interrupt-controller@fed01000 {
+>  			#interrupt-cells = <3>;
+>  		};
+>  
+> +		qos_crypto_a: qos@ff200000 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff200000 0x0 0x20>;
+> +		};
+> +
+> +		qos_crypto_p: qos@ff200080 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff200080 0x0 0x20>;
+> +		};
+> +
+> +		qos_dcf: qos@ff200100 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff200100 0x0 0x20>;
+> +		};
+> +
+> +		qos_dft2apb: qos@ff200200 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff200200 0x0 0x20>;
+> +		};
+> +
+> +		qos_dma2ddr: qos@ff200280 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff200280 0x0 0x20>;
+> +		};
+> +
+> +		qos_dmac: qos@ff200300 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff200300 0x0 0x20>;
+> +		};
+> +
+> +		qos_keyreader: qos@ff200380 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff200380 0x0 0x20>;
+> +		};
+> +
+> +		qos_cpu: qos@ff210000 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff210000 0x0 0x20>;
+> +		};
+> +
+> +		qos_debug: qos@ff210080 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff210080 0x0 0x20>;
+> +		};
+> +
+> +		qos_gpu_m0: qos@ff220000 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff220000 0x0 0x20>;
+> +		};
+> +
+> +		qos_gpu_m1: qos@ff220080 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff220080 0x0 0x20>;
+> +		};
+> +
+> +		qos_pmu_mcu: qos@ff240000 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff240000 0x0 0x20>;
+> +		};
+> +
+> +		qos_rkvdec: qos@ff250000 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff250000 0x0 0x20>;
+> +		};
+> +
+> +		qos_rkvenc: qos@ff260000 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff260000 0x0 0x20>;
+> +		};
+> +
+> +		qos_gmac0: qos@ff270000 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff270000 0x0 0x20>;
+> +		};
+> +
+> +		qos_hdcp: qos@ff270080 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff270080 0x0 0x20>;
+> +		};
+> +
+> +		qos_jpegdec: qos@ff270100 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff270100 0x0 0x20>;
+> +		};
+> +
+> +		qos_rga2_m0ro: qos@ff270200 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff270200 0x0 0x20>;
+> +		};
+> +
+> +		qos_rga2_m0wo: qos@ff270280 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff270280 0x0 0x20>;
+> +		};
+> +
+> +		qos_sdmmc0: qos@ff270300 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff270300 0x0 0x20>;
+> +		};
+> +
+> +		qos_usb2host: qos@ff270380 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff270380 0x0 0x20>;
+> +		};
+> +
+> +		qos_vdpp: qos@ff270480 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff270480 0x0 0x20>;
+> +		};
+> +
+> +		qos_vop: qos@ff270500 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff270500 0x0 0x20>;
+> +		};
+> +
+> +		qos_emmc: qos@ff280000 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff280000 0x0 0x20>;
+> +		};
+> +
+> +		qos_fspi: qos@ff280080 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff280080 0x0 0x20>;
+> +		};
+> +
+> +		qos_gmac1: qos@ff280100 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff280100 0x0 0x20>;
+> +		};
+> +
+> +		qos_pcie: qos@ff280180 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff280180 0x0 0x20>;
+> +		};
+> +
+> +		qos_sdio0: qos@ff280200 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff280200 0x0 0x20>;
+> +		};
+> +
+> +		qos_sdio1: qos@ff280280 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff280280 0x0 0x20>;
+> +		};
+> +
+> +		qos_tsp: qos@ff280300 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff280300 0x0 0x20>;
+> +		};
+> +
+> +		qos_usb3otg: qos@ff280380 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff280380 0x0 0x20>;
+> +		};
+> +
+> +		qos_vpu: qos@ff280400 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff280400 0x0 0x20>;
+> +		};
 
-Sergey, do you prefer if we keep things as-is, or if you update your
-series to incorporate Herbert's changes for zsmalloc/zram, then I can
-update my series to incorporate the changes in zswap?
+These QoS node are typically referenced from power domains so that the
+PMU driver know what QoS to save/restore when a power domain is power
+cycled.
 
-We can also combine the series into a single updated one with
-zsmalloc/zram/zswap changes.
+Vendor kernel only reference the two qos_gpu nodes in it's power domains,
+do you have any documentation or knowledge about what power domain the
+remaining QoS are related to?
 
-Let me know what you prefer.
+It would have been helpful to include PMU support to help understand the
+QoS <-> PD relationship, on their own they do not tell us that much :-)
+
+Regards,
+Jonas
+
+> +
+>  		cru: clock-controller@ff4a0000 {
+>  			compatible = "rockchip,rk3528-cru";
+>  			reg = <0x0 0xff4a0000 0x0 0x30000>;
+
 
