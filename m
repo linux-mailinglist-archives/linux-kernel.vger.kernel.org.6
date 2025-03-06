@@ -1,382 +1,169 @@
-Return-Path: <linux-kernel+bounces-548054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA7AA53F47
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:43:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DA5A53F48
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:44:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A441A1893994
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:43:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A280F18934B9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5E82E40B;
-	Thu,  6 Mar 2025 00:43:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1CC1AAC9;
+	Thu,  6 Mar 2025 00:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="mVw2WhsJ"
-Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11012059.outbound.protection.outlook.com [52.101.71.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="oVLOjvKU"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 963B6EEA9;
-	Thu,  6 Mar 2025 00:43:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741221793; cv=fail; b=e/BqrgXX1Vf5RY1qc0n0NJtieyp794hT2XCJCkuZ0VrjUzmH3cWetsUX7TtN+EZtgcu1SuaPO4HgVWVEliDkVZ0KM5WZ5sB6gz9Nd9+UCBmn3Q3VvEpL23PRTzmZtt3Yr3TKN1YVKFEjwZ0z0UVvlqjXRTT8RMCtnMAI9XETTvA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741221793; c=relaxed/simple;
-	bh=IFeVD0QmvftZ1mDJxfI7nQyWGLynfhEm2+q/IcX5LEg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=c10ULVReJRzcA/azU4JIblW7u0RaY0EfaPL3VtUWwwwqJvC4qGFNT6rOiDDrQ7Y3kSBWexw7IFWqIcsB2fkaIYSWTlXXaIJS/QZcAL1FRFwepC9QntvU/qLTg0X98jzdZCh8GZIUdql3gAx6YzqFYLWAC7BBybtLVqh5hOdbO74=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=mVw2WhsJ; arc=fail smtp.client-ip=52.101.71.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Iqq3zPi2Zh5GDWhgT77cxU7hnMWSFgZ9OE29ZXNerSr8k1mu3kU73VTUqjvNhdZj4zQLmFFwgpBVTUUJ/XhpbhBadrGe6rwS0hJgYXIvCLJ4BfU4WeWzyuPYDL152J2WvawnQ6V6Lv6ec1Ai1/GWE9+j5Oc64rDdsOmt/sAOh5GuL99kSBIAKn8JTFikSzQZf7ZPDG56ZZd+Gu5jf6+i414Ieq7K/1FrHtYMaTggkx3P2ZPgWkfZT3RMP4CFVD/Y5T/8dXcztAP0cDk2hACMgCS64cMIr0B+tLo+qVuRgJIDLel6oWI36Syv2tOreWHccUfeCpp9n8kRisbnKdSueg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rt0F4uCjPAszHJEWm9ube4bUlBcoomKxFSCmspLyAyk=;
- b=PhJqWOIqSmVxLUxgl6+CSl7zVrBDRVtU4OzDDqHxfo5CjhWomvnSPNTMAIr3TmipLaewg0oNBTaNU/CBDpjChQHJ3igsCS4kspWMaBZymhMcuj4heV8TpfaGDDRIdIs10miN2Gn13VF2IeTRZUJbCQ5yGNv0Gifuwjlgaw3xnrIDY/libcRIIGHw5Ec0EtVW42nMRkK4jv0/hj7A9SbMHpyvbLT4pCstY0XXWP2uAiTVEmic85YETSU3dE70/30fHceOScE3bdR7Q4KNBnT2wpueHcLJ1ZX8nitQtWSLsg2pVNe9BlfNdsA+dOpFxdnfEmzlk2s5OsYsyZWmgexjXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rt0F4uCjPAszHJEWm9ube4bUlBcoomKxFSCmspLyAyk=;
- b=mVw2WhsJeTl+t5aBYi9iN6zn86pvddb6k9Qhr4LcbL5xB9F6CHbIORh17OqSOzEfHUj6ylD4NTh1Ma55MqOaPHOCNeHHTTo/d38UxWhODVKGZZRl6Kz9LTf4SjQPz7+9x9nY3/niSK2VYCmEjaUeRNOLi2wAOsezBjWl9YxO92Btc7DNl/MmRz5ZgXs6xvMN77Mz60DMBjCbIwwkDrV26iiDR13tBUbJ0YDy1LsuBcCy0Cb4Oz8764R7SetbA0gOBjY1eUOZ05BjA2MNe4rZc77Xh4JfQa/+sA3XD1pJHjnVfTFkF9L/lq9ENRvdmO7qAV92T0/qIOU/ayfWeDyc+A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by VI0PR04MB11071.eurprd04.prod.outlook.com (2603:10a6:800:262::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Thu, 6 Mar
- 2025 00:43:05 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 00:43:05 +0000
-Date: Thu, 6 Mar 2025 02:43:01 +0200
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Furong Xu <0x1207@gmail.com>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Xiaolei Wang <xiaolei.wang@windriver.com>,
-	Suraj Jaiswal <quic_jsuraj@quicinc.com>,
-	Kory Maincent <kory.maincent@bootlin.com>,
-	Gal Pressman <gal@nvidia.com>,
-	Jesper Nilsson <jesper.nilsson@axis.com>,
-	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Chwee-Lin Choong <chwee.lin.choong@intel.com>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
-	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
-Subject: Re: [PATCH iwl-next v8 08/11] igc: add support to set
- tx-min-frag-size
-Message-ID: <20250306004301.evw34gqoyll36mso@skbuf>
-References: <20250305130026.642219-1-faizal.abdul.rahim@linux.intel.com>
- <20250305130026.642219-1-faizal.abdul.rahim@linux.intel.com>
- <20250305130026.642219-9-faizal.abdul.rahim@linux.intel.com>
- <20250305130026.642219-9-faizal.abdul.rahim@linux.intel.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305130026.642219-9-faizal.abdul.rahim@linux.intel.com>
- <20250305130026.642219-9-faizal.abdul.rahim@linux.intel.com>
-X-ClientProxiedBy: VI1P195CA0057.EURP195.PROD.OUTLOOK.COM
- (2603:10a6:802:5a::46) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C28317C68
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 00:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741221848; cv=none; b=pwg7fryY1YS9wz+Bq6R/WeKTUnZEDcc68Vz5s2rZ6fSjitRiQ+oxOrtagYpjc7li9fCl9v6K4NkovAe5iBt0AX3Imsb/3czjb1Cfw1xy1gWrIr5jYbUjNqZCaeRlLd4FFTAEmfkj0ZSh3t/gDnEVsMipd3oxbQ7r9dVVTpRWnvk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741221848; c=relaxed/simple;
+	bh=/XPBPYPK+Ts2ontme00hSLTZRIeMbEhmEiIPzB22szs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=kSeg0pEsEnNWp7zhTGkaJZ8vJSAy/YJcfRQRZa5TkE+1Z7zhy42glsw4p9Vu3WgXsjFLvJ5YqzLLBcv5yWsVoxx7Bkw5GlPrdyBrooUZ5Hg9k6VFTWVhvjSAjUv6cdsWpamGpOgye5IOwn1+OVTBsL+MCNZjwSkoM0YtKx0LnIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=oVLOjvKU; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223594b3c6dso761925ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 16:44:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1741221845; x=1741826645; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Yl5pQMvwhs9KXlNz+24dCzwkEL5L1AwJPXBGp3tpzqo=;
+        b=oVLOjvKUV8ITmqzw2n8O7x22uK5gA4WHqVjzuCajVfJ2zUFg5SCa1b4zDv7RryNhmK
+         N1/IlLoHz5lOWNJguMv7spiRxuwJkY+9S85C0UdWKjxTH83R4xk96Ks7icnKgoDyIvz/
+         GXRYixWJyri3Jy9zGq5uaXOh1z2ISMAIcG3O/JTn5IWCiU8T2RuEZ0re/l+jiQflA5Ws
+         DNIe/8JjpPocp3kDX2QOsJ2lPUtdm7igOYBm1NKTDbAyiflQ2JKL5zsex12NoC7OMKjj
+         VBpYEETL19dxz/ggkdql01kWwzjDqQFm/FP0bUXY9ovtCg8zqjJ7GWswTn9YAgSaELbx
+         7E/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741221845; x=1741826645;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Yl5pQMvwhs9KXlNz+24dCzwkEL5L1AwJPXBGp3tpzqo=;
+        b=b0Uj981owQpCNDc9c9CAxV0Mf3zQzHXUmtNhmLyIUfD/CRX8MuJ5I2g7uISeN26VMx
+         kifXDoGq/NSi2q0h/uXTkue3y5E+SQudheEhakzfsCO9c9vD3kOhHb5i7Skcp/q+s1Jr
+         MTugm2T5epM/dIwklp4eDCBU+S6ZWwulCx+GWDc31woitdLuYW/DyJuHcJOgfmonwD/C
+         30CuMQWsHL8oEHxb/GKx1RsdMuP+S6bAoxAcKWso9qYUDp8SHAbaoe1sDslFu3pMjDPe
+         o/yMrtGsb9spXGyP3esBnI9OKy9PZVLwmUi64zeHAKtjOXkXrxh6yZup4CxTPrT8cyyC
+         YXmg==
+X-Forwarded-Encrypted: i=1; AJvYcCULKGAU3GsCYFmGE0xzUeaigwDAab+25cjMgIWyT3dowdgGBHl5pohxv/AFS+GqwpMAkamEU08p9TswR6g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy2Ex5zcRj0IaLc5cbotl//UuD88U2QW//cX5xa/gYOutgSjIX
+	md2h1XbQF/zf2PGlUkwq27d3ES4vQTr+jBupf2/lynHUY9Jc8QC6RAOPz0TQq14=
+X-Gm-Gg: ASbGncu9zBD1FQlyWWo4EYaFL6UHNRcb0Zb0EPq53TBl9QV7qustJS3WM/vYXWao6xe
+	J9QNOZ7EYWbiqdKHq48+hnbn90jjxut6pkx/yml1o7i2kdbW9IcGVqbAx5arYrBphqMccKFkw5r
+	OdqBD3R4UcIqdwpESoySe2BuxX7CR46EmG1OjiWDUoGl2HiNp+2GQ4tPf8/Jd+JAYH3CPwUAjk1
+	1hnuJ3S1UvYTZQXocEaQLH8RoniV0yVmfYH3eHCU4J83kTxQ6XKdko9nef5eDBmqAE7b8KyeQ1p
+	8eYdXj876DrDepNe5UmG8F315cgi8+fV4Jd4IwSVJ9BKiAa0i5fJ7Zvji8ov
+X-Google-Smtp-Source: AGHT+IHI2rP2Hyd2lOR7EMEDGvOEHYUYseZqcPAUg2IT9Fva6WUyScEehXV53qnCOoMF9yh/zzST8w==
+X-Received: by 2002:a17:902:f710:b0:21f:2ded:76ea with SMTP id d9443c01a7336-223f1d6ccddmr92798435ad.36.1741221845509;
+        Wed, 05 Mar 2025 16:44:05 -0800 (PST)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7f7efsm347085ad.132.2025.03.05.16.44.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 16:44:04 -0800 (PST)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Subject: [PATCH v5 0/4] entry: Move ret_from_fork() to C and inline
+ syscall_exit_to_user_mode()
+Date: Wed, 05 Mar 2025 16:43:43 -0800
+Message-Id: <20250305-riscv_optimize_entry-v5-0-6507b5dff3ce@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|VI0PR04MB11071:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5240df97-70a7-4de8-1a9c-08dd5c47dba6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?68tBHlDxL4s2y+3m5LpjYONubCrqmxVCqwqhcnCkzODOIjMjBISLZciRv8UV?=
- =?us-ascii?Q?HN2XrN4qaRX88EJFNSufQYmk9Mqe1SRIC52rU9Br9WvTsMHJy3AMTxhaH0Wr?=
- =?us-ascii?Q?DXFxuUnQYO7DGv/fUBrLUfSfO9Q0w1rwGBlQ5BNzHaZ9IZPKj0vykpNPsoNf?=
- =?us-ascii?Q?hpbY6gsTSKCv12/OXarPVgLHpDFsNzjnUPSr3f/3Qu0ujPpXykNMfyfdPQpV?=
- =?us-ascii?Q?AC+6weOhW8cJv0qaSMdjw90fuFIOOrYrayWZrYLbv0ASdWhnA/jhdGFm6pCa?=
- =?us-ascii?Q?qRHCS5Vo1HPNyhUsulW6Hkgec5WN87LEOcOn6nybsMQbhn/458gbSHeuXYxY?=
- =?us-ascii?Q?NRuxoc+dtHZB8m0MDdIbNFdayhSq7b/oReFop2jWsyYHCLUDGHeFY5qGZ8UC?=
- =?us-ascii?Q?Cq36yJOfyHz9LgHnDArNSfjnAYyawVZVwRE1ZqnJkxqWtYEBHJn6XjgI3Nt/?=
- =?us-ascii?Q?AUPZktivitVuZyCVaISeVggz/GpLL/Q37kfW3U4Ns96NtbSNwRVtwsSBUXQ3?=
- =?us-ascii?Q?hGNJWb/uisgyTyYY/b2aAz9QCeMnNjov7h2pD3eFM1J9doJKO9SeFkbkUcdq?=
- =?us-ascii?Q?gF9feSY/nQ6Tdz2hm9WWAgrB86ATIlbCWUu7fGrTlH1wAFT4J8hfu5lbQXS9?=
- =?us-ascii?Q?QyPW5mufeZJw+LYijjGn0+WOQxYs5QsYBsoSd6w1aaTd7a+pqCfohHYRWR1m?=
- =?us-ascii?Q?l3PR9j3bqRD9WH8omrpjjqAos03vG2EBsnkNzsyoAsarUFvcVOsMPmOuTDTn?=
- =?us-ascii?Q?zq/fV21P8NT5U3SBlut7dopfwKqpXD71qFG5c9bJB16pqZedJcVFU0iMX2u0?=
- =?us-ascii?Q?h8eu+4fhNcQ2IkVhLC4Z5xMJf0/7EKqGte/QE32wfwhMSOgjsfE++otwyhJZ?=
- =?us-ascii?Q?5wrVh0zxhPYki3ke1YPhy2q15OPgR6wgphzTLnyO0eBP8N0Uod1jckhgiH6c?=
- =?us-ascii?Q?HXVRB4okXH5bLcDWhH0Xsr529pEw61eSgBJkUcMYXisvykv2myxv/qLqPAuB?=
- =?us-ascii?Q?kAnrT2HgCaaDbed4exCkz2NPlNdQsmM8CH4Qj+UbhNQGhlFWGoUjTScdCGAp?=
- =?us-ascii?Q?3sffzwsz7JuH2xRKohFKbFu0f4RnfVNQqUJ5OE7VBpyc/32b63sKJNbGq66s?=
- =?us-ascii?Q?U2ZLnJqGKV1eCZDDfK6OiafhsoxjvHvQzBVVGWIqQq/43E0zirrXzMZXLgFR?=
- =?us-ascii?Q?hihy6htbiQFiYXg9Y9x46R+3QRy/YnXppNHX7CShx83j2TWXkhuS68o07N4b?=
- =?us-ascii?Q?A2aZQ0rn+JnaVEK1i0Ulp92He+mN/j7l6Si/Z3c7i9L/Qcs8kaAXFjD2d0fj?=
- =?us-ascii?Q?7dQLAHSRBU53lGM+/xLrpUlvPF/UkbcEOtz2FxwUxtwUtPT3Wwobw8ouILTI?=
- =?us-ascii?Q?eJ2PTRXBiCLysWllKYg01us+8yNI?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Woytg/G2yfArt2O/I0nM0xXgqFARRLg1som9N3i7hFckZDBxs3V8zw5WHtFc?=
- =?us-ascii?Q?EeKwEYYJTt/arew79nmAZePYiQ4V3dzj9Nq40BD73No/8YUEgRH03NFnzRKK?=
- =?us-ascii?Q?l7dlyV8qwpVVsVLiFTZWKCp46g+2qXnOfrMIU+qk39QGq0o2BWxfb/9pC+Ca?=
- =?us-ascii?Q?uZuboIiU6y/ZGv23unChYvpFeZ/QC35NumaLMcBTIiW8bCfXEgmHQMm/sgck?=
- =?us-ascii?Q?zKOHv8Imp8638uBYZWrb6/F0J+FGdfbtMsmwk2W6i/MI59DrPfaj//1Dtasc?=
- =?us-ascii?Q?LIVTmmcIg7PIIgVfLnZnCLKzOAiATYbNZ+crDs45htMrtdvE1DjGUVXCxLbd?=
- =?us-ascii?Q?5Wf+lj30AKsJMWr3+TaMNSYTcR8FxBrHx3GzdAthDr05ghex6g0mco/UDqxB?=
- =?us-ascii?Q?KQMDcw7yKLSiTBz3oCG3uwJSBXcmJOy1K/uZmdfayqc+6SVx1BUZWB1EBEd6?=
- =?us-ascii?Q?zOY5KJpGMyINkbXG6Ljx+dzNtfsCtRQ3TzROzr2KdDCVUzmjl0YQ3WSi66Hi?=
- =?us-ascii?Q?afSThTX4vhLWeu/kbK+keaGGeRXBvxGGgBUuy54SH3PmsYWKyyGnAkTJt2Yn?=
- =?us-ascii?Q?8rmz1FmFFXVrvyUwBpl+e4CkGijBRotzhF5tQhPs4ak078sXv0w53MnZP4ax?=
- =?us-ascii?Q?gS5/jpH5k7FRiwhOu6A4l5BahLALek9CTewhMaYcwQC0ghg78D+L1XB6IEPb?=
- =?us-ascii?Q?ZGHBGufPfmrqZR/Pmd6mgI7WCikMIhERXlo6JEnHUk1ma7IMkZnUYx8yS8O6?=
- =?us-ascii?Q?ygLdMCoR2VWoIYajlOC2+Sm2OxI2nfZhvqUdNxlke8DmN9sYIMcWXjhs/Nvo?=
- =?us-ascii?Q?UfhmE6H2NF3m0N+7Bc/033e6HvzlespeQ7xNkHhd5DZoOEAM24TN52Vyp9Yu?=
- =?us-ascii?Q?eV3mYa6X3u+nsdruMhObaME/ozK7XtbtdTUgCWDuTL4zzwMHaLVPfogyUT74?=
- =?us-ascii?Q?n0elFz2QeKfzII4jJU1i8KnMgAWDIPscGqlZynrtbvvdPjCQeaaCwsEoh5UH?=
- =?us-ascii?Q?NlYoxSdAxk+TkBJU6ExXJE9zTqcAUrNEaMsIhaom2GBPylMl+EK8Gt8Hak0i?=
- =?us-ascii?Q?s2DRP6crLcN7vrxd4RBHZTkd9vbWrruG9/rB2QLPtth3Xmjr2MaPJrGe3Gu6?=
- =?us-ascii?Q?+vH49NkOSWI57LWMjgeFK6IGulOtfNZ7s8hg49CLrE1mxqSGBj745B3GHt/U?=
- =?us-ascii?Q?PU5HNbb2SPWWOhZS6ZVMvfNmej+iRSX14Emd342npoP7PSeOP1XAuTOzZlPD?=
- =?us-ascii?Q?8cNjPcxkFwOljh+ud19fUhvLfbm3cXgVKYQLEmzrXs7L8lxThdxbxBl/p36G?=
- =?us-ascii?Q?n+68JJuseIQyjkIntjqaO6Mpg4HIyJmNCh31R+WtLbL7DsvVxd40e8B0Clc7?=
- =?us-ascii?Q?bbEjvW+CCQzdeeVzEoESaIPuhEtyjUGHKU28mDBeG7D/xDUg1s+nJzJpTg5w?=
- =?us-ascii?Q?DCK9ZUrIZ9WQCJmFaWYR9Kb8BPxnZsjISfJgie0fQzrGSbI8K01gsW7ZWKa0?=
- =?us-ascii?Q?j/v3c4wy1Oi2TLPb8733rt1+y15LiFIstfwRzSN0Xnu7T22wKXq8NaM0jH/1?=
- =?us-ascii?Q?IC3ISF6zL6rb3LX+OqZffef8HaQpUsGzNVoxTKIXnmornAS2ubu14oGdm4EM?=
- =?us-ascii?Q?EA=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5240df97-70a7-4de8-1a9c-08dd5c47dba6
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 00:43:05.5868
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: muHbIc6b13iLTx7zl2obcgKKJnwa41mgf6kTSE6lcaR9C8jYY6WcSLm5i2rzsqck5LniFt9PG45TmRx8lXD8uA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11071
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAL/vyGcC/3XNwW7CMAzG8VdBOS8odWya7LT3QBMaqTt8oEFJF
+ cFQ331pTxWix/8n+eenypyEs/rcPVXiIlniUIM+dipcfoZf1tLVVmAADRrQSXIop3gb5Sp/fOJ
+ hTA9Nzjq0CMYCqXp6S9zLfWGP37UvkseYHsuX0szrDJJpYAMsjTYamT0R+dB35itJiVmGsA/xq
+ mazwNqxGw5Upw1AHj10ZNwbx64d3HBsddzB9/Zw9oz2/MbBtdNuOLg4LvRta6AL/sWZpukfmPs
+ pi5MBAAA=
+X-Change-ID: 20240402-riscv_optimize_entry-583843420325
+To: Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Huacai Chen <chenhuacai@kernel.org>, 
+ WANG Xuerui <kernel@xen0n.name>, Thomas Gleixner <tglx@linutronix.de>, 
+ Peter Zijlstra <peterz@infradead.org>, Andy Lutomirski <luto@kernel.org>, 
+ Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ loongarch@lists.linux.dev, Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2610; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=/XPBPYPK+Ts2ontme00hSLTZRIeMbEhmEiIPzB22szs=;
+ b=owGbwMvMwCXWx5hUnlvL8Y3xtFoSQ/qJ92c6erj6L4quN/7dqcybGPVlekXdFbf23JKd89sNn
+ 093enajo5SFQYyLQVZMkYXnWgNz6x39sqOiZRNg5rAygQxh4OIUgIlcfsTIcOXwk9z4c12MHic+
+ SL44N4X38GztPo8bhyp5i4s+sRisWsrwP7XpyOZn0m+5BC8/XdKZ9zfBw/v5w+91ZyS1G972H52
+ Rxw4A
+X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
+ fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
-On Wed, Mar 05, 2025 at 08:00:23AM -0500, Faizal Rahim wrote:
-> Add support to set tx-min-frag-size via set_mm callback in igc.
-> Increase the max limit of tx-ming-frag-size in ethtool from 252 to 256
-> since i225/6 value range is 64, 128, 192 and 256.
-> 
-> Co-developed-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
-> ---
->  drivers/net/ethernet/intel/igc/igc.h         |  1 +
->  drivers/net/ethernet/intel/igc/igc_defines.h |  1 +
->  drivers/net/ethernet/intel/igc/igc_ethtool.c |  5 +++
->  drivers/net/ethernet/intel/igc/igc_tsn.c     | 37 ++++++++++++++++++--
->  drivers/net/ethernet/intel/igc/igc_tsn.h     |  2 +-
->  net/ethtool/mm.c                             |  2 +-
->  6 files changed, 43 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/igc/igc.h b/drivers/net/ethernet/intel/igc/igc.h
-> index d9ecb7cf80c9..4dfd133b4d6f 100644
-> --- a/drivers/net/ethernet/intel/igc/igc.h
-> +++ b/drivers/net/ethernet/intel/igc/igc.h
-> @@ -42,6 +42,7 @@ void igc_ethtool_set_ops(struct net_device *);
->  
->  struct igc_fpe_t {
->  	struct ethtool_mmsv mmsv;
-> +	u32 tx_min_frag_size;
->  };
->  
->  enum igc_mac_filter_type {
-> diff --git a/drivers/net/ethernet/intel/igc/igc_defines.h b/drivers/net/ethernet/intel/igc/igc_defines.h
-> index 22db1de02964..038ee89f1e08 100644
-> --- a/drivers/net/ethernet/intel/igc/igc_defines.h
-> +++ b/drivers/net/ethernet/intel/igc/igc_defines.h
-> @@ -551,6 +551,7 @@
->  #define IGC_TQAVCTRL_PREEMPT_ENA	0x00000002
->  #define IGC_TQAVCTRL_ENHANCED_QAV	0x00000008
->  #define IGC_TQAVCTRL_FUTSCDDIS		0x00000080
-> +#define IGC_TQAVCTRL_MIN_FRAG_MASK	0x0000C000
->  
->  #define IGC_TXQCTL_QUEUE_MODE_LAUNCHT	0x00000001
->  #define IGC_TXQCTL_STRICT_CYCLE		0x00000002
-> diff --git a/drivers/net/ethernet/intel/igc/igc_ethtool.c b/drivers/net/ethernet/intel/igc/igc_ethtool.c
-> index b64d5c6c1d20..529654ccd83f 100644
-> --- a/drivers/net/ethernet/intel/igc/igc_ethtool.c
-> +++ b/drivers/net/ethernet/intel/igc/igc_ethtool.c
-> @@ -1789,6 +1789,11 @@ static int igc_ethtool_set_mm(struct net_device *netdev,
->  	struct igc_adapter *adapter = netdev_priv(netdev);
->  	struct igc_fpe_t *fpe = &adapter->fpe;
->  
-> +	fpe->tx_min_frag_size = igc_fpe_get_supported_frag_size(cmd->tx_min_frag_size);
-> +	if (fpe->tx_min_frag_size != cmd->tx_min_frag_size)
-> +		NL_SET_ERR_MSG_MOD(extack,
-> +				   "tx-min-frag-size value set is unsupported. Rounded up to supported value (64, 128, 192, 256)");
-> +
->  	if (fpe->mmsv.pmac_enabled != cmd->pmac_enabled) {
->  		if (cmd->pmac_enabled)
->  			static_branch_inc(&igc_fpe_enabled);
-> diff --git a/drivers/net/ethernet/intel/igc/igc_tsn.c b/drivers/net/ethernet/intel/igc/igc_tsn.c
-> index 0a2c747fde2d..2ec5909bf8b0 100644
-> --- a/drivers/net/ethernet/intel/igc/igc_tsn.c
-> +++ b/drivers/net/ethernet/intel/igc/igc_tsn.c
-> @@ -6,6 +6,12 @@
->  #include "igc_hw.h"
->  #include "igc_tsn.h"
->  
-> +#define MIN_MULTPLIER_TX_MIN_FRAG	0
-> +#define MAX_MULTPLIER_TX_MIN_FRAG	3
-> +/* Frag size is based on the Section 8.12.2 of the SW User Manual */
-> +#define TX_MIN_FRAG_SIZE		64
-> +#define TX_MAX_FRAG_SIZE	(TX_MIN_FRAG_SIZE * (MAX_MULTPLIER_TX_MIN_FRAG + 1))
-> +
->  DEFINE_STATIC_KEY_FALSE(igc_fpe_enabled);
->  
->  static int igc_fpe_init_smd_frame(struct igc_ring *ring,
-> @@ -128,6 +134,7 @@ static const struct ethtool_mmsv_ops igc_mmsv_ops = {
->  
->  void igc_fpe_init(struct igc_adapter *adapter)
->  {
-> +	adapter->fpe.tx_min_frag_size = TX_MIN_FRAG_SIZE;
->  	ethtool_mmsv_init(&adapter->fpe.mmsv, adapter->netdev, &igc_mmsv_ops);
->  }
->  
-> @@ -278,7 +285,7 @@ static int igc_tsn_disable_offload(struct igc_adapter *adapter)
->  	tqavctrl = rd32(IGC_TQAVCTRL);
->  	tqavctrl &= ~(IGC_TQAVCTRL_TRANSMIT_MODE_TSN |
->  		      IGC_TQAVCTRL_ENHANCED_QAV | IGC_TQAVCTRL_FUTSCDDIS |
-> -		      IGC_TQAVCTRL_PREEMPT_ENA);
-> +		      IGC_TQAVCTRL_PREEMPT_ENA | IGC_TQAVCTRL_MIN_FRAG_MASK);
->  
->  	wr32(IGC_TQAVCTRL, tqavctrl);
->  
-> @@ -324,12 +331,34 @@ static void igc_tsn_set_retx_qbvfullthreshold(struct igc_adapter *adapter)
->  	wr32(IGC_RETX_CTL, retxctl);
->  }
->  
-> +static u8 igc_fpe_get_frag_size_mult(const struct igc_fpe_t *fpe)
-> +{
-> +	u8 mult = (fpe->tx_min_frag_size / TX_MIN_FRAG_SIZE) - 1;
-> +
-> +	return clamp_t(u8, mult, MIN_MULTPLIER_TX_MIN_FRAG,
-> +		       MAX_MULTPLIER_TX_MIN_FRAG);
-> +}
-> +
-> +u32 igc_fpe_get_supported_frag_size(u32 frag_size)
-> +{
-> +	const u32 supported_sizes[] = {64, 128, 192, 256};
-> +
-> +	/* Find the smallest supported size that is >= frag_size */
-> +	for (int i = 0; i < ARRAY_SIZE(supported_sizes); i++) {
-> +		if (frag_size <= supported_sizes[i])
-> +			return supported_sizes[i];
-> +	}
-> +
-> +	return TX_MAX_FRAG_SIZE; /* Should not happen, value > 256 is blocked by ethtool */
+Similar to commit 221a164035fd ("entry: Move
+syscall_enter_from_user_mode() to header file"), move
+syscall_exit_to_user_mode() to the header file as well.
 
-Try to place comments on separate lines from code.
+Testing was done with the byte-unixbench [1] syscall benchmark (which
+calls getpid) and QEMU. On riscv I measured a 7.09246% improvement, on
+x86 a 2.98843% improvement, on loongarch a 6.07954% improvement, and on
+s390 a 11.1328% improvement.
 
-> +}
-> +
->  static int igc_tsn_enable_offload(struct igc_adapter *adapter)
->  {
->  	struct igc_hw *hw = &adapter->hw;
->  	u32 tqavctrl, baset_l, baset_h;
->  	u32 sec, nsec, cycle, rxpbs;
->  	ktime_t base_time, systim;
-> +	u32 frag_size_mult;
->  	int i;
->  
->  	wr32(IGC_TSAUXC, 0);
-> @@ -501,13 +530,15 @@ static int igc_tsn_enable_offload(struct igc_adapter *adapter)
->  	}
->  
->  	tqavctrl = rd32(IGC_TQAVCTRL) & ~(IGC_TQAVCTRL_FUTSCDDIS |
-> -		   IGC_TQAVCTRL_PREEMPT_ENA);
-> -
-> +		   IGC_TQAVCTRL_PREEMPT_ENA | IGC_TQAVCTRL_MIN_FRAG_MASK);
->  	tqavctrl |= IGC_TQAVCTRL_TRANSMIT_MODE_TSN | IGC_TQAVCTRL_ENHANCED_QAV;
->  
->  	if (adapter->fpe.mmsv.pmac_enabled)
->  		tqavctrl |= IGC_TQAVCTRL_PREEMPT_ENA;
->  
-> +	frag_size_mult = igc_fpe_get_frag_size_mult(&adapter->fpe);
-> +	tqavctrl |= FIELD_PREP(IGC_TQAVCTRL_MIN_FRAG_MASK, frag_size_mult);
-> +
->  	adapter->qbv_count++;
->  
->  	cycle = adapter->cycle_time;
-> diff --git a/drivers/net/ethernet/intel/igc/igc_tsn.h b/drivers/net/ethernet/intel/igc/igc_tsn.h
-> index a2534228cc0e..975f4e38836e 100644
-> --- a/drivers/net/ethernet/intel/igc/igc_tsn.h
-> +++ b/drivers/net/ethernet/intel/igc/igc_tsn.h
-> @@ -14,7 +14,7 @@ enum igc_txd_popts_type {
->  DECLARE_STATIC_KEY_FALSE(igc_fpe_enabled);
->  
->  void igc_fpe_init(struct igc_adapter *adapter);
-> -u32 igc_fpe_get_supported_frag_size(u32 user_frag_size);
-> +u32 igc_fpe_get_supported_frag_size(u32 frag_size);
+The Intel bot also reported "kernel test robot noticed a 1.9%
+improvement of stress-ng.seek.ops_per_sec" [2]
 
-The "-" piece shouldn't exist. You are renaming a function argument for
-a function declaration that shouldn't have existed in the code prior to
-the introduction of its definition. Please delete it from the original
-patch that added it.
+Since this is on QEMU, I know these numbers are not perfect, but they
+show a trend of general improvement across all architectures that use
+the generic entry code.
 
->  int igc_tsn_offload_apply(struct igc_adapter *adapter);
->  int igc_tsn_reset(struct igc_adapter *adapter);
->  void igc_tsn_adjust_txtime_offset(struct igc_adapter *adapter);
-> diff --git a/net/ethtool/mm.c b/net/ethtool/mm.c
-> index ad9b40034003..4c395cd949ab 100644
-> --- a/net/ethtool/mm.c
-> +++ b/net/ethtool/mm.c
-> @@ -153,7 +153,7 @@ const struct nla_policy ethnl_mm_set_policy[ETHTOOL_A_MM_MAX + 1] = {
->  	[ETHTOOL_A_MM_VERIFY_TIME]	= NLA_POLICY_RANGE(NLA_U32, 1, 128),
->  	[ETHTOOL_A_MM_TX_ENABLED]	= NLA_POLICY_MAX(NLA_U8, 1),
->  	[ETHTOOL_A_MM_PMAC_ENABLED]	= NLA_POLICY_MAX(NLA_U8, 1),
-> -	[ETHTOOL_A_MM_TX_MIN_FRAG_SIZE]	= NLA_POLICY_RANGE(NLA_U32, 60, 252),
-> +	[ETHTOOL_A_MM_TX_MIN_FRAG_SIZE]	= NLA_POLICY_RANGE(NLA_U32, 60, 256),
+[1] https://github.com/kdlucas/byte-unixbench
+[2] https://lore.kernel.org/linux-riscv/202502051555.85ae6844-lkp@intel.com/
 
-Please make this a separate patch with a reasonably convincing
-justification for any reader, and also state why it is a change that
-will not introduce regressions to the other drivers. It shows that
-you've done the due dilligence of checking that they all use
-ethtool_mm_frag_size_min_to_add(), which errors out on non-standard
-values.
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+Changes in v5:
+- Rebase on 6.14-rc5
+- Link to v4: https://lore.kernel.org/r/20250127-riscv_optimize_entry-v4-0-868cf7702dc9@rivosinc.com
 
-To be clear, extending the policy from 252 to 256 is just to suppress
-the netlink warning which states that the driver rounds up the minimum
-fragment size, correct? Because even if you pass 252 (the current
-netlink maximum), the driver will still use 256.
+Changes in v4:
+- I had messed up warning for ct_state() on rebase, correct that issue
+- Link to v3: https://lore.kernel.org/r/20250124-riscv_optimize_entry-v3-0-869f36b9e43b@rivosinc.com
 
->  };
->  
->  static void mm_state_to_cfg(const struct ethtool_mm_state *state,
-> -- 
-> 2.34.1
->
+Changes in v3:
+- Fixup comment to properly reflect args (Alex)
+- Fix prototypes for loongarch (Huacai)
+- Link to v2: https://lore.kernel.org/r/20250123-riscv_optimize_entry-v2-0-7c259492d508@rivosinc.com
+
+Changes in v2:
+- Fixup compilation issues for loongarch
+- Fixup compilation issues with CONFIG_CONTEXT_TRACKING_USER
+- Link to v1: https://lore.kernel.org/r/20250122-riscv_optimize_entry-v1-0-4ee95559cfd0@rivosinc.com
+
+---
+Charlie Jenkins (4):
+      riscv: entry: Convert ret_from_fork() to C
+      riscv: entry: Split ret_from_fork() into user and kernel
+      LoongArch: entry: Migrate ret_from_fork() to C
+      entry: Inline syscall_exit_to_user_mode()
+
+ arch/loongarch/include/asm/asm-prototypes.h |  8 +++++
+ arch/loongarch/kernel/entry.S               | 22 ++++++-------
+ arch/loongarch/kernel/process.c             | 33 +++++++++++++++----
+ arch/riscv/include/asm/asm-prototypes.h     |  2 ++
+ arch/riscv/kernel/entry.S                   | 20 +++++++-----
+ arch/riscv/kernel/process.c                 | 21 +++++++++++--
+ include/linux/entry-common.h                | 43 +++++++++++++++++++++++--
+ kernel/entry/common.c                       | 49 +----------------------------
+ 8 files changed, 119 insertions(+), 79 deletions(-)
+---
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+change-id: 20240402-riscv_optimize_entry-583843420325
+-- 
+- Charlie
+
 
