@@ -1,155 +1,123 @@
-Return-Path: <linux-kernel+bounces-548602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F75A546DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:50:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5354EA546DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:51:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FA9F1883CCD
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:50:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4666C173B8B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401CD20D510;
-	Thu,  6 Mar 2025 09:48:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56DC720CCF0
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:48:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E02420AF98;
+	Thu,  6 Mar 2025 09:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xeP4T/se"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AAC20ADCF
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741254504; cv=none; b=Uft5ngQxRnZEJhI4hQnsWLpPB7tcgJJoMwrZXyvBFwZUf4DRKf3qgh7QfioN5e8v6id1qX8DUM2NSclHJ+21F0m1j4WKauS6l0znonfwTaglQwDWASazIebBIg5PRxqxUzAWTP1u7jKHAmTx2fbwwzUjeeNsW4UFix4B9moBVjM=
+	t=1741254521; cv=none; b=PvtBfitCuWZ7MRccfgkpWVUXTptzKJlDw8opqxvS0OJ39nhpLCZjrHf6rWX1+mwIkCF+ZUUuaN4w9o8G1caugaWIuTZ5XKOCtkrDE64gM1rvgqwlGZmnu72CIRri1sTwXSHAC7H5lRSuMQPXSJf6JmP3khIqDSpOgRR3nJtwf34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741254504; c=relaxed/simple;
-	bh=RIe/5ZaCtNLHo29qreZI0j1qk+lpe9VGGmd6j6rEDJ4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=R8tD1u3kcKLK+4fYaYgeeFBvGG/fzqYEu89xNTXk2Z91UCSAyZuOnsO3xwZxQ+0YRx9sipCpLg7vSJeUybdE3Ml7zQlN2f4nQAS9U1UOFuBnDmr2Ouz2hNkiA+8ql1s3AhLBfhq5SI7cpWl5dxRTiBJGipRj/xkwJ8vfRE5Nzlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE2A21007;
-	Thu,  6 Mar 2025 01:48:35 -0800 (PST)
-Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 0DD043F673;
-	Thu,  6 Mar 2025 01:48:20 -0800 (PST)
-From: Yeoreum Yun <yeoreum.yun@arm.com>
-To: suzuki.poulose@arm.com,
-	mike.leach@linaro.org,
-	james.clark@linaro.org,
-	alexander.shishkin@linux.intel.com,
-	bigeasy@linutronix.de,
-	clrkwllms@kernel.org,
-	rostedt@goodmis.org
-Cc: coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev,
-	Yeoreum Yun <yeoreum.yun@arm.com>
-Subject: [PATCH v5 9/9] coresight/ultrasoc: change smb_drv_data spinlock's type to raw_spinlock_t
-Date: Thu,  6 Mar 2025 09:48:00 +0000
-Message-Id: <20250306094800.1082950-10-yeoreum.yun@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250306094800.1082950-1-yeoreum.yun@arm.com>
-References: <20250306094800.1082950-1-yeoreum.yun@arm.com>
+	s=arc-20240116; t=1741254521; c=relaxed/simple;
+	bh=RJEAUzoNnPjXojDrx1lfGnTyV5utsglqX5RvWoQNM3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=lZfcVUjRzkvpdomObbYi5LyrdgdIx508H3fOLieK+FibrY3aP/59Pb6uhF3R6Nc8aBgrRHhz2fG6FTByUTQtkWPJeqaAEyFoM/Gfdu8wgSOiF3kRHmE4OXLtzEs6IkkTqT+XonYtvozaa7nzdGjcAPdlx1nmmOkLzyNeMBstMJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xeP4T/se; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43690d4605dso2583725e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:48:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741254518; x=1741859318; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dYb6T/3vLosF9o5q+Y5UiX2/6xC2fpf9CrlM4eItM9w=;
+        b=xeP4T/se9LH8ndz4Z61G3FKvdCQlcnEL7DSi6csfa3TbdnIlLsFbivnOiwI1Du52kx
+         cwfkJNoXXCMgUIMq933n/oyyXy4rgdFz1TGw+s2SsEbe0aUc8QhlUl2kTOF8V5N6lqfd
+         96TSlKT3SbAGge8aINCkOHiekbL4M+Q1BJcoqclUmJEUya1DnT8wrPp8R36aurMHnWkT
+         zgtps8ModMJYBrO4Qzabx8Z39Z7KocHwtDoikxTZH2lV+4pwCWRP5k5wqyqHyzuQEdj1
+         8zdZeThdz4AdE+0qfmgpqpSFdofGm9EZTZ1DcNyAHe4H46CPrFMa06AWTZQndp8ndWM6
+         bPcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741254518; x=1741859318;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dYb6T/3vLosF9o5q+Y5UiX2/6xC2fpf9CrlM4eItM9w=;
+        b=mXrOOdh+OZdLozagdC86Wr2NPjaA0PYOk4HzfHROfATmIJFeI7hjBoxZ0nxR2xQkd+
+         Brp+1BfWm5spOZrDlIDdEEex41j6AOc5AnFhndFkx1foz3zLXVR5vXyF5MSZIcyJn1LD
+         N6zx3XUrR59TaEYfDnQUVXrYazIBKfRehMd+ODRt5EPyQ8woHz71pvasuaMn4vUcWkTY
+         zPDrlfqLChnJ41ueM/QHozn8pHclNzMxX2Zax3R7YtKSTpk1jDsTeRwF2RQwu63iIf1j
+         ZvEWBHliior2V04rUupEZLVfjs9hqTF4CkoWdffy10ZbFsGhtcNLNH7/wPJoGt/lWQey
+         VBbw==
+X-Forwarded-Encrypted: i=1; AJvYcCWu3T5r9cXYt8lUyw4BdQQBB34V6emdP3qH+vSQ+zNBx++1+M8En60Je3kqacUSI9H6UwQYWXrTuc8o6iM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjR7XHeCt/8ykF5/HNIKTD9USsZchTMAfHM51HwndESDN8iRSz
+	LX4hceaBoZW9N3l9m+P4MJVM0TomH+G46MNcA05R9o+OAC8umpydOVHC4ThC9hs=
+X-Gm-Gg: ASbGncuIItO1Gevry4KfUaxD06tkLsOMoUDNRDruMq2C2YJXt7/6ya2uFF5faIeiwdl
+	YZWGzjpIyus93MhtBoW75uu002YXjFZqXZvShyq6h+AJ4El1BtRPrbgX+G5MmZXkZDUHKtA+34W
+	FaUNODeupU293Bf9dPVK1w3eSRGvqHB/Msz8hXj+i9BkjzSHBmr4CzvhANp6n6ORQLZwl6sddeS
+	xogb3cXv9da9MGeYo0Ta9fr58guLm2Iw4HwzNvhJL3C0gF63OTkP4ckkXwl9oprWcJiccr+X/9Z
+	+7UM7IS74K0LPCm/K8umrGy8h6Mls3psA1CYNeVod9mMlN5wRA==
+X-Google-Smtp-Source: AGHT+IFBd/ryvsqo4SuH5AoV+P7wyT4wM81i1izptWSUavGGlpTSK4T7eUmgeLPy3GMlZioDo8QvWA==
+X-Received: by 2002:a05:6000:10d:b0:391:225:9521 with SMTP id ffacd0b85a97d-3911f7bd8b2mr4846113f8f.38.1741254518181;
+        Thu, 06 Mar 2025 01:48:38 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912bfba66esm1527318f8f.18.2025.03.06.01.48.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 01:48:37 -0800 (PST)
+Date: Thu, 6 Mar 2025 12:48:34 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Patrice Chotard <patrice.chotard@foss.st.com>
+Cc: Mark Brown <broonie@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-spi@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: [PATCH next] spi: stm32-ospi: Fix an IS_ERR() vs NULL bug in
+ stm32_ospi_get_resources()
+Message-ID: <bc4c9123-df43-4616-962f-765801d30b4c@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-In ultrasoc-smb drivers, smb_drv_data->spinlock can be held
-during __schedule() by perf_event_task_sched_out()/in().
+The devm_ioremap() function returns NULL on error, it doesn't return
+error pointers.  Fix the check to match.
 
-Since smb__drv_data->spinlock type is spinlock_t and
-perf_event_task_sched_out()/in() is called after acquiring rq_lock,
-which is raw_spinlock_t (an unsleepable lock),
-this poses an issue in PREEMPT_RT kernel where spinlock_t is sleepable.
-
-To address this, change type smb_drv_data->spinlock in ultrasoc-smb drivers,
-which can be called by perf_event_task_sched_out()/in(),
-from spinlock_t to raw_spinlock_t.
-
-Reviewed-by: James Clark <james.clark@linaro.org>
-Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+Fixes: 79b8a705e26c ("spi: stm32: Add OSPI driver")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/hwtracing/coresight/ultrasoc-smb.c | 12 ++++++------
- drivers/hwtracing/coresight/ultrasoc-smb.h |  2 +-
- 2 files changed, 7 insertions(+), 7 deletions(-)
+ drivers/spi/spi-stm32-ospi.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/ultrasoc-smb.c b/drivers/hwtracing/coresight/ultrasoc-smb.c
-index dc3c9504dd7c..26cfc939e5bd 100644
---- a/drivers/hwtracing/coresight/ultrasoc-smb.c
-+++ b/drivers/hwtracing/coresight/ultrasoc-smb.c
-@@ -98,7 +98,7 @@ static int smb_open(struct inode *inode, struct file *file)
- 	struct smb_drv_data *drvdata = container_of(file->private_data,
- 					struct smb_drv_data, miscdev);
+diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
+index 8eadcb64f34a..a544d7897edf 100644
+--- a/drivers/spi/spi-stm32-ospi.c
++++ b/drivers/spi/spi-stm32-ospi.c
+@@ -835,10 +835,10 @@ static int stm32_ospi_get_resources(struct platform_device *pdev)
+ 	if (rmem) {
+ 		ospi->mm_size = rmem->size;
+ 		ospi->mm_base = devm_ioremap(dev, rmem->base, rmem->size);
+-		if (IS_ERR(ospi->mm_base)) {
++		if (!ospi->mm_base) {
+ 			dev_err(dev, "unable to map memory region: %pa+%pa\n",
+ 				&rmem->base, &rmem->size);
+-			ret = PTR_ERR(ospi->mm_base);
++			ret = -ENOMEM;
+ 			goto err_dma;
+ 		}
  
--	guard(spinlock)(&drvdata->spinlock);
-+	guard(raw_spinlock)(&drvdata->spinlock);
- 
- 	if (drvdata->reading)
- 		return -EBUSY;
-@@ -152,7 +152,7 @@ static int smb_release(struct inode *inode, struct file *file)
- 	struct smb_drv_data *drvdata = container_of(file->private_data,
- 					struct smb_drv_data, miscdev);
- 
--	guard(spinlock)(&drvdata->spinlock);
-+	guard(raw_spinlock)(&drvdata->spinlock);
- 	drvdata->reading = false;
- 
- 	return 0;
-@@ -245,7 +245,7 @@ static int smb_enable(struct coresight_device *csdev, enum cs_mode mode,
- 	struct smb_drv_data *drvdata = dev_get_drvdata(csdev->dev.parent);
- 	int ret = 0;
- 
--	guard(spinlock)(&drvdata->spinlock);
-+	guard(raw_spinlock)(&drvdata->spinlock);
- 
- 	/* Do nothing, the trace data is reading by other interface now */
- 	if (drvdata->reading)
-@@ -280,7 +280,7 @@ static int smb_disable(struct coresight_device *csdev)
- {
- 	struct smb_drv_data *drvdata = dev_get_drvdata(csdev->dev.parent);
- 
--	guard(spinlock)(&drvdata->spinlock);
-+	guard(raw_spinlock)(&drvdata->spinlock);
- 
- 	if (drvdata->reading)
- 		return -EBUSY;
-@@ -378,7 +378,7 @@ static unsigned long smb_update_buffer(struct coresight_device *csdev,
- 	if (!buf)
- 		return 0;
- 
--	guard(spinlock)(&drvdata->spinlock);
-+	guard(raw_spinlock)(&drvdata->spinlock);
- 
- 	/* Don't do anything if another tracer is using this sink. */
- 	if (csdev->refcnt != 1)
-@@ -563,7 +563,7 @@ static int smb_probe(struct platform_device *pdev)
- 
- 	smb_reset_buffer(drvdata);
- 	platform_set_drvdata(pdev, drvdata);
--	spin_lock_init(&drvdata->spinlock);
-+	raw_spin_lock_init(&drvdata->spinlock);
- 	drvdata->pid = -1;
- 
- 	ret = smb_register_sink(pdev, drvdata);
-diff --git a/drivers/hwtracing/coresight/ultrasoc-smb.h b/drivers/hwtracing/coresight/ultrasoc-smb.h
-index a91d39cfccb8..c4c111275627 100644
---- a/drivers/hwtracing/coresight/ultrasoc-smb.h
-+++ b/drivers/hwtracing/coresight/ultrasoc-smb.h
-@@ -115,7 +115,7 @@ struct smb_drv_data {
- 	struct coresight_device	*csdev;
- 	struct smb_data_buffer sdb;
- 	struct miscdevice miscdev;
--	spinlock_t spinlock;
-+	raw_spinlock_t spinlock;
- 	bool reading;
- 	pid_t pid;
- };
 -- 
-LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+2.47.2
 
 
