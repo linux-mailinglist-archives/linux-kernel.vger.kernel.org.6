@@ -1,145 +1,150 @@
-Return-Path: <linux-kernel+bounces-548336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7F57A54383
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:18:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A492A54387
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:20:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1FA116B0C5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:18:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1815F3A9B43
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A00E1C84D0;
-	Thu,  6 Mar 2025 07:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7351C84D0;
+	Thu,  6 Mar 2025 07:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CvKh7afQ"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WecRY+Fx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E48C18DB04;
-	Thu,  6 Mar 2025 07:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D68018DB04;
+	Thu,  6 Mar 2025 07:20:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741245509; cv=none; b=cPVF04FgCnUYQWu2jhobC1/3rNqU8eoY+4tdpLThz2JyR5RHW3gEhQm10Ngn/TsKmQNMZynQU6dQKSyjTI2yAHESrgMc3b9ANhF4V08bnpr+NwF1so1ewS3LP+Yym+4FCJZxpn7dB4zmlA1XURJChkesAF2metko7DKWx3fCzM4=
+	t=1741245601; cv=none; b=ZuZY43jLi0dkynYEeRBcvjGFM53jfg0eD9lRMtG0Ud1AbL4KzWBkCqhcTj4dBuoip9tmWyUVPpbY738XdyZ99/YZPCeeofdja05W5cczS5LabDqqySGTWFVUgHaSyEOmRGz1Zjs+sHGkrMK2PCnOm9+kUEUVg+HM1SpYdf59YHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741245509; c=relaxed/simple;
-	bh=YLKYVDWQOrV8eI3ckWCLh6O/vZOuW1RwOWw1EBpS7wU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E1lkFweeYzTMPEv2sAf1K4ax1SvsXm9IP1nn8iZIFHfz9YpzclBeQNjpxSEHeVIuzvtMYMX+B3PSup/wpRtf6UTiPW7i9sxCw4y3Jphc56ImZnMtyOKGJXz1t/wd1RsMGfklt85NQSvGvQJAHfjL6vYgHbCDY2ZVWtJx9J44zRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CvKh7afQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA32AC4CEE0;
-	Thu,  6 Mar 2025 07:18:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741245508;
-	bh=YLKYVDWQOrV8eI3ckWCLh6O/vZOuW1RwOWw1EBpS7wU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CvKh7afQvL3Tbft8vQKxA4MuB3CYddx+1IGp/luNUgqCD33ZcEIF9vl46NlJWS7bj
-	 rQ6sTV+jGRMWtITqeVzPXoFHALwgzDNfGSpI1va7/0nZWjZ7P3rWLdLg+Ig78OwJM7
-	 3/Y6v554RWb6oxzS9A9kpdJIOWS5mYJpafLq5K3K63uC55WqZL/IMLFMR9y7yc3GOH
-	 djGhKKSTHs4AnI5CXSesb5abOaMdci5KNnNt9mGK9NQD3w5PFMhsythrpbgTmxYoNM
-	 H83g2kJv/eTl6Y+H5RbB9ND+Mu0BbnPQ4HNNzT2KZqVJmRiOkt+JAofgRrRmyE4Mmv
-	 VV7x+T2EIgLBQ==
-Message-ID: <b118bc5a-9f5c-476d-8af6-31e793ec5479@kernel.org>
-Date: Thu, 6 Mar 2025 08:18:19 +0100
+	s=arc-20240116; t=1741245601; c=relaxed/simple;
+	bh=qLuqTZiAoEdE5ZqzkuOEquYAHoFjFE1U9aW4fu6/tYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iEa2PKz+1XLXS2mMnFo6QR+E1An0Wb64GPddHudvga5Ky+Qv4ZZr0E27Bw5q+I/bgY8Zu3NZyvQ15AkOVDltMyTUKpvbB08CzYE3huTpnHNiFaJ/RFfkd7Bz4VqwNrp+Xt6lH4gvhyFhkTU9k8ETFkMOuwk0hyANwR1a7XIvogw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WecRY+Fx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 503A9C4CEE0;
+	Thu,  6 Mar 2025 07:20:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741245600;
+	bh=qLuqTZiAoEdE5ZqzkuOEquYAHoFjFE1U9aW4fu6/tYE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WecRY+FxXOJFSeHz07hdLmt4UZKnKWvJEscFSOnyndfNaDgAGzNxTPftEKZTK5Yz1
+	 vBy6K9J5miiQnrj2vHPqMW+Jh5qtFA8JuyKnlMmZYpu2XMEs7TefYNNL8UuMwKcbrs
+	 bQqnF/wwWMjzaxAaVtdgsvr0xBSAd5I/LcLozbtw=
+Date: Thu, 6 Mar 2025 08:18:46 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: David Jander <david@protonic.nl>, linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
+Message-ID: <2025030611-embezzle-sacrament-00d9@gregkh>
+References: <20250227162823.3585810-1-david@protonic.nl>
+ <20250227162823.3585810-2-david@protonic.nl>
+ <6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
+ <20250305164046.4de5b6ef@erd003.prtnl>
+ <mzxammninwmak5ti4c6is4pbdx3xzzziiwbxiwrldjyxgae4ok@ocec24vu4txa>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/6] Enable IPQ5018 PCI support
-To: George Moussalem <george.moussalem@outlook.com>,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
- andersson@kernel.org, bhelgaas@google.com, conor+dt@kernel.org,
- devicetree@vger.kernel.org, dmitry.baryshkov@linaro.org, kishon@kernel.org,
- konradybcio@kernel.org, krzk+dt@kernel.org, kw@linux.com,
- lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
- p.zabel@pengutronix.de, quic_nsekar@quicinc.com, robh@kernel.org,
- robimarko@gmail.com, vkoul@kernel.org
-Cc: quic_srichara@quicinc.com
-References: <20250305134239.2236590-1-george.moussalem@outlook.com>
- <DS7PR19MB8883B5F3CC99C0F943BEE9DE9DCB2@DS7PR19MB8883.namprd19.prod.outlook.com>
- <b28b1778-8996-48a5-901e-807a1b820999@kernel.org>
- <DS7PR19MB8883484545BE6AE9E12B5AF69DCB2@DS7PR19MB8883.namprd19.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <DS7PR19MB8883484545BE6AE9E12B5AF69DCB2@DS7PR19MB8883.namprd19.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <mzxammninwmak5ti4c6is4pbdx3xzzziiwbxiwrldjyxgae4ok@ocec24vu4txa>
 
-On 05/03/2025 17:59, George Moussalem wrote:
->> On 05/03/2025 14:41, George Moussalem wrote:
->>> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
->> Not correct From. Cover letter should be written by you.
-> Noted. I thought I'd keep the original author included and added my v3 changes which you rightfully pointed out should have been v4 instead.
-> Will remove in next version.
->>
->>> This patch series adds the relevant phy and controller
->>> DT configurations for enabling PCI gen2 support
->>> on IPQ5018. IPQ5018 has two phys and two controllers, 
->>> one dual-lane and one single-lane.
->>>
->>> Last patch series (v2) submitted dates back to August 27, 2024.
->>> As I've worked to add IPQ5018 platform support in OpenWrt, I'm
->>> continuing the efforts to add Linux kernel support.
->>>
->>> v3:
->>>   *) Depends on: https://patchwork.kernel.org/project/linux-arm-msm/cover/20250220094251.230936-1-quic_varada@quicinc.com/
->>
->> Wasn't this applied, so why is it still a dependency?
-> I explicitly added it as ipq5332 has not made it to the master branch yet. Should I remove?
+On Thu, Mar 06, 2025 at 12:21:22AM +0100, Uwe Kleine-König wrote:
+> Hello David,
+> 
+> On Wed, Mar 05, 2025 at 04:40:45PM +0100, David Jander wrote:
+> > On Fri, 28 Feb 2025 17:44:27 +0100
+> > Uwe Kleine-König <u.kleine-koenig@baylibre.com> wrote:
+> > > On Thu, Feb 27, 2025 at 05:28:17PM +0100, David Jander wrote:
+> > > [...]
+> > > > +static int motion_open(struct inode *inode, struct file *file)
+> > > > +{
+> > > > +	int minor = iminor(inode);
+> > > > +	struct motion_device *mdev = NULL, *iter;
+> > > > +	int err;
+> > > > +
+> > > > +	mutex_lock(&motion_mtx);  
+> > > 
+> > > If you use guard(), error handling gets a bit easier.
+> > 
+> > This looks interesting. I didn't know about guard(). Thanks. I see the
+> > benefits, but in some cases it also makes the locked region less clearly
+> > visible. While I agree that guard() in this particular place is nice,
+> > I'm hesitant to try and replace all mutex_lock()/_unlock() calls with guard().
+> > Let me know if my assessment of the intended use of guard() is incorrect.
+> 
+> I agree that guard() makes it harder for non-trivial functions to spot
+> the critical section. In my eyes this is outweight by not having to
+> unlock in all exit paths, but that might be subjective. Annother
+> downside of guard is that sparse doesn't understand it and reports
+> unbalanced locking.
+>  
+> > > > +	list_for_each_entry(iter, &motion_list, list) {
+> > > > +		if (iter->minor != minor)
+> > > > +			continue;
+> > > > +		mdev = iter;
+> > > > +		break;
+> > > > +	}  
+> > > 
+> > > This should be easier. If you use a cdev you can just do
+> > > container_of(inode->i_cdev, ...);
+> > 
+> > Hmm... I don't yet really understand what you mean. I will have to study the
+> > involved code a bit more.
+> 
+> The code that I'm convinced is correct is
+> https://lore.kernel.org/linux-pwm/00c9f1181dc351e1e6041ba6e41e4c30b12b6a27.1725635013.git.u.kleine-koenig@baylibre.com/
+> 
+> This isn't in mainline because there is some feedback I still have to
+> address, but I think it might serve as an example anyhow.
+> 
+> > > > [...]
+> > > > +
+> > > > +static const struct class motion_class = {
+> > > > +	.name		= "motion",
+> > > > +	.devnode	= motion_devnode,  
+> > > 
+> > > IIRC it's recommended to not create new classes, but a bus.
+> > 
+> > Interesting. I did some searching, and all I could find was that the chapter
+> > in driver-api/driver-model about classes magically vanished between versions
+> > 5.12 and 5.13. Does anyone know where I can find some information about this?
+> > Sorry if I'm being blind...
+> 
+> Half knowledge on my end at best. I would hope that Greg knows some
+> details (which might even be "no, classes are fine"). I added him to Cc:
 
-If you treat something not yet released as dependency, then please stop
-sending so many versions because nothing here can be applied for this cycle.
+A class is there for when you have a common api that devices of
+different types can talk to userspace (i.e. the UAPI is common, not the
+hardware type).  Things like input devices, tty, disks, etc.  A bus is
+there to be able to write different drivers to bind to for that hardware
+bus type (pci, usb, i2c, platform, etc.)
 
-Why is this a dependency?
+So you need both, a bus to talk to the hardware, and a class to talk to
+userspace in a common way (ignore the fact that we can also talk to
+hardware directly from userspace like raw USB or i2c or PCI config
+space, that's all bus-specific stuff).
 
-Best regards,
-Krzysztof
+Did that help?
+
+thanks,
+
+greg k-h
 
