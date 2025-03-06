@@ -1,179 +1,160 @@
-Return-Path: <linux-kernel+bounces-548010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3195A53EC3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:01:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE237A53EC7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:02:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3D8516A635
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:01:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E8561892970
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD02438DE0;
-	Thu,  6 Mar 2025 00:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B84B652;
+	Thu,  6 Mar 2025 00:01:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BKCk3ueQ"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tQY3jNOo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFC821345;
-	Thu,  6 Mar 2025 00:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5156A367;
+	Thu,  6 Mar 2025 00:01:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741219255; cv=none; b=PKfnCrYmVRGkI8qfKZ7aFhUj26/JlQVfJhPIEazP+wdPwmVulm9eb5pWgo3GU1ioJeUBddjW3xNp8A2Yu6cNKG71MMoGtMFZdzlj+NkuM8Q0PEmz0TOguzLWNBzIQ96UPTSivPzO0ysOE1T5jzjOScS3CS0GGKiluW4t1/Vnl6Q=
+	t=1741219311; cv=none; b=nTuODKoqG9cxVOvJNX03YbZ5R0aWCllvjqkOXyp12UYQZQlIx7VL1GddHEvQQRVeTQMYGXzEBQsp4Li6A95o0UGZFeZXaib+o1MFyRY4B+rG3bHguLbaRNv+KWx8GlhI3zVLaqdqNRvWRgPlX1DhlbnaKBAiIxM4eERJISd/gZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741219255; c=relaxed/simple;
-	bh=9SMTplvOW8Y0aUq+MUzef7Y+O7HPYhrDmJ57NxbBB/A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aRLcjru8q0S6xObwU+5KNxkiJl4khN47hx4JwMiAHDHdfGTm8FRkZ0R6BclCYDb5uNMjZcvQH6o0uqNbaGQ8KWyA75VuQIaN58ZX5RxjfBaoF/iPz7Ci3JHsREd8e5nKXsas94lQVo1+pqsDEsh3QJa0mzkNx+taW9waoj4TV9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BKCk3ueQ; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2feb867849fso154175a91.3;
-        Wed, 05 Mar 2025 16:00:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741219253; x=1741824053; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=GhVW9oe2cjj3Hs7+7j3GMXcu7eiEDWbnxpNS4pNrjzA=;
-        b=BKCk3ueQzBHKjwPUDyuBv/n4shFLfjpku9YUmWd5dig5RjL+/UWRmAyW7K+CmDGUK/
-         WtO8WFu99HiCONPg7l6eK/DgFymxnwr3PcJI6ch9L+WMAk1RaYJcwjE86cBenlBlqTl/
-         HvF9XoPpH+fR3EQD8Ndz/XNgOWdNSNICgy5cSJzur3Jq8g9Th7yT+soXR5+1d90qZWIg
-         cwOhUbiPwyr4CBadosm6U45N8Q5BCT6sZ/uKVl+24cmE1Zn3qyhldmd1wW9R0zosGLNQ
-         pOyALmSoEChF8nnd4I16z/6ET10J1c05wefyQfMGm5Aes7Kjp77Ep8yWLAI2c2iPTLUi
-         /tnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741219253; x=1741824053;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GhVW9oe2cjj3Hs7+7j3GMXcu7eiEDWbnxpNS4pNrjzA=;
-        b=DAK8Pf3xX6OpJ4NyIPYFubdY3XBfaLMyFL3OMrrEny/3H5WJpJ6u/Nqc8Cczb+YBwJ
-         IsF7H3WKAp/TR4BMUCoBWrFJorqKNEzzDWnZfp6+uC9DfsEGP3SNr7Ad4kNowIEbnL/C
-         h52raQw3sWdBMjF6vezW6Gubz5Bk5a/U8KZidazs11woDzrgYgbNZuybQU7tsIzAt6E3
-         EBelrSFBgNB1mAN/f12Snb6mkSC53YbtxpMxeH3jDaEXaVwOIiN0QtOGTseEkqhAiIY+
-         iRsmXaoBfAH7WdgJekRgNdqKO8QGdIwk6mwWXfuDTy/FigvDM4KtqpXJQKUKNGj2gIbh
-         SrkA==
-X-Forwarded-Encrypted: i=1; AJvYcCVu5IQRkA9VenGcjO9Sg97g38kM9bTun/CBPseE/ZPb/UqhU3OvTz9GXKNoKV/Pu7ZB5+RLkjkAZS8afw==@vger.kernel.org, AJvYcCWLAq1X1T4m3fcoyU3EdwnXjrkVZd4Bb8lJddFlAq9oYuHNxjXpJSfrOBvidsWEeImvD7KYshgkKeaHQ+Q=@vger.kernel.org, AJvYcCWonvo6h/44xRFQtg0QtHsJldvJVdJ/rSv18Tb4h/WAAWgrHlE7MvbEf0yNH7nenxlheGl9N1uYYd4S8qU+VH8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywj5izAAorYymMnZyHw//FsJjBVEB3Ml+8OYa7jcdOJ1WUjADYW
-	zhgE++jWCA5kK9lViDa/fxFJauIGxAPOquCvhV8cdj3sP2GQ4jR9
-X-Gm-Gg: ASbGncuXRtKigMp7Z1QGpZdAEFb//69GBmoCDXqHtmRvl457GfzSYwfAqaqx2aF4ggO
-	sZTpD3bqMbpWyZ9Ompx9ViqnR/ynhcWGscE2dQUwIqVNUT3iV933O8ZnRAmuHEli5afbiq2M/jP
-	BBKB34//6KDlC08tPnzmQeIFok7PH4TUcUQIafEVOP+7ZCLJSYSpyrlunIjp4gjyyi5cR5g7bwp
-	Ma3U/IZoLBS6GndyLg1/7fui1S9LZAnHN5SUSWbe2zx0Ecsoa8nFFJbmqJWREIPyIKUrpFYCi9B
-	zvZfM7hP47f3g80tzqRqNXXPyZPcxiWl0oRrZ4SzwipC2r5lvupr2s5p251MR/MmRdFJvRjVP6A
-	3fHf2K0oY7kDtTyP/9g==
-X-Google-Smtp-Source: AGHT+IG0o6NZDwL/ouuTSHVqdZU+QbHNr6bhBHpEI+HHBxP5E469uK+cbJOr5aaDszmuflfUD3yKfQ==
-X-Received: by 2002:a17:90b:2750:b0:2ee:741c:e9f4 with SMTP id 98e67ed59e1d1-2ff4972ad4amr8472496a91.11.1741219252909;
-        Wed, 05 Mar 2025 16:00:52 -0800 (PST)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff6935335asm30567a91.13.2025.03.05.16.00.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 16:00:52 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <5ca55233-b370-4176-9632-8e5df8d4c4ce@roeck-us.net>
-Date: Wed, 5 Mar 2025 16:00:48 -0800
+	s=arc-20240116; t=1741219311; c=relaxed/simple;
+	bh=azxlGePwOlFA7zcE0N3ZDl8+Ny9Zkx377il0JTO8MG8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KAKCtEcoWOjj4q6LcHQTiomMlznUqFGTdPtf3V4c219TDD8nR5nzaigUPS0DaXTguXP3Um2R2fFbMm1xFa0yCzeHCnha4TctK1U44WQLbtlNHxxkR9OqOXmodsK17HClf/7/y9E2Eplgg4z0POnLTX2RrHaKciH0crNAtZpjWWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tQY3jNOo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35488C4CED1;
+	Thu,  6 Mar 2025 00:01:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741219310;
+	bh=azxlGePwOlFA7zcE0N3ZDl8+Ny9Zkx377il0JTO8MG8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tQY3jNOoCTqdU4vTPCjeXnOwgKa7GfKQYUou91frUhAgjUwUZpl4E11vgHD0RAjBb
+	 SYh0JnHNYWbdB6tMQutB6nJYR/wBmGfdJjesBAoEd9El3MU9Wme7yzSYLY5Nyi9pz4
+	 LmSvx8EO4a2FJ4uFahl/InA/mPT2fC6qq8WxZosMN4pTTiKAwsQsrZAAPLhZmf00nf
+	 qLsqCwUMJWy93wH+bGQzufJRtKXIuj9DWBl4eHTHPckG0umgWPMJnuT0ePcU9QGqv9
+	 mqMiyDj3ET/u/0BTxhQ1NsiwGKX/EHvtGkvGlY33VANia95wsTaEJh5RbfFsHMQtc8
+	 nsm6LNd61CFoA==
+Date: Thu, 6 Mar 2025 00:01:36 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Alisa-Dariana Roman <alisadariana@gmail.com>
+Cc: Alisa-Dariana Roman <alisa.roman@analog.com>, "Rob Herring (Arm)"
+ <robh@kernel.org>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, Ramona
+ Gradinariu <ramona.bolboaca13@gmail.com>, David Lechner
+ <dlechner@baylibre.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet
+ <corbet@lwn.net>
+Subject: Re: [PATCH v6 0/3] Add support for AD7191
+Message-ID: <20250306000136.7de51170@jic23-huawei>
+In-Reply-To: <20250228141327.262488-1-alisa.roman@analog.com>
+References: <20250228141327.262488-1-alisa.roman@analog.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] drivers: watchdog: Add support for panic notifier
- callback
-To: Andy Shevchenko <andy@kernel.org>,
- George Cherian <george.cherian@marvell.com>
-Cc: wim@linux-watchdog.org, jwerner@chromium.org, evanbenn@chromium.org,
- kabel@kernel.org, krzk@kernel.org, mazziesaccount@gmail.com,
- thomas.richard@bootlin.com, lma@chromium.org, bleung@chromium.org,
- support.opensource@diasemi.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, paul@crapouillou.net,
- alexander.usyskin@intel.com, andreas.werner@men.de, daniel@thingy.jp,
- romain.perier@gmail.com, avifishman70@gmail.com, tmaimon77@gmail.com,
- tali.perry1@gmail.com, venture@google.com, yuenn@google.com,
- benjaminfair@google.com, maddy@linux.ibm.com, mpe@ellerman.id.au,
- npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
- mwalle@kernel.org, xingyu.wu@starfivetech.com, ziv.xu@starfivetech.com,
- hayashi.kunihiko@socionext.com, mhiramat@kernel.org,
- linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, chrome-platform@lists.linux.dev,
- imx@lists.linux.dev, linux-mips@vger.kernel.org, openbmc@lists.ozlabs.org,
- linuxppc-dev@lists.ozlabs.org, patches@opensource.cirrus.com
-References: <20250305101025.2279951-1-george.cherian@marvell.com>
- <20250305101025.2279951-3-george.cherian@marvell.com>
- <Z8gohVIQqlA6QquZ@smile.fi.intel.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <Z8gohVIQqlA6QquZ@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 3/5/25 02:33, Andy Shevchenko wrote:
-> On Wed, Mar 05, 2025 at 10:10:25AM +0000, George Cherian wrote:
->> Watchdog is not turned off in kernel panic situation.
->> In certain systems this might prevent the successful loading
->> of kdump kernel. The kdump kernel might hit a watchdog reset
->> while it is booting.
->>
->> To avoid such scenarios add a panic notifier call back function
->> which can stop the watchdog. This provision can be enabled by
->> passing watchdog.stop_on_panic=1 via kernel command-line parameter.
-> 
-> ...
-> 
-> First of all, do we really need a new module parameter for that? Why can't it
-> be done automatically if kdump is expected?
-> 
+Hi Alisa-Dariana,
+Looks good to me.  Applied to the togreg branch of iio.git and pushed out
+for now as testing to see if 0-day finds anything we missed.
 
-Sounds like a good idea to me.
+Thanks,
 
-Guenter
+Jonathan
+
+
+On Fri, 28 Feb 2025 16:05:59 +0200
+Alisa-Dariana Roman <alisadariana@gmail.com> wrote:
+
+> v5: https://lore.kernel.org/all/20250226115451.249361-1-alisa.roman@analog.com/
+> 
+> v5 -> v6:
+> 	- use GPL-2.0-only
+> 	- remove kernel.h
+> 	- remove unused macros
+> 	- initialize local indexes
+> 	- check number of gpio pins
+> 	- use bitmap
+> 	- inverse if condition and remove continue in 2 places
+> 	- fit .compatible initialization in one line
+> 	- change MODULE_IMPORT_NS() content to string
+> 	- use iio_device_claim_direct()
+> 	- refactor heading levels in docs
+> 
+> v4: https://lore.kernel.org/all/20250203133254.313106-1-alisa.roman@analog.com/
+> 
+> v4 -> v5:
+> 	- use static arrays in the ad7191_config_setup function, instead of keeping
+> them in the state structure
+> 	- added error checking for devicetree parsing of pga-value and odr-value
+> 	- for now, it doesn't return error when the index corresponding to pga-value
+> or odr-value doesn't match, since index is initialized to 0, so it will use the
+> first value in this case (the bindings constrain the possbile values for these
+> 2 properties, so I thought it's ok like this)
+> 	- use gpiod_multi_set_value_cansleep()
+> 	- move sampling frequency attribute to mask separate (the avail unmodified)
+> 	- removed unused argument form ad7191_setup()
+> 	- removed 2 redundant sections from docs, and renamed one to Devicetree
+> 	- add ad7191.rst to MAINTAINERS
+> 
+> v3: https://lore.kernel.org/all/20250129143054.225322-1-alisa.roman@analog.com/
+> 
+> v3 -> v4:
+> 	- addressed all replies for v3
+> 	- refactored the scale and sampling frequencies configurations to use 2
+> different arrays for gpio case vs pinstrap case
+> 
+> v2: https://lore.kernel.org/all/20250122132821.126600-1-alisa.roman@analog.com/
+> 
+> v2 -> v3:
+> 	- correct binding title
+> 	- remove clksel_state and clksel_gpio, assume the clksel pin is always
+> pinstrapped
+> 	- rephrase clocks description accordingly
+> 	- simplify binding constraints
+> 	- specify in binding description that PDOWN must be connected to SPI's
+> controller's CS
+> 	- add minItems for gpios in bindings
+> 	- make scope explicit for mutex guard
+> 	- remove spi irq check
+> 	- add id_table to spi_driver struct
+> 	- changed comments as suggested
+> 	- use spi_message_init_with_transfers()
+> 	- default returns an error in ad7191_set_mode()
+> 	- replace hard-coded 2 with st->pga_gpios->ndescs
+> 	- use gpiod_set_array_value_cansleep()
+> 	- change .storagebits to 32
+> 	- check return value for ad_sd_init()
+> 	- change to adi,odr-value and adi,pga-value, which now accepts the value as
+> suggested
+> 	- modify variables names and refactor the setup of odr and pga gpios,
+> indexes and available arrays into ad7191_config_setup(), since they are all
+> related
+> 	- add ad7191.rst
+> 
+> v1: https://lore.kernel.org/all/20241221155926.81954-1-alisa.roman@analog.com/
+> 
+> v1 -> v2:
+> 	- removed patch adding function in ad_sigma_delta.h/.c
+> 	- added a function set_cs() for asserting/deasserting the cs
+> 	- handle pinstrapping cases
+> 	- refactored all clock handling
+> 	- updated bindings: corrected and added new things
+> 	- -> address of the channels is used in set_channel()  
+> 	- addressed all the other changes
+> 
+> 
 
 
