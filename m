@@ -1,263 +1,203 @@
-Return-Path: <linux-kernel+bounces-548930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35603A54AF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:42:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A3B9A54AFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:42:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E2331881CF5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:42:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB72B3AF2CA
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:42:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196F220C005;
-	Thu,  6 Mar 2025 12:41:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB2320B80E;
+	Thu,  6 Mar 2025 12:42:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gF+7s/zM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ueJW+by8"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2085.outbound.protection.outlook.com [40.107.220.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F66190051;
-	Thu,  6 Mar 2025 12:41:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741264914; cv=none; b=mWCDJQw7F4BM0IkRpDEtuq9bvPtSy3cQ/+tqLVOU31sNZiSIw2/ipFkEBRLxHqiQPKOvegWSjzQS/VHej8uI4/DV5A2cyDcjx4TnwuMu/tFnt2nzvVBpoc/jQx9HrL0VyVfwFjZhEib5G23RGRhAGU9vRmoRurtDac4jykSXwJw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741264914; c=relaxed/simple;
-	bh=40/PeAeXAjmSJ+HviKd4I8tD+I4pW9r5VSSDdOws/5U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q5DHDXP7trYW2AgtCpLqYKYQkVU6/EPSGShxpLxgnyAW2Os6YW2J6f9qd+u5IOW0ID8Q0m8Jq+gXr33oFtcpd6pJgc4hNcojkyW2EN6r2UOhPVM/VY+2zRFa7ylA3AxXVwiRPtqHLb11Hk/lnxOTP7Fj+xqvPTUMEaEQpZExKVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gF+7s/zM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C0DFC4CEE0;
-	Thu,  6 Mar 2025 12:41:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741264914;
-	bh=40/PeAeXAjmSJ+HviKd4I8tD+I4pW9r5VSSDdOws/5U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gF+7s/zMoiPC27BOey1fWc0EQ/oc5GL0vlN3dpvkBoec3W/x9Epkmvt2dMUYAZ5kN
-	 YwR1nK+EBgNkFNnM2nGlMougBQkKU8vvLiBFhTRKQENEeAkWM+feoyzBkjhBNLfCJL
-	 Yj5jLfW03VKZy+S/A/fuurHAaPPyF66i3oWHIxzuj3mp5/MfwYGFZpOhTwas1PzrAE
-	 kJAB+nk+t9Vfxc6ZfwNtcFRVSlc2iGz9f9eVxr7HJCvwgZQowN5uB1ratl0M9hId95
-	 /zitaRW7vILVR8bcPtzYOB3KyMKX/noGf8IbW+DgZsKYe2+6OK0st6cWlqSC8oSTz8
-	 uaWhO8mnL/dOw==
-Message-ID: <75c17309-3072-4321-ab15-69d60190f2f7@kernel.org>
-Date: Thu, 6 Mar 2025 13:41:47 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0F4190051;
+	Thu,  6 Mar 2025 12:42:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741264925; cv=fail; b=akDNGRflON43Xp4njIeviwWn+K55Ibmc4fuPTXW2nhOCP0bxU6lnxbTKO/nkfIlI3yd4zzqf5c+6gM5Vav575oOyX4kC5F/pvROcTRzVTKze8jy8k83DNuNR24stx9dDzGlozoS4M+4t3ckJSsyAecTPnO41gPhwACpqRjZ+E5Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741264925; c=relaxed/simple;
+	bh=qoDwu5HMgIQ+e4U21aMx7jRyWkMNVNRhJbhEa3eAWbw=;
+	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
+	 In-Reply-To:MIME-Version; b=qiAFPNxI0QuTR+kxLZZz9LoZC3UCmOX+2WlCTITsARs3WOjCftuMtQ0a3ByVCMI0LSLkD18Tl+WrsKjiZyXVXpkDLyvrDV0zMMTQ9obHvM27Hx9MjaJrx0N7lsZ3BEgUGgFvaWJGGcOd3eKjQ0Awft6RbsO6v31DSmDn1ANyrts=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ueJW+by8; arc=fail smtp.client-ip=40.107.220.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Pv5NGqMChXaelf3yc/X0YWQ5Of0lYd1wpzi0Iva1z/GkZ23x0ipXTjVNt1YPTbId1at95ayN/cS87WQBwbeqJC9RZr0eA3pmXA/KzBlToxmebt5hBsVbH0u/lTqpUXEyKMQyYPeq6tIC/pNraL+RF4YJA/eCnJLh8aNnrDJi07Fywn9jLzyMJJEaCbFOqKXw7VNsThFOYBwfX34UW06cK5CgU0ngu7bKBzKSvv8gBlXE+d0rUWn5g81U2q2ypjVH6ZtCGZ2glVq3Vi2VDj1x+VhHW5uHpCYq2r8nFT3HhwoiUdN4jfLmT4tB5AEyW25Q/NSnKazxnm1WVquT+FFGQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qoDwu5HMgIQ+e4U21aMx7jRyWkMNVNRhJbhEa3eAWbw=;
+ b=emqhsc/s28rUaO1esr2OiBfBuxn/TLClh6vHY5G12IJThLhEV81QC1FyMznD9gFTaMG6TieJcdJFqaqptH8s+lvUfPA++892oOiYc6bkvuwhtU5sIJ3poswQ0Kli8wQhicf1VAjRz0tuxlmYzoz5kAG0Q3rDpomsHhrdut91lggfr9rPXFfLYgZGSXT/vllE9HbWOB/01P1R45Mv7Nh5TjyH0W9T38zpvbmxqwvaUaY596csHqQByS0JJaaPttaVKHjP6/g6e6HwE0puD/Nz6Y+AkK2T8r8yXHgJiSQzfU2lRHoRxhBvHEeTBg5tnQo8r7SEyCpsqtXM53HV6TVeYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qoDwu5HMgIQ+e4U21aMx7jRyWkMNVNRhJbhEa3eAWbw=;
+ b=ueJW+by8/rHU884QV3vmVpjlfZP+Roo0aiKInnQDl2KCq7l+I7gfciRgeQfLtb9/CrgdHvrrDNDOb1DZwUlFVe14XUfXHRyybtu0G4OJ4CEzkBnZDWJgURk8+390cs7ej5BLyfSZsHjp6VFQvk5Xc/owut+oFBmIlez8VObIczk4V9K8BjGNxfGAjuZGu/dNr8p6BQi855CymR70cTEZiY72Dyp3RPzcvhSsndQetHDd1vFrzcurin37m3x1r59OW0ADGKwCKfv3XyDjfTVbJQ7kKGCaTCs2zDA+y9AhpuMUr7W//kicSgqEKOTsbJydYAie108/73e7sJuoT7lPJw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MN2PR12MB3997.namprd12.prod.outlook.com (2603:10b6:208:161::11)
+ by DM4PR12MB6254.namprd12.prod.outlook.com (2603:10b6:8:a5::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Thu, 6 Mar
+ 2025 12:42:01 +0000
+Received: from MN2PR12MB3997.namprd12.prod.outlook.com
+ ([fe80::d161:329:fdd3:e316]) by MN2PR12MB3997.namprd12.prod.outlook.com
+ ([fe80::d161:329:fdd3:e316%6]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
+ 12:42:01 +0000
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 06 Mar 2025 21:41:57 +0900
+Message-Id: <D896WBS00WNO.2QFVBP5GPEHA3@nvidia.com>
+Cc: <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
+ <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <benno.lossin@proton.me>,
+ <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
+ <gregkh@linuxfoundation.org>, <mcgrof@kernel.org>, <russ.weight@linux.dev>,
+ <dri-devel@lists.freedesktop.org>, <linux-doc@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <nouveau@lists.freedesktop.org>,
+ <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH v5 5/5] gpu: nova-core: add initial documentation
+From: "Alexandre Courbot" <acourbot@nvidia.com>
+To: "Danilo Krummrich" <dakr@kernel.org>, <airlied@gmail.com>,
+ <simona@ffwll.ch>, <corbet@lwn.net>, <maarten.lankhorst@linux.intel.com>,
+ <mripard@kernel.org>, <tzimmermann@suse.de>, <ajanulgu@redhat.com>,
+ <lyude@redhat.com>, <pstanner@redhat.com>, <zhiw@nvidia.com>,
+ <cjia@nvidia.com>, <jhubbard@nvidia.com>, <bskeggs@nvidia.com>,
+ <acurrid@nvidia.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250304173555.2496-1-dakr@kernel.org>
+ <20250304173555.2496-6-dakr@kernel.org>
+In-Reply-To: <20250304173555.2496-6-dakr@kernel.org>
+X-ClientProxiedBy: TY4P286CA0012.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:405:26d::10) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: Add device tree for TUXEDO Elite 14
- Gen1
-To: Georg Gottleuber <ggo@tuxedocomputers.com>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Konrad Dybcio
- <konrad.dybcio@oss.qualcomm.com>, wse@tuxedocomputers.com,
- cs@tuxedocomputers.com
-References: <57589859-fec1-4875-9127-d1f99e40a827@tuxedocomputers.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <57589859-fec1-4875-9127-d1f99e40a827@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN2PR12MB3997:EE_|DM4PR12MB6254:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc46f6c9-93f1-40d0-84e6-08dd5cac49ea
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dW9kUjNMOXNhMExpeFZhSy9EWDFOTm13ekpqeWRndG5NZDlaZW5iajFScERL?=
+ =?utf-8?B?akNyMVRCeEgxdGoxQUFKd1h3Vnc1ZjJHVXZwNXJVYUV6Z3pxNGd6Q1hZQXlr?=
+ =?utf-8?B?RlJrT0lpMmdqOWRDanFwb3h0Zy9JNzNLS0NxR0xZQkVJajVDcEg0MVVpQlNh?=
+ =?utf-8?B?MzdteHNTUmtCM09QVEF0NDJlYmZ6WnUvek5tM3RxNVYxN29kcDR0TGJIM0ZQ?=
+ =?utf-8?B?TW5pMzJFcFFqZjhyT0hKSEd0MFJrMExsRlBtVVZVVEhXaGVtTWV5L0pqUVpS?=
+ =?utf-8?B?cVlKZkpRcnlKa015c3dWMEpidVNYUkMycjFkSGdNQm1jaDZjVmhvaWIyQWJ1?=
+ =?utf-8?B?SUNtemMvTmRSTzdtaUIvbGJoQW1jMkFYam0vZ2kzZEhxNmk5eC9kaHhodlpJ?=
+ =?utf-8?B?ejdvUkM1dGlCUEVnMzYxanBWdnBzSHdRdEdXVjNwRTJ1Y2MxOEVGdHRFQ1RY?=
+ =?utf-8?B?VHk4V3M5UXRhTUx6RGNjR05jamdGdVd4alIzeXRxcWdFZFNTemw4aC9vRkdB?=
+ =?utf-8?B?MDRWb3JYajgyYXRocU9nd3ZqOHBiV2U5WStGeGhYMURFdU9GUUNPOU5MSXM1?=
+ =?utf-8?B?MWRhVHRwVGduM05Eem5FYXVEa1h3S1BsVDE3S1R2NFdYUkk4SytGcnRmK3Zn?=
+ =?utf-8?B?TGJqOXBkVG45WWpsREhqT2o2S3k0MXFhN3Q4Tmxqc1RMSmZGTFlDazZFUk45?=
+ =?utf-8?B?ZE83NTNMaktRZDVqWEpTZk5aYUdOSUcyRUxyMktQVjhNdnNNdUZJQ1V1OXRV?=
+ =?utf-8?B?Tlh0UW1xaHdLMjc3OG5rbXhjTlJYenZZQUwycmdFSVBlK01hekdkOEtXM0Vy?=
+ =?utf-8?B?Q3JWUUV3SzFYNVBQZENTZFQvYVBsMXEyMDVvL1AwcDhwbnVzWm1oZVRqRVV4?=
+ =?utf-8?B?THFFUDlvckoxeGY5b0xTdXZjeG5aelFiWURRSU5lY054N0pPS3crODZRU3hU?=
+ =?utf-8?B?VW1yWkhSOS9VZ3haUmIySDVYcnR3UDNaaXhERHlRdU0yU3ZCN1I1bVlXSXor?=
+ =?utf-8?B?a0RLUENlMEY4RWNoNEhIOU9SS3FTdG9nWFRKWnhGTVYxMG9CaStUOUFFVE5R?=
+ =?utf-8?B?SWowRnQwMWVwMXZpdndPSys5U1JBUTFmOUNQaDdCSGJHMTVzVXRHWXdKbzlm?=
+ =?utf-8?B?ZGJCc2drNWYydys2aWdHaFpSemZMdDRVQnpKR0hvWFNPSjVWZTdmTlpPK2Z3?=
+ =?utf-8?B?YlBiVVcycUVNbFdabW9odEpsRjFJaGJEWVBoQzQ0REJrbEZEYm9HTmhqTkdW?=
+ =?utf-8?B?TlBoSjYyOGpJNmE4M3hSYlU3bkhFY3lZWGtWU1cwL2hqTUcvUVpiVVhrRm5R?=
+ =?utf-8?B?MkIrMjZBZ09oendia3lvWmhEY2J6ZklzT0taUHFLMmFVSzlFSzduczJKbDJO?=
+ =?utf-8?B?VGpjMjJUU2JEd29yN0dVVXVRbXovaWpvS1NIRjh1N203MmVPbWJWM1hmUVJh?=
+ =?utf-8?B?U2NHTUhNbnZ5WEFuZWQ2TG9MdFRqK3dNMmpvRktJUWJ0dW9LL1RiUXFlSkg2?=
+ =?utf-8?B?eEh3KzlDZUZaSzFoaXdnM2RScGRLaTZBL01DY1pmRlZkSVdsa1lJRDdUTm5R?=
+ =?utf-8?B?aVppenB1UUIycVhhTVhIaXhxM2t1bGsyN2llOWFZaVRCMFo1WkRtWFlJVmVK?=
+ =?utf-8?B?VmozaVBBTWQ0R1NkdHZUOEdNWkZRUVdsWUNsSkdTTzh4aElKMjUva25lTGN4?=
+ =?utf-8?B?RWpOZ1NFMTlmb2haN2MvM1UzS2ZiVnJJMW5VS2tLUXhlcnN3b3RvcTBwcE9Q?=
+ =?utf-8?B?WTFBaTRlMnU1TkEyUFJWYVdwdC85cDFCMUhUWDJIKzFzUmVPZVhFV2NIZzZT?=
+ =?utf-8?B?TVhMVE42bFpkV0JzVVFDT2tiNHhsbVlSUVNTbDR5MGIrWC9PM3hxTVRkenBO?=
+ =?utf-8?B?YXBsbSszWWdZZ2c5QWErVGlJQWRsSkprK0ZTUkM0Ty85WXpRMElxZGwxV3ZZ?=
+ =?utf-8?Q?fz92GFCKqAE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR12MB3997.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Tm9QZXhuZWVyYVdLWjRzREllM3NPamdXOFBRQ1FnMGJ2M0V3bnhCS0VGU1BQ?=
+ =?utf-8?B?U1diRGgwSUpRbTFZaFdVWVpFQ1JXMVFUTkoyc0FqNCtHcUxPcTUyVjIvM0JK?=
+ =?utf-8?B?Q3BRUHo2Q09yODM1dGQzVUlmRDZhdStXRmxlWWsrMmVjdGZNQ0t1R08xRzFN?=
+ =?utf-8?B?L0tqZGZWM0k3RHFoeEViY29OZm9kclQwZ0hHTEtuRmdWRkxhUXpYb1BXOSs0?=
+ =?utf-8?B?ZWJpOEYxRkNYdGNkYlBhMldwSXNUa3RhSnBWS0taZTVPYitWYnJoY0hIUWZX?=
+ =?utf-8?B?b29ua3h6elNwdzVtRU5ubHJaOXB1YWRVVkRJOEtWUCtGV3hTNWx6aTBFWXd3?=
+ =?utf-8?B?MFppRzBtS25DUEM0cWpvbis0K0lnNS9UYkNuQVVpNjkxSDZxVDE2ZWJtbitV?=
+ =?utf-8?B?K2g0dkVad2gzSXNCVS8vQ0hzY3B4SUlidzdyYmkrYmYxbXJ1ajhEOHl5WWk2?=
+ =?utf-8?B?SG1kenJaM1NwYndiQ3FmY2R0K2Y0OWZQSFJ4ZGF3ek84NGhtREx2ZWVkTVNT?=
+ =?utf-8?B?Q0gySldZZm1Eb0hKenRHa2RORmJtUGVBaDRDc2l1VUd0dFVwWk5TVWs3N3N3?=
+ =?utf-8?B?Ykw1ejRpWERkWXJNa2hYNHZRQW9DZnVzQlhlTTNyZTV3TzlSNTRaLzM5UjVW?=
+ =?utf-8?B?cDBtZmpSdUVpQk83YkJYMzBUenM0TVB6eHhRTnJIWXlpSFJNNjVVcUxDOWJD?=
+ =?utf-8?B?UW4rNEdvV0ZlYXZxUURNUW5rdWR1QUkzK2dFMi91d3JYVDBKQkJLYTVwMzlo?=
+ =?utf-8?B?akc0S3hFZFNYd0J6UTJWZVFpK2JOVnorbHFWbjAyMVpoODNTSml0YmpGaElP?=
+ =?utf-8?B?VjRPOSt1K2xERk1rTkk2c0dodDV2UzRHc2xONzdSNzBhaTNLeVB3ZTJUREJx?=
+ =?utf-8?B?V3NKeG1YR3JaWkZUVlI3NzFIOGdJRzdvdGkyanRtMUVFLzl4Y3ZQRjc5SzBy?=
+ =?utf-8?B?UVRWLzE3eEpzU29XTHdCbDM5RWEzaVhNY3V0UUV0ZFNZSUR0UUcrVUtqKzZN?=
+ =?utf-8?B?bFNwbHd4MkhwREVuRW01dG9HSmFRY3dWZ01ndEpLOVlYK0hzMDhqc2VSMFlB?=
+ =?utf-8?B?TXZNdFlPT2N4MTdEMHNiMkkzb3BteThSdEJyblM4Nys3SERORHM0UGw4UDNK?=
+ =?utf-8?B?QVZ4MVJQa3FuNW9PeTBzWXZvaEFkSDlLQktadkZTSmF1d1RlRlhEc0l0SlBQ?=
+ =?utf-8?B?cmdNeVNFNlh4ZHBtU3JGV2ZuUVlTNDI1Yi9OaXhNbjJ4a0NVRkV6Vk1laUhB?=
+ =?utf-8?B?ZzlKenFGalhLaENSNENlaXZHam42Q3hqVnR5TEtnQWNuR09HT1hhTXQxRklX?=
+ =?utf-8?B?RXVET05pSlVtN0ZRSDkzcW9XSEh0Q3hvck5lSHpiY3cza0IwcG9NMzdrYjFj?=
+ =?utf-8?B?UHJxOTR2ZDNHbGZKRFE2Z2I5ZjBlODByZGFDT1hnbXphOTNvbGhoN1VWWlRm?=
+ =?utf-8?B?TWpmNTlPSU5zQm5OTFkxdGpjQ2VwYWJWbllXb2dlcmNLR1g4akwrNzdKZ3RN?=
+ =?utf-8?B?SGIveDlZb2t5UThvU0ZHeDdwVDNadHplOFdPT0FPQlBzeTZwbkY1MVllWGlx?=
+ =?utf-8?B?OURDWTFhM3VKWFZUZjl0ekNJSFA0VDlWcko1bll4NEhBeEE2MGZ4WkpQVGlD?=
+ =?utf-8?B?azljb216QXRVd1RDZURYcEVza3FhMm9TTjBIempTWWZyVzlQdjJ0cGU3cW5O?=
+ =?utf-8?B?VjZMK2dQTnVRQk5YQ1BSY0NJL0l5UkhGZ1J4RSt5YUY2d2RONks1cm5iMUlq?=
+ =?utf-8?B?MUgrbkFDYzRhT3pHTXhUNU1LQnZBZnhXZGtFeisxdnBSZE9qWWdHU25pU2hn?=
+ =?utf-8?B?QUkxcUpvamNYWDRXdTgzM0xrQ0VzWnc0aTdnSVB0cWJsNDNWUE1SVGpuSTB0?=
+ =?utf-8?B?ZWRSRXk5ZmpSQ2lQckxXb0pBRFYrTURFV0RRMldIOXVZOGswaktkNlFpWnBo?=
+ =?utf-8?B?RFhJZGEvTS9Rb2hJNGlHTnh1Yy9MRVhFbjdTYXZzYjFsQjI4UkRDSGthRGJp?=
+ =?utf-8?B?SDdXeGE5SzFCWGkvTVY0cVc4RmVZVVZCM1hncGlhWjRIa3A3L0k0OStmazFP?=
+ =?utf-8?B?SzZtTkNMVit2eVNYYWdsc0VScnl1NWVtdDIvRnNDbkFmeXpzeW01RzdlVmZp?=
+ =?utf-8?Q?UjLBiBatw2dvuiA1X0DZNAlUp?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc46f6c9-93f1-40d0-84e6-08dd5cac49ea
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 12:42:00.8253
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4snvy0H0/B9xGMZrScDUqIFkCZJg1yCVtLPwTqlogmQizXw8Q2q7wzOLCPXdV1R+2ROmfBGCDmQ+5jYBnA4X9Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6254
 
-On 06/03/2025 13:25, Georg Gottleuber wrote:
-> Initial support for TUXEDO Elite 14 Gen1 based on Qualcomm Snapdragon X
-> Elite SoC (X1E78100).
-> 
-> Working:
-> * Touchpad
-> * Keyboard
-> * eDP (no brightness control yet)
-> * NVMe
-> * USB Type-C port
-> * WiFi (WiFi 7 untested)
-> * GPU (software rendering)
-> 
-> Not working:
-> * GPU (WIP: firmware loading but output is jerky)
-> * USB Type-A (WIP)
-> * Suspend with substantial energy saving
-> * Audio, Speakers, Microphones
-> * Camera
-> * Fingerprint Reader
-> 
-> Signed-off-by: Georg Gottleuber <ggo@tuxedocomputers.com>
-> ---
->  arch/arm64/boot/dts/qcom/Makefile             |   1 +
->  .../qcom/x1e80100-tuxedo-elite-14-gen1.dts    | 798 ++++++++++++++++++
->  2 files changed, 799 insertions(+)
->  create mode 100644
-> arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> index 140b0b2abfb5..f0a9d677d957 100644
-> --- a/arch/arm64/boot/dts/qcom/Makefile
-> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> @@ -298,3 +298,4 @@ dtb-$(CONFIG_ARCH_QCOM)     += x1e80100-lenovo-yoga-slim7x.dtb
->  dtb-$(CONFIG_ARCH_QCOM)        += x1e80100-microsoft-romulus13.dtb
->  dtb-$(CONFIG_ARCH_QCOM)        += x1e80100-microsoft-romulus15.dtb
->  dtb-$(CONFIG_ARCH_QCOM)        += x1e80100-qcp.dtb
-> +dtb-$(CONFIG_ARCH_QCOM)        += x1e80100-tuxedo-elite-14-gen1.dtb
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-> new file mode 100644
-> index 000000000000..86bdec4a2dd8
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-tuxedo-elite-14-gen1.dts
-> @@ -0,0 +1,798 @@
-> +// SPDX-License-Identifier: BSD-3-Clause
-> +/*
-> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> + * Copyright (c) 2025 TUXEDO Computers GmbH
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include <dt-bindings/gpio/gpio.h>
-> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
-> +
-> +#include "x1e80100.dtsi"
-> +#include "x1e80100-pmics.dtsi"
-> +
-> +/ {
-> +       model = "TUXEDO Elite 14 Gen1";
-> +       compatible = "tuxedo,elite14gen1", "qcom,x1e80100";
+On Wed Mar 5, 2025 at 2:34 AM JST, Danilo Krummrich wrote:
+> Add the initial documentation of the Nova project.
+>
+> The initial project documentation consists out of a brief introduction
+> of the project, as well as project guidelines both general and nova-core
+> specific and a task list for nova-core specifically.
+>
+> The task list is divided into tasks for general Rust infrastructure
+> required by the project, tasks regarding GSP enablement and firmware
+> abstraction, general GPU driver tasks as well as tasks related to
+> external API design and test infrastructure.
+>
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 
-Please run scripts/checkpatch.pl and fix reported warnings. After that,
-run also `scripts/checkpatch.pl --strict` and (probably) fix more
-warnings. Some warnings can be ignored, especially from --strict run,
-but the code here looks like it needs a fix. Feel free to get in touch
-if the warning is not clear.
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 
-It does not look like you tested the DTS against bindings. Please run
-`make dtbs_check W=1` (see
-Documentation/devicetree/bindings/writing-schema.rst or
-https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-for instructions).
-Maybe you need to update your dtschema and yamllint. Don't rely on
-distro packages for dtschema and be sure you are using the latest
-released dtschema.
-
-
-...
-
-> +
-> +       eusb3_repeater: redriver@47 {
-> +               compatible = "nxp,ptn3222";
-> +               reg = <0x47>;
-> +               #phy-cells = <0>;
-> +
-> +               vdd1v8-supply = <&vreg_l4b_1p8>;
-> +               vdd3v3-supply = <&vreg_l13b_3p0>;
-> +
-> +               reset-gpios = <&tlmm 124 GPIO_ACTIVE_LOW>;
-> +
-> +               pinctrl-0 = <&eusb3_reset_n>;
-> +               pinctrl-names = "default";
-
-No graph? Isn't it needed?
-
-> +       };
-> +
-> +       eusb5_repeater: redriver@43 {
-> +               compatible = "nxp,ptn3222";
-> +               reg = <0x43>;
-> +               #phy-cells = <0>;
-> +
-> +               vdd1v8-supply = <&vreg_l4b_1p8>;
-> +               vdd3v3-supply = <&vreg_l13b_3p0>;
-> +
-> +               reset-gpios = <&tlmm 184 GPIO_ACTIVE_LOW>;
-> +
-> +               pinctrl-0 = <&eusb6_reset_n>;
-> +               pinctrl-names = "default";
-> +       };
-> +
-> +       eusb6_repeater: redriver@4f {
-> +               compatible = "nxp,ptn3222";
-> +               reg = <0x4f>;
-> +               #phy-cells = <0>;
-> +
-> +               vdd1v8-supply = <&vreg_l4b_1p8>;
-> +               vdd3v3-supply = <&vreg_l13b_3p0>;
-> +
-> +               reset-gpios = <&tlmm 111 GPIO_ACTIVE_LOW>;
-> +
-> +               pinctrl-0 = <&eusb6_reset_n>;
-> +               pinctrl-names = "default";
-> +       };
-> +
-
-Stray blank line
-
-> +};
-> +
-> +&mdss {
-> +       status = "okay";
-> +};
-> +
-
-
-> +
-> +&usb_1_ss0_dwc3_hs {
-> +       remote-endpoint = <&pmic_glink_ss0_hs_in>;
-> +};
-> +
-> +&usb_1_ss0_qmpphy_out {
-> +       remote-endpoint = <&pmic_glink_ss0_ss_in>;
-> +};
-> +
-
-Here as well
-
-
-Best regards,
-Krzysztof
+Thanks for this - the todo list in particular is super helpful to
+understand which components outside of the driver we need to include or
+drive to completion.
 
