@@ -1,85 +1,89 @@
-Return-Path: <linux-kernel+bounces-549870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 749E7A55808
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:01:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06369A55804
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:01:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAE791772C6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:01:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF61216D218
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6C7276020;
-	Thu,  6 Mar 2025 21:01:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24028270052;
+	Thu,  6 Mar 2025 21:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="U1CouIeU"
-Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ftrWd3p2"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2071.outbound.protection.outlook.com [40.107.101.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E630207E00;
-	Thu,  6 Mar 2025 21:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741294885; cv=none; b=m84l/ce6V3CnsFLDc0eUH9W9gt2dIfesDYQNPOdC2xYdwDHbOzKr9+Z4bvGjuHJdiq9n0UagAineXDHQ/p7T1ZhE69uZuTXFyY9Oph0TwonmL4PnBlEirlayj9TVE2dCUmHxjTXsABjsVtYJKILnXYK3n4wgg8M/lwc/yRc89Q0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741294885; c=relaxed/simple;
-	bh=kGZfpJDbO2J1BM3sYh7KXV2ALbildeR9iQVCOOvLG9o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MjEx10umGTlW92cLUA5e8Ll2vXCUap8NAPewHhiKAvEN9kxhCLABnenjkTmCGFtDAvDfsgyhU+4sC7bmxeqiksLiUhN37n5dCuslYlILbJ7843YxhbpovW1XwpPMEgAsncXaUOmQ561Hq6Enu3ullgF6TfCT8u8RJIGoz1rEGuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=U1CouIeU; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
-	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526HfbQc002962;
-	Thu, 6 Mar 2025 16:01:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=mtD1A
-	kqVVK0ZCZdy8pI+QB1o62lbWLXkQOc0ljf0wSo=; b=U1CouIeUjJznVOH915CfH
-	Ro63xzZbNwuMajLVgJDRjygfxlGJgfjQnUNs+4EAu3A0I2yx3rlKoo6z9ZzPc4sB
-	9K0XaIhdtaimIQbAFRwza72Hihin4XqnIlNTDeFu8asEKjV1RN8jlCaZqq6bIJBX
-	X0RSapITMnRPuMXAhv2UDBUGot1l6ADAPsucREUvqawroAUr0L30p3Yz3jzCS2q0
-	o+n6VunqPNTOHex5q5XE6BLcmvHVnC00D3YT198xV3Hsfrx77NL0oNe0DzVBolH2
-	6K0QOnp30BKW04OaspdbVNh6Y9TZ/sM3zS8h9RQVau8cOTYRgANWEMCqs7OcuEx6
-	g==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 455wnuf8eu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 06 Mar 2025 16:01:04 -0500 (EST)
-Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 526L12F2034760
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 6 Mar 2025 16:01:02 -0500
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX8.ad.analog.com (10.64.17.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Thu, 6 Mar 2025 16:01:02 -0500
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Thu, 6 Mar 2025 16:01:02 -0500
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Thu, 6 Mar 2025 16:01:02 -0500
-Received: from JSANTO12-L01.ad.analog.com ([10.65.60.206])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 526L0hxc011453;
-	Thu, 6 Mar 2025 16:00:46 -0500
-From: Jonathan Santos <Jonathan.Santos@analog.com>
-To: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-CC: Jonathan Santos <Jonathan.Santos@analog.com>, <lars@metafoo.de>,
-        <Michael.Hennerich@analog.com>, <marcelo.schmitt@analog.com>,
-        <jic23@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linus.walleij@linaro.org>, <brgl@bgdev.pl>,
-        <lgirdwood@gmail.com>, <broonie@kernel.org>, <dlechner@baylibre.com>,
-        <marcelo.schmitt1@gmail.com>, <jonath4nns@gmail.com>
-Subject: [PATCH v4 02/17] iio: adc: ad7768-1: set MOSI idle state to prevent accidental reset
-Date: Thu, 6 Mar 2025 18:00:43 -0300
-Message-ID: <c2a2b0f3d54829079763a5511359a1fa80516cfb.1741268122.git.Jonathan.Santos@analog.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1741268122.git.Jonathan.Santos@analog.com>
-References: <cover.1741268122.git.Jonathan.Santos@analog.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7993207E13
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 21:01:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741294884; cv=fail; b=uFFmh4H0i8qqK8Ue/NC1/w0IZgFBJEkwa+DOPe52LXOIWUMP6nQgaN6PswVTEwmpu36gn3ZaCZOfFoPsBb2Wg1TjA8RKXYoiJA0HulSsp2PZteKNc+NI9yn80JjFE2zHvwt/Vg5Yq960vdl4w5vUBrTy0O9LNQng6fi3fM2gr+w=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741294884; c=relaxed/simple;
+	bh=yclrIAF6GrVZKNmYzNEXPdUqXlOu8Yuh0LEL85wvUE8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=f74BDlDtt+WoK+HvsC/k/amJwo/YaWayA8auT2smDE28B58Qi2E221/km5NqxWdmJlzjrdpNtBB5/fiYno3yAU8Kp8n4g3lyfxkd2dJQfkZ51y8Smss+ibyDPh7zn1uYH5toI/YzIjgFso7R3G80+lfORJu0W/KxzuJFeW4yYQU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ftrWd3p2; arc=fail smtp.client-ip=40.107.101.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=njHypXPiA8pnW2QF+8rZnbeVuIM6GiKBCYHxNC6bNZ+LZZgSpvfQdAckRDtASHI5USWME+3VZ3DYmRFrh3svRmE4I+3jXnMG1CDZPCc3XfdPLlUzYx2Mgo9p/4VvFxYcidikfPt2aETp1XR+OFd0i/IrMV0rmXVUjeEhptruZKa1D5DbSiKDFUPgVjoQMJkYnVHAEWe5uqhevW9zVVe8kAYbQT3utVluGGZZeNP0V4tXpEyTMzxicOwk+A+Kg0jb46ioK4uWIV2nklcowE77UOkRxnh877hvgJY1SGZYjnEfi7oLcEJzALrIJnIQgdv9+BJsS2HP3F6LXttph3MlkA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=klnn/TOFzm1LwmSpMjEwRVsDLm5JDnSDsdsgwmJGBU8=;
+ b=A3oGWJtb/wXAyuTNixi3+SGpxNioOfcnEmBC19u8VDWfxnTlo2QsbDnI4ILHFpFU2gl/WEJiUHBk9Vxg9KVr6oiffsAuxw507pKLaN7egkBWlSBTCRUcEMGN3E63e/UpOcrE8r6MZyX8niTi6e/9aRuoOyKLlrdrB+pB6K7DAJg1diI4d/WKLHTqw/cmxX4FtGtzIs0lcRBjJUkglyoWQVGxGkSclS20a3yntueEePPbzGRFquUSTZxYtRGg+EFFo9Lqc7PlOXI1NfgBM3Bt8/tmIMNFryzBH0lX826Ffdm55JQwSEeVjeE16mh4ONyVKgmDx1L1htuuCDy1s6wcFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=klnn/TOFzm1LwmSpMjEwRVsDLm5JDnSDsdsgwmJGBU8=;
+ b=ftrWd3p2z46ga3CHaiff3IkilNvn81oSjNeu4ptW56SYaWtmYlGaY/se2SJ+EQ4k9NBWLssnu7VT1k6xKBVpxzbPB+hGQHvpdEIpez06DgGGPwhSkJVoFK3yRDGAKyiX0Mx5POOXmubWiaCUCZVqqHVn7VGeHFdrU3VGlBgz/CI7qsGbL+P+pKBLoNIsQe1krQUYzRuT3eVZsL6qqXUPaovaFOThQigfEfZKi7024bWATvCNoYRBDZ/uiJHM9VcBZo39pJZdbZaTLUi3eXDM+B+jjeVvCDUuQ5E28u8Z67NL/gr9Pdr65Sjov6+qsR6G+uTpJ46VGlAG8Hde3a245A==
+Received: from SA1P222CA0150.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c2::20)
+ by SJ2PR12MB9137.namprd12.prod.outlook.com (2603:10b6:a03:562::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Thu, 6 Mar
+ 2025 21:01:18 +0000
+Received: from SA2PEPF000015CC.namprd03.prod.outlook.com
+ (2603:10b6:806:3c2:cafe::84) by SA1P222CA0150.outlook.office365.com
+ (2603:10b6:806:3c2::20) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.19 via Frontend Transport; Thu,
+ 6 Mar 2025 21:01:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SA2PEPF000015CC.mail.protection.outlook.com (10.167.241.202) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8511.15 via Frontend Transport; Thu, 6 Mar 2025 21:01:18 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 6 Mar 2025
+ 13:01:02 -0800
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 6 Mar
+ 2025 13:01:01 -0800
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.12) by mail.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Thu, 6 Mar 2025 13:01:01 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <jgg@nvidia.com>, <kevin.tian@intel.com>, <robin.murphy@arm.com>,
+	<joro@8bytes.org>, <will@kernel.org>
+CC: <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 0/3] iommu: Clean up cookie and sw_msi in struct iommu_domain
+Date: Thu, 6 Mar 2025 13:00:46 -0800
+Message-ID: <cover.1741294235.git.nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,72 +92,122 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: G7uyCLKeAEoW2P7k_-9HXw_gDuM7iHQ6
-X-Proofpoint-ORIG-GUID: G7uyCLKeAEoW2P7k_-9HXw_gDuM7iHQ6
-X-Authority-Analysis: v=2.4 cv=VNcnn8PX c=1 sm=1 tr=0 ts=67ca0d10 cx=c_pps a=PpDZqlmH/M8setHirZLBMw==:117 a=PpDZqlmH/M8setHirZLBMw==:17 a=Vs1iUdzkB0EA:10 a=gAnH3GRIAAAA:8 a=x-s49S57KS4xq0-Af7kA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-06_07,2025-03-06_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- spamscore=0 clxscore=1015 priorityscore=1501 bulkscore=0 mlxlogscore=999
- lowpriorityscore=0 impostorscore=0 suspectscore=0 adultscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503060160
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF000015CC:EE_|SJ2PR12MB9137:EE_
+X-MS-Office365-Filtering-Correlation-Id: 92ec067f-4d9d-49da-fe20-08dd5cf20a70
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?x36PVBX3yXo+u9yxx5FrIt6hk5m+NArDMjdNayFB4Y4mT9lesNc9sMInbC0l?=
+ =?us-ascii?Q?pmZgM+/FcwLs2WXA5dlcsuuWWVWNzTY11yb9ugUhIHoXW3G3xabLirrBPdy1?=
+ =?us-ascii?Q?agw96AhVD8bpoqmzy7DljPUyf08aPDiH4gp8gO7AWUfoUfEv2mHvxxpl7Rug?=
+ =?us-ascii?Q?Sg4O6dduKRT0TFotTbIhe8uexcyIeM8ZY2IZ7YZGCbcUgOgcb7tdgsPMc9j/?=
+ =?us-ascii?Q?Iw5mZ5xhsAzBodhmfDoSDpcaObc6tdo1Z9+nr1v4h0L5EFtnfYRXhU+vfyNO?=
+ =?us-ascii?Q?LEyExbFCrhUmGgEMMuWdF1yxDEOb9POsseLmZu03mAS2jK/6bT8BjnTegkjD?=
+ =?us-ascii?Q?otlz6jahDN/9Yc+VvB1/QdyC4AKvySHEm6yKhckMm+oGFOjp5qcJyZtgRbED?=
+ =?us-ascii?Q?jxoccAZwYehpMbTitcstCTgUvUdS77s5VJLq6fz9oKVAsFkYCZZvtjsslhCJ?=
+ =?us-ascii?Q?3LVdMMx1acloSD/UZQruBHJVoaHz3MxxnOCOYmj3p2kalP4xy3welU9bRSM6?=
+ =?us-ascii?Q?ELeGkQL/2MDiFIU7LhBIyx2QBEbRhqaTsH6jFVdnQHu6IEr3Vzvkq2lyvJza?=
+ =?us-ascii?Q?YLtoiuKiY8+Yp6LCbmUcr47ZbKdDdksrqB5xTicRHrOuTSj3vxrU2l1keq9d?=
+ =?us-ascii?Q?FwBS9W/s1fi//ir1vyPnnFxgS/TqZLXOiPImb42yBsyMwzc/0TjzHiUn5lo+?=
+ =?us-ascii?Q?Hf1lGmzJ3QXke7AWaeWHg4FaLD4ZcMtqZdlkivaCDtg+hS7iXcRfCZ0eJZDQ?=
+ =?us-ascii?Q?jvfI5l54lU3x0+WNQ/i6U//ZSjP7TJb+Ck9RPLAoyJtGXIE7qT/DOPR5kY1F?=
+ =?us-ascii?Q?lsoG04ONs07soBeyxZfg97gFT5d+mQRNRxr9oPSN8ft15rNeODtpF1LTiiFz?=
+ =?us-ascii?Q?+z3I92ftNZgmlih6mrOC4+85bcYyAeiP80SZztklfzN6bdlxW+Ye2SlK89uE?=
+ =?us-ascii?Q?bjFG6tk1Q3D2xtVnjiroltMiqsPYIJtrJrQOo3LfkgH7tyayw34Y//30Nn6d?=
+ =?us-ascii?Q?jCxGEjoNc896td0vNrykPePQY9t/HhP5XMH9gRHgKzoPG4adQI2WrKGV0Ish?=
+ =?us-ascii?Q?N/oJ5EejiKqbCGEe3ClLlfaKBjDofr50U2jo4bM5dUDV34XneWaDz93JeDE5?=
+ =?us-ascii?Q?hf+xUzXCmwRRyJiJ/Wq0hjxHHGUnyOJkv4H2gPMJh4TgzwRJHdoyGdVyNlso?=
+ =?us-ascii?Q?rlQYi2k83Ge5lLYG1blrr5gY+HEBxlR0d83nzW7J2ymLPxwhf6NzkrK90N0x?=
+ =?us-ascii?Q?p/s91O1M+PFOcN7juH+44bf13Te4wMHki0Re4d0vU2lkQ2m6ZquNXhwJzXnp?=
+ =?us-ascii?Q?wPFBPg57zPh1ZgLUFlTv7k3sZUsLa48HtfaO0vfWYuFdI8dXp0R73vIc6Dsw?=
+ =?us-ascii?Q?C7V3V64LWBPiOGv4nUs8W7bDHtXB49LMM++N3U53npXlq1xQR4vLIiuCLRAt?=
+ =?us-ascii?Q?OzinvMd1mw3O2famWHumqrZ8dSBn3KR5QfdA3fUjsMCJySb3Zj/vpPA4z55c?=
+ =?us-ascii?Q?quUFoHLlyEYqpgA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 21:01:18.1934
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 92ec067f-4d9d-49da-fe20-08dd5cf20a70
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF000015CC.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB9137
 
-Datasheet recommends Setting the MOSI idle state to high in order to
-prevent accidental reset of the device when SCLK is free running.
-This happens when the controller clocks out a 1 followed by 63 zeros
-while the CS is held low.
+A few things in iommu_domain structure (such as iova_cookie, iommufd_hwpt,
+fault handler, and etc) are exclusive to certain types of iommu_domains.
+So, all of them can be seen as domain cookies in different cookie types.
 
-Check if SPI controller supports SPI_MOSI_IDLE_HIGH flag and set it.
+Furthermore, iova_cookie is shared with the msi_cookie use case. It could
+be cleaner by decoupling these too.
 
-Fixes: a5f8c7da3dbe ("iio: adc: Add AD7768-1 ADC basic support")
-Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
----
-v4 Changes:
-* None.
+Define an enum iommu_domain_cookie_type to fit all those cookies in.
 
-v3 Changes:
-* Patch moved closer to the start of the patch set.
+Since there are only two sw_msi implementations, check domain->cookie_type
+in iommu_dma_prepare_msi() to call the corresponding sw_msi function.
 
-v2 Changes:
-* Only setup SPI_MOSI_IDLE_HIGH flag if the controller supports it, otherwise the driver
-  continues the same. I realized that using bits_per_word does not avoid the problem that
-  MOSI idle state is trying to solve. If the controller drives the MOSI low between bytes
-  during a transfer, nothing happens.
----
- drivers/iio/adc/ad7768-1.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+This is a clean-up series for the previous sw_msi Part-1 core series. It's
+on github:
+https://github.com/nicolinc/iommufd/commits/iommufd_msi_cleanup-v4
 
-diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-index c3cf04311c40..2e2d50ccb744 100644
---- a/drivers/iio/adc/ad7768-1.c
-+++ b/drivers/iio/adc/ad7768-1.c
-@@ -574,6 +574,21 @@ static int ad7768_probe(struct spi_device *spi)
- 		return -ENOMEM;
- 
- 	st = iio_priv(indio_dev);
-+	/*
-+	 * Datasheet recommends SDI line to be kept high when data is not being
-+	 * clocked out of the controller and the spi clock is free running,
-+	 * to prevent accidental reset.
-+	 * Since many controllers do not support the SPI_MOSI_IDLE_HIGH flag
-+	 * yet, only request the MOSI idle state to enable if the controller
-+	 * supports it.
-+	 */
-+	if (spi->controller->mode_bits & SPI_MOSI_IDLE_HIGH) {
-+		spi->mode |= SPI_MOSI_IDLE_HIGH;
-+		ret = spi_setup(spi);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
- 	st->spi = spi;
- 
- 	st->vref = devm_regulator_get(&spi->dev, "vref");
+Changelog
+v4
+ * Rebase on top of a bug fix for hwpt_iommufd cookie
+   https://lore.kernel.org/all/20250305211800.229465-1-nicolinc@nvidia.com/
+ * Add Reviewed-by from Robin and Kevin
+ * Add missing "break;" in iommu_domain_free()
+ * Drop "linux/msi.h" header from the iommufd/device code
+ * Set iommufd_sw_msi_install's SYMBOL to "IOMMUFD_INTERNAL"
+ * Update commit messages for typo fixing and size comparison
+ * Add a local msi_page_list to cache cookie_msi_pages(domain) return
+ * Add an inline iommufd_group_setup_msi() for !CONFIG_IRQ_MSI_IOMMU
+v3
+ https://lore.kernel.org/all/cover.1741034885.git.nicolinc@nvidia.com/
+ * Integrate Robin's patch
+   https://lore.kernel.org/linux-iommu/4e68d5820be06adc1b34fc0d1c9399481151daee.1740742271.git.robin.murphy@arm.com/
+   replacing private_data_owner with the new cookie_type
+ * Move iommu_sw_msi stub from the public header to iommu-priv.h
+v2
+ https://lore.kernel.org/all/cover.1740705776.git.nicolinc@nvidia.com/
+ * Drop sw_msi function pointer
+ * Add a new private_data_owner tag in iommu_domain
+ * Let iommu core call the two sw_msi implementations directly
+v1
+ https://lore.kernel.org/all/cover.1740600272.git.nicolinc@nvidia.com/
+
+Thanks
+Nicolin
+
+Nicolin Chen (2):
+  iommufd: Move iommufd_sw_msi and related functions to driver.c
+  iommu: Drop sw_msi from iommu_domain
+
+Robin Murphy (1):
+  iommu: Sort out domain user data
+
+ drivers/iommu/dma-iommu.h               |  14 ++
+ drivers/iommu/iommu-priv.h              |  13 ++
+ drivers/iommu/iommufd/iommufd_private.h |   7 +-
+ include/linux/iommu.h                   |  35 ++--
+ drivers/iommu/dma-iommu.c               | 208 ++++++++++++------------
+ drivers/iommu/iommu-sva.c               |   1 +
+ drivers/iommu/iommu.c                   |  35 +++-
+ drivers/iommu/iommufd/device.c          | 131 +--------------
+ drivers/iommu/iommufd/driver.c          | 125 ++++++++++++++
+ drivers/iommu/iommufd/hw_pagetable.c    |   6 +-
+ 10 files changed, 320 insertions(+), 255 deletions(-)
+
+
+base-commit: 4b022ff93d8b332891cae818a7331942db50610f
 -- 
-2.34.1
+2.43.0
 
 
