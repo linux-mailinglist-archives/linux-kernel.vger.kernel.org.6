@@ -1,153 +1,172 @@
-Return-Path: <linux-kernel+bounces-548102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62DE1A53FF7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:32:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DE3EA53FFD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:36:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A3A83A9586
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:32:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D703188F884
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65D617E473;
-	Thu,  6 Mar 2025 01:32:45 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AA418B464;
+	Thu,  6 Mar 2025 01:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="U6n9MltG"
+Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22B361EB2A
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 01:32:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1862D12F5A5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 01:36:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741224765; cv=none; b=nwlu037SNR/PX7bA42rHsCCTG7YHfO9RxC0X/GcgdigztC5puNFXeuicCN3xSRhYxk0CFWJKBohdKsLujtsKBYn2Y8+rrsmpYBAPBMSSjUsxDFLto+scX/GOqxO/4T7Mg+tgRZQCEhsxX3nlerM97VyCL7nly8MvfnW89bfDsUY=
+	t=1741224963; cv=none; b=Ch23oLnHgsgU9dRF/MOzUedtC/xt88baFTuAQZ3rhzKMk1r8rm+9LPwjszUuwKVUE3dLcF+LZrqqbhKTgYRy9XcN4Dd/iiCr2ri9PKwloDB69Bbbc8fAy0r4ySy88YSJYbmtEXNbkqpAE/pjvwoYZLD1s0JFWMytQD+5VmKUwAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741224765; c=relaxed/simple;
-	bh=zKldQpPWeoSzOmeGmxYaFcn+fWjqCoxG+1gHFyXn2/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=asdkBE5Q4XkNmid/93T5LBXvhhsO0+cK+tucbTrl0+3Qei02ebVMKmkY7K1W45VznFtFtPYVQXqPWpfDcLMD7dVlKQnudKW402AdaxCxJu4bfy5VFYjmiEc0h9OMQwhCcwD4ep9x1ftycVBxcuTytvo5cf3TBeJD5+LpeeJQtHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: e11f659cfa2a11efa216b1d71e6e1362-20250306
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:d42586ec-b316-4fd5-a095-2db611931e7c,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:20d8a490134ba7f827e10872660987bf,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: e11f659cfa2a11efa216b1d71e6e1362-20250306
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <liuye@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1929729831; Thu, 06 Mar 2025 09:32:34 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 39947B807587;
-	Thu,  6 Mar 2025 09:32:34 +0800 (CST)
-X-ns-mid: postfix-67C8FB32-120793925
-Received: from [172.30.70.73] (unknown [172.30.70.73])
-	by node2.com.cn (NSMail) with ESMTPA id BFEFAB807587;
-	Thu,  6 Mar 2025 01:32:31 +0000 (UTC)
-Message-ID: <085b5684-1444-4684-b2e3-b25f2e0dc554@kylinos.cn>
-Date: Thu, 6 Mar 2025 09:32:18 +0800
+	s=arc-20240116; t=1741224963; c=relaxed/simple;
+	bh=m7Yrmh0IoxcGUiuEpPifwUioJMqsqBdm2uaqhnC+GTw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IZj3K2jz0WBt6WEt+WgnMlTXLAPx1L9ogENlirFCs6OHbVOf8nBL6x4g5D1kT5XmfkFp76nRNCn2iWckTar7Ak7fIAqFCa1Cf692PsJZEXZs4JKub5FXjrd2vufD23JiLrEkA9vWuwzV6fbBcADbCD0Hiy98rokRC1Q21/DmgfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=U6n9MltG; arc=none smtp.client-ip=185.70.43.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741224958; x=1741484158;
+	bh=ND+2J8eDESvWBePjwilBskO3freJ/kVq1V4PGxH5RG8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=U6n9MltG2oZDw4oQnDzNAEbic41sfYzDMZC1Uhu+g+sqKlwtjZ+vzK0KBjxISWLXv
+	 L3YP863L/T7Xcg/NyKZjSjNFg4mrI7ZKc1TpPUtNRv/yO6LFKxIs8DQLavVNsdEFGb
+	 LMVHpFSOcJcRewSEepiPjtp86hGJO3dHJGWfTyDVdEEmsFN/WkHXTZcp9X5Xlbo3Ur
+	 2eMV5wSUw14CdFOaa4oJxN9KEa2u9mQSflSh07KLR6eD8L9M6fhTGUO3XgYgtqHPPL
+	 xB9FW4oTVbTc/Z0cBB21ewkQ4RIP8pbg806bhkcDRTA+fMkFVXP0n3ix7RbdpCRC0v
+	 nOY9PqgWhKqjw==
+Date: Thu, 06 Mar 2025 01:35:52 +0000
+To: Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: airlied@gmail.com, simona@ffwll.ch, corbet@lwn.net, maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, ajanulgu@redhat.com, lyude@redhat.com, pstanner@redhat.com, zhiw@nvidia.com, cjia@nvidia.com, jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com, ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu, gregkh@linuxfoundation.org, mcgrof@kernel.org, russ.weight@linux.dev, dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] rust: firmware: introduce `firmware::ModInfoBuilder`
+Message-ID: <D88SQ87X0OHX.1ZD8LM8LKUQ8J@proton.me>
+In-Reply-To: <Z8j6ckpD6JVY4m-p@pollux>
+References: <20250304173555.2496-1-dakr@kernel.org> <20250304173555.2496-3-dakr@kernel.org> <D88OSC9XJXZL.C5HXWFYCG9U6@proton.me> <Z8jSV5CpZDcXrviY@pollux> <D88Q7503C8FF.2TMMBSEMOGKU1@proton.me> <Z8jk3qs6nCIJz-39@pollux> <D88R7HI1Z6GG.ZOQ9A1VQOR28@proton.me> <Z8j6ckpD6JVY4m-p@pollux>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: e2e6315ff5a51d3333eb47ebe8d3305ce534f871
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] mm/vmalloc: Remove unnecessary size ALIGN in
- __vmalloc_node_range_noprof
-To: Uladzislau Rezki <urezki@gmail.com>, Baoquan He <bhe@redhat.com>
-Cc: akpm@linux-foundation.org, hch@infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250303094410.437985-1-liuye@kylinos.cn>
- <20250303094410.437985-2-liuye@kylinos.cn> <Z8X1U-3f35-JZTUr@pc636>
- <6701d375-8d7c-4e13-b0db-486a48088446@kylinos.cn>
- <Z8ghK22l7USzuBWY@MiWiFi-R3L-srv> <Z8giNq5CMtbYnlo-@pc636>
-Content-Language: en-US
-From: liuye <liuye@kylinos.cn>
-In-Reply-To: <Z8giNq5CMtbYnlo-@pc636>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-
-
-=E5=9C=A8 2025/3/5 18:06, Uladzislau Rezki =E5=86=99=E9=81=93:
-> On Wed, Mar 05, 2025 at 06:02:19PM +0800, Baoquan He wrote:
->> On 03/05/25 at 09:46am, liuye wrote:
->>>
->>> =E5=9C=A8 2025/3/4 02:30, Uladzislau Rezki =E5=86=99=E9=81=93:
->>>> On Mon, Mar 03, 2025 at 05:44:07PM +0800, Liu Ye wrote:
->>>>> The same operation already exists in the function __get_vm_area_nod=
-e,
->>>>> so delete the duplicate operation to simplify the code.
->>>>>
->>>>> Signed-off-by: Liu Ye <liuye@kylinos.cn>
->>>>> ---
->>>>>  mm/vmalloc.c | 1 -
->>>>>  1 file changed, 1 deletion(-)
->>>>>
->>>>> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
->>>>> index dc658d4af181..20d9b9de84b1 100644
->>>>> --- a/mm/vmalloc.c
->>>>> +++ b/mm/vmalloc.c
->>>>> @@ -3798,7 +3798,6 @@ void *__vmalloc_node_range_noprof(unsigned lo=
-ng size, unsigned long align,
->>>>>  			shift =3D arch_vmap_pte_supported_shift(size);
->>>>> =20
->>>>>  		align =3D max(real_align, 1UL << shift);
->>>>> -		size =3D ALIGN(real_size, 1UL << shift);
->>>>>  	}
->>>>> =20
->>>>>  again:
->>>>> --=20
->>>>> 2.25.1
->>>>>
->>>> There is a mess with:
->>>>
->>>>  unsigned long real_size =3D size;
->>>>  unsigned long real_align =3D align;
->>>>
->>>> "real_size" and "real_align". Those are useless. What is about:
->>>
->>> Sorry, the order of the patches may be misleading.
->>>
->>> The correct order is as follows=EF=BC=9A
->>>
->>> PATCH1.=C2=A0 mm/vmalloc: Size should be used instead of real_size "
->>> PATCH2.=C2=A0 mm/vmalloc: Remove unnecessary size ALIGN in __vmalloc_=
-node_range_noprof=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0
->>> PATCH3.=C2=A0 mm/vmalloc: Remove the real_size variable to simplify t=
-he code "
->>> PATCH4.=C2=A0 mm/vmalloc: Rename the variable real_align to original_=
-align to prevent misunderstanding
->>>
->>> If=C2=A0PATCH1 is the correct fix, then consider=C2=A0PATCH2,=C2=A0PA=
-TCH3, and=C2=A0PATCH4.
+On Thu Mar 6, 2025 at 2:29 AM CET, Danilo Krummrich wrote:
+> On Thu, Mar 06, 2025 at 12:24:21AM +0000, Benno Lossin wrote:
+>> On Thu Mar 6, 2025 at 12:57 AM CET, Danilo Krummrich wrote:
+>> > On Wed, Mar 05, 2025 at 11:36:54PM +0000, Benno Lossin wrote:
+>> >> On Wed Mar 5, 2025 at 11:38 PM CET, Danilo Krummrich wrote:
+>> >> > On Wed, Mar 05, 2025 at 10:30:31PM +0000, Benno Lossin wrote:
+>> >> >> On Tue Mar 4, 2025 at 6:34 PM CET, Danilo Krummrich wrote:
+>> >> >> > +    /// Push an additional path component.
+>> >> >> > +    ///
+>> >> >> > +    /// After a new [`ModInfoBuilder`] instance has been create=
+d, [`ModInfoBuilder::prepare`] must
+>> >> >> > +    /// be called before adding path components.
+>> >> >> > +    pub const fn push(self, s: &str) -> Self {
+>> >> >> > +        if N !=3D 0 && self.n =3D=3D 0 {
+>> >> >> > +            crate::build_error!("Must call prepare() before pus=
+h().");
+>> >> >>
+>> >> >> This will only prevent the first `prepare` call being missed, righ=
+t?
+>> >> >
+>> >> > Correct, unfortunately there's no way to detect subsequent ones.
+>> >>
+>> >> Does it make sense to do that one in the constructor?
+>> >>
+>> >> (After looking at the example below) Ah maybe you can't do that, sinc=
+e
+>> >> then you would have two `prepare()` calls for the example below...?
+>> >
+>> > Exactly.
+>> >
+>> >> >> If you always have to call this before `push`, why not inline it t=
+here?
+>> >> >
+>> >> > You can push() multiple times to compose the firmware path string (=
+which is the
+>> >> > whole purpose :).
+>> >>
+>> >> Ah I see, I only looked at the example you have in the next patch. Al=
+l
+>> >> in all, I think this patch could use some better documentation, since=
+ I
+>> >> had to read a lot of the code to understand what everything is suppos=
+ed
+>> >> to do...
+>> >
+>> > I can expand the example in module_firmware! to make things a bit more=
+ obvious.
+>> >
+>> > Otherwise, what information do you think is missing?
 >>
->> Well, seems the patch split is done too subtly. It's only about the
->> size/align inside one function, maybe one patch is enough in this case=
-.
->> My personal opinion.
->>
-> I agree. One patch would be enough.
->=20
+>> Abstractly: what `ModInfoBuilder` *does*, concretely:
+>> - why the generic constant `N` exists,
+>
+> It doesn't really matter to the user, since the user never needs to suppl=
+y it.
+> That happens in the module_firmware! macro.
+>
+> I agree it not good to not mention anything about it at all, but I wouldn=
+'t want
+> to bother the user with all implemention details.
+>
+> We can probably just mention that it's used internally and is supplied by
+> module_firmware!. (That module_firmware! does that by doing a dry run of =
+the
+> builder itself, isn't necessary to know for the user I think.)
+>
+>> - what `prepare()` does,
+>
+> Same here, it's an implementation detail not relevant to the user. All th=
+e user
+> needs to know is that prepare() acts as a separator to be able to supply =
+the
+> next firmware path.
 
-At first, I only wanted to use one patch, but to better understand, I spl=
-it it up.
-I can integrate it later and resend a new patch, and add a detailed descr=
-iption in the commit message.
+How about calling it `new_path`/`new_entry` or similar?
 
-Thanks=EF=BC=8C
-Liu Ye
+>> - what happens with the `module_name` parameter of `new`
+>
+> Should probably just mention it's supplied by module_firmware! and used
+> internally.
 
-> --
-> Uladzislau Rezki
+IIUC, that's not the case, the `module_firmware!` macro will call the
+`create` function with the name and you're supposed to just pass it onto
+the builder.
+
+>> - answer the question "I want that the builder outputs the string `???`
+>>   can it do that? If yes, how do I do it?"
+>
+> All it does is concatenating multiple &str in const context, which I thou=
+ght is
+> clear since there are only push() and prepare() as public methods.
+>
+> May it be that your request is more about can we add more hints on the
+> implementation details rather than user focused documentation?
+
+I am not familiar with MODULE_FIRMWARE in C, and I'd think that someone
+that uses this API would know what to put into the `.modinfo` section,
+so like "foo\0bar\0\0baz" (no idea if that makes sense, but just add
+`firmware` or whatever is needed to make it make sense). And then the
+question would be how to translate that into the builder.
+
+I wouldn't be able to piece it together without looking at the
+implementation.
+
+---
+Cheers,
+Benno
+
 
