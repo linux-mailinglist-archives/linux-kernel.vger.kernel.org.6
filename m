@@ -1,198 +1,86 @@
-Return-Path: <linux-kernel+bounces-548136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C31A540A9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:28:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF127A540CF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:45:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB1B916D945
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:28:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F38433A9DDF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78A918F2FB;
-	Thu,  6 Mar 2025 02:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="qffaZTOF"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F8718E03A;
+	Thu,  6 Mar 2025 02:45:38 +0000 (UTC)
+Received: from baidu.com (mx22.baidu.com [220.181.50.185])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AA12907;
-	Thu,  6 Mar 2025 02:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E6BA33C9;
+	Thu,  6 Mar 2025 02:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.181.50.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741228131; cv=none; b=cgVQsrL6HrSfvfVVgQxvNKOXBC/167T03RmMatckJa08yv8/FlO90h8nPSSTAqWHFdOZyz8MiZ9Shh6oClAu9v7CopPzWVL3/2LQNj3lC/7PuOMZykbf3zUZNsF0SdsUN9N9/xybfdC8TrBYuJBwLYSmKDkOGTQ+0Y72KtCCTc8=
+	t=1741229137; cv=none; b=Zqg2gzinkNCLGP/WgUW95DAfmQEcb5CAeQOtBFMbLCsxDk50t8BuTLKjF+/FAaUtdyMIxqpMI3SascpGh0tdU+9i2O1UD7if1iALh9NxpTjEEMy8bome+4fwMuFHcSCB+v/qdDW/jCQdpToNJCBjsxTQCTLJW66rxr8hNj8Yr0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741228131; c=relaxed/simple;
-	bh=3dhtHCh58xOEShk9yT+stIKHGFWKjW+X/xW5WyTuYyo=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=GpTV1uiOIEl2LzrgL+PPmNhtAP0VolrN2Zfj80jj1hvOtVVL0z5DZ8salsydiy1fuqrlwwrQo20BbsVo8HCtJQ5dcGTPFQOejqY5Ll295L03Qk1iCZsSfE98s1uQoLLcF2w0KKJCoadggr7cL6gr9WDYboQ+IGD7WP+6y/mjo6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=qffaZTOF; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 5262RLQQ02509779, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1741228041; bh=3dhtHCh58xOEShk9yT+stIKHGFWKjW+X/xW5WyTuYyo=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=qffaZTOFY6G5QtMg7KOMpJbczF9b5vgJpIkpbxYr2O/KxO9wvD3xvq9QfNPmZFptM
-	 8q7rI5AU/l6JWLzoyB8nqvjLf+h0qdLC7eVUkxbjjT487yAzjxQVgHxz39HSgG8KFp
-	 3rsVs+kdUIijke9XH1s83B8Ht1pZ9NrszD8FvBh0r8PPfO8ZHWovNvmOcVfbPxb/kZ
-	 Qu9y9gFnlM3kjCHYfejymMy1cW8TIGQficJrEibYmASvKSF40LlUlWuifAbBfbXxaK
-	 G2iDM2E+Lx+z/qBFOwC85g8mEGhm9pox6ljveYOLhR3QhT/jvuzlSCK4C13cBPA5cC
-	 rLOLNtDs0BkXg==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 5262RLQQ02509779
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 6 Mar 2025 10:27:21 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 6 Mar 2025 10:27:21 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS04.realtek.com.tw (172.21.6.97) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Thu, 6 Mar 2025 10:27:20 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622]) by
- RTEXMBS04.realtek.com.tw ([fe80::4c19:b586:6e71:3622%5]) with mapi id
- 15.01.2507.035; Thu, 6 Mar 2025 10:27:20 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Shengyu Qu <wiagn233@outlook.com>, "nbd@nbd.name" <nbd@nbd.name>,
-        "lorenzo@kernel.org" <lorenzo@kernel.org>,
-        "ryder.lee@mediatek.com"
-	<ryder.lee@mediatek.com>,
-        "shayne.chen@mediatek.com"
-	<shayne.chen@mediatek.com>,
-        "sean.wang@mediatek.com"
-	<sean.wang@mediatek.com>,
-        "johannes@sipsolutions.net"
-	<johannes@sipsolutions.net>,
-        "matthias.bgg@gmail.com"
-	<matthias.bgg@gmail.com>,
-        "angelogioacchino.delregno@collabora.com"
-	<angelogioacchino.delregno@collabora.com>,
-        "miriam.rachel.korenblit@intel.com" <miriam.rachel.korenblit@intel.com>,
-        "nicolas.cavallari@green-communications.fr"
-	<nicolas.cavallari@green-communications.fr>,
-        "howard-yh.hsu@mediatek.com"
-	<howard-yh.hsu@mediatek.com>,
-        "greearb@candelatech.com"
-	<greearb@candelatech.com>,
-        "christophe.jaillet@wanadoo.fr"
-	<christophe.jaillet@wanadoo.fr>,
-        "benjamin-jw.lin@mediatek.com"
-	<benjamin-jw.lin@mediatek.com>,
-        "mingyen.hsieh@mediatek.com"
-	<mingyen.hsieh@mediatek.com>,
-        "quic_adisi@quicinc.com"
-	<quic_adisi@quicinc.com>,
-        "deren.wu@mediatek.com" <deren.wu@mediatek.com>,
-        "chui-hao.chiu@mediatek.com" <chui-hao.chiu@mediatek.com>,
-        "gustavoars@kernel.org" <gustavoars@kernel.org>,
-        "bo.jiao@mediatek.com"
-	<bo.jiao@mediatek.com>,
-        "sujuan.chen@mediatek.com"
-	<sujuan.chen@mediatek.com>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-mediatek@lists.infradead.org"
-	<linux-mediatek@lists.infradead.org>
-Subject: RE: [PATCH v8] wifi: mt76: mt7915: add wds support when wed is enabled
-Thread-Topic: [PATCH v8] wifi: mt76: mt7915: add wds support when wed is
- enabled
-Thread-Index: AQHbjb8lReN6YdafAkq12sgLw/MaUbNlWkUA
-Date: Thu, 6 Mar 2025 02:27:20 +0000
-Message-ID: <c56c9714c754451a8255ece79353da2b@realtek.com>
-References: <TYCPR01MB84374EEAC0DDDA4223B8997298CB2@TYCPR01MB8437.jpnprd01.prod.outlook.com>
-In-Reply-To: <TYCPR01MB84374EEAC0DDDA4223B8997298CB2@TYCPR01MB8437.jpnprd01.prod.outlook.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1741229137; c=relaxed/simple;
+	bh=y4qkiHrv5YzJwTFdfke6HPG9TVpJNfR6GD7LnkavQBo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=eLfzQhzYCO7IA4tPJGXI2c5PdEWM3lwwprt17HEfcqZWtUXujQNluu2dj/xrniEartFbVnBbgYfwB4L5Rw/DjvM4+KbVFEUaBS/d1dYFcfET+wjOsi3VnBDiXHaRHRUGjhayg/sZgtSpkmafOBZT2rMtPqFZbjlcmbXD2woO95w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com; spf=pass smtp.mailfrom=baidu.com; arc=none smtp.client-ip=220.181.50.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=baidu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baidu.com
+From: "Li,Rongqing" <lirongqing@baidu.com>
+To: Dave Hansen <dave.hansen@intel.com>, Adrian Hunter
+	<adrian.hunter@intel.com>, Jiri Olsa <olsajiri@gmail.com>
+CC: "peterz@infradead.org" <peterz@infradead.org>, "mingo@redhat.com"
+	<mingo@redhat.com>, "acme@kernel.org" <acme@kernel.org>,
+	"namhyung@kernel.org" <namhyung@kernel.org>, "mark.rutland@arm.com"
+	<mark.rutland@arm.com>, "alexander.shishkin@linux.intel.com"
+	<alexander.shishkin@linux.intel.com>, "irogers@google.com"
+	<irogers@google.com>, "kan.liang@linux.intel.com"
+	<kan.liang@linux.intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"bp@alien8.de" <bp@alien8.de>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>,
+	"hpa@zytor.com" <hpa@zytor.com>, "linux-perf-users@vger.kernel.org"
+	<linux-perf-users@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: =?utf-8?B?562U5aSNOiBb5aSW6YOo6YKu5Lu2XSBSZTogW1BBVENIXSBwZXJmL3g4Ni9p?=
+ =?utf-8?Q?ntel/bts:_allocate_bts=5Fctx_only_if_necessary?=
+Thread-Topic: =?utf-8?B?W+WklumDqOmCruS7tl0gUmU6IFtQQVRDSF0gcGVyZi94ODYvaW50ZWwvYnRz?=
+ =?utf-8?Q?:_allocate_bts=5Fctx_only_if_necessary?=
+Thread-Index: AQHbjd8ZANFZJP37eUuTV7oAm1ygsrNkMLQAgAEx3BA=
+Date: Thu, 6 Mar 2025 02:28:34 +0000
+Message-ID: <5ddaff2748344dc4ac6290f195c8758e@baidu.com>
+References: <20250122074103.3091-1-lirongqing@baidu.com>
+ <Z8hV3WYuHxHBNoNV@krava> <Z8hXsvloKEb7ia3V@krava>
+ <d70b6f8d-0e86-4814-bf05-4c3d9acd313d@intel.com>
+ <293158f0-d36f-4569-bad3-6be1db938457@intel.com>
+In-Reply-To: <293158f0-d36f-4569-bad3-6be1db938457@intel.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-baidu-bdmsfe-datecheck: 1_BJHW-Mail-Ex14_2025-03-06 10:28:35:265
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-FEAS-Client-IP: 10.127.64.37
+X-FE-Last-Public-Client-IP: 100.100.100.38
+X-FE-Policy-ID: 52:10:53:SYSTEM
 
-Shengyu Qu <wiagn233@outlook.com> wrote:
-
-[...]
-
-> @@ -1271,6 +1278,10 @@ static void mt7915_sta_set_4addr(struct ieee80211_=
-hw *hw,
->  {
->         struct mt7915_dev *dev =3D mt7915_hw_dev(hw);
->         struct mt7915_sta *msta =3D (struct mt7915_sta *)sta->drv_priv;
-> +       int min =3D MT76_WED_WDS_MIN, max =3D MT76_WED_WDS_MAX;
-> +       struct ieee80211_sta *pre_sta;
-> +       u8 flags =3D MT76_WED_DEFAULT;
-> +       int temp_idx;
-
-In general 'temp' is short for temperature. 'tmp' is preferred.
-
->=20
->         if (enabled)
->                 set_bit(MT_WCID_FLAG_4ADDR, &msta->wcid.flags);
-> @@ -1280,6 +1291,30 @@ static void mt7915_sta_set_4addr(struct ieee80211_=
-hw *hw,
->         if (!msta->wcid.sta)
->                 return;
->=20
-> +       if (mtk_wed_device_active(&dev->mt76.mmio.wed) &&
-> +           !is_mt7915(&dev->mt76) &&
-> +           (msta->wcid.idx < min || msta->wcid.idx > max - 1)) {
-> +               pre_sta =3D kzalloc(sizeof(*sta) + sizeof(*msta), GFP_KER=
-NEL);
-> +               memmove(pre_sta, sta, sizeof(*sta) + sizeof(*msta));
-
-Seemingly, kmemdup() =3D kzalloc() + memmove().
-
-> +
-> +               flags =3D test_bit(MT_WCID_FLAG_4ADDR, &msta->wcid.flags)=
- ?
-> +                       MT76_WED_WDS_ACTIVE : MT76_WED_ACTIVE;
-> +
-> +               temp_idx =3D __mt76_wcid_alloc(dev->mt76.wcid_mask, MT791=
-5_WTBL_STA, flags);
-
-Since __mt76_wcid_alloc() could return -1 for error case, shouldn't you han=
-dle that?
-
-> +               ((struct mt7915_sta *)pre_sta->drv_priv)->wcid.idx =3D (u=
-16)temp_idx;
-
-Define a local `struct mt7915_sta *pre_msta =3D (struct mt7915_sta *)pre_st=
-a->drv_priv`
-ahead. This statement would be simpler. Just `pre_msta-> wcid.idx =3D (u16)=
-temp_idx`,
-but casting of '(u16)' is still not very preferred.
-
-> +               mt7915_mac_sta_add(&dev->mt76, vif, pre_sta);
-> +               rcu_assign_pointer(dev->mt76.wcid[temp_idx], &msta->wcid)=
-;
-> +
-> +               temp_idx =3D msta->wcid.idx;
-> +               msta->wcid.idx =3D ((struct mt7915_sta *)pre_sta->drv_pri=
-v)->wcid.idx;
-> +               ((struct mt7915_sta *)pre_sta->drv_priv)->wcid.idx =3D (u=
-16)temp_idx;
-> +               rcu_assign_pointer(dev->mt76.wcid[temp_idx], NULL);
-> +
-> +               synchronize_rcu();
-> +               mt7915_mac_sta_remove(&dev->mt76, vif, pre_sta);
-> +               kfree(pre_sta);
-> +       }
-> +
->         mt76_connac_mcu_wtbl_update_hdr_trans(&dev->mt76, vif, sta);
->  }
->=20
-
-[...]
-
+PiBKaXJpLCB0aGFua3MgZm9yIHRoZSByZXBvcnQhDQo+IA0KPiBPbiAzLzUvMjUgMDY6NTgsIEFk
+cmlhbiBIdW50ZXIgd3JvdGU6DQo+ID4gSXQgbG9va3MgbGlrZSB0aGVyZSBhcmUgMyBmdW5jdGlv
+bnMgYWZmZWN0ZWQ6DQo+ID4NCj4gPiAJaW50ZWxfYnRzX2VuYWJsZV9sb2NhbCgpDQo+ID4gCWlu
+dGVsX2J0c19kaXNhYmxlX2xvY2FsKCkNCj4gPiAJaW50ZWxfYnRzX2ludGVycnVwdCgpDQo+ID4N
+Cj4gPiBQZXJoYXBzIG1ha2UgdGhlbSBzdGF0aWMgY2FsbHM/DQo+IA0KPiBUaGF0LCBvciBhIGZl
+dzoNCj4gDQo+IAlpZiAoIWJ0c19jdHgpDQo+IAkJcmV0dXJuOw0KPiANCj4gaWYgeW91J3JlIG5v
+dCBmZWVsaW5nIGFzIGZhbmN5IHdvdWxkIGRvLg0KPiANCj4gV291bGQgc29tZW9uZSBiZSBpbnRl
+cmVzdGVkIGluIHNlbmRpbmcgYW4gYWN0dWFsIHRlc3RlZCBwYXRjaCwgaWRlYWxseSB0aGUNCj4g
+cGF0Y2ggYXV0aG9yIG9mIHRoZSByZWdyZXNzaW9uPyA8aGludCwgaGludD4NCg0KDQpJIGFtIHNv
+cnJ5IHRvIGludHJvZHVjZSB0aGlzIGJ1ZywgSSB3aWxsIHRyeSB0byBzZW5kIGEgcGF0Y2gNCg0K
+VGhhbmtzIHRvIGFsbA0KDQotTGkNCg==
 
