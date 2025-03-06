@@ -1,205 +1,287 @@
-Return-Path: <linux-kernel+bounces-548231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B972FA54208
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:22:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAED5A5420F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 06:28:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1F13170D4A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:22:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D43A16CD4B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:28:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7215219DF4D;
-	Thu,  6 Mar 2025 05:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C0119DF77;
+	Thu,  6 Mar 2025 05:28:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DZDlg71Y"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="1lq0NwBZ"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2044.outbound.protection.outlook.com [40.107.93.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E9219C546;
-	Thu,  6 Mar 2025 05:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741238555; cv=none; b=hyKW25SfsFv2+cofw4FyrSomgl2xcFWQM8OTZcXyzZ10pXG7gTt0zIyVUqQSPa2zZX1MqRanEwumghyOH+saN+X8/U+P0ilKsEXVvnB9BFR4ZWumOjhZYjkif1+5h/EatcdmnCJoEI4FjlJpNQ4b2nD29CQgVNFLQ9ygKcXiwUY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741238555; c=relaxed/simple;
-	bh=0z5yhqvQqhdwGnoq2F+YoE5Fl3fUyiC68CgC2ANTf2U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sG6Li1dFEAsNn8wKKwypCXyIstD3dCPky4k/L5hyOtE767JUDF79ZIoGfNbxIDb7oTGBohmA7ISdOCAuHG/5CIn/SSzvwJ06MWpjEsUQjIjijDZbjiUYBhI2AV14GWD3Lye/3FLlMxxxSYyK4ZHmONegiNuHuof2cDQSoI9qo+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DZDlg71Y; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d3e68939deso884115ab.1;
-        Wed, 05 Mar 2025 21:22:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741238553; x=1741843353; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZVTkF/tobSDNmB1ZjwvbLTru0Ubgqet17u+KkorpADw=;
-        b=DZDlg71YWpr+MqCtrThQtLcbX/VUH0zy8eSf8V0akVo1zT7ph6VywRApwjXckT7kry
-         CCDOd4SoWl5YT7DICJjhH9LUJlu8WCK+RCM1ZmxTbI50wahuVulguA3IckmvrEXS6TeZ
-         lPyvi8AoufvecNAbW49VWV3bPtff2B+plH2SsyasU3WMxWy6YWM8yebHZs2awABmqlhL
-         eOtIlFZcdpVLVvukWYXoc5sEjxcZVojma8SMslfj/mETB+sjdiRPM4IPimL/vVqSbQhc
-         kA0e79U0gAt3VKJzjNianpLacKhVX1DVSIlFAZlxTTLT5EdOwsPdMvhbpy/eTi8pWyjQ
-         /bEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741238553; x=1741843353;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZVTkF/tobSDNmB1ZjwvbLTru0Ubgqet17u+KkorpADw=;
-        b=KOLCClxyRpv2uc3/TlqaOGfFyLOoJQEIXgv4MMIqcfCF8Kxjy1Rct00ipOFXgGLKMO
-         DwbVk+cWq3EXzRJcXJb0M2gWVkPKxxKI03Z8+v6/DX9txWfGIbJOzoU5bwUMHHOG+VbM
-         HSrkJH4TK0gy2OmZwZm7GfrxY9oTT1ZtRi3HxuRKRM31Lio6Ayj1kcRclKTXzFAvK8MZ
-         /caye1w9NsMo6mOWXqKrVWoUzRyq57TgkAD1m3SshI2uV2OVXIthVwGhGO5/vcLGtorQ
-         TZj5r+1QqXf0EEdENCCd48OufX3jHP7Ii5KrUN5Xz4huAM63nWzaKEQYSQjFhDUrZo7r
-         WBIw==
-X-Forwarded-Encrypted: i=1; AJvYcCWx7c9ffyr6kQxaCWagyLZDcJEwbOf3kpX7c7tWNWR7uIWUaTDreyC8gQMWjoNANS/QnPs7O60vUGi3Rms=@vger.kernel.org, AJvYcCXwaB4gUJ4AVWrPbR2aVHBMcQx05MC9kr/YyQ63E24cjHW4ASHszg3zSA25oJEDxl7kPCONSj8d@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5kETpOTk9txftFUGKcK2dPB4JerpT5iw3hGtJo/Oziwg4Nv8L
-	Ro7neOcTWLKIfUhKyBBwAjdSPslclVb5Mif+LSotBSdrReEP+itgssIPfsA2FfDCnz05XRftR5d
-	OvVr5tLhfK5OFAIDFkVBkpfv2AtY=
-X-Gm-Gg: ASbGncurUIDWr2gvzTpH8dZESjO24SJekx7jNjV7QRlF9f0M5q2x7OHY4o8yhHmhSF8
-	12K7Ce7JJMvL6Jk+tcR1Ay4b2X9ExiSQLvicmkc9jnC6A0Tbu0YNXGyjfoTRdaOZZO7jN1hnM6Y
-	gaXhD/DznkLqD3aKBYoIj2VQE+
-X-Google-Smtp-Source: AGHT+IHCu3R0Gkmwvr/d9D10F4Fnp1D31Fns4gsp95Cvm16wLRe/2+tUmYP2EhB/RwGE6zwifzgmFMixL2an/0JA4H0=
-X-Received: by 2002:a05:6e02:221b:b0:3d4:27d4:f76 with SMTP id
- e9e14a558f8ab-3d436adf50bmr25879205ab.7.1741238553323; Wed, 05 Mar 2025
- 21:22:33 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B36E1991B6;
+	Thu,  6 Mar 2025 05:28:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741238907; cv=fail; b=mnN4JzQDb4YdG3gBWlPG7mPU4qSaFE5qMch8Ccd+qnMF8GilrrXpYrB/RZfKsCNk/xqX9gH9bmKtGsi5qeH/y7TM+oj8//11qVk0sm3W/P+6Onsktvr8xGi+8+lRNhEvesjPVVTBtVKbrsVwpru72T+fu2NRB3O62jAOsPI6oQ0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741238907; c=relaxed/simple;
+	bh=v/hmMu7dkBBNuBoPJAX+g+l7aay/z+qRFIV03EJ65Rc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=IhmgclJ3yDVNQvhOMu1tN3pR4O9YCkRI1FUz17nwm96YsvAWjD5S6cNkuVnaquZ8HixTvcnlFrE1lf6STxMenLKzzQkfRKw3YzM29q7bMNa0YrwMy2nRRUTfM1ucAB0VwrljHdDfDeOdGObfOApJzLg4TRQGdO0aPP+3aSWzUGc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=1lq0NwBZ; arc=fail smtp.client-ip=40.107.93.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QrxWXxaDYE+xAzKC1XAW6B+oBXMnBhcLho9N5cAzVQB8O0J/C7Qyp+4oCvv7KIcfJLwSesp5GUq8MWNeEkmPedcm2GQRFKh7nPPeE27gVIfLiqd+qcIHgBgK6wBkSVhikOw56L59BJ6wx1f8wqJXDtp+Hih4dFKQNJZk6wWc9haahFiGX0es+x1vwes0QwOjKqeqwfbvnT5oZHt2ib8Ucx4JlZLpb5Op51bkMZXYExaGNTgCtywxmHTJmopOcnCpSOwbvbStyKeGsVJDFtbr1YvXzIeDUiUl0K1R3EE53PWd8288O1PM7YwqsY4v4Oi9fTqfDsA6ighpUfDRXNWh3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QimuvJt2HEK21alb1YgTKNQCLVxBKAHfNdNNTlK18Cg=;
+ b=SmcbYVRGWg2Sh8BzlcWNiKdmttzj3kFBC3ImckilW8zPYOUByhfMpH+/AuHvJ/kiJZfGQWCbjxMkTbZqCjU9krPfAFS+mJsjHJv75JiLBaSoTUmSUN96/Hk7Wo4QIqFdXBVgD6KQbXiRfkcT00x/XYcVjZcE/oG4G7eEl8AlZDNJ6d8FPlRjPRcrfOsu/h4T2RVh4UzMawZgQAaB2oNamZG6YTq3Q/7CsWAPwusYR7E2t3xR0AotFRrOjt25VgsLuzwX/tY6QbzzGRMloFZRGRMRf26hchMUJom8ErpJj8iIxt4BAWRQxK9yp/dvktZK2gXGjCOHQmNi2O+/AUPjwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QimuvJt2HEK21alb1YgTKNQCLVxBKAHfNdNNTlK18Cg=;
+ b=1lq0NwBZKj56D/PL9svvzAGc1srqhVby2ua9yA6wLXDbD4J3rAYHywtuxeRnWITeZ9t2tYdYjNAyJ+BdoUgW8vUTleJ4cXEWa1lqg1Th6yQW5azJgCCrdZz18DD2ALUyV1wp2JxxyxjKzR7ga/4kMkaxpNb5x/pxBhlBHvjxD8E=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA1PR12MB8189.namprd12.prod.outlook.com (2603:10b6:208:3f0::13)
+ by IA1PR12MB6353.namprd12.prod.outlook.com (2603:10b6:208:3e3::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.29; Thu, 6 Mar
+ 2025 05:28:23 +0000
+Received: from IA1PR12MB8189.namprd12.prod.outlook.com
+ ([fe80::193b:bbfd:9894:dc48]) by IA1PR12MB8189.namprd12.prod.outlook.com
+ ([fe80::193b:bbfd:9894:dc48%7]) with mapi id 15.20.8489.025; Thu, 6 Mar 2025
+ 05:28:23 +0000
+Message-ID: <85d324ff-a1d3-4d7c-ae2c-68588b12deb3@amd.com>
+Date: Thu, 6 Mar 2025 06:28:18 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] KVM: SEV: Configure "ALLOWED_SEV_FEATURES" VMCB
+ Field
+To: Kim Phillips <kim.phillips@amd.com>, kvm@vger.kernel.org,
+ linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org
+Cc: Tom Lendacky <thomas.lendacky@amd.com>,
+ Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>,
+ "Nikunj A . Dadhania" <nikunj@amd.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>,
+ Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Kishon Vijay Abraham I <kvijayab@amd.com>
+References: <20250306003806.1048517-1-kim.phillips@amd.com>
+ <20250306003806.1048517-3-kim.phillips@amd.com>
+Content-Language: en-US
+From: "Gupta, Pankaj" <pankaj.gupta@amd.com>
+In-Reply-To: <20250306003806.1048517-3-kim.phillips@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: FR0P281CA0149.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:96::16) To IA1PR12MB8189.namprd12.prod.outlook.com
+ (2603:10b6:208:3f0::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305-net-next-fix-tcp-win-clamp-v1-1-12afb705d34e@kernel.org>
-In-Reply-To: <20250305-net-next-fix-tcp-win-clamp-v1-1-12afb705d34e@kernel.org>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Thu, 6 Mar 2025 13:21:56 +0800
-X-Gm-Features: AQ5f1JohJfb3wH0oihOcAk_5UlajfKw7zjaDJ6N5o0gNhKuh5XmYb8DNNJeXchw
-Message-ID: <CAL+tcoAqZmeV0-4rjH-EPmhBBaS=ZSwgcXhU8ZsBCr_aXS3Lqw@mail.gmail.com>
-Subject: Re: [PATCH net-next] tcp: clamp window like before the cleanup
-To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Cc: mptcp@lists.linux.dev, Eric Dumazet <edumazet@google.com>, 
-	Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
-	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR12MB8189:EE_|IA1PR12MB6353:EE_
+X-MS-Office365-Filtering-Correlation-Id: e7671b75-0197-4b33-59ba-08dd5c6fb68d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Z2lIcS9adHNJNXZ3NW5YN0JZZEJQZ3kyWVk0bktDTWZ0UjcvN1JDUy9renFP?=
+ =?utf-8?B?UnduQ0F3aEVRTERCSi9KYlE3TUVQWFBOYlZ3aTVnMFkzYW5td0Exc1NHZkFa?=
+ =?utf-8?B?MFpFV0drTWVpZGErNTVNV1pEcktmTmZSc3FBZ0QyQkZqUDhjK202TXZJbVor?=
+ =?utf-8?B?MDJIVVFSdy9Eb2hReW9lY3hJYlFueWM3YWxwZjA0ZE1pVTBzRWVWb25COXJa?=
+ =?utf-8?B?b0JlYTErNjdQNys0VWJDZHZXcEFXRnNucTRocnhuMk1uUzBOT1RqTFhqOGJW?=
+ =?utf-8?B?QnlaNXh0YVE1SVZ2aWRaeGtidFRYTFdyNjVGaUNZWGErd01VUzE1UDI0RUQ2?=
+ =?utf-8?B?aHZlRjZ1S0Y3c2lFNko1N3E0Q1dINXBXMjJBM1l2eldFWDBabVJ3eFlrMHdV?=
+ =?utf-8?B?SlBhYURpVzlxaHBkOFJVelhhazR4VzBQdjMvR2UweVdCZ25SYXFwdzFjRHVH?=
+ =?utf-8?B?Si9GcUt6Q1RNc2V2RjJmT2kwZU05akhpekFJTHJmYStVazFIdS94aWU2eTc0?=
+ =?utf-8?B?TW8yRVRSMzBaWmZPU0xsNDFrV2p6a0lCaGZMVHlEUVNnL2lBSXNPZm1JSjF6?=
+ =?utf-8?B?aHpUckhvQkxyVWNMYnJkOUlGMFpTRXErTGF1T25PSDFOMGdMSjVrcml4UXBa?=
+ =?utf-8?B?aWdNSzZVWVBoUWxib2hlQU9GUWoxU3dEUnl0NGRURWgxdisrYnRNc3Z3TlVr?=
+ =?utf-8?B?ZjV2aTRNUnJmTzJhREpEcldTN1EyUWNJUVJUcHpFczFGdVpRTkEwOU53Q2Jz?=
+ =?utf-8?B?b1lKQnB5dS85M2llcC90U0RkckJvL3F6b0JKRXE0K0xtYmZmMU5ORGFVR3cv?=
+ =?utf-8?B?NUpxMWFqcUNGTzJjTHE1Wk5GYzExT2svcU5lSXpoM3ZXNCtRV2ZxSkJoT0hh?=
+ =?utf-8?B?WC85bDJ0MnB2ZVIyMVUyQUhpeHFhMDY5Y1RPd0dpNXFSZ1VjK1E4eEhNY082?=
+ =?utf-8?B?eFVpM3pING5VZjNtQmxVbTRvdGpmeTAyeTF2MlV4Y3lMK3dQNWxjQ01zRnFQ?=
+ =?utf-8?B?b1NYRzVuUkdTckFYbFVndXE5cEM2c1dTaDRLOHF4NEVwZ1BZeUVjU1RTUGMv?=
+ =?utf-8?B?T3JvMjZUSEl1U3UxUlZLcHF4Z01RMGgyTUJpNWVZSVFRRmQ0Yy9VZU8vV2JI?=
+ =?utf-8?B?b0ErS2ZLb2FLLzNEUmY5OUVGanllMDFCV3ZKb2NlNkpUVWFWVUhQTDBkYlVv?=
+ =?utf-8?B?OHFZVUd4ajdTb1ZpZERsc0pwNVUzYktmVEJIQUhtMGlVUjh2QXcxWnlsN0c0?=
+ =?utf-8?B?K01kS1RmVW5TcFA0M1lPT25CL2VVbXQrMFFkRVdGenYrcWJ2dUgrYnJPL2hI?=
+ =?utf-8?B?TzlraHZzV003WW1XeU0ydG1CRlNoaXNMZ2p5UklOQnE1bEFiVmtGVjArdnA4?=
+ =?utf-8?B?UXJUbndsaU5QbGp1MzZ2cG0vWXBnaWR0ekxCQnN2amV1UDZhV1NBektwN05O?=
+ =?utf-8?B?NEdCSVNrKy9zcW95b1Rka05UUzc5c0NMSXlqR2I5QjJwM09MNnZZSFQxZjRQ?=
+ =?utf-8?B?M2pPYkJwYy9hODhNdkI3YjhaWERzTDYrYlZGaW9aNmZuT2xTVUJ4MTNJTFQv?=
+ =?utf-8?B?ZzVvSDczaWNzdGxBRUJ1VGlOV3I3T2JZUTk3d09vM3oxaGN5cG5FczQyUjV1?=
+ =?utf-8?B?RFhrYm1wT0YrUTZqRGd4WGQyTWM2UFV0Y2ZrVXBPcFhGSUltRWFOU0hxenJL?=
+ =?utf-8?B?dlRhWmx6YXpRSk4zeVhleldJNEMwMkpOMzkzcS9VZTI4N3kxc0EzU0U0bU1D?=
+ =?utf-8?Q?Yjs+FKeXm82tu5hi20aaJVisooEz3o1aPrNvTj5?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB8189.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bElPa1JrOTFOYU5neE9jcnk4OC9CVmhYcGdua1dxVVFVek5kRVZmY05zOUVs?=
+ =?utf-8?B?c0gvaGxLZXBtNWowZ21RelNwYjJOTHFwYThuUTVKR3pobmR1WnI3L1QyaXNp?=
+ =?utf-8?B?RW5XVFpPVjNRRmFVMTVWalkreW1BRFpYQXI4ajEyUnlHZzdPWHZ4bWpjNEJF?=
+ =?utf-8?B?K0dNQmozK1B3dkR4dXJ6aUt1RDB0Y2ZpN2VjanRRaHoxUENiRXdBTkxFajRD?=
+ =?utf-8?B?VjF0Y2NaRnk2eFE4OFB5TGh6MjdEc2wrUHMxU1ErUURhNHdFYWkwVFhpMVh6?=
+ =?utf-8?B?dFFmc0UvbE1mMENxemd5amNkeEZ6ZFIyWWd5b1hXVnVTRUs3cHlDT1ZZZXha?=
+ =?utf-8?B?aWw5K0dLanpRbDl1amVxZzRtbGFwNjFMcFRWcUllNnpLWWFxTzlreEZ5YjZK?=
+ =?utf-8?B?QlNXMlhmNjFYcm5MallGVHgraXhPdHZTRE1yZ1RsYnM0WWhNVHpPWkYwKzlV?=
+ =?utf-8?B?Y011RHhGeEdySTBZY3VXRHBCSm1kaHdselZvejlVZ256UFZMQUhvVXhrY0ls?=
+ =?utf-8?B?Znkxc0JjNC9EdjVaSFdOSWZUb2srR0lKVWFHNkNYeWcwRnB3TGpUaEpNb0Zk?=
+ =?utf-8?B?aDZRa3phWW1QVktZcFd3QnlKM0Z1U0xWczV5Ky9IcTg2RzFKSTBqRHBsY3cz?=
+ =?utf-8?B?WWdITDJxdklhbDdWV1FOUy80UU1XVkhSMURMbUNjeVRoMjFtK25jZlpYN3Jp?=
+ =?utf-8?B?SndWNm9vSEJmR3lOU2FnWktCLzEzZ0kzOEZvdE1UQThIemtaTlpZdjZRWW9Y?=
+ =?utf-8?B?MmRybUYrMkZ0a0FETC84LzBNcDdhcEZBQUpTai96dzJPTmJjejZidWpSMVZk?=
+ =?utf-8?B?bVRrTU51MW9QYlIxYXRHanZ1T0lWc1NqdVY0bHNTTHNIMTU3M1VLSXZqNHVy?=
+ =?utf-8?B?WmFmVDhpUUkvQnIxWHJDemV2KzZBdDU4b1hyU2FKVWwyRDlreDVqcW1JVnl0?=
+ =?utf-8?B?dndHNmg1Nm52cWgwbk1JVDlyS1pHZ3pBdXRrR3ZFZHZwcmlQTFVCTVd5MHJT?=
+ =?utf-8?B?NUhsL1d6Vks1blJQdFRmRGRrbXlPUldObTlkcHRTUGZmT3ZuTkdhcUovWXph?=
+ =?utf-8?B?QTJDaWhHT2xmYjRoV2dLTVVjYWhMMTdwRlBPNXNFRlF2U0pZZFp6VTVpTmtt?=
+ =?utf-8?B?ZGRZbStsUTZ0eDh2Z1BUdjk1MEV1OGNzMGE2enNXcFp5aXNIeHFGQVc4Z2NE?=
+ =?utf-8?B?Q2M0LzZMbk9jdzFRelZ5MEJCK3AzamNYSWNmdmlNeVJyRDRQSlZmSUxIWE5j?=
+ =?utf-8?B?aEM0Mis5ZGpuOEVDMTVtckJENlFDYjh5Y2RYNEo0ZzI5Tkd3VDByOWE0UHlv?=
+ =?utf-8?B?T2NqaC94ekJoRlNIMFM3TXhLQ2N0RlFSUWhwaEFTNTdKeWFNUm1WQzhOakN1?=
+ =?utf-8?B?cGNDK0FvUTQ2b1FLWk1DYVhnTmprV241Q1ZLbWM3Y0dWYlFBbFRFdk9zZHJG?=
+ =?utf-8?B?QWVJWWpMVmdwek9jZGpWVHVjZk5CZmJ4RlJBanpvamhieE5XNmw5bi95bVRp?=
+ =?utf-8?B?TFVGTUpCSTZiZVRFdm1vb0lmbTNEZllxcHNBSFlaaHdqZWZ4N1oxd3FwSXl2?=
+ =?utf-8?B?MmZscXFnUTB1NWVrK2E2ZjlQREZ6b0tmM0ExWFg5d1ZKMGFmRkRxejBtMVB6?=
+ =?utf-8?B?VjVjMFErZUxKandjMFJ2SHREMVN2QWJzdmZQRmhOYUdsRDBZcTFBNVVVWXNL?=
+ =?utf-8?B?M3ZYaHJZZEw5alZYL2FoZ0RjZlVVa2p4cHptOFZNREdsR2c1Y1NIUlplT2VK?=
+ =?utf-8?B?U1pmRkw1S3RoRGgrbUFlUUEzRUxSTko5VkJKTTVJVFNSbVhkU0RJaHVtc1ZU?=
+ =?utf-8?B?NU0vZjlTRmZaWVNlbEU0RVkwZU56WWNKQXpEeVFGM0I4dGtGQzA3UFMxQlZz?=
+ =?utf-8?B?WE1Yd0pmMmJXdW1ZOHRWZ2U2Uk44UkViSnQ2dCt0VHVWOG5BNFhxVDAxRWVo?=
+ =?utf-8?B?SXlwaEUzOGdTanRIQ3NHWklWcGpscmdtRXlxOXV1YWk1VG16cnRLYXQzV3cz?=
+ =?utf-8?B?SlJhYVoxN2QydmhaOHdMZ1FxVHRHZXdPV1lGZUt5VjVSSDVvdkJBTzJkcnpE?=
+ =?utf-8?B?TVF1Mng5TDBJNTdQMUFiUWR1N0hoQ1JXQUpUM0lzaW1vdndkWEdVdWNxemNo?=
+ =?utf-8?Q?4EnPQ2l/Cimb9E8NVVKiLsJYw?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e7671b75-0197-4b33-59ba-08dd5c6fb68d
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB8189.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 05:28:23.2239
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EbJANFEl1FTt9kMJbTkbXpEKkEWMntkkCV2hEo47IMjFzDmE3BnppOfKThQ8KH2eseULUhEzwF3zfLLxnXUbuw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6353
 
-On Wed, Mar 5, 2025 at 10:49=E2=80=AFPM Matthieu Baerts (NGI0)
-<matttbe@kernel.org> wrote:
->
-> A recent cleanup changed the behaviour of tcp_set_window_clamp(). This
-> looks unintentional, and affects MPTCP selftests, e.g. some tests
-> re-establishing a connection after a disconnect are now unstable.
->
-> Before the cleanup, this operation was done:
->
->   new_rcv_ssthresh =3D min(tp->rcv_wnd, new_window_clamp);
->   tp->rcv_ssthresh =3D max(new_rcv_ssthresh, tp->rcv_ssthresh);
->
-> The cleanup used the 'clamp' macro which takes 3 arguments -- value,
-> lowest, and highest -- and returns a value between the lowest and the
-> highest allowable values. This then assumes ...
->
->   lowest (rcv_ssthresh) <=3D highest (rcv_wnd)
->
-> ... which doesn't seem to be always the case here according to the MPTCP
-> selftests, even when running them without MPTCP, but only TCP.
->
-> For example, when we have ...
->
->   rcv_wnd < rcv_ssthresh < new_rcv_ssthresh
->
-> ... before the cleanup, the rcv_ssthresh was not changed, while after
-> the cleanup, it is lowered down to rcv_wnd (highest).
->
-> During a simple test with TCP, here are the values I observed:
->
->   new_window_clamp (val)  rcv_ssthresh (lo)  rcv_wnd (hi)
->       117760   (out)         65495         <  65536
->       128512   (out)         109595        >  80256  =3D> lo > hi
->       1184975  (out)         328987        <  329088
->
->       113664   (out)         65483         <  65536
->       117760   (out)         110968        <  110976
->       129024   (out)         116527        >  109696 =3D> lo > hi
->
-> Here, we can see that it is not that rare to have rcv_ssthresh (lo)
-> higher than rcv_wnd (hi), so having a different behaviour when the
-> clamp() macro is used, even without MPTCP.
->
-> Note: new_window_clamp is always out of range (rcv_ssthresh < rcv_wnd)
-> here, which seems to be generally the case in my tests with small
-> connections.
->
-> I then suggests reverting this part, not to change the behaviour.
->
-> Fixes: 863a952eb79a ("tcp: tcp_set_window_clamp() cleanup")
-> Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/551
-> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-
-Tested-by: Jason Xing <kerneljasonxing@gmail.com>
-
-Thanks for catching this. I should have done more tests :(
-
-Now I use netperf with TCP_CRR to test loopback and easily see the
-case where tp->rcv_ssthresh is larger than tp->rcv_wnd, which means
-tp->rcv_wnd is not the upper bound as you said.
-
-Thanks,
-Jason
-
+On 3/6/2025 1:38 AM, Kim Phillips wrote:
+> AMD EPYC 5th generation processors have introduced a feature that allows
+> the hypervisor to control the SEV_FEATURES that are set for, or by, a
+> guest [1].  ALLOWED_SEV_FEATURES can be used by the hypervisor to enforce
+> that SEV-ES and SEV-SNP guests cannot enable features that the
+> hypervisor does not want to be enabled.
+> 
+> Always enable ALLOWED_SEV_FEATURES.  A VMRUN will fail if any
+> non-reserved bits are 1 in SEV_FEATURES but are 0 in
+> ALLOWED_SEV_FEATURES.
+> 
+> Some SEV_FEATURES - currently PmcVirtualization and SecureAvic
+> (see Appendix B, Table B-4) - require an opt-in via ALLOWED_SEV_FEATURES,
+> i.e. are off-by-default, whereas all other features are effectively
+> on-by-default, but still honor ALLOWED_SEV_FEATURES.
+> 
+> [1] Section 15.36.20 "Allowed SEV Features", AMD64 Architecture
+>      Programmer's Manual, Pub. 24593 Rev. 3.42 - March 2024:
+>      https://bugzilla.kernel.org/attachment.cgi?id=306250
+> 
+> Co-developed-by: Kishon Vijay Abraham I <kvijayab@amd.com>
+> Signed-off-by: Kishon Vijay Abraham I <kvijayab@amd.com>
+> Signed-off-by: Kim Phillips <kim.phillips@amd.com>
 > ---
-> Notes: the 'Fixes' commit is only in net-next
-> ---
->  net/ipv4/tcp.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-> index eb5a60c7a9ccdd23fb78a74d614c18c4f7e281c9..46951e74930844af952dfbc57=
-a107b504d4e296b 100644
-> --- a/net/ipv4/tcp.c
-> +++ b/net/ipv4/tcp.c
-> @@ -3693,7 +3693,7 @@ EXPORT_SYMBOL(tcp_sock_set_keepcnt);
->
->  int tcp_set_window_clamp(struct sock *sk, int val)
->  {
-> -       u32 old_window_clamp, new_window_clamp;
-> +       u32 old_window_clamp, new_window_clamp, new_rcv_ssthresh;
->         struct tcp_sock *tp =3D tcp_sk(sk);
->
->         if (!val) {
-> @@ -3714,12 +3714,12 @@ int tcp_set_window_clamp(struct sock *sk, int val=
-)
->         /* Need to apply the reserved mem provisioning only
->          * when shrinking the window clamp.
->          */
-> -       if (new_window_clamp < old_window_clamp)
-> +       if (new_window_clamp < old_window_clamp) {
->                 __tcp_adjust_rcv_ssthresh(sk, new_window_clamp);
-> -       else
-> -               tp->rcv_ssthresh =3D clamp(new_window_clamp,
-> -                                        tp->rcv_ssthresh,
-> -                                        tp->rcv_wnd);
-> +       } else {
-> +               new_rcv_ssthresh =3D min(tp->rcv_wnd, new_window_clamp);
-> +               tp->rcv_ssthresh =3D max(new_rcv_ssthresh, tp->rcv_ssthre=
-sh);
-> +       }
->         return 0;
->  }
->
->
-> ---
-> base-commit: c62e6f056ea308d6382450c1cb32e41727375885
-> change-id: 20250305-net-next-fix-tcp-win-clamp-9f4c417ff44d
->
-> Best regards,
-> --
-> Matthieu Baerts (NGI0) <matttbe@kernel.org>
->
+>   arch/x86/include/asm/svm.h |  7 ++++++-
+>   arch/x86/kvm/svm/sev.c     | 13 +++++++++++++
+>   2 files changed, 19 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/svm.h b/arch/x86/include/asm/svm.h
+> index 9b7fa99ae951..b382fd251e5b 100644
+> --- a/arch/x86/include/asm/svm.h
+> +++ b/arch/x86/include/asm/svm.h
+> @@ -159,7 +159,10 @@ struct __attribute__ ((__packed__)) vmcb_control_area {
+>   	u64 avic_physical_id;	/* Offset 0xf8 */
+>   	u8 reserved_7[8];
+>   	u64 vmsa_pa;		/* Used for an SEV-ES guest */
+> -	u8 reserved_8[720];
+> +	u8 reserved_8[40];
+> +	u64 allowed_sev_features;	/* Offset 0x138 */
+> +	u64 guest_sev_features;		/* Offset 0x140 */
+
+Just thinking, if dumping error in logs would be
+useful for Admin in case of failure Or maybe we
+want to leave this to userspace?
+
+In any case, this patch looks good to me.
+
+Reviewed-by: Pankaj Gupta <pankaj.gupta@amd.com>
+
+
+> +	u8 reserved_9[664];
+>   	/*
+>   	 * Offset 0x3e0, 32 bytes reserved
+>   	 * for use by hypervisor/software.
+> @@ -291,6 +294,8 @@ static_assert((X2AVIC_MAX_PHYSICAL_ID & AVIC_PHYSICAL_MAX_INDEX_MASK) == X2AVIC_
+>   #define SVM_SEV_FEAT_ALTERNATE_INJECTION		BIT(4)
+>   #define SVM_SEV_FEAT_DEBUG_SWAP				BIT(5)
+>   
+> +#define VMCB_ALLOWED_SEV_FEATURES_VALID			BIT_ULL(63)
+> +
+>   struct vmcb_seg {
+>   	u16 selector;
+>   	u16 attrib;
+> diff --git a/arch/x86/kvm/svm/sev.c b/arch/x86/kvm/svm/sev.c
+> index 0bc708ee2788..7f6cb950edcf 100644
+> --- a/arch/x86/kvm/svm/sev.c
+> +++ b/arch/x86/kvm/svm/sev.c
+> @@ -793,6 +793,14 @@ static int sev_launch_update_data(struct kvm *kvm, struct kvm_sev_cmd *argp)
+>   	return ret;
+>   }
+>   
+> +static u64 allowed_sev_features(struct kvm_sev_info *sev)
+> +{
+> +	if (cpu_feature_enabled(X86_FEATURE_ALLOWED_SEV_FEATURES))
+> +		return sev->vmsa_features | VMCB_ALLOWED_SEV_FEATURES_VALID;
+> +
+> +	return 0;
+> +}
+> +
+>   static int sev_es_sync_vmsa(struct vcpu_svm *svm)
+>   {
+>   	struct kvm_vcpu *vcpu = &svm->vcpu;
+> @@ -891,6 +899,7 @@ static int sev_es_sync_vmsa(struct vcpu_svm *svm)
+>   static int __sev_launch_update_vmsa(struct kvm *kvm, struct kvm_vcpu *vcpu,
+>   				    int *error)
+>   {
+> +	struct kvm_sev_info *sev = &to_kvm_svm(kvm)->sev_info;
+>   	struct sev_data_launch_update_vmsa vmsa;
+>   	struct vcpu_svm *svm = to_svm(vcpu);
+>   	int ret;
+> @@ -900,6 +909,8 @@ static int __sev_launch_update_vmsa(struct kvm *kvm, struct kvm_vcpu *vcpu,
+>   		return -EINVAL;
+>   	}
+>   
+> +	svm->vmcb->control.allowed_sev_features = allowed_sev_features(sev);
+> +
+>   	/* Perform some pre-encryption checks against the VMSA */
+>   	ret = sev_es_sync_vmsa(svm);
+>   	if (ret)
+> @@ -2426,6 +2437,8 @@ static int snp_launch_update_vmsa(struct kvm *kvm, struct kvm_sev_cmd *argp)
+>   		struct vcpu_svm *svm = to_svm(vcpu);
+>   		u64 pfn = __pa(svm->sev_es.vmsa) >> PAGE_SHIFT;
+>   
+> +		svm->vmcb->control.allowed_sev_features = allowed_sev_features(sev);
+> +
+>   		ret = sev_es_sync_vmsa(svm);
+>   		if (ret)
+>   			return ret;
+
 
