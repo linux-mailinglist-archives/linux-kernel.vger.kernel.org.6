@@ -1,76 +1,98 @@
-Return-Path: <linux-kernel+bounces-549920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F0EA55898
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:19:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81953A558A4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:20:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5ECDC7A3B6C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:18:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 693933A6A84
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:20:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC2D8209F4A;
-	Thu,  6 Mar 2025 21:19:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040DB271295;
+	Thu,  6 Mar 2025 21:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cazu6oZr"
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fCD2eitP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341C82063EB;
-	Thu,  6 Mar 2025 21:19:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003022063EB;
+	Thu,  6 Mar 2025 21:20:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741295987; cv=none; b=qBAR0U8YUHwVWUwZ8YFKDDHKldK9bTJ+kORZ8XqFvDDr0aF1TDatdBaZOKOgLpLwgA+h37MFp19Qt3riecJ4JGDmiW/xzx229OhwCcw7o5RYSgpzH5HCQpf088uJE10HiLOU1ZvNmY3pn7K2wKRQ3zD2cW2VtvWjoAZOcF6zE2s=
+	t=1741296006; cv=none; b=EuxXbGLJ9FgpP3J0IRXVfcGo7Nnp++oqL2NIDA2Uh70rm9x4W5N4EteKgygGcSsag4p8UmgVKDepFPZu/JpM/lk4kZQrJ7uqtRTVpBPLthcDsx3VskZTb75jMkIR6b0HshB1uOpj5pl/DgNYlIBMNX+39/xvprf/z0zylDhfDu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741295987; c=relaxed/simple;
-	bh=XN+Ey8cN+SJIk7PE+4pqJFYo0whimSQnIOpxKW/DKdw=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eE3Zo7tG8QTVFm7gGq7Kxjk3+4ErwhWT3eaYlLSfLOk5K+CaHvNIkmK0Aw3aeCkt/TCK2kJ30BPkARIithiDZPH7ZzoLqIk8XzuH2DuRyKSTAkY5FpKbdYE3droXUXiBu9bNREnetHEr7LsD2htdm2il+jRq/b2Zy7YijAvU9GM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cazu6oZr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ECBFC4CEE0;
-	Thu,  6 Mar 2025 21:19:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741295986;
-	bh=XN+Ey8cN+SJIk7PE+4pqJFYo0whimSQnIOpxKW/DKdw=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=Cazu6oZrueuAszhrUC1ohuFyYKDBKqjTUXYTUXHorYtVZ4CYAiCXdXymEbO3vcFN/
-	 Cpusw0oPO7Sorpy3YvArHIL3A47IRBNm3z0S5LZokXtSXhxILIiLg3WquDBjS2cLFz
-	 oIG0MucqtsezoCRPWxrhDbB/gt7YeeXuL1Oa6zYB9Obp8M1MV6yUdEfNlxsChA7mYp
-	 XDDSLnrRG8YPQoLHslB0o3C533Pg8b1UvFfy4eZGGB4qORZoM6srBYiCI+I0eKWsBo
-	 7y7JTGfBuLvwLkqyacLHPGHMKv+5zwYKe54B7oird30/CN/qfbmHL4NwDoY5jrfuSV
-	 wQSNK0iuJLgEQ==
-Date: Thu, 6 Mar 2025 23:19:42 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH] MAINTAINERS: TPM DEVICE DRIVER: linux-tpmdd-nixos
-Message-ID: <Z8oRbtw8NDPkSLDF@kernel.org>
-References: <20250306211716.51120-1-jarkko@kernel.org>
+	s=arc-20240116; t=1741296006; c=relaxed/simple;
+	bh=cZDw6Poc4BDrQ+UyFQkoa8sDIiciZub+M7TYHo89aq4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=MokhWgxpVZ9lNICHfLGEAvGyP7SpKn7Dsc9kWXlFukm3zs766/ex/scBvNXAy0VkUP3e/L1O6sXwW6MYJ+Wb4SdDFJLTMPJfDxV7qh09bv93JdkpTgaTQviYZzOrSPjmCkhUlQcnT2TgFUZM6AHVJ6VexRPdHosYHI6gJ3AnOmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fCD2eitP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9335C4CEE0;
+	Thu,  6 Mar 2025 21:20:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1741296005;
+	bh=cZDw6Poc4BDrQ+UyFQkoa8sDIiciZub+M7TYHo89aq4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fCD2eitPTHFzv+QGanXjZD4bENnmRFCyuGnOvEmFo3oZUyxfGbz0e9/waUKJcay/B
+	 ulqAAqZ8fT7ST4z1YZd+B5XSm85iLoKo7BN7tD3KTLECZ4zAMHYgvB+TmrABW752ri
+	 sqVT0tKHdBGtciAetPrknw/7LiV2aVP98DL5X7zA=
+Date: Thu, 6 Mar 2025 13:20:03 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>, Andreas Larsson
+ <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>, Arnd Bergmann
+ <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>, Brian Cain
+ <bcain@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Dave Hansen
+ <dave.hansen@linux.intel.com>, "David S. Miller" <davem@davemloft.net>,
+ Dinh Nguyen <dinguyen@kernel.org>, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
+ Guo Ren <guoren@kernel.org>, Heiko Carstens <hca@linux.ibm.com>, Helge
+ Deller <deller@gmx.de>, Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar
+ <mingo@redhat.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, Johannes Berg
+ <johannes@sipsolutions.net>, John Paul Adrian Glaubitz
+ <glaubitz@physik.fu-berlin.de>, Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+ Michael Ellerman <mpe@ellerman.id.au>, Michal Simek <monstr@monstr.eu>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Peter Zijlstra <peterz@infradead.org>,
+ Richard Weinberger <richard@nod.at>, Russell King <linux@armlinux.org.uk>,
+ Stafford Horne <shorne@gmail.com>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Thomas Gleixner <tglx@linutronix.de>, Vasily
+ Gorbik <gor@linux.ibm.com>, Vineet Gupta <vgupta@kernel.org>, Will Deacon
+ <will@kernel.org>, linux-alpha@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+ linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+ linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org, x86@kernel.org
+Subject: Re: [PATCH 00/13] arch, mm: reduce code duplication in mem_init()
+Message-Id: <20250306132003.0066f109dae75f74711f9432@linux-foundation.org>
+In-Reply-To: <20250306185124.3147510-1-rppt@kernel.org>
+References: <20250306185124.3147510-1-rppt@kernel.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306211716.51120-1-jarkko@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 06, 2025 at 11:17:16PM +0200, Jarkko Sakkinen wrote:
-> This is my new testing tree for my kernel tree. It will over time replace
-> my previous BuildRoot based testing tree (but not just yet).
+On Thu,  6 Mar 2025 20:51:10 +0200 Mike Rapoport <rppt@kernel.org> wrote:
+
+> Every architecture has implementation of mem_init() function and some
+> even more than one. All these release free memory to the buddy
+> allocator, most of them set high_memory to the end of directly
+> addressable memory and many of them set max_mapnr for FLATMEM case.
 > 
-> Depending on host `docker compose up --build` (or podman) will spit out
-> rootfs and OVMF/AAVMF image depending on host where it is compiled.
+> These patches pull the commonalities into the generic code and refactor
+> some of the mem_init() implementations so that many of them can be just
+> dropped.
 
-Oops "depending on host" x2. As far as I'm concerned don't care ;-)
-
-BR, Jarkko
+Thanks, I added this series to mm.git.
 
