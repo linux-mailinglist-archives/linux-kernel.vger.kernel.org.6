@@ -1,123 +1,109 @@
-Return-Path: <linux-kernel+bounces-548186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC1F7A5414F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:43:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6EAEA54152
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:44:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E9C0166D9C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:43:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 480F2188CC04
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 03:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6199199396;
-	Thu,  6 Mar 2025 03:43:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF30A19992C;
+	Thu,  6 Mar 2025 03:44:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="dFVcnFy5"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RlxwznnS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373101991CB;
-	Thu,  6 Mar 2025 03:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEDA156225;
+	Thu,  6 Mar 2025 03:44:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741232603; cv=none; b=Y2Cc/Bo/lBgFIIs0MMpqxccCw/g9u2q/z1THiLEPe1zc2A/ey+LsenKtI/3FX2fYPLilmPSMY8nGQUES1VCBvPxFdpG0vsTo/oVdvqDfEMTPocqCe0uHs/iydQrYT6xrDppAg7spDgt7L70BXaXE/0Do9XGzcqKY10IlbAnNbvI=
+	t=1741232659; cv=none; b=rLxv6UCd3l4pKB7d1D4VWX2pV8g8/Qp3MNuZ+gJTX+fm9Kp7UveC/V9OT43hF9EE8NhBe2HeKC/i8DxbBKcp3moi+7DYfEFUTmsOMgKa1PlD2ozsm+bbv6YbNrrJeW1S0YaX56pYW6HSJOb2fJ5A73PBl607wlgsqcIwZN2WlLw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741232603; c=relaxed/simple;
-	bh=/shJ6VX/7A8nICUUOrOyA8xM0QkB+vTBPXISkMYVips=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cl8D6tCMY7v09Y7b8WXHfBgKUOqFOQkGx6Ot2emwzNokUwupFG5ufM9f+C5pCf4J1biv++FEK2mNyYZ0Cm1DPV4byDLHQ06ay9jZNdEw+xNh/wakjsTrewhX1bfdkNpD1e41OBcdaRYlXxjwoyExZCPKtqrL5d+xBspmTXtdj08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=dFVcnFy5; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-39104c1cbbdso84322f8f.3;
-        Wed, 05 Mar 2025 19:43:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1741232599; x=1741837399; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KvfaYVCJjOxUnzXkJLdVLBxKjcghXR6Hh+HVmJQ9ONE=;
-        b=dFVcnFy5dQRqHvowmdrtJ3miYrjGBgD/0f2BqaTS9/J48MLzDAs9jWLtR9DyC4ejvQ
-         M396k1PUeaTxmO6pg07HMRU5a8NFY3uW5DBPD29J2Nf7UtBQ7evqib8QYplf3Fut1cAR
-         4w5QZHvsxhhnwkdYNBEInDN+PrLYX8/6MUsqUZxT3m+kbDZEffBh8Wwps4zPpBuGxy/J
-         W3WJUksXVe93QtuSXUVvDC8LQr+H/lENW7yl9dYDuCM8soxUv4G34UF/AHwpweqgRom1
-         KUB68r9uK2CRugByPhtvLQO1yt8If3czc58GCjqUHNyxtB4Yw/pU6sdwctR71jJQxhou
-         jHpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741232599; x=1741837399;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KvfaYVCJjOxUnzXkJLdVLBxKjcghXR6Hh+HVmJQ9ONE=;
-        b=ROvfKFTXqX1F9xLpuIh2s5BkJ6sOg89h2W/QstcQLPhpCZQGiVrcYKwGIsaMfr/gk6
-         y7LChG8YFpYbc8HJBrDD7mH/gtr3J3GMSAaLoDMT8aKwJHm06ExAI37rmQND7HwUTOwf
-         OivSr4/i6WM8nQnJDtBnpcBHKQ5CAdfvuO5qhKCsvQDSp00L3SDDV6+Fpi/5uSTY372b
-         TRsyZYX7J4U2UsxDW5b2JmL4bI+6r/c0ycmIspwZY5Y1537bDXHehkln0me8mDasJ11A
-         461f6BTXRdiCcaH3ZbPmZFBjEA5UXa0/kxU0L9sKbiDhMu79N2xDoVOqe0/uA8DWS1Th
-         XRHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNt2c3eKoeZzgziXzctSuCamcu2+i8H2OoggP0N1SLqdDKqRqH3chqAi0v+0EyN4ciCnUP59lKYBLeHpM=@vger.kernel.org, AJvYcCWvjQMhda00oW6yH84EyEOvLWAG+TOdlfS18h1abYnyWrYY/3tTvYyGdn/iVY/mEWL+Mo63tQ/E@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKiVq/TMhb9Zyp/5pzijaWZdmi48maCIl5fEfqX2HtIbVs3huR
-	jBwKSk8eU1libS48qIxrjTZci70UlhfmWzLhyrwFEkLfe5X3M14=
-X-Gm-Gg: ASbGncs8QBzD2BkrUlXZxPZT534vWR36DLA37yuZ2SlyGwmE1Tos4Jr2AZBJuD3dVfw
-	sc5ZP4zclCRN+qJQzg12crh6VVGY6s2cv8wLdUAQ1O/dJoB1QdmDORTwi+dys7HP9qo6rGMLxV9
-	IHrtRCF51cuHuidwk9RlPXNoDI6vX9i2A8U6y9A8KmLNYUSHudNov+VD/4+WtYPGC2KsJdi9c+A
-	+2NpYZwBuImtXFt6rTrdXHSA2/MfXOa23ZxcwplIhAeweNK71JgR7UGld3HBVvYD1lDBa1xLe/w
-	iRyXZFsHcPh0QEP6o41rXBHL5tQb35ExMzvkPr2DkOuGxDiSs94mgAcJG4kLYbj9jlbsHqLdQ2f
-	/NP1v0+WLkEJauOvYEBAp
-X-Google-Smtp-Source: AGHT+IFZoJr4BpD0Wcdp0F2PVjihayKVse4R5DfOBq2DFLN6HWFFFJhBXhibGrJXCA8RwR8Cs1rHoA==
-X-Received: by 2002:a5d:5f8f:0:b0:390:f88c:a684 with SMTP id ffacd0b85a97d-3911f7bb837mr4964247f8f.35.1741232599178;
-        Wed, 05 Mar 2025 19:43:19 -0800 (PST)
-Received: from [192.168.1.3] (p5b2b4217.dip0.t-ipconnect.de. [91.43.66.23])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfbaa94sm550605f8f.14.2025.03.05.19.43.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 19:43:18 -0800 (PST)
-Message-ID: <997f3cf2-3718-47ea-ba11-a5255aa75ca5@googlemail.com>
-Date: Thu, 6 Mar 2025 04:43:15 +0100
+	s=arc-20240116; t=1741232659; c=relaxed/simple;
+	bh=zbuxOIdgJUxZ4n8mVot+kiQOUkVyHXs87OyG172qmlk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JKtyltKiHPm9Q3ruyOiOYPP+eQb1VSebTGqXqQNARkbsRFAoxGfdJYtyqCwOutGsOz6EFh+72AOxYabr5f1Rk8Mi14diQIkbmFFXaCV0awGAkICXaT7tY3Fv8hjEjxChhG8WQvhZZhMiIXzn6JlX5a2D7y6JYI8edmIkj2t/Hbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RlxwznnS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 386D0C4CEE4;
+	Thu,  6 Mar 2025 03:44:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741232654;
+	bh=zbuxOIdgJUxZ4n8mVot+kiQOUkVyHXs87OyG172qmlk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RlxwznnSVd2HmpCdVhZNgE6a9GKYx0jLMHE0x0VqxVVV6QRAdvF8L6tbE9GL421nH
+	 7cA64wpmnv4rwWrm0jEW7Jld4heyq9LB9c5SVcTxwQITg41JjSS0BrwGxrLmJd668p
+	 yhcuTaiFWIRlqvKZygv6c1TRmgo0FKBfqLJMZGl0e0/xIrxFSZwBJQ8MRUdaaAMNIi
+	 1TKJ1KU8Hf+f1GvllMW4KVxwObyTU+4rjzrQub2Bwd21+WT6gTSPMz5L27joxJzgtp
+	 NAd9ptyWZ57454ja9cvV8HKWccbh2FI8cTXZu7RZEeseR6m1/Our8n+bwnG85eACcL
+	 V8hUVUtl+tZZg==
+From: Mario Limonciello <superm1@kernel.org>
+To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"Luke D . Jones" <luke@ljones.dev>,
+	Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: platform-driver-x86@vger.kernel.org (open list:AMD PMF DRIVER),
+	linux-kernel@vger.kernel.org (open list),
+	linux-acpi@vger.kernel.org (open list:ACPI),
+	"Derek J . Clark" <derekjohn.clark@gmail.com>,
+	Antheas Kapenekakis <lkml@antheas.dev>,
+	me@kylegospodneti.ch,
+	Denis Benato <benato.denis96@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Yijun Shen <Yijun.Shen@dell.com>
+Subject: [PATCH] platform/x86/amd: pmf: Fix missing hidden options for Smart PC
+Date: Wed,  5 Mar 2025 21:44:02 -0600
+Message-ID: <20250306034402.50478-1-superm1@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.13 000/157] 6.13.6-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20250305174505.268725418@linuxfoundation.org>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <20250305174505.268725418@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Am 05.03.2025 um 18:47 schrieb Greg Kroah-Hartman:
-> This is the start of the stable review cycle for the 6.13.6 release.
-> There are 157 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+From: Mario Limonciello <mario.limonciello@amd.com>
 
-Builds, boots and works on my 2-socket Ivy Bridge Xeon E5-2697 v2 server. No dmesg 
-oddities or regressions found.
+amd_pmf_get_slider_info() checks the current profile to report correct
+value to the TA inputs.  If hidden options are in use then the wrong
+values will be reported to TA.
 
-Tested-by: Peter Schneider <pschneider1968@googlemail.com>
+Add the two compat options PLATFORM_PROFILE_BALANCED_PERFORMANCE and
+PLATFORM_PROFILE_QUIET for this use.
 
+Reported-by: Yijun Shen <Yijun.Shen@dell.com>
+Fixes: 9a43102daf64d ("platform/x86/amd: pmf: Add balanced-performance to hidden choices")
+Fixes: 44e94fece5170 ("platform/x86/amd: pmf: Add 'quiet' to hidden choices")
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ drivers/platform/x86/amd/pmf/spc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Beste Grüße,
-Peter Schneider
-
+diff --git a/drivers/platform/x86/amd/pmf/spc.c b/drivers/platform/x86/amd/pmf/spc.c
+index f34f3130c3307..1d90f9382024b 100644
+--- a/drivers/platform/x86/amd/pmf/spc.c
++++ b/drivers/platform/x86/amd/pmf/spc.c
+@@ -219,12 +219,14 @@ static int amd_pmf_get_slider_info(struct amd_pmf_dev *dev, struct ta_pmf_enact_
+ 
+ 	switch (dev->current_profile) {
+ 	case PLATFORM_PROFILE_PERFORMANCE:
++	case PLATFORM_PROFILE_BALANCED_PERFORMANCE:
+ 		val = TA_BEST_PERFORMANCE;
+ 		break;
+ 	case PLATFORM_PROFILE_BALANCED:
+ 		val = TA_BETTER_PERFORMANCE;
+ 		break;
+ 	case PLATFORM_PROFILE_LOW_POWER:
++	case PLATFORM_PROFILE_QUIET:
+ 		val = TA_BEST_BATTERY;
+ 		break;
+ 	default:
 -- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+2.43.0
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
 
