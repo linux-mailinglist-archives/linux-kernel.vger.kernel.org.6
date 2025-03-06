@@ -1,190 +1,216 @@
-Return-Path: <linux-kernel+bounces-550038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF49A55A65
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:00:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1C35A55A4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:59:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C10C31898994
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 23:00:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC644176586
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F27E5206F22;
-	Thu,  6 Mar 2025 23:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5298227D771;
+	Thu,  6 Mar 2025 22:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QiLSyING"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k5c1cCXW"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684472E3373
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 23:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9555A27CB33;
+	Thu,  6 Mar 2025 22:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741302020; cv=none; b=tZUN9/kqfDqouxrfz+7IaTnzUsTi6RxzsO0VXDoRYCRjQuPGBn5jaMEkXJqQwE4Jmj6HV9/kgyli/RI6V0kAbrv27PTP5HPpRlVYRlzDDytIu/kPHpK/HqZpDg83v+2cLbOqnFbhLeY0WyHnSwkqM1oUJhfgvc+n9dLfc6CXITw=
+	t=1741301971; cv=none; b=eA8MyLnIcjs06eYBXfuyzE3TlvISkgUey/ErTDjLrOfrWmtjLK8lGtMO3yuVAJCZ6YNq0PhB5rDTngZ5p5fUb5HnqXnfBm9AffkHTo995PPhOfDagfO7dS1dOwquwFlr1ilanI/H4lfMGYtoO4QhpQEDh3wGF9i4XIk4LBXvOPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741302020; c=relaxed/simple;
-	bh=KbuAqtkYtNbIf7bFsEkGfJoWaMV6On0bXLqnHFLgpjU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TbfSLuwJIM5880sLj0sXBsMq/WPDH15IvB7BaoLRZp7C1BOIcbxpdf623hCdnqvqtHiHCiXroo5jEEA0cwRYlaowxSIhyzX07vw9W78RRHG8ehk2Dfv1MqPq6w37oVElu68spvMd7OomphbEVqYE8SU9hjkZCJbrHskh5c/NuoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QiLSyING; arc=none smtp.client-ip=209.85.128.181
+	s=arc-20240116; t=1741301971; c=relaxed/simple;
+	bh=MEVUv7kEvUWZsmt0XrtVqxj6H4KcAw6tjsmKoRb9jlg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NxdBC4uYb7Zr3F58FX9iAp5vs4cTUN5NuiLWnu9k6EbtXIMfsEQt8TneWkVy07juwqEYiy9irDpo28YdjriTjYeQtvef0Zk8hW+VAVwV8La9MExALj+yFdwQfE4K8JMec2wQbBotk2aSS20YWMxcDIcyrv0f//XP4eMA6qW0wcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k5c1cCXW; arc=none smtp.client-ip=209.85.208.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6fd9d9ae47cso12331887b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 15:00:17 -0800 (PST)
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e4ebc78da5so2221542a12.2;
+        Thu, 06 Mar 2025 14:59:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741302016; x=1741906816; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=geAOgzeebd8mAMWoJQZj/D/Fwtsvs8mA1xjntUbssZw=;
-        b=QiLSyINGepD4VGn5lryz3/V2UFDqqE8azJd7WHjYpPg39wFt1hfjeQnJGDh71jt6is
-         lSPVr36UXT5yRWjaC2pNuwk+zmbwSEdDkQ+SG2EbE4ecPszWkbxl3aRKXArID6mke7TO
-         pIZfJtlruGmIvcQ7X2pys2GphHth6x9j66lJwsDnAJ5hmQGiq+bFJexdLgzSgtbbT0M4
-         XChgUbox814+4rjhF71dRlqr/y7/mS+uoHprpJ8Q+ANnwZ0uVujBt12TK7zM9Cg+kyt2
-         o+Nuh46boeNx5XcsR21j/sJzoR1dq4FVULQNrjAknNCtZKPhQjxtQtqiGeQLa/oaIxXB
-         +zzA==
+        d=gmail.com; s=20230601; t=1741301968; x=1741906768; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=chV7S+fzAA2Gau2Ic5aypqTe9OyWNi3Kgw8UANvm0UE=;
+        b=k5c1cCXWV1k9Z6czGQ3VI57VQDvUQv6qVH1FxDCbZ+DmdJMpsd18w8Q+PrOFEawxoJ
+         i3DfrQQamWRLgTlJl/PMM4AIh6mA9d+cJeP52hqiw6mXtaHDXzHD0Kt+EK3BKS9ITShy
+         h2stvPW0cbOtLsGY7OMajVx8Rtu49E8UtIDQD36/GxjXzAtwdIJhLcTXPVGzv3ofKOPK
+         e/xYf+4b9gmbVMqouKk+O7sH4lLveyovYvVRJ1XsA4LZOjd2a3eNW1tlMAWDxMfj5112
+         YuRLJFnYUpTLCTMaawZ6hzb0nsBimDyfvtOHfiimjhK1rTw27O+oRdnQ0uK9dxu9WIJl
+         Jz9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741302016; x=1741906816;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=geAOgzeebd8mAMWoJQZj/D/Fwtsvs8mA1xjntUbssZw=;
-        b=om1TOTvHOXxJJbdAtDSCdb21dyrYNva/bc55anABkWw71kqWOqRpTx6PyGHhWqu/+B
-         q/P7BNCVo/fHHZmFnmDaWYc9dBhH6O1EbbvqqjZqtv5ewRRSFmzT4kg1Ezz/omSux+GF
-         b2HtXfvg6dKLlm9NSHRqoYQBJGM22rW2jTnqVUS1IufQT8ZRXXWpXBFUjULFuuKouXTU
-         4OodIqdjsBxUX9iQfYXM1VmEAl4VsLLfgdlTGxemzASHmqw4ECXKrUtge7SgEn5A+nnz
-         9vmRYxzO6GOIrGscghmnbB80k3O7rwFNdTNpl1ZDJUoFWQnB4OaKCagrqOLSZy2zkTys
-         ikAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMPHJobE6FVBMFAWpPjlCnmAavSLAC0kESPZ7oVXNpEKw2Klz+pTQbpxBlyJpvxOk4ao68IDIJCncEOQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwdOgINPrjf1F8/kwOmJzPY/okF+S6yaBvrPXg7eB0eMb+caaP
-	brGWNHWi+YvL+UoD0LSy6kWPFrGL+bRVdk9yfZyawIXmC/E7M0Th
-X-Gm-Gg: ASbGncs/N3sRVoKEDdHSrqF6uElAYUAICXuzL4ZczuzPY48bJFSs+uEJiHBI/MlKogD
-	ult53+QTn47CB+OMef0IGgungsoD6TAEkRw9QfvS50y5k4BV/15FyC6JF6gjOUwRCrfkv8eixzm
-	hhQETeCo1ECmL+9nOsMA4OlXB9PECZ5dpplZcBwk+HQVM0txwZ0qjsrNWMt9PIAsHc1W13wzKzb
-	hfa9dny+mrmaFssMddfBaJHYkyR4xUMJD3alqnnwe4Yn2kfdKG8G1G/O2B4hynOi8mRQS/0okNA
-	uahON7oOss/RPgzl4IBhuplCrrG6sjwokCQv
-X-Google-Smtp-Source: AGHT+IGgG/4b/FIa0kd9TWIEiHSPrmyea0X37UqteSiydOz0UfID+3itnlJ73noe5bd9kiIP6s7VYA==
-X-Received: by 2002:a05:690c:4c09:b0:6fb:ae6b:a340 with SMTP id 00721157ae682-6febf3b42c1mr17124967b3.30.1741302016225;
-        Thu, 06 Mar 2025 15:00:16 -0800 (PST)
-Received: from localhost ([2a03:2880:25ff:72::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6feb2c2e85dsm4688647b3.93.2025.03.06.15.00.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 15:00:15 -0800 (PST)
-From: Nhat Pham <nphamcs@gmail.com>
-To: akpm@linux-foundation.org
-Cc: hannes@cmpxchg.org,
-	yosryahmed@google.com,
-	yosry.ahmed@linux.dev,
-	chengming.zhou@linux.dev,
-	linux-mm@kvack.org,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] page_io: return proper error codes for swap_read_folio_zeromap()
-Date: Thu,  6 Mar 2025 15:00:15 -0800
-Message-ID: <20250306230015.1456794-1-nphamcs@gmail.com>
-X-Mailer: git-send-email 2.43.5
+        d=1e100.net; s=20230601; t=1741301968; x=1741906768;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=chV7S+fzAA2Gau2Ic5aypqTe9OyWNi3Kgw8UANvm0UE=;
+        b=g5RnTTFUdqAmUcFvH3h+a8uDFeBkyUE89n6jjh4zMUqyvRnTdeZC5hVpG+AF1wYI4v
+         2cIq63ltOtFy7XmGEQi6JryKTr/MdbfijJdcaRkoANWpsBijicb7CBcGIFx82iez9zJt
+         C19sXh+b0VlP6pHzhbn0jj9ooKe34eGgSdoqD1n3N147v8sso1oD+sNLAWsnHslbPFBD
+         PMsFT33gcDXueb9GDCyzVtA4nKRT2YlQDg2ZGSuVTn89jC1r/6yqm9CM6oKLhosmsj53
+         OQ1iq1GKF1cGNNWLCcR8Xhdfakt4SQMhgMGUE8QvrAR7XR5/pWtzX8hrCaNQ0/8MdrAF
+         eJhw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxwmCCmKrXX33R57wQHnuJMfHiFEFKltiYGgCjbvXVfKyb3yIQvyWqP3wKSo9DuuW1jOe2hdnO@vger.kernel.org, AJvYcCWbWmro2CBVWxagJ9zpMfWhsWwOM4brSeGMdY/2IduFNwLZWiwf8IyoQj0M3KzyTmcdo0cGmWxoWZ2o4TY=@vger.kernel.org, AJvYcCWk5qqVbQ5BluNgaC/69Ut1EVw8DDulL3QR4mANHtwG5FL+knM0DMP3hCcgGcheOg2ukUmnq4uqqo6y@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ/dGAyBlWLYHH/pYaz2Z7cu1kX5pleyaZOCNChQWXDRJM14cn
+	7+yaM/yNTUrUqtAjlwoxrc4z54hQpAgBExG1z188XpZTcm9fFHLj
+X-Gm-Gg: ASbGnctbRBANp0dcFCBaKThjuXdUosE8mYYAPLYHpr1onVFr/0DQViUF6IefVCr7J3b
+	NEN+S6h85jseporIGy4iudtpILGghk8AAPnW2JYIheN97Lk2nmmRcz7ALIl3JTTwy7Gfb0T6Ot9
+	fvIZ3m1FylIM859kMkJsjXESTpwwCpYM/uOSph+hu4VWmWOk4yxuc6Mntz6zgF0F8FQave/21PH
+	RM7lvCgjl3KopEK31LucB0SJL9lJm+071U/8WBHrlZkd6cMyeYaP6D0B2H+Fw4cd7KoyLyeFlRA
+	7eqyKxHTWrzvPflQzU4PHLrLP4wh5QdQd93Rti+EvZ0BAIOT+ioAqXjaRjQAB8gtc/dOrSuaCkc
+	ujZct5IzDBy7jWGmXl+vf7EerukdSJgfx8QxKUZ9ivCOVaIK39nhPSu9xcZ85T4e6V8wAcENdZs
+	dqZBd77Y3XSEyOk/QEYU+dQwk/LnhCkqK64Oj1
+X-Google-Smtp-Source: AGHT+IFQn++9U/ESA/OJsB0mJ5tnr07300S0qIrgsTlThMgcR5RwG+W1bWFil9+SRlpFgBOxUg6++g==
+X-Received: by 2002:a05:6402:35c7:b0:5e0:9390:f0d2 with SMTP id 4fb4d7f45d1cf-5e5e248f10amr852338a12.20.1741301967659;
+        Thu, 06 Mar 2025 14:59:27 -0800 (PST)
+Received: from ?IPV6:2a02:3100:a5b0:7900:4d9a:9929:21ea:7180? (dynamic-2a02-3100-a5b0-7900-4d9a-9929-21ea-7180.310.pool.telefonica.de. [2a02:3100:a5b0:7900:4d9a:9929:21ea:7180])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c74a8e0asm1568321a12.39.2025.03.06.14.59.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 14:59:26 -0800 (PST)
+Message-ID: <9d8efb09-5c27-4934-a273-98c0ff57a48a@gmail.com>
+Date: Fri, 7 Mar 2025 00:00:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: Add PCI quirk to disable L0s ASPM state for RTL8125
+ 2.5GbE Controller
+To: Bjorn Helgaas <helgaas@kernel.org>, hans.zhang@cixtech.com
+Cc: bhelgaas@google.com, cix-kernel-upstream@cixtech.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Peter Chen <peter.chen@cixtech.com>, ChunHao Lin <hau@realtek.com>,
+ nic_swsd@realtek.com, netdev@vger.kernel.org
+References: <20250305222016.GA316198@bhelgaas>
+Content-Language: en-US
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ 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
+In-Reply-To: <20250305222016.GA316198@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Similar to zswap_load(), also return proper error codes for
-swap_read_folio_zeromap():
+On 05.03.2025 23:20, Bjorn Helgaas wrote:
+> [+cc r8169 maintainers, since upstream r8169 claims device 0x8125]
+> 
+> On Wed, Mar 05, 2025 at 02:30:35PM +0800, hans.zhang@cixtech.com wrote:
+>> From: Hans Zhang <hans.zhang@cixtech.com>
+>>
+>> This patch is intended to disable L0s ASPM link state for RTL8125 2.5GbE
+>> Controller due to the fact that it is possible to corrupt TX data when
+>> coming back out of L0s on some systems. This quirk uses the ASPM api to
+>> prevent the ASPM subsystem from re-enabling the L0s state.
+> 
+> Sounds like this should be a documented erratum.  Realtek folks?  Or
+> maybe an erratum on the other end of the link, which looks like a CIX
+> Root Port:
+> 
+>   https://admin.pci-ids.ucw.cz/read/PC/1f6c/0001
+> 
+> If it's a CIX Root Port defect, it could affect devices other than
+> RTL8125.
+> 
+>> And it causes the following AER errors:
+>>   pcieport 0003:30:00.0: AER: Multiple Corrected error received: 0003:31:00.0
+>>   pcieport 0003:30:00.0: PCIe Bus Error: severity=Corrected, type=Data Link Layer, (Transmitter ID)
+>>   pcieport 0003:30:00.0:   device [1f6c:0001] error status/mask=00001000/0000e000
+>>   pcieport 0003:30:00.0:    [12] Timeout
+>>   r8125 0003:31:00.0: PCIe Bus Error: severity=Corrected, type=Data Link Layer, (Transmitter ID)
+>>   r8125 0003:31:00.0:   device [10ec:8125] error status/mask=00001000/0000e000
+>>   r8125 0003:31:00.0:    [12] Timeout
+>>   r8125 0003:31:00.0: AER:   Error of this Agent is reported first
+> 
+> Looks like a driver name of "r8125", but I don't see that upstream.
+> Is this an out-of-tree driver?
+> 
+Yes, this refers to Realtek's out-of-tree r8125 driver.
+As stated by Hans, with the r8169 in-tree driver the issue doesn't occur.
 
-* 0 on success. The folio is unlocked and marked up-to-date.
-* -ENOENT, if the folio is entirely not zeromapped.
-* -EINVAL (with the follio unlocked but not marked to date), if the
-  folio is partially zeromapped. This is not supported, and will SIGBUS
-  the faulting process.
-
-This patch is purely a clean-up, and should not have any behavioral
-change. It is based on (and should be applied on top of) [1].
-
-[1]: https://lore.kernel.org/linux-mm/20250306205011.784787-1-nphamcs@gmail.com/
-
-Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
-Signed-off-by: Nhat Pham <nphamcs@gmail.com>
----
- mm/page_io.c | 35 ++++++++++++++++++++++++++---------
- 1 file changed, 26 insertions(+), 9 deletions(-)
-
-diff --git a/mm/page_io.c b/mm/page_io.c
-index 4bce19df557b..48ed1e810392 100644
---- a/mm/page_io.c
-+++ b/mm/page_io.c
-@@ -511,7 +511,23 @@ static void sio_read_complete(struct kiocb *iocb, long ret)
- 	mempool_free(sio, sio_pool);
- }
- 
--static bool swap_read_folio_zeromap(struct folio *folio)
-+/**
-+ * swap_read_folio_zeromap - check if the folio was zeromapped, and if so,
-+ *                           zero-fill it.
-+ * @folio: the folio.
-+ *
-+ * Return: 0 on success, with the folio zero-filled, unlocked, and marked
-+ * up-to-date, or one of the following error codes:
-+ *
-+ *  -ENOENT: the folio is entirely not zeromapped. The folio remains locked.
-+ *
-+ *  -EINVAL: some of the subpages in the folio are zeromaped, but not all of
-+ *  them. This is an error because we don't currently support a large folio
-+ *  that is partially in the zeromap. The folio is unlocked, but NOT marked
-+ *  up-to-date, so that an IO error is emitted (e.g. do_swap_page() will
-+ *  sigbus).
-+ */
-+static int swap_read_folio_zeromap(struct folio *folio)
- {
- 	int nr_pages = folio_nr_pages(folio);
- 	struct obj_cgroup *objcg;
-@@ -519,15 +535,17 @@ static bool swap_read_folio_zeromap(struct folio *folio)
- 
- 	/*
- 	 * Swapping in a large folio that is partially in the zeromap is not
--	 * currently handled. Return true without marking the folio uptodate so
-+	 * currently handled. Return -EINVAL without marking the folio uptodate so
- 	 * that an IO error is emitted (e.g. do_swap_page() will sigbus).
- 	 */
- 	if (WARN_ON_ONCE(swap_zeromap_batch(folio->swap, nr_pages,
--			&is_zeromap) != nr_pages))
--		return true;
-+			&is_zeromap) != nr_pages)) {
-+		folio_unlock(folio);
-+		return -EINVAL;
-+	}
- 
- 	if (!is_zeromap)
--		return false;
-+		return -ENOENT;
- 
- 	objcg = get_obj_cgroup_from_folio(folio);
- 	count_vm_events(SWPIN_ZERO, nr_pages);
-@@ -538,7 +556,8 @@ static bool swap_read_folio_zeromap(struct folio *folio)
- 
- 	folio_zero_range(folio, 0, folio_size(folio));
- 	folio_mark_uptodate(folio);
--	return true;
-+	folio_unlock(folio);
-+	return 0;
- }
- 
- static void swap_read_folio_fs(struct folio *folio, struct swap_iocb **plug)
-@@ -635,10 +654,8 @@ void swap_read_folio(struct folio *folio, struct swap_iocb **plug)
- 	}
- 	delayacct_swapin_start();
- 
--	if (swap_read_folio_zeromap(folio)) {
--		folio_unlock(folio);
-+	if (swap_read_folio_zeromap(folio) != -ENOENT)
- 		goto finish;
--	}
- 
- 	if (zswap_load(folio) != -ENOENT)
- 		goto finish;
--- 
-2.43.5
+>> And the RTL8125 website does not say that it supports L0s. It only supports
+>> L1 and L1ss.
+>>
+>> RTL8125 website: https://www.realtek.com/Product/Index?id=3962
+> 
+> I don't think it matters what the web site says.  Apparently the
+> device advertises L0s support via Link Capabilities.
+> 
+>> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+>> Reviewed-by: Peter Chen <peter.chen@cixtech.com>
+>> ---
+>>  drivers/pci/quirks.c | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+>> index 82b21e34c545..5f69bb5ee3ff 100644
+>> --- a/drivers/pci/quirks.c
+>> +++ b/drivers/pci/quirks.c
+>> @@ -2514,6 +2514,12 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x10f1, quirk_disable_aspm_l0s);
+>>  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x10f4, quirk_disable_aspm_l0s);
+>>  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x1508, quirk_disable_aspm_l0s);
+>>  
+>> +/*
+>> + * The RTL8125 may experience data corruption issues when transitioning out
+>> + * of L0S. To prevent this we need to disable L0S on the PCIe link.
+>> + */
+>> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_REALTEK, 0x8125, quirk_disable_aspm_l0s);
+>> +
+>>  static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
+>>  {
+>>  	pci_info(dev, "Disabling ASPM L0s/L1\n");
+>>
+>> base-commit: 99fa936e8e4f117d62f229003c9799686f74cebc
+>> -- 
+>> 2.47.1
+>>
 
 
