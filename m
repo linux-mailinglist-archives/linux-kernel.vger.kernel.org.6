@@ -1,130 +1,228 @@
-Return-Path: <linux-kernel+bounces-548214-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BB1AA541D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:48:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7736A541D5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 05:49:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85BC616DD91
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:48:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D94367A5ABF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 04:48:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84E5A19CCEC;
-	Thu,  6 Mar 2025 04:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 740CC19ADB0;
+	Thu,  6 Mar 2025 04:49:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bMpHgUwP"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="cl/17yYn"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2040.outbound.protection.outlook.com [40.107.92.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EAE82F50
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 04:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741236495; cv=none; b=e95GIokc4b5KzHBchFoLo2GfXIqmVHYghORUYZDgAg7s9t1S9BH4AzDMZXdtWoOe8H9R2pDHGx7PQoR/e7F14dYteLJDKyDhBF2ThbaVlLiQshilbtpMmZi/25x9M8ElATigtD0chHSsiYnBoSGZWouC9MrV7qMfjf21PmvxmCA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741236495; c=relaxed/simple;
-	bh=SkKfQC6CZcQpKn3fA8/UGW3rZ+8PsyS1MkVPLxlRNEE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PNNBrNPuC4Tg/RTpOQf1n5XJwjcBT4RYAeyCg24WnsXBP3eWDlMz/n7vimsg7eoi6z7Dg4HTVBCNRHyCAt9thLN0kASqcQfOm8M54xssNki/VOER7Ogzez6D7x9Paq5K8wUCeJIpKb3TuJUPz7nxx7r7j+EKE3Rlqy5h1Da35fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bMpHgUwP; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2240b4de12bso4630795ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 20:48:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741236493; x=1741841293; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=pVhCeF3zfzn4fOX1E4nH6Dq1VG6iFwnhwgnMjYfbfh4=;
-        b=bMpHgUwPQQ3kBe0bHMxiBD4El/qNbW0D6ULjA0jjV1iyWPU4110SJdFhZHRVXDOfr7
-         lVh88ROeGXrddGokIVlm2rKDWy9k6hol2v0nxuK2JoIWt4RkcUdzQsMy3CJd89u0C7RG
-         r+Y4Y2/yWLmf14owCWZ2Lz1IRb8OpcmPn1YkDNLCRtUcAZJx109N7GKTp81pG75T2FcF
-         j3hp9vWinhGqu5I5Xq7i3FwJh5QcBpRzUUUILSXCJKpToBUyoNwqhpH2y9Ewta5yot8R
-         OealpzSFnOxNuw7b2410LcPSPcqvUEWn//NAphrv8lzirFTzgLM+kAeBt1sUe2OHRCly
-         Q5lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741236493; x=1741841293;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pVhCeF3zfzn4fOX1E4nH6Dq1VG6iFwnhwgnMjYfbfh4=;
-        b=Yv56kj+9SnjR85dOLwvDHJOxc3fpeqz9r9Memi6cMbug/CHsNjGIOGOi7d0z3l97vE
-         7H/s2IgF5XXt0wbnT3+yUKjgfxV6vHt2bQaoJZiAnDVEgLDk7Ssuud8mRAIm9Hcx6vm7
-         E+brTjLlhWaBGDnnvC/QGWDIbP6R3dAnxBi3bFIo+TqbrS1I4KtxUkh/BPHexnKG0cB2
-         1ouu1h11yI5fRI05lizcfPto3YxDm9QkHzkRorvk8ZQzEHj1S+XNWROYVW2+2klvQOu0
-         yObD2GIBEKUKdvpr6bc0QlJWQ+N2gfvsWxUTj83BHNNaPDXAYxKj+WtI9jjA5nes47I0
-         mafw==
-X-Forwarded-Encrypted: i=1; AJvYcCVX6pUYeIEq4mm917ytVXyMRpRU4PnYySooSQuimkRjyGZgU6GzDEzFFNmGGQGrYUCOg7gU8wsVcNa7tGo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8dJZwz9TOfnx+2KH+w1U6BgOhxo/er9/8wQwKQzNRaUCKgfxX
-	PpNvHa4sRWgVvHiCPigr6g0MdbunK3Cw1pq/pwFiC2buAZBdRHcthk0v63lS/hc=
-X-Gm-Gg: ASbGncuqr6mYBxneOsrSte7jbUKlLJE8P2GjjG+teQ+Qfxeb/WScCcljWNwcHTDOg3R
-	hQ4gFuE+xpJ4RN10nA9MOHX8wH2ZAqee8/XWHSAkhX0q2eUI+isphq2KSYjujOZJN4nZIwzjRho
-	3O9++Kcqn853BJVaebHd02eT4QrdrmX93YFK1tXu2iZ7WlFEKO1BLP/kn9yHWqyiGFHPz/pHzVo
-	gy8iHIVIttc0gVLbIhx8t1s1TepPfmN2N26MwtnBGyoGw1cb9ttMMqiC8WZiUDRyBrJVw/KcZNs
-	DdxwecNoQffiL/mq1fqh1/IsU7Uv84wlfVEHJvtF1DVnMg==
-X-Google-Smtp-Source: AGHT+IF/7SpYm7RhZEOVyZQ0/yR2A6FRsW6wiwdOD3yjpFUdPfld11PpaLDCbSfVpUDCWJ0TInwjUA==
-X-Received: by 2002:a05:6a00:4f8d:b0:736:2a73:6756 with SMTP id d2e1a72fcca58-73682d10227mr7674703b3a.21.1741236492786;
-        Wed, 05 Mar 2025 20:48:12 -0800 (PST)
-Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736985191cfsm333947b3a.145.2025.03.05.20.48.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 20:48:12 -0800 (PST)
-Date: Thu, 6 Mar 2025 10:18:10 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH V2 2/2] rust: Add basic bindings for clk APIs
-Message-ID: <20250306044810.mqbo74nc6ch4dauw@vireshk-i7>
-References: <cover.1740118863.git.viresh.kumar@linaro.org>
- <a0a1ba4e27c3a0d9e38c677611eb88027e463287.1740118863.git.viresh.kumar@linaro.org>
- <Z7iGHiQcqa-_AXli@pollux>
- <4AD8A8F3-EA7E-4FBE-9F0D-58CF7BB09ED5@collabora.com>
- <Z7iSHR0F2QpiNpMZ@pollux>
- <aoprvojsnmkbzmmpgx5wxjqtamnr3jyhyqfcqnwhxulp34gn32@aau57u4cotpe>
- <20250221215931.GA134397-robh@kernel.org>
- <20250224095945.xjcjwkoqlgcsd2np@vireshk-i7>
- <CAL_JsqJFeb66pt37wsTB7esCpRD1tpvqP1bvW=Nw8MmP5LvktQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 799DC2F50
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 04:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741236558; cv=fail; b=poZmHkl4pgt+qG+6F2/2g+jvDpHYpGaYzICgKEabYdjz9EdDJxj4zQgsAkZETfqwvwq4FUrP5p9VujDqEDEnK7wr8wUT0ZB6+j9Ijw0gSqL9cKbGMq9Fg9FRJOZt2FOvd0RAqCCE46TdfNjjrU2CrUU5kQwFXLySNlo5VtTlPOo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741236558; c=relaxed/simple;
+	bh=ocAIFiwiUPAYwOntqd4FpEX60hkYsSydmuJInUyZXss=;
+	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=J9v9/o4PfPnjWF/1gd3ODWPKYUZQeF70pLqQRYjWE3St+rks6cjpabLganuuO6jDIpedDP1tbRNfZPsrjVMkqTH3xoCaKvhnc+wCd6PaQ3CUMW5TRV21NvKi69oYz5PXgbtmM8zCelCVPSHk4RQGzEflwONleVPuuektvpENRMc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=cl/17yYn; arc=fail smtp.client-ip=40.107.92.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PqP86OyEWPsMe23HHP12fBv9aDuUo/OeRJPpiHU8rVQNz6FOQN9Wr/Ug03L7mMCOYfn4TK6wjIqHFbwVvBmiVSJwtPCdhvIEkKoKdeg/ATqUCwNYR9oQLbuJbCTf7huKIDbh6/e5iPXE6MQly8HrYxEiz5moL/6cKVrfcI8mjFY4Y172c2JYiTMuk5tVzTzhOLeY1Yj9BeG0r3ObhEXaMIu/uMcuqDP+vnO3D0px7bifsqybJWPPM3IRdppC6V1R+EDCdxjuAIwFXVLsv9dWbJlbdc5rMZFE+Ebz7mY7hy/Q/GNaT3gFSthacEAdvtOlD1In3RUtQv60jNIemRQXww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8v8ZGfPVUJssfDbU4lGsI//Hvg1ao0ZfW1BswMSUaLI=;
+ b=xX+DS15IpORXCjHUNRvVNJZGLoPgMlN0hPYKk3kcBZwzx054TYZBIFaswu5x1V28UKHR9hUJzFHzHc6dZsPFASR6DowkDhPeCer2/BffGKUfrK/0e5tqxytlHo1M8gF7Ldmw5QB9jtA9hcdwpQvRLsRMM9KDpeyM5yJ4AsBAWaLFqJaWrUgoKS7rfQ4YQ/bQ6RTeZmNNcp61V3+KeyJPLAUkLK2suGUphoyuJFyRMMwpd8ySvFjEkbZNIxm75Y78uOmXcslg+sPlBHQJDgdh32BMk9RqyFvKUZ7QVrylfC1rOA0YdjPhtb4fIEZFCB7G0/h6SPLqMWl5WVDKImU16g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=8v8ZGfPVUJssfDbU4lGsI//Hvg1ao0ZfW1BswMSUaLI=;
+ b=cl/17yYnCuvjpFQHTAyyk6u6SUGJCd7LqTqnbo7Ni8mrnS2AL6XPpUs43PWKKHb66nMZSOZtwDSGP5P2KNIn52Syg4uDa7xYDRIE/ymbQLp4czg+aBSW5GrxC09I/Glr8z/t4h7LylVTBy8ryVq622kPRSr+o/vwrjVCVliFAOw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM6PR12MB4401.namprd12.prod.outlook.com (2603:10b6:5:2a9::15)
+ by MW4PR12MB7216.namprd12.prod.outlook.com (2603:10b6:303:226::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Thu, 6 Mar
+ 2025 04:49:11 +0000
+Received: from DM6PR12MB4401.namprd12.prod.outlook.com
+ ([fe80::1fc8:2c4c:ea30:a42f]) by DM6PR12MB4401.namprd12.prod.outlook.com
+ ([fe80::1fc8:2c4c:ea30:a42f%7]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
+ 04:49:11 +0000
+Message-ID: <7bda5c5c-3f2e-496c-b5a0-6f7d9120dacb@amd.com>
+Date: Thu, 6 Mar 2025 10:19:04 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] ktest: Fix Test Failures Due to Missing LOG_FILE
+ Directories
+From: "Jain, Ayush" <ayushjai@amd.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Ayush Jain <Ayush.jain3@amd.com>
+Cc: warthog9@eaglescrag.net, linux-kernel@vger.kernel.org,
+ srikanth.aithal@amd.com, kalpana.shetty@amd.com
+References: <20250305041913.1720599-1-Ayush.jain3@amd.com>
+ <20250305190159.7c590242@gandalf.local.home>
+ <faadd6ad-3b85-4ad3-8d17-acb5e0991a18@amd.com>
+Content-Language: en-US
+In-Reply-To: <faadd6ad-3b85-4ad3-8d17-acb5e0991a18@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0092.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:9b::10) To DM6PR12MB4401.namprd12.prod.outlook.com
+ (2603:10b6:5:2a9::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqJFeb66pt37wsTB7esCpRD1tpvqP1bvW=Nw8MmP5LvktQ@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR12MB4401:EE_|MW4PR12MB7216:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5687302d-5650-4393-5e09-08dd5c6a3c78
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VjZoQWJIM2ZEUTFnUXRkRERkOWRtdjF6bXdCMWo0K3dDcTE3bmR4eUU0cWlJ?=
+ =?utf-8?B?RGJHSUEySjgwNnlVTnh5blNrSGpvTXNqSGVCajAyRnVuSnhDWWRET3h0ZlhN?=
+ =?utf-8?B?VVppenRoUHZTWFdRbDM4UEU1SjlLL0NnOTNmc0NSYlRkZW1wcFRhT2hCRldE?=
+ =?utf-8?B?djVDbjZNTWUvNnAxUWhvaEs1ekRiTnlIRlQ0RVBEa1pvNE9oaEJmckpNTW50?=
+ =?utf-8?B?Z2ZQWHN4NUt4MFVIdzI3YXVsVnYzck01OWF2ZDI1UWlCQkZueVMxUFpaa2RN?=
+ =?utf-8?B?N1IwSFc2ekZqbjlQMXRaUWp3cmc2bDNkSVJ6REdBN1VqZXZGVWlxcnZFTjNq?=
+ =?utf-8?B?VDhMQVFYVFlpaTZKUUR0Z2R3UGI2eTdJZGhvRDhaOThieVl0SWF5QU1WVnp3?=
+ =?utf-8?B?bTNXanpzWm00OHQrODJoZklaUWhEWDBFR0RCaVBJZFNqM2xwL2IycENEM3Jy?=
+ =?utf-8?B?Nm92N2w3RkpPMjZZZEYxc2FRb2JZdUhWMmtiMGQxMUIyOUlyRTc5cVFpa2V4?=
+ =?utf-8?B?a0VEdzhuVlZmeXVvbFVnNVQ0U1liSUxEMzdYSEdUTWdPMzVyUWJHQjl4Z096?=
+ =?utf-8?B?UjVWZVo2SGl4UCszYm5ieWNUeGhFalpvQng1MFNpQ01WbHA1eXFabk1wRVZ4?=
+ =?utf-8?B?WEc5NkRtNXA5YXhVSGgyWFd0Nk9SVDlyQS9rbE4rR2czcWtWV2hEZUxGb1I2?=
+ =?utf-8?B?WGZQSFVnSmlZTHBHY0drT3lJZFFkQnFKcWdnVmsvWStNNWk1d1lXQXVDc0hR?=
+ =?utf-8?B?N215OWxJeXAxcTFjL25rWlQ0a0ZLbGN5R243U0xRZnBvNW5KSHdLZWdGakJQ?=
+ =?utf-8?B?dkRDbnRBVzFPV3RaZnRPczNaalhnVE9SV2Z2Q2l2ODduT09hbFNZUjkxS05S?=
+ =?utf-8?B?bVFubnlqZERNNEpnbWxNd0FoTUYxMWIzVnE5UmJVamtQUVJRVVhhTFJWbG5E?=
+ =?utf-8?B?S05qN2VpbG5UeC94cmloRHdvUDNHU0I3Z2RzS1NkQ013SDNzdnJLUWRrY0xx?=
+ =?utf-8?B?bS91eGtoVVZvQ0lsUkVSMXBMbnZYN1lJWlBpMEpHNGdrWlB6dzBrSHBHTkgw?=
+ =?utf-8?B?ejRNdWl5aUxtc2lHOEd6eVV5enZiRnhhQ0tBK1JrazFvYlRqcHQ4QTFKS1Ex?=
+ =?utf-8?B?QVJrTHZVYlhxdjBReUxrRGZ1clRHblpKVUlNZGNoOHluK3E2TDlkaFkxK1c5?=
+ =?utf-8?B?MGxPVExReHJGYlFxV2hIanVsSUltaGdzdVFKOURPTWN1eXJhUlZtNnZQVUVh?=
+ =?utf-8?B?TndkYlVKakpvcGNtdUl3WXMrMldES3JNaFBHZ0x3SU9ZcEhIbmpSMDVpb1lq?=
+ =?utf-8?B?SUxpRWx3YzdXbzVyUk5hc0Z4OWgra0k3Nkx0S2FKenhWQWRPSDNzM0tjVGdz?=
+ =?utf-8?B?dW5xWGV0bHp4R0FJYnhyQ28yZTE2dnBFeGx4cmJsemdwRlo5c0NuY1pTT28v?=
+ =?utf-8?B?TmdFSkFVY3MzREhzQXorUFd5SWMwZERsZVp2T1hIU2ZUU2tWUk1vaUFrSnJ0?=
+ =?utf-8?B?SFNZOGUrUEsxT0IzTW45b2FXRUxuNjlFblpwUXRQMDEvcWFTUlhtSTFuSEZM?=
+ =?utf-8?B?SnZ4cmY0cXJLOHZmd2RvZzZwOHNSSmVBcktZNzkvSnFtOU1YUHcwSXVjcHp4?=
+ =?utf-8?B?cUtyOVB1QlBHRGs2aHdobUVMMm5nd3diTWlrekkxYUVIbkRmTlA5L0JWZ3VX?=
+ =?utf-8?B?ZUxHVmgwWnJ1cXBEMWlCZDY0U3lxU1phSUk4azNISUtYYmRibFJ1TzZpc3c0?=
+ =?utf-8?B?eVBORmVBOUlXdGhZZEh5Zk5zV2ZNem0rT3pkNUkwK3E3OTNZc29PL0FWSEZp?=
+ =?utf-8?B?akRSRGVUcTdUbHNaaEEyTlNvN3ZRdmVOWGtIckJ4Qlp3SmFic2NyZ0xGMS9O?=
+ =?utf-8?Q?XVHcsinc+qjak?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB4401.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?aVdvT3NmMXoxYTFKZHkvT0pCSXE2UktsTDBlR1NWYzdBNmdPQ0ZZMUJYa3hP?=
+ =?utf-8?B?TFZtNTlPQmh3bVRpb1NwR3JpQXd0SHIzeTdWUWx5TzI3WG9UdTRxbUVqdFRR?=
+ =?utf-8?B?aUprTlBzYy9RVXV1UjBad3ZKYnlBZ05EalhCZnlGbGRMUG0vZjdFd1lXWGtq?=
+ =?utf-8?B?aXk0cm5qRTQ2eEU5VmdjVUVDTEgvaHJsa1dKQ1E0NE51Q21mNFFNREdwQ3pL?=
+ =?utf-8?B?U1RjenNhTXpJZ0pBU0NhMWFYbjVjOWRmcE41V3lCNTNlaWZpZmFNM0h6ZUpY?=
+ =?utf-8?B?cW9td3NnbFBPVkEyQVR4Mm1FVG04MCsyTEJMQkE4eHVmb2FvblFBOW43UUQ5?=
+ =?utf-8?B?REcwcDFGY2xmbDdkZE9EY3FuN0ptTDJZRy9pbEhWeTlCc2o3NjJjQ3U5cEE1?=
+ =?utf-8?B?MUR1ejNGbWV6Kzg2V2hYUGN1ZGhKYU43VFNaUGpLZkx3QUFUdUUvb2VnU1hx?=
+ =?utf-8?B?YTE3RmRSR1NTaE9HSjg1OVgvc1U5Y09nQkg2eDVsNGtQRUJNc3IwaHJJbWdz?=
+ =?utf-8?B?blVhK3l3RG1rODdodmREKy9tTDZiTm8wZFJYTldJSHNFcWNubmp3cklVdEFl?=
+ =?utf-8?B?a0htdjUxenk0QXg0WWcrTmVhTVhCU0NnYlA1YnR1QVBLZEQwT3k5Mlk0V29O?=
+ =?utf-8?B?eFFRWHV1eXljb2hlQ09ZVXRzUXRxeGlXYXo5UzVsMVdYQ3Q4M2RCcy9Cd3JZ?=
+ =?utf-8?B?bVpBWGVNYjZrTUt3RVBZVTlzd2RuakVSb2Z5MmQzVUwwaXlkY05BV1VRdXJI?=
+ =?utf-8?B?cnVNcnM5cHVRK0txaU9hSTlwWlJzRzN0MDBYSUYvTFFYbVBHWDluYzJPdlpx?=
+ =?utf-8?B?dDcveWlSZS82Q0N0N1YrVy80WHF4a1lzUVJFMFRHeWg4cmdVNHRSTHFZY05v?=
+ =?utf-8?B?bHl0U1RHTHlLWFplRHRjTWNrcHNQV1dIUHkyNFh4UUpYREZheXRxRnE0Y2kw?=
+ =?utf-8?B?QjNvUXBXUHFRUnZ2Y0dLdmhXWHFneVhadGdYNXNrYWVMSDlyakZCVkdwNnVL?=
+ =?utf-8?B?aVFTUlNrSlo1OWQxWXE2UVlROUdBYm9scGc2RmxRNDZZZ3ZVbnlNaHBESHM3?=
+ =?utf-8?B?bHFzUG91a0pnSVBjY2JOcU1xTUJGRzViU09QejhGWE5RdlZuczlYN3pmYmsy?=
+ =?utf-8?B?dE9HQUFlUTB6OXhoWldSQ0FFSHREZFFsenI0Z0VmRTU2MTJUb3JnWmFwZjVr?=
+ =?utf-8?B?b1F6RDM5M1FHbDVvOTUzbmROcGl6ZmswaG9OY2hrNUZpQVJnd1dJU2IySm1u?=
+ =?utf-8?B?Ty8zcThjWlBrc2h4TXRTWk5iTER3ZkE4V1N2VkVzTFRrNmd5bktUMWVHMk5z?=
+ =?utf-8?B?NlNwOFd0MEhMY3NNejE2TVYzQitEZHk4QU9SNGZPREdSMGwyNWxnUk5ielRa?=
+ =?utf-8?B?NzRwQVJXS25pbUZOMWJ2Z3RnRmZyTGpPY0RNNGVOaGNSVlhudWFiMnpZaUZq?=
+ =?utf-8?B?d0F5NEVZMnZ2OUlzWXNnbXMvd2pvYTFjTWc5V2JEVTVrUFRGOW1rQjJOdFdX?=
+ =?utf-8?B?cHlBMlhXU2VacllKUWVSSUx5bHFlSk9aOFpmdnRzN0JKb3o5b1ZFeVlEVFgr?=
+ =?utf-8?B?dlRtNkZsODNsTDRCVWpPRFo5QWJtemdCMmw4T3ZHSkVNWkI2YjR4WXJ3ZHFI?=
+ =?utf-8?B?TkhIenNrOVVyQjFIK1VybnFMODlEQys2NmtGTGx0Z1pRdndDa216WXovaGxX?=
+ =?utf-8?B?N25VSkR4NW40TVROc1p6OWhuRytXeGRDcVhjMUdpcTlsZTNLd2Y4ODFkV3k4?=
+ =?utf-8?B?OGxKTHpUamFBZ1R6elBva1Nnbk05eWYrMXRHaEZJVGhHRlJtajdKRGRSRnlF?=
+ =?utf-8?B?MFdUQXplNnpsbXUvRjlhUHJUU0hNelF4VTVNK0xrT0dtVjRoK29RWGxlSFdi?=
+ =?utf-8?B?VW1tT2lLY2RlVWJPbFcwb0tFazkrODNGWmptdlZpaGZybC8rcEovaE1nbGhi?=
+ =?utf-8?B?L1FUazlUYkk1c1pXazRTbkRMSnh5aktjMkh6TGswblFWRlE0bHA5YzAxTUx5?=
+ =?utf-8?B?V1NsQkRwUVMzMkhwM0EzWmFpM29YaGppdHVwQWlFNTRXaDZpN3NPOU96VTlB?=
+ =?utf-8?B?YlFMVDJ4TDZhS2IxbmJ1SExRZWNpMTNOMWd1VVVqWVU5NDBtaG1sWEtvbnNl?=
+ =?utf-8?Q?jMOwCvO8MWoR3KX0TvJ/XoZGI?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5687302d-5650-4393-5e09-08dd5c6a3c78
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB4401.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 04:49:11.2160
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: f1pkrp5o0JHt4q0AnO/tJFdLe0ZAwYhXB01lQOKR2abRn98QUOxi9PFqGk0Fj+UQOdbkbLEipBb9Ujj0oevvtg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7216
 
-On 05-03-25, 14:09, Rob Herring wrote:
-> Either way, but generally I think 2 functions are preferred over 1
-> function and flags.
-> 
-> The harder part here is in C we just return NULL and all subsequent
-> functions (e.g. clk_enable()) just return with no error for a NULL
-> struct clk. For rust, I think we'd need a dummy Clk returned and then
-> handle comparing the passed in reference to the dummy Clk in the rust
-> bindings.
+Hello steven,
 
-I have implemented it differently in V3:
+On 3/6/2025 8:29 AM, Jain, Ayush wrote:
+> Hello steven,
+>
+> On 3/6/2025 5:31 AM, Steven Rostedt wrote:
+>> On Wed, 5 Mar 2025 04:19:13 +0000
+>> Ayush Jain <Ayush.jain3@amd.com> wrote:
+>>
+>>> diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
+>>> index 8c8da966c641..13b97e6b8459 100755
+>>> --- a/tools/testing/ktest/ktest.pl
+>>> +++ b/tools/testing/ktest/ktest.pl
+>>> @@ -4303,6 +4303,14 @@ if (defined($opt{"LOG_FILE"})) {
+>>>      if ($opt{"CLEAR_LOG"}) {
+>>>  	unlink $opt{"LOG_FILE"};
+>>>      }
+>>> +
+>>> +	if (! -e $opt{"LOG_FILE"} && $opt{"LOG_FILE"} =~ m,^(.*/),) {
+>>> +	my $dir = $1;
+>>> +	if (! -d $dir) {
+>>> +	mkpath($dir) or die "Failed to create directories '$dir': $!";
+>>> +	print "\nThe log directory $dir did not exist, so it was created.\n";
+>>> +	}
+>>> +	}
+>> Hmm, somehow the indentation is messed up here. Should be:
+> Sure, will update it in next version
 
-https://lore.kernel.org/all/023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org/
+Just to be clear on my end, you mean 4 space wide tab for indentation here.
 
-So even for a NULL value returned from clk_get_optional(), Rust users still get
-OptionalClk (Deref as Clk) and they keep using it as if a valid Clk is returned
-and will keep calling all clk APIs (which will return early for NULL clks).
+- Ayush
 
--- 
-viresh
+>> diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
+>> index 8c8da966c641..13b97e6b8459 100755
+>> --- a/tools/testing/ktest/ktest.pl
+>> +++ b/tools/testing/ktest/ktest.pl
+>> @@ -4303,6 +4303,14 @@ if (defined($opt{"LOG_FILE"})) {
+>>      if ($opt{"CLEAR_LOG"}) {
+>>  	unlink $opt{"LOG_FILE"};
+>>      }
+>> +
+>> +    if (! -e $opt{"LOG_FILE"} && $opt{"LOG_FILE"} =~ m,^(.*/),) {
+>> +	my $dir = $1;
+>> +	if (! -d $dir) {
+>> +	    mkpath($dir) or die "Failed to create directories '$dir': $!";
+>> +	    print "\nThe log directory $dir did not exist, so it was created.\n";
+>> +	}
+>> +    }
+>>
+>> -- Steve
+> Regards,
+>
+> Ayush Jain
+>
 
