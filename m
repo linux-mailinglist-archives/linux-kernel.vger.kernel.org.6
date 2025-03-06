@@ -1,52 +1,51 @@
-Return-Path: <linux-kernel+bounces-549470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C648A552F3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:24:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71958A552F8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:24:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58B4D16E7F9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:24:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A7C21893030
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:24:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE8D626E64B;
-	Thu,  6 Mar 2025 17:22:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DDA25D90C;
+	Thu,  6 Mar 2025 17:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ei7dTjmF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="jIgvtXXD"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131F626E16F;
-	Thu,  6 Mar 2025 17:22:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DFC2116F2;
+	Thu,  6 Mar 2025 17:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741281751; cv=none; b=WbFUrGL783yIozMSLvMv2XiumHYLhkyl2ElW36iSMdygGvPZWkzXkHrtwm56uxUCJyxci5yz2MwfqvbwquvS0vXmpgihwZCJQecJcKeihdt5pXbYfQxl4f9E5paUIOotroe/Ta5yQ6OQg89FHeD23lM4DkNHtAnDnhMHPXibrbI=
+	t=1741281769; cv=none; b=nv38yt/QQTtDrGhGB95zP+cbEGx12/5ffRUOS0Aeh//dskjowiI55ZGhqZUweDhvg4MO5IJw4r+qPJwzAF6fn8szxQwxqolG5YL47lVP82JlhTXbEORj80Ucev2SyC9gjTussim+DVck/9oeedePq0MVoZ0kqIHvAAbaYdibP1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741281751; c=relaxed/simple;
-	bh=AFTey6kcvQB+x5Xt78k6oINdM05Fyq/dhsy9nPs8fjY=;
+	s=arc-20240116; t=1741281769; c=relaxed/simple;
+	bh=Uw0AQGHDrWkbA7FKay0iF5OuHaVk3LcXuluJk7ArVxo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZT2YVfHqMPMP7xtvpARlFhyaNMXVyOH+SJyl+8aWFT728QE1HbX4UkBpQbtHhNVz19Mv7tf/ALB5ihWI0IexT+wXhVAoiIRZFrGLxGCb4xU8Kpvj6Epd0H1Yjd2Fw/r9x0xctIGuYtCYDAUdd+yBz2mB2om9kB8DrBEwjStA+94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ei7dTjmF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A652C4CEE9;
-	Thu,  6 Mar 2025 17:22:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741281750;
-	bh=AFTey6kcvQB+x5Xt78k6oINdM05Fyq/dhsy9nPs8fjY=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=U0px//jRxGOozYqgIkySE7u+kVx6uOmZCOsiL3/rHGC9xGN/5LQRaiw7C/+LntmkqZiT4wopPQJ5cZTxhIPlUdfiluz5nrPq/yqEqFgsbByncL8r8szmQqurMnnx4sqjoWJEchnGB1tCADM7eSTolIyyWgi/Gu+ysPSsvi4ETQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=jIgvtXXD; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1741281766;
+	bh=Uw0AQGHDrWkbA7FKay0iF5OuHaVk3LcXuluJk7ArVxo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ei7dTjmFkCvE0Q4Ml0hfAFyt2v+GxaHWGhhOlIE7DhD3B9nf07OCSUi0y14JCDil6
-	 TI0VyF3zVuUXRYGIJhQK6elgj/pUFlXDI4daZHsdPsBhxAjWI/U44WUe6brQnc9/DG
-	 kT7dZ3tLsBj9uKJ2qcJ8PEvA/wUlaub+vUqUiAm9fsmaabLkzBfZJfv8kum3y88mps
-	 wmCcDkII1ohft2J9T5DBr1MhzB6wp+xL8aTPpApQgHj69BrE6TeCjLJi7/mX2d+1kv
-	 S6XLQH3cWFWeIas5qHHqb0cjd1D7DTw+eC6AT2KYTW1TDW9rB/RB6O7njz6YLTCU1o
-	 3YlomU48iPxsw==
-Date: Thu, 6 Mar 2025 09:22:28 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>
-Subject: Re: [PATCH 0/5] Remove unnecessary prompts for CRC library (batch 1)
-Message-ID: <20250306172228.GE1796@sol.localdomain>
-References: <20250304230712.167600-1-ebiggers@kernel.org>
+	b=jIgvtXXDYtL6dSt+yGQAPZSRU+71PA9X9pXFBGz4jGqbinU6uhWgYiHksujbvRevn
+	 iFFsQpCo+9cBzXj0adSPUYBuseBXAyJ5Ltjh4ypgIsUzUPqXw8XdTdVuUap2OkyqDW
+	 New+I0IvwBEHibVZQKdU/A3j99cetgPjo1K5DuvU=
+Date: Thu, 6 Mar 2025 18:22:45 +0100
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Willy Tarreau <w@1wt.eu>
+Cc: Louis Taylor <louis@kragniz.eu>, Shuah Khan <shuah@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 1/5] tools/nolibc: add support for openat(2)
+Message-ID: <598c8370-507b-4d6f-bf7e-ce17a3b5dca0@t-8ch.de>
+References: <20250304075846.66563-1-louis@kragniz.eu>
+ <20250304081116.GG9911@1wt.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,25 +54,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250304230712.167600-1-ebiggers@kernel.org>
+In-Reply-To: <20250304081116.GG9911@1wt.eu>
 
-On Tue, Mar 04, 2025 at 03:07:07PM -0800, Eric Biggers wrote:
-> Library functions are already selected when they are needed, so there is
-> no need to ask users whether to enable them or not.  This patchset fixes
-> this for the first batch of CRC library options.
-> 
-> There will be a batch 2 later to handle the rest.
-> 
-> Eric Biggers (5):
->   lib/crc: remove unnecessary prompt for CONFIG_CRC4
->   lib/crc: remove unnecessary prompt for CONFIG_CRC7
->   lib/crc: remove unnecessary prompt for CONFIG_CRC8
->   lib/crc: remove unnecessary prompt for CONFIG_LIBCRC32C
->   lib/crc: remove unnecessary prompt for CONFIG_CRC64
-> 
+Hi Willy,
 
-Applied to
-https://web.git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=crc-next
+On 2025-03-04 09:11:16+0100, Willy Tarreau wrote:
+> On Tue, Mar 04, 2025 at 07:58:15AM +0000, Louis Taylor wrote:
+> > openat is useful to avoid needing to construct relative paths, so expose
+> > a wrapper for using it directly.
+> 
+> Reviewed the whole series, no comments from me. Let's wait for Thomas
+> to double-check but for me it's OK:
+> 
+> Acked-by: Willy Tarreau <w@1wt.eu>
 
-- Eric
+Fairly happy with it, only some tiny nitpicks.
+
+> Thomas, since you already have plenty of changes in queue, do you mind
+> if I let you pick this series ?
+
+Sure.
+
+Also we need to send a PR to Shuah soon.
+I have some patches I want to get into it.
+In case you missed it:
+https://lore.kernel.org/lkml/20250305-nolibc-asm-headers-v1-1-f2053def2ee7@linutronix.de/
+Also the removal of the constructor order validation.
+Will you send a patch or should I?
+
+
+Thomas
 
