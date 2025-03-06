@@ -1,254 +1,237 @@
-Return-Path: <linux-kernel+bounces-549960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD2BCA55911
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:50:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 484BAA55914
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:51:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D86F7189A0CC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:50:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43E697A8FFC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9F182702B8;
-	Thu,  6 Mar 2025 21:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D0D9277020;
+	Thu,  6 Mar 2025 21:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="k2rIq0Vc"
-Received: from CO1PR03CU002.outbound.protection.outlook.com (mail-westus2azon11020100.outbound.protection.outlook.com [52.101.46.100])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UAPBjBJj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF80218FDD8
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 21:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.46.100
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741297809; cv=fail; b=qO7zjZtpZvFy14ZX8+6pE3ZZV7PjaNmKjBkN1a+pt7mf2wYAb6ZxjxQG0Bx8GnXNq+Vs3mkFI/0qg/vjo+kYX5aV4mF7bOkBWQGDaDQ4VlaVUrklbuUCHiUMscbFkW7MaRpLx8hxb2dgoSRIf7Y/qIpSRrFuM3bkX9WcRQ2ip00=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741297809; c=relaxed/simple;
-	bh=4wgKoPXHNojq+XgLPSDxs9C16kuBDmGNm9RY++HX0R0=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=FpiynFrwkMFOyTf3jmXzGps96KUsA/i8TepQzq31KjsoTeuQHLa68+huDQ247mLtaQrlTnUh07FA4mJlxZNs3HXLmDiilhgZaa+ai2oeCqIc8DQEjLVQxl26d6AF5ztsWu1gIQ8ADlELZ+ia87LZ4cihbxsmIaAjLC+/FuFOERI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=k2rIq0Vc; arc=fail smtp.client-ip=52.101.46.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ixRCuitLuoTRDt/l+l8yA7k1yamcXJBQpsH3JJOHmyuUXmMhmywTgKMtOjJ66CYZbUTeHMlHn+qrmkJ4KY6bZ2ATwzl4g9QzJwCAHYKd1F82cxzs597RX9YsCrv4bCthnmCev1dK24JHsdbsf0kJtoRMISGOqdDt8LC5QU+IyCdlfbVbJtMQS14h/B3DlYWaGA809Q6hWnpof+FnZ4r2HJyADQbnYY7ooyXE898i20odMbzZoCfHAzYvPSDRZ2Acys945PIyo0Rpiw+av/wibyFotVfhU7qmwalfB9uu86cbxqwTLC+2UUqyXcKxknmfX0HFlSUz+jl2/PRimkIZdw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5TBkLf7pYhVulBWnbhXYgn+prMAvjn84aZKC/dpgd0U=;
- b=lv7xnUx15yDgs4wOH2EXdFCnpk2S1l4tmAjRXQzMb7/9TZNNPBbNAgBJiAklP2UmUL5wMc5Uusoi4takxpE1RsIOB9NsqM7gu9+Exike9lq0yNvRamsZW5j3myiJ4eKrHaN2aYEyhWl0T3uit8DHsPB9bfZSBIjbHivrW3Tki6yMTTDRPPyfR+0WgeNtXlxhLfbnOvcljpCR9knSOt7oLYOGAHezKJPUwXOEmsB1RxV9PN/90MswSt8xTXpkcZRZ03Xjer5osH+OtpPtZjWoMzVHu1f2a9ym/JL8obc2BWhAerb+dE2MGOOXxjOZBfbDDHLPTA0Z4gU+Am+kTuMhVA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5TBkLf7pYhVulBWnbhXYgn+prMAvjn84aZKC/dpgd0U=;
- b=k2rIq0VcIkktKCvlbMaKiJGlu+JbO/vzBpDf2BommVbWOkZPQx+rdFRFQ3VsZr0fMcgzO9rfZ0x6SJyFYEDPM1WpYQcM0ATY7Yspug0QZ9koVRUw60sDqequVEcjX4m3XvEeBbeQIEykF6QEQ4v/6VGJ/OZpVvmXNBBJVqPftw8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from CH0PR01MB6873.prod.exchangelabs.com (2603:10b6:610:112::22) by
- CH0PR01MB7091.prod.exchangelabs.com (2603:10b6:610:f1::8) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8511.19; Thu, 6 Mar 2025 21:50:03 +0000
-Received: from CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460]) by CH0PR01MB6873.prod.exchangelabs.com
- ([fe80::3850:9112:f3bf:6460%2]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 21:50:02 +0000
-From: Yang Shi <yang@os.amperecomputing.com>
-To: Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com,
-	vbabka@suse.cz,
-	jannh@google.com,
-	oliver.sang@intel.com,
-	akpm@linux-foundation.org
-Cc: yang@os.amperecomputing.com,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] mm: vma: skip anonymous vma when inserting vma to file rmap tree
-Date: Thu,  6 Mar 2025 13:49:48 -0800
-Message-ID: <20250306214948.2939043-1-yang@os.amperecomputing.com>
-X-Mailer: git-send-email 2.47.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: CY8P220CA0018.NAMP220.PROD.OUTLOOK.COM
- (2603:10b6:930:46::15) To CH0PR01MB6873.prod.exchangelabs.com
- (2603:10b6:610:112::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A3B26FD9A
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 21:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741297901; cv=none; b=mHMTN+khx1IQuHIreNCKg3J47Pr2qfmpufy3N+UNFEgXMR9UJLH7nJxsh0sSuO0VlKxr5y+oa/xkUZiEH9V9hLrINigh8jG16lv/k7snxXR0yJlQSfGqNvLRKT/k5jzUmLNboQg9nkJ6fTqs3qahzvEmCzob1ABkB+Vbdl3LXYE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741297901; c=relaxed/simple;
+	bh=JfRLPknr6t/lzKAO4sHgBXmNudQiAB6yND2W6g9u0FE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=joFNrlPgFeRfKUXb6ULJVmV+PAPOQKAuSPcYqyEjDphcYVNNMOAuc5r+TFLemJlXP4o0JxEobfwLgIJGUYIrGfkwtzLph0ndr1NotJGZijVe55mcxmgl6HpHI3orv3SuWOLB1fRvwQF3VGs0I1CUOlc+/2e48V69rne1Gr1EVRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UAPBjBJj; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741297900; x=1772833900;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=JfRLPknr6t/lzKAO4sHgBXmNudQiAB6yND2W6g9u0FE=;
+  b=UAPBjBJjQFD3/8YwO1q+gc2QvpybNfkhph/mfGVNFVOTrAT5TVSZe4MG
+   TCUAWQI6WeLaHFJZrTRF7GQh+tqIZzHAp70sgHkNgZOx8OO3R2iyE3v64
+   3nyHFaZeDPG6nqZi4dFXlF3INF1Yleps065/xO3OJRV5bo3l+VOrx9BbA
+   Tdczo/HzztxaCF+0hjEekTUm/2Um39JDTL7WdrsyVsqdt00boVJ/7jZke
+   Mx1FzXMRoVtvHlDeJwNa0jsf8x8Kj5VdZ0h9GFGFK4ar5F1qI9HcUTEXd
+   vKL5tnuRN41dOQi8Lb3VQacjnfyK0DJzthUbYqgDBz+Tpv5P/bmCkAsIT
+   Q==;
+X-CSE-ConnectionGUID: bbN/NBGvTIeiuQl3aWLIIw==
+X-CSE-MsgGUID: GOJNnd8DStGEq1AYeYiR0w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="41585483"
+X-IronPort-AV: E=Sophos;i="6.14,227,1736841600"; 
+   d="scan'208";a="41585483"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 13:51:39 -0800
+X-CSE-ConnectionGUID: YDUMy8//RS2tUmWuBQjw2g==
+X-CSE-MsgGUID: UPtH+EtTTQqvEScGDUejUA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="150077493"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa001.fm.intel.com with ESMTP; 06 Mar 2025 13:51:37 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tqJ7v-000NfS-1t;
+	Thu, 06 Mar 2025 21:51:35 +0000
+Date: Fri, 7 Mar 2025 05:50:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Greg Ungerer <gerg@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Palmer Dabbelt <palmer@rivosinc.com>
+Subject: fs/binfmt_elf_fdpic.c:1024:52: warning: variable 'excess1' set but
+ not used
+Message-ID: <202503070539.bKnm5hEv-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR01MB6873:EE_|CH0PR01MB7091:EE_
-X-MS-Office365-Filtering-Correlation-Id: b09eea70-a34f-4955-9809-08dd5cf8d96e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|52116014|376014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?g7oH2BVqe5jk4rVUJ564D005PijSfzomyJdUaBbEXUP7pQWO8UsXFRwPPtPK?=
- =?us-ascii?Q?hHE9bjofduARbgCPG+UrMTSXQ6a9+anX+JRUtF56rRMRUXaZ/lWo41Fy7FFC?=
- =?us-ascii?Q?7i4uSOAUEg2vWW5r00XcIgBsGconTjBDkS7qms9o3vZGbVJ2yfkD4By7FFCS?=
- =?us-ascii?Q?7XUGJ7uT8X4XqhWyrIUzHrLkl77oqpCwxMSRmKt/1MOJIDli7GtHmru2PWZJ?=
- =?us-ascii?Q?KwCw6OGsf/TUeGAX3aCMQrgOw69XBTcLWnIGodNzNnQgyhGjP/UiLqqtWTaF?=
- =?us-ascii?Q?uga+BP1wc1ajBQrB3HCWRDmuS2Dm/2sJq8AnLKI3lEry7FcitvrdiZiPEHm5?=
- =?us-ascii?Q?sp5zawQn6AZfW+vzQ2va0Y/96vaV16ONnM4Dq50OxTyNwKDDKiSTfjemZLSy?=
- =?us-ascii?Q?4axIiLx6qEb7ukqaWhT7/qTnWasQuFQ2tW+K1tDDyAPDYpJPtiA/1dTWApwJ?=
- =?us-ascii?Q?sGwviXmwgoZj+mqjTQpGvLVFp+2mna2sisLPZ1nSAkQE/ml18ZjhdpH0Gr+H?=
- =?us-ascii?Q?YTmlYwEvcfDKqjtmlggri3zWHXQR88oNweXuByg3Vw5IieDmDerv0KYGfWyD?=
- =?us-ascii?Q?p7M3xwGR3x5LWsrCn1Te5bj8o+SzvM853nFcKXeODLhjSAskJLO3+E781J0P?=
- =?us-ascii?Q?fEOd54gfwZqVusVomnyC0JCJx0xuRnFUt7nmRVgDYuf/7ymcoeZ6xxYVn/pG?=
- =?us-ascii?Q?XqcOzqCf2OJgqoYvqjjjlJNPdHvebZscR9kaN9rArMo9iRMVoxmlDKR9Z1pL?=
- =?us-ascii?Q?x/tS7073kGtQXSHFosm2E3f9ZwlBnDwr2j2PCGtmcPafgCYN/e+FY55S7/vC?=
- =?us-ascii?Q?XWqya99O7JgR+xRB6XrdjZST93/YMjANQmyx5tL450E8SLJclfzbIH7kd8Pm?=
- =?us-ascii?Q?rt78JKiCQW0DOHC6NE8BZdSTPcSBC4cWHOENfeNOMh4ZAWecUD/jypLkdLAI?=
- =?us-ascii?Q?khMAMpi9dCilKi7NSUq53qJOUTN5nX7UmL0kUg2rvxMW7wG9awHuXfvBwX1U?=
- =?us-ascii?Q?vQ79Lm0oa8U1vHeQOlAS9/vjki7GIvBbG57U6ApSU9DjpJQpe60TEzNu52t6?=
- =?us-ascii?Q?T2mR3AAXhETzKNxecULbbFDeeOtrLZucZyHmQNvbkMIyXlWi7licrQ7M+gZF?=
- =?us-ascii?Q?purAvPHNLijAldxCIb62562HrrLlW790SI8g11Vxige1vHPJs/J5y+nLbwe9?=
- =?us-ascii?Q?M5upefzVobdfkYua+vgQepH0kvna1c1FDfkN2d1I0OqfG81XzAhYIXeAwznL?=
- =?us-ascii?Q?A4dIpCT93cLROyAIR8cee9BY/GEA/7B4NzVAgVGX0zaNDhsgjblcrceA7STa?=
- =?us-ascii?Q?opRZLDFhJINve2Ylc1u98iyyMmCIWZBBFVJ+YqHVe1cPfT7GyX0wnGvoOtQd?=
- =?us-ascii?Q?8MDEYBDUpHuiEeqQL8VgJdiSpZndqkb8cZ+iJXBTINvNBM/4eoVGdjc2th5N?=
- =?us-ascii?Q?mYqeRxobhvqgZKb9wfFB4OLzcV2JTXmj?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR01MB6873.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hFFSTV7HtcbIRdFUTbOmxRgTnJvOBqF10yFV5RdUa2+meqSJiHD6mwIEuTyz?=
- =?us-ascii?Q?jefuL6qbqjan2452ODq0ENIFoXbF9au65yKJZh2zvu3Ln9dlSH5216tepR9K?=
- =?us-ascii?Q?NFWngazmSp/421H1YjAMlMmVJ0b8xJyw6zFsMKAehillPSpXri8IvbeZOsFc?=
- =?us-ascii?Q?oRxPO4uHDfn6gvKmRSy0KiyXeLesatOUb89LNAFYKkZ9Zu6AFqKSz4mvjc1l?=
- =?us-ascii?Q?5y+s9Zr+F8EGNO1zRPZDb2UISoi5ai7TC6QkB0CBakjq/fP5uUOnhMfouzXj?=
- =?us-ascii?Q?XqnOJMFDmOECnUiBOaNxlMKc/5YYoSaiuqbvPupbrF8iRrcYlJV63NfcxtuT?=
- =?us-ascii?Q?9Jlf1RYBUmDnb9CM4VAdeVt318H6o1nLcQMy50hYZAynifkPltNbW3WGaj4z?=
- =?us-ascii?Q?NfMfC7dSSynXAlFZI+SLEgv0EBFbaDc+imondRBXH9iMgPvsOKaOTq/Fx/wr?=
- =?us-ascii?Q?Cce5l/PDYzcF7wlTaWI0iq3szzl6ozfPbw9lleUE+TZKIVuycAPOkG9LxHzb?=
- =?us-ascii?Q?ac1VVSD980yo65Ehy30L36kiWbTRZo5va0HrvWYMM9pe6VyDXho2hMQMC1jB?=
- =?us-ascii?Q?CC4UoxMqmLomP51qWhCoxPfjQ4J7FneBBn+WQRMNdohIhBTOG/ufy8MBCEH+?=
- =?us-ascii?Q?aQpFMNBDlhHyAr26k42MYjfkZOojTPfryRaS3P8ND9PPy4IRpjPSxDfJ87WA?=
- =?us-ascii?Q?L72Y/CTo3ZyvHeUW1AG0mq9QgHQE9UyDLDi2Jf6R2rxo2yYITW5ta5M3JXoR?=
- =?us-ascii?Q?cmUT3AQ5XQx+01a+mKN+TCcAc8vA0V61409mAjfRt70UO3a6Mv60o2Ojip5Q?=
- =?us-ascii?Q?BGNGrgphpY1lQf4KJdClEDlMWeWU2OjePSadCUsMiLpiV8AjiBbJAxE2klYe?=
- =?us-ascii?Q?GuYNPwytduRTElgj7BLhuiLnjEfdKvAWGNlRVK4UM8Z/JnvsI0fWOWU/xTeQ?=
- =?us-ascii?Q?gFtgkjLdOpajonmEmJnybbyfIHqHsbLAHEgmSb+axBbWvLDQrK+xTB4T67iA?=
- =?us-ascii?Q?6sBJAbRDA8E0MIIKURHRBYjnzDpBHqDqE0hXCpg/MyVeVhuFiGGzCAUvXP5S?=
- =?us-ascii?Q?TGhu3VCqEo2zucYX6U17EiT+9AzE+LXwIvu4x0d00D2Igg+CuHc9M16aEJ2G?=
- =?us-ascii?Q?VB70Z3YLqGRwSHRIH217876+gguPRDdhnzE+AAosuRsGdW12P2yg7pHPO6ML?=
- =?us-ascii?Q?v7gyvzbjdcIJBNs58QhvzSK1VHKOowwDkzBp2ZLOXFJ/OD59Af1xyhM4GKvD?=
- =?us-ascii?Q?scrudkTdbHiZWZs46ndAKhzf4lneNMOYFJ78uTMNSb49HSb+LIg2VR72ssfg?=
- =?us-ascii?Q?/BiS6GOacpT8KiZBTVR9Mq9lMAAVsSUfvC4wRsT6PftNPFwqVuzqAhqDzd5s?=
- =?us-ascii?Q?KmuZIK8Hy3roBkcY+P7z/1L0xMWCU0c5znu+9hhIX5K4CL5ZgPIsuluEFlYR?=
- =?us-ascii?Q?bL6Ae2Z/KU08hi+7dOwdDRT0Yc+9QBp0dM9JFhXdyQ9BXVTsdstKa/dfxJSu?=
- =?us-ascii?Q?9Ost1cQvBNi7HnfiDEclvlPAM76RFtvSxBCtdsJpOpJmTnhE2jKkSlK2R7i6?=
- =?us-ascii?Q?B41v8di6XfOp1h9s9A5EZCpkZovEsyB9uApsAm7lN20TcNUINjmi7SKy1JL1?=
- =?us-ascii?Q?fHdz44INr3FUie0xqzECrvY=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b09eea70-a34f-4955-9809-08dd5cf8d96e
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR01MB6873.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 21:50:02.7791
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CvM4InqV+eia8LFFEF5Iv88vJNAXmvKRtA2dW42HtNEpPefUtfBoig+wE9pY/rh1bq9pUFh5BAIerWDMRxJPILj3xre1LoGe/U8uu3ekAGk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR01MB7091
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-LKP reported 800% performance improvement for small-allocs benchmark
-from vm-scalability [1] with patch ("/dev/zero: make private mapping
-full anonymous mapping") [2], but the patch was nack'ed since it changes
-the output of smaps somewhat.
+Hi Greg,
 
-The profiling shows one of the major sources of the performance
-improvement is the less contention to i_mmap_rwsem.
+FYI, the error/warning still remains.
 
-The small-allocs benchmark creates a lot of 40K size memory maps by
-mmap'ing private /dev/zero then triggers page fault on the mappings.
-When creating private mapping for /dev/zero, the anonymous VMA is
-created, but it has valid vm_file.  Kernel basically assumes anonymous
-VMAs should have NULL vm_file, for example, mmap inserts VMA to the file
-rmap tree if vm_file is not NULL.  So the private /dev/zero mapping
-will be inserted to the file rmap tree, this resulted in the contention
-to i_mmap_rwsem.  But it is actually anonymous VMA, so it is pointless
-to insert it to file rmap tree.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   1238f0af13495e14e1f40d011b9b7b414bf387fe
+commit: 9549fb354ef1a451ceddfa404ae3e943c5c803d0 riscv: support the elf-fdpic binfmt loader
+date:   1 year, 6 months ago
+config: riscv-randconfig-002-20240701 (https://download.01.org/0day-ci/archive/20250307/202503070539.bKnm5hEv-lkp@intel.com/config)
+compiler: riscv64-linux-gcc (GCC) 12.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250307/202503070539.bKnm5hEv-lkp@intel.com/reproduce)
 
-Skip anonymous VMA for this case.  Over 400% performance improvement was
-reported [3].
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503070539.bKnm5hEv-lkp@intel.com/
 
-It is not on par with the 800% improvement from the original patch.  It is
-because page fault handler needs to access some members of struct file
-if vm_file is not NULL, for example, f_mode and f_mapping.  They are in
-the same cacheline with file refcount.  When mmap'ing a file the file
-refcount is inc'ed and dec'ed, this caused bad cache false sharing
-problem.  The further debug showed checking whether the VMA is anonymous
-or not can alleviate the problem.  But I'm not sure whether it is the
-best way to handle it, maybe we should consider shuffle the layout of
-struct file.
+All warnings (new ones prefixed by >>):
 
-However it sounds rare that real life applications would create that
-many maps with mmap'ing private /dev/zero and share the same struct
-file, so the cache false sharing problem may be not that bad.  But
-i_mmap_rwsem contention problem seems more real since all /dev/zero
-private mappings even from different applications share the same struct
-address_space so the same i_mmap_rwsem.
+   fs/binfmt_elf_fdpic.c: In function 'elf_fdpic_map_file_by_direct_mmap':
+>> fs/binfmt_elf_fdpic.c:1024:52: warning: variable 'excess1' set but not used [-Wunused-but-set-variable]
+    1024 |                 unsigned long maddr, disp, excess, excess1;
+         |                                                    ^~~~~~~
 
-[1] https://lore.kernel.org/linux-mm/202501281038.617c6b60-lkp@intel.com/
-[2] https://lore.kernel.org/linux-mm/20250113223033.4054534-1-yang@os.amperecomputing.com/
-[3] https://lore.kernel.org/linux-mm/Z6RshwXCWhAGoMOK@xsang-OptiPlex-9020/#t
 
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
----
- mm/vma.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+vim +/excess1 +1024 fs/binfmt_elf_fdpic.c
 
-diff --git a/mm/vma.c b/mm/vma.c
-index c7abef5177cc..f4cf85c32b7a 100644
---- a/mm/vma.c
-+++ b/mm/vma.c
-@@ -1648,6 +1648,9 @@ static void unlink_file_vma_batch_process(struct unlink_vma_file_batch *vb)
- void unlink_file_vma_batch_add(struct unlink_vma_file_batch *vb,
- 			       struct vm_area_struct *vma)
- {
-+	if (vma_is_anonymous(vma))
-+		return;
-+
- 	if (vma->vm_file == NULL)
- 		return;
- 
-@@ -1671,8 +1674,12 @@ void unlink_file_vma_batch_final(struct unlink_vma_file_batch *vb)
-  */
- void unlink_file_vma(struct vm_area_struct *vma)
- {
--	struct file *file = vma->vm_file;
-+	struct file *file;
-+
-+	if (vma_is_anonymous(vma))
-+		return;
- 
-+	file = vma->vm_file;
- 	if (file) {
- 		struct address_space *mapping = file->f_mapping;
- 
-@@ -1684,9 +1691,13 @@ void unlink_file_vma(struct vm_area_struct *vma)
- 
- void vma_link_file(struct vm_area_struct *vma)
- {
--	struct file *file = vma->vm_file;
-+	struct file *file;
- 	struct address_space *mapping;
- 
-+	if (vma_is_anonymous(vma))
-+		return;
-+
-+	file = vma->vm_file;
- 	if (file) {
- 		mapping = file->f_mapping;
- 		i_mmap_lock_write(mapping);
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1001  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1002  /*****************************************************************************/
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1003  /*
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1004   * map a binary by direct mmap() of the individual PT_LOAD segments
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1005   */
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1006  static int elf_fdpic_map_file_by_direct_mmap(struct elf_fdpic_params *params,
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1007  					     struct file *file,
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1008  					     struct mm_struct *mm)
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1009  {
+b922bf04d2c135 Greg Ungerer      2023-07-11  1010  	struct elf_fdpic_loadseg *seg;
+b922bf04d2c135 Greg Ungerer      2023-07-11  1011  	struct elf_phdr *phdr;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1012  	unsigned long load_addr, delta_vaddr;
+e30c7c3b306312 Takuya Yoshikawa  2010-06-01  1013  	int loop, dvset;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1014  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1015  	load_addr = params->load_addr;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1016  	delta_vaddr = 0;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1017  	dvset = 0;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1018  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1019  	seg = params->loadmap->segs;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1020  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1021  	/* deal with each load segment separately */
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1022  	phdr = params->phdrs;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1023  	for (loop = 0; loop < params->hdr.e_phnum; loop++, phdr++) {
+^1da177e4c3f41 Linus Torvalds    2005-04-16 @1024  		unsigned long maddr, disp, excess, excess1;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1025  		int prot = 0, flags;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1026  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1027  		if (phdr->p_type != PT_LOAD)
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1028  			continue;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1029  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1030  		kdebug("[LOAD] va=%lx of=%lx fs=%lx ms=%lx",
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1031  		       (unsigned long) phdr->p_vaddr,
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1032  		       (unsigned long) phdr->p_offset,
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1033  		       (unsigned long) phdr->p_filesz,
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1034  		       (unsigned long) phdr->p_memsz);
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1035  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1036  		/* determine the mapping parameters */
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1037  		if (phdr->p_flags & PF_R) prot |= PROT_READ;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1038  		if (phdr->p_flags & PF_W) prot |= PROT_WRITE;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1039  		if (phdr->p_flags & PF_X) prot |= PROT_EXEC;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1040  
+4589ff7ca81516 David Hildenbrand 2021-04-23  1041  		flags = MAP_PRIVATE;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1042  		maddr = 0;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1043  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1044  		switch (params->flags & ELF_FDPIC_FLAG_ARRANGEMENT) {
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1045  		case ELF_FDPIC_FLAG_INDEPENDENT:
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1046  			/* PT_LOADs are independently locatable */
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1047  			break;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1048  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1049  		case ELF_FDPIC_FLAG_HONOURVADDR:
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1050  			/* the specified virtual address must be honoured */
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1051  			maddr = phdr->p_vaddr;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1052  			flags |= MAP_FIXED;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1053  			break;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1054  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1055  		case ELF_FDPIC_FLAG_CONSTDISP:
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1056  			/* constant displacement
+8a2ab7f5df76b9 David Howells     2006-07-10  1057  			 * - can be mapped anywhere, but must be mapped as a
+8a2ab7f5df76b9 David Howells     2006-07-10  1058  			 *   unit
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1059  			 */
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1060  			if (!dvset) {
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1061  				maddr = load_addr;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1062  				delta_vaddr = phdr->p_vaddr;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1063  				dvset = 1;
+8a2ab7f5df76b9 David Howells     2006-07-10  1064  			} else {
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1065  				maddr = load_addr + phdr->p_vaddr - delta_vaddr;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1066  				flags |= MAP_FIXED;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1067  			}
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1068  			break;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1069  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1070  		case ELF_FDPIC_FLAG_CONTIGUOUS:
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1071  			/* contiguity handled later */
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1072  			break;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1073  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1074  		default:
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1075  			BUG();
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1076  		}
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1077  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1078  		maddr &= PAGE_MASK;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1079  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1080  		/* create the mapping */
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1081  		disp = phdr->p_vaddr & ~PAGE_MASK;
+6be5ceb02e98ea Linus Torvalds    2012-04-20  1082  		maddr = vm_mmap(file, maddr, phdr->p_memsz + disp, prot, flags,
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1083  				phdr->p_offset - disp);
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1084  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1085  		kdebug("mmap[%d] <file> sz=%lx pr=%x fl=%x of=%lx --> %08lx",
+8a2ab7f5df76b9 David Howells     2006-07-10  1086  		       loop, phdr->p_memsz + disp, prot, flags,
+8a2ab7f5df76b9 David Howells     2006-07-10  1087  		       phdr->p_offset - disp, maddr);
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1088  
+8a2ab7f5df76b9 David Howells     2006-07-10  1089  		if (IS_ERR_VALUE(maddr))
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1090  			return (int) maddr;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1091  
+8a2ab7f5df76b9 David Howells     2006-07-10  1092  		if ((params->flags & ELF_FDPIC_FLAG_ARRANGEMENT) ==
+8a2ab7f5df76b9 David Howells     2006-07-10  1093  		    ELF_FDPIC_FLAG_CONTIGUOUS)
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1094  			load_addr += PAGE_ALIGN(phdr->p_memsz + disp);
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1095  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1096  		seg->addr = maddr + disp;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1097  		seg->p_vaddr = phdr->p_vaddr;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1098  		seg->p_memsz = phdr->p_memsz;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1099  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1100  		/* map the ELF header address if in this segment */
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1101  		if (phdr->p_offset == 0)
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1102  			params->elfhdr_addr = seg->addr;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1103  
+8a2ab7f5df76b9 David Howells     2006-07-10  1104  		/* clear the bit between beginning of mapping and beginning of
+8a2ab7f5df76b9 David Howells     2006-07-10  1105  		 * PT_LOAD */
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1106  		if (prot & PROT_WRITE && disp > 0) {
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1107  			kdebug("clear[%d] ad=%lx sz=%lx", loop, maddr, disp);
+e30c7c3b306312 Takuya Yoshikawa  2010-06-01  1108  			if (clear_user((void __user *) maddr, disp))
+e30c7c3b306312 Takuya Yoshikawa  2010-06-01  1109  				return -EFAULT;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1110  			maddr += disp;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1111  		}
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1112  
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1113  		/* clear any space allocated but not loaded
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1114  		 * - on uClinux we can just clear the lot
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1115  		 * - on MMU linux we'll get a SIGBUS beyond the last page
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1116  		 *   extant in the file
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1117  		 */
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1118  		excess = phdr->p_memsz - phdr->p_filesz;
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1119  		excess1 = PAGE_SIZE - ((maddr + phdr->p_filesz) & ~PAGE_MASK);
+^1da177e4c3f41 Linus Torvalds    2005-04-16  1120  
+
+:::::: The code at line 1024 was first introduced by commit
+:::::: 1da177e4c3f41524e886b7f1b8a0c1fc7321cac2 Linux-2.6.12-rc2
+
+:::::: TO: Linus Torvalds <torvalds@ppc970.osdl.org>
+:::::: CC: Linus Torvalds <torvalds@ppc970.osdl.org>
+
 -- 
-2.47.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
