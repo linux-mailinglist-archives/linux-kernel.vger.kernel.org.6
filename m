@@ -1,112 +1,106 @@
-Return-Path: <linux-kernel+bounces-549029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7EDEA54C4F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:36:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F55AA54C53
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:36:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 581FD3A67EB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:36:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BA433AF901
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:36:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8A020B7F8;
-	Thu,  6 Mar 2025 13:36:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B601C20E6E1;
+	Thu,  6 Mar 2025 13:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UbWuBODS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="A+w0f7Rv"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CED820E6ED
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 13:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A98DA20B7F8;
+	Thu,  6 Mar 2025 13:36:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741268168; cv=none; b=Ncee/43tpcrED5UOhCfuKF2+8mK7kl+YTow602VrPgqWQ04EC1Cdqv84G/lEypjCG9F7eOTyJZPkN1Wc5+spofSegUSjL+NdM/jK80CNmDUuEcaArKk1OzKFBySLjMumvmLKbvozgM3fIEFotmXUnpWZ4QUWbsUJk0aWBn/Oe0g=
+	t=1741268200; cv=none; b=ggulcX1mKvK1etfyEi7g0C6YC9g5RfhzT3m679QkhUpT+h2W8um1c99seJA8Zg3qeZkD5ThrJzbLxRyss1PTAJyVQFQGdr0u84NfHWQurrjDNxyoP6TPo6AhKSkD6L7PxKwU/T0zQXKLiY5qgiBf0xq7BX2wRDH7hNVioYsV+W0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741268168; c=relaxed/simple;
-	bh=Iu9c4SCfXOrtwqrHON4466GUQ3W94KlIZG7iDD6It1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TrDfzfKGWNuRpR9rcvh3fybhtS48Kv2V/JlSxAqT/d3MhlxqoiQdwjL8RVqlvIfLL2gzWj3r1KvX93X4sCWq+pCmBjJGfB8WIyeYefT8LcD4XZaZNk0gKgIi9ndm7JNBQcCjD5lhcHbmceaMRJJz2BBrYaqm63SBuwBSfB/yiSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UbWuBODS; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741268167; x=1772804167;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Iu9c4SCfXOrtwqrHON4466GUQ3W94KlIZG7iDD6It1k=;
-  b=UbWuBODSKaTdOdSUMSg3wtrlGPawJ6enW2jZhfzMdWuNt+aX6LQYCAs6
-   x2v9PiFj1ZH3ZBr/Klc71TT6zMAj0tvOvUyrK6Z8Ac1019p7irK7ETK+5
-   yuF8dggElfgqacHDLCHvgPUrAKCkhMekcX249VjwmLBVEQ4SizZQtvujc
-   f+s2r5OYpMierrhS5MY6NN13pBlg2GfnCF2PlAYD5/wiUIj5xRBYugD2S
-   WkeeSOLH+gKa4226KefTPOUkA+C1fjMywasZBLUOrYPa5oLhkmQG5ub7k
-   zQmPrvJZNyK3yOWKk5h59WLfmvO4+wkC521OeaR9O1DjY2nhdYs/y6jvk
-   w==;
-X-CSE-ConnectionGUID: uIc0wNd4RKm2jOqfpV9geQ==
-X-CSE-MsgGUID: fwOJY2k3Qw2HB6fkJ4719A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42472415"
-X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
-   d="scan'208";a="42472415"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 05:36:06 -0800
-X-CSE-ConnectionGUID: CQDVKGfQRuyDmW/qOjIDog==
-X-CSE-MsgGUID: BDbMVIdyQAy2FxIIhp1uiA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,226,1736841600"; 
-   d="scan'208";a="118757907"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 06 Mar 2025 05:36:04 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 2AA041FC; Thu, 06 Mar 2025 15:36:02 +0200 (EET)
-Date: Thu, 6 Mar 2025 15:36:02 +0200
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Joerg Roedel <joro@8bytes.org>, Dave Hansen <dave.hansen@intel.com>, 
-	Joerg Roedel <jroedel@suse.de>, Ingo Molnar <mingo@kernel.org>, x86@kernel.org, hpa@zytor.com, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org, 
-	Larry.Dewey@amd.com, "Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <efbnludlccxde7bwt64faajkmadufyolcetl5at3anmvy5mi36@5q6zdzmwtvae>
-References: <Z8g01YhM_FtdB5n6@gmail.com>
- <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
- <Z8g4sU_dsZgY0PuS@gmail.com>
- <20250305115035.GEZ8g6i7NTiSfkxk7J@fat_crate.local>
- <Z8hYEsHvwUwlOold@suse.de>
- <20250305153705.GKZ8hvoaz2GPt2rGtu@fat_crate.local>
- <b0cf4bfc-bf22-4986-9e76-62e3f54179ea@intel.com>
- <2koe2zg26fndx6d6jcmbg6dzybbgldgrjufupj74nvmav2dmqg@w6bknhosl64h>
- <Z8le_TWUJNebrfs7@8bytes.org>
- <20250306103119.GAZ8l5d-brstBbLDEH@fat_crate.local>
+	s=arc-20240116; t=1741268200; c=relaxed/simple;
+	bh=89na8aEyy6PeC9priobZs3cNkeHT5uhFC166aKaR6Us=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JecGv0Wvpv3LR0XnFIz+reQDdQoCoO9No6CiNulORXELopK8UT/Mu9HY6hV3bm5N0FKAgfp0kMdkzV2Gbh7AwQaO3zv4ymSL5WzOYKTIO8BF1XDdZJgFFAql9cb5m74H9WkEnNFCeZ1nuVSNAhTT3syjyZPDQBHpaDZysiJV1ng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=A+w0f7Rv; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=p2MHZq557DZLmu8HoDAX+Ak6NqSl7I/7w5qQt+/fGYg=; b=A+w0f7RvRtsuAyx5NFTDD8uU2l
+	mNPisZuKkW+KoACpYl1xCpSqeUiK71ycK4fKV14rQOEtNw7Drgj9TN8xCfek9MZ+B2wguVybUZ6fR
+	E7H1siM4ZsCfyA+gfYw8g9mTzLYAu7AXPyCXO7n+hqm4LI4YRQLJtEY5V0AYo7yG+tHtDcbqv3daw
+	LDT64gyOShAlzBZriEXPoJGanytmsW7GDPtByasV2gwXgcBVkqElh1Z1EFNCdj82SFyWPCpJ4lbiN
+	RaWgzVN5DRps4RsJ4+9guH48ioSpXJVpdyknlc5eq+tfyB4jmBQNOdKb4+xZqZgXYAf/W9DuIwmYq
+	9sqCXMeQ==;
+Received: from i53875a38.versanet.de ([83.135.90.56] helo=phil..)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tqBOm-0003OH-Hz; Thu, 06 Mar 2025 14:36:28 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Shresth Prasad <shresthprasad7@gmail.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Chukun Pan <amadeus@jmu.edu.cn>,
+	Yao Zi <ziyao@disroot.org>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 0/8] Support SD/SDIO controllers on RK3528
+Date: Thu,  6 Mar 2025 14:36:26 +0100
+Message-ID: <174126816885.664640.17521271236710485903.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250305194217.47052-1-ziyao@disroot.org>
+References: <20250305194217.47052-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306103119.GAZ8l5d-brstBbLDEH@fat_crate.local>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 06, 2025 at 11:31:19AM +0100, Borislav Petkov wrote:
-> On Thu, Mar 06, 2025 at 09:38:21AM +0100, Joerg Roedel wrote:
-> > On Thu, Mar 06, 2025 at 10:01:17AM +0200, Kirill A. Shutemov wrote:
-> > > Alexey looking into exposing TDX module version in sysfs for both guest
-> > > and host.
-> > > 
-> > > I think it would be useful for guest to make attributes and TD_CTLS
-> > > available via sysfs. So far, we only dump them in dmesg on boot (see
-> > > 564ea84c8c14).
-> > 
-> > Okay, do you have ideas already on where to put this information in
-> > SYSFS?
+
+On Wed, 05 Mar 2025 19:42:09 +0000, Yao Zi wrote:
+> RK3528 features two SDIO controllers and one SD/MMC controller. This
+> series adds essential support for their tuning clocks, document the
+> controller in dt-bindings and bring the SD/MMC one up on Radxa E20C
+> board. Both HS and SDR104 mode are verified.
 > 
-> Right, I was thinking about it: sysfs does a one-datum-per-file thing and that
-> would go nuts very quickly.
+> This is based on v2 of the SARADC series[1]
+> 
+> [...]
 
-I think we should be pretty use to one-datum-per-file thing by now.
-I don't see why coco case is special.
+Applied, thanks!
 
+[1/8] dt-bindings: soc: rockchip: Add RK3528 VO GRF syscon
+      commit: efc1bc1f36568a4297d20a691758b68c121cf982
+[2/8] dt-bindings: soc: rockchip: Add RK3528 VPU GRF syscon
+      commit: 8f814d7c9f6cdffc1f5cc97637e12cd699ff9085
+
+Best regards,
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+Heiko Stuebner <heiko@sntech.de>
 
