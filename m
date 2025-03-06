@@ -1,84 +1,99 @@
-Return-Path: <linux-kernel+bounces-549087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E01B4A54D07
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:09:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 970F7A54D61
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:17:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 734D71889CCA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:08:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB20A188A90E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:17:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9FC1547F8;
-	Thu,  6 Mar 2025 14:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IbBGOB0R"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FA8156960;
+	Thu,  6 Mar 2025 14:17:27 +0000 (UTC)
+Received: from sxb1plsmtpa01-02.prod.sxb1.secureserver.net (sxb1plsmtpa01-02.prod.sxb1.secureserver.net [188.121.53.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536AC151990;
-	Thu,  6 Mar 2025 14:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEDB51494DD
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 14:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.121.53.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741270114; cv=none; b=s/8n4xOLMGwP54OEDmZEHDFIirhVfnpxv1E/gEYxpmlXXLsg9Xrj2j3GCdhDfl41P0PT5pOrzn05J6agBhYe5itjltWMqZplEcNDHXFTRm8l0dZ5qBDBAGKZp+00D490g2fEvwhhhCrI2Qa3rRbHLJrE8vPTmM+ghjxfsrq0HDQ=
+	t=1741270646; cv=none; b=ql33ao6ZQtrMts6s0JGNlseZH19gIBrVXk3+QEZRKUZwmQbH56GD972ous5aL/s8P18m/JwuVSGg06Vae8z7cR46CB1JLeveiyeVVOYmG+E4gem0GnxQ0TF+1TLoSEtDTEVgQNEv58dTunydb/1eA0W51QbisypdMlIvQU+LlZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741270114; c=relaxed/simple;
-	bh=LkIfOHx5/dcrgATekQOsPiV7zPoeugPYPaspJUC3TN0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C53zVIj4yyJVE6b0hsEtkTMzUCXRFYb0pgkYj+5snWEEw9TFhACbibE+ShKzxDATawQ9WT0xZyfz4nREncno3mIaP46D+3ByEVWn6YcVxliD1RfKtzwdM1/ByIcQYLxywyyFLxZF1yRdL65rVtfQRZ2uD9aG0zaJeabci2xCfnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IbBGOB0R; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B49D4C4CEE0;
-	Thu,  6 Mar 2025 14:08:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741270113;
-	bh=LkIfOHx5/dcrgATekQOsPiV7zPoeugPYPaspJUC3TN0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=IbBGOB0R7RKhs/DksPDnNSPytvTgwWFHcsTcpTedR628UAdd1V7hYr2OoQ1UTTBvW
-	 02xNfRmtsjukygDZ9U43L1V+ZUKF1AYJG6SxQlIJ7KKWZO79EfwGkxPWJQYH7Ttilf
-	 3cFm0gEfLbNCT7erksLlyqRjF6GyCUq8wW7rDPKu3tF3FdWFBhnzQC1ZpeyCrIyZBw
-	 fYJgkFk9mKgfbi0laikEy2b/4+jDbzZ+2cAhTRd9PS3BsOuxBKrnbBlmzWkA/u3aix
-	 wt4PolrAAQV/mMkl4XJJalcoH+8oFj3v/7Bamf309Ggo6+KQE+jEXj5SO2PGZsfoko
-	 9elPEPwaigtaw==
-From: William Breathitt Gray <wbg@kernel.org>
-To: =?UTF-8?q?Cs=C3=B3k=C3=A1s=20Bence?= <csokas.bence@prolan.hu>,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	William Breathitt Gray <wbg@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] counter: microchip-tcb-capture: Fix undefined counter channel state on probe
-Date: Thu,  6 Mar 2025 23:08:23 +0900
-Message-ID: <174126995863.355997.16346927228585162675.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250305-preset-capture-mode-microchip-tcb-capture-v1-1-632c95c6421e@kernel.org>
-References: <20250305-preset-capture-mode-microchip-tcb-capture-v1-1-632c95c6421e@kernel.org>
+	s=arc-20240116; t=1741270646; c=relaxed/simple;
+	bh=gP+bRMDLabVdKkg9fiGZtOotPXrC1J1nOUqUpfoGeIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rcAebmeeBYtqqDHK4fFZhr2HN7VebBUZ9Mvrlh3SI+pRqte2R1ClzMrh0bVltc2nq5KDj4BnGVmZcjwa/PS/IvP+42eaPcDfDrLwh0QNsWrAam7DbFphBOt8AR9LnQvSNVuAD8bYQUUKLryzLcuoNbKYW08qm05zBhfanOAIo64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk; spf=pass smtp.mailfrom=squashfs.org.uk; arc=none smtp.client-ip=188.121.53.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squashfs.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squashfs.org.uk
+Received: from [192.168.178.95] ([82.69.79.175])
+	by :SMTPAUTH: with ESMTPSA
+	id qBuxtGkbUjsVIqBuytFtDY; Thu, 06 Mar 2025 07:09:45 -0700
+X-CMAE-Analysis: v=2.4 cv=ZNgtmW7b c=1 sm=1 tr=0 ts=67c9aca9
+ a=84ok6UeoqCVsigPHarzEiQ==:117 a=84ok6UeoqCVsigPHarzEiQ==:17
+ a=IkcTkHD0fZMA:10 a=VwQbUJbxAAAA:8 a=pGLkceISAAAA:8 a=FXvPX3liAAAA:8
+ a=70GUUZxsgcFP8lEI_bwA:9 a=QEXdDO2ut3YA:10 a=UObqyxdv-6Yh2QiB9mM_:22
+X-SECURESERVER-ACCT: phillip@squashfs.org.uk
+Message-ID: <ae31e0a6-7cea-4f76-824c-d8f5ae97c101@squashfs.org.uk>
+Date: Thu, 6 Mar 2025 14:09:40 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=566; i=wbg@kernel.org; h=from:subject:message-id; bh=ZYCqo0M2oAeDQGbSQHEhiD46dBjTRHS0YFHniKGFDv0=; b=owGbwMvMwCW21SPs1D4hZW3G02pJDOknV787fUt35qeoyqI1PbW3rYTOMHd/VktWXLrpzh1po 0snF1RO6yhlYRDjYpAVU2TpNT9798ElVY0fL+Zvg5nDygQyhIGLUwAmkpHAyLBIM/3u+faOSfom QZ+i/j/YcJ73uMP/TxOre9o28EZdFF3F8IfLqeXPV9bY909uN9zx4Y4VDNcLXlDx6e5cnZ0Rkhu vW3IDAA==
-X-Developer-Key: i=wbg@kernel.org; a=openpgp; fpr=8D37CDDDE0D22528F8E89FB6B54856CABE12232B
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] squashfs: Fix invalid pointer dereference in
+ squashfs_cache_delete
+To: Zhiyu Zhang <zhiyuzhang999@gmail.com>, akpm@linux-foundation.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250306132855.2030-1-zhiyuzhang999@gmail.com>
+Content-Language: en-US
+From: Phillip Lougher <phillip@squashfs.org.uk>
+In-Reply-To: <20250306132855.2030-1-zhiyuzhang999@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4xfOnnLoEViXSynWXN230Yh91rrSC3vY400r6+cgUzL82cHjJv3lYTHvjI2Zl66DgPVd5qnLbnpEENULljH/6n9sT6NzXqs1Ed41CZk5FwRFOhihCo9/qi
+ b9xRshh5R0vJayXGz2zWHq1aQ4zewdEe8mTW2rVSvNg7/nZGLBHEScMiwznTpnVWvI+iJ7GRgd9kObk0cmVMrj97rO1rwLCcsurc1+4fxGZMFEd/L58L5AxE
+ AlwRvps2xl+oaLsPLoob6UNvNAdfLDYw40k/BP7qmMuzL8aUsGna1cPa4UVdXorKqu/ZTcvW8KzIppznlt5qhIkV4+RsR3l+EZ5YEdkkbrE=
 
 
-On Wed, 05 Mar 2025 19:01:19 +0900, William Breathitt Gray wrote:
-> Hardware initialize of the timer counter channel does not occur on probe
-> thus leaving the Count in an undefined state until the first
-> function_write() callback is executed. Fix this by performing the proper
-> hardware initialization during probe.
+
+On 06/03/2025 13:28, Zhiyu Zhang wrote:
+> When mounting a squashfs fails, squashfs_cache_init() may return an error
+> pointer (e.g., -ENOMEM) instead of NULL. However, squashfs_cache_delete()
+> only checks for a NULL cache, and attempts to dereference the invalid
+> pointer. This leads to a kernel crash (BUG: unable to handle kernel paging
+> request in squashfs_cache_delete).
 > 
+> This patch fixes the issue by checking IS_ERR(cache) before accessing it.
 > 
+> Fixes: 49ff29240ebb ("squashfs: make squashfs_cache_init() return ERR_PTR(-ENOMEM)")
+> Reported-by: Zhiyu Zhang <zhiyuzhang999@gmail.com>
+> Closes: https://lore.kernel.org/linux-fsdevel/CALf2hKvaq8B4u5yfrE+BYt7aNguao99mfWxHngA+=o5hwzjdOg@mail.gmail.com/
+> Tested-by: Zhiyu Zhang <zhiyuzhang999@gmail.com>
+> Signed-off-by: Zhiyu Zhang <zhiyuzhang999@gmail.com>
+> ---
+>   fs/squashfs/cache.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/squashfs/cache.c b/fs/squashfs/cache.c
+> index 4db0d2b0aab8..181260e72680 100644
+> --- a/fs/squashfs/cache.c
+> +++ b/fs/squashfs/cache.c
+> @@ -198,7 +198,7 @@ void squashfs_cache_delete(struct squashfs_cache *cache)
+>   {
+>   	int i, j;
+>   
+> -	if (cache == NULL)
+> +	if (IS_ERR(cache) || cache == NULL)
+>   		return;
+>   
+>   	for (i = 0; i < cache->entries; i++) {
 
-Applied to counter-fixes.
+Looks good to me.
 
-[1/1] counter: microchip-tcb-capture: Fix undefined counter channel state on probe
-      commit: c0c9c73434666dc99ee156b25e7e722150bee001
-
-Best regards,
--- 
-William Breathitt Gray <wbg@kernel.org>
+Reviewed-by: Phillip Lougher <phillip@squashfs.org.uk>
 
