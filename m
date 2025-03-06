@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-548987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55032A54BC7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:16:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C938CA54BC8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:16:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EDFBF3B3744
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:15:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC96F174DAB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EF320F072;
-	Thu,  6 Mar 2025 13:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F0720E715;
+	Thu,  6 Mar 2025 13:15:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="MIeD1qum"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OvORDHt+"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57AB520E710
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 13:15:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF50D20F063
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 13:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741266932; cv=none; b=XYG0hKYAtyBZJPjF/93XUbB4u73/PFEb1Q47Y6kKf5/UApKNxPNO+mtn3CfftuI9Dg/OI+yZQsS2sMZHw7m8QWjenD+VuAR62CGBMFtNWY31Geu9PcHLKrj1janT77akFvCvLjKh3WTwzlEQmFG/n5eiDioOWe8ULqkwVixklr8=
+	t=1741266933; cv=none; b=qpNMdECUJmYHPHDU2S4zuxxa65WCkjYVc7NYxoBaEnRyWHEMIOWJ2R+BGqmpEBWGYjbmkGJHPxFh3T4SXOvLOts6T7EEXqM3ZD28b038g/tv8SPP8C7/l0PgO43tfW2y/jUeuFemMt2UreRvi7wsz2+ZDWIIUmW/FaGkyXspQVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741266932; c=relaxed/simple;
-	bh=t9WUE4puJ3y/u1gPad4p78vEDZXVaqsDCLjaQIolUf8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lk5M/bxv5ERJgemo9WFNdHCsI5DluNAWOqM60Sxdwox8zn4qyAy1czYr6rvECgjFBIwUP8MM1ummWrNatDFe7rUFd0SaISLAEtRbJd4Mz2lURH1xpGe7cfhsnd8rQdfxEeN6s4xMY/WRGcAAt+4DN30TH+bUkiOr8UT3IyHa2q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=MIeD1qum; arc=none smtp.client-ip=209.85.128.46
+	s=arc-20240116; t=1741266933; c=relaxed/simple;
+	bh=BvSlaG3rLjNuw2XDjvoJaB0XtiXWFz6skWwh3t2ohzk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Tk3H5nCCTuO8igp6tErj+DmcpWLXenVreuTAGPfHUUV8a+Y5gqwoEAE7D0bM7BQBQnWnSYt+i5C7SSzXfHH0Rnr2hlEX+yq/EFlbaGj9C2zQhIG/s4gi9bhzoDSpyjjjOLHoPZ8Uyb4LslIVwrNGYWZjovVjReL+QefjpSyPJhI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OvORDHt+; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43bbc8b7c65so7135475e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 05:15:30 -0800 (PST)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so3976505e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 05:15:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741266929; x=1741871729; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XvqE0gdDd8D80g4QcmunzIAXwiMoEWGi2ibgkUreq8w=;
-        b=MIeD1qumAArSC7exNSs3ricWz+59+FCdxDfnEWtDCTePJDnI2b8j+IVFztpSUT+5o7
-         zU1OFfJ8wFcq9M3b3mAnLERCVtfIhOW3ajlyyxGCNAuPx6mV3Now0cD4vFzNjuD0KgOw
-         loU8sPfamk/6xZ0qp66b25HGUSPXODtHmwZhWgX8c08zAjb5FCwkMB8wJeaqWFsEGTem
-         eJU/JYPmSGBbIlp6FIGydP+Malk8xxCrc7tOFAp/ojh5fejmq0x9+9ox9zG7B1Ri7jqJ
-         MHWekudtOYYwzjDlNnuq5BM4l4TbNuusFD6kEFHL5qKRcTNFnEZsoGNAIDSFC2KifrVP
-         dW2w==
+        d=suse.com; s=google; t=1741266930; x=1741871730; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pj78PG0pp5n8PTZUVZot4fU7c++ftFca2ezsst8qrio=;
+        b=OvORDHt+NMLiOA+Iolz2wGqz+F4SlpHLd88MJytIqHdLfYYUzFL1FHQEnbdfe0DR+T
+         aJYDJcZq5Xu3a31EuLHW/TsVz0VxJzF3tOveXIL4x7hnIZgy6XoY1bKH4kEJ+0fyTwrL
+         q0P54ei19rJkc5tZgg5W2Th822C1/TjXoZf+u37ASa1D9LZRZTETzFUygTxNOPtrnnvF
+         yL9+9mTT36rPDToP6e9ryvC/Smk2OZ0erN1SauT5WY560NSp5dcHMUzlDGGmUx8EUNlo
+         ydszgzldoB7Z1CBjlaRbo3ltfkkGplru1mdc2Y4Aof+/925O+VRuLvQENco4dT4MZKd2
+         elqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741266929; x=1741871729;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XvqE0gdDd8D80g4QcmunzIAXwiMoEWGi2ibgkUreq8w=;
-        b=KhENjMBdt2aC/rwNLVHCvzdrsb2EFe0QghJcYnaVXmJs9K6/QkBBM+AA2xekFK1h77
-         EdqpV0RzgV0KOKs5ENujHl2AjgvemF/hjusbS8OLLZWmFuSTeK8Vsgj+ZiPQgSSt11pv
-         7PY9PstA7LBXzOos4pYGHAAkymqYE6HRyQ7NSE35AZep63PTTKa7xMGREjLZrMMQAhW6
-         hAqa3CLNDyRUqwQbAbt1CYLBJNUuGSA67u7Ked22/edXGsoU1Sk1mHAao9xv7rT6pMGB
-         LZqeAXrSgBeuH0zRLX+Me9MK+/Ovp7TPGPPvg3u0ye0kC//l2/aXLDmqDKZevm53wkGW
-         Jmlw==
-X-Forwarded-Encrypted: i=1; AJvYcCXR52cf1knEhioDLLQCdGZcOR1lh1wRBcwAFO4u6IYptcOsbJhq0mgOtr5PgIKaq/4lEJGu2EUKR606HOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGcF9nlQdI/g7ikuYxb37sXLNDd4szflDEbeswOCO7cmaChAE9
-	CstFbADkpQJ2sv/sFsJyMfdRVP+HXrrStHKlpVoOYHBVRTmShvdMR+zmq7Midb0=
-X-Gm-Gg: ASbGncvIjxSq1coYGKC380VDRMKGG5YCYE8LSE6DYQzrHJy0kA2AlcT8gx+shFi3/+b
-	V+JC4ngf9AM/fxK6N+gsTueMUZxF2N+dqtHICy3o0WtOqBf+KbIb5hSYiROZAeaN8LXkGoRu2e3
-	JGhRmdGcl9BIydi48wQfLNYhL3ADE5DiiwYHKLAgu/gzsbvhHTTl0VdSZ64v6cusIfPVV+MfyI9
-	Oq8ob7FA1g6reaqK575BQX0d19TFOuSaWZ2QDEY6OBOYYvTa9L9fODJGHRPGYQXS/DCBq7J14hF
-	vuefopGpJixPj9t6Flei7VAzJPyRb8OGS4dIvhdTCiH+uctQ
-X-Google-Smtp-Source: AGHT+IGN9G2IHEnZL3cvPtt7JMOOBNRM/b0RxlvzKWb5wGb0QePNN3COkLKHXonQaY7+rv3elRBeMQ==
-X-Received: by 2002:a05:600c:4f11:b0:439:916a:b3db with SMTP id 5b1f17b1804b1-43bd292fee0mr67965375e9.6.1741266928699;
-        Thu, 06 Mar 2025 05:15:28 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741266930; x=1741871730;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Pj78PG0pp5n8PTZUVZot4fU7c++ftFca2ezsst8qrio=;
+        b=mXMbhA1j5+NYIQndiWV8HT/VuudngbZphQugZ57I6ORluZwwEA8dyPfFaB5FKXxdE5
+         9/edB1nwcrS0FUwWgNGcoJX4I39n/hFSTCSIa7olLWQH9nDZ9Apz7BdQIeZpl1UCpTZX
+         wDb4n8KUVwizFpXkR8VO0w2JiHW+jt3b0+g3GWgTTDAUFpbNroT4bIKp5zLJzuVVqgAT
+         ik5tuqTFHbH34l/AysfQgecXMaT1ZxvE2Pk8d6G3/eDfD2vzu2pC/p3TiqHwZ3BgMi3x
+         WvsbYuyR0o0amBWoV5eJobH8REv3YTve7fBEO+KYxIoOx9Gchr7DcD5jChqXHGs3MChP
+         MjzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/NFe7v5TrHbRQGC8qY30AnJbnNw1zNV0q9OzG3dX/06f/wgaxTXrdUttcyjAMdJToFsseAN/sRuv8jR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKDPZmH11tUqtwAf46gEgvnaOPrrc69V+aC7rlX0IN7llC5Gtn
+	UV46LJLzoUUBMHL8pEcqBXiUkLD9uqPBXHWJ9iY2fyP481uWb2sDJsF4/xiDmog=
+X-Gm-Gg: ASbGnct+L89UVuNvVQGVNh34ui9Z3Ai+whs5M8ZOwsTMo7nZKrSvc1TQnMp355MmbVA
+	C0wJJwT/Xcj6tNGMvjljo4xFjeAWWwQJZL9jcEN7Fny5GJRSNgQ6Fj6+ngIYmpU5ThTtn62W8fv
+	KgV0wwVmRqNzbM9zAVp9YRrGdQDyUMvw2oyiUciM2yDBbycx1UOAyvKTLuTcm1BG+iVs/UjXJmg
+	9U88mLiFBBt/3vwYe9ZreHi8OAMAG2GNqRNJTRzEoPv+9SsY4oCpwCQ7MweN+dXFf4vW/dTWAlY
+	sbH+pluysmJu+SUzNIOeULtcGvySuh4zs0tRkEg1E07oadqk
+X-Google-Smtp-Source: AGHT+IFr54SyRcHfD64GHzzREo8VdfNOB246KLkodyLGDvF849R5Dk9GM2hPiS0mwZXhRJQCfmy98g==
+X-Received: by 2002:a05:600c:1d02:b0:439:91dd:cfa3 with SMTP id 5b1f17b1804b1-43bd29d8db3mr54480605e9.29.1741266929975;
+        Thu, 06 Mar 2025 05:15:29 -0800 (PST)
 Received: from dhcp161.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd8c327fsm19704485e9.13.2025.03.06.05.15.26
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd8c327fsm19704485e9.13.2025.03.06.05.15.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 05:15:27 -0800 (PST)
+        Thu, 06 Mar 2025 05:15:29 -0800 (PST)
 From: Petr Pavlu <petr.pavlu@suse.com>
 To: Luis Chamberlain <mcgrof@kernel.org>,
 	Petr Pavlu <petr.pavlu@suse.com>,
@@ -82,10 +84,12 @@ Cc: Sami Tolvanen <samitolvanen@google.com>,
 	Christophe Leroy <christophe.leroy@csgroup.eu>,
 	linux-modules@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/3] module: Make .static_call_sites read-only after init
-Date: Thu,  6 Mar 2025 14:13:51 +0100
-Message-ID: <20250306131430.7016-1-petr.pavlu@suse.com>
+Subject: [PATCH v2 1/3] module: Constify parameters of module_enforce_rwx_sections()
+Date: Thu,  6 Mar 2025 14:13:52 +0100
+Message-ID: <20250306131430.7016-2-petr.pavlu@suse.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250306131430.7016-1-petr.pavlu@suse.com>
+References: <20250306131430.7016-1-petr.pavlu@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,31 +98,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Section .static_call_sites holds data structures that need to be sorted and
-processed only at module load time. The section is never modified
-afterwards. Make it therefore read-only after module initialization to
-avoid any (non-)accidental modifications.
+Minor cleanup, this is a non-functional change.
 
-Changes since v1 [1]:
-* Rebase the patches. The kernel now has commit 110b1e070f1d ("module:
-  Don't fail module loading when setting ro_after_init section RO failed")
-  which addresses a previous problem with handling ro_after_init sections.
+Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+---
+ kernel/module/internal.h   | 5 +++--
+ kernel/module/strict_rwx.c | 5 +++--
+ 2 files changed, 6 insertions(+), 4 deletions(-)
 
-[1] https://lore.kernel.org/linux-modules/20241223093840.29417-1-petr.pavlu@suse.com/
-
-Petr Pavlu (3):
-  module: Constify parameters of module_enforce_rwx_sections()
-  module: Add a separate function to mark sections as read-only after
-    init
-  module: Make .static_call_sites read-only after init
-
- kernel/module/internal.h   |  7 ++++--
- kernel/module/main.c       | 18 +++------------
- kernel/module/strict_rwx.c | 47 ++++++++++++++++++++++++++++++++++++--
- 3 files changed, 53 insertions(+), 19 deletions(-)
-
-
-base-commit: 848e076317446f9c663771ddec142d7c2eb4cb43
+diff --git a/kernel/module/internal.h b/kernel/module/internal.h
+index d09b46ef032f..18f32e791db0 100644
+--- a/kernel/module/internal.h
++++ b/kernel/module/internal.h
+@@ -333,8 +333,9 @@ int module_enable_rodata_ro(const struct module *mod);
+ int module_enable_rodata_ro_after_init(const struct module *mod);
+ int module_enable_data_nx(const struct module *mod);
+ int module_enable_text_rox(const struct module *mod);
+-int module_enforce_rwx_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+-				char *secstrings, struct module *mod);
++int module_enforce_rwx_sections(const Elf_Ehdr *hdr, const Elf_Shdr *sechdrs,
++				const char *secstrings,
++				const struct module *mod);
+ 
+ #ifdef CONFIG_MODULE_SIG
+ int module_sig_check(struct load_info *info, int flags);
+diff --git a/kernel/module/strict_rwx.c b/kernel/module/strict_rwx.c
+index 74834ba15615..81278e687055 100644
+--- a/kernel/module/strict_rwx.c
++++ b/kernel/module/strict_rwx.c
+@@ -86,8 +86,9 @@ int module_enable_data_nx(const struct module *mod)
+ 	return 0;
+ }
+ 
+-int module_enforce_rwx_sections(Elf_Ehdr *hdr, Elf_Shdr *sechdrs,
+-				char *secstrings, struct module *mod)
++int module_enforce_rwx_sections(const Elf_Ehdr *hdr, const Elf_Shdr *sechdrs,
++				const char *secstrings,
++				const struct module *mod)
+ {
+ 	const unsigned long shf_wx = SHF_WRITE | SHF_EXECINSTR;
+ 	int i;
 -- 
 2.43.0
 
