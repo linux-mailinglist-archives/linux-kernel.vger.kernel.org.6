@@ -1,139 +1,140 @@
-Return-Path: <linux-kernel+bounces-549085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A27B9A54D01
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:07:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D99DA54D0A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:09:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70152188D916
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:08:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B954A3B215D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B8A0155308;
-	Thu,  6 Mar 2025 14:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E611509BD;
+	Thu,  6 Mar 2025 14:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Quig70Xo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="e3b4mAdk"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kfNXRKyV"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0C0823DE;
-	Thu,  6 Mar 2025 14:07:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15517CA64;
+	Thu,  6 Mar 2025 14:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741270057; cv=none; b=WO58b6efvy5R+9Ks4dqPrUzhXY09kPrsWhIgTNzoOthx4ef239AOmyQFSd0oBpv9VBzkvcxdATy3GWw6bZtiZ9Fn0qehpO2KouA8gToCAwwtkJHHABURJHLcH+QGxYGd40YXf0VTdQ4GD6lWwAEXjNbfMcqM2wk2WfBUe2CI3jM=
+	t=1741270113; cv=none; b=cgbjNKHMp0U3d8Lc6THsRNdZHpmB4I0vn2SfhKfG0sdByPH/IcBdq65FD83o106WpKWwS4LqBxzXNoxGTguQVEM5hYokQzqw7xEtWH3Dzx/UkpfUCNANDhnmaNO08jnQinMVblKabL3GD7ktxkQ5LqwXoQ2b/j+8LaJkts0m+F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741270057; c=relaxed/simple;
-	bh=ACBl2Fq/Y+AeDxVyAuPw9jDrfJIgt71CLxWbfrKoGm4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=P2+xLJZQ34quS5vYT3eZeOFGxL+XKVULM071x5zdiB1YgVE3ejhmIIe0i/lty75SsKI3b9sncV9Z+nXEJ3NJQj0yt1Tb1S49qh7/JuxhPLKGMbbtC7QNgL4OXkZxl6MHxtfhCSWh8jM7JHDs1caQqo5K06pfHWgNWLGaAJa1lSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Quig70Xo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=e3b4mAdk; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741270053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2crXcGvedM/l/P9SdD7SNW7ifDpTDKg+mtvUD2PYjsM=;
-	b=Quig70XohAnNH332230EP8SIZNq+5lokc88kZRdKaR74Iq7Jb5Av6vEtdEXjslyBtDrRke
-	gV55lCqAOOdIePJAALaLSiokDiCpVb4CTe+NFfSKrgqc0mSi4bhWOcPjHULDC+rS6BRAPF
-	TqkaxxL7btm+O/qhJgi3KjGUe6zBG+nJKughRzoTSeIPjJm4JnuJ7c3SwobhAUi/43mXin
-	ZtcN+PddciItSACrjL3yk2X+8BpixdXWzUbHtc126iLkrDXICcsGANmpEOvf2rdZbEHlf+
-	ZNYIYd4Xi/nGVvP4Hz1ig8xueWbZAKiFmZx2BwpDGbONqZDQYgnSxJ0sAnvnOA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741270053;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2crXcGvedM/l/P9SdD7SNW7ifDpTDKg+mtvUD2PYjsM=;
-	b=e3b4mAdkyWPAKE5CDWiWdjOx0TIl9bm+abod421qjbK1Us+ybqyoIFW8CBJUoJqEFmH9ud
-	yne7yCCthEdsxkBA==
-Date: Thu, 06 Mar 2025 15:07:21 +0100
-Subject: [PATCH v2 2/2] sparc: vdso: Always reject undefined references
- during linking
+	s=arc-20240116; t=1741270113; c=relaxed/simple;
+	bh=kWV8ljageqb0izUaC+/nzAbBvrv81I+4eNjdwXRR/Fs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=G3QSuSxvSTAAxblb80J+vgGAW1ULUzKBq31UTbOR4IZV2Vhon8MtPeh0gEz6cHR0g1hmqdnhPVxhA9LP0SREhi2sIIVmrkX9ZnPacNrT9BdrBYX7VAf/yEIkjCpzVPmpy1rJlbJNwYDKVeAn4pjr4mUzzUbY7luRSQ22RARbjMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kfNXRKyV; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e539ea490dso988864a12.0;
+        Thu, 06 Mar 2025 06:08:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741270110; x=1741874910; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kWV8ljageqb0izUaC+/nzAbBvrv81I+4eNjdwXRR/Fs=;
+        b=kfNXRKyVBzqghavRJ2mKMvpHonCN/nHXFLlVs60BJwRQl/LQDRoL559vzBoSVROKZQ
+         kXmXc1ctFZ8of2RjqBdezeZu7JLOFfw6cyBGlrMWfWI0nHognKmwjCS+hOjoOa92crkp
+         eV3QF98To5aNkyyK5XQNHCp/mywDqU3ocGJ+S0sI+RhacDW3gI1fCZGqe3nWRRKajdmw
+         16HMxRyftcQM0+tgGm+eJrB2OW3sEt8A/luA6+sN0xtHOw+pe84XV4z9qB4DA5JkSQvx
+         Jr96EWv3FTJZ+P3LNQh8qFTIQdv5vIV82E3m5TigdGjfyz8bB6wpWjU1f5vRybAi/WXw
+         S53A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741270110; x=1741874910;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kWV8ljageqb0izUaC+/nzAbBvrv81I+4eNjdwXRR/Fs=;
+        b=j9WwgOHsWzKcfYA5B1pF/ef5r94itNldKEsY77VN2u0nFCKDVMC4ccFY+nhCh5VZ8D
+         V4rh+JBciqIq1WrA9g+gEEB0rB2PJ5KmTsU9t9iJPKnEgzcIOcxbLpWt6YCJg+rMH3y8
+         0J7Ag1duDso2W4MT3sJxc7rLh67rOMZhzZtArwS16slmSeEcQatwj6zj915zzJTzTJ2E
+         raT+YCri6x5Ar+Th2n69eK+W9p64pqSPHrMutDU5gn56vpcTmxAfcAaVEbap8Y3Sij6S
+         NlmNYw5r2cAhZSe6hnEB7qV+8SC26g3mzgFapt+xELYxtgMc8HakK7kdEYuh8JmVW1Dq
+         XPwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU2R7wRjGSiqTWK2OY3s0wDVckCHdXEKdVkl1+sK3ft/L6sDiHItaMO1fpmO7A+onJeekgsB0bCi00Q@vger.kernel.org, AJvYcCXSEheWDo9I9UiIbjKC+Sfjgu8SN4lgPvZyzUrSHZCWUMLXxfFN82+wxDNjDJV0YLOr6v5E1vOxEik5dMBN@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO+1FxSXIJq3UKIhz0R4iT85jADrk15qx1pMBRL49EuSEcapVW
+	cVGl9lc/0RvHqCwm3ZIPTLsrkCpFwFXXgw4+ArRZB5GRWzzarRFF
+X-Gm-Gg: ASbGncuUTJpSzijwt/+Lr/gV+hNLD7OLMmGA3d0qdQ/jOw1tj30Kuy4qkA/y2zTSgp5
+	4IYmen2j6ckncJQ0FBm2ruGIDRN+5ZK+OaEhEgWwIdmXrdbpv0bBJ1LyiRiVlUN9R4yZsorz36t
+	ghKfgiYsO2ZSX7fHqQPXyHiKGpBXOvWHHKPGE5OB1TSGkwcLRkiTSLyr0fd2Hvz9DyeTe+ZqeEg
+	JlVh21xDzFc9ZjcRjjbLrUa7u5bM8C+VBmqWdhKZwWcYwHxw+W4kIx+pE6eA45mq7NF2iONGS85
+	kQL0ss3czDA2ySgLTMLMwl8rLdjaA7ZuGzMeIlP3tRE1XxVpyNOLkamuI91HuQR6EDCHvF31YQH
+	rCzo0vJ/O1Tlw7CuVqRT/y9vUxg==
+X-Google-Smtp-Source: AGHT+IEjOK8tItru0CnDJMfpuW+YocWEOgCRwuy6WiSEato+NxCIl7mKq10KFt+G6Q2r3z6rTWjduA==
+X-Received: by 2002:a05:6402:2186:b0:5e5:be7f:a1f6 with SMTP id 4fb4d7f45d1cf-5e5be7fa870mr8495205a12.1.1741270109496;
+        Thu, 06 Mar 2025 06:08:29 -0800 (PST)
+Received: from smtpclient.apple (89-66-237-154.dynamic.chello.pl. [89.66.237.154])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c7475e9dsm989794a12.30.2025.03.06.06.08.26
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 06 Mar 2025 06:08:28 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250306-vdso-checkundef-v2-2-a26cc315fd73@linutronix.de>
-References: <20250306-vdso-checkundef-v2-0-a26cc315fd73@linutronix.de>
-In-Reply-To: <20250306-vdso-checkundef-v2-0-a26cc315fd73@linutronix.de>
-To: Andy Lutomirski <luto@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
- "H. Peter Anvin" <hpa@zytor.com>, "David S. Miller" <davem@davemloft.net>, 
- Andreas Larsson <andreas@gaisler.com>
-Cc: linux-kernel@vger.kernel.org, sparclinux@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741270050; l=1993;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=ACBl2Fq/Y+AeDxVyAuPw9jDrfJIgt71CLxWbfrKoGm4=;
- b=UuaTRkXYjiIVxjUdQQMpfDmQC4YBDeYk6fa+gs14FSvUDvzMsPh0HIlcGVWDoQEtKJqZ5fQMd
- QecvT4zWUjQAxoJa5AXsLFgb2hu7KYO3I/RvjFhkmLnFCKpJin4t1ro
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH 0/6] Add support for RK3588 DisplayPort Controller
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+X-Priority: 3
+In-Reply-To: <46c0d239.a4f5.1956b619b97.Coremail.andyshrk@163.com>
+Date: Thu, 6 Mar 2025 15:08:14 +0100
+Cc: heiko@sntech.de,
+ neil.armstrong@linaro.org,
+ sebastian.reichel@collabora.com,
+ devicetree@vger.kernel.org,
+ hjc@rock-chips.com,
+ mripard@kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org,
+ yubing.zhang@rock-chips.com,
+ dri-devel@lists.freedesktop.org,
+ Andy Yan <andy.yan@rock-chips.com>,
+ krzk+dt@kernel.org,
+ robh@kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <252BB2E2-4BC5-4402-953D-F7B30EA5DE14@gmail.com>
+References: <25401bfa.291d.19564244e54.Coremail.andyshrk@163.com>
+ <75189787-28E1-4FC2-8E10-4960B3877A6F@gmail.com>
+ <28b0d3fc.bb3.19568f6b5f8.Coremail.andyshrk@163.com>
+ <44213B17-FE14-4FB8-8319-1E31BBF6EAA0@gmail.com>
+ <74c154b6.8c50.1956aa8c8d2.Coremail.andyshrk@163.com>
+ <1573D5D6-AFED-4D92-8112-B0C6BB52D5FF@gmail.com>
+ <46c0d239.a4f5.1956b619b97.Coremail.andyshrk@163.com>
+To: Andy Yan <andyshrk@163.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
 
-Instead of using a custom script to detect and fail on undefined
-references, use --no-undefined for all VDSO linker invocations.
 
-Drop the now unused checkundef.sh script.
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
- arch/sparc/vdso/Makefile      |  7 +++----
- arch/sparc/vdso/checkundef.sh | 10 ----------
- 2 files changed, 3 insertions(+), 14 deletions(-)
+> Wiadomo=C5=9B=C4=87 napisana przez Andy Yan <andyshrk@163.com> w dniu =
+6 mar 2025, o godz. 13:15:
+>=20
+> Hi Piotr,
+>=20
+>=20
+>=20
+> Then when you DP cable plugin, you can run command as bellow to see if =
+the driver detects the HPD:
+>=20
+> # cat /sys/class/drm/card0-DP-1/status=20
+> connected
+> #=20
+>=20
 
-diff --git a/arch/sparc/vdso/Makefile b/arch/sparc/vdso/Makefile
-index 50ec2978cda5397841daad6ffdc9682811b9b38e..fdc4a8f5a49c5b27fbaee861b24e8b31cfe64477 100644
---- a/arch/sparc/vdso/Makefile
-+++ b/arch/sparc/vdso/Makefile
-@@ -22,7 +22,7 @@ targets += $(foreach x, 32 64, vdso-image-$(x).c vdso$(x).so vdso$(x).so.dbg)
- 
- CPPFLAGS_vdso.lds += -P -C
- 
--VDSO_LDFLAGS_vdso.lds = -m elf64_sparc -soname linux-vdso.so.1 --no-undefined \
-+VDSO_LDFLAGS_vdso.lds = -m elf64_sparc -soname linux-vdso.so.1 \
- 			-z max-page-size=8192
- 
- $(obj)/vdso64.so.dbg: $(obj)/vdso.lds $(vobjs) FORCE
-@@ -101,7 +101,6 @@ $(obj)/vdso32.so.dbg: FORCE \
- quiet_cmd_vdso = VDSO    $@
-       cmd_vdso = $(LD) -nostdlib -o $@ \
- 		       $(VDSO_LDFLAGS) $(VDSO_LDFLAGS_$(filter %.lds,$(^F))) \
--		       -T $(filter %.lds,$^) $(filter %.o,$^) && \
--		sh $(src)/checkundef.sh '$(OBJDUMP)' '$@'
-+		       -T $(filter %.lds,$^) $(filter %.o,$^)
- 
--VDSO_LDFLAGS = -shared --hash-style=both --build-id=sha1 -Bsymbolic
-+VDSO_LDFLAGS = -shared --hash-style=both --build-id=sha1 -Bsymbolic --no-undefined
-diff --git a/arch/sparc/vdso/checkundef.sh b/arch/sparc/vdso/checkundef.sh
-deleted file mode 100644
-index 2d85876ffc32519ab8a0702917fedd31293cd9da..0000000000000000000000000000000000000000
---- a/arch/sparc/vdso/checkundef.sh
-+++ /dev/null
-@@ -1,10 +0,0 @@
--#!/bin/sh
--objdump="$1"
--file="$2"
--$objdump -t "$file" | grep '*UUND*' | grep -v '#scratch' > /dev/null 2>&1
--if [ $? -eq 1 ]; then
--    exit 0
--else
--    echo "$file: undefined symbols found" >&2
--    exit 1
--fi
 
--- 
-2.48.1
+Andy,
+Thx!
 
+With above changes i=E2=80=99m getting =E2=80=9Econnected=E2=80=9D.
+Also it looks crtc gets reasonable mode: =
+https://gist.github.com/warpme/d6220e3cc502086a4c95f05bd9f9cf0c
+
+Still black screen however... =20=
 
