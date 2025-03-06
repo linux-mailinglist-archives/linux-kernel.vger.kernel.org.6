@@ -1,122 +1,155 @@
-Return-Path: <linux-kernel+bounces-549253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D8E2A54FAC
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:53:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04115A54FB2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:54:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C62A2188C9B6
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:54:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 788077A927F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C341FDE37;
-	Thu,  6 Mar 2025 15:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF3AA20F089;
+	Thu,  6 Mar 2025 15:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Z5Xnn6Bn"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHTpIO49"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60750148FF5
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 15:53:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED6738DE0;
+	Thu,  6 Mar 2025 15:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741276432; cv=none; b=UTzvL4yqg5haaLNyyHyOIh7OQrWPrZlRiqDoZv9zMK3eeJycNB0UW42hoeZ9YDgvWZRkWMG2Qda7Wk/n+weoJ28jvotYcLWTji+BcnwXDhkNoAUQ+RjIteIykRK4D4zHPmJy72amZp+dLr3WvpbGljBu2qgzLdOtFzrJP8ON3U8=
+	t=1741276462; cv=none; b=MPElo0sxl2S3J8wkxo9Lkzp1aqf7RlN2n5dwgUONZ/3rr8X4EvLwmZ1lk25feEmDVdBdIaf0WoxcpPoAvr+FFktayz56QvtPnDfyyjgi3wP8WcG3qMejWNh+Erh08ucobSGweOI5XWeJgCa5C5fn9YUXXxq4tfHkgQqeE5voBtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741276432; c=relaxed/simple;
-	bh=9xApzznU9zToGpRvOyi0B+B9DLKySsAQzusSYJseRe4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bSMs34BxNHUX7MhkyXFj6yfa5YzdoVmJPu80zAWXpIb7ub/TZTC1zRtsacHDF/hB22HGpCV9MRSVTiK+XhwHjT0Z/cW0U4hr9odls0CzL0SiFP899+P9KvbED6KFHKjnzNChoW7ejM/7VvQQFv5eb8a7f/hRO4rtoMWxZYSNBS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Z5Xnn6Bn; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-85ad9632156so62066739f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 07:53:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1741276429; x=1741881229; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UGVbwjHGlVQWxl/m59u6FqTt/mVrEMBYDWttRsZVfrg=;
-        b=Z5Xnn6BnI85L8JouaY73Qe9pU/dTgAaaAvEgTGyJitZNvK0ciuyChxcpQYmb16TQFA
-         SffLqlJ0DCbcCzHNnvFEOn1BI5R+1x52L/tKzo4jFFwVb8bSvh4fgpRyFZt2mcaHfrVp
-         ztgVCXv6Icqawfc2nIVwjiQOTt1D/04B2smTU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741276429; x=1741881229;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UGVbwjHGlVQWxl/m59u6FqTt/mVrEMBYDWttRsZVfrg=;
-        b=iZVxp7lfkZycaDj59FaBz/SzpqKFjBMelFvNNnz8SxX3z+zUyggBcYIfyvKYgDsLpI
-         PVpux0asKxjcgDfOiQjGGyaMWGTIjZOwTCG6XQZ6Tj16y4hTP8ItjJzDODDRLMoL9Z4g
-         r8+pAIvgqN72SKAmjR11pF/p0xDom8JSSZaSpFi/vU5nZ9nrttnWU1XyaTlf0MzcHeD5
-         oiH1HgTwlmX3GxU+JExTvsgtVz790Qr5Pia6ehDCZI5K2zmCjtzfruxOuNFzFbJe3Cyh
-         QkcZKK0ZlR46YJJNmn7JyjG0g2K/4qkOjA1bitfE3EyjD/afAJ7PnOsHeJX2xNxF/zcn
-         4gGw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnJCfJ+68nBGSBNc5DqjzX/zTahG+MHr6vhw6RUtjYPBD0cv4EniQM5Lg8+5qDuJ/TUHTSqo5iv1Um+wE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9iyqd+nW75jFvUzrFvh8Rr1DxnTgjHQwrT+vGOCNM+/T+7wcE
-	dq0MvLatAxuBtgzcjAQigwC+cPS+DH9GzZsH7K4cF8z/wish0a8I5SM3WWXnBmM=
-X-Gm-Gg: ASbGncuoPpKUQonSLtHJYwszB6gv3zlJMQR94RyrkI9WIX7fk+4HYTNEEfDM+AYGLZp
-	8mBawFrMuUHlR4fqLwbGKGndoBuluYfqOAO9a9hS+0lWjPBppm8nrpyFxYFOCs4uxuR+Zr22CaF
-	rubH7S0rUTAthfkiceJoo/Vl7HqCG+2fAzniIhtGONXdon+9UwvqRBJnrEfyXmx38Y+4uxXMw6i
-	DXHDLU0sHi0CVaxcvnIWNBKjJ4xct+kj2ctLutEmQpBuInxnidNxtl4PFK6jSfCDVT9DPc0FLv9
-	vD4+2GAPEoudJrM1xiwhEJsjQU4iUIKNIABhvk0sx4XprBfcLxB3eFk=
-X-Google-Smtp-Source: AGHT+IGNfRM6WfvPSmrxwPJSCIIkYyc3wCyGQxjF8B+uwVak9ijJZWpq0YOE6Njzt4Xig2A+t7QPUQ==
-X-Received: by 2002:a05:6602:750d:b0:855:2bc8:69df with SMTP id ca18e2360f4ac-85affb86847mr1088552639f.14.1741276429490;
-        Thu, 06 Mar 2025 07:53:49 -0800 (PST)
-Received: from [192.168.1.14] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f209e1569dsm400620173.30.2025.03.06.07.53.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 07:53:49 -0800 (PST)
-Message-ID: <0c017b9f-0bc7-4826-89bc-70b9b9d38d4f@linuxfoundation.org>
-Date: Thu, 6 Mar 2025 08:53:48 -0700
+	s=arc-20240116; t=1741276462; c=relaxed/simple;
+	bh=mVOUoMC1bk4HTH++GmpfTH/JOD2CG3MVZY69+6D4SNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O3CFalHL2sQ2s9u9cZFXoeqk1grt7qTEbZNvUT5OupkeJA29je4yoGCUlTdLMCzjeMDyVcTzllgfjbFYLBlgHXrS9NTDJL3GLy6xz1JwVhAg+vTOKWsH17wFSXZa5BIkD02TbyyWkG30GbUF76DoZuMGRjIefhpDUhOS4A3Obno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHTpIO49; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B5C4C4CEE4;
+	Thu,  6 Mar 2025 15:54:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741276461;
+	bh=mVOUoMC1bk4HTH++GmpfTH/JOD2CG3MVZY69+6D4SNY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GHTpIO49taIrevs/bg/xVv81jeyXDNxsjmc2g8dKNw0iDMt52tvZuzRSnxesJnQtP
+	 B2RG7DnhIS1EgJGr5s2ByecjoIBOi1sV/U0hHdCUqVE34MwfiLiWtybXHrwcieCvHZ
+	 aurvm/f39VmvDESM1Y+fIW8/kzd/oyGoYZCkQ84182P/TbtMKZzK5+jeNYMs87I0Dx
+	 skiijTuC+/IQJSmMV7idaSwMgtpK1M3l/qMWycTNm/HlI61bnafXyQ8dCfTG9S6v5+
+	 KMh22HAR2KVaUhK/jzbFo1JNeSpSz+GF/nTPcRWxQReIw75SNS36dP9D+woC9XfhHx
+	 a5a12fos4oabQ==
+Date: Thu, 6 Mar 2025 16:54:14 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Simona Vetter <simona.vetter@ffwll.ch>
+Cc: Jason Gunthorpe <jgg@nvidia.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>, aliceryhl@google.com,
+	robin.murphy@arm.com, daniel.almeida@collabora.com,
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+Message-ID: <Z8nFJjb30_Wm3cJJ@cassiopeiae>
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+ <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+ <20250305174118.GA351188@nvidia.com>
+ <Z8mlAxsszdOH-ow8@cassiopeiae>
+ <Z8m9j3SwWHqaCTXo@phenom.ffwll.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.13 000/157] 6.13.6-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20250305174505.268725418@linuxfoundation.org>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20250305174505.268725418@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8m9j3SwWHqaCTXo@phenom.ffwll.local>
 
-On 3/5/25 10:47, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.13.6 release.
-> There are 157 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Fri, 07 Mar 2025 17:44:26 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.13.6-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.13.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+(For some reason, when replying to this mail, mutt removed Sima from To: and
+instead switched Cc: to To:, hence resending.)
 
-Compiled and booted on my test system. No dmesg regressions.
+On Thu, Mar 06, 2025 at 04:21:51PM +0100, Simona Vetter wrote:
+> On Thu, Mar 06, 2025 at 02:37:07PM +0100, Danilo Krummrich wrote:
+> > On Wed, Mar 05, 2025 at 01:41:19PM -0400, Jason Gunthorpe wrote:
+> > > On Mon, Feb 24, 2025 at 01:49:06PM +0200, Abdiel Janulgue wrote:
+> > > 
+> > > > +impl<T: AsBytes + FromBytes> Drop for CoherentAllocation<T> {
+> > > > +    fn drop(&mut self) {
+> > > > +        let size = self.count * core::mem::size_of::<T>();
+> > > > +        // SAFETY: the device, cpu address, and the dma handle is valid due to the
+> > > > +        // type invariants on `CoherentAllocation`.
+> > > > +        unsafe {
+> > > > +            bindings::dma_free_attrs(
+> > > > +                self.dev.as_raw(),
+> > > > +                size,
+> > > > +                self.cpu_addr as _,
+> > > > +                self.dma_handle,
+> > > > +                self.dma_attrs.as_raw(),
+> > > > +            )
+> > > 
+> > > I mentioned this in another thread..
+> > > 
+> > > There is an additional C API restriction here that the DMA API
+> > > functions may only be called by a driver after probe() starts and
+> > > before remove() completes. This applies to dma_free_attrs().
+> > > 
+> > > It is not enough that a refcount is held on device.
+> > > 
+> > > Otherwise the kernel may crash as the driver core allows resources
+> > > used by the DMA API to be changed once the driver is removed.
+> > > 
+> > > See the related discussion here, with an example of what the crash can
+> > > look like:
+> > > 
+> > > https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/#m0c7dda0fb5981240879c5ca489176987d688844c
+> > > 
+> > >  > a device with no driver bound should not be passed to the DMA API,
+> > >  > much less a dead device that's already been removed from its parent
+> > >  > bus.
+> > 
+> > Thanks for bringing this up!
+> > 
+> > I assume that's because of potential iommu mappings, the memory itself should
+> > not be critical.
+> > 
+> > > 
+> > > My rust is non-existent, but I did not see anything about this
+> > > point.
+> > 
+> > Indeed, this needs to be fixed. It means that a CoherentAllocation also needs to
+> > be embedded in a Devres container.
+> > 
+> > > 
+> > > Also note that any HW configured to do DMA must be halted before the
+> > > free is allowed otherwise it is a UAF bug. It is worth mentioning that
+> > > in the documentation.
+> > 
+> > Agreed, makes sense to document. For embedding the CoherentAllocation into
+> > Devres this shouldn't be an issue, since a driver must stop operating the device
+> > in remove() by definition.
+> 
+> I think for basic driver allocations that you just need to run the device
+> stuffing it all into devres is ok.
 
-Tested-by: Shuah Khan <skhan@linuxfoundation.org>
+What exactly do you mean with that? DMA memory allocations or "normal" memory
+allocations?
 
-thanks,
--- Shuah
+The latter should never be in a Devres container. The Devres container should
+only hold things that, for safety reasons, are not allowed to out-live device
+/ driver unbind.
+
+> But for dma mappings at runtime this will be too slow.
+
+What exactly do you mean with "DMA mappings at runtime"? What to you think is
+is slow in this aspect?
 
