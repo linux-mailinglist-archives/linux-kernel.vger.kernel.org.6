@@ -1,153 +1,227 @@
-Return-Path: <linux-kernel+bounces-548909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63505A54AC3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:33:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE978A54AC4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:34:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D497F7A584C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:32:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90BDF16C694
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD0720B803;
-	Thu,  6 Mar 2025 12:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P1g5NbEl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FEC1EDA1F;
-	Thu,  6 Mar 2025 12:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC9D620B7F3;
+	Thu,  6 Mar 2025 12:33:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A9F1FC0E5;
+	Thu,  6 Mar 2025 12:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741264429; cv=none; b=WTZ4+X564LW3ZaDtqE0eqZUJzX6WIWW7Xrgx7xalUmn85LTW5Rdn15RjM1zdJCSz9v/fslz+fsbOAp18vi/C7/4kTFTxS8OPWgkmpiZlEUHfrfgcNr9DNPENh1LHxJrjrL4rBshabC+4GjSskVe8bP9E9LH29J2JhUuqoa/h9us=
+	t=1741264439; cv=none; b=WRdFQmF+/wpdJAVnBwth7ZEiRn8LwYnA1OKbUZXHrz/85ssSg6KmYOnf9lVy+tsCljeX69hsuhT6TqJFKWIGQ7g9K77u/rw6jm082o8Wunpfw1Sly0IbyofwKkTW54F+Cnoi76xOH/B0MeH88eW2EDPVTUUMRoiD7AUKvuvLtVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741264429; c=relaxed/simple;
-	bh=P5/bQBujci4UcWFgDKpxgC7L6tOL6QdQ90C1u/6ZuWM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JUf5mF/4Db4jbhLvniyR1vMGKZFCO4Ry7UImS6KYwuSkYTApaseNBfRThqrOzDD1KWehsBVp2GWubi+iwTTzK32Pr8SXdIqrF6yTgMnMkhnanmRcSY55GNbMAbkJw2TW7cNmr8DiOUHsXXxf6zjCOh9Ks88fRbMeyBgNyX4HQhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P1g5NbEl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24169C4CEE4;
-	Thu,  6 Mar 2025 12:33:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741264428;
-	bh=P5/bQBujci4UcWFgDKpxgC7L6tOL6QdQ90C1u/6ZuWM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P1g5NbEl7bkSKYa7caiviUHuN6Lyuqm0/Qep0kyaOrJs7oMLo/CdWuOXYMO9ZJp02
-	 8HjTStp7fZPtK3ZhYZzrUaDkBxMUjtXFj+zxBL0SeE6MGjeUWwn+ByCTs33+BWuQPa
-	 hmRup15H4PeRfDBD+a9vitj0bivxiSIuqHLMKBFN+Zak7+kwtz1eIGgOIS/9esC6Ni
-	 o7NEG7xqW2WUC0QNEHPH2q5FHEWB4ZHGNTMLriPau/f89AWycPObq9NXFI5I8WWHMS
-	 s0cl+lnWOAhKCU9hyeOC3ZoW5Iey8aNuzjzMey8thWBe/zkZC9NuATaLG0p3pLCUGy
-	 XWhQuaFAhhVbQ==
-Date: Thu, 6 Mar 2025 13:33:42 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>
-Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
-Message-ID: <Z8mWJox-0IyP1uUo@cassiopeiae>
-References: <cover.1740995194.git.viresh.kumar@linaro.org>
- <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
- <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
- <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
+	s=arc-20240116; t=1741264439; c=relaxed/simple;
+	bh=aGjzBpT0G0t8eJj0mKb/W8C/c3s44EYZ+Jb75+aXYak=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CEoi/ke9l+wXu5Q6N11p75oFGIBgfSYpsnrCZyojNqeeWtL+mU6XgOkeuOMmP7OwCyTb35mDrjXIfp/i7kmAowrMorZqB3f6oyLwsVBJrfA61g2HlMXGOiZ4yapc9CmcNmwyZOKvA5zutA8SmN5jjKR775fiAdU85akLLINHg9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9601C1007;
+	Thu,  6 Mar 2025 04:34:09 -0800 (PST)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7FB523F673;
+	Thu,  6 Mar 2025 04:33:54 -0800 (PST)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: mingo@kernel.org,
+	peterz@infradead.org,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	Mark.Rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	leo.yan@arm.com,
+	james.clark@linaro.org
+Cc: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v4] events/core: fix acoount failure for event's child_total_enable_time at task exit
+Date: Thu,  6 Mar 2025 12:33:50 +0000
+Message-Id: <20250306123350.1650114-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 04, 2025 at 02:23:51PM +0530, Viresh Kumar wrote:
-> +/// This structure represents the Rust abstraction for a C [`struct clk`].
-> +///
-> +/// # Invariants
-> +///
-> +/// A [`Clk`] instance always corresponds to a valid [`struct clk`] created by the C portion of the
-> +/// kernel.
-> +///
-> +/// Instances of this type are reference-counted. Calling `get` ensures that the allocation remains
-> +/// valid for the lifetime of the [`Clk`].
-> +///
-> +/// ## Example
-> +///
-> +/// The following example demonstrates how to obtain and configure a clock for a device.
-> +///
-> +/// ```
-> +/// use kernel::clk::{Clk, Hertz};
-> +/// use kernel::device::Device;
-> +/// use kernel::error::Result;
-> +///
-> +/// fn configure_clk(dev: &Device) -> Result {
-> +///     let clk = Clk::get(dev, "apb_clk")?;
-> +///
-> +///     clk.prepare_enable()?;
-> +///
-> +///     let expected_rate = Hertz::new(1_000_000_000);
-> +///
-> +///     if clk.rate() != expected_rate {
-> +///         clk.set_rate(expected_rate)?;
-> +///     }
-> +///
-> +///     clk.disable_unprepare();
-> +///     Ok(())
-> +/// }
-> +/// ```
-> +///
-> +/// [`struct clk`]: https://docs.kernel.org/driver-api/clk.html
-> +#[repr(transparent)]
-> +pub struct Clk(*mut bindings::clk);
-> +
-> +impl Clk {
-> +    /// Gets `Clk` corresponding to a [`Device`] and a connection id.
-> +    pub fn get(dev: &Device, name: Option<&CStr>) -> Result<Self> {
-> +        let con_id = if let Some(name) = name {
-> +            name.as_ptr() as *const _
-> +        } else {
-> +            ptr::null()
-> +        };
-> +
-> +        // SAFETY: It is safe to call `clk_get()` for a valid device pointer.
-> +        Ok(Self(from_err_ptr(unsafe {
-> +            bindings::clk_get(dev.as_raw(), con_id)
-> +        })?))
-> +    }
-> +
-> +    /// Obtain the raw `struct clk *`.
-> +    #[inline]
-> +    pub fn as_raw(&self) -> *mut bindings::clk {
-> +        self.0
-> +    }
-> +
-> +    /// Enable the clock.
-> +    #[inline]
-> +    pub fn enable(&self) -> Result {
-> +        // SAFETY: It is safe to call clk APIs of the C code for a clock pointer earlier returned
-> +        // by `clk_get()`.
+The perf core code fails to account for total_enable_time of event
+when its state is inactive.
 
-You may want to add an invariant for this, i.e. something along the lines of
-"Clk always holds either a pointer to a valid struct clk or a NULL pointer".
+Here is the error case for failure to account for total_enable_time for
+core event:
 
-In this safety comment you can then say that by the type invariant of Clk
-self.as_raw() is a valid argument for $func.
+sudo ./perf stat -vvv -e armv8_pmuv3_0/event=0x08/ -e armv8_pmuv3_1/event=0x08/ -- stress-ng --pthread=2 -t 2s
+...
 
-Not that your type invariant needs the NULL case, since OptionalClk may set Clk
-to hold a NULL pointer.
+/*
+ * three number represetns each
+ *   scaled count / total_enable_time / total_total_running_time
+ */
+armv8_pmuv3_0/event=0x08/: 1138698008 2289429840 2174835740
+                                      ^^^^^^^^^^
+armv8_pmuv3_1/event=0x08/: 1826791390 1950025700 847648440
+                                      ^^^^^^^^^^
 
-I still think that a new type MaybeNull<T> would be nice to encapsulate this
-invariant, but we can also wait until we get another use-case for it.
+ Performance counter stats for 'stress-ng --pthread=2 -t 2s':
+
+     1,138,698,008      armv8_pmuv3_0/event=0x08/                                               (94.99%)
+     1,826,791,390      armv8_pmuv3_1/event=0x08/                                               (43.47%)
+
+Since above two events are belong to the same task context and
+mutually-exclusive per cpu (they couldn't be active at the same time on the same cpu),
+the total_enable_time should be the same (marked with ^^^^^^^^^^^)
+and the summation of ratio should be 100%.
+
+This account failure of total_enable_time because of
+account failure of child_total_enable_time of child event when
+child task exit.
+
+Below table explains how the child_total_enable_time is failed to account at
+exiting child task which switch cpus as time passes by (CPU0 -> CPU1 -> CPU0)
+
+ - in means sched_in.
+ - out means sched_out.
+ - exit means at the exit of child task.
+   NOTE: the value is before calling list_del_event(). which mean
+         the value at exit column will be added at parent event's
+          child_total_enable_time when child task exit.
+ - ctx is the child_task_ctx,
+ - e0 is the child_event which set with cpu == -1 and opened with pmu0 only
+   added in CPU0,
+ - e1 is the child_event which set with cpu == -1 and opened with pmu1 only
+   added in CPU1,
+ - e0 and e1 belongs to same child_task_ctx.
+
+          CPU0 (run t1)        CPU1 (run t2)          CPU0 (run t3)
+          |  in | out |       | in  | out     |       | in      | exit        |
+------------------------------------------------------------------------------
+ctx->time |  0  | t1  |       | t1  | t1 + t2 |       | t1 + t2 | t1 + t2 + t3|
+------------------------------------------------------------------------------
+e0->ena   |  0  | t1  |       | t1  | t1     *|       | t1 + t2 | t1 + t2 + t3|
+------------------------------------------------------------------------------
+e0->run   |  0  | t1  |       | t1  | t1     *|       | t1      | t1 + t3     |
+------------------------------------------------------------------------------
+e1->ena   |  0  | 0  *|       | t1  | t1 + t2 |       | t1 + t2 | t1 + t2    X|
+------------------------------------------------------------------------------
+e1->run   |  0  | 0  *|       | 0   | t2      |       | t2      | t2         X|
+------------------------------------------------------------------------------
+
+The value marked with * means it doesn't updates since event->state was
+INACTIVE.
+
+Please see the last CPU0's column with exit (marked with X).
+Since e1's state is INACTIVE its total_enable_time doesn't update
+and it remains with former value without accounting t3 time.
+
+In this situation, at __perf_remove_from_context() while exit child_task,
+sync_child_event() where adds child_event's total_enable_time to
+parent event's child_total_enable_time in perf_child_detach() is called
+before list_del_event() in which event time is updated by setting
+the event state as OFF.
+That means child_total_enable_time is added with missing
+amount of last enable time -- t3.
+
+In case of parent event's total_enable_time is updated properly in
+list_del_event() when the task exit.
+However, the child_total_enable_time is missed when child_task exited,
+the perf prints error amount of enable_time (which is summation of
+total_enable_time + child_total_enable_time).
+
+To address this, update event state via perf_event_state() in
+__perf_remove_from_context() and call it before perf_child_detach()
+where parent's total_enable_time is updated.
+
+After this patch, this problem is gone like:
+
+sudo ./perf stat -vvv -e armv8_pmuv3_0/event=0x08/ -e armv8_pmuv3_1/event=0x08/ -- stress-ng --pthread=2 -t 10s
+...
+armv8_pmuv3_0/event=0x08/: 15396770398 32157963940 21898169000
+armv8_pmuv3_1/event=0x08/: 22428964974 32157963940 10259794940
+
+ Performance counter stats for 'stress-ng --pthread=2 -t 10s':
+
+    15,396,770,398      armv8_pmuv3_0/event=0x08/                                               (68.10%)
+    22,428,964,974      armv8_pmuv3_1/event=0x08/                                               (31.90%)
+
+Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+Suggsted-by: Peter Zijlstra <peterz@infradead.org>
+---
+ kernel/events/core.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 6364319e2f88..058533a50493 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -2407,6 +2407,7 @@ ctx_time_update_event(struct perf_event_context *ctx, struct perf_event *event)
+ #define DETACH_GROUP	0x01UL
+ #define DETACH_CHILD	0x02UL
+ #define DETACH_DEAD	0x04UL
++#define DETACH_EXIT	0x08UL
+
+ /*
+  * Cross CPU call to remove a performance event
+@@ -2421,6 +2422,7 @@ __perf_remove_from_context(struct perf_event *event,
+ 			   void *info)
+ {
+ 	struct perf_event_pmu_context *pmu_ctx = event->pmu_ctx;
++	enum perf_event_state state = PERF_EVENT_STATE_OFF;
+ 	unsigned long flags = (unsigned long)info;
+
+ 	ctx_time_update(cpuctx, ctx);
+@@ -2429,16 +2431,19 @@ __perf_remove_from_context(struct perf_event *event,
+ 	 * Ensure event_sched_out() switches to OFF, at the very least
+ 	 * this avoids raising perf_pending_task() at this time.
+ 	 */
+-	if (flags & DETACH_DEAD)
++	if (flags & DETACH_EXIT)
++		state = PERF_EVENT_STATE_EXIT;
++	if (flags & DETACH_DEAD) {
+ 		event->pending_disable = 1;
++		state = PERF_EVENT_STATE_DEAD;
++	}
+ 	event_sched_out(event, ctx);
++	perf_event_set_state(event, min(event->state, state));
+ 	if (flags & DETACH_GROUP)
+ 		perf_group_detach(event);
+ 	if (flags & DETACH_CHILD)
+ 		perf_child_detach(event);
+ 	list_del_event(event, ctx);
+-	if (flags & DETACH_DEAD)
+-		event->state = PERF_EVENT_STATE_DEAD;
+
+ 	if (!pmu_ctx->nr_events) {
+ 		pmu_ctx->rotate_necessary = 0;
+@@ -13424,12 +13429,7 @@ perf_event_exit_event(struct perf_event *event, struct perf_event_context *ctx)
+ 		mutex_lock(&parent_event->child_mutex);
+ 	}
+
+-	perf_remove_from_context(event, detach_flags);
+-
+-	raw_spin_lock_irq(&ctx->lock);
+-	if (event->state > PERF_EVENT_STATE_EXIT)
+-		perf_event_set_state(event, PERF_EVENT_STATE_EXIT);
+-	raw_spin_unlock_irq(&ctx->lock);
++	perf_remove_from_context(event, detach_flags | DETACH_EXIT);
+
+ 	/*
+ 	 * Child events can be freed.
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
+
 
