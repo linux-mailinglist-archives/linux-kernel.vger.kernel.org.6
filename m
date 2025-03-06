@@ -1,304 +1,133 @@
-Return-Path: <linux-kernel+bounces-548512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B90B5A545D7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:06:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40F79A545EF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:09:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D5E3A876E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:06:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4919A3A9598
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:09:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CFEC20A5D3;
-	Thu,  6 Mar 2025 09:05:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D979208962;
+	Thu,  6 Mar 2025 09:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=wolfvision.net header.i=@wolfvision.net header.b="w4u1KJn5"
-Received: from AS8PR03CU001.outbound.protection.outlook.com (mail-westeuropeazon11022137.outbound.protection.outlook.com [52.101.71.137])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="RyiFEy7n"
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A39C209F5F;
-	Thu,  6 Mar 2025 09:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.71.137
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741251938; cv=fail; b=stzpZkquf1Cti2DE4Cx7GOmgIyzJ32aApy+zqOhjyCZxztR3ZLvH5+b3jaUGwKnyMkWmTg4ckOpJ4qf+/A3dSi3w8CtVnpnV4TE/6PxWahalFSYW+1rncc3UMQV56HphVdgjdP2T2DpZBMHq350wjUoz/Ca5Tkj2Q233o0SzRAg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741251938; c=relaxed/simple;
-	bh=trhC1kLQiOUpmHDavklCn2U7k/kqtnXNsJy1N7e+tlE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=R2/asfQZnvlbW2XfR86p+UVpzNwtvspl5t131zXbkRbQkDU3BgBf4Y4+QLhTiJpQqLuWRwoq/OHLBP+QYrD+BTt07FeLoaTO3z/iWrbcGsLkwKQ8N/ohGgnD6xrNOQIHT7ogdSCkj+gc5bONO5nLYoFWeHdTQvq3KcVbcHbfd0A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wolfvision.net; spf=pass smtp.mailfrom=wolfvision.net; dkim=pass (1024-bit key) header.d=wolfvision.net header.i=@wolfvision.net header.b=w4u1KJn5; arc=fail smtp.client-ip=52.101.71.137
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wolfvision.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wolfvision.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kauXJzWjASzncW5mOsZQ8mPtCttqDL2lgbn0gVJ6buXtSDa1S4FOPAMb9fYlBX1UtzT5nutXSDmuguJcOcnuRhoIAPy6qN1UZjg4e6NlAXTilDp29ECOfUzP63p1Ao3nsTkBU+F8mk/k6wIidRdVPGGuTzNmU1CCMwxJpB4UkdJMKYbLbzdZiCWRgIRTtkn6WBNfNmM4y/Bi45G1aP4gaJ7hRyf1ChR3Yu1Ue18C1jsO3JeBrzEm4wIRXzHSDQDUT83zq03QOG3tIGw9pIRtkAC9qDUZUB3fUs7N2XJ+BIHh66ChSmywKeHYh+cBN75wsR8Ugjh+usqYcdC8oPiprA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cQPs44/r1cMuZXbVFTmHCJsY0uXkNtGqC+MBDW2Zprw=;
- b=R/8UhH/jxJ3b6VXeO2VfmpNCsxDDHOtOTd/PZjzg0VGSv3iIAsDyznOwqq8xRFxIpDn2ic5n9A0mohp3qPbZSzsvEvhXPRh9mDbpug2oU3yWNomUtaILa6eD/pMKE5W1kVyByl67LXQCJN/Eq4P1NpNYVLQD3jC9n6u7Qwgwe8oDvJozENqJRsxQDNPE77/0QdmwtwJmoTy3VuE/HFt6q0C12umdQuPVh/DiyzwO5lLy1df5kAqBwyEsIMsaxhVC4bAkK+HepUrcw3kYosJZxyV06vp85XNf/N7OxxfCmaI24tfo1nwY3+HjaFCrij+pSF/GKYK73Cd6bVKxR4/EnA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wolfvision.net; dmarc=pass action=none
- header.from=wolfvision.net; dkim=pass header.d=wolfvision.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wolfvision.net;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cQPs44/r1cMuZXbVFTmHCJsY0uXkNtGqC+MBDW2Zprw=;
- b=w4u1KJn5VkwGXM9qrjaGNAkqST7vFrShRba8aDb9actVtlEfHxn72NCKu9ZJ9AFMHPfkH8AfdTq4xP1x2/k9H2cSbuZ5hIVx1/8oGGMaHiVOgcw/1dVt1FXUfnu31TL7s1wWr/C5DSqf8AmaJuaQwaNTsoWns5V9/6+5ht6sR/0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wolfvision.net;
-Received: from DU0PR08MB9155.eurprd08.prod.outlook.com (2603:10a6:10:416::5)
- by GV1PR08MB7755.eurprd08.prod.outlook.com (2603:10a6:150:56::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Thu, 6 Mar
- 2025 09:05:27 +0000
-Received: from DU0PR08MB9155.eurprd08.prod.outlook.com
- ([fe80::4e72:c5d4:488e:f16d]) by DU0PR08MB9155.eurprd08.prod.outlook.com
- ([fe80::4e72:c5d4:488e:f16d%5]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 09:05:27 +0000
-Message-ID: <137eeb26-65df-4dfa-bece-08a7758ae5c2@wolfvision.net>
-Date: Thu, 6 Mar 2025 10:05:22 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 06/11] media: rockchip: rkcif: add driver for mipi
- csi-2 host
-To: Mehdi Djait <mehdi.djait@linux.intel.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
- =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
- Gerald Loacker <gerald.loacker@wolfvision.net>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Kever Yang <kever.yang@rock-chips.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Sebastian Fricke <sebastian.fricke@collabora.com>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Paul Kocialkowski <paulk@sys-base.io>,
- Alexander Shiyan <eagle.alexander923@gmail.com>,
- Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-References: <20250219-v6-8-topic-rk3568-vicap-v4-0-e906600ae3b0@wolfvision.net>
- <20250219-v6-8-topic-rk3568-vicap-v4-6-e906600ae3b0@wolfvision.net>
- <3fztpczfxlfzt3bdll4alzllrrqvvr3akhkiqtmtam2v2sbw2y@6hb3aok7h62x>
-Content-Language: en-US
-From: Michael Riesch <michael.riesch@wolfvision.net>
-Organization: WolfVision GmbH
-In-Reply-To: <3fztpczfxlfzt3bdll4alzllrrqvvr3akhkiqtmtam2v2sbw2y@6hb3aok7h62x>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: VI1PR06CA0126.eurprd06.prod.outlook.com
- (2603:10a6:803:a0::19) To DU0PR08MB9155.eurprd08.prod.outlook.com
- (2603:10a6:10:416::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22516207DF8
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:09:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741252188; cv=none; b=S3b14coT0xnAH6mp5FvY9TJfNnklv596ngwiujYIX7tYxF/OiCE7e6JoPbRYQQ/MUfvng7ENxoJBVaqk4iVFOkcCnR4NSTwBbAQCQswRM+bRYBJ69dnxHCzX4PyTedxQflHSgsY79p+VJZPl4RCtj2hbV4j9juiNDS9HzudUHAU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741252188; c=relaxed/simple;
+	bh=x6I7LCwo+Avhb00YGNpsl7OnqLaXiIjRV7k9qsBtZn0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lKY4Jxl+8Q45S00MF6Pn40OYFSBxVIrjq+bet5sWu8Oh8782+QM95iyA0cil0aU2oxKXSHFX56Xj0Bs/HL/j2KwdDM9pfjpl7qyhWHi1hAKI0eaIOGadYcczsJcJUWtYpqAabsNOmEALFpmOhUa+MqstMwiOulOakdJqauquQBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=RyiFEy7n; arc=none smtp.client-ip=209.85.128.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-4394036c0efso2078745e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:09:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1741252184; x=1741856984; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=x6I7LCwo+Avhb00YGNpsl7OnqLaXiIjRV7k9qsBtZn0=;
+        b=RyiFEy7nRr/HTwiO/5ZTGuYoE+i/fh/1bDIFrTWy3YOPTA/QDGkx4dUWpeGBRKvkSd
+         GdSHtAfIYsZZ9J+m5I2D+D6TmrhhORxeap/n6ItbH5d9z4K1F4PnEoqnLtJR8i11dQ0o
+         /Pu7UUA73RJGQ44Z3IjfUpCRU+KpExKMGdnmLnk5e8cEzxrGcNpl31bueQC6uCaqsNQ/
+         OcLE8sEClHEkRAPduOwWmAzsSjjJ4Zjk3IJM1LZPFr8D6Afzr1wZ+vpdxe3mNMIsq/v7
+         Hq7Bw2z3vO8zdlzokl4pds4wW39YmG5AZXQJsvloZl2uXm/E+JH3npJAvDtx0FP8tQOU
+         d4Cg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741252184; x=1741856984;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x6I7LCwo+Avhb00YGNpsl7OnqLaXiIjRV7k9qsBtZn0=;
+        b=M/yQJjntezenctVd/zwF+KPs7yfwtIq00SYCnJU49D1sFyK/6+etyL1vl2nKo7ex9h
+         HlkvG8DnPaxfC0A3tyjqjLpB16YDYLQUVMm4MX7vobfZMj9JXM1+7Far8NUpYTewVE5o
+         pc82QbivXNfQJgDaWBEoWtdiqYeC+4E5EIodDjHD1Gmf0L+xu7f5H1lwNHFGP+g62gox
+         Fwonjo0oFg8y1oCJ76qEGhHnJqZgper4BE8M01VDC2ExmgOeFxK1qOioo/L5HcRZqyvg
+         FkeKfaGwRgf7NgO7g+5p6KtIvUhCaTl4L92qqU3aOcBzjZt5dEcykgGl/An5jlBKZfd7
+         bz1A==
+X-Forwarded-Encrypted: i=1; AJvYcCV1k0+7YPjvSvOK3SoOxEhmByzJYBJ4UuxhqHLifRlFc0YaCKf22pCFe62s5ZTEKxiubvm71BLnAcz1AnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbwoDOWQ4oRGGMP/qPCBHD1cQ9bOI8EiY4LkU7UlauXpBWqpmp
+	bvArT4t82z3zxsg1md7xcWdIORzlbhecj0dxopZtLJRUISAFIc9QfGD8nvR2TOc=
+X-Gm-Gg: ASbGncvILN1yRJbt5rERS0k1QANxPT6FM7ASguRdJlg+eZcIlxmQXxWWXRIsAggQxXJ
+	aetdMnx5e6d5ilTQVv4VUSHH61rzitOddLcute4uloMMrAfpqWJ5L6gwVJWQAwcICQ7BHEQailg
+	WZii2ig+/M4ZY3F5db+B64YEXbdoQvMS3VyJyrjtRg0KuF8Ifhv4C/MZbWEz2Cv4CuxSLX9ueda
+	ajiCMGPvENBV2xrk7HYeZOH8AhUe9bQgQAJDnIlZEy7IWC9QEkiZxmBweeZWY+Fz8UaqC3a4BLk
+	H2wFQN/kuvC15bFG4DaHLEkLCaP0t4jyfF764gQtWl8QN7c=
+X-Google-Smtp-Source: AGHT+IE20SfeQZTIROwzNnAwSpomgWzOj7kDG/AFPKSGBYaqpQAWmZKrf9xz0kYJLQXsIi86AmqWOQ==
+X-Received: by 2002:a05:600c:1c26:b0:439:9274:81db with SMTP id 5b1f17b1804b1-43bd292a806mr64639955e9.5.1741252184269;
+        Thu, 06 Mar 2025 01:09:44 -0800 (PST)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0194f2sm1405811f8f.54.2025.03.06.01.09.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 01:09:43 -0800 (PST)
+Date: Thu, 6 Mar 2025 10:09:41 +0100
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Mikhalitsyn <alexander@mihalicyn.com>, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Kees Cook <kees@kernel.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Eric W . Biederman" <ebiederm@xmission.com>, 
+	Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH 2/2] pid: Optional first-fit pid allocation
+Message-ID: <ajz3vdl7yqu6a7dtl6dpqm2ea6wfac2jovbx5zl54dw2g2a4ab@tgs4gq5hyim4>
+References: <20250221170249.890014-1-mkoutny@suse.com>
+ <20250221170249.890014-3-mkoutny@suse.com>
+ <20250306-esskultur-sitzheizung-d482c4a35f80@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DU0PR08MB9155:EE_|GV1PR08MB7755:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1eed850e-60bc-496a-3177-08dd5c8e0942
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?akVrQWc3QjE5M2ZPZEZ2OVVoVzhqb0NOellsN1FPNUpFbExGNUFOQkVFVWtW?=
- =?utf-8?B?MEZScHIwV3NuSnlKMmRZMk5FalQ5WjF1WkhUQ3AyMzg1VnhIbHp2SDBWb3pX?=
- =?utf-8?B?WDhlVzZUcTR1L1hzYnpXc0ZyYkl4QmpJQXlBd21GOW1GT0xXdjhVWjVYcytW?=
- =?utf-8?B?RlN6aVN4K29VVlY2VXpObHhXSXMxemM1aXB0V210ZGJiZkdiQThEb0ZyUTRy?=
- =?utf-8?B?T1dBL0lXSFhhOWN6eDAvVjhOUC84K21xeDdlL25ycWd1dExwb1F4T2tWU0Nv?=
- =?utf-8?B?dGxiaDhuWGtMY09MdHFmWGcwckZhcUZzR0ZRTURYN2hnZ1NnNjRyRTA0VVJy?=
- =?utf-8?B?bitIZVJHbWN6Rnp2Yyt6RTlkMEduZmtnRWFjMGt6dVI5dk5XNkladGdHSjUz?=
- =?utf-8?B?Q1Vya0FFVHBJLzVsNDZxWHFrWlNhT014THJ3Ui9oVk5ncWhCNFQxOUcyMS93?=
- =?utf-8?B?QkdPRUF4ZWU5TUhhaUR3NHA4YXI2LzlBa2RsR3U5QTloSVc1L09PZU1JSmsx?=
- =?utf-8?B?T3hrNmo3TUZoY2NUQ0kzQ2FaOEtvRjJXMEtibXJ6akhmSmQ2cEM2amlqOW4r?=
- =?utf-8?B?WlZUY3N0Z0tCWWlxOTBKU09kZmZaMHZSeXV2SFhxbHZNdG9tUlFNTDd0a29o?=
- =?utf-8?B?aTlVK0djVDdWc1FIS1hPMGcvNFJGV04yY3FQbmpiR0JZVzJuT3BPUkp6bXRa?=
- =?utf-8?B?eDRUbndpNk1wdnY2emRXN3Jkc3IyRU83ck9ZNStpbWhHOEowbFRVdER6a3cw?=
- =?utf-8?B?Q1daOGI0N2kzRG1zMXROeFJ6c1BSaWNITXRLWTEzbVBIa0NOem1vTVBoZHRQ?=
- =?utf-8?B?QnFXd0k3ajJlSzVtSk9pWitvT01JakxxQ1FYNmE2SXR6bytZcEF0SVBVRWph?=
- =?utf-8?B?dHp1by9McVRUVXhJWlI1Zy9STm5SbHdVanRHN28yb2pCNUpXNWRxY1RqTm9k?=
- =?utf-8?B?Y2plMEEzdzM4SDFpaFNURXJuQkZCa0hYd05KakswUUs5M1V5Zm9UNFo1bEpu?=
- =?utf-8?B?R3hQVTVWNG85MzdKNUxhVXlTU245SHFFQU5XMzJRcllsUDVNNldQRUUxYXRB?=
- =?utf-8?B?RGd1OGpZRHZmazRnRWc2SE42bHh5SkVhcGFCd2plTG9Ca3JWb3kwNFp4b3ds?=
- =?utf-8?B?YWJKYlVTbWt3K1hCZDVGZVpuSFVqbGVQN2dSN1ByZVBaRnBwTFdIeG9lbEtN?=
- =?utf-8?B?d0ZKUFR0b1RocklwKytlK2NHWlFnOEY4ZEo0bEczSmppdHdxRlZFTmJUcTBR?=
- =?utf-8?B?dmlOL2JmQXJNWWsrbkl4bXA1d21kZ0hVV3RuSVhKVi9iZU42NU9LUkt4cDVR?=
- =?utf-8?B?R056Wks1Wm1rMlF3NWFtL3hUV0QwWktYK001KzNydlpVdml0R0hVMmdTaWh4?=
- =?utf-8?B?ZVN3S3RNRDNMZnhUcHlrRGZqUjdlR05jZ2IxVVZuRTJyTWlDUUM0UTlydWlI?=
- =?utf-8?B?TXREcmE1RGNpVm9LVGpNZDEvMU0wa3Q1NGZCYWZ0QTlubnVtR2RZazI3N1BZ?=
- =?utf-8?B?QnQxWFhYdHhGbkMwQS9OY0Vjc1ZFZUZkSXBQTVlsVEkxdTA4dlN4UGFOUjdC?=
- =?utf-8?B?czBiaGZQZHNnOVpqQUV6SFh4VDFUR0hBaURXMWhyYUJUTi94bWRCTytFeVlF?=
- =?utf-8?B?T2ZmZGg3UVNNT2NVa1JEek9xYWJ0ajROSEVmNXhJYUpaNktRUmRhQ1VLWTkw?=
- =?utf-8?B?aWNwTzU2di8wclNvSjhrUWF3eDdETmYzTjBzRSsxcnRKU1Jsa2lXSml0U2hZ?=
- =?utf-8?B?NmlRazZqSW55MHR6NkNZV1pkMVM2U2VQT0xlSHA0RW4vT2UrQW8xSzhMR25m?=
- =?utf-8?B?ajdpUGRENkliRUJOWVd1RXJOYmZ2RENZSHpMUzFFMmRtSU4ycWkxZDVrUkVj?=
- =?utf-8?Q?P3NU+0KbqZhZp?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR08MB9155.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dFJWL1AweWtSQXIvRzMxSXloMG1NcmNRODlsRjFuWGRWaUh3RWpvQ1BQVjVN?=
- =?utf-8?B?Y3VoKzZpWEhNMW9KSnd3YUV2VlNVMi9McnNOWnFhcmMxbUxCMGw5ZTk2c3NX?=
- =?utf-8?B?elVHRU0wMDlwaWg0aU5GUVdiYUJWT1oxN3VHYTZlSEYyTHdpSzV6cVRMMll4?=
- =?utf-8?B?VVVOcHRzOEthT056MjlxNXZBR1p5RDd2WXM4dmxYS3RlY0VEKzdZczllSnZP?=
- =?utf-8?B?ZGdvSlJLMkJadmtZa2ZzdmpsRS9NTHZBVStKTDdDVS9FWk8zanh2NUtTeHEx?=
- =?utf-8?B?MURVeTBtTTVPZGtaUGJVT0hyWFdZcHhlczdVSXRvWGg5cDJLRk5sbnJ3b09k?=
- =?utf-8?B?MzVkcGIremdPTGlWSmdlUXpIUG9Bb0RvaGtrUEV1MnRXdThnQzlNdE5lelNz?=
- =?utf-8?B?OTV0SUJBQXRNSG10TGZObndIVHN1U2hrcVZad1dURzNTMU8wajhxVlhJS1Vt?=
- =?utf-8?B?bDdMRldrNC9XVU1VVi9OQ3FFUmF4eDFGeGNGcEsrTnhmUHg5R1FMNEttWHVj?=
- =?utf-8?B?b05OekUrdDVzdUx0L29PRnBJOC9BcWZWcjA2VjZQM05JRWlKRzdLQWR3Q0to?=
- =?utf-8?B?cVR2aGlLVTJxb29FbjlVd3pYQWtmRmVEYWUzSzEydC9GczhSdUtQQVdTR05B?=
- =?utf-8?B?UkNOOXBCUHpkcWJEV2J3YS9jQXlpdHFCTmdZVC9rMDdHVzk3Z1Vwa1JFUmZS?=
- =?utf-8?B?SVI4NXpHSFdDWitPcHVLM0o5a1h2SExSWkpHc1M0RmRaMWdtaU82NElkdVZv?=
- =?utf-8?B?OWNtNi9WU25pNTA5R3V0Z0djcUFsU2QycDZVdTVyK1MwcUFWV2tCVzhtNGZZ?=
- =?utf-8?B?T2lIZVNFK0NqUlE5Z2NRazlQaFdRTm96Q0dTV1I2bDJxYnJJcmRGb2kwSks0?=
- =?utf-8?B?K1V3ZTJKN3owdHllMDNuNm9KM1hYeWFuS1ZQKzJkL3BrUUk5aHpsejdoSU0z?=
- =?utf-8?B?YzhlTDVRcTFoOWN3ZldRN2dKQXdSOER0bU5YUFVuNWdrVm5YeSs3dzB6eG5h?=
- =?utf-8?B?ZnhGeHlGWWlIZm9WdnZkRG11WEsyL1BndlFWLzhSK09Sa202b3p6SXJzcVB3?=
- =?utf-8?B?VGV3SjExelFMbVZ2R0t4VzI2YlhTSXorNVhtUE1qUHVkOW9NRUJtUVNxOU1v?=
- =?utf-8?B?YkxFbHR5RW1HQUdkdXVFaFFKOHppaUJuYmpWQWNweEszaDNCWnJiUklnZnpU?=
- =?utf-8?B?U0dYSXlBRWNGQzdZVGM3QWlnSFBXc1U2dm41YVZucnkyWU02NnVMZ2Fzc29m?=
- =?utf-8?B?bGRJOEg0MVYrQ0hTdEZCL2Ewb3c5RWxTTHpPbmFzYkVGTjdKMFlmdThnRzRR?=
- =?utf-8?B?TWxpdXB3Ylh5MENFTFpqNHllVmxRN2YrWXY1bGI4V0MrUXVUTmVRSHJWNExR?=
- =?utf-8?B?aFBSaGVtOVp4eUlrblhsUUM2R2VzUTROejZ5V0hxQXludjE4U0JBbjdUcWZO?=
- =?utf-8?B?MTJFRVR4QXhmM3l5Zlo4Z0xOdmJNa2ZGVHdKUVRzT2pic0g4TlRURFVUbG81?=
- =?utf-8?B?TFZzS1JjN253b08yM2pFZnZOeGRid3ZXdkh5czdxVXk5RHNtZmZHRGREdzdl?=
- =?utf-8?B?c3p0UzMxNzEyaWpRSW1rN09WR0p6NlRJY1pQQndXcFpXR0prZG1QSkh5SHJV?=
- =?utf-8?B?eTl0RVBBMDdhZ3R0QmY2cXQrb1JMUmVvTmsvMFdGQlllcGlvYklabU8wcm12?=
- =?utf-8?B?bjhWZ09JeWZDeUJYb0JndEJwWCtGR21RcG1yY2RQd1pyY3I3OWJtNC9jRzFU?=
- =?utf-8?B?bUE3enlqQi80dHZqWm81dFd4aExrb0ErZ1NpKzlFV1NqcE9WQzNkLzFHc2ts?=
- =?utf-8?B?cmhVTkdudGdwV3RWazAzakFDekhPekF6NW04ZkpFcmRCMEtHaGxwTWxvcDQ2?=
- =?utf-8?B?c0w4ZmNPd2hxV093aEk0emVQRW50dEF3TXRsYVEzenQzdGl3MHNzc2NNOENz?=
- =?utf-8?B?NnZkRGJmRkgyQTdLUUNlQ29nTHZSUDk5MDlpb3NNbDVlNWFSOG1udGgxM1Va?=
- =?utf-8?B?cTdNRU50MVZ6cnFtTmlwSUtSSUl6VjVGNGc4VGFBbjh1VEQ1WlBCNU8vY2tV?=
- =?utf-8?B?V0J5bXRUSVBOclRSdWNRQ2FiTHFCWHloZUdwTGRTbmUvdm5xb1ZIREs0UGNl?=
- =?utf-8?B?OCtXY2VSVzJNeXd6L1hEb3piTlRLS0RjODlSUWI0WWlHc3JLcCt1Q1psUFdv?=
- =?utf-8?B?WkE9PQ==?=
-X-OriginatorOrg: wolfvision.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1eed850e-60bc-496a-3177-08dd5c8e0942
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR08MB9155.eurprd08.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 09:05:26.9418
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: e94ec9da-9183-471e-83b3-51baa8eb804f
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IvAqXIK9B+lQfNh2PZLbfsBPN/BGpH0c1u1nJRJ+OmoDXc1j+LdwvfZpOHbxvPHf3klVxqqS6vk/azYzSEeVVuJbdxtt/82oaQ6ktZTb70w=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR08MB7755
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jo3sx6jdjxyyuo56"
+Content-Disposition: inline
+In-Reply-To: <20250306-esskultur-sitzheizung-d482c4a35f80@brauner>
 
-Hi Mehdi,
 
-On 3/4/25 20:41, Mehdi Djait wrote:
-> Hi Michael,
-> 
-> thank you for the patches.
-> 
-> Sorry for the big delay!
+--jo3sx6jdjxyyuo56
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH 2/2] pid: Optional first-fit pid allocation
+MIME-Version: 1.0
 
-No worries, thanks for your comments!
+On Thu, Mar 06, 2025 at 09:59:13AM +0100, Christian Brauner <brauner@kernel.org> wrote:
+> I strongly disagree with this approach. This is way worse then making
+> pid_max per pid namespace.
 
-> 
-> On Wed, Feb 19, 2025 at 11:16:37AM +0100, Michael Riesch wrote:
->> The Rockchip RK3568 MIPI CSI-2 Host is a CSI-2 bridge with one input port
->> and one output port. It receives the data with the help of an external
->> MIPI PHY (C-PHY or D-PHY) and passes it to the Rockchip RK3568 Video
->> Capture (VICAP) block. Add a V4L2 subdevice driver for this unit.
->>
->> Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
->> ---
->>  drivers/media/platform/rockchip/rkcif/Makefile     |   1 +
->>  .../platform/rockchip/rkcif/rkcif-mipi-csi-host.c  | 731 +++++++++++++++++++++
->>  2 files changed, 732 insertions(+)
->>
->> diff --git a/drivers/media/platform/rockchip/rkcif/Makefile b/drivers/media/platform/rockchip/rkcif/Makefile
->> index 818424972c7b..0c18efd1f1b4 100644
->> --- a/drivers/media/platform/rockchip/rkcif/Makefile
->> +++ b/drivers/media/platform/rockchip/rkcif/Makefile
->> @@ -4,4 +4,5 @@ rockchip-cif-objs += rkcif-dev.o \
->>  	rkcif-capture-dvp.o \
->>  	rkcif-capture-mipi.o \
->>  	rkcif-interface.o \
->> +	rkcif-mipi-csi-host.o \
-> 
-> [..]
-> 
->>  	rkcif-stream.o
->> diff --git a/drivers/media/platform/rockchip/rkcif/rkcif-mipi-csi-host.c b/drivers/media/platform/rockchip/rkcif/rkcif-mipi-csi-host.c
->> new file mode 100644
->> index 000000000000..fa3f42b2dc55
-> 
-> SNIP
-> 
->> --- /dev/null
->> +++ b/drivers/media/platform/rockchip/rkcif/rkcif-mipi-csi-host.c
->> +
->> +static struct platform_driver rkcif_csi_drv = {
->> +	.driver = {
->> +		   .name = "rockchip-mipi-csi",
->> +		   .of_match_table = rkcif_csi_of_match,
->> +		   .pm = &rkcif_csi_pm_ops,
->> +	},
->> +	.probe = rkcif_csi_probe,
->> +	.remove = rkcif_csi_remove,
->> +};
->> +module_platform_driver(rkcif_csi_drv);
-> 
-> [..]
-> 
-> When adding the driver for this CSI-2 Host bridge, you added another
-> call to  module_platform_driver()
-> 
-> but in the definition of this macro:
-> 
-> "Each module may only use this macro once, and
-> calling it replaces module_init() and module_exit()"
-> 
-> and as you can see in the diff of the Makefile,
-> rkcif-mipi-csi-host.0 is part of the same module as rkcif-dev.o, where
-> you already call module_platform_driver()
+Thanks for taking the look.
 
-Indeed. Found that only after submitting v4... :-/
+> I'm fine if you come up with something else that's purely based on
+> cgroups somehow and is uniform across 64-bit and 32-bit. Allowing to
+> change the pid allocation strategy just for 32-bit is not the solution
+> and not mergable.
 
-> I think the solution here is to call
-> platform_register_drivers(drivers, ARRAY_SIZE(drivers)) in rkcif-dev.c
-> 
-> with
-> 
-> static struct platform_driver * const drivers[] = {
-> 	&rkcif_csi_drv,
-> 	&rkcif_plat_drv,
-> };
-> 
-> then define module_init() and module_exit()
+Here's a minimalist correction
+https://lore.kernel.org/r/20250305145849.55491-1-mkoutny@suse.com/
 
-Ah, I haven't thought of that approach. Actually, I was going to split
-the cif part and the mipi host part into two modules. This would keep
-things modular (literally). What do you think about that?
 
-> 
-> Btw. MODULE_DEVICE_TABLE() is missing both here and in rkcif-dev.c
+Michal
 
-Huh, indeed. Nice catch, thanks!
+--jo3sx6jdjxyyuo56
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Best regards,
-Michael
+-----BEGIN PGP SIGNATURE-----
 
-> 
->> +
->> +MODULE_DESCRIPTION("Rockchip MIPI CSI-2 Host platform driver");
->> +MODULE_LICENSE("GPL");
->>
->> -- 
->> 2.34.1
->>
-> 
-> --
-> Kind Regards
-> Mehdi Djait
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZ8lmRwAKCRAt3Wney77B
+SVEQAQCv1kf8EBaRDF66bApU+yr8h9OYOK0rqy+iUFrGxAXfSgD/TWrBYLDNn9YJ
+LVkBPIKqH3tjY6+xjhd+d7lU6a/0Sg4=
+=1oAV
+-----END PGP SIGNATURE-----
 
+--jo3sx6jdjxyyuo56--
 
