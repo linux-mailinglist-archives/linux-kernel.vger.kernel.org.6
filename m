@@ -1,260 +1,259 @@
-Return-Path: <linux-kernel+bounces-548306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45E59A5432D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:01:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80CD1A5445E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:14:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 529953AF9DB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 07:01:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCFD217185C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41BE1A5BA1;
-	Thu,  6 Mar 2025 07:01:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFD31FCFCA;
+	Thu,  6 Mar 2025 08:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Eu/y4Xe0"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2084.outbound.protection.outlook.com [40.107.241.84])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VuDXOzlj"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC5919DF4D;
-	Thu,  6 Mar 2025 07:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741244494; cv=fail; b=BDi8gBgB0xGxjSowCqlbuqjAT2llatJDbAfw5yj64eLv0SPUAhRt4ESoRWxL3NrnQCqpDZq2lL2QL7q6VnBsMTE86Anlr1nT1t4gQOIkJx/5rbjZMcuqLFy2jW+RFnL+L+xONY6WM0AauGe+Be2Y3EPhyGDUqx04kYg/R83BL0s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741244494; c=relaxed/simple;
-	bh=bpZR2g0vHLi4hHg6f0BlDIfJg7kRCH3FyjhCOVfIfkk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=n5sMqd2OjKeiAildeo/8oTOG9XeIMuU9Fx0v0sznFtuwEDypSLlxUten6r0b4mPym8QNKvJ/Ld4xKHU4/JMwYTcVR31WMXU811QT2nM9bXl2vMC9VF24rxpcitRoXf+jV318mrOA2ucKEiDbx2wi9XoFVco8yumgkbsoqMSIl1A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Eu/y4Xe0; arc=fail smtp.client-ip=40.107.241.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P+5cc7e/99Y18VZX40S/aM9IVxBuckYQO2A0LC3+Zc0xBVMRdjOiou/xaJ3xS7h5Y7leucVRl7pI3yqNyhQfRn3kfHV7+bkmpxwiclEYBWzUArQYxIy6ZiTOkOlS0P3Y0urcazPv2RGN6tpPNdJGCSMcngNJdPAFdfeiuo7FQtRmnd29zVxZyTyR2XslbotnDzSPUxK6dmlMvTsiib1frFuRZ+KLqr5NMhWLNkbHKsBL3fQX58iZWl8ytPuiG1/42ffHDPyEqXNFoq1DAqsuqJGQ9/LJ+w42yjez41CrGVa4o6Wo0Q3z8jqO17S6UOrb3fC+VdYuclrSE7BYORN1/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W9/UpD9T1Rcyv7GXufVhrwh/y2oPj75HiCc8tPDnj1I=;
- b=tjrTekVIarRvG071RuUwX+nIctyqgcu53zqDxcHVZmc+fTPPCrhLVHh4ywCr6MVow80HE/nnF/Qpi369RLaGAHBOoe5GEM9uey3dtqfvNKkgZ0g/+68YLjz+8imrcceg3d82yzHYnnLClnnLMXGY1jZlsmCOt6zoVnlFfyfEvNb3nLxMwfOBUQGotETmikl4eRvdVRXO/SxIo4AVO7zIKcvazX3h793gPjlUX5QG1fe91w1YMKsLjkgyH9YfbxFkxbvKn3Y65+L+/e6xnKgzxzA3WBBeuKYiGfwQ4S77jQUEx+DmWLkyZxZeWc2FnugmViC/ZCqCoSc7xFEujF97KA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W9/UpD9T1Rcyv7GXufVhrwh/y2oPj75HiCc8tPDnj1I=;
- b=Eu/y4Xe0OFqMlf3UzP3RQC6Q9X4icKOT8ILUA2yWESt2Ab0tzcQv8PTlZMOdS0NGStymhC3Eo1Ma82MyFib0vORvob5e1YKTqV/c8NAcJwqfvZengoGUBe6ChUgFAvZVMHeh8Vbr4v0VVnB6WSP6Sz+cF+O4tKWwcF9xRLGy5+maRVpAEaN4C2isahRcODic3o14QtbAOe4ACycsalSYK3LJ2sXDapAu6xbxAatgvZiRRulI5yBACEsiNrnkHuO/kIrzF7U7M9g4IV9s6uzLr3R8mBkkT5tGNFGsKoch8IgJSYjGDLAiRk7VQzG4F/omc3Roo6kEDjEPwxeWVSWu5w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by DU4PR04MB10863.eurprd04.prod.outlook.com (2603:10a6:10:588::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Thu, 6 Mar
- 2025 07:01:29 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 07:01:29 +0000
-Message-ID: <7d98163d-10c8-457d-92e7-6a1d6e379beb@nxp.com>
-Date: Thu, 6 Mar 2025 15:02:41 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] dt-bindings: display: simple-bridge: Document DPI
- color encoder
-To: Rob Herring <robh@kernel.org>,
- Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
-References: <20250304101530.969920-1-victor.liu@nxp.com>
- <20250304101530.969920-4-victor.liu@nxp.com>
- <20250304152320.GA2630063-robh@kernel.org> <1891036.atdPhlSkOF@steina-w>
- <20250305163805.GA2071011-robh@kernel.org>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <20250305163805.GA2071011-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI1PR02CA0041.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::18) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6B41FC7F9
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741248816; cv=none; b=CWbYE5vtXbbqTpP0BXu88mfD5M1jKHhkC3KCTCtQk53gkkUNZLvzjqM//Km4FHkG1cLS7OusJmx9w5iVTHwoK9wANNSRkfcPl2uoLzkvMj91Ra7GN1gAAXUuqmMQ5t9PZiiuHTRI92k0ujbJMwvezaj2siTQKZetj9LzvVqyjmo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741248816; c=relaxed/simple;
+	bh=eUWsVZlYIjL3uAIwhBG07uNNCBfBviynwix7o2rDp44=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=O1ivvcPlf4jtivrTWsoj6RgXrSbwQiyelIdkYL/N7hOFFPXcrxZrW3LSzLjADuTPY27ZGrf1HINLG4HwTBYntCMIdChQO101/eheP0ip505+uPzjbGuwOynL6mQU7X8IMZUAFjxpp6dEoxL5wtyoMArGffahwM5u4MXCJ2HVOls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VuDXOzlj; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250306081331epoutp040975efa09c81a494d958f7f7a2015e89~qKJGYQLr70806808068epoutp046
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:13:31 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250306081331epoutp040975efa09c81a494d958f7f7a2015e89~qKJGYQLr70806808068epoutp046
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741248811;
+	bh=Knqwjqi8GM+4dP/latZEf+wvPDK1ylOIsGOJ/pjBcKs=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=VuDXOzljywT9rE+DTveaUSn7uB8cE+o57upwpdEKg8GP25T0odmG+QWbeiliYBJjM
+	 pF3AJbVKf0aFDPb+GxLY37N2gtizQoi6HAxO+AKe/T74XJXXEsv8XYZdnEqjb5wXYV
+	 9OHHbkDGF82fWw3akJNyEXexM0OLiA/IGvUPDaZM=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20250306081331epcas5p4262255b3e8a8503f816fb6d82a9b1c90~qKJF1jdSG2477724777epcas5p4T;
+	Thu,  6 Mar 2025 08:13:31 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Z7hy139Hqz4x9Q7; Thu,  6 Mar
+	2025 08:13:29 +0000 (GMT)
+Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	AE.A6.19933.82959C76; Thu,  6 Mar 2025 17:13:28 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20250306063546epcas5p388084f298ae5d55eab7fbbb7cc1db2d9~qIzvhmjmb0821708217epcas5p3e;
+	Thu,  6 Mar 2025 06:35:46 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250306063546epsmtrp183610b81ac1e5a41fa084533ed2e7dc3~qIzvgx2MP2210422104epsmtrp1k;
+	Thu,  6 Mar 2025 06:35:46 +0000 (GMT)
+X-AuditID: b6c32a4a-b87c770000004ddd-41-67c959281b3b
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	3B.4A.33707.14249C76; Thu,  6 Mar 2025 15:35:45 +0900 (KST)
+Received: from FDSFTE245 (unknown [107.122.81.20]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250306063545epsmtip1d4a3d8251fe06ce0f9469ed7fbe08272~qIzun50W40927409274epsmtip1W;
+	Thu,  6 Mar 2025 06:35:44 +0000 (GMT)
+From: "Aatif Mushtaq/Aatif Mushtaq" <aatif4.m@samsung.com>
+To: "'Vinod Koul'" <vkoul@kernel.org>
+Cc: <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<pankaj.dubey@samsung.com>, <aswani.reddy@samsung.com>
+In-Reply-To: 
+Subject: RE: [PATCH 1/3] dmaengine: Add support for 2D DMA operation
+Date: Thu, 6 Mar 2025 12:05:43 +0530
+Message-ID: <014701db8e61$fdd331d0$f9799570$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DU4PR04MB10863:EE_
-X-MS-Office365-Filtering-Correlation-Id: 88d7f74a-2c49-4bec-30cc-08dd5c7cb7d0
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?Y1BWWHdmejFzVDRBb2h5cU02azZ1SjRJeDJ2RGE5eWRBek1vTThXYzh4Wll6?=
- =?utf-8?B?R2Ftd0w2dDNLNW1GVHhZRnRZOWdweGx4c2ljTU9lWlR3cXhlQTJpbGpnd0Mw?=
- =?utf-8?B?Y1U3Y2F1SEt4NGJJUGtCb3FHbWExM2dRa1prenJzZS95TjByUUdMemFGTDc5?=
- =?utf-8?B?KzBZQVJJV0kzNzBPUFBWdVAwZWxBM2p1alE3ZlI5MUVUZ1l0RDRqejVteDNm?=
- =?utf-8?B?ZjBaYWxvOW4xY1FmazNkMkQzOVZ5VVNaLzE4M2RDQUZFYkVNbStJdHUzdzVH?=
- =?utf-8?B?WUo1ME9KUzFqUEl3eUpoZkwvTlArQks4QU9lT21tN2RwUVBMZHNMZ3pINnk2?=
- =?utf-8?B?d3hmUUN2eUZ2VVVDTkkvUzUrelBxa3puMkFNa2JpSG5RaXlQYTBML2lVSG5P?=
- =?utf-8?B?R3h2VmFBb3E0ZktZWXBrak1yZVA5SGczMmxBSU5QakJGNlZGOHd3ZnRERG91?=
- =?utf-8?B?N3lsKzg2OGRyK05vUFhQZWt3a3RMOE5nNnp4dk56UTJWcmRueFkwcHpWY3B1?=
- =?utf-8?B?YUVaUTVnWUZPY1F2M2NqTUtYcjdhOXA5TDlwTk01Q0x0WWw0a2pEVXVtRk9G?=
- =?utf-8?B?VEFYWmNJS0d4TjVRREc2SG5FVTBkNmRmR1pKTjRJdWppd2NmNGx4UDlsZGtu?=
- =?utf-8?B?UjJRdFN2TnFEMUJWYjlQR2NDdVpFYkQ4OFpXM0tVeFR3SHF1OTZhNlBkQmhh?=
- =?utf-8?B?QW8xYy9VaGs2VnhWRmdDR3JTbXFmMm8yaUNuZkx6ZEhBem1BM3ZCVUQ0YVhr?=
- =?utf-8?B?czZQc3hZUkIzVlE1d3hQd1NJbTFWUFRUanhIR0x3aDBGeTVsWG9pZE5wOE9y?=
- =?utf-8?B?TFEyck52RWFYanJqWGRRRGkzYytXaHltKzl1L3Y1eWx6YW5ickZWWkVadmd2?=
- =?utf-8?B?ZGw4dzljSmRNdXIwRENLVjdFdW45OVlZN2hVZFg0Z1dpbjI2TUF5WUNyU3RN?=
- =?utf-8?B?Tmh2WGk1UmNOSmNpNzU1MHFzaDgyWWIyY3oyaFM3QnNMTFRtV0Y0L05SK0Jw?=
- =?utf-8?B?R2JORVJSSGxCU0lGR2NFU1gvK1l2OVVDZGh6cWFvY2QzQmpMMlkwRGJsc1hj?=
- =?utf-8?B?bkpLN0pSWDQvendiS1JCd3JoZ29Sajg0Tkhmb0NQWlcrSVpLT1NNc3d0OVRO?=
- =?utf-8?B?VDZJQVc3a0NKdlV3eTJzV3ExajRvNHliVTlLYW5KOTg3QzlwaXd3clJnK3Fv?=
- =?utf-8?B?RFhSRjZEMlZhazgvWExZOTJQUjVCYlJURktoWFMwbTVkRXdXVWxEdmxlQnRa?=
- =?utf-8?B?b2RFaXdmVDRkVHFpOVRKTU5LOXBucHFYY25CZ2hLUE42VXhvVFFUcUVQVVA0?=
- =?utf-8?B?RW0zTDJkM1h4cUFRSjFkSFNqV3pUWDdIR2Fncll6TEU2MS9tZlJVZXpWZGR2?=
- =?utf-8?B?WlBGbVJPWm4vV09xYUhUVGtSMmZTU3Z5TVhBc1poSVhFM2RtRklxYnlRSTNJ?=
- =?utf-8?B?Z0VkSUVqWlRaU3p6dFpkTlNab1dsdUswenZKbmVYOHd3NTBhRndld25yY2xw?=
- =?utf-8?B?a3BOWmcvdXoxNDVsMmJrWVBtTjBRZ0w4QjA4TzViUkhoVTNGSHg4cU1ETnN6?=
- =?utf-8?B?V1V4bUdqanVzR1Z6L1FuY2tmeTVLRkxtd1ZDaHU4MzhrdHFGWlVUYjBrYk9j?=
- =?utf-8?B?b0pkNmhMMko3VytJTEF3VGdLc3cxbTQxU2NaakV1NFUyRjF4NlRKeGI1cXdS?=
- =?utf-8?B?d3d5WUxTQnBITUczdGJTK1h3aGYyU3hxNFpvanE1VDFISHBEeHllZ2F5enBr?=
- =?utf-8?B?V3pmV2ppcmVhNHdzRXFKNUNHNE4zZ2o1TUdwZ2VuVGMwaWF3b2Rwck5Pc2lW?=
- =?utf-8?B?SGhBdXN5QUNvdTBJNWZnZGZlMmtGZys2cmp5aERWaUJaeEpzbDMrdE9aV1gv?=
- =?utf-8?Q?LMPn6IHuh2w/d?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?T0hXSkxSdzBrVmJpSXd5d0VnMTg5c1BVaHZZL3dyelBRcy9HcStKNFBqbW1T?=
- =?utf-8?B?d2NvN09zTDdndldwb3FJMjFzUnFETGFiQVNVTjBuNnNFY0VraUpDaFRLUitk?=
- =?utf-8?B?ako3TllUWVhOMEpJYk02SVRicjdGTmxFWUJleUd0NTJGNUcvUWZMMGpVTGU2?=
- =?utf-8?B?dy85N0IyWkU3TTMweWIrMXN2NmFnSzB1YTJaTFdPVkdrZzltdHVBZE0yMzl5?=
- =?utf-8?B?c3F3bWFyWDlxUWR4ZWxLeDl0YVBXWWowbmcwWEUwN3dTY0g1Rm9laWRvKzUz?=
- =?utf-8?B?eXk2UTE3QnIwTTQ1Sko5bTdNcnNISlN2ZU1sRHB6enZBMUZIWmkyVm1nYmU4?=
- =?utf-8?B?azk5YVlqaCtZL2ZsWEwvMWtVMS9vYU96T0JMRXdpVnV3andCVmhLRGJLSFFI?=
- =?utf-8?B?TS9CYlRucGlTbG0xOXlhUDBqV0dCa25yMzY5VlprYzQ2b2djWEI1bVUwcWMw?=
- =?utf-8?B?TzVDblV2WWpqWWNqOHlsbHB4aGttWUw0c3owV3dyNTJtMXEvWWVnQUorcUpt?=
- =?utf-8?B?a2RFRDlzM3l4RUlUUmhWVmF4eU95Wlk4bXhpSG1uencyaVIrbytEOHlNUUhL?=
- =?utf-8?B?dEYvVkc4RUlBSFZWUnhUQVZneXNnUFE2V2xuM2JwTVNoeU9COVN4SW96MlVv?=
- =?utf-8?B?cUFIYUw5QXZGUDV6dzZ4SXo3cXlvcFdNaFNReEg1Sk01OWhaWTU5Y01SaE4x?=
- =?utf-8?B?SC8waXhNTFhmZ21CUjI5cWRibHYzdWFrOXJRb3Ziem9HYUFVVG4zUVMrQ1Ir?=
- =?utf-8?B?NGFWVzRsUG1KWWoyWEI0ZjNiZHl2MnZCcDdlN3NObkxmQ3BhbFlnbW5jUm12?=
- =?utf-8?B?dnRtZTFqbVBoVlhYSnRYZVNrQXFNb1cvbG9HRkpMQTByQkRLS0xQZklkWmJu?=
- =?utf-8?B?RTBCNllobUhKWWc3L0YrcytKc0lKRlhwV2dRM1lOZjZFMU9xaG5QVk01c255?=
- =?utf-8?B?YXNnbm9EWEhydUFKTXo3S29penFFSmRmMnNtVytadGlhN3htNDhkU05aelIz?=
- =?utf-8?B?ZUd3d0VsOHdkTFZNWFViclVUbythbDJyVnlvZWJFQnZxTHZXS2JWK3B1RUJx?=
- =?utf-8?B?YjJUbzlhUVM1WEd6N01Oa2tLa3ZvQW1wbHY1YjNHSTJTSDByUnBMSFBUMnVl?=
- =?utf-8?B?YXdQUTF2QmdscHpVMUFHREk1K3Y1K090MllQRzZyZzZnVkVsRWpnZmNjT0du?=
- =?utf-8?B?SWgrR2lKa2RWYXI4ZUpVaWJWa1NxeEh0ZDR2ZklsVThjWk91WFJSSHBrY3dB?=
- =?utf-8?B?UnpJRktWaGVrSHdrQmlqbHc3UmplYW56NXQyMWhDclRtMG14cjJ4VUU0ODRS?=
- =?utf-8?B?TmUrWkp0THVRemVtb2p0d1d6WTJYOEU0WThuNy8yaDdZVjMwUk11c0NjRndU?=
- =?utf-8?B?blFMTHd0aUw3SnNBTzBLUkw5UmxjVGR2cGp2ZGdPZ3BUa0hrTG9Qc0IwSVd2?=
- =?utf-8?B?dlg5Ly9ZTVU0dG5WaHF2dmpjY2lJWllOTStPRnV5RHZrT1VrZXQvZ1pyajJj?=
- =?utf-8?B?Nm41NnRKN3VLYmRIN2UveUtxUEdJTFhEZHZXalFtQ0NsUFJzNWg2WHQzTHBv?=
- =?utf-8?B?KzdnSm0vaWhHYnJrK28vUGh3eUpOTlBXbVJQdzZKV1lIbno5WFNCV3haVWxy?=
- =?utf-8?B?aDFaNjNjbnM2KzFBanpxNnlWTklBWWRwdE1od1NzQUNQYlVDVU5rRGE1cW5X?=
- =?utf-8?B?M0VJWkFKdEhEdk1YczAyVHpsN3IvckRLRE4yOUdLdE9LaXFXd2l1SHNySlpz?=
- =?utf-8?B?Z0NnS0J6MUsxWnJJRUtoTkZJckwwMWxrUlRScndiL1Ezd1cycm1zR1FIbjVu?=
- =?utf-8?B?WHBjODhzQlk1b2d5TXpCeTBXK1lGb3RmM0pHRUQveDE4d1AvdDVTNTdUZHN3?=
- =?utf-8?B?YjVGcWxrQUdDZHlCYWlybnZlRE9ySEtSMWpIWDNPVk5weWcxem5JalJOSE5x?=
- =?utf-8?B?UHlaZTllckc4d2FZekxkWWFKVkJVbEhtakFCaGc2S3IwU3hWY3lhTVlwL0Jz?=
- =?utf-8?B?RFJtZjhFdks2S0M2YmhNTmtFSVNkRG1sQm5tYzdtdXFlVWQyNVZ1d2pyZk4r?=
- =?utf-8?B?MnBJZnBER1BYUHl0d3Awc2I3T1kyYTNKK09pbXByOVZ1eFBET21GdUdDRGV4?=
- =?utf-8?Q?6yzQ8wNRlLkyNmeIwdKoKGfX7?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 88d7f74a-2c49-4bec-30cc-08dd5c7cb7d0
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 07:01:29.0138
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Bnt+c1J956efYm9LfNBA06Xs+Hqcqz1maARnnvaHaf8skO0WCSW6xSvCUEl0UFpBKwYtGODwA+Ozhn1xyMU/wQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10863
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQFsIHTrWqAe9Pu9L3iNOvGTrR8WTgG4P+QRAcvczKUCj5EGvbQKqHTggAfgiMA=
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpjk+LIzCtJLcpLzFFi42LZdlhTU1cj8mS6wZ8nYhaHNm9lt1g99S+r
+	xeVdc9gsFm39wm6x884JZgdWj02rOtk8+rasYvT4vEkugDkq2yYjNTEltUghNS85PyUzL91W
+	yTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaKWSQlliTilQKCCxuFhJ386mKL+0JFUh
+	I7+4xFYptSAlp8CkQK84Mbe4NC9dLy+1xMrQwMDIFKgwITvjfeMtpoLHGhXzTt5lamBco9DF
+	yMkhIWAisfjtGdYuRi4OIYHdjBJtvz6xQTifGCWmbFrADOdcmLqVCaZlYsclqMRORomTs7+y
+	QDjPGSX+r+5iA6liE7CSOP9rH5gtIqAqseXJAyCbg4NZoFJiyytNEJNTgFdiwj9rkAphAReJ
+	k+f+gFWzCKhIvGk4yApi8wpYSky83MkGYQtKnJz5hAXEZhaQl9j+dg4zxD0KEj+fLmOF2OQn
+	8ezPUXaIGnGJoz97wO6UEPjKLvHl1RZ2iAYXiWXfe6CahSVeHYeJS0m87G+DspMlbr7fB2Xn
+	SExYuBrKtpc4cGUOC8QrmhLrd+lDhGUlpp5axwSxl0+i9/cTaFjxSuyYB2MrSax538cGYUtI
+	/Dt4knECo9IsJK/NQvLaLCQvzELYtoCRZRWjZGpBcW56arFpgVFeajk8vpPzczcxghOkltcO
+	xocPPugdYmTiYDzEKMHBrCTCe9HvZLoQb0piZVVqUX58UWlOavEhRlNgeE9klhJNzgem6LyS
+	eEMTSwMTMzMzE0tjM0Mlcd7mnS3pQgLpiSWp2ampBalFMH1MHJxSDUy6xm+mvLy74Zd/sMnW
+	tYkP2kpN0g8sD8x/kKnO4Wm97qn77+c9j1bNuGKwKfzGVOYpTXO5eP2O/dnX/sR60ztF81ln
+	35x5XhrfaX72r+C6XQdvfN9j/+R1T1fFi8pulYMBz6PD2z1uL5rls1lgqbSpmR7bRJvqQ0tN
+	XKpnSq5q1XmTf0Jw2XXf9qv3E37G1nUf1mUTZmoSP7zRaOKa6R770uL/5PeunfNr3q7zZywf
+	bUvrvJhkviDjx/s1As++W/U/jnmUY9n74W+NdvCUzDsOLD/PN4Tqffze11rk6iCSJ2neuuV8
+	60K2VsfpPUvkX93XrJosuuwaSzq7IfN15VPLF9WJXtj1edP0y1fTLIxrlFiKMxINtZiLihMB
+	TpaQvBkEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBLMWRmVeSWpSXmKPExsWy7bCSnK6j08l0gyMHzCwObd7KbrF66l9W
+	i8u75rBZLNr6hd1i550TzA6sHptWdbJ59G1ZxejxeZNcAHMUl01Kak5mWWqRvl0CV8b7xltM
+	BY81KuadvMvUwLhGoYuRk0NCwERiYsclZhBbSGA7o8TLwwYQcQmJ5s5GJghbWGLlv+fsXYxc
+	QDVPGSVuHP4BlmATsJI4/2sfG4gtIqAqseXJAzCbWaBW4sGia0wQDZcZJV697AFKcHBwCvBK
+	TPhnDVIjLOAicfLcH7B6FgEViTcNB1lBbF4BS4mJlzvZIGxBiZMzn7CAtDIL6Em0bWSEGC8v
+	sf3tHGaI2xQkfj5dxgpxgp/Esz9H2SFqxCWO/uxhnsAoPAvJpFkIk2YhmTQLSccCRpZVjKKp
+	BcW56bnJBYZ6xYm5xaV56XrJ+bmbGMGRoRW0g3HZ+r96hxiZOBgPMUpwMCuJ8L4+dTxdiDcl
+	sbIqtSg/vqg0J7X4EKM0B4uSOK9yTmeKkEB6YklqdmpqQWoRTJaJg1OqgWnCkRDxV2/yV0le
+	vOdyjvmZu9tD8ZpAz9AHwReqcvn6v3V9jA9cFTH1WUq/gu7O7Z7r01oc+tUcDhz+Fh+f9fCc
+	0inJaROLX+nzHj3z+lycxLRpHlGNNbkBN/uFw7aKzPO5IRx0ojX9JMeP5DVf/+62+/P8Tc4M
+	zh1nWD7nLhDPTOz/xfZ3RsqRhFPyzLN4zD9Uv/DV2jP93L/Fi2636W1RK/338EZqguw7N/Oi
+	T8bZEjd9/T+n/JGamWEa6+Ij1VFWvmBtwKWi4lubTeJTmZ07VWU+Xvu5O+uGX9O1m+WMelx1
+	USerCp/eaOMz2qYjyn/tyTNe7gkf9uSfmqL4TuHEZw72vme9bMmHqg9UVyixFGckGmoxFxUn
+	AgBhg6cq+wIAAA==
+X-CMS-MailID: 20250306063546epcas5p388084f298ae5d55eab7fbbb7cc1db2d9
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250210062247epcas5p4ce208ba2806454c48a68ef25d0a326cc
+References: <20250210061915.26218-1-aatif4.m@samsung.com>
+	<CGME20250210062247epcas5p4ce208ba2806454c48a68ef25d0a326cc@epcas5p4.samsung.com>
+	<20250210061915.26218-2-aatif4.m@samsung.com> <Z8Ab3VcAXf5z7UqE@vaman> 
 
-On 03/06/2025, Rob Herring wrote:
-> On Wed, Mar 05, 2025 at 10:35:26AM +0100, Alexander Stein wrote:
->> Hi,
->>
->> Am Dienstag, 4. März 2025, 16:23:20 CET schrieb Rob Herring:
->>> On Tue, Mar 04, 2025 at 06:15:28PM +0800, Liu Ying wrote:
->>>> A DPI color encoder, as a simple display bridge, converts input DPI color
->>>> coding to output DPI color coding, like Adafruit Kippah DPI hat[1] which
->>>> converts input 18-bit pixel data to 24-bit pixel data(with 2 low padding
->>>> bits in every color component though). Document the DPI color encoder.
->>>
->>> Why do we need a node for this? Isn't this just wired how it is wired 
->>> and there's nothing for s/w to see or do? I suppose if you are trying to 
->>> resolve the mode with 24-bit on one end and 18-bit on the other end, you 
->>> need to allow that and not require an exact match. You still might need 
->>> to figure out which pins the 18-bit data comes out on, but you have that 
->>> problem with an 18-bit panel too. IOW, how is this any different if you 
->>> have an 18-bit panel versus 24-bit panel?
->>
->> Especially panel-simple.c has a fixed configuration for each display, such as:
->>> .bus_format = MEDIA_BUS_FMT_RGB666_1X18
->>
->> How would you allow or even know it should be addressed as
->> MEDIA_BUS_FMT_RGB888_1X24 instead? I see different ways:
->> 1. Create a new display setting/compatible
->> 2. Add an overwrite property to the displays
->> 3. Use a (transparent) bridge (this series)
->>
->> Number 1 is IMHO out of question. 
+
+
+> -----Original Message-----
+> From: Aatif Mushtaq/Aatif Mushtaq <aatif4.m@samsung.com>
+> Sent: 28 February 2025 15:03
+> To: 'Vinod Koul' <vkoul@kernel.org>
+> Cc: 'dmaengine@vger.kernel.org' <dmaengine@vger.kernel.org>; 'linux-
+> kernel@vger.kernel.org' <linux-kernel@vger.kernel.org>;
+> 'pankaj.dubey@samsung.com' <pankaj.dubey@samsung.com>;
+> 'aswani.reddy@samsung.com' <aswani.reddy@samsung.com>
+> Subject: RE: [PATCH 1/3] dmaengine: Add support for 2D DMA operation
 > 
-> Agreed.
 > 
->> I personally don't like number 2 as this
->> feels like adding quirks to displays, which they don't have.
 > 
-> This is what I would do except apply it to the controller side. We know 
-> the panel side already. This is a board variation, so a property makes 
-> sense. I don't think you need any more than knowing what's on each end. 
-
-With option 2, no matter putting a property in source side or sink side,
-impacted display drivers and DT bindings need to be changed, once a board
-manipulates the DPI color coding.  This adds burdens and introduces new
-versions of those DT bindings.  Is this what we want?
-
+> > -----Original Message-----
+> > From: Vinod Koul <vkoul@kernel.org>
+> > Sent: 27 February 2025 13:32
+> > To: Aatif Mushtaq <aatif4.m@samsung.com>
+> > Cc: dmaengine@vger.kernel.org; linux-kernel@vger.kernel.org;
+> > pankaj.dubey@samsung.com; aswani.reddy@samsung.com
+> > Subject: Re: [PATCH 1/3] dmaengine: Add support for 2D DMA operation
+> >
+> > On 10-02-25, 11:49, Aatif Mushtaq wrote:
+> > > Add a new dma engine API to support 2D DMA operations.
+> > > The API will be used to get the descriptor for 2D transfer based on
+> > > the 16-bit immediate to define the stride length between
+> > > consecuitive source address or destination address after every DMA
+> > > load and store instruction is processed.
+> >
+> > Why should we define a new API for this...? Why not use the sg or
+> > interleaved api for this?
+> >
 > 
->> Number 3 actually describe the hardware connection. The only impact for
->> software is to know which bus format it should use.
+> Thanks for pointing out, interleaved API can be used for this.
+> I will make the change
 > 
-> I'm not opposed to this, but only if it provides *something* that option 
-> 2 does not. I'm not seeing what that is.
 
-Option 3 provides an intermediate bridge for both DT and OSes.  It makes
-the DPI color coding manipulation transparent to source side and sink side.
+While trying to make the change I realised that sg and interleaved
+APIs cannot be used for our use case.
+Interleaved API is used to transfer data from non-contiguous
+buffer to non-contiguous buffer and sg API is used to transfer 
+non-contiguous buffer to contiguous buffer but both the APIs work 
+on multiple data chunks where each chunk has its individual attributes 
+and there is a tx descriptor for each data chunk.
+But in our case we have single tx descriptor to increment the source or
+destination after every DMA LOAD and STORE operation till the desired
+length of transfer is achieved, which means we don't have multiple data
+chunks which is required in case of interleaved and sg.
+The use case is to do memory to memory copy but not in a linear way,
+such that we can define a gap between each burst.
 
-> 
-> Node or not, either case needs a format property. We already have a 
-> variety of bus/pixel format related properties. I've rejected new ones 
-> because we need something common here that's flexible enough to handle 
-> any situation. That's either something that can describe any bit layout 
-> or something enumerating the formats (as MEDIA_BUS_FMT_* does). The 
-> former is hard to get right and there's always something else you can't 
-> handle. I'm not opposed to just reusing MEDIA_BUS_FMT_ if that works.
+> > >
+> > > Signed-off-by: Aatif Mushtaq <aatif4.m@samsung.com>
+> > > ---
+> > >  include/linux/dmaengine.h | 25 +++++++++++++++++++++++++
+> > >  1 file changed, 25 insertions(+)
+> > >
+> > > diff --git a/include/linux/dmaengine.h b/include/linux/dmaengine.h
+> > > index b137fdb56093..8a73b2147983 100644
+> > > --- a/include/linux/dmaengine.h
+> > > +++ b/include/linux/dmaengine.h
+> > > @@ -833,6 +833,7 @@ struct dma_filter {
+> > >   *	be called after period_len bytes have been transferred.
+> > >   * @device_prep_interleaved_dma: Transfer expression in a generic
+> way.
+> > >   * @device_prep_dma_imm_data: DMA's 8 byte immediate data to the
+> > dst
+> > > address
+> > > + * @device_prep_2d_dma_memcpy: prepares a 2D memcpy operation
+> > >   * @device_caps: May be used to override the generic DMA slave
+> > capabilities
+> > >   *	with per-channel specific ones
+> > >   * @device_config: Pushes a new configuration to a channel, return
+> > > 0 or an error @@ -938,6 +939,9 @@ struct dma_device {
+> > >  	struct dma_async_tx_descriptor *(*device_prep_dma_imm_data)(
+> > >  		struct dma_chan *chan, dma_addr_t dst, u64 data,
+> > >  		unsigned long flags);
+> > > +	struct dma_async_tx_descriptor
+> > *(*device_prep_2d_dma_memcpy)(
+> > > +		struct dma_chan *chan, dma_addr_t dest, dma_addr_t src,
+> > > +		size_t len, u16 src_imm, u16 dest_imm, unsigned long flags);
+> > >
+> > >  	void (*device_caps)(struct dma_chan *chan, struct dma_slave_caps
+> > *caps);
+> > >  	int (*device_config)(struct dma_chan *chan, struct
+> > dma_slave_config
+> > > *config); @@ -1087,6 +1091,27 @@ static inline struct
+> > dma_async_tx_descriptor *dmaengine_prep_dma_memcpy(
+> > >  						    len, flags);
+> > >  }
+> > >
+> > > +/**
+> > > + * device_prep_2d_dma_memcpy() - Prepare a DMA 2D memcpy
+> > descriptor.
+> > > + * @chan: The channel to be used for this descriptor
+> > > + * @dest: Address of the destination data for a DMA channel
+> > > + * @src: Address of the source data for a DMA channel
+> > > + * @len: The total size of data
+> > > + * @src_imm: The immediate value to be added to the src address
+> > > +register
+> > > + * @dest_imm: The immediate value to be added to the dst address
+> > > +register
+> > > + * @flags: DMA engine flags
+> > > + */
+> > > +static inline struct dma_async_tx_descriptor
+> > *device_prep_2d_dma_memcpy(
+> > > +		struct dma_chan *chan, dma_addr_t dest, dma_addr_t src,
+> > > +		size_t len, u16 src_imm, u16 dest_imm, unsigned long flags)
+{
+> > > +	if (!chan || !chan->device || !chan->device-
+> > >device_prep_2d_dma_memcpy)
+> > > +		return NULL;
+> > > +
+> > > +	return chan->device->device_prep_2d_dma_memcpy(chan, dest,
+> > src, len,
+> > > +						       src_imm, dest_imm,
+> > flags); }
+> > > +
+> > >  static inline bool dmaengine_is_metadata_mode_supported(struct
+> > dma_chan *chan,
+> > >  		enum dma_desc_metadata_mode mode)  {
+> > > --
+> > > 2.17.1
+> >
+> > --
+> > ~Vinod
 
-Agree that the former is hard to get right.
-
-Since this is all about DPI and we have that MIPI DPI standard document
-which specifies color codings, maybe it's fine to start with those limited
-color codings.
-
-BTW, I'd admit that the artificial paddings are not described by this patch
-set, though maybe no one cares about that.  The paddings could be floating/
-low/high/other component bits.
-
-> 
-> Rob
-
--- 
-Regards,
-Liu Ying
 
