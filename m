@@ -1,315 +1,185 @@
-Return-Path: <linux-kernel+bounces-548613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA77FA54700
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:57:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C96A546F3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:56:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A657A1893CDF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:57:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69DBE18929DF
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFE220B7E1;
-	Thu,  6 Mar 2025 09:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="qNSbPQ1j"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C103820ADC9;
+	Thu,  6 Mar 2025 09:56:38 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3853B20B1E8
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1A2E2080D4;
+	Thu,  6 Mar 2025 09:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741255028; cv=none; b=cZDtFHOslNKlNnzXa+/gPISHsqzA1vVwu1/t31Jtw6piX52szbcG1tsxhrET0McpW15zDZc1y2Lss0yJ3rGynn2RZ3IrFCyfn5VNfiFOj+3I54XA+JgjRS6ASLd5FWDt+1DWDX04ywDDQnNCv6PIrAAWqj8tOVozDqhHkltuIKA=
+	t=1741254998; cv=none; b=TZvFCtZRV0W5a81X3A8V3FuMFcrY/CMC3sAQy/F8tDbpVWjTSqtribcmmEsw3Xx+4GjN39jil3iE3KJWQ3PQ0naZvfcn60g9ijqrTGHceMR5bSAivVFufRvC7jHGmOqNR79FXqXMPMqajbeTjCsZeRv2Pgt5+VRqlNK3Og/DaM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741255028; c=relaxed/simple;
-	bh=9YjLGgOgxjd7KI1w2ki+88OGAWpCNcVzyGfWquchPGU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To; b=WBY3fVhBopqCHyW/af+DZFebhmKkBRK5Ek16FDucIsgh5wlCnhUEbXSs9YHENh0l4Sf53+QMyJcbv4AVP7jzxfgbIAp+hKEBvGRXWkga1Z16OkbaIWatA0rZ3fc+KYj4949OFAhrt7S/3xEmsnd0SDEX4fEYYs3hG74v2UquDJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=qNSbPQ1j; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-223cc017ef5so6853555ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:57:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741255026; x=1741859826; darn=vger.kernel.org;
-        h=to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b/qC0mfXfemQxtgPVvB5yWxcCoCf7wtW10EiI7eK4rY=;
-        b=qNSbPQ1jqjyfhEOT4z+7Wgsx1G4ne2OrtJakl7SSjVhCbhAHPAxAm1jG9Kc++RUxK3
-         INEHVVX0+TVwhbojeyOS/fj4YGyyAP/qc8Rh4KApOWg9DK6r1xvTkXZxht4FwCAjcZRa
-         6Ct9EhDQMm4ZNrUlKxJ9/RMOe9wmoAdPBqbUH5XcHVTTg4f1nwqS8Z3xshSguaDa0Fde
-         WXjjV1eCbX0DJV7GtunbOk6rqWVKfdZPMg/9vNWkvo/KrngadJub+1Q2W0o+Hre6AcCN
-         yGgP0Z4FK8Z2/NpoU8wkdZqRWP5Fjb/G2ODYqLOrW78tkn825K0BH8vRsnrekLVcdtN+
-         FVew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741255026; x=1741859826;
-        h=to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b/qC0mfXfemQxtgPVvB5yWxcCoCf7wtW10EiI7eK4rY=;
-        b=uHA0DUwFlvMTssfNymI6OY/pqDk2u2wiRM5SjvzKe14glsWmDGDC7do7/e0Yx0F82R
-         XufXoosJXjJLYeN7rTsIprTuaVGIOQF05hKpNecvXm3r41SS8PGeti2Pwr1UXQvx/xyi
-         Q+rq7GQg9yzv++nbCWI372DIfnBbQdekrTrpgy2I/iIgdqMrL54tVVRk4Dcw4QWnMNA/
-         6eTbP5kw7cx7TFN+rqwIfJUymC+Q3l+bB/qC/Khmrg6KDC5VO6mU/BKK7iqBb88Ma4rz
-         +979ofD/9b3CxpIh1jL3NFZaX1sQWZ3ZODGUsFszW1nbUVzVrcPqI9H1WuJTl9AykyG2
-         ymMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVe0tQy9uFUC+jikI3i6ifkXY16v1Nv01CoHlkqTTgTNznMq2t5DMNrmX9kcYj3timrP1LCA+3nR0NH8Is=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZEgZpBCaUlEnzcqrv4jAvjmo4drR0ZfWUcdD2XY+xsxtJaxo5
-	CBC+65psQHhWCg4kAJQA8+ERkTjdj4yj+Uh1OyOP8ERHvPMtlIJFqiHtJw/mJvk=
-X-Gm-Gg: ASbGncsmEg/rXbXXmhKEDvdWZqZ2gR/uWdGsdUZiWnHNK6iQjuhZ1Ew1ePjFVMk/vsG
-	hQEH0YQfT6X3kKQhGkf6w7VzhRMnEAC1TjrUH96egFQg9sjRor42VvrM7hdmo6ttK4TLcwzg1nr
-	Qy46elPLxYRJLmrB7u0BQu70sVlswrLayC8AXut1wIr2v9mdQBWQ32onI6nYbXKGKH3DKoBdE2k
-	m8z6ghpIDR9t/5icoONZ6uxVrYUsKYaeOaBUrn+0fBjNit6IE2y9NfV2U07Wi2PB9744BpSQsFK
-	zIcYr2tYeGFaieCOol98/Wm5bw3qsNEn52kNJiChVIAue1F8
-X-Google-Smtp-Source: AGHT+IGGu/QoZAo2nhaA1potLpyXYJJNNJV8+aoiHR1iuEu2Ty1edcESMjQIzzVWhtXcrQeaP1hfZQ==
-X-Received: by 2002:a05:6a00:2d9a:b0:736:4ebd:e5a with SMTP id d2e1a72fcca58-73682cfa781mr9500647b3a.20.1741255026382;
-        Thu, 06 Mar 2025 01:57:06 -0800 (PST)
-Received: from localhost ([157.82.207.107])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7369844cfd8sm926795b3a.83.2025.03.06.01.57.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 01:57:06 -0800 (PST)
-From: Akihiko Odaki <akihiko.odaki@daynix.com>
-Date: Thu, 06 Mar 2025 18:56:31 +0900
-Subject: [PATCH net-next v8 1/6] virtio_net: Add functions for hashing
+	s=arc-20240116; t=1741254998; c=relaxed/simple;
+	bh=immmqccZpgWh0VqDZp5BiUC+ppJSTASF8em54h17xLQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=LPMUnrB/NzB06zLqwMkYRyGzkPcFcvfvYr9fje6W36E1pJ2qd30FowZD8oyMNVugNPpJn76pWzBY4scE5+EObwaa7JLwqnLnicZE4OzeHWgR8cMjCxRmPoAaN5E0iD4U8z9EMselSfXkPxFSoQ15nQ3MFOUapMCsJehCvJSqPYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z7lBH3LRGz6K9Q3;
+	Thu,  6 Mar 2025 17:54:15 +0800 (CST)
+Received: from frapeml100008.china.huawei.com (unknown [7.182.85.131])
+	by mail.maildlp.com (Postfix) with ESMTPS id 54B2C140159;
+	Thu,  6 Mar 2025 17:56:33 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (7.182.85.71) by
+ frapeml100008.china.huawei.com (7.182.85.131) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 6 Mar 2025 10:56:33 +0100
+Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
+ frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
+ Thu, 6 Mar 2025 10:56:33 +0100
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>, Christoffer Dall
+	<cdall@cs.columbia.edu>, Marc Zyngier <maz@kernel.org>
+CC: Oliver Upton <oliver.upton@linux.dev>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, Linux Next Mailing List
+	<linux-next@vger.kernel.org>
+Subject: RE: linux-next: build failure after merge of the kvm-arm tree
+Thread-Topic: linux-next: build failure after merge of the kvm-arm tree
+Thread-Index: AQHbjlsd0TXa7xMo1EGEgdIX5w5serNl3gnw
+Date: Thu, 6 Mar 2025 09:56:32 +0000
+Message-ID: <6027e05e03474a87826217ee56f12761@huawei.com>
+References: <20250306164614.4ccb2e9d@canb.auug.org.au>
+In-Reply-To: <20250306164614.4ccb2e9d@canb.auug.org.au>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-rss-v8-1-7ab4f56ff423@daynix.com>
-References: <20250306-rss-v8-0-7ab4f56ff423@daynix.com>
-In-Reply-To: <20250306-rss-v8-0-7ab4f56ff423@daynix.com>
-To: Jonathan Corbet <corbet@lwn.net>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Jason Wang <jasowang@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>, 
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, kvm@vger.kernel.org, 
- virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
- Yuri Benditovich <yuri.benditovich@daynix.com>, 
- Andrew Melnychenko <andrew@daynix.com>, 
- Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
- Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>, 
- Akihiko Odaki <akihiko.odaki@daynix.com>
-X-Mailer: b4 0.14.2
 
-They are useful to implement VIRTIO_NET_F_RSS and
-VIRTIO_NET_F_HASH_REPORT.
 
-Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
----
- include/linux/virtio_net.h | 188 +++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 188 insertions(+)
 
-diff --git a/include/linux/virtio_net.h b/include/linux/virtio_net.h
-index 02a9f4dc594d02372a6c1850cd600eff9d000d8d..426f33b4b82440d61b2af9fdc4c0b0d4c571b2c5 100644
---- a/include/linux/virtio_net.h
-+++ b/include/linux/virtio_net.h
-@@ -9,6 +9,194 @@
- #include <uapi/linux/tcp.h>
- #include <uapi/linux/virtio_net.h>
- 
-+struct virtio_net_hash {
-+	u32 value;
-+	u16 report;
-+};
-+
-+struct virtio_net_toeplitz_state {
-+	u32 hash;
-+	const u32 *key;
-+};
-+
-+#define VIRTIO_NET_SUPPORTED_HASH_TYPES (VIRTIO_NET_RSS_HASH_TYPE_IPv4 | \
-+					 VIRTIO_NET_RSS_HASH_TYPE_TCPv4 | \
-+					 VIRTIO_NET_RSS_HASH_TYPE_UDPv4 | \
-+					 VIRTIO_NET_RSS_HASH_TYPE_IPv6 | \
-+					 VIRTIO_NET_RSS_HASH_TYPE_TCPv6 | \
-+					 VIRTIO_NET_RSS_HASH_TYPE_UDPv6)
-+
-+#define VIRTIO_NET_RSS_MAX_KEY_SIZE 40
-+
-+static inline void virtio_net_toeplitz_convert_key(u32 *input, size_t len)
-+{
-+	while (len >= sizeof(*input)) {
-+		*input = be32_to_cpu((__force __be32)*input);
-+		input++;
-+		len -= sizeof(*input);
-+	}
-+}
-+
-+static inline void virtio_net_toeplitz_calc(struct virtio_net_toeplitz_state *state,
-+					    const __be32 *input, size_t len)
-+{
-+	while (len >= sizeof(*input)) {
-+		for (u32 map = be32_to_cpu(*input); map; map &= (map - 1)) {
-+			u32 i = ffs(map);
-+
-+			state->hash ^= state->key[0] << (32 - i) |
-+				       (u32)((u64)state->key[1] >> i);
-+		}
-+
-+		state->key++;
-+		input++;
-+		len -= sizeof(*input);
-+	}
-+}
-+
-+static inline u8 virtio_net_hash_key_length(u32 types)
-+{
-+	size_t len = 0;
-+
-+	if (types & VIRTIO_NET_HASH_REPORT_IPv4)
-+		len = max(len,
-+			  sizeof(struct flow_dissector_key_ipv4_addrs));
-+
-+	if (types &
-+	    (VIRTIO_NET_HASH_REPORT_TCPv4 | VIRTIO_NET_HASH_REPORT_UDPv4))
-+		len = max(len,
-+			  sizeof(struct flow_dissector_key_ipv4_addrs) +
-+			  sizeof(struct flow_dissector_key_ports));
-+
-+	if (types & VIRTIO_NET_HASH_REPORT_IPv6)
-+		len = max(len,
-+			  sizeof(struct flow_dissector_key_ipv6_addrs));
-+
-+	if (types &
-+	    (VIRTIO_NET_HASH_REPORT_TCPv6 | VIRTIO_NET_HASH_REPORT_UDPv6))
-+		len = max(len,
-+			  sizeof(struct flow_dissector_key_ipv6_addrs) +
-+			  sizeof(struct flow_dissector_key_ports));
-+
-+	return len + sizeof(u32);
-+}
-+
-+static inline u32 virtio_net_hash_report(u32 types,
-+					 const struct flow_keys_basic *keys)
-+{
-+	switch (keys->basic.n_proto) {
-+	case cpu_to_be16(ETH_P_IP):
-+		if (!(keys->control.flags & FLOW_DIS_IS_FRAGMENT)) {
-+			if (keys->basic.ip_proto == IPPROTO_TCP &&
-+			    (types & VIRTIO_NET_RSS_HASH_TYPE_TCPv4))
-+				return VIRTIO_NET_HASH_REPORT_TCPv4;
-+
-+			if (keys->basic.ip_proto == IPPROTO_UDP &&
-+			    (types & VIRTIO_NET_RSS_HASH_TYPE_UDPv4))
-+				return VIRTIO_NET_HASH_REPORT_UDPv4;
-+		}
-+
-+		if (types & VIRTIO_NET_RSS_HASH_TYPE_IPv4)
-+			return VIRTIO_NET_HASH_REPORT_IPv4;
-+
-+		return VIRTIO_NET_HASH_REPORT_NONE;
-+
-+	case cpu_to_be16(ETH_P_IPV6):
-+		if (!(keys->control.flags & FLOW_DIS_IS_FRAGMENT)) {
-+			if (keys->basic.ip_proto == IPPROTO_TCP &&
-+			    (types & VIRTIO_NET_RSS_HASH_TYPE_TCPv6))
-+				return VIRTIO_NET_HASH_REPORT_TCPv6;
-+
-+			if (keys->basic.ip_proto == IPPROTO_UDP &&
-+			    (types & VIRTIO_NET_RSS_HASH_TYPE_UDPv6))
-+				return VIRTIO_NET_HASH_REPORT_UDPv6;
-+		}
-+
-+		if (types & VIRTIO_NET_RSS_HASH_TYPE_IPv6)
-+			return VIRTIO_NET_HASH_REPORT_IPv6;
-+
-+		return VIRTIO_NET_HASH_REPORT_NONE;
-+
-+	default:
-+		return VIRTIO_NET_HASH_REPORT_NONE;
-+	}
-+}
-+
-+static inline void virtio_net_hash_rss(const struct sk_buff *skb,
-+				       u32 types, const u32 *key,
-+				       struct virtio_net_hash *hash)
-+{
-+	struct virtio_net_toeplitz_state toeplitz_state = { .key = key };
-+	struct flow_keys flow;
-+	struct flow_keys_basic flow_basic;
-+	u16 report;
-+
-+	if (!skb_flow_dissect_flow_keys(skb, &flow, 0)) {
-+		hash->report = VIRTIO_NET_HASH_REPORT_NONE;
-+		return;
-+	}
-+
-+	flow_basic = (struct flow_keys_basic) {
-+		.control = flow.control,
-+		.basic = flow.basic
-+	};
-+
-+	report = virtio_net_hash_report(types, &flow_basic);
-+
-+	switch (report) {
-+	case VIRTIO_NET_HASH_REPORT_IPv4:
-+		virtio_net_toeplitz_calc(&toeplitz_state,
-+					 (__be32 *)&flow.addrs.v4addrs,
-+					 sizeof(flow.addrs.v4addrs));
-+		break;
-+
-+	case VIRTIO_NET_HASH_REPORT_TCPv4:
-+		virtio_net_toeplitz_calc(&toeplitz_state,
-+					 (__be32 *)&flow.addrs.v4addrs,
-+					 sizeof(flow.addrs.v4addrs));
-+		virtio_net_toeplitz_calc(&toeplitz_state, &flow.ports.ports,
-+					 sizeof(flow.ports.ports));
-+		break;
-+
-+	case VIRTIO_NET_HASH_REPORT_UDPv4:
-+		virtio_net_toeplitz_calc(&toeplitz_state,
-+					 (__be32 *)&flow.addrs.v4addrs,
-+					 sizeof(flow.addrs.v4addrs));
-+		virtio_net_toeplitz_calc(&toeplitz_state, &flow.ports.ports,
-+					 sizeof(flow.ports.ports));
-+		break;
-+
-+	case VIRTIO_NET_HASH_REPORT_IPv6:
-+		virtio_net_toeplitz_calc(&toeplitz_state,
-+					 (__be32 *)&flow.addrs.v6addrs,
-+					 sizeof(flow.addrs.v6addrs));
-+		break;
-+
-+	case VIRTIO_NET_HASH_REPORT_TCPv6:
-+		virtio_net_toeplitz_calc(&toeplitz_state,
-+					 (__be32 *)&flow.addrs.v6addrs,
-+					 sizeof(flow.addrs.v6addrs));
-+		virtio_net_toeplitz_calc(&toeplitz_state, &flow.ports.ports,
-+					 sizeof(flow.ports.ports));
-+		break;
-+
-+	case VIRTIO_NET_HASH_REPORT_UDPv6:
-+		virtio_net_toeplitz_calc(&toeplitz_state,
-+					 (__be32 *)&flow.addrs.v6addrs,
-+					 sizeof(flow.addrs.v6addrs));
-+		virtio_net_toeplitz_calc(&toeplitz_state, &flow.ports.ports,
-+					 sizeof(flow.ports.ports));
-+		break;
-+
-+	default:
-+		hash->report = VIRTIO_NET_HASH_REPORT_NONE;
-+		return;
-+	}
-+
-+	hash->value = toeplitz_state.hash;
-+	hash->report = report;
-+}
-+
- static inline bool virtio_net_hdr_match_proto(__be16 protocol, __u8 gso_type)
+> -----Original Message-----
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Sent: Thursday, March 6, 2025 5:46 AM
+> To: Christoffer Dall <cdall@cs.columbia.edu>; Marc Zyngier
+> <maz@kernel.org>
+> Cc: Oliver Upton <oliver.upton@linux.dev>; Shameerali Kolothum Thodi
+> <shameerali.kolothum.thodi@huawei.com>; Linux Kernel Mailing List
+> <linux-kernel@vger.kernel.org>; Linux Next Mailing List <linux-
+> next@vger.kernel.org>
+> Subject: linux-next: build failure after merge of the kvm-arm tree
+>=20
+> Hi all,
+>=20
+> After merging the kvm-arm tree, today's linux-next build (arm
+> multi_v7_defconfig) failed like this:
+>=20
+> drivers/firmware/smccc/kvm_guest.c:58:14: warning: no previous prototype
+> for 'kvm_arm_target_impl_cpu_init' [-Wmissing-prototypes]
+>    58 | void  __init kvm_arm_target_impl_cpu_init(void)
+>       |              ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/firmware/smccc/kvm_guest.c: In function
+> 'kvm_arm_target_impl_cpu_init':
+> drivers/firmware/smccc/kvm_guest.c:89:39: error: invalid application of
+> 'sizeof' to incomplete type 'struct target_impl_cpu'
+>    89 |         target =3D memblock_alloc(sizeof(*target) * max_cpus,
+> __alignof__(*target));
+>       |                                       ^
+> drivers/firmware/smccc/kvm_guest.c:89:62: error: invalid application of
+> '__alignof__' to incomplete type 'struct target_impl_cpu'
+>    89 |         target =3D memblock_alloc(sizeof(*target) * max_cpus,
+> __alignof__(*target));
+>       |                                                              ^~~~=
+~~~~~~~
+> drivers/firmware/smccc/kvm_guest.c:102:23: error: invalid use of undefine=
+d
+> type 'struct target_impl_cpu'
+>   102 |                 target[i].midr =3D res.a1;
+>       |                       ^
+> drivers/firmware/smccc/kvm_guest.c:102:26: error: invalid use of undefine=
+d
+> type 'struct target_impl_cpu'
+>   102 |                 target[i].midr =3D res.a1;
+>       |                          ^
+> drivers/firmware/smccc/kvm_guest.c:103:23: error: invalid use of undefine=
+d
+> type 'struct target_impl_cpu'
+>   103 |                 target[i].revidr =3D res.a2;
+>       |                       ^
+> drivers/firmware/smccc/kvm_guest.c:103:26: error: invalid use of undefine=
+d
+> type 'struct target_impl_cpu'
+>   103 |                 target[i].revidr =3D res.a2;
+>       |                          ^
+> drivers/firmware/smccc/kvm_guest.c:104:23: error: invalid use of undefine=
+d
+> type 'struct target_impl_cpu'
+>   104 |                 target[i].aidr =3D res.a3;
+>       |                       ^
+> drivers/firmware/smccc/kvm_guest.c:104:26: error: invalid use of undefine=
+d
+> type 'struct target_impl_cpu'
+>   104 |                 target[i].aidr =3D res.a3;
+>       |                          ^
+> drivers/firmware/smccc/kvm_guest.c:107:14: error: implicit declaration of
+> function 'cpu_errata_set_target_impl' [-Wimplicit-function-declaration]
+>   107 |         if (!cpu_errata_set_target_impl(max_cpus, target)) {
+>       |              ^~~~~~~~~~~~~~~~~~~~~~~~~~
+> drivers/firmware/smccc/kvm_guest.c:116:37: error: invalid application of
+> 'sizeof' to incomplete type 'struct target_impl_cpu'
+>   116 |         memblock_free(target, sizeof(*target) * max_cpus);
+>       |                                     ^
+>=20
+> Caused by commit
+>=20
+>   86edf6bdcf05 ("smccc/kvm_guest: Enable errata based on implementation
+> CPUs")
+>=20
+> I have used the kvm-arm tree from next-20250305 for today.
+
+Thanks for reporting this.
+
+Hmm..kvm_guest.c gets build through HAVE_ARM_SMCCC_DISCOVERY=20
+which is selected by ARM_GIC_V3.
+
+We could limit the kvm_arm_target_impl_cpu_init() to ARM64 to fix this
+like below as these hypercall is only supported for KVM/ARM64.
+
+Or is there a better way to handle this?
+
+Thanks,
+Shameer
+
+---8---
+diff --git a/drivers/firmware/smccc/kvm_guest.c
+b/drivers/firmware/smccc/kvm_guest.c
+index 2f03b582c298..5767aed25cdc 100644
+--- a/drivers/firmware/smccc/kvm_guest.c
++++ b/drivers/firmware/smccc/kvm_guest.c
+@@ -55,6 +55,7 @@ bool kvm_arm_hyp_service_available(u32 func_id)
+ }
+ EXPORT_SYMBOL_GPL(kvm_arm_hyp_service_available);
+
++#ifdef CONFIG_ARM64
+ void  __init kvm_arm_target_impl_cpu_init(void)
  {
- 	switch (gso_type & ~VIRTIO_NET_HDR_GSO_ECN) {
+        int i;
+@@ -115,3 +116,4 @@ void  __init kvm_arm_target_impl_cpu_init(void)
+ mem_free:
+        memblock_free(target, sizeof(*target) * max_cpus);
+ }
++#endif
 
--- 
-2.48.1
 
 
