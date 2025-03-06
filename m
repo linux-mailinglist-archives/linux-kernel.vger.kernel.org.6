@@ -1,348 +1,132 @@
-Return-Path: <linux-kernel+bounces-549448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24909A552C0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:18:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B7CA552C2
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:18:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C33183A77D3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:17:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 348293A8ED1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:18:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1655A25D205;
-	Thu,  6 Mar 2025 17:17:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F2925A2AD;
+	Thu,  6 Mar 2025 17:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u+zypPLv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mxhP4wAY"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEBA25D1F1;
-	Thu,  6 Mar 2025 17:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058CE1494B5;
+	Thu,  6 Mar 2025 17:18:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741281455; cv=none; b=BmcobRdgeJZ8glcG6KCh06dw7Z0CO4NbO3K4gtlBDQSW8q3xzeR1vi7XhMKcZRvJOuyfXZ5kfy2qzlOHcnq2NIftM1C6JB+CQKhWgiAG803/8fYep6wG/sdGdwK1+J0Nru+Ut9huFP0Svn7OVoajVLR5JeKmSUKEJomZEHTfADo=
+	t=1741281524; cv=none; b=f1nIpQxwdyxnHJa3j6wtIk3uVyk5KNlBb+GIm2Sa2W5/tHUmeVt2shKcZ7VtFj16cXSDr03CgGpjQigS28ntiSoXVYkqVSh9aW8MHVZAO6uSbhmkgGIrmt6pCVZHvZsUu98XQfsF0bRNJ87U/vENQW/WNSkdbr2/V228t7n2MRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741281455; c=relaxed/simple;
-	bh=sBJ/Ecm4SffYsSoCrw5m0wEDMK6aNIKJ0sVghq8b1ro=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Fxp9PeV068Yj75eLjKC4K7Oqd0PIScK+MDyhyQhsLKVgpPd/LP9pS1gqWaRIvfBxMvs07S8T3dg1J3D/1qodwtmzlRLJ0tlG8yD3PVCU2qWkPQQVt6z2KiEOnPu4DXEtXFAaP3zoMHQvf3FJv3sag3srLn9bVEjl2Dc6BEwo7bM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u+zypPLv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B41FC4CEED;
-	Thu,  6 Mar 2025 17:17:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741281454;
-	bh=sBJ/Ecm4SffYsSoCrw5m0wEDMK6aNIKJ0sVghq8b1ro=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=u+zypPLvhzxB3BTkMSvmI38Wv7IPLhalLqJjzMW0WMBEcL7gyTjSvX2iTVo2FtXa2
-	 b+Sw8aKLG8qQGI6Yu6ZMcPX56A8RC86eH7ppqrbUpb5MKETSXnqtwE5FfRglSSQVRE
-	 kkYWczDaJNQFwiuVhjQzBUfR46Axnw6lwsrkc7nFrHSn1qs2WmQm21GB9irYYxEyY5
-	 nDgVCJJTW4Nw4PTiZYi1RzXZC4sIxrGjp6+CTyJl39QiDipY5L6NZZbDLZHGLiMfNL
-	 VHMIV1nzbaNaJ65JgTmIloJMOrrmam5DqUlbI3+Ke3tmMb+ZrUcT6PsePyFLfiyj9N
-	 nuWMH1j9mRbbg==
-From: Maxime Ripard <mripard@kernel.org>
-Date: Thu, 06 Mar 2025 18:17:24 +0100
-Subject: [PATCH 2/2] drm/display: hdmi: Mention Infoframes testing with
- edid-decode
+	s=arc-20240116; t=1741281524; c=relaxed/simple;
+	bh=395x5AyGRqSAYneg2mz2L9F5gpCGkhuEWJ48Cofvc3Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=qreTXVo51Pc+xjqdDXTS9DRGhEdT9N77qY1MknAEUqJCsF6b70w/SIdMqRC3uVLd37UoF8VijGd5lIE7iSbWfTczJh0ov65HJ3dyKURvEf8N5Ifar0jepR0AVnM/N2h53QxxHy8VN9W5DFT7G8Zy5H0lj+nc7/uK5kyZn2lZpCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mxhP4wAY; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-224171d6826so17042285ad.3;
+        Thu, 06 Mar 2025 09:18:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741281521; x=1741886321; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uLcbW4YRLVL48lfvUUsSf+uXxoiWIb4cMrwCVJEXxyQ=;
+        b=mxhP4wAYIxrxi8O+Ic5ZTTyVYG2dtY2YhtXpYvlQB5XobdXJh5rwzSeNjmfHqBlmjz
+         jFmd6cWhu3MIT8dM5EcVUvyg4TyeHaO4cNpuILDJ4ynYJGEq2kd7nThVB0W20Z91ULDn
+         2D07jJrI4XCYI5GzOhlYHLlPvJUH4fZteMqlcpL7Nsopa1mRos8LyoybcM0X35sOy4qr
+         yrW7rHCuWZOlcNGnG/RTNqfsaItmziYh8v0qBh38nla2/ecgzfgj3dtsUIIWWbTOFiBP
+         +0E89xqin1vpPEmd8p5JeGb7NPkQVywXqsqZBGpQiU8nZHQB1qEpF98ccivAUR5WoQxD
+         Fg2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741281521; x=1741886321;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uLcbW4YRLVL48lfvUUsSf+uXxoiWIb4cMrwCVJEXxyQ=;
+        b=g0Q3K1eG87IW9A7umVn47SF/UgGquiXzQOPYXfxTNbgPNpcllP06n7LLWP6VySi5rK
+         K5RKKlf33M7M2brnsuaBjg4V6DVw8ndiE7EqUk+DT4VM6kJ1C85+w5KjEC2+9rBFEBW/
+         8wbmXlKFyUnb6eTzAp0PAgk8eitDh9Ahl6QpjaiCz5PCQ2jxbvxSYJM/hXb6wXZDd+s9
+         jS96WDGf3hICGn3HVkIhTXuoaAwYCUET0+O+4Qu2anFUz3IiG5lfjwiXyRzYkWDqLGui
+         Oz76y1KXRZEz7jXS27MPqLtFA3nTx6GI7L8agw1w2OIMhXkCn4U3Oss45er/5ZMQar4k
+         Aq5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUCSUORmEtxsBg0+CrgKBava9CbDvj7BdehK9LW/EauRm3C2ENUFUEaHgp0khikaNFTmJGfegwvNJkT57m7Kxo=@vger.kernel.org, AJvYcCWXzBT17rXJdetZSardd+14xWS4AWPmJ/9kKEd4oXu2CsBYPCIbfSi0p22lMbJ1Omss8VeIVLn6fdvSp2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx86fvvxxUshlMWKJGDM/+geLjg6hgx8wQ4TktwCm6PkCNx6dqC
+	z17MwR5V9WJAzuxXjZ/XKKXNhUQW4+EXWMIvtt05QhcTow7yyNvG
+X-Gm-Gg: ASbGncsQToA9eofpOGxhNSy7Q5zRarQ3JeDp4/jmUWG47FMB2COx+T65lSaTL557bjP
+	hpUA7yS/N/QvdacjcmeBEjbTZ/G+MBxl1pIneruEcraSPo/wgbR5+mijLdq3zdAm6vBq1iw5lOx
+	hVhcpmM8yw56nGcMskAQHme7A2MkbgMFSxSqAaE5U9l+e7i/1DIdG8Akm3hWEOuVpFcw6DM2ZnF
+	VEBFnseOltVvykbmPN3uxWQCI2j3Mspcq+qALPKT9svjIFS4z5LJ2FEwCCP2rzipuLKjYFQGVKC
+	aD1wCGhbprxKelj+BGoKKDSDyrv9TztyOL0PrWSaEOV05+ZotXMc
+X-Google-Smtp-Source: AGHT+IHeeys3QZu6VDhZ8s3MM6QrswxXbPxJHU7HlCS0a64b+dUVEPa6Zj1+IwyqEAlsMoigY4EzwA==
+X-Received: by 2002:a17:903:22c8:b0:220:cb6c:2e30 with SMTP id d9443c01a7336-22428ad565bmr620925ad.49.1741281521131;
+        Thu, 06 Mar 2025 09:18:41 -0800 (PST)
+Received: from linuxsimoes.. ([187.120.156.44])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410ab45bfsm14914115ad.250.2025.03.06.09.18.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 09:18:40 -0800 (PST)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: miguel.ojeda.sandonis@gmail.com
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	apw@canonical.com,
+	arnd@arndb.de,
+	aswinunni01@gmail.com,
+	axboe@kernel.dk,
+	benno.lossin@proton.me,
+	bhelgaas@google.com,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	dakr@kernel.org,
+	dwaipayanray1@gmail.com,
+	ethan.twardy@gmail.com,
+	fujita.tomonori@gmail.com,
+	gary@garyguo.net,
+	gregkh@linuxfoundation.org,
+	joe@perches.com,
+	linux-kernel@vger.kernel.org,
+	lukas.bulwahn@gmail.com,
+	ojeda@kernel.org,
+	pbonzini@redhat.com,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu,
+	trintaeoitogc@gmail.com,
+	walmeida@microsoft.com
+Subject: Re: [PATCH V6 2/2] checkpatch: check format of Vec<String> in modules
+Date: Thu,  6 Mar 2025 14:18:29 -0300
+Message-Id: <20250306171829.365809-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CANiq72nXzY_j38ytE7KwHpH3Cy4sDw85WU2MyUe5u74oB2UP+Q@mail.gmail.com>
+References: <CANiq72nXzY_j38ytE7KwHpH3Cy4sDw85WU2MyUe5u74oB2UP+Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-drm-hdmi-state-docs-v1-2-56a19d3805a1@kernel.org>
-References: <20250306-drm-hdmi-state-docs-v1-0-56a19d3805a1@kernel.org>
-In-Reply-To: <20250306-drm-hdmi-state-docs-v1-0-56a19d3805a1@kernel.org>
-To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Thomas Zimmermann <tzimmermann@suse.de>, Jonathan Corbet <corbet@lwn.net>
-Cc: dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Maxime Ripard <mripard@kernel.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=10412; i=mripard@kernel.org;
- h=from:subject:message-id; bh=sBJ/Ecm4SffYsSoCrw5m0wEDMK6aNIKJ0sVghq8b1ro=;
- b=owGbwMvMwCX2+D1vfrpE4FHG02pJDOknbyzj+bdmzu/QfrfLS2vYZ69c9nZD7q1Oie0/QrafL
- Kr6wBln0FHKwiDGxSArpsgSI2y+JO7UrNedbHzzYOawMoEMYeDiFICJZFxnZJi14ez7adUbc/PX
- axt+m97m9/lyy5zPb+REFnzXOccz1VOJkeHG4SovuWs7z+3vn3tpV+Du234iW/4cv3Lu+PNOi0P
- 1PJ28AA==
-X-Developer-Key: i=mripard@kernel.org; a=openpgp;
- fpr=BE5675C37E818C8B5764241C254BCFC56BF6CE8D
+Content-Transfer-Encoding: 8bit
 
-edid-decode gained recently support to check that infoframes are
-compliant and match the EDID the monitor exposes.
+Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
+> So if I understand correctly, `rustfmt` will simply not do anything,
+> i.e. it will always keep the array as it was -- that sounds good
+> enough to me! Most people will write it correctly, and for those that
+> don't, `checkpatch.pl` will likely catch the mistake -- that is all we
+> need.
+Ok, but, how is mentioned by Andreas Hindborg, this scenary is passing:
+    authors: [
+        "John Doe",
+              "Foo Bar"
+    ],
 
-Since the HDMI helpers provide those infoframes in debugfs, it makes it
-easy to check from userspace that the drivers (and helpers) behave
-properly.
+Is good make a check for this too and senda a v7
 
-Let's document it.
-
-Cc: Hans Verkuil <hverkuil@xs4all.nl>
-Signed-off-by: Maxime Ripard <mripard@kernel.org>
----
- drivers/gpu/drm/display/drm_hdmi_state_helper.c | 240 ++++++++++++++++++++++++
- 1 file changed, 240 insertions(+)
-
-diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-index 24bfc82bf9b02bf3201d97432e3c239ccc8714b4..86f812b89f0e51abc24910898c114d6b08a78edf 100644
---- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-+++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-@@ -16,10 +16,250 @@
-  * in the form of KMS helpers.
-  *
-  * It contains TMDS character rate computation, automatic selection of
-  * output formats, infoframes generation, etc.
-  *
-+ * Infoframes Compliance
-+ * ~~~~~~~~~~~~~~~~~~~~~
-+ *
-+ * Drivers using the helpers will expose the various infoframes
-+ * generated according to the HDMI specification in debugfs.
-+ *
-+ * Compliance can then be tested using a recent-enough ``edid-decode``
-+ * version (released after summer 2024). A sample run would look like:
-+ *
-+ * .. code-block:: bash
-+ *
-+ *	# edid-decode \
-+ *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/audio \
-+ *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/avi \
-+ *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/hdmi \
-+ *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/hdr_drm \
-+ *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/spd \
-+ *		/sys/class/drm/card1-HDMI-A-1/edid \
-+ *		-c
-+ *
-+ *	edid-decode (hex):
-+ *
-+ *	00 ff ff ff ff ff ff 00 1e 6d f4 5b 1e ef 06 00
-+ *	07 20 01 03 80 2f 1a 78 ea 24 05 af 4f 42 ab 25
-+ *	0f 50 54 21 08 00 d1 c0 61 40 01 01 01 01 01 01
-+ *	01 01 01 01 01 01 56 5e 00 a0 a0 a0 29 50 30 20
-+ *	35 00 d1 06 11 00 00 1a 00 00 00 fd 00 3b 3d 1e
-+ *	70 1e 00 0a 20 20 20 20 20 20 00 00 00 fc 00 4c
-+ *	47 20 53 44 51 48 44 0a 20 20 20 20 00 00 00 ff
-+ *	00 32 30 37 4e 54 52 4c 44 43 34 33 30 0a 01 43
-+ *
-+ *	02 03 29 71 23 09 07 07 4b 01 03 04 90 12 13 1f
-+ *	22 5d 5e 5f 83 01 00 00 6d 03 0c 00 10 00 b8 3c
-+ *	20 00 60 01 02 03 e2 00 6a 00 00 00 00 00 00 00
-+ *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-+ *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-+ *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-+ *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-+ *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ee
-+ *
-+ *	----------------
-+ *
-+ *	Block 0, Base EDID:
-+ *	  EDID Structure Version & Revision: 1.3
-+ *	 Vendor & Product Identification:
-+ *	    Manufacturer: GSM
-+ *	    Model: 23540
-+ *	    Serial Number: 454430 (0x0006ef1e)
-+ *	    Made in: week 7 of 2022
-+ *	  Basic Display Parameters & Features:
-+ *	    Digital display
-+ *	    Maximum image size: 47 cm x 26 cm
-+ *	    Gamma: 2.20
-+ *	    DPMS levels: Standby Suspend Off
-+ *	    RGB color display
-+ *	    First detailed timing is the preferred timing
-+ *	  Color Characteristics:
-+ *	    Red  : 0.6835, 0.3105
-+ *	    Green: 0.2587, 0.6679
-+ *	    Blue : 0.1445, 0.0585
-+ *	    White: 0.3134, 0.3291
-+ *	  Established Timings I & II:
-+ *	    DMT 0x04:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
-+ *	    DMT 0x09:   800x600    60.316541 Hz   4:3     37.879 kHz     40.000000 MHz
-+ *	    DMT 0x10:  1024x768    60.003840 Hz   4:3     48.363 kHz     65.000000 MHz
-+ *	  Standard Timings:
-+ *	    DMT 0x52:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz
-+ *	    DMT 0x10:  1024x768    60.003840 Hz   4:3     48.363 kHz     65.000000 MHz
-+ *	  Detailed Timing Descriptors:
-+ *	    DTD 1:  2560x1440   59.950550 Hz  16:9     88.787 kHz    241.500000 MHz (465 mm x 262 mm)
-+ *	                 Hfront   48 Hsync  32 Hback   80 Hpol P
-+ *	                 Vfront    3 Vsync   5 Vback   33 Vpol N
-+ *	    Display Range Limits:
-+ *	      Monitor ranges (GTF): 59-61 Hz V, 30-112 kHz H, max dotclock 300 MHz
-+ *	    Display Product Name: 'LG SDQHD'
-+ *	    Display Product Serial Number: '207NTRLDC430'
-+ *	  Extension blocks: 1
-+ *	Checksum: 0x43
-+ *
-+ *	----------------
-+ *
-+ *	Block 1, CTA-861 Extension Block:
-+ *	  Revision: 3
-+ *	  Basic audio support
-+ *	  Supports YCbCr 4:4:4
-+ *	  Supports YCbCr 4:2:2
-+ *	  Native detailed modes: 1
-+ *	  Audio Data Block:
-+ *	    Linear PCM:
-+ *	      Max channels: 2
-+ *	      Supported sample rates (kHz): 48 44.1 32
-+ *	      Supported sample sizes (bits): 24 20 16
-+ *	  Video Data Block:
-+ *	    VIC   1:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
-+ *	    VIC   3:   720x480    59.940060 Hz  16:9     31.469 kHz     27.000000 MHz
-+ *	    VIC   4:  1280x720    60.000000 Hz  16:9     45.000 kHz     74.250000 MHz
-+ *	    VIC  16:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz (native)
-+ *	    VIC  18:   720x576    50.000000 Hz  16:9     31.250 kHz     27.000000 MHz
-+ *	    VIC  19:  1280x720    50.000000 Hz  16:9     37.500 kHz     74.250000 MHz
-+ *	    VIC  31:  1920x1080   50.000000 Hz  16:9     56.250 kHz    148.500000 MHz
-+ *	    VIC  34:  1920x1080   30.000000 Hz  16:9     33.750 kHz     74.250000 MHz
-+ *	    VIC  93:  3840x2160   24.000000 Hz  16:9     54.000 kHz    297.000000 MHz
-+ *	    VIC  94:  3840x2160   25.000000 Hz  16:9     56.250 kHz    297.000000 MHz
-+ *	    VIC  95:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
-+ *	  Speaker Allocation Data Block:
-+ *	    FL/FR - Front Left/Right
-+ *	  Vendor-Specific Data Block (HDMI), OUI 00-0C-03:
-+ *	    Source physical address: 1.0.0.0
-+ *	    Supports_AI
-+ *	    DC_36bit
-+ *	    DC_30bit
-+ *	    DC_Y444
-+ *	    Maximum TMDS clock: 300 MHz
-+ *	    Extended HDMI video details:
-+ *	      HDMI VICs:
-+ *	        HDMI VIC 1:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
-+ *	        HDMI VIC 2:  3840x2160   25.000000 Hz  16:9     56.250 kHz    297.000000 MHz
-+ *	        HDMI VIC 3:  3840x2160   24.000000 Hz  16:9     54.000 kHz    297.000000 MHz
-+ *	  Video Capability Data Block:
-+ *	    YCbCr quantization: No Data
-+ *	    RGB quantization: Selectable (via AVI Q)
-+ *	    PT scan behavior: Always Underscanned
-+ *	    IT scan behavior: Always Underscanned
-+ *	    CE scan behavior: Always Underscanned
-+ *	Checksum: 0xee  Unused space in Extension Block: 86 bytes
-+ *
-+ *	----------------
-+ *
-+ *	edid-decode SHA: 5332a3b76080 2024-11-19 07:53:00
-+ *
-+ *	Warnings:
-+ *
-+ *	Block 1, CTA-861 Extension Block:
-+ *	  IT Video Formats are overscanned by default, but normally this should be underscanned.
-+ *	  Video Data Block: VIC 1 and the first DTD are not identical. Is this intended?
-+ *	  Video Data Block: All VICs are in ascending order, and the first (preferred) VIC <= 4, is that intended?
-+ *	  Video Capability Data Block: Set Selectable YCbCr Quantization to avoid interop issues.
-+ *	  Video Capability Data Block: S_PT is equal to S_IT and S_CE, so should be set to 0 instead.
-+ *	  Display Product Serial Number is set, so the Serial Number in the Base EDID should be 0.
-+ *	  Add a Colorimetry Data Block with the sRGB colorimetry bit set to avoid interop issues.
-+ *	EDID:
-+ *	  Base EDID: Some timings are out of range of the Monitor Ranges:
-+ *	    Vertical Freq: 24.000 - 60.317 Hz (Monitor: 59.000 - 61.000 Hz)
-+ *
-+ *	Failures:
-+ *
-+ *	Block 1, CTA-861 Extension Block:
-+ *	  Video Capability Data Block: IT video formats are always underscanned, but bit 7 of Byte 3 of the CTA-861 Extension header is set to overscanned.
-+ *	EDID:
-+ *	  CTA-861: Native progressive timings are a mix of several resolutions.
-+ *
-+ *	EDID conformity: FAIL
-+ *
-+ *	================
-+ *
-+ *	InfoFrame of '/sys/kernel/debug/dri/1/HDMI-A-1/infoframes/audio' was empty.
-+ *
-+ *	================
-+ *
-+ *	edid-decode InfoFrame (hex):
-+ *
-+ *	82 02 0d 31 12 28 04 00 00 00 00 00 00 00 00 00
-+ *	00
-+ *
-+ *	----------------
-+ *
-+ *	HDMI InfoFrame Checksum: 0x31
-+ *
-+ *	AVI InfoFrame
-+ *	  Version: 2
-+ *	  Length: 13
-+ *	  Y: Color Component Sample Format: RGB
-+ *	  A: Active Format Information Present: Yes
-+ *	  B: Bar Data Present: Bar Data not present
-+ *	  S: Scan Information: Composed for an underscanned display
-+ *	  C: Colorimetry: No Data
-+ *	  M: Picture Aspect Ratio: 16:9
-+ *	  R: Active Portion Aspect Ratio: 8
-+ *	  ITC: IT Content: No Data
-+ *	  EC: Extended Colorimetry: xvYCC601
-+ *	  Q: RGB Quantization Range: Limited Range
-+ *	  SC: Non-Uniform Picture Scaling: No Known non-uniform scaling
-+ *	  YQ: YCC Quantization Range: Limited Range
-+ *	  CN: IT Content Type: Graphics
-+ *	  PR: Pixel Data Repetition Count: 0
-+ *	  Line Number of End of Top Bar: 0
-+ *	  Line Number of Start of Bottom Bar: 0
-+ *	  Pixel Number of End of Left Bar: 0
-+ *	  Pixel Number of Start of Right Bar: 0
-+ *
-+ *	----------------
-+ *
-+ *	AVI InfoFrame conformity: PASS
-+ *
-+ *	================
-+ *
-+ *	edid-decode InfoFrame (hex):
-+ *
-+ *	81 01 05 49 03 0c 00 20 01
-+ *
-+ *	----------------
-+ *
-+ *	HDMI InfoFrame Checksum: 0x49
-+ *
-+ *	Vendor-Specific InfoFrame (HDMI), OUI 00-0C-03
-+ *	  Version: 1
-+ *	  Length: 5
-+ *	  HDMI Video Format: HDMI_VIC is present
-+ *	  HDMI VIC 1:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
-+ *
-+ *	----------------
-+ *
-+ *	Vendor-Specific InfoFrame (HDMI), OUI 00-0C-03 conformity: PASS
-+ *
-+ *	================
-+ *
-+ *	InfoFrame of '/sys/kernel/debug/dri/1/HDMI-A-1/infoframes/hdr_drm' was empty.
-+ *
-+ *	================
-+ *
-+ *	edid-decode InfoFrame (hex):
-+ *
-+ *	83 01 19 93 42 72 6f 61 64 63 6f 6d 56 69 64 65
-+ *	6f 63 6f 72 65 00 00 00 00 00 00 00 09
-+ *
-+ *	----------------
-+ *
-+ *	HDMI InfoFrame Checksum: 0x93
-+ *
-+ *	Source Product Description InfoFrame
-+ *	  Version: 1
-+ *	  Length: 25
-+ *	  Vendor Name: 'Broadcom'
-+ *	  Product Description: 'Videocore'
-+ *	  Source Information: PC general
-+ *
-+ *	----------------
-+ *
-+ *	Source Product Description InfoFrame conformity: PASS
-+ *
-  * Testing
-  * ~~~~~~~
-  *
-  * The helpers have unit testing and can be tested using kunit with:
-  *
-
--- 
-2.48.1
-
+Thanks,
+Guilherme
 
