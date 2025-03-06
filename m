@@ -1,145 +1,100 @@
-Return-Path: <linux-kernel+bounces-549000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39AD1A54BE7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:19:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F08D9A54BEC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:22:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 555E6166628
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:18:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1911C16218F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25CD720E6E6;
-	Thu,  6 Mar 2025 13:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68C4320E016;
+	Thu,  6 Mar 2025 13:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GFRVQW4Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h4GnPR9R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CB120CCEF;
-	Thu,  6 Mar 2025 13:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4FB20AF7D
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 13:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741267111; cv=none; b=hyiKaY3yJLGocDWwN0ORV++vhNuiy8F0J5pWqt0M4qR+7acPxPbH8NUSf2xD71AoADF88CaN0mjc7lMHSprN2BzCI1KFiiPVJg2RGi8b7NZXPp+zsNvkJa59vhIR34J9jw7ftTzHjOwm89XK1rk9/TUzwfBBAexf3mtJnZacKJw=
+	t=1741267348; cv=none; b=YNRjiFyM7Ry/NkJopB4OCTIYJj3IOmYNiOn7Ol4ExwBg9RQRTGV2q8V4wSbDoC3E3Tun3m0bhVbxBZvwBa25b3IV2voQOxqMn/nKpd1LaIqIHyIbTwjsKDEPuHLfw24GP9aFbiunmMJPmqUAMyPp6qrWrhRekzSt5++xnoAXDOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741267111; c=relaxed/simple;
-	bh=NRAmMlaST99PuE29h0Bw96V9IXafkYUp84trtPBfjh4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cBiHuen/6EvuFaoLLW0aqyaOMmj1CIpajKM8cYmWRwVgcTMsOJOjlizU7pvbMNdPykHvuIncqUgEUSgrkFZyfNLEsz4NTFM5/HyCZrZIJDMvnwaIMj1GbcRP/rvUmMq88/8oa4PYqpb19OI9ZpqLQNlL9/QqV0TO0r+ZpjbTZtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GFRVQW4Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0247EC4CEE0;
-	Thu,  6 Mar 2025 13:18:30 +0000 (UTC)
+	s=arc-20240116; t=1741267348; c=relaxed/simple;
+	bh=5eA2fLHHytvpJsyufAJwyobEAShcLAnIBdswKa/Z1lQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxZV1yT2i4pzQ2Dq1VUCTGsy5C2i2bAQLmdBGU/aT0aSHHXlIHicreNTiKgTJdfsnPVFPiipw6jSpRx4dXWcpeR21HvS/ATvIJ0LoC9Hrer1f0kKrV4dYMN1n9t29YHqZnQX42Jm6HAGRZFbKbGA6tRsAhucG8wcunrYo/oJ73U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h4GnPR9R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8A70C4CEE0;
+	Thu,  6 Mar 2025 13:22:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741267110;
-	bh=NRAmMlaST99PuE29h0Bw96V9IXafkYUp84trtPBfjh4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GFRVQW4ZW3PGSi4JPFIqGI0MwARrwxBZFx63xCwoJ5OhEPrg5lMCAjp4AlkKWAU2E
-	 LeBI7HccZQq3P374H1TonJbQtqg4xIFMwKetdk1U3IdAD26hVaMeLaHqFmABgotnyn
-	 VWOf7EcbHQAgHdjdFpKOHabt0wexqS+W+0M6hrbyBscywpsSrGsoAXQy9V68yVSf0v
-	 ztymC0Gftqbjo2Qc8je0B7Z6k76MkIM65GokkmHaNjkwkH5+Hph045nm288ZHWSgTq
-	 PPSHApjXVN5fyHU3nTghyde6aFzeOyKO4QrWyyzNILmUH8kKGARPPj/8A7gx1auFmA
-	 lcX59UDw/lGBA==
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-60018b29f51so431971eaf.1;
-        Thu, 06 Mar 2025 05:18:29 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVk3jGREOcKBZtEok+zETEcgercbGB1WvowR/lV8vi5P0JcesnCrxmyfTKUiZ8RslH4zr7AD+McF48=@vger.kernel.org, AJvYcCX+ecBZR+vymSm0XISpW4dcGIGneIE+Xr5VCV8UmEzBVvnRWZVSE0E2YG099Z4XBGjxi2pK1jrNlanMvCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9fVk4TQITl830KIAwS1wutPwcw8HwWihhrFwaT9c5V/zZcSkN
-	uOaVbab/MIwt9Ri/oujvfsfSeZ5hDp2RTkhqHbAO9dEEBDN2V//Xns/xGJbwB8tnKTDnxS2CUjW
-	NlZAnIhxU4aZJKtLkoyfxxX1ZRCs=
-X-Google-Smtp-Source: AGHT+IH3oEcVmbsFOsBmKMsof78yBUJz6WhIFBnZDb8x6rX363SbDrl3Pb/36Y6XTPMbr5wNRn70whh4hwc+eirkwHE=
-X-Received: by 2002:a4a:ee07:0:b0:5f3:4c09:55e7 with SMTP id
- 006d021491bc7-6003eba4c53mr1847338eaf.3.1741267109305; Thu, 06 Mar 2025
- 05:18:29 -0800 (PST)
+	s=k20201202; t=1741267348;
+	bh=5eA2fLHHytvpJsyufAJwyobEAShcLAnIBdswKa/Z1lQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h4GnPR9RmMvQ0OWRNHnFkYNA8Qzx1rrG6j3xc+FA+xT3GZ7l+GfVG6UmtrxuOlv9L
+	 BqYzgXl06LV9TkfaDmscSJuQTrh9JJVm5uAgVoV5HyqnPbfj+QDCMfdpNJd182++D6
+	 hIoNYuEJ/pHzmLLJQyounH7roHgQvEnlJDOIb7jqz2WzLioVA17tbdM6XYCjtwS03l
+	 L3ulPHdKCVSrvV5AybwS+AIC83i7ENsr6pMcj2JkD+ocZLD63SPARZvthnjrUBp0F9
+	 5eYxV7dsEsth+JXV1L5s6fpzwqG28DRS7tXxOZhlOEB7io11rEGM1I740RxDwRR8LR
+	 A1pVwL/a99YjQ==
+Date: Thu, 6 Mar 2025 13:22:24 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Raag Jadav <raag.jadav@intel.com>, lgirdwood@gmail.com,
+	bleung@chromium.org, groeck@chromium.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] Convert regulator drivers to use
+ devm_kmemdup_array()
+Message-ID: <e993a833-45bb-44c1-9129-63e3a3ac106b@sirena.org.uk>
+References: <20250228072057.151436-1-raag.jadav@intel.com>
+ <174077776750.602863.5336934105237710269.b4-ty@kernel.org>
+ <Z8kFW13EyR0YXnJd@black.fi.intel.com>
+ <Z8loo-N5byavJLkm@smile.fi.intel.com>
+ <Z8l1ozUOMTDNQupC@black.fi.intel.com>
+ <Z8mBQEKAJfZd6a7G@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306113549.796524-1-ulf.hansson@linaro.org> <20250306113549.796524-3-ulf.hansson@linaro.org>
-In-Reply-To: <20250306113549.796524-3-ulf.hansson@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 6 Mar 2025 14:18:17 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0hF_am9DsuwEUmmgpUp=1ZuAG8fdjYfQ5XxFmS_Y1pMog@mail.gmail.com>
-X-Gm-Features: AQ5f1JqAwyTNs4ZBM0f52Gc4g0dPgvb0TMPdtOuexc8yStCGdnp_mg1UZuJLuuw
-Message-ID: <CAJZ5v0hF_am9DsuwEUmmgpUp=1ZuAG8fdjYfQ5XxFmS_Y1pMog@mail.gmail.com>
-Subject: Re: [PATCH 2/2] PM: s2idle: Avoid holding the s2idle_lock when
- calling pm_wakeup_pending()
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ayCJo+E4ycenxaol"
+Content-Disposition: inline
+In-Reply-To: <Z8mBQEKAJfZd6a7G@smile.fi.intel.com>
+X-Cookie: What!?  Me worry?
 
-On Thu, Mar 6, 2025 at 12:36=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.org=
-> wrote:
->
-> There's no reason to hold the s2idle_lock longer than necessary. Let's
-> instead acquire it when really needed in s2idle_enter().
->
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  kernel/power/suspend.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-> index e7aca4e40561..ca09f26cbf4e 100644
-> --- a/kernel/power/suspend.c
-> +++ b/kernel/power/suspend.c
-> @@ -91,10 +91,10 @@ static void s2idle_enter(void)
->  {
->         trace_suspend_resume(TPS("machine_suspend"), PM_SUSPEND_TO_IDLE, =
-true);
->
-> -       raw_spin_lock_irq(&s2idle_lock);
 
-This is to prevent missing a wakeup event when pm_system_wakeup() runs
-at this point on a different CPU.
+--ayCJo+E4ycenxaol
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-If you move the locking, it may run as a whole between the
-pm_wakeup_pending() check below and the s2idle_state update, so the
-wakeup event will be missed.
+On Thu, Mar 06, 2025 at 01:04:32PM +0200, Andy Shevchenko wrote:
 
-With the locking in place, the pm_abort_suspend update in
-pm_system_wakeup() may still happen at any time, but the code under
-the lock in s2idle_wake() after it can only run before the lock is
-acquired above or after it is released.
+> I;m not sure what you exactly pointing out here. Mark seems applied only
+> necessary part of the immutable tag, which have the same effect. The Git merges
+> only once the stuff as long as it has the same hash.
 
-If s2idle_wake() in pm_system_wakeup() runs before the
-raw_spin_lock_irq() above, the pm_wakeup_pending() check below will
-notice the pm_abort_suspend set and return true, so the suspend will
-be aborted (and the pm_abort_suspend update in pm_system_wakeup()
-cannot be reordered entirely after the s2idle_wake() call because of
-the locking there).
+Yes, there was a lot of random IIO stuff applied on top of the API
+change so I rolled back to the API change.
 
-Now, if s2idle_wake() in pm_system_wakeup() runs after the
-raw_spin_unlock_irq() below, it will notice the s2idle_state change
-and it will update it to S2IDLE_STATE_WAKE, so the suspend will be
-aborted.
+--ayCJo+E4ycenxaol
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I guess it would have helped if there had been a comment describing this ..=
-.
+-----BEGIN PGP SIGNATURE-----
 
->         if (pm_wakeup_pending())
->                 goto out;
->
-> +       raw_spin_lock_irq(&s2idle_lock);
->         s2idle_state =3D S2IDLE_STATE_ENTER;
->         raw_spin_unlock_irq(&s2idle_lock);
->
-> @@ -111,11 +111,10 @@ static void s2idle_enter(void)
->         wake_up_all_idle_cpus();
->
->         raw_spin_lock_irq(&s2idle_lock);
-> -
-> - out:
->         s2idle_state =3D S2IDLE_STATE_NONE;
->         raw_spin_unlock_irq(&s2idle_lock);
->
-> + out:
->         trace_suspend_resume(TPS("machine_suspend"), PM_SUSPEND_TO_IDLE, =
-false);
->  }
->
-> --
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfJoY8ACgkQJNaLcl1U
+h9BL8gf/cduCWkNZ8ybQsoPgWyU1dB+EilRvOOqOdvXhb3TT/TtCOSfRsQoB583y
+F8jbE42mdTbRttZ/If3qVyzoKgfczmM/+3HAFQIu9HSH+W3rNVmX0fyZbE8ELJ4k
+cdhwWNtERS+71S4s98EuN/MMS0YuRpzPalyJOx6r7mFYobNRhSIjVzd9ReyLWpR4
+Psysx7lmdiXLhF9mX1a+53fJ0K+1hePNWjPxlii7qZ+10ceUycVXzpmDTsT+Sw6p
+C8mlLXQxOX9LHVi72PoVSuxsZN9dPjV18ODc2Cmd+aIfMHVDTf3ybcQqottu9hNe
+WNQ4opCxroTbSIubeR1Ft29YJfQ7bA==
+=cG7z
+-----END PGP SIGNATURE-----
+
+--ayCJo+E4ycenxaol--
 
