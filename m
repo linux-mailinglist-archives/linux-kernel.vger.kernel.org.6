@@ -1,138 +1,144 @@
-Return-Path: <linux-kernel+bounces-551267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E814A56A44
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:23:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D9EBA56A48
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:24:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C7857A83CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:22:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48718164DA5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D7B21B9F7;
-	Fri,  7 Mar 2025 14:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7503C21B9DA;
+	Fri,  7 Mar 2025 14:24:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bj1vUZRV"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Gv2ZUzEE"
+Received: from mail-10628.protonmail.ch (mail-10628.protonmail.ch [79.135.106.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6C921B8EC;
-	Fri,  7 Mar 2025 14:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F056B18DF65;
+	Fri,  7 Mar 2025 14:24:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741357378; cv=none; b=cQmQFPKSJg5An6bXC3saVsc1pRUNfXD2NOoIzE+9i6368zdjG2ZQZMivQB5afSBZW7MiPO8CQSF3d0JDKJ+aMk3/6uH4gR/Cog9ljnJa3gEZhZyApsPenL6zgOjIzk2x1BTrNLDBAhSg2E0wunui3v8tg6f4+/YZyqwSx8AhjAU=
+	t=1741357484; cv=none; b=qM2z83zDZanoKOs6lqXj01Nd8ViIRaFQ4DEPtbFZmX1ZbUOgUQbNuqtT+r2sQcYvocBvJYq5dII7ow3mYMQimpHoN91iYdgcUXx68bQrvU0qSxF3FampZ2VzP9BDti6oUYASzLTkN5JfOuEqLO5nlknWOYRnbyk7Cd/BPZEgNo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741357378; c=relaxed/simple;
-	bh=GvUKH5oJnoRKKMs29BXEgbZczyorqGQcyFWXcpVYfZc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=thRt67sA+cmwJ2CD9e6Jn3Nfr3vZBbJIaYF62iqcmy74opnke8LFptwqEZVZL39sacMKrQjpQv7icl/AWS5IRp8EZdIr7pl+l7wmsWMgHZLWXHJyI3sY45iMW0Q2qU26XISmwHdq7PUYLwpaf9rNzphr+Mg9sUAB9wV9DHTSnw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bj1vUZRV; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43bc4b16135so11396445e9.1;
-        Fri, 07 Mar 2025 06:22:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741357375; x=1741962175; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PejxjOLcOPCBsN9OKYEARibmDmaIRCji7dqrz9O8QL0=;
-        b=bj1vUZRVP0olf6N/2u9keEr5PhnHCnZJke8JRdb0+DqU9cNbbUYIXUXUu5wI4l8Nw5
-         tTl5mMKfhcvDtW/viec0DvBizZampfd6SVUXaVfpSpS3DeqJyTMA6X/MAHBi0TYZnMzd
-         hVUsH6LM2k7fbz/DEdVYJR00mel+hwkFn4AMYZEJ4vViqgmnjKNVTsg9NXLuIgDNGwwD
-         5ShHhEvjlMKSboidXXUF4LdwPQaMQtj9Gzt7iLxwJxSw4Qj9jVx+9VovXx8l8CZWGfih
-         Y0IeyyUaJb3QUp4Z/J5J7oB/KS+W7OZ0r2BaEoH1ekoZNZ0Z4PfZtt1FEMJh00+MA5O3
-         riew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741357375; x=1741962175;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PejxjOLcOPCBsN9OKYEARibmDmaIRCji7dqrz9O8QL0=;
-        b=jkDNp5anGxzkIHXjmhC1R595RAJmhcnXpMmqtSthVBRjycHgSpGJj2JhFIBm6EYcdM
-         MG+ARkSTL0ibwen0oW8dZOrxxrwPbO2G0VNBPOkYLcpXVFBYqLgzSzZc/ymKgZ16YV5K
-         EDwmRnnQMHr6EiCkwG7hF51JD08TTqZKfnnJ9tw+E1UA8PrIgTzvEbkp5u8leMkqlTBX
-         Z2yKYbCBwGYve3hYbfeiG9wwutO2TBKpZ9HpEFo+GO5rS9IdYOs7RdJ8GbfbBszOc4LA
-         in8ZbsXihonrRbd/6EgPpjzBgfVodFtim3453RiUap8uXuhNhn3xWXO+xlT29bMG767X
-         m29w==
-X-Forwarded-Encrypted: i=1; AJvYcCVGZSlwzkM8uPG3YRUpFw+RUqvJY7k3hXF+dd48mkRf7sWzDTRl9ckGUZ3EQDQW0xaRrqAtcYIJnzYF0kdt@vger.kernel.org, AJvYcCWLyuMs3Pyp+mWYax32UUjw5PD//PykfkPsQTfvhUS6JV0h8EZoCpPOB2ANlwDDTdlSQp7NZVD9hcxu@vger.kernel.org, AJvYcCWQEQpipsnXZhC8WBAjHqrZ5j+xRmLrybAFX952vr1Ff8lx8U4NZV6HLgGsXpld9Ln3Kz+JdA/C@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVIXKYHwMWvGysPLQcYL3lT81bX2eOFPSyRNzpTEXGnoVeWYTZ
-	oS0D4t6ooW9lKTVZR4etWaYTgO2rX9uIVT0snB5j96IhgMt82aE8
-X-Gm-Gg: ASbGncvcP+8tkuqVdfHorLsLb9bUWeygWvwj0PnTPHiD4AHc+l2XTpOMyISFq6RZ3Do
-	BccJUbyFKbgbQpEg5ieeKXycYOt8AiGVi2AsyB3gfsy2lo5vXVLG6w+yT+2X58deVbd0rX2FtNr
-	Ip2THlUuo8kaCu54I4qGJOaW4w1J+HuV71Q1FCWDXAugmIwvCYGhGLE2+yxzsWIC1kTX4vM+5En
-	muifxqw7YpohdNMBvZjGtsWlyv7mS3tHEswYCrJmGoZlJlHnwzjKaoZftqofYXb/vS9ZZdFLpFW
-	tB9v6KgbU8t4jNiHWlgNVdAMFYuZxbaW3FbwAQcXOfk=
-X-Google-Smtp-Source: AGHT+IHRSH7+mnghk5+K6OY1NH52/2MRSnfqJmNP3IiaQH5tQ5r0hWfDAhatgkUrfGbEuoehDRIFqg==
-X-Received: by 2002:a05:600c:190d:b0:439:99ab:6178 with SMTP id 5b1f17b1804b1-43c601cf229mr24881215e9.6.1741357374842;
-        Fri, 07 Mar 2025 06:22:54 -0800 (PST)
-Received: from legfed1 ([2a00:79c0:614:ea00:1ebe:eb51:3a97:3b47])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd948c1bsm51706755e9.36.2025.03.07.06.22.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 06:22:54 -0800 (PST)
-Date: Fri, 7 Mar 2025 15:22:52 +0100
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: dimitri.fedrau@liebherr.com, Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 0/3] net: phy: dp83822: Add support for changing
- the MAC series termination
-Message-ID: <20250307142252.GA2326148@legfed1>
-References: <20250307-dp83822-mac-impedance-v1-0-bdd85a759b45@liebherr.com>
- <6aee57d3-8657-44d6-ac21-9f443ca0924e@lunn.ch>
+	s=arc-20240116; t=1741357484; c=relaxed/simple;
+	bh=0ivBtm88OhtMMsvzZ6gveDwR1IczACnoVY8KLwPymM4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q+rlKgMgZVUyRfIKEQxwv8SvlC4V3ukRbdQKzwC90QvOkuCAiU9GY+Ftb513wM4QfSkuY8e79R41i1jPIDeUqMmftvTToWr5yc6j13dhtOrmdmUeDvW5nIa0G6/xk6d/AKNL5DcRc/rKcZQaexfCUMGJZFLfnUVosMMekFc83bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Gv2ZUzEE; arc=none smtp.client-ip=79.135.106.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741357480; x=1741616680;
+	bh=KqthcJVrewmtu1xtlHXM3b3KzDBBgkcXCjltCDAKMr8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=Gv2ZUzEEhNz24nrFdExvPJGxZrGl9yZQdPcjukALo+vcSuGSARQqR4bWDnktJ5HyW
+	 NFyP9TIHP/EP6Tv2MWQ0pCpuCPVVWxdHDXzHU7a6t8qXR7Uo1KXBxvzsklaaL49BCY
+	 UTEJR7U4Rx/qY7W1ZpF/BnQVGU2kK4hcXGsIY3X91FyuuSaoIzRwCcyIraIOw1/MUc
+	 d3arcR8d3x7x9OlPN+wiqA18I0/9e/7pKTiC2OY9QeO0n5JzCSIUbIAuoKSlGst4EB
+	 liXOBsrPhdF7E+FKhClwcpaB8rgCuDZM6iAvdYXU34C3T4eTH/h7vdmvXSpl4904gi
+	 QILDEnxgSj/QQ==
+Date: Fri, 07 Mar 2025 14:24:32 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 03/13] rust: hrtimer: implement `HrTimerPointer` for `Arc`
+Message-ID: <D8A3PCB7F5L8.36WN92Y4Y9AP9@proton.me>
+In-Reply-To: <87zfhx2afi.fsf@kernel.org>
+References: <20250307-hrtimer-v3-v6-12-rc2-v10-0-0cf7e9491da4@kernel.org> <20250307-hrtimer-v3-v6-12-rc2-v10-3-0cf7e9491da4@kernel.org> <b-T-Yv_oexMXaKG9kNNfbYz-Qaw1XhJw-VHerSPFp_sIMoztNyAj94_rH-uNYeG-Hc5WANUivDJW9WLmfZZHwA==@protonmail.internalid> <D8A1Z043VPGR.2OBGSBH1ALUL6@proton.me> <87senp3r9b.fsf@kernel.org> <4ZAkOKT4__IQstGGnVAvkCTx_eb_sQwehN8od8rozgp_hijMhU83a7AOm9PD2WV8AuamjQxz_U1abZVWKY-zDA==@protonmail.internalid> <D8A2O5QBXCRI.18W3W0EDI3UXZ@proton.me> <87zfhx2afi.fsf@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: a5b9ed01667193288f8ed54b88ac9c8b3c1513c7
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6aee57d3-8657-44d6-ac21-9f443ca0924e@lunn.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Am Fri, Mar 07, 2025 at 02:39:32PM +0100 schrieb Andrew Lunn:
-> On Fri, Mar 07, 2025 at 11:30:00AM +0100, Dimitri Fedrau via B4 Relay wrote:
-> > The dp83822 provides the possibility to set the resistance value of the
-> > the MAC series termination. Modifying the resistance to an appropriate
-> > value can reduce signal reflections and therefore improve signal quality.
-> 
-> I have some dumb questions....
-> 
-> By referring to MAC from the perspective of the PHY, do you mean the
-> termination of the bus between the MAC and the PHY? The SGMII SERDES,
-> or RGMII?
+On Fri Mar 7, 2025 at 3:16 PM CET, Andreas Hindborg wrote:
+> "Benno Lossin" <benno.lossin@proton.me> writes:
+>> On Fri Mar 7, 2025 at 2:27 PM CET, Andreas Hindborg wrote:
+>>> "Benno Lossin" <benno.lossin@proton.me> writes:
+>>>> On Fri Mar 7, 2025 at 11:11 AM CET, Andreas Hindborg wrote:
+>>>>> +impl<T> RawHrTimerCallback for Arc<T>
+>>>>> +where
+>>>>> +    T: 'static,
+>>>>> +    T: HasHrTimer<T>,
+>>>>> +    T: for<'a> HrTimerCallback<Pointer<'a> =3D Self>,
+>>>>> +{
+>>>>> +    type CallbackTarget<'a> =3D ArcBorrow<'a, T>;
+>>>>> +
+>>>>> +    unsafe extern "C" fn run(ptr: *mut bindings::hrtimer) -> binding=
+s::hrtimer_restart {
+>>>>> +        // `HrTimer` is `repr(C)`
+>>>>> +        let timer_ptr =3D ptr.cast::<super::HrTimer<T>>();
+>>>>> +
+>>>>> +        // SAFETY: By C API contract `ptr` is the pointer we passed =
+when
+>>>>> +        // queuing the timer, so it is a `HrTimer<T>` embedded in a =
+`T`.
+>>>>> +        let data_ptr =3D unsafe { T::timer_container_of(timer_ptr) }=
+;
+>>>>> +
+>>>>> +        // SAFETY: `data_ptr` points to the `T` that was used to que=
+ue the
+>>>>> +        // timer. This `T` is contained in an `Arc`.
+>>>>
+>>>> You're not justifying all safety requirements of `ArcBorrow::from_raw`=
+.
+>>>
+>>> How is this:
+>>>
+>>>         // SAFETY:
+>>>         //  - `data_ptr` is derived form the pointer to the `T` that wa=
+s used to
+>>>         //    queue the timer.
+>>>         //  - The `ArcTimerHandle` associated with this timer is guaran=
+teed to
+>>>         //    be alive for the duration of the lifetime of `receiver`, =
+so the
+>>
+>> There is no `receiver` in this context?
 >
-- Yes, the perspective is from the PHY.
-- Yes, but only the outputs towards the MAC. Resistors can be saved on
-  the PCB when they are integrated into the PHY.
-- The PHY is able to operate with RGMII, RMII and MII.
+> It's the value returned from the call, same line.
 
-Should I rename then "mac-series-termination-ohms" to
-"output-mac-series-termination-ohms" or similar ?
+Ah my bad.
 
-> I'm assuming the terminology is direct from the datasheet of the PHY?
-> But since this is a bit of a niche area, no other PHY driver currently
-> supports anythings like this, the terminology is not well known. So it
-> would be good to expand the description, to make it really clear what
-> you are talking about, so if anybody else wants to add the same
-> feature, they make use of the property, not add a new property.
+>
+>> Is the reason for the handle staying alive that when it is dropped, it
+>> calls `cancel` and that waits until the callback finishes? If so, did
+>> you write that down somewhere here?
+>
+> Yes, it is in the safety requirement of the `HrTimerHandle` trait.
+> Should I add that? It becomes quite a story.
 
-The datasheet calls it MAC impedance control, that is what someone might
-want to achieve when selecting the proper resistance value. I named it
-"mac-series-termination-ohms" instead to make sure what is done to
-achieve impedance matching.
+Yeah, I think you should add it.
 
-Should I add the proper description in the bindings ? Description of the
-properties are somehow short. However will expand the description.
+---
+Cheers,
+Benno
 
-Best regards,
-Dimitri Fedrau
+>>>         //    refcount of the underlying `Arc` is guaranteed to be nonz=
+ero for
+>>>         //    the duration.
+>>>         //  - We own one refcount in the `ArcTimerHandle` associted wit=
+h this
+>>>         //    timer, so it is not possible to get a `UniqueArc` to this
+>>>         //    allocation from other `Arc` clones.
+>>
+>> Otherwise this sounds good.
+>
+> Cool.
+>
+>
+> Best regards,
+> Andreas Hindborg
+
+
 
