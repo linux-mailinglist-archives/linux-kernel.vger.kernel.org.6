@@ -1,121 +1,145 @@
-Return-Path: <linux-kernel+bounces-550904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64F70A56590
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:38:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7E7A56593
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:39:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4120B3B435D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:38:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 667BE189699F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85FF20E700;
-	Fri,  7 Mar 2025 10:38:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8C920E713;
+	Fri,  7 Mar 2025 10:38:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZeUFC5Fr"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iq+fSDAs"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989E71A239E;
-	Fri,  7 Mar 2025 10:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220441A239E;
+	Fri,  7 Mar 2025 10:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741343888; cv=none; b=GYNmOfVhynqR8DcltXq0aUcnGK5anOCH2Cd1U/4sl3RMA/GeSYZY5Dn2GiGYlEiwXzvGx4mElctsczQVsOTP5ZwuAJX+aqV9BAv7OK1T/CDb3mfwZeDRqDc0Yzw6e94B/EAOeL2ZFLq2xqr2LDe6EFG2xXMVIb7x6laEAwXN/tg=
+	t=1741343937; cv=none; b=AIB56nXcLBKSAkOjaTRHGKFvo0pF71R5kub6wkL35p17GbNZIqKoW5p2yzRC9xcSmErUmj3mrxix+SDuEWjaVZOuZnSacg8swmvE0Hio91Leti0XxVDL3WD+JGMJvjadEK4YqVjb4CRzBtPlRp2Jpm3wVIRPT/Y6CgVIj0QDxB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741343888; c=relaxed/simple;
-	bh=NejdsTtVw1HHTKocf1fmib35yAwLtf1yxH2xdipeR7U=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iBeY+g/j42hwqmZWPxfXrfkXlx1c3xZ5TPTEaRqiiy8bFw6Ko3V+sA6VIhYLQFoHE0mTAyeP+RY5cQmvjW1/ORnf2pZW6wpcCNd7zgh035Rr2RD99gpVo9AEMMCHFIksjGbZTB9GhsTjQiiAX+m7DCtwzk5ECDaBINCHZlmp+WE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZeUFC5Fr; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 527Ac0tQ244116
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Mar 2025 04:38:00 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741343881;
-	bh=C1++GN37YacsvtvGJVQ2tP4MeEDYm2OhNRDU8/ZHW64=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=ZeUFC5Fr9NyqOc65rZANb7X3bc///Ar7dClPMnYVrozGbFxKmFFTGE41EsMmF/YjD
-	 VvAjuQOBY5Eii6qYpuOiPO2E9OQO7PQy0L0WVpC5SmQq0PgluzAqgRlH70VSRwU+0o
-	 Dqzbt+1gBW4psqz49DZG8xNGWGOMhNVy/l220pBA=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 527Ac0a5088612
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 7 Mar 2025 04:38:00 -0600
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
- Mar 2025 04:38:00 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 7 Mar 2025 04:38:00 -0600
-Received: from uda0132425.dhcp.ti.com (dhcp-10-24-69-250.dhcp.ti.com [10.24.69.250])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527Abt74022744;
-	Fri, 7 Mar 2025 04:37:56 -0600
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <j-choudhary@ti.com>, <rogerq@kernel.org>,
-        Siddharth
- Vadapalli <s-vadapalli@ti.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, <stable@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
-Subject: Re: [PATCH v2] arm64: dts: ti: k3-j784s4-j742s2-main-common: Fix serdes_ln_ctrl reg-masks
-Date: Fri, 7 Mar 2025 16:07:53 +0530
-Message-ID: <174133309359.1072814.1136748837607533827.b4-ty@ti.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250228053850.506028-1-s-vadapalli@ti.com>
-References: <20250228053850.506028-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1741343937; c=relaxed/simple;
+	bh=KBjfkwRvGCUyvFil1J8pzURsrNfhG9wF/ffzDqhupJA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=i4BrrGamlHs1a4v1xxdafwgIpsQmEEs0MvCmDpa00JNPLu1h1VogIAcUv0cM29hMXIGLWTt6dXPjmXJCAYmymgzCvQd1xxjWV+HMd4g+dtR1j24TgomI96++/M8akgPuZ6ZR9VXCiLABW4MAtZJDKsp8MUudM+4SFuBvJN4dDAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iq+fSDAs; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43bc6a6aaf7so13054565e9.2;
+        Fri, 07 Mar 2025 02:38:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741343934; x=1741948734; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=KBjfkwRvGCUyvFil1J8pzURsrNfhG9wF/ffzDqhupJA=;
+        b=Iq+fSDAs6F0LtZnFNme30f+57EjZXJRwxOrjGWyWbTpkzw2ysl4G5IR8mWyvSnJZQe
+         TDHfGhj7Bj5Asttf87cWLzE8CXEP4/KzJiu9B2j7pAWpMzyjUS03n+dZTjtEsszIMPTB
+         IecUHqZnrdl9DuARvhErSRtIlFz/KKMaP1LIM1Aiba1JUTfyWvhQEU5EiWq5BYc6YfRR
+         9CHBoCFFSPmS+eADmaUkkSM/8Gjkc7KPvmG7GoJonOm85Del5/fWW1Sf8xnW9KjVSOWs
+         UtIrr7k5nbnJlcleksuMUAhMw6vM8kO+R58K+eia4LM6szJSNZD29kDCc0SGwVl5RZM3
+         QV5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741343934; x=1741948734;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KBjfkwRvGCUyvFil1J8pzURsrNfhG9wF/ffzDqhupJA=;
+        b=YdjyfgZWy2V10uQGwXti58psKF1ArR2IH117sWffFk8aGTtU0geo5/vGXgbhtQ/il9
+         a4uWEB8zgHjS7x0QPkebja+vceKjMyEsgo3AIetXVUTj9K2cpp5RU4YER7z4DLSNf/gr
+         9yLpRZp4Azd4OqcvO4vEnTTDtXsU3q9V+ontU7LO5BkdgDNElKG9mJBS/DTKjJ+kEtGp
+         gd5qq0HLr/lFPl7G/3y4d0AwiTqqndL+/TF1K95Bmbg1Ph37qqqEUsMffUiju5mdEiCP
+         hyBEHe4AW86Zn0VRYMMRk5z1Mb+dG8fHE3vYGH2wpVwUt+GtlwhDi9E3FFcA0IOh0CGU
+         C+WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW0zdTw7Pk4PHiRBu1JwIobk/mLD9/A+Gdxpw/EfaALSiCE6wgIZGz+aDllRuOGFbH4v254n8ktmsJP0A==@vger.kernel.org, AJvYcCWoKNkxtbVdX4Ejv5Fqr+k06XxJrT/cUfR6xhzyAzC06ehJiPboh4zztqNZvOf+/N1lRbax0EDZb/09ZL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyra+Fppc3bbUMPtbyEyHINh/rJE+6x5zgwtIPiySSJ79gPeDSy
+	ElsGAQzPVcv2/YhKeJrxeYrY78+TG0LpCT65M5Wr8QaQeLp/Ke8J
+X-Gm-Gg: ASbGncudqToUSbQQkZ5WrC5Oy0InGgqQVVl+4TI0Lzbp2xiJgurH0pw7MVDMzY1VjFw
+	iAarJZJ4Wid/Pb3kd65LxP6wxKfjuimqGM6hlhBuih0ARRzr5QDJjyPumnVh9vJJBtz2fZswC4j
+	L8X7n1rjMI7hukBKjjQ1lVaXnDodpu+lhuiE++l0aGsFlHsT7qcMSsfpmv3j+Nqx7qM3n577Jlq
+	M3hGPeh0ZRg/TJmGiX2GC21Xc6y62SSeoTejf8wUexR54A4PhNQHgp4PBbRrJRPNn3TGuXQxPoh
+	iZpmfQvCHGU1LV33d1zLK9cc7jtjCtQcRZRenUQ1uhjZ4lU=
+X-Google-Smtp-Source: AGHT+IEorkdXayPImRPZQsK1R9xIBDq7GWAblWS2lMHO3O/4fE4WLPdorUwZSgvvZskGaZ02RyApBg==
+X-Received: by 2002:a05:600c:3546:b0:43b:cc73:2528 with SMTP id 5b1f17b1804b1-43c5a62a5f8mr17687435e9.20.1741343933990;
+        Fri, 07 Mar 2025 02:38:53 -0800 (PST)
+Received: from [10.176.235.56] ([137.201.254.41])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd4352e29sm76442125e9.32.2025.03.07.02.38.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 02:38:53 -0800 (PST)
+Message-ID: <7c6042974071699f9e5a85a4592d75a6a8c5ce4f.camel@gmail.com>
+Subject: Re: [PATCH] ufs: core: bsg: Add hibern8 enter/exit to
+ ufshcd_send_bsg_uic_cmd
+From: Bean Huo <huobean@gmail.com>
+To: Arthur Simchaev <Arthur.Simchaev@sandisk.com>, 
+ "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+ "quic_mapa@quicinc.com" <quic_mapa@quicinc.com>,  "quic_cang@quicinc.com"
+ <quic_cang@quicinc.com>
+Cc: Avri Altman <Avri.Altman@sandisk.com>, Avi Shchislowski
+	 <Avi.Shchislowski@sandisk.com>, "linux-scsi@vger.kernel.org"
+	 <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	 <linux-kernel@vger.kernel.org>, "bvanassche@acm.org" <bvanassche@acm.org>
+Date: Fri, 07 Mar 2025 11:38:52 +0100
+In-Reply-To: <SA2PR16MB42515681881747A6B5C83352F4D52@SA2PR16MB4251.namprd16.prod.outlook.com>
+References: <20250304114652.210395-1-arthur.simchaev@sandisk.com>
+	 <bd2e01d8b33413655a4215221c910eaf2cdf6461.camel@gmail.com>
+	 <SA2PR16MB42515681881747A6B5C83352F4D52@SA2PR16MB4251.namprd16.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Siddharth Vadapalli,
+On Fri, 2025-03-07 at 09:18 +0000, Arthur Simchaev wrote:
+>=20
+>=20
+> > -----Original Message-----
+> > From: Bean Huo <huobean@gmail.com>
+> > Sent: Thursday, March 6, 2025 2:50 PM
+> > To: Arthur Simchaev <Arthur.Simchaev@sandisk.com>;
+> > martin.petersen@oracle.com; quic_mapa@quicinc.com;
+> > quic_cang@quicinc.com
+> > Cc: Avri Altman <Avri.Altman@sandisk.com>; Avi Shchislowski
+> > <Avi.Shchislowski@sandisk.com>; linux-scsi@vger.kernel.org; linux-
+> > kernel@vger.kernel.org; bvanassche@acm.org
+> > Subject: Re: [PATCH] ufs: core: bsg: Add hibern8 enter/exit to
+> > ufshcd_send_bsg_uic_cmd
+> >=20
+> >=20
+> > Arthur,
+> >=20
+> > At present, we lack a user-space tool to initiate eye monitor
+> > measurements.
+> > Additionally, opening a channel for users in user land to send MP
+> > commands
+> > seems unsafe.
+> >=20
+> >=20
+> > Kind regards,
+> > Bean
+> >=20
+>=20
+> Hi Bean.
+>=20
+> Actually,=C2=A0 the EOM tool was published two months ago
+> See the mail from Can Guo. The patch simply extends the UIC debugging
+> functionality from user space.
+> I think it is quite safe to use hibern8 functionality for debugging
+> purposes.
+>=20
+> Regards
+> Arthur
 
-On Fri, 28 Feb 2025 11:08:50 +0530, Siddharth Vadapalli wrote:
-> Commit under Fixes added the 'idle-states' property for SERDES4 lane muxes
-> without defining the corresponding register offsets and masks for it in the
-> 'mux-reg-masks' property within the 'serdes_ln_ctrl' node.
-> 
-> Fix this.
-> 
-> 
-> [...]
+Great, we will work on that.
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
-
-[1/1] arm64: dts: ti: k3-j784s4-j742s2-main-common: Fix serdes_ln_ctrl reg-masks
-      commit: 38e7f9092efbbf2a4a67e4410b55b797f8d1e184
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
---
-Vignesh
-
+Kind regards,
+Bean
 
