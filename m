@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-550308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7369A55DBD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:39:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E86FA55DBE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:39:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE5473B22F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:39:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87E1B174687
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECCE18DB2D;
-	Fri,  7 Mar 2025 02:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8BD18E368;
+	Fri,  7 Mar 2025 02:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WprpxhQn"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1a9Nwdp3"
 Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585961891A9
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 02:39:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEE1F18C337
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 02:39:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741315158; cv=none; b=q/PDwJDbVkpYZ+z2Gq1jG8+mA8LgL83Bb5W6gWqLPf7aD4m62qbs0H2aO0361q8Mp11t5G5x16Qm6WSQMFV9d/qwnk0Z7mIen6VwTlF6KhbXv3MtTubMRZExBvkXLq/00YIscPTubwASaOMDYDR2ONhKfQOtRmFhU+lKkYw96RE=
+	t=1741315159; cv=none; b=CRPWGhwtheWyR5L1Bz/B4FiDW1JuUtklX2QPHJil7ndq2ROgEAog8k+sg9VNeMVYsC4CdCHpcWgoi0f/Miw308GVz0TQ9p4ycBEzJn0h9c6U0FET98gjYivHKQB3Wxmxcv0tujUrTmGW+GrHDX1ReBztlFncxizjtRMbYaS/rfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741315158; c=relaxed/simple;
-	bh=F3s3liOiszNRKh+IGM77OFI5rtCSCy0pnnGAdXuo7hE=;
+	s=arc-20240116; t=1741315159; c=relaxed/simple;
+	bh=iqG3XkWRBPttmCCbkNtgJ25Z4WythQO6E5K24EXEX3w=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=eR2WrVe5lwakjdZW9iXwQf/LKuVeSesUCDTDST53C1SyQ3aR4pe7INsklGCt/eiYaxWmOc+SzmHsAbVXu02OvnbzupsqobWJXQtUe20ClPzkga7rDRdC2dd5+erdmEpbwvfvy5DJl4I/yTwhPSBsCH5hw86SlWsjo7y/Fj6B4Ow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WprpxhQn; arc=none smtp.client-ip=209.85.216.73
+	 To:Content-Type; b=iw6zO4DZpvBjjuIUNWsOX7Dxbcn5pnwSXCvcJhicnkm6Y7yov+ZOObaUWtx0RRLSTmXHai9feH9zh3618gZXbquoeKKmbzQi2oPhDSi+IJrI9os5QmDYaXcaoBfcza5nsO1VnAANkdhI+WY53XuIFiG0jPInLfk1DF8OB5Vg2L0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1a9Nwdp3; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fe8c5dbdb0so2543143a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 18:39:16 -0800 (PST)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2feb47c6757so2366137a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 18:39:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741315155; x=1741919955; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741315157; x=1741919957; darn=vger.kernel.org;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9r1pEzREl2UeUw5kyh9Mo6aZcKi+y0eZFdoOEN6jsvQ=;
-        b=WprpxhQnygbpwtiwPAFEvHaSNwvM+J+RabmcuDDLzlejXBEZte1uijziHlqF2DQ41Y
-         Tn48XRoG5YB2woGuhvbIX+gZEvowDSERVdAnYpGVrzErKDju18sa25ltVg5iXAUq2qzR
-         bIkknTBikUr17pkteaaKwdNnK30BZoYDWs7scGDHKSTYjxz6rOtU4+L6BUPpAI+rhqHG
-         rYO0Qvr3vSIkpHBQuqUVsP1aTV+5ddBODZfHRE7QrMk9E7hx5ueA1rpXtGHS0dZXlQjO
-         8tYKIaLqAmWH4s8WFXVLP6Zgz5/8VeNnMUhCdw0B0B5NoGYkVe74mXkJcHmmOVFBWehR
-         I3Bg==
+        bh=KPBN3yXUjkpdSLG1dni/WGsuJHBEZ19aO4r2Wk7bmj0=;
+        b=1a9Nwdp3RNDeMa1v8lI8a0TLMDHGfbh75kulSknTlRuVllvBylQSJH46EzQkII9JGj
+         jjIv68m6QtEy1/dI54woUZfLEhLrK75P+Y6DALGzJS7oAbgFuara9YAl/U5j3r1OMWai
+         6TR5Mj/CMgJ5mtaH/AU7Hb1/jd7kJt6fZ/Gd22uSGg+iLA5uc0hUoUwaF5RP/c+bxCkQ
+         1JgyKUCvgvoCnpQEMktjAN8Bf4M1fkCPn76MHydlfB5CneNt6Ye232SxVJBhRQFEANQ6
+         sstHDU/1OnvIVP6l+nz8WSdgcuqGAH4bXIt1uhPmTjbV46FBv9hqfTvSBp9TefPqAhLD
+         wnxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741315155; x=1741919955;
+        d=1e100.net; s=20230601; t=1741315157; x=1741919957;
         h=to:from:subject:message-id:references:mime-version:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9r1pEzREl2UeUw5kyh9Mo6aZcKi+y0eZFdoOEN6jsvQ=;
-        b=nY2KxllAbH6TYqMOFoBBUkm2T6272LAfw9KYOTDOtOWKn+ZJgqwRtZSi8vU+sgyiGL
-         1lt1NA4uciy4o6bvqMLH2JyDfaSemyY7vh8diA2xbvAzMpSMR+jugEr89HNcI4Fabx5P
-         mLyAuhVvoHB1RbagCnzuWta/RxqLvoZiqcSDBLPBBhVNFWovU7yfyaL+wvJICsb3QmT3
-         axfFk+oekunJdNp/AS3xZb6NFZJTnlKzMO4ZsWGty3PfIEtCd3eqwlCyFeplKE5Jwfu2
-         QcFGi3CKuFtXdbxjdib6wOjU6y7n83hFio6X/2pD7hlEMPRHuNkcU7YqJZhsAE13YbWy
-         LmDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfnlEWPeG+Ouh3Qhwp5fe/sDLg279cDNCwjoe2tJWv5fgV5wucEOrH4nF3HfeSMGWl7xa/t8Di7ST9u0c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzScxst1OHZqo7ywqMHyKUST+RIxCrZdR20DIGDabFLxHJqWhkg
-	4+UTCDPL+R4bbCpWnnYfEAf2irMPPOhsA5u3L0Vs99eQYAl3LDzQFUC2MNfGgUGHmKeg2kcd0Fd
-	3QukfJA==
-X-Google-Smtp-Source: AGHT+IFB0Jz96EghCYT9ApTLDpOc/vAwaOVYpvQQQH8OlnfZ6TncP/9f8f1tEe0CjITrBDqQDN3C7rY6NhKW
-X-Received: from pjbqx8.prod.google.com ([2002:a17:90b:3e48:b0:2f9:e05f:187f])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:38cd:b0:2ee:741c:e9f4
- with SMTP id 98e67ed59e1d1-2ff7ce8e5dfmr2673067a91.11.1741315155485; Thu, 06
- Mar 2025 18:39:15 -0800 (PST)
-Date: Thu,  6 Mar 2025 18:39:04 -0800
+        bh=KPBN3yXUjkpdSLG1dni/WGsuJHBEZ19aO4r2Wk7bmj0=;
+        b=VPfYrpnXa563LENs8vNo8PfL9PEq35RIh0094a6CmhwMaA/D7d/H4BYIBffF6DeVP7
+         P6TnMtWLpNZVlet8AIrvnjWhX1jStEj9IxvwAmcpk538I+WnNWsG/6Bk7duzlibEq/JL
+         LciW5yQo+QfmorGAw55YOQvxSoeazzOg3Ks3bAZph6OsMj3qvfoxDVeaEGE0fyUtkJVG
+         E3956G94zFR9bH7yfAd8FPS6RlQPWlmMoJrmp5pG/53ntMIZfPo9tnI3zNROCbYThJ6k
+         5fPl0PSM4tDRCKuKWA8W90mpWU2yyn+4MyHQaM/17RJCfjIy+9erH2fS8cde5ccvc5+8
+         XlSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGlJ0dLAFhRo0ueNl9G49cB3F0YvaS1u1zGLZt9OQogroyvf3M9pZP0B2884bnOBGGWtkEpi+QYMpY63k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxip/C3H/YUbeITbE1DVo2phDmz1mEhDm/SSolIbtimW1BKOJah
+	NRZP7hyHhNN7MlUzSL01kg09a2VrwSDeeKxUZvtGQMVRQl+6AUXV5Ny37J4c4zRiVAwtLefNbTY
+	7sgm6UA==
+X-Google-Smtp-Source: AGHT+IG/b0hXfWY5ZRlwruhM4tAtMOk8s3jJ+EevpJ3fgIu+EuawoslSbZhkRzSkJ/I8qE89wS6GDaFWoThH
+X-Received: from pji13.prod.google.com ([2002:a17:90b:3fcd:b0:2ff:4ba2:f3a5])
+ (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4e86:b0:2fe:8f9f:e5f0
+ with SMTP id 98e67ed59e1d1-2ff7cea0212mr2324134a91.19.1741315157159; Thu, 06
+ Mar 2025 18:39:17 -0800 (PST)
+Date: Thu,  6 Mar 2025 18:39:05 -0800
 In-Reply-To: <20250307023906.1135613-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250307023906.1135613-1-irogers@google.com>
 X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
-Message-ID: <20250307023906.1135613-3-irogers@google.com>
-Subject: [PATCH v2 3/5] perf parse-events: Corrections to topdown sorting
+Message-ID: <20250307023906.1135613-4-irogers@google.com>
+Subject: [PATCH v2 4/5] perf x86 evlist: Update comments on topdown regrouping
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -87,260 +87,58 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	Dapeng Mi <dapeng1.mi@linux.intel.com>, Thomas Falcon <thomas.falcon@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 
-In the case of '{instructions,slots},faults,topdown-retiring' the
-first event that must be grouped, slots, is ignored causing the
-topdown-retiring event not to be adjacent to the group it needs to be
-inserted into. Don't ignore the group members when computing the
-force_grouped_index.
+From: Dapeng Mi <dapeng1.mi@linux.intel.com>
 
-Make the force_grouped_index be for the leader of the group it is
-within and always use it first rather than a group leader index so
-that topdown events may be sorted from one group into another.
+Update to remove comments about groupings not working and with the:
+```
+perf stat -e "{instructions,slots},{cycles,topdown-retiring}"
+```
+case that now works.
 
-As the PMU name comparison applies to moving events in the same group
-ensure the name ordering is always respected.
-
-Change the group splitting logic to not group if there are no other
-topdown events and to fix cases where the force group leader wasn't
-being grouped with the other members of its group.
-
-Reported-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Closes: https://lore.kernel.org/lkml/20250224083306.71813-2-dapeng1.mi@linux.intel.com/
-Closes: https://lore.kernel.org/lkml/f7e4f7e8-748c-4ec7-9088-0e844392c11a@linux.intel.com/
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/arch/x86/util/evlist.c |  15 ++--
- tools/perf/util/parse-events.c    | 145 ++++++++++++++++++++----------
- 2 files changed, 105 insertions(+), 55 deletions(-)
+ tools/perf/arch/x86/util/evlist.c | 27 ++++++---------------------
+ 1 file changed, 6 insertions(+), 21 deletions(-)
 
 diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
-index 447a734e591c..ed205d1b207d 100644
+index ed205d1b207d..7905a28d7734 100644
 --- a/tools/perf/arch/x86/util/evlist.c
 +++ b/tools/perf/arch/x86/util/evlist.c
-@@ -76,12 +76,15 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
- 		 * topdown metrics events are already in same group with slots
- 		 * event, do nothing.
- 		 */
--		if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs) &&
--		    lhs->core.leader != rhs->core.leader)
--			return -1;
--		if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs) &&
--		    lhs->core.leader != rhs->core.leader)
--			return 1;
-+		if (lhs->core.leader != rhs->core.leader) {
-+			bool lhs_topdown = arch_is_topdown_metrics(lhs);
-+			bool rhs_topdown = arch_is_topdown_metrics(rhs);
-+
-+			if (lhs_topdown && !rhs_topdown)
-+				return -1;
-+			if (!lhs_topdown && rhs_topdown)
-+				return 1;
-+		}
- 	}
- 
- 	/* Retire latency event should not be group leader*/
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 35e48fe56dfa..5152fd5a6ead 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -1980,48 +1980,55 @@ static int evlist__cmp(void *_fg_idx, const struct list_head *l, const struct li
- 	int *force_grouped_idx = _fg_idx;
- 	int lhs_sort_idx, rhs_sort_idx, ret;
- 	const char *lhs_pmu_name, *rhs_pmu_name;
--	bool lhs_has_group, rhs_has_group;
- 
- 	/*
--	 * First sort by grouping/leader. Read the leader idx only if the evsel
--	 * is part of a group, by default ungrouped events will be sorted
--	 * relative to grouped events based on where the first ungrouped event
--	 * occurs. If both events don't have a group we want to fall-through to
--	 * the arch specific sorting, that can reorder and fix things like
--	 * Intel's topdown events.
-+	 * Get the indexes of the 2 events to sort. If the events are
-+	 * in groups then the leader's index is used otherwise the
-+	 * event's index is used. An index may be forced for events that
-+	 * must be in the same group, namely Intel topdown events.
+@@ -39,28 +39,13 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
+ 	 *         26,319,024      slots
+ 	 *          2,427,791      instructions
+ 	 *          2,683,508      topdown-retiring
+-	 *
+-	 * If slots event and topdown metrics events are not in same group, the
+-	 * topdown metrics events must be first event after the slots event group,
+-	 * otherwise topdown metrics events can't be regrouped correctly, e.g.
+-	 *
+-	 * a. perf stat -e "{instructions,slots},cycles,topdown-retiring" -C0 sleep 1
+-	 *    WARNING: events were regrouped to match PMUs
+-	 *     Performance counter stats for 'CPU(s) 0':
+-	 *         17,923,134      slots
+-	 *          2,154,855      instructions
+-	 *          3,015,058      cycles
+-	 *    <not supported>      topdown-retiring
+-	 *
+-	 * If slots event and topdown metrics events are in two groups, the group which
+-	 * has topdown metrics events must contain only the topdown metrics event,
+-	 * otherwise topdown metrics event can't be regrouped correctly as well, e.g.
+-	 *
+-	 * a. perf stat -e "{instructions,slots},{topdown-retiring,cycles}" -C0 sleep 1
++	 * e. slots event and metrics event are in a group and not adjacent
++	 *    perf stat -e "{instructions,slots},cycles,topdown-retiring" -C0 sleep 1
+ 	 *    WARNING: events were regrouped to match PMUs
+-	 *    Error:
+-	 *    The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
+-	 *    event (topdown-retiring)
++	 *         68,433,522      slots
++	 *          8,856,102      topdown-retiring
++	 *          7,791,494      instructions
++	 *         11,469,513      cycles
  	 */
--	if (lhs_core->leader != lhs_core || lhs_core->nr_members > 1) {
--		lhs_has_group = true;
--		lhs_sort_idx = lhs_core->leader->idx;
-+	if (*force_grouped_idx != -1 && arch_evsel__must_be_in_group(lhs)) {
-+		lhs_sort_idx = *force_grouped_idx;
- 	} else {
--		lhs_has_group = false;
--		lhs_sort_idx = *force_grouped_idx != -1 && arch_evsel__must_be_in_group(lhs)
--			? *force_grouped_idx
--			: lhs_core->idx;
--	}
--	if (rhs_core->leader != rhs_core || rhs_core->nr_members > 1) {
--		rhs_has_group = true;
--		rhs_sort_idx = rhs_core->leader->idx;
-+		bool lhs_has_group = lhs_core->leader != lhs_core || lhs_core->nr_members > 1;
-+
-+		lhs_sort_idx = lhs_has_group ? lhs_core->leader->idx : lhs_core->idx;
-+	}
-+	if (*force_grouped_idx != -1 && arch_evsel__must_be_in_group(rhs)) {
-+		rhs_sort_idx = *force_grouped_idx;
- 	} else {
--		rhs_has_group = false;
--		rhs_sort_idx = *force_grouped_idx != -1 && arch_evsel__must_be_in_group(rhs)
--			? *force_grouped_idx
--			: rhs_core->idx;
-+		bool rhs_has_group = rhs_core->leader != rhs_core || rhs_core->nr_members > 1;
-+
-+		rhs_sort_idx = rhs_has_group ? rhs_core->leader->idx : rhs_core->idx;
- 	}
- 
-+	/* If the indices differ then respect the insertion order. */
- 	if (lhs_sort_idx != rhs_sort_idx)
- 		return lhs_sort_idx - rhs_sort_idx;
- 
--	/* Group by PMU if there is a group. Groups can't span PMUs. */
--	if (lhs_has_group && rhs_has_group) {
--		lhs_pmu_name = lhs->group_pmu_name;
--		rhs_pmu_name = rhs->group_pmu_name;
--		ret = strcmp(lhs_pmu_name, rhs_pmu_name);
--		if (ret)
--			return ret;
--	}
-+	/*
-+	 * Ignoring forcing, lhs_sort_idx == rhs_sort_idx so lhs and rhs should
-+	 * be in the same group. Events in the same group need to be ordered by
-+	 * their grouping PMU name as the group will be broken to ensure only
-+	 * events on the same PMU are programmed together.
-+	 *
-+	 * With forcing the lhs_sort_idx == rhs_sort_idx shows that one or both
-+	 * events are being forced to be at force_group_index. If only one event
-+	 * is being forced then the other event is the group leader of the group
-+	 * we're trying to force the event into. Ensure for the force grouped
-+	 * case that the PMU name ordering is also respected.
-+	 */
-+	lhs_pmu_name = lhs->group_pmu_name;
-+	rhs_pmu_name = rhs->group_pmu_name;
-+	ret = strcmp(lhs_pmu_name, rhs_pmu_name);
-+	if (ret)
-+		return ret;
- 
--	/* Architecture specific sorting. */
-+	/*
-+	 * Architecture specific sorting, by default sort events in the same
-+	 * group with the same PMU by their insertion index. On Intel topdown
-+	 * constraints must be adhered to - slots first, etc.
-+	 */
- 	return arch_evlist__cmp(lhs, rhs);
- }
- 
-@@ -2030,9 +2037,11 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
- 	int idx = 0, force_grouped_idx = -1;
- 	struct evsel *pos, *cur_leader = NULL;
- 	struct perf_evsel *cur_leaders_grp = NULL;
--	bool idx_changed = false, cur_leader_force_grouped = false;
-+	bool idx_changed = false;
- 	int orig_num_leaders = 0, num_leaders = 0;
- 	int ret;
-+	struct evsel *force_grouped_leader = NULL;
-+	bool last_event_was_forced_leader = false;
- 
- 	/*
- 	 * Compute index to insert ungrouped events at. Place them where the
-@@ -2055,10 +2064,13 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
- 		 */
- 		pos->core.idx = idx++;
- 
--		/* Remember an index to sort all forced grouped events together to. */
--		if (force_grouped_idx == -1 && pos == pos_leader && pos->core.nr_members < 2 &&
--		    arch_evsel__must_be_in_group(pos))
--			force_grouped_idx = pos->core.idx;
-+		/*
-+		 * Remember an index to sort all forced grouped events
-+		 * together to. Use the group leader as some events
-+		 * must appear first within the group.
-+		 */
-+		if (force_grouped_idx == -1 && arch_evsel__must_be_in_group(pos))
-+			force_grouped_idx = pos_leader->core.idx;
- 	}
- 
- 	/* Sort events. */
-@@ -2086,31 +2098,66 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
- 		 * Set the group leader respecting the given groupings and that
- 		 * groups can't span PMUs.
- 		 */
--		if (!cur_leader)
-+		if (!cur_leader) {
- 			cur_leader = pos;
-+			cur_leaders_grp = &pos->core;
-+			if (pos_force_grouped)
-+				force_grouped_leader = pos;
-+		}
- 
- 		cur_leader_pmu_name = cur_leader->group_pmu_name;
--		if ((cur_leaders_grp != pos->core.leader &&
--		     (!pos_force_grouped || !cur_leader_force_grouped)) ||
--		    strcmp(cur_leader_pmu_name, pos_pmu_name)) {
--			/* Event is for a different group/PMU than last. */
-+		if (strcmp(cur_leader_pmu_name, pos_pmu_name)) {
-+			/* PMU changed so the group/leader must change. */
- 			cur_leader = pos;
--			/*
--			 * Remember the leader's group before it is overwritten,
--			 * so that later events match as being in the same
--			 * group.
--			 */
- 			cur_leaders_grp = pos->core.leader;
-+			if (pos_force_grouped && force_grouped_leader == NULL)
-+				force_grouped_leader = pos;
-+		} else if (cur_leaders_grp != pos->core.leader) {
-+			bool split_even_if_last_leader_was_forced = true;
-+
- 			/*
--			 * Avoid forcing events into groups with events that
--			 * don't need to be in the group.
-+			 * Event is for a different group. If the last event was
-+			 * the forced group leader then subsequent group events
-+			 * and forced events should be in the same group. If
-+			 * there are no other forced group events then the
-+			 * forced group leader wasn't really being forced into a
-+			 * group, it just set arch_evsel__must_be_in_group, and
-+			 * we don't want the group to split here.
- 			 */
--			cur_leader_force_grouped = pos_force_grouped;
-+			if (force_grouped_idx != -1 && last_event_was_forced_leader) {
-+				struct evsel *pos2 = pos;
-+				/*
-+				 * Search the whole list as the group leaders
-+				 * aren't currently valid.
-+				 */
-+				list_for_each_entry_continue(pos2, list, core.node) {
-+					if (pos->core.leader == pos2->core.leader &&
-+					    arch_evsel__must_be_in_group(pos2)) {
-+						split_even_if_last_leader_was_forced = false;
-+						break;
-+					}
-+				}
-+			}
-+			if (!last_event_was_forced_leader || split_even_if_last_leader_was_forced) {
-+				if (pos_force_grouped) {
-+					if (force_grouped_leader) {
-+						cur_leader = force_grouped_leader;
-+						cur_leaders_grp = force_grouped_leader->core.leader;
-+					} else {
-+						cur_leader = force_grouped_leader = pos;
-+						cur_leaders_grp = &pos->core;
-+					}
-+				} else {
-+					cur_leader = pos;
-+					cur_leaders_grp = pos->core.leader;
-+				}
-+			}
- 		}
- 		if (pos_leader != cur_leader) {
- 			/* The leader changed so update it. */
- 			evsel__set_leader(pos, cur_leader);
- 		}
-+		last_event_was_forced_leader = (force_grouped_leader == pos);
- 	}
- 	list_for_each_entry(pos, list, core.node) {
- 		struct evsel *pos_leader = evsel__leader(pos);
+ 	if (topdown_sys_has_perf_metrics() &&
+ 	    (arch_evsel__must_be_in_group(lhs) || arch_evsel__must_be_in_group(rhs))) {
 -- 
 2.49.0.rc0.332.g42c0ae87b1-goog
 
