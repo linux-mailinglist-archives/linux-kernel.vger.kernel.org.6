@@ -1,181 +1,117 @@
-Return-Path: <linux-kernel+bounces-551065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33AD1A567BC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:21:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 62284A567BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:22:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B1BA3A79DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:21:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 540FB3A7090
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:21:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3D4218EB3;
-	Fri,  7 Mar 2025 12:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A48B5218EA1;
+	Fri,  7 Mar 2025 12:22:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4wbIWD+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SiZrPpQQ"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B00E184E;
-	Fri,  7 Mar 2025 12:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E1221884B
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 12:22:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741350085; cv=none; b=bdmUODprUfQjNV6ytpKPdcaIHFG6PxSYQ2X0dnvlyysb7SV3TjiuPbojyEnZaGJhmxklkHeZaE2BzwqGE8pVeo1SfufVreLcHwI5sW1ydcf2SHqEPyd1fSBsrvLuPQj0tOGwmkbosamcSOVye/WLQ+ju3JPCRT9r7gyLztaIUJI=
+	t=1741350122; cv=none; b=Ui20UNxB+zJCcgEb2HAfQcAJkX/Gy3KJ+a49+N9X9s7sJqMoIXAM3DJbvMqTDFCG5fD3cKBkQs84jbNJdFDQgS1Asm/WNvU6cPyEKZ7XWJl7Z+/BvLDStWzJJsHO/0qdGcpmJxG+4HY9YKtTICBu/fqnAWzYH8A8J/eaQscFLLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741350085; c=relaxed/simple;
-	bh=n/rX2T7XWYNEB5c47vZqkTQcbFk1cEn+IsmwsxMI8H4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dhTi47U/GUHzmFuMpjObMeJzVwAqLJYqItYwLQTvp4Vp+qfpl6voA73dpR1+WSh3DAQ7RFTefpOblOWT82S/5wro+F0Nvdm/iFWIufRQh8qE615lsrG2VE2VOKIov5Ofxgkmu2fnEliGtA8uN4I/+z4cLl/B1yPxSUuido7te70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4wbIWD+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 379A9C4CED1;
-	Fri,  7 Mar 2025 12:21:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741350084;
-	bh=n/rX2T7XWYNEB5c47vZqkTQcbFk1cEn+IsmwsxMI8H4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G4wbIWD+eQgi9iSzdRuy9RPG1IVOA0kvWKjOcAZWjQyfpCe1oTP0d4AyYJJkMI7bx
-	 mV+L+WG/USp4nL+oyGB5fWGwSSXGW+joQxc4Bbmx1VlWr4gw2SPnkAy1uCUAZaT3ud
-	 WR4TQYjFo6KYOLRepnzgHLP1eNhxmRAnTZ27rx98jQMeqWTeyjqF9f8H4hzQ7ESZSJ
-	 QnVzxO2KXa2NJHk3hRPoge4TW4gy0ueua3MjM+7e80Q0cFznNkNf3RZdcNFhPP60cJ
-	 37IY+Bpo6V+lW1w4Xfbma4zKAV0ek411E0sfBy0MH/7n7JlWIIMDfAXZijxfw2xceO
-	 1QmGPueKe804g==
-Date: Fri, 7 Mar 2025 12:21:19 +0000
-From: Simon Horman <horms@kernel.org>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?utf-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>
-Subject: Re: [PATCH net-next 1/7] net: ethtool: netlink: Allow per-netdevice
- DUMP operations
-Message-ID: <20250307122119.GE3666230@kernel.org>
-References: <20250305141938.319282-1-maxime.chevallier@bootlin.com>
- <20250305141938.319282-2-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1741350122; c=relaxed/simple;
+	bh=cq1+OteKDtgJWfu1nYckuUeYuh1/3pv+gICqyQxiZeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cnc5FaXqoqdMS3W5evBMCUOclIHm60DdiqbswWRx1GFcCDYquaKcshrO1ckiw79BUgqIE7Hu+kkNGl/jnerwfDVbpVDgU0vwjaO074PSDvEjz8zFfZyBIEnecVl+d1YBi/O50dpNYd4x7DaVif3zToRE8LRFn4fY5AmSDAsjumw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SiZrPpQQ; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5439a6179a7so1761713e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 04:21:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741350118; x=1741954918; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3LSXN2s87KZIXIkPkPFgGyIKtJmmpgi3DyLUElVYvfM=;
+        b=SiZrPpQQQ7oHoHSTkmFZWMsGYcUe8VknD33562SMDVM1kh/OFTcoJz2uvSb6xJKMV8
+         nptrWBjOXeenZodMgIRFYlOU5pQrp6xILyeXpRdgYyXtpqS7bQckq9aua9UjULDwLMXq
+         SZNQTHMWtpGufbX1dg2WgJwQRlxE70BJzM6yrGE7IqUWxhqZ5nv5/gS3Ww6xlZX3XPO8
+         ZdcLj29UWqlZ0IUm3M114nkokRnrmcoHMXvtZIvXXlxC6z+J42LI0XMil0sJ3TJZ2OcG
+         zureo9yVLUPgzp2lDccjKkzFvndAJliPtLFtfzxMp6juDzvKURkCVkT3k+PlzRRlSblL
+         MiQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741350118; x=1741954918;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3LSXN2s87KZIXIkPkPFgGyIKtJmmpgi3DyLUElVYvfM=;
+        b=iM00p/QYuCs0egcmVWsB0dEYMZvwCEUIk+rz/YhRT8IsatTfUUaAn240rF/hPpEaHS
+         vqJw4lOGrIDmUqtj6eQseXPYpISnhW2gn1E/ce59/749EI0JaQqUpwSzKceozdKpxAdD
+         Wx1eu7RbjerntuUHo8D6z6cwPByGW0P3ZXlwAFTLIcCf+3+F6XwK5H8rHiH3o8AmnX0t
+         0CzT4kaRXRg9TNmWlR9HgO3PHKXcMRiA0qh1qQfspcYYQhTRvs3J7QMeXQ4Rt4CAP7JZ
+         ZLGSNVbdSyFHBAxQo7pzTAz2Eo/SXNgu2FS20rqvCa828SyfUJ5bDSLqMS1ox9zAzytw
+         ZQRw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOXeMVVan19aEnS/mDb7diZ/BIXeI7CQGXXnTwYjQ/lPmOu0TpxhFj0dNBbYEKOL9l7XnqfbCkzlsS2xI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzmau4o5/t/w80WZq6HbqpaH98bXovYeabaeF3nVYGQAmVC14n9
+	d7q7bpr9zSF7e/jRL3t13O7aHLfBcXxgiOhBHtaoPZze00Mb2naTNxwiLiAGMqM=
+X-Gm-Gg: ASbGnctdamxD1O2W/O40TDF5Q8gp3asWibaQmrLGxZx4b5vNJTE31aLYO/XJj5ny0DV
+	CboAie4T5IXR6fg5o51L0dRo6fI8NIdzc2nFiEgLTDrlqKyGmxwyC2up5osQtpO8LaDOwMsz0oe
+	D1CzrsOsCtNcR/JZdpwDW7xBn2hv2lOWA4BXzfrEkDYgDadzjaCHSc/JfEGd/5ZqyaAlybzVz9J
+	yIW/io6zYC/TLfdEISW4w7BsVmXH0LhwW6CQBx1hvQwotD38ynAu2GU4DjvG4FR2XzeYSsdQ74J
+	RZT3UgUqHh7BiCByafgiEstFb5RkIy9/TKGq6c103WioOuhm0btz8w==
+X-Google-Smtp-Source: AGHT+IEkE7ifgMpdMezpZQNCnHBP1lZ6rxE+o6lKPh6Da3+fmM6emG5u6CXIK1LjuK/UverWoewG9g==
+X-Received: by 2002:a05:6512:1242:b0:545:2a9a:aa02 with SMTP id 2adb3069b0e04-54990435209mr1307217e87.19.1741350118331;
+        Fri, 07 Mar 2025 04:21:58 -0800 (PST)
+Received: from [192.168.0.14] ([79.115.63.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae58093sm473524e87.57.2025.03.07.04.21.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Mar 2025 04:21:57 -0800 (PST)
+Message-ID: <924c370e-2c42-4e29-b790-a1d16e7c1e24@linaro.org>
+Date: Fri, 7 Mar 2025 12:21:55 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305141938.319282-2-maxime.chevallier@bootlin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] mtd: spi-nor: explicitly include
+ <linux/mod_devicetable.h>
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: Pratyush Yadav <pratyush@kernel.org>, Michael Walle <mwalle@kernel.org>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250307-spi-nor-headers-cleanup-v1-0-c186a9511c1e@linaro.org>
+ <20250307-spi-nor-headers-cleanup-v1-2-c186a9511c1e@linaro.org>
+ <875xkltfle.fsf@bootlin.com>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <875xkltfle.fsf@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 05, 2025 at 03:19:31PM +0100, Maxime Chevallier wrote:
-> We have a number of netlink commands in the ethnl family that may have
-> multiple objects to dump even for a single net_device, including :
+
+
+On 3/7/25 8:22 AM, Miquel Raynal wrote:
+> Hello Tudor,
+
+Hi, Miquel!
 > 
->  - PLCA, PSE-PD, phy: one message per PHY device
->  - tsinfo: one message per timestamp source (netdev + phys)
->  - rss: One per RSS context
+> On 07/03/2025 at 09:09:06 +02, Tudor Ambarus <tudor.ambarus@linaro.org> wrote:
 > 
-> To get this behaviour, these netlink commands need to roll a custom
-> ->dumpit().
+>> The core driver is using 'struct of_device_id' and relies on implicit
+>> inclusion of <linux/mod_devicetable.h>, which comes from
+>> <linux/of_platform.h>.
 > 
-> To prepare making per-netdev DUMP more generic in ethnl, introduce a
-> member in the ethnl ops to indicate if a given command may allow
-> pernetdev DUMPs (also referred to as filtered DUMPs).
-> 
-> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
-> ---
->  net/ethtool/netlink.c | 45 ++++++++++++++++++++++++++++---------------
->  net/ethtool/netlink.h |  1 +
->  2 files changed, 30 insertions(+), 16 deletions(-)
-> 
-> diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
-> index 734849a57369..0815b28ba32f 100644
-> --- a/net/ethtool/netlink.c
-> +++ b/net/ethtool/netlink.c
-> @@ -578,21 +578,34 @@ static int ethnl_default_dumpit(struct sk_buff *skb,
->  	int ret = 0;
->  
->  	rcu_read_lock();
-> -	for_each_netdev_dump(net, dev, ctx->pos_ifindex) {
-> -		dev_hold(dev);
-> +	if (ctx->req_info->dev) {
-> +		dev = ctx->req_info->dev;
->  		rcu_read_unlock();
-> -
-> -		ret = ethnl_default_dump_one(skb, dev, ctx, genl_info_dump(cb));
-> -
-> +		/* Filtered DUMP request targeted to a single netdev. We already
-> +		 * hold a ref to the netdev from ->start()
-> +		 */
-> +		ret = ethnl_default_dump_one_dev(skb, dev, ctx,
-> +						 genl_info_dump(cb));
+> It is actually included from of.h now (since patch 1) and I wonder
+> whether there is a need for it to be included explicitly. As a user it
+> feels like "of.h" should already include whatever is needed for us (and
 
-Hi Maxime,
-
-ethnl_default_dump_one_dev() is called here but it doesn't exist
-until the following patch is applied, which breaks bisection.
-
->  		rcu_read_lock();
-> -		dev_put(dev);
-> -
-> -		if (ret < 0 && ret != -EOPNOTSUPP) {
-> -			if (likely(skb->len))
-> -				ret = skb->len;
-> -			break;
-> +		netdev_put(ctx->req_info->dev, &ctx->req_info->dev_tracker);
-> +	} else {
-> +		for_each_netdev_dump(net, dev, ctx->pos_ifindex) {
-> +			dev_hold(dev);
-> +			rcu_read_unlock();
-> +
-> +			ret = ethnl_default_dump_one(skb, dev, ctx,
-> +						     genl_info_dump(cb));
-> +
-> +			rcu_read_lock();
-> +			dev_put(dev);
-> +
-> +			if (ret < 0 && ret != -EOPNOTSUPP) {
-> +				if (likely(skb->len))
-> +					ret = skb->len;
-> +				break;
-> +			}
-> +			ret = 0;
->  		}
-> -		ret = 0;
->  	}
->  	rcu_read_unlock();
->  
-
-...
-
-> diff --git a/net/ethtool/netlink.h b/net/ethtool/netlink.h
-> index ec6ab5443a6f..4db27182741f 100644
-> --- a/net/ethtool/netlink.h
-> +++ b/net/ethtool/netlink.h
-> @@ -388,6 +388,7 @@ struct ethnl_request_ops {
->  	unsigned int		req_info_size;
->  	unsigned int		reply_data_size;
->  	bool			allow_nodev_do;
-> +	bool			allow_pernetdev_dump;
-
-nit: allow_pernetdev_dump should also be added to the Kernel doc for
-     struct ethnl_request_ops
-
-     Flagged by ./scripts/kernel-doc -none
-
-     There also appear to be similar minor issues with subsequent
-     patches in this series.
-
->  	u8			set_ntf_cmd;
->  
->  	int (*parse_request)(struct ethnl_req_info *req_info,
-> -- 
-> 2.48.1
-> 
+Seems so. I'll drop this patch. Thanks!
+ta
 
