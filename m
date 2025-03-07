@@ -1,124 +1,454 @@
-Return-Path: <linux-kernel+bounces-550724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14301A5634E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:11:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F36A56333
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:05:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74D1818954AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:11:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B621A7A2EC5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040721E1E1C;
-	Fri,  7 Mar 2025 09:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523BE1FE45F;
+	Fri,  7 Mar 2025 09:05:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="xlqJ5gvN"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="svKN8Uer"
+Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D2E1D9A66;
-	Fri,  7 Mar 2025 09:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85D921EA7E5
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:05:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741338679; cv=none; b=cT7JSmIifdzYIAhxq4VJQEjMXBNNXECZur22y0rkPIJYY96gpgIa6v3wUl2rSRzgYCTyTfKuCGVIXWnZXj60b/a5co0KZbGz8rVm1ytyOCZI4U1fdaeq4EcWBTwpnvL98q0yMQoUSGC3gMZ0BnOgw9NZYGTq48mGzaXgksb+SKM=
+	t=1741338306; cv=none; b=HS2SMJzk5CmqBtCD16DgEVf2nygap69F5IrmS81vsfAhM8goIRrdfTUcB8KjCtFEXlj1Wf2whG0paJFviAdWPNC1RkzSp3GPT9+rTui8Lh7zw2jl4ROiX1jHv3M4HAgLWPs8y974/fk2AkyMJyd8sHqo1mNjyGRFY2hhuIsHBUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741338679; c=relaxed/simple;
-	bh=ltgoNzgYtxsbymD9vskeFxGtQHUnteTdUfDu3zc5wGg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nbpfmVbRb1HeZt3AU2Rav0EQz417pESPdDCPOlBIJ/+wEHSXcAZy1t9dC4HbAr06dnGdon8GCG8JegZDVRoW+jUQiQOHVDs6MuX5uVXBFPDCc6WpvG0cxMFJU3FhfemF+u5wrS8grRz+wrjBy5feqtIDugNlNBHliRjn807BliE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=xlqJ5gvN; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5277MpKU029564;
-	Fri, 7 Mar 2025 10:10:43 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	MbwoBFfg5pVaSdi+Qssvq+8QdxwNch8vbgxAm8z822M=; b=xlqJ5gvN1TnsNDm4
-	1CT8YWBcB/a5XeRyb/I/ol1Rnvx1KlSG991Qw5SL25FfA+1/kLwJCEKmhodmujYx
-	Y2oqilb2hWxwhZaDMWoVY+oGOHvBRR9/bM7nyfENFeJH+NcnoqkSC2rgyPz3XeJA
-	z4v/Hjo3D6+Ub91QfXyPTJ9ak1QUGkh7wJ5pG6ZSvXqe+BMz5gEDdvS6B2UIUdr4
-	BVdL6T8kFTVlSVXmOdA+q1/Kjx48ChQS/0S4f607E9DC0nMECo2GmM8H1O0jm9TN
-	D4p+lrEDeU0e9xh6Zai9P+OLCH1h0ueMxQ47Smx8JPj5MkkgCArHduDdDTp3aS9l
-	44j1dA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 457286vefq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 10:10:43 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A1001400F0;
-	Fri,  7 Mar 2025 10:09:23 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BABD85AC8BC;
-	Fri,  7 Mar 2025 09:59:43 +0100 (CET)
-Received: from [10.252.19.16] (10.252.19.16) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 7 Mar
- 2025 09:59:43 +0100
-Message-ID: <dfd831ec-e004-4132-94f0-3bdc755907cd@foss.st.com>
-Date: Fri, 7 Mar 2025 09:59:42 +0100
+	s=arc-20240116; t=1741338306; c=relaxed/simple;
+	bh=cZjyiLD8FCBsctu3Idqltdd92fC4NnGL8/qM5yKU+6c=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=h2cGBiyvHRFBU3bQjclTv+zkbNUoHIl7P3H5iElfR1j3Tog9OwPwsNOyxOQZ2/0tUUH6aDH3U+s/YWT+Vfil71zHIApCUVfctMBaiT2bzIKqJXHJtmImlI6ggaJwXNfeWrWr1xYiV7b7RAFJGfGas0LVKb2m7t8KH/0uWHWl5Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=svKN8Uer; arc=none smtp.client-ip=209.85.214.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
+Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-224191d9228so28301605ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 01:05:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741338304; x=1741943104; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IWTcXa8qMb2OXMUapDmcY8nfKao30BYKVcH0vm161K0=;
+        b=svKN8UermL90C4Qr8AoRPAJmnKFUndxMXro0NaW4ykvd3+tlidSg3rh3ve3/1lMuSh
+         5F2321L/Vjetkcwls6Rtaxdy6/IP0Z0zl3vQxRnkm/amm9+KK4TNfWotTNSEG1+q5h9E
+         9mZceX5YjC/mf2cgMkRPYX341Jf2Kxuun4/Q+tTlMlO70sum0xQCH23nzgFfrcS5HFOZ
+         GxchqhAeeZUQ3Ca3YdIyGJzPSR4U7ZqV2/xhxX6IfsK99MFyJmBeKiBASZ67v8crHBfB
+         o7oZrFPU3CpfunP1PFALJrkl2YluR2hmRsht4W7Hk1hgx3vqrucFaE9FuqVviNdXwsyi
+         uLjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741338304; x=1741943104;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=IWTcXa8qMb2OXMUapDmcY8nfKao30BYKVcH0vm161K0=;
+        b=R7Ctr2qVdPoL4D6u9Hnkqq4alpzWsSI1gPgoryh44UZomNkINNomMacc0V4KdZmPWO
+         pwwAgIWka0z7w2xRS2wBMNS7leTz+ArSTfqUW8sEIsGjdTWDaGQot6ePEMKRlfGbHlYw
+         DaBSrRvRtnuCtM4KvZ/df245a1brVqXCvd57Jsk8K+xQkyzbuG9mzAxO194gr4gTHwmm
+         4FyD+8rG1nLkY0DpCU28HhTyNXJ0qEfBhifRp0sjUFv82LM6ccffIzqD489ZX9qSyGnu
+         6IQrWfApe1b6xh8/DGyUnacDYvF7PvcUa/YGfuq9P2wp863pmyLVYxsVoazaQ785EOiV
+         /VGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNtZzKS/Pq0vsOwMtlCWaIOj1zZ4PVQ459jqIHt839F72MpqI2iZBaxh1+sSxk0oyZ3/kYAVVSyj6DV54=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+n6aM4fXmPYs98j0yNVGyW4/AhushfZPDtNWh10ULOhsVd8E2
+	4CYZAg2M3d9fTPI/qbsyr0sKg2GYM4avcV2Jd7ZGg+EPgbZwj/xKvdmt/6vljWA6o6gq2IRXbif
+	Zy2FInnFCeQ==
+X-Google-Smtp-Source: AGHT+IH6GowAmts0OAzwe/qO1oBRfvaXgz1FbCscQwji3d5sv+JtAidq29lpF5w3zW6q4bgnUEkmIuIjPtCqVg==
+X-Received: from pjbss12.prod.google.com ([2002:a17:90b:2ecc:b0:2ff:5752:a78f])
+ (user=davidgow job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:903:32c5:b0:224:2717:7993 with SMTP id d9443c01a7336-22428bfaacbmr40175325ad.45.1741338303815;
+ Fri, 07 Mar 2025 01:05:03 -0800 (PST)
+Date: Fri,  7 Mar 2025 17:00:57 +0800
+In-Reply-To: <20250307090103.918788-1-davidgow@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] spi: stm32: Fix a NULL vs IS_ERR() bug
-To: Charles Han <hanchunchao@inspur.com>, <broonie@kernel.org>,
-        <mcoquelin.stm32@gmail.com>, <alexandre.torgue@foss.st.com>
-CC: <linux-spi@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-References: <20250307032530.116837-1-hanchunchao@inspur.com>
-Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <20250307032530.116837-1-hanchunchao@inspur.com>
+Mime-Version: 1.0
+References: <20250307090103.918788-1-davidgow@google.com>
+X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
+Message-ID: <20250307090103.918788-3-davidgow@google.com>
+Subject: [PATCH v8 2/3] rust: macros: add macro to easily run KUnit tests
+From: David Gow <davidgow@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, 
+	"=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?=" <jose.exposito89@gmail.com>, Rae Moar <rmoar@google.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, Benno Lossin <benno.lossin@proton.me>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Matt Gilbride <mattgilbride@google.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
+	Tamir Duberstein <tamird@gmail.com>
+Cc: kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	David Gow <davidgow@google.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-07_03,2025-03-06_04,2024-11-22_01
+Content-Transfer-Encoding: quoted-printable
 
+From: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
 
+Add a new procedural macro (`#[kunit_tests(kunit_test_suit_name)]`) to
+run KUnit tests using a user-space like syntax.
 
-On 3/7/25 04:25, Charles Han wrote:
-> The devm_ioremap() function doesn't return error pointers, it may
-> returns NULL.  Update the error checking to match.
-> 
-> Fixes: 79b8a705e26c ("spi: stm32: Add OSPI driver")
-> Signed-off-by: Charles Han <hanchunchao@inspur.com>
-> ---
->  drivers/spi/spi-stm32-ospi.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
-> index 8eadcb64f34a..a544d7897edf 100644
-> --- a/drivers/spi/spi-stm32-ospi.c
-> +++ b/drivers/spi/spi-stm32-ospi.c
-> @@ -835,10 +835,10 @@ static int stm32_ospi_get_resources(struct platform_device *pdev)
->  	if (rmem) {
->  		ospi->mm_size = rmem->size;
->  		ospi->mm_base = devm_ioremap(dev, rmem->base, rmem->size);
-> -		if (IS_ERR(ospi->mm_base)) {
-> +		if (!ospi->mm_base) {
->  			dev_err(dev, "unable to map memory region: %pa+%pa\n",
->  				&rmem->base, &rmem->size);
-> -			ret = PTR_ERR(ospi->mm_base);
-> +			ret = -ENOMEM;
->  			goto err_dma;
->  		}
->  
+The macro, that should be used on modules, transforms every `#[test]`
+in a `kunit_case!` and adds a `kunit_unsafe_test_suite!` registering
+all of them.
 
-Hi
+The only difference with user-space tests is that instead of using
+`#[cfg(test)]`, `#[kunit_tests(kunit_test_suit_name)]` is used.
 
-No need to copy/paste other contributor's patch by just swapping some 
-words in title/commit message.
+Note that `#[cfg(CONFIG_KUNIT)]` is added so the test module is not
+compiled when `CONFIG_KUNIT` is set to `n`.
 
-This fix has already sent By Dan Carpenter and merged.
+Reviewed-by: David Gow <davidgow@google.com>
+Signed-off-by: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
+Co-developed-by: Boqun Feng <boqun.feng@gmail.com>
+Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+Reviewed-by: Tamir Duberstein <tamird@gmail.com>
+Signed-off-by: David Gow <davidgow@google.com>
+---
 
-Patrice
+No changes since v7:
+https://lore.kernel.org/rust-for-linux/20250214074051.1619256-3-davidgow@go=
+ogle.com/
+
+Changes since v6:
+https://lore.kernel.org/rust-for-linux/20250214074051.1619256-3-davidgow@go=
+ogle.com/
+- Fixed an [allow(unused_unsafe)] which ended up in patch 2 instead of
+  patch 1. (Thanks, Tamir!)
+- Add Tamir's Reviewed-by tag.
+
+Changes since v5:
+https://lore.kernel.org/all/20241213081035.2069066-3-davidgow@google.com/
+- Fix some rustfmt-related formatting shenanigans. (Thanks, Miguel)
+- Fix some documentation comment formatting as well. (Thanks, Miguel)
+- Tidy up the generated code to avoid unneeded &mut[] everywhere.
+  (Thanks, Miguel)
+- Fix a new clippy warning for using .as_bytes().len() instead of .len()
+  directly.
+
+Changes since v4:
+https://lore.kernel.org/linux-kselftest/20241101064505.3820737-3-davidgow@g=
+oogle.com/
+- Rebased against 6.13-rc1
+- "Expect" that the sample assert_eq!(1+1, 2) produces a clippy warning
+  due to a redundant assertion. (Thanks Boqun, Miguel)
+
+Changes since v3:
+https://lore.kernel.org/linux-kselftest/20241030045719.3085147-6-davidgow@g=
+oogle.com/
+- The #[kunit_tests()] macro now preserves span information, so
+  errors can be better reported. (Thanks, Boqun!)
+- The example test has been replaced to no longer use assert_eq!() with
+  a constant bool argument (which triggered a clippy warning now we
+  have the span info). It now checks 1 + 1 =3D=3D 2, to match the C example=
+.
+  - (The in_kunit_test() test in the next patch uses assert!() to check
+    a bool, so having something different here seemed to make a better
+    example.)
+
+Changes since v2:
+https://lore.kernel.org/linux-kselftest/20241029092422.2884505-3-davidgow@g=
+oogle.com/
+- Include missing rust/macros/kunit.rs file from v2. (Thanks Boqun!)
+- The proc macro now emits an error if the suite name is too long.
+
+Changes since v1:
+https://lore.kernel.org/lkml/20230720-rustbind-v1-2-c80db349e3b5@google.com=
+/
+- Rebased on top of rust-next
+- Make use of the new const functions, rather than the kunit_case!()
+  macro.
+
+---
+ MAINTAINERS          |   1 +
+ rust/kernel/kunit.rs |  11 +++
+ rust/macros/kunit.rs | 161 +++++++++++++++++++++++++++++++++++++++++++
+ rust/macros/lib.rs   |  29 ++++++++
+ 4 files changed, 202 insertions(+)
+ create mode 100644 rust/macros/kunit.rs
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c8d9e8187eb0..4e7a6d2f2c49 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12677,6 +12677,7 @@ F:	Documentation/dev-tools/kunit/
+ F:	include/kunit/
+ F:	lib/kunit/
+ F:	rust/kernel/kunit.rs
++F:	rust/macros/kunit.rs
+ F:	scripts/rustdoc_test_*
+ F:	tools/testing/kunit/
+=20
+diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
+index 1b9b52892562..97e99b52e4a9 100644
+--- a/rust/kernel/kunit.rs
++++ b/rust/kernel/kunit.rs
+@@ -40,6 +40,8 @@ pub fn info(args: fmt::Arguments<'_>) {
+     }
+ }
+=20
++use macros::kunit_tests;
++
+ /// Asserts that a boolean expression is `true` at runtime.
+ ///
+ /// Public but hidden since it should only be used from generated tests.
+@@ -285,3 +287,12 @@ macro_rules! kunit_unsafe_test_suite {
+         };
+     };
+ }
++
++#[kunit_tests(rust_kernel_kunit)]
++mod tests {
++    #[test]
++    fn rust_test_kunit_example_test() {
++        #![expect(clippy::eq_op)]
++        assert_eq!(1 + 1, 2);
++    }
++}
+diff --git a/rust/macros/kunit.rs b/rust/macros/kunit.rs
+new file mode 100644
+index 000000000000..4f553ecf40c0
+--- /dev/null
++++ b/rust/macros/kunit.rs
+@@ -0,0 +1,161 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Procedural macro to run KUnit tests using a user-space like syntax.
++//!
++//! Copyright (c) 2023 Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
++
++use proc_macro::{Delimiter, Group, TokenStream, TokenTree};
++use std::fmt::Write;
++
++pub(crate) fn kunit_tests(attr: TokenStream, ts: TokenStream) -> TokenStre=
+am {
++    let attr =3D attr.to_string();
++
++    if attr.is_empty() {
++        panic!("Missing test name in `#[kunit_tests(test_name)]` macro")
++    }
++
++    if attr.len() > 255 {
++        panic!(
++            "The test suite name `{}` exceeds the maximum length of 255 by=
+tes",
++            attr
++        )
++    }
++
++    let mut tokens: Vec<_> =3D ts.into_iter().collect();
++
++    // Scan for the `mod` keyword.
++    tokens
++        .iter()
++        .find_map(|token| match token {
++            TokenTree::Ident(ident) =3D> match ident.to_string().as_str() =
+{
++                "mod" =3D> Some(true),
++                _ =3D> None,
++            },
++            _ =3D> None,
++        })
++        .expect("`#[kunit_tests(test_name)]` attribute should only be appl=
+ied to modules");
++
++    // Retrieve the main body. The main body should be the last token tree=
+.
++    let body =3D match tokens.pop() {
++        Some(TokenTree::Group(group)) if group.delimiter() =3D=3D Delimite=
+r::Brace =3D> group,
++        _ =3D> panic!("Cannot locate main body of module"),
++    };
++
++    // Get the functions set as tests. Search for `[test]` -> `fn`.
++    let mut body_it =3D body.stream().into_iter();
++    let mut tests =3D Vec::new();
++    while let Some(token) =3D body_it.next() {
++        match token {
++            TokenTree::Group(ident) if ident.to_string() =3D=3D "[test]" =
+=3D> match body_it.next() {
++                Some(TokenTree::Ident(ident)) if ident.to_string() =3D=3D =
+"fn" =3D> {
++                    let test_name =3D match body_it.next() {
++                        Some(TokenTree::Ident(ident)) =3D> ident.to_string=
+(),
++                        _ =3D> continue,
++                    };
++                    tests.push(test_name);
++                }
++                _ =3D> continue,
++            },
++            _ =3D> (),
++        }
++    }
++
++    // Add `#[cfg(CONFIG_KUNIT)]` before the module declaration.
++    let config_kunit =3D "#[cfg(CONFIG_KUNIT)]".to_owned().parse().unwrap(=
+);
++    tokens.insert(
++        0,
++        TokenTree::Group(Group::new(Delimiter::None, config_kunit)),
++    );
++
++    // Generate the test KUnit test suite and a test case for each `#[test=
+]`.
++    // The code generated for the following test module:
++    //
++    // ```
++    // #[kunit_tests(kunit_test_suit_name)]
++    // mod tests {
++    //     #[test]
++    //     fn foo() {
++    //         assert_eq!(1, 1);
++    //     }
++    //
++    //     #[test]
++    //     fn bar() {
++    //         assert_eq!(2, 2);
++    //     }
++    // }
++    // ```
++    //
++    // Looks like:
++    //
++    // ```
++    // unsafe extern "C" fn kunit_rust_wrapper_foo(_test: *mut kernel::bin=
+dings::kunit) { foo(); }
++    // unsafe extern "C" fn kunit_rust_wrapper_bar(_test: *mut kernel::bin=
+dings::kunit) { bar(); }
++    //
++    // static mut TEST_CASES: [kernel::bindings::kunit_case; 3] =3D [
++    //     kernel::kunit::kunit_case(kernel::c_str!("foo"), kunit_rust_wra=
+pper_foo),
++    //     kernel::kunit::kunit_case(kernel::c_str!("bar"), kunit_rust_wra=
+pper_bar),
++    //     kernel::kunit::kunit_case_null(),
++    // ];
++    //
++    // kernel::kunit_unsafe_test_suite!(kunit_test_suit_name, TEST_CASES);
++    // ```
++    let mut kunit_macros =3D "".to_owned();
++    let mut test_cases =3D "".to_owned();
++    for test in &tests {
++        let kunit_wrapper_fn_name =3D format!("kunit_rust_wrapper_{}", tes=
+t);
++        let kunit_wrapper =3D format!(
++            "unsafe extern \"C\" fn {}(_test: *mut kernel::bindings::kunit=
+) {{ {}(); }}",
++            kunit_wrapper_fn_name, test
++        );
++        writeln!(kunit_macros, "{kunit_wrapper}").unwrap();
++        writeln!(
++            test_cases,
++            "    kernel::kunit::kunit_case(kernel::c_str!(\"{}\"), {}),",
++            test, kunit_wrapper_fn_name
++        )
++        .unwrap();
++    }
++
++    writeln!(kunit_macros).unwrap();
++    writeln!(
++        kunit_macros,
++        "static mut TEST_CASES: [kernel::bindings::kunit_case; {}] =3D [\n=
+{test_cases}    kernel::kunit::kunit_case_null(),\n];",
++        tests.len() + 1
++    )
++    .unwrap();
++
++    writeln!(
++        kunit_macros,
++        "kernel::kunit_unsafe_test_suite!({attr}, TEST_CASES);"
++    )
++    .unwrap();
++
++    // Remove the `#[test]` macros.
++    // We do this at a token level, in order to preserve span information.
++    let mut new_body =3D vec![];
++    let mut body_it =3D body.stream().into_iter();
++
++    while let Some(token) =3D body_it.next() {
++        match token {
++            TokenTree::Punct(ref c) if c.as_char() =3D=3D '#' =3D> match b=
+ody_it.next() {
++                Some(TokenTree::Group(group)) if group.to_string() =3D=3D =
+"[test]" =3D> (),
++                Some(next) =3D> {
++                    new_body.extend([token, next]);
++                }
++                _ =3D> {
++                    new_body.push(token);
++                }
++            },
++            _ =3D> {
++                new_body.push(token);
++            }
++        }
++    }
++
++    let mut new_body =3D TokenStream::from_iter(new_body);
++    new_body.extend::<TokenStream>(kunit_macros.parse().unwrap());
++
++    tokens.push(TokenTree::Group(Group::new(Delimiter::Brace, new_body)));
++
++    tokens.into_iter().collect()
++}
+diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
+index d61bc6a56425..50b58259c577 100644
+--- a/rust/macros/lib.rs
++++ b/rust/macros/lib.rs
+@@ -10,6 +10,7 @@
+ mod quote;
+ mod concat_idents;
+ mod helpers;
++mod kunit;
+ mod module;
+ mod paste;
+ mod pin_data;
+@@ -492,3 +493,31 @@ pub fn paste(input: TokenStream) -> TokenStream {
+ pub fn derive_zeroable(input: TokenStream) -> TokenStream {
+     zeroable::derive(input)
+ }
++
++/// Registers a KUnit test suite and its test cases using a user-space lik=
+e syntax.
++///
++/// This macro should be used on modules. If `CONFIG_KUNIT` (in `.config`)=
+ is `n`, the target module
++/// is ignored.
++///
++/// # Examples
++///
++/// ```ignore
++/// # use macros::kunit_tests;
++///
++/// #[kunit_tests(kunit_test_suit_name)]
++/// mod tests {
++///     #[test]
++///     fn foo() {
++///         assert_eq!(1, 1);
++///     }
++///
++///     #[test]
++///     fn bar() {
++///         assert_eq!(2, 2);
++///     }
++/// }
++/// ```
++#[proc_macro_attribute]
++pub fn kunit_tests(attr: TokenStream, ts: TokenStream) -> TokenStream {
++    kunit::kunit_tests(attr, ts)
++}
+--=20
+2.49.0.rc0.332.g42c0ae87b1-goog
+
 
