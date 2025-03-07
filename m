@@ -1,326 +1,248 @@
-Return-Path: <linux-kernel+bounces-550677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90AE5A562D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:43:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C46AA562D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:44:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7512F3A7D8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:43:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 981D7170262
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B86E1E1DFF;
-	Fri,  7 Mar 2025 08:43:35 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87AE51E1DEA;
+	Fri,  7 Mar 2025 08:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Djpc60WN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A001E1DEA;
-	Fri,  7 Mar 2025 08:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA33E1C861C;
+	Fri,  7 Mar 2025 08:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741337014; cv=none; b=DNAfIjcpFDXQGS98T+Y5vRJx+cxSlg0BEI3WrLuW1zAQ2ES6qXy/57XDPGso7gWrcUrCL305bZ9A38DVSmqGsSmOiK+atgP7h14FhVQ3p/QbqsiUReRxXbH1Qrbn1ZoEcfTwYfww+d/7iheVusbUX+pLjWTCG/Gq5ZnvYfK4zA4=
+	t=1741337037; cv=none; b=qTF1+0Kv+OWyUsgk/LB0Xcue9C9pt+Ezvcs5U5HKv+5s9UA0rDbUGjP33UFER/KLuDewA0tVQ7u+9I9wX8nz0o37wF8ne6OONMkIniNWZOVwmszIJ176j55gP3Km7ULwprh+HXMCtBFGZulV6tW4qQusNc0bkH2RoY3Kjz8T/P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741337014; c=relaxed/simple;
-	bh=ff/4itB3Zzjzhk8H8Tut3/WNFPGkoT6mDalp07z+9Uk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZWw6CjhTXDnopD9FpkaHsBkVwoeF9NQ92pb2YK2PlV9P/naZFwDecSXsDD5Xaj/JQce/osQz0URjF0iQn6wL8M+LBsoJU7SJ8xo6VInWHqa05hW92nzDCfaoB4yXo5QLtu+BwOXxRRCAeZ35vWrgc7o935n1wjNFZlWkix//cGQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z8KYn4jphz4f3jsv;
-	Fri,  7 Mar 2025 16:43:09 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7EA8E1A06D7;
-	Fri,  7 Mar 2025 16:43:26 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgDnSl+sscpnZLApFw--.25420S3;
-	Fri, 07 Mar 2025 16:43:26 +0800 (CST)
-Message-ID: <e9e92601-53bc-42a2-b428-e61bff6153c5@huaweicloud.com>
-Date: Fri, 7 Mar 2025 16:43:24 +0800
+	s=arc-20240116; t=1741337037; c=relaxed/simple;
+	bh=WcIPsud+/UeAJLAwbqQqP5bSvYxrFp1JApjAuuMLvBk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=bfycIyIQhTlFHuXwXt2MV1rFnIlL42cUr35kN8SnIZsuO8d1d0q/conZj7s0zvPzzrcBQ5wQQee4eCp7sp0pvRDWUQC292wzIw8R4yFsqrtqUf74C9M5qYaFZU1fXPi6JdsVRks/WIE7TdcMlRkof+5tagdtPBcEAmGw9hjZfhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Djpc60WN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75A47C4CED1;
+	Fri,  7 Mar 2025 08:43:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741337037;
+	bh=WcIPsud+/UeAJLAwbqQqP5bSvYxrFp1JApjAuuMLvBk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Djpc60WNtcCDAgBW6fAFzRxWnnLVQTD60WFqtBpUQpTTqUYSWtPUuVc4/0JOR1qud
+	 QDmsq3fwoTFHVQm6zRQQwGTE+HHe3raXaQix2tYp7YRaW0loKLs4lUHkZwsXEb1Nzx
+	 g/hs+59KQQW8GVBjeUDdlgAFmfNyJILCHbPYM9ZQbOKwQ8Qagszuw8qYq3oBnDu8Im
+	 FFkL9v50tNaO82qwUlgBwhRU5lzoCPTSABUcR+aCEMPDtJS0NPc6ToTFFRghhERE3R
+	 HSMv8EdJQWWD4sjOg9XAir+VafiuJCPKdetb+TPy5gGT103bgOLIKwpK/Ap5+CWaAe
+	 UN0OqLV/wRMKg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Ralf Jung" <post@ralfj.de>
+Cc: "Alice Ryhl" <aliceryhl@google.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "comex" <comexk@gmail.com>,  "Daniel Almeida"
+ <daniel.almeida@collabora.com>,  "Benno Lossin" <benno.lossin@proton.me>,
+  "Abdiel Janulgue" <abdiel.janulgue@gmail.com>,  <dakr@kernel.org>,
+  <robin.murphy@arm.com>,  <rust-for-linux@vger.kernel.org>,  "Miguel
+ Ojeda" <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary
+ Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,
+  "Trevor Gross" <tmgross@umich.edu>,  "Valentin Obst"
+ <kernel@valentinobst.de>,  <linux-kernel@vger.kernel.org>,  "Christoph
+ Hellwig" <hch@lst.de>,  "Marek Szyprowski" <m.szyprowski@samsung.com>,
+  <airlied@redhat.com>,  <iommu@lists.linux.dev>,  <lkmm@lists.linux.dev>
+Subject: Re: Allow data races on some read/write operations
+In-Reply-To: <580cfb1a-3619-410f-8b03-61ee984c1b1f@ralfj.de> (Ralf Jung's
+	message of "Wed, 05 Mar 2025 22:53:39 +0100")
+References: <87bjuil15w.fsf@kernel.org> <87ikoqjg1n.fsf@kernel.org>
+	<KpWTCfIlcLYFBpSvWPfALJ9VQn5a99_RAvxgMBc1aCrSalPB-qaW9IhXyaDG7HM1AcFPX5chj_Yr7IQp3F7UqA==@protonmail.internalid>
+	<CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
+	<87mse2hrd8.fsf@kernel.org> <Z8YMTiKS4T9wC4t_@boqun-archlinux>
+	<ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
+	<88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
+	<hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
+	<25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de>
+	<CAH5fLgidPHQzdUORNpNhtRFsKPU1T-0xdn5OSwYYZh3BgOVRQA@mail.gmail.com>
+	<18cmxblLU2QAa4YP25RWCKEnxuonOwWXavYmSsS4C5D40o8RaCkIXo0UDZ2SPnksk5nWYB29Y4zHkjQeOgd4ng==@protonmail.internalid>
+	<3aabca39-4658-454a-b0e3-e946e72977e1@ralfj.de> <87eczb71xs.fsf@kernel.org>
+	<M_YejDCAOZ7AX0l8ZZ7Z5EesJicUgsjYJUTm0SzLkhYTAYyXRJFTr4QYZMagG4KX6YdHoT-IPhf8ygjircrs0A==@protonmail.internalid>
+	<915eacce-cfd8-4bed-a407-32513e43978f@ralfj.de> <87tt875fu8.fsf@kernel.org>
+	<-_bKVxONywzmy2K6TPj5TT6swM4PhCN6ulfel4V8yTlJi3MzAGbIiKIVQ0TQzoVJ7wRfM8Ie5Jh5MSv9yf-sKg==@protonmail.internalid>
+	<580cfb1a-3619-410f-8b03-61ee984c1b1f@ralfj.de>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Fri, 07 Mar 2025 09:43:44 +0100
+Message-ID: <87frjp5iyn.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] ext4: avoid journaling sb update on error if
- journal is destroying
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
- linux-kernel@vger.kernel.org, Mahesh Kumar <maheshkumar657g@gmail.com>,
- linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
-References: <cover.1741270780.git.ojaswin@linux.ibm.com>
- <1bf59095d87e5dfae8f019385ba3ce58973baaff.1741270780.git.ojaswin@linux.ibm.com>
- <5b3864c3-bcfd-4f45-b427-224d32aca478@huaweicloud.com>
- <Z8qTciy49b7LSHqr@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <Z8qqna0BEDT5ZD82@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <Z8qqna0BEDT5ZD82@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgDnSl+sscpnZLApFw--.25420S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3JrykCrW7JryrAr4UKrW8Xrb_yoW3AFW8pr
-	Z5C3WqyrWUZr1jyw4Iqr4FqrWvga40yF92gr1UCwn7t398t3Z2qFWxtFyYkFyUZrs5G3W8
-	ZF4UA397Gw1YkFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyGb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAK
-	I48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7
-	xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xII
-	jxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw2
-	0EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x02
-	67AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
+"Ralf Jung" <post@ralfj.de> writes:
 
-
-On 2025/3/7 16:13, Ojaswin Mujoo wrote:
-> On Fri, Mar 07, 2025 at 12:04:26PM +0530, Ojaswin Mujoo wrote:
->> On Fri, Mar 07, 2025 at 10:49:28AM +0800, Zhang Yi wrote:
->>> On 2025/3/6 22:28, Ojaswin Mujoo wrote:
->>>> Presently we always BUG_ON if trying to start a transaction on a journal marked
->>>> with JBD2_UNMOUNT, since this should never happen. However, while ltp running
->>>> stress tests, it was observed that in case of some error handling paths, it is
->>>> possible for update_super_work to start a transaction after the journal is
->>>> destroyed eg:
->>>>
->>>> (umount)
->>>> ext4_kill_sb
->>>>   kill_block_super
->>>>     generic_shutdown_super
->>>>       sync_filesystem /* commits all txns */
->>>>       evict_inodes
->>>>         /* might start a new txn */
->>>>       ext4_put_super
->>>> 	flush_work(&sbi->s_sb_upd_work) /* flush the workqueue */
->>>>         jbd2_journal_destroy
->>>>           journal_kill_thread
->>>>             journal->j_flags |= JBD2_UNMOUNT;
->>>>           jbd2_journal_commit_transaction
->>>>             jbd2_journal_get_descriptor_buffer
->>>>               jbd2_journal_bmap
->>>>                 ext4_journal_bmap
->>>>                   ext4_map_blocks
->>>>                     ...
->>>>                     ext4_inode_error
->>>>                       ext4_handle_error
->>>>                         schedule_work(&sbi->s_sb_upd_work)
->>>>
->>>>                                                /* work queue kicks in */
->>>>                                                update_super_work
->>>>                                                  jbd2_journal_start
->>>>                                                    start_this_handle
->>>>                                                      BUG_ON(journal->j_flags &
->>>>                                                             JBD2_UNMOUNT)
->>>>
->>>> Hence, introduce a new sbi flag s_journal_destroying to indicate journal is
->>>> destroying only do a journaled (and deferred) update of sb if this flag is not
->>>> set. Otherwise, just fallback to an un-journaled commit.
->>>>
->>>> We set sbi->s_journal_destroying = true only after all the FS updates are done
->>>> during ext4_put_super() (except a running transaction that will get commited
->>>> during jbd2_journal_destroy()). After this point, it is safe to commit the sb
->>>> outside the journal as it won't race with a journaled update (refer
->>>> 2d01ddc86606).
->>>>
->>>> Also, we don't need a similar check in ext4_grp_locked_error since it is only
->>>> called from mballoc and AFAICT it would be always valid to schedule work here.
->>>>
->>>> Fixes: 2d01ddc86606 ("ext4: save error info to sb through journal if available")
->>>> Reported-by: Mahesh Kumar <maheshkumar657g@gmail.com>
->>>> Suggested-by: Jan Kara <jack@suse.cz>
->>>> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
->>>> ---
->>>>  fs/ext4/ext4.h      | 2 ++
->>>>  fs/ext4/ext4_jbd2.h | 8 ++++++++
->>>>  fs/ext4/super.c     | 4 +++-
->>>>  3 files changed, 13 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
->>>> index 2b7d781bfcad..d48e93bd5690 100644
->>>> --- a/fs/ext4/ext4.h
->>>> +++ b/fs/ext4/ext4.h
->>>> @@ -1728,6 +1728,8 @@ struct ext4_sb_info {
->>>>  	 */
->>>>  	struct work_struct s_sb_upd_work;
->>>>  
->>>> +	bool s_journal_destorying;
->>>> +
->>>>  	/* Atomic write unit values in bytes */
->>>>  	unsigned int s_awu_min;
->>>>  	unsigned int s_awu_max;
->>>> diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
->>>> index 9b3c9df02a39..6bd3ca84410d 100644
->>>> --- a/fs/ext4/ext4_jbd2.h
->>>> +++ b/fs/ext4/ext4_jbd2.h
->>>> @@ -437,6 +437,14 @@ static inline int ext4_journal_destroy(struct ext4_sb_info *sbi, journal_t *jour
->>>>  {
->>>>  	int err = 0;
->>>>  
->>>> +	/*
->>>> +	 * At this point all pending FS updates should be done except a possible
->>>> +	 * running transaction (which will commit in jbd2_journal_destroy). It
->>>> +	 * is now safe for any new errors to directly commit superblock rather
->>>> +	 * than going via journal.
->>>> +	 */
->>>> +	sbi->s_journal_destorying = true;
->>>> +
->>>
->>> Hi, Ojaswin!
->>>
->>> I'm afraid you still need to flush the superblock update work here,
->>> otherwise I guess the race condition you mentioned in v1 could still
->>> occur.
->>>
->>>  ext4_put_super()
->>>   flush_work(&sbi->s_sb_upd_work)
->>>
->>>                     **kjournald2**
->>>                     jbd2_journal_commit_transaction()
->>>                     ...
->>>                     ext4_inode_error()
->>>                       /* JBD2_UNMOUNT not set */
->>>                       schedule_work(s_sb_upd_work)
->>>
->>>                                   **workqueue**
->>>                                    update_super_work
->>>                                    /* s_journal_destorying is not set */
->>>                             	   if (journal && !s_journal_destorying)
->>>
->>>   ext4_journal_destroy()
->>>    /* set s_journal_destorying */
->>>    sbi->s_journal_destorying = true;
->>>    jbd2_journal_destroy()
->>>     journal->j_flags |= JBD2_UNMOUNT;
->>>
->>>                                        jbd2_journal_start()
->>>                                         start_this_handle()
->>>                                           BUG_ON(JBD2_UNMOUNT)
->>>
->>> Thanks,
->>> Yi.
->> Hi Yi,
+> Hi all,
+>
+> On 05.03.25 22:26, Andreas Hindborg wrote:
+>> "Ralf Jung" <post@ralfj.de> writes:
 >>
->> Yes you are right, somehow missed this edge case :(
->>
->> Alright then, we have to move out sbi->s_journal_destroying outside the
->> helper. Just wondering if I should still let it be in
->> ext4_journal_destroy and just add an extra s_journal_destroying = false
->> before schedule_work(s_sb_upd_work), because it makes sense.
->>
->> Okay let me give it some thought but thanks for pointing this out!
->>
->> Regards,
->> ojaswin
-> 
-> Okay so thinking about it a bit more, I see you also suggested to flush
-> the work after marking sbi->s_journal_destroying. But will that solve
-> it?
-> 
->   ext4_put_super()
->    flush_work(&sbi->s_sb_upd_work)
->  
->                      **kjournald2**
->                      jbd2_journal_commit_transaction()
->                      ...
->                      ext4_inode_error()
->                        /* JBD2_UNMOUNT not set */
->                        schedule_work(s_sb_upd_work)
->  
->                                     **workqueue**
->                                     update_super_work
->                                     /* s_journal_destorying is not set */
->                              	      if (journal && !s_journal_destorying)
->  
->    ext4_journal_destroy()
->     /* set s_journal_destorying */
->     sbi->s_journal_destorying = true;
->     flush_work(&sbi->s_sb_upd_work)
->                                       schedule_work()
-                                        ^^^^^^^^^^^^^^^
-                                        where does this come from?
-
-After this flush_work, we can guarantee that the running s_sb_upd_work
-finishes before we set JBD2_UNMOUNT. Additionally, the journal will
-not commit transaction or call schedule_work() again because it has
-been aborted due to the previous error. Am I missing something?
-
-Thanks,
-Yi.
-
->     jbd2_journal_destroy()
->      journal->j_flags |= JBD2_UNMOUNT;
->  
->                                         jbd2_journal_start()
->                                          start_this_handle()
->                                            BUG_ON(JBD2_UNMOUNT)
-> 
-> 
-> Seems like these edge cases keep sprouting up :)
-> 
-> As for the fix, how about we do something like this:
-> 
->   ext4_put_super()
-> 
->    flush_work(&sbi->s_sb_upd_work)
->    destroy_workqueue(sbi->rsv_conversion_wq);
-> 
->    ext4_journal_destroy()
->     /* set s_journal_destorying */
->     sbi->s_journal_destorying = true;
-> 
->    /* trigger a commit and wait for it to complete */
-> 
->     flush_work(&sbi->s_sb_upd_work)
-> 
->     jbd2_journal_destroy()
->      journal->j_flags |= JBD2_UNMOUNT;
->  
->                                         jbd2_journal_start()
->                                          start_this_handle()
->                                            BUG_ON(JBD2_UNMOUNT)
-> 
-> Still giving this codepath some thought but seems like this might just
-> be enough to fix the race. Thoughts on this?
-> 
-> Regards,
-> ojaswin
-> 
+>>> Hi all,
 >>>
->>>>  	err = jbd2_journal_destroy(journal);
->>>>  	sbi->s_journal = NULL;
->>>>  
->>>> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
->>>> index 8ad664d47806..31552cf0519a 100644
->>>> --- a/fs/ext4/super.c
->>>> +++ b/fs/ext4/super.c
->>>> @@ -706,7 +706,7 @@ static void ext4_handle_error(struct super_block *sb, bool force_ro, int error,
->>>>  		 * constraints, it may not be safe to do it right here so we
->>>>  		 * defer superblock flushing to a workqueue.
->>>>  		 */
->>>> -		if (continue_fs && journal)
->>>> +		if (continue_fs && journal && !EXT4_SB(sb)->s_journal_destorying)
->>>>  			schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
->>>>  		else
->>>>  			ext4_commit_super(sb);
->>>> @@ -5311,6 +5311,8 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
->>>>  	spin_lock_init(&sbi->s_error_lock);
->>>>  	INIT_WORK(&sbi->s_sb_upd_work, update_super_work);
->>>>  
->>>> +	sbi->s_journal_destorying = false;
->>>> +
->>>>  	err = ext4_group_desc_init(sb, es, logical_sb_block, &first_not_zeroed);
->>>>  	if (err)
->>>>  		goto failed_mount3;
+>>>>>> For some kinds of hardware, we might not want to trust the hardware.
+>>>>>> I.e., there is no race under normal operation, but the hardware could
+>>>>>> have a bug or be malicious and we might not want that to result in U=
+B.
+>>>>>> This is pretty similar to syscalls that take a pointer into userspace
+>>>>>> memory and read it - userspace shouldn't modify that memory during t=
+he
+>>>>>> syscall, but it can and if it does, that should be well-defined.
+>>>>>> (Though in the case of userspace, the copy happens in asm since it
+>>>>>> also needs to deal with virtual memory and so on.)
+>>>>>
+>>>>> Wow you are really doing your best to combine all the hard problems a=
+t the same
+>>>>> time. ;)
+>>>>> Sharing memory with untrusted parties is another tricky issue, and ev=
+en leaving
+>>>>> aside all the theoretical trouble, practically speaking you'll want to
+>>>>> exclusively use atomic accesses to interact with such memory. So doin=
+g this
+>>>>> properly requires atomic memcpy. I don't know what that is blocked on=
+, but it is
+>>>>> good to know that it would help the kernel.
+>>>>
+>>>> I am sort of baffled by this, since the C kernel has no such thing and
+>>>> has worked fine for a few years. Is it a property of Rust that causes =
+us
+>>>> to need atomic memcpy, or is what the C kernel is doing potentially da=
+ngerous?
 >>>
-> 
+>>> It's the same in C: a memcpy is a non-atomic access. If something else
+>>> concurrently mutates the memory you are copying from, or something else
+>>> concurrently reads/writes the memory you are copying two, that is UB.
+>>> This is not specific to memcpy; it's the same for regular pointer loads=
+/stores.
+>>> That's why you need READ_ONCE and WRITE_ONCE to specifically indicate t=
+o the
+>>> compiler that these are special accesses that need to be treated differ=
+ently.
+>>> Something similar is needed for memcpy.
+>>
+>> I'm not a compiler engineer, so I might be wrong about this, but. If I
+>> do a C `memcpy` from place A to place B where A is experiencing racy
+>> writes, if I don't interpret the data at place B after the copy
+>> operation, the rest of my C program is fine and will work as expected.
+>
+> The program has UB in that case. A program that has UB may work as expect=
+ed
+> today, but that changes nothing about it having UB.
+> The C standard is abundantly clear here:
+> "The execution of a program contains a data race if it contains two confl=
+icting
+> actions in different threads, at least one of which is not atomic, and ne=
+ither
+> happens before the other. Any such data race results in undefined behavio=
+r."
+> (C23, =C2=A75.1.2.4)
+>
+> You are describing a hypothetical language that treats data races in a di=
+fferent
+> way. Is such a language *possible*? Definitely. For the specific case you
+> describe here, one "just" has to declare read-write races to be not UB, b=
+ut to
+> return "poison data" on the read side (poison data is a bit like uninitia=
+lized
+> memory or padding), which the memcpy would then store on the target side.=
+ Any
+> future interpretation of the target memory would be UB ("poison data" is =
+not the
+> same as "random data"). Such a model has actually been studied [1], thoug=
+h no a
+> lot, and not as a proposal for a semantics of a user-facing language. (Ra=
+ther,
+> that was a proposal for an internal compiler IR.) The extra complications
+> incurred by this choice are significant -- there is no free lunch here.
+>
+> [1]: https://sf.snu.ac.kr/publications/promising-ir-full.pdf
+>
+> However, C is not that language, and neither is Rust. Defining a concurre=
+ncy
+> memory model is extremely non-trivial (there's literally hundreds of pape=
+rs
+> proposing various different models, and there are still some unsolved pro=
+blems).
+> The route the C++ model took was to strictly rule out all data races, and=
+ since
+> they were the first to actually undertake the effort of defining a model =
+at this
+> level of rigor (for a language not willing to pay the cost that would be
+> incurred by the Java concurrency memory model), that has been the standar=
+d ever
+> since. There's a lot of subtle trade-offs here, and I am far from an expe=
+rt on
+> the exact consequences each different choice would have. I just want to c=
+aution
+> against the obvious reaction of "why don't they just". :)
+>
+
+Thanks for the elaborate explanation.
+
+>
+>> I
+>> may even later copy the data at place B to place C where C might have
+>> concurrent reads and/or writes, and the kernel will not experience UB
+>> because of this. The data may be garbage, but that is fine. I am not
+>> interpreting the data, or making control flow decisions based on it. I
+>> am just moving the data.
+>>
+>> My understand is: In Rust, this program would be illegal and might
+>> experience UB in unpredictable ways, not limited to just the data that
+>> is being moved.
+>
+> That is correct. C and Rust behave the same here.
+
+Is there a difference between formal models of the languages and
+practical implementations of the languages here? I'm asking this because
+C kernel developers seem to be writing these programs that are illegal
+under the formal spec of the C language, but work well in practice.
+Could it be the same in Rust?
+
+That is, can I do this copy and get away with it in practice under the
+circumstances outlined earlier?
+
+>
+>> One option I have explored is just calling C memcpy directly, but
+>> because of LTO, that is no different than doing the operation in Rust.
+>>
+>> I don't think I need atomic memcpy, I just need my program not to
+>> explode if I move some data to or from a place that is experiencing
+>> concurrent writes without synchronization. Not in general, but for some
+>> special cases where I promise not to look at the data outside of moving
+>> it.
+>
+> I'm afraid I do not know of a language, other than assembly, that can pro=
+vide this.
+>
+> Atomic memcpy, however, should be able to cover your use-case, so it seem=
+s like
+> a reasonable solution to me? Marking things as atomic is literally how yo=
+u tell
+> the compiler "don't blow up if there are concurrent accesses".
+
+If atomic memcpy is what we really need to write these kinds of programs in
+Rust, what would be the next steps to get this in the language?
+
+Also, would there be a performance price to pay for this?
+
+
+Best regards,
+Andreas Hindborg
+
+
 
 
