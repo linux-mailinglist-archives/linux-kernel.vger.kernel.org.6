@@ -1,149 +1,146 @@
-Return-Path: <linux-kernel+bounces-551322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E883A56B17
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:03:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31279A56B24
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:04:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E4067A9785
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:02:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB6223B5C8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3140D21C16D;
-	Fri,  7 Mar 2025 15:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A58921D3DA;
+	Fri,  7 Mar 2025 15:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lIB2qU9h"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qo8sgSCh"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A8F21CA1F
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B684621D3C2;
+	Fri,  7 Mar 2025 15:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741359803; cv=none; b=XiQYda2RpQJX+c1TDjOoxzcQnud5uW4pNnaP+WxyfKukELbVCuMken67iGJFj7ncULqBpwzbzX2ZR4whdDPbMcfD2l5wAISFMY5UtXQbUgPiwiiZpEc5v6hCTY5+xhpyNI0DDtRH0Px6mG0uwUCB33FF4lQSlkSYEb93N8zt870=
+	t=1741359831; cv=none; b=QuImsDmOaJua/tyRk4eTtwzrfxOsSJel/45c804t0ocZkenHdOrUXtmaoGNEazfEaZOU26bzf2xjQwZq2eno2Qz7i78ZxL4oRT8gpdPYRWcegcCGPm94w5B4wBkDETLVVHTc3egjFguKU+eJPhVg0MEFM6s7yzdQTp4Ixj9z4vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741359803; c=relaxed/simple;
-	bh=ClXgnNB8s9sls8sH6ohCBtkUa60dce5RsindDE59v7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rTqw5Yo/NqcP+RnzAjUyNgkOyZWyA4GzD5oT/O2KPpe01RBtKYzdbyvh6/4vhLfryVcwiG6CsB5yFA7PHP3iskF5JMXeNLK3KkmnYGxYf/NIX3GxCXpV9dKceCiXbiM1SWdqSJ8jiy3UitqWGznS0bNK4e72G430ptzuAcsE0y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lIB2qU9h; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741359802; x=1772895802;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ClXgnNB8s9sls8sH6ohCBtkUa60dce5RsindDE59v7Q=;
-  b=lIB2qU9hi0mzDNtzHsYEoyKjI1gnfxJb0JzMvfPCBycGR5LKfk6dD9Ls
-   1eXqUB0F8CjRsQ9Z3uZTrzRFPy0kH5dL+A2iKk32emwzTXxVPO0FSa6ZR
-   x37jmao/lPar7zhhnO7Sg+mwZDTNis6nmq9auQx4uh+18ZjeODl6kHqZF
-   pTHGHGy8wP4zAls2MAymLRbcBERKAmIoKhjc+87w/JMbtMadSfhxiBJHk
-   kmLVbE7edaOKZp3f1ZnqYnUHWiuVi6FjWS0X12B8Zp2b9Bw1d6csYSLby
-   noFWIsIUkfakKdQGOwE67dS8VMgMPOX7myK83n0or8qIHpPO7Q1rLHeUr
-   A==;
-X-CSE-ConnectionGUID: ATEzcQy0Su6KJwPCGaIEuA==
-X-CSE-MsgGUID: 1BUzcIMXTdO/IhgvKyuGlw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42550745"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="42550745"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 07:03:21 -0800
-X-CSE-ConnectionGUID: rjKDA3kTSi+mH+unG99b2g==
-X-CSE-MsgGUID: 7tikOMWGQUSsecx5fuhUkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="124436070"
-Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.110.132]) ([10.125.110.132])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 07:03:20 -0800
-Message-ID: <0ade78e7-7a3c-459d-bf1c-f0bb1f24baee@intel.com>
-Date: Fri, 7 Mar 2025 07:03:43 -0800
+	s=arc-20240116; t=1741359831; c=relaxed/simple;
+	bh=JWnX24bQXGvbdkcSpP8hZ14PW+ptSaxnMNvypsvsyfs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h0JmEXwuATGAfJwORNXm+FU4No5AZp2RkzamrlMzttFEj+fwT1zGKqp7iSyo+UHPITgNY8ETBoVgiVyujuqTQAKKO684kUO7Df8IHylbtW87JWQw4BCmKwT9gDlywgbQi2iuWTU1ODQYWfgpUzKI0y0++MikPAE97gK4q9F5r6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qo8sgSCh; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2234e4b079cso35130535ad.1;
+        Fri, 07 Mar 2025 07:03:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741359829; x=1741964629; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=mjltdXPvzAGYWJCjNCh7/tJsigIQN9ooLcu9BagrtF8=;
+        b=Qo8sgSCh/Ri2cEcjiIZpfYyfbrMm7vQdoVHOkK5NbUWoimAq28ItOBS8iZ/XfjzFut
+         JGF2fs1TWe3jx9B4GsXtygrv93yTkzYrbUVsHKeoAqJTGL6AjlePqM7j5R4fZKTFgQwQ
+         AHQGqpA3hOBO8x9DftsjzHoOobti0brx5mxPTr0li9l0VoXqh/GdHGazlCwaiPbRaxaq
+         fLxSk85zV8o8THkS6O8LQR3SN53rVHLIe0qmEe1C0NmUNumrOFD51gXzfaSdm726tR5N
+         h+UIjlhdJh167vJb4W/Gk2e1TcWmVtRSkb51xZCFhiVY5CBTlStXJAof2kNF2py4FjO4
+         abqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741359829; x=1741964629;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mjltdXPvzAGYWJCjNCh7/tJsigIQN9ooLcu9BagrtF8=;
+        b=eoWmFfwuwzx0X+GT/AwadM4ujcguQkOIM8jfzfZwp/9b8+fPEsU2Qep/znQtYesyBU
+         FzqHKlqoOcnbV9B20khXZvtKey6ygjZZsp1z4VTlm5NbyUI5HJoA/ZJ/VstZ9yyDOIZ3
+         VV20Xgb6lsRpjvdzNESmKHUrtxvLZ7Sz7bx0m0yt9CQPpghXsE90WMOr8SHrYWTfUImk
+         lwLGYt7RMFSfvBVjeCoksFY5P21Q4hrskyRRV+dQKcTeCEdJpPVM60ueG/qgVBIlacEx
+         h+/eKzMjKQXr0C/tkrqKecpd+4Cap9ZPxL8cm8R0YG4r4CK2CqdR1JlYwIv/X0dxPeLi
+         /Ojw==
+X-Forwarded-Encrypted: i=1; AJvYcCXX/fi/pVeauI3sHN2B+vIRq13aM+FSYmDWCVI1C9xARoveJQOHLiPOZTCDggcqORLloE10kVGNmXaHk+I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvmNV8HIhYfSwbTnrMG01v394CgyALjasOB5J6WR7+d/OuJffn
+	hbDm1QUQruiSno6QRnVVgdZ1NSzJI/UZZKM475mh2H/HJcoTV2NhpLMfbg==
+X-Gm-Gg: ASbGncs9fkHiHQXlH6GBiSvKwfi1LQwukTjdtTrHj2TmYCYtZzTILKiFFdtZh0k3E6F
+	r2ioGx4bbYGWep6NQx66lxBvUjQIBGksxLhbrjfBdLZVMSebseic5gNj2rrd5c+/4v1qv+lxS/z
+	2xgPKhgy3tt/45/6QpfUWAfAr233lDiUFo2DU9/kdN6leO+cX4DEbm5THloX+1I/ByuyAdA0J8W
+	S1vbWyH4dA6EkdIvOsQhoymia5Gae20rvIVHbcVjwJLg1hDe3ObX3KagS8px60qHO89VC4JXZLC
+	gb3IeFXYt5ogWYtSj+5cBEsKMtFI5nQRouOS9wXftYo9cpx4ftoY/oQiyg==
+X-Google-Smtp-Source: AGHT+IEWDM76vDq+sGetR3TYHlWMMUUHGBnS2ETD1Absx3BChqLC/jgHSoWtZYIjx/0SwmgYZ74fSA==
+X-Received: by 2002:a17:902:ecc1:b0:224:1e77:1a8b with SMTP id d9443c01a7336-22428c0d609mr50555265ad.51.1741359828739;
+        Fri, 07 Mar 2025 07:03:48 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a7fad8sm30961195ad.119.2025.03.07.07.03.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 07:03:48 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+From: Guenter Roeck <linux@roeck-us.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] hwmon fixes for v6.14-rc6
+Date: Fri,  7 Mar 2025 07:03:47 -0800
+Message-ID: <20250307150347.3784204-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 07/12] tools/x86/kcpuid: Add rudimentary CPU vendor
- detection
-To: "Ahmed S. Darwish" <darwi@linutronix.de>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- Andrew Cooper <andrew.cooper3@citrix.com>, "H. Peter Anvin" <hpa@zytor.com>,
- x86@kernel.org, John Ogness <john.ogness@linutronix.de>,
- x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
-References: <20250306205000.227399-1-darwi@linutronix.de>
- <20250306205000.227399-8-darwi@linutronix.de>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250306205000.227399-8-darwi@linutronix.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/6/25 12:49, Ahmed S. Darwish wrote:
-> The kcpuid CSV file will soon be updated with CPUID indices that are only
-> valid for certain CPU vendors, such as Centaur or Transmeta.  Thus,
-> introduce rudimentary x86 vendor detection to kcpuid.
+Hi Linus,
 
-Do we really need the vendor detection? For example, look at the end of
-cpuid(1)'s output:
+Please pull hwmon fixes for Linux v6.14-rc6 from signed tag:
 
-   # cpuid -1 --raw
-   ...
-   0x20000000 0x00: eax=0x00000000 ebx=0x00000000 ecx=0x00000000
-edx=0x00000000
-   ...
-   0x80860000 0x00: eax=0x00000000 ebx=0x00000000 ecx=0x00000000
-edx=0x00000000
-   0xc0000000 0x00: eax=0x00000000 ebx=0x00000000 ecx=0x00000000
-edx=0x00000000
+    git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git hwmon-for-v6.14-rc6
 
-It seems to just blindly poke at all of the CPUID regions. There are
-only a handful of these and there's no hard in poking at them other
-than an extra couple of executions of CPUID.
+Thanks,
+Guenter
+------
+
+The following changes since commit d082ecbc71e9e0bf49883ee4afd435a77a5101b6:
+
+  Linux 6.14-rc4 (2025-02-23 12:32:57 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git tags/hwmon-for-v6.14-rc6
+
+for you to fetch changes up to 10fce7ebe888fa8c97eee7e317a47e7603e5e78d:
+
+  hwmon: fix a NULL vs IS_ERR_OR_NULL() check in xgene_hwmon_probe() (2025-03-03 06:04:34 -0800)
+
+----------------------------------------------------------------
+hwmon fixes for v6.14-rc6
+
+- xgene-hwmon: Fix a NULL vs IS_ERR_OR_NULL() check
+
+- ad7314: Return error if leading zero bits are non-zero
+
+- ntc_thermistor: Update/fix the ncpXXxh103 sensor table
+
+- pmbus: Initialise page count in pmbus_identify()
+
+- peci/dimmtemp: Di not provide fake threshold data
+
+----------------------------------------------------------------
+Erik Schumacher (1):
+      hwmon: (ad7314) Validate leading zero bits and return error
+
+Maud Spierings (1):
+      hwmon: (ntc_thermistor) Fix the ncpXXxh103 sensor table
+
+Paul Fertser (1):
+      hwmon: (peci/dimmtemp) Do not provide fake thresholds data
+
+Titus Rwantare (1):
+      hwmon: (pmbus) Initialise page count in pmbus_identify()
+
+Xinghuo Chen (1):
+      hwmon: fix a NULL vs IS_ERR_OR_NULL() check in xgene_hwmon_probe()
+
+ drivers/hwmon/ad7314.c         | 10 +++++++
+ drivers/hwmon/ntc_thermistor.c | 66 +++++++++++++++++++++---------------------
+ drivers/hwmon/peci/dimmtemp.c  | 10 +++----
+ drivers/hwmon/pmbus/pmbus.c    |  2 ++
+ drivers/hwmon/xgene-hwmon.c    |  2 +-
+ 5 files changed, 50 insertions(+), 40 deletions(-)
 
