@@ -1,123 +1,129 @@
-Return-Path: <linux-kernel+bounces-551328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEEA5A56B25
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:05:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B50AA56B2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:06:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24BA017920B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:05:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7FF63B7486
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E918021B9F7;
-	Fri,  7 Mar 2025 15:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F7321D3C0;
+	Fri,  7 Mar 2025 15:04:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G/twAOnT"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MzUfUaWk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8550421CC52
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF7021CC6F;
+	Fri,  7 Mar 2025 15:04:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741359851; cv=none; b=Z0g/gHMa39gIvJwH2e8klWXsyB6bDtsL3ileIg/Z8uNjMBTBo1x7pxO5dd/uqrOrPhog/E0l6MU970qni2xeZvqnVWiz/kxZAMCIPLQfhjCb21vpZhnSxSliZH3NFKoe1qXOMi00kcUaW/BBRSqnA0Glu07ZEZ9vODc2bROwJpA=
+	t=1741359890; cv=none; b=EzA9h0eyuF3WeqmRZNxwLfp8I0JbslbRjWnyMRQOyazBZzKeorMerH0aAacBgCqvNtHOdb8MLPAgpdwN99ucRwO6EOAUjGyeHNz+NLLHjvFrCnRUUD7IkU5++PO0h5euFtCfPNxY/P53Z/Q4tByKPJvZjjwn7bauksDKyiWCiBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741359851; c=relaxed/simple;
-	bh=e8ChYfB2JWMNrEuzMXT2LNRFntJeGVEoJBRw50gUiNI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=FDGtN2dvPJY6afk8mVDUQwDZFHySw/demPrwtKNwUQ+vbYw8+wiktTBYTQo3q/QHZemFU8WjgLZhiIE3dn1sLf6QSGT0WxNuw1kwtODTOEaGxxJBTseJDitAzh5kENUxvowZsQzOHvBrWPuCS+RAwUYqZeCq8Vfvw9VIdPvJmxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G/twAOnT; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4394944f161so2093295e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:04:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741359848; x=1741964648; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3ELG0oVhA+BqzmcxJHQfLXvm4d36xTv4jodb57FoDL0=;
-        b=G/twAOnTT7g4uD9xrW0acvPGkyTePwmSQhe3wVuG/IckVaOy1J0SyVWQc4/dLe1zfY
-         QXV+bm2D1uIlA/iyp1Tp4BnhKrbmf4Ia64sDNlnoH4yq3hPU//BYZ3BNyzRsa4gJ4WFR
-         23EswCJ+CkM1f1FcsyDnq0iZTQFc43wFdkKcQteRgV5YRuG5M+xkwX7u9dbTfn5dHk+T
-         bNbX8JvLglBIfLCw27178Z/azg4GvuWGGa6ct+JO3QYpc3KFCHAck/tA/gFN6BPMQm9y
-         MZNpiyiNtWnPuCPoJrWuGGFMgX3jqbl/WXTH6LJPBzj0/YCo/2dizxBuKRsuVXxfW4Ks
-         CHow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741359848; x=1741964648;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3ELG0oVhA+BqzmcxJHQfLXvm4d36xTv4jodb57FoDL0=;
-        b=NdrQSVBsYWAia2vpBPcfBFbe9CsVVhSUmiUsWLHXjOhF6FEAXjjAqlRWfmjpmpc5GT
-         jRRX26hrwDBrxtQRnNJW2057glQWmDyBc8uI+JwugMGEIMAPSwcXCaYmOv9KeJjS48eV
-         HYO+Mdu1yzFvh0CL9uwf2+T6pDN+mSx+SRanq+Crh4aMa9L/gCFRkDHHx0CDCSZRKRHi
-         fLFggpuqcwD21xpYpqvaXQogSTOP/Z+oif01wpXKBMimzziYPO6pwKiA6AGbQwIe0H4K
-         sCB/Bkvf9+4o2zLiGn5EdOAHrXXQ5i7L/BOj+oEG964ZoNk6ajFKihwQS62l6V+p5OBc
-         VBCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV9Mynnse6uDVoQi4ZUqAXqbTlZZPR6R7aytZkw5Oao3tHJTeNqSXAJr18+0h9H3m6+jTYeq9YivNzitPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzksi2UKuHDubfm9k/A52twk1KlZe6X/VZjARm4QnApyNb2KSn9
-	SDH8rMxTu0qU7NdV5hDAvC6lMP/hu3MwTdcR5wX+97JfJca0xJ/b0wnfNoCxyzI=
-X-Gm-Gg: ASbGncs+/XGbW4QzeMQrtg2p/iR1z3igOjnIUynwn3B56/17nXMzOf5yYBhvEIq1zCh
-	KozSkqC31RN5HbqCQCbmma70bWnW6+TAosDtMNGXp/INrF4NeZPtX0ZDQNdYsy+y5hWybT2f4iS
-	/wypAW2Uz3ioPvLmDqI6gbgxusJ1mKQXBXFGqsleG5qhQ75xAWIhmkWt0Ixdu6qkyR/D6zhbFh5
-	iVbSiPBTHnMJ8BttQ+8ulFKDr6DRQeflIQkWeEPxzTPO/QxIWUh2jb/CGo8pFQQqd+BBhWRvKNh
-	HoLIHEdTgakhcd8cHrEY9aOxnw8i+yvGq8X2etKjDN3wD2ALa+Sjjq4MksJ7
-X-Google-Smtp-Source: AGHT+IGeiraKGeEqa9VGhWaeeNF9N+Kf66ORaln0VM6PqpULNSWjc+LqFVea7mhvmFHlhfc4guuJvQ==
-X-Received: by 2002:a5d:584b:0:b0:385:de67:229e with SMTP id ffacd0b85a97d-3913a8aeefbmr51698f8f.11.1741359847652;
-        Fri, 07 Mar 2025 07:04:07 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfa52sm5444573f8f.21.2025.03.07.07.04.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 07:04:07 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
- Peter Griffin <peter.griffin@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250305-clk-samsung-headers-cleanup-v2-0-ea1ae8e9e2bf@linaro.org>
-References: <20250305-clk-samsung-headers-cleanup-v2-0-ea1ae8e9e2bf@linaro.org>
-Subject: Re: [PATCH v2 0/2] clk: samsung: Two header cleanups
-Message-Id: <174135984582.202251.7619477733984588971.b4-ty@linaro.org>
-Date: Fri, 07 Mar 2025 16:04:05 +0100
+	s=arc-20240116; t=1741359890; c=relaxed/simple;
+	bh=WIO25UZyxl4aeXjXSMtUYiMd4bqWAzaD/w30AClH/n0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KW5TTWdNZDVArX0nVjIZ2vLjVu0M236RZ6Tk7//hRlaSpT1dPEPgnHavz4z3feHDgRagYSMvuvVC37wPZ57zEUmA6DE/OR4N3LH0hKx0j1yq4X/HJ8GHFTOQ2bnJjBQpZmWrjbCScX0taWET+mZo6GhOt3+UfxJbfcWnJr7s9Ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MzUfUaWk; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741359889; x=1772895889;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WIO25UZyxl4aeXjXSMtUYiMd4bqWAzaD/w30AClH/n0=;
+  b=MzUfUaWkIm3zW2VaDlfvcXYqSGoEY8HscmcbMtUBcoIM8LO1G1pDBx5Z
+   epbCEXPiOm4whwCaUQASVsn8hv9oR3WNTzxlo7+Vb2m69tgzkpVYwjfxf
+   TWyi1jPau5C3j1sM66hdfDh1doC3Fgyn7V8TPE/4i6v62LC4Y9w/BvTmc
+   wpdSD6DFdnT4b7SYggyyINeTTfd78tLMC/0uG2ijK73hmQEOMxCMa0hgx
+   cU8WmGa8/jdUVhO1uqV/Sn+KHEY3dBGevXFCPwl5DqFEcTHVKFoB3SH16
+   +pD+68Xy4aSXPKCiTEHovjkGwh8o3xcIIvYHWRIYhf91H9VIoqnsr5V6s
+   A==;
+X-CSE-ConnectionGUID: Fyooo9VnQ4iZpUQN2oTdNg==
+X-CSE-MsgGUID: QR0N00QYSy6eDfoH3slWTg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42608984"
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="42608984"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 07:04:35 -0800
+X-CSE-ConnectionGUID: tQt0L6i8Q+qcvH3YuYOKrQ==
+X-CSE-MsgGUID: addakMZvQS+KAu/AKEkO+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="119283192"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by orviesa010.jf.intel.com with ESMTP; 07 Mar 2025 07:04:31 -0800
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tqZFU-0000c3-2M;
+	Fri, 07 Mar 2025 15:04:28 +0000
+Date: Fri, 7 Mar 2025 23:04:19 +0800
+From: kernel test robot <lkp@intel.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Sebastian Reichel <sre@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: oe-kbuild-all@lists.linux.dev, Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org,
+	=?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>
+Subject: Re: [PATCH v4 4/7] nvmem: add support for device and sysfs-based
+ cell lookups
+Message-ID: <202503072216.f6lwkxwJ-lkp@intel.com>
+References: <20250306093900.2199442-5-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306093900.2199442-5-o.rempel@pengutronix.de>
 
+Hi Oleksij,
 
-On Wed, 05 Mar 2025 21:03:42 +0100, Krzysztof Kozlowski wrote:
-> Changes in v2:
-> - mod_devicetable.h: also clk.c, clk.h, clk-exynos4.c,
->   clk-exynos5-subcmu.c, clk-exynos2200.c and clk-exynos7870.c (Tudor)
-> - cleanup: clk-exynos2200.c and clk-exynos7870.c (Tudor)
-> - Rb tags
-> - Link to v1: https://lore.kernel.org/r/20250304-clk-samsung-headers-cleanup-v1-0-81718e38246e@linaro.org
-> 
-> [...]
+kernel test robot noticed the following build errors:
 
-Applied, thanks!
+[auto build test ERROR on sre-power-supply/for-next]
+[also build test ERROR on broonie-regulator/for-next rafael-pm/thermal linus/master v6.14-rc5 next-20250307]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-[1/2] clk: samsung: Add missing mod_devicetable.h header
-      https://git.kernel.org/krzk/linux/c/f32f5b0ec0f6eec0186de0607ab12f9cb1ecab73
-[2/2] clk: samsung: Drop unused clk.h and of.h headers
-      https://git.kernel.org/krzk/linux/c/017bbc922a09630579ff7b5b314fb186b8c0efcf
+url:    https://github.com/intel-lab-lkp/linux/commits/Oleksij-Rempel/power-Extend-power_on_reason-h-for-upcoming-PSCRR-framework/20250306-174233
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git for-next
+patch link:    https://lore.kernel.org/r/20250306093900.2199442-5-o.rempel%40pengutronix.de
+patch subject: [PATCH v4 4/7] nvmem: add support for device and sysfs-based cell lookups
+config: sparc-randconfig-002-20250307 (https://download.01.org/0day-ci/archive/20250307/202503072216.f6lwkxwJ-lkp@intel.com/config)
+compiler: sparc-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250307/202503072216.f6lwkxwJ-lkp@intel.com/reproduce)
 
-Best regards,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503072216.f6lwkxwJ-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   sparc-linux-ld: drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8173.o: in function `nvmem_cell_get_by_sysfs_name':
+>> phy-mtk-mipi-dsi-mt8173.c:(.text+0x434): multiple definition of `nvmem_cell_get_by_sysfs_name'; drivers/phy/mediatek/phy-mtk-mipi-dsi.o:phy-mtk-mipi-dsi.c:(.text+0x2a0): first defined here
+   sparc-linux-ld: drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8173.o: in function `nvmem_device_get_by_name':
+>> phy-mtk-mipi-dsi-mt8173.c:(.text+0x43c): multiple definition of `nvmem_device_get_by_name'; drivers/phy/mediatek/phy-mtk-mipi-dsi.o:phy-mtk-mipi-dsi.c:(.text+0x2a8): first defined here
+   sparc-linux-ld: drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8183.o: in function `nvmem_cell_get_by_sysfs_name':
+   phy-mtk-mipi-dsi-mt8183.c:(.text+0x470): multiple definition of `nvmem_cell_get_by_sysfs_name'; drivers/phy/mediatek/phy-mtk-mipi-dsi.o:phy-mtk-mipi-dsi.c:(.text+0x2a0): first defined here
+   sparc-linux-ld: drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8183.o: in function `nvmem_device_get_by_name':
+   phy-mtk-mipi-dsi-mt8183.c:(.text+0x478): multiple definition of `nvmem_device_get_by_name'; drivers/phy/mediatek/phy-mtk-mipi-dsi.o:phy-mtk-mipi-dsi.c:(.text+0x2a8): first defined here
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
