@@ -1,280 +1,305 @@
-Return-Path: <linux-kernel+bounces-551756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 152B4A57069
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:25:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 098ABA57079
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:27:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEC523B0316
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:24:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 360BC178B39
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14D1242901;
-	Fri,  7 Mar 2025 18:24:45 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7490241CA3;
+	Fri,  7 Mar 2025 18:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TqxdwOBf";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vQaePyWt"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE0102405E4
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 18:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D571123F411;
+	Fri,  7 Mar 2025 18:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741371885; cv=none; b=Cr7989JqUan77huvqzs8ylpyrBfQyWsFfyjGU41Es90pqPX/au45O1ZXZ1f523QDLmqPMlyt1fUlH7w1gQNjMR5/fTaoXgp38xS3qz7MlUG8Qhph19qNsoYJ+fcKvFhfMUZJOXKLx3GDIsdu4JCRsgpdbuCykHx3UtaXTg1tvSU=
+	t=1741371953; cv=none; b=HtlUB6vjs6K5M7wngVB0kxjcukjrE72xkseT0Yy//gt9B9b6wjp8TaN29RIfPLhymj3IGbV2x2yT07F8DWF7yMNfLOHwF3HuRJHTfV1DpoGD7aZ1mNN39r1x6VK3r+uX01F3R/YAqKQBBBssVYGVkjIC2AKvF+vVevdZgFnapBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741371885; c=relaxed/simple;
-	bh=QfZX74vUj7EezakyuPH/MDQLEKG18GpeaxGL2h9PXD0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=raL5DI9/GYimFmjA9uJ+xwT3tRWZoYcYtM3eA0Awfc1jwSx8lN+jJeMU9b6yY9/BS4bhqV6QD36QW17aJEmzOZ6rSAZoi3mnX7djdKZcSNDl1p6iqJaCmtQ4DvMyOje/GAk+zN5mPMrCpNhLXIx0GmWXW6dIi5E3PnT7gf9qFOs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tqcN9-0005mg-4w; Fri, 07 Mar 2025 19:24:35 +0100
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tqcN7-004X2d-25;
-	Fri, 07 Mar 2025 19:24:33 +0100
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tqcN7-008I9I-1m;
-	Fri, 07 Mar 2025 19:24:33 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Russell King <rmk+kernel@armlinux.org.uk>,
-	Thangaraj Samynathan <Thangaraj.S@microchip.com>,
-	Rengarajan Sundararajan <Rengarajan.S@microchip.com>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH net-next v2 7/7] net: usb: lan78xx: Integrate EEE support with phylink LPI API
-Date: Fri,  7 Mar 2025 19:24:32 +0100
-Message-Id: <20250307182432.1976273-8-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250307182432.1976273-1-o.rempel@pengutronix.de>
-References: <20250307182432.1976273-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1741371953; c=relaxed/simple;
+	bh=6+uvT56j5CrXhq5A9atDqahn5SDHgYAbOnqBawc8lDI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=OiecRRmIcIiiuz+b8XdjS36JLZT+RvjJUQUNKz2Pv7fiFDWtm0/DAjBa8LUnyuu+VggOLdzMLQ2BchT82eZDe4JqczDJ0gJSPFl8mRF5SM1qtPbgZ4Fj8QS++AUXob5KcisLEYjbqh6ajl30wA5Yk31wpdfXltisuJ1KmPX4U1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TqxdwOBf; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vQaePyWt; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 07 Mar 2025 18:25:44 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741371948;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jyRUoZ/VYkRkOOmhD+6bodu6hSbBK4ZHB5ncQD57VD0=;
+	b=TqxdwOBfq0FliLvzPFUllR9jaxACaRhQbpkH4xCYfpdKN+N7/qSCPALfathCJW7rM/FKyB
+	YcNsrlDHf7Fr7nR/vBlIifDZ9q0PsDK7DHI78fv9P60P2Nlqv1tsYhazGzd/HCZJk00umJ
+	zUBD398KMwzbLMLnqI+gFLFYZ0o646YCsWcJBuHi3mxHD2DPHjnN6YRItsQrcom3zkPO9x
+	qPoGydyD6zReQM7AtcCJN0Jza4D/AFL+Bivl7QiB5eiVcVf6R4YksHYvrBidHOe2+WTT5p
+	c1nqC3/JcQ5vHHrd8P0zfbYMJdAymAcAb4+Rs7RPNgIE+vLFPehlgGLWK/4CHw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741371948;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jyRUoZ/VYkRkOOmhD+6bodu6hSbBK4ZHB5ncQD57VD0=;
+	b=vQaePyWtW2PwMlnco7CkX2rTFbdPZMe3Z+x9P1r4MGJs9AQpIA4D/NJwggFBRWHByg5dAK
+	+DpNQdgRbOTzGZBQ==
+From: "tip-bot2 for Alexey Kardashevskiy" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] virt: sev-guest: Move SNP Guest Request data pages
+ handling under snp_cmd_mutex
+Cc: Alexey Kardashevskiy <aik@amd.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ Nikunj A Dadhania <nikunj@amd.com>, stable@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250307013700.437505-3-aik@amd.com>
+References: <20250307013700.437505-3-aik@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Message-ID: <174137194498.14745.3512028477594108437.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Refactor Energy-Efficient Ethernet (EEE) support in the LAN78xx driver to
-fully integrate with the phylink Low Power Idle (LPI) API. This includes:
+The following commit has been merged into the x86/urgent branch of tip:
 
-- Replacing direct calls to `phy_ethtool_get_eee` and `phy_ethtool_set_eee`
-  with `phylink_ethtool_get_eee` and `phylink_ethtool_set_eee`.
-- Implementing `.mac_enable_tx_lpi` and `.mac_disable_tx_lpi` to control
-  LPI transitions via phylink.
-- Configuring `lpi_timer_default` to align with recommended values from
-  LAN7800 documentation.
-- ensure EEE is disabled on controller reset
+Commit-ID:     3e385c0d6ce88ac9916dcf84267bd5855d830748
+Gitweb:        https://git.kernel.org/tip/3e385c0d6ce88ac9916dcf84267bd5855d830748
+Author:        Alexey Kardashevskiy <aik@amd.com>
+AuthorDate:    Fri, 07 Mar 2025 12:37:00 +11:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Fri, 07 Mar 2025 14:09:33 +01:00
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+virt: sev-guest: Move SNP Guest Request data pages handling under snp_cmd_mutex
+
+Compared to the SNP Guest Request, the "Extended" version adds data pages for
+receiving certificates. If not enough pages provided, the HV can report to the
+VM how much is needed so the VM can reallocate and repeat.
+
+Commit
+
+  ae596615d93d ("virt: sev-guest: Reduce the scope of SNP command mutex")
+
+moved handling of the allocated/desired pages number out of scope of said
+mutex and create a possibility for a race (multiple instances trying to
+trigger Extended request in a VM) as there is just one instance of
+snp_msg_desc per /dev/sev-guest and no locking other than snp_cmd_mutex.
+
+Fix the issue by moving the data blob/size and the GHCB input struct
+(snp_req_data) into snp_guest_req which is allocated on stack now and accessed
+by the GHCB caller under that mutex.
+
+Stop allocating SEV_FW_BLOB_MAX_SIZE in snp_msg_alloc() as only one of four
+callers needs it. Free the received blob in get_ext_report() right after it is
+copied to the userspace. Possible future users of snp_send_guest_request() are
+likely to have different ideas about the buffer size anyways.
+
+Fixes: ae596615d93d ("virt: sev-guest: Reduce the scope of SNP command mutex")
+Signed-off-by: Alexey Kardashevskiy <aik@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Nikunj A Dadhania <nikunj@amd.com>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20250307013700.437505-3-aik@amd.com
 ---
-changes v2:
-- use latest PHYlink TX_LPI API
----
- drivers/net/usb/lan78xx.c | 120 ++++++++++++++++++++++++--------------
- 1 file changed, 76 insertions(+), 44 deletions(-)
+ arch/x86/coco/sev/core.c                | 23 +++++-----------
+ arch/x86/include/asm/sev.h              |  6 ++--
+ drivers/virt/coco/sev-guest/sev-guest.c | 34 +++++++++++++++++++-----
+ 3 files changed, 39 insertions(+), 24 deletions(-)
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index c257d8432695..33bfebdd8872 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -1785,54 +1785,15 @@ static int lan78xx_set_wol(struct net_device *netdev,
- static int lan78xx_get_eee(struct net_device *net, struct ethtool_keee *edata)
- {
- 	struct lan78xx_net *dev = netdev_priv(net);
--	struct phy_device *phydev = net->phydev;
--	int ret;
--	u32 buf;
--
--	ret = usb_autopm_get_interface(dev->intf);
--	if (ret < 0)
--		return ret;
--
--	ret = phy_ethtool_get_eee(phydev, edata);
--	if (ret < 0)
--		goto exit;
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index 82492ef..96c7bc6 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -2853,19 +2853,8 @@ struct snp_msg_desc *snp_msg_alloc(void)
+ 	if (!mdesc->response)
+ 		goto e_free_request;
  
--	ret = lan78xx_read_reg(dev, MAC_CR, &buf);
--	if (buf & MAC_CR_EEE_EN_) {
--		/* EEE_TX_LPI_REQ_DLY & tx_lpi_timer are same uSec unit */
--		ret = lan78xx_read_reg(dev, EEE_TX_LPI_REQ_DLY, &buf);
--		edata->tx_lpi_timer = buf;
--	} else {
--		edata->tx_lpi_timer = 0;
--	}
+-	mdesc->certs_data = alloc_shared_pages(SEV_FW_BLOB_MAX_SIZE);
+-	if (!mdesc->certs_data)
+-		goto e_free_response;
 -
--	ret = 0;
--exit:
--	usb_autopm_put_interface(dev->intf);
+-	/* initial the input address for guest request */
+-	mdesc->input.req_gpa = __pa(mdesc->request);
+-	mdesc->input.resp_gpa = __pa(mdesc->response);
+-	mdesc->input.data_gpa = __pa(mdesc->certs_data);
 -
--	return ret;
-+	return phylink_ethtool_get_eee(dev->phylink, edata);
+ 	return mdesc;
+ 
+-e_free_response:
+-	free_shared_pages(mdesc->response, sizeof(struct snp_guest_msg));
+ e_free_request:
+ 	free_shared_pages(mdesc->request, sizeof(struct snp_guest_msg));
+ e_unmap:
+@@ -2885,7 +2874,6 @@ void snp_msg_free(struct snp_msg_desc *mdesc)
+ 	kfree(mdesc->ctx);
+ 	free_shared_pages(mdesc->response, sizeof(struct snp_guest_msg));
+ 	free_shared_pages(mdesc->request, sizeof(struct snp_guest_msg));
+-	free_shared_pages(mdesc->certs_data, SEV_FW_BLOB_MAX_SIZE);
+ 	iounmap((__force void __iomem *)mdesc->secrets);
+ 
+ 	memset(mdesc, 0, sizeof(*mdesc));
+@@ -3054,7 +3042,7 @@ retry_request:
+ 	 * sequence number must be incremented or the VMPCK must be deleted to
+ 	 * prevent reuse of the IV.
+ 	 */
+-	rc = snp_issue_guest_request(req, &mdesc->input, rio);
++	rc = snp_issue_guest_request(req, &req->input, rio);
+ 	switch (rc) {
+ 	case -ENOSPC:
+ 		/*
+@@ -3064,7 +3052,7 @@ retry_request:
+ 		 * order to increment the sequence number and thus avoid
+ 		 * IV reuse.
+ 		 */
+-		override_npages = mdesc->input.data_npages;
++		override_npages = req->input.data_npages;
+ 		req->exit_code	= SVM_VMGEXIT_GUEST_REQUEST;
+ 
+ 		/*
+@@ -3120,7 +3108,7 @@ retry_request:
+ 	}
+ 
+ 	if (override_npages)
+-		mdesc->input.data_npages = override_npages;
++		req->input.data_npages = override_npages;
+ 
+ 	return rc;
  }
+@@ -3158,6 +3146,11 @@ int snp_send_guest_request(struct snp_msg_desc *mdesc, struct snp_guest_req *req
+ 	 */
+ 	memcpy(mdesc->request, &mdesc->secret_request, sizeof(mdesc->secret_request));
  
- static int lan78xx_set_eee(struct net_device *net, struct ethtool_keee *edata)
- {
- 	struct lan78xx_net *dev = netdev_priv(net);
--	int ret;
--	u32 buf;
--
--	ret = usb_autopm_get_interface(dev->intf);
--	if (ret < 0)
--		return ret;
--
--	ret = phy_ethtool_set_eee(net->phydev, edata);
--	if (ret < 0)
--		goto out;
--
--	buf = (u32)edata->tx_lpi_timer;
--	ret = lan78xx_write_reg(dev, EEE_TX_LPI_REQ_DLY, buf);
--out:
--	usb_autopm_put_interface(dev->intf);
- 
--	return ret;
-+	return phylink_ethtool_set_eee(dev->phylink, edata);
- }
- 
- static void lan78xx_get_drvinfo(struct net_device *net,
-@@ -2470,10 +2431,59 @@ static void lan78xx_mac_link_up(struct phylink_config *config,
- 		   ERR_PTR(ret));
- }
- 
-+static int lan78xx_mac_eee_enable(struct lan78xx_net *dev, bool enable)
-+{
-+	u32 mac_cr = 0;
++	/* Initialize the input address for guest request */
++	req->input.req_gpa = __pa(mdesc->request);
++	req->input.resp_gpa = __pa(mdesc->response);
++	req->input.data_gpa = req->certs_data ? __pa(req->certs_data) : 0;
 +
-+	if (enable)
-+		mac_cr |= MAC_CR_EEE_EN_;
+ 	rc = __handle_guest_request(mdesc, req, rio);
+ 	if (rc) {
+ 		if (rc == -EIO &&
+diff --git a/arch/x86/include/asm/sev.h b/arch/x86/include/asm/sev.h
+index 1581246..ba7999f 100644
+--- a/arch/x86/include/asm/sev.h
++++ b/arch/x86/include/asm/sev.h
+@@ -203,6 +203,9 @@ struct snp_guest_req {
+ 	unsigned int vmpck_id;
+ 	u8 msg_version;
+ 	u8 msg_type;
 +
-+	/* make sure TXEN and RXEN are disabled before reconfiguring MAC */
-+	return lan78xx_update_reg(dev, MAC_CR, MAC_CR_EEE_EN_, mac_cr);
-+}
-+
-+static void lan78xx_mac_disable_tx_lpi(struct phylink_config *config)
-+{
-+	struct net_device *net = to_net_dev(config->dev);
-+	struct lan78xx_net *dev = netdev_priv(net);
-+
-+	lan78xx_mac_eee_enable(dev, false);
-+}
-+
-+static int lan78xx_mac_enable_tx_lpi(struct phylink_config *config, u32 timer,
-+				     bool tx_clk_stop)
-+{
-+	struct net_device *net = to_net_dev(config->dev);
-+	struct lan78xx_net *dev = netdev_priv(net);
-+	int ret;
-+
-+	/* Software should only change this field when Energy Efficient
-+	 * Ethernet Enable (EEEEN) is cleared. We ensure that by clearing
-+	 * EEEEN during probe, and phylink itself guarantees that
-+	 * mac_disable_tx_lpi() will have been previously called.
-+	 */
-+	ret = lan78xx_write_reg(dev, EEE_TX_LPI_REQ_DLY, timer);
-+	if (ret < 0)
-+		goto tx_lpi_fail;
-+
-+	ret = lan78xx_mac_eee_enable(dev, true);
-+	if (ret < 0)
-+		goto tx_lpi_fail;
-+
-+	return 0;
-+
-+tx_lpi_fail:
-+	netdev_err(dev->net, "Failed to enable TX LPI with error %pe\n",
-+		   ERR_PTR(ret));
-+	return ret;
-+}
-+
- static const struct phylink_mac_ops lan78xx_phylink_mac_ops = {
- 	.mac_config = lan78xx_mac_config,
- 	.mac_link_down = lan78xx_mac_link_down,
- 	.mac_link_up = lan78xx_mac_link_up,
-+	.mac_disable_tx_lpi = lan78xx_mac_disable_tx_lpi,
-+	.mac_enable_tx_lpi = lan78xx_mac_enable_tx_lpi,
++	struct snp_req_data input;
++	void *certs_data;
  };
  
- static struct phy_device *lan7801_phy_init(struct lan78xx_net *dev)
-@@ -2527,6 +2537,26 @@ static int lan78xx_phylink_setup(struct lan78xx_net *dev)
- 	dev->phylink_config.mac_capabilities = MAC_SYM_PAUSE | MAC_ASYM_PAUSE |
- 		MAC_10 | MAC_100 | MAC_1000FD;
- 	dev->phylink_config.mac_managed_pm = true;
-+	dev->phylink_config.lpi_capabilities = MAC_100FD | MAC_1000FD;
-+	/*
-+	 * Default TX LPI (Low Power Idle) request delay count is set to 50us.
-+	 *
-+	 * Source: LAN7800 Documentation, DS00001992H, Section 15.1.57, Page 204.
-+	 *
-+	 * Reasoning:
-+	 * According to the application note in the LAN7800 documentation, a
-+	 * zero delay may negatively impact the TX data path’s ability to
-+	 * support Gigabit operation. A value of 50us is recommended as a
-+	 * reasonable default when the part operates at Gigabit speeds,
-+	 * balancing stability and power efficiency in EEE mode. This delay can
-+	 * be increased based on performance testing, as EEE is designed for
-+	 * scenarios with mostly idle links and occasional bursts of full
-+	 * bandwidth transmission. The goal is to ensure reliable Gigabit
-+	 * performance without overly aggressive power optimization during
-+	 * inactive periods.
-+	 */
-+	dev->phylink_config.lpi_timer_default = 50;
-+	dev->phylink_config.eee_enabled_default = true;
+ /*
+@@ -263,9 +266,6 @@ struct snp_msg_desc {
+ 	struct snp_guest_msg secret_request, secret_response;
  
- 	if (dev->chipid == ID_REV_CHIP_ID_7801_) {
- 		__set_bit(PHY_INTERFACE_MODE_RGMII,
-@@ -2544,6 +2574,10 @@ static int lan78xx_phylink_setup(struct lan78xx_net *dev)
- 		link_interface = PHY_INTERFACE_MODE_INTERNAL;
- 	}
- 
-+	memcpy(dev->phylink_config.lpi_interfaces,
-+	       dev->phylink_config.supported_interfaces,
-+	       sizeof(dev->phylink_config.lpi_interfaces));
-+
- 	phylink = phylink_create(&dev->phylink_config, dev->net->dev.fwnode,
- 				 link_interface, &lan78xx_phylink_mac_ops);
- 	if (IS_ERR(phylink))
-@@ -2620,8 +2654,6 @@ static int lan78xx_phy_init(struct lan78xx_net *dev)
- 		return ret;
- 	}
- 
--	phy_support_eee(phydev);
+ 	struct snp_secrets_page *secrets;
+-	struct snp_req_data input;
 -
- 	if (phydev->mdio.dev.of_node) {
- 		u32 reg;
- 		int len;
-@@ -3144,7 +3176,7 @@ static int lan78xx_reset(struct lan78xx_net *dev)
- 	if (ret < 0)
- 		return ret;
+-	void *certs_data;
  
--	buf &= ~(MAC_CR_AUTO_DUPLEX_ | MAC_CR_AUTO_SPEED_);
-+	buf &= ~(MAC_CR_AUTO_DUPLEX_ | MAC_CR_AUTO_SPEED_ | MAC_CR_EEE_EN_);
+ 	struct aesgcm_ctx *ctx;
  
- 	/* LAN7801 only has RGMII mode */
- 	if (dev->chipid == ID_REV_CHIP_ID_7801_)
--- 
-2.39.5
-
+diff --git a/drivers/virt/coco/sev-guest/sev-guest.c b/drivers/virt/coco/sev-guest/sev-guest.c
+index 23ac177..70fbc9a 100644
+--- a/drivers/virt/coco/sev-guest/sev-guest.c
++++ b/drivers/virt/coco/sev-guest/sev-guest.c
+@@ -176,6 +176,7 @@ static int get_ext_report(struct snp_guest_dev *snp_dev, struct snp_guest_reques
+ 	struct snp_guest_req req = {};
+ 	int ret, npages = 0, resp_len;
+ 	sockptr_t certs_address;
++	struct page *page;
+ 
+ 	if (sockptr_is_null(io->req_data) || sockptr_is_null(io->resp_data))
+ 		return -EINVAL;
+@@ -209,8 +210,20 @@ static int get_ext_report(struct snp_guest_dev *snp_dev, struct snp_guest_reques
+ 	 * the host. If host does not supply any certs in it, then copy
+ 	 * zeros to indicate that certificate data was not provided.
+ 	 */
+-	memset(mdesc->certs_data, 0, report_req->certs_len);
+ 	npages = report_req->certs_len >> PAGE_SHIFT;
++	page = alloc_pages(GFP_KERNEL_ACCOUNT | __GFP_ZERO,
++			   get_order(report_req->certs_len));
++	if (!page)
++		return -ENOMEM;
++
++	req.certs_data = page_address(page);
++	ret = set_memory_decrypted((unsigned long)req.certs_data, npages);
++	if (ret) {
++		pr_err("failed to mark page shared, ret=%d\n", ret);
++		__free_pages(page, get_order(report_req->certs_len));
++		return -EFAULT;
++	}
++
+ cmd:
+ 	/*
+ 	 * The intermediate response buffer is used while decrypting the
+@@ -219,10 +232,12 @@ cmd:
+ 	 */
+ 	resp_len = sizeof(report_resp->data) + mdesc->ctx->authsize;
+ 	report_resp = kzalloc(resp_len, GFP_KERNEL_ACCOUNT);
+-	if (!report_resp)
+-		return -ENOMEM;
++	if (!report_resp) {
++		ret = -ENOMEM;
++		goto e_free_data;
++	}
+ 
+-	mdesc->input.data_npages = npages;
++	req.input.data_npages = npages;
+ 
+ 	req.msg_version = arg->msg_version;
+ 	req.msg_type = SNP_MSG_REPORT_REQ;
+@@ -237,7 +252,7 @@ cmd:
+ 
+ 	/* If certs length is invalid then copy the returned length */
+ 	if (arg->vmm_error == SNP_GUEST_VMM_ERR_INVALID_LEN) {
+-		report_req->certs_len = mdesc->input.data_npages << PAGE_SHIFT;
++		report_req->certs_len = req.input.data_npages << PAGE_SHIFT;
+ 
+ 		if (copy_to_sockptr(io->req_data, report_req, sizeof(*report_req)))
+ 			ret = -EFAULT;
+@@ -246,7 +261,7 @@ cmd:
+ 	if (ret)
+ 		goto e_free;
+ 
+-	if (npages && copy_to_sockptr(certs_address, mdesc->certs_data, report_req->certs_len)) {
++	if (npages && copy_to_sockptr(certs_address, req.certs_data, report_req->certs_len)) {
+ 		ret = -EFAULT;
+ 		goto e_free;
+ 	}
+@@ -256,6 +271,13 @@ cmd:
+ 
+ e_free:
+ 	kfree(report_resp);
++e_free_data:
++	if (npages) {
++		if (set_memory_encrypted((unsigned long)req.certs_data, npages))
++			WARN_ONCE(ret, "failed to restore encryption mask (leak it)\n");
++		else
++			__free_pages(page, get_order(report_req->certs_len));
++	}
+ 	return ret;
+ }
+ 
 
