@@ -1,232 +1,271 @@
-Return-Path: <linux-kernel+bounces-550713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68A64A56335
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:05:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6643CA5633A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:06:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50CD9175D59
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:05:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B5473B1AEC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23741EA7E5;
-	Fri,  7 Mar 2025 09:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s73t25w8"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3076E1E1E0B;
+	Fri,  7 Mar 2025 09:06:39 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7D1202F89
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A117199E94;
+	Fri,  7 Mar 2025 09:06:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741338311; cv=none; b=ST0VIaIGy4wKvJ7s1m31m4eCGo6HLpFfIRpPmVPSGbjLsEyGw3PPWNMcesHsUKhHPpVNYSKkf/LYpfAy4dUjgCJoPBdWBPKUIOd8T3O2of/VsGd+WEWKI555wkfH1bAF9FHzysyRgKFPzbIVtxC9xTRW9MtQXHxrVL4K2CDaNjY=
+	t=1741338398; cv=none; b=Ad8SnuB66UBXgRNyYGbcSgD2ffyVhwVHuEQ1iNpni7UWGp8+FGOSJrpxGEPx4BJmqJNhG46IV4SveobgtC8o/W8ZbnopACg5aXf+w+u9dIKlUOYo6F8sC3ST15Se3qtJy/aPUTHpecN9BMpXFBSZkMjreban4i6CwXU4fqGyVn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741338311; c=relaxed/simple;
-	bh=sIgpg5Z+kT4ZxmXKrwRqNpariABEca6JU6hGPKgiICg=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=E0JwSoN/eFd2WxMhcBCnsTEiXa+pZkEm054t4cq4DUGghZAUUuYR+pK7CzY0XW9zgshhlmuGEO6byekS1cmhJwAeeQc91PUkqcWyHXLySz3lEe/bwWufC7lKGp2VC/+m8D3ibDYq3IWtavLF6W/ZrJmxw9ZnBeCBkfFshGWfEBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s73t25w8; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--davidgow.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ff798e8c93so1728546a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 01:05:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741338308; x=1741943108; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zRuk23B1HYGUDb1k19WG8K3aurYaMSpuYJ0SBDb3Nis=;
-        b=s73t25w8ILowIGPNhtVATVkiv6a1IqrQug3t+eZAkgSMoU+3IWHx/U8+1CY0+JHVmt
-         62V1eBTK1ffjiguIhObFhG2Q5XLmvPnP2xNbNce23Fkdk6lSKzF+m2k2vBHtVdlzC0ml
-         yShcae8msH1WBXMZHgWUrLwH/+IhEIHqzUPMBnXa7MauK7y89GnG1zV4CPQS7rrmhFV1
-         0hh8RHu7ptgJkyVW0kZRWA/f1hOcf/qB95vPGxJvsNBrZDXHk4l/Ht+MHEZ5NweVGXwL
-         qBKSMrKAYU5SJEITdlprifqJKl+7XRUoJgRfJEHHv3KgyQX4HRSbih8DmumcW634J9ri
-         PNIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741338308; x=1741943108;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=zRuk23B1HYGUDb1k19WG8K3aurYaMSpuYJ0SBDb3Nis=;
-        b=lR5CBpmMKCtuLmgxhKixSjcdWt2cjJyN8xkOdaMJmK6OxlI76QyasUhoNCwXe3DqUB
-         L0T9XHRk9ONOVtIOH8XceGKPVYaWuLAk5seiW6B/eeXQEcknGS253Wwc8PyR2UV8/+ke
-         wW69LFyBeplFrH9nBmJUsIPOduey4xmCkgM+5JqLFhst5pn9Vz0XCVNhyx/xB0YCZnGF
-         EHDlpDmE8vEjuUO08rlscLEI69VqF4/Zm58r7lCrHuZ/hptdGhj84gLoZsYoOXanA3kw
-         0KwKgNUssNCh4MVJyaUr3p7M+vajxVvSYv+2reWkSuDgFMUVN8ue9r77yF+BillPJ4X5
-         PS5w==
-X-Forwarded-Encrypted: i=1; AJvYcCV7y3ux9X0M+Ql03iOhbdH6HS8/fp6nuvGXnPeC7zRTeEnM0g16GpkyymIK8WgAmYd59F79Rrbca9VeUTU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytbJLT34bTbwhwZGNR0U2l2oXVoSKzMzWW6I4j0cp2yXXwwQtt
-	pr0pgLA4+5viCqHhpifl5fbppK+clXE8BFKT/tjfXwdsK69w959kDW7vm2I4vh/4zqFo4t60cEr
-	6hYeYrvkhmw==
-X-Google-Smtp-Source: AGHT+IEMh2qJqItWBdivwZ20S1IgBdnlDDo2ThbaF/uKAWdN2IAz2GUfOQGkeHgejgR3WFapaEocrzpWeyAa/Q==
-X-Received: from pfie21.prod.google.com ([2002:a62:ee15:0:b0:732:6425:de9a])
- (user=davidgow job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:a11f:b0:1f2:f1a8:fbc8 with SMTP id adf61e73a8af0-1f544ad7265mr5374068637.2.1741338308594;
- Fri, 07 Mar 2025 01:05:08 -0800 (PST)
-Date: Fri,  7 Mar 2025 17:00:58 +0800
-In-Reply-To: <20250307090103.918788-1-davidgow@google.com>
+	s=arc-20240116; t=1741338398; c=relaxed/simple;
+	bh=HGOVik4p9v3ak8rxb1sEyoauH9teQ1vQw9f36MUssQM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HyR48n+klyxFkwlEIWzDR/LuZfSFzJ4/VOo6iLTg9jWOV7cKadgsE8Ape6J8hyJfM/9br2Ia8JeDAB/DJ9Ooi0NyrjwI2AaB+eJUKLr7ZDmF476tDezPCZXrhixt/L+uWKyzZ/X6PV2kV1qbF4G30lXRuXUoH+oc/9yqvxgD5N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Z8L4H3YMtz4f3jXP;
+	Fri,  7 Mar 2025 17:06:07 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id AA2451A0ACF;
+	Fri,  7 Mar 2025 17:06:29 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgAni18St8pnW0QrFw--.36042S4;
+	Fri, 07 Mar 2025 17:06:28 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: ming.lei@redhat.com,
+	axboe@kernel.dk,
+	tj@kernel.org,
+	josef@toxicpanda.com
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH] blk-throttle: support io merge over iops_limit
+Date: Fri,  7 Mar 2025 17:01:52 +0800
+Message-Id: <20250307090152.4095551-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250307090103.918788-1-davidgow@google.com>
-X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
-Message-ID: <20250307090103.918788-4-davidgow@google.com>
-Subject: [PATCH v8 3/3] rust: kunit: allow to know if we are in a test
-From: David Gow <davidgow@google.com>
-To: Miguel Ojeda <ojeda@kernel.org>, 
-	"=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?=" <jose.exposito89@gmail.com>, Rae Moar <rmoar@google.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, Benno Lossin <benno.lossin@proton.me>, 
-	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Matt Gilbride <mattgilbride@google.com>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	Tamir Duberstein <tamird@gmail.com>
-Cc: kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	David Gow <davidgow@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAni18St8pnW0QrFw--.36042S4
+X-Coremail-Antispam: 1UD129KBjvJXoW3AFy3WF15XF48KF4xAFy8Grg_yoWxWw18pF
+	WjyF4UAws7XF4vgFZ8J3WfJFWFqwsrA343G3y5Gw4fAFnIgrn5tF1kZryFvFW0vFZ3uFZ7
+	AF1IgwnrGF48trJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9Y14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2
+	Y2ka0xkIwI1lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
+	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
+	zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
+	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
+	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
+	nIWIevJa73UjIFyTuYvjfUonmRUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
+From: Yu Kuai <yukuai3@huawei.com>
 
-In some cases, we need to call test-only code from outside the test
-case, for example, to mock a function or a module.
+Commit 9f5ede3c01f9 ("block: throttle split bio in case of iops limit")
+support to account split IO for iops limit, because block layer provides
+io accounting against split bio.
 
-In order to check whether we are in a test or not, we need to test if
-`CONFIG_KUNIT` is set.
-Unfortunately, we cannot rely only on this condition because:
-- a test could be running in another thread,
-- some distros compile KUnit in production kernels, so checking at runtime
-  that `current->kunit_test !=3D NULL` is required.
+However, io merge is still not handled, while block layer doesn't
+account merged io for iops. Fix this problem by decreasing io_disp
+if bio is merged, and following IO can use the extra budget. If io merge
+concurrent with iops throttling, it's not handled if one more or one
+less bio is dispatched, this is fine because as long as new slice is not
+started, blk-throttle already preserve one extra slice for deviation,
+and it's not worth it to handle the case that iops_limit rate is less than
+one per slice.
 
-Forturately, KUnit provides an optimised check in
-`kunit_get_current_test()`, which checks CONFIG_KUNIT, a global static
-key, and then the current thread's running KUnit test.
+A regression test will be added for this case [1], before this patch,
+the test will fail:
 
-Add a safe wrapper function around this to know whether or not we are in
-a KUnit test and examples showing how to mock a function and a module.
++++ /root/blktests-mainline/results/nodev/throtl/007.out.bad
+@@ -1,4 +1,4 @@
+ Running throtl/007
+ 1
+-1
++11
+ Test complete
 
-Signed-off-by: Jos=C3=A9 Exp=C3=B3sito <jose.exposito89@gmail.com>
-Co-developed-by: Miguel Ojeda <ojeda@kernel.org>
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-Co-developed-by: David Gow <davidgow@google.com>
-Signed-off-by: David Gow <davidgow@google.com>
+[1] https://lore.kernel.org/all/20250307080318.3860858-2-yukuai1@huaweicloud.com/
+
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
+ block/blk-merge.c    |  3 +++
+ block/blk-throttle.c | 20 ++++++++++----------
+ block/blk-throttle.h | 19 +++++++++++++++++--
+ 3 files changed, 30 insertions(+), 12 deletions(-)
 
-Changes since v7:
-https://lore.kernel.org/rust-for-linux/20250214074051.1619256-4-davidgow@go=
-ogle.com/
-- Remove the second example, which shadowed a function in order to mock
-  it, as it was (a) unclear that it is only useful for code in the same
-  file as the test, and (b) didn't use in_kunit_test(), which would've
-  made it more useful (but still limited). The first example should be
-  good enough to point people in the right direction for now. (Thanks,
-  Tamir)
-
-Changes since v6:
-https://lore.kernel.org/rust-for-linux/20250214074051.1619256-4-davidgow@go=
-ogle.com/
-- Doc comments now have a useful link. (Thanks, Tamir!)
-- A small tidy-up to limit unsafe usage. (Thanks, Tamir!)
-
-Changes since v5:
-https://lore.kernel.org/all/20241213081035.2069066-4-davidgow@google.com/
-- Greatly improved documentation, which is both clearer and better
-  matches the rustdoc norm. (Thanks, Miguel)
-- The examples and safety comments are also both more idiomatic an
-  cleaner. (Thanks, Miguel)
-- More things sit appropriately behind CONFIG_KUNIT (Thanks, Miguel)
-
-Changes since v4:
-https://lore.kernel.org/linux-kselftest/20241101064505.3820737-4-davidgow@g=
-oogle.com/
-- Rebased against 6.13-rc1
-- Fix some missing safety comments, and remove some unneeded 'unsafe'
-  blocks. (Thanks Boqun)
-
-Changes since v3:
-https://lore.kernel.org/linux-kselftest/20241030045719.3085147-8-davidgow@g=
-oogle.com/
-- The example test has been updated to no longer use assert_eq!() with
-  a constant bool argument (fixes a clippy warning).
-
-No changes since v2:
-https://lore.kernel.org/linux-kselftest/20241029092422.2884505-4-davidgow@g=
-oogle.com/
-
-Changes since v1:
-https://lore.kernel.org/lkml/20230720-rustbind-v1-3-c80db349e3b5@google.com=
-/
-- Rebased on top of rust-next.
-- Use the `kunit_get_current_test()` C function, which wasn't previously
-  available, instead of rolling our own.
-- (Thanks also to Boqun for suggesting a nicer way of implementing this,
-  which I tried, but the `kunit_get_current_test()` version obsoleted.)
----
- rust/kernel/kunit.rs | 36 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
-
-diff --git a/rust/kernel/kunit.rs b/rust/kernel/kunit.rs
-index 97e99b52e4a9..7388fa831b8e 100644
---- a/rust/kernel/kunit.rs
-+++ b/rust/kernel/kunit.rs
-@@ -288,11 +288,47 @@ macro_rules! kunit_unsafe_test_suite {
-     };
+diff --git a/block/blk-merge.c b/block/blk-merge.c
+index 15cd231d560c..8dc7add7c31e 100644
+--- a/block/blk-merge.c
++++ b/block/blk-merge.c
+@@ -988,6 +988,7 @@ enum bio_merge_status bio_attempt_back_merge(struct request *req,
+ 
+ 	trace_block_bio_backmerge(bio);
+ 	rq_qos_merge(req->q, req, bio);
++	blk_throtl_bio_merge(req->q, bio);
+ 
+ 	if ((req->cmd_flags & REQ_FAILFAST_MASK) != ff)
+ 		blk_rq_set_mixed_merge(req);
+@@ -1025,6 +1026,7 @@ static enum bio_merge_status bio_attempt_front_merge(struct request *req,
+ 
+ 	trace_block_bio_frontmerge(bio);
+ 	rq_qos_merge(req->q, req, bio);
++	blk_throtl_bio_merge(req->q, bio);
+ 
+ 	if ((req->cmd_flags & REQ_FAILFAST_MASK) != ff)
+ 		blk_rq_set_mixed_merge(req);
+@@ -1055,6 +1057,7 @@ static enum bio_merge_status bio_attempt_discard_merge(struct request_queue *q,
+ 		goto no_merge;
+ 
+ 	rq_qos_merge(q, req, bio);
++	blk_throtl_bio_merge(q, bio);
+ 
+ 	req->biotail->bi_next = bio;
+ 	req->biotail = bio;
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index 91dab43c65ab..9fd613c79caa 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -477,7 +477,7 @@ static inline void throtl_start_new_slice_with_credit(struct throtl_grp *tg,
+ 		bool rw, unsigned long start)
+ {
+ 	tg->bytes_disp[rw] = 0;
+-	tg->io_disp[rw] = 0;
++	atomic_set(&tg->io_disp[rw], 0);
+ 
+ 	/*
+ 	 * Previous slice has expired. We must have trimmed it after last
+@@ -500,7 +500,7 @@ static inline void throtl_start_new_slice(struct throtl_grp *tg, bool rw,
+ {
+ 	if (clear) {
+ 		tg->bytes_disp[rw] = 0;
+-		tg->io_disp[rw] = 0;
++		atomic_set(&tg->io_disp[rw], 0);
+ 	}
+ 	tg->slice_start[rw] = jiffies;
+ 	tg->slice_end[rw] = jiffies + tg->td->throtl_slice;
+@@ -623,10 +623,10 @@ static inline void throtl_trim_slice(struct throtl_grp *tg, bool rw)
+ 	else
+ 		tg->bytes_disp[rw] = 0;
+ 
+-	if ((int)tg->io_disp[rw] >= io_trim)
+-		tg->io_disp[rw] -= io_trim;
++	if (atomic_read(&tg->io_disp[rw]) >= io_trim)
++		atomic_sub(io_trim, &tg->io_disp[rw]);
+ 	else
+-		tg->io_disp[rw] = 0;
++		atomic_set(&tg->io_disp[rw], 0);
+ 
+ 	tg->slice_start[rw] += time_elapsed;
+ 
+@@ -655,9 +655,9 @@ static void __tg_update_carryover(struct throtl_grp *tg, bool rw,
+ 			tg->bytes_disp[rw];
+ 	if (iops_limit != UINT_MAX)
+ 		*ios = calculate_io_allowed(iops_limit, jiffy_elapsed) -
+-			tg->io_disp[rw];
++			atomic_read(&tg->io_disp[rw]);
+ 	tg->bytes_disp[rw] -= *bytes;
+-	tg->io_disp[rw] -= *ios;
++	atomic_sub(*ios, &tg->io_disp[rw]);
  }
-=20
-+/// Returns whether we are currently running a KUnit test.
-+///
-+/// In some cases, you need to call test-only code from outside the test c=
-ase, for example, to
-+/// create a function mock. This function allows to change behavior depend=
-ing on whether we are
-+/// currently running a KUnit test or not.
-+///
-+/// # Examples
-+///
-+/// This example shows how a function can be mocked to return a well-known=
- value while testing:
-+///
-+/// ```
-+/// # use kernel::kunit::in_kunit_test;
-+/// fn fn_mock_example(n: i32) -> i32 {
-+///     if in_kunit_test() {
-+///         return 100;
-+///     }
-+///
-+///     n + 1
-+/// }
-+///
-+/// let mock_res =3D fn_mock_example(5);
-+/// assert_eq!(mock_res, 100);
-+/// ```
-+pub fn in_kunit_test() -> bool {
-+    // SAFETY: `kunit_get_current_test()` is always safe to call (it has f=
-allbacks for
-+    // when KUnit is not enabled).
-+    !unsafe { bindings::kunit_get_current_test() }.is_null()
+ 
+ static void tg_update_carryover(struct throtl_grp *tg)
+@@ -691,7 +691,7 @@ static unsigned long tg_within_iops_limit(struct throtl_grp *tg, struct bio *bio
+ 	/* Round up to the next throttle slice, wait time must be nonzero */
+ 	jiffy_elapsed_rnd = roundup(jiffy_elapsed + 1, tg->td->throtl_slice);
+ 	io_allowed = calculate_io_allowed(iops_limit, jiffy_elapsed_rnd);
+-	if (io_allowed > 0 && tg->io_disp[rw] + 1 <= io_allowed)
++	if (io_allowed > 0 && atomic_read(&tg->io_disp[rw]) + 1 <= io_allowed)
+ 		return 0;
+ 
+ 	/* Calc approx time to dispatch */
+@@ -815,7 +815,7 @@ static void throtl_charge_bio(struct throtl_grp *tg, struct bio *bio)
+ 	if (!bio_flagged(bio, BIO_BPS_THROTTLED))
+ 		tg->bytes_disp[rw] += bio_size;
+ 
+-	tg->io_disp[rw]++;
++	atomic_inc(&tg->io_disp[rw]);
+ }
+ 
+ /**
+@@ -1679,7 +1679,7 @@ bool __blk_throtl_bio(struct bio *bio)
+ 		   rw == READ ? 'R' : 'W',
+ 		   tg->bytes_disp[rw], bio->bi_iter.bi_size,
+ 		   tg_bps_limit(tg, rw),
+-		   tg->io_disp[rw], tg_iops_limit(tg, rw),
++		   atomic_read(&tg->io_disp[rw]), tg_iops_limit(tg, rw),
+ 		   sq->nr_queued[READ], sq->nr_queued[WRITE]);
+ 
+ 	td->nr_queued[rw]++;
+diff --git a/block/blk-throttle.h b/block/blk-throttle.h
+index 7964cc041e06..7e5f50c6bb19 100644
+--- a/block/blk-throttle.h
++++ b/block/blk-throttle.h
+@@ -104,7 +104,7 @@ struct throtl_grp {
+ 	/* Number of bytes dispatched in current slice */
+ 	int64_t bytes_disp[2];
+ 	/* Number of bio's dispatched in current slice */
+-	int io_disp[2];
++	atomic_t io_disp[2];
+ 
+ 	/*
+ 	 * The following two fields are updated when new configuration is
+@@ -144,6 +144,8 @@ static inline struct throtl_grp *blkg_to_tg(struct blkcg_gq *blkg)
+ static inline void blk_throtl_exit(struct gendisk *disk) { }
+ static inline bool blk_throtl_bio(struct bio *bio) { return false; }
+ static inline void blk_throtl_cancel_bios(struct gendisk *disk) { }
++static inline void blk_throtl_bio_merge(struct request_queue *q,
++					struct bio *bio) { }
+ #else /* CONFIG_BLK_DEV_THROTTLING */
+ void blk_throtl_exit(struct gendisk *disk);
+ bool __blk_throtl_bio(struct bio *bio);
+@@ -189,12 +191,25 @@ static inline bool blk_should_throtl(struct bio *bio)
+ 
+ static inline bool blk_throtl_bio(struct bio *bio)
+ {
+-
+ 	if (!blk_should_throtl(bio))
+ 		return false;
+ 
+ 	return __blk_throtl_bio(bio);
+ }
++
++static inline void blk_throtl_bio_merge(struct request_queue *q,
++					struct bio *bio)
++{
++	struct throtl_grp *tg;
++	int rw = bio_data_dir(bio);
++
++	if (!blk_throtl_activated(bio->bi_bdev->bd_queue))
++		return;
++
++	tg = blkg_to_tg(bio->bi_blkg);
++	if (tg->has_rules_iops[rw])
++		atomic_dec(&tg->io_disp[rw]);
 +}
-+
- #[kunit_tests(rust_kernel_kunit)]
- mod tests {
-+    use super::*;
-+
-     #[test]
-     fn rust_test_kunit_example_test() {
-         #![expect(clippy::eq_op)]
-         assert_eq!(1 + 1, 2);
-     }
-+
-+    #[test]
-+    fn rust_test_kunit_in_kunit_test() {
-+        assert!(in_kunit_test());
-+    }
- }
---=20
-2.49.0.rc0.332.g42c0ae87b1-goog
+ #endif /* CONFIG_BLK_DEV_THROTTLING */
+ 
+ #endif
+-- 
+2.39.2
 
 
