@@ -1,77 +1,182 @@
-Return-Path: <linux-kernel+bounces-550658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4977A56284
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:24:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A048A56235
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:08:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9ADD33B2B51
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:23:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8118F3ACA11
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C2F1B413D;
-	Fri,  7 Mar 2025 08:24:02 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84631AA1E8;
+	Fri,  7 Mar 2025 08:08:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EJb2y/aD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DD8186607;
-	Fri,  7 Mar 2025 08:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D59C28E8;
+	Fri,  7 Mar 2025 08:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741335842; cv=none; b=BSZoc8uFJ1d+V5ykcWXqdj7WhbcUb3OXNZ5Y/CEygorp4iz3z23DNbef9fzr50eBMhr0Ux8/l95mnHaG5Zl5Mof74tA/xpNnIABLR5zrHMBPhURDlHecYvn//TGecNax07/XYgQeuE6v+H+OzMGTIJTS/0blasdi2vuL4mvyfLE=
+	t=1741334911; cv=none; b=gqvUeGvKKkGwj87FKCorCXsmnzSvSgJcvTRmjVSuQi5Kl2JgIsUzzxisZ27A6A8C9X/cLpNb4cz95vhajUWWKDkHdu0X+Yyvcp1SgRKn+6IH31LQYBD3kKRb6zU3XbcjuBmNxLRQZ2Vo8aaCzsmVkxg5cfKoVPwkqUXhCATqqdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741335842; c=relaxed/simple;
-	bh=s3l2q/Nnz6wU5N/cVTEMEy94ENTsGRsCboHxSTZ9wZk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=I0YIejasmA2aYzXg3CutEKnK52KHGQx3sibOqxssHtoc7hPdwx4IpXTbcM6awKtD4UzXimhV4puOTCCK6YmuMiWuBBbwFhkegkAtnRWK2ga3pzQtz+Gz5QaGULdbUrrkM5El4BEMbsZ+ndJ8MVE3CGhXGl+5RAwkCV087M5fYiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Z8JjY6Tn9z9wQH;
-	Fri,  7 Mar 2025 16:04:49 +0800 (CST)
-Received: from kwepemo200002.china.huawei.com (unknown [7.202.195.209])
-	by mail.maildlp.com (Postfix) with ESMTPS id B08E21800EB;
-	Fri,  7 Mar 2025 16:07:58 +0800 (CST)
-Received: from [10.174.179.13] (10.174.179.13) by
- kwepemo200002.china.huawei.com (7.202.195.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 7 Mar 2025 16:07:57 +0800
-Message-ID: <46ac83f7-d3e0-b667-7352-d853938c9fc9@huawei.com>
-Date: Fri, 7 Mar 2025 16:07:57 +0800
+	s=arc-20240116; t=1741334911; c=relaxed/simple;
+	bh=R7McxMqYt7xjhm1X6S7itYmS510cv+FdsApwHps+Zm0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z/pMfENRwLaL6i/JOVM7oTF/50pmehMMQoNm2C/jAhZRfnlGyjwem38i9K2UxLijqDWK3Y7WmkGgXnwEtMILLvG1GZGuOlM8E356dcckMhHlTYBoGfMUvhtUMstpbrpEYaIVcIaEGU/yfVdDgSEHjERiMIEoIsjXDOjf8TqhfYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EJb2y/aD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 557B8C4CED1;
+	Fri,  7 Mar 2025 08:08:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741334910;
+	bh=R7McxMqYt7xjhm1X6S7itYmS510cv+FdsApwHps+Zm0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EJb2y/aDYLTRXoscwPEUrUes89HEur3zfemJFD5prS1cxcyS83hu9WoCWVuhPpBIy
+	 q22RsO9m5z6tV7GFywb2HygpWyOvM4GfWfMjPTknq50yOXL4k83kb1uVbmMzWrhM5s
+	 kYqo6k36jmNohuet02Thk1c7Z7GqfhHgYGfLw5rARB0oATdJbDBEw1h67P7Id5YVL6
+	 T1Oqx7dRiIEsdBVklc1jnrkEkw6Yusc7OwaHLm5LlGcl82tALQQleMfRMNHPO8nLWm
+	 KEpJ92cYXQyCa81gMyNkm+jmSyYtArVWqlYgVJb9WDkm+PaodOEhW+w8NGIhNlZuyc
+	 vxQ2h0gMS7Ijw==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Dmitry Vyukov <dvyukov@google.com>
+Subject: [PATCH 1/3] perf sort: Keep output fields in the same level
+Date: Fri,  7 Mar 2025 00:08:27 -0800
+Message-ID: <20250307080829.354947-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: Using userfaultfd with KVM's async page fault handling causes
- processes to hung waiting for mmap_lock to be released
-To: <jimsiak@cslab.ece.ntua.gr>, <peterx@redhat.com>
-CC: <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<viro@zeniv.linux.org.uk>, <linux-mm@kvack.org>, <wangkefeng.wang@huawei.com>
-References: <79375b71-db2e-3e66-346b-254c90d915e2@cslab.ece.ntua.gr>
- <20250307072133.3522652-1-tujinjiang@huawei.com>
-From: Jinjiang Tu <tujinjiang@huawei.com>
-In-Reply-To: <20250307072133.3522652-1-tujinjiang@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemo200002.china.huawei.com (7.202.195.209)
 
-cc Peter Xu
+This is useful for hierarchy output mode where the first level is
+considered as output fields.  We want them in the same level so that it
+can show only the remaining groups in the hierarchy.
 
-在 2025/3/7 15:21, Jinjiang Tu 写道:
-> Hi,
->
-> I encountered the same issue too. In my scenario, GUP is called by mlockall()
-> syscall.
->
-> Is there a solution to fix it?
->
-> Thanks.
->
+Before:
+  $ perf report -s overhead,sample,period,comm,dso -H --stdio
+  ...
+  #          Overhead  Samples / Period / Command / Shared Object
+  # .................  ..........................................
+  #
+     100.00%           4035
+        100.00%           3835883066
+           100.00%           perf
+               99.37%           perf
+                0.50%           ld-linux-x86-64.so.2
+                0.06%           [unknown]
+                0.04%           libc.so.6
+                0.02%           libLLVM-16.so.1
+
+After:
+  $ perf report -s overhead,sample,period,comm,dso -H --stdio
+  ...
+  #    Overhead       Samples        Period  Command / Shared Object
+  # .......................................  .......................
+  #
+     100.00%          4035    3835883066     perf
+         99.37%          4005    3811826223     perf
+          0.50%            19      19210014     ld-linux-x86-64.so.2
+          0.06%             8       2367089     [unknown]
+          0.04%             2       1720336     libc.so.6
+          0.02%             1        759404     libLLVM-16.so.1
+
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/util/sort.c | 44 ++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 44 insertions(+)
+
+diff --git a/tools/perf/util/sort.c b/tools/perf/util/sort.c
+index f08fbc4bf0a2ce29..6b49d64854f5f986 100644
+--- a/tools/perf/util/sort.c
++++ b/tools/perf/util/sort.c
+@@ -3720,6 +3720,34 @@ int sort_dimension__add(struct perf_hpp_list *list, const char *tok,
+ 	return -ESRCH;
+ }
+ 
++/* This should match with sort_dimension__add() above */
++static bool is_hpp_sort_key(const char *key)
++{
++	unsigned i;
++
++	for (i = 0; i < ARRAY_SIZE(arch_specific_sort_keys); i++) {
++		if (!strcmp(arch_specific_sort_keys[i], key) &&
++		    !arch_support_sort_key(key)) {
++			return false;
++		}
++	}
++
++	for (i = 0; i < ARRAY_SIZE(common_sort_dimensions); i++) {
++		struct sort_dimension *sd = &common_sort_dimensions[i];
++
++		if (sd->name && !strncasecmp(key, sd->name, strlen(key)))
++			return false;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(hpp_sort_dimensions); i++) {
++		struct hpp_dimension *hd = &hpp_sort_dimensions[i];
++
++		if (!strncasecmp(key, hd->name, strlen(key)))
++			return true;
++	}
++	return false;
++}
++
+ static int setup_sort_list(struct perf_hpp_list *list, char *str,
+ 			   struct evlist *evlist)
+ {
+@@ -3727,7 +3755,9 @@ static int setup_sort_list(struct perf_hpp_list *list, char *str,
+ 	int ret = 0;
+ 	int level = 0;
+ 	int next_level = 1;
++	int prev_level = 0;
+ 	bool in_group = false;
++	bool prev_was_hpp = false;
+ 
+ 	do {
+ 		tok = str;
+@@ -3748,6 +3778,19 @@ static int setup_sort_list(struct perf_hpp_list *list, char *str,
+ 		}
+ 
+ 		if (*tok) {
++			if (is_hpp_sort_key(tok)) {
++				/* keep output (hpp) sort keys in the same level */
++				if (prev_was_hpp) {
++					bool next_same = (level == next_level);
++
++					level = prev_level;
++					next_level = next_same ? level : level+1;
++				}
++				prev_was_hpp = true;
++			} else {
++				prev_was_hpp = false;
++			}
++
+ 			ret = sort_dimension__add(list, tok, evlist, level);
+ 			if (ret == -EINVAL) {
+ 				if (!cacheline_size() && !strncasecmp(tok, "dcacheline", strlen(tok)))
+@@ -3759,6 +3802,7 @@ static int setup_sort_list(struct perf_hpp_list *list, char *str,
+ 				ui__error("Unknown --sort key: `%s'", tok);
+ 				break;
+ 			}
++			prev_level = level;
+ 		}
+ 
+ 		level = next_level;
+-- 
+2.49.0.rc0.332.g42c0ae87b1-goog
+
 
