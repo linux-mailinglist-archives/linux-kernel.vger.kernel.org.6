@@ -1,84 +1,91 @@
-Return-Path: <linux-kernel+bounces-550681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74EDDA562E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:47:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77CBDA562E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:47:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3196171AF1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:47:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43F833AAEF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B71D819E971;
-	Fri,  7 Mar 2025 08:46:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB7A31A2642;
+	Fri,  7 Mar 2025 08:47:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eOm4uEvI"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o40S2uN1"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A4161A9B49
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 08:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0271A255C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 08:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741337217; cv=none; b=SPgLQ7iwPfOOQrK3Fa7JecxjhyOiPdWKBeaZ8FP/DnhHgH9FSyIe0sLdhF/RX0kFl6qxBEULMsyYKH+xxnCKpGTTuFy10sQ6lhr0oQGSHpdebXpm96fkBZHk7NepEuaCJM23DmQWKMltAVEkm94LOw+9jzmjZe7NjvNE17KksPc=
+	t=1741337271; cv=none; b=L+Z9Js4qAbzzzOUC050qZyukz0DqnlIXifJJEpuD+fC7lGlpaO9TNQNtI5D512X6wYQPmYVj1WSowYhN0ehKmXULkl67kgQd8azmsDZMA1t1HytMZhMu7XOJOqj1bbXHQ6i5p508PArmLIw4xCu53H7X7tqeNm2X/+pkidizwGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741337217; c=relaxed/simple;
-	bh=2tCICcAJq3mMEdu4ZDVty00I9VzTBbw0rWKed6g0y1k=;
+	s=arc-20240116; t=1741337271; c=relaxed/simple;
+	bh=1klQmpUuK3tpkUPnhlarREZmlq+0v1VMdGLEMIYqCk0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DVzzQ9l359lS8tCt/32SUhMLrbzNNmrAagj9EuYavpoD7LcvPAZRvAri1CLXdf7V2yqX+Chhgke2Gz8ekLXJTiIJiKvZlV2eRiBM0I57AnIPC0kUE0MjHupx8xZZwp5uJSJDv84p0E9wkxRYxFIDg+h1m4d+zdfiZ31S7g0G15w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eOm4uEvI; arc=none smtp.client-ip=209.85.128.54
+	 Content-Type:Content-Disposition:In-Reply-To; b=r4kV9WTCANIwMZcBx8aEVmNOZKxCuwCexeLWR+V8XPr4tMIcPcV0FjEDRShI7Q+iDw2DBNb5G1vHBOksyOCsH5ba+w16ySvddzeMYrzDYhRTaYltBJLnX3757vX/XSq17TnSNptfXzzfVxfMeLP5OtZlVOq39jxJ+5medKKXJ0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o40S2uN1; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43bdc607c16so12233815e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 00:46:55 -0800 (PST)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30b9b1979b9so17779871fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 00:47:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741337214; x=1741942014; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741337268; x=1741942068; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CURT3euQlvlJ1zWGuJW+d+Z8hIOMnrtr7tJOIL93/Ac=;
-        b=eOm4uEvI8zz2mi7l1F08LqQwGSTneNiE/vhatQFpT8E9tJqTa3rnU+anEXpx6hH+u4
-         gJSsknIRQy9YW4/mlisDichoRvLYAOOYLqqlGTGyE5zeBN4UTE0m+y910WMjQPkOuGcx
-         tSDruNw77Bjtq/1irOHSeWcD5rs7CWvUiAfhINkPfkM4uw/3cDZRj7xvRETgZ7rn2wo+
-         MJn3ul63qEepQLexx/Zmwy/5rwMlvpg8qamZVCPTow0U39FNr7L9fGwzQHzGvHlJtOTd
-         jb13iLfAD9UExdezgrYHiMGNs3knu4hMlMDpmQ5S9wCur9j+dTNO4f8177Jm11s0E30e
-         zqYw==
+        bh=LcV1MZ5e0X4Au7sgZSdAJMfYoBCfZQzOt7NC7B6Xb5o=;
+        b=o40S2uN1UD4snsy1yMtLQ9aX0HoTHUsEC+4WNc+zoiie9OSmSC9NVvwhuJedncdKAc
+         htJ1Oe9u3okimtRLAv3M6umbLrwvd8BV586IHDtfs3yd+CfCuccOc36nZ19qEnOGHfdM
+         4mT+scV9S63ywTmTRcTiKWfuBjKhUIO7BUtgByvTF99Q9QrKzwm3BGaK6EkO4MJmhTOm
+         /9AC6AqGW9oHHlpvP9e3lyK0rh9aviATAw5KUpPqsUHZm4Q6cHA9/giF8ySNG0Uju5Vj
+         cQ0tHhjvrbjwuk2tICQ53z6FvTa7XKY+f8TLzwamjl79/JW/5i3nfrAzyHI+3hWxWU9z
+         FZdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741337214; x=1741942014;
+        d=1e100.net; s=20230601; t=1741337268; x=1741942068;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CURT3euQlvlJ1zWGuJW+d+Z8hIOMnrtr7tJOIL93/Ac=;
-        b=VOzD+VpQwnJ2RKc1SWy/JgBplqQjafnh1HeYzbUcXQIPEJSkx45bijpaRWb73Z0bG9
-         nYVJBxcSqzQX3gwJFo1MZEXnISNUjE0NQT3bA/pred54e8eO6KkTtYvXvKkDIa+Bwv2L
-         JRnkdCOiDbZzFdwV+Ym2t3Pv+X9dcQ1dGCUZeQJyg0qYW/2K4k868iXHx0HbSFr8nnBc
-         WhOuRcNgoL9FuYNclTBGGiDAPTVCV8PkE874GGozfTU4dpWHnnRBGxNbLsMphE0RkbyM
-         xV5upoH/WH+RbPbtVAPvvGhVpXiQH47g6ffGXJU/YMEAvqSi0qw9D3STGkNNnb3/EKSd
-         gZvg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYxP7lfK1qrqJN0dBs6JVAc63eFLbSo80gsiCKp3a6z8ANcC4CLhUbdSpTn++eycqLPqFenMva81NmQRE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyaJ7X63KIGDU/yBhyzhSlN/79CPOIxgSLuPTNk8Sii1W06JPYl
-	iBND4In7brTU81jk2Zvo7AaCOwKRNmKkTYQgGB/O6NAtONR3eLfGyj24yFhchut0jVfDw8JXaMv
-	B
-X-Gm-Gg: ASbGnctrvEptkZirSZUe4QgX0xZHrFURyHr71SQHk61suP4aUjkifcGGygjCs0+w60Q
-	2nARjxYlrn2w3hDpAYPvhZVSxV+4DbvOB4WCRcmO7MeNWiU3ufVJbWHp3U44ptQIIOo15CUUCG8
-	Jf0dHin9Fa3wF2aXBUQA6TAZGeRHhsYVTeMxUNibWQApl9HtiEjpxWAYXLvHN1oRfC9WQ3q61qW
-	O9v26cPikDwgy8EcFz0/En+7DH7neFwRBWuoW7FdVLL6n7FtbLs1NhqH3Iq47mWOb1D0bNUof4w
-	7G3o7Ctwq+iKP+ygRoUpg/H+W/Zd6WelTpNuwfBPmk7NZkZaUQ==
-X-Google-Smtp-Source: AGHT+IEi5jnq9tYBMNZz/LbRpDjpN8pjvqYyLgYrE5AUx25gXQmhhihjTg9/axLoWRLHysByHJibOQ==
-X-Received: by 2002:a05:600c:4f91:b0:43b:d14d:8ff2 with SMTP id 5b1f17b1804b1-43c5a635695mr17068445e9.29.1741337213638;
-        Fri, 07 Mar 2025 00:46:53 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c102db1sm4643611f8f.95.2025.03.07.00.46.52
+        bh=LcV1MZ5e0X4Au7sgZSdAJMfYoBCfZQzOt7NC7B6Xb5o=;
+        b=QlWfCLrbpC5xdqFeAODINp5+AxZEBs2+H4BHUSDqobO5VA8xzRpQGoV72blQPuLzI2
+         +dFVQR7OoegWI9urOU/lNDIU/Q0ixA6AlBflUqpD0YUAjXV1T9Ce7nUowyL87vMMCcQo
+         klnLMTJpdYbazxqFkPbXTc5pyB90iFQn841riYQCHVy/rHo8efTRTJ5rLAHphSFy0T/R
+         PiqY0XvZZBRe5vBfj/Inbfu/wHutihqMAR3mfohhRxhm1nv16VeDmAHofhAbnoneuNQg
+         Bh4Kwcd0KbpL6mOrWoNqNYgR7IOlsaWBsk+FC7xb9qDYwS3jcUJ34gopR8aUhjofUOWF
+         XS0w==
+X-Forwarded-Encrypted: i=1; AJvYcCW521wTCVZhTYEUOlfucmtdS8oNCrSzl67ShGdu/zPKRQDchddXGZUdxnOHuCBcvlsP3KiTHw8swlfvCHc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8l2/dsBeox71Ul5G0vgdOW96kmbU264yJjYlTKUuECARgc2m3
+	KbBTzjgafECtTA/6iMtoDPmpBPAupcXKPhgCqEbxMPGsTVPDurH4aGViwYMI6qw=
+X-Gm-Gg: ASbGncv+ZEu7vqH2u5GTYZISamGfxgLe+BtXgvtd5mXXP8gih+1OuBsd2KqBs/G/Wn2
+	002StCADzazvwzRKk3xy/PUkd2vuTPWpT6oNOC5ZseXKndVoRHiGBqfAuo2/4XIsUZzR9ze/APO
+	sHirpvf89+3UCLrl9QtBa90LUGIvDb08rLCBxciR75Pv3/dDSXucmn/5qV8BwCMWOEo5IgpfITg
+	04w+imNiEwMUXNuqBVbxluszYKV0Exb0j8EaG0nwevQwZGG3Tw2FX6Sixsn0U9TyCDhrEeuYJWY
+	CtIchCWIsfoeKfFtzoiAYYG8B6y2j9dnOO/3gy8WpbAiKJCwrLPRM+NKlDRPjpmyeI7JLfd7NCq
+	ExXDtAVdiceVkSIXNDk0l4nIu
+X-Google-Smtp-Source: AGHT+IEiTwEYJTrTPyGNimhSVQS4rhsKdEBaz+K9T/k8At9auSzopeTRHY7N/xxUYxj35p79+k7uWg==
+X-Received: by 2002:a2e:838a:0:b0:306:501:4772 with SMTP id 38308e7fff4ca-30bf4613cd7mr7319681fa.37.1741337267601;
+        Fri, 07 Mar 2025 00:47:47 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30be98d0897sm4763021fa.2.2025.03.07.00.47.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 00:46:53 -0800 (PST)
-Date: Fri, 7 Mar 2025 11:46:41 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Ma Ke <make24@iscas.ac.cn>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] PCI: Fix double free in pci_register_host_bridge()
-Message-ID: <db806a6c-a91b-4e5a-a84b-6b7e01bdac85@stanley.mountain>
-References: <cover.1741336994.git.dan.carpenter@linaro.org>
+        Fri, 07 Mar 2025 00:47:46 -0800 (PST)
+Date: Fri, 7 Mar 2025 10:47:43 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 3/8] clk: qcom: common: Manage rpm, configure PLLs &
+ AON clks in really probe
+Message-ID: <vmxwmunmlknwp7elhp5zayoraccunxw5fex2hse2w4nwhuxzu5@atbcrfp2jgdm>
+References: <20250306-videocc-pll-multi-pd-voting-v2-0-0cd00612bc0e@quicinc.com>
+ <20250306-videocc-pll-multi-pd-voting-v2-3-0cd00612bc0e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,62 +94,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1741336994.git.dan.carpenter@linaro.org>
+In-Reply-To: <20250306-videocc-pll-multi-pd-voting-v2-3-0cd00612bc0e@quicinc.com>
 
-Calling put_device(&bus->dev) will call release_pcibus_dev() which will
-free the bus.  It leads to a use after free when we dereference "bus" in
-the cleanup code and the kfree(bus) is a double free.
+On Thu, Mar 06, 2025 at 02:25:35PM +0530, Jagadeesh Kona wrote:
+> Add support for runtime power management, PLL configuration and enabling
+> critical clocks in qcom_cc_really_probe() to commonize the clock
+> controller probe.
 
-Fixes: b80b4d4972e6 ("PCI: Fix reference leak in pci_register_host_bridge()")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/pci/probe.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+Please split this into two commits: one for the runtime PM and another
+one for clock configuration, because ...
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index 819d23ce3565..c13f2c957002 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -957,6 +957,7 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
- 	resource_size_t offset, next_offset;
- 	LIST_HEAD(resources);
- 	struct resource *res, *next_res;
-+	bool bus_registered = false;
- 	char addr[64], *fmt;
- 	const char *name;
- 	int err;
-@@ -1020,10 +1021,9 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
- 	name = dev_name(&bus->dev);
- 
- 	err = device_register(&bus->dev);
--	if (err) {
--		put_device(&bus->dev);
-+	bus_registered = true;
-+	if (err)
- 		goto unregister;
--	}
- 
- 	pcibios_add_bus(bus);
- 
-@@ -1110,12 +1110,15 @@ static int pci_register_host_bridge(struct pci_host_bridge *bridge)
- unregister:
- 	put_device(&bridge->dev);
- 	device_del(&bridge->dev);
--
- free:
- #ifdef CONFIG_PCI_DOMAINS_GENERIC
- 	pci_bus_release_domain_nr(parent, bus->domain_nr);
- #endif
--	kfree(bus);
-+	if (bus_registered)
-+		put_device(&bus->dev);
-+	else
-+		kfree(bus);
-+
- 	return err;
- }
- 
+> 
+> The runtime power management is not required for all clock controllers,
+> hence handle the rpm based on use_rpm flag in clock controller descriptor.
+> Also the power domains need to be kept enabled during pll configuration,
+> hence attach all required power domains prior to calling get_sync() on the
+> device.
+> 
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> ---
+>  drivers/clk/qcom/common.c | 45 ++++++++++++++++++++++++++++++++++++---------
+>  drivers/clk/qcom/common.h | 16 ++++++++++++++++
+>  2 files changed, 52 insertions(+), 9 deletions(-)
+
+[...]
+
+> +
+> +	for (i = 0; i < desc->num_plls; i++)
+> +		qcom_cc_clk_pll_configure(desc->plls[i], regmap);
+> +
+> +	for (i = 0 ; i < desc->num_clks_cfg; i++)
+> +		regmap_update_bits(regmap, clks_cfg[i].offset,
+> +				   clks_cfg[i].mask, clks_cfg[i].mask);
+> +
+
+... just calling regmap_update_bits() looks like a step backwards. In
+the past several years we got several sensible wrappers and helpers. I
+suggest having a callback instead of a fixed 'update bits' table.
+
+>  	reset = &cc->reset;
+>  	reset->rcdev.of_node = dev->of_node;
+>  	reset->rcdev.ops = &qcom_reset_ops;
+
+The RPM part is fine with me.
+
 -- 
-2.47.2
-
+With best wishes
+Dmitry
 
