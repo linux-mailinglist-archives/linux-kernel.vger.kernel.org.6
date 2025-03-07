@@ -1,111 +1,169 @@
-Return-Path: <linux-kernel+bounces-551317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC49A56AFD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:58:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E30A56B06
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:01:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A30B81897880
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:58:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D253A177660
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:01:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B91221B91D;
-	Fri,  7 Mar 2025 14:58:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A1921C167;
+	Fri,  7 Mar 2025 15:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPqY0/JW"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zj7Smsbk"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D3F16EB4C;
-	Fri,  7 Mar 2025 14:58:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC16021ADC1
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741359515; cv=none; b=K+e/48ZU+0nTyh1fJkSoXeDv4Wb+Jo8JmDmeOr2rnd/145J56HoQFw6gqSC5CFfanHwxaG/09DPFJmPPk2Mm3T1+JrA270nMrWjStDogGz7w0JbfhmnXKWLFpWYk/J7T9V4uAnoudyBzvKQZY8+LcbqS7cCU0fPWGtscMRpANjo=
+	t=1741359661; cv=none; b=JBUO27CXB6XbQ2MUZXs23Ry/JD7tUKrh3SrzdFZLlcbup3fR3Fl02wGDMabanrgQE3MthodoNOobxaI34XltIbDCItOpUig0mbXlrI60R1pEyppKP/4O054IvVjrNwjv/kM4vjyDzTPQpOCAErFeZF5urb5UOqD25g0d952VUF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741359515; c=relaxed/simple;
-	bh=oZzk1/5Rt1IYOn6jkgTu1i2ssgOPUr5M3qitmmRVOy8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EwnRddNVV5zarDzVkcmkUaf884Q+n0nACZk0t9RoWPFbB3d0c1lnuj3P1c6+njzUonE2AyZJJYvM/lCq8K6tw0BU2XR5CPoY6KwBwhzQDrFSjU0gWULzX6A4BAL36o1CBpfjcEUY6BdqOTlxr+c08PybdZks6y3biCvAmIxLuJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPqY0/JW; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2239f8646f6so36954015ad.2;
-        Fri, 07 Mar 2025 06:58:32 -0800 (PST)
+	s=arc-20240116; t=1741359661; c=relaxed/simple;
+	bh=qHtTx50HpEAPQhi+oOAilwuHPWB/0cppXyBnHt6uC6k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o2HdRiaXzzFIQ2FxUID51Qg05XZoQ7cSZnssVeZy25iw8TVnffbvJ4hUmWHmaPuD4WqbLMIa3/0tD7HHori0Cw44rGSMFkZx9X05ftzSOIZa4PMltC3RjYZ9gyfwJZSZe22FG9LLxT23qJl6VdKMQeyVa5kvh2rmzZyFkHHlgrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zj7Smsbk; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43bc2f816daso2108445e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:00:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741359512; x=1741964312; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BeGVrO9UYpogd2hMfjsiDz/RbqZAS98AB3fSsRgyDlE=;
-        b=CPqY0/JW+Km7g3SXC8rhEBJGnNs+1R3zPo4oy1kTR9OhD/4Gr7ZM5tHB9yYuL0110Q
-         ul3l5sNx/yHVTA9FM3Ggz5yFrhzv9wHtB45aAkUrjEZXHeXnDPhNKNZLeXjbXIr9odDP
-         HlW0Llhb+DsW6G1G2i2ptLMZOApH8l6+w9WPq8Ev4ai+6BV5lWqZiM0oBb+GhmbnrRcO
-         ETKjLOfvAW5eItAgODSYwhbG/HLseHwZYTxIhILdLMuJ8dNbnuWaJ1r5vrz14yY+fjY6
-         /pj49DLOkalL8Z9SA8DVxSSwosLdtNdplA08JZLiMhzCcBWKoAlc/WgzCsx4/6+CITMc
-         uG5Q==
+        d=linaro.org; s=google; t=1741359658; x=1741964458; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=CG/0+ifxr75o2y5vXP38zdPvnGa50K7D2JsI3Q0oVMA=;
+        b=zj7SmsbkDNFC3tqjz2OpvawdJfbAbVUxJnxgeYrYdbVCLuAV1pqS4VZw+QZNo2+JX4
+         XlS/8es2i9/JbRkprOqAsK6pkstJsET3GzK7hI+SzC+IPLGJX7qMOBpNw+1wGb+SSdnZ
+         HXeEzQqHXqFx1TWrQkPKimsgJElZHYqWXqW1um82aZrZsPM5sP98mQC/yB9AJd6Q1AAP
+         vu84YjzSAwSp055N9nwBhJ7xVNEpUaCBaW8/o1na8BZLuFhWXb9+BtUTn49YLWLrv+cV
+         4RypA+XI91eKQW3MDMO9+B42GMcFLmfv8guQRjDpOTA1iCnAN90Z7R8p+FRvTyTiqZql
+         XYUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741359512; x=1741964312;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BeGVrO9UYpogd2hMfjsiDz/RbqZAS98AB3fSsRgyDlE=;
-        b=Aysm80/4TQdHEPGQNxW7wXCPewuLAMWsd+IHbYXe7OXRiHBu3KW+WvgQBjghyfbyho
-         qZCNsWVY/BobD/21TjwXLwe9Bi9vwqHo0nPFufkNE1gj5ILRxe9pHEXAc9ffqaMaDVmC
-         ojWuNYRk5z3VdNU066oIDvXo9HPEBx9wkKKylo9a7ClWw6vZOp3PZGw0hSQ5QSvr0orB
-         QjBifs+HuQnj5IfZHKkdZg6YvL2cfyS5SdZ1iaNOS8nhNprs0mMSWDk8HxP3niMjLOSp
-         HU/hqLTDJJA1tia3iw8q7U2qh1X+xAKPf6pYJ+lwm6pKLYAg2YLbCzFqyZG8qZjHlB4X
-         RHvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTzorGKMZYE2ItxhNWIoTLfjWuB0U1+sXehTY57qqI6rD4MOeDds50qxwm23I7WHSxscMuoSeJ8VkpWA==@vger.kernel.org, AJvYcCXlmgOO5Biu0hQT1V3uWqW1t/V4vlEjRN/wvNWBoJLwQjELVt/gAky6zCk6mPuW3rRMXVfaGlGsJd6n9OQQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVF4CltwPJSjrETa0KQX69sZJ7aU4YnhP4BJv/o9tirGhXsukW
-	4ip8oo/gKFt39oW/vYzxoPtrRNnbfnZix0FojJfUmg13TtS6CPAjEVTi3w==
-X-Gm-Gg: ASbGncvFrzuVm64Z0yh3iRUd/Pidwf+oBH2lXjXgoojkITCIBS8cBiKDGnlPr+YSW0y
-	DKcwwvceSxTbum3SjiAWiyPnSvW6AYhN16yFVF+Tx4Co3Sl0NL6zJuQcMkBk6uLYjp9p/367+8b
-	8jzk0/j5IHKQivlBYVJaqjsrGgr3KTsgNtFfadz1Ou3YKCOOYVj9uGVrUm7y4d5z5H/9CrFNe8M
-	5ph2n8Hbwtkm6zZTEQaW7QhN+WQ1MqDlT1kfDfHMVe6ccngMeGY5pMVPPAbWIvdCr5Bm9PnNd31
-	htn0KYi0jO8rYyth8q3veKjNPJ9CrhNkgE3kdNdfAbPcbRawQSM5SHaVUg==
-X-Google-Smtp-Source: AGHT+IEkVEXPKWVGYwsEilWmrMR6r4ItlGhcbgF9+MHpE/uL2jCYzQD8yzq9kkCTEiv1CZ65LJozcw==
-X-Received: by 2002:a05:6a00:c8f:b0:736:32d2:aa93 with SMTP id d2e1a72fcca58-736aaae8207mr5170578b3a.20.1741359512336;
-        Fri, 07 Mar 2025 06:58:32 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736b1eb2138sm1190852b3a.126.2025.03.07.06.58.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 06:58:31 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 7 Mar 2025 06:58:30 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: maudspierings@gocontroll.com
-Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] hwmon: (ntc_thermistor) return error instead of
- clipping on OOB
-Message-ID: <da9ba2fe-f182-43b7-a28d-b34021a2d3be@roeck-us.net>
-References: <20250307-ntc_oob-v2-1-bba2d32b1a8e@gocontroll.com>
+        d=1e100.net; s=20230601; t=1741359658; x=1741964458;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CG/0+ifxr75o2y5vXP38zdPvnGa50K7D2JsI3Q0oVMA=;
+        b=ED2As1Qeb0mtgiig1skmHOz5nLRV00/VJIpXpCfkwLaD2EU/cSnnSqm9nhQfeDtlBs
+         O/sP7exoOVnOJBIvVpWLNt/i7zfEqePE/I4K9AR94pXWxAWAXljRsEwQr9iDyVoW4GZB
+         igIhaovg+Rj2DKdY+phEFVRuEktGnLN/9rGlRRKWaGznCFB6UuxNYFD50dbxvJBxEpfq
+         wYkcJ6ygkTro/iPrSigU1sUdBEpUV/zDOFL7OeG0k79MnHGMb4xfiaoXX6rEbxGzgPFm
+         xQA6CUUQbKdCo6v8Lr5EYYPjWWmuWn73TD/1m36H4Z40vM0AeyoG42LjmLeDkdPLyN4/
+         S+mg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+/nTeSiCvU+PEMZHiVHkrcnZyiOChRfWjInK5SmTDV7s/SvN34Sq7y7DV1vbeswtpgs5mn3qBBBuSyyQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIwnxRmPviZkYuL7zrmFXnIXUn56NKIiEpXG7XwehT6tIoP5NS
+	ohHI9Oo39vTbeM8MWTNWty12CnVJEQSE01q/8V1Tpd+betF94kXv0fnwe1sVZBo=
+X-Gm-Gg: ASbGncsAY6mcabIEaXRtfCgIwXRil1bU5Ec9tMb1iKz3pRC+eO1V+KMEPpz/JTE4ofP
+	S0TneG8dwWqYlslWKGlkd5x9wBX1Fm9Z3UTa14qIaeQy4V6QsuO/ymINsKAEgtyQQMIHDYk9VPa
+	7rjR3Zt9FnKZXnKVlJC5OOn6H5UJfgpSLH1IGSjSOFuf7uPygD/sEDqzCsAmYYOaUSvyFo/sLgn
+	wxQgF59i0T6Tx4cTRLvSggFLUwnGeiMYHZGKUIPJBYIpVzyu66nhIDSS4NMWMUjLsA0HliM3VBt
+	W/YMt5PlM24V3TU5qeojPqr+p/+l7zvpRDAJfrXXd3UZqtlu028tnoa7fdmwGZhZ
+X-Google-Smtp-Source: AGHT+IGGZYO9R1Ir9jZGE3PRQGONJFCKHQHAZ8yS9pdVo8obZtmL6fx1WKDeNC/DhwpJv1mJ7ANdZg==
+X-Received: by 2002:a05:600c:5108:b0:439:90f5:3919 with SMTP id 5b1f17b1804b1-43c5c4bb61fmr11520345e9.4.1741359656901;
+        Fri, 07 Mar 2025 07:00:56 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c11e9desm5476847f8f.101.2025.03.07.07.00.55
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Mar 2025 07:00:56 -0800 (PST)
+Message-ID: <ceb3be8e-8f5c-43a8-a4b9-3ee62e67dfd6@linaro.org>
+Date: Fri, 7 Mar 2025 16:00:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307-ntc_oob-v2-1-bba2d32b1a8e@gocontroll.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC/RFT 00/12] clk: samsung: Use platform_driver_probe()
+ to avoid __refdata
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250305-clk-samsung-ref-init-data-v1-0-a4e03a019306@linaro.org>
+ <01cdf3a68e120d30bdcf4fc225bb236dba47fdff.camel@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <01cdf3a68e120d30bdcf4fc225bb236dba47fdff.camel@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 07, 2025 at 09:10:43AM +0100, Maud Spierings via B4 Relay wrote:
-> From: Maud Spierings <maudspierings@gocontroll.com>
+On 07/03/2025 15:29, André Draszik wrote:
+> Hi Krzysztof,
 > 
-> When the ntc is reading Out Of Bounds instead of clipping to the nearest
-> limit (min/max) return -ENODATA. This prevents malfunctioning sensors
-> from sending a device into a shutdown loop due to a critical trip.
+> Nice idea!
 > 
-> This implementation will only work for ntc type thermistors if a ptc
-> type is to be implemented the min/max ohm calculation must be adjusted
-> to take that into account.
+> On Wed, 2025-03-05 at 22:43 +0100, Krzysztof Kozlowski wrote:
+>> RFT/RFC because testing needed. I tried to do the same on exynos5-subcmu
+>> and it caused weird oopses which even KASAN did not narrow. Probably
+>> because of multiple exynos5-subcmu devices?
 > 
-> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+> I've tried this on top of next-20250225, and it doesn't work on gs101
+> either and OOPSes several times during boot in different places, but
+> I can not dig deeper right now.
+> 
+> [   11.502919][   T58] Unable to handle kernel paging request at virtual address ffffbfe2ab25cc30
 
-Applied.
+Thanks. I'll dig more once have a bit more time. The calltrace is
+exactly what I saw with exynos5-subcmu and it puzzles me.
 
-Thanks,
-Guenter
+Best regards,
+Krzysztof
 
