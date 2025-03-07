@@ -1,113 +1,117 @@
-Return-Path: <linux-kernel+bounces-551530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551532-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE2E2A56DB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:31:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF3BA56DBB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:32:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 343A1171FF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:31:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6931417917C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7410123BF9B;
-	Fri,  7 Mar 2025 16:31:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1961F21A44E;
+	Fri,  7 Mar 2025 16:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RGT/fMHx"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gb8wy99Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A20F1607A4;
-	Fri,  7 Mar 2025 16:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AD221CC7B;
+	Fri,  7 Mar 2025 16:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741365092; cv=none; b=ItNZJgWTAp/9AWIRU5DcsYoWcG3GWOW2TxWhs85Zt0hp+0MShWJRqiZ3IrB/L3RqREPyAz8eNpsPK/nOYvPQUeEqvA8T3VUHGBzKLuw7bOdORSb1Djbo8wLDqP9Z5lCgZMUM/22/iLxabWXDedwWCHALdsmCoTFJOaOZLfe1daE=
+	t=1741365134; cv=none; b=it6Sqgvi9rehKFgd3uSZS6DG/hUFua/P2blKbdXMG5nfxBDuLdNC+V71IMK2/edDqtYGpZNxkkRVXPU94S1P40b2IQb94jax8wvOKHXtByAG9lBHCg75+KXPeItBaEnkgJBc+SFo/HDE+M7yhB93PE3KE7sQyQitSIEeJjlmMA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741365092; c=relaxed/simple;
-	bh=lAJPfgwy80djfUD6Dp0fH1s3yX48TIE7w1QicCUh1KI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B4157airE/tYvMwpTzvm1UYJiqnMzymtEvXEE+9QMfpyakstu07LF6RtvmD6iOzZ7mFWeCbEFDk6gSZdF4CKira3ggT5wFAjkcOcvv4O1XHkJtkN2z42UfztHJIg5t98yMcZZPudhEKc2ot03gqJxOUHtIn2wZtaBjEfrII+Vps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RGT/fMHx; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30797730cbdso20231021fa.3;
-        Fri, 07 Mar 2025 08:31:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741365089; x=1741969889; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lAJPfgwy80djfUD6Dp0fH1s3yX48TIE7w1QicCUh1KI=;
-        b=RGT/fMHx09KHYrRVJ2vkbJVj0hoTqsvQfn2MR7wgr1sfrQpGVYZ6uIa4OW5QtTn8d6
-         CKOi3kb9t9oYkzcLp2OOd6iDp4qd4DbHbbcHOj3+WPhHL1giS0+b+2R29m4NLq5Xnh34
-         vtzVdy5g+m14axyBjzzaaAj4Xxo+lZIYwgyWOw/bMqgN91A6aFpzeSC6EZiJmFr4my0Q
-         uxpGsoNT+N7EVT4zF4SQ8Catibn0YRTEIzu88fmfyGZxWUzbBY3PqmQ9Sdf7Lw6MzItY
-         f9rlI1p4iJ4UpkPDT2gX5vxVL9K9a+PJ0cF7UkfdJkst0RPc5dSuTJZRWVZCFSG5p9vJ
-         FFkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741365089; x=1741969889;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lAJPfgwy80djfUD6Dp0fH1s3yX48TIE7w1QicCUh1KI=;
-        b=k2JYpHVIPEYH2GbBQY1mfVMLeG0gyrH9VFD/NeqJbsQS3OnNISa8dNArd5dTqWLio2
-         qQ0DuJltVd1xGAfwvEG4NLh88eFSKajgJPcwe1oo7uQHEgRuP2S0MO6NfRInJcOD4kHH
-         j/JmikQlR095C3sZ67p9rjfSPkTLvXUy0Ir/2ub6h2+RDC/IGu8d48DRGmhCgewgUvRo
-         jW05W+CEmT+ZJw/gv5cev4nP/fxVZl4Gs1F2NkNimE3CjQ0DPgFJmpqQFpyTagZ8mG6E
-         M4DIcsPICb5w3IxVwv980ILXvGMoM8clkw1TjigHTAWN8SCmE5lNQlyy3IpuQci5ytyI
-         wAKw==
-X-Forwarded-Encrypted: i=1; AJvYcCVk835h7MDGeAhZGT4bAzVCQAhBfcwdim0gqcdlP9fqfucSa/pFuvnqr1POocJHmt/Q2JmwDpGHadQ=@vger.kernel.org, AJvYcCX5VYTTAy3TErzTXexC4PasA41YLbEuuUlE+rLTptlwBwPe6ahKV9fmYjB6Ca5j4jmyHTb17whrBqpozoml@vger.kernel.org, AJvYcCXkSW2EHgDy4iUYKjz/mvW4BGBTwgyn2jKbJj6GN/WhoSizCIYC/9Ywz7rGG99mDiAOpWAnHnXfG0jheM85sYRg@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrCJlHanZF0eF8HNIhXF2l/8X8CTkRKoSFIu41E9+8GVF14hSz
-	qYqggS1X8IFvKMv1uh5yyVR2xbKquGvo0HjvldDEE3TkiNvu3JecIhRiFXju4/UcrVRFUN5p9l0
-	8KAwo5/MpihsWxl/KG3AHWGOCT8E=
-X-Gm-Gg: ASbGnctRmbUvs78k/nEzNxLvy4aaac/m/fAQiDEU0VqX1PzbBrL2BVoN6sNBzPWBK71
-	VmdAr9RfTtdQP7HWn2hFm+pUXw9Wul1mwoL2/eDBxypkXWF8UA3TgXcnpfAAB/iXvC7PhrkCRHE
-	IPoe0/hH9PPnxrBiNAiFFAtyxGIDsEpq6F6TxyU2t29ePfEfhJSjVYcBD+FcA3
-X-Google-Smtp-Source: AGHT+IEgEmihwEMplxNvvkQvj5VuR9SKkH2j1mgoi1vrJUJlhmNG3YpZPhWz5+QONvVJZUVJ5MwX6UXtoR+OGwuCJVI=
-X-Received: by 2002:a05:651c:1689:b0:308:fbd5:9d2d with SMTP id
- 38308e7fff4ca-30bf463a73dmr11788591fa.37.1741365089031; Fri, 07 Mar 2025
- 08:31:29 -0800 (PST)
+	s=arc-20240116; t=1741365134; c=relaxed/simple;
+	bh=Sm2u4lkW9WmjbUbfrUxh0xjfgPJJFZa6w+NyuKr9lJY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bOocashLy8/TvayiJFVSEz0LBL+co4xTjaoqYyj78ZGLLxIBvYEOKxn1RELB8wNZ8wQ8tOGj2/EAS1vB+m2y1oXBtcn1CGz/YY6+zmTGxH7+s+K6beEhKXV2kbX6iVngIzioAcZn/2oCgIG3Hrbo6KqHT3SG0Ngj6ziI7rEm7co=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gb8wy99Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4084AC4CED1;
+	Fri,  7 Mar 2025 16:32:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741365133;
+	bh=Sm2u4lkW9WmjbUbfrUxh0xjfgPJJFZa6w+NyuKr9lJY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Gb8wy99Qc6kqeeXN0aV5hFK0czGJZEoZK70atA8Arhc9mN247Fr0CgGSYZbK7BwuA
+	 rX4UxHHouy1ukcLy9zX/I8JtmRsN02BUw3op93sTEaqaZTV9RNDgPacO5FhrbISqSV
+	 Bn07pK6wchQO/8/IKk1JoWHvaaoyEVzwd6mxAQ6rSstQyZKp90Xap1XdvtSNKDCZ3o
+	 OKGpsTrxn/LeIlFY5zLadLScHy3UmjBhwQJwFJq5mdgLRVBYFe0xntaWUn9B0Xma+q
+	 hg7INV2MtqXhJcoZBMkpzz99TuHZq99x2Ga6Wf6mPbjhUQVe8LgiglY6Mj4g+hh9Tk
+	 xFGCHeKjljABA==
+Date: Fri, 7 Mar 2025 18:32:08 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, Thomas Gleixner <tglx@linutronix.de>,
+	Claudio Carvalho <cclaudio@linux.ibm.com>,
+	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
+	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
+	Dionna Glaze <dionnaglaze@google.com>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [RFC PATCH v2 3/6] tpm: add send_recv() ops in tpm_class_ops
+Message-ID: <Z8sfiDEhsG6RATiQ@kernel.org>
+References: <20250228170720.144739-1-sgarzare@redhat.com>
+ <20250228170720.144739-4-sgarzare@redhat.com>
+ <Z8Jmps6AF_geaHUw@kernel.org>
+ <3p5erujbhxw7ozdnfpmresv3dqdh2xszolv6mh4khkagoy3wit@ow5qht4keh4h>
+ <0e156883acf95d31b9358831550d6d675e3ce4ff.camel@kernel.org>
+ <Z8dg46Mj81Q9Z0WV@kernel.org>
+ <jkr5z4thb55gs2jcmtcfipgg6p7z6ikhr6etd6l3nqpf723hf7@3fns3z5cjqk4>
+ <20250305190229.GC354403@ziepe.ca>
+ <Z8oZLqn4p2-AWQbz@kernel.org>
+ <fgxwcfm6fctdsjnzdbf3ecxss453dir3pgaqio7bzazjj5qotj@mdi6wtuzorvn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221-printf-kunit-convert-v5-0-5db840301730@gmail.com>
- <20250221-printf-kunit-convert-v5-1-5db840301730@gmail.com>
- <Z8mUH0comOCpycpK@pathway.suse.cz> <CAJ-ks9nFSzRXFauavzSWhvhr2Rou7qqkWi_LZ=4e1Tyr4_bn3g@mail.gmail.com>
- <CAJ-ks9nDLGvzZ+NDAJsk2Hy1=hsCzayg4-65gk60T_WJZzOUzA@mail.gmail.com> <Z8sW1QBgPVUmEzUd@pathway.suse.cz>
-In-Reply-To: <Z8sW1QBgPVUmEzUd@pathway.suse.cz>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 7 Mar 2025 11:30:52 -0500
-X-Gm-Features: AQ5f1Jqj8z8Xnln11dqVW0XOSqH1XoW79G51FNEA7K4iaFdlgfDG9Z_Ubvj7D_E
-Message-ID: <CAJ-ks9=YWas3fUeUOYLhivb+icMczafmfBopvS77-CCWQyKQBQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] printf: convert self-test to KUnit
-To: Petr Mladek <pmladek@suse.com>
-Cc: Arpitha Raghunandan <98.arpi@gmail.com>, David Gow <davidgow@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
-	linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fgxwcfm6fctdsjnzdbf3ecxss453dir3pgaqio7bzazjj5qotj@mdi6wtuzorvn>
 
-On Fri, Mar 7, 2025 at 10:55=E2=80=AFAM Petr Mladek <pmladek@suse.com> wrot=
-e:
->
-> Honestly, I am not able to find how the KUNIT_FAIL() actually prints
-> the message. I can't find how assert_format() is defined.
+On Fri, Mar 07, 2025 at 04:37:12PM +0100, Stefano Garzarella wrote:
+> On Thu, Mar 06, 2025 at 11:52:46PM +0200, Jarkko Sakkinen wrote:
+> > On Wed, Mar 05, 2025 at 03:02:29PM -0400, Jason Gunthorpe wrote:
+> > > On Wed, Mar 05, 2025 at 10:04:25AM +0100, Stefano Garzarella wrote:
+> > > > Jason suggested the send_recv() ops [2], which I liked, but if you prefer to
+> > > > avoid that, I can restore what we did in v1 and replace the
+> > > > TPM_CHIP_FLAG_IRQ hack with your point 2 (or use TPM_CHIP_FLAG_IRQ if you
+> > > > think it is fine).
+> > > 
+> > > I think it is a pretty notable simplification for the driver as it
+> > > does not need to implement send, status, req_canceled and more ops.
+> > > 
+> > > Given the small LOC on the core side I'd call that simplification a
+> > > win..
+> > 
+> > I'm sorry to disagree with you on this but adding a callback for
+> > one leaf driver is not what I would call "a win" :-)
+> 
+> IIUC in the ftpm driver (tpm_ftpm_tee.c) we could also use send_recv() and
+> save a memcpy() to a temporally buffer (pvt_data->resp_buf) and also that 4k
+> buffer allocated with the private data of the driver.
+> 
+> BTW if you agree, for now I'll do something similar of what we do in the
+> ftpm driver (which would be what Jarkko recommended - status() returns 0,
+> .req_complete_mask = 0, .req_complete_val = 0) and we can discuss
+> send_recv() in a new series where I can include changes for the ftpm driver
+> too, to see whether it makes sense or not.
+> 
+> WDYT?
 
-KUNIT_FAIL -> KUNIT_FAIL_ASSERTION -> _KUNIT_FAILED ->
-__kunit_do_failed_assertion -> kunit_fail -> kunit_print_string_stream
--> kunit_err(test, "%s", buf);
+Yeah, that would work. Althought not related to this callback interface
+per se, also tpm-dev-common.c is one example (in a way).
 
-So I agree that the trailing newline is just as necessary here as in
-any other printk.
+> 
+> Thanks,
+> Stefano
+
+BR, Jarkko
 
