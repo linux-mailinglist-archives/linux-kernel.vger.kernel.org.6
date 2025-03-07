@@ -1,153 +1,201 @@
-Return-Path: <linux-kernel+bounces-550961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FE6BA5666E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:17:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE499A5663B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:06:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CADF11891C40
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:17:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BAFF47A55C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A9D217673;
-	Fri,  7 Mar 2025 11:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3486C2153EB;
+	Fri,  7 Mar 2025 11:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J08eV7ap"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMYohYSS"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C360217653;
-	Fri,  7 Mar 2025 11:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B44402153CF;
+	Fri,  7 Mar 2025 11:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741346253; cv=none; b=osRm2lp7DeKNSjW+LqWY/vJp6JHOIRDG+c1tkkmApAHmUJ/w1id5zw+et6RnrN6msIPBfHfCxs8orWnEGKOWFllE8WZNYejMhFuH8XtzBznz486ifKWbhqE9rPwXaGO5oMC1/d41ramrs7br2/Dx30IJHgx5P9YGx4fu5JaldAo=
+	t=1741345569; cv=none; b=bPJwXhCLW/4LFr3QHmVAvAyG8zlhu/StbVYjANbLtOhEzNNNIxYTl3p0s3YARirhgK+oazUFPa8vHwNqqTuxRmOq1pT+RYZ9tSQhN+Q49eYpe8Sa4TYItgJYuFI2Z8XGXm7C44222GbLDiyuulsPAhtK0J3+k25f5I6CdtYlEYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741346253; c=relaxed/simple;
-	bh=QY00a3rngmsVxLQDZ3rhfcfy8+4hGUDyLxDK2MVdQBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u6j8zF1xT8VFwJkuI5CBXvff49g4brXAyf0N0yc43w1IQUJ4WqcAN1CfWS5Vn3y89vV2fkStuA5F9BClcxaYEyrg6yaSDK4O2Z9OfC23WbMesr/QbTOPI6uyvecpDXtddF1fShxEbjBOM6WY0yLtE5D/Wu2TvNoNrk+nJPJ70A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J08eV7ap; arc=none smtp.client-ip=209.85.214.175
+	s=arc-20240116; t=1741345569; c=relaxed/simple;
+	bh=Y3c1xaFBNvjdfM7CmJTWCACE1BdwUW+rsUdX+Am+YJE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fwg/SNtG4dU4/geQaK8C93YqdCIcA8Uobunvqd/Ap6M+GG/rKfPFK4TYnhTg1m/hRaenLoSqrVHFgFaeedyxftSmBOZcMxG4iou2anAjXA/x0H2Mebo9X+SUih2Fd7wD1RODb7Ljz27NXEXeZRD5iSZ2KOZkMqpM1rGTB3khJr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMYohYSS; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22185cddbffso53482995ad.1;
-        Fri, 07 Mar 2025 03:17:32 -0800 (PST)
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30762598511so18881571fa.0;
+        Fri, 07 Mar 2025 03:06:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741346251; x=1741951051; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9WDU/0AiPCuXExkzik2v+BtrRa6yZzdzICrZw+6l4Ag=;
-        b=J08eV7apyRp/7zr2li9x1dsc0j4wTXDGWQFhJd7rINalz6N+2/2fItP+fFU0wPRmQZ
-         AKe88xcpsI+tLHhjGQk8ox0+xjugYPasuvcdwZpc2sY7A7swk1UFXxtUhonEs/387T3O
-         vKqmpffJSWXll9A64odVCUReG0MYGRBHZCP3ghK7yGv4DwdDtG8c/dQ429QZYd5WPTH0
-         1vrF1p1I3uGcZximeDHlVHfuhug01nuWYMZhZaapaSPQKTaVAGX8cenZH1eiuZwWEkep
-         99s5SdWzA3+zRJJOoWaSo58pwyLNYlPDqHoX4uqgBCo83plWkxiASaD1aSOpxLGkyCSt
-         yvyg==
+        d=gmail.com; s=20230601; t=1741345566; x=1741950366; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=O6/lu0PuWFwtxqE9OCkmTvscVopIwEhxKjBzyZRwrA0=;
+        b=HMYohYSSWHqMj0SMltkJrErWrnFvG+tK9EGInYbARqMFCMjNtrugxCOBcNj0JVPUaW
+         k+5MZoEZzwArbpb9jfHC2gJzRJeZ0NwsdvebtNhpGzKijNTr2n6GB/Hf5CDqa7c8D+Im
+         PdVPfywh8z3avYp3YIfDkU8Gemou1ktiVjAuqOA+P+J5s0ezLPE4qFgi96Ah6gMov/+9
+         bzCYMnV5yAJqfln5iaRXoiAxzww115UiDj5aeiqflrU04ppCu5C17U8vOaJnK61DpvBX
+         uZ8vkcV01fU5gToJ8RVJmVZqIhNJm89LuzYFXjpuK9J5KnLaFUgpzd1y1n82Z1VKVAhr
+         phRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741346251; x=1741951051;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9WDU/0AiPCuXExkzik2v+BtrRa6yZzdzICrZw+6l4Ag=;
-        b=lXfpbVLX84suJkZ2jQDlhnMjonHcLZaUW7ESIx4LVFGs+9DWUC7WcNKEGrQlRCIObo
-         lWhL8V7xi2+BXMLZIc49tyqePmeWD+aDy5ZHHLNCs9JgYhZfiF+oeTq6c1eyb/vjm/ps
-         Sv5VJEH52ZjiCvBq0k1d5eTCFQeLRA/gdRoYy6w1HZi8E81ngzH2IgnDiTWKdASEQGzP
-         NIDZznQvG5mS/KQu2eXU9iQvpEriVYgqp9C0vlFQgXbszSmSEtIqIgwcgygTD/TJ18sq
-         rRqAj7Ns1GcXRRSA3+giHTZuQdvB50m+/fy7TnMCyuRIW7xvXOaqSjv0V0gy5X60Dgc7
-         SvWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVV9XKJFTHIxsqq225Ta0S+mIR4QtcyFyZAlC9U8cmzAm9AsWohfPnAS8UXkmHKPyYjgqwTI1c2C+E=@vger.kernel.org, AJvYcCVbCVFE51irR2nJisNXwrfzGmOsVB0+JS1VdSmejykK+M89mtnN12ciofW/O8qSL3FVBpIFaY4m3liombjV@vger.kernel.org
-X-Gm-Message-State: AOJu0YybXBplsZj9DTfcZuqAQwWSFs/vAi2NHe3ayzjUcVKa/rOD6Zst
-	J37FnOxjwT4YTNkQZEUpN5Mn4N8UsVpC8VzflfBBoeFVQyG4847O
-X-Gm-Gg: ASbGnctalOWPnE/eNIwtVyLFPQsWJKcD/S3UAQj+J4LBSzXA6SKdi6SuVBVIA4l+nCX
-	w8jmsLvecteOA/V2G0JMWdkVMsGKk8xPAJnbdjLtWW4gEjgcJiY8BJRopjpoxp287XTVRZ3TWKf
-	ylvMpgM6g3vyuOwd0fbtw5bkQo1AJ1lXlmCz7d8p+uE2RDpVmV5MXSnRRqirwKSD4A3rFndaKHI
-	g4XHWHqpXcPmjOlfQ7Loj1eaB27Oc4jUpbB0bLL1y8v3XV2DdD2rUyMhzi2U2K7TOtgVjhPX1qb
-	XjN03ePJkPEyYSu+MHEd6jNFHWOnKz/HrSb3nlPU1Up1K2U9a7Lx0GaCYGSCGR4um4jNGAVlMYO
-	eEsl+CieO15A5Li4=
-X-Google-Smtp-Source: AGHT+IGLMqL97eIZaqRXzhmsR4cnq0XXC/PM8jbkeUNyeHsw1h0hQd26hi42sAz14nYj3gGZ9el5iQ==
-X-Received: by 2002:a05:6a00:3d52:b0:736:9f2e:1357 with SMTP id d2e1a72fcca58-736a97e4239mr4650047b3a.12.1741346251281;
-        Fri, 07 Mar 2025 03:17:31 -0800 (PST)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73698514f4dsm2971364b3a.124.2025.03.07.03.17.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 03:17:30 -0800 (PST)
-Message-ID: <e3637b13-1f51-445b-8d9d-bd53a691eca3@gmail.com>
-Date: Fri, 7 Mar 2025 19:57:54 +0900
+        d=1e100.net; s=20230601; t=1741345566; x=1741950366;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O6/lu0PuWFwtxqE9OCkmTvscVopIwEhxKjBzyZRwrA0=;
+        b=OW0X8Dmh7pdr6QwEc33OVckGhfc7f5TB/sERQpIgCHMo78bDoj1WDnHinSlGfBX6e6
+         sd9JYZbFeSF3LGIu+NeFJpnFl6JW0HngHsgaM158tHUTGeFetXoEpx7w0EzaYq+8LnQ4
+         Sq496QYva9SOkxYE8Iu8EFi0GVEYnsBHGTS0QN7TmKBIhTio4jK1BgfjP0pN/lLEEFZF
+         ax0XLIOpdxn4W9Vo0bx0yFpXpFmroJoQiHwoFGvIgGKIg5kSIMrtVMPzDWiCBxApH61l
+         lHyXaie6bqv2LIH/L3/K70Of4B3lztcrIcWxBCKgD6J85n2j05BVq6rSCqTeYDQN6PiV
+         j2+w==
+X-Forwarded-Encrypted: i=1; AJvYcCW+E8TUkcix6dR4WbE7osfweJ1kr8iwpSEp/WhL9xf6ydyAnOmId7h/Ta9IwZGXd0pSovaeA7RRdTighjctXA4=@vger.kernel.org, AJvYcCXyja1wxpsUetYMCXjr0jJdixnEm17SX7uBM5/HsHF0JmdEbbcRSABgTjbmLC15Uw22cnY3mpqUmkEhxzM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuSrNfitjEkOHmewMH29GD2qGYR9v2MltPqbYew0bzhnPV/j8d
+	bQLZQWlU+SbO/AEGI2ePkTWwvonOdAm8hQ8PUwOaETMHrgPskzbV0kyQJ0dt19MJy2e4tUqlIF4
+	qoFXVLf4BAt9c5/At49+o115XS0k=
+X-Gm-Gg: ASbGncs1EUSO3c2iibF1VTO1tnI/vWjKtR2JYebqAxVK+jA1d2FTCsX45wo/sVN4I+4
+	/FYfoBfaITC/vmTtolCI4F/ObwcNw/Ma1kBWofyolYqKiu0r01NDTupakJJc7qAl7c80zpZcLoy
+	+XfQnkmS6G0Yp1k1s9NJCxd/2zrYg51BSrQTvsfneWI6SQTdy0aP+3xhNtKHVV
+X-Google-Smtp-Source: AGHT+IFJxg6rADFBRb55qm7qbREgXVMaA/SWCf0d9xcf6hqoz84f8DFI7T6UPF89zZo8LKwCp15hSsTp6xYmokxzlDc=
+X-Received: by 2002:a2e:be9f:0:b0:30b:ba06:b6f9 with SMTP id
+ 38308e7fff4ca-30bf463b68fmr9089911fa.26.1741345565293; Fri, 07 Mar 2025
+ 03:06:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 1/2] cpumask: Fix kernel-doc formatting errors in
- cpumask.h
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, linux-doc@vger.kernel.org,
- Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
- Akira Yokosawa <akiyks@gmail.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Yury Norov <yury.norov@gmail.com>
-References: <cover.1741332579.git.viresh.kumar@linaro.org>
- <f4ad81150eaa00b43c161f0d1f811f8ecfe21889.1741332579.git.viresh.kumar@linaro.org>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <f4ad81150eaa00b43c161f0d1f811f8ecfe21889.1741332579.git.viresh.kumar@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <6-mv8ahCblqal1f_T1RcVPPPb6QEedsAXlhmcyCNC-lnvAj1USOInn0YNogItuEdy_KthnPdFDElN1F6A9ncwA==@protonmail.internalid>
+ <20250210-rust-analyzer-macros-core-dep-v3-1-45eb4836f218@gmail.com> <874j055csy.fsf@kernel.org>
+In-Reply-To: <874j055csy.fsf@kernel.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Fri, 7 Mar 2025 06:05:29 -0500
+X-Gm-Features: AQ5f1Jr6-m0eAV9GPSpncHM1zoCrIjknINxPjzXii3DP0sMK3uIQjcf4Vr7NWp8
+Message-ID: <CAJ-ks9mofNbtGqoYBummkfxZ+zrmEHg5P6viVwwgs9-BuNGbZg@mail.gmail.com>
+Subject: Re: [PATCH v3] scripts: generate_rust_analyzer.py: add missing macros deps
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Boris-Chengbiao Zhou <bobo1239@web.de>, Fiona Behrens <me@kloenk.dev>, 
+	Kees Cook <kees@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Chayim Refael Friedman <chayimfr@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi again, 
+On Fri, Mar 7, 2025 at 5:57=E2=80=AFAM Andreas Hindborg <a.hindborg@kernel.=
+org> wrote:
+>
+> "Tamir Duberstein" <tamird@gmail.com> writes:
+>
+> > The macros crate has depended on std and proc_macro since its
+> > introduction in commit 1fbde52bde73 ("rust: add `macros` crate"). These
+> > dependencies were omitted from commit 8c4555ccc55c ("scripts: add
+> > `generate_rust_analyzer.py`") resulting in missing go-to-definition and
+> > autocomplete, and false-positive warnings emitted from rust-analyzer
+> > such as:
+> >
+> >   [{
+> >       "resource": "/Users/tamird/src/linux/rust/macros/module.rs",
+> >       "owner": "_generated_diagnostic_collection_name_#1",
+> >       "code": {
+> >               "value": "non_snake_case",
+> >               "target": {
+> >                       "$mid": 1,
+> >                       "path": "/rustc/",
+> >                       "scheme": "https",
+> >                       "authority": "doc.rust-lang.org",
+> >                       "query": "search=3Dnon_snake_case"
+> >               }
+> >       },
+> >       "severity": 4,
+> >       "message": "Variable `None` should have snake_case name, e.g. `no=
+ne`",
+> >       "source": "rust-analyzer",
+> >       "startLineNumber": 123,
+> >       "startColumn": 17,
+> >       "endLineNumber": 123,
+> >       "endColumn": 21
+> >   }]
+> >
+> > Add the missing dependencies to improve the developer experience.
+> >
+> > Fixes: 8c4555ccc55c ("scripts: add `generate_rust_analyzer.py`")
+> > Reviewed-by: Fiona Behrens <me@kloenk.dev>
+> > Suggested-by: Chayim Refael Friedman <chayimfr@gmail.com>
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> > ---
+> > Changes in v3:
+> > - Avoid shuffling compilter_builtins; it is not needed for RA support.
+> > - Align more closely with the long-term solution:
+> >   https://lore.kernel.org/all/20250209-rust-analyzer-host-v1-0-a2286a2a=
+2fa3@gmail.com/.
+> > - Link to v2: https://lore.kernel.org/r/20250209-rust-analyzer-macros-c=
+ore-dep-v2-1-897338344d16@gmail.com
+> >
+> > Changes in v2:
+> > - Change macros deps from [core] to [std, proc_macro], improving
+> >   autocomplete and go-to-definition.
+> > - Remove Wedson Almeida Filho <wedsonaf@google.com> from cc; email
+> >   bounced.
+> > - Link to v1: https://lore.kernel.org/r/20250209-rust-analyzer-macros-c=
+ore-dep-v1-1-5ebeb3eb60a9@gmail.com
+> > ---
+> >  scripts/generate_rust_analyzer.py | 30 +++++++++++++++++++++---------
+> >  1 file changed, 21 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/scripts/generate_rust_analyzer.py b/scripts/generate_rust_=
+analyzer.py
+> > index aa8ea1a4dbe5..1394baa5ee9e 100755
+> > --- a/scripts/generate_rust_analyzer.py
+> > +++ b/scripts/generate_rust_analyzer.py
+> > @@ -57,14 +57,26 @@ def generate_crates(srctree, objtree, sysroot_src, =
+external_src, cfgs):
+> >          crates_indexes[display_name] =3D len(crates)
+> >          crates.append(crate)
+> >
+> > -    # First, the ones in `rust/` since they are a bit special.
+> > -    append_crate(
+> > -        "core",
+> > -        sysroot_src / "core" / "src" / "lib.rs",
+> > -        [],
+> > -        cfg=3Dcrates_cfgs.get("core", []),
+> > -        is_workspace_member=3DFalse,
+> > -    )
+> > +    def append_sysroot_crate(
+> > +        display_name,
+> > +        deps,
+> > +        cfg=3D[],
+> > +    ):
+> > +        return append_crate(
+>
+> Why the `return` here?
 
-Viresh Kumar wrote:
-> This fixes various kernel-doc formatting errors in cpumask.h:
-> 
-> - WARNING: Inline literal start-string without end-string.
-> - ERROR: Unexpected indentation.
-> - ERROR: Unknown target name: "gfp".
-> 
-> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
->  include/linux/cpumask.h | 65 +++++++++++++++++++++--------------------
->  1 file changed, 34 insertions(+), 31 deletions(-)
-> 
+It's in anticipation of this follow up patch
 
-Didn't come up in your diff, but you need additional changes shown below:
+https://lore.kernel.org/all/20250209-rust-analyzer-host-v1-2-a2286a2a2fa3@g=
+mail.com/
 
-diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-index 656d2208467e..a6c1961cc535 100644
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -285,10 +285,10 @@ unsigned int cpumask_next_and(int n, const struct cpumask *src1p,
- }
- 
- /**
-- * cpumask_next_and_wrap - get the next cpu in *src1p & *src2p, starting from
-- *                        @n+1. If nothing found, wrap around and start from
-+ * cpumask_next_and_wrap - get the next cpu in *@src1p & *@src2p, starting from
-+ *                        @n+ 1. If nothing found, wrap around and start from
-  *                        the beginning
-- * @n: the cpu prior to the place to search (i.e. search starts from @n+1)
-+ * @n: the cpu prior to the place to search (i.e. search starts from @n +1)
-  * @src1p: the first cpumask pointer
-  * @src2p: the second cpumask pointer
-  *
-@@ -306,9 +306,9 @@ unsigned int cpumask_next_and_wrap(int n, const struct cpumask *src1p,
- }
- 
- /**
-- * cpumask_next_wrap - get the next cpu in *src, starting from @n+1. If nothing
-+ * cpumask_next_wrap - get the next cpu in *@src, starting from @n +1. If nothing
-  *                    found, wrap around and start from the beginning
-- * @n: the cpu prior to the place to search (i.e. search starts from @n+1)
-+ * @n: the cpu prior to the place to search (i.e. search starts from @n +1)
-  * @src: cpumask pointer
-  *
-  * Return: next set bit, wrapped if needed, or >= nr_cpu_ids if @src is empty.
+where the return value is used to identify the crate. I developed the
+two in parallel so I added this return to reduce overall churn.
 
-Feel free to squash into your 1/2.
-My R-b tag still stands.
+> Otherwise looks good to me.
+>
+> I never had any errors as described above, but I can confirm that go to
+> definition in `macros` for items in `proc_macro` work with this patch
+> applied. It does not work prior to applying the patch.
+>
+>
+> Tested-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-        Thanks, Akira
-
+Thanks!
 
