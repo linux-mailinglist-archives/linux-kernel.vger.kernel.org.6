@@ -1,201 +1,417 @@
-Return-Path: <linux-kernel+bounces-550414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BDE1A55F3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:09:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47344A55F3B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:10:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B687F18959DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:09:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72F3716FDD6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 956D7194C8B;
-	Fri,  7 Mar 2025 04:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA72A187346;
+	Fri,  7 Mar 2025 04:10:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VSg8BI6D"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GNV5OAOY"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2068.outbound.protection.outlook.com [40.107.236.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFBD188CB1;
-	Fri,  7 Mar 2025 04:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741320562; cv=none; b=ALpEP9lpD2m+sf8oO0P2k6t65hg6XXQpTndKKmdfTsISiclr/AeRdhdN0eu+DWTrsUAXszGezhb8jxiVTROhGBTbnvC3UlE8Gse0i6AdmU328q+i45YeFEFmWq/Hx0OmapZQvZHicHeS6tmrFp5u3iOaHVA6Z8nkXx6UVWyazjI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741320562; c=relaxed/simple;
-	bh=cuKt24kcAjKveIAjgD+wLPLZB4CR5DPDJK7/xqFPahY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bLhw+Vm17OeqlHDXOZrHGu+XY9I5YSG3ifi6gIPU2+Jib9PJqYUBTcqUIzd08yoZa2sz94rWFB6WKKYIpoXOhrWfKx3WU27Ru6gxB2Ewvtcr8ZeRfuz2X12yHLQEWbw8XuCTLC7R8QefSyoKs01M3565eihGzj1s8oGvJZaGCAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VSg8BI6D; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526KZUNI013728;
-	Fri, 7 Mar 2025 04:09:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FNe6MduAMikPyxEIVcb5geDLRDx+MJDGHts/3q8VcXE=; b=VSg8BI6DcxvI3vXM
-	vl+gYfmz0QAyNJA6p/VNy4ibhxfffK+C36WRvuCiul2gIaKWlmiDV7jWhFtFXSit
-	/q7AEwcOASWaTJl0IyEyyD3s0azwujVUybwpv1lMJZLw1U0nOylhV1RcSc10gFm9
-	SvpL+IidUNuOAzoqkozw+UuX0SDWO58lCR91E+eMArekw4oGxBRsQKW6nhp5FD8f
-	i1AP5Bad88cZhO1beBbsho2CHafiQJq/8oBZoAPW7zzLLJj4yN80j5w3VBkx/dVx
-	05u8YwBe8MPU/KxMiSaOX2Ij7PSqEULHIEECj5fkVeDkFiTm+Ux3xs5HGpHR70zA
-	2gVhTw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 457jvdrxm7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 04:09:18 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 52749I87008564
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 7 Mar 2025 04:09:18 GMT
-Received: from Z2-SFF-G9-MQ.ap.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 6 Mar 2025 20:09:16 -0800
-From: Miaoqing Pan <quic_miaoqing@quicinc.com>
-To: <quic_jjohnson@quicinc.com>
-CC: <ath11k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Miaoqing Pan <quic_miaoqing@quicinc.com>
-Subject: [PATCH ath-next 2/2] wifi: ath11k: fix HTC rx insufficient length
-Date: Fri, 7 Mar 2025 12:08:48 +0800
-Message-ID: <20250307040848.3822788-3-quic_miaoqing@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250307040848.3822788-1-quic_miaoqing@quicinc.com>
-References: <20250307040848.3822788-1-quic_miaoqing@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55A85DF49
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 04:10:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741320626; cv=fail; b=L3LaBHB2IIlM3dE185bhBpFw4ZxkL8R3L0N1A+LL4TmxJGrxjndZCAj3b5Ur6poSpZnZjQUrvurg8QT9YeM1lO5uXIWvxDbfG+7DolLv3uADMb1azgrrcFC7AMNBPDYwRYS4pPRZFPsO5v1U0PQ4ZWiy7xAOaQ0vZkpFDJJYWHU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741320626; c=relaxed/simple;
+	bh=8FV8pnztsUhjDd3YwgcKW8UNcVAbIvFmIz/pTaEYrqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ht0oAp18nTqrynI84M5pp10XE5f+NhhBsQg7JJ7U0BKN3d+nHj+mBhwKgHBxLPfURPpI4JNZukL3Ca+uD7i96j3egOKXAvwqOEkVizon4zepWhe4gjlKsxZimfq0HjxwEr+QmylBZ9qIBK1+LBuRE1aeK8+UqiCnCXjpa10866I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GNV5OAOY; arc=fail smtp.client-ip=40.107.236.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vG2zT/xTJcLmh0weBcCVMwjzz/p2b/e6imAue14Rhcva2Y7yiydiuUhTnFHB4mFNB9jVBjCtgXlRTwkYtgZkiWk8cdrztASkjqcA1k6RDPpVKxBSlaRej9Dno+uUMw3q7GqudAxTOT/XQdx2CbG13t40lMxjBULbBFxAisw0r5PAhNZa52Qdf2ofgM9lRxtYl7MLfA2dIHmhCOi80aQVXu8MPxXSrGkkHjMH4KCPLQQbQUQyn13CD0bpc/wupPeIKjttWzEFY4nCqLtYAYntuWCIWu9m6FPdDlHRNc3QWzWz4gqPhaUbTth/afvAjGvzKb0wlqSSNjKhMsrfj2pBvg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=f2C/Uq/vhkffR2J5lpSfxKnGxj69FakNSGyApvNjuVc=;
+ b=XhEbLlhTGBSTPVnkVoA3r0ue5lGatITfjwJXRDZJPmtacAEkqjbW7/ZhaIo3pj59OEi369rjxkvHIZLsk9/JWeipZYH1phG1yDEXCxXu2eJJek8hcw9UEpDwFCFLI+nHSauNBEkSMlRzj+GSQLKF1NmztBX5Ag/mvzbzuvDnnLMHbqQGV/guaOF42SEJNIXq+1zwmmnfDnPOs0ioUea6Wt6vKpM85VSKBKVYNtKWQrhFXBZNnHDID6yEEYGfyAStFYyQHiqDt/KidYRjUGFt6FIlgEMAZHZVBng6phf9UbWIKJGbME1+Gy6MsgPfrcjI7dncT9GdmalH3teTnw7mpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=gmail.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=f2C/Uq/vhkffR2J5lpSfxKnGxj69FakNSGyApvNjuVc=;
+ b=GNV5OAOYP59NSa2ZB1Jn++7ekIqFpTKxy8Fqhv8NUoXFCEri+St2l2LFmN5KnEkkhkR0M10x66hZF11nbD8V3js+Kryubhny0X49dWshQDxg0WlTZCf5IETaZ8hVnJlb4lsFLdo5D37UuuA/oNwKjzKpgE1UJEEVZYol/tI+bzM=
+Received: from BN0PR04CA0021.namprd04.prod.outlook.com (2603:10b6:408:ee::26)
+ by DM3PR12MB9288.namprd12.prod.outlook.com (2603:10b6:0:4a::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.18; Fri, 7 Mar
+ 2025 04:10:18 +0000
+Received: from BN1PEPF0000468D.namprd05.prod.outlook.com
+ (2603:10b6:408:ee:cafe::b5) by BN0PR04CA0021.outlook.office365.com
+ (2603:10b6:408:ee::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.19 via Frontend Transport; Fri,
+ 7 Mar 2025 04:10:17 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN1PEPF0000468D.mail.protection.outlook.com (10.167.243.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8511.15 via Frontend Transport; Fri, 7 Mar 2025 04:10:17 +0000
+Received: from [10.136.39.36] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 6 Mar
+ 2025 22:10:14 -0600
+Message-ID: <3d0f9c2b-8498-4405-b178-9f6c8615f73b@amd.com>
+Date: Fri, 7 Mar 2025 09:40:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=W8XCVQWk c=1 sm=1 tr=0 ts=67ca716e cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=YcQLN9OU0fFkaZwozdwA:9 a=RVmHIydaz68A:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 6PVMUoo7SUeJHmgDbEowjSsiwZhQh2Wv
-X-Proofpoint-ORIG-GUID: 6PVMUoo7SUeJHmgDbEowjSsiwZhQh2Wv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-07_01,2025-03-06_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
- bulkscore=0 suspectscore=0 priorityscore=1501 impostorscore=0
- clxscore=1015 malwarescore=0 spamscore=0 lowpriorityscore=0 adultscore=0
- mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503070025
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/2] sched: Reduce the default slice to avoid tasks
+ getting an extra tick
+To: zihan zhou <15645113830zzh@gmail.com>
+CC: <bsegall@google.com>, <dietmar.eggemann@arm.com>,
+	<gautham.shenoy@amd.com>, <juri.lelli@redhat.com>,
+	<linux-kernel@vger.kernel.org>, <mgorman@suse.de>, <mingo@redhat.com>,
+	<peterz@infradead.org>, <rostedt@goodmis.org>, <vincent.guittot@linaro.org>,
+	<vschneid@redhat.com>
+References: <ce4f4f7a-6033-4354-972e-2a066f8d5190@amd.com>
+ <20250222030221.63120-1-15645113830zzh@gmail.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250222030221.63120-1-15645113830zzh@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF0000468D:EE_|DM3PR12MB9288:EE_
+X-MS-Office365-Filtering-Correlation-Id: 89d3cca1-58b8-497a-66be-08dd5d2df855
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|7416014|376014|1800799024|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?cDdHdE54dUFBbUkrQUpUOHp5TkVOd3ZWL09EOGRsTUc0bWNudnNqZVRxaHVT?=
+ =?utf-8?B?b0hYTEdrRmdQMWlHWERZeGlUdHc3enpKMjVYa0twaStON2RrTjFJU25tY2tL?=
+ =?utf-8?B?MUdMVDZ5UGxTRUREZUtVN3pmemxVZXdSbjJxTDZVeUIyMitQNTlXQi9NOFcv?=
+ =?utf-8?B?UzkwYlJuMnp4aktBMjExeWh6K3dsTkNidmpWbnNxUkloeWE4Tk1vM0pldTE2?=
+ =?utf-8?B?aXkwODVJWlZENjh0K3B1SDZ6RFJ1YkJpZlpKZnRNQWkzQVRmN3NuSlJGNFhY?=
+ =?utf-8?B?T3JpQTB6cVZMYjF5L05rODRNemlQczd5VGNDT09tU1M5Q05WRlBSd0hCZHE4?=
+ =?utf-8?B?QkRJTStGSXVqUC9OeUYrTWcrSHVRK1ptRHdYVkxHQm1QZFBYMHdXVzBCZWVk?=
+ =?utf-8?B?cE40dWdKcktISTk5cVRxVHEybG9NS3FNc1pxcGRyTjF1WldyVkhxWmxvSFMz?=
+ =?utf-8?B?ZjlRdHhxY2NsQWdTMTRpODNrNDhOYjEvZHZLM3VlNW9tZkxhMG1IdnEwS3VT?=
+ =?utf-8?B?TGJBTVNMbUhFcGpBZDlPc3M3SlRZSnRBL0J4RURraUNPWGdnQ0N0bnpQUzRI?=
+ =?utf-8?B?R3RkMmlJNDNGWHNKSktITWpMenFtb040amFUdGhmSEJFeENGNXBYaEllbkc5?=
+ =?utf-8?B?M1JzMkNaQXV5WEZWdzBJQ2c2RzNNZGN3azNFdmVmQWd1aW1vMnVReVQrdUVy?=
+ =?utf-8?B?NzEzMEQ4c3EyNExIVCtUUFFpNnhsZEcwMytNcit5TFlWRXRnL2xGcjVXUEhY?=
+ =?utf-8?B?bDBYOU5kSDN3cUNQNTdMRGY0U2JwTmV2K0dKSVJQa0pUSVZlRUxuN1UrbFY4?=
+ =?utf-8?B?anVvZkEzNkg3enh3ZEdaL051UUlJUnF5Y0lEbUs4WFZ4VG1GSm9FbjA1NEdu?=
+ =?utf-8?B?RC9aRzJZTDdUM0dpN2QwVTg2dzFCTEpmOVc5UzZhZmlLaDRzc1IvaWN6NHV4?=
+ =?utf-8?B?ZFZxUXpjUWJWWVNNcVRYZWlsaWROaXl2eDkzUXVOMnhWSGFvcWhYSTc4WUJx?=
+ =?utf-8?B?Szk5elFsT0xKYzAzZDRROUZCMTAvUmFBdmNLcHJXTlVKaGhNMmUveVRDeHhT?=
+ =?utf-8?B?YVZoSG9JOTVjdmhHMkxPMWNVRGkwUThPS01yYlA0NVNJdWF1emU4UUpEbXZm?=
+ =?utf-8?B?RTJ0NFRjVEkwTU5WS1U5cWNRWURKN2dVRXVSeUt0d3NjSWdjaWhJQmRDUjR6?=
+ =?utf-8?B?K1ZzaUF2K2VqZGpwZ1ZCQmNmS2grZEFvZmJLdTdra2t4Rll5a3dobFlOaUtS?=
+ =?utf-8?B?UVFkeGVDUTRjbCtGVjNOeWxobFZXUlZmVFdMRDJlazlFVnRVYk9JZW5QRmNm?=
+ =?utf-8?B?V00zNVIvRTBDRENxVU85aDg0dUdlZ204dWNHMkJpcm92cHNxdFFYb0NzbUJD?=
+ =?utf-8?B?bk5hQTVFVEdvZ3NuTHdnbHcxVjNrcUYwL1JyRmJad2pNU0V1WjRCL05yaDkr?=
+ =?utf-8?B?QlJyeFpjSlVJNWYyaHpDRWFXenZmUnRPZEpoaTFzcUUyMUpraS9sdkZQQnRF?=
+ =?utf-8?B?L3hoM1cxeFpBWktSTk9NMkRVS3JRYU5QRStxQmRKTU9JNnJwaFpINWRJSU0y?=
+ =?utf-8?B?a3hRNVFrNnk2bmlaNm9EQnNiRCtaM1UvUnhMcXZRTmNKTFpyTUp5aFBtbHlO?=
+ =?utf-8?B?S01NSjVtQ1R6TktHaGdhVS9PQVU3eEJ6Q2lKWkNlUWM4K1pvOW9zaHlEWWsy?=
+ =?utf-8?B?TjFvNFFvOTljRm9HT2N2VnNpT2pDcVdkTHM1dUM1ZTNxTzlIUVlNa3g2c1FM?=
+ =?utf-8?B?aFZ1bHU0SnM4NnRDdFphc1VvV2M4TzNZVU1zUkd4MHJ4WjlOUlpZWGp6enF5?=
+ =?utf-8?B?NTV6N1YwaXBMZ081RmRVYXNLcysvay9qN3dEaTBDY1IwQVFSOFFlZnJOQ2dW?=
+ =?utf-8?B?UjVROFRsYUR1WTQ5Q216QUtNT1NiT0pUQ2l0K0o0VXQvZFBuTXd3cklMKzM0?=
+ =?utf-8?Q?bGMYrS0XSe8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(7416014)(376014)(1800799024)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 04:10:17.7111
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 89d3cca1-58b8-497a-66be-08dd5d2df855
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF0000468D.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9288
 
-A relatively unusual race condition occurs between host software
-and hardware, where the host sees the updated destination ring head
-pointer before the hardware updates the corresponding descriptor.
-When this situation occurs, the length of the descriptor returns 0.
+Hello Zhou,
 
-The current error handling method is to increment descriptor tail
-pointer by 1, but 'sw_index' is not updated, causing descriptor and
-skb to not correspond one-to-one, resulting in the following error:
+Sorry this slipped past me.
 
-ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1488, expected 1492
-ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
+On 2/22/2025 8:32 AM, zihan zhou wrote:
+> Thank you for your reply, thank you for providing such a detailed test,
+> which also let me learn a lot.
+> 
+>> Hello Zhou,
+>>
+>> I'll leave some testing data below but overall, in my testing with
+>> CONFIG_HZ=250 and CONFIG_HZ=10000, I cannot see any major regressions
+>> (at least not for any stable data point) There are few small regressions
+>> probably as a result of grater opportunity for wakeup preemption since
+>> RUN_TO_PARITY will work for a slightly shorter duration now but I
+>> haven't dug deeper to confirm if they are run to run variation or a
+>> result of the larger number of wakeup preemption.
+>>
+>> Since most servers run with CONFIG_HZ=250, and the tick is anyways 4ms
+>> and with default base slice currently at 3ms, I don't think there will
+>> be any discernible difference in most workloads (fingers crossed)
+>>
+>> Please find full data below.
+> 
+> 
+> This should be CONFIG_HZ=250 and CONFIG_HZ=1000, is it wrong?
 
-To address this problem, temporarily skip processing the current
-descriptor and handle it again next time. However, to prevent this
-descriptor from continuously returning 0, use skb cb to set a flag.
-If the length returns 0 again, this descriptor will be discarded.
+That is correct! My bad.
 
-Tested-on: QCA6698AQ hw2.1 PCI WLAN.HSP.1.1-04546-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
+> 
+> It seems that no performance difference is good news. This change will not
+> affect performance. This problem was first found in the openeuler 6.6
+> kernel. If one task runs all the time and the other runs for 3ms and then
+> sleeps for 1us, the running time of the two tasks will become 4:3, but 1:1
+> on orig cfs. This problem has disappeared in the mainline kernel.
+> 
+>> o Benchmark results (CONFIG_HZ=1000)
+>>
+>> ==================================================================
+>> Test          : hackbench
+>> Units         : Normalized time in seconds
+>> Interpretation: Lower is better
+>> Statistic     : AMean
+>> ==================================================================
+>> Case:      mainline[pct imp](CV)    new_base_slice[pct imp](CV)
+>>    1-groups     1.00 [ -0.00]( 8.66)     1.05 [ -5.30](16.73)
+>>    2-groups     1.00 [ -0.00]( 5.02)     1.07 [ -6.54]( 7.29)
+>>    4-groups     1.00 [ -0.00]( 1.27)     1.02 [ -1.67]( 3.74)
+>>    8-groups     1.00 [ -0.00]( 2.75)     0.99 [  0.78]( 2.61)
+>> 16-groups     1.00 [ -0.00]( 2.02)     0.97 [  2.97]( 1.19)
+>>
+>>
+>> ==================================================================
+>> Test          : tbench
+>> Units         : Normalized throughput
+>> Interpretation: Higher is better
+>> Statistic     : AMean
+>> ==================================================================
+>> Clients:      mainline[pct imp](CV)    new_base_slice[pct imp](CV)
+>>       1     1.00 [  0.00]( 0.40)     1.00 [ -0.44]( 0.47)
+>>       2     1.00 [  0.00]( 0.49)     0.99 [ -0.65]( 1.39)
+>>       4     1.00 [  0.00]( 0.94)     1.00 [ -0.34]( 0.09)
+>>       8     1.00 [  0.00]( 0.64)     0.99 [ -0.77]( 1.57)
+>>      16     1.00 [  0.00]( 1.04)     0.98 [ -2.00]( 0.98)
+>>      32     1.00 [  0.00]( 1.13)     1.00 [  0.34]( 1.31)
+>>      64     1.00 [  0.00]( 0.58)     1.00 [ -0.28]( 0.80)
+>>     128     1.00 [  0.00]( 1.40)     0.99 [ -0.91]( 0.51)
+>>     256     1.00 [  0.00]( 1.14)     0.99 [ -1.48]( 1.17)
+>>     512     1.00 [  0.00]( 0.51)     1.00 [ -0.25]( 0.66)
+>>    1024     1.00 [  0.00]( 0.62)     0.99 [ -0.79]( 0.40)
+>>
+>>
+>> ==================================================================
+>> Test          : stream-10
+>> Units         : Normalized Bandwidth, MB/s
+>> Interpretation: Higher is better
+>> Statistic     : HMean
+>> ==================================================================
+>> Test:      mainline[pct imp](CV)    new_base_slice[pct imp](CV)
+>>    Copy     1.00 [  0.00](16.03)     0.98 [ -2.33](17.69)
+>> Scale     1.00 [  0.00]( 6.26)     0.99 [ -0.60]( 7.94)
+>>     Add     1.00 [  0.00]( 8.35)     1.01 [  0.50](11.49)
+>> Triad     1.00 [  0.00]( 9.56)     1.01 [  0.66]( 9.25)
+>>
+>>
+>> ==================================================================
+>> Test          : stream-100
+>> Units         : Normalized Bandwidth, MB/s
+>> Interpretation: Higher is better
+>> Statistic     : HMean
+>> ==================================================================
+>> Test:      mainline[pct imp](CV)    new_base_slice[pct imp](CV)
+>>    Copy     1.00 [  0.00]( 6.03)     1.02 [  1.58]( 2.27)
+>> Scale     1.00 [  0.00]( 5.78)     1.02 [  1.64]( 4.50)
+>>     Add     1.00 [  0.00]( 5.25)     1.01 [  1.37]( 4.17)
+>> Triad     1.00 [  0.00]( 5.25)     1.03 [  3.35]( 1.18)
+>>
+>>
+>> ==================================================================
+>> Test          : netperf
+>> Units         : Normalized Througput
+>> Interpretation: Higher is better
+>> Statistic     : AMean
+>> ==================================================================
+>> Clients:      mainline[pct imp](CV)    new_base_slice[pct imp](CV)
+>>    1-clients     1.00 [  0.00]( 0.06)     1.01 [  0.66]( 0.75)
+>>    2-clients     1.00 [  0.00]( 0.80)     1.01 [  0.79]( 0.31)
+>>    4-clients     1.00 [  0.00]( 0.65)     1.01 [  0.56]( 0.73)
+>>    8-clients     1.00 [  0.00]( 0.82)     1.01 [  0.70]( 0.59)
+>> 16-clients     1.00 [  0.00]( 0.68)     1.01 [  0.63]( 0.77)
+>> 32-clients     1.00 [  0.00]( 0.95)     1.01 [  0.87]( 1.06)
+>> 64-clients     1.00 [  0.00]( 1.55)     1.01 [  0.66]( 1.60)
+>> 128-clients     1.00 [  0.00]( 1.23)     1.00 [ -0.28]( 1.58)
+>> 256-clients     1.00 [  0.00]( 4.92)     1.00 [  0.25]( 4.47)
+>> 512-clients     1.00 [  0.00](57.12)     1.00 [  0.24](62.52)
+>>
+>>
+>> ==================================================================
+>> Test          : schbench
+>> Units         : Normalized 99th percentile latency in us
+>> Interpretation: Lower is better
+>> Statistic     : Median
+>> ==================================================================
+>> #workers:      mainline[pct imp](CV)    new_base_slice[pct imp](CV)
+>>     1     1.00 [ -0.00](27.55)     0.81 [ 19.35](31.80)
+>>     2     1.00 [ -0.00](19.98)     0.87 [ 12.82]( 9.17)
+>>     4     1.00 [ -0.00](10.66)     1.09 [ -9.09]( 6.45)
+>>     8     1.00 [ -0.00]( 4.06)     0.90 [  9.62]( 6.38)
+>>    16     1.00 [ -0.00]( 5.33)     0.98 [  1.69]( 1.97)
+>>    32     1.00 [ -0.00]( 8.92)     0.97 [  3.16]( 1.09)
+>>    64     1.00 [ -0.00]( 6.06)     0.97 [  3.30]( 2.97)
+>> 128     1.00 [ -0.00](10.15)     1.05 [ -5.47]( 4.75)
+>> 256     1.00 [ -0.00](27.12)     1.00 [ -0.20](13.52)
+>> 512     1.00 [ -0.00]( 2.54)     0.80 [ 19.75]( 0.40)
+>>
+>>
+>> ==================================================================
+>> Test          : new-schbench-requests-per-second
+>> Units         : Normalized Requests per second
+>> Interpretation: Higher is better
+>> Statistic     : Median
+>> ==================================================================
+>> #workers:      mainline[pct imp](CV)    new_base_slice[pct imp](CV)
+>>     1     1.00 [  0.00]( 0.15)     1.00 [  0.00]( 0.46)
+>>     2     1.00 [  0.00]( 0.15)     1.00 [  0.00]( 0.15)
+>>     4     1.00 [  0.00]( 0.15)     1.00 [  0.00]( 0.15)
+>>     8     1.00 [  0.00]( 0.00)     1.00 [  0.00]( 0.15)
+>>    16     1.00 [  0.00]( 0.00)     1.00 [  0.00]( 0.00)
+>>    32     1.00 [  0.00]( 0.43)     1.01 [  0.63]( 0.28)
+>>    64     1.00 [  0.00]( 1.17)     1.00 [  0.00]( 0.20)
+>> 128     1.00 [  0.00]( 0.20)     1.00 [  0.00]( 0.20)
+>> 256     1.00 [  0.00]( 0.27)     1.00 [  0.00]( 1.69)
+>> 512     1.00 [  0.00]( 0.21)     0.95 [ -4.70]( 0.34)
+>>
+>>
+>> ==================================================================
+>> Test          : new-schbench-wakeup-latency
+>> Units         : Normalized 99th percentile latency in us
+>> Interpretation: Lower is better
+>> Statistic     : Median
+>> ==================================================================
+>> #workers:      mainline[pct imp](CV)    new_base_slice[pct imp](CV)
+>>     1     1.00 [ -0.00](11.08)     1.33 [-33.33](15.78)
+>>     2     1.00 [ -0.00]( 4.08)     1.08 [ -7.69](10.00)
+>>     4     1.00 [ -0.00]( 6.39)     1.21 [-21.43](22.13)
+>>     8     1.00 [ -0.00]( 6.88)     1.15 [-15.38](11.93)
+>>    16     1.00 [ -0.00](13.62)     1.08 [ -7.69](10.33)
+>>    32     1.00 [ -0.00]( 0.00)     1.00 [ -0.00]( 3.87)
+>>    64     1.00 [ -0.00]( 8.13)     1.00 [ -0.00]( 2.38)
+>> 128     1.00 [ -0.00]( 5.26)     0.98 [  2.11]( 1.92)
+>> 256     1.00 [ -0.00]( 1.00)     0.78 [ 22.36](14.65)
+>> 512     1.00 [ -0.00]( 0.48)     0.73 [ 27.15]( 6.75)
+>>
+>>
+>> ==================================================================
+>> Test          : new-schbench-request-latency
+>> Units         : Normalized 99th percentile latency in us
+>> Interpretation: Lower is better
+>> Statistic     : Median
+>> ==================================================================
+>> #workers:      mainline[pct imp](CV)    new_base_slice[pct imp](CV)
+>>     1     1.00 [ -0.00]( 1.53)     1.00 [ -0.00]( 1.77)
+>>     2     1.00 [ -0.00]( 0.50)     1.01 [ -1.35]( 1.19)
+>>     4     1.00 [ -0.00]( 0.14)     1.00 [ -0.00]( 0.42)
+>>     8     1.00 [ -0.00]( 0.24)     1.00 [ -0.27]( 1.37)
+>>    16     1.00 [ -0.00]( 0.00)     1.00 [  0.27]( 0.14)
+>>    32     1.00 [ -0.00]( 0.66)     1.01 [ -1.48]( 2.65)
+>>    64     1.00 [ -0.00]( 5.72)     0.96 [  4.32]( 5.64)
+>> 128     1.00 [ -0.00]( 0.10)     1.00 [ -0.20]( 0.18)
+>> 256     1.00 [ -0.00]( 2.52)     0.96 [  4.04]( 9.70)
+>> 512     1.00 [ -0.00]( 0.68)     1.06 [ -5.52]( 0.36)
+>>
+>>
+>> ==================================================================
+>> Test          : longer running benchmarks
+>> Units         : Normalized throughput
+>> Interpretation: Higher is better
+>> Statistic     : Median
+>> ==================================================================
+>> Benchmark		pct imp
+>> ycsb-cassandra          -0.64%
+>> ycsb-mongodb             0.56%
+>> deathstarbench-1x        0.30%
+>> deathstarbench-2x        3.21%
+>> deathstarbench-3x        2.18%
+>> deathstarbench-6x       -0.40%
+>> mysql-hammerdb-64VU     -0.63%
+>> ---
+> 
+> It seems that new_base_slice has made some progress in high load/latency
+> and regressed a bit on low load.
+> 
+> It seems that slice should not only be related to the number of cpus, but
+> also to the corresponding relationship between the overall load and the
+> number of cpus. The load is relatively heavy, so the slice should be
+> smaller. The load is relatively light, so the slice should be larger.
+> Fixing it to a value may not be the optimal solution.
 
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218623
-Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
----
- drivers/net/wireless/ath/ath11k/ce.c   | 32 ++++++++++++++++++++------
- drivers/net/wireless/ath/ath11k/core.h |  1 +
- 2 files changed, 26 insertions(+), 7 deletions(-)
+We've seen that assumptions go wrong in our experiments; some benchmarks
+really love their time on the CPU without any preemptions :)
 
-diff --git a/drivers/net/wireless/ath/ath11k/ce.c b/drivers/net/wireless/ath/ath11k/ce.c
-index e66e86bdec20..2573f8c7a994 100644
---- a/drivers/net/wireless/ath/ath11k/ce.c
-+++ b/drivers/net/wireless/ath/ath11k/ce.c
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: BSD-3-Clause-Clear
- /*
-  * Copyright (c) 2018-2019 The Linux Foundation. All rights reserved.
-- * Copyright (c) 2021-2023 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2021-2023, 2025 Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- #include "dp_rx.h"
-@@ -387,18 +387,36 @@ static int ath11k_ce_completed_recv_next(struct ath11k_ce_pipe *pipe,
- 
- 	ath11k_hal_srng_access_begin(ab, srng);
- 
--	desc = ath11k_hal_srng_dst_get_next_entry(ab, srng);
-+	desc = ath11k_hal_srng_dst_peek(ab, srng);
- 	if (!desc) {
- 		ret = -EIO;
- 		goto err;
- 	}
- 
- 	*nbytes = ath11k_hal_ce_dst_status_get_length(desc);
--	if (*nbytes == 0) {
--		ret = -EIO;
--		goto err;
-+	if (unlikely(*nbytes == 0)) {
-+		struct ath11k_skb_rxcb *rxcb =
-+			ATH11K_SKB_RXCB(pipe->dest_ring->skb[sw_index]);
-+
-+		/* A relatively unusual race condition occurs between host
-+		 * software and hardware, where the host sees the updated
-+		 * destination ring head pointer before the hardware updates
-+		 * the corresponding descriptor.
-+		 *
-+		 * Temporarily skip processing the current descriptor and handle
-+		 * it again next time. However, to prevent this descriptor from
-+		 * continuously returning 0, set 'is_desc_len0' flag. If the
-+		 * length returns 0 again, this descriptor will be discarded.
-+		 */
-+		if (!rxcb->is_desc_len0) {
-+			rxcb->is_desc_len0 = true;
-+			ret = -EIO;
-+			goto err;
-+		}
- 	}
- 
-+	ath11k_hal_srng_dst_next(ab, srng);
-+
- 	*skb = pipe->dest_ring->skb[sw_index];
- 	pipe->dest_ring->skb[sw_index] = NULL;
- 
-@@ -430,8 +448,8 @@ static void ath11k_ce_recv_process_cb(struct ath11k_ce_pipe *pipe)
- 		dma_unmap_single(ab->dev, ATH11K_SKB_RXCB(skb)->paddr,
- 				 max_nbytes, DMA_FROM_DEVICE);
- 
--		if (unlikely(max_nbytes < nbytes)) {
--			ath11k_warn(ab, "rxed more than expected (nbytes %d, max %d)",
-+		if (unlikely(max_nbytes < nbytes || !nbytes)) {
-+			ath11k_warn(ab, "rxed invalid length (nbytes %d, max %d)",
- 				    nbytes, max_nbytes);
- 			dev_kfree_skb_any(skb);
- 			continue;
-diff --git a/drivers/net/wireless/ath/ath11k/core.h b/drivers/net/wireless/ath/ath11k/core.h
-index 1a3d0de4afde..c8614c5c6493 100644
---- a/drivers/net/wireless/ath/ath11k/core.h
-+++ b/drivers/net/wireless/ath/ath11k/core.h
-@@ -128,6 +128,7 @@ struct ath11k_skb_rxcb {
- 	bool is_continuation;
- 	bool is_mcbc;
- 	bool is_eapol;
-+	bool is_desc_len0;
- 	struct hal_rx_desc *rx_desc;
- 	u8 err_rel_src;
- 	u8 err_code;
+> 
+>> With that overwhelming amount of data out of the way, please feel free
+>> to add:
+>>
+>> Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+> 
+> I think you're worth it, but it seems a bit late. I have received the email
+> of tip-bot2, I am not sure if there can still add it.
+
+That is fine as long as there is a record on lore :)
+
+> 
+> Your email made me realize that I should establish a systematic testing
+> method. Can you give me some useful projects?
+
+We use selective benchmarks from LKP: https://github.com/intel/lkp-tests
+
+Then there are some larger benchmarks we run based on previous regression
+reports and debugs. some of them are:
+
+YCSB: https://github.com/brianfrankcooper/YCSB
+netperf: https://github.com/HewlettPackard/netperf
+DeathStarBench: https://github.com/delimitrou/DeathStarBench
+HammerDB: https://github.com/TPC-Council/HammerDB.git
+tbench (part of dbench): https://dbench.samba.org/web/download.html
+schbench: https://git.kernel.org/pub/scm/linux/kernel/git/mason/schbench.git
+sched-messaging: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/perf/bench/sched-messaging.c?h=v6.14-rc4
+
+Some of them are hard to setup the first time; we internally have some
+tools that have made it easy to run these benchmarks in a way that
+stresses the system but we keep an eye out for regression reports to
+understand what benchmarks folks are running in the field.
+
+Sorry again for the delay and thank you.
+
+> 
+> Thanks!
+
 -- 
-2.25.1
+Thanks and Regards,
+Prateek
 
 
