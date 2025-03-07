@@ -1,110 +1,103 @@
-Return-Path: <linux-kernel+bounces-550388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB3A7A55EC8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:43:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CF6FA55ECB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:43:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D06AF7A1EFA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:41:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 660DF16BAC8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADF3818FC79;
-	Fri,  7 Mar 2025 03:42:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WoGU3bhI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E25C18DB08;
+	Fri,  7 Mar 2025 03:43:44 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096BB14AD0D;
-	Fri,  7 Mar 2025 03:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004D017DFF3;
+	Fri,  7 Mar 2025 03:43:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741318923; cv=none; b=qczlsTR8TXxf4pWxpgcRqQ2OLU2jKtB3/kzMqERgV4AI2d1WPsmH7/HS9O16+xxYYJ35BIrMJ6g5IJOZFJ7uvoJMrCW6qdL7GcWjLsCV4fJNytaqcJ/ip7iIoEPEwfWF9HkJMGP/Fx3G7mJX+Fr/+LzoNFrBjFQWIBEwt+2cWHw=
+	t=1741319024; cv=none; b=TnlE2jsbfxPJ+3HbGFhDB/GCD9TqvUkaQ/WimcGnTKgdohHBa2QIqLBE21WOO19gBMhPZY8hPflNm9FsR0Vd6jEN3KMX8VsTCHKd07kTxXcivt76vHCR9LQjMIW0fH2Zd/B1KmuBtKXihy20lR2obqVxVRzAiSt8v60mzzdqxs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741318923; c=relaxed/simple;
-	bh=7ZKmaLDPkgzayTW7zs8/xwX8IdPe6S/kyUqYROT1Tkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxMPr9nkxznTDegmeePDNGaaT4nE+Y/g/XPl4uNvs+Bwz878fawekUW+hHhTpN+LLfwBBEoK4AqIf82qe/vC3SnAJcXNU7zTjA6vOflMUEF6PiLP/bqS+o9xfweYik4N+jJw0sRa4y8RJCdNVgTBxOCemuzxKRT+gvDSiDJu+h8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WoGU3bhI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59E67C4CED1;
-	Fri,  7 Mar 2025 03:42:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741318922;
-	bh=7ZKmaLDPkgzayTW7zs8/xwX8IdPe6S/kyUqYROT1Tkw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WoGU3bhIbmj/RgbH4PG/wcamx2JxqjI4P/F+zRU/wQxDnHv1lJFvQmgSLL+IgRmRE
-	 sOLjdcQiryXV5ei9ZgXApTIIe0mm3mSOsWo1Eshg0EF5yWMSycDMpbSPG3wQSEeOPX
-	 dKykgdVeye4scfjjTOvPHSNB5C968bDsFBsyL+q6NPAYKPPHI/dLSJ2waVf0xvPJm7
-	 jyec22eqjat8dDN7W6wO+aPHZzuUWePjb8q3M9DANp/jBzGSFUwh/+CeJEGEhZLnPk
-	 4l9UVcHb8KGemAZJ886iLxmiBg35EoWpiG8b95Hg6+SpVKwdaFfP3MJ2y3TGLlZMqN
-	 O9TCcizARoOnA==
-Date: Thu, 6 Mar 2025 19:41:59 -0800
-From: Kees Cook <kees@kernel.org>
-To: David Gow <davidgow@google.com>
-Cc: Nathan Chancellor <nathan@kernel.org>,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, llvm@lists.linux.dev,
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] kbuild: clang: Support building UM with SUBARCH=i386
-Message-ID: <202503061939.AAC6EF5A44@keescook>
-References: <20250304162124.it.785-kees@kernel.org>
- <CABVgOSnEaTVUfZB6KACFJE4mM=oSWnUtcrf7ETHFq8h_k=mFTw@mail.gmail.com>
+	s=arc-20240116; t=1741319024; c=relaxed/simple;
+	bh=8dXojX/8uIgxC5WJAgabFATdEMEUTNL7Iiw/XSmjiUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l/3dDjlNcwGIl/Ki9crevPTMFiqEAtkOTWhmkRkF1jaoVIgoLJxGylh/MbPQu4sMseX/witHr3aR+tp2dvjUt2q67sLp0gSJ1lomPC/mdBPbgp/eqeNIUgp6XqDG1w4hj+h2CQBC8yiEsX944OSOl9eoDGkCOqsF5gA0GdpP03c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83932C4CEE7;
+	Fri,  7 Mar 2025 03:43:42 +0000 (UTC)
+Date: Thu, 6 Mar 2025 22:43:41 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Abaci
+ Robot <abaci@linux.alibaba.com>
+Subject: Re: [PATCH -next] function_graph: Remove the unused variable func
+Message-ID: <20250306224341.00cf6291@batman.local.home>
+In-Reply-To: <20250307021412.119107-1-jiapeng.chong@linux.alibaba.com>
+References: <20250307021412.119107-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CABVgOSnEaTVUfZB6KACFJE4mM=oSWnUtcrf7ETHFq8h_k=mFTw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 06, 2025 at 04:59:53PM +0800, David Gow wrote:
-> On Wed, 5 Mar 2025 at 00:21, Kees Cook <kees@kernel.org> wrote:
-> >
-> > The UM builds distinguish i386 from x86_64 via SUBARCH, but we don't
-> > support building i386 directly with Clang. To make SUBARCH work for
-> > i386 UM, we need to explicitly test for it.
-> >
-> > This lets me run i386 KUnit tests with Clang:
-> >
-> > $ ./tools/testing/kunit/kunit.py run \
-> >         --make_options LLVM=1 \
-> >         --make_options SUBARCH=i386
-> > ...
-> >
-> > Fixes: c7500c1b53bf ("um: Allow builds with Clang")
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > ---
-> 
-> Thanks for this -- I'd been using `--kconfig_add CONFIG_64BIT=n` as a
-> way to build i386 UML kernels, which seems to work even without this
-> patch -- but this is definitely an improvement.
+On Fri,  7 Mar 2025 10:14:12 +0800
+Jiapeng Chong <jiapeng.chong@linux.alibaba.com> wrote:
 
-Thanks! Yeah, I figured there must have been a way to get at it. I
-wanted to make it work the "normal" way.
+> Variable func is not effectively used, so delete it.
+>=20
+> kernel/trace/trace_functions_graph.c:925:16: warning: variable =E2=80=98f=
+unc=E2=80=99 set but not used.
 
-> It may be worth noting that CONFIG_FORTIFY_SOURCE is incompatible with
-> clang + i386, which seems to affect UML as well. (That might actually
-> not be required, as I think UML doesn't use any of the strange
-> -mregparm calling convention stuff which appears to be what breaks
-> FORTIFY_SOURCE here.)
+Thanks, but it should be stated that the variable "func" which came
+from "call->func" was replaced by "ret_func" coming from
+"graph_ret->func" but "func" wasn't removed after the replacement.
 
-Also fixed! :)
-https://lore.kernel.org/lkml/20250303214929.work.499-kees@kernel.org/
+Also:
 
-> Tested-by: David Gow <davidgow@google.com>
+Fixes: ff5c9c576e754 ("ftrace: Add support for function argument to graph t=
+racer")
 
-Thanks for testing; I've updated the trailers in my tree.
+You don't need to resend. I'll take the patch and update the change log.
 
--Kees
+-- Steve
 
--- 
-Kees Cook
+>=20
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D19250
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ---
+>  kernel/trace/trace_functions_graph.c | 3 ---
+>  1 file changed, 3 deletions(-)
+>=20
+> diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_fu=
+nctions_graph.c
+> index 71b2fb068b6b..ed61ff719aa4 100644
+> --- a/kernel/trace/trace_functions_graph.c
+> +++ b/kernel/trace/trace_functions_graph.c
+> @@ -922,7 +922,6 @@ print_graph_entry_leaf(struct trace_iterator *iter,
+>  	struct ftrace_graph_ent *call;
+>  	unsigned long long duration;
+>  	unsigned long ret_func;
+> -	unsigned long func;
+>  	int args_size;
+>  	int cpu =3D iter->cpu;
+>  	int i;
+> @@ -933,8 +932,6 @@ print_graph_entry_leaf(struct trace_iterator *iter,
+>  	call =3D &entry->graph_ent;
+>  	duration =3D ret_entry->rettime - ret_entry->calltime;
+> =20
+> -	func =3D call->func + iter->tr->text_delta;
+> -
+>  	if (data) {
+>  		struct fgraph_cpu_data *cpu_data;
+> =20
+
 
