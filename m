@@ -1,133 +1,121 @@
-Return-Path: <linux-kernel+bounces-551620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE9A1A56EBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:09:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C76F4A56EC3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:10:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFD761784A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:08:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B42BE3AE879
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D0FF23F40E;
-	Fri,  7 Mar 2025 17:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A1823F424;
+	Fri,  7 Mar 2025 17:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UofD/Yor"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lmrN/363"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C7923F296
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 17:08:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B70664C6;
+	Fri,  7 Mar 2025 17:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741367330; cv=none; b=f4BdRGPFebgfvtpWNZITa3+9mkCy1WcL/FQ3n8kAKsF1yj5++rJf7snTcGI1Wi888AZu78uSVFbzLX+yZne9RcCH5iqLqbE7FRqL6Nqw8uZk8+bDYXZaHYRbnV905TbM3BG36De3nVPkrhcS3YTz6H6aZYPwqRq8HhLec8EzSkI=
+	t=1741367447; cv=none; b=Juc5OHzmMk/GkZbqLk/BPPuXQ2U/U4Qu6jhtKCGQcGDHJJkKZxXHNHSqR3kH/pQ/zZMbnAFq9MO+t2dO8MJy6uriyvJuc6TupWooz9Fi3WaZ5bfFDigp5tvcSq0GfaQU0sO6exJ/fAWtYfX+gCuXdEtnlgf9Ra/AuesmiQL/XTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741367330; c=relaxed/simple;
-	bh=SgC1G2rgGhFPge6rJs+RnqahXw9tJ3WgcDvbjDF2Jlw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uxSEQIvZOST38fN+icu8YvJ6GeLRXCZsTbpiKOFc+VewYKzfs2AEll9qD2YefRETJz1WnHUtJbI1KIJKVXjMFOZWS8Msy3cnzkmW9W+kYxqXOKgUKKY7weh8+IUkw+G64jya32xPqef9sGcTmz1sGRaBay140HtyP3GD0IhX7MM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UofD/Yor; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741367330; x=1772903330;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SgC1G2rgGhFPge6rJs+RnqahXw9tJ3WgcDvbjDF2Jlw=;
-  b=UofD/YoruiC50M10vFXd39aZLBLSn9QMvgWzANLz9JRFyiua6yDSyLYw
-   uJ9x8s1jxpTbMh/IUa/6x2of/SumdmGVwv79wjtVSD6YNSp/RhlEsTbwF
-   2cvk3jpskDbxD6Rqgvbaoqx0LyteoNeYd/CiGNIoOIPO3XYEdd3AJm3b6
-   vsxQtocoPfzMdsf/Upi+Vzql1G5DbDH+bLKndWuNINyDecH7lMNeCak75
-   c0px460r5K1SFqDJh2ti49nvijUjCXJA+k5v8RO3k5dFNp6ocQsQfTbBT
-   0IbkldKLz2WqGs8dtQqw2+/pQd9iwqca2sABKboHizZ7lBoncYLqdDmyi
-   A==;
-X-CSE-ConnectionGUID: CEs4xFnTTz69gPdaOOESKQ==
-X-CSE-MsgGUID: gzZ1waemRC+eTQAlc6LLgw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="46202768"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="46202768"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 09:08:35 -0800
-X-CSE-ConnectionGUID: IeKRue+KQ3CCF2ZY6U8kRQ==
-X-CSE-MsgGUID: kNaOZSoKQwybA4GABZblOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="123967263"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 09:08:32 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tqbBV-00000000T0N-1sCo;
-	Fri, 07 Mar 2025 19:08:29 +0200
-Date: Fri, 7 Mar 2025 19:08:29 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org, Willy Tarreau <willy@haproxy.com>,
-	Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
-Subject: Re: [PATCH v1 6/7] auxdisplay: hd44780: Call charlcd_alloc() from
- hd44780_common_alloc()
-Message-ID: <Z8soDV0U2LG2KX9J@smile.fi.intel.com>
-References: <20250224173010.219024-1-andriy.shevchenko@linux.intel.com>
- <20250224173010.219024-7-andriy.shevchenko@linux.intel.com>
- <CAMuHMdXP1=7YJzYp=_WJsqx2mtBYcwAjpOGK2_9SH+r4w6v2Ug@mail.gmail.com>
+	s=arc-20240116; t=1741367447; c=relaxed/simple;
+	bh=UtUjan0RBifzMrQyhjYYw/jNSvvuZGdyk0P9I9WQxxw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OMtUEkQ0m7tCBvmK/q8pxK3rZywJ74XWELcSjBKScp1D9jC1tLmXZJPEU7gu1uxDpH0kT5wwTZHOyGf8YY3h2FzHFtQSCXsKPZWrp9T8htFv/Vc75Ubc1nPYmHAwLnsveu+CD7UfOg0+feFgGz2sDDjU+4X6zWYuhaYJQ4mTtTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lmrN/363; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03858C4CED1;
+	Fri,  7 Mar 2025 17:10:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741367447;
+	bh=UtUjan0RBifzMrQyhjYYw/jNSvvuZGdyk0P9I9WQxxw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=lmrN/363ujfmOxvtujwFBeoer1iOLthL+joB6VqC3ZIbLJCZaCurL3ldEmo7+nCCI
+	 N6hToW3FUCrEtkFIv/+8Y/xktLXr+gCOZoWRMTNM1Lkv3UaACNILH6fAyCjJMaZfKe
+	 NzUsHWivVACoBBuiw3i/gFPcX1IMhrF1/b29IXLyfcGhYkBr/Xrre7w0cROOHX8+DC
+	 eXW1+SAn/Ox5nI5Hv4BYH6HqgNSgx9kFka8G9LcXvk3CAuQBKNEIPrD82ruj/RKJbN
+	 64lIuhNV+6MrCMx02nVsuqYMiwlPnQtuK29TGu7SP+vSj3GGfk3JiLLs0JYOxEzHoD
+	 9pdtYyvQ6G+cw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1tqbDh-000000001te-2RhM;
+	Fri, 07 Mar 2025 18:10:45 +0100
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH] arm64: dts: qcom: sc8280xp-crd: add support for volume-up key
+Date: Fri,  7 Mar 2025 18:10:36 +0100
+Message-ID: <20250307171036.7276-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.45.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdXP1=7YJzYp=_WJsqx2mtBYcwAjpOGK2_9SH+r4w6v2Ug@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 07, 2025 at 10:14:48AM +0100, Geert Uytterhoeven wrote:
-> On Mon, 24 Feb 2025 at 18:30, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > HD44780 APIs are operate on struct charlcd object. Moreover, the current users
-> 
-> s/are/all/
-> s/object/objects/
-> 
-> > always call charlcd_alloc() and hd44780_common_alloc(). Make the latter call
-> > the former, so eliminate the additional allocation, make it consistent with
-> 
-> either s/make/making/, or s/make/to make/
-> 
-> > the rest of API and avoid duplication.
-> >
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> 
-> As the code looks correct to me:
-> Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+Add support for the keypad volume-up key on the debug extension board.
 
-Thanks I have corrected all grammar issues in the commit messages except one in
-the first patch which I do not understand.
+This is useful to have when testing PMIC interrupt handling, and the key
+can also be used to wake up from deep suspend states (CX shutdown).
 
-...
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
+ arch/arm64/boot/dts/qcom/sc8280xp-crd.dts | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-> While I like the general idea, there are two things in the API I do
-> not like:
->   1. The function is called "hd44780_common_alloc()", but returns
->      a pointer to a different struct type than the name suggests,
->   2. The real "struct hd44780_common" must be obtained by the caller
->      from charlcd.drvdata, which is of type "void *", i.e. unsafe.
-> 
-> What about changing it to e.g.?
-> 
->     struct hd44780_common *hd44780_common_alloc(struct charlcd **lcd)
-> 
-> so you can return pointers to both structs?
-
-I don't like this prototype as it seems and feels confusing. Also note,
-the APIs are using struct charlcd while being in the hd44780 namespace.
-perhaps better to rename the function to hd44780_common_and_lcd_alloc()?
-
+diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts b/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts
+index 75adaa19d1c3..8badf7f49b95 100644
+--- a/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts
++++ b/arch/arm64/boot/dts/qcom/sc8280xp-crd.dts
+@@ -37,6 +37,20 @@ chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	gpio-keys {
++		compatible = "gpio-keys";
++
++		pinctrl-0 = <&kypd_vol_up_n>;
++		pinctrl-names = "default";
++
++		key-vol-up {
++			label = "volume_up";
++			gpios = <&pmc8280_1_gpios 6 GPIO_ACTIVE_LOW>;
++			linux,code = <KEY_VOLUMEUP>;
++			wakeup-source;
++		};
++	};
++
+ 	pmic-glink {
+ 		compatible = "qcom,sc8280xp-pmic-glink", "qcom,pmic-glink";
+ 
+@@ -885,6 +899,14 @@ edp_bl_reg_en: edp-bl-reg-en-state {
+ 		function = "normal";
+ 	};
+ 
++	kypd_vol_up_n: kypd-vol-up-n-state {
++		pins = "gpio6";
++		function = "normal";
++		power-source = <0>; /* 3.3 V */
++		bias-pull-up;
++		input-enable;
++	};
++
+ 	misc_3p3_reg_en: misc-3p3-reg-en-state {
+ 		pins = "gpio2";
+ 		function = "normal";
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.45.3
 
 
