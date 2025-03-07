@@ -1,156 +1,164 @@
-Return-Path: <linux-kernel+bounces-550700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3901A56317
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:58:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 503BBA5631A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:59:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 135D67A736A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:57:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C1047AA19F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E043919E971;
-	Fri,  7 Mar 2025 08:58:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4B21E1DF0;
+	Fri,  7 Mar 2025 08:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="tQ7yE1Eg"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H0r/LtFp"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA321A5B9E
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 08:58:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194E1199E94
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 08:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741337926; cv=none; b=Xcv1xQCVa/PEXI8QBiqsihz0Zk+b9oTIoFDjmpS6IFsH7q8FVQwNW5ZNxrp0m4NbSlm7cFclwGNRskd26MUPRYPTwjqTSYcg56cFPaklo3+VD19FaSfXaL+oFJixuduodv3UQepCfht9NfQH6bfb833Q7uqhpltWb+KurP7Wplk=
+	t=1741337967; cv=none; b=HeuSY5QxUAwrlQ/P06IcNB+qnOPL1SOI964CuMqIDuKB4uiSZkAOLOYsOkiuO+TxfvhD74arexMNNr+iIGZIS9cEjnYkZRSPrqPBSh+N/RYFOUDUp4S10qKlrxK0TFYl0dJotbwYq8UfzRXqlSkj2sJBMhwDrW5R2Xq43YogPBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741337926; c=relaxed/simple;
-	bh=ZjIQfWG83oRMyHUQO4OLqSgSMHEWjUJSojUPoWkoC0c=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=dh4QIZDaDonKJANvDXPH1NrhOY/DqTXu8fJ/lyCWVT+5fK2CDU23M+Jmdy6gsu83e22pPAxFq+IXsDDWGvmFpMkXRB1303+97Y+MAAk38ScRL+GQRSX2nw7zU9vALFzun9RRYzgz/8KZ8yptfLXqRZw+EktJzGITqVX5JpitHFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=tQ7yE1Eg; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id C62CB11401BE;
-	Fri,  7 Mar 2025 03:58:42 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Fri, 07 Mar 2025 03:58:42 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1741337922; x=1741424322; bh=QPeVGTBd43rKn7LkcJDA/FXYNYp2iIcX4WE
-	UvEUfYNM=; b=tQ7yE1EgJ60/UNnooVX4mQmvkVu0xuEswZPUEIJNovrTsWDaOeV
-	+pxZQlK85pyoGpROjrehmBJPfQN80xCqPyan4mGrhB/0ELwTVei5pVUhIQGnN8Z/
-	n8ZA6Bl72ujJt7nM+GAAcPWGaPFst0Uoc0fjskdktQyEnkyDydJklOF8vljQI5DH
-	HTCqstREL9Nd3jLw7iNhFzsCJH8a5mzO8a2N3VMJLrijeFc5sBnDleWM7cpZ5kTE
-	A0rsTUZhZnLfqBIV673rUZF2ErQsf8o4Vk8eiFrFS2OQUTgo8WJys66QRlX8VYEb
-	YGzHlpTPymXoMMR4dTILW+UV8gFPsbVuTlA==
-X-ME-Sender: <xms:QrXKZ_bL6_1JjNNoqg07-tNIduz_4sz4BhuJdZ6x5CRYd3w2QmU_ug>
-    <xme:QrXKZ-b3YpkWD31NY68_lYhQv_OxuBoQWYIInuMJ2nEbRcwLbjkLBgmS2eb41DUh-
-    AqOkdQdQmrYGvVhCEw>
-X-ME-Received: <xmr:QrXKZx-JRC0zqwfGDZbBRL1QMmY2FZ75W_Au-IZDXf4yTzkoapA76XTBtdIKDtVm3mAURAy4fY9n8AYG_VklA7NamLcMZTOqiKE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduuddtvdehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddv
-    necuhfhrohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheike
-    hkrdhorhhgqeenucggtffrrghtthgvrhhnpeelueehleehkefgueevtdevteejkefhffek
-    feffffdtgfejveekgeefvdeuheeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgpdhn
-    sggprhgtphhtthhopeeipdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehgvggvrh
-    htsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehthhhorhhsthgvnhdrsghl
-    uhhmsehlihhnuhigrdguvghvpdhrtghpthhtohepjhgvrghnmhhitghhvghlrdhhrghuth
-    gsohhisheshihoshgvlhhirdhorhhgpdhrtghpthhtoheplhhinhhugidqmheikehksehl
-    ihhsthhsrdhlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvg
-    hrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvggvsheskhgv
-    rhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:QrXKZ1qo12hFO_G5ANML-5eSLqQZ_-jAS_CAgdLxIiNJ2pT1dN-uWg>
-    <xmx:QrXKZ6pOT-BJZUIgzVRiTJoBOzUDbY-tzlso8su4Arks7Yp-sX2twQ>
-    <xmx:QrXKZ7TWDzRKX1eKCJ7SHp2hpKvpA76HycKw0VtLMBx_d53G6g6eAQ>
-    <xmx:QrXKZyq0Md45kuKrjVGXSpyl-ONSB_VO1xrjgrYHl704P_7gy50MeA>
-    <xmx:QrXKZ3DKV8ffoweirEjSVDm1TLFWHjSeF5CNp-ecBzUmAvu1TW14NZLE>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 7 Mar 2025 03:58:40 -0500 (EST)
-Date: Fri, 7 Mar 2025 19:58:39 +1100 (AEDT)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-cc: Thorsten Blum <thorsten.blum@linux.dev>, 
-    Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>, 
-    linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
-    Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH] m68k: mm: Remove size argument when calling strscpy()
-In-Reply-To: <CAMuHMdWjOkUXy+jf0yghs2_SQM3UWY3e8or3T11=fXYYD-VJEw@mail.gmail.com>
-Message-ID: <dd1425d0-6d46-86a7-b508-ff0a646d61c0@linux-m68k.org>
-References: <20250302230532.245884-2-thorsten.blum@linux.dev> <CAMuHMdUonC54g-XSt-EkNbEGxhkOWMxBc87Qtw0MyeXoPqDD4A@mail.gmail.com> <e5e10808-5cca-243b-304f-4aa8db1d30b6@linux-m68k.org> <CAMuHMdWjOkUXy+jf0yghs2_SQM3UWY3e8or3T11=fXYYD-VJEw@mail.gmail.com>
+	s=arc-20240116; t=1741337967; c=relaxed/simple;
+	bh=DnLQl3Ksq7Z2cxllWUtimVgS0kCffSWmdptylR8Su4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dgJ6NSDxCa9P8/5SwQg63N0EEKd6cvITc/OacGJb/b0h7tZthxQjEL7G15XDu9Klo8jzuiuJvIx0dUtmoU//URol9y2ViA5yHNznpOQItzvtgHJIerbCig7wJVpYenvsnwIGAAaN+5RLISZoUOQimumZWk4bFOH6tP/MEy+6K00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H0r/LtFp; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741337964;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fNzbo/dN/JoeBXTVjx7dS75+0FihoJ2m5H1svayNa/U=;
+	b=H0r/LtFp7lYsOgf7+jbdhD3Hbkaxux8K7oFiG1B68T2x3pVB0Rpoh/0kjUp4H+vUuRwi/T
+	SKXFtDNNXKQ4yuKQvnNKwy0O06YjPfJYMZ9f6JIyGqL9ADvHSPzkPUAgS4grvnQXdSmpqD
+	LePOLALn7f32eBWXDBSOEPjqI1UQJnc=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-113-z2zDNYcKM4eFkh4Uim-Iig-1; Fri, 07 Mar 2025 03:59:23 -0500
+X-MC-Unique: z2zDNYcKM4eFkh4Uim-Iig-1
+X-Mimecast-MFC-AGG-ID: z2zDNYcKM4eFkh4Uim-Iig_1741337963
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4751af95442so32989891cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 00:59:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741337963; x=1741942763;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fNzbo/dN/JoeBXTVjx7dS75+0FihoJ2m5H1svayNa/U=;
+        b=TtKgCLEVAaD6cueNFIzaLeJ8F8KAq9bw3ZEVdOtGE0yzE4DhtacnfF5iLcMGC02Ucl
+         KFos81fZXY/2AY6b55v1PZEJDfiY1E71RLKhDzs0u6wAEz71wO4mm3PKipIk5mHUa32X
+         FpZj0l9ozL1ZF7f/tW4h2qUlbBREg/Yz2bf3o+pvLQYQ6P8c+BlmqsyGZ2DU+7FUEOJE
+         M5fpHbHtOsjUh526E+x88lFpRmyX/HAI2pofiT0ErpyS3M8AUx9Lm85DrbmuCOxyu7lX
+         u3bmol0pN4JFy6uddr575QPacJrKGqWcrBzi6KW2KQn0i9SszHeCKJbUKixRrT5Dp2Uj
+         ajBw==
+X-Gm-Message-State: AOJu0YzDr2IPhFwqGS6oiEiutURsqlPWbe41hPDeicAgWCsugTamxAiK
+	s84OmXvvkBir9lH4+veu5t3t3ZzSAfF8oU4ALSfNOl1YZWtO73uAHvd44g2b5fxFMQwLRNcJzqU
+	zVwdtHn3oXt5SpSPebdVk1JVdWnRBgQ94eXBSzZXcY3T+vxvNjldwyFPc8gp+Pg==
+X-Gm-Gg: ASbGnct5YejrzGmkBwjo+R46rKFMKfqHwOSawVOy26185bf89GS8dJvE1wy1G+SwBWC
+	5szssWmjln61Y6x0AhdmkonNJLpWQ4zGwAtBWjJgvpBHl2ylm6nFVYCZ9fcwlAt+oa7sIhtg5UF
+	uPC6M3koK0nVOr6OECa34n2kXPv2nSaAtqpfeOGtDCuOrfJAa0TQXnku7EMCeFvAfUpyj/IUEZ/
+	4fb436PhagX7cIGQvMUNxoHxxP/YMtyDenUGag/JNppczZm2N43OmCZYUpFwXJBWKRsNqIxFZyh
+	rz4QJ6MBBeMRqJo1EFi833e7KYhwYQENTMlUWMotiIKujQLTa+wuNsGF5cj2FOkXDlOBokZfmMY
+	GLeS+
+X-Received: by 2002:ac8:7f42:0:b0:471:fde4:f0ae with SMTP id d75a77b69052e-476189e8118mr29380241cf.36.1741337963210;
+        Fri, 07 Mar 2025 00:59:23 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGq0N4B7njPtAmPXmTzn2vvYLdOcpPjQWYIsJ8Snozrqg1T6MF5pIGRzPtQzrAvPBv5qyU+Fg==
+X-Received: by 2002:ac8:7f42:0:b0:471:fde4:f0ae with SMTP id d75a77b69052e-476189e8118mr29380101cf.36.1741337962968;
+        Fri, 07 Mar 2025 00:59:22 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4751d96f378sm18205061cf.30.2025.03.07.00.59.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 00:59:22 -0800 (PST)
+Date: Fri, 7 Mar 2025 08:59:17 +0000
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
+	tommaso.cucinotta@santannapisa.it,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 4/8] sched/deadline: Rebuild root domain accounting
+ after every update
+Message-ID: <Z8q1ZdJEjOEkhEt2@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250306141016.268313-1-juri.lelli@redhat.com>
+ <20250306141016.268313-5-juri.lelli@redhat.com>
+ <295680e1-ba91-4019-9b7f-e8efd75d7f13@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <295680e1-ba91-4019-9b7f-e8efd75d7f13@linux.ibm.com>
 
-
-On Fri, 7 Mar 2025, Geert Uytterhoeven wrote:
-
-> On Fri, 7 Mar 2025 at 00:24, Finn Thain <fthain@linux-m68k.org> wrote:
-> > On Thu, 6 Mar 2025, Geert Uytterhoeven wrote:
-> > > On Mon, 3 Mar 2025 at 00:07, Thorsten Blum <thorsten.blum@linux.dev> wrote:
-> > > > The size parameter of strscpy() is optional and specifying the 
-> > > > size of the destination buffer is unnecessary. Remove it to 
-> > > > simplify the code.
-> > > >
-> > > > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> > >
-> > > Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org> i.e. will 
-> > > queue in the m68k tree for v6.15.
-> >
-> > The commit message says "simplify the code" which is only true if you 
-> > never scratch the surface (i.e. it's simple code if the reader is 
-> > simple too...)
+On 07/03/25 13:02, Shrikanth Hegde wrote:
 > 
-> The code is simpler in the sense that the API is simpler to use, and 
-> harder to abuse (i.e. to get it wrong).
 > 
-> > Commit 30035e45753b ("string: provide strscpy()") was a good idea. It 
-> > was easily auditable. But that's not what we have now.
-> >
-> > Patches like this one (which appear across the whole tree) need 
-> > reviewers (lots of them) that know what kind of a bounds check you end 
-> > up with when you ask an arbitary compiler to evaluate this:
-> >
-> > sizeof(dst) + __must_be_array(dst) + __must_be_cstr(dst) + 
-> > __must_be_cstr(src)
-> >
-> > Frankly, I can't be sure. But it's a serious question, and not what 
-> > I'd call a "simple" one.
+> On 3/6/25 19:40, Juri Lelli wrote:
+> > Rebuilding of root domains accounting information (total_bw) is
+> > currently broken on some cases, e.g. suspend/resume on aarch64. Problem
+> > is that the way we keep track of domain changes and try to add bandwidth
+> > back is convoluted and fragile.
+> > 
+> > Fix it by simplify things by making sure bandwidth accounting is cleared
+> > and completely restored after root domains changes (after root domains
+> > are again stable).
+> > 
+> > Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> > Fixes: 53916d5fd3c0 ("sched/deadline: Check bandwidth overflow earlier for hotplug")
+> > Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+
+...
+
+> > @@ -965,11 +967,12 @@ static void dl_rebuild_rd_accounting(void)
+> >   	rcu_read_lock();
+> > -	/*
+> > -	 * Clear default root domain DL accounting, it will be computed again
+> > -	 * if a task belongs to it.
+> > -	 */
+> > -	dl_clear_root_domain(&def_root_domain);
+> > +	for_each_possible_cpu(cpu) {
+> > +		if (dl_bw_visited(cpu, cookie))
+> > +			continue;
+> > +
+> > +		dl_clear_root_domain_cpu(cpu);
+> > +	}
 > 
-> All the __must_be_*() macros evaluate to zero when true, and cause a 
-> build failure when false.
+> This will clear all possible root domains bandwidth and rebuild it.
 > 
+> For an online CPUs, the fair server bandwidth is added i think in
+> rq_attach_root. But for an offline CPUs the sched domains wont be rebuilt.
+> It may not be an issue. but the def_root_domain's bw may be different
+> afterwords. no?
 
-It seems to me that the code review problem could be solved either by not 
-churning the whole tree, or if we must have the churn, by short-circuiting 
-the recursive search by reviewers for macro definitions.
+dl_clear_root_domain() actually adds DL servers contribution back on
+their domains (dynamic and def) and we want to keep offline CPUs DL
+server contribution not accounted for until they come back online and
+the domains are rebuilt.
 
-Can we do something like this?
+Thanks,
+Juri
 
-sizeof(dst) * !!__must_be_array(dst) * !!__must_be_cstr(dst) * !!__must_be_cstr(src)
-
-At first glance multiplication appears to be safe (unlike all the addition 
-terms that we have) because the limit of the string copy is either 
-unchanged or zeroed.
-
-Yes, I know you said "zero when true". That looks like another design flaw 
-to me. But maybe I'm missing something that's more important than 
-readability and ease of review.
-
-> BTW, Linux does not support being built by an "arbitrary compiler": only 
-> gcc and clang are supported.
-> 
-
-So only gcc and clang must agree about all of the details...
 
