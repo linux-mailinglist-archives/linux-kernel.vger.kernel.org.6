@@ -1,93 +1,79 @@
-Return-Path: <linux-kernel+bounces-551597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C304A56E5C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:52:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF95A56E5E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:52:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92D6F3AEF13
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:51:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5736416A21C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:52:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8212417D8;
-	Fri,  7 Mar 2025 16:51:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A46B23C8CD;
+	Fri,  7 Mar 2025 16:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YRYfCV0o"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N0j/PDvY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD2A24169B;
-	Fri,  7 Mar 2025 16:51:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7DD634EC;
+	Fri,  7 Mar 2025 16:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741366263; cv=none; b=rjpWYbJK/xAe2YyhreT9kjCBKnsveof1O1vmiNmNfpx6oVJWGGT5KvAGFAtNL4ixE846NPArgxHSYNr5enI7toFAmiMkpaGQQRI0oR8DnV7Ttv4tcp7hQhpDo+F1Ss0rf8NkYVztsYzIcmMwyhlKDgn2Edp+xJFnqDb1pfaX3Wk=
+	t=1741366302; cv=none; b=sDJ9MXAqOJhVcs4r/M2MyLNgOoeR2Ap+ENpYKouFVpBzHEHLltLQVYMa4w00CxBSe67ANpetik8s4HLYnZnudHqysl+0mrlwWYumtuooyP9QU9z9E3CycncfVWUJDf5ysbRLgY5ji+xXGVXhZefPSUMrfRNqn70THaa8ivuwAhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741366263; c=relaxed/simple;
-	bh=cS9Zb1GU4eE3BvyFwVLVC0TTxdlswEgP6RUyYFegNdc=;
+	s=arc-20240116; t=1741366302; c=relaxed/simple;
+	bh=alWLxts8I1LVeHcFD4o9Tk354TpdfgHz+c6UXPKGrvk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B47PrP+5neCrI7H2Ltg1ePnvDMGD5KSowMTT4SARnvbk6VRFZvZtFfFMUS4fHYiAcb1UIgeJbl80MTGHKc6jStLHtb8HTkRRuVqGNR+jEsrUSiG8+4kyFRQH5o9MNA+yM+DofK3m6uxoR5tTcpIvJanyWxK8bD42P274Vx/wUHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YRYfCV0o; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22113560c57so40200475ad.2;
-        Fri, 07 Mar 2025 08:51:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741366261; x=1741971061; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cS9Zb1GU4eE3BvyFwVLVC0TTxdlswEgP6RUyYFegNdc=;
-        b=YRYfCV0owSuxVz8qWAE/QYlb9d89C7CftaRqZGyWGf9AIwn5BO8wAGES5IOX1iMe+C
-         ddvw9wgTb/T9ApqI92MiJQvk4byx3s2qlNgZloiz/2+4/unnUb2AWlD8aUPUaA02kkV3
-         Um6ePEdet97ccOe0gNQb25gJw67BzlDLi+jcgbJaQbmg1I3cqncy+dLvoSgLoTwd4fJP
-         QzgT7QQ9kA+TgMj7Z6vIF5JVgdFQiMUPrajVfQZKCXSi3q9cMnCw2CUh1ykC4CH8xn6K
-         n+yKp50/VRALj52XWZuyOeoggJFFqogWv/u4btJl58KtSnhE46cWVJJn0/PMY0m+zVq2
-         W3hQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741366261; x=1741971061;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cS9Zb1GU4eE3BvyFwVLVC0TTxdlswEgP6RUyYFegNdc=;
-        b=M9sBS686pF+4DwqUTKeoJU6CToPyPby5OBs/WTY14onh9CY02DE6MptdBhUDEcOAg1
-         SASUqCHGfRiMAr68Rfv4xhNXVjFBmSjKqohCCZGwvuVSzqZ9sgtXQNco/lcwe5bIeS34
-         1BaJr4aNMVzrEu70afrcYafgQiWPu3KMjtdlp/lKmmT+7NILMHRHs7iT+Ca1pI3yTAUi
-         BarCY2VRHQyUvx755prMY23SYFr92wC6AZmVS7cuQEJ8OZ/nvsxuI2+b5KhFC0eLNgQA
-         UL5YtEjrl/9bMkX3TwBU9oOFn3+pWhmkALxnu4jcZAaqZsY4VbgxJVaIzYCjAedeka8f
-         yxLg==
-X-Forwarded-Encrypted: i=1; AJvYcCUoax8p5BaqfkVhwFS3WIyp+BrEvEWiIWjwwOe8T/G12owXftd+2qq9QdnpBUF9BvpaXpMGO7QhDGvg3ag2@vger.kernel.org, AJvYcCVGE0rdqB/Q1zVCxTzThJ755K+lK4gB7x6Me6ccI7LWjbtYa1b3okYyluoR/fX8GoZ7Syc88InkvhA25z+V@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPCWoQt4J0x1CFnh12V7f1IepN4mWNnxyj8zg7w0z8NvMs4/pw
-	xCVy3kRCiKCZ7mkqmArHzEXMu0Dy6wiM9hFf3nTlH9GkPUhI5GbF
-X-Gm-Gg: ASbGncsj/GzEHIYlNYxxcAGiOPyy9v9YpUoYtGzeFTNQFHdQWwsNrqRS3cRd3VWSAbb
-	u9KStw/GFERTinode4pPEoeQzC7tFvg4Xajjazftxc7VTdtay4u72bmNvVfQjSDSP9J/hhrhirx
-	wQbZUfySVaZ1A79I5irMJVLs98/Y2A2BzZLNvlm6MZR078qCUEv6idrLjoYHwCxrbOtqxL7S3gH
-	CxP0s6RRxm1rR7/OEIrDvtSeklI9aUTq45q1+na96gCOOvLCrEqFQM90NKQY208S8G42AlCzgU0
-	SyCTXG+aKuHAQMFwacVdxEvtbmayofDMCHvSUbaA+M4c1WJ9zBKC4g==
-X-Google-Smtp-Source: AGHT+IH6wTdVSrkEWzxPXeMMRaiQrPUn2JENVyXLqhw3Yh4hYsLuRU+w3/MgwsrvFwKD90HG2+mNGA==
-X-Received: by 2002:a17:902:eb81:b0:224:1935:d9a3 with SMTP id d9443c01a7336-2242888ab01mr74689915ad.21.1741366260807;
-        Fri, 07 Mar 2025 08:51:00 -0800 (PST)
-Received: from eaf ([2802:8010:d51a:1300:38a4:5444:b138:8488])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109ea390sm32354895ad.69.2025.03.07.08.50.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 08:51:00 -0800 (PST)
-Date: Fri, 7 Mar 2025 13:50:54 -0300
-From: Ernesto =?utf-8?Q?A=2E_Fern=C3=A1ndez?= <ernesto.mnd.fernandez@gmail.com>
-To: Sven Peter <sven@svenpeter.dev>
-Cc: Theodore Ts'o <tytso@mit.edu>, Aditya Garg <gargaditya08@live.com>,
-	Ethan Carter Edwards <ethan@ethancedwards.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-	"linux-staging@lists.linux.dev" <linux-staging@lists.linux.dev>,
-	"asahi@lists.linux.dev" <asahi@lists.linux.dev>,
-	"ernesto@corellium.com" <ernesto@corellium.com>
-Subject: Re: [RFC] apfs: thoughts on upstreaming an out-of-tree module
-Message-ID: <20250307165054.GA9774@eaf>
-References: <rxefeexzo2lol3qph7xo5tgnykp5c6wcepqewrze6cqfk22leu@wwkiu7yzkpvp>
- <d0be518b-3abf-497a-b342-ff862dd985a7@app.fastmail.com>
- <upqd7zp2cwg2nzfuc7spttzf44yr3ylkmti46d5udutme4cpgv@nbi3tpjsbx5e>
- <795A00D4-503C-4DCB-A84F-FACFB28FA159@live.com>
- <20250306180427.GB279274@mit.edu>
- <4e41ef2b-7bc3-439c-9260-8a0ae835ca02@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LTxdt2v+DFBbXD/h1IsYUfKxKoTP6LFPHXgni61buxfFTWuFcfiDND1BoD/wkHZcBJudJS5zy4QiqSFwyEEQIRCIoZwchD1ClianvlAOVjpcYF0DwcKVqnzYE9SBZ9uLSbVmjKHAmUBgpmVa3aMFAz4Gnu1bfnHYglxD9W37QBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N0j/PDvY; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741366301; x=1772902301;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=alWLxts8I1LVeHcFD4o9Tk354TpdfgHz+c6UXPKGrvk=;
+  b=N0j/PDvYIPZ/7ksu6e04bddaHhT0/INH2+8m5NiIo04BTU1VmvZhUuQq
+   3Z7hZGHNV5XZAwcNcwisIdCYalxLsMXqyUuzAWoIdkfEPpCjYUNW1oMFz
+   EPxuPNfsblfR5jJ3PHVMTmcrez1lR+3JeY9c+CVi7LXukvcnKAAx+gZNF
+   o5sLJPZrKcz6EJIor0ohzB0r5ycxRi+v+y//6Pk6/uh8Fq85555BPMg9a
+   nwvCZrVWgHPSnnJZIdkIWBpLiQjkSlyslrHA1G7zrM2T4azNfbrWfZgv5
+   H8ZzCgKYb1YI+I5lhYk5b+GezdsOlb/2lEtn6nxZQvN2SMkuby3a/EQ3H
+   Q==;
+X-CSE-ConnectionGUID: tiH8hyVuR8mcyFBNlW9YKA==
+X-CSE-MsgGUID: Z9GVsp3LTum44YsKtk6c6A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="46345802"
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="46345802"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 08:51:40 -0800
+X-CSE-ConnectionGUID: WtD25zaFT3mXXARehBlPTA==
+X-CSE-MsgGUID: 7Z7n2cvwQLuhP/uYgVY9Yw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="124601988"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 08:51:38 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tqav9-00000000SjA-1hoP;
+	Fri, 07 Mar 2025 18:51:35 +0200
+Date: Fri, 7 Mar 2025 18:51:35 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	kernel test robot <lkp@intel.com>, x86@kernel.org
+Subject: Re: [PATCH] x86/mm: Define PTRS_PER_PMD for assembly code too
+Message-ID: <Z8skF4rtRzaDL2Ou@smile.fi.intel.com>
+References: <20250306092658.378837-1-andriy.shevchenko@linux.intel.com>
+ <174125602814.14745.12946945836213678532.tip-bot2@tip-bot2>
+ <CAHk-=whTGVy1aaEashu3K49wuG7-hARh02xbAr_hMm3844Ec7Q@mail.gmail.com>
+ <Z8oSAQiBvVJ_METQ@gmail.com>
+ <Z8oa8AUVyi2HWfo9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,36 +82,116 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4e41ef2b-7bc3-439c-9260-8a0ae835ca02@app.fastmail.com>
+In-Reply-To: <Z8oa8AUVyi2HWfo9@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi everyone,
+On Thu, Mar 06, 2025 at 11:00:16PM +0100, Ingo Molnar wrote:
+> * Ingo Molnar <mingo@kernel.org> wrote:
+> 
+> > Separating out the assembler-compatible defines from the types 
+> > headers appears to be a bigger patch, since it's all mixed in with C 
+> > syntax:
+> > 
+> > <=-----------------------------------===============================
+> > typedef struct { pud_t pud; } pmd_t;
+> > 
+> > #define PMD_SHIFT       PUD_SHIFT
+> > #define PTRS_PER_PMD    1
+> > #define PMD_SIZE        (1UL << PMD_SHIFT)
+> > #define PMD_MASK        (~(PMD_SIZE-1))
+> > 
+> > /*
+> >  * The "pud_xxx()" functions here are trivial for a folded two-level
+> >  * setup: the pmd is never bad, and a pmd always exists (as it's folded
+> >  * into the pud entry)
+> >  */
+> > static inline int pud_none(pud_t pud)           { return 0; }
+> > static inline int pud_bad(pud_t pud)            { return 0; }
+> > static inline int pud_present(pud_t pud)        { return 1; }
+> > ================================================================>
+> > 
+> > In any case I've removed the commit for the time being until this all 
+> > is cleared up.
+> 
+> So there's a simple solution: define it on i386 too, via the patch 
+> below. It appears the double-definition doesn't create any warnings, on 
+> GCC at least.
 
-I don't mind putting in the work to prepare my driver for upstream. I just
-can't make a case for it myself, since it sounds like a lot of work for the
-reviewers and I suspect it won't be all that useful in practice.
+Fine by me as long as it gets fixed. Currently it prevents the WERROR=y
+to be used along with `make W=1` for x86_32 by both compilers.
 
-I think the driver is reliable enough under linux-only use; the subset of
-xfstests that I managed to get to run stopped finding intermittent bugs last
-year. I'm less confident about our compatibility with the official driver,
-since I recently fixed a terrible corruption bug for all shared containers
-above 1.32 TiB in size. There is an official reference for the layout, but
-it's incomplete and has a few errors.
+> But if it's an issue, we could do something like this in 
+> <asm-generic/pgtable-nopmd.h>:
+> 
+>  #if defined(PTRS_PER_PMD) && (PTRS_PER_PMD != 1)
+>  # error "mm: Wait a minute, that's a super confusing pagetable setup ..."
+>  #endif
+> 
+> ?
+> 
+> Thanks,
+> 
+> 	Ingo
+> 
+> =========================>
+> From: Ingo Molnar <mingo@kernel.org>
+> Date: Thu, 6 Mar 2025 22:53:49 +0100
+> Subject: [PATCH] x86/mm: Define PTRS_PER_PMD for assembly code too
+> 
+> Andy reported the following build warning from head_32.S:
+> 
+>   In file included from arch/x86/kernel/head_32.S:29:
+>   arch/x86/include/asm/pgtable_32.h:59:5: error: "PTRS_PER_PMD" is not defined, evaluates to 0 [-Werror=undef]
+>        59 | #if PTRS_PER_PMD > 1
+> 
+> The reason is that on 2-level i386 paging the folded in PMD's
+> PTRS_PER_PMD constant is not defined in assembly headers,
+> only in generic MM C headers.
+> 
+> Instead of trying to fish out the definition from the generic
+> headers, just define it - it even has a comment for it already...
+> 
+> Reported-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> ---
+>  arch/x86/include/asm/pgtable-2level_types.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/pgtable-2level_types.h b/arch/x86/include/asm/pgtable-2level_types.h
+> index 7f6ccff0ba72..4a12c276b181 100644
+> --- a/arch/x86/include/asm/pgtable-2level_types.h
+> +++ b/arch/x86/include/asm/pgtable-2level_types.h
+> @@ -23,17 +23,17 @@ typedef union {
+>  #define ARCH_PAGE_TABLE_SYNC_MASK	PGTBL_PMD_MODIFIED
+>  
+>  /*
+> - * traditional i386 two-level paging structure:
+> + * Traditional i386 two-level paging structure:
+>   */
+>  
+>  #define PGDIR_SHIFT	22
+>  #define PTRS_PER_PGD	1024
+>  
+> -
+>  /*
+> - * the i386 is two-level, so we don't really have any
+> - * PMD directory physically.
+> + * The i386 is two-level, so we don't really have any
+> + * PMD directory physically:
+>   */
+> +#define PTRS_PER_PMD	1
 
-> > (Although I suspect many external SSD's would end
-> > up using some other file system that might be more portable like VFS.)
+Should I give a try?
 
-That's what I would expect too. The driver does get cloned a lot, and it's
-been packaged for debian for years, so I guess some people must be using it,
-but I don't really know for sure.
+Okay, just
 
-> > In terms of making it work with the internal SSD, it sounds like Linux
-> > would need to talk to the secure enclave on the T2 Security Chip and
-> > convince it to upload the encryption key into the hardware in-line
-> > encryption engine.
+Tested-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-I don't know much about the hardware side, but I think my driver will also
-need some changes to get this to work. Right now we don't support any form
-of encryption. It's the biggest missing feature I believe.
+for x86_32 with Clang 19.1.7 and GCC 14.2.0.
 
-Ernesto
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
