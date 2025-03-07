@@ -1,119 +1,111 @@
-Return-Path: <linux-kernel+bounces-551637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48C5BA56EFD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:28:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACCFDA56F07
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:29:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7640A168292
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:28:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADBC87A9CAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FD02405EC;
-	Fri,  7 Mar 2025 17:28:04 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC2B2405E4;
+	Fri,  7 Mar 2025 17:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dG3MOep0"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89A232940D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 17:28:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A215F23FC68;
+	Fri,  7 Mar 2025 17:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741368484; cv=none; b=p9N1uGDZnZkSnBzl3Y8g86VflkDABL3OO0hZI9Z3En1Sx7b4kYPO79bjRresJS1tHSqeb4NlGrYJok+tznX8EErXdM9nU/FuUfEhfxCR8wE7blxYSuMy7rNYnTKEyR3tzvCh5nSAM5qoqObmMaBRTjNxeHbTTKY9/PUXvoW7LQ4=
+	t=1741368550; cv=none; b=aB0675jqaLtSw4+1ueT5oXTnRVHMme5zIUlzL9BUn0HPm6DPKLybBXnI2tDDe3ez43vDUyCFiDwhGDQOF8hBwIKSqZ2BCGj5YFxvNlelh6Uvm5jz6v9ZhTCoieWpLrN3hwEXfsoz7TT3Elq9K4wkq8YGtgNVob8zdHhA0m4PxBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741368484; c=relaxed/simple;
-	bh=upJQ5mjymofgpXkz41INvuAsthQFAND/YR305XX1Jlg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=RRziKK2uPolXHg5LB89RvstIi3ps0SqnwRy5BO/eZgWgrVXooOcuU95ADs7t45jfCfbs6syjA/PBz8dO8T1C4xHD2JtsN6xA1ldayxl+Z0sxDCoHnEj5LDEmRPEuCkaiP/fZmBi+6yfhG38dAWFkxzDLWUJhfadAZEhlmyeYi/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3d43b460962so33589585ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 09:28:02 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741368481; x=1741973281;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KiVJKCgKzBlcHXwJoqOsA0A8HPvoZj8TKdObe42sP98=;
-        b=F7Ou0OjfwQ80VzWHjSWX/42xErTWEPwcNUZCoZMm+yM9UmtMJ0IMRsz9a3kxWLP9rf
-         kq5H51GRcr9mDyVgCmqSnh+DPFA2Y6NL13dK3Rl/i8aVfWG+19yhz3viDtCjbVBnw9Ga
-         4tIaFLqCKYxc/MR4MjpudbiVAk1mX+d3nqq6L52YsZF5+xD8O+WI3lXbtqxm0gROnOpT
-         K0N/fZoF+kVhidyF3WyvMuUUBCvlEBMiXFy79JCsp9huZcdAshhlRpWlRNO+eGifnO0E
-         3zWMxeiLdOHfsZchBtjRASBiv5zS4gkOek7poo9/zgecKoX56QB9JnjBt6mvwILyJkV1
-         YS8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWtLhKlEk6WLZxADOF9o54LBEAaCZcZZLS69tdC0zq3Q1ECggm5QZddf532EdTUds9voLh8btGok74p20M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoDiH038NXSnzTFgMm/WI1aVW/lNR4uW8sNngJzrkjiZ5bO5Jf
-	j9gRlOQhdH3kczeWGQM5lfIDJDIBLSPTKhOb9x9BJMYHBAH7fXkCUh5cBMI42Gx87xdXHe5Ji9L
-	XhpR1wlg/vC2iSHhTOAwcAoi6jqPgS92+jEonzyCtYNgZbq55idzaOvg=
-X-Google-Smtp-Source: AGHT+IF6wDU9ZKWQ//+3hPY1GgjgX/QLT4u1UJyPfYraBrReiPZDYyOP7z+VuKE2DTqKQ1xfke8tVU6gVUM1gVkS9bmM3wzhvvJZ
+	s=arc-20240116; t=1741368550; c=relaxed/simple;
+	bh=pAXk9nplQXMo4PaQGK2RiTm1NJNkWQ9qJnNQm1qjKCo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=XqkB3XBYv9HkaN4NVLxW4ZVoYmkPbfaKdbPooPlYIcfThCl/77Ih7b0tN/RsCKaboMrkCdusDK+rUELjhrPUg21rnsmF3DhLDXnQ0shR22OWg25K1g89HAECovgnTi6TH4yTbaXuglUUmgDqrpRFM9q6ZjhjNeGmem47DOx+JtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dG3MOep0; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741368545; x=1741973345; i=markus.elfring@web.de;
+	bh=9mK+OlGiVmRDcs0Jmovne1s6idfZ5q2umrUN0yXPCNc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=dG3MOep0kSdHLtgbLbH1gwJD7jia4EM1iTw/+4U3WftPFnmQ2GfcaNao3/oYHmai
+	 qO4Bd4DixkzvIABvIoWkJOqUxaG5ciGM4+LnOFJr/CVi2SP8jchZ8PW6VM4X7Vfxz
+	 OA/Cq9q6aFmplq0QQbETkvT7mSOhA2eCqMZClIZij0dAjva9oplFDs9TppWt3d2lS
+	 a94RdMQPxwWJGFFw6p2+dj1fZatmX6keFqPStem3c22EIVZH1XIE3MwA0qVLPIt3n
+	 289JOT242ZrPOvL8QZOGSxj8/EoexG3loiQGP/w2EIJGVNdupseMKcroNUGBU4srw
+	 bcj+/QSpyEWG1HWfLQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.70]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M8T7E-1tv1MH1vHM-000rvy; Fri, 07
+ Mar 2025 18:29:05 +0100
+Message-ID: <03bc1b71-6b53-428e-8b2e-4f3a434087b1@web.de>
+Date: Fri, 7 Mar 2025 18:29:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:180d:b0:3d4:3aba:954a with SMTP id
- e9e14a558f8ab-3d4419fef78mr57414785ab.15.1741368481737; Fri, 07 Mar 2025
- 09:28:01 -0800 (PST)
-Date: Fri, 07 Mar 2025 09:28:01 -0800
-In-Reply-To: <67972800-CD21-4A3E-B4E5-0FDFD7B83D44@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67cb2ca1.050a0220.15b4b9.0084.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] KASAN: slab-out-of-bounds Read in __bch2_bkey_unpack_key
-From: syzbot <syzbot+b9d9de2aa46b1bbe575a@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mmpgouride@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+To: vulab@iscas.ac.cn, linux-nfs@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Anna Schumaker <anna@kernel.org>,
+ Trond Myklebust <trondmy@kernel.org>
+References: <20250303140314.1650-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH] NFS: handle wait_on_bit_action() errors in
+ nfs_vm_page_mkwrite()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250303140314.1650-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:YWnTnJ2Fxc4XORGjPMBmYYOBrRGjG7e8Oq/hxJpYzBc8eCRPzud
+ R5sx/ob+f76LUi6gcRbEhhgOeZZnwVqJ7UWzJJSDJjeD69dvQOEnDm52cRqB+w7dVSY3IPL
+ 4zLOuql/uVlNMF29wmxIqupzBzv3nml5DaiF5ve2tvreDh+VutVzTE13R2/gP9sNonJcBHB
+ /Mlj7l51/tEPTUbGEhE4g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:1EK34QZ6akg=;adCjeFb0z1LeRI04IrU5yu6lNrm
+ Q0jJOCbYUBELkUxy0Jlo2RP/j9fAQRatZ5+YKZtYDgoNMuenZ9iLcOBxGqahlsTO0lMShmG/H
+ NGkdcPjMUxrkIofsyrigdV5SbihO049OqJdSnkFxov+X0wR8sZGfmEXW3AzJ1Ph0/bAeon1ox
+ AlFu0nDhBk2uiYIWlIBkg5cGGa8Zrt7niqYhv8c5C0CPMvEbxGdW+Hf/nqzbYSXNhBHx9/9I2
+ ak2Q6PdeYgUUnGRkQAmRvFK6iOY7nMDKNVuBXeKjD67cV/SmKaD5dD2GPfe5e2QQERvZqSScA
+ R24zP+/gg8+Yf7dcmSiGPtlzKb7lv9nawO/xEW6pHDCQwRygm1vJ3kZXcWCz2qwq+bnhxs1Xi
+ oNfa76XmVDDm0zKJxiA6Yvlqcy7t6HHoRidcam3MWd52nqiW+yC/GY+3cNWhhOygPyBY7lm98
+ gzqVMSHDiCzHZvztaa8nZnviP1f1KoVT7G0jpZhGUI0Maf0kS49MaZrv5ErnnkMpy6QxWnVN3
+ 04E0JQ5w5twEtFNrk9IkQrlEmQMaVjzIQLvpVvIXzIg1m7Xq5hNC2+AZWlnNU9RQnLW6kRt3i
+ rkCPHr2a+ncDBRE7m1sHuPWL9A4TS/+NRVjWo29uZiaYoaA5mZdBsrpd2NjBMu4kAhOhQPEQ5
+ zp3hFack2X4hsTGa+rlx3ki64lSMl9i8kEbLK5+q+hjV/JYKOAoEjSOlcMrFfHU2Qn8DdwWHV
+ uuUW2pxMqoQPGW4LsNYBvnDFZudxYVG1SaD92NrOKb04Z2Rh5uN/ph3gArcpWplmDiqkimtXK
+ WmuEu9Xg513iIgfOuN3wQZqDlioaSuW5EsSJsCKYfBwHAkPP2aOkm5oN0tmTfWo6d3sMg2NRU
+ jIo7r21NAVuCt55oNbRfFlzy+IRtO5TgUpCXJmQt3k2D8eyHPvxy8AJuTqMfACC0pRtJR7uMx
+ UVkxONOgFNHcAJ0prbr4va0F/n6ARU4epXkGz/nWjo7HvLah+ZFsjMtx9GAatdQyEUvpVE/Ah
+ VZo1Iy7rAufva8w/pRAFobzx4Rnp6x6NRBKitNHTWzsMOazwjLN32vfw21KjmnjyQ4LbK2xlM
+ RlVDdmiYfcEgNlgz6Ubu1/Ga4AveGwfJ1afSYPIJwKpvvbydN53/m/1tP13FvdZiO0XHDvsvs
+ qDTVNIgO6Z9ClCeue4gmnR3sGoG+yTqAo+lPi1IxNZ0ikDcc6Eacd3MYDV1IAwvniJbQHgCCU
+ zB4cfPp4Ei9fe1a61Y4A6l06NAiRG2KJowhsSiVIi3DdbWQahg7n/02BGNmwx8itIBKE92a9O
+ bkndwVgR3oq1hEJqYGNQhaCCg4WBXopqXGEsb0ySdCco1imV2M4cBVZng801s3IgsQfBxlFut
+ Y8fPRSGsqXhaq4lCID7kAqsFoG4ZPIDcmT9qUoc3mpCGfcXpcmewaZUqTd030BD3fCDdbSNG9
+ D+flVeKulZ1bqFIzQZMWp/sEtrho=
 
-Hello,
+> Add error handling for wait_on_bit_action() failures in the page
+> fault path. Return VM_FAULT_SIGBUS instead of proceeding with
+> folio operations when wait_on_bit_action() fails.
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-WARNING in bch2_trans_put
+                                             call failed?
 
-------------[ cut here ]------------
-btree trans held srcu lock (delaying memory reclaim) for 11 seconds
-WARNING: CPU: 0 PID: 37 at fs/bcachefs/btree_iter.c:3202 check_srcu_held_too_long fs/bcachefs/btree_iter.c:3200 [inline]
-WARNING: CPU: 0 PID: 37 at fs/bcachefs/btree_iter.c:3202 bch2_trans_put+0xe36/0x1020 fs/bcachefs/btree_iter.c:3457
-Modules linked in:
-CPU: 0 UID: 0 PID: 37 Comm: kworker/0:1H Not tainted 6.14.0-rc1-syzkaller-g47e4e14a59ec #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: bcachefs_btree_io btree_node_write_work
-RIP: 0010:check_srcu_held_too_long fs/bcachefs/btree_iter.c:3200 [inline]
-RIP: 0010:bch2_trans_put+0xe36/0x1020 fs/bcachefs/btree_iter.c:3457
-Code: 1c 24 48 c1 eb 02 48 b9 c3 f5 28 5c 8f c2 f5 28 48 89 d8 48 f7 e1 48 c1 ea 02 48 c7 c7 40 3f 72 8c 48 89 d6 e8 6b 71 32 fd 90 <0f> 0b 90 90 e9 63 f8 ff ff e8 fc a9 72 fd 90 0f 0b 90 e9 a6 f8 ff
-RSP: 0018:ffffc90000587910 EFLAGS: 00010246
-RAX: f68e1852cb63db00 RBX: 0000000000000121 RCX: ffff88801e220000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 00000000ffffce37 R08: ffffffff81817d12 R09: 1ffff11003f8519a
-R10: dffffc0000000000 R11: ffffed1003f8519b R12: ffff88804f04c088
-R13: 1ffff11009e09811 R14: ffff88804f04c042 R15: 1ffff11009e09808
-FS:  0000000000000000(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fd96e77d538 CR3: 0000000012314000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btree_node_write_work+0xa91/0xbb0 fs/bcachefs/btree_io.c:2098
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xabe/0x18e0 kernel/workqueue.c:3317
- worker_thread+0x870/0xd30 kernel/workqueue.c:3398
- kthread+0x7a9/0x920 kernel/kthread.c:464
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc5#n145
 
-
-Tested on:
-
-commit:         47e4e14a bcachefs: Fix b->written overflow
-git tree:       https://github.com/alanskind/bcachefs
-console output: https://syzkaller.appspot.com/x/log.txt?x=16b843a8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9a4389e017863e2
-dashboard link: https://syzkaller.appspot.com/bug?extid=b9d9de2aa46b1bbe575a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+Regards,
+Markus
 
