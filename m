@@ -1,74 +1,76 @@
-Return-Path: <linux-kernel+bounces-550512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71AF6A5609E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:12:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C150A5609F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:12:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 692F57A9C69
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:11:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4B5D189671D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FD6199E9A;
-	Fri,  7 Mar 2025 06:12:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C13C19CD0B;
+	Fri,  7 Mar 2025 06:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7yZBrPw"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XE5jM0QO"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403C5194C77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E495198E6F
 	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 06:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741327938; cv=none; b=ejWzoGS3/sPj4Y+sNBP034na0RozSBM4EpVutsSX0Jfh2a/qu+wdMboQLtfg6LaGdQWc0P+nlOK92YNZxpdM6K26P8yxIgY5f76pGDz3g3gsoFGQkBIoIsomV52GBJ9Xhp4QwNrQmMI1JYDkj4rBQAy4jbtsxtozKKfbt9tOHVU=
+	t=1741327939; cv=none; b=FLVCzyEmW/1M6wy7bvtWcLRrJ1qmmhTX56GtFDEDrSJF3qfKuFc8fuyzyRgeW4bjQh2DRj/IPt9gbJQ0DFBACdzKZGErkWoFefSIPeVXeW2QdEMEiPNvd/OQykzIa9Bzh8QI3F3aLC1f1UT8zyLr7LeNkMbrVCFsBdC8r+D5oUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741327938; c=relaxed/simple;
-	bh=SUfC7KfOALJ5wxmePH27qRlLAbIWKbJNM73jMjKempA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RkOPs4lVXHDU4Ay6OQdw+Il3MpQfJTf2XLaB6418U2C0iP+MDhMlR4vv0pXQaMTBb9ogmHCJ911mWpvQj3sHeAaeLQLB9ZL5WHL/wqe49726IkZdoFbIA64M0HkK9fBX8tv1zLwYlYzeb/RYTwnTClQoCnC41tUJ5zzlOL9p0Z8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D7yZBrPw; arc=none smtp.client-ip=209.85.208.41
+	s=arc-20240116; t=1741327939; c=relaxed/simple;
+	bh=vCyddJ0D95OwxDUR6U/Pbrt+ThF/e5dJerWiPBwzDmY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ljqQZHiIayUzJMgd2KZlvMfauY329Dvbo2bx1MzSiq4C9s9KzrW6mxqvVCl26bk03QiVgekrodJspGVyDbqnuKA9Of6Qt3i9iZKjsVoQPvM6cgoB2TdtAXYk14UXUQCpsfgUdTzjX5sRfawvfJihHtU4/wlDKXzTyuxldTobU6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XE5jM0QO; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e5e1a38c1aso683602a12.2
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 22:12:16 -0800 (PST)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-abec8b750ebso256110866b.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 22:12:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741327935; x=1741932735; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dyG25qKRa4ECc4XnSGWcWGpn3t3HI2LhpRSGp5OKczg=;
-        b=D7yZBrPwC8GUKJfg/izFkBWA5JKRiY7tMMVBvcjpfsyewhH3Tlu5TWnfpKEcRFxyWv
-         e7bwkLLjgror43G6kT7xXWM/mZzt+3ITrI68GpucuZF3FrNzWt5W0T0oP/YbNneQHsjX
-         GIOVrx0aO7EtYfNwFuoJeQmJ18iolpa2YE2eweV9GVfIX2YW4wpPr1LXXLsQf4PHYXAJ
-         brifCG5Zwdxs0C5PBPgxmiTP4Qva6kJqsfLZ1NE4XHLSnZamMN8RUxPHd517fVtYXOm6
-         eD3ffdFxN11X4et1tWrEH1F4cSl/kwDTXokAhqWc6pe2J3/P+FmNGYF1S6olcFmGnyfF
-         h1NA==
+        d=gmail.com; s=20230601; t=1741327936; x=1741932736; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eRUzzQ97ZwMPSXtyuJFQxmEmoL1y54SwlS9TQS3XfIk=;
+        b=XE5jM0QOHNAPGPOPewwX6jSs/7nf0TLfdd+S2/j43k5sa4H0sGieM4pKqBo7sZbkdR
+         Mgo80C214qGSgpZRfCDsjLY195zK1EwDuJNi/AJqXozE0VOHuQRjrc7I3dOElG5Jb+Ev
+         Dk9cfLbEaSzyZe4s0ZmmEKskrEAzu1hdyQ5nqbRnflnvenZc1DnetnzXSN+edhIYWpQc
+         Ec0vWX0iK+wFjmKQseNy/5JIiM5V5qQ6wmH3fTvz/XCWNiM9tATxWACNe4M9LQeAR+fr
+         LnWN6QaN3ZxQlm7wIF7lqNmqGpB5f0IY7UFsej4SEZrq/5vSZZd6VXPs+1Q3TGiHSrxB
+         YoaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741327935; x=1741932735;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dyG25qKRa4ECc4XnSGWcWGpn3t3HI2LhpRSGp5OKczg=;
-        b=CxEd4zTa5PTmd03D9d+OLVijqMMT8MoF/wXkO4gXm78st8/iiJs94VxkwxPlqqhkFB
-         x13YDwIu+8xwdNxy4dPz78tEr19PQbtVfhoNF5Jn9SgthbqJrg8rcGUbXV/f+Y+FWtL4
-         /uqGBmTuGT5Qf5AVuMX3ceCkPNJZAo3j3RzaGeSobWIBI0Jtp9OS7l/hpS0atH45o/yO
-         K5OqaZXMy+ZF+30FNQ+OUvYWI8A7rTpZdNq3k3ZonBFM/1IcaFWmykhaTclUUxFy9yGM
-         FmJugfl7JskIllfSQ45sdbnRTEj9hZkoW4hubEsJknLr4ch2kU+fpFRTVU07yiJ1YDrL
-         iHyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdPCliQCEm5wiajFbCM+OEkiNWZRGcxaYqZ9UZ95JDt+U+X9VzfzxvyerezpgqsmGtvtEzOz2ecrVooPI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNZCHKUqWhCp3ZgVaJdc9LoP38qWxT2lz6PjcSekznl8bgBvfa
-	B6i0EpfgdC5pkQtzluMi8RzmDZp/T2SwY+7go5vHwEGN/SnGcE8=
-X-Gm-Gg: ASbGnctv6UStHrUuWxoMTJa7zCD6i3YL2qaViM7DqDRLZUkUYLE27CKB2VNyEkoJfcx
-	E6bowZp/wyLLYPvEDwQ2fgEvsA9f42x6Bq5vF2JknL/ZvNOy0fE6WK5IAkA5lrKVholsZilpLIr
-	Hnw8a6VO/bB+3oAbS33gJhv0LxfOrRDweHjdVOTEP25wk0nd5dUKrofBvEX2SG+poTp+q633h5x
-	Lu2BfpE8sw7rmgXCXzUTEg5t8Gxk5SiqkthHsDcjZNW7f1mUjTirHvSphTolOYH4WjbVrlr7rdd
-	UkaFFPv8hSOjTtE5wnO7BYC9v2fSV7JXKfcB3zzW6EJcHmlxCQckFLFL
-X-Google-Smtp-Source: AGHT+IFfs/8FTfsbkybk8G4LIOP0nCJV5Du4CrPbI9l1E84oUsLvwRWcih0iTDX1ePMBQBgkMZ+qig==
-X-Received: by 2002:a05:6402:4021:b0:5e5:e78a:c500 with SMTP id 4fb4d7f45d1cf-5e5e78aca9fmr3350967a12.12.1741327935313;
-        Thu, 06 Mar 2025 22:12:15 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741327936; x=1741932736;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eRUzzQ97ZwMPSXtyuJFQxmEmoL1y54SwlS9TQS3XfIk=;
+        b=Bi3F68iCEdUWH5J+TlEC0J+Cp7bYkI6qh5LZjXVFL1JHUAwAIxT8AgiMv0nanDzjXN
+         bl4eWtcRUwWuDRIwozK8W3w59C1OSVFTJsPRIFvCXQOkeRrDtVmRtLKKY8pwBloYVTbN
+         ejcV4AEIgtZ7Hk3GqEBlE/Fl3C0/ptJr2qpWyEj+71q5c21l9HSbNim//AOOvCNxoXsR
+         Qwff0wy93QBRK+oF2IQf9PgHNK43ZEzKHbc1sRjRYvAT/1mVRbHUX6w+aK5+X4reIxUG
+         +XbcaW5tJplnYZYJ1E7fhsWXMFIeS+2avdPT20Mp0RP5MdYJxjLJzvojG+PSo4PKAWgA
+         2iwA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8l3SbewYpYetR0aThOYVMlZmszgF8nT3/322bnPDzU0Odl7Jc/K4Gi+pz+VGl9XKvEcPnjDbBSwgneJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtMQc2zhGLAYJATo3Ohgw4POVO+aMKJ0OulAyMjjbXt6B2UOdG
+	8zAKalpPaT35Bg8QNEnkUd1z9deRyfZrI/eIpAMNg6RkXgzhtWM=
+X-Gm-Gg: ASbGncvMZQlJUlk+kDurui+s75rfTruF3++p/IiRW77k2dCOOKQhCpXhdodfxF4aCnn
+	eCuBBF9dsNMAUV49S+ErNNvQjxSO5V6Vmc6q5dmqixUTy8iWE7QRbzZXcgWJTQxyzZQe/xhB25P
+	C9hiECX0JPkQHU7a89r9Uw17h9anLxQi8ZAB4SB0M+XihYtYCIIhIjFNwyFnuk14V1e5g8de4Fe
+	GZro/LwDDh8hc95o5+3rh+KKEoeoU7ukFPhSG+d2RbOlfjP4E2eExH30X7iHrf+42zEP2phWN+c
+	zeNlQuwItCi7DNaryrjANu+fPb/KLY9mU+4r6GqdmpK0NqEtlvk9K4Uq
+X-Google-Smtp-Source: AGHT+IH3FqFDOrTYacaH+NQOlfi+rO3IvHAZkyEssU04D2Pzk3ADoYv1vgUSWkh3iKa+tXJ+J8EPxg==
+X-Received: by 2002:a17:907:94ce:b0:ac1:e1e1:1f37 with SMTP id a640c23a62f3a-ac25273af3dmr227721566b.10.1741327936139;
+        Thu, 06 Mar 2025 22:12:16 -0800 (PST)
 Received: from localhost.localdomain ([178.172.147.62])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac23988bdd8sm216824166b.138.2025.03.06.22.12.14
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac23988bdd8sm216824166b.138.2025.03.06.22.12.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 22:12:14 -0800 (PST)
+        Thu, 06 Mar 2025 22:12:15 -0800 (PST)
 From: Alexey Dobriyan <adobriyan@gmail.com>
 To: tglx@linutronix.de,
 	mingo@redhat.com,
@@ -78,10 +80,12 @@ Cc: x86@kernel.org,
 	hpa@zytor.com,
 	linux-kernel@vger.kernel.org,
 	Alexey Dobriyan <adobriyan@gmail.com>
-Subject: [PATCH 1/4] x86/asm: inline constant inputs in rdpkru(), wrpkru()
-Date: Fri,  7 Mar 2025 09:12:00 +0300
-Message-ID: <20250307061203.3281-1-adobriyan@gmail.com>
+Subject: [PATCH 2/4] x86/asm: delete dummy variable in clwb()
+Date: Fri,  7 Mar 2025 09:12:01 +0300
+Message-ID: <20250307061203.3281-2-adobriyan@gmail.com>
 X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250307061203.3281-1-adobriyan@gmail.com>
+References: <20250307061203.3281-1-adobriyan@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,48 +94,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Put immediate values directly into registers deleting dummy variables.
+Cast to pointer-to-array instead.
 
 Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 ---
- arch/x86/include/asm/special_insns.h | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ arch/x86/include/asm/special_insns.h | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/arch/x86/include/asm/special_insns.h b/arch/x86/include/asm/special_insns.h
-index 21ce480658b1..494a1aa19f05 100644
+index 494a1aa19f05..d349aa0f0a83 100644
 --- a/arch/x86/include/asm/special_insns.h
 +++ b/arch/x86/include/asm/special_insns.h
-@@ -79,7 +79,6 @@ void native_write_cr4(unsigned long val);
- #ifdef CONFIG_X86_INTEL_MEMORY_PROTECTION_KEYS
- static inline u32 rdpkru(void)
- {
--	u32 ecx = 0;
- 	u32 edx, pkru;
- 
- 	/*
-@@ -88,20 +87,18 @@ static inline u32 rdpkru(void)
- 	 */
- 	asm volatile(".byte 0x0f,0x01,0xee\n\t"
- 		     : "=a" (pkru), "=d" (edx)
--		     : "c" (ecx));
-+		     : "c" (0));
- 	return pkru;
+@@ -179,17 +179,15 @@ static inline void clflushopt(volatile void *__p)
+ 		       "+m" (*(volatile char __force *)__p));
  }
  
- static inline void wrpkru(u32 pkru)
+-static inline void clwb(volatile void *__p)
++static inline void clwb(volatile void *p)
  {
--	u32 ecx = 0, edx = 0;
+-	volatile struct { char x[64]; } *p = __p;
 -
- 	/*
- 	 * "wrpkru" instruction.  Loads contents in EAX to PKRU,
- 	 * requires that ecx = edx = 0.
- 	 */
- 	asm volatile(".byte 0x0f,0x01,0xef\n\t"
--		     : : "a" (pkru), "c"(ecx), "d"(edx));
-+		     : : "a" (pkru), "c" (0), "d" (0));
+ 	asm volatile(ALTERNATIVE_2(
+ 		".byte 0x3e; clflush (%[pax])",
+ 		".byte 0x66; clflush (%[pax])", /* clflushopt (%%rax) */
+ 		X86_FEATURE_CLFLUSHOPT,
+ 		".byte 0x66, 0x0f, 0xae, 0x30",  /* clwb (%%rax) */
+ 		X86_FEATURE_CLWB)
+-		: [p] "+m" (*p)
++		: [p] "+m" (*(volatile char(*)[64])p)
+ 		: [pax] "a" (p));
  }
  
- #else
 -- 
 2.45.3
 
