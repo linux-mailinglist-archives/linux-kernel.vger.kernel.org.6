@@ -1,253 +1,165 @@
-Return-Path: <linux-kernel+bounces-551782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFFB4A570C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:48:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0BE9A570CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:50:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFE95189BD1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:48:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 040E31782ED
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C9924394B;
-	Fri,  7 Mar 2025 18:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E55B24A049;
+	Fri,  7 Mar 2025 18:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XPkXkgBp"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="DkWjcQAC"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C80715382E
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 18:48:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C582C2459D6
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 18:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741373294; cv=none; b=HNsF93H+jE4/doQH89PpUOGa6BI5kdKEfiipAluU1KfgJecC9+QEcZ2MVM9Id1myDjWZUebKRomHMoDKJfef2bfGgqwplvmdLYCU27nzAA6mDJF0TTWpnn/z2wHTH2zNY29EcZFjf3Dr0WphCUBCmv1LURVfZrXNYp3VR6Kc+e0=
+	t=1741373402; cv=none; b=X2UMiLmSYPcSV797ZRrGE94QlFm3yGpQVSktFHShikA7PWf8AHX4Y+xGh3XbSOzRnXYbu0ey0/28kGahMyVHGJv0MFUQTO4hjBlNhP6agHRDGkeH/5f1P9Xwf9z/qHYntoAeKE2VWOCBvcV6tbj50Zt2I6h8I7+Ofj9Dc5UrFQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741373294; c=relaxed/simple;
-	bh=GTfNNZvLCbOPBoM0Ai0WgtMz65rUH5c7i6UB1UGWT7s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qAZYmNeKBJV1lXoY2OHW2W+z7FUbBz6ybG+ax24AQnTIuHcx7fWZY93TjiishuI6VYyvMAD9fdfcQeYwRb4QRrU5AML/6r8JRlIRWP33J2a89gsWmAhqN76UhqmbG926k/irtMu4v3cVTgL+NKgZPqpIN0aTojJSuKANW58ng+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XPkXkgBp; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-223a0da61easo12515ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 10:48:12 -0800 (PST)
+	s=arc-20240116; t=1741373402; c=relaxed/simple;
+	bh=iY8btfX+g/V/cLT+RlidyZhd+i1kGYYOkkkl+VytfXM=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=uoo6oc3rBDSSmdqysNVdc5rm5dDKsDAsOUPJmgNaZnwMGeAYeYxAYciS7jjbQlfBW79S14PdzpQYqtPY7M9gd8cTNo1uf4tBfdtW8ndRGOuIJ/uKEGP7rocr0yYyFoWclgJZv9I/erbjCpZH4mLmIGeLMr2GJrgPY58BNa0NSsw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=DkWjcQAC; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-390e88caa4dso1250211f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 10:50:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741373292; x=1741978092; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hnnBLiHSipCquEBENm80tx5p5tMfaLtXbkHcXLPFAjU=;
-        b=XPkXkgBpG2Z/bl6TqPHaytNlT1VMOl4x5jpQBvxyz8CBz3WUEZb5/elJHjKYjRMQ87
-         sfnMLzQJwtcUqO2PhXCVQnp9d/Vrbj0mUhQyVMeW8MDqpnH9079IP7VMd4bpemw2iLsj
-         HRDZWHVIWtYKNHdjmpB/+3SbOsd4oqJ55XAmo7R/CLjxQ6n0JEUgxx0ry9OrqhImowzW
-         vZk25VWt3RJidaN5GopH6dya26Bw1jXvC/0WLywzHvQDbngBA8/pssjiHhJGoIt7s0z4
-         a7YeUyzEqW/KrQ+h4xX9a3if/gbxDsXyz7fjndyy9Q3w/g6RRe62ysebX2BGoBLg3SG8
-         lXrQ==
+        d=citrix.com; s=google; t=1741373399; x=1741978199; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=iY8btfX+g/V/cLT+RlidyZhd+i1kGYYOkkkl+VytfXM=;
+        b=DkWjcQAC5C0/tvdNiOQOFtyEoSV+GivWOME44KbetdV2C8s9mjk9kJMlq69hUV1xpJ
+         C/d4ewKlGNRFEvIBNZRQrY+TcB4ulGj99/8idRRQmKUjj6OiQjEIsbZqa/DUCpV+vc/s
+         q8tbCBHmrACDAIxxYlm+hj8K1fPoEitZbhPwg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741373292; x=1741978092;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hnnBLiHSipCquEBENm80tx5p5tMfaLtXbkHcXLPFAjU=;
-        b=wLY0zhNfEvT4YdviRaE8f4p7ha5YZOsBOd+HVY2INGaU07XUh6aitMiLI5UtMhcZwk
-         4natfGZwvibA+34aN15/1w72UleQnM9A9ml3BxvRo0vgFhNEQAPEmEv/JvceaNmN2ep0
-         jWNuWszdaOBLgKWq6CYYiOTbPOCXWFi+U+MCPIM8GZqpPqifV6Q63hzBTlrWMjN8HzsM
-         27XsnLwESEGwc6/cKsaOobXlHfhlY0HFcMC4gF8+ABxfuDRIdpPt56IoJ9Ebps4G1GEj
-         /Ch9Y6AAXoFDKYkck0Y6BYetSYJbCG+o2PhBD6r+1nDinOsquflumdtkxtbHqJHxs3PS
-         O1+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXcTczr/pt8x6FLB5wM+Z84+uazFjcP27O80YGivP0zc2DJ9eSWEIVM5b1GCElBqwpP4MlkQT29JuEj2go=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvJ/NKnDkgB9J7EL32kHpjoYdbPIuyTSwh5kElb+UZaoH+Bkmf
-	rXZZ0X2gAFqUlemESL5TtszSejPRvq1M6B8E85+lpWQzBllYsC1NuVz1uAwAseTwNSGRekrGNPs
-	bDAabiZlXYQ406+dSvbyXawmz9xYgc3BM8kma
-X-Gm-Gg: ASbGnctmL1SHzPR2AcheBDHBZXv3pny7AivC2nAjXuoykFooNXTMa+GiXWcfr2p1tp/
-	0fzvNYuQuX49CVPU7/eZxmT2N1Xmr3U+u9OI/A+q7Ohj9FlQEqvFpc8Mue2w2rnZ4P+umV3NmBH
-	QVvMS0fbZW/W6laOCZWI73nFL5mzI=
-X-Google-Smtp-Source: AGHT+IGdT5nE+QHbJpWHzcC0wNB5abK8RgakHQzBWpxs8Ndj2pR7WbNhCjKOLLaAbeK/qow+V4wBDpPUYk2l/+ePmXg=
-X-Received: by 2002:a17:902:ccc8:b0:215:42a3:e844 with SMTP id
- d9443c01a7336-22434b5433emr1163905ad.17.1741373291454; Fri, 07 Mar 2025
- 10:48:11 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741373399; x=1741978199;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:subject:references:cc:to:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iY8btfX+g/V/cLT+RlidyZhd+i1kGYYOkkkl+VytfXM=;
+        b=lLNsmwWCQvZVqdtO9JuMDeLG8jHMfyz5oSWFlsSkolD7mdg1YUWFNE9OYJTCr3lJJ3
+         jWrX6dABS7wC8PhL4kctx7CYwtimO+KdMrWOpfA1PEBfhhtrLf8sr3DgCtkL3QdqiNRY
+         oPIjq7bxf4Yr2GxeLGfqo4wkczPEfAXGWex+pAJTh67ueftR9aUqnNSxf40F+yPGghwY
+         6ifVIiLnkRcrx6wkU//zR+L/h89h64H5oomos8c1T56smFZVlYWiAIKPrG3/KrodpkX9
+         hl6WPusIlujoMNGb2V+A3AMNDOPGBjE+4+WXWf0dJoTaS7WDp3Yt/hGXFxd0mzGMiI5e
+         xtaw==
+X-Forwarded-Encrypted: i=1; AJvYcCW4xw2ZBqW49Gx9m9PRbr/IDObC18ZYJzqFObJl/MJHESyg9vCAWdtpQEQZoIX1FEV7WF5Hj6u8groTjlU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxccO5yRbTZaoiOY17mRXv3i/aC4Kg3jMIxUuzD35/tj0U6KPsp
+	rX8mxqnKPLJ1Xb2IT81Nz763Rt4tmCtYE16BamFJvCzgtU/Sg3NhGrz+4ng2Ka4=
+X-Gm-Gg: ASbGncs5vBCDSgz5tz2pbm9zxmcdldxLg9RgmSwGvAx7GxAeYhR1mcJJejA4/gLC9L4
+	IP0EyBC1IzfKjFc9TpwweAtXcMRMS6T7KiqbNrxVvx4uFAU2V/+zk+MSeo1+Z75Sgq4XcdSBzSd
+	by+kaYhGyNQ9JBE9judwkTkmnrVm3Ttu/1yMwTF59efLeviQ2ckfDj0gkRUP8Hl5L/zlnqLwu43
+	iJVVuJDrozppDegvhlm5YNr88mrPkUW1z/SyhUbwmNp8EUsDfpKR1zXJPzeXwMeuqr01zfMEwK2
+	WtFpcLjrwGm7XeDrKy22nySSIPMEPWKq2g85vM+iHhVQryVbroisHj/8w5mxxoavEPfw3aiBoL3
+	n+j7Z5SWA
+X-Google-Smtp-Source: AGHT+IGmeOPTWjHa0Be27hfI/1kYnZp0UHx0P0R/hj81LDLYhuR4kj7WMmpAAdsX/afUuDK/xqqF5Q==
+X-Received: by 2002:a5d:59a7:0:b0:391:1139:2653 with SMTP id ffacd0b85a97d-39132de145bmr3407200f8f.52.1741373399039;
+        Fri, 07 Mar 2025 10:49:59 -0800 (PST)
+Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfba848sm6051474f8f.4.2025.03.07.10.49.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Mar 2025 10:49:57 -0800 (PST)
+Message-ID: <efc2ee9d-5382-457f-b471-f3c44b81a190@citrix.com>
+Date: Fri, 7 Mar 2025 18:49:56 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z7Z5kv75BMML2A1q@google.com> <CAP-5=fVbti6efu6uA9a5os6xhnTuJ0egyesZsy0dmkiScwYFqQ@mail.gmail.com>
- <Z7yJ0Vpub6JeQyYo@x1> <80432f35-e865-4186-8b92-26b25279e150@linaro.org> <Z8sMcta0zTWeOso4@x1>
-In-Reply-To: <Z8sMcta0zTWeOso4@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 7 Mar 2025 10:48:00 -0800
-X-Gm-Features: AQ5f1Jq6zGKtLrcNss-uzScSqLCab5P5rfBJprgge4TMGFWgurWy9LXP2biOgVw
-Message-ID: <CAP-5=fWytO4QkxQEu02RxTM51dtqtDXnT517tdiAe79LidT6Ww@mail.gmail.com>
-Subject: Re: [RFC] perf tools: About encodings of legacy event names
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: James Clark <james.clark@linaro.org>, Namhyung Kim <namhyung@kernel.org>, 
-	linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Andi Kleen <ak@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: hpa@zytor.com
+Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
+ akpm@linux-foundation.org, alistair@popple.id.au, andrew+netdev@lunn.ch,
+ andrzej.hajda@intel.com, arend.vanspriel@broadcom.com,
+ awalls@md.metrocast.net, bp@alien8.de, bpf@vger.kernel.org,
+ brcm80211-dev-list.pdl@broadcom.com, brcm80211@lists.linux.dev,
+ dave.hansen@linux.intel.com, davem@davemloft.net, dmitry.torokhov@gmail.com,
+ dri-devel@lists.freedesktop.org, eajames@linux.ibm.com, edumazet@google.com,
+ eleanor15x@gmail.com, gregkh@linuxfoundation.org, hverkuil@xs4all.nl,
+ jernej.skrabec@gmail.com, jirislaby@kernel.org, jk@ozlabs.org,
+ joel@jms.id.au, johannes@sipsolutions.net, jonas@kwiboo.se,
+ jserv@ccns.ncku.edu.tw, kuba@kernel.org, linux-fsi@lists.ozlabs.org,
+ linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+ linux-serial@vger.kernel.org, linux-wireless@vger.kernel.org,
+ linux@rasmusvillemoes.dk, louis.peens@corigine.com,
+ maarten.lankhorst@linux.intel.com, mchehab@kernel.org, mingo@redhat.com,
+ miquel.raynal@bootlin.com, mripard@kernel.org, neil.armstrong@linaro.org,
+ netdev@vger.kernel.org, oss-drivers@corigine.com, pabeni@redhat.com,
+ parthiban.veerasooran@microchip.com, rfoss@kernel.org, richard@nod.at,
+ simona@ffwll.ch, tglx@linutronix.de, tzimmermann@suse.de, vigneshr@ti.com,
+ visitorckw@gmail.com, x86@kernel.org, yury.norov@gmail.com
+References: <4732F6F6-1D41-4E3F-BE24-E54489BC699C@zytor.com>
+Subject: Re: [PATCH v3 00/16] Introduce and use generic parity16/32/64 helper
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <4732F6F6-1D41-4E3F-BE24-E54489BC699C@zytor.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 7, 2025 at 7:10=E2=80=AFAM Arnaldo Carvalho de Melo <acme@kerne=
-l.org> wrote:
->
-> On Fri, Mar 07, 2025 at 02:17:22PM +0000, James Clark wrote:
-> > On 24/02/2025 3:01 pm, Arnaldo Carvalho de Melo wrote:
-> > > On Wed, Feb 19, 2025 at 10:37:33PM -0800, Ian Rogers wrote:
-> > > > I knew of this tech debt and separately RISC-V was also interested =
-to
-> > > > have sysfs/json be the priority so that the legacy to config encodi=
-ng
-> > > > could exist more in the perf tool than the PMU driver. I'm a SIG
->
-> > > I saw them saying that supporting PERF_TYPE_HARDWARE counters was ok =
-as
-> > > they didn't want to break the perf tooling workflow, no?
->
-> > Doesn't most of the discussion stem from this particular point? I also
-> > understood it that way, that risc-v folks agreed it was better to suppo=
-rt
-> > these to make all existing software work, not just Perf.
->
-> That is my understanding, and I agree with them and with you.
+> (int)true most definitely is guaranteed to be 1.
 
-This is describing what RISC-V have been forced into doing:
-1) to support non-perf tooling,
-2) because the perf is inconsistent in priority with legacy and
-sysfs/json events.
+That's not technically correct any more.
 
-Their preference has been to move these problems into the tool not the
-PMU driver. What you are saying here is to ignore their preference.
-I've already quoted them in this thread saying this, but this keeps
-being ignored. Here is my previous message:
-https://lore.kernel.org/lkml/CAP-5=3DfXSgpZaAgickZSWgjt-2iTWK7FFZc65_HG3Qhr=
-Tg1mtBw@mail.gmail.com/
+GCC has introduced hardened bools that intentionally have bit patterns
+other than 0 and 1.
 
-> > Maybe one issue was calling them 'legacy' events in the first place, an=
-d I'm
-> > not sure if there is complete consensus that these are legacy.
->
-> I don't see them as "legacy".
+https://gcc.gnu.org/gcc-14/changes.html
 
-So let me say this is really distracting from the intent in the
-series. The series is:
-1) trying to clean up wild carding ambiguity - not making it dependent
-on the name of the event being parsed, the behavior of `cpu_cycles`
-matches that of `cpu-cycles`
-2) trying to make the legacy vs sysfs/json prioritization consistent -
-making it so that `cpu_core/instructions/` encoding matches
-`instructions` as we display both of these as cpu_core/instructions/
-and it is confusing to a user that different encodings were used. We
-also pattern match perf_event_attr config values in places like:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/arch/x86/util/topdown.c?h=3Dperf-tools-next#n38
-so >1 config for the same event means such pattern matching needs to
-consider all cases.
-
-There is now a  "Make Legacy Events Great Again" (MLEGA) effort that
-is standing in the way of clean up work. As already stated but
-repeating, why is MLEGA a bad thing:
-1) legacy events lack descriptions and are open for interpretation.
-For example, do the events include counts for things done
-speculatively?
-2) it is unneeded. Vendors can choose to name events the same name in
-sysfs and json. ARM are achieving pretty much all of the same thing
-with architecture standard events but in their use they will have
-appropriate event descriptions for each model giving all the caveats
-for the event. When something is common we can encode it in the common
-json we don't need legacy events for this:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/pmu-events/arch/common/common?h=3Dperf-tools-next
-3) LLC doesn't mean L2, it nearly always means L3, the event names
-have become obsolete and confusing. More MLEGA means more of this.
-4) PMUs have only ever supported a subset of the legacy events. We
-have to make use of legacy events in `perf stat` not fail when they
-are implicitly added as default events and via the -ddd options.
-5) multiple encodings/PMU types for the same thing complicates things
-like topdown event ordering, that is a kernel/PMU restriction, and
-metric event deduplication.
-6) legacy events are broken on ARM Apple-M and have been broken on Juno boa=
-rds.
-7) architectures trying to push complexity into user land (RISC-V) are
-being forced to push it into the kernel/driver.
-
-Is MLEGA relevant here? Well if you want legacy events to be >
-sysfs/json then yes. For wild carding I don't see why MLEGA cares. Do
-I want to push on MLEGA? No, and I think the reasons above are why it
-hasn't happened in over 10 years.
-
-> > Can't they continue be the short easy list of events likely to be commo=
-n across
-> > platforms?
->
-> That is my understanding of the original intent, yes.
->
-> A first approximation, those who want to dig deeper, well, learn more
-> about the architecture, learn about the extensive support for
-> vendor/JSON events, sysfs ones, how to properly configure them taking
-> advantage of the high level of flexibility both perf, the tool and perf
-> the kernel subsystem allows them to be used, in groups, leader sampling,
-> multiplexing or not, etc.
->
-> But lots of developers seem to be OK with just the default events or
-> using those aliases for expected events across architectures, sometimes
-> specifying :ppp as a hint that if there are more precise events in this
-> architecture, please use them, for instance.
-
-When and where have I said that I don't want to support events like
-instructions and cycles? See above, consistent wild carding and the
-encoding priority are the only issues here.
-
-> > If there is an issue with some of them being wrong in some places
-> > we can move forward from that by making sure new platforms do it right,
->
-> And adding special case for broken things when we know that some event
-> named "cycles" shouldn't be used for sampling, for instance.
-
-What is this? A new framework for special casing PMUs and events,
-where we're maintaining lists of broken PMUs and changing encodings?
-And tooling like event sorting, metrics, is all supposed to just work
-with this? Are we going to write json for this? Who is writing/testing
-it for Apple-M?
-
-Special cases should be the exception and not an expected norm.
-
-> > rather than changing the logic for everyone to fix that bug.
->
-> Right. And again, if something doesn't work for a while in some
-> architecture, its just a matter of specifying the name of the event in
-> full form, with the PMU prefix, etc.
-
-So MLEGA would like sysfs/json when they are broken? This is just
-silly, if something is broken we should just not use it. Having 2 ways
-of stating something and expecting different behaviors from them is
-clearly brittle.
-
-> > For the argument that Google prefers to use the sysfs events because of
-> > these differences, I don't think there is anything preventing that kind=
- of
-> > use today?
->
-> Indeed.
-
-I explained that in the context of why legacy events are wrong. I've
-repeated it above. This is not addressing the issues of wild carding
-and the encoding priority.
-
-> > Or at least not for the main priority flip proposed, but maybe
-> > there are some smaller adjacent bugs that can be fixed up separately.
->
-> Yes, and work in this area is greatly appreciated.
-
-I don't know what your proposals are and to my eyes none of them have
-ever existed, no one has created them in over 10 years.
-I am trying to fix wild carding and the encoding priority.
-Bike shedding on MLEGA, please can we move it to a separate email thread.
-
-Thanks,
-Ian
+~Andrew
 
