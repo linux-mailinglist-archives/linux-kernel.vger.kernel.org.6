@@ -1,225 +1,159 @@
-Return-Path: <linux-kernel+bounces-551972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E5C9A57391
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:24:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B03CA57396
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:25:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A91E3188DB64
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:24:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48EEB189AD6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:24:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1475425DAEC;
-	Fri,  7 Mar 2025 21:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7700A2580D1;
+	Fri,  7 Mar 2025 21:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=d3engineering.onmicrosoft.com header.i=@d3engineering.onmicrosoft.com header.b="KhoTttBw"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2129.outbound.protection.outlook.com [40.107.220.129])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="S61nIiBK"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920E425D53B;
-	Fri,  7 Mar 2025 21:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.129
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741382481; cv=fail; b=P4JXXdRWL5KTO2d1OB9pp/44WPVYebxXuQyxIde+rav4lDDC1RWQd4j245WiZvFw2vXNC9ubUm03DIqb8lo4bbYkaWngnL/qUrz5zvg+sEWJTXt+dM82MhTfB6Ud3n7sx9hGCnP1HIiy3Yc+p0SN3D9Iind6BqlQhklvVem0lek=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741382481; c=relaxed/simple;
-	bh=ORDDqV6XYo0Ls0oc45qCXSZphWVU2IG5bUsmHYP9J0U=;
-	h=Content-Type:Date:Message-Id:Cc:Subject:From:To:References:
-	 In-Reply-To:MIME-Version; b=N0uxtKR6ndg8V4FJ8vMxQkQvSm1uQNTdXlIYp7THoNdJfL6qtT5/AtsrSpGmENW3JuLfMTdBZrwD4DPkIdcK/9GwmhSCKAukeVSPRyParZO0Bnfg1z+99DOjP7b3GHp0QHI6Mfk4Y2oLQXZlcY+FR+RJlySetGnUCBfegUyBOjk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=d3embedded.com; spf=pass smtp.mailfrom=d3embedded.com; dkim=pass (1024-bit key) header.d=d3engineering.onmicrosoft.com header.i=@d3engineering.onmicrosoft.com header.b=KhoTttBw; arc=fail smtp.client-ip=40.107.220.129
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=d3embedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=d3embedded.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bynzdKR+F5qRE0Fai+ArcoDUBFPgd4ctZqVYZX2sP9V6aUlwCa4BHZ41XKEKbHWPSrtsxcwajR1WGTAYY+gUd2FHgDUqBnFHNYD8oWvo5agIhymiqJjEKG7x3H0yrfTkRZwK1p8te3Vzdxlqlu6l7DqiZm12Zsrll8aygtJFzNECebLef5KLMSva/P9uDMFNNlmHsV0EB0oncnz89oxDK3ujq0VE5w+7Iw0gPriB+lZqDyEOui77Ube98je/511e2LBL0IPWAGaqxP4g9XNZXRnBPTWq5BKh4HDAFgbFdCyE40ekhrWB/M5rbPawuXZoHdL0sAbLDArGHkn+ItJPhw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lKBsNQNu7EgwdJ9mezfJK3/YtwYfn9rAHb5B3qRECv8=;
- b=skACrX4jIK8EcKlK6Obp1/zdNCZkvQe8mT9+HfexJSBPV6Cxhw147uQOAhhs8C81DBR3yfkWdipz7PqRFuGGqkh2D05W6T61B/4UuuanfGXr6u9/TW5nCAs+scWM8u9UUw8krjHVKRPAinHV9ao1oFwIGpTyShLU/PvMe995A4iDAH/iGGkfRNmtbCwULCtJLQRfnUVO65pCNKuVtFAPXayvlhrpSdgchU6cKHKe8+O9OG37xveHrNCq4L+FN+1Tt5/sp0aeavpF2ov6bCntIf8R9zSWFZGu/+eSzAlJKU0KMrUE0XT5vy64s4bEkkks7eC30dXCktKnlAP1ozboNw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=d3embedded.com; dmarc=pass action=none
- header.from=d3embedded.com; dkim=pass header.d=d3embedded.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=d3engineering.onmicrosoft.com; s=selector2-d3engineering-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lKBsNQNu7EgwdJ9mezfJK3/YtwYfn9rAHb5B3qRECv8=;
- b=KhoTttBwMZMTmCnOgzAcodxULrqUTgLZWbAV1EeE/yFUy5sbCHWS3xPzISanDP2Sfh81HdSCQw9urJTWu4vVZHEp/d3NW384D8dBdivqh+nl7y6aT4AmOFRDwBUjOWqdDHJDHiNAl6Yw+knau8Pf/YGR3jEfZYmjNMIq9UFZQks=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=d3embedded.com;
-Received: from BY5PR14MB4194.namprd14.prod.outlook.com (2603:10b6:a03:20a::7)
- by BY5PR14MB3670.namprd14.prod.outlook.com (2603:10b6:a03:1db::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.22; Fri, 7 Mar
- 2025 21:21:14 +0000
-Received: from BY5PR14MB4194.namprd14.prod.outlook.com
- ([fe80::8455:2eef:6470:1665]) by BY5PR14MB4194.namprd14.prod.outlook.com
- ([fe80::8455:2eef:6470:1665%4]) with mapi id 15.20.8489.025; Fri, 7 Mar 2025
- 21:21:14 +0000
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 07 Mar 2025 16:21:09 -0500
-Message-Id: <D8ACKEK4QS1G.2QTKXG691PVZY@d3embedded.com>
-Cc: =?utf-8?b?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- "Abel Vesa" <abel.vesa@linaro.org>, "Achath Vaishnav" <vaishnav.a@ti.com>,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- "Ard Biesheuvel" <ardb@kernel.org>, "Benjamin Mugnier"
- <benjamin.mugnier@foss.st.com>, "Biju Das" <biju.das.jz@bp.renesas.com>,
- "Bjorn Andersson" <quic_bjorande@quicinc.com>, "Catalin Marinas"
- <catalin.marinas@arm.com>, "Conor Dooley" <conor+dt@kernel.org>, "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>, "Elinor Montmasson"
- <elinor.montmasson@savoirfairelinux.com>, "Fabio Estevam"
- <festevam@gmail.com>, "Geert Uytterhoeven" <geert+renesas@glider.be>, "Hans
- Verkuil" <hverkuil@xs4all.nl>, "Javier Carrasco"
- <javier.carrasco@wolfvision.net>, "Jianzhong Xu" <xuj@ti.com>, "Julien
- Massot" <julien.massot@collabora.com>, "Kieran Bingham"
- <kieran.bingham@ideasonboard.com>, "Kory Maincent"
- <kory.maincent@bootlin.com>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski@linaro.org>, "Laurent Pinchart"
- <laurent.pinchart@ideasonboard.com>, "Mauro Carvalho Chehab"
- <mchehab@kernel.org>, "Mikhail Rudenko" <mike.rudenko@gmail.com>, "Nishanth
- Menon" <nm@ti.com>, "Pengutronix Kernel Team" <kernel@pengutronix.de>, "Rob
- Herring" <robh@kernel.org>, "Sakari Ailus" <sakari.ailus@linux.intel.com>,
- "Sascha Hauer" <s.hauer@pengutronix.de>, "Shawn Guo" <shawnguo@kernel.org>,
- "Stuart Burtner" <sburtner@d3embedded.com>, "Tero Kristo"
- <kristo@kernel.org>, "Thakkar Devarsh" <devarsht@ti.com>, "Tomi Valkeinen"
- <tomi.valkeinen@ideasonboard.com>, "Umang Jain"
- <umang.jain@ideasonboard.com>, "Vignesh Raghavendra" <vigneshr@ti.com>,
- "Will Deacon" <will@kernel.org>, "Zhi Mao" <zhi.mao@mediatek.com>
-Subject: Re: [PATCH 2/4] media: i2c: Add driver for Sony IMX728
-From: "Sebastian LaVine" <slavine@d3embedded.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, <devicetree@vger.kernel.org>,
- <imx@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250212195656.69528-1-slavine@d3embedded.com>
- <20250212195656.69528-3-slavine@d3embedded.com>
- <f18d5d31-09ab-4422-b56d-3361e4d3b9c8@kernel.org>
-In-Reply-To: <f18d5d31-09ab-4422-b56d-3361e4d3b9c8@kernel.org>
-X-ClientProxiedBy: CH0PR04CA0011.namprd04.prod.outlook.com
- (2603:10b6:610:76::16) To BY5PR14MB4194.namprd14.prod.outlook.com
- (2603:10b6:a03:20a::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFE561991CF;
+	Fri,  7 Mar 2025 21:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741382636; cv=none; b=qC4dMH5hqNsxfCY2U+8tdhidMLo30xeuqy3PCUEVHc/EcHjpIIpdvxlMdoloVaKjsKbFpDiu93Azva+MH1WotG6nteZ+6bqJIjD4x5rFqfu88mILoZQ8Oob1In60+Q9TOs5EF1SOS1wUyxINa+JoT0N+xiS7k7gkJ4oJIhqbai0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741382636; c=relaxed/simple;
+	bh=RS93ZbOAzMBBEDO9HzJjyF6X9D+u1i2KDyI+wUFunHc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Km61NYGThclHquM+toOJn2DeZv+DZB2ATIkTxx3+zPqAYNSxvf0BkT91ajEuqDdyu6kJzI1OxhlWHSrVr2LDbnCAiKv7YN1AcPlqCPC5V1U5a0Zmydw3t7+gYqUV5VwgRXF+FKxjRLW+fBB/XIc+hkHwHlLD37k8tTyGSgtqrPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=S61nIiBK; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=GCO72uFmx6xppf23halPg7wu85+M0x1vkpq7t0HjnaY=; b=S61nIiBK9LpSHHz4
+	vdCtaZbtM+6E9svrmcRFezvO94kaloCq4Y3TyWz3wPP+KCLrGS2VZfsjiaBpiWcaKnrb7rhhJa/he
+	LvOqWNl4ojW/B6sX+Ub0pLfx3SYf47Rm4EBLtpQ8TJ4z7rEk/Nuhths4CuFKURpXILZc0RMyPEkOv
+	Rn3RLl99dGExtwRnD2JVINbKLG0MoOlYghfMlCztDteohxBtFH6g3eyVZS9o6kNWRNEFAxn6kpFUZ
+	dPsbez6j40Aa3OVmwIwkodkJFJK3sk2Wz8rgMfEFbf5z8wjomT7q8gpMmHwwjPisDgG4NKg9mrs5V
+	FuC58brd+IVzSzgtKQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1tqfAa-003WBC-0z;
+	Fri, 07 Mar 2025 21:23:48 +0000
+From: linux@treblig.org
+To: rafael@kernel.org,
+	len.brown@intel.com,
+	pavel@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	dakr@kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] PM: clk: Remove unused pm_clk_remove
+Date: Fri,  7 Mar 2025 21:23:47 +0000
+Message-ID: <20250307212347.68785-1-linux@treblig.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR14MB4194:EE_|BY5PR14MB3670:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0ef69cc2-639e-480d-5f97-08dd5dbdfd98
-X-LD-Processed: b7153db5-3376-478b-b601-92ce9bc0d3bc,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?eWswdWFudS8vVk9hb0lKM2EvWmp1QlNEdDZpbmRyUWdKQVhIbWRoem1Pb0Iv?=
- =?utf-8?B?UWxIWEY1ZDZtb1o3WDZ6UUVrdm9UZTkzaE84RmltbGFJelpJNHhzNHd4aXBR?=
- =?utf-8?B?amNrL3ZYSFZsVzZUNnZkRzVoMEgxK2c0THk3dUZXQmpSQkI2cFQ3Q3A5QnhL?=
- =?utf-8?B?VytqMzFTTTEzdXNycTZiallqSHlkQTIvWjFVSzR1R2M5LzZocU1UT0Jrd0RI?=
- =?utf-8?B?UFhqQVJqOXp2ZUJUT3dPSVVKQjhwRHBsZjVVNnZZeEZQaG96UGI0cU5ab0xj?=
- =?utf-8?B?NHRwdHkrcjAwZHRCclN4aG1nbDlPNUttMVV6OVUzSm1oWnFINzA1TlhxeDdF?=
- =?utf-8?B?aTJobGRmMW8yT1JOM255UVpRdlFuTEJLbzZaa2NBT09naE1ZMjcyMTZIT3JM?=
- =?utf-8?B?Q3NFbml4R0M1Zm1ud09XeVJoS1k2SGJlN0w1eUVWWkpydzdnVEFSbjI0dXFO?=
- =?utf-8?B?aGF2WHhjczZTUFlpNHJMRk5iVzQ3TElFVlZ2eDR2NW9EVGNPKzZqOFllMkpJ?=
- =?utf-8?B?Nm13WVRaaGhqaW1DTEQ4YWQxbU91QjAybk9wamNzRnhiWEpsWndHejhxemhk?=
- =?utf-8?B?OXRLQ0M5dEZYNS92NkhkdzViY2pOSkMwTlhHUGQ3MGdmbC9PTWI4a3RjQVU2?=
- =?utf-8?B?Z0Y4RmFTcGJNVm1hMm5Xck84dGdqemNINTRPd1VueURDeVNUZjU5azk2Wk1k?=
- =?utf-8?B?NUp5MXFtTE5xM1pYOEJWY2poSUZZc0JoSXBOM3V5Sm96R01QbUVwbG96SUdh?=
- =?utf-8?B?a0d4SUcxRzNBM09UaFZpZkxBeXFzMlJqVmYxTXpPWW1uQUFnejdLdng0N3NZ?=
- =?utf-8?B?bUZYQTIyaTVzWFduZzhFMi9HRnRzTmRzd0tsUFRpZkx2MWZpd2RURERjRk1Y?=
- =?utf-8?B?SlM2UVdFTTZXaXo5Y0xUeWlQUCtBaHRVTFFyWHowYVpjWUVTejZpcTM5YVh4?=
- =?utf-8?B?VzdPTWNtSjl4TzJlVTY0bzFTKy9ZdjBBR3NMMjNBaThPcCtENlZKYkdiSmpP?=
- =?utf-8?B?RmxDMlA1RlAzVVhnZDBiRHkxdGM3bW9oL0hwazVpQ1dyNTVYcW1KU2QrejRr?=
- =?utf-8?B?Mko2eG54eWtvbk82cFdXWlZRb0NYelBJcGJrQTZBamluMXNJWlNRbnV2clFN?=
- =?utf-8?B?cTI5amRoVFA5MDdua0ZpNDZMTS9yem9GVWViYi9lR21MbTllOEZqQ1pOUnB0?=
- =?utf-8?B?MVFRWVluWS80RlFYdjRuV2s4S2R6bzF1eGxYcXhpWEdwS1pFQkhvdi9aMUxo?=
- =?utf-8?B?V3FwS3pXdFFpZVA0SmZTK28yYlIva1Zud3FzdXV0NmxQSlBTYW10TWNDNkJ6?=
- =?utf-8?B?NmxUSktrQlArbFZkYlZQRzJDTGdldm1qcUxONlpmeGpud3BUUW0wcHBaVXNO?=
- =?utf-8?B?REI3QlN5YmRTcnp5RkEvNFVNM1FUNWJ5c2pzbHJXWnlaL2hjejcxcTgwWGtC?=
- =?utf-8?B?Um0yMDRveGVXbVlaT2RacFdJbU9kNTRNZ0RXV3NkNHNXTmg2NjZnOWs0NUlC?=
- =?utf-8?B?ZlVzRXpQMVlnK1lSaE5jMXZJaFhyS0x1UUIzbXFhTXlsdTEzOHlFcnpnSmlX?=
- =?utf-8?B?aFBHQ2Uza040ajBHMmxoR1ZhZWd0MlA2OGxwb2loZlhpbytiQVBrOG5Ub0hC?=
- =?utf-8?B?aUJHMW1ieVB4bWlGbm9aQldxeks5WHVxZCtOeENjWVJOSXIxcW5LZVZBbUps?=
- =?utf-8?B?SDBmSXVDNFhJVTBBRU4wOFByZk0rZEc3VVNaQ1VNUWoyOUxsR2VMRnZJdWEy?=
- =?utf-8?B?M1g4V0x0K01MRmdDZm9SN3RJaXFTaCtPOGZCNkhEYWszS1JNTlIvc1l2blM1?=
- =?utf-8?B?a29rd2E5QlBNNkduQXNteFVoZktxTTc4bTdYKzBhZStQUWtIRWtGY2lYQXZq?=
- =?utf-8?Q?1gfTIPfsngzl9?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR14MB4194.namprd14.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?UDBwVmdPSVlXejQva1ZpVVhJUjRGRzVUZm9WczNoOVowWnBtc1FGbU96U3Vj?=
- =?utf-8?B?YWJnY3Z1UzJONWVKVXhKQk1ZY0g1QUc5bmlPVXVXUDBLQlRGaVdUcmVxZkZG?=
- =?utf-8?B?R1N5UUl0TzVXL2JGY003TUVLRkdpRWhTamRqamlXaWxvN1JBaE1wTGxnc3ds?=
- =?utf-8?B?UlNTc1lOK1dwWE13MzlCeEh2Z0dUU2JlNDVFcDFYbWZTM1JzaUhXMnU5U0Mr?=
- =?utf-8?B?b1dEKzh5ZjBPOEVwMXFWQ3IvMHlTRm0raUtmMHcvMnRsM085elRiRUh5cjVk?=
- =?utf-8?B?V3ZDeS9XdStycXRvWGFzMW41SWlUVFNkU1dQVkJTWkp5Z0JxNHJlUzYrSU9V?=
- =?utf-8?B?ZFdXd2F6WlBsNjlia3JpK0swOVltd0JHb2NKR2x1QzVDcGpQMFhqUzZaeFlZ?=
- =?utf-8?B?bHFiVW5LcVQxVU5Jb1hMRFJONUZYaW5xSHFvWUR6N1hmNElQWk1uclNEY093?=
- =?utf-8?B?Mi94WDNUSkorVWhXL2Q5c2tRcmlmVkZ1VXE4bytmZ2tmTGhSelRkRDJ3ai9s?=
- =?utf-8?B?cm1Bcm5Yb0Z2TGI2cmRPMjAyYVpuN0g2M1FDeFNNcTdZT2dEN0VjTENGdUtt?=
- =?utf-8?B?a2tYYkJjTWdJbFZHS1dseGc3SzFJdEE0elg1MzE2QnovSDg4c2M3ZVd4ODJJ?=
- =?utf-8?B?U2J1dFA4VGlpWXZ3YXlXaXNGZEJkSGIwNDhnOXJGZ3lhckErRjhKZVVtaGsz?=
- =?utf-8?B?bXBYdG1jQWJab25TbnE1RGZVeVJpY3lkZ0JtOS9HSm1XV0o5ZFBsZE04NUxi?=
- =?utf-8?B?bU9HU1FKWThPaUE2VWFJNjFpS3JEVjI5RDZrN0J2VS9MeEV0anB3VTR3WFZ5?=
- =?utf-8?B?czFLbXhld0hPRW1wcEUrTkxHSkVwSS9KZzkza2oweSttSWptRTNTb3EvUzE1?=
- =?utf-8?B?UEIrUXd1VEFOc0RJRVdPcEhEVXNSZThFZUZMZk5wOFB1QUxzNnUxaGx1SUpv?=
- =?utf-8?B?ZlBuNUNxQlpEeTlTeUtVSFRCM2QzZERxem1QSFVwTkthanprVWkrN1BmN2Vi?=
- =?utf-8?B?aVBKRlYxOTVFSVJVaHlFZnFnUDl5OS94Z212WXFqMWpwT1JaaUhwR3ZZWDZw?=
- =?utf-8?B?NFNIcGZyUVpCT0tpcmdCRGhWM2NKNU1hdzB6UXNIZ0dtR1Q0MDNzNWJwRFRa?=
- =?utf-8?B?dk9NcCtmd2xmVjFibHJ2c1pXMHV1c011T3JyZGY3YUZWTkFlVDlIT3licVc2?=
- =?utf-8?B?OWxkVDlvbnhZcTM3a0FoTTJ2TU5qMzVtOFdOa3l1WGhTTVJjZHZMZ0YwNlVT?=
- =?utf-8?B?Yi9DK3puN2F6NGVjSk9scWdKcU1pOFJoUTl1YUt1TzZ3WHZSMlk2Y1NucUVP?=
- =?utf-8?B?THY3TS9mSE9LN1JwUC91eTBIMVE0QU1qYjBnVlNyMEZzZEJIL2ovbGhSN0k0?=
- =?utf-8?B?ZzI3NEhvcUJUeHB1OFZNU2xCVFdheGtjeTROL2I4cGtyTkVqU3k1L1dkMk4x?=
- =?utf-8?B?Mk9ZRGMzY0JMV1U4NkJiWFhMVzBjWFNpTWJCQ0xFT3phQlBnZXQxWUI0SDlu?=
- =?utf-8?B?VlZnTDZISy9WMG5DRGFaQW4yTWhraDNac2x4OGZjdFlmQkxtZTdRYk5BSGpi?=
- =?utf-8?B?YzhpNTJndlh6Q01yVHdHUEljbVAxR0FIMXR2RHRZdzlhN0hVTnc2ZDJSaTQ4?=
- =?utf-8?B?RFJwaGRHeFpMYVBzL09BZ3QxMHRlVTNGL1poK0RyOWQwNno5NHJDWXVnTndR?=
- =?utf-8?B?VEJyUzhsSFRuOVFBQlZHRndQRHVPajlYdHM4Mll0QTRyRUV6SXEvNm9ab3JK?=
- =?utf-8?B?OEJWcjZvVU5JdWxRWWlyRVJTaHVWVkdSajZKaVRYM2NFRG9UVHFhVnQ1R3Rk?=
- =?utf-8?B?a21DSy81ZGNmUHFjRDFxT3QxMjhlakJuSnpjSHdvMUZFVERhWTU5dWE2cnpt?=
- =?utf-8?B?Q3N1QnVkM3RaVEM2L2t6YzA2cVlpZU54emZBcWJwS21aWGt5bVpPZm1SbXNo?=
- =?utf-8?B?VlFOY3NIc1gyUERFSGdzTWdvVE1kRU01QVpoQnhCeHU1ZW9venBOcEUvbGwz?=
- =?utf-8?B?VXVmeERMYTFVMkdTUEk2NUNqL2FaRE54dC9jalFXdnNaRG9CNXBWOFk0NUZj?=
- =?utf-8?B?WnZXZUNCTU1UZStLa2hSTmJ5aEZNTm5MMjRjcWtvdjJZRmJLWGJpVmFWYjJW?=
- =?utf-8?B?RnhBK3h1eDZ0NS9iQXZ1TGVtNTVBYVRQd1ZqcGhvcTlDQTJaR2I3eWdVdDdG?=
- =?utf-8?B?V0E9PQ==?=
-X-OriginatorOrg: d3embedded.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0ef69cc2-639e-480d-5f97-08dd5dbdfd98
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR14MB4194.namprd14.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 21:21:14.2567
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: b7153db5-3376-478b-b601-92ce9bc0d3bc
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Tv7hRG6iWaihLVvyVV3IMiDPKZYK4twDIK6UmWzGyAHVQGWB/vSedw+12L//LYqH7TOrXaRqas+ByFEuoTBpKQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR14MB3670
+Content-Transfer-Encoding: 8bit
 
-On Thu Feb 13, 2025 at 1:19 PM EST, Krzysztof Kozlowski wrote:
->
-> ...
->
->> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
->> index c62831e61586..0ff578bb4645 100644
->> --- a/arch/arm64/configs/defconfig
->> +++ b/arch/arm64/configs/defconfig
->> @@ -852,6 +852,7 @@ CONFIG_VIDEO_TI_J721E_CSI2RX=3Dm
->>  CONFIG_VIDEO_HANTRO=3Dm
->>  CONFIG_VIDEO_IMX219=3Dm
->>  CONFIG_VIDEO_IMX412=3Dm
->> +CONFIG_VIDEO_IMX728=3Dm
->>  CONFIG_VIDEO_OV5640=3Dm
->
-> This is not related to this patch and should target different subsystem
-> with its own explanation why you thing this should be in common defconfig=
-.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-Thanks, I will remove this in v4.
+pm_clk_remove() is currently unused.
+It hasn't been used since at least 2011 when it was renamed from
+pm_runtime_clk_remove by
+commit 3d5c30367cbc ("PM: Rename clock management functions")
 
--Sebastian
-Please be aware that this email includes email addresses outside of the org=
-anization.
+Remove it.
+
+Note that the __pm_clk_remove is still used and is left in.
+
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/base/power/clock_ops.c | 40 ----------------------------------
+ include/linux/pm_clock.h       |  4 ----
+ 2 files changed, 44 deletions(-)
+
+diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
+index 97a53215a274..b69bcb37c830 100644
+--- a/drivers/base/power/clock_ops.c
++++ b/drivers/base/power/clock_ops.c
+@@ -343,46 +343,6 @@ static void __pm_clk_remove(struct pm_clock_entry *ce)
+ 	kfree(ce);
+ }
+ 
+-/**
+- * pm_clk_remove - Stop using a device clock for power management.
+- * @dev: Device whose clock should not be used for PM any more.
+- * @con_id: Connection ID of the clock.
+- *
+- * Remove the clock represented by @con_id from the list of clocks used for
+- * the power management of @dev.
+- */
+-void pm_clk_remove(struct device *dev, const char *con_id)
+-{
+-	struct pm_subsys_data *psd = dev_to_psd(dev);
+-	struct pm_clock_entry *ce;
+-
+-	if (!psd)
+-		return;
+-
+-	pm_clk_list_lock(psd);
+-
+-	list_for_each_entry(ce, &psd->clock_list, node) {
+-		if (!con_id && !ce->con_id)
+-			goto remove;
+-		else if (!con_id || !ce->con_id)
+-			continue;
+-		else if (!strcmp(con_id, ce->con_id))
+-			goto remove;
+-	}
+-
+-	pm_clk_list_unlock(psd);
+-	return;
+-
+- remove:
+-	list_del(&ce->node);
+-	if (ce->enabled_when_prepared)
+-		psd->clock_op_might_sleep--;
+-	pm_clk_list_unlock(psd);
+-
+-	__pm_clk_remove(ce);
+-}
+-EXPORT_SYMBOL_GPL(pm_clk_remove);
+-
+ /**
+  * pm_clk_remove_clk - Stop using a device clock for power management.
+  * @dev: Device whose clock should not be used for PM any more.
+diff --git a/include/linux/pm_clock.h b/include/linux/pm_clock.h
+index 45c3f3ccbaf8..c3b46fa358d3 100644
+--- a/include/linux/pm_clock.h
++++ b/include/linux/pm_clock.h
+@@ -42,7 +42,6 @@ extern void pm_clk_destroy(struct device *dev);
+ extern int pm_clk_add(struct device *dev, const char *con_id);
+ extern int pm_clk_add_clk(struct device *dev, struct clk *clk);
+ extern int of_pm_clk_add_clks(struct device *dev);
+-extern void pm_clk_remove(struct device *dev, const char *con_id);
+ extern void pm_clk_remove_clk(struct device *dev, struct clk *clk);
+ extern int pm_clk_suspend(struct device *dev);
+ extern int pm_clk_resume(struct device *dev);
+@@ -75,9 +74,6 @@ static inline int of_pm_clk_add_clks(struct device *dev)
+ {
+ 	return -EINVAL;
+ }
+-static inline void pm_clk_remove(struct device *dev, const char *con_id)
+-{
+-}
+ #define pm_clk_suspend	NULL
+ #define pm_clk_resume	NULL
+ static inline void pm_clk_remove_clk(struct device *dev, struct clk *clk)
+-- 
+2.48.1
+
 
