@@ -1,407 +1,168 @@
-Return-Path: <linux-kernel+bounces-551773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A278CA570B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:39:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B43A4A570B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:39:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8D157A9972
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:38:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 995A83B774A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D103219E98;
-	Fri,  7 Mar 2025 18:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6333D24290F;
+	Fri,  7 Mar 2025 18:39:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="N/Qoqt3d"
-Received: from sonic307-15.consmr.mail.ne1.yahoo.com (sonic307-15.consmr.mail.ne1.yahoo.com [66.163.190.38])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dNBq7+OZ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A4B2417C7
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 18:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.190.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8D742417D3;
+	Fri,  7 Mar 2025 18:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741372737; cv=none; b=HsblSAS4vafFskvsgC/LTdW08HZTQjdNGJJZxZw0/Bgf7NZcvX8bILW02pxlphGBqxWoSL4m/YG6pLMqdvkhYSljlYgC9DPloHN5WY92lxdXIshGLpfYfsH0mZM4DNXofEjfRAg3DrUv4iJ/bAxoDmfrblK+1PvQ26JpYDa8FcI=
+	t=1741372766; cv=none; b=fI8HQt9Rsd2KXBYqI2Ox30SPY5IEuyOUQye63k1wutQSzTa5i3z8NW9VXJnqvQs2BjfOKQbqlDKpfrkLPbMFOanLeByr/XwSfvlNtgUhsou3DR1m7SBDK67B1ahHETUhYNg05AVjhvB/6gKD3ftxloSdG+HAh4+y3ybk/PkUIjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741372737; c=relaxed/simple;
-	bh=tSKN4Cjx9nrEcfH2HlKBPdEI7fUjiYrOSzZarADa1CE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=W6h11lG9ewzWdxqOXzOG6e74n03f5DY/j/WZJ2AfPO9UCXikXXERBmk+quj9kYfK0XxpBhc4uoGT8YhFMC9TWrCt07/Z0sXC+oLwajYus5kzFva0D99a2qWIzOeuI7/VV4oEm8WFYvDJ2/MZXoPxPcc9C6JVEKuQkgCnW8ad2DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=N/Qoqt3d; arc=none smtp.client-ip=66.163.190.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741372735; bh=ycS8nspkUXFVTGuCN2+zHn8Z6/iu9OemyNtk/iFNowM=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=N/Qoqt3dFSXm9ra8iDIX+ZZHmPwaGN20bPwDLRAI7OZNt0EFYAcK5uJfeh2WkDcm78lURsivLkOJKusVxwszSkBxGeU1Pd6XLAQr/05KDxRBKuVr0RY1zvIsPa0UgvB1IjjsyAFZw7YMDda8cNgiPsv9eiZ8x7MVg2UN+Bd0RYa1mfiVlq4ThpvRv1TfQlZz6vv2WwePB1I8SBekGya6wWhGHJUXDi3XoFeoFlxI3u5lo88APy5lTvzP4mZbPaZ+zgz/+mTEty7tEd5a+ykFnez8ZVQ3UJ1AwH4qQUFyQDXB+z/0jEjYzvXUNFH85mDHQ+wX9ZPYhZ2XinQ75/DWIQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741372735; bh=JEI8lmmxlDhq8OtrpQrxUy8xQI9L6LexCpQzoMYQUih=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=EIV7Xll0DNoXW/R8ePrwpMJS8bQ9JZpHj6WMZo8OlvlIDDXMsdz69pphEXP/pumovOBRT0xFdBLAbUScpPG8oY4MtRDEuEnUSwIAL2ruVyxayysy/B84/tSfT+m70IfUMe5hnTmPLbjKtYjicJ6e4+qKfvXckJlKRktTu8zsyNr5DzAh/jqYRatO8E2B6q1agfhTEdgnXiMVU0u2Rd6KySLzbj2svftZbi0ZgJv6Evc2caFyJNg6BinsckkT1w+FB0Z5QDDVMq1PBvuohpdcldxKQJ6dX9cQ6178S0tmK8Yvr2aQHr2YK6I0SmybfnC+enEPAUjoP9KuR1jY6ZJwwA==
-X-YMail-OSG: jgNOR4UVM1mAMLLMRcshYCW29MfuCp_JAq7j7slLtpfWU1Ee_qZBe5.8XCwMvXW
- 620aWWoGUyAbHzcBsRH2khqK_jGEXd75irdw7xRcpThXi_PDcFStIiq22PJ8SVmtHlNGimqCUPyu
- x9S0OujzSdE5kKrXh3ty3I1cNJjs2ESXBXhvXSjWTYOtXL1MMMJQZZBpqSaCBqpzCeMLk83R1eZJ
- xwEgQH10vo9deUTiCfMgh5qLjbyMEU856sAz3Y0qNTp7onMcf_T45alJBgWyOc76lSbM.F4wdUVG
- WA_j_kLfQFsobS9A9_ZbJzVbBPlzbK6Oz.AkyCnDHPTBLzlBeO8PDS..EjLxw81DADeHgRlY0v4O
- JMrDq1PlE1ed1vKW1CjQtRMaNy35xdMs.2jyjSwzNeoECGlWatLHqiwO6vpzlzhbYaGdkVasI8yg
- PpKEYQUx6bHivWqKXwJPgQwmxhGAKsRCLmXTWU0o5HJBjVnLmNy4rqLzfuP2gMCsBp0ZqYVZP.Om
- n3I0T7GK7nDvr4cF4hxeCyh1Jg1cr6FqAhEm25UxxGntbWjEzT_VmDg8w5kDSd_bIA3f5aoxhxJ5
- sRx2pabDo2c6kW18JtyGlrAxWYNtmjbRCDSYMAMg_hrJqiPW5VHRrQph_9hg_Rt3gRWcFdKQImeM
- uU73y2R8gvjK77VWinm5Z4ZpC9tnYUivXaEnpPMhNG5UELfLmeFHc6nQ16lY4d1LeN03Tm51b4rf
- IMYJU3i6n3ji3OXhgiaR5a105ZVLiVT3u9wehiJbYVkH2uGlviz.8tWN1ip90l9TvANiZl4hoU_y
- wh7tzUhJVEV.G9XyyF.PnYe6xntkNYn3Okt1tZYJ9onDlc2GVyI7EnYAq.f52rS23AwzTtfm6G4p
- jkitcqEs9eLG.RLevzDwVgEhFIJ1YXHsqrRt1skxA_njLOnEuvkmklE17_D_0Op2cTjN1A0wiOM.
- Lh5ybq7V234lHrvifTnur6cAy5N09lwTlnFUv9XsNCFJiqncaKBslOBiJdgrnKhAXkrksH4U5iKd
- 16qSYKjcHV.AB6Q_B3rHQm9EC7KQ2F8h5FXDlvtE.CuJLkXC3XUS0q4bHZpYUTd5w9nLV_iDragd
- R56W02PIW6JJwPgU0vuqpgdteO66BETLdcmSNMMNupiyhj8x7mKIx9PghFxZzRVsJ802aGUpjwP3
- MXi4yP7hPUqjaSIlf2yvMsKCfhhfu7wvmIjpZggKn4SDnezSsSYmQNXLuBS.rPHD_QHVGt76O0fe
- 5hBJNFbCs7CndVpAmZU7feXV7i9L6WNzzKwusJ2Smg510Q.8xpJVbckh6KZW4dtVCP1d8s_pY6cL
- FfbthxbBK44BhHV_RN4zjzdZNVWhXD9.x_snom0Te52B1o4DdLDGcrzHpiXnEQgIVvapHuZK_p43
- Xk02nK0A03f6XDdu6SXGc.V1BrkoO5xaI3B5yqtS50T4h77d3kPM2uEDg1fjF1K2g1xCeD07h7DJ
- e.0uj2UVAi40DFDrtBvPm5OiApRWgRsWeJrL8j2oZgbvnXfvhqVbCqzYBZebotLI3XGkRcGF68WM
- DZueVzoi37iklIy1fFf1v_5__pTlXQOIiBigU8Gb3djdLBPCAiptA4bM.cpsW7MkatJC6ZHAwrfO
- Ynr79ZaGDnGRPjvzziDvWJO.eYJWdU1biDaJ4kJGjvJrb6js8zsTr3RSBkFZXqjdW5.EFcmpj3lI
- qtHmCTlWVZlouOeRYK_Yom4y7LAUrY.byFbQN4K7sTWgjq3gNCWDQ22lAIkTglxcrAM5bdAECdTV
- xIO3Suz8CevC.Rnvb5DgaGJKq2N36A3ODyQ.4oZbAzmGoK3khi6yI7BdkST5zuqVGqWVEOH05C0n
- .QRt6oKrr1zOb0eTeZ56gZ25LPa0tMWFxc_7v7l5p3mP4Eq5pD_u7u2C97PnwB4LslY1LnKpB1cb
- gNtsnVc5d7MnwFTlxEjFaEj9KA_W48UZXr9BMoih4LsKBItPYTk4OkMQ7e_LK29nK6_S2ZQF9XC0
- lSBJwgIPgpYB1I2DcfnwsH9PFnadZ9wDiiX81Ps5wafRViJ.GYBceiJY4dQ7uTDPcXs6e0HzpI4i
- in_gLhP5Y9osV8S9bN7K5JKNjVD07GOwvjaBXJSp2Z2L0sWRazKNcL8o_uQs21zVnZCwJFn86ztL
- cavqD.YYBph3OMJqaj1i_i3VCA5d.Gmk0.RPGrBcGfszn_L63pMwAR4tJo7RoEK4tmCYHpl8QMSS
- 3pQ.YZKtRxVGwWxVPaFNP7zYIVjDHbGoXoo5LOYJ.ub0cbPgkmdpcSQ3fpRK1gvD6XZd8yQn6QQT
- pxup5zbEu3znVHPk5R3hmTp0YYln5cg--
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 6b73b301-4445-4438-9c82-f034acccee7f
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic307.consmr.mail.ne1.yahoo.com with HTTP; Fri, 7 Mar 2025 18:38:55 +0000
-Received: by hermes--production-gq1-7d5f4447dd-mxg2z (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 84a3ec74d8bfe114e53660abafd57a8a;
-          Fri, 07 Mar 2025 18:38:52 +0000 (UTC)
-From: Casey Schaufler <casey@schaufler-ca.com>
-To: casey@schaufler-ca.com,
-	paul@paul-moore.com,
-	eparis@redhat.com,
-	linux-security-module@vger.kernel.org,
-	audit@vger.kernel.org
-Cc: jmorris@namei.org,
-	serge@hallyn.com,
-	keescook@chromium.org,
-	john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com,
-	linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org
-Subject: [PATCH v2 6/6] Audit: Add record for multiple object contexts
-Date: Fri,  7 Mar 2025 10:37:01 -0800
-Message-ID: <20250307183701.16970-7-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20250307183701.16970-1-casey@schaufler-ca.com>
-References: <20250307183701.16970-1-casey@schaufler-ca.com>
+	s=arc-20240116; t=1741372766; c=relaxed/simple;
+	bh=qU6KijlFXoR98S5pulEIQzkadZEZV8Z0TBnXBxmBuu8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IgV+KN2iAESctAHW+qDFC3Yjr1ZzBDQX6gsTRAVIQX8yXUTRuydljmHJa1j2MmU3v6CQZBZrUyuMDWrUWHysKVAEylb8ZN/BBcqKgPmaVLwwR8CqZRNvuKPgJpygvKg1aqIOndrFPp9uswcQ+a1qtewlYxZDJ6I0tkCLFtwpWfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dNBq7+OZ; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741372765; x=1772908765;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=qU6KijlFXoR98S5pulEIQzkadZEZV8Z0TBnXBxmBuu8=;
+  b=dNBq7+OZ/aPY5ZgOnocmF7ofJKWF8u7TmfWH5gF/ISrz/M1mSdwkaQNf
+   oTsAX4VKqUEFF55T5kkpM0lDPRUlOYw9mDVglz9m2CsGJRDp1/1MZMZ53
+   0HezCm0Oql6YUWaIZR0Prdz1zLRKD/PB1QtURBeiFfArR9tDCokpztlVP
+   8QeNLrYuUvfBW3mGJJn6KvPQN84fZsE0/Lci92ebQI7/zMFz3Z2dFtz/g
+   bRKgrIhS8vSAWP6v2Na7RK9MaepPWWG+DzjKt8lDFwp6SyhIgaD879PAo
+   g5+iREEKz9JRRj66rWpI5+f00M2/Q5lvzIAiw2o9aL1J/bbU6mATziE/Z
+   Q==;
+X-CSE-ConnectionGUID: 58uY+RgmSY+3YcsTvpqJbg==
+X-CSE-MsgGUID: NEOs++VwQs2qo0McxQ53UA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="53072692"
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="53072692"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 10:39:24 -0800
+X-CSE-ConnectionGUID: ru1BalfMQ0ue0IcmsKwSpw==
+X-CSE-MsgGUID: QlkwuRuuT3+yDy+4eLZTEQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="124317362"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.110.132]) ([10.125.110.132])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 10:39:23 -0800
+Message-ID: <74e49413-dd1a-4577-818f-b5b21b2a2b7e@intel.com>
+Date: Fri, 7 Mar 2025 10:39:47 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 08/10] x86/fpu/xstate: Add CET supervisor xfeature
+ support
+To: Chao Gao <chao.gao@intel.com>, tglx@linutronix.de, x86@kernel.org,
+ seanjc@google.com, pbonzini@redhat.com, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+Cc: peterz@infradead.org, rick.p.edgecombe@intel.com,
+ weijiang.yang@intel.com, john.allen@amd.com, bp@alien8.de,
+ Maxim Levitsky <mlevitsk@redhat.com>
+References: <20250307164123.1613414-1-chao.gao@intel.com>
+ <20250307164123.1613414-9-chao.gao@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250307164123.1613414-9-chao.gao@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Create a new audit record AUDIT_MAC_OBJ_CONTEXTS.
-An example of the MAC_OBJ_CONTEXTS (1424) record is:
+On 3/7/25 08:41, Chao Gao wrote:
+> From: Yang Weijiang <weijiang.yang@intel.com>
+> 
+> To support CET virtualization, KVM needs the kernel to save/restore CET
+> supervisor xstate in guest FPUs when switching between guest and host
+> FPUs.
+> 
+> Add CET supervisor xstate (i.e., XFEATURE_CET_KERNEL) support. Both the
+> guest FPU and the kernel FPU will allocate memory for the new xstate.
+> For the guest FPU, the xstate remains unused until the upcoming CET
+> virtualization is added to KVM. For the kernel FPU, the xstate is unused
+> until CET_S is enabled within the kernel.
+> 
+> Note CET_S may or may not be enabled within the kernel, so always
+> allocating memory for XFEATURE_CET_KERNEL could potentially waste some
+> XSAVE buffer space. If necessary, this issue can be addressed by making
+> XFEATURE_CET_KERNEL a guest-only feature.
 
-    type=MAC_OBJ_CONTEXTS[1424]
-    msg=audit(1601152467.009:1050):
-    obj_selinux=unconfined_u:object_r:user_home_t:s0
+I feel like these changelogs are long but say very little.
 
-When an audit event includes a AUDIT_MAC_OBJ_CONTEXTS record
-the "obj=" field in other records in the event will be "obj=?".
-An AUDIT_MAC_OBJ_CONTEXTS record is supplied when the system has
-multiple security modules that may make access decisions based
-on an object security context.
+This patch *WASTES* resources. Granted, it's only for a single patch,
+but it's totally not obvious.
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
----
- include/linux/audit.h      |  7 ++++-
- include/linux/lsm_hooks.h  |  3 +++
- include/linux/security.h   |  1 +
- include/uapi/linux/audit.h |  1 +
- kernel/audit.c             | 53 +++++++++++++++++++++++++++++++++++++-
- kernel/auditsc.c           | 45 ++++++++------------------------
- security/security.c        |  3 +++
- security/selinux/hooks.c   |  1 +
- security/smack/smack_lsm.c |  1 +
- 9 files changed, 79 insertions(+), 36 deletions(-)
+Could you work on tightening down the changelog, please?
 
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index ee3e2ce70c45..0b17acf459f2 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -186,8 +186,10 @@ extern void		    audit_log_path_denied(int type,
- 						  const char *operation);
- extern void		    audit_log_lost(const char *message);
- 
-+extern int audit_log_object_context(struct audit_buffer *ab,
-+				    struct lsm_prop *prop);
- extern int audit_log_subject_context(struct audit_buffer *ab,
--				     struct lsm_prop *blob);
-+				     struct lsm_prop *prop);
- extern int audit_log_task_context(struct audit_buffer *ab);
- extern void audit_log_task_info(struct audit_buffer *ab);
- 
-@@ -248,6 +250,9 @@ static inline void audit_log_key(struct audit_buffer *ab, char *key)
- { }
- static inline void audit_log_path_denied(int type, const char *operation)
- { }
-+static inline void audit_log_object_context(struct audit_buffer *ab,
-+					    struct lsm_prop *prop)
-+{ }
- static inline int audit_log_subject_context(struct audit_buffer *ab,
- 					    struct lsm_prop *prop)
- {
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index e4d303ab1f20..464bd8ef4045 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -75,6 +75,8 @@ struct lsm_static_calls_table {
-  * struct lsm_id - Identify a Linux Security Module.
-  * @lsm: name of the LSM, must be approved by the LSM maintainers
-  * @id: LSM ID number from uapi/linux/lsm.h
-+ * @subjctx: true if LSM supports a subject context
-+ * @objctx: true if LSM supports an object context
-  *
-  * Contains the information that identifies the LSM.
-  */
-@@ -82,6 +84,7 @@ struct lsm_id {
- 	const char *name;
- 	u64 id;
- 	bool subjctx;
-+	bool objctx;
- };
- 
- /*
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 79a9bf4a7cdd..7c1a6d99e148 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -169,6 +169,7 @@ struct lsm_prop {
- extern const char *const lockdown_reasons[LOCKDOWN_CONFIDENTIALITY_MAX+1];
- extern u32 lsm_active_cnt;
- extern u32 lsm_subjctx_cnt;
-+extern u32 lsm_objctx_cnt;
- extern const struct lsm_id *lsm_idlist[];
- 
- /* These functions are in security/commoncap.c */
-diff --git a/include/uapi/linux/audit.h b/include/uapi/linux/audit.h
-index 5ebb5d80363d..8ca58144bcc6 100644
---- a/include/uapi/linux/audit.h
-+++ b/include/uapi/linux/audit.h
-@@ -147,6 +147,7 @@
- #define AUDIT_IPE_CONFIG_CHANGE	1421	/* IPE config change */
- #define AUDIT_IPE_POLICY_LOAD	1422	/* IPE policy load */
- #define AUDIT_MAC_TASK_CONTEXTS	1423	/* Multiple LSM task contexts */
-+#define AUDIT_MAC_OBJ_CONTEXTS	1424	/* Multiple LSM objext contexts */
- 
- #define AUDIT_FIRST_KERN_ANOM_MSG   1700
- #define AUDIT_LAST_KERN_ANOM_MSG    1799
-diff --git a/kernel/audit.c b/kernel/audit.c
-index f0c1f0c0b250..054776f29327 100644
---- a/kernel/audit.c
-+++ b/kernel/audit.c
-@@ -1116,7 +1116,6 @@ static int is_audit_feature_set(int i)
- 	return af.features & AUDIT_FEATURE_TO_MASK(i);
- }
- 
--
- static int audit_get_feature(struct sk_buff *skb)
- {
- 	u32 seq;
-@@ -2302,6 +2301,58 @@ int audit_log_task_context(struct audit_buffer *ab)
- }
- EXPORT_SYMBOL(audit_log_task_context);
- 
-+int audit_log_object_context(struct audit_buffer *ab, struct lsm_prop *prop)
-+{
-+	int i;
-+	int rc;
-+	int error = 0;
-+	char *space = "";
-+	struct lsm_context context;
-+
-+	if (lsm_objctx_cnt < 2) {
-+		error = security_lsmprop_to_secctx(prop, &context,
-+						   LSM_ID_UNDEF);
-+		if (error < 0) {
-+			if (error != -EINVAL)
-+				goto error_path;
-+			return error;
-+		}
-+		audit_log_format(ab, " obj=%s", context.context);
-+		security_release_secctx(&context);
-+		return 0;
-+	}
-+	audit_log_format(ab, " obj=?");
-+	error = audit_buffer_aux_new(ab, AUDIT_MAC_OBJ_CONTEXTS);
-+	if (error)
-+		goto error_path;
-+
-+	for (i = 0; i < lsm_active_cnt; i++) {
-+		if (!lsm_idlist[i]->objctx)
-+			continue;
-+		rc = security_lsmprop_to_secctx(prop, &context,
-+						lsm_idlist[i]->id);
-+		if (rc < 0) {
-+			audit_log_format(ab, "%sobj_%s=?", space,
-+					 lsm_idlist[i]->name);
-+			if (rc != -EINVAL)
-+				audit_panic("error in audit_log_object_context");
-+			error = rc;
-+		} else {
-+			audit_log_format(ab, "%sobj_%s=%s", space,
-+					 lsm_idlist[i]->name, context.context);
-+			security_release_secctx(&context);
-+		}
-+		space = " ";
-+	}
-+
-+	audit_buffer_aux_end(ab);
-+	return error;
-+
-+error_path:
-+	audit_panic("error in audit_log_object_context");
-+	return error;
-+}
-+
- void audit_log_d_path_exe(struct audit_buffer *ab,
- 			  struct mm_struct *mm)
- {
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index d98ce7097a2d..82470862ea81 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -1098,7 +1098,6 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
- 				 char *comm)
- {
- 	struct audit_buffer *ab;
--	struct lsm_context ctx;
- 	int rc = 0;
- 
- 	ab = audit_log_start(context, GFP_KERNEL, AUDIT_OBJ_PID);
-@@ -1108,15 +1107,9 @@ static int audit_log_pid_context(struct audit_context *context, pid_t pid,
- 	audit_log_format(ab, "opid=%d oauid=%d ouid=%d oses=%d", pid,
- 			 from_kuid(&init_user_ns, auid),
- 			 from_kuid(&init_user_ns, uid), sessionid);
--	if (lsmprop_is_set(prop)) {
--		if (security_lsmprop_to_secctx(prop, &ctx, LSM_ID_UNDEF) < 0) {
--			audit_log_format(ab, " obj=(none)");
--			rc = 1;
--		} else {
--			audit_log_format(ab, " obj=%s", ctx.context);
--			security_release_secctx(&ctx);
--		}
--	}
-+	if (lsmprop_is_set(prop) && audit_log_object_context(ab, prop))
-+		rc = 1;
-+
- 	audit_log_format(ab, " ocomm=");
- 	audit_log_untrustedstring(ab, comm);
- 	audit_log_end(ab);
-@@ -1392,16 +1385,8 @@ static void show_special(struct audit_context *context, int *call_panic)
- 				 from_kgid(&init_user_ns, context->ipc.gid),
- 				 context->ipc.mode);
- 		if (lsmprop_is_set(&context->ipc.oprop)) {
--			struct lsm_context lsmctx;
--
--			if (security_lsmprop_to_secctx(&context->ipc.oprop,
--						       &lsmctx,
--						       LSM_ID_UNDEF) < 0) {
-+			if (audit_log_object_context(ab, &context->ipc.oprop))
- 				*call_panic = 1;
--			} else {
--				audit_log_format(ab, " obj=%s", lsmctx.context);
--				security_release_secctx(&lsmctx);
--			}
- 		}
- 		if (context->ipc.has_perm) {
- 			audit_log_end(ab);
-@@ -1558,18 +1543,9 @@ static void audit_log_name(struct audit_context *context, struct audit_names *n,
- 				 from_kgid(&init_user_ns, n->gid),
- 				 MAJOR(n->rdev),
- 				 MINOR(n->rdev));
--	if (lsmprop_is_set(&n->oprop)) {
--		struct lsm_context ctx;
--
--		if (security_lsmprop_to_secctx(&n->oprop, &ctx,
--					       LSM_ID_UNDEF) < 0) {
--			if (call_panic)
--				*call_panic = 2;
--		} else {
--			audit_log_format(ab, " obj=%s", ctx.context);
--			security_release_secctx(&ctx);
--		}
--	}
-+	if (lsmprop_is_set(&n->oprop) &&
-+	    audit_log_object_context(ab, &n->oprop))
-+		*call_panic = 2;
- 
- 	/* log the audit_names record type */
- 	switch (n->type) {
-@@ -1780,15 +1756,16 @@ static void audit_log_exit(void)
- 						  axs->target_sessionid[i],
- 						  &axs->target_ref[i],
- 						  axs->target_comm[i]))
--				call_panic = 1;
-+			call_panic = 1;
- 	}
- 
- 	if (context->target_pid &&
- 	    audit_log_pid_context(context, context->target_pid,
- 				  context->target_auid, context->target_uid,
- 				  context->target_sessionid,
--				  &context->target_ref, context->target_comm))
--			call_panic = 1;
-+				  &context->target_ref,
-+				  context->target_comm))
-+		call_panic = 1;
- 
- 	if (context->pwd.dentry && context->pwd.mnt) {
- 		ab = audit_log_start(context, GFP_KERNEL, AUDIT_CWD);
-diff --git a/security/security.c b/security/security.c
-index 8450cc5f82d5..ed48457f8f24 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -321,6 +321,7 @@ static void __init initialize_lsm(struct lsm_info *lsm)
-  */
- u32 lsm_active_cnt __ro_after_init;
- u32 lsm_subjctx_cnt __ro_after_init;
-+u32 lsm_objctx_cnt __ro_after_init;
- const struct lsm_id *lsm_idlist[MAX_LSM_COUNT];
- 
- /* Populate ordered LSMs list from comma-separated LSM name list. */
-@@ -629,6 +630,8 @@ void __init security_add_hooks(struct security_hook_list *hooks, int count,
- 		lsm_idlist[lsm_active_cnt++] = lsmid;
- 		if (lsmid->subjctx)
- 			lsm_subjctx_cnt++;
-+		if (lsmid->objctx)
-+			lsm_objctx_cnt++;
- 	}
- 
- 	for (i = 0; i < count; i++) {
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 1e2e1545eb2e..10b13cd589c5 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -7143,6 +7143,7 @@ static const struct lsm_id selinux_lsmid = {
- 	.name = "selinux",
- 	.id = LSM_ID_SELINUX,
- 	.subjctx = true,
-+	.objctx = true,
- };
- 
- /*
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index 75bd62fe1513..1b42ac32d815 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -5058,6 +5058,7 @@ static const struct lsm_id smack_lsmid = {
- 	.name = "smack",
- 	.id = LSM_ID_SMACK,
- 	.subjctx = true,
-+	.objctx = true,
- };
- 
- static struct security_hook_list smack_hooks[] __ro_after_init = {
--- 
-2.47.0
+> --- a/arch/x86/kernel/fpu/xstate.c
+> +++ b/arch/x86/kernel/fpu/xstate.c
+> @@ -55,7 +55,7 @@ static const char *xfeature_names[] =
+>  	"Protection Keys User registers",
+>  	"PASID state",
+>  	"Control-flow User registers",
+> -	"Control-flow Kernel registers (unused)",
+> +	"Control-flow Kernel registers",
 
+This should probably be:
+
+> +	"Control-flow Kernel registers (KVM only)",
+
+or something similar for now. XFEATURE_CET_KERNEL is *VERY* different
+from all of the other features and it's silly to pretend that it's the same.
 
