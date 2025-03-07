@@ -1,258 +1,128 @@
-Return-Path: <linux-kernel+bounces-550801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C696DA56451
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:49:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C01A5645B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:50:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30F043B155B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:49:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A96C4188674E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53A3120C473;
-	Fri,  7 Mar 2025 09:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0DC020D4F0;
+	Fri,  7 Mar 2025 09:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lkEP1op/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B825B1519B4;
-	Fri,  7 Mar 2025 09:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="AePwnvq+"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4FC207A10;
+	Fri,  7 Mar 2025 09:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741340964; cv=none; b=TgjtH10wrnvj7tFhZyHKNN3uqV0Rp6ik+sFNXb9IpI8S3J59V3HzuJQVFjAIwMmtGt1dhJsN0aeeCEI5seWBEyXkaBvxtzbuhIOTmCT186toSdFrh9ZPBJ3+3rIFlksyrdYe6zYbOM8XfT6dFr79nF+ClMexBLsDL9/awchSQyw=
+	t=1741341037; cv=none; b=SIKUDtX/KSEwbOEQagn+CJr9P6mrAc8me5ysE4w8/IwJ9X7cxKaXM2vYrI9CqkHBL7ffcg1yH73Gs8Wzz5CavQiSLtbyGWa0ojUpuV7yqQ9+8yc/ZgN9D+nsoFhwzmeA3a/okrFZUfvAsjvRK099N0QUYosUET15pWOlyymZ5EA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741340964; c=relaxed/simple;
-	bh=UMv+mWNoFkGiSJzPQ4HjhZzF/GGFwH++BILQFYuqJjc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FqmA0Nj2l2WL426S/p3do00h95uWKLdGG4ga5wtkBijncokEGgq67CKU3q4JqAF2OEOAFL9svOWefKzAJU/xZFUE2GqX0a8ZODvN9BN98bVuGRFur8FLyH1TSmzSIbO2+9reAetbX79G5M7UGS1U81ougiL4iRdQ4LACv1oqLkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lkEP1op/; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741340963; x=1772876963;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UMv+mWNoFkGiSJzPQ4HjhZzF/GGFwH++BILQFYuqJjc=;
-  b=lkEP1op//qEerqIxLMJUlsPba89MAepx9HqUkw5DcJNuyJQuBIbGF2yp
-   dlduPsWnaKBzvpS5XUb8L7AUmKb9ckqaVQdOmWIjZXKacyH+6/U1/iKa2
-   npPqTRtB2ssF5gSWzLajbwH7LIaiZGeUMmKoA0ZYKejaJ0PA+7ejO5sX9
-   pZdNxUJ3mIofBeamBA7N9igRxP1lKjaWLHP5bEEDrOoB6TvxBMzIbErld
-   vGfT/twEteQuSex8/VjNJWynm/FB9+mWWXrzXlfTa6MvyHCNfAuXupYGN
-   LRM8xVK0/qDyfSjR/BuKajiob0NK1h56sj7fui0EaYQdQrdx9HnTlCiEQ
-   g==;
-X-CSE-ConnectionGUID: 0W9mkAo1RyeGoEDCZJcizg==
-X-CSE-MsgGUID: aCsGCXKiRbmiAnZLNkBXFw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="41553786"
-X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
-   d="scan'208";a="41553786"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 01:49:22 -0800
-X-CSE-ConnectionGUID: PaMUlQqVQtK1CzZrnIll9g==
-X-CSE-MsgGUID: d7CscytIQdiOtvxDoGLfRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="120197533"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 01:49:15 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id C298411F9DA;
-	Fri,  7 Mar 2025 11:49:12 +0200 (EET)
-Date: Fri, 7 Mar 2025 09:49:12 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Riesch <michael.riesch@wolfvision.net>,
-	Mehdi Djait <mehdi.djait@linux.intel.com>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Gerald Loacker <gerald.loacker@wolfvision.net>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Sebastian Fricke <sebastian.fricke@collabora.com>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Paul Kocialkowski <paulk@sys-base.io>,
-	Alexander Shiyan <eagle.alexander923@gmail.com>,
-	Val Packett <val@packett.cool>, Rob Herring <robh@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 03/11] media: dt-bindings: media: add bindings for
- rockchip rk3568 vicap
-Message-ID: <Z8rBGHK9Tjx7D1D2@kekkonen.localdomain>
-References: <20250306-v6-8-topic-rk3568-vicap-v5-0-f02152534f3c@wolfvision.net>
- <20250306-v6-8-topic-rk3568-vicap-v5-3-f02152534f3c@wolfvision.net>
- <20250307-pink-dalmatian-of-kindness-f87ad2@krzk-bin>
+	s=arc-20240116; t=1741341037; c=relaxed/simple;
+	bh=Pp6d5BKF+pheNNOvupojLHj4T//vHMr36YBOcZFJl2k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nqtvvfTc5YcJiFp4InnjzBMm3ERp2Pd1cinFBDng6XPZFo/nNeYexTAYCHxtr2vYlNLcU/TXcyIZdqQxMQ13Ef9H9n29G4FLdS59vciJ5Z9MWzX+C0UPs2jcHovtHRyPuZkJjN2SnW2ikR5OnLzkeBccEXi3LT4Ki/66H9mg+S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=AePwnvq+; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=uoqTP
+	MhXIqedMWASNYsYxuw9FI9yzczKTakxe0eccvg=; b=AePwnvq+2t/H/qNoazB+f
+	dw2HgS+1tpm6AO/NBY0PBvn0wMdYXMfvtjqqXRZdvLmqOeM3HbbQS15bkPsWdGI4
+	NHlkmosM39DcNt7HxhHvTuHh01ctrM4AF2vvvBnjXNxY402UJAmyDVGlzJGFI4v3
+	zEuoJMvM0leL29aw/yVv+I=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgDnb_xBwcpncjlNCA--.49226S4;
+	Fri, 07 Mar 2025 17:49:55 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: shshaikh@marvell.com,
+	manishc@marvell.com,
+	GR-Linux-NIC-Dev@marvell.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	sucheta.chakraborty@qlogic.com,
+	rajesh.borundia@qlogic.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH net v3] qlcnic: fix memory leak issues in qlcnic_sriov_common.c
+Date: Fri,  7 Mar 2025 17:49:52 +0800
+Message-Id: <20250307094952.14874-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307-pink-dalmatian-of-kindness-f87ad2@krzk-bin>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PygvCgDnb_xBwcpncjlNCA--.49226S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Aw4kAF45ury5Ww43tr15CFg_yoW8tF4rpF
+	43Za45Wr95JF1jkws5Zw10kr90k3yqy34DWF9xW393u34jyr4fGw1UAwnIgFWjyrZ5WFy8
+	trn8Z3W5XFn8A3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pimhF7UUUUU=
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/1tbiqAkJbmfKu+WTIwAAsF
 
-Hi Krzysztof, Michael,
+Add qlcnic_sriov_free_vlans() in qlcnic_sriov_alloc_vlans() if
+any sriov_vlans fails to be allocated.
+Add qlcnic_sriov_free_vlans() to free the memory allocated by
+qlcnic_sriov_alloc_vlans() if "sriov->allowed_vlans" fails to
+be allocated.
 
-On Fri, Mar 07, 2025 at 08:51:54AM +0100, Krzysztof Kozlowski wrote:
-> On Thu, Mar 06, 2025 at 05:56:04PM +0100, Michael Riesch wrote:
-> > Add documentation for the Rockchip RK3568 Video Capture (VICAP) unit.
-> > 
-> > Signed-off-by: Michael Riesch <michael.riesch@wolfvision.net>
-> 
-> subject: only one media prefix, the first
-> 
-> A nit, subject: drop second/last, redundant "bindings". The
-> "dt-bindings" prefix is already stating that these are bindings.
-> See also:
-> https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-> 
-> > ---
-> >  .../bindings/media/rockchip,rk3568-vicap.yaml      | 169 +++++++++++++++++++++
-> >  MAINTAINERS                                        |   1 +
-> >  2 files changed, 170 insertions(+)
-> > 
-> 
-> ...
-> 
-> > +  clocks:
-> > +    items:
-> > +      - description: ACLK
-> > +      - description: HCLK
-> > +      - description: DCLK
-> > +      - description: ICLK
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: aclk
-> > +      - const: hclk
-> > +      - const: dclk
-> > +      - const: iclk
-> > +
-> > +  rockchip,cif-clk-delaynum:
-> > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > +    minimum: 0
-> > +    maximum: 127
-> > +    description:
-> > +      Delay the DVP path clock input to align the sampling phase, only valid
-> > +      in dual edge sampling mode. Delay is zero by default and can be adjusted
-> > +      optionally.
-> 
-> default: 0
+Fixes: 91b7282b613d ("qlcnic: Support VLAN id config.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+---
+Changes in v3:
+- Handle allocation errors in qlcnic_sriov_alloc_vlans()
+- Modify the patch title and description.
+There's one more thing I'm confused about: I'm not sure if the fixes-tag
+is correct, because I noticed that the two modifications correspond to
+different commits. Should I split them into two separate patch submissions? Thanks, Paolo!
+Changes in v2:
+- Add qlcnic_sriov_free_vlans() if qlcnic_sriov_alloc_vlans() fails.
+- Modify the patch description.
+vf_info was allocated by kcalloc, no need to do more checks cause
+kfree(NULL) is safe. Thanks, Paolo! 
+---
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-And this is technically specific to the DVP port (0). Should (or could?) it
-be located there?
-
-> 
-> > +
-> > +  iommus:
-> > +    maxItems: 1
-> > +
-> > +  resets:
-> > +    items:
-> > +      - description: ARST
-> > +      - description: HRST
-> > +      - description: DRST
-> > +      - description: PRST
-> > +      - description: IRST
-> > +
-> > +  reset-names:
-> > +    items:
-> > +      - const: arst
-> > +      - const: hrst
-> > +      - const: drst
-> > +      - const: prst
-> > +      - const: irst
-> > +
-> > +  rockchip,grf:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description: Phandle to general register file used for video input block control.
-> > +
-> > +  power-domains:
-> > +    maxItems: 1
-> > +
-> > +  ports:
-> > +    $ref: /schemas/graph.yaml#/properties/ports
-> > +
-> > +    properties:
-> > +      port@0:
-> > +        $ref: /schemas/graph.yaml#/$defs/port-base
-> > +        unevaluatedProperties: false
-> > +        description: The digital video port (DVP, a parallel video interface).
-> > +
-> > +        properties:
-> > +          endpoint:
-> > +            $ref: video-interfaces.yaml#
-> > +            unevaluatedProperties: false
-> > +
-> > +            properties:
-> > +              bus-type:
-> > +                enum: [5, 6]
-> > +
-> > +            required:
-> > +              - bus-type
-> > +
-> > +      port@1:
-> > +        $ref: /schemas/graph.yaml#/properties/port
-> > +        description: Internal port connected to a MIPI CSI-2 host.
-> > +
-> > +        properties:
-> > +          endpoint:
-> > +            $ref: video-interfaces.yaml#
-> > +            unevaluatedProperties: false
-> 
-> Hm, does it actually work? graph/port does not allow any other
-> properties. You should use graph/port-base and probably still narrow
-> lanes for both of port@0 and port@1.
-
-I'd list the relevant properties for both DVP and CSI-2, either as
-mandatory or with defaults (could be reasonable for DVP signal polarities
-but not e.g. on number of CSI-2 lanes).
-
-> 
-> 
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +  - clocks
-> > +  - ports
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/rk3568-cru.h>
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +    #include <dt-bindings/power/rk3568-power.h>
-> > +    #include <dt-bindings/media/video-interfaces.h>
-> > +
-> > +    parent {
-> 
-> soc {
-> 
-> > +        #address-cells = <2>;
-> > +        #size-cells = <2>;
-> 
-> Best regards,
-> Krzysztof
-> 
-
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
+index f9dd50152b1e..28d24d59efb8 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
+@@ -454,8 +454,10 @@ static int qlcnic_sriov_set_guest_vlan_mode(struct qlcnic_adapter *adapter,
+ 
+ 	num_vlans = sriov->num_allowed_vlans;
+ 	sriov->allowed_vlans = kcalloc(num_vlans, sizeof(u16), GFP_KERNEL);
+-	if (!sriov->allowed_vlans)
++	if (!sriov->allowed_vlans) {
++		qlcnic_sriov_free_vlans(adapter);
+ 		return -ENOMEM;
++	}
+ 
+ 	vlans = (u16 *)&cmd->rsp.arg[3];
+ 	for (i = 0; i < num_vlans; i++)
+@@ -2167,8 +2169,10 @@ int qlcnic_sriov_alloc_vlans(struct qlcnic_adapter *adapter)
+ 		vf = &sriov->vf_info[i];
+ 		vf->sriov_vlans = kcalloc(sriov->num_allowed_vlans,
+ 					  sizeof(*vf->sriov_vlans), GFP_KERNEL);
+-		if (!vf->sriov_vlans)
++		if (!vf->sriov_vlans) {
++			qlcnic_sriov_free_vlans(adapter);
+ 			return -ENOMEM;
++		}
+ 	}
+ 
+ 	return 0;
 -- 
-Kind regards,
+2.25.1
 
-Sakari Ailus
 
