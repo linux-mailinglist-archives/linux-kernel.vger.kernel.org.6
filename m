@@ -1,252 +1,215 @@
-Return-Path: <linux-kernel+bounces-551123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6616A56876
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:08:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3320AA56879
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:09:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 973ED7A6C75
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:07:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ABF2177A64
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222A5219A89;
-	Fri,  7 Mar 2025 13:07:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75F02219A97;
+	Fri,  7 Mar 2025 13:09:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="sUFB16nE"
-Received: from MA0PR01CU009.outbound.protection.outlook.com (mail-southindiaazolkn19010010.outbound.protection.outlook.com [52.103.67.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="hDdyBC3G"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E1EF2940B;
-	Fri,  7 Mar 2025 13:07:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.10
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741352872; cv=fail; b=WiSfSH5jNdxwP9lzBnWufi0CnuqTwnC6bXR9Ls+e99+Ng8Eqb2XZMFhj1QYFM1hlGj71chQAYZqt/8OUurk+dL2BCxnV2slnzph0nGNRAujlkPxDinv+TV/2qBxkJltep7XdHKkGmHI8osM0mD4m7O8S7sA+SE883rnP9Kx8cNg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741352872; c=relaxed/simple;
-	bh=eKzbfhES+e75IGSxF3z1EAqhKZ0TJgCdaRb5GrwC/hY=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=aiO5OGp4y51mshTQ+VMJPFFn2gid1G1qtzS8Y9DzYHwtMYMqUSYBAryif7nQl/Lui9Z85F6AxgfA7tF6gvxOymzKuNRClQcDmMm3637+tQzYdvZSFh8I96sfLiLTJqs1UUM+Gnb8SI87/qtnyIUAJWWDV8C1N/GtmSWDUuzrJrI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=sUFB16nE; arc=fail smtp.client-ip=52.103.67.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=N5H9Wkup2n4It1lVqO74IcxOoC60sonJLMACxgkF3+e5eCyYXz5DPDJLj6WDtyw2mFDGpVuKiy1wR7aK8tYSTWbxCvor7XwCOsF3pExyPCuKJRqzINac4nWvz2KDji5Wr0Jb6eudzGQN4QNGE3b5VgKUpmQ+DhlgqIImylGD+ldJ/KfUm0M1lhqFLlwdY+7pspNfDObYKiZE5t1ESBuRqfdbwjEVz6V+kknUE+RL7fMgscOTdYSb9AOxxiB7Zu2/zqaMkKtc6n1QbCz7pi+ZNz1giVkZSkf72Kod6JWgd3zRcbdDq8Zw2cP2z4FtB3O7ZAi+udjdTuD3e1j+UzVriw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+XrB7T80mYHHKo+ciE8oxlyeiYgkgdfdt5NKUNGeoO4=;
- b=ykZJpjiGL3kLbeNABTpVCOiKQ3sD1ulFMJaD/1gu6Zc6456tUMVyBoPvGPcfTsGNIHB8M9UP9UZ930rSuZ6z+zU0fGgIOQJCn3DPyIVXT3NMEp0tubcDJpF+/fwyH9Td8a62jmVyhGCca14PUJihfIQBdGU03toqlmW+Uj+hxeTyxGoSDb42meSBfgqV6dojdWffZAzL24Mr/EBresSOYo4z2qFBWBlCZ+X4KJq+NAhwrdCEjsJmvQtfyAEQxtJB5s3TWwN7aoNxlPuB1kg0SRt8nCXtWIBJqfv8vPdNXW26FIcPv8dv2itiMK0iRmRAtSV7NUBPPWTslToW1zViOQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+XrB7T80mYHHKo+ciE8oxlyeiYgkgdfdt5NKUNGeoO4=;
- b=sUFB16nEujWWUR7Qku69i4+v1daIeg3KxE0HUCrbK9SiOfYjZKL0GGP/xUm+OdC131Xj12FqBUxNkDD0gunHzvLf/szbJqsfPCk0vWBOGKbG517U3jKQTL6+vvfzZe+B29WTjJRriTLhLNEjSKeHHtCIAXAcHrptOqkGTBc27Yvp7y3WmwSUwCjM8plK9X4Wawy+5DfqtpvlRhC4tpOBPNZ46YrN5oFFSB22xXNVVwp1n9IVLR046uf0Ypu7nVk3J4fqaE6Rcv3qY5Od430Qq7jOxTLJk9nzBeexSsBqDzm+4ReO2/jqb09SEFTQgm2wqV2Am0BSX2t/sOqeRUZshg==
-Received: from PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:1eb::14) by MA0PR01MB10236.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:a01:127::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Fri, 7 Mar
- 2025 13:07:41 +0000
-Received: from PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::1b4f:5587:7637:c5a5]) by PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::1b4f:5587:7637:c5a5%6]) with mapi id 15.20.8511.020; Fri, 7 Mar 2025
- 13:07:41 +0000
-Message-ID:
- <PN0PR01MB10393C44D1F4B9189C52D31EBFED52@PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM>
-Date: Fri, 7 Mar 2025 21:07:35 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: cadence: Fix NULL pointer error for ops
-To: Chen Wang <unicornxw@gmail.com>, lpieralisi@kernel.org, kw@linux.com,
- manivannan.sadhasivam@linaro.org, robh@kernel.org, bhelgaas@google.com,
- s-vadapalli@ti.com, thomas.richard@bootlin.com, bwawrzyn@cisco.com,
- wojciech.jasko-EXT@continental-corporation.com, kishon@kernel.org,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- sophgo@lists.linux.dev
-References: <20250304081742.848985-1-unicornxw@gmail.com>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20250304081742.848985-1-unicornxw@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: TYAPR04CA0018.apcprd04.prod.outlook.com
- (2603:1096:404:15::30) To PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:1eb::14)
-X-Microsoft-Original-Message-ID:
- <1f2ed6a6-d588-46ed-af9f-9aa452bdd79c@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0297028E8
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 13:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741352958; cv=none; b=QT3VrPNXuX+1PEipm6Qvn12FWQycqVT+RSybmy9ba2ohcIqvbNU64vGmAo9qLLw1IrSUbo7P9jKDH9ps7Io3Xr6vCWQMLn+L5fC2EL/tNlaPqv8wqZStYRiKWf+RbnpOoAzlS13MIMchWm44sl+sCvM3UVmZrcYuLlZMvbFm2q8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741352958; c=relaxed/simple;
+	bh=b/c+EwYUHehXR7B1azTRJ4LvPuPfsGVQQ98vVvUU8KI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MHqxYJoP/pQNijBAABcB1yweqtDFdJMfsRbmzWHqwMChx7Hx7zE0ioBZyqW85gzkMM3SwplrRag0kc3jSunuWStohNVkkvjvZIDmlkz8o7edKfAmBGbZks/1QDrDHVPqkzwz6OnwR2KEPiPF1HV+Pw7eOxckLsLqPYSiUT3g2WI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=hDdyBC3G; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso20644275e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 05:09:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ffwll.ch; s=google; t=1741352955; x=1741957755; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fLXbK1kB32hdkos1OXYsIkc5qxoXTv1ZW+nI08u1/9M=;
+        b=hDdyBC3GnngCcTiqKIWlXvHtJr6oFMxs0w7+XF9Ej962ECGzRbyN4x9sQD7SSXxtHi
+         oHYpG5VwYhYOQsMH/RcYHaGz9+n2hXavCj++w8mlr6kqc2Y62MtmW/A4DmXnIJAaA0Rx
+         IcH3T+JtiWhwlYeSIBSnskR11qjY5xQ+rtZ9s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741352955; x=1741957755;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fLXbK1kB32hdkos1OXYsIkc5qxoXTv1ZW+nI08u1/9M=;
+        b=eCXXF3qpVh9D3T81YZJTQV8YDOkcndMB8OAG8Y0Egu3fJZTm/qNKqUOqIUVTEeHce6
+         kFvrbI0wBIGbT6k8Goo3ZEswsuFI/BCPAqqtN7ZHuCv9//jK1oG785ij81SZuP6Rmaew
+         xbNeWgtORG9BPWT0rWvEUXhpHjppaW2mCcIZsu/Id8rqNl8g50HkWaZdWhrqrMcBQ0B3
+         LAixc+MJ5C3GUwgg2A46WQSZ88zKfGVaa2AC2mIMzko1YtG1U59ibceKbcDc+jNIes7e
+         yuDCVq65hXd3vUJw+Tb3dM99uOuNvI7ztg2rSNhN0p/Uf/rXRFxVt8ei+HYw+2mIpGX0
+         A/vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQDpA7+dVRU+awDarr7QMKNNMyQBzA9WDBPv+18kAGbvg02uexIKNpFPPYwCbNzw5PP2fRGxQAGZgNW0s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYwgFyGTG+TMDP1OmHLHg4toIFa0+HmMnJXS9FMoSj6QGBILbq
+	Yvf7p9/pRbPo3rg5WBF9IVMsLFVKEqigHttio5m8y38MgY4iUtofRk7PaM2BOZM=
+X-Gm-Gg: ASbGncvA4zYYCifBtrOuV0mxxE+Zr+aaxn1o8xMid11TPm0vHfloAdcc55JHnvClRQJ
+	1yJmFEsisxvsE2U8DUw2ek68D13zQvYe9ykg2juP40LhTsiFc5Non0Sf9yK5lm6iV6XvpXC9CPn
+	qUc4wT/ZXKevwiDwqRzPlaF5skIhKAqMcNDD3fxrY+nXOsjAQUCpY95QG6Z4CCPOSjo1Qid5+KX
+	bXO74jak0DQbMMXNIcavEFFOWmvueeKGnUYoIxiQIELzukMa2ZgSpxz1fq2QnplZGNxtJI1tknC
+	CcMriwIo8SORGWFqEZRaaIZ3Iz0RKcetJMrv6wo0iTvOTBk282YoFTQl
+X-Google-Smtp-Source: AGHT+IGXKnB7QtBKk8gCa+TlzYNbGzQEnm9bXI6Rnch3Ew5gX/H5UMUN/1g1KPRfZAkAjvrureRPLg==
+X-Received: by 2002:a5d:6c63:0:b0:390:f0f3:138a with SMTP id ffacd0b85a97d-39132d5b4bfmr3104340f8f.27.1741352954934;
+        Fri, 07 Mar 2025 05:09:14 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfcb8sm5384143f8f.33.2025.03.07.05.09.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 05:09:14 -0800 (PST)
+Date: Fri, 7 Mar 2025 14:09:12 +0100
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: John Hubbard <jhubbard@nvidia.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <Z8rv-DQuGdxye28N@phenom.ffwll.local>
+Mail-Followup-To: Jason Gunthorpe <jgg@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org
+References: <Z8GViQzZJVFPxfNd@phenom.ffwll.local>
+ <20250228184013.GF39591@nvidia.com>
+ <Z8cmBWB8rl97-zSG@phenom.ffwll.local>
+ <20250304164201.GN133783@nvidia.com>
+ <Z8f9mgD4LUJN_dWw@phenom.ffwll.local>
+ <20250305151012.GW133783@nvidia.com>
+ <Z8l8HgZOV7sDWqBh@phenom.ffwll.local>
+ <20250306153236.GE354511@nvidia.com>
+ <Z8rKVZolu8n6lB1P@phenom.ffwll.local>
+ <20250307123255.GK354511@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PN0PR01MB10393:EE_|MA0PR01MB10236:EE_
-X-MS-Office365-Filtering-Correlation-Id: 99651ef5-d4d4-4423-12a9-08dd5d790ada
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|6090799003|7092599003|461199028|8060799006|19110799003|5072599009|15080799006|440099028|3412199025|41001999003;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ekN0dzRiOUtVWG54aUNKcWM3V2V0czJBdEdBREIzS05OOEwwVytocXF4Z1NL?=
- =?utf-8?B?ajJmeGRvK0MwdCtzNjhpUTZrNTg4NWhEcDdQSWZScVd5TVJTWHVGRHZpQkJs?=
- =?utf-8?B?U3NnWmlMc1NhSGplYzlxelZjamlzdVY5YXJ4aVZRdTJ4Zy90clo5bTdvNFBI?=
- =?utf-8?B?eW9zZWFNQWtrYjJlLzNZOTV2eFpobFA1NmJhTUhUZHFleU82ZG1IMzdPOERk?=
- =?utf-8?B?UENVQmxjb1N6VTJLeDYreVdjcHlOVjUyelprWDJTcEVVMjVVSnlhNU1RdXMv?=
- =?utf-8?B?aERtTW5vODFuOHllN01PTWFVTFpPYU4wc1F2bjQwS08vTjRCalk3ckJFQlFs?=
- =?utf-8?B?N3IzQXpNRHRZb2ZsU0YzWFVpM1hWMUlMaFZGZHdiRnBkSzk2dnhQa001bGlx?=
- =?utf-8?B?bTFWbFhWallobzNya3ZKb0lWaUkwQlZYbEw5dkRucFZycG4wRDlKYW0xMkJt?=
- =?utf-8?B?V1Uxa0RkWDVTdEVibEE3MXhQYURFeUN6aTBrNUp6SEgwMU1pcFpHejRPdnlG?=
- =?utf-8?B?bUNZaDJUOGMzQ1FBVW4wemkra3h4Rzl4bnZnUUQ0NWRCUXpYN1Z1WHd3Yk8r?=
- =?utf-8?B?NWpCQ0lvSVAzNm5KWUhYZW5HSWd1d0MzL3g3TDBYdktoV1B0eHRDM29ZWjNw?=
- =?utf-8?B?L25ZOHEwRHJKTXNXTW1RNHBnMEI3K2JuWDJQY3B5cVFFbkI1UlBaNXNCYm9H?=
- =?utf-8?B?YzB1Umx5TFhyRjZ1ckJpbUVhZm5BWFRzK0xPbGVXS2Q0cTQ2eXJocVp6MU8x?=
- =?utf-8?B?dEhFQjQ0am1VWkNPZGxZV0dscFVSSmRoWDhiTitQVGllelZrVDhmOGlvdFo5?=
- =?utf-8?B?UWR0bS9kU3hFQi9LVnAxdi85VGl3NHJtcGwzRFlQVVpRbFkybEZrNEFoeTFU?=
- =?utf-8?B?SHdUR1JMTWRXbzFQS2JxdFR6M2MwS0s5ZWg1SWlQbE1xTkJmYkpETXhjWUdW?=
- =?utf-8?B?ZVNSbFNGeDRQY0tiTmdtSmtRZ2tHUjJvMzhrdC83NVNvZ1A2UjI4RVNuSGpV?=
- =?utf-8?B?WjUyeVkyVW5kWkZrV3haRXFtdTg4SkdiOW1UWk45MTZtdzhVWjYxcEl5M3VX?=
- =?utf-8?B?NTZLRDQ1R0UzQjVxWkFaUVFxalhqbEE0bUVDayt4TXpyc1pzSG5OaDJhWFFq?=
- =?utf-8?B?YjRSaGp5dHkyTDA0RzdiQWNtTkltQlNXTDAwMkMxMmRwNlJ1cWxoWGpmTnJ0?=
- =?utf-8?B?bWF3Q1N6dnVYeDJsT1htZmtQTTJ0UWxpVDhIaEZ3OWJrd1ZUTDFPUytxNVRB?=
- =?utf-8?B?djNHbkhJdi9OaVl1WEtHeGV2eHpwRHlpT0crRm5DUlVoMy9aNm9mOENISnpJ?=
- =?utf-8?B?YmRqOUNsODdqcFZxQjdNRjdDOU8wSkZnVGI3VWNrZkUxR3RVUFZQMFl3Y3pl?=
- =?utf-8?B?Wkk1M0NnQjZlRW1UZUNIQ1UzNDdZVHRRUklpaTV0NTl6VUkyL0tDanMvbnk5?=
- =?utf-8?B?RmRPa3NveGdUeDNkS1hlQ1M4cnpzMmVUQzRsY3lHc3dNWCt1Yk5jMXEwSGRL?=
- =?utf-8?B?NEVKU0tDM3dFWjFPcVNJUkhsdHFZWnNLQ0h1U0dxd1pJb1MrWTE1SVNvazg3?=
- =?utf-8?B?STVpQT09?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SkdxcWdpb1Rvem1lNUlvek9jcWJrUi9lNTVQcEVIYWVBYTdnd3VOcTdZdGRZ?=
- =?utf-8?B?enVLVkNlRW4rYUhsQXdZNHVqT1pldVV6VGhUMURzSXJhWXJCSnhkaUZOYTZY?=
- =?utf-8?B?bGl1cTRvcmR2VU5tZkJrZTJvaUFkWkJ1Rzg3eTlud0VETzNQeHBhaFNsWU9w?=
- =?utf-8?B?b3ZoMFhwVXhXYkdlZUJFNHl6cXl3Tkp4UnRiZkdFTDhQczF6VXhmRGpzeE9l?=
- =?utf-8?B?SVZTd2VFeFhwZFZhaEUveGFQcmc0NGdmcUVwZHlXU29KZTZCNmNONGkwbUo2?=
- =?utf-8?B?dkltVC8wM1F6VXBrY3VCZWZ6R2VCeE45UUhmaHJ5aG52TzcxNCtjeGMzaHFz?=
- =?utf-8?B?UjhVeFdkc1NqT2RXLzc0VjVKR2E4NEhJVVA1d05Td1BBNzFrT28rMkNkQlZQ?=
- =?utf-8?B?TGlIejhrMzdhMG9MNi9KRjRjTlNBUE55cExRa2ZXRzlhcE5rV2g4V1hsaTJj?=
- =?utf-8?B?WENTdXpkMk0rZmU1akh3Yi9TNTZheFJpZ1k3TmVhTkRKL2Z0TTIwUjJLcGt4?=
- =?utf-8?B?aDJHTVJMVWZOSGcrb3hBZ3hlTk1mbkRzTEJHMW0xbHJjZTJmNm1oVVRUaTBu?=
- =?utf-8?B?UlJMZUx2Yk1pd2JsTEVBamg5VkdObUM1bStNd21SWU9YNUVuVWxUcUlhTExN?=
- =?utf-8?B?VkIwZkZnbjVpUUVnaGVROG1DbVdja2FNblREMVZoTEVXeGZuMmJQY1UwdGVz?=
- =?utf-8?B?dENyV3kzTzJuSEpXSENhR1hIUExaYm1uUjAyaTNEVDhzNEl3cU9yWW5KeUhm?=
- =?utf-8?B?amhtdTN5Ykc4OTZIeWVlRXo5WXJlUk9mUDFmVFN3RGdVcUphQ0wzQjlIcDZT?=
- =?utf-8?B?bHlIaEF2YzBQRG92V1JCNzY3TmJYMVJ0T29YeG84M1kyd0Q4WWZ3OHF4dE5E?=
- =?utf-8?B?U1RWYVMxSTVWc1pVckFEa1FxcmtGQzYvQjdSRlJCckhoRTVNZXBQT2FwdnBG?=
- =?utf-8?B?bDBJVEl4bFRCdUhDS1ZaZEFqN0w3dUpaRjMxTGMwYWM1dzF1UTAvRVZyMXh2?=
- =?utf-8?B?YnZCZkhFTjdpVmJ4VVVzS3Q0OEFFS0RQcEpVT2FueDNHRU5uMmxIbGw3RGFU?=
- =?utf-8?B?ODd4SUNKMTlCUnpLOGFFdHNaT0R4RE1GMHJPaGxua0J5eHozVjhrbUE3YkFw?=
- =?utf-8?B?SDVGTEFQUTdLaTJMSjY4WGE3T2hGQktkMHhmWXFyVFBXeUgvT1JncWNVQnA1?=
- =?utf-8?B?SzZXNC8wcmJtYmNqVDdaTEloZGtvYjZYVXNaSDFab3BaeHBxKzBTc3BRUnZJ?=
- =?utf-8?B?azRGOUEvTE9OeGJYR1FPQW5ydHpxbzllZUF5TndWaFpkbXpadzIydUlJek1o?=
- =?utf-8?B?M3ZQVzkveUhvUytBR1lMZCtaZU1hOGhrRlZaS014MkRhOUlJek9iSy9kQXlB?=
- =?utf-8?B?UUt2NkkyTjVKajRBM3NvMkw2eHRpZE1UWXEwM1liZjVZODgxR2hYek9CeG4r?=
- =?utf-8?B?MzJYeG4vZ21JeTEycEhFM1BoemZmK2xjTnppZVFobTY0Q3hTaFI3YXVsZDRl?=
- =?utf-8?B?SlNCT1hVcTJabTdSWVdzVnI4VTBONzRoZFgrSGZ5aUMyaFFGa1JUdTZRckFS?=
- =?utf-8?B?YjByODRTb1hsUytCZFVpRTZtUWdIaGRMdE1Cd3lEREpIVmNkZ09WcnFDT1dM?=
- =?utf-8?B?akQzdUZJdC9aU2JmOXo4amNrRVVvVG9zVDNtRHd5Z2Q0YTdLRitlRUxubDlw?=
- =?utf-8?B?QzFMRTVFS2ZybFFUMEwxTkVqL29zcWhuVkpmSStFc2lJbU4rQU94U2RUZzJJ?=
- =?utf-8?Q?kGhY8L2pYiynVYjId5lyPoSO7PxarirwYPYHNmM?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 99651ef5-d4d4-4423-12a9-08dd5d790ada
-X-MS-Exchange-CrossTenant-AuthSource: PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 13:07:41.4835
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA0PR01MB10236
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307123255.GK354511@nvidia.com>
+X-Operating-System: Linux phenom 6.12.11-amd64 
 
-Hello~
+On Fri, Mar 07, 2025 at 08:32:55AM -0400, Jason Gunthorpe wrote:
+> On Fri, Mar 07, 2025 at 11:28:37AM +0100, Simona Vetter wrote:
+> 
+> > > I wouldn't say it is wrong. It is still the correct thing to do, and
+> > > following down the normal cleanup paths is a good way to ensure the
+> > > special case doesn't have bugs. The primary difference is you want to
+> > > understand the device is dead and stop waiting on it faster. Drivers
+> > > need to consider these things anyhow if they want resiliency against
+> > > device crashes, PCI link wobbles and so on that don't involve
+> > > remove().
+> > 
+> > Might need to revisit that discussion, but Greg didn't like when we asked
+> > for a pci helper to check whether the device is physically gone (at least
+> > per the driver model). Hacking that in drivers is doable, but feels
+> > icky.
+> 
+> I think Greg is right here, the driver model has less knowledge than
+> the driver if the device is alive.
 
-Any comment on this? Or can we have this bugfix patch picked for coming 
-v6.15?
+Maybe I misremember, but iirc he was fairly fundamentally opposed to
+trying to guess whether the hw is gone or not in the ->remove callback.
+But maybe that's more from the usb world, where all the hotremove race
+conditions are handled in the subsystem and you only have to deal with
+errno from calling into usb functions and unwind. So much, much easier
+situation.
 
-Regards,
+> The resiliency/fast-failure issue is not just isolated to having
+> observed a proper hot-unplug, but there are many classes of failure
+> that cause the device HW to malfunction that a robust driver can
+> detect and recover from. mlx5 attempts to do this for instance.
+> 
+> It turns out when you deploy clusters with 800,000 NICs in them there
+> are weird HW fails constantly and you have to be resilient on the SW
+> side and try to recover from them when possible.
+> 
+> So I'd say checking for a -1 read return on PCI is a sufficient
+> technique for the driver to use to understand if it's device is still
+> present. mlx5 devices further have an interactive register operation
+> "health check" that proves the device and it's PCI path is alive.
+> 
+> Failing health checks trigger recovery, which shoot downs sleeps,
+> cleanly destroys stuff, resets the device, and starts running
+> again. IIRC this is actually done with a rdma hot unplug/plug sequence
+> autonomously executed inside the driver.
+> 
+> A driver can do a health check immediately in remove() and make a
+> decision if the device is alive or not to speed up removal in the
+> hostile hot unplug case.
 
-Chen
+Hm ... I guess when you get an all -1 read you check with a specific
+register to make sure it's not a false positive? Since for some registers
+that's a valid value.
 
-On 2025/3/4 16:17, Chen Wang wrote:
-> From: Chen Wang <unicorn_wang@outlook.com>
->
-> ops of struct cdns_pcie may be NULL, direct use
-> will result in a null pointer error.
->
-> Add checking of pcie->ops before using it.
->
-> Fixes: 40d957e6f9eb ("PCI: cadence: Add support to start link and verify link status")
-> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-> ---
->   drivers/pci/controller/cadence/pcie-cadence-host.c | 2 +-
->   drivers/pci/controller/cadence/pcie-cadence.c      | 4 ++--
->   drivers/pci/controller/cadence/pcie-cadence.h      | 6 +++---
->   3 files changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/pci/controller/cadence/pcie-cadence-host.c b/drivers/pci/controller/cadence/pcie-cadence-host.c
-> index 8af95e9da7ce..9b9d7e722ead 100644
-> --- a/drivers/pci/controller/cadence/pcie-cadence-host.c
-> +++ b/drivers/pci/controller/cadence/pcie-cadence-host.c
-> @@ -452,7 +452,7 @@ static int cdns_pcie_host_init_address_translation(struct cdns_pcie_rc *rc)
->   	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_PCI_ADDR1(0), addr1);
->   	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(0), desc1);
->   
-> -	if (pcie->ops->cpu_addr_fixup)
-> +	if (pcie->ops && pcie->ops->cpu_addr_fixup)
->   		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
->   
->   	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(12) |
-> diff --git a/drivers/pci/controller/cadence/pcie-cadence.c b/drivers/pci/controller/cadence/pcie-cadence.c
-> index 204e045aed8c..56c3d6cdd70e 100644
-> --- a/drivers/pci/controller/cadence/pcie-cadence.c
-> +++ b/drivers/pci/controller/cadence/pcie-cadence.c
-> @@ -90,7 +90,7 @@ void cdns_pcie_set_outbound_region(struct cdns_pcie *pcie, u8 busnr, u8 fn,
->   	cdns_pcie_writel(pcie, CDNS_PCIE_AT_OB_REGION_DESC1(r), desc1);
->   
->   	/* Set the CPU address */
-> -	if (pcie->ops->cpu_addr_fixup)
-> +	if (pcie->ops && pcie->ops->cpu_addr_fixup)
->   		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
->   
->   	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(nbits) |
-> @@ -120,7 +120,7 @@ void cdns_pcie_set_outbound_region_for_normal_msg(struct cdns_pcie *pcie,
->   	}
->   
->   	/* Set the CPU address */
-> -	if (pcie->ops->cpu_addr_fixup)
-> +	if (pcie->ops && pcie->ops->cpu_addr_fixup)
->   		cpu_addr = pcie->ops->cpu_addr_fixup(pcie, cpu_addr);
->   
->   	addr0 = CDNS_PCIE_AT_OB_REGION_CPU_ADDR0_NBITS(17) |
-> diff --git a/drivers/pci/controller/cadence/pcie-cadence.h b/drivers/pci/controller/cadence/pcie-cadence.h
-> index f5eeff834ec1..436630d18fe0 100644
-> --- a/drivers/pci/controller/cadence/pcie-cadence.h
-> +++ b/drivers/pci/controller/cadence/pcie-cadence.h
-> @@ -499,7 +499,7 @@ static inline u32 cdns_pcie_ep_fn_readl(struct cdns_pcie *pcie, u8 fn, u32 reg)
->   
->   static inline int cdns_pcie_start_link(struct cdns_pcie *pcie)
->   {
-> -	if (pcie->ops->start_link)
-> +	if (pcie->ops && pcie->ops->start_link)
->   		return pcie->ops->start_link(pcie);
->   
->   	return 0;
-> @@ -507,13 +507,13 @@ static inline int cdns_pcie_start_link(struct cdns_pcie *pcie)
->   
->   static inline void cdns_pcie_stop_link(struct cdns_pcie *pcie)
->   {
-> -	if (pcie->ops->stop_link)
-> +	if (pcie->ops && pcie->ops->stop_link)
->   		pcie->ops->stop_link(pcie);
->   }
->   
->   static inline bool cdns_pcie_link_up(struct cdns_pcie *pcie)
->   {
-> -	if (pcie->ops->link_up)
-> +	if (pcie->ops && pcie->ops->link_up)
->   		return pcie->ops->link_up(pcie);
->   
->   	return true;
->
-> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+But yeah maybe this approach is more solid. The current C approach we have
+with an srcu revoceable section is definitely a least worse attempt from a
+very, very bad starting point.
+
+I think maybe we should also have two levels here:
+
+- Ideal driver design, probably what you've outlined above. This will need
+  some hw/driver specific thought to get the optimal design most likely.
+  This part is probably more bus and subsystem specific best practices
+  documentation than things we enforce with the rust abstractions.
+
+- The "at least we don't blow up with memory safety issues" bare minimum
+  that the rust abstractions should guarantee. So revocable and friends.
+
+And I think the latter safety fallback does not prevent you from doing the
+full fancy design, e.g. for revocable resources that only happens after
+your explicitly-coded ->remove() callback has finished. Which means you
+still have full access to the hw like anywhere else.
+
+Does this sounds like a possible conclusion of this thread, or do we need
+to keep digging?
+
+Also now that I look at this problem as a two-level issue, I think drm is
+actually a lot better than what I explained. If you clean up driver state
+properly in ->remove (or as stack automatic cleanup functions that run
+before all the mmio/irq/whatever stuff disappears), then we are largely
+there already with being able to fully quiescent driver state enough to
+make sure no new requests can sneak in. As an example
+drm_atomic_helper_shutdown does a full kernel modesetting commit across
+all resources, which guarantees that all preceeding in-flight commits have
+finished (or timed out, we should probably be a bit smarter on this so the
+timeouts are shorter when the hw is gone for good). And if you do that
+after drm_dev_unplug then nothing new should have been able to sneak in I
+think, at least conceptually. In practice we might have a bunch of funny
+races that are worth plugging I guess.
+
+Cheers, Sima
+-- 
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
