@@ -1,129 +1,130 @@
-Return-Path: <linux-kernel+bounces-551358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D172A56B76
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:15:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ACD5A56B77
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:15:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 617BB7AA945
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:12:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78FF7174A53
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D8C21D5A0;
-	Fri,  7 Mar 2025 15:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41ACF22156B;
+	Fri,  7 Mar 2025 15:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="kEnnOKjR"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uWjUvTN6"
+Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0B421D59B
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AFB221556
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741360188; cv=none; b=PEQMZnJrBV03bk04pJY/jAB1WgSGIxk9rI53Wf74zUSpgOLxqiEqoduJ3s6IJ0ie3zXmwZ52OW88WJHjMJ+CvAUl1pix7X4hXTDx4Mb5Qogjb3wxXoNTGH+lopz1sQAOubeipaULFGEMrtB3+HGx1z1g+iHRgaWIrBFysiGt54A=
+	t=1741360248; cv=none; b=dX1j055ctBnsR2x5WK0hfavVsoprmNSmQ6kPth+bsvTz5wsbGw24PSJ8NvVeanaGMfgUq9htd2xGhXJAuD+MMxuJCOcdeVgz8p8eYPwRXVkna7Mx5fFU5VwErFE1LTwIofe6w0ucbL0O+ibvdZdTzqwjqXUXsC/I9pkgXXFTG8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741360188; c=relaxed/simple;
-	bh=gE6FGCV28DwkTHBBOESRmnTDsWzJHMdNw/Oj97QoaiM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e4zRT7znJ5WKnIWPNQSgYF06ugyfpH+tGRNZzTk+loEEKAEvWsMpYZ5rg8/goJF6zr0i9iHEAT6f/WHfvDhz7KfSav5+HGG4rOUVfKbX8QL6I+A/z7Apioi2inxu5ugUsJpUIv75oWrlIe/mN8trQxgJgl76DyPNxu2WNfw3UuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=kEnnOKjR; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39129017bbbso865073f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:09:46 -0800 (PST)
+	s=arc-20240116; t=1741360248; c=relaxed/simple;
+	bh=7vPM66wrqA8ItOal1m7QS909J6dZMJbGOzOQwE8gVyc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YjJ4gHwFEY8uQYEDv5h0tLGzKLl2oXsZ6C0JjMlnQpZHFTpKBjRCixf3X+SE/3695zC+0BbH+0CFwOAcK+1NQTm8Fbrj0o5AA90HbJI5CCD5wQW8hM9KLMw1jzZDbMO9bcKWSC88Ef+t3TlK74HiiAZgkKVG2KXq1+VdviiFqxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uWjUvTN6; arc=none smtp.client-ip=209.85.161.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5fe8759153dso739018eaf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:10:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1741360185; x=1741964985; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BP9EZa+ZXL6z9j+n7AY1mhAuXOFT2kVu+uBWLrEP2JQ=;
-        b=kEnnOKjRVDJkPhTH4NAr02m0uIFW40H0+iQBKyvXSykYEoy3j9Q1Hecgq5l0jipCCy
-         mBIcYvvK4ka1jHl51nPY/lYpMi8tI8+iHeHvTM27u+F0mohPwJMc4AwBxtCn9WjOUSVM
-         3QW9XS2CbcKbedb4V1knjAnuUVmAqPIJGCAo3GGKYIpl9FS0ENHQF8SZXI8nmOZ+PAX/
-         bvhl2G67nnPymVBNIH40iP7iYpsN74ieOrTNf0YVsw1meyB4F52GyGhdG06sYPTMXklm
-         +WXSr5FiCNmjVjwpiBFTcyhl2m0eYWFcOoxg1zMrey594RfnwyhNevlfUQxvYBL+3z6y
-         EpKA==
+        d=linaro.org; s=google; t=1741360246; x=1741965046; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GaMH1NOSXXEyX+4I+PnYIXnBgRaLQ5ST8GTB4hff2uQ=;
+        b=uWjUvTN6EX4c+P6aUMdpQ43KsDrmqLeNu4sCncwPyem00Z1g+HI/xWEBkr4dFJdHpK
+         TNH0hXx0f3UoH43rXHSDalHKIXhUHAC3ENvuawUDmEus0ME5Xub6k9ZGTHGYrCIXPhrX
+         89wAD6qQsx0sS9L3mwOHeQg0PE0ZPNktI0SWmt9BZek3zMTGVFdUDs9V5PPKsPDP8Lt5
+         0Q3CtQlbPPa7a9N2dFgnArlZ/85+krAiwR6eFfidcqh8KJScz3g9hkivLPdwGkye3LTE
+         lYYnUm45dF+wNyEBujgUNWIXn8AjDMak/HwScGunaYFpyrOsRWcJN/VPoYycb2cZ2MlD
+         x27A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741360185; x=1741964985;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1741360246; x=1741965046;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BP9EZa+ZXL6z9j+n7AY1mhAuXOFT2kVu+uBWLrEP2JQ=;
-        b=QtdMQ3M8LiiQtE0g5gzwAFYTnE/StU2lun6bnUBtqsghlv/JFvXEhIhDY8ufIoH3/F
-         6ziCqgu/mUa5EZsaN62AylsVDvVd70TWbus+ubZLDBMLH+e9N7sOuIZGf/yKCy9BNAqj
-         rBGUXcfpsc4XSwtiul2VfiPaESdUOeM26QJcDF6TtnvdC5HtTewY2uYHKB06Efm5bLgq
-         7g8CbGpziItycXvyWeQGMscdloaNjGkPPsXYCud6ztGH6eDs1J0Rk/ZZv0B+2FYt7u/O
-         qfgt6dX8nyM873KGqYy5G6XsSkUxEdu4nUI6W5Veiq0Vb5gy/FOvWHbJ2nSoKurzFm0k
-         KbMA==
-X-Gm-Message-State: AOJu0YzQ61IH4FD6ue9cFe37uSiOpcpQFV/3nJz1mbvRnb3Gr4F1Q2oF
-	CIOCo7VqqOgCRG/sfis11oogSam0WGRhAZxtLcSzDnDh7QdrKZB3vErORaW7Qn8=
-X-Gm-Gg: ASbGnctUbL9x8AkN6mprW+fjZaIq7qi9ijTvpcJA36a221yc+fOK1rSB6RNMwvUJ2bh
-	dWqTgb4WfPvhlYm2lDtNyyZULHF5Hgc6588aRiS06jxBnGqbVoy2eMs62otHic72crgMhW3Gu8s
-	iA7FVWXYFH+NQ5KFm/xUtNkw0uLp7NGO7n2Pg1N1PIFQzK0cECgWX3fdke6wNUOMccAHlaMczq5
-	OHrpjDbdM3Z5XbLM8ZWzPhgVkXR3aVTQNzOvTWepSWXHAXicFPzCoI6siGT0dby6NHD1qZbwd7S
-	u7vmuBY0yNFwXpZTVD0ddVj9QuVrunvjPLBdFGkQI3be1LYy
-X-Google-Smtp-Source: AGHT+IFk6NYRxZEBXy3AmEUNEKnHoFzQmS/X6I0jyvaiFDvAd5Hny94unW35ookz2eoEpTTH6nqtPw==
-X-Received: by 2002:a5d:5f8f:0:b0:391:2e31:c7e8 with SMTP id ffacd0b85a97d-39132d66e3dmr2518912f8f.2.1741360184367;
-        Fri, 07 Mar 2025 07:09:44 -0800 (PST)
-Received: from matt-Precision-5490.. ([2a09:bac1:28e0:840::179:137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e2b6asm5703574f8f.66.2025.03.07.07.09.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 07:09:43 -0800 (PST)
-From: Matt Fleming <matt@readmodwrite.com>
-To: Masahiro Yamada <masahiroy@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@cloudflare.com,
-	Matt Fleming <mfleming@cloudflare.com>
-Subject: [PATCH] kbuild: Add KDEB_COMPRESS_LEVEL to control compression level
-Date: Fri,  7 Mar 2025 15:09:40 +0000
-Message-Id: <20250307150940.1309703-1-matt@readmodwrite.com>
-X-Mailer: git-send-email 2.34.1
+        bh=GaMH1NOSXXEyX+4I+PnYIXnBgRaLQ5ST8GTB4hff2uQ=;
+        b=KnDmuuQU+sZf5vm11VNaqXMZQAdt7Z2Vg706zVK9rjPFVpLo7lqXO2LWNJvDKa1paT
+         ROc6B2EEvRbDzKMFeByD1TWt4/oq/8OVypHHRzO7r4PweI+q8QiYN4P6dkFxuvAA11Xz
+         J2hjrX7g+9iyA/cuOl3EhapmvESU2uKZ1AjjdJifXXhHJD91rM2syPszR6cXcjStYreC
+         XyKzBVM03IHZ20kwHIKhbV+wHTCr6RbWGrA10Bc/L5hLvxTM8athvZO8QQZahvHBilIH
+         eT2G6byUTgbTjewUV2QwMld0Pu1yr6d+diajeiuCorpxcPCL4IgckWbYmHY/RcOqDOd9
+         7Ndg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJvpS9aSH2O18XcYnWIedBg9bzkrrk8fl8N0n19DkYftH3BPN2ko6BO5KiT1P5iPWkihC6ZJl0rZnbZ30=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAZ/FDmxEBbYJViMWQhdzkFH6gMtK1p4yAteYE1LhTEFi6jwdQ
+	voEXOTKeQvEfxX2nZG0AZXkba5adKXBus4Vfwbo2hagWZucnp9FEgrrzAdwbKek4Qjr79KXrD+L
+	zVeZkG+GemD0lwITefPf2gN9S4hi7h1IGZ6dnUA==
+X-Gm-Gg: ASbGncsdOis3aozCZezaSDtSy/0c4b4TSyi5nQy9ek6Ig7VoAhoMXtl89IWcKGENEvS
+	vqwc20Xh+07kgQWb9TIwCjZy0y6bXEQ2/ClGfGvNxh8SGH5zrn69InsiJ/5/R73qlCPp29bQkqj
+	Dniby7+OYEymAvzaYjwvh0wukKFw0=
+X-Google-Smtp-Source: AGHT+IGmSI6uKhyqp0Lz6umulak1/qdCrknOZ1BwGtVXVr7Hw1ALnj7JKNyxJ8z0WKOu5JKZrR6BgmZGuCc1usZ1pxU=
+X-Received: by 2002:a4a:ec46:0:b0:5fc:f3b8:78c2 with SMTP id
+ 006d021491bc7-6004aaf90aemr2063696eaf.3.1741360244995; Fri, 07 Mar 2025
+ 07:10:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250226220414.343659-1-peter.griffin@linaro.org>
+ <20250226220414.343659-5-peter.griffin@linaro.org> <20250305024020.GC20133@sol.localdomain>
+In-Reply-To: <20250305024020.GC20133@sol.localdomain>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Fri, 7 Mar 2025 15:10:33 +0000
+X-Gm-Features: AQ5f1JrG484DP9qv6Qb4pGd14bkBMzxvaPSxEwh5c_p71wnvCQXfRvFkoiXZo_U
+Message-ID: <CADrjBPpju3MmZbNy1uaPzAWTWrmNHx0nT+03DmkM3p5qFEUHdA@mail.gmail.com>
+Subject: Re: [PATCH 4/6] scsi: ufs: exynos: Enable PRDT pre-fetching with UFSHCD_CAP_CRYPTO
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: alim.akhtar@samsung.com, James.Bottomley@hansenpartnership.com, 
+	martin.petersen@oracle.com, krzk@kernel.org, linux-scsi@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, willmcvicker@google.com, 
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org, bvanassche@acm.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Matt Fleming <mfleming@cloudflare.com>
+Hi Eric,
 
-Give users more control to tradeoff compression time vs compressed size
-when building debian packages with a new KDEB_COMPRESS_LEVEL option.
+Thanks for your review feedback.
 
-Here are some examples of using KDEB_COMPRESS=xz with
-KDEB_COMPRESS_LEVEL=1 through to KDEB_COMPRESS_LEVEL=6 with the
-bindeb-pkg target:
+On Wed, 5 Mar 2025 at 02:40, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Wed, Feb 26, 2025 at 10:04:12PM +0000, Peter Griffin wrote:
+> > PRDT_PREFETCH_ENABLE[31] bit should be set when desctype field of
+> > fmpsecurity0 register is type2 (double file encryption) or type3
+> > (file and disk excryption). Setting this bit enables PRDT
+> > pre-fetching on both TXPRDT and RXPRDT.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+>
+> I assume you mean that desctype 3 provides "support for file and disk
+> encryption"?
 
-  Level Time to compress Compressed size (bytes)
-  ----- ---------------- -----------------------
-      1        0m36.771s               476909176
-      2        0m40.335s               474832644
-      3        0m43.635s               473845600
-      4        1m13.839s               472260012
-      5        1m18.657s               464442676
-      6        1m20.658s               464355000
+Yes, the PRDT_PREFETCH_ENABLE description in the commit message I
+copied from the datasheet. But I can re-word it like you suggest if
+you think that it's clearer? I notice now there is also a typo with
+the word 'encryption' which I can also fix.
 
-Signed-off-by: Matt Fleming <mfleming@cloudflare.com>
----
- scripts/package/debian/rules | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+This patch came about whilst comparing UFS SFR register dumps of
+upstream and downstream drivers. I noticed that PRDT_PREFETCH_ENABLE
+is enabled downstream but not upstream, and after checking the
+datasheet description it seemed like we should set this if
+exynos_ufs_fmp_init() completed and set CFG_DESCTYPE_3.
 
-diff --git a/scripts/package/debian/rules b/scripts/package/debian/rules
-index ca07243bd5cd..616ecf1d4d1b 100755
---- a/scripts/package/debian/rules
-+++ b/scripts/package/debian/rules
-@@ -52,7 +52,7 @@ define binary
- 	$(Q)dh_fixperms $(DH_OPTIONS)
- 	$(Q)dh_gencontrol $(DH_OPTIONS) -- -f$(call mk-files,$@)
- 	$(Q)dh_md5sums $(DH_OPTIONS)
--	$(Q)dh_builddeb $(DH_OPTIONS) -- $(addprefix -Z,$(KDEB_COMPRESS))
-+	$(Q)dh_builddeb $(DH_OPTIONS) -- $(addprefix -Z,$(KDEB_COMPRESS)) $(addprefix -z,$(KDEB_COMPRESS_LEVEL))
- endef
- 
- .PHONY: $(binary-targets)
--- 
-2.34.1
+> The driver does use desctype 3, but it only uses the "file
+> encryption".  So this confused me a bit.  (BTW, in FMP terminology, "file
+> encryption" seems to mean "use the key provided in the I/O request", and "disk
+> encryption" seems to mean "use some key the firmware provided somehow".  They
+> can be cascaded, and the intended use cases are clearly file and disk encryption
+> respectively, but they don't necessarily have to be used that way.)
 
+Thanks for the additional context :)
+
+Peter
 
