@@ -1,138 +1,109 @@
-Return-Path: <linux-kernel+bounces-551902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D169A572C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:10:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D11CA572B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:08:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D18B3B81C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:10:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9B4E3B8010
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A9E82566DE;
-	Fri,  7 Mar 2025 20:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AE992561A9;
+	Fri,  7 Mar 2025 20:07:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="F3IB7iSH"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FMnuoiV3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A67DB21CC4A;
-	Fri,  7 Mar 2025 20:10:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0911A5BBD;
+	Fri,  7 Mar 2025 20:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741378242; cv=none; b=K1A9j0EshKLQ444Ixh8DKgK4tyaZv4W/gv27o/h+5mgeWo5mgFxyHLYBECwBGqCcgKQEePCfQLirRjyoWtQFHzBXrUUyOLCVatPCJRP33I2MOTw8j8oyDHRNIo69nAeqrEYCSPYcDNql029GPzqBJsJTv5H9FiPaJS/bpD/A0iI=
+	t=1741378070; cv=none; b=g65hdw7yIioUqDAF5wdQFBT2OzVvhgyFmRaFefc6O6BzTIv7ZSwYsSrCiSX2sxMm75O4+p6p2QaLn/mKsY9anzh9S6DgpP3K4GNSA3Xhz8FJMtfr0wkx1hXOTGyE9yX+thwCf8ApGVFYdu5aRnyY/IlnURSWCw/aHG/+2fIgOko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741378242; c=relaxed/simple;
-	bh=z8uaY0FEvDXDyRuTUQIK7YT1It04TyjrpCzzUcauDks=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=ERIyRtVGRBShXTUMW6BKbqqehzHe1KYqPk1mBjSQNNUzdsdJxEBLbf7fq1ov6OoXUfD3H1YdMU5YP2EOCBmOm3v+86Rnz0VWihYlxsbfXXSsBVJMgOEwhjQZs3lxnDw30uaPkv8VzTBbzAdJ5wFxIWuteewQv5QFfxTebvQ5W6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=F3IB7iSH; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [IPv6:::1] ([172.56.209.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 527K79aI409264
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 7 Mar 2025 12:07:10 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 527K79aI409264
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1741378034;
-	bh=labYh6dS183ez/ccMGDewAeypbKIJUEZ63NUVodYP9Y=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=F3IB7iSHYEvDT6RxcaTUE+HY1uOaC4VnUwxKdSJcbsJ/VGwP8hnKFJom4bWfM8OtP
-	 AchryuBqXBGLSXDbZ+MsV5uKdxioAoL64EB2Hr82VgdPIiuWZvSICUQIsfj5WGpBgd
-	 KriIaJc3fhV0nS1OF/J9ovKepTrInAm9zRKeY8fu9KnjjC1cA61PvXNcMr8KPpE2Si
-	 6ZtEA98YPUR4DMGJMmEfr7slViCtz+0KmVEla3+d3bqWKNRc+yfSLHHLIoMfgw95oG
-	 SN+4dF7fYBU8DZVgqTjvri3AONNiYtVQqGQhFLjE5E+swQ4mWdQWMCk66SRGgQ/FHU
-	 OiSkGpohg9mHw==
-Date: Fri, 07 Mar 2025 12:07:02 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: David Laight <david.laight.linux@gmail.com>
-CC: Andrew Cooper <andrew.cooper3@citrix.com>,
-        Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
-        akpm@linux-foundation.org, alistair@popple.id.au,
-        andrew+netdev@lunn.ch, andrzej.hajda@intel.com,
-        arend.vanspriel@broadcom.com, awalls@md.metrocast.net, bp@alien8.de,
-        bpf@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211@lists.linux.dev, dave.hansen@linux.intel.com,
-        davem@davemloft.net, dmitry.torokhov@gmail.com,
-        dri-devel@lists.freedesktop.org, eajames@linux.ibm.com,
-        edumazet@google.com, eleanor15x@gmail.com, gregkh@linuxfoundation.org,
-        hverkuil@xs4all.nl, jernej.skrabec@gmail.com, jirislaby@kernel.org,
-        jk@ozlabs.org, joel@jms.id.au, johannes@sipsolutions.net,
-        jonas@kwiboo.se, jserv@ccns.ncku.edu.tw, kuba@kernel.org,
-        linux-fsi@lists.ozlabs.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-serial@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux@rasmusvillemoes.dk,
-        louis.peens@corigine.com, maarten.lankhorst@linux.intel.com,
-        mchehab@kernel.org, mingo@redhat.com, miquel.raynal@bootlin.com,
-        mripard@kernel.org, neil.armstrong@linaro.org, netdev@vger.kernel.org,
-        oss-drivers@corigine.com, pabeni@redhat.com,
-        parthiban.veerasooran@microchip.com, rfoss@kernel.org, richard@nod.at,
-        simona@ffwll.ch, tglx@linutronix.de, tzimmermann@suse.de,
-        vigneshr@ti.com, visitorckw@gmail.com, x86@kernel.org,
-        yury.norov@gmail.com
-Subject: Re: [PATCH v3 00/16] Introduce and use generic parity16/32/64 helper
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20250307195310.58abff8c@pumpkin>
-References: <4732F6F6-1D41-4E3F-BE24-E54489BC699C@zytor.com> <efc2ee9d-5382-457f-b471-f3c44b81a190@citrix.com> <5A790652-1B22-4D13-AAC5-5D9931E90903@zytor.com> <20250307195310.58abff8c@pumpkin>
-Message-ID: <EB85C3C1-8A0D-4CB9-B501-BFEABDF3E977@zytor.com>
+	s=arc-20240116; t=1741378070; c=relaxed/simple;
+	bh=aL+XZM/7p7Esweo3/w1A7NMI9JjtTr5G50MAaH4HdCs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=trQ5eV2HFx0AC4ZrASrfLdc5LhEW+ihCUavJcgy8+B3D6ZeSUkVue6ZgBJ1DbeIZGKXwjT3eZvWtzfoqzgEwugRmfwgO2pdC3gKH2p7UEKW82WUc4S7dfeyKDcTNdX+bD6U7Y8eesjOKJK+TD32sY7cleW3sYAmKDF7IZw58+hM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FMnuoiV3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E54D6C4CED1;
+	Fri,  7 Mar 2025 20:07:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741378070;
+	bh=aL+XZM/7p7Esweo3/w1A7NMI9JjtTr5G50MAaH4HdCs=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=FMnuoiV3Nzp4OWlLE5VAXd3CJvw2kMN6G5vuInuDGb1BTQZjtWRRmhrJnkgZsGlVG
+	 t3a+I7DdNGJ7wLbv+gm101+uTjike5WDaHuEDKGyS9u98LBkU2x7J/L9fcCnTOOg5/
+	 1cCU1DIQA3+2BF+z2xbtojsvjraOrINpOctX9uAbbRIOaD9IVA8cuyGWQ2Woy6ezHD
+	 EDByOkK6GLydLpq3HI86PJHA8FcX4KmKI1pMIFpiUP7GfHXFj3tmBR1I3fBQ5oe+hy
+	 9HnxCzIeT2Hke50o+yELn2Qup/WHwGm5sABvj8JvdrOoU8MV0MYF9YOYK4EEJAW1Z1
+	 qI6Uy2S8OPBpQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4373C19F32;
+	Fri,  7 Mar 2025 20:07:49 +0000 (UTC)
+From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
+Subject: [PATCH v3 0/2] iommu: apple-dart: Support the ISP DART
+Date: Fri, 07 Mar 2025 21:07:44 +0100
+Message-Id: <20250307-isp-dart-v3-0-684fe4489591@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABBSy2cC/22Myw6CMBBFf8V0bU1nQARX/odxMdApTCKPtKTRE
+ P7dwoqFy3Nzz1lUYC8c1P20KM9RgoxDgux8Uk1HQ8tabGKFBq8G8aYlTNqSn7Urs6KqibipQaX
+ 75NnJZ089X4k7CfPov3s5wrb+iUTQRkMBXAG73OXFo+1J3pdm7NUWiXgUy4OISTRMtgSqDKM9i
+ uu6/gDB3Ik42QAAAA==
+X-Change-ID: 20250227-isp-dart-f8369baaecb1
+To: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Joerg Roedel <joro@8bytes.org>, 
+ Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ Sasha Finkelstein <fnkl.kernel@gmail.com>, Hector Martin <marcan@marcan.st>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741378068; l=965;
+ i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
+ bh=aL+XZM/7p7Esweo3/w1A7NMI9JjtTr5G50MAaH4HdCs=;
+ b=TymRhGh67bcUCvfAFG+jHbf8FOmhN8c2DfiA24iqbzxriblvi9pdbes4+hbhn2xAcjeQY+Kh0
+ 8kPtqo0/QtbC3iXPTr7yVkK78hCipfoGXZDbX4wZYDkoP3HBpq6usEo
+X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
+ pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
+X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
+ auth_id=283
+X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Reply-To: fnkl.kernel@gmail.com
 
-On March 7, 2025 11:53:10 AM PST, David Laight <david=2Elaight=2Elinux@gmai=
-l=2Ecom> wrote:
->On Fri, 07 Mar 2025 11:30:35 -0800
->"H=2E Peter Anvin" <hpa@zytor=2Ecom> wrote:
->
->> On March 7, 2025 10:49:56 AM PST, Andrew Cooper <andrew=2Ecooper3@citri=
-x=2Ecom> wrote:
->> >> (int)true most definitely is guaranteed to be 1=2E =20
->> >
->> >That's not technically correct any more=2E
->> >
->> >GCC has introduced hardened bools that intentionally have bit patterns
->> >other than 0 and 1=2E
->> >
->> >https://gcc=2Egnu=2Eorg/gcc-14/changes=2Ehtml
->> >
->> >~Andrew =20
->>=20
->> Bit patterns in memory maybe (not that I can see the Linux kernel using=
- them) but
->> for compiler-generated conversations that's still a given, or the manag=
-er isn't C
->> or anything even remotely like it=2E
->>=20
->
->The whole idea of 'bool' is pretty much broken by design=2E
->The underlying problem is that values other than 'true' and 'false' can
->always get into 'bool' variables=2E
->
->Once that has happened it is all fubar=2E
->
->Trying to sanitise a value with (say):
->int f(bool v)
->{
->	return (int)v & 1;
->}   =20
->just doesn't work (see https://www=2Egodbolt=2Eorg/z/MEndP3q9j)
->
->I really don't see how using (say) 0xaa and 0x55 helps=2E
->What happens if the value is wrong? a trap or exception?, good luck recov=
-ering
->from that=2E
->
->	David
+The ISP block has 3 linked DARTs with mismatched bypass support.
+This series adds support for this setup.
 
-Did you just discover GIGO?
+(The ISP driver itself is sent as a separate series
+https://lore.kernel.org/asahi/20250219-isp-v1-0-6d3e89b67c31@gmail.com/T/ )
+
+Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+---
+Changes in v3:
+- Just added r-b, effectively a resend
+- Link to v2: https://lore.kernel.org/r/20250228-isp-dart-v2-0-0ead81a90e2d@gmail.com
+
+Changes in v2:
+- Made comments and code a closer match for each other
+- Link to v1: https://lore.kernel.org/r/20250227-isp-dart-v1-0-161e91ef4f46@gmail.com
+
+---
+Hector Martin (2):
+      iommu: apple-dart: Increase MAX_DARTS_PER_DEVICE to 3
+      iommu: apple-dart: Allow mismatched bypass support
+
+ drivers/iommu/apple-dart.c | 19 +++++++++++++------
+ 1 file changed, 13 insertions(+), 6 deletions(-)
+---
+base-commit: dd83757f6e686a2188997cb58b5975f744bb7786
+change-id: 20250227-isp-dart-f8369baaecb1
+
+
 
