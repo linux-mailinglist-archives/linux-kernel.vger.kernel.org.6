@@ -1,130 +1,153 @@
-Return-Path: <linux-kernel+bounces-550936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BB8FA56637
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:05:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE6BA5666E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:17:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DEC73B6898
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CADF11891C40
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C398F212D61;
-	Fri,  7 Mar 2025 11:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A9D217673;
+	Fri,  7 Mar 2025 11:17:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GDFN9sxH"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J08eV7ap"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76D081925AC;
-	Fri,  7 Mar 2025 11:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C360217653;
+	Fri,  7 Mar 2025 11:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741345432; cv=none; b=T9WHr/7J0WrQFaluetJrcbpVTnDFIXwzWqbXDmYCSCJWlp59v0yCLSRVuq+IyNytzul2NcD9Lsra3MYafdbiG2LOLWltK+tzt1hWwX5h4oCBRHpSrTqvam7ewCgbtPoYZ3bhNFAWjji1+2GoP4vRkfc9x3RoJ4IJQ1cmsdChEPE=
+	t=1741346253; cv=none; b=osRm2lp7DeKNSjW+LqWY/vJp6JHOIRDG+c1tkkmApAHmUJ/w1id5zw+et6RnrN6msIPBfHfCxs8orWnEGKOWFllE8WZNYejMhFuH8XtzBznz486ifKWbhqE9rPwXaGO5oMC1/d41ramrs7br2/Dx30IJHgx5P9YGx4fu5JaldAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741345432; c=relaxed/simple;
-	bh=pzjFzK1eLmN7NkZe7es86B7QKp3hIAs0x8XnRYMwGpU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CbzB9UxJPmAGs2VfGOip/13GKK68s5rv4ccUHPugt1CwmlWkhn0M4gveAtP9C+F4RXiMpi56lQmyaqUAWAbSzyCR9tjSq+oZZjSkiqlNsHUNQHqKU+wK3sSBMXRjC5StzI6D3gnxkWl7+qBAjYpJpGAWqF2XxqP4wUQB03ux6ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GDFN9sxH; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1741346253; c=relaxed/simple;
+	bh=QY00a3rngmsVxLQDZ3rhfcfy8+4hGUDyLxDK2MVdQBU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u6j8zF1xT8VFwJkuI5CBXvff49g4brXAyf0N0yc43w1IQUJ4WqcAN1CfWS5Vn3y89vV2fkStuA5F9BClcxaYEyrg6yaSDK4O2Z9OfC23WbMesr/QbTOPI6uyvecpDXtddF1fShxEbjBOM6WY0yLtE5D/Wu2TvNoNrk+nJPJ70A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J08eV7ap; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43bdc607c3fso10335285e9.3;
-        Fri, 07 Mar 2025 03:03:50 -0800 (PST)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22185cddbffso53482995ad.1;
+        Fri, 07 Mar 2025 03:17:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741345429; x=1741950229; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gpotCte8H4PC7hGvjJ+k1ZIol1Rkv0hHrJYEaQxCJ6Y=;
-        b=GDFN9sxHD363h0Urtv9PLpBTtgf7BRQl2vIncmcWHLlxK8eqUyOxGe05qO9IxINKjt
-         fKW8v3woffxBulBMgHm3ZYBvHJOq0iIU8swYt2SOQdCrJQ44i2dSHboV9bYU5p4gQdnO
-         rhvAxgV1PXtMsKlvRCdyrN4tUDhwpzY3k/w3ucySdb57M9PvfxBJIpR/SmQe9RKjd0fl
-         H5Y7nuXsbkNJeSmnYF72GidDo8gilGTA8LkNWsGLm9X/M+8yFaM5Bof13kC3JLUUGt+5
-         O61qadkKEmUNszqrYMTUc0Z1gA5ofiG8+dxmyZOMh/W8NoSP4jb3sgXV3QkhmbiY63jS
-         rGlQ==
+        d=gmail.com; s=20230601; t=1741346251; x=1741951051; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9WDU/0AiPCuXExkzik2v+BtrRa6yZzdzICrZw+6l4Ag=;
+        b=J08eV7apyRp/7zr2li9x1dsc0j4wTXDGWQFhJd7rINalz6N+2/2fItP+fFU0wPRmQZ
+         AKe88xcpsI+tLHhjGQk8ox0+xjugYPasuvcdwZpc2sY7A7swk1UFXxtUhonEs/387T3O
+         vKqmpffJSWXll9A64odVCUReG0MYGRBHZCP3ghK7yGv4DwdDtG8c/dQ429QZYd5WPTH0
+         1vrF1p1I3uGcZximeDHlVHfuhug01nuWYMZhZaapaSPQKTaVAGX8cenZH1eiuZwWEkep
+         99s5SdWzA3+zRJJOoWaSo58pwyLNYlPDqHoX4uqgBCo83plWkxiASaD1aSOpxLGkyCSt
+         yvyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741345429; x=1741950229;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gpotCte8H4PC7hGvjJ+k1ZIol1Rkv0hHrJYEaQxCJ6Y=;
-        b=R8gYi9lDyM8H1HQ823GqbseR6l6Hyh4rsZHPjSHl51fZPxL0M64vwnrpJGq2QNxxPE
-         pYktV3wY8Zp4p0LjCl9XXwHIJw0JfFhwy2yR7OrfsQGqJbIJrS7MZPLpBiDIKLM3mojT
-         J7gsq1w09LaoGm+EhbTwKm9G+aRlhfQmiy1be5oRpFH6xyp/TAvqjlxI8yfSrXP3yxby
-         AqnmJgMOLcVYUHk5hRxg5XOI1SRlyvjkeVWZUjjXm4FMWmJG61R267dyoVY6V6iOGMh/
-         z3mcIjkIwY2YlhBUM948epXtk3Mr/0Z9QO8IiDLJ/ABsXHxFqTuVGF1g5N56WP7csAmW
-         GKfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWIPlWFQVqgMbXFRX5KRn6gA5YRcA+s4jY4UsLFZ+sneJEsGMr6cLB8g0lZko9QJy7wGeb0+u1S@vger.kernel.org, AJvYcCXc3RBJ+yFRbzzJ9dL5p/TcFRs8xQX9xHgiCipoOjgJe55CHP3lZcHBt1XM76uFalIbBDzBht9i8wXRCIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWfOmq0BHQxaOrOE60oXJnqGUbCTYfbUHyCPNdHXyS0vq0o5Sa
-	HOcd0XlXtbexcsODE8LZBRJhwKjl840b8+cCGD+NUxVNI5Sd2n4=
-X-Gm-Gg: ASbGncsRJ8008uB0uakB7lgq6xTQkyc1gP+eQy/YRKcZpht/YREDoLqkCNSeAVM6xbc
-	jF6G6XTBnS0hFgIDuhkXEt7D3MOIzSaNjsm9Xxtqg0g/OWOGQ1iLm1dtyYLND2iPDav58PzjQCz
-	yKFJt1wAAQRbQHifGdAtQ5IoPpMZsB0oYJqpWjorrB7TtYKPmNReyRaf5OIWUCblIU36rZ8emfo
-	U9JlfNbthJCPShJcqp5kKoOtArByx3gQDYhBHhfAVVMvZF2SF1wgEfDr7p2RBROD5O5KfsvZsZI
-	1N5A5mfxKLESQiXpLQYEZDV7bdU635RDAbaV36RS88SM
-X-Google-Smtp-Source: AGHT+IEHSVkCVjCtHLyZDimSRoBR6Awi60yFRDLb8q1oMuE9nsLyv1iPrBcITJfvZYX/8JUJYfxlww==
-X-Received: by 2002:a05:600c:524d:b0:439:84ba:5773 with SMTP id 5b1f17b1804b1-43c6871c50fmr21332895e9.31.1741345428437;
-        Fri, 07 Mar 2025 03:03:48 -0800 (PST)
-Received: from phoenix.rocket.internal ([2a12:26c0:2101:6702::14])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e4065sm5074863f8f.62.2025.03.07.03.03.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 03:03:48 -0800 (PST)
-From: Rui Salvaterra <rsalvaterra@gmail.com>
-To: muhammad.husaini.zulkifli@intel.com,
-	anthony.l.nguyen@intel.com,
-	przemyslaw.kitszel@intel.com
-Cc: edumazet@google.com,
-	kuba@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Rui Salvaterra <rsalvaterra@gmail.com>
-Subject: [PATCH] igc: enable HW VLAN insertion/stripping by default
-Date: Fri,  7 Mar 2025 11:02:39 +0000
-Message-ID: <20250307110339.13788-1-rsalvaterra@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1741346251; x=1741951051;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9WDU/0AiPCuXExkzik2v+BtrRa6yZzdzICrZw+6l4Ag=;
+        b=lXfpbVLX84suJkZ2jQDlhnMjonHcLZaUW7ESIx4LVFGs+9DWUC7WcNKEGrQlRCIObo
+         lWhL8V7xi2+BXMLZIc49tyqePmeWD+aDy5ZHHLNCs9JgYhZfiF+oeTq6c1eyb/vjm/ps
+         Sv5VJEH52ZjiCvBq0k1d5eTCFQeLRA/gdRoYy6w1HZi8E81ngzH2IgnDiTWKdASEQGzP
+         NIDZznQvG5mS/KQu2eXU9iQvpEriVYgqp9C0vlFQgXbszSmSEtIqIgwcgygTD/TJ18sq
+         rRqAj7Ns1GcXRRSA3+giHTZuQdvB50m+/fy7TnMCyuRIW7xvXOaqSjv0V0gy5X60Dgc7
+         SvWg==
+X-Forwarded-Encrypted: i=1; AJvYcCVV9XKJFTHIxsqq225Ta0S+mIR4QtcyFyZAlC9U8cmzAm9AsWohfPnAS8UXkmHKPyYjgqwTI1c2C+E=@vger.kernel.org, AJvYcCVbCVFE51irR2nJisNXwrfzGmOsVB0+JS1VdSmejykK+M89mtnN12ciofW/O8qSL3FVBpIFaY4m3liombjV@vger.kernel.org
+X-Gm-Message-State: AOJu0YybXBplsZj9DTfcZuqAQwWSFs/vAi2NHe3ayzjUcVKa/rOD6Zst
+	J37FnOxjwT4YTNkQZEUpN5Mn4N8UsVpC8VzflfBBoeFVQyG4847O
+X-Gm-Gg: ASbGnctalOWPnE/eNIwtVyLFPQsWJKcD/S3UAQj+J4LBSzXA6SKdi6SuVBVIA4l+nCX
+	w8jmsLvecteOA/V2G0JMWdkVMsGKk8xPAJnbdjLtWW4gEjgcJiY8BJRopjpoxp287XTVRZ3TWKf
+	ylvMpgM6g3vyuOwd0fbtw5bkQo1AJ1lXlmCz7d8p+uE2RDpVmV5MXSnRRqirwKSD4A3rFndaKHI
+	g4XHWHqpXcPmjOlfQ7Loj1eaB27Oc4jUpbB0bLL1y8v3XV2DdD2rUyMhzi2U2K7TOtgVjhPX1qb
+	XjN03ePJkPEyYSu+MHEd6jNFHWOnKz/HrSb3nlPU1Up1K2U9a7Lx0GaCYGSCGR4um4jNGAVlMYO
+	eEsl+CieO15A5Li4=
+X-Google-Smtp-Source: AGHT+IGLMqL97eIZaqRXzhmsR4cnq0XXC/PM8jbkeUNyeHsw1h0hQd26hi42sAz14nYj3gGZ9el5iQ==
+X-Received: by 2002:a05:6a00:3d52:b0:736:9f2e:1357 with SMTP id d2e1a72fcca58-736a97e4239mr4650047b3a.12.1741346251281;
+        Fri, 07 Mar 2025 03:17:31 -0800 (PST)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73698514f4dsm2971364b3a.124.2025.03.07.03.17.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Mar 2025 03:17:30 -0800 (PST)
+Message-ID: <e3637b13-1f51-445b-8d9d-bd53a691eca3@gmail.com>
+Date: Fri, 7 Mar 2025 19:57:54 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 1/2] cpumask: Fix kernel-doc formatting errors in
+ cpumask.h
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Vincent Guittot <vincent.guittot@linaro.org>, linux-doc@vger.kernel.org,
+ Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
+ Akira Yokosawa <akiyks@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Yury Norov <yury.norov@gmail.com>
+References: <cover.1741332579.git.viresh.kumar@linaro.org>
+ <f4ad81150eaa00b43c161f0d1f811f8ecfe21889.1741332579.git.viresh.kumar@linaro.org>
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <f4ad81150eaa00b43c161f0d1f811f8ecfe21889.1741332579.git.viresh.kumar@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-This is enabled by default in other Intel drivers I've checked (e1000, e1000e,
-iavf, igb and ice). Fixes an out-of-the-box performance issue when running
-OpenWrt on typical mini-PCs with igc-supported Ethernet controllers and 802.1Q
-VLAN configurations, as ethtool isn't part of the default packages and sane
-defaults are expected.
+Hi again, 
 
-In my specific case, with an Intel N100-based machine with four I226-V Ethernet
-controllers, my upload performance increased from under 30 Mb/s to the expected
-~1 Gb/s.
+Viresh Kumar wrote:
+> This fixes various kernel-doc formatting errors in cpumask.h:
+> 
+> - WARNING: Inline literal start-string without end-string.
+> - ERROR: Unexpected indentation.
+> - ERROR: Unknown target name: "gfp".
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+>  include/linux/cpumask.h | 65 +++++++++++++++++++++--------------------
+>  1 file changed, 34 insertions(+), 31 deletions(-)
+> 
 
-Signed-off-by: Rui Salvaterra <rsalvaterra@gmail.com>
----
+Didn't come up in your diff, but you need additional changes shown below:
 
-This patch cost me two afternoons of network debugging, last weekend. Is there
-any plausible reason why VLAN acceleration wasn't enabled by default for this
-driver, specifically?
-
- drivers/net/ethernet/intel/igc/igc_main.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-index 84307bb7313e..6fef763239bc 100644
---- a/drivers/net/ethernet/intel/igc/igc_main.c
-+++ b/drivers/net/ethernet/intel/igc/igc_main.c
-@@ -7049,6 +7049,9 @@ static int igc_probe(struct pci_dev *pdev,
- 	netdev->xdp_features = NETDEV_XDP_ACT_BASIC | NETDEV_XDP_ACT_REDIRECT |
- 			       NETDEV_XDP_ACT_XSK_ZEROCOPY;
+diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+index 656d2208467e..a6c1961cc535 100644
+--- a/include/linux/cpumask.h
++++ b/include/linux/cpumask.h
+@@ -285,10 +285,10 @@ unsigned int cpumask_next_and(int n, const struct cpumask *src1p,
+ }
  
-+	/* enable hardware VLAN insertion/stripping by default */
-+	netdev->features |= NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_CTAG_RX;
-+
- 	/* MTU range: 68 - 9216 */
- 	netdev->min_mtu = ETH_MIN_MTU;
- 	netdev->max_mtu = MAX_STD_JUMBO_FRAME_SIZE;
--- 
-2.48.1
+ /**
+- * cpumask_next_and_wrap - get the next cpu in *src1p & *src2p, starting from
+- *                        @n+1. If nothing found, wrap around and start from
++ * cpumask_next_and_wrap - get the next cpu in *@src1p & *@src2p, starting from
++ *                        @n+ 1. If nothing found, wrap around and start from
+  *                        the beginning
+- * @n: the cpu prior to the place to search (i.e. search starts from @n+1)
++ * @n: the cpu prior to the place to search (i.e. search starts from @n +1)
+  * @src1p: the first cpumask pointer
+  * @src2p: the second cpumask pointer
+  *
+@@ -306,9 +306,9 @@ unsigned int cpumask_next_and_wrap(int n, const struct cpumask *src1p,
+ }
+ 
+ /**
+- * cpumask_next_wrap - get the next cpu in *src, starting from @n+1. If nothing
++ * cpumask_next_wrap - get the next cpu in *@src, starting from @n +1. If nothing
+  *                    found, wrap around and start from the beginning
+- * @n: the cpu prior to the place to search (i.e. search starts from @n+1)
++ * @n: the cpu prior to the place to search (i.e. search starts from @n +1)
+  * @src: cpumask pointer
+  *
+  * Return: next set bit, wrapped if needed, or >= nr_cpu_ids if @src is empty.
+
+Feel free to squash into your 1/2.
+My R-b tag still stands.
+
+        Thanks, Akira
 
 
