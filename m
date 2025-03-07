@@ -1,136 +1,108 @@
-Return-Path: <linux-kernel+bounces-552095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4D1EA575B4
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:04:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5661A575B2
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:03:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A06B8189A4E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:04:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A55D3AA8BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:03:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 057ED259498;
-	Fri,  7 Mar 2025 23:03:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7699258CE9;
+	Fri,  7 Mar 2025 23:03:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WjhZsWV2"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kf17KF7c"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F1319006F;
-	Fri,  7 Mar 2025 23:03:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230DA1EBFE6
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 23:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741388628; cv=none; b=Kkj/D3rNrP0rWjDijtnrR0V4z/TejUYq+lFgSZy+MQl2YMwIRdA8jsWb/bppWMPeShgwIey1ZkBw3B8WeiXYUqyoez6nxLFl8Qrau7h1VGhQjc1Oh2apuXYqeR+BbJ5LgDHChQolthz9hYjWFbaNpKzJm5iZPhIUTNoQhCVleoA=
+	t=1741388628; cv=none; b=Fb4QVOoykQV43D2jbrf7ACej7QG3nN0j2ELmCAbbLQm4G5U9hzJHroFCwLSoBQ/nF2eFVvb6JFsSdhwxR3aGBQvthlieR/Z0hmF1+MkpYXv9y+7tlMhQ4/KDIEQhsPqDFuJ9FMSAdu5lRjbLLvjRiv7rWR6Vp652FJ2m+/n8rxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741388628; c=relaxed/simple;
-	bh=Cg7tzJF/cbegOUZRx8dSKGVw+mp1jDxyJ6VHBTQ9Zg4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RCqT/DIM99x5UvxMs34jQ5glf6mHjpCibe8knipdGOvdtRaAc1Q3GbVZA1nzlcDFofijIuKoWSZwvNWLHoHUitl3fDUo7sorXGTzbW3YEiHc6q1uB8LZiKJxYgkpicPqLdQeqxQ6IG6sWXWxaB5HzP+XbLKVjYmFt8nPKLWTfgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WjhZsWV2; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e6c082eac0so20967606d6.0;
-        Fri, 07 Mar 2025 15:03:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741388626; x=1741993426; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QTzXTB5/hI3k/tUV1QdjmWKVi1pI+jp0+a6jtCFIsMQ=;
-        b=WjhZsWV2y1HFWmAQCe1WmiOHFfcnHIaDDSzotFlZM0Yl/i82aw/Ih9uyMAYAt3CECN
-         es5OhClkCzuAC+gnqGD3XCuXj+D973TV5qLhz/8PmDFKGIRWIdV8n57A82l2ty/apc+C
-         ynXhsaAC8+UzQFXXqUi/kmeq97Eq8HBkty56sNOECT6CeegUTNUGfhuo+TIRRYe2KVKj
-         z3SrA+dZiEJ03XPycNIVtE5Otm30862MlazGdBHXD0eMdNRAChWdrmjuKgNZCh79of9V
-         xeju6ATIPjstGojf9NjTZSgpjpxLp7MJ2Cr2BuvEcIXe49aHjaCPEKSdBd08gF3SuBLH
-         x1tw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741388626; x=1741993426;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QTzXTB5/hI3k/tUV1QdjmWKVi1pI+jp0+a6jtCFIsMQ=;
-        b=UO/oyxN8Ztsf8LRffzZyJ1rBWYPf3N1h//G5exbonNyoaOWeYD1D4bwJHU3GFBiL0P
-         mX8sfg0j8iVt7Qsmr43wNjc+dmPTod1VdBMiTOiJbcYaWWRtkibCvi9YQ9R6/hyLg9e/
-         V/97cVMCNclxoEYTDsPgLUqJlFKeEgkXfQNaSS2N/PkiShUxc/R6P1Y2L/kOdFuikWxj
-         J9UsfD+1xa/7WQOgFJ/GYa0n96QsuBZ5MY9JlslUdvzHDzemJyy5Lp0Eeh4vi0+8Kar9
-         cxN88kcGsVGKN0QfvPN5EIfRWf3MrphhBm6j/Od9GR/VsbPI7src7NCxYE1OInNILLUF
-         HAYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUL6Y+clQBfCP2cUbwcL17QY9N8o7cNbbTSw5pLqiBr6RwoGYJSwlJhidv3fpBrwINNjoqJ3DMXxkw+Ug==@vger.kernel.org, AJvYcCVF28HNyzflLuFaL+Us1nak1IRAPR2tstVfLlMb3bdDwzjpG42JEdwXwaGyDHmk/A+BsLB8hi4fE91olvNo@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxLysVhPzE2+fymAUR4DV4cxlXe1/b/UkrsBNJy2wRWEO6faKs
-	ywiCqydT2Oa9wi2iquQx7aNqTryw8RMYJUHwXUeoV9sUDsy9KeKh+nau4XCa9sUiAp7HcFbxAkZ
-	s04IiaHTsfP81/Kzaj1llhw1PwII=
-X-Gm-Gg: ASbGncu8o1dRhC1qZtAKcWyUV/JmBYd6JZUiKOklSfwdYrRbI4oAOGCHwSfJs3f64PD
-	UCwzHXPWazSJ5J1BcyazBB8kD4Cl/1Hu3vMV0zG+Ij2S9xAn2Hj1gaxEUUNH9pZ5qEmgkhqJPp2
-	sXqCsdxmko/EzVfzJiAeYHmsKspymurtfe6gDf1zv3ng==
-X-Google-Smtp-Source: AGHT+IGuZ0NkG/KYo9Dv4g1oyD3XwK6X16DBM6QY/A6W3C/6eEhj7vqNq1AeDarxJvsQFObtM42FXnLLMg29Plyo2bk=
-X-Received: by 2002:a05:6214:2aa7:b0:6e8:9e9c:d20f with SMTP id
- 6a1803df08f44-6e900621afcmr58352476d6.21.1741388625281; Fri, 07 Mar 2025
- 15:03:45 -0800 (PST)
+	bh=eOeoPHHhOecDDOaLcxlv3LqvTCf2AZDIMmiBVHjkJ10=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lt29RcUAt5ZIbQq4pB8UIiFckvPjAJq1UIpg3qv0wWQsW8QUmkZ3WYAZ8fvRUMfd0+EuisiAEFMGpIsAHRNULkfTBCzUQ9hfkhuNy+kZBnImd4A4kmZZ0HDV7dBZeZW0Wfd/t2uDJuPX2xdoLZGSLxUeyFDwOE+BVUMcqB4DAj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kf17KF7c; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F571C4CEE5;
+	Fri,  7 Mar 2025 23:03:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741388627;
+	bh=eOeoPHHhOecDDOaLcxlv3LqvTCf2AZDIMmiBVHjkJ10=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kf17KF7cfebveOhha6ljUmsdmxK7riPcLcAxEbmN9dErUst1LwSQZWgBiMmFeUmJP
+	 Zrtca0saI2d2cDaZGu2P2SWBTLRRUgVPcUVk4UdTRzkenOLZje58+F6YUzWSdxiPxQ
+	 CwkklJ1axuRDVVIub/yL8tBy1gUOtftIrqUPRtO4lvkKqwPubwacLYhdEYKWynUQfs
+	 FGGpezoPDbtRKwKI1BU+5LHkXaylxs7l/1aLlbBVfTFcdRg6Fa+oWfsguaYoAryra8
+	 nPau4YIY0FfmhiYrsw/BXBtpRW9i48iYaBl1j4fTkia8URDOlExnumouV7gVpcrjAi
+	 Jr2PQ3ZMHbziA==
+Date: Sat, 8 Mar 2025 00:03:44 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Benjamin Segall <bsegall@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrey Vagin <avagin@openvz.org>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [patch V2 08/17] posix-timers: Rework timer removal
+Message-ID: <Z8t7UJUd9SLT0Ytj@pavilion.home>
+References: <20250302185753.311903554@linutronix.de>
+ <20250302193627.416552300@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307120141.1566673-1-qun-wei.lin@mediatek.com>
-In-Reply-To: <20250307120141.1566673-1-qun-wei.lin@mediatek.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Fri, 7 Mar 2025 15:03:34 -0800
-X-Gm-Features: AQ5f1Jr_FBnz9qk1uNlckq4_7pHKTqldI029tYPnmq326QX8Uckh0mZErYX0PQo
-Message-ID: <CAKEwX=NfKrisQL-DBcNxBwK2ErK-u=MSzHNpETcuWWNBh9s9Bg@mail.gmail.com>
-Subject: Re: [PATCH 0/2] Improve Zram by separating compression context from kswapd
-To: Qun-Wei Lin <qun-wei.lin@mediatek.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Minchan Kim <minchan@kernel.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chris Li <chrisl@kernel.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
-	Kairui Song <kasong@tencent.com>, Dan Schatzberg <schatzberg.dan@gmail.com>, 
-	Barry Song <baohua@kernel.org>, Al Viro <viro@zeniv.linux.org.uk>, 
-	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
-	nvdimm@lists.linux.dev, linux-mm@kvack.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Casper Li <casper.li@mediatek.com>, Chinwen Chang <chinwen.chang@mediatek.com>, 
-	Andrew Yang <andrew.yang@mediatek.com>, James Hsu <james.hsu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250302193627.416552300@linutronix.de>
 
-On Fri, Mar 7, 2025 at 4:02=E2=80=AFAM Qun-Wei Lin <qun-wei.lin@mediatek.co=
-m> wrote:
->
-> This patch series introduces a new mechanism called kcompressd to
-> improve the efficiency of memory reclaiming in the operating system. The
-> main goal is to separate the tasks of page scanning and page compression
-> into distinct processes or threads, thereby reducing the load on the
-> kswapd thread and enhancing overall system performance under high memory
-> pressure conditions.
+Le Sun, Mar 02, 2025 at 08:36:56PM +0100, Thomas Gleixner a écrit :
+> --- a/include/linux/posix-timers.h
+> +++ b/include/linux/posix-timers.h
+> @@ -240,6 +240,13 @@ static inline void posixtimer_sigqueue_p
+>  
+>  	posixtimer_putref(tmr);
+>  }
+> +
+> +static inline bool posixtimer_valid(const struct k_itimer *timer)
+> +{
+> +	unsigned long val = (unsigned long)timer->it_signal;
+> +
+> +	return !(val & 0x1UL);
+> +}
+>  #else  /* CONFIG_POSIX_TIMERS */
+>  static inline void posixtimer_sigqueue_getref(struct sigqueue *q) { }
+>  static inline void posixtimer_sigqueue_putref(struct sigqueue *q) { }
+> --- a/kernel/signal.c
+> +++ b/kernel/signal.c
+> @@ -2092,7 +2092,7 @@ static inline void posixtimer_sig_ignore
+>  	 * from a non-periodic timer, then just drop the reference
+>  	 * count. Otherwise queue it on the ignored list.
+>  	 */
+> -	if (tmr->it_signal && tmr->it_sig_periodic)
+> +	if (posixtimer_valid(tmr) && tmr->it_sig_periodic)
+>  		hlist_add_head(&tmr->ignored_list, &tsk->signal->ignored_posix_timers);
+>  	else
+>  		posixtimer_putref(tmr);
+> --- a/kernel/time/posix-timers.c
+> +++ b/kernel/time/posix-timers.c
+> @@ -279,7 +279,7 @@ static bool __posixtimer_deliver_signal(
+>  	 * since the signal was queued. In either case, don't rearm and
+>  	 * drop the signal.
+>  	 */
+> -	if (timr->it_signal_seq != timr->it_sigqueue_seq || WARN_ON_ONCE(!timr->it_signal))
+> +	if (timr->it_signal_seq != timr->it_sigqueue_seq || !posixtimer_valid(timr))
 
-Please excuse my ignorance, but from your cover letter I still don't
-quite get what is the problem here? And how would decouple compression
-and scanning help?
+Hmm, should it still warn here? ie: WARN_ON_ONCE(!posixtimer_valid(timr)) ?
 
->
-> Problem:
->  In the current system, the kswapd thread is responsible for both
->  scanning the LRU pages and compressing pages into the ZRAM. This
->  combined responsibility can lead to significant performance bottlenecks,
-
-What bottleneck are we talking about? Is one stage slower than the other?
-
->  especially under high memory pressure. The kswapd thread becomes a
->  single point of contention, causing delays in memory reclaiming and
->  overall system performance degradation.
->
-> Target:
->  The target of this invention is to improve the efficiency of memory
->  reclaiming. By separating the tasks of page scanning and page
->  compression into distinct processes or threads, the system can handle
->  memory pressure more effectively.
-
-I'm not a zram maintainer, so I'm definitely not trying to stop this
-patch. But whatever problem zram is facing will likely occur with
-zswap too, so I'd like to learn more :)
+Thanks.
 
