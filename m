@@ -1,130 +1,134 @@
-Return-Path: <linux-kernel+bounces-551363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ACD5A56B77
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:15:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE566A56B7A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:15:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78FF7174A53
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:15:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEFA41898B78
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41ACF22156B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6B8221576;
 	Fri,  7 Mar 2025 15:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uWjUvTN6"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1CYXnJT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5AFB221556
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:10:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1E8221565;
+	Fri,  7 Mar 2025 15:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741360248; cv=none; b=dX1j055ctBnsR2x5WK0hfavVsoprmNSmQ6kPth+bsvTz5wsbGw24PSJ8NvVeanaGMfgUq9htd2xGhXJAuD+MMxuJCOcdeVgz8p8eYPwRXVkna7Mx5fFU5VwErFE1LTwIofe6w0ucbL0O+ibvdZdTzqwjqXUXsC/I9pkgXXFTG8I=
+	t=1741360249; cv=none; b=mbiEnE5cZzAh2Kft+IPoVwYHfDO74zzBSSiuYkn5vDiu/J43AC37/4ofjrygsBNnVJaQ1hIlP5OeMnL3BXp8WITrysYboO3tIFvW2aqEtkr5ntAhTzMZWb4Arip9XJn6sr60NvWse2cXn8b1jwTKNUyKqWuexKjNFMzo4SEU3Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741360248; c=relaxed/simple;
-	bh=7vPM66wrqA8ItOal1m7QS909J6dZMJbGOzOQwE8gVyc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YjJ4gHwFEY8uQYEDv5h0tLGzKLl2oXsZ6C0JjMlnQpZHFTpKBjRCixf3X+SE/3695zC+0BbH+0CFwOAcK+1NQTm8Fbrj0o5AA90HbJI5CCD5wQW8hM9KLMw1jzZDbMO9bcKWSC88Ef+t3TlK74HiiAZgkKVG2KXq1+VdviiFqxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uWjUvTN6; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5fe8759153dso739018eaf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:10:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741360246; x=1741965046; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GaMH1NOSXXEyX+4I+PnYIXnBgRaLQ5ST8GTB4hff2uQ=;
-        b=uWjUvTN6EX4c+P6aUMdpQ43KsDrmqLeNu4sCncwPyem00Z1g+HI/xWEBkr4dFJdHpK
-         TNH0hXx0f3UoH43rXHSDalHKIXhUHAC3ENvuawUDmEus0ME5Xub6k9ZGTHGYrCIXPhrX
-         89wAD6qQsx0sS9L3mwOHeQg0PE0ZPNktI0SWmt9BZek3zMTGVFdUDs9V5PPKsPDP8Lt5
-         0Q3CtQlbPPa7a9N2dFgnArlZ/85+krAiwR6eFfidcqh8KJScz3g9hkivLPdwGkye3LTE
-         lYYnUm45dF+wNyEBujgUNWIXn8AjDMak/HwScGunaYFpyrOsRWcJN/VPoYycb2cZ2MlD
-         x27A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741360246; x=1741965046;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GaMH1NOSXXEyX+4I+PnYIXnBgRaLQ5ST8GTB4hff2uQ=;
-        b=KnDmuuQU+sZf5vm11VNaqXMZQAdt7Z2Vg706zVK9rjPFVpLo7lqXO2LWNJvDKa1paT
-         ROc6B2EEvRbDzKMFeByD1TWt4/oq/8OVypHHRzO7r4PweI+q8QiYN4P6dkFxuvAA11Xz
-         J2hjrX7g+9iyA/cuOl3EhapmvESU2uKZ1AjjdJifXXhHJD91rM2syPszR6cXcjStYreC
-         XyKzBVM03IHZ20kwHIKhbV+wHTCr6RbWGrA10Bc/L5hLvxTM8athvZO8QQZahvHBilIH
-         eT2G6byUTgbTjewUV2QwMld0Pu1yr6d+diajeiuCorpxcPCL4IgckWbYmHY/RcOqDOd9
-         7Ndg==
-X-Forwarded-Encrypted: i=1; AJvYcCXJvpS9aSH2O18XcYnWIedBg9bzkrrk8fl8N0n19DkYftH3BPN2ko6BO5KiT1P5iPWkihC6ZJl0rZnbZ30=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAZ/FDmxEBbYJViMWQhdzkFH6gMtK1p4yAteYE1LhTEFi6jwdQ
-	voEXOTKeQvEfxX2nZG0AZXkba5adKXBus4Vfwbo2hagWZucnp9FEgrrzAdwbKek4Qjr79KXrD+L
-	zVeZkG+GemD0lwITefPf2gN9S4hi7h1IGZ6dnUA==
-X-Gm-Gg: ASbGncsdOis3aozCZezaSDtSy/0c4b4TSyi5nQy9ek6Ig7VoAhoMXtl89IWcKGENEvS
-	vqwc20Xh+07kgQWb9TIwCjZy0y6bXEQ2/ClGfGvNxh8SGH5zrn69InsiJ/5/R73qlCPp29bQkqj
-	Dniby7+OYEymAvzaYjwvh0wukKFw0=
-X-Google-Smtp-Source: AGHT+IGmSI6uKhyqp0Lz6umulak1/qdCrknOZ1BwGtVXVr7Hw1ALnj7JKNyxJ8z0WKOu5JKZrR6BgmZGuCc1usZ1pxU=
-X-Received: by 2002:a4a:ec46:0:b0:5fc:f3b8:78c2 with SMTP id
- 006d021491bc7-6004aaf90aemr2063696eaf.3.1741360244995; Fri, 07 Mar 2025
- 07:10:44 -0800 (PST)
+	s=arc-20240116; t=1741360249; c=relaxed/simple;
+	bh=SorLb/yESkB+YPPgRtN1w+OBH2IdMbCLeWiut7PXYKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ud5+BJyKyidUSpjl7Oj6l0ftNi9xyyINFcLvJ1mObOoWodArDXFQP8CVwqTk4Wub5kpeodA/HtKAN4bZA2aLkaOISDb1lSpDOQOQ78C4/Xy0B76bCw4lL4rvZafVlGWhE/AVCVQzQ0/UwdaTIAQ0pvPFVS/gek6LEcv/ahtdAno=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a1CYXnJT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88462C4CEE8;
+	Fri,  7 Mar 2025 15:10:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741360248;
+	bh=SorLb/yESkB+YPPgRtN1w+OBH2IdMbCLeWiut7PXYKM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a1CYXnJTKwSwXIMQ3G2Mwntd3JYUwHmR3ZmMpv50tcbi5eq8HakiK+l6bahRrG9dP
+	 lMT9RM7+leU4jjQQsQxedvONkxhjbtnYLDPW0aRPh6FmUzmuvNZOVWulHufm9CvJnF
+	 VCq9XmmFtM2DjaSpKNKUOwYUqR+OOcsTtrAtn0AlypFs9z+D2OCV1Mnh7kiwcFrOcV
+	 k8t0I8M2exv60z83ufE/B8CneL0gRDWKc4HUDUomLnaptrBTJWpukJufYFe2mBMxvx
+	 Or42O7GUV0ZG3fkFLjeFq9IUVV+LC3thvfo0TmGeFRs7ASdVOmL5ZIm/ByEsBrtRNP
+	 7xD3POLJgwLmg==
+Date: Fri, 7 Mar 2025 12:10:42 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Andi Kleen <ak@linux.intel.com>
+Subject: Re: [RFC] perf tools: About encodings of legacy event names
+Message-ID: <Z8sMcta0zTWeOso4@x1>
+References: <Z7Z5kv75BMML2A1q@google.com>
+ <CAP-5=fVbti6efu6uA9a5os6xhnTuJ0egyesZsy0dmkiScwYFqQ@mail.gmail.com>
+ <Z7yJ0Vpub6JeQyYo@x1>
+ <80432f35-e865-4186-8b92-26b25279e150@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226220414.343659-1-peter.griffin@linaro.org>
- <20250226220414.343659-5-peter.griffin@linaro.org> <20250305024020.GC20133@sol.localdomain>
-In-Reply-To: <20250305024020.GC20133@sol.localdomain>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Fri, 7 Mar 2025 15:10:33 +0000
-X-Gm-Features: AQ5f1JrG484DP9qv6Qb4pGd14bkBMzxvaPSxEwh5c_p71wnvCQXfRvFkoiXZo_U
-Message-ID: <CADrjBPpju3MmZbNy1uaPzAWTWrmNHx0nT+03DmkM3p5qFEUHdA@mail.gmail.com>
-Subject: Re: [PATCH 4/6] scsi: ufs: exynos: Enable PRDT pre-fetching with UFSHCD_CAP_CRYPTO
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: alim.akhtar@samsung.com, James.Bottomley@hansenpartnership.com, 
-	martin.petersen@oracle.com, krzk@kernel.org, linux-scsi@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, willmcvicker@google.com, 
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org, bvanassche@acm.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <80432f35-e865-4186-8b92-26b25279e150@linaro.org>
 
-Hi Eric,
+On Fri, Mar 07, 2025 at 02:17:22PM +0000, James Clark wrote:
+> On 24/02/2025 3:01 pm, Arnaldo Carvalho de Melo wrote:
+> > On Wed, Feb 19, 2025 at 10:37:33PM -0800, Ian Rogers wrote:
+> > > I knew of this tech debt and separately RISC-V was also interested to
+> > > have sysfs/json be the priority so that the legacy to config encoding
+> > > could exist more in the perf tool than the PMU driver. I'm a SIG
+ 
+> > I saw them saying that supporting PERF_TYPE_HARDWARE counters was ok as
+> > they didn't want to break the perf tooling workflow, no?
+ 
+> Doesn't most of the discussion stem from this particular point? I also
+> understood it that way, that risc-v folks agreed it was better to support
+> these to make all existing software work, not just Perf.
 
-Thanks for your review feedback.
+That is my understanding, and I agree with them and with you.
+ 
+> Maybe one issue was calling them 'legacy' events in the first place, and I'm
+> not sure if there is complete consensus that these are legacy.
 
-On Wed, 5 Mar 2025 at 02:40, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Wed, Feb 26, 2025 at 10:04:12PM +0000, Peter Griffin wrote:
-> > PRDT_PREFETCH_ENABLE[31] bit should be set when desctype field of
-> > fmpsecurity0 register is type2 (double file encryption) or type3
-> > (file and disk excryption). Setting this bit enables PRDT
-> > pre-fetching on both TXPRDT and RXPRDT.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
->
-> I assume you mean that desctype 3 provides "support for file and disk
-> encryption"?
+I don't see them as "legacy".
 
-Yes, the PRDT_PREFETCH_ENABLE description in the commit message I
-copied from the datasheet. But I can re-word it like you suggest if
-you think that it's clearer? I notice now there is also a typo with
-the word 'encryption' which I can also fix.
+> Can't they continue be the short easy list of events likely to be common across
+> platforms?
 
-This patch came about whilst comparing UFS SFR register dumps of
-upstream and downstream drivers. I noticed that PRDT_PREFETCH_ENABLE
-is enabled downstream but not upstream, and after checking the
-datasheet description it seemed like we should set this if
-exynos_ufs_fmp_init() completed and set CFG_DESCTYPE_3.
+That is my understanding of the original intent, yes.
 
-> The driver does use desctype 3, but it only uses the "file
-> encryption".  So this confused me a bit.  (BTW, in FMP terminology, "file
-> encryption" seems to mean "use the key provided in the I/O request", and "disk
-> encryption" seems to mean "use some key the firmware provided somehow".  They
-> can be cascaded, and the intended use cases are clearly file and disk encryption
-> respectively, but they don't necessarily have to be used that way.)
+A first approximation, those who want to dig deeper, well, learn more
+about the architecture, learn about the extensive support for
+vendor/JSON events, sysfs ones, how to properly configure them taking
+advantage of the high level of flexibility both perf, the tool and perf
+the kernel subsystem allows them to be used, in groups, leader sampling,
+multiplexing or not, etc.
 
-Thanks for the additional context :)
+But lots of developers seem to be OK with just the default events or
+using those aliases for expected events across architectures, sometimes
+specifying :ppp as a hint that if there are more precise events in this
+architecture, please use them, for instance.
 
-Peter
+> If there is an issue with some of them being wrong in some places
+> we can move forward from that by making sure new platforms do it right,
+
+And adding special case for broken things when we know that some event
+named "cycles" shouldn't be used for sampling, for instance.
+
+> rather than changing the logic for everyone to fix that bug.
+
+Right. And again, if something doesn't work for a while in some
+architecture, its just a matter of specifying the name of the event in
+full form, with the PMU prefix, etc.
+ 
+> For the argument that Google prefers to use the sysfs events because of
+> these differences, I don't think there is anything preventing that kind of
+> use today?
+
+Indeed.
+
+> Or at least not for the main priority flip proposed, but maybe
+> there are some smaller adjacent bugs that can be fixed up separately.
+
+Yes, and work in this area is greatly appreciated.
+
+- Arnaldo
 
