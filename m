@@ -1,135 +1,116 @@
-Return-Path: <linux-kernel+bounces-550825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBE19A56493
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:04:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC92A56495
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:04:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3530188F2EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:04:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C5C31897DB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:04:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF13020D513;
-	Fri,  7 Mar 2025 10:04:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B2E1C84B5;
-	Fri,  7 Mar 2025 10:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF23920DD75;
+	Fri,  7 Mar 2025 10:04:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=pm.me header.i=@pm.me header.b="VaICkP4u"
+Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F43820E018
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 10:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741341850; cv=none; b=Ii0IgSnac1uyNyf8UkiXONOADUkj76S4wJS3mVpQ//NBr9690i0bX8JzixdwrQiqN7cv//f4d8s2gyFP/ExEWolQR/VptCzwK0GsC/s3MfW5+2mzjS7FTx9OFnjlliGYQ0RPuQxVDYwS6glLTgdvt+7B11wnITWRnZ0JBP3re54=
+	t=1741341862; cv=none; b=aTBWz6G7FlV+GPb+ZY4XHstX0cD/TA5TVZtMPHm6vqxjrgaSwWyGPBrARyDK4C1gt3lNJEKFtBVRDDmnr00ePoE3wIZFecYK8/JVQ4+iFJEj4EBNWuS1bH317hGaxpBkOqi/5rxRNW+9ACdRlQ6VRaFXNcWd57CmWKNKYJThw0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741341850; c=relaxed/simple;
-	bh=MixtkC6Vdu2RyKm+p1WrB24RizzWnzxsKFc9VRWYl1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TqyGQSX59ZUuPJVMRLs6/z1BaaYeD/4MvXAzN0lZBVIrMvyphq4i4sfCpyXlJkguBJg0/ugdEmjUJgqr6dz0ubGEMJKQis+6mD9Yh8mW9m8jWnFywpedLAE6cj8ezFAcvZR4Ue8q6QhGZ4vBG8Ri9jfJuJsTwLgjyKPHd8P5iQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C04F2150C;
-	Fri,  7 Mar 2025 02:04:20 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 123553F66E;
-	Fri,  7 Mar 2025 02:04:04 -0800 (PST)
-Date: Fri, 7 Mar 2025 10:04:02 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Jacky Bai <ping.bai@nxp.com>
-Cc: "rafael@kernel.org" <rafael@kernel.org>,
-	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"d-gole@ti.com" <d-gole@ti.com>,
-	"anup@brainfault.org" <anup@brainfault.org>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-	"palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"khilman@baylibre.com" <khilman@baylibre.com>,
-	"quic_tingweiz@quicinc.com" <quic_tingweiz@quicinc.com>,
-	"quic_yuanjiey@quicinc.com" <quic_yuanjiey@quicinc.com>
-Subject: Re: [PATCH v4] cpuidle: Init cpuidle only for present CPUs
-Message-ID: <Z8rEkgYoThJAJdPV@bogus>
-References: <20250307080303.2660506-1-ping.bai@nxp.com>
- <Z8rBYuDiIyo8y6HT@bogus>
- <AS8PR04MB86425B7CEE7443F822A2DBCA87D52@AS8PR04MB8642.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1741341862; c=relaxed/simple;
+	bh=90QTGs32AVSI2VPyezjC4MXe2zHbVhBn/KoTJEbuTnI=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=oKwnT4uyrXYpztZA9CctDctrkkI87sRzZpQgT/tTtTGMYvTbgGFbcaqC+ncvgesneNjb366nrDoHp3UnG89t34a1fo6Hou1JihCHB/6f7tV50J8IgkaDAFm0IURtrWShmImyiyhZMQtGknB+JkVh5Pl6kIHLKt8P1X1ygkWD7h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me; spf=pass smtp.mailfrom=pm.me; dkim=pass (2048-bit key) header.d=pm.me header.i=@pm.me header.b=VaICkP4u; arc=none smtp.client-ip=79.135.106.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pm.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pm.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pm.me;
+	s=protonmail3; t=1741341850; x=1741601050;
+	bh=/LuWRpfcUgT1jCP92H5hhq9N4YDUmLEzZnbmTQBxK+w=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector:
+	 List-Unsubscribe:List-Unsubscribe-Post;
+	b=VaICkP4udZ8d2Sv4S5DSlDK10fOVF8qm6Tp9HnuAolxjDE+7T6bsLGSVdbt9ja6U3
+	 dhAgBvhvdbHrvNgd82l5CeGyQz15+ejN4cobnYVBWJukYkgM9nAtKBookO3qRdgPT9
+	 LrvL9MeTMGV/kWE4i3a5i+UzpqHdQ21TYdkB3OwCdORtOkpV/n6oQJmEFjW4plDhuw
+	 zIxGyc4q2G4CZJFBg2DCPyjxeV1ttU2eIXjb9p/wqmSnGM44X8gBOTLBqUWO2peGZh
+	 Caa7aQ69eg5pIJXDK0kgIv2PiEvMHLqO2oXUo8rV94B11bK6kANX31Thd9VidISB5u
+	 8oqgsMCngqtTg==
+Date: Fri, 07 Mar 2025 10:04:04 +0000
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Asahi Lina <lina@asahilina.net>
+From: Oliver Mangold <oliver.mangold@pm.me>
+Cc: rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Oliver Mangold <oliver.mangold@pm.me>
+Subject: [PATCH v5 0/4] New trait OwnableRefCounted for ARef<->Owned conversion.
+Message-ID: <20250307-unique-ref-v5-0-bffeb633277e@pm.me>
+Feedback-ID: 31808448:user:proton
+X-Pm-Message-ID: aee66c4aa5d0a23295b7c21e27f221bccab1317b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AS8PR04MB86425B7CEE7443F822A2DBCA87D52@AS8PR04MB8642.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 07, 2025 at 10:02:14AM +0000, Jacky Bai wrote:
-> Hi Sudeep,
-> 
-> > Subject: Re: [PATCH v4] cpuidle: Init cpuidle only for present CPUs
-> > 
-> > On Fri, Mar 07, 2025 at 04:03:03PM +0800, Jacky Bai wrote:
-> > > for_each_possible_cpu() is currently used to initialize cpuidle in
-> > > below cpuidle drivers:
-> > >   drivers/cpuidle/cpuidle-arm.c
-> > >   drivers/cpuidle/cpuidle-big_little.c
-> > >   drivers/cpuidle/cpuidle-psci.c
-> > >   drivers/cpuidle/cpuidle-riscv-sbi.c
-> > >
-> > > However, in cpu_dev_register_generic(), for_each_present_cpu() is used
-> > > to register CPU devices which means the CPU devices are only
-> > > registered for present CPUs and not all possible CPUs.
-> > >
-> > > With nosmp or maxcpus=0, only the boot CPU is present, lead to the
-> > > failure:
-> > >
-> > >   |  Failed to register cpuidle device for cpu1
-> > >
-> > > Then rollback to cancel all CPUs' cpuidle registration.
-> > >
-> > > Change for_each_possible_cpu() to for_each_present_cpu() in the above
-> > > cpuidle drivers to ensure it only registers cpuidle devices for CPUs
-> > > that are actually present.
-> > >
-> > > Fixes: b0c69e1214bc ("drivers: base: Use present CPUs in
-> > > GENERIC_CPU_DEVICES")
-> > > Reviewed-by: Dhruva Gole <d-gole@ti.com>
-> > > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> > > Tested-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-> > > Signed-off-by: Jacky Bai <ping.bai@nxp.com>
-> > > ---
-> > >  - v4 changes:
-> > >   - add changes for other cpuidle driver that has the similar issue
-> > >     as cpuidle-pcsi driver.
-> > >
-> > >  - v3 changes:
-> > >   - improve the changelog as suggested by Sudeep
-> > > ---
-> > >  drivers/cpuidle/cpuidle-arm.c        | 8 ++++----
-> > >  drivers/cpuidle/cpuidle-big_little.c | 2 +-
-> > >  drivers/cpuidle/cpuidle-psci.c       | 4 ++--
-> > >  drivers/cpuidle/cpuidle-riscv-sbi.c  | 4 ++--
-> > 
-> > 
-> > Why have you spared drivers/cpuidle/cpuidle-qcom-spm.c ? IIUC the issue
-> > exists there as well.
-> > 
-> 
-> For qcom-spm driver, it has below code logic to handle no cpu device case, and
-> no rollback to cancel the whole cpuidle registration. So I just leave it as it is.
-> Do we need to update it?
-> 
-> for_each_possible_cpu(cpu) {
->         ret = spm_cpuidle_register(&pdev->dev, cpu);
+This allows to convert between ARef<T> and Owned<T> by
+implementing the new trait OwnedRefCounted.
 
-Did you look into this function ?
+This way we will have a shared/unique reference counting scheme
+for types with built-in refcounts in analogy to Arc/UniqueArc.
 
--- 
-Regards,
-Sudeep
+Signed-off-by: Oliver Mangold <oliver.mangold@pm.me>
+---
+Changes in v5:
+- Rebase the whole thing on top of the Ownable/Owned traits by Asahi Lina.
+- Rename AlwaysRefCounted to RefCounted and make AlwaysRefCounted a
+  marker trait instead to allow to obtain an ARef<T> from an &T,
+  which (as Alice pointed out) is unsound when combined with UniqueRef/Owne=
+d.
+- Change the Trait design and naming to implement this feature,
+  UniqueRef/UniqueRefCounted is dropped in favor of Ownable/Owned and
+  OwnableRefCounted is used to provide the functions to convert
+  between Owned and ARef.
+- Link to v4: https://lore.kernel.org/r/20250305-unique-ref-v4-1-a8fdef7b1c=
+2c@pm.me
+
+Changes in v4:
+- Just a minor change in naming by request from Andreas Hindborg,
+  try_shared_to_unique() -> try_from_shared(),
+  unique_to_shared() -> into_shared(),
+  which is more in line with standard Rust naming conventions.
+- Link to v3: https://lore.kernel.org/r/Z8Wuud2UQX6Yukyr@mango
+
+---
+Asahi Lina (1):
+      rust: types: Add Ownable/Owned types
+
+Oliver Mangold (3):
+      rust: make Owned::into_raw() and Owned::from_raw() public
+      rust: rename AlwaysRefCounted to RefCounted
+      rust: adding OwnableRefCounted and SimpleOwnableRefCounted
+
+ rust/kernel/block/mq/request.rs |  11 +-
+ rust/kernel/cred.rs             |   8 +-
+ rust/kernel/device.rs           |   8 +-
+ rust/kernel/fs/file.rs          |  10 +-
+ rust/kernel/pid_namespace.rs    |   8 +-
+ rust/kernel/task.rs             |   6 +-
+ rust/kernel/types.rs            | 422 ++++++++++++++++++++++++++++++++++++=
+++--
+ 7 files changed, 442 insertions(+), 31 deletions(-)
+---
+base-commit: 4b2ee22fe32ea9b255926effbb6f26450607c391
+change-id: 20250305-unique-ref-29fcd675f9e9
+
+Best regards,
+--=20
+Oliver Mangold <oliver.mangold@pm.me>
+
+
 
