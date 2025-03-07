@@ -1,116 +1,142 @@
-Return-Path: <linux-kernel+bounces-551281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18ABDA56A6E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:33:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C926A56AAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:41:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B27293AA7F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:33:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 078537A5D99
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB58021B8E0;
-	Fri,  7 Mar 2025 14:33:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E981E21C172;
+	Fri,  7 Mar 2025 14:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HNHn2sH4"
-Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
+	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="Z02gXctY"
+Received: from forward202b.mail.yandex.net (forward202b.mail.yandex.net [178.154.239.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59DE21ABB6
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:33:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76F11922EF
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741358002; cv=none; b=Lezo2vBZjWZlPkOx2ySbhil4188JI7gt5WqSCKq5Ep1mgcz3DIXMpZuaxtDZ4YX0ukxVTLBGWTF81VRHluEbF1Nmld6wl7QvOFcGTISyjSw7OAU/F4SGEXlSxVT3x8YZv8X5GiaRSomHqwwOlOjZcaywxuQeu/TMm1NKO/pWi9U=
+	t=1741358499; cv=none; b=VMGjWCqkpD1cB4bQ1a03/HN5Tu5ds42UQe2B/bMMxeDJ2n5aGB1sF1NislyXHAiQYJw1RPfYOOYDpYUo383oc8cdSupyJsjTQA5ILp/Xg4imL0alhe+E1oqU5shIjDBfQhFSdghjxZbIpBpPYMSWrpaZTeTmonnxY9Q1Lxshzmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741358002; c=relaxed/simple;
-	bh=Ah4V9gXkZcRUGClC4NNQfVikJonjsRQKb6mmES319Ls=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pMP4CWhyrkWKnezABM9cAfxxET1Au17yYgIFe0LDKxJbL9dTuLABDgs42T64M294MlCf75dZTD7SnBe6WNJAO8ACCPgCdFLLjx1R96PtCX+qJv2KoDtK1KtqD4BK0+9pFeArxqG9ujGr18TlXMDz1bYefKJwjUyWxdJUJZ9vYd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HNHn2sH4; arc=none smtp.client-ip=95.215.58.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 7 Mar 2025 09:33:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741357997;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pjl4DWZrTPv6Tr4FNOs316geaz13POhQ8HdzhOPafp4=;
-	b=HNHn2sH4TmKROiCNrlgy55VVMpv0UiAHVP0vg32Y3CS2ja80qLsGIH4VdDN9iDe/zIguTc
-	PEDWTMHpSa0EfPUotQQzJp1KT0hBG1F23NqBN26eVa4ivdYBAlrjOnyFq/yT/pKsIHdQce
-	E+3G/SgFM6ZbO42nj6arUVVkNFZe69A=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Hector Martin <marcan@marcan.st>, 
-	syzbot <syzbot+4364ec1693041cad20de@syzkaller.appspotmail.com>, broonie@kernel.org, joel.granados@kernel.org, kees@kernel.org, 
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] general protection fault in proc_sys_compare
-Message-ID: <a5avbx7c6pilz4bnp3iv7ivuxtth7udo6ypepemhumsxvuawrw@qa7kec5sxyhp>
-References: <67ca5dd0.050a0220.15b4b9.0076.GAE@google.com>
- <239cbc8a-9886-4ebc-865c-762bb807276c@marcan.st>
- <ph6whomevsnlsndjuewjxaxi6ngezbnlmv2hmutlygrdu37k3w@k57yfx76ptih>
- <20250307133126.GA8837@mit.edu>
+	s=arc-20240116; t=1741358499; c=relaxed/simple;
+	bh=9/YOTw+hwlAppabGdlW1lcCBKvn6z3aahdbUZH9TUDI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=HrMTkyJeNke1SI/PWeGb0scTAKTGv5RTQjJNYonRcg9TEV7yF73urld2EZECdkHRjWncaeEIj+A6nqVq6b2/szU6lZxVQZDSgu3huCTlSuvHFaxs/n/ITxa3XUx3BWJWqpuajVzPPoX5Kof8+sF/7CaDuM71Qi3cVvnpDTjzgJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=Z02gXctY; arc=none smtp.client-ip=178.154.239.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
+Received: from forward102b.mail.yandex.net (forward102b.mail.yandex.net [IPv6:2a02:6b8:c02:900:1:45:d181:d102])
+	by forward202b.mail.yandex.net (Yandex) with ESMTPS id AA1E564D5A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 17:35:16 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net [IPv6:2a02:6b8:c1e:3990:0:640:808c:0])
+	by forward102b.mail.yandex.net (Yandex) with ESMTPS id BFF3060D8C;
+	Fri,  7 Mar 2025 17:35:08 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 0ZnwD2MLoSw0-vZ61V53i;
+	Fri, 07 Mar 2025 17:35:08 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
+	t=1741358108; bh=8GeJNa6VgiFIh/C+Y/1mk9oen77NnBJDUbFFTfIyHuE=;
+	h=Message-Id:Date:In-Reply-To:Cc:Subject:References:To:From;
+	b=Z02gXctYbnuUHb0I7qaIZ4qtq9rEp9swVGI3+DiBUfZ+nlwb6jQr4EG36XSF1HEDz
+	 wOXNy+5hoD0bz0Az19LccEKlnjELGv4OxD7k0N7d3TlRI4CS6kWrlyKokOqD5OeFV0
+	 vPvGR75YFOrZhAI1wQneBAkF3H0NB5A0FyqSwBmE=
+Authentication-Results: mail-nwsmtp-smtp-production-main-91.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
+From: Andrey Tsygunka <aitsygunka@yandex.ru>
+To: markus.elfring@web.de
+Cc: aitsygunka@yandex.ru,
+	arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org,
+	lvc-project@linuxtesting.org
+Subject: [PATCH v2] misc: sram: Fix NULL pointer dereference in sram_probe
+Date: Fri,  7 Mar 2025 17:34:42 +0300
+Message-Id: <20250307143442.4125844-1-aitsygunka@yandex.ru>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <84969aba-67ba-4990-9065-6b55ce26ff92@web.de>
+References: <84969aba-67ba-4990-9065-6b55ce26ff92@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307133126.GA8837@mit.edu>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 07, 2025 at 08:31:26AM -0500, Theodore Ts'o wrote:
-> On Fri, Mar 07, 2025 at 06:51:23AM -0500, Kent Overstreet wrote:
-> > 
-> > Better bisection algorithm? Standand bisect does really badly when fed
-> > noisy data, but it wouldn't be hard to fix that: after N successive
-> > passes or fails, which is unlikely because bisect tests are coinflips,
-> > backtrack and gather more data in the part of the commit history where
-> > you don't have much.
-> 
-> My general approach when handling some test failure is to try running
-> the reproducer 5-10 times on the original commit where the failure was
-> detected, to see if the reproducer is reliable.  Once it's been
-> established whether the failure reproduces 100% of the time, or some
-> fraction of the time, say 25% of the time, then we can estalbish how
-> times we should try running the reproducer before we can conclude the
-> that a particular commit is "good" --- and the first time we detect a
-> failure, we can declare the commit is "bad", even if it happens on the
-> 2nd out of the 25 tries that we might need to run a test if it is
-> particularly flaky.
+Add a check for the return value from platform_get_resource() call
+to be NULL.
 
-That does sound like a nice trick. I think we'd probably want both
-approaches though, I've seen cases where a test starts out failing
-perhasp 5% of the time and then jumps up to 40% later on - some other
-behavioural change makes your race or what have you easier to hit.
+If the passed device-tree contains a node for sram-device
+without a specified '<reg>' property value, for example:
 
-Really what we're trying to do is determine the shape of an unknown
-function sampling; we hope it's just a single stepwise change
-but if not we need to keep gathering more data until we get a clear
-enough picture (and we need a way to present that data, too).
+    sram: sram@5c0000000 {
+        compatible = "nvidia,tegra186-sysram";
+    };
 
-> 
-> Maybe this is something Syzbot could implement?
+and the of_device_id[] '.data' element contains a sram_config*
+with '.map_only_reserved = true' property, we get the error:
 
-Wouldn't it be better to have it in 'git bisect'?
+Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.1.96 #1
+Hardware name: linux,dummy-virt (DT)
+Call trace:
+  sram_probe+0x134/0xd30
+  platform_probe+0x94/0x130
+  really_probe+0x124/0x580
+  __driver_probe_device+0xd0/0x1f0
+  driver_probe_device+0x50/0x1c0
+  __device_attach_driver+0x140/0x220
+  bus_for_each_drv+0xbc/0x130
+  __device_attach+0xec/0x2c0
+  device_initial_probe+0x24/0x40
+  bus_probe_device+0xd8/0xe0
+  device_add+0x67c/0xc80
+  of_device_add+0x58/0x80
+  of_platform_device_create_pdata+0xd0/0x1b0
+  of_platform_bus_create+0x27c/0x6f0
+  of_platform_populate+0xac/0x1d0
+  of_platform_default_populate_init+0x10c/0x130
+  do_one_initcall+0xdc/0x510
+  kernel_init_freeable+0x43c/0x4d8
+  kernel_init+0x2c/0x1e0
+  ret_from_fork+0x10/0x20
 
-> And if someone is familiar with the Go language, patches to implement
-> this in gce-xfstests's ltm server would be great!  It's something I've
-> wanted to do, but I haven't gotten around to implementing it yet so it
-> can be fully automated.  Right now, ltm's git branch watcher reruns
-> any failing test 5 times, so I get an idea of whether a failure is
-> flaky or not.  I'll then manually run a potentially flaky test 30
-> times, and based on how reliable or flaky the test failure happens to
-> be, I then tell gce-xfstests to do a bisect running each test N times,
-> without having it stop once the test fails.  It wasts a bit of test
-> resources, but since it doesn't block my personal time (results land
-> in my inbox when the bisect completes), it hasn't risen to the top of
-> my todo list.
+Fixes: 444b0111f3bc ("misc: sram: use devm_platform_ioremap_resource_wc()")
+Signed-off-by: Andrey Tsygunka <aitsygunka@yandex.ru>
+---
+v2: Description changed based on comments from Markus Elfring 
+at https://lore.kernel.org/linux-kernel/84969aba-67ba-4990-9065-6b55ce26ff92@web.de/,
+added tag 'Fixes', removed useless information from backtrace.
 
-If only we had interns and grad students for this sort of thing :)
+ drivers/misc/sram.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/misc/sram.c b/drivers/misc/sram.c
+index e5069882457e..c8ba8ebd4364 100644
+--- a/drivers/misc/sram.c
++++ b/drivers/misc/sram.c
+@@ -410,8 +410,13 @@ static int sram_probe(struct platform_device *pdev)
+ 	if (IS_ERR(clk))
+ 		return PTR_ERR(clk);
+ 
+-	ret = sram_reserve_regions(sram,
+-			platform_get_resource(pdev, IORESOURCE_MEM, 0));
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (unlikely(res == NULL)) {
++		dev_err(&pdev->dev, "invalid resource\n");
++		return -EINVAL;
++	}
++
++	ret = sram_reserve_regions(sram, res);
+ 	if (ret)
+ 		return ret;
+ 
+-- 
+2.25.1
+
 
