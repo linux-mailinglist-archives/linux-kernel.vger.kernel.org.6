@@ -1,75 +1,100 @@
-Return-Path: <linux-kernel+bounces-550232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C261A55CDB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:14:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F26A55CDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:14:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D592188495E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:14:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8409918870AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0146152196;
-	Fri,  7 Mar 2025 01:12:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86970193425;
+	Fri,  7 Mar 2025 01:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L4Oe3F8S"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BB9xEDfL"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428AB19048F
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 01:12:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71A381714B4;
+	Fri,  7 Mar 2025 01:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741309957; cv=none; b=rWBnPfE7R7GJKOgJeMOjwBCBrVL0TVuQ9ORbVnEfUKyobBZ/cI+9QaCSej7cReSPzx9hp1EmZI8qYXYWTceq14MN1kiA6RA4SBdfZDT6feEAyI18sCQ+ZMOv37Fsg6sEVmiB53tAhetNu0o0Bo9ZdgebGniLTSNH9bTxA/a7x64=
+	t=1741309959; cv=none; b=LhrxdztrcDj6YnFZNTnK0yQL7D4LHP4RdgzIR7np72WgARhnGPvwAAAv/ZBHK3ZUHz1I6fY0ea/B41a93Nuk5fEr+w2Dl+wP3ooPDJOTYN8if/O7Cj3a4cJKOoCuFFW3PWUmwY6sQCl3SCpcDvEw4kHK71SAPelOvo0LI/xNqQc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741309957; c=relaxed/simple;
-	bh=i4e1Wq5wULsJ+Sd1+XzXR5DjN2FAixSujA0TvULCFcg=;
+	s=arc-20240116; t=1741309959; c=relaxed/simple;
+	bh=BrW1aIZtHKo41y17LJzfr4co8/xIvNXDluaIYdF+m9Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LNxKqMfHwnhhHvU+tHY27Fbun+cBwKDrQzJB6vR+K+GFrXcpXD6nQagOVkwUreG0OW1enEVJlwAqZJVBO8YVgE0FXiW7QvWbwgUkMDrgnxsqyvRx/ySrph7l4U31vZgNw0dx3Yo8aZELZFGAjyOp0AoRf59e5YeFbuTm5NV2nho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L4Oe3F8S; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741309954;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6mdzK/WXp+Lm7i4d9GJMs+rpGzUg0HU1Yazr+QOg/6E=;
-	b=L4Oe3F8SQPK0+qWeLBKuwR7oRsuq8HHovKsNzsotNbcf5xfX3SCRmSgnykzpJVSQOIqWGv
-	1VdYKI6xI0Wu8EvNz3ItbXIfLJUe2Rblu1GY9v1lb8QV0qDaAx09wrAE5SQ3i71voxUl17
-	PXKJBBNuFv15HaKM0YGf6+4pr1Fmvpg=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-645-so212BznPymnaZOowrfQvw-1; Thu,
- 06 Mar 2025 20:12:31 -0500
-X-MC-Unique: so212BznPymnaZOowrfQvw-1
-X-Mimecast-MFC-AGG-ID: so212BznPymnaZOowrfQvw_1741309949
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 75608195608F;
-	Fri,  7 Mar 2025 01:12:29 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.22.58.19])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C35C7300019E;
-	Fri,  7 Mar 2025 01:12:25 +0000 (UTC)
-Date: Thu, 6 Mar 2025 20:12:23 -0500
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>,
-	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-	Linux Kernel Audit Mailing List <audit@vger.kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	Eric Paris <eparis@parisplace.org>, Steve Grubb <sgrubb@redhat.com>,
-	Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v1 1/2] audit: record fanotify event regardless of
- presence of rules
-Message-ID: <Z8pH97tbwt7OGj2o@madcap2.tricolour.ca>
-References: <cover.1741210251.git.rgb@redhat.com>
- <3c2679cb9df8a110e1e21b7f387b77ddfaacc289.1741210251.git.rgb@redhat.com>
- <aksoenimnsvk4jhxw663spln3pow5x6dys4lbtlfxqtwzwtvs4@yk5ef2tq26l2>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OUMrCkYes6Gn0qMbiy9UuI91/E745aKD96YDTtA8r5CLfX29rm9KkhZuvYGZKwMH/VvZsAecbGsG67rssT0A1EIaLJyPqb4jQ+x4BPtmz1rziTZnvkpGFVx/RbarDad0bEqPzNM/Xl6Rb1fcXtOHTpYRpaYBI5iOb3vm1Zc14EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BB9xEDfL; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7c0a159ded2so146387085a.0;
+        Thu, 06 Mar 2025 17:12:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741309957; x=1741914757; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RoTiwV/penO5v76PscVulf4a30dmwygkJIwyLi0333I=;
+        b=BB9xEDfLsz7IBfByN0/wI2YW/AxqXMQVZ2rSfeM1OHFLtkzChyrRv7KD0TKPpan9Xl
+         IArsxfHIux4EuzWNYRtYEng+hibttlykhKHZlmEotF1k3imGpi3BmvUVD5KVP820YylS
+         ey7JouVWaop1mfr4DAeJ7TGZ25/9ne2rjwhwRobF3fn0T6mvH4PzXD2RkORF+wpJOo3Z
+         0Ni5jKTcEOn4DPRda0AHshYgGGwx851INLYSf4DZ1DvV2vVdV1AmAAH9YDY+2w+qETt3
+         nyCNrVnezCBHDBaMqsz6jt92E6aMI1XXTRVWX9hiCkqjeOoLhWoUQjeTMDoz3hZ0NjJD
+         DHcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741309957; x=1741914757;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RoTiwV/penO5v76PscVulf4a30dmwygkJIwyLi0333I=;
+        b=eXUgIwGXh9yIZ7JhqvcOz//T7qgZf/I0FeaYKKqpNepv2NcoRxDJIrG4k8Hbkw1XZZ
+         FtCAaje55hA9WrzghYtxSDhkWPIp+wQ5Ho9UG8A4pElUcyA9aVfO23LivX3hrEzbNmv1
+         g5m3s/5ui/lH/i05p9W6dReYZOr7FZnmKFcN87VBLvJ5Rey/L9J2gncReepotUyKvI5M
+         Yr1pbKsBI4Mw46h0//tv7HeXsi1hD8E3/L0KvUtN5jYZUkz0QarsPa3ztf+AV1l6Bu3F
+         0/FkWxm01sTZLksV6EYzFX5JbOdnhdP0WKLZWoh7aZA8v25N+5RmydnAKk3s4COl/q5w
+         gkYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGeu5uBNrX6P0IuaH3/ehcoNViAnxJvNYKJs0vXozsazJ7T84OB3zx5HyzrdIOILp226MO4RRzI8G12Elk@vger.kernel.org, AJvYcCWyHwDS1UqiVtjKETTHGUUDsh8/TC7C4TJOh2JgLuRwrIWhqhiseNQFqIMepLUSRctclyd59TrcS7ij@vger.kernel.org, AJvYcCXAmZG0oPY6mzQdNxr4stbCfTQSxYbqhsOa+3hEKfehZNq//xKkyWB6IO4KBAeQiHOwJPWjDa1S@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv+dLIKBfQxAfN609DbkNL7P2ZAUsmvXBxhoSBx18q47dFCfFf
+	0/ud7iX3UbsBDJre7qk08UAvzQgy6diZf8j0bdJAz2+4lxlbFYXr
+X-Gm-Gg: ASbGncvF/Qifn3DUdapD7vrcub1gaw+rZhAE0ZSwqtGi2mLhnQsF0/zMJBp6PMc2JZS
+	QH+RLwq6jISYdTOMkqiaEVev5CKwvWFxST4MOgPVdeobZoanb/JJbPTYHWl2dPuFjg6JmTToJ43
+	1eUfJ0Nrb5N+Y4nTPGE2WwIxfQolV8MKuafC98q7hrw/fiaOKglNJ4iXkD5MJJBCJFEHNTWtbtj
+	Yf6Jn7USwvkJHv+zE8/zS1BJO82+YXP9KYwSrbsJfsRT6oCrbjfwr/go8e5OeA8rwhD7n+8UfgG
+	Vqo3pfzViF63tftRyYc+
+X-Google-Smtp-Source: AGHT+IFUBVq3F43PYm5XLqPTMM7AQh1lBI2X72APqLeXMYlSNYjEqY6EGkejol6T0++oyIAOjKb56g==
+X-Received: by 2002:a05:620a:6607:b0:7c0:ae2e:630d with SMTP id af79cd13be357-7c4e168299dmr213772785a.16.1741309957325;
+        Thu, 06 Mar 2025 17:12:37 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c3e54ffa6bsm163770985a.80.2025.03.06.17.12.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 17:12:35 -0800 (PST)
+Date: Fri, 7 Mar 2025 09:12:33 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Richard Cochran <richardcochran@gmail.com>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Romain Gantois <romain.gantois@bootlin.com>, 
+	Hariprasad Kelam <hkelam@marvell.com>, Jisheng Zhang <jszhang@kernel.org>, 
+	=?utf-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>, 
+	Simon Horman <horms@kernel.org>, Furong Xu <0x1207@gmail.com>, 
+	Lothar Rubusch <l.rubusch@gmail.com>, Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Giuseppe Cavallaro <peppe.cavallaro@st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sophgo@lists.linux.dev, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>, 
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH net-next v6 0/4] riscv: sophgo: Add ethernet support for
+ SG2044
+Message-ID: <ptq4ujomkffgpizhikejfjjbjcg44vyzw4pwbs7kureqqndy6e@alxgdc3qkm7q>
+References: <20250305063920.803601-1-inochiama@gmail.com>
+ <20250306165931.7ffefe3a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,67 +103,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aksoenimnsvk4jhxw663spln3pow5x6dys4lbtlfxqtwzwtvs4@yk5ef2tq26l2>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+In-Reply-To: <20250306165931.7ffefe3a@kernel.org>
 
-On 2025-03-06 16:06, Jan Kara wrote:
-> On Wed 05-03-25 16:33:19, Richard Guy Briggs wrote:
-> > When no audit rules are in place, fanotify event results are
-> > unconditionally dropped due to an explicit check for the existence of
-> > any audit rules.  Given this is a report from another security
-> > sub-system, allow it to be recorded regardless of the existence of any
-> > audit rules.
-> > 
-> > To test, install and run the fapolicyd daemon with default config.  Then
-> > as an unprivileged user, create and run a very simple binary that should
-> > be denied.  Then check for an event with
-> > 	ausearch -m FANOTIFY -ts recent
-> > 
-> > Link: https://issues.redhat.com/browse/RHEL-1367
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+On Thu, Mar 06, 2025 at 04:59:31PM -0800, Jakub Kicinski wrote:
+> On Wed,  5 Mar 2025 14:39:12 +0800 Inochi Amaoto wrote:
+> > The ethernet controller of SG2044 is Synopsys DesignWare IP with
+> > custom clock. Add glue layer for it.
 > 
-> I don't know enough about security modules to tell whether this is what
-> admins want or not so that's up to you but:
-> 
-> > -static inline void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar)
-> > -{
-> > -	if (!audit_dummy_context())
-> > -		__audit_fanotify(response, friar);
-> > -}
-> > -
-> 
-> I think this is going to break compilation with !CONFIG_AUDITSYSCALL &&
-> CONFIG_FANOTIFY?
-
-Why would that break it?  The part of the patch you (prematurely)
-deleted takes care of that.
-
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index 0050ef288ab3..d0c6f23503a1 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -418,7 +418,7 @@ extern void __audit_log_capset(const struct cred *new, const struct cred *old);
- extern void __audit_mmap_fd(int fd, int flags);
- extern void __audit_openat2_how(struct open_how *how);
- extern void __audit_log_kern_module(char *name);
--extern void __audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar);
-+extern void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar);
- extern void __audit_tk_injoffset(struct timespec64 offset);
- extern void __audit_ntp_log(const struct audit_ntp_data *ad);
- extern void __audit_log_nfcfg(const char *name, u8 af, unsigned int nentries,
-
-> 								Honza
+> Looks like we have a conflict on the binding, could you rebase
+> against latest net-next/main and repost?
 > -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+> pw-bot: cr
 
-- RGB
+Yeah, I see a auto merge when cherry-pick here. I will send a
+new version for it.
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-Upstream IRC: SunRaycer
-Voice: +1.613.860 2354 SMS: +1.613.518.6570
-
+Regards,
+Inochi
 
