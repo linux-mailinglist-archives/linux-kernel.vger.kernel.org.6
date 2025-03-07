@@ -1,169 +1,149 @@
-Return-Path: <linux-kernel+bounces-551678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3BCBA56F6F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:44:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CE32A56F6E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:44:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D9083B7F7C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:43:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40B8E178681
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD30241663;
-	Fri,  7 Mar 2025 17:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C272C2417F9;
+	Fri,  7 Mar 2025 17:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B7NE4oXp"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kn4uxx+8"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1050D2405F2
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 17:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775DB241114;
+	Fri,  7 Mar 2025 17:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741369329; cv=none; b=jOk7prJX2n/ZNIF/kziqHnQl+S4cfNHn8ImhWKepZQ8pTb1heLJQCSzto+TK5r0lq6qI02UmYZpB2PxT1lpql0eZyu6W3KK7WFzjtLT8KcXZ+jWgoyEqGjSZ9OFhTi+CGKH+Z/5mFmdhSpOvWLax2FxZUpQQoR2JJND3rQtKkc0=
+	t=1741369398; cv=none; b=FeODeu2Jx5An6d21/vhozXvFAVHEpuNt5uSWHcMguJ+AKOsZ+tKC/ALJ5vQ1p1rJCUE1JRs4abgpZlZGM2rasI/ievCAX5bhJFkPkpsnRuqleBMtRj2QG2exOXvb9Uf2Y1yAVtvLjRRHZau2ITQ2aYZ3ouPwVeIsVhSb+ThOLSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741369329; c=relaxed/simple;
-	bh=KQS1zGojMtlyo5Lhl62aadLOweiXB7BrdSEtxARRf9A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jW2y1DhVN52FxC3QuQI5tGuj+JkMGjoCK/saKyx1QkIO18xv/ydHIq3xhhyEbTjnMsghbkGEIyh8w2RMfnuF89dMI+C4j3enrwitR+ul1KygW1kKLgP5z03WPiUjGwMylBIyiuncukP6s22A/8z/hYtzAo9m5P2REP7XRbkZdGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B7NE4oXp; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac25520a289so172189166b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 09:42:07 -0800 (PST)
+	s=arc-20240116; t=1741369398; c=relaxed/simple;
+	bh=Lw1nmb2v0Yj3bxOV+QZJBEEVt/+s6xuWrvoi0UoUrXM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LY9GrkJE+FGX/2u+FAYPuX93WxuT3TPdkUsaQ9C8zPHx5zF6DOBXfNFjymcYtleDPFLfZoMLw+NRPQxi8uY6zF2zHvU+JZ/TD2ZF7B3lfNcrNAP9pUjIOl7BG2f1qInL2hA3oZdSipwPFZ5xIlV8K2tD3mxnHrTyLiYpYQmm43c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kn4uxx+8; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-307325f2436so20985631fa.0;
+        Fri, 07 Mar 2025 09:43:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741369326; x=1741974126; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=87LLRJ6QEN8pKjPcs70n3/W5zmSE0p6Cob9Wz2RQEBw=;
-        b=B7NE4oXpj/yoUiPs8+YVU3eJC1OWK6bnx3B86Ir77M//PbPqFjZzrmt8x2qXdG7BM2
-         fk/BLrKx8iczf5n+P0h8YrvzaPdL5ALMOUBCux6wdPZJGunBrS6c2a/ZeQRGWqh3yQx7
-         nCkvDHx/tGJ0fD+MQsmPaMXP4mh/D90JorgBdtRgVnN0zz3TtzVZ5BRN8yzd2JCVcdpb
-         PoKPSsPigrf6IjbCKyueT5UKmd7053NXuNw98/tzTVwzm3YBtw5HKJIXFtgeZusKXbnl
-         ls2lm0akhpGQhz/vEN2e8OFYSFBaP7vGsEhLGOPF6GStT2N2I3Qu03oyO2JJfLSlavGO
-         0dvg==
+        d=gmail.com; s=20230601; t=1741369394; x=1741974194; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xpmu3Gvgb/KEU4Sda/9nJtOsIbbAseer/tFW7MRAm30=;
+        b=kn4uxx+84EQrkr/KR5bEZw8T+d9RBZSQZZzRMuC4fx/HeiWyCy2naCmVlOzugal3vf
+         n70WkQCOF5pN3iVIhIyaLKJcQ4TqytqkJftDswhjDyAjnq7uyG0pL7gJo8Zs20Hl2jt1
+         /WW4u5kM4ZqGmAppK6Ev09D3E+bZW8JH4TlAiFB5K0nOiXFJrO72h+RqnQVnAeUtEesI
+         4CxIKpM3U1QdC0CXUqqzPdPIMPLUB/LUkLnbyPvoMu00U92BlMdHndMDBXUwD+n1wKkR
+         wBIxV0i7gr1Y389z2J9MgAyZBDjR7h6HNGdNUjq6EOBd7gXZV6GlubK0ZDYOiQZzHKhF
+         1y+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741369326; x=1741974126;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=87LLRJ6QEN8pKjPcs70n3/W5zmSE0p6Cob9Wz2RQEBw=;
-        b=mx7ICXrwtkf2YYaXDznnVcc/w+IdfBGisEe4A4p9SZhaqsZbtn93vQ2DixXDRIIiHC
-         VyZVKehcRpHsVaqSD8NYOguI3Xt4AurfxGN3QBJU3FxZRTc81TJQlEYEY7NNQ1HDHsLs
-         Y01oSzJvLs7i5EijPNnXbRo3Rs9O2MAkM7wubNzJhmbpEVWTunN8p8hmMgurLdetMLVc
-         VjBt84Lg8U8GViLVylx7eopKJW2Iy7CSd63nucSIat0aMJkZUR3oAfwHL/8ZgQB5118p
-         AHJpA4XLCwZlyFNbJaljtR+4TuMwkARG8n4By3BwCgeSMQTybhlO1wD7gUmBc5nFEcBz
-         C1dA==
-X-Gm-Message-State: AOJu0YwssPt7x8NxpyizMrob7IoNqT706qeQp37sUX/4lUKJz3bsp3xJ
-	ZupjEHw48jy04E3whVL705VspPHB9kbKRmZzTN+y5oQr5JiLGSAQG78uLNW4Q8I=
-X-Gm-Gg: ASbGncuA2DGCl7OIW5elSE5hETHvPrDou+xQEIc3q0nowPPLFAfMgHGo2Xpymlbbg1j
-	SsEHGRek67pKT2LY/3imbNcpakFs7IISrXV0tfdRVjHNusIgxxJFdSSPydAc+xkz9lcev+ayuaA
-	Zx7+0cHE3c/WYtoQChGDDshQCw5HxcsXapRKHFsUBN/xpc0VMYuotBfmcnMSykKOpZ3heljzvRG
-	GrqjIqEN43kpw945IuxNk5yYfdh5fvF0E/xSjFpdL1P07dxIF4lymHiUSYibWgG8yJbEOqOFPxE
-	M8sWmeoRgamjezgnEOC0z25ElQy6knaEmW9cD+9lJ0jf9vKAhM2D2NMHcFFZ/Fk=
-X-Google-Smtp-Source: AGHT+IGf62tDN8mXFcenEaMR6BHaYRH620Q4sbEACg4krU437G/4p/+4UlaCgrWyCIlJS29OT9t8kA==
-X-Received: by 2002:a17:906:d552:b0:ac1:ea29:4e63 with SMTP id a640c23a62f3a-ac252a866b6mr423637566b.26.1741369326129;
-        Fri, 07 Mar 2025 09:42:06 -0800 (PST)
-Received: from [192.168.68.113] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-ac23973a733sm304374366b.112.2025.03.07.09.42.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 09:42:05 -0800 (PST)
-Message-ID: <1167c489-92cb-440e-a2c0-4f47190de5ac@linaro.org>
-Date: Fri, 7 Mar 2025 17:42:05 +0000
+        d=1e100.net; s=20230601; t=1741369394; x=1741974194;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xpmu3Gvgb/KEU4Sda/9nJtOsIbbAseer/tFW7MRAm30=;
+        b=aWxByVppdc51Ve/Xt1iIljG9iFTN8yG0MW8iBv+xMVhYaI7o7GpwUi9pGxu97qcDbs
+         hcTh/gxBAY8JgA3RtfVzzrhNP2b52cRvfeRg2m2UTvIx2zUy78p/IGWvBjrtiGdH6oFl
+         lFPLOQV6Fa7sWKcmjUVHnq9zU0Io6I1flHV+8ws9pI6NSuE6DDrfnIaCDhlzDnFBmDPt
+         bJamWtpJf04JyAlMRH198JyGhlfjRbv76zJY/f8n8jkSWiQzigrghh0Ejm5iVCGcDoWn
+         Fj9PNtAq1QfHWYWhoc9AZ+RQyFRz7OBhHGLG8MtFa/3LPSKxIXvAY4bdHzSn5Ua88bp9
+         pgSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeon+w1GcLHSCzNdSlg6GJaT0YYYTdBWuu0bTILEYOzYX6b9zNCNBUiRweMmBZc0jedHkoMnBfRJAlT8TjbmhL@vger.kernel.org, AJvYcCUoZNh1/GyhIostk2ITA0LoBwlKUm0pqtqaDMyYfKDb8RXQj35I3mvt0Iwm2EIAp+9cVtLj/sH3t7wjSVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCNw+kYX8w+wMWzkYsdMMlAM0IMEhwbGQYGmf8kxwwstEQciaT
+	6yePOXaAP+ZD7CU0z+S09QTlv8ldE7OanIRhtuSdsruy/WjrcPMIbJdKnEMNY4pULn5Vwvf0Eb6
+	c8ebAeoC2Z9ZnP6x9PhO25fcMdJU=
+X-Gm-Gg: ASbGnctsfT4dw/w+DVdrO86KvveYJFsYXZrpl8IhI9nh6FHbSoakbcn86VU4jyG8acs
+	vgM1XRlDqJZdrKXaFBJC4xGD1Z5BA9KK3ja3Y2kEtGOT0ai7sbp41XCG3ViypP6rCpJRPYvMbAa
+	LfxKfIhnzE2du4PNGYNYqmNvNZ6ec5Nv6+Grt79deX/KNp9dh4690Zt5ytJbUv
+X-Google-Smtp-Source: AGHT+IGNE+s/WfCFPmFb4azPDrp6Ep6m4DzvtThcdQnGQ8oYJv4In1m3Li/HSQtD0h1GwQ0dx6rOpSPlli/LEIWCFUk=
+X-Received: by 2002:a05:651c:19a4:b0:30b:abe6:4bb0 with SMTP id
+ 38308e7fff4ca-30bf451abf5mr17878641fa.13.1741369394123; Fri, 07 Mar 2025
+ 09:43:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] nvmem: core: add nvmem_cell_size()
-To: Jennifer Berringer <jberring@redhat.com>,
- Sebastian Reichel <sre@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20250228180326.256058-1-jberring@redhat.com>
- <20250228180326.256058-2-jberring@redhat.com>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <20250228180326.256058-2-jberring@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250307-scanf-kunit-convert-v9-0-b98820fa39ff@gmail.com>
+ <20250307-scanf-kunit-convert-v9-5-b98820fa39ff@gmail.com>
+ <Z8suJdZsLYPYF34t@smile.fi.intel.com> <Z8svbdT779qxfXuk@smile.fi.intel.com>
+In-Reply-To: <Z8svbdT779qxfXuk@smile.fi.intel.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Fri, 7 Mar 2025 12:42:35 -0500
+X-Gm-Features: AQ5f1Jp7RU2gmPYms0G_AXDCTB9f6fphgxlud1fG4O9DYc1x04owURciYIdEq5s
+Message-ID: <CAJ-ks9=QPkYX1HN6g1g=_F+a2B5+NHyE-ybtVaveK4JvtgFhVQ@mail.gmail.com>
+Subject: Re: [PATCH v9 5/6] scanf: tidy header `#include`s
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: David Gow <davidgow@google.com>, Petr Mladek <pmladek@suse.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <shuah@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jennifer,
+On Fri, Mar 7, 2025 at 12:40=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Fri, Mar 07, 2025 at 07:34:29PM +0200, Andy Shevchenko wrote:
+> > On Fri, Mar 07, 2025 at 06:27:38AM -0500, Tamir Duberstein wrote:
+>
+> ...
+>
+> > >  #include <kunit/test.h>
+> >
+> > + array_size.h
+> >
+> > >  #include <linux/bitops.h>
+>
+> > + bug.h // BUILD_BUG_ON()
+>
+> Actually if it's only BUILD_BUG_ON(), then we better use build_bug.h.
+>
+> > + errno.h // actually asm/errno.h, but in C code the linux/* will suffi=
+ce
+> >
+> > > -#include <linux/kernel.h>
+> >
+> > This was used like a "proxy" header to a lot, see around.
+> >
+> > >  #include <linux/module.h>
+> > >  #include <linux/overflow.h>
+> > >  #include <linux/prandom.h>
+> > >  #include <linux/slab.h>
+> > > -#include <linux/string.h>
+> > > +#include <linux/sprintf.h>
+> >
+> > + types.h // u32, __scanf, ...
+>
+> ...
+>
+> > Note,the above I made based on the context of your changes, I haven't c=
+hecked
+> > the resulting file in full, please do it yourself.
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
-On 28/02/2025 18:03, Jennifer Berringer wrote:
-> This function allows nvmem consumers to know the size of an nvmem cell
-> before calling nvmem_cell_write() or nvmem_cell_read(), which is helpful
-> for drivers that may need to handle devices with different cell sizes.
-> 
-> Signed-off-by: Jennifer Berringer <jberring@redhat.com>
-> ---
->   drivers/nvmem/core.c           | 18 ++++++++++++++++++
->   include/linux/nvmem-consumer.h |  6 ++++++
->   2 files changed, 24 insertions(+)
-> 
-> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-> index d6494dfc20a7..4d0cbd20da48 100644
-> --- a/drivers/nvmem/core.c
-> +++ b/drivers/nvmem/core.c
-> @@ -1624,6 +1624,24 @@ void nvmem_cell_put(struct nvmem_cell *cell)
->   }
->   EXPORT_SYMBOL_GPL(nvmem_cell_put);
->   
-> +/**
-> + * nvmem_cell_size() - Get nvmem cell size in bytes.
-> + *
-> + * @cell: nvmem cell.
-> + *
-> + * Return: size of the nvmem cell.
-> + */
-> +size_t nvmem_cell_size(struct nvmem_cell *cell)
-> +{
-> +	struct nvmem_cell_entry *entry = cell->entry;
-> +
-> +	if (!entry)
-> +		return 0;
-> +
-> +	return entry->bytes;
-> +}
-> +EXPORT_SYMBOL_GPL(nvmem_cell_size);
-> +
+If it's easier to take this series without this patch, please do so --
+my tools aren't giving me any help with IWYU and I'm not familiar
+enough with the kernel to do a thorough manual job. As this is not
+core to the goals of this series, I'd prefer not to hold it up over
+it.
 
-There is a similar patch on the list, could you take a look and see if 
-that is usable in power reset driver.
+Thanks.
 
-https://lore.kernel.org/lkml/20250306093900.2199442-3-o.rempel@pengutronix.de/T/#m97bbb1870d7140661894a4e806a695e563588524
-
-
-
---srini
->   static void nvmem_shift_read_buffer_in_place(struct nvmem_cell_entry *cell, void *buf)
->   {
->   	u8 *p, *b;
-> diff --git a/include/linux/nvmem-consumer.h b/include/linux/nvmem-consumer.h
-> index 34c0e58dfa26..a2020527d2d3 100644
-> --- a/include/linux/nvmem-consumer.h
-> +++ b/include/linux/nvmem-consumer.h
-> @@ -54,6 +54,7 @@ struct nvmem_cell *nvmem_cell_get(struct device *dev, const char *id);
->   struct nvmem_cell *devm_nvmem_cell_get(struct device *dev, const char *id);
->   void nvmem_cell_put(struct nvmem_cell *cell);
->   void devm_nvmem_cell_put(struct device *dev, struct nvmem_cell *cell);
-> +size_t nvmem_cell_size(struct nvmem_cell *cell);
->   void *nvmem_cell_read(struct nvmem_cell *cell, size_t *len);
->   int nvmem_cell_write(struct nvmem_cell *cell, void *buf, size_t len);
->   int nvmem_cell_read_u8(struct device *dev, const char *cell_id, u8 *val);
-> @@ -117,6 +118,11 @@ static inline void nvmem_cell_put(struct nvmem_cell *cell)
->   {
->   }
->   
-> +static inline size_t nvmem_cell_size(struct nvmem_cell *cell)
-> +{
-> +	return 0;
-> +}
-> +
->   static inline void *nvmem_cell_read(struct nvmem_cell *cell, size_t *len)
->   {
->   	return ERR_PTR(-EOPNOTSUPP);
+Tamir
 
