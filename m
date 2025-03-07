@@ -1,95 +1,65 @@
-Return-Path: <linux-kernel+bounces-552155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 947CFA5764E
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:40:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C6BAA57651
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:41:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 924E23AE170
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:40:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F9B01889E90
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9776F212B3C;
-	Fri,  7 Mar 2025 23:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F0B212B3E;
+	Fri,  7 Mar 2025 23:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4vwXPcN9"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Udfo0dUo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 577AA20F063
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 23:40:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30191DC99A;
+	Fri,  7 Mar 2025 23:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741390803; cv=none; b=UYzOGrQYiHGuldu6n/WcAEnjUqEkeuplj6nfjfhCkLg5kIutVMl8QjN/Qrmtl+qGe/YrJIsVwd7CUAdBdURbOkTZqWAld5OhVPYpv0Mt/JROP76uhWJRKP/3ysqcl8rso/xH1gtFGbKi4GK90xPOM0MBsGBZ4LGoP+a17YkS9PE=
+	t=1741390893; cv=none; b=EGA+mnxnRiAuhvqzrcZjJzuMpqPKz4FXVUW59ZQlaM4dZhmN5zx16eVYBbjFmVTn43+HaTwON+/gsxUJXI7BtHXJBcP3mjiBM+GU5C7YxXlBKa4KnPYRYblw9Ocay8uJ2vhzsfJADTIJE+awxh4sdZB1hGn578bRtXfiBR0+z0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741390803; c=relaxed/simple;
-	bh=w436wgjGcjzJ3dyS3A6//n+WNelqPnxFh6A/g8MJI18=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ap8FXnTWTuTPHHV18xtivMEoGNjSjNMK5Jxdd1h+cjBdxmGNUijTraJHs4/bXh6/z0L5VpJIVn/C5qwAjnbN5FVo2jua5XbHsSWFTDhk7qs15897q7Fvg/KzIGJsh/i4XgCLu/rXSyayy9sQNf2W2bZkKwzgB0FtU6q4K9qIiq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4vwXPcN9; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-85af81a1febso74628739f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 15:40:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741390800; x=1741995600; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jDc72lD8Mhnu3NfUsPcD1oy818yB1nERuThSEkGUHkw=;
-        b=4vwXPcN9EGBJ8ArVBWRV4hhuiBxfqvIWxYMwiZbdrqCsMPfdc5jLTlnroiaktJRLbm
-         LTglMy81pePPJdHIi6qUoTDil3fjiSrhxYyDzkhnXFI8V0m8Zc7Br5HQJo2ASz0+8ZIM
-         yaD3t/44crfxvTVhTdlycs1+v1A0W2VIkIvEXoFyHWbejQ37hsCOVtSNQ6TqScOa+C0s
-         LK7ztbCcQnFMyTifJQdOFzoyjrwdOq1iIvZiVSv/tiTE4vMhUwC2blVrh14fiQyIVsfy
-         aRwx8/pM4W3SGR/L1T9smglthFDByAXMQSf+jELc49CjcWOljOlS+uQzHEkKery5Edih
-         ioWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741390800; x=1741995600;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jDc72lD8Mhnu3NfUsPcD1oy818yB1nERuThSEkGUHkw=;
-        b=VgFYqhHjcLJ58nhMMtkredGsh/uR63HiiTLs1p80UJmrYcgswMOR+C2hmYtHQtvS+c
-         frnzrGdkjTf6l+dsdv03h6zkuGOoHtuppkLbZ5lg7qlmngMO5WW8ZVVwZnDTO3g2bGmR
-         lcU+WC+O+dPFqh6diH6Lws2qxEoVNe/TCCLCyiKaQ1yVoftiQn+d3EURu44nDQLDjMg/
-         aX0Jn+85fo+zg6zcbmMTftSr1W49SoSFauNFgR3E1Q/jnlhN9eYW7QaTUCm+DzC4nnv+
-         zATjtmg3GIvT+jdUNdtQqc35sycEwqqOVuxDB2XbY4bZZOAGnt+GXwGHHPxWmFuaJAiq
-         Wv4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU8CatChW7xNpFSv9RV12+9JL1XRwrAc79hWAJOp/nmBT5aHz/NjMJ0EroGOsGwIM2IE3NChqRs3jguQQo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztfIsakGv4bfRgxy3W5x0bHRNHxQPmHAEpaQaZbaJRuonHkqty
-	TQcixNeX0bK/k4ssmP+PIKAbq/6gROp2dEavn9nbO6CXJeJAKKrIBhHMAUgqFA==
-X-Gm-Gg: ASbGncumgIjOqHgFwTgdL07SQQcZSQTv9pkrR5pHLkka3duFj87PAhlZjOcVoqG0g4U
-	hOG9RHyEEXCM9GcjdwjB52Lb0oELnD320YcFUqOGDGA9AvLoZ7UdOdbozC5KSXs3jMw+g2ow81d
-	3EhjY2o2UTyUYfUoJbtqS2Vdh0I2Inieo4FOs2DASBcS73Jn7ViaOJrrJFfDi2gYe8ZGPG2Xzt1
-	4IqS2h7fx+s0BCF+CyZ0uI1qhSK5TJBQmKtassiCjejHGHbmuJxDJPCdoOI0RPoz7zyUPT9Mqw+
-	Y1stek4UH4LblItyUDff31nqvvaNhiC7mmP/G8eQ8iTOPQyjaQA+YMU+MLm5qswtfAooTmlwo09
-	vrqWsC6xy
-X-Google-Smtp-Source: AGHT+IE5GWqkBP7F2KuCtSZMj3O7YCqwL1LClyQ1d+IKR/y1v4SzZvWajbv9qbfRqrrAzp37TIieCQ==
-X-Received: by 2002:a05:6602:474b:b0:855:9c88:7894 with SMTP id ca18e2360f4ac-85b1d03fb51mr700353139f.11.1741390800315;
-        Fri, 07 Mar 2025 15:40:00 -0800 (PST)
-Received: from google.com (26.80.59.108.bc.googleusercontent.com. [108.59.80.26])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f20a06b059sm1193908173.136.2025.03.07.15.39.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 15:39:59 -0800 (PST)
-Date: Fri, 7 Mar 2025 15:39:57 -0800
-From: Justin Stitt <justinstitt@google.com>
-To: Kees Cook <kees@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	Marco Elver <elver@google.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, kasan-dev@googlegroups.com, linux-hardening@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Hao Luo <haoluo@google.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Bill Wendling <morbo@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Tony Ambardar <tony.ambardar@gmail.com>, 
-	Alexander Potapenko <glider@google.com>, Jan Hendrik Farr <kernel@jfarr.cc>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 3/3] ubsan/overflow: Enable ignorelist parsing and add
- type filter
-Message-ID: <52samxs253u3t2cmm5xwbmrwzyof36w7xczpuvbkarqwonwl32@2jbmkagpk7za>
-References: <20250307040948.work.791-kees@kernel.org>
- <20250307041914.937329-3-kees@kernel.org>
+	s=arc-20240116; t=1741390893; c=relaxed/simple;
+	bh=yyE7KOWWH/DThx7lyaD0ORCMpjEmY7tHAL2lQSTtrxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=IM6aipUZKLAuy4zEgxcx396r2CjxduBu2oSbXX55/PjNmP0anSiF0rTBgK1YZrbOztayyuP4D1x2qq9gGZfcHgetYklrAkIo6e5SaOykTbS6LC0LteMkejUT0ZUSvrQFAfQ0NJx1e6hM2HOAaQTuv55mEqNTjD4qnlQ+1QuPTaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Udfo0dUo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEE84C4CED1;
+	Fri,  7 Mar 2025 23:41:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741390893;
+	bh=yyE7KOWWH/DThx7lyaD0ORCMpjEmY7tHAL2lQSTtrxA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=Udfo0dUo1NqX33GUbGYVRCfE2XukS0+19Lq8BUfwh5a2MSfyFC0FzoFb+JV12kTeB
+	 N4VIx3dpaVde/6VorEOKIcGmoej71DV/NyP/+9MitDa7Ih1tlnSnI7yhFK503YOAZZ
+	 Nto95q0f4z+O+vPziWEJswiMg4zMIj/PGdjeqlFnNvFKPv/rUILi05vjTQ2d6XyliB
+	 TDfAL1SdOjRUbvF7FkV+O7VnEE6hROtjKiATZWC5xSxk0l15uzGP6xdeonUhFwOqTn
+	 /agcd7Po8MoZzLUptFMYStBJ7uBuzgc8KBHB8zKUiYUJ7k/ACW+cW1khknah3fly8d
+	 BXAI1/rbZExhA==
+Date: Fri, 7 Mar 2025 17:41:31 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Richard Zhu <hongxing.zhu@nxp.com>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	Niklas Cassel <cassel@kernel.org>
+Subject: Re: [PATCH v9 3/7] PCI: Add parent_bus_offset to resource_entry
+Message-ID: <20250307234131.GA440690@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,85 +68,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250307041914.937329-3-kees@kernel.org>
+In-Reply-To: <Z8sRl1c//SZXKhB+@lizhi-Precision-Tower-5810>
 
-On Thu, Mar 06, 2025 at 08:19:11PM -0800, Kees Cook wrote:
-> Limit integer wrap-around mitigation to only the "size_t" type (for
-> now). Notably this covers all special functions/builtins that return
-> "size_t", like sizeof(). This remains an experimental feature and is
-> likely to be replaced with type annotations.
+On Fri, Mar 07, 2025 at 10:32:39AM -0500, Frank Li wrote:
+> On Tue, Mar 04, 2025 at 05:25:45PM -0500, Frank Li wrote:
+> > On Tue, Mar 04, 2025 at 05:11:54PM -0500, Frank Li wrote:
+> > > On Tue, Mar 04, 2025 at 11:50:10AM -0600, Bjorn Helgaas wrote:
+> > > > On Mon, Mar 03, 2025 at 04:57:29PM -0500, Frank Li wrote:
+> > > > > On Wed, Feb 26, 2025 at 06:23:26PM -0600, Bjorn Helgaas wrote:
+> > > > > > On Tue, Jan 28, 2025 at 05:07:36PM -0500, Frank Li wrote:
+> > > > > > > Introduce `parent_bus_offset` in `resource_entry` and a new API,
+> > > > > > > `pci_add_resource_parent_bus_offset()`, to provide necessary information
+> > > > > > > for PCI controllers with address translation units.
+> > > > > > >
+> > > > > > > Typical PCI data flow involves:
+> > > > > > >   CPU (CPU address) -> Bus Fabric (Intermediate address) ->
+> > > > > > >   PCI Controller (PCI bus address) -> PCI Bus.
+> > > > > > >
+> > > > > > > While most bus fabrics preserve address consistency, some modify addresses
+> > > > > > > to intermediate values. The `parent_bus_offset` enables PCI controllers to
+> > > > > > > translate these intermediate addresses correctly to PCI bus addresses.
+> > > > > > >
+> > > > > > > Pave the road to remove hardcoded cpu_addr_fixup() and similar patterns in
+> > > > > > > PCI controller drivers.
+> > > > > > > ...
+> > > > > >
+> > > > > > > +++ b/drivers/pci/of.c
+> > > > > > > @@ -402,7 +402,17 @@ static int devm_of_pci_get_host_bridge_resources(struct device *dev,
+> > > > > > >  			res->flags &= ~IORESOURCE_MEM_64;
+> > > > > > >  		}
+> > > > > > >
+> > > > > > > -		pci_add_resource_offset(resources, res,	res->start - range.pci_addr);
+> > > > > > > +		/*
+> > > > > > > +		 * IORESOURCE_IO res->start is io space start address.
+> > > > > > > +		 * IORESOURCE_MEM res->start is cpu start address, which is the
+> > > > > > > +		 * same as range.cpu_addr.
+> > > > > > > +		 *
+> > > > > > > +		 * Use (range.cpu_addr - range.parent_bus_addr) to align both
+> > > > > > > +		 * IO and MEM's parent_bus_offset always offset to cpu address.
+> > > > > > > +		 */
+> > > > > > > +
+> > > > > > > +		pci_add_resource_parent_bus_offset(resources, res, res->start - range.pci_addr,
+> > > > > > > +						   range.cpu_addr - range.parent_bus_addr);
+> > > > > >
+> > > > > > I don't know exactly where it needs to go, but I think we can call
+> > > > > > .cpu_addr_fixup() once at startup on the base of the region.  This
+> > > > > > will tell us the offset that applies to the entire region, i.e.,
+> > > > > > parent_bus_offset.
+> > > > > >
+> > > > > > Then we can remove all the .cpu_addr_fixup() calls in
+> > > > > > cdns_pcie_host_init_address_translation(),
+> > > > > > cdns_pcie_set_outbound_region(), and dw_pcie_prog_outbound_atu().
+> > > > > >
+> > > > > > Until we can get rid of all the .cpu_addr_fixup() implementations,
+> > > > > > We'll still have that single call at startup (I guess once for cadence
+> > > > > > and another for designware), but it should simplify the current
+> > > > > > callers quite a bit.
+> > > > >
+> > > > > I don't think it can simple code. cdns_pcie_set_outbound_region() and
+> > > > > dw_pcie_prog_outbound_atu() are called by EP functions, which have not use
+> > > > > "resource" to manage outbound windows.
+> > > >
+> > > > Let's ignore cadence for now.  I don't think we need to solve that
+> > > > until later.
+> > > >
+> > > > dw_pcie_prog_outbound_atu() is called by:
+> > > >
+> > > >   - dw_pcie_other_conf_map_bus(): atu.parent_bus_addr = pp->cfg0_base
+> > > >
+> > > >     I think dw_pcie_host_init() can set pp->cfg0_base with the correct
+> > > >     intermediate address, either via the the of_property_read_reg() or
+> > > >     .cpu_addr_fixup().
+> >
+> > And chicken and egg problem here for artpec6_pcie_cpu_addr_fixup(), which
+> > need cfg0_base. But try to use .cpu_addr_fixup() to get cfg0_base's
+> > intermediate address.
 > 
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Justin Stitt <justinstitt@google.com>
-> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-> Cc: Marco Elver <elver@google.com>
-> Cc: Andrey Konovalov <andreyknvl@gmail.com>
-> Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Cc: Nicolas Schier <nicolas@fjasle.eu>
-> Cc: kasan-dev@googlegroups.com
-> Cc: linux-hardening@vger.kernel.org
-> Cc: linux-kbuild@vger.kernel.org
-> ---
->  lib/Kconfig.ubsan               | 1 +
->  scripts/Makefile.ubsan          | 3 ++-
->  scripts/integer-wrap-ignore.scl | 3 +++
->  3 files changed, 6 insertions(+), 1 deletion(-)
->  create mode 100644 scripts/integer-wrap-ignore.scl
-> 
-> diff --git a/lib/Kconfig.ubsan b/lib/Kconfig.ubsan
-> index 888c2e72c586..4216b3a4ff21 100644
-> --- a/lib/Kconfig.ubsan
-> +++ b/lib/Kconfig.ubsan
-> @@ -125,6 +125,7 @@ config UBSAN_INTEGER_WRAP
->  	depends on $(cc-option,-fsanitize=unsigned-integer-overflow)
->  	depends on $(cc-option,-fsanitize=implicit-signed-integer-truncation)
->  	depends on $(cc-option,-fsanitize=implicit-unsigned-integer-truncation)
-> +	depends on $(cc-option,-fsanitize-ignorelist=/dev/null)
->  	help
->  	  This option enables all of the sanitizers involved in integer overflow
->  	  (wrap-around) mitigation: signed-integer-overflow, unsigned-integer-overflow,
-> diff --git a/scripts/Makefile.ubsan b/scripts/Makefile.ubsan
-> index 233379c193a7..9e35198edbf0 100644
-> --- a/scripts/Makefile.ubsan
-> +++ b/scripts/Makefile.ubsan
-> @@ -19,5 +19,6 @@ ubsan-integer-wrap-cflags-$(CONFIG_UBSAN_INTEGER_WRAP)     +=	\
->  	-fsanitize=signed-integer-overflow			\
->  	-fsanitize=unsigned-integer-overflow			\
->  	-fsanitize=implicit-signed-integer-truncation		\
-> -	-fsanitize=implicit-unsigned-integer-truncation
-> +	-fsanitize=implicit-unsigned-integer-truncation		\
-> +	-fsanitize-ignorelist=$(srctree)/scripts/integer-wrap-ignore.scl
->  export CFLAGS_UBSAN_INTEGER_WRAP := $(ubsan-integer-wrap-cflags-y)
-> diff --git a/scripts/integer-wrap-ignore.scl b/scripts/integer-wrap-ignore.scl
-> new file mode 100644
-> index 000000000000..431c3053a4a2
-> --- /dev/null
-> +++ b/scripts/integer-wrap-ignore.scl
-> @@ -0,0 +1,3 @@
-> +[{unsigned-integer-overflow,signed-integer-overflow,implicit-signed-integer-truncation,implicit-unsigned-integer-truncation}]
-> +type:*
-> +type:size_t=sanitize
+> Bjorn:
+> 	Do you have chance to check my reply? some dwc platform driver
+> .cpu_addr_fixup() implement have dependence with old initilize sequency.
 
-Forgot to mention this in my intial reply but we have to be careful
-with what types are added here. Kees, I know we're on the same page from
-offline chats but for others: using sanitizer case lists to discriminate
-against types for the purposes of sanitizer instrumentation may not work
-properly through various arithmetic conversions. Mainly, implicit
-promotions which tend to break this particular approach.
+Yes, I tried to sketch out what I was thinking to make it more
+concrete.  I posted it and sent to you, but just for other readers of
+this thread, it's at:
 
-Now, for size_t we got kind of "lucky" because there are no implicit
-promotions with size_t, it doesn't get promoted. This is not the case
-for other types. This further necessitates the need for canonical
-wrapping types backed by in-source annotations/qualification -- coming
-soon in Clang.
+https://lore.kernel.org/linux-pci/20250307233744.440476-1-helgaas@kernel.org/T/#t
 
-> -- 
-> 2.34.1
-> 
-
-Justin
+Bjorn
 
