@@ -1,46 +1,64 @@
-Return-Path: <linux-kernel+bounces-551744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B2BBA57034
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:12:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DAEFA57012
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:06:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC6BC16F541
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:12:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D598188F1E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A82241673;
-	Fri,  7 Mar 2025 18:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D346823F29C;
+	Fri,  7 Mar 2025 18:06:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="kfOgPVr5"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A5A1A7AF7;
-	Fri,  7 Mar 2025 18:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ccv3WhIH"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60421607A4;
+	Fri,  7 Mar 2025 18:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741371160; cv=none; b=Q+hyPWexkKMzytD613ZOeLiM/TsgzBFvwvPEXPGwPtcz3/TeLmgQyHCJMA76jKou1C1q1HW3ZCZG4NYb/c19egrSlJ0lP6FcQhytpNp+Pt5hpamhhvs3DY0UPEFxPgelPDvaCli4Kf2bAO0sz7bfCpwWoRdOrpOYnAOf67MKF3s=
+	t=1741370796; cv=none; b=T5YGEzaH1urCCdObMWY5Hz49YKr7gC9/yOt1rYxHnf+GK4uh0fLNVPkhN4ha7g1uYF7Jnu9fGJlfUl6tbHuUb4N8VgFo+I8mNG/f3YxPxC40MVKrPRPp4ZNVflnE5Ov3hl7iIoY69fgF6OHG9dQQbUoNy80IL5nzUKLyTOtdfzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741371160; c=relaxed/simple;
-	bh=NAWLZyERU1mrVLoBZ/xNqI1pIF9+w43e2HDxORnVkHQ=;
+	s=arc-20240116; t=1741370796; c=relaxed/simple;
+	bh=/LNeyTo1Lsx5XsFAdGiPxDkCOZ6LU1NL1TFIHWBBD8o=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GHWx48ErSDcDh+QXusIk/0lXAoO7XwueP1iVCsNgsrAJp/DL/VXWqCDwpsvzBqKLgMMn9s+Vs5a0z98qxUBz7HX6LLp1RFXZbqOJDO8jUlNgBsqksSfkpkH4xLctbOxalketQ59WxkmQyBTuJ2urAhHS5jQhlv6MS6XphLwzHe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=kfOgPVr5; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.137.184.60] (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id CAD852038F37;
-	Fri,  7 Mar 2025 10:06:47 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com CAD852038F37
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741370808;
-	bh=fkpzWS7kKQxS7iHBM5+/9vLioYcucl4kL46RR98FB2o=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kfOgPVr5LJFN2ld3861YnCyoXBzp+thWEeMvJ+YweMjJBiArD9U7tYwudHEyeNoat
-	 igt1898SeJwvGyscPq6VaPbrQalQZt8Xwoxkv4MYmortZR1uJCXtyOKomZaHk/Sq4b
-	 ZHHPwTwLAQWLTYwV6XCRICP5BGc3MKiHJftH/nzw=
-Message-ID: <efb43459-4136-43cd-adac-2179d9985e9d@linux.microsoft.com>
-Date: Fri, 7 Mar 2025 10:06:47 -0800
+	 In-Reply-To:Content-Type; b=mkJd/fBJg8zX28xdMUcBB5ep3jbb/nCpm2v6ZsoAICVXYkFnw0Oq+/M1KZuPp94sxhvG3zaqrHZflNuvdyjZr3yqZxL3gjGolWxhvQv0E5wuruBSV7WI1MxXNP15fmlP0qa9HQP3UnUCDJF+LazXZvxiUW3xNuGNjtGrhW1VQv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ccv3WhIH; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741370795; x=1772906795;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/LNeyTo1Lsx5XsFAdGiPxDkCOZ6LU1NL1TFIHWBBD8o=;
+  b=Ccv3WhIHu+bq05nJp9slTZ8nHzExcILyVx80kUpAAsFqL/PiEdT4pX7k
+   N8oQ59ZNAcUizJIpOeLBLn6iUcwqJFPZh6mcX5WyVNqh/bE35b/xTlz9N
+   +XZkcHeCUoAwGYThEQR/GM8GeA7GGYvwzU8k62N+KadjTv4ONkWZOeYmy
+   VKOnOZD/faQNUfXALHyC6bE+RpW0S+8N8fmjCb4JwNS6MlT/hebLXEEbi
+   x3aSYY8uF6YJj/nc232Xy4Pq077AK2Z/EWWS4z8rUs/8ruc4vDpB6l4VU
+   RpETGIuOV8GrVJGgEGLrFlK4KmHpDX36akbskZDtBuYt06VAvqlcPCGVW
+   A==;
+X-CSE-ConnectionGUID: st9SMvM6RQ61ciZYCrsEEg==
+X-CSE-MsgGUID: pBiC9xYWQWaJG9zqYaG4gg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42629927"
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="42629927"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 10:06:34 -0800
+X-CSE-ConnectionGUID: uhEHW7HqSmSgYdgBm3bTOQ==
+X-CSE-MsgGUID: Nzo/yW6HQHG22mJ9x4SJbw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="150339325"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.110.132]) ([10.125.110.132])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 10:06:33 -0800
+Message-ID: <cde2e31a-af2b-4236-a5b7-e1119c62b4a5@intel.com>
+Date: Fri, 7 Mar 2025 10:06:56 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,73 +66,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 10/10] Drivers: hv: Introduce mshv_root module to
- expose /dev/mshv to VMMs
-To: Wei Liu <wei.liu@kernel.org>
-Cc: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
- linux-hyperv@vger.kernel.org, x86@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-acpi@vger.kernel.org, kys@microsoft.com,
- haiyangz@microsoft.com, mhklinux@outlook.com, decui@microsoft.com,
- catalin.marinas@arm.com, will@kernel.org, tglx@linutronix.de,
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
- daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
- arnd@arndb.de, jinankjain@linux.microsoft.com, muminulrussell@gmail.com,
- skinsburskii@linux.microsoft.com, mrathor@linux.microsoft.com,
- ssengar@linux.microsoft.com, apais@linux.microsoft.com,
- Tianyu.Lan@microsoft.com, stanislav.kinsburskiy@gmail.com,
- gregkh@linuxfoundation.org, vkuznets@redhat.com, prapal@linux.microsoft.com,
- muislam@microsoft.com, anrayabh@linux.microsoft.com, rafael@kernel.org,
- lenb@kernel.org, corbet@lwn.net
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-11-git-send-email-nunodasneves@linux.microsoft.com>
- <f332b77a-940f-4007-a44a-de64878d5201@linux.microsoft.com>
- <Z8ncFkwzxi9qJFD3@liuwe-devbox-debian-v2>
+Subject: Re: [PATCH v3 05/10] x86/fpu/xstate: Introduce guest FPU
+ configuration
+To: Chao Gao <chao.gao@intel.com>, tglx@linutronix.de, x86@kernel.org,
+ seanjc@google.com, pbonzini@redhat.com, linux-kernel@vger.kernel.org,
+ kvm@vger.kernel.org
+Cc: peterz@infradead.org, rick.p.edgecombe@intel.com,
+ weijiang.yang@intel.com, john.allen@amd.com, bp@alien8.de,
+ Maxim Levitsky <mlevitsk@redhat.com>
+References: <20250307164123.1613414-1-chao.gao@intel.com>
+ <20250307164123.1613414-6-chao.gao@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-From: Roman Kisel <romank@linux.microsoft.com>
-In-Reply-To: <Z8ncFkwzxi9qJFD3@liuwe-devbox-debian-v2>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250307164123.1613414-6-chao.gao@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+On 3/7/25 08:41, Chao Gao wrote:
+> +	fpu_guest_cfg.max_features = fpu_kernel_cfg.max_features;
+> +	fpu_guest_cfg.default_features = fpu_guest_cfg.max_features;
+> +	fpu_guest_cfg.default_features &= ~XFEATURE_MASK_USER_DYNAMIC;
 
+Is just copying and pasting the 'fpu_kernel_cfg' initialization really
+the best way to explain what's going on?
 
-On 3/6/2025 9:32 AM, Wei Liu wrote:
-> On Thu, Feb 27, 2025 at 10:50:30AM -0800, Roman Kisel wrote:
+Let's say you just did:
 
-[...]
+	fpu_guest_cfg = fpu_kernel_cfg;
 
->> 2. Scheduling. Here, there is the mature KVM and Xen code to find
->>     inspiration in. Xen being the Type 1 hypervisor should likely be
->>     closer to MSHV in my understanding.
-> 
-> Yes and no.
-> 
-> When a hypervisor-based scheduler (either classic or core) is used, the
-> scheduling model is the same as Xen. In this model, the hypervisor makes
-> the scheduling decisions.
-> 
-> There is a second scheduler model. In that model, the hypervisor
-> delegates scheduling to the Linux kernel. The Linux scheduler makes the
-> scheduling decisions. It is similar to KVM.
-> 
-> We support both. Which model to use largely depends on the workload and
-> the desired behaviors of the system.
-> 
-> This is purely informational in case people wonder why the run vp
-> function branches off to two different code paths.
-> 
+?
 
-Thanks, now I understand that better :)
+That would explicitly tell the reader that they're equal.
 
-[...]
-
->> -- 
->> Thank you,
->> Roman
->>
-
--- 
-Thank you,
-Roman
 
 
