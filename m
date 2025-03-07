@@ -1,126 +1,145 @@
-Return-Path: <linux-kernel+bounces-551055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E84A5678E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:13:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 273FDA56797
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:14:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA95E3B4A67
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:13:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 883363B5519
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:13:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D163218ADC;
-	Fri,  7 Mar 2025 12:13:37 +0000 (UTC)
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 921F4219316;
+	Fri,  7 Mar 2025 12:13:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAAKNVwX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA911B413D;
-	Fri,  7 Mar 2025 12:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCA5B1B413D;
+	Fri,  7 Mar 2025 12:13:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741349617; cv=none; b=mwegwAwEBllcRbuEhdEkutMgx7m7tDi4kIR/6dIv0X2uGROTwytp2wpURsU3G4WsTA8O0ZgHyqpjMM4JjvortcDX937+oTlisE56cZV3DvL6ZRxjuE4fqaxQmRoKUQgTikEtANS4wB+PYDDWRpU68vUKZsHcB2e6TUu73dsE7fo=
+	t=1741349623; cv=none; b=ci0xVbc+MYIF7AXBV5F4Mczkh0u0XpTGUv5yyKxPCTbpZeIYRtTwd2cx6dflSt5Co8Yxn2GvgyW3/m6IygGi6scgXJcYDQG37H1GwAjwWhCqxoowvfaPi3xtBuIU5Tx5FFnGh/fH4NryD/b99qPdCNdps1FBeOdE6ztjBsL3K98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741349617; c=relaxed/simple;
-	bh=Y2tea/SV2O71IZ/SlEuXPbWMvLQMc6VbkdZr9bFJELI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N2Jxlr5Zb1/CwznvVCcTUzNCnA2jSq4Fh8VXjS2xx6xQaUBNEtBJGlrXhInzDF6Eg0KuuEQ09W4GOJ0EIh+gGyiRanXtTeUfoBY6+NHWQrFCqsVJlmtzd3D1zgjslaLiDCZoIpzWD2NQP10jTvG6FBfhNTjLQMAtuEsFQuVhl9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-86cce5dac90so757349241.0;
-        Fri, 07 Mar 2025 04:13:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741349612; x=1741954412;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bxeVgWBPIaIHKr/VoNwwOt9Stv37rE17JkSSDvEu9I8=;
-        b=k6J7q9J5wMpiS+oP0kDdwFSeCIRJFMBLMm1lYw3Dtfmnbre1TyJEW3Pna8GVh22kwr
-         95enl2OR1q0rQhycywvHiiE3UsQHF3u1ohyaVn9Bd+iil4GPAIqa0TRqHymfiST5ibum
-         uzAR6XR0p5c6YSYX0LUINTLtK+fYIvtvMUW1N1AAZzIuj+Ao+RdAKiYCwj9GZ1QRB40O
-         oyRMVgvkPeFlpoFIEtTISSSppeaAAkO92xSxILuUyiM2xRu7RzbulGEiubHdqdsCREam
-         EIYy7y6v7ay1hr3bDPIzRuw+Yf/zCUcubkr1R2yZ9kNuTlbeEu/K0vK+cgY9OvX6vuJQ
-         CqEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV6IpNcUdZ65NduMkq8/bW6+f3SyC6tEa7qNOPfL8vrukSyW+sK7AXCDcwraf3wsE5qUpp+vQ92VVPXqa39@vger.kernel.org, AJvYcCX7dBbOG3PLRLRlF/1OrGK5soQMR9i8lO2Za5cg99+MvvSAsC0IhoUVfcH1ELeAE3HHTEDQoYez/mk=@vger.kernel.org, AJvYcCXNJyRA33aCfbtSC+QX6Lyx9BP4k/rCKW2/d3RVgJyLLWbM9nmc9IA+Cjxov/ocif4rB3FYwBL6jpa5@vger.kernel.org, AJvYcCXO2KV+wa0iVrUncu4xTgp+qp+v5F1+c6YBbGM6OGyTitKy0ycPLAAYkd6P2XPI2yiYRkIUOGu/XlE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4Qa6jNjMXTA6P9A654gbxhUz3RrULsMe6qRnpDpzCcsV67LRx
-	xH6SDQAX4Oi11SySCFkR4Du5W0yequ46zD0/6zlNgIylMet+Mun8x1Eteww/x5U=
-X-Gm-Gg: ASbGncs3s/O3k0GoYijeVlHELFSyixc7mW2fJDBpE9Sgf9VJsBAql/uQFYihOnObTw3
-	XWorHwUShUf7dvk+ralAYP/UEyGCSbrNTrBfQKPBrUVVeNBM9HFz+AiTPAqzZ6J2hhng8Sd6ZGm
-	3CK8hSnxY3XaLKV/gixwYdnucXvVvqjYdtn8wd8kfsU35sW+Qin3qxcxUW5Ow0EHlYfekwtUmR8
-	Mtfdj0JaO4tMuIeI2oK/RS7B9Kfw98XTdnDKQVHxgquWJWcYxKJFjbSvTpelDdTZw4dAWG/QZci
-	cTeo0/1RWVx4bojIBZyRRt3Ip/4d2dhXVOJL/Scl8dgZfzeRfXFAAmPf0xr8tdWOSQcttG3vQ61
-	0olzdgm8=
-X-Google-Smtp-Source: AGHT+IEghvAAwuhoCq4oG0sKdWCVGwd5m0PWtGv1/pmpTcQ7dsNyqIES6opQez42K9NsZBqXxQ4jCg==
-X-Received: by 2002:a05:6102:2927:b0:4bb:c24b:b64b with SMTP id ada2fe7eead31-4c30a68a683mr1582245137.19.1741349612137;
-        Fri, 07 Mar 2025 04:13:32 -0800 (PST)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c2fb459a40sm651235137.12.2025.03.07.04.13.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 04:13:32 -0800 (PST)
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-866e8ca2e07so748378241.2;
-        Fri, 07 Mar 2025 04:13:31 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUs8j9PWEJxFGun+6TofH2/CFdITiwmXZglRrX49ueeK9LwHB0o2V3CyVoZc2XjGMaZjYF0I6Ti8mc=@vger.kernel.org, AJvYcCVZat1KJsWJ6Ns0SEhtC0yGfstzIuE7Tb/d1QZNCPqA4MOiDqdu7XIusmOsjNW7mQtX75Yi4h5TVuoWHIxQ@vger.kernel.org, AJvYcCWH3A+fyb4JPcERcxxInhxCWybzYWkqC7hntD+cNmHqoz1mrH0/KaD8v6lWy31a5Z+GQr3lZE3RATI=@vger.kernel.org, AJvYcCX7baI6aYKSR4lJS0WSCbdAxStGYqbHRhQEKuCy5DkmUfs2v3DB4qEZewWjutZjDcCpjpclHpfgNDBA@vger.kernel.org
-X-Received: by 2002:a05:6102:8001:b0:4bb:e8c5:b149 with SMTP id
- ada2fe7eead31-4c30a5ab186mr1795545137.7.1741349611548; Fri, 07 Mar 2025
- 04:13:31 -0800 (PST)
+	s=arc-20240116; t=1741349623; c=relaxed/simple;
+	bh=A0iB+YCb+UVBZshzVwjPGcV1KlpUOFw1SPgFL2eBkpo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uoouyaTMfkyPKHPwJ73QdVV5VO8tJMcJJSTc+s78j5lD0WX4L3cEOLIgut7B9hqJ/5nSDG9GHHyNBEzktGQWB5LywgbiCoNSj3YgiJip/fZiA31x2L3nu+hn0b2gsLwRFwVFEpEBX9j3DU05kbTidYxbhI/skNL/z3hBSlLZwOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAAKNVwX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C604C4CED1;
+	Fri,  7 Mar 2025 12:13:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741349621;
+	bh=A0iB+YCb+UVBZshzVwjPGcV1KlpUOFw1SPgFL2eBkpo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fAAKNVwXTNgwLiB5yUVEtuwsAVGV/QIJuDWb7igtxd0P9qswD1E8OeErlDEuR/e4A
+	 KzLmqjaEJZEEl8hSt3qCO5bduwmqj7FwIXcOT4tSNTVGxBcAdBk7AWN4yLRQ/mH/Ta
+	 NH7IKeh8DSsI6ZQyf5gMsWXFqhAVxHXQBYrvIhW0+UfaCBXrOUm7UjEXrPkF7B1TOK
+	 SMzEej6Y5vdB6J5u6wKBSSsXn2sden45AL2Ml53BlqVAWJg8Ls711zuQtM6RIh95+n
+	 mN2kfDztpe5dbxCy74QPpzR2QMb4IHiGzh8wu9JEohDHUW7xPD0W/hDCgkdkVGFdrr
+	 aEDVYiNNNjX8A==
+Date: Fri, 7 Mar 2025 13:13:26 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Jiri Slaby <jirislaby@kernel.org>
+Cc: Kuan-Wei Chiu <visitorckw@gmail.com>, tglx@linutronix.de,
+	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
+	x86@kernel.org, jk@ozlabs.org, joel@jms.id.au,
+	eajames@linux.ibm.com, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	dmitry.torokhov@gmail.com, mchehab@kernel.org,
+	awalls@md.metrocast.net, hverkuil@xs4all.nl,
+	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
+	louis.peens@corigine.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
+	parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
+	johannes@sipsolutions.net, gregkh@linuxfoundation.org,
+	yury.norov@gmail.com, akpm@linux-foundation.org, hpa@zytor.com,
+	alistair@popple.id.au, linux@rasmusvillemoes.dk,
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, linux-fsi@lists.ozlabs.org,
+	dri-devel@lists.freedesktop.org, linux-input@vger.kernel.org,
+	linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
+	oss-drivers@corigine.com, netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org, brcm80211@lists.linux.dev,
+	brcm80211-dev-list.pdl@broadcom.com, linux-serial@vger.kernel.org,
+	bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
+	Yu-Chun Lin <eleanor15x@gmail.com>
+Subject: Re: [PATCH v3 01/16] bitops: Change parity8() return type to bool
+Message-ID: <Z8ri5h-nvNXNp6NB@gmail.com>
+References: <20250306162541.2633025-1-visitorckw@gmail.com>
+ <20250306162541.2633025-2-visitorckw@gmail.com>
+ <9d4b77da-18c5-4551-ae94-a2b9fe78489a@kernel.org>
+ <Z8ra0s9uRoS35brb@gmail.com>
+ <a4040c78-8765-425e-a44e-c374dfc02a9c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307-vsprintf-pcn-v1-0-df0b2ccf610f@bootlin.com>
-In-Reply-To: <20250307-vsprintf-pcn-v1-0-df0b2ccf610f@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 7 Mar 2025 13:13:19 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUeThsk5tSaMnT-6BqO6XSMTTDo1Q9kRgJ_d5iC7MTdcw@mail.gmail.com>
-X-Gm-Features: AQ5f1JphTlGlfeyx26A9RukmW_sJoWB7kM5qnNPVm2RVhmEmPwlzPLJvmsJkOb8
-Message-ID: <CAMuHMdUeThsk5tSaMnT-6BqO6XSMTTDo1Q9kRgJ_d5iC7MTdcw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] vsprintf: remove redundant %pCn format specifier
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Petr Mladek <pmladek@suse.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Liu Ying <victor.liu@nxp.com>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a4040c78-8765-425e-a44e-c374dfc02a9c@kernel.org>
 
-Hi Luca,
 
-On Fri, 7 Mar 2025 at 12:19, Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
-> There are two printk format specifiers for clocks: %pC and %pCn, and they
-> print exactly the same string. The reason for having two is not totally
-> clear (see discussion in patch 2), but there seem to be no advantage in
-> having two instead of one.
->
-> Definitely having two without properly documenting they do the same creates
-> misunderstandings [0].
->
-> Since %pCn is used in a single place, replace it with %pC and remove %pCn
-> to simplify such format specifiers implementation and avoid
-> misunderstandings.
->
-> [0] https://lore.kernel.org/dri-devel/71c44221-b18b-4928-8faf-00893ec4a109@nxp.com/
+* Jiri Slaby <jirislaby@kernel.org> wrote:
 
-The link looks unrelated?
+> On 07. 03. 25, 12:38, Ingo Molnar wrote:
+> > 
+> > * Jiri Slaby <jirislaby@kernel.org> wrote:
+> > 
+> > > On 06. 03. 25, 17:25, Kuan-Wei Chiu wrote:
+> > > > Change return type to bool for better clarity. Update the kernel doc
+> > > > comment accordingly, including fixing "@value" to "@val" and adjusting
+> > > > examples. Also mark the function with __attribute_const__ to allow
+> > > > potential compiler optimizations.
+> > > > 
+> > > > Co-developed-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> > > > Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
+> > > > Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+> > > > ---
+> > > >    include/linux/bitops.h | 10 +++++-----
+> > > >    1 file changed, 5 insertions(+), 5 deletions(-)
+> > > > 
+> > > > diff --git a/include/linux/bitops.h b/include/linux/bitops.h
+> > > > index c1cb53cf2f0f..44e5765b8bec 100644
+> > > > --- a/include/linux/bitops.h
+> > > > +++ b/include/linux/bitops.h
+> > > > @@ -231,26 +231,26 @@ static inline int get_count_order_long(unsigned long l)
+> > > >    /**
+> > > >     * parity8 - get the parity of an u8 value
+> > > > - * @value: the value to be examined
+> > > > + * @val: the value to be examined
+> > > >     *
+> > > >     * Determine the parity of the u8 argument.
+> > > >     *
+> > > >     * Returns:
+> > > > - * 0 for even parity, 1 for odd parity
+> > > > + * false for even parity, true for odd parity
+> > > 
+> > > This occurs somehow inverted to me. When something is in parity means that
+> > > it has equal number of 1s and 0s. I.e. return true for even distribution.
+> > > Dunno what others think? Or perhaps this should be dubbed odd_parity() when
+> > > bool is returned? Then you'd return true for odd.
+> > 
+> > OTOH:
+> > 
+> >   - '0' is an even number and is returned for even parity,
+> >   - '1' is an odd  number and is returned for odd  parity.
+> 
+> Yes, that used to make sense for me. For bool/true/false, it no longer does.
+> But as I wrote, it might be only me...
 
-Gr{oetje,eeting}s,
+No strong opinion on this from me either, I'd guess existing practice 
+with other parity functions should probably control. (If a coherent 
+praxis exists.).
 
-                        Geert
+Thanks,
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+	Ingo
 
