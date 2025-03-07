@@ -1,138 +1,242 @@
-Return-Path: <linux-kernel+bounces-552564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FD02A57B63
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:03:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2AF3A57BAA
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 16:54:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9474D7A4484
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 15:02:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07EA916EDDA
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 15:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4361DE4E7;
-	Sat,  8 Mar 2025 15:03:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E8D01E51F9;
+	Sat,  8 Mar 2025 15:54:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="QStkJoM9"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ppHVffR8"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C451A83F4
-	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 15:03:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D2B1DE3DC
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 15:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741446220; cv=none; b=FVl5MBZbDokR6Rs9dxUbA289eG9v24MSrm8p62wQiQcN8HmhWPDJGJFdsXH28eNAF8xbvwiDF5VktZltDR5c1r6FnUMMX3Yj/doKiRr9WfBGyTirBNIzHE9QetZTtnI0lDp605IfpUnULeFQoJUlutD5dOjIwICKbJbwhtAqaQg=
+	t=1741449249; cv=none; b=THIr5aLf+u7kZDWwVNDm4OeXZB6lT7Ek0KIujykAy1aC16PXHcIQ0y6vCWFnHIsRcTusYC+0Ts4hj71OCme1VvnnV8fW3yBq9M2wMcwrF1TCGePrVDzKpU7JyFnK7M6yiOS63DVBtzHG8NsaOQLhPTrrNxsLqSZqR6v1sfwvqc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741446220; c=relaxed/simple;
-	bh=e8SexFMLy+V7m84HKtVT7FdSZ56Nzyx3ZfiZYFbyK0s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rSlbD41poD2UXeyqjmyXXiaFcToxm8Hoi5CvQVYJOKCS5G/CfgwVNKMFldwlfLT7ZHETq9pl/yQ5HENTlTN+LZ6UETMPMgAVSbqy8HNPdYU0NemI4S3NLzeACc5ZP4EPpZj+S0O4+kGGYCFtE3hqEZcVGN+FiRxOWxLnTPB5tXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=QStkJoM9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 528DhF1x002191
-	for <linux-kernel@vger.kernel.org>; Sat, 8 Mar 2025 15:03:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	IKPlg8KpcdilLw+MDQw3ribbQkf1W3yXLlwbnkUFVEo=; b=QStkJoM9yFDPRuKP
-	TAlN9Nx3GZ8AzY7PwGE6cY+IUQALBrunGtJ71X91Iydk32xhzHGO51JIXEG0/rVW
-	iSoEx9rxOAMom7RXWhrXa4KQHWX3Giv0qYI2bJIDaSizeOBOJFAFjZzWZkuCtLXE
-	KMrgw86aP/ossoee9Y7dn9i5D3NyfRy+6DVTn9vVIpTCkLkvOYN/9OgicGe9iA2l
-	bIzWZCP9i633tpIVaOpMKHGWRbEbSYrkDqsvrYfi4hrihwwr/5JpB8GaW3NnKmsm
-	plGuhK6NVVX4M6Fervj4CyTeD5QUU6MsXdfYyHzI7vGmqla/DFMRW152l8+7hIoE
-	hYoZVQ==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 458f6a8qm8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 15:03:37 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e906c422a9so3471776d6.2
-        for <linux-kernel@vger.kernel.org>; Sat, 08 Mar 2025 07:03:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741446216; x=1742051016;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IKPlg8KpcdilLw+MDQw3ribbQkf1W3yXLlwbnkUFVEo=;
-        b=jeacYHcKS3HBf0KEeU3FlZIedqO+T72tm/vzcVQh3R2oWV/eVCGz1OLHvwFF2v02Zz
-         mnIYuYtfRaBHQRE565d2W1HhKO4tm3A5rQruVkWicShet6bI4xj6LT05dMjc/+DavWXR
-         Nxsc8IR9RLE/E6r5jd2HgDW/FE7hncNGoHma6QvIc2JELJEFhOGVd5P/rL5j7uycZ2Ra
-         QIlQv48+gYn/o80nucgAiIdfVJm+U8Ao3hoRc1Ph9qR3SwB2Fyw504EyCPyDyOgSe/CX
-         +HoavqJVCHajZNGiNPSaRHb8nL/JAh1UUye7ATTKeJClJWVw5NUruX3/8pz0ioVSr/Kj
-         rIpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVhQlrcFxX9fX2Mx1a41PEsdC6piuT6OtopapeUkA9hW9mKqqHcKRWCuX4CiWVNr8DxGHbDlshRMLwPuUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmpXu9QkAIj5pEWZfpRElmqo8EGFQ8Jxmbfkwkx0A03YZ1mpnP
-	7qKuvQp8lRcz+geUwiG6j6z7l/lvQh6kl/963nlS3Bxx4TbLR/6chE4jtzSUWk8NFlBPx4YX4zB
-	nvqc85a4ID4k1UQLqCVySZbGnwpP90zw9IUVgz6yBJPqjYXEdANxywMI+kFTtZLc=
-X-Gm-Gg: ASbGncvDg7Xm7DKk70f98tcn4pABGnY3zXj8IbGm8x2ANRIVcyZfB6WSGKoJJWF5mFY
-	3kzQ8iq9pVS3Vr5QMrhNYAMZmWQLcyz4bco4nOCGL7CcIRrgexVcDdOuW4nM0JrYxJBSVP9hdeh
-	J6ikh/ANb0PG+BB7LZ5ND+J8XT2PsvgatsT+hxRQSMkoNbfsiPBMoFs2lNUPr40fjY1KBWXc0eC
-	gzcjGsAYFIzanoW2opBhle0kIV4AdKgekcu48DWywvLnNr2X70tL9sqTPCYZnqQjYovVK/SEPv3
-	CNyeHJps/9MxhN9+46pb/M13912r71BGIXauCAQ4Zv3NJRFLVnwyA1QFvufl09JxvtWu3w==
-X-Received: by 2002:a05:622a:2b0c:b0:474:e7de:8595 with SMTP id d75a77b69052e-47666ca49c3mr13703071cf.14.1741446216613;
-        Sat, 08 Mar 2025 07:03:36 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG2C1ER2UZOIAo7ctUzp4nSuh/7gNp2uvGTLVNBhuB4jYEmqZINWmCWfInxvDC01eRy/YRnlQ==
-X-Received: by 2002:a05:622a:2b0c:b0:474:e7de:8595 with SMTP id d75a77b69052e-47666ca49c3mr13702851cf.14.1741446216104;
-        Sat, 08 Mar 2025 07:03:36 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c768f98asm3999255a12.68.2025.03.08.07.03.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 08 Mar 2025 07:03:34 -0800 (PST)
-Message-ID: <df2f0bfb-665e-45a8-8103-5c6217dd194a@oss.qualcomm.com>
-Date: Sat, 8 Mar 2025 16:03:32 +0100
+	s=arc-20240116; t=1741449249; c=relaxed/simple;
+	bh=rMuV6nHCFntzsYto5y3wh+iRvpqtsKuycOOrbtN0JmE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=Eivp131fWGkN4AAjOH3brabquQ74xaS7rk04oNzvkBKBJLl6qp4qfKbbCXZeLw8jVzxV9w62tZpvPQuLshMEJzJJqrAB6QdnDuqJ2VFwQwrSXkzBJjaKSiogbOKC6Ig4zFX8QJiNNdZ9BWSno4UDLFMuCZxs9O3Fx1+9EvrSayE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ppHVffR8; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20250308155359epoutp0413ed96fedd8eaefe6716cbe874f4b06d~q3ttFNt391545715457epoutp04V
+	for <linux-kernel@vger.kernel.org>; Sat,  8 Mar 2025 15:53:59 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20250308155359epoutp0413ed96fedd8eaefe6716cbe874f4b06d~q3ttFNt391545715457epoutp04V
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741449239;
+	bh=KqFr1VhT2FTQnSr3LaaqWnUOVNuACS2W7zCBsK/XyWg=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=ppHVffR8fnb/BCswaIXVwhi13kROZlDPhwqyAu3iatGKZR6X+rvwBkkWSv1OHPVXK
+	 G9Pa9D8tbHnMJoFztCK4J/B6kogUyjp4XHjwJoVTnnWAdNwhlQ2gGPpzIkNO7BsvqX
+	 Pf4Ao6U/xPNmRve0uslePSWRXm91l0VchiwPQxyU=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
+	20250308155358epcas5p164f2e579cd86ce471b82119a926eb1ee~q3tsaFtGe1115911159epcas5p1p;
+	Sat,  8 Mar 2025 15:53:58 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4Z974N5YC7z4x9Pp; Sat,  8 Mar
+	2025 15:53:56 +0000 (GMT)
+Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F7.AD.29212.4186CC76; Sun,  9 Mar 2025 00:53:56 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20250307093024epcas5p1e0be921d3f3445c67daf399e451bb203~qe1gjIIBT2800428004epcas5p1Z;
+	Fri,  7 Mar 2025 09:30:24 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250307093024epsmtrp12309fd6dc4c83031d7095f2e2625ec8d~qe1ghSaSe3067930679epsmtrp1C;
+	Fri,  7 Mar 2025 09:30:24 +0000 (GMT)
+X-AuditID: b6c32a50-801fa7000000721c-b7-67cc68143370
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B8.DE.23488.0BCBAC76; Fri,  7 Mar 2025 18:30:24 +0900 (KST)
+Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250307093022epsmtip26314520fbe088f38ce7c9fb84b185828~qe1eigaFn2162621626epsmtip2G;
+	Fri,  7 Mar 2025 09:30:22 +0000 (GMT)
+From: Varada Pavani <v.pavani@samsung.com>
+To: krzk@kernel.org, aswani.reddy@samsung.com, pankaj.dubey@samsung.com,
+	s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: gost.dev@samsung.com, Varada Pavani <v.pavani@samsung.com>
+Subject: [PATCH v3] clk: samsung: Use samsung CCF common function
+Date: Fri,  7 Mar 2025 14:54:03 +0530
+Message-Id: <20250307092403.19742-1-v.pavani@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrAKsWRmVeSWpSXmKPExsWy7bCmlq5Ixpl0g22rtS0ezNvGZnFo81Z2
+	i+tfnrNa3Dywk8ni/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrVYtHWL+wWh9+0s1r8
+	u7aRxWJD7yt2Bz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKOybTJSE1NSixRS85LzUzLz
+	0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOA7lRSKEvMKQUKBSQWFyvp29kU5ZeW
+	pCpk5BeX2CqlFqTkFJgU6BUn5haX5qXr5aWWWBkaGBiZAhUmZGcsmb2HuWChWkXD7seMDYzb
+	FbsYOTkkBEwkDv2/wNLFyMUhJLCHUaL35B92COcTo8TVGQfYQKqEBL4xSux5kgLT8fXvTqii
+	vYwSXZsmMUI4Xxglnvz4zghSxSagJbF66nJWEFtE4AiTxJ8TqSA2s4CdxPqpc5lBbGEBR4mL
+	H2ayg9gsAqoSu49NBIpzcPAKWEpcuFUDsUxeYvWGA8wg8yUE7rFLLL/QzQ6RcJGYseoUE4Qt
+	LPHq+BaouJTEy/42dpA5EgLJEu2fuCHCORKXdq+CKreXOHBlDgtICbOApsT6XfoQYVmJqafW
+	MUFcySfR+/sJVDmvxI55MLaSxM4dE6BsCYmnq9cAw4cdyPaQeB4EMlBIIFbi5/SsCYyysxDG
+	L2BkXMUolVpQnJuemmxaYKibl1oOj6Tk/NxNjOCkpxWwg3H1hr96hxiZOBgPMUpwMCuJ8Kpt
+	P5UuxJuSWFmVWpQfX1Sak1p8iNEUGF4TmaVEk/OBaTevJN7QxNLAxMzMzMTS2MxQSZy3eWdL
+	upBAemJJanZqakFqEUwfEwenVAOT/kqVOT98NP4uDkm4/2Fz2sPOlTm3Xy9XOvHwr7mRfeyL
+	58/vLb0wtfZXrYLMlCLGdVqKS2b7VjbuvnyD80yHnnt0dFrkUlcl5k3OU73srigZq1W81t8+
+	6dOenAtmvbEXFxVteq/0LXX2ZreF9oUu897JVJeLMoqH/fb6/8Nu96kH14xXr/3FW/lj0kmd
+	dt+49kNM19Yqzmqt9FoadvbozOftu9lYOx3MRb4/s7fXK04vfabi/LtTMnUar++e9Z9PXJ9+
+	TyHu59OOIJuNmdtr5x+6xTd/crn5xLcnxDfP9RBoMerPP3eo82D4cbP1DLPXsmuqiLOzRNo3
+	SstFNRWbHJc4Xf69lLP4CcNOpo1aSizFGYmGWsxFxYkA3Nan4gMEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPLMWRmVeSWpSXmKPExsWy7bCSvO6GPafSDY5NE7B4MG8bm8WhzVvZ
+	La5/ec5qcfPATiaL8+c3sFtsenyN1eJjzz1Wi8u75rBZzDi/j8ni4ilXi0Vbv7BbHH7Tzmrx
+	79pGFosNva/YHfg83t9oZffYtKqTzWPzknqPvi2rGD0+b5ILYI3isklJzcksSy3St0vgylgy
+	ew9zwUK1iobdjxkbGLcrdjFyckgImEh8/buTHcQWEtjNKDHpaiJEXEJi57dWZghbWGLlv+dA
+	NVxANZ8YJXoXrwRLsAloSayeupwVJCEicIlJ4sCRJ2CTmAUcJC6efcICYgsLOEpc/DATLM4i
+	oCqx+9hEoGYODl4BS4kLt2ogFshLrN5wgHkCI88CRoZVjJKpBcW56bnJhgWGeanlesWJucWl
+	eel6yfm5mxjBYailsYPx3bcm/UOMTByMhxglOJiVRHjVtp9KF+JNSaysSi3Kjy8qzUktPsQo
+	zcGiJM670jAiXUggPbEkNTs1tSC1CCbLxMEp1cDUUqsuJ+m3MfPq4S+M3z1vnwywvvo/3tRE
+	l9HgYq7y5Z87fi6fPV1XecaVq128gtEuV8zTQydFG/JqMa3v6PoWV6Z0RNE2zrR0HpPO3hvX
+	3vidVz+4+Ff8gldTBfJVs55ePisdIPbcdOb8dzJVUZdtnFIWH29tvHot5Lqj6E/tY7ZfbP98
+	mbavNzFklk9JwQ1Rfcm30hqmRiFLte6d9wq7dOOVdHVBY8mBTenX/lxmPlH4cpI1l4ZAdGfS
+	jsUei6Y9m+CwxTF07cuJG59nZTAu9ZjBf9zqUpgAh4zxs2kH2pc0m7hEv3J6yVzUsXxfw2Hv
+	Kcv85U+smrnK0ob7stGqGfX7pU3jPUTt5psUvLqlxFKckWioxVxUnAgAnn1atbICAAA=
+X-CMS-MailID: 20250307093024epcas5p1e0be921d3f3445c67daf399e451bb203
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250307093024epcas5p1e0be921d3f3445c67daf399e451bb203
+References: <CGME20250307093024epcas5p1e0be921d3f3445c67daf399e451bb203@epcas5p1.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 21/23] arm64: dts: qcom: sc8180x: Add 'global' PCIe
- interrupt
-To: manivannan.sadhasivam@linaro.org,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        cros-qcom-dts-watchers@chromium.org
-Cc: linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250227-pcie-global-irq-v1-0-2b70a7819d1e@linaro.org>
- <20250227-pcie-global-irq-v1-21-2b70a7819d1e@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250227-pcie-global-irq-v1-21-2b70a7819d1e@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=WsDRMcfv c=1 sm=1 tr=0 ts=67cc5c49 cx=c_pps a=7E5Bxpl4vBhpaufnMqZlrw==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=x0-Ntm4DP0gVEan9CnAA:9 a=QEXdDO2ut3YA:10
- a=pJ04lnu7RYOZP9TFuWaZ:22 a=cvBusfyB2V15izCimMoJ:22
-X-Proofpoint-GUID: f9UVasGZXMh-xCvJpRw-ChVE0lb7ZjhC
-X-Proofpoint-ORIG-GUID: f9UVasGZXMh-xCvJpRw-ChVE0lb7ZjhC
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-08_05,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- lowpriorityscore=0 priorityscore=1501 bulkscore=0 adultscore=0
- impostorscore=0 phishscore=0 mlxscore=0 mlxlogscore=570 clxscore=1015
- spamscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503080113
 
-On 27.02.2025 2:41 PM, Manivannan Sadhasivam via B4 Relay wrote:
-> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> 
-> 'global' interrupt is used to receive PCIe controller and link specific
-> events.
-> 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
+Use samsung CCF function which registers multiple clock providers using
+single function call samsung_cmu_register_clocks().
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Signed-off-by: Varada Pavani <v.pavani@samsung.com>
+---
 
-Konrad
+Changes in V3:
+-Addressed checkpatch warning identified when run with --strict option, as per
+review comment from Krzysztof. Below is the warning from checkpatch.
+"CHECK: Unbalanced braces around else statement"
+-Here is the link for V2 https://patchwork.kernel.org/project/linux-clk/patch/20250225131918.50925-2-v.pavani@samsung.com/
+
+Changes in V2:
+-No review comments in V1.
+
+ drivers/clk/samsung/clk-exynos4.c | 74 ++++++++++++++++++-------------
+ 1 file changed, 42 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 16be0c53903c..8fc89bde0d24 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1269,6 +1269,45 @@ static const struct samsung_cpu_clock exynos4412_cpu_clks[] __initconst = {
+ 		CPUCLK_LAYOUT_E4210, e4412_armclk_d),
+ };
+ 
++static const struct samsung_cmu_info cmu_info_exynos4 __initconst = {
++	.mux_clks		= exynos4_mux_clks,
++	.nr_mux_clks		= ARRAY_SIZE(exynos4_mux_clks),
++	.div_clks		= exynos4_div_clks,
++	.nr_div_clks		= ARRAY_SIZE(exynos4_div_clks),
++	.gate_clks		= exynos4_gate_clks,
++	.nr_gate_clks		= ARRAY_SIZE(exynos4_gate_clks),
++	.fixed_factor_clks	= exynos4_fixed_factor_clks,
++	.nr_fixed_factor_clks	= ARRAY_SIZE(exynos4_fixed_factor_clks),
++	.fixed_clks	= exynos4_fixed_rate_clks,
++	.nr_fixed_clks	= ARRAY_SIZE(exynos4_fixed_rate_clks),
++};
++
++static const struct samsung_cmu_info cmu_info_exynos4210 __initconst = {
++	.mux_clks		= exynos4210_mux_clks,
++	.nr_mux_clks		= ARRAY_SIZE(exynos4210_mux_clks),
++	.div_clks		= exynos4210_div_clks,
++	.nr_div_clks		= ARRAY_SIZE(exynos4210_div_clks),
++	.gate_clks		= exynos4210_gate_clks,
++	.nr_gate_clks		= ARRAY_SIZE(exynos4210_gate_clks),
++	.fixed_factor_clks	= exynos4210_fixed_factor_clks,
++	.nr_fixed_factor_clks	= ARRAY_SIZE(exynos4210_fixed_factor_clks),
++	.fixed_clks	= exynos4210_fixed_rate_clks,
++	.nr_fixed_clks	= ARRAY_SIZE(exynos4210_fixed_rate_clks),
++	.cpu_clks		= exynos4210_cpu_clks,
++	.nr_cpu_clks		= ARRAY_SIZE(exynos4210_cpu_clks),
++};
++
++static const struct samsung_cmu_info cmu_info_exynos4x12 __initconst = {
++	.mux_clks		= exynos4x12_mux_clks,
++	.nr_mux_clks		= ARRAY_SIZE(exynos4x12_mux_clks),
++	.div_clks		= exynos4x12_div_clks,
++	.nr_div_clks		= ARRAY_SIZE(exynos4x12_div_clks),
++	.gate_clks		= exynos4x12_gate_clks,
++	.nr_gate_clks		= ARRAY_SIZE(exynos4x12_gate_clks),
++	.fixed_factor_clks	= exynos4x12_fixed_factor_clks,
++	.nr_fixed_factor_clks	= ARRAY_SIZE(exynos4x12_fixed_factor_clks),
++};
++
+ /* register exynos4 clocks */
+ static void __init exynos4_clk_init(struct device_node *np,
+ 				    enum exynos4_soc soc)
+@@ -1322,41 +1361,12 @@ static void __init exynos4_clk_init(struct device_node *np,
+ 					ARRAY_SIZE(exynos4x12_plls));
+ 	}
+ 
+-	samsung_clk_register_fixed_rate(ctx, exynos4_fixed_rate_clks,
+-			ARRAY_SIZE(exynos4_fixed_rate_clks));
+-	samsung_clk_register_mux(ctx, exynos4_mux_clks,
+-			ARRAY_SIZE(exynos4_mux_clks));
+-	samsung_clk_register_div(ctx, exynos4_div_clks,
+-			ARRAY_SIZE(exynos4_div_clks));
+-	samsung_clk_register_gate(ctx, exynos4_gate_clks,
+-			ARRAY_SIZE(exynos4_gate_clks));
+-	samsung_clk_register_fixed_factor(ctx, exynos4_fixed_factor_clks,
+-			ARRAY_SIZE(exynos4_fixed_factor_clks));
++	samsung_cmu_register_clocks(ctx, &cmu_info_exynos4);
+ 
+ 	if (exynos4_soc == EXYNOS4210) {
+-		samsung_clk_register_fixed_rate(ctx, exynos4210_fixed_rate_clks,
+-			ARRAY_SIZE(exynos4210_fixed_rate_clks));
+-		samsung_clk_register_mux(ctx, exynos4210_mux_clks,
+-			ARRAY_SIZE(exynos4210_mux_clks));
+-		samsung_clk_register_div(ctx, exynos4210_div_clks,
+-			ARRAY_SIZE(exynos4210_div_clks));
+-		samsung_clk_register_gate(ctx, exynos4210_gate_clks,
+-			ARRAY_SIZE(exynos4210_gate_clks));
+-		samsung_clk_register_fixed_factor(ctx,
+-			exynos4210_fixed_factor_clks,
+-			ARRAY_SIZE(exynos4210_fixed_factor_clks));
+-		samsung_clk_register_cpu(ctx, exynos4210_cpu_clks,
+-				ARRAY_SIZE(exynos4210_cpu_clks));
++		samsung_cmu_register_clocks(ctx, &cmu_info_exynos4210);
+ 	} else {
+-		samsung_clk_register_mux(ctx, exynos4x12_mux_clks,
+-			ARRAY_SIZE(exynos4x12_mux_clks));
+-		samsung_clk_register_div(ctx, exynos4x12_div_clks,
+-			ARRAY_SIZE(exynos4x12_div_clks));
+-		samsung_clk_register_gate(ctx, exynos4x12_gate_clks,
+-			ARRAY_SIZE(exynos4x12_gate_clks));
+-		samsung_clk_register_fixed_factor(ctx,
+-			exynos4x12_fixed_factor_clks,
+-			ARRAY_SIZE(exynos4x12_fixed_factor_clks));
++		samsung_cmu_register_clocks(ctx, &cmu_info_exynos4x12);
+ 		if (soc == EXYNOS4412)
+ 			samsung_clk_register_cpu(ctx, exynos4412_cpu_clks,
+ 					ARRAY_SIZE(exynos4412_cpu_clks));
+-- 
+2.17.1
+
 
