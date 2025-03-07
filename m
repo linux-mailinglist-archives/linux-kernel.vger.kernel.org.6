@@ -1,200 +1,365 @@
-Return-Path: <linux-kernel+bounces-551239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E74A569F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:07:15 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 392A3A569FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:07:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D288D179DF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:07:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2838189B18E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:07:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BA8B21ADA4;
-	Fri,  7 Mar 2025 14:06:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36A2721C185;
+	Fri,  7 Mar 2025 14:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lo7+6Z2H"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2083.outbound.protection.outlook.com [40.107.220.83])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+i3hJmC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187E921ADC3;
-	Fri,  7 Mar 2025 14:06:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741356413; cv=fail; b=MAkUIDhVMowhJ3uoI7baX5PdIB1fCnYK4BzS4KGDYfn0q6InegRbglLegih1EfgQJKfLr9Z/p5nKuvQA/tvt6Ybl28dcPKopfJpYJ+6WGYqAIU7YE9IoR0KYhkfi/l4maecLu+u4IaOs2OIZwkHCr63N3HKH2KJ3IVNK/UKY/jo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741356413; c=relaxed/simple;
-	bh=JnKo7d3F8dEY49P37KBOMSOfvpwQx5y9JOfcyvr6OKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PtksrzCUmKVAWFG7WXJbVGbWa+m8zZ6JJA25UlULc53DOkM4FC5OJx39B5spkxBfDRvFiAM3dZ/PVICW61sBZanUfTsjy30EdOcDz9t/bNe/l3x07iWqxqPuL2bWABxTJkniSNcTOMStQ33N9ZcNm7z4nZjvc7EZiQVaKRqEsWY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lo7+6Z2H; arc=fail smtp.client-ip=40.107.220.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Mf8XbCG1VNrd7Y+6UAvpmxjzB+Bl7zy46AAXV5DVyQFo4FhPnMgEt3IG1RSOSm77IlBpQaWqGYJRLmBIiGRHQVYZTUgSUp7xQu1tK4PNg+keKDfpTUnaaUJJxLnlOqfdun/KAY7hvLnZOAGrfCL0dFTjwRPR0XhmSXCR33CDh9PmfgkJkCPjgl1i0Jibd0hgtBMZrgkeW6ZOPmVRxf8YoHuW8AsYChEwpE0XVB76zN9/p4wAUviaf2v1c9IYBOGUc1/+Cxqb9ZIiGAAUz7wFZbo61tvDm8rQn98ZZVypqJgKJ+dFkOy5o1AWl0nXtfbCX5eZ10d6paJXWLjF/NiVOQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vla9cO4JYJsTr7+qLfEkgoaFIXuSfavuBBP4NYgE+io=;
- b=FnhNbX2NVrq3iQH5boJjSE8LH0BqF5NpCRbcUrsxrrAlrqW6/iXPgnDmxXGOs8AC9nscyeXz6VcKd4wCY59X/4e1Ut8SmYBcjf91xLMm2uTkw1huCQ/oR6sbed5pC2afcccV+EX/uvmBHyOuRibt9AXz40md6TwoNvBTXcPg5tUccLZYmX8o8fZSI/jLznu559tHmtET68hhx4BgQvcztCbcUob4wCOq7NcWM1dW8gSat9CiZJu2vDx3W4uWh693SkRigLpvExLVH6KgfrvV7csiIfS/WIYQRVUSzs4e2BIpnyQjT3zgdF48hQpOgsYDyTMwAgSeuZfckpFECVuLKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Vla9cO4JYJsTr7+qLfEkgoaFIXuSfavuBBP4NYgE+io=;
- b=lo7+6Z2HF0h7ytpzCRrSFP6Ji6dyn95Pg51fn+QdukIjBuItA36K6m3fNztKIstMGiv5MpDi+a2oSwd3nMXl556lcNew2MaWi4FeKzF9Kw6IuP23KiJYBdVKL8pDHVvMo/bGjJWxo6dMcN2/SwC/Fi3/W8XyGx19mSgX/rAP45E=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com (2603:10b6:930:be::18)
- by MW5PR12MB5621.namprd12.prod.outlook.com (2603:10b6:303:193::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Fri, 7 Mar
- 2025 14:06:48 +0000
-Received: from CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a]) by CYYPR12MB8750.namprd12.prod.outlook.com
- ([fe80::b965:1501:b970:e60a%7]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
- 14:06:48 +0000
-Date: Fri, 7 Mar 2025 15:06:41 +0100
-From: Robert Richter <rrichter@amd.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Gregory Price <gourry@gourry.net>,
-	Terry Bowman <terry.bowman@amd.com>
-Subject: Re: [PATCH 0/2] cxl/pci: Inactive downstream port handling
-Message-ID: <Z8r9cSxdhNyq4bvC@rric.localdomain>
-References: <20250305100123.3077031-1-rrichter@amd.com>
- <67c8a0cc23ec_24b64294f6@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <67c8a0cc23ec_24b64294f6@dwillia2-xfh.jf.intel.com.notmuch>
-X-ClientProxiedBy: FR4P281CA0098.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cb::15) To CYYPR12MB8750.namprd12.prod.outlook.com
- (2603:10b6:930:be::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EA7821ABDB;
+	Fri,  7 Mar 2025 14:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741356423; cv=none; b=A+9KaHuxPfPAALyHmkx/Vwz1aupD/u+tm3xn5wBW/Wqx81uiNxV2duZZb3k49YqAqJOVpbBv2sN724ddnX1fMG030UxyT7ScoBV5cKhICt5syCcF+Fgj6koiw6ciQQvPTStwsVfP1+itnh3gUp2uDwQigQsz6w5xafQLhNq2whs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741356423; c=relaxed/simple;
+	bh=mmv2E9F+UfPAQ/2f6RZO6VoS3fV6ohPEF0Q1R0VuLMA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=htELGh44E7tmEKAWaPPjhcTKbjqV9ko+6PPIRH6F7DElLvkYEZKgIz/PVGFVdr+xnxpjIJP+tgFZNxdrCM4gW5AHl7QHI7yz3EHgjIu6dC3MnZhXiC+AIaT630Ohu4NxynnIIzYdjeIOs5O5SoibAhiD+af/xYj6SrqT32SNdR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+i3hJmC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B93B4C4CEE7;
+	Fri,  7 Mar 2025 14:06:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741356422;
+	bh=mmv2E9F+UfPAQ/2f6RZO6VoS3fV6ohPEF0Q1R0VuLMA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=U+i3hJmCJq6JdAbCq+2zbE69YmNji1k0H0ii5Ri5sz4QeoUo1/TN+bARDZ+XjLq+2
+	 gJ72mbISMZTAyIxM3Yf3BTwnDRVLfzJ3Nafs8PeUamTQG5/JUu3sGWlnm8ncY/MkF0
+	 C0N32lyuYRuNr2VvRDqfA0xW8VeLDCqm2fvXGu79in40Whw8tOal+48G9sj0Oxk9Rh
+	 yEVsC59CwB7UHWKdokmzCBicZiOXjJTMG12om5QsKzaWPoNdIcZVGDxjnm+jyR9/J6
+	 PPPk83FOcThC2tiV21VcYkgciYZDQ38S4YSjNmU37zO12BVv4P2F+d3Ph+cfGFM6BV
+	 Fidw7qSt7PsOA==
+Message-ID: <7d3b0aa7-9ebf-4493-94ae-338207448429@kernel.org>
+Date: Fri, 7 Mar 2025 15:06:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYYPR12MB8750:EE_|MW5PR12MB5621:EE_
-X-MS-Office365-Filtering-Correlation-Id: ed62030a-9ec9-4ae9-0741-08dd5d814cf3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2OmDtuEWKT4TsBysZcxnHCr60xQ9wMmrqrBf4FfywGjk4gJikbpGrko+b3ZJ?=
- =?us-ascii?Q?+qMR72b8hGaggE7dKtIy3Jtj6gcPKWsWjc9pRCK3kexxDVQtdxWXyzXAt6zN?=
- =?us-ascii?Q?d+TehTJxVCtAhfBHBUTK2afqU3WnMpbzzpKu8m5s4l772Te4qWuRHYEmk1D7?=
- =?us-ascii?Q?r/lub/4qd3XJr02Y8eXoc+PiPh/3u4RXbXXGKq7ZSCUZ4IwXpL0X1I0n9AHk?=
- =?us-ascii?Q?scZFVHFrdi3cq9Y2nMolv5tpQP49WOJAvxDNuJCK4htBr0D5j7FKzBe0zZui?=
- =?us-ascii?Q?FjKl3KqcN2/CRCrxl9apGf80sCHHn6l94cp9avlYOEPf0w159mkjfbj0RfUN?=
- =?us-ascii?Q?Dg/xNWsTxq1DWnzpIe7FslJx2VG1a7BJ99SUip5PEF5YFtq0U79rqEnpvxTX?=
- =?us-ascii?Q?F4d6vjqgmAypJ3nhcknFEkoKEFWHzolCr/rbq1y6/S+AKSRVrKK/Su4eXYeb?=
- =?us-ascii?Q?oY12ve49aJIemW51S7yoEDMfgeRpVxrJHRMxu963f5tvy/pDJOl9dpkt6ChA?=
- =?us-ascii?Q?0Ui6qB5OF88xNqN6b6v3iEztPQZS4BlWqWoytOPqMRKWscjLNc84Zhw8JlsK?=
- =?us-ascii?Q?EISoG0W+UuovscBSmByk9kkWbBGhi+45mHb1qZK82Ml/l3ggJr5tT4ZOlwBp?=
- =?us-ascii?Q?Pit9+jrpB5yveSNkatHnfvV4PgpCzlaX7CHGcl9GapUhYBanXizcQh4QaQlg?=
- =?us-ascii?Q?SN94Vo9mNUjutn3FnXxK+Ig0xP13zBe7hNqratn6//brVR8MXDbPlW+osbJn?=
- =?us-ascii?Q?Dtm8gzo1seCTL+nSX9H/u78DKm2GP0qY/Q8+uOS8EEAXCRnHCgeu7BV5KiMw?=
- =?us-ascii?Q?YQ28walW961O5VYmvxDO7st8sK5P0hMz8wnzWhUaZQLn0+k3MeTY0DnR9p2G?=
- =?us-ascii?Q?L2ZWz4O6hIeV5IwGOR0j4BTpSe23wCjElwhs+RqfF0Om9vuhrM5761H1WUdt?=
- =?us-ascii?Q?AC5hNZUXXqQ5DdVwW4AZAAdfTbyWoqYlowlWuLjeBO8PP5YmAbgshbN8W3Nn?=
- =?us-ascii?Q?U2RfC+NiPLLrO7DLxu2zUvBY7P2JglmplOE2sMv3Q36ggIeHE7EkMR4AvABP?=
- =?us-ascii?Q?1yIE33zS+3cvR2MIw7oPqEKHYQifRSh4Z5MyFt6fxx4js2xhQWkO96PyaNg/?=
- =?us-ascii?Q?gMxdCFgaoXGODBsT2qIUL3XCHFbdJk4mSNxHT1Jv9ni8nAmuDX5omkCBC679?=
- =?us-ascii?Q?dYbtN6ELJjGu3Q+Xqw2bfc8npfdCz793Oecdio3JTAj1fwk1IVfTNzRM3ZD+?=
- =?us-ascii?Q?6L2j99ufKS3sZ25POx7BZ08Fl46LSYUdF/lx7pFWbkUURt7ApilF0wmwE7tt?=
- =?us-ascii?Q?Y8ywJrUW/tGVYmKy8ok0FJ7Nz9Awh3hDHdmv5twZAWE5q7ZSvysvqzPZrgq0?=
- =?us-ascii?Q?7UC65d/dN2N9Mc1yK3xgBZ/u0ZMM?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8750.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?T+NKw+YTtIsT9TMJY4lIUwr2/a5M8y7CZezlA5WTalUfuQIG5wGJu+R7Q4kg?=
- =?us-ascii?Q?MhPvJmeKqhPLIr/QCk4ldHTACaURuDsIXTPiykDtSKoAcUwak2yfCPxjGM63?=
- =?us-ascii?Q?KxGBxceGNYpRP4OvoPZwdoVF0smb4VEFOQNkWVgqlrdJd5bZM5wEDthocOIq?=
- =?us-ascii?Q?Rt3bN1HcI4f5WSRD33hdH2HTyTt8foCwqEzKtdszGwp/yJ2cDv/MrvUwb512?=
- =?us-ascii?Q?PP/zyC9lpKBeD2XYL6z4l09WVfinkBpqf5wxWRA3cXoJO2L8pMIeuA0er/6f?=
- =?us-ascii?Q?t3PMkgcOqpwXl0TLf1pVPNvB7zu3eeaMOdA4dPXrcHyea4BzA4HL20/34LbJ?=
- =?us-ascii?Q?ppPyTndKDKbdnOjyf9AtApVhxnTwfKq15gRCCI8GC+Wmu6DS5hidOTCkoukZ?=
- =?us-ascii?Q?79A2iU78X39s/iVM9DQ8xigLkeROiEOslXPBUDPs/l2M26i7fSxYiZ8cEVVs?=
- =?us-ascii?Q?295Ku2SEcu9kgEgFGNG/CFz2lRESvLONwB7hgzgZYipRMFoHuksSLLOtno0k?=
- =?us-ascii?Q?sq9KDsDJdxGpdG7Ac/gvas0nnVRaFPWQuePppdG5YAORhL2QzL1+NgZHXGHJ?=
- =?us-ascii?Q?AVWlpW6RFRem0VpZC6Jw5IaY2EggNL+Z6wX53yMtlVkAp8yV2iFEi6dfwNNo?=
- =?us-ascii?Q?2+qHgGY2ZEKuY3roYDTgJr/uHK26YSmldUtLP8ZN6rYXbeAphqorCclOX9Dh?=
- =?us-ascii?Q?RhQ9Vx5Z11sUHvyRlK05NQkHX7DXN+6eif/Mv2CX9uSEyNPJvLZIFNRFJPQn?=
- =?us-ascii?Q?eE92xTiHQLAhG4WLxeLMDvxCZxM8vcU6dMAERFRtbG5x/IdxG1XOPV75JN+v?=
- =?us-ascii?Q?ZUKFpbyfH9r/ZTVFU2+XpE9qgml6+JG+13lzL1o8YrJ1qZtLJ24Y3nWh3eu0?=
- =?us-ascii?Q?9BWxaf1dhY2SKejCgf4wsVDAHZQdKfwuZ8u0lhXcKSeKX2sHzMtMRUufNmZm?=
- =?us-ascii?Q?vf9xcOrPAqwEAw2+AHqlwJkjji7VjvM5EZunv/HckT+MYVP+9HGRjQ6P0UdV?=
- =?us-ascii?Q?68Fp1V674zC5ePHiWPv7x2XOcckp3ye1uA9ktDa3uizxwXJgeUbdzGvy+zfa?=
- =?us-ascii?Q?3OWqHsGbJ9wnvliNF1VDjN7j7k3ts+TzVSGAWUhmPBDJT1GZ71gJnMAGgheb?=
- =?us-ascii?Q?+YnbSnp7lmnjSkvOmcZspCZ2Cq2uVIUPzkFwU+w4ogWKo0bvmj2zdZeEOnSz?=
- =?us-ascii?Q?tHikfaPRNgpJSxN+AGLphz7Z8xm66f/K+pX5hHoep3YoPwhHlPuFWcL5AkRO?=
- =?us-ascii?Q?5EA45Cj1UEKZI5r3j8dB66lzdNzrxZIK5BpntHwsohLe69M6FpaaK0IWPDcM?=
- =?us-ascii?Q?DjuXb4TkIC4llZJqiVyjAQP116hpFChy2vQJbWAYLzKiR0Y6nXRfpRY0SIfa?=
- =?us-ascii?Q?P6Oo1QVKFvSgqfeC4ERtcYfne6HQgL9q1scKQWgfjVGLEvGqYVPyumm1Oy86?=
- =?us-ascii?Q?LMXtI9qiSAVw1RbBmMqgA1cTLMleVGTmGjywMWOkVJsjRWnOZApDS8nhKjsw?=
- =?us-ascii?Q?tS4ceHgJdTqvnLW/O0D+nSsPd1WTg9lemQWgNi+dG5m9bRHRrh0NT2ONP8jY?=
- =?us-ascii?Q?CeD3YS3yI4ImSvwvOPBrUTLH3mr1p4Z+C/P/uCPx?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed62030a-9ec9-4ae9-0741-08dd5d814cf3
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8750.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 14:06:48.1500
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EWGGn8MPaobnfRZ0rcqFYYDMzriuzUIbquTJeuBE7wHlrh2HUEqKfVlwf3ZQHOf3yO+MVZMo7bsjy42dmymj1A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW5PR12MB5621
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: display: tegra: document EPP, ISP,
+ MPE and TSEC for Tegra114 and Tegra124
+To: Svyatoslav Ryhel <clamor95@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <treding@nvidia.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250307081047.13724-1-clamor95@gmail.com>
+ <20250307081047.13724-2-clamor95@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250307081047.13724-2-clamor95@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Dan,
+On 07/03/2025 09:10, Svyatoslav Ryhel wrote:
+> The current EPP, ISP and MPE schemas are largely compatible with Tegra114 and Tegra124,
+> requiring only minor adjustments. Additionally, the TSEC schema for the Security engine,
+> which is available from Tegra114 onwards, is included.
 
-thanks for review.
 
-On 05.03.25 11:06:52, Dan Williams wrote:
-> Robert Richter wrote:
-> > A small series with individual patches to handle inactive downstream
-> > ports during enumeration. First patch changes downstream port
-> > enumeration to ignore those with duplicate port IDs. Second patch only
-> > enables active downstream ports with the link status up.
-> > 
-> > Patches are independent each and can be applied individually.
-> > 
-> > Robert Richter (2):
-> >   cxl/pci: Ignore downstream ports with duplicate port IDs
-> >   cxl/pci: Check link status and only enable active dports
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+
 > 
-> Both of these problems are to addressed by work in progress patches to
-> delay dport enumeration until a cxl_memdev is registered beneath that
-> leg of CXL topology.
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>  .../display/tegra/nvidia,tegra114-tsec.yaml   | 70 +++++++++++++++++++
+>  .../display/tegra/nvidia,tegra20-epp.yaml     | 12 ++--
+>  .../display/tegra/nvidia,tegra20-isp.yaml     | 16 +++--
+>  .../display/tegra/nvidia,tegra20-mpe.yaml     | 30 ++++++--
+>  4 files changed, 114 insertions(+), 14 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
 > 
-> I would prefer to focus on that solution and skip these band-aids in
-> the near term unless there is an urgent need that makes it clear that
-> waiting for v6.16 is not tenable.
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
+> new file mode 100644
+> index 000000000000..84d9ab9394d5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
+> @@ -0,0 +1,70 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/tegra/nvidia,tegra114-tsec.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVIDIA Tegra Security co-processor
 
-Port ids could be set only by hardware and there will be no other way
-then, than the driver to handle the duplicates. Relaxing the check
-looks reasonable to prevent the whole port being shut down. There are
-other cases where dport enumeration also just continues, e.g. if the
-link capablity cannot be read or the component registers do not exist.
+How security processor is related to display?
 
-The delayed port enumeration series will hide duplicates too (not yet
-tested), but since this is marked RFC and 'long term fix', how about
-having those patches first and then update them with the delayed port
-enumeration patches? The duplicate port handling could be changed
-again or even made obsolete. Otherwise, until then, the kernel fails
-to enumerate CXL devices.
 
-Thanks,
 
--Robert
+> +
+> +maintainers:
+> +  - Svyatoslav Ryhel <clamor95@gmail.com>
+> +  - Thierry Reding <thierry.reding@gmail.com>
+
+Please provide description of the hardware here.
+
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - const: nvidia,tegra114-tsec
+> +      - const: nvidia,tegra124-tsec
+
+That's just enum
+
+> +      - items:
+> +          - const: nvidia,tegra132-tsec
+> +          - const: nvidia,tegra124-tsec
+> +      - const: nvidia,tegra210-tsec
+
+And this goes to enum.
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    items:
+> +      - description: module clock
+
+Instead: maxItems: 1
+
+> +
+> +  resets:
+> +    items:
+> +      - description: module reset
+
+Instead: maxItems: 1
+
+
+> +
+> +  reset-names:
+> +    items:
+> +      - const: tsec
+
+Drop reset-names, redundant.
+
+> +
+> +  iommus:
+> +    maxItems: 1
+> +
+> +  interconnects:
+> +    maxItems: 6
+
+You need to list the items.
+
+> +
+> +  interconnect-names:
+> +    maxItems: 6
+
+You need to list the items.
+
+> +
+> +  operating-points-v2: true
+
+No opp-table?
+
+> +
+> +  power-domains:
+> +    items:
+> +      - description: phandle to the core power domain
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/tegra114-car.h>
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +
+> +    tsec@54500000 {
+> +        compatible = "nvidia,tegra114-tsec";
+> +        reg = <0x54500000 0x00040000>;
+> +        interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
+> +        clocks = <&tegra_car TEGRA114_CLK_TSEC>;
+> +        resets = <&tegra_car TEGRA114_CLK_TSEC>;
+> +        reset-names = "tsec";
+> +    };
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-epp.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-epp.yaml
+> index 3c095a5491fe..a50e3261a191 100644
+> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-epp.yaml
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-epp.yaml
+> @@ -15,10 +15,14 @@ properties:
+>      pattern: "^epp@[0-9a-f]+$"
+>  
+>    compatible:
+> -    enum:
+> -      - nvidia,tegra20-epp
+> -      - nvidia,tegra30-epp
+> -      - nvidia,tegra114-epp
+> +    oneOf:
+> +      - const: nvidia,tegra20-epp
+> +      - const: nvidia,tegra30-epp
+> +      - const: nvidia,tegra114-epp
+> +      - const: nvidia,tegra124-epp
+
+No, that was an enum.
+
+> +      - items:
+> +          - const: nvidia,tegra132-epp
+> +          - const: nvidia,tegra124-epp
+>  
+>    reg:
+>      maxItems: 1
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-isp.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-isp.yaml
+> index 3bc3b22e98e1..bfef4f26a3d7 100644
+> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-isp.yaml
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-isp.yaml
+> @@ -11,11 +11,19 @@ maintainers:
+>    - Jon Hunter <jonathanh@nvidia.com>
+>  
+>  properties:
+> +  $nodename:
+> +    pattern: "^isp@[0-9a-f]+$"
+
+Why?
+
+Nothing in commit msg explains this.
+
+
+> +
+>    compatible:
+> -    enum:
+> -      - nvidia,tegra20-isp
+> -      - nvidia,tegra30-isp
+> -      - nvidia,tegra210-isp
+> +    oneOf:
+> +      - const: nvidia,tegra20-isp
+> +      - const: nvidia,tegra30-isp
+> +      - const: nvidia,tegra114-isp
+> +      - const: nvidia,tegra124-isp
+> +      - items:
+> +          - const: nvidia,tegra132-isp
+> +          - const: nvidia,tegra124-isp
+> +      - const: nvidia,tegra210-isp
+>  
+>    reg:
+>      maxItems: 1
+> diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
+> index 2cd3e60cd0a8..35e3991f1135 100644
+> --- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
+> +++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-mpe.yaml
+> @@ -12,13 +12,19 @@ maintainers:
+>  
+>  properties:
+>    $nodename:
+> -    pattern: "^mpe@[0-9a-f]+$"
+> +    oneOf:
+> +      - pattern: "^mpe@[0-9a-f]+$"
+> +      - pattern: "^msenc@[0-9a-f]+$"
+>  
+>    compatible:
+> -    enum:
+> -      - nvidia,tegra20-mpe
+> -      - nvidia,tegra30-mpe
+> -      - nvidia,tegra114-mpe
+> +    oneOf:
+> +      - const: nvidia,tegra20-mpe
+> +      - const: nvidia,tegra30-mpe
+> +      - const: nvidia,tegra114-msenc
+> +      - const: nvidia,tegra124-msenc
+> +      - items:
+> +          - const: nvidia,tegra132-msenc
+> +          - const: nvidia,tegra124-msenc
+>  
+>    reg:
+>      maxItems: 1
+> @@ -36,7 +42,9 @@ properties:
+>  
+>    reset-names:
+>      items:
+> -      - const: mpe
+> +      - enum:
+> +          - mpe
+> +          - msenc
+
+No, why? That's redundant. Having names equal to module name brings zero
+benefits. This change even shows that it is counter productive.
+
+>  
+>    iommus:
+>      maxItems: 1
+> @@ -58,6 +66,7 @@ additionalProperties: false
+>  examples:
+>    - |
+>      #include <dt-bindings/clock/tegra20-car.h>
+> +    #include <dt-bindings/clock/tegra114-car.h>
+>      #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  
+>      mpe@54040000 {
+> @@ -68,3 +77,12 @@ examples:
+>          resets = <&tegra_car 60>;
+>          reset-names = "mpe";
+>      };
+> +
+> +    msenc@544c0000 {
+> +        compatible = "nvidia,tegra114-msenc";
+
+Difference in compatible does not mean you need new example.
+
+
+Best regards,
+Krzysztof
 
