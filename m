@@ -1,195 +1,159 @@
-Return-Path: <linux-kernel+bounces-551437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EF95A56C64
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:44:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A0FDA56C63
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:44:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BF0C188A685
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:44:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93480165210
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60B1821E082;
-	Fri,  7 Mar 2025 15:44:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C895521D5BE;
-	Fri,  7 Mar 2025 15:43:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6B121D58F;
+	Fri,  7 Mar 2025 15:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z6x5hrqv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2AA218DB09;
+	Fri,  7 Mar 2025 15:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741362241; cv=none; b=gEpjLSXgja3pGbRd62As0a+54Fin+9NDydsbH6Ntc4rjzarL8WBHvpb9P1f6lfgGuPSRy6p9rUjPjoETzphmSKPFCVZYg7sO6Zf7RFa3mYxCHkzyv5TONSeucbZA55RVhEVyAsm/bjs9mPGkxYEd+3jJFP2ejke2kLrARhy6YBU=
+	t=1741362265; cv=none; b=UnktEPxNMDvIkv9vjla8wnAUt8o1uWKBBi1M9OnR5b/HwGcXBsRzGb14lwv85/3RnmowP2QYLi4VXbn6GgiQAyaZIfym/JxRIUKXYXHbCJv36p95MkkOFzQzuLhae/Yfx9PIAoOUrbhTC5melMDZQYWkxqY5mmZ+BZnl8EZn2uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741362241; c=relaxed/simple;
-	bh=WYGYqIE7tjs3Ndvg97TJgF3DQFNARamHvv9Sv/QBZgk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NnG8wv9UAyN/ExzYZq7SXvgSWRTSKIiSa2OfaualMJiUUjoDXV1GkS8yn+8/l7hZeYR3Kow5EdoG5oLJIh9/MMnEEIv9ue61cPyEb+IivhfXOA8Ilz8FuXLbM5uGcnsey8koGMl0orX+6IiWwFBUXGU0CIeiRmBY9Yvtjbq6iGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8239C1477;
-	Fri,  7 Mar 2025 07:44:10 -0800 (PST)
-Received: from [10.1.35.22] (e122027.cambridge.arm.com [10.1.35.22])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D558B3F66E;
-	Fri,  7 Mar 2025 07:43:53 -0800 (PST)
-Message-ID: <4566d2d1-1f59-49e3-ad75-45c27ac4dfda@arm.com>
-Date: Fri, 7 Mar 2025 15:43:51 +0000
+	s=arc-20240116; t=1741362265; c=relaxed/simple;
+	bh=4d4YhX86AxePC24DFJMicsIc618HFk7dC28ZbtPJuM4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N+GysHzJb/5CIs2bDeIPMqkHHesUvTxbwWM5Aa1liYjVim6CthVhECRJVgHvYw/j2AU6bCLGyLge4fzGxjvq+wTUY28HRX34FbF1uX1ehFCXUelTxqZjGX5L59FJxFmSGgiyvGS2vXdHvva7B7K4qVsr8KSAnmGtEz3tVxH1p3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z6x5hrqv; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741362264; x=1772898264;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=4d4YhX86AxePC24DFJMicsIc618HFk7dC28ZbtPJuM4=;
+  b=Z6x5hrqv+VVFVv2i5xR1pIFyPxAt1oUyAHYKy+muTCXAOu90LiGO6TRl
+   8rPvO4UXWOtS0mG8o3VDCfNjlqdruVdeLmTcByPhb+2crF7zFTdseBKay
+   Iz8p0l4ZMMAWlYWmG5gRlTSBC7U8Xk1ne3CQ3JjKUq+p209JXfJv0S5Io
+   nT12ROG2GIhQUI+b+xzjIo7O+n32Ey4LqCwSrNfGgjsgbDMuh6XndvU4Y
+   LCBOFgQuU7tUzsp2W/XQD2DfPPVyPG6BmH+FGB7xBlGo0qdyvq72IMouL
+   2YRRYMhVBixoTgtnyZoG00S1Ii/aGaZ4a6ecr2tQ/wTahCd2+vp5FSQ4Q
+   g==;
+X-CSE-ConnectionGUID: QU4dACmITN68QB8ge7iCNQ==
+X-CSE-MsgGUID: 9iQFZpCeRfa4IImYPTrRWA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="59970455"
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="59970455"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 07:44:23 -0800
+X-CSE-ConnectionGUID: ijITPfdvTzyhioCdygfWow==
+X-CSE-MsgGUID: nFHE9sfuQiWLv6tsSuMgwA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="124443993"
+Received: from apgcp0h572501.png.altera.com ([10.244.73.227])
+  by fmviesa004.fm.intel.com with ESMTP; 07 Mar 2025 07:44:21 -0800
+From: Boon Khai Ng <boon.khai.ng@intel.com>
+To: Johan Hovold <johan@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-usb <linux-usb@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Cc: Boon Khai Ng <boon.khai.ng@altera.com>,
+	Tien Sung Ang <tien.sung.ang@altera.com>,
+	Boon Khai Ng <boon.khai.ng@intel.com>
+Subject: [PATCH v2] USB: serial: ftdi_sio: add support for Altera USB Blaster 3
+Date: Fri,  7 Mar 2025 23:43:55 +0800
+Message-Id: <20250307154355.30772-1-boon.khai.ng@intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 12/45] arm64: RME: Allocate/free RECs to match vCPUs
-To: Gavin Shan <gshan@redhat.com>, kvm@vger.kernel.org, kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20250213161426.102987-1-steven.price@arm.com>
- <20250213161426.102987-13-steven.price@arm.com>
- <7639eca7-8fd8-491c-90bd-1be084fbd710@redhat.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <7639eca7-8fd8-491c-90bd-1be084fbd710@redhat.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Gavin,
+The Altera USB Blaster 3, available as both a cable and an on-board
+solution, is primarily used for programming and debugging FPGAs.
 
-On 03/03/2025 07:08, Gavin Shan wrote:
-> On 2/14/25 2:13 AM, Steven Price wrote:
->> The RMM maintains a data structure known as the Realm Execution Context
->> (or REC). It is similar to struct kvm_vcpu and tracks the state of the
->> virtual CPUs. KVM must delegate memory and request the structures are
->> created when vCPUs are created, and suitably tear down on destruction.
->>
->> RECs must also be supplied with addition pages - auxiliary (or AUX)
->> granules - for storing the larger registers state (e.g. for SVE). The
->> number of AUX granules for a REC depends on the parameters with which
->> the Realm was created - the RMM makes this information available via the
->> RMI_REC_AUX_COUNT call performed after creating the Realm Descriptor
->> (RD).
->>
->> Note that only some of register state for the REC can be set by KVM, the
->> rest is defined by the RMM (zeroed). The register state then cannot be
->> changed by KVM after the REC is created (except when the guest
->> explicitly requests this e.g. by performing a PSCI call). The RMM also
->> requires that the VMM creates RECs in ascending order of the MPIDR.
->>
->> See Realm Management Monitor specification (DEN0137) for more
->> information:
->> https://developer.arm.com/documentation/den0137/
->>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->> Changes since v6:
->>   * Avoid reporting the KVM_ARM_VCPU_REC feature if the guest isn't a
->>     realm guest.
->>   * Support host page size being larger than RMM's granule size when
->>     allocating/freeing aux granules.
->> Changes since v5:
->>   * Separate the concept of vcpu_is_rec() and
->>     kvm_arm_vcpu_rec_finalized() by using the KVM_ARM_VCPU_REC feature as
->>     the indication that the VCPU is a REC.
->> Changes since v2:
->>   * Free rec->run earlier in kvm_destroy_realm() and adapt to previous
->> patches.
->> ---
->>   arch/arm64/include/asm/kvm_emulate.h |   7 ++
->>   arch/arm64/include/asm/kvm_host.h    |   3 +
->>   arch/arm64/include/asm/kvm_rme.h     |  18 +++
->>   arch/arm64/kvm/arm.c                 |  13 +-
->>   arch/arm64/kvm/reset.c               |  11 ++
->>   arch/arm64/kvm/rme.c                 | 179 +++++++++++++++++++++++++++
->>   6 files changed, 229 insertions(+), 2 deletions(-)
->>
-> 
-> With the following one comment addressed:
-> 
-> Reviewed-by: Gavin Shan <gshan@redhat.com>
-> 
-> [...]
-> 
->>     /*
->> diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/
->> asm/kvm_rme.h
->> index 698bb48a8ae1..5db377943db4 100644
->> --- a/arch/arm64/include/asm/kvm_rme.h
->> +++ b/arch/arm64/include/asm/kvm_rme.h
->> @@ -6,6 +6,7 @@
->>   #ifndef __ASM_KVM_RME_H
->>   #define __ASM_KVM_RME_H
->>   +#include <asm/rmi_smc.h>
->>   #include <uapi/linux/kvm.h>
->>     /**
->> @@ -65,6 +66,21 @@ struct realm {
->>       unsigned int ia_bits;
->>   };
->>   +/**
->> + * struct realm_rec - Additional per VCPU data for a Realm
->> + *
->> + * @mpidr: MPIDR (Multiprocessor Affinity Register) value to identify
->> this VCPU
->> + * @rec_page: Kernel VA of the RMM's private page for this REC
->> + * @aux_pages: Additional pages private to the RMM for this REC
->> + * @run: Kernel VA of the RmiRecRun structure shared with the RMM
->> + */
->> +struct realm_rec {
->> +    unsigned long mpidr;
->> +    void *rec_page;
->> +    struct page *aux_pages[REC_PARAMS_AUX_GRANULES];
->> +    struct rec_run *run;
->> +};
->> +
-> 
-> REC_PARAMS_AUX_GRANULES represents the maximal number of the auxiliary
-> granules.
-> Since the base page size is always larger than or equal to granule size
-> (4KB).
-> The capacity of array @aux_pages[] needs to be REC_PARAMS_AUX_GRANULES.
-> Ideally,
-> the array's size can be computed dynamically and it's allocated in
-> kvm_create_rec().
+It interfaces with host software such as Quartus Programmer,
+System Console, SignalTap, and Nios Debugger. The device utilizes
+either an FT2232 or FT4232 chip.
 
-This is indeed another example of where pages and granules have got
-mixed. The RMM specification provides a maximum number of granules (and
-there's a similar array in struct rec_params). Here the use of
-REC_PARAMS_AUX_GRANULES is just to keep the structure more simple (no
-dynamic allocation) with the cost of ~128bytes. Obviously if
-PAGE_SIZE>4k then this array could be smaller.
+Enabling support for various configurations of the USB Blaster 3
+by including the appropriate VID/PID pairs, allowing it to function
+as a serial device via ftdi_sio. The configurations are determined
+by the hardware design and include:
 
-> Alternatively, to keep the code simple, a comment is needed here to
-> explain why
-> the array's size has been set to REC_PARAMS_AUX_GRANULES.
+1) PID 0x6020, FT2232, 1 JTAG port
+2) PID 0x6021, FT2232, 2 JTAG ports
+3) PID 0x6022, FT2232, 1 JTAG port + Port B as UART
+4) PID 0x6023, FT2232, Cable USB-Blaster 3
+5) PID 0x6024, FT4232, 1 JTAG port
+6) PID 0x6025, FT4232, 1 JTAG port + Port C as UART
+7) PID 0x6026, FT4232, 1 JTAG port + Port C, D as UART
+8) PID 0x602e, FT4232, 1 JTAG port + Port B, C, D as UART
 
-Definitely a valid point - this could do with a comment explaining the
-situation.
+These configurations allow for flexibility in how the
+USB Blaster 3 is used, depending on the specific needs of the
+hardware design.
 
-> An relevant question: Do we plan to support differentiated sizes between
-> page
-> and granule? I had the assumption this feature will be supported in the
-> future
-> after the base model (equal page and granule size) gets merged first.
+Signed-off-by: Boon Khai Ng <boon.khai.ng@intel.com>
+---
+ drivers/usb/serial/ftdi_sio.c     | 14 ++++++++++++++
+ drivers/usb/serial/ftdi_sio_ids.h | 13 +++++++++++++
+ 2 files changed, 27 insertions(+)
 
-Yes I do plan to support it. This series actually has the basic support
-in it already, with an experimental patch at the end enabling that
-support. It "works" but I haven't tested it well and I think some of the
-error handling isn't quite right yet.
-
-But there's also a bunch more work to be done (like here) to avoid
-over-allocating memory when PAGE_SIZE>4k. E.g. RTTs need an
-sub-allocator so that we don't waste an entire (larger) page on each RTT.
-
-Steve
+diff --git a/drivers/usb/serial/ftdi_sio.c b/drivers/usb/serial/ftdi_sio.c
+index e07c5e3eb18c..9b34e23b7091 100644
+--- a/drivers/usb/serial/ftdi_sio.c
++++ b/drivers/usb/serial/ftdi_sio.c
+@@ -1079,6 +1079,20 @@ static const struct usb_device_id id_table_combined[] = {
+ 		.driver_info = (kernel_ulong_t)&ftdi_jtag_quirk },
+ 	/* GMC devices */
+ 	{ USB_DEVICE(GMC_VID, GMC_Z216C_PID) },
++	/* Altera USB Blaster 3 */
++	{ USB_DEVICE_INTERFACE_NUMBER(ALTERA_VID, ALTERA_UB3_6022_PID, 1) },
++	{ USB_DEVICE_INTERFACE_NUMBER(ALTERA_VID, ALTERA_UB3_6025_PID, 2) },
++	{ USB_DEVICE_INTERFACE_NUMBER(ALTERA_VID, ALTERA_UB3_6026_PID, 2) },
++	{ USB_DEVICE_INTERFACE_NUMBER(ALTERA_VID, ALTERA_UB3_6026_PID, 3) },
++	{ USB_DEVICE_INTERFACE_NUMBER(ALTERA_VID, ALTERA_UB3_6029_PID, 2) },
++	{ USB_DEVICE_INTERFACE_NUMBER(ALTERA_VID, ALTERA_UB3_602A_PID, 2) },
++	{ USB_DEVICE_INTERFACE_NUMBER(ALTERA_VID, ALTERA_UB3_602A_PID, 3) },
++	{ USB_DEVICE_INTERFACE_NUMBER(ALTERA_VID, ALTERA_UB3_602C_PID, 1) },
++	{ USB_DEVICE_INTERFACE_NUMBER(ALTERA_VID, ALTERA_UB3_602D_PID, 1) },
++	{ USB_DEVICE_INTERFACE_NUMBER(ALTERA_VID, ALTERA_UB3_602D_PID, 2) },
++	{ USB_DEVICE_INTERFACE_NUMBER(ALTERA_VID, ALTERA_UB3_602E_PID, 1) },
++	{ USB_DEVICE_INTERFACE_NUMBER(ALTERA_VID, ALTERA_UB3_602E_PID, 2) },
++	{ USB_DEVICE_INTERFACE_NUMBER(ALTERA_VID, ALTERA_UB3_602E_PID, 3) },
+ 	{ }					/* Terminating entry */
+ };
+ 
+diff --git a/drivers/usb/serial/ftdi_sio_ids.h b/drivers/usb/serial/ftdi_sio_ids.h
+index 5ee60ba2a73c..52be47d684ea 100644
+--- a/drivers/usb/serial/ftdi_sio_ids.h
++++ b/drivers/usb/serial/ftdi_sio_ids.h
+@@ -1612,3 +1612,16 @@
+  */
+ #define GMC_VID				0x1cd7
+ #define GMC_Z216C_PID			0x0217 /* GMC Z216C Adapter IR-USB */
++
++/*
++ *  Altera USB Blaster 3 (http://www.altera.com).
++ */
++#define ALTERA_VID			0x09fb
++#define ALTERA_UB3_6022_PID		0x6022
++#define ALTERA_UB3_6025_PID		0x6025
++#define ALTERA_UB3_6026_PID		0x6026
++#define ALTERA_UB3_6029_PID		0x6029
++#define ALTERA_UB3_602A_PID		0x602a
++#define ALTERA_UB3_602C_PID		0x602c
++#define ALTERA_UB3_602D_PID		0x602d
++#define ALTERA_UB3_602E_PID		0x602e
+-- 
+2.25.1
 
 
