@@ -1,126 +1,91 @@
-Return-Path: <linux-kernel+bounces-551237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680D4A569F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:06:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB1D0A569EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:06:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4319A3B20E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:06:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC6183B04BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:06:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F30821B181;
-	Fri,  7 Mar 2025 14:06:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B5321ADA4;
+	Fri,  7 Mar 2025 14:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="k4LLpH1x"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lJaj/OxB";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G1r6x2oo"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C8518DF65;
-	Fri,  7 Mar 2025 14:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741356396; cv=pass; b=pBgaS9tSPdH5zs3qjs72FkBI1qUTINcjK6a3w+DZSI1ZxNdLRNQsn00zKep1JBNzUneyGf2h0nXgWPsHd1t+tJqeXp6Vcuer8uhHFmfeoHzsU/UQ1O22qyMT2jKzuEVGpZu3qwJqqWgBI3i7JHhNxhAz1kHtCcYl8MfrDz60CFM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741356396; c=relaxed/simple;
-	bh=ykdhXmylYh6z/rNdao/fGKzQPI3z2XmS1ESDJTS7TYQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QGQiIX2zO3ezoyJiUS/o1x6WiTTwwug645zoFo+5NrKnCaJMCPE5xBMQBjEeiNTa2/JO7/JWo9vVpDMjHMe+FFlcYeJeEgqW/AvP1PT5zI3IGIWGMoKp5rvv5qerUXiperkO40i6p4BboCeBcK1FwfjWezQQDXXRCUHC0AiR2OU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=k4LLpH1x; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741356358; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=RUSqeTjX0/f+vSCIJFG7Ivi/H9ExZZOTIGsH8b/7NgnDNY+UPVZ7ECjWzwOuDI3RzpTfQqmbZSAsfna/nJrzgxqNHi9CItEF9nS40fA67K5OyjyabwmfpK9um35EBQjHtXoOmHIdnjUaDBCCDMC8yAzHg++9XIkIh6wtiClIxik=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741356358; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=FP+ifasHniIC8neSq6VwSq5ZsIenCwU36aCvQ3EbV9k=; 
-	b=M4EErEyApvaCAnFL5c92n1M0wMYZ4/LNdYQL/JjFfVIWr1+oWZ7LWHG91M7LH/wdakw0O6B/Z6DdW1CFhUYSU8YrcdcDdi/S/B33oM+ZFqVbEURJgvl8Ve4JwYi+DVhf5OMbdwCpJiS1Sj2d8rpDnz9ZN6y3eCQFi/Cx2aen930=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
-	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741356358;
-	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=FP+ifasHniIC8neSq6VwSq5ZsIenCwU36aCvQ3EbV9k=;
-	b=k4LLpH1xLhH5D3H7h2upAramGsfkMWDuPKZ9FZ0XGVS9QKMQsdQP0bKN4azcuUGk
-	pMfBCbFEZtyQaxyMl/XEFyBtH0id4McTIUQZz/KeSYcNbJQotbnjO7wP5JrTi+oGXgB
-	95fO8bj46v0ezvai2ZHpniitwdl6VAtoA17B70u4=
-Received: by mx.zohomail.com with SMTPS id 1741356356876241.9419093370691;
-	Fri, 7 Mar 2025 06:05:56 -0800 (PST)
-From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-To: Daniel Golle <daniel@makrotopia.org>,
- Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>,
- Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, linux-crypto@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject:
- Re: [PATCH v2] dt-bindings: rng: rockchip,rk3588-rng: Drop unnecessary status
- from example
-Date: Fri, 07 Mar 2025 15:05:50 +0100
-Message-ID: <5417098.31r3eYUQgx@workhorse>
-In-Reply-To: <20250307093309.44950-1-krzysztof.kozlowski@linaro.org>
-References: <20250307093309.44950-1-krzysztof.kozlowski@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E713421ABD7
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741356386; cv=none; b=ghW87gsonQh9NxhA495ZnZJf1Ppd2XIqsHlUTBZxIQEwzQMo/7hzd2L6gXgLUGXZtJSxVg42AUMS2s1UdQunYj/UeT2I2jq+3j70WkMRic/pJgM6IezuHA8mZaitkSDbwb/x1Bsr4wVFI6Phkw/bG4esEqzRIOprA9yBhdYFCmk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741356386; c=relaxed/simple;
+	bh=wqhy5TPYm5RJ0L6opguVJAW3lnezYmtMO0kEqr5M6b0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KItsrqhN98XkduXVpqdja15PzS4Zy06mBxOFsalSK1km6lhl7aFO39erxGbur7+3vdpEeYevrYtESNvVV/bzHUV7uiC8tEXeFxyfcIl4WfFnwFmtwS+OkFJuWLxfAE7eIJUjPZk8e02fnRRhMRRm0DLh4nqqdQGyQcvLbmq1DyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lJaj/OxB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G1r6x2oo; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 7 Mar 2025 15:06:20 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741356382;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wqhy5TPYm5RJ0L6opguVJAW3lnezYmtMO0kEqr5M6b0=;
+	b=lJaj/OxB/OCDp40EPPN5/PONPbRUU5n0NWOPOXjqVqkyy6UQGVsNoslUOsErDVLdvcgyh1
+	k/nzSSu4aeYqS83I2F+Vjx6bPJzeYDgVI509A+rCLAfK2gxVEgWM3PF7gn7tpfzRyDypsN
+	y/Eu+6tQ48xCCmRQUtro5P3OwAGTTLNtOHQFspcWwz0j6NV58EkHNUFjx8P2PU9HgPx6PR
+	uVxqDFG2T/VSRte8wIyflqpa8J5Cfdmh364u0FBGusk1ztMvgD1HiWrXHjKv91aO1btDRV
+	rQPwVgQUwit38OTObdAGBS/IgkrywPkTXfwh0VS7ClYhRTGECI7VGdyLwJzB/A==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741356382;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wqhy5TPYm5RJ0L6opguVJAW3lnezYmtMO0kEqr5M6b0=;
+	b=G1r6x2oolXoGZBGc0KHhALnd3QiFSQa1xWbhTYaNtLGUvqSaqUUZC5q7ZPsL1pgebUN8Uo
+	jo1PYgMzxIWMgPAg==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+	John Ogness <john.ogness@linutronix.de>, x86-cpuid@lists.linux.dev,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 07/12] tools/x86/kcpuid: Add rudimentary CPU vendor
+ detection
+Message-ID: <Z8r9XN1wyYEDa_ji@lx-t490>
+References: <20250306205000.227399-1-darwi@linutronix.de>
+ <20250306205000.227399-8-darwi@linutronix.de>
+ <01a2a955-98a5-47f6-aeb2-275ba840a9fa@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01a2a955-98a5-47f6-aeb2-275ba840a9fa@citrix.com>
 
-On Friday, 7 March 2025 10:33:09 Central European Standard Time Krzysztof 
-Kozlowski wrote:
-> Device nodes are enabled by default, so no need for 'status = "okay"' in
-> the DTS example.
-> 
-> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Changes in v2:
-> 1. Drop unnecessary full stop in subject prefix after ':'.
-> 2. Add Rb tag.
-> ---
->  Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
-> b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml index
-> 757967212f55..ca71b400bcae 100644
-> --- a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
-> +++ b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
-> @@ -53,7 +53,6 @@ examples:
->          interrupts = <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH 0>;
->          clocks = <&scmi_clk SCMI_HCLK_SECURE_NS>;
->          resets = <&scmi_reset SCMI_SRST_H_TRNG_NS>;
-> -        status = "okay";
->        };
->      };
+On Thu, 06 Mar 2025, Andrew Cooper wrote:
+>
+> Many CPUs have ways of overriding the vendor string, thanks to
+> GenuineIntel being hardcoded in too many pieces of software.
+>
+> I suggest you check all registers, lest you find yourself on a CPU
+> claiming EBX=0x68747541, ECX=0x6C65746E, EDX=0x6E65476E
+>
 
-Hi,
+Indeed; will do.
 
-is there the possibility we could make dtschema as invoked by `make 
-dt_binding_check W=1` (or W=2) add a warning for examples that have disabled 
-or explicitly listed status properties when not needed? Or is this something 
-better handled in, say, checkpatch.pl?
-
-The question arises because dumb mistakes by me like this should ideally be 
-caught before they waste precious maintainer time.
-
-If it's best handled in dtschema, I can look into working on that so you guys 
-don't have to do even more work due to me.
-
-Cheers,
-Nicolas Frattaroli
-
-
+Thanks,
+Ahmed
 
