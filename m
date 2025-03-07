@@ -1,137 +1,124 @@
-Return-Path: <linux-kernel+bounces-551068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 215CBA567C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:25:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D161A567C4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:25:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59529174342
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:25:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 346BF7A844C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BA87218EA7;
-	Fri,  7 Mar 2025 12:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C952192EE;
+	Fri,  7 Mar 2025 12:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b="oPhHG8xY"
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="qxu8OlZ3"
+Received: from the.earth.li (the.earth.li [93.93.131.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F2421767D
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 12:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F63E218E9B;
+	Fri,  7 Mar 2025 12:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741350320; cv=none; b=lfuzKnL/3fUPJHy7xn/xg4IM4z/UqZnfVt1GJdEmNjeyqxvSGNIRt481RAZ9WQu0ONAMg89JfJi8W74lDRDKc1ondW3wA6n7nvSWk4FkK5JrhSbf2uim5HNG/sglKFmgOcnjHe3DKTphrdb7+n6D9kn7tefMDXe+TeoQvmVXDpY=
+	t=1741350331; cv=none; b=kQzKBU3I+bb+uGGLPIEgVOkKZcKybwTTx8WGlDQr+Ydd7eZYtdcbrNr6VGpuvj1vOdNU8VdxifJS4f4h/Kkl74ESsq0XS4AEs70vxWcYCgWxtgxm5pWUCmTm0s86K8USMur9Z5rpX6yhA/x7WfOyql8zKvlU3mbTvE0qNtIzJDY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741350320; c=relaxed/simple;
-	bh=cWtcLtZgpaH/BcPDoH4lq4uUZE4PyN6b3+uskMHMYW0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y8SIPnKpRXeXT8ZbW634FL5nNu4Anm0z/QYI4qtVVB4eqS24NJEd4yu+nyfp2KJYU3RyZvZR9p39/xdIUaC+fh7iyZd8tIsZ9d0jEwwF+jvUL8fBzv351ybsnHAy595qh9EdZ3jhU8k9I/scW3/vPKj1f7sFEFLGYuWBxSHARak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl.com header.i=@futuring-girl.com header.b=oPhHG8xY; arc=none smtp.client-ip=209.85.216.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=futuring-girl.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2f9d3d0f55dso2825971a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 04:25:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=futuring-girl.com; s=google; t=1741350317; x=1741955117; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fDU3rB3lwTDhzbpDMnrAAgHgs/LQWtd52vWgHpI2VSI=;
-        b=oPhHG8xYH2ADeWUJKhE++2F063+/AUZGT/1zCgbheDMdTkeJpdKpIqwRrLNUhIP1pz
-         i6m3enEzt4OOaTmZDkBNZj5IbtoyPfIZlTxIZ1zaODv93Ou8yYUNdARVq3xpysbiUTnY
-         ZiSvBp7AT4otsCHGw1aKsLA5fpeSAmKJZFBmo3rI1SAOqZdo0bh3eLOhvMTYtkGNxE0n
-         ++4Kft6wJQc5ifXcpagqOBislwk3hOuPYHcGaW5aNbi2H+wIg6yXqN/p/CTqGEarlSO4
-         t56InySi0W5gNAx5OxvPu+YrcPlFwEznE06wqoz/OmyiZceZviomeM5dERqr06LN/xPO
-         TGsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741350317; x=1741955117;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fDU3rB3lwTDhzbpDMnrAAgHgs/LQWtd52vWgHpI2VSI=;
-        b=oANRPpc/+h8MytbBrXexLeZHLLVaXIUh9MRXMmsdX/6+WK7jUDlPK3wKeDkfutmSSn
-         JTwM7jIzrFHkhryhNhyfdT3I3D+2tzztu/MzeTfvO390SUew3kMVkgQ5MdulFHrzSdTk
-         57XSBohUDCq0Ptqh+UK/t6HKGNKGjmqd8peoGtgOOxZ1Ru5ZZ3Z+NQBHkKuWoUJ2elYX
-         3TgS4C0MrmrL7/259Q3DP1fSv5BoDICmn6oGHm2inIvlDEMKPjtgEJbA0g4QQX+19UCz
-         tB+Qrwsc/CJ5Y/6Vj+aa6N9NasKlEKQMKu9WDM1CPJJlc4ZFJL+/YX1q6IWRgiUGSDFC
-         O7kw==
-X-Forwarded-Encrypted: i=1; AJvYcCWFkDHCU4cAXHFwdk+OSL04qi0WsWlViKeqoasIMjgUDUZWARuc5SZYgiuUKxt3PKevutUna7H0Fb950Wg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8zPAQvAS/UM7+e2IpNxRV0hP0ktAaKkSY/UadmCw9LJY7gRem
-	KhN09q6pY/7r91rBlDGgh3MgqJknjPFRUVFPHNhIjiWMY0M5LBk8nDVvME1CjBtDzquvfsROI34
-	x2KhwZbDsjyZX2565qsYELHGGkVO8G6rhKXYu7w==
-X-Gm-Gg: ASbGncsEQlyTcFMtmJehHZ3i7O250BzT+YDOcMqpiOHXICTRsh6LHJpDSMXsMO6nHBY
-	Ni56mOoH2SlGaQhzN3PcVL65xpRMondXMaej90Ale++VEp4eZ2XTptx8+ticusu8a6QTmM7ZTms
-	7ygVEwAbFNgofcz0DH956QDzik+w==
-X-Google-Smtp-Source: AGHT+IGIGXETSpV0breS5/h5u0O7Kue3nNAf0M2JvAyRjW//VoTRE04GF88gdeHWev8c3/TxvH+ghyGuEq0/lEZFOuk=
-X-Received: by 2002:a17:90b:3ecb:b0:2fe:6942:370e with SMTP id
- 98e67ed59e1d1-2ff7ce70a09mr5339946a91.7.1741350316997; Fri, 07 Mar 2025
- 04:25:16 -0800 (PST)
+	s=arc-20240116; t=1741350331; c=relaxed/simple;
+	bh=GkxCs4YB8ASsPjX9IWShyzuObf+ZAxnIvvctr0chLgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=N2HQPcunCbFLC7Y3TLyeiUJCwiY6kCBmzoWXlMf7oe+FtTMVAc6ruiIDeda4OgCxXD57eqsRAklgoJW4MhmmURHlLEVFCFSB7WDzz5wA2GcKAZx5EoclLlSv96uVwX2PgjI2QdSQnB0dF4QuelrfA3a8tNlWfZ5rtfR4B6PeHVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=qxu8OlZ3; arc=none smtp.client-ip=93.93.131.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
+	s=the; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=6UMNRM9uWjFBtWF7LyfW0g9MVh4V11YndHgWK9NCQm8=; b=qxu8OlZ3T82XliRM3GlO4qym/j
+	wJ5rMG3nIaBEjwvHLCNaTYKvtNnwsR6Fi69R7wsao5aeSuR9GuV5Sen8OAyaz9xjBOCQ6cuj8J5Sp
+	DL4ttjND6HmtHvu9dM8sFtwMgJAfn9jWVtqaukvqM48cYr9lZlV9mTNsCyGjkn0Z3R2E++DtE4cdv
+	mCSjQ8w5R0ANu/db2tpN6moxmwHbVfahznF1iPt1i21pIhT7E4GM+tEXKjBbIZmEfNM4idZHkQoxd
+	TQIo38MwiLTgIVAc0u8gejMfp7a4TASG2en2dpwkpPYpwC/FdQWH+0cSphjnBn0gQXwT/lAwps7aM
+	EHPBf0FQ==;
+Received: from noodles by the.earth.li with local (Exim 4.96)
+	(envelope-from <noodles@earth.li>)
+	id 1tqWlX-00CyjR-2Y;
+	Fri, 07 Mar 2025 12:25:23 +0000
+Date: Fri, 7 Mar 2025 12:25:23 +0000
+From: Jonathan McDowell <noodles@earth.li>
+To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] tpm: End any active auth session before shutdown
+Message-ID: <Z8rls0QkzOliECp_@earth.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306151416.469067667@linuxfoundation.org>
-In-Reply-To: <20250306151416.469067667@linuxfoundation.org>
-From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
-Date: Fri, 7 Mar 2025 21:25:00 +0900
-X-Gm-Features: AQ5f1JrjYvBGN-wb9TdEeE7hFb2s31KStFO0Mmp9jf2eKZUcyW3LZfYCdYbFDbc
-Message-ID: <CAKL4bV623WMkm3dXFKhd-84yVDCCxxCJK9g_zAE6_ign9=2m4g@mail.gmail.com>
-Subject: Re: [PATCH 6.13 000/154] 6.13.6-rc2 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Greg
+From: Jonathan McDowell <noodles@meta.com>
 
-On Fri, Mar 7, 2025 at 12:21=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.13.6 release.
-> There are 154 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat, 08 Mar 2025 15:13:38 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.13.6-rc2.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.13.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+Lazy flushing of TPM auth sessions can interact badly with IMA + kexec,
+resulting in loaded session handles being leaked across the kexec and
+not cleaned up. Fix by ensuring any active auth session is ended before
+the TPM is told about the shutdown, matching what is done when
+suspending.
 
-6.13.6-rc2 tested.
+Before:
 
-Build successfully completed.
-Boot successfully completed.
-No dmesg regressions.
-Video output normal.
-Sound output normal.
+root@debian-qemu-efi:~# tpm2_getcap handles-loaded-session
+root@debian-qemu-efi:~# tpm2_getcap handles-saved-session
+root@debian-qemu-efi:~# kexec --load --kexec-file-syscall …
+root@debian-qemu-efi:~# systemctl kexec
+…
+root@debian-qemu-efi:~# tpm2_getcap handles-loaded-session
+- 0x2000000
+root@debian-qemu-efi:~# tpm2_getcap handles-saved-session
+root@debian-qemu-efi:~#
+(repeat kexec steps)
+root@debian-qemu-efi:~# tpm2_getcap handles-loaded-session
+- 0x2000000
+- 0x2000001
+root@debian-qemu-efi:~# tpm2_getcap handles-saved-session
+root@debian-qemu-efi:~#
 
-Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
+After:
 
-[    0.000000] Linux version 6.13.6-rc2rv-g3244959bfa6b
-(takeshi@ThinkPadX1Gen10J0764) (gcc (GCC) 14.2.1 20250207, GNU ld (GNU
-Binutils) 2.44) #1 SMP PREEMPT_DYNAMIC Fri Mar  7 20:34:19 JST 2025
+root@debian-qemu-efi:~# tpm2_getcap handles-loaded-session
+root@debian-qemu-efi:~# tpm2_getcap handles-saved-session
+root@debian-qemu-efi:~# kexec --load --kexec-file-syscall …
+root@debian-qemu-efi:~# systemctl kexec
+…
+root@debian-qemu-efi:~# tpm2_getcap handles-loaded-session
+root@debian-qemu-efi:~# tpm2_getcap handles-saved-session
+root@debian-qemu-efi:~#
 
-Thanks
+Signed-off-by: Jonathan McDowell <noodles@meta.com>
+---
+ drivers/char/tpm/tpm-chip.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+index 7df7abaf3e52..87f01269b9b5 100644
+--- a/drivers/char/tpm/tpm-chip.c
++++ b/drivers/char/tpm/tpm-chip.c
+@@ -300,6 +300,7 @@ int tpm_class_shutdown(struct device *dev)
+ 	down_write(&chip->ops_sem);
+ 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+ 		if (!tpm_chip_start(chip)) {
++			tpm2_end_auth_session(chip);
+ 			tpm2_shutdown(chip, TPM2_SU_CLEAR);
+ 			tpm_chip_stop(chip);
+ 		}
+-- 
+2.48.1
+
 
