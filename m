@@ -1,172 +1,231 @@
-Return-Path: <linux-kernel+bounces-550271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A991A55D66
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:59:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ADAFA55D57
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:55:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE4F3170B6E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:59:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 905D17A3487
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:54:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FD316631C;
-	Fri,  7 Mar 2025 01:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E15D71632C8;
+	Fri,  7 Mar 2025 01:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pascal-lab.net header.i=@pascal-lab.net header.b="U9ncMhyc"
-Received: from out28-67.mail.aliyun.com (out28-67.mail.aliyun.com [115.124.28.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RmAnwr0l"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E5185931
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 01:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.28.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF867155C87;
+	Fri,  7 Mar 2025 01:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741312765; cv=none; b=qUsTbyR7Ui4mf/X1iFP9Ye+of+CIxIL6C6924rjeHnA/m7/sv2RG/yTjjClmVQRT1+W8C466EkpP8l6rEBDQHA7VMbc9s2g55bERRpMymZ3Y0ATwzc8N5EZu0e7t2MK21G20ls93Hnj3uscP0DOe4PelNM/Ca2E1ZwHNhelmkUA=
+	t=1741312545; cv=none; b=pF8M8vCs38SktadPu2u2wk/u4y6QbroRtW8OtFF0YZpAO7E4YYiO9AEu3Z0S7CiVzBwU86k1zuttq+SB4Aerln/w5BZFGfvPJZC3gTndkp34WZP8QS+whVRLjNBP+KLNMf5WtLBYZ+p0FheOZZokWgkb3W7jxeSGcyrBoVB5o7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741312765; c=relaxed/simple;
-	bh=ceAxW0wcpCgaPLr4vhaECO1Q+DYRORbjOyasSwcXyMg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sBkGgcILLxRFtnNnUol82sViy/CWqV/lJzXSUR6BNWmjce2iMwqaeaaB9gmZzkwoINJqat58fxEW6pPXVrawGZA+4GAu2LbwS3LONeyNgDUgxQk9b7qR6RM7QEjyNF0hg8kdbts5fFfd3vJwgDTtIh4g53gtFPrOTeaDWUkHAGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pascal-lab.net; spf=pass smtp.mailfrom=pascal-lab.net; dkim=pass (1024-bit key) header.d=pascal-lab.net header.i=@pascal-lab.net header.b=U9ncMhyc; arc=none smtp.client-ip=115.124.28.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pascal-lab.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pascal-lab.net
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=pascal-lab.net; s=default;
-	t=1741312759; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=eAGkuDLEsX76lQqIfTyLCBObjDcJx0xLHtbT0UI2peU=;
-	b=U9ncMhycXSKouzrRXz+i7R5AqpBbYdHtjsvV06Beh3LKjuWOFSXzNfuQNZc9BlEAoFTpNW33dd+W0DvYcdeGtABzt+OvU1gWFBLV3aonSSReMfXJd/e/F1KbuhHNJzqR86uj9pvwG8FJIw6wfTGCqPBL7N5PI5kq/7IrgnK75f4=
-Received: from archlinux.nju.edu.cn(mailfrom:yujundong@pascal-lab.net fp:SMTPD_---.bmZnPeR_1741312441 cluster:ay29)
-          by smtp.aliyun-inc.com;
-          Fri, 07 Mar 2025 09:54:02 +0800
-From: Yujun Dong <yujundong@pascal-lab.net>
-To: mingo@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	peterz@infradead.org,
-	vincent.guittot@linaro.org,
-	vschneid@redhat.com,
-	yujundong@pascal-lab.net
-Subject: Re: [PATCH] cpuidle, sched: Use smp_mb__after_atomic() in current_clr_polling()
-Date: Fri,  7 Mar 2025 09:53:44 +0800
-Message-ID: <20250306164217.3028977-1-yujundong@pascal-lab.net>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <Z740eIZcK31DQETq@gmail.com>
-References: <Z740eIZcK31DQETq@gmail.com>
+	s=arc-20240116; t=1741312545; c=relaxed/simple;
+	bh=RHtN3iGjMgWiluyrwelfjYAaPkmhPTQUo75CvgJ0QEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FC2rEccQu4bdMp5OyV6CNpds4IKoE389dbs53XLr5jSXYcrtpg7jrfdF2vl+m+MU19QeQHpf/XMVGvkRfHKmYT1cLAuwWs41IUE2jE+FAFlWLaib6k1+h4CB/r7525HCvNEsPfNOQlKlMULwVam/xCVRJ6wzAvB45B8X0+9mQnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RmAnwr0l; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7c3cb761402so258446485a.0;
+        Thu, 06 Mar 2025 17:55:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741312542; x=1741917342; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CnB820XmRIOqOOR99gcezJiiPyY61vMTKT3r5Ay3K/8=;
+        b=RmAnwr0lSqm7JG/V+f6Ab7L3YXm8cgIHoJLVJ+Yhc5bQUAnaetwzRWQaxAxxElz5SK
+         ch8Cx7KRw4m1fzGF1xWc+VhC6F46SfElqaMGg1pZ22A/p3kWfW3BGwQrCaRZXvAUxSD6
+         WIO7UNSazQ9b6uWI1wPq2+aFF3ytRpxOzW1QbFeQF8xVLLwcFQfkBfqiA2dAp718B03R
+         TujwE1XAo/yGOQjXzvYcB6uB75jsbFDSNij32VKdKFVAylgl2j4euYx7Av0VnYp3/2oq
+         gR0uCac5oviE/dKejui6VqlT91gIOsdu+JwiknVjE6ic8ZoJ2w2mptSYdZHAoSybvqdv
+         FkOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741312542; x=1741917342;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CnB820XmRIOqOOR99gcezJiiPyY61vMTKT3r5Ay3K/8=;
+        b=kCvpwaPpYdGcMKSIIRRmyZu3oSlW9L6HXWGuC99nNnOFKgBJuu7UrludSC7pdmdkDp
+         uxv9oo1dQJwAsoWHs3DRefWlpI+7SxjGSABCWsEVBvJQ2q334YLswKwM52vqJS64jYnt
+         lMnkMLxEsK/xiAtrBO8ITqFAddiV1WdJmcyw4aPMKDvY8pXT1wSTHrQI98aOuMO/FTK3
+         fVVuTvqDUpAADo4UBGtsW9BjwIohZjYzBYgvfN5189kJQiZ+daHTizbwjjifYMyF+SS2
+         Hy1rIcsVN5Ql7sy8x0mlPhFcogK1+E/jfOr0zQhhv2oz8A0LDiMRnsxHVeVGOGc3KKy5
+         JfKg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6pKKJPd21S8xZO/Ajj/1nDb//QdyRbOYB34Q08l+/zR5NvK5hG+wSJBoynIKsK1hVOnZWKcRt/IOfwlh0@vger.kernel.org, AJvYcCXKA6YRX2Fw8h7ZrWGoyMBWboVWf272e93x4BEZ2oD1kxgWSBZDFpyiCgxoqqOB322zv/IHYTbguAfh@vger.kernel.org, AJvYcCXalO1QckfR95XYUEJUKd6/7a58/ZUg3wGan5Xc1xBgelIgYZFRkVaS2i0x4/BDfkvGSkbitQENsNh7@vger.kernel.org
+X-Gm-Message-State: AOJu0YypNnyqwIadvgghFpqBD8zXW5Mc+cPgclwDzrgKESmOcPszlet3
+	pR54Co2gHKy8FTGuE+GWOJUD7Cq0sK3blZ/R7DylB3awQompSxs3
+X-Gm-Gg: ASbGnctBTVOaGC0a01RUH12SAfowt0PxrU6nxzp3EVBCs5IllSrnizKQ7M8mz5700b3
+	RX9oZ6Fe/+3LGHjAe+pYBBJwdKRM9SLEg96WEVcSNwixOjv290so0Zbf/iELhO70yomGJXOU1Tk
+	RNVkXaWSUWw3a7aZt+DnIFF0SGNh+w40qCbSZDbQa/9JVZMm1qOm8n5g+4Jta776hvivGWY9Anb
+	gxgREZwdUsXzoOmJZMLbB5n6gA0vjMkL+++db5y4k6fwil5zLWkQRct7B2dbYhHxaD+iLJJXmxM
+	tPB3uHF3CGO9v2oBB3S7
+X-Google-Smtp-Source: AGHT+IEhk9cw6y94YXFfzejXMM/qsbiaq30VZ1R51o4YMU4MUQ3DOSzkmoemtDhtTBQwJetuR8isjg==
+X-Received: by 2002:a05:620a:8719:b0:7c3:d6a7:6eea with SMTP id af79cd13be357-7c4e168b8b7mr226719685a.21.1741312542344;
+        Thu, 06 Mar 2025 17:55:42 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c3e551102csm168635885a.101.2025.03.06.17.55.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 17:55:41 -0800 (PST)
+Date: Fri, 7 Mar 2025 09:55:15 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Haylen Chu <heylenay@4d2.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, spacemit@lists.linux.dev, 
+	Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>, 
+	Jisheng Zhang <jszhang@kernel.org>, Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
+Subject: Re: [PATCH v5 5/5] riscv: dts: spacemit: Add clock tree for Spacemit
+ K1
+Message-ID: <2isaev6ys2fn2u6lnyudvnjam34fggr5tqh7afajwdjbdp5rvr@ajokoevhqq4p>
+References: <20250306175750.22480-2-heylenay@4d2.org>
+ <20250306175750.22480-7-heylenay@4d2.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306175750.22480-7-heylenay@4d2.org>
 
-Hi Ingo, 
+On Thu, Mar 06, 2025 at 05:57:51PM +0000, Haylen Chu wrote:
+> Describe the PLL and system controllers that're capable of generating
+> clock signals in the devicetree.
+> 
+> Signed-off-by: Haylen Chu <heylenay@4d2.org>
+> ---
+>  arch/riscv/boot/dts/spacemit/k1.dtsi | 79 ++++++++++++++++++++++++++++
+>  1 file changed, 79 insertions(+)
+> 
+> diff --git a/arch/riscv/boot/dts/spacemit/k1.dtsi b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> index c670ebf8fa12..09a9100986b1 100644
+> --- a/arch/riscv/boot/dts/spacemit/k1.dtsi
+> +++ b/arch/riscv/boot/dts/spacemit/k1.dtsi
+> @@ -3,6 +3,8 @@
+>   * Copyright (C) 2024 Yangyu Chen <cyy@cyyself.name>
+>   */
+>  
+> +#include <dt-bindings/clock/spacemit,k1-ccu.h>
+> +
+>  /dts-v1/;
+>  / {
+>  	#address-cells = <2>;
+> @@ -306,6 +308,40 @@ cluster1_l2_cache: l2-cache1 {
+>  		};
+>  	};
+>  
+> +	clocks {
 
-* Ingo Molnar <mingo@kernel.org> wrote:
->
-> [ Sorry about the belated reply, found this in my TODO pile ... ]
->
-> * Yujun Dong <yujundong@pascal-lab.net> wrote:
->
->> In architectures that use the polling bit, current_clr_polling() employs
->> smp_mb() to ensure that the clearing of the polling bit is visible to
->> other cores before checking TIF_NEED_RESCHED.
->>
->> However, smp_mb() can be costly. Given that clear_bit() is an atomic
->> operation, replacing smp_mb() with smp_mb__after_atomic() is appropriate.
->>
->> Many architectures implement smp_mb__after_atomic() as a lighter-weight
->> barrier compared to smp_mb(), leading to performance improvements.
->> For instance, on x86, smp_mb__after_atomic() is a no-op. This change
->> eliminates a smp_mb() instruction in the cpuidle wake-up path, saving
->> several CPU cycles and thereby reducing wake-up latency.
->>
->> Architectures that do not use the polling bit will retain the original
->> smp_mb() behavior to ensure that existing dependencies remain unaffected.
->>
->> Signed-off-by: Yujun Dong <yujundong@pascal-lab.net>
->> ---
->>  include/linux/sched/idle.h | 23 ++++++++++++++++-------
->>  1 file changed, 16 insertions(+), 7 deletions(-)
->>
->> diff --git a/include/linux/sched/idle.h b/include/linux/sched/idle.h
->> index e670ac282333..439f6029d3b9 100644
->> --- a/include/linux/sched/idle.h
->> +++ b/include/linux/sched/idle.h
->> @@ -79,6 +79,21 @@ static __always_inline bool __must_check current_clr_polling_and_test(void)
->>  	return unlikely(tif_need_resched());
->>  }
->>  
->> +static __always_inline void current_clr_polling(void)
->> +{
->> +	__current_clr_polling();
->> +
->> +	/*
->> +	 * Ensure we check TIF_NEED_RESCHED after we clear the polling bit.
->> +	 * Once the bit is cleared, we'll get IPIs with every new
->> +	 * TIF_NEED_RESCHED and the IPI handler, scheduler_ipi(), will also
->> +	 * fold.
->> +	 */
->> +	smp_mb__after_atomic(); /* paired with resched_curr() */
->> +
->> +	preempt_fold_need_resched();
->> +}
->> +
->>  #else
->>  static inline void __current_set_polling(void) { }
->>  static inline void __current_clr_polling(void) { }
->> @@ -91,21 +106,15 @@ static inline bool __must_check current_clr_polling_and_test(void)
->>  {
->>  	return unlikely(tif_need_resched());
->>  }
->> -#endif
->>  
->>  static __always_inline void current_clr_polling(void)
->>  {
->>  	__current_clr_polling();
->>  
->> -	/*
->> -	 * Ensure we check TIF_NEED_RESCHED after we clear the polling bit.
->> -	 * Once the bit is cleared, we'll get IPIs with every new
->> -	 * TIF_NEED_RESCHED and the IPI handler, scheduler_ipi(), will also
->> -	 * fold.
->> -	 */
->>  	smp_mb(); /* paired with resched_curr() */
->
-> So this part is weird: you remove the comment that justifies the 
-> smp_mb(), but you leave the smp_mb() in place. Why?
->
-> Thanks,
->
-> 	Ingo
+> +		#address-cells = <0x2>;
+> +		#size-cells = <0x2>;
+> +		ranges;
 
-Thanks for pointing that out. The comment removal in the non-polling
-branch was intentional, but my original explanation was unclear. Let
-me rephrase:
+why setting this?
 
-Polling architectures (with the TIF_POLLING flag):
-1. __current_clr_polling() performs atomic ops -> 
-Use smp_mb__after_atomic()
-2. Keep original "clear polling bit" comment as it directly explains
-the barrier's purpose.
+> +
+> +		vctcxo_1m: clock-1m {
+> +			compatible = "fixed-clock";
 
-Non-polling architectures (#else branch):
-1. __current_clr_polling() is a no-op -> Original comment about
-"clearing the bit" becomes misleading.
-2. However, the smp_mb() must remain to preserve pre-existing memory
-ordering guarantees. And explicitly documenting it requires new
-wording to avoid confusion.
+> +			clock-frequency = <1000000>;
 
-Proposed approaches:
-Option A: Add a comment for non-polling smp_mb() like "Paired with
-resched_curr(), as per pre-existing memory ordering guarantees"
-Option B: Leave code as-is (no comment) and elaborate in the commit
-message: "For non-polling architectures, retain smp_mb() to avoid
-subtle regressions, while intentionally omitting the bit-specific
-comment that no longer applies."
+Should the frequency this move to the board file?
+I do not think these clock are in the soc.
+This applys to all clock below.
 
-Which direction would you consider most maintainable? Your insight
-would be greatly appreciated.
-
-Best regards,
-Yujun
+> +			clock-output-names = "vctcxo_1m";
+> +			#clock-cells = <0>;
+> +		};
+> +
+> +		vctcxo_24m: clock-24m {
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <24000000>;
+> +			clock-output-names = "vctcxo_24m";
+> +			#clock-cells = <0>;
+> +		};
+> +
+> +		vctcxo_3m: clock-3m {
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <3000000>;
+> +			clock-output-names = "vctcxo_3m";
+> +			#clock-cells = <0>;
+> +		};
+> +
+> +		osc_32k: clock-32k {
+> +			compatible = "fixed-clock";
+> +			clock-frequency = <32000>;
+> +			clock-output-names = "osc_32k";
+> +			#clock-cells = <0>;
+> +		};
+> +	};
+> +
+>  	soc {
+>  		compatible = "simple-bus";
+>  		interrupt-parent = <&plic>;
+> @@ -314,6 +350,17 @@ soc {
+>  		dma-noncoherent;
+>  		ranges;
+>  
+> +		syscon_apbc: system-control@d4015000 {
+> +			compatible = "spacemit,k1-syscon-apbc";
+> +			reg = <0x0 0xd4015000 0x0 0x1000>;
+> +			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>,
+> +				 <&vctcxo_24m>;
+> +			clock-names = "osc", "vctcxo_1m", "vctcxo_3m",
+> +				      "vctcxo_24m";
+> +			#clock-cells = <1>;
+> +			#reset-cells = <1>;
+> +		};
+> +
+>  		uart0: serial@d4017000 {
+>  			compatible = "spacemit,k1-uart", "intel,xscale-uart";
+>  			reg = <0x0 0xd4017000 0x0 0x100>;
+> @@ -409,6 +456,38 @@ pinctrl: pinctrl@d401e000 {
+>  			reg = <0x0 0xd401e000 0x0 0x400>;
+>  		};
+>  
+> +		syscon_mpmu: system-controller@d4050000 {
+> +			compatible = "spacemit,k1-syscon-mpmu";
+> +			reg = <0x0 0xd4050000 0x0 0x209c>;
+> +			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>,
+> +				 <&vctcxo_24m>;
+> +			clock-names = "osc", "vctcxo_1m", "vctcxo_3m",
+> +				      "vctcxo_24m";
+> +			#clock-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +			#reset-cells = <1>;
+> +		};
+> +
+> +		pll: system-control@d4090000 {
+> +			compatible = "spacemit,k1-pll";
+> +			reg = <0x0 0xd4090000 0x0 0x1000>;
+> +			clocks = <&vctcxo_24m>;
+> +			spacemit,mpmu = <&syscon_mpmu>;
+> +			#clock-cells = <1>;
+> +		};
+> +
+> +		syscon_apmu: system-control@d4282800 {
+> +			compatible = "spacemit,k1-syscon-apmu";
+> +			reg = <0x0 0xd4282800 0x0 0x400>;
+> +			clocks = <&osc_32k>, <&vctcxo_1m>, <&vctcxo_3m>,
+> +				 <&vctcxo_24m>;
+> +			clock-names = "osc", "vctcxo_1m", "vctcxo_3m",
+> +				      "vctcxo_24m";
+> +			#clock-cells = <1>;
+> +			#power-domain-cells = <1>;
+> +			#reset-cells = <1>;
+> +		};
+> +
+>  		plic: interrupt-controller@e0000000 {
+>  			compatible = "spacemit,k1-plic", "sifive,plic-1.0.0";
+>  			reg = <0x0 0xe0000000 0x0 0x4000000>;
+> -- 
+> 2.48.1
+> 
 
