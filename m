@@ -1,111 +1,123 @@
-Return-Path: <linux-kernel+bounces-551359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7FE1A56B6F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:14:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DEEA5A56B25
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:05:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 959FA17908A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:14:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24BA017920B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:05:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C34E421E0BD;
-	Fri,  7 Mar 2025 15:10:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E918021B9F7;
+	Fri,  7 Mar 2025 15:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b="qhy2KiDD"
-Received: from out-16.pe-a.jellyfish.systems (out-16.pe-a.jellyfish.systems [198.54.127.94])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G/twAOnT"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BC121E091;
-	Fri,  7 Mar 2025 15:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.94
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8550421CC52
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741360203; cv=none; b=ClVo/p+XNBQ4HpSt/44gwx1n5hHGV3Zz8lNoiTsMh5nOXR9qACAuDVk8V49ExjutgD9hHIcJsHyqbhtqn2nLHzXk6oFhmdxSwDsXdAGE10mMCdEwD93lUMAraG6XHSOCCc7EPEYHKaJ+KcKgknWPG9vwGiUcf8fE5zeTHI/jbIU=
+	t=1741359851; cv=none; b=Z0g/gHMa39gIvJwH2e8klWXsyB6bDtsL3ileIg/Z8uNjMBTBo1x7pxO5dd/uqrOrPhog/E0l6MU970qni2xeZvqnVWiz/kxZAMCIPLQfhjCb21vpZhnSxSliZH3NFKoe1qXOMi00kcUaW/BBRSqnA0Glu07ZEZ9vODc2bROwJpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741360203; c=relaxed/simple;
-	bh=ihHvQIx2ztyg1h3yxcaLwTKJXChieyv6DV25l6QnD90=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UESl9QDyPLWUCjDaRNLVY6tQ9WVmm6pShmLryK+zC0OwlkpM4hvAe51hFuDW11mj7TuFDBrPPu0dxOd78LpczkrIxBdy/5y/bswTOYER5dMOuvBRSUs4YBOfp8SuyBP3g2U38I5sWy99Sriq/Tc/r8Le4BzYdDSsyKMLwwTWIS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org; spf=pass smtp.mailfrom=framepointer.org; dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b=qhy2KiDD; arc=none smtp.client-ip=198.54.127.94
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=framepointer.org
-Received: from prod-lbout-phx.jellyfish.systems (new-01-3.privateemail.com [66.29.159.56])
-	by pe-a.jellyfish.systems (Postfix) with ESMTPA id 4Z8V030r8Wz4xR1;
-	Fri, 07 Mar 2025 15:02:59 +0000 (UTC)
-Received: from MTA-09.privateemail.com (unknown [10.50.14.19])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by NEW-01-3.privateemail.com (Postfix) with ESMTPS id 4Z8V023W0Pz2Sd0Q;
-	Fri,  7 Mar 2025 10:02:58 -0500 (EST)
-Received: from mta-09.privateemail.com (localhost [127.0.0.1])
-	by mta-09.privateemail.com (Postfix) with ESMTP id 4Z8V022587z3hhS5;
-	Fri,  7 Mar 2025 10:02:58 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=framepointer.org;
-	s=default; t=1741359778;
-	bh=ihHvQIx2ztyg1h3yxcaLwTKJXChieyv6DV25l6QnD90=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qhy2KiDDFvcqu+ixtgYPQY02OQ6Scwnhg48qe5Myk4QwVy1TCma8BfhzfNa7i3gXP
-	 ppkLwvL7igfCrEIBTdA3DnuMJkPEvcxCE2vdJ87GdqWDZUmYbMPoaGF9KO8l3HCOIh
-	 n5OMKsMIAU+6OshNBhzmIRWvrW3kXBAANolwEQciHg53ZuFZh2OVZQ0jr5teKGS+3q
-	 V6S2fSQbA9c1MeEzKZW/ZoUhDqlm4QfQSEg4sLG6jS3I9sD9/TjC3Y4f4RSaOLntk1
-	 5SzYmXRQYmxt/63wv5NbQIJsA0Y248UeM25ZLFs+uFtm4HwRSkc7Wy3OQDKt622/3m
-	 SbrImQE35mpKQ==
-Received: from 65YTFL3.secure.tethers.com (unknown [152.44.190.141])
-	by mta-09.privateemail.com (Postfix) with ESMTPA;
-	Fri,  7 Mar 2025 10:02:43 -0500 (EST)
-From: Sam Winchenbach <sam.winchenbach@framepointer.org>
-To: linux-kernel@vger.kernel.org
-Cc: lars@metafoo.de,
-	Michael.Hennerich@analog.com,
-	antoniu.miclaus@analog.com,
-	jic23@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	sam.winchenbach@framepointer.org,
-	bpellegrino@arka.org
-Subject: [PATCH v6 2/6] iio: filter: admv8818: fix band 4, state 15
-Date: Fri,  7 Mar 2025 10:02:12 -0500
-Message-ID: <20250307150216.374643-2-sam.winchenbach@framepointer.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250307150216.374643-1-sam.winchenbach@framepointer.org>
-References: <20250307150216.374643-1-sam.winchenbach@framepointer.org>
+	s=arc-20240116; t=1741359851; c=relaxed/simple;
+	bh=e8ChYfB2JWMNrEuzMXT2LNRFntJeGVEoJBRw50gUiNI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=FDGtN2dvPJY6afk8mVDUQwDZFHySw/demPrwtKNwUQ+vbYw8+wiktTBYTQo3q/QHZemFU8WjgLZhiIE3dn1sLf6QSGT0WxNuw1kwtODTOEaGxxJBTseJDitAzh5kENUxvowZsQzOHvBrWPuCS+RAwUYqZeCq8Vfvw9VIdPvJmxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G/twAOnT; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4394944f161so2093295e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:04:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741359848; x=1741964648; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3ELG0oVhA+BqzmcxJHQfLXvm4d36xTv4jodb57FoDL0=;
+        b=G/twAOnTT7g4uD9xrW0acvPGkyTePwmSQhe3wVuG/IckVaOy1J0SyVWQc4/dLe1zfY
+         QXV+bm2D1uIlA/iyp1Tp4BnhKrbmf4Ia64sDNlnoH4yq3hPU//BYZ3BNyzRsa4gJ4WFR
+         23EswCJ+CkM1f1FcsyDnq0iZTQFc43wFdkKcQteRgV5YRuG5M+xkwX7u9dbTfn5dHk+T
+         bNbX8JvLglBIfLCw27178Z/azg4GvuWGGa6ct+JO3QYpc3KFCHAck/tA/gFN6BPMQm9y
+         MZNpiyiNtWnPuCPoJrWuGGFMgX3jqbl/WXTH6LJPBzj0/YCo/2dizxBuKRsuVXxfW4Ks
+         CHow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741359848; x=1741964648;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3ELG0oVhA+BqzmcxJHQfLXvm4d36xTv4jodb57FoDL0=;
+        b=NdrQSVBsYWAia2vpBPcfBFbe9CsVVhSUmiUsWLHXjOhF6FEAXjjAqlRWfmjpmpc5GT
+         jRRX26hrwDBrxtQRnNJW2057glQWmDyBc8uI+JwugMGEIMAPSwcXCaYmOv9KeJjS48eV
+         HYO+Mdu1yzFvh0CL9uwf2+T6pDN+mSx+SRanq+Crh4aMa9L/gCFRkDHHx0CDCSZRKRHi
+         fLFggpuqcwD21xpYpqvaXQogSTOP/Z+oif01wpXKBMimzziYPO6pwKiA6AGbQwIe0H4K
+         sCB/Bkvf9+4o2zLiGn5EdOAHrXXQ5i7L/BOj+oEG964ZoNk6ajFKihwQS62l6V+p5OBc
+         VBCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9Mynnse6uDVoQi4ZUqAXqbTlZZPR6R7aytZkw5Oao3tHJTeNqSXAJr18+0h9H3m6+jTYeq9YivNzitPo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzksi2UKuHDubfm9k/A52twk1KlZe6X/VZjARm4QnApyNb2KSn9
+	SDH8rMxTu0qU7NdV5hDAvC6lMP/hu3MwTdcR5wX+97JfJca0xJ/b0wnfNoCxyzI=
+X-Gm-Gg: ASbGncs+/XGbW4QzeMQrtg2p/iR1z3igOjnIUynwn3B56/17nXMzOf5yYBhvEIq1zCh
+	KozSkqC31RN5HbqCQCbmma70bWnW6+TAosDtMNGXp/INrF4NeZPtX0ZDQNdYsy+y5hWybT2f4iS
+	/wypAW2Uz3ioPvLmDqI6gbgxusJ1mKQXBXFGqsleG5qhQ75xAWIhmkWt0Ixdu6qkyR/D6zhbFh5
+	iVbSiPBTHnMJ8BttQ+8ulFKDr6DRQeflIQkWeEPxzTPO/QxIWUh2jb/CGo8pFQQqd+BBhWRvKNh
+	HoLIHEdTgakhcd8cHrEY9aOxnw8i+yvGq8X2etKjDN3wD2ALa+Sjjq4MksJ7
+X-Google-Smtp-Source: AGHT+IGeiraKGeEqa9VGhWaeeNF9N+Kf66ORaln0VM6PqpULNSWjc+LqFVea7mhvmFHlhfc4guuJvQ==
+X-Received: by 2002:a5d:584b:0:b0:385:de67:229e with SMTP id ffacd0b85a97d-3913a8aeefbmr51698f8f.11.1741359847652;
+        Fri, 07 Mar 2025 07:04:07 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfa52sm5444573f8f.21.2025.03.07.07.04.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 07:04:07 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250305-clk-samsung-headers-cleanup-v2-0-ea1ae8e9e2bf@linaro.org>
+References: <20250305-clk-samsung-headers-cleanup-v2-0-ea1ae8e9e2bf@linaro.org>
+Subject: Re: [PATCH v2 0/2] clk: samsung: Two header cleanups
+Message-Id: <174135984582.202251.7619477733984588971.b4-ty@linaro.org>
+Date: Fri, 07 Mar 2025 16:04:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Corrects the upper range of LPF Band 4 from 18.5 GHz to 18.85 GHz per
-the ADMV8818 datasheet
 
-Fixes: f34fe888ad05 ("iio:filter:admv8818: add support for ADMV8818")
-Signed-off-by: Sam Winchenbach <sam.winchenbach@framepointer.org>
----
- drivers/iio/filter/admv8818.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 05 Mar 2025 21:03:42 +0100, Krzysztof Kozlowski wrote:
+> Changes in v2:
+> - mod_devicetable.h: also clk.c, clk.h, clk-exynos4.c,
+>   clk-exynos5-subcmu.c, clk-exynos2200.c and clk-exynos7870.c (Tudor)
+> - cleanup: clk-exynos2200.c and clk-exynos7870.c (Tudor)
+> - Rb tags
+> - Link to v1: https://lore.kernel.org/r/20250304-clk-samsung-headers-cleanup-v1-0-81718e38246e@linaro.org
+> 
+> [...]
 
-diff --git a/drivers/iio/filter/admv8818.c b/drivers/iio/filter/admv8818.c
-index 848baa6e3bbf..8f563a426232 100644
---- a/drivers/iio/filter/admv8818.c
-+++ b/drivers/iio/filter/admv8818.c
-@@ -103,7 +103,7 @@ static const unsigned long long freq_range_lpf[4][2] = {
- 	{2050000000ULL, 3850000000ULL},
- 	{3350000000ULL, 7250000000ULL},
- 	{7000000000, 13000000000},
--	{12550000000, 18500000000}
-+	{12550000000, 18850000000}
- };
- 
- static const struct regmap_config admv8818_regmap_config = {
+Applied, thanks!
+
+[1/2] clk: samsung: Add missing mod_devicetable.h header
+      https://git.kernel.org/krzk/linux/c/f32f5b0ec0f6eec0186de0607ab12f9cb1ecab73
+[2/2] clk: samsung: Drop unused clk.h and of.h headers
+      https://git.kernel.org/krzk/linux/c/017bbc922a09630579ff7b5b314fb186b8c0efcf
+
+Best regards,
 -- 
-2.48.1
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
