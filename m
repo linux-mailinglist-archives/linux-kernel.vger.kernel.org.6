@@ -1,836 +1,368 @@
-Return-Path: <linux-kernel+bounces-550099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA687A55B59
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:01:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10338A55B57
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:01:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7D8817803B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:01:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FA007AA51E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0764A1E;
-	Fri,  7 Mar 2025 00:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pkz1DLwM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016AE4C80;
+	Fri,  7 Mar 2025 00:01:32 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02EA94C80;
-	Fri,  7 Mar 2025 00:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741305710; cv=fail; b=qPBhhz/f/iK3SUgv5eCfR1aCuPHKF7K0Wiakv4wO3OVn/kthVaM/yjngioTGAnAk4e/0h3t2htxrd0FGF0SWJmoxBQcxrMapExhpGGWSWROkUEx2nsXO2Yb09R6S7pHUSmn8cTKO1Hz/eE/l3NelEZo2+n5f7/K2djjaXsbvT/s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741305710; c=relaxed/simple;
-	bh=ljuNv/w9pSl/TTGZuayX2fV/g//c/H63RVnPP+e/qCo=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=fcH1U4eVc6Ms4ObO3iBLjK8Fs2hJvR7vYxTGG7HBuhYaQuNRTPd1Ml6bTdwrbybaweAuAEr/hck2KpWl+VQnJMHiuDN0Nh2mUhB3ArRk9K4BGy9EZGBNKYm529xmxrhAZKnM1EqNFH95KMnvBd3ivDpnWpacHBkYvQJ0xifOHNI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pkz1DLwM; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741305708; x=1772841708;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=ljuNv/w9pSl/TTGZuayX2fV/g//c/H63RVnPP+e/qCo=;
-  b=Pkz1DLwMLgho9SZpeBbPK89gCRh7+tf2nCQ6eF2bTgSKNYnUnZIbZecW
-   HbCiZ8mtaVnKlxXyZIaV0T2qL6tdNx/jb2mQUleHYEAvEnQA8C1wdsSdu
-   pPy8JY7gw00ibALNm6JKmSIDZYQxKZ+ezA3QFaOL41HXBMHOQcESkOdVU
-   6+Lea5b1Vr9aJvldDe5a4Jrn48k2EisoraaJSk106yBqCjIef95xBXFgH
-   8rNeJzbjJzMHvwEGK2qxRbQ4qeR2YMv5477avoFQj+W2j2qDI9aJpigb1
-   avLCJ+wZEstV9eMVnxebNR+JO5tajsNCbI+Rj5qDfNwoyW53IbEsq4wRU
-   g==;
-X-CSE-ConnectionGUID: ++49ogGaRnKlcevp6v6vVQ==
-X-CSE-MsgGUID: 5GKODmk+QYWUrUHY5amc2w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="46269702"
-X-IronPort-AV: E=Sophos;i="6.14,227,1736841600"; 
-   d="scan'208";a="46269702"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 16:01:46 -0800
-X-CSE-ConnectionGUID: 28+/WHzYR+Kl7JJa8LVnPQ==
-X-CSE-MsgGUID: zezJcn/qQtGiS02z0AHXSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="156389502"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 06 Mar 2025 16:01:47 -0800
-Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Thu, 6 Mar 2025 16:01:46 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Thu, 6 Mar 2025 16:01:46 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.176)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Thu, 6 Mar 2025 16:01:44 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=yKYpILOnr4fswrIPzJ6r1XYKzSzwLjblZBpEFKZzgi0jhOofXfmRa6skc3vqlf3wCtNvXAl/LyZSzduYFDe5zxdfneniSBL9jyM2zUKhgJ7d8WnFZ9iDdhAj/aOBK2Hpgc/8069aTS6sDJAHI1H8TYYzvf5NqnMe9jR7idiNfjAPBBIXH6w7XuyQ/H53p5l9QC2T0tPPdEtkeJ9k+JrXF7KLZ+jwx6hVQGlNDGFS7A/OELwPYPWra52S4Y89g+TAIdgiKRSNSfST9CTPbbLii5yFvD4XAz70DEkMqnx9UsbBF93BDYMbDgnHN0nTOPxiRofZomUdoMrxNobJqUkftQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Op29+/BroXAe2plZdFfsWrDwLoJw0+6yW+g9jtKJhWc=;
- b=nN/NCUNtdVZMG0DuYfO5YKFkxVucUFAZUtLXfbEm9HBQo0Qmqk97AknZVB3MIX0/yxGoK73oJBQarvzRAQmaRUYLjTTvJ2e6gDxTDnCIsgdnYVcHNG4lWVe7TQi578ir0ecl6RVLyKel7u1wmcPTHRwOjA03J7Bex7Jt4uxA5NowKckBNhCg45WkL5RzR0kqtMyu6GF4SWSTCadqrucHHSDuEDxKEN9xd1VUnuBXqFjVJn1vHzN53BNj6E0HQbTA/sAGTqCX6GX8NB4r1+ypuV/HoU8GBDTG/r6lpxcYeR/8ubWAbtAFQKjQTf3N7NbuL0squhZ4VegfZib7YGHHLw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from PH8SPRMB0044.namprd11.prod.outlook.com (2603:10b6:510:258::17)
- by CH3PR11MB8185.namprd11.prod.outlook.com (2603:10b6:610:159::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Fri, 7 Mar
- 2025 00:01:15 +0000
-Received: from PH8SPRMB0044.namprd11.prod.outlook.com
- ([fe80::3f76:ba1a:2e7b:43a4]) by PH8SPRMB0044.namprd11.prod.outlook.com
- ([fe80::3f76:ba1a:2e7b:43a4%4]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
- 00:01:15 +0000
-From: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>, "hannes@cmpxchg.org"
-	<hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>,
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com"
-	<ryan.roberts@arm.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>,
-	"ying.huang@linux.alibaba.com" <ying.huang@linux.alibaba.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-	"davem@davemloft.net" <davem@davemloft.net>, "clabbe@baylibre.com"
-	<clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>,
-	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com"
-	<surenb@google.com>, "Accardi, Kristen C" <kristen.c.accardi@intel.com>,
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh"
-	<vinodh.gopal@intel.com>, "Sridhar, Kanchana P"
-	<kanchana.p.sridhar@intel.com>
-Subject: RE: [PATCH v8 12/14] mm: zswap: Simplify acomp_ctx resource
- allocation/deletion and mutex lock usage.
-Thread-Topic: [PATCH v8 12/14] mm: zswap: Simplify acomp_ctx resource
- allocation/deletion and mutex lock usage.
-Thread-Index: AQHbjBjx1q5dleb6eEq5EZF781nDprNmhasAgAA86hA=
-Date: Fri, 7 Mar 2025 00:01:14 +0000
-Message-ID: <PH8SPRMB004414B5E1E0765C18F9A89DC9D52@PH8SPRMB0044.namprd11.prod.outlook.com>
-References: <20250303084724.6490-1-kanchana.p.sridhar@intel.com>
- <20250303084724.6490-13-kanchana.p.sridhar@intel.com>
- <Z8n5CCmELvpUwi3B@google.com>
-In-Reply-To: <Z8n5CCmELvpUwi3B@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH8SPRMB0044:EE_|CH3PR11MB8185:EE_
-x-ms-office365-filtering-correlation-id: 94564213-bbff-4110-4baf-08dd5d0b2db3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?TgJNnJXc0vCAinuIww/CUA++zh7o4pM+9VyFbTfjyGZz6+ZrfN/9ZVXGZbxy?=
- =?us-ascii?Q?71eamtUfbBhSNQDBvnIXvcmta02Di8DS4XSJFz6gRdfTfeb0QSJiTASXtNQ3?=
- =?us-ascii?Q?TNV/o+Z5Q5CbswQnV4j/EST4cX0bNs/q4O9+rTWTNSgR1FpIEOtllvgpej7u?=
- =?us-ascii?Q?fv+HKGPgTOIf2L+n9FP3lLVViHtOghsp/7ceX9XgAmclqMnDKSCrPvpWJIQ+?=
- =?us-ascii?Q?vCgGe2oy86abhGev+o1uq5PIVfdJ/OTvLHCiguApLr51ZML5F5hKdQyRinaF?=
- =?us-ascii?Q?CGGpgWhc4jTLTd2I5JCawfA0xr+cF/lo4/4j8RF+dW0yA0ZYTLDSpw/cTPoY?=
- =?us-ascii?Q?QCE6BNDVv1vUd+ITiWMKwtOCyHGcVCa5d5Ew0yjmHvZf2Ogj8IsTyuXc59V/?=
- =?us-ascii?Q?GYO2w17Yihxb4wnPcyVVOfNl7bGxi4AtSJ8W30fnLEPWh674+PJoawVx1K6R?=
- =?us-ascii?Q?GXwi4qcbL2Tk2erYinB6xPps6WzOP2+yGlcKbhVyTUjXNptkAspp9IIR98/r?=
- =?us-ascii?Q?tUrqbbgVlgPzxW4ekO/w+OGuPqKjdPWZeKWyc5sdhOY5E3mqGiRW8HksE8fX?=
- =?us-ascii?Q?5EwYQrt+LOws+D0GqZWsa+ScWCuCHS9b9S8m80ZlFuEa+SXCt1K84+ykrdL6?=
- =?us-ascii?Q?toPmwMuFIZPg89khKfQDEGRS5cBp5nL1sbfXh72+RJWHLbDYvgPE9cAlS0Gr?=
- =?us-ascii?Q?o5y7uF4t57a57iv21PdfSpsV8i+Y9zPzTssM8yfMbjT98vZl7CKLZPY9mTxF?=
- =?us-ascii?Q?99zSBmq6zsix9kaR/Pz/vQDe1IgNn7nWcEMS3LGRYvVMMcWYK7K9+1spf9px?=
- =?us-ascii?Q?tcvkp5F8EM/cvV2LxiCgJROWn5ff2/uoeYuUHYRs6jf2h/skeCO5B6Klx2Cu?=
- =?us-ascii?Q?HQ2tjDC3oAar31RWQBzk00ish8CxcSKO9hx6+prC3s+D593fs9B8CLDKddAZ?=
- =?us-ascii?Q?arlWC7ui9v6M47mbXoR6WYwlZ7kb7E5djLHuXvOvLDoNi/JNP0bXPJzRF/yX?=
- =?us-ascii?Q?/bDs4YVMHWccM5FMN50r1Im8OmKrsLUoD0VZWXvdjptImr8Vd50RkVZSqpdx?=
- =?us-ascii?Q?G1IRLRaqk741RB1vGIMIBv+Uopz3qDGMw1PC3AFb/aMwd1/ftRSw0z/6pV1M?=
- =?us-ascii?Q?RUfFp+mUQymsZEvjDA5dUTBzPOOYyTZIPvhp+9iJ6eYG+zwdJ0cbEfilpo0k?=
- =?us-ascii?Q?M+nHUOJjMo2xy3Brt2agCk+TzQzGo0c43UFwMRoAMqh/WVTNqnHKH5gUkqXf?=
- =?us-ascii?Q?N9AagaWVLm93/Pqr2bgzkgytfKVRUjPsp00OMY7xNmPz4IZZJXRnSOo2mMcF?=
- =?us-ascii?Q?SuppbCZTIHJM1Q4QqPG0NkoZkovbHeiIRQfvzoImXIaqLgva50l6gqY7GBgG?=
- =?us-ascii?Q?uQz9YMeOxzklecyk21zCUvueA6MSn47F/s6UEu4zMB8RJlfIjwJ36chtPkPZ?=
- =?us-ascii?Q?g7dyfR8eYRh5kxtXxR2Yb/fIUAaWoqEL?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8SPRMB0044.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?WWK/EDIssnqQh52UKnGWflBgHrQtcIJmWt3efxnlLO4z0ED89gGX+gjV4Ap+?=
- =?us-ascii?Q?bwwLmd6vybCjdIRLGWT/SKfsYF0ZuYOx4rFKGj2C2br9LbblehxC83fawA8e?=
- =?us-ascii?Q?m+ZVdZ2mU6RxS5xHrzTkA4AxtQ8jpdXIlYEcIxoRkjkuuXho+S1U1pk2pWFo?=
- =?us-ascii?Q?L+xZlOl1OkVQoRL24RnD/MIJXzCOK9sTKRdWR6L/7SNwFZPdRZGS1SG8b0Et?=
- =?us-ascii?Q?siagfPJelF1EXMi1RX4+Hl2CXrc7lox9fSyJb6AA2obUCuHHG/KKbmEXtSar?=
- =?us-ascii?Q?gsl3XRdpQIBcwVsUw72WNzMvxevFoHuy4lxMlExaeSPdV0dp2kOM4z/rjpA/?=
- =?us-ascii?Q?7U80OK6n3F5LaGwxTXynWqbfhGdx6uhgajsklDa4WoXq4/a1rSzUd0AbIZIj?=
- =?us-ascii?Q?u4CSzLfd+VihPjN+6JUkO2ZiWkABwq5XVOfkizDkUZx5FYa1w7T1O4+l3SbT?=
- =?us-ascii?Q?mNiX1mubuuNe7YQWwzrF6fYYtA2MWwekn4pPREGvWHK4o6YfoJN5Z1GIbBUu?=
- =?us-ascii?Q?uqqoCK8V0cwpvvg5eRgPjq8IWcDeIwul/PLtxlZHtV2mcLrGoRKms+RZYeWf?=
- =?us-ascii?Q?h/LTSg3stiYMe62XfivVAaDW7IK0pbCteQo6HhG6GViseKEp/FVLBXFW34r+?=
- =?us-ascii?Q?RzQkG30wpntkF7h0eKcXyBb9m8QNpclsX3jjuc4ehAHSlne9kjQ3xFNEnMHg?=
- =?us-ascii?Q?rrg4VynggQX2aJSxCReIvafg+/schFpCWWpG1gv2VZzAA3QJrJiPJGvRIZw8?=
- =?us-ascii?Q?U5EWubcCPh9WSkjSGAfGzewCAo/YSLMTz6/dcDSOGOumF6OI/iyGMWPmV1Fm?=
- =?us-ascii?Q?iJgdZpT0midJ11mJFPAHQfQCuLI951+ResFYT7R5IpSgtiApYn2jAIUGecq9?=
- =?us-ascii?Q?tq9X+BQ9WH+9rQQLHNpvwcExcPVHZGu7o7YXHCkt4yHq3R05a/Xv89tFEzwP?=
- =?us-ascii?Q?Zx5Xl956pBol1d05TIoRi4oft+vvBVVvM2jnVyFk9SUN80Pt/c3Ixpa1Pdp0?=
- =?us-ascii?Q?Yv/iQllDxvI71Z7+jdtlw+U/Z0piBJOReAPAfV+YTwARN8fJpK0T09ClIXDv?=
- =?us-ascii?Q?joyGSzZUYUf07sop2LVFMQUfn9/nfFqO3GW1Vyqonf/CxDNxdO5tidtkuyk+?=
- =?us-ascii?Q?7gdWs/754AdtywV2ntpLnI6AF8uMu14D5F0RLeweHsj6A1zqNkNS32MFoXys?=
- =?us-ascii?Q?8Lcqw8vODvnWee13V7o4KDaBfLtuMXk2rpFxEFiMhVnLuk60Em5jClyht+/j?=
- =?us-ascii?Q?DvNib41EhBO1yhQSaG8UNe+VS+53Z7luoLxw0t9TYAmK9Qv7gW5MuM8uVhk5?=
- =?us-ascii?Q?VKxxucD7YnGxj+7KjvAnUH8XgD4JZnjmvYtwI/wBtP9ucICeMgH1gS/DEcXw?=
- =?us-ascii?Q?eUcOsXd7DAP/ylIgXjBroSkarCxM1CPapi31y0CV0TqURt8+YUk4z00YBMhU?=
- =?us-ascii?Q?xtPXEC0779MmBoIFxibwae3VEIqvtNwqzlEHmuQbI5K+geMCqL3SCZkoQTu7?=
- =?us-ascii?Q?VGriStF+dPx0FHVUpL67wAmByNgZEkeSlhA6+uJsJ/0+MV7hNrMrkvucC1ME?=
- =?us-ascii?Q?/sRoztnMMZ1aca/DWfRCVUsB2pa5E7jAJeG6yMfIaFGduf2AF5dUYvF6/cYL?=
- =?us-ascii?Q?Jg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48E672CA6
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 00:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741305691; cv=none; b=e+CJvw2OKNZFUh2jK+nc6CYoOekNkkfvkNysUz7eZYxYEurI93Sn5+wJknodieyPsWfEa4ickVjOJU8jxjetJJcemN5xh4+vsNU8ek/tOju0YGRlR5NENIT+xtXc42Hge4i/0r3oWvxDKkHKBe3TXXq06fy1K8ciT4enyr8KOVk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741305691; c=relaxed/simple;
+	bh=cuP/vScxGtaMqppW/h6NaC/dlve9qOgtjc8hq4kp0AU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BrBZi9ywXCQ0HdnmDLDcaocvHlNXSCPua89Udnzpb8dbKLybMj1S8t7UoE8EKPG8ALhmWrJH/w9gKrDA+oNZe06Gn1MfKnZezWi5shGS/Mbx3k6wZpUcfEuB7TYo1JJNbToXxk1LHM0drptxHwysNtpJ73d96OkMIrFtp1l3Uic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3ce843b51c3so25606375ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 16:01:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741305688; x=1741910488;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ifMmxd60Hb7OPYrM+DTw5Np2I8L4Y/29uTi+Rh8hpQk=;
+        b=bKSgCp1eDpSJPincCsUdpQp43kvvHpNjPAOZorOaUmbe+wko0BRrIFcR1DCCOaU+sY
+         aHKdIL/QzxQJ+afwyT+5dhxhPB2JtR+ZsAkqqjGi2lLcrc+4u3XM7XuGqd8LHFEjqDCk
+         wQU+EA1u3qt+E5hS8qyjodo4jPMvHcUCa/6doCY+yRV5Fe5DA+YUWrLUgINqP/WnS5xc
+         6pBbCJZ9UCUER0Sl8GDG+kijRZbSrn7lupdB+nabM6cyR54noeeH/DnhZtjdOGkOeCVp
+         sQvnI0D/RBD5jOhnuXXmZ7lZGt8/a/x93OsIVah2uFJQwa6yDPZXRpFnZKjLu1vc1p+p
+         NdJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtLyhAfNxTSAvAnGiLfIXkqPo227bHg3O1C9bnHSTCRFykKJQG+yyTLkamWihBWoc0LSBPJr/r6KY709s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWR4J6Q1LFTh+ponq89sTzg8DBREKKvFm6NxKNLyOBI7i89NEk
+	uAvwcKHQPkDVfkbqGr68ciI6BovdED4Qj2JkbXvtYn+yHMTVn60QrkJ8PZQhClm9nABVIWAoFD5
+	bM58pLN6VdCKCcTtYEll4ZzuZqv3YfO9MzYiCn7QZqsleP6GmpHHkhgI=
+X-Google-Smtp-Source: AGHT+IHNHvKJbD0FFhT0nPb+EzQcFSiphBjI449xuRyJhOPgFV5mkctrULPQgeygR4oC9719dc3k7YVJ7JyTaaVXzH7AxPmc/f1c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH8SPRMB0044.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94564213-bbff-4110-4baf-08dd5d0b2db3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2025 00:01:14.8997
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: QzOoyd1MrBdLdhcDFgFJItbfDLB5xD7y+zhYesW0qbZ+ChvoQNmnG8oEkVgOFhklOixpfSJN7axIReZ+tGiqLBDeSeT/VrdZBspNVbrcECc=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8185
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a92:ca49:0:b0:3d2:b66b:94cd with SMTP id
+ e9e14a558f8ab-3d441930332mr21411855ab.3.1741305688466; Thu, 06 Mar 2025
+ 16:01:28 -0800 (PST)
+Date: Thu, 06 Mar 2025 16:01:28 -0800
+In-Reply-To: <6761bbbd.050a0220.29fcd0.0075.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67ca3758.050a0220.15b4b9.005c.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_connect_cfm
+From: syzbot <syzbot+e9abaabc441d3dd18735@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+
+syzbot has found a reproducer for the following issue on:
+
+HEAD commit:    f66d6acccbc0 Merge tag 'x86_urgent_for_v6.12' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1666b2e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ca2f08f822652bd0
+dashboard link: https://syzkaller.appspot.com/bug?extid=e9abaabc441d3dd18735
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5b28ec7d6aaa/disk-f66d6acc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1999546fff71/vmlinux-f66d6acc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ef848d42ab19/bzImage-f66d6acc.xz
+
+Bisection is inconclusive: the issue happens on the oldest tested release.
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=147adb78580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=167adb78580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=127adb78580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e9abaabc441d3dd18735@syzkaller.appspotmail.com
+
+kobject: kobject_add_internal failed for hci5:201 with -EEXIST, don't try to register things with the same name in the same directory.
+Bluetooth: hci5: failed to register connection device
+==================================================================
+BUG: KASAN: slab-use-after-free in l2cap_conn_ready net/bluetooth/l2cap_core.c:1619 [inline]
+BUG: KASAN: slab-use-after-free in l2cap_connect_cfm+0xdbe/0xf80 net/bluetooth/l2cap_core.c:7278
+Read of size 8 at addr ffff8880780f0480 by task kworker/u9:3/5950
+
+CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Not tainted 6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci5 hci_rx_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ l2cap_conn_ready net/bluetooth/l2cap_core.c:1619 [inline]
+ l2cap_connect_cfm+0xdbe/0xf80 net/bluetooth/l2cap_core.c:7278
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Allocated by task 5950:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ l2cap_chan_create+0x44/0x920 net/bluetooth/l2cap_core.c:449
+ l2cap_sock_alloc.constprop.0+0xf3/0x180 net/bluetooth/l2cap_sock.c:1886
+ l2cap_sock_new_connection_cb+0x101/0x240 net/bluetooth/l2cap_sock.c:1468
+ l2cap_connect_cfm+0x4cc/0xf80 net/bluetooth/l2cap_core.c:7261
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Freed by task 6070:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2342 [inline]
+ slab_free mm/slub.c:4579 [inline]
+ kfree+0x14f/0x4b0 mm/slub.c:4727
+ l2cap_chan_destroy net/bluetooth/l2cap_core.c:495 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ l2cap_chan_put+0x216/0x2c0 net/bluetooth/l2cap_core.c:519
+ l2cap_sock_cleanup_listen+0x4d/0x2a0 net/bluetooth/l2cap_sock.c:1451
+ l2cap_sock_release+0x5c/0x210 net/bluetooth/l2cap_sock.c:1411
+ __sock_release+0xb3/0x270 net/socket.c:658
+ sock_close+0x1c/0x30 net/socket.c:1426
+ __fput+0x3f9/0xb60 fs/file_table.c:431
+ task_work_run+0x151/0x250 kernel/task_work.c:239
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff8880780f0000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 1152 bytes inside of
+ freed 2048-byte region [ffff8880780f0000, ffff8880780f0800)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff8880780f6000 pfn:0x780f0
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801b042000 ffffea0001292c00 0000000000000002
+raw: ffff8880780f6000 0000000080080003 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff88801b042000 ffffea0001292c00 0000000000000002
+head: ffff8880780f6000 0000000080080003 00000001f5000000 0000000000000000
+head: 00fff00000000003 ffffea0001e03c01 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 2965, tgid 2965 (kworker/u8:7), ts 97728781507, free_ts 97577158223
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
+ prep_new_page mm/page_alloc.c:1564 [inline]
+ get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
+ __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4751
+ alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
+ alloc_slab_page mm/slub.c:2412 [inline]
+ allocate_slab mm/slub.c:2578 [inline]
+ new_slab+0x2c9/0x410 mm/slub.c:2631
+ ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ __do_kmalloc_node mm/slub.c:4263 [inline]
+ __kmalloc_node_track_caller_noprof+0x355/0x430 mm/slub.c:4283
+ kmalloc_reserve+0xef/0x2c0 net/core/skbuff.c:609
+ __alloc_skb+0x164/0x380 net/core/skbuff.c:678
+ alloc_skb include/linux/skbuff.h:1322 [inline]
+ nlmsg_new include/net/netlink.h:1015 [inline]
+ rtmsg_ifinfo_build_skb+0x81/0x280 net/core/rtnetlink.c:4099
+ unregister_netdevice_many_notify+0x983/0x1e50 net/core/dev.c:11411
+ cleanup_net+0x58c/0xb40 net/core/net_namespace.c:621
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+page last free pid 2965 tgid 2965 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_unref_page+0x661/0x1080 mm/page_alloc.c:2657
+ __folio_put+0x32a/0x450 mm/swap.c:112
+ kvfree+0x47/0x50 mm/util.c:701
+ unix_net_exit+0x61/0xb0 net/unix/af_unix.c:3708
+ ops_exit_list+0xb3/0x180 net/core/net_namespace.c:173
+ cleanup_net+0x5b7/0xb40 net/core/net_namespace.c:626
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Memory state around the buggy address:
+ ffff8880780f0380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880780f0400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff8880780f0480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff8880780f0500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880780f0580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+==================================================================
+BUG: KASAN: wild-memory-access in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: wild-memory-access in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+BUG: KASAN: wild-memory-access in l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+BUG: KASAN: wild-memory-access in l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+BUG: KASAN: wild-memory-access in l2cap_connect_cfm+0x7eb/0xf80 net/bluetooth/l2cap_core.c:7278
+Read of size 4 at addr deacfffffffffc8c by task kworker/u9:3/5950
+
+CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Tainted: G    B              6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
+Tainted: [B]=BAD_PAGE
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci5 hci_rx_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+ l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+ l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+ l2cap_connect_cfm+0x7eb/0xf80 net/bluetooth/l2cap_core.c:7278
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+==================================================================
+Oops: general protection fault, probably for non-canonical address 0xfbd59bffffffff91: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: maybe wild-memory-access in range [0xdeacfffffffffc88-0xdeacfffffffffc8f]
+CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Tainted: G    B              6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
+Tainted: [B]=BAD_PAGE
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci5 hci_rx_work
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
+RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
+RIP: 0010:l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+RIP: 0010:l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+RIP: 0010:l2cap_connect_cfm+0x7f2/0xf80 net/bluetooth/l2cap_core.c:7278
+Code: 80 fb ff ff 49 39 c5 0f 84 29 01 00 00 e8 26 a0 6e f7 49 8d 6f 0c be 04 00 00 00 48 89 ef e8 b5 80 cf f7 48 89 e8 48 c1 e8 03 <0f> b6 14 18 48 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 c5
+RSP: 0018:ffffc90003e0f878 EFLAGS: 00010213
+RAX: 1bd59fffffffff91 RBX: dffffc0000000000 RCX: ffffffff814e821f
+RDX: ffff888030808000 RSI: ffffffff81ee2f8e RDI: 0000000000000007
+RBP: deacfffffffffc8c R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: ffff88804779003b
+R13: ffff88806c83d2c0 R14: 0000000000000080 R15: deacfffffffffc80
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055558a5ef5c8 CR3: 000000007bf02000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
+RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
+RIP: 0010:l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+RIP: 0010:l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+RIP: 0010:l2cap_connect_cfm+0x7f2/0xf80 net/bluetooth/l2cap_core.c:7278
+Code: 80 fb ff ff 49 39 c5 0f 84 29 01 00 00 e8 26 a0 6e f7 49 8d 6f 0c be 04 00 00 00 48 89 ef e8 b5 80 cf f7 48 89 e8 48 c1 e8 03 <0f> b6 14 18 48 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 c5
+RSP: 0018:ffffc90003e0f878 EFLAGS: 00010213
+RAX: 1bd59fffffffff91 RBX: dffffc0000000000 RCX: ffffffff814e821f
+RDX: ffff888030808000 RSI: ffffffff81ee2f8e RDI: 0000000000000007
+RBP: deacfffffffffc8c R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: ffff88804779003b
+R13: ffff88806c83d2c0 R14: 0000000000000080 R15: deacfffffffffc80
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055558a5ef5c8 CR3: 000000007bf02000 CR4: 0000000000350ef0
+----------------
+Code disassembly (best guess), 4 bytes skipped:
+   0:	49 39 c5             	cmp    %rax,%r13
+   3:	0f 84 29 01 00 00    	je     0x132
+   9:	e8 26 a0 6e f7       	call   0xf76ea034
+   e:	49 8d 6f 0c          	lea    0xc(%r15),%rbp
+  12:	be 04 00 00 00       	mov    $0x4,%esi
+  17:	48 89 ef             	mov    %rbp,%rdi
+  1a:	e8 b5 80 cf f7       	call   0xf7cf80d4
+  1f:	48 89 e8             	mov    %rbp,%rax
+  22:	48 c1 e8 03          	shr    $0x3,%rax
+* 26:	0f b6 14 18          	movzbl (%rax,%rbx,1),%edx <-- trapping instruction
+  2a:	48 89 e8             	mov    %rbp,%rax
+  2d:	83 e0 07             	and    $0x7,%eax
+  30:	83 c0 03             	add    $0x3,%eax
+  33:	38 d0                	cmp    %dl,%al
+  35:	7c 08                	jl     0x3f
+  37:	84 d2                	test   %dl,%dl
+  39:	0f                   	.byte 0xf
+  3a:	85 c5                	test   %eax,%ebp
 
 
-> -----Original Message-----
-> From: Yosry Ahmed <yosry.ahmed@linux.dev>
-> Sent: Thursday, March 6, 2025 11:36 AM
-> To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> hannes@cmpxchg.org; nphamcs@gmail.com; chengming.zhou@linux.dev;
-> usamaarif642@gmail.com; ryan.roberts@arm.com; 21cnbao@gmail.com;
-> ying.huang@linux.alibaba.com; akpm@linux-foundation.org; linux-
-> crypto@vger.kernel.org; herbert@gondor.apana.org.au;
-> davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
-> ebiggers@google.com; surenb@google.com; Accardi, Kristen C
-> <kristen.c.accardi@intel.com>; Feghali, Wajdi K <wajdi.k.feghali@intel.co=
-m>;
-> Gopal, Vinodh <vinodh.gopal@intel.com>
-> Subject: Re: [PATCH v8 12/14] mm: zswap: Simplify acomp_ctx resource
-> allocation/deletion and mutex lock usage.
->=20
-> On Mon, Mar 03, 2025 at 12:47:22AM -0800, Kanchana P Sridhar wrote:
-> > This patch modifies the acomp_ctx resources' lifetime to be from pool
-> > creation to deletion. A "bool __online" and "u8 nr_reqs" are added to
-> > "struct crypto_acomp_ctx" which simplify a few things:
-> >
-> > 1) zswap_pool_create() will initialize all members of each percpu
-> acomp_ctx
-> >    to 0 or NULL and only then initialize the mutex.
-> > 2) CPU hotplug will set nr_reqs to 1, allocate resources and set __onli=
-ne
-> >    to true, without locking the mutex.
-> > 3) CPU hotunplug will lock the mutex before setting __online to false. =
-It
-> >    will not delete any resources.
-> > 4) acomp_ctx_get_cpu_lock() will lock the mutex, then check if __online
-> >    is true, and if so, return the mutex for use in zswap compress and
-> >    decompress ops.
-> > 5) CPU onlining after offlining will simply check if either __online or
-> >    nr_reqs are non-0, and return 0 if so, without re-allocating the
-> >    resources.
-> > 6) zswap_pool_destroy() will call a newly added zswap_cpu_comp_dealloc(=
-)
-> to
-> >    delete the acomp_ctx resources.
-> > 7) Common resource deletion code in case of zswap_cpu_comp_prepare()
-> >    errors, and for use in zswap_cpu_comp_dealloc(), is factored into a =
-new
-> >    acomp_ctx_dealloc().
-> >
-> > The CPU hot[un]plug callback functions are moved to "pool functions"
-> > accordingly.
-> >
-> > The per-cpu memory cost of not deleting the acomp_ctx resources upon
-> CPU
-> > offlining, and only deleting them when the pool is destroyed, is as fol=
-lows:
-> >
-> >     IAA with batching: 64.8 KB
-> >     Software compressors: 8.2 KB
-> >
-> > I would appreciate code review comments on whether this memory cost is
-> > acceptable, for the latency improvement that it provides due to a faste=
-r
-> > reclaim restart after a CPU hotunplug-hotplug sequence - all that the
-> > hotplug code needs to do is to check if acomp_ctx->nr_reqs is non-0, an=
-d
-> > if so, set __online to true and return, and reclaim can proceed.
->=20
-> I like the idea of allocating the resources on memory hotplug but
-> leaving them allocated until the pool is torn down. It avoids allocating
-> unnecessary memory if some CPUs are never onlined, but it simplifies
-> things because we don't have to synchronize against the resources being
-> freed in CPU offline.
->=20
-> The only case that would suffer from this AFAICT is if someone onlines
-> many CPUs, uses them once, and then offline them and not use them again.
-> I am not familiar with CPU hotplug use cases so I can't tell if that's
-> something people do, but I am inclined to agree with this
-> simplification.
-
-Thanks Yosry, for your code review comments! Good to know that this
-simplification is acceptable.
-
->=20
-> >
-> > Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-> > ---
-> >  mm/zswap.c | 273 +++++++++++++++++++++++++++++++++++--------------
-> ----
-> >  1 file changed, 182 insertions(+), 91 deletions(-)
-> >
-> > diff --git a/mm/zswap.c b/mm/zswap.c
-> > index 10f2a16e7586..cff96df1df8b 100644
-> > --- a/mm/zswap.c
-> > +++ b/mm/zswap.c
-> > @@ -144,10 +144,12 @@ bool zswap_never_enabled(void)
-> >  struct crypto_acomp_ctx {
-> >  	struct crypto_acomp *acomp;
-> >  	struct acomp_req *req;
-> > -	struct crypto_wait wait;
->=20
-> Is there a reason for moving this? If not please avoid unrelated changes.
-
-The reason is so that req/buffer, and reqs/buffers with batching, go togeth=
-er
-logically, hence I found this easier to understand. I can restore this to t=
-he
-original order, if that's preferable.
-
->=20
-> >  	u8 *buffer;
-> > +	u8 nr_reqs;
-> > +	struct crypto_wait wait;
-> >  	struct mutex mutex;
-> >  	bool is_sleepable;
-> > +	bool __online;
->=20
-> I don't believe we need this.
->=20
-> If we are not freeing resources during CPU offlining, then we do not
-> need a CPU offline callback and acomp_ctx->__online serves no purpose.
->=20
-> The whole point of synchronizing between offlining and
-> compress/decompress operations is to avoid UAF. If offlining does not
-> free resources, then we can hold the mutex directly in the
-> compress/decompress path and drop the hotunplug callback completely.
->=20
-> I also believe nr_reqs can be dropped from this patch, as it seems like
-> it's only used know when to set __online.
-
-All great points! In fact, that was the original solution I had implemented
-(not having an offline callback). But then, I spent some time understanding
-the v6.13 hotfix for synchronizing freeing of resources, and this comment
-in zswap_cpu_comp_prepare():
-
-	/*
-	 * Only hold the mutex after completing allocations, otherwise we may
-	 * recurse into zswap through reclaim and attempt to hold the mutex
-	 * again resulting in a deadlock.
-	 */
-
-Hence, I figured the constraint of "recurse into zswap through reclaim" was
-something to comprehend in the simplification (even though I had a tough
-time imagining how this could happen).
-
-Hence, I added the "bool __online" because zswap_cpu_comp_prepare()
-does not acquire the mutex lock while allocating resources. We have already
-initialized the mutex, so in theory, it is possible for compress/decompress
-to acquire the mutex lock. The __online acts as a way to indicate whether
-compress/decompress can proceed reliably to use the resources.
-
-The "nr_reqs" was needed as a way to distinguish between initial and
-subsequent calls into zswap_cpu_comp_prepare(), for e.g., on a CPU that
-goes through an online-offline-online sequence. In the initial onlining,
-we need to allocate resources because nr_reqs=3D0. If resources are to
-be allocated, we set acomp_ctx->nr_reqs and proceed to allocate
-reqs/buffers/etc. In the subsequent onlining, we can quickly inspect
-nr_reqs as being greater than 0 and return, thus avoiding any latency
-delays before reclaim/page-faults can be handled on that CPU.
-
-Please let me know if this rationale seems reasonable for why
-__online and nr_reqs were introduced.
-
->=20
-> >  };
-> >
-> >  /*
-> > @@ -246,6 +248,122 @@ static inline struct xarray
-> *swap_zswap_tree(swp_entry_t swp)
-> >  **********************************/
-> >  static void __zswap_pool_empty(struct percpu_ref *ref);
-> >
-> > +static void acomp_ctx_dealloc(struct crypto_acomp_ctx *acomp_ctx)
-> > +{
-> > +	if (!IS_ERR_OR_NULL(acomp_ctx) && acomp_ctx->nr_reqs) {
-> > +
-> > +		if (!IS_ERR_OR_NULL(acomp_ctx->req))
-> > +			acomp_request_free(acomp_ctx->req);
-> > +		acomp_ctx->req =3D NULL;
-> > +
-> > +		kfree(acomp_ctx->buffer);
-> > +		acomp_ctx->buffer =3D NULL;
-> > +
-> > +		if (!IS_ERR_OR_NULL(acomp_ctx->acomp))
-> > +			crypto_free_acomp(acomp_ctx->acomp);
-> > +
-> > +		acomp_ctx->nr_reqs =3D 0;
-> > +	}
-> > +}
->=20
-> Please split the pure refactoring into a separate patch to make it
-> easier to review.
-
-Sure, will do.
-
->=20
-> > +
-> > +static int zswap_cpu_comp_prepare(unsigned int cpu, struct hlist_node
-> *node)
->=20
-> Why is the function moved while being changed? It's really hard to see
-> the diff this way. If the function needs to be moved please do that
-> separately as well.
-
-Sure, will do.
-
->=20
-> I also see some ordering changes inside the function (e.g. we now
-> allocate the request before the buffer). Not sure if these are
-> intentional. If not, please keep the diff to the required changes only.
-
-The reason for this was, I am trying to organize the allocations based
-on dependencies. Unless requests are allocated, there is no point in
-allocating buffers. Please let me know if this is Ok.
-
->=20
-> > +{
-> > +	struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool,
-> node);
-> > +	struct crypto_acomp_ctx *acomp_ctx =3D per_cpu_ptr(pool-
-> >acomp_ctx, cpu);
-> > +	int ret =3D -ENOMEM;
-> > +
-> > +	/*
-> > +	 * Just to be even more fail-safe against changes in assumptions
-> and/or
-> > +	 * implementation of the CPU hotplug code.
-> > +	 */
-> > +	if (acomp_ctx->__online)
-> > +		return 0;
-> > +
-> > +	if (acomp_ctx->nr_reqs) {
-> > +		acomp_ctx->__online =3D true;
-> > +		return 0;
-> > +	}
-> > +
-> > +	acomp_ctx->acomp =3D crypto_alloc_acomp_node(pool->tfm_name, 0,
-> 0, cpu_to_node(cpu));
-> > +	if (IS_ERR(acomp_ctx->acomp)) {
-> > +		pr_err("could not alloc crypto acomp %s : %ld\n",
-> > +			pool->tfm_name, PTR_ERR(acomp_ctx->acomp));
-> > +		ret =3D PTR_ERR(acomp_ctx->acomp);
-> > +		goto fail;
-> > +	}
-> > +
-> > +	acomp_ctx->nr_reqs =3D 1;
-> > +
-> > +	acomp_ctx->req =3D acomp_request_alloc(acomp_ctx->acomp);
-> > +	if (!acomp_ctx->req) {
-> > +		pr_err("could not alloc crypto acomp_request %s\n",
-> > +		       pool->tfm_name);
-> > +		ret =3D -ENOMEM;
-> > +		goto fail;
-> > +	}
-> > +
-> > +	acomp_ctx->buffer =3D kmalloc_node(PAGE_SIZE * 2, GFP_KERNEL,
-> cpu_to_node(cpu));
-> > +	if (!acomp_ctx->buffer) {
-> > +		ret =3D -ENOMEM;
-> > +		goto fail;
-> > +	}
-> > +
-> > +	crypto_init_wait(&acomp_ctx->wait);
-> > +
-> > +	/*
-> > +	 * if the backend of acomp is async zip, crypto_req_done() will
-> wakeup
-> > +	 * crypto_wait_req(); if the backend of acomp is scomp, the callback
-> > +	 * won't be called, crypto_wait_req() will return without blocking.
-> > +	 */
-> > +	acomp_request_set_callback(acomp_ctx->req,
-> CRYPTO_TFM_REQ_MAY_BACKLOG,
-> > +				   crypto_req_done, &acomp_ctx->wait);
-> > +
-> > +	acomp_ctx->is_sleepable =3D acomp_is_async(acomp_ctx->acomp);
-> > +
-> > +	acomp_ctx->__online =3D true;
-> > +
-> > +	return 0;
-> > +
-> > +fail:
-> > +	acomp_ctx_dealloc(acomp_ctx);
-> > +
-> > +	return ret;
-> > +}
-> > +
-> > +static int zswap_cpu_comp_dead(unsigned int cpu, struct hlist_node
-> *node)
-> > +{
-> > +	struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool,
-> node);
-> > +	struct crypto_acomp_ctx *acomp_ctx =3D per_cpu_ptr(pool-
-> >acomp_ctx, cpu);
-> > +
-> > +	mutex_lock(&acomp_ctx->mutex);
-> > +	acomp_ctx->__online =3D false;
-> > +	mutex_unlock(&acomp_ctx->mutex);
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static void zswap_cpu_comp_dealloc(unsigned int cpu, struct hlist_node
-> *node)
-> > +{
-> > +	struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool,
-> node);
-> > +	struct crypto_acomp_ctx *acomp_ctx =3D per_cpu_ptr(pool-
-> >acomp_ctx, cpu);
-> > +
-> > +	/*
-> > +	 * The lifetime of acomp_ctx resources is from pool creation to
-> > +	 * pool deletion.
-> > +	 *
-> > +	 * Reclaims should not be happening because, we get to this routine
-> only
-> > +	 * in two scenarios:
-> > +	 *
-> > +	 * 1) pool creation failures before/during the pool ref initializatio=
-n.
-> > +	 * 2) we are in the process of releasing the pool, it is off the
-> > +	 *    zswap_pools list and has no references.
-> > +	 *
-> > +	 * Hence, there is no need for locks.
-> > +	 */
-> > +	acomp_ctx->__online =3D false;
-> > +	acomp_ctx_dealloc(acomp_ctx);
->=20
-> Since __online can be dropped, we can probably drop
-> zswap_cpu_comp_dealloc() and call acomp_ctx_dealloc() directly?
-
-I suppose there is value in having a way in zswap to know for sure, that
-resource allocation has completed, and it is safe for compress/decompress
-to proceed. Especially because the mutex has been initialized before we
-get to resource allocation. Would you agree?
-
->=20
-> > +}
-> > +
-> >  static struct zswap_pool *zswap_pool_create(char *type, char
-> *compressor)
-> >  {
-> >  	struct zswap_pool *pool;
-> > @@ -285,13 +403,21 @@ static struct zswap_pool
-> *zswap_pool_create(char *type, char *compressor)
-> >  		goto error;
-> >  	}
-> >
-> > -	for_each_possible_cpu(cpu)
-> > -		mutex_init(&per_cpu_ptr(pool->acomp_ctx, cpu)->mutex);
-> > +	for_each_possible_cpu(cpu) {
-> > +		struct crypto_acomp_ctx *acomp_ctx =3D per_cpu_ptr(pool-
-> >acomp_ctx, cpu);
-> > +
-> > +		acomp_ctx->acomp =3D NULL;
-> > +		acomp_ctx->req =3D NULL;
-> > +		acomp_ctx->buffer =3D NULL;
-> > +		acomp_ctx->__online =3D false;
-> > +		acomp_ctx->nr_reqs =3D 0;
->=20
-> Why is this needed? Wouldn't zswap_cpu_comp_prepare() initialize them
-> right away?
-
-Yes, I figured this is needed for two reasons:
-
-1) For the error handling in zswap_cpu_comp_prepare() and calls into
-    zswap_cpu_comp_dealloc() to be handled by the common procedure
-    "acomp_ctx_dealloc()" unambiguously.
-2) The second scenario I thought of that would need this, is let's say
-     the zswap compressor is switched immediately after setting the
-     compressor. Some cores have executed the onlining code and
-     some haven't. Because there are no pool refs held,
-     zswap_cpu_comp_dealloc() would be called per-CPU. Hence, I figured
-     it would help to initialize these acomp_ctx members before the
-     hand-off to "cpuhp_state_add_instance()" in zswap_pool_create().
-
-Please let me know if these are valid considerations.
-
->=20
-> If it is in fact needed we should probably just use __GFP_ZERO.
-
-Sure. Are you suggesting I use "alloc_percpu_gfp()" instead of "alloc_percp=
-u()"
-for the acomp_ctx?
-
->=20
-> > +		mutex_init(&acomp_ctx->mutex);
-> > +	}
-> >
-> >  	ret =3D
-> cpuhp_state_add_instance(CPUHP_MM_ZSWP_POOL_PREPARE,
-> >  				       &pool->node);
-> >  	if (ret)
-> > -		goto error;
-> > +		goto ref_fail;
-> >
-> >  	/* being the current pool takes 1 ref; this func expects the
-> >  	 * caller to always add the new pool as the current pool
-> > @@ -307,6 +433,9 @@ static struct zswap_pool *zswap_pool_create(char
-> *type, char *compressor)
-> >  	return pool;
-> >
-> >  ref_fail:
-> > +	for_each_possible_cpu(cpu)
-> > +		zswap_cpu_comp_dealloc(cpu, &pool->node);
-> > +
-> >  	cpuhp_state_remove_instance(CPUHP_MM_ZSWP_POOL_PREPARE,
-> &pool->node);
->=20
-> I am wondering if we can guard these by hlist_empty(&pool->node) instead
-> of having separate labels. If we do that we can probably make all the
-> cleanup calls conditional and merge this cleanup code with
-> zswap_pool_destroy().
->=20
-> Although I am not too sure about whether or not we should rely on
-> hlist_empty() for this. I am just thinking out loud, no need to do
-> anything here. If you decide to pursue this tho please make it a
-> separate refactoring patch.
-
-Sure, makes sense.
-
->=20
-> >  error:
-> >  	if (pool->acomp_ctx)
-> > @@ -361,8 +490,13 @@ static struct zswap_pool
-> *__zswap_pool_create_fallback(void)
-> >
-> >  static void zswap_pool_destroy(struct zswap_pool *pool)
-> >  {
-> > +	int cpu;
-> > +
-> >  	zswap_pool_debug("destroying", pool);
-> >
-> > +	for_each_possible_cpu(cpu)
-> > +		zswap_cpu_comp_dealloc(cpu, &pool->node);
-> > +
-> >  	cpuhp_state_remove_instance(CPUHP_MM_ZSWP_POOL_PREPARE,
-> &pool->node);
-> >  	free_percpu(pool->acomp_ctx);
-> >
-> > @@ -816,85 +950,6 @@ static void zswap_entry_free(struct zswap_entry
-> *entry)
-> >  /*********************************
-> >  * compressed storage functions
-> >  **********************************/
-> > -static int zswap_cpu_comp_prepare(unsigned int cpu, struct hlist_node
-> *node)
-> > -{
-> > -	struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool,
-> node);
-> > -	struct crypto_acomp_ctx *acomp_ctx =3D per_cpu_ptr(pool-
-> >acomp_ctx, cpu);
-> > -	struct crypto_acomp *acomp =3D NULL;
-> > -	struct acomp_req *req =3D NULL;
-> > -	u8 *buffer =3D NULL;
-> > -	int ret;
-> > -
-> > -	buffer =3D kmalloc_node(PAGE_SIZE * 2, GFP_KERNEL,
-> cpu_to_node(cpu));
-> > -	if (!buffer) {
-> > -		ret =3D -ENOMEM;
-> > -		goto fail;
-> > -	}
-> > -
-> > -	acomp =3D crypto_alloc_acomp_node(pool->tfm_name, 0, 0,
-> cpu_to_node(cpu));
-> > -	if (IS_ERR(acomp)) {
-> > -		pr_err("could not alloc crypto acomp %s : %ld\n",
-> > -				pool->tfm_name, PTR_ERR(acomp));
-> > -		ret =3D PTR_ERR(acomp);
-> > -		goto fail;
-> > -	}
-> > -
-> > -	req =3D acomp_request_alloc(acomp);
-> > -	if (!req) {
-> > -		pr_err("could not alloc crypto acomp_request %s\n",
-> > -		       pool->tfm_name);
-> > -		ret =3D -ENOMEM;
-> > -		goto fail;
-> > -	}
-> > -
-> > -	/*
-> > -	 * Only hold the mutex after completing allocations, otherwise we
-> may
-> > -	 * recurse into zswap through reclaim and attempt to hold the mutex
-> > -	 * again resulting in a deadlock.
-> > -	 */
-> > -	mutex_lock(&acomp_ctx->mutex);
-> > -	crypto_init_wait(&acomp_ctx->wait);
-> > -
-> > -	/*
-> > -	 * if the backend of acomp is async zip, crypto_req_done() will
-> wakeup
-> > -	 * crypto_wait_req(); if the backend of acomp is scomp, the callback
-> > -	 * won't be called, crypto_wait_req() will return without blocking.
-> > -	 */
-> > -	acomp_request_set_callback(req,
-> CRYPTO_TFM_REQ_MAY_BACKLOG,
-> > -				   crypto_req_done, &acomp_ctx->wait);
-> > -
-> > -	acomp_ctx->buffer =3D buffer;
-> > -	acomp_ctx->acomp =3D acomp;
-> > -	acomp_ctx->is_sleepable =3D acomp_is_async(acomp);
-> > -	acomp_ctx->req =3D req;
-> > -	mutex_unlock(&acomp_ctx->mutex);
-> > -	return 0;
-> > -
-> > -fail:
-> > -	if (acomp)
-> > -		crypto_free_acomp(acomp);
-> > -	kfree(buffer);
-> > -	return ret;
-> > -}
-> > -
-> > -static int zswap_cpu_comp_dead(unsigned int cpu, struct hlist_node
-> *node)
-> > -{
-> > -	struct zswap_pool *pool =3D hlist_entry(node, struct zswap_pool,
-> node);
-> > -	struct crypto_acomp_ctx *acomp_ctx =3D per_cpu_ptr(pool-
-> >acomp_ctx, cpu);
-> > -
-> > -	mutex_lock(&acomp_ctx->mutex);
-> > -	if (!IS_ERR_OR_NULL(acomp_ctx)) {
-> > -		if (!IS_ERR_OR_NULL(acomp_ctx->req))
-> > -			acomp_request_free(acomp_ctx->req);
-> > -		acomp_ctx->req =3D NULL;
-> > -		if (!IS_ERR_OR_NULL(acomp_ctx->acomp))
-> > -			crypto_free_acomp(acomp_ctx->acomp);
-> > -		kfree(acomp_ctx->buffer);
-> > -	}
-> > -	mutex_unlock(&acomp_ctx->mutex);
-> > -
-> > -	return 0;
-> > -}
-> >
-> >  static struct crypto_acomp_ctx *acomp_ctx_get_cpu_lock(struct
-> zswap_pool *pool)
-> >  {
-> > @@ -902,16 +957,52 @@ static struct crypto_acomp_ctx
-> *acomp_ctx_get_cpu_lock(struct zswap_pool *pool)
-> >
-> >  	for (;;) {
-> >  		acomp_ctx =3D raw_cpu_ptr(pool->acomp_ctx);
-> > -		mutex_lock(&acomp_ctx->mutex);
-> > -		if (likely(acomp_ctx->req))
-> > -			return acomp_ctx;
-> >  		/*
-> > -		 * It is possible that we were migrated to a different CPU
-> after
-> > -		 * getting the per-CPU ctx but before the mutex was
-> acquired. If
-> > -		 * the old CPU got offlined, zswap_cpu_comp_dead() could
-> have
-> > -		 * already freed ctx->req (among other things) and set it to
-> > -		 * NULL. Just try again on the new CPU that we ended up on.
-> > +		 * If the CPU onlining code successfully allocates acomp_ctx
-> resources,
-> > +		 * it sets acomp_ctx->__online to true. Until this happens, we
-> have
-> > +		 * two options:
-> > +		 *
-> > +		 * 1. Return NULL and fail all stores on this CPU.
-> > +		 * 2. Retry, until onlining has finished allocating resources.
-> > +		 *
-> > +		 * In theory, option 1 could be more appropriate, because it
-> > +		 * allows the calling procedure to decide how it wants to
-> handle
-> > +		 * reclaim racing with CPU hotplug. For instance, it might be
-> Ok
-> > +		 * for compress to return an error for the backing swap device
-> > +		 * to store the folio. Decompress could wait until we get a
-> > +		 * valid and locked mutex after onlining has completed. For
-> now,
-> > +		 * we go with option 2 because adding a do-while in
-> > +		 * zswap_decompress() adds latency for software
-> compressors.
-> > +		 *
-> > +		 * Once initialized, the resources will be de-allocated only
-> > +		 * when the pool is destroyed. The acomp_ctx will hold on to
-> the
-> > +		 * resources through CPU offlining/onlining at any time until
-> > +		 * the pool is destroyed.
-> > +		 *
-> > +		 * This prevents races/deadlocks between reclaim and CPU
-> acomp_ctx
-> > +		 * resource allocation that are a dependency for reclaim.
-> > +		 * It further simplifies the interaction with CPU onlining and
-> > +		 * offlining:
-> > +		 *
-> > +		 * - CPU onlining does not take the mutex. It only allocates
-> > +		 *   resources and sets __online to true.
-> > +		 * - CPU offlining acquires the mutex before setting
-> > +		 *   __online to false. If reclaim has acquired the mutex,
-> > +		 *   offlining will have to wait for reclaim to complete before
-> > +		 *   hotunplug can proceed. Further, hotplug merely sets
-> > +		 *   __online to false. It does not delete the acomp_ctx
-> > +		 *   resources.
-> > +		 *
-> > +		 * Option 1 is better than potentially not exiting the earlier
-> > +		 * for (;;) loop because the system is running low on memory
-> > +		 * and/or CPUs are getting offlined for whatever reason. At
-> > +		 * least failing this store will prevent data loss by failing
-> > +		 * zswap_store(), and saving the data in the backing swap
-> device.
-> >  		 */
->=20
-> I believe we can dropped. I don't think we can have any store/load
-> operations on a CPU before it's fully onlined, and we should always have
-> a reference on the pool here, so the resources cannot go away.
->=20
-> So unless I missed something we can drop this completely now and just
-> hold the mutex directly in the load/store paths.
-
-Based on the above explanations, please let me know if it is a good idea
-to keep the __online, or if you think further simplification is possible.
-
-Thanks,
-Kanchana
-
->=20
-> > +		mutex_lock(&acomp_ctx->mutex);
-> > +		if (likely(acomp_ctx->__online))
-> > +			return acomp_ctx;
-> > +
-> >  		mutex_unlock(&acomp_ctx->mutex);
-> >  	}
-> >  }
-> > --
-> > 2.27.0
-> >
+---
 
