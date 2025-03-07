@@ -1,130 +1,216 @@
-Return-Path: <linux-kernel+bounces-551060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED42DA567A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:16:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D55FA567A3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:15:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25D1C1742D5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:16:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A1EB3B5000
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:15:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07C5219319;
-	Fri,  7 Mar 2025 12:15:59 +0000 (UTC)
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08A4218ADC;
+	Fri,  7 Mar 2025 12:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P7rw3hFk"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F93149E0E;
-	Fri,  7 Mar 2025 12:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA95184E
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 12:15:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741349759; cv=none; b=r3jb3AwlYL9tLgjxJpsc4fRCMwDEHmq/FpSFwA6s9Cxuu8BIigsBqSTFX4+xzjcNZXFuAgU5r+6lyrPnVP1qg1j4LaoB9KoFvFMSYod4F8MlSrEoAyCex/Sq/k0QeODBSLEN6cdraTeK0xoVfg5a1CuT9hAYRFyXTFjGtYc4SZI=
+	t=1741349747; cv=none; b=j/6dJAhBd/SzXTX87XCqRjoP92yrZ0pzUE+u484c4aSUgymbfRbo8toTsxqLqWOaqFN1tYtVT2Og+ciajwo/o9cteEYLjgnvKmm+zJe6T2YnbpFaGjeIbRCYmEa3aRzMhfvnnrF70dRpr9p/LSHl8UEw0isn1F0TdCrZEg8DRrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741349759; c=relaxed/simple;
-	bh=Mkxsk+8ZzK8MNLJflwpYr/fZgGBX+yXybH8aRt+IVXI=;
+	s=arc-20240116; t=1741349747; c=relaxed/simple;
+	bh=Uq5EX9UBJZnVWIhuJ2GWRomnXK1KFuooZNZZkTpKySQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cpGUnKwGL4LcDrWNlHi9BSosFOqt07jG8SvhmwjIZmz7GGsgdMsm1emnGR+L0HYvnXLj4BlYfQu5IMM08U/YPH/69uQovwL7hTM+INI1JQWbDdx5UtdMZUl6wOTp9oSpqRKSCW4FmxIIu61nhq4PP9V3nco64rmvz1y3sRmq8As=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=R0sIS/Tk1w2l/VZZCQkkefLLmFtqf9afMFHTKv5O6/3MRpWCfTeMm5DJq12updqNZscgkxT3Nm4sKk8aZFm+fvjbozBfSlVHEtUySGRhMdWMWckDZ6B3A6z3gSxRNoWdw36VWtafEOSI2yUdkX2Blnv2ALyx9OddVQOGB0Q8ZdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P7rw3hFk; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so3617811a12.0;
-        Fri, 07 Mar 2025 04:15:56 -0800 (PST)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30bfca745c7so348361fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 04:15:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741349743; x=1741954543; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uh0WieB7+ME7dypKDGPqNgGpxSoEqDRzIyKGvye1j+Y=;
+        b=P7rw3hFklaMjKMiIwCDVVGP3BvbKV00PehCZSiJCvPKVjWm/KHQ7IIO1eI3D6V0Xox
+         7SaEXZP/XYof2HkOBJzh6L+aI8INPrjRruv+gZ9XX6i8UB7R34Gw/wNX2hUmDwM+td9x
+         1nus37kgCBwdixVFI+xiBmrs00ylNG/0WZisSli60xnTn6EYupcQCToYG97KapOMV361
+         gDyHyjUSAzujBcQD4V6zVNWwmallb3FgelZy+Zuk7ha1jdAe41b5uG1CPNA1JuI1YNdM
+         q+3xUR2+AmlgpAlXmQf5BHu7xa0QRVaOBdJ10aD9bKvfbC6QR2fY1pBXC+L32U/Fw4Vd
+         rGTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741349750; x=1741954550;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K0tTBBkSXXJKUR9oaU2RMjBJaq/Kyp/6BfjUzv+/56o=;
-        b=HMOjN1VGPgjEHXn0WBromolIKA0nN/4/Xpq8/CNd3Q65QAm4AjKIXRlmTADvhd44LY
-         jI4XQk4Ayx3mEsNOAiMvaZKvDalyBf6RHfF+JQ37vmCDL93rtr7l5k5W8T5IgOeGnufu
-         p05RpstbOkEA9nFOg3pC5QES5VxJe76YXXjyJuTlBCXvPh02VxPCmqKlZ/OMAy3mco7U
-         L6dPdpBfFEpuGhMmK0kw1Q1nMl9asZoOX7lIGRrnxqdHzSpw/8M0wDKJXwxLlzeVFMay
-         2atyPylcTH+y4Lq2+2mwdUl3cOht57bcOFTvsnxIjYKOhYjz1Cw68YcbwPeNIPZpSkng
-         sS2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUarB2Cw2JUJIWK6h8b8DkuPARo0C9T3O5r11QI+1zNuxsBlkStxR1z3KmELkB7q26CunbftH5qYNI=@vger.kernel.org, AJvYcCWhvfK6TNX95oXGrA5gaMLQ9Dc+7VaW8D7V985Yjq7gryTlz0DmRveiDcgUzhANUZaksr9D5D70xBIxsDNO@vger.kernel.org, AJvYcCXCVjZjiP6UfTIc2FmLR+l857GK2fEaFsPRyt0UJRBlN7v6/bElO1yKUJkkFndp9vEkQvM5OmDQ+jQ=@vger.kernel.org, AJvYcCXbCc6YQOimKgdoBLQszQQDXrDPwQzynZ+9/IWzMFjRljdksvRGNsDQHLqvhhr3fcgUncAo9wKwj6BE@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUuu+Bi+ZdvdX77sSbbJdqExzR68Q/efSuMLsP4wPZBhcQW34n
-	ov13q9TLfuZJbkWe+ZhmTIVrCMe/FdUTPwIMKtQ8nJy4OBS13KFvN2RIgF/2fI8=
-X-Gm-Gg: ASbGncs+Oaxk5mBLDPO8UyNqd7iTzrvQWAaRJyQ35BqWqSsPTsPTLcLeA0gqkK47N2I
-	epwk6PAne8tOW0HvoJph0TjCf4rEuab18Fkr8l9Nk4pYsUyYbVZEppL4epH+CMW/Ctlzj33aFpe
-	ydkcFR3QaM2eodggy2r/CiQWF9iJiKnJd+4Nm/eKLFp2il6m3efIeNeesmvNbTL6q9meQm2Xwce
-	6+UgznZ7pSRvjQvP98bXF2n54Qj3dkt2CnjFPhjpgNe3Ou3R9hhc+/7TCqmeXDeN+UBvjk+uITD
-	lMT4DBPa4ugXX2t9bg84GlZODhTaWosAnnJEqS49ZwDpVJVhmKWIGABgsfGw5MQleRqxWToJNEY
-	arPUbZ34=
-X-Google-Smtp-Source: AGHT+IGYC2BFtgADX5tcvXREP6IthAkbQKnrNTYLD0waNq1mBm5QpcKespZcrve+ON46/krj/WXp8A==
-X-Received: by 2002:a05:6402:5113:b0:5e4:d27a:d868 with SMTP id 4fb4d7f45d1cf-5e5c1a6463bmr8441040a12.0.1741349750401;
-        Fri, 07 Mar 2025 04:15:50 -0800 (PST)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c768ef30sm2467240a12.69.2025.03.07.04.15.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 04:15:48 -0800 (PST)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ac2400d1c01so282345866b.1;
-        Fri, 07 Mar 2025 04:15:47 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV9ZkFB4WK2Ek8yWWzlyy8ok89VAmx6fy4R99yxJ8nfohq7lBfEtQhG042Nb53bEUMhPLwyblOzFuM=@vger.kernel.org, AJvYcCWVJFhCpoqqjaXPoLpOVK0L8+liLIllL7UrN9rL4yVv2kgR4oK1Nh1iolO70gew73GeECAlWY5K2tby@vger.kernel.org, AJvYcCWw8PRCP7q0xwYspQSWszPJfKVJUpftJg8+qBjiNNesnR3BmuKLg4X4NEdhGQi6XY7pzDMJDs1fkoorrId6@vger.kernel.org, AJvYcCXq8p45vG3YCMJKVyWF3LAcCTr2ePU7TIShbUnwiJ7/JQLbHzvaZyOVP2VGyS1SwR1dSYFkH8LnqfM=@vger.kernel.org
-X-Received: by 2002:a17:906:59a1:b0:abf:555a:899f with SMTP id
- a640c23a62f3a-ac24e8a165dmr392518166b.6.1741349746952; Fri, 07 Mar 2025
- 04:15:46 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741349743; x=1741954543;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uh0WieB7+ME7dypKDGPqNgGpxSoEqDRzIyKGvye1j+Y=;
+        b=isDIp2Mv7RvAlZaoxO+SfHTou3sZQsxDDjd2DagoLykK4OAsEm4w9fWQe/1YVtyojC
+         8HEl+LGF5Mzzdip+H/PPBD0UJDSjl3w62I4wonNVLIcOq5qF4fJzes8cBxnn8AoXoLOB
+         kN8syhaeZ0fxNhMlIhtnLQHxe9C2Tw1e1dILj1/rZliCdIG8KJ7fOFNAo5K0DWgv2hwS
+         EZOeZOqv23YFTAEtnWzAY7sdu1T9swrFaDifwlTL23y9AmfTOLuyaSgloKTbxx5R5uSw
+         4YKyNUBMLCQ8ZHu35/ol27ks7yNL+bJAqaL0T8lfiqH2y2i0byirJiFLCm7/EKs4pohm
+         22ZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHgbSa9EaZxcXOYzva7nte9zfum0U2cX23/ZqZnlh4sRXKzSoOB/uv9l0RdyqQT/oItexkQXB4BlTo3PY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIY0X6j4XJzKB8Lh/gK4rMTDsJHN50WD62MjJt+/wAWckp2pcG
+	KYxSUlG5EC6C5UGjdthBosv/VJ+J8UTFoMj0AiCvKXJPKotuBfvACldL2dQS/7IaANJDsCTGEZ0
+	pj9rmDDkpTEZxM5xdPyXF7Q+2ToQ=
+X-Gm-Gg: ASbGnct28FuvGziRBFVLXQ6LgzMWlgby5nXpx3xkiwnqVBand3+UFB7NS0TYzIn4FnK
+	YosFyA87ZJoKmiNW7fQAFV5QsLok9YIUTMLUvfiyGkvigBYZvp6q3ZNnZtIc5e0eUmuRCtT42q4
+	bacxN2NTxPgrS8iiMnpTL5WIU6Qw==
+X-Google-Smtp-Source: AGHT+IEiPbW0qy5iBnOZSkDkqWWSRUblM32gZfBLaGejIR2C+xJp0wAnKF/dzLqGYZ2c4sb5S+5a2lJmz9qy93fu1bM=
+X-Received: by 2002:a2e:a592:0:b0:30b:d0d5:1fc6 with SMTP id
+ 38308e7fff4ca-30bf460acebmr12063981fa.23.1741349743197; Fri, 07 Mar 2025
+ 04:15:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307-vsprintf-pcn-v1-0-df0b2ccf610f@bootlin.com> <20250307-vsprintf-pcn-v1-2-df0b2ccf610f@bootlin.com>
-In-Reply-To: <20250307-vsprintf-pcn-v1-2-df0b2ccf610f@bootlin.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 7 Mar 2025 13:15:32 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUzZ8GK1mqXw+YgvFZ5xhOy-v_oOeaVrCtFUhk=n+rF8g@mail.gmail.com>
-X-Gm-Features: AQ5f1JpiPD-qF9biv1S8tlEkcmxPY9MCTwa00AZqEgKbE5uM-n1NMvZ7sTZ9fuM
-Message-ID: <CAMuHMdUzZ8GK1mqXw+YgvFZ5xhOy-v_oOeaVrCtFUhk=n+rF8g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] vsprintf: remove redundant and unused %pCn format specifier
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Petr Mladek <pmladek@suse.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Liu Ying <victor.liu@nxp.com>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20250307091022.181136-1-ubizjak@gmail.com> <DC668A65-3173-4A0C-BF78-1CECF60D300B@zytor.com>
+In-Reply-To: <DC668A65-3173-4A0C-BF78-1CECF60D300B@zytor.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Fri, 7 Mar 2025 13:15:42 +0100
+X-Gm-Features: AQ5f1JrhxlrEiJ_cToo0DeNAFPKOUPYFafvHsQo3lPkNPazjdxaWeA5pCotlOb8
+Message-ID: <CAFULd4aMkxYp6L=grE7TrvvfdX7gTGOTAJgojJ=mjHfDLJ=kVQ@mail.gmail.com>
+Subject: Re: [PATCH] x86/boot: Do not test if AC and ID eflags are changeable
+ on x86_64
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Luca,
-
-On Fri, 7 Mar 2025 at 12:19, Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
-> %pC and %pCn print the same string, and commit 900cca294425 ("lib/vsprintf:
-> add %pC{,n,r} format specifiers for clocks") introducing them does not
-> clarify any intended difference. It can be assumed %pC is a default for
-> %pCn as some other specifiers do, but not all are consistent with this
-> policy. Moreover there is now no other suffix other than 'n', which makes a
-> default not really useful.
-
-The original intention was indeed to serve as a default, like some
-other formats also have ("%pa[p]", %pOF[f]").
-
-> All users in the kernel were using %pC except for one which has been
-> converted. So now remove %pCn and all the unnecessary extra code and
-> documentation.
+On Fri, Mar 7, 2025 at 12:58=E2=80=AFPM H. Peter Anvin <hpa@zytor.com> wrot=
+e:
 >
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> On March 7, 2025 1:10:03 AM PST, Uros Bizjak <ubizjak@gmail.com> wrote:
+> >The test for the changeabitily of AC and ID eflags is used to
+> >distinguish between i386 and i486 processors (AC) and to test
+> >for cpuid instruction support (ID).
+> >
+> >Skip these tests on x86_64 processors as they always supports cpuid.
+> >
+> >Also change the return type of has_eflag() to bool.
+> >
+> >Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> >Cc: Thomas Gleixner <tglx@linutronix.de>
+> >Cc: Ingo Molnar <mingo@kernel.org>
+> >Cc: Borislav Petkov <bp@alien8.de>
+> >Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> >Cc: "H. Peter Anvin" <hpa@zytor.com>
+> >---
+> > arch/x86/boot/cpuflags.c | 26 +++++++++-----------------
+> > arch/x86/boot/cpuflags.h |  6 +++++-
+> > 2 files changed, 14 insertions(+), 18 deletions(-)
+> >
+> >diff --git a/arch/x86/boot/cpuflags.c b/arch/x86/boot/cpuflags.c
+> >index d75237ba7ce9..2150a016176f 100644
+> >--- a/arch/x86/boot/cpuflags.c
+> >+++ b/arch/x86/boot/cpuflags.c
+> >@@ -29,40 +29,32 @@ static int has_fpu(void)
+> >       return fsw =3D=3D 0 && (fcw & 0x103f) =3D=3D 0x003f;
+> > }
+> >
+> >+#ifdef CONFIG_X86_32
+> > /*
+> >  * For building the 16-bit code we want to explicitly specify 32-bit
+> >  * push/pop operations, rather than just saying 'pushf' or 'popf' and
+> >- * letting the compiler choose. But this is also included from the
+> >- * compressed/ directory where it may be 64-bit code, and thus needs
+> >- * to be 'pushfq' or 'popfq' in that case.
+> >+ * letting the compiler choose.
+> >  */
+> >-#ifdef __x86_64__
+> >-#define PUSHF "pushfq"
+> >-#define POPF "popfq"
+> >-#else
+> >-#define PUSHF "pushfl"
+> >-#define POPF "popfl"
+> >-#endif
+> >-
+> >-int has_eflag(unsigned long mask)
+> >+bool has_eflag(unsigned long mask)
+> > {
+> >       unsigned long f0, f1;
+> >
+> >-      asm volatile(PUSHF "    \n\t"
+> >-                   PUSHF "    \n\t"
+> >+      asm volatile("pushfl    \n\t"
+> >+                   "pushfl    \n\t"
+> >                    "pop %0    \n\t"
+> >                    "mov %0,%1 \n\t"
+> >                    "xor %2,%1 \n\t"
+> >                    "push %1   \n\t"
+> >-                   POPF "     \n\t"
+> >-                   PUSHF "    \n\t"
+> >+                   "popfl     \n\t"
+> >+                   "pushfl    \n\t"
+> >                    "pop %1    \n\t"
+> >-                   POPF
+> >+                   "popfl"
+> >                    : "=3D&r" (f0), "=3D&r" (f1)
+> >                    : "ri" (mask));
+> >
+> >       return !!((f0^f1) & mask);
+> > }
+> >+#endif
+> >
+> > void cpuid_count(u32 id, u32 count, u32 *a, u32 *b, u32 *c, u32 *d)
+> > {
+> >diff --git a/arch/x86/boot/cpuflags.h b/arch/x86/boot/cpuflags.h
+> >index fdcc2aa4c3c4..a398d9204ad0 100644
+> >--- a/arch/x86/boot/cpuflags.h
+> >+++ b/arch/x86/boot/cpuflags.h
+> >@@ -15,7 +15,11 @@ struct cpu_features {
+> > extern struct cpu_features cpu;
+> > extern u32 cpu_vendor[3];
+> >
+> >-int has_eflag(unsigned long mask);
+> >+#ifdef CONFIG_X86_32
+> >+bool has_eflag(unsigned long mask);
+> >+#else
+> >+static inline bool has_eflag(unsigned long mask) { return true; }
+> >+#endif
+> > void get_cpuflags(void);
+> > void cpuid_count(u32 id, u32 count, u32 *a, u32 *b, u32 *c, u32 *d);
+> > bool has_cpuflag(int flag);
+>
+> PUSF et al =E2=86=92 pushf
+>
+> The -l and -q suffixes have been optional for a long time.
 
-I guess this is a worthwhile cleanup.
+No, not in this case. Please see the comment:
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+/*
+* For building the 16-bit code we want to explicitly specify 32-bit
+* push/pop operations, rather than just saying 'pushf' or 'popf' and
+* letting the compiler choose.
+*/
 
-Gr{oetje,eeting}s,
+We are building 16-bit code here, and we want PUSHFL, the one with
+operand size prefix 0x66.
 
-                        Geert
+Please consider the following code:
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+    .code16
+    pushf
+    pushfl
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+as -o push.o push.s
+
+objdump -dr -Mdata16 push.o
+
+0000000000000000 <.text>:
+  0:   9c                      pushf
+  1:   66 9c                   pushfl
+
+Uros.
 
