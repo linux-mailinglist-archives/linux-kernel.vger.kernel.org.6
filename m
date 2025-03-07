@@ -1,147 +1,153 @@
-Return-Path: <linux-kernel+bounces-550986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04AAAA566B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:27:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C58CA566B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:28:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E6073B487F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:27:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B460B3AAD63
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6D6218592;
-	Fri,  7 Mar 2025 11:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9941221770E;
+	Fri,  7 Mar 2025 11:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZfT9wrkP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SoexAbJm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43862215197;
-	Fri,  7 Mar 2025 11:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BDFF21767B
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 11:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741346779; cv=none; b=HHjWnkRB64hxc1Pm2jjOhi2mTaAizYXENtZvSig5rG65dqQqOikY3qL9RJL7iucJldJbI7LYI7fCKGGm2Qw4ZzA4Df/VyF1/kxK5GKHJELa55QcOoEvenJ0XCmUOsbo8Qm/Kl+SppX9fjocApfFdY6zROptpZFjI19jxV0wb8MY=
+	t=1741346827; cv=none; b=ZK3T2G7MZqbRzWGikLJDZeHjKvhiTCwTUTU316bJfOQUd9izxnwiPkjgjP56SdCGvTEaEa4MOQuSJNkzS+LxK7Kc0D08MJ1tBAfubvqAae8HxS11+LTA+u+r/oFn2gdIWLHHVsT5IiTpaYU4QZ0/Qa0NcYciUU0ahRUTcatZfmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741346779; c=relaxed/simple;
-	bh=IRGd/73/547JbPgxOPTPAv9MDN91O+zWBBkgec1T5PM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RV3jb9j4dq4OEfQ++/gJPOXeB/H119/sps9vo+ZXdgNZpoB/ALF4OzLBov1cpOUYK8LjnG1UAyC9q8pcK/9PYlfPxi7+EXrDmRurgZQ3hs1p48BbKoCKipQV99c0i+nRumSDa+RS4D4i8CfZyjW2B5ewlUAk7x0axFs783eeL9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZfT9wrkP; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741346778; x=1772882778;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=IRGd/73/547JbPgxOPTPAv9MDN91O+zWBBkgec1T5PM=;
-  b=ZfT9wrkP7yX8TH16Ym4ahcJ/BP5iWSetMCIK7Uf3qtoxyXFnZJ+R56g4
-   E93Gide/UGHNTF18fQWov90qYU62Q37FDzEI+cIV0qK8idhini/W5f3uB
-   qoLAAG3iqC6rxkuZnNldPq5h4ZBYwggONqpRnoSaooYt7ol6wD9H9juK4
-   JeNROQDgV6Nk05pfSWwIXuuvv8f2zy0J+XymV3gCVnLBLzEMDtrTa1bkw
-   ugT+WK5UMXiPjNtvgRaYgjwLD8t4exCk/xG/sQlsv/MaKQtlNnzjEIf1C
-   sFBDyJ9nk15KghGhkvm5L6OEttg2JeLhnC+hYUGgFYhXrWpFxaU3SvUf6
-   Q==;
-X-CSE-ConnectionGUID: YobadY4ITa2bLyH1scJmEA==
-X-CSE-MsgGUID: uBF00zRXTk2GoIhuGCt6MA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="52598946"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="52598946"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 03:26:15 -0800
-X-CSE-ConnectionGUID: MhGzflfcR5uwjOmgTHfi1w==
-X-CSE-MsgGUID: RXDB3iloTN6BhM+AbCLNOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="123891784"
-Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.100.177]) ([10.247.100.177])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 03:26:08 -0800
-Message-ID: <152e48f6-e68d-4de4-8170-3f35df1ddd1d@linux.intel.com>
-Date: Fri, 7 Mar 2025 19:26:05 +0800
+	s=arc-20240116; t=1741346827; c=relaxed/simple;
+	bh=sTDwWbGNvYSg3+yFfHFk1I0CTOwe5y52yKszzO7Z5SM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nYLmt7oRq8CotxH/Yk3dcFFhKl/J0v4nlTtNd7Z6s2dy0weRHpoWUjUCWkTdd+pyaJypnjeL0PE8OeosnbScgBe9V+OIcFuDdyrJICNmwkQPwjPgq5gQZcxAh2kSVBnWnlcS8At3f+Eu+TxVDQRbf4Kzzhv4/V75QfCEWApLjWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SoexAbJm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741346823;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9+6uMQgQ57mtgNlyjlDjpNt3H0NEA7p032v4Ic5GZ5A=;
+	b=SoexAbJmP2Gl5vEqwvav0EjZk4IZIxhcDwbw/SwbcW8+4kdsiJn2ryeszSwtHXmp8TISXh
+	jv4H9Eezu83jINw6vLI7MPT1bt0aW9yMjTN6oQ8vr8lifvnWCvcrLYIIkHaymBjxYpyNtr
+	foOT9vR67prPOJI1/6MlUkiMV6tJHsA=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-503-idiLffsVNligza2laa-wzQ-1; Fri,
+ 07 Mar 2025 06:26:57 -0500
+X-MC-Unique: idiLffsVNligza2laa-wzQ-1
+X-Mimecast-MFC-AGG-ID: idiLffsVNligza2laa-wzQ_1741346816
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A1D1D1955BC1;
+	Fri,  7 Mar 2025 11:26:55 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.108])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id E07E418001E9;
+	Fri,  7 Mar 2025 11:26:52 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri,  7 Mar 2025 12:26:24 +0100 (CET)
+Date: Fri, 7 Mar 2025 12:26:20 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250307112619.GA5963@redhat.com>
+References: <20250227211229.GD25639@redhat.com>
+ <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com>
+ <20250228143049.GA17761@redhat.com>
+ <20250228163347.GB17761@redhat.com>
+ <20250304050644.2983-1-hdanton@sina.com>
+ <20250304102934.2999-1-hdanton@sina.com>
+ <20250304233501.3019-1-hdanton@sina.com>
+ <20250305045617.3038-1-hdanton@sina.com>
+ <20250305224648.3058-1-hdanton@sina.com>
+ <20250307060827.3083-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH iwl-next v8 08/11] igc: add support to set
- tx-min-frag-size
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Furong Xu <0x1207@gmail.com>,
- Russell King <rmk+kernel@armlinux.org.uk>,
- Serge Semin <fancer.lancer@gmail.com>,
- Xiaolei Wang <xiaolei.wang@windriver.com>,
- Suraj Jaiswal <quic_jsuraj@quicinc.com>,
- Kory Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>,
- Jesper Nilsson <jesper.nilsson@axis.com>,
- Choong Yong Liang <yong.liang.choong@linux.intel.com>,
- Chwee-Lin Choong <chwee.lin.choong@intel.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
-References: <20250305130026.642219-1-faizal.abdul.rahim@linux.intel.com>
- <20250305130026.642219-1-faizal.abdul.rahim@linux.intel.com>
- <20250305130026.642219-9-faizal.abdul.rahim@linux.intel.com>
- <20250305130026.642219-9-faizal.abdul.rahim@linux.intel.com>
- <20250306004301.evw34gqoyll36mso@skbuf>
-Content-Language: en-US
-From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
-In-Reply-To: <20250306004301.evw34gqoyll36mso@skbuf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307060827.3083-1-hdanton@sina.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
+On 03/07, Hillf Danton wrote:
+>
+> On Thu, 6 Mar 2025 10:30:21 +0100 Oleg Nesterov <oleg@redhat.com>
+> > > >
+> > > > Yes, but in this case pipe_full() == true is correct, this writer can
+> > > > safely sleep.
+> > > >
+> > > No, because no reader is woken up before sleep to make pipe not full.
+> >
+> > Why the reader should be woken before this writer sleeps? Why the reader
+> > should be woken at all in this case (when pipe is full again) ?
+> >
+> "to make pipe not full" failed to prevent you asking questions like this one.
 
+Hmm. I don't understand your "prevent you asking questions" reply.
 
-On 6/3/2025 8:43 am, Vladimir Oltean wrote:
->> diff --git a/net/ethtool/mm.c b/net/ethtool/mm.c
->> index ad9b40034003..4c395cd949ab 100644
->> --- a/net/ethtool/mm.c
->> +++ b/net/ethtool/mm.c
->> @@ -153,7 +153,7 @@ const struct nla_policy ethnl_mm_set_policy[ETHTOOL_A_MM_MAX + 1] = {
->>   	[ETHTOOL_A_MM_VERIFY_TIME]	= NLA_POLICY_RANGE(NLA_U32, 1, 128),
->>   	[ETHTOOL_A_MM_TX_ENABLED]	= NLA_POLICY_MAX(NLA_U8, 1),
->>   	[ETHTOOL_A_MM_PMAC_ENABLED]	= NLA_POLICY_MAX(NLA_U8, 1),
->> -	[ETHTOOL_A_MM_TX_MIN_FRAG_SIZE]	= NLA_POLICY_RANGE(NLA_U32, 60, 252),
->> +	[ETHTOOL_A_MM_TX_MIN_FRAG_SIZE]	= NLA_POLICY_RANGE(NLA_U32, 60, 256),
-> 
-> Please make this a separate patch with a reasonably convincing
-> justification for any reader, and also state why it is a change that
-> will not introduce regressions to the other drivers. It shows that
-> you've done the due dilligence of checking that they all use
-> ethtool_mm_frag_size_min_to_add(), which errors out on non-standard
-> values.
-> 
-> To be clear, extending the policy from 252 to 256 is just to suppress
-> the netlink warning which states that the driver rounds up the minimum
-> fragment size, correct? Because even if you pass 252 (the current
-> netlink maximum), the driver will still use 256.
-> 
-I originally changed 252 to 256 because our internal validation failed when 
-setting 256 via ethtool. The test case was based on our old kernel OOT 
-patches code, but this run was done on the upstreamed FPE framework plus 
-this series. After thinking about it, it doesn’t seem right to change this 
-just to accommodate the i226 quirk in a common layer when the IEEE standard 
-and other devices use 252.
+If the pipe was full we do not need to wake the reader(s), the reader
+can only sleep if pipe_empty() == true.
 
-So, we’ll update our validation to use 252 instead. The driver already 
-rounds up to 256 anyway. I’ll drop this change in the next revision.
+> > We certainly can't understand each other.
 
-Also, noted your point about being cautious with changes that impact other 
-drivers.
+Yes.
 
-Thanks.
+> step-00
+> 	pipe->head = 36
+> 	pipe->tail = 36
+> 	after 3d252160b818
+>
+> step-01
+> 	task-118762 writer
+> 	pipe->head++;
+> 	wakes up task-118740 and task-118768
+>
+> step-02
+> 	task-118768 writer
+> 	makes pipe full;
+> 	sleeps without waking up any reader as
+> 	pipe was not empty after step-01
+>
+> step-03
+> 	task-118766 new reader
+> 	makes pipe empty
+> 	sleeps
+
+but since the pipe was full, this reader should wake up the
+writer task-118768 once it updates the tail the 1st time during
+the read.
+
+> step-04
+> 	task-118740 reader
+> 	sleeps as pipe is empty
+
+this is fine.
+
+> [ Tasks 118740 and 118768 can then indefinitely wait on each other. ]
+
+118768 should be woken at step 3 ?
+
+Oleg.
+
 
