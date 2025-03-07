@@ -1,392 +1,228 @@
-Return-Path: <linux-kernel+bounces-551130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7E4A5688A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:11:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A8BBA5688B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:12:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 117D11898E8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:11:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 455021898F63
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D30219A79;
-	Fri,  7 Mar 2025 13:11:44 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B469A219A97;
+	Fri,  7 Mar 2025 13:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="VwHwIzyu"
+Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B1428E8;
-	Fri,  7 Mar 2025 13:11:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA570219A91;
+	Fri,  7 Mar 2025 13:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741353104; cv=none; b=HBqwehylyR6p8+NL1fETpqElLLz7oesknjy/pIKkS+LupUPuA6DEofsD4rZCFOyMaVB9eZ94oLVPksRLaMn7BDTM4bsow9HQbxTt2yFpPzxHAJYI0OT15TZ31BVFjYHAVvCSAQPHd/8KEafFXpG+GrZCAiyjwu8ZoAJaVfJO2i8=
+	t=1741353132; cv=none; b=mTjDOIewPL8rVQQxpXZz5/EigOqahmTDNAtrba7UICM3thqyiLeQ3c0vvUd0xKCWZnVNEw9KNsdTuPxCZ4Va+nuxGea0neOjZDri+TR8F74mYBugO2HoVvJi1qsyobQDq6slTv8o06m4HPDtkgikA8jvOM1L+qzMrvdxXDzc5S0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741353104; c=relaxed/simple;
-	bh=vLarW/hqVjAeNuKZBz6uzVLSQerh+6Ir2dlsZtA/83M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mMlvx5FlY2n2dAIj6iP4PBCYW7GkQD68WxJTNQ1eZx4HoNax18hqjZ+iadeKSSnynxdakWMQZtZTTdeTVseDbFZgFFviuf27OgBfCOznMReTrt2wU1WqFWT3lbXU6PDXKPih3i/PFmqnOr1ukgzfJyV2UtJHaBK1yETUyh78tKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ABD2C4CED1;
-	Fri,  7 Mar 2025 13:11:41 +0000 (UTC)
-Message-ID: <9d0cb8b0-95a5-4766-88bd-45a0c5b54a1b@xs4all.nl>
-Date: Fri, 7 Mar 2025 14:11:40 +0100
+	s=arc-20240116; t=1741353132; c=relaxed/simple;
+	bh=JU8htKFP4OTNtmFYmIpr/tleZo1HgElVetqRW0R1f68=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o3/X+mt/Ayrspz6tWRSngJuKqfzjTWcqGZYH5Jx5NqsILKHtFFKs2Sou2lQOPrguRFAT8RCGm66Nw1acurLymFGL+iz/YqtIFY9hhKKVFYZMjJb/y1bSuq2pwD73IAsVSVgP86HDPUj3Y4wJiIdDLNYMZvTUPVenYMlqkBIkqqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=VwHwIzyu; arc=none smtp.client-ip=79.135.106.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=d6eet5shpfgetkni5iz6gdgrwy.protonmail; t=1741353125; x=1741612325;
+	bh=/+q9lE6UJf74WcjYXHOyPYDemOtS/IPH0c3XT1oZCQc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=VwHwIzyukVPXTfYdBb5XH8uGqo4jJAsxi78WWBsZlcmgEFXiy0LN8TCMqCXqTmZs8
+	 1E7Vdbu+tm6Ld8qj0lvZmt0zBkuA2W1/wo+en3R2BFZ4CbxNr+STmQFTZuYByEP82F
+	 gJiwMs7zMnJGorWBbcn8ufNTNrc6h6n+TsB2SqI+LQGriNSM9tjHrh4o7F08gaQGUX
+	 czKIIBtt9atkdr/OIDR97CV5Tl4E5q5R+t7jg9/jBFgA+hYiAdPX3yJUQ03BAhUEKr
+	 hlNN7cP0FNjseeLTLzSMWBzV78iGblrqFHeia/uKEKFl/AFO/PCMpXz6vMQcB6rezI
+	 OiLBK7i9m6ECg==
+Date: Fri, 07 Mar 2025 13:12:01 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 07/13] rust: hrtimer: implement `UnsafeHrTimerPointer` for `Pin<&T>`
+Message-ID: <D8A25UNDIJHK.216EX6YG4EJ6E@proton.me>
+In-Reply-To: <20250307-hrtimer-v3-v6-12-rc2-v10-7-0cf7e9491da4@kernel.org>
+References: <20250307-hrtimer-v3-v6-12-rc2-v10-0-0cf7e9491da4@kernel.org> <20250307-hrtimer-v3-v6-12-rc2-v10-7-0cf7e9491da4@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: f68f5ec89961c2cc36164558a8db5bdee9fb5b01
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] drm/display: hdmi: Mention Infoframes testing with
- edid-decode
-To: Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, Jonathan Corbet <corbet@lwn.net>
-Cc: dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250306-drm-hdmi-state-docs-v1-0-56a19d3805a1@kernel.org>
- <20250306-drm-hdmi-state-docs-v1-2-56a19d3805a1@kernel.org>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <20250306-drm-hdmi-state-docs-v1-2-56a19d3805a1@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Maxime,
-
-On 06/03/2025 18:17, Maxime Ripard wrote:
-> edid-decode gained recently support to check that infoframes are
-> compliant and match the EDID the monitor exposes.
-> 
-> Since the HDMI helpers provide those infoframes in debugfs, it makes it
-> easy to check from userspace that the drivers (and helpers) behave
-> properly.
-> 
-> Let's document it.
-> 
-> Cc: Hans Verkuil <hverkuil@xs4all.nl>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+On Fri Mar 7, 2025 at 11:11 AM CET, Andreas Hindborg wrote:
+> Allow pinned references to structs that contain a `HrTimer` node to be
+> scheduled with the `hrtimer` subsystem.
+>
+> Acked-by: Frederic Weisbecker <frederic@kernel.org>
+> Reviewed-by: Lyude Paul <lyude@redhat.com>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 > ---
->  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 240 ++++++++++++++++++++++++
->  1 file changed, 240 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> index 24bfc82bf9b02bf3201d97432e3c239ccc8714b4..86f812b89f0e51abc24910898c114d6b08a78edf 100644
-> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
-> @@ -16,10 +16,250 @@
->   * in the form of KMS helpers.
->   *
->   * It contains TMDS character rate computation, automatic selection of
->   * output formats, infoframes generation, etc.
->   *
-> + * Infoframes Compliance
-> + * ~~~~~~~~~~~~~~~~~~~~~
-> + *
-> + * Drivers using the helpers will expose the various infoframes
-> + * generated according to the HDMI specification in debugfs.
-> + *
-> + * Compliance can then be tested using a recent-enough ``edid-decode``
-> + * version (released after summer 2024). A sample run would look like:
-> + *
-> + * .. code-block:: bash
-> + *
-> + *	# edid-decode \
-> + *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/audio \
-> + *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/avi \
-> + *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/hdmi \
-> + *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/hdr_drm \
-> + *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/spd \
-> + *		/sys/class/drm/card1-HDMI-A-1/edid \
-> + *		-c
-> + *
-> + *	edid-decode (hex):
-> + *
-> + *	00 ff ff ff ff ff ff 00 1e 6d f4 5b 1e ef 06 00
-> + *	07 20 01 03 80 2f 1a 78 ea 24 05 af 4f 42 ab 25
-> + *	0f 50 54 21 08 00 d1 c0 61 40 01 01 01 01 01 01
-> + *	01 01 01 01 01 01 56 5e 00 a0 a0 a0 29 50 30 20
-> + *	35 00 d1 06 11 00 00 1a 00 00 00 fd 00 3b 3d 1e
-> + *	70 1e 00 0a 20 20 20 20 20 20 00 00 00 fc 00 4c
-> + *	47 20 53 44 51 48 44 0a 20 20 20 20 00 00 00 ff
-> + *	00 32 30 37 4e 54 52 4c 44 43 34 33 30 0a 01 43
-> + *
-> + *	02 03 29 71 23 09 07 07 4b 01 03 04 90 12 13 1f
-> + *	22 5d 5e 5f 83 01 00 00 6d 03 0c 00 10 00 b8 3c
-> + *	20 00 60 01 02 03 e2 00 6a 00 00 00 00 00 00 00
-> + *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> + *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> + *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> + *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> + *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ee
-> + *
-> + *	----------------
-> + *
-> + *	Block 0, Base EDID:
-> + *	  EDID Structure Version & Revision: 1.3
-> + *	 Vendor & Product Identification:
+>  rust/kernel/time/hrtimer.rs     |  2 +
+>  rust/kernel/time/hrtimer/pin.rs | 99 +++++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 101 insertions(+)
+>
+> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+> index d90a25785f87..2ca56397eade 100644
+> --- a/rust/kernel/time/hrtimer.rs
+> +++ b/rust/kernel/time/hrtimer.rs
+> @@ -439,3 +439,5 @@ unsafe fn timer_container_of(ptr: *mut $crate::time::=
+hrtimer::HrTimer<$timer_typ
+>
+>  mod arc;
+>  pub use arc::ArcHrTimerHandle;
+> +mod pin;
+> +pub use pin::PinHrTimerHandle;
+> diff --git a/rust/kernel/time/hrtimer/pin.rs b/rust/kernel/time/hrtimer/p=
+in.rs
+> new file mode 100644
+> index 000000000000..6c9f2190f8e1
+> --- /dev/null
+> +++ b/rust/kernel/time/hrtimer/pin.rs
+> @@ -0,0 +1,99 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +use super::HasHrTimer;
+> +use super::HrTimer;
+> +use super::HrTimerCallback;
+> +use super::HrTimerHandle;
+> +use super::RawHrTimerCallback;
+> +use super::UnsafeHrTimerPointer;
+> +use crate::time::Ktime;
+> +use core::pin::Pin;
+> +
+> +/// A handle for a `Pin<&HasHrTimer>`. When the handle exists, the timer=
+ might be
+> +/// running.
+> +pub struct PinHrTimerHandle<'a, T>
+> +where
+> +    T: HasHrTimer<T>,
+> +{
+> +    pub(crate) inner: Pin<&'a T>,
+> +}
+> +
+> +// SAFETY: We cancel the timer when the handle is dropped. The implement=
+ation of
+> +// the `cancel` method will block if the timer handler is running.
+> +unsafe impl<'a, T> HrTimerHandle for PinHrTimerHandle<'a, T>
+> +where
+> +    T: HasHrTimer<T>,
+> +{
+> +    fn cancel(&mut self) -> bool {
+> +        let self_ptr: *const T =3D self.inner.get_ref();
+> +
+> +        // SAFETY: As we got `self_ptr` from a reference above, it must =
+point to
+> +        // a valid `T`.
+> +        let timer_ptr =3D unsafe { <T as HasHrTimer<T>>::raw_get_timer(s=
+elf_ptr) };
+> +
+> +        // SAFETY: As `timer_ptr` is derived from a reference, it must p=
+oint to
+> +        // a valid and initialized `HrTimer`.
+> +        unsafe { HrTimer::<T>::raw_cancel(timer_ptr) }
+> +    }
+> +}
+> +
+> +impl<'a, T> Drop for PinHrTimerHandle<'a, T>
+> +where
+> +    T: HasHrTimer<T>,
+> +{
+> +    fn drop(&mut self) {
+> +        self.cancel();
+> +    }
+> +}
+> +
+> +// SAFETY: We capture the lifetime of `Self` when we create a `PinHrTime=
+rHandle`,
+> +// so `Self` will outlive the handle.
+> +unsafe impl<'a, T> UnsafeHrTimerPointer for Pin<&'a T>
+> +where
+> +    T: Send + Sync,
+> +    T: HasHrTimer<T>,
+> +    T: HrTimerCallback<Pointer<'a> =3D Self>,
+> +    Pin<&'a T>: RawHrTimerCallback<CallbackTarget<'a> =3D Self>,
+> +{
+> +    type TimerHandle =3D PinHrTimerHandle<'a, T>;
+> +
+> +    unsafe fn start(self, expires: Ktime) -> Self::TimerHandle {
+> +        // Cast to pointer
+> +        let self_ptr: *const T =3D <Self as core::ops::Deref>::deref(&se=
+lf);
 
-This looks odd: the two lines above should be aligned, but they are not.
+Why use deref? `get_ref` seems much cleaner.
 
-Some copy-and-paste issue perhaps?
+> +
+> +        // SAFETY:
+> +        //  - As we derive `self_ptr` from a reference above, it must po=
+int to a
+> +        //    valid `T`.
+> +        //  - We keep `self` alive by wrapping it in a handle below.
+> +        unsafe { T::start(self_ptr, expires) };
+> +
+> +        PinHrTimerHandle { inner: self }
+> +    }
+> +}
+> +
+> +impl<'a, T> RawHrTimerCallback for Pin<&'a T>
+> +where
+> +    T: HasHrTimer<T>,
+> +    T: HrTimerCallback<Pointer<'a> =3D Self>,
+> +{
+> +    type CallbackTarget<'b> =3D Self;
+> +
+> +    unsafe extern "C" fn run(ptr: *mut bindings::hrtimer) -> bindings::h=
+rtimer_restart {
+> +        // `HrTimer` is `repr(C)`
+> +        let timer_ptr =3D ptr as *mut HrTimer<T>;
+> +
+> +        // SAFETY: By the safety requirement of this function, `timer_pt=
+r`
+> +        // points to a `HrTimer<T>` contained in an `T`.
+> +        let receiver_ptr =3D unsafe { T::timer_container_of(timer_ptr) }=
+;
+> +
+> +        // SAFETY: By the safety requirement of this function, `timer_pt=
+r`
+> +        // points to a `HrTimer<T>` contained in an `T`.
 
-> + *	    Manufacturer: GSM
-> + *	    Model: 23540
-> + *	    Serial Number: 454430 (0x0006ef1e)
-> + *	    Made in: week 7 of 2022
-> + *	  Basic Display Parameters & Features:
-> + *	    Digital display
-> + *	    Maximum image size: 47 cm x 26 cm
-> + *	    Gamma: 2.20
-> + *	    DPMS levels: Standby Suspend Off
-> + *	    RGB color display
-> + *	    First detailed timing is the preferred timing
-> + *	  Color Characteristics:
-> + *	    Red  : 0.6835, 0.3105
-> + *	    Green: 0.2587, 0.6679
-> + *	    Blue : 0.1445, 0.0585
-> + *	    White: 0.3134, 0.3291
-> + *	  Established Timings I & II:
-> + *	    DMT 0x04:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
-> + *	    DMT 0x09:   800x600    60.316541 Hz   4:3     37.879 kHz     40.000000 MHz
-> + *	    DMT 0x10:  1024x768    60.003840 Hz   4:3     48.363 kHz     65.000000 MHz
-> + *	  Standard Timings:
-> + *	    DMT 0x52:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz
-> + *	    DMT 0x10:  1024x768    60.003840 Hz   4:3     48.363 kHz     65.000000 MHz
-> + *	  Detailed Timing Descriptors:
-> + *	    DTD 1:  2560x1440   59.950550 Hz  16:9     88.787 kHz    241.500000 MHz (465 mm x 262 mm)
-> + *	                 Hfront   48 Hsync  32 Hback   80 Hpol P
-> + *	                 Vfront    3 Vsync   5 Vback   33 Vpol N
-> + *	    Display Range Limits:
-> + *	      Monitor ranges (GTF): 59-61 Hz V, 30-112 kHz H, max dotclock 300 MHz
-> + *	    Display Product Name: 'LG SDQHD'
-> + *	    Display Product Serial Number: '207NTRLDC430'
-> + *	  Extension blocks: 1
-> + *	Checksum: 0x43
-> + *
-> + *	----------------
-> + *
-> + *	Block 1, CTA-861 Extension Block:
-> + *	  Revision: 3
-> + *	  Basic audio support
-> + *	  Supports YCbCr 4:4:4
-> + *	  Supports YCbCr 4:2:2
-> + *	  Native detailed modes: 1
-> + *	  Audio Data Block:
-> + *	    Linear PCM:
-> + *	      Max channels: 2
-> + *	      Supported sample rates (kHz): 48 44.1 32
-> + *	      Supported sample sizes (bits): 24 20 16
-> + *	  Video Data Block:
-> + *	    VIC   1:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
-> + *	    VIC   3:   720x480    59.940060 Hz  16:9     31.469 kHz     27.000000 MHz
-> + *	    VIC   4:  1280x720    60.000000 Hz  16:9     45.000 kHz     74.250000 MHz
-> + *	    VIC  16:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz (native)
-> + *	    VIC  18:   720x576    50.000000 Hz  16:9     31.250 kHz     27.000000 MHz
-> + *	    VIC  19:  1280x720    50.000000 Hz  16:9     37.500 kHz     74.250000 MHz
-> + *	    VIC  31:  1920x1080   50.000000 Hz  16:9     56.250 kHz    148.500000 MHz
-> + *	    VIC  34:  1920x1080   30.000000 Hz  16:9     33.750 kHz     74.250000 MHz
-> + *	    VIC  93:  3840x2160   24.000000 Hz  16:9     54.000 kHz    297.000000 MHz
-> + *	    VIC  94:  3840x2160   25.000000 Hz  16:9     56.250 kHz    297.000000 MHz
-> + *	    VIC  95:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
-> + *	  Speaker Allocation Data Block:
-> + *	    FL/FR - Front Left/Right
-> + *	  Vendor-Specific Data Block (HDMI), OUI 00-0C-03:
-> + *	    Source physical address: 1.0.0.0
-> + *	    Supports_AI
-> + *	    DC_36bit
-> + *	    DC_30bit
-> + *	    DC_Y444
-> + *	    Maximum TMDS clock: 300 MHz
-> + *	    Extended HDMI video details:
-> + *	      HDMI VICs:
-> + *	        HDMI VIC 1:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
-> + *	        HDMI VIC 2:  3840x2160   25.000000 Hz  16:9     56.250 kHz    297.000000 MHz
-> + *	        HDMI VIC 3:  3840x2160   24.000000 Hz  16:9     54.000 kHz    297.000000 MHz
-> + *	  Video Capability Data Block:
-> + *	    YCbCr quantization: No Data
-> + *	    RGB quantization: Selectable (via AVI Q)
-> + *	    PT scan behavior: Always Underscanned
-> + *	    IT scan behavior: Always Underscanned
-> + *	    CE scan behavior: Always Underscanned
-> + *	Checksum: 0xee  Unused space in Extension Block: 86 bytes
-> + *
-> + *	----------------
-> + *
-> + *	edid-decode SHA: 5332a3b76080 2024-11-19 07:53:00
+This justification seems wrong it talks about `HrTimer<T>`, but here we
+have a `*const T`... Also see [1] (I am mainly interested in your
+justification for the lifetime).
 
-I recommend that you get the latest edid-decode version from https://git.linuxtv.org/v4l-utils.git/
-so that the documentation is at least corresponding to the most recent version.
+[1]: https://doc.rust-lang.org/std/ptr/index.html#pointer-to-reference-conv=
+ersion
 
-Should there be a link to the official git repo as well?
+---
+Cheers,
+Benno
 
-> + *
-> + *	Warnings:
-> + *
-> + *	Block 1, CTA-861 Extension Block:
-> + *	  IT Video Formats are overscanned by default, but normally this should be underscanned.
-> + *	  Video Data Block: VIC 1 and the first DTD are not identical. Is this intended?
-> + *	  Video Data Block: All VICs are in ascending order, and the first (preferred) VIC <= 4, is that intended?
-> + *	  Video Capability Data Block: Set Selectable YCbCr Quantization to avoid interop issues.
-> + *	  Video Capability Data Block: S_PT is equal to S_IT and S_CE, so should be set to 0 instead.
-> + *	  Display Product Serial Number is set, so the Serial Number in the Base EDID should be 0.
-> + *	  Add a Colorimetry Data Block with the sRGB colorimetry bit set to avoid interop issues.
-> + *	EDID:
-> + *	  Base EDID: Some timings are out of range of the Monitor Ranges:
-> + *	    Vertical Freq: 24.000 - 60.317 Hz (Monitor: 59.000 - 61.000 Hz)
-> + *
-> + *	Failures:
-> + *
-> + *	Block 1, CTA-861 Extension Block:
-> + *	  Video Capability Data Block: IT video formats are always underscanned, but bit 7 of Byte 3 of the CTA-861 Extension header is set to overscanned.
-> + *	EDID:
-> + *	  CTA-861: Native progressive timings are a mix of several resolutions.
-> + *
-> + *	EDID conformity: FAIL
-> + *
-> + *	================
-> + *
-> + *	InfoFrame of '/sys/kernel/debug/dri/1/HDMI-A-1/infoframes/audio' was empty.
-> + *
-> + *	================
-> + *
-> + *	edid-decode InfoFrame (hex):
-> + *
-> + *	82 02 0d 31 12 28 04 00 00 00 00 00 00 00 00 00
-> + *	00
-> + *
-> + *	----------------
-> + *
-> + *	HDMI InfoFrame Checksum: 0x31
-> + *
-> + *	AVI InfoFrame
-> + *	  Version: 2
-> + *	  Length: 13
-> + *	  Y: Color Component Sample Format: RGB
-> + *	  A: Active Format Information Present: Yes
-> + *	  B: Bar Data Present: Bar Data not present
-> + *	  S: Scan Information: Composed for an underscanned display
-> + *	  C: Colorimetry: No Data
-> + *	  M: Picture Aspect Ratio: 16:9
-> + *	  R: Active Portion Aspect Ratio: 8
-> + *	  ITC: IT Content: No Data
-> + *	  EC: Extended Colorimetry: xvYCC601
-> + *	  Q: RGB Quantization Range: Limited Range
-> + *	  SC: Non-Uniform Picture Scaling: No Known non-uniform scaling
-> + *	  YQ: YCC Quantization Range: Limited Range
-> + *	  CN: IT Content Type: Graphics
-> + *	  PR: Pixel Data Repetition Count: 0
-> + *	  Line Number of End of Top Bar: 0
-> + *	  Line Number of Start of Bottom Bar: 0
-> + *	  Pixel Number of End of Left Bar: 0
-> + *	  Pixel Number of Start of Right Bar: 0
-> + *
-> + *	----------------
-> + *
-> + *	AVI InfoFrame conformity: PASS
-> + *
-> + *	================
-> + *
-> + *	edid-decode InfoFrame (hex):
-> + *
-> + *	81 01 05 49 03 0c 00 20 01
-> + *
-> + *	----------------
-> + *
-> + *	HDMI InfoFrame Checksum: 0x49
-> + *
-> + *	Vendor-Specific InfoFrame (HDMI), OUI 00-0C-03
-> + *	  Version: 1
-> + *	  Length: 5
-> + *	  HDMI Video Format: HDMI_VIC is present
-> + *	  HDMI VIC 1:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
-> + *
-> + *	----------------
-> + *
-> + *	Vendor-Specific InfoFrame (HDMI), OUI 00-0C-03 conformity: PASS
-> + *
-> + *	================
-> + *
-> + *	InfoFrame of '/sys/kernel/debug/dri/1/HDMI-A-1/infoframes/hdr_drm' was empty.
-> + *
-> + *	================
-> + *
-> + *	edid-decode InfoFrame (hex):
-> + *
-> + *	83 01 19 93 42 72 6f 61 64 63 6f 6d 56 69 64 65
-> + *	6f 63 6f 72 65 00 00 00 00 00 00 00 09
-> + *
-> + *	----------------
-> + *
-> + *	HDMI InfoFrame Checksum: 0x93
-> + *
-> + *	Source Product Description InfoFrame
-> + *	  Version: 1
-> + *	  Length: 25
-> + *	  Vendor Name: 'Broadcom'
-> + *	  Product Description: 'Videocore'
-> + *	  Source Information: PC general
-> + *
-> + *	----------------
-> + *
-> + *	Source Product Description InfoFrame conformity: PASS
-> + *
->   * Testing
->   * ~~~~~~~
->   *
->   * The helpers have unit testing and can be tested using kunit with:
->   *
-> 
+> +        let receiver_ref =3D unsafe { &*receiver_ptr };
+> +
+> +        // SAFETY: `receiver_ref` only exists as pinned, so it is safe t=
+o pin it
+> +        // here.
+> +        let receiver_pin =3D unsafe { Pin::new_unchecked(receiver_ref) }=
+;
+> +
+> +        T::run(receiver_pin).into_c()
+> +    }
+> +}
+>
+> --
+> 2.47.0
 
-Note that the InfoFrame checks are still rudimentary for the AVI and HDMI InfoFrames.
 
-It's on my TODO list to improve this further, but -ENOTIME :-(
-
-Regards,
-
-	Hans
 
