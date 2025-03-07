@@ -1,107 +1,111 @@
-Return-Path: <linux-kernel+bounces-551200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E95CA56959
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:48:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B241EA56961
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:51:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 338CE1783D4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:48:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2207F18996D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FB621ADCC;
-	Fri,  7 Mar 2025 13:48:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F7FA21ADC3;
+	Fri,  7 Mar 2025 13:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="z0++ta11";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="tc1LYX4G"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="asCGPA5Y"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D21F21ABD7
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 13:48:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176CB21CA1A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 13:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741355289; cv=none; b=O6oxHb/uf5lsBuzP3rrky8Myd53Yb/9ERq0DxKnvIbK8rD1t+cixkanZbmbV/OHvvCJapofyThnQffgGRKrB0KM6q+zq8yk6ddcyPrE4vlqY0A/KKmBsrIzZ19vjqhuGE7S3qnv6Q3xSeyyizVfimxnGkKyDGnXfJiMVF+33ncE=
+	t=1741355393; cv=none; b=pG+S0H1t214RICi+R8ckB0yWBYaTI6ez+cH3FVchbCEJQq5lRSoSdJUfLNyCZMDsXZj96TMTBwqp+immYeP33Q2Eu4X+vI/M3k1RAoQ3VONDQ4aISrhPu+3FXY+RyatNkeOHEEMDMhOsjUjXPgvySRQG0uu1xOPkpRF8/NVWbs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741355289; c=relaxed/simple;
-	bh=XcqIEEJGSi8aUmJHCEIcXsVJ/HfjYYX9FY26+bSCQMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iQeAjgp/tgaFhmI5y/ioTvFUB9qxTVRUo/bPLau3nUFoPCFdAKEwB5Rl+DMvEAbN1y4TIJTNfLCQqboWyJ3bT4aZnifReyfpaalUaMOC97KPUR3C9U++3K3ib5Lo0V4uHix9y+S1/K7IGMXmwtADZhZFmI4t8OySaC+vtsmOx/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=z0++ta11; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=tc1LYX4G; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 7 Mar 2025 14:48:03 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741355285;
+	s=arc-20240116; t=1741355393; c=relaxed/simple;
+	bh=JjXVgfl4z2OzE6D7Il8Bs32DEv8QhkgN5BubGGf159s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LxLajQa3qltcQB4PQPm2qTa7FxBz/+N0JpPHU4gxG0tMWy863KXGldtdoP0tuaF+/+c61XFhILSQLtfp+RZiTrQcd3ldEx6chOG/C4UP/fXjer37x+F/rx41Zvrr5AmTcHcj9UUrwbRFqgmF9KWomoIuA7f5Fbgf1MS43ze3vZg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=asCGPA5Y; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741355380;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C+ps/GbNo7Lb+DsAaK0x7WRuor9Nl46Th5feabU2ueI=;
-	b=z0++ta114LNxIj8y+Nr0co7/X/d1U5JZ07d0TIMKvta4eGiHPtDrN9T7hpt5kVLvpaQce2
-	hyErXMBmIuP+ucOpDBir+uxTsgYur79sanDS/a25ldd8/d/ssHc6O1cW3WS+qixg821HbS
-	NDg0efLA/Qd5g7CUZTPq4bYsToNWwcayGX+gfsulB3b1qMFj3Lp4dDuQWG9J1IqAjIbWhe
-	8Bm83qYUmg5ZitI6fw6Bo0jdh8qQ4llRZmdTCCFvGJZwMtGaau5GeLLuyyKDiGLZET5T16
-	HtLzfgvEFwBDnUc99dsFvTCN+/iLQtoziSrQUe+OA6lgQEQj9RD0yCsNiuHjcQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741355285;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C+ps/GbNo7Lb+DsAaK0x7WRuor9Nl46Th5feabU2ueI=;
-	b=tc1LYX4GDRhM58yU73WCurUCAWkIaIA7iQw1OjgiGXpuxk6DQPUveLUstXak3ytrbdfPNh
-	Lkl8GwbUp1Cg4pAg==
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-	John Ogness <john.ogness@linutronix.de>, x86-cpuid@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 07/12] tools/x86/kcpuid: Add rudimentary CPU vendor
- detection
-Message-ID: <Z8r5E3wfFyv-n8XK@lx-t490>
-References: <20250306205000.227399-1-darwi@linutronix.de>
- <20250306205000.227399-8-darwi@linutronix.de>
- <0ada12f8-4fdb-4dad-90f7-b044993e829c@intel.com>
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=3ji2IkkcmXjR0mZGki7gGaLPjSa8LMyofwipW+tIfP8=;
+	b=asCGPA5YCSan70df+CMuf6QOaR+mHcaZgP82o6SYIC8ZqVorlv0/rmRtT/kG08es9ZQZHP
+	/GK5+SCmE3LTBImWp5yolUJt7I00lxg0+cadZ1d3nsUvx7ML5ibiLe9xuBq9c1cw2u3HW8
+	TMVbPL5iPnZV1IRqwsYVovk+ni6whZ0=
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Kent Overstreet <kent.overstreet@linux.dev>
+Subject: [PATCH 0/7] blk_holder_ops, freeze/thaw
+Date: Fri,  7 Mar 2025 08:49:24 -0500
+Message-ID: <20250307134933.1033872-1-kent.overstreet@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0ada12f8-4fdb-4dad-90f7-b044993e829c@intel.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 06 Mar 2025, Dave Hansen wrote:
->
-> So, this is cute and all. But isn't it a _wee_ bit too clever for its
-> own good?
->
+Until now, it turns out bcachefs has been lacking freeze/thaw support,
+which is important for hibernate.
 
-That was funny, thanks for the laugh :)
+We thought we had freeze/thaw support, but it turns out that when
+.freeze_fs and .unfreeze_fs were implemented in super_operations, they
+were never being called - those functions are only called from the
+blk_holder callbacks, and the engineer implementing them never thought
+to check that.
 
-> Why not just have a dumb array:
->
-> 	{ INTEL, "GenuineIntel" },
-> 	{ AMD,   "AuthenticAMD" ],
-> 	...
->
-> Are we really looking to save a few dozen CPU cycles in this thing? It
-> took me at least a minute or two of staring at this thing to figure out
-> what the heck it was doing.
->
+So - there's a lesson here, and this is why I keep harping on testing.
+It's not enough to just fire off the automated test suite and call it a
+day, you do have to put actual thought into checking that your code is
+behaving as expected :)
 
-Indeed.
+It turns out the method we were originally talking about for freeze/thaw
+of just using our existing read-only/read-write paths doesn't work, for
+reasons that I neglected to remember when hooking up blk_holder_ops
+(locking and conflicting state management, I assume), so we need to
+block IOs at a lower level - which conveniently we can do with our
+existing per-device IO references.
 
-For some reason I forgot that this is all little-endian and a simple
-strcmp() like what the kernel does at get_cpu_vendor() would suffice.
+This patchset also implements the other blk holder ops - the big one
+being mark_dead, which now offlines a single device from the filesystem
+if possible (leaving the filesystem read-write), or if not possible to
+run in degraded mode, sets the entire filesystem read only.
 
-I'll fix it in v2.
+Kent Overstreet (7):
+  fs: export invalidate_inodes()
+  bcachefs: Stash a pointer to the filesystem for blk_holder_ops
+  bcachefs: Make sure c->vfs_sb is set before starting fs
+  bcachefs: Implement blk_holder_ops
+  bcachefs: Fix btree_node_scan io_ref handling
+  bcachefs: bch2_dev_get_ioref() may now sleep
+  bcachefs: Implement freeze/thaw
 
-Thanks!
-Ahmed
+ fs/bcachefs/bcachefs.h        |   3 +
+ fs/bcachefs/btree_node_scan.c |  17 ++-
+ fs/bcachefs/fs.c              |  11 +-
+ fs/bcachefs/journal_io.c      |   7 +-
+ fs/bcachefs/sb-members.c      |  49 +++++++++
+ fs/bcachefs/sb-members.h      |  18 +---
+ fs/bcachefs/super-io.c        |   5 +-
+ fs/bcachefs/super.c           | 191 +++++++++++++++++++++++++++++++++-
+ fs/bcachefs/super.h           |   2 +
+ fs/bcachefs/super_types.h     |   8 +-
+ fs/inode.c                    |   1 +
+ fs/internal.h                 |   1 -
+ include/linux/fs.h            |   1 +
+ 13 files changed, 272 insertions(+), 42 deletions(-)
+
+-- 
+2.47.2
+
 
