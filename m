@@ -1,223 +1,337 @@
-Return-Path: <linux-kernel+bounces-550639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41005A56255
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:12:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE332A56279
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:19:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C8223A7D13
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:12:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 233E4177189
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:19:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01C261C2335;
-	Fri,  7 Mar 2025 08:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858561AF0B6;
+	Fri,  7 Mar 2025 08:18:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCAYhKEm"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="hcwRSY0h"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D4B1AF4C1;
-	Fri,  7 Mar 2025 08:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1545028E8;
+	Fri,  7 Mar 2025 08:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741335125; cv=none; b=Dqo/JyIfvN8jZVUpOO+op4RqdludwD+3BWeSTz+40hiPOWKNhWAeXKCgRVVLvYA/YtI/1dsO/1hxr+Bgq7QasYzj6mkxkut+qruzBp7SeUaKDYkMeKODh9RApKrLRg5T2vfSoKUqbtYTfSslQBeVnObMj5P6uldTHFmE6zXevaQ=
+	t=1741335537; cv=none; b=LTGle40JVL7RHMPFTuvOHMyUc06XnHrArP4uWYUojAfU/QMfpdxLYm5+00oQYHDnVq/zRJk/HdAekiVacnWw6smmi59LwNxgNBpDtJGGyDUt/G42/W8zBu6QCp5xtJzvvU7yeLi7AEY6Yg6MkWRT3omObARYbpWZKwHnYDHGnhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741335125; c=relaxed/simple;
-	bh=h2dntkUfJwrH+lw/QJ0+nzuKV9TZKuuQO2N0lnGhcyA=;
+	s=arc-20240116; t=1741335537; c=relaxed/simple;
+	bh=EQu91PFSTOJkCVily/hsBtf/K0QHqZLxoHM4zw3Xtcw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VnCifeJx+NDmMJvW3MjoxGNY/6jlTR1k+++GSV8kvUn/pQMn6XAHz654aJq7w2w8oV38M2hPuxBazkiydW7w7Awrp3LQHYLZJk7NzrmuimysQSsaKDsCAqIsNxU1Ec65xc6IflqNy5+1bW0eqvIl4oi+bfL9EFiv+ks0EPqzoz4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eCAYhKEm; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22185cddbffso51337455ad.1;
-        Fri, 07 Mar 2025 00:12:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741335123; x=1741939923; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ds7fuOTnZNbrJDQsh2xBXZIeviEl9UGP1bWdlRctqzo=;
-        b=eCAYhKEmROLUsn2ftt8g3UMwUZ8IaXyl6PUvVur+zgkN5Goi1k+oNM09pqgGJI6ABt
-         2PMfoVQSVLAukrBf2MUShZ0iO7sI6dw2nB04a6YkkIuyKWmDJu9l9QUqJlzogTppySMY
-         2jrgWuN3OjbrrrDaITU/nftDOtyZUeTVrJMxV24GYkTcN1lfVOpo+xP4CP8dE5ekI870
-         Yvypw947647UHEd+oovGBU0/h1sTqHYYiwFy70yMDN/f+dtJJh3IEisfj7DRYPImLWQe
-         gTst2nc1XAUi2zLLaS0f4QP353/pPH0CFttmUZo7Tl8Hn0HPlvQnxAJHPhUBgWsz5KgQ
-         B0Dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741335123; x=1741939923;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ds7fuOTnZNbrJDQsh2xBXZIeviEl9UGP1bWdlRctqzo=;
-        b=nwEvrXrN+EGC0Ut3mYD85NuGI6zDUxEGHvLyzIuNiDXV1u3CAAYwt5w5H6DOvuUOdu
-         X2xRyU634dCQMIRi4vy6C7kwUlC/NH1Vxt+pi/4/rDxal+mrUKK0tpih0pBAC174/fR3
-         u04sn8dHnfkQHWNIkni24YhgPOTqC2xL8NE4H4UxQVhzBsDyZjQevqlPRfvQXk9qUXne
-         PXxFjeoUNPwR4rk7s7KjjASkdXP9+LAadcFKqOLDlAnS+X8ZDKVc6AVepPMEvgqlDo/7
-         /PYJSYM43MuqPFoeVpaEWYH1rKCix4RHJwL9qW1F/pPlxnT+fHhT7ojSaWgA8Vb0Jdeb
-         S/9A==
-X-Forwarded-Encrypted: i=1; AJvYcCWIdsnVIuoMlKYMSu/+Vni7j/JAkHW8W+txQBwd//OdGuhp38fUeiAnqrGiObGYi0X48bDsEzjo13RlmJljVhu7@vger.kernel.org, AJvYcCWlY46WG85EdfScqTMqvz6mn2+TsKO1eIs3j/ZKCBMLOnPMPConlE86nhhqQx0JlVLlc5SGtQZInqrDS2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGbWhMRxMXOKht+ehlWoqye+JjoAfkFfKvEvFUeYLBaww1m0li
-	eHJpYl/uKSVT2QFJqrAL596az0oiLT2d5v2yOZxQYpMQ7wm3gwhiqBB/6WAFBnlMcA==
-X-Gm-Gg: ASbGncstL/Kt5xmSiBVsKz0ieunnp3vPdFJWbflDEZZi3QRKD916RlXuMEgOHJYtAE5
-	LdlB/zVMeFWtYHX40+/4BY8S2F9Ocd96er4tiDX0Fs9sKlMt6b4zzNZY7MRILiI2PL3peqGolW9
-	0DHDMPIlK/BGsJpOgo8nJ7F0e5T+A5734Rhuxj6xsm/Hc6b5WFwX8rMy6Ar+r17faKNUTAOnhA8
-	YOx8R1CxY4yU0b6eZvQlaqVMQuMlYyujv4B+N5KCvV/lwSfIjgz4LcsaxltNJyIL/uvCI2GrXNX
-	y06PIUOYXVDvZx2SyPpeU4Z0pIQARiQ8x9M1xkkzrIoPzeHawQ==
-X-Google-Smtp-Source: AGHT+IFwyjX98PyfsGqDZjhho4Zw+j+tB2qDBue3Q0SpOHzeqFKmlbr1OMQ9XTcDRVh3XdNjOIsQLg==
-X-Received: by 2002:a05:6a00:2fc4:b0:727:39a4:30cc with SMTP id d2e1a72fcca58-73693e294dcmr8118261b3a.1.1741335122689;
-        Fri, 07 Mar 2025 00:12:02 -0800 (PST)
-Received: from fedora ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736984f81b3sm2623744b3a.118.2025.03.07.00.11.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 00:12:02 -0800 (PST)
-Date: Fri, 7 Mar 2025 08:11:55 +0000
-From: Hangbin Liu <liuhangbin@gmail.com>
-To: Nikolay Aleksandrov <razor@blackwall.org>
-Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>, Jianbo Liu <jianbol@nvidia.com>,
-	Jarod Wilson <jarod@redhat.com>,
-	Steffen Klassert <steffen.klassert@secunet.com>,
-	Cosmin Ratiu <cratiu@nvidia.com>, Petr Machata <petrm@nvidia.com>,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv5 net 1/3] bonding: fix calling sleeping function in spin
- lock and some race conditions
-Message-ID: <Z8qqS9IlRAMYIqXb@fedora>
-References: <20250307031903.223973-1-liuhangbin@gmail.com>
- <20250307031903.223973-2-liuhangbin@gmail.com>
- <6dd52efd-3367-4a77-8e7b-7f73096bcb3f@blackwall.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AMA32uhd/+kzrx55LObaRUVY/GW5H7LdAR1duh6h+5lz1mcoXIM6aTvYmqhBYmnGio0hEcYBfSEe9s1SYLUY2BcI493CRsysYfTVKEE7gU7Rd3hcxY3G4oXkwF7TpERwtHSuYUI4Zd6MwmGoKtn9aWE+OpYUR/0lXVPifqA7aeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=hcwRSY0h; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5273kUxb018167;
+	Fri, 7 Mar 2025 08:13:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=wWX4iOtIn++CL1/dN1ikn1W0GKoVqF
+	nMSuZKWBu6Yjk=; b=hcwRSY0hxyfTGhNQOYV1ZDa7K3SCyYbPuY6efo/aUKeu0t
+	cab6yklBTMOM267mNjctDGDERO5rj8Em34Isq/GEVeWL9u4+NIDIaY51XA0KExSk
+	QI92yPWEtC7wAAEEfNwi71UsluCvcPMdIf0BvUenoyKXKTtFxBno7y/K6IdgUF4d
+	QGq7fxgkvtaBiCyYs3aeHRnyzr12YJr0hMdHRiiBp6ePxvGOa/ndNcK3wV/W3XJ7
+	I1ZueadOZn2Y7EbbmisZfruu5ZjDZyfhDqYS14lFg0G7DjTWQBCPgtz6wWnm6I/O
+	AFe1Z/Jzm0G3WC8Rw/Snylns/oXmyYD5s+FUqv1g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457s6a11xe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Mar 2025 08:13:33 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5278DW6N021407;
+	Fri, 7 Mar 2025 08:13:32 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457s6a11xb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Mar 2025 08:13:32 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5275Qufp020845;
+	Fri, 7 Mar 2025 08:13:31 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454djnwn59-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Mar 2025 08:13:31 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5278DTt034079250
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Mar 2025 08:13:29 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 174902004B;
+	Fri,  7 Mar 2025 08:13:29 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DE58C20040;
+	Fri,  7 Mar 2025 08:13:24 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.215.108])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  7 Mar 2025 08:13:24 +0000 (GMT)
+Date: Fri, 7 Mar 2025 13:43:17 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
+        linux-kernel@vger.kernel.org, Mahesh Kumar <maheshkumar657g@gmail.com>,
+        linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
+Subject: Re: [PATCH v2 2/3] ext4: avoid journaling sb update on error if
+ journal is destroying
+Message-ID: <Z8qqna0BEDT5ZD82@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <cover.1741270780.git.ojaswin@linux.ibm.com>
+ <1bf59095d87e5dfae8f019385ba3ce58973baaff.1741270780.git.ojaswin@linux.ibm.com>
+ <5b3864c3-bcfd-4f45-b427-224d32aca478@huaweicloud.com>
+ <Z8qTciy49b7LSHqr@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6dd52efd-3367-4a77-8e7b-7f73096bcb3f@blackwall.org>
+In-Reply-To: <Z8qTciy49b7LSHqr@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: sWclsEj-3K1brhaAJQvK2jO5vCDgp3Du
+X-Proofpoint-ORIG-GUID: Z1rgOkNFOI0NQ87xIczrhCSVFodudDaL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-07_03,2025-03-06_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
+ mlxlogscore=999 adultscore=0 priorityscore=1501 phishscore=0 clxscore=1015
+ malwarescore=0 impostorscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503070057
 
-Hi Nikolay,
-On Fri, Mar 07, 2025 at 09:42:49AM +0200, Nikolay Aleksandrov wrote:
-> On 3/7/25 05:19, Hangbin Liu wrote:
-> > The fixed commit placed mutex_lock() inside spin_lock_bh(), which triggers
-> > a warning:
+On Fri, Mar 07, 2025 at 12:04:26PM +0530, Ojaswin Mujoo wrote:
+> On Fri, Mar 07, 2025 at 10:49:28AM +0800, Zhang Yi wrote:
+> > On 2025/3/6 22:28, Ojaswin Mujoo wrote:
+> > > Presently we always BUG_ON if trying to start a transaction on a journal marked
+> > > with JBD2_UNMOUNT, since this should never happen. However, while ltp running
+> > > stress tests, it was observed that in case of some error handling paths, it is
+> > > possible for update_super_work to start a transaction after the journal is
+> > > destroyed eg:
+> > > 
+> > > (umount)
+> > > ext4_kill_sb
+> > >   kill_block_super
+> > >     generic_shutdown_super
+> > >       sync_filesystem /* commits all txns */
+> > >       evict_inodes
+> > >         /* might start a new txn */
+> > >       ext4_put_super
+> > > 	flush_work(&sbi->s_sb_upd_work) /* flush the workqueue */
+> > >         jbd2_journal_destroy
+> > >           journal_kill_thread
+> > >             journal->j_flags |= JBD2_UNMOUNT;
+> > >           jbd2_journal_commit_transaction
+> > >             jbd2_journal_get_descriptor_buffer
+> > >               jbd2_journal_bmap
+> > >                 ext4_journal_bmap
+> > >                   ext4_map_blocks
+> > >                     ...
+> > >                     ext4_inode_error
+> > >                       ext4_handle_error
+> > >                         schedule_work(&sbi->s_sb_upd_work)
+> > > 
+> > >                                                /* work queue kicks in */
+> > >                                                update_super_work
+> > >                                                  jbd2_journal_start
+> > >                                                    start_this_handle
+> > >                                                      BUG_ON(journal->j_flags &
+> > >                                                             JBD2_UNMOUNT)
+> > > 
+> > > Hence, introduce a new sbi flag s_journal_destroying to indicate journal is
+> > > destroying only do a journaled (and deferred) update of sb if this flag is not
+> > > set. Otherwise, just fallback to an un-journaled commit.
+> > > 
+> > > We set sbi->s_journal_destroying = true only after all the FS updates are done
+> > > during ext4_put_super() (except a running transaction that will get commited
+> > > during jbd2_journal_destroy()). After this point, it is safe to commit the sb
+> > > outside the journal as it won't race with a journaled update (refer
+> > > 2d01ddc86606).
+> > > 
+> > > Also, we don't need a similar check in ext4_grp_locked_error since it is only
+> > > called from mballoc and AFAICT it would be always valid to schedule work here.
+> > > 
+> > > Fixes: 2d01ddc86606 ("ext4: save error info to sb through journal if available")
+> > > Reported-by: Mahesh Kumar <maheshkumar657g@gmail.com>
+> > > Suggested-by: Jan Kara <jack@suse.cz>
+> > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > > ---
+> > >  fs/ext4/ext4.h      | 2 ++
+> > >  fs/ext4/ext4_jbd2.h | 8 ++++++++
+> > >  fs/ext4/super.c     | 4 +++-
+> > >  3 files changed, 13 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> > > index 2b7d781bfcad..d48e93bd5690 100644
+> > > --- a/fs/ext4/ext4.h
+> > > +++ b/fs/ext4/ext4.h
+> > > @@ -1728,6 +1728,8 @@ struct ext4_sb_info {
+> > >  	 */
+> > >  	struct work_struct s_sb_upd_work;
+> > >  
+> > > +	bool s_journal_destorying;
+> > > +
+> > >  	/* Atomic write unit values in bytes */
+> > >  	unsigned int s_awu_min;
+> > >  	unsigned int s_awu_max;
+> > > diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
+> > > index 9b3c9df02a39..6bd3ca84410d 100644
+> > > --- a/fs/ext4/ext4_jbd2.h
+> > > +++ b/fs/ext4/ext4_jbd2.h
+> > > @@ -437,6 +437,14 @@ static inline int ext4_journal_destroy(struct ext4_sb_info *sbi, journal_t *jour
+> > >  {
+> > >  	int err = 0;
+> > >  
+> > > +	/*
+> > > +	 * At this point all pending FS updates should be done except a possible
+> > > +	 * running transaction (which will commit in jbd2_journal_destroy). It
+> > > +	 * is now safe for any new errors to directly commit superblock rather
+> > > +	 * than going via journal.
+> > > +	 */
+> > > +	sbi->s_journal_destorying = true;
+> > > +
 > > 
-> >   BUG: sleeping function called from invalid context at...
+> > Hi, Ojaswin!
 > > 
-> > Fix this by moving the IPsec deletion operation to bond_ipsec_free_sa,
-> > which is not held by spin_lock_bh().
+> > I'm afraid you still need to flush the superblock update work here,
+> > otherwise I guess the race condition you mentioned in v1 could still
+> > occur.
 > > 
-> > Additionally, there are also some race conditions as bond_ipsec_del_sa_all()
-> > and __xfrm_state_delete could running in parallel without any lock.
-> > e.g.
+> >  ext4_put_super()
+> >   flush_work(&sbi->s_sb_upd_work)
 > > 
-> >   bond_ipsec_del_sa_all()            __xfrm_state_delete()
-> >     - .xdo_dev_state_delete            - bond_ipsec_del_sa()
-> >     - .xdo_dev_state_free                - .xdo_dev_state_delete()
-> >                                        - bond_ipsec_free_sa()
-> >   bond active_slave changes              - .xdo_dev_state_free()
+> >                     **kjournald2**
+> >                     jbd2_journal_commit_transaction()
+> >                     ...
+> >                     ext4_inode_error()
+> >                       /* JBD2_UNMOUNT not set */
+> >                       schedule_work(s_sb_upd_work)
 > > 
-> >   bond_ipsec_add_sa_all()
-> >     - ipsec->xs->xso.real_dev = real_dev;
-> >     - xdo_dev_state_add
+> >                                   **workqueue**
+> >                                    update_super_work
+> >                                    /* s_journal_destorying is not set */
+> >                             	   if (journal && !s_journal_destorying)
 > > 
-> > To fix this, let's add xs->lock during bond_ipsec_del_sa_all(), and delete
-> > the IPsec list when the XFRM state is DEAD, which could prevent
-> > xdo_dev_state_free() from being triggered again in bond_ipsec_free_sa().
+> >   ext4_journal_destroy()
+> >    /* set s_journal_destorying */
+> >    sbi->s_journal_destorying = true;
+> >    jbd2_journal_destroy()
+> >     journal->j_flags |= JBD2_UNMOUNT;
 > > 
-> > In bond_ipsec_add_sa(), if .xdo_dev_state_add() failed, the xso.real_dev
-> > is set without clean. Which will cause trouble if __xfrm_state_delete is
-> > called at the same time. Reset the xso.real_dev to NULL if state add failed.
+> >                                        jbd2_journal_start()
+> >                                         start_this_handle()
+> >                                           BUG_ON(JBD2_UNMOUNT)
 > > 
-> > Despite the above fixes, there are still races in bond_ipsec_add_sa()
-> > and bond_ipsec_add_sa_all(). If __xfrm_state_delete() is called immediately
-> > after we set the xso.real_dev and before .xdo_dev_state_add() is finished,
-> > like
-> > 
-> >   ipsec->xs->xso.real_dev = real_dev;
-> >                                        __xfrm_state_delete
-> >                                          - bond_ipsec_del_sa()
-> >                                            - .xdo_dev_state_delete()
-> >                                          - bond_ipsec_free_sa()
-> >                                            - .xdo_dev_state_free()
-> >   .xdo_dev_state_add()
-> > 
-> > But there is no good solution yet. So I just added a FIXME note in here
-> > and hope we can fix it in future.
-> > 
-> > Fixes: 2aeeef906d5a ("bonding: change ipsec_lock from spin lock to mutex")
-> > Reported-by: Jakub Kicinski <kuba@kernel.org>
-> > Closes: https://lore.kernel.org/netdev/20241212062734.182a0164@kernel.org
-> > Suggested-by: Cosmin Ratiu <cratiu@nvidia.com>
-> > Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
-> > ---
-> >  drivers/net/bonding/bond_main.c | 69 ++++++++++++++++++++++++---------
-> >  1 file changed, 51 insertions(+), 18 deletions(-)
-> > 
-> > diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
-> > index e45bba240cbc..dd3d0d41d98f 100644
-> > --- a/drivers/net/bonding/bond_main.c
-> > +++ b/drivers/net/bonding/bond_main.c
-> > @@ -506,6 +506,7 @@ static int bond_ipsec_add_sa(struct xfrm_state *xs,
-> >  		list_add(&ipsec->list, &bond->ipsec_list);
-> >  		mutex_unlock(&bond->ipsec_lock);
-> >  	} else {
-> > +		xs->xso.real_dev = NULL;
-> >  		kfree(ipsec);
-> >  	}
-> >  out:
-> > @@ -541,7 +542,15 @@ static void bond_ipsec_add_sa_all(struct bonding *bond)
-> >  		if (ipsec->xs->xso.real_dev == real_dev)
-> >  			continue;
-> >  
-> > +		/* Skip dead xfrm states, they'll be freed later. */
-> > +		if (ipsec->xs->km.state == XFRM_STATE_DEAD)
-> > +			continue;
+> > Thanks,
+> > Yi.
+> Hi Yi,
 > 
-> As we commented earlier, reading this state without x->lock is wrong.
-
-But even we add the lock, like
-
-		spin_lock_bh(&ipsec->xs->lock);
-		if (ipsec->xs->km.state == XFRM_STATE_DEAD) {
-			spin_unlock_bh(&ipsec->xs->lock);
-			continue;
-		}
-
-We still may got the race condition. Like the following note said.
-So I just leave it as the current status. But I can add the spin lock
-if you insist.
-
-> > +
-> >  		ipsec->xs->xso.real_dev = real_dev;
-> > +		/* FIXME: there is a race that before .xdo_dev_state_add()
-> > +		 * is called, the __xfrm_state_delete() is called in parallel,
-> > +		 * which will call .xdo_dev_state_delete() and xdo_dev_state_free()
-> > +		 */
-> >  		if (real_dev->xfrmdev_ops->xdo_dev_state_add(ipsec->xs, NULL)) {
-> >  			slave_warn(bond_dev, real_dev, "%s: failed to add SA\n", __func__);
-> >  			ipsec->xs->xso.real_dev = NULL;
-> [snip]
+> Yes you are right, somehow missed this edge case :(
 > 
-> TBH, keeping buggy code with a comment doesn't sound good to me. I'd rather remove this
-> support than tell people "good luck, it might crash". It's better to be safe until a
-> correct design is in place which takes care of these issues.
+> Alright then, we have to move out sbi->s_journal_destroying outside the
+> helper. Just wondering if I should still let it be in
+> ext4_journal_destroy and just add an extra s_journal_destroying = false
+> before schedule_work(s_sb_upd_work), because it makes sense.
+> 
+> Okay let me give it some thought but thanks for pointing this out!
+> 
+> Regards,
+> ojaswin
 
-I agree it's not a good experience to let users using an unstable feature.
-But this is a race condition, although we don't have a good fix yet.
+Okay so thinking about it a bit more, I see you also suggested to flush
+the work after marking sbi->s_journal_destroying. But will that solve
+it?
 
-On the other hand, I think we can't remove a feature people is using, can we?
-What I can do is try fix the issues as my best.
+  ext4_put_super()
+   flush_work(&sbi->s_sb_upd_work)
+ 
+                     **kjournald2**
+                     jbd2_journal_commit_transaction()
+                     ...
+                     ext4_inode_error()
+                       /* JBD2_UNMOUNT not set */
+                       schedule_work(s_sb_upd_work)
+ 
+                                    **workqueue**
+                                    update_super_work
+                                    /* s_journal_destorying is not set */
+                             	      if (journal && !s_journal_destorying)
+ 
+   ext4_journal_destroy()
+    /* set s_journal_destorying */
+    sbi->s_journal_destorying = true;
+    flush_work(&sbi->s_sb_upd_work)
+                                      schedule_work()
+    jbd2_journal_destroy()
+     journal->j_flags |= JBD2_UNMOUNT;
+ 
+                                        jbd2_journal_start()
+                                         start_this_handle()
+                                           BUG_ON(JBD2_UNMOUNT)
 
-By the way, I started this patch because my patch 2/3 is blocked by the
-selftest results from patch 3/3...
 
-Thanks
-Hangbin
+Seems like these edge cases keep sprouting up :)
+
+As for the fix, how about we do something like this:
+
+  ext4_put_super()
+
+   flush_work(&sbi->s_sb_upd_work)
+   destroy_workqueue(sbi->rsv_conversion_wq);
+
+   ext4_journal_destroy()
+    /* set s_journal_destorying */
+    sbi->s_journal_destorying = true;
+
+   /* trigger a commit and wait for it to complete */
+
+    flush_work(&sbi->s_sb_upd_work)
+
+    jbd2_journal_destroy()
+     journal->j_flags |= JBD2_UNMOUNT;
+ 
+                                        jbd2_journal_start()
+                                         start_this_handle()
+                                           BUG_ON(JBD2_UNMOUNT)
+
+Still giving this codepath some thought but seems like this might just
+be enough to fix the race. Thoughts on this?
+
+Regards,
+ojaswin
+
+> > 
+> > >  	err = jbd2_journal_destroy(journal);
+> > >  	sbi->s_journal = NULL;
+> > >  
+> > > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+> > > index 8ad664d47806..31552cf0519a 100644
+> > > --- a/fs/ext4/super.c
+> > > +++ b/fs/ext4/super.c
+> > > @@ -706,7 +706,7 @@ static void ext4_handle_error(struct super_block *sb, bool force_ro, int error,
+> > >  		 * constraints, it may not be safe to do it right here so we
+> > >  		 * defer superblock flushing to a workqueue.
+> > >  		 */
+> > > -		if (continue_fs && journal)
+> > > +		if (continue_fs && journal && !EXT4_SB(sb)->s_journal_destorying)
+> > >  			schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
+> > >  		else
+> > >  			ext4_commit_super(sb);
+> > > @@ -5311,6 +5311,8 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
+> > >  	spin_lock_init(&sbi->s_error_lock);
+> > >  	INIT_WORK(&sbi->s_sb_upd_work, update_super_work);
+> > >  
+> > > +	sbi->s_journal_destorying = false;
+> > > +
+> > >  	err = ext4_group_desc_init(sb, es, logical_sb_block, &first_not_zeroed);
+> > >  	if (err)
+> > >  		goto failed_mount3;
+> > 
 
