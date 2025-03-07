@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-550792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4724EA56433
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:46:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E05ABA5643C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:47:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA8443B0B4F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:45:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A45F3B42CE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:47:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE8B20C022;
-	Fri,  7 Mar 2025 09:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24FFD20CCCA;
+	Fri,  7 Mar 2025 09:47:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="Fpv3ofoW"
-Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="RIzsMLC5"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9926E19C575;
-	Fri,  7 Mar 2025 09:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741340755; cv=none; b=WI+kxDqSwgzzlq4neSMyryc5ID8ikVezs6axpzZcdDySTMPGFKOmwqG6k/iMBZv8YL36+s47ATY3PtLZO/npDdT5lhFSWGm3upwS6AeuVVlRRkexqf8OoJaJHJhH/MTSxaFIho/o3GdrdD8fxwcr9PlRa5ONpQUgph34Kw6C/xg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741340755; c=relaxed/simple;
-	bh=8BxwcUC03a1oPRZ2pAlv3i2yCxXMrV7cP/jYoHXH/zs=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BgjmWmVJQwBPqGQtHDMUQB9n/kXDyASiQj3QIjc9lU6rvuzNLutrc6bsELooNpJlc5kqSGe84g44ohGk3NzstBpyWRhdts8SGDH0OZ/rFgLdPhGE0jlYJRGN96nJr0nxIqRapN0yVh7mvs14LzuHCnPoCMmknKrgPOT4O3niaAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=Fpv3ofoW; arc=none smtp.client-ip=185.226.149.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
-	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1tqUGs-0033xo-8z; Fri, 07 Mar 2025 10:45:34 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
-	Cc:To:Subject:From:MIME-Version:Date:Message-ID;
-	bh=8tA/kRSVyx+JyEIR4+usiCzAfmuIpsak7pwQ/jnN35Y=; b=Fpv3ofoWZmCgQnpYPTTrolVu6P
-	de8JefFtWeInaxjfUg6dvQf0fUMLHGZAWWioaw1DKq2pRg6rudQT4aJqR9D4nsI3a6I8wPG33XdWB
-	8ktI4nOIW40I3Dycgnpt/LHRPDIQceBf4zW8rLy37gvK2Zf3mGEmxZ8axKldzz5/shnBQY3FhrqCa
-	xySf0CsXSEEiR3LVnC6gDAo9QTdYg1onBEwRlHQ9wN00pIku4eado38x+zfsxt0Mdw8LPd/eu6hq6
-	/IOIurS90GnhKLVxkwwHaesvOfewix+ImcI5Sz82I+c7v3hHOeoWN9TkumkXoCAHDmVoTZm62hlFX
-	BQVMGIlg==;
-Received: from [10.9.9.73] (helo=submission02.runbox)
-	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1tqUGq-0003Tb-67; Fri, 07 Mar 2025 10:45:32 +0100
-Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1tqUGl-006bBn-4U; Fri, 07 Mar 2025 10:45:27 +0100
-Message-ID: <baeca627-e6f1-4d0a-aea5-fa31689edc4d@rbox.co>
-Date: Fri, 7 Mar 2025 10:45:25 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA5D1A4AAA;
+	Fri,  7 Mar 2025 09:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741340851; cv=pass; b=ZT/sdsXfw7LwXWRQf4NqBaSb7WVhh7B71xQn1ITnaVpm3CPud1lhzLJEIIyA2x0auXTNeHmurMJadRnElQ1GPfO1IHl1nWreUXU0gztfhAQGFM8hLy4kTSAVrnDBEj710Qdp3YgGq/5+uvTFsU6hxAJ12cUKqj9v19CRlnxYosw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741340851; c=relaxed/simple;
+	bh=TKYfuOxdy1s1UVd0RHd4x0Y5IOTTNY9r8ooPj+t8xB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GLT7UQWQjduic6z12kOOJKeDL1m+fssQC8qMRsQr0zHB6Bn6mDNNQNSy6ON5fj2Ijnk4gcLEtawwvKd1YfpOTA2wA5D2S04LBVqfqTMmdLlqOJ5m57csDkD1JsZaMKRmNlIl6B8YuB27V69tijLjiaNPfxV61IFm7QygICL9iFs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=RIzsMLC5; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741340825; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BN4GZTqqX1hFEfPVXNwX2SdMjQ2FKPy9d0OOArjsJ94AvV7sqHN65TZVRUMoszNuuU9z9Vu5+Yok+gabiijboF5oS6pMG35NOJQ/eeEz7GvFJ/JI7OoANrqIOjkfLFq+ghBcpYNaIhf8RE/xikWoNnDFIDY9wLDBdIxi5L5wxgw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741340825; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=9pKHj4mQjvLd9ro+KI2xNvG5tbJUvO6/hXW3wWj049E=; 
+	b=YO+nBI2MItXU7EOSjfdZPr+4OVx1ZFDcrNbRqJwGWsBSDdBnuwkyICpYFkTE95jqsZ7Df8xX5ojUSLUP4QTzf2s0IVINGdnvj81wL/di3KiqXKNGxhwuwQP6yS4n2pCP9E4d+BUiIKOfKyj2L/x7qretSjTLaF75cO9mCbB8XvU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741340825;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=9pKHj4mQjvLd9ro+KI2xNvG5tbJUvO6/hXW3wWj049E=;
+	b=RIzsMLC5CPOidIFYfG7xXjtVSnLKeCLh5PtccOr6ArCYcFK/wkGdb7R1akPJUxel
+	bQPk4OerLJ6IWk4Huy2326o112byizq7POFQbNdHHnrF0RE7NiibWzWL29oscBNWvpu
+	H9cOgiQwfOxgWo766WyvQQrMJlbWB194Ybh6i7AY=
+Received: by mx.zohomail.com with SMTPS id 1741340823435860.073154154047;
+	Fri, 7 Mar 2025 01:47:03 -0800 (PST)
+Message-ID: <51d0781b-1da4-46c6-b772-718d7833798e@collabora.com>
+Date: Fri, 7 Mar 2025 12:47:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,74 +59,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Michal Luczaj <mhal@rbox.co>
-Subject: Re: [PATCH bpf-next v2 1/3] bpf, sockmap: avoid using sk_socket after
- free
-To: Jiayuan Chen <jiayuan.chen@linux.dev>, xiyou.wangcong@gmail.com,
- john.fastabend@gmail.com, jakub@cloudflare.com, martin.lau@linux.dev
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, andrii@kernel.org, eddyz87@gmail.com,
- mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, shuah@kernel.org, sgarzare@redhat.com,
- netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, mrpre@163.com, cong.wang@bytedance.com,
- syzbot+dd90a702f518e0eac072@syzkaller.appspotmail.com
-References: <20250228055106.58071-1-jiayuan.chen@linux.dev>
- <20250228055106.58071-2-jiayuan.chen@linux.dev>
-Content-Language: pl-PL, en-GB
-In-Reply-To: <20250228055106.58071-2-jiayuan.chen@linux.dev>
+Subject: Re: [PATCH next] media: synopsys: hdmirx: Fix signedness bug in
+ hdmirx_parse_dt()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Shreeya Patel <shreeya.patel@collabora.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil
+ <hverkuil@xs4all.nl>, Dingxian Wen <shawn.wen@rock-chips.com>,
+ linux-media@vger.kernel.org, kernel@collabora.com,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <7ec94789-305c-4de4-b477-c0eb839170e5@stanley.mountain>
+ <54d5eef8-66a9-44aa-9e9b-0324d6fee46d@collabora.com>
+ <4a50949d-e472-4942-9152-3e5a54c6b076@stanley.mountain>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <4a50949d-e472-4942-9152-3e5a54c6b076@stanley.mountain>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On 2/28/25 06:51, Jiayuan Chen wrote:
-> ...
->  static void sk_psock_verdict_data_ready(struct sock *sk)
->  {
-> -	struct socket *sock = sk->sk_socket;
-> +	struct socket *sock;
->  	const struct proto_ops *ops;
->  	int copied;
->  
->  	trace_sk_data_ready(sk);
->  
-> +	/* We need RCU to prevent the sk_socket from being released.
-> +	 * Especially for Unix sockets, we are currently in the process
-> +	 * context and do not have RCU protection.
-> +	 */
-> +	rcu_read_lock();
-> +	sock = sk->sk_socket;
->  	if (unlikely(!sock))
-> -		return;
-> +		goto unlock;
-> +
->  	ops = READ_ONCE(sock->ops);
->  	if (!ops || !ops->read_skb)
-> -		return;
-> +		goto unlock;
-> +
->  	copied = ops->read_skb(sk, sk_psock_verdict_recv);
->  	if (copied >= 0) {
->  		struct sk_psock *psock;
->  
-> -		rcu_read_lock();
->  		psock = sk_psock(sk);
->  		if (psock)
->  			sk_psock_data_ready(sk, psock);
-> -		rcu_read_unlock();
->  	}
-> +unlock:
-> +	rcu_read_unlock();
->  }
+On 3/7/25 12:45, Dan Carpenter wrote:
+> On Fri, Mar 07, 2025 at 12:36:47PM +0300, Dmitry Osipenko wrote:
+>> On 3/7/25 12:30, Dan Carpenter wrote:
+>>> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+>>> index 4ffc86ad6c35..e0d3fed87a92 100644
+>>> --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+>>> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+>>> @@ -154,7 +154,7 @@ struct snps_hdmirx_dev {
+>>>  	bool hpd_trigger_level_high;
+>>>  	bool tmds_clk_ratio;
+>>>  	bool plugged;
+>>> -	u32 num_clks;
+>>> +	int num_clks;
+>>>  	u32 edid_blocks_written;
+>>>  	u32 cur_fmt_fourcc;
+>>>  	u32 color_depth;
+>>
+>> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>>
+>> Would be also good to return the original error code. There is no need
+>> to check for the < 1 clock, it should be the < 0 check. Can be done in a
+>> separate patch later. Thanks for the fix!
+> 
+> I'm not very familiar with th edevm_clk_bulk_get_all() function and it's
+> not documented.  But clk_bulk_get_all() does return zero, so I can see why
+> people would be confused.
 
-Hi,
+We will take care of it, thanks again.
 
-Doesn't sk_psock_handle_skb() (!ingress path) have the same `struct socket`
-release race issue? Any plans on fixing that one, too?
-
-BTW, lockdep (CONFIG_LOCKDEP=y) complains about calling AF_UNIX's
-read_skb() under RCU read lock.
-
-Thanks,
-Michal
+-- 
+Best regards,
+Dmitry
 
