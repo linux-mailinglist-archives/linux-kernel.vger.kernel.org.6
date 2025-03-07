@@ -1,146 +1,130 @@
-Return-Path: <linux-kernel+bounces-550349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC061A55E3F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:21:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0643DA55E40
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:21:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C786C3B4038
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:21:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99EB73B468E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF2F018E37D;
-	Fri,  7 Mar 2025 03:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DACC18DB3B;
+	Fri,  7 Mar 2025 03:21:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eVKYI77C"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="FmKbf4vX"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 413471624F7;
-	Fri,  7 Mar 2025 03:21:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FF1416C854
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 03:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741317686; cv=none; b=t9CY0pdxW3F86slvR5FgkNr6rjw3Pog+dqmQ9BhYZ3ekczrKKeHSWEMKeg1psRslPkxiLOQfAcxix+Nlk4yQXlXgXMpit1BPln4h1dQShKyvGXQ9JrUbHKqcn4AIfgnZp+DRZzdunYdf0uEU4QXwyg7Kb+aNSq8Ut1ZxMBAC634=
+	t=1741317708; cv=none; b=WCMfvbMG+LddBaVpnRSevrvs+Nqp5SsadRIeMpppiuol76OBoN/nSPVuhQEfPxnxUbZtW6TyK2yFrn4x16qgfE2j1Nqv28YiT49kB27NKGaobQ0p6qYIi0XBSu93k5hvMqFewIA2mmFxziKmLZ85ey67FTucZ2+44zIhmSt3mSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741317686; c=relaxed/simple;
-	bh=Jg5XeRxyuKD825uDbJYMZSOpqP9zMmh8t5nyw3/cSXk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Au7scVnqTOpO7MiaA+1usvUlKfKL3O2HbDvAECqxFG201xVpW/BRXkJSRxiWkWws5v3/tQFM60mwtvKY5R03e983hMORLwYMYkf9P9aGZ9VjGqIOgqiFhIpIwYkEjR6BljbmrdUKs5tJI+rj+1kVZxrU00+n6fwBd61mqmSVaSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eVKYI77C; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741317684; x=1772853684;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Jg5XeRxyuKD825uDbJYMZSOpqP9zMmh8t5nyw3/cSXk=;
-  b=eVKYI77CQg1VBIAf3OxuOQrecRd1/4XNcA6wNVhduzIa7gX9tb5hf+Vu
-   k9i6sqD8EQzt5uLhJ7LZ4ZDpO6FNEaw8jYbOCYKOh80+WJm+qZmWQrJwV
-   Cit4b+ZOWvSjS4ZM/Xx368Uek4dio7dQJUK2agC17J6ARiioZRQ93hlUb
-   sEpFfS3ZLcNDyUGqakmanJAmSxVSuMkAQimAZ0TFyMhv8/ldc/5ygpw+y
-   FFwAYIYIP3lnCD+cUckJG9nmRV/48zOD28NQ8qSragERDKxpRPNf1AEaA
-   zftZQxxU0h8593rqSZeIiGc4SsPI+Oe/Or7XcOhV79q1AfTzLgE+flQMZ
-   g==;
-X-CSE-ConnectionGUID: 4a2FtoJwRoeo7X8ccIL9pg==
-X-CSE-MsgGUID: AVofDC1bT7S0wIxXX1BV/Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="45164185"
-X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
-   d="scan'208";a="45164185"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 19:21:23 -0800
-X-CSE-ConnectionGUID: iDlWGXgBRa+qU7VDX2G/zg==
-X-CSE-MsgGUID: jWEeBpZ0ToCaX0rjX89xkQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
-   d="scan'208";a="119388873"
-Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.100.177]) ([10.247.100.177])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 19:20:57 -0800
-Message-ID: <df5f2ff0-2ead-4074-a40e-8a2fc9b63339@linux.intel.com>
-Date: Fri, 7 Mar 2025 11:20:53 +0800
+	s=arc-20240116; t=1741317708; c=relaxed/simple;
+	bh=sb/tY6RnUTd5sjFAwJ6gR8OEHHbvu4xlt/t3CIV2vCY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MYCjneHFuxfwjNjaAHALxSI7jLAzDOqTbR/q6r9O/eIV4KstTiKzMVm26i0hJKtTTQOraKRV1ck+romwqX34OcYmGpgdVTKqhXdIvS+tnR9ge9dx3n4sfSqUNYg+zwVvWjNQk07A0BXQNV+c1adu0Yl1XusATppyFsQNnt8iiSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=FmKbf4vX; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-224172f32b3so2608805ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 19:21:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1741317706; x=1741922506; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1JkFqFbD15/e+bhfTcg0dS1K84Mbp7wNo+7XsIkEauI=;
+        b=FmKbf4vXy+SyN5ZtEHXYQYoeL6MhYeavsRjg4m79rn+FfAfgod/EugZotU1RZJcKn6
+         p+2W5+CV7Sy9RIkZNF4us3Ng/sXuMOjuyYUpOCCoH1+5noA7iLHgyzlII923ng0Yvhns
+         ocqK+sbJ3XcHxfQC0klewD8TF8+B6YogFOgMlCRuaR7/Zo6mPmmlPc1cuGkQ5tcB54Wd
+         rocgvcRRagIYd/Pu/qVa2sxZKxUCPlsGzwNfr2/72LPofOGaUpkf7kQUGrcQmJyBiK6l
+         CXYtZGBMFz6mkpJ1ZPWMyV9GR1O53qOxCkNVtwj+w+hMWrTJmDLDFMLa46EEQc6aFSBM
+         Dxww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741317706; x=1741922506;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1JkFqFbD15/e+bhfTcg0dS1K84Mbp7wNo+7XsIkEauI=;
+        b=kfZm8I6L4Y1M3GFXnYier283ybeDOzCS4UsLqC+q5VABgblIDvC7WtVzto8UbjEgTs
+         4e3AuDjejkQrB4WsI9GJBAEbckvrepX6Etl0CJN/VoBs78KuNCjnhi68kg4XVddjQ46x
+         tcdMtKsxs6UGMHmoYgGvqxsqdLQGxgmGPMhqspEpo3LHBEtEqjR0OGVZbgCQAeBMdHH8
+         NNmZXaZYfUcrLSp20GvpDF0RtrgPcgm/S4p4ym9QBY2PmQtlqGv7zbNrRxR8e7q4kr7F
+         JSh+ad5/1ePA6/TRaPI90G0QyX/YzDK4xSoOBeUhFce5dBXDWgai2cSAz5iG+syVcxq7
+         NhIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXrn+yJVJ/PMsZK08qCompcsyLc5+rohfsmiaumTVDW8A/GyKVW/D/HeeSNE/KspoNzevCi7ovPqIWugRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy370UQ6LrLNaBzpJFNi1rvs+FaE35JvPXOCgsjk+dq7U710Ep
+	CS61SDLgyIzrxLh6sik6uBFVpBCVC/gk5hP99aDTdKyMH0opUo72ftPYq9gMpx8=
+X-Gm-Gg: ASbGncvxCgPDgwyrZfGFXftWtw0aJ16SyQqArcfQuEMDx3hNuHO0aHP0MqAVaMQxE6Q
+	JDCUEEWlpVqDV5z04L+WMEhyadt/uR9QMlUUwRvLOJ2SYNk/FR6fOzdadNA5q6WT5rcFo481Lej
+	vSEvIgMGX+tVsDdQfD6VerzRJWCD/8tCTpbxWQtZDKpKpqwovRwm+115ZcPFCYeY6WF0xpilVmT
+	tHqCiLMHqHAIdlriuEC06NP4I6XKkHfz/UA0Gw+Aqk+FInmCPmRuBdhnK3WH+o9VpsEnvy88v7L
+	no8MfRvCZUGAaozZwtpvMaX+5Hb+7b+slWj6DvxAuyDZRSLyAFnqBIHAU7sR4iyrdFmwiE+e/Dl
+	RWqR+dZ0=
+X-Google-Smtp-Source: AGHT+IE5AQjB1i4m5sho8oCNTw5FUe7hY3dzjkvZB9ZAXLdP2T6st2x9xbWSRmX0zhdE4HZb3wrSYA==
+X-Received: by 2002:a17:902:d492:b0:212:48f0:5b6f with SMTP id d9443c01a7336-2242b3eb238mr3734955ad.9.1741317705811;
+        Thu, 06 Mar 2025 19:21:45 -0800 (PST)
+Received: from C02DV8HUMD6R.bytedance.net ([139.177.225.235])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410aa8a86sm19847605ad.240.2025.03.06.19.21.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 19:21:44 -0800 (PST)
+From: Abel Wu <wuyun.abel@bytedance.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Madadi Vineeth Reddy <vineethr@linux.ibm.com>,
+	Phil Auld <pauld@redhat.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Josh Don <joshdon@google.com>,
+	Tianchen Ding <dtcccc@linux.alibaba.com>
+Cc: Abel Wu <wuyun.abel@bytedance.com>,
+	linux-kernel@vger.kernel.org (open list:SCHEDULER)
+Subject: [PATCH v3 0/2] Fix SCHED_IDLE behavior on wakeup preemption
+Date: Fri,  7 Mar 2025 11:21:14 +0800
+Message-Id: <20250307032118.30364-1-wuyun.abel@bytedance.com>
+X-Mailer: git-send-email 2.37.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH iwl-next v8 11/11] igc: add support to get frame
- preemption statistics via ethtool
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, Furong Xu <0x1207@gmail.com>,
- Russell King <rmk+kernel@armlinux.org.uk>,
- Serge Semin <fancer.lancer@gmail.com>,
- Xiaolei Wang <xiaolei.wang@windriver.com>,
- Suraj Jaiswal <quic_jsuraj@quicinc.com>,
- Kory Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>,
- Jesper Nilsson <jesper.nilsson@axis.com>,
- Choong Yong Liang <yong.liang.choong@linux.intel.com>,
- Chwee-Lin Choong <chwee.lin.choong@intel.com>,
- Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
- Vinicius Costa Gomes <vinicius.gomes@intel.com>,
- intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
-References: <20250305130026.642219-1-faizal.abdul.rahim@linux.intel.com>
- <20250305130026.642219-1-faizal.abdul.rahim@linux.intel.com>
- <20250305130026.642219-12-faizal.abdul.rahim@linux.intel.com>
- <20250305130026.642219-12-faizal.abdul.rahim@linux.intel.com>
- <20250306004809.q2x565rys5zja6kh@skbuf>
-Content-Language: en-US
-From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
-In-Reply-To: <20250306004809.q2x565rys5zja6kh@skbuf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+The commit 6bc912b71b6f ("sched: SCHED_OTHER vs SCHED_IDLE isolation")
+defines the behavior of SCHED_IDLE as following:
 
+ - no SCHED_IDLE buddies
+ - never let SCHED_IDLE preempt on wakeup
+ - always preempt SCHED_IDLE on wakeup
+ - limit SLEEPER fairness for SCHED_IDLE
 
-On 6/3/2025 8:48 am, Vladimir Oltean wrote:
-> On Wed, Mar 05, 2025 at 08:00:26AM -0500, Faizal Rahim wrote:
->> +/* Received out of order packets with SMD-C */
->> +#define IGC_PRMEXCPRCNT_OOO_SMDC			0x000000FF
->> +/* Received out of order packets with SMD-C and wrong Frame CNT */
->> +#define IGC_PRMEXCPRCNT_OOO_FRAME_CNT			0x0000FF00
->> +/* Received out of order packets with SMD-C and wrong Frag CNT */
->> +#define IGC_PRMEXCPRCNT_OOO_FRAG_CNT			0x00FF0000
->> +/* Received packets with SMD-S and wrong Frag CNT and Frame CNT */
->> +#define IGC_PRMEXCPRCNT_MISS_FRAME_FRAG_CNT		0xFF000000
->>   
->> +/**
->> + * igc_ethtool_get_frame_ass_error - Get the frame assembly error count.
->> + * @reg_value: Register value for IGC_PRMEXCPRCNT
->> + * Return: The count of frame assembly errors.
->> + */
->> +static u64 igc_ethtool_get_frame_ass_error(u32 reg_value)
->> +{
->> +	u32 ooo_frame_cnt, ooo_frag_cnt; /* Out of order statistics */
->> +	u32 miss_frame_frag_cnt;
->> +
->> +	ooo_frame_cnt = FIELD_GET(IGC_PRMEXCPRCNT_OOO_FRAME_CNT, reg_value);
->> +	ooo_frag_cnt = FIELD_GET(IGC_PRMEXCPRCNT_OOO_FRAG_CNT, reg_value);
->> +	miss_frame_frag_cnt = FIELD_GET(IGC_PRMEXCPRCNT_MISS_FRAME_FRAG_CNT, reg_value);
->> +
->> +	return ooo_frame_cnt + ooo_frag_cnt + miss_frame_frag_cnt;
->> +}
-> 
-> These counters are quite small (8 bits each). What is their behavior
-> once they reach 255? Saturate? Truncate? Do they clear on read?
-> 
-Hi Vladimir,
+and the middle two of them are broken now.
 
-These are part of the statistic registers, which in IGC, reset upon read. 
-When they reach their maximum value, each field remain at 0xFF.
+v3:
+ - Collect Tested-by and Acked-by from K Nayak and Vincent, thanks!
 
+v2:
+ - Collect Reviewed-by tags from Vincent, Josh and Madadi, thanks!
+ - Rebased to up-to-date tip. (Madadi)
+ - Folded some discussion with Vincent into commit log.
+
+Abel Wu (2):
+  sched/fair: Do not let idle entities preempt others
+  sched/fair: Fix premature check of WAKEUP_PREEMPTION
+
+ kernel/sched/fair.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
+
+-- 
+2.37.3
 
 
