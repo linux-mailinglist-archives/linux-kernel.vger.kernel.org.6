@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-551897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CCF8A572AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:08:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D8E5A572BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:09:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 50EBB17902B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:08:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 712B916EED4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9432561AC;
-	Fri,  7 Mar 2025 20:07:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7CF2566EE;
+	Fri,  7 Mar 2025 20:09:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IbatuPWV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oaZfOA1s"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B0F31A7AE3;
-	Fri,  7 Mar 2025 20:07:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF036254AFD;
+	Fri,  7 Mar 2025 20:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741378070; cv=none; b=sjnTXqGJkDBhpGCVJiZhZjcTBjqSCagqOzEPb+g89TSk0zzZkViP6ttIm9PLOQz2xvNne7woBZp1nT7vkEYjCt3ZwMfQGHk7NZT36LzET1YAwBix9gtiXR38jyKxIthTKnZI0S5kReHUdwRWmL6vr8vqDAHS868qSGGhDZ2lziw=
+	t=1741378141; cv=none; b=Xf8oIkWOiSNd6PSn70S6v+QIGzLJr2nzQghbIzMJy+KYLZVBzCaIpsxr3gFHDQOeyvsDMEatQXygOnnMKwrlnjl2kKoMZuEe/P/nh4qltjeTn8v9NkTlKSk7w0H/EYOfdGtL/Wcl53Jb+EvNkoNyI1lO4bGKJfmhxK5YK5vnmwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741378070; c=relaxed/simple;
-	bh=KA79ZbiEBvPYyWfzjjnUellynBK/ryTNjq2ShoxsjFA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=e7j7XOrZf46qqc6tOeyG/4gN8TBLunHXZT8zzn+jdfxzRgaH4hveDx5FBhZ2Yicu+lpC1Xfr1MU19iYkqr2CUULT8yjBcuD4Th4vCIs/CY5dgmtXqaWGXjBXPbGfEEpRTDT/OcQH5YyWRPLgH4VGHCfXyYrpSwyTVH4RZDH13+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IbatuPWV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 12084C4CEE8;
-	Fri,  7 Mar 2025 20:07:50 +0000 (UTC)
+	s=arc-20240116; t=1741378141; c=relaxed/simple;
+	bh=DSewne/+knY+TMcgAfoQ8NfYE734FckrFWzIFoRfRT8=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pxF3XYzTJntR9KoHTPm1iEtb8jPWhtP9s+R3JEjpoN3LZIN1VKdeTpxLjrGLyTTPPKn7KgOVy/xKKYUE0tf4hThlnsAcjBsuohNrDtsnv8HpF17IvWcDe0IWLbGudk8pOsw3dC7+0WhcMN+pc9czicxa8U5Rx/OcWqnL2ouSDZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oaZfOA1s; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 47474C4CED1;
+	Fri,  7 Mar 2025 20:09:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741378070;
-	bh=KA79ZbiEBvPYyWfzjjnUellynBK/ryTNjq2ShoxsjFA=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=IbatuPWVSNByvLc1+CYBlKj/PqfCXXv01QymwjMRJu/N3rxFoUulaWzfHgKPXhZLk
-	 wc7j8rKZYZ5CQclCfYnzKFXHBrqEaqiFFWsbsDkKa5ioZtMYfXr9qC/ByWDo4ZTtXl
-	 4+dWmZmZi1jfqjfqnejl+d23lkN3vH+XlRAgm3cjEgwyJl+Y9fXJ822A/AkWCxfypV
-	 c9MBQwvh7wP4+u/tZTC0XIymnOTIyWZ+dN4PDCifWuxZB20sDwlghqcqJTBKIXaQfk
-	 ANb2988indqdM3OOk1dAXIfJyztPczeaQzwWOz5uV4v+iq6AkyyIZ/J0K+VkEienae
-	 0QPQD4g4CyrrA==
+	s=k20201202; t=1741378141;
+	bh=DSewne/+knY+TMcgAfoQ8NfYE734FckrFWzIFoRfRT8=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=oaZfOA1saAwNtpvwrriZDOItHNIelASijxAaEKGCW4c8ztl5dA4I1LzCIgRGpK+Pw
+	 VYeQkIktaZyHhEcZ/DZZh3MNQVzaUJ7nUtncX23TjTDrF7GVvLpEsidqboYXQnAUTw
+	 v2OHxw8QQ90Wwcnnb2dyJQR7voC81quz7iFi3RARai7CepO6BYDqU/LSYaKY+JQRSm
+	 X/TIsT3kIXimWeEq4ueEmOIjlGyu15ce6y9weMofKTNtrikn7JKKX8bCJJq5TPPzMH
+	 xV4ZS8cqS5qDVvUq6fkn/ok/m/j6K61KAZwIWx5h9ndR2xFuXMN7Nqq8MLiVjOuemC
+	 1V5xNu27MA0gQ==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0269FC28B27;
-	Fri,  7 Mar 2025 20:07:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B7A1C28B23;
+	Fri,  7 Mar 2025 20:09:01 +0000 (UTC)
 From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
-Date: Fri, 07 Mar 2025 21:07:46 +0100
-Subject: [PATCH v3 2/2] iommu: apple-dart: Allow mismatched bypass support
+Subject: [PATCH v2 0/3] Driver for the Apple SPMI controller
+Date: Fri, 07 Mar 2025 21:08:58 +0100
+Message-Id: <20250307-spmi-v2-0-eccdb06afb99@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,21 +54,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250307-isp-dart-v3-2-684fe4489591@gmail.com>
-References: <20250307-isp-dart-v3-0-684fe4489591@gmail.com>
-In-Reply-To: <20250307-isp-dart-v3-0-684fe4489591@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAFpSy2cC/zXMQQ7CIBCF4as0sxYz0FLFlfcwXSCFdhIpDRiia
+ bi7WOPyf3n5Nkg2kk1waTaINlOisNQQhwbMrJfJMhprg0AhscWOpdUT68fWiO6uUJw01OsaraP
+ XztyG2jOlZ4jvXc38u/4B+QMyZ8iMOjvZc6eVctfJa3ocTfAwlFI+MGHpcpgAAAA=
+X-Change-ID: 20250304-spmi-6d3c24b9027a
 To: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Joerg Roedel <joro@8bytes.org>, 
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Stephen Boyd <sboyd@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
 Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Sasha Finkelstein <fnkl.kernel@gmail.com>, Hector Martin <marcan@marcan.st>
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Sasha Finkelstein <fnkl.kernel@gmail.com>, 
+ Jean-Francois Bortolotti <jeff@borto.fr>, Nick Chan <towinchenmi@gmail.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741378068; l=2218;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741378140; l=1309;
  i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
- bh=3aDy2S8QXy8OI20z2hGDfoi8k/VVP4EgGDhon31Nli0=;
- b=kttzfDkZosiRjwEHcNhPQmIYNEUFg22THIwPw0L5LDLgXk/s/Jour4qoEVJ9RHWofnriYfCGE
- D3ru2R4mrUXCVs5ej3ujynhnGtQO4iSbPJvsFLF/CFfPNrplsNJA+Am
+ bh=DSewne/+knY+TMcgAfoQ8NfYE734FckrFWzIFoRfRT8=;
+ b=ZuJIMgk3Tp5NZsN5L8gVH2bMl8CdDnA3XDCtr9+Lez5tfbuwwKqRP9YqQVjOubumjPPttNy5I
+ rsrw5smJggjA3cF4u9rrGXG2MXyD4UHIxRQQyB6mtGVDFvR4uBfDjtS
 X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
  pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
 X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
@@ -76,80 +79,40 @@ X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
 X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
 Reply-To: fnkl.kernel@gmail.com
 
-From: Hector Martin <marcan@marcan.st>
+Hi.
 
-This is needed by ISP, which has DART0 with bypass and DART1/2 without.
+This patch series adds support for the SPMI controller persent in most
+Apple SoCs. The drivers for the attached PMU and subdevices will be in
+further patch series.
 
-Signed-off-by: Hector Martin <marcan@marcan.st>
-Reviewed-by: Alyssa Rosenzweig <alyssa@rosenzweig.io>
 Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
 ---
- drivers/iommu/apple-dart.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+Changes in v2:
+- Removed redundant error prints
+- Various style fixes
+- Better explanation of why the driver is needed
+- Link to v1: https://lore.kernel.org/r/20250305-spmi-v1-0-c98f561fa99f@gmail.com
 
-diff --git a/drivers/iommu/apple-dart.c b/drivers/iommu/apple-dart.c
-index edb2fb22333506d7c64ad1b6321df00ebfd07747..13ccb801f52a4d34f6653f78e92787af7dfed1bc 100644
---- a/drivers/iommu/apple-dart.c
-+++ b/drivers/iommu/apple-dart.c
-@@ -277,6 +277,9 @@ struct apple_dart_domain {
-  * @streams: streams for this device
-  */
- struct apple_dart_master_cfg {
-+	/* Intersection of DART capabilitles */
-+	u32 supports_bypass : 1;
-+
- 	struct apple_dart_stream_map stream_maps[MAX_DARTS_PER_DEVICE];
- };
- 
-@@ -684,7 +687,7 @@ static int apple_dart_attach_dev_identity(struct iommu_domain *domain,
- 	struct apple_dart_stream_map *stream_map;
- 	int i;
- 
--	if (!cfg->stream_maps[0].dart->supports_bypass)
-+	if (!cfg->supports_bypass)
- 		return -EINVAL;
- 
- 	for_each_stream_map(i, cfg, stream_map)
-@@ -792,20 +795,24 @@ static int apple_dart_of_xlate(struct device *dev,
- 		return -EINVAL;
- 	sid = args->args[0];
- 
--	if (!cfg)
-+	if (!cfg) {
- 		cfg = kzalloc(sizeof(*cfg), GFP_KERNEL);
-+
-+		/* Will be ANDed with DART capabilities */
-+		cfg->supports_bypass = true;
-+	}
- 	if (!cfg)
- 		return -ENOMEM;
- 	dev_iommu_priv_set(dev, cfg);
- 
- 	cfg_dart = cfg->stream_maps[0].dart;
- 	if (cfg_dart) {
--		if (cfg_dart->supports_bypass != dart->supports_bypass)
--			return -EINVAL;
- 		if (cfg_dart->pgsize != dart->pgsize)
- 			return -EINVAL;
- 	}
- 
-+	cfg->supports_bypass &= dart->supports_bypass;
-+
- 	for (i = 0; i < MAX_DARTS_PER_DEVICE; ++i) {
- 		if (cfg->stream_maps[i].dart == dart) {
- 			set_bit(sid, cfg->stream_maps[i].sidmap);
-@@ -945,7 +952,7 @@ static int apple_dart_def_domain_type(struct device *dev)
- 
- 	if (cfg->stream_maps[0].dart->pgsize > PAGE_SIZE)
- 		return IOMMU_DOMAIN_IDENTITY;
--	if (!cfg->stream_maps[0].dart->supports_bypass)
-+	if (!cfg->supports_bypass)
- 		return IOMMU_DOMAIN_DMA;
- 
- 	return 0;
+---
+Jean-Francois Bortolotti (1):
+      spmi: add a spmi driver for Apple SoC
 
--- 
-2.48.1
+Sasha Finkelstein (2):
+      dt-bindings: spmi: Add Apple SPMI controller
+      arm64: dts: apple: Add SPMI controller nodes
+
+ .../devicetree/bindings/spmi/apple,spmi.yaml       |  49 ++++++
+ MAINTAINERS                                        |   2 +
+ arch/arm64/boot/dts/apple/t600x-die0.dtsi          |   7 +
+ arch/arm64/boot/dts/apple/t8103.dtsi               |   8 +
+ arch/arm64/boot/dts/apple/t8112.dtsi               |   7 +
+ drivers/spmi/Kconfig                               |   8 +
+ drivers/spmi/Makefile                              |   1 +
+ drivers/spmi/spmi-apple-controller.c               | 178 +++++++++++++++++++++
+ 8 files changed, 260 insertions(+)
+---
+base-commit: 48a5eed9ad584315c30ed35204510536235ce402
+change-id: 20250304-spmi-6d3c24b9027a
 
 
 
