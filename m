@@ -1,434 +1,694 @@
-Return-Path: <linux-kernel+bounces-551636-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2794A56EFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:27:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF49DA56EF8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:26:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F5EC7A3166
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:26:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C62451894B5E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:27:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87C523F424;
-	Fri,  7 Mar 2025 17:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4B02405E3;
+	Fri,  7 Mar 2025 17:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="e/obKVQs"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="HxVVmHj2"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12olkn2012.outbound.protection.outlook.com [40.92.21.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BBC23FC55;
-	Fri,  7 Mar 2025 17:27:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741368441; cv=none; b=kJ04/znnucqGP1tqvH1eOqd3ftEAxlg3Jlae+Eup7w0fRa1ImnVzQGsqKCDxBK7I7eFLrz9MS8BWljtCkbykMAD9WzoCcAiT9ny7NUGuinr3v2/k6au3RtWpMBAjin6/y71LHVHQNSb5F0nsD5pzUwTNJGN23ShTDjxl+JNvTaM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741368441; c=relaxed/simple;
-	bh=W34giGH60auhG6xXjCRLhUSv+FITjmzxYrJMMW/f5c0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oMgShU5Ublzi+pxTj8vUMeP7yV1C5roOlfsuR7MK65+V0sHLBqnzHnmycZQIDuk61jBXcACsEbt4RwfhKK1cK1TvwrFphpzoLvS3fZWDDIjRX3+0Is+RvAEIwT9y99GjanKfjB4NqyQLnafjTFfLXqH6BkFeorHoaKn3C+ACFuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=e/obKVQs; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5279XLBp012008;
-	Fri, 7 Mar 2025 17:26:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=7hMYYBxyAOhgExIURKYxx5rzYnbrcj
-	oF6LgssckJcRE=; b=e/obKVQscFMNzUFecNSGLxUWyEEkzrPYxcDxV3W/YEclgg
-	eTpvpBNoC+yJgG9Ktu/Dga0rjA+ZA2HB5y/lJENjQdvV8O8o1+yc8DdRooYsTpBG
-	xaKlq4vQ4CK6knuj3RRePbLA5zfR34sB077jwZaVsJ4L/Jv49yz1gWlJUR8Jc5aH
-	u/CY8OsKKIpIDGDVwfuuW6gujja0DMzqnVyqKFokvCAlJzrIhCWlLjM9Njq9CKoC
-	Hkh2JFPVF7MFwxftChxTe38LtyQznrmBmMALrwRTszSXBhr/dTo/UjaRY/IxPu30
-	wHnYnRXlW1XhlC7bqyqpM+56LL83YznjPnbgGWMQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457k45d998-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 17:26:58 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 527HQv7h005792;
-	Fri, 7 Mar 2025 17:26:57 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457k45d987-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 17:26:57 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 527FoCpE008929;
-	Fri, 7 Mar 2025 17:26:44 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454cy006fc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 17:26:44 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 527HQgvf56230316
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Mar 2025 17:26:42 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 527932004E;
-	Fri,  7 Mar 2025 17:26:42 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 906AD20040;
-	Fri,  7 Mar 2025 17:26:36 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.39.22.73])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  7 Mar 2025 17:26:35 +0000 (GMT)
-Date: Fri, 7 Mar 2025 22:56:31 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
-        linux-kernel@vger.kernel.org, Mahesh Kumar <maheshkumar657g@gmail.com>,
-        linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
-Subject: Re: [PATCH v2 2/3] ext4: avoid journaling sb update on error if
- journal is destroying
-Message-ID: <Z8ssR7BtBVP1zif2@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1741270780.git.ojaswin@linux.ibm.com>
- <1bf59095d87e5dfae8f019385ba3ce58973baaff.1741270780.git.ojaswin@linux.ibm.com>
- <5b3864c3-bcfd-4f45-b427-224d32aca478@huaweicloud.com>
- <Z8qTciy49b7LSHqr@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <Z8qqna0BEDT5ZD82@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <e9e92601-53bc-42a2-b428-e61bff6153c5@huaweicloud.com>
- <Z8rKAsmIuBlOo4T1@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
- <e3172770-9b39-4105-966f-faf64a6b6515@huaweicloud.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2241C14293;
+	Fri,  7 Mar 2025 17:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.21.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741368406; cv=fail; b=AMUbxdwtI4O7FuRxBFUG5/d45Jb38f3X4TUp5SEYwtbJZIJBJ6q87W51w+TpogMklJPSPW+NVl6BNwd3wdOooKn6xtNOCZZj7njA4T/ZWhCjHm1OxZ+qDXcU81TSG68aMMzHobtqz7/IPcYE6XHr8zD//4LrnnYlB8WKUeRmh9c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741368406; c=relaxed/simple;
+	bh=Bi1VuVo4cOF45Z3IXwWmoh5wkZbnRIEOcCQp2hr1h3o=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hSixEuw/nv9J6Q2dq1EgZ40XLGpAaER6xBmEih9z1Wb4TggRA1h+oQrCgkO4xNXcTshDAeLaVQRQVYxOw9f5/WKXcSv7n1r7o7LH9XiTRTXLBQu1eKKWMiKdnRRWJoLupXmpS/7CVlelIsXXHY+rNPpMbIjVSnB49OPz78hHhts=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=HxVVmHj2; arc=fail smtp.client-ip=40.92.21.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aJjPYPUKoZaCiH0L4hfUt4MrvyTIh4ZMSOUffORFcFieUZ97UzotE5brCm2fYTmP1Wah2jExQqd/sYlFZNhiL4CLU9kDeBXCj/tjYavYB4AcW4gipOo7GCVTwY/Mlz7iViGy+Uzee35pPdGbR+k08kJeD/lYWDfNM/tbNozqFGvOdp8Y3Q1dvqTfIyH1D+V4P11VRGDfpLXDEI5HLuoC9em75uutBW3zddlvxss/WaQlA2CrAipkks6orwVEmaaNCOViinvJP8JlNe5RatX9nA7uAQK1Z1kKxcOUhUhOKmxiuTvZUBwr3y++65Y1D0+YL+MbHKJePQJdAmQn/3QE9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nXnamhW9CMD9sYPSvP5GXAVubGI4f/f56OeRktBx+iU=;
+ b=xFbwwZdEb8psvok8jQuka1IY4Tt6Yd5sT5o23ZpyzpqtOVkXWFCQLcsMS6NcYE6Pv9XLP61r6BS1t6QY3mYdoR2po6bQ6KlYvMEUeThekEss2LIdvvdpsYtM2ecgTTEOyJopGwkWikduil10KB5e09jx6GR+iqIlvFxDMbHKTz7Nx+KPcT2fw5R8kjDCtln5ik6xXWHfwN4wz6DcLTOC+a05HQ/kgB+ctjcd3ua3sn+uU6Ymk+70zE54as6oCY7ldwNvvMZWD/A72pqPLz4u/UoGKhkZetq/lW+aVwGDvPlouN/RvPe9wT1R0yX3xgIWB7TcS1aTuKJKWz8/s50mVQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nXnamhW9CMD9sYPSvP5GXAVubGI4f/f56OeRktBx+iU=;
+ b=HxVVmHj2N/jMG3CiiFsLNxrQ9tQnXcBn6mCFDhlAjz+vcweTGLXhA7+q0txDdiLZIdGioGQT2YY40CkxEzHRL+g2JG1rzjPZGebEjMHnr8DJUiHCkAX5CggWEiBfR3Gbyaix0NDFjSSwJYqRajh8mKMYoi5TRuGSaX9pK9IF90S+3HgaW2pE0NvNfLIfZOPknWeknlMT72l4RIAHqOGzhiMGWbBqqQpDdsBEpg3pK5EeOsA2W2/VKcdp0T8ykjBwaGsjB5W8Zrz2aqKAkn8EYPRYUKynwMDnS0F4iNjCOQHAftd3R6xK0+KcJl6N4EnzZ8PMroPvt6FJ1Mso29GdHg==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by BL0PR02MB6546.namprd02.prod.outlook.com (2603:10b6:208:1cc::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Fri, 7 Mar
+ 2025 17:26:39 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
+ 17:26:39 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"x86@kernel.org" <x86@kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org"
+	<linux-arch@vger.kernel.org>, "linux-acpi@vger.kernel.org"
+	<linux-acpi@vger.kernel.org>
+CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
+	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "hpa@zytor.com"
+	<hpa@zytor.com>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+	"joro@8bytes.org" <joro@8bytes.org>, "robin.murphy@arm.com"
+	<robin.murphy@arm.com>, "arnd@arndb.de" <arnd@arndb.de>,
+	"jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+	"muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+	"skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+	"mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
+	"ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+	"apais@linux.microsoft.com" <apais@linux.microsoft.com>,
+	"Tianyu.Lan@microsoft.com" <Tianyu.Lan@microsoft.com>,
+	"stanislav.kinsburskiy@gmail.com" <stanislav.kinsburskiy@gmail.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"vkuznets@redhat.com" <vkuznets@redhat.com>, "prapal@linux.microsoft.com"
+	<prapal@linux.microsoft.com>, "muislam@microsoft.com"
+	<muislam@microsoft.com>, "anrayabh@linux.microsoft.com"
+	<anrayabh@linux.microsoft.com>, "rafael@kernel.org" <rafael@kernel.org>,
+	"lenb@kernel.org" <lenb@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
+Subject: RE: [PATCH v5 09/10] hyperv: Add definitions for root partition
+ driver to hv headers
+Thread-Topic: [PATCH v5 09/10] hyperv: Add definitions for root partition
+ driver to hv headers
+Thread-Index: AQHbiKNujfpOKLhVUE6AMyvtUkdPaLNn9IxQ
+Date: Fri, 7 Mar 2025 17:26:39 +0000
+Message-ID:
+ <SN6PR02MB41575301E96B82BF3813828BD4D52@SN6PR02MB4157.namprd02.prod.outlook.com>
+References:
+ <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-10-git-send-email-nunodasneves@linux.microsoft.com>
+In-Reply-To:
+ <1740611284-27506-10-git-send-email-nunodasneves@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|BL0PR02MB6546:EE_
+x-ms-office365-filtering-correlation-id: a234fe86-b59a-4c68-d565-08dd5d9d3855
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|8060799006|19110799003|461199028|8062599003|15080799006|440099028|3412199025|30101999003|41001999003|12091999003|102099032;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?nTSFvlU0ay+toDy/qrEAJ/T25expNHIvrIS1pIHxIj/Hko4tgjKrlZ3rpJ/e?=
+ =?us-ascii?Q?SiOdpcInU+o8n/cwkNPRI0NjjVgvn2SnMzwtD3y0kCbtKb1rBP6m2CaPYNZz?=
+ =?us-ascii?Q?x39F7K4fl8gdkC98wnqDSWRs+xPVKONJtWtTu9JCBSxI3cYuS99sZQjxWrEv?=
+ =?us-ascii?Q?M7kbZN4m8h1BaIC0P2RbLvc0BEHWyxgjXGBKFcaWuf3otpZSauldABfllY9a?=
+ =?us-ascii?Q?LaKYiCLHbhvBLXZeGO+BiSU9m3bBqPuN7JDAIdY8q85H2stlDnDAmWUGMUn7?=
+ =?us-ascii?Q?c3a3AsGn0xUS3vpyFQyOPHeKAJ/h1DFJFr4Z9hSxwYVdTOUU5exB4/uFVf1F?=
+ =?us-ascii?Q?nNLSHKHvV5iWv0GDXnyiN2mK3bvRt0A1BrGammfmxuPAn4rv4Tw5umFIii8K?=
+ =?us-ascii?Q?MJ5kQDnTI0RI8NE7l6yLV6vpED7DpntkLcpJSQQ7yunf5MQS4f1pNc1r+Ai8?=
+ =?us-ascii?Q?Fd5Qne2qLUk5RIl2SDPKKWiRxmYUIXUi6RZ5RcA7iE7fSTOfARn0T6KRG7mX?=
+ =?us-ascii?Q?tWKB0U3JddR2O8FWx41+atxfErkOXAH7jnKPIgiqQ02V+l7J8BOmE/KDLUg0?=
+ =?us-ascii?Q?7EyuNR8WjexxI+v/LGzHpvw34wUdw+6psRQ7qyFKR6JSNwS5loFK3+XPUwcM?=
+ =?us-ascii?Q?AyfjoJijCKbVYPDyvfjd1YBtu0EM3X9ycl/qrXTD4UfRc7ijtUrSL4IBK9Uf?=
+ =?us-ascii?Q?RMAoqRLyvTYZWZsrvSnriCqU0x0bKpuznYbSl606Zuyu9fYkq7qoX3zYTS/g?=
+ =?us-ascii?Q?3tXSvwm3aH9YtSqr/VemI7dRMPmG6XZ2GbERABrXpV5CHLyeWYDvJBpwWkSn?=
+ =?us-ascii?Q?AYWwJKvfQEwBoQm/ZkU0mh36BQa4ED1n17uPM2HSpGMUe3ImtigwDp9OuF2E?=
+ =?us-ascii?Q?ephcyEA+WwSo+njd8GSrEXKHeeCAUy07vPZ90m0RLAxc0RKeMXDOTAtHEmPL?=
+ =?us-ascii?Q?jbtJQzI7JYqD5Oywx0xe5Bd/TFAm66N0Uth3Cp/77mWWvbFT/QH+oKUkm8ja?=
+ =?us-ascii?Q?TWr+josNCsOfixQWBkvE8tvsou3u1lGUO2vTiIw4o1yvzgxhlP5YJTvcVR5B?=
+ =?us-ascii?Q?IvB0LGh0rWcUdN1tvNzkY2BYUImI29F4srTwRuH/zbv7e592UBN1+bV9zDpU?=
+ =?us-ascii?Q?12XbC6PUrBXGezfUhbjKXbIEnfDpgtNCfg=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?UdMUuTNoPKQVTByYxtnlLk3GPDuE0RpqCA+mrDsvsBohm2JLS1sqe4lZPW9M?=
+ =?us-ascii?Q?Su9rC5gEn4XL+f5KVFmLYFbuhA2vdbSTGHhS3KvKkynyHBb1+D2bKnMd4Adq?=
+ =?us-ascii?Q?GUMZooyXdj+MLdq5jTPCip5DJtSfS4d44FDsUtWFwm77mjXcY5qcV4tePvWb?=
+ =?us-ascii?Q?+FNQxIHoidw6PrSxHFboXVl7ZiDkUDPAM04o7WZrdOS5vn3WlkCyVw3M/2Cg?=
+ =?us-ascii?Q?2ihyU/HWqqjCmmwmR6D+G9clqFOKrkY1llF40F8pM8VhFwnVQ5iLll0/0Cey?=
+ =?us-ascii?Q?0AAQVCQCRKiSVfJ97v63fr+N9f9JMwv/+3yQfcLhox/BfJKAk6XcrArU1wfB?=
+ =?us-ascii?Q?AIktmWhI3LBWyPz9QHPnMRUJLooRonXVYHW7jhZbAHCvRZ1vPBRkjMfou9D0?=
+ =?us-ascii?Q?meXc1QOZuxYHIeRJzBXgaOcC56+tADTHDeWrWQ+B5DGEmplh0EsAhdo4we1O?=
+ =?us-ascii?Q?vAx9DKqZ0Igtg0gz3+ghuil80RhNVcqVLgoey+IBMn4d5Vu/MH0WbBKW7eK9?=
+ =?us-ascii?Q?rHbhlElhmV8o5y2ufwkrXohu4JwVW7F5IP/+MC/xgbnMpKJXlVnsNZ7wmsvr?=
+ =?us-ascii?Q?B5BP8a7jI6FOVsVs2642u58nHydmH9d0yk40IPTz6sjjdsJFf9+WZ48PaZZw?=
+ =?us-ascii?Q?Fef0yWao8e5KdUJWrzUOtCwa8fEB2nGq/riK82j4yfSK/+Qnt0llqJOF0fnf?=
+ =?us-ascii?Q?PWU36QvgjDhs3ewMQqePaORhwnm2tM8kJ+MCRk8WhoezdJSG80A92bsWgkfG?=
+ =?us-ascii?Q?zaJZwpS90nFvtfTOEByJhyh6PFkE+KTwsoYT5yTf5Zm+tqNaMXHWIDD85mNT?=
+ =?us-ascii?Q?Z0FPquH2r5awwa9NEzBIIHdEa3gu6yDkNROFGZyZy2WbuWoRspWqFBB73nhP?=
+ =?us-ascii?Q?rMo/ejl7sjpxOUa174fxiM3InkT6M7EDUE8b3woZVCmfl28Xmc7HNU1E3OOP?=
+ =?us-ascii?Q?eJHvlcZqbipj7rTllZuSxAFNQEZ7r7VNyt+PNSke6X+ytWjfZOjE1UcY2Ob0?=
+ =?us-ascii?Q?EgxgxUubrJdMD08kpV21q+M6akeEu8QAU9WtoyFUxWPa64sifORGoWnsrG2g?=
+ =?us-ascii?Q?WLO1aybh+DKASLu5ojeqmHLt8sNuYYtSLWwKfgh6k26dTOt3zfbZoPq3qbf4?=
+ =?us-ascii?Q?miAfNXqEPp8tWXc2gy9uZyhPaHPYYlD9OmUx6B9IrTi4hNSpn6CO/mQvZIBz?=
+ =?us-ascii?Q?OOoytfEiWhJDXPGTR5Y+u6wuCW2rGTaZJXRhVyxxJuJvpehgLsk0OsmAZI0?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e3172770-9b39-4105-966f-faf64a6b6515@huaweicloud.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 2SUi_pdD47PfsEGdbyuQibv5IInrQkL3
-X-Proofpoint-GUID: oRzORxLyDENn70VKxq_bDX0OGcFV0s3G
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-07_06,2025-03-06_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 adultscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 suspectscore=0 bulkscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503070130
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: a234fe86-b59a-4c68-d565-08dd5d9d3855
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2025 17:26:39.2735
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL0PR02MB6546
 
-On Fri, Mar 07, 2025 at 08:36:08PM +0800, Zhang Yi wrote:
-> On 2025/3/7 18:27, Ojaswin Mujoo wrote:
-> > On Fri, Mar 07, 2025 at 04:43:24PM +0800, Zhang Yi wrote:
-> >> On 2025/3/7 16:13, Ojaswin Mujoo wrote:
-> >>> On Fri, Mar 07, 2025 at 12:04:26PM +0530, Ojaswin Mujoo wrote:
-> >>>> On Fri, Mar 07, 2025 at 10:49:28AM +0800, Zhang Yi wrote:
-> >>>>> On 2025/3/6 22:28, Ojaswin Mujoo wrote:
-> >>>>>> Presently we always BUG_ON if trying to start a transaction on a journal marked
-> >>>>>> with JBD2_UNMOUNT, since this should never happen. However, while ltp running
-> >>>>>> stress tests, it was observed that in case of some error handling paths, it is
-> >>>>>> possible for update_super_work to start a transaction after the journal is
-> >>>>>> destroyed eg:
-> >>>>>>
-> >>>>>> (umount)
-> >>>>>> ext4_kill_sb
-> >>>>>>   kill_block_super
-> >>>>>>     generic_shutdown_super
-> >>>>>>       sync_filesystem /* commits all txns */
-> >>>>>>       evict_inodes
-> >>>>>>         /* might start a new txn */
-> >>>>>>       ext4_put_super
-> >>>>>> 	flush_work(&sbi->s_sb_upd_work) /* flush the workqueue */
-> >>>>>>         jbd2_journal_destroy
-> >>>>>>           journal_kill_thread
-> >>>>>>             journal->j_flags |= JBD2_UNMOUNT;
-> >>>>>>           jbd2_journal_commit_transaction
-> >>>>>>             jbd2_journal_get_descriptor_buffer
-> >>>>>>               jbd2_journal_bmap
-> >>>>>>                 ext4_journal_bmap
-> >>>>>>                   ext4_map_blocks
-> >>>>>>                     ...
-> >>>>>>                     ext4_inode_error
-> >>>>>>                       ext4_handle_error
-> >>>>>>                         schedule_work(&sbi->s_sb_upd_work)
-> >>>>>>
-> >>>>>>                                                /* work queue kicks in */
-> >>>>>>                                                update_super_work
-> >>>>>>                                                  jbd2_journal_start
-> >>>>>>                                                    start_this_handle
-> >>>>>>                                                      BUG_ON(journal->j_flags &
-> >>>>>>                                                             JBD2_UNMOUNT)
-> >>>>>>
-> >>>>>> Hence, introduce a new sbi flag s_journal_destroying to indicate journal is
-> >>>>>> destroying only do a journaled (and deferred) update of sb if this flag is not
-> >>>>>> set. Otherwise, just fallback to an un-journaled commit.
-> >>>>>>
-> >>>>>> We set sbi->s_journal_destroying = true only after all the FS updates are done
-> >>>>>> during ext4_put_super() (except a running transaction that will get commited
-> >>>>>> during jbd2_journal_destroy()). After this point, it is safe to commit the sb
-> >>>>>> outside the journal as it won't race with a journaled update (refer
-> >>>>>> 2d01ddc86606).
-> >>>>>>
-> >>>>>> Also, we don't need a similar check in ext4_grp_locked_error since it is only
-> >>>>>> called from mballoc and AFAICT it would be always valid to schedule work here.
-> >>>>>>
-> >>>>>> Fixes: 2d01ddc86606 ("ext4: save error info to sb through journal if available")
-> >>>>>> Reported-by: Mahesh Kumar <maheshkumar657g@gmail.com>
-> >>>>>> Suggested-by: Jan Kara <jack@suse.cz>
-> >>>>>> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> >>>>>> ---
-> >>>>>>  fs/ext4/ext4.h      | 2 ++
-> >>>>>>  fs/ext4/ext4_jbd2.h | 8 ++++++++
-> >>>>>>  fs/ext4/super.c     | 4 +++-
-> >>>>>>  3 files changed, 13 insertions(+), 1 deletion(-)
-> >>>>>>
-> >>>>>> diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> >>>>>> index 2b7d781bfcad..d48e93bd5690 100644
-> >>>>>> --- a/fs/ext4/ext4.h
-> >>>>>> +++ b/fs/ext4/ext4.h
-> >>>>>> @@ -1728,6 +1728,8 @@ struct ext4_sb_info {
-> >>>>>>  	 */
-> >>>>>>  	struct work_struct s_sb_upd_work;
-> >>>>>>  
-> >>>>>> +	bool s_journal_destorying;
-> >>>>>> +
-> >>>>>>  	/* Atomic write unit values in bytes */
-> >>>>>>  	unsigned int s_awu_min;
-> >>>>>>  	unsigned int s_awu_max;
-> >>>>>> diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
-> >>>>>> index 9b3c9df02a39..6bd3ca84410d 100644
-> >>>>>> --- a/fs/ext4/ext4_jbd2.h
-> >>>>>> +++ b/fs/ext4/ext4_jbd2.h
-> >>>>>> @@ -437,6 +437,14 @@ static inline int ext4_journal_destroy(struct ext4_sb_info *sbi, journal_t *jour
-> >>>>>>  {
-> >>>>>>  	int err = 0;
-> >>>>>>  
-> >>>>>> +	/*
-> >>>>>> +	 * At this point all pending FS updates should be done except a possible
-> >>>>>> +	 * running transaction (which will commit in jbd2_journal_destroy). It
-> >>>>>> +	 * is now safe for any new errors to directly commit superblock rather
-> >>>>>> +	 * than going via journal.
-> >>>>>> +	 */
-> >>>>>> +	sbi->s_journal_destorying = true;
-> >>>>>> +
-> >>>>>
-> >>>>> Hi, Ojaswin!
-> >>>>>
-> >>>>> I'm afraid you still need to flush the superblock update work here,
-> >>>>> otherwise I guess the race condition you mentioned in v1 could still
-> >>>>> occur.
-> >>>>>
-> >>>>>  ext4_put_super()
-> >>>>>   flush_work(&sbi->s_sb_upd_work)
-> >>>>>
-> >>>>>                     **kjournald2**
-> >>>>>                     jbd2_journal_commit_transaction()
-> >>>>>                     ...
-> >>>>>                     ext4_inode_error()
-> >>>>>                       /* JBD2_UNMOUNT not set */
-> >>>>>                       schedule_work(s_sb_upd_work)
-> >>>>>
-> >>>>>                                   **workqueue**
-> >>>>>                                    update_super_work
-> >>>>>                                    /* s_journal_destorying is not set */
-> >>>>>                             	   if (journal && !s_journal_destorying)
-> >>>>>
-> >>>>>   ext4_journal_destroy()
-> >>>>>    /* set s_journal_destorying */
-> >>>>>    sbi->s_journal_destorying = true;
-> >>>>>    jbd2_journal_destroy()
-> >>>>>     journal->j_flags |= JBD2_UNMOUNT;
-> >>>>>
-> >>>>>                                        jbd2_journal_start()
-> >>>>>                                         start_this_handle()
-> >>>>>                                           BUG_ON(JBD2_UNMOUNT)
-> >>>>>
-> >>>>> Thanks,
-> >>>>> Yi.
-> >>>> Hi Yi,
-> >>>>
-> >>>> Yes you are right, somehow missed this edge case :(
-> >>>>
-> >>>> Alright then, we have to move out sbi->s_journal_destroying outside the
-> >>>> helper. Just wondering if I should still let it be in
-> >>>> ext4_journal_destroy and just add an extra s_journal_destroying = false
-> >>>> before schedule_work(s_sb_upd_work), because it makes sense.
-> >>>>
-> >>>> Okay let me give it some thought but thanks for pointing this out!
-> >>>>
-> >>>> Regards,
-> >>>> ojaswin
-> >>>
-> >>> Okay so thinking about it a bit more, I see you also suggested to flush
-> >>> the work after marking sbi->s_journal_destroying. But will that solve
-> >>> it?
-> >>>
-> >>>   ext4_put_super()
-> >>>    flush_work(&sbi->s_sb_upd_work)
-> >>>  
-> >>>                      **kjournald2**
-> >>>                      jbd2_journal_commit_transaction()
-> >>>                      ...
-> >>>                      ext4_inode_error()
-> >>>                        /* JBD2_UNMOUNT not set */
-> >>>                        schedule_work(s_sb_upd_work)
-> >>>  
-> >>>                                     **workqueue**
-> >>>                                     update_super_work
-> >>>                                     /* s_journal_destorying is not set */
-> >>>                              	      if (journal && !s_journal_destorying)
-> >>>  
-> >>>    ext4_journal_destroy()
-> >>>     /* set s_journal_destorying */
-> >>>     sbi->s_journal_destorying = true;
-> >>>     flush_work(&sbi->s_sb_upd_work)
-> >>>                                       schedule_work()
-> >>                                         ^^^^^^^^^^^^^^^
-> >>                                         where does this come from?
-> >>
-> >> After this flush_work, we can guarantee that the running s_sb_upd_work
-> >> finishes before we set JBD2_UNMOUNT. Additionally, the journal will
-> >> not commit transaction or call schedule_work() again because it has
-> >> been aborted due to the previous error. Am I missing something?
-> >>
-> >> Thanks,
-> >> Yi.
-> > 
-> > Hmm, so I am thinking of a corner case in ext4_handle_error() where 
-> > 
-> >  if(journal && !is_journal_destroying) 
-> > 
-> > is computed but schedule_work() not called yet, which is possible cause
-> > the cmp followed by jump is not atomic in nature. If the schedule_work
-> > is only called after we have done the flush then we end up with this:
-> > 
-> >                               	      if (journal && !s_journal_destorying)
-> >     ext4_journal_destroy()
-> >      /* set s_journal_destorying */
-> >      sbi->s_journal_destorying = true;
-> >      flush_work(&sbi->s_sb_upd_work)
-> >                                        schedule_work()
-> > 
-> > Which is possible IMO, although the window is tiny.
-> 
-> Yeah, right!
-> Sorry for misread the location where you add the "!s_journal_destorying"
-> check, the graph I provided was in update_super_work(), which was wrong.
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Wednesday, Fe=
+bruary 26, 2025 3:08 PM
+>=20
+> A few additional definitions are required for the mshv driver code
+> (to follow). Introduce those here and clean up a little bit while
+> at it.
+>=20
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+> ---
+>  include/hyperv/hvgdk_mini.h |  64 ++++++++++++++++-
+>  include/hyperv/hvhdk.h      | 132 ++++++++++++++++++++++++++++++++++--
+>  include/hyperv/hvhdk_mini.h |  91 +++++++++++++++++++++++++
+>  3 files changed, 280 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/include/hyperv/hvgdk_mini.h b/include/hyperv/hvgdk_mini.h
+> index 58895883f636..e4a3cca0cbce 100644
+> --- a/include/hyperv/hvgdk_mini.h
+> +++ b/include/hyperv/hvgdk_mini.h
+> @@ -13,7 +13,7 @@ struct hv_u128 {
+>  	u64 high_part;
+>  } __packed;
+>=20
+> -/* NOTE: when adding below, update hv_status_to_string() */
+> +/* NOTE: when adding below, update hv_result_to_string() */
+>  #define HV_STATUS_SUCCESS			    0x0
+>  #define HV_STATUS_INVALID_HYPERCALL_CODE	    0x2
+>  #define HV_STATUS_INVALID_HYPERCALL_INPUT	    0x3
+> @@ -51,6 +51,7 @@ struct hv_u128 {
+>  #define HV_HYP_PAGE_SHIFT		12
+>  #define HV_HYP_PAGE_SIZE		BIT(HV_HYP_PAGE_SHIFT)
+>  #define HV_HYP_PAGE_MASK		(~(HV_HYP_PAGE_SIZE - 1))
+> +#define HV_HYP_LARGE_PAGE_SHIFT		21
+>=20
+>  #define HV_PARTITION_ID_INVALID		((u64)0)
+>  #define HV_PARTITION_ID_SELF		((u64)-1)
+> @@ -374,6 +375,10 @@ union hv_hypervisor_version_info {
+>  #define HV_SHARED_GPA_BOUNDARY_ACTIVE			BIT(5)
+>  #define HV_SHARED_GPA_BOUNDARY_BITS			GENMASK(11, 6)
+>=20
+> +/* HYPERV_CPUID_FEATURES.ECX bits. */
+> +#define HV_VP_DISPATCH_INTERRUPT_INJECTION_AVAILABLE	BIT(9)
+> +#define HV_VP_GHCB_ROOT_MAPPING_AVAILABLE		BIT(10)
+> +
+>  enum hv_isolation_type {
+>  	HV_ISOLATION_TYPE_NONE	=3D 0,	/*
+> HV_PARTITION_ISOLATION_TYPE_NONE */
+>  	HV_ISOLATION_TYPE_VBS	=3D 1,
+> @@ -437,9 +442,12 @@ union hv_vp_assist_msr_contents {	 /*
+> HV_REGISTER_VP_ASSIST_PAGE */
+>  #define HVCALL_MAP_GPA_PAGES				0x004b
+>  #define HVCALL_UNMAP_GPA_PAGES				0x004c
+>  #define HVCALL_CREATE_VP				0x004e
+> +#define HVCALL_INSTALL_INTERCEPT			0x004d
 
-Oh right, I also misread your trace but yes as discussed, even 
+This is numerically out-of-order.  Should be before HVCALL_CREATE_VP.
 
-    sbi->s_journal_destorying = true;
-		flush_work()
-    jbd2_journal_destroy()
+>  #define HVCALL_DELETE_VP				0x004f
+>  #define HVCALL_GET_VP_REGISTERS				0x0050
+>  #define HVCALL_SET_VP_REGISTERS				0x0051
+> +#define HVCALL_TRANSLATE_VIRTUAL_ADDRESS		0x0052
+> +#define HVCALL_CLEAR_VIRTUAL_INTERRUPT			0x0056
+>  #define HVCALL_DELETE_PORT				0x0058
+>  #define HVCALL_DISCONNECT_PORT				0x005b
+>  #define HVCALL_POST_MESSAGE				0x005c
+> @@ -447,12 +455,15 @@ union hv_vp_assist_msr_contents {	 /*
+> HV_REGISTER_VP_ASSIST_PAGE */
+>  #define HVCALL_POST_DEBUG_DATA				0x0069
+>  #define HVCALL_RETRIEVE_DEBUG_DATA			0x006a
+>  #define HVCALL_RESET_DEBUG_SESSION			0x006b
+> +#define HVCALL_MAP_STATS_PAGE				0x006c
+> +#define HVCALL_UNMAP_STATS_PAGE				0x006d
+>  #define HVCALL_ADD_LOGICAL_PROCESSOR			0x0076
+>  #define HVCALL_GET_SYSTEM_PROPERTY			0x007b
+>  #define HVCALL_MAP_DEVICE_INTERRUPT			0x007c
+>  #define HVCALL_UNMAP_DEVICE_INTERRUPT			0x007d
+>  #define HVCALL_RETARGET_INTERRUPT			0x007e
+>  #define HVCALL_NOTIFY_PORT_RING_EMPTY			0x008b
+> +#define HVCALL_REGISTER_INTERCEPT_RESULT		0x0091
+>  #define HVCALL_ASSERT_VIRTUAL_INTERRUPT			0x0094
+>  #define HVCALL_CREATE_PORT				0x0095
+>  #define HVCALL_CONNECT_PORT				0x0096
+> @@ -460,12 +471,18 @@ union hv_vp_assist_msr_contents {	 /*
+> HV_REGISTER_VP_ASSIST_PAGE */
+>  #define HVCALL_GET_VP_ID_FROM_APIC_ID			0x009a
+>  #define HVCALL_FLUSH_GUEST_PHYSICAL_ADDRESS_SPACE	0x00af
+>  #define HVCALL_FLUSH_GUEST_PHYSICAL_ADDRESS_LIST	0x00b0
+> +#define HVCALL_SIGNAL_EVENT_DIRECT			0x00c0
+> +#define HVCALL_POST_MESSAGE_DIRECT			0x00c1
+>  #define HVCALL_DISPATCH_VP				0x00c2
+> +#define HVCALL_GET_GPA_PAGES_ACCESS_STATES		0x00c9
+> +#define HVCALL_ACQUIRE_SPARSE_SPA_PAGE_HOST_ACCESS	0x00d7
+> +#define HVCALL_RELEASE_SPARSE_SPA_PAGE_HOST_ACCESS	0x00d8
+>  #define HVCALL_MODIFY_SPARSE_GPA_PAGE_HOST_VISIBILITY	0x00db
+>  #define HVCALL_MAP_VP_STATE_PAGE			0x00e1
+>  #define HVCALL_UNMAP_VP_STATE_PAGE			0x00e2
+>  #define HVCALL_GET_VP_STATE				0x00e3
+>  #define HVCALL_SET_VP_STATE				0x00e4
+> +#define HVCALL_GET_VP_CPUID_VALUES			0x00f4
+>  #define HVCALL_MMIO_READ				0x0106
+>  #define HVCALL_MMIO_WRITE				0x0107
+>=20
+> @@ -807,6 +824,8 @@ struct hv_x64_table_register {
+>  	u64 base;
+>  } __packed;
+>=20
+> +#define HV_NORMAL_VTL	0
+> +
+>  union hv_input_vtl {
+>  	u8 as_uint8;
+>  	struct {
+> @@ -1325,6 +1344,49 @@ struct hv_retarget_device_interrupt {	 /*
+> HV_INPUT_RETARGET_DEVICE_INTERRUPT */
+>  	struct hv_device_interrupt_target int_target;
+>  } __packed __aligned(8);
+>=20
+> +enum hv_intercept_type {
+> +#if defined(CONFIG_X86_64)
+> +	HV_INTERCEPT_TYPE_X64_IO_PORT			=3D 0x00000000,
+> +	HV_INTERCEPT_TYPE_X64_MSR			=3D 0x00000001,
+> +	HV_INTERCEPT_TYPE_X64_CPUID			=3D 0x00000002,
+> +#endif
+> +	HV_INTERCEPT_TYPE_EXCEPTION			=3D 0x00000003,
+> +	/* Used to be HV_INTERCEPT_TYPE_REGISTER */
+> +	HV_INTERCEPT_TYPE_RESERVED0			=3D 0x00000004,
+> +	HV_INTERCEPT_TYPE_MMIO				=3D 0x00000005,
+> +#if defined(CONFIG_X86_64)
+> +	HV_INTERCEPT_TYPE_X64_GLOBAL_CPUID		=3D 0x00000006,
+> +	HV_INTERCEPT_TYPE_X64_APIC_SMI			=3D 0x00000007,
+> +#endif
+> +	HV_INTERCEPT_TYPE_HYPERCALL			=3D 0x00000008,
+> +#if defined(CONFIG_X86_64)
+> +	HV_INTERCEPT_TYPE_X64_APIC_INIT_SIPI		=3D 0x00000009,
+> +	HV_INTERCEPT_MC_UPDATE_PATCH_LEVEL_MSR_READ	=3D 0x0000000A,
+> +	HV_INTERCEPT_TYPE_X64_APIC_WRITE		=3D 0x0000000B,
+> +	HV_INTERCEPT_TYPE_X64_MSR_INDEX			=3D 0x0000000C,
+> +#endif
+> +	HV_INTERCEPT_TYPE_MAX,
+> +	HV_INTERCEPT_TYPE_INVALID			=3D 0xFFFFFFFF,
+> +};
+> +
+> +union hv_intercept_parameters {
+> +	/*  HV_INTERCEPT_PARAMETERS is defined to be an 8-byte field. */
+> +	__u64 as_uint64;
+> +#if defined(CONFIG_X86_64)
+> +	/* HV_INTERCEPT_TYPE_X64_IO_PORT */
+> +	__u16 io_port;
+> +	/* HV_INTERCEPT_TYPE_X64_CPUID */
+> +	__u32 cpuid_index;
+> +	/* HV_INTERCEPT_TYPE_X64_APIC_WRITE */
+> +	__u32 apic_write_mask;
+> +	/* HV_INTERCEPT_TYPE_EXCEPTION */
+> +	__u16 exception_vector;
+> +	/* HV_INTERCEPT_TYPE_X64_MSR_INDEX */
+> +	__u32 msr_index;
+> +#endif
+> +	/* N.B. Other intercept types do not have any parameters. */
+> +};
+> +
+>  /* Data structures for HVCALL_MMIO_READ and HVCALL_MMIO_WRITE */
+>  #define HV_HYPERCALL_MMIO_MAX_DATA_LENGTH 64
+>=20
+> diff --git a/include/hyperv/hvhdk.h b/include/hyperv/hvhdk.h
+> index 64407c2a3809..1b447155c338 100644
+> --- a/include/hyperv/hvhdk.h
+> +++ b/include/hyperv/hvhdk.h
+> @@ -19,11 +19,24 @@
+>=20
+>  #define HV_VP_REGISTER_PAGE_VERSION_1	1u
+>=20
+> +#define HV_VP_REGISTER_PAGE_MAX_VECTOR_COUNT		7
+> +
+> +union hv_vp_register_page_interrupt_vectors {
+> +	u64 as_uint64;
+> +	struct {
+> +		u8 vector_count;
+> +		u8 vector[HV_VP_REGISTER_PAGE_MAX_VECTOR_COUNT];
+> +	} __packed;
+> +} __packed;
+> +
+>  struct hv_vp_register_page {
+>  	u16 version;
+>  	u8 isvalid;
+>  	u8 rsvdz;
+>  	u32 dirty;
+> +
+> +#if IS_ENABLED(CONFIG_X86)
+> +
+>  	union {
+>  		struct {
+>  			/* General purpose registers
+> @@ -95,6 +108,22 @@ struct hv_vp_register_page {
+>  	union hv_x64_pending_interruption_register pending_interruption;
+>  	union hv_x64_interrupt_state_register interrupt_state;
+>  	u64 instruction_emulation_hints;
+> +	u64 xfem;
+> +
+> +	/*
+> +	 * Fields from this point are not included in the register page save ch=
+unk.
+> +	 * The reserved field is intended to maintain alignment for unsaved fie=
+lds.
+> +	 */
+> +	u8 reserved1[0x100];
+> +
+> +	/*
+> +	 * Interrupts injected as part of HvCallDispatchVp.
+> +	 */
+> +	union hv_vp_register_page_interrupt_vectors interrupt_vectors;
+> +
+> +#elif IS_ENABLED(CONFIG_ARM64)
+> +	/* Not yet supported in ARM */
+> +#endif
+>  } __packed;
+>=20
+>  #define HV_PARTITION_PROCESSOR_FEATURES_BANKS 2
+> @@ -299,10 +328,11 @@ union hv_partition_isolation_properties {
+>  #define HV_PARTITION_ISOLATION_HOST_TYPE_RESERVED   0x2
+>=20
+>  /* Note: Exo partition is enabled by default */
+> -#define HV_PARTITION_CREATION_FLAG_EXO_PARTITION                    BIT(=
+8)
+> -#define HV_PARTITION_CREATION_FLAG_LAPIC_ENABLED                    BIT(=
+13)
+> -#define HV_PARTITION_CREATION_FLAG_INTERCEPT_MESSAGE_PAGE_ENABLED   BIT(=
+19)
+> -#define HV_PARTITION_CREATION_FLAG_X2APIC_CAPABLE                   BIT(=
+22)
+> +#define HV_PARTITION_CREATION_FLAG_GPA_SUPER_PAGES_ENABLED		BIT(4)
+> +#define HV_PARTITION_CREATION_FLAG_EXO_PARTITION			BIT(8)
+> +#define HV_PARTITION_CREATION_FLAG_LAPIC_ENABLED			BIT(13)
+> +#define HV_PARTITION_CREATION_FLAG_INTERCEPT_MESSAGE_PAGE_ENABLED	BIT(19=
+)
+> +#define HV_PARTITION_CREATION_FLAG_X2APIC_CAPABLE			BIT(22)
+>=20
+>  struct hv_input_create_partition {
+>  	u64 flags;
+> @@ -349,13 +379,23 @@ struct hv_input_set_partition_property {
+>  enum hv_vp_state_page_type {
+>  	HV_VP_STATE_PAGE_REGISTERS =3D 0,
+>  	HV_VP_STATE_PAGE_INTERCEPT_MESSAGE =3D 1,
+> +	HV_VP_STATE_PAGE_GHCB,
 
-doesn't work.
+Seems like this enum member should have an explicit value assigned
+since it is part of the contract with the hypervisor.
 
-> The right one should be:
-> 
->  ext4_put_super()
->   flush_work(&sbi->s_sb_upd_work)
-> 
->                     **kjournald2**
->                     jbd2_journal_commit_transaction()
->                     ...
->                     ext4_inode_error()
->                       /* s_journal_destorying is not set */
->                       if (journal && !s_journal_destorying)
->                         (schedule_work(s_sb_upd_work))  //can be here
-> 
->   ext4_journal_destroy()
->    /* set s_journal_destorying */
->    sbi->s_journal_destorying = true;
->    jbd2_journal_destroy()
->     journal->j_flags |= JBD2_UNMOUNT;
-> 
->                         (schedule_work(s_sb_upd_work))  //also can be here
-> 
->                                   **workqueue**
->                                    update_super_work()
->                                    journal = sbi->s_journal //get journal
->     kfree(journal)
->                                      jbd2_journal_start(journal) //journal UAF
->                                        start_this_handle()
->                                          BUG_ON(JBD2_UNMOUNT) //bugon here
-> 
-> 
-> So there are two problems here, the first one is the 'journal' UAF,
-> the second one is triggering JBD2_UNMOUNT flag BUGON.
+>  	HV_VP_STATE_PAGE_COUNT
+>  };
+>=20
+>  struct hv_input_map_vp_state_page {
+>  	u64 partition_id;
+>  	u32 vp_index;
+> -	u32 type; /* enum hv_vp_state_page_type */
+> +	u16 type; /* enum hv_vp_state_page_type */
+> +	union hv_input_vtl input_vtl;
+> +	union {
+> +		u8 as_uint8;
+> +		struct {
+> +			u8 map_location_provided : 1;
+> +			u8 reserved : 7;
+> +		};
+> +	} flags;
+> +	u64 requested_map_location;
+>  } __packed;
+>=20
+>  struct hv_output_map_vp_state_page {
+> @@ -365,7 +405,14 @@ struct hv_output_map_vp_state_page {
+>  struct hv_input_unmap_vp_state_page {
+>  	u64 partition_id;
+>  	u32 vp_index;
+> -	u32 type; /* enum hv_vp_state_page_type */
+> +	u16 type; /* enum hv_vp_state_page_type */
+> +	union hv_input_vtl input_vtl;
+> +	u8 reserved0;
+> +} __packed;
+> +
+> +struct hv_x64_apic_eoi_message {
+> +	__u32 vp_index;
+> +	__u32 interrupt_vector;
+>  } __packed;
+>=20
+>  struct hv_opaque_intercept_message {
+> @@ -515,6 +562,13 @@ struct hv_synthetic_timers_state {
+>  	u64 reserved[5];
+>  } __packed;
+>=20
+> +struct hv_async_completion_message_payload {
+> +	__u64 partition_id;
+> +	__u32 status;
+> +	__u32 completion_count;
+> +	__u64 sub_status;
+> +} __packed;
+> +
+>  union hv_input_delete_vp {
+>  	u64 as_uint64[2];
+>  	struct {
+> @@ -649,6 +703,57 @@ struct hv_input_set_vp_state {
+>  	union hv_input_set_vp_state_data data[];
+>  } __packed;
+>=20
+> +union hv_x64_vp_execution_state {
+> +	__u16 as_uint16;
+> +	struct {
+> +		__u16 cpl:2;
+> +		__u16 cr0_pe:1;
+> +		__u16 cr0_am:1;
+> +		__u16 efer_lma:1;
+> +		__u16 debug_active:1;
+> +		__u16 interruption_pending:1;
+> +		__u16 vtl:4;
+> +		__u16 enclave_mode:1;
+> +		__u16 interrupt_shadow:1;
+> +		__u16 virtualization_fault_active:1;
+> +		__u16 reserved:2;
+> +	} __packed;
+> +};
+> +
+> +struct hv_x64_intercept_message_header {
+> +	__u32 vp_index;
+> +	__u8 instruction_length:4;
+> +	__u8 cr8:4; /* Only set for exo partitions */
+> +	__u8 intercept_access_type;
+> +	union hv_x64_vp_execution_state execution_state;
+> +	struct hv_x64_segment_register cs_segment;
+> +	__u64 rip;
+> +	__u64 rflags;
+> +} __packed;
+> +
+> +union hv_x64_memory_access_info {
+> +	__u8 as_uint8;
+> +	struct {
+> +		__u8 gva_valid:1;
+> +		__u8 gva_gpa_valid:1;
+> +		__u8 hypercall_output_pending:1;
+> +		__u8 tlb_locked_no_overlay:1;
+> +		__u8 reserved:4;
+> +	} __packed;
+> +};
+> +
+> +struct hv_x64_memory_intercept_message {
+> +	struct hv_x64_intercept_message_header header;
+> +	__u32 cache_type; /* enum hv_cache_type */
+> +	__u8 instruction_byte_count;
+> +	union hv_x64_memory_access_info memory_access_info;
+> +	__u8 tpr_priority;
+> +	__u8 reserved1;
+> +	__u64 guest_virtual_address;
+> +	__u64 guest_physical_address;
+> +	__u8 instruction_bytes[16];
+> +} __packed;
+> +
+>  /*
+>   * Dispatch state for the VP communicated by the hypervisor to the
+>   * VP-dispatching thread in the root on return from HVCALL_DISPATCH_VP.
+> @@ -716,6 +821,7 @@ static_assert(sizeof(struct hv_vp_signal_pair_schedul=
+er_message)
+> =3D=3D
+>  #define HV_DISPATCH_VP_FLAG_SKIP_VP_SPEC_FLUSH		0x8
+>  #define HV_DISPATCH_VP_FLAG_SKIP_CALLER_SPEC_FLUSH	0x10
+>  #define HV_DISPATCH_VP_FLAG_SKIP_CALLER_USER_SPEC_FLUSH	0x20
+> +#define HV_DISPATCH_VP_FLAG_SCAN_INTERRUPT_INJECTION	0x40
+>=20
+>  struct hv_input_dispatch_vp {
+>  	u64 partition_id;
+> @@ -730,4 +836,18 @@ struct hv_output_dispatch_vp {
+>  	u32 dispatch_event; /* enum hv_vp_dispatch_event */
+>  } __packed;
+>=20
+> +struct hv_input_modify_sparse_spa_page_host_access {
+> +	u32 host_access : 2;
+> +	u32 reserved : 30;
+> +	u32 flags;
+> +	u64 partition_id;
+> +	u64 spa_page_list[];
+> +} __packed;
+> +
+> +/* hv_input_modify_sparse_spa_page_host_access flags */
+> +#define HV_MODIFY_SPA_PAGE_HOST_ACCESS_MAKE_EXCLUSIVE  0x1
+> +#define HV_MODIFY_SPA_PAGE_HOST_ACCESS_MAKE_SHARED     0x2
+> +#define HV_MODIFY_SPA_PAGE_HOST_ACCESS_LARGE_PAGE      0x4
+> +#define HV_MODIFY_SPA_PAGE_HOST_ACCESS_HUGE_PAGE       0x8
+> +
+>  #endif /* _HV_HVHDK_H */
+> diff --git a/include/hyperv/hvhdk_mini.h b/include/hyperv/hvhdk_mini.h
+> index f8a39d3e9ce6..42e7876455b5 100644
+> --- a/include/hyperv/hvhdk_mini.h
+> +++ b/include/hyperv/hvhdk_mini.h
+> @@ -36,6 +36,52 @@ enum hv_scheduler_type {
+>  	HV_SCHEDULER_TYPE_MAX
+>  };
+>=20
+> +/* HV_STATS_AREA_TYPE */
+> +enum hv_stats_area_type {
+> +	HV_STATS_AREA_SELF =3D 0,
+> +	HV_STATS_AREA_PARENT =3D 1,
+> +	HV_STATS_AREA_INTERNAL =3D 2,
+> +	HV_STATS_AREA_COUNT
+> +};
+> +
+> +enum hv_stats_object_type {
+> +	HV_STATS_OBJECT_HYPERVISOR		=3D 0x00000001,
+> +	HV_STATS_OBJECT_LOGICAL_PROCESSOR	=3D 0x00000002,
+> +	HV_STATS_OBJECT_PARTITION		=3D 0x00010001,
+> +	HV_STATS_OBJECT_VP			=3D 0x00010002
+> +};
+> +
+> +union hv_stats_object_identity {
+> +	/* hv_stats_hypervisor */
+> +	struct {
+> +		u8 reserved[15];
+> +		u8 stats_area_type;
+> +	} __packed hv;
+> +
+> +	/* hv_stats_logical_processor */
+> +	struct {
+> +		u32 lp_index;
+> +		u8 reserved[11];
+> +		u8 stats_area_type;
+> +	} __packed lp;
+> +
+> +	/* hv_stats_partition */
+> +	struct {
+> +		u64 partition_id;
+> +		u8  reserved[7];
+> +		u8  stats_area_type;
+> +	} __packed partition;
+> +
+> +	/* hv_stats_vp */
+> +	struct {
+> +		u64 partition_id;
+> +		u32 vp_index;
+> +		u16 flags;
+> +		u8  reserved;
+> +		u8  stats_area_type;
+> +	} __packed vp;
+> +};
+> +
+>  enum hv_partition_property_code {
+>  	/* Privilege properties */
+>  	HV_PARTITION_PROPERTY_PRIVILEGE_FLAGS			=3D 0x00010000,
+> @@ -47,19 +93,45 @@ enum hv_partition_property_code {
+>=20
+>  	/* Compatibility properties */
+>  	HV_PARTITION_PROPERTY_PROCESSOR_XSAVE_FEATURES		=3D
+> 0x00060002,
+> +	HV_PARTITION_PROPERTY_XSAVE_STATES                      =3D 0x00060007,
+>  	HV_PARTITION_PROPERTY_MAX_XSAVE_DATA_SIZE		=3D 0x00060008,
+>  	HV_PARTITION_PROPERTY_PROCESSOR_CLOCK_FREQUENCY		=3D
+> 0x00060009,
+>  };
+>=20
+> +enum hv_snp_status {
+> +	HV_SNP_STATUS_NONE =3D 0,
+> +	HV_SNP_STATUS_AVAILABLE =3D 1,
+> +	HV_SNP_STATUS_INCOMPATIBLE =3D 2,
+> +	HV_SNP_STATUS_PSP_UNAVAILABLE =3D 3,
+> +	HV_SNP_STATUS_PSP_INIT_FAILED =3D 4,
+> +	HV_SNP_STATUS_PSP_BAD_FW_VERSION =3D 5,
+> +	HV_SNP_STATUS_BAD_CONFIGURATION =3D 6,
+> +	HV_SNP_STATUS_PSP_FW_UPDATE_IN_PROGRESS =3D 7,
+> +	HV_SNP_STATUS_PSP_RB_INIT_FAILED =3D 8,
+> +	HV_SNP_STATUS_PSP_PLATFORM_STATUS_FAILED =3D 9,
+> +	HV_SNP_STATUS_PSP_INIT_LATE_FAILED =3D 10,
+> +};
+> +
+>  enum hv_system_property {
+>  	/* Add more values when needed */
+>  	HV_SYSTEM_PROPERTY_SCHEDULER_TYPE =3D 15,
+> +	HV_DYNAMIC_PROCESSOR_FEATURE_PROPERTY =3D 21,
+> +};
+> +
+> +enum hv_dynamic_processor_feature_property {
+> +	/* Add more values when needed */
+> +	HV_X64_DYNAMIC_PROCESSOR_FEATURE_MAX_ENCRYPTED_PARTITIONS =3D 13,
+> +	HV_X64_DYNAMIC_PROCESSOR_FEATURE_SNP_STATUS =3D 16,
+>  };
+>=20
+>  struct hv_input_get_system_property {
+>  	u32 property_id; /* enum hv_system_property */
+>  	union {
+>  		u32 as_uint32;
+> +#if IS_ENABLED(CONFIG_X86)
+> +		/* enum hv_dynamic_processor_feature_property */
+> +		u32 hv_processor_feature;
+> +#endif
+>  		/* More fields to be filled in when needed */
+>  	};
+>  } __packed;
+> @@ -67,9 +139,28 @@ struct hv_input_get_system_property {
+>  struct hv_output_get_system_property {
+>  	union {
+>  		u32 scheduler_type; /* enum hv_scheduler_type */
+> +#if IS_ENABLED(CONFIG_X86)
+> +		u64 hv_processor_feature_value;
+> +#endif
+>  	};
+>  } __packed;
+>=20
+> +struct hv_input_map_stats_page {
+> +	u32 type; /* enum hv_stats_object_type */
+> +	u32 padding;
+> +	union hv_stats_object_identity identity;
+> +} __packed;
+> +
+> +struct hv_output_map_stats_page {
+> +	u64 map_location;
+> +} __packed;
+> +
+> +struct hv_input_unmap_stats_page {
+> +	u32 type; /* enum hv_stats_object_type */
+> +	u32 padding;
+> +	union hv_stats_object_identity identity;
+> +} __packed;
+> +
+>  struct hv_proximity_domain_flags {
+>  	u32 proximity_preferred : 1;
+>  	u32 reserved : 30;
+> --
+> 2.34.1
 
-Indeed, there's a possible UAF here as well.
-
-> 
-> >>>
-> >>> As for the fix, how about we do something like this:
-> >>>
-> >>>   ext4_put_super()
-> >>>
-> >>>    flush_work(&sbi->s_sb_upd_work)
-> >>>    destroy_workqueue(sbi->rsv_conversion_wq);
-> >>>
-> >>>    ext4_journal_destroy()
-> >>>     /* set s_journal_destorying */
-> >>>     sbi->s_journal_destorying = true;
-> >>>
-> >>>    /* trigger a commit and wait for it to complete */
-> >>>
-> >>>     flush_work(&sbi->s_sb_upd_work)
-> >>>
-> >>>     jbd2_journal_destroy()
-> >>>      journal->j_flags |= JBD2_UNMOUNT;
-> >>>  
-> >>>                                         jbd2_journal_start()
-> >>>                                          start_this_handle()
-> >>>                                            BUG_ON(JBD2_UNMOUNT)
-> >>>
-> >>> Still giving this codepath some thought but seems like this might just
-> >>> be enough to fix the race. Thoughts on this?
-> >>>
-> 
-> I think this solution should work, the forced commit and flush_work()
-> should ensure that the last transaction is committed and that the
-> potential work is done.
-> 
-> Besides, the s_journal_destorying flag is set and check concurrently
-> now, so we need WRITE_ONCE() and READ_ONCE() for it. Besides, what
-> about adding a new flag into sbi->s_mount_state instead of adding
-> new s_journal_destorying?
-
-Right, that makes sence. I will incorporate these changes in the next 
-revision.
-
-Thanks for the review,
-ojaswin
-
-> 
-> Thanks,
-> Yi.
-> 
-> >>>
-> >>>>>
-> >>>>>>  	err = jbd2_journal_destroy(journal);
-> >>>>>>  	sbi->s_journal = NULL;
-> >>>>>>  
-> >>>>>> diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> >>>>>> index 8ad664d47806..31552cf0519a 100644
-> >>>>>> --- a/fs/ext4/super.c
-> >>>>>> +++ b/fs/ext4/super.c
-> >>>>>> @@ -706,7 +706,7 @@ static void ext4_handle_error(struct super_block *sb, bool force_ro, int error,
-> >>>>>>  		 * constraints, it may not be safe to do it right here so we
-> >>>>>>  		 * defer superblock flushing to a workqueue.
-> >>>>>>  		 */
-> >>>>>> -		if (continue_fs && journal)
-> >>>>>> +		if (continue_fs && journal && !EXT4_SB(sb)->s_journal_destorying)
-> >>>>>>  			schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
-> >>>>>>  		else
-> >>>>>>  			ext4_commit_super(sb);
-> >>>>>> @@ -5311,6 +5311,8 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
-> >>>>>>  	spin_lock_init(&sbi->s_error_lock);
-> >>>>>>  	INIT_WORK(&sbi->s_sb_upd_work, update_super_work);
-> >>>>>>  
-> >>>>>> +	sbi->s_journal_destorying = false;
-> >>>>>> +
-> >>>>>>  	err = ext4_group_desc_init(sb, es, logical_sb_block, &first_not_zeroed);
-> >>>>>>  	if (err)
-> >>>>>>  		goto failed_mount3;
-> >>>>>
-> >>>
-> >>
-> > 
-> 
 
