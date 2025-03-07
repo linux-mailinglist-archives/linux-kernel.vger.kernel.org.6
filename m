@@ -1,157 +1,134 @@
-Return-Path: <linux-kernel+bounces-550593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70680A561B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:23:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78A1EA561B9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:25:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C82853B4DD4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:23:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D74F31893CF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6781A3031;
-	Fri,  7 Mar 2025 07:23:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ADBE1A314C;
+	Fri,  7 Mar 2025 07:25:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y3vQW+Sa"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XOM+qAvu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5A71A3146
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 07:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0169157A48;
+	Fri,  7 Mar 2025 07:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741332207; cv=none; b=TL5RmA7ZosZL3pBLJFmXt+AQstag7sHd6uAkH0No6wYonhT5q4UaW61iarUDBQmxdr3U58pYSYK7Hju2+/WRVQGz37PH/cixjUatS4rtx1bDRkUXNjCctTBsmc9ATu2nJy+TM9kRYZBsES1LfdGFzQWhv5xsE5AgR/vLlGG+WC4=
+	t=1741332334; cv=none; b=OcZCleeH0B/I7N1Y1wavC2iXX7j4iR09eMji9L16YksUKG5/95k3R2LumzNaXaIBCY0NWp3HvfszqREX8z3/NPAtdd8h8AJvIA1V1iEghoElMgjp5lmzcnJ85cct8zUPS3ccFUPXeBu1qPpAxbZ0ZLpT/wGYDu1tfh/RpKorJiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741332207; c=relaxed/simple;
-	bh=QqafGuAhOIuebi5LncashDc9XDAZ2JG7WWMLwyg4leQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uBa7EFTY/hZouPODTQZ1Nb3alZqfYj0fbco0HRC2JUeJ7TytuDGGR+eJjKk7Ozml9X+617dUp3cmtPkp6c4yrQKK4sou8H4/Qq0aBYCimaPa1cGzAqRVKs7OGnNG5yntRPpccrFfHjJYFMKKS+iTEsghfy2V3cm2Rtv8+qR7gfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y3vQW+Sa; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-223785beedfso27266065ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 23:23:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741332205; x=1741937005; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VCjDatYdwCCsM/WfG3Y3BLozY6pEAZzndrpXaKUoI/0=;
-        b=Y3vQW+SaJy/gHv6ZVcpj26Nz/nPLhjopvhJCzdQrwcq2voCbSuX4omSWT8qy7xAoU6
-         waEKUYLL6qLvXMNhc2pgzKAoT3Pa6ysytjhU0y77D7gcixTQlro4lqLgBXFxcLgMxM9X
-         T2/+Vm0Py0Is+em8EOeTL4zwUAeMMX6gSuiBc3VkbCHT/Mbj4NdmlkCPGT3eoDyJyPfg
-         cfI1r7SwWj87rjhLH0ylAMRoxLDdWIzztZ21+ZD/NISMBUfIxxhVgX4ruWHalnguGygF
-         p6d2jb+NkIyF8ibwdYKnfldV8GF71x4Yot1B8DRwm+g9ZAVabve/YWx7RBtZ6ZNYx2gz
-         fH9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741332205; x=1741937005;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VCjDatYdwCCsM/WfG3Y3BLozY6pEAZzndrpXaKUoI/0=;
-        b=pB7mR3e6KZXlPMHoL+k8SL5AF5DMYnQ3gBdmbRZPpF1D6pIoXXshO3XDq1+3hfJXwz
-         Dv34B7kqCI55ML5oopomDooZFuyJmotToDukt/tla3c5W+QjblSomujMRYUZQFywdd6r
-         3+vCoarkG0oc1q0tOfFStmgYMKIXUV3HvLkej98QWMom5IA4FXoqiwwpYZK/b/68VRHL
-         q1j9istJQentWd0IM9mb4vMWT9lsL2vYuNR4KzyDFHA151S9A9gZmFwJ8X6NXBu53kAY
-         Q5jcFT3CZqSA5u1LXhvzYtkOLtUaa28p0tnpCoTO9MtKnZuZ2cZ6YeEWqUvo//YGCgpa
-         c/Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+txaM2l2rOhvAVUwwBH4jXpQomJqCXzMbOCHMQrFbMRciAHQ6yn+WfMVEGbq20v3fi6OeTHcUuMjVNoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHLrtIg0XX0qYIrqd0GBfe/lF3mRN4vJ/VK5A7jagXzWSDhcYp
-	6Zvqg3iD+A/DQkRyL8HRiaVXsTy42FRgZduBu8idJFsR+Q+KQKWYfm7ZryRQXck=
-X-Gm-Gg: ASbGncsCDeWaZp+R5aBJS8H/IrU4ylBl7nE9A7YMcjhK+Z8nOMUrPsgXIpGA6cqQYFi
-	TOXzYsVz1zQY8cdcmyn08eXmuSQUTnTKCtI1rrhb8r8E2rCZ+9fLfTXX4C14xEBz6GrXk0sU7bc
-	1VM43guXXEHyFMn18fprAhJBGKQ1Ep4BAQoHCf3tleF5rG8zI9LgF/N8pzauEBSbCS4Z2O2gECN
-	QIydPb8jyN+Iow4Pnu8S9HRJden5qZnU3Vdur0/NxWqRqdNzo4DH7yCaZW3pwIgFYoKWMW57FHV
-	xx7FV9LtyYCERk41TZhiq3O+B0cI8Dfc7ckmODsmRSu4LQ==
-X-Google-Smtp-Source: AGHT+IGAtNyb2kEEWj4EBD2NQHNijL6RTt39L6X5JPOWRj3HjNXnhSpRkQZgMznJ39lNF6si/KC6VQ==
-X-Received: by 2002:a17:903:192:b0:224:1ec0:8a16 with SMTP id d9443c01a7336-22428a97f21mr36812615ad.21.1741332205491;
-        Thu, 06 Mar 2025 23:23:25 -0800 (PST)
-Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109df225sm23794445ad.47.2025.03.06.23.23.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 23:23:24 -0800 (PST)
-Date: Fri, 7 Mar 2025 12:53:22 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>
-Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
-Message-ID: <20250307072322.5w2i7dxtcaani2ok@vireshk-i7>
-References: <cover.1740995194.git.viresh.kumar@linaro.org>
- <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
- <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com>
- <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
- <CANiq72=sU1sHvamC5REFPEC1aOVdZw9EKdxOgkUYESTR2yh3iQ@mail.gmail.com>
- <20250305114659.k5pptszvmusblynm@vireshk-i7>
- <2c17361891c4eb7edd947e5384cc9741.sboyd@kernel.org>
- <20250306044028.5d2w4og2juclktqs@vireshk-i7>
- <1ad3e7e2f8f2fc375b472d7676e47f5d.sboyd@kernel.org>
+	s=arc-20240116; t=1741332334; c=relaxed/simple;
+	bh=EMy2kONyybpKUPYU2Wc0GcuzJDOy4VnHqQVqpWCs5W4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KZe8WUMI6YULHLjxCi5tGdWgaw2dekrAy+On7ifWlM/UIPtQbz7juuhWW6k1HUPI0BTE+6zVu54Y/N+SCUg3jJaFNa+Jah8Nfge94pZi5RVDitVkF+o++Vlzb5BwsTPpeA1xr7+1nMRd1cgOqokL2vIN+wjxp+jqNW74Rj+gYl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XOM+qAvu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6143C4CED1;
+	Fri,  7 Mar 2025 07:25:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741332334;
+	bh=EMy2kONyybpKUPYU2Wc0GcuzJDOy4VnHqQVqpWCs5W4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XOM+qAvu+9g4ZaEzKLIYeKwVIKiN1jl0Fdwug8pIOfoSAP23OThdi06IwHmTHWxHy
+	 rweGADTAunMkZ7Mp04f7uxEq9yTWBNgGEQhe16o8rEBmLcT3nTVdHT5mVXJONZb/dY
+	 469l4d/lV9VaQL72GXDDlaI8EpbGvp9fkU/aclZG5y9NQe9miszqXTNFPk8zb2bgwg
+	 wZhMoero8YP/23nf58Qg3QEmxgPRyhrVs6e06C+9RO0KV/xtoZHBHSNpaGxqreLTfR
+	 hwbK83tcKJ4zTB5KxPuVNvz1p2daQlmbUz2n9bj1GyWEySdKD7p8KIu0qtvEPyI8I8
+	 uk5XH0xjMxUBQ==
+Message-ID: <52c99f0a-670c-4e76-a30d-cdb9cb0e83e7@kernel.org>
+Date: Fri, 7 Mar 2025 08:25:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1ad3e7e2f8f2fc375b472d7676e47f5d.sboyd@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] tty: serial: fsl_lpuart: Use u32 for register
+ variables
+To: Sherry Sun <sherry.sun@nxp.com>, gregkh@linuxfoundation.org
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, shenwei.wang@nxp.com
+References: <20250307022547.1000293-1-sherry.sun@nxp.com>
+ <20250307022547.1000293-2-sherry.sun@nxp.com>
+Content-Language: en-US
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <20250307022547.1000293-2-sherry.sun@nxp.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 06-03-25, 12:58, Stephen Boyd wrote:
-> Quoting Viresh Kumar (2025-03-05 20:40:28)
-> > 2. clk is enabled / disabled from different routines:
-> > 
-> >    In this case the caller needs to call dismiss to avoid the automatic freeing
-> >    of resource. Alternatively the returned value can be stored too somewhere,
-> >    but I am not sure if it what users will end up doing.
-> > 
-> >    fn probe(...) -> Result {
-> >         clk.enable()?.dismiss();
+On 07. 03. 25, 3:25, Sherry Sun wrote:
+> Use u32 rather than unsigned long for register variables for clarity and
+> consistency.
 > 
-> Yuck. Can't we tie the lifetime of the clk to the consumer device driver
-> so that when the driver is unbound the clk is dropped
+> Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
+> ---
+>   drivers/tty/serial/fsl_lpuart.c | 54 ++++++++++++++++-----------------
+>   1 file changed, 27 insertions(+), 27 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+> index 4dc2f3e2b8e0..888d744494d6 100644
+> --- a/drivers/tty/serial/fsl_lpuart.c
+> +++ b/drivers/tty/serial/fsl_lpuart.c
+> @@ -450,7 +450,7 @@ static void lpuart_stop_tx(struct uart_port *port)
+>   
+>   static void lpuart32_stop_tx(struct uart_port *port)
+>   {
+> -	unsigned long temp;
+> +	u32 temp;
 
-Yes, that is how it would work right now, the driver needs to store the clk
-instance locally. As soon as Clk would be dropped, clk_put() will be called.
+This patch is fine per se. But could you also rename these temps to 
+something sane? (In a separate patch.) Like ctrl in this case.
 
-> and it decrements all the enables/prepares and puts the clk with clk_put()?
-
-Miguel, how do you suggest we do this ?
-
-> A ScopeGuard could probably be used for that on the struct Clk itself,
-
-Not sure if I misunderstood that, but as soon as Clk goes out of scope,
-clk_put() will be called from drop() anyway.
-
-> but we would
-> want to track the enables and prepares in the rust wrapper code until
-> the struct clk can be inspected directly.
-
-So Rust abstraction needs to do some sort of refcounting for this I believe. Not
-sure if we want to do it and if yes, then how.
-
-> The problem is we don't know how a platform may implement the clk API,
-> and CCF hasn't taken over the entire kernel yet so we can't rely on some
-> private API between the CCF and the rust wrapper to know how many
-> clk_disable()s to call, or even rely on clk_put() to do the work for us.
-> Can the rust wrappers depend on CONFIG_COMMON_CLK? If they did then we
-> could have some private API between rust and CCF. We probably don't want
-> rust code to _not_ use COMMON_CLK underneath so we can encourage the
-> last few holdouts to migrate to CCF. I'd lean towards depending on
-> COMMON_CLK for the rust wrappers in this case.
-
-Sure.
-
+thanks,
 -- 
-viresh
+js
+suse labs
 
