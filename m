@@ -1,142 +1,178 @@
-Return-Path: <linux-kernel+bounces-552017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FA49A57410
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:54:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1D41A57415
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:55:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DFEC189A0DE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:55:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CB951899F5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:55:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D84820CCEA;
-	Fri,  7 Mar 2025 21:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A771E1DFA;
+	Fri,  7 Mar 2025 21:55:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gVxbuT07"
-Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5FB208973
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 21:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="SnZFHeoT"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A9DF2080FD;
+	Fri,  7 Mar 2025 21:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741384488; cv=none; b=Cqjb4521flgVZP3UrmNsSqVMFDgqmP/V6QDxh9rgILNBJJWK+zrCzblqXQyDOTOgIpEdRi9oAAolnI4RMMGyhobMw9FpwPRbpjn0p2dX6XqIJuuuHpZtTI/01/kKsZFSbWJIZFpm8hwekNzXGAwhx+unUxlkSV2KhYNmunnOc5s=
+	t=1741384526; cv=none; b=gDB7UthQqr1VbomEuN4Z6LQJg+tcH2LL6m6jLljkJfjaqRjK2XJYbbJp17qLBxctu7BzKfC8Dy6I1rZ2kxHimdSEMDxGRF/9yZut2mJsqdlRCoj67JygIJwTQcyFSkv1iAOvByVHlGeaLUz+/h6XZ5znK011OcNs3ZI8+kVS73o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741384488; c=relaxed/simple;
-	bh=DUq0dhWWcl4Fdo46I96OPoN1n8SN5YDhOpwqzdC0/BE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GwmXAYZ7686TXmu2iiXXZK5sUtoafZ49Zrv61aLvQ/dfFqEPlrmDOC2O8VSsfF+FKQJTKwIxzS0NsWJaYJXdZe+ve+MztmyuoemcwezFD5zd1q8axWpmJn/6m3SLnvuUkn2gTlG928Kr2lmv2fpmm2DHQB5mKZP9kA0gG02eYqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=gVxbuT07; arc=none smtp.client-ip=209.85.161.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5fc0ba48f10so232017eaf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 13:54:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741384486; x=1741989286; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6GDGhBTwqKwJR63pSInFZQnWeDj4qMLJQJdQjXQs4y8=;
-        b=gVxbuT07X/ZBwFj2RvWEha7r+lF8EZT3obnDniWVLeBpPX/5dZVGbBeE4Kh35Qc1x3
-         SaGFFJTgnRTRlUcwgvmDHbCSzsCeY4NlqgqMYJ7rutf+Ij7e6T3/LZR70iR506jac48d
-         Hogym33CX9/6dvc3r0KdiAEb/hCR1By96C1t4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741384486; x=1741989286;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6GDGhBTwqKwJR63pSInFZQnWeDj4qMLJQJdQjXQs4y8=;
-        b=TQa8N6qgYP64XLzWQBis0xiYOLf01826P9SLH0fz2CSWAIXvF1LHYu7EoRu6t200au
-         MQpI1zK1ojftEmYAfi3G8ohL5PpzlfSF2S9Ov5oug/WS5rH+ygjMMLy/0dy6ayQtyBrQ
-         dAZyxSQXTlvCVxE9n1yUSZrDjROgpm210YxKaWKJhRscpogl+BUWSQVAzRKD8TYjTeRC
-         TNoTW/nIFojIDutsAZrsXQgPAHVVwdA6lzk0R/L/PRfoh5AHH5oIRsCv6JmlKwLxG56M
-         JD5Kt3vnuCdtkmHgQTe76j3sc4p+CHTX2/WNtxqR2ugdbFWEGpoNRbV3Rry8CMM0j5ah
-         t3oA==
-X-Forwarded-Encrypted: i=1; AJvYcCXOGCR2Aydj9R0UhY6Wd6iwcqNHv+WtATtt+QkBR3qA7f+z/JWL4+GPhajDKDeiiy1Xg4gAXc011jdCUFo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZmxiFQoHDXDCGTmDq6VS4EZxNJWs4Ej7CVUc1wCyg03s8Sb2j
-	jLRhUhA5LVYXEV/0cTXwZPOQ/E7fz80nM/cXmnjd4FBRlAbeqYfUWvOmTHOHtHbDSzx4oeeKGng
-	doOwCkuAu2O2E9bgCK0Oa31ULwjAbemYd7JtZ
-X-Gm-Gg: ASbGncv4f0zFh5kGGH0yDfZzV3xWqPsmoyOdmQyekz7dUYv7wFldHq7Uymm9ZNfGtKC
-	2wyIbZpYAAu2a0fMiItAjjkBOv98ehuPDpK4IfdvhAve0fkYEaG1iLbJTOlFFasTFN3yjiRF/zc
-	qrNzF1kP6gIMs9TvbqNnxjaWECX0cOam8GadRVtts/+qDLA80coLCNmUw=
-X-Google-Smtp-Source: AGHT+IGlC5WFOviLS+aZjozNYu1sVY7gzueAZ2m+Z+xUHKx5Gy02hQ9Z+04BilpVmrFI9kGHkQCcYyJSwp84oI3GLXQ=
-X-Received: by 2002:a05:6871:106:b0:29e:37d7:3f56 with SMTP id
- 586e51a60fabf-2c286bf4e75mr100658fac.12.1741384486282; Fri, 07 Mar 2025
- 13:54:46 -0800 (PST)
+	s=arc-20240116; t=1741384526; c=relaxed/simple;
+	bh=lClzBMRdUULwzoMLwEqwrMgSFr14uRCRgTFs1G4m8e0=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=QIjcB8sA7a6wiIFMUlIZiWGhJsfKA3SayTqSaWqbPZhXSP7gCbReIr4I1hS0IRm4x5CuqlGVBe3q/gaB4NW3kPRL9s7WOdZBk7lFb4o2Zl0537uUCJ2KoG+H1kT3XIUVqosSrnQ7YlWNAkNwk/YY7Z43HdhExGcVg4/yLxYISVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=SnZFHeoT; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [192.168.35.166] (c-24-22-154-137.hsd1.wa.comcast.net [24.22.154.137])
+	by linux.microsoft.com (Postfix) with ESMTPSA id E30EB2038F3B;
+	Fri,  7 Mar 2025 13:55:23 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com E30EB2038F3B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741384524;
+	bh=BYiqT5jddIJjKfv2s/zeQhMm81+sjONX7rRhWau6sX8=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=SnZFHeoT4mDZsn5Rlyo65kO8j7OrCyFjXp+yUsoaUMwBj04Pv8Hr4YbS0zY1M5JBI
+	 KzbKWXQF8/IhMnTVs9LQmBaZigJf+/bNz8HHHuNKFlreUORpgb5AXo51iKtcbOmmA6
+	 dV2IMIxGY2uY01fbJKBPdec4cij7cYKcHmJG8rSE=
+Message-ID: <9cd97b0e-dfd3-4923-961e-00ba09eb6cef@linux.microsoft.com>
+Date: Fri, 7 Mar 2025 13:55:22 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307151426.5f3c0c39@canb.auug.org.au> <20250306235802.ff0f406acd0117bcfe927082@linux-foundation.org>
-In-Reply-To: <20250306235802.ff0f406acd0117bcfe927082@linux-foundation.org>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Fri, 7 Mar 2025 13:54:34 -0800
-X-Gm-Features: AQ5f1JrFT21uli_pAbssptGcyq50T6bNIBhPVXwP9VRlXL7ayRTwCxJEEx9l7ig
-Message-ID: <CABi2SkWkm+NAOsk8UY+C+SfY7b7p4N4=CVkiXdMeNX7cAPwW7A@mail.gmail.com>
-Subject: Re: linux-next: manual merge of the tip tree with the mm tree
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>, Nam Cao <namcao@linutronix.de>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: Michael Kelley <mhklinux@outlook.com>, eahariha@linux.microsoft.com,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "x86@kernel.org" <x86@kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+ "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+ "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
+ <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
+ "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "hpa@zytor.com" <hpa@zytor.com>,
+ "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+ "joro@8bytes.org" <joro@8bytes.org>,
+ "robin.murphy@arm.com" <robin.murphy@arm.com>, "arnd@arndb.de"
+ <arnd@arndb.de>,
+ "jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+ "muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+ "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+ "mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
+ "ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
+ "apais@linux.microsoft.com" <apais@linux.microsoft.com>,
+ "Tianyu.Lan@microsoft.com" <Tianyu.Lan@microsoft.com>,
+ "stanislav.kinsburskiy@gmail.com" <stanislav.kinsburskiy@gmail.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "vkuznets@redhat.com" <vkuznets@redhat.com>,
+ "prapal@linux.microsoft.com" <prapal@linux.microsoft.com>,
+ "muislam@microsoft.com" <muislam@microsoft.com>,
+ "anrayabh@linux.microsoft.com" <anrayabh@linux.microsoft.com>,
+ "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org"
+ <lenb@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
+Subject: Re: [PATCH v5 03/10] arm64/hyperv: Add some missing functions to
+ arm64
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1740611284-27506-4-git-send-email-nunodasneves@linux.microsoft.com>
+ <5f3d660d-fe2e-4ac1-94a7-66d6c8ffe579@linux.microsoft.com>
+ <2fee888a-4f81-40aa-9545-617a49a7fb30@linux.microsoft.com>
+ <SN6PR02MB41579F4147561B96A2C1C057D4CA2@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <7f689725-f676-4465-974d-ca2477d445f7@linux.microsoft.com>
+From: Easwar Hariharan <eahariha@linux.microsoft.com>
+Content-Language: en-US
+In-Reply-To: <7f689725-f676-4465-974d-ca2477d445f7@linux.microsoft.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 6, 2025 at 11:58=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
->
-> On Fri, 7 Mar 2025 15:14:26 +1100 Stephen Rothwell <sfr@canb.auug.org.au>=
- wrote:
->
-> > Hi all,
-> >
-> > Today's linux-next merge of the tip tree got a conflict in:
-> >
-> >   arch/arm64/kernel/vdso.c
-> >
-> > between commit:
-> >
-> >   6742f72d084b ("mseal sysmap: enable arm64")
-> >
-> > from the mm tree and commit:
-> >
-> >   0b3bc3354eb9 ("arm64: vdso: Switch to generic storage implementation"=
-)
-> >
-> > from the tip tree.
-> >
-> > I didn't fix it up - couldn't figure it out, so just reverted the forme=
-r
-> > for today as it was simpler.
-> >
-> > It looks like VM_SEALED_SYSMAP needs to be added to
-> > vdso_install_vvar_mapping(), but that is generic across all the
-> > architectures using GENERIC_VDSO_DATA_STORE.
-> >
-> > and we have the same between commit
-> >
-> >   035f34159d61 ("mseal sysmap: enable x86-64")
-> >
-> > from the mm tre and commit
-> >
-> >   dafde29605eb ("x86/vdso: Switch to generic storage implementation")
-> >
-> > So I have reverted 035f34159d61 as well.
->
-> Thanks.
->
-> How about this?  I scooped Thomas's series into mm.git and merged
-> Peter's mseal series on top.  I'll sort this out during the merge
-> window, after the tip tree has merged.
->
-> Pushed out now.  Peter, please check my handiwork.
+On 3/7/2025 1:36 PM, Nuno Das Neves wrote:
+> On 3/6/2025 11:05 AM, Michael Kelley wrote:
+>> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Thursday, February 27, 2025 4:21 PM
+>>>
+>>> On 2/26/2025 9:56 PM, Easwar Hariharan wrote:
+>>>> On 2/26/2025 3:07 PM, Nuno Das Neves wrote:
+>>>>> These non-nested msr and fast hypercall functions are present in x86,
+>>>>> but they must be available in both architetures for the root partition
+>>>>
+>>>> nit: *architectures*
+>>>>
+>>>>
+>>> Thanks!
+>>>
+>>>>> driver code.
+>>>>>
+>>>>> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+>>>>> ---
+>>>>>  arch/arm64/hyperv/hv_core.c       | 17 +++++++++++++++++
+>>>>>  arch/arm64/include/asm/mshyperv.h | 12 ++++++++++++
+>>>>>  include/asm-generic/mshyperv.h    |  2 ++
+>>>>>  3 files changed, 31 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm64/hyperv/hv_core.c b/arch/arm64/hyperv/hv_core.c
+>>>>> index 69004f619c57..e33a9e3c366a 100644
+>>>>> --- a/arch/arm64/hyperv/hv_core.c
+>>>>> +++ b/arch/arm64/hyperv/hv_core.c
+>>>>> @@ -53,6 +53,23 @@ u64 hv_do_fast_hypercall8(u16 code, u64 input)
+>>>>>  }
+>>>>>  EXPORT_SYMBOL_GPL(hv_do_fast_hypercall8);
+>>>>>
+>>>>> +/*
+>>>>> + * hv_do_fast_hypercall16 -- Invoke the specified hypercall
+>>>>> + * with arguments in registers instead of physical memory.
+>>>>> + * Avoids the overhead of virt_to_phys for simple hypercalls.
+>>>>> + */
+>>>>> +u64 hv_do_fast_hypercall16(u16 code, u64 input1, u64 input2)
+>>>>> +{
+>>>>> +	struct arm_smccc_res	res;
+>>>>> +	u64			control;
+>>>>> +
+>>>>> +	control = (u64)code | HV_HYPERCALL_FAST_BIT;
+>>>>> +
+>>>>> +	arm_smccc_1_1_hvc(HV_FUNC_ID, control, input1, input2, &res);
+>>>>> +	return res.a0;
+>>>>> +}
+>>>>> +EXPORT_SYMBOL_GPL(hv_do_fast_hypercall16);
+>>>>> +
+>>>>
+>>>> I'd like this to have been in arch/arm64/include/asm/mshyperv.h like its x86
+>>>> counterpart, but that's just my personal liking of symmetry. I see why it's here
+>>>> with its slow and 8-byte brethren.
+>>>>
+>>> Good point, I don't see a good reason this can't be in the header.
+>>
+>> I was trying to remember if there was some reason I originally put
+>> hv_do_hypercall() and hv_do_fast_hypercall8() in the .c file instead of
+>> the header like on x86. But I don't remember a reason. During
+>> development, the code changed several times, and there might have
+>> been a reason that didn't persistent in the version that was finally
+>> accepted upstream.
+>>
+>> My only comment is that hv_do_hypercall() and the 8 and 16 "fast"
+>> versions should probably stay together one place on the arm64 side,
+>> even if it doesn't match x86.
+>>
+> 
+> I think I'll just keep them together here for now then. They
+> could be moved to the header in future if it seems worth doing.
+> 
 
-In case this helps, I checked mm-unstable and the merge looks good to
-me, thanks Andrew !
+I was really hoping the answer here would be to move all of them together to the header,
+but oh well.
 
--Jeff
+<snip>
 
