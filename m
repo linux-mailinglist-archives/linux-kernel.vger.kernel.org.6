@@ -1,185 +1,143 @@
-Return-Path: <linux-kernel+bounces-551987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90045A573C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:39:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B10DCA573DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:43:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8507171C0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:39:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F0F13B0C66
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:43:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44842580DD;
-	Fri,  7 Mar 2025 21:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04EA925C710;
+	Fri,  7 Mar 2025 21:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="I19wXnmt"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0002580DB;
-	Fri,  7 Mar 2025 21:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZQd26g2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617CB2580DD;
+	Fri,  7 Mar 2025 21:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741383541; cv=none; b=Aj+naqrSxf8QjvBmsCxkXfkchiAsADUbeJV8zn7RjXlxBklWTdvt3bHgmpAHKtrOGfZUhUSqMWPmO+XquuJYdQLs6uA3wKhomzSUzHM7SjhUgLJw4kUc2kIuFK9yAog5qwp1qciRHo3TxX8/wtz5LOV3vEHrZGVR2Ca8W5xN6YY=
+	t=1741383690; cv=none; b=rwOtjAPVXH51pUvwwWRYMlPtlPKf7Zp7dCYjZmfs24KisifCa4JQbNWAVH7X+fDfMQqpskLFq/zRdSyNoi6WKKMqIGUci+4vzS8dNe7+jLzup85NbIIumRK7rWi5qi/OO0eBX4bBi8qSYIAL1AqJt2ZkNidsB8RN54RBacTqD70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741383541; c=relaxed/simple;
-	bh=+wi8o9NkAeErLhcfBbbC/HrwvBoXP4xttRM/E2ADzf4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JNbaAj/k6SiFUODeA+xY6Wzf/E379E5Qu9tpk9PtlpzgABD5ajUttU08il3iMr6DVnSZ7AbpevaRa/mHeNLYY/fg6G+0/mCafRQxQqRq9LzhL9dNRr09Wj6DjuHt+clM3I2zwek6bsXdOYeNFp0PPj44M1F2GuTtIPlMzwRFxoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=I19wXnmt; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 5141B2038F3B;
-	Fri,  7 Mar 2025 13:38:59 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 5141B2038F3B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741383540;
-	bh=PErTl8OjCmr+pXwdzsQjeewJzsWEtdQvnkkFx+B+7d4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=I19wXnmtMTh5TKUlGJZ1jrhcfilqlen7AEI9d0oLMxbG8/LUNvkfP6s7gePdSXzP4
-	 atNUJWmjNO40FAQcmyGeeiz6CUyVP5t/l6f4UyWBLO8gk2CkeZnnor3kJ8YVqEjKMd
-	 6KM77EOO72WSaKZMIexUsot5lon5rj3stvV+gx/c=
-Message-ID: <bed778c5-4642-4429-914d-7ef2e6ecccc6@linux.microsoft.com>
-Date: Fri, 7 Mar 2025 13:38:42 -0800
+	s=arc-20240116; t=1741383690; c=relaxed/simple;
+	bh=+Kma+nbFYfjc4yGFhq1umBDIXU4Jat/HmaZ3lk50G20=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=HBBKomc4Jc7XO0ilXhMzhN4ENhG6ilTj8A+Fdc+OSA9nStKPRfkKKlvSXMWBsmy0msO3y81LKfaqhS2QlnFHvujXGkqakFPSMx/SsV72AcLxp0cvHuD5+9HWQoWUkcVwjoCWkfdMx1OsgcUHRHNApd0WUqFvG6ZWZ6vmTraPQO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZQd26g2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4334CC4CEE7;
+	Fri,  7 Mar 2025 21:41:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741383689;
+	bh=+Kma+nbFYfjc4yGFhq1umBDIXU4Jat/HmaZ3lk50G20=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
+	b=QZQd26g2zHdYtvhX2t5RnyQ6MhMw0jR7KUeZUtTiMyrLmMxPHDuINeSICQRbJq8wW
+	 hetlsmpLxo+5EcVVfR1hO3g7LrmeK6Z8i9LF/18+Xkj8OJtlo6VQnvAjs4IriB/Fe0
+	 iB6f3t9vpOXmSyxeIqRnMLtqI7Q2cDHCaN+54kR/gBg4xNGDsvARrcfvokiQ49X2e9
+	 ORLLw5EpvCfQ6n+n5j80ZJPbf3rLM8FH/TXhUt8qqtcKBGQQkaJxE6DOlGOmicFRnE
+	 U4Xj3yZ/uTdNNQmiTHbjEl9FL/hs1i8YLD3ocf8I93U+2wgW1kAy2LVx/DIhaWPhni
+	 j7ia0QMWo6kGQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+Date: Fri, 07 Mar 2025 22:38:43 +0100
+Subject: [PATCH v11 02/13] rust: sync: add `Arc::as_ptr`
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/10] Drivers/hv: Export some functions for use by
- root partition module
-To: Michael Kelley <mhklinux@outlook.com>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Cc: "kys@microsoft.com" <kys@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
- <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
- "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "hpa@zytor.com" <hpa@zytor.com>,
- "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
- "joro@8bytes.org" <joro@8bytes.org>,
- "robin.murphy@arm.com" <robin.murphy@arm.com>, "arnd@arndb.de"
- <arnd@arndb.de>,
- "jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
- "muminulrussell@gmail.com" <muminulrussell@gmail.com>,
- "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
- "mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
- "ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
- "apais@linux.microsoft.com" <apais@linux.microsoft.com>,
- "Tianyu.Lan@microsoft.com" <Tianyu.Lan@microsoft.com>,
- "stanislav.kinsburskiy@gmail.com" <stanislav.kinsburskiy@gmail.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "vkuznets@redhat.com" <vkuznets@redhat.com>,
- "prapal@linux.microsoft.com" <prapal@linux.microsoft.com>,
- "muislam@microsoft.com" <muislam@microsoft.com>,
- "anrayabh@linux.microsoft.com" <anrayabh@linux.microsoft.com>,
- "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org"
- <lenb@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-7-git-send-email-nunodasneves@linux.microsoft.com>
- <SN6PR02MB415706E75693B821FAF0A231D4CA2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB415706E75693B821FAF0A231D4CA2@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20250307-hrtimer-v3-v6-12-rc2-v11-2-7934aefd6993@kernel.org>
+References: <20250307-hrtimer-v3-v6-12-rc2-v11-0-7934aefd6993@kernel.org>
+In-Reply-To: <20250307-hrtimer-v3-v6-12-rc2-v11-0-7934aefd6993@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>, 
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, 
+ Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, 
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1949; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=+Kma+nbFYfjc4yGFhq1umBDIXU4Jat/HmaZ3lk50G20=;
+ b=owEBbQKS/ZANAwAIAeG4Gj55KGN3AcsmYgBny2dq5Ev3oIBtW5pDlICfPa1x3atzm8cU94sow
+ chUNrjg9W+JAjMEAAEIAB0WIQQSwflHVr98KhXWwBLhuBo+eShjdwUCZ8tnagAKCRDhuBo+eShj
+ d0fcD/9BfkMJ6JjTkjriudNavU6WsCEQCsc8ocvGKvXwjd8pNZ1TpLP14Y0d9apjOh9MRrtxqBC
+ 2aK0K76212t5GqXhNtYPyu4kS/0BM9PWWwQJTFIfsNE4nmcXDYSnmut0Wr6M9h0j7dRznCsxrp7
+ UVRgT9TMsucGtsq0xke4GO8DoKHOwn8TYwWTjeGsTBQHxy/D7o7yZRXnbZx1E3GZ0FxvcMd+er5
+ 2QXFK1fSCK9PY8ScMoLJQxzceugWOajrjC4GKTPt6K9gUqrEBwxlHrbyo1jC2VbzagWD7DclVY7
+ C988KJGRg+H+EXbhM3sbDhbg8eWYiuDJeOPJ4VIGfajaL3FFwQhXI7WR85EdjqOQLTpowJbvvdl
+ nU8QdgJ7sRIuoG3mh/ZjHG39ywXNZzLio7bDgjrJCndc7lozE+coTQw+ZJoOMv/NUrHpd0NBDaN
+ okcBOIif4aqbGuli+tP93ss6uFB2KgBWYRsf0MViHt7dFFsHDAx+Oz7vcrSNughh25JNgLw7/a/
+ qpVAs4W/XVjHA4kOM7sw4Clot7rixGfRIqyTd4PdYd5WMQOrkkS+i2mwBJHL/GtMCIHiBYZEH/U
+ f4PF8RPf1uU87MVnlV1wGZhfrt7/HY9Y1ug+4oWp5WUSoLBhEL89ZXCUsCf7SYzynt0Le/zTWGC
+ dxBI7CRepIcsaTA==
+X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
+ fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
-On 3/6/2025 11:23 AM, Michael Kelley wrote:
-> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Wednesday, February 26, 2025 3:08 PM
->>
-> 
-> Nit: For the patch Subject line, use prefix "Drivers: hv:" instead of with a slash.
-> That's what we usually use and what you have used for other patches in this
-> series.
-> 
-Thanks, I thought I checked these but I guess I missed this! I'll update for v6.
+Add a method to get a pointer to the data contained in an `Arc`.
 
->> get_hypervisor_version, hv_call_deposit_pages, hv_call_create_vp,
->> hv_call_deposit_pages, and hv_call_create_vp are all needed in module
->> with CONFIG_MSHV_ROOT=m.
->>
->> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-> 
-> Modulo the nit:
-> 
-> Reviewed-by: Michael Kelley <mhklinux@outlook.com>
-> 
->> ---
->>  arch/arm64/hyperv/mshyperv.c   | 1 +
->>  arch/x86/kernel/cpu/mshyperv.c | 1 +
->>  drivers/hv/hv_common.c         | 1 +
->>  drivers/hv/hv_proc.c           | 3 ++-
->>  4 files changed, 5 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
->> index 2265ea5ce5ad..4e27cc29c79e 100644
->> --- a/arch/arm64/hyperv/mshyperv.c
->> +++ b/arch/arm64/hyperv/mshyperv.c
->> @@ -26,6 +26,7 @@ int hv_get_hypervisor_version(union hv_hypervisor_version_info
->> *info)
->>
->>  	return 0;
->>  }
->> +EXPORT_SYMBOL_GPL(hv_get_hypervisor_version);
->>
->>  static int __init hyperv_init(void)
->>  {
->> diff --git a/arch/x86/kernel/cpu/mshyperv.c b/arch/x86/kernel/cpu/mshyperv.c
->> index 2c29dfd6de19..0116d0e96ef9 100644
->> --- a/arch/x86/kernel/cpu/mshyperv.c
->> +++ b/arch/x86/kernel/cpu/mshyperv.c
->> @@ -420,6 +420,7 @@ int hv_get_hypervisor_version(union hv_hypervisor_version_info
->> *info)
->>
->>  	return 0;
->>  }
->> +EXPORT_SYMBOL_GPL(hv_get_hypervisor_version);
->>
->>  static void __init ms_hyperv_init_platform(void)
->>  {
->> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
->> index ce20818688fe..252fd66ad4db 100644
->> --- a/drivers/hv/hv_common.c
->> +++ b/drivers/hv/hv_common.c
->> @@ -717,6 +717,7 @@ int hv_result_to_errno(u64 status)
->>  	}
->>  	return -EIO;
->>  }
->> +EXPORT_SYMBOL_GPL(hv_result_to_errno);
->>
->>  void hv_identify_partition_type(void)
->>  {
->> diff --git a/drivers/hv/hv_proc.c b/drivers/hv/hv_proc.c
->> index 8fc30f509fa7..20c8cee81e2b 100644
->> --- a/drivers/hv/hv_proc.c
->> +++ b/drivers/hv/hv_proc.c
->> @@ -108,6 +108,7 @@ int hv_call_deposit_pages(int node, u64 partition_id, u32 num_pages)
->>  	kfree(counts);
->>  	return ret;
->>  }
->> +EXPORT_SYMBOL_GPL(hv_call_deposit_pages);
->>
->>  int hv_call_add_logical_proc(int node, u32 lp_index, u32 apic_id)
->>  {
->> @@ -194,4 +195,4 @@ int hv_call_create_vp(int node, u64 partition_id, u32 vp_index, u32 flags)
->>
->>  	return ret;
->>  }
->> -
->> +EXPORT_SYMBOL_GPL(hv_call_create_vp);
->> --
->> 2.34.1
+Reviewed-by: Lyude Paul <lyude@redhat.com>
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+---
+
+This is a dependency for:
+
+rust: hrtimer: implement `HrTimerPointer` for `Arc`
+---
+ rust/kernel/sync/arc.rs | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/rust/kernel/sync/arc.rs b/rust/kernel/sync/arc.rs
+index 3cefda7a4372..1dfa75714f9d 100644
+--- a/rust/kernel/sync/arc.rs
++++ b/rust/kernel/sync/arc.rs
+@@ -246,6 +246,15 @@ pub fn into_raw(self) -> *const T {
+         unsafe { core::ptr::addr_of!((*ptr).data) }
+     }
+ 
++    /// Return a raw pointer to the data in this arc.
++    pub fn as_ptr(this: &Self) -> *const T {
++        let ptr = this.ptr.as_ptr();
++
++        // SAFETY: As `ptr` points to a valid allocation of type `ArcInner`,
++        // field projection to `data`is within bounds of the allocation.
++        unsafe { core::ptr::addr_of!((*ptr).data) }
++    }
++
+     /// Recreates an [`Arc`] instance previously deconstructed via [`Arc::into_raw`].
+     ///
+     /// # Safety
+@@ -539,11 +548,11 @@ unsafe fn new(inner: NonNull<ArcInner<T>>) -> Self {
+     }
+ 
+     /// Creates an [`ArcBorrow`] to an [`Arc`] that has previously been deconstructed with
+-    /// [`Arc::into_raw`].
++    /// [`Arc::into_raw`] or [`Arc::as_ptr`].
+     ///
+     /// # Safety
+     ///
+-    /// * The provided pointer must originate from a call to [`Arc::into_raw`].
++    /// * The provided pointer must originate from a call to [`Arc::into_raw`] or [`Arc::as_ptr`].
+     /// * For the duration of the lifetime annotated on this `ArcBorrow`, the reference count must
+     ///   not hit zero.
+     /// * For the duration of the lifetime annotated on this `ArcBorrow`, there must not be a
+
+-- 
+2.47.0
+
 
 
