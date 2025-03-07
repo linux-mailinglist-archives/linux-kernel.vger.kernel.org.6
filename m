@@ -1,116 +1,65 @@
-Return-Path: <linux-kernel+bounces-550850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D44A564FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:20:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E7CA5650A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:22:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE8AF3AA57D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:19:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D6F83A613F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:22:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECAB215042;
-	Fri,  7 Mar 2025 10:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="eiLb2h4g"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385DC213E8A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 10:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC952135CF;
+	Fri,  7 Mar 2025 10:19:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D018A2135AC;
+	Fri,  7 Mar 2025 10:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741342699; cv=none; b=NI+K+zs/Pu0gkix1RW5ed/Cb1haoCNBjqu7eK4JQUERQLt4BT27bCj3vZXJBetY2/pWYxJ7YztUlPlB4IsSMOYB8LA4VrGxYuj8ylWXU5TySnDnuHyDf07K8fUPo020AFp2RlvCJZB3qwuLBuoLbtpAeGzTPQuE0lfjQQni5W3E=
+	t=1741342753; cv=none; b=mlzTixIRDSgQaU6Bvo8axYN21YP2Psk4a+ifhUjyi3/TLICyYu3e6UwaFyBN1RAo7shEctq+WNBX/EUhwB+Z8hEDWtmOiQqhlGv4M0GBWXfBaBxKCKFnx2vSg3lKZ7tos5zaqgU1Yyn7SWZHBwNB59XNAyunfaHcfRA0Sej36as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741342699; c=relaxed/simple;
-	bh=A2ngPlxsViHeU++f/T0fHfvoDhTTkba+2oBbb7Nj+nI=;
+	s=arc-20240116; t=1741342753; c=relaxed/simple;
+	bh=pLZMW6lX3DLMse1INX58kD8j1eFBZrBwVyM4agX06SM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vCk3dRpv2mJmlZ37bqMhcVVVsbTyisGb8vkdZHnDhPCcfYMVklacL8eGeID4d0R8SO/2byPd4ISxTx9Cka+iKMDrmyjR+P70VpUHxfhIsnUoIUko+y6pGINUc2SA1iOwp8R32mqxprtPQdHUR8AavjDy82jluIEST9zzUl8IFjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=eiLb2h4g; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-391342fc0b5so655575f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 02:18:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1741342695; x=1741947495; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eriVuZyAjeW4XZxzbs/VYx0wmamknYVQrCt+Q1+FUXw=;
-        b=eiLb2h4gjukf5j52+npr3KDym6bccOdn0JdH3it+D9rbhYFyBwGhz5Z9+pASCnjQRA
-         tZVIl5lx2Z+DxbLn2vh/J0Tkmh53BJvEdIXpKYNzoySYWkaGaDPCX5sJtFDs/vll6Q57
-         KfQ62JeHmX085MjHboJ4HzlUMkb+k8KBhdZ14=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741342695; x=1741947495;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eriVuZyAjeW4XZxzbs/VYx0wmamknYVQrCt+Q1+FUXw=;
-        b=YJ8X660tdlV2/q8Uuge1i8xxkDjyg7yxiz3+QYd56pFwIBcirP+AyIMIv3dTYQNSR8
-         DicGMDZUJjJIGbXjCX4E3dTimfjmsSQ1VDErKvNbQFA9CRghZNv/d2SB2aahwGqJiUYA
-         QcbZ7m+we0G43hd3rKHnTCj5A7CkS+o1xqut9dKas0qIqn/apr73ahgsTBaImqsqML49
-         0wMW4R7MmwdrNF+CmPeQx3WU84js1tHN597lbcX7kR/tSmSuXPXhpl4UOPOzbblxmuSW
-         grb46EEPPIJySMx1SOSPz6ogwxxoP57HjyOYAMcmWlvbPyeAZO7RmY9+rlESHjolCpic
-         hUdA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnqI4LPIVgRpL0YpxVin9FrZxbKIBuCgTbac3HEBUt6lVxfJsLe4p/NSbTK93tE12GNk0m9hs1Vd54ApU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyY5rbKxIfqmVLAtomnL4iApnQGLiEAOGLoXBVERLbRZzFibbUC
-	0sTT8EgeuiZTwbAcLRBkAi38Hx6NllvJ2sLevM7QaN0p46GDpO6pSsD7GbFh5Mc=
-X-Gm-Gg: ASbGncsPrDwHFwDHyN1gAFolabDFPXI+JuoZW9S0jEeMvqYKNXCUx1O+QlJaUACylpd
-	AZx5/Byv9V/vkFfkI0AqM4ooQd4/iIer0A0ANR/gYuPrU6NOwMHaW7+hbW3fE8Evrd/eJ5zA5cD
-	Ej1sehEN8q3fTZW5bpVc6q7zMPmPLSyChGTRNdwyu1Ggpaw39d5Lx4jP+11eXeLQ3GLsWJEgi33
-	WOAQ/CahJH5QYB7wsitMKED2p+qfb2NNebK9DtSjWLUlBo8hS2/p0LI/dcOlKBVTstUQRnHxty7
-	tYHMSP89oPHvxqNLofEiZl85cJlAxR3GMXsrBtOPu7tQzasWmcMrQ8Bi
-X-Google-Smtp-Source: AGHT+IEAZISqACsxvEE8pMsJbbIN/kzp1kRyxcTMswdSMukChQqkklpQTvMwVWdtKsOw5sLVVDQLwg==
-X-Received: by 2002:a5d:584f:0:b0:391:2e7:67ff with SMTP id ffacd0b85a97d-39132d090fbmr2149096f8f.10.1741342695383;
-        Fri, 07 Mar 2025 02:18:15 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfcdasm4798966f8f.23.2025.03.07.02.18.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 02:18:14 -0800 (PST)
-Date: Fri, 7 Mar 2025 11:18:12 +0100
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Jason Gunthorpe <jgg@nvidia.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>, aliceryhl@google.com,
-	robin.murphy@arm.com, daniel.almeida@collabora.com,
-	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Valentin Obst <kernel@valentinobst.de>,
-	open list <linux-kernel@vger.kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
-	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
-Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
-Message-ID: <Z8rH5D5S7QzyJo1D@phenom.ffwll.local>
-Mail-Followup-To: Danilo Krummrich <dakr@kernel.org>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>, aliceryhl@google.com,
-	robin.murphy@arm.com, daniel.almeida@collabora.com,
-	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Valentin Obst <kernel@valentinobst.de>,
-	open list <linux-kernel@vger.kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
-	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
-References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
- <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
- <20250305174118.GA351188@nvidia.com>
- <Z8mlAxsszdOH-ow8@cassiopeiae>
- <Z8m9j3SwWHqaCTXo@phenom.ffwll.local>
- <20250306160907.GF354511@nvidia.com>
- <Z8qzP3CR8Quhp87Z@pollux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pYxmLki0Ms1nLeTtcnKfsVJ+O7jHL7za6T3Q5umZeF8yBb3yRIrQIwUhKAh+m244gyDClOyj69+FEalHkeAZ9QO7pK0BBHIHSvwtrfEWaFNTK27igcUkA0CU58kI+SJDTe6yj3upHThqNGqcbVgyYRxXUtamAqCPXJQo8ncgBuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC65D150C;
+	Fri,  7 Mar 2025 02:19:21 -0800 (PST)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F3D943F66E;
+	Fri,  7 Mar 2025 02:19:05 -0800 (PST)
+Date: Fri, 7 Mar 2025 10:19:03 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Jacky Bai <ping.bai@nxp.com>
+Cc: "rafael@kernel.org" <rafael@kernel.org>,
+	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"d-gole@ti.com" <d-gole@ti.com>,
+	"anup@brainfault.org" <anup@brainfault.org>,
+	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>,
+	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"khilman@baylibre.com" <khilman@baylibre.com>,
+	"quic_tingweiz@quicinc.com" <quic_tingweiz@quicinc.com>,
+	"quic_yuanjiey@quicinc.com" <quic_yuanjiey@quicinc.com>
+Subject: Re: [PATCH v4] cpuidle: Init cpuidle only for present CPUs
+Message-ID: <Z8rIF3fQr958cf8g@bogus>
+References: <20250307080303.2660506-1-ping.bai@nxp.com>
+ <Z8rBYuDiIyo8y6HT@bogus>
+ <AS8PR04MB86425B7CEE7443F822A2DBCA87D52@AS8PR04MB8642.eurprd04.prod.outlook.com>
+ <Z8rEkgYoThJAJdPV@bogus>
+ <AS8PR04MB86425524495B3FEF19F32E6B87D52@AS8PR04MB8642.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -119,90 +68,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8qzP3CR8Quhp87Z@pollux>
-X-Operating-System: Linux phenom 6.12.11-amd64 
+In-Reply-To: <AS8PR04MB86425524495B3FEF19F32E6B87D52@AS8PR04MB8642.eurprd04.prod.outlook.com>
 
-On Fri, Mar 07, 2025 at 09:50:07AM +0100, Danilo Krummrich wrote:
-> On Thu, Mar 06, 2025 at 12:09:07PM -0400, Jason Gunthorpe wrote:
-> > On Thu, Mar 06, 2025 at 04:21:51PM +0100, Simona Vetter wrote:
-> > > > >  > a device with no driver bound should not be passed to the DMA API,
-> > > > >  > much less a dead device that's already been removed from its parent
-> > > > >  > bus.
-> > > > 
-> > > > Thanks for bringing this up!
-> > > > 
-> > > > I assume that's because of potential iommu mappings, the memory itself should
-> > > > not be critical.
+On Fri, Mar 07, 2025 at 10:10:50AM +0000, Jacky Bai wrote:
+> > Subject: Re: [PATCH v4] cpuidle: Init cpuidle only for present CPUs
 > > 
-> > There is a lot of state tied to the struct device lifecycle that the
-> > DMA API and iommu implicitly manages. It is not just iommu mappings.
-> > 
-> > It is incorrect to view the struct device as a simple refcount object
-> > where holding the refcount means it is alive and safe to use. There
-> > are three broad substates (No Driver, Driver Attached, Zombie) that
-> > the struct device can be in that are relevant.
-> > 
-> > Technically it is unsafe and oopsable to call the allocation API as
-> > well on a device that has no driver. This issue is also ignored in
-> > these bindings and cannot be solved with revoke.
-> 
-> This is correct, and I am well aware of it. I brought this up once when working
-> on the initial device / driver, devres and I/O abstractions.
-> 
-> It's on my list to make the creation of the Devres container fallible in this
-> aspect, which would prevent this issue.
-> 
-> For now it's probably not too critical; we never hand out device references
-> before probe(). The only source of error is when a driver tries to create new
-> device resources after the device has been unbound.
-> 
-> > IOW I do not belive you can create bindings here that are truely safe
-> > without also teaching rust to understand the concept of a scope
-> > guaranteed to be within a probed driver's lifetime.
-> > 
-> > > > > Also note that any HW configured to do DMA must be halted before the
-> > > > > free is allowed otherwise it is a UAF bug. It is worth mentioning that
-> > > > > in the documentation.
-> > > > 
-> > > > Agreed, makes sense to document. For embedding the CoherentAllocation into
-> > > > Devres this shouldn't be an issue, since a driver must stop operating the device
-> > > > in remove() by definition.
+> > On Fri, Mar 07, 2025 at 10:02:14AM +0000, Jacky Bai wrote:
+> > > Hi Sudeep,
 > > >
-> > > I think for basic driver allocations that you just need to run the device
-> > > stuffing it all into devres is ok. 
+> > > > Subject: Re: [PATCH v4] cpuidle: Init cpuidle only for present CPUs
+> > > >
+> > > > On Fri, Mar 07, 2025 at 04:03:03PM +0800, Jacky Bai wrote:
+> > > > > for_each_possible_cpu() is currently used to initialize cpuidle in
+> > > > > below cpuidle drivers:
+> > > > >   drivers/cpuidle/cpuidle-arm.c
+> > > > >   drivers/cpuidle/cpuidle-big_little.c
+> > > > >   drivers/cpuidle/cpuidle-psci.c
+> > > > >   drivers/cpuidle/cpuidle-riscv-sbi.c
+> > > > >
+> > > > > However, in cpu_dev_register_generic(), for_each_present_cpu() is
+> > > > > used to register CPU devices which means the CPU devices are only
+> > > > > registered for present CPUs and not all possible CPUs.
+> > > > >
+> > > > > With nosmp or maxcpus=0, only the boot CPU is present, lead to the
+> > > > > failure:
+> > > > >
+> > > > >   |  Failed to register cpuidle device for cpu1
+> > > > >
+> > > > > Then rollback to cancel all CPUs' cpuidle registration.
+> > > > >
+> > > > > Change for_each_possible_cpu() to for_each_present_cpu() in the
+> > > > > above cpuidle drivers to ensure it only registers cpuidle devices
+> > > > > for CPUs that are actually present.
+> > > > >
+> > > > > Fixes: b0c69e1214bc ("drivers: base: Use present CPUs in
+> > > > > GENERIC_CPU_DEVICES")
+> > > > > Reviewed-by: Dhruva Gole <d-gole@ti.com>
+> > > > > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> > > > > Tested-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+> > > > > Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+> > > > > ---
+> > > > >  - v4 changes:
+> > > > >   - add changes for other cpuidle driver that has the similar issue
+> > > > >     as cpuidle-pcsi driver.
+> > > > >
+> > > > >  - v3 changes:
+> > > > >   - improve the changelog as suggested by Sudeep
+> > > > > ---
+> > > > >  drivers/cpuidle/cpuidle-arm.c        | 8 ++++----
+> > > > >  drivers/cpuidle/cpuidle-big_little.c | 2 +-
+> > > > >  drivers/cpuidle/cpuidle-psci.c       | 4 ++--
+> > > > >  drivers/cpuidle/cpuidle-riscv-sbi.c  | 4 ++--
+> > > >
+> > > >
+> > > > Why have you spared drivers/cpuidle/cpuidle-qcom-spm.c ? IIUC the
+> > > > issue exists there as well.
+> > > >
+> > >
+> > > For qcom-spm driver, it has below code logic to handle no cpu device
+> > > case, and no rollback to cancel the whole cpuidle registration. So I just leave
+> > it as it is.
+> > > Do we need to update it?
+> > >
+> > > for_each_possible_cpu(cpu) {
+> > >         ret = spm_cpuidle_register(&pdev->dev, cpu);
 > > 
-> > What exactly will this revokable critical region protect?
-> > 
-> > The actual critical region extends into the HW itself, it is not
-> > simple to model this with a pure SW construct of bracketing some
-> > allocation. You need to bracket the *entire lifecycle* of the
-> > dma_addr_t that has been returned and passed into HW, until the
-> > dma_addr_t is removed from HW.
+> > Did you look into this function ?
 > 
-> Devres callbacks run after remove(). It's the drivers job to stop operating the
-> device latest in remove(). Which means that the design is correct.
+> Yes, at the very beginning of this function it will check if the cpu device
+> is available, if not, directly return -ENODEV, something I misunderstood?
 > 
-> Now, you ask for a step further, i.e. make it that we can enforce that a driver
-> actually stopped the device in remove().
-> 
-> But that's just impossible, because obviously no one else than the driver knows
-> the semantics of the devicei; it's the whole purpose of the driver. So, this is
-> one of the exceptions where just have to trust the driver doing the correct
-> thing.
 
-In general it's impossible, but I think for specific cases like pci we can
-enforce that bus mastering/interrupt generation/whatever else might cause
-havoc is force-disabled after ->remove finishes. For platform devices this
-is more annoying, but then it's much harder to physically yank a platform
-devices. So I'm less worried about that being a practical concern there.
+So why do you think spm_cpuidle_register() does anything different than
+psci_idle_init_cpu(). They do exactly same check and yet you apply the
+change for psci_idle_init_cpu() but not for spm_cpuidle_register().
+What am I missing ?
 
-> Having that said, it doesn't need to be an "all or nothing", let's catch the
-> ones we can actually catch.
-
-Yeah, agreed.
--Sima
 -- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Regards,
+Sudeep
 
