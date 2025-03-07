@@ -1,148 +1,287 @@
-Return-Path: <linux-kernel+bounces-550533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14CCBA560E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:31:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8F77A560E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:33:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D923B3AF867
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:31:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9100188E9EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 831AB19D081;
-	Fri,  7 Mar 2025 06:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D182A19D081;
+	Fri,  7 Mar 2025 06:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="hVUK7HEt";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="USo9iDYe"
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DbhYTEP0"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD993D6D;
-	Fri,  7 Mar 2025 06:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670D03D6D;
+	Fri,  7 Mar 2025 06:33:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741329069; cv=none; b=b0xGbXiFn6PegLPjZPov+/OeDK/S5//aC2D0Q5/E4j+tc2rAepGJd+62GHOPYInA1PwUgCr1qpvhDtSw2TLdlKJbi1ROg+z+JAikT63FrRAGSicJ/uZzS3E2WTf0qXMB8/FOr2Wx7/1INzZsMg/wYM6fVJO4ZeBaQMXBnENbKkM=
+	t=1741329221; cv=none; b=JSWr2r/v4SUmVBJjeLptQx10NEiF/uqiwCLPn50wyVhFGksjkxBzC8Ybcip2/Vfz3tNZyLlbgZC3eBHpLygzZINP3YEd8sbgq6t4oHGni3fjD2oYfLS2cm13cskZFxC6e/ZJa71KwSp+dTDmLGAxl+OpdJdwWaI60Cc4UVq3kPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741329069; c=relaxed/simple;
-	bh=QbIBN2cYPALHuwk835VmCHT20olGGIRk7Frt+363LtE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HTzKkozrZtRw458vwmNh8GZUE/sRmrQCnzgFZW0iZIeIFRAyqUK+BclZNjF97a39/9cVi1juxANh9Dq97yaU0wD2ZoB/MlwnUyuwM3NnUk3axGNG779BzU6K69m19NsnUodKIZ64QkrcFzGzVZcT1LAz9k5ZRThxTvnlqzc36jM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=hVUK7HEt; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=USo9iDYe; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id CAB9DEC59F6;
-	Thu, 06 Mar 2025 22:31:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1741329066; bh=QbIBN2cYPALHuwk835VmCHT20olGGIRk7Frt+363LtE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hVUK7HEtvyH9RopctGa+q2nO7DTlF9WKs9Unk0B/X3OxmZNCKihro9qCRi0I9YcnH
-	 ITlNedSZ7jknmpMmXoQrI4ahi780ANE2CkTVnKTjhOa9TM6ODAk3gWRst++HUEzg24
-	 S9VisYglRLgF5tC7OCH/0blS/kyt6tOo1TculZzVhLaDXRlRp1QMVrOfv5nmCbvjop
-	 EHxdf7MNTnEBrVvE/UmpzYDRBolpzh0+27mwGw31eS8ARZDzWvIA57Cv67bkfgdAoE
-	 qngjcZJhmbNTNqujtBug4O9cyIdFPxecDa2IjiY2Pd5mmkIzAvPBP2odjyFa21KvW7
-	 7VQhHSadBkIyw==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id bcNtAdR40R4T; Thu,  6 Mar 2025 22:31:05 -0800 (PST)
-Received: from ketchup (unknown [183.217.80.218])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 50050EC59F2;
-	Thu, 06 Mar 2025 22:31:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1741329065; bh=QbIBN2cYPALHuwk835VmCHT20olGGIRk7Frt+363LtE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=USo9iDYeupLGfhOfG/Enc2OxgvBUZCQztffyffTK/ZZWiDR6ERox6qdaCVLQxQ7ny
-	 ufyGH5rczv27cihJuHg8bn2M7trtL6rFmNQa6IDC3KNx+1oYctVoopbX/d+xBAA8qv
-	 WqyRNcsDKDFiTPtt1JNfWL+GrnN2uJCTNCQPNX1b2S5uAhqvfWqx3aD3XLlfHMWP97
-	 f3Qo3zvh7TxenaWjGW/GHop8gR7sCZ0GHfvn/yUBE/VDqODpp54/2uKsg83O8OX0Qj
-	 aFH2aE4AcgAinbPoe++nkM5mPfBSo2tNntRcsFLnjd7Tdr6mDezcR58MEL4QX5I24f
-	 0fRroYRc+Dbxw==
-Date: Fri, 7 Mar 2025 06:30:52 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>, Yixun Lan <dlan@gentoo.org>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	spacemit@lists.linux.dev, Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
-Subject: Re: [PATCH v5 4/5] clk: spacemit: k1: Add TWSI8 bus and function
- clocks
-Message-ID: <Z8qSnBc4dmR3ftOz@ketchup>
-References: <20250306175750.22480-2-heylenay@4d2.org>
- <20250306175750.22480-6-heylenay@4d2.org>
+	s=arc-20240116; t=1741329221; c=relaxed/simple;
+	bh=ZekPPtsk1ScZpqNWJqDXN+JNyvlvIbWBAK2GZKubP5k=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ra4vULYxikVisez4vNPe8DmUvHXSCrOSAVwng/IdZquhda8/U6cZmpEkVmbReguqYrPzOUGURMDg2Yc30lJEyXMCSs0QQQNdt3iKeZq1oZSj+ntO2i5i72XUc3rUnPjvpEIOD2lbsqnWnSBRQULgUVjaTqm4ydIzeSmqbB/dueM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DbhYTEP0; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526KdJ8b003771;
+	Fri, 7 Mar 2025 06:33:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=2ZGwll
+	Zz5/kLVNOFNLkWjcldANwCssBAkYGRgFt9ndo=; b=DbhYTEP0qhE4RxVNLaMr/W
+	0Tx7ovHVTon5OaHc48seP9QgeFF3cZlpnvfiyvjw8YlTdbd8P9WmisK0aUIa9yf4
+	5Gv40SrEtiG84sqPZ5wILbJzCqmW8S77PxZqHOxQ5+B6kU6yVkqZ3O9gwj2Pgr3v
+	8CH4ogWyf/EiAesxQbRBThBY5UlKaaMsUKbCbgPJ8HNFgIC6Ns7FCLrdbw/STE5L
+	NtTLGOs0+0hiuQi9xIryIrcEvYtEcKaEt2WrHk96cC81pqhfP0Svc9v+yfjT/NOm
+	QasGcFtd1JIaFScuceineX0cHt1LtNOmrgDacDdijPor7PODPj2eqnuKx4vfJ+Cg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457jx024w2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Mar 2025 06:33:09 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5276X8dA002152;
+	Fri, 7 Mar 2025 06:33:08 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457jx024vy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Mar 2025 06:33:08 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5273ptcA025012;
+	Fri, 7 Mar 2025 06:33:07 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 454f92cs7e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Mar 2025 06:33:07 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5276X6n941484648
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Mar 2025 06:33:06 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2BD4920043;
+	Fri,  7 Mar 2025 06:33:06 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C787020040;
+	Fri,  7 Mar 2025 06:33:01 +0000 (GMT)
+Received: from [9.124.218.213] (unknown [9.124.218.213])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  7 Mar 2025 06:33:01 +0000 (GMT)
+Message-ID: <2926c843-62e6-419b-a045-e49bdd0b0b97@linux.ibm.com>
+Date: Fri, 7 Mar 2025 12:03:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306175750.22480-6-heylenay@4d2.org>
+User-Agent: Mozilla Thunderbird
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Subject: Re: [PATCH v2 4/8] sched/deadline: Rebuild root domain accounting
+ after every update
+To: Juri Lelli <juri.lelli@redhat.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>,
+        Qais Yousef <qyousef@layalina.io>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Swapnil Sapkal <swapnil.sapkal@amd.com>, cgroups@vger.kernel.org,
+        Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
+        linux-kernel@vger.kernel.org, tommaso.cucinotta@santannapisa.it,
+        Jon Hunter <jonathanh@nvidia.com>
+References: <20250306141016.268313-1-juri.lelli@redhat.com>
+ <20250306141016.268313-5-juri.lelli@redhat.com>
+Content-Language: en-US
+In-Reply-To: <20250306141016.268313-5-juri.lelli@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: WiGCthaIkkcdAAhbRu_qw1VZaJElO8hh
+X-Proofpoint-ORIG-GUID: WA-lyjapa09EPcq-i9zLOMdLbhhdoowZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-07_02,2025-03-06_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ suspectscore=0 bulkscore=0 clxscore=1015 malwarescore=0 spamscore=0
+ lowpriorityscore=0 priorityscore=1501 phishscore=0 mlxscore=0 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503070044
 
-On Thu, Mar 06, 2025 at 05:57:50PM +0000, Haylen Chu wrote:
-> The control register for TWSI8 clocks, APBC_TWSI8_CLK_RST, contains mux
-> selection bits, reset assertion bit and enable bits for function and bus
-> clocks. It has a quirk that reading always results in zero.
+Hi Juri.
+
+On 3/6/25 19:40, Juri Lelli wrote:
+> Rebuilding of root domains accounting information (total_bw) is
+> currently broken on some cases, e.g. suspend/resume on aarch64. Problem
+> is that the way we keep track of domain changes and try to add bandwidth
+> back is convoluted and fragile.
 > 
-> As a workaround, let's hardcode the mux value as zero to select
-> pll1_d78_31p5 as parent and treat twsi8_clk as a gate, whose enable mask
-> is combined from the real bus and function clocks to avoid the
-> write-only register being shared between two clk_hws, in which case
-> updates of one clk_hw zero the other's bits.
+> Fix it by simplify things by making sure bandwidth accounting is cleared
+> and completely restored after root domains changes (after root domains
+> are again stable).
 > 
-> With a 1:1 factor serving as placeholder for the bus clock, the I2C-8
-> controller could be brought up, which is essential for boards attaching
-> power-management chips to it.
-> 
-> Signed-off-by: Haylen Chu <heylenay@4d2.org>
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Fixes: 53916d5fd3c0 ("sched/deadline: Check bandwidth overflow earlier for hotplug")
+> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
 > ---
->  drivers/clk/spacemit/ccu-k1.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+>   include/linux/sched/deadline.h |  4 ++++
+>   include/linux/sched/topology.h |  2 ++
+>   kernel/cgroup/cpuset.c         | 16 +++++++++-------
+>   kernel/sched/deadline.c        | 16 ++++++++++------
+>   kernel/sched/topology.c        |  1 +
+>   5 files changed, 26 insertions(+), 13 deletions(-)
 > 
-> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> index 5974a0a1b5f6..44db48ae7131 100644
-> --- a/drivers/clk/spacemit/ccu-k1.c
-> +++ b/drivers/clk/spacemit/ccu-k1.c
-> @@ -558,6 +558,10 @@ static CCU_MUX_GATE_DEFINE(twsi7_clk, twsi_parents,
->  			   APBC_TWSI7_CLK_RST,
->  			   4, 3, BIT(1),
->  			   0);
-> +static CCU_GATE_DEFINE(twsi8_clk, CCU_PARENT_HW(pll1_d78_31p5),
-> +		       APBC_TWSI8_CLK_RST,
-> +		       BIT(1) | BIT(0),
-> +		       0);
->  
->  static const struct clk_parent_data timer_parents[] = {
->  	CCU_PARENT_HW(pll1_d192_12p8),
-> @@ -795,6 +799,8 @@ static CCU_GATE_DEFINE(twsi7_bus_clk, CCU_PARENT_HW(apb_clk),
->  		       APBC_TWSI7_CLK_RST,
->  		       BIT(0),
->  		       0);
-> +static CCU_FACTOR_DEFINE(twsi8_bus_clk, CCU_PARENT_HW(apb_clk),
-> +			 1, 1);
->  
->  static CCU_GATE_DEFINE(timers1_bus_clk, CCU_PARENT_HW(apb_clk),
->  		       APBC_TIMERS1_CLK_RST,
-> -- 
-> 2.48.1
-> 
+> diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
+> index 6ec578600b24..a780068aa1a5 100644
+> --- a/include/linux/sched/deadline.h
+> +++ b/include/linux/sched/deadline.h
+> @@ -34,6 +34,10 @@ static inline bool dl_time_before(u64 a, u64 b)
+>   struct root_domain;
+>   extern void dl_add_task_root_domain(struct task_struct *p);
+>   extern void dl_clear_root_domain(struct root_domain *rd);
+> +extern void dl_clear_root_domain_cpu(int cpu);
+> +
+> +extern u64 dl_cookie;
+> +extern bool dl_bw_visited(int cpu, u64 gen);
 
-Oops, I don't split out the twsi8-related definitions completely from
-PATCH 3, causing building errors with only PATCH 3 applied. Will fix it
-in the next version.
+Is this needed? There is same declaration outside of CONFIG_SMP done in 
+patch 3/8.
 
-Best regards,
-Haylen Chu
+>   
+>   #endif /* CONFIG_SMP */
+>   
+> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+> index 7f3dbafe1817..1622232bd08b 100644
+> --- a/include/linux/sched/topology.h
+> +++ b/include/linux/sched/topology.h
+> @@ -166,6 +166,8 @@ static inline struct cpumask *sched_domain_span(struct sched_domain *sd)
+>   	return to_cpumask(sd->span);
+>   }
+>   
+> +extern void dl_rebuild_rd_accounting(void);
+> +
+>   extern void partition_sched_domains_locked(int ndoms_new,
+>   					   cpumask_var_t doms_new[],
+>   					   struct sched_domain_attr *dattr_new);
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index f87526edb2a4..f66b2aefdc04 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -954,10 +954,12 @@ static void dl_update_tasks_root_domain(struct cpuset *cs)
+>   	css_task_iter_end(&it);
+>   }
+>   
+> -static void dl_rebuild_rd_accounting(void)
+> +void dl_rebuild_rd_accounting(void)
+>   {
+>   	struct cpuset *cs = NULL;
+>   	struct cgroup_subsys_state *pos_css;
+> +	int cpu;
+> +	u64 cookie = ++dl_cookie;
+>   
+>   	lockdep_assert_held(&cpuset_mutex);
+>   	lockdep_assert_cpus_held();
+> @@ -965,11 +967,12 @@ static void dl_rebuild_rd_accounting(void)
+>   
+>   	rcu_read_lock();
+>   
+> -	/*
+> -	 * Clear default root domain DL accounting, it will be computed again
+> -	 * if a task belongs to it.
+> -	 */
+> -	dl_clear_root_domain(&def_root_domain);
+> +	for_each_possible_cpu(cpu) {
+> +		if (dl_bw_visited(cpu, cookie))
+> +			continue;
+> +
+> +		dl_clear_root_domain_cpu(cpu);
+> +	}
+>   
+>   	cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
+>   
+> @@ -996,7 +999,6 @@ partition_and_rebuild_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+>   {
+>   	sched_domains_mutex_lock();
+>   	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
+> -	dl_rebuild_rd_accounting();
+>   	sched_domains_mutex_unlock();
+>   }
+>   
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index 339434271cba..17b040c92885 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -166,7 +166,7 @@ static inline unsigned long dl_bw_capacity(int i)
+>   	}
+>   }
+>   
+> -static inline bool dl_bw_visited(int cpu, u64 cookie)
+> +bool dl_bw_visited(int cpu, u64 cookie)
+>   {
+>   	struct root_domain *rd = cpu_rq(cpu)->rd;
+>   
+> @@ -207,7 +207,7 @@ static inline unsigned long dl_bw_capacity(int i)
+>   	return SCHED_CAPACITY_SCALE;
+>   }
+>   
+> -static inline bool dl_bw_visited(int cpu, u64 cookie)
+> +bool dl_bw_visited(int cpu, u64 cookie)
+>   {
+>   	return false;
+>   }
+> @@ -2981,18 +2981,22 @@ void dl_clear_root_domain(struct root_domain *rd)
+>   	rd->dl_bw.total_bw = 0;
+>   
+>   	/*
+> -	 * dl_server bandwidth is only restored when CPUs are attached to root
+> -	 * domains (after domains are created or CPUs moved back to the
+> -	 * default root doamin).
+> +	 * dl_servers are not tasks. Since dl_add_task_root_domanin ignores
+
+s/dl_add_task_root_domanin/dl_add_task_root_domain
+
+> +	 * them, we need to account for them here explicitly.
+>   	 */
+>   	for_each_cpu(i, rd->span) {
+>   		struct sched_dl_entity *dl_se = &cpu_rq(i)->fair_server;
+>   
+>   		if (dl_server(dl_se) && cpu_active(i))
+> -			rd->dl_bw.total_bw += dl_se->dl_bw;
+> +			__dl_add(&rd->dl_bw, dl_se->dl_bw, dl_bw_cpus(i));
+>   	}
+>   }
+>   
+> +void dl_clear_root_domain_cpu(int cpu)
+> +{
+> +	dl_clear_root_domain(cpu_rq(cpu)->rd);
+> +}
+> +
+>   #endif /* CONFIG_SMP */
+>   
+>   static void switched_from_dl(struct rq *rq, struct task_struct *p)
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index 44093339761c..363ad268a25b 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -2791,6 +2791,7 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
+>   	ndoms_cur = ndoms_new;
+>   
+>   	update_sched_domain_debugfs();
+> +	dl_rebuild_rd_accounting();
+>   }
+>   
+>   /*
+
 
