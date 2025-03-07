@@ -1,79 +1,145 @@
-Return-Path: <linux-kernel+bounces-550405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC3AFA55EF9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:48:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B45DA55EFA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:48:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EAF216F199
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:48:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09F073B024C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BE8818BB9C;
-	Fri,  7 Mar 2025 03:46:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACF72194C8B;
+	Fri,  7 Mar 2025 03:45:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cmbgNhkR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ANX+lhTd"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5698318DB32;
-	Fri,  7 Mar 2025 03:46:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A106A18DB32;
+	Fri,  7 Mar 2025 03:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741319163; cv=none; b=ZaKu4bXuZAeKH9yyhHeCYpXceYi/Pw+8c3DJNlQwpeq0VBwaE8tMDKwPBMMRO2CdxNQ4EP/vHQPBsJYkrxSX3A6Tlea2jY6GjAxEuvjUDwU1a+U4RsyOHKTUsNSKC85Fg+FLYri/DtjTk6xwhyGB+eLtlVDm7yzYxfqHH5cAHtc=
+	t=1741319139; cv=none; b=uzYnMBXACjYKNyZeXFfShG8nd3+lUdlZSeKJyaPSV4GPk2XfEEUhYa2hKb2bYZvGtHNAncv9BqcsiDyrmtzSRA+lgcIO84YBflvRSsJtU2X5xLGHdcswaFWZo3GNo93P56qAXS/TseKHbT1wn6mViSWXmmpTOEL2uoYo008wrok=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741319163; c=relaxed/simple;
-	bh=HqkVtEDf0p4y9TxtMur9tdjhvByo0aozITD3vARWJS0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bnijhbiyG5g7lOsJI8oyZCCPTdYf7iYv0vwp95WYBqrxwDmA8DEnkmaI8uZWis5v5I41mMx7ju9bAxLkMjkpIlcWOWCuFPO8BGPGPc/70hCibYsJEEdxn8NKHZdWHfFP8Euz1EyuBwwk7adZ/9chlhlLR414RlVRk8vlt7JUPHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cmbgNhkR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B19CBC4CED1;
-	Fri,  7 Mar 2025 03:46:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741319162;
-	bh=HqkVtEDf0p4y9TxtMur9tdjhvByo0aozITD3vARWJS0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=cmbgNhkRLemxZPpOSTbWMiZWD0iFLIZDcRWm0XbCYGsXdnw58vt1OrRAEs0navkxJ
-	 eGl6F12tGg1Da8XvnQXVfcIeQ+SQakEQPxggficsJiQFKIQcnG4AdWOQcjGHuyg188
-	 pOIecFX8EVkL5Y1AmdQu7mT26WwDZG5vyIFBf5V5iMOwAZk1GpnRrHWOggY0Q2W5GX
-	 DUygQ2I4ikqltsNG8ShJYCOzR2OxyBtlE7L/ZeCjbWgoOAOaNlLfoXf+4OUcPqD4+g
-	 DcRLab4BTC/pUCN4WcAYxyQ5fBS8xo53OYBB77AjIhnq/H8rLhR/5195Bmk5Jd2Yce
-	 gVjY9fRpsKDtg==
-From: Kees Cook <kees@kernel.org>
-To: =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>
-Cc: Kees Cook <kees@kernel.org>,
-	linux-security-module@vger.kernel.org,
+	s=arc-20240116; t=1741319139; c=relaxed/simple;
+	bh=tLUqZm0eNJ1rTuuXdj+f/sqylw0hX05mayVEHF7KvZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OZRkam0vKq5ge1NZcno+j/N4I/KiHXu8BJBGmHyzpl8uls3JENUB/TzoMHlgu40W/N3Wgs3TD7in/QLlve3XAZvmFdEngG3ag0jWzrDucHiIXxG4RjLSqkPZ4yQRMu2deY690VlI8h6gM3i/EEyFjjgb30VI8mr/qSSJpB57VI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ANX+lhTd; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22398e09e39so24813645ad.3;
+        Thu, 06 Mar 2025 19:45:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741319137; x=1741923937; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=BnwlMexOUxV2S2U/hpi0ahnFqzZYEy2k/NFTV8x1kBQ=;
+        b=ANX+lhTd/odX+QL3+9L3+MihXgvw6tpFq7+C3SAtsg6rM/ytfp5YYPZpi0WK/cMXzN
+         Ryu04LPCpbFDDs2+lm9byDqsMSHibFsQzSfM0NPOYIbXPzQpRyyXzYRQch8VSVS/ZZoB
+         c282xTEh59vOXlDyK/WqDfQfsKJWpzhlOPB9HgyJx48PUj06MmZLFpi60bXKVj3dC1BM
+         OLBpuBq/whj6g8uVO8FXX+dj9muCCqUGOCDO0CFpLVQoBv3LC6Tnmbwtw5tTQf3bPq+t
+         On6y2hOG0hGQqwjfbYfvwOArBgjgbNMrLWCg7FZAZ7/8mJtnYiQNLVjXqQ73rjZ2o/RO
+         eo1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741319137; x=1741923937;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BnwlMexOUxV2S2U/hpi0ahnFqzZYEy2k/NFTV8x1kBQ=;
+        b=AymDKL8OVcenmA7tDaG7Y8RLUrXnpTJORUvLa3tiFhdDDYdgJ1h8zp4FEC2c720m5L
+         QFr3GRFdxMAhhafyoJ29QLMlF9+74LOR8tsrv2invqO+GCyu9wpMHqwDWjjyj42nh8oR
+         B0aZZ/iZfz3KL8IOav70RXVJugEo42yqOsDjDFm9UWtM0w/8UkuDDp9aLRkex/n65rww
+         tzEbP0qnnkAEPI4p1DGUZd0sHx5pLmNeOkkxIb9TotnbJLm0qzho4GBlKUsnHHIxg01o
+         +07wB/a8DxYW0sAFnpyIU28m5237UyRFYqAk/W5c5MSGupHAA7+RkVM4eCNkJEfqIz9f
+         m0CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrfx0Tj4vDYWyDj10GkWVyuuVg65uSTpdClScbVGBBv7HxmPAXwYoGGXWDLkpa2yGvyuTiGX0gXTEUbGZm@vger.kernel.org, AJvYcCXPWec520d+QouOv3FwG/lFDDcuy/mmzl2a1oVYVs/EKVD+U4f2gEN/6MqYh6Kmrw35NwZ1osWL+hg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCkXezDfNKKm2insJ5sZCN2jSaYJG1C3IW+rSzo0j0VGmYuFMx
+	95/HLTo/6LTN8jJrxI2YpiSw02nawlCIqhLPHVeW8ojrZPCLMS1q
+X-Gm-Gg: ASbGncveMsYJNm9xCBQhtfKypg6uXtjPWYg/44du4XMNGxXJ0QCTyzk8/06MY6HGtNh
+	oaSaGsWALVh4lEEdOiYF18nVhAFItMhpglRtR+l1WHnVixYx7aoTlTad567N1yew6bvY49nqo6O
+	eplx2It5A+CtUbeJZsJ5nXmCZMv/HYVhFPrVsXilU69W/8CFSAyNWnWbKhHJTCad+F9nKYCShVW
+	NuKNV3O2v30FyXMAbxiZxv06b5NfAO+lDeCsKak4Oi1XsHzcYso0hBl6gsTBAGcyRbWlROTk5W3
+	xqIbHp5NAk4DfCvEszEZIYNpNegASWZCn2jBkFdZgFw/IF4b+aS/K4s=
+X-Google-Smtp-Source: AGHT+IFuaAkfRLNIy6uNerSM149+aN7uTDDzS2Rxs5PjmbFtqCybN662n+tZe2npxQsWSCFir8snag==
+X-Received: by 2002:a17:902:e5d2:b0:224:e33:8896 with SMTP id d9443c01a7336-22428886514mr30029155ad.11.1741319136850;
+        Thu, 06 Mar 2025 19:45:36 -0800 (PST)
+Received: from localhost ([2804:30c:1f21:4300:1cf6:c485:6555:b1c5])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22410a91b8asm20163315ad.171.2025.03.06.19.45.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 19:45:36 -0800 (PST)
+Date: Fri, 7 Mar 2025 00:46:29 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Jun Yan <jerrysteve1101@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] samples/check-exec: Fix script name
-Date: Thu,  6 Mar 2025 19:45:58 -0800
-Message-Id: <174131915705.900594.10701719115017257985.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250306180559.1289243-1-mic@digikod.net>
-References: <20250306180559.1289243-1-mic@digikod.net>
+Subject: Re: [PATCH v3] iio: gyro: bmg160_spi: add of_match_table
+Message-ID: <Z8psFU4mhW76jFqE@debian-BULLSEYE-live-builder-AMD64>
+References: <20250306145740.32687-1-jerrysteve1101@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306145740.32687-1-jerrysteve1101@gmail.com>
 
-On Thu, 06 Mar 2025 19:05:58 +0100, Mickaël Salaün wrote:
-> run-script-ask.sh had an incorrect file extension.  This helper script
-> is not used by kselftests.
+On 03/06, Jun Yan wrote:
+> Add the missing of_match_table to bmg160_spi
+> driver to enhance device tree compatibility.
+> 
+> Signed-off-by: Jun Yan <jerrysteve1101@gmail.com>
+> 
+> ---
+
+LGTM
+
+Reviewed-by: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+
+> 
+> Changes in v3
+> - Adjust the content of the commit message; there are no code changes.
+> - Link to v2: https://lore.kernel.org/linux-iio/20250220165001.273325-1-jerrysteve1101@gmail.com/
+> 
+> Changes in v2
+> - Fix a syntax error (a missing comma after the .of_match_table = bmg160_of_match).
+> - Fix the style issues found by checkpatch.pl.
+> - Link to v1: https://lore.kernel.org/linux-iio/20250219150254.24664-1-jerrysteve1101@gmail.com/
+> 
+> ---
+>  drivers/iio/gyro/bmg160_spi.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/iio/gyro/bmg160_spi.c b/drivers/iio/gyro/bmg160_spi.c
+> index fc2e453527b9..ac04b3b1b554 100644
+> --- a/drivers/iio/gyro/bmg160_spi.c
+> +++ b/drivers/iio/gyro/bmg160_spi.c
+> @@ -41,9 +41,19 @@ static const struct spi_device_id bmg160_spi_id[] = {
+>  
+>  MODULE_DEVICE_TABLE(spi, bmg160_spi_id);
+>  
+> +static const struct of_device_id bmg160_of_match[] = {
+> +	{ .compatible = "bosch,bmg160" },
+> +	{ .compatible = "bosch,bmi055_gyro" },
+> +	{ .compatible = "bosch,bmi088_gyro" },
+> +	{ }
+> +};
+> +
+> +MODULE_DEVICE_TABLE(of, bmg160_of_match);
+> +
+>  static struct spi_driver bmg160_spi_driver = {
+>  	.driver = {
+>  		.name	= "bmg160_spi",
+> +		.of_match_table = bmg160_of_match,
+>  		.pm	= &bmg160_pm_ops,
+>  	},
+>  	.probe		= bmg160_spi_probe,
+> -- 
+> 2.48.1
 > 
 > 
-
-Applied to for-next/hardening, thanks!
-
-[1/1] samples/check-exec: Fix script name
-      https://git.kernel.org/kees/c/6c2c85820b2a
-
-Take care,
-
--- 
-Kees Cook
-
 
