@@ -1,183 +1,108 @@
-Return-Path: <linux-kernel+bounces-551787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E08DA570E7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:55:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA18FA570E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:55:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1113E189877C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:55:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1041E179A80
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED10D24A049;
-	Fri,  7 Mar 2025 18:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EC921D3D6;
+	Fri,  7 Mar 2025 18:55:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAJksGt9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Fyjumdv4"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 479142459FB;
-	Fri,  7 Mar 2025 18:54:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6DF19DF4A;
+	Fri,  7 Mar 2025 18:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741373698; cv=none; b=Vi3audpSJGvCjUCVlyj0LVSgsvWSm53p3Dup6XKmsVyxLkt00rvDr0wVCziZxp5tpOhQu6w8jV8ZmPFDVjimZX0c+ixDrK9A/oO2pRIqJUNCBaCJgtqtrnKgPHWS70sa9CxHUYXpNXiiDNYtygIbJ8oJBkUiGpT8a+ibcTL9Lp4=
+	t=1741373745; cv=none; b=Qfs3dQv+S+asq9y+VA3gcWjGbuxGDnxUtOAZmW4D1rVsNThs9SeaZ6XK4X5lKxPLL0WmFnCCLkaWujib7eObo8EU4h/vAvEyCmXm8OxGXuz6pLpKqyJCY8P6q2LSVIeM1cK5EZpzKoq61v3RIWWgjQa/r8CJzntBxqMCEKvIX9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741373698; c=relaxed/simple;
-	bh=A1hzyzX2gwYPUPzTsAzIqU0ZPHdzSA6DM3y210R7dIk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ri67Xhi14Sm2DeleK/CQlYpPODTNk9+u1ysN4dJGwxY3Jg2Hk4uc5PE0ZsXZEgF0liwkwMH9wRxzLxPWHKrGJg+peZDNfSP5EzuWFqXqFpWFHP2sNqKU1SWEAR2YnXaU6hngEE2mYYFTk10MTWQxccrI97akYfkD1o4KV8nksLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JAJksGt9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 233A3C4CED1;
-	Fri,  7 Mar 2025 18:54:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741373698;
-	bh=A1hzyzX2gwYPUPzTsAzIqU0ZPHdzSA6DM3y210R7dIk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=JAJksGt9HFaMvVKhk05lUfdM/thbcWKDfGg60hHxtaNqpCBVufvjBykA7KJgu8wR/
-	 uY8bBE+D+xxTVSTprl/USMEULwpaf/Ux4FtDT2klOPycIeDiVQ5Vbdf2IG1LXU6k6A
-	 U1R3HFaDQHqDtXcI4WTGIu48ZSJriiFNJpcu5zmAjEtIOmAHOfYMfEX8v7oFJmksF/
-	 q3DaP2Lak9B0q9Gbui7RfDIojAiil4c8LYqYzi5Vz0aW9y1+JhNa5B1nbOtF97xnCr
-	 gdIFMr5KAz4QI/4ebdiBBCGiBO6pffvCSiIKWxKtESXPIIzl9bATjeluXg25sPJ9Si
-	 aIahk0EXVGQPQ==
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30bf2513a2dso16661951fa.0;
-        Fri, 07 Mar 2025 10:54:58 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUU2GHHO94ONd39BSyxUk2nZNnVewhkeY35kFbhJ5yEQrbE2xxLdpHW9TdFgLXOE+vPf+Pxg95jPfj6u/I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyAE0TOtQ0cASNOREn5VExU00l/mJ/IrtEW3QMHImRXGyqCFX+b
-	tBM9RqcWYzENXZx1Yw9TO2eRU+0EcyC34r5FoOadh97I5oXhu5KF6dBQ190BmM+yBz965ZvbwuL
-	E8Sv1YKznytIyW+uuJcVtPi3Zj4k=
-X-Google-Smtp-Source: AGHT+IGobzWZZjQf8EsgGAX/Rno6nPlMxbZ8WwDAHCshVEV4wF5D7pC3DIDWityzVC2/E4DTVm0cQ8mNqgLiySUNnL8=
-X-Received: by 2002:a05:6512:3da3:b0:545:6fa:bf5f with SMTP id
- 2adb3069b0e04-54990e2bbd8mr1509102e87.2.1741373696796; Fri, 07 Mar 2025
- 10:54:56 -0800 (PST)
+	s=arc-20240116; t=1741373745; c=relaxed/simple;
+	bh=86skbsONZGZP9pjLi6lZ8M36onJpc2uZLgQpDZ0s4Pg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=pMmeiHyJvDGAg4TvuXS8C50i9z71hUh6MvIS+brvF3qCUz+6iHeHzvl+nfbjvg1oqZK8LJpKxvUxOaoS51yuDm+CjkF5oJ7382tSS02PbMAlzLlxDfzHMYTeUGrI9qpjgJ5/y7BHO8rfnVwt+9Xgt+10rDD1+E8CJgDeb80TdvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Fyjumdv4; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741373727; x=1741978527; i=markus.elfring@web.de;
+	bh=86skbsONZGZP9pjLi6lZ8M36onJpc2uZLgQpDZ0s4Pg=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Fyjumdv4cR3D97iNuNEfz6ezQHo9QULwNQ/9b/JAHStESiHf0rKiBA/JNYBT1WD3
+	 1h0W9CiGl+tAHVNBhbe2nOHRLdTQwScpC2Dazhi1X9uaODsOxaPeIWxC0Xf6a4gwe
+	 6MJsblZ5EyGBbyv7nROdo3PUEsbEG0sYZHmvEcdjtGQdADgjIaOaCqgS+cOthCkyW
+	 EaiiTYFDmbJ6PTo1nxJ2Yu+oE9/NPQvcyoG0pOBNzuUAV2aAd8yCSzS8zDV4XH+0L
+	 /4NpuiC3UFkchlWUKao1DsGfr7wCtHzzPsv9QDuYZT5EQqon0OLDoa5/O369G3hif
+	 cCIhtM6OptDq8GlO9Q==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.70]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MZB01-1tlvuY3DQ9-00Q2IU; Fri, 07
+ Mar 2025 19:55:27 +0100
+Message-ID: <2719d1d0-6e1c-48fd-b73e-42b78c51b201@web.de>
+Date: Fri, 7 Mar 2025 19:55:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224132132.1765115-6-ardb+git@google.com> <CAMj1kXHamiZ8u4YO9FnrWhpcotUkAusDF_db_5H2qaVD85qmVA@mail.gmail.com>
-In-Reply-To: <CAMj1kXHamiZ8u4YO9FnrWhpcotUkAusDF_db_5H2qaVD85qmVA@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Sat, 8 Mar 2025 03:54:20 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATLf2iXNGi-UKRg=+PRRqgmxry5QQnQ4GUNsuVmDBAnmw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jr9sTgHhTNx_izbjyV6zevV8ooGYcQ_pewlwvwGtKvROwXdXWv-VRUVTAg
-Message-ID: <CAK7LNATLf2iXNGi-UKRg=+PRRqgmxry5QQnQ4GUNsuVmDBAnmw@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] x86/build: Get rid of vmlinux postlink step
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-kbuild@vger.kernel.org, 
-	Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: Namhyung Kim <namhyung@kernel.org>, linux-perf-users@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>
+References: <20250307061250.320849-1-namhyung@kernel.org>
+Subject: Re: [PATCH v2 1/2] perf report: Use map_symbol__copy() when copying
+ callchians
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250307061250.320849-1-namhyung@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:bvCzD10uajwy/qZSnyTYEOKCpaqXvR5T3faQr5QFSHEZIk+8Vz7
+ UA0dYS+Mq+dd6ZHCibcTwaUj2k/GtRIRnhjtqNFx7/b7QUGIwJzTVhWQbUxVDmy3ovm3w1Z
+ QXZHxhxdFe7zTc8SA4mvDliGd+ObB7LKQ2jrkK1uR6Dd8cheGslj3tpwBJBFmiy0l/AdEQb
+ CPdeuUk6LudrKBYzaTLwQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:0Q5jl4dEAJI=;XitBOd1LjkyRpHlThirBb3hEBnO
+ Q2NYl5NmQqJ35fdlG5E9BvYMZAfj1giDiocg99WGUIvXjLbCTk8nJR613I6+Lhwg4cy+5tFYh
+ A9zaKc1PreA/6RUPIeNg8DoEc5EYg4JplWQZDyFPRc2aZqtMwXL9DSN7+RS7rZFFcnY2GZD7w
+ eEd6YfDMq+sMFAcoM70KIjaZnMLKosjXnXhizt+yWtgkAoxw1ktuzMB5bufBva3iFPcpSFq/2
+ RodY8zkFOvAlozRPALc4V6uU28SyGm8CfBl4XBeT1mg1tjVRlRcvPs2m0htdJAU38vaYtZPxy
+ gvgChwG5RKdbyNvuCgNwO7gFDuHwxSH14ci55lJhnts50TGfOGwdAUNcFQFyWoOKW2x4+qPgQ
+ G3SMeMo9GyzhGac8Z+MdwdfcJCvMa+oSdn5TJrwzEkpp+QoTdw5dvgrhD2CDVk0tvhF1qdnEd
+ sXSCfOGONdIQHg+JVTidlkgO7uNXwJL0fNbjAH+hJ5fpZ8lA03B/g250ixD9BdoLX/gP/BwlM
+ gsTsoDa2mf9OZ9zLv5WjjYkXxtbEK9wf8Oxmw/2ps48VbstJQeLB6jV/rArhPWb30XDxIiy+P
+ 9y1udlzOXMxZMzFNjBRQjjdR2bfA6xeOT0Ne9C/ehwIeUMDyrILvdvzGJ0nsDJuxL44Codbgd
+ zJz+f+HiRXbd4F3x6QBZBmmS0otvr9QRRiPdewiL305pA1l47Z/6r7aqgkQp7I1KfSAhDE33j
+ dR1jthIZ5mWEQCASjdQCfA9cf8G6ifXNawvN3kGPuoOMiV7hLYUlklyjBj5BO0oxMsoMkqznk
+ M+7yRwsrSCfacxC9v2Q9WBSph6bmdkiGIRHqgPeREGNFnZyUfe0uFrdGXHD8KIqQTMMugc80j
+ Ve3PuMuDPRl1E7isWAxn7QKHmumu3kFExoRk8jxG10AZddK99PNV7gkXqc4RnfHniauP0afH3
+ swnNQwrfmFrqCszVy+4hH4xDzKzDG0FINq7jd2sJXVXhiSXtNa0aW5x7x6gM0O/MY4Jm+7HG1
+ yFKa2bW6ftwdxGjQRg4ULkCCwikQHDd/wd5NQ7hszYRgWLv32LUvDx+XL4TCjetRZGA69QC/E
+ On47YjTQLF9bXBLeH1TI/l+cI3NUsAcerhFVJCGZE+AKxdtsoT9LtHxQi9784gaTyifR+pkJf
+ 0tzlIr+Zpr0K2Mw5+EtWrroFiF/JyRxDgWFcU3tRFRCrihbZGKCiIBa5RqW0v7PZ6KYOBhmfG
+ 37F76q1Yu4Surjb6keBc8hBhnYuqNH/2xU2ELOcdQoFm5ljzG6wO+l42T2r1zwmL46hgWnbdZ
+ hlaxMihMsmmP0j2Wusbl2Vt7g0TJCENUMyRnMQKFKe7xYYmXfpp/zvX2bYYKej/1nVU3RHzL6
+ /7JPQ+vKon1yQUwKeSHGiE//bB+wyUYkVliq2k2YoyXcvaQJeMp2hlWgVDzNhSE1ChbFgNmmb
+ h2NmU5g==
 
-On Fri, Mar 7, 2025 at 1:47=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> wro=
-te:
->
-> On Mon, 24 Feb 2025 at 14:21, Ard Biesheuvel <ardb+git@google.com> wrote:
-> >
-> > From: Ard Biesheuvel <ardb@kernel.org>
-> >
-> > Kbuild supports an architecture specific Makefile.postlink file that is
-> > invoked for the vmlinux target after it has been built. This Makefile
-> > takes 'vmlinux' (which has just been built) as the target, and mangles
-> > the file and/or constructs other intermediate artifacts from it.
-> >
-> > This violates the general philosophy of Make, which is based on rules
-> > and dependencies, and artifacts that are rebuilt only when any of their
-> > dependencies have been updated.
-> >
-> > Instead, the different incarnations of vmlinux that are consumed by
-> > different stages of the build should be emitted as distinct files, wher=
-e
-> > rules and dependencies are used to define one in terms of the other.
+* Please avoid a typo in the summary phrase.
 
-
-In my understanding, the build rule of vmlinux is atomic
-because vmlinux embeds a timestamp and a build version.
-
-Now, you are splitting it into two stages.
-
-vmlinux.unstripped (this includes timestamp and the build version)
-  --(cmd_strip_relocs)-->  vmlinux
-
-
-When cmd_strip_relocs is changed, only vmlinux is updated.
-This changes the content of vmlinux, but its timestamp and build version
-remain the same.
-
-So, I am not sure if this is the right direction.
+* Can a cover letter be helpful for such a patch series?
 
 
-You can see more steps for updating vmlinux.
-Do you believe the build rule should be further split into
-more fine-grained stages?
-
-For example,
-
-vmlinux.pre-sort  (this includes timestamp and the build version)
-   --(scripts/sortable)-->
-vmlinux.unstripped
-   --(cmd_strip_relocs)-->
-vmlinux
-
-But, again, even when sorttable is changed,
-the timestamp and the build version remain the same.
-
-
-Yeah, arch/*/Makefile.postlink is a crap
-where arch maintainers build a fence
-and start whatever they want to do.
-
-If they completely disappear, I would love it.
-
-However, this seems a partial clean-up
-within the scope you are interested in.
-(more specifically your motivation is because Linus pointed out
-a failure in arch/x86/Makefile.postlink deleted vmlinux)
-
-
-
-
-
-
-> > This also works around an error observed here [0], where vmlinux is
-> > deleted by Make because a subsequent step that consumes it as input
-> > throws an error.
-> >
-> > So refactor the vmlinux shell scripts and build rules so that
-> > architectures that rely on --emit-relocs to construct vmlinux with
-> > static relocations preserved will get a separate vmlinux.unstripped fil=
-e
-> > carrying those relocations. This removes the need for an imperative
-> > postlink step, given that any rules that depend on the unstripped
-> > vmlinux can now simply depend on vmlinux.unstripped, rather than inject
-> > a build step into Makefile.postlink
-> >
-> > S390 should be able to do the same. MIPS and RISC-V perform some
-> > post-build checks on vmlinux, which is reasonable in principle for a
-> > postlink step, although deleting vmlinux when the check fails is equall=
-y
-> > unhelpful.
-> >
-> > [0] https://lore.kernel.org/all/Z5ARucnUgqjwBnrp@gmail.com/T/#m731ed020=
-6949fc3f39fcc8a7b82fe348a8fc80c4
-> >
-> > Cc: Masahiro Yamada <masahiroy@kernel.org>
-> > Cc: Ingo Molnar <mingo@kernel.org>
-> >
-> > Ard Biesheuvel (4):
-> >   Kbuild/link-vmlinux.sh: Make output file name configurable
-> >   Kbuild: Introduce Kconfig symbol for linking vmlinux with relocations
-> >   Kbuild: Create intermediate vmlinux build with relocations preserved
-> >   x86: Get rid of Makefile.postlink
-> >
->
-> Ping?
-
-
-
-
---=20
-Best Regards
-Masahiro Yamada
+Regards,
+Markus
 
