@@ -1,201 +1,160 @@
-Return-Path: <linux-kernel+bounces-550326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49997A55DFA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:03:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D127A55DFD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:04:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD823B303E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:03:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EB0D1895389
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:04:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C1461624C2;
-	Fri,  7 Mar 2025 03:03:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40121624F7;
+	Fri,  7 Mar 2025 03:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b="guhbhtOT"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11020140.outbound.protection.outlook.com [52.101.51.140])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PCxkC9Dl"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68411F94C;
-	Fri,  7 Mar 2025 03:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.51.140
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741316624; cv=fail; b=LPVtxzuQVcGTzZxd2jfN2J7QUihK3nn9/hBPosuX6db1draDTV0iVzU212XcpNeHLmp7ebhYPjhyN8Uo80d7jgUP1mq1XR0gBqnWNs+5F5cuMF3NpvTGTvcgi6JNgSPsK8SjjY8uosTC1plykUPmjl3aM+lMN5Tw8rwKxQi/ljw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741316624; c=relaxed/simple;
-	bh=wdTWntxrF48jx+tIp+IEJs+XqcMREcoVqojlMUVJ1Vg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iL1p5CHJpmd516N9zeO7NEqSQiX8MkxiWzjXP+wVkhQiJ4AM15jyAIyVFPoA8eM8IL3eQqlkbIGK0RqXuLVs9rD5OSq0VYAv8gE7OayjHqeafeHlKSfVSa4cvtoU1H5Y2svcXzkmSeOHVT7GWsIfn+8bpnuLiGgaypRw+0S5aZI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=fail (0-bit key) header.d=amperemail.onmicrosoft.com header.i=@amperemail.onmicrosoft.com header.b=guhbhtOT reason="key not found in DNS"; arc=fail smtp.client-ip=52.101.51.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=amperemail.onmicrosoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Pv7dv4/Erx7EKGuG6n2HNOMFEQLMSigqqtI/qb7YpoOf0nrxPlhBzNtnvJ7K6Y4oKb9QHdxRPKyvV7dOi7T/NTk8kh4uP/gpt2aVLCyVerJ9jkjQKKcRod3VgtQhsE3SwbrUaZgtef4l5RU4g0x4i69pR4x6i4+PV8KpKjMm6O3JS5xmKNhxk72TfeyUm4ihFdyshSsMihNmT6oMyHYLOE7FqGQRqmYyFYYjYFVKeMZGTFHHMDjwiIYcVzh2pA2fkeFm9wqdTx3FSTQxjLx4P0hB5VY9+9KhFHPjbaLzz/NA8I4PVUZB1bcmH26UEEt3O5lCbpq04gnn9crvCCHQXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3wGWNRQ5NIhanUqMtHbsrkonTZjAdpDOquFVFtuKZys=;
- b=oQWNjKhC9WYGixWZHfH3QR4cFC45F392YlJzJcahY5PUy/6FFknz/K/nzWY7OcL66SxlLd1fC61JFivu2D1Nbg0LO0N4Osf3JBEu9Tvn7JTcdcEaW99oFJTRCe2Wh+8qCRV8gG2cpYEsHUyBFJR5lgtEkfW+pHd/We5GrNwBg3nojnCM5Au9xQcu2iv5f7WQRe+mVKjt6bqDJcKeglmZ1C5/Z64AK8vYDfbZcCl4/UuqatDcJlY3dnzaFm5kdPGxufJOqPL2PlHMvpy5j6O100N3lTcjb8tj7/VLkClXHAtsUCpMS/KLT5zN9TGPUHDLKUZTRiDWlLZnfDfwrK3Daw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=amperemail.onmicrosoft.com; dkim=pass
- header.d=amperemail.onmicrosoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amperemail.onmicrosoft.com; s=selector1-amperemail-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3wGWNRQ5NIhanUqMtHbsrkonTZjAdpDOquFVFtuKZys=;
- b=guhbhtOT9zSzwYd76idIrA6SxI+96IfMrdUx5qEX7ipWwYFEUhLkaat+bEnCbeApMStfTl92NozDzvO+4EaNmp1erX27u430CWruc3ZvF62zAoh1RPJOb9RPzQ94ow5G3+To4AcjvTRwC0NGRgDPUbl56AXKglQd+sxRGt23gDM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amperemail.onmicrosoft.com;
-Received: from PH0PR01MB7975.prod.exchangelabs.com (2603:10b6:510:26d::15) by
- LV2PR01MB7646.prod.exchangelabs.com (2603:10b6:408:179::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8511.18; Fri, 7 Mar 2025 03:03:39 +0000
-Received: from PH0PR01MB7975.prod.exchangelabs.com
- ([fe80::6926:a627:118e:8050]) by PH0PR01MB7975.prod.exchangelabs.com
- ([fe80::6926:a627:118e:8050%4]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
- 03:03:39 +0000
-Message-ID: <8e7618ef-ba5f-42ac-80b7-f07e3e85ec42@amperemail.onmicrosoft.com>
-Date: Fri, 7 Mar 2025 11:03:30 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH resend ] tracepoint: Print the function symbol when
- tracepoint_debug is set
-Content-Language: en-GB
-To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Steven Rostedt <rostedt@goodmis.org>
-Cc: Huang Shijie <shijie@os.amperecomputing.com>,
- patches@amperecomputing.com, cl@linux.com, yang@os.amperecomputing.com,
- peterz@infradead.org, jpoimboe@kernel.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <20250305015505.14493-1-shijie@os.amperecomputing.com>
- <f600edd0-8855-46af-98ec-1181db1f5dd4@efficios.com>
- <b098cbdf-394b-4f20-9dcd-393ad1b734b7@amperemail.onmicrosoft.com>
- <20250306101315.5a5f1d7f@gandalf.local.home>
- <0e691a3e-1406-4496-b7e4-8b1679b59b5d@efficios.com>
-From: Shijie Huang <shijie@amperemail.onmicrosoft.com>
-In-Reply-To: <0e691a3e-1406-4496-b7e4-8b1679b59b5d@efficios.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2P153CA0035.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::22)
- To PH0PR01MB7975.prod.exchangelabs.com (2603:10b6:510:26d::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88AE31F94C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 03:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741316660; cv=none; b=VpmEYDrkwqOLLvtWUUXQa8aLs6xchPQne9WoNuW/qtH32zYosxLpAxpQl9ikzA6HWaLsHN4Cxkxhwsgrdkeck7pW1Lg0CfQjcvvSeED6QHG7yFQD1m5iFk93HmbY3kAzRMbzAv9tpsu5dg9QJJc8QAQVoAuJsDZYA3qYyq4fYTU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741316660; c=relaxed/simple;
+	bh=XCP9kwKztjB5aMRSK3OlQNdJX12K71O8wDs8oAclikE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BWITi0mLfOgsbn/YuAFcdy/ZJtOCnuv6Hu1t2Vayb/USiuHUpiAoDdPESI9wlsGFUDRcQWZYz55jrQz645E97suU++fobS/GyCiupHYJ3a2tmyeu10hqndHhdCEhcnfO4RohylI6YDWIjPJp4DlZbwoB5PBOFak7BAxsslYUbvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PCxkC9Dl; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526FYWPh017935;
+	Fri, 7 Mar 2025 03:04:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=IEawcTkCI3WN0tBwh7VLst
+	cfdDPbM0A0inPDwTtdLlo=; b=PCxkC9Dl73FlMap8NTr17C4MOwX8bvU2wk+ESb
+	oDFQbnCddwvn/W5ChLbZIUgCxUwo/wKl3UJMxUMv+VHtVx+utt5Zhvte5uYHw3m/
+	ReGUQ25ElHiTu14zANCqEVYu58UhX+ZXlFxsvNPkz+jMku+caRD0ZaPVxzCkFhSZ
+	xjHzYmJ7y9qjyLbcxLhLUMfmLCiZY6nbavMFKc83+jTNcC+6RRz88FpUXkNwJzX7
+	deJqYTQj1XJZN+FvmLrlbNvbHWNHShZCr8YV4y+UPpPNdeARMUPCqH/4Yc/x6goe
+	/sP3/bq9itBVWHwBKaj1m8KcP9iwg+Nn1D56J1zXKHZxs4tA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 45778tb0x4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Mar 2025 03:04:03 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 527342ks011599
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 7 Mar 2025 03:04:02 GMT
+Received: from Z2G9.lan (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 6 Mar 2025
+ 19:04:00 -0800
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+To: <m.szyprowski@samsung.com>, <robin.murphy@arm.com>, <justin.he@arm.com>,
+        <hch@lst.de>
+CC: <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+        <quic_bqiang@quicinc.com>
+Subject: [PATCH] dma-mapping: fix missing clear bdr in check_ram_in_range_map()
+Date: Fri, 7 Mar 2025 11:03:50 +0800
+Message-ID: <20250307030350.69144-1-quic_bqiang@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH0PR01MB7975:EE_|LV2PR01MB7646:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6bc6b428-072b-4cc1-9d75-08dd5d24a8ed
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aXJ3WU9IK1pveFF1Ylc1bzVNeVRzMGpJbHdzVXUrQUpabUIwOXNRUURiYngv?=
- =?utf-8?B?VytJdStYQlpxL0xlbTVmRmp6a1RHclNFejE4dm1hOEN0YlQvc0c3eTJWUC9v?=
- =?utf-8?B?UnJUL0NPK2FtT0g0bXQwdFIrS3dlUmVrV1UrMHJVNEROZ0ZnS3FsVDZyWmZz?=
- =?utf-8?B?azgvdXVKYm1nbTFZdyt2azdqVzZyYU1aazQzYjFCd0E3djladS9IbitFdmdH?=
- =?utf-8?B?QXlrODVVdkF0QUwvMWpxeEJSd2FoWTd4d1JuMFp3azluRm1UdXVHODZpeVRL?=
- =?utf-8?B?UExiQThOMzNneUQ3NU1rYmU1MDJjNXlna1lzQ3A0eE5iaXh4a1EyYjUyRGRS?=
- =?utf-8?B?R3JVVktpcE1zazNFTXhMK0NEY0xGYVd4YnAxdnZnaHlrWE9jdkxLNDl4bnRL?=
- =?utf-8?B?M28rdXRETXJxaWhBcnFjUHRDV2pMUkZtNTl3MUFHdm8vdHo4UjdzdHFjekpT?=
- =?utf-8?B?eHlOZzFJOGQveWxkdDhNYUdmdGpWZm1ScW1qWkg3TmxWSmZLQjVkT0ZTcW5P?=
- =?utf-8?B?cFVtWlNmT3NqREtBejBBZG9SaitaUHo1UkFBeHhIMmVFSXRBeXd1WFNsTWl1?=
- =?utf-8?B?VHZJZnBSWGNSNkhFQlFRa2ZsbGVmMCtmWG5WR3ZRWjBrTzMvbWQ1S0c1dkU5?=
- =?utf-8?B?VHZDQzVjenoxMk1PUGI1MzBSY09LMmw1d3VGS21VNkd2YzNybEh3ajhzZE1l?=
- =?utf-8?B?cU9JcENORmRJakFBNmppM0hZYVloK2o1VytZWXl2S21YQ293VXlRYWZGMjJH?=
- =?utf-8?B?Nzh6ZUNsczcrWVNHTDYwWUZaelF5K085U09jNFBReCtJZ0dzNzBHamZyYlBZ?=
- =?utf-8?B?Y0pFOW9vYVZhRGpLS01LQml3TXh3aXBOb2pnbk5Ia1lCOCtTM2UvY3dZRnBl?=
- =?utf-8?B?cWtXOUJwVWVTQVRJcW5NRGZWNEFHQW43TC9CZWtxWnpFeGUwUnE2QXBMWDZk?=
- =?utf-8?B?VFhQb09IQWk2TGJUVWMrYzJ6OHlQVWVXc3Q2N1EvUkRuOXArcWc2c0g0VXow?=
- =?utf-8?B?dlJXc3d6NXBKV2dqZTBIb21XdzJuc0M4RnVUNzd2dkJqVVhkMDNmL0pGMC9U?=
- =?utf-8?B?REoyS01zTkQxZE1weHZiUkFQZnJjVjZDeGVUUlJQN1RBWnBCZERlc3Z2M3Yx?=
- =?utf-8?B?MmdkQTY0WVBnU2dsbkFxOGVEeTRmdG5OdHFUTW1nWXBCbXJqTyt0L3U5bDdz?=
- =?utf-8?B?K216ZVhGQzdDaHR4QXphMGt2VWlhOGI5SmcyRmJVeW9FVmRxcUliYldNR2xR?=
- =?utf-8?B?UXVWOWd2M3NaejI2TUR6UWUwcjhsZ3U5cjJqUnoxenloL29nNmFyaHk1aFdM?=
- =?utf-8?B?YzBndmJ5MlBnWGNyN09rOFdXTStmTFQ3NnNxaCtMZUxHc2l2WG5hT0hsZ2gx?=
- =?utf-8?B?Yk5EMmovNEVaanFhbUErWWg2QjEzSUR6YlloRnhiM2MvL2pzcko4VVdRR2Zy?=
- =?utf-8?B?TE91WE50anVJMGlZRFc1a1preG53L0xiYm9QMWFEU0pVUWpaSWdDNTlZVit6?=
- =?utf-8?B?dnhYd1BsVFpWbnM4dlJlMjhkTmkzY3VqOTdBdGdtTkdNRms2UVNKQkk3amh4?=
- =?utf-8?B?K0dmeC9mUnpjOFBXc0Y1bExzQ09YOWpZcGpEeXMxODFpS0EzNy8vQkJ4N0M0?=
- =?utf-8?B?TXlUQkVDVzZYL2pWRUNyZ1RlRnlmV2ZFUTJQUVNGRkZyKzNiT0QvNWtzVDdF?=
- =?utf-8?B?OE1YYjV4N3NYQmNSVmpqVGFaTWJocGNKZ3Z6bTlOZDVHcGdKME15b2NuSzk5?=
- =?utf-8?B?SndRdytiN3lEb3F1dVMyOU5CSTNWTWtoMjFjeE1tTmRBT29MYXRmVnFQaEps?=
- =?utf-8?B?UUQ3SU54Z1hsWkxGTW1kM3p5b2tLejZ1KzZxVXFOV1QxMnN3S0tUdVQ2ME45?=
- =?utf-8?Q?4QGcckK8Qv/rP?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR01MB7975.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MmpHZWpXclgvenp3d2Z4UzBKbmdnN1Biajc0d3A3cDhDV0YwQjVLRjRVbDNX?=
- =?utf-8?B?aUgxT29RTkEwVHYyWkZQeFg3U2Qyc0ZkMCtEY0pRai9Cbk5YaGQ3K0lCRVVz?=
- =?utf-8?B?cW94eVBJMy9vd3gwYzFUL3BVS05rSDBTdnlUcmdmWk5wSktaUUd2c1hwMjFF?=
- =?utf-8?B?OVpQdG5rQjNBOFBZbHhUOCszanY3MTBjdzZ4SnRoZ1BpTjFoT3hOTURPMncx?=
- =?utf-8?B?Zk8rVUh4U3FaQ0tteThLNzNhSzB5TmQvZGN5Z0Z6ek1Ua2F4RmpDRFc1V2JS?=
- =?utf-8?B?dFJySG1YYi9TOVJnUWhYYjRmRmVOTGRJL3Z0VzhCdm5TdW43WFhQV2w2Mi9G?=
- =?utf-8?B?L21vWFozWllCOXlZSHd6NEtKOWx6YU92U1hYMjRZZXIwNGRSajBRUGdOOC9m?=
- =?utf-8?B?ODlHNTQ0TCtVZzFKWlNNZGdVY2xlUnd0ZGUvbENSd3F3WW1xT2todEFuYlR6?=
- =?utf-8?B?c2R4WUlMWm55dElkZlk5ZUo4VFNhQmtDWG1Ua3FaVUNpR01zbTVOamZYMkNW?=
- =?utf-8?B?TTlaWWk0QWlhUGZXOWdkNHpZVVI4YWJ5bGY5ZTBhZzFqN25PMUpYbEpnL0hy?=
- =?utf-8?B?VnBkb3hHTnd0QnBwRmFnL1J5ZGxULzh5TkI4SkYrQzlOazRQL250VEVkQVY3?=
- =?utf-8?B?MFcyUVVZT1lpQUR2OFdrZjhLajdnS2t0M3NGT3U1WWlhbDR1VjhWbUR3UVE2?=
- =?utf-8?B?VVR5ZjdQSUlpY1lwWTZZY0pkeDNEOC9sa3pXRDk0WXlqQnVCbWdTQkwrRGpJ?=
- =?utf-8?B?ZlFxNmlrYUE1M3luQ2xPb3UzM3RaTGtNVys0Qnk2TmhyUk96S3BuRFJwRWRr?=
- =?utf-8?B?SFFZbWVTUXZmbDgwbDNRVlJIVGpyaTJZakE4TnNRZkJSeklMdFRzaWdmOWpm?=
- =?utf-8?B?MFJJQ09pSkZzVUwyL0lmN0ppSzBPTGYxem9GaExGdkFQU1YrUUk0MzEydWEz?=
- =?utf-8?B?Nlg3R3BtK1pZVG9SaVZTeUhUT21wenhmaHY0bjZ4VDFFQ3dCay80cTd4cmxR?=
- =?utf-8?B?djJBWFFxejRxc1VpYlhoUWpXN2pvVnlEcmpOczNDVXVOZmxWVjFzYTBBdGtx?=
- =?utf-8?B?cm4yc0VjZEtPQy9WVzU3MTh6TTZBUHdWeWFrOUFmUHlBa2ova0NlLy95M3dh?=
- =?utf-8?B?TGpQWk9zcml6TGcxd295eThESVdNbFpRVmp1c2VzcmtST2YySkUzTHNNMWFj?=
- =?utf-8?B?UFlsMmhaYzRnY1FsdVBMMk5MdUZINExvT1dOM3J0cHB6V2lNUTV1RVdWUTRM?=
- =?utf-8?B?enNIUkJoZnRzUTRoMkI1SUVYT096cEFJL28zaDY4UWxEeGNEenNKSTQzZllL?=
- =?utf-8?B?UlZMR1grRStFeVRCczlxUFBxbzJwcUdLejM0T2MxSWJsWk1kT2JaOVd5Ykxy?=
- =?utf-8?B?a0VxK0RDMGZ5TlJYZVlFa2tkVHl4TkphSVlIdmd1Y3Vrd2FtS25POXRJaC90?=
- =?utf-8?B?VkIxUUs2MTZsMERXdmNiM1RMWThBYTY5NU5RZkJqUjRRNFVFMHJyU0wyRi9H?=
- =?utf-8?B?cmZoTTFFYUNycW40QXRvVGVKRmFObkpxaFhZcksrV2dVdTkydTYzODRWRVJa?=
- =?utf-8?B?ZUR0eVp1cGU4ZlRGTnE3TVdpWWF1MUJmY3o1dk1ROElNRkhoQlBqOW1EUTUz?=
- =?utf-8?B?ZHlDUG9td2pCQ0htUER5enhJN200Zk9pMDV1K1ZzVmU0K0tMWUpPSWlhNVlI?=
- =?utf-8?B?U3VmS2JwTnNwc3Y4Wk9vZldncysrVlpKcWtZZHBRcUFpTVo3dnR0enlER2hJ?=
- =?utf-8?B?WEh0WVFBRVpZRGJ3OC9kTWc5MisyVXVaSG02a1F6eHkwNDJKOWdDZVBnZVdU?=
- =?utf-8?B?aVNnU0NOcE1Xb0x6OVpjNnRXRWxkZHZkUUVaQWRKWmpSUWZUbUFFVEw2TnRU?=
- =?utf-8?B?RXJ2dy94elN3alh4bEtaTzRCWVVkUlpNVm5KSHpsM3QzamF0cmcwS0dmaHdT?=
- =?utf-8?B?dFhrbWs4VytoNG1mcnFDVDhhYzhyZ09LeGJOMGk4QTFraTBFUTV3VzdqQmN5?=
- =?utf-8?B?K0xTazgxMlFpS0V4SnBKY2pRaDREcko4RGROOFlxSlY5eEQzb1RWMitzTjlR?=
- =?utf-8?B?Vi9RMEN2SFYvMlpLZGw3NXNxeENXQW1LbjJPcFlYUnlTVHJvUVIxa2M0Sm1L?=
- =?utf-8?B?TldWNEdQZDNwL0Nmd3o3aklrY3ZIcXlJQzRSNXg3U3lEQ0Z4NjRuVDJGYkY2?=
- =?utf-8?Q?NBgJSZ4kAHt7RfBPILaCBDw=3D?=
-X-OriginatorOrg: amperemail.onmicrosoft.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6bc6b428-072b-4cc1-9d75-08dd5d24a8ed
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR01MB7975.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 03:03:39.5549
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PW20FKJhEg4ZcMF1erC9kap9Rq5/dAovjFAgGzq3NdGL9gxIP5h3t+zL6krtOX9bWd8gvitdsakNKlV7JxwhgjYH7VWvENFbHuA7whlFLb5Lok8qkeIMxGEIH+xiLhph
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR01MB7646
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: IA4xNB-LbgoUeq15A9bmdWCUt3KXcaLk
+X-Authority-Analysis: v=2.4 cv=U5poDfru c=1 sm=1 tr=0 ts=67ca6223 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=6YtNXFjIWaMwA3fUu04A:9
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: IA4xNB-LbgoUeq15A9bmdWCUt3KXcaLk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-07_01,2025-03-06_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 phishscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 adultscore=0 clxscore=1011 malwarescore=0 bulkscore=0
+ mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503070018
 
+As discussed in [1], if 'bdr' is set once, it would never get
+cleared, hence 0 is always returned.
 
-On 2025/3/7 0:37, Mathieu Desnoyers wrote:
->
-> I think we could just print %Sb
->
-> e.g. from core-api/printk-formats.rst:
->
->         %pSb    versatile_init+0x0/0x110 [module_name 
-> ed5019fdf5e53be37cb1ba7899292d7e143b259e]
->
-> AFAIU, when the kallsyms_lookup_buildid fails, it prints the raw 
-> address instead
-> (see __sprint_symbol).
+Refactor the range check hunk into a new helper dma_find_range(),
+which allows 'bdr' to be cleared in each iteration.
 
-okay, I will use "%pSb" in version v2 later.
+Link: https://lore.kernel.org/all/64931fac-085b-4ff3-9314-84bac2fa9bdb@quicinc.com/ # [1]
+Fixes: a409d9600959 ("dma-mapping: fix dma_addressing_limited() if dma_range_map can't cover all system RAM")
+Suggested-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Baochen Qiang <quic_bqiang@quicinc.com>
+---
+ kernel/dma/direct.c | 28 ++++++++++++++++++----------
+ 1 file changed, 18 insertions(+), 10 deletions(-)
 
+diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+index 5b4e6d3bf7bc..b8fe0b3d0ffb 100644
+--- a/kernel/dma/direct.c
++++ b/kernel/dma/direct.c
+@@ -584,6 +584,22 @@ int dma_direct_supported(struct device *dev, u64 mask)
+ 	return mask >= phys_to_dma_unencrypted(dev, min_mask);
+ }
+ 
++static const struct bus_dma_region *dma_find_range(struct device *dev,
++						   unsigned long start_pfn)
++{
++	const struct bus_dma_region *m;
++
++	for (m = dev->dma_range_map; PFN_DOWN(m->size); m++) {
++		unsigned long cpu_start_pfn = PFN_DOWN(m->cpu_start);
++
++		if (start_pfn >= cpu_start_pfn &&
++		    start_pfn - cpu_start_pfn < PFN_DOWN(m->size))
++			return m;
++	}
++
++	return NULL;
++}
++
+ /*
+  * To check whether all ram resource ranges are covered by dma range map
+  * Returns 0 when further check is needed
+@@ -593,20 +609,12 @@ static int check_ram_in_range_map(unsigned long start_pfn,
+ 				  unsigned long nr_pages, void *data)
+ {
+ 	unsigned long end_pfn = start_pfn + nr_pages;
+-	const struct bus_dma_region *bdr = NULL;
+-	const struct bus_dma_region *m;
+ 	struct device *dev = data;
+ 
+ 	while (start_pfn < end_pfn) {
+-		for (m = dev->dma_range_map; PFN_DOWN(m->size); m++) {
+-			unsigned long cpu_start_pfn = PFN_DOWN(m->cpu_start);
++		const struct bus_dma_region *bdr;
+ 
+-			if (start_pfn >= cpu_start_pfn &&
+-			    start_pfn - cpu_start_pfn < PFN_DOWN(m->size)) {
+-				bdr = m;
+-				break;
+-			}
+-		}
++		bdr = dma_find_range(dev, start_pfn);
+ 		if (!bdr)
+ 			return 1;
+ 
 
-Thanks
-
-Huang Shijie
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
+-- 
+2.34.1
 
 
