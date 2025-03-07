@@ -1,134 +1,119 @@
-Return-Path: <linux-kernel+bounces-550863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 641B0A56512
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:23:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EF63A56514
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:24:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DE8E1893860
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:23:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D72CC1893B18
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFE9E20D4FD;
-	Fri,  7 Mar 2025 10:23:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A5D720E022;
+	Fri,  7 Mar 2025 10:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E5hV0nHe"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IrMSHBYO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B56C1194C8B
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 10:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027E316DED0;
+	Fri,  7 Mar 2025 10:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741343004; cv=none; b=iba6TURj6qlmoqVwxMQCDvZ96ZNhK9hdMZEYEN/FO6gBuBOiyzkD3R8Yx0eaTnUB8Natp5LZ8f/fFUQpyMGsnKofBU6qu06NTksk3cyV6SX7gI/nJVyH4mP8WXaLvbSER/4/6emH436bjBq6UPQ5KSTGCr5CVT2JOzPCelH/MpM=
+	t=1741343051; cv=none; b=DZJOEemBySoYC6UL0JntSsE6R/wW36EXdfmKwxT2+LfoxC2cbmjjWQINOW5A3WMTTnb1PXoS2c1i9u2YJdrNNgyTRBWiRKpOa+2AQY+pMM323hC3yFhDC1WJtsg8qrFcJI29y0NeDKOO7S6CqOoZVekJXF+ks1cXatrUEVmCCrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741343004; c=relaxed/simple;
-	bh=DtxFf0fYVU4w0uIExHFhQmlD2Fo3K9WMMATEvxoc1DY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Npv8vDaQw2x72ZnKXdKmEgR90fngtRPCKIi2IzZIgMT6RUWz7LebiuEJXHx+K1lKhU/8gHQ+VqfbuLxeeu9GUZuC//HH+vN7RbD/Z229rJGRsChEqDVLYpCKxXTdnYxh416Y6c70oDjet7PNWBG85bhnVxxE97BbeKKl7LERJMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E5hV0nHe; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6fcf90d09c6so14810097b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 02:23:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741343001; x=1741947801; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KfF5v1NAk0jH/+c1GNbFOnaW6p4cZVM6+YYNwLme/iI=;
-        b=E5hV0nHe7t5SpGmf6l/OJe3yzCaV+t7xutwCl+2QodGzgNlUByr9AeZk30n7ERGmt5
-         DQeRt7bLwxNuvuENISn9hcWguTgCO9NrvjpPmBY3unZbHg08laQ6UotyQLs/MMw+jMvW
-         SW2qeybGH/wC77yWQb39pgWFFGGPKjXUMKY0yPyWqBX5s+dopxJr83utbDO4Kj2f9lfF
-         oxviHAHBnbIUwNbGrNjvIlnvec+dFg4++72ZjUweeJResmljLWzyo826YrUrBZmR4G5N
-         F7x6bJiFUNyWnOtpgVO0Foo09kw3tAlOlPJkuqsKh3y5J6OjN9tq5KcuH4hb9i+5jwGz
-         yb+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741343001; x=1741947801;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KfF5v1NAk0jH/+c1GNbFOnaW6p4cZVM6+YYNwLme/iI=;
-        b=p53vD9JSNbbIWQYz7d2xqe3a8fPQrrqPJHWi04cNw8YYIIMiDetLP5uwt6Xz4MqJpf
-         qs8s1qdFQFcULHAZxlwkPIQLC27sMgompTdd6VkA4DF7i5jD6ji11r95+6rzXhKVSj/2
-         2otfiTCbKha57HE8Kr0Hj2e1glkHtyp28A7cH4179HM4VNF1z9wps2yi0jgtUbKaWc8V
-         YR4Xjc63uijO1bps95hO57EGpjg+aOiL5EiUCBwgxqgIvIJuBAOcqJiSwI1QV9wY+SSP
-         2zgT/zIXYu1lYQNpjiBm/jfyFcTmViZyj6s+58YnMnNdfQ+IPHF2xrbenlMPnVWT03sY
-         K8xw==
-X-Forwarded-Encrypted: i=1; AJvYcCUdI/JSVKdKOm9OjOa3/bAqdV/d92k38BGfh4IeS1YS3tvAk7tf9IiXsSYq7v+Bg0t95FxMWpPPA0nZEpU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz0PB7yknN4wUFEX8VQ7RW+Xpy0QhTbyb/u5CTlv/dm9u5yS9t
-	1hJCTd0le+XGXvhhpBaBy+LiTxNoY6U/J82uRZrKx5Drh3kiIw+ngIfnVcNaLzMqVOUtwCFLZFD
-	Upx87lCu6ZFzJZvAJM1it2hgJx1aNV/B2b6+NVA==
-X-Gm-Gg: ASbGncuCgZuLe6fTgG5utSLoEJ0w70MZnZo/ug8kIgJlhL/X0PW6aX7iT/JQkwbPlWy
-	e2ZjIelBe5m9QyaUiJHiYew/hJNvPrnzTt/owulOSFxvsKhzcamE0a9JoPPk7Bc33TI9mKTSj3t
-	v4cXedAh8cc3F8QFxogyK/g9KXWg==
-X-Google-Smtp-Source: AGHT+IGoVn0EU8OQQylHX1iDez6suRBDKS1M41QCK+afLZoIaTp9DDlChzEKRewCL4YZil1oG324vrVpsJNG5UcBgw8=
-X-Received: by 2002:a05:690c:250b:b0:6fe:bf32:a427 with SMTP id
- 00721157ae682-6febf32a43amr27741247b3.0.1741343001667; Fri, 07 Mar 2025
- 02:23:21 -0800 (PST)
+	s=arc-20240116; t=1741343051; c=relaxed/simple;
+	bh=2Dw4ZzZnDmhCYD8Y3MnylO37nujICIb8mg2uubPBiu4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SlPlHUX/6x9IZRzl7H3qtHM7q6OiSXvRuukv6GwxJExqeIckKn1OZa/5n3xj5GH355GM6Ux8v1lBNEwL4nxyA1DUm6PoQ46jzE2mXY02iLQnftY2yY1DROVTpcwfR2JJLbFn4vmf9ZZHmIyZdBxbIi7izdPW4ziTYAmyx5J5XSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IrMSHBYO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ACEDC4CED1;
+	Fri,  7 Mar 2025 10:24:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741343050;
+	bh=2Dw4ZzZnDmhCYD8Y3MnylO37nujICIb8mg2uubPBiu4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IrMSHBYOZYJEIiItrKzY86ihEbeitO2VuC+IAcSLeixPBVQWfMKJpMQJq5JqW+s9H
+	 gzvhkD8xzIN5y3LOUMMkchDngZbx2s9tQ1/BsCs9ZnfuaBux4kGJ3ecjFsK57Jh+KJ
+	 XGoziZ6pnVjyQ0DCaakSQlY3FqIjVb3bF9xPkqWuWuH1/QC0gggguJu+NqywzZ3KSK
+	 XuCGF0KaIVkzFBNPzgJfYP2My7SQJBj9WI6KOcSPUiSSiUkXgbvGX1/I6YKq1pAHpK
+	 IHQTMxp/7L9PEcaiJkCfSGD4+6yj5SVyLVmlpKc7sluGCnB4WnTXgG69yPtQBH2nHo
+	 AQziHmOYgUF+g==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Shreeya Patel <shreeya.patel@collabora.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Dingxian Wen <shawn.wen@rock-chips.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	linux-media@vger.kernel.org,
+	kernel@collabora.com,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] media: platform: synopsys: use div_u64() for 64-bit division
+Date: Fri,  7 Mar 2025 11:23:56 +0100
+Message-Id: <20250307102405.56313-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306113549.796524-1-ulf.hansson@linaro.org>
- <20250306113549.796524-2-ulf.hansson@linaro.org> <CAJZ5v0hhHv7P8UXEqtRMwC66aSqs115e8gN8rzn_QzZgnVULzA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0hhHv7P8UXEqtRMwC66aSqs115e8gN8rzn_QzZgnVULzA@mail.gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Fri, 7 Mar 2025 11:22:45 +0100
-X-Gm-Features: AQ5f1JqZugkIR9PiHod2Oz80mHX8b_HvsiZotAhfpU29Uq7tx5I0h5ScmIr0gHE
-Message-ID: <CAPDyKFqcCMGdZ9kfpkRi+6Y9wzf16WXAQjrio0-KwP9cZGJt_w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] PM: s2idle: Drop redundant locks when entering s2idle
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: linux-pm@vger.kernel.org, Len Brown <len.brown@intel.com>, 
-	Pavel Machek <pavel@kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 6 Mar 2025 at 15:34, Rafael J. Wysocki <rafael@kernel.org> wrote:
->
-> On Thu, Mar 6, 2025 at 12:36=E2=80=AFPM Ulf Hansson <ulf.hansson@linaro.o=
-rg> wrote:
-> >
-> > The calls to cpus_read_lock|unlock() protects us from getting CPUS
-> > hotplugged, while entering suspend-to-idle. However, when s2idle_enter(=
-) is
-> > called we should be far beyond the point when CPUs may be hotplugged.
-> > Let's therefore simplify the code and drop the use of the lock.
-> >
-> > Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> > ---
-> >  kernel/power/suspend.c | 4 ----
-> >  1 file changed, 4 deletions(-)
-> >
-> > diff --git a/kernel/power/suspend.c b/kernel/power/suspend.c
-> > index 09f8397bae15..e7aca4e40561 100644
-> > --- a/kernel/power/suspend.c
-> > +++ b/kernel/power/suspend.c
-> > @@ -98,8 +98,6 @@ static void s2idle_enter(void)
-> >         s2idle_state =3D S2IDLE_STATE_ENTER;
-> >         raw_spin_unlock_irq(&s2idle_lock);
-> >
-> > -       cpus_read_lock();
-> > -
->
-> As you said above, this is not expected to be contended, so it mostly
-> serves as an annotation.
->
-> The correctness of the code "protected" by it in fact depends on the
-> number of CPUs not changing while it runs and this needs to be
-> documented this way or another.
->
-> I guess a comment to that effect can be used here instead of the locking.
+From: Arnd Bergmann <arnd@arndb.de>
 
-Okay. I will update the patch and add a comment.
+One open-coded division causes a link failure on 32-bit architectures:
 
-Thanks for reviewing!
+ld.lld-21: error: undefined symbol: __aeabi_uldivmod
+>>> referenced by snps_hdmirx.c
+>>>               drivers/media/platform/synopsys/hdmirx/snps_hdmirx.o:(hdmirx_query_dv_timings) in archive vmlinux.a
 
-[...]
+Another one uses do_div() with a temporary variable.
 
-Kind regards
-Uffe
+Change both to use div_u64() to avoid the link failure and improve
+readability.
+
+Fixes: 7b59b132ad43 ("media: platform: synopsys: Add support for HDMI input driver")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+index 4ffc86ad6c35..438536d88c7f 100644
+--- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
++++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+@@ -296,7 +296,7 @@ static void hdmirx_get_timings(struct snps_hdmirx_dev *hdmirx_dev,
+ 	hfp = htotal - hact - hs - hbp;
+ 	vfp = vtotal - vact - vs - vbp;
+ 
+-	fps = (bt->pixelclock + (htotal * vtotal) / 2) / (htotal * vtotal);
++	fps = div_u64(bt->pixelclock + (htotal * vtotal) / 2, htotal * vtotal);
+ 	bt->width = hact;
+ 	bt->height = vact;
+ 	bt->hfrontporch = hfp;
+@@ -396,7 +396,7 @@ static int hdmirx_get_detected_timings(struct snps_hdmirx_dev *hdmirx_dev,
+ 	u32 val, tmdsqpclk_freq, pix_clk;
+ 	unsigned int num_retries = 0;
+ 	u32 field_type, deframer_st;
+-	u64 tmp_data, tmds_clk;
++	u64 tmds_clk;
+ 	bool is_dvi_mode;
+ 	int ret;
+ 
+@@ -418,9 +418,7 @@ static int hdmirx_get_detected_timings(struct snps_hdmirx_dev *hdmirx_dev,
+ 
+ 	tmdsqpclk_freq = hdmirx_readl(hdmirx_dev, CMU_TMDSQPCLK_FREQ);
+ 	tmds_clk = tmdsqpclk_freq * 4 * 1000;
+-	tmp_data = tmds_clk * 24;
+-	do_div(tmp_data, hdmirx_dev->color_depth);
+-	pix_clk = tmp_data;
++	pix_clk = div_u64(tmds_clk * 24, hdmirx_dev->color_depth);
+ 	bt->pixelclock = pix_clk;
+ 
+ 	if (hdmirx_dev->pix_fmt == HDMIRX_YUV420)
+-- 
+2.39.5
+
 
