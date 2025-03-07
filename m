@@ -1,126 +1,127 @@
-Return-Path: <linux-kernel+bounces-551514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D7BA56D7E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:23:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE8FA56D86
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:23:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBA6F189518F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:23:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADC5C3AA21F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A7A823BCEA;
-	Fri,  7 Mar 2025 16:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DE923BCFE;
+	Fri,  7 Mar 2025 16:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cmPFGhPC"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="G7oNfjIz"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E9423AE9A;
-	Fri,  7 Mar 2025 16:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA1023BCF4
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 16:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741364578; cv=none; b=bONrNJstaLCaUKzRdIacn4C96ihQURUrGIUUN9nAJaIwmG0ywqoII61HVNfGUWw3OMCZ/a4bAHzZ1zKEztvju63PSb1Ol0IbCW+6rdhOtkDQe9fMNizES7tGmd5QWabBuwg4kFHb/S97PspFf834/JLjTzBbLeJWH4fspJHfhsY=
+	t=1741364630; cv=none; b=ZD4YkK0/tSgqezEq/0gLxqFY5g7xif4XeaItxMPuKj847yYaTQXCKOgxRkV/eZgDp3HjSu+pHtDqQMRbQdUfb2qTJ3uFphV+enT1MvH2Qbn5tdfQU/oOYfXoPUkm9YCO2gnBB5QdHY+OIbbbiPt83lm5girF+0ExW/ArCi6bzQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741364578; c=relaxed/simple;
-	bh=HehM6Qwewq6SkML/mBRVRIlvDs4DMNnNlMIxTT+m/W4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fBxAceu9x+FRi1WmGYSXo5nWG9w0V3HjENR91sskoF3sXNL8k4pGtqbOt107ZbBM7vvKH5GUh7WWnkLRJReX6bMZIqDxXTVqEsamNu7SSHfXR4Hd53j621ftE+zYcCzdpEGezjyBVUQRyi1W265L1ELloznVMbDH0ZQi0i0yPuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cmPFGhPC; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abf45d8db04so314179566b.1;
-        Fri, 07 Mar 2025 08:22:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741364575; x=1741969375; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oQVqDsHdw/+ZjbpyFQkR95KzV9fVxY5AcxcM0fzGq84=;
-        b=cmPFGhPCmZyhKzJKfGzzFonnvHNTTTOPemp76/B0WKwkpd6lmYUS01VvvU6f+/oDAX
-         xEn8GayQI7wFBE6mME92JxUP58abutMz5F0XwJIRNEyi/l1VlLvOGJEf7RKNh9kew3cd
-         t27bfZnjsoVKtMSEtEKRhpf6B0Lx9w4msvd7Q7Qc7IcFfSy2zU/TduKTqzaheq57Mi9C
-         EQcN54mdO7eoT7yAJNowVfpTl3Wwh1EWD8VRj/3agvYXhqnzgipicgMSWLNs9DRwRWf3
-         xglwtIdWUIbUe8XdPTmOyD8VBXBXQfXSTndpR8mQU8IQGNco0+UgqrCyjtQSpy1gaogm
-         wASA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741364575; x=1741969375;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oQVqDsHdw/+ZjbpyFQkR95KzV9fVxY5AcxcM0fzGq84=;
-        b=KZuijPUZCc/u5UA8OQgdp04vJTRRlHUA6jbVW4SSd3F7Dv1CNwuWxqPz7p9DFh19cV
-         Z3U4WAvGo+nsmvJ3uP+f28leud7QOpNvrcspBG1EZv/yRQlTOInGrF9n0HXlU6nM2tyT
-         /HFCL1MxF9mkGxQtlm3dRWPnHu4eW9DUrfu061WUYhI4/KgtRMEoe4sWHwHwGXP9oKad
-         joH14WbgzZA1YFzmfMjTGqPvGmH7KgNbXJXqrbsGnDlTrIabdstK31vbZN9m5mCbCswN
-         D9aLzYS+wcOJ3BjXph/KV7Rrr9GyF7u0hhaz6J/lrxrJkJWW+yadfNmO1SUAGFqiulYg
-         ufvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU4sVqkvWEK1vIG5Kn8QSq2Q2s/3OnNeVqv3c6P1q4IXSJz4SHRNnhZ3ILByOt3aY+1/tqPSPsAtkicklFf@vger.kernel.org, AJvYcCU7SbwFQOdhpD4aDsn2NbR5sbYJSGVNLMChEAIACKSGXLR4tmhzUCmm9JQL6TtWnWzSCkUFIt908UxX@vger.kernel.org, AJvYcCV22tFJDGVGvnq9MrwhrZNa4r5jOXewnkjeyA8n1kOfzRP4CrSpslOrqOKm25Hrnj33CGw6eden7HZ52LgE@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTrboCB+8j3EkMHO/VvvKHdaKEcCQiFwJhO13ITAyPnjfYeJVk
-	/JlQAz2HawMIt7JFAgq380ubFM1J3/+Eexx0P7bSFLt8Dj5NOY4QOHmFvWj2P0N42ELzgWPPaZq
-	aRrVls8MW1u2/PH8fv71FcDQ3ot4=
-X-Gm-Gg: ASbGncvl+6keP6Mrtf1D4y72rd7Xin5znCb70V+RLPjuXNu2al4yA9HdqLM9b+4LPbT
-	xszHJlp/rG+tqgF4c1ihgh3rn3havLVMbkBH7McRumdyRRn9xfc+dnP6R9jPfub6pTJx7mNMsBH
-	V828lTQk2AZXTlwh/S4+4fGQl2ig==
-X-Google-Smtp-Source: AGHT+IHC1py7w2m8go5VMq6eI+Rzc42CqWn666RVrn7NRiN5dOLiuz60Rlfmwi8JlB/SJZ4s+09dscdh23QrF/ZPBeM=
-X-Received: by 2002:a17:906:4818:b0:ac2:64eb:d4e8 with SMTP id
- a640c23a62f3a-ac264ebd527mr153832166b.0.1741364574933; Fri, 07 Mar 2025
- 08:22:54 -0800 (PST)
+	s=arc-20240116; t=1741364630; c=relaxed/simple;
+	bh=yjWhndqBY/p/naYYeyjqW/iXjpCwZxRa8eTsaF7Em3M=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=HfQ1S1SLBXf/qZYemlBSoElrdzpqfMPfU+kBXC8l1gPOdUspaUp6/H2jE9gp5CUbhF4tP6m6EMrFpVoSK42AxVDMBmCa3h+pbkobA18ZLq4kxuEO0YQR+1KwniK36D9IqnyLuc3dza3SlpMvHwoanPsu2DsQYkSzMbfopCyYEzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=G7oNfjIz; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 527GNJPW317850
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Fri, 7 Mar 2025 08:23:19 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 527GNJPW317850
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741364600;
+	bh=BO+FVZTQ+WFQNezyeYDYypLAuwFFO1XjKGTbH7ev1ns=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=G7oNfjIzeUmIkTDDEEykEbYpjV9zClr0FbDoOz2kY6mrEqT5XK2Rcdamb+rWbzMCh
+	 a1qOrX4P9I8LLcUUe4eAHwWSHRn26Tfh4rwt0waSHkRX5OpBl61Yni+Ufj4HGv7ETA
+	 TcnWuQbjHyJl/HcEoQtwGdzy7PQSAN/9LmVRSCv54R6mheWVwkDF5ev97JC2zFyQOr
+	 0v7GiEXbcS6X+j26hJHlkhCxVrEC8DIwEq0ZQEmOD2HSt1iwr6OYZqwWLYx218w/CW
+	 u0KqmoZYAjlYXhMdK4DtYVxGG3XLxBGhQKjD63cF5OozoR8sScIbp1WiIrs5+VkSMB
+	 RBBPMd0wNWnpw==
+Date: Fri, 07 Mar 2025 08:23:17 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: Alexey Dobriyan <adobriyan@gmail.com>, Ingo Molnar <mingo@kernel.org>
+CC: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] x86/asm: delete dummy variables in movdir64b()
+User-Agent: K-9 Mail for Android
+In-Reply-To: <d9d6b9db-dcdb-4024-a14a-bdcbe6afe00a@p183>
+References: <20250307061203.3281-1-adobriyan@gmail.com> <20250307061203.3281-3-adobriyan@gmail.com> <Z8rdRljzdRdh9hu6@gmail.com> <d9d6b9db-dcdb-4024-a14a-bdcbe6afe00a@p183>
+Message-ID: <686459FE-58F5-4009-AF13-B2BF43CF5550@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAOQ4uxizF1qGpC3+m47Y5C_NSMa84vbBRj6xg7_uS-BTJF0Ycw@mail.gmail.com>
- <67cb1cee.050a0220.15b4b9.0082.GAE@google.com>
-In-Reply-To: <67cb1cee.050a0220.15b4b9.0082.GAE@google.com>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 7 Mar 2025 17:22:43 +0100
-X-Gm-Features: AQ5f1Jpm17vwPTL_SLf5SNhsDNjexpxmxQEAhre-BxYX_NNk8s0Ac-GhpzbKKAw
-Message-ID: <CAOQ4uxjxbhJPDCBnuMMmkPchFiDOwX82-35jbhbrQkbp2Rsy6g@mail.gmail.com>
-Subject: Re: [syzbot] [xfs?] WARNING in fsnotify_file_area_perm
-To: syzbot <syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com>
-Cc: akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org, 
-	cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, jack@suse.cz, 
-	josef@toxicpanda.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 7, 2025 at 5:21=E2=80=AFPM syzbot
-<syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com> wrote:
+On March 7, 2025 8:15:42 AM PST, Alexey Dobriyan <adobriyan@gmail=2Ecom> wr=
+ote:
+>On Fri, Mar 07, 2025 at 12:49:26PM +0100, Ingo Molnar wrote:
+>>=20
+>> * Alexey Dobriyan <adobriyan@gmail=2Ecom> wrote:
+>>=20
+>> > Cast to pointer-to-array instead=2E
+>> >=20
+>> > Signed-off-by: Alexey Dobriyan <adobriyan@gmail=2Ecom>
+>> > ---
+>> >  arch/x86/include/asm/special_insns=2Eh | 9 +++------
+>> >  1 file changed, 3 insertions(+), 6 deletions(-)
+>> >=20
+>> > diff --git a/arch/x86/include/asm/special_insns=2Eh b/arch/x86/includ=
+e/asm/special_insns=2Eh
+>> > index d349aa0f0a83=2E=2Eb24c6c945c38 100644
+>> > --- a/arch/x86/include/asm/special_insns=2Eh
+>> > +++ b/arch/x86/include/asm/special_insns=2Eh
+>> > @@ -215,13 +215,10 @@ static __always_inline void serialize(void)
+>> >  /* The dst parameter must be 64-bytes aligned */
+>> >  static inline void movdir64b(void *dst, const void *src)
+>> >  {
+>> > -	const struct { char _[64]; } *__src =3D src;
+>> > -	struct { char _[64]; } *__dst =3D dst;
+>> > -
+>> >  	/*
+>> >  	 * MOVDIR64B %(rdx), rax=2E
+>> >  	 *
+>> > -	 * Both __src and __dst must be memory constraints in order to tell=
+ the
+>> > +	 * Both src and dst must be memory constraints in order to tell the
+>> >  	 * compiler that no other memory accesses should be reordered aroun=
+d
+>> >  	 * this one=2E
+>> >  	 *
+>> > @@ -230,8 +227,8 @@ static inline void movdir64b(void *dst, const voi=
+d *src)
+>> >  	 * I=2Ee=2E, not the pointers but what they point to, thus the dere=
+f'ing '*'=2E
+>> >  	 */
+>> >  	asm volatile("=2Ebyte 0x66, 0x0f, 0x38, 0xf8, 0x02"
+>> > -		     : "+m" (*__dst)
+>> > -		     :  "m" (*__src), "a" (__dst), "d" (__src));
+>> > +		     : "+m" (*(char(*)[64])dst)
+>> > +		     :  "m" (*(const char(*)[64])src), "a" (dst), "d" (src));
+>>=20
+>> In what world is putting type casts inside asm() statements an=20
+>> improvement to the code?
 >
-> Hello,
+>In the same world where creating distracting variable whose only purpose
+>is to make a cast is considered not good=2E
 >
-> syzbot tried to test the proposed patch but the build/boot failed:
->
-> failed to apply patch:
-> checking file include/linux/fs.h
-> patch: **** unexpected end of file in patch
->
->
->
-> Tested on:
->
-> commit:         ea33db4d fsnotify: avoid possible deadlock with HSM ho..
-> git tree:       https://github.com/amir73il/linux fsnotify-fixes
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dd6b7e15dc5b5e=
-776
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3D7229071b47908b1=
-9d5b7
-> compiler:
-> userspace arch: arm64
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=3D16fe487858=
-0000
->
+>Notice the cast is shorter, there is not "struct", so it is positive in
+>both vertical and horizontal directions=2E
 
-Let's try again - just the branch - no extra patch:
-
-#syz test: https://github.com/amir73il/linux fsnotify-fixes
-
-Thanks,
-Amir
+Stuffing more into a single statement =E2=80=93 and asm statements are inv=
+ariably complex =E2=80=93 is not good for clarity=2E Please, no=2E
 
