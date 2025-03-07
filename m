@@ -1,345 +1,125 @@
-Return-Path: <linux-kernel+bounces-551207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3961BA56960
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:50:50 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC0BA56964
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:51:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCADB3B4706
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:50:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 094193B5DB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B7221C9E4;
-	Fri,  7 Mar 2025 13:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18F421CC6D;
+	Fri,  7 Mar 2025 13:49:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PX/DvRpY"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="mWBD89Ur"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A914721B181
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 13:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1ADE21ADBA
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 13:49:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741355389; cv=none; b=A1wi2t3DolSeKkg+nC2uE57MTJTH3DEaeVCcTgAfrY9rLAy8W6M7wgnkTCJ5bbRyhuIBHII5rla+uNJaDBHA0VdGWyw3djgVPARf6qmlhDQwDHon6XfuyHn7isXdmMWQ8sAGmRvpLPN8otI0HfhVaNCgCgETss/p75alU3/6elg=
+	t=1741355395; cv=none; b=WbvYJyTAOEIThK07ozmrxTa2g1/EtGAfMGT0vJ84DX7HQQvQy6nz0oLdk3sGleb3HVL6Mox1hUsV5v5KC3Xp68ttmJgiX9AttPYzRNGpJo6UWejSqjwquLuiRvtmQqvoxDORlzqcnoXq7feOpNDkwcOSjlcSXc3EwUk3PcbBMv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741355389; c=relaxed/simple;
-	bh=UwCAiAJk8a0FhYx5e7ekQxVFl3kVmc4cgPx9AGzJKPE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Zmp6dxUmdbEn7ot3zttnyCok+Df+C3X+s5vZb9MEM0pX47Q9KkXChH/H90CPRdpkYxlUHTWV/T/ohAauBFxGX3NpgbK2AjyffSVZtO8785LJy+NwQTfr+XeBN/15MDvqukC7u0g4VSwt+fyIqS+atWP66+Z+f3rTA/JKuiWnMLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PX/DvRpY; arc=none smtp.client-ip=95.215.58.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741355385;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z6jW7sIZDKGN//InFjXTx2v/9Ue/mZirsyApk04RQs8=;
-	b=PX/DvRpYUiIzeQ+62kUuMgo3uryTn27izG4CBJg32R6KOXH+L60uXLejbov46XD+buMob3
-	s1HvlAPndIUZSF/0+4J8Sm15MrTnlLGlaJlFZC+cjLXtOjpe96nav0FI75MtnIKgekeZlQ
-	9CbXShlQft08UM3/XhUvuHNzXcTNAEU=
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Kent Overstreet <kent.overstreet@linux.dev>
-Subject: [PATCH 7/7] bcachefs: Implement freeze/thaw
-Date: Fri,  7 Mar 2025 08:49:31 -0500
-Message-ID: <20250307134933.1033872-8-kent.overstreet@linux.dev>
-In-Reply-To: <20250307134933.1033872-1-kent.overstreet@linux.dev>
-References: <20250307134933.1033872-1-kent.overstreet@linux.dev>
+	s=arc-20240116; t=1741355395; c=relaxed/simple;
+	bh=yW9/4dLSersMO4DNHldQci8zupCYVd7u26yzS3h3m0o=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SFXLDj9jLK0JeldL8iG7s9iHFTS/do3muBbTjNX8awNp5Aq9pE0TBrdWz88rzFEcnTT/cGCglE54Xa+BaiMo6nNRunyKgMtnjrXWnz+pYtdD7MIt9Iylcy7k5Z6ozws0eF4zskUnOSm7pFytXjEcEwcyiIVPsF7fb0ModfUfpGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=mWBD89Ur; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=6fptnopq2ffptbx2q4fbd7bngq.protonmail; t=1741355389; x=1741614589;
+	bh=EEYoYNAuUuPoPs1W8X1jIbMyhvVpA6cLe6iGvpj1uPg=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=mWBD89UrSunFxSSed9piHZRVnTVTQbSfHGj68T4nj05bbQwvR4DgIxFkpHzZ/J6Zt
+	 Q1kHAQezzzYRAFj6jIH+35y9OadKXgOuHlSefrTqaS9YfNxMWMge7w3fXunyCjD1yR
+	 90sIhMEiMhSHMyQv4KJUjHXihlyonOYxW6ZYYwKwjoI1LsCJaVU6ZePMpLR4Ez+sRy
+	 dO07ivR/bO690AQwCmNLOmVxjEP54qsiauNBQ9SyhFw7aYmrSJnuIDnD3/CRtY6ZiH
+	 ke30h7hELhG3moZxZR+uFvWWTO5Ig1MoOeCpfDdiZDPTzjte18xw82Zu7DCBeuRAzY
+	 hBX0mCFcydjBA==
+Date: Fri, 07 Mar 2025 13:49:43 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 08/13] rust: hrtimer: implement `UnsafeHrTimerPointer` for `Pin<&mut T>`
+Message-ID: <D8A2YP4GF2XL.2MN17TTXW6GM1@proton.me>
+In-Reply-To: <20250307-hrtimer-v3-v6-12-rc2-v10-8-0cf7e9491da4@kernel.org>
+References: <20250307-hrtimer-v3-v6-12-rc2-v10-0-0cf7e9491da4@kernel.org> <20250307-hrtimer-v3-v6-12-rc2-v10-8-0cf7e9491da4@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 1f35bcd8df090977494af4ce67698d317ace72b0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-This fills out our blk_holders_ops with freeze and thaw callbacks, for
-shutting down IO (generally during a system suspend).
+On Fri Mar 7, 2025 at 11:11 AM CET, Andreas Hindborg wrote:
+> Allow pinned mutable references to structs that contain a `HrTimer` node =
+to
+> be scheduled with the `hrtimer` subsystem.
+>
+> Acked-by: Frederic Weisbecker <frederic@kernel.org>
+> Reviewed-by: Lyude Paul <lyude@redhat.com>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+>  rust/kernel/time/hrtimer.rs         |   2 +
+>  rust/kernel/time/hrtimer/pin_mut.rs | 101 ++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 103 insertions(+)
+>
+> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+> index 2ca56397eade..d2791fd624b7 100644
+> --- a/rust/kernel/time/hrtimer.rs
+> +++ b/rust/kernel/time/hrtimer.rs
+> @@ -441,3 +441,5 @@ unsafe fn timer_container_of(ptr: *mut $crate::time::=
+hrtimer::HrTimer<$timer_typ
+>  pub use arc::ArcHrTimerHandle;
+>  mod pin;
+>  pub use pin::PinHrTimerHandle;
+> +mod pin_mut;
+> +pub use pin_mut::PinMutHrTimerHandle;
+> diff --git a/rust/kernel/time/hrtimer/pin_mut.rs b/rust/kernel/time/hrtim=
+er/pin_mut.rs
+> new file mode 100644
+> index 000000000000..4f4a9e9602d8
+> --- /dev/null
+> +++ b/rust/kernel/time/hrtimer/pin_mut.rs
+> @@ -0,0 +1,101 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +use super::HasHrTimer;
+> +use super::HrTimer;
+> +use super::HrTimerCallback;
+> +use super::HrTimerHandle;
+> +use super::RawHrTimerCallback;
+> +use super::UnsafeHrTimerPointer;
+> +use crate::time::Ktime;
+> +use core::pin::Pin;
+> +
+> +/// A handle for a `Pin<&mut HasHrTimer>`. When the handle exists, the t=
+imer might
+> +/// be running.
+> +pub struct PinMutHrTimerHandle<'a, T>
+> +where
+> +    T: HasHrTimer<T>,
+> +{
+> +    pub(crate) inner: Pin<&'a mut T>,
 
-This is implemented completely differently as on other filesystems
-since we have a low level synchronization object which conveniently
-works well for us - bch_dev.io_ref, normally used for guarding against a
-device being offlined while in use.
+I just noticed, if `T: Unpin`, this is unsound in combination with you
+creating another `Pin<&mut T>` reference below for the callback, since
+then we have two `&mut T` pointing to the same value. So you should
+store a raw pointer instead.
 
-bch2_dev_get_ioref() now checks if a freeze is in progress if it fails
-to get ca->io_ref, and sleeps until complete and ca->io_ref is alive.
-
-We also need a bit of synchronization for freeze/suspend vs. device
-online/offline, done with the new bch_dev.io_ref_statechange_lock.
-
-Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
 ---
- fs/bcachefs/bcachefs.h   |  3 ++
- fs/bcachefs/journal_io.c |  2 +-
- fs/bcachefs/sb-members.c | 49 ++++++++++++++++++++++
- fs/bcachefs/sb-members.h | 20 +--------
- fs/bcachefs/super.c      | 87 +++++++++++++++++++++++++++++++++++++---
- 5 files changed, 136 insertions(+), 25 deletions(-)
-
-diff --git a/fs/bcachefs/bcachefs.h b/fs/bcachefs/bcachefs.h
-index d2c3f59a668f..d03aa62907ad 100644
---- a/fs/bcachefs/bcachefs.h
-+++ b/fs/bcachefs/bcachefs.h
-@@ -526,6 +526,9 @@ struct bch_dev {
- 	struct completion	ref_completion;
- 	struct percpu_ref	io_ref;
- 	struct completion	io_ref_completion;
-+	struct mutex		io_ref_statechange_lock;
-+	unsigned		frozen;
-+	wait_queue_head_t	frozen_wait;
- 
- 	struct bch_fs		*fs;
- 
-diff --git a/fs/bcachefs/journal_io.c b/fs/bcachefs/journal_io.c
-index a510755a8364..6979fef5c128 100644
---- a/fs/bcachefs/journal_io.c
-+++ b/fs/bcachefs/journal_io.c
-@@ -1769,7 +1769,7 @@ static CLOSURE_CALLBACK(journal_write_submit)
- 		struct bch_dev *ca = bch2_dev_get_ioref(c, ptr->dev, WRITE);
- 		if (!ca) {
- 			/* XXX: fix this */
--			bch_err(c, "missing device for journal write\n");
-+			bch_err(c, "missing device for journal write");
- 			continue;
- 		}
- 
-diff --git a/fs/bcachefs/sb-members.c b/fs/bcachefs/sb-members.c
-index 116131f95815..2363367cb32d 100644
---- a/fs/bcachefs/sb-members.c
-+++ b/fs/bcachefs/sb-members.c
-@@ -9,6 +9,55 @@
- #include "sb-members.h"
- #include "super-io.h"
- 
-+/*
-+ * Use of bch2_dev_get_ioref() is subject to deadlocks if used incorrectly, and
-+ * we cannot write asserts for correct usage, so: pay attention, because this is
-+ * where we implement freeze.
-+ *
-+ * Waiting on an outstanding freeze to complete will indirectly wait on all
-+ * other outstanding io_refs to be released. That means:
-+ *
-+ * - Don't use bch2_dev_get_ioref() if you already have an io_ref, use
-+ *   percpu_ref_get(). Since dev_get_ioref() has tryget() semantics, that's what
-+ *   you should be doing anyways.
-+ *
-+ * - All io_refs must be released without blocking on locks that might be held
-+ *   while calling dev_get_ioref(). This is easy to obey since we generally
-+ *   release io_refs from endio functions.
-+ *
-+ */
-+struct bch_dev *bch2_dev_get_ioref(struct bch_fs *c, unsigned dev, int rw)
-+{
-+	might_sleep();
-+again:
-+	rcu_read_lock();
-+	struct bch_dev *ca = bch2_dev_rcu(c, dev);
-+	if (likely(ca)) {
-+		if (unlikely(!percpu_ref_tryget(&ca->io_ref))) {
-+			smp_mb();
-+			if (ca->frozen) {
-+				bch2_dev_get(ca);
-+				rcu_read_unlock();
-+
-+				wait_event(ca->frozen_wait, !ca->frozen);
-+				bch2_dev_put(ca);
-+				goto again;
-+			}
-+			ca = NULL;
-+		}
-+	}
-+	rcu_read_unlock();
-+
-+	if (ca &&
-+	    (ca->mi.state == BCH_MEMBER_STATE_rw ||
-+	    (ca->mi.state == BCH_MEMBER_STATE_ro && rw == READ)))
-+		return ca;
-+
-+	if (ca)
-+		percpu_ref_put(&ca->io_ref);
-+	return NULL;
-+}
-+
- void bch2_dev_missing(struct bch_fs *c, unsigned dev)
- {
- 	if (dev != BCH_SB_MEMBER_INVALID)
-diff --git a/fs/bcachefs/sb-members.h b/fs/bcachefs/sb-members.h
-index df91b02ce575..b3359ee63b0e 100644
---- a/fs/bcachefs/sb-members.h
-+++ b/fs/bcachefs/sb-members.h
-@@ -281,25 +281,7 @@ static inline struct bch_dev *bch2_dev_iterate(struct bch_fs *c, struct bch_dev
- 	return bch2_dev_tryget(c, dev_idx);
- }
- 
--static inline struct bch_dev *bch2_dev_get_ioref(struct bch_fs *c, unsigned dev, int rw)
--{
--	might_sleep();
--
--	rcu_read_lock();
--	struct bch_dev *ca = bch2_dev_rcu(c, dev);
--	if (ca && !percpu_ref_tryget(&ca->io_ref))
--		ca = NULL;
--	rcu_read_unlock();
--
--	if (ca &&
--	    (ca->mi.state == BCH_MEMBER_STATE_rw ||
--	    (ca->mi.state == BCH_MEMBER_STATE_ro && rw == READ)))
--		return ca;
--
--	if (ca)
--		percpu_ref_put(&ca->io_ref);
--	return NULL;
--}
-+struct bch_dev *bch2_dev_get_ioref(struct bch_fs *, unsigned, int);
- 
- /* XXX kill, move to struct bch_fs */
- static inline struct bch_devs_mask bch2_online_devs(struct bch_fs *c)
-diff --git a/fs/bcachefs/super.c b/fs/bcachefs/super.c
-index 05a2dc5ef513..dfdeab7d847c 100644
---- a/fs/bcachefs/super.c
-+++ b/fs/bcachefs/super.c
-@@ -1236,6 +1236,22 @@ static void bch2_dev_free(struct bch_dev *ca)
- 	kobject_put(&ca->kobj);
- }
- 
-+static void bch2_dev_io_ref_stop(struct bch_dev *ca)
-+{
-+	lockdep_assert_held(&ca->io_ref_statechange_lock);
-+
-+	reinit_completion(&ca->io_ref_completion);
-+	percpu_ref_kill(&ca->io_ref);
-+	wait_for_completion(&ca->io_ref_completion);
-+}
-+
-+static void bch2_dev_io_ref_start(struct bch_dev *ca)
-+{
-+	lockdep_assert_held(&ca->io_ref_statechange_lock);
-+
-+	percpu_ref_reinit(&ca->io_ref);
-+}
-+
- static void __bch2_dev_offline(struct bch_fs *c, struct bch_dev *ca)
- {
- 
-@@ -1246,13 +1262,14 @@ static void __bch2_dev_offline(struct bch_fs *c, struct bch_dev *ca)
- 
- 	__bch2_dev_read_only(c, ca);
- 
--	reinit_completion(&ca->io_ref_completion);
--	percpu_ref_kill(&ca->io_ref);
--	wait_for_completion(&ca->io_ref_completion);
--
- 	bch2_dev_unlink(ca);
- 
-+	mutex_lock(&ca->io_ref_statechange_lock);
-+	bch2_dev_io_ref_stop(ca);
-+
- 	bch2_free_super(&ca->disk_sb);
-+	mutex_unlock(&ca->io_ref_statechange_lock);
-+
- 	bch2_dev_journal_exit(ca);
- }
- 
-@@ -1334,6 +1351,8 @@ static struct bch_dev *__bch2_dev_alloc(struct bch_fs *c,
- 	kobject_init(&ca->kobj, &bch2_dev_ktype);
- 	init_completion(&ca->ref_completion);
- 	init_completion(&ca->io_ref_completion);
-+	mutex_init(&ca->io_ref_statechange_lock);
-+	init_waitqueue_head(&ca->frozen_wait);
- 
- 	INIT_WORK(&ca->io_error_work, bch2_io_error_work);
- 
-@@ -1428,6 +1447,8 @@ static int __bch2_dev_attach_bdev(struct bch_dev *ca, struct bch_sb_handle *sb)
- 	if (ret)
- 		return ret;
- 
-+	mutex_lock(&ca->io_ref_statechange_lock);
-+
- 	/* Commit: */
- 	ca->disk_sb = *sb;
- 	memset(sb, 0, sizeof(*sb));
-@@ -1441,7 +1462,9 @@ static int __bch2_dev_attach_bdev(struct bch_dev *ca, struct bch_sb_handle *sb)
- 
- 	ca->dev = ca->disk_sb.bdev->bd_dev;
- 
--	percpu_ref_reinit(&ca->io_ref);
-+	if (!ca->frozen)
-+		bch2_dev_io_ref_start(ca);
-+	mutex_unlock(&ca->io_ref_statechange_lock);
- 
- 	return 0;
- }
-@@ -2115,9 +2138,63 @@ static void bch2_fs_bdev_sync(struct block_device *bdev)
- 	bch2_ro_ref_put(c);
- }
- 
-+static int bch2_fs_bdev_freeze(struct block_device *bdev)
-+{
-+	int ret = -EINVAL;
-+	struct bch_fs *c = bdev_get_fs(bdev);
-+	if (!c)
-+		return ret;
-+
-+	struct bch_dev *ca = bdev_to_bch_dev(c, bdev);
-+	if (!ca)
-+		goto err;
-+
-+	mutex_lock(&ca->io_ref_statechange_lock);
-+	ca->frozen++;
-+	smp_mb();
-+	bch2_dev_io_ref_stop(ca);
-+	mutex_unlock(&ca->io_ref_statechange_lock);
-+
-+	ret = sync_blockdev(bdev);
-+
-+	bch2_dev_put(ca);
-+err:
-+	bch2_ro_ref_put(c);
-+	return ret;
-+}
-+
-+static int bch2_fs_bdev_thaw(struct block_device *bdev)
-+{
-+	int ret = -EINVAL;
-+	struct bch_fs *c = bdev_get_fs(bdev);
-+	if (!c)
-+		return ret;
-+
-+	struct bch_dev *ca = bdev_to_bch_dev(c, bdev);
-+	if (!ca)
-+		goto err;
-+
-+	mutex_lock(&ca->io_ref_statechange_lock);
-+	if (ca->disk_sb.bdev &&
-+	    ca->frozen == 1)
-+		bch2_dev_io_ref_start(ca);
-+	--ca->frozen;
-+	wake_up(&ca->frozen_wait);
-+	mutex_unlock(&ca->io_ref_statechange_lock);
-+
-+	ret = 0;
-+
-+	bch2_dev_put(ca);
-+err:
-+	bch2_ro_ref_put(c);
-+	return ret;
-+}
-+
- const struct blk_holder_ops bch2_sb_handle_bdev_ops = {
- 	.mark_dead		= bch2_fs_bdev_mark_dead,
- 	.sync			= bch2_fs_bdev_sync,
-+	.freeze			= bch2_fs_bdev_freeze,
-+	.thaw			= bch2_fs_bdev_thaw,
- };
- 
- /* Filesystem open: */
--- 
-2.47.2
+Cheers,
+Benno
 
 
