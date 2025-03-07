@@ -1,229 +1,149 @@
-Return-Path: <linux-kernel+bounces-552038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA45AA57498
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:06:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0231A57499
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:06:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 002BC174DC6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:06:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE49E3B5774
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:05:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C63E25DCF8;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82CBF257437;
 	Fri,  7 Mar 2025 22:03:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="VWMx1A8c"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B8C425A2C8;
-	Fri,  7 Mar 2025 22:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RoSjkAPa"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E38AA25C6E9;
+	Fri,  7 Mar 2025 22:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741384992; cv=none; b=CXZlz+NefaVLxJi6xGLD1qIV9qVoE3I/kfk50kWNNPFL5zkD20XkPVKa22PJBMPwSzstBRnmzHB5axDr7GRHTF9M979y6TGDHVyl0DcuzBNoCjKdtYwWUwNLcoMkbBxnma3ZylCLcoW+dksMxtz0naTeNRejYxnGpmm+kHqKaUc=
+	t=1741384993; cv=none; b=iTBVbx11Xb1F87sVjfPD9KSrQPAqrOCflAe8b9AnPAvq/wEzm2C3LEShmaQi+kNgIQ1DHHU4oemA7GTKZXCZNHqXkgVzM6hfpOjjpV1rWfD3IygKaXE1FXuS5Mvy8zSI9PfZ0GL9HwKg+uJbBsUZuS9HPW98V5JvvrMX096SGCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741384992; c=relaxed/simple;
-	bh=d0fwC8UIq93YzDsvDKcCK5mGNc+J0b9PJ8mM7P/Ez0U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EjxK77BsAA0X8o1h5OszSfTc29gtu0AEBfHjnUFF9ChD+ozEauR79p7oEW7Sm57gbT2shSCr/Zq+gF3dVpaeUAu/kJgII8gwEF5l0qjpW3nr0w6kSsUnNwTz72ZtkLaWrkBX1aL41Q7KWYyJji1cvK2HZX1/d5NKqZZwPKvq9WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=VWMx1A8c; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from romank-3650.corp.microsoft.com (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id AAA482038F4B;
-	Fri,  7 Mar 2025 14:03:09 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com AAA482038F4B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741384990;
-	bh=B5hsLkIIQHRBbaSv3v+Ds4WX3/ha0axnhDxusO+bLK8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VWMx1A8cvwJ+9Lsto0d6on3jXNC+IMlxDwKxqC6OrCvjKJtjfai0Gv5FOohlsSpnH
-	 dwGk16wQvvzv8CPi1uKH7Z+cbHOQRrILujcG5kLWK8k1whdcFVIn9/b1s17zv0EpvJ
-	 jLb1OWLgYSCX1542iIyBgx0MF9f8+s0l0jkUWi00=
-From: Roman Kisel <romank@linux.microsoft.com>
-To: arnd@arndb.de,
-	bhelgaas@google.com,
-	bp@alien8.de,
-	catalin.marinas@arm.com,
-	conor+dt@kernel.org,
-	dave.hansen@linux.intel.com,
-	decui@microsoft.com,
-	haiyangz@microsoft.com,
-	hpa@zytor.com,
-	joey.gouly@arm.com,
-	krzk+dt@kernel.org,
-	kw@linux.com,
-	kys@microsoft.com,
-	lenb@kernel.org,
-	lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org,
-	mark.rutland@arm.com,
-	maz@kernel.org,
-	mingo@redhat.com,
-	oliver.upton@linux.dev,
-	rafael@kernel.org,
-	robh@kernel.org,
-	ssengar@linux.microsoft.com,
-	sudeep.holla@arm.com,
-	suzuki.poulose@arm.com,
-	tglx@linutronix.de,
-	wei.liu@kernel.org,
-	will@kernel.org,
-	yuzenghui@huawei.com,
-	devicetree@vger.kernel.org,
-	kvmarm@lists.linux.dev,
-	linux-acpi@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-hyperv@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	x86@kernel.org
-Cc: apais@microsoft.com,
-	benhill@microsoft.com,
-	bperkins@microsoft.com,
-	sunilmut@microsoft.com
-Subject: [PATCH hyperv-next v5 11/11] PCI: hv: Get vPCI MSI IRQ domain from DeviceTree
-Date: Fri,  7 Mar 2025 14:03:03 -0800
-Message-ID: <20250307220304.247725-12-romank@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250307220304.247725-1-romank@linux.microsoft.com>
-References: <20250307220304.247725-1-romank@linux.microsoft.com>
+	s=arc-20240116; t=1741384993; c=relaxed/simple;
+	bh=HfT7YBUuQun9peA6NSdWFSnBB00x6zpOkOT1q8ZQG8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WBGA1HOS0BcDPh04wfl5qu+4dwbxD1HaniI7Lx/hCZSc1i8taP+/GqoeBIN1iX+s0uOfVMHDmqYKQlA79tAEjxtKsreZOoXgdBY26UJ03J4TqUktnSyuny4y4uAT3ZEFDwylrZddN7N5/oXQ1aKGmM09I3uh6/M3x+B4o8M44L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RoSjkAPa; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22185cddbffso65830425ad.1;
+        Fri, 07 Mar 2025 14:03:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741384991; x=1741989791; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+QrD4lSciRyJzuMr7aOD0QN72ptV5sVvOJnuSmvbS6g=;
+        b=RoSjkAPaPM6eSHOl8IEF2LSxVhHBZmeMYAvIMP7l0kcIpbR2T4vBh61HVstm7lfhxJ
+         7Z04iB1leTeWhGzRXV5tpVqLrGCkRdQQhjs8Rpc/Jk6JZevd4EhykV/x0NVvzQnPZkOc
+         NVV1sBXR+Nwa6PYxpD7RCDaqkeZEi9tzFMQnfcat2yna/ZH4699SmwakOnw9rwXmoLZh
+         znVpCPqzK0pPzV8tn3uBZaaxIq1IyT5bBQeSq1Fiw9SwS8YAI6bsb7hJflkzEWu6Tfh+
+         9/H69uSE8++tULrhvy5lpPyIixR1oRg19EE/+PLJI+ATM4+qhDyqChEgn+g36wKzXqDx
+         6tTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741384991; x=1741989791;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+QrD4lSciRyJzuMr7aOD0QN72ptV5sVvOJnuSmvbS6g=;
+        b=GSML3UJh3qprWWoRk89NHkvFe8HWlzx7JqAuuK0qm6lM6JgMm4q9sGUB7BSyxbpnB6
+         pAaSc6ptLnAMwd2B4x6dR5qoRuGBlOiZ4uMZRPM7WLuX+htDVdGxb4JOQ2QWmnCumvo5
+         yp0CTqywKy8jDby2OhPGlLIXIUqJVVMYhZIo9fiZe0IKKTIpyDDtr5IylCc/+OM1ClZj
+         AkwlHY/cmu+S/ezVGXSX68EZdN0N6u12Tn/RfAl0qWIhfJv57vmapgNe30ettz6z04kK
+         IOwX9qALd7jtyHBjUSv8mRxoHdnx53wrvDZ+Gafjn4KH3j7BRj8ZrAvsQBgOUKRlsLPu
+         W/aQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvHF14bSMRmPkJ9wqyYLhGipAEspT36KIzM3mUN3xCtYYY0RkcCHIk6KpVeAVVZvch2WYJ7yCuzGCs@vger.kernel.org, AJvYcCVvhYSBapU05At/Ipqh9SqTTmYX0a11yH2H8hs7ULtSbN46IZ/Pv3q797JNZrAjcqRg5P5c7mVlxOJc0rt3sg==@vger.kernel.org, AJvYcCWPEHVY40Uuk6KDrporNI9TJ3FELgeWnQaygWdNxZIM/O5sR6tAvdIwflJIvQ9O4VSV880bvXDuWCb1AJ1x@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTsubFDuBv92XBDIbocQnVuZoy0XEZNnfJKhygnt3roRbkQVrF
+	WfADp+gILlTs8Hcmct3oXr71CxFf2q8nERe4tn0ICpl5+GsgaDk=
+X-Gm-Gg: ASbGnct27wYOozaYQDhwx738shtXCeUoeSud0Xw5ZQmsntA7/w9c86gzF48qmsc7RxQ
+	u4JVaHYVHvG9S3Fvhcw4tldel5pol5CBgVAY1UF4hUrXAqPnc0taC95VrB1jpad0RfiJurSOPH7
+	71NspAJEkhaJQOq12+756zemx++N4FuAB1Fme0kDP/YGiNa2zfBhbhlB4afvsTM3BhO4HyGHvj2
+	HayXPRU/Hu9xegPH9Ks/eIZ1ezTJvSbFFc7tMHOJpEJOTi2S2B/HocdH2ShaQVbcqet6mTLWSCI
+	qofAK7zsuvakXL6s3JpoLev0i85fGo9nrb+Aa9kT9iW28wzD5gM9+6WsMXd1DDfCoUbbFZjWMEz
+	bURhOUiSl/Wg=
+X-Google-Smtp-Source: AGHT+IF38hSMmdQu7eK/4ry/q0bQbaliG6ifbVXwZ+xnP5shZveIjg6P+7bLSB3++j5ldSNYjgrjbg==
+X-Received: by 2002:a05:6a00:816:b0:736:aea8:c9b7 with SMTP id d2e1a72fcca58-736bbf4af5dmr2240165b3a.2.1741384990903;
+        Fri, 07 Mar 2025 14:03:10 -0800 (PST)
+Received: from [192.168.20.171] (adsl-178-39-53-103.adslplus.ch. [178.39.53.103])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73698244180sm3909287b3a.63.2025.03.07.14.03.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Mar 2025 14:03:10 -0800 (PST)
+Message-ID: <ea9344b7-6646-4329-b8f6-45d2b51f183b@gmail.com>
+Date: Fri, 7 Mar 2025 23:03:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v5 0/4] arm64: dts: qcom: x1e80100: crd/t14s:
+ Enable Parade Type-C retimers
+To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Rajendra Nayak <quic_rjendra@quicinc.com>,
+ Sibi Sankar <quic_sibis@quicinc.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Trilok Soni <quic_tsoni@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250220-x1e80100-dts-crd-t14s-enable-typec-retimers-v5-0-380a3e0e7edc@linaro.org>
+From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
+Content-Language: en-US
+In-Reply-To: <20250220-x1e80100-dts-crd-t14s-enable-typec-retimers-v5-0-380a3e0e7edc@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The hyperv-pci driver uses ACPI for MSI IRQ domain configuration on
-arm64. It won't be able to do that in the VTL mode where only DeviceTree
-can be used.
 
-Update the hyperv-pci driver to get vPCI MSI IRQ domain in the DeviceTree
-case, too.
 
-Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
----
- drivers/pci/controller/pci-hyperv.c | 79 ++++++++++++++++++++++++++---
- 1 file changed, 73 insertions(+), 6 deletions(-)
+On 2/20/25 18:42, Abel Vesa wrote:
+> Since the driver and dt-bindings have been alread merged, it has been
+> agreed offline that there is no point of holding on to these DT patches
+> even though there are some issues with plug/unplug during suspend in
+> both pmic-glink-altmode and ucsi-glink. These issues are being worked on
+> meanwhile. Merging these means that even though this will provide external DP
+> and USB orientation, plug/unplug during suspend will give some splats
+> and render both the USB orientation and DP broken. But then, other
+> X Elite boards already have these nodes described, so lets bring the crd
+> and t14s to the same level.
+> 
+> These patches are just a resend of the ones found in v5 and dropped in the v6
+> patchset of the driver and dt-bindings.
+> 
+> Link to v5: https://lore.kernel.org/all/20241112-x1e80100-ps8830-v5-0-4ad83af4d162@linaro.org/
+> 
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 
-diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
-index 6084b38bdda1..9740006a8c73 100644
---- a/drivers/pci/controller/pci-hyperv.c
-+++ b/drivers/pci/controller/pci-hyperv.c
-@@ -50,6 +50,7 @@
- #include <linux/irqdomain.h>
- #include <linux/acpi.h>
- #include <linux/sizes.h>
-+#include <linux/of_irq.h>
- #include <asm/mshyperv.h>
- 
- /*
-@@ -817,9 +818,17 @@ static int hv_pci_vec_irq_gic_domain_alloc(struct irq_domain *domain,
- 	int ret;
- 
- 	fwspec.fwnode = domain->parent->fwnode;
--	fwspec.param_count = 2;
--	fwspec.param[0] = hwirq;
--	fwspec.param[1] = IRQ_TYPE_EDGE_RISING;
-+	if (is_of_node(fwspec.fwnode)) {
-+		/* SPI lines for OF translations start at offset 32 */
-+		fwspec.param_count = 3;
-+		fwspec.param[0] = 0;
-+		fwspec.param[1] = hwirq - 32;
-+		fwspec.param[2] = IRQ_TYPE_EDGE_RISING;
-+	} else {
-+		fwspec.param_count = 2;
-+		fwspec.param[0] = hwirq;
-+		fwspec.param[1] = IRQ_TYPE_EDGE_RISING;
-+	}
- 
- 	ret = irq_domain_alloc_irqs_parent(domain, virq, 1, &fwspec);
- 	if (ret)
-@@ -887,10 +896,53 @@ static const struct irq_domain_ops hv_pci_domain_ops = {
- 	.activate = hv_pci_vec_irq_domain_activate,
- };
- 
-+#ifdef CONFIG_OF
-+
-+static struct irq_domain *hv_pci_of_irq_domain_parent(void)
-+{
-+	struct device_node *parent;
-+	struct irq_domain *domain;
-+
-+	parent = of_irq_find_parent(hv_get_vmbus_root_device()->of_node);
-+	domain = NULL;
-+	if (parent) {
-+		domain = irq_find_host(parent);
-+		of_node_put(parent);
-+	}
-+
-+	return domain;
-+}
-+
-+#endif
-+
-+#ifdef CONFIG_ACPI
-+
-+static struct irq_domain *hv_pci_acpi_irq_domain_parent(void)
-+{
-+	struct irq_domain *domain;
-+	acpi_gsi_domain_disp_fn gsi_domain_disp_fn;
-+
-+	if (acpi_irq_model != ACPI_IRQ_MODEL_GIC)
-+		return NULL;
-+	gsi_domain_disp_fn = acpi_get_gsi_dispatcher();
-+	if (!gsi_domain_disp_fn)
-+		return NULL;
-+	domain = irq_find_matching_fwnode(gsi_domain_disp_fn(0),
-+				     DOMAIN_BUS_ANY);
-+
-+	if (!domain)
-+		return NULL;
-+
-+	return domain;
-+}
-+
-+#endif
-+
- static int hv_pci_irqchip_init(void)
- {
- 	static struct hv_pci_chip_data *chip_data;
- 	struct fwnode_handle *fn = NULL;
-+	struct irq_domain *irq_domain_parent = NULL;
- 	int ret = -ENOMEM;
- 
- 	chip_data = kzalloc(sizeof(*chip_data), GFP_KERNEL);
-@@ -907,9 +959,24 @@ static int hv_pci_irqchip_init(void)
- 	 * way to ensure that all the corresponding devices are also gone and
- 	 * no interrupts will be generated.
- 	 */
--	hv_msi_gic_irq_domain = acpi_irq_create_hierarchy(0, HV_PCI_MSI_SPI_NR,
--							  fn, &hv_pci_domain_ops,
--							  chip_data);
-+#ifdef CONFIG_ACPI
-+	if (!acpi_disabled)
-+		irq_domain_parent = hv_pci_acpi_irq_domain_parent();
-+#endif
-+#if defined(CONFIG_OF)
-+	if (!irq_domain_parent)
-+		irq_domain_parent = hv_pci_of_irq_domain_parent();
-+#endif
-+	if (!irq_domain_parent) {
-+		WARN_ONCE(1, "Invalid firmware configuration for VMBus interrupts\n");
-+		ret = -EINVAL;
-+		goto free_chip;
-+	}
-+
-+	hv_msi_gic_irq_domain = irq_domain_create_hierarchy(
-+		irq_domain_parent, 0, HV_PCI_MSI_SPI_NR,
-+		fn, &hv_pci_domain_ops,
-+		chip_data);
- 
- 	if (!hv_msi_gic_irq_domain) {
- 		pr_err("Failed to create Hyper-V arm64 vPCI MSI IRQ domain\n");
--- 
-2.43.0
+If you will be respinning, could you please add link-frequencies to
+enable HBR3 speeds, similarly to [1]? Alternatively, I can also send
+fixups once this series lands.
+
+[1] 
+https://lore.kernel.org/all/20250226231436.16138-1-alex.vinarskis@gmail.com/
+
+Thanks,
+Alex
+
+> ---
+> Abel Vesa (4):
+>        arm64: dts: qcom: x1e80100-crd: Describe the Parade PS8830 retimers
+>        arm64: dts: qcom: x1e80100-crd: Enable external DisplayPort support
+>        arm64: dts: qcom: x1e80100-t14s: Describe the Parade PS8830 retimers
+>        arm64: dts: qcom: x1e80100-t14s: Enable external DisplayPort support
+> 
+>   .../dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts     | 321 +++++++++++++-
+>   arch/arm64/boot/dts/qcom/x1e80100-crd.dts          | 474 ++++++++++++++++++++-
+>   2 files changed, 785 insertions(+), 10 deletions(-)
+> ---
+> base-commit: 50a0c754714aa3ea0b0e62f3765eb666a1579f24
+> change-id: 20250220-x1e80100-dts-crd-t14s-enable-typec-retimers-325cdb7b097d
+> 
+> Best regards,
 
 
