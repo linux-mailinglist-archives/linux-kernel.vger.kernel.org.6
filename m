@@ -1,411 +1,238 @@
-Return-Path: <linux-kernel+bounces-551151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551153-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C425EA568B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:19:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F87AA568C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:22:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D936172DEF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:19:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 764FD1888323
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EEA2219A72;
-	Fri,  7 Mar 2025 13:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 577DE218592;
+	Fri,  7 Mar 2025 13:22:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lJ4DltpQ"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Oq7Ceyfl"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0B631A2398;
-	Fri,  7 Mar 2025 13:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF6921766A;
+	Fri,  7 Mar 2025 13:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741353555; cv=none; b=i5UyeMdKTP9O13evZEJ7IENlP3ENfdmi7Ttdrb6Da+KH7Op/zROrI2wzwCN6Kn4zJhpdaJZCyYyiG+22q53hX4c9y1yuALSOzw+71PwxQFazusMr+S6n7ktKTtGcS34BUx6idqwXKNsQ5tQMpdzlPbYrW3GmpkMlouCyVuy0gQw=
+	t=1741353719; cv=none; b=fN/xGAYOOLw1rJPvA5dQOI9Jgb1YtJlPNgpcLXtP5hi4UbkHvyXeyqer0YN+lpWUH4SwR9hY0FUpD7B87svfgIyFmfpUB9MLJeM3Ic9UK4G8+fefuRbNyY3NGS0xYUs1il0Gsb+3tovVWi1Hu4NuO64Ye0x2G8JNP48tc82p9oM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741353555; c=relaxed/simple;
-	bh=0DSn/PTRSgM3reu4DhbsF4DDbxPv1sZrQ+klQptiyhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LfolXa9OQOgDHUc0NWumLN3i4D98H1Acjp+FUx3grzZS/H6SLV1X9DqDDgY/2eN2+WFn+hRDnSG4UapVn3WDmPljE+cIZAYDQkwwEvXjOeSTITXbpdI3buIX6VQSujEWS+KnThjgG0df4d4Ean1zs9VwvyKxdXfLXDo5gLjX0d0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lJ4DltpQ; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2239f8646f6so33908395ad.2;
-        Fri, 07 Mar 2025 05:19:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741353553; x=1741958353; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=eImNnLSVIdIQFpmVL7ZVYdDntXt9XT8RVIowRhm/nWA=;
-        b=lJ4DltpQv2AZliEiAdTL/AM7ONpY5YH2JOzQUEPDt9QNFS9XHjYjvk2SDeQye8fs64
-         EsKV0nTyJIelj/BRcV87zrGVllegJYzYKtATaWKGdopXhxEZkmD23yWO5gLGSBILIHDD
-         Q3d3rnVFQaFjQSCFbB4f20kt70+txWkOtKCTYiRERmp41u1JaTLHdUMrJpw+hSO7h7xF
-         wMv+nV8h8s151cWaZCnKiwufjWDriGTEnLeRgGw5RJ4k6I+CqKXCusU1z2MLiY4Op5Db
-         LYiTZxi2buwA9C7ah1UVX9gzbkjurpN2ds2WsISmbnR8ifK7d5JpFcHKfGBrK0XFkh4+
-         lOtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741353553; x=1741958353;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eImNnLSVIdIQFpmVL7ZVYdDntXt9XT8RVIowRhm/nWA=;
-        b=BHQPOEHG+54nHhz0PlTWQfW3mbtm1YwlKB9U094M56/6CHUj2l55wC90tQ25MgXFJV
-         Tfhs67GmUAzgWrv4FzsCFH525bWif7O8mTfXBp26u54njdoeOQerQGhB/a//fDZzr+qo
-         KPicLZhFj8L+OaUt3yY9iOdSmB+yzFJO616FvUEeIf3ofJeOWeOv1JMXO2O3DcYug4fz
-         MJ6zklcGcDDEInu7OfWNtxBgSxT6PgxsSvCY0wEp7x80hvroO0hjVIaRsxcEb+j3J7ZI
-         ffMnsnQ0UaqbpFJwxmS52nWEYqGfc9cfvkJz8TypEz7qsEM1Dyhgz7cEoUfA2nQfZ1LX
-         lmMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVOkgCBYfBzYXABvp5IjO/DNeSUv0aEl5dPm9ydqmK3/28u1+aMF0VSv0Bhq6AKMELQv3ERfpJfRyDwMKpL@vger.kernel.org, AJvYcCVroVugL6SeSu9ec9tL27mfn8vzK/fy9sua3qSEmwJU1EBOQEKRAP4eblL4pdxS0ekfihsuXbP0DBoO@vger.kernel.org, AJvYcCVtcS1FwZlrFYpKHb9TsSqy7z2g2rSxf2x2sIeifwVCelq7NmbBQbIsUq/rilYxdm3DGtiH5DdsfxrfPg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/d90sOG/SaEy5mRvmh+Yrl8V6orxLlzRhdy06pFljUjuirOQY
-	mk/ohmMkhSOw+vtAPJ2y94FuktjVmZggjue56JQZsgEVGtzBmYu6
-X-Gm-Gg: ASbGncu7riDvL/3JHpQhgVpAN+1wpO6UBCsXWHgAF3QKd4/SoZ/KwsSqsGBRHdK6Sto
-	7xe86B8s1o0TZ8F5FA/XUpnZn6G8hfvPt7l2gL+6Q5kwTNh16W0WLj6i4jXVma3Yl5qbqF9dkY6
-	ovIPNoT7RHdeWz2xEEtG64GcelNpu3Xqg0CKqGL+tjMD5LGdXfVRw/gyWqFXvqmN9O9VnhXJWaw
-	jexk4Ruyig6NXzM1zrPH2+AJCtfhwxoWYsku/WL8Cxh8fjf2C0cDt4kNv0H91JHOS3XvYK6b9DD
-	/I1wTAY71c8xfMZk/X6WsLgyuuMYkFuXe0BvjDbE0c1ONlOT3W+//Q==
-X-Google-Smtp-Source: AGHT+IExqyi822ISn1fcSp/X6enD9IsnsJ0FvV3qlXmYFJJi/+pzoceA+KfV9d1W1JhyORit4JBYHg==
-X-Received: by 2002:a05:6a20:1591:b0:1f3:484e:c55c with SMTP id adf61e73a8af0-1f544c99ea7mr6074059637.35.1741353552772;
-        Fri, 07 Mar 2025 05:19:12 -0800 (PST)
-Received: from localhost ([2804:30c:1f21:4300:1cf6:c485:6555:b1c5])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-736ade82020sm1346646b3a.17.2025.03.07.05.19.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 05:19:12 -0800 (PST)
-Date: Fri, 7 Mar 2025 10:20:04 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	lars@metafoo.de, Michael.Hennerich@analog.com,
-	marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
-	brgl@bgdev.pl, lgirdwood@gmail.com, broonie@kernel.org,
-	dlechner@baylibre.com, jonath4nns@gmail.com
-Subject: Re: [PATCH v4 08/17] iio: adc: ad7768-1: convert driver to use regmap
-Message-ID: <Z8ryhMV1lYZeZVCB@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1741268122.git.Jonathan.Santos@analog.com>
- <b0c7976d4bc817b7056ef40e3ce870b42e8a2d80.1741268122.git.Jonathan.Santos@analog.com>
+	s=arc-20240116; t=1741353719; c=relaxed/simple;
+	bh=vA08rp+GauFFkvql3PJYYKaGeal8Vz7EnyCQmoEvSCA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X6+vsno0WptumCSLpG0erwIlvzm2ySdR+G6eSqNCNKw5hZkesUrdDvlKeDKrE4fKdbFbHrEnt1qwGIz6zr4sy8EnYFlhUwARCfN30NVPn+V5cUfsAHhh171x2aDYcvqzY62VcIB2GLuwISNFpJ7rCNXW+puIRLw5+pfQO5e9Sog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Oq7Ceyfl; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=rfhu44corralbjgscz7aoex4yu.protonmail; t=1741353707; x=1741612907;
+	bh=g9I17LnuLpRiNJ7CP70cjoepGRs+1G1lV39xRLjr7S8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=Oq7CeyfluQmlmLDYi9fcHBBGYkB9nGFPvodj8x0q7cOieRyBN0dWq3TLhhZwkxUOB
+	 23XUGcEbMhZxZ0cHDd8dxsG6+JRhiWepH4FtInzyZ0o8WowIXZtFlzHZnSl9SL05sz
+	 WrZX7mgYYA8gly24iafbqMxKtbPOrG7stYxNeQK1KrsBa0C2T2A79vHU/DqDmGNMWL
+	 h8p9fzb3MTOXMVcg47XC9U/GJMWDjVxZBzYvRZOvnN57fhDJaw5Ept45Q/fkEfKkHt
+	 JU3CM0gIq2iuz1oehsFTloHRWwFiHe+4JIhqgboyAV3K0776khdrjSdsh/ns5ku/7Z
+	 8lZ/2CN00y7jQ==
+Date: Fri, 07 Mar 2025 13:21:44 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 10/13] rust: hrtimer: implement `HrTimerPointer` for `Pin<Box<T>>`
+Message-ID: <D8A2DAP4JOOK.PC50NH7JGIM2@proton.me>
+In-Reply-To: <20250307-hrtimer-v3-v6-12-rc2-v10-10-0cf7e9491da4@kernel.org>
+References: <20250307-hrtimer-v3-v6-12-rc2-v10-0-0cf7e9491da4@kernel.org> <20250307-hrtimer-v3-v6-12-rc2-v10-10-0cf7e9491da4@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: e162dc079f29301a8b2e4dce2f2cdc32b96986b4
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b0c7976d4bc817b7056ef40e3ce870b42e8a2d80.1741268122.git.Jonathan.Santos@analog.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 03/06, Jonathan Santos wrote:
-> Convert the AD7768-1 driver to use the regmap API for register
-> access. This change simplifies and standardizes register interactions,
-> reducing code duplication and improving maintainability.
-> 
-> Create two regmap configurations, one for 8-bit register values and
-> other for 24-bit register values.
-> 
-> Since we are using regmap now, define the remaining registers from 0x32
-> to 0x34.
-> 
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+On Fri Mar 7, 2025 at 11:11 AM CET, Andreas Hindborg wrote:
+> Allow `Pin<Box<T>>` to be the target of a timer callback.
+>
+> Acked-by: Frederic Weisbecker <frederic@kernel.org>
+> Reviewed-by: Lyude Paul <lyude@redhat.com>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
 > ---
-> v4 Changes:
-> * Add `REGMAP24` to the register macros with 24-bit value.
-> * Add `select REGMAP_SPI` line to the Kconfig.
-> 
-> v3 Changes:
-> * Included a second register map for the 24-bit register values.
-> * Added register tables to separate the 24-bit from the 8-bit values.
-> 
-> v2 Changes:
-> * New patch in v2.
-> ---
->  drivers/iio/adc/Kconfig    |   1 +
->  drivers/iio/adc/ad7768-1.c | 151 +++++++++++++++++++++++++------------
->  2 files changed, 104 insertions(+), 48 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index 849c90203071..a2fdb7e03a66 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -277,6 +277,7 @@ config AD7766
->  config AD7768_1
->  	tristate "Analog Devices AD7768-1 ADC driver"
->  	depends on SPI
-> +	select REGMAP_SPI
->  	select IIO_BUFFER
->  	select IIO_TRIGGER
->  	select IIO_TRIGGERED_BUFFER
-> diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-> index f5509a0a36ab..04a26e5b7d5c 100644
-> --- a/drivers/iio/adc/ad7768-1.c
-> +++ b/drivers/iio/adc/ad7768-1.c
-> @@ -12,6 +12,7 @@
->  #include <linux/gpio/consumer.h>
->  #include <linux/kernel.h>
->  #include <linux/module.h>
-> +#include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/sysfs.h>
->  #include <linux/spi/spi.h>
-> @@ -53,12 +54,15 @@
->  #define AD7768_REG_SPI_DIAG_ENABLE	0x28
->  #define AD7768_REG_ADC_DIAG_ENABLE	0x29
->  #define AD7768_REG_DIG_DIAG_ENABLE	0x2A
-> -#define AD7768_REG_ADC_DATA		0x2C
-> +#define AD7768_REG24_ADC_DATA		0x2C
->  #define AD7768_REG_MASTER_STATUS	0x2D
->  #define AD7768_REG_SPI_DIAG_STATUS	0x2E
->  #define AD7768_REG_ADC_DIAG_STATUS	0x2F
->  #define AD7768_REG_DIG_DIAG_STATUS	0x30
->  #define AD7768_REG_MCLK_COUNTER		0x31
-> +#define AD7768_REG_COEFF_CONTROL	0x32
-> +#define AD7768_REG24_COEFF_DATA		0x33
-> +#define AD7768_REG_ACCESS_KEY		0x34
->  
->  /* AD7768_REG_POWER_CLOCK */
->  #define AD7768_PWR_MCLK_DIV_MSK		GENMASK(5, 4)
-> @@ -153,6 +157,8 @@ static const struct iio_chan_spec ad7768_channels[] = {
->  
->  struct ad7768_state {
->  	struct spi_device *spi;
-> +	struct regmap *regmap;
-> +	struct regmap *regmap24;
->  	struct regulator *vref;
->  	struct clk *mclk;
->  	unsigned int mclk_freq;
-> @@ -175,46 +181,76 @@ struct ad7768_state {
->  	} data __aligned(IIO_DMA_MINALIGN);
->  };
->  
-> -static int ad7768_spi_reg_read(struct ad7768_state *st, unsigned int addr,
-> -			       unsigned int len)
-> -{
-> -	unsigned int shift;
-> -	int ret;
-> +static const struct regmap_range ad7768_regmap_rd_ranges[] = {
-> +	regmap_reg_range(AD7768_REG_CHIP_TYPE, AD7768_REG_DIG_DIAG_ENABLE),
-> +	regmap_reg_range(AD7768_REG_MASTER_STATUS, AD7768_REG_COEFF_CONTROL),
-> +	regmap_reg_range(AD7768_REG_ACCESS_KEY, AD7768_REG_ACCESS_KEY),
-> +};
->  
-> -	shift = 32 - (8 * len);
-> -	st->data.d8[0] = AD7768_RD_FLAG_MSK(addr);
-> +static const struct regmap_access_table ad7768_regmap_rd_table = {
-> +	.yes_ranges = ad7768_regmap_rd_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(ad7768_regmap_rd_ranges),
-> +};
->  
-> -	ret = spi_write_then_read(st->spi, st->data.d8, 1,
-> -				  &st->data.d32, len);
-> -	if (ret < 0)
-> -		return ret;
-> +static const struct regmap_range ad7768_regmap_wr_ranges[] = {
-> +	regmap_reg_range(AD7768_REG_SCRATCH_PAD, AD7768_REG_SCRATCH_PAD),
-> +	regmap_reg_range(AD7768_REG_INTERFACE_FORMAT, AD7768_REG_GPIO_WRITE),
-> +	regmap_reg_range(AD7768_REG_OFFSET_HI, AD7768_REG_DIG_DIAG_ENABLE),
-> +	regmap_reg_range(AD7768_REG_SPI_DIAG_STATUS, AD7768_REG_SPI_DIAG_STATUS),
-> +	regmap_reg_range(AD7768_REG_COEFF_CONTROL, AD7768_REG_COEFF_CONTROL),
-> +};
->  
-> -	return (be32_to_cpu(st->data.d32) >> shift);
-> -}
-> +static const struct regmap_access_table ad7768_regmap_wr_table = {
-> +	.yes_ranges = ad7768_regmap_wr_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(ad7768_regmap_wr_ranges),
-> +};
->  
-> -static int ad7768_spi_reg_write(struct ad7768_state *st,
-> -				unsigned int addr,
-> -				unsigned int val)
-> -{
-> -	st->data.d8[0] = AD7768_WR_FLAG_MSK(addr);
-> -	st->data.d8[1] = val & 0xFF;
-> +static const struct regmap_config ad7768_regmap_config = {
-> +	.name = "ad7768-1-8",
-> +	.reg_bits = 8,
-> +	.val_bits = 8,
-> +	.read_flag_mask = BIT(6),
-> +	.rd_table = &ad7768_regmap_rd_table,
-> +	.wr_table = &ad7768_regmap_wr_table,
-> +	.max_register = AD7768_REG_ACCESS_KEY,
-> +	.use_single_write = true,
-> +	.use_single_read = true,
-> +};
->  
-> -	return spi_write(st->spi, st->data.d8, 2);
-> -}
-> +static const struct regmap_range ad7768_regmap24_rd_ranges[] = {
-> +	regmap_reg_range(AD7768_REG24_ADC_DATA, AD7768_REG24_ADC_DATA),
-> +	regmap_reg_range(AD7768_REG24_COEFF_DATA, AD7768_REG24_COEFF_DATA),
-
-So, this device has only two registers that are 24-bit size?
-Also, one of those is the ADC_DATA register which you will probably want
-to read with optimized SPI messages in the future (devm_spi_optimize_message()).
-That makes me wonder if the 24-bit regmap worth's the boiler plate to have it.
-Does the driver access AD7768_REG24_COEFF_DATA after the patches from this
-series is applied? If not, maybe drop the 24-bit regmap and implement ADC_DATA
-with usual spi_message/spi_transfer interfaces?
-
-> +};
->  
-> -static int ad7768_set_mode(struct ad7768_state *st,
-> -			   enum ad7768_conv_mode mode)
-> -{
-> -	int regval;
-> +static const struct regmap_access_table ad7768_regmap24_rd_table = {
-> +	.yes_ranges = ad7768_regmap24_rd_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(ad7768_regmap24_rd_ranges),
-> +};
->  
-> -	regval = ad7768_spi_reg_read(st, AD7768_REG_CONVERSION, 1);
-> -	if (regval < 0)
-> -		return regval;
-> +static const struct regmap_range ad7768_regmap24_wr_ranges[] = {
-> +	regmap_reg_range(AD7768_REG24_COEFF_DATA, AD7768_REG24_COEFF_DATA),
-> +};
->  
-> -	regval &= ~AD7768_CONV_MODE_MSK;
-> -	regval |= AD7768_CONV_MODE(mode);
-> +static const struct regmap_access_table ad7768_regmap24_wr_table = {
-> +	.yes_ranges = ad7768_regmap24_wr_ranges,
-> +	.n_yes_ranges = ARRAY_SIZE(ad7768_regmap24_wr_ranges),
-> +};
+>  rust/kernel/time/hrtimer.rs      |   3 ++
+>  rust/kernel/time/hrtimer/tbox.rs | 109 +++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 112 insertions(+)
+>
+> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+> index d2791fd624b7..991d37b0524a 100644
+> --- a/rust/kernel/time/hrtimer.rs
+> +++ b/rust/kernel/time/hrtimer.rs
+> @@ -443,3 +443,6 @@ unsafe fn timer_container_of(ptr: *mut $crate::time::=
+hrtimer::HrTimer<$timer_typ
+>  pub use pin::PinHrTimerHandle;
+>  mod pin_mut;
+>  pub use pin_mut::PinMutHrTimerHandle;
+> +// `box` is a reserved keyword, so prefix with `t` for timer
+> +mod tbox;
+> +pub use tbox::BoxHrTimerHandle;
+> diff --git a/rust/kernel/time/hrtimer/tbox.rs b/rust/kernel/time/hrtimer/=
+tbox.rs
+> new file mode 100644
+> index 000000000000..a3b2ed849050
+> --- /dev/null
+> +++ b/rust/kernel/time/hrtimer/tbox.rs
+> @@ -0,0 +1,109 @@
+> +// SPDX-License-Identifier: GPL-2.0
 > +
-> +static const struct regmap_config ad7768_regmap24_config = {
-> +	.name = "ad7768-1-24",
-> +	.reg_bits = 8,
-> +	.val_bits = 24,
-> +	.read_flag_mask = BIT(6),
-> +	.rd_table = &ad7768_regmap24_rd_table,
-> +	.wr_table = &ad7768_regmap24_wr_table,
-> +	.max_register = AD7768_REG24_COEFF_DATA,
-> +};
->  
-> -	return ad7768_spi_reg_write(st, AD7768_REG_CONVERSION, regval);
-> +static int ad7768_set_mode(struct ad7768_state *st,
-> +			   enum ad7768_conv_mode mode)
+> +use super::HasHrTimer;
+> +use super::HrTimer;
+> +use super::HrTimerCallback;
+> +use super::HrTimerHandle;
+> +use super::HrTimerPointer;
+> +use super::RawHrTimerCallback;
+> +use crate::prelude::*;
+> +use crate::time::Ktime;
+> +use core::mem::ManuallyDrop;
+> +use core::ptr::NonNull;
+> +
+> +/// A handle for a [`Box<HasHrTimer<T>>`] returned by a call to
+> +/// [`HrTimerPointer::start`].
+> +pub struct BoxHrTimerHandle<T, A>
+
+Should this type implement `Send` and `Sync` depending on `T`?
+
+> +where
+> +    T: HasHrTimer<T>,
+> +    A: crate::alloc::Allocator,
 > +{
-> +	return regmap_update_bits(st->regmap, AD7768_REG_CONVERSION,
-> +				 AD7768_CONV_MODE_MSK, AD7768_CONV_MODE(mode));
->  }
->  
->  static int ad7768_scan_direct(struct iio_dev *indio_dev)
-> @@ -233,9 +269,10 @@ static int ad7768_scan_direct(struct iio_dev *indio_dev)
->  	if (!ret)
->  		return -ETIMEDOUT;
->  
-> -	readval = ad7768_spi_reg_read(st, AD7768_REG_ADC_DATA, 3);
-> -	if (readval < 0)
-> -		return readval;
-> +	ret = regmap_read(st->regmap24, AD7768_REG24_ADC_DATA, &readval);
-> +	if (ret)
-> +		return ret;
+> +    pub(crate) inner: NonNull<T>,
+> +    _p: core::marker::PhantomData<A>,
+> +}
 > +
->  	/*
->  	 * Any SPI configuration of the AD7768-1 can only be
->  	 * performed in continuous conversion mode.
-> @@ -259,16 +296,23 @@ static int ad7768_reg_access(struct iio_dev *indio_dev,
->  	if (ret)
->  		return ret;
->  
-> +	ret = -EINVAL;
->  	if (readval) {
-> -		ret = ad7768_spi_reg_read(st, reg, 1);
-> -		if (ret < 0)
-> -			goto err_release;
-> -		*readval = ret;
-> -		ret = 0;
-> +		if (regmap_check_range_table(st->regmap, reg, &ad7768_regmap_rd_table))
-> +			ret = regmap_read(st->regmap, reg, readval);
+> +// SAFETY: We implement drop below, and we cancel the timer in the drop
+> +// implementation.
+> +unsafe impl<T, A> HrTimerHandle for BoxHrTimerHandle<T, A>
+> +where
+> +    T: HasHrTimer<T>,
+> +    A: crate::alloc::Allocator,
+> +{
+> +    fn cancel(&mut self) -> bool {
+> +        // SAFETY: As we obtained `self.inner` from a valid reference wh=
+en we
+> +        // created `self`, it must point to a valid `T`.
+> +        let timer_ptr =3D unsafe { <T as HasHrTimer<T>>::raw_get_timer(s=
+elf.inner.as_ptr()) };
 > +
-> +		if (regmap_check_range_table(st->regmap24, reg, &ad7768_regmap24_rd_table))
-> +			ret = regmap_read(st->regmap24, reg, readval);
+> +        // SAFETY: As `timer_ptr` points into `T` and `T` is valid, `tim=
+er_ptr`
+> +        // must point to a valid `HrTimer` instance.
+> +        unsafe { HrTimer::<T>::raw_cancel(timer_ptr) }
+> +    }
+> +}
 > +
->  	} else {
-> -		ret = ad7768_spi_reg_write(st, reg, writeval);
-> +		if (regmap_check_range_table(st->regmap, reg, &ad7768_regmap_wr_table))
-> +			ret = regmap_write(st->regmap, reg, writeval);
+> +impl<T, A> Drop for BoxHrTimerHandle<T, A>
+> +where
+> +    T: HasHrTimer<T>,
+> +    A: crate::alloc::Allocator,
+> +{
+> +    fn drop(&mut self) {
+> +        self.cancel();
+> +        // SAFETY: `self.inner` came from a `Box::into_raw` call
+
+Please add this as an invariant to `Self`.
+
+> +        drop(unsafe { Box::<T, A>::from_raw(self.inner.as_ptr()) })
+> +    }
+> +}
 > +
-> +		if (regmap_check_range_table(st->regmap24, reg, &ad7768_regmap24_wr_table))
-> +			ret = regmap_write(st->regmap24, reg, writeval);
+> +impl<T, A> HrTimerPointer for Pin<Box<T, A>>
+> +where
+> +    T: 'static,
+> +    T: Send + Sync,
+> +    T: HasHrTimer<T>,
+> +    T: for<'a> HrTimerCallback<Pointer<'a> =3D Pin<Box<T, A>>>,
+> +    Pin<Box<T, A>>: for<'a> RawHrTimerCallback<CallbackTarget<'a> =3D Pi=
+n<&'a T>>,
+
+I don't think this is necessary.
+
+> +    A: crate::alloc::Allocator,
+> +{
+> +    type TimerHandle =3D BoxHrTimerHandle<T, A>;
 > +
->  	}
-> -err_release:
+> +    fn start(self, expires: Ktime) -> Self::TimerHandle {
+> +        // SAFETY:
+> +        //  - We will not move out of this box during timer callback (we=
+ pass an
+> +        //    immutable reference to the callback).
+> +        //  - `Box::into_raw` is guaranteed to return a valid pointer.
+> +        let inner =3D
+> +            unsafe { NonNull::new_unchecked(Box::into_raw(Pin::into_inne=
+r_unchecked(self))) };
 > +
->  	iio_device_release_direct_mode(indio_dev);
->  
->  	return ret;
-> @@ -285,7 +329,7 @@ static int ad7768_set_dig_fil(struct ad7768_state *st,
->  	else
->  		mode = AD7768_DIG_FIL_DEC_RATE(dec_rate);
->  
-> -	ret = ad7768_spi_reg_write(st, AD7768_REG_DIGITAL_FILTER, mode);
-> +	ret = regmap_write(st->regmap, AD7768_REG_DIGITAL_FILTER, mode);
->  	if (ret < 0)
->  		return ret;
->  
-> @@ -322,7 +366,7 @@ static int ad7768_set_freq(struct ad7768_state *st,
->  	 */
->  	pwr_mode = AD7768_PWR_MCLK_DIV(ad7768_clk_config[idx].mclk_div) |
->  		   AD7768_PWR_PWRMODE(ad7768_clk_config[idx].pwrmode);
-> -	ret = ad7768_spi_reg_write(st, AD7768_REG_POWER_CLOCK, pwr_mode);
-> +	ret = regmap_write(st->regmap, AD7768_REG_POWER_CLOCK, pwr_mode);
->  	if (ret < 0)
->  		return ret;
->  
-> @@ -449,11 +493,11 @@ static int ad7768_setup(struct ad7768_state *st)
->  	 * to 10. When the sequence is detected, the reset occurs.
->  	 * See the datasheet, page 70.
->  	 */
-> -	ret = ad7768_spi_reg_write(st, AD7768_REG_SYNC_RESET, 0x3);
-> +	ret = regmap_write(st->regmap, AD7768_REG_SYNC_RESET, 0x3);
->  	if (ret)
->  		return ret;
->  
-> -	ret = ad7768_spi_reg_write(st, AD7768_REG_SYNC_RESET, 0x2);
-> +	ret = regmap_write(st->regmap, AD7768_REG_SYNC_RESET, 0x2);
->  	if (ret)
->  		return ret;
->  
-> @@ -508,18 +552,19 @@ static int ad7768_buffer_postenable(struct iio_dev *indio_dev)
->  	 * continuous read mode. Subsequent data reads do not require an
->  	 * initial 8-bit write to query the ADC_DATA register.
->  	 */
-> -	return ad7768_spi_reg_write(st, AD7768_REG_INTERFACE_FORMAT, 0x01);
-> +	return regmap_write(st->regmap, AD7768_REG_INTERFACE_FORMAT, 0x01);
->  }
->  
->  static int ad7768_buffer_predisable(struct iio_dev *indio_dev)
->  {
->  	struct ad7768_state *st = iio_priv(indio_dev);
-> +	unsigned int unused;
->  
->  	/*
->  	 * To exit continuous read mode, perform a single read of the ADC_DATA
->  	 * reg (0x2C), which allows further configuration of the device.
->  	 */
-> -	return ad7768_spi_reg_read(st, AD7768_REG_ADC_DATA, 3);
-> +	return regmap_read(st->regmap24, AD7768_REG24_ADC_DATA, &unused);
->  }
->  
->  static const struct iio_buffer_setup_ops ad7768_buffer_ops = {
-> @@ -590,6 +635,16 @@ static int ad7768_probe(struct spi_device *spi)
->  
->  	st->spi = spi;
->  
-> +	st->regmap = devm_regmap_init_spi(spi, &ad7768_regmap_config);
-> +	if (IS_ERR(st->regmap))
-> +		return dev_err_probe(&spi->dev, PTR_ERR(st->regmap),
-> +				     "Failed to initialize regmap");
+> +        // SAFETY:
+> +        //  - We keep `self` alive by wrapping it in a handle below.
+> +        //  - Since we generate the pointer passed to `start` from a val=
+id
+> +        //    reference, it is a valid pointer.
+> +        unsafe { T::start(inner.as_ptr(), expires) };
 > +
-> +	st->regmap24 = devm_regmap_init_spi(spi, &ad7768_regmap24_config);
-> +	if (IS_ERR(st->regmap24))
-> +		return dev_err_probe(&spi->dev, PTR_ERR(st->regmap24),
-> +				     "Failed to initialize regmap24");
+> +        BoxHrTimerHandle {
+> +            inner,
+> +            _p: core::marker::PhantomData,
+> +        }
+> +    }
+> +}
 > +
->  	st->vref = devm_regulator_get(&spi->dev, "vref");
->  	if (IS_ERR(st->vref))
->  		return PTR_ERR(st->vref);
-> -- 
-> 2.34.1
-> 
+> +impl<T, A> RawHrTimerCallback for Pin<Box<T, A>>
+> +where
+> +    T: 'static,
+> +    T: HasHrTimer<T>,
+> +    T: for<'a> HrTimerCallback<Pointer<'a> =3D Pin<Box<T, A>>>,
+> +    A: crate::alloc::Allocator,
+> +{
+> +    type CallbackTarget<'a> =3D Pin<&'a T>;
+
+Why isn't this `Pin<&'a mut T>`?
+
+> +
+> +    unsafe extern "C" fn run(ptr: *mut bindings::hrtimer) -> bindings::h=
+rtimer_restart {
+> +        // `HrTimer` is `repr(C)`
+> +        let timer_ptr =3D ptr.cast::<super::HrTimer<T>>();
+> +
+> +        // SAFETY: By C API contract `ptr` is the pointer we passed when
+> +        // queuing the timer, so it is a `HrTimer<T>` embedded in a `T`.
+> +        let data_ptr =3D unsafe { T::timer_container_of(timer_ptr) };
+> +
+> +        // SAFETY: We called `Box::into_raw` when we queued the timer.
+> +        let tbox =3D ManuallyDrop::new(Box::into_pin(unsafe { Box::<T, A=
+>::from_raw(data_ptr) }));
+
+Since you turn this into a reference below and never run the drop, why
+not turn the pointer directly into a reference?
+
+---
+Cheers,
+Benno
+
+> +
+> +        T::run(tbox.as_ref()).into_c()
+> +    }
+> +}
+>
+> --
+> 2.47.0
+
+
 
