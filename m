@@ -1,179 +1,134 @@
-Return-Path: <linux-kernel+bounces-550410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC9A6A55F0D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:00:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8972BA55E4B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:31:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE2EE189465E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:00:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 843BF3B02B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:31:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BB0018E750;
-	Fri,  7 Mar 2025 04:00:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC3E150997;
+	Fri,  7 Mar 2025 03:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qmwgxtF0"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bDYWWlNq"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB9818DB30
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 04:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65A2ADDC5;
+	Fri,  7 Mar 2025 03:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741320005; cv=none; b=sRYI2sJfVpFCdhYswqp2S474dSWy33EUXh8Nk7oFwW++d15LUibWD114h1T2w2p8R2GGz0ZjBT8qjMACOAC54qcfC+zFtB9RrKmRptTkJcEkaMtlWh1Ko1ltTBvpf30O5FAjlk0/4mmcAWHR+HN4TVGvhutxufdk+twZ/9f1lHc=
+	t=1741318300; cv=none; b=DjH+qHMBHCvpZmB6Gyfrf9PHmlYIANoz5g0Q0vL4t7jakvP5dp9LM0a9Lf9IriDNuygtUIJUzNLGPSGtRSGKO1lQ0U945PRKRnYStwKQKWuYign0IQrdbupdK83Oc6/CwkQOEeIUQbQ3wQkFMFD2D1tTg2o0jRZ6XWjji6Z2t3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741320005; c=relaxed/simple;
-	bh=/EJHP+8TfDAtSkvGsyq8r00JUKNY7IZDhYhYCIDTFlg=;
-	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
-	 Content-Type:References; b=Ju1nvkJe2rhN1EBsF/8vlbjoMDombmBAigO9TcUus8LypkPqrX7byCk+QaapxCDP0pFat8iRTV7rCnh7jeORp3E2DgmAROpdcJfC5/2WGsM+ZZZMdak68iXPBzWSBw14iBF3dc+9MmxbNhErp1f9wJOz7cmdPKnAaJ49YS3TrrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qmwgxtF0; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250307035959epoutp0224f4f55ccef85a081356db3fab6a3d67~qaVBl2bft2637926379epoutp02G
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 03:59:59 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250307035959epoutp0224f4f55ccef85a081356db3fab6a3d67~qaVBl2bft2637926379epoutp02G
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1741319999;
-	bh=LzTQRzJ1HeapOI4JPtLfPUdsHjeO+Cq77SQ6lp2CbFM=;
-	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-	b=qmwgxtF05wg6kEGgv1SHGt5mVGxQIaDtBVfp/805BRsvK1q0g31Vs/7iagw85H9sn
-	 WxqBC7uulCjjIbqKLYLdBQ91hzq+2aN7c6j92cw3rC8Ac3VR5fwnu3nxvS8hw1+JZL
-	 sv3G+3bJZt9UO0tC+dDM7ewI56+RDNCjWefwXwk4=
-Received: from epsmges5p2new.samsung.com (unknown [182.195.42.74]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20250307035959epcas5p44d3562a116c24c9a9f1f3305c3197fc5~qaVBGt9jN1240212402epcas5p4f;
-	Fri,  7 Mar 2025 03:59:59 +0000 (GMT)
-X-AuditID: b6c32a4a-c1fda70000004ddd-74-67ca6f3f0db4
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	18.E7.19933.F3F6AC76; Fri,  7 Mar 2025 12:59:59 +0900 (KST)
+	s=arc-20240116; t=1741318300; c=relaxed/simple;
+	bh=gCOOcyBomA8ym/MPB9dZ8uybUtzLM0QMJZ7UNpi5h38=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qmBdQ522RlKwI8kJ78m/lGOgFhUwBQ0LFiLTy8Wq1NivnA4WbqLI7l+/J6MskBjRGIO7E2SwzP48asC0DJMpBHC5OYqjzUKjO9VklXqLXm1agfYTvI4te0RiPco1SZsXbxAJh7GzLZrKqgniUaEpZvLWpDAwlFDAisJt2ifOgbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bDYWWlNq; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-224191d92e4so20172255ad.3;
+        Thu, 06 Mar 2025 19:31:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741318298; x=1741923098; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=POmXH3RB5AOdcM4iy/V5RM3jxDeeDKhoQuC/nTf0CE8=;
+        b=bDYWWlNq+OENoc/6JKnjsCaD+RL7a3lGRL5Nvbe9B7CWU1guT3bFX4jbY22KQlQ1xK
+         jE4CFUk4+fieCPEQ/apb1t7ucfMWCLuLGHNV/abA6tzxiszamO7B7BqRdfVDYP654JJ5
+         US38J1s7t3yqgsBajMT9qdi/+Uiq6l1TYloxJ/CHNeOhJy+4siFppsnJf8oYubsqy5Mq
+         iMnq1W5C3VQ2U96bE5Krv7WfUhEfQwcq2zRtqDteS1sk2lV0uSPYY9R/jSqlUm9JRmmR
+         NDakgQXz4mzKW/B2wS+z5NstyllHGime6pHhno6cQcgX78a+8b+nWPbts28+upZ2OvcX
+         RB9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741318298; x=1741923098;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=POmXH3RB5AOdcM4iy/V5RM3jxDeeDKhoQuC/nTf0CE8=;
+        b=HMhJgHoJ4II+7t23fiGHz4cQdc25VwxqIETdtx4wj2ZmZLHaUlKoOP4XzDW5v9UeBj
+         RIQcro7+mHnSRx7DowiRWc2Vil8ctiaUgdkLCabVnKBPwIeIkPqzOvrBZ4B9dtxqr+v+
+         5EZus5oB4l0ikgbnDCU1bdanghYAfe0CdaA48QyVNMjAyBZ/IEZOG9Z2SpGJcTtfTG0C
+         lIx8oFSdQA/+SF9CbvO6ZY7im+xdh0TbgdbVih7C4FilaGkSSvELtz2R0YUWshkKTMfe
+         xnzNBg5SE6TzBvcUkAJqVRpT1jCqeuk90vEi3AbgGbJCm5OFeEStBzkov+J0Fmr2K2rx
+         aM4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUs60QRQg1cceMl5J1EKcXuL7hlZg2VzrtRsH8V4xJSbBQe0xoYxXn8m4we19vB6rAxHqf1pLYPucQh/kt6@vger.kernel.org, AJvYcCV5798TPgj9GhaBKq8x6wrjMyEU8uHFzjA62r0QNQtKSV3a1NECbnHJDCBKUm2eJAaC/SvU0XvEHNk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXKnvCZ1PLOJK5kaf/IX6qbdhAurRo7jtzW886R65YNWJu8yy/
+	wbk6jYw6sx02D28wJIrY6KmNwqIieJubxC/fBmFAqc+KB6qI/nqbBLZ1OUihUQ0=
+X-Gm-Gg: ASbGncuyLBSEZ1dTapMJfETfLZcd+osiO1NiGodadScTtXocQZ4f168FXUhMDHyjh63
+	SUvfdm5qKGqRWw+JQ3ufCoPjuOrT5TDwmRXnjfAAbaBL7Vr9eMo3tiyscr9HjcEfsYnqv0TNHeN
+	Ky8BSo53bwgW+Nk8D8TzB/id7xM1ux/zJai6GTKoUNCCKKMJWdRNFiQxYqhUfvBT42q+ag4k6FL
+	C+w6oFI969VCCvqP/AosgA8VqvtQFQ8kYwpG/88FSH2AYG4BqLAT0SIgYetlClk0pcZxOQAqAO0
+	xSkj24KIKIVtZZZhPpYcfQhpHZeGXm4QvNmKIoxoba8tgxEadKj93zk=
+X-Google-Smtp-Source: AGHT+IGkebL+fF1LPcEVxoOTh8Md9lfPjHNCFJiq4bU7ai9wRrrBoKSjgRruULMi73fEeTWoN6quYQ==
+X-Received: by 2002:a17:902:e5d2:b0:224:160d:3f5b with SMTP id d9443c01a7336-22428c1169cmr29142615ad.49.1741318298523;
+        Thu, 06 Mar 2025 19:31:38 -0800 (PST)
+Received: from localhost ([2804:30c:1f21:4300:1cf6:c485:6555:b1c5])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-224109fee78sm20022575ad.105.2025.03.06.19.31.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 19:31:37 -0800 (PST)
+Date: Fri, 7 Mar 2025 00:32:30 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Saalim Quadri <danascape@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+	gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [RFC]: Getting ADIS16203 out of staging
+Message-ID: <Z8pozuvS1a3sa039@debian-BULLSEYE-live-builder-AMD64>
+References: <20250306002645.1555569-1-danascape@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: RE: [PATCH 2/2] NFSD: fix race between nfsd registration and
- exports_proc
-Reply-To: maninder1.s@samsung.com
-Sender: Maninder Singh <maninder1.s@samsung.com>
-From: Maninder Singh <maninder1.s@samsung.com>
-To: Jeff Layton <jlayton@kernel.org>, "chuck.lever@oracle.com"
-	<chuck.lever@oracle.com>, "neilb@suse.de" <neilb@suse.de>,
-	"okorniev@redhat.com" <okorniev@redhat.com>, "Dai.Ngo@oracle.com"
-	<Dai.Ngo@oracle.com>, "tom@talpey.com" <tom@talpey.com>,
-	"lorenzo@kernel.org" <lorenzo@kernel.org>
-CC: "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Chung-Ki Woo
-	<chungki0201.woo@samsung.com>, Shubham Rana <s9.rana@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <c5d6d532ca6bb39f02629402ed289700589ded19.camel@kernel.org>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20250307032948epcms5p5280f36a460ef7a4def620096699a1df2@epcms5p5>
-Date: Fri, 07 Mar 2025 08:59:48 +0530
-X-CMS-MailID: 20250307032948epcms5p5280f36a460ef7a4def620096699a1df2
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLKsWRmVeSWpSXmKPExsWy7bCmuq59/ql0g0fzxCz+333OZHH6+xV2
-	i/mLNrNZ/Fy2it3i8q45bBYXDpxmtehbPYvRYu/8BhaLSc8+sVt8f3yJ0eLUr1NMDtwem1Z1
-	snl8fHqLxeP9vqtsHn1bVjF6bD5d7XH5yRVGj8+b5ALYo7hsUlJzMstSi/TtErgyZvesZin4
-	J1yxa0svcwPjNYEuRk4OCQETiWXnbjF1MXJxCAnsZpT4uP8QcxcjBwevgKDE3x3CIDXCAiES
-	t44eYQOxhQQUJS7MWMMIUiIsYCDxa6sGSJhNQE9i1a49LCBjRASWMUns//CeGcRhFjjHKPFs
-	4hN2iGW8EjPan7JA2NIS25dvZQSxOQU8JC50/mCCiItK3Fz9lh3Gfn9sPiOELSLReu8sM4Qt
-	KPHg526ouIzE6s29UDOrJZ6+PscGslhCoIVRYt9umCJzifVLVoEN5RXwlfj7+wwriM0ioCrR
-	e/M9C8g3EgIuEjd+qYGEmQXkJba/nQMOB2YBTYn1u/QhpshKTD21jgmihE+i9/cTJpi3dsyD
-	sVUlWm5uYIV58fPHj1CneUi07jjJBgnnn4wSsy/dYJzAqDALEdSzkGyehbB5ASPzKkbJ1ILi
-	3PTUYtMCo7zUcr3ixNzi0rx0veT83E2M4BSl5bWD8eGDD3qHGJk4GA8xSnAwK4nwCm4+mS7E
-	m5JYWZValB9fVJqTWnyIUZqDRUmct3lnS7qQQHpiSWp2ampBahFMlomDU6qBiUWHuVfM6pzr
-	eVepyvWLlOfnyujeyHhrqnCDz4rrp9lvAaVkjznG0ZtFNXyLtjP6+4QFCHE8Z+MRynAM27TK
-	dv3vV9HzC7c91a5uaNj4ypd3Syfz9X+GjnG5z0+dfLxCmCv95Mfwvw86DLLa8rTavv0N/Zgx
-	9/Iew55ds09/P/kgf5u46kUh25+PQpbr6Rbnsr77F3li9Tw3jzdWjd+ahFUvBZlm9a0rnPWr
-	/rj6gvt27YcS60J5Luu2NKb1tSmeWTlL/NLn93slEmZu+9r8Q/z/MS6njT5/HdwdDTOmPmRf
-	7xjbrjSF8f75cNGwSI5vXtltX740RL5at80kK4DvsJVZH/uSY8eDiovV2aYqsRRnJBpqMRcV
-	JwIAMVpi/8ADAAA=
-X-CMS-RootMailID: 20250306092021epcas5p41133e5a273e547d39ae8b724c9eca23f
-References: <c5d6d532ca6bb39f02629402ed289700589ded19.camel@kernel.org>
-	<20250306092007.1419237-1-maninder1.s@samsung.com>
-	<20250306092007.1419237-2-maninder1.s@samsung.com>
-	<CGME20250306092021epcas5p41133e5a273e547d39ae8b724c9eca23f@epcms5p5>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306002645.1555569-1-danascape@gmail.com>
 
-Hi,
+Hi Saalim,
 
-> > As of now nfsd calls create_proc_exports_entry() at start of init_nfsd
-> > and cleanup by remove_proc_entry() at last of exit_nfsd.
-> > 
-> > Which causes kernel OOPs if there is race between below 2 operations:
-> > (i) exportfs -r
-> > (ii) mount -t nfsd none /proc/fs/nfsd
-> > 
-> > for 5.4 kernel ARM64:
-> > 
-> > CPU 1:
-> > el1_irq+0xbc/0x180
-> > arch_counter_get_cntvct+0x14/0x18
-> > running_clock+0xc/0x18
-> > preempt_count_add+0x88/0x110
-> > prep_new_page+0xb0/0x220
-> > get_page_from_freelist+0x2d8/0x1778
-> > __alloc_pages_nodemask+0x15c/0xef0
-> > __vmalloc_node_range+0x28c/0x478
-> > __vmalloc_node_flags_caller+0x8c/0xb0
-> > kvmalloc_node+0x88/0xe0
-> > nfsd_init_net+0x6c/0x108 [nfsd]
-> > ops_init+0x44/0x170
-> > register_pernet_operations+0x114/0x270
-> > register_pernet_subsys+0x34/0x50
-> > init_nfsd+0xa8/0x718 [nfsd]
-> > do_one_initcall+0x54/0x2e0
-> > 
-> > CPU 2 :
-> > Unable to handle kernel NULL pointer dereference at virtual address 0000000000000010
-> > 
-> > PC is at : exports_net_open+0x50/0x68 [nfsd]
-> > 
-> > Call trace:
-> > exports_net_open+0x50/0x68 [nfsd]
-> > exports_proc_open+0x2c/0x38 [nfsd]
-> > proc_reg_open+0xb8/0x198
-> > do_dentry_open+0x1c4/0x418
-> > vfs_open+0x38/0x48
-> > path_openat+0x28c/0xf18
-> > do_filp_open+0x70/0xe8
-> > do_sys_open+0x154/0x248
-
-
-
-> To make sure I understand, the race is that sometimes the exports
-> interface gets created before the net namespace is set up, and then
-> that causes GPFs when exports_net_open tries to access the nfsd_net?
+On 03/06, Saalim Quadri wrote:
+> ADIS16203 and ADIS16201 are very similar in functionality whilst the
+> major difference between the accuracy in ADIS16201, I wonder if they
+> can be merged together into single driver, whilst also implementing
+> platform_device support in them.
 > 
+From quick datasheet comparison, yes, I think the drivers could be merged.
 
+> I want to work on this, provided some opinions for me to work with
+> or to have a separate driver for both of them.
 
-Yes, Sometime at time of module init this happened as I shared state of 2 CPUs at
-time of crash.
-and sometimes it occurs when module was unloading and user space was accessing it.
+I often look at two things when assessing if two or more devices can be
+supported by the same driver, the protocol and internal register structure. For
+IIO devices, the protocol is usually I2C or SPI. Though, even between devices of
+same protocol, there may be differences on how the data is structured in
+read/write commands. Also, if internal registers have very different addresses
+or meanings, it makes it harder to reuse code because the configuration
+procedure for each distinct design/device will tend to require specific
+handling.
 
-So I though interface to user shall be exported late during init and clean up early.
-But what is actual position for that I was not sure, So I moved to last at time of init
-and first at time of clean up.
+That said, ADIS16201 and ADIS16203 SPI read/write commands seem to be the same,
+and ADIS16203 registers seem to be a subset of ADIS16201's. That's why I think
+it may be worth merging the drivers. I didn't read the datasheets thoroughly,
+though.
 
-And originally at time of 4.13 kernel this cleanup was the first thing to do in exit time.
-but with time to fixing other issues, its position got changed.
+> 
+> I see that there has been some discussion regarding the same at [1].
+> 
+> [1]: https://lore.kernel.org/linux-iio/20230124094450.0000272b@Huawei.com
 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=027690c75e8fd91b60a634d31c4891a6e39d45bd
-https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=bd5ae9288d6451bd346a1b4a59d4fe7e62ba29b7
-https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=6f6f84aa215f7b6665ccbb937db50860f9ec2989
+Git tends to rename/move files when we move a file from one directory to another.
+IIRC, Jonathan prefers the drivers to be completely removed from staging to then
+be added under iio directory to sort of make it clearer that something is
+being added to official (not staging) IIO drivers. To accomplish that, we
+use --no-renames flag (e.g. git format-patch --no-renames ...).
 
-Which caused this kernel OOPs I think.
-
-Thanks,
-Maninder Singh
+> 
+> Sincerely,
+> Saalim Quadri
+> 
 
