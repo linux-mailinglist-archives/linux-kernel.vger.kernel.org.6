@@ -1,132 +1,100 @@
-Return-Path: <linux-kernel+bounces-551161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B1AA568DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:26:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A6E3A568E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:26:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B92533B2492
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:25:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73BF21895756
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:26:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97410219E9E;
-	Fri,  7 Mar 2025 13:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B056221A443;
+	Fri,  7 Mar 2025 13:26:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujmQT0N6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="JGPn4/aV"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03E722EE5;
-	Fri,  7 Mar 2025 13:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4B520E00D;
+	Fri,  7 Mar 2025 13:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741353960; cv=none; b=kM8jpe8JWWx+3Ps6xOuFdSpPMD9CIZYgKbfkq3aj9AVosjDPfeWSFS7fPnyVhCoJ0bOLsHgXWLghSUL/I1Y0Q9lgmIgU19XUhzgMPzrTEVol0WWrxlhRXHZHam2e++QLaDlSks9qQc4p7ShT3cxTaecIIIklwiz4CRZCHZ5NITA=
+	t=1741353976; cv=none; b=OCMQbFCtdDwDNurTi7uehEVBN8PvgD2V8nu5yN9rV18597YsNA1kyTbYxLgwMsSXQNjBa8nIA2FlrC9W14JPEBl8b8DZ3jUDdtoRjYzRjeOpxn/3hip0lB7CpjqGsq14T3pZ5CToH4ILGBSOQHmGxkuP3w2g0LfZQnHWMmzbFNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741353960; c=relaxed/simple;
-	bh=LEKn/iVCDqHF6UuoX0gnwRLWk845tZ27d/a8XRfdFns=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=UEeaRsLFoU/n6TSFy2OHbom880pP6fuK+nCaED7VYaa51X3wc30xzrBHkRCaxMS2GjU+Fvyc4FmrkzJTDkc2E72tkCAZTYqbQ5n9sfEGghpwhKnv/BZ+iDCnQIsHzcmAuNv2jV8qDiGEYKYtGjD0Xpo12IWPjZXRYmLZzgqhPGw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujmQT0N6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C6EEC4AF09;
-	Fri,  7 Mar 2025 13:25:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741353959;
-	bh=LEKn/iVCDqHF6UuoX0gnwRLWk845tZ27d/a8XRfdFns=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=ujmQT0N6gf65OIZAzyctWyrhVDHH+NoBKkPRP9nIUk8R/cDtq0oWXQXk2/EsBIsfu
-	 0sGEj5/wXbPMZDZXSKxL2AO6+gq0rhyrxBzDWkT/7DEHzvi5N1wYHsWSCJOkHh6CzO
-	 lLqXe6RR2nwGRbexL2qTzE/HRNiVUdUReSnVZTSa7cAOCk0BL8vYn64HvFUFPDEyfa
-	 nMwkWgAUehuE5qYIW0p+WQmOZ2lvM90B/5fa97faBy5R2vjG7SCdDsPFFkkxttwlEt
-	 JTyRl8mD6AoGVfNOzrh4xkvDdEXH/0l5IxpAuqUv3bq/ub4GTzJBOFzUjshpTuxM9H
-	 2+b+fz8o486VQ==
-Date: Fri, 07 Mar 2025 07:25:57 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1741353976; c=relaxed/simple;
+	bh=I1DgXJAugaRvo5oHawhY6fpJ1+WEdBWElcFLSX6rCKQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EjqtwteRoH824yDY8ZahDkPAALQIHfAnm9svTbPpDT6qgPt5ujJnowfKgPL8OFOvpZXW586dkMdGRyPSHVd8TRr4K/Ku7mJ9PP3u9nkuMrsWcDq08vUdXTTdPKHeEht7o7ZFCHbi98H04n22p2WmAU+TftrkfJ1DIah4P82wa48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=JGPn4/aV; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=1yXC3Xb/MwcJsrS6HKxPIosX6qAp8S61W2EzWPVkdLs=; b=JGPn4/aVIXPXE7o/ElfV+U26Co
+	UETfL8Rcs2Wq+/+AgkMbywLJM/iE9EIiTTj34gqwImUs3UE1zT/XZeEMzktenZwlNEvt1J4v4hOUT
+	AzI2q/m+ksf9wvg9aGH026Z0T1LP+nR46y9kMHn7QV3nq3rygJ2JVVOOkIZ3WG7w9Lv8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tqXiA-0039Aa-GR; Fri, 07 Mar 2025 14:25:58 +0100
+Date: Fri, 7 Mar 2025 14:25:58 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Yao Zi <ziyao@disroot.org>,
+	linux-rockchip@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] arm64: dts: rockchip: Enable Ethernet controller on
+ Radxa E20C
+Message-ID: <c7fe0371-76bc-4cb4-ade8-e22112c1475d@lunn.ch>
+References: <20250306221402.1704196-1-jonas@kwiboo.se>
+ <20250306221402.1704196-5-jonas@kwiboo.se>
+ <e0e8fa5e-07a2-4f4f-80b9-ddb2332c27ea@lunn.ch>
+ <cbd6d3ee-8ad1-443f-9506-e28240ffb09e@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
- Thierry Reding <treding@nvidia.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
- linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-In-Reply-To: <20250307081047.13724-1-clamor95@gmail.com>
-References: <20250307081047.13724-1-clamor95@gmail.com>
-Message-Id: <174135385223.4031140.10808514258285152164.robh@kernel.org>
-Subject: Re: [PATCH v2 0/3] ARM: tegra: complete Tegra 4 and Tegra K1
- device trees
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cbd6d3ee-8ad1-443f-9506-e28240ffb09e@kwiboo.se>
 
-
-On Fri, 07 Mar 2025 10:10:44 +0200, Svyatoslav Ryhel wrote:
-> Complete T114 and T124 device trees.
+On Fri, Mar 07, 2025 at 10:16:08AM +0100, Jonas Karlman wrote:
+> Hi Andrew,
 > 
-> ---
-> Changes in v2:
-> - dropped accepted commits
-> - added EPP, MPE and ISP compatibility for T114 and T124
-> - added TSEC schema
-> ---
+> On 2025-03-06 23:49, Andrew Lunn wrote:
+> >> +&mdio1 {
+> >> +	rgmii_phy: ethernet-phy@1 {
+> >> +		compatible = "ethernet-phy-ieee802.3-c22";
+> > 
+> > The compatible is not needed. That is the default.
 > 
-> Svyatoslav Ryhel (3):
->   dt-bindings: display: tegra: document EPP, ISP, MPE and TSEC for
->     Tegra114 and Tegra124
->   ARM: tegra114: complete HOST1X devices binding
->   ARM: tegra124: complete HOST1X devices binding
-> 
->  .../display/tegra/nvidia,tegra114-tsec.yaml   | 70 +++++++++++++++++++
->  .../display/tegra/nvidia,tegra20-epp.yaml     | 12 ++--
->  .../display/tegra/nvidia,tegra20-isp.yaml     | 16 +++--
->  .../display/tegra/nvidia,tegra20-mpe.yaml     | 30 ++++++--
->  arch/arm/boot/dts/nvidia/tegra114.dtsi        | 65 +++++++++++++++++
->  arch/arm/boot/dts/nvidia/tegra124.dtsi        | 65 +++++++++++++++++
->  6 files changed, 244 insertions(+), 14 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/display/tegra/nvidia,tegra114-tsec.yaml
-> 
-> --
-> 2.43.0
-> 
-> 
-> 
+> Interesting, however I rather be explicit to not cause any issue for
+> U-Boot or any other user of the device trees beside Linux kernel.
 
+O.K.  But any system using Linux .dts files should be happy with no
+compatible, since that is how the majority are. Because PHYs have ID
+registers, generally there is no need for a compatible. The only time
+you do need a compatible is:
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+* The ID registers are wrong
+* The ID registers cannot be read, chicken/egg problems the driver needs to solve
+* The Clause 22 address space is not implemented and you need to indicate C45
+  should be used to get the ID registers.
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+None of this is specific to Linux.
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y for arch/arm/boot/dts/nvidia/' for 20250307081047.13724-1-clamor95@gmail.com:
-
-arch/arm/boot/dts/nvidia/tegra124-apalis-v1.2-eval.dtb: isp@54680000: reset-names:0: 'isp' was expected
-	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-isp.yaml#
-arch/arm/boot/dts/nvidia/tegra124-nyan-blaze.dtb: isp@54680000: reset-names:0: 'isp' was expected
-	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-isp.yaml#
-arch/arm/boot/dts/nvidia/tegra124-apalis-eval.dtb: isp@54680000: reset-names:0: 'isp' was expected
-	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-isp.yaml#
-arch/arm/boot/dts/nvidia/tegra124-nyan-big.dtb: isp@54680000: reset-names:0: 'isp' was expected
-	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-isp.yaml#
-arch/arm/boot/dts/nvidia/tegra124-venice2.dtb: isp@54680000: reset-names:0: 'isp' was expected
-	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-isp.yaml#
-arch/arm/boot/dts/nvidia/tegra124-nyan-big-fhd.dtb: isp@54680000: reset-names:0: 'isp' was expected
-	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-isp.yaml#
-arch/arm/boot/dts/nvidia/tegra124-jetson-tk1.dtb: isp@54680000: reset-names:0: 'isp' was expected
-	from schema $id: http://devicetree.org/schemas/display/tegra/nvidia,tegra20-isp.yaml#
-
-
-
-
-
+	Andrew
 
