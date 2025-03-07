@@ -1,88 +1,83 @@
-Return-Path: <linux-kernel+bounces-550995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 680EEA566C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:30:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEA48A566C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:30:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 647403B205A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:29:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39C113ABDAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F12217F31;
-	Fri,  7 Mar 2025 11:28:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8468C20DD50;
+	Fri,  7 Mar 2025 11:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jTKeeARZ"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="A2+Si6LE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90226217709
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 11:28:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3815221767C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 11:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741346899; cv=none; b=QpqULLC0pgWIRUVC6ThCjznY+/hktC4YwuqejUzDkK6xz5TJNGbh/WNN8H9tBH2P/6Ju7SARWTE8aIu4FYKUCF/ktrI1zMLX3N40lp6zllMvKuGMBqglnyoFUrfFkWyn8DZFAJVWp7a3rcf3nA9UWH3rhk+ogUzUWOkbDvRXxqM=
+	t=1741347004; cv=none; b=pr/Tr/Ul/xfEh+/L8AXsT4KFtQrjcA9PWpYbUYrAtoFwYMAd0ryf/HbbsrR4+6JyMpM5LlVk4OyayjSSq2OKFaufTpf7o74j80l9FCAf3bbxoku+E/1zur3pSB7VDfTpPWzDKoPAQHK3EBqHv6p3xtXBZcQhsGqmWQS9iY6eNA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741346899; c=relaxed/simple;
-	bh=77bK4Zp/TbJCp4MDtt6BamPlf5APkGCXJN1UMIG44Hw=;
+	s=arc-20240116; t=1741347004; c=relaxed/simple;
+	bh=3xFqsfmNyph+Xl2XdVJUArNLkdZCz7c3+dVcIqg96Eg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cOn9AzEPfqimEQumCR0qYaWMTu0e/47uFUHsm3SRCiDaObdMHSWVApf3TWWMrDqGT9GV3iLNa5B5ltBFju2ghtrpcCvHgDxpO4XqCl8nLfC1tRshLNv21u/dCe2wktIFCprdrrABIvOe2zrOsvUcu2Z8oqYnB4fcVbUuzDRJHF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jTKeeARZ; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-223a7065ff8so2440895ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 03:28:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741346896; x=1741951696; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2KHuSHjoctZDpRbteDuBYEVJTRxTt8Y9MylCsxslIVY=;
-        b=jTKeeARZ+bslbWFsD97aEFoRpd3SqFTHIvLlPCYh/OWWxpUdWfW/WncupTBctMd1ME
-         zbmA2dGyBK6qs2gUhtl5Smk9M1Uc+qWlqpvFtd/41xpfEs2UZDlXXZ1BhsgGzPXRN1md
-         t3LycwxvDj1sO2F4uhnHG5zbfKTyVBnButv12EsUGIb/DToYzCBQ68I6jRutYSU797Qa
-         Y1iHZmaoWjcPZOZAZW74HCNZPUdeqtyYobyUaKuYxfZ4Q8Art9amBCU/ecHaxkq5b5pZ
-         ehbieWMyNiOI5IuVZrz9dtQCqSUUBx1Cxa5gwKpXgqOBadcCDGfVSlrO6RMECIEVgBAq
-         644Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741346896; x=1741951696;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2KHuSHjoctZDpRbteDuBYEVJTRxTt8Y9MylCsxslIVY=;
-        b=jWeV2s+oUesxI5Tm9esJItmdWblGnvPl6g6arGDViFWX2P+mxnG8m0tYulQEluEBFj
-         tRRw1rQz56l4qVd9TEdiqp1GBdqPU/yEg+j7IQWvyePqhtDXfWaNBVvWg7hsHeLXeD8o
-         7u92eZYDc4o4v2fKzQ4X/sVzbNVMKKKVBcpNOQWp/SgG8yxy0kSs4jg3RjBY9NW5q7Hr
-         +wUwSggKvRCuLLesW1abln8ALwKfoPmfZ3GWt6kBmYHdqYhPIinSg/r2U9zbnRKNMy9O
-         MjFLORl19e9SCt6I3A14NbMWLeRpmyNZkwPELbKbsTZfBULQgmw879teKMdP3iWV5t+c
-         r7wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/GuO5Ucg34S/Sq20EF09UGFEjnKqwEd8J4Zrl3fSeTYIVuBpJZ6Qv8YUN0uFfPEpjpTvMgqaYraNq6M0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvFssjm4f+zM0+YrVGH0c2x+88cQ+ahXsPct0YOWE7qnEk7SUl
-	f8vdPCYfcNARcCwaFx6AEClnu8/pX5I5UNDchCJpcRQd4XE9Z2DhxXh93lDIgWI=
-X-Gm-Gg: ASbGnctQX+Qs7+RPcV60RLvCt8EItwW++ekiTn+Rj6iNOWO9JRR+gAnuZV3Dxj09BCI
-	ZWppt9284KuvIfLaotRPM4XNgtHNuVlUzHbZ4A3V/Y3ct4tF4gIb5jLadZQ8Jz7uWLy5qJ3Q/qa
-	TRmbLby7k8JnO6cgwJDDVO9iUZ9eo+PGZpVcyYL1wQyMpuPVNK6LsIZFqhKAFwnHj+A+5cSSuK9
-	5Eix6FTosbT8MlGQ9cGyw/sKNsXmqkqex46ijNltjX+2mQitxP4pQsft3bBmYLnMFFLI6GCcBY5
-	HoWETpf38Q769aPdj54vfa32A8P4CmwZa6XBmIuIj8rQwA==
-X-Google-Smtp-Source: AGHT+IEvps1aGNeyDSEfmuS/2kZ/UIoJVeC4FQ3bEv/wYy7E3JSdL5e5iwjVJ47HjPenjvhwUyieNg==
-X-Received: by 2002:a05:6a20:3943:b0:1f3:289e:36d9 with SMTP id adf61e73a8af0-1f544c98c99mr5849762637.40.1741346895822;
-        Fri, 07 Mar 2025 03:28:15 -0800 (PST)
-Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736984f7281sm3085274b3a.94.2025.03.07.03.28.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 03:28:15 -0800 (PST)
-Date: Fri, 7 Mar 2025 16:58:12 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Akira Yokosawa <akiyks@gmail.com>
-Cc: Vincent Guittot <vincent.guittot@linaro.org>, linux-doc@vger.kernel.org,
-	Jonathan Corbet <corbet@lwn.net>, linux-kernel@vger.kernel.org,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Yury Norov <yury.norov@gmail.com>
-Subject: Re: [PATCH V2 1/2] cpumask: Fix kernel-doc formatting errors in
- cpumask.h
-Message-ID: <20250307112812.3la74kiomyqbzhk5@vireshk-i7>
-References: <cover.1741332579.git.viresh.kumar@linaro.org>
- <f4ad81150eaa00b43c161f0d1f811f8ecfe21889.1741332579.git.viresh.kumar@linaro.org>
- <e3637b13-1f51-445b-8d9d-bd53a691eca3@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MCH0wU0dRVHiQhPo/2KXloYW2PAM5K5ihGGv9Vr3LHF7lCygqpk5CNTfbyEmi/trBVgoXGIEaI+gdkM7iVeuEUK2QmzM7HJFS6nMUQCAOEYOxWGpVDS/7U938O7xPNDqcfSVZvURVWMOP9Cy+iKF/aEY9NSwdZYflXBPgZKOUNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=A2+Si6LE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741347001;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ojp02tMMlaCOgsrJPucLz0Hwm5Y00WT/jYhUO+/vuWg=;
+	b=A2+Si6LERySpnxNo+aNxP1qHXrEiJkKA2RKBBA+20B+SF8KnVaw1iLQfbDr4MZlpE4+7Ai
+	nl5RO4Nj4xeVzcAV0LtQKR+qwLlgyVJGU/XZMlyyVBfggWFt9CITilOzhqmtF0HwzfAVVW
+	SiEakOTAfNmFgAMwGdLaDzte69P60II=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-650-zEl5gvgUMmq14HrDIZkdEg-1; Fri,
+ 07 Mar 2025 06:29:58 -0500
+X-MC-Unique: zEl5gvgUMmq14HrDIZkdEg-1
+X-Mimecast-MFC-AGG-ID: zEl5gvgUMmq14HrDIZkdEg_1741346997
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0328E19560AB;
+	Fri,  7 Mar 2025 11:29:57 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.108])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id BA49B1801751;
+	Fri,  7 Mar 2025 11:29:53 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri,  7 Mar 2025 12:29:26 +0100 (CET)
+Date: Fri, 7 Mar 2025 12:29:21 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250307112920.GB5963@redhat.com>
+References: <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com>
+ <20250228143049.GA17761@redhat.com>
+ <20250228163347.GB17761@redhat.com>
+ <20250304050644.2983-1-hdanton@sina.com>
+ <20250304102934.2999-1-hdanton@sina.com>
+ <20250304233501.3019-1-hdanton@sina.com>
+ <20250305045617.3038-1-hdanton@sina.com>
+ <20250305224648.3058-1-hdanton@sina.com>
+ <20250307060827.3083-1-hdanton@sina.com>
+ <20250307104654.3100-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,47 +86,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e3637b13-1f51-445b-8d9d-bd53a691eca3@gmail.com>
+In-Reply-To: <20250307104654.3100-1-hdanton@sina.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On 07-03-25, 19:57, Akira Yokosawa wrote:
-> Didn't come up in your diff, but you need additional changes shown below:
-> 
-> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-> index 656d2208467e..a6c1961cc535 100644
-> --- a/include/linux/cpumask.h
-> +++ b/include/linux/cpumask.h
-> @@ -285,10 +285,10 @@ unsigned int cpumask_next_and(int n, const struct cpumask *src1p,
->  }
->  
->  /**
-> - * cpumask_next_and_wrap - get the next cpu in *src1p & *src2p, starting from
-> - *                        @n+1. If nothing found, wrap around and start from
-> + * cpumask_next_and_wrap - get the next cpu in *@src1p & *@src2p, starting from
-> + *                        @n+ 1. If nothing found, wrap around and start from
->   *                        the beginning
-> - * @n: the cpu prior to the place to search (i.e. search starts from @n+1)
-> + * @n: the cpu prior to the place to search (i.e. search starts from @n +1)
->   * @src1p: the first cpumask pointer
->   * @src2p: the second cpumask pointer
->   *
-> @@ -306,9 +306,9 @@ unsigned int cpumask_next_and_wrap(int n, const struct cpumask *src1p,
->  }
->  
->  /**
-> - * cpumask_next_wrap - get the next cpu in *src, starting from @n+1. If nothing
-> + * cpumask_next_wrap - get the next cpu in *@src, starting from @n +1. If nothing
->   *                    found, wrap around and start from the beginning
-> - * @n: the cpu prior to the place to search (i.e. search starts from @n+1)
-> + * @n: the cpu prior to the place to search (i.e. search starts from @n +1)
->   * @src: cpumask pointer
->   *
->   * Return: next set bit, wrapped if needed, or >= nr_cpu_ids if @src is empty.
+On 03/07, Hillf Danton wrote:
+>
+> On Fri, 7 Mar 2025 11:54:56 +0530 K Prateek Nayak <kprateek.nayak@amd.com>
+> >> step-03
+> >> 	task-118766 new reader
+> >> 	makes pipe empty
+> >
+> >Reader seeing a pipe full should wake up a writer allowing 118768 to
+> >wakeup again and fill the pipe. Am I missing something?
+> >
+> Good catch, but that wakeup was cut off [2,3]
+>
+> [2] https://lore.kernel.org/lkml/20250304123457.GA25281@redhat.com/
+> [3] https://lore.kernel.org/all/20250210114039.GA3588@redhat.com/
 
-How did you find these ? I only looked for build warnings / errors earlier (with
-make htmldocs). Anything else I should be doing to find these issues ?
+Why do you think
 
-Thanks for your help Akira.
+	[PATCH v2 1/1] pipe: change pipe_write() to never add a zero-sized buffer
+	https://lore.kernel.org/all/20250210114039.GA3588@redhat.com/
 
--- 
-viresh
+can make any difference ???
+
+Where do you think a zero-sized buffer with ->len == 0 can come from?
+
+Oleg.
+
 
