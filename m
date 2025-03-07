@@ -1,103 +1,115 @@
-Return-Path: <linux-kernel+bounces-550389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CF6FA55ECB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:43:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACB28A55ED0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:45:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 660DF16BAC8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:43:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6F8216CC09
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:45:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E25C18DB08;
-	Fri,  7 Mar 2025 03:43:44 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47E51922DC;
+	Fri,  7 Mar 2025 03:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="s1YqEYFY"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 004D017DFF3;
-	Fri,  7 Mar 2025 03:43:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9263C187872;
+	Fri,  7 Mar 2025 03:45:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741319024; cv=none; b=TnlE2jsbfxPJ+3HbGFhDB/GCD9TqvUkaQ/WimcGnTKgdohHBa2QIqLBE21WOO19gBMhPZY8hPflNm9FsR0Vd6jEN3KMX8VsTCHKd07kTxXcivt76vHCR9LQjMIW0fH2Zd/B1KmuBtKXihy20lR2obqVxVRzAiSt8v60mzzdqxs4=
+	t=1741319107; cv=none; b=KN1E1dmIJ3mMwqwgd3Y4i2k+LMaP3MP5VzSspvDgMSx5mo2N0dH3yxwXcMoQcJBOQQbxXbTf4BdPptQeXiTQhMcWynxmWCN3EFryiB0PE0wzmFxNHIMWYSjefff3hawiaqVtgI7D+k5manCEcaY8LYTkokvjYtnyBaHr7BN4flM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741319024; c=relaxed/simple;
-	bh=8dXojX/8uIgxC5WJAgabFATdEMEUTNL7Iiw/XSmjiUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l/3dDjlNcwGIl/Ki9crevPTMFiqEAtkOTWhmkRkF1jaoVIgoLJxGylh/MbPQu4sMseX/witHr3aR+tp2dvjUt2q67sLp0gSJ1lomPC/mdBPbgp/eqeNIUgp6XqDG1w4hj+h2CQBC8yiEsX944OSOl9eoDGkCOqsF5gA0GdpP03c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83932C4CEE7;
-	Fri,  7 Mar 2025 03:43:42 +0000 (UTC)
-Date: Thu, 6 Mar 2025 22:43:41 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: mhiramat@kernel.org, mathieu.desnoyers@efficios.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Abaci
- Robot <abaci@linux.alibaba.com>
-Subject: Re: [PATCH -next] function_graph: Remove the unused variable func
-Message-ID: <20250306224341.00cf6291@batman.local.home>
-In-Reply-To: <20250307021412.119107-1-jiapeng.chong@linux.alibaba.com>
-References: <20250307021412.119107-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741319107; c=relaxed/simple;
+	bh=QAudi0vbwHorwbjwLc/y9hhLGMJKGpkcbFkupOp6/BY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=vBlE57jLC0yZ5KfxhuolaAeRBfiUj4lnyPFd7KIE+Wd3AgbpaHi4inTR4H5Y4mXIxKh1NQsO/p/ElyJDb6ZPHaCM8DvttltoVHqo1TexnQg6XXgSGZVcX/hQy0szciFUB445Dg5Y3zzN3g5rAje93Q+Kw7ZB+FXAmWApWeSpVaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=s1YqEYFY; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 8a7518aefb0611efaae1fd9735fae912-20250307
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=bubgnY0zrmF8D2EJUSPC+Gnryw9Y+zgy2Y+PYLhxYXg=;
+	b=s1YqEYFY2FOwhBBaVlqT8HtPvQSxHcAk0K+91TylI5O4+WStuAYnBRFc3ZJj2Ph5WYcQpDzU2H9RGXP6K4/NN3k5DwRsJxj+Px/Y/JwEWEZRtA1IkMXQ2hOjsKwuMUC6FJ5xC1YnTG/MBtc7oaG9qrB/GbeYw8IA9siZ6AXkdrc=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:6a164fc0-6fd5-469b-929e-f519744d5451,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:1297108c-f5b8-47d5-8cf3-b68fe7530c9a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 8a7518aefb0611efaae1fd9735fae912-20250307
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw01.mediatek.com
+	(envelope-from <guangjie.song@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1822769354; Fri, 07 Mar 2025 11:44:58 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 7 Mar 2025 11:44:56 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Fri, 7 Mar 2025 11:44:56 +0800
+From: Guangjie Song <guangjie.song@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Ulf Hansson
+	<ulf.hansson@linaro.org>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-pm@vger.kernel.org>, Guangjie Song <guangjie.song@mediatek.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH 00/13] pmdomain: mediatek: Add MT8196 power domain
+Date: Fri, 7 Mar 2025 11:44:24 +0800
+Message-ID: <20250307034454.12243-1-guangjie.song@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri,  7 Mar 2025 10:14:12 +0800
-Jiapeng Chong <jiapeng.chong@linux.alibaba.com> wrote:
+This series is based on linux-next, tag: next-20250306.
 
-> Variable func is not effectively used, so delete it.
->=20
-> kernel/trace/trace_functions_graph.c:925:16: warning: variable =E2=80=98f=
-unc=E2=80=99 set but not used.
+Changes:
+- Update mtk-scpsys driver for MT8196
+- Add MT8196 power domain support
 
-Thanks, but it should be stated that the variable "func" which came
-from "call->func" was replaced by "ret_func" coming from
-"graph_ret->func" but "func" wasn't removed after the replacement.
+Guangjie Song (13):
+  pmdomain: mediatek: Support sram isolation
+  pmdomain: mediatek: Support sram low power
+  pmdomain: mediatek: Support power on bypass
+  pmdomain: mediatek: Support check power on/off ack
+  pmdomain: mediatek: Support voting for power domain
+  pmdomain: mediatek: Support trigger subsys save/restore regesters
+  pmdomain: mediatek: Support power domain irq safe
+  pmdomain: mediatek: Support power domain always on
+  pmdomain: mediatek: Refactor parameters of init_scp
+  pmdomain: mediatek: Support bus protect with table
+  pmdomain: mediatek: Add post init callback
+  dt-bindings: power: mediatek: Add new MT8196 power domain
+  pmdomain: mediatek: Add MT8196 power domain support
 
-Also:
+ .../mediatek,mt8196-power-controller.yaml     |   74 +
+ drivers/pmdomain/mediatek/mt8196-scpsys.h     |  114 ++
+ drivers/pmdomain/mediatek/mtk-scpsys.c        | 1276 ++++++++++++++++-
+ include/dt-bindings/power/mt8196-power.h      |   57 +
+ 4 files changed, 1483 insertions(+), 38 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/power/mediatek,mt8196-power-controller.yaml
+ create mode 100644 drivers/pmdomain/mediatek/mt8196-scpsys.h
+ create mode 100644 include/dt-bindings/power/mt8196-power.h
 
-Fixes: ff5c9c576e754 ("ftrace: Add support for function argument to graph t=
-racer")
-
-You don't need to resend. I'll take the patch and update the change log.
-
--- Steve
-
->=20
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D19250
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
->  kernel/trace/trace_functions_graph.c | 3 ---
->  1 file changed, 3 deletions(-)
->=20
-> diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_fu=
-nctions_graph.c
-> index 71b2fb068b6b..ed61ff719aa4 100644
-> --- a/kernel/trace/trace_functions_graph.c
-> +++ b/kernel/trace/trace_functions_graph.c
-> @@ -922,7 +922,6 @@ print_graph_entry_leaf(struct trace_iterator *iter,
->  	struct ftrace_graph_ent *call;
->  	unsigned long long duration;
->  	unsigned long ret_func;
-> -	unsigned long func;
->  	int args_size;
->  	int cpu =3D iter->cpu;
->  	int i;
-> @@ -933,8 +932,6 @@ print_graph_entry_leaf(struct trace_iterator *iter,
->  	call =3D &entry->graph_ent;
->  	duration =3D ret_entry->rettime - ret_entry->calltime;
-> =20
-> -	func =3D call->func + iter->tr->text_delta;
-> -
->  	if (data) {
->  		struct fgraph_cpu_data *cpu_data;
-> =20
+-- 
+2.45.2
 
 
