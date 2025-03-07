@@ -1,200 +1,251 @@
-Return-Path: <linux-kernel+bounces-551442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 630C4A56C73
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:45:58 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E6B4A56C79
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:46:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2A98188E4B2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:46:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 418107AB4C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:45:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58DDDF71;
-	Fri,  7 Mar 2025 15:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE8B21CFF6;
+	Fri,  7 Mar 2025 15:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="StclEmU6"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="Rrhx66eD"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F0821CA1A;
-	Fri,  7 Mar 2025 15:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29CFADF71
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741362348; cv=none; b=YjFZnmsjXd9wp/7zB1j3ClBzGrmrH9DYilQ+ta2HjXttMaGO7HFQ31K5FozzSBerCECBVZHKZR0d7g4XSeK1RuRfOG6UvZ7Dc9qRNpGHuUJ4ukbx3Jb/W/V7vENn/908B1U2pxHCLx02+K8u09+VZtcBftLVsBT49zUArkmOsy0=
+	t=1741362378; cv=none; b=bMdS4tMpDH0CZAs6ZAuioZlrs3SRVDMNFUbZhjcDU9zR80QJ+pj+CwvLuq8zG3/kNHMn8hXCMATZjpXwo4mmmF9K183AEIQiJs7bhT94SU9I9jro2+4/ZBBi5ZJ+T4Yt+HtkTt+otk5A9v7qJZj4FyPv20dVCLiBjuvi7EqNV4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741362348; c=relaxed/simple;
-	bh=ZpBOqPvPpg4k+GwFKkbvTJnOE4LZ2+Rh5edulRy7JRQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cf1HwSF4NjLnzWEULcliKrH6UaA9cO77WZn2jM05DhkuyC4FsYVI46KVF2Cm5gdto9mjUJFQl1Yb9o5a/O977ABr5Nt9flikhhS6E+DGi3AwriRNpN7VVQe2r5JkEY/ykV6ly/WNMl0MbSI3tj0o7odYKiYIHF/aOxG7AJmCids=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=StclEmU6; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso404154866b.3;
-        Fri, 07 Mar 2025 07:45:45 -0800 (PST)
+	s=arc-20240116; t=1741362378; c=relaxed/simple;
+	bh=z7gs7BlfOC/UBYmevmQVkCHwb3yUJYsPO1D5N15aWig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JZbFp8bPGVk1YF8zMY7NMUsp32HtqwblCtAaJo7oxKUzZxvgRHgTo/uY04WxY136pO82EoPOfaPDJaS+2G7d+u1+HFtWSvgi5vFG719jkPtI+CVttrQPOemaJSq5a8Ds/teO99eGyd6RgNJ0osXP9OMAwkReED3atVfCo0MZjrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=Rrhx66eD; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6feafc707d3so19108177b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:46:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741362344; x=1741967144; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cTClkgx+OHCu7CHEL4QgdX7j7z63TsB2DtVNGQ6gRoQ=;
-        b=StclEmU62JCYl6gd7ULS5RX83XPi68TKRBqRVgyXQjY1GW4vcuux+Y+sv4UZa+k8lp
-         7fH1ysDHk4vUr5SlhaW02L3WrKS5tXpcFayE57EIfVua16Ye/g2n1S0NEPP0bKX9dO7T
-         GWTxsUXLH0ZNi3X5glE19+PnvqRk24aCUERXVDNq8VZ/O23sa1JgkmKkqpKSiS/JhMHU
-         CEbMAaPQkd4prQOL4vLPway149aktYcd3QLmh/0PRKna3QQTlbWK2U39pf0fNOcaNPw8
-         FyUcn1Pp99UFeMvsqx7Vvzsd2kCST7qjkC+5ztWxa8SlMEkIbI6VAiGjabFJG84HG1wz
-         V+GA==
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1741362376; x=1741967176; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=24J3CynJ4fNToC40YYg0INXois46zfdfDDswNEU4WCw=;
+        b=Rrhx66eDhzAlGmIJ4yyWZduZGji29jN0g+ooBuiLcBEPepOAZpG28baKczOkkPZG02
+         Kj7rQClfecgJbS1L1vb/nI6v+bK7FA/+B5I2hvFlcpbZOj/GoVO+3Y9FDCjiL+qCOg4U
+         KTWXUf3s7R/fKYhWVINW7yM2jBj4opefgeDph89h0TDH9PSgMx0HcfiAvY5btA1zCqG8
+         am3R73qwsw2JXaHzeQvrJ+dWNvJOafvfS3ABcD20+GSV1V1twzTTQA5rbQaFCmeokae2
+         GU0Dlk7sJbK/lE2nB7T1vRDTwqCt4VIb5HGBlRvuPXLd5unVvq6Etw75w1VcfgtQH4rs
+         Odxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741362344; x=1741967144;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cTClkgx+OHCu7CHEL4QgdX7j7z63TsB2DtVNGQ6gRoQ=;
-        b=VNVsApru0TYThRY9VS8av9bso4xFADAlHozw9MINhXPnmZz7ahshYjcLHVJiXo1Nn9
-         aJXCpVk6zLWkhg2WMZByxE0allYfW72L/YtrOhytDu72pXPPXSccn224WHvPrRmiB/kG
-         MV9hRBi2gq5FvdVccNOj12IHv0UTx+nHDivXVXF471ZD2nSOWKbuIAkmWhSkfAisAHd+
-         5yqWzcCH4Ek8gFJ72LrvBNWZtU1C6uUqiswDGABPn23p/wiU4opwecXlUFA2YKUhTr3A
-         kvGdU5mq+aodeHrCIllzAz3ZqbT1NfNTnUssxTT63Z1oWofPUWHMUn8/Gy2ttvXwugV6
-         J6Kw==
-X-Forwarded-Encrypted: i=1; AJvYcCVU2hEvKy7RqMmrKhMFj0xV7XEVOoWOVCFUTkOo4az8eAZeUNy/YGjw87RmOJVjuItL5Euek+V+vHnn2Ws=@vger.kernel.org, AJvYcCVrIxro871RqiK+p7dO1czDnUOSjQ6xCAiR1S0hPF2oSaQz8V+7KxYubgJaTzMYMKQq4eA3ObSt@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbHWVsl5vVFFeHuh7q7ygOngYXB1QqqAMAdcMWO8/4gJfX8n5M
-	89/L/xbQ4WtII9YZCXOt5lry/SmAQ7VhBUcngY6lTJJa6CWF/vg2DllmFOi1H8ieDCTA5tz7NSY
-	oSNZMr9VBMGjXJuGePhrrmNYS+oBqrwU9/rG1Xtm/
-X-Gm-Gg: ASbGnct1oZ3//HcqOx2qLwqjtRglGMivBzGEHMceRi3/RLmJDcJoLc1x6qIGZiu/rGy
-	rR+cPMVDp/wLPKRDmvXH4pA21jrd4H3MMiX8M277VeD4G+qw1Yz8ba9i3cG4VsoLTV7yr+auMrS
-	6R0Lk7Fii2Q83giMrcfHKLAWr1
-X-Google-Smtp-Source: AGHT+IFlypVhoPatyG1S41ARRN9VafZA5suTA50Nl4KHnRzPgisegFr5nMPXUcbEavl64mUeZqkyzMjq0vmoau6IOKc=
-X-Received: by 2002:a17:907:82a3:b0:abf:5dd3:bb29 with SMTP id
- a640c23a62f3a-ac25264fab8mr354322566b.15.1741362344149; Fri, 07 Mar 2025
- 07:45:44 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741362376; x=1741967176;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=24J3CynJ4fNToC40YYg0INXois46zfdfDDswNEU4WCw=;
+        b=kCf5lQRfTFHKKWz1MytsgnCL2IBSnLQ2iqPvVigM+lC2sUQigPBIS1emwc8h7t9q2T
+         OuP9yCRtQmBmfPHJ0NPTQ54X2CYihPMCHo1pZwg4wf0Ivf5VvVfBY/dNnfmWUxI7hoL8
+         gufa8HnYeneV3oMnHToDpzVEK5sKbzDFa5+TE18i4SaZjXxBOlTd4Z+3/ocB6UgW0pp/
+         0evHMNWrqxiMI4r6yPnFoTTeiyKFILfUCxroXBCguYb0tm7uT8XuiyJzEiS3Z6ojf12R
+         nx7fFiGfwSVfkuMVVGk8auKZfhzy4WbA2JjFvuCkKQoglCPVbcPhOEKNmZH7zba2V800
+         KlFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXgf6IpEufgeQ8ofIHMDz5DIFJ3idZ6/K+ywazEfh8b6Ea/odfZfiAqwT1h2rVUuIbl/8U7d1hTtLgbvko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZhIrAzOW5JShsT8pl/jIHrlQsuD0FN9uCuZ5VtckIP8wsQFSs
+	dq6ApHnB4z+JpJp6EFihv7Vq5JeyIXWcFuWS9yKfNfxHhdfLjTo59Yyjxjw8JI0=
+X-Gm-Gg: ASbGnctuhEEP55qfdkLn81VA61INMQ1Mi40fByD6VsMAHb1DZ9FgmMX/KRNxQMlqXZ0
+	0F1N84bfmgITxz+M/XvkaxA9giKp0PZNGNT4lt2OrCgMtvI5zTuv60OInQieE0yneQctSnklBp0
+	LrwIBCVciz+HJkZZBWegblP/yXHoSCHoSWvMrGxqWZ3PBQsotpz9l2mugWtA5bszl3wvM3u16Jh
+	PNnJJ1n20GDEeuCK4XvB+Nhp5VHbOnvZhIs1hRCGAQzBOwLMzd+qFwkhVkcb0QeVWXC4Ae+/gpI
+	kLtlv0OtF/4gnnPJ/bKURvXHJw8ywcjzzPtoeGqLtWaGgWEVU583qVntVfnQdFVdEO4e32S8W3g
+	RgKF8/A==
+X-Google-Smtp-Source: AGHT+IFbO7B7I5QW8p7YyFhEoZvye5dOa0V+vkMhRA5dzshNa6dL/BbXoDUHXepaAKDlZqjdHG+27w==
+X-Received: by 2002:a05:690c:3386:b0:6fb:9474:7b5f with SMTP id 00721157ae682-6febf2eb32dmr60526787b3.14.1741362375930;
+        Fri, 07 Mar 2025 07:46:15 -0800 (PST)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6feb2c4676fsm7827907b3.103.2025.03.07.07.46.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 07:46:14 -0800 (PST)
+Date: Fri, 7 Mar 2025 10:46:14 -0500
+From: Josef Bacik <josef@toxicpanda.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>,
+	syzbot <syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com>,
+	akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org,
+	cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [xfs?] WARNING in fsnotify_file_area_perm
+Message-ID: <20250307154614.GA59451@perftesting>
+References: <67a487f7.050a0220.19061f.05fc.GAE@google.com>
+ <67c4881e.050a0220.1dee4d.0054.GAE@google.com>
+ <7ehxrhbvehlrjwvrduoxsao5k3x4aw275patsb3krkwuq573yv@o2hskrfawbnc>
+ <CAOQ4uxjf5H_vj-swF7wEvUkPobEuxs2q6jfO9jFsx4pqxtJMMg@mail.gmail.com>
+ <20250304161509.GA4047943@perftesting>
+ <CAOQ4uxj0cN-sUN=EE0+9tRhMFFrWLQ0T_i0fprwNRr92Hire6Q@mail.gmail.com>
+ <20250304203657.GA4063187@perftesting>
+ <CAOQ4uxihyR8u5c0T8q85ySNgp4U1T0MMSR=+vv3HWNFcvezRPQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAMpRfLORiuJOgUmpmjgCC1LZC1Kp0KFzPGXd9KQZELtr35P+eQ@mail.gmail.com>
- <2025030559-radiated-reviver-eebb@gregkh> <CAMpRfLMQ=rWBpYCaco5X4Sh1ecHuiqa91TwsBo6m2MA_UMKM+g@mail.gmail.com>
- <CAMpRfLMakzeazr91DBVyZQnin7y6L9RB+sPFb59U1QZvY3+KBQ@mail.gmail.com> <2025030718-dwindle-degrading-94d3@gregkh>
-In-Reply-To: <2025030718-dwindle-degrading-94d3@gregkh>
-From: =?UTF-8?Q?Se=C3=AFfane_Idouchach?= <seifane53@gmail.com>
-Date: Fri, 7 Mar 2025 23:45:27 +0800
-X-Gm-Features: AQ5f1JrD13VtvoNkOtbz2uR8YGz8hRWTTp6AyKcLBEqS-dprw-ibk2WnFv0PJks
-Message-ID: <CAMpRfLPLJA4TaJQCeYfn5XRFnVdqJ36yv-1LL7o=kjYOAj9u1Q@mail.gmail.com>
-Subject: Re: [REGRESSION] Long boot times due to USB enumeration
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: dirk.behme@de.bosch.com, rafael@kernel.org, dakr@kernel.org, 
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxihyR8u5c0T8q85ySNgp4U1T0MMSR=+vv3HWNFcvezRPQ@mail.gmail.com>
 
-> That is a totally different change, I think you have something odd here
-> as these bisection points are very confusing.
+On Tue, Mar 04, 2025 at 10:13:39PM +0100, Amir Goldstein wrote:
+> On Tue, Mar 4, 2025 at 9:37 PM Josef Bacik <josef@toxicpanda.com> wrote:
+> >
+> > On Tue, Mar 04, 2025 at 09:27:20PM +0100, Amir Goldstein wrote:
+> > > On Tue, Mar 4, 2025 at 5:15 PM Josef Bacik <josef@toxicpanda.com> wrote:
+> > > >
+> > > > On Tue, Mar 04, 2025 at 04:09:16PM +0100, Amir Goldstein wrote:
+> > > > > On Tue, Mar 4, 2025 at 12:06 PM Jan Kara <jack@suse.cz> wrote:
+> > > > > >
+> > > > > > Josef, Amir,
+> > > > > >
+> > > > > > this is indeed an interesting case:
+> > > > > >
+> > > > > > On Sun 02-03-25 08:32:30, syzbot wrote:
+> > > > > > > syzbot has found a reproducer for the following issue on:
+> > > > > > ...
+> > > > > > > ------------[ cut here ]------------
+> > > > > > > WARNING: CPU: 1 PID: 6440 at ./include/linux/fsnotify.h:145 fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
+> > > > > > > Modules linked in:
+> > > > > > > CPU: 1 UID: 0 PID: 6440 Comm: syz-executor370 Not tainted 6.14.0-rc4-syzkaller-ge056da87c780 #0
+> > > > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+> > > > > > > pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> > > > > > > pc : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
+> > > > > > > lr : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
+> > > > > > > sp : ffff8000a42569d0
+> > > > > > > x29: ffff8000a42569d0 x28: ffff0000dcec1b48 x27: ffff0000d68a1708
+> > > > > > > x26: ffff0000d68a16c0 x25: dfff800000000000 x24: 0000000000008000
+> > > > > > > x23: 0000000000000001 x22: ffff8000a4256b00 x21: 0000000000001000
+> > > > > > > x20: 0000000000000010 x19: ffff0000d68a16c0 x18: ffff8000a42566e0
+> > > > > > > x17: 000000000000e388 x16: ffff800080466c24 x15: 0000000000000001
+> > > > > > > x14: 1fffe0001b31513c x13: 0000000000000000 x12: 0000000000000000
+> > > > > > > x11: 0000000000000001 x10: 0000000000ff0100 x9 : 0000000000000000
+> > > > > > > x8 : ffff0000c6d98000 x7 : 0000000000000000 x6 : 0000000000000000
+> > > > > > > x5 : 0000000000000020 x4 : 0000000000000000 x3 : 0000000000001000
+> > > > > > > x2 : ffff8000a4256b00 x1 : 0000000000000001 x0 : 0000000000000000
+> > > > > > > Call trace:
+> > > > > > >  fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145 (P)
+> > > > > > >  filemap_fault+0x12b0/0x1518 mm/filemap.c:3509
+> > > > > > >  xfs_filemap_fault+0xc4/0x194 fs/xfs/xfs_file.c:1543
+> > > > > > >  __do_fault+0xf8/0x498 mm/memory.c:4988
+> > > > > > >  do_read_fault mm/memory.c:5403 [inline]
+> > > > > > >  do_fault mm/memory.c:5537 [inline]
+> > > > > > >  do_pte_missing mm/memory.c:4058 [inline]
+> > > > > > >  handle_pte_fault+0x3504/0x57b0 mm/memory.c:5900
+> > > > > > >  __handle_mm_fault mm/memory.c:6043 [inline]
+> > > > > > >  handle_mm_fault+0xfa8/0x188c mm/memory.c:6212
+> > > > > > >  do_page_fault+0x570/0x10a8 arch/arm64/mm/fault.c:690
+> > > > > > >  do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:783
+> > > > > > >  do_mem_abort+0x74/0x200 arch/arm64/mm/fault.c:919
+> > > > > > >  el1_abort+0x3c/0x5c arch/arm64/kernel/entry-common.c:432
+> > > > > > >  el1h_64_sync_handler+0x60/0xcc arch/arm64/kernel/entry-common.c:510
+> > > > > > >  el1h_64_sync+0x6c/0x70 arch/arm64/kernel/entry.S:595
+> > > > > > >  __uaccess_mask_ptr arch/arm64/include/asm/uaccess.h:169 [inline] (P)
+> > > > > > >  fault_in_readable+0x168/0x310 mm/gup.c:2234 (P)
+> > > > > > >  fault_in_iov_iter_readable+0x1dc/0x22c lib/iov_iter.c:94
+> > > > > > >  iomap_write_iter fs/iomap/buffered-io.c:950 [inline]
+> > > > > > >  iomap_file_buffered_write+0x490/0xd54 fs/iomap/buffered-io.c:1039
+> > > > > > >  xfs_file_buffered_write+0x2dc/0xac8 fs/xfs/xfs_file.c:792
+> > > > > > >  xfs_file_write_iter+0x2c4/0x6ac fs/xfs/xfs_file.c:881
+> > > > > > >  new_sync_write fs/read_write.c:586 [inline]
+> > > > > > >  vfs_write+0x704/0xa9c fs/read_write.c:679
+> > > > > >
+> > > > > > The backtrace actually explains it all. We had a buffered write whose
+> > > > > > buffer was mmapped file on a filesystem with an HSM mark. Now the prefaulting
+> > > > > > of the buffer happens already (quite deep) under the filesystem freeze
+> > > > > > protection (obtained in vfs_write()) which breaks assumptions of HSM code
+> > > > > > and introduces potential deadlock of HSM handler in userspace with filesystem
+> > > > > > freezing. So we need to think how to deal with this case...
+> > > > >
+> > > > > Ouch. It's like the splice mess all over again.
+> > > > > Except we do not really care to make this use case work with HSM
+> > > > > in the sense that we do not care to have to fill in the mmaped file content
+> > > > > in this corner case - we just need to let HSM fail the access if content is
+> > > > > not available.
+> > > > >
+> > > > > If you remember, in one of my very early version of pre-content events,
+> > > > > the pre-content event (or maybe it was FAN_ACCESS_PERM itself)
+> > > > > carried a flag (I think it was called FAN_PRE_VFS) to communicate to
+> > > > > HSM service if it was safe to write to fs in the context of event handling.
+> > > > >
+> > > > > At the moment, I cannot think of any elegant way out of this use case
+> > > > > except annotating the event from fault_in_readable() as "unsafe-for-write".
+> > > > > This will relax the debugging code assertion and notify the HSM service
+> > > > > (via an event flag) that it can ALLOW/DENY, but it cannot fill the file.
+> > > > > Maybe we can reuse the FAN_ACCESS_PERM event to communicate
+> > > > > this case to HSM service.
+> > > > >
+> > > > > WDYT?
+> > > >
+> > > > I think that mmap was a mistake.
+> > >
+> > > What do you mean?
+> > > Isn't the fault hook required for your large executables use case?
+> >
+> > I mean the mmap syscall was a mistake ;).
+> >
+> 
+> ah :)
+> 
+> > >
+> > > >
+> > > > Is there a way to tell if we're currently in a path that is under fsfreeze
+> > > > protection?
+> > >
+> > > Not at the moment.
+> > > At the moment, file_write_not_started() is not a reliable check
+> > > (has false positives) without CONFIG_LOCKDEP.
+> > >
+> 
+> One very ugly solution is to require CONFIG_LOCKDEP for
+> pre-content events.
+> 
+> > > > Just denying this case would be a simpler short term solution while
+> > > > we come up with a long term solution. I think your solution is fine, but I'd be
+> > > > just as happy with a simpler "this isn't allowed" solution. Thanks,
+> > >
+> > > Yeh, I don't mind that, but it's a bit of an overkill considering that
+> > > file with no content may in fact be rare.
+> >
+> > Agreed, I'm fine with your solution.
+> 
+> Well, my "solution" was quite hand-wavy - it did not really say how to
+> propagate the fact that faults initiated from fault_in_readable().
+> Do you guys have any ideas for a simple solution?
 
-I can only agree. I was skeptical that reverting this commit would fix
-the issue but it does.
+Sorry I've been elbow deep in helping getting our machine replacements working
+faster.
 
-> I think you have a mix of problems here.  Let's fix up all of those
-> error messages in the log first.  Dan's fix has nothing to do with that
-> at all, once the USB bus connection stuff is resolved, then it should be
-> ok.
+I've been thnking about this, it's not like we can carry context from the reason
+we are faulting in, at least not simply, so I think the best thing to do is
+either 
 
-Are you suggesting you want to fix those messages ? I am sorry if I
-was not clear before, those messages are always present even on a
-"good" build.
-The issue is that on a "bad" build they hold back the boot process
-from continuing. USB functionality is never affected.
+1) Emit a precontent event at mmap() time for the whole file, since really all I
+care about is faulting at exec time, and then we can just skip the precontent
+event if we're not exec.
 
-> As that xhci commit you point at is showing an issue, are you sure that
-> you are properly building the right xhci driver into the system?  Do you
-> have a Renesas xhci controller?  What is the output of 'lspci'?
+2) Revert the page fault stuff, put back your thing to fault the whole file, and
+wait until we think of a better way to deal with this.
 
-I am building with a config based on my current distribution, Arch
-Linux, with olddefconfig. A quick grep for the values found in the
-commit returns the following :
-CONFIG_USB_XHCI_PCI=y
-CONFIG_USB_XHCI_PCI_RENESAS=m
+Obviously I'd prefer not #2, but I'd really, really rather not chuck all of HSM
+because my page fault thing is silly.  I'll carry what I need internally while
+we figure out what to do upstream.  #1 doesn't seem bad, but I haven't thought
+about it that hard.  Thanks,
 
-lspci as requested:
-00:00.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Starship/Matisse Root Complex [1022:1480]
-00:00.2 IOMMU [0806]: Advanced Micro Devices, Inc. [AMD]
-Starship/Matisse IOMMU [1022:1481]
-00:01.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Starship/Matisse PCIe Dummy Host Bridge [1022:1482]
-00:01.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
-Starship/Matisse GPP Bridge [1022:1483]
-00:01.2 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
-Starship/Matisse GPP Bridge [1022:1483]
-00:02.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Starship/Matisse PCIe Dummy Host Bridge [1022:1482]
-00:03.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Starship/Matisse PCIe Dummy Host Bridge [1022:1482]
-00:03.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
-Starship/Matisse GPP Bridge [1022:1483]
-00:04.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Starship/Matisse PCIe Dummy Host Bridge [1022:1482]
-00:05.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Starship/Matisse PCIe Dummy Host Bridge [1022:1482]
-00:07.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Starship/Matisse PCIe Dummy Host Bridge [1022:1482]
-00:07.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
-Starship/Matisse Internal PCIe GPP Bridge 0 to bus[E:B] [1022:1484]
-00:08.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Starship/Matisse PCIe Dummy Host Bridge [1022:1482]
-00:08.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
-Starship/Matisse Internal PCIe GPP Bridge 0 to bus[E:B] [1022:1484]
-00:14.0 SMBus [0c05]: Advanced Micro Devices, Inc. [AMD] FCH SMBus
-Controller [1022:790b] (rev 61)
-00:14.3 ISA bridge [0601]: Advanced Micro Devices, Inc. [AMD] FCH LPC
-Bridge [1022:790e] (rev 51)
-00:18.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Matisse/Vermeer Data Fabric: Device 18h; Function 0 [1022:1440]
-00:18.1 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Matisse/Vermeer Data Fabric: Device 18h; Function 1 [1022:1441]
-00:18.2 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Matisse/Vermeer Data Fabric: Device 18h; Function 2 [1022:1442]
-00:18.3 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Matisse/Vermeer Data Fabric: Device 18h; Function 3 [1022:1443]
-00:18.4 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Matisse/Vermeer Data Fabric: Device 18h; Function 4 [1022:1444]
-00:18.5 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Matisse/Vermeer Data Fabric: Device 18h; Function 5 [1022:1445]
-00:18.6 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Matisse/Vermeer Data Fabric: Device 18h; Function 6 [1022:1446]
-00:18.7 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
-Matisse/Vermeer Data Fabric: Device 18h; Function 7 [1022:1447]
-01:00.0 Non-Volatile memory controller [0108]: Kingston Technology
-Company, Inc. A2000 NVMe SSD [SM2263EN] [2646:2263] (rev 03)
-02:00.0 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD] 500
-Series Chipset USB 3.1 XHCI Controller [1022:43ee]
-02:00.1 SATA controller [0106]: Advanced Micro Devices, Inc. [AMD] 500
-Series Chipset SATA Controller [1022:43eb]
-02:00.2 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] 500
-Series Chipset Switch Upstream Port [1022:43e9]
-03:00.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Device [1022:43ea]
-03:09.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD] Device [1022:43ea]
-04:00.0 Ethernet controller [0200]: Intel Corporation 82599ES
-10-Gigabit SFI/SFP+ Network Connection [8086:10fb] (rev 01)
-2a:00.0 Ethernet controller [0200]: Realtek Semiconductor Co., Ltd.
-RTL8125 2.5GbE Controller [10ec:8125] (rev 05)
-2b:00.0 VGA compatible controller [0300]: NVIDIA Corporation TU106
-[GeForce RTX 2070 Rev. A] [10de:1f07] (rev a1)
-2b:00.1 Audio device [0403]: NVIDIA Corporation TU106 High Definition
-Audio Controller [10de:10f9] (rev a1)
-2b:00.2 USB controller [0c03]: NVIDIA Corporation TU106 USB 3.1 Host
-Controller [10de:1ada] (rev a1)
-2b:00.3 Serial bus controller [0c80]: NVIDIA Corporation TU106 USB
-Type-C UCSI Controller [10de:1adb] (rev a1)
-2c:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices,
-Inc. [AMD] Starship/Matisse PCIe Dummy Function [1022:148a]
-2d:00.0 Non-Essential Instrumentation [1300]: Advanced Micro Devices,
-Inc. [AMD] Starship/Matisse Reserved SPP [1022:1485]
-2d:00.1 Encryption controller [1080]: Advanced Micro Devices, Inc.
-[AMD] Starship/Matisse Cryptographic Coprocessor PSPCPP [1022:1486]
-2d:00.3 USB controller [0c03]: Advanced Micro Devices, Inc. [AMD]
-Matisse USB 3.0 Host Controller [1022:149c]
-2d:00.4 Audio device [0403]: Advanced Micro Devices, Inc. [AMD]
-Starship/Matisse HD Audio Controller [1022:1487]
-
-Thanks for your time
+Josef
 
