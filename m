@@ -1,163 +1,225 @@
-Return-Path: <linux-kernel+bounces-551012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54892A566EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:40:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5584AA566F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:41:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A0EC189668A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:40:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8595D17814B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FBD521770B;
-	Fri,  7 Mar 2025 11:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64F0021767C;
+	Fri,  7 Mar 2025 11:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lKjjt++J"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="q4zIk+07"
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2059.outbound.protection.outlook.com [40.107.243.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC4E21767C;
-	Fri,  7 Mar 2025 11:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741347607; cv=none; b=Q2dtAJxy+kK6sjvjXBL4ALEN+BSJBx7IJnUjRUlMuwu8KqBAlxNT8vrKRMk/Y5wOPYOUtJisA5K6eLehYWIklvJ3st7Yf/WhurcEj/6fM7mG7jhODjh/XLqz4DBmLPpVa9ROz6O2d01DRTQHK51fT8yDKYV6UVouKi7VQxdca+w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741347607; c=relaxed/simple;
-	bh=RdXGeUksPX5nBK/Nql891UU9+VHLyZXp5Jp77NwC/lM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IB9p3AhczKJJnUGQ2DGi7l1kQysRwZynawcDobuG6SSoiRwa6ZTIoa/j7Wiez4PX1RIjN9+CUBE9jB08EjniqW/YowWx91kcFqzkZqZXlzX0ERWagkMqLEO9xGt+kAW/Wq0a3XKTK3qw60N/mvlcGcfgDfsJkiRZ5TiHJPira+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lKjjt++J; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=qJd8io4yNDJMwXhLW9Dt8G+ZqODy5u6PCGa0y547CXU=; b=lKjjt++J+HBCgfVI9IYXcazi5Q
-	72CTIpHnw6xOivdf9EBin4omOJsOOKakaGp2XCz3wfinSdS7UNgYuW31GA9rk5cpvCNrqMmxikhnq
-	QT2g4ezgHGZZgNCHMTE+RIx+c9dQiqtQ1W9HiKyHoGKjuM4jFsS6zOwRTGiV6beHFyVT45uukbja/
-	rRAR5rJ2tmeqT+mz/r+LZPNTydv1KZwuz2FFnrKHDgcXmS6Uq5PIejr6RyvyKx8EiEsCBwq/lqoMG
-	3AI7by4DSf4Y0t65jFGhZ6pXkttWOOYJxsERUsvbt+vTrpRaC6fJRrdsWBR+H1fDSTlyBi2HaIghT
-	Sk5UKx/w==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tqW3Y-0000000CMER-1YFt;
-	Fri, 07 Mar 2025 11:39:56 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id A392D30031C; Fri,  7 Mar 2025 12:39:55 +0100 (CET)
-Date: Fri, 7 Mar 2025 12:39:55 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-tip-commits@vger.kernel.org, Ryo Takakura <ryotkkr98@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, x86@kernel.org
-Subject: Re: [tip: locking/core] lockdep: Fix wait context check on softirq
- for PREEMPT_RT
-Message-ID: <20250307113955.GK16878@noisy.programming.kicks-ass.net>
-References: <20250118054900.18639-1-ryotkkr98@gmail.com>
- <174102791921.14745.9525905092448169732.tip-bot2@tip-bot2>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41E5213252;
+	Fri,  7 Mar 2025 11:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741347662; cv=fail; b=LRtkw26N3bjN+jK9F+iw5K8vdmRvxcXqltd+RxU7IEG1EzvVlVZIEnyeJJjqOE1lpplcHjPuWN31XolRdsTEVehoeQXD2v6KJPWHxd7gDWuzfu9cCfaqUXOA61qmsCYcze3jF/bZQtyIdF4PsrYb3PZZ7nYPr9fFC5w0f8tOoas=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741347662; c=relaxed/simple;
+	bh=eQRXkdrhiUiW3RKWDoGGdPFPupVcFsV78JF69FSsxD0=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=c28L2H1WULlWyXuQVbnegE0JVUFubDWF0x/cwQ9vCyWQgpOGnfn3yf1KhvL7DcovhuYNd57gI1mbH3El72MbYvVaXwn6UcTMUq+VGpFuBDKgx2o8WjPrVbDciWO9zW+xQIKmkOxulEHcdFdS+SB9WFafsJ2UJhK/ZtSELostgdQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=q4zIk+07; arc=fail smtp.client-ip=40.107.243.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=QUA+5yOmo1fMQeuzWapRayXxk5vDK5DgoGYm+iXL2vYseMkHy354shVp6lJBDhFHttdiw7m7CfT8lDgbUJ37yef1j4k8FT6fRQM35LyJrgPS+3wZbqZlRk1HMZ4KZnSl7hsZmUoS6gtKip28bGSxZIi1rNe/bljexllUbLD+8mXxNHlItp9ShKmH46XMBtm+WvynTvoySLeUtcH6kJ6Xkn535b9L6Ym6w+fpHgHAOysNo8BQF53l3RxUX6h0iRmbs91p9xuP1SeNnjZ97Tq7/JNJSbJ35FLm3JMU+WLSH2jWiK/5vS1RIJc7IJQP0jW2dfLRoYTGIjXUf5p4MU7kZg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hpyz9aZ/iUy3dPzmCYPNk2UM9/reJ9xzPlwEVQkFiKM=;
+ b=r5rb5yNrsZx+oE6JN56tV6B0vDs4nnyfd0JSX6u/tvuAxlR3Mkd9gEocFfB2VxqmxiqYMNtSfZtrymvZRdmPjdCxA+PpRDbRH4bx4d1G2Lv/F2g8J6i8Xqd1s1dhGrzjQYO94r0jE7JmK5+BZYjlwvDiEn1PFbe7ae/ArmInyFxD7mDdQpEF7suV5U6wniV2tq+dQGr7OiC6OXUnb8PQsyjyak5HmBVrXcDZSjxdzoWmqXEdI4TDCllxQs+1gaar1ulRHikAwO6ngnHP9cxWQZPsPjaEN+quDG1iOAc7VwxQzRWWEaAOXIvS7jXSMudzq2JzCAa6DUIj0ZYG68fHRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hpyz9aZ/iUy3dPzmCYPNk2UM9/reJ9xzPlwEVQkFiKM=;
+ b=q4zIk+07RpYuPLcTLTi9elHulAd+iNN7lWEPUNiwQQvQL5kW9E89C5PL0++3kdSo6/wC60xT34hHO1fseQ68Ujoi9EPG7ceEPeLI5sGYPn0Qja6bApyevWEFdx4+vzJsacBQheEuT5AJ8vFc9+Oi4YRjhgxIwBZmmN3j6GCJeT0aJFBCI4xTCvSD5vqKEUOFwX1uAR1XW6jNbpnCy/TbOFVr1edHcQiOViJjKLLxAUcQZtLoAYYHmPJXtZpvLmpawAtydOge1H88Bjqf1lv9f88oqYKuoQB1esUklE9W5nUJpZOdhb01kXYUCBqAy5p1ldXn2rL2ke1XzR2DYDIkGA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com (2603:10b6:a03:4d0::11)
+ by MN2PR12MB4336.namprd12.prod.outlook.com (2603:10b6:208:1df::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.23; Fri, 7 Mar
+ 2025 11:40:58 +0000
+Received: from SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9]) by SJ2PR12MB8784.namprd12.prod.outlook.com
+ ([fe80::1660:3173:eef6:6cd9%6]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
+ 11:40:57 +0000
+Message-ID: <5cffdf8b-2670-4b46-9434-8024e18e4750@nvidia.com>
+Date: Fri, 7 Mar 2025 11:40:50 +0000
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/8] Fix SCHED_DEADLINE bandwidth accounting during
+ suspend
+To: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+ Johannes Weiner <hannes@cmpxchg.org>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>, Qais Yousef <qyousef@layalina.io>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Swapnil Sapkal <swapnil.sapkal@amd.com>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>, Phil Auld <pauld@redhat.com>,
+ luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20250306141016.268313-1-juri.lelli@redhat.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <20250306141016.268313-1-juri.lelli@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0201.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:318::10) To SJ2PR12MB8784.namprd12.prod.outlook.com
+ (2603:10b6:a03:4d0::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <174102791921.14745.9525905092448169732.tip-bot2@tip-bot2>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8784:EE_|MN2PR12MB4336:EE_
+X-MS-Office365-Filtering-Correlation-Id: 54a73a87-429c-4c6d-c357-08dd5d6ced26
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|10070799003|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WEhNbi8xQ2w5SmJGMVlHdldJSUxOTWl0MkhPVDZHeWJaaWJOU2JhUEwyVlAy?=
+ =?utf-8?B?cElDR2I5VTN5QmpTM25GSEV1UjRuUUc0TU9HVUJ0dHZsRnRKdXJLMWlBaWhi?=
+ =?utf-8?B?NVpHblZxMy9Idlp2RmhCYTZwRVIzOWo1bm52bTVnV2RyQ2dmME51aXFVZlJV?=
+ =?utf-8?B?Wi9CM1Y1OGg1ZHZIdE5pWmFvM2VKemdKdnc0UFRWWktqYks3VjBZSHJxYXQz?=
+ =?utf-8?B?bTN0OXV0TG9mNTc0eFcwTmI3TVNGMk9NWStmRlJldVN2dk5wVTRiZVhlcS9N?=
+ =?utf-8?B?Q1V3LzBiemwwcjlqU2dPcWJ6WU9oM3RJM1ZLV2svM3FuaW1UZlA2b3Vzbk8w?=
+ =?utf-8?B?ZnJTeWtXZTBMcWcwOU5md0NucXRQYWxleWNxNHVqZFhoWFM4NUdkNDJKZlBk?=
+ =?utf-8?B?LytDeFFKdkx6eUU2RDVma3lvZDllNjRHQ1E1dlhTTEhabzBFQndQUjduczRm?=
+ =?utf-8?B?aElJNWdmdm9DblozWUhuUHZJVG9ZdVdBeHY0UFlhbncza1V0ZVc0RU9lY00r?=
+ =?utf-8?B?OWJuWDhFN0Fmd1lHSTJHUWNLQzN3NTBjQnA3VzRTV2Q2VCtGdDducFlXR0l0?=
+ =?utf-8?B?RXpBSk1jQmlOQk5JeUowVmpLMnllcHJNa1FIOS81T0FHT0dTZDllSmNHZVpo?=
+ =?utf-8?B?akNRdnNXVzVqTmNRTFJNWFBGRDkxV0o5ZlNOb2V6RG1MUnFzUDNLYTRRN1dQ?=
+ =?utf-8?B?ZHl5MzhQVHhvd1Z3a3RwbjVlMWZaeEVlSU5SUjRHSE00dHlBRytSTDVFaTFR?=
+ =?utf-8?B?S0h0SldrRDlpb2lvUExOOCtyTlJOMGVDcGVReVNvUm43SkZ6bEt0Q1ZyN2xM?=
+ =?utf-8?B?YllkQ1pMSjNZUTRxa3o3STdPSXozclV4Qmd0d3Q2bTdYMXhpYVNuUEZXMHZu?=
+ =?utf-8?B?T2czeTNLY2FIZjJPSXo0TFczTCtTVmFIVHpNaUVqVkRrWXlGdWF2bmNXNGlQ?=
+ =?utf-8?B?YnlHRGpCdWRVeGdXdDVZbXdPYTcrR0UxNVB2L0RGMjFqYnFCK0NEZmU0ckM2?=
+ =?utf-8?B?TzM4aUEyTGlGeTIxTWRYb3hmMW5CdG5hM0IrQWJUUTAyTU8wai81N3VQUmo4?=
+ =?utf-8?B?djhpZ1g0cldpcks4bEx5WmNxMFFoSURxU1pvK01rS3FmQzJkSWJMdjJYajBs?=
+ =?utf-8?B?R2diZzNjdkJMYjcyZThYSVpmdTFsaEZPZ0FadW8wQUdYcTlJNjB6eWpPVHI5?=
+ =?utf-8?B?MnU2bGJUTTVSS2NFYTdyekZpRFhmVmdLQlFnOW5TTFpsV2FCbkgvSG9NQ2dN?=
+ =?utf-8?B?YUMraUhTWTFaMmpHaXl2QjhQR2JFcnNMRkxnQWJUN2pJcExSYXlpdWR4TFVJ?=
+ =?utf-8?B?UlNINWI5YjhYR2h4Y3k5TTIyYkFzdUJDUmNsMGVYK2s1YUpEVGhnemVCZzlV?=
+ =?utf-8?B?V2RqclpmOTh4c0h0aWRCY2NieVhoc1d0Z2JUN0tsY05DUExHdVlXVXA0aSt0?=
+ =?utf-8?B?eFdlRVlQT1pEb3MrRmcyRXU3WjJNZFN3cjZzZUxtSjR3bmNrRkt6MzJDdTRT?=
+ =?utf-8?B?QWM0ZUNlWmVORUZ4Vys4WVdtODZncUc0M2QwQVl3MUdNbC9TVGowMnpLT0hL?=
+ =?utf-8?B?Skx0RHhuSjJLdXYyRTl1V2V1dXZRYkpwZkN5YTdLZnp2TmluTnlvUHZMN3h6?=
+ =?utf-8?B?T3YwbFQ3TWxjUEMrNWZucjlRSjlka010VlpnT1F4Z1RmNE5TRWF0SE12ZjBH?=
+ =?utf-8?B?NFhoMXRTTUJJQm1nTmw5b3pXWmJoNW8yRnJ6djd3TW5wK3RmRDI1N2NUUjRX?=
+ =?utf-8?B?UEpXdUsrZGtIUWxyR2hJanRqeWhIamFHdDJSem8yRzNHd2dFSGNRZ2k4VjdS?=
+ =?utf-8?B?eExHMXlHbERlZUMwM29WZTg2TWVPbGZmRWYxOXN0UTB3QUhUNmtjSzFJdEc1?=
+ =?utf-8?Q?yjfAOU1Do5wmd?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8784.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dHlQekFQcGVGOXVZcEc0dnJocWI1cFA3ZUVWZFhhZGtsdFNDVkRQNWlPLzBZ?=
+ =?utf-8?B?NU12Zy9uaHBkbGgrWGVRNE9TSUJMQWxxdkkrRXVjREMzMjlsbWFEanpiZ2Mr?=
+ =?utf-8?B?czNEYTZiLzRYYW9qM0QvL3NmZ0ZqbC9Dd1Z6cUNXYWd0Zk5XLzIrWXo4eTlo?=
+ =?utf-8?B?VVh6ZTlnY0FTYVZxWGdiUW41MzBTcTd4Mm9KbnBKdy9vZDlieWJ6eHFkb3Fh?=
+ =?utf-8?B?VloyYlRrbU9NRDFkYzJIUVVEb2hkOFlqUi93a2ZiZDNYRHZmL05tSnhjNlhW?=
+ =?utf-8?B?OUpoL0pDVldqUVYzR0k2YmpFYjk3UFdWdlV6UXlzUDZrWUxJZGt1OE1KdFBU?=
+ =?utf-8?B?YXZKVzVXMnJTbkt6SkhlUWtSTTZVcjNrNk5pUTZ5S0xWYmtFcVFrRmdmUkht?=
+ =?utf-8?B?Ty9aRGJNSHFJMkFnRVRvVTVzNU15UFdVK0xscS9QSzkvYnhPL2FsSmtOR05M?=
+ =?utf-8?B?cDMvSGloOWxtT2JRYVRvT2hlRzBuU3IxUktDeXlXVnF2TmNMN0xpL1FTeE1F?=
+ =?utf-8?B?OEZtZytCbTBTMmJZWmFrTXpWME9kZUxHVTVSclgrS1MyUGRURkk5MmVzVGZY?=
+ =?utf-8?B?eFNxc2RONytibldlcC83ZzVwbUJselV5WENKRHFUQnBPRjhtNzlaeG5ROFpG?=
+ =?utf-8?B?ZEFIb0dmRWczM2hIVm1zM21ubVBub1FOWkU0MHpjMGdtd1NyWFhGQ1J4T01Y?=
+ =?utf-8?B?UklHZXgzTzl0THQ1UkE0dzgyWlk0UEkzb1RFYWJrbzZ0RnJ6bmRxVHZ5eWk4?=
+ =?utf-8?B?VFhoWjdBL0lWbE0vYnFrMEpBcDVQRE5TQWQvdjNRNVJOaEVKMDVLZGVQazhV?=
+ =?utf-8?B?OG1UQTBweGkwb3BoeS9iTGdPQ08wRFVzZ05ESVRCSHA0Y2xGb1UzY3IwY1l2?=
+ =?utf-8?B?ZVl5Vk5OMFFPWXJ5U1QvZWlKOUJnWE0veUsrMDhqRy9oWW1YY2NMK1VvbDRC?=
+ =?utf-8?B?ZThIQngyMXNKa3NKK3Myd2lYWkNzaGQ0bWozOVhMbHdVVlI0dDBZWWZiWVE2?=
+ =?utf-8?B?dFNLbkJxNXNHcHVIODdEeER0TUtuekdIcVFmYWZjOUpsQStiaTd6ZzdLWFFB?=
+ =?utf-8?B?Vkl1cTF1M3VMbnFMVmljVmZaMHhueW85SWJtb1hvNWdSelh1c2kzckU0VDVm?=
+ =?utf-8?B?TXA5SjVWTnN1OEs1MWlkOWNYdFQ4MTZ4QnZxeGNEZlNXbVd1cHBkWGU3c0Ur?=
+ =?utf-8?B?WHp6OWloY2tnYXV3M1paUVRGaEpCclV2bXIzYytlbTQ3OG1YV2RMWElkV1Mz?=
+ =?utf-8?B?ZFdCMmZkNUg3V3Y3WHZHODRvV2xyNk1Hc0pVWEQvd2VWWDNucW8vVit2ZGVa?=
+ =?utf-8?B?WmpsVzRJZnJPOHllM1l4aE9HanZGWFp6Q1FKMlQyRDUrckxDUzA2VnFEL3Bk?=
+ =?utf-8?B?VkVKV3d3QjVUekc5ckl5eHlXZDBKY1ZyTTViYmVQaFZXcWU3Y2RWVjVMKy92?=
+ =?utf-8?B?cGRVdktGSWpWeGZIR21sVVFaa2o0RkVFWTROeElaUUdicFoyTzlqaEZBWlkw?=
+ =?utf-8?B?Y1hqMWNsMTUxNTI5c1FZeDI1OHNDanUzYkZ3LzZrY2lUNEJDaGZTdmIrZ01r?=
+ =?utf-8?B?b1J2SS9OS1RybUgxNDZHWFh2YStIbk1jWWhtaUxSTlZ0REFoenc4bE4ybnBE?=
+ =?utf-8?B?SHVKcWVrc2Fnb1BHdFRsaEh6bm43WDhZY25vU2ZPd2Nkc3prVVVHM2FTaS9I?=
+ =?utf-8?B?SXV3QkdnZFdDMG8wQ0RMaGpZSldNbjFIL05yZ2NIamkxb2lFcmdoL1ZOZ2Yy?=
+ =?utf-8?B?cUV1Wk5Cajl1T2pqQVNxZ212eW5ZcG8rdVRKWFVJaURlQ0g0VVZxUVhvc2Fj?=
+ =?utf-8?B?cjA0NW5xckxtVlZvRTVGeTQrQituNEdJNktiNUxZUnFSZWJPTXRhcktaNGd6?=
+ =?utf-8?B?aXptWnQ4cGNab2tOWEVoQUJ5cENqUFhkRm5qdVAxM1JmdGZidU5lM2Y3Zkp6?=
+ =?utf-8?B?SmhGS0JqSys4Wm1xTWlSQ21kYzhvMjRXd0JBeFIvM3NoVHYrbkROeFhMU3ZE?=
+ =?utf-8?B?cW5MWTltRnh1TFUwYUZYTHRCZ1ZlRHBKZlpQQjdHdCtHNXZ5elVXZEdWNmhi?=
+ =?utf-8?B?dGVFREFrdVB4UkhiWWJvS0U3VFpuM0VQME4yRVhiV0xRWWpuVWE1THVOV3Jo?=
+ =?utf-8?B?SWg1NGhXMFNnNXJnUUtLUEZ0R0N5dTRWS3B5dkxSdEMzNHpKVU9XRG0wdjhD?=
+ =?utf-8?Q?z2qDums0BtJQqDfJWc0BM7jxgLQ4FzN9g5sfBatamzgl?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 54a73a87-429c-4c6d-c357-08dd5d6ced26
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8784.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 11:40:57.5964
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: etxEBflhmFxRCzxE3er1DKJWIOANnR2jmNXcGqI98XtEdtaOrHA7Ei4QPu2AtykWNFEI4y5m2i6DKAN6YvMwYA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4336
 
-On Mon, Mar 03, 2025 at 06:51:59PM -0000, tip-bot2 for Ryo Takakura wrote:
-> The following commit has been merged into the locking/core branch of tip:
+Hi Juri,
+
+On 06/03/2025 14:10, Juri Lelli wrote:
+> Hello!
 > 
-> Commit-ID:     8a9d677a395703ef9075c91dd04066be8a553405
-> Gitweb:        https://git.kernel.org/tip/8a9d677a395703ef9075c91dd04066be8a553405
-> Author:        Ryo Takakura <ryotkkr98@gmail.com>
-> AuthorDate:    Sat, 18 Jan 2025 14:49:00 +09:00
-> Committer:     Boqun Feng <boqun.feng@gmail.com>
-> CommitterDate: Sun, 23 Feb 2025 18:24:46 -08:00
+> Jon reported [1] a suspend regression on a Tegra board configured to
+> boot with isolcpus and bisected it to commit 53916d5fd3c0
+> ("sched/deadline: Check bandwidth overflow earlier for hotplug").
 > 
-> lockdep: Fix wait context check on softirq for PREEMPT_RT
+> Root cause analysis pointed out that we are currently failing to
+> correctly clear and restore bandwidth accounting on root domains after
+> changes that initiate from partition_sched_domains(), as it is the case
+> for suspend operations on that board.
 > 
-> Since commit 0c1d7a2c2d32 ("lockdep: Remove softirq accounting on
-> PREEMPT_RT."), the wait context test for mutex usage within
-> "in softirq context" fails as it references @softirq_context.
+> This is v2 [2] of the proposed approach to fix the issue. With respect
+> to v1, the following implements the approach by:
 > 
-> [    0.184549]   | wait context tests |
-> [    0.184549]   --------------------------------------------------------------------------
-> [    0.184549]                                  | rcu  | raw  | spin |mutex |
-> [    0.184549]   --------------------------------------------------------------------------
-> [    0.184550]                in hardirq context:  ok  |  ok  |  ok  |  ok  |
-> [    0.185083] in hardirq context (not threaded):  ok  |  ok  |  ok  |  ok  |
-> [    0.185606]                in softirq context:  ok  |  ok  |  ok  |FAILED|
+> - 01: filter out DEADLINE special tasks
+> - 02: preparatory wrappers to be able to grab sched_domains_mutex on
+>        UP (remove !SMP wrappers - Waiman)
+> - 03: generalize unique visiting of root domains so that we can
+>        re-use the mechanism elsewhere
+> - 04: the bulk of the approach, clean and rebuild after changes
+> - 05: clean up a now redundant call
+> - 06: remove partition_and_rebuild_sched_domains() (Waiman)
+> - 07: stop exposing partition_sched_domains_locked (Waiman)
 > 
-> As a fix, add lockdep map for BH disabled section. This fixes the
-> issue by letting us catch cases when local_bh_disable() gets called
-> with preemption disabled where local_lock doesn't get acquired.
-> In the case of "in softirq context" selftest, local_bh_disable() was
-> being called with preemption disable as it's early in the boot.
-> 
-> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
-> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> Link: https://lore.kernel.org/r/20250118054900.18639-1-ryotkkr98@gmail.com
-
-This commit is causing:
-
-[    7.184373] NET: Registered PF_INET6 protocol family
-[    7.196129] =============================
-[    7.196129] [ BUG: Invalid wait context ]
-[    7.196129] 6.14.0-rc5-00547-g67de62470d82-dirty #629 Not tainted
-[    7.196129] -----------------------------
-[    7.196129] swapper/0/1 is trying to lock:
-[    7.196129] ffffffff83312108 (pcpu_alloc_mutex){+.+.}-{4:4}, at: pcpu_alloc_noprof+0x818/0xc20
-[    7.196129] other info that might help us debug this:
-[    7.196129] context-{5:5}
-[    7.238009] ata7.00: ATA-8: ST91000640NS, SN03, max UDMA/133
-[    7.196129] 3 locks held by swapper/0/1:
-[    7.196129]  #0: ffffffff834414d0 (pernet_ops_rwsem){+.+.}-{4:4}, at: register_netdevice_notifier+0x1a/0x120
-[    7.196129]  #1: ffffffff83442988 (rtnl_mutex){+.+.}-{4:4}, at: register_netdevice_notifier+0x1f/0x120
-[    7.196129]  #2: ffffffff8324c740 (local_bh){.+.+}-{1:3}, at: dev_mc_add+0x39/0xb0
-[    7.196129] stack backtrace:
-[    7.196129] CPU: 31 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.14.0-rc5-00547-g67de62470d82-dirty #629
-[    7.196129] Hardware name: Intel Corporation S2600GZ/S2600GZ, BIOS SE5C600.86B.02.02.0002.122320131210 12/23/2013
-[    7.196129] Call Trace:
-[    7.196129]  <TASK>
-[    7.196129]  dump_stack_lvl+0x57/0x80
-[    7.196129]  __lock_acquire+0xd72/0x17d0
-[    7.196129]  ? ret_from_fork_asm+0x1a/0x30
-[    7.196129]  lock_acquire+0xcd/0x2f0
-[    7.196129]  ? pcpu_alloc_noprof+0x818/0xc20
-[    7.196129]  __mutex_lock+0xa4/0x820
-[    7.196129]  ? pcpu_alloc_noprof+0x818/0xc20
-[    7.196129]  ? pcpu_alloc_noprof+0x818/0xc20
-[    7.196129]  ? lock_acquire+0xcd/0x2f0
-[    7.239989]  ? pcpu_alloc_noprof+0x818/0xc20
-[    7.239990]  pcpu_alloc_noprof+0x818/0xc20
-[    7.239993]  ? lockdep_hardirqs_on+0x74/0x110
-[    7.239996]  ? neigh_parms_alloc+0xed/0x160
-[    7.240001]  ? neigh_parms_alloc+0xed/0x160
-[    7.240005]  ipv6_add_dev+0x154/0x520
-[    7.240005]  addrconf_notify+0x2de/0x8b0
-[    7.240005]  ? register_netdevice_notifier+0x1f/0x120
-[    7.240005]  ? lock_acquire+0xdd/0x2f0
-[    7.240005]  call_netdevice_register_net_notifiers+0x5b/0x100
-[    7.240005]  register_netdevice_notifier+0x87/0x120
-[    7.240005]  addrconf_init+0xa5/0x150
-[    7.240005]  inet6_init+0x1f3/0x3b0
-[    7.240005]  ? __pfx_inet6_init+0x10/0x10
-[    7.240005]  do_one_initcall+0x53/0x2b0
-[    7.240005]  ? rcu_is_watching+0xd/0x40
-[    7.240005]  kernel_init_freeable+0x23f/0x280
-[    7.240005]  ? __pfx_kernel_init+0x10/0x10
-[    7.240005]  kernel_init+0x16/0x130
-[    7.240005]  ret_from_fork+0x2d/0x50
-[    7.240005]  ? __pfx_kernel_init+0x10/0x10
-[    7.240005]  ret_from_fork_asm+0x1a/0x30
-[    7.240005]  </TASK>
-
-And some other weirdness for bpetkov:
-
-  https://lkml.kernel.org/r/20250306122413.GBZ8mT7Z61Tmgnh5Y9@fat_crate.local
+> Please test and review. The set is also available at
 
 
-I suspect you missed a release somewhere.
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+
+Thanks!
+Jon
+
+-- 
+nvpublic
+
 
