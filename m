@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-550813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC698A56470
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:58:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3321A56471
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:59:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8377F3B45EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:58:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0CF416E552
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:59:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06EE320C47A;
-	Fri,  7 Mar 2025 09:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8398120C033;
+	Fri,  7 Mar 2025 09:59:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dOcysyH6"
-Received: from out.smtpout.orange.fr (out-14.smtpout.orange.fr [193.252.22.14])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="YHysda3A"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2FF20C476
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741341512; cv=none; b=Eo7djSWnQDa1K3NXGGyeEsqepqe8IHbGOJq3GvGeyYJNVtg2ygiJzoWZLOEa1ZidX8rYJg17JM2tNVefl192iNK0VGHONzO59NJaipg+hmA0g5m9QQPmi0fBgXOjtboMUPeDabyh6AVNUUplOGnEEslPQyfwEBo6I/bKCEQFbkk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741341512; c=relaxed/simple;
-	bh=z2856FJXESGplS9cF9pWXVmByXl8uYux+A8cFDsx6IQ=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEF5204C2A;
+	Fri,  7 Mar 2025 09:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741341540; cv=pass; b=ajbW1dw6TMFPCeQJ/atwmy5MgT6Dv+lasq7LHeBrtKXstquoww0J58FXp8NWICChyHy9m1d0+8vfd/Fh4TgYZgi7Rbqe1StgQ/CCOenjuSBexgY+eNYe2SAYA52BkY6mTOVGjrliiHUuiXbsfSqPT0YC+6FIKK5X5ttVD4XI4QE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741341540; c=relaxed/simple;
+	bh=sh0lyBC+9zQydcsp6rYm1YiuA10rQP0OryKOargKp64=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BqNmGK3lwGBLZCWTEk2MM29l0V9dvF0aMGuYgxuWDVybdOwXGSpXecYcSdUwPsFjTkEgkMQEufKEObkN9WmowyuK7SgXXCvodszHgjsQNJv9P/VXG6TN/50DP5tLVd8ljt8d5Use9SmZkFY2zMdvaCbAcdLc20UxUpVoB3Mig2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dOcysyH6; arc=none smtp.client-ip=193.252.22.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id qUT3ttclTLArrqUT8tnDZY; Fri, 07 Mar 2025 10:58:21 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1741341501;
-	bh=ec/4FFnWtkVOGJAjE0F14PO+sOMtcZNESadfGxpFl20=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=dOcysyH6tA0paeZ31fP7jP/1Ol4ph/8eOVEiBrFVPt9RtkZ5khevSysUNVRYlq0IM
-	 0Deeb0gvMgy5zUhy0+JhJbDrwVWiPhipvWUH1ZsTF06Ba70D0qJAJlAwU8frJOVwxW
-	 dFeyqA0XT6le15Zf8Uh4LcfCMfBFaQbxzQbKSSKE/h+gJdwo4ZKdzFWkz05CuQgk9Y
-	 sL9pusjhNhsldKs4V6yD4NWlY8P20IKAEob+fKQvY1K3blNC1rwhNCZpVVDxTuX1mE
-	 2xJHTqrYKJdb8L4ec7a4DTEjH1/BiaL1f4b8rqRQAUfxssX2LKr6M1j7x61ZX5R1UL
-	 JVx+35nAvYemw==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Fri, 07 Mar 2025 10:58:21 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <bdce7d99-7f02-4667-acda-9ffc62c92af2@wanadoo.fr>
-Date: Fri, 7 Mar 2025 18:58:08 +0900
+	 In-Reply-To:Content-Type; b=qjaPYVhHz7mkZKH0JFX6Ciy+fvyRCVDYU8+bipalySWeihTMRCepiZfZ7IvHFx5thwkVgbguTbRIesj6NuNPV+dllBXUJWPcJWh1irC4tGPQQtPioiQSfUH6IpdHLT2e2OjjR5xbBzVD+Gdy7euX/cJLHsmhx/+6kxanCq8TT5M=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=YHysda3A; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741341500; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Z/PR+U4MA9bcDqOgjLzb9aFLSqOfjQCNLN9CWXAeqCSaQ2wexkyxP1Bg/xD0fmk8RquwWyFiArD1B3UiqE6iMXVnW0hOKgSKOfNSoAQ7i813gQ0JRMIYg6WGxknxMtOD7rLnAWQBM9LWalrtEwE1AUWt1bi4+pu17mNed8EyYb4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741341500; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Sd6Z99EJ8ZfYhr95vBuuNjDtXLH/fo9bgS3ZF5FRe+A=; 
+	b=Qpm3aURsAO+MlocU75G0A8cgylgrCbRoof3nsZVioW00rCGtdvFtOkxb0Zo7WVk0HduFlADq+lK3HqVMdKEetK1JNFes7+ErPFf+Sqf6gI+FLG1s/IqdhmyB7APaBA43BVR8JxIBG/nza1zVBNPQUJS9G8STIDAD2GZ0s5+5UL0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741341500;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=Sd6Z99EJ8ZfYhr95vBuuNjDtXLH/fo9bgS3ZF5FRe+A=;
+	b=YHysda3AUKg7FgH3xrjjMNnd/QXtAkN7B6bo8cAoMMwJY15V3jJuq1aiK+6+6CiF
+	s8++XPd6/7Q7/zbieDWC6pTp8jK8u/U1Mj3yAnCBOQDOD8lpjR58007bAdKrqLz9k3t
+	j/M2fjCiBh4+PgCjsVqhunTNhuwUajm8YR3Fyry4=
+Received: by mx.zohomail.com with SMTPS id 174134149797959.40961357397384;
+	Fri, 7 Mar 2025 01:58:17 -0800 (PST)
+Message-ID: <64f8d179-9d0a-47ca-872c-aa92e44e7772@collabora.com>
+Date: Fri, 7 Mar 2025 12:58:13 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,114 +59,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/7] bits: split the definition of the asm and non-asm
- GENMASK()
-To: David Laight <david.laight.linux@gmail.com>
-Cc: Yury Norov <yury.norov@gmail.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@ACULAB.COM>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-References: <20250306-fixed-type-genmasks-v5-0-b443e9dcba63@wanadoo.fr>
- <20250306-fixed-type-genmasks-v5-1-b443e9dcba63@wanadoo.fr>
- <20250306192331.2701a029@pumpkin>
+Subject: Re: [PATCH v1] media: platform: synopsys: hdmirx: Fix compilation on
+ 32bit arches
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+ Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
+ <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ jose.abreu@synopsys.com, nelson.costa@synopsys.com,
+ shawn.wen@rock-chips.com, nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ Tim Surber <me@timsurber.de>
+References: <20250307092113.646831-1-dmitry.osipenko@collabora.com>
+ <8cb4af0d-935a-4305-a204-9c2f187e0593@xs4all.nl>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
 Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <20250306192331.2701a029@pumpkin>
+In-Reply-To: <8cb4af0d-935a-4305-a204-9c2f187e0593@xs4all.nl>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On 07/03/2025 at 04:23, David Laight wrote:
-> On Thu, 06 Mar 2025 20:29:52 +0900
-> Vincent Mailhol via B4 Relay <devnull+mailhol.vincent.wanadoo.fr@kernel.org> wrote:
+On 3/7/25 12:54, Hans Verkuil wrote:
+> Hi Dmitry,
 > 
->> From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> On 07/03/2025 10:21, Dmitry Osipenko wrote:
+>> The pixelclock is specified as 64bit integer and for this driver it
+>> won't be above 600MHz. Fix the 64bit division of the pixclock for 32bit
+>> kernel builds.
 >>
->> In an upcoming change, GENMASK() and its friends will indirectly
->> depend on sizeof() which is not available in asm.
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Closes: https://lore.kernel.org/oe-kbuild-all/202503070743.WnRxStlk-lkp@intel.com/
+>> Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+>> ---
+>>  drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
 >>
->> Instead of adding further complexity to __GENMASK() to make it work
->> for both asm and non asm, just split the definition of the two
->> variants.
-> ...
->> +#else /* defined(__ASSEMBLY__) */
->> +
->> +#define GENMASK(h, l)		__GENMASK(h, l)
->> +#define GENMASK_ULL(h, l)	__GENMASK_ULL(h, l)
+>> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+>> index 4d42da7255f3..7e342bbde967 100644
+>> --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+>> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+>> @@ -291,7 +291,7 @@ static void hdmirx_get_timings(struct snps_hdmirx_dev *hdmirx_dev,
+>>  	hfp = htotal - hact - hs - hbp;
+>>  	vfp = vtotal - vact - vs - vbp;
+>>  
+>> -	fps = (bt->pixelclock + (htotal * vtotal) / 2) / (htotal * vtotal);
+>> +	fps = ((u32)bt->pixelclock + (htotal * vtotal) / 2) / (htotal * vtotal);
 > 
-> What do those actually expand to now?
-> As I've said a few times both UL(0) and ULL(0) are just (0) for __ASSEMBLY__
-> so the expansions of __GENMASK() and __GENMASK_ULL() contained the
-> same numeric constants.
-
-Indeed, in asm, the UL(0) and ULL(0) expands to the same thing: 0.
-
-But the two macros still expand to something different on 32 bits
-architectures:
-
-  * __GENMASK:
-
-      (((~(0)) << (l)) & (~(0) >> (32 - 1 - (h))))
-
-  * __GENMASK_ULL:
-
-      (((~(0)) << (l)) & (~(0) >> (64 - 1 - (h))))
-
-On 64 bits architecture these are the same.
-
-> This means they should be generating the same values.
-> I don't know the correct 'sizeof (int_type)' for the shift right of ~0.
-> My suspicion is that a 32bit assembler used 32bit signed integers and a
-> 64bit one 64bit signed integers (but a 32bit asm on a 64bit host might
-> be 64bit).
-> So the asm versions need to avoid the right shift and only do left shifts.
+> I just merged:
 > 
-> Which probably means they need to be enirely separate from the C versions.
-> And then the C ones can have all the ULL() removed.
+> https://patchwork.linuxtv.org/project/linux-media/patch/20250306-synopsys-hdmirx-fix-64-div-v1-1-dd5ff38bba5e@kernel.org/
+> 
+> So you can either leave that patch in, or provide a patch on top.
 
-In this v5, I already have the ULL() removed from the non-uapi C
-version. And we are left with two distinct variants:
+Missed that patch you merged. No need to do anything then, thanks!
 
-  - the uapi C & asm
-  - the non-uapi C (including fix width)
-
-For the uapi ones, I do not think we can modify it without a risk of
-breaking some random userland. At least, this is not a risk I will take.
-And if we have to keep the __GENMASK() and __GENMASK_ULL(), then I would
-rather just reuse these for the asm variant instead of splitting further
-more and finding ourselves with three variants:
-
-  - the uapi C
-  - the asm
-  - the non-uapi C (including fix width)
-
-If __GENMASK() and __GENMASK_ULL() were not in the uapi, I would have
-agreed with you.
-
-If you believe that the risk of modifying the uapi GENMASK*() is low
-enough, then you can submit a patch. But I will definitely not touch
-these myself.
-
-
-Yours sincerely,
-Vincent Mailhol
-
+-- 
+Best regards,
+Dmitry
 
