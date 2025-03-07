@@ -1,149 +1,134 @@
-Return-Path: <linux-kernel+bounces-551680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CE32A56F6E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:44:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25764A56F72
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:44:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40B8E178681
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:43:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FF107AC220
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:42:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C272C2417F9;
-	Fri,  7 Mar 2025 17:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2033C2417C4;
+	Fri,  7 Mar 2025 17:43:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kn4uxx+8"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FRQ4nIZv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775DB241114;
-	Fri,  7 Mar 2025 17:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283C023CEF9
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 17:43:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741369398; cv=none; b=FeODeu2Jx5An6d21/vhozXvFAVHEpuNt5uSWHcMguJ+AKOsZ+tKC/ALJ5vQ1p1rJCUE1JRs4abgpZlZGM2rasI/ievCAX5bhJFkPkpsnRuqleBMtRj2QG2exOXvb9Uf2Y1yAVtvLjRRHZau2ITQ2aYZ3ouPwVeIsVhSb+ThOLSM=
+	t=1741369388; cv=none; b=rAPmX9gvscFhBYWCfSh3Ojm/wgAPB74mUN0JSTULARW2zV0irthCXqOF0+GL3N+4FlBno/Q3YmLtWQNA7/Z4t0M6zCwNtZ/19Bga8WhrR+ySXJ96jZPZ/Fg54jM5rPWvSszj22idB1VEmX+HUVdjMyGYJ5WV2F/0lnylxEtS9Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741369398; c=relaxed/simple;
-	bh=Lw1nmb2v0Yj3bxOV+QZJBEEVt/+s6xuWrvoi0UoUrXM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LY9GrkJE+FGX/2u+FAYPuX93WxuT3TPdkUsaQ9C8zPHx5zF6DOBXfNFjymcYtleDPFLfZoMLw+NRPQxi8uY6zF2zHvU+JZ/TD2ZF7B3lfNcrNAP9pUjIOl7BG2f1qInL2hA3oZdSipwPFZ5xIlV8K2tD3mxnHrTyLiYpYQmm43c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kn4uxx+8; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-307325f2436so20985631fa.0;
-        Fri, 07 Mar 2025 09:43:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741369394; x=1741974194; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xpmu3Gvgb/KEU4Sda/9nJtOsIbbAseer/tFW7MRAm30=;
-        b=kn4uxx+84EQrkr/KR5bEZw8T+d9RBZSQZZzRMuC4fx/HeiWyCy2naCmVlOzugal3vf
-         n70WkQCOF5pN3iVIhIyaLKJcQ4TqytqkJftDswhjDyAjnq7uyG0pL7gJo8Zs20Hl2jt1
-         /WW4u5kM4ZqGmAppK6Ev09D3E+bZW8JH4TlAiFB5K0nOiXFJrO72h+RqnQVnAeUtEesI
-         4CxIKpM3U1QdC0CXUqqzPdPIMPLUB/LUkLnbyPvoMu00U92BlMdHndMDBXUwD+n1wKkR
-         wBIxV0i7gr1Y389z2J9MgAyZBDjR7h6HNGdNUjq6EOBd7gXZV6GlubK0ZDYOiQZzHKhF
-         1y+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741369394; x=1741974194;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xpmu3Gvgb/KEU4Sda/9nJtOsIbbAseer/tFW7MRAm30=;
-        b=aWxByVppdc51Ve/Xt1iIljG9iFTN8yG0MW8iBv+xMVhYaI7o7GpwUi9pGxu97qcDbs
-         hcTh/gxBAY8JgA3RtfVzzrhNP2b52cRvfeRg2m2UTvIx2zUy78p/IGWvBjrtiGdH6oFl
-         lFPLOQV6Fa7sWKcmjUVHnq9zU0Io6I1flHV+8ws9pI6NSuE6DDrfnIaCDhlzDnFBmDPt
-         bJamWtpJf04JyAlMRH198JyGhlfjRbv76zJY/f8n8jkSWiQzigrghh0Ejm5iVCGcDoWn
-         Fj9PNtAq1QfHWYWhoc9AZ+RQyFRz7OBhHGLG8MtFa/3LPSKxIXvAY4bdHzSn5Ua88bp9
-         pgSw==
-X-Forwarded-Encrypted: i=1; AJvYcCUeon+w1GcLHSCzNdSlg6GJaT0YYYTdBWuu0bTILEYOzYX6b9zNCNBUiRweMmBZc0jedHkoMnBfRJAlT8TjbmhL@vger.kernel.org, AJvYcCUoZNh1/GyhIostk2ITA0LoBwlKUm0pqtqaDMyYfKDb8RXQj35I3mvt0Iwm2EIAp+9cVtLj/sH3t7wjSVA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCNw+kYX8w+wMWzkYsdMMlAM0IMEhwbGQYGmf8kxwwstEQciaT
-	6yePOXaAP+ZD7CU0z+S09QTlv8ldE7OanIRhtuSdsruy/WjrcPMIbJdKnEMNY4pULn5Vwvf0Eb6
-	c8ebAeoC2Z9ZnP6x9PhO25fcMdJU=
-X-Gm-Gg: ASbGnctsfT4dw/w+DVdrO86KvveYJFsYXZrpl8IhI9nh6FHbSoakbcn86VU4jyG8acs
-	vgM1XRlDqJZdrKXaFBJC4xGD1Z5BA9KK3ja3Y2kEtGOT0ai7sbp41XCG3ViypP6rCpJRPYvMbAa
-	LfxKfIhnzE2du4PNGYNYqmNvNZ6ec5Nv6+Grt79deX/KNp9dh4690Zt5ytJbUv
-X-Google-Smtp-Source: AGHT+IGNE+s/WfCFPmFb4azPDrp6Ep6m4DzvtThcdQnGQ8oYJv4In1m3Li/HSQtD0h1GwQ0dx6rOpSPlli/LEIWCFUk=
-X-Received: by 2002:a05:651c:19a4:b0:30b:abe6:4bb0 with SMTP id
- 38308e7fff4ca-30bf451abf5mr17878641fa.13.1741369394123; Fri, 07 Mar 2025
- 09:43:14 -0800 (PST)
+	s=arc-20240116; t=1741369388; c=relaxed/simple;
+	bh=+kt9trydWppjyLTS1v06E/6kn1cAIhEtv++sHef4MMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z1D/fb9jXdlbB5njjv9ARnFn0iGle3CuEHu6rmBi/Wp4U5jEBDGtxeP3TxBotAawVSk/KEejesfPVXVPNFd9Z2ou923oWrRr+p2a52gS+5FjRPiE4a0ZZOIWrod7wiLkax0J2Xs0Tr4GJEmlbFaR/T+3PL7t6Yow0Go0vcC8XsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FRQ4nIZv; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741369388; x=1772905388;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+kt9trydWppjyLTS1v06E/6kn1cAIhEtv++sHef4MMw=;
+  b=FRQ4nIZvgyA8eVYQP4kquE1MmPUOitUF8vnMLzWJanZXfWbV61nJ2LF3
+   5Jve5O/2DhASZQ1hpdV13YxrBNSFpApTRBjGPQWas5yWRvQo1VZqgd22S
+   LCAf9KnOHSjwbtRPCpWYiYnYJkoeayjTZZIHi89Ka4tK0qo9L42/0j5ly
+   rdiGbfIxEfr+68AkSIXb2MlfgXQJgBUl0aOz2Y+GC4zbLmDpxuu18unZE
+   RvepCFrgf5YHQccLiR4RubT0js6TP5k6nDWe7gi+zFRQwWQLFglLBLpcK
+   TBROfIWgnLG0VnwE4qqHIzmpYD9gI7sLs+8faUQIuYK34fUYonehUZBym
+   g==;
+X-CSE-ConnectionGUID: 9NvIMCWsQ9qLpUsq18pHqg==
+X-CSE-MsgGUID: UYauZrlLSTOz50AT9MH/wA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42461693"
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="42461693"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 09:43:07 -0800
+X-CSE-ConnectionGUID: RlVyw6roQzWlw+azXoMNUg==
+X-CSE-MsgGUID: 8HzF3/4YSjGNPswqX4cnMg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="120083673"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 09:43:02 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tqbis-00000000TVI-4BqQ;
+	Fri, 07 Mar 2025 19:42:59 +0200
+Date: Fri, 7 Mar 2025 19:42:58 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: mailhol.vincent@wanadoo.fr
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	David Laight <David.Laight@aculab.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v6 1/7] bits: split the definition of the asm and non-asm
+ GENMASK()
+Message-ID: <Z8swIt7fqpVAp2P8@smile.fi.intel.com>
+References: <20250308-fixed-type-genmasks-v6-0-f59315e73c29@wanadoo.fr>
+ <20250308-fixed-type-genmasks-v6-1-f59315e73c29@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307-scanf-kunit-convert-v9-0-b98820fa39ff@gmail.com>
- <20250307-scanf-kunit-convert-v9-5-b98820fa39ff@gmail.com>
- <Z8suJdZsLYPYF34t@smile.fi.intel.com> <Z8svbdT779qxfXuk@smile.fi.intel.com>
-In-Reply-To: <Z8svbdT779qxfXuk@smile.fi.intel.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 7 Mar 2025 12:42:35 -0500
-X-Gm-Features: AQ5f1Jp7RU2gmPYms0G_AXDCTB9f6fphgxlud1fG4O9DYc1x04owURciYIdEq5s
-Message-ID: <CAJ-ks9=QPkYX1HN6g1g=_F+a2B5+NHyE-ybtVaveK4JvtgFhVQ@mail.gmail.com>
-Subject: Re: [PATCH v9 5/6] scanf: tidy header `#include`s
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: David Gow <davidgow@google.com>, Petr Mladek <pmladek@suse.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Shuah Khan <shuah@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250308-fixed-type-genmasks-v6-1-f59315e73c29@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Mar 7, 2025 at 12:40=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> On Fri, Mar 07, 2025 at 07:34:29PM +0200, Andy Shevchenko wrote:
-> > On Fri, Mar 07, 2025 at 06:27:38AM -0500, Tamir Duberstein wrote:
->
-> ...
->
-> > >  #include <kunit/test.h>
-> >
-> > + array_size.h
-> >
-> > >  #include <linux/bitops.h>
->
-> > + bug.h // BUILD_BUG_ON()
->
-> Actually if it's only BUILD_BUG_ON(), then we better use build_bug.h.
->
-> > + errno.h // actually asm/errno.h, but in C code the linux/* will suffi=
-ce
-> >
-> > > -#include <linux/kernel.h>
-> >
-> > This was used like a "proxy" header to a lot, see around.
-> >
-> > >  #include <linux/module.h>
-> > >  #include <linux/overflow.h>
-> > >  #include <linux/prandom.h>
-> > >  #include <linux/slab.h>
-> > > -#include <linux/string.h>
-> > > +#include <linux/sprintf.h>
-> >
-> > + types.h // u32, __scanf, ...
->
-> ...
->
-> > Note,the above I made based on the context of your changes, I haven't c=
-hecked
-> > the resulting file in full, please do it yourself.
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+On Sat, Mar 08, 2025 at 01:48:48AM +0900, Vincent Mailhol via B4 Relay wrote:
+> From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+> 
+> In an upcoming change, GENMASK() and its friends will indirectly
+> depend on sizeof() which is not available in asm.
+> 
+> Instead of adding further complexity to __GENMASK() to make it work
+> for both asm and non asm, just split the definition of the two
+> variants.
 
-If it's easier to take this series without this patch, please do so --
-my tools aren't giving me any help with IWYU and I'm not familiar
-enough with the kernel to do a thorough manual job. As this is not
-core to the goals of this series, I'd prefer not to hold it up over
-it.
+...
 
-Thanks.
+> -/*
+> - * BUILD_BUG_ON_ZERO is not available in h files included from asm files,
+> - * disable the input check if that is the case.
+> - */
 
-Tamir
+> +/*
+> + * BUILD_BUG_ON_ZERO() is not available in h files included from asm files, so
+> + * no input checks in assembly.
+> + */
+
+In case of a new version I would reformat this as
+
+/*
+ * BUILD_BUG_ON_ZERO() is not available in h files included from asm files,
+ * so no input checks in assembly.
+ */
+
+It makes easier to review the changes and see that the first line is kept
+the same.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
