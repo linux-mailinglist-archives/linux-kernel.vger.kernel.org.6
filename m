@@ -1,129 +1,171 @@
-Return-Path: <linux-kernel+bounces-551330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B50AA56B2D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:06:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A866A56B2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:05:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7FF63B7486
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:05:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14B0E189B952
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37F7321D3C0;
-	Fri,  7 Mar 2025 15:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DAD21CA0E;
+	Fri,  7 Mar 2025 15:04:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MzUfUaWk"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QFmhOV8E"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2068.outbound.protection.outlook.com [40.107.95.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEF7021CC6F;
-	Fri,  7 Mar 2025 15:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741359890; cv=none; b=EzA9h0eyuF3WeqmRZNxwLfp8I0JbslbRjWnyMRQOyazBZzKeorMerH0aAacBgCqvNtHOdb8MLPAgpdwN99ucRwO6EOAUjGyeHNz+NLLHjvFrCnRUUD7IkU5++PO0h5euFtCfPNxY/P53Z/Q4tByKPJvZjjwn7bauksDKyiWCiBE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741359890; c=relaxed/simple;
-	bh=WIO25UZyxl4aeXjXSMtUYiMd4bqWAzaD/w30AClH/n0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KW5TTWdNZDVArX0nVjIZ2vLjVu0M236RZ6Tk7//hRlaSpT1dPEPgnHavz4z3feHDgRagYSMvuvVC37wPZ57zEUmA6DE/OR4N3LH0hKx0j1yq4X/HJ8GHFTOQ2bnJjBQpZmWrjbCScX0taWET+mZo6GhOt3+UfxJbfcWnJr7s9Ek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MzUfUaWk; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741359889; x=1772895889;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WIO25UZyxl4aeXjXSMtUYiMd4bqWAzaD/w30AClH/n0=;
-  b=MzUfUaWkIm3zW2VaDlfvcXYqSGoEY8HscmcbMtUBcoIM8LO1G1pDBx5Z
-   epbCEXPiOm4whwCaUQASVsn8hv9oR3WNTzxlo7+Vb2m69tgzkpVYwjfxf
-   TWyi1jPau5C3j1sM66hdfDh1doC3Fgyn7V8TPE/4i6v62LC4Y9w/BvTmc
-   wpdSD6DFdnT4b7SYggyyINeTTfd78tLMC/0uG2ijK73hmQEOMxCMa0hgx
-   cU8WmGa8/jdUVhO1uqV/Sn+KHEY3dBGevXFCPwl5DqFEcTHVKFoB3SH16
-   +pD+68Xy4aSXPKCiTEHovjkGwh8o3xcIIvYHWRIYhf91H9VIoqnsr5V6s
-   A==;
-X-CSE-ConnectionGUID: Fyooo9VnQ4iZpUQN2oTdNg==
-X-CSE-MsgGUID: QR0N00QYSy6eDfoH3slWTg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42608984"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="42608984"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 07:04:35 -0800
-X-CSE-ConnectionGUID: tQt0L6i8Q+qcvH3YuYOKrQ==
-X-CSE-MsgGUID: addakMZvQS+KAu/AKEkO+g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119283192"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by orviesa010.jf.intel.com with ESMTP; 07 Mar 2025 07:04:31 -0800
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tqZFU-0000c3-2M;
-	Fri, 07 Mar 2025 15:04:28 +0000
-Date: Fri, 7 Mar 2025 23:04:19 +0800
-From: kernel test robot <lkp@intel.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>,
-	Sebastian Reichel <sre@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de, linux-kernel@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org,
-	=?iso-8859-1?Q?S=F8ren?= Andersen <san@skov.dk>
-Subject: Re: [PATCH v4 4/7] nvmem: add support for device and sysfs-based
- cell lookups
-Message-ID: <202503072216.f6lwkxwJ-lkp@intel.com>
-References: <20250306093900.2199442-5-o.rempel@pengutronix.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B017D189B94;
+	Fri,  7 Mar 2025 15:04:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741359882; cv=fail; b=HkznfzEMC5gQy04PfP/z7Xr4mWTQX4L0Eiq3pMKsXr898ICHT1sv3XCOQNfDnsF1JNyAraAplrOYKfiAiuDuuqbiHKcYrx7/OEEnMFHl0sU/YnzdMV+5ttu+g7RKVDwJ1TPlwAOKHJeFOnR/oe3ZwDQukT9GCZ+UobsgpXko7CY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741359882; c=relaxed/simple;
+	bh=vaxNXbzb2y4dLmY5zVduggw+mZlrlz3ISbvc/DUgwps=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=u7KSINMIIpoBZKVjiFsZsB8yX9LQn7q4im3uduLUXBlUXDvqDZOpfErVDQV+p/k29jxoDTb1u1qssKKevp8BTUO1M32Fpy61PRf0k/73MCAMPqh9KuY+POnHqHXzBVuL02puEhatDQsWRgYskXgx9iOuwk6PazWFCTjiiqZt+P8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QFmhOV8E; arc=fail smtp.client-ip=40.107.95.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nTVhOD1Hp/B7kNQKgJ4h6vtncwlpW97Iz3r8DyKAS9cTFrZ5+b0RkRfh2qUDZ2gUlSnLXDKTY5fQTrHuFFNm0EdUvR1jndRc/laIGv41AWeMD9AQigktSfGOqXZ1DCaZuU0kbSI3IDRuqr8MRUEVCAUsI2Jg0kRG0josku8SfK6JsOhCNK6u1pGWL/8RiuW9HR3igEKSVdJqDzH8eFh4I34QQQjvmVquWtdS21uL1tXOkd9yP13jDvY7NrHnAoHy7hPuTmpuzZBE6BYvlfxjBtZ5REyymTqrKvdywWP7d/UYMymvzB8CrbQmV4HXds2L/30mjd6EwUO2MmpTd/M5Hg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JzAdnqoNhPFrcTF4ap8kjipi0GN91MHLSeXaO530pjg=;
+ b=UQEzYwJ8t3AFgKtEZAcTwQG2+tmDXMMMTfduKc88r+7iDKER5nTsSrkELCr14wmNurJzZ84GjF+St/VY4rzkHnSa5haNNOf2fI1R3cZQdEv8waLl0IkohYlt0dhSUl1EYCs7qWEv5wUpNFZq1TvH+pzte9P2e2UhBFY+iKZJPjD7mrIW40ONBUkqotES4IT7XnYI0Vy0pECswnwegdTAevQgFDhY0lOvgWjhMjO8t/HarJFusgnyRqhdKSBO+11VwzLa7c0PhcqP8ZN4+tItu6nteNe3EI826V7iU63X5iIhn4gZoVMtaIN5kctGf0+RTSxl8mV5jfMQ4A0XB6xyCA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JzAdnqoNhPFrcTF4ap8kjipi0GN91MHLSeXaO530pjg=;
+ b=QFmhOV8EriamnW2g6xNB7Z1jsNqAi7TUVHcmPQCnsWRiv7dyzXJzpiPb6jF8FHHZZLe44QZJeanV7CVWbwINovbBEA0UhoByOvllGilL6wGy+Our3/kvK75jv0Ai9tSmSTAwsRQYqQD2OEYTmSVIwR6G4oe4vFvfCMikS6LJjFknWcIVQJSnbugLY0spsl1HQYNMn/wtExJRFf/3r3ZXTEQR3s4VO0r7pzyWmfX6BaV5sD69HkXWURjVXWkavReyXc1ctB4BOKT2rYRIwAJ1Fg7jvLkindK0NTw8cKcGAmLwa/HzNaA+K7ifLG0PnaS5bpf8Ynz81aimranuFYlDGA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MW6PR12MB8663.namprd12.prod.outlook.com (2603:10b6:303:240::9)
+ by MW4PR12MB7334.namprd12.prod.outlook.com (2603:10b6:303:219::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Fri, 7 Mar
+ 2025 15:04:36 +0000
+Received: from MW6PR12MB8663.namprd12.prod.outlook.com
+ ([fe80::594:5be3:34d:77f]) by MW6PR12MB8663.namprd12.prod.outlook.com
+ ([fe80::594:5be3:34d:77f%2]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
+ 15:04:36 +0000
+Date: Fri, 7 Mar 2025 11:04:34 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>,
+	Dave Jiang <dave.jiang@intel.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the hmm tree
+Message-ID: <20250307150434.GP354511@nvidia.com>
+References: <20250307195715.0b7abf0f@canb.auug.org.au>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307195715.0b7abf0f@canb.auug.org.au>
+X-ClientProxiedBy: BN1PR10CA0028.namprd10.prod.outlook.com
+ (2603:10b6:408:e0::33) To MW6PR12MB8663.namprd12.prod.outlook.com
+ (2603:10b6:303:240::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306093900.2199442-5-o.rempel@pengutronix.de>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW6PR12MB8663:EE_|MW4PR12MB7334:EE_
+X-MS-Office365-Filtering-Correlation-Id: a17084d2-87e8-49da-00c8-08dd5d895fee
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?ctKoawi4gMlQiE5Z+PJioEV5oVtqkr/4gTiF+lbafQbfLqS0NNhANtYP1MRV?=
+ =?us-ascii?Q?WMIIo0U279FcegroGhPZRawwIQhCZWi+Y7GCzUe+dDLMuP5CT6L1UwBMTEEM?=
+ =?us-ascii?Q?CwUZnhsKKZcTvdwytuYp1vV98lGKsciXmBjGjdut13g70rmekcCU/l04dd8E?=
+ =?us-ascii?Q?H6n6KszIU2CF6DKeZib/J3C0lkkqmWNcahPIBcinyOX1NkJWX9vrgrUHNy9u?=
+ =?us-ascii?Q?I9E9HrW4HJzTGZ+cI3Vnx0earxi8DbwDLohklp/qio6TSeYC+dwR2a09u4KJ?=
+ =?us-ascii?Q?5gVpjCOZrKe2BgAA/+tds3BHo8CFhWX5GRNnoQqbQHL2YpIjt+GseRD2WlH8?=
+ =?us-ascii?Q?M646cEELUMNN7GYxNuLNu6hx2gMHUx1r2ncPBhCMFg+SrVRqinaGyYcNlmTM?=
+ =?us-ascii?Q?cy28IdhPyGUdhKxT3aRqQmD4aI2GQr0VsThJNAAReHaLhQWgz/kVSjyOAPjF?=
+ =?us-ascii?Q?jwiwVwQmpFWzQ5410FP61hVyiUHjuO02X30mDaM8Y0G/Dr/oi/CRVxBiTf6q?=
+ =?us-ascii?Q?ZQrFxRcmCfzu7JiwTlHeMBuhwARW8Nrgn/6PTUKhyT/FP4LgmAGpUdbFJB9W?=
+ =?us-ascii?Q?HnQIJNZp5jWl465YON99Av3mgRwjnagYmWWPI0dQLCL3Dy3BkE7HPPHVhppi?=
+ =?us-ascii?Q?EByes2xz/+U3/jgKtKe+WMq3OTWkMONP0adM0dGZ1/6f+DHQ+s+01wDzT4Lo?=
+ =?us-ascii?Q?3pTsA+PhVOfL7PKIV9YV+bH1DHumZF5XQtkuQ1mA/N3tzKhWavcgTET3TaTH?=
+ =?us-ascii?Q?P8Qj0fC+huQuLGiWSehqljQwXFTD6J/hoOHXqO8T+eu1jGWjVUakdI/cYlox?=
+ =?us-ascii?Q?u2WAp1Pmx2NRW9dCHcuanJRbcrpdP09O3hxFhDF24KgFs0pcIIgDX8qOz26I?=
+ =?us-ascii?Q?HU3ZhS+0N7hjKSh7dsxFxWPJz1GEt9LzHrk3V864QU6CITNQ+AfLE+TCw52l?=
+ =?us-ascii?Q?aHndZfAuMkD+2lVBtyGOdT/G76hQaJr0XsJU+Jl/wqbcY7h8RMq45Bup/HM2?=
+ =?us-ascii?Q?6kuH2c/FN4v3ARp1Cf/x3nkH8sJN1D8b67AA8GJc9bt22i7R4W6LUY0bUzV4?=
+ =?us-ascii?Q?+hzes7xsJVxPj61eqxz5fbCGhZ6lZ83FgseNkaGeubyPKggYohYgW+rWR1aG?=
+ =?us-ascii?Q?2Q6Vfh8p1pKQkUhTVafInGFhDr3/yIgz8peHNpPpDo89jiE0l7EEgGqSAciC?=
+ =?us-ascii?Q?rHCJvC/eA6c8W3zSmW2tv9ptzGTiH1spmoGhqSMtO9wjciVIK+sUV2m9A60K?=
+ =?us-ascii?Q?/hVplsg/NSp0MAEDf781AtvrijSKqMkYz6VBU8rrFmj7Zem444+DdR95E4kA?=
+ =?us-ascii?Q?LzUASRPjNRE/S/f2zHeWbxFFvA1Zk9drdB/HFkK6CGuWOK88lGeC106iE2JN?=
+ =?us-ascii?Q?WT+2oL+yQqS5T4zjfHCGFmcoOs9Y?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB8663.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5C5WBK19P04rGO4nSsT9fcztv8GtFTbqj5ZLhgWLzUYcAdSOTTO4gykhQzCs?=
+ =?us-ascii?Q?N2Mj1W0C3rtqm0qX31R5jCQzALivL+Gy7HW5myT9Bw4kiqk42pnYJUIgyZjj?=
+ =?us-ascii?Q?WLy1eSr/svt5Hy/bhdlB7+pzzFaoiXlXxH2fq7Pt0x4QWWS6CHxjjoD9MHMr?=
+ =?us-ascii?Q?RjrC9/nSyLfgt+mCLsRoPc32A3et0DMElNpaSZY6F0bmRrmbne68HSotHA0f?=
+ =?us-ascii?Q?p9b+5EYwQiWuwapl1cMnQThYH8JauwUxIvaKC2V3MgFPQM3SiNqMRbKlJ0sq?=
+ =?us-ascii?Q?WslwUHgawf2/nclf/BAbnbgAT2VzAMS7GdSdreAlpBuXTPo2jOHKEerOKy71?=
+ =?us-ascii?Q?mesaXH6PUkOQihyTZXhLMhqUQMdt82HdiNC6+AlqQ7PpHqqaYrHndhzXkDtz?=
+ =?us-ascii?Q?9jRx1SpTtRbgKEiynq8aId3bjNFvYXuGrTicysHP+o8yIzQTMCjKsOtWwSo7?=
+ =?us-ascii?Q?pcBobwnMlzaWhKV9o1d2b+pVHl92/bx/LDb+tyiWdgDKuHwjmRBlImec/KZK?=
+ =?us-ascii?Q?+1PoYA5Ns45esjlDDYBPfDiu7u2UgGRwtEtS7YAEoUiEq3Xb7n4AiLq/OF2f?=
+ =?us-ascii?Q?Hrdhafh2t0xcVm/C7g0TRvUEkfOqcsr+9jgNXVQ3sSv2wGsajhPREIAx6Fj9?=
+ =?us-ascii?Q?FmcbSXvqbRtHvspNsaz/rEoiyPumMF+WqjrUqCMAHI78MI7o8roMpq+RbkXs?=
+ =?us-ascii?Q?ZA1L75ybxkXhF8u5IBJ65OfRVqJyZKK/k7PSCNm7+VzAHHRzHYc8gXpLnWTa?=
+ =?us-ascii?Q?YdDoENQcgDk/AaROqZqgl6hOYM95UjzAb+iDmcGVV4IHdy+VQnU8HOQym4Wx?=
+ =?us-ascii?Q?fMMNtU1sQ3sYemlFIRWUXPeeH61iL3uUH9qatZHSam6WNk+WAL/0JcNfeVqb?=
+ =?us-ascii?Q?f7XEAm4eKhEEvN335iuntsUNWzTdyHUKuOL3CG4nA+J5NbNomISIOMyJykKS?=
+ =?us-ascii?Q?aM5VKVHOfEAPqhruQZXIzC1NfICLKFguhpe02gpDP5buC8qbE0cBmrrIPtFu?=
+ =?us-ascii?Q?acVcaxw4CB1+T6JDTpRia6gTXFOWsFC2fKMJN/hRJnO4RHP8inZmrPgJuDpr?=
+ =?us-ascii?Q?wOwjge0eLvU6ZvDOs2mjDud5OfjXxPJpbT2LS+LZDEMsnhP0hOtXERjz0tNs?=
+ =?us-ascii?Q?Qy9S7QYV8w9JD00r9GRzmDy53igyF/aaNqOjRCybpNnapk+fTJKjoguDAUlT?=
+ =?us-ascii?Q?Tb9nRQn/v3qO0b9qyQb1VipAh6I2TCFb0uRaXwKiKJtREoco0sM3JXZh5lH+?=
+ =?us-ascii?Q?7kNI/NBfdy19FGaDRoxNiDby0Ekk+yUSU+MQHWgHDtgMBIzqDuZs2pE/D3ze?=
+ =?us-ascii?Q?90z+gxftovzfSn5HfAUriDYzf57WdfbCTq0DWT0TVs8sbbfc1jsdZ/1t6rMr?=
+ =?us-ascii?Q?h5xKjPwzrriaw4dkXwazNACnRRC+8Vc8/lQ42bdrDY/TweFLPaJFgavzbWZ/?=
+ =?us-ascii?Q?TC3N5t0icSTJMt3roFSSMDCL9mazGqFM4IfxyBvVDRyUoSF/3AV4QlAqFUIq?=
+ =?us-ascii?Q?CGSvFMhJWgf7HWX3LvJmV9jDV5kT+85Cyl6kTgDKPtaMNpbz7+wMx+ZJRqob?=
+ =?us-ascii?Q?/q3VeuFFka3Yp3Y9D7pdC/fFjHodGGsQYFG8j/a9?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a17084d2-87e8-49da-00c8-08dd5d895fee
+X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8663.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 15:04:35.9466
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gCqEHibSQVSwsbpgx8xm8l5CWmE/mmZatdz0EgWVQK9ZKBCOdwDNg7C6yH9/L9u4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7334
 
-Hi Oleksij,
+On Fri, Mar 07, 2025 at 07:57:15PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the hmm tree, today's linux-next build (htmldocs) produced
+> this warning:
+> 
+> Error: Cannot open file /home/sfr/next/next/drivers/cxl/features.c
+> 
+> Introduced by commit
+> 
+>   da0dd17604d4 ("fwctl/cxl: Add documentation to FWCTL CXL")
 
-kernel test robot noticed the following build errors:
+Thanks Stephen,
 
-[auto build test ERROR on sre-power-supply/for-next]
-[also build test ERROR on broonie-regulator/for-next rafael-pm/thermal linus/master v6.14-rc5 next-20250307]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Dave can you fix all of thes kdoc bugs and post a new version?
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Oleksij-Rempel/power-Extend-power_on_reason-h-for-upcoming-PSCRR-framework/20250306-174233
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-power-supply.git for-next
-patch link:    https://lore.kernel.org/r/20250306093900.2199442-5-o.rempel%40pengutronix.de
-patch subject: [PATCH v4 4/7] nvmem: add support for device and sysfs-based cell lookups
-config: sparc-randconfig-002-20250307 (https://download.01.org/0day-ci/archive/20250307/202503072216.f6lwkxwJ-lkp@intel.com/config)
-compiler: sparc-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250307/202503072216.f6lwkxwJ-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503072216.f6lwkxwJ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   sparc-linux-ld: drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8173.o: in function `nvmem_cell_get_by_sysfs_name':
->> phy-mtk-mipi-dsi-mt8173.c:(.text+0x434): multiple definition of `nvmem_cell_get_by_sysfs_name'; drivers/phy/mediatek/phy-mtk-mipi-dsi.o:phy-mtk-mipi-dsi.c:(.text+0x2a0): first defined here
-   sparc-linux-ld: drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8173.o: in function `nvmem_device_get_by_name':
->> phy-mtk-mipi-dsi-mt8173.c:(.text+0x43c): multiple definition of `nvmem_device_get_by_name'; drivers/phy/mediatek/phy-mtk-mipi-dsi.o:phy-mtk-mipi-dsi.c:(.text+0x2a8): first defined here
-   sparc-linux-ld: drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8183.o: in function `nvmem_cell_get_by_sysfs_name':
-   phy-mtk-mipi-dsi-mt8183.c:(.text+0x470): multiple definition of `nvmem_cell_get_by_sysfs_name'; drivers/phy/mediatek/phy-mtk-mipi-dsi.o:phy-mtk-mipi-dsi.c:(.text+0x2a0): first defined here
-   sparc-linux-ld: drivers/phy/mediatek/phy-mtk-mipi-dsi-mt8183.o: in function `nvmem_device_get_by_name':
-   phy-mtk-mipi-dsi-mt8183.c:(.text+0x478): multiple definition of `nvmem_device_get_by_name'; drivers/phy/mediatek/phy-mtk-mipi-dsi.o:phy-mtk-mipi-dsi.c:(.text+0x2a8): first defined here
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Jason
 
