@@ -1,241 +1,455 @@
-Return-Path: <linux-kernel+bounces-550822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A741EA5648A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:02:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFFE2A5648E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:03:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDA213A6349
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:02:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 599541749D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:03:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4527B20DD6E;
-	Fri,  7 Mar 2025 10:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF211E1DE3;
+	Fri,  7 Mar 2025 10:03:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="NCPBBNB9"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2056.outbound.protection.outlook.com [40.107.20.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XWfjqrlR"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58CB120CCCA;
-	Fri,  7 Mar 2025 10:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741341741; cv=fail; b=N6EETr+/HR3dG486pMBq1fbISejO5idkA7jeOwPX6NMSveDI4Wr6bL9dABcaABk0HCbfEeHMcO0kE2RNi1x3rxHVyh01ujIE6yOCtqgLMTMkKgO1yLYMMeoK+xLAo6qrk/YlabntooiJJXfa0axxJiJZxWCks/VTPLXVEFta05o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741341741; c=relaxed/simple;
-	bh=drzpgbg6vq2vR0eH3br2chdGAExhYiRIghSJQKH2d00=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=V+YWgEFV+RPOXe7tIsgSeAccVp3FE7Rd53XFln3dS+JP5BaXiISNGFIQxFx4q46AF1DUIztXxzI4cnPqoi9cq37qERCwxRjpT78RvVIdEttAK7Id0fy0tCQLGoLTah3CMs8J/o1C4KlJRKN5WdgE8by6Ej1FeJKpnDE0v+wKka4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=NCPBBNB9; arc=fail smtp.client-ip=40.107.20.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pMk37CQnAFH0CVwd2Zmu5p1lArt8unGsrgKL8n4obY4F7kLQjt4c5CvWwOwqvg5RZnM+VkHM1oiulGQQMmWoWivnT8DNJYxwxp35C/84K4hoVDsy1O/eTFBzLB4uLtfuzuZVU/36whTlRcNiopRmsWxMniyErfAjIVPS2YH6CgIgRrIuyNQgEcwX/uZaOJ3BoU/cEQC5A4WI635WtHpn0RbRBnOJFeb8POK7HN6WY+lg/db7EhphEW/TSFN2SsZVJxAl+4YS7BNGyX7kBkiRyR52xv0LOV6mQLtVNXNpA1ziG8HW3JeP3W7DLnaZs9QUOU8L26MnVmecEmUdoaKPSQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YLNeC3cCrLgVG95IZnNEOhI7zuA5YiCMnWZMJ3rpIFI=;
- b=Bi3iMhgZ3R7jDis4YRkWRzeSPlCdcne4JnACZbirRedV+Ec41JTlCCk1cu6EgSFuyL+V/nm478lAl6l5a/PlAFeOYPjOdlh3KLJxof2Mp6Z9h5/dbuM5XIqipn08vDor7PEkrbYpQAiegDOJQt8r3ZxfiCBPvcfo72L2PbBFE19+ABO4ejnQUccOhbtJ5UJvemBeKxSUFoT8luRYayAVTQY+kMcOrhPFoV6NVNzIakG41o1fWx1FkzP8XooZRjmvwWuPpR0iJyZfThv8DSPg05AlPD8fM4sonSS7F7UufiJtEbQLOvbogGWGV6dT7m4JfuNqiyx9AC94xztCDv1A1A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YLNeC3cCrLgVG95IZnNEOhI7zuA5YiCMnWZMJ3rpIFI=;
- b=NCPBBNB9kC6IesR8ANO+rGVKWFz03UPNJw4XqGFdQPkJjUUDX056ARgt8W+K1DhjNUbyrxBVg/PZmiwwF7LWDvSs/DE2oRoWVWEBYsx+zso9aqOHob12AhkrQx42FZW0q2+Rg25D6DteaYeJlbXEK8FOTK0nvz6EfQBCxuqc0OJnjEhKl23rcE2Hl+QfSUaTfRmnK1+a4xuuoKYb3OBTPY0X+kyZ2mb5RLw4iV7iyxitU+jJbz4hOBTUvlXN1ZzAJr4ufyqM4Ek6+kksOI83Z3tTNL/kgXssjMj1DagUtwsPFxSuc125ECRDSOCgvfKvItBfuuF9hP7JMyDwZg8VvQ==
-Received: from AS8PR04MB8642.eurprd04.prod.outlook.com (2603:10a6:20b:429::24)
- by VI2PR04MB10167.eurprd04.prod.outlook.com (2603:10a6:800:22c::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Fri, 7 Mar
- 2025 10:02:14 +0000
-Received: from AS8PR04MB8642.eurprd04.prod.outlook.com
- ([fe80::50d3:c32a:2a83:34bb]) by AS8PR04MB8642.eurprd04.prod.outlook.com
- ([fe80::50d3:c32a:2a83:34bb%7]) with mapi id 15.20.8511.019; Fri, 7 Mar 2025
- 10:02:14 +0000
-From: Jacky Bai <ping.bai@nxp.com>
-To: Sudeep Holla <sudeep.holla@arm.com>
-CC: "rafael@kernel.org" <rafael@kernel.org>, "daniel.lezcano@linaro.org"
-	<daniel.lezcano@linaro.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, "james.morse@arm.com"
-	<james.morse@arm.com>, "d-gole@ti.com" <d-gole@ti.com>, "anup@brainfault.org"
-	<anup@brainfault.org>, "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-	"palmer@dabbelt.com" <palmer@dabbelt.com>, "aou@eecs.berkeley.edu"
-	<aou@eecs.berkeley.edu>, "linux-pm@vger.kernel.org"
-	<linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>, "imx@lists.linux.dev"
-	<imx@lists.linux.dev>, "khilman@baylibre.com" <khilman@baylibre.com>,
-	"quic_tingweiz@quicinc.com" <quic_tingweiz@quicinc.com>,
-	"quic_yuanjiey@quicinc.com" <quic_yuanjiey@quicinc.com>
-Subject: RE: [PATCH v4] cpuidle: Init cpuidle only for present CPUs
-Thread-Topic: [PATCH v4] cpuidle: Init cpuidle only for present CPUs
-Thread-Index: AQHbjzc48QAeOzv5L02tuSUugwb8UbNnbkUAgAAAI3A=
-Date: Fri, 7 Mar 2025 10:02:14 +0000
-Message-ID:
- <AS8PR04MB86425B7CEE7443F822A2DBCA87D52@AS8PR04MB8642.eurprd04.prod.outlook.com>
-References: <20250307080303.2660506-1-ping.bai@nxp.com>
- <Z8rBYuDiIyo8y6HT@bogus>
-In-Reply-To: <Z8rBYuDiIyo8y6HT@bogus>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR04MB8642:EE_|VI2PR04MB10167:EE_
-x-ms-office365-filtering-correlation-id: fba5d259-c3fc-47db-6146-08dd5d5f22a8
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?9wfYWpjh/p0Kqk2GXNSj0o7d7tSy0OjXvXvDDd/6kpgM43Vu/Gdm/eKi3W+7?=
- =?us-ascii?Q?5ZLg8nYnNAJk31sSqZMM8bKuPFqYsIqqgFsnCFJOqBtP+SHxJqE2m51rZiiG?=
- =?us-ascii?Q?EWyYWAhMJ+1cM6c+Rl69NEoPbOhaR4WnqAWP94gmIXFyob5uZvQ23gC9CIas?=
- =?us-ascii?Q?0VuPdHFLNNrL6/X4cZzuo+4/H3ar3pfCR+tTQdzxtdNE+JkU2OhgkCFc21a9?=
- =?us-ascii?Q?+PhrBG14+fae08ijF0V1jNthDRxyWPn3cz3EmlnGjNHjXKwrXrcQ5BEhjJeP?=
- =?us-ascii?Q?M4+khQ14YpEYiCqUA1w0HcEMzHjzpbFSQ/V2eG4b9QJ+1PhHnnbZ7UreeWhR?=
- =?us-ascii?Q?9hsoaERG970Eaas8O+qCxDbv7ukhsOVsJQWJaPihaK/J5I+92nMvxQSdL1RR?=
- =?us-ascii?Q?ywSlQ4wsVBDHASTuC1UOKLLLV+s2RbGZPzx9zuk2uhxYfweRyQNFNqAxxn+V?=
- =?us-ascii?Q?TS69elHaHOz+HRkqp/OwnIFYICgdrD0lT/ZQQQn7DQmaLDyEZmIGx1vJYbmf?=
- =?us-ascii?Q?4c5xNAvDhgnWiLRLg3igZHwTC/YLM3raEN1XXTDjv4SSh7LYBj1Tcdi9DiIO?=
- =?us-ascii?Q?q4BzTcLZNwGvjb5iy/0zgiVblFAmnIa9LwVff4BmUboLqsLzCNgVWlf3cddW?=
- =?us-ascii?Q?e/+D0IO3fd524BbAVa0mVWqL9ssteeTiWJw2C4iJJzbcEQxj6SRcV169TyXe?=
- =?us-ascii?Q?7H3z4GbcqeIQvpFcgrTtwavF6E6gf7J89+u01CyRq91tjdHjLWgLZZmC+axe?=
- =?us-ascii?Q?rkoZPdAfzcYnSmKWL61Z5uy2S/sNsDpLHVIig+ZTLonfAvQyM6qeTUMoFhN7?=
- =?us-ascii?Q?3GG/SAW0ybQpqKYwCPxS9d7ZKZAQMy1ArHuP3bWLZvsusWa4PAPL0WxODHjm?=
- =?us-ascii?Q?kgviXeE+BBn5Pn0YhLcMiq082AOsy5/bE3IwD6UDRGNi0bpf64wg9i9XQ2kZ?=
- =?us-ascii?Q?5JVGZlVaL4rsk2JjyC4+MCcU+6bWQVwjpife+ZLHeItG+E4+3WH+7fbonjhL?=
- =?us-ascii?Q?srkU37qlvNGxiINvg9RWMrIE3Pai9fFhgMYidsMJojaAfEDjKC5QpAAk4x6z?=
- =?us-ascii?Q?KX065kNpWZnJCX/ywe+ZCmGq//d+bYvL4FUqHXRdoQgyPzEZ92nUOgpz+WhQ?=
- =?us-ascii?Q?y7z2SqkauOnOmnGEL/wPSHjYvnRPvuOmD4/cBtBbLzfxe3ne/L2ZAOm4GkL5?=
- =?us-ascii?Q?kLfVfPZjrL0OkOIv3SvFKKZl3SDt6gl8sgpi4h5uvdnt0kufiq4/OhEOxzZo?=
- =?us-ascii?Q?Gtvk8QU3n2CJZ0zThgiOhKvZ+7VtE7d7xSi5uN40mLZgB4OvpkDGcThs4tuv?=
- =?us-ascii?Q?+oMKEKBOTsD4DwcQJEhCNLUc8wO7vT3Ere5g/Nkd6d+Qu6ONQPJbA9h7RgeT?=
- =?us-ascii?Q?7HRQAHYTwox4TlcqpyWjHyj1YgGPYI4sIF7McYAyFZa9nE6zGUaAL11imdVD?=
- =?us-ascii?Q?ju7L1sm9qRd6oJbOcaQOgTQsyHZBF2Rn?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?h4EObjfEEsLnsNzqLX1aZZ3EIxcVhUy0SovR96JG3dgo05/MfEESg+sPJF0x?=
- =?us-ascii?Q?b6C9EBERzPJlT2rrsUrOGV7CoFB2g8lWYl7hn4mvJtrWjjqZAduiXjmNye95?=
- =?us-ascii?Q?VwwX1JkyyoPN7hqIV1DgoLxOY40pNsZ9Wbq7ya6jdE0t1lVqRY1XJhfVjJ3g?=
- =?us-ascii?Q?BEgiJugKAaE+IGeSNkYVPfRpXZZk7n+d2o9gqjFeKFW8Ukhhaj87vlaIYFk+?=
- =?us-ascii?Q?7eCD0gUg8IDSl2tCBSLxXXzLbAGG83JB57GTjvvtVnD3mjBjYXpsmnGWjqbu?=
- =?us-ascii?Q?YTWD55n22trQSdGLYHmXKbwc7uMMfL5HSnfoWLeU6Y7LWXpxdEiC1XpFFvba?=
- =?us-ascii?Q?QZwHB5QZHATMGztrjbUMuT04ZRP6v8s0vruGwH1rd55Ccn0rVIgWfgYgpCOG?=
- =?us-ascii?Q?u2Zd9SsaVzIdC3KpiytlvgGY2dJWxshd607ah4DVWyUaeeUoX+s2mlkZP753?=
- =?us-ascii?Q?edDyrxw7/4a/VGuApyl2jwDHduVooRsskzQtVs8JpHuVQ0WY4nGEozTX1tCX?=
- =?us-ascii?Q?/vHtCpe0CadMw+Bm0KmVhLMniY+7+rNRHb0BR7ebC1cFnlW6le3512jNeaWK?=
- =?us-ascii?Q?9pf5bOUW5Yl0+ZjSnOJUejKUBX3K67qeFaW90RZl6g8PztjU8gdgO4VHEDXs?=
- =?us-ascii?Q?hVhuqUTtbuzG67i0vkEqdJyzOlXkxn1tzZBn9mlKpIEjEzhC11vGrg4p6AAj?=
- =?us-ascii?Q?2P2nR7XLD5eiWuAfYnpwV1volDXVUfDY8oUx05WPZrVB6AzfyGUmb2h2V0Mp?=
- =?us-ascii?Q?llITV0fhxzVrU53M/H1N7eXPv5sFQvL+igbvehJJk133Zw3VPAWX8xUG+/JU?=
- =?us-ascii?Q?36dIuoxeLmcNNRtj4cgzT8VAuvMrKXXNBtUEcwDbs+BE4CqPcYpcUiKHqfY6?=
- =?us-ascii?Q?8EVvvOgt5np1D0d8rVwJyXWApmUfnHCPcREfpjOz5phBPOQHEVMFC6RZWqNn?=
- =?us-ascii?Q?zDNBl2Ft9XB8U8dEIdh7syCL5wYNsDskHIl6hmL9aIgr7xRDxx0KhDA4GvD6?=
- =?us-ascii?Q?tQQZzQvbrDhndnHGxLxDE8goarKS6hyFHAZGTdhB7ZsQI0DIShy5/rn0ORag?=
- =?us-ascii?Q?fY3IbQ6+b2p2uvA8UmKDSM+JGK3MKtjY8YpmUu4SRY5dRDKvT04TGR3VR7LN?=
- =?us-ascii?Q?0q708+EauQjo8RhsqhRPCyjqq16XMfIZqKmV9tWPq9sAayHAqPLm1Kap9cOZ?=
- =?us-ascii?Q?+gD5Zw2bVUEea6AJZGo6FLLK151Yvlf7uYIJSY8j4nApOTrumLv1NoK+73fb?=
- =?us-ascii?Q?kcPhBKtWZ85kEbuxQzWR2szV1MamuLSdyd7Zg2du8pFzDEWtiJMyCnRX14vf?=
- =?us-ascii?Q?qf41qbIzWPWzw8zeSfLCE3KLBVNkGe62tR48pc+GAWFBRA5ocx/C1Melkevu?=
- =?us-ascii?Q?RIx8FFGSxW9FrRzQzKR+NEfIyDi+ycvxhd9Hi9RU8B/LCiYc50Ximqhom87P?=
- =?us-ascii?Q?IB76EI723FI6BmTb9K9DGU6U2LcSSAmGNy2/T7LE7MxAUkwME7WW2dtKkwUQ?=
- =?us-ascii?Q?rOHUHKZipY2hvhuymgWmUPENlonJ9tba7O9YCQMVT6QrppGrWnulXnpOi5iC?=
- =?us-ascii?Q?QWYhMIC5/vvmsSISHFE=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A772020CCCC
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 10:03:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741341795; cv=none; b=MHzNtDq8F3020y2R/p/mQnRDruxHYB9lF+J6fsQLU/E/S3Rwq9pfFpgzrjofug5QvGgBnOnmGmz8SnXifYNVrurqRtqUsp1JyjzF+YoDVJIKQbH0zbJqgBm2l03TEjyvYAvXqLyQmQocWPNIDvKaxnRul5bm819jgAO6hw/7I4E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741341795; c=relaxed/simple;
+	bh=qC09XvL+E4XxS8W7QyWzuLFEczeFsZDxtV2iyUyjsVQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=j/u7l+ZfOw4QT1jfOZtU2tk3ynz3hgx0OWjF/MpS74fIq7O5JAEwrpP9wPSK0U1FBLj1R5VrLegGgQS1u5GFS4S91R2Ru0VQ5ke8D5waYopo8FBAlMBm5GWpQiAXoU3F2F1ojWszb9sQ34/ogjvk0gEk5z+ClQDiXcOQyi60yWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XWfjqrlR; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43bc638686eso18075735e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 02:03:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741341792; x=1741946592; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1vEF9+tsv2YIJlxjHnRIp5QhDr50rxu5AlAzHayFtoM=;
+        b=XWfjqrlRfa59PagAnn86Rh7JE2dflA3yM9Ja/trGLYfuFioSz8H0JYxbdf/UU6bPNE
+         HQL/EGLS5gX6glvTxHRSzbLpG2/4w0Y9wmNPQfKbn7gI/Zk8jG19Vbfl7Och9Dp6jApT
+         kUhouAo4zmg/psY9vFz+fdkUqQSv53DSp/nPpfYx+XpaVTT6KsN969LvAQUV60SBux+G
+         95BDbtmhP0z5iIUYn2T0xoweWt5sA4t7PH5am4eqwKmeeWI8Kn1zf2evLiurudsWsA9R
+         WKWXW9Uw2py9Wx2XprwxVJ6xYClMyRfZUgVoNp0rzcpPSJtOrfqcmpqEcQLDW1+GK7Wx
+         xgFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741341792; x=1741946592;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1vEF9+tsv2YIJlxjHnRIp5QhDr50rxu5AlAzHayFtoM=;
+        b=wcQbBPIFqSnJgtYvaKF3hv9qUHmTofQIyHMAIl3vujriQXI6HOFLtEuRgYLArVnhRF
+         S9LjPI6uk6vwYLtBjtdD+ujS5WqAH+C4Mnts86GPDB8yjQsJTOLqKtjDoUt5CjLFfSL/
+         7zRgRX4z24qepfWcJHzNVRxR78+QzkgRH0MADjkDBiRzAiV6eYVp070WKWzDD1/l9dtJ
+         ilvRcF3q03BATPzQsyIAiQ02/Uz00aQ9M21BJx4fYQ5jVidoVwdMLrrWYPkVVq0sHGY/
+         vmYU7m+vAjuMu6pVQ/+V+r7ctZYx6aR42HZ5E41vMJm0MER1VsmUf3/2A32XLDzTr9dF
+         t9gA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYnm4LoJFJrJJHbvAzE6xjiS429MHgALo+z99U5FaX0YIAPNbJ2Ceqm/YPEuHXXffFL7nIhHPO6OItzJE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXp18k2rvsTzyWdXoP474Mvj3gBegvJGSjoSHvdy7cEtpnOWeY
+	8pwEAY+x21pYyXbSyLQypoJNw3X80OTLDigLaU07wA199SN/ziH9NvtN+YHnmYBov8WoC4Mbvqv
+	9
+X-Gm-Gg: ASbGncs/At0jrnZv1tcjT/ktgTrzX/9qZiUyiD+VXIYty6kKn0Cm9ClNkom15jmsxno
+	kI0A86EIBxkZbIA2rSW2Vujsdr///aUzY9JN5EwEMbzCIMyaxd2bEeZSw8GUv5Tdp/G5XHd9DVX
+	5Z/xz32UzO3weXwKvKLIIEmCtWO/HtYVEOurPtj+aYu3AR1cYdJh9W+dUcYgnDAWJZbajkykZ7q
+	HBIjI/kIgfoeY31WCf9JSk1SktWbyXlRDmJCxbKK3n+V5M2mdUzkCE+N1SUs4BlOjcOHBbdoELr
+	2+0X5m8Chgx9eXasU1yDZZFP1LNgaIbQQAJ9dv9OqY9pMK7aI0fmry6enYxt5U7RE0R5BaExokh
+	nW4G3HAFKsQQqW9Kkbc9bQw==
+X-Google-Smtp-Source: AGHT+IGNzDh/kKDNpCLZ2JuvWaD1TESNfBPS1qik4baGkJKQtiSCovQ66r/C2qv98cepZ6On8oiNUQ==
+X-Received: by 2002:a05:600c:1c9f:b0:439:8634:9909 with SMTP id 5b1f17b1804b1-43c601cc6b2mr18520465e9.14.1741341791815;
+        Fri, 07 Mar 2025 02:03:11 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:1ea4:9158:5668:7977? ([2a01:e0a:982:cbb0:1ea4:9158:5668:7977])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd8c3173sm47504605e9.11.2025.03.07.02.03.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Mar 2025 02:03:11 -0800 (PST)
+Message-ID: <edb4c8f2-afef-4892-914f-33bd5b25301a@linaro.org>
+Date: Fri, 7 Mar 2025 11:03:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fba5d259-c3fc-47db-6146-08dd5d5f22a8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2025 10:02:14.1072
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Zo+KCOXlR6zekveSUN4b/LOHTWVyPWVHhk6IPWn/sWeGBhj8QzbNgoMDW35DYowJEQKuJOD6GT1sa+EMcYYjAw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10167
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v3 2/2] Input: goodix_berlin - Add support for Berlin-A
+ series
+To: Jens Reidel <adrian@mainlining.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bastien Nocera <hadess@hadess.net>,
+ Hans de Goede <hdegoede@redhat.com>
+Cc: Luca Weiss <luca.weiss@fairphone.com>, linux-input@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ phone-devel@vger.kernel.org, linux@mainlining.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <20250307094823.478152-1-adrian@mainlining.org>
+ <20250307094823.478152-3-adrian@mainlining.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250307094823.478152-3-adrian@mainlining.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Sudeep,
+On 07/03/2025 10:48, Jens Reidel wrote:
+> The current implementation of the goodix_berlin driver lacks support for
+> revisions A and B of the Berlin IC. This change adds support for the
+> gt9897 IC, which is a Berlin-A revision part.
+> 
+> The differences between revision D and A are rather minor, a handful of
+> address changes and a slightly larger read buffer. They were taken from
+> the driver published by Goodix, which does a few more things that don't
+> appear to be necessary for the touchscreen to work properly.
+> 
+> Tested-by: Luca Weiss <luca.weiss@fairphone.com>
+> Signed-off-by: Jens Reidel <adrian@mainlining.org>
+> ---
+>   drivers/input/touchscreen/goodix_berlin.h     | 16 ++++++-
+>   .../input/touchscreen/goodix_berlin_core.c    | 21 ++++----
+>   drivers/input/touchscreen/goodix_berlin_i2c.c | 14 ++++--
+>   drivers/input/touchscreen/goodix_berlin_spi.c | 48 ++++++++++++++-----
+>   4 files changed, 73 insertions(+), 26 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/goodix_berlin.h b/drivers/input/touchscreen/goodix_berlin.h
+> index 38b6f9ddbdef..d8bbd4853206 100644
+> --- a/drivers/input/touchscreen/goodix_berlin.h
+> +++ b/drivers/input/touchscreen/goodix_berlin.h
+> @@ -12,12 +12,26 @@
+>   
+>   #include <linux/pm.h>
+>   
+> +#define GOODIX_BERLIN_FW_VERSION_INFO_ADDR_A	0x1000C
+> +#define GOODIX_BERLIN_FW_VERSION_INFO_ADDR_D	0x10014
+> +
+> +#define GOODIX_BERLIN_IC_INFO_ADDR_A		0x10068
+> +#define GOODIX_BERLIN_IC_INFO_ADDR_D		0x10070
+> +
+> +struct goodix_berlin_ic_data {
+> +	int fw_version_info_addr;
+> +	int ic_info_addr;
+> +	ssize_t read_dummy_len;
+> +	ssize_t read_prefix_len;
+> +};
+> +
+>   struct device;
+>   struct input_id;
+>   struct regmap;
+>   
+>   int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
+> -			struct regmap *regmap);
+> +			struct regmap *regmap,
+> +			const struct goodix_berlin_ic_data *ic_data);
+>   
+>   extern const struct dev_pm_ops goodix_berlin_pm_ops;
+>   extern const struct attribute_group *goodix_berlin_groups[];
+> diff --git a/drivers/input/touchscreen/goodix_berlin_core.c b/drivers/input/touchscreen/goodix_berlin_core.c
+> index f7ea443b152e..02a1d9a465f2 100644
+> --- a/drivers/input/touchscreen/goodix_berlin_core.c
+> +++ b/drivers/input/touchscreen/goodix_berlin_core.c
+> @@ -12,7 +12,7 @@
+>    * to the previous generations.
+>    *
+>    * Currently the driver only handles Multitouch events with already
+> - * programmed firmware and "config" for "Revision D" Berlin IC.
+> + * programmed firmware and "config" for "Revision A/D" Berlin IC.
+>    *
+>    * Support is missing for:
+>    * - ESD Management
+> @@ -20,7 +20,7 @@
+>    * - "Config" update/flashing
+>    * - Stylus Events
+>    * - Gesture Events
+> - * - Support for older revisions (A & B)
+> + * - Support for revision B
+>    */
+>   
+>   #include <linux/bitfield.h>
+> @@ -28,6 +28,7 @@
+>   #include <linux/input.h>
+>   #include <linux/input/mt.h>
+>   #include <linux/input/touchscreen.h>
+> +#include <linux/property.h>
+>   #include <linux/regmap.h>
+>   #include <linux/regulator/consumer.h>
+>   #include <linux/sizes.h>
+> @@ -53,10 +54,8 @@
+>   
+>   #define GOODIX_BERLIN_DEV_CONFIRM_VAL		0xAA
+>   #define GOODIX_BERLIN_BOOTOPTION_ADDR		0x10000
+> -#define GOODIX_BERLIN_FW_VERSION_INFO_ADDR	0x10014
+>   
+>   #define GOODIX_BERLIN_IC_INFO_MAX_LEN		SZ_1K
+> -#define GOODIX_BERLIN_IC_INFO_ADDR		0x10070
+>   
+>   #define GOODIX_BERLIN_CHECKSUM_SIZE		sizeof(u16)
+>   
+> @@ -175,6 +174,8 @@ struct goodix_berlin_core {
+>   	/* Runtime parameters extracted from IC_INFO buffer  */
+>   	u32 touch_data_addr;
+>   
+> +	const struct goodix_berlin_ic_data *ic_data;
+> +
+>   	struct goodix_berlin_event event;
+>   };
+>   
+> @@ -299,7 +300,7 @@ static int goodix_berlin_read_version(struct goodix_berlin_core *cd)
+>   {
+>   	int error;
+>   
+> -	error = regmap_raw_read(cd->regmap, GOODIX_BERLIN_FW_VERSION_INFO_ADDR,
+> +	error = regmap_raw_read(cd->regmap, cd->ic_data->fw_version_info_addr,
+>   				&cd->fw_version, sizeof(cd->fw_version));
+>   	if (error) {
+>   		dev_err(cd->dev, "error reading fw version, %d\n", error);
+> @@ -367,7 +368,7 @@ static int goodix_berlin_get_ic_info(struct goodix_berlin_core *cd)
+>   	if (!afe_data)
+>   		return -ENOMEM;
+>   
+> -	error = regmap_raw_read(cd->regmap, GOODIX_BERLIN_IC_INFO_ADDR,
+> +	error = regmap_raw_read(cd->regmap, cd->ic_data->ic_info_addr,
+>   				&length_raw, sizeof(length_raw));
+>   	if (error) {
+>   		dev_err(cd->dev, "failed get ic info length, %d\n", error);
+> @@ -380,8 +381,8 @@ static int goodix_berlin_get_ic_info(struct goodix_berlin_core *cd)
+>   		return -EINVAL;
+>   	}
+>   
+> -	error = regmap_raw_read(cd->regmap, GOODIX_BERLIN_IC_INFO_ADDR,
+> -				afe_data, length);
+> +	error = regmap_raw_read(cd->regmap, cd->ic_data->ic_info_addr, afe_data,
+> +				length);
+>   	if (error) {
+>   		dev_err(cd->dev, "failed get ic info data, %d\n", error);
+>   		return error;
+> @@ -716,7 +717,8 @@ const struct attribute_group *goodix_berlin_groups[] = {
+>   EXPORT_SYMBOL_GPL(goodix_berlin_groups);
+>   
+>   int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
+> -			struct regmap *regmap)
+> +			struct regmap *regmap,
+> +			const struct goodix_berlin_ic_data *ic_data)
+>   {
+>   	struct goodix_berlin_core *cd;
+>   	int error;
+> @@ -733,6 +735,7 @@ int goodix_berlin_probe(struct device *dev, int irq, const struct input_id *id,
+>   	cd->dev = dev;
+>   	cd->regmap = regmap;
+>   	cd->irq = irq;
+> +	cd->ic_data = ic_data;
+>   
+>   	cd->reset_gpio = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
+>   	if (IS_ERR(cd->reset_gpio))
+> diff --git a/drivers/input/touchscreen/goodix_berlin_i2c.c b/drivers/input/touchscreen/goodix_berlin_i2c.c
+> index ad7a60d94338..059a25537aad 100644
+> --- a/drivers/input/touchscreen/goodix_berlin_i2c.c
+> +++ b/drivers/input/touchscreen/goodix_berlin_i2c.c
+> @@ -31,6 +31,8 @@ static const struct input_id goodix_berlin_i2c_input_id = {
+>   
+>   static int goodix_berlin_i2c_probe(struct i2c_client *client)
+>   {
+> +	const struct goodix_berlin_ic_data *ic_data =
+> +		i2c_get_match_data(cd->dev);
+>   	struct regmap *regmap;
+>   	int error;
+>   
+> @@ -39,22 +41,28 @@ static int goodix_berlin_i2c_probe(struct i2c_client *client)
+>   		return PTR_ERR(regmap);
+>   
+>   	error = goodix_berlin_probe(&client->dev, client->irq,
+> -				    &goodix_berlin_i2c_input_id, regmap);
+> +				    &goodix_berlin_i2c_input_id, regmap,
+> +				    ic_data);
+>   	if (error)
+>   		return error;
+>   
+>   	return 0;
+>   }
+>   
+> +static const struct goodix_berlin_ic_data gt9916_data = {
+> +	.fw_version_info_addr = GOODIX_BERLIN_FW_VERSION_INFO_ADDR_D,
+> +	.ic_info_addr = GOODIX_BERLIN_IC_INFO_ADDR_D,
+> +};
+> +
+>   static const struct i2c_device_id goodix_berlin_i2c_id[] = {
+> -	{ "gt9916" },
+> +	{ .name = "gt9916", .driver_data = (long)&gt9916_data },
+>   	{ }
+>   };
+>   
+>   MODULE_DEVICE_TABLE(i2c, goodix_berlin_i2c_id);
+>   
+>   static const struct of_device_id goodix_berlin_i2c_of_match[] = {
+> -	{ .compatible = "goodix,gt9916", },
+> +	{ .compatible = "goodix,gt9916", .data = &gt9916_data },
+>   	{ }
+>   };
+>   MODULE_DEVICE_TABLE(of, goodix_berlin_i2c_of_match);
+> diff --git a/drivers/input/touchscreen/goodix_berlin_spi.c b/drivers/input/touchscreen/goodix_berlin_spi.c
+> index 0662e87b8692..01f850f484c2 100644
+> --- a/drivers/input/touchscreen/goodix_berlin_spi.c
+> +++ b/drivers/input/touchscreen/goodix_berlin_spi.c
+> @@ -18,10 +18,14 @@
+>   
+>   #define GOODIX_BERLIN_SPI_TRANS_PREFIX_LEN	1
+>   #define GOODIX_BERLIN_REGISTER_WIDTH		4
+> -#define GOODIX_BERLIN_SPI_READ_DUMMY_LEN	3
+> -#define GOODIX_BERLIN_SPI_READ_PREFIX_LEN	(GOODIX_BERLIN_SPI_TRANS_PREFIX_LEN + \
+> +#define GOODIX_BERLIN_SPI_READ_DUMMY_LEN_A	4
+> +#define GOODIX_BERLIN_SPI_READ_DUMMY_LEN_D	3
+> +#define GOODIX_BERLIN_SPI_READ_PREFIX_LEN_A	(GOODIX_BERLIN_SPI_TRANS_PREFIX_LEN + \
+>   						 GOODIX_BERLIN_REGISTER_WIDTH + \
+> -						 GOODIX_BERLIN_SPI_READ_DUMMY_LEN)
+> +						 GOODIX_BERLIN_SPI_READ_DUMMY_LEN_A)
+> +#define GOODIX_BERLIN_SPI_READ_PREFIX_LEN_D	(GOODIX_BERLIN_SPI_TRANS_PREFIX_LEN + \
+> +						 GOODIX_BERLIN_REGISTER_WIDTH + \
+> +						 GOODIX_BERLIN_SPI_READ_DUMMY_LEN_D)
+>   #define GOODIX_BERLIN_SPI_WRITE_PREFIX_LEN	(GOODIX_BERLIN_SPI_TRANS_PREFIX_LEN + \
+>   						 GOODIX_BERLIN_REGISTER_WIDTH)
+>   
+> @@ -33,6 +37,7 @@ static int goodix_berlin_spi_read(void *context, const void *reg_buf,
+>   				  size_t val_size)
+>   {
+>   	struct spi_device *spi = context;
+> +	const struct goodix_berlin_ic_data *ic_data = spi_get_device_match_data(spi);
+>   	struct spi_transfer xfers;
+>   	struct spi_message spi_msg;
+>   	const u32 *reg = reg_buf; /* reg is stored as native u32 at start of buffer */
+> @@ -42,23 +47,22 @@ static int goodix_berlin_spi_read(void *context, const void *reg_buf,
+>   		return -EINVAL;
+>   
+>   	u8 *buf __free(kfree) =
+> -		kzalloc(GOODIX_BERLIN_SPI_READ_PREFIX_LEN + val_size,
+> -			GFP_KERNEL);
+> +		kzalloc(ic_data->read_prefix_len + val_size, GFP_KERNEL);
+>   	if (!buf)
+>   		return -ENOMEM;
+>   
+>   	spi_message_init(&spi_msg);
+>   	memset(&xfers, 0, sizeof(xfers));
+>   
+> -	/* buffer format: 0xF1 + addr(4bytes) + dummy(3bytes) + data */
+> +	/* buffer format: 0xF1 + addr(4bytes) + dummy(3/4bytes) + data */
+>   	buf[0] = GOODIX_BERLIN_SPI_READ_FLAG;
+>   	put_unaligned_be32(*reg, buf + GOODIX_BERLIN_SPI_TRANS_PREFIX_LEN);
+>   	memset(buf + GOODIX_BERLIN_SPI_TRANS_PREFIX_LEN + GOODIX_BERLIN_REGISTER_WIDTH,
+> -	       0xff, GOODIX_BERLIN_SPI_READ_DUMMY_LEN);
+> +	       0xff, ic_data->read_dummy_len);
+>   
+>   	xfers.tx_buf = buf;
+>   	xfers.rx_buf = buf;
+> -	xfers.len = GOODIX_BERLIN_SPI_READ_PREFIX_LEN + val_size;
+> +	xfers.len = ic_data->read_prefix_len + val_size;
+>   	xfers.cs_change = 0;
+>   	spi_message_add_tail(&xfers, &spi_msg);
+>   
+> @@ -68,7 +72,7 @@ static int goodix_berlin_spi_read(void *context, const void *reg_buf,
+>   		return error;
+>   	}
+>   
+> -	memcpy(val_buf, buf + GOODIX_BERLIN_SPI_READ_PREFIX_LEN, val_size);
+> +	memcpy(val_buf, buf + ic_data->read_prefix_len, val_size);
+>   	return error;
+>   }
+>   
+> @@ -123,6 +127,7 @@ static const struct input_id goodix_berlin_spi_input_id = {
+>   
+>   static int goodix_berlin_spi_probe(struct spi_device *spi)
+>   {
+> +	const struct goodix_berlin_ic_data *ic_data = spi_get_device_match_data(spi);
+>   	struct regmap_config regmap_config;
+>   	struct regmap *regmap;
+>   	size_t max_size;
+> @@ -137,7 +142,7 @@ static int goodix_berlin_spi_probe(struct spi_device *spi)
+>   	max_size = spi_max_transfer_size(spi);
+>   
+>   	regmap_config = goodix_berlin_spi_regmap_conf;
+> -	regmap_config.max_raw_read = max_size - GOODIX_BERLIN_SPI_READ_PREFIX_LEN;
+> +	regmap_config.max_raw_read = max_size - ic_data->read_prefix_len;
+>   	regmap_config.max_raw_write = max_size - GOODIX_BERLIN_SPI_WRITE_PREFIX_LEN;
+>   
+>   	regmap = devm_regmap_init(&spi->dev, NULL, spi, &regmap_config);
+> @@ -145,21 +150,38 @@ static int goodix_berlin_spi_probe(struct spi_device *spi)
+>   		return PTR_ERR(regmap);
+>   
+>   	error = goodix_berlin_probe(&spi->dev, spi->irq,
+> -				    &goodix_berlin_spi_input_id, regmap);
+> +				    &goodix_berlin_spi_input_id, regmap,
+> +				    ic_data);
+>   	if (error)
+>   		return error;
+>   
+>   	return 0;
+>   }
+>   
+> +static const struct goodix_berlin_ic_data gt9897_data = {
+> +	.fw_version_info_addr = GOODIX_BERLIN_FW_VERSION_INFO_ADDR_A,
+> +	.ic_info_addr = GOODIX_BERLIN_IC_INFO_ADDR_A,
+> +	.read_dummy_len = GOODIX_BERLIN_SPI_READ_DUMMY_LEN_A,
+> +	.read_prefix_len = GOODIX_BERLIN_SPI_READ_PREFIX_LEN_A,
+> +};
+> +
+> +static const struct goodix_berlin_ic_data gt9916_data = {
+> +	.fw_version_info_addr = GOODIX_BERLIN_FW_VERSION_INFO_ADDR_D,
+> +	.ic_info_addr = GOODIX_BERLIN_IC_INFO_ADDR_D,
+> +	.read_dummy_len = GOODIX_BERLIN_SPI_READ_DUMMY_LEN_D,
+> +	.read_prefix_len = GOODIX_BERLIN_SPI_READ_PREFIX_LEN_D,
+> +};
+> +
+>   static const struct spi_device_id goodix_berlin_spi_ids[] = {
+> -	{ "gt9916" },
+> +	{ .name = "gt9897", .driver_data = (long)&gt9897_data },
+> +	{ .name = "gt9916", .driver_data = (long)&gt9916_data },
+>   	{ },
+>   };
+>   MODULE_DEVICE_TABLE(spi, goodix_berlin_spi_ids);
+>   
+>   static const struct of_device_id goodix_berlin_spi_of_match[] = {
+> -	{ .compatible = "goodix,gt9916", },
+> +	{ .compatible = "goodix,gt9897", .data = &gt9897_data },
+> +	{ .compatible = "goodix,gt9916", .data = &gt9916_data },
+>   	{ }
+>   };
+>   MODULE_DEVICE_TABLE(of, goodix_berlin_spi_of_match);
 
-> Subject: Re: [PATCH v4] cpuidle: Init cpuidle only for present CPUs
->=20
-> On Fri, Mar 07, 2025 at 04:03:03PM +0800, Jacky Bai wrote:
-> > for_each_possible_cpu() is currently used to initialize cpuidle in
-> > below cpuidle drivers:
-> >   drivers/cpuidle/cpuidle-arm.c
-> >   drivers/cpuidle/cpuidle-big_little.c
-> >   drivers/cpuidle/cpuidle-psci.c
-> >   drivers/cpuidle/cpuidle-riscv-sbi.c
-> >
-> > However, in cpu_dev_register_generic(), for_each_present_cpu() is used
-> > to register CPU devices which means the CPU devices are only
-> > registered for present CPUs and not all possible CPUs.
-> >
-> > With nosmp or maxcpus=3D0, only the boot CPU is present, lead to the
-> > failure:
-> >
-> >   |  Failed to register cpuidle device for cpu1
-> >
-> > Then rollback to cancel all CPUs' cpuidle registration.
-> >
-> > Change for_each_possible_cpu() to for_each_present_cpu() in the above
-> > cpuidle drivers to ensure it only registers cpuidle devices for CPUs
-> > that are actually present.
-> >
-> > Fixes: b0c69e1214bc ("drivers: base: Use present CPUs in
-> > GENERIC_CPU_DEVICES")
-> > Reviewed-by: Dhruva Gole <d-gole@ti.com>
-> > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> > Tested-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-> > Signed-off-by: Jacky Bai <ping.bai@nxp.com>
-> > ---
-> >  - v4 changes:
-> >   - add changes for other cpuidle driver that has the similar issue
-> >     as cpuidle-pcsi driver.
-> >
-> >  - v3 changes:
-> >   - improve the changelog as suggested by Sudeep
-> > ---
-> >  drivers/cpuidle/cpuidle-arm.c        | 8 ++++----
-> >  drivers/cpuidle/cpuidle-big_little.c | 2 +-
-> >  drivers/cpuidle/cpuidle-psci.c       | 4 ++--
-> >  drivers/cpuidle/cpuidle-riscv-sbi.c  | 4 ++--
->=20
->=20
-> Why have you spared drivers/cpuidle/cpuidle-qcom-spm.c ? IIUC the issue
-> exists there as well.
->=20
+Thanks !
 
-For qcom-spm driver, it has below code logic to handle no cpu device case, =
-and
-no rollback to cancel the whole cpuidle registration. So I just leave it as=
- it is.
-Do we need to update it?
-
-for_each_possible_cpu(cpu) {
-        ret =3D spm_cpuidle_register(&pdev->dev, cpu);
-        if (ret && ret !=3D -ENODEV) {
-                dev_err(&pdev->dev,
-                        "Cannot register for CPU%d: %d\n", cpu, ret);
-        }
-}
-
-BR
-Jacky Bai
-> --
-> Regards,
-> Sudeep
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
