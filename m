@@ -1,129 +1,117 @@
-Return-Path: <linux-kernel+bounces-550725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E5C6A56351
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:12:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6809A56341
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:09:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79E0D18953D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:13:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DD4E3A807E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695B01E1E14;
-	Fri,  7 Mar 2025 09:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PrZzu2Tm"
-Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 873201E1E11;
+	Fri,  7 Mar 2025 09:09:03 +0000 (UTC)
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22671A8F60;
-	Fri,  7 Mar 2025 09:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E211E1DEA
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741338773; cv=none; b=j7pNuTV3fevLbFvXaD5Z+T7ZkvIDPusKNcUzCxF0TS68mRr4aJASLWnHJjstgN3GeTa004vDywjHjqrYaoBRTRhr/+RTKEj3Y5/ywrF+ZVdMevavEcngEU9w75DjWLFzidSRyAoz6ObQKFFlUbiLqt051uHIigiD+RwK+bSisbg=
+	t=1741338543; cv=none; b=WKYTsFBuj0yOS5BPMYJ2U4NqkhGHcVbXCTvTPSxycMTycWhsnBI9on825zMqonNB8LqIXqyB25mmM8CfvpLeWN10Va8eO8ghlT9uKjE0I3hl7apegBVAGoAXK6DBWBj9V+41rbTVDjntj3haNOGe2n146UJdlSSnGztE1PIqwio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741338773; c=relaxed/simple;
-	bh=SI7/zfo5ZeW1S7cwDCksy4BuoO+WtxO6HWfPQp20Qec=;
-	h=To:Cc:Message-ID:From:Subject:Date; b=A9CiBngo56uWQASA+/BcPgjBZIU/PCsP2SliZdV8KXwIRkuJjajSDHo3fTs2JkEjm04ppl57VkVFIdHoJMtWqJxXRpXHJd2CSJCrh1bvH0EYVSW7CwkKQqWDJ+l8zBnDJNegAwcQBlwQ8kG2H31lm3IxfM1HlHs9qy8hHne0/fM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PrZzu2Tm; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id E6162114010A;
-	Fri,  7 Mar 2025 04:12:49 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Fri, 07 Mar 2025 04:12:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm1; t=1741338769; x=1741425169; bh=hg3PLU/0C0HunaKuqzKlrTLma1Fo
-	k3lK/tApVH6mYfQ=; b=PrZzu2TmVZzHwRZMKfKbOy3jtmB7DIBbdVm7Jsv/BwOp
-	FjXDLjWijBZG65WRlzfKdX7mjWuHZaMNHVVo51d5LLV3gclEK0EfcL6IhYhz7mcb
-	bY1KZ/wC0R4wqZg2HGh+lIgSDHwQ9ygfMznmKB9hAIDjn1ZLssGrvn59IzOZNMOh
-	jfymPWlunWBvmD7i6fhlXeBUoIZ1t3Owfn4YPwEr+2Ek5xnPz2ujN5MD3bmXEd7I
-	79Gf8Cuk/1r4qsr+URN9aZRNsj0JtC5uhg1oc+vx4Zmlcp6Ce+y21ANsoOgM4VSF
-	yKq3FbSHovCbMpX5c0DeCnSI6kF4HluVn9JJqXdSWA==
-X-ME-Sender: <xms:kbjKZ0laZAw_DfXw_Ax4hIsjzEO52Bnwseiuxp_lTgBtPO5Nv2jcTA>
-    <xme:kbjKZz0jGkHdTKwA83nx7E9kubZae_B87dyfPZa3qtcALPU--pfot3YjXxieAw5Ec
-    BUawVDnxsxjBW7KT5k>
-X-ME-Received: <xmr:kbjKZyonZo1gpzJyhz4G7p3KXiJtlvWpqwVvljS-kKdZ3goc_WBdiUtDbOUQDjbXFaiBzJqwrIYUFvnkHaX1RP2D20TlijMULLU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduuddtvdekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepvfevkffhufffsedttdertddttddtnecuhfhr
-    ohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorh
-    hgqeenucggtffrrghtthgvrhhnpefgheduvdegffektdehjeejhfekieelleffgffgjeff
-    hfffueefgefhvdevudegtdenucffohhmrghinhephhgvrggurdhssgenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhu
-    gidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuth
-    dprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthho
-    pehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
-    igqdhmieekkheslhhishhtshdrlhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohep
-    lhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:kbjKZwnVSccfYx3he3o3jtcVXBtcm2thVSsuO5s4g_kZsjLSFSgTuw>
-    <xmx:kbjKZy2PZZ7PJyGMCTuOvfFLc4M8EMtqQPMK1__XSOV79-T5HlqlWw>
-    <xmx:kbjKZ3sAQzQtC8j8bufK7unYyfLDpgUtquNswau4ngPrNqsTtEGsHQ>
-    <xmx:kbjKZ-VH9wCx1M5z1vfAByKu-xJPVNqqwv4pkXy4mk4L4AyjAbQTBQ>
-    <xmx:kbjKZ3zaXrYUoLoP5FKU-TJZwYd3_CdtSvCrplvW5y9l83P8-5YdHu0Q>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 7 Mar 2025 04:12:47 -0500 (EST)
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: stable@vger.kernel.org,
-    linux-m68k@lists.linux-m68k.org,
-    linux-kernel@vger.kernel.org
-Message-ID: <c03e60ce451e4ccdf12830192080be4262b31b89.1741338535.git.fthain@linux-m68k.org>
-From: Finn Thain <fthain@linux-m68k.org>
-Subject: [PATCH] m68k: Fix lost column on framebuffer debug console
-Date: Fri, 07 Mar 2025 20:08:55 +1100
+	s=arc-20240116; t=1741338543; c=relaxed/simple;
+	bh=2jgWG9QbwNaLnCAQWNSdI3o+GvnyRoUpqPGzbjTm2y4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mb82KkLd8TE9OtU3YPdinQWEvGK8G7H6XQKw5Y2u99RYs9/F/xKlvBwL78pC7uMh4dZbkLr4rHXGeBWoss6nvwj3w6wplOI5C05x8SbrR/AJk4PFvdqtfKxr1qp/1+cJ3TVnKsFHQVLN/HU4IiSCnNXbdUbqXARr8nrhAKyiPvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 1F71A43147;
+	Fri,  7 Mar 2025 09:08:56 +0000 (UTC)
+Message-ID: <d76f62d5-b461-4bff-baa7-62d0eabbf2cd@ghiti.fr>
+Date: Fri, 7 Mar 2025 10:08:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [resend PATCH] riscv: fix memory leakage in
+ process_accumulated_relocations
+To: laokz <zhangkai@iscas.ac.cn>, Walmsley <paul.walmsley@sifive.com>,
+ Dabbelt <palmer@dabbelt.com>, Ou <aou@eecs.berkeley.edu>,
+ linux-riscv@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org
+References: <a9058ac757636e4f5160a0bd11abeb3c111fc9a5.camel@iscas.ac.cn>
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <a9058ac757636e4f5160a0bd11abeb3c111fc9a5.camel@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: 0
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduuddtvdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnhepuefffedvleetleetjefhjeehudejteetvedtvddvtdfhieetffelvdffgefgieeinecuffhomhgrihhnpehinhhfrhgruggvrggurdhorhhgnecukfhppeeghedrudeftddrvdefkedrudekfeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeghedrudeftddrvdefkedrudekfedphhgvlhhopegludelvddrudeikedrheehrdduheefngdpmhgrihhlfhhrohhmpegrlhgvgiesghhhihhtihdrfhhrpdhnsggprhgtphhtthhopeeipdhrtghpthhtohepiihhrghnghhkrghisehishgtrghsrdgrtgdrtghnpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehlihhnuhigqdhrihhstghvsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhto
+ heplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: alex@ghiti.fr
 
-When long lines are sent to the debug console on the framebuffer, the
-right-most column is lost. Fix this by subtracting 1 from the column
-count before comparing it with console_struct_cur_column, as the latter
-counts from zero.
+Hi Kai,
 
-Linewrap is handled with a recursive call to console_putc, but this
-alters the console_struct_cur_row global. Store the old value before
-calling console_putc, so the right-most character gets rendered on the
-correct line.
+On 16/11/2024 13:07, laokz wrote:
+> Sorry for last weird email.
+> ---
+>
+> When module relocation is done, process_accumulated_relocations()
+> frees all dynamic allocated memory. rel_head_iter->rel_entry is
+> missed to free that kmemleak might report:
+>
+> unreferenced object 0xffffffd880c5fc40 (size 16):
+>    comm "insmod", pid 1101, jiffies 4295045138
+>    hex dump (first 16 bytes):
+>      e0 c0 f5 87 d8 ff ff ff 60 c5 f5 87 d8 ff ff ff  ........`.......
+>    backtrace (crc d2ecb20c):
+>      [<00000000b01655f6>] kmalloc_trace_noprof+0x268/0x2f6
+>      [<000000006dc0067a>]
+> add_relocation_to_accumulate.constprop.0+0xf2/0x1aa
+>      [<00000000e1b29a36>] apply_relocate_add+0x13c/0x36e
+>      [<000000007543f1fb>] load_module+0x5c6/0x83e
+>      [<00000000abce12e8>] init_module_from_file+0x74/0xaa
+>      [<0000000049413e3d>] idempotent_init_module+0x116/0x22e
+>      [<00000000f9b98b85>] __riscv_sys_finit_module+0x62/0xae
+>
+> Signed-off-by: Kai Zhang <zhangkai@iscas.ac.cn>
+> ---
+>   arch/riscv/kernel/module.c | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/riscv/kernel/module.c b/arch/riscv/kernel/module.c
+> index 1cd461f3d87..f8c3c4b47dc 100644
+> --- a/arch/riscv/kernel/module.c
+> +++ b/arch/riscv/kernel/module.c
+> @@ -643,6 +643,7 @@ process_accumulated_relocations(struct module *me,
+>                          }
+>                          reloc_handlers[curr_type].accumulate_handler(
+>                                  me, location, buffer);
+> +                       kfree(rel_head_iter->rel_entry);
+>                          kfree(rel_head_iter);
+>                  }
+>                  kfree(bucket_iter);
+>
+>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Cc: stable@vger.kernel.org
-Signed-off-by: Finn Thain <fthain@linux-m68k.org>
----
- arch/m68k/kernel/head.S | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/arch/m68k/kernel/head.S b/arch/m68k/kernel/head.S
-index 852255cf60de..9c60047764d0 100644
---- a/arch/m68k/kernel/head.S
-+++ b/arch/m68k/kernel/head.S
-@@ -3583,11 +3583,16 @@ L(console_not_home):
- 	movel	%a0@(Lconsole_struct_cur_column),%d0
- 	addql	#1,%a0@(Lconsole_struct_cur_column)
- 	movel	%a0@(Lconsole_struct_num_columns),%d1
-+	subil	#1,%d1
- 	cmpl	%d1,%d0
- 	jcs	1f
--	console_putc	#'\n'	/* recursion is OK! */
-+	/*	recursion will alter console_struct so load d1 register first */
-+	movel	%a0@(Lconsole_struct_cur_row),%d1
-+	console_putc	#'\n'
-+	jmp	2f
- 1:
- 	movel	%a0@(Lconsole_struct_cur_row),%d1
-+2:
- 
- 	/*
- 	 *	At this point we make a shift in register usage
--- 
-2.45.3
+This patch is not relevant anymore since commit 03f0b548537f ("riscv: 
+module: remove relocation_head rel_entry member allocation") which 
+turned the dynamic allocation of rel_entry into a static allocation.
+
+Thanks anyway Kai, that was a good catch.
+
+Alex
 
 
