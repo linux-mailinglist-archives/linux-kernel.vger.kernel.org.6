@@ -1,262 +1,200 @@
-Return-Path: <linux-kernel+bounces-550876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332DBA5653A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:28:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90029A56545
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:29:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB2A01894BB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:29:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B40D91896123
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24E420E302;
-	Fri,  7 Mar 2025 10:28:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64AD2101B5;
+	Fri,  7 Mar 2025 10:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="MHOvxVkk"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WWbceMNN"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE881B392B
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 10:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F0020C02B
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 10:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741343324; cv=none; b=oIqNwr2UXiTFxxDfKe77oNZw93WDn0r2Ci/KGb4YKV9az5CnvkfSnjAtM5kK7+bQhALRvVBXCp9i4NrzjJ9UWE/UigZqhZsImlmg2s6OkSQ0KziP4vR18ZV3T+zysjEEfrC+ap5/iry1cdVeWGRDR+Svq4xSxbx9KOZNsv+UFAU=
+	t=1741343369; cv=none; b=E9+q9Mk/ewkiGN6I3vyJEkoAjo7cSfqy1ps439ERscFHJdy57xQ8zpcxP7W9U64lWTaL6wJ4UuXjaFoehJwJbc7CmK1u49oSZBKHv6ZbskytNZ7z7nalhbxdbBgtMCm/P8t9qtL1dms2BcdJxLOOaTK4lcroiBmS5jYdLVe2mEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741343324; c=relaxed/simple;
-	bh=zXH71BfDtdTjFlS8jDiAJVkO9AR569+vdz/KAu3ChhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=j2BAgvTnTpk/lfaBL/wgql6XGqfffTRFJI6TdvlwqWzg3KMiYAhWMBZOSL5bFl5Kcgvon3Cmdsl3k6Dcf5dTh678PyPKIqS+M9weynpf9SxggZXyZlrf5+CqUoGLHnHsonuad8ZerjFG+tDBKW3Nr+FMJ88Z1Be5frDjS3+zHmw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=MHOvxVkk; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so10133335e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 02:28:42 -0800 (PST)
+	s=arc-20240116; t=1741343369; c=relaxed/simple;
+	bh=iCQvNvrSUCbnUFJbDtQ5Q+slsxi7yRmUesQiJSr9k0k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bpFmvJe4Y8LZQUdcKRNb6jS5iLBtaVYaclkpsE61fcYvANnbOJYNWMsn602EDGYMjyAPSKM3DLaFMulb/VmKRMKwRbFYBU3RZSMpxFB/JLFidpEmOx3S4Ef/2A0yQ6Ij9C1+dysypkxLjsfPBiSRT6EVc2lSKqpcHiLWTDPiVXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WWbceMNN; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43bcc85ba13so13054955e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 02:29:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1741343320; x=1741948120; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KLOoQkl6hkv1bWsp3aSpxVd+aCFLRfs2J3JgKPuyRtU=;
-        b=MHOvxVkk5O9JOyyyJFbgy2mPzFT2nnurZgPC/qViaASbu06kEa1bTM5Hl86CwAjX2c
-         a/91unDnmK8S1/P+2ox2luz7RDMeDcPEEQr79aZMbeNvVOLNH8pWVZDed4RD8TJPZZP9
-         iMM1gKLLFNf2fmV4Q/J21LX8oa2b2PGDLgaxI=
+        d=linaro.org; s=google; t=1741343364; x=1741948164; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sVCYZLL0PxN2CDTkTr7gzBPm/K6Lr1h5htb1NMheOZQ=;
+        b=WWbceMNNeXOq3bHjDLRsZhWF1tijfQT6XPgxwv9x8U5XqaHrMN/VlqWjwfj7JeDiQ+
+         t7Orj+QpazqS4wEopayopts/IqS8gTDf4wMu3gkDVidLNi70nhMiJIGrJYPMuMaY8PK5
+         ICD+PVpCCh7vvIz2DwmKLUhdO68rF3dddmIjd0DtuTvro+ui5tTE2A/9KhdTJPKjGxUy
+         0GNIra2bmCJYb83d/vkwwIJu6qgB6V/DoOm6XLmZkR+2Tma5uHTpyEKa3ZeLvMrm4E6Z
+         azkCUpk44sgrg57hCPP/NR4/MRjSAKqM6/WNWG6xTmuDRjfICBe8Yd1Usw5bQ2kd3mZi
+         3yhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741343320; x=1741948120;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KLOoQkl6hkv1bWsp3aSpxVd+aCFLRfs2J3JgKPuyRtU=;
-        b=tgnKbuOgYVl5FRHL0ljoqaHQ7uMpR4VkGDHotY4aDcd/7a3IEIfZudkPz5gUd/lYj2
-         m7QVeuGrrbOplw6YEO1FsnhJBYFwUHCItAHr8kS55ZOCOf8NtyjWdbUEXHhMnwvx9S71
-         OWPcrDkK82wivZ6X7qyAJoKgVk12qEwfyb27mP14PDf/qU/WrcPLAV2n0qRbuE7NJgmH
-         QNxl/ETjA8DIyP8KlzsVo5ojZWgy0XKxMWP/v5sVAa1UT7RJkM83iH+1UENZ/JHaMHD7
-         JvnqEHaONCQYG0gzSqywzVCcoIz9yvBtZ8xG2NkMi2EZFMH9hRkNdhEJtEEnIQ1Ua/Pp
-         QJqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5GoSbpCTMPBf2qSQAk5qeTuJ2PXVqXfQc0o14Cn2dKMR/q2SyIJoqFgP2htOibb+0+yhoT29sONS6Lrw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysZpZPKlW7Izn9ccXo3yF95WV7DdiYma3z8ltYMEZulWcvKDpR
-	5x9nxGKUZ/jzoGrIlXXzP61RQD3LZiVKT2C1m+5Bc1RD4nREF5mcbvUbD8GgpOA=
-X-Gm-Gg: ASbGncvNEcMk0ATHir3XZHJKcUpF1WQxOBvzPCH7kNgumUlZd4TXnn17dgUopFMXjmI
-	ScGWObgruR9Eh0wXVKK0d8f4pPyx2J2afsPcWhiAopbIFCApTl0WLomTTUMn+zZ8O8golVR9jsK
-	WLCB2gbcb7abzrKBCXjDMKbSYyIDghWIB1arB10sOJxlaBZG0blSjWuSyEtbTZccKuD657YrSQd
-	dajabG7fHdvFI6Wps2jlIjI/ScZwcoPkxVLsGijPH7y4CSBEzX9lN1lq1IuyXrMZcPnHbG6b1SW
-	uilqHj177d+ApSKf5jsRCSzhbmVxNrL/GX/wW9jqTeKa7lFqTKWbGxsd
-X-Google-Smtp-Source: AGHT+IEXqPg4ntpIBJrKqJUmhFhVvUeMVHQTUghTZcJWrf+11xUWOEGUbhcEz08DJwh4IgeUGuaIlA==
-X-Received: by 2002:a5d:64c5:0:b0:38f:4b15:32f1 with SMTP id ffacd0b85a97d-39132de3ef7mr1902737f8f.54.1741343320431;
-        Fri, 07 Mar 2025 02:28:40 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd93cc2esm46469755e9.30.2025.03.07.02.28.39
+        d=1e100.net; s=20230601; t=1741343364; x=1741948164;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=sVCYZLL0PxN2CDTkTr7gzBPm/K6Lr1h5htb1NMheOZQ=;
+        b=cr6Zi85hAidbpzEHdY9rpo2n0Y5l0dhMlaJSlwSy7yFnoiSJaTNfOwnw5Rmrii8GFk
+         1IAiAdYnAENqmfDgEEvhKvwtFnfL81Vcs/jwhjCjDAvzhHipXsbLXjJmqeUI5icW3xk/
+         rbI+XfDw73Yt19QmvNnkWqOEnWxLUH2iBthQSTCABUIzRcBBCEjZfvn/hWYn8qUpUbjc
+         ZpgXwmS/wKq2+WiTT4z9ZykGB3g+bKkbYkghMiVPm6l3GDX7oqVd+gb1VG4aT1UF35Xt
+         LJVb8vLUq58/PLYS1KUyMb9bwrdxIi9CLWi6M+NVRikuxrX5eTkRo3/kn/eXZQN9B8dY
+         tbxw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/dwQ2EElEzTZmKk4PKDZEjOuOBlrGIR7/YswINwWZ+tyG94NXrKcPyn6wdr1Vlr7K0tT5cklgLjObp7A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzniJnZeJgIMmbzDdsO0qGiDtQfwNkrLYg1+VETfly7B8mkFl4y
+	R1xAXE3AA5cc7HeHk32nUIi6ujtZ+Dq7db5vKuY7iMcgXTySrvWgW94lg2Hgksg=
+X-Gm-Gg: ASbGncvtMmLbvVBrFqId1NWPELzjyVZ7V69gL/PSIGOTxECxXQAhC6jbYEinyYE/wMj
+	qeWBTnLD6oyewCazKnUnD1CL2NjAjhg294t51/XkibPHUddYzz6HHkP4+iWD+99DsaTAcKT11LA
+	t0zTjgohJTldgXaQKoFckBa2HAhrQ7yxV9WGzcHRhgouOOZ/snFlEKeOuSY5/ViN29uzs4PRoo1
+	Jbq+8XnqNJa0KfsvQlvqXCroVdCJfzZ+ZBpak/8yxRr7ZykX75Tq6sbs5lZZ/ocZ41PgX1QQefm
+	GTe5zlzuq7myGsvAg6AZDXtdGtK3QiTVruhC2iUnjE9ULjTFTtvV4evGPxVYGwNKAiF1AZkxgcI
+	=
+X-Google-Smtp-Source: AGHT+IEHa6kUt/xq+dn25f2syNI+XsfPksB/5LtSy2qdICevzWmT3fzjID8iFJtsA0jNgMPQs9MKwQ==
+X-Received: by 2002:a05:600c:1907:b0:439:8e3d:fb58 with SMTP id 5b1f17b1804b1-43c5a5fe368mr24279375e9.11.1741343364442;
+        Fri, 07 Mar 2025 02:29:24 -0800 (PST)
+Received: from gpeter-l.roam.corp.google.com ([145.224.90.122])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd8b0461sm49192955e9.4.2025.03.07.02.29.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 02:28:39 -0800 (PST)
-Date: Fri, 7 Mar 2025 11:28:37 +0100
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	paulmck@kernel.org
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Message-ID: <Z8rKVZolu8n6lB1P@phenom.ffwll.local>
-Mail-Followup-To: Jason Gunthorpe <jgg@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	paulmck@kernel.org
-References: <2025022644-fleshed-petite-a944@gregkh>
- <D82UB3V6NZ55.3OEPPW2W8MFZV@nvidia.com>
- <Z8GViQzZJVFPxfNd@phenom.ffwll.local>
- <20250228184013.GF39591@nvidia.com>
- <Z8cmBWB8rl97-zSG@phenom.ffwll.local>
- <20250304164201.GN133783@nvidia.com>
- <Z8f9mgD4LUJN_dWw@phenom.ffwll.local>
- <20250305151012.GW133783@nvidia.com>
- <Z8l8HgZOV7sDWqBh@phenom.ffwll.local>
- <20250306153236.GE354511@nvidia.com>
+        Fri, 07 Mar 2025 02:29:23 -0800 (PST)
+From: Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH v4 0/4] samsung: pinctrl: Add support for
+ eint_fltcon_offset and filter selection on gs101
+Date: Fri, 07 Mar 2025 10:29:04 +0000
+Message-Id: <20250307-pinctrl-fltcon-suspend-v4-0-2d775e486036@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306153236.GE354511@nvidia.com>
-X-Operating-System: Linux phenom 6.12.11-amd64 
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHDKymcC/4XNTQ6CMBCG4auQrq3pHyCuvIdx0ZYpNCEtabHRE
+ O5uYaPGEJfvl8wzM4oQLER0LmYUINlovcshDgXSvXQdYNvmRoywklBG8GidnsKAzTBp73C8xxF
+ cixnnXFJea9EKlI/HAMY+Nvh6y93bOPnw3P4kuq5/yUQxwVDXDSGKyVMpLoN1MvijDx1azcTeD
+ id012HZkTWAaZQSgqsfh3861a7Ds2MaqYQxlWQCvpxlWV4mkrrwTQEAAA==
+X-Change-ID: 20250120-pinctrl-fltcon-suspend-2333a137c4d4
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ andre.draszik@linaro.org, tudor.ambarus@linaro.org, willmcvicker@google.com, 
+ semen.protsenko@linaro.org, kernel-team@android.com, 
+ jaewon02.kim@samsung.com, Peter Griffin <peter.griffin@linaro.org>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3384;
+ i=peter.griffin@linaro.org; h=from:subject:message-id;
+ bh=iCQvNvrSUCbnUFJbDtQ5Q+slsxi7yRmUesQiJSr9k0k=;
+ b=owEBbQKS/ZANAwAKAc7ouNYCNHK6AcsmYgBnysp59dcFeF8bi+BDvg8zdNdr2JC4aWKtQbXWR
+ 5PLmdsLeZuJAjMEAAEKAB0WIQQO/I5vVXh1DVa1SfzO6LjWAjRyugUCZ8rKeQAKCRDO6LjWAjRy
+ ukQYD/4jJs2HzQEt5K9aXtxfYKahy7nUC8bA/y7SvNveZg0ZB2LiQAzUggdvLpc0sYwaLeDyw+W
+ 7VgDlv9Y43Sq2LQU7DBkrqGiIz9I1zdw2Sa768dJU+t4hicZveHo+0gQi9bYnSGJeqg1cgRZPKb
+ qQ60iLx6KB10oRIxiu9Kf4liE8kQYRxza3T4y5t8t9cwFKhqysbzPBbVKnBlmOXvXtx9eZ5JMPb
+ zPIVMkuD7jpCArp+e20WVkQ8O6qQRfPK/IuRLhLHgNnkdpVYYgnxvqJe5lhKOOgLGCTOjj6HQZm
+ DzZRhFYDgT/WnWDn95tCk3axXfeuh/w8z5CcrUb2VHJWviA+wPQD/tpztLHG2xV8Dkr+3bgqom0
+ Gdi0VtryZafXFJXBpDALq0zfs1HrFG1bFFdeBq0ZdfTId1UAKWuUxaERtmATLfUbrUsjPDr51sq
+ EIyLbqlf3xovS9mbk/S1GOSU2np3dBHBSJJNXRAnRuZ6qy5GyrR3/NIOSzPHZEKidpRFcW635qY
+ gA+bkLlUdDTDCr/zs+taHCtSEJrgZo4GqaSJi2GirQJWd05jVKaW76D4W8VuosrVXfVcmL6Efq+
+ oVX7WvFXD9PVEiXEZRRzp+E9ZYJWgmQV93Hj6xVCZEd7daRmFKMui7rt12WEK+XxXuaTXoRpaib
+ LpLgVdhn6s1UL+Q==
+X-Developer-Key: i=peter.griffin@linaro.org; a=openpgp;
+ fpr=0EFC8E6F5578750D56B549FCCEE8B8D6023472BA
 
-On Thu, Mar 06, 2025 at 11:32:36AM -0400, Jason Gunthorpe wrote:
-> On Thu, Mar 06, 2025 at 11:42:38AM +0100, Simona Vetter wrote:
-> > > Further, I just remembered, (Danilo please notice!) there is another
-> > > related issue here that DMA mappings *may not* outlive remove()
-> > > either. netdev had a bug related to this recently and it was all
-> > > agreed that it is not allowed. The kernel can crash in a couple of
-> > > different ways if you try to do this.
-> > > 
-> > > https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/#m0c7dda0fb5981240879c5ca489176987d688844c
-> > 
-> > Hm for the physical dma I thought disabling pci bust master should put a
-> > stop to all this stuff?
-> 
-> Not in the general case. Many device classes (eg platform) don't have
-> something like "PCI bus master". It is also not always possible to
-> reset a device, even in PCI.
-> 
-> So the way things work today for module reload relies on the driver
-> duing a full quiet down so that the next driver to attach can safely
-> start up the device. Otherwise the next driver flips PCI bus master
-> back on and immediately UAFs memory through rouge DMA.
-> 
-> Relying on PCI Bus master also exposes a weakness we battled with in
-> kexec. When the new driver boots up it has to gain control of the
-> device and stop the DMA before flipping "PCI Bus Master" off. Almost
-> no drivers actually do this, and some HW can't even achieve it without
-> PCI reset (which is not always available). Meaning you end up with a
-> likely UAF flow if you rely on this technique.
+Hi folks,
 
-Yeah this gets really hairy really fast. We might need some pragmatism
-here of not being able to be better than C.
+This series fixes support for correctly saving and restoring fltcon0
+and fltcon1 registers on gs101 for non-alive banks where the fltcon
+register offset is not at a fixed offset (unlike previous SoCs).
+This is done by adding a eint_fltcon_offset and providing GS101
+specific pin macros that take an additional parameter (similar to
+how exynosautov920 handles it's eint_con_offset).
 
-And the entire "load driver after previously the linux driver messed with
-it already" is a very broad issue, from rebinding to module reload to
-kexec. With some hw it's just not possible to do safely, and with a lot
-more hw not reliably due to complexity. E.g. drm/i915/display can take
-over the gpu if outputs are enabled and fully recover hw state into sw
-state. But defacto that only works for configurations the fw/bootloader
-leaves behind, and not in full generality. Plus we don't handle
-misprogrammed hw at all.
+Additionally the SoC specific suspend and resume callbacks are
+re-factored so that each SoC variant has it's own callback containing
+the peculiarities for that SoC.
 
-> > For the sw lifecycle stuff I honestly didn't know that was an issue, I
-> > guess that needs to be adressed in the dma-api wrappers or rust can blow
-> > up in funny ways. C drivers just walk all mappings and shoot them.
-> 
-> I wonder what people will come up with. DMA API is performance path,
-> people are not going to accept pointless overheads there.
-> 
-> IMHO whatever path the DMA API takes the MMIO design should follow
-> it.
+Finally support for filter selection on alive banks is added, this is
+currently only enabled for gs101. The code path can be excercised using
+`echo mem > /sys/power/state`
 
-I think this needs to be subsystem specific, since very often there's
-already data structures to track all mappings, and so easy to add a bit of
-glue to nuke them all forcefully. Or at least data structures to track all
-pending requests, and so again we can enforce that we stall for them all
-to finish.
+regards,
 
-We'll probably end up with rust bindings being a lot more opinionated
-about how a driver should work, which has the risk of going too far into
-the midlayer mistake antipattern. I guess we'll see how that all pans out.
+Peter
 
-> > The trouble is that for real hotunplug, you need all this anyway. Because
-> > when you physically hotunplug the interrupts will be dead, the mmio will
-> > be gone any momem (not just at the beginnning of an rcu revocable
-> > section), so real hotunplug is worse than what we're trying to do here.
-> 
-> There are two kinds of real hotunplug, the friendly kind that we see
-> in physical PCI where you actually plonk a button on the case and wait
-> for the light to go off. Ie it is interactive and safe with the
-> OS. Very similar to module reloading.
-> 
-> And the hostile kind, like in thunderbolt, where it just goes away and
-> dies.
-> 
-> In the server world, other than nvme, we seem to focus on the friendly
-> kind.
+To: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sylwester Nawrocki <s.nawrocki@samsung.com>
+To: Alim Akhtar <alim.akhtar@samsung.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-samsung-soc@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: andre.draszik@linaro.org
+Cc: tudor.ambarus@linaro.org
+Cc: willmcvicker@google.com
+Cc: semen.protsenko@linaro.org
+Cc: kernel-team@android.com
+Cc: jaewon02.kim@samsung.com
 
-Yeah gpus tend to hang out in external enclosures sometimes, so I'm not
-sure we can ignore the hostile kind.
+Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+---
+Changes in v4:
+- save->eint_fltcon1 is an argument to pr_debug(), not readl() change alignment accordingly (Andre)
+- Link to v3: https://lore.kernel.org/r/20250306-pinctrl-fltcon-suspend-v3-0-f9ab4ff6a24e@linaro.org
 
-> > So randomly interrupts not happening is something you need to cope with no
-> > matter what.
-> 
-> Yes
->  
-> > But for a driver unbind you _do_ have to worry about cleanly shutting down
-> > the hardware. For the above reasons and also in general putting hardware
-> > into a well-known (all off usually) state is better for then reloading a
-> > new driver version and binding that. Except that there's no way to tell
-> > whether your ->remove got called for unbinding or hotunplug.
-> 
-> IMHO it doesn't really matter, the driver has to support the most
-> difficult scenario anyhow. The only practical difference is that the
-> MMIO might return -1 to all reads and the interrupts are dead. If you
-> want to detect a gone PCI device then just do a register read and
-> check for -1, which some drivers like mlx5 are doing as part of their
-> resiliency strategy.
-> 
-> > pci device was physically unplugged or not, and so for developer
-> > convenience most pci drivers go with the "cleanly shut down everything"
-> > approach, which is the wrong thing to do for actual hotunplug.
-> 
-> I wouldn't say it is wrong. It is still the correct thing to do, and
-> following down the normal cleanup paths is a good way to ensure the
-> special case doesn't have bugs. The primary difference is you want to
-> understand the device is dead and stop waiting on it faster. Drivers
-> need to consider these things anyhow if they want resiliency against
-> device crashes, PCI link wobbles and so on that don't involve
-> remove().
+Changes in v3:
+- Ensure EXYNOS_FLTCON_DIGITAL bit is cleared (Andre)
+- Make it obvious that exynos_eint_set_filter() is conditional on bank type (Andre)
+- Make it obvious exynos_set_wakeup() is conditional on bank type (Andre)
+- Align style where the '+' is placed first (Andre)
+- Remove unnecessary braces (Andre)
+- Link to v2: https://lore.kernel.org/r/20250301-pinctrl-fltcon-suspend-v2-0-a7eef9bb443b@linaro.org
 
-Might need to revisit that discussion, but Greg didn't like when we asked
-for a pci helper to check whether the device is physically gone (at least
-per the driver model). Hacking that in drivers is doable, but feels icky.
+Changes in v2:
+- Remove eint_flt_selectable bool as it can be deduced from EINT_TYPE_WKUP (Peter)
+- Move filter config register comment to header file (Andre)
+- Rename EXYNOS_FLTCON_DELAY to EXYNOS_FLTCON_ANALOG (Andre)
+- Remove misleading old comment (Andre)
+- Refactor exynos_eint_update_flt_reg() into a loop (Andre)
+- Split refactor of suspend/resume callbacks & gs101 parts into separate patches (Andre)
+- Link to v1: https://lore.kernel.org/r/20250120-pinctrl-fltcon-suspend-v1-0-e77900b2a854@linaro.org
 
-> Regardless, I think the point is clear that the driver author bears
-> alot of responsibility to sequence this stuff correctly as part of
-> their remove() implementation. The idea that Rust can magically make
-> all this safe against UAF or lockups seems incorrect.
+---
+Peter Griffin (4):
+      pinctrl: samsung: add support for eint_fltcon_offset
+      pinctrl: samsung: add dedicated SoC eint suspend/resume callbacks
+      pinctrl: samsung: add gs101 specific eint suspend/resume callbacks
+      pinctrl: samsung: Add filter selection support for alive bank on gs101
 
-Agreed, it's not pure magic. I do think it can help a lot though, or at
-least I'm hoping.
+ drivers/pinctrl/samsung/pinctrl-exynos-arm64.c | 150 ++++++-------
+ drivers/pinctrl/samsung/pinctrl-exynos.c       | 294 +++++++++++++++----------
+ drivers/pinctrl/samsung/pinctrl-exynos.h       |  50 ++++-
+ drivers/pinctrl/samsung/pinctrl-samsung.c      |  12 +-
+ drivers/pinctrl/samsung/pinctrl-samsung.h      |  12 +-
+ 5 files changed, 318 insertions(+), 200 deletions(-)
+---
+base-commit: 0761652a3b3b607787aebc386d412b1d0ae8008c
+change-id: 20250120-pinctrl-fltcon-suspend-2333a137c4d4
 
-> > > Ah.. I guess rust would have to validate the function pointers and the
-> > > THIS_MODULE are consistent at runtime time before handing them off to
-> > > C to prevent this. Seems like a reasonable thing to put under some
-> > > CONFIG_DEBUG, also seems a bit hard to implement perhaps..
-> > 
-> > We should know the .text section of a module, so checking whether a
-> > pointer is within that shouldn't be too hard.
-> 
-> It is legal to pass a pointer to a function in a module that this
-> module is linked to as well. We do that sometimes.. Eg a fops having a
-> simple_xx pointer. So you'd need to do some graph analysis.
-
-Hm right, indirect deps are fine too ...
-
-Cheers, Sima
+Best regards,
 -- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Peter Griffin <peter.griffin@linaro.org>
+
 
