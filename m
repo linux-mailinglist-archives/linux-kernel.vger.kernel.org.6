@@ -1,121 +1,210 @@
-Return-Path: <linux-kernel+bounces-550208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD9B8A55C95
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:03:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B3FA55C9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:05:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0990B7A4E61
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:02:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FF3C1887355
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C5D1519B4;
-	Fri,  7 Mar 2025 01:02:52 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A6913FD72;
+	Fri,  7 Mar 2025 01:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sv3S7TzU"
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBBC14830A;
-	Fri,  7 Mar 2025 01:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3095B28FF;
+	Fri,  7 Mar 2025 01:04:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741309372; cv=none; b=orEootIWYHz5a/IIu4aY+IGBclyQGXNnWdiUp96KnNhyBLjfrsxi3Y1tSEuRWWiIUT53IH9iKpNaJYgk9OoyD5NW3CYrMT+nMvRfrjhGrC8X8hZulGj61bQMP7g/jXnhRx1yLCwLz4o3+zPg7QdzVOHTRGx6ycirXfJ1be2BuSE=
+	t=1741309492; cv=none; b=f4/0rBMk4PX4xev9b2jdc+oB2DSbUpmh4F7BwdrOJwGa+i7jblr1NVDw+VBHbG42ZxOP70BbGJOCVpXjVrVt6ElJHYronf84KgDeJYe22bnGBxEUdfVLAQcT1AdLH+55fmnjssbGbZUC4aM8gVBBR9cryyEHsmXanYpqJVL2V40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741309372; c=relaxed/simple;
-	bh=rHoZRuHrZyKIgwOgWEruuTSdd8F1g/1ItTDHnvwS+cA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=g5hshDa9+vknv3AC1+O7vBNR7S/1s/SZPaVKiFx7lAb+f5EWb3MG/eJTydrCUtjLlEGHYdmQyRD12mJNUERNme44h+gx06hzZoUiIDDxhVS5PYyeZPYyF24ybKAgIXyVcwxq+MTFL2s0sjUQiOyA9XLyWeYAieLoqqK15I3NTVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Z87Jl1bK0zpbX2;
-	Fri,  7 Mar 2025 09:01:11 +0800 (CST)
-Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
-	by mail.maildlp.com (Postfix) with ESMTPS id 88D3E140157;
-	Fri,  7 Mar 2025 09:02:41 +0800 (CST)
-Received: from [10.174.179.80] (10.174.179.80) by
- kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 7 Mar 2025 09:02:40 +0800
-Message-ID: <94ee6407-0d67-48cb-8252-f0fd8c5aa14b@huawei.com>
-Date: Fri, 7 Mar 2025 09:02:39 +0800
+	s=arc-20240116; t=1741309492; c=relaxed/simple;
+	bh=oDrfQqiYXqiLn0JVeuGrsRgK5P6HmYH2KIyp8Qky3l8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cHNTmahksGO40wc4iEY7oN5Nuh4GeIoJue7XxX5aKhU4mqO5FSC2s6klgFxMitY65Dpg0l8hgG69M865hBUEmVAYSbGbOF+3V8+7z1iwPvgOjEZBlHy/3vvqR6qqO9Wq2orIhwgj5GH0Q/IhHrQUY352ErnbOw4KGJHJGqHT9jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sv3S7TzU; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-523dc3649edso384670e0c.0;
+        Thu, 06 Mar 2025 17:04:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741309490; x=1741914290; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FpgNsP0RsTTpLOpERJI2CJLUOC16l+9Hasgl+r3eevc=;
+        b=Sv3S7TzUlpMolCGk33QawcMxtKNbctN5ntahHoTZupguBRmyKStq7LoZt2QxG1WEZA
+         NGJaiqQh1MKp0x+U3F4m9H1klNathg/GU87K1+V2h+lDOzmRabfFiMoZg7ZcQo2hyW4b
+         a+ifR8SauPKW+g4FiuqNFCMUMmojZklMw4edDwWFyhoAapScO4OUw2u1ADS6KV7FHG0Y
+         I0jDTiDqIluyfjW+4dH86UAYdfeZAj+bLSJvJy4+25BRq6UYvMeUul3jltd+8s/oaGLS
+         K5JRIkhFeQCFPmJAttLDA0LBXmMVq+4jTvORlOXWXJiKJTRMvKlde2DSwo3KA1Vzgl3n
+         l8kA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741309490; x=1741914290;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FpgNsP0RsTTpLOpERJI2CJLUOC16l+9Hasgl+r3eevc=;
+        b=F4J2APvnxDvSyYhMX3xITMYmz1cjh911J0ZDMV/1NKqicactEOr7/J2hcdCh4LVKVH
+         iI4hudq7TKlbEG2EI4GnFAZQmV8zA5ANNbQ6/a/6UjC4Qsn+ZevXf+BDF1840bOYH/N/
+         EiEh3ntJE5gjBV6dRjMsHaf7FnmtD2FU8gYM6SAWUHvEvdq154DLQqVa4NWeSLyiIa8l
+         HpbWbNlqzCJNbgvZU9361Nqe7PG1I7cvJb7GuIVLKfwQ93M/z4czv8MAOeStJOGKVxoR
+         3eiVKKYhFTWCdf4Y5Os9HQmjuW4Okg1SV+E7pHNZeGPmHuXZN33MLKK/8O6XDexSxBG+
+         ecWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVjy5NiK5L1+GU5rR9LcgfUuI3O4RrvPe/DrRfu57wlzhIjAA4I42QonR40y6yye9qnNvPI+WxFx342+Q8lmBY=@vger.kernel.org, AJvYcCWHKZjFHCU8NpzAJX5o5SU/l2ipoMn+GKHBKHSaHa7Iu6pkx6HCjT+qvMFmCIHahdGgoK9oSxhxr5s=@vger.kernel.org, AJvYcCWpA/gxY1lwtlvkg2ip3hBjUJoM9kYs+Xtkhgu+jgOH5DKiUGcxsBetcFnFPRubIO1oepoCgOcesdvU@vger.kernel.org, AJvYcCXUW3ZC70C60UtKOCgrRtK2fBrIVWhDN4Gub7/ad4lWNOk9kI3IVguXcPYy9Mp7vDMN8i+u4bxDer68P2mB@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNTKgKKdUg5IxP/sm4mhXq3lOkMWUPpRGtMYjgiXrM0qkktRkR
+	hUo0z46vPWIUJ4anDcLuGeei7i1zrVtbdtXSFGoRRxHy3i+H2Y0CUJlHAGuhd05Qzd7QLmjKL1Z
+	/tYUgIzAy6E9hcTktp44eDP9K2es=
+X-Gm-Gg: ASbGncvWtN2BiuzHsGqFzYKKfYklVna+AJ5oT1oUOhHLoNSihWV2+1tuR+tfd8TubQB
+	C0RcSgBClojC521uWTmMGHYzT3md+3D2fkdD6B6H2AlWoJ1A0YTqJsd3c6rMDSM+nuUzW6MjsLD
+	kRQSjlu478ZZaMpTyD+bxgloA9FODQs5BugmYLWHwFFoX62kMq9lW6JCeJ
+X-Google-Smtp-Source: AGHT+IGbwmafUFC0g3M/wodTSstZb8EnCAH6b9gBxI+jfvUYZxWjuOY7Y5eVL2Cn7rIG2fpCOUE53vdi5hXO2D0kVEU=
+X-Received: by 2002:a05:6122:c86:b0:520:6773:e5bf with SMTP id
+ 71dfb90a1353d-523e3ff02fcmr1565400e0c.1.1741309489887; Thu, 06 Mar 2025
+ 17:04:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] jbd2: remove jbd2_journal_unfile_buffer()
-To: <libaokun@huaweicloud.com>
-CC: <tytso@mit.edu>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
-	<linux-kernel@vger.kernel.org>, <yangerkun@huawei.com>, Baokun Li
-	<libaokun1@huawei.com>, <linux-ext4@vger.kernel.org>
-References: <20250306063240.157884-1-libaokun@huaweicloud.com>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huawei.com>
-In-Reply-To: <20250306063240.157884-1-libaokun@huaweicloud.com>
+References: <20250227030952.2319050-1-alistair@alistair23.me>
+ <20250227030952.2319050-10-alistair@alistair23.me> <2025022717-dictate-cortex-5c05@gregkh>
+ <CAH5fLgiQAdZMUEBsWS0v1M4xX+1Y5mzE3nBHduzzk+rG0ueskg@mail.gmail.com>
+ <2025022752-pureblood-renovator-84a8@gregkh> <CANiq72kS8=1R-0yoGP5wwNT2XKSwofjfvXMk2qLZkO9z_QQzXg@mail.gmail.com>
+ <2025022749-gummy-survivor-c03a@gregkh> <CAKmqyKNei==TWCFASFvBC48g_DsFwncmO=KYH_i9JrpFmeRu+w@mail.gmail.com>
+ <67c8abffd2deb_1a7f294d5@dwillia2-xfh.jf.intel.com.notmuch>
+In-Reply-To: <67c8abffd2deb_1a7f294d5@dwillia2-xfh.jf.intel.com.notmuch>
+From: Alistair Francis <alistair23@gmail.com>
+Date: Fri, 7 Mar 2025 11:04:23 +1000
+X-Gm-Features: AQ5f1JqcTJhjy1IWJHBHvzqfhRy4UX4pT0bM7wOi79bttO_uR-yCHqTUQrbxBnM
+Message-ID: <CAKmqyKORk5n_b2DUDfCVmttE4T+S-LQvcp0NoQD_O7D-csdEvA@mail.gmail.com>
+Subject: Re: [RFC v2 09/20] PCI/CMA: Expose in sysfs whether devices are authenticated
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Alistair Francis <alistair@alistair23.me>, linux-cxl@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lukas@wunner.de, linux-pci@vger.kernel.org, 
+	bhelgaas@google.com, Jonathan.Cameron@huawei.com, 
+	rust-for-linux@vger.kernel.org, akpm@linux-foundation.org, 
+	boqun.feng@gmail.com, bjorn3_gh@protonmail.com, wilfred.mallawa@wdc.com, 
+	ojeda@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu, gary@garyguo.net, 
+	alex.gaynor@gmail.com, benno.lossin@proton.me, 
+	Alistair Francis <alistair.francis@wdc.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemf100017.china.huawei.com (7.202.181.16)
+Content-Transfer-Encoding: quoted-printable
 
-On 2025/3/6 14:32, libaokun@huaweicloud.com wrote:
-> From: Baokun Li <libaokun1@huawei.com>
-> 
-> Since the function jbd2_journal_unfile_buffer() is no longer called
-> anywhere after commit e5a120aeb57f ("jbd2: remove journal_head from
-> descriptor buffers"), so let's remove it.
-> 
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
+On Thu, Mar 6, 2025 at 5:55=E2=80=AFAM Dan Williams <dan.j.williams@intel.c=
+om> wrote:
+>
+> Alistair Francis wrote:
+> > On Fri, Feb 28, 2025 at 5:33=E2=80=AFAM Greg KH <gregkh@linuxfoundation=
+.org> wrote:
+> > >
+> > > On Thu, Feb 27, 2025 at 05:45:02PM +0100, Miguel Ojeda wrote:
+> > > > On Thu, Feb 27, 2025 at 1:01=E2=80=AFPM Greg KH <gregkh@linuxfounda=
+tion.org> wrote:
+> > > > >
+> > > > > Sorry, you are right, it does, and of course it happens (otherwis=
+e how
+> > > > > would bindings work), but for small functions like this, how is t=
+he C
+> > > > > code kept in sync with the rust side?  Where is the .h file that =
+C
+> > > > > should include?
+> >
+> > This I can address with something like Alice mentioned earlier to
+> > ensure the C and Rust functions stay in sync.
+> >
+> > > >
+> > > > What you were probably remembering is that it still needs to be
+> > > > justified, i.e. we don't want to generally/freely start replacing
+> > > > "individual functions" and doing FFI both ways everywhere, i.e. the
+> > > > goal is to build safe abstractions wherever possible.
+> > >
+> > > Ah, ok, that's what I was remembering.
+> > >
+> > > Anyway, the "pass a void blob from C into rust" that this patch is do=
+ing
+> > > feels really odd to me, and hard to verify it is "safe" at a simple
+> > > glance.
+> >
+> > I agree, it's a bit odd. Ideally I would like to use a sysfs binding,
+> > but there isn't one today.
+> >
+> > I had a quick look and a Rust sysfs binding implementation seems like
+> > a lot of work, which I wasn't convinced I wanted to invest in for this
+> > series. This is only a single sysfs attribute and I didn't want to
+> > slow down this series on a whole sysfs Rust implementation.
+> >
+> > If this approach isn't ok for now, I will just drop the sysfs changes
+> > from the series so the SPDM implementation doesn't stall on sysfs
+> > changes. Then come back to the sysfs attributes in the future.
+>
+> This highlights a concern I have about what this means for ongoing
+> collaboration between this native PCI device-authentication (CMA)
+> enabling and the platform TEE Security Manager (TSM) based
+> device-security enabling.
+>
+> First, I think Rust for a security protocol like SPDM makes a lot of
+> sense. However, I have also been anticipating overlap between the ABIs
+> for conveying security collateral like measurements, transcripts, nonces
+> etc between PCI CMA and PCI TSM. I.e. potential opportunities to
+> refactor SPDM core helpers for reuse. A language barrier and an ABI
+> barrier (missing Rust integrations for sysfs and netlink ABIs that were
+> discussed at Plumbers) limits that potential collaboration.
 
-Looks good to me.
+I see your concern, but I'm not sure it's as bad as you think.
 
-Reviewed-by: Zhang Yi <yi.zhang@huawei.com>
+We will need to expose the Rust code to C no matter what. The CMA,
+NVMe, SATA and SAS is all C code, so the Rust library will have a nice
+C style ABI to allow those subsystems to call the code.
 
-> ---
->  fs/jbd2/transaction.c | 15 ---------------
->  include/linux/jbd2.h  |  1 -
->  2 files changed, 16 deletions(-)
-> 
-> diff --git a/fs/jbd2/transaction.c b/fs/jbd2/transaction.c
-> index 9fe17e290c21..2bc14291a0fb 100644
-> --- a/fs/jbd2/transaction.c
-> +++ b/fs/jbd2/transaction.c
-> @@ -2078,21 +2078,6 @@ static void __jbd2_journal_unfile_buffer(struct journal_head *jh)
->  	jh->b_transaction = NULL;
->  }
->  
-> -void jbd2_journal_unfile_buffer(journal_t *journal, struct journal_head *jh)
-> -{
-> -	struct buffer_head *bh = jh2bh(jh);
-> -
-> -	/* Get reference so that buffer cannot be freed before we unlock it */
-> -	get_bh(bh);
-> -	spin_lock(&jh->b_state_lock);
-> -	spin_lock(&journal->j_list_lock);
-> -	__jbd2_journal_unfile_buffer(jh);
-> -	spin_unlock(&journal->j_list_lock);
-> -	spin_unlock(&jh->b_state_lock);
-> -	jbd2_journal_put_journal_head(jh);
-> -	__brelse(bh);
-> -}
-> -
->  /**
->   * jbd2_journal_try_to_free_buffers() - try to free page buffers.
->   * @journal: journal for operation
-> diff --git a/include/linux/jbd2.h b/include/linux/jbd2.h
-> index 82ef232935c0..2205c99beff4 100644
-> --- a/include/linux/jbd2.h
-> +++ b/include/linux/jbd2.h
-> @@ -1401,7 +1401,6 @@ JBD2_FEATURE_INCOMPAT_FUNCS(fast_commit,	FAST_COMMIT)
->   */
->  
->  /* Filing buffers */
-> -extern void jbd2_journal_unfile_buffer(journal_t *, struct journal_head *);
->  extern bool __jbd2_journal_refile_buffer(struct journal_head *);
->  extern void jbd2_journal_refile_buffer(journal_t *, struct journal_head *);
->  extern void __jbd2_journal_file_buffer(struct journal_head *, transaction_t *, int);
+The sysfs issue is mostly because I am trying to write as much of the
+sysfs code in Rust, but there aren't bindings yet.
 
+So if we want to re-use code (such as measurements, transcripts or
+nonces) we just need to expose a C style function in Rust which can
+then can then be used.
+
+So I don't think this really limits code re-use. Obviously there might
+need to be some refactoring to share the code, but that will be true
+of C or Rust code.
+
+>
+> Now if you told me the C SPDM work will continue and the Rust SPDM
+> implementation will follow in behind until this space settles down in a
+> year or so, great. I am not sure it works the other way, drop the C
+
+That was kind of my original plan (see the first RFC), but maintaining
+both, with at least one being out of tree, will be a huge pain and
+prone to breakage.
+
+Also I suspect the Rust implementation will struggle to keep up if the
+C version is merged (and hence has more people looking at it) compared
+to just me working on the Rust code.
+
+> side, when the Rust side is not ready / able to invest in some ABI
+> integrations that C consumers need.
+>
+> Otherwise this thread seems to be suggesting that people like me need to
+> accelerate nascent cross C / Rust refactoring skills, or lean on Rust
+> folks to care about that refactoring work.
+
+I'm happy to help maintain the C / Rust code and help refactor as
+required. The current ABI to this library is all "C style" Rust to
+keep it simple and easily compatible with the out of tree C SPDM
+implementation and callers of the code.
+
+So hopefully it doesn't require much Rust knowledge to refactor the ABI.
+
+This is the type of feedback that I wanted to get though. Before this
+goes too far is it something that is going to be accepted upstream?
+
+Alistair
 
