@@ -1,162 +1,163 @@
-Return-Path: <linux-kernel+bounces-551253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F427A56A1F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:16:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B766A56A22
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:16:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C5D1177F97
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:15:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 532FD178B2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC6321B918;
-	Fri,  7 Mar 2025 14:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3A0E4642D;
+	Fri,  7 Mar 2025 14:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AJb37XvP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hd9xcTAo"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07CB821ABDB;
-	Fri,  7 Mar 2025 14:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55EEC21ABAC;
+	Fri,  7 Mar 2025 14:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741356941; cv=none; b=Z+PJPyg8dIgb5DMNZTR26zcsBIzdUlnWQ20lrbDN/fU78RhpQqnWxriy5NfciDK3tHuMSgBjoc7tjHXVP+YXORH4NStvXxuM0yceAg7Vx4Om3iv0B8+CxfRrbu/Nu+N6Olq4VwWvobPEi5Lm4KHUlQG8O7VZd5qqIQhZRvw8mcQ=
+	t=1741356955; cv=none; b=C0tEDs6F1SZ0TcxeiWYjHQQDPu70H5RiSUqhxGw05tFNHqzD3xxqDkmnL4rwuIwXPv3GaIIl192OiO492U/ygCA2ORDUAk63rPBvk6r/b+hC4DBMMIqJzto3V2urXK7rI3AcK1T2OXNb9mnPMI/uFoRVp3SY4rFMMzeaqW3wWog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741356941; c=relaxed/simple;
-	bh=h61k6iv//Zq/ZiRsDE9u6tLjb5WeXniiaN02btlUD2U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IknvDQqN6GG8Znd7b6hwScYTDZqo0xVgZtsK+30HC6RNrfBRc6V7fLPHYL3RojYjvk8FL69X10mT02BeXnfK78BBhUD3vMwijThDYxJd8z8kbTH2Ur48SkmjcbR0cNdNT6bHY/lYS4AnT4t4GAJ/unvN/SiiHNb0uQPYu8pvrzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AJb37XvP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 881A3C4CED1;
-	Fri,  7 Mar 2025 14:15:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741356940;
-	bh=h61k6iv//Zq/ZiRsDE9u6tLjb5WeXniiaN02btlUD2U=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AJb37XvPU3wdQoVVWHPVreIILAwibReo4M/jbFBbR45E2bebdUuCbB2DDamtnlebE
-	 I53q5syHy1k8OHjPbjknGJ6Zt3EgL10DZH/zay6k0KfCytik+ainPyWdYfDX8Bu/lK
-	 Qng4H9KJbi4hB+wN8ONHHZrv4rtonxbF7nFda2+OFRiehBmfO+q1hrXNdlojvPb76d
-	 FQXsSnjdSoZYdkQx1/MjaUj+HCz6VzdHcP9R0yiNbOtUJKInQxfTbkGLdEsO5sOefN
-	 swaBT6AzGGl4myNWln4fgQ5ngnUKAE5oTiz1htR5MmVvuYvXrO1dIx+h9KauO/r2nV
-	 i6oekSjyY+imA==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5497e7bf2e0so2053456e87.3;
-        Fri, 07 Mar 2025 06:15:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCULiTwpaqUC1q3OP7O6BteZNgGPhqpVJxGSXrK4hTa8BoJRSGUpxv8+5VameMgCMV9GhyrqyQWUa4kF7bpl@vger.kernel.org, AJvYcCXh6ssMUcHgJ1SyCrbp3mSk0c7X1Yaq9VFlg8quXWfGVdEB48lEM1XahekyS/Ssy9NaPf58NrvTjWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8oD/RI4hXuUxWIavVrKxMmw+g3Vg6GamSN2qZ79g71bNSsKN7
-	+giXcSZWdoMb3UgEQM0xnapaDaFDJ0s62ZY0nkMgnQlJvHFqQInlGzPNOvQz4YwK4gdqecb3sYk
-	VnR7ZIXKgK0occy+2U+B7/0+2FhE=
-X-Google-Smtp-Source: AGHT+IFOCmV4u3elWhaWSptdZbc8TD2xpzUa5YLcS6kt+CsHvdflAstlrsL3ORK9es0Vok4WkYXlvC9tg9iRlt5Z9d8=
-X-Received: by 2002:a05:6512:3d0b:b0:546:2a27:ec35 with SMTP id
- 2adb3069b0e04-54990eaaecfmr1416220e87.37.1741356938883; Fri, 07 Mar 2025
- 06:15:38 -0800 (PST)
+	s=arc-20240116; t=1741356955; c=relaxed/simple;
+	bh=taP3F99W38M9kOmq3WxGykgtM2k764o1KKtTPDuFYV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XL3YoXqTXWWykz7p0TgIJriEyzpp9QoZREMZEJU06k9YnlBR49jsgb5puH5T++7et9fiUnVxPkEweviddcMt8FYpEbuIw0Gv492RrPchwdq5SFsrSIyYfVryzi9qAIJ2KIovYdJKpi3Y6rD1i3y8bRW52X6k7G0sXmY4Qn5w+W0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hd9xcTAo; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43bc6a6aaf7so14810025e9.2;
+        Fri, 07 Mar 2025 06:15:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741356951; x=1741961751; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=kFwKmzBhAxlpLaATkDCjvlsMFFHGTZg+V5EA1F4aNnw=;
+        b=Hd9xcTAoga5Fn636t00mkP+Xpff9ItuZ6+LoQs6zX68nAba9u0hKsYfo0PZm+Gov6W
+         S9q38Yo2t2+v1UcqBlbDLa4CXPDrkfZKCHWHuCeIqhFzEbYG/u0KhjPqG97Jw+rbMRcP
+         aTggIjXse9XLpUbsY43VO9p/6GWCCFijUEOHVcEeyMdeEdWvAi23kbyilFl3KKDNuTHS
+         INwnV0BCZeutx3KaCy8JgAaOknuoXZGfE3nfv47OwZo+xzFrInF2n0oJaJczufldDFQZ
+         8uocFDvPLzsUw30icorFaK7GfKa2ITZXgIL9xzvDx3qg/6k80mKFvQlD2KDTgrocNvri
+         UH3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741356951; x=1741961751;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kFwKmzBhAxlpLaATkDCjvlsMFFHGTZg+V5EA1F4aNnw=;
+        b=AbP7J7jYFYcJjpl7yPAgEY4N4y1yUaztC1o/6HpcCEHh5nc8cDOpvNGUcCAJGwz4NU
+         b86KQzfbMond490q8KS4P/9Mlw64VNBAP2oEeeFKsPSdBnE/fIOzBMnhjDhA2wpq4JBR
+         ehSMu9e3jNnTM1AXvkdwNbcUjbgI8hbztK2nknE9Rs5YCFpyzejA9DTyr8GVO/kcyazO
+         SYkex85vwYlwcNM3ORjx/N2EgpALNGGr/y8Ir4GQmHi7h1xkKogxkGOrUXADQpfJhXfA
+         E9nCvLAJnYKU4sdlVYul5H4O49jm/ZclsmAC3Fm3Bpjviofb6jOuZK3nMbHAGOavrNHi
+         e6gg==
+X-Forwarded-Encrypted: i=1; AJvYcCVn3d/HUKLxOS+T1RMSN8k48Dh6vHxyulU7699GaUAZpFN1hk4jYFFcom5mbl/kvc79+CQPkgW4TdqyYtLx@vger.kernel.org, AJvYcCWQuthK10kN7KaKxuUATubkpzw9VaWbgD60psvZsa3Z93M0Xm0+XhIDX34FPImUflm4r77nIw==@vger.kernel.org, AJvYcCXMXOgP75a7npwGuqpYhdCByy3QHKCe0WJCwNTXdGkpT2YaESDq4dQatLcWfzz55L9uRyO/JLXOptWXGrPVqg3cj0/4lzDj@vger.kernel.org
+X-Gm-Message-State: AOJu0YztgE9HQKX2PVJ1DbCpPfZ5+Q0CLH+ElY9Zet7LyIOXPO8Sakxv
+	JukbX8zX32NFWiOtDccOwmwx8jF+R4UzkcVJZE2VANw0w5mfrBUT/t1bGMjI
+X-Gm-Gg: ASbGncv6RUS813ckTGNB0NxJ4sy6wV1jEjbXyjkZZ3gq1rk0nxNkSnlO+W2K0l8ztse
+	B8d0EjW9Efp2s11cWL/W1Pvlg7QiB9xIdU4D+WbetwCiKY6FdzcFWpqFQSOXo3GIplX7DNSIpqp
+	MsdnnfNDVHj52ReRByK6ZBTCpuxyBwssYADApdds/6p2f9O9UZ+wotrPNq+CgUUxAgwa8i1ArZl
+	gzzbC1zVLL4k/X4xi02YiF6q2B5zafq/JHokRBAWs+EBdFxWC7tInFmVKcC4vu7QKijzUOVE6lR
+	JHfd9QniyLJRaDFJKTGxC0OD38ms3bl9XZL/sY2st5uWzg==
+X-Google-Smtp-Source: AGHT+IEeQbp0KPTtaRkHZdgqyWieJ4Lpbt+72nb/jjZnESc+t/wQXHMLHCm49p2mTJWtWxtSzfV9sg==
+X-Received: by 2002:a05:600c:548c:b0:439:8bc3:a697 with SMTP id 5b1f17b1804b1-43c5a5e4f54mr26703145e9.4.1741356951169;
+        Fri, 07 Mar 2025 06:15:51 -0800 (PST)
+Received: from localhost ([2a00:79e1:abd:a201:48ff:95d2:7dab:ae81])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0193bfsm5536881f8f.55.2025.03.07.06.15.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 06:15:50 -0800 (PST)
+Date: Fri, 7 Mar 2025 15:15:44 +0100
+From: =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To: =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc: Eric Paris <eparis@redhat.com>, Paul Moore <paul@paul-moore.com>,
+	=?iso-8859-1?Q?G=FCnther?= Noack <gnoack@google.com>,
+	"Serge E . Hallyn" <serge@hallyn.com>,
+	Ben Scarlato <akhna@google.com>,
+	Casey Schaufler <casey@schaufler-ca.com>,
+	Charles Zaffery <czaffery@roblox.com>,
+	Daniel Burgener <dburgener@linux.microsoft.com>,
+	Francis Laniel <flaniel@linux.microsoft.com>,
+	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>,
+	Jeff Xu <jeffxu@google.com>,
+	Jorge Lucangeli Obes <jorgelo@google.com>,
+	Kees Cook <kees@kernel.org>,
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+	Matt Bobrowski <mattbobrowski@google.com>,
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>,
+	Phil Sutter <phil@nwl.cc>,
+	Praveen K Paladugu <prapal@linux.microsoft.com>,
+	Robert Salvet <robert.salvet@roblox.com>,
+	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>,
+	Tahera Fahimi <fahimitahera@gmail.com>,
+	Tyler Hicks <code@tyhicks.com>, audit@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Subject: Re: [PATCH v5 02/24] landlock: Add unique ID generator
+Message-ID: <20250307.db38587e80e7@gnoack.org>
+References: <20250131163059.1139617-1-mic@digikod.net>
+ <20250131163059.1139617-3-mic@digikod.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305101744.1706803-1-vkuznets@redhat.com> <CAMj1kXF-c46Bdw_cmLK-TckxukefqkpAYkOhg3jzfvW6YucDog@mail.gmail.com>
- <63vy4xc4mpm5tttdqz5vfzwyriqlminjdiffrbuamxcubmpuur@nxszi7xzxa6a>
-In-Reply-To: <63vy4xc4mpm5tttdqz5vfzwyriqlminjdiffrbuamxcubmpuur@nxszi7xzxa6a>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 7 Mar 2025 15:15:27 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHQydeGHTa3Jd-ZByMntdqRp4f74ow6Uc0GLwjmejCSbw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jr86TiXszKmQrasOXuWsCUEnbIZThXAX6w_l2bc7xQGjQHKKDN-H-fN1BE
-Message-ID: <CAMj1kXHQydeGHTa3Jd-ZByMntdqRp4f74ow6Uc0GLwjmejCSbw@mail.gmail.com>
-Subject: Re: [PATCH RFC] x86/efi: Add a mechanism for embedding SBAT section
-To: Gerd Hoffmann <kraxel@redhat.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, x86@kernel.org, linux-efi@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Peter Jones <pjones@redhat.com>, Daniel Berrange <berrange@redhat.com>, 
-	Emanuele Giuseppe Esposito <eesposit@redhat.com>, Greg KH <gregkh@linuxfoundation.org>, 
-	Luca Boccassi <bluca@debian.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Matthew Garrett <mjg59@srcf.ucam.org>, 
-	James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Eric Snowberg <eric.snowberg@oracle.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250131163059.1139617-3-mic@digikod.net>
 
-On Fri, 7 Mar 2025 at 14:29, Gerd Hoffmann <kraxel@redhat.com> wrote:
->
->   Hi,
->
-> > > This patch suggests a different approach: instead of defining SBAT
-> > > information, provide a mechanism for downstream kernel builders (distros)
-> > > to include their own SBAT data.
-> >
-> > Why does this require a mechanism in the upstream kernel at all?
->
-> To avoid every distro re-inventing the wheel?
->
+On Fri, Jan 31, 2025 at 05:30:37PM +0100, Mickaël Salaün wrote:
+> --- /dev/null
+> +++ b/security/landlock/id.c
+> +static atomic64_t next_id = ATOMIC64_INIT(COUNTER_PRE_INIT);
+> +
+> +static void __init init_id(atomic64_t *const counter, const u32 random_32bits)
+> +{
+> +	u64 init;
+> +
+> +	/*
+> +	 * Ensures sure 64-bit values are always used by user space (or may
+> +	 * fail with -EOVERFLOW), and makes this testable.
+> +	 */
+> +	init = 1ULL << 32;
+> +
+> +	/*
+> +	 * Makes a large (2^32) boot-time value to limit ID collision in logs
+> +	 * from different boots, and to limit info leak about the number of
+> +	 * initially (relative to the reader) created elements (e.g. domains).
+> +	 */
+> +	init += random_32bits;
+> +
+> +	/* Sets first or ignores.  This will be the first ID. */
+> +	atomic64_cmpxchg(counter, COUNTER_PRE_INIT, init);
 
-Fair enough.
-
-> > > - CRC32 must be at the end of the file.
-> >
-> > We never cared about the CRC32 before with signed EFI images, which
-> > gets clobbered when the image is signed. Why should we start caring
-> > about it now?
->
-> I have some blurry memories on having seen this crc32 discussion
-> before ...
->
-> The crc32 is not clobbered.  The signature is simply appended and
-> wouldn't overwrite the crc32.  But if software expects to find that
-> crc32 in the last four bytes of the file then yes, that assumption does
-> not hold any more for signed kernel binaries.
->
-
-The crc32 is a CRC over the entire bzImage. Whether or not it lives at
-the end is irrelevant, as signing the bzImage will necessarily [*]
-break the CRC, and subsequently regenerating the CRC will invalidate
-the signature. (The CRC lives at the end because that is the easiest
-way to generate an image whose checksum including the CRC itself is
-~0. However, there are also other ways to achieve this)
-
-> Who uses that crc32 and how?  If it is useless anyway, can we just drop
-> it upstream?
->
-
-I tried but hpa objected to that. [0]
-
-> > Please don't create a special case for x86 again - iff this needs to
-> > be in upstream (which I am not convinced about) it needs to be
-> > implemented for all architectures.
->
-> Well, x86 *is* the special case.  Everybody else just uses zboot.
->
-> But, yes, when this RfC patch discussion comes to the conclusion that
-> this is useful to have upstream the plan is to do this for zboot too
-> so all architectures are covered.
->
-
-Good.
-
-> > So I'd like to understand better what is preventing you from appending
-> > a PE/COFF section on an arbitrary bzImage (or EFI zboot image).
->
-> Well, assuming it is safe to ignore the crc32 as per above discussion
-> then nothing really.  It should be possible to do this as part of the
-> signing process instead.  That leaves the "not re-inventing the wheel"
-> aspect of this on the table.
->
-
-[*] While it is feasible to generate an image that checksums to ~0 and
-is signed for UEFI secure boot (details in [0]), I seriously doubt
-that we should bother. Not even hpa's own bootloader 'syslinux' cares
-about the CRC-32, and given that all signed distro kernels that have
-been in circulation since they started signing them have corrupted
-CRCs, there is really no need to start caring about that now.
-
-If there is a need to maintain this upstream, we can host the tools
-but I don't see a reason to integrate this with the bzImage build as
-this patch proposes.
+It feels like this should always need to succeed.  Or to say it the
+other way around: If this cmpxchg were to fail, the guarantees from
+your commit message would be broken.  Maybe it would be worth handling
+that error case in a more direct way?
 
 
+> +static void __init test_init_once(struct kunit *const test)
+> +{
+> +	const u64 first_init = 1ULL + U32_MAX;
+> +	atomic64_t counter = ATOMIC64_INIT(COUNTER_PRE_INIT);
+> +
+> +	init_id(&counter, 0);
+> +	KUNIT_EXPECT_EQ(test, atomic64_read(&counter), first_init);
+> +
+> +	init_id(&counter, ~0);
+> +	KUNIT_EXPECT_EQ(test, atomic64_read(&counter), first_init);
 
+Maybe we can annotate this with an explanatory message,
+to make it slightly clearer that this is the point of the test:
 
+KUNIT_EXPECT_EQ_MSG(test, atomic64_read(&counter), first_init,
+    "should still have the same value after the subsequent init_id()");
 
-[0] https://lore.kernel.org/all/20230818134422.380032-1-ardb@kernel.org/T/#m3d3c7b62045072090c49706295a1fc9aa6a5e349
+–Günther
 
