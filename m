@@ -1,115 +1,189 @@
-Return-Path: <linux-kernel+bounces-550255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E83DEA55D30
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:38:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 414D2A55D34
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:39:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 667A216B5C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:38:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 450E33B3FF2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:39:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38496154BFE;
-	Fri,  7 Mar 2025 01:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="GCXGxNzx"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90458156677;
+	Fri,  7 Mar 2025 01:39:02 +0000 (UTC)
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazon11020107.outbound.protection.outlook.com [52.101.128.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0A1118027
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 01:38:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741311494; cv=none; b=rS47iPf2B+6w3Is/pkU0PMwafQqXkwTroHV2HqhrUHAok7uGwOjym6RmGO0VkUsc1MI42aYIJpTU+IPFj72ph7TmmWcGEx2k/zEL6hesuGbPk9ZIVjmzvdOJQv5MNx79CldDgIm2WSZig+W0AC+loKqFWVvdS9JSwHThyd5KgvY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741311494; c=relaxed/simple;
-	bh=94x6A3Zw3yyTFfdg3nqgD7OHEUHUN1gOM78nrJlzxXY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZxbjCQM71E9rVsPErfA1+ZQe7NHMj51GoDAt7sMJW4Y/Bj0qSRqydw+yLFiPi+zKHF1BFKp0grHwDs3zl/nZ9EQEL63/FlFg3dLKXxN2uX+f4VRRASVkmr+V3qOXUqT6dTPT1WsFYrFE7MUJyGR2oQRyDSH+JqWC2I8Sf0nDlKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=GCXGxNzx; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-474eca99f9bso17327291cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 17:38:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1741311491; x=1741916291; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hnkwGAXDjAZ/3Sv4OxDh6yiqEm9a+SObOYwqvIotnsc=;
-        b=GCXGxNzx7ELcNrcy+hDbctxnabuLL77Ia/w2gYQjQDTBQ0FJoxsCBm6UGhc3AR+FKX
-         azfrABLGqhf4vzRfHsxt7ZO6decQknD0fYCTJLslEX0yME/6pGEFkbuiKJIytUHFwBof
-         aIbyA/OxOqqvIZ+S4pXJ0X7Hv2Xzs26Jb078vNV1noIY5YTGCE2dK9SMnlw3ODyf7+b5
-         4cCaBXZC0Qi3JIBqPIWk29/hHldNrdx8ZGQyoefiey6dM66XhAX4kXxo91l5h5y03W3n
-         vxRXIGt5fe11VGQahjggMCBERDz5Fyn4Slhxr6Wj7shGkGmUS91lfd/7zqunw+G0reTg
-         +7dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741311491; x=1741916291;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hnkwGAXDjAZ/3Sv4OxDh6yiqEm9a+SObOYwqvIotnsc=;
-        b=PI2ybGcq3NmWGwoh0LuLbeqfswwKv8KlAvmsekZyM06Cmq7J6/81uZPuiP/dSEikKv
-         3nKdr0z2L+x4BAGNKHEYSVorr65kRRf8lFxNttMFQLhmHA5u+2mG44Z4Hq92nnR7a4bG
-         qJgs7V21DOP2bmo1oMTuOUgtjaEFQyeU0iAbyIhbJzgIp+yqCSpU7WyOWbqsqqTMG21K
-         TegvydwSnhVF8Fqzvi6gSQdAxe2RqyTjsQloH7bBiIE0IYcG3mqdzRkm8vVF/CTeARji
-         fB9Agfw9RzdvhFn5v4LTpVKTi90C1Kny99Xx9FYBXqC0rRcSKvmvbQsgwDHtByMfTxBl
-         GOdA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpJB2WfbSEiESU9tvf91LfE91pypJeEZcUsfxts6BZ11pmU+43rH5aThgh2K9koHBwsAS7bGvsbYUUw8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg3J6EY01WSKYzdpvPMBHrYinf3ujWQ8/bW/0pyOdpIIlM+Tv1
-	OaFa0IN2DCXk1yxAvdD9iSbuM3dGYdyGEUUErWH9718r40Z+E0RapiCfdv/JXXc=
-X-Gm-Gg: ASbGncvyI7/skABJmFYG3SX0l9D6aANTMrPd+E31eweGd69W1Bntn55ZmISIWDwSxWy
-	e8cdHaf8dcppff5jbWGCf2aNEXIRqqMlVSqJ8NQwdI2SVjMG/LxKpbOYmmy3YN6Ddx/ccyeOy3k
-	/kZCZoIxtWmmQZ3VPiLq3VFWOb9ICWdgeJ6wGCfbJycQq1Dttdgo+6/S2/M//I/fr5p62XduoYD
-	bpSfbfS2M2FIX0cdtiq4EABgj16DD8jxs2AblALWmXZbJPnuXZAWw9FFQRZjeLnH2uS73Q6NdaM
-	wthI27b7e2JA31UAthvsebpFd1Bj6L8VrZRrNgyanTs=
-X-Google-Smtp-Source: AGHT+IEtJlC54ZdJ22zSGj3d/VEVRbhunui5bPlFtWGfHB7hXm1qfRGaLDRqCGuEB7XXlk8lmGoUUg==
-X-Received: by 2002:a05:622a:34a:b0:474:f1b5:519c with SMTP id d75a77b69052e-47611959438mr18239461cf.32.1741311491506;
-        Thu, 06 Mar 2025 17:38:11 -0800 (PST)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-4751db2f139sm13981901cf.51.2025.03.06.17.38.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 17:38:10 -0800 (PST)
-Date: Thu, 6 Mar 2025 20:38:09 -0500
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Nhat Pham <nphamcs@gmail.com>
-Cc: akpm@linux-foundation.org, yosryahmed@google.com, yosry.ahmed@linux.dev,
-	chengming.zhou@linux.dev, linux-mm@kvack.org, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] page_io: return proper error codes for
- swap_read_folio_zeromap()
-Message-ID: <20250307013809.GB423735@cmpxchg.org>
-References: <20250306230015.1456794-1-nphamcs@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB366BB5B;
+	Fri,  7 Mar 2025 01:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.128.107
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741311542; cv=fail; b=TiTSEdW+M2bl2uyzc6ktphRUkriFQuhs9LLeK7Nhy0vy7SgonDoAG+wcertPmzFTb3qLXEsJ+ojnp6CACFtScw8J0QepRVe2Aau921/6JiJl/z0zfx/yqynSzYkzRNsaylbjHIPeFKBuHUgpNubKAw49YlUUls7yOWNzpJLEE9c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741311542; c=relaxed/simple;
+	bh=OlgnnvVLSrBdYIMfMPZu9/VSgGBE8hfHNG02grXtGco=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W3eqgBwShzMHaQ7SJnZVIbdJKtSWMiFyR7pvr87LMQAG1VxT+YMlD75SYwQIzGkx9N3zU59Bncq7mtthW+fP7gPqSKQu9onaG8nGephFFmCoRMkeO1i/3RfqaTy6fqYtOoikD/fk/cN+2L/ow0MMJjlim5CCtAXVgFyKGFmb7rs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com; spf=pass smtp.mailfrom=cixtech.com; arc=fail smtp.client-ip=52.101.128.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cixtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cixtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=qGKbCQMhGlGKls5xx+kRW6dLLgnAWyIHvz6ZUQWqg2A2aYo1G/jXLmiYcVjdnZJ+N2hr0ay6+JWxlhM28krlUTY7TKad2eFoNnY+7eirKfy3yaDmbXbslv8OrL2E0jjvlMlI2UjGtxGvjQZaT5mwbNSTy4z9uoz/mDLNNAMFp59ySd5Yz1XCkDNhIHxs6cO9BNV9990h8CUM64dwwOJ01UF60o+PqFtLp8jT0acqPNCWE6TTAO9bUfnLLpRHfavOOYSxgK1JtyQF+ZurBsFACVBFAW3G7rgm8SFj30sf1PNTGhG/PthiUVCrnAuROKrjN2u0NE3JeaGvzcnqmj3Yuw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i2Wxt2mnFkmkvbXAz0aLM5OWBdfHQFjCuUkO1Fq67wA=;
+ b=OalU62QD9mqi9IifMr1c6wSnuB4EjVQL+LgZSwzHyr93xBX8YZvDlqWni8c1BEBncXOOoB29SJtU4uN+1I+wjnrefCex4BO1TXUBJxQnTRExhz26sY7L+XLFffjxGJzxcqwLmjyPnQljW+78DVx2cAP+4z8ocNOzJV7+Jabx2QSmUGp/pvofb/xixpESY1H/gMvaSH6Sog4cDdr5luw949kKEj6OoQPZPwTOhUQjdaciMSOGrJXjJDnZ1rOQoVY0mI7S4Ni6udN85djKd+9RZ/IuKI2KEZ+38sbkcNGhTv4O3fv07LXUciNjyQwaj/Op6Rs8+BuebDG9pDf+ywKONQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 222.71.101.198) smtp.rcpttodomain=cixtech.com smtp.mailfrom=cixtech.com;
+ dmarc=bestguesspass action=none header.from=cixtech.com; dkim=none (message
+ not signed); arc=none (0)
+Received: from SGBP274CA0022.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::34) by
+ JH0PR06MB7032.apcprd06.prod.outlook.com (2603:1096:990:70::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8511.17; Fri, 7 Mar 2025 01:38:54 +0000
+Received: from SG1PEPF000082E6.apcprd02.prod.outlook.com
+ (2603:1096:4:b0:cafe::8d) by SGBP274CA0022.outlook.office365.com
+ (2603:1096:4:b0::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.19 via Frontend Transport; Fri,
+ 7 Mar 2025 01:38:54 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 222.71.101.198)
+ smtp.mailfrom=cixtech.com; dkim=none (message not signed)
+ header.d=none;dmarc=bestguesspass action=none header.from=cixtech.com;
+Received-SPF: Pass (protection.outlook.com: domain of cixtech.com designates
+ 222.71.101.198 as permitted sender) receiver=protection.outlook.com;
+ client-ip=222.71.101.198; helo=smtprelay.cixcomputing.com; pr=C
+Received: from smtprelay.cixcomputing.com (222.71.101.198) by
+ SG1PEPF000082E6.mail.protection.outlook.com (10.167.240.9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8511.15 via Frontend Transport; Fri, 7 Mar 2025 01:38:53 +0000
+Received: from [172.16.64.208] (unknown [172.16.64.208])
+	by smtprelay.cixcomputing.com (Postfix) with ESMTPSA id C8AA24160CA0;
+	Fri,  7 Mar 2025 09:38:52 +0800 (CST)
+Message-ID: <79869ce4-c0d5-4b20-ad79-7b6244602d13@cixtech.com>
+Date: Fri, 7 Mar 2025 09:38:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306230015.1456794-1-nphamcs@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI: Add PCI quirk to disable L0s ASPM state for RTL8125
+ 2.5GbE Controller
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: bhelgaas@google.com, cix-kernel-upstream@cixtech.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Peter Chen <peter.chen@cixtech.com>, ChunHao Lin <hau@realtek.com>,
+ Heiner Kallweit <hkallweit1@gmail.com>, nic_swsd@realtek.com,
+ netdev@vger.kernel.org
+References: <20250306162842.GA344204@bhelgaas>
+Content-Language: en-US
+From: "hans.zhang" <hans.zhang@cixtech.com>
+In-Reply-To: <20250306162842.GA344204@bhelgaas>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SG1PEPF000082E6:EE_|JH0PR06MB7032:EE_
+X-MS-Office365-Filtering-Correlation-Id: ff3c992f-d846-4ea0-bde4-08dd5d18d1bb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Nk9lT2RDblViU1JKdUs2ZUhEM2FJOGltRmZvQXlBMVQ0QVNnbmVFcVM4RTlK?=
+ =?utf-8?B?QkkxNVlxTDh1aWk1QW05ZXdZQUhmZGZXUXRSRGxmVmNLemVTQUJ0TXNHVnpy?=
+ =?utf-8?B?QU83SG9mRjR6dkpmTWY0aDhZSU9uMjk0c3M2Vmg4aDZVR2JhbXYrazlWY016?=
+ =?utf-8?B?UVkwM0lMR29PTUpMTFcxdnNYeVduV2lObmlsdzRBWFVnMnl6bmI2TTZzMnB3?=
+ =?utf-8?B?OFJ3M0lKVmlYS2prdGFMaThYWFdJNDU2U2pUV0dyY2hNbjY3dEhoSTVBTXFi?=
+ =?utf-8?B?akxTeFQ3eEwvdjNzUjZ4UFhJRWlXcFMzTk91ay9odDViSDQxNFFoUjZJQURw?=
+ =?utf-8?B?aS9mL3pZR3pBRGJscmg3WkNQUVVYNWpncTQ1WmlFVzNldU91eWtlaXk3SEtp?=
+ =?utf-8?B?RXFVZHdLS3l3eCtSNTFZYi8wbkNaOTNlaVhjYXB0NFE0dzRqbGN3ejJzb3dP?=
+ =?utf-8?B?OU80V1dpYk1ndGd5ZWdNOStQdTVoeDJwdGdEUDU1YTVlUzNOaFk3anp0ajBN?=
+ =?utf-8?B?S3JwRnVsNkF0L0tscnlhbTZ2TEJ2eHB2NVVJWVRrWEF1eGR0Z3FsenNaM2pJ?=
+ =?utf-8?B?VjdySTB0V015WklMNDIvWEFzeG5COHlXMWFibVpnRjdlbmY2ZEh0VkxwcUM5?=
+ =?utf-8?B?QXBZSnNPbG9LNjRGYStQY0ZjVTM4WTMwbHJKWVRHK3RnbXk0UzRrUzUzQmc2?=
+ =?utf-8?B?dmNYT3hlWnhLclE5MWduNkpBL2NGUmpRZDk2c2lPbmZ2cEtlMDlYT2I3cDkx?=
+ =?utf-8?B?WW5Vc2psV21vVktXeXlpU0gwcEFkWWZhdW15S2YyRkVwS1BhbWlDSVJtVnlE?=
+ =?utf-8?B?NVpNb2s4WnVLMHJjQlYxUkVZMnZYbDNYK29XTjZ1eWQyMTU0VU1OZVNRZjMz?=
+ =?utf-8?B?UTc5M0piZHVoY1M0MitSUDhLTUJZQ24rK3QyaEM2NlBxc2QyV0Ztb1E2Vk5N?=
+ =?utf-8?B?dzdPbURnbEtIV0JaT2ZhWVRvZnJkb0hHNTdDQkZIc01tWkl0WTJyQ1crWFpv?=
+ =?utf-8?B?am5TOWNNdXRwSWpzWXF3bE1kOWFyanl0bU05MVB2RnkxMGI0Rk5aY016NEls?=
+ =?utf-8?B?R2F2QUFjZm1McllZcWVrMVZUdloxMUhWdUdGdEVwemYwYVNGZVVWZnM1SVdk?=
+ =?utf-8?B?VFFFTXlZL2tGRkk3T0JreWlCV0hrcGJFYS9uc3FsdTN4QUlSRzFuS3h4UGJk?=
+ =?utf-8?B?YWQ5ZFFVSmxzRFNvMWd2cGQrZW9rbG8rcnNrdmg2Q0IxK1ZJcjZzZms2aXQ2?=
+ =?utf-8?B?cUhhU0EyWW53bFVIUTZvQ3hjc1ErVlRoL3gvMDBXc0VWYnBCNTF2R3BXbXRW?=
+ =?utf-8?B?UEkvNGR0WVdWT1JuVk03dFRwaEtvNkJjOHczcVlhTFlZY2tlWG03NklFWnJC?=
+ =?utf-8?B?TzZwQ1JwaE9pOURHVExRZDJrdkJGeWNsUFdJWlFlaEloSmdTQzFFOW1lQ05o?=
+ =?utf-8?B?WHRWK2wrMGJEaStDdkRjbTZtUG5wZjFYaFZpUHZPTkZhaVphZlpvMVpFVUEv?=
+ =?utf-8?B?STl3eDhpOVQwRUYxUGN1T3lQWU0yaWlkL3kyZUxZTDhXcGRqSjJENlBlY0lP?=
+ =?utf-8?B?RHlXQXUwdjI2c2xrNmh6VFZMdHcvRFRaVVE1NFVWUXhnUnQwSE5tYnBaQmRD?=
+ =?utf-8?B?bTBhU01ManhKTmtEbU5BdGlObVJkNWRqUHpQYjFrWTNsaXpWRFVpeVppS05i?=
+ =?utf-8?B?dUtKNnBjdzhFbHlGTFJVSmFTTWtWbi9tZjZORGRFOXNvbXdZVCtSR2l0bG5v?=
+ =?utf-8?B?MXdicHUwMHdrRFk4NjZSZEc0MlpYdXo2ZUZOUkszMldVMEdiVmFwVDlXMk9K?=
+ =?utf-8?B?V1ZFTlozY0MyUE95QUl3OG9JSHN0OVlNYU85MTg3U2svL2tmWmZicHN2QkE2?=
+ =?utf-8?B?T1E1Skg4MUdxVnUzNkE0VGlteFhYdTNRN2Jlbm9xY3VPVzN6MGNRM3FreGNy?=
+ =?utf-8?Q?LNQUyKcJXZQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:222.71.101.198;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:smtprelay.cixcomputing.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7053199007);DIR:OUT;SFP:1102;
+X-OriginatorOrg: cixtech.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 01:38:53.4099
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff3c992f-d846-4ea0-bde4-08dd5d18d1bb
+X-MS-Exchange-CrossTenant-Id: 0409f77a-e53d-4d23-943e-ccade7cb4811
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=0409f77a-e53d-4d23-943e-ccade7cb4811;Ip=[222.71.101.198];Helo=[smtprelay.cixcomputing.com]
+X-MS-Exchange-CrossTenant-AuthSource: SG1PEPF000082E6.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB7032
 
-On Thu, Mar 06, 2025 at 03:00:15PM -0800, Nhat Pham wrote:
-> Similar to zswap_load(), also return proper error codes for
-> swap_read_folio_zeromap():
-> 
-> * 0 on success. The folio is unlocked and marked up-to-date.
-> * -ENOENT, if the folio is entirely not zeromapped.
-> * -EINVAL (with the follio unlocked but not marked to date), if the
->   folio is partially zeromapped. This is not supported, and will SIGBUS
->   the faulting process.
-> 
-> This patch is purely a clean-up, and should not have any behavioral
-> change. It is based on (and should be applied on top of) [1].
-> 
-> [1]: https://lore.kernel.org/linux-mm/20250306205011.784787-1-nphamcs@gmail.com/
-> 
-> Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
-> Signed-off-by: Nhat Pham <nphamcs@gmail.com>
 
-Nice! With Yosry's two suggestions:
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+On 2025/3/7 00:28, Bjorn Helgaas wrote:
+> [Some people who received this message don't often get email from helgaas@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> 
+> EXTERNAL EMAIL
+> 
+> On Thu, Mar 06, 2025 at 11:32:04AM +0800, hans.zhang wrote:
+>> On 2025/3/6 06:20, Bjorn Helgaas wrote:
+>>> Sounds like this should be a documented erratum.  Realtek folks?  Or
+>>> maybe an erratum on the other end of the link, which looks like a CIX
+>>> Root Port:
+>>>
+>>>     https://admin.pci-ids.ucw.cz/read/PC/1f6c/0001
+>>
+>> Name: CIX P1 CD8180 PCI Express Root Port
+>>
+>> 0000:90:00.0 PCI bridge [0604]: Device [1f6c:0001]
+>> 0001:60:00.0 PCI bridge [0604]: Device [1f6c:0001]
+>> 0002:00:00.0 PCI bridge [0604]: Device [1f6c:0001]
+>> 0003:30:00.0 PCI bridge [0604]: Device [1f6c:0001]
+>>
+>>
+>> This URL does not appear right, how should be changed, is it you? Or can you
+>> tell me who I should call to change it?
+>>
+>> The correct answer is:
+>> 0000:90:00.0 PCI bridge [0604]: Device [1f6c:0001]
+>> 0001:C0:00.0 PCI bridge [0604]: Device [1f6c:0001]
+>> 0002:60:00.0 PCI bridge [0604]: Device [1f6c:0001]
+>> 0003:30:00.0 PCI bridge [0604]: Device [1f6c:0001]
+>> 0004:00:00.0 PCI bridge [0604]: Device [1f6c:0001]
+> 
+> This part of the web page is just commentary.  In this case it's just
+> an example of what devices might be on some system.  It's not a
+> requirement that all systems have this many devices or devices at
+> these addresses.
+> 
+> The only important parts are the Vendor ID, Device ID, and the name
+> ("CIX P1 CD8180 PCI Express Root Port").  If those are correct, no
+> need to do anything.
+
+I see. Thank you very much Bjorn.
+
+Best regards,
+Hans
+
 
