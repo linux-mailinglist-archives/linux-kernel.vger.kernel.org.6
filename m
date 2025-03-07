@@ -1,130 +1,160 @@
-Return-Path: <linux-kernel+bounces-550782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318EEA56410
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:36:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0606A5640C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:36:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E57B53B681D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:35:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C781817817A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:35:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D872A20D50F;
-	Fri,  7 Mar 2025 09:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0E220C476;
+	Fri,  7 Mar 2025 09:34:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tuoEXp4M"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="h9w52F4n"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8990E20D4E0
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9292202F9A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741339998; cv=none; b=j3+6OQV7YFNkEt0sG3sV4U3IvE8DFsUQ+cc2xw9iqJkrw91M/9XShKZV9r5R0W7JJEQrKorqHW2+vKFCXANMT7JkBAzGSerMW/pFgNv2UxdaPbXQ9o1QDEhiaVnM7b0o/A8bZpDGMmeZQ+LdO5a/9kY2vG9xz9mv33vLyr/xflM=
+	t=1741340042; cv=none; b=MKcJ7owNz40uN6auq0D2KpO69FV3jV9JJzKI39NbT7xVUC0MCfAeTbB9thUBtPSnpmvGlg8fzXw1utDOPU9B+Ce5ippI4/T222c2TCDQSdDid15kTK8Y0TiifuPmwU7w0bRqLHHG8qXFUUCkznXp5SgcOPtvEhVc3ByZVJN+Fkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741339998; c=relaxed/simple;
-	bh=f6+JfLU/1QFiRs0zJLu13R4ni0sWGfII1CyAkkteBPM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LDEzxMdH8GQ7zSa2k/9NlLxhfu/UViQZHaKEgQpRCMTMlAD6CpFHvvRDR6KM5fn5T8x5fjINdRpo1Rd4zC++RYQdGN+fwMDE1yy4Ku6uOgaKEiICHDguTOkfNcJ2lDNVTXy51wSpnyXLOVO/MSfIbYMNRlUlObeCpBX24hJCAm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tuoEXp4M; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e5ea062471so54342a12.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 01:33:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741339994; x=1741944794; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fU0HHdQ1hyz6Oi/pxgyRXXgGFlp0DgTNlBw/r19mLUE=;
-        b=tuoEXp4MCXqWFa33f111JLpTrEcuR0hQ3u7Hli6VAsKF9HK22gpN1o5QTYlGbVK1xt
-         CTEH7U7AWV3sRBBhx7/0S3BUjV0JLdYBjGlaJ/6m/wk0PmaA132L/rceatLF+aGxBBvD
-         2Wfc4exbDizDs8aCSOftuvqaWJlXbP8WUpg3ZzokiTyJ1gmKqtN8jcs5vbgBSzwkXQhr
-         8lQ2CC3PT02tJfzgLQsC8l7y+SDW+PGYeebXE35nOQQ4N3emfxtR/XqhWPTRYKgaYNqN
-         vDGhhuXiZkNoyrO2iNJ274EohjgJ6zNSVYuTSf8+bXlq4RgyosAO0RJKjXjXQEYw8qlb
-         CrcQ==
+	s=arc-20240116; t=1741340042; c=relaxed/simple;
+	bh=Ypb9lH57vm+WjVbRerOzUIkxUzGc7i5IMTgs/vJz0zQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CaGhBcdCZqnjyeIz+binz7P1+O1sHiyfDUY+mplwAi6KySM2019lEC0X5wM3FltGResgUaz6uxgDSJzPJyoshW8fBTnMQukpc0vxyXKSQvW8/tcdcoq5XYYxPQXbPZfosQfUSCCito9ysA93j4QYljmDTzY+N7YbYMKKm62OEe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=h9w52F4n; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741340039;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jVEOIfEn4WDZ5RzbzaumI6wBZHn7khG5qOmcjQFY/34=;
+	b=h9w52F4n/pCaAIW7xhI09jxg5sVIPyBOvnPvNuyGK1pw4+RuGLdDx0Qef9CNUVuwxGTub2
+	vkXYtZF7Mg809TP9zjbohaKVdYrdYITWWCwa7wSumutFiuwr1rDOvdYiptWaUfYsF0PApt
+	F/omwqllRhz+ZMl1MQeNv5Ryt24b2OA=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-404-Vy6fiRnkPK-rnji1tWsQeA-1; Fri, 07 Mar 2025 04:33:56 -0500
+X-MC-Unique: Vy6fiRnkPK-rnji1tWsQeA-1
+X-Mimecast-MFC-AGG-ID: Vy6fiRnkPK-rnji1tWsQeA_1741340036
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e8ff626b73so16675956d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 01:33:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741339994; x=1741944794;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fU0HHdQ1hyz6Oi/pxgyRXXgGFlp0DgTNlBw/r19mLUE=;
-        b=svGEzS6mzhW2SCkie1Q+cYTonPSQqIFdYoi6XYKnskSd5F29pnss67W2AKnNlxOJvJ
-         B9AhCuwt8MRL2batskBAMhYTvvDL30UJbBMQ4Iae2dqO/6ols4PFRhFfQL8DD9l+/agk
-         2TbCm6PF01dIX4eAN7ozs9QV9SkM8kboA0JUhPSIQo4vVR4yjYAGoglAEtyA+qI/bdYI
-         K3jPR8TYBn4fBTd9tAJ3xO20g0nUoaZKo4DbvsIRWwLV4ryaSh3kND0MJUw0C1bQ88XB
-         9t39m0YGGWgys9UK0lpufwN8J12pt/LWTDJxboDGjXUpqmeMroFNtO587hd/gMFtOo3k
-         iSZA==
-X-Forwarded-Encrypted: i=1; AJvYcCX2hTbyo0Nin2+O6Aj5VT+j6dL8FwKh9dlfm7PBk1TWnyQeFlcuWHi8Sjein/a+nEdAWrvHUuwlzhmvbU8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw08pxkS7eybVvqjyyUhYGk3L9vn32Nv2qrZOTptt6PzKHluGhB
-	fnBsnKAQSaA1ui7kdU2latU2C6lwpQ6PfI7hjv8GIg/LYYG00/Ta56MHm3w3FTk=
-X-Gm-Gg: ASbGnctRQhjzhAXEYC2dqDsX/NwHj7px2aYLQXyIuH7rPjrUn/eFTvy/CdGVxdg9B48
-	UM1jmXcXRKr9iFZ1sncwpi9xlRkevl6QrsX9aWUTaVWfK9OPqS0iR3+ufplcx1tDDuggAVCDmB5
-	ynugdC8Gqr672Uu0qzxChj3O7CfJSPOAq9jlPC/z82ABpT5G5JvE1aV2VuBkYAqQQVP9/DyN1sU
-	hr9xFig5b9BoeTzohMVfUN3MZmiMesX5JosstE7Z7p2JTde6ZM2n8C1WaHqa2jEAT/kJzWO+fOa
-	AdPG6juyjInt+VhlNsmtU0+U22IUm/lr4Q6ivcvSklgWDvcrg5V01f1XSxQ=
-X-Google-Smtp-Source: AGHT+IEAJGcNFFbHug7ITx5iMdjawlkckyUu9cdR2GxHKINK8WVBM4YprSaxysEv0Z5OJYbITLcdkQ==
-X-Received: by 2002:a05:6402:51c9:b0:5e5:e17f:22fc with SMTP id 4fb4d7f45d1cf-5e5e22ae3c4mr1030915a12.2.1741339993683;
-        Fri, 07 Mar 2025 01:33:13 -0800 (PST)
-Received: from krzk-bin.. ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c74a82ecsm2275091a12.37.2025.03.07.01.33.12
+        d=1e100.net; s=20230601; t=1741340036; x=1741944836;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jVEOIfEn4WDZ5RzbzaumI6wBZHn7khG5qOmcjQFY/34=;
+        b=N8CP9QsTCtJM75s4fXOblbnUS15t/OvvcJP70bn1wH0qGGVPmx1CS9/Z6U78S4tInf
+         9nonAPqcwZqSKVl0FYeVRx1ha8uLsen9QmWO8b4ytT3OiHFektLyXKYXRf5mNw4HNtbT
+         S/9x/9FJY1PIUIFozqyfRB5ivCAO1gYA8IVDDlm4zgPZ2oJJkEFqQoFS1DXwEJDqPX59
+         R+VyNrIVLjLDTH67YgWHv6te5wso/lCIgS3zy2Wt353Ru4xl6Wy6J2cpgL2V1EHQXcSV
+         VtI3qNbYHJssKlxrDnpyEye7eXM+88ykmzkzUi+OO/36gSChMHWuj2uAtbjjXuH8wTVF
+         cNcw==
+X-Forwarded-Encrypted: i=1; AJvYcCXfRtASMBDbA5ldtZXJpvLFpZ3IGEKr/4gmtw6ryCR0dR5AAkdQ6NFROpu08vPLKfMCI2dsDRTdb3IWFNY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzreTKtgMIxGE0vQ8Z6C2qjRn8vYoUJLnjCuK9qlqVHKtA8o0lg
+	sujGcFgqVI9hkaASqRyXEn2SAxPEEwAdaD/+kSgBOi3ZwQxAM++6Bn/9laeRDTn97QQijwLVFNu
+	YQ1o5dO3/3CjLHQZ/2EYpOBJKsrEN8vJqENojx4jn2zFTpWTaNU940pYCxGcdOQ==
+X-Gm-Gg: ASbGncvUnwJiieWFKMo/jjjvDxozBBNi2IjagGbKMAYevQ1gm/v+riIy2TiwuF3L32j
+	J3kQ0wUWm/kBD/NkCc0y+bO2ij4wB3Ct+IlXuyoXo3CC7o6+iV+uJvbG5IXcWi6XkxyhTulLBrG
+	iY/WizPkfiXC6Jmkpde8oNKCtigMUfNWloeoUzChAjowsoxp51ooHcnPjUbazd4P4q9rj1+moed
+	CY3he1tOOoXm6VR2Ic7UyDg8mNWG1G8xV2ZKNBV0/AnoAzHVBEIfyR3KMMmb4/CYLyCJSMPr/Wv
+	vrTrT1924XMdarKnvW1/Ok9uyB1CluZU3MO/lGs0X3W1pDCcBX2C3Ts3t6kTkVF7Vq8Z3azVHhY
+	iAkFl
+X-Received: by 2002:ad4:5d65:0:b0:6e8:89bd:2b50 with SMTP id 6a1803df08f44-6e900604760mr33987766d6.7.1741340035817;
+        Fri, 07 Mar 2025 01:33:55 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHyw0MIlPz6JSxN4+Pj2WN6QeNWdmbKWHxOQqdc5jlEBKq4ZYwIpIMz5BhiL2wU0DVNM6In+g==
+X-Received: by 2002:ad4:5d65:0:b0:6e8:89bd:2b50 with SMTP id 6a1803df08f44-6e900604760mr33987556d6.7.1741340035522;
+        Fri, 07 Mar 2025 01:33:55 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f7090c4csm17736036d6.33.2025.03.07.01.33.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 01:33:13 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Daniel Golle <daniel@makrotopia.org>,
-	Aurelien Jarno <aurelien@aurel32.net>,
-	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
-	Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v2] dt-bindings: rng: rockchip,rk3588-rng: Drop unnecessary status from example
-Date: Fri,  7 Mar 2025 10:33:09 +0100
-Message-ID: <20250307093309.44950-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        Fri, 07 Mar 2025 01:33:54 -0800 (PST)
+Date: Fri, 7 Mar 2025 09:33:49 +0000
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>, cgroups@vger.kernel.org,
+	Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
+	linux-kernel@vger.kernel.org, tommaso.cucinotta@santannapisa.it,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 4/8] sched/deadline: Rebuild root domain accounting
+ after every update
+Message-ID: <Z8q9fY0DDzVsc4Yb@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250306141016.268313-1-juri.lelli@redhat.com>
+ <20250306141016.268313-5-juri.lelli@redhat.com>
+ <2926c843-62e6-419b-a045-e49bdd0b0b97@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2926c843-62e6-419b-a045-e49bdd0b0b97@linux.ibm.com>
 
-Device nodes are enabled by default, so no need for 'status = "okay"' in
-the DTS example.
+On 07/03/25 12:03, Shrikanth Hegde wrote:
+> Hi Juri.
+> 
+> On 3/6/25 19:40, Juri Lelli wrote:
+> > Rebuilding of root domains accounting information (total_bw) is
+> > currently broken on some cases, e.g. suspend/resume on aarch64. Problem
+> > is that the way we keep track of domain changes and try to add bandwidth
+> > back is convoluted and fragile.
+> > 
+> > Fix it by simplify things by making sure bandwidth accounting is cleared
+> > and completely restored after root domains changes (after root domains
+> > are again stable).
+> > 
+> > Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> > Fixes: 53916d5fd3c0 ("sched/deadline: Check bandwidth overflow earlier for hotplug")
+> > Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+> > ---
+> >   include/linux/sched/deadline.h |  4 ++++
+> >   include/linux/sched/topology.h |  2 ++
+> >   kernel/cgroup/cpuset.c         | 16 +++++++++-------
+> >   kernel/sched/deadline.c        | 16 ++++++++++------
+> >   kernel/sched/topology.c        |  1 +
+> >   5 files changed, 26 insertions(+), 13 deletions(-)
+> > 
+> > diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
+> > index 6ec578600b24..a780068aa1a5 100644
+> > --- a/include/linux/sched/deadline.h
+> > +++ b/include/linux/sched/deadline.h
+> > @@ -34,6 +34,10 @@ static inline bool dl_time_before(u64 a, u64 b)
+> >   struct root_domain;
+> >   extern void dl_add_task_root_domain(struct task_struct *p);
+> >   extern void dl_clear_root_domain(struct root_domain *rd);
+> > +extern void dl_clear_root_domain_cpu(int cpu);
+> > +
+> > +extern u64 dl_cookie;
+> > +extern bool dl_bw_visited(int cpu, u64 gen);
+> 
+> Is this needed? There is same declaration outside of CONFIG_SMP done in
+> patch 3/8.
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Nope. Good catch.
 
----
-
-Changes in v2:
-1. Drop unnecessary full stop in subject prefix after ':'.
-2. Add Rb tag.
----
- Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
-index 757967212f55..ca71b400bcae 100644
---- a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
-+++ b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
-@@ -53,7 +53,6 @@ examples:
-         interrupts = <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH 0>;
-         clocks = <&scmi_clk SCMI_HCLK_SECURE_NS>;
-         resets = <&scmi_reset SCMI_SRST_H_TRNG_NS>;
--        status = "okay";
-       };
-     };
- 
--- 
-2.43.0
+Thanks,
+Juri
 
 
