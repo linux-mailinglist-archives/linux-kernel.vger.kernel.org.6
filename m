@@ -1,133 +1,101 @@
-Return-Path: <linux-kernel+bounces-551498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D254FA56D36
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:10:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1766CA56D35
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:10:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B3843B06CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:09:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D17507A8D77
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9BB226D1D;
-	Fri,  7 Mar 2025 16:09:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DB3227B88;
+	Fri,  7 Mar 2025 16:09:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRixdy6/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F4WjY/dM"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9E3226D0A;
-	Fri,  7 Mar 2025 16:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9ED7226D11;
+	Fri,  7 Mar 2025 16:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741363765; cv=none; b=BrLMil1evTv41FfXfy2y0db1AHqexI62zYSvvWO6SuKNIpJkSkOgDJlCyK6jKyTYjKMzJiNf6pZURIQKwoE8dF46mPSw4dtEV3FLwBW+o47NJrfQueo92L99Sg8sudtk2+S5AWQ8BC2JDDu6ZbrPIpG9qIeE1CioiUgJ4+0Imk8=
+	t=1741363776; cv=none; b=nlxHBjq8tOi2B82zYL0urfWI0ilDPab0Fr+/1lAJvPJTIS1j6hVo/nUm67wj9Weg0bobe2GcVWrSrcS32CzR0nYqB+CVS9fEKeRppsUGcZjavkltc4Gglb0ewS4GRS17ma4dkDXELzJzum4OavEytrn0UbX0qc9DrchD37L8SjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741363765; c=relaxed/simple;
-	bh=OjzgZIrF4I2Usopqifbp/MqmZF5LZWDEmj7w8BfGAOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DFUGx/uolgfKyTRwlw2Ljr4Y0UcceQVZni+q/vaAuL9HQTQzWlnKEbdJQHRaMA6y4DFslhYScbPH4Zyy9CNDlSj8eC7PzfCmvoOP/Q788/B8IbqxQf0eHtDDMDsbJxdA8+J6aiRBVxOHBMY1bWjq0YW0BKP3hfP36CpC6OieQWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRixdy6/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A03B6C4CED1;
-	Fri,  7 Mar 2025 16:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741363764;
-	bh=OjzgZIrF4I2Usopqifbp/MqmZF5LZWDEmj7w8BfGAOY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CRixdy6/AE5PCxS5J+Ug/OE91n6wpvg3310s9xJb3CIlggDDaMfzy2YA0LLJ+wzMK
-	 KFGtabUqbxPWftAGlrA6QpxjyQWW+ahk8AhjFm0mqplp2aYjzcSOHeSWdGqvdtsjWa
-	 5ZO98/8DZC/a1MawaJ8lzVSvRTbr29iqgiQkGjo0VFQnTY/BpXNb8qpVx5QGEER8Pt
-	 yG8lbMSBb1aU8bOym3nEioEKNrn15zHWOWI3z4OOjRi77OdaB2YFDkZQadiKpc7+cS
-	 LbuzBZ+yjaDP12RjnaSRks4/IMqlBUTruFV5YbHfWu6XnsIkh8gMVS+90lt0FOdFpu
-	 bZ0RF+V5CGFGw==
-Date: Fri, 7 Mar 2025 17:09:17 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, aliceryhl@google.com,
-	robin.murphy@arm.com, daniel.almeida@collabora.com,
-	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	Valentin Obst <kernel@valentinobst.de>,
-	open list <linux-kernel@vger.kernel.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
-	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
-Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
-Message-ID: <Z8saLZAylcVp89n_@cassiopeiae>
-References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
- <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
- <20250305174118.GA351188@nvidia.com>
- <Z8mlAxsszdOH-ow8@cassiopeiae>
- <Z8m9j3SwWHqaCTXo@phenom.ffwll.local>
- <20250306160907.GF354511@nvidia.com>
- <Z8qzP3CR8Quhp87Z@pollux>
- <20250307124809.GL354511@nvidia.com>
+	s=arc-20240116; t=1741363776; c=relaxed/simple;
+	bh=vJ+jf3Jx0DsxFUkCZwqaWfUCJ9ZSvn+hNc14SICc9g8=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=fLzopKC8FUJ8P7i5NjkR3RdTiMUwY2pCTaxuFpDZTIdvJTPsROUITYHxW8IpE1V9gB2XXQuL4pTTNRjyxh0qrC2wvs3vf/yD+WnBnRDabrpJYRL2vItEffj/T7E7eIdxSKzptlEfZrepafMRxIiMKwP/NUDdv5sgRR/CEeA5qfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F4WjY/dM; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30bee1cb370so15632641fa.1;
+        Fri, 07 Mar 2025 08:09:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741363773; x=1741968573; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Y2wGs5UXG2ODNyJagCD7ka8U4DqPW7/dd5bx6dOjGVc=;
+        b=F4WjY/dMxo5Ii5ki82NQEOvDQtaaD/nb0dzwJJSCUrJn1oJ2AImX6IpctvlnC6r2+y
+         vB3+ghQRbhuJ94DTYydKMWReUNoArMg9H9htyFIv0Ulo8yolxiPy4Sa1ExWXadndMFJL
+         /X8U1WJj0+FPwLwH/TFdi8TCxDHMR7pQlUlfKWZgaLKK4Y/yIzFdGGJtL6ortvo0fUdW
+         ws0jceHNPACBx85DzOaScHmBbVsIWSa4r4NzbBCmYLw9uGIM67zlURfe//JMS5VkIQUt
+         RE3f+XywLQn8ywT4sfD+QDA+9ln5wX783pqiKLHQ/EGYEKTA1gYbwfvSVbPpMofibkiR
+         DmGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741363773; x=1741968573;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Y2wGs5UXG2ODNyJagCD7ka8U4DqPW7/dd5bx6dOjGVc=;
+        b=LeaAuob0J+GzyT3+BsomwV8Y163VjREb8YflHDmwq7akL4ycmRr2JSiGKSCdyvoRbv
+         fmQZ/ZRMyNjDZe+JgSI5vDv1JnGvyqyVVjHEyR4ZwVQR41N9jcmRm4I+Vu9pbD4EgwBE
+         rT4N/f4Iz3o0RTUSvwBFXFiGef9CMN3oex9GUhp5a6kSLXfbcLrpX5lmDi1odzVG8xDb
+         DRPGbvDn1+5iLKgrVM9aA7bH/wq/q/QhUR8jEEBgpV4uLg9HRiAmExBm4AdS+cUmbamP
+         6m5c2v1cCdU3LlNu3/GOHY2rIIVFaEajRss/ssAXSIx6UHjHH37xA8keF76Dtfk8gMpO
+         bu3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVptrWoZuFqkPmJMLx3vteJRCvBjBUH/lQcuMQ2kaHecZ5wQb2iA0gnpxbJMrlxFbKslsstRAWQBUMJ@vger.kernel.org, AJvYcCXynBWMiA6J2lOZJwSf65Ppyy/7eTOYldDI9VjL4aibAysm1/SvwqZa0LVDktELumy6Hkpi3cmMpuoyKMM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyE8ZUHF5M5nJEUPSD2Lo2pC5Exxg5QQHqOYNFINwUvt4i4aZ7I
+	dLu2zpwCAmL3ZT3Xbvd9jcLHL4rb3iTCz+H/hhY82m3cNDz4+zv567gz8HSwJIWzLEAr2kKgCfk
+	6nd0AAySJvTtLDJtagtUdHf7ZKw0=
+X-Gm-Gg: ASbGncuSYtdjxdz7FJK6JslyQhO8ni4gMQxPHhSs6Q+yUPTpVaa5Y2ON3S1RT24JOyH
+	Pydl+8NObeOeF31Osz+WwYN5m0UNwhml2WY2lbp768osDNYO66EtWW62vq71x46vUHJy9n/y+42
+	nJxMWOTvg7+UVYQ8pBD4cUAK6fNfudufXX9gNSLjzQtgq3X6ghY8U5Z+EPt0GK
+X-Google-Smtp-Source: AGHT+IEGAo38UAEc4cQfuVmq5Jdsr88KuRMq/DhEusWgz0mo46DhAi2VuEH+tMH8CPg0BPgNIUeczUEJI+CaQB5LfZA=
+X-Received: by 2002:a2e:99d3:0:b0:30b:f15f:1c02 with SMTP id
+ 38308e7fff4ca-30bf452c908mr14816111fa.18.1741363772920; Fri, 07 Mar 2025
+ 08:09:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307124809.GL354511@nvidia.com>
+From: Norbert Lange <nolange79@gmail.com>
+Date: Fri, 7 Mar 2025 17:09:21 +0100
+X-Gm-Features: AQ5f1Jrwvs7RoPwaNoYn3qlQZNg0CL7a1KYAB6ll61sjH1XcH0LjlfcPMcIjohc
+Message-ID: <CADYdroOnqNT4uWz=XAfr1iuaaLmWMzSyciXzFSoMP+CoxMPDpw@mail.gmail.com>
+Subject: Re: [PATCH] fs/netfs/read_collect: add to next->prev_donated
+To: max.kellermann@ionos.com
+Cc: Salvatore Bonaccorso <carnil@debian.org>, dhowells@redhat.com, gregkh@linuxfoundation.org, 
+	linux-kernel <linux-kernel@vger.kernel.org>, linux-nfs@vger.kernel.org, 
+	netfs@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Mar 07, 2025 at 08:48:09AM -0400, Jason Gunthorpe wrote:
-> On Fri, Mar 07, 2025 at 09:50:07AM +0100, Danilo Krummrich wrote:
-> > > The actual critical region extends into the HW itself, it is not
-> > > simple to model this with a pure SW construct of bracketing some
-> > > allocation. You need to bracket the *entire lifecycle* of the
-> > > dma_addr_t that has been returned and passed into HW, until the
-> > > dma_addr_t is removed from HW.
-> > 
-> > Devres callbacks run after remove(). It's the drivers job to stop operating the
-> > device latest in remove(). Which means that the design is correct.
-> 
-> It could be the drivers job to unmap the dma as well if you take that
-> logic.
+I reproduced with the available versions in debian:
 
-I really don't understand what you want: *You* brought up that the
-CoherentAllocation is not allowed to out-live driver unbind.
+linux-image-6.12.12-amd64  6.12.12-1 -> segfault
+linux-image-6.12.17-amd64  6.12.17-1 -> segfault
+linux-image-6.13-amd64  6.13.5-1~exp1 -> 'kernel BUG at
+fs/netfs/read_collect.c:316!'
 
-We agreed and provided a way that solves this. But then you point out the
-unsolvable problem of malicious (or wrongly programmed) hardware and use it to
-question why we then even bother solving the problem you just pointed out, that
-is solvable.
+Then I took the debian 6.12.17-1 kernel (latest LTS), added those 3 patches:
 
-So, what do you ask for?
+https://lore.kernel.org/netfs/20250211093432.3524035-1-max.kellermann@ionos.com/
+https://lore.kernel.org/netfs/20250210223144.3481766-1-max.kellermann@ionos.com/
+https://lore.kernel.org/netfs/20250210191118.3444416-1-max.kellermann@ionos.com/
 
-> You still didn't answer the question, what is the critical region of
-> the DevRes for a dma_alloc_coherent() actually going to protect?
+The resulting kernel apparently fixed the issue, I just testet in Qemu
+so far (no signed kernel for secure boot).
 
-Devres, just like in C, ensures that an object can't out-live driver unbind. The
-RCU read side critical section is to revoke access to the then invalid pointer
-of the object.
-
-C leaves you with an invalid pointer, whereas Rust revokes the access to the
-invalid pointer for safety reasons. The pointer is never written to, except for
-on driver unbind, hence RCU.
-
-We discussed all this in other threads already.
-
-> 
-> You also have to urgently fix the synchronize_rcu() repitition of you
-> plan to do this.
-
-I mentioned this a few days ago, and I did not forget it. :-)
-
-> 
-> > Now, you ask for a step further, i.e. make it that we can enforce that a driver
-> > actually stopped the device in remove().
-> 
-> So where do you draw the line on bugs Rust should prevent and bugs
-> Rust requires the programmer to fix?
-
-It should prevent all safety related bug, but the one above is impossible to
-solve, so we have to live with it. But that doesn't mean it's a justification to
-stop preventing bugs we can actually prevent? Do you disagree?
+Tested-by: Norbert Lange <nolange79@gmail.com>
 
