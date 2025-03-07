@@ -1,113 +1,105 @@
-Return-Path: <linux-kernel+bounces-551165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 055D6A568E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:27:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 947D8A568CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:24:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 306327A5F61
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:26:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DFDA16DA45
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:24:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B17AC219EAB;
-	Fri,  7 Mar 2025 13:27:16 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE48A219A94;
-	Fri,  7 Mar 2025 13:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07AC219A6B;
+	Fri,  7 Mar 2025 13:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gfuiCWPm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E221E868;
+	Fri,  7 Mar 2025 13:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741354036; cv=none; b=qO9EZ1g8DatqlBeOHnKoA14VBGpGCwmiCJ8lm+kFD2B84lCXwTJWSEVYUcMcq86ROwCIF+KLihgSxHIzXQYPg4gAhoeuImgNsRcvl/Is5lcbC8njZAkz1jhtG2Q47eYva5ntzzGmWopB2RyjbkvtX0fBH4lN86Ht1+CfRQ77x+s=
+	t=1741353849; cv=none; b=B5byQHoGCBVIOQ/sw471ZSVWoi6GlYIQ3W8rq/FIPvc60UEnqB0/Knu3P7Luhnuya+LV3qe8xk5X0ruBfXlYABbYRg9m246gOcnWA7dQAy8AgVQu+la3yDQF+BYb+4o1cyhN2HXwQB4LmVXD6lPo+R6z+5hXRW0+Vh66+SkjnrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741354036; c=relaxed/simple;
-	bh=kxF+meGrN+Y9nPfgY7RbqYnONmGGuWPNBl9Jkuv/GYQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GBvNNt6RrcmzMiGIUgipmjwDjYvBpTjOedL/5DbV8kol7X/+z0Hv+wEFpxc3OLj7QXmlu7ECgy7pvML9g8PI3567f0MGcGGqG4Erzj8ygCfrN+DApupchq+f/7bB2XAb17B/tIl95f09Tp9CUchdcADyGrqHaycqZXC7Nml9mR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D67A51424;
-	Fri,  7 Mar 2025 05:27:25 -0800 (PST)
-Received: from e129166.arm.com (unknown [10.57.84.65])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id D18E13F66E;
-	Fri,  7 Mar 2025 05:27:11 -0800 (PST)
-From: Lukasz Luba <lukasz.luba@arm.com>
-To: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	rafael@kernel.org,
-	daniel.lezcano@linaro.org
-Cc: lukasz.luba@arm.com,
-	rui.zhang@intel.com,
-	srinivas.pandruvada@linux.intel.com,
-	jeson.gao@unisoc.com
-Subject: [RESEND][PATCH] power: energy_model: Rework the depends on for CONFIG_ENERGY_MODEL
-Date: Fri,  7 Mar 2025 13:23:49 +0000
-Message-ID: <20250307132649.4056210-1-lukasz.luba@arm.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741353849; c=relaxed/simple;
+	bh=9OCou/LxbyRarhdBQeea7UlQ71nAsQw9C80k68D611o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rrB1ppbw0AwLwH/agD0+lnK7B0KgefUSHWmbvI0a3CNHbJjAwCq/vtqYzNlv04Omv6llYr1AupYkDCnSMcQLOLmgiThOqhTxQjatmQYh/XVkqPPN/nnhgv/CudvjlQ+tzRJHb79DyYsLPl7t6XQEXurE6rWgPT2R1tmUU675LRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gfuiCWPm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 340D7C4CED1;
+	Fri,  7 Mar 2025 13:24:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741353848;
+	bh=9OCou/LxbyRarhdBQeea7UlQ71nAsQw9C80k68D611o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gfuiCWPm2uKw/bA0VZBhF8DvMN4wC3kmsCCSkVg3wQWJ5U7R+GXJRPSD1cOCy5zQu
+	 F0tv3C5Or9FtqrXicOro/2LlUsst/NGLfQlses9yin2wxMXfg61LWcx+L1tVWyZg+F
+	 KYTF+LiktZxrE2nYFfE/aPFyxVbGp9V7K/wHEyUOZCNoJXRZZ4hxQHICr1fLowvAFR
+	 arY7ZGqbHCcAS8i8srEL3Uvn1n+q7pnB4ItpQ+5S9baEFZfC1vzO01fosU9R5WZT94
+	 KC/ePncWmhWoe2bcsomh0P5zxsMOYFhpaRKRFHHJDZs+lUTJtp7PCJX8vGRS/njkvT
+	 Q77DT+ikKhvzw==
+Date: Fri, 7 Mar 2025 13:24:03 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Patrice CHOTARD <patrice.chotard@foss.st.com>
+Cc: Charles Han <hanchunchao@inspur.com>, mcoquelin.stm32@gmail.com,
+	alexandre.torgue@foss.st.com, linux-spi@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] spi: stm32: Fix a NULL vs IS_ERR() bug
+Message-ID: <Z8rzc8suhKPr5SHV@finisterre.sirena.org.uk>
+References: <20250307032530.116837-1-hanchunchao@inspur.com>
+ <dfd831ec-e004-4132-94f0-3bdc755907cd@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-From: Jeson Gao <jeson.gao@unisoc.com>
-
-Now not only CPUs can use energy efficiency models, but GPUs
-can also use. On the other hand, even with only one CPU, we can also
-use energy_model to align control in thermal.
-So remove the dependence of SMP, and add the DEVFREQ.
-
-Signed-off-by: Jeson Gao <jeson.gao@unisoc.com>
-[Added missing SMP config option in DTPM_CPU dependency]
-Signed-off-by: Lukasz Luba <lukasz.luba@arm.com>
----
-
-Hi Rafael,
-
-This fixes the issue in the former patch with the DTMP_CPU
-implicit build dependencies on SMP.
-The original patch can be found here [1] (the one that you had to revert).
-
-Regards,
-Lukasz Luba
-
-[1] https://lore.kernel.org/lkml/20241219091109.10050-1-xuewen.yan@unisoc.com/
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fKhienEiuUGd3VD1"
+Content-Disposition: inline
+In-Reply-To: <dfd831ec-e004-4132-94f0-3bdc755907cd@foss.st.com>
+X-Cookie: Editing is a rewording activity.
 
 
- drivers/powercap/Kconfig | 2 +-
- kernel/power/Kconfig     | 3 +--
- 2 files changed, 2 insertions(+), 3 deletions(-)
+--fKhienEiuUGd3VD1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/powercap/Kconfig b/drivers/powercap/Kconfig
-index 69ef8d081c98b..03c4c796d9931 100644
---- a/drivers/powercap/Kconfig
-+++ b/drivers/powercap/Kconfig
-@@ -82,7 +82,7 @@ config DTPM
- 
- config DTPM_CPU
- 	bool "Add CPU power capping based on the energy model"
--	depends on DTPM && ENERGY_MODEL
-+	depends on DTPM && ENERGY_MODEL && SMP
- 	help
- 	  This enables support for CPU power limitation based on
- 	  energy model.
-diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
-index ca947ed32e3dd..54a6236800194 100644
---- a/kernel/power/Kconfig
-+++ b/kernel/power/Kconfig
-@@ -380,8 +380,7 @@ config CPU_PM
- 
- config ENERGY_MODEL
- 	bool "Energy Model for devices with DVFS (CPUs, GPUs, etc)"
--	depends on SMP
--	depends on CPU_FREQ
-+	depends on CPU_FREQ || PM_DEVFREQ
- 	help
- 	  Several subsystems (thermal and/or the task scheduler for example)
- 	  can leverage information about the energy consumed by devices to
--- 
-2.48.1
+On Fri, Mar 07, 2025 at 09:59:42AM +0100, Patrice CHOTARD wrote:
+> On 3/7/25 04:25, Charles Han wrote:
 
+> > The devm_ioremap() function doesn't return error pointers, it may
+> > returns NULL.  Update the error checking to match.
+
+> No need to copy/paste other contributor's patch by just swapping some=20
+> words in title/commit message.
+
+> This fix has already sent By Dan Carpenter and merged.
+
+No idea if it applies here or not but since a lot of Dan's work is based
+on static checker results it's quite common to see duplicates of his
+patches when someone else runs the same or similar checkers - I think
+all the people running these checkers are aware this happens but often
+figure it's easier to send the duplicates than to check -next.
+
+--fKhienEiuUGd3VD1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfK83AACgkQJNaLcl1U
+h9C6DAf/SppwraYcs3hm+tA8JgynoM6XNXFnzcupDCDn8T1COBVOwH2vXjv1IxaL
+NtNktXiNdmlS4s1gVJK/xhlNTf24sa+SCj4AiRZd7gVhM/3ajKo/ONnUzTnBsmhi
+QdzADx/vYjhHj1kLjG9srDIs5nDtP1lCfcUimCxhu57dZHzEiT4yDSnrQfYZNKva
+lvKvTckBdBrDfDmzSAOV9BHmHOZdeeGsmbjpHXXaao2Q5VhpdYO+HG6lds7TzPWw
+KJJROXJwjT8hsdstk/n7PyT5C183z/8l9D9Mj0qPqF4Dzd0LfdMig3eTJz/E2Lvd
+Okl9rsg7Lkrf0YNo52PA0NMbLNgFKg==
+=YO1O
+-----END PGP SIGNATURE-----
+
+--fKhienEiuUGd3VD1--
 
