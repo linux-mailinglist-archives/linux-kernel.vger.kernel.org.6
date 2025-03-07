@@ -1,84 +1,103 @@
-Return-Path: <linux-kernel+bounces-550170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A14A7A55C24
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:45:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EFE0A55C26
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:46:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C37BB1896AE0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:45:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8723216F92F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDFB13D52E;
-	Fri,  7 Mar 2025 00:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD424315C;
+	Fri,  7 Mar 2025 00:46:30 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020835028C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 00:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E331E868;
+	Fri,  7 Mar 2025 00:46:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741308328; cv=none; b=LFoSSnQBM+QE8IW2xdEPNDjubmZ4TFmJK/mJIj4ke1FRFxYFYFM7AFhMD42aK/OxqzYZoSSbhEF00LDIIoMQjUFFLyIw08PYSj16AwHQu6/ZfUtrDjDqkuay4Ua+YgsmU9qk0vJSvwoa9EPCtU8tLaf1M55u+SmIYtDPZFo4B+w=
+	t=1741308390; cv=none; b=UDsylow9Vr3aQyST7nLLB9xQKZZkur+LG7/Ztlqf+wmz8DfFrCzO3WQJV4FIUU5zVBP00Jo1MdBJ2sxNOF1A2J0oSu/WWXexIRv5GKIoRHMTkXsYeCnA8NRy+m6+vwkbA4OGKbzNyGK3Z1O5xL1NptyZMhrdohFIPh07O/m6vns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741308328; c=relaxed/simple;
-	bh=ODGu1KUtq6L6OsCmFCgd4AbKUDCB2rn6ttG57ujgYYM=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=cHDTFVv4/0463VoeKhgNhhXnkGIze21TxE38hsMUOnIIgb2TXBSH3IaYOd+D6hhD9GvJuVSdxa52BeMzaa+WIbqEQepGooxZYr2BSEID2oW6rgEN8XT05bmRzZtFE6Jp4Q2PIHItsQgPqGRJfnSAwe8GM/b7eU1kUupONithKaE=
+	s=arc-20240116; t=1741308390; c=relaxed/simple;
+	bh=1/L9emtK9hucruSg20/zRBRrihTT01klByixgO9Yj14=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A7ph0LKcc+txsSTcJNhAyqHbzVGW/5KqT/hUmXTz0WaAm0v2j3uz4QJpeI7QrMZ21TVMgmPwivk5SZZKeSugiVSyc1gW9aV83isaK4fcEOcXT4F9U66YbxdCFHpm14+lDRX3uKJ7t/bkRJxpT3X5a9/BYTHd3O8OFCRJwZnvSbo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E087C4CEED;
-	Fri,  7 Mar 2025 00:45:27 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1tqLqB-000000005Ag-0QhA;
-	Thu, 06 Mar 2025 19:45:27 -0500
-Message-ID: <20250307004526.954574184@goodmis.org>
-User-Agent: quilt/0.68
-Date: Thu, 06 Mar 2025 19:45:14 -0500
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16EAFC4CEE0;
+	Fri,  7 Mar 2025 00:46:28 +0000 (UTC)
+Date: Thu, 6 Mar 2025 19:46:27 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [for-next][PATCH 3/3] tracing: Update MAINTAINERS file to include tracepoint.c
-References: <20250307004511.688485107@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Mark
+ Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: [RFC PATCH v2 1/3] tracing: Show last module text symbols in
+ the stacktrace
+Message-ID: <20250306194627.59452513@gandalf.local.home>
+In-Reply-To: <173920223724.826592.12665655620615313089.stgit@devnote2>
+References: <173920222697.826592.3726270716809214055.stgit@devnote2>
+	<173920223724.826592.12665655620615313089.stgit@devnote2>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Tue, 11 Feb 2025 00:43:57 +0900
+"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
 
-Updates to the tracepoint.c file should not only be Cc'd to LKML, but also
-to linux-trace-kernel@vger.kernel.org. But because it is not listed in the
-MAINTAINERS file, it does not get added.
+> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> 
+> Since the previous boot trace buffer can include module text address in
+> the stacktrace. As same as the kernel text address, convert the module
+> text address using the module address information.
+> 
+> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> ---
+>  Changes in v2:
+>   - Add LRU based removed module information override.
 
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Link: https://lore.kernel.org/20250304103724.174ecb36@gandalf.local.home
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+I don't think we should bother supporting removal of modules yet.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 4ff26fa94895..c203aa4225b0 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -24063,6 +24063,7 @@ F:	fs/tracefs/
- F:	include/linux/trace*.h
- F:	include/trace/
- F:	kernel/trace/
-+F:	kernel/tracepoint.c
- F:	scripts/tracing/
- F:	tools/testing/selftests/ftrace/
- 
--- 
-2.47.2
+It also makes this patch way too complex for what it should do.
+
+>   - Fix to move module_delta initialization after tr->scratch check.
+
+>   - Fix to make mod_delta on all loaded modules correctly.
+
+Should be a separate patch.
+
+>   - (Note, I don't add uname check yet)
+>   - Fix mod_addr_comp() overflow issue.
+>   - Add pr_info() when failed to allocate module_delta.
+
+So basically this patch should just add the code to handle finding the
+module for stack traces. Not to mention, I have code that depends on that,
+but this patch currently does way to much.
+
+Can you just send a patch that adds the trace_adjust_address() (although, I
+would shorten it to "trace_addr_adjust()").
+
+And add what is needed to update the trace_stack_print().
+
+You can base it off of the ring-buffer/for-next branch.
+
+Thanks,
+
+-- Steve
 
 
+> ---
+>  kernel/trace/trace.c        |  173 ++++++++++++++++++++++++++++++++++++++++---
+>  kernel/trace/trace.h        |    4 +
+>  kernel/trace/trace_output.c |    3 -
+>  3 files changed, 167 insertions(+), 13 deletions(-)
+> 
 
