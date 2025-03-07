@@ -1,169 +1,138 @@
-Return-Path: <linux-kernel+bounces-552151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79892A57642
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:39:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB855A57644
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:39:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5FBE57A460E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:38:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6D0A3AE6C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:39:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED9E21516E;
-	Fri,  7 Mar 2025 23:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1123C20C024;
+	Fri,  7 Mar 2025 23:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CTVoSv90"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bWLTMjg+"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AEDE21504D;
-	Fri,  7 Mar 2025 23:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0020208990
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 23:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741390685; cv=none; b=egY5HiVNphTWpOFlF6ePHsSyZ8h1f1hlnjLJp29Rb69YFtK6BOyl0VbOvSNqf5tThzk2L4dvacqSm7PhMdonOf46SWMJlneA9og7PeEyRlCnhDVg+YOXmSUu+1tdQsbBr/b7rDLCUmQt3E9bPksnYkciJjd4Zd3C1S0OFvI2ixg=
+	t=1741390717; cv=none; b=uQRsmpYtJuVrxOHowr0KhwApCDxpqfg6R8ffkPCaoIzLzH72Qut1CkxmGfffyFFTzGSk5hxWgkpliZ0XfhZFOJ55siLik2d95hbQs633IKflcBePe2ZvSqf3i/gbvNHk/BVb5pemWw8csPtxG5jT5jyD/xIiRQ/23T910n+nICo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741390685; c=relaxed/simple;
-	bh=awyxVGLYLrPGk2ph0vC9xWww4UwkrrLl5cXRfJqJlA0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KWXuyJREzcnRtiq624hd5bmR/J+rxp0wzZCg4R0vRBZeLaTpIXLwjFBwJo1hMm4lvco5A4JH7MUtnKV40CNKZGgP4NOOlB65D6pdRpL4Cn3VB7LSHaXlVn2HUzKNG6yAp/cc1Si/Bu2OPWE2w8EfCVyPoM7kc8plG7JvQtPc/Sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CTVoSv90; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57CD0C4CEE9;
-	Fri,  7 Mar 2025 23:38:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741390684;
-	bh=awyxVGLYLrPGk2ph0vC9xWww4UwkrrLl5cXRfJqJlA0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CTVoSv901qPSH0kq0SRi45h38A2I+kzNId6N7kN8mUDSfb6d97vw8m4klIvm5tqeU
-	 GAAPZ5h8bTAR47cLw04L8I7NjH5O/CDqd25IsGFixaVCi5ZEhO4yXYmreSFZzmYMrK
-	 XaHNENqH+Q/S6PlDJq0DxFh0/6b+0WoOEf2ZXcZhM2du4yDrJASDBW4+8oX8QNwjdN
-	 p54qwFQwhzKPPTNYZw6cjZYMCH1dPSzf3d1OomHr3NmfONYvc+Yfozq1yDf9csiFzw
-	 uL8QR7UnDcubB4ogUeQwavpsm9bsM3+0DxVajnJXq4IXlJIuaAT4Ry1NxjECm27jxA
-	 wcuiivr40Jl9w==
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Richard Zhu <hongxing.zhu@nxp.com>,
-	Lucas Stach <l.stach@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Niklas Cassel <cassel@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH 4/4] PCI: dwc: Use parent_bus_offset
-Date: Fri,  7 Mar 2025 17:37:44 -0600
-Message-Id: <20250307233744.440476-5-helgaas@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250307233744.440476-1-helgaas@kernel.org>
-References: <20250307233744.440476-1-helgaas@kernel.org>
+	s=arc-20240116; t=1741390717; c=relaxed/simple;
+	bh=FvTrwsvRrqcU8r3STXAD/abJZn6ARPfm75ImG2CAES0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TegopwRgAg7RfCG7UAMLi9/OARcGsk7K4vijdxxW4gtFhur+luuDvoQ7mf42LQxnFj3iHpbSIlIkJcNzMjabA3S+APGHLh1KJ27nWWd+cPlRynqFaCbZQ8rzu9/JbHaLz9xL4JoaGSop7qqmDO4LE5pHrcvaScnJFE5wY0Je9eQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bWLTMjg+; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e53a91756e5so1957316276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 15:38:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741390713; x=1741995513; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VWjXUhpo2fKrXU1j0gY5Xr67XtHa6Daou9ianeTAqY8=;
+        b=bWLTMjg+w9EYiB9xWAKPqZC3lc/fuwKyPrzbCpnhXhByH3eAmJXmX2r1Qgo+CC3aNW
+         EUpQ4UJRnKYR/FzUqKUlPA+k/DUbryKyU24xx48mEdt23u0D/+YEwkUsUkGKLiTnVMyP
+         OLcwY1LPrU3/67Jx0dRXn/FFzybVkvb31z+y2wnTzYQP+VT4l7Ya/OD0dtyHwZnTlV1A
+         R4Q9TQ9NBO2PaaeHRDK4tg4ADtNSBl+kL/gUG9zGWviGfIzPsoYlU/zDPZaRHHCkjEam
+         KCIhOURk86iReVpSdi+rTmPdZxVoHMmf6uZcOXy7X0BVXn9dP1mWwyUCj5Bs99zQqLME
+         vUrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741390713; x=1741995513;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VWjXUhpo2fKrXU1j0gY5Xr67XtHa6Daou9ianeTAqY8=;
+        b=Gd34Oc0oyKzcLFqIJmWxybzrkurBqswVyH87b/diX3qvPsdWIUNgVakSCRL/goniQN
+         a9pTFUSo8mKAQSwqP6J1Gp0GPWqnGB9YNS7dDuVwIKWEpBfIuhCO09GegU44Pu2kY38p
+         Hnsej8hoiVtEtvUerEZgwKTKkbOTkEmrB7oKLOVbYyVDhsX/f9e8qWBUruDZ/amkd7aY
+         Vt15oMkGFsAeK2yMI2taGgFu4x6wnitfVGXhfeuyeH+oqkjxJ5r63ZpPyDOk0/kD1ZAx
+         JfVdfxcTT0Qd/6Y95qNP9SP3K9HxWHEffpp7Eop5jfx4Zc+07ig0INsIciMhDkoomKGl
+         c27w==
+X-Forwarded-Encrypted: i=1; AJvYcCWSRo9/n0WvLmbo9YPdle5Mw7Ex73TgG9F1RAJ0NL7SX5et4pgEV3+LBgPCV2KfeBKt2Lu3dxQxgDynI9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTHwXRnOLqdF6dm+OuHxukEvOhJ+kq4i4irlBZwJGV6sktFPhE
+	Sx+PpHYzcoHv8+H515y2jV5rqVLJiybGBKevObUN4O4hSP/jShweELYi+EO+o0133Uv22nWKoNn
+	+ztovxFFoP2cDXEauz2ZkvpldzYYSj94u9RhibPwoAZNE2onZwDQ=
+X-Gm-Gg: ASbGnctIdYO+wyva2z3+W/lZSO0w+9x6wI5prFA22gcKwmv3DsV7CPNnxrAK6TC1fr6
+	3koqTSVamCDvVf9DdyLBAKLyTQqeTtzBDk5e9KsWFhH7ZsewZDft5Cgfaj9n9HrYKFF0qo0vwt4
+	Tc+HVOqC2T0Fbi8Vd4a8lygob7
+X-Google-Smtp-Source: AGHT+IH7YGl7HNKB8Okz8jZeL1FHEiS1Q1w9EOtWnahWll8xohjVD4FnIQlNwfvzCh1K3mKRlv103YdKVoGu9WyWWyk=
+X-Received: by 2002:a05:6902:cc7:b0:e20:25bb:7893 with SMTP id
+ 3f1490d57ef6-e635c1dccfcmr6795032276.46.1741390713262; Fri, 07 Mar 2025
+ 15:38:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250307175724.15068-1-srinivas.kandagatla@linaro.org> <20250307175724.15068-13-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20250307175724.15068-13-srinivas.kandagatla@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Sat, 8 Mar 2025 00:38:21 +0100
+X-Gm-Features: AQ5f1JqJKThblUEswZ3lN2Qkaev9eo1SwByk6PqJy3hET9Fq3mSSJOOUuYqdG8w
+Message-ID: <CAA8EJppTfafU_RMjG2V9FbrpAviTcGhDZ9F2ZJJtNR08Ap5h7Q@mail.gmail.com>
+Subject: Re: [PATCH 12/14] nvmem: make the misaligned raw_len non-fatal
+To: srinivas.kandagatla@linaro.org
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Bjorn Helgaas <bhelgaas@google.com>
+On Fri, 7 Mar 2025 at 18:58, <srinivas.kandagatla@linaro.org> wrote:
+>
+> From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>
+> The commit 11ccaa312111 ("nvmem: core: verify cell's raw_len") enforced
+> the raw read len being aligned to the NVMEM's word_size. However this
+> change broke some of the platforms, because those used misaligned
+> reads. Make this error non-fatal for the drivers that didn't specify
+> raw_len directly and just increase the raw_len making it aligned.
+>
+> Fixes: 11ccaa312111 ("nvmem: core: verify cell's raw_len")
 
-We know the parent_bus_offset, either computed from a DT reg property (the
-offset is the CPU physical addr - the 'config' address on the parent bus)
-or from a .cpu_addr_fixup() (which may have used a host bridge window
-offset).
+This patch does only make sense together with your tree, because it
+references a commit from that tree.
+As you are reposting them for Greg, commit IDs will change. It might
+be easier to fold this patch into the offending commit.
 
-Apply that parent_bus_offset instead of calling .cpu_addr_fixup() again.
+> Reported-by: Mark Brown <broonie@kernel.org>
+> Closes: https://lore.kernel.org/linux-arm-msm/Z7Xv9lNc6ckJVtKc@finisterre.sirena.org.uk/
+> Tested-by: Mark Brown <broonie@kernel.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
+>  drivers/nvmem/core.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+> index b6f8544fd966..e206efc29a00 100644
+> --- a/drivers/nvmem/core.c
+> +++ b/drivers/nvmem/core.c
+> @@ -612,7 +612,11 @@ static int nvmem_cell_info_to_nvmem_cell_entry_nodup(struct nvmem_device *nvmem,
+>                         "cell %s raw len %zd unaligned to nvmem word size %d\n",
+>                         cell->name ?: "<unknown>", cell->raw_len,
+>                         nvmem->word_size);
+> -               return -EINVAL;
+> +
+> +               if (info->raw_len)
+> +                       return -EINVAL;
+> +
+> +               cell->raw_len = ALIGN(cell->raw_len, nvmem->word_size);
+>         }
+>
+>         return 0;
+> --
+> 2.25.1
+>
 
-This assumes that all intermediate addresses are at the same offset from
-the CPU physical addresses.
----
- drivers/pci/controller/dwc/pcie-designware-host.c | 12 ++++++------
- drivers/pci/controller/dwc/pcie-designware.c      |  3 ---
- 2 files changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-index e22f650ada5a..3378f905b3bd 100644
---- a/drivers/pci/controller/dwc/pcie-designware-host.c
-+++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-@@ -670,7 +670,7 @@ static void __iomem *dw_pcie_other_conf_map_bus(struct pci_bus *bus,
- 		type = PCIE_ATU_TYPE_CFG1;
- 
- 	atu.type = type;
--	atu.parent_bus_addr = pp->cfg0_base;
-+	atu.parent_bus_addr = pp->cfg0_base - pp->parent_bus_offset;
- 	atu.pci_addr = busdev;
- 	atu.size = pp->cfg0_size;
- 
-@@ -695,7 +695,7 @@ static int dw_pcie_rd_other_conf(struct pci_bus *bus, unsigned int devfn,
- 
- 	if (pp->cfg0_io_shared) {
- 		atu.type = PCIE_ATU_TYPE_IO;
--		atu.parent_bus_addr = pp->io_base;
-+		atu.parent_bus_addr = pp->io_base - pp->parent_bus_offset;
- 		atu.pci_addr = pp->io_bus_addr;
- 		atu.size = pp->io_size;
- 
-@@ -721,7 +721,7 @@ static int dw_pcie_wr_other_conf(struct pci_bus *bus, unsigned int devfn,
- 
- 	if (pp->cfg0_io_shared) {
- 		atu.type = PCIE_ATU_TYPE_IO;
--		atu.parent_bus_addr = pp->io_base;
-+		atu.parent_bus_addr = pp->io_base - pp->parent_bus_offset;
- 		atu.pci_addr = pp->io_bus_addr;
- 		atu.size = pp->io_size;
- 
-@@ -790,7 +790,7 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
- 
- 		atu.index = i;
- 		atu.type = PCIE_ATU_TYPE_MEM;
--		atu.parent_bus_addr = entry->res->start;
-+		atu.parent_bus_addr = entry->res->start - pp->parent_bus_offset;
- 		atu.pci_addr = entry->res->start - entry->offset;
- 
- 		/* Adjust iATU size if MSG TLP region was allocated before */
-@@ -812,7 +812,7 @@ static int dw_pcie_iatu_setup(struct dw_pcie_rp *pp)
- 		if (pci->num_ob_windows > ++i) {
- 			atu.index = i;
- 			atu.type = PCIE_ATU_TYPE_IO;
--			atu.parent_bus_addr = pp->io_base;
-+			atu.parent_bus_addr = pp->io_base - pp->parent_bus_offset;
- 			atu.pci_addr = pp->io_bus_addr;
- 			atu.size = pp->io_size;
- 
-@@ -956,7 +956,7 @@ static int dw_pcie_pme_turn_off(struct dw_pcie *pci)
- 	atu.size = resource_size(pci->pp.msg_res);
- 	atu.index = pci->pp.msg_atu_index;
- 
--	atu.parent_bus_addr = pci->pp.msg_res->start;
-+	atu.parent_bus_addr = pci->pp.msg_res->start - pci->pp.parent_bus_offset;
- 
- 	ret = dw_pcie_prog_outbound_atu(pci, &atu);
- 	if (ret)
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c b/drivers/pci/controller/dwc/pcie-designware.c
-index 9d0a5f75effc..640caf4a084f 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -474,9 +474,6 @@ int dw_pcie_prog_outbound_atu(struct dw_pcie *pci,
- 	u32 retries, val;
- 	u64 limit_addr;
- 
--	if (pci->ops && pci->ops->cpu_addr_fixup)
--		parent_bus_addr = pci->ops->cpu_addr_fixup(pci, parent_bus_addr);
--
- 	limit_addr = parent_bus_addr + atu->size - 1;
- 
- 	if ((limit_addr & ~pci->region_limit) != (parent_bus_addr & ~pci->region_limit) ||
 -- 
-2.34.1
-
+With best wishes
+Dmitry
 
