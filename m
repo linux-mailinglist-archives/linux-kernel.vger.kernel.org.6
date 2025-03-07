@@ -1,116 +1,124 @@
-Return-Path: <linux-kernel+bounces-551230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BFC5A569E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:03:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C526AA569E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:04:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF92E1899775
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:03:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82068171064
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:04:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DEA21ADC4;
-	Fri,  7 Mar 2025 14:03:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCA921ADA4;
+	Fri,  7 Mar 2025 14:04:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="YC2hEVy4"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TdwVGdgL"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B8FF21ABBD;
-	Fri,  7 Mar 2025 14:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE67821ABBD;
+	Fri,  7 Mar 2025 14:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741356188; cv=none; b=IURIFs9lLTDTnts855vjz81b2eGQKhBbAle5H0Z9MJh/WAMrsm0YcGcZpxLJuX2Jw99TaM18FGroFwoEkDBkZVZU3IvE8G85ljYV0YP2YzUubwc+d61mqrDfcaZh3nHNkmIyOXmVX4dxJcP7oFT9Pz3qCDRGbT0Bm248kyl4DGY=
+	t=1741356242; cv=none; b=EnpcU1Hr4fDKNtV3v23/xbGaQoAe9K7ff+BJgrLYBJ8J5Q2qoTwAani7Mu7/8bGbYvTgD4GzFUpvPbm3kUFQWku8Rb/vZeJ+EmaMdMCW9mbKULS0ngmL4lcyk/5nACb5Fd401slCaYQ05Przr8wVKueZ60vSyH5jN5CLHMUSbJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741356188; c=relaxed/simple;
-	bh=CrhhOIMTVL+IZJGVGxgGzbJTCVnnSVtzlH5FBaVUETw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uumqnixpwAPRLUCc3rKp4cVY7JCyJUk+VfNWx3a+GG5HshnQf1MoKkXA8pl79VhxnWRZk9dT71nT1WAt1aBJY6MnrdTwVAXp9B3W3BrHp9dFYFs1sOGKYaqN9uR9Wqv56NbEQUxwFKtmUqNTS7ieCPGHBCFe71Z+ktzDG5UlkKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=YC2hEVy4; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=nB1Ff94gX6hUEiR4vaLcBQczfcyrPErlm6RF/exj1rY=; b=YC2hEVy4NZANVuitqKYVpsTfLw
-	Vq53fYjnsZ/1ipxexmYUW+xwwvwoTr6C2S4WvrqLu/Wx/vj7Bfejk8gxeXpGpMi9v41K7xmJNq4KH
-	294pI4i61HdG3JE6B7pDvyY8tUpME3f5/uDtjCZDQwO1PVRguDqOkUFJoi5SAEEV5xbI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tqYHs-0039gt-1L; Fri, 07 Mar 2025 15:02:52 +0100
-Date: Fri, 7 Mar 2025 15:02:52 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: Heiko Stuebner <heiko@sntech.de>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Yao Zi <ziyao@disroot.org>,
-	linux-rockchip@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1741356242; c=relaxed/simple;
+	bh=ywhzavUbT8Crwka9kYfHb80Hlmy4pKHZMiz6hFpwVWg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XoesShBBW5Zf5sTkVTv3y5HhFFUTaalcJeQ4RezBVuuhXm53F6O2inMWWH+YYdlEnX0K+8L8ZjvdHA7dcPiBUJGzHTNlMn5WhrrlkIYiQzWQrEELhecONdivlHCcWsBUboeXF8K2QdDTSdIk8nKlZB5v0G3GyQORvevxHCiMXKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TdwVGdgL; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741356241; x=1772892241;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ywhzavUbT8Crwka9kYfHb80Hlmy4pKHZMiz6hFpwVWg=;
+  b=TdwVGdgL16G/7QMutBHxazRMMTGEKfneo3IHYkklphWtgKBiFwEAJOTq
+   Ey5ENKmbsdgrS+zffAtkgiFLnkLzlZE5SjecnCWRs2aOCwxDjMVOrDqST
+   aSLX+Hh23S4fh6TT95j7vA0dN3vOgxvn5ArluoUiLBecc6i1W9Gwo2jk6
+   bOnc7cP1hXkFK3a0QvgzX8Kg8iOKbzH2cGtJox9OJO1l7EfRKmcqVp/hT
+   fPbS/CGXKA52tJBqewPcPfKnMfjocqzOwitDV2zaO6R6YvAhTLHWXVFyA
+   JFaNOVJNRQqLOFRd2erzIDjlNYW1ZZ8QNWh1nTIV4ZLcEev2fBxTcRV/8
+   A==;
+X-CSE-ConnectionGUID: 6taCO5r2S4OIL/XJwj9vWg==
+X-CSE-MsgGUID: fBUYxoQKT0+/1ff0HZXvFQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="53040427"
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="53040427"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 06:04:00 -0800
+X-CSE-ConnectionGUID: pT4gQoJlQOKKQ82jFUIpxA==
+X-CSE-MsgGUID: g/AAWw7aSJmahjk8R7b9tQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="119257861"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.120])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 06:03:56 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] arm64: dts: rockchip: Add GMAC nodes for RK3528
-Message-ID: <f6c6aeb5-bdec-4283-87c8-e870f59008c8@lunn.ch>
-References: <20250306221402.1704196-1-jonas@kwiboo.se>
- <20250306221402.1704196-4-jonas@kwiboo.se>
- <a827e7e9-882a-40c6-9f2c-03d8181dff88@lunn.ch>
- <003d3726-680a-4e91-89cd-d127bc3b5609@kwiboo.se>
+Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	=?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>
+Subject: [PATCH v2 1/1] PCI: Fix BAR resizing when VF BARs are assigned
+Date: Fri,  7 Mar 2025 16:03:49 +0200
+Message-Id: <20250307140349.5634-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <003d3726-680a-4e91-89cd-d127bc3b5609@kwiboo.se>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-So this is a bit more complicated than i first guessed...
+__resource_resize_store() attempts to release all resources of the
+device before attempting the resize. The loop, however, only covers
+standard BARs (< PCI_STD_NUM_BARS). If a device has VF BARs that are
+assigned, pci_reassign_bridge_resources() finds the bridge window still
+has some assigned child resources and returns -NOENT which makes
+pci_resize_resource() to detect an error and abort the resize.
 
-> 	phy-mode = "rmii";
-> 	clock_in_out = "input";
+Change the release loop to cover all resources up to VF BARs which
+allows the resize operation to release the bridge windows and attempt
+to assigned them again with the different size.
 
-Probably will not get passed the DT maintainers. The clocking needs
-investigating.
+As __resource_resize_store() checks first that no driver is bound to
+the PCI device before resizing is allowed, SR-IOV cannot be enabled
+during resize so it is safe to release also the IOV resources.
 
-> 	phy-handle = <&rmii0_phy>;
-> 
-> 	mdio0: mdio {
-> 		compatible = "snps,dwmac-mdio";
-> 		#address-cells = <0x1>;
-> 		#size-cells = <0x0>;
-> 
-> 		rmii0_phy: ethernet-phy@2 {
-> 			compatible = "ethernet-phy-id0044.1400", "ethernet-phy-ieee802.3-c22";
-> 			reg = <2>;
-> 			clocks = <&cru CLK_MACPHY>;
-> 			resets = <&cru SRST_MACPHY>;
+Fixes: 91fa127794ac ("PCI: Expose PCIe Resizable BAR support via sysfs")
+Reported-by: Michał Winiarski <michal.winiarski@intel.com>
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
 
-Using the ID suggests there might be a chicken/egg with the reset and
-clock. The ID registers cannot be read from the PHY?
+v2:
+- Removed language about expansion ROMs
 
-> 			phy-is-integrated;
+ drivers/pci/pci-sysfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This suggests the possibility exists to route the RMII interface to the
-outside world:
+diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
+index b46ce1a2c554..0c16751bab40 100644
+--- a/drivers/pci/pci-sysfs.c
++++ b/drivers/pci/pci-sysfs.c
+@@ -1578,7 +1578,7 @@ static ssize_t __resource_resize_store(struct device *dev, int n,
+ 
+ 	pci_remove_resource_files(pdev);
+ 
+-	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
++	for (i = 0; i < PCI_BRIDGE_RESOURCES; i++) {
+ 		if (pci_resource_len(pdev, i) &&
+ 		    pci_resource_flags(pdev, i) == flags)
+ 			pci_release_resource(pdev, i);
 
-  phy-is-integrated:
-    $ref: /schemas/types.yaml#/definitions/flag
-    description:
-      If set, indicates that the PHY is integrated into the same
-      physical package as the Ethernet MAC. If needed, muxers
-      should be configured to ensure the integrated PHY is
-      used. The absence of this property indicates the muxers
-      should be configured so that the external PHY is used.
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+-- 
+2.39.5
 
-Given these issues, i suggest you keep with the DT as you have it
-now. Adding the PHY node will require access to hardware and some
-investigations.
-
-	Andrew
 
