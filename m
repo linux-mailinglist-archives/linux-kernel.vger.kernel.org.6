@@ -1,89 +1,251 @@
-Return-Path: <linux-kernel+bounces-550354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A71A55E48
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:25:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D163FA55E45
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:24:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A7E18976F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:26:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8F933A27BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:24:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B92E18DB3B;
-	Fri,  7 Mar 2025 03:25:52 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FBDF18DB3E;
+	Fri,  7 Mar 2025 03:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="czw7O2jv"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013052.outbound.protection.outlook.com [40.107.162.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E642529408;
-	Fri,  7 Mar 2025 03:25:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741317951; cv=none; b=WcBrsvieWwBKP3mNIW5Bo526wmOvAHftD36JTUbV2232Bn0D1Twzll1p5oESglgBnEqAEvMku3cDtnOpsbSCR/tBH1iUMGlZyS6QHWKoVcDpyzaC918q/JfCpSgvRmkHJqeNU1RTShbJ0KeCIP440ndHnrJ9m2XrAjLBUTrEAVI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741317951; c=relaxed/simple;
-	bh=AeizJya3IEeXZE/xwtzLxLFEXt9d6U6q8b3BRF4dsEM=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=uIFNe0Val8kLOKvTqMQbDqWPkjcShblEIJjllH/rBij8YoHvZewEUJ8RspAODPdggjn981iDKIioht55qou11C2BRXy4takuJ/dQg3OfIiwfk/bpLRMVksYK5p5JuJ4tk/8IqjIth2oJi1TIpfTRly846K/hCFmJzqGzqr3NEEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201610.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202503071125354834;
-        Fri, 07 Mar 2025 11:25:35 +0800
-Received: from locahost.localdomain (10.94.18.185) by
- jtjnmail201610.home.langchao.com (10.100.2.10) with Microsoft SMTP Server id
- 15.1.2507.39; Fri, 7 Mar 2025 11:25:34 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <broonie@kernel.org>, <mcoquelin.stm32@gmail.com>,
-	<alexandre.torgue@foss.st.com>, <patrice.chotard@foss.st.com>
-CC: <linux-spi@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Charles Han <hanchunchao@inspur.com>
-Subject: [PATCH] spi: stm32: Fix a NULL vs IS_ERR() bug
-Date: Fri, 7 Mar 2025 11:25:28 +0800
-Message-ID: <20250307032530.116837-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30AC529408;
+	Fri,  7 Mar 2025 03:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741317874; cv=fail; b=CurVJPYs7/C1ex1kxuxBwYMyqqADeoX7j2X1SLp5Vk0DVrEHwUHUTOl/5F8W9YDi7Br38vnLNWKhPthDhsjVdMCSqbeiOABQf+NNkYz0GMVY4BSvYD0Xdx098rJ+F36DjAZbAwzcDITNF4HhkMq5+RTdvGhf7deGeyTq10fLmlw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741317874; c=relaxed/simple;
+	bh=7HkSH9wIGEb4MsDdlgnDA1iqycAXzziXG/RMshuK7gQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=UXyiabc1hn1x5ROdHE++WCLsHEhPSs141Xdc22E//OvnNLfG00UjcITKFZoklYbF91V6o8EkD7W03cpC2tqH6Q8XcWSGaON7nFwuApgMCf296ohEhFdfp/TdXWjN7UGdPasBUb97sboGWZEOqsNQ4dLUiRFx6aKmKfevQK9lfjA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=czw7O2jv; arc=fail smtp.client-ip=40.107.162.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XUTaWH8dOPYU5G+To4TylY1lX3tdSdbTBcdM26XNPrqUvq6wAGYPE1zP1JagYCkFsnDexd1fb0AvX1DLJEmy6seCIb8uuM5DXEumPs8lz4PtO5l/jJLoPs59ke40irIe4xSjrXB66/q7YazN/u9StUI+eO44a7JXyA0WPiZPVNmEkvSx6MYp3nShYlJ0tdy5j7yGqtrzilJiclmHE0SnT2Eagfx44aAyYbb2VsauLCUEWm1ZfQgCzD/dw6aFlhWzv9dKHBkhCm12Tvn8kVwIANoeIKW9S29OONMIt/hSzeK2lhRNgqvSx5ldOpef6C0GUMObTIXJKbbKFob+g5RTIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zzHPeQEJh5xDMU2aMRKoiRXhpWGcQnaAY9qYu28ktZ4=;
+ b=TyNu4iqb2yc+KVQOJepKnwGA66v3FGFbQYi/DDCyFLt+Dzz493w1IJrbFeTaALhYMwWyYpU1ROcSvRbqpu1708vRDqbFGYk9A1kvwl4BysKlUsucHCm7ztrZ0tQ1X88JlIxxlNOcDGvwyzxt0yGQNgLuF/ilKO6tlKqy2x+Yoxl2aCf156bRcci/wPmqgdQYGR/tebcNNZaw5icuW02lZ0UFvJ+IiYP1sq9YHg/XVQY23y5YTt5186GfNAssjB8i6tFB1cQzKcpVMjskM54wAPzr/sKnt6NEa2qzB1x4MHs+XV6lQXAU6koiQ7fkImHaavqptQHb1TK/RORrizaErw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zzHPeQEJh5xDMU2aMRKoiRXhpWGcQnaAY9qYu28ktZ4=;
+ b=czw7O2jvOblww8rT8y4Qg/KJrJJsIkkJDd/U25T8EZTI4muDu7366ywzebL5+nnRgFMgkdZq71mINjsKFXEE3nuRc64V4oCnIph51p9K/l2ekLFRP4AHbBINFnfcK5cC39EeEvThDrumjF1I1gVVWbedAKd+iRG3J5VVRls2IQEfhfJXM2DF33agMy+tQD+Yu0bkgOKz+wby3/qOfXlDN3Gkdzw25uVXiUnpKXAJ1BMolsqMGLM+JrEe7Xbi7HLKOp+2+a8gPx1ST1D6Dv9XdhT2duWbKP/TOQ5rh1AZS79quWZzwB914XuQ1MqZ73RJFlz+gtX+m241oMgoKO6b5g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by PAXPR04MB8781.eurprd04.prod.outlook.com (2603:10a6:102:20c::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.20; Fri, 7 Mar
+ 2025 03:24:28 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
+ 03:24:28 +0000
+Message-ID: <3836a4d2-ef4e-427e-a820-39dd4823458b@nxp.com>
+Date: Fri, 7 Mar 2025 11:25:40 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] dt-bindings: display: simple-bridge: Document DPI
+ color encoder
+To: Rob Herring <robh@kernel.org>, Maxime Ripard <mripard@kernel.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
+References: <20250304101530.969920-1-victor.liu@nxp.com>
+ <20250304101530.969920-4-victor.liu@nxp.com>
+ <20250304152320.GA2630063-robh@kernel.org> <1891036.atdPhlSkOF@steina-w>
+ <20250305163805.GA2071011-robh@kernel.org>
+ <7d98163d-10c8-457d-92e7-6a1d6e379beb@nxp.com>
+ <20250306-kangaroo-of-pastoral-typhoon-8aefb2@houat>
+ <20250306203444.GA570402-robh@kernel.org>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <20250306203444.GA570402-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR02CA0132.apcprd02.prod.outlook.com
+ (2603:1096:4:188::15) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-tUid: 2025307112535a815d6c3a2c39f102f9dbacaeff8520a
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|PAXPR04MB8781:EE_
+X-MS-Office365-Filtering-Correlation-Id: 87e86a23-d577-4286-e627-08dd5d27919b
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?Y3Y4a1M3K1dKMHBnWWYxTUJNbS95ayszRG5HWkJwUDI0ZHN0anNPY3UrUk9Y?=
+ =?utf-8?B?SkZmeHZ6eTBTSGFPbVJtNFB4M1lnS3FpaCtEMjd1RlA2VXFySWJzZHRORjJR?=
+ =?utf-8?B?UEtmR0JsTzRhYzhqTXY3L1NqQUpTYWZGcGl4U0Y2OXpyYUtrNFAwR2ZjSWls?=
+ =?utf-8?B?aUp1REFISnhsSlE3R0Y2Wk9zN1EyQjJiQ1p1NXVsTDZFSXVWNkNHRnViK0Qz?=
+ =?utf-8?B?eHNzZEdBN1h1a1kwVk1BbHlkWER3c2RMLzdUZEFmQlF0ckRKcEpEcmVhNEJo?=
+ =?utf-8?B?RmQvQzVMUVBuNTZKWVNMUWhXdk1USkpBNEtRdmVLaU1VL0NQRjMyU0hHaGll?=
+ =?utf-8?B?ZWIxUStUY01oamhoV2ZwYzV1MXlPZkNQN1d5ci9kM2pPcjRxandXdWNReG5r?=
+ =?utf-8?B?VHFhL3I3bVhKQXNzT0pPNDQ3WlpIQVlSMTlxdXFDa1c1Z1Z2dVpqeFRrQmVS?=
+ =?utf-8?B?NFBNWXdNMVhwRFhJUTU3eE15MFYzMHUyUWFOOTN3UFFJd0t5VTlQRHlLNEp2?=
+ =?utf-8?B?ZW1xVzJyV09uTWdCK28rMGpmVFlRdmxCNzhEMDY3SlZNNElTM2JLNnRxV2tu?=
+ =?utf-8?B?a3NZa3JFSFBrWkYyYWg5dFBhTGtDeVpjdHJRYzhiek90c2x5QmJNZi96UFhF?=
+ =?utf-8?B?N3ZNVTdBOFlKNG81b2F2VGhoMHFnMnpNTE55YUxZQzlyUGJlcVRjQVhqK1c3?=
+ =?utf-8?B?eTZzMXVSQ2c2ZEg0WjRqaFkvMkFiVC9VbHkvUElycDR0bU5rSGovT2JaT0tz?=
+ =?utf-8?B?NlpDRVJvcGkzeUY2RmZIMjNVWjl4TEVPTXJIdFFvZlIrSlh1MkRBWXNkNUhp?=
+ =?utf-8?B?MzlUdEJ6RlhYTzEzdjhLVFhidkxWSk0zL2lQYkM4N3JFMlBITUl5blY5aGg0?=
+ =?utf-8?B?UzN2NW0xTEhxbVBtYkovY3luNXdHSGFXRmdQbUpDSnpFbjR6QXRuNHdMWURW?=
+ =?utf-8?B?NmNaMEpIRzhhWlNNN1k5Q1dOUWRNVVdEUFpKemRCODR2NHdWNjIxOUFERGE0?=
+ =?utf-8?B?dEthb084U2FsMUxHc3FnelZQZjlHNHVGMlYyeDhJemRCUEgxbnNqSkpidVVa?=
+ =?utf-8?B?Qzh4cHhOZmNhYllCL1gwZE9iVy9PNlFQLy8vSFplbTNVbjJlNlhDU1JEdFBv?=
+ =?utf-8?B?Z3FaaVlHMGhScUJUbWcyRTdsQUdGTUdtdStnWXFXM0hqOVZCTXFQU0VVNHor?=
+ =?utf-8?B?N2xxZkFhUGtCcWk0bk1lLzV0UXRPemR0YVNVTmd3RmVGZytCby9lNnZFMUpU?=
+ =?utf-8?B?c2hPRFl2MkFRMkpyZWdzZEN6RzNpNmwwSG5vYllHVDlTVjh6ZEtKVVg5L0ts?=
+ =?utf-8?B?aUowbU9JNFZqTWZpK1RHd3V6UVlEek9JUjgvTWdOb0ZBYzNlOUpmNklycjVt?=
+ =?utf-8?B?UFArbTFidlQ1T3oxSmlqL1ZrUjcvRmVDbCs4d3ZxOEVnbVRkeHJtTGJUbElv?=
+ =?utf-8?B?SlZWQzJIb2N2VTBzem5PWHNiWXluR0tteisvMERIUXNKYmhadk5vTll3T1p4?=
+ =?utf-8?B?UzZQaUZrU0Q4cjNLYTZFbGtDbEkvc1pTN1RuWUMzTFVwdENkK1Q3VDZRUlo5?=
+ =?utf-8?B?ZWhWQnFhdlJpK05nREpycDFqT1pUSVRYL2dvbHhNME1pL2ZKRUZZOUVQT3pB?=
+ =?utf-8?B?di9xWHA5V2h5VUlFbEtYSjBxMkFWVUxQd2FMTXpXRjh5SzV0ZlhVNVdYVnhP?=
+ =?utf-8?B?TGZNNmJ4ZDhKQzRtSEtweTV2TXJuTy9MYmhBNlI5LytHRDFwWUpnSEtBMU4z?=
+ =?utf-8?B?N2JVenhtbThzVzJiekFuQjY2TEovVjdpdXBvdC84MmIzRm80UnB0bWMvVnly?=
+ =?utf-8?B?dzd1RXZIQUdtNEhCTDV3R053cmhsNGtTSmFKbnp5a1Q0MFNGcCtDMDFsQlBm?=
+ =?utf-8?Q?MNF1G3t2FsI6g?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?VmJGRmw2dzhGV3VORGd3Y0QzU3VCTFY4UTRVekdqZmd3YVpKcm1qandhWG1J?=
+ =?utf-8?B?cC9vVjRmQXRFdmozZkRlV0I5aEh4N2NGUFY1MjJLNXZMQUlsaDVaM3ZHY0ZO?=
+ =?utf-8?B?bWxnNzMybGhIQmRlSnl6dy9uYi9IUEdXeno3d3VxUUxPWFVxMG5uSjNuZitR?=
+ =?utf-8?B?WlVnaGVUTzlrU3BEb1RmTkVNNTVnOSszbXpEQzdNNCsvcEJUWnhwOFUyUFJv?=
+ =?utf-8?B?L0FzSmZTRlZENmFpYjdwemRQM0RyMDk1Q1V1M2J5UElUN3R3cUJKUzVieWxW?=
+ =?utf-8?B?d1kwcW5NVzVJYTh3QVh3d2VWQVFsWnVwM1RGdmFZVGFYQ0ZuWDZaeFd0WGpa?=
+ =?utf-8?B?T1FFMno1bklqVGtHc255NVQ1R0EzSVVVcCtaV2lyV0NrSnd3RkhPdE9HazRl?=
+ =?utf-8?B?QVBSdVBibnRQaVhmVndWRUhVRTBTSEE4NnBianIxa0lOYjJqMUg2WGF2NjVt?=
+ =?utf-8?B?ZGNLMzBZOElwK1BrY3NQMmw5NDFVaUtRTkJpNEQxWXEwSVg2Y0NzdldQcmw2?=
+ =?utf-8?B?S2F2UExnUVRGNlVYRmtLUytlTjc1SXdNOHNDODhHOUs5Uy9wWHpadE1tTENq?=
+ =?utf-8?B?US9McjNjUThiYkgwNk1vd1pYSG96cUtXZGFHWjRmSUwxQy92b3NEN1FsTFBz?=
+ =?utf-8?B?elZJM1dHR0x6Tkg1amJKZ2lwMlVMRy84VmNNL1llcnhBRldGVGRzNFZFN3l1?=
+ =?utf-8?B?K3QzVUNFN3lWMDNLNjk2SFU1NkZDc1diMzUzSFFSTjh0L3FkeWJRcFZEMmxQ?=
+ =?utf-8?B?T3N4MnVlQm5VWHR5SVBqUTg2ZTJDeFVWMmxWaTM5R3RtV04xak4vQlMrMllH?=
+ =?utf-8?B?dGVQMHBOSGRuSmlLbnRLQ1ltRThLeWhveFNDaUg3KzdYejY0eitoMThaYVZD?=
+ =?utf-8?B?Z3RIOVNiZnVqcEU3VDg5bHJRK0Z3QXBHTmkzMGI1TVFWUzE5NWdzQ0N6UGRE?=
+ =?utf-8?B?T1JzNzVyUGJHVE5kNXdPUW5TTm4xdkUrc2xhVFBOTlh4WlZ5NStkNHpnbzlP?=
+ =?utf-8?B?OTI5cEMyLzgxVGdGTU1NdU4xVGpld1JxMU5BMmRMWGluamV2UVZMSlkxZXVO?=
+ =?utf-8?B?bkZCSUMycEd1Mk1mb0JaMHJNb2tWSWdEWG1IVFhzSjVyVTVYSzNyQVlqeWxn?=
+ =?utf-8?B?Z1VNamZDQTNZWjJ1OHJJbU03WUFlVDEyVnZXcHVVUjM1ZG5rOEtGN0pkTWIx?=
+ =?utf-8?B?Y0p2REdod1ZaSElTREt1cnNjZDU5a1RieDZ0dVBCd3hQWTNEQkl5UTYzaGFE?=
+ =?utf-8?B?c21UYUNaNHd0dlRFWWRNU1ZmbjNSSFkrVjZxcHl0bUpBdFUvNWg5Zy9CSFJz?=
+ =?utf-8?B?dTVLaVFaVlFIbDlpMEJla1BBYnVsb3hxQ3lGUC85WllFVlRnM0dBOXMwNzk0?=
+ =?utf-8?B?QVhJOEwyS3NVOU1WNEFLckhEQ2FLR05DaktsVE9mZ1h1b1lsYk9pa3VqODZE?=
+ =?utf-8?B?NFBhbEowVURkbTNCekZWWEwyMnZ3TWVOaW0xWGlFNjJ1RFkvcEJOaC9xY0Zv?=
+ =?utf-8?B?TkFNaTV3OEVSV1hTa0x2Q3RETlFLQWJvME0xOUM2d0d5K2s2NEhVSTRteDdM?=
+ =?utf-8?B?UDdPcDM1OVV6UTYwVE5yUkw0R1JqNWFGTmRud3M3N1ljTThaNFZXMWFiU3BW?=
+ =?utf-8?B?aTJScHAyWjZ5VXBqZDZMQWFjZTM4Mmh0aG0zaklxdDN4REV0UWlrZkhCTitZ?=
+ =?utf-8?B?eVBvYjJKcGlNZEsxL0c4K2dOSER2OU9oM3ZHQlI3QUVaTi8ydHRmZnJmVjQy?=
+ =?utf-8?B?NnNDOENZT2gyS2NUSk9JYWVISnhGVVBLZlluMllPTk5ZWDdLZDNIeEtoSHhl?=
+ =?utf-8?B?U2tXTnNlZmpkZEtaOVVXQVkwY1J2YmFQYkRHSXhwVTJIVldSTmNZVGtxMEhP?=
+ =?utf-8?B?cHY1aThkc1hpRTJQWFNqelEzaU9UR1k1SmMydldTZnFHeFUydkdWL2NIZytt?=
+ =?utf-8?B?SmYwZis4bnBOU0EwU2hTZzFtVjVhdUJkNlVaTGxFcDVRY1h1YkJWRXNFd2Ey?=
+ =?utf-8?B?bm9lL0JocE1aUXBIZlFVL2piZFpoOTZGTHVkUEpROGdUZnFyVTdYVDRTSjJO?=
+ =?utf-8?B?bHJVc0ZqT0hBaGpNYXA5aER0WGVLYlhhdktkRzhDYnNxRXVZUXJQR1hXbWE4?=
+ =?utf-8?Q?FCsQslQLcDpIgu8TW2rg1EfRs?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 87e86a23-d577-4286-e627-08dd5d27919b
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 03:24:28.6634
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: VIel8jpPNrg6O+ww9jNwxyzKkrdKdYlxcgdSxRzlU6cMcxcf/ty3cCktCBrmuvzwnD8YOztYZ1azRPZ6wBUuEQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8781
 
-The devm_ioremap() function doesn't return error pointers, it may
-returns NULL.  Update the error checking to match.
+On 03/07/2025, Rob Herring wrote:
+> On Thu, Mar 06, 2025 at 12:35:49PM +0100, Maxime Ripard wrote:
+>> On Thu, Mar 06, 2025 at 03:02:41PM +0800, Liu Ying wrote:
+>>> On 03/06/2025, Rob Herring wrote:
+>>>> On Wed, Mar 05, 2025 at 10:35:26AM +0100, Alexander Stein wrote:
+>>>>> Hi,
+>>>>>
+>>>>> Am Dienstag, 4. März 2025, 16:23:20 CET schrieb Rob Herring:
+>>>>>> On Tue, Mar 04, 2025 at 06:15:28PM +0800, Liu Ying wrote:
+>>>>>>> A DPI color encoder, as a simple display bridge, converts input DPI color
+>>>>>>> coding to output DPI color coding, like Adafruit Kippah DPI hat[1] which
+>>>>>>> converts input 18-bit pixel data to 24-bit pixel data(with 2 low padding
+>>>>>>> bits in every color component though). Document the DPI color encoder.
+>>>>>>
+>>>>>> Why do we need a node for this? Isn't this just wired how it is wired 
+>>>>>> and there's nothing for s/w to see or do? I suppose if you are trying to 
+>>>>>> resolve the mode with 24-bit on one end and 18-bit on the other end, you 
+>>>>>> need to allow that and not require an exact match. You still might need 
+>>>>>> to figure out which pins the 18-bit data comes out on, but you have that 
+>>>>>> problem with an 18-bit panel too. IOW, how is this any different if you 
+>>>>>> have an 18-bit panel versus 24-bit panel?
+>>>>>
+>>>>> Especially panel-simple.c has a fixed configuration for each display, such as:
+>>>>>> .bus_format = MEDIA_BUS_FMT_RGB666_1X18
+>>>>>
+>>>>> How would you allow or even know it should be addressed as
+>>>>> MEDIA_BUS_FMT_RGB888_1X24 instead? I see different ways:
+>>>>> 1. Create a new display setting/compatible
+>>>>> 2. Add an overwrite property to the displays
+>>>>> 3. Use a (transparent) bridge (this series)
+>>>>>
+>>>>> Number 1 is IMHO out of question. 
+>>>>
+>>>> Agreed.
+>>>>
+>>>>> I personally don't like number 2 as this
+>>>>> feels like adding quirks to displays, which they don't have.
+>>>>
+>>>> This is what I would do except apply it to the controller side. We know 
+>>>> the panel side already. This is a board variation, so a property makes 
+>>>> sense. I don't think you need any more than knowing what's on each end. 
+>>>
+>>> With option 2, no matter putting a property in source side or sink side,
+>>> impacted display drivers and DT bindings need to be changed, once a board
+>>> manipulates the DPI color coding.  This adds burdens and introduces new
+>>> versions of those DT bindings.  Is this what we want?
+>>
+>> There's an option 4: make it a property of the OF graph endpoints. In
+>> essence, it's similar to properties that are already there like
+>> lane-mapping, and it wouldn't affect the panel drivers, or create an
+>> intermediate bridge.
+> 
+> Yes, that's actually where I meant to put the property(ies).
 
-Fixes: 79b8a705e26c ("spi: stm32: Add OSPI driver")
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- drivers/spi/spi-stm32-ospi.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Put optional dpi-color-coding or something else in endpoint-base?
+Assuming it's optional, then it implies that it will overwrite OS's setting,
+which sounds kinda awkward, because it is supposed to be required to describe
+the actual color coding. If it's required, then we would have to create
+something like dpi-endpoint-base, but existing display device DT nodes are
+based on endpoint-base.
 
-diff --git a/drivers/spi/spi-stm32-ospi.c b/drivers/spi/spi-stm32-ospi.c
-index 8eadcb64f34a..a544d7897edf 100644
---- a/drivers/spi/spi-stm32-ospi.c
-+++ b/drivers/spi/spi-stm32-ospi.c
-@@ -835,10 +835,10 @@ static int stm32_ospi_get_resources(struct platform_device *pdev)
- 	if (rmem) {
- 		ospi->mm_size = rmem->size;
- 		ospi->mm_base = devm_ioremap(dev, rmem->base, rmem->size);
--		if (IS_ERR(ospi->mm_base)) {
-+		if (!ospi->mm_base) {
- 			dev_err(dev, "unable to map memory region: %pa+%pa\n",
- 				&rmem->base, &rmem->size);
--			ret = PTR_ERR(ospi->mm_base);
-+			ret = -ENOMEM;
- 			goto err_dma;
- 		}
- 
+> 
+> Rob
+
 -- 
-2.43.0
-
+Regards,
+Liu Ying
 
