@@ -1,311 +1,239 @@
-Return-Path: <linux-kernel+bounces-551257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07DF0A56A2A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:17:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F41AA56A2B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:18:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A54176B02
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:17:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9A083B3516
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC4E21B9C8;
-	Fri,  7 Mar 2025 14:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BE4E21C173;
+	Fri,  7 Mar 2025 14:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UWOAQM0d"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="os8p1b9x"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F34A529408;
-	Fri,  7 Mar 2025 14:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741357042; cv=fail; b=Iftr2HRm7zRiI2G03Gsk930cohMGdKqT6QzhX8hJt6fTtim+9z7DD5Byhu68q865KijL9kPbow7KfFpi2at7yWBCyo8ze2mQEmmoYLnmd3CDr2AKXCxqf4e5O3NrYR0zCYGh7kvxUvY7TIQ7PUyE/EQekNuR0MlYqJijYn1PDSI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741357042; c=relaxed/simple;
-	bh=xXXiOyPLcxzItsODz1kxZwxWFcDOXEva6NniCIUH8VA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=PTeqWM/BHhYVGisdht+NUXpJcnyPP0FYZsTY7Eefg2qNUW20C1Wk4s9m68dm+7TCLsrOUJxp/K3Dm/0x8X0JQF42U3FwXllvCnqhVIi6e3I1DNjsta0lY29hY6Nl67+m7FylKyJkHNyt/hwC2jqAhbrYFAH5tMVgK2sW1PBx+8s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UWOAQM0d; arc=fail smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741357041; x=1772893041;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=xXXiOyPLcxzItsODz1kxZwxWFcDOXEva6NniCIUH8VA=;
-  b=UWOAQM0d1pBSCs8o8zjT1bJAXrVVpbOuK6imcUaSC4Sxy5ekQxjosiJz
-   +ORKQkk/MpWah8DajJ0scDziMm+89gS5BXROid2PAyQ1x1ba3VLeBpeI2
-   U3w47FQ9OF62kVIv78O0M3ngABAiRHUQZkQuFUnbntgfzOQQBC2WtccCL
-   Ohx0whqJCj2kR/2gQVEmjQ+e6+gBuMxddmerYflRziecw3brKDyaPegj3
-   rUKCV7tVZkkisjljFRoB0s0GRsuf/3AFxY2Mu4ZG+wkU3XAtRwlTEqq8F
-   vzPaJkeFlF1jMD6LK5pql+efRVIGQgrRCVmwrWcUapqWYosFVKNAgGJrs
-   g==;
-X-CSE-ConnectionGUID: NP11mtfJScerJ8P60j9yMg==
-X-CSE-MsgGUID: ppNclQLDSwmlTgR2KJJX0w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42635310"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="42635310"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 06:17:18 -0800
-X-CSE-ConnectionGUID: xFGOBmmmRDK8vYzf2KLeww==
-X-CSE-MsgGUID: eLPfKGqJQTSUP+wwS0H0EA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="150128267"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 06:17:18 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Fri, 7 Mar 2025 06:17:17 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 06:17:17 -0800
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (104.47.55.41) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 7 Mar 2025 06:17:17 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=NZsXUt3mjpyS4ywTSDAYErLK7oQ1tV7YLNRCM+qhhlP+KH543RQCEmOuWMdCXJsc5qUlT8MUwkgntYfPRLcAjNbjeTrlCUvE2x20eMSZ70LfePiZzucagmmNvmCqBYNoG7hO5/4xabSctGQQb8qq2ghy/tFBiUHdV/8GCz2SgxE6FGr07ZzmqRdd0k2aTRRmzzAX5sUWBM2oImLn8SBH8rfqojidyUHaGeQIiqbetx09YTdRiAbMlsWrtyJxGiThIHxRBOTDJjS4ww7jsHvtChhJH0TwqA6j/+y3MM3puLY9+RES6i45d10UR75BF/E6SyVK3PW2SP6HKmV3fvUZCA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BBA3ivlbMdqinW+890NW/al+XOOGHKFkeYzbbHXNCCo=;
- b=yHEV5EhGX1KjODW5Bt4RCRIcJU2jw1j3e/yzHyTpAsx34Recyu+bTgPPO8YUZe4olblA/5fn/xlK934kG3nX/EBw6WgDJBPfPiQ9lPMkl8pJOE0pbtC0+g0IVl10gpp+F4rc5W8A6sbplbBufZdDX+xo1ug1xQG4RS4j84GSGdMRqabEaLF904fYBftZbBwk1P5Wx/o7MWO7ALjA2IjkDix6Z/vEjtwdnc3uaQeVi0hBGAPwQQ3I+cm/EadXeVT0x/w6q3KA3Bh3zhMrP5gH33kOVOh7KhWdisSnacs90m2LzWKz3Wrko/OsSiTIelxl5/NgHlahRkDrQ9467oZOnA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DM4PR11MB6117.namprd11.prod.outlook.com (2603:10b6:8:b3::19) by
- PH7PR11MB5767.namprd11.prod.outlook.com (2603:10b6:510:13a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.26; Fri, 7 Mar
- 2025 14:17:00 +0000
-Received: from DM4PR11MB6117.namprd11.prod.outlook.com
- ([fe80::d19:56fe:5841:77ca]) by DM4PR11MB6117.namprd11.prod.outlook.com
- ([fe80::d19:56fe:5841:77ca%3]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
- 14:17:00 +0000
-Date: Fri, 7 Mar 2025 15:16:48 +0100
-From: Maciej Fijalkowski <maciej.fijalkowski@intel.com>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-CC: <intel-wired-lan@lists.osuosl.org>, Michal Kubiak
-	<michal.kubiak@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, "Przemek
- Kitszel" <przemyslaw.kitszel@intel.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, "Alexei
- Starovoitov" <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
-	"Jesper Dangaard Brouer" <hawk@kernel.org>, John Fastabend
-	<john.fastabend@gmail.com>, Simon Horman <horms@kernel.org>,
-	<bpf@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 12/16] idpf: implement XDP_SETUP_PROG in ndo_bpf
- for splitq
-Message-ID: <Z8r/0NOkovItGD1E@boxer>
-References: <20250305162132.1106080-1-aleksander.lobakin@intel.com>
- <20250305162132.1106080-13-aleksander.lobakin@intel.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250305162132.1106080-13-aleksander.lobakin@intel.com>
-X-ClientProxiedBy: MI2P293CA0013.ITAP293.PROD.OUTLOOK.COM
- (2603:10a6:290:45::8) To DM4PR11MB6117.namprd11.prod.outlook.com
- (2603:10b6:8:b3::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BCB21C16A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741357048; cv=none; b=X+BjX3X8w+AtBBk+J600TDxRX5+zTkRxci6HECYozEXHwLjCZvf0EdMIsgA9e960iQiQKuqiKvPNWkbbvWxY+60F6EfYBfZ9r8pAoOrj/H5sF3HWgi12OZo2cYbz6/aFlIHQ4vuyivMIbwMYcAjS+DsA9eSVSYX+9hpLnuFIiEs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741357048; c=relaxed/simple;
+	bh=qcmNYIDfA+pW4+IYn4jJnQES1wyn5oAU5tJlDI6SNI4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MA6mRZkfTnWoyEWEb3VemRwgEqdktrG11qus6bxjOqM1s6x6JB4U6JxTvKYstvrNsbv9NzVUZokzfrvOI/qk7TnmOmPzYaQTUeV47UrAPMhBjJbvagZ7byR+7UIq0WDNXS1jmhHFo4JWEardTT7+oaJ0AuVZSs5LpSP3+qHK2bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=os8p1b9x; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43bdc607c16so14853155e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 06:17:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741357045; x=1741961845; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sPPfmGqMcw+FMxvKDCPOdbfmb7wwE6+oyjDmZFYMjSM=;
+        b=os8p1b9xMhvK02wC2jNil7a5lA1r7LhTWX0DIafToCEryisEv3Qey+CT4t7I5OA40g
+         WiogFBmpToSAiKI6G8/CGQIiUXpYH0Hr+Zk2nTc4OA9GJhxNh9GdGiyOecLCcGc/uKaV
+         9H7B9HcmQv9a29X/pyau6F2Z1jYFWm2DoFK7o/RbT6UKHo/wp5+68fkaLY6gQSXVf+M/
+         4a4YPieHlwo6tcvYy4c9nccWq8O1XAXIlI8SA9E4G4mTMZT/+BAWg1ik/rYPD5W4yfsF
+         hW2nHEP/Jobj7xbHQzNooNV9XVhBbSV/Ik0wsL/s5mLGSfuXkN3W/YdDQH/kopn6RcBj
+         jdkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741357045; x=1741961845;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sPPfmGqMcw+FMxvKDCPOdbfmb7wwE6+oyjDmZFYMjSM=;
+        b=I8ClmUuKRbaOhGszx/CBT1dE+iXVbY1WigV2q+zn1p4Lhx7LDKz9zQfPbYGHzFHfcW
+         EUyGJVk5yQV3asRvrqlN94iZwMX/bZuxnvD3cPb0XOBfNLfj03KP3rtRcWovVrcphXpR
+         YPgpvueVm3g0E5qyJXDY6eo9g5qaAdefJgIyUrrxd8hZikBsnQiZzY4RvIV77ciiLJIB
+         r/mKjqpjeFL260YbNkjo0it8w45o3Lsxwx9ure9zJgiDlVxQeSyF21UkZjjuBJIP2lUe
+         mXyc4JHWKdtZEcamViWJcKlisko4he7f6/5B7iVaK6T8YwAshIf4NRnFY2Dhy0ThHTVB
+         EggQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7XAXWH3U3Q+W9TAvu9+FZWiWgFueOboEPxgZvsoRbHwFV8Fs1OWO22hZJpRUzeYEYkqn+o5W/H1oa+NY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuoxuVi+9/kZufNp7eKWozzMWeGmQhoCQWotAdQzB3dJSEEGUx
+	Uw48kc+9B7RUkEvNVPCW5+qp3u0aG0fuAagcBwuFs0XaItUb1lXYwvnkEKnJsOU=
+X-Gm-Gg: ASbGncuWKNLBn/uuy6abdTiEb1rUuRQMTufRqgdSVTZ232W3sultiFbhnqGgxd+2ZXU
+	hDZ+eAyeD1Hc4u2hEoYf6H2PGBR9jayR1EHB8PfFGHApJWTf794FKJeG2dUqxighEM2QgApeehQ
+	fxUhvKqlWn/5dtrf23kfGPe0J3wr51284MBEO3j/5zmdqVKgje2Or7HyjH5Kdt1ZZ+gKOVX0xDM
+	V3czHeDSk2BZHAeSjjQEXLPH20Ys131j2tAwvPQ+a7yBitacGs2n4W1epKMJUgQOUfje7n0ZATX
+	zFv/bH/YJyVL28QY4HpaeI+FzO+a+2aHmABBODXkDc8gaN/xVfUq6Q==
+X-Google-Smtp-Source: AGHT+IHpoNeJ9Jwip1Cdx5uUKipi0qqCHgMLrkGZ0Er+W7OmX2RBd8j0bEQTdafbhn91KFoC0mlOmQ==
+X-Received: by 2002:a05:600c:3b1e:b0:43b:c94d:e1e2 with SMTP id 5b1f17b1804b1-43c5a6355aamr22142215e9.25.1741357044717;
+        Fri, 07 Mar 2025 06:17:24 -0800 (PST)
+Received: from [192.168.1.247] ([145.224.67.152])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd831719sm55298865e9.0.2025.03.07.06.17.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Mar 2025 06:17:24 -0800 (PST)
+Message-ID: <80432f35-e865-4186-8b92-26b25279e150@linaro.org>
+Date: Fri, 7 Mar 2025 14:17:22 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR11MB6117:EE_|PH7PR11MB5767:EE_
-X-MS-Office365-Filtering-Correlation-Id: 25b1d813-0027-4958-c4a3-08dd5d82b9fb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?WvdyHPImVLHzVYc12Tlo9m1G7jNTIMggcKbQGSIV7/IJKS6KfJnbPDj1oYPy?=
- =?us-ascii?Q?yGtExNxNsMkAPEbO9DsKgsGBqmns63phtlAtahNCqNKsPYKI3cUr3ld+eERF?=
- =?us-ascii?Q?eJJXLhLJUlVR81p9a/0tcxwQarBUmxitfpS+I3ujCbeJAUwU7hUn5o7fcKjy?=
- =?us-ascii?Q?JcpWacTvTfdrsP60KzkNvnpZHyjubmueUfpb3GgqHDpWOHT9i4Y/xulnZf8x?=
- =?us-ascii?Q?MeVvKkZjMLVbo5tp3h9GY/pOJwDhD/LGFp1OsZ14Mm84+/SrCE9/3Wcjh525?=
- =?us-ascii?Q?onMKO5fggu3DgmPZd77bWabel/XsHvB9lQJgPpt88TXRbRYOjrcUsjfDSTYg?=
- =?us-ascii?Q?Vj/QdDYtb5tBiONRNemj3Xu5ioWzS3lp9wu2itziwpS+iaGm7IUEpKreEIp6?=
- =?us-ascii?Q?qFBfKt3y1VP76/NOuF7zhLmBeuDbv9aUuvH2k+gtjUactVECR1NYATlml8FS?=
- =?us-ascii?Q?Uo/k1/31T7AL8708ksQJDZC8pYHQQH5kVBmK2H78o8pOW2YvvOe1CXr9wwtk?=
- =?us-ascii?Q?8Ne+4jGt7sFH6UBNn+PeTUwGDcNvE62OxB+L07dPmQSvzRipeZzX/tGZIe2/?=
- =?us-ascii?Q?CQzc24keDhngyaZEZbZhY0U+ffcFGD3tF8GABSCoYe+2t+u0kewaBOiepeza?=
- =?us-ascii?Q?0nCitaYgvw2VZCFM78lUZmAgeNdfqG5zHknTV+68333t5/jxuMkSmVJCmycO?=
- =?us-ascii?Q?i+1FJdaajlOeDoeH6xxp91c5S0xKD4B2poSuZw8Rbnm6NfocUS5+VHCenWt2?=
- =?us-ascii?Q?GgK57E9v4KWAO7fnXH8l8zJ8Xa1xY9LaVGJh4s83Tj6zxOTI8SWqZ3uoASLx?=
- =?us-ascii?Q?+S13Pyflt4/gssa3srdyAec24U8cmhpMlJo0pSTY26yFrO1vbG0f244fiGcV?=
- =?us-ascii?Q?7zwmlWRJ+O2pZE1wAqwU04ruPY3eVyxoS2y7bLTgkIeyaJNsAoT/zKwsWb6x?=
- =?us-ascii?Q?eT8IjzSWFNHqQKsgS3j8ISLWx2UHBAtCIgJY6G9Hyt9lRdTzfbWc+NaD+frr?=
- =?us-ascii?Q?WUVe78Uy+tWIXA65tt//f9KzJqm4qqj1y/khk2I3cVFhEo318Pl0gMpIXPDT?=
- =?us-ascii?Q?CTfCrhs9Loog3brCWq2ym6jnHGHL9BLm/maZ33A4GtuKxBbAfQAZFpnrH9/z?=
- =?us-ascii?Q?TutP5PjAN/aNcJWRDSnF/x18d1alY7iI52/9DswVHBTVHOXHbcnOLNeIaQAk?=
- =?us-ascii?Q?677AEzSwak5vNsmKLPci865QwnLnflEKtbJaqi3AVmt1U0kt29qlVbY4sIlD?=
- =?us-ascii?Q?uC2yDY6rcAnzkYdnN4LLwCektHSVNiosnRGmd+KuCPCnGcL3lKzOisUIlqiz?=
- =?us-ascii?Q?diXXqD/KiZDzvBNCy/5SnSWXPzZhpJRuzeqi+LDDwOuU6O/OAuyHDxyVEz8/?=
- =?us-ascii?Q?V2y9qKLC3jrsh8J5UOcwyFi7OmEb?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR11MB6117.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?8juRHiH0iW1qr8muRYLDhbXgyp4wLijc8Gu82qaqoubUv/iQigPmOBENcYw5?=
- =?us-ascii?Q?v6U3swUvCKKfjBpFVK0dQwsGv5IlGargK5YYy1RvZJ0ayEds6qtRUrW1z0oP?=
- =?us-ascii?Q?UVwr9XnzDikLBPQ15fRV66Ap8UZrm1DqmnzhPvGweW1uVyPb3vBBtiUYqRCN?=
- =?us-ascii?Q?BuXZsg3m44rbpBNTL9x6J6qd0rgeu4zQtx1h1dC88hDW56bZRQ/58pcvXxpX?=
- =?us-ascii?Q?kpAy7y6n3vxIml2tye69Mp4twQKLjyBYuAGeLUrgwDBDCZaNkCZnWodvhI5m?=
- =?us-ascii?Q?Tq478b2qEQdVuhZIWJq/bY1hwu4RoD83uPjo/Bl2mg0uCNysLbTt3Bn7Unji?=
- =?us-ascii?Q?VvWNdPcNE10L1Wd9woQUAWvNHemgy0mvZmYEJ3XqEmlBCjFFmn12DDMA14Z/?=
- =?us-ascii?Q?i6KRzfqm+aLkmSIlK/sv8couGK7dKObqbaIz3rtaYteAUl0IlP+o8Upz0/zy?=
- =?us-ascii?Q?q1kQs8eVgl/pT38P47ppfG5m6cwrVqXMnMn+I0mUhOLKRCwLgjniMAZmXTzW?=
- =?us-ascii?Q?s91R96MNHcTsZ3a3cKd4zkd0f1EyyxcYgMy+Jaoi/5ZOXort6RC+klaYujJt?=
- =?us-ascii?Q?wsMnShQTfp8hzrL6zmampHt11PXtQolb1OhE8YDNe434qBcuTqSQxSpxVDVs?=
- =?us-ascii?Q?TWskzXIvnenXoXxm86RYgKzGIg9Uloi2ZLdlwtTxAE5D8PBzdkn4i3LpFBiP?=
- =?us-ascii?Q?G0CszpbHfbSNNuPICFlYQBrCTpW0RvU6lf1cTIodzWclg3d2eak1d3zArYR0?=
- =?us-ascii?Q?+RFYg8TM8X2gnHi7rPHC99jWegYDbF5lHzRqOIXoeBqsBngqEhdgJfF7wgtL?=
- =?us-ascii?Q?ZJ7PSNyEtTpu+QcwDPhsbZZ0MteTdP1tY0IoHfBY3D+o/6EVyI2ps8IllPKW?=
- =?us-ascii?Q?EGxsxNED9aUSAOCAT+6pRPWlQUJTXWfI0BauSgfi8JfAvZb2MSfM1/vdgwng?=
- =?us-ascii?Q?lwA9EFco5dlFRA5LT5nrGvhslTyZFESjCJkHtjZ5YSo6G3Q0BMheUCr7VhP/?=
- =?us-ascii?Q?vFlNAw2Rk5a+rdBzlb/WdTxjLzgAlbzHpqKPCH+3qwkHR0F0Jtm4JsBivnEh?=
- =?us-ascii?Q?j9bYStBiHpKPXxRFpB9QH6BNkKTBm2SE/CL9rWsjBZz5pK3wgEorfo/L6h7H?=
- =?us-ascii?Q?0iENcwxNckrJd6yexBAl7fOC+32MKVXj47cv3tqDQzE++IV7xbcTG3oTxcq2?=
- =?us-ascii?Q?+Rpo2IvR21QaT8zjzoAU08CiZG0EX64iswpNnXLOsVEw6NqT9K21ByvAVSu3?=
- =?us-ascii?Q?ftdqllfu2AgHn2JUr3lVkxMrGkwgO2MZIMj65LTxDAYNL5TLnSJ/3iwyKv1S?=
- =?us-ascii?Q?DYnHtBarriiQbJop6+pBEzhFySQLMHcytGSbPUOyT19TFAaIIXTB6jcqZ7AP?=
- =?us-ascii?Q?f6B9NgtI5fM55M9Tr/rxslLTqmZ9yB0v5J+3XcR4JW+f0J8G2Oj0tcH3/Fw/?=
- =?us-ascii?Q?74URq4nvVuOttHwWBDf5IHwVX28H03UtEeKn9rtMACwxTPDB3/2LUiaSOnJ8?=
- =?us-ascii?Q?Qa4YiQYkW6X7N9RAwwwwDT/ONihHfGjW/5LnHVPiTH8CIaSpY8dPva+T3dMJ?=
- =?us-ascii?Q?sx1n6Yzr0jl5UCxqXj3ttEkirPCj70mkzU0gkAwNZxmhBV8DeYQicDg6+73v?=
- =?us-ascii?Q?AQ=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25b1d813-0027-4958-c4a3-08dd5d82b9fb
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR11MB6117.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 14:17:00.5283
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: vVTfhm15YyCclxfVnul7zjkQ5CAUuJ8T0velhOrpZXFbOtY//p6vZ94kseiLQ402kqumFc2k0CahF5vtZaG2ViDh5gCWjUxZdWh02upcVEk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5767
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] perf tools: About encodings of legacy event names
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>
+Cc: linux-perf-users@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>
+References: <Z7Z5kv75BMML2A1q@google.com>
+ <CAP-5=fVbti6efu6uA9a5os6xhnTuJ0egyesZsy0dmkiScwYFqQ@mail.gmail.com>
+ <Z7yJ0Vpub6JeQyYo@x1>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <Z7yJ0Vpub6JeQyYo@x1>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 05, 2025 at 05:21:28PM +0100, Alexander Lobakin wrote:
-> From: Michal Kubiak <michal.kubiak@intel.com>
+
+
+On 24/02/2025 3:01 pm, Arnaldo Carvalho de Melo wrote:
+> On Wed, Feb 19, 2025 at 10:37:33PM -0800, Ian Rogers wrote:
+>> On Wed, Feb 19, 2025 at 4:38 PM Namhyung Kim <namhyung@kernel.org> wrote:
+>>> Ian and I have been discussing the behaviors of event encodings and it's
+>>> hard to find a point so far that we can agree on.  So I'd like to hear
+>>> your opinion to resolve this.  If you happen to have some time, you can
+>>> follow the thread here:
 > 
-> Implement loading/removing XDP program using .ndo_bpf callback
-> in the split queue mode. Reconfigure and restart the queues if needed
-> (!!old_prog != !!new_prog), otherwise, just update the pointers.
+>>> https://lore.kernel.org/linux-perf-users/20250109222109.567031-5-irogers@google.com/#r
 > 
-> Signed-off-by: Michal Kubiak <michal.kubiak@intel.com>
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
-> ---
->  drivers/net/ethernet/intel/idpf/idpf_txrx.h |   4 +-
->  drivers/net/ethernet/intel/idpf/xdp.h       |   7 ++
->  drivers/net/ethernet/intel/idpf/idpf_lib.c  |   1 +
->  drivers/net/ethernet/intel/idpf/idpf_txrx.c |   4 +
->  drivers/net/ethernet/intel/idpf/xdp.c       | 114 ++++++++++++++++++++
->  5 files changed, 129 insertions(+), 1 deletion(-)
+>>> Basically there are some events that were defined in the perf ABI.
+> 
+>>>    PERF_COUNT_HW_CPU_CYCLES, PERF_COUNT_HW_INSTRUCTIONS, ...
+> 
+>>> So perf tools use those (legacy) encodings with the matching names like
+>>> "cycles" (or "cpu-cycles"), "instructions", etc.
+> 
+>>> On the another hand, it has wildcard matching for event names in PMUs so
+>>> that users can conveniently use events without specifying PMU names.
+>>> For example, "event1" would expand to "pmuX/event1/", "pmuY/event1/", etc
+>>> as long as the PMUs have the event in sysfs or JSON.
+> 
+>>> And there are platforms where "cycles" event is defined in a (core) PMU
+>>> (like "blah/cycles") and the event has a different behavior than the
+>>> legacy encoding.  Then it has to choose which encoding is better for the
+>>> given name.  But it's a general issue for the legacy event names.
+> 
+> So we pick the "legacy" one, as always, and the one that is in a PMU
+> needs to have its pmu name specified, no?
+> 
+>>>    Q. what should it do with "cycles"?
+>>>    -----------------------------------
+>>>    1. just use the legacy encoding (PERF_COUNT_HW_CPU_CYCLES).
+> 
+> Right
+> 
+>>>    2. expand to (possibly multiple) PMU events (like "cpu/cycles/") and
+>>>       use the encoding defined there.
+> 
+> Nope
+> 
+>>> I think the #1 is the current behavior.  The upside is it's simple and
+>>> intuitive.  But it's different than other names and can make confusion.
+>>> Users should use the full name ("cpu/cycles/") if they need sysfs one.
+> 
+> Right
+>   
+>> So the code keeps changing, for example, the removal of BPF events. I
+> 
+> Humm, this seems like a different discussion.
+> 
+>> think the important change and the thing that has brought us here is
+>> the addition of what Intel call hybrid and ARM call BIG.little. ARM
+> 
+> Right, the support for hybrid systems brought lots of problems, most
+> people didn't have access to such systems and thus couldn't test
+> patches, so the attempt was to keep the existing code working as it had
+> been while allowing for the support for the new hybrid systems.
+> 
+> As more people get access to hybrid systems we started noticing problems
+> and working on fixing it, you did a lot of work in this area, highly
+> appreciated.
+> 
+>> have got architectural events and so the same event encoding on BIG
+>> and little cores. On x86 the e-core (atom) and p-cores have different
+>> event encodings. In the original hybrid work, pushed on for the launch
+>> of Alderlake and reviewed by Jiri and Arnaldo with no involvement from
+>> me, Intel wanted the event names to work transparently. So a cycles
+> 
+> Without access to such systems, yes, see above.
+> 
+>> event would be gathered on the e-core and p-core with a command line
+>> option to merge the legacy event cycles on both cores. To be specific
+>> the expected behavior of:
+>> $ perf (stat|record) -e cycles ...
+>> would be as if:
+>> $ perf (stat|record) -e cpu_atom/cycles/,cpu_core/cycles/ ...
+> 
+> Yes, and if somebody wants to profile in just one of those core types,
+> just specify the "cpu_atom" or "cpu_core" to have it fully specified.
+>   
+>> An unfortunate thing in the hybrid code was that it was hardcoded to
+>> PMU names of cpu_atom and cpu_core, but what to do for metrics? The
+> 
+> Yeah, metrics IIRC came before hybrid systems.
+> 
+>> original proposal was that metrics would have a PMU name and all names
+>> would be relative to that, but what about uncore events? What about
+>> metrics that refer to other metrics? A decision was made to not to
+>> have PMUs implicitly in metrics and the events in the metric would
+>> match those given to perf's -e command line. This also greatly
+>> simplifies testing events when creating a metric.
+> 
+>> I set about rewriting the hybrid code not to use hard coded PMU names
+>> but to discover core PMUs at runtime. This was to make the metric and
+>> event parsing code as generic as possible, but this had an unintended
+>> consequence. ARM's core PMU had previously not been seen as handling
+>> legacy events like cycles, and appeared as an uncore PMU. When there
+> 
+>> are both legacy and sysfs/json events then previously the legacy
+>> events had priority. This broke events like cycles on Apple M
+>> processors where the legacy events were broken and the sysfs ones not.
+>> Yes this is a driver bug, but everybody told me a change in behavior
+>> of the tool was needed to fix it, that fix was to make sysfs/json
+>> events have priority over legacy events. I prioritized fixing event
+>> parsing when a PMU was specified but given "cycles" means
+>> "cpu_atom/cycles/ and cpu_core/cycles/" for hybrid, why would the
+>> prioritization be different without a PMU specified?
+>   
+>> I knew of this tech debt and separately RISC-V was also interested to
+>> have sysfs/json be the priority so that the legacy to config encoding
+>> could exist more in the perf tool than the PMU driver. I'm a SIG
+> 
+> I saw them saying that supporting PERF_TYPE_HARDWARE counters was ok as
+> they didn't want to break the perf tooling workflow, no?
 > 
 
-(...)
+Doesn't most of the discussion stem from this particular point? I also 
+understood it that way, that risc-v folks agreed it was better to 
+support these to make all existing software work, not just Perf.
 
-> +
-> +/**
-> + * idpf_xdp_setup_prog - handle XDP program install/remove requests
-> + * @vport: vport to configure
-> + * @xdp: request data (program, extack)
-> + *
-> + * Return: 0 on success, -errno on failure.
-> + */
-> +static int
-> +idpf_xdp_setup_prog(struct idpf_vport *vport, const struct netdev_bpf *xdp)
-> +{
-> +	const struct idpf_netdev_priv *np = netdev_priv(vport->netdev);
-> +	struct bpf_prog *old, *prog = xdp->prog;
-> +	struct idpf_vport_config *cfg;
-> +	int ret;
-> +
-> +	cfg = vport->adapter->vport_config[vport->idx];
-> +	if (!vport->num_xdp_txq && vport->num_txq == cfg->max_q.max_txq) {
-> +		NL_SET_ERR_MSG_MOD(xdp->extack,
-> +				   "No Tx queues available for XDP, please decrease the number of regular SQs");
-> +		return -ENOSPC;
-> +	}
-> +
-> +	if (test_bit(IDPF_REMOVE_IN_PROG, vport->adapter->flags) ||
+Maybe one issue was calling them 'legacy' events in the first place, and 
+I'm not sure if there is complete consensus that these are legacy. Can't 
+they continue be the short easy list of events likely to be common 
+across platforms? If there is an issue with some of them being wrong in 
+some places we can move forward from that by making sure new platforms 
+do it right, rather than changing the logic for everyone to fix that bug.
 
-IN_PROG is a bit unfortunate here as it mixes with 'prog' :P
+For the argument that Google prefers to use the sysfs events because of 
+these differences, I don't think there is anything preventing that kind 
+of use today? Or at least not for the main priority flip proposed, but 
+maybe there are some smaller adjacent bugs that can be fixed up separately.
 
-> +	    !!vport->xdp_prog == !!prog) {
-> +		if (np->state == __IDPF_VPORT_UP)
-> +			idpf_copy_xdp_prog_to_qs(vport, prog);
-> +
-> +		old = xchg(&vport->xdp_prog, prog);
-> +		if (old)
-> +			bpf_prog_put(old);
-> +
-> +		cfg->user_config.xdp_prog = prog;
-> +
-> +		return 0;
-> +	}
-> +
-> +	old = cfg->user_config.xdp_prog;
-> +	cfg->user_config.xdp_prog = prog;
-> +
-> +	ret = idpf_initiate_soft_reset(vport, IDPF_SR_Q_CHANGE);
-> +	if (ret) {
-> +		NL_SET_ERR_MSG_MOD(xdp->extack,
-> +				   "Could not reopen the vport after XDP setup");
-> +
-> +		if (prog)
-> +			bpf_prog_put(prog);
+Thanks
+James
 
-aren't you missing this for prog->NULL conversion? you have this for
-hot-swap case (prog->prog).
-
-> +
-> +		cfg->user_config.xdp_prog = old;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +/**
-> + * idpf_xdp - handle XDP-related requests
-> + * @dev: network device to configure
-> + * @xdp: request data (program, extack)
-> + *
-> + * Return: 0 on success, -errno on failure.
-> + */
-> +int idpf_xdp(struct net_device *dev, struct netdev_bpf *xdp)
-> +{
-> +	struct idpf_vport *vport;
-> +	int ret;
-> +
-> +	idpf_vport_ctrl_lock(dev);
-> +	vport = idpf_netdev_to_vport(dev);
-> +
-> +	if (!idpf_is_queue_model_split(vport->txq_model))
-> +		goto notsupp;
-> +
-> +	switch (xdp->command) {
-> +	case XDP_SETUP_PROG:
-> +		ret = idpf_xdp_setup_prog(vport, xdp);
-> +		break;
-> +	default:
-> +notsupp:
-> +		ret = -EOPNOTSUPP;
-> +		break;
-> +	}
-> +
-> +	idpf_vport_ctrl_unlock(dev);
-> +
-> +	return ret;
-> +}
-> -- 
-> 2.48.1
-> 
 
