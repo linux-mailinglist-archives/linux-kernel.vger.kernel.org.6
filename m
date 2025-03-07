@@ -1,121 +1,279 @@
-Return-Path: <linux-kernel+bounces-552083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352DEA57575
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:55:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60394A57573
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:54:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A4B47A9647
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:54:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3CEC189996A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:54:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C328A258CEB;
-	Fri,  7 Mar 2025 22:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D46F2561DA;
+	Fri,  7 Mar 2025 22:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O/Pgk9Bx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O/Fcjbvr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A923918BC36
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 22:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC41724167A;
+	Fri,  7 Mar 2025 22:54:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741388092; cv=none; b=eZblZzXdtnhVnCmJCRt2L9v5mJRIIcppWrrB5c6BOYPJCMOp08+q8n8JAF/c340T1a8+8J/tWWmFpVWu48Ntt/ILB943RgT5o04oR9Nl5B+U2IupiaWMSEFFGgSp+XIDR+M4zDjoawSpTfWga2Qb24XJDZ6mbu180YRTRdmNku4=
+	t=1741388054; cv=none; b=f3riS3xQ5urWsmOiJHpdyRQiVCNB6z6K2oOcRUDIg5G/+C/QQg6C4dcuOvSdllX3Xym3aGFD0d9DYNpGXsMwywA3RCXeC6Xq7j8SxtYz6hBTeCRrcRHJJ2i9fSspPZLRJKxczcp0XbGXpTNi4NWWkKQZHLMhfmtLQZHv2mXvSU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741388092; c=relaxed/simple;
-	bh=BSi+jLpfi6FKVIOnGVr3DA17x8MXb/n0b1fUUm36580=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kx2OCwTtvfov2XIrMEeduKuCw+D2FO+juOlOoz7rCqQ5L30U/fEB+Vmfd2AtTw8W6os0LWiHUZpQlZGv9zOelzEIGUz5QbTdogZTQhqixJRj8lb+bDG7AG9e6M7xDAOLN3RVdYXnXWxWI0dtt017dl5pi4TqqXW2s2OsKVjc0rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O/Pgk9Bx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741388089;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kHIQmI/H5roYn1gRZhaXUiNd6lXGJi2nFrmnslq5uRk=;
-	b=O/Pgk9BxLPiY2T5eCpU6xrOdpHZ+JXa+vWrmVqWOSzw3uDbm/mbh4/mufz+jS8f957WpPf
-	2cdvm5VJ7tHOOhO/zmhmTFoYq+RdZ+u3OM0TZnqbU/FUX9qTHB23eBfaB7UkSb7tzqCq+u
-	ySS/qsgrHTycPqYIrJJdqRE9LZlmNx4=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-632-8M6qQ5JoOoyZcIglVOWZ8A-1; Fri,
- 07 Mar 2025 17:54:45 -0500
-X-MC-Unique: 8M6qQ5JoOoyZcIglVOWZ8A-1
-X-Mimecast-MFC-AGG-ID: 8M6qQ5JoOoyZcIglVOWZ8A_1741388084
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D807B1956083;
-	Fri,  7 Mar 2025 22:54:43 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.108])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6A85618009BC;
-	Fri,  7 Mar 2025 22:54:40 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri,  7 Mar 2025 23:54:12 +0100 (CET)
-Date: Fri, 7 Mar 2025 23:54:08 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/pipe.c: merge if statements with identical conditions
-Message-ID: <20250307225408.GC28762@redhat.com>
-References: <20250307222500.1117662-1-linux@rasmusvillemoes.dk>
+	s=arc-20240116; t=1741388054; c=relaxed/simple;
+	bh=h95jfDEVekegdqKYt0vI61hdhO60jEa8FkEqwJSP3t0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=M4RCftU6C3UqRlARjho7e7k1hBnPw8WbYPJgALSCZy+RJUakD6L1eS4JarsJ4C7IWTHr3+M+2Ec2jPe2qHD15q5tkRzRCa4VI5qwPp4LOT5Dsrkx5d5JoW3b3CyApZ8hHQVDa7ntTtl2/fHkznkU3/5TQ/p3fR1Cq5bHxuaH5nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O/Fcjbvr; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741388053; x=1772924053;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=h95jfDEVekegdqKYt0vI61hdhO60jEa8FkEqwJSP3t0=;
+  b=O/FcjbvriXj/sVEzUaTWU7hVw/dMl1j0wGVepd8SLtGoQwMpR3VhOMpD
+   e/N64yAvyJDpHNPyQNwSa6qRr4FPj1p8VubEYMJeF2+R9ib2Ms4Aafdsj
+   CxXK/arTxURlIqVc8FXAUXzazBxXdpu2JziSzs+2CH6VADQtFVh68vCGr
+   n8t5gpW8T4tINvSXCh+yF3abMmMnF0dlb4hf4zc6qqEHdN0M85c3yj7G5
+   fTb/J3x/49oCwoxOKN2tGoaE1nfvoN/VZsNvPHbx6CCbE090BSSuzU58C
+   cWhtEssv9VGKytPHDCsZECgXakfMaYfww6dZP3L10XGxRBzWSIpHXlBWq
+   Q==;
+X-CSE-ConnectionGUID: fEFMGlcJQaqnNlRrrS9k9A==
+X-CSE-MsgGUID: LCpkEvjtRrmvYjxGBM3Eng==
+X-IronPort-AV: E=McAfee;i="6700,10204,11366"; a="42156863"
+X-IronPort-AV: E=Sophos;i="6.14,230,1736841600"; 
+   d="scan'208";a="42156863"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 14:54:12 -0800
+X-CSE-ConnectionGUID: tkw14bPlTzOo9dHdIvualg==
+X-CSE-MsgGUID: 4IRqfbo2SZ6xNS3eCfDgeQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="119382998"
+Received: from cmdeoliv-mobl4.amr.corp.intel.com (HELO [10.125.110.166]) ([10.125.110.166])
+  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 14:54:12 -0800
+Message-ID: <0d1cc457c6a97178fc68880957757f3c27088f53.camel@linux.intel.com>
+Subject: Re: [RFC PATCH 2/3] sched/numa: Introduce per cgroup numa balance
+ control
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Chen Yu <yu.c.chen@intel.com>, Ingo Molnar <mingo@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>, Andrew Morton
+ <akpm@linux-foundation.org>
+Cc: Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>, Johannes
+ Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>, Roman
+ Gushchin <roman.gushchin@linux.dev>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Muchun Song <muchun.song@linux.dev>, "Liam R. Howlett"
+ <Liam.Howlett@oracle.com>,  Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Huang, Ying" <ying.huang@linux.alibaba.com>, Tim Chen
+ <tim.c.chen@intel.com>, Aubrey Li <aubrey.li@intel.com>, Michael Wang
+ <yun.wang@linux.alibaba.com>, Kaiyang Zhao <kaiyang2@cs.cmu.edu>, David
+ Rientjes <rientjes@google.com>, Raghavendra K T <raghavendra.kt@amd.com>,
+ cgroups@vger.kernel.org,  linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Date: Fri, 07 Mar 2025 14:54:10 -0800
+In-Reply-To: <b3f1f6c478127a38b9091a8341374ba160d25c5a.1740483690.git.yu.c.chen@intel.com>
+References: <cover.1740483690.git.yu.c.chen@intel.com>
+	 <b3f1f6c478127a38b9091a8341374ba160d25c5a.1740483690.git.yu.c.chen@intel.com>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307222500.1117662-1-linux@rasmusvillemoes.dk>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-On 03/07, Rasmus Villemoes wrote:
->
-> As 'head' is not updated after head+1 is assigned to pipe->head, the
-> condition being tested here is exactly the same as in the big if
-> statement just above. Merge the two bodies.
+On Tue, 2025-02-25 at 22:00 +0800, Chen Yu wrote:
+> [Problem Statement]
+> Currently, NUMA balancing is configured system-wide. However,
+>=20
+>=20
+> A simple example to show how to use per-cgroup Numa balancing:
+>=20
+> Step1
+> //switch to global per cgroup Numa balancing,
+> //All cgroup's Numa balance is disabled by default.
+> echo 4 > /proc/sys/kernel/numa_balancing
+>=20
 
-Yes.
+Can you add documentation of this additional feature
+for numa_balancing in
+admin-guide/sysctl/kernel.rst
 
-But Mateusz has already sent the same patch, please see
+Should you make NUMA_BALANCING_NORMAL and NUMA_BALANCING_CGROUP
+mutually exclusive in? In other words
+echo 5 > /proc/sys/kernel/numa_balancing should result in numa_balancing to=
+ be 1?
 
-	[PATCH 1/3] pipe: drop an always true check in anon_pipe_write()
-	https://lore.kernel.org/all/20250303230409.452687-2-mjguzik@gmail.com/
+Otherwise tg_numa_balance_enabled() can return 0 with NUMA_BALANCING_CGROUP
+bit turned on even though you have NUMA_BALANCING_NORMAL bit on.
 
-Oleg.
-
-> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Tim
+>=20
+> Suggested-by: Tim Chen <tim.c.chen@intel.com>
+> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
 > ---
->  fs/pipe.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index 097400cce241..27385e3e5417 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -547,10 +547,8 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
->
->  			if (!iov_iter_count(from))
->  				break;
-> -		}
-> -
-> -		if (!pipe_full(head, pipe->tail, pipe->max_usage))
->  			continue;
-> +		}
->
->  		/* Wait for buffer space to become available. */
->  		if ((filp->f_flags & O_NONBLOCK) ||
-> --
-> 2.48.1
->
+>  include/linux/sched/sysctl.h |  1 +
+>  kernel/sched/core.c          | 32 ++++++++++++++++++++++++++++++++
+>  kernel/sched/fair.c          | 18 ++++++++++++++++++
+>  kernel/sched/sched.h         |  3 +++
+>  mm/mprotect.c                |  5 +++--
+>  5 files changed, 57 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
+> index 5a64582b086b..1e4d5a9ddb26 100644
+> --- a/include/linux/sched/sysctl.h
+> +++ b/include/linux/sched/sysctl.h
+> @@ -22,6 +22,7 @@ enum sched_tunable_scaling {
+>  #define NUMA_BALANCING_DISABLED		0x0
+>  #define NUMA_BALANCING_NORMAL		0x1
+>  #define NUMA_BALANCING_MEMORY_TIERING	0x2
+> +#define NUMA_BALANCING_CGROUP		0x4
+> =20
+>  #ifdef CONFIG_NUMA_BALANCING
+>  extern int sysctl_numa_balancing_mode;
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 44efc725054a..f4f048b3da68 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -10023,6 +10023,31 @@ static ssize_t cpu_max_write(struct kernfs_open_=
+file *of,
+>  }
+>  #endif
+> =20
+> +#ifdef CONFIG_NUMA_BALANCING
+> +static DEFINE_MUTEX(numa_balance_mutex);
+> +static int numa_balance_write_u64(struct cgroup_subsys_state *css,
+> +				  struct cftype *cftype, u64 enable)
+> +{
+> +	struct task_group *tg;
+> +	int ret;
+> +
+> +	guard(mutex)(&numa_balance_mutex);
+> +	tg =3D css_tg(css);
+> +	if (tg->nlb_enabled =3D=3D enable)
+> +		return 0;
+> +
+> +	tg->nlb_enabled =3D enable;
+> +
+> +	return ret;
+> +}
+> +
+> +static u64 numa_balance_read_u64(struct cgroup_subsys_state *css,
+> +				 struct cftype *cft)
+> +{
+> +	return css_tg(css)->nlb_enabled;
+> +}
+> +#endif /* CONFIG_NUMA_BALANCING */
+> +
+>  static struct cftype cpu_files[] =3D {
+>  #ifdef CONFIG_GROUP_SCHED_WEIGHT
+>  	{
+> @@ -10071,6 +10096,13 @@ static struct cftype cpu_files[] =3D {
+>  		.seq_show =3D cpu_uclamp_max_show,
+>  		.write =3D cpu_uclamp_max_write,
+>  	},
+> +#endif
+> +#ifdef CONFIG_NUMA_BALANCING
+> +	{
+> +		.name =3D "numa_load_balance",
+> +		.read_u64 =3D numa_balance_read_u64,
+> +		.write_u64 =3D numa_balance_write_u64,
+> +	},
+>  #endif
+>  	{ }	/* terminate */
+>  };
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 1c0ef435a7aa..526cb33b007c 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -3146,6 +3146,18 @@ void task_numa_free(struct task_struct *p, bool fi=
+nal)
+>  	}
+>  }
+> =20
+> +/* return true if the task group has enabled the numa balance */
+> +static bool tg_numa_balance_enabled(struct task_struct *p)
+> +{
+> +	struct task_group *tg =3D task_group(p);
+> +
+> +	if (tg && (sysctl_numa_balancing_mode & NUMA_BALANCING_CGROUP) &&
+> +	    !tg->nlb_enabled)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+>  /*
+>   * Got a PROT_NONE fault for a page on @node.
+>   */
+> @@ -3174,6 +3186,9 @@ void task_numa_fault(int last_cpupid, int mem_node,=
+ int pages, int flags)
+>  	     !cpupid_valid(last_cpupid)))
+>  		return;
+> =20
+> +	if (!tg_numa_balance_enabled(p))
+> +		return;
+> +
+>  	/* Allocate buffer to track faults on a per-node basis */
+>  	if (unlikely(!p->numa_faults)) {
+>  		int size =3D sizeof(*p->numa_faults) *
+> @@ -3596,6 +3611,9 @@ static void task_tick_numa(struct rq *rq, struct ta=
+sk_struct *curr)
+>  	if (!curr->mm || (curr->flags & (PF_EXITING | PF_KTHREAD)) || work->nex=
+t !=3D work)
+>  		return;
+> =20
+> +	if (!tg_numa_balance_enabled(curr))
+> +		return;
+> +
+>  	/*
+>  	 * Using runtime rather than walltime has the dual advantage that
+>  	 * we (mostly) drive the selection from busy threads and that the
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 38e0e323dda2..9f478fb2c03a 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -491,6 +491,9 @@ struct task_group {
+>  	/* Effective clamp values used for a task group */
+>  	struct uclamp_se	uclamp[UCLAMP_CNT];
+>  #endif
+> +#ifdef CONFIG_NUMA_BALANCING
+> +	u64			nlb_enabled;
+> +#endif
+> =20
+>  };
+> =20
+> diff --git a/mm/mprotect.c b/mm/mprotect.c
+> index 516b1d847e2c..ddaaf20ef94c 100644
+> --- a/mm/mprotect.c
+> +++ b/mm/mprotect.c
+> @@ -155,10 +155,11 @@ static long change_pte_range(struct mmu_gather *tlb=
+,
+>  				toptier =3D node_is_toptier(nid);
+> =20
+>  				/*
+> -				 * Skip scanning top tier node if normal numa
+> +				 * Skip scanning top tier node if normal/cgroup numa
+>  				 * balancing is disabled
+>  				 */
+> -				if (!(sysctl_numa_balancing_mode & NUMA_BALANCING_NORMAL) &&
+> +				if (!(sysctl_numa_balancing_mode &
+> +				    (NUMA_BALANCING_CGROUP | NUMA_BALANCING_NORMAL)) &&
+>  				    toptier)
+>  					continue;
+>  				if (folio_use_access_time(folio))
 
 
