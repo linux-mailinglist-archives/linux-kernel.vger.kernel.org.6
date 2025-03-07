@@ -1,35 +1,54 @@
-Return-Path: <linux-kernel+bounces-550812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6FFAA5646E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:58:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC698A56470
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:58:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E84016ECC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:58:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8377F3B45EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C837A20CCC2;
-	Fri,  7 Mar 2025 09:58:09 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06EE320C47A;
+	Fri,  7 Mar 2025 09:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="dOcysyH6"
+Received: from out.smtpout.orange.fr (out-14.smtpout.orange.fr [193.252.22.14])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6075F204C2A;
-	Fri,  7 Mar 2025 09:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA2FF20C476
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741341489; cv=none; b=plPmXjFikR8v7a3YYSrxoQ2wihLMzqHmRK84scAjQ3YFe34BNsAgattNTYlf4jpNH/UHaoNYmJyyB2Q9QERtQgkCutzsL5HeRX0/UXSXkZuyb7WoDWK5R7TxQ6J5e/a7sFvz/Ji8IAMV+ELaV7S+6xb0XXd7rcJrSZflhxsrorE=
+	t=1741341512; cv=none; b=Eo7djSWnQDa1K3NXGGyeEsqepqe8IHbGOJq3GvGeyYJNVtg2ygiJzoWZLOEa1ZidX8rYJg17JM2tNVefl192iNK0VGHONzO59NJaipg+hmA0g5m9QQPmi0fBgXOjtboMUPeDabyh6AVNUUplOGnEEslPQyfwEBo6I/bKCEQFbkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741341489; c=relaxed/simple;
-	bh=ucr+bccldZkrqFJ4ccH1dQQdTKxMqH0tvhvJJjrQmTI=;
+	s=arc-20240116; t=1741341512; c=relaxed/simple;
+	bh=z2856FJXESGplS9cF9pWXVmByXl8uYux+A8cFDsx6IQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CgXfCI/gFzuJMfU79VGLhGx8HiHrWMSJ3Ap05DQAu0MAinOdY0E7Hb3gBwuFxIzjz1heoTOR7SC4mIemUawdA8vYmp4BTkZ1AVPWBS24fct+muGI32IIq4Ndr4FqgSof6YtQIWUXYLp2xxtNkgKOvzLQlrYjVPsjPwCNSlUqrG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A069C4CED1;
-	Fri,  7 Mar 2025 09:58:07 +0000 (UTC)
-Message-ID: <a4f08c9c-b74a-486f-915d-6b0e06e22d7b@xs4all.nl>
-Date: Fri, 7 Mar 2025 10:58:05 +0100
+	 In-Reply-To:Content-Type; b=BqNmGK3lwGBLZCWTEk2MM29l0V9dvF0aMGuYgxuWDVybdOwXGSpXecYcSdUwPsFjTkEgkMQEufKEObkN9WmowyuK7SgXXCvodszHgjsQNJv9P/VXG6TN/50DP5tLVd8ljt8d5Use9SmZkFY2zMdvaCbAcdLc20UxUpVoB3Mig2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=dOcysyH6; arc=none smtp.client-ip=193.252.22.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [172.16.82.72] ([124.33.176.97])
+	by smtp.orange.fr with ESMTPA
+	id qUT3ttclTLArrqUT8tnDZY; Fri, 07 Mar 2025 10:58:21 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1741341501;
+	bh=ec/4FFnWtkVOGJAjE0F14PO+sOMtcZNESadfGxpFl20=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=dOcysyH6tA0paeZ31fP7jP/1Ol4ph/8eOVEiBrFVPt9RtkZ5khevSysUNVRYlq0IM
+	 0Deeb0gvMgy5zUhy0+JhJbDrwVWiPhipvWUH1ZsTF06Ba70D0qJAJlAwU8frJOVwxW
+	 dFeyqA0XT6le15Zf8Uh4LcfCMfBFaQbxzQbKSSKE/h+gJdwo4ZKdzFWkz05CuQgk9Y
+	 sL9pusjhNhsldKs4V6yD4NWlY8P20IKAEob+fKQvY1K3blNC1rwhNCZpVVDxTuX1mE
+	 2xJHTqrYKJdb8L4ec7a4DTEjH1/BiaL1f4b8rqRQAUfxssX2LKr6M1j7x61ZX5R1UL
+	 JVx+35nAvYemw==
+X-ME-Helo: [172.16.82.72]
+X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
+X-ME-Date: Fri, 07 Mar 2025 10:58:21 +0100
+X-ME-IP: 124.33.176.97
+Message-ID: <bdce7d99-7f02-4667-acda-9ffc62c92af2@wanadoo.fr>
+Date: Fri, 7 Mar 2025 18:58:08 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -37,104 +56,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH next] media: synopsys: hdmirx: Fix signedness bug in
- hdmirx_parse_dt()
-To: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Shreeya Patel <shreeya.patel@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Dingxian Wen <shawn.wen@rock-chips.com>, linux-media@vger.kernel.org,
- kernel@collabora.com, linux-kernel@vger.kernel.org,
- kernel-janitors@vger.kernel.org
-References: <7ec94789-305c-4de4-b477-c0eb839170e5@stanley.mountain>
- <54d5eef8-66a9-44aa-9e9b-0324d6fee46d@collabora.com>
- <4a50949d-e472-4942-9152-3e5a54c6b076@stanley.mountain>
- <51d0781b-1da4-46c6-b772-718d7833798e@collabora.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <51d0781b-1da4-46c6-b772-718d7833798e@collabora.com>
+Subject: Re: [PATCH v5 1/7] bits: split the definition of the asm and non-asm
+ GENMASK()
+To: David Laight <david.laight.linux@gmail.com>
+Cc: Yury Norov <yury.norov@gmail.com>,
+ Lucas De Marchi <lucas.demarchi@intel.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
+ linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
+ David Laight <David.Laight@ACULAB.COM>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+References: <20250306-fixed-type-genmasks-v5-0-b443e9dcba63@wanadoo.fr>
+ <20250306-fixed-type-genmasks-v5-1-b443e9dcba63@wanadoo.fr>
+ <20250306192331.2701a029@pumpkin>
+Content-Language: en-US
+From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
+ xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
+ LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
+ GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
+ bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
+ BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
+ 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
+ yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
+ CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
+ ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
+In-Reply-To: <20250306192331.2701a029@pumpkin>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 07/03/2025 10:47, Dmitry Osipenko wrote:
-> On 3/7/25 12:45, Dan Carpenter wrote:
->> On Fri, Mar 07, 2025 at 12:36:47PM +0300, Dmitry Osipenko wrote:
->>> On 3/7/25 12:30, Dan Carpenter wrote:
->>>> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
->>>> index 4ffc86ad6c35..e0d3fed87a92 100644
->>>> --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
->>>> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
->>>> @@ -154,7 +154,7 @@ struct snps_hdmirx_dev {
->>>>  	bool hpd_trigger_level_high;
->>>>  	bool tmds_clk_ratio;
->>>>  	bool plugged;
->>>> -	u32 num_clks;
->>>> +	int num_clks;
->>>>  	u32 edid_blocks_written;
->>>>  	u32 cur_fmt_fourcc;
->>>>  	u32 color_depth;
->>>
->>> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
->>>
->>> Would be also good to return the original error code. There is no need
->>> to check for the < 1 clock, it should be the < 0 check. Can be done in a
->>> separate patch later. Thanks for the fix!
+On 07/03/2025 at 04:23, David Laight wrote:
+> On Thu, 06 Mar 2025 20:29:52 +0900
+> Vincent Mailhol via B4 Relay <devnull+mailhol.vincent.wanadoo.fr@kernel.org> wrote:
+> 
+>> From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 >>
->> I'm not very familiar with th edevm_clk_bulk_get_all() function and it's
->> not documented.  But clk_bulk_get_all() does return zero, so I can see why
->> people would be confused.
+>> In an upcoming change, GENMASK() and its friends will indirectly
+>> depend on sizeof() which is not available in asm.
+>>
+>> Instead of adding further complexity to __GENMASK() to make it work
+>> for both asm and non asm, just split the definition of the two
+>> variants.
+> ...
+>> +#else /* defined(__ASSEMBLY__) */
+>> +
+>> +#define GENMASK(h, l)		__GENMASK(h, l)
+>> +#define GENMASK_ULL(h, l)	__GENMASK_ULL(h, l)
 > 
-> We will take care of it, thanks again.
+> What do those actually expand to now?
+> As I've said a few times both UL(0) and ULL(0) are just (0) for __ASSEMBLY__
+> so the expansions of __GENMASK() and __GENMASK_ULL() contained the
+> same numeric constants.
+
+Indeed, in asm, the UL(0) and ULL(0) expands to the same thing: 0.
+
+But the two macros still expand to something different on 32 bits
+architectures:
+
+  * __GENMASK:
+
+      (((~(0)) << (l)) & (~(0) >> (32 - 1 - (h))))
+
+  * __GENMASK_ULL:
+
+      (((~(0)) << (l)) & (~(0) >> (64 - 1 - (h))))
+
+On 64 bits architecture these are the same.
+
+> This means they should be generating the same values.
+> I don't know the correct 'sizeof (int_type)' for the shift right of ~0.
+> My suspicion is that a 32bit assembler used 32bit signed integers and a
+> 64bit one 64bit signed integers (but a 32bit asm on a 64bit host might
+> be 64bit).
+> So the asm versions need to avoid the right shift and only do left shifts.
 > 
+> Which probably means they need to be enirely separate from the C versions.
+> And then the C ones can have all the ULL() removed.
 
-I'm confused. Is Dan's patch correct or is more work needed? If more work is
-needed, then I prefer to have a single patch correcting the devm_clk_bulk_get_all()
-handling.
+In this v5, I already have the ULL() removed from the non-uapi C
+version. And we are left with two distinct variants:
 
-Regards,
+  - the uapi C & asm
+  - the non-uapi C (including fix width)
 
-	Hans
+For the uapi ones, I do not think we can modify it without a risk of
+breaking some random userland. At least, this is not a risk I will take.
+And if we have to keep the __GENMASK() and __GENMASK_ULL(), then I would
+rather just reuse these for the asm variant instead of splitting further
+more and finding ourselves with three variants:
+
+  - the uapi C
+  - the asm
+  - the non-uapi C (including fix width)
+
+If __GENMASK() and __GENMASK_ULL() were not in the uapi, I would have
+agreed with you.
+
+If you believe that the risk of modifying the uapi GENMASK*() is low
+enough, then you can submit a patch. But I will definitely not touch
+these myself.
+
+
+Yours sincerely,
+Vincent Mailhol
+
 
