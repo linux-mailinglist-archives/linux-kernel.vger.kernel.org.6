@@ -1,89 +1,86 @@
-Return-Path: <linux-kernel+bounces-550764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D035A563CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:30:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3313A563D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:30:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6353B175AFD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:30:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFB7F3B03FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:30:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685D11F94C;
-	Fri,  7 Mar 2025 09:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1705420B1F3;
+	Fri,  7 Mar 2025 09:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ed9Eyaul"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VDsWTn4q"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7C420298A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DB120B1E8
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741339787; cv=none; b=cfk66OyV0NN6NtBVPrc88J2Rl73tSNeOWm+WljZ8w5+fbWLNWTSYG0hs05C23nXL2tj12OVO0qezW1stfFh5BYC4BcCE4FSBtbCQZwtdH4tvTB08bAYrqTuizUHkVSxe7OT35DwhoqiXGemyMVxN71tQUC2rkH/IxZEEKDGOiCQ=
+	t=1741339823; cv=none; b=kiL8KqvcnYUrsNIdXMcKI0RAzxV489U4u11l3ylQ1pFWUc2NQu9y9wj2dY6tJVKxlSEdQ2lXAlYWUbsN+nU16yq2gqCEkOWe0sLCooH/qIMm07LuGI4p7RbsPrC4yBC+qoy0NE0VEWS28fQXCPUZIUV3SIj8X0USYJFGdJViHUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741339787; c=relaxed/simple;
-	bh=OA/7Qe5aEekqV7T4SN23N+UJLdSmv9Rkedt7UYvoflg=;
+	s=arc-20240116; t=1741339823; c=relaxed/simple;
+	bh=Ai4u6jucrFJEo5fiJus6WWtKhesRZx/NrT2YEqPhK3o=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dfiU1K8V5hLSYHxO+AwLbhmQRkmykjLG6kLd3I5k8ujdd/ukNlCavSRV8rBR7rqK5k3DzedpoDv+lkci4k+rP//QcyM0umDrzPq5YtcGy5f4OuKg1Ai11O6VDUnMTh58Uw1v2ldupx7Z/0W/YfU982Opy+khLVoB//yWgTEjB6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ed9Eyaul; arc=none smtp.client-ip=209.85.221.52
+	 Content-Disposition; b=dZiV6Rdy9nWorVBKaQ4G8a+2nCJhjD2c55oqQ0Uxl7N2BTUYmex8jhyhVsPs29idBKpxPN5faSoQ1r4fETe66Xdf2zo94p9qvvEkhFpjR6n+pci0jH+PyGlW0PEn3nGoqCaUcUfq1oR4U4g7KSmfK+RvPbzGsZprO+N7GgcPkfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VDsWTn4q; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-391211ea598so1063914f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 01:29:44 -0800 (PST)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43bbd711eedso12523785e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 01:30:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741339783; x=1741944583; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741339820; x=1741944620; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Im6pSo0BzRtrOvminHRm9b1Ao6lE3VOWmMljLzr+YZQ=;
-        b=ed9Eyaulrc3fziPknhdHPMXo4Ya25d0DzW734oud1WnouOoJnoVyPQtU8PU0J6F2oo
-         HsyvM08oKrNZ2st3hTUFpkwTJOCucLiW7MqEyLnxPi6Qjk2IrCwXSh0PG8dTy1oEywwx
-         IHCyPf7RtRiOOqQ09brL3xCmOsPBIvLlqXglLDotRpVTvSu0qDJWDdZSEWzsRzREsM49
-         mVx2+rMijRM+7155yGVyID4DPjflHx57yhbaqaIgrnkpsR7NQPnrZ4WC1WBLVR3/tCg7
-         GoZii6LL4KOHCo3om/FmkqxnZZSZsjAZ8z1r9buVxB58PNTyzBaVRPvZrUEWOyO/C5Tm
-         aFYg==
+        bh=93blEQmxjswWheyXHKesIB+wQzCMQvJ6bucP/eSHntw=;
+        b=VDsWTn4qx/JCgvdN9+TYPTjaj1IZ+ww8uk5lWdsZfzUDSYO35B0i/UrnmwcpGuLlzq
+         stNmTrMd+H8HdhIhGKIoIGCBBd4fM5cqfXSnHoZKmOreAgstZJKAwfgq5IpJ9DxjE6h2
+         wcVK/EVXam2bnd7hN77O+idKL4VPLZeuhOyKx35EQijix/IZl1uqMnJrwZWDINkCQEi3
+         1CacdI896HKUOHOMs4B/DupEi4O2zManKuxUt0dQh9s0qA7aE7eUap2T/iqT/j2h4peA
+         tgTt1BSqYYUZlILhzX41d/Z9Lg5ajWUXVKBwFf0MpcW+F03WlcNqOTGiW+MAgedH5uJb
+         bX+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741339783; x=1741944583;
+        d=1e100.net; s=20230601; t=1741339820; x=1741944620;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Im6pSo0BzRtrOvminHRm9b1Ao6lE3VOWmMljLzr+YZQ=;
-        b=lFf5aIGxe26COvQYyESrne9hEYLmZP07kgWkvhi3TDycz2+QpK7/TofnQojDTF1LRZ
-         JbOl7xCKxD0RFLZWRIxXQIgwrSXtjHgm16kPnwfuhz4xAS+dEbrjzQfnnoTlc485yNul
-         G8JvhjpgqvLd3W/8WdLtp3BmKGeUeZytGgNZCMv4jSkbGOOR4yEYUhs0uE0JwDXEDYGY
-         h/8cbn+nloy8Q+oSp7hyZcVNIizIUuXS2Ull/3vM6uXItpX5bsOm8hJqLoJQXPyAxtW6
-         JIoyEe34rtYlg4pwGxQgivarEJ9XAldiTLviDasPNrhbUCAVIOYqarTPtAz4hT8DPz+o
-         DFDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVTnBjJko7NzwmprclKFSoGcpfsI9OcSoO97YBv9WzB7YOTJzryWlhueZD5bdM8nFeSRYatM1rJ/Qf28KQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz32TYOsUO2tpzWqovRf8+xxkjTIZNNNRiTQH/EvvFPotdCSfGz
-	IdwTLXmgEtv4Vk0JPulvlYCea8Ca854GGDvdjoA2PNEJLkBtvLRbfNyT3vPH/FM=
-X-Gm-Gg: ASbGncs7WlUd7SG73J6cyfwmqKsehsjy8zpQBqOb57bBLLApc4shlR4XU2b3Coe5BlP
-	TKanw31ooeTJ2BFPN5UiZbzOYc15VXUdvRaiW9OyjlYty8lBocXLu/5+mpMDZBIdQFZqCvEzKdx
-	gS3Ivv11AW+vGkK1QD0T5yfhscxm81dAjIh5JjDo5unVHAQ9NQaJfmqKGHEMusoKVx6osleWYmL
-	T6emj9eVs12HGnhtvKSZlKgN4R7IYpQ5rEjSzKoYBjm9u7DLJX2zanD5Ho/w2tkx03LKQWv8j5n
-	kLmTYyY0tQO8p1/OvxI8XCtT6L71/+4X2nKk0OV794U4fMl1/Q==
-X-Google-Smtp-Source: AGHT+IG1aeOLiht/Zk+dJWxQiJtrE01AKe/jCJ9h6AR4ika6O/iJj47hJhtKgYXJCT1ozzCGM9Qjxg==
-X-Received: by 2002:a05:6000:2c6:b0:391:31f2:b99e with SMTP id ffacd0b85a97d-39132d1fc45mr1723216f8f.2.1741339783348;
-        Fri, 07 Mar 2025 01:29:43 -0800 (PST)
+        bh=93blEQmxjswWheyXHKesIB+wQzCMQvJ6bucP/eSHntw=;
+        b=e5HdyYT8E2W80z1JsanggVouHruKa+ymXDV7DHqXA638WF2wP2pWPESwFjFPHW37gV
+         8VW39FvK11FTLdOKKY2yrLphRg9yk3PKwzIWmW/JFT4v3sRoaAq9VhtFsD6OUSnZx73w
+         SVUkufQYH1YJjKZBn0oXAsaigEk1Pn5w02E6/eZiG1RQqd18uoGWvoaTIUMNsQTMXNlZ
+         HAzItzwIefiwxE9sMNNq3Zn9YXmojq/gd1Q8Yp3dMPd0AxRZk7r+Xa8ZZxiJ0eIFvYlp
+         +HhLdYzqx2d9JKUvXM5zp5bhNq3ni5k91Nj7tKCTVQvv56HE5nE2cO0O24NM1jBmbf3f
+         8NCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWSiIgE/WtiAbBiXpz98LgNqi4ge/lPmnnmvJKlVIba1YBl4KYT/JQieZtq07zPCEUlko8B+G/qofDyrcE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyemlN/TkkihuEK39Lu20c5zNkAI2A5BJVYxaMs81ZSMOtxc15X
+	3EKDxfa9WCK5wNqzP+57M1KWCigf3nayehEBbN59sNo6qoSxua8Z2xyjyMaVVjw=
+X-Gm-Gg: ASbGnctdY1dIKZ+uTxS9qZKyqsekJL16Uovr3u+GdZhVKS2mhcY/2TczLDPkKSQJL96
+	1p1r2GEJX0oMaVHp+ilnMKd/ABgnKy0zX4dzmkBxvZmjRPlxsDXx7C9TwSyBEXbHtkEWkH8lFde
+	vyovtyYxPO1l+3eW24kcfiwZL8u9NPjJ5kmCXy6hEzIcqpdWKe06czJhOGvSobYz4GHJxnjWuxe
+	0e7c5c4oQyqWnEyEJGYFa2MGqGjsl+4VQIgoygQgFwUD7mU7twzLRMsLOnpqGfJKjKsqW5eAoAE
+	CPV/pn2zqd9xCuPCzLhBrJCWB0UZRQfQC+Gpd0i67Ei4e8U3hw==
+X-Google-Smtp-Source: AGHT+IF7W0BZOmIMpa6aTO/bUCCYodrmELNE8zettIHxeBxOTGRaV6zmqbl8WqRyoPh3IyqfSxwMVQ==
+X-Received: by 2002:a05:600c:8a8:b0:43b:ca39:a9ca with SMTP id 5b1f17b1804b1-43c5a60e07amr22236695e9.16.1741339820010;
+        Fri, 07 Mar 2025 01:30:20 -0800 (PST)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912c0e3250sm4783347f8f.61.2025.03.07.01.29.42
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3912bfdfdb9sm4709196f8f.27.2025.03.07.01.30.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 01:29:42 -0800 (PST)
-Date: Fri, 7 Mar 2025 12:29:39 +0300
+        Fri, 07 Mar 2025 01:30:19 -0800 (PST)
+Date: Fri, 7 Mar 2025 12:30:16 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/msm/dpu: Fix uninitialized variable in
- dpu_crtc_kickoff_clone_mode()
-Message-ID: <f8ba03dc-0f90-4781-8d54-c16b3251ecb1@stanley.mountain>
+To: Shreeya Patel <shreeya.patel@collabora.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+	Hans Verkuil <hverkuil@xs4all.nl>,
+	Dingxian Wen <shawn.wen@rock-chips.com>,
+	linux-media@vger.kernel.org, kernel@collabora.com,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] media: synopsys: hdmirx: Fix signedness bug in
+ hdmirx_parse_dt()
+Message-ID: <7ec94789-305c-4de4-b477-c0eb839170e5@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,28 +91,35 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-After the loop there is a check for whether "wb_encoder" has been set
-to non-NULL, however it was never set to NULL.  Initialize it to NULL.
+The num_clks is set this way:
 
-Fixes: ad06972d5365 ("drm/msm/dpu: Reorder encoder kickoff for CWB")
+	hdmirx_dev->num_clks = devm_clk_bulk_get_all(dev, &hdmirx_dev->clks);
+        if (hdmirx_dev->num_clks < 1)
+                return -ENODEV;
+
+The devm_clk_bulk_get_all() function returns negative error codes so the
+hdmirx_dev->num_cks variable needs to be signed for the error handling to
+work.
+
+Fixes: 7b59b132ad43 ("media: platform: synopsys: Add support for HDMI input driver")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 2 +-
+ drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index b0a062d6fa3b..ff6f5c5303d4 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -956,7 +956,7 @@ static int _dpu_crtc_wait_for_frame_done(struct drm_crtc *crtc)
- static int dpu_crtc_kickoff_clone_mode(struct drm_crtc *crtc)
- {
- 	struct drm_encoder *encoder;
--	struct drm_encoder *rt_encoder = NULL, *wb_encoder;
-+	struct drm_encoder *rt_encoder = NULL, *wb_encoder = NULL;
- 	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
- 
- 	/* Find encoder for real time display */
+diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+index 4ffc86ad6c35..e0d3fed87a92 100644
+--- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
++++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
+@@ -154,7 +154,7 @@ struct snps_hdmirx_dev {
+ 	bool hpd_trigger_level_high;
+ 	bool tmds_clk_ratio;
+ 	bool plugged;
+-	u32 num_clks;
++	int num_clks;
+ 	u32 edid_blocks_written;
+ 	u32 cur_fmt_fourcc;
+ 	u32 color_depth;
 -- 
 2.47.2
 
