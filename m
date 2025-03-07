@@ -1,253 +1,585 @@
-Return-Path: <linux-kernel+bounces-552046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE99A574B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:09:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEA3AA574B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:09:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D082189AE8E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:08:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27A71189C146
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C672580DB;
-	Fri,  7 Mar 2025 22:07:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B22B241CA5;
+	Fri,  7 Mar 2025 22:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Mx6aGjtg"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F8C1B042E;
-	Fri,  7 Mar 2025 22:07:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IX5kYgPt"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B780C1A5B88;
+	Fri,  7 Mar 2025 22:07:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741385225; cv=none; b=BYy9HzZ4a/JzdpUGLpfuF/2RCdWfu3t1RyW1JN9eWKdcQlHHplB6sCLG8yrA0OndW0X0qMPwcKQp45ZIsbbctGPA9iLWBVJJBo/cwjCfxic8k69EpDMoF/QNJwwr2rl8MpjSeG8oJiiCfVckYo0bgoiRz8Ob/GdoYzOeIL47VzM=
+	t=1741385263; cv=none; b=Bo/n0VtISF9AuVI6X8jOIxbYr8NOAYPOud2bFo+b0xjJ1RaacT6VBQFEJYSDctChjioL1aPOCvwjdH+D8lBql8ffUGaH3YurJvHb4jNUZdnbcOhOpYwhMdDFz/wXUqBm40O5zNJZURERU2N1uOOVq4WDvFQ47sagr7ITmhE5XQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741385225; c=relaxed/simple;
-	bh=wbw4zZuLdJ8TPQ1CGkAz57mIWGyuK2sutPxeVgei0Pg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a8hxsPn+H8afEsMa6hqt6DCGyruTCQAueEBHJsh5G3aQiLO2frSSSdYwvm6NWh16LdXUDBqb5NKGBxwC3Oc4Ai2pA0mAovOxl5Nisdh23xYnOfZBQhSHP8R9nhgn2sR78sVDDX/8adBWGZ9sIELw6wrGrC3xML5Tu/CxRM6U9M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Mx6aGjtg; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [10.0.0.114] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 243922038F3D;
-	Fri,  7 Mar 2025 14:07:03 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 243922038F3D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741385223;
-	bh=0/ocVvSH62mGuq4y8ism5h7T+7GWChnxENwL9KBqKPo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Mx6aGjtgGhY3S4a5G/RKkNZ9uwr1Gl6w0gRe2w8pVRKZMLMt5ZI8DpQabSoNqbfDt
-	 i2iJVYB546I+8ogQYWRyMBRLGejdhO5kzKCvUgI2gBkIQSflUfRvkkKfeT7+EpEDwm
-	 G02TMgwWoc8qk1n4Xompjgh6WNlpXMV5S5D3CltY=
-Message-ID: <63437aa6-d45a-4b7a-b222-5901c03c48e0@linux.microsoft.com>
-Date: Fri, 7 Mar 2025 14:06:46 -0800
+	s=arc-20240116; t=1741385263; c=relaxed/simple;
+	bh=F5v+bUQNPfp3I/kpIkF//Q7WJhPT8yl6OKfoM5aHo+I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KajEsEMpG4pcnNSgpbh47G59BiZPSfFgvjvc2CzgQ46cQUnw7fc2wA+oKamC13l6yuWhqK4+7j65LgMY048Ee9+hNWt2GNJAm3GY8VWP5+8huZ9r73gSSVqVBS05kDwd+BuAuu7/c/LcoCVGt1VGg8mc/NAmV0xH4V8GlrHQ2no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IX5kYgPt; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-30613802a6bso24622361fa.1;
+        Fri, 07 Mar 2025 14:07:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741385259; x=1741990059; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PrV+HTzsLyE0q0FjJT3FiUcFk5z6NXv+u+UCT3WofwU=;
+        b=IX5kYgPtwIda9rkUzc9XzYmCwsn+hu4L2yFwnOSRLjFRx4hewU4SP7yy7Lh0lpe2ql
+         UWRS59TjBY2oNP/hSrgrWHLLekLq2agUt96Ztdf6S3ovtHDQQmplMp1gt5jVEefGSdSx
+         9EgYeRQThIax9OwZV100y3PGzm7V9FSwdA+4USXLQVxXcdy+JyAVQ62/9s4Hgzh4I9QX
+         iJRTcD9UA2d+iBmFkJuqJbzCRCGEkBE2myu8t2Gdg0kPfrk2iF3ygMDvD5udsZkoXvwC
+         /InWRbIh2WuiyHDCg8x0bQsy/Srcl1zANXGletKGJqmGPaDVk4dygAw0oZTzFEt5CT6B
+         2c4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741385259; x=1741990059;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PrV+HTzsLyE0q0FjJT3FiUcFk5z6NXv+u+UCT3WofwU=;
+        b=cpMuk82FhOn3v+l/AbYejojnY7RNpbb6bzdKsnIGF1g/d6L94pF7ifFtJAZa659tbR
+         SStBkyWOwy4/BvvDJgSmYJJg9pEqnu9QWx4fDeIvncL/oRaonXKQHyex/KiKGkCL4xWu
+         /fij/ROsr0vG9wq9VQFZEJScgV6ZgTbfbSVCCRnWgf0K/eO4srZ3DeSeljYOhZjcfFyF
+         gKWqlCM3nxiz+zyrh+IbNVoCRVIzyOdZg+d1ZTIgBCoacPuranZW1r2+QUuxRdq8G1O0
+         +jIF1NTavahm/e6wlOcMYOU8LviP64cilCs49Cy8yAqjj94UeC9g5CVt2FRk8b0QM3ti
+         WXwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXBxQAaXlJatzUUJcfbExz8KjyYS2/6+ViWiM7VLfBkNovUYLe73hD4EcBodE9Dap0nRLZtK99jv9BQMljdmSg=@vger.kernel.org, AJvYcCXi2/q9Stv9hHpwObIawIp28cMIHR+YJ5dMf0ckMlM2xKyywvzYeTpZutz6UZlNRPZviyoolOLsckjrgjk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqQL/T9O6wdIGOQ+Qier8O1l+BhN1DgIPmwXb+kAZG7m6Wzghd
+	YdaQAYlYsQa6oxZ81CT+LJ1TXW8pU8aVLdM8N5tWqmjM6adqeWEX/xW0kfIzJ33fQm/sPlfwjOs
+	adwTNDAAoU2KhBG/swJd42Jd2bNEkVLPvcZI=
+X-Gm-Gg: ASbGncvKqs2G7MyIstVwF6C0Vu9XOTraKosD7eMU+psI0+DC8Q8XUST+e2Dh8we89oX
+	DiT8/bPqtvq60lhSHZ4UzX+oO6S3t9b5MnrWJ0nSSHts00HRm1kSkNotev0Tp4zTL39nHzda1wu
+	G355H0gnroHYLjQRsQlbkjZ3TCbAAzj0lLpPBZSGqvjmhzeYDU8Aev3uR+ISt1
+X-Google-Smtp-Source: AGHT+IE1uULeizDHWyO0d7hF5rr2RWuIEgFE8H9Z8wKTke0iSgnfdD9mBqDYPtEPfwFxW1t3Zfd1fGATmt1vSw88ZlU=
+X-Received: by 2002:a05:651c:1a0b:b0:309:2ed:7331 with SMTP id
+ 38308e7fff4ca-30bf453cdb5mr20832191fa.18.1741385258369; Fri, 07 Mar 2025
+ 14:07:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 07/10] Drivers: hv: Introduce per-cpu event ring tail
-To: Michael Kelley <mhklinux@outlook.com>,
- "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
- "x86@kernel.org" <x86@kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
- "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>
-Cc: "kys@microsoft.com" <kys@microsoft.com>,
- "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
- "wei.liu@kernel.org" <wei.liu@kernel.org>,
- "decui@microsoft.com" <decui@microsoft.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
- <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
- "bp@alien8.de" <bp@alien8.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "hpa@zytor.com" <hpa@zytor.com>,
- "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
- "joro@8bytes.org" <joro@8bytes.org>,
- "robin.murphy@arm.com" <robin.murphy@arm.com>, "arnd@arndb.de"
- <arnd@arndb.de>,
- "jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
- "muminulrussell@gmail.com" <muminulrussell@gmail.com>,
- "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
- "mrathor@linux.microsoft.com" <mrathor@linux.microsoft.com>,
- "ssengar@linux.microsoft.com" <ssengar@linux.microsoft.com>,
- "apais@linux.microsoft.com" <apais@linux.microsoft.com>,
- "Tianyu.Lan@microsoft.com" <Tianyu.Lan@microsoft.com>,
- "stanislav.kinsburskiy@gmail.com" <stanislav.kinsburskiy@gmail.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "vkuznets@redhat.com" <vkuznets@redhat.com>,
- "prapal@linux.microsoft.com" <prapal@linux.microsoft.com>,
- "muislam@microsoft.com" <muislam@microsoft.com>,
- "anrayabh@linux.microsoft.com" <anrayabh@linux.microsoft.com>,
- "rafael@kernel.org" <rafael@kernel.org>, "lenb@kernel.org"
- <lenb@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>
-References: <1740611284-27506-1-git-send-email-nunodasneves@linux.microsoft.com>
- <1740611284-27506-8-git-send-email-nunodasneves@linux.microsoft.com>
- <SN6PR02MB4157107676CF415A464C2C25D4D52@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Language: en-US
-From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
-In-Reply-To: <SN6PR02MB4157107676CF415A464C2C25D4D52@SN6PR02MB4157.namprd02.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250307-hrtimer-v3-v6-12-rc2-v11-0-7934aefd6993@kernel.org> <20250307-hrtimer-v3-v6-12-rc2-v11-1-7934aefd6993@kernel.org>
+In-Reply-To: <20250307-hrtimer-v3-v6-12-rc2-v11-1-7934aefd6993@kernel.org>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Fri, 7 Mar 2025 17:07:02 -0500
+X-Gm-Features: AQ5f1JrL8-U1G29EF9POEZO4CXU0RPQVWfGCVTsZiAy0s0_hbJ1ndE-fe_GHggc
+Message-ID: <CAJ-ks9mteU3qAApVxo0eGYshR3_CME54qaqVD2z4ZAyD1=Kd5A@mail.gmail.com>
+Subject: Re: [PATCH v11 01/13] rust: hrtimer: introduce hrtimer support
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+	Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, 
+	Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
+	Markus Elfring <Markus.Elfring@web.de>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/7/2025 9:02 AM, Michael Kelley wrote:
-> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Wednesday, February 26, 2025 3:08 PM
->>
->> Add a pointer hv_synic_eventring_tail to track the tail pointer for the
->> SynIC event ring buffer for each SINT.
->>
->> This will be used by the mshv driver, but must be tracked independently
->> since the driver module could be removed and re-inserted.
->>
->> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
->> Reviewed-by: Wei Liu <wei.liu@kernel.org>
->> ---
->>  drivers/hv/hv_common.c | 34 ++++++++++++++++++++++++++++++++--
->>  1 file changed, 32 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
->> index 252fd66ad4db..2763cb6d3678 100644
->> --- a/drivers/hv/hv_common.c
->> +++ b/drivers/hv/hv_common.c
->> @@ -68,6 +68,16 @@ static void hv_kmsg_dump_unregister(void);
->>
->>  static struct ctl_table_header *hv_ctl_table_hdr;
->>
->> +/*
->> + * Per-cpu array holding the tail pointer for the SynIC event ring buffer
->> + * for each SINT.
->> + *
->> + * We cannot maintain this in mshv driver because the tail pointer should
->> + * persist even if the mshv driver is unloaded.
->> + */
->> +u8 __percpu **hv_synic_eventring_tail;
-> 
-> I think the "__percpu" is in the wrong place here. This placement
-> is likely to cause errors from the "sparse" tool.  It should be
-> 
-> u8 * __percpu *hv_synic_eventring_tail;
-> 
-> See the way hyperv_pcpu_input_arg, for example, is defined.  And
-> see commit db3c65bc3a13 where I fixed hyperv_pcpu_input_arg.
-> 
-Thanks. I'll fix it.
+On Fri, Mar 7, 2025 at 4:40=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel.=
+org> wrote:
+>
+> Add support for intrusive use of the hrtimer system. For now,
+> only add support for embedding one timer per Rust struct.
+>
+> The hrtimer Rust API is based on the intrusive style pattern introduced b=
+y
+> the Rust workqueue API.
+>
+> Acked-by: Frederic Weisbecker <frederic@kernel.org>
+> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+>  rust/kernel/time.rs         |   2 +
+>  rust/kernel/time/hrtimer.rs | 351 ++++++++++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 353 insertions(+)
+>
+> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
+> index 379c0f5772e5..fab1dadfa589 100644
+> --- a/rust/kernel/time.rs
+> +++ b/rust/kernel/time.rs
+> @@ -8,6 +8,8 @@
+>  //! C header: [`include/linux/jiffies.h`](srctree/include/linux/jiffies.=
+h).
+>  //! C header: [`include/linux/ktime.h`](srctree/include/linux/ktime.h).
+>
+> +pub mod hrtimer;
+> +
+>  /// The number of nanoseconds per millisecond.
+>  pub const NSEC_PER_MSEC: i64 =3D bindings::NSEC_PER_MSEC as i64;
+>
+> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+> new file mode 100644
+> index 000000000000..dc64cef96dd4
+> --- /dev/null
+> +++ b/rust/kernel/time/hrtimer.rs
+> @@ -0,0 +1,351 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Intrusive high resolution timers.
+> +//!
+> +//! Allows running timer callbacks without doing allocations at the time=
+ of
+> +//! starting the timer. For now, only one timer per type is allowed.
+> +//!
+> +//! # Vocabulary
+> +//!
+> +//! States:
+> +//!
+> +//! - Stopped: initialized but not started, or cancelled, or not restart=
+ed.
+> +//! - Started: initialized and started or restarted.
+> +//! - Running: executing the callback.
+> +//!
+> +//! Operations:
+> +//!
+> +//! * Start
+> +//! * Cancel
+> +//! * Restart
+> +//!
+> +//! Events:
+> +//!
+> +//! * Expire
+> +//!
+> +//! ## State Diagram
+> +//!
+> +//! ```text
+> +//!                                                   Return NoRestart
+> +//!                       +---------------------------------------------=
+------------------------+
+> +//!                       |                                             =
+                        |
+> +//!                       |                                             =
+                        |
+> +//!                       |                                             =
+                        |
+> +//!                       |                                         Retu=
+rn Restart              |
+> +//!                       |                                      +------=
+------------------+     |
+> +//!                       |                                      |      =
+                  |     |
+> +//!                       |                                      |      =
+                  |     |
+> +//!                       v                                      v      =
+                  |     |
+> +//!           +-----------------+      Start      +------------------+  =
+         +--------+-----+--+
+> +//!           |                 +---------------->|                  |  =
+         |                 |
+> +//! Init      |                 |                 |                  |  =
+Expire   |                 |
+> +//! --------->|    Stopped      |                 |      Started     +--=
+-------->|     Running     |
+> +//!           |                 |     Cancel      |                  |  =
+         |                 |
+> +//!           |                 |<----------------+                  |  =
+         |                 |
+> +//!           +-----------------+                 +---------------+--+  =
+         +-----------------+
+> +//!                                                     ^         |
+> +//!                                                     |         |
+> +//!                                                     +---------+
+> +//!                                                      Restart
+> +//! ```
+> +//!
+> +//!
+> +//! A timer is initialized in the **stopped** state. A stopped timer can=
+ be
+> +//! **started** by the `start` operation, with an **expiry** time. After=
+ the
+> +//! `start` operation, the timer is in the **started** state. When the t=
+imer
+> +//! **expires**, the timer enters the **running** state and the handler =
+is
+> +//! executed. After the handler has returned, the timer may enter the
+> +//! **started* or **stopped** state, depending on the return value of th=
+e
+> +//! handler. A timer in the **started** or **running** state may be **ca=
+nceled**
+> +//! by the `cancel` operation. A timer that is cancelled enters the **st=
+opped**
+> +//! state.
+> +//!
+> +//! A `cancel` or `restart` operation on a timer in the **running** stat=
+e takes
+> +//! effect after the handler has returned and the timer has transitioned
+> +//! out of the **running** state.
+> +//!
+> +//! A `restart` operation on a timer in the **stopped** state is equival=
+ent to a
+> +//! `start` operation.
+> +
+> +use crate::{init::PinInit, prelude::*, time::Ktime, types::Opaque};
+> +use core::marker::PhantomData;
+> +
+> +/// A timer backed by a C `struct hrtimer`.
+> +///
+> +/// # Invariants
+> +///
+> +/// * `self.timer` is initialized by `bindings::hrtimer_setup`.
+> +#[pin_data]
+> +#[repr(C)]
+> +pub struct HrTimer<T> {
+> +    #[pin]
+> +    timer: Opaque<bindings::hrtimer>,
+> +    _t: PhantomData<T>,
+> +}
+> +
+> +// SAFETY: Ownership of an `HrTimer` can be moved to other threads and
+> +// used/dropped from there.
+> +unsafe impl<T> Send for HrTimer<T> {}
+> +
+> +// SAFETY: Timer operations are locked on the C side, so it is safe to o=
+perate
+> +// on a timer from multiple threads.
+> +unsafe impl<T> Sync for HrTimer<T> {}
+> +
+> +impl<T> HrTimer<T> {
+> +    /// Return an initializer for a new timer instance.
+> +    pub fn new() -> impl PinInit<Self>
+> +    where
+> +        T: HrTimerCallback,
+> +    {
+> +        pin_init!(Self {
+> +            // INVARIANT: We initialize `timer` with `hrtimer_setup` bel=
+ow.
+> +            timer <- Opaque::ffi_init(move |place: *mut bindings::hrtime=
+r| {
+> +                // SAFETY: By design of `pin_init!`, `place` is a pointe=
+r to a
+> +                // live allocation. hrtimer_setup will initialize `place=
+` and
+> +                // does not require `place` to be initialized prior to t=
+he call.
+> +                unsafe {
+> +                    bindings::hrtimer_setup(
+> +                        place,
+> +                        Some(T::Pointer::run),
+> +                        bindings::CLOCK_MONOTONIC as i32,
+> +                        bindings::hrtimer_mode_HRTIMER_MODE_REL,
+> +                    );
+> +                }
+> +            }),
+> +            _t: PhantomData,
+> +        })
+> +    }
+> +
+> +    /// Get a pointer to the contained `bindings::hrtimer`.
+> +    ///
+> +    /// This function is useful to get access to the value without creat=
+ing
+> +    /// intermediate references.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `this` must point to a live allocation of at least the size of `=
+Self`.
+> +    unsafe fn raw_get(this: *const Self) -> *mut bindings::hrtimer {
+> +        // SAFETY: The field projection to `timer` does not go out of bo=
+unds,
+> +        // because the caller of this function promises that `this` poin=
+ts to an
+> +        // allocation of at least the size of `Self`.
+> +        unsafe { Opaque::raw_get(core::ptr::addr_of!((*this).timer)) }
+> +    }
+> +
+> +    /// Cancel an initialized and potentially running timer.
+> +    ///
+> +    /// If the timer handler is running, this function will block until =
+the
+> +    /// handler returns.
+> +    ///
+> +    /// Note that the timer might be started by a concurrent start opera=
+tion. If
+> +    /// so, the timer might not be in the **stopped** state when this fu=
+nction
+> +    /// returns.
+> +    ///
+> +    /// Users of the `HrTimer` API would not usually call this method di=
+rectly.
+> +    /// Instead they would use the safe [`HrTimerHandle::cancel`] on the=
+ handle
+> +    /// returned when the timer was started.
+> +    ///
+> +    /// This function is useful to get access to the value without creat=
+ing
+> +    /// intermediate references.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `this` must point to a valid `Self`.
+> +    #[allow(dead_code)]
+> +    pub(crate) unsafe fn raw_cancel(this: *const Self) -> bool {
+> +        // SAFETY: `this` points to an allocation of at least `HrTimer` =
+size.
+> +        let c_timer_ptr =3D unsafe { HrTimer::raw_get(this) };
+> +
+> +        // If the handler is running, this will wait for the handler to =
+return
+> +        // before returning.
+> +        // SAFETY: `c_timer_ptr` is initialized and valid. Synchronizati=
+on is
+> +        // handled on the C side.
+> +        unsafe { bindings::hrtimer_cancel(c_timer_ptr) !=3D 0 }
+> +    }
+> +}
+> +
+> +/// Implemented by pointer types that point to structs that contain a [`=
+HrTimer`].
+> +///
+> +/// `Self` must be [`Sync`] because it is passed to timer callbacks in a=
+nother
+> +/// thread of execution (hard or soft interrupt context).
+> +///
+> +/// Starting a timer returns a [`HrTimerHandle`] that can be used to man=
+ipulate
+> +/// the timer. Note that it is OK to call the start function repeatedly,=
+ and
+> +/// that more than one [`HrTimerHandle`] associated with a [`HrTimerPoin=
+ter`] may
+> +/// exist. A timer can be manipulated through any of the handles, and a =
+handle
+> +/// may represent a cancelled timer.
+> +pub trait HrTimerPointer: Sync + Sized {
+> +    /// A handle representing a started or restarted timer.
+> +    ///
+> +    /// If the timer is running or if the timer callback is executing wh=
+en the
+> +    /// handle is dropped, the drop method of [`HrTimerHandle`] should n=
+ot return
+> +    /// until the timer is stopped and the callback has completed.
+> +    ///
+> +    /// Note: When implementing this trait, consider that it is not unsa=
+fe to
+> +    /// leak the handle.
+> +    type TimerHandle: HrTimerHandle;
+> +
+> +    /// Start the timer with expiry after `expires` time units. If the t=
+imer was
+> +    /// already running, it is restarted with the new expiry time.
+> +    fn start(self, expires: Ktime) -> Self::TimerHandle;
+> +}
+> +
+> +/// Implemented by [`HrTimerPointer`] implementers to give the C timer c=
+allback a
+> +/// function to call.
+> +// This is split from `HrTimerPointer` to make it easier to specify trai=
+t bounds.
+> +pub trait RawHrTimerCallback {
+> +    /// Type of the parameter passed to [`HrTimerCallback::run`]. It may=
+ be
+> +    /// [`Self`], or a pointer type derived from [`Self`].
+> +    type CallbackTarget<'a>;
+> +
+> +    /// Callback to be called from C when timer fires.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// Only to be called by C code in the `hrtimer` subsystem. `this` m=
+ust point
+> +    /// to the `bindings::hrtimer` structure that was used to start the =
+timer.
+> +    unsafe extern "C" fn run(this: *mut bindings::hrtimer) -> bindings::=
+hrtimer_restart;
+> +}
+> +
+> +/// Implemented by structs that can be the target of a timer callback.
+> +pub trait HrTimerCallback {
+> +    /// The type whose [`RawHrTimerCallback::run`] method will be invoke=
+d when
+> +    /// the timer expires.
+> +    type Pointer<'a>: RawHrTimerCallback;
+> +
+> +    /// Called by the timer logic when the timer fires.
+> +    fn run(this: <Self::Pointer<'_> as RawHrTimerCallback>::CallbackTarg=
+et<'_>)
+> +    where
+> +        Self: Sized;
+> +}
+> +
+> +/// A handle representing a potentially running timer.
+> +///
+> +/// More than one handle representing the same timer might exist.
+> +///
+> +/// # Safety
+> +///
+> +/// When dropped, the timer represented by this handle must be cancelled=
+, if it
+> +/// is running. If the timer handler is running when the handle is dropp=
+ed, the
+> +/// drop method must wait for the handler to return before returning.
+> +///
+> +/// Note: One way to satisfy the safety requirement is to call `Self::ca=
+ncel` in
+> +/// the drop implementation for `Self.`
+> +pub unsafe trait HrTimerHandle {
+> +    /// Cancel the timer. If the timer is in the running state, block ti=
+ll the
+> +    /// handler has returned.
+> +    ///
+> +    /// Note that the timer might be started by a concurrent start opera=
+tion. If
+> +    /// so, the timer might not be in the **stopped** state when this fu=
+nction
+> +    /// returns.
+> +    ///
+> +    fn cancel(&mut self) -> bool;
+> +}
+> +
+> +/// Implemented by structs that contain timer nodes.
+> +///
+> +/// Clients of the timer API would usually safely implement this trait b=
+y using
+> +/// the [`crate::impl_has_hr_timer`] macro.
+> +///
+> +/// # Safety
+> +///
+> +/// Implementers of this trait must ensure that the implementer has a [`=
+HrTimer`]
+> +/// field at the offset specified by `OFFSET` and that all trait methods=
+ are
+> +/// implemented according to their documentation.
 
->> +EXPORT_SYMBOL_GPL(hv_synic_eventring_tail);
-> 
-> The "extern" declaration for this variable is in Patch 10 of the series
-> in drivers/hv/mshv_root.h. I guess that's OK, but I would normally
-> expect to find such a declaration in the header file associated with
-> where the variable is defined, which in this case is mshyperv.h.
-> Perhaps you are trying to restrict its usage to just mshv?
-> 
-Yes, that's the idea - it should only be used by the driver.
+OFFSET no longer exists.
 
->> +
->>  /*
->>   * Hyper-V specific initialization and shutdown code that is
->>   * common across all architectures.  Called from architecture
->> @@ -90,6 +100,9 @@ void __init hv_common_free(void)
->>
->>  	free_percpu(hyperv_pcpu_input_arg);
->>  	hyperv_pcpu_input_arg = NULL;
->> +
->> +	free_percpu(hv_synic_eventring_tail);
->> +	hv_synic_eventring_tail = NULL;
->>  }
->>
->>  /*
->> @@ -372,6 +385,11 @@ int __init hv_common_init(void)
->>  		BUG_ON(!hyperv_pcpu_output_arg);
->>  	}
->>
->> +	if (hv_root_partition()) {
->> +		hv_synic_eventring_tail = alloc_percpu(u8 *);
->> +		BUG_ON(hv_synic_eventring_tail == NULL);
->> +	}
->> +
->>  	hv_vp_index = kmalloc_array(nr_cpu_ids, sizeof(*hv_vp_index),
->>  				    GFP_KERNEL);
->>  	if (!hv_vp_index) {
->> @@ -460,6 +478,7 @@ void __init ms_hyperv_late_init(void)
->>  int hv_common_cpu_init(unsigned int cpu)
->>  {
->>  	void **inputarg, **outputarg;
->> +	u8 **synic_eventring_tail;
->>  	u64 msr_vp_index;
->>  	gfp_t flags;
->>  	const int pgcount = hv_output_page_exists() ? 2 : 1;
->> @@ -472,8 +491,8 @@ int hv_common_cpu_init(unsigned int cpu)
->>  	inputarg = (void **)this_cpu_ptr(hyperv_pcpu_input_arg);
->>
->>  	/*
->> -	 * hyperv_pcpu_input_arg and hyperv_pcpu_output_arg memory is already
->> -	 * allocated if this CPU was previously online and then taken offline
->> +	 * The per-cpu memory is already allocated if this CPU was previously
->> +	 * online and then taken offline
->>  	 */
->>  	if (!*inputarg) {
->>  		mem = kmalloc(pgcount * HV_HYP_PAGE_SIZE, flags);
->> @@ -485,6 +504,17 @@ int hv_common_cpu_init(unsigned int cpu)
->>  			*outputarg = (char *)mem + HV_HYP_PAGE_SIZE;
->>  		}
->>
->> +		if (hv_root_partition()) {
->> +			synic_eventring_tail = (u8 **)this_cpu_ptr(hv_synic_eventring_tail);
->> +			*synic_eventring_tail = kcalloc(HV_SYNIC_SINT_COUNT,
->> +							sizeof(u8), flags);
->> +
->> +			if (unlikely(!*synic_eventring_tail)) {
->> +				kfree(mem);
->> +				return -ENOMEM;
->> +			}
->> +		}
->> +
-> 
-> Adding this code under the "if(!*inputarg)" implicitly ties the lifecycle of
-> synic_eventring_tail to the lifecycle of hyperv_pcpu_input_arg and
-> hyperv_pcpu_output_arg. Is there some logical relationship between the
-> two that warrants tying the lifecycles together (other than just both being
-> per-cpu)?  hyperv_pcpu_input_arg and hyperv_pcpu_output_arg have an
-> unusual lifecycle management in that they aren't freed when a CPU goes
-> offline, as described in the comment in hv_common_cpu_die(). Does
-> synic_eventring_tail also need that same unusual lifecycle?
-> 
-I thought about it, and no I don't think it shares the same exact lifecycle.
-It's only used by the mshv_root driver - it just needs to remain present
-whenever there's a chance the module could be re-inserted and expect it to
-be there.
+> +pub unsafe trait HasHrTimer<T> {
+> +    /// Return a pointer to the [`HrTimer`] within `Self`.
+> +    ///
+> +    /// This function is useful to get access to the value without creat=
+ing
+> +    /// intermediate references.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `this` must be a valid pointer.
+> +    unsafe fn raw_get_timer(this: *const Self) -> *const HrTimer<T>;
+> +
+> +    /// Return a pointer to the struct that is containing the [`HrTimer`=
+] pointed
+> +    /// to by `ptr`.
+> +    ///
+> +    /// This function is useful to get access to the value without creat=
+ing
+> +    /// intermediate references.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `ptr` must point to a [`HrTimer<T>`] field in a struct of type `=
+Self`.
+> +    unsafe fn timer_container_of(ptr: *mut HrTimer<T>) -> *mut Self
+> +    where
+> +        Self: Sized;
+> +
+> +    /// Get pointer to the contained `bindings::hrtimer` struct.
+> +    ///
+> +    /// This function is useful to get access to the value without creat=
+ing
+> +    /// intermediate references.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// `this` must be a valid pointer.
+> +    unsafe fn c_timer_ptr(this: *const Self) -> *const bindings::hrtimer=
+ {
+> +        // SAFETY: `this` is a valid pointer to a `Self`.
+> +        let timer_ptr =3D unsafe { Self::raw_get_timer(this) };
+> +
+> +        // SAFETY: timer_ptr points to an allocation of at least `HrTime=
+r` size.
+> +        unsafe { HrTimer::raw_get(timer_ptr) }
+> +    }
+> +
+> +    /// Start the timer contained in the `Self` pointed to by `self_ptr`=
+. If
+> +    /// it is already running it is removed and inserted.
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// - `this` must point to a valid `Self`.
+> +    /// - Caller must ensure that the pointee of `this` lives until the =
+timer
+> +    ///   fires or is canceled.
+> +    unsafe fn start(this: *const Self, expires: Ktime) {
+> +        // SAFETY: By function safety requirement, `this`is a valid `Sel=
+f`.
+> +        unsafe {
+> +            bindings::hrtimer_start_range_ns(
+> +                Self::c_timer_ptr(this).cast_mut(),
+> +                expires.to_ns(),
+> +                0,
+> +                bindings::hrtimer_mode_HRTIMER_MODE_REL,
+> +            );
+> +        }
+> +    }
+> +}
+> +
+> +/// Use to implement the [`HasHrTimer<T>`] trait.
+> +///
+> +/// See [`module`] documentation for an example.
+> +///
+> +/// [`module`]: crate::time::hrtimer
+> +#[macro_export]
+> +macro_rules! impl_has_hr_timer {
+> +    (
+> +        impl$({$($generics:tt)*})?
+> +            HasHrTimer<$timer_type:ty>
+> +            for $self:ty
+> +        { self.$field:ident }
+> +        $($rest:tt)*
+> +    ) =3D> {
+> +        // SAFETY: This implementation of `raw_get_timer` only compiles =
+if the
+> +        // field has the right type.
+> +        unsafe impl$(<$($generics)*>)? $crate::time::hrtimer::HasHrTimer=
+<$timer_type> for $self {
+> +
+> +            #[inline]
+> +            unsafe fn raw_get_timer(
+> +                this: *const Self,
+> +            ) -> *const $crate::time::hrtimer::HrTimer<$timer_type> {
+> +                // SAFETY: The caller promises that the pointer is not d=
+angling.
+> +                unsafe { ::core::ptr::addr_of!((*this).$field) }
+> +            }
+> +
+> +            #[inline]
+> +            unsafe fn timer_container_of(
+> +                ptr: *mut $crate::time::hrtimer::HrTimer<$timer_type>,
+> +            ) -> *mut Self {
+> +                // SAFETY: As per the safety requirement of this functio=
+n, `ptr`
+> +                // is pointing inside a `$timer_type`.
+> +                unsafe { ::kernel::container_of!(ptr, $timer_type, $fiel=
+d).cast_mut() }
+> +            }
+> +        }
+> +    }
+> +}
+>
+> --
+> 2.47.0
+>
+>
 
-> Assuming there's no logical relationship, I'm thinking synic_eventring_tail
-> should be managed independent of the other two. If it does need the
-> unusual lifecycle, make sure to add a comment in hv_common_cpu_die()
-> explaining why. If it doesn't need the unusual lifecycle, maybe just do
-> the normal thing of allocating it in hv_common_cpu_init() and freeing
-> it in hv_common_cpu_die().
-> 
-Yep, I suppose it should just be freed normally then, assuming
-hv_common_cpu_die() is only called when the hypervisor is going to reset
-(or remove) the synic pages for this partition. Is that the case here?
-
-Otherwise we'd want to retain it, in case mshv_root ever needs it again for
-that CPU in the lifetime of this partition.
-
-Nuno
-
-> The code as written in your patch isn't wrong and would work OK. But
-> the structure implies a relationship with hyperv_pcpu_*_arg that I
-> suspect doesn't exist.
-> 
-> Michael
-> 
->>  		if (!ms_hyperv.paravisor_present &&
->>  		    (hv_isolation_type_snp() || hv_isolation_type_tdx())) {
->>  			ret = set_memory_decrypted((unsigned long)mem, pgcount);
->> --
->> 2.34.1
-
+Reviewed-by: Tamir Duberstein <tamird@gmail.com>
 
