@@ -1,144 +1,353 @@
-Return-Path: <linux-kernel+bounces-551268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D9EBA56A48
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:24:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A360A56A4C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:25:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48718164DA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:24:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9503E189B08D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7503C21B9DA;
-	Fri,  7 Mar 2025 14:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB3021C165;
+	Fri,  7 Mar 2025 14:25:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Gv2ZUzEE"
-Received: from mail-10628.protonmail.ch (mail-10628.protonmail.ch [79.135.106.28])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nVao6tuI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F056B18DF65;
-	Fri,  7 Mar 2025 14:24:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B25A21B8FE;
+	Fri,  7 Mar 2025 14:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741357484; cv=none; b=qM2z83zDZanoKOs6lqXj01Nd8ViIRaFQ4DEPtbFZmX1ZbUOgUQbNuqtT+r2sQcYvocBvJYq5dII7ow3mYMQimpHoN91iYdgcUXx68bQrvU0qSxF3FampZ2VzP9BDti6oUYASzLTkN5JfOuEqLO5nlknWOYRnbyk7Cd/BPZEgNo4=
+	t=1741357511; cv=none; b=pI4vCbXnEJnnT/PGXk3WJbeNaHQJh9p75nW3K0TAGyx6QbzPC5D/WdT1fQPwvrwE3EHswakvFtpcbeUoe5UoDswAUrzdnH0P6iDGoqeE2UEFaDp1tBIKc82sAIfJZIM3FRe0i42D/bN7qHhXxCdmz1wwKIAMdEjUK5LfPhQF7v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741357484; c=relaxed/simple;
-	bh=0ivBtm88OhtMMsvzZ6gveDwR1IczACnoVY8KLwPymM4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q+rlKgMgZVUyRfIKEQxwv8SvlC4V3ukRbdQKzwC90QvOkuCAiU9GY+Ftb513wM4QfSkuY8e79R41i1jPIDeUqMmftvTToWr5yc6j13dhtOrmdmUeDvW5nIa0G6/xk6d/AKNL5DcRc/rKcZQaexfCUMGJZFLfnUVosMMekFc83bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Gv2ZUzEE; arc=none smtp.client-ip=79.135.106.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741357480; x=1741616680;
-	bh=KqthcJVrewmtu1xtlHXM3b3KzDBBgkcXCjltCDAKMr8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=Gv2ZUzEEhNz24nrFdExvPJGxZrGl9yZQdPcjukALo+vcSuGSARQqR4bWDnktJ5HyW
-	 NFyP9TIHP/EP6Tv2MWQ0pCpuCPVVWxdHDXzHU7a6t8qXR7Uo1KXBxvzsklaaL49BCY
-	 UTEJR7U4Rx/qY7W1ZpF/BnQVGU2kK4hcXGsIY3X91FyuuSaoIzRwCcyIraIOw1/MUc
-	 d3arcR8d3x7x9OlPN+wiqA18I0/9e/7pKTiC2OY9QeO0n5JzCSIUbIAuoKSlGst4EB
-	 liXOBsrPhdF7E+FKhClwcpaB8rgCuDZM6iAvdYXU34C3T4eTH/h7vdmvXSpl4904gi
-	 QILDEnxgSj/QQ==
-Date: Fri, 07 Mar 2025 14:24:32 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 03/13] rust: hrtimer: implement `HrTimerPointer` for `Arc`
-Message-ID: <D8A3PCB7F5L8.36WN92Y4Y9AP9@proton.me>
-In-Reply-To: <87zfhx2afi.fsf@kernel.org>
-References: <20250307-hrtimer-v3-v6-12-rc2-v10-0-0cf7e9491da4@kernel.org> <20250307-hrtimer-v3-v6-12-rc2-v10-3-0cf7e9491da4@kernel.org> <b-T-Yv_oexMXaKG9kNNfbYz-Qaw1XhJw-VHerSPFp_sIMoztNyAj94_rH-uNYeG-Hc5WANUivDJW9WLmfZZHwA==@protonmail.internalid> <D8A1Z043VPGR.2OBGSBH1ALUL6@proton.me> <87senp3r9b.fsf@kernel.org> <4ZAkOKT4__IQstGGnVAvkCTx_eb_sQwehN8od8rozgp_hijMhU83a7AOm9PD2WV8AuamjQxz_U1abZVWKY-zDA==@protonmail.internalid> <D8A2O5QBXCRI.18W3W0EDI3UXZ@proton.me> <87zfhx2afi.fsf@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: a5b9ed01667193288f8ed54b88ac9c8b3c1513c7
+	s=arc-20240116; t=1741357511; c=relaxed/simple;
+	bh=KDsgPCgOzgPDAzo4i3S+8MmS09X6FfWFRxch1f9mvno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KzdSBOwZw3fNlIM99eRB7nztvEwXF16eNc+eH80J9Eb6l2/8p/7H5OMm04BJ4HdRexE8jlrjWWuS4Qnnw3u1DQMkmWKgtLrDWUKktTpc6WEy8WKMnNs9ow8GXMsKaH2AznmsGmyGt+cKXIRQzumW7YPn5WpCtJMIFXou8eAfUkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nVao6tuI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABB4EC4CED1;
+	Fri,  7 Mar 2025 14:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741357509;
+	bh=KDsgPCgOzgPDAzo4i3S+8MmS09X6FfWFRxch1f9mvno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nVao6tuIM/7Bcq+XvIU35pqwTfLdO+d+o60dBldGxHj5JCWI8V6w4sDA7q4sGGfv6
+	 gnAIdQBIY1fZxM0iwRyPyOVht/UbTx4GzcdlUUN312lLnfcapZAAt3oieAOvyKAMEr
+	 XnGAh4MaSfhc3jrt4umQ6HhYuVgGfhMIzQyLQeMhnzlfLRP6blI7/v7yCqrjcJRhJe
+	 N6Vf5dbEk5hzSagBgO0OP8y5sEnFQEddxpBhUg9TRr6fctK1NX5Y/anxe6eFfvPve4
+	 BGvgCjFBJX39r9Zd6nWDc/6Uz59j64tqesoXti+JY2IDEpWPqGE0EGo7O6I9Lgsz29
+	 iCdSlngof+Zbw==
+Date: Fri, 7 Mar 2025 15:24:59 +0100
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Hanjun Guo <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Russell King <linux@armlinux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Stuart Yoder <stuyoder@gmail.com>,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+	Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Charan Teja Kalla <quic_charante@quicinc.com>
+Subject: Re: [PATCH v2 4/4] iommu: Get DT/ACPI parsing into the proper probe
+ path
+Message-ID: <Z8sBuzx6sGq24n0g@lpieralisi>
+References: <cover.1740753261.git.robin.murphy@arm.com>
+ <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
 
-On Fri Mar 7, 2025 at 3:16 PM CET, Andreas Hindborg wrote:
-> "Benno Lossin" <benno.lossin@proton.me> writes:
->> On Fri Mar 7, 2025 at 2:27 PM CET, Andreas Hindborg wrote:
->>> "Benno Lossin" <benno.lossin@proton.me> writes:
->>>> On Fri Mar 7, 2025 at 11:11 AM CET, Andreas Hindborg wrote:
->>>>> +impl<T> RawHrTimerCallback for Arc<T>
->>>>> +where
->>>>> +    T: 'static,
->>>>> +    T: HasHrTimer<T>,
->>>>> +    T: for<'a> HrTimerCallback<Pointer<'a> =3D Self>,
->>>>> +{
->>>>> +    type CallbackTarget<'a> =3D ArcBorrow<'a, T>;
->>>>> +
->>>>> +    unsafe extern "C" fn run(ptr: *mut bindings::hrtimer) -> binding=
-s::hrtimer_restart {
->>>>> +        // `HrTimer` is `repr(C)`
->>>>> +        let timer_ptr =3D ptr.cast::<super::HrTimer<T>>();
->>>>> +
->>>>> +        // SAFETY: By C API contract `ptr` is the pointer we passed =
-when
->>>>> +        // queuing the timer, so it is a `HrTimer<T>` embedded in a =
-`T`.
->>>>> +        let data_ptr =3D unsafe { T::timer_container_of(timer_ptr) }=
-;
->>>>> +
->>>>> +        // SAFETY: `data_ptr` points to the `T` that was used to que=
-ue the
->>>>> +        // timer. This `T` is contained in an `Arc`.
->>>>
->>>> You're not justifying all safety requirements of `ArcBorrow::from_raw`=
-.
->>>
->>> How is this:
->>>
->>>         // SAFETY:
->>>         //  - `data_ptr` is derived form the pointer to the `T` that wa=
-s used to
->>>         //    queue the timer.
->>>         //  - The `ArcTimerHandle` associated with this timer is guaran=
-teed to
->>>         //    be alive for the duration of the lifetime of `receiver`, =
-so the
->>
->> There is no `receiver` in this context?
->
-> It's the value returned from the call, same line.
+On Fri, Feb 28, 2025 at 03:46:33PM +0000, Robin Murphy wrote:
+> In hindsight, there were some crucial subtleties overlooked when moving
+> {of,acpi}_dma_configure() to driver probe time to allow waiting for
+> IOMMU drivers with -EPROBE_DEFER, and these have become an
+> ever-increasing source of problems. The IOMMU API has some fundamental
+> assumptions that iommu_probe_device() is called for every device added
+> to the system, in the order in which they are added. Calling it in a
+> random order or not at all dependent on driver binding leads to
+> malformed groups, a potential lack of isolation for devices with no
+> driver, and all manner of unexpected concurrency and race conditions.
+> We've attempted to mitigate the latter with point-fix bodges like
+> iommu_probe_device_lock, but it's a losing battle and the time has come
+> to bite the bullet and address the true source of the problem instead.
+> 
+> The crux of the matter is that the firmware parsing actually serves two
+> distinct purposes; one is identifying the IOMMU instance associated with
+> a device so we can check its availability, the second is actually
+> telling that instance about the relevant firmware-provided data for the
+> device. However the latter also depends on the former, and at the time
+> there was no good place to defer and retry that separately from the
+> availability check we also wanted for client driver probe.
+> 
+> Nowadays, though, we have a proper notion of multiple IOMMU instances in
+> the core API itself, and each one gets a chance to probe its own devices
+> upon registration, so we can finally make that work as intended for
+> DT/IORT/VIOT platforms too. All we need is for iommu_probe_device() to
+> be able to run the iommu_fwspec machinery currently buried deep in the
+> wrong end of {of,acpi}_dma_configure(). Luckily it turns out to be
+> surprisingly straightforward to bootstrap this transformation by pretty
+> much just calling the same path twice. At client driver probe time,
+> dev->driver is obviously set; conversely at device_add(), or a
+> subsequent bus_iommu_probe(), any device waiting for an IOMMU really
+> should *not* have a driver already, so we can use that as a condition to
+> disambiguate the two cases, and avoid recursing back into the IOMMU core
+> at the wrong times.
+> 
+> Obviously this isn't the nicest thing, but for now it gives us a
+> functional baseline to then unpick the layers in between without many
+> more awkward cross-subsystem patches. There are some minor side-effects
+> like dma_range_map potentially being created earlier, and some debug
+> prints being repeated, but these aren't significantly detrimental. Let's
+> make things work first, then deal with making them nice.
+> 
+> With the basic flow finally in the right order again, the next step is
+> probably turning the bus->dma_configure paths inside-out, since all we
+> really need from bus code is its notion of which device and input ID(s)
+> to parse the common firmware properties with...
+> 
+> Acked-by: Bjorn Helgaas <bhelgaas@google.com> # pci-driver.c
+> Acked-by: Rob Herring (Arm) <robh@kernel.org> # of/device.c
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> ---
+> 
+> v2:
+>  - Comment bus driver changes for clarity
+>  - Use dev->iommu as the now-robust replay condition
+>  - Drop the device_iommu_mapped() checks in the firmware paths as they
+>    weren't doing much - we can't replace probe_device_lock just yet...
+>  
+>  drivers/acpi/arm64/dma.c        |  5 +++++
+>  drivers/acpi/scan.c             |  7 -------
+>  drivers/amba/bus.c              |  3 ++-
+>  drivers/base/platform.c         |  3 ++-
+>  drivers/bus/fsl-mc/fsl-mc-bus.c |  3 ++-
+>  drivers/cdx/cdx.c               |  3 ++-
+>  drivers/iommu/iommu.c           | 24 +++++++++++++++++++++---
+>  drivers/iommu/of_iommu.c        |  7 ++++++-
+>  drivers/of/device.c             |  7 ++++++-
+>  drivers/pci/pci-driver.c        |  3 ++-
+>  10 files changed, 48 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/acpi/arm64/dma.c b/drivers/acpi/arm64/dma.c
+> index 52b2abf88689..f30f138352b7 100644
+> --- a/drivers/acpi/arm64/dma.c
+> +++ b/drivers/acpi/arm64/dma.c
+> @@ -26,6 +26,11 @@ void acpi_arch_dma_setup(struct device *dev)
+>  	else
+>  		end = (1ULL << 32) - 1;
+>  
+> +	if (dev->dma_range_map) {
+> +		dev_dbg(dev, "dma_range_map already set\n");
+> +		return;
+> +	}
+> +
 
-Ah my bad.
+Why are we checking that dev->dma_range_map exists here rather than
+at function entry ? Is that because we want to run the previous code
+for some reasons even if dev->dma_range_map is already set ?
 
->
->> Is the reason for the handle staying alive that when it is dropped, it
->> calls `cancel` and that waits until the callback finishes? If so, did
->> you write that down somewhere here?
->
-> Yes, it is in the safety requirement of the `HrTimerHandle` trait.
-> Should I add that? It becomes quite a story.
+Just noticed, the OF counterpart does not seem to take the same
+approach, so I am just flagging this up if it matters at all.
 
-Yeah, I think you should add it.
+Other than that, for acpi/arm64:
 
----
-Cheers,
-Benno
+Reviewed-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
 
->>>         //    refcount of the underlying `Arc` is guaranteed to be nonz=
-ero for
->>>         //    the duration.
->>>         //  - We own one refcount in the `ArcTimerHandle` associted wit=
-h this
->>>         //    timer, so it is not possible to get a `UniqueArc` to this
->>>         //    allocation from other `Arc` clones.
->>
->> Otherwise this sounds good.
->
-> Cool.
->
->
-> Best regards,
-> Andreas Hindborg
-
-
+>  	ret = acpi_dma_get_range(dev, &map);
+>  	if (!ret && map) {
+>  		end = dma_range_map_max(map);
+> diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+> index 9f4efa8f75a6..fb1fe9f3b1a3 100644
+> --- a/drivers/acpi/scan.c
+> +++ b/drivers/acpi/scan.c
+> @@ -1632,13 +1632,6 @@ static int acpi_iommu_configure_id(struct device *dev, const u32 *id_in)
+>  		err = viot_iommu_configure(dev);
+>  	mutex_unlock(&iommu_probe_device_lock);
+>  
+> -	/*
+> -	 * If we have reason to believe the IOMMU driver missed the initial
+> -	 * iommu_probe_device() call for dev, replay it to get things in order.
+> -	 */
+> -	if (!err && dev->bus)
+> -		err = iommu_probe_device(dev);
+> -
+>  	return err;
+>  }
+>  
+> diff --git a/drivers/amba/bus.c b/drivers/amba/bus.c
+> index 8ef259b4d037..71482d639a6d 100644
+> --- a/drivers/amba/bus.c
+> +++ b/drivers/amba/bus.c
+> @@ -364,7 +364,8 @@ static int amba_dma_configure(struct device *dev)
+>  		ret = acpi_dma_configure(dev, attr);
+>  	}
+>  
+> -	if (!ret && !drv->driver_managed_dma) {
+> +	/* @drv may not be valid when we're called from the IOMMU layer */
+> +	if (!ret && dev->driver && !drv->driver_managed_dma) {
+>  		ret = iommu_device_use_default_domain(dev);
+>  		if (ret)
+>  			arch_teardown_dma_ops(dev);
+> diff --git a/drivers/base/platform.c b/drivers/base/platform.c
+> index 6f2a33722c52..1813cfd0c4bd 100644
+> --- a/drivers/base/platform.c
+> +++ b/drivers/base/platform.c
+> @@ -1451,7 +1451,8 @@ static int platform_dma_configure(struct device *dev)
+>  		attr = acpi_get_dma_attr(to_acpi_device_node(fwnode));
+>  		ret = acpi_dma_configure(dev, attr);
+>  	}
+> -	if (ret || drv->driver_managed_dma)
+> +	/* @drv may not be valid when we're called from the IOMMU layer */
+> +	if (ret || !dev->driver || drv->driver_managed_dma)
+>  		return ret;
+>  
+>  	ret = iommu_device_use_default_domain(dev);
+> diff --git a/drivers/bus/fsl-mc/fsl-mc-bus.c b/drivers/bus/fsl-mc/fsl-mc-bus.c
+> index d1f3d327ddd1..a8be8cf246fb 100644
+> --- a/drivers/bus/fsl-mc/fsl-mc-bus.c
+> +++ b/drivers/bus/fsl-mc/fsl-mc-bus.c
+> @@ -153,7 +153,8 @@ static int fsl_mc_dma_configure(struct device *dev)
+>  	else
+>  		ret = acpi_dma_configure_id(dev, DEV_DMA_COHERENT, &input_id);
+>  
+> -	if (!ret && !mc_drv->driver_managed_dma) {
+> +	/* @mc_drv may not be valid when we're called from the IOMMU layer */
+> +	if (!ret && dev->driver && !mc_drv->driver_managed_dma) {
+>  		ret = iommu_device_use_default_domain(dev);
+>  		if (ret)
+>  			arch_teardown_dma_ops(dev);
+> diff --git a/drivers/cdx/cdx.c b/drivers/cdx/cdx.c
+> index c573ed2ee71a..780fb0c4adba 100644
+> --- a/drivers/cdx/cdx.c
+> +++ b/drivers/cdx/cdx.c
+> @@ -360,7 +360,8 @@ static int cdx_dma_configure(struct device *dev)
+>  		return ret;
+>  	}
+>  
+> -	if (!ret && !cdx_drv->driver_managed_dma) {
+> +	/* @cdx_drv may not be valid when we're called from the IOMMU layer */
+> +	if (!ret && dev->driver && !cdx_drv->driver_managed_dma) {
+>  		ret = iommu_device_use_default_domain(dev);
+>  		if (ret)
+>  			arch_teardown_dma_ops(dev);
+> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+> index a3b45b84f42b..1cec7074367a 100644
+> --- a/drivers/iommu/iommu.c
+> +++ b/drivers/iommu/iommu.c
+> @@ -414,9 +414,21 @@ static int iommu_init_device(struct device *dev)
+>  	if (!dev_iommu_get(dev))
+>  		return -ENOMEM;
+>  	/*
+> -	 * For FDT-based systems and ACPI IORT/VIOT, drivers register IOMMU
+> -	 * instances with non-NULL fwnodes, and client devices should have been
+> -	 * identified with a fwspec by this point. Otherwise, we can currently
+> +	 * For FDT-based systems and ACPI IORT/VIOT, the common firmware parsing
+> +	 * is buried in the bus dma_configure path. Properly unpicking that is
+> +	 * still a big job, so for now just invoke the whole thing. The device
+> +	 * already having a driver bound means dma_configure has already run and
+> +	 * either found no IOMMU to wait for, or we're in its replay call right
+> +	 * now, so either way there's no point calling it again.
+> +	 */
+> +	if (!dev->driver && dev->bus->dma_configure) {
+> +		mutex_unlock(&iommu_probe_device_lock);
+> +		dev->bus->dma_configure(dev);
+> +		mutex_lock(&iommu_probe_device_lock);
+> +	}
+> +	/*
+> +	 * At this point, relevant devices either now have a fwspec which will
+> +	 * match ops registered with a non-NULL fwnode, or we can reasonably
+>  	 * assume that only one of Intel, AMD, s390, PAMU or legacy SMMUv2 can
+>  	 * be present, and that any of their registered instances has suitable
+>  	 * ops for probing, and thus cheekily co-opt the same mechanism.
+> @@ -426,6 +438,12 @@ static int iommu_init_device(struct device *dev)
+>  		ret = -ENODEV;
+>  		goto err_free;
+>  	}
+> +	/*
+> +	 * And if we do now see any replay calls, they would indicate someone
+> +	 * misusing the dma_configure path outside bus code.
+> +	 */
+> +	if (dev->driver)
+> +		dev_WARN(dev, "late IOMMU probe at driver bind, something fishy here!\n");
+>  
+>  	if (!try_module_get(ops->owner)) {
+>  		ret = -EINVAL;
+> diff --git a/drivers/iommu/of_iommu.c b/drivers/iommu/of_iommu.c
+> index e10a68b5ffde..6b989a62def2 100644
+> --- a/drivers/iommu/of_iommu.c
+> +++ b/drivers/iommu/of_iommu.c
+> @@ -155,7 +155,12 @@ int of_iommu_configure(struct device *dev, struct device_node *master_np,
+>  		dev_iommu_free(dev);
+>  	mutex_unlock(&iommu_probe_device_lock);
+>  
+> -	if (!err && dev->bus)
+> +	/*
+> +	 * If we're not on the iommu_probe_device() path (as indicated by the
+> +	 * initial dev->iommu) then try to simulate it. This should no longer
+> +	 * happen unless of_dma_configure() is being misused outside bus code.
+> +	 */
+> +	if (!err && dev->bus && !dev_iommu_present)
+>  		err = iommu_probe_device(dev);
+>  
+>  	if (err && err != -EPROBE_DEFER)
+> diff --git a/drivers/of/device.c b/drivers/of/device.c
+> index edf3be197265..5053e5d532cc 100644
+> --- a/drivers/of/device.c
+> +++ b/drivers/of/device.c
+> @@ -99,6 +99,11 @@ int of_dma_configure_id(struct device *dev, struct device_node *np,
+>  	bool coherent, set_map = false;
+>  	int ret;
+>  
+> +	if (dev->dma_range_map) {
+> +		dev_dbg(dev, "dma_range_map already set\n");
+> +		goto skip_map;
+> +	}
+> +
+>  	if (np == dev->of_node)
+>  		bus_np = __of_get_dma_parent(np);
+>  	else
+> @@ -119,7 +124,7 @@ int of_dma_configure_id(struct device *dev, struct device_node *np,
+>  		end = dma_range_map_max(map);
+>  		set_map = true;
+>  	}
+> -
+> +skip_map:
+>  	/*
+>  	 * If @dev is expected to be DMA-capable then the bus code that created
+>  	 * it should have initialised its dma_mask pointer by this point. For
+> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+> index f57ea36d125d..4468b7327cab 100644
+> --- a/drivers/pci/pci-driver.c
+> +++ b/drivers/pci/pci-driver.c
+> @@ -1653,7 +1653,8 @@ static int pci_dma_configure(struct device *dev)
+>  
+>  	pci_put_host_bridge_device(bridge);
+>  
+> -	if (!ret && !driver->driver_managed_dma) {
+> +	/* @driver may not be valid when we're called from the IOMMU layer */
+> +	if (!ret && dev->driver && !driver->driver_managed_dma) {
+>  		ret = iommu_device_use_default_domain(dev);
+>  		if (ret)
+>  			arch_teardown_dma_ops(dev);
+> -- 
+> 2.39.2.101.g768bb238c484.dirty
+> 
 
