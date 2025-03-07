@@ -1,166 +1,243 @@
-Return-Path: <linux-kernel+bounces-551050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C01BDA5677A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:06:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86A4EA56785
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:10:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0691174AEB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:06:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72B063A7BE7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B6D218858;
-	Fri,  7 Mar 2025 12:06:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12EE4218AB2;
+	Fri,  7 Mar 2025 12:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KWBY/ML3"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SHGmB75G";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qgoGIvye"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A8E192D7C;
-	Fri,  7 Mar 2025 12:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAA71E1DE5;
+	Fri,  7 Mar 2025 12:09:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741349159; cv=none; b=cARSpt1IiFqAe7H26CmkyL0pIV/WaqKFvMyG41EZTqsKTOo4ARhN5UBbC30KLXV2CrRifwQe+FUOCTjCEFAbAn5eXI4RO+5mGGneJ00JXJ17ouVxctEFhun//3b1GJxgHbh+5R9rq19uOOwu1UmZ8mrhVLLFPM5e4QDmfPk0si4=
+	t=1741349398; cv=none; b=oZrBQQXmkm9SjlWw64k0Gs7OKnbE/9OhquloQCFQuo3D4paJaydNqy/bmnYIphxY+DOnwFMe3trdnZ/Nj3i8lQcw81qWDDL/TiioH35cedYZk3pkXxOVguMGX7lLNpwTBVqmpIXkVIUDDhnTiwE1+/NqKVtHBiSs2bzoUtoG2Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741349159; c=relaxed/simple;
-	bh=o4JarWW/MUbOyvdB3aVz3LV8uhCJAFPqTqIujRLiLC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O1YvTuYu5Y0xrBeBs5H2sLl5R+nVy4scASkRObaU1BOVv6X4TZyuLvQ6pNHUFfqm6a4JjeMaUrljZN6LEK1tkNe3kIKr2Xk70lRrfejdxDwOnB5Hq7HpAU4hmcucJkXo/q0eW8inKmvnPNANUj2JPedsYDKdmQrczxaehpsIOZU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KWBY/ML3; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-223378e2b0dso25140085ad.0;
-        Fri, 07 Mar 2025 04:05:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741349158; x=1741953958; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FrmrTRS8Hu1HqQv6SIP179ZqkMWR94/wJgTSiRfF+20=;
-        b=KWBY/ML3bQ7fPg21g9eTzxC99gwQqWj1LcrJT37P+NZ5dLHI3QgMFu9eAZjay8g667
-         8RIGzXetIJXQAiWr9sNvf+ZpgF1ngY0wptPFtcSD5sst506F/gVLTJNdIAIb2U0ja8YZ
-         h+VjE7kigrBADkE0xvzg+5YieLTJCTASjFIplFCu28UHSCzHZMD3JOnoQJ0F8Up24do1
-         UWtf/7QonXiCxzSVDKFftnZBa9EswBaCC45YV8pZwvcf5yta2KEwDLD1WKH58f5tShE+
-         OJdQm8Qiov0YOwkP1HAoS68QwPwg8f7pQol5N5Ar9OsUcS8W9L+y0UTRX4RezIxmI7yL
-         h+4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741349158; x=1741953958;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FrmrTRS8Hu1HqQv6SIP179ZqkMWR94/wJgTSiRfF+20=;
-        b=nB6wG9ue00eQQ0oj6BwkpbOgHo8RGzxK5xKh18tq//zTjmJEc2B2wgSgFm2259e39l
-         kcXs35pCVpTJcKi6eZwVZXW7hv40lHms8RlmpO5yhtefy66h+GzSCIH3obbGyrXX4QNA
-         lH4bAM/FY3L+pQrJbdxRjKsqoRFUze3mO46wM9BJaNa0XNhM0tlGPWjsQBAzucwjH+AC
-         nrCvWXsltUu3Qiro3spUkiJK9VOHlKU/csVhD/U+TJ9wy05DZqmPCI+2L4pXL8I9JnGO
-         Dvn/MTvdzN9Jq+pwJSHomNRrb+OyLVVXRnq59VSnSRIiuUOhgQ4TtmSt5UX6D8ivPUMx
-         c/HA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMoGeei4fHIq5FYjCockWTEzIPnlkort4ayS2ittgm4SuV9tdulgfxLkYec6aK1gd45n9vk/JAEUNR@vger.kernel.org, AJvYcCUOCgm6WsZFLxd7YvC67YxDtcBnk7UpktFGWGnCyrSZfozOAz6QvMX4PsABCSjAwn4qS0OMy26brgpKiYPU@vger.kernel.org, AJvYcCX2RjEk0hnuQYt8anG2kR/g1c+RqjLiTtM7k5RJ4PlQqkBaLiTo3Dc+CiH5leTiTqu1HQ9LLygt+YRMVg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9YruFjzYYPxYNC/edOUXumI83wV/6dHflDf02VpkhVZZ8SHPu
-	82cMdb75zhUKnrJOaocMEZzn8VjF0TkLUoNR2N9pXNPMX5W7x1s2
-X-Gm-Gg: ASbGncuaWSToyrxHEaZ8Ikvay3kh3ZY4k0lUIu3x1h6JctDVXauTfcz9wvUaPEasIGE
-	Kl/Ichtt9aJhMgka3ck4hmHwAsDjXs9JtW93qoAuu/FZ0rfz0FZMeKW11zlWOeqXfICu+nBChrI
-	l+tC/uENb+0fy11z/itjObDy2kSnMbmLd91105BmotHzTAJr0H9CXwVXwvyAMkEhB9vC2r4LWlm
-	X6b/YdYnnnIqDh7xHHOVqo83/h8yLcAYAhmQESs/p3NbYpEJRcQXS3RO3JMsh10RJPGB5XrrN/d
-	hpzs/JAeYiBsVN4Mn2bME4cnSbxq/kdT5xWSeIe7v3OgU+VBUQh1Wg==
-X-Google-Smtp-Source: AGHT+IH7hW6CQv7KXxiwAEKf27FKpfxNgGTgX9XMOGE2DCZirz393uzNz0ltsUEj3zWjPg31mHD2yQ==
-X-Received: by 2002:a17:903:22cc:b0:224:76f:9e59 with SMTP id d9443c01a7336-22428886833mr53916435ad.10.1741349157554;
-        Fri, 07 Mar 2025 04:05:57 -0800 (PST)
-Received: from localhost ([2804:30c:1f21:4300:1cf6:c485:6555:b1c5])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-224109e944csm28368535ad.74.2025.03.07.04.05.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 04:05:56 -0800 (PST)
-Date: Fri, 7 Mar 2025 09:06:48 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	lars@metafoo.de, Michael.Hennerich@analog.com,
-	marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
-	brgl@bgdev.pl, lgirdwood@gmail.com, broonie@kernel.org,
-	dlechner@baylibre.com, jonath4nns@gmail.com
-Subject: Re: [PATCH v4 02/17] iio: adc: ad7768-1: set MOSI idle state to
- prevent accidental reset
-Message-ID: <Z8rhWLz32fdySDyN@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1741268122.git.Jonathan.Santos@analog.com>
- <c2a2b0f3d54829079763a5511359a1fa80516cfb.1741268122.git.Jonathan.Santos@analog.com>
+	s=arc-20240116; t=1741349398; c=relaxed/simple;
+	bh=QGDqhnVTkMxUD/s/oQfklPC6spqn0PHAdbKwzCq7oQU=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=P39ny2VGR3astKgBA9+8aPNRRCz6SbKxlspheZYdXWkpLgoLrUeuzD9BYcFaDo+LoP5BDKA1k1AKt3Z4HoYD5mqv8LLzkwVB1oo2S5oLV9G2mxpMMQyXLGyVDrZpep3G3SRIajrYxmpY5uwgDlun7IZkM/DMzyWVqYHG6UB/H5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SHGmB75G; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qgoGIvye; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 07 Mar 2025 12:09:48 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741349392;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UigKyD5FBJEO172t/PeVjmazgOFcEa1nbtu2g0lmZug=;
+	b=SHGmB75Gj7sRmq31H9EmNfMuA2LJiC/VgFl21502hQ3pNgtmPdgdjun9qvtsucGO6fRjIA
+	Z9Oa+uqkuyEL1DDivZrTcKbZ2rsMarsMrbQ2a5B+CVbsR5LH8WrQB5JmNGBFd04W3NN2DT
+	K1pw3Nrkz0fZirDZsg5ZQ4tpWcm9HVrP4FfbfTmJLroxRePWLuCEkufv+l1sQ88chpKlLn
+	COdpbjsAqgLJ5XZGIEZ9ypSinp+iLzzDZfXdMMJ6LgWXc7jkVbDc2MQRPfmw5fmSRMhuk3
+	XOT3nGVUwaB+0qUAtJBTYPPP+3wAVf9zmWWEQBXbyFnavjANHkAZTChLOLWZNw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741349392;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UigKyD5FBJEO172t/PeVjmazgOFcEa1nbtu2g0lmZug=;
+	b=qgoGIvyem2reeyyt+6bYhYvR7UPJYwSHU2g24LFnMGvuymA/phATJ8TXssMgOEsWQ7BrCi
+	e3e0R0GGb8xfZOAQ==
+From: "tip-bot2 for Maksim Davydov" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/core] x86/split_lock: Fix the delayed detection logic
+Cc: Maksim Davydov <davydov-max@yandex-team.ru>,
+ Ingo Molnar <mingo@kernel.org>, "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ravi Bangoria <ravi.bangoria@amd.com>,
+ Tom Lendacky <thomas.lendacky@amd.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250115131704.132609-1-davydov-max@yandex-team.ru>
+References: <20250115131704.132609-1-davydov-max@yandex-team.ru>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c2a2b0f3d54829079763a5511359a1fa80516cfb.1741268122.git.Jonathan.Santos@analog.com>
+Message-ID: <174134938906.14745.11174609071483438403.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 03/06, Jonathan Santos wrote:
-> Datasheet recommends Setting the MOSI idle state to high in order to
-> prevent accidental reset of the device when SCLK is free running.
-> This happens when the controller clocks out a 1 followed by 63 zeros
-> while the CS is held low.
-> 
-> Check if SPI controller supports SPI_MOSI_IDLE_HIGH flag and set it.
-> 
-> Fixes: a5f8c7da3dbe ("iio: adc: Add AD7768-1 ADC basic support")
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> ---
+The following commit has been merged into the locking/core branch of tip:
 
-LGTM
+Commit-ID:     c929d08df8bee855528b9d15b853c892c54e1eee
+Gitweb:        https://git.kernel.org/tip/c929d08df8bee855528b9d15b853c892c54e1eee
+Author:        Maksim Davydov <davydov-max@yandex-team.ru>
+AuthorDate:    Wed, 15 Jan 2025 16:17:04 +03:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Fri, 07 Mar 2025 13:01:02 +01:00
 
-Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+x86/split_lock: Fix the delayed detection logic
 
-> v4 Changes:
-> * None.
-> 
-> v3 Changes:
-> * Patch moved closer to the start of the patch set.
-> 
-> v2 Changes:
-> * Only setup SPI_MOSI_IDLE_HIGH flag if the controller supports it, otherwise the driver
->   continues the same. I realized that using bits_per_word does not avoid the problem that
->   MOSI idle state is trying to solve. If the controller drives the MOSI low between bytes
->   during a transfer, nothing happens.
+If the warning mode with disabled mitigation mode is used, then on each
+CPU where the split lock occurred detection will be disabled in order to
+make progress and delayed work will be scheduled, which then will enable
+detection back.
 
-When you say nothing happens if the controller drives MOSI low between data
-bytes you mean the data is still good in that case? Just trying to understand
-the device behavior.
+Now it turns out that all CPUs use one global delayed work structure.
+This leads to the fact that if a split lock occurs on several CPUs
+at the same time (within 2 jiffies), only one CPU will schedule delayed
+work, but the rest will not.
 
-Thanks,
-Marcelo
+The return value of schedule_delayed_work_on() would have shown this,
+but it is not checked in the code.
 
-> ---
->  drivers/iio/adc/ad7768-1.c | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
-> 
-> diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-> index c3cf04311c40..2e2d50ccb744 100644
-> --- a/drivers/iio/adc/ad7768-1.c
-> +++ b/drivers/iio/adc/ad7768-1.c
-> @@ -574,6 +574,21 @@ static int ad7768_probe(struct spi_device *spi)
->  		return -ENOMEM;
->  
->  	st = iio_priv(indio_dev);
-> +	/*
-> +	 * Datasheet recommends SDI line to be kept high when data is not being
-> +	 * clocked out of the controller and the spi clock is free running,
-> +	 * to prevent accidental reset.
-> +	 * Since many controllers do not support the SPI_MOSI_IDLE_HIGH flag
-> +	 * yet, only request the MOSI idle state to enable if the controller
-> +	 * supports it.
-> +	 */
-> +	if (spi->controller->mode_bits & SPI_MOSI_IDLE_HIGH) {
-> +		spi->mode |= SPI_MOSI_IDLE_HIGH;
-> +		ret = spi_setup(spi);
-> +		if (ret < 0)
-> +			return ret;
-> +	}
-> +
->  	st->spi = spi;
->  
->  	st->vref = devm_regulator_get(&spi->dev, "vref");
-> -- 
-> 2.34.1
-> 
+A diagram that can help to understand the bug reproduction:
+
+ - sld_update_msr() enables/disables SLD on both CPUs on the same core
+
+ - schedule_delayed_work_on() internally checks WORK_STRUCT_PENDING_BIT.
+   If a work has the 'pending' status, then schedule_delayed_work_on()
+   will return an error code and, most importantly, the work will not
+   be placed in the workqueue.
+
+Let's say we have a multicore system on which split_lock_mitigate=0 and
+a multithreaded application is running that calls splitlock in multiple
+threads. Due to the fact that sld_update_msr() affects the entire core
+(both CPUs), we will consider 2 CPUs from different cores. Let the 2
+threads of this application schedule to CPU0 (core 0) and to CPU 2
+(core 1), then:
+
+|                                 ||                                   |
+|             CPU 0 (core 0)      ||          CPU 2 (core 1)           |
+|_________________________________||___________________________________|
+|                                 ||                                   |
+| 1) SPLIT LOCK occured           ||                                   |
+|                                 ||                                   |
+| 2) split_lock_warn()            ||                                   |
+|                                 ||                                   |
+| 3) sysctl_sld_mitigate == 0     ||                                   |
+|    (work = &sl_reenable)        ||                                   |
+|                                 ||                                   |
+| 4) schedule_delayed_work_on()   ||                                   |
+|    (reenable will be called     ||                                   |
+|     after 2 jiffies on CPU 0)   ||                                   |
+|                                 ||                                   |
+| 5) disable SLD for core 0       ||                                   |
+|                                 ||                                   |
+|    -------------------------    ||                                   |
+|                                 ||                                   |
+|                                 || 6) SPLIT LOCK occured             |
+|                                 ||                                   |
+|                                 || 7) split_lock_warn()              |
+|                                 ||                                   |
+|                                 || 8) sysctl_sld_mitigate == 0       |
+|                                 ||    (work = &sl_reenable,          |
+|                                 ||     the same address as in 3) )   |
+|                                 ||                                   |
+|            2 jiffies            || 9) schedule_delayed_work_on()     |
+|                                 ||    fials because the work is in   |
+|                                 ||    the pending state since 4).    |
+|                                 ||    The work wasn't placed to the  |
+|                                 ||    workqueue. reenable won't be   |
+|                                 ||    called on CPU 2                |
+|                                 ||                                   |
+|                                 || 10) disable SLD for core 0        |
+|                                 ||                                   |
+|                                 ||     From now on SLD will          |
+|                                 ||     never be reenabled on core 1  |
+|                                 ||                                   |
+|    -------------------------    ||                                   |
+|                                 ||                                   |
+|    11) enable SLD for core 0 by ||                                   |
+|        __split_lock_reenable    ||                                   |
+|                                 ||                                   |
+
+If the application threads can be scheduled to all processor cores,
+then over time there will be only one core left, on which SLD will be
+enabled and split lock will be able to be detected; and on all other
+cores SLD will be disabled all the time.
+
+Most likely, this bug has not been noticed for so long because
+sysctl_sld_mitigate default value is 1, and in this case a semaphore
+is used that does not allow 2 different cores to have SLD disabled at
+the same time, that is, strictly only one work is placed in the
+workqueue.
+
+In order to fix the warning mode with disabled mitigation mode,
+delayed work has to be per-CPU. Implement it.
+
+Fixes: 727209376f49 ("x86/split_lock: Add sysctl to control the misery mode")
+Signed-off-by: Maksim Davydov <davydov-max@yandex-team.ru>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Tested-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ravi Bangoria <ravi.bangoria@amd.com>
+Cc: Tom Lendacky <thomas.lendacky@amd.com>
+Link: https://lore.kernel.org/r/20250115131704.132609-1-davydov-max@yandex-team.ru
+---
+ arch/x86/kernel/cpu/bus_lock.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/bus_lock.c b/arch/x86/kernel/cpu/bus_lock.c
+index 6cba85c..97222ef 100644
+--- a/arch/x86/kernel/cpu/bus_lock.c
++++ b/arch/x86/kernel/cpu/bus_lock.c
+@@ -192,7 +192,13 @@ static void __split_lock_reenable(struct work_struct *work)
+ {
+ 	sld_update_msr(true);
+ }
+-static DECLARE_DELAYED_WORK(sl_reenable, __split_lock_reenable);
++/*
++ * In order for each CPU to schedule its delayed work independently of the
++ * others, delayed work struct must be per-CPU. This is not required when
++ * sysctl_sld_mitigate is enabled because of the semaphore that limits
++ * the number of simultaneously scheduled delayed works to 1.
++ */
++static DEFINE_PER_CPU(struct delayed_work, sl_reenable);
+ 
+ /*
+  * If a CPU goes offline with pending delayed work to re-enable split lock
+@@ -213,7 +219,7 @@ static int splitlock_cpu_offline(unsigned int cpu)
+ 
+ static void split_lock_warn(unsigned long ip)
+ {
+-	struct delayed_work *work;
++	struct delayed_work *work = NULL;
+ 	int cpu;
+ 
+ 	if (!current->reported_split_lock)
+@@ -235,11 +241,17 @@ static void split_lock_warn(unsigned long ip)
+ 		if (down_interruptible(&buslock_sem) == -EINTR)
+ 			return;
+ 		work = &sl_reenable_unlock;
+-	} else {
+-		work = &sl_reenable;
+ 	}
+ 
+ 	cpu = get_cpu();
++
++	if (!work) {
++		work = this_cpu_ptr(&sl_reenable);
++		/* Deferred initialization of per-CPU struct */
++		if (!work->work.func)
++			INIT_DELAYED_WORK(work, __split_lock_reenable);
++	}
++
+ 	schedule_delayed_work_on(cpu, work, 2);
+ 
+ 	/* Disable split lock detection on this CPU to make progress */
 
