@@ -1,121 +1,129 @@
-Return-Path: <linux-kernel+bounces-551357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 231D1A56B69
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:13:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D172A56B76
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:15:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2976517924D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:13:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 617BB7AA945
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 741AA21D3FB;
-	Fri,  7 Mar 2025 15:09:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D8C21D5A0;
+	Fri,  7 Mar 2025 15:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="FufODiUI"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="kEnnOKjR"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49EC321D3ED;
-	Fri,  7 Mar 2025 15:09:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E0B421D59B
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741360175; cv=none; b=QZ71zG4VvUjZgkwyzySwibunhVncWbDzEw45hhdGPB7qXXrqyHR2EjLq9uMaG62ROQnSa0Y3xnILInqf+J7Fd1D3id6j8+u4T3uPNHIgY9CQl0raiL3GoJNlvUFId+ntnxAShGhNGQwp4xrm97/v9lPA/EmQo92ZjVy0IARLa2o=
+	t=1741360188; cv=none; b=PEQMZnJrBV03bk04pJY/jAB1WgSGIxk9rI53Wf74zUSpgOLxqiEqoduJ3s6IJ0ie3zXmwZ52OW88WJHjMJ+CvAUl1pix7X4hXTDx4Mb5Qogjb3wxXoNTGH+lopz1sQAOubeipaULFGEMrtB3+HGx1z1g+iHRgaWIrBFysiGt54A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741360175; c=relaxed/simple;
-	bh=DQvwBE3K7wzKqqbtyQLjgZyIxBKJQenqbjwYxhmSLxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mn/unUfX96p2esOojdFIQhisuERoz1HxG9ybWhQ5JerOcP27NXLKI6GdxylPGFnob4PS6rqH1mX6mJ83y0o3JF+pODcBZmkJ6gc79HsalaqR4G5oL4FoMnP5lc99hN8aA1srLzmQEmQF4QFuNyRQKyW87OjYs9cHymaRMN95f/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=FufODiUI; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Yn7ux/Q934nEj2IODedpVWaIfwaseRhFKbJdfXrSFaU=; b=FufODiUIOanVNCqafgKRVNBKkG
-	8AFE2vweHwr4mNEfbiMvMMdN7jF/kImN8ZlqRrTUbRisHgc5htYoyOY1/xRchDl02gbJ8+RwdETlV
-	yf5NIag9+CvqVY2Wwx3oybGq9F139EJMS+IkYezmQi9eJKY4DySpoGEYcy2GofTvkUzJ5VunETMsS
-	JIZ1vMf83Mr0dsC/5pWj4VSOvQstBc1YVUnTfr2EevR9EUUmV+VwAAE+irAyyL+d1isTulIRJt/tY
-	i77W0yrs4wEz5G1p3zcY1TnyC3eBfcQilAmmiP1EoZzQALEMGukyy1C65IizFle84dHfS6xV5EQIa
-	5Onhu+hQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:36654)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tqZK7-0007aN-1l;
-	Fri, 07 Mar 2025 15:09:15 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tqZK2-0007ua-2m;
-	Fri, 07 Mar 2025 15:09:10 +0000
-Date: Fri, 7 Mar 2025 15:09:10 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <clement.leger@bootlin.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	"Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
-	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Vladimir Oltean <olteanv@gmail.com>, Furong Xu <0x1207@gmail.com>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Serge Semin <fancer.lancer@gmail.com>,
-	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
-	Lothar Rubusch <l.rubusch@gmail.com>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>, Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH net-next v7 3/4] net: stmmac: platform: Add
- snps,dwmac-5.30a IP compatible string
-Message-ID: <Z8sMFh7yAUTZ9GRN@shell.armlinux.org.uk>
-References: <20250307011623.440792-1-inochiama@gmail.com>
- <20250307011623.440792-4-inochiama@gmail.com>
+	s=arc-20240116; t=1741360188; c=relaxed/simple;
+	bh=gE6FGCV28DwkTHBBOESRmnTDsWzJHMdNw/Oj97QoaiM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e4zRT7znJ5WKnIWPNQSgYF06ugyfpH+tGRNZzTk+loEEKAEvWsMpYZ5rg8/goJF6zr0i9iHEAT6f/WHfvDhz7KfSav5+HGG4rOUVfKbX8QL6I+A/z7Apioi2inxu5ugUsJpUIv75oWrlIe/mN8trQxgJgl76DyPNxu2WNfw3UuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=kEnnOKjR; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-39129017bbbso865073f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:09:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1741360185; x=1741964985; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=BP9EZa+ZXL6z9j+n7AY1mhAuXOFT2kVu+uBWLrEP2JQ=;
+        b=kEnnOKjRVDJkPhTH4NAr02m0uIFW40H0+iQBKyvXSykYEoy3j9Q1Hecgq5l0jipCCy
+         mBIcYvvK4ka1jHl51nPY/lYpMi8tI8+iHeHvTM27u+F0mohPwJMc4AwBxtCn9WjOUSVM
+         3QW9XS2CbcKbedb4V1knjAnuUVmAqPIJGCAo3GGKYIpl9FS0ENHQF8SZXI8nmOZ+PAX/
+         bvhl2G67nnPymVBNIH40iP7iYpsN74ieOrTNf0YVsw1meyB4F52GyGhdG06sYPTMXklm
+         +WXSr5FiCNmjVjwpiBFTcyhl2m0eYWFcOoxg1zMrey594RfnwyhNevlfUQxvYBL+3z6y
+         EpKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741360185; x=1741964985;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=BP9EZa+ZXL6z9j+n7AY1mhAuXOFT2kVu+uBWLrEP2JQ=;
+        b=QtdMQ3M8LiiQtE0g5gzwAFYTnE/StU2lun6bnUBtqsghlv/JFvXEhIhDY8ufIoH3/F
+         6ziCqgu/mUa5EZsaN62AylsVDvVd70TWbus+ubZLDBMLH+e9N7sOuIZGf/yKCy9BNAqj
+         rBGUXcfpsc4XSwtiul2VfiPaESdUOeM26QJcDF6TtnvdC5HtTewY2uYHKB06Efm5bLgq
+         7g8CbGpziItycXvyWeQGMscdloaNjGkPPsXYCud6ztGH6eDs1J0Rk/ZZv0B+2FYt7u/O
+         qfgt6dX8nyM873KGqYy5G6XsSkUxEdu4nUI6W5Veiq0Vb5gy/FOvWHbJ2nSoKurzFm0k
+         KbMA==
+X-Gm-Message-State: AOJu0YzQ61IH4FD6ue9cFe37uSiOpcpQFV/3nJz1mbvRnb3Gr4F1Q2oF
+	CIOCo7VqqOgCRG/sfis11oogSam0WGRhAZxtLcSzDnDh7QdrKZB3vErORaW7Qn8=
+X-Gm-Gg: ASbGnctUbL9x8AkN6mprW+fjZaIq7qi9ijTvpcJA36a221yc+fOK1rSB6RNMwvUJ2bh
+	dWqTgb4WfPvhlYm2lDtNyyZULHF5Hgc6588aRiS06jxBnGqbVoy2eMs62otHic72crgMhW3Gu8s
+	iA7FVWXYFH+NQ5KFm/xUtNkw0uLp7NGO7n2Pg1N1PIFQzK0cECgWX3fdke6wNUOMccAHlaMczq5
+	OHrpjDbdM3Z5XbLM8ZWzPhgVkXR3aVTQNzOvTWepSWXHAXicFPzCoI6siGT0dby6NHD1qZbwd7S
+	u7vmuBY0yNFwXpZTVD0ddVj9QuVrunvjPLBdFGkQI3be1LYy
+X-Google-Smtp-Source: AGHT+IFk6NYRxZEBXy3AmEUNEKnHoFzQmS/X6I0jyvaiFDvAd5Hny94unW35ookz2eoEpTTH6nqtPw==
+X-Received: by 2002:a5d:5f8f:0:b0:391:2e31:c7e8 with SMTP id ffacd0b85a97d-39132d66e3dmr2518912f8f.2.1741360184367;
+        Fri, 07 Mar 2025 07:09:44 -0800 (PST)
+Received: from matt-Precision-5490.. ([2a09:bac1:28e0:840::179:137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e2b6asm5703574f8f.66.2025.03.07.07.09.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 07:09:43 -0800 (PST)
+From: Matt Fleming <matt@readmodwrite.com>
+To: Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Cc: linux-kernel@vger.kernel.org,
+	kernel-team@cloudflare.com,
+	Matt Fleming <mfleming@cloudflare.com>
+Subject: [PATCH] kbuild: Add KDEB_COMPRESS_LEVEL to control compression level
+Date: Fri,  7 Mar 2025 15:09:40 +0000
+Message-Id: <20250307150940.1309703-1-matt@readmodwrite.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307011623.440792-4-inochiama@gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 07, 2025 at 09:16:16AM +0800, Inochi Amaoto wrote:
-> Add "snps,dwmac-5.30a" compatible string for 5.30a version that can avoid
-> to define some platform data in the glue layer.
-> 
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> Reviewed-by: Romain Gantois <romain.gantois@bootlin.com>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+From: Matt Fleming <mfleming@cloudflare.com>
 
-Reviewed-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Give users more control to tradeoff compression time vs compressed size
+when building debian packages with a new KDEB_COMPRESS_LEVEL option.
 
-Thanks!
+Here are some examples of using KDEB_COMPRESS=xz with
+KDEB_COMPRESS_LEVEL=1 through to KDEB_COMPRESS_LEVEL=6 with the
+bindeb-pkg target:
+
+  Level Time to compress Compressed size (bytes)
+  ----- ---------------- -----------------------
+      1        0m36.771s               476909176
+      2        0m40.335s               474832644
+      3        0m43.635s               473845600
+      4        1m13.839s               472260012
+      5        1m18.657s               464442676
+      6        1m20.658s               464355000
+
+Signed-off-by: Matt Fleming <mfleming@cloudflare.com>
+---
+ scripts/package/debian/rules | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/scripts/package/debian/rules b/scripts/package/debian/rules
+index ca07243bd5cd..616ecf1d4d1b 100755
+--- a/scripts/package/debian/rules
++++ b/scripts/package/debian/rules
+@@ -52,7 +52,7 @@ define binary
+ 	$(Q)dh_fixperms $(DH_OPTIONS)
+ 	$(Q)dh_gencontrol $(DH_OPTIONS) -- -f$(call mk-files,$@)
+ 	$(Q)dh_md5sums $(DH_OPTIONS)
+-	$(Q)dh_builddeb $(DH_OPTIONS) -- $(addprefix -Z,$(KDEB_COMPRESS))
++	$(Q)dh_builddeb $(DH_OPTIONS) -- $(addprefix -Z,$(KDEB_COMPRESS)) $(addprefix -z,$(KDEB_COMPRESS_LEVEL))
+ endef
+ 
+ .PHONY: $(binary-targets)
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.34.1
+
 
