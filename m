@@ -1,238 +1,135 @@
-Return-Path: <linux-kernel+bounces-550526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60A6EA560D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:26:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06338A560DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:27:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BB34176457
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:26:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 186FC3B3110
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285CA1A5BB9;
-	Fri,  7 Mar 2025 06:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7091C861C;
+	Fri,  7 Mar 2025 06:25:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="h6hhUqlC"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2047.outbound.protection.outlook.com [40.107.212.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4vQ7two"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FED1A316A;
-	Fri,  7 Mar 2025 06:25:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741328710; cv=fail; b=gQCdfRGIjh/qT7CLgkEISpuFQWsbZapPmN3i5MNn/GR90ybUcip6tQU3/6AjIsYlDt7pHC//6lnzzSLBEVv9BvPguvYBbb9IE3zZGLgM10/ahntjIcu7LK0ni1JbYNCM5QhYJ6eNhMaCGDxo5aS1A5IlZbUwUo/at1BHilXpC6U=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741328710; c=relaxed/simple;
-	bh=Cse6Fk96aC24s41zMsiszobfJg6WVJdIE2wfwJ4avEA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZUjQSXFrYL8Eo2eXqsUgA9zUpPT3D/fB2C/Jhq2qlQQQZwMc5T65G7lLw3zHFC9otImgs4NcUONLVTpjRqY26ssY7oxbIF5KYI76TJtOgXmyCqg1m1yNM09rIUv6d/AhjhpzBSCSnbwqYrsnyAZmCPQTg1iU2nH6D4d+jpOXIl4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=h6hhUqlC; arc=fail smtp.client-ip=40.107.212.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FC3YLxS8du/IVTS5pRPyGh6680jCtn66gpCA72Osa58VnbfpGx/wJrxjlGHELlrnhIPsv/GxJHLSeBG6OywIJKeAxDCSDWtUohOA4HRvQD8tsqUbAJ/VQ8krpbPXKIlFiaPGONUlzTEUf9XjPvw/p4YGbYoMObLw+7JOtFS/doyLa/LW4EO8HizBU45yFx09dR0d+tI/Tvxf/hLtX3mCW0gRCX9Zwyb7lsxJhvH7G/0gejS3L2QpxoU0ZJM+b3ciaE9/1CPKO3W8NKJ4W2twVNRnJhbhtG7uTcxwuxucMIoakiVv9w4/mrSyCbk5UMDolxSaZJcqYciwRUJGc1IhWg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3vukLi2Gz3y66NCfkzMcKV0iWeAhmt6dcDy8fO9Oyno=;
- b=ePNgxa1oUeaOcNzRFB+qz3hnQTwkP5dnoLkY+8tf2SU7haDx+u5Bomkm5BMsMLY0oTELM82TFeQ7GabMBqbJloZ2oSB/gd5wz7DqfBMvhzjmf8AdB/sYqZdw/+zsK+gLaHaMeuMRx5nVWPg5D+Rd+GmoPDBu51KxUw/MowsUfcikYg9MJwDX2j3JWIGgBzu4CxuwFUc/AczqWF6mkTI/i6rlmTzOjJT7oNmmIsiqto2l/9uzN4uj3naB4KdKw0BUJquOe33b5tfAQqffebPNWkjNQuUQ3F8HHhkFhzp8kWO2w7970GZKSjc5QOnB0aSOnyC79vXu2LKHbCV/LBclog==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=sina.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3vukLi2Gz3y66NCfkzMcKV0iWeAhmt6dcDy8fO9Oyno=;
- b=h6hhUqlCzw7dv85eZgNA14oMzTLGuWw9+/cqRszJadQwjebupLkVowPNhGizBvR34+RYl/rlxGYWwAx2LhjToF+vSAzwEXGN530cM4N/ee8IqxwYAH6ilYqNYz7S6D7yjj1lJuiskNgbxytzMpWMgQPD9dQgOYs0ubn1mA8aZps=
-Received: from BL1P221CA0009.NAMP221.PROD.OUTLOOK.COM (2603:10b6:208:2c5::24)
- by PH7PR12MB8153.namprd12.prod.outlook.com (2603:10b6:510:2b0::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.18; Fri, 7 Mar
- 2025 06:25:04 +0000
-Received: from BN3PEPF0000B073.namprd04.prod.outlook.com
- (2603:10b6:208:2c5:cafe::92) by BL1P221CA0009.outlook.office365.com
- (2603:10b6:208:2c5::24) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.19 via Frontend Transport; Fri,
- 7 Mar 2025 06:25:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN3PEPF0000B073.mail.protection.outlook.com (10.167.243.118) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8511.15 via Frontend Transport; Fri, 7 Mar 2025 06:25:02 +0000
-Received: from [10.136.39.36] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 7 Mar
- 2025 00:24:59 -0600
-Message-ID: <6ff2e489-7289-4840-868e-9401f26033c6@amd.com>
-Date: Fri, 7 Mar 2025 11:54:56 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EEB61A0731;
+	Fri,  7 Mar 2025 06:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741328727; cv=none; b=DWrjMgz0p6E9TqJYJhEicdzm6s6tsHPMToyI+wdGSjjL6znbScacDKaBedKVMPEp56zD5lsIVmTqOpLfT3MKtLvKLG61tezOv7CURhwLUAeay8av6CXfOIVNz+j4JM51CrfXHGosGdJrVKvbaNB/RPWGD1OIx+z6rS4BQKvB/kc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741328727; c=relaxed/simple;
+	bh=IaXFjppS/IoB+IJ+M/BVXjFLMyZOrjULwzmXC5Zs3oQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sjqq3W2KNyG+nw/1ok3nIXc08vvqlnA56TlB/fb2Q4v37a4q8Rd1kCMdLPA0WK0q0+JZhu8Y37k4TcjbOZXp7ZSjIpigSl8QeHhnxpiqYsddY/xIR78RglkL2wkSTc4sivVUBMXxMaMGcFb/zNo23Pxtox/4aZ5vJN6fpd+2K7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P4vQ7two; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c3d1664ed5so181489585a.2;
+        Thu, 06 Mar 2025 22:25:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741328724; x=1741933524; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DE4RgttB+ObeTGoRY2FNPNi0ZuWCnd0LsJTM8WKCSPE=;
+        b=P4vQ7twoUHQPmt+m/8VaumAE86PX0xxhzx51Yy3GLM5vqYn1D0mUjNWqiaZZ/sFBXC
+         r73r+JInHMoo1MCgSqyhTehGgAgdQagPkeGhJfPeBNn+mklWXLIOgj4Gpigi5bVZgf6S
+         W1NJbcxT3WWZ3bSb/+q/bQm0CBmUrbFtQIT6rF4R41/l4a83J1EgCiw3zFdQRYQfxtM2
+         gjcgd9vO/KBEkEsRehhyiXgv3pSBdylzFYjYgIOlo3H11gl9krdQV88mUB219G0YwatL
+         rNmSQ+c/HYkbnsL7PcG6zQHrvD/MGFIEMkafAkKql9nN6JNVWlGfaUUsTWbYWn6o78gC
+         r6VQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741328724; x=1741933524;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DE4RgttB+ObeTGoRY2FNPNi0ZuWCnd0LsJTM8WKCSPE=;
+        b=lh+FsdFbGvNU2GGMqEnL2ER4ZEq2aEDbLnQKBobuO8d7MGC8Isf5pJfAcxHZHnKGEQ
+         v7L1Xw16LZXKqk4gzBWLlPsHyFyZsbszbRinDC3OhqgZjICspg/mkt+BqN+hxmeNUXoD
+         XB3Uj+I93aFSTHI5JKYr7udjsDeDsGVRwSJhl80esugeptuMT8SkgThsQIT9t0ZxH1cs
+         YDNbUORV+jmlHEIklKdM3IaG7hs9qVHbV7XTQOUV3ptYTpYnmhmnXLVHdNv34OUmZ9T7
+         3L9oJPjU2CQMKYt4MTE8VuNJmcTTSgTzgq1bSZ53iey1uxOHRsTWqjZbw93iQd6DgntP
+         73kA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnLXNowdW4ulG4TIBS5Y5xqsam+l/2ghqrGy9lVH6BZCwwtPNViEDMTXtEyOthchC0P/q+1ayE@vger.kernel.org, AJvYcCVLU76/PVR+Gl9OouQ4ARF3P4NZjH+7DgtnXXE4hZQJ03Yb0RH4qv4LoNpwRjbmsr7Rzq9lNXM+Y2Q3PMJD@vger.kernel.org, AJvYcCVfgfRMqFuYN/Hs+nxerAjsbYWgj8QsRvq2kk7xjV+dECmvJAh/pPH4joZYGwbbTVNQ0mU5m59bJ8vH@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmNydzGMxm7JHhuzjHeUXooysgKS9HVlEU5+4RHlJu+ZelXHpO
+	PW6paWcrCRJ0GHG02fDMiPx5QfqVxEdd6ADPBd7/LtkmXo9cGD9t
+X-Gm-Gg: ASbGncsPgmqGiQLev/GSzOVaxO3SCCkIaoHv+2hG6TNwQ9Pn2k9FIg9vzHj9ALCTRzq
+	DYQnPmI/V279u5kLDzcJnbiroAqTksVAheSsoetPDKrcFSyNrMaIuUw7+GCG4ThlP4NRVeKl1st
+	JoDGh/SHsRSLEXFUEAKVUTv7PNs1FZmHuVP0EICHrRcE1qYt145omM5UzQPvRWBLMtCcGvjODZn
+	zG6U1xM+HSGEtrL0Abts/e9liG++mux9z0vBJ2/xRMRZaUd9bT3sMexNylCiId3GKq5T/g5+BbC
+	+mFRGZuaMsAerCA6BBF7
+X-Google-Smtp-Source: AGHT+IEvDoykmlC42OAIJsi/QLfT+x2fU7js07z1lL9fYKp71NWDuSXyrrw0QsqRokKnLcIZ4rtbYA==
+X-Received: by 2002:a05:620a:2787:b0:7c3:c199:c3b0 with SMTP id af79cd13be357-7c4e610578fmr376275485a.32.1741328724151;
+        Thu, 06 Mar 2025 22:25:24 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c3e533a0e8sm200339585a.9.2025.03.06.22.25.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 22:25:23 -0800 (PST)
+Date: Fri, 7 Mar 2025 14:25:19 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@gmail.com>, 
+	Richard Cochran <richardcochran@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH v3 0/2] clk: sophgo: add SG2044 clock controller support
+Message-ID: <gyww3drj2eez2bl3y5ikxy7mqpqpif7cktd3espqs4ve5srjpk@u6h5nzmtkmrb>
+References: <20250226232320.93791-1-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-To: Hillf Danton <hdanton@sina.com>, Oleg Nesterov <oleg@redhat.com>
-CC: Mateusz Guzik <mjguzik@gmail.com>, "Sapkal, Swapnil"
-	<swapnil.sapkal@amd.com>, Linus Torvalds <torvalds@linux-foundation.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com>
- <20250227211229.GD25639@redhat.com>
- <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com>
- <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com>
- <20250304050644.2983-1-hdanton@sina.com>
- <20250304102934.2999-1-hdanton@sina.com>
- <20250304233501.3019-1-hdanton@sina.com>
- <20250305045617.3038-1-hdanton@sina.com>
- <20250305224648.3058-1-hdanton@sina.com>
- <20250307060827.3083-1-hdanton@sina.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250307060827.3083-1-hdanton@sina.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B073:EE_|PH7PR12MB8153:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1855968b-92e0-410b-356b-08dd5d40cb2d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|13003099007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?S2VsMXdoQ1doc0FoTFdmK0ovbzdhdTc0dVZLM0pKMXUvYXM4REl5SThjYUFa?=
- =?utf-8?B?a0Vsc1lDOHBYN1ZEMFBMSkVuN1NJWEhXS2krOW9IOGo2Y0NKV2syMVQzTHpj?=
- =?utf-8?B?VW9MN1pZTVU1Yy9UdGRQVkJuTUQxaXRBNUZjM1lGOTRFWEVoVGo3b2Q1YSto?=
- =?utf-8?B?QVBxUHQ0Y09XMjVpK0NkREFVNjdkeU5uSHhPNzJZNjEyYjA4bC9vMXovSlBk?=
- =?utf-8?B?bmJSTGgrRVZveEVKOHIxK0pySzhGTmtLbkRuRnZORU5TMnVnTk1nYlE3Ykgx?=
- =?utf-8?B?bGM2Y0daai9PdENWWlEyNGpubWN4R1VxcHVNdlpBNFVWbmxDWUdFSHFsSDdi?=
- =?utf-8?B?WWhJR0FCNEN4Y2h0RWdvYzh3UUdpVDh1aHY2cnpaZ05McUk5VmpPa3QyelMw?=
- =?utf-8?B?L2hWai9Tc0lPN2tmNHVJRjNCcGh5bHJ4Z21YRHhPNnFIbFhDTEtJU3pPMXpS?=
- =?utf-8?B?YjlOdUh2U0gva2hRN1NMUWVVOHpoVFQrTjIzT1NGUUg2c2lFQ1JCTmpzTU1I?=
- =?utf-8?B?WEtHMXhVaHE5d1lLL0M5UExRWHdsNTluVFZxRU5FTGpDZ0R0dVd6dmVhMDlj?=
- =?utf-8?B?SjJoWUNpWG9KZUtFbjdPKzVacWxObjVkMkRiQVF6TFlGeFZDSzc3d0UvWE1J?=
- =?utf-8?B?b2RQOWFmNWsxaXFPZWI0SHAxS1ZDOGovMDM5Ykw0U0lOK0xsNVZNOXhWWUlQ?=
- =?utf-8?B?OW8weElkZy9HeXhCcEFuOVM3U0lBYm5vWjJsRmd2NUtFYUNxRFVVRGZobWNs?=
- =?utf-8?B?WnB5ZTdJWmViQkh1UzZWK3JoeThUcFdqdm1LTnd5UHBxU1pUa1FMUFRYSGxU?=
- =?utf-8?B?L2RGdXpIUzdycTF1SFZaVGN1ak9OWmtwdnZaL0EvLzZmdzhmRkNtR3haWUM2?=
- =?utf-8?B?ZFh0d2FVUGFneUI0NVJDdVV5d1VTK2lyTkVyQzFIOG9nV0lzaWN4QlVZRFEv?=
- =?utf-8?B?c1B1ZnJOMXBmNVZrUE1PYk9RRlZ2MmZEOVpqQXpvMXo3QnQyS1JReURuMWlF?=
- =?utf-8?B?dmo2OXVqekdnTWhyWjZMd3BranVxcXhudVZRRm0vaWpSRGwyamtYVFhIYnY5?=
- =?utf-8?B?MHdON3d3WU5rMXNrZVRzVDFaTnlBM0J3Lzh1YzZnd01XR0lkdW9aTzdhZWhX?=
- =?utf-8?B?UkNOc05kdzd1WERrR0x5ODB0Y3lRLzh1U1g5UjA5UnU5a2xSNFB1Wng4SEQw?=
- =?utf-8?B?M0hYVjVLdVRERXFXdzRqaVEwMmF4WHBvU0YzbFhySWxzZjJzZkIyRVJud0g5?=
- =?utf-8?B?OHRPeEUrb3BUZVNFdlZibTRYZkZLSnVlQmlxU0JDZEltd2JLMVU1dlludWJ1?=
- =?utf-8?B?TWNPRDdQYld5TlNrQzMvVm0xRVU1ZDhrSU5JS1Z6Vk53OHc0aEh4Zk9ld0RG?=
- =?utf-8?B?RkZGSE96dEh3N3ppQVUwL1NMbU1TRFhvbDFEempTM0tYeVVIcjdFNW9DVkt2?=
- =?utf-8?B?RThZb3JhZVV5NDJJNjFYeCtRcURXUzlBL1k5cGFoWFcyRDNyM0UzU2lEYlRI?=
- =?utf-8?B?d2huTXFoL2xNMm13Y1dwRzIyNzNkYmtyNDBJeVNqSlRVa3EzZUhNZFRPNVYx?=
- =?utf-8?B?MU9USkZvbmVZczZFYXQvVzJFZVkwQWc1QkVJU0Z3UjREZUZVcUVkN0lVaU1v?=
- =?utf-8?B?NSswZG5kNjFScW1PbzVwalJxamhUaTdvekZ1d3RQY0RtcTlPYjJCenNHT3Fs?=
- =?utf-8?B?UnVoSjZReDRDVENNanJ6NlYwZ2dvZUxMQW5Od25GQjBiTmRVTXZhNitYVjM4?=
- =?utf-8?B?Y29HZ1JEMmNkRUNIYjREZjE1Z29UeHlkSTBUSEpZVmFiS0Evd0VrS05sN3BQ?=
- =?utf-8?B?MG1JclJuRWV4U2lXWUl5K3RiOEVUQ3oreVNyREUyMUZTVTgvVDFxMVNuMFNH?=
- =?utf-8?B?aGN1V082K1VKdmR1WWxlWWcwVnVRalBBMUhJTlcrT2VFSHpnb2xnTGdiWFFK?=
- =?utf-8?B?cGJJVUpoWEl4SUxYdmlKeGNpNkJTSm5id2EwK2o5RytTRnp6alpNVXp6Qklo?=
- =?utf-8?Q?rZLTgzvtKG7kgWAgvUZMjjxqGyVPpQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(13003099007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 06:25:02.4037
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1855968b-92e0-410b-356b-08dd5d40cb2d
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B073.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB8153
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226232320.93791-1-inochiama@gmail.com>
 
-Hello Hiilf,
+On Thu, Feb 27, 2025 at 07:23:17AM +0800, Inochi Amaoto wrote:
+> The clock controller of SG2044 provides multiple clocks for various
+> IPs on the SoC, including PLL, mux, div and gates. As the PLL and
+> div have obvious changed and do not fit the framework of SG2042,
+> a new implement is provided to handle these.
+> 
+> Changed from v2:
+> 1. Applied Chen Wang' tag
+> 2. patch 2: fix author mail infomation
+> 
+> Changed from v1:
+> 1. patch 1: Applied Krzysztof's tag
+> 2. patch 2: Fix the build warning from bot.
+> 
+> Inochi Amaoto (2):
+>   dt-bindings: clock: sophgo: add clock controller for SG2044
+>   clk: sophgo: Add clock controller support for SG2044 SoC
+> 
+>  .../bindings/clock/sophgo,sg2044-clk.yaml     |   40 +
+>  drivers/clk/sophgo/Kconfig                    |   11 +
+>  drivers/clk/sophgo/Makefile                   |    1 +
+>  drivers/clk/sophgo/clk-sg2044.c               | 2271 +++++++++++++++++
+>  drivers/clk/sophgo/clk-sg2044.h               |   62 +
+>  include/dt-bindings/clock/sophgo,sg2044-clk.h |  170 ++
+>  6 files changed, 2555 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/sophgo,sg2044-clk.yaml
+>  create mode 100644 drivers/clk/sophgo/clk-sg2044.c
+>  create mode 100644 drivers/clk/sophgo/clk-sg2044.h
+>  create mode 100644 include/dt-bindings/clock/sophgo,sg2044-clk.h
+> 
+> --
+> 2.48.1
+> 
 
-On 3/7/2025 11:38 AM, Hillf Danton wrote:
-> On Thu, 6 Mar 2025 10:30:21 +0100 Oleg Nesterov <oleg@redhat.com>
->> On 03/06, Hillf Danton wrote:
->>> On Wed, 5 Mar 2025 12:44:34 +0100 Oleg Nesterov <oleg@redhat.com>
->>>> On 03/05, Hillf Danton wrote:
->>>>> See the loop in  ___wait_event(),
->>>>>
->>>>> 	for (;;) {
->>>>> 		prepare_to_wait_event();
->>>>>
->>>>> 		// flip
->>>>> 		if (condition)
->>>>> 			break;
->>>>>
->>>>> 		schedule();
->>>>> 	}
->>>>>
->>>>> After wakeup, waiter will sleep again if condition flips false on the waker
->>>>> side before waiter checks condition, even if condition is atomic, no?
->>>>
->>>> Yes, but in this case pipe_full() == true is correct, this writer can
->>>> safely sleep.
->>>>
->>> No, because no reader is woken up before sleep to make pipe not full.
->>
->> Why the reader should be woken before this writer sleeps? Why the reader
->> should be woken at all in this case (when pipe is full again) ?
->>
-> "to make pipe not full" failed to prevent you asking questions like this one.
-> 
->> We certainly can't understand each other.
->>
->> Could your picture the exact scenario/sequence which can hang?
->>
-> If you think the scenario in commit 3d252160b818 [1] is correct, check
-> the following one.
-> 
-> step-00
-> 	pipe->head = 36
-> 	pipe->tail = 36
-> 	after 3d252160b818
-> 
-> step-01
-> 	task-118762 writer
-> 	pipe->head++;
-> 	wakes up task-118740 and task-118768
-> 
-> step-02
-> 	task-118768 writer
-> 	makes pipe full;
-> 	sleeps without waking up any reader as
-> 	pipe was not empty after step-01
-> 
-> step-03
-> 	task-118766 new reader
-> 	makes pipe empty
+If there is no comments anymore, I will collect these patch and send
+a PR to Stephen at rc6 to see whether he will accept it.
 
-Reader seeing a pipe full should wake up a writer allowing 118768 to
-wakeup again and fill the pipe. Am I missing something?
-
-> 	sleeps
-> 
-> step-04
-> 	task-118740 reader
-> 	sleeps as pipe is empty
-> 
-> [ Tasks 118740 and 118768 can then indefinitely wait on each other. ]
-> 
-> 
-> [1] https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/fs/pipe.c?id=3d252160b818045f3a152b13756f6f37ca34639d
-
--- 
-Thanks and Regards,
-Prateek
-
+Regards,
+Inochi
 
