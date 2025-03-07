@@ -1,181 +1,202 @@
-Return-Path: <linux-kernel+bounces-551288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9B64A56AAB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:41:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C496DA56AA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:40:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 072863B7898
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:40:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3972189B57B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55CCE21ABB6;
-	Fri,  7 Mar 2025 14:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aTWxX0n2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECE121C18A;
+	Fri,  7 Mar 2025 14:40:20 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9701E21C16D;
-	Fri,  7 Mar 2025 14:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748D721ABDC
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:40:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741358358; cv=none; b=UG3zL2Nn2OeckpWHb85w8zWLaERtbbw5+SKBiBc3CXkhfTVqNwNfAUT/cwBcOom8lv8Q09gC9oQhbTm7axVbp2AEHkztuZV1q++P1JIkjoBWO5BUrWrO6hD+CMTWsd72TT9SQoXYg2PHST1OoVtKVmwvl7HrTLEoo8+xU+V+Y0s=
+	t=1741358419; cv=none; b=EyxOgaEyiY2/JsYH6yWs+aXwqV9/HG2v5sbz0DYGrEqDULfE9JgZ0khh/0knLeIlBlPrv6j3kyJAkfBd9sOcTiPV1UURmqZ9Ns992JUm+UWIOhF+zduCg0keSzr2keazpOJLs7fEsq90dbQxyq+Sd5aPeBc6hp2G3kIVgamBJLM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741358358; c=relaxed/simple;
-	bh=fFmSvyAZuaaADM9zu6ZznJgoRZWd4cxcZLyG+vgwEsw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RVL5PAI5sh3BAtGa5KQ1w8gPeHICX+BeJhdW4o/YiBbhC8jxtRsQAIjYzg6Fo7f4xf388uZi+WLy7g9Jsvf66vK3a8MqY0eM/6GcC1/EWaV2VPRyrALZ5AmdfRDOxCDpiiAmPNt6UK66KnI71+M+LOyy+LQJVBxO/bgxo81QQhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aTWxX0n2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0501EC4CED1;
-	Fri,  7 Mar 2025 14:39:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741358357;
-	bh=fFmSvyAZuaaADM9zu6ZznJgoRZWd4cxcZLyG+vgwEsw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=aTWxX0n2Zy2Nrp7qYJgJWgik6p61+eNrvVQNaezL/2NQ538lK1+ogBtMn65I2qskV
-	 VHDx8nvcGMa+gLe/gf7DNZ3sbNFLcmGiBWObn+anRjtzqpfNkooL0TkqAKgwryMZm4
-	 gQbmJKs4MJdHZ0hWie8xfZZOawsrm5/BkBB/vLBpXiomHK4aP66HuPxy8RQxyrTTuW
-	 I34DGnIw9oHlBa1+Ua7gT6yP0v889tNgPdK5hfX7xCLRVyZIaa3iGgPVD4gTthcYZ6
-	 u4mA9gK5PT7+KPab8JeyBnG/PvRhuammGafFcI4pHUXG5ZxdzMXZj3x+GXl+9b48yp
-	 BXA/7X/32QAIA==
-Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-2b2b6019a74so1060855fac.0;
-        Fri, 07 Mar 2025 06:39:16 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVesnhDA/cH8B3h1L44hZQj3Xu4C76uq43pGM2Cdj8ImR2OiETdOOJsd0hf5HqUWdLuAL8cQ1uqTVMT@vger.kernel.org, AJvYcCW/t3Gsj8jNLEiGb5MqTDjXpfCbAjo0pzAu/Qz3nIxM6funOiJRuPNehFD/ffeusnt0Lcz+YsC/BTBW/8Oi@vger.kernel.org, AJvYcCXWpfh3LhUw0/AJn6kuTPUD7COKquB9pY1fycKuRT/ArojC+G7ZxzR/GzJs/hC4YyTFMqpK2owVFhaEJA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYvBNPfKbacIBIWm4gIYaIoZHmsueWFDVIWrOncKXtiKszH3aL
-	LJcgNNMNKsTbBIyuBOet7JVptAdmTcR3jOSq7hlTys2bcPLv/3pnxvW1n6CgHrVFiGZ2FzwX/m9
-	4J7b48qfsNLmpNkufeMPNfhYAeP4=
-X-Google-Smtp-Source: AGHT+IHIPb/Xjy60xgUb8wH9pdRdsbl0zxj2R31ulx/Tzqn62Qr0VTwR5WyiUuItGs148LZBFEMswc7pIJruI8pEwMw=
-X-Received: by 2002:a05:6870:9e8b:b0:2ba:11d5:ad64 with SMTP id
- 586e51a60fabf-2c261159fd3mr2032713fac.23.1741358356369; Fri, 07 Mar 2025
- 06:39:16 -0800 (PST)
+	s=arc-20240116; t=1741358419; c=relaxed/simple;
+	bh=zJqZeLk7niPxv+gNZzVEwSQrvYWMHIJnaH5lMK+VwS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T3l1ekqZBMywdJoJKYtUgsr4ksIyW8xv0DC056nCt/qu6wBX8ujnLiQ3uQsAUOgbSb0YQkk4YuS0f3H5oRBrcLzNcJUc/bi4vaEdHonIHjaFo0WI144TJD5cM+GbyJ9xSRwp+R+HeAtu/oi08xqY13bQmhPJEi44JSnOX7ULJPk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tqYrk-0004Bx-MV; Fri, 07 Mar 2025 15:39:56 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tqYrk-004VBw-0X;
+	Fri, 07 Mar 2025 15:39:56 +0100
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1tqYrk-000XG3-06;
+	Fri, 07 Mar 2025 15:39:56 +0100
+Date: Fri, 7 Mar 2025 15:39:56 +0100
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <Frank.li@nxp.com>,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] imx8mp: add support for the IMX AIPSTZ bridge
+Message-ID: <20250307143956.aft3xolakts3nlja@pengutronix.de>
+References: <20250226165314.34205-1-laurentiumihalcea111@gmail.com>
+ <20250226212219.lthoofw7nrs3gtg6@pengutronix.de>
+ <20250227112856.aylsurbt3uqm4ivw@pengutronix.de>
+ <541539db-0015-41de-837f-aabbea68486a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305220146.3932955-1-superm1@kernel.org> <20250305220146.3932955-3-superm1@kernel.org>
-In-Reply-To: <20250305220146.3932955-3-superm1@kernel.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 7 Mar 2025 15:39:04 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0gYRZ-wqStz7B96-HhkeedKBwNRXTOaA=bD1Q1uUy69TQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JpAUIjPtX9iBGcsSPf1RkGFON1HvGvxnN_LJPj3sH2gAisy6Q4TCQzk_O4
-Message-ID: <CAJZ5v0gYRZ-wqStz7B96-HhkeedKBwNRXTOaA=bD1Q1uUy69TQ@mail.gmail.com>
-Subject: Re: [PATCH v3 RESEND 2/2] pinctrl: amd: Add an LPS0 check() callback
-To: Mario Limonciello <superm1@kernel.org>
-Cc: "Rafael J . Wysocki" <rjw@rjwysocki.net>, Linus Walleij <linus.walleij@linaro.org>, 
-	"open list:PIN CONTROL SUBSYSTEM" <linux-gpio@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	linux-acpi@vger.kernel.org, Basavaraj Natikar <Basavaraj.Natikar@amd.com>, 
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>, Mario Limonciello <mario.limonciello@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <541539db-0015-41de-837f-aabbea68486a@gmail.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Mar 5, 2025 at 11:01=E2=80=AFPM Mario Limonciello <superm1@kernel.o=
-rg> wrote:
->
-> From: Mario Limonciello <mario.limonciello@amd.com>
->
-> During suspend the pinctrl_amd driver disables the interrupts for
-> any GPIOs that are not marked as wake sources.
->
-> This however does not prevent them from changing the wake status
-> bit during suspend, it just stops the system from waking.
->
-> If the system wakes from hardware sleep for another reason (such
-> as plugging in the AC adapter) this wake bits might be active.
->
-> This could potentially cause problems with going back to hardware
-> sleep.  Add an extra debugging message when PM debugging is enabled
-> to help identify if this is happening.
->
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Link: https://gitlab.freedesktop.org/drm/amd/-/issues/3929
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
-> v3:
->  * Add tag
-> ---
->  drivers/pinctrl/pinctrl-amd.c | 28 ++++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
->
-> diff --git a/drivers/pinctrl/pinctrl-amd.c b/drivers/pinctrl/pinctrl-amd.=
-c
-> index 1d7fdcdec4c85..fdda8d1c4f344 100644
-> --- a/drivers/pinctrl/pinctrl-amd.c
-> +++ b/drivers/pinctrl/pinctrl-amd.c
-> @@ -37,6 +37,8 @@
->  #include "pinctrl-utils.h"
->  #include "pinctrl-amd.h"
->
-> +static struct amd_gpio *pinctrl_dev;
-> +
->  static int amd_gpio_get_direction(struct gpio_chip *gc, unsigned offset)
->  {
->         unsigned long flags;
-> @@ -909,6 +911,29 @@ static bool amd_gpio_should_save(struct amd_gpio *gp=
-io_dev, unsigned int pin)
->         return false;
->  }
->
-> +static void amd_gpio_check_pending(void)
-> +{
-> +       struct amd_gpio *gpio_dev =3D pinctrl_dev;
-> +       struct pinctrl_desc *desc =3D gpio_dev->pctrl->desc;
-> +       int i;
-> +
-> +       if (!pm_debug_messages_on)
-> +               return;
-> +
-> +       for (i =3D 0; i < desc->npins; i++) {
-> +               int pin =3D desc->pins[i].number;
-> +               u32 tmp;
-> +
-> +               tmp =3D readl(gpio_dev->base + pin * 4);
-> +               if (tmp & PIN_IRQ_PENDING)
-> +                       pm_pr_dbg("%s: GPIO %d is active: 0x%x.\n", __fun=
-c__, pin, tmp);
-> +       }
-> +}
-> +
-> +static struct acpi_s2idle_dev_ops pinctrl_amd_s2idle_dev_ops =3D {
-> +       .check =3D amd_gpio_check_pending,
-> +};
-> +
->  static int amd_gpio_suspend_hibernate_common(struct device *dev, bool is=
-_suspend)
->  {
->         struct amd_gpio *gpio_dev =3D dev_get_drvdata(dev);
-> @@ -942,6 +967,7 @@ static int amd_gpio_suspend_hibernate_common(struct d=
-evice *dev, bool is_suspend
->
->  static int amd_gpio_suspend(struct device *dev)
->  {
-> +       pinctrl_dev =3D dev_get_drvdata(dev);
->         return amd_gpio_suspend_hibernate_common(dev, true);
->  }
->
-> @@ -1181,6 +1207,7 @@ static int amd_gpio_probe(struct platform_device *p=
-dev)
->
->         platform_set_drvdata(pdev, gpio_dev);
->         acpi_register_wakeup_handler(gpio_dev->irq, amd_gpio_check_wake, =
-gpio_dev);
-> +       acpi_register_lps0_dev(&pinctrl_amd_s2idle_dev_ops);
->
->         dev_dbg(&pdev->dev, "amd gpio driver loaded\n");
->         return ret;
-> @@ -1199,6 +1226,7 @@ static void amd_gpio_remove(struct platform_device =
-*pdev)
->
->         gpiochip_remove(&gpio_dev->gc);
->         acpi_unregister_wakeup_handler(amd_gpio_check_wake, gpio_dev);
-> +       acpi_unregister_lps0_dev(&pinctrl_amd_s2idle_dev_ops);
->  }
->
->  #ifdef CONFIG_ACPI
-> --
+On 25-03-05, Laurentiu Mihalcea wrote:
+> 
+> On 2/27/2025 1:28 PM, Marco Felsch wrote:
+> > Hi Laurentiu,
+> >
+> > On 25-02-26, Marco Felsch wrote:
+> >> Hi,
+> >>
+> >> On 25-02-26, Laurentiu Mihalcea wrote:
+> >>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> >>>
+> >>> The AIPSTZ bridge offers some security-related configurations which can
+> >>> be used to restrict master access to certain peripherals on the bridge.
+> >>>
+> >>> Normally, this could be done from a secure environment such as ATF before
+> >>> Linux boots but the configuration of AIPSTZ5 is lost each time the power
+> >>> domain is powered off and then powered on. Because of this, it has to be
+> >>> configured each time the power domain is turned on and before any master
+> >>> tries to access the peripherals (e.g: AP, CM7, DSP, on i.MX8MP).
+> >> My question still stands:
+> >>
+> >> Setting these bits requires very often that the core is running at EL3
+> >> (e.g. secure-monitor) which is not the case for Linux. Can you please
+> >> provide more information how Linux can set these bits?
+> > Sorry I didn't noticed your response:
+> >
+> > https://lore.kernel.org/all/a62ab860-5e0e-4ebc-af1f-6fb7ac621e2b@gmail.com/
+> >
+> > If EL1 is allowed to set the security access configuration of the IP
+> > cores doesn't this mean that a backdoor can be opened? E.g. your
+> > secure-boot system configures one I2C IP core to be accessible only from
+> > secure-world S-EL1 (OP-TEE) and after the power-domain was power-cycled
+> > it's accessible from EL1 again. This doesn't seem right. Why should a
+> > user be able to limit the access permissions to an IP core to only be
+> > accessible from secure-world if the IP core is accessible from
+> > normal-world after the power-domain was power-cycled.
+> >
+> > Regards,
+> >   Marco
+> 
+> I'm no security expert so please feel free to correct me if I get
+> something wrong.
+> 
+> This isn't about S/NS world. The bridge AC doesn't offer any
+> configurations for denying access to peripherals based on S/NS world.
 
-Applied as 6.15 material, thanks!
+It does, please see the AIPSTZ_OPACR register definition. The imx-atf of
+sets OPACR registers to 0 (of course), which means that the S/NS is not
+checked _but_ it can be configured.
+
+Also please see chapter 4.7.6.1 Security Block:
+
+The AIPSTZ contains a security block that is connected to each
+off-platform peripheral. This block filters accesses based on
+write/read, non-secure, and supervisor signals.
+
+> AFAIK that's the job of the CSU (central security unit), which is a
+> different IP.
+
+Please see above.
+
+> Perhaps I shouldn't have used the term "trusted" as it might have
+> ended up creating more confusion? If so, please do let me know so I
+> can maybe add a comment about it in one of the commit messages. In
+> this context, "master X is trusted for read/writes" means "master X is
+> allowed to perform read/write transactions".
+
+No you didn't confused me but you triggered my interest :) and I started
+to check the (S)TRM.
+
+> Even if the bridge is configured to allow read/write transactions from
+> a master (i.e: master is marked as trusted for read/writes) that
+> wouldn't be very helpful.
+
+We're talking about the IP access permissions, right. If the
+"secure-I2C" is accessible from NS world this would make a difference of
+course.
+
+> You'd still have to bypass the CSU configuration which as far as I
+> understand is also used by the bridge to deny access to peripherals
+> (e.g: if transaction is secure+privileged then forward to peripheral,
+> otherwise abort it). See the "4.7.6.1 Security Block" and "4.7.4 
+> Access Protections" chapters from the IMX8MP RM.
+
+I have read this too, also that the AIPSTZ can force the mode into
+user_mode regardless of the CSU settings, if I get this correct.
+
+What I don't understand as of now is the interaction of the AIPSTZ and
+the CSU. You can configure different bus-masters within the CSU to be
+S/NS as well as the pheripherals. Now the part which I don't understand
+right now: According the OPACx register description:
+
+x0xx SP0 — This peripheral does not require supervisor privilege level
+           for accesses.
+x1xx SP1 — This peripheral requires supervisor privilege level for
+           accesses. The master privilege level must indicate supervisor
+	   via the hprot[1] access attribute, and the MPROTx[MPL] control
+	   bit for the master must be set. If not, the access is
+	   terminated with an error response and no peripheral access is
+	   initiated on the IPS bus.
+
+The peripheral can be configured via the AIPSTZ as well. So which IP
+(CSU or AIPSTZ) override the other if the settings don't match, e.g. if
+CSU says: "this I2C controller for secure-world" and the AIPSTZ says:
+"this I2C is for non-secure-world".
+
+> Given all of this, I think the purpose of this IP's AC is to add some
+> extra, light, security features on top of the CSU.
+
+Or to override the CSU settings like the MPROTOx values:
+
+xxx0 MPL0 — Accesses from this master are forced to user-mode
+           (ips_supervisor_access is forced to zero) regardless of the
+	   hprot[1] access attribute.
+xxx1 MPL1 — Accesses from this master are not forced to user-mode. The
+            hprot[1] access attribute is used directly to determine
+	    ips_supervisor_access.
+
+Can you pleae elaborate a bit more how NXP designed the interaction
+between both the AIPSTZ and the CSU?
+
+Regards,
+  Marco
 
