@@ -1,166 +1,146 @@
-Return-Path: <linux-kernel+bounces-552107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 099E8A575D8
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:13:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1269EA575DA
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:14:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3677217536D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:13:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B9551892F18
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D0B259C89;
-	Fri,  7 Mar 2025 23:13:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0195258CF7;
+	Fri,  7 Mar 2025 23:14:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YZGCpVhd"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BFjrU/uC"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EA115746E;
-	Fri,  7 Mar 2025 23:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B764515746E;
+	Fri,  7 Mar 2025 23:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741389205; cv=none; b=TapXQtOcJz8mlBajMHlL26Pma/TjEgSZdFpvmpHagROGm/ypA/TngBlJfM7+q5RNuvqyGV++TLVFD73jQfeW6h4akvncyRZlwKGhKj9YWMnmmYOTqTuCqutFHOgYoD+hDgHXBdtXqBT2KuC31CUF0uAcSqlEQEmGFiGbAN5aMp4=
+	t=1741389246; cv=none; b=f2y2bR3KLObNH3XN5JiOfg+yghSfuuYRmJMCzl3Qc80xWDj3Jh4mqZ8GNnYUEc7sOJquWWJITB1BcRVrkWnwJCptnywb6T/gNVvQbPJMfQXOjLNCg6B6bPCCSabQaEMH66rEEjS0Y5izohaSd+2FsXhnKVKVC9ZpdVCp5Z0IBx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741389205; c=relaxed/simple;
-	bh=G63d06X8W9arXCJggGOHT2w3cbPycEOHJ8wMoqYNgPQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s04pM0MQdDzeMG1EZ4GHemxfLB+XjKXvU/itLymCsslivj488RAButgwn4+jLNA+TWR1s107yGogXQCQc7BbBbUQBm8qDnoBFwCBpL/6DJ7Cz5oGa+tPMw6FK//Odjx+ImtEBEzpVXI5zaIxdnUPO1X04YQkYKYVRZ+3+yZuhXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YZGCpVhd; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e8ec399427so15986606d6.2;
-        Fri, 07 Mar 2025 15:13:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741389203; x=1741994003; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cqomUUPjRLiQmonoip8f3BCduAZxVjsjo6bLnE0yfxE=;
-        b=YZGCpVhdVwnMccQG60h1+BC2fxJTiY3QuFIhTMj95lWP3gTatd/PqhzHcBh1Whomtl
-         73sMldiapnqKss05dMeJe7znRKJdGitHzw6XGzTzC/wNCzXIbjI5DnKUavfhSztyrJLR
-         wBYVDMqmnnHvxtpJ9MYVf8mMBs0n3WSEMcm55SpjwsWHV04Cbl4ewS3w5+BOwmmNMuIw
-         P437SgkE95NTAM1X99/au8k0UlMxoPzSs8WCjB2mkHuzax+jWw7rVx+lpXm6SQLLpH9y
-         B4nKqN5myU6jOLB7Z12e1MHBpiDsDIRkmmtcTZm+DFsndFbl5Sa9gLe+l10nJje+4fFu
-         Kt3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741389203; x=1741994003;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cqomUUPjRLiQmonoip8f3BCduAZxVjsjo6bLnE0yfxE=;
-        b=Gz1RQm78nFbF90NtTd8z+sTQ9N1aZDsOFRbbN0dfvklSReZz7Q9dpUBCv6tSpr996a
-         ZCSMRdTM9f4+zqaRmuWY5uWvAxLc7sWKWOhFJSI/sxnXaoQlfR6UIpMXzAXb15SWomdF
-         KnsVmOVAjC9Lgc7yFJagMo6QxHkLP3ednShr3YUaLqdWVwfb4eDmYxxqUFOck5NDRL1v
-         TQG+d2qoDPrPtwh+yIMKWV2wF8ssv5xMMUPUuo/8D1DKGdHWSM8zZMwdeiuLpIiJnFmZ
-         zSfhZvkw7lvE71vF931V/vpuxPaIZ/W5pORwzQwQQ6cS1J9YuOfGXMNNZ52WoUiOd4op
-         bYvg==
-X-Forwarded-Encrypted: i=1; AJvYcCW5zbY3L/NY+HBATLN/Sufdb8TvKZJVvuc69OmKLDCTlY3z5EDMxgS/U5seGChCSLLy6k91sIqoG1tiEg==@vger.kernel.org, AJvYcCXBCSTdkV2SHWjNjlOiHcfugwfnNliu0V37eAwpuZFJeU7b2rA9tAh8RbM/Vk1liBKMPQRa960/PrsLUxtc@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBXlX8JHhtBK8LcuJcqqXmP0E6TbSCEu0GkfMUvMB8SIdU/nqp
-	SmZ2oQbMhEb9v+WfQoNwKLvRVh59EdkZIB+OVT0rnBj2x/7pqoGwlE2LY7IJh+7xHIFam+N7I6E
-	XQEzguKei1ABczOfUpiJN6sQo0Oo=
-X-Gm-Gg: ASbGncv+xob802HwJFdex2i2k9Ye+qR3rvRCEX/3ydTO6ZS6Z7th4imLtr82OAmuT9g
-	F63LYWARkvBB0dK3ds+C7oqRQ0oW2s5heHwpohXpPq0x2rGMvHM49Gw6ibRW6PeMaQr3J3m+Y3d
-	CTfBuM/yNQlLiW5650RnOkyBt3oikLzI5HYuC+9V/ysA==
-X-Google-Smtp-Source: AGHT+IGgO4waxliJRJEjcjUATYM+tLYXbT7o9vAllgT5zmhdZvJYwca7AqrIUigw62PVDCYdl3bzS0BOeN1gV1tcJBc=
-X-Received: by 2002:a05:6214:21a6:b0:6e4:2dd7:5c88 with SMTP id
- 6a1803df08f44-6e90068196dmr70464496d6.38.1741389203258; Fri, 07 Mar 2025
- 15:13:23 -0800 (PST)
+	s=arc-20240116; t=1741389246; c=relaxed/simple;
+	bh=4C9O5IfLxoqALAVxpI1tRWW7zTFY8vqbF0bNmC70UVw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=BUAAZvjRJn68wiL+Fj7K7fu7YYxtxGHTerrqpGDPMW3B5EZ83g8Zn7ZvjHTo7Da6/M6qnCYuqqHwB/SzNw85m/kRDeUEsbCCh0x2Jl26dRZxgKUQ+aOWqWSa0X3NbcB+8IMaqtE8wqq5ZitfObW+1D/i9EEyvSMCriCZm0v352E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BFjrU/uC; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 527KqTPL023264;
+	Fri, 7 Mar 2025 23:14:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=9fzZUkk8QdDhoK9eiYVYMl630UKE
+	8hRxbL04c2VHNbQ=; b=BFjrU/uCLB9lApiTyTzgXstIXP9YrH0OFSv4vAVBBhUy
+	+2AJppWxohrefaiSNdY+Caz8sloRL2phKIu91SHPK67MivxoH5cmM62qCRAMYU1D
+	mzL5+wZqCrBSPTJs7z+eRwZUrWUHwE8Ag57LFquXq3mQylVmzRxsIJDSf7cXV5JG
+	EuaxgptJxV6eK+KYs+DLROwxZpJNXhervICmLpxrvzPeyfEYRc2h0vaUt+EilvSE
+	ewdLWD0znK9ex2u8zR4e9d9IdIv1g2lodTiwpePL0TtsLj21GsYK0DdxJhxeUzkH
+	LtBRiy/ipAGh6r5hT9a+e1tRToSW/nrea7VI/5CDfw==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4588768eev-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Mar 2025 23:14:02 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 527N3pSV009038;
+	Fri, 7 Mar 2025 23:14:01 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454cy01mws-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Mar 2025 23:14:01 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 527NDv7g52953400
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Mar 2025 23:13:58 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DEC0A2004D;
+	Fri,  7 Mar 2025 23:13:57 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 641C520043;
+	Fri,  7 Mar 2025 23:13:57 +0000 (GMT)
+Received: from localhost (unknown [9.179.11.245])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  7 Mar 2025 23:13:57 +0000 (GMT)
+Date: Sat, 8 Mar 2025 00:13:55 +0100
+From: Vasily Gorbik <gor@linux.ibm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Heiko Carstens <hca@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Shuah Khan <skhan@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: [GIT PULL] s390 updates for 6.14-rc6
+Message-ID: <your-ad-here.call-01741389235-ext-8883@work.hours>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307120141.1566673-1-qun-wei.lin@mediatek.com>
- <20250307120141.1566673-3-qun-wei.lin@mediatek.com> <CAGsJ_4xtp9iGPQinu5DOi3R2B47X9o=wS94GdhdY-0JUATf5hw@mail.gmail.com>
-In-Reply-To: <CAGsJ_4xtp9iGPQinu5DOi3R2B47X9o=wS94GdhdY-0JUATf5hw@mail.gmail.com>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Fri, 7 Mar 2025 15:13:12 -0800
-X-Gm-Features: AQ5f1JooOtTd4HVR7CCnLuHoQkyIFVDhrvbdPzpgk1fPg8et0mZMLZfSKYeQ1OE
-Message-ID: <CAKEwX=OP9PJ9YeUvy3ZMQPByH7ELHLDfeLuuYKvPy3aCQCAJwQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] kcompressd: Add Kcompressd for accelerated zram compression
-To: Barry Song <21cnbao@gmail.com>
-Cc: Qun-Wei Lin <qun-wei.lin@mediatek.com>, Jens Axboe <axboe@kernel.dk>, 
-	Minchan Kim <minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Vishal Verma <vishal.l.verma@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
-	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chris Li <chrisl@kernel.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
-	Kairui Song <kasong@tencent.com>, Dan Schatzberg <schatzberg.dan@gmail.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, 
-	linux-block@vger.kernel.org, nvdimm@lists.linux.dev, linux-mm@kvack.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Casper Li <casper.li@mediatek.com>, Chinwen Chang <chinwen.chang@mediatek.com>, 
-	Andrew Yang <andrew.yang@mediatek.com>, James Hsu <james.hsu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 1Uh7G7H5ec4mEeRFGTGArVS_oHZuerkE
+X-Proofpoint-GUID: 1Uh7G7H5ec4mEeRFGTGArVS_oHZuerkE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-07_08,2025-03-07_03,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ mlxlogscore=782 priorityscore=1501 suspectscore=0 malwarescore=0
+ adultscore=0 impostorscore=0 phishscore=0 mlxscore=0 bulkscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503070173
 
-On Fri, Mar 7, 2025 at 11:41=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
-e:
->
-> On Sat, Mar 8, 2025 at 1:02=E2=80=AFAM Qun-Wei Lin <qun-wei.lin@mediatek.=
-com> wrote:
-> >
-> > Introduced Kcompressd to offload zram page compression, improving
-> > system efficiency by handling compression separately from memory
-> > reclaiming. Added necessary configurations and dependencies.
-> >
-> > Signed-off-by: Qun-Wei Lin <qun-wei.lin@mediatek.com>
-> > ---
-> >  drivers/block/zram/Kconfig      |  11 ++
-> >  drivers/block/zram/Makefile     |   3 +-
-> >  drivers/block/zram/kcompressd.c | 340 ++++++++++++++++++++++++++++++++
-> >  drivers/block/zram/kcompressd.h |  25 +++
-> >  drivers/block/zram/zram_drv.c   |  22 ++-
-> >  5 files changed, 397 insertions(+), 4 deletions(-)
-> >  create mode 100644 drivers/block/zram/kcompressd.c
-> >  create mode 100644 drivers/block/zram/kcompressd.h
-> >
-> > diff --git a/drivers/block/zram/Kconfig b/drivers/block/zram/Kconfig
-> > index 402b7b175863..f0a1b574f770 100644
-> > --- a/drivers/block/zram/Kconfig
-> > +++ b/drivers/block/zram/Kconfig
-> > @@ -145,3 +145,14 @@ config ZRAM_MULTI_COMP
-> >           re-compress pages using a potentially slower but more effecti=
-ve
-> >           compression algorithm. Note, that IDLE page recompression
-> >           requires ZRAM_TRACK_ENTRY_ACTIME.
-> > +
-> > +config KCOMPRESSD
-> > +       tristate "Kcompressd: Accelerated zram compression"
-> > +       depends on ZRAM
-> > +       help
-> > +         Kcompressd creates multiple daemons to accelerate the compres=
-sion of pages
-> > +         in zram, offloading this time-consuming task from the zram dr=
-iver.
-> > +
-> > +         This approach improves system efficiency by handling page com=
-pression separately,
-> > +         which was originally done by kswapd or direct reclaim.
->
-> For direct reclaim, we were previously able to compress using multiple CP=
-Us
-> with multi-threading.
-> After your patch, it seems that only a single thread/CPU is used for comp=
-ression
-> so it won't necessarily improve direct reclaim performance?
->
-> Even for kswapd, we used to have multiple threads like [kswapd0], [kswapd=
-1],
-> and [kswapd2] for different nodes. Now, are we also limited to just one t=
-hread?
-> I also wonder if this could be handled at the vmscan level instead of the=
- zram
-> level. then it might potentially help other sync devices or even zswap la=
-ter.
+Hello Linus,
 
-Agree. A shared solution would be much appreciated. We can keep the
-kcompressd idea, but have it accept IO work from multiple sources
-(zram, zswap, whatever) through a shared API.
+please pull s390 fixes for 6.14-rc6. There is also a vDSO selftest fix
+for s390, acked by Shuah Khan.
 
-Otherwise we would need to reinvent the wheel multiple times :)
+Thank you,
+Vasily
+
+The following changes since commit c3a589fd9fcbf295a7402a4b188dc9277d505f4f:
+
+  s390/boot: Fix ESSA detection (2025-02-18 18:49:24 +0100)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.14-6
+
+for you to fetch changes up to b4a1dec11793936ffe1a9fb811724532ff3b1174:
+
+  s390/ftrace: Fix return address recovery of traced function (2025-03-04 17:15:19 +0100)
+
+----------------------------------------------------------------
+s390 updates for 6.14-rc6
+
+- Fix return address recovery of traced function in ftrace to ensure
+  reliable stack unwinding
+
+- Fix compiler warnings and runtime crashes of vDSO selftests on s390 by
+  introducing a dedicated GNU hash bucket pointer with correct 32-bit
+  entry size
+
+- Fix test_monitor_call() inline asm, which misses CC clobber, by
+  switching to an instruction that doesn't modify CC
+
+----------------------------------------------------------------
+Heiko Carstens (1):
+      s390/traps: Fix test_monitor_call() inline assembly
+
+Sumanth Korikkar (1):
+      s390/ftrace: Fix return address recovery of traced function
+
+Thomas Weißschuh (1):
+      selftests/vDSO: Fix GNU hash table entry size for s390x
+
+ arch/s390/kernel/ftrace.c                 |  3 ++-
+ arch/s390/kernel/traps.c                  |  6 +++---
+ tools/testing/selftests/vDSO/parse_vdso.c | 10 +++++-----
+ 3 files changed, 10 insertions(+), 9 deletions(-)
 
