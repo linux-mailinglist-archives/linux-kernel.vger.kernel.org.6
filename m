@@ -1,140 +1,120 @@
-Return-Path: <linux-kernel+bounces-551903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75DFCA572C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:11:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DC97A572C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:11:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE7FE3B8320
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:10:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D955D3B7267
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2CA2561BC;
-	Fri,  7 Mar 2025 20:10:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBA52561C6;
+	Fri,  7 Mar 2025 20:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TJgd30qO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="XfOStQ/I"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C52821CC4A;
-	Fri,  7 Mar 2025 20:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A101A5B8C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 20:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741378255; cv=none; b=ilNtnEGgcFdTJWrmGmkFsIhed1fPCFzI7v4bvbTRe5TllWJyf8hWYSg6eLC6AviATpTUNWPUUieWCWXJmpDm3DETEsIC2oz1u4gGkWzs9+ea4F5k3TnUhv3ETgUT0tYKi0c4uVLmKEHf8CRP67vrVohCShDV9Y5gfacBuAVQb+Y=
+	t=1741378273; cv=none; b=kd0u/8i9ryMeiTi31TQF6GQ2kzI4xnam8a7fyuxvL7hbJkbhRqtxBGN4wePrHx5bNL/hGM0J+j1YU2Rpq0Buu67fDzdSIfP1+BJumY7CiGL+9A4OzzzXG2qJnWcwJ/Jr1wHy2+Nh6IiBPldaw+9LZ/xEvEq+b7yNWlbunpRJK3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741378255; c=relaxed/simple;
-	bh=3nSZ2JbAIlV45zJPDKD7cz1iFS7azKXpOcw/9B+Wc7Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNoU+1BNp6ac3yraA9FZ0AmPMkkZuFdayqBy+Tnz6c45lMTo2YhWwglwvk5lkZ35qg5BqNJFJ9hvwzaQPsPWz8TqEQTMdlGzBdWxMBRFBgicYB6X2CdfSIUCUjILq6xu0LEDIhfL7gtTvRmVpHxrf5wLBAfK3rast6mj3+w62H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TJgd30qO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F93DC4CED1;
-	Fri,  7 Mar 2025 20:10:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741378254;
-	bh=3nSZ2JbAIlV45zJPDKD7cz1iFS7azKXpOcw/9B+Wc7Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TJgd30qOSyXEM7mIsT2K4/fd6oyvFM0crtMoGhc0OlKMUnx1gUXwqYxR/x1c0YrnQ
-	 kQ4AisB7J9AzfaG3wKdKZCJtwzHLA/DcRDnKw3Q82VD9hsbqygWosSlCyjz6GlGguP
-	 VMREfYj2uFOCdOgsaEcjNMS/+bvCP8WJQSBL/pI0/kh+mJmAFaTLwV8T8LeKJCeNZx
-	 4dIs8o2YaqLslu23yA1kCYSZKHv9EiKmRyD/6aOf1ZQlQKoIlgtmSJHMC2rTGzSoU7
-	 DAgQoWgjOdN2lCLv0XoSfkP75FtnMWyfUs2Q3qbEGDPaZuEFEQtOISGdHziTDKjyhI
-	 1ze7QJ7J5QvKA==
-Date: Fri, 7 Mar 2025 17:10:51 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Stephen Brennan <stephen.s.brennan@oracle.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Athira Rajeev <atrajeev@linux.vnet.ibm.com>,
-	Jiri Olsa <jolsa@kernel.org>, linux-kernel@vger.kernel.org,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Chaitanya S Prakash <chaitanyas.prakash@arm.com>,
-	Ian Rogers <irogers@google.com>, linux-perf-users@vger.kernel.org,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Andi Kleen <ak@linux.intel.com>
-Subject: Re: [PATCH v2 0/3] Support .gnu_debugdata for symbols in perf
-Message-ID: <Z8tSyzcHF2V7Lofx@x1>
-References: <20250220185512.3357820-1-stephen.s.brennan@oracle.com>
- <Z7-QZKNT4Cc8lspM@google.com>
+	s=arc-20240116; t=1741378273; c=relaxed/simple;
+	bh=8mMyk1ulJwVyqgnppDDhKpfmvXF0Bc4Fw/7P5XU97/g=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=l/XiAto7E2rWeOsn3Q+vkqMevKoCZfMYmfBtjSWkk1X7eZvSWCc/qvRE2V5ImqjKmhMZP41JKaTBnn2G81PJbMsdGzuySrOU2GMX/ZRJSczrbrB/Bbt9fT2oKSRWfui8KVw5jJbj1EX/GBqJiUej+d1H2kCOgb/hpiuF81USL3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=XfOStQ/I; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c3d1664ed5so277677485a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 12:11:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1741378270; x=1741983070; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q78/HiWHJU/pFecas/YddCOoXzeJ1vsGLqv0kt0f1Vs=;
+        b=XfOStQ/IQBgHLs0DBQ03faY5Egd1dJT4aEYJePKvgj06hiFa1vryZ6ve29oF8j/CDf
+         nM14NvzrqCMIqaAhwzxaBiCsL5fyEPTvEqIgQkI+p5XgmYwdI4nV8SlbIxoglidRmocl
+         B0Hna8vUCkbq4wwdXFsfHLh2mJ4Y4xS6M0/sg0UQF2O10ABCgsoQYQd6krfjdMqmsdVZ
+         U69WmHBFKWCNPKUe/vH+nZWJErleT4dsETqnW6NRJt/wvqRQWmBfYaYnNrmlvGtnuQkg
+         php3LMJsptmoR4meZ3G+MG4JWsHa+lS7+maJAJ7zvNubMT7QfOu8gG62V1EmVTq3Pl8R
+         QVGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741378270; x=1741983070;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=q78/HiWHJU/pFecas/YddCOoXzeJ1vsGLqv0kt0f1Vs=;
+        b=i2/VqZOr98CQCdtdRih089YCUYtT1vSJgW1blPfhQbH00QYbjjZCPwHSysgMxcPWSZ
+         yLt7KrRfyQk5XHhuctZ736JRDk45qec58p4S1snMZYgZQNmSXEuFIp5u5yskHdaA4Spm
+         PjMtAbwXV4+kHaYMBoug9bfUTGmd9F8y+a6jgfhMQTJgTex/EurHI005ynNkYUexxM4G
+         jkHB72bMBrAlqt3pOJny0hfU6l5KfUrKIsQI82M5VM6q6A2H7vzlskyOhtPMnnmdVp56
+         eV27UrRByCJrifLLfutWhbS9KWKG64yYt+W+4uDmcoy9TNTZtEImhrCVVvmIY4ZfunNP
+         uKBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSxb3gh5GgcNb6pIwblb4O9IO03bY2yOWZ1I2DCagvnXwxLLXPQm0FOXQrgDFxZ/+WR6VdEqj2XL7/T2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFLodqL36AozsSwtBaYxsA9a7Vff9Qq0hC+0sbb2j0dfS30RBo
+	cxLaMgRK1Pa9wUi4FsFZkJ8bbKMZCWU3e+G5yw0vrmjkKJfD1gkOtTynjtnr/w==
+X-Gm-Gg: ASbGncv2UpdO69HXPcDCI0zSkf6yk+V0M4oS0RUqUZKgkGhMtbaQmrnEdEtVe29NQrI
+	9atpKYEqOJE7zrHp5VY02VpSd83miiVagd/j+2Mc+8Nyy75lIPLhxC1UUYvZaufZM9ljHnpL42V
+	YIMEcgUNg8e0Js95/TTbA1B6bvv+BUgtJiBMo4CpXCn7phmdOXyU0L7CTd8U74mh7ZERyDE3re4
+	rMAZrd8vz6rBatPCGqaaU/TvekanDJYyO7uAD3XT0dLi62ahlBkoFtpi0BrpxwXT1h8tKOOkKdo
+	/BhBd/naEStBPtkcBI3dKhTp7nJSmfY9xEX9JFhxAQKZjwaTfPo/WrpVucRh0adCQK0F7odWb0i
+	eysHUBIWssUHmjg==
+X-Google-Smtp-Source: AGHT+IFigSgioC6qGGcWPMc1V2MMvwUklhtlL/Nr0hqqWle0uIyyD/88acNfu9IOe8cY2IJGlAOOrQ==
+X-Received: by 2002:a05:620a:1b84:b0:7c3:cd38:9be1 with SMTP id af79cd13be357-7c4e6193e60mr760431985a.48.1741378270458;
+        Fri, 07 Mar 2025 12:11:10 -0800 (PST)
+Received: from localhost (pool-71-126-255-178.bstnma.fios.verizon.net. [71.126.255.178])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c3e5500015sm280557185a.85.2025.03.07.12.11.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 12:11:10 -0800 (PST)
+Date: Fri, 07 Mar 2025 15:11:09 -0500
+Message-ID: <c53b73fccbc24586776e9240a14dc6b3@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z7-QZKNT4Cc8lspM@google.com>
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20250307_1437/pstg-lib:20250307_1437/pstg-pwork:20250307_1437
+From: Paul Moore <paul@paul-moore.com>
+To: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>, selinux@vger.kernel.org
+Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>, Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, =?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>, =?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>, Casey Schaufler <casey@schaufler-ca.com>, Canfeng Guo <guocanfeng@uniontech.com>, GUO Zihua <guozihua@huawei.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selinux: support wildcard network interface names
+References: <20250302154100.104746-1-cgoettsche@seltendoof.de>
+In-Reply-To: <20250302154100.104746-1-cgoettsche@seltendoof.de>
 
-On Wed, Feb 26, 2025 at 02:06:28PM -0800, Namhyung Kim wrote:
-> On Thu, Feb 20, 2025 at 10:55:08AM -0800, Stephen Brennan wrote:
-> > Hello all,
-> > 
-> > This series adds the ability to read symbols from the ".gnu_debugdata" section,
-> > an LZMA-compressed embedded ELF file which is supposed to contain additional ELF
-> > symbols. This is something that Fedora implemented (as "MiniDebuginfo" [1]).
-> > There are more details in v1. I've tested it with binaries that have
-> > .gnu_debugdata, and I've also ensured that the build & runtime work when LZMA is
-> > disabled.
-> > 
-> > [1]: https://fedoraproject.org/wiki/Features/MiniDebugInfo
-> > 
-> > Changes since v1:
-> > * Reuses the existing LZMA decompression helpers, rather than implementing a
-> >   new LZMA decompression loop. This does involve creating a temporary file, but
-> >   I think that actually makes things cleaner, since now the symsrc has a file
-> >   descriptor to close, rather than adding a new pointer that needs freeing.
-> > * I did also remove the pr_debug() for the case where there is no
-> >   ".gnu_debugdata" section. That's not really an error worth logging, that's
-> >   just normal operation.
-> > * I added a pr_debug() for the case where we successfully load .gnu_debugdata
-> >   so that it's easier to determine whether it gets used in tests.
+On Mar  2, 2025 =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de> wrote:
 > 
-> Thanks, it'd be nice if anyone with a Fedora box could test this.
+> Add support for wildcard matching of network interface names.  This is
+> useful for auto-generated interfaces, for example podman creates network
+> interfaces for containers with the naming scheme podman0, podman1,
+> podman2, ...
+> 
+> To maintain backward compatibility guard this feature with a new policy
+> capability 'netif_wildcard'.
+> 
+> Netifcon definitions are compared against in the order given by the
+> policy, so userspace tools should sort them in a reasonable order.
+> 
+> Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+> ---
+> v2: add policy capability netif_wildcard
+> ---
+>  security/selinux/include/policycap.h       |  1 +
+>  security/selinux/include/policycap_names.h |  1 +
+>  security/selinux/include/security.h        |  8 +++++++-
+>  security/selinux/ss/services.c             | 16 +++++++++++++---
+>  4 files changed, 22 insertions(+), 4 deletions(-)
 
-I'm trying to go thru this, testing with/without LZMA so that we can
-show the difference in symbol resolution, etc, but I've now stumbled on
-something that predates this, namely trying to build with NO_LZMA=1
-isn't disabling it:
+Looks good, merged into selinux/dev, thanks!
 
-⬢ [acme@toolbox perf-tools-next]$ rm -rf /tmp/build/$(basename $PWD)/ ; mkdir /tmp/build/$(basename $PWD)/ ; make NO_LZMA=1 O=/tmp/build/$(basename $PWD)/ -C tools/perf install-bin
-make: Entering directory '/home/acme/git/perf-tools-next/tools/perf'
-  BUILD:   Doing 'make -j28' parallel build
-
-Auto-detecting system features:
-...                                   libdw: [ on  ]
-...                                   glibc: [ on  ]
-...                                  libbfd: [ on  ]
-...                          libbfd-buildid: [ on  ]
-...                                  libelf: [ on  ]
-...                                 libnuma: [ on  ]
-...                  numa_num_possible_cpus: [ on  ]
-...                                 libperl: [ on  ]
-...                               libpython: [ on  ]
-...                               libcrypto: [ on  ]
-...                               libunwind: [ on  ]
-...                             libcapstone: [ on  ]
-...                               llvm-perf: [ on  ]
-...                                    zlib: [ on  ]
-...                                    lzma: [ on  ]
-<SNIP>
-
-
-⬢ [acme@toolbox perf-tools-next]$ ldd ~/bin/perf | grep lzma
-	liblzma.so.5 => /lib64/liblzma.so.5 (0x00007f77ac879000)
-⬢ [acme@toolbox perf-tools-next]$
-
-my hunch is that some other feature needs lzma support and ignores the
-explicit NO_LZMA=1 on the make command line when it should really be
-disabling whatever features needs it, not overriding the cmd line
-request.
-
-I'm trying to investigate.
-
-- Arnaldo
+--
+paul-moore.com
 
