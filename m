@@ -1,204 +1,107 @@
-Return-Path: <linux-kernel+bounces-551752-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551753-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884B5A57057
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:20:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A3E7A57065
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:23:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D387218967B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:20:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DC4D1898570
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D842405E4;
-	Fri,  7 Mar 2025 18:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5035B241682;
+	Fri,  7 Mar 2025 18:22:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+mHNaBF"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="WMhOKhug"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA30E1A7AF7;
-	Fri,  7 Mar 2025 18:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E46721C17B;
+	Fri,  7 Mar 2025 18:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741371620; cv=none; b=ACxlu1ep8WSN/CtrKlosdq2CN28cFxa1g0jyQOR9peovvCRuvKJ/c72JByMmD3Yjw1vN77iVA02phzH4gxN2f2xHzko6yXw8jyEnMUJoe44/rYRewfHHZMwmBB1V6XvKUaHeWdrskbSLhTyGYitXN4KxzoSQIYsAc49Sid7naRE=
+	t=1741371773; cv=none; b=jZTLuzq1VAcaLp0jXCYmuFifTnvIK1cgi/CRB5foPPFbGSDomqS5wqU4jR564/bl91r9BMKUvwxNgnTxApOayTJmgGslV9RWtaJ9GlNMtuk8rMzKGpOV96rNiLzJeznV5Io8+laCFaCreHK0c4L6xYTE6m67kNgigSmtbXrGmtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741371620; c=relaxed/simple;
-	bh=rqrIgGVQ6M5vVw6p4Jr1p0YFHYVdn2Xj93tZ/3VW8rc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fs8GlkedPXvSouInn7Hy3PuTW3r6IdBFPmaOksVW34fo3m8qIy6SZrJWhrYqja/yfgCg31uMbnq9q7fyhZEMDihxLkQa2AWe0aAu8/1NimhfbEEViZHiNhKKlZuxOWwd7YcUW2BYCflhZK5/7jX9XhDyYq64lnYreLm/b4xIN9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E+mHNaBF; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6fed0620395so678157b3.3;
-        Fri, 07 Mar 2025 10:20:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741371618; x=1741976418; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FeJw1/wk13slq8SaTOaUUmP/IYv8V17ltprOZMyg7cg=;
-        b=E+mHNaBFmFiS0Iocn7UQu6+0CFNC3fjcWs5SNuHm+4btnQsj+t3ugV3+d/4SauQGiq
-         N8xtil+Tn3toaPP0kB7UfGPojnMC1T/FAAFaMEY2s6Gqnax83u3fZEQ5q5AQyjA3GHzE
-         d7IvW/t3NHdx8VncHs4pMuI/3h0VtcibbSAdMDmbkBp0XP93o3isL4eFdMmyAGSFVWwA
-         xLreJvhXPpKh/gEW3Enu8nfD2nTtOG8IALwS/ngRhuRE6K/22v41vJ7GZiYqWZcJ2uFk
-         KQgwbSeopmh1WMb3kuuCvpnssV0P/aMdgG15DajkjxbHo1mZvTcKxR11IgsXJC7HITdc
-         j0vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741371618; x=1741976418;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FeJw1/wk13slq8SaTOaUUmP/IYv8V17ltprOZMyg7cg=;
-        b=e6emIJ3ytodKFKfbKi2IY22OyK1OHShD2fiYTDbrpQ/oO4URoPNwkvCXb7WE8jUvCO
-         BGvqep+lDpanPFBkYWI00Swp2cvV9F6D8jU2x1k4V+680HQmIxP8bkr6lcmsYWfGqXl7
-         PegfikZMsPWIk5UlRoYWEJdLI9KGnjEBfy4cCV3fHBpTIe+W9EGSa5Z1K98L5AwGfZ5+
-         XeIIQBZKXyAaEYA9XvF+ZM6WnI3drJMmoKjCZtUdF37cdkJ8EiyfdVGL5FtyN+hZDP/i
-         Szgf3Wgwc8RJ6nQX3mjEnji+6MygAareHsbfDLrWnCjEW8SWr/Ws+LuedKNXUDepW8Vq
-         z7Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUIroZEMTwTXtgaJAFFFHFCHjl1b0JoCuZD9haxD6zq21DrCcAP1lIuIUnXNJH+af0bsNZcYrrt6a4=@vger.kernel.org, AJvYcCWwMZHZDfBfSA9U/hf9EeIadnKkc5gotr68vdtZL8+RLhR5RMex7mWiFYO1xO/DM8CJ4DdCR6iX8m+zB9yH@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnJws5drAkwxQTd+6ogKz4pdo2zcKNeiDvPzHpEpgAvuedWisd
-	/i4dVXrCV93IJZw850I0O9dRwAKziYOuH1O1E0A8lzdfpGRZxqOi
-X-Gm-Gg: ASbGncsn/Gw0GT1JJ68mo+QojsOfyrqihWj7EooRHwtpwRFfPni9/FyLIbqkAeanCdE
-	5hBbLF1KoTLTbibEz1H6zeP+hF9GDufvuJokiLZfJVdMOn0r2rqcS/Z1CRKI+BD0x37ZVCYKqqi
-	NyCTgn3YIMYPNyK7ezYZIXizjevdBifRRgHwZUu/o6BXRkYbxw2oknwySoALgXSAsw3ZvFRAFfv
-	sd4HWfnJE34JC2LDFMkAnP5P2T4Ix/RjH3Eo9e4HpjW+BA+2CQ32t4LO7EhTI/d1HftpihgRgVr
-	lyDMUgzkby9iiiiu70aICwa4f2NPDFtze2tldt5LnZw=
-X-Google-Smtp-Source: AGHT+IG2YFy9NIzuiSU0JWQXIeYFv/n1+QFXy6BL1HyvwEsV80P0bUaURpLNAaL1ozbvN4gTQ0q7mA==
-X-Received: by 2002:a05:690c:998e:b0:6f9:ac35:4483 with SMTP id 00721157ae682-6febf3a9308mr61829397b3.25.1741371617759;
-        Fri, 07 Mar 2025 10:20:17 -0800 (PST)
-Received: from localhost ([2a03:2880:25ff:2::])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6feb2a5c217sm8348817b3.38.2025.03.07.10.20.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 10:20:17 -0800 (PST)
-From: Joshua Hahn <joshua.hahnjy@gmail.com>
-To: Rakie Kim <rakie.kim@sk.com>
-Cc: gourry@gourry.net,
-	akpm@linux-foundation.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	joshua.hahnjy@gmail.com,
-	dan.j.williams@intel.com,
-	ying.huang@linux.alibaba.com,
-	kernel_team@skhynix.com,
-	honggyu.kim@sk.com,
-	yunjeong.mun@sk.com
-Subject: Re: [PATCH 2/4] mm/mempolicy: Enable sysfs support for memory hotplug in weighted interleave
-Date: Fri,  7 Mar 2025 10:19:59 -0800
-Message-ID: <20250307182015.489780-1-joshua.hahnjy@gmail.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20250307063534.540-3-rakie.kim@sk.com>
-References: 
+	s=arc-20240116; t=1741371773; c=relaxed/simple;
+	bh=UhbysGiaH8FQ+ovQ5mfhRgpDsda9xG/VbV10XXNS1tw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I3MJu/dr8BDPEkIpND1pDioSIRsnLjqKGxzrFDaVubYvdRZ1q5ev6TkOQktypmISt/dKgLMtydqBeVreWNZ4+LpZYmzD+msodRHJTXprQh53b+1PJ35BCnOswr/4iIxonS8zNwJKSWUcZjoN7DV9qDjaJZ3AhlQa339EvL/M3TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=WMhOKhug; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=MWbVuIUV4GkljN1k7GKXrppH1dlxoAA7vzJpSPCNsbU=; b=WMhOKhuglrHkpbV/vRsZcs+D0H
+	zLiPV7i2eS2xvJsy0QnqQ6mVDhonciTp5SLpB27cs0NnxoDn3yM7TG7eV1jDuQaZdcMZhuBUn3Fsa
+	qfRUokBI3yXbTHrB6OJXuykdi02AgOzdCuoESh6jeNdui4Wgbra/wOXOnnPZPiZ55dAdBo7nH54vb
+	408s4a7FJoZ+suIFg0bI01v/KJv1Fg4eWSb91v6g+ab64bDZI/QjTbcCf3psM2U0ukL9L2mkjwct6
+	cMr+fGCgpq9y5z7Dfqn5r7xbKtX9fAZPLc45O60XUV5vmcE0nzlnIuBWreEHZ7MNpwGWE8AywAKeg
+	fJe3EoKw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:53270)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tqcLB-0007sw-21;
+	Fri, 07 Mar 2025 18:22:33 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tqcL7-00083J-0h;
+	Fri, 07 Mar 2025 18:22:29 +0000
+Date: Fri, 7 Mar 2025 18:22:29 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Jonas Karlman <jonas@kwiboo.se>, Andrew Lunn <andrew@lunn.ch>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 2/2] net: stmmac: dwmac-rk: Validate rockchip,grf and
+ php-grf during probe
+Message-ID: <Z8s5ZZyTCpS9xHlA@shell.armlinux.org.uk>
+References: <20250306210950.1686713-1-jonas@kwiboo.se>
+ <20250306210950.1686713-3-jonas@kwiboo.se>
+ <bab793bb-1cbe-4df6-ba6b-7ac8bfef989d@lunn.ch>
+ <1dd9e663-561e-4d6c-b9d9-6ded22b9f81b@kwiboo.se>
+ <20250307085558.5f8fcb90@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307085558.5f8fcb90@kernel.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri,  7 Mar 2025 15:35:31 +0900 Rakie Kim <rakie.kim@sk.com> wrote:
-
-Hi Rakie, thank you for your work on this patch! I think it makes a lot of
-sense, given the discussion between Gregory & Honggyu in the weighted
-interleave auto-tuning patch.
-
-I have a few small nits and questions that I wanted to raise, but none that
-should change the behavior at all : -)
-
-> Previously, sysfs entries for weighted interleave were only created during
-> initialization, preventing dynamically added memory nodes from being recognized.
+On Fri, Mar 07, 2025 at 08:55:58AM -0800, Jakub Kicinski wrote:
+> On Fri, 7 Mar 2025 00:49:38 +0100 Jonas Karlman wrote:
+> > Subject: Re: [PATCH 2/2] net: stmmac: dwmac-rk: Validate rockchip,grf and php-grf during probe
+> > 
+> > [encrypted.asc  application/octet-stream (3384 bytes)] 
 > 
-> This patch enables sysfs registration for nodes added via memory hotplug,
-> allowing weighted interleave settings to be updated as the system memory
-> configuration changes.
-> 
-> Signed-off-by: Rakie Kim <rakie.kim@sk.com>
-> ---
->  mm/mempolicy.c | 51 +++++++++++++++++++++++++++++++-------------------
->  1 file changed, 32 insertions(+), 19 deletions(-)
-> 
-> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-> index 385607179ebd..fc10a9a4be86 100644
-> --- a/mm/mempolicy.c
-> +++ b/mm/mempolicy.c
-> @@ -3389,6 +3389,13 @@ struct iw_node_attr {
->  	int nid;
->  };
->  
-> +struct iw_node_group {
-> +	struct kobject *wi_kobj;
-> +	struct iw_node_attr **nattrs;
-> +};
-> +
-> +static struct iw_node_group *ngrp;
-> +
->  static ssize_t node_show(struct kobject *kobj, struct kobj_attribute *attr,
->  			 char *buf)
->  {
-> @@ -3431,8 +3438,6 @@ static ssize_t node_store(struct kobject *kobj, struct kobj_attribute *attr,
->  	return count;
->  }
->  
-> -static struct iw_node_attr **node_attrs;
-> -
->  static void sysfs_wi_node_release(struct iw_node_attr *node_attr,
->  				  struct kobject *parent)
->  {
-> @@ -3448,7 +3453,7 @@ static void sysfs_wi_release(struct kobject *wi_kobj)
->  	int i;
->  
->  	for (i = 0; i < nr_node_ids; i++)
-> -		sysfs_wi_node_release(node_attrs[i], wi_kobj);
-> +		sysfs_wi_node_release(ngrp->nattrs[i], wi_kobj);
+> Is it just me or does anyone else get blobs from Jonas?
+> The list gets text, according to lore.
 
-Nit: I think it is slightly awkward to have a global struct ngrp, and then have
-its members passed individually like this. Of course there's nothing that
-we can do for sysfs_wi_release's argument, but I think we can make the
-arguments for sysfs_wi_node_release a bit cleaner. An idea would just be to
-pass an integer (nid) instead of the nattrs[i] pointer. We also don't need
-to pass wi_kobj, since it is accessible from within sysfs_wi_node_release.
+Looking at the emails I've received, some which were via the list, some
+which were direct, I don't see anything out of the ordinary - seems to
+just be text/plain here.
 
-Once we make both these changes, patch 3 becomes a little bit cleaner (IMHO),
-where we acquire the lock for the ngrp struct, then access its contents,
-and we don't have to pass two pointers as arguments when they are already
-accessible via the global struct anyways.
-
->  	kobject_put(wi_kobj);
->  }
->  
-> @@ -3486,12 +3491,10 @@ static int add_weight_node(int nid, struct kobject *wi_kobj)
->  		return -ENOMEM;
->  	}
->  
-> -	node_attrs[nid] = node_attr;
-> +	ngrp->nattrs[nid] = node_attr;
->  	return 0;
->  }
->  
-> -struct kobject *wi_kobj;
-> -
->  static int wi_node_notifier(struct notifier_block *nb,
->  			       unsigned long action, void *data)
->  {
-> @@ -3504,10 +3507,10 @@ static int wi_node_notifier(struct notifier_block *nb,
->  
->  	switch(action) {
->  	case MEM_ONLINE:
-> -		err = add_weight_node(nid, wi_kobj);
-> +		err = add_weight_node(nid, ngrp->wi_kobj);
-
-Same idea here, we probably don't need to pass wi_kobj into add_weight_node.
-With that said, I can also see the argument for passing the struct itself,
-since it saves a line of variable declaration & definition.
-
-[...snip...]
-
-Please let me know what you think! I hope you have a great day, thank you
-again for this patch!
-Joshua
-
-Sent using hkml (https://github.com/sjp38/hackermail)
-
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
