@@ -1,193 +1,126 @@
-Return-Path: <linux-kernel+bounces-551235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A76A569EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:06:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 680D4A569F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:06:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D8301739E9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:06:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4319A3B20E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A23D521ADBC;
-	Fri,  7 Mar 2025 14:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F30821B181;
+	Fri,  7 Mar 2025 14:06:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HH8Wy0yr"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="k4LLpH1x"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B771A23B8;
-	Fri,  7 Mar 2025 14:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741356368; cv=none; b=Jb3u4+jef/+q2yjEATnOBQSsGwNh7pHYjb6IWdAgxiCYxTBaxhE9XGjkI531lPn0LuUBjOT9WLWsVPTk28bH1rnrknikl9HNuUZhuV8Jq19lytL53Jo+mVuABpacCwT/AidSSwStZC086NE8aq4hoKon5qxLZK1iWDeaqkm6mxY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741356368; c=relaxed/simple;
-	bh=5VLagXW2ew9uhRLkbykIfrKcmkJn+Ce2ATNGQ9NaCuY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MYia7OIUGEBDTdr7N2a9D0MrfP7sLNvr8FboF+kSle39ur78j+8Kr87QnN+bfurd0Q0RCqn2I8sp+UEolTuwwmy9w+VNBLfvn6BpHbmfN0BQMLokX3LxrH7j55QcS1wkOG9d04pjk1lt0TiIeVMUUJDfhl36y1jkjJ5dt+jmW2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HH8Wy0yr; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3912baafc58so1241804f8f.1;
-        Fri, 07 Mar 2025 06:06:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741356363; x=1741961163; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7SZdxN44/1acImS0lakyTJRUhJC1pE/XRacRur4akcg=;
-        b=HH8Wy0yrAtNmntfAfzIkspn7MMZnOZqrc1x67kwuwNBe8GQHZuZ82nNKJuATzwT9vX
-         nAdI3lWMR+C/60bWt5CnyK/4Y/ovQLvAiQcAopKicIFvI1dhGHjsL3eP31ic2PYLcYd6
-         fY9npZJEbHMNm3WzpvQ+1FA/lOLU51CujhfIuH3KwhDECZac/74KUUr1MgsJEFvPdbCF
-         x5/ohXillMb//ofY6z6yT3lkQCHUzKP3SXw39ysq1unLwfs1DUoS0ySbIf6/kqBNFmMN
-         juF1+/A+x1r/OyEoTBqekVP3klv567tljJCFnsnYHlVqRcMRKqpBRCjL+ea0iOo90Q4t
-         7XeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741356363; x=1741961163;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7SZdxN44/1acImS0lakyTJRUhJC1pE/XRacRur4akcg=;
-        b=GJFsQS2iCvE5/wMfQQEaACT6ggfsMlSpz5allTVdB8Q2fFIs8N70ruhPg3rPlU6upg
-         4AmTWigeF0CXnUFGJB+Bc0mwNiBW8ucCXqjhuJ0p657Lpcvmf6oUdYGAN6WmpzynFj8C
-         qU6ZiJ5259BFi640YvV4iagwlT5FfQP4x/yCveqHmVcY3pzQMZOiKxEv2baz9KBzvbF3
-         oWD7ssk/CQbefPFCJexefujBzKGRB/w6DsqwE5nJLQtkhV28iCBm2cm1yzrlk17UN8hf
-         2Hm/nTLyxY9t2F3a8wTs00q5PMdvp/l0jdkoWoHt0+fC4p5Nvgx3pyyipueUZgohLYOz
-         KHmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOKAfA9kPu/atrXLHPGq/bqHj9d5xq8Fn186s08sD42v7m6FusU7wNIWzeypH256MIsjGt16sKKSaDaPI=@vger.kernel.org, AJvYcCVqKZtTkO56hVPprzHPUpnWK/94e7BmcKVT26UOnDB/hy7VoWz7yOq3tzwhhBzP/NL7+X/rBfXyzGF9GKw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyG/vukKrWpWgdh5b8yunmkdqklKrSVuGtaD8ioA00G0W62KEKV
-	/248/gB1K+7ngj9jqqGdBxj1Cr3EIlINqC4PDi+aWvkJ9GIqTGb6IkCwkwAaVvvxBCZmK6NTyl4
-	2dfvs2MGMDDcjzC1xcvLYdceNuRiKIQ==
-X-Gm-Gg: ASbGnctf3bApyuhwh8w8kD9qMqiS2EhBE0mlON3zzLdS0yVvL1VMfn+ONyAGI+Cq6HA
-	i9uCGjQNU9shVyZ7MFXO9S2Z4V0aC6iQLNOBDypb2Rh9tru/kkcgpCvzan6Hxe5BFqvXzYz/Wvv
-	usxrgrEVSYm+vMwoq2gIYOS0SpuS0=
-X-Google-Smtp-Source: AGHT+IFhub89BE49PmxRZ8B8/y6+v62Udl5bv83R4GZCBTLTM5tTKYVilTiiVDGq1yCCtdpNz79F+1Uik61AGfCdedU=
-X-Received: by 2002:a5d:588f:0:b0:390:f699:8c27 with SMTP id
- ffacd0b85a97d-39132d4d155mr1899751f8f.12.1741356363179; Fri, 07 Mar 2025
- 06:06:03 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C8518DF65;
+	Fri,  7 Mar 2025 14:06:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741356396; cv=pass; b=pBgaS9tSPdH5zs3qjs72FkBI1qUTINcjK6a3w+DZSI1ZxNdLRNQsn00zKep1JBNzUneyGf2h0nXgWPsHd1t+tJqeXp6Vcuer8uhHFmfeoHzsU/UQ1O22qyMT2jKzuEVGpZu3qwJqqWgBI3i7JHhNxhAz1kHtCcYl8MfrDz60CFM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741356396; c=relaxed/simple;
+	bh=ykdhXmylYh6z/rNdao/fGKzQPI3z2XmS1ESDJTS7TYQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QGQiIX2zO3ezoyJiUS/o1x6WiTTwwug645zoFo+5NrKnCaJMCPE5xBMQBjEeiNTa2/JO7/JWo9vVpDMjHMe+FFlcYeJeEgqW/AvP1PT5zI3IGIWGMoKp5rvv5qerUXiperkO40i6p4BboCeBcK1FwfjWezQQDXXRCUHC0AiR2OU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=k4LLpH1x; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741356358; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=RUSqeTjX0/f+vSCIJFG7Ivi/H9ExZZOTIGsH8b/7NgnDNY+UPVZ7ECjWzwOuDI3RzpTfQqmbZSAsfna/nJrzgxqNHi9CItEF9nS40fA67K5OyjyabwmfpK9um35EBQjHtXoOmHIdnjUaDBCCDMC8yAzHg++9XIkIh6wtiClIxik=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741356358; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=FP+ifasHniIC8neSq6VwSq5ZsIenCwU36aCvQ3EbV9k=; 
+	b=M4EErEyApvaCAnFL5c92n1M0wMYZ4/LNdYQL/JjFfVIWr1+oWZ7LWHG91M7LH/wdakw0O6B/Z6DdW1CFhUYSU8YrcdcDdi/S/B33oM+ZFqVbEURJgvl8Ve4JwYi+DVhf5OMbdwCpJiS1Sj2d8rpDnz9ZN6y3eCQFi/Cx2aen930=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
+	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741356358;
+	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
+	bh=FP+ifasHniIC8neSq6VwSq5ZsIenCwU36aCvQ3EbV9k=;
+	b=k4LLpH1xLhH5D3H7h2upAramGsfkMWDuPKZ9FZ0XGVS9QKMQsdQP0bKN4azcuUGk
+	pMfBCbFEZtyQaxyMl/XEFyBtH0id4McTIUQZz/KeSYcNbJQotbnjO7wP5JrTi+oGXgB
+	95fO8bj46v0ezvai2ZHpniitwdl6VAtoA17B70u4=
+Received: by mx.zohomail.com with SMTPS id 1741356356876241.9419093370691;
+	Fri, 7 Mar 2025 06:05:56 -0800 (PST)
+From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+To: Daniel Golle <daniel@makrotopia.org>,
+ Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, linux-crypto@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject:
+ Re: [PATCH v2] dt-bindings: rng: rockchip,rk3588-rng: Drop unnecessary status
+ from example
+Date: Fri, 07 Mar 2025 15:05:50 +0100
+Message-ID: <5417098.31r3eYUQgx@workhorse>
+In-Reply-To: <20250307093309.44950-1-krzysztof.kozlowski@linaro.org>
+References: <20250307093309.44950-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307081047.13724-1-clamor95@gmail.com> <20250307081047.13724-4-clamor95@gmail.com>
-In-Reply-To: <20250307081047.13724-4-clamor95@gmail.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Fri, 7 Mar 2025 16:05:50 +0200
-X-Gm-Features: AQ5f1JopsiBx3C_3vrquzAAnidmlrCqZUF4O16fOjewKfMKN97K_wjqcS_eBo04
-Message-ID: <CAPVz0n3EwU=N4Fr+HEKTEM-nwmYb+Lm7NHPjg7OXUH4dhnGm0A@mail.gmail.com>
-Subject: Re: [PATCH v2 3/3] ARM: tegra124: complete HOST1X devices binding
-To: Thierry Reding <treding@nvidia.com>
-Cc: devicetree@vger.kernel.org, Svyatoslav Ryhel <clamor95@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="utf-8"
 
-=D0=BF=D1=82, 7 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 10:11 Svyat=
-oslav Ryhel <clamor95@gmail.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> Add nodes for devices on the HOST1X bus: VI, ISP, ISPB, MSENC and TSEC.
->
-> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+On Friday, 7 March 2025 10:33:09 Central European Standard Time Krzysztof 
+Kozlowski wrote:
+> Device nodes are enabled by default, so no need for 'status = "okay"' in
+> the DTS example.
+> 
+> Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
 > ---
->  arch/arm/boot/dts/nvidia/tegra124.dtsi | 65 ++++++++++++++++++++++++++
->  1 file changed, 65 insertions(+)
->
-> diff --git a/arch/arm/boot/dts/nvidia/tegra124.dtsi b/arch/arm/boot/dts/n=
-vidia/tegra124.dtsi
-> index ec4f0e346b2b..8181e5d88654 100644
-> --- a/arch/arm/boot/dts/nvidia/tegra124.dtsi
-> +++ b/arch/arm/boot/dts/nvidia/tegra124.dtsi
-> @@ -103,6 +103,45 @@ host1x@50000000 {
->
->                 ranges =3D <0 0x54000000 0 0x54000000 0 0x01000000>;
->
-> +               vi@54080000 {
-> +                       compatible =3D "nvidia,tegra124-vi";
-> +                       reg =3D <0x0 0x54080000 0x0 0x00040000>;
-> +                       interrupts =3D <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks =3D <&tegra_car TEGRA124_CLK_VI>;
-> +                       resets =3D <&tegra_car 20>;
-> +                       reset-names =3D "vi";
-> +
-> +                       iommus =3D <&mc TEGRA_SWGROUP_VI>;
-> +
-> +                       status =3D "disabled";
-> +               };
-> +
-> +               isp@54600000 {
-> +                       compatible =3D "nvidia,tegra124-isp";
-> +                       reg =3D <0x0 0x54600000 0x0 0x00040000>;
-> +                       interrupts =3D <GIC_SPI 71 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks =3D <&tegra_car TEGRA124_CLK_ISP>;
-> +                       resets =3D <&tegra_car TEGRA124_CLK_ISP>;
-> +                       reset-names =3D "isp";
-> +
-> +                       iommus =3D <&mc TEGRA_SWGROUP_ISP2>;
-> +
-> +                       status =3D "disabled";
-> +               };
-> +
-> +               isp@54680000 {
-> +                       compatible =3D "nvidia,tegra124-isp";
-> +                       reg =3D <0x0 0x54680000 0x0 0x00040000>;
-> +                       interrupts =3D <GIC_SPI 70 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks =3D <&tegra_car TEGRA124_CLK_ISPB>;
-> +                       resets =3D <&tegra_car TEGRA124_CLK_ISPB>;
-> +                       reset-names =3D "ispb";
+> 
+> Changes in v2:
+> 1. Drop unnecessary full stop in subject prefix after ':'.
+> 2. Add Rb tag.
+> ---
+>  Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
+> b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml index
+> 757967212f55..ca71b400bcae 100644
+> --- a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
+> +++ b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
+> @@ -53,7 +53,6 @@ examples:
+>          interrupts = <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH 0>;
+>          clocks = <&scmi_clk SCMI_HCLK_SECURE_NS>;
+>          resets = <&scmi_reset SCMI_SRST_H_TRNG_NS>;
+> -        status = "okay";
+>        };
+>      };
 
-Thierry, here ispb is typo and should be just isp, obviously. I can
-re-upload patchset or you may adjust it when applying. Let me know
-what you would prefer.
+Hi,
 
-> +
-> +                       iommus =3D <&mc TEGRA_SWGROUP_ISP2B>;
-> +
-> +                       status =3D "disabled";
-> +               };
-> +
->                 dc@54200000 {
->                         compatible =3D "nvidia,tegra124-dc";
->                         reg =3D <0x0 0x54200000 0x0 0x00040000>;
-> @@ -209,6 +248,32 @@ dsib: dsi@54400000 {
->                         #size-cells =3D <0>;
->                 };
->
-> +               msenc@544c0000 {
-> +                       compatible =3D "nvidia,tegra124-msenc";
-> +                       reg =3D <0x0 0x544c0000 0x0 0x00040000>;
-> +                       interrupts =3D <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks =3D <&tegra_car TEGRA124_CLK_MSENC>;
-> +                       resets =3D <&tegra_car TEGRA124_CLK_MSENC>;
-> +                       reset-names =3D "msenc";
-> +
-> +                       iommus =3D <&mc TEGRA_SWGROUP_MSENC>;
-> +
-> +                       status =3D "disabled";
-> +               };
-> +
-> +               tsec@54500000 {
-> +                       compatible =3D "nvidia,tegra124-tsec";
-> +                       reg =3D <0x0 0x54500000 0x0 0x00040000>;
-> +                       interrupts =3D <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks =3D <&tegra_car TEGRA124_CLK_TSEC>;
-> +                       resets =3D <&tegra_car TEGRA124_CLK_TSEC>;
-> +                       reset-names =3D "tsec";
-> +
-> +                       iommus =3D <&mc TEGRA_SWGROUP_TSEC>;
-> +
-> +                       status =3D "disabled";
-> +               };
-> +
->                 sor@54540000 {
->                         compatible =3D "nvidia,tegra124-sor";
->                         reg =3D <0x0 0x54540000 0x0 0x00040000>;
-> --
-> 2.43.0
->
+is there the possibility we could make dtschema as invoked by `make 
+dt_binding_check W=1` (or W=2) add a warning for examples that have disabled 
+or explicitly listed status properties when not needed? Or is this something 
+better handled in, say, checkpatch.pl?
+
+The question arises because dumb mistakes by me like this should ideally be 
+caught before they waste precious maintainer time.
+
+If it's best handled in dtschema, I can look into working on that so you guys 
+don't have to do even more work due to me.
+
+Cheers,
+Nicolas Frattaroli
+
+
 
