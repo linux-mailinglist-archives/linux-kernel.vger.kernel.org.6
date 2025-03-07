@@ -1,173 +1,111 @@
-Return-Path: <linux-kernel+bounces-551316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB724A56AFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:57:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DC49A56AFD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:58:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5C6D3A88D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:57:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A30B81897880
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCA821ABB5;
-	Fri,  7 Mar 2025 14:57:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B91221B91D;
+	Fri,  7 Mar 2025 14:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJNJx59J"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPqY0/JW"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D5B16EB4C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D3F16EB4C;
+	Fri,  7 Mar 2025 14:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741359430; cv=none; b=a+nAre4dy5XEWrQ5PLl7+8C8yAlwZx9mDw8mVNkK1mBIM+ts7ad/6gChfQ6qFZvQz4dogu5kDvHgl/PGClIffOLR94sOK1xlCcf2r1+pOCSnSRTvXQmHwrVkNrfmU98ZZaRniKmlyTURFLGyEfbJ3uI2y6OagxGlIpd9eajbMKM=
+	t=1741359515; cv=none; b=K+e/48ZU+0nTyh1fJkSoXeDv4Wb+Jo8JmDmeOr2rnd/145J56HoQFw6gqSC5CFfanHwxaG/09DPFJmPPk2Mm3T1+JrA270nMrWjStDogGz7w0JbfhmnXKWLFpWYk/J7T9V4uAnoudyBzvKQZY8+LcbqS7cCU0fPWGtscMRpANjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741359430; c=relaxed/simple;
-	bh=CWOvPrUsWNSjxJGBCOQBGM3Ykx2mN7P2Ou6ShM8wu48=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WZpCGbCtpqwIXaKsyDFMeyAY83rIKEOm4enPk9KsIk9x7NIHb/zWAP5mBWI4v6paCsVZaUqQ9kOA1mEW31Fb/u8li4QK1TY92AK+TJ5uxy2dnPLrrqHC+diD1tqJpoQT+lt5ZVFPOqSexmIqMNgV0PG9wGLf76mZ0MxuYK3QO+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJNJx59J; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1741359515; c=relaxed/simple;
+	bh=oZzk1/5Rt1IYOn6jkgTu1i2ssgOPUr5M3qitmmRVOy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EwnRddNVV5zarDzVkcmkUaf884Q+n0nACZk0t9RoWPFbB3d0c1lnuj3P1c6+njzUonE2AyZJJYvM/lCq8K6tw0BU2XR5CPoY6KwBwhzQDrFSjU0gWULzX6A4BAL36o1CBpfjcEUY6BdqOTlxr+c08PybdZks6y3biCvAmIxLuJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPqY0/JW; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2feb96064e4so4033085a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 06:57:08 -0800 (PST)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2239f8646f6so36954015ad.2;
+        Fri, 07 Mar 2025 06:58:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741359428; x=1741964228; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=T3/1TblqPLns6jPBBvXv/kgUjFkYTE2ZlCuQ4AlF1Mc=;
-        b=aJNJx59JMhsU/b1ZPrJKOwu4ZCsWizhJzesXZheBfauwT15Tyh8sMy8dz2bLUg5SPP
-         jps69ysVwyBLfrE2gxDRI+hffIUvDUmFgk/L+eNwrfuG40O+9FPSgaiFbIZH7Y5hZfW3
-         1eRZIN8z0JwrIOVYBfMxkAwRR4tb4tQ8ljdlk5fbViW5fS/i96a+KVBW3dss7NMmTJuW
-         Yn5cDwqYPNYyVrsAb1+gC/y+O1/m6yFwo+/lK7TmNco8suId6RRKm1jI3KtTGCPOa+8m
-         KT3+HILcxTyJqzDe0wfBNECOU8ZUnY7CYt1LA6eDYGmxaNYRNU5KSs+p7q3Yn9UtaH4H
-         RCDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741359428; x=1741964228;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1741359512; x=1741964312; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=T3/1TblqPLns6jPBBvXv/kgUjFkYTE2ZlCuQ4AlF1Mc=;
-        b=SsGFegsGr3NCb1C2nysPXbGbIPZ5n3SzB8qlwruFUzcTnaX8QBxDWlSu7w7dML51bh
-         Zz2awbSH+F46a0FsdKl8O8lkFjZg8Prb65qJy6jXrz1Xf/wv4SozJzSVgbH40bIETKby
-         gHQ4lmPv+4Gye7fr8CzURSXKCvRVoT2LPoI9X7+kHUsPKA9fqyt+FAv+6UHtUsrQu1fB
-         N05qElf9EGgJWCCMBYpfUEDDEEE0VG+AkUNwp9HvaZwEebsK92mN14d+rMMC9iZBck0o
-         TNBGMJ3sii9H68lRMz99eb2GZuV0G7v7vt2MO7T/SW69n8HNiKcKa4m13ZruF675OCar
-         O8Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNvpmebk/NoD/pS7zb2WskTG6fmbK7xU4kI3EezIlOeeMOvHdolqoV8jp5AS+fW/f6BcvcQW6pcqFMxgg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPJCUoduFCwdct6FcBvv8xehz6AmagoC/qLBfhwxNt2x52eOWj
-	zNs9xN1tF7n7cOYca1KlI1cv18X831DbcKMX3es9Ya7zl5pSjCt3
-X-Gm-Gg: ASbGncsVuOH/rwZCMMhf6npqnWWaSGz+CA+C7NB6PwTVG9WQnpo3jCQimtvYOI4HXpX
-	E518/+nXwACpeC2BSsdqVRTuLknZ2RSqsYGoFOIzGviNDdfAbN9BQSCs+aURKvbGLY8LudBHsbu
-	9kz3ebO7KtzXM0YycunMaQpfQyjFWoRwyqDJZVag9x4iS/BZuXHOHQjaWITseJDtq6UNR0QmO0i
-	bvR2ltTBJhBoVx4nwoEUNzQjGjWnHNcOXDJ6yilGNASRMBRlDEILc8sExxCnh0gxLhEfDTeev7w
-	SOhaZKhxIkQL9pdfvHX+gtTmyZzQ54oCUZcIJhdTAb/whnnRijUSVvEQT+Q+v4rV5fPvaRp12Q=
-	=
-X-Google-Smtp-Source: AGHT+IGBMkybK8LNpELvScIet/VbiDV1S6TPQmThy3Vq2qoHJxC3y1ofM+O+wkhBnBKHMhYfwdPVwQ==
-X-Received: by 2002:a17:90b:35cd:b0:2ff:6608:78cd with SMTP id 98e67ed59e1d1-2ff7ce632a3mr6394441a91.9.1741359427882;
-        Fri, 07 Mar 2025 06:57:07 -0800 (PST)
-Received: from DESKTOP-B5TBVBT.localdomain ([175.117.51.71])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff6935339dsm3118754a91.15.2025.03.07.06.57.05
+        bh=BeGVrO9UYpogd2hMfjsiDz/RbqZAS98AB3fSsRgyDlE=;
+        b=CPqY0/JW+Km7g3SXC8rhEBJGnNs+1R3zPo4oy1kTR9OhD/4Gr7ZM5tHB9yYuL0110Q
+         ul3l5sNx/yHVTA9FM3Ggz5yFrhzv9wHtB45aAkUrjEZXHeXnDPhNKNZLeXjbXIr9odDP
+         HlW0Llhb+DsW6G1G2i2ptLMZOApH8l6+w9WPq8Ev4ai+6BV5lWqZiM0oBb+GhmbnrRcO
+         ETKjLOfvAW5eItAgODSYwhbG/HLseHwZYTxIhILdLMuJ8dNbnuWaJ1r5vrz14yY+fjY6
+         /pj49DLOkalL8Z9SA8DVxSSwosLdtNdplA08JZLiMhzCcBWKoAlc/WgzCsx4/6+CITMc
+         uG5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741359512; x=1741964312;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BeGVrO9UYpogd2hMfjsiDz/RbqZAS98AB3fSsRgyDlE=;
+        b=Aysm80/4TQdHEPGQNxW7wXCPewuLAMWsd+IHbYXe7OXRiHBu3KW+WvgQBjghyfbyho
+         qZCNsWVY/BobD/21TjwXLwe9Bi9vwqHo0nPFufkNE1gj5ILRxe9pHEXAc9ffqaMaDVmC
+         ojWuNYRk5z3VdNU066oIDvXo9HPEBx9wkKKylo9a7ClWw6vZOp3PZGw0hSQ5QSvr0orB
+         QjBifs+HuQnj5IfZHKkdZg6YvL2cfyS5SdZ1iaNOS8nhNprs0mMSWDk8HxP3niMjLOSp
+         HU/hqLTDJJA1tia3iw8q7U2qh1X+xAKPf6pYJ+lwm6pKLYAg2YLbCzFqyZG8qZjHlB4X
+         RHvA==
+X-Forwarded-Encrypted: i=1; AJvYcCVTzorGKMZYE2ItxhNWIoTLfjWuB0U1+sXehTY57qqI6rD4MOeDds50qxwm23I7WHSxscMuoSeJ8VkpWA==@vger.kernel.org, AJvYcCXlmgOO5Biu0hQT1V3uWqW1t/V4vlEjRN/wvNWBoJLwQjELVt/gAky6zCk6mPuW3rRMXVfaGlGsJd6n9OQQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVF4CltwPJSjrETa0KQX69sZJ7aU4YnhP4BJv/o9tirGhXsukW
+	4ip8oo/gKFt39oW/vYzxoPtrRNnbfnZix0FojJfUmg13TtS6CPAjEVTi3w==
+X-Gm-Gg: ASbGncvFrzuVm64Z0yh3iRUd/Pidwf+oBH2lXjXgoojkITCIBS8cBiKDGnlPr+YSW0y
+	DKcwwvceSxTbum3SjiAWiyPnSvW6AYhN16yFVF+Tx4Co3Sl0NL6zJuQcMkBk6uLYjp9p/367+8b
+	8jzk0/j5IHKQivlBYVJaqjsrGgr3KTsgNtFfadz1Ou3YKCOOYVj9uGVrUm7y4d5z5H/9CrFNe8M
+	5ph2n8Hbwtkm6zZTEQaW7QhN+WQ1MqDlT1kfDfHMVe6ccngMeGY5pMVPPAbWIvdCr5Bm9PnNd31
+	htn0KYi0jO8rYyth8q3veKjNPJ9CrhNkgE3kdNdfAbPcbRawQSM5SHaVUg==
+X-Google-Smtp-Source: AGHT+IEkVEXPKWVGYwsEilWmrMR6r4ItlGhcbgF9+MHpE/uL2jCYzQD8yzq9kkCTEiv1CZ65LJozcw==
+X-Received: by 2002:a05:6a00:c8f:b0:736:32d2:aa93 with SMTP id d2e1a72fcca58-736aaae8207mr5170578b3a.20.1741359512336;
+        Fri, 07 Mar 2025 06:58:32 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736b1eb2138sm1190852b3a.126.2025.03.07.06.58.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 06:57:07 -0800 (PST)
-From: Yohan Joung <jyh429@gmail.com>
-X-Google-Original-From: Yohan Joung <yohan.joung@sk.com>
-To: jaegeuk@kernel.org,
-	chao@kernel.org,
-	daeho43@gmail.com
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Yohan Joung <yohan.joung@sk.com>
-Subject: [PATCH] f2fs: optimize f2fs DIO overwrites
-Date: Fri,  7 Mar 2025 23:56:50 +0900
-Message-Id: <20250307145650.568-1-yohan.joung@sk.com>
-X-Mailer: git-send-email 2.25.1
+        Fri, 07 Mar 2025 06:58:31 -0800 (PST)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Fri, 7 Mar 2025 06:58:30 -0800
+From: Guenter Roeck <linux@roeck-us.net>
+To: maudspierings@gocontroll.com
+Cc: Jean Delvare <jdelvare@suse.com>, linux-hwmon@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] hwmon: (ntc_thermistor) return error instead of
+ clipping on OOB
+Message-ID: <da9ba2fe-f182-43b7-a28d-b34021a2d3be@roeck-us.net>
+References: <20250307-ntc_oob-v2-1-bba2d32b1a8e@gocontroll.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307-ntc_oob-v2-1-bba2d32b1a8e@gocontroll.com>
 
-this is unnecessary when we know we are overwriting already allocated
-blocks and the overhead of starting a transaction can be significant
-especially for multithreaded workloads doing small writes.
+On Fri, Mar 07, 2025 at 09:10:43AM +0100, Maud Spierings via B4 Relay wrote:
+> From: Maud Spierings <maudspierings@gocontroll.com>
+> 
+> When the ntc is reading Out Of Bounds instead of clipping to the nearest
+> limit (min/max) return -ENODATA. This prevents malfunctioning sensors
+> from sending a device into a shutdown loop due to a critical trip.
+> 
+> This implementation will only work for ntc type thermistors if a ptc
+> type is to be implemented the min/max ohm calculation must be adjusted
+> to take that into account.
+> 
+> Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
 
-Signed-off-by: Yohan Joung <yohan.joung@sk.com>
----
- fs/f2fs/data.c | 20 ++++++++++++++++++++
- fs/f2fs/f2fs.h |  1 +
- fs/f2fs/file.c |  5 ++++-
- 3 files changed, 25 insertions(+), 1 deletion(-)
+Applied.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 09437dbd1b42..728630037b74 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -4267,6 +4267,26 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
- 	return 0;
- }
- 
-+static int f2fs_iomap_overwrite_begin(struct inode *inode, loff_t offset,
-+		loff_t length, unsigned flags, struct iomap *iomap,
-+		struct iomap *srcmap)
-+{
-+	int ret;
-+
-+	/*
-+	 * Even for writes we don't need to allocate blocks, so just pretend
-+	 * we are reading to save overhead of starting a transaction.
-+	 */
-+	flags &= ~IOMAP_WRITE;
-+	ret = f2fs_iomap_begin(inode, offset, length, flags, iomap, srcmap);
-+	WARN_ON_ONCE(!ret && iomap->type != IOMAP_MAPPED);
-+	return ret;
-+}
-+
- const struct iomap_ops f2fs_iomap_ops = {
- 	.iomap_begin	= f2fs_iomap_begin,
- };
-+
-+const struct iomap_ops f2fs_iomap_overwrite_ops = {
-+	.iomap_begin	= f2fs_iomap_overwrite_begin,
-+};
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index c6cc2694f9ac..0511ab5ed42a 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -3936,6 +3936,7 @@ void f2fs_destroy_post_read_processing(void);
- int f2fs_init_post_read_wq(struct f2fs_sb_info *sbi);
- void f2fs_destroy_post_read_wq(struct f2fs_sb_info *sbi);
- extern const struct iomap_ops f2fs_iomap_ops;
-+extern const struct iomap_ops f2fs_iomap_overwrite_ops;
- 
- static inline struct page *f2fs_find_data_page(struct inode *inode,
- 		pgoff_t index, pgoff_t *next_pgofs)
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 82b21baf5628..bb2fe6dac9b6 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -4985,6 +4985,7 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
- 	const ssize_t count = iov_iter_count(from);
- 	unsigned int dio_flags;
- 	struct iomap_dio *dio;
-+	const struct iomap_ops *iomap_ops = &f2fs_iomap_ops;
- 	ssize_t ret;
- 
- 	trace_f2fs_direct_IO_enter(inode, iocb, count, WRITE);
-@@ -5025,7 +5026,9 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
- 	dio_flags = 0;
- 	if (pos + count > inode->i_size)
- 		dio_flags |= IOMAP_DIO_FORCE_WAIT;
--	dio = __iomap_dio_rw(iocb, from, &f2fs_iomap_ops,
-+	else if (f2fs_overwrite_io(inode, pos, count))
-+		iomap_ops = &f2fs_iomap_overwrite_ops;
-+	dio = __iomap_dio_rw(iocb, from, iomap_ops,
- 			     &f2fs_iomap_dio_write_ops, dio_flags, NULL, 0);
- 	if (IS_ERR_OR_NULL(dio)) {
- 		ret = PTR_ERR_OR_ZERO(dio);
--- 
-2.25.1
-
+Thanks,
+Guenter
 
