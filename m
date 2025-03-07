@@ -1,186 +1,130 @@
-Return-Path: <linux-kernel+bounces-551298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E505CA56AC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:47:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 372D0A56AD0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:49:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A88F189A5C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:47:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A45451896043
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:49:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05B117E45B;
-	Fri,  7 Mar 2025 14:47:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9B0D219E93;
+	Fri,  7 Mar 2025 14:49:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="p89e8Vs2";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lRACKNHA";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XGzuTsY6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lklopRZF"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Rk2JI14N"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5499F8BE5
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA67619D8A8;
+	Fri,  7 Mar 2025 14:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741358853; cv=none; b=IsaPBzohhjeiSsD3ZKSz8S7DZtiQwqQWJqDGFPsqNg4GSjLw5Soz5/ourYz7zwhy4rfHLAeQSbegKGEZkx0ZXyJkHW/IhQBo6RTDPxGCnJ/s13KHr1WnAyYKeIZRMYaDnRKTMVwfJ3VhCBtKjSjhpMhIDZwRPk1HKhg+MLBM0iI=
+	t=1741358961; cv=none; b=Xtw6JMtTcedQS+zbDJARgcS14I/XaLQg43J2dI0S3tAPhu2W8I8nbYAtl/ZkSMOzbnHJpbGHS6cLqbHghC/8+H1gJbGXZaPaXHfBu3WvdGxkt6WNkdlj4N68Fq/BYW4TRMfH67czUoSiRma5c6yFAsQAThVZ7rtr8tK9b92iaV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741358853; c=relaxed/simple;
-	bh=Gcw117duv8recEN1dqJRNyL3cWrsr+wn49dHddV6FrQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KwDkWL8TzH3gu2vep+VwGdFEXB1XLQYPgUBe9xqJyMKiMoBVlPaJFzHSeihJhbi8Bisy477ex99R94JVHZFYONIsy/Ho/qpU+sRWHRRHKmZXKa29r/LfhRS3zg/ocZ10yxU4uBiv3ld3cHjzXqgfzkfl9+CEov2z/bsOI00gW94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=p89e8Vs2; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lRACKNHA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XGzuTsY6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lklopRZF; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 9AC941F395;
-	Fri,  7 Mar 2025 14:47:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741358849; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V3e0QAGzyMycCbFd6B+5fqZyw6K7Uq5wm7ushJR/f5Y=;
-	b=p89e8Vs2POw8H9ao/jx5slB/pophAmIlhL0naiE+25jguenqZ1HJ7gk3Jm5u35pDoK5w8C
-	gl7VRA1BkBiJrHWBP+GxEq2Dx2ItTY7PbQo86wNzhGwsutkyjixbNImHFODVV8fii+ax9n
-	EyAuQMVPzO4VT3zQxNoCT1a3/dtekgs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741358849;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V3e0QAGzyMycCbFd6B+5fqZyw6K7Uq5wm7ushJR/f5Y=;
-	b=lRACKNHAPTpgQRNsvSrf2xEFztkZlnxGBAVAjWT8IvgJRoFRsNEsPaYGl6HktpkdaA6K0V
-	pW7PykZgAieHEKAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741358848; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V3e0QAGzyMycCbFd6B+5fqZyw6K7Uq5wm7ushJR/f5Y=;
-	b=XGzuTsY6IWmI3NXFw1cZKSnsmuzD+QWzn7L+njmbTru81fvRqSF4eWoJxwTPBvYFz8rJhC
-	ISZbq18iXWSsGhweQz6jqL0QoKclmtmlYNDklaqaoFML/nOLDFaHqBcBecffgLZRScfJun
-	ceOrsojuttOxFr+p5OZUqaVL3iAp1Pg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741358848;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=V3e0QAGzyMycCbFd6B+5fqZyw6K7Uq5wm7ushJR/f5Y=;
-	b=lklopRZFtsxRfgj0e23BtpElXr6wU5nRUP8gVcFqh1+eBoWJWgDm0UjTANTtXRDFOKWJa/
-	Dl39lJX4UoewqPBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8FEAC13939;
-	Fri,  7 Mar 2025 14:47:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /VoGIwAHy2cxMgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 07 Mar 2025 14:47:28 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 570B0A089C; Fri,  7 Mar 2025 15:47:28 +0100 (CET)
-Date: Fri, 7 Mar 2025 15:47:28 +0100
-From: Jan Kara <jack@suse.cz>
-To: sunliming@linux.dev
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, 
-	kees@kernel.org, ebiederm@xmission.com, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, sunliming@kylinos.cn, 
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] fs: binfmt_elf_efpic: fix variable set but not used
- warning
-Message-ID: <a555rynwidxdyj7s3oswpmcnkqu57jv3wsk5qwfg5zz6m55na3@n53ssiekfch4>
-References: <20250307061128.2999222-1-sunliming@linux.dev>
+	s=arc-20240116; t=1741358961; c=relaxed/simple;
+	bh=VPk17q5nmJY2rxOxj3mpB0m0yXmxxxWDjZY9RakVCaU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=UR6Xo1lQLTxHV5m5WpQJCd9EFRcZwhtK2m7QENRmjfjtitlHrZew82/ZQUtiPPhp3kL1eroFYZpxmxtnnqKEo3Yuu2Y7YrmzKu6ZGFvEYRHxRDn5DjrBl993WTYP6ZaYc86AML4hDh6X2f3TN44Pg68jShEAL/xpJsWK2iVGb1Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Rk2JI14N; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741358922; x=1741963722; i=markus.elfring@web.de;
+	bh=53gg/aCTFTibjY5aJ4alNpQJDsk/0FoKqcakSxNP730=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Rk2JI14N4ARXCHpuTNyNOcInGRlDkRyGaOnvc0XIXeYUutcybCjAHABLG1wnNfQL
+	 E0OC5UbS4qsIGNhktZhmXoeEx+Rj72xBVVV5biYD7UGcnPWwGnbEy+cIEpPiwEY8Q
+	 Xodz7LO2kOD6E581tYK5/diCEoHmiUPXXACz+eniUXpob/rHZRB6LSDtrR4em4otj
+	 DHvyto3q+jXv/haoOKN4VlAgedztXJx3HGpJK3IXxDnYbd0yiQHutog9A9GfqHObn
+	 X9w/r421MIcII9vZKaJkV5o9w9NykVGYUR174njtFLopu5pgjOxmwCNUMkaRt8n1d
+	 mcWxNyu2oF7hNonkgA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.70]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MzTLI-1t4OGg00aO-00rs3h; Fri, 07
+ Mar 2025 15:48:42 +0100
+Message-ID: <c29a5d6e-335b-463e-a318-e8d78d176a9f@web.de>
+Date: Fri, 7 Mar 2025 15:48:37 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307061128.2999222-1-sunliming@linux.dev>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,intel.com:email,suse.cz:email]
+User-Agent: Mozilla Thunderbird
+To: vulab@iscas.ac.cn, dri-devel@lists.freedesktop.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Alim Akhtar
+ <alim.akhtar@samsung.com>, David Airlie <airlied@gmail.com>,
+ Inki Dae <inki.dae@samsung.com>, Jani Nikula <jani.nikula@linux.intel.com>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Kyungmin Park <kyungmin.park@samsung.com>,
+ Seung-Woo Kim <sw0312.kim@samsung.com>, Simona Vetter <simona@ffwll.ch>
+References: <20250306042720.2296-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH] drm/exynos/vidi: Remove redundant error handling in
+ vidi_get_modes()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250306042720.2296-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:EcZzEqOUckJHTaTmMgt0SzYVfd5Np76gwmwaGPdRegKbmAQG2ie
+ RCevNQmV/4Ln5FLn/62gjIXAXTwQiqbh+/CATnHMYczi6MEkvoN2BjaOvrQfw+HYKHhR5Bx
+ mzIvsJgE1sKOnRViNKz2N+UpbCZJft0aRieW7CKidbc7mLkcQbyX+KULpqBHO9Kegi+W8x5
+ R1QalZUFSCke95V9fRkHg==
 X-Spam-Flag: NO
-X-Spam-Level: 
+UI-OutboundReport: notjunk:1;M01:P0:BhmL7JB8mZw=;0Gs9w1jIrIJFlQZ4oQBwgNG9PdQ
+ nXplFJ+a+QA1RHvsThhDSdcjEM6cRz//u9FqvZxcsmEBbR773A8sqENDuyC31AAE+qnnv+dM1
+ iHBdO9C+ZSifqcBqSc2q5HZoTkkvWvGup0113DCSPJfZPERdC3223HQkp+iG0GOLMILqGPKcw
+ niOa21dCv/jZS3BW/bAfHnpXtsKxgfUKScVf/seSgmtGPRoEk25fzMUrGjAEFStd9rXnHK6rc
+ HCNpN+VULvHVxPbYV2GqqAJENiWcPEOiaSb+LdZzppnTd6/8HW9Gg7PIZFLFWcPAvz2hp2JhI
+ xnV9t/wmBN8zqmCUkvu1WqOaM56US9q6VhRJubmvtugstNNrH/qUP8JVRQvmASuFzjsdQ8djo
+ gdvQjyB11O/cVHQKIKOt8kPvEB0bRdvGRdZP1C2DIln6PxsQOVsPhd9gkLu5lL/Grds458w7b
+ KYSUYAwfbNAgXSGKh7/NE9DTLh/50oMB/JIReQM9UDyyQ62IxnSuF4zkxqYLH8JzjByh9blAR
+ l/sWdgXXKczn48QXbrGJiN2orUU8kwFaEWXW5ojieXNgY8QaYRSf18bigyo+4a75sF8S6ntua
+ fPAk+gFh2I0XTgqkKcARKzBvsby9t7IYc9UuVW2rrmOOVPaUHaIiN3fq3LgEj65+iWO3pGGEN
+ ZgaAgZoHthKpXVnNG0hHAde92foYQV1SQhViNw0sjD3OyyYqTSNau5sjNuOJptKEroDWWzHVw
+ CAVxO0IsEnMN2aRwDSNQ8QO/fd2qp2RkE4/YC//NzSNh+N8eX+NBNBK2vb2qfoC34OzZCoE4O
+ /o4Xy3iPiQ51JAb8lVeadSMR7aPbro9HOWvHzbPy/tHkVEd826PFhyTTO1GLNLXchFNkURLMi
+ RE1lxllCOUI+2xgyJxQn0grSkFgWCfZ7lJ6H2sf/dOGUjb1gzmUmPdhnn02h5z5RDIC3yLW+a
+ L07FuFRq0El4llj695N14l2b8OpLs1fKpO1qh2sThOXovc5dyl3pxcXcjQYTZwu/9sLtS1P2D
+ yl2v+e8F3S7npQJXYV5aDzAwEJ5wnCtVdcjDMXJl4uItgWrmvumM3DwxU8jq8PO4Eln4DdjTU
+ WLsSDnYoCewDHiu6WutEun9F6faMuYA+boXsa8ZMMJNAQMcdSe/Xy7eWyOLIZrRIYRDaZ+FSo
+ VGPuvzCbdvH74SnrGbHKU/8gdPfrhy4wc7aYCllaOKC5BfEguPh9v085UDotW1Knlx5qMUa6Q
+ ZL7cESsZmIWCdP9uPrTX9DCROhJ7SPXS31VSNGoOlD3NOkJ+4tyBj/uykw8/0rJrGISorqFzj
+ wHir6t6hzukRwaNVGNeAUqn+shSuKB+km2H1t+Lp+gsNm2aN6bkSwWv9I5sY1Ru2R/vW39YSu
+ ZQDHxb2D8DrJvQfi+iXsotjngUP4ea81CQRft+Aw2iBfHBaQE4LGZ8KxmSAMFBFIHeoeb8eBr
+ KFtS6Kg==
 
-On Fri 07-03-25 14:11:28, sunliming@linux.dev wrote:
-> From: sunliming <sunliming@kylinos.cn>
-> 
-> Fix below kernel warning:
-> fs/binfmt_elf_fdpic.c:1024:52: warning: variable 'excess1' set but not
-> used [-Wunused-but-set-variable]
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: sunliming <sunliming@kylinos.cn>
+=E2=80=A6
+> drm_edid_alloc() fails, the function will immediately return 0,
+=E2=80=A6
 
-The extra ifdef is not pretty but I guess it's better. Feel free to add:
+                   failed?
 
-Reviewed-by: Jan Kara <jack@suse.cz>
 
-								Honza
+=E2=80=A6
+> the event of failure in these two functions, it is still necessary
+> to call the subsequent drm_edid_connector_update() function with
+=E2=80=A6
 
-> ---
->  fs/binfmt_elf_fdpic.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/binfmt_elf_fdpic.c b/fs/binfmt_elf_fdpic.c
-> index e3cf2801cd64..bed13ee8bfec 100644
-> --- a/fs/binfmt_elf_fdpic.c
-> +++ b/fs/binfmt_elf_fdpic.c
-> @@ -1024,8 +1024,11 @@ static int elf_fdpic_map_file_by_direct_mmap(struct elf_fdpic_params *params,
->  	/* deal with each load segment separately */
->  	phdr = params->phdrs;
->  	for (loop = 0; loop < params->hdr.e_phnum; loop++, phdr++) {
-> -		unsigned long maddr, disp, excess, excess1;
-> +		unsigned long maddr, disp, excess;
->  		int prot = 0, flags;
-> +#ifdef CONFIG_MMU
-> +		unsigned long excess1;
-> +#endif
->  
->  		if (phdr->p_type != PT_LOAD)
->  			continue;
-> @@ -1120,9 +1123,9 @@ static int elf_fdpic_map_file_by_direct_mmap(struct elf_fdpic_params *params,
->  		 *   extant in the file
->  		 */
->  		excess = phdr->p_memsz - phdr->p_filesz;
-> -		excess1 = PAGE_SIZE - ((maddr + phdr->p_filesz) & ~PAGE_MASK);
->  
->  #ifdef CONFIG_MMU
-> +		excess1 = PAGE_SIZE - ((maddr + phdr->p_filesz) & ~PAGE_MASK);
->  		if (excess > excess1) {
->  			unsigned long xaddr = maddr + phdr->p_filesz + excess1;
->  			unsigned long xmaddr;
-> -- 
-> 2.25.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+You may occasionally put more than 66 characters into text lines
+of such a change description.
+
+
+>                                    =E2=80=A6 To maintain the integrity o=
+f
+> the operation, redundant error handling needs to be removed.
+
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc5#n145
+
+Regards,
+Markus
 
