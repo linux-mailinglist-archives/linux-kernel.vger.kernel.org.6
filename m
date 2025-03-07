@@ -1,88 +1,93 @@
-Return-Path: <linux-kernel+bounces-550643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4191A5625D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:14:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD99DA56263
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:14:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BDAF176B0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:14:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86F4C1897C4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:14:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA481C84A2;
-	Fri,  7 Mar 2025 08:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A22F1B3929;
+	Fri,  7 Mar 2025 08:14:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cAV8f2Y2"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KMBMPdqH"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3CB01A3A8A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 08:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642221A3A8A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 08:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741335230; cv=none; b=crwcsSpP67j/HhIMB1xZN8qijqhCY4aJKh1PIqm9Ks/zzc7rkDqKCsTDjsnW0NQUFz3QujAqM4byPNM8cCYb5iFnbgO6F/Q3bCTT57B9FJdhemR8du69GSV36jjR1Qz/aCfhStFttEdRYnQb8KBRVFPtXA+Ax1dgsaHMdWDrLLo=
+	t=1741335253; cv=none; b=RpSUF6x6zN8eI3WOivzDcvN9541odD+RMmyvQLN+zyoK8ZbTYmpeTzKnIl66bGt58EBMqJo5RsfD+Njf4AbqpS3KVKOU9XT3owUNTnzvUr4bE2qwDxyw7eWZ0xb5IK61fYayu7udN6Rc3Kd9oyarDaV8y+otJpVNVYLP54/Sya4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741335230; c=relaxed/simple;
-	bh=/4pBJcV9vwScMlIQ+csYLrBtIODZkNz7iKtnSIY+mZ0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Id752lomhg9R5j8bb61k3nZzyynTtMtmZyWmZCHy205arOs0yjRLHWvEmv7cc22iBIiiIWHOCyOdhF8sxnhSXg7AKK2Ihlg8XzKlUAwcC4Y4g/gDkB8zMyHK0ksz2ivzU9j/VgKXPTd9Uvmc3zTru6yOFf1bpUPQ2KPzCikr9ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cAV8f2Y2; arc=none smtp.client-ip=209.85.128.44
+	s=arc-20240116; t=1741335253; c=relaxed/simple;
+	bh=ifGvzz7OBeukTcY2WHZgJTC0sTUnzBW2FA4VRpqiGVM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ce+u6IMYNRr7b/2NKJH2Cor5Q5j207kkkmlNnH4gI6TmbW4qMhAAZvXAN0SBtNoAlsAqFJAGAm2q5+6eA3igAJrUC4p2vwOaRsze9J5DzkJlr/SShq8IopUNk017vaI7RyjymVVxDyh6cTsxX9eESU/Cy23YjYnoyLe0J9+aT6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KMBMPdqH; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394944f161so1643695e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 00:13:46 -0800 (PST)
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43bc526c7c8so2041825e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 00:14:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741335225; x=1741940025; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741335250; x=1741940050; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=aWHK9yli0arAp4uGJvEOq4N98UZnlQVuehVV6E0itOc=;
-        b=cAV8f2Y2iuvujrQ47DZZBx0OZ/nQFhOmhwVO3RpEFcIqokUQNiy9GFxWeFOUmubrsj
-         QpRKGDAo8PFR9RIou7TaM+I1bkGXo1yHFdv4ipHhJpDySsb+dH7ktsmOVshv7bG3CiFA
-         ePfgOL0VaRCOZbpYBRuW+OhztWRqh3rAjTKCyrC99T2XmjtWPpybsMpbuUltPT/Vs2bF
-         wSeXhkk5vCmk1LsfqNaZblUGqia5/Fw6oIGA2GTumZ3AvI8k58thqBEeGw6ddyZ7vuMW
-         lSHAI643TNpeDYurYYhHWZiZBiiasne98Puaouw+LvKkRXfMfcxldNWIFRyj1BaAeIqv
-         Bnmg==
+        bh=dC1LPCsdF2Z42Jp+jxNOAqnbNIqpSsoAUsorj5VopVg=;
+        b=KMBMPdqHIcvtrRYMqa1cuM5cYuFr4kR2eMIkNJiGRsCjrgmJirF/zIWLq3aHvzdqlY
+         RZyeCv5Ki8zgKhMJ4mgIO9rrG8heCihpx6qyw7Ohu0kYS7xSg/MBycQ4V7jMUO+IiIMg
+         KzIp+sgisv3yxD/v/UVEl4Ie5opmHkdAvTEARu/7dnIiQr+feSEzt59U9oAe9g7h8k2g
+         mgFfgILr8JQnX0CVmBaZsmETUM2cEfLVBolRnW5k4h0Hvz2nB2MkIfrzdeZegyefahkS
+         3LZ74EoL+FjvgL4gbAvfiuQVV2rIeh8JGVV6pUBfR+DW/uEZfC45uE9bmW6ftu6iFO+Z
+         Rruw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741335225; x=1741940025;
+        d=1e100.net; s=20230601; t=1741335250; x=1741940050;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aWHK9yli0arAp4uGJvEOq4N98UZnlQVuehVV6E0itOc=;
-        b=XIBlJ7cbxS9vQrm4CHcUnx/kdVLeHmN/eSDkTAVzfrEjUZkHYTauczpQQa9m/WnTEH
-         EVI/m9Tqg9R8ZI/G0dwqTetLl/LRzDzFrds5MrochKcPLw6ANAbdleeHmbvU9SsSFwN7
-         9nJfZvKRQg3oZEOQkSelCbc9i9WF8bNY5mm7iQCkr9W9mfVsxLDDIkWkrq1ib1gZPZvP
-         8HI4nOxezJeA4+NeT0GDpjAyg0gmC2RCU4YirAoFkJWOlZ9HOcIR8H2Rz2+txT6BJLqu
-         tdoope0xCuZGqbVQvZZVFdVsmIl0qAvUQBI59P/tKghZfmY3+Xwd/GO+enCRJw6wxJy5
-         rZUw==
-X-Forwarded-Encrypted: i=1; AJvYcCViiGukvoYKF3cZPBhluzsMyUcTHBOSxNBv6tYuXPTV83MR/v/KIoDbAanRwukH2oE5jVq45KrTDAHzKPY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBzhyftLn5yJyOHAeAgxMKhu4GjWDsTsW9ufb8caMrs8vnzvwD
-	KLuKBKB0caHWxpICE+Qd9NzBiwdKgfz/ydDfZDOacTzQjyWp+JabzLFRPThYkqY=
-X-Gm-Gg: ASbGnctQdlTmIfAyDilxIUNUYppcG5ro0f57YwRl3vTxw48U9CcUYCzGpcNZjdpcCY7
-	nxvLPbOmktNAj1c/iem2mH6WxIowsI5QGFw0AVFJwV28bkkuSjNInar/WJZ8jjJmy6S5teH/rJF
-	0J5332ymK0cqJwcngDxg5z8S3q5WPL9QDXgG/ExOjHJO++ZNfpaW8onDsTbX13GjdbiTMEdZ4+q
-	h08qx9c7s0vFVLESclmHBs97RHWIyUijH3tK84MWPYW1njxtdf4ZPF0PWenQZDCro2OwQkHT8PY
-	uuUoVwGy0HzZsswAAh3Be2DJo14z45IsintBfsXTDZxkE9ncP7D6DK3gidI=
-X-Google-Smtp-Source: AGHT+IF4UvKX11yMkyXP1QJeL56hmM+u2mk3Z+n8AmkHahFOQAmYaNbSy5nTjDw60A7BEfx1RoKOQg==
-X-Received: by 2002:a05:600c:1d9a:b0:43b:d547:6336 with SMTP id 5b1f17b1804b1-43c601da744mr6450845e9.8.1741335225207;
-        Fri, 07 Mar 2025 00:13:45 -0800 (PST)
+        bh=dC1LPCsdF2Z42Jp+jxNOAqnbNIqpSsoAUsorj5VopVg=;
+        b=B/LB4ar8ZV1v1kMIC5/oJMYsGCd7610hzJXWZBCEAQjZil2Hd2A5jsYnzgGwkHsX1d
+         HzRtWVrV6xH3KZa17zXWcZMVlyP8sQ96atURzAQo82sMcd0Y/VpMdeKF315esqFwS6cr
+         kgPipefNJxCo9PoMrX1X0Uhm/FcfkBiRM6++kfe1CuPxGspDP+3QMAliU8BfQuvvwnXk
+         m0TMbSR9gSwG+U/ZYbtMIc7H/uYVSvD2dcG6r8XeZCVQaigj3MCkGGSsWU2Q0YzlWV7V
+         nqvnw8CUdsgjarx3wCB30bG1JE8C7Vv7wn8IOsy/5sG4H+5HPzqA3Nyp33EQCmQlwg4V
+         clRA==
+X-Forwarded-Encrypted: i=1; AJvYcCXn0f5bz0QkyfD9U9qQCUiojwXiShHgKZRcViLPSQUjQtGP13md7SzAw6sPdo0CpnLnK6htc5Wqpn5lihU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyyqd+X/3E8g6nDucQidbvdHV/8kEwdc9Rrc+CibvWNfL/ohPfL
+	nT0+vjEXmlEjc3Y6EMl1RYTxmpbwv5zHxUElcoPDMTpM9bPBQA5/Z5P0Rk+djgM=
+X-Gm-Gg: ASbGnctteUyB2ZK5+i8LXrumTkFf9TRaMm74oYc7ncqBCJH1VbisZywkGkCEMcgEgHe
+	5Ib3nJ0LGMdEPu5hxl8/TZE6gtasQxgtYErWaUL0bdCXEb7JUB5aICLRp3YLXsGzm58JsZLvSuq
+	+1ZXQBZcfrbMmKz3lAGeAdWbGYFCc2gCdMJWB9vS4LcmmtogHSOkKTZfzKydFr82oT6TigfA2Ud
+	o7LZnK+Wi09vRar+tJlPqnKy7dZ7cXnpeauUoRI2bEPuN7HyU3ZzfRnsUuxI6vrQfjDvoRfD/Rv
+	pwXGhFslHsZCQ/pZ3RFAUId1dNT+FtjgRHyg45wHNRsYhQuAZTnHelzw1Ew=
+X-Google-Smtp-Source: AGHT+IHUpH+Xyh16N+1wZEqp2m7qpL812EuSHBMLvRKqepcXSU9SdbYHDp2gAq5aCXZu0H8xpH08Dg==
+X-Received: by 2002:a5d:6c62:0:b0:38d:be5e:b2a7 with SMTP id ffacd0b85a97d-391353f0678mr390435f8f.10.1741335249622;
+        Fri, 07 Mar 2025 00:14:09 -0800 (PST)
 Received: from krzk-bin.. ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd91338cesm62267155e9.7.2025.03.07.00.13.43
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c01cb82sm4691799f8f.51.2025.03.07.00.14.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 00:13:44 -0800 (PST)
+        Fri, 07 Mar 2025 00:14:09 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
+To: Daniel Golle <daniel@makrotopia.org>,
+	Aurelien Jarno <aurelien@aurel32.net>,
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
+	Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-crypto@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: soc: samsung: exynos-usi: Drop unnecessary status from example
-Date: Fri,  7 Mar 2025 09:13:41 +0100
-Message-ID: <20250307081341.35197-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: rng: rockchip,rk3588-rng.: Drop unnecessary status from example
+Date: Fri,  7 Mar 2025 09:14:06 +0100
+Message-ID: <20250307081406.35242-1-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -92,29 +97,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Device nodes in the examples are supposed to be enabled, so the schema
-will be validated against them.  Keeping them disabled hides potential
-errors.  Only one child of Samsung Exynos USI device node should be
-enabled.  The node in the example already selected 'USI_MODE_UART', so
-enable the serial node while keeping second - I2C - disabled.
+Device nodes are enabled by default, so no need for 'status = "okay"' in
+the DTS example.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml | 1 -
+ Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml | 1 -
  1 file changed, 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-index f711e23c0686..cb22637091e8 100644
---- a/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-+++ b/Documentation/devicetree/bindings/soc/samsung/exynos-usi.yaml
-@@ -191,7 +191,6 @@ examples:
-             interrupts = <GIC_SPI 227 IRQ_TYPE_LEVEL_HIGH>;
-             clocks = <&cmu_peri 32>, <&cmu_peri 31>;
-             clock-names = "uart", "clk_uart_baud0";
--            status = "disabled";
-         };
+diff --git a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
+index 757967212f55..ca71b400bcae 100644
+--- a/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
++++ b/Documentation/devicetree/bindings/rng/rockchip,rk3588-rng.yaml
+@@ -53,7 +53,6 @@ examples:
+         interrupts = <GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH 0>;
+         clocks = <&scmi_clk SCMI_HCLK_SECURE_NS>;
+         resets = <&scmi_reset SCMI_SRST_H_TRNG_NS>;
+-        status = "okay";
+       };
+     };
  
-         hsi2c_0: i2c@13820000 {
 -- 
 2.43.0
 
