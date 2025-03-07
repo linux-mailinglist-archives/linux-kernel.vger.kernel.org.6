@@ -1,77 +1,86 @@
-Return-Path: <linux-kernel+bounces-551829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D356A57180
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:21:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6858A5717D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:21:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8EBA166853
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:21:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01302166DC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D24254B1C;
-	Fri,  7 Mar 2025 19:19:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BAC7253B68;
+	Fri,  7 Mar 2025 19:19:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dqi/KrB5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YXNuixpY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B24C253B67
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 19:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB80824FC03;
+	Fri,  7 Mar 2025 19:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741375192; cv=none; b=Rx5JzZltd7mX/nervdOoAJPmSr+8OpfW3xrgiQRAR1aLbPX4JSoSLD3dcGL/jVUsa4NVA3bJR/HZD71tgJ0oUTjccAU8FmXnWh3wOfNHEdZjH5YusJtNsofM9tcVM2f8NgzWoWqlml7aHj4xPK7lgj1ge/7lwr4L0j0g6mzCUw4=
+	t=1741375189; cv=none; b=bBPu1Xk/8n44iJ1CwPfGerO+sd4ci46p0KFOAiQr2iALgHWXe9jjeG2GB2euWf7p1scjLs8x6cwLmjlp0+/lVzi/AZgkgRkTWbL+L14ln1FvZ2hhbDkSkHv5FpiwCQw9qP4Yn5DUAoGDLPyLpVhvczjLfwgy61/7ClQijLua8n4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741375192; c=relaxed/simple;
-	bh=g4MqkEHiB7Hh07+p3G9AYFM2M8BQsXqZ/GWxguZs4Jc=;
+	s=arc-20240116; t=1741375189; c=relaxed/simple;
+	bh=lWohW1lK5/1oJ/E8ckkRCgfaedm9zAHAHPnzlFJse9c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sw4Muasp8BU4M8m6zCxcVDvnUKRKl9TUUl+X1ppBojUIsvPcN1riTyDOo0Z5xUINGx8EglMJA9PUTTyOrC2yZQ7X+q7plw+B5W0o6+oEpgtx1V/xeQT6CltIoR60ROw4v4RMz9eT95EQUFdHtXE+Cb8MdVmJqu3TEsQgQP5f2EI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dqi/KrB5; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741375188;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nrPsYGhY2ctGgSCoMFqFX1XHzK6SWuV8/qZ7voczswo=;
-	b=dqi/KrB5ftxd8Vfdq+342YcnhdzY37LFdw/EX9BrHqdmWlIoUIB7BhenpI8W1fHBHfmb3L
-	wkOg4muZ++ZMWs1qoSO+oiSvC3203jYdc8DK86RLB+nMx2uE1F+qVXJCjcyN1kbuLlGyej
-	VwZ5PVX4rQvOBPL6k6J/2mHHRNQ+v1M=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-686-fHWpz0DVMHiW_mwF1wewHQ-1; Fri,
- 07 Mar 2025 14:19:45 -0500
-X-MC-Unique: fHWpz0DVMHiW_mwF1wewHQ-1
-X-Mimecast-MFC-AGG-ID: fHWpz0DVMHiW_mwF1wewHQ_1741375184
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AE68B1955BC9;
-	Fri,  7 Mar 2025 19:19:43 +0000 (UTC)
-Received: from madcap2.tricolour.ca (unknown [10.22.58.19])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CF3161955DCE;
-	Fri,  7 Mar 2025 19:19:40 +0000 (UTC)
-Date: Fri, 7 Mar 2025 14:19:38 -0500
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Jan Kara <jack@suse.cz>
-Cc: Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>,
-	LKML <linux-kernel@vger.kernel.org>, linux-fsdevel@vger.kernel.org,
-	Linux Kernel Audit Mailing List <audit@vger.kernel.org>,
-	Paul Moore <paul@paul-moore.com>,
-	Eric Paris <eparis@parisplace.org>, Steve Grubb <sgrubb@redhat.com>,
-	Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v1 1/2] audit: record fanotify event regardless of
- presence of rules
-Message-ID: <Z8tGyiUzX6p+2vpp@madcap2.tricolour.ca>
-References: <cover.1741210251.git.rgb@redhat.com>
- <3c2679cb9df8a110e1e21b7f387b77ddfaacc289.1741210251.git.rgb@redhat.com>
- <aksoenimnsvk4jhxw663spln3pow5x6dys4lbtlfxqtwzwtvs4@yk5ef2tq26l2>
- <Z8pH97tbwt7OGj2o@madcap2.tricolour.ca>
- <jhvf3n4fnzsnj7opxooqblmpnuhvqhcg366y47p5u44dg4tm3i@snmc3msdcoiv>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mBNIAadjlyGdXorS7iye14a1xu4n0S2RRNLJ9XaNEbHJXccOb80/owrlfnDZFNm8eaoUPLpfzil7ORwNJ88JpSOauT/Bs7XrtLcWzPyRgn1ozasGzDaOIlxj2rVTzcKk8qjjQtjcIcpbrgLVBjXM0ZkBMaBENgUgzDqEVtbF4BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YXNuixpY; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741375187; x=1772911187;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lWohW1lK5/1oJ/E8ckkRCgfaedm9zAHAHPnzlFJse9c=;
+  b=YXNuixpYDKlmanDTBmjWP2bRVI3W7+suQ01y6CcBiN0eeggig9r8dxWg
+   7RfXyjVLduEji/xArpC+BynyRCDDewvdwgptmK3MRGMw3pDFcbGeINLZF
+   eCxBV0Lf99knCSOr3AAjTzZ9lh/hTQti8285sqshVKeAx90BhqusrMq4J
+   WKz8Dmf69iC4fxpAhYJWiYIbvXX5MqVc8+0a2IdZYFOJG8961Xt7rfd4p
+   DnTiOFAgiKu+P2WsHE4CXG9TvNNj5io+tvgeTwD+OhJHF9dW9MGNu66DQ
+   wvj83BOo01dHtdlKrgIYzgaNB8aT2idVvBaJ0+yWxSETGTPzC0c9nCGUY
+   Q==;
+X-CSE-ConnectionGUID: ve7o6fAIQCaSUttKnRyKNg==
+X-CSE-MsgGUID: XhRJyq1gQbWwlMNTUYBz3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42315416"
+X-IronPort-AV: E=Sophos;i="6.14,230,1736841600"; 
+   d="scan'208";a="42315416"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 11:19:46 -0800
+X-CSE-ConnectionGUID: CfyhsuotQIeGhCi5YnLAaA==
+X-CSE-MsgGUID: ze8qhkRFRD+Y3Nyxiz0cpQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="156621322"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.110.159])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 11:19:44 -0800
+Date: Fri, 7 Mar 2025 11:19:43 -0800
+From: Alison Schofield <alison.schofield@intel.com>
+To: shiju.jose@huawei.com
+Cc: linux-cxl@vger.kernel.org, dan.j.williams@intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com, david@redhat.com,
+	Vilas.Sridharan@amd.com, linux-edac@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, bp@alien8.de, tony.luck@intel.com,
+	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
+	leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
+	jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
+	naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
+	somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
+	duenwen@google.com, gthelen@google.com,
+	wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
+	wbs@os.amperecomputing.com, nifan.cxl@gmail.com,
+	tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
+	roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
+	wanghuiqiang@huawei.com, linuxarm@huawei.com
+Subject: Re: [PATCH 1/8] cxl: Add helper function to retrieve a feature entry
+Message-ID: <Z8tGz33l9vDzuJLy@aschofie-mobl2.lan>
+References: <20250227223816.2036-1-shiju.jose@huawei.com>
+ <20250227223816.2036-2-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,99 +89,76 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <jhvf3n4fnzsnj7opxooqblmpnuhvqhcg366y47p5u44dg4tm3i@snmc3msdcoiv>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+In-Reply-To: <20250227223816.2036-2-shiju.jose@huawei.com>
 
-On 2025-03-07 15:52, Jan Kara wrote:
-> On Thu 06-03-25 20:12:23, Richard Guy Briggs wrote:
-> > On 2025-03-06 16:06, Jan Kara wrote:
-> > > On Wed 05-03-25 16:33:19, Richard Guy Briggs wrote:
-> > > > When no audit rules are in place, fanotify event results are
-> > > > unconditionally dropped due to an explicit check for the existence of
-> > > > any audit rules.  Given this is a report from another security
-> > > > sub-system, allow it to be recorded regardless of the existence of any
-> > > > audit rules.
-> > > > 
-> > > > To test, install and run the fapolicyd daemon with default config.  Then
-> > > > as an unprivileged user, create and run a very simple binary that should
-> > > > be denied.  Then check for an event with
-> > > > 	ausearch -m FANOTIFY -ts recent
-> > > > 
-> > > > Link: https://issues.redhat.com/browse/RHEL-1367
-> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > > 
-> > > I don't know enough about security modules to tell whether this is what
-> > > admins want or not so that's up to you but:
-> > > 
-> > > > -static inline void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar)
-> > > > -{
-> > > > -	if (!audit_dummy_context())
-> > > > -		__audit_fanotify(response, friar);
-> > > > -}
-> > > > -
-> > > 
-> > > I think this is going to break compilation with !CONFIG_AUDITSYSCALL &&
-> > > CONFIG_FANOTIFY?
-> > 
-> > Why would that break it?  The part of the patch you (prematurely)
-> > deleted takes care of that.
+On Thu, Feb 27, 2025 at 10:38:08PM +0000, shiju.jose@huawei.com wrote:
+> From: Shiju Jose <shiju.jose@huawei.com>
 > 
-> So I'm failing to see how it takes care of that when with
-> !CONFIG_AUDITSYSCALL kernel/auditsc.c does not get compiled into the kernel.
-> So what does provide the implementation of audit_fanotify() in that case?
-> I think you need to provide empty audit_fanotify() inline wrapper for that
-> case...
-
-I'm sorry, I responded too quickly without thinking about your question,
-my mistake.  It isn't the prototype that was changed in the
-CONFIG_SYSCALL case that is relevant in that case.
-
-There was already in existance in the !CONFIG_AUDITSYSCALL case the
-inline wrapper to do that job:
-
-	static inline void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar)
-	{ }
-
-Did I understand correctly this time and does this answer your question?
-
-But you do cause me to notice the case that these notifications will be
-dropped when CONFIG_AUDIT && !CONFIG_AUDITSYSCALL.
-
-Thanks for persisting.
-
-> 								Honza
+> Add helper function to retrieve a feature entry from the supported
+> features list, if supported.
 > 
-> > diff --git a/include/linux/audit.h b/include/linux/audit.h
-> > index 0050ef288ab3..d0c6f23503a1 100644
-> > --- a/include/linux/audit.h
-> > +++ b/include/linux/audit.h
-> > @@ -418,7 +418,7 @@ extern void __audit_log_capset(const struct cred *new, const struct cred *old);
-> >  extern void __audit_mmap_fd(int fd, int flags);
-> >  extern void __audit_openat2_how(struct open_how *how);
-> >  extern void __audit_log_kern_module(char *name);
-> > -extern void __audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar);
-> > +extern void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar);
-> >  extern void __audit_tk_injoffset(struct timespec64 offset);
-> >  extern void __audit_ntp_log(const struct audit_ntp_data *ad);
-> >  extern void __audit_log_nfcfg(const char *name, u8 af, unsigned int nentries,
-> > 
-> > > -- 
-> > > Jan Kara <jack@suse.com>
-> > > SUSE Labs, CR
-> > 
-> > - RGB
-> > 
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+> ---
+>  drivers/cxl/core/core.h     |  2 ++
+>  drivers/cxl/core/features.c | 20 ++++++++++++++++++++
+>  2 files changed, 22 insertions(+)
+> 
+> diff --git a/drivers/cxl/core/core.h b/drivers/cxl/core/core.h
+> index 3d3b00835446..6c83f6f18122 100644
+> --- a/drivers/cxl/core/core.h
+> +++ b/drivers/cxl/core/core.h
+> @@ -120,6 +120,8 @@ int cxl_port_get_switch_dport_bandwidth(struct cxl_port *port,
+>  int cxl_gpf_port_setup(struct device *dport_dev, struct cxl_port *port);
+>  
+>  #ifdef CONFIG_CXL_FEATURES
+> +struct cxl_feat_entry *cxl_get_feature_entry(struct cxl_dev_state *cxlds,
+> +					     const uuid_t *feat_uuid);
+>  size_t cxl_get_feature(struct cxl_mailbox *cxl_mbox, const uuid_t *feat_uuid,
+>  		       enum cxl_get_feat_selection selection,
+>  		       void *feat_out, size_t feat_out_size, u16 offset,
+> diff --git a/drivers/cxl/core/features.c b/drivers/cxl/core/features.c
+> index 048ba4fc3538..c822fb4a8c33 100644
+> --- a/drivers/cxl/core/features.c
+> +++ b/drivers/cxl/core/features.c
+> @@ -203,6 +203,26 @@ int devm_cxl_setup_features(struct cxl_dev_state *cxlds)
+>  }
+>  EXPORT_SYMBOL_NS_GPL(devm_cxl_setup_features, "CXL");
+>  
+> +struct cxl_feat_entry *cxl_get_feature_entry(struct cxl_dev_state *cxlds,
+> +					     const uuid_t *feat_uuid)
+> +{
+> +	struct cxl_features_state *cxlfs = to_cxlfs(cxlds);
+> +	struct cxl_feat_entry *feat_entry;
+> +	int count;
+> +
+> +	/*
+> +	 * Retrieve the feature entry from the supported features list,
+> +	 * if the feature is supported.
+> +	 */
+> +	feat_entry = cxlfs->entries->ent;
+
+Do we need some NULL checking here on cxlfs, entries
+
+
+> +	for (count = 0; count < cxlfs->entries->num_features; count++, feat_entry++) {
+
+Was num_features previously validated? 
+
+> +		if (uuid_equal(&feat_entry->uuid, feat_uuid))
+> +			return feat_entry;
+> +	}
+> +
+> +	return ERR_PTR(-ENOENT);
+
+Why not just return NULL?
+
+
+> +}
+> +
+>  size_t cxl_get_feature(struct cxl_mailbox *cxl_mbox, const uuid_t *feat_uuid,
+>  		       enum cxl_get_feat_selection selection,
+>  		       void *feat_out, size_t feat_out_size, u16 offset,
 > -- 
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-Upstream IRC: SunRaycer
-Voice: +1.613.860 2354 SMS: +1.613.518.6570
-
+> 2.43.0
+> 
 
