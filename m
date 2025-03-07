@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-551452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C122A56C9F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:53:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8617EA56CA2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:55:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0438C16BCD9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:53:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC0EF189520C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:55:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9222421D594;
-	Fri,  7 Mar 2025 15:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7145121D3FD;
+	Fri,  7 Mar 2025 15:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8mdCIbQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MZ26MWs8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E640721D3E9;
-	Fri,  7 Mar 2025 15:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C779121A459;
+	Fri,  7 Mar 2025 15:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741362795; cv=none; b=eeXIKUy1AsU5JSqkxVehEq9/Vnda+UOsGiQhhfI/1CI3RGvdzHWmun9hwTxUpZRpQh79VefYzGUUCjT9MBCbqmDenMSiDkgmGWJHIE3V3PdXCi7sjxxnMASm4M/eDO57+1YDon9FabKWozoQkwPUGL3an/hsZOE2hzYcmk+jSkA=
+	t=1741362894; cv=none; b=FG3WGgcFzLlIEYdwKtSl6vaVXGC4JZf+3JAySg6U3zvz9v0qEtDXubnPm9lBeAy36tOWrjaEBiKtRyzFiafKZ6s7B+l3OASQyBKJ2wY+IoOvfc6LG+WIe132EeBj8z0rN/yk0gWr2NYd6XP0hqvyv06SqNkFPeJdOlgs6FULkSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741362795; c=relaxed/simple;
-	bh=QaXt3qUnolSOD2+fscbOypdsBBZM6FVPw4wTClxd6fU=;
+	s=arc-20240116; t=1741362894; c=relaxed/simple;
+	bh=XLqUVh9MVKw//8gzVQqjpctpMapgvMDKnxShTMptn7g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JE+N2I3BSVhUCqRYn+XJ/Lya6FeohmCKdEmd6x2MUm6VaaTpafOpNnQbyprnap8ALCeuBBkUFlHRSUQcvBg9ZXBCKJot/I1oK15pVN6vUXZX0ceLZ1Yb36eQPP8EivKRKBzmp2W9IkseDlTuoAH3l9VORMLcTzhcKs7JrwxlvUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8mdCIbQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5EF4C4CED1;
-	Fri,  7 Mar 2025 15:53:10 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=lCQCjxO1+9o6LDuds11iTSK/r2QRSAxcoxC7pRhwOqUoGxr13W3wY6l1TgLWIQVN2CGAtHEDKlEif7Xv66j1uFu0Pdw3jqQlYl1Jvb73AGRckXOvwFUdIAKdhoROFmcKSg3a7t5DFoXgLxRtQ728NntLhhAt4qzHmvPIQSFz6Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MZ26MWs8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40359C4CEE3;
+	Fri,  7 Mar 2025 15:54:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741362794;
-	bh=QaXt3qUnolSOD2+fscbOypdsBBZM6FVPw4wTClxd6fU=;
+	s=k20201202; t=1741362894;
+	bh=XLqUVh9MVKw//8gzVQqjpctpMapgvMDKnxShTMptn7g=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=k8mdCIbQNEghQtTq+6//Ss922zy7G3VduxGDvPN18PtoLRFvy/PO7Kq8f17LVDC//
-	 Rxi5jSBeEKfTxcn0egK1mO9UOBLS3pdfJ8BiWEkJQ3rHvWPqvnwFBGhk+//o/nv4OW
-	 VVkHkTVkHh7lOk4RcxR1jv+tfH/y2eNL1/FyYmJg1LECX3gFZ1UMDkOdTV6SVjDh5m
-	 1eZ5c9eNngfPHXxTo1KLx1vqwCDbOZUaNatKZlQvEzACMHyuJI2A/CHR07X0J8tRVE
-	 o267V3N4azqjPY80W/ehxQl9lgFwRaTOsau/0GQNP7PAmyWsN7onKqZV79vN29NW1H
-	 u0FBIM7CHxs0A==
-Message-ID: <10c65b97-a57a-48fb-b843-bf556e46466f@kernel.org>
-Date: Fri, 7 Mar 2025 16:53:08 +0100
+	b=MZ26MWs8WPT0UYoYwjzBxmCpnPM2ante9CpGhJxdS5Q9Q/SoVOkI5B988YH8yONqx
+	 pAOZ2O6I++iAq27HuDStGTyl33rgves/RZItSuTsK3ilYyo32FfnckDtyA8FPuFhfG
+	 at11JIi4RUG4A1O9qLlUg1gvcbhJQ4XteUh8NibP5GM8g0LpaB7YYdnqhEetmBCQ2p
+	 9PNs+EcGQQ1DCf/AC7n8C/V326Oq1yw+YhWrGDDBDMarynWwhvoy2kxKUGDkUMoagw
+	 re/wkMs1gEG+GfvVd2pgdCt2oxVTginbfQ01RR7Oh4h14dODRK7YLzdmxBIZiHH2oZ
+	 DwTtHupUdN7Bg==
+Message-ID: <59864da1-a011-4ed0-9297-fd3ec2ff081b@kernel.org>
+Date: Fri, 7 Mar 2025 16:54:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: amd/seattle: Fix bus, mmc, and ethernet
- node names
+Subject: Re: [PATCH 1/4] arm64: dts: amd/seattle: Base Overdrive B1 on top of
+ B0 version
 To: "Rob Herring (Arm)" <robh@kernel.org>, soc@kernel.org,
  Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
  Tom Lendacky <thomas.lendacky@amd.com>,
@@ -59,7 +59,7 @@ To: "Rob Herring (Arm)" <robh@kernel.org>, soc@kernel.org,
  Richard Cochran <richardcochran@gmail.com>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250306-dt-amd-fixes-v1-0-011c423ba99a@kernel.org>
- <20250306-dt-amd-fixes-v1-3-011c423ba99a@kernel.org>
+ <20250306-dt-amd-fixes-v1-1-011c423ba99a@kernel.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,23 +105,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250306-dt-amd-fixes-v1-3-011c423ba99a@kernel.org>
+In-Reply-To: <20250306-dt-amd-fixes-v1-1-011c423ba99a@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 07/03/2025 02:07, Rob Herring (Arm) wrote:
-> Use preferred node names for bus, mmc, and ethernet.
+> AMD Overdrive B1 version is just more peripherals enabled over B0
+> version. Rework the B1 .dts to use the B0 .dts.
 > 
 > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
->  arch/arm64/boot/dts/amd/amd-overdrive-rev-b0.dts | 2 +-
->  arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi     | 2 +-
->  arch/arm64/boot/dts/amd/amd-seattle-xgbe-b.dtsi  | 4 ++--
->  3 files changed, 4 insertions(+), 4 deletions(-)
+>  arch/arm64/boot/dts/amd/amd-overdrive-rev-b1.dts | 61 +-----------------------
+>  1 file changed, 1 insertion(+), 60 deletions(-)
 > 
+> diff --git a/arch/arm64/boot/dts/amd/amd-overdrive-rev-b1.dts b/arch/arm64/boot/dts/amd/amd-overdrive-rev-b1.dts
+> index 58e2b0a6f841..b34dd8d5d1b1 100644
+> --- a/arch/arm64/boot/dts/amd/amd-overdrive-rev-b1.dts
+> +++ b/arch/arm64/boot/dts/amd/amd-overdrive-rev-b1.dts
+> @@ -8,32 +8,10 @@
+>  
+>  /dts-v1/;
+>  
+> -/include/ "amd-seattle-soc.dtsi"
+> -/include/ "amd-seattle-cpus.dtsi"
+> +/include/ "amd-overdrive-rev-b0.dts"
 
+This should be just common DTSI for overdrive boards. We rather avoid
+including DTS from DTS.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+OTOH, that's pretty abandoned platform, so probably no one cares about
+correctness, so I don't oppose current approach.
 
 Best regards,
 Krzysztof
