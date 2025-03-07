@@ -1,130 +1,118 @@
-Return-Path: <linux-kernel+bounces-551331-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDBC5A56B2F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:06:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 07554A56B33
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:06:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CDA03B7BAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:05:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FBDB3B47DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C544189B94;
-	Fri,  7 Mar 2025 15:05:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4088E21C19A;
+	Fri,  7 Mar 2025 15:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="af5d+C1Q"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C81521C179;
-	Fri,  7 Mar 2025 15:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wxd9Q4Ml"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014BA21C166
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741359935; cv=none; b=WOz1+tP8B4abtCVq7H3YTbITeBIxDeOwAJX+ZgLSuBjhFsb9Wp9mm8xcgRkxoO38PAHRbJ6FBBJh0aq5Fv/Dfb1gBlypdH0TyqvJcuOHIzWHL78Ixps0ONsXeH8+73WXOeiTA6CzOetfYWXIC4Eqb6SwN27oN3E6L4BS9JyO8Uw=
+	t=1741359991; cv=none; b=D1fbKwcxeOjzkvRMg0zEWesKG31tw6gXP81fxFFlD5IOZcpnhtJHX2r6/bor1fLOBvPcyFGF00QUXq/o/7LHWPV1xqJTFHqB9l6xUA8SwlDxxdF777GZQEEq9iKhD0tZC7hXpeaJ03nYoVpkZVmuIqwx9ZGaPoDEKCA/88730Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741359935; c=relaxed/simple;
-	bh=vkajAd6C+aBL/cx4UI6cMxaNKhLSk483ukm9k5uqSgQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Chz5kvc8CuSDGUF2cN+D8v+bgh932Hh/eLF5yCz+JcE7nw2+WlLMo5i76YLIXyD+dZlALEjKYm332cbgytZeXPnUbLeIn37vskEXaEYB2Nifg3dZ+Sr5D5vzGQQVFn9FUBJVc7Egw4gpNoO3kp09Y2BQcY0Gei5Eqh7TZ+vzT7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=af5d+C1Q; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.79.65.43] (unknown [4.194.122.144])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 622232038F38;
-	Fri,  7 Mar 2025 07:05:28 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 622232038F38
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741359933;
-	bh=qBvGIF1Dvpc7Yt8ucophS5Ds134KAk4AkIU1eqWjtnc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=af5d+C1QG4E3Dv0RaNrDEOOwzVVn9PIMHtjh26hglj7DujoxrmFene6tAhUm1Yd29
-	 JFQlqKiizStpfrMS+PfMs/IlmYIJxb7z1bvO9NRLQQUtLsmbgn9H3PoeN2mmrOZSMi
-	 Fo6bvB8B2Z5etoYsJjYcs3NeeRz8mVohVhRokXY4=
-Message-ID: <81b11433-58ac-4a2c-a497-d6d91e330810@linux.microsoft.com>
-Date: Fri, 7 Mar 2025 20:35:23 +0530
+	s=arc-20240116; t=1741359991; c=relaxed/simple;
+	bh=9Y/Y73m9zuvLRA6vGtkNTS7BPX54Zx9NPuwy9xoTbQo=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=m79GHlrQ8V0m1r3gbWPAH/8RcNWz6JqoWvu9lGqikc9DoWq4M56Okx+wsQS8tvi/nithiIvtn15pnR0LYidnqXAZ17BCOpN2/K+MaEqsiizvjBT3rLckWnpt4TJK8s8hDS5NmgLu1hol88liNV20bdxu4ZofgTY4uZHe61HxNPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wxd9Q4Ml; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3912387cf48so63369f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:06:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741359988; x=1741964788; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iArDif38+fZWZHkgSuOxfgSy+rEDqBvDc+u/YR4aXK4=;
+        b=Wxd9Q4MlVmNFiwwtrfqzzFBBOnHB7G46pBet8K0p9sePNyrr6/7UwxCZQQEV7OlTuO
+         qR83GWnJ7XYmaK/ecey4kFtw0xG/+H70Xq9jZoXcDeU8SFH5OFyR46M7ep0RFez4Dc1w
+         pZKHEX7BxLg5kNIkmyASxTi89/lr5hEMDZkCpXDFHlB1Eqgfd33DSVoGxRDECSfFZtTN
+         xVHMABYa7cj5GLnUjb+TujiurC+PNun83ubzA1DINnvS7aMWh/N//TNXUfSWmWL8zBv+
+         RJjq4hvbwr1SWz//MwkvsiSbCu4hIYFRnrbOdlCEmmnkKzQaqeEKf9E1sef9q67rRwzR
+         oekQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741359988; x=1741964788;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iArDif38+fZWZHkgSuOxfgSy+rEDqBvDc+u/YR4aXK4=;
+        b=LdaXCX5JhAQsKc+i3QzfiVuQPt1CW7Rh5dmTuid418lfYlyoB2WfgmWVclRQKp/Bqc
+         MghoRj3K4CFHFV3fLUmNOC93tTBH11TZ7qhn2nINiifZIMuJparHuApt6fscE8wzvt8T
+         tjaZHvGs5J88IPnysEBXu1Lm2K9o+izKsTtu7lpB3mo+ijND45CJxWHVuHu1rEZE/ud4
+         Z+jpQC/ZtFPa2vMABj7xzMuzREk57Jh5o7+4AkJMMBrM6LQ4CVfKnXZcUMTVmqhnT+lG
+         GfMak56v7OP9xZLyZaNh+5vUIwf67Xgv30oDOYOkOdmIdp3fkM8G/BHAV554pfnlUJ9F
+         47Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCWml7zxlx4Yr9h5cVgaBis+XJtCs9XQEpJhxFUp33Befd4/PFVo3xOxzAHCQ/ZPk7Yvo3JBhQHza2elbZI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/k+8rmkASt7BgoQGk7R1l4RXsa5+ZjM7Z6pg/YKoj/czxh7It
+	K6nsIitVI39rzkTCzvAjQw1Zlg0sMhO7amd4KaXjQp7Nz0IibUSnMyu12pAE3vg=
+X-Gm-Gg: ASbGncsx1nLwavPhB6kWk2iL3EqR5SunMy6zNoalP3zoVkFi5/Ky7ojkDRIdgGK0Pel
+	JtpMvm3pmt8IzG6VpQLG3VzKEsU8A1yi2A902elmpfburUVLKNlosn8aUMNN8/L8z38IGicS44t
+	NwUDuHtZtvUXZTWDbhuuKssKnZ3ZXjEbsKZEAY5iRtMxKc8mrUDYGbslmqUfpOdBHACpYrHPNeY
+	qvM9npEPRmMlqIZacBssoXIHsY8DGbPjxqAd1eB++c2cEh8JiPUPjF+AW2SFSKzbRWoHw2cOKPY
+	eYlG0pJLYg532M4gJ5yMbl/4B7SiSMkpxC4Pqtz39QTUF2ZOwObM+5lTOVwv
+X-Google-Smtp-Source: AGHT+IEepjQ7imgYoD7q4HWijAiTHHIHKB+RaF8r7Ya6WdH9B4Go9g4Q6bd0zl6386Q12ZEaV7KLTg==
+X-Received: by 2002:a5d:5f92:0:b0:38f:2b3c:569e with SMTP id ffacd0b85a97d-3913a8b4205mr53814f8f.11.1741359988167;
+        Fri, 07 Mar 2025 07:06:28 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0e4065sm5694633f8f.62.2025.03.07.07.06.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 07:06:27 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ linux-fsd@tesla.com, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20250219085726.70824-1-krzysztof.kozlowski@linaro.org>
+References: <20250219085726.70824-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/2] arm64: dts: exynos: gs101: Change labels to
+ lower-case
+Message-Id: <174135998630.202917.16887190642980215810.b4-ty@linaro.org>
+Date: Fri, 07 Mar 2025 16:06:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] sched/topology: Enable topology_span_sane check only
- for debug builds
-To: Valentin Schneider <vschneid@redhat.com>, Ingo Molnar <mingo@redhat.com>,
- Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>
-Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
- Steve Wahl <steve.wahl@hpe.com>,
- Saurabh Singh Sengar <ssengar@linux.microsoft.com>, srivatsa@csail.mit.edu,
- K Prateek Nayak <kprateek.nayak@amd.com>,
- Michael Kelley <mhklinux@outlook.com>,
- Shrikanth Hegde <sshegde@linux.ibm.com>
-References: <20250306055354.52915-1-namjain@linux.microsoft.com>
- <xhsmhwmd2ds0o.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-Content-Language: en-US
-From: Naman Jain <namjain@linux.microsoft.com>
-In-Reply-To: <xhsmhwmd2ds0o.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
 
-
-On 3/6/2025 10:18 PM, Valentin Schneider wrote:
-> On 06/03/25 11:23, Naman Jain wrote:
->> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
->> index c49aea8c1025..666f0a18cc6c 100644
->> --- a/kernel/sched/topology.c
->> +++ b/kernel/sched/topology.c
->> @@ -2359,6 +2359,13 @@ static bool topology_span_sane(struct sched_domain_topology_level *tl,
->>   {
->>        int i = cpu + 1;
->>
->> +	/* Skip the topology sanity check for non-debug, as it is a time-consuming operation */
->> +	if (!sched_debug()) {
->> +		pr_info_once("%s: Skipping topology span sanity check. Use `sched_verbose` boot parameter to enable it.\n",
->> +			     __func__);
+On Wed, 19 Feb 2025 09:57:25 +0100, Krzysztof Kozlowski wrote:
+> DTS coding style expects labels to be lowercase.  No functional impact.
+> Verified with comparing decompiled DTB (dtx_diff and fdtdump+diff).
 > 
-> FWIW I'm not against this change, however if you want to add messaging
-> about sched_verbose I'd put that in e.g. sched_domain_debug() (as a print
-> once like you've done here) with something along the lines of:
 > 
->    "Scheduler topology debugging disabled, add 'sched_verbose' to the cmdline to enable it"
 
+Applied, thanks!
 
-Thank you so much for reviewing.
-Please correct me if I misunderstood. Are you proposing below change?
+[1/2] arm64: dts: exynos: gs101: Change labels to lower-case
+      https://git.kernel.org/krzk/linux/c/73fd2bb607387a77b2dde43a2c47db2b71c65a96
+[2/2] arm64: dts: tesla: Change labels to lower-case
+      https://git.kernel.org/krzk/linux/c/056106b030b73c7d53749469bd1cdbc89b4d2daf
 
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -2361,7 +2361,7 @@ static bool topology_span_sane(struct 
-sched_domain_topology_level *tl,
-
-         /* Skip the topology sanity check for non-debug, as it is a 
-time-consuming operation */
-         if (!sched_debug()) {
--               pr_info_once("%s: Skipping topology span sanity check. 
-Use `sched_verbose` boot parameter to enable it.\n",
-+               pr_info_once("%s: Scheduler topology debugging disabled, 
-add 'sched_verbose' to the cmdline to enable it\n",
-                              __func__);
-                 return true;
-         }
-
-
-Regards,
-Naman
-
-> 
->> +		return true;
->> +	}
->> +
->>        /* NUMA levels are allowed to overlap */
->>        if (tl->flags & SDTL_OVERLAP)
->>                return true;
->> --
->> 2.34.1
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 
