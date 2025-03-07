@@ -1,112 +1,96 @@
-Return-Path: <linux-kernel+bounces-550278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79AC3A55D7E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:13:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 586FCA55D7F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:14:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D9847A5484
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:12:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B13E11885129
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:14:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DD515990C;
-	Fri,  7 Mar 2025 02:13:35 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6734D1531E8;
+	Fri,  7 Mar 2025 02:14:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="aZhvs2gg"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0D863CF;
-	Fri,  7 Mar 2025 02:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6775363CF;
+	Fri,  7 Mar 2025 02:14:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741313614; cv=none; b=J6OenDC7r2/9DcMO+yDcl24cgHbKXjvWzQrsytEIfqUMD6A4YIWSM8q+9SizkYaCy8by6pzGaq9vwGAGWBES1r+7zdMnsOoOOq1YqRq8nBkbcJcnC8EutbwOpP7C4aD1Ko7ElbKYzfaXf23toful679ZT/do0Zkxx5PFjpCNBjQ=
+	t=1741313670; cv=none; b=KcqU2Anm1WrwccfSLYlQe1F0fivvDeM00TFTI5Ji1f1FG/Acpgw1IBBcYywgxeRmkrkfj2ZF8x5ByjaIfvqRuq70xCYtCytnXmDJWT7rYIFyjVdvqbajqlKqbFeWBIKKR0OXg2UaMo11GV5wAtAtgTEbxstzpxGMsZskjJ1cPNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741313614; c=relaxed/simple;
-	bh=b2cWtXC1jbgi5umlBm9Vcc830Fi6Sru0+8pFSBC4eZQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dlUqAslMhD3SIdlbYdHjGL3/L8upTj55w069xVyIObm1xUelz2U/wJn1c1dyEZTjpvxBp7n9KksHaxu+dZ6nSvytwFeS7Mp86MEYARUZAMJ3ujpqMZPxtvqgekQXDUb/Ri5Kb2wuAzcq2llTnNGILeZm6BdwpLDQiOEr4gUZD30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: be2f5798faf911efa216b1d71e6e1362-20250307
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:1cdbb6de-9e0c-48c9-9976-b814b3f5bb00,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:6493067,CLOUDID:6a3db4192fcd060ef7b18f8cde81c044,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: be2f5798faf911efa216b1d71e6e1362-20250307
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1104782365; Fri, 07 Mar 2025 10:13:21 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 6CA4316001CC7;
-	Fri,  7 Mar 2025 10:13:21 +0800 (CST)
-X-ns-mid: postfix-67CA5641-354583794
-Received: from [10.42.13.56] (unknown [10.42.13.56])
-	by node4.com.cn (NSMail) with ESMTPA id 052F516001CC7;
-	Fri,  7 Mar 2025 02:13:20 +0000 (UTC)
-Message-ID: <8c9ab398-4074-48b8-9606-21c50f057516@kylinos.cn>
-Date: Fri, 7 Mar 2025 10:12:53 +0800
+	s=arc-20240116; t=1741313670; c=relaxed/simple;
+	bh=hIU/jHW6i2n1bLd+ULKkpNa1KSq3r0IHNrwHxnEvsMU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=jzNQx0QYh5QveQu53CP2cT4mt6cdmYcQCSGM3LisbEyjov6OJ7SIcTw29FOilbpThEy5sGylA5GqtZr8bbSgMFWguMOT2nCrn88vA0kvXvw2HNX1eVghlUriN26E3js+OoCZFL9nW3xSFAFCmVKH7SlaJ5cFOSIy4BYN/IHvpCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=aZhvs2gg; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1741313658; h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type;
+	bh=OEsZ722+T9luhvFcjJl5RrcLF6JNMZ9rh4LTTolbXl4=;
+	b=aZhvs2ggFIOZzVNXkqT9dtVzxSgUP/ObOmWnGLft4XtE9jJdycbDVvX3FlZGnnVZVVHRa369BVGhovsjAWckmM69QqMrK5x+Ce5k2pq6goK9YBrmY8c8A2eo5nHMu0XcG1ysCuZZkfV/dxKQSpk9dT+guID/qqm9IFlNrxXpnOg=
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WQqVTne_1741313652 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 07 Mar 2025 10:14:17 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: rostedt@goodmis.org
+Cc: mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH -next] function_graph: Remove the unused variable func
+Date: Fri,  7 Mar 2025 10:14:12 +0800
+Message-Id: <20250307021412.119107-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Pei Xiao <xiaopei01@kylinos.cn>
-Subject: Re: [PATCH] serial: 8250: Optimize port function assignment with
- generic macro
-To: Greg KH <gregkh@linuxfoundation.org>, xiaopeitux@foxmail.com
-Cc: linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-References: <tencent_50535E8627177335AEA311C5DC0A54609008@qq.com>
- <2025030602-frays-profusely-0656@gregkh>
-In-Reply-To: <2025030602-frays-profusely-0656@gregkh>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
+Variable func is not effectively used, so delete it.
 
-=E5=9C=A8 2025/3/6 15:05, Greg KH =E5=86=99=E9=81=93:
-> On Thu, Mar 06, 2025 at 11:00:32AM +0800, xiaopeitux@foxmail.com wrote:
->> From: xiaopei01 <xiaopei01@kylinos.cn>
-> Sorry, as per the documentation we need a name, not just an email alias=
-.
+kernel/trace/trace_functions_graph.c:925:16: warning: variable ‘func’ set but not used.
 
-ok=EF=BC=8Cperhaps I changed a new computer to send patch caused it.=C2=A0
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=19250
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ kernel/trace/trace_functions_graph.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-I will modify in next time!
+diff --git a/kernel/trace/trace_functions_graph.c b/kernel/trace/trace_functions_graph.c
+index 71b2fb068b6b..ed61ff719aa4 100644
+--- a/kernel/trace/trace_functions_graph.c
++++ b/kernel/trace/trace_functions_graph.c
+@@ -922,7 +922,6 @@ print_graph_entry_leaf(struct trace_iterator *iter,
+ 	struct ftrace_graph_ent *call;
+ 	unsigned long long duration;
+ 	unsigned long ret_func;
+-	unsigned long func;
+ 	int args_size;
+ 	int cpu = iter->cpu;
+ 	int i;
+@@ -933,8 +932,6 @@ print_graph_entry_leaf(struct trace_iterator *iter,
+ 	call = &entry->graph_ent;
+ 	duration = ret_entry->rettime - ret_entry->calltime;
+ 
+-	func = call->func + iter->tr->text_delta;
+-
+ 	if (data) {
+ 		struct fgraph_cpu_data *cpu_data;
+ 
+-- 
+2.32.0.3.g01195cf9f
 
->> Refactor repetitive conditional function pointer assignments using a
->> generic macro ASSIGN_IF_EXIST. This consolidates 15+ conditional
->> checks into a consistent pattern while maintaining type safety.
-> But why?  Macros are a pain and hide what is happening here.  Do you
-> think this makes the code more maintainable over time?  Does it fix any
-> existing bugs?
-
-sorry for make some noise=EF=BC=8CI know you're a very busy person.=C2=A0
-
-Sorry for disturbing you=EF=BC=81
-
-No,it don't fix any bugs.Indeed, it's less readable than the previous cod=
-e.=C2=A0
-
-Initially, I thought there were too many repetitive lines,=C2=A0
-
-and the code length could be reduced.
-
-
-thanks=EF=BC=81
-
-Pei Xiao
-
-> thanks,
->
-> greg k-h
 
