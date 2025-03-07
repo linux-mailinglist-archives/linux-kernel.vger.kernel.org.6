@@ -1,112 +1,116 @@
-Return-Path: <linux-kernel+bounces-550418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30760A55F44
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:16:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A0B0A55F54
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:19:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A95F03B2DB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:16:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 244BB3B367C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1584619048F;
-	Fri,  7 Mar 2025 04:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D581194AF9;
+	Fri,  7 Mar 2025 04:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CL8qtgn4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpGqn/ZZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F32249E5;
-	Fri,  7 Mar 2025 04:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64750190482;
+	Fri,  7 Mar 2025 04:19:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741320988; cv=none; b=rh4yFSmFY82VlB4cB+OHaWxtcQM0/phWXMljiKy/xm0Y8ZOqSM9OG2TFE23z+OsGdTYWqUi+0wCf6ANtg4BvMFlZ80pL+L52q4AasEaemgqG38SQdQeCeXrypH15bp+cgeNol+B6rQdhIaQ4nAqv8JlM84ydnwl2tz8Nitfaebw=
+	t=1741321158; cv=none; b=DsYvKDP+qOA8AaTk4VS4o77IKkQchB93R44sSx9pgZ6ERBAkZ/lpUaeBc1dGMNdeIQxLNW5uh+oqh7qgXhWGzUKTgrIep57q5zyJ5GwrNVB4XpZ5TOuf7jDUJv68yruIEIXAe3UEgV1KZ9+Aj25kEVCcUHp00Uf/SQbJwNhL0wg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741320988; c=relaxed/simple;
-	bh=ajKfc7gigb87SKdIwwoyRysY03B56hMMZRp8G59YjxI=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=ntDnhxfhW2t/sIFdQCv4g67DFtT55lUEbra9pjYPDmSv3JhKeDjZ3QAT4UMqrolOP3ECm27TYZ7cU3DMHjJcUVW2kXXvEcHQAnAK6PwN5yHmWICfMM5HHKPN/nG0BCuo88tNqeMoLWNDuWfk+ywWX0knwjVvRIyBt5Cv4C//MA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CL8qtgn4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9DFD3C4CED1;
-	Fri,  7 Mar 2025 04:16:27 +0000 (UTC)
+	s=arc-20240116; t=1741321158; c=relaxed/simple;
+	bh=HdpOnS7Eic+UbYPCcALNkxTU2FKSqjORHtZap9XlbFA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I8ybzPFbnC58JTcrefAFUpivCKqQI0uSby2/xPa/x1rNvUKwgX4cUkiKTgAbwo2gpXu2Hlft8nAVH4JbniJOWLOlwZ7u1kSff7I7AVDBIfrZO2KTgxCnEPG9qRLhKCCZ1+gjZTiOPjTuXQNSxY+zE6vKGUUs10swhl0u+VHfets=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rpGqn/ZZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA624C4CEE2;
+	Fri,  7 Mar 2025 04:19:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741320987;
-	bh=ajKfc7gigb87SKdIwwoyRysY03B56hMMZRp8G59YjxI=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=CL8qtgn4sJhzjtBviEMGu4ppipSMtJP1w4YUcCjeddS/TRxWje5+TJIy3dXVaUI6A
-	 u5aFCJGR3DzAofl6XVgrJDurLXP0fkkO5TTHU8VlztHuKM3SnugeseRfiprGsKPt1F
-	 eCHE+DV/OdEbO0DNd0r4S0wjHRkpL2+J66I0jkFNx35ap50y+r1uZTWtaVKHQCuMp/
-	 q0K9I1KC1M0XV2CIWBY9Rx8yXkC18p9jUmC8GgN88p8mByq379KjmUD35A/7QVupeb
-	 iLJ7UW5iJEAlTK3uebsBOKmYokopK1R3yHgo7M2n3WZJD/HSLz3aifEIMGKMQZ5oLT
-	 0jFmn7DGsrUlg==
-Date: Thu, 06 Mar 2025 22:16:26 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1741321157;
+	bh=HdpOnS7Eic+UbYPCcALNkxTU2FKSqjORHtZap9XlbFA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rpGqn/ZZuVMd8802YF2u3CrReKTKLsliU+NXkgcbV+AGrn8xiN7OEu6SPojhjCHDT
+	 NNmk1S7H8fASwn4j1JJTfp7Ui5a9QnrmQ5b8q8kMRu4iH3QGPcG029YFGHUNi7XfUa
+	 tAO0jX8MF0Loo7tJGsIe+3p8jqwxjs2w+dQ/TFAAJ7ZGWDykFQ/22OBwyDHsEVlw6C
+	 BHjMCZZ44yPux6+9C4h8Q2PkhFxBa38udR+Zxg55a+eQ+b12uUpU0REpzu/SvKDaNw
+	 ufjU9+pXAFLjKMhCo1cH37EFESnTkXvg5YRAD2qClUtuLbaK1I0tFwD2slIidlEW28
+	 OPpMFoctyEMQQ==
+From: Kees Cook <kees@kernel.org>
+To: Justin Stitt <justinstitt@google.com>
+Cc: Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Bill Wendling <morbo@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Tony Ambardar <tony.ambardar@gmail.com>,
+	Alexander Potapenko <glider@google.com>,
+	Jan Hendrik Farr <kernel@jfarr.cc>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	kasan-dev@googlegroups.com,
+	linux-kbuild@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH 0/3] ubsan/overflow: Enable pattern exclusions
+Date: Thu,  6 Mar 2025 20:19:08 -0800
+Message-Id: <20250307040948.work.791-kees@kernel.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- linux-arm-kernel@lists.infradead.org, 
- Project_Global_Chrome_Upstream_Group@mediatek.com, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
- Richard Cochran <richardcochran@gmail.com>, linux-clk@vger.kernel.org, 
- netdev@vger.kernel.org, devicetree@vger.kernel.org
-To: Guangjie Song <guangjie.song@mediatek.com>
-In-Reply-To: <20250307032942.10447-7-guangjie.song@mediatek.com>
-References: <20250307032942.10447-1-guangjie.song@mediatek.com>
- <20250307032942.10447-7-guangjie.song@mediatek.com>
-Message-Id: <174132098632.2770289.10803747794522136743.robh@kernel.org>
-Subject: Re: [PATCH 06/26] dt-bindings: clock: mediatek: Add new MT8196
- clock
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1304; i=kees@kernel.org; h=from:subject:message-id; bh=HdpOnS7Eic+UbYPCcALNkxTU2FKSqjORHtZap9XlbFA=; b=owGbwMvMwCVmps19z/KJym7G02pJDOmnivc9WDdJnPdalex1RaudYX/mSYtfr5ZaxpWtqjyt9 5P6wfmiHaUsDGJcDLJiiixBdu5xLh5v28Pd5yrCzGFlAhnCwMUpABNRTWJk2Ls3+nLnp+qNm3pd i7/l+q32Xp9lKsT2w+HqrwYGvp+pKxkZznY7Kx+w8zbRv2vpHFciXPDncomFpWdCpd20INdqyTU cAA==
+X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
+Content-Transfer-Encoding: 8bit
 
+Hi,
 
-On Fri, 07 Mar 2025 11:27:02 +0800, Guangjie Song wrote:
-> Add the new binding documentation for system clock and functional clock
-> on Mediatek MT8196.
-> 
-> Signed-off-by: Guangjie Song <guangjie.song@mediatek.com>
-> ---
->  .../bindings/clock/mediatek,mt8196-clock.yaml |   66 +
->  .../clock/mediatek,mt8196-sys-clock.yaml      |   63 +
->  include/dt-bindings/clock/mt8196-clk.h        | 1503 +++++++++++++++++
->  3 files changed, 1632 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8196-clock.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt8196-sys-clock.yaml
->  create mode 100644 include/dt-bindings/clock/mt8196-clk.h
-> 
+This brings Linux's integer overflow mitigation integration up to the
+current set of features available in Clang for handling things sanely
+(i.e. pattern exclusions). While this isn't over yet, it puts all the
+infrastructure in place to continue keeping up to date with current
+Clang development. The next step is to add support for the coming
+canonical wrapping and non-wrapping types[1].
 
-My bot found errors running 'make dt_binding_check' on your patch:
+-Kees
 
-yamllint warnings/errors:
+[1] https://discourse.llvm.org/t/rfc-clang-canonical-wrapping-and-non-wrapping-types/84356
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/mediatek,mt8196-sys-clock.example.dtb: clock-controller@10000800: reg: [[0, 268437504], [0, 4096]] is too long
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+Kees Cook (3):
+  ubsan/overflow: Rework integer overflow sanitizer option to turn on
+    everything
+  ubsan/overflow: Enable pattern exclusions
+  ubsan/overflow: Enable ignorelist parsing and add type filter
 
-doc reference errors (make refcheckdocs):
+ include/linux/compiler_types.h  |  2 +-
+ kernel/configs/hardening.config |  2 +-
+ lib/Kconfig.ubsan               | 25 +++++++++++++------------
+ lib/test_ubsan.c                | 18 ++++++++++++++----
+ lib/ubsan.c                     | 28 ++++++++++++++++++++++++++--
+ lib/ubsan.h                     |  8 ++++++++
+ scripts/Makefile.lib            |  4 ++--
+ scripts/Makefile.ubsan          | 10 ++++++++--
+ scripts/integer-wrap-ignore.scl |  3 +++
+ 9 files changed, 76 insertions(+), 24 deletions(-)
+ create mode 100644 scripts/integer-wrap-ignore.scl
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250307032942.10447-7-guangjie.song@mediatek.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+2.34.1
 
 
