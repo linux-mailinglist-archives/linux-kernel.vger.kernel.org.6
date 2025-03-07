@@ -1,124 +1,95 @@
-Return-Path: <linux-kernel+bounces-551231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C526AA569E5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:04:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 802FEA569E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:05:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82068171064
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:04:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 362421739E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:05:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCA921ADA4;
-	Fri,  7 Mar 2025 14:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD25821ABC3;
+	Fri,  7 Mar 2025 14:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TdwVGdgL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XVxlJzMV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE67821ABBD;
-	Fri,  7 Mar 2025 14:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131BB18DF65
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741356242; cv=none; b=EnpcU1Hr4fDKNtV3v23/xbGaQoAe9K7ff+BJgrLYBJ8J5Q2qoTwAani7Mu7/8bGbYvTgD4GzFUpvPbm3kUFQWku8Rb/vZeJ+EmaMdMCW9mbKULS0ngmL4lcyk/5nACb5Fd401slCaYQ05Przr8wVKueZ60vSyH5jN5CLHMUSbJM=
+	t=1741356306; cv=none; b=rtbdiBT3n3Rdg8i7T6nXUSmIbpbA7OfL1ZRbHm5R5OT9i1Gchc3c9i1jnL5jYVR8ApUPm0A30QcjoXn6rGXA7IwYdD6pB4o117uIZI/heSQOUPmbTdpazBYKfb4GRubYeq7QnKoMUf0dxvr/e23q9X5ysDiAUtSUtkBgvmKxzds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741356242; c=relaxed/simple;
-	bh=ywhzavUbT8Crwka9kYfHb80Hlmy4pKHZMiz6hFpwVWg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XoesShBBW5Zf5sTkVTv3y5HhFFUTaalcJeQ4RezBVuuhXm53F6O2inMWWH+YYdlEnX0K+8L8ZjvdHA7dcPiBUJGzHTNlMn5WhrrlkIYiQzWQrEELhecONdivlHCcWsBUboeXF8K2QdDTSdIk8nKlZB5v0G3GyQORvevxHCiMXKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TdwVGdgL; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741356241; x=1772892241;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ywhzavUbT8Crwka9kYfHb80Hlmy4pKHZMiz6hFpwVWg=;
-  b=TdwVGdgL16G/7QMutBHxazRMMTGEKfneo3IHYkklphWtgKBiFwEAJOTq
-   Ey5ENKmbsdgrS+zffAtkgiFLnkLzlZE5SjecnCWRs2aOCwxDjMVOrDqST
-   aSLX+Hh23S4fh6TT95j7vA0dN3vOgxvn5ArluoUiLBecc6i1W9Gwo2jk6
-   bOnc7cP1hXkFK3a0QvgzX8Kg8iOKbzH2cGtJox9OJO1l7EfRKmcqVp/hT
-   fPbS/CGXKA52tJBqewPcPfKnMfjocqzOwitDV2zaO6R6YvAhTLHWXVFyA
-   JFaNOVJNRQqLOFRd2erzIDjlNYW1ZZ8QNWh1nTIV4ZLcEev2fBxTcRV/8
-   A==;
-X-CSE-ConnectionGUID: 6taCO5r2S4OIL/XJwj9vWg==
-X-CSE-MsgGUID: fBUYxoQKT0+/1ff0HZXvFQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="53040427"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="53040427"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 06:04:00 -0800
-X-CSE-ConnectionGUID: pT4gQoJlQOKKQ82jFUIpxA==
-X-CSE-MsgGUID: g/AAWw7aSJmahjk8R7b9tQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119257861"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.120])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 06:03:56 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	Alex Williamson <alex.williamson@redhat.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	=?UTF-8?q?Micha=C5=82=20Winiarski?= <michal.winiarski@intel.com>
-Subject: [PATCH v2 1/1] PCI: Fix BAR resizing when VF BARs are assigned
-Date: Fri,  7 Mar 2025 16:03:49 +0200
-Message-Id: <20250307140349.5634-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1741356306; c=relaxed/simple;
+	bh=ht415aaYPdz+tHKVVk7wvtQ5lvSaEqEPmVYLSlJXTW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DHoS49gPtYoo5ejm1M5MkvWtkQSPjVo2DyWtlWvPrhUUoA+042RyfyovHZaPqxDL7IwGn31uIcj6k/MsAFCLfnbzXm/nS+GfUbOCKgt4yMxf6878yeu+lrUCfhsH8CHfEwvnzyeinUUgJKj181Kpl81qdmgULKhHs1UuU2gd5gU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XVxlJzMV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCFBCC4CEE5;
+	Fri,  7 Mar 2025 14:05:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741356305;
+	bh=ht415aaYPdz+tHKVVk7wvtQ5lvSaEqEPmVYLSlJXTW8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XVxlJzMViQfB6KaxRBDJzbkNnjkGf3AmdbYKeyapzUlLhlMbVgt7PEc38RfdfebQ/
+	 daqohpEmIITBu9OetWzqhZi6PXovrUATcw+Dhb1QUD4EcF766/9AwiMeFn7vWz7zPH
+	 AD1we5D0c7F+W4Kq9uKr8Aa+17ehBY1KwvZaqQFQ=
+Date: Fri, 7 Mar 2025 15:04:56 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
+	Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH] driver core: faux: Check device binding state by
+ dedicated API device_is_bound()
+Message-ID: <2025030704-lapping-gurgle-d101@gregkh>
+References: <20250307-fix_faux-v1-1-91459764575e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307-fix_faux-v1-1-91459764575e@quicinc.com>
 
-__resource_resize_store() attempts to release all resources of the
-device before attempting the resize. The loop, however, only covers
-standard BARs (< PCI_STD_NUM_BARS). If a device has VF BARs that are
-assigned, pci_reassign_bridge_resources() finds the bridge window still
-has some assigned child resources and returns -NOENT which makes
-pci_resize_resource() to detect an error and abort the resize.
+On Fri, Mar 07, 2025 at 08:47:16PM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> Use dedicated API device_is_bound() instead of 'dev->driver' to check
+> device binding state in faux_device_create_with_groups().
+> 
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+>  drivers/base/faux.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/base/faux.c b/drivers/base/faux.c
+> index 407c1d1aad50b7969a6dab9d2027d8beab66a754..76fe494a128254aaaf1339386ab37817a732781f 100644
+> --- a/drivers/base/faux.c
+> +++ b/drivers/base/faux.c
+> @@ -154,7 +154,8 @@ struct faux_device *faux_device_create_with_groups(const char *name,
+>  	 * if not, let's fail the creation as trying to guess if probe was
+>  	 * successful is almost impossible to determine by the caller.
+>  	 */
+> -	if (!dev->driver) {
+> +	/* Do not need to device_lock(dev) due to no race here */
+> +	if (!device_is_bound(dev)) {
 
-Change the release loop to cover all resources up to VF BARs which
-allows the resize operation to release the bridge windows and attempt
-to assigned them again with the different size.
+Ick, this feels wrong.  This is the driver core code, it can poke in
+dev->driver if it wants to, and as the lock is not held, and there is no
+lock even mentioned in this driver, the comment is confusing unless you
+dig and go read that device_is_bound() requires this.
 
-As __resource_resize_store() checks first that no driver is bound to
-the PCI device before resizing is allowed, SR-IOV cannot be enabled
-during resize so it is safe to release also the IOV resources.
+Also, when we start to add locking requirements to functions like
+device_is_bound() (which we really should) this call will fail the
+check, right?  How are you going to explain that?  :)
 
-Fixes: 91fa127794ac ("PCI: Expose PCIe Resizable BAR support via sysfs")
-Reported-by: Michał Winiarski <michal.winiarski@intel.com>
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
+thanks,
 
-v2:
-- Removed language about expansion ROMs
-
- drivers/pci/pci-sysfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/pci/pci-sysfs.c b/drivers/pci/pci-sysfs.c
-index b46ce1a2c554..0c16751bab40 100644
---- a/drivers/pci/pci-sysfs.c
-+++ b/drivers/pci/pci-sysfs.c
-@@ -1578,7 +1578,7 @@ static ssize_t __resource_resize_store(struct device *dev, int n,
- 
- 	pci_remove_resource_files(pdev);
- 
--	for (i = 0; i < PCI_STD_NUM_BARS; i++) {
-+	for (i = 0; i < PCI_BRIDGE_RESOURCES; i++) {
- 		if (pci_resource_len(pdev, i) &&
- 		    pci_resource_flags(pdev, i) == flags)
- 			pci_release_resource(pdev, i);
-
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
--- 
-2.39.5
-
+greg k-h
 
