@@ -1,201 +1,462 @@
-Return-Path: <linux-kernel+bounces-550289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D2E7A55D98
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:20:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A74A6A55D9B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:20:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 265C63B49D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:20:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21EB618967D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:20:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A38017FAC2;
-	Fri,  7 Mar 2025 02:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1855E188907;
+	Fri,  7 Mar 2025 02:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="OGjmlmGt"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2082.outbound.protection.outlook.com [40.107.103.82])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="G3gPeqyy"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5019322A;
-	Fri,  7 Mar 2025 02:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741314002; cv=fail; b=CWI5hM425ho/AlgyTUlx21osQ1xTTYLDmjyE5X9CQbuzOeN6n4SRRTy1WzFccO7js9CTBVP/goHPjr4yeMofrzg1wKJQju3Qi4yl+eLDhFQ+/EAEwbmtMCN8tHGvT+8JAVkItPIXK+ZBuEf29rMS0D9N3T3zpAvmvbwqVokWZJM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741314002; c=relaxed/simple;
-	bh=VVBoAOSUjZIqgIgWlLTUPBS6rdWcfyZguOsr1BJBMOY=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=WRFmmFk2JAcm2bbSJzhN5C5gSmYt4hJGHMujIx7emkv/IaLsNl7YyJPTJVGTubWIHLWfFuubgM/Aiulqsfd1OjaRreXm0iw7GnJaS6K+iZWaKDU88mwVcJ+9S604Rd3YmE0bJSeVjXijpVSU+bAKUcxc09BBZXGYTUZPHwQmsaA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=OGjmlmGt; arc=fail smtp.client-ip=40.107.103.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=W+QwkGs4TwSqI8KPhWfNJ2mYBFkMWXE6+YHr5ZoBtJpcTMf+S6kmk5JlrbTNn3t4gtIhNGULuqF0BXlgIosDP1hSHgPdgoO+i8u3lwNPxa9a2FLMb69O/fdNCL9dMOVZR7nP0aMMONjIhIacum18wqQge42y6B5snFHfRg20pS96em/Kd3djQTAadBETKnIozM9BFdrIWxNrg667vRD3b3k5cBCD7L26Hlm+GtmTSfKnJ+AOP8ncjLOV8wzbIiB91F9hup7VSTVZKZCX1M0k5gr0oMgsUAjnbR6y1WOIiAHtc21S4i2e4y1NWezYHVF7iKic1tR33fLJb4/YA07//g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=G5YXBTakjW/2AO+m3/0Y3QYWANEVcwtLdmxNNwxvNWg=;
- b=PGNxGz2LiX5r+JtEfUZQ1h8PG4PwPeQdqIue7AZDqb25gK3glCxbhqXpI3BhKyGb42PJrdS/ln7U0nP6AfGHGxn/vfZwSL24VxFn0HIXX6+cHs6J56URjg1LCjQ/AIA6rnTd3JpVDgqV8lIQu1/FKIz12RTWku5CfGOBu0NfwXAN4yapkbJZc13+bRfKH3/2IXFi4cCVAT1J/dBRWNfnU/p4IBAzkvk5AHUOMEKbCxAsK2Q/bO+E5c+UvNNg1ewajVHPqWyEuZi/qQT5rnLc1T9v4UsbDhAbDBqHAKCdGTkJTyOF/Hs7Vcb2AdahPJN2prhEe9YL/XkJzOkJmh/igQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=G5YXBTakjW/2AO+m3/0Y3QYWANEVcwtLdmxNNwxvNWg=;
- b=OGjmlmGtHaExV1wL2V1Vefcq4TeG5BYEeRIkVtDIM97eWct/OdGqxSpKk2slG7eyDze7uUEeJB3WkMbmaBX79hfBnr8EojyiRRb+EVInXc29Wha2/K707f7DoEPbiYd6EjnPUaSmpCJjnPEXMnsrERp51LPv98VXpHt0wCB6PDjyBJq0G9ED0K5UbBfNRAdBgrBt08/kgZCMalk3VfG2juhgucHidHTkpzuvzaVol36oqmNt7O6O5rS09A6utyDLu7ENnW5AJR5DgO9B19AGiFLCIYxEGwt0eYtWP4r8t28vzBCDC7z7uX9x0NOrVgM1x4AJs2HsQLwOO6ejz+5GCw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB8429.eurprd04.prod.outlook.com (2603:10a6:10:242::19)
- by PA1PR04MB10628.eurprd04.prod.outlook.com (2603:10a6:102:490::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.20; Fri, 7 Mar
- 2025 02:19:56 +0000
-Received: from DB9PR04MB8429.eurprd04.prod.outlook.com
- ([fe80::2edf:edc4:794f:4e37]) by DB9PR04MB8429.eurprd04.prod.outlook.com
- ([fe80::2edf:edc4:794f:4e37%6]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
- 02:19:56 +0000
-From: Sherry Sun <sherry.sun@nxp.com>
-To: gregkh@linuxfoundation.org,
-	jirislaby@kernel.org
-Cc: linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev,
-	shenwei.wang@nxp.com
-Subject: [PATCH] tty: serial: fsl_lpuart: disable transmitter before changing RS485 related registers
-Date: Fri,  7 Mar 2025 10:19:50 +0800
-Message-Id: <20250307021950.1000221-1-sherry.sun@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0094.apcprd02.prod.outlook.com
- (2603:1096:4:90::34) To DB9PR04MB8429.eurprd04.prod.outlook.com
- (2603:10a6:10:242::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81747168B1;
+	Fri,  7 Mar 2025 02:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741314016; cv=none; b=afJrKizEQuUyq8HobQ0RIqluEJV1A4QWQOmc+qzYJF2CIInfUjBQYd5zmlABA3OiSZ2tFQ5tOztXYPbEUwodPXtBWatltwLNfN1puVeXzah8jG15gxwFLq7NIYW1tvrXUqmNbSB15psLhgoehkWHkUVubVDQwgvLJ5DeD8IlK3U=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741314016; c=relaxed/simple;
+	bh=XgoaPaZLRFcDNmldrJZnRMu/ZHa9uIzniEYE0qAT29k=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=Gd86SprNXFN3qDoXGFHMRTyOFy81FmH3MCgasDYehDAsPUAqFZWOsLzRZZAKfV33djVd9EFjaHGCMae2P0VfLLXrSYmYp3tduYDGv7UX+ycpg03CjidXisYVO5X1egvOyh3lKHFK6MqgRfKYQqAubRxm8q4u9kEGvLCJ6XEpxRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=G3gPeqyy; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:Sender
+	:Reply-To:Content-ID:Content-Description;
+	bh=MI9+ZmbRyN8XMo/CxM02plIhNjOeHxU5pdUvVUUf+v8=; b=G3gPeqyyG4G1SQ6aGiFsK38WIo
+	XNW/6Ot2orS6FRjfNdySmr6Y/ws8PgrDtHrV5/BvPtyi3UUozUJJ38q4WEw9OvaPyOF2U+X7QZJ0d
+	cl6fwREnWyiW/EVurz9Y7vi27xw7rjU1A+iypGqwCzgFwwkxaAl/w6uHe0geNKry2Tjo7DUpDRviC
+	RoyfTjd1VbrLdM+VQ3j4YzWp22UeiKcaIF8f8Mn7L7crI83TACZxjKA8kBjU2amv/rESVFGGJWLpy
+	u/euK5vWQYbYhA8855NCkZLmrFSVJ2CEa001u5UAEaaNl7qvW/GoGrelqnCGcPe7tyzeSAbiTwYl2
+	6ttXf01w==;
+Received: from [129.95.238.77] (helo=[127.0.0.1])
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tqNJj-0000000Bey7-1Eol;
+	Fri, 07 Mar 2025 02:20:03 +0000
+Date: Thu, 06 Mar 2025 18:19:58 -0800
+From: Randy Dunlap <rdunlap@infradead.org>
+To: Pratyush Yadav <ptyadav@amazon.de>, linux-kernel@vger.kernel.org
+CC: Jonathan Corbet <corbet@lwn.net>, Eric Biederman <ebiederm@xmission.com>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Alexander Viro <viro@zeniv.linux.org.uk>,
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+ Hugh Dickins <hughd@google.com>, Alexander Graf <graf@amazon.com>,
+ Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+ David Woodhouse <dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>,
+ Mike Rapoport <rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+ Pasha Tatashin <tatashin@google.com>,
+ Anthony Yznaga <anthony.yznaga@oracle.com>,
+ Dave Hansen <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>,
+ Jason Gunthorpe <jgg@nvidia.com>, Matthew Wilcox <willy@infradead.org>,
+ Wei Yang <richard.weiyang@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-fsdevel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-mm@kvack.org, kexec@lists.infradead.org
+Subject: Re: [RFC PATCH 2/5] misc: add documentation for FDBox
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20250307005830.65293-3-ptyadav@amazon.de>
+References: <20250307005830.65293-1-ptyadav@amazon.de> <20250307005830.65293-3-ptyadav@amazon.de>
+Message-ID: <E41DA7C8-635C-4E6E-A2CA-5D657526BE85@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB8429:EE_|PA1PR04MB10628:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3f99fa96-aee2-43c1-48bd-08dd5d1e8d3f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?0tej79iWLCH1o2/TO0UassbwboYmEoGPTOGQ8AueuXzYiK8lDdglSKdigWpf?=
- =?us-ascii?Q?UMkwfw31bR3jzRNfe7O5d8rJ2t6CmnPX5rvWAkpa8G5u0/BsZlvpXdOR3UHX?=
- =?us-ascii?Q?hEq+C48ZMIepuygf+pHDgUtipva2Pz8L4k1A58LBDZDuGAx3soDH2LlMUVRB?=
- =?us-ascii?Q?vBG6j3mEI1SUCbD2U3oHIT2/hix/W8Rk0aTC4VdweqjWk++nOOR45cvLUBHp?=
- =?us-ascii?Q?AjwT3ci9TWKbWqVoxQeZ7qQebz0C5X5v4Bs/ivlQWgbkfUXjGm3udrdGpDI6?=
- =?us-ascii?Q?GiWxzATwz/a7uToGcPsB3/Le0XCO3LG4H9+OVG6cNyXxax9ILW1RRGza0ogt?=
- =?us-ascii?Q?WRuVKDb1AdYLiKyN8s7hSq9L8ru8ZmZ2KHA2VcXSeuZfFj5wWVCorLeuShXk?=
- =?us-ascii?Q?23Ak7xQ1QdvW2w7AE2FKJrHdF5lsZPobEvVnnD0QehX9pAI0qmdFOKH/sJfc?=
- =?us-ascii?Q?fE1rPs2690+iyZyvctiI1RyL5/BV2fBfGQW8onzwWbS6J6ExDlF2c4TmdGZO?=
- =?us-ascii?Q?ypdHBHUUsuIr0NfrN4XKhsKKIcb4lmqX7VtZqELkNauCKxpzzeVXKJiTo+9u?=
- =?us-ascii?Q?kcFO0s0vNKn0RqR7zLGzvsFogrP97f6ESEwekcRbDyszOUOqyfDbPgCby+y1?=
- =?us-ascii?Q?Zy1CLWY8N6QfeeCURMlEygUoU3ST/oCwslsY3Bv7WGmV6i1/E13xNPeJU07L?=
- =?us-ascii?Q?n8jq9a/HhHF1K5h+H/nVqSldM8JpggyeUOUjUSG4o/EWQ3k9bmXpova6Un8d?=
- =?us-ascii?Q?9Ik5udc3JccJ6gxMHuixyNgFKWGofNP9h8obdZKqyjdbcDO5dGw/fMvqw9QV?=
- =?us-ascii?Q?NBtyzjhtFUuOpirItK1hIqBYSEXaPxMI0oNLxpgoRyhtYQFPnGLRoIMfs5z9?=
- =?us-ascii?Q?ODlCHm0IgTxaMlCceIy1PcklteKN/7A7C9EiV3lJ6U8t0HttuNpxnl+kglC/?=
- =?us-ascii?Q?2fzxIdc2MSpRNMts29DM1Lrksrd1c5GTGq+zkY1djpRjTrIAB5JMFO1QcGL4?=
- =?us-ascii?Q?k1JXnQxxbvAfgaTcaH+7cD9Hn/qLqMBokr418VcDG7ozlWUyRrsS05NH5OAI?=
- =?us-ascii?Q?yXJFBf5Jr6l078bILqte5O+iboLImnBQWwdeLARvwut/TwwLNddGqQ9ScfW+?=
- =?us-ascii?Q?YBk4ek4y8YVrnjREPgm40LxeV34RoQZpfF3IwZnQUvodmc3SmHOW4pI3N9zC?=
- =?us-ascii?Q?OWvw4IXUs3z7+lYSpStLE2UW2peqz8aqfbQSsaKzDrvCq5+oIFIF8GoX1qq7?=
- =?us-ascii?Q?ghrNdGXfpV14UWT9BmiSuvl3t1OcQK+0b2RrNSi4qEbYRSCVUS+3FIu/gp5I?=
- =?us-ascii?Q?mzmNXMQpv7G6iIg1eFO3lwC0CTPmvwy8ICXd0BMCxhOK4/fPbk08l9jJiwOa?=
- =?us-ascii?Q?36FMGDYECeCSRhnlxci52tLpvDJtyUKz9QJCHmL6nl0LxakuHjZF0u/54MhC?=
- =?us-ascii?Q?rS9jp/1i+CTHihK8wh5hrWNar2DLqNd5?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8429.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ZXj9zW6u4tAWLkese/Xa3Bq98IN9gw+3trwkn0uFqPnn61WwhPhe8i2M1+al?=
- =?us-ascii?Q?47HyD5fWImqS5c47uAw/2XxNT3uYwDdpjybklNCTdb5jd1muhQ6iOmFEPFYZ?=
- =?us-ascii?Q?tPOYhQTiD8ynAChluPqU9asjSFk+iMYzwNp4iVXc7ghw6XYTWtZPECVC5Il0?=
- =?us-ascii?Q?c/i+36CCAkm+iA1DkeC9hX2AvllUV+wUur6A6x9fl6o/Svs6HQaasKSubj0K?=
- =?us-ascii?Q?xzBxzgY1/ciNFjQUVSxRddpKOtB4xtOyrKOW3sp4ODiu5dAz0SohRPWsNNra?=
- =?us-ascii?Q?HgxTKI6VvUmJgMi4iZCebkQgl4qRiD+OcQUJ7av3Ds5KBryasz+N8VmUf96w?=
- =?us-ascii?Q?+Y+9c9TAy5ibEyPUXv6L4ONrsPA7vqqx3c/zUxEAK/ubBYiWYBdJODO07GBL?=
- =?us-ascii?Q?olOSscBeVLJVe42itQgW5TdADsQ5qISCapCAec12VOtg5de+3fRwK78hm5vB?=
- =?us-ascii?Q?P/SyWZffVfqH1vZFRX2+hzjZ/QgFXG1rOMarJM9jFofDKy/m1OkU6WuFQ//h?=
- =?us-ascii?Q?8iP+3PIPWregqYVWqQL4akAcC4dj9Y2ht0bBS6XDVAvEG7bAHxZGFiFdKBrH?=
- =?us-ascii?Q?xoajPDwAFmUYyAg/5r7b0hXbzpby5e/Wz6d5jo4V+ihcTpKHmFgkugfIy54s?=
- =?us-ascii?Q?SEHNUgCHre2OyMFoHeLX5vsvtnJhGLUmG8CATm7ndgHgRMCit3hBzHxpmOhR?=
- =?us-ascii?Q?aWgOucZ5myFOcl5tV2SMhfFjCVb6Q6i2rcYwUjq3+fjfaQL3usMLT82JYaWw?=
- =?us-ascii?Q?33NIZ2U7d7XmavA+X4khRKGBTnJbpakcDgX+Xyng9sQzcpqFElajhpZcKm8D?=
- =?us-ascii?Q?MbEofuueOSVMUeXaWC/N3tVbk2iqhxTr2MTk2KcMZacOqvX1BwfGbfDVjj/0?=
- =?us-ascii?Q?XPW/ZIjsCvgVUJDPOz1UIPm9J2yKFyHYpWHAP+FQtX/UVTBnqx6oFPmJ8t+a?=
- =?us-ascii?Q?//sQH1jrTScfKQXX/4SUY+sRUBYrIhFE09rRhvePAUMb9wliYZQ5aeFQh6nw?=
- =?us-ascii?Q?6/bxjusIVPuXePHfKu2/9O5qBj3Ru54yJwiVEZQjrxoVeSurl0wGu0gfQevr?=
- =?us-ascii?Q?aJx8IIHAdfUURIoYTm3Y0Sc0K1jU0fTxiFZG+bSNXwcrjTZwxxn5THqkdCzZ?=
- =?us-ascii?Q?TUYG3KdL1lhXHapGqb1/5/x5On1RnJtTR3BHGl5EwNCh5RU4hs7D7+Go5zOp?=
- =?us-ascii?Q?JS0PuBptMaY6wncda95MQDNa3FMBWBd+12iZsyfnTVp1j4KRW77qJcYRN3D/?=
- =?us-ascii?Q?c5/YarbxOyro/PJVWbaKq+rctXn1nvgFiM2J+nLujBRohtyqJMtjbw7rdstD?=
- =?us-ascii?Q?An+D9vrinnWAo73g1TfLPCxWg2ZO37lM/yKybXYQTqbLzUYw7Q8xFj0sYpgl?=
- =?us-ascii?Q?gb4aNhbUsNYkpkOPVpLimdYbxN3gJAZPenYeKJ1GTBCClWJ6ietrKdqCrt1Z?=
- =?us-ascii?Q?/miFg2atd+0K2NutTxh99/HkU5dUuL7bfXaUEVeLqOn4xn4fKgu3ZglmecE6?=
- =?us-ascii?Q?f0IIsDEfMUDe9fapP+vCHRQVf5SJ0nkOpPBKCyeXoliZhtA4gu4PLJLsd0CY?=
- =?us-ascii?Q?nn815oou7KDkN303eaF5Lv+wPRJtXlBilMeriM8h?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3f99fa96-aee2-43c1-48bd-08dd5d1e8d3f
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8429.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 02:19:55.9555
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: dkYEdyb+2IHB+pQVVKXZj4LCrB0VA2FjQOm5nQeOAHwJZUXcPca4QBNc5CYw+i+5xgHt9jaPygUIaMgQBOf8OA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10628
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-According to the LPUART reference manual, TXRTSE and TXRTSPOL of MODIR
-register only can be changed when the transmitter is disabled.
-So disable the transmitter before changing RS485 related registers and
-re-enable it after the change is done.
+On March 6, 2025 4:57:36 PM PST, Pratyush Yadav <ptyadav@amazon=2Ede> wrote=
+:
+>With FDBox in place, add documentation that describes what it is and how
+>it is used, along with its UAPI and in-kernel API=2E
+>
+>Since the document refers to KHO, add a reference tag in kho/index=2Erst=
+=2E
+>
+>Signed-off-by: Pratyush Yadav <ptyadav@amazon=2Ede>
+>---
+> Documentation/filesystems/locking=2Erst |  21 +++
+> Documentation/kho/fdbox=2Erst           | 224 ++++++++++++++++++++++++++
+> Documentation/kho/index=2Erst           |   3 +
+> MAINTAINERS                           |   1 +
+> 4 files changed, 249 insertions(+)
+> create mode 100644 Documentation/kho/fdbox=2Erst
+>
+>diff --git a/Documentation/filesystems/locking=2Erst b/Documentation/file=
+systems/locking=2Erst
+>index d20a32b77b60f=2E=2E5526833faf79a 100644
+>--- a/Documentation/filesystems/locking=2Erst
+>+++ b/Documentation/filesystems/locking=2Erst
+>@@ -607,6 +607,27 @@ used=2E To block changes to file contents via a memo=
+ry mapping during the
+> operation, the filesystem must take mapping->invalidate_lock to coordina=
+te
+> with ->page_mkwrite=2E
+>=20
+>+fdbox_file_ops
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>+
+>+prototypes::
+>+
+>+	int (*kho_write)(struct fdbox_fd *box_fd, void *fdt);
+>+	int (*seal)(struct fdbox *box);
+>+	int (*unseal)(struct fdbox *box);
+>+
+>+
+>+locking rules:
+>+	all may block
+>+
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>+ops		i_rwsem(box_fd->file->f_inode)
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>+kho_write:	exclusive
+>+seal:		no
+>+unseal:		no
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D	=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>+
+> dquot_operations
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>=20
+>diff --git a/Documentation/kho/fdbox=2Erst b/Documentation/kho/fdbox=2Ers=
+t
+>new file mode 100644
+>index 0000000000000=2E=2E44a3f5cdf1efb
+>--- /dev/null
+>+++ b/Documentation/kho/fdbox=2Erst
+>@@ -0,0 +1,224 @@
+>+=2E=2E SPDX-License-Identifier: GPL-2=2E0-or-later
+>+
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+>+File Descriptor Box (FDBox)
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+>+
+>+:Author: Pratyush Yadav
+>+
+>+Introduction
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>+
+>+The File Descriptor Box (FDBox) is a mechanism for userspace to name fil=
+e
+>+descriptors and give them over to the kernel to hold=2E They can later b=
+e
+>+retrieved by passing in the same name=2E
+>+
+>+The primary purpose of FDBox is to be used with :ref:`kho`=2E There are =
+many kinds
 
-Fixes: 67b01837861c ("tty: serial: lpuart: Add RS485 support for 32-bit uart flavour")
-Signed-off-by: Sherry Sun <sherry.sun@nxp.com>
----
- drivers/tty/serial/fsl_lpuart.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+    many kinds of=20
 
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
-index 91d02c55c470..4dc2f3e2b8e0 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1484,6 +1484,16 @@ static int lpuart32_config_rs485(struct uart_port *port, struct ktermios *termio
- 
- 	unsigned long modem = lpuart32_read(&sport->port, UARTMODIR)
- 				& ~(UARTMODIR_TXRTSPOL | UARTMODIR_TXRTSE);
-+	u32 ctrl;
-+
-+	/* TXRTSE and TXRTSPOL only can be changed when transmitter is disabled. */
-+	ctrl = lpuart32_read(&sport->port, UARTCTRL);
-+	if (ctrl & UARTCTRL_TE) {
-+		/* wait transmit engin complete */
-+		lpuart32_wait_bit_set(&sport->port, UARTSTAT, UARTSTAT_TC);
-+		lpuart32_write(&sport->port, ctrl & ~UARTCTRL_TE, UARTCTRL);
-+	}
-+
- 	lpuart32_write(&sport->port, modem, UARTMODIR);
- 
- 	if (rs485->flags & SER_RS485_ENABLED) {
-@@ -1503,6 +1513,10 @@ static int lpuart32_config_rs485(struct uart_port *port, struct ktermios *termio
- 	}
- 
- 	lpuart32_write(&sport->port, modem, UARTMODIR);
-+
-+	if (ctrl & UARTCTRL_TE)
-+		lpuart32_write(&sport->port, ctrl, UARTCTRL);
-+
- 	return 0;
- }
- 
--- 
-2.34.1
+>+anonymous file descriptors in the kernel like memfd, guest_memfd, iommuf=
+d, etc=2E
 
+   etc=2E,
+
+>+that would be useful to be preserved using KHO=2E To be able to do that,=
+ there
+>+needs to be a mechanism to label FDs that allows userspace to set the la=
+bel
+>+before doing KHO and to use the label to map them back after KHO=2E FDBo=
+x achieves
+>+that purpose by exposing a miscdevice which exposes ioctls to label and =
+transfer
+>+FDs between the kernel and userspace=2E FDBox is not intended to work wi=
+th any
+>+generic file descriptor=2E Support for each kind of FDs must be explicit=
+ly
+>+enabled=2E
+>+
+>+FDBox can be enabled by setting the ``CONFIG_FDBOX`` option to ``y``=2E =
+While the
+>+primary purpose of FDBox is to be used with KHO, it does not explicitly =
+require
+>+``CONFIG_KEXEC_HANDOVER``, since it can be used without KHO, simply as a=
+ way to
+>+preserve or transfer FDs when userspace exits=2E
+>+
+>+Concepts
+>+=3D=3D=3D=3D=3D=3D=3D=3D
+>+
+>+Box
+>+---
+>+
+>+The box is a container for FDs=2E Boxes are identified by their name, wh=
+ich must
+>+be unique=2E Userspace can put FDs in the box using the ``FDBOX_PUT_FD``
+>+operation, and take them out of the box using the ``FDBOX_GET_FD`` opera=
+tion=2E
+
+Is this ioctl range documented is ioctl-number=2Erst?
+I didn't notice a patch for that=2E
+
+>+Once all the required FDs are put into the box, it can be sealed to make=
+ it
+>+ready for shipping=2E This can be done by the ``FDBOX_SEAL`` operation=
+=2E The seal
+>+operation notifies each FD in the box=2E If any of the FDs have a depend=
+ency on
+>+another, this gives them an opportunity to ensure all dependencies are m=
+et, or
+>+fail the seal if not=2E Once a box is sealed, no FDs can be added or rem=
+oved from
+>+the box until it is unsealed=2E Only sealed boxes are transported to a n=
+ew kernel
+
+What if KHO is not being used?
+
+>+via KHO=2E The box can be unsealed by the ``FDBOX_UNSEAL`` operation=2E =
+This is the
+>+opposite of seal=2E It also notifies each FD in the box to ensure all de=
+pendencies
+>+are met=2E This can be useful in case some FDs fail to be restored after=
+ KHO=2E
+>+
+>+Box FD
+>+------
+
+I can't tell in my email font, but is each underlinoat least as long as th=
+e title above it?
+
+>+
+>+The Box FD is a FD that is currently in a box=2E It is identified by its=
+ name,
+>+which must be unique in the box it belongs to=2E The Box FD is created w=
+hen a FD
+>+is put into a box by using the ``FDBOX_PUT_FD`` operation=2E This operat=
+ion
+>+removes the FD from the calling task=2E The FD can be restored by passin=
+g the
+>+unique name to the ``FDBOX_GET_FD`` operation=2E
+>+
+>+FDBox control device
+>+--------------------
+>+
+>+This is the ``/dev/fdbox/fdbox`` device=2E A box can be created using th=
+e
+>+``FDBOX_CREATE_BOX`` operation on the device=2E A box can be removed usi=
+ng the
+>+``FDBOX_DELETE_BOX`` operation=2E
+>+
+>+UAPI
+>+=3D=3D=3D=3D
+>+
+>+FDBOX_NAME_LEN
+>+--------------
+>+
+>+=2E=2E code-block:: c
+>+
+>+    #define FDBOX_NAME_LEN			256
+>+
+>+Maximum length of the name of a Box or Box FD=2E
+>+
+>+Ioctls on /dev/fdbox/fdbox
+>+--------------------------
+>+
+>+FDBOX_CREATE_BOX
+>+~~~~~~~~~~~~~~~~
+>+
+>+=2E=2E code-block:: c
+>+
+>+    #define FDBOX_CREATE_BOX	_IO(FDBOX_TYPE, FDBOX_BASE + 0)
+>+    struct fdbox_create_box {
+>+    	__u64 flags;
+>+    	__u8 name[FDBOX_NAME_LEN];
+>+    };
+>+
+>+Create a box=2E
+>+
+>+After this returns, the box is available at ``/dev/fdbox/<name>``=2E
+>+
+>+``name``
+>+    The name of the box to be created=2E Must be unique=2E
+>+
+>+``flags``
+>+    Flags to the operation=2E Currently, no flags are defined=2E
+>+
+>+Returns:
+>+    0 on success, -1 on error, with errno set=2E
+>+
+>+FDBOX_DELETE_BOX
+>+~~~~~~~~~~~~~~~~
+>+
+>+=2E=2E code-block:: c
+>+
+>+    #define FDBOX_DELETE_BOX	_IO(FDBOX_TYPE, FDBOX_BASE + 1)
+>+    struct fdbox_delete_box {
+>+    	__u64 flags;
+>+    	__u8 name[FDBOX_NAME_LEN];
+>+    };
+>+
+>+Delete a box=2E
+>+
+>+After this returns, the box is no longer available at ``/dev/fdbox/<name=
+>``=2E
+>+
+>+``name``
+>+    The name of the box to be deleted=2E
+>+
+>+``flags``
+>+    Flags to the operation=2E Currently, no flags are defined=2E
+>+
+>+Returns:
+>+    0 on success, -1 on error, with errno set=2E
+>+
+>+Ioctls on /dev/fdbox/<boxname>
+>+------------------------------
+>+
+>+These must be performed on the ``/dev/fdbox/<boxname>`` device=2E
+>+
+>+FDBX_PUT_FD
+>+~~~~~~~~~~~
+>+
+>+=2E=2E code-block:: c
+>+
+>+    #define FDBOX_PUT_FD	_IO(FDBOX_TYPE, FDBOX_BASE + 2)
+>+    struct fdbox_put_fd {
+>+    	__u64 flags;
+>+    	__u32 fd;
+>+    	__u32 pad;
+>+    	__u8 name[FDBOX_NAME_LEN];
+>+    };
+>+
+>+
+>+Put FD into the box=2E
+>+
+>+After this returns, ``fd`` is removed from the task and can no longer be=
+ used by
+>+it=2E
+>+
+>+``name``
+>+    The name of the FD=2E
+>+
+>+``fd``
+>+    The file descriptor number to be
+>+
+>+``flags``
+>+    Flags to the operation=2E Currently, no flags are defined=2E
+>+
+>+Returns:
+>+    0 on success, -1 on error, with errno set=2E
+>+
+>+FDBX_GET_FD
+>+~~~~~~~~~~~
+>+
+>+=2E=2E code-block:: c
+>+
+>+    #define FDBOX_GET_FD	_IO(FDBOX_TYPE, FDBOX_BASE + 3)
+>+    struct fdbox_get_fd {
+>+    	__u64 flags;
+>+    	__u8 name[FDBOX_NAME_LEN];
+>+    };
+>+
+>+Get an FD from the box=2E
+>+
+>+After this returns, the FD identified by ``name`` is mapped into the tas=
+k and is
+>+available for use=2E
+>+
+>+``name``
+>+    The name of the FD to get=2E
+>+
+>+``flags``
+>+    Flags to the operation=2E Currently, no flags are defined=2E
+>+
+>+Returns:
+>+    FD number on success, -1 on error with errno set=2E
+>+
+>+FDBOX_SEAL
+>+~~~~~~~~~~
+>+
+>+=2E=2E code-block:: c
+>+
+>+    #define FDBOX_SEAL	_IO(FDBOX_TYPE, FDBOX_BASE + 4)
+>+
+>+Seal the box=2E
+>+
+>+Gives the kernel an opportunity to ensure all dependencies are met in th=
+e box=2E
+>+After this returns, the box is sealed and FDs can no longer be added or =
+removed
+>+from it=2E A box must be sealed for it to be transported across KHO=2E
+>+
+>+Returns:
+>+    0 on success, -1 on error with errno set=2E
+>+
+>+FDBOX_UNSEAL
+>+~~~~~~~~~~~~
+>+
+>+=2E=2E code-block:: c
+>+
+>+    #define FDBOX_UNSEAL	_IO(FDBOX_TYPE, FDBOX_BASE + 5)
+>+
+>+Unseal the box=2E
+>+
+>+Gives the kernel an opportunity to ensure all dependencies are met in th=
+e box,
+>+and in case of KHO, no FDs have been lost in transit=2E
+>+
+>+Returns:
+>+    0 on success, -1 on error with errno set=2E
+>+
+>+Kernel functions and structures
+>+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+>+
+>+=2E=2E kernel-doc:: include/linux/fdbox=2Eh
+>diff --git a/Documentation/kho/index=2Erst b/Documentation/kho/index=2Ers=
+t
+>index 5e7eeeca8520f=2E=2E051513b956075 100644
+>--- a/Documentation/kho/index=2Erst
+>+++ b/Documentation/kho/index=2Erst
+>@@ -1,5 +1,7 @@
+> =2E=2E SPDX-License-Identifier: GPL-2=2E0-or-later
+>=20
+>+=2E=2E _kho:
+>+
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> Kexec Handover Subsystem
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>@@ -9,6 +11,7 @@ Kexec Handover Subsystem
+>=20
+>    concepts
+>    usage
+>+   fdbox
+>=20
+> =2E=2E only::  subproject and html
+>=20
+>diff --git a/MAINTAINERS b/MAINTAINERS
+>index d329d3e5514c5=2E=2E135427582e60f 100644
+>--- a/MAINTAINERS
+>+++ b/MAINTAINERS
+>@@ -8866,6 +8866,7 @@ FDBOX
+> M:	Pratyush Yadav <pratyush@kernel=2Eorg>
+> L:	linux-fsdevel@vger=2Ekernel=2Eorg
+> S:	Maintained
+>+F:	Documentation/kho/fdbox=2Erst
+> F:	drivers/misc/fdbox=2Ec
+> F:	include/linux/fdbox=2Eh
+> F:	include/uapi/linux/fdbox=2Eh
+
+
+~Randy
 
