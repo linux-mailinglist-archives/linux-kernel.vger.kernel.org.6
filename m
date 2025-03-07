@@ -1,163 +1,144 @@
-Return-Path: <linux-kernel+bounces-551090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 296BDA56808
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:43:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CB98DA5680E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:44:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C64E18998AE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:43:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F04A31889B04
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81693219309;
-	Fri,  7 Mar 2025 12:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7386B219A74;
+	Fri,  7 Mar 2025 12:44:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0GVy30Oe";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EZw4mupL"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jxh0/UOm"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A67714A4F9
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 12:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C044219310;
+	Fri,  7 Mar 2025 12:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741351412; cv=none; b=uHc6rNBUkgkBRJ1+59kiyePsy7qOrj8fExjKSSUIxZE6GRtwprS1o09arYt25OwpLj/oAEB46innkGgh5a+3xG5GA8sYCLomYE0UNFEWzcToHFz+UO1p/t4xaCP9XYtSKnc+sYQn11cRO49+SyKkDNPtaPdaO3uGH+QGMm6f3Hg=
+	t=1741351462; cv=none; b=TfvCV7TbZRcT+/Knzp2pw1/RSHbng/soRDKgk2hRdPsjqf20kNms6s9KR279XSVXHlsK392I177MEXi3NWcTzQ6LO6ruDY0+XS/WlkWx8lD0tGXVWF5bQMiW0qRld5gNbclUok3p2yM92vg8VoTURkNN08yJB/IAJkbqLSqkduc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741351412; c=relaxed/simple;
-	bh=7VmanMlSY+AL4R5Gl2+izLNwqisKICSmKSHCP61d7X4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=l061qzJKE6QfEFVkNB5hBKWxSJpIJ2sNuiVS52xWSfjc/mNTcU/OL/+TWiiaWSGKKASS/OUPJbGztl+xu0n6LslzrHyovObfi5CSY+YZ4BnXI+MPihN+aYmVuJjsSC9mY3eKxGR4QBCtUD8bVIGRULLSMBj4VNADEu46sb9tBfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0GVy30Oe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EZw4mupL; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741351408;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hiWhhFFiguC06XDLj0xZWCAnw46+uSzsqCLVXGy3bqM=;
-	b=0GVy30OeGXpmtADuBX35FXO0zSDxLiaJZjaKxvGp0OIeeH7Nk6kvJrVFBuOjdTTNt4Pn6+
-	hKODrW2wUH427dTmnDDCTUbK9ZjfU7TnkcTF5troe574orvLiZD1AAu1dUQTWhiuDRHf38
-	oOh6buwzKFDkp1mm1HK57nJC9IsWO+1TxfO7PppDFLAk2db9r9KE5Ya272mjqYxr4Vd0ux
-	YsADF1tKUioZgMzn9/TV2f74df0whDuIeOWWjE3WMHotqbdnBHFtUabHbkhHuzjO4zIPRJ
-	ShXX4anigtReAMKuc47smAGxkgVXWuCp0zlT3i7n8IFzHEEF530wqqxKGL8lFQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741351408;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=hiWhhFFiguC06XDLj0xZWCAnw46+uSzsqCLVXGy3bqM=;
-	b=EZw4mupLSQoxdrmdJyKguJYM0IdXY4LGBr4sw13RIDOKd3FHeLpIiWGA6wv9jg90jsIPtN
-	QdCiUpD+BBXsKqDA==
-Date: Fri, 07 Mar 2025 13:43:23 +0100
-Subject: [PATCH v2] tools/nolibc: don't use asm/ UAPI headers
+	s=arc-20240116; t=1741351462; c=relaxed/simple;
+	bh=pEgUfTgW2S7gBugBF/6PSUkopxJLG2pTgy1gx153wqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E6HQdhFYy1+SaFrNnT3O8YSUMuEwQ0ql4Qd8JoVKYGBL0ZLGee0vNXrAB4o3OpkSU4PswJplKgeGvWxk1DNdkM//JkFvo7J67BU1MXDTOj21WigUmInY/oNyDh2Icz8CLb8QYqRm7Nel5Q4GP+yMvKhVV9vooGZg0L3zy05fON0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jxh0/UOm; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2ff85fec403so510748a91.1;
+        Fri, 07 Mar 2025 04:44:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741351461; x=1741956261; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iwzKC+BoRKyvxXzUfOtE+LFJN29dSh3BAY3ttGocc2c=;
+        b=Jxh0/UOmevRHjzzZjYWsRHvv1L2i/OxlhCT7byC/Kp5gZG7WKsN4MY0KpwU8hZxQIg
+         zY30/AcVL89cC14u1NdP4OeUujNUHUYFTLymqTVMhugZNw8mwKahRkmaoJqcLKjsPUNm
+         6s5WkVCw40kAdqMZX1r2MNhFoNJR2oANbF9iLYOiqJp+Y7u87cqpURqIm9tWHFMHxOk2
+         dfq0OMyqXfU7cv29dfzh9xN7mAinZAgl8O8bO67VYOlg0tsLrGkhwzpQtG00bKwQi+3k
+         o+E0y4Ng3HSzh+zoomJJOEyMM5As2iZgBzdh4lrgI4CUv6bvjJCC4fankflUYwlgB9qM
+         Yswg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741351461; x=1741956261;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iwzKC+BoRKyvxXzUfOtE+LFJN29dSh3BAY3ttGocc2c=;
+        b=oWqDsRHLHFatFeUHJn9hxzcLg/cYpuCRSezwgDXp/Ra+t/g54Ou+qK9EBp8UzB3uvU
+         RNOiGFGWm+VxeMZKaSMOydN7c0unGXkUxHPc0PdSg1Glf/KGErcxeXGfgBYmH9ISdzBY
+         +GD4j8sJxeImonWiQoME4tcvBcPcLKe+7GhypnzE3ulvk22t4flU4fHciUxmiBj4/px0
+         0ddzfuxWeKPwrHMoNNsQJaSvffnoOeNzvwP2mFfEntzrOecEtge6rK6ftG93sdDofQTJ
+         m//M9DUs92HoDxaEeXGjfQ9RsuYMpg2Dmr0WgcGhBWC2h4MfhEeVcRj3ODpwhLjxRTHC
+         xRWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUn3oRIWvZepOE/gXf/Wpl2NOhqImRXdsewcPC1RpA1CmIltZe8pRTsxh543a6p5JSM2WJKq+YyZyyDpw==@vger.kernel.org, AJvYcCXWgtvjqfDPamsCJffaPzQSfHWAHSVrnH8hg2eHLm4UpvNhxjs69t0EpdNrgPYcaOJlHalTlmuG2dwdplUZ@vger.kernel.org, AJvYcCXfGxrjameF/s9Fc6aC0MLsV8nImEbTqTlMzbWYuz9D/pr8V3hFjvH6D4Ps/DtBvN73YtLgc7EN96UB@vger.kernel.org
+X-Gm-Message-State: AOJu0YxobDIZN9mmPfaGsGQ34GR/ioFxAUOX4lgJLRNTqq39jTap5iWN
+	++ZpAt/W1X+vI1eXH8rvhf9prhU/2Vc1Y30aImRFRzM0UNxtnHEn
+X-Gm-Gg: ASbGncuPEDzhjmhBgAVkChp5BB4W9Y3E0BscA5xu5rLR6fhnfjquu3p8DVkF99D9T3t
+	S0MEXHidtj3wzJuJOi5luBXrK+x2gb8shc1HcrLriQc/aCYhjK4WU8S8ig7Tgth6pDjHejco7Cb
+	4CzQqwtRT5iK50IStuIzRlk1pEETw7RSlUmFDCh/l11q3BuouOJ6AzvAfSzVHVCMdaNJ25ITX2t
+	SDt4A/CU+dd6/hBVKjcZ3QlekbLPPe4dxzcEXS5GXPJLbDxqzZ1j0aGLZ/py0uq7EwvC+IaiDIn
+	xm/CL8hOr5m30V61EmNZeePFHee9tTuDr7Yc/Xw3UJnO2oYE4j1RcA==
+X-Google-Smtp-Source: AGHT+IHMu9qUUyOvbqivlw3hkwW3To7hdGzWlPlEcierAxxBBP/Hf/0k3ExYeldcV6lFv+wY39JSVg==
+X-Received: by 2002:a17:90b:4c8a:b0:2ff:556f:bf9 with SMTP id 98e67ed59e1d1-2ff7b59dec9mr5451858a91.4.1741351460582;
+        Fri, 07 Mar 2025 04:44:20 -0800 (PST)
+Received: from localhost ([2804:30c:1f21:4300:1cf6:c485:6555:b1c5])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-224109def8bsm29093965ad.8.2025.03.07.04.44.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 04:44:19 -0800 (PST)
+Date: Fri, 7 Mar 2025 09:45:13 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	lars@metafoo.de, Michael.Hennerich@analog.com,
+	marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
+	brgl@bgdev.pl, lgirdwood@gmail.com, broonie@kernel.org,
+	dlechner@baylibre.com, jonath4nns@gmail.com
+Subject: Re: [PATCH v4 06/17] Documentation: ABI: add wideband filter type to
+ sysfs-bus-iio
+Message-ID: <Z8rqWR7OKZMIcmB6@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1741268122.git.Jonathan.Santos@analog.com>
+ <b390ec6d92dd742ace93bd8e40a0df4379b98e23.1741268122.git.Jonathan.Santos@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250307-nolibc-asm-headers-v2-1-e2a734f25d22@linutronix.de>
-X-B4-Tracking: v=1; b=H4sIAOrpymcC/32NQQ6CMBBFr0Jm7ZgyDUJceQ/CotKpTIKtaZFgS
- O9u5QAu30v++zskjsIJrtUOkVdJEnwBOlUwTsY/GMUWBlLUKK0a9GGW+4gmPXFiYzkm1C11dHG
- mc9pBGb4iO9mOaD8UniQtIX6Oj7X+2b+5tcYaHalGW3bE3N5m8e8lBi/b2TIMOecvg1mQ6rgAA
- AA=
-X-Change-ID: 20250305-nolibc-asm-headers-372826fa8f3f
-To: Willy Tarreau <w@1wt.eu>, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: linux-kernel@vger.kernel.org, 
- =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741351407; l=2634;
- i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
- bh=7VmanMlSY+AL4R5Gl2+izLNwqisKICSmKSHCP61d7X4=;
- b=v3GgKbG6q81UqOVdqDDElEK2JG3g5bwXd+gDyipgRc9MKaXCdglIP9IJ1iw4ZLklnZxSS8NvU
- zh+lkoAv6x9A1vE1HanxFwFLAAhE6f9sVtYZDSimT26+y961L3QC2h9
-X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
- pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b390ec6d92dd742ace93bd8e40a0df4379b98e23.1741268122.git.Jonathan.Santos@analog.com>
 
-The asm/ and asm-generic/ namespaces are implementation details of the UAPI
-headers and not meant for direct usage.
+On 03/06, Jonathan Santos wrote:
+> The Wideband Low Ripple filter is used for AD7768-1 Driver.
+> Document wideband filter option into filter_type_available
+> attribute.
+> 
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> ---
 
-Use the equivalent headers from the linux/ namespace instead.
+LGTM
 
-While at it also drop the duplicate include of linux/signal.h from sys.h.
+Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 
-Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
----
-Changes in v2:
-- Avoid duplicate '#include <linux/signal.h>'
-- Link to v1: https://lore.kernel.org/r/20250305-nolibc-asm-headers-v1-1-f2053def2ee7@linutronix.de
----
- tools/include/nolibc/arch-s390.h | 4 ++--
- tools/include/nolibc/errno.h     | 2 +-
- tools/include/nolibc/sys.h       | 9 ++++-----
- 3 files changed, 7 insertions(+), 8 deletions(-)
+FWIW, ADAQ7768-1 datasheet provides more info about what wideband should mean
+for these devices.
+"The wideband filter offers a filter profile similar to
+an ideal brick wall filter, making it ideal for frequency analysis."
+The proposed doc seems to portray that to some extent.
 
-diff --git a/tools/include/nolibc/arch-s390.h b/tools/include/nolibc/arch-s390.h
-index acfee7e9d5e2bb65718cb947110d2c5e1cdeba9b..df4c3cc713accd45551e07e1f02d3638e49e300e 100644
---- a/tools/include/nolibc/arch-s390.h
-+++ b/tools/include/nolibc/arch-s390.h
-@@ -5,8 +5,8 @@
- 
- #ifndef _NOLIBC_ARCH_S390_H
- #define _NOLIBC_ARCH_S390_H
--#include <asm/signal.h>
--#include <asm/unistd.h>
-+#include <linux/signal.h>
-+#include <linux/unistd.h>
- 
- #include "compiler.h"
- #include "crt.h"
-diff --git a/tools/include/nolibc/errno.h b/tools/include/nolibc/errno.h
-index a44486ff047745bc9bcf9748c3e5074213430f80..1d8d8033e8ff766ee4b3cf7efdb741d4208db04e 100644
---- a/tools/include/nolibc/errno.h
-+++ b/tools/include/nolibc/errno.h
-@@ -7,7 +7,7 @@
- #ifndef _NOLIBC_ERRNO_H
- #define _NOLIBC_ERRNO_H
- 
--#include <asm/errno.h>
-+#include <linux/errno.h>
- 
- #ifndef NOLIBC_IGNORE_ERRNO
- #define SET_ERRNO(v) do { errno = (v); } while (0)
-diff --git a/tools/include/nolibc/sys.h b/tools/include/nolibc/sys.h
-index 5d8adc7785759d2ef9316d70979740b16756dab1..08c1c074bec89a27e53e5d461a3ebbf71ec323d1 100644
---- a/tools/include/nolibc/sys.h
-+++ b/tools/include/nolibc/sys.h
-@@ -10,10 +10,10 @@
- #include "std.h"
- 
- /* system includes */
--#include <asm/unistd.h>
--#include <asm/signal.h>  /* for SIGCHLD */
--#include <asm/ioctls.h>
--#include <asm/mman.h>
-+#include <linux/unistd.h>
-+#include <linux/signal.h>  /* for SIGCHLD */
-+#include <linux/termios.h>
-+#include <linux/mman.h>
- #include <linux/fs.h>
- #include <linux/loop.h>
- #include <linux/time.h>
-@@ -23,7 +23,6 @@
- #include <linux/prctl.h>
- #include <linux/resource.h>
- #include <linux/utsname.h>
--#include <linux/signal.h>
- 
- #include "arch.h"
- #include "errno.h"
-
----
-base-commit: a782d45c867ca92edc50e54715a71124bec1dd11
-change-id: 20250305-nolibc-asm-headers-372826fa8f3f
-
-Best regards,
--- 
-Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-
+> v4 Changes:
+> * None.
+> 
+> v3 Changes:
+> * None, since we still did not agree on a better name for this filter type.
+> 
+> v2 Changes:
+> * Removed FIR mentions.
+> ---
+>  Documentation/ABI/testing/sysfs-bus-iio | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-bus-iio b/Documentation/ABI/testing/sysfs-bus-iio
+> index f83bd6829285..9b879e7732cd 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-iio
+> +++ b/Documentation/ABI/testing/sysfs-bus-iio
+> @@ -2291,6 +2291,8 @@ Description:
+>  		* "sinc3+pf2" - Sinc3 + device specific Post Filter 2.
+>  		* "sinc3+pf3" - Sinc3 + device specific Post Filter 3.
+>  		* "sinc3+pf4" - Sinc3 + device specific Post Filter 4.
+> +		* "wideband" - filter with wideband low ripple passband
+> +		  and sharp transition band.
+>  
+>  What:		/sys/.../events/in_proximity_thresh_either_runningperiod
+>  KernelVersion:	6.6
+> -- 
+> 2.34.1
+> 
 
