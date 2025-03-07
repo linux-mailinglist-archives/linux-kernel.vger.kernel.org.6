@@ -1,139 +1,229 @@
-Return-Path: <linux-kernel+bounces-551866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0D2A57249
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:43:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3D2DA57151
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:16:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 823FF189AC86
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:43:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 149501799D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 105A5255E2F;
-	Fri,  7 Mar 2025 19:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D72C256C9A;
+	Fri,  7 Mar 2025 19:15:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b="nUstl2fO"
-Received: from cloudserver094114.home.pl (cloudserver094114.home.pl [79.96.170.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ItObX/Nc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BB7424FC1F;
-	Fri,  7 Mar 2025 19:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.96.170.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D4E250BFB;
+	Fri,  7 Mar 2025 19:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741376570; cv=none; b=Y51Y8S4hHEGRDWqnCIsnieduoPg1kuioa2+Gs9enQCqkKAg0p8OIna4cci6J8NTmHveyi9hgvnlKtvQArMXdbCM9A+UF21npTXSOIKGiQxnLrDglh+bKbg4uXBVYWH3OabRC/JZipufdayWDL6RSRRJgBIMaibH47Hl5rKXczxY=
+	t=1741374898; cv=none; b=DMqvgkyABHPtH8VanJog6FgcwVy3/d+HWkL+sTMqk2vZxGSeS6AJvXEbhpKV/nsFJb+CTCUjiIlox4uvdgl2wispW5xJXmUimOcY1pE0d1ibpkJ7KsYvXObeDNaRWrC4nlPovIupNr6VM3d5DQzUZ1oBOBxVQj5OnBKU2Ku8L3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741376570; c=relaxed/simple;
-	bh=bntwyWnrMdWDSe4vnVdSyZBMiRO/ZRUZNY4KsjH/rsE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gS4XwikVhhpH6CqUOniwndyfBEFsq81mUgiwERUNUVn8UA+7jAJb5gun7bVTHzGFhSPtGIU86uS7cCmQSfwQZ0sfNt9nxtH5DmOiCvmP5xIQfTxCQNlZpoJKoPWFTLH5qJqRJjlrKFORC5siMCbFoOmj4yqfvvFpbwd7hhkgVNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net; spf=pass smtp.mailfrom=rjwysocki.net; dkim=pass (2048-bit key) header.d=rjwysocki.net header.i=@rjwysocki.net header.b=nUstl2fO; arc=none smtp.client-ip=79.96.170.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rjwysocki.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rjwysocki.net
-Received: from localhost (127.0.0.1) (HELO v370.home.net.pl)
- by /usr/run/smtp (/usr/run/postfix/private/idea_relay_lmtp) via UNIX with SMTP (IdeaSmtpServer 6.3.1)
- id bd548913f5f0793d; Fri, 7 Mar 2025 20:42:45 +0100
-Received: from kreacher.localnet (unknown [195.136.19.94])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by cloudserver094114.home.pl (Postfix) with ESMTPSA id 581269A0BFB;
-	Fri,  7 Mar 2025 20:42:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rjwysocki.net;
-	s=dkim; t=1741376565;
-	bh=bntwyWnrMdWDSe4vnVdSyZBMiRO/ZRUZNY4KsjH/rsE=;
-	h=From:Subject:Date;
-	b=nUstl2fOjsDJTZ3H1jC9w8CqcwhArq6Q7ElmCXlnurofh79vYmjWSCpuXf+Cl3eyE
-	 HtsbNujM4Vd4zy47Oagr9/5f89lDF98oOtOqubO0vrBxtbv6uoB+wTfYGDimO950rk
-	 84FrT2zAVPl8IaYSdMAH6vNKhUAH28SFl5xk1KajlmFMVCvyAtxtsRaqx7sKEG6ud3
-	 lTq4TH941JmYHRFo4DLaYd52gPYAgDRHT9F3uGi02YTuC1eqMMI+ifKq2y8mJo9als
-	 /vI5MRI3V7dnxVvQqt+KOHbGztaLt1N2wdB99wbSwRxmg2nX+vtG8qOPyyeITqRqZG
-	 5r+O52ybKq21A==
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Lukasz Luba <lukasz.luba@arm.com>,
- Peter Zijlstra <peterz@infradead.org>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Morten Rasmussen <morten.rasmussen@arm.com>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
- Pierre Gondois <pierre.gondois@arm.com>,
- Christian Loehle <christian.loehle@arm.com>
-Subject:
- [RFC][PATCH v0.3 0/6] cpufreq: intel_pstate: Enable EAS on hybrid platforms
- without SMT - alternative
-Date: Fri, 07 Mar 2025 20:12:11 +0100
-Message-ID: <22640172.EfDdHjke4D@rjwysocki.net>
+	s=arc-20240116; t=1741374898; c=relaxed/simple;
+	bh=jvI2n2uO/V++4nHoK7UV7ov9SzCE4x7XfCv+m1FxJ5I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iP/+uRGD70rbuLI8eLs9BSrLWfsDDmxS7NXnyWAOwHO8hoP4GMIRdYU2M1RCWfB9OBnUzZljufBD4Uzn1ZHTuGNo0UuE8x/Rucg6tmJKcudFeCsDjRSpUpsg4d6OO62Ol9VKxoVd6pqvEJhC8VZz6NdA5LuZt4SAZvliIvfYxYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ItObX/Nc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9A6CC4CEED;
+	Fri,  7 Mar 2025 19:14:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741374897;
+	bh=jvI2n2uO/V++4nHoK7UV7ov9SzCE4x7XfCv+m1FxJ5I=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ItObX/NcEuNHpAYf0kUdZre/+mYx6LmiLJXGnRR5yjNARoWrl0Wi1dUEo+Y4a+Jg8
+	 vrtUfwvthPRbCdgBSMqrCStaqvOJuX6iJet5thzJtCY3ELAYh8bHtGlRnHXKtcfFQw
+	 NIE02AmCl8MBvaX/N2NzIiV3IpxBuyKK1b7+/qn+Tf/utnGrrl1gt95MoyPFTrN9Ni
+	 97AM9867fq5lnrbXMuBY53IvdZrQRh+78AW1zn2F6gnrDBcD44aY807hUhvEL6KrS+
+	 iCeRkLTmpeumWmjMXC0vuhSP4it84tIR3A6GFw/m2l23pNSwdnIRcXOzS3+2pFAu/g
+	 hFLY9y3Gqyc/A==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98.1)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1tqd9r-0000000BQmB-2cHO;
+	Fri, 07 Mar 2025 20:14:55 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Igor Mammedov <imammedo@redhat.com>,
+	"Michael S . Tsirkin" <mst@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	qemu-arm@nongnu.org,
+	qemu-devel@nongnu.org,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	=?UTF-8?q?Philippe=20Mathieu-Daud=C3=A9?= <philmd@linaro.org>,
+	Gavin Shan <gshan@redhat.com>,
+	Ani Sinha <anisinha@redhat.com>,
+	Cleber Rosa <crosa@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>,
+	Eduardo Habkost <eduardo@habkost.net>,
+	Eric Blake <eblake@redhat.com>,
+	John Snow <jsnow@redhat.com>,
+	Marcel Apfelbaum <marcel.apfelbaum@gmail.com>,
+	Markus Armbruster <armbru@redhat.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	Shannon Zhao <shannon.zhaosl@gmail.com>,
+	Yanan Wang <wangyanan55@huawei.com>,
+	Zhao Liu <zhao1.liu@intel.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v8 00/20] Change ghes to use HEST-based offsets and add support for error inject
+Date: Fri,  7 Mar 2025 20:14:29 +0100
+Message-ID: <cover.1741374594.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="UTF-8"
-X-CLIENT-IP: 195.136.19.94
-X-CLIENT-HOSTNAME: 195.136.19.94
-X-VADE-SPAMSTATE: clean
-X-VADE-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduudduheefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecujffqoffgrffnpdggtffipffknecuuegrihhlohhuthemucduhedtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkfgggfgtsehtufertddttdejnecuhfhrohhmpedftfgrfhgrvghlucflrdcuhgihshhotghkihdfuceorhhjfiesrhhjfiihshhotghkihdrnhgvtheqnecuggftrfgrthhtvghrnhepgeffhfdujeelhfdtgeffkeetudfhtefhhfeiteethfekvefgvdfgfeeikeeigfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucfkphepudelhedrudefiedrudelrdelgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeduleehrddufeeirdduledrleegpdhhvghlohepkhhrvggrtghhvghrrdhlohgtrghlnhgvthdpmhgrihhlfhhrohhmpehrjhifsehrjhifhihsohgtkhhirdhnvghtpdhnsggprhgtphhtthhopeduuddprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepphgvthgvrhiisehinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepshhrihhnihhvrghsrdh
-X-DCC--Metrics: v370.home.net.pl 1024; Body=11 Fuz1=11 Fuz2=11
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Hi Everyone,
+Hi Michael,
 
-This is a new take on the "EAS for intel_pstate" work:
+I'm sending v8 to avoid a merge conflict with v7 due to this
+changeset:
 
-https://lore.kernel.org/linux-pm/5861970.DvuYhMxLoT@rjwysocki.net/
+   611f3bdb20f7 ("hw/acpi/ghes: Make  static")
 
-with refreshed preparatory patches and a revised energy model design.
+As ghes_record_cper_errors() was written since the beginning
+to be public and used by ghes-cper.c. It ended being meged
+earlier because the error-injection series become too big,
+so it was decided last year to split in two to make easier for
+reviewers and maintainers to discuss.
 
-The following paragraph from the original cover letter still applies:
+Anyway, as mentioned on v7, I guess we're ready to merge this
+series, as patches here have been thoughfully reviewed mainly 
+by Igor and Jonathan over the last 5-6 months.
 
-"The underlying observation is that on the platforms targeted by these changes,
-Lunar Lake at the time of this writing, the "small" CPUs (E-cores), when run at
-the same performance level, are always more energy-efficient than the "big" or
-"performance" CPUs (P-cores).  This means that, regardless of the scale-
-invariant utilization of a task, as long as there is enough spare capacity on
-E-cores, the relative cost of running it there is always lower."
+The only change from v7 is a minor editorial change at HEST doc
+spec, and the addition of Igor and Jonathan's A-B/R-B.
 
-However, this time perf domains are registered per CPU and in addition to the
-primary cost component, which is related to the CPU type, there is a small
-component proportional to performance whose role is to help balance the load
-between CPUs of the same type.
+This series change the way HEST table offsets are calculated,
+making them identical to what an OSPM would do and allowing
+multiple HEST entries without causing migration issues. It open
+space to add HEST support for non-arm architectures, as now
+the number and type of HEST notification entries are not
+hardcoded at ghes.c. Instead, they're passed as a parameter
+from the arch-dependent init code.
 
-This is done to avoid migrating tasks too much between CPUs of the same type,
-especially between E-cores, which has been observed in tests of the previous
-iteration of this work.
+With such issue addressed, it adds a new notification type and
+add support to inject errors via a Python script. The script
+itself is at the final patch.
 
-The expected effect is still that the CPUs of the "low-cost" type will be
-preferred so long as there is enough spare capacity on any of them.
+---
+v8:
+  - added a patch to revert recently-added changeset causing a
+    conflict with these. All remaining patches are identical.
 
-The first two patches in the series rearrange cpufreq checks related to EAS so
-that sched_is_eas_possible() doesn't have to access cpufreq internals directly
-and patch [3/6] changes those checks to also allow EAS to be used with cpufreq
-drivers that implement internal governors (like intel_pstate).
+v7:
+  - minor editorial change at the patch updating HEST doc spec
+   with the new workflow
 
-Patches [4-5/6] deal with the Energy Model code.  Patch [4/6] simply rearranges
-it so as to allow the next patch to be simpler and patch [5/6] adds a function
-that's used in the last patch.
+v6:
+- some minor nits addressed:
+   - use GPA instead of offset;
+   - merged two patches;
+   - fixed a couple of long line coding style issues;
+   - the HEST/DSDT diff inside a patch was changed to avoid troubles
+     applying it.
 
-Patch [6/6] is the actual intel_pstate modification which now is significantly
-simpler than before because it doesn't need to track the type of each CPU
-directly in order to put into the right perf domain.
+v5:
+- make checkpatch happier;
+- HEST table is now tested;
+- some changes at HEST spec documentation to align with code changes;
+- extra care was taken with regards to git bisectability.
 
-Please refer to the individual patch changelogs for details.
+v4:
+- added an extra comment for AcpiGhesState structure;
+- patches reordered;
+- no functional changes, just code shift between the patches in this series.
 
-For easier access, the series is available on the experimental/intel_pstate/eas-take2
-branch in linux-pm.git:
+v3:
+- addressed more nits;
+- hest_add_le now points to the beginning of HEST table;
+- removed HEST from tests/data/acpi;
+- added an extra patch to not use fw_cfg with virt-10.0 for hw_error_le
 
-git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
-experimental/intel_pstate/eas-take2
+v2: 
+- address some nits;
+- improved ags cleanup patch and removed ags.present field;
+- added some missing le*_to_cpu() calls;
+- update date at copyright for new files to 2024-2025;
+- qmp command changed to: inject-ghes-v2-error ans since updated to 10.0;
+- added HEST and DSDT tables after the changes to make check target happy.
+  (two patches: first one whitelisting such tables; second one removing from
+   whitelist and updating/adding such tables to tests/data/acpi)
 
-or
+Mauro Carvalho Chehab (20):
+  tests/acpi: virt: add an empty HEST file
+  tests/qtest/bios-tables-test: extend to also check HEST table
+  tests/acpi: virt: update HEST file with its current data
+  Revert "hw/acpi/ghes: Make ghes_record_cper_errors() static"
+  acpi/ghes: Cleanup the code which gets ghes ged state
+  acpi/ghes: prepare to change the way HEST offsets are calculated
+  acpi/ghes: add a firmware file with HEST address
+  acpi/ghes: Use HEST table offsets when preparing GHES records
+  acpi/ghes: don't hard-code the number of sources for HEST table
+  acpi/ghes: add a notifier to notify when error data is ready
+  acpi/generic_event_device: Update GHES migration to cover hest addr
+  acpi/generic_event_device: add logic to detect if HEST addr is
+    available
+  acpi/generic_event_device: add an APEI error device
+  tests/acpi: virt: allow acpi table changes at DSDT and HEST tables
+  arm/virt: Wire up a GED error device for ACPI / GHES
+  qapi/acpi-hest: add an interface to do generic CPER error injection
+  acpi/generic_event_device.c: enable use_hest_addr for QEMU 10.x
+  tests/acpi: virt: update HEST and DSDT tables
+  docs: hest: add new "etc/acpi_table_hest_addr" and update workflow
+  scripts/ghes_inject: add a script to generate GHES error inject
 
-https://web.git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git/log/?h=experimental/intel_pstate/eas-take2
+ MAINTAINERS                                   |  10 +
+ docs/specs/acpi_hest_ghes.rst                 |  28 +-
+ hw/acpi/Kconfig                               |   5 +
+ hw/acpi/aml-build.c                           |  10 +
+ hw/acpi/generic_event_device.c                |  44 ++
+ hw/acpi/ghes-stub.c                           |   7 +-
+ hw/acpi/ghes.c                                | 233 ++++--
+ hw/acpi/ghes_cper.c                           |  38 +
+ hw/acpi/ghes_cper_stub.c                      |  19 +
+ hw/acpi/meson.build                           |   2 +
+ hw/arm/virt-acpi-build.c                      |  35 +-
+ hw/arm/virt.c                                 |  19 +-
+ hw/core/machine.c                             |   2 +
+ include/hw/acpi/acpi_dev_interface.h          |   1 +
+ include/hw/acpi/aml-build.h                   |   2 +
+ include/hw/acpi/generic_event_device.h        |   1 +
+ include/hw/acpi/ghes.h                        |  51 +-
+ include/hw/arm/virt.h                         |   2 +
+ qapi/acpi-hest.json                           |  35 +
+ qapi/meson.build                              |   1 +
+ qapi/qapi-schema.json                         |   1 +
+ scripts/arm_processor_error.py                | 476 ++++++++++++
+ scripts/ghes_inject.py                        |  51 ++
+ scripts/qmp_helper.py                         | 703 ++++++++++++++++++
+ target/arm/kvm.c                              |   7 +-
+ tests/data/acpi/aarch64/virt/DSDT             | Bin 5196 -> 5240 bytes
+ .../data/acpi/aarch64/virt/DSDT.acpihmatvirt  | Bin 5282 -> 5326 bytes
+ tests/data/acpi/aarch64/virt/DSDT.memhp       | Bin 6557 -> 6601 bytes
+ tests/data/acpi/aarch64/virt/DSDT.pxb         | Bin 7679 -> 7723 bytes
+ tests/data/acpi/aarch64/virt/DSDT.topology    | Bin 5398 -> 5442 bytes
+ tests/data/acpi/aarch64/virt/HEST             | Bin 0 -> 224 bytes
+ tests/qtest/bios-tables-test.c                |   2 +-
+ 32 files changed, 1695 insertions(+), 90 deletions(-)
+ create mode 100644 hw/acpi/ghes_cper.c
+ create mode 100644 hw/acpi/ghes_cper_stub.c
+ create mode 100644 qapi/acpi-hest.json
+ create mode 100644 scripts/arm_processor_error.py
+ create mode 100755 scripts/ghes_inject.py
+ create mode 100755 scripts/qmp_helper.py
+ create mode 100644 tests/data/acpi/aarch64/virt/HEST
 
-Thanks!
-
+-- 
+2.48.1
 
 
 
