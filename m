@@ -1,135 +1,173 @@
-Return-Path: <linux-kernel+bounces-551313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EB66A56AF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:56:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB724A56AFB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:57:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F794189748D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:56:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5C6D3A88D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009BE21C16D;
-	Fri,  7 Mar 2025 14:55:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCA821ABB5;
+	Fri,  7 Mar 2025 14:57:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kzHvHABN"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJNJx59J"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9208B218EB5;
-	Fri,  7 Mar 2025 14:55:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D5B16EB4C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741359354; cv=none; b=F10udnrBjWHiE3C6ldW94CUgRcrB0KeKH2zc2bXWIuLwc8XIYyXHdbx1LjUgxR0cmX8acEsBVMa2791NwzosYxZm+oKhtJ+bJhh+EgtjllDn8AGAePYJSwoBtadw2xtLZ8bAgpmG2DgnMDQodRnx5XUX7V6EIQFck4rdcGlDU40=
+	t=1741359430; cv=none; b=a+nAre4dy5XEWrQ5PLl7+8C8yAlwZx9mDw8mVNkK1mBIM+ts7ad/6gChfQ6qFZvQz4dogu5kDvHgl/PGClIffOLR94sOK1xlCcf2r1+pOCSnSRTvXQmHwrVkNrfmU98ZZaRniKmlyTURFLGyEfbJ3uI2y6OagxGlIpd9eajbMKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741359354; c=relaxed/simple;
-	bh=AEII/3Bp+DkFC+pqH8Z8yWTg7GV3BlvLVlnjNJo4RXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U0YEaMUodFlSscR+iE1rMCvEcepV+baRRq3DOyvCTHz5W4T5xc27jqzhnqh+90ZsdUlm2A7lB6mS6n8i/IFFpfJO3v9co4+AdgsoPM4dXDC9Sqa3fZN3JIOedtoXjzMUYFADagAwbdwzLdBMmUZ8s4JuUmg0w/o+A47y61k6byQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kzHvHABN; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741359353; x=1772895353;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=AEII/3Bp+DkFC+pqH8Z8yWTg7GV3BlvLVlnjNJo4RXo=;
-  b=kzHvHABN/70Oe0jwKEdnGwoMyt9OngwwvOUG2vEX5OKN6HU62S4DCVOo
-   o9wqbyvnErfabttled9kZTjmrSaUVixcfuO68OnItULNo5IMFCOsPsQT/
-   DW8qG5zeyMXDRowmJP5IDqvp6GR+NOXk/N1iMPConm9zP4Fy9bPV7LX0t
-   7SqaNVcPk8FFrRX1iU9QzpV7+CTK25Y16f7QynoA7PCoaTtpqNO4APl3Y
-   RIq35rcX+u9Rbhxe26WvhW0Gx5PrEDpTvJWy7swmV/brQepc3EFuYi2Lp
-   VJ+1g1qrnelJwLhoDIZFcO4LtHEg1KWBcQXC7d5y9qpzk5iYX/DU6d+tx
-   Q==;
-X-CSE-ConnectionGUID: MvDXmG+ISJqqBaKLLTcolg==
-X-CSE-MsgGUID: IQCxl5elSn6p11dWzddgTg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="29988003"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="29988003"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 06:55:42 -0800
-X-CSE-ConnectionGUID: vMMgbUSXTeuJEuzSjYs+mQ==
-X-CSE-MsgGUID: IT2fDP4DQoaZ6LFNJzrgDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="119842543"
-Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.110.132]) ([10.125.110.132])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 06:55:41 -0800
-Message-ID: <2cf9798f-1a89-46e1-b1a4-7deec9cb7e40@intel.com>
-Date: Fri, 7 Mar 2025 06:56:03 -0800
+	s=arc-20240116; t=1741359430; c=relaxed/simple;
+	bh=CWOvPrUsWNSjxJGBCOQBGM3Ykx2mN7P2Ou6ShM8wu48=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WZpCGbCtpqwIXaKsyDFMeyAY83rIKEOm4enPk9KsIk9x7NIHb/zWAP5mBWI4v6paCsVZaUqQ9kOA1mEW31Fb/u8li4QK1TY92AK+TJ5uxy2dnPLrrqHC+diD1tqJpoQT+lt5ZVFPOqSexmIqMNgV0PG9wGLf76mZ0MxuYK3QO+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aJNJx59J; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2feb96064e4so4033085a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 06:57:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741359428; x=1741964228; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=T3/1TblqPLns6jPBBvXv/kgUjFkYTE2ZlCuQ4AlF1Mc=;
+        b=aJNJx59JMhsU/b1ZPrJKOwu4ZCsWizhJzesXZheBfauwT15Tyh8sMy8dz2bLUg5SPP
+         jps69ysVwyBLfrE2gxDRI+hffIUvDUmFgk/L+eNwrfuG40O+9FPSgaiFbIZH7Y5hZfW3
+         1eRZIN8z0JwrIOVYBfMxkAwRR4tb4tQ8ljdlk5fbViW5fS/i96a+KVBW3dss7NMmTJuW
+         Yn5cDwqYPNYyVrsAb1+gC/y+O1/m6yFwo+/lK7TmNco8suId6RRKm1jI3KtTGCPOa+8m
+         KT3+HILcxTyJqzDe0wfBNECOU8ZUnY7CYt1LA6eDYGmxaNYRNU5KSs+p7q3Yn9UtaH4H
+         RCDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741359428; x=1741964228;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T3/1TblqPLns6jPBBvXv/kgUjFkYTE2ZlCuQ4AlF1Mc=;
+        b=SsGFegsGr3NCb1C2nysPXbGbIPZ5n3SzB8qlwruFUzcTnaX8QBxDWlSu7w7dML51bh
+         Zz2awbSH+F46a0FsdKl8O8lkFjZg8Prb65qJy6jXrz1Xf/wv4SozJzSVgbH40bIETKby
+         gHQ4lmPv+4Gye7fr8CzURSXKCvRVoT2LPoI9X7+kHUsPKA9fqyt+FAv+6UHtUsrQu1fB
+         N05qElf9EGgJWCCMBYpfUEDDEEE0VG+AkUNwp9HvaZwEebsK92mN14d+rMMC9iZBck0o
+         TNBGMJ3sii9H68lRMz99eb2GZuV0G7v7vt2MO7T/SW69n8HNiKcKa4m13ZruF675OCar
+         O8Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVNvpmebk/NoD/pS7zb2WskTG6fmbK7xU4kI3EezIlOeeMOvHdolqoV8jp5AS+fW/f6BcvcQW6pcqFMxgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPJCUoduFCwdct6FcBvv8xehz6AmagoC/qLBfhwxNt2x52eOWj
+	zNs9xN1tF7n7cOYca1KlI1cv18X831DbcKMX3es9Ya7zl5pSjCt3
+X-Gm-Gg: ASbGncsVuOH/rwZCMMhf6npqnWWaSGz+CA+C7NB6PwTVG9WQnpo3jCQimtvYOI4HXpX
+	E518/+nXwACpeC2BSsdqVRTuLknZ2RSqsYGoFOIzGviNDdfAbN9BQSCs+aURKvbGLY8LudBHsbu
+	9kz3ebO7KtzXM0YycunMaQpfQyjFWoRwyqDJZVag9x4iS/BZuXHOHQjaWITseJDtq6UNR0QmO0i
+	bvR2ltTBJhBoVx4nwoEUNzQjGjWnHNcOXDJ6yilGNASRMBRlDEILc8sExxCnh0gxLhEfDTeev7w
+	SOhaZKhxIkQL9pdfvHX+gtTmyZzQ54oCUZcIJhdTAb/whnnRijUSVvEQT+Q+v4rV5fPvaRp12Q=
+	=
+X-Google-Smtp-Source: AGHT+IGBMkybK8LNpELvScIet/VbiDV1S6TPQmThy3Vq2qoHJxC3y1ofM+O+wkhBnBKHMhYfwdPVwQ==
+X-Received: by 2002:a17:90b:35cd:b0:2ff:6608:78cd with SMTP id 98e67ed59e1d1-2ff7ce632a3mr6394441a91.9.1741359427882;
+        Fri, 07 Mar 2025 06:57:07 -0800 (PST)
+Received: from DESKTOP-B5TBVBT.localdomain ([175.117.51.71])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff6935339dsm3118754a91.15.2025.03.07.06.57.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 06:57:07 -0800 (PST)
+From: Yohan Joung <jyh429@gmail.com>
+X-Google-Original-From: Yohan Joung <yohan.joung@sk.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org,
+	daeho43@gmail.com
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Yohan Joung <yohan.joung@sk.com>
+Subject: [PATCH] f2fs: optimize f2fs DIO overwrites
+Date: Fri,  7 Mar 2025 23:56:50 +0900
+Message-Id: <20250307145650.568-1-yohan.joung@sk.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] x86/microcode/AMD: Fix out-of-bounds on systems with
- CPU-less NUMA nodes
-To: Florent Revest <revest@chromium.org>, bp@alien8.de,
- linux-kernel@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
- x86@kernel.org, hpa@zytor.com, stable@vger.kernel.org
-References: <20250307131243.2703699-1-revest@chromium.org>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250307131243.2703699-1-revest@chromium.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/7/25 05:12, Florent Revest wrote:
->  	for_each_node(nid) {
-> -		cpu = cpumask_first(cpumask_of_node(nid));
-> +		mask = cpumask_of_node(nid);
-> +		if (cpumask_empty(mask))
-> +			continue;
-> +
-> +		cpu = cpumask_first(mask);
+this is unnecessary when we know we are overwriting already allocated
+blocks and the overhead of starting a transaction can be significant
+especially for multithreaded workloads doing small writes.
 
-Would for_each_node_with_cpus() trim this down a bit?
+Signed-off-by: Yohan Joung <yohan.joung@sk.com>
+---
+ fs/f2fs/data.c | 20 ++++++++++++++++++++
+ fs/f2fs/f2fs.h |  1 +
+ fs/f2fs/file.c |  5 ++++-
+ 3 files changed, 25 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 09437dbd1b42..728630037b74 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -4267,6 +4267,26 @@ static int f2fs_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 	return 0;
+ }
+ 
++static int f2fs_iomap_overwrite_begin(struct inode *inode, loff_t offset,
++		loff_t length, unsigned flags, struct iomap *iomap,
++		struct iomap *srcmap)
++{
++	int ret;
++
++	/*
++	 * Even for writes we don't need to allocate blocks, so just pretend
++	 * we are reading to save overhead of starting a transaction.
++	 */
++	flags &= ~IOMAP_WRITE;
++	ret = f2fs_iomap_begin(inode, offset, length, flags, iomap, srcmap);
++	WARN_ON_ONCE(!ret && iomap->type != IOMAP_MAPPED);
++	return ret;
++}
++
+ const struct iomap_ops f2fs_iomap_ops = {
+ 	.iomap_begin	= f2fs_iomap_begin,
+ };
++
++const struct iomap_ops f2fs_iomap_overwrite_ops = {
++	.iomap_begin	= f2fs_iomap_overwrite_begin,
++};
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index c6cc2694f9ac..0511ab5ed42a 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -3936,6 +3936,7 @@ void f2fs_destroy_post_read_processing(void);
+ int f2fs_init_post_read_wq(struct f2fs_sb_info *sbi);
+ void f2fs_destroy_post_read_wq(struct f2fs_sb_info *sbi);
+ extern const struct iomap_ops f2fs_iomap_ops;
++extern const struct iomap_ops f2fs_iomap_overwrite_ops;
+ 
+ static inline struct page *f2fs_find_data_page(struct inode *inode,
+ 		pgoff_t index, pgoff_t *next_pgofs)
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 82b21baf5628..bb2fe6dac9b6 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -4985,6 +4985,7 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
+ 	const ssize_t count = iov_iter_count(from);
+ 	unsigned int dio_flags;
+ 	struct iomap_dio *dio;
++	const struct iomap_ops *iomap_ops = &f2fs_iomap_ops;
+ 	ssize_t ret;
+ 
+ 	trace_f2fs_direct_IO_enter(inode, iocb, count, WRITE);
+@@ -5025,7 +5026,9 @@ static ssize_t f2fs_dio_write_iter(struct kiocb *iocb, struct iov_iter *from,
+ 	dio_flags = 0;
+ 	if (pos + count > inode->i_size)
+ 		dio_flags |= IOMAP_DIO_FORCE_WAIT;
+-	dio = __iomap_dio_rw(iocb, from, &f2fs_iomap_ops,
++	else if (f2fs_overwrite_io(inode, pos, count))
++		iomap_ops = &f2fs_iomap_overwrite_ops;
++	dio = __iomap_dio_rw(iocb, from, iomap_ops,
+ 			     &f2fs_iomap_dio_write_ops, dio_flags, NULL, 0);
+ 	if (IS_ERR_OR_NULL(dio)) {
+ 		ret = PTR_ERR_OR_ZERO(dio);
+-- 
+2.25.1
+
 
