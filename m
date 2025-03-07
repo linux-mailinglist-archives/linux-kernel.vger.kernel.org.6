@@ -1,164 +1,180 @@
-Return-Path: <linux-kernel+bounces-550701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 503BBA5631A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:59:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19072A5631C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:59:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C1047AA19F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:58:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07AB53A8070
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4B21E1DF0;
-	Fri,  7 Mar 2025 08:59:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272571E1DF7;
+	Fri,  7 Mar 2025 08:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H0r/LtFp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ernTCcp2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194E1199E94
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 08:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DBB41DC99A;
+	Fri,  7 Mar 2025 08:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741337967; cv=none; b=HeuSY5QxUAwrlQ/P06IcNB+qnOPL1SOI964CuMqIDuKB4uiSZkAOLOYsOkiuO+TxfvhD74arexMNNr+iIGZIS9cEjnYkZRSPrqPBSh+N/RYFOUDUp4S10qKlrxK0TFYl0dJotbwYq8UfzRXqlSkj2sJBMhwDrW5R2Xq43YogPBY=
+	t=1741337988; cv=none; b=EKJQa6M8GYERy7Xv8gTbCiWqAacxCMI8aPn/3ClOi36Uj2G7hdTTf5ef/7XLoLdAcvYN09Z0X7qHNvnx1Crg14XKKAf6hzWTL31lz1Z3ig3r2qRjB8LGruixM34sJIwcOmxbKSu+Jkcz0lLbIfoV9bcmJUsYjf6tmgOnLRZ58PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741337967; c=relaxed/simple;
-	bh=DnLQl3Ksq7Z2cxllWUtimVgS0kCffSWmdptylR8Su4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dgJ6NSDxCa9P8/5SwQg63N0EEKd6cvITc/OacGJb/b0h7tZthxQjEL7G15XDu9Klo8jzuiuJvIx0dUtmoU//URol9y2ViA5yHNznpOQItzvtgHJIerbCig7wJVpYenvsnwIGAAaN+5RLISZoUOQimumZWk4bFOH6tP/MEy+6K00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H0r/LtFp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741337964;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fNzbo/dN/JoeBXTVjx7dS75+0FihoJ2m5H1svayNa/U=;
-	b=H0r/LtFp7lYsOgf7+jbdhD3Hbkaxux8K7oFiG1B68T2x3pVB0Rpoh/0kjUp4H+vUuRwi/T
-	SKXFtDNNXKQ4yuKQvnNKwy0O06YjPfJYMZ9f6JIyGqL9ADvHSPzkPUAgS4grvnQXdSmpqD
-	LePOLALn7f32eBWXDBSOEPjqI1UQJnc=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-113-z2zDNYcKM4eFkh4Uim-Iig-1; Fri, 07 Mar 2025 03:59:23 -0500
-X-MC-Unique: z2zDNYcKM4eFkh4Uim-Iig-1
-X-Mimecast-MFC-AGG-ID: z2zDNYcKM4eFkh4Uim-Iig_1741337963
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4751af95442so32989891cf.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 00:59:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741337963; x=1741942763;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fNzbo/dN/JoeBXTVjx7dS75+0FihoJ2m5H1svayNa/U=;
-        b=TtKgCLEVAaD6cueNFIzaLeJ8F8KAq9bw3ZEVdOtGE0yzE4DhtacnfF5iLcMGC02Ucl
-         KFos81fZXY/2AY6b55v1PZEJDfiY1E71RLKhDzs0u6wAEz71wO4mm3PKipIk5mHUa32X
-         FpZj0l9ozL1ZF7f/tW4h2qUlbBREg/Yz2bf3o+pvLQYQ6P8c+BlmqsyGZ2DU+7FUEOJE
-         M5fpHbHtOsjUh526E+x88lFpRmyX/HAI2pofiT0ErpyS3M8AUx9Lm85DrbmuCOxyu7lX
-         u3bmol0pN4JFy6uddr575QPacJrKGqWcrBzi6KW2KQn0i9SszHeCKJbUKixRrT5Dp2Uj
-         ajBw==
-X-Gm-Message-State: AOJu0YzDr2IPhFwqGS6oiEiutURsqlPWbe41hPDeicAgWCsugTamxAiK
-	s84OmXvvkBir9lH4+veu5t3t3ZzSAfF8oU4ALSfNOl1YZWtO73uAHvd44g2b5fxFMQwLRNcJzqU
-	zVwdtHn3oXt5SpSPebdVk1JVdWnRBgQ94eXBSzZXcY3T+vxvNjldwyFPc8gp+Pg==
-X-Gm-Gg: ASbGnct5YejrzGmkBwjo+R46rKFMKfqHwOSawVOy26185bf89GS8dJvE1wy1G+SwBWC
-	5szssWmjln61Y6x0AhdmkonNJLpWQ4zGwAtBWjJgvpBHl2ylm6nFVYCZ9fcwlAt+oa7sIhtg5UF
-	uPC6M3koK0nVOr6OECa34n2kXPv2nSaAtqpfeOGtDCuOrfJAa0TQXnku7EMCeFvAfUpyj/IUEZ/
-	4fb436PhagX7cIGQvMUNxoHxxP/YMtyDenUGag/JNppczZm2N43OmCZYUpFwXJBWKRsNqIxFZyh
-	rz4QJ6MBBeMRqJo1EFi833e7KYhwYQENTMlUWMotiIKujQLTa+wuNsGF5cj2FOkXDlOBokZfmMY
-	GLeS+
-X-Received: by 2002:ac8:7f42:0:b0:471:fde4:f0ae with SMTP id d75a77b69052e-476189e8118mr29380241cf.36.1741337963210;
-        Fri, 07 Mar 2025 00:59:23 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGq0N4B7njPtAmPXmTzn2vvYLdOcpPjQWYIsJ8Snozrqg1T6MF5pIGRzPtQzrAvPBv5qyU+Fg==
-X-Received: by 2002:ac8:7f42:0:b0:471:fde4:f0ae with SMTP id d75a77b69052e-476189e8118mr29380101cf.36.1741337962968;
-        Fri, 07 Mar 2025 00:59:22 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4751d96f378sm18205061cf.30.2025.03.07.00.59.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 00:59:22 -0800 (PST)
-Date: Fri, 7 Mar 2025 08:59:17 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Shrikanth Hegde <sshegde@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
-	tommaso.cucinotta@santannapisa.it,
-	Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 4/8] sched/deadline: Rebuild root domain accounting
- after every update
-Message-ID: <Z8q1ZdJEjOEkhEt2@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250306141016.268313-1-juri.lelli@redhat.com>
- <20250306141016.268313-5-juri.lelli@redhat.com>
- <295680e1-ba91-4019-9b7f-e8efd75d7f13@linux.ibm.com>
+	s=arc-20240116; t=1741337988; c=relaxed/simple;
+	bh=OUm7r7IpsmT73wpd2azBUljbUrW/IqVpCS+NbA3cdD8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=A76j1sr5wVHFUe+OwQTo95RcUy6XUxE+3aP/yoJGbjEbllVWDkJUqI0bPeOnMSSQG87WWNOOfQAGCluV6RBbORFVPyx6frkEBdwynvAUF/iOvi+XnHu0oVKeW8EyMUhjve7WYMTX4JcpLmtZea+8vCUseOZoR/9GM97M80yZ8JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ernTCcp2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09EC7C4CED1;
+	Fri,  7 Mar 2025 08:59:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741337987;
+	bh=OUm7r7IpsmT73wpd2azBUljbUrW/IqVpCS+NbA3cdD8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ernTCcp2o/kCxExwSGkbZOyzh6oF9W/6wtDyKXNyH900Nr+5vjVjbCzhxnoBlYtym
+	 HLFZVN2MhtEYTdw9aPiCSX+aMKWnb3OySFZ6jaFmOnJHIQ9sAuuaAH6caSepvR/uqf
+	 WC1rA+By+L0IxyLYkAHhAeslfFc2keV7H0cr+0u7HhFuu1hUiy0OM86F60PkWYDr32
+	 pUjyYIANYz4kRLOTYS9OQ0rlsW20BdgbeMbIhkT9IlHPmCfqpyABZRZzKnWhYe8JUD
+	 6x2qI1C1/ulCK+pl34ozOSypZ/H0lXk6Jh9Uh6MqRjGwPQUO+RbaOU69T3EvRXNUVJ
+	 idKQ/9hRlbG7w==
+Message-ID: <2f39acd2-e378-47cf-b852-bee1a38108c5@kernel.org>
+Date: Fri, 7 Mar 2025 09:59:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <295680e1-ba91-4019-9b7f-e8efd75d7f13@linux.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXTERNAL] Re: [PATCH v3 3/3] arm64: dts: marvell: cp11x: Add
+ reset controller node
+To: Wilson Ding <dingwei@marvell.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "robh@kernel.org" <robh@kernel.org>
+Cc: "andrew@lunn.ch" <andrew@lunn.ch>,
+ "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+ "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ Sanghoon Lee <salee@marvell.com>, Geethasowjanya Akula <gakula@marvell.com>
+References: <20250227192536.2426490-1-dingwei@marvell.com>
+ <20250227192536.2426490-4-dingwei@marvell.com>
+ <d085c34a-fdbf-4950-a2e3-b3d25a1c0145@kernel.org>
+ <BY3PR18MB46730C150D4CB9619B3B05FBA7CC2@BY3PR18MB4673.namprd18.prod.outlook.com>
+ <050ae833-10b5-4d80-9856-8bc2f434a74f@kernel.org>
+ <BY3PR18MB46739700B533630D65C60808A7C82@BY3PR18MB4673.namprd18.prod.outlook.com>
+ <87b9e9c3-87db-4ebe-96b0-4f04705ef6f8@kernel.org>
+ <BY3PR18MB4673B4CEB60D3D21AB17B01DA7C82@BY3PR18MB4673.namprd18.prod.outlook.com>
+ <03b14353-5d47-48de-99fd-9cc48bad5651@kernel.org>
+ <BY3PR18MB4673BD07048F8AF7EA55282CA7CA2@BY3PR18MB4673.namprd18.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <BY3PR18MB4673BD07048F8AF7EA55282CA7CA2@BY3PR18MB4673.namprd18.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 07/03/25 13:02, Shrikanth Hegde wrote:
+On 06/03/2025 18:42, Wilson Ding wrote:
 > 
 > 
-> On 3/6/25 19:40, Juri Lelli wrote:
-> > Rebuilding of root domains accounting information (total_bw) is
-> > currently broken on some cases, e.g. suspend/resume on aarch64. Problem
-> > is that the way we keep track of domain changes and try to add bandwidth
-> > back is convoluted and fragile.
-> > 
-> > Fix it by simplify things by making sure bandwidth accounting is cleared
-> > and completely restored after root domains changes (after root domains
-> > are again stable).
-> > 
-> > Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> > Fixes: 53916d5fd3c0 ("sched/deadline: Check bandwidth overflow earlier for hotplug")
-> > Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-
-...
-
-> > @@ -965,11 +967,12 @@ static void dl_rebuild_rd_accounting(void)
-> >   	rcu_read_lock();
-> > -	/*
-> > -	 * Clear default root domain DL accounting, it will be computed again
-> > -	 * if a task belongs to it.
-> > -	 */
-> > -	dl_clear_root_domain(&def_root_domain);
-> > +	for_each_possible_cpu(cpu) {
-> > +		if (dl_bw_visited(cpu, cookie))
-> > +			continue;
-> > +
-> > +		dl_clear_root_domain_cpu(cpu);
-> > +	}
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: Wednesday, March 5, 2025 11:29 PM
+>> To: Wilson Ding <dingwei@marvell.com>; linux-kernel@vger.kernel.org;
+>> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+>> robh@kernel.org
+>> Cc: andrew@lunn.ch; gregory.clement@bootlin.com;
+>> sebastian.hesselbarth@gmail.com; krzk+dt@kernel.org; conor+dt@kernel.org;
+>> p.zabel@pengutronix.de; Sanghoon Lee <salee@marvell.com>;
+>> Geethasowjanya Akula <gakula@marvell.com>
+>> Subject: [EXTERNAL] Re: [PATCH v3 3/3] arm64: dts: marvell: cp11x: Add reset
+>> controller node
+>>
+>> On 04/03/2025 20:08, Wilson Ding wrote:
+>>>
+>>> I did consider shrinking the syscon's register address range to make
+>>> the reset-controller node to be independent from the syscon node.
+>>> However, I found the syscon node is also referred by some devices for
+>>> miscellaneous configurations . The reset configuration register
+>>> happens to be located in between these registers and clock/GPIO
+>>> registers.
+>>>
+>>>> drop offset in your patch or unify everything into 'reg'.
+>>>>
+>>>
+>>> This is exactly what I proposed in v3 patch. Do I misunderstand you?
+>>>
+>>> CP11X_LABEL(swrst): reset-controller@268 {
+>>> 	compatible = "marvell,armada8k-reset";
+>>> 	reg = <0x268 0x4>;
+>>> 	#reset-cells = <1>;
+>>> };
+>>
+>> I don't see the other device being fixed here. How did you unify them?
 > 
-> This will clear all possible root domains bandwidth and rebuild it.
-> 
-> For an online CPUs, the fair server bandwidth is added i think in
-> rq_attach_root. But for an offline CPUs the sched domains wont be rebuilt.
-> It may not be an issue. but the def_root_domain's bw may be different
-> afterwords. no?
+> This patch series is about the proposal of Armada8K's reset controller
+> dt-binding. The dt-bindings issues of clock/GPIO controllers have been
+> there for years. Having to say, it is not just a simple patch to fix it. It
 
-dl_clear_root_domain() actually adds DL servers contribution back on
-their domains (dynamic and def) and we want to keep offline CPUs DL
-server contribution not accounted for until they come back online and
-the domains are rebuilt.
 
-Thanks,
-Juri
+I understand, you just want to throw your patch here over the wall. It's
+reasonable, I feel it. Just like previous cases for this binding -
+everyone wanted one subnode at a time, ignoring bigger picture, each
+time making it franken-node or franken-binding.
 
+Please listen to Greg's talk from years ago about upstreaming. "I don't
+want your code":
+https://www.youtube.com/watch?v=fMeH7wqOwXA
+
+
+Best regards,
+Krzysztof
 
