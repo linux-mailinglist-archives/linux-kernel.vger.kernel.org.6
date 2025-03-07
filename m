@@ -1,146 +1,111 @@
-Return-Path: <linux-kernel+bounces-552108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1269EA575DA
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:14:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2603A575DD
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:14:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B9551892F18
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:14:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D77187A4C1F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0195258CF7;
-	Fri,  7 Mar 2025 23:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55F7208989;
+	Fri,  7 Mar 2025 23:14:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BFjrU/uC"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H71nba+x"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B764515746E;
-	Fri,  7 Mar 2025 23:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3C4915746E;
+	Fri,  7 Mar 2025 23:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741389246; cv=none; b=f2y2bR3KLObNH3XN5JiOfg+yghSfuuYRmJMCzl3Qc80xWDj3Jh4mqZ8GNnYUEc7sOJquWWJITB1BcRVrkWnwJCptnywb6T/gNVvQbPJMfQXOjLNCg6B6bPCCSabQaEMH66rEEjS0Y5izohaSd+2FsXhnKVKVC9ZpdVCp5Z0IBx8=
+	t=1741389283; cv=none; b=uwkV8YjGG044aSjKIbiCEm5Es8BQWHa4hqr5zZ9zB/R4lrAEsOVwaKrqU71NNkJpDWy6oiAH8mzUoyKyEWUj/0FKnPS7wy9soxJL5fXXtA8rh9hm20WX6XMftyEaq4btNNy2CljngY8rITl4d/7QxQ9HEWKvjXgpIdcnctSAhYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741389246; c=relaxed/simple;
-	bh=4C9O5IfLxoqALAVxpI1tRWW7zTFY8vqbF0bNmC70UVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BUAAZvjRJn68wiL+Fj7K7fu7YYxtxGHTerrqpGDPMW3B5EZ83g8Zn7ZvjHTo7Da6/M6qnCYuqqHwB/SzNw85m/kRDeUEsbCCh0x2Jl26dRZxgKUQ+aOWqWSa0X3NbcB+8IMaqtE8wqq5ZitfObW+1D/i9EEyvSMCriCZm0v352E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BFjrU/uC; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 527KqTPL023264;
-	Fri, 7 Mar 2025 23:14:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=9fzZUkk8QdDhoK9eiYVYMl630UKE
-	8hRxbL04c2VHNbQ=; b=BFjrU/uCLB9lApiTyTzgXstIXP9YrH0OFSv4vAVBBhUy
-	+2AJppWxohrefaiSNdY+Caz8sloRL2phKIu91SHPK67MivxoH5cmM62qCRAMYU1D
-	mzL5+wZqCrBSPTJs7z+eRwZUrWUHwE8Ag57LFquXq3mQylVmzRxsIJDSf7cXV5JG
-	EuaxgptJxV6eK+KYs+DLROwxZpJNXhervICmLpxrvzPeyfEYRc2h0vaUt+EilvSE
-	ewdLWD0znK9ex2u8zR4e9d9IdIv1g2lodTiwpePL0TtsLj21GsYK0DdxJhxeUzkH
-	LtBRiy/ipAGh6r5hT9a+e1tRToSW/nrea7VI/5CDfw==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4588768eev-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 23:14:02 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 527N3pSV009038;
-	Fri, 7 Mar 2025 23:14:01 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454cy01mws-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 23:14:01 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 527NDv7g52953400
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Mar 2025 23:13:58 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DEC0A2004D;
-	Fri,  7 Mar 2025 23:13:57 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 641C520043;
-	Fri,  7 Mar 2025 23:13:57 +0000 (GMT)
-Received: from localhost (unknown [9.179.11.245])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  7 Mar 2025 23:13:57 +0000 (GMT)
-Date: Sat, 8 Mar 2025 00:13:55 +0100
-From: Vasily Gorbik <gor@linux.ibm.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Heiko Carstens <hca@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Shuah Khan <skhan@linuxfoundation.org>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Subject: [GIT PULL] s390 updates for 6.14-rc6
-Message-ID: <your-ad-here.call-01741389235-ext-8883@work.hours>
+	s=arc-20240116; t=1741389283; c=relaxed/simple;
+	bh=hvlQKLrSiuf2/LahHmulAvjGAEyNjmerVi/1M7Kc3Yc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ck72mxrjswiWwdMfUF5zGu0f+3vrEzREH2m772XazlHneIlhWjg86Fsp8uwd1XVTc6l5kxrtXFIkrQf78agNjqtVqCyOv3eWL8znPY3eDG/PWRqtDMJqitsHc24+4njt2r1XSuXa19LzTjhDYyulvy0TUnJe6FRWNTe35A1mjxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H71nba+x; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6e8fca43972so17646196d6.1;
+        Fri, 07 Mar 2025 15:14:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741389281; x=1741994081; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hvlQKLrSiuf2/LahHmulAvjGAEyNjmerVi/1M7Kc3Yc=;
+        b=H71nba+x5kUM7iNlAArjbCo9ErDcJxx2ajnCqxEwZ9E9rW7c9veb31nt6fIHPEDBEn
+         mwa2NP0IbY4Ja+WpzMMXNq8z+JIavfCKCKMdhe6M5oKJ0TIjMYBFFAvm0ZMqt6YA4zRM
+         C1Kd4msJBog0E14t8njtIpU2/UuUA2DNgw0E+AeSqri5H3MKn8rgIhKyHfybSrYWVnFn
+         SfM7vF1fRYvlWbYNL6GDlbiHOQGHu1Q924KfZ/cETaWEPcARDN6BRbCL/AB2ScRPZDGD
+         y6V9AIw2X1ziy53e5t68qI+pczPCgYfAKP9s1YaYURHZ95cswLbuOOtVX81LVIrSMuqT
+         fG1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741389281; x=1741994081;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hvlQKLrSiuf2/LahHmulAvjGAEyNjmerVi/1M7Kc3Yc=;
+        b=XNz5xL4uizCXQPlqYr/uyv+d56aTFTPDQC0mcA4LQzs30JpvQtXwlvWhz5DvtXHwGK
+         S9jnthShuVhEUn+SOjzrm2fYorp0dai6lNq8JkXYLF5qirUGdcBG2IizpNvy3HoH1mSs
+         GRJeaI56x6ZFafLFwYcx8aaTAfZLVrhP+Yn6GkDFHYcPySoAco2ky/O04HpKvYhzFNFC
+         5gpDGesVZjyq4F8xpYeDImrXK9h+MpnMVlm3CF2Fifg8fvAlPh4L4ksRHoE/6MRYynM1
+         4u8W86eP2UiRsdu/PmVAayj/QZD92JJOpj1RzASQfZ/O5M2qiEXFl7sVQWY25HjsJxlU
+         /O3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUbfy8p6y1t+O1+aSZeRz/yompD2FRlVJTRiznW9+Ing7WNZu/mlcMm7zMcV7xDuzjvQvGFH79UrBEVqtxd@vger.kernel.org, AJvYcCV/lhjtWfWfddNu/bKGAssNLLzaZkK4PdsgZ8K+GfR4s14WswqKoKo/SVK4hSlEwjms1rNiV2gGsK+/wQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOz69ba9wTWzlY9n5EwXkReRF/I/Gsf8GW4vhVzp81iKEuOilK
+	EoG4NOQ8XF+iMYUpKjiNxWevDr7PFDLp1sCRw0Szh8v9tbAOBWtesdCET9tnnnmjbpC5IjkK/w6
+	HmnbvcdcOSF+xvwSm8YRw+psjHEg=
+X-Gm-Gg: ASbGncuBn/7qdD5nt2tNxVqXYQQbuocp4WoSwTt0mb5oIFgP6WFz+DAKbDsHBgc6fCP
+	5uczuG1GC/WFEkFPSZYpncfc+AdJ2ynKLHtnmmTupFmwzWPpQvNsi7UNFYY9+ClK5npSEdj72VN
+	GXancLqxMBtEQ8sEr9MG19kc8v+vuTA561i2JdbjiaoA==
+X-Google-Smtp-Source: AGHT+IHWYEQ6LscglzBgawkGRiqBX2sOTVaS0nueKi1A4ZzRN9eK4g2H4WB1UETzJEMeMek/KVtF2JUfl6jDtMtPy88=
+X-Received: by 2002:a05:6214:76c:b0:6e8:fa7a:14ab with SMTP id
+ 6a1803df08f44-6e9005b6618mr58352686d6.6.1741389280497; Fri, 07 Mar 2025
+ 15:14:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 1Uh7G7H5ec4mEeRFGTGArVS_oHZuerkE
-X-Proofpoint-GUID: 1Uh7G7H5ec4mEeRFGTGArVS_oHZuerkE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-07_08,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
- mlxlogscore=782 priorityscore=1501 suspectscore=0 malwarescore=0
- adultscore=0 impostorscore=0 phishscore=0 mlxscore=0 bulkscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503070173
+References: <20250307120141.1566673-1-qun-wei.lin@mediatek.com>
+ <20250307120141.1566673-3-qun-wei.lin@mediatek.com> <CAGsJ_4xtp9iGPQinu5DOi3R2B47X9o=wS94GdhdY-0JUATf5hw@mail.gmail.com>
+ <CAKEwX=OP9PJ9YeUvy3ZMQPByH7ELHLDfeLuuYKvPy3aCQCAJwQ@mail.gmail.com>
+In-Reply-To: <CAKEwX=OP9PJ9YeUvy3ZMQPByH7ELHLDfeLuuYKvPy3aCQCAJwQ@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Fri, 7 Mar 2025 15:14:29 -0800
+X-Gm-Features: AQ5f1Jo_UNIHhJUaEMGqM4jtD6PWvuZ_dX8aqKe0wEkynddQGZ-ujq2FDrA5W-U
+Message-ID: <CAKEwX=MtzM4Vw221pHTj8CZJ1NhLgo7Ls3xroxLRO399fzG98Q@mail.gmail.com>
+Subject: Re: [PATCH 2/2] kcompressd: Add Kcompressd for accelerated zram compression
+To: Barry Song <21cnbao@gmail.com>
+Cc: Qun-Wei Lin <qun-wei.lin@mediatek.com>, Jens Axboe <axboe@kernel.dk>, 
+	Minchan Kim <minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chris Li <chrisl@kernel.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Kairui Song <kasong@tencent.com>, 
+	Dan Schatzberg <schatzberg.dan@gmail.com>, Al Viro <viro@zeniv.linux.org.uk>, 
+	linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+	nvdimm@lists.linux.dev, linux-mm@kvack.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Casper Li <casper.li@mediatek.com>, Chinwen Chang <chinwen.chang@mediatek.com>, 
+	Andrew Yang <andrew.yang@mediatek.com>, James Hsu <james.hsu@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Linus,
+On Fri, Mar 7, 2025 at 3:13=E2=80=AFPM Nhat Pham <nphamcs@gmail.com> wrote:
+>
+>
+> Agree. A shared solution would be much appreciated. We can keep the
+> kcompressd idea, but have it accept IO work from multiple sources
+> (zram, zswap, whatever) through a shared API.
 
-please pull s390 fixes for 6.14-rc6. There is also a vDSO selftest fix
-for s390, acked by Shuah Khan.
-
-Thank you,
-Vasily
-
-The following changes since commit c3a589fd9fcbf295a7402a4b188dc9277d505f4f:
-
-  s390/boot: Fix ESSA detection (2025-02-18 18:49:24 +0100)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/s390/linux.git tags/s390-6.14-6
-
-for you to fetch changes up to b4a1dec11793936ffe1a9fb811724532ff3b1174:
-
-  s390/ftrace: Fix return address recovery of traced function (2025-03-04 17:15:19 +0100)
-
-----------------------------------------------------------------
-s390 updates for 6.14-rc6
-
-- Fix return address recovery of traced function in ftrace to ensure
-  reliable stack unwinding
-
-- Fix compiler warnings and runtime crashes of vDSO selftests on s390 by
-  introducing a dedicated GNU hash bucket pointer with correct 32-bit
-  entry size
-
-- Fix test_monitor_call() inline asm, which misses CC clobber, by
-  switching to an instruction that doesn't modify CC
-
-----------------------------------------------------------------
-Heiko Carstens (1):
-      s390/traps: Fix test_monitor_call() inline assembly
-
-Sumanth Korikkar (1):
-      s390/ftrace: Fix return address recovery of traced function
-
-Thomas Weißschuh (1):
-      selftests/vDSO: Fix GNU hash table entry size for s390x
-
- arch/s390/kernel/ftrace.c                 |  3 ++-
- arch/s390/kernel/traps.c                  |  6 +++---
- tools/testing/selftests/vDSO/parse_vdso.c | 10 +++++-----
- 3 files changed, 10 insertions(+), 9 deletions(-)
+by IO I meant compress work (should be double quoted "IO"). But you
+get the idea :)
 
