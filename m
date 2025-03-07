@@ -1,132 +1,214 @@
-Return-Path: <linux-kernel+bounces-551079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AE03A567DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:33:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2394A567E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:33:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C0FD3A8F83
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:32:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E2A11893F7C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:33:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B14E218EA1;
-	Fri,  7 Mar 2025 12:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3F3C219A6F;
+	Fri,  7 Mar 2025 12:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="AYBYWcuQ"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lPeFiW15"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2080.outbound.protection.outlook.com [40.107.237.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA9014A4F9
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 12:32:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741350777; cv=none; b=GzGf7cIrcWwaX7G9K1r+DyLlYhy3tvMIen6DugKSWTpFTyx5H09Xxd+BMfBRKWN5TMnUe/iaZONeWcjOyd82ZcU/zojuV1hn9l2enshMz/xg05dPkSSzKKX2srqPJeDXhVaHroJPcdWTpA7lEocU+4+Cg52EQ0156SFwvsbhmLw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741350777; c=relaxed/simple;
-	bh=x0KNblaIRgSJMApw2q2ASsM7BQ2eIFQHYxnjbxM69Q8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KhL2k5SMSd7JUNt8h+icX7NAm6zkjCV605BcQFKeJpMzKjq6psy40FfnRZYLDpZ2+spraMh1wSbx3slAT2a5k0+0hfHNjn5yW+I3Slig4eu2fpeAaStlBU0++YhTh3pyLk7Ms28nunWxv+CJzJKU3MY5F7JTIDwvgp7XH64nusw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=AYBYWcuQ; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3912d2c89ecso1409661f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 04:32:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741350774; x=1741955574; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xVLNbVcf5J5tHPSW2EA0QuyhFRjDh+ZXmGhDgOad+9g=;
-        b=AYBYWcuQ1uBII9L4+9FLTon/N0j84KTL2d0XiP4aLQh+tqIf13oqnMLISGbjtoW6wO
-         wSf71eVCEs8Q+2LQXNIJlyusa9GucxV8tveNS6Otxd2kXgs62Mu6ssoBrpUU00oiwEEl
-         RYvjYH/uFIpsTGDkC4fftuzcunmYgSLVJmV9EWCK3+H+apNkrafgm09wSbWgqANulPPL
-         HuKJBIblJnNzmYrHfv9BwgNuFOQPZhqp1fDpHPPd09mtsb8l6vZJqJXfb+FJ3gUKfGEL
-         Q58nZ2bWeJV83DoBz5RBsLUPtR13VSv2tjjl1SHVf2EJJUFYmECxfT21fSsfgscrpKa3
-         /wig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741350774; x=1741955574;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xVLNbVcf5J5tHPSW2EA0QuyhFRjDh+ZXmGhDgOad+9g=;
-        b=gz2D11rAJSpRpSNLqiM0a1MKHOzWwSmg9WaZIBRftOGMs39YbiHPh7bUlxeDInYZln
-         oV/H3o+Nbl29ek1+lOQgXKAKxTD/agcUAxhgaJAevj2wjb169QsLeW00nya1xPNJ3w+2
-         jXBlp33KSyJV40vaFfreR3qL5QSWVm74VWmfjrupjugdjAPYEd3yGeJUycVvNHO7cXK5
-         Hj7exlfo1HbQ5OiXr2zqmT67mxpbt/Ibz7DhyKZzMtdJjP0MxWuvHi0usDQs+UpEBqHo
-         BpKJSshVn0faZvnTRoSroxs3UIJ1wvvo7SO8f9/4yvWaq+988geNjDfihOPhn9ngVz81
-         g10Q==
-X-Forwarded-Encrypted: i=1; AJvYcCULE8SRV0Hmo3NdFJDMNqWeMYB2gTCstHpU7KVZWvDMe/hIQHjmGVtNHba9xOJKfmWkt4MsH/zE8Dvo6kY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsYUh0UDc1WAjQAsUyFGmAANbhojYoTmirclbsJ3Ob1vi/Ru6x
-	dzOyNsaufHuYhUKcxnyW77IqtuqEU0Ojjg7qnbwn3g5yjoxo/VtCg1h3C81/SC0=
-X-Gm-Gg: ASbGncurH6JGb3nI16ZVFwrNA2BElWz8yuZvWiYeeHv3a7yK2hFADe2XuYCOuSVW5dv
-	usU8n/HMWTPZisiM+/yEndTzMbI8KbUWLiDhy/ppZ4Aht4fbw24nkLLo5l26gHqis3lbwoTM076
-	HARDxJBWmWylxl05x5ik7m5vN7+nP/5m8HBZR2WVX8zqg/BuusnepFN5gBHHlKH2pPG349WEdlO
-	3zVVUtZQHucwAMh9ukVgM14mzeMk0YrYC6KT65TEUmku+0e2pMykQCJrJ96dswe2iJyjpB2r3xX
-	Dn7gzbhl3phFD6KyOp3woeAYv2o8baElidvxDdnwSgs=
-X-Google-Smtp-Source: AGHT+IGuef6pKgiNyF2uu3DNvcdOFkH4Hdb6WvXNB65WXsz2EKPw7vJT7pFnYFyhkFEZzi3HaKoaLQ==
-X-Received: by 2002:a5d:6d8c:0:b0:391:2a9a:47a3 with SMTP id ffacd0b85a97d-39132b5b802mr2169697f8f.0.1741350773976;
-        Fri, 07 Mar 2025 04:32:53 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:f9a:e2a6:5c12:124a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfbab43sm5297046f8f.15.2025.03.07.04.32.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 04:32:51 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [GIT PULL] gpio fixes for v6.14-rc6
-Date: Fri,  7 Mar 2025 13:32:47 +0100
-Message-ID: <20250307123249.28832-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E6EA14A4F9;
+	Fri,  7 Mar 2025 12:33:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741350783; cv=fail; b=AmCfOieHSq1AZcskIAjSkLgtC3hK2QrnwnDbFjI9+fziC9pVI2i2iJlNptnmxXHB7F7I7bdVA9I3ibdETbZF+/EDIjIGgzT7elgeu/+KGgT09mDNmvcP4qLTAK39v1itS0kbl7THuFNgJLH00zKf+3RaW+z2S34Y8f+ptir7k0g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741350783; c=relaxed/simple;
+	bh=0qAlm+anaQ/0v92DAxLr1mwKt5KrvES7QsWqKXW2k1o=;
+	h=Date:From:To:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=c5Vs2xGnAywmwz/UWKkveAiWcmS/zM0gBh7PlT9AHSrqstThoaNmwSruQRfw64VdAC7T0TgDoN/x/3TTDDtvqT/dYQIN+fIpxROgu/P8BIzkO6zoZ4JVYGpbZiS3I8yoR4XR+joqDDmv+qZ4RKYldUBO3kzFO6T4smfVRCGnH48=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lPeFiW15; arc=fail smtp.client-ip=40.107.237.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=syXqGrrS/uKpE430lwtDIs56TSkhuR0avotvC8f8bo62k8L3kIZalLI6bB+agB20SR4J8Ej+91A6yQQAOVcDRwEf00VDLKY/oCdb1IPb+0RIcT54wjp7NzTT/73TdWn9FH/n9/lKIG5f8IFGRcLpSIWWAM9CMC2VA1ccQbXyiTH75Rr7KYw2Y+GtiVKGguj/pAbD36XM02QvZCrpaOpMu2djV/2A9OEYCBuXa7SLLHAiGmROXyPHjoYwNlBzgwFjLYO3N6As8Ojh/Z2UrvCeFvWkF3vWtb46wFSWii9OoyxpRUQjlJ8eY/RP0XZrPrcD/pWxI/1t/xBzNSuFh1bkqw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PLvAiD0JhA+JB6QAtcfODrDKZ+dYHKv4DhAZlXdNivI=;
+ b=rOudph8qf87ZaDwBWHwFpNds4e3G+FT/o8igFDWJP4jFwKBP75WeXhONErlzI8bRUx1SnyUv8xp8ixqMNMLlnZAu3tk092HbE6XT+IOfB0Ho8PHreFKNvCRgs6qN40aSzLQIJXr8OdbkihhtLnvof+mBzVwr4WLAkM2bEa6RNX7/E3HADNqjLnr5jo7Bbu2wyM5OaT1OfjG3pHIOgUYd0LsRocDu1BqOJ45PoAuo6fw7hqbg75xxXdpXRh4VpNheeRFrV+2ajroQ7SMGKAaVaAjywyzTs6lYjCXGCpeotMeykupl/c5+R7/+ZSbXiM1jZHQlHazDqtXXc9YD/ImpoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=PLvAiD0JhA+JB6QAtcfODrDKZ+dYHKv4DhAZlXdNivI=;
+ b=lPeFiW1594AvEs8KWVmEKsTGWwY5b9YkRYQ3UL9sZRgg35O4xfBwwoup1DV3b4NJtYkP1v1L517LA3VDFzNw9KIvihvCIycwkWh2v6xB6mRA09SQtHKivZf4zXBZNF0tkmj78P0+/jQoXAK5EyAoV+5mLjHSEXAh0ky9/0kD3l2Eeta67J/jLXVQMdF0RixN4x0/Y0S4GZEdk2sUpBzHp34rejvxUm5GHkBAi/gQXt2CyNd1gev/kFfmHz1G5Xf2E1MvLbijva7unEAmuRdJZ8uG8s3sJB3LDV/suzsKogIKIQeC7mIlOePRl+uu2PY+CFB8R8EcLcjiBxWEPDy5NQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MW6PR12MB8663.namprd12.prod.outlook.com (2603:10b6:303:240::9)
+ by DS7PR12MB6288.namprd12.prod.outlook.com (2603:10b6:8:93::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8511.17; Fri, 7 Mar 2025 12:32:57 +0000
+Received: from MW6PR12MB8663.namprd12.prod.outlook.com
+ ([fe80::594:5be3:34d:77f]) by MW6PR12MB8663.namprd12.prod.outlook.com
+ ([fe80::594:5be3:34d:77f%2]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
+ 12:32:57 +0000
+Date: Fri, 7 Mar 2025 08:32:55 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: John Hubbard <jhubbard@nvidia.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <20250307123255.GK354511@nvidia.com>
+References: <D82UB3V6NZ55.3OEPPW2W8MFZV@nvidia.com>
+ <Z8GViQzZJVFPxfNd@phenom.ffwll.local>
+ <20250228184013.GF39591@nvidia.com>
+ <Z8cmBWB8rl97-zSG@phenom.ffwll.local>
+ <20250304164201.GN133783@nvidia.com>
+ <Z8f9mgD4LUJN_dWw@phenom.ffwll.local>
+ <20250305151012.GW133783@nvidia.com>
+ <Z8l8HgZOV7sDWqBh@phenom.ffwll.local>
+ <20250306153236.GE354511@nvidia.com>
+ <Z8rKVZolu8n6lB1P@phenom.ffwll.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8rKVZolu8n6lB1P@phenom.ffwll.local>
+X-ClientProxiedBy: BL1PR13CA0274.namprd13.prod.outlook.com
+ (2603:10b6:208:2bc::9) To MW6PR12MB8663.namprd12.prod.outlook.com
+ (2603:10b6:303:240::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW6PR12MB8663:EE_|DS7PR12MB6288:EE_
+X-MS-Office365-Filtering-Correlation-Id: 152382b4-fda9-4412-6998-08dd5d743092
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Kf+RVKuR0mNmFCkGA9+mQOLTK/OoFrh1tLA4A8fyXfxm0+ckLSmOQbe5M8u5?=
+ =?us-ascii?Q?Lq0673j3p1PEls+f+KeWWREV9sYS5g6RNrdLGtM9wR0fxk0jtMwBklxb63td?=
+ =?us-ascii?Q?idkU1S5rScRG+WjT5RuFECln75kElRVUl94kmBXpMrv17HlChPF5Q9UCaqqR?=
+ =?us-ascii?Q?DAuiN6I/svbOGFoskFhvSAIg9GYN1PHZr954jY5ggXyHQbQCaeg3By3DII/Q?=
+ =?us-ascii?Q?/TSn209DogLblWeKtacv0uXRUqSOj6OQdiN+JiSF7piYPpE352bUkKusa3FG?=
+ =?us-ascii?Q?5vgeYj1gZAUXQJFx9Pat/N0ro2E3aZfV5vMceJLuwoZ1VGTYVclEQl3Xn9qC?=
+ =?us-ascii?Q?uLlONXKNnl3LP4PtT9zeaJ1avGGr23FegTTnlpKwh5XjH0/xFm+8gww7AZIx?=
+ =?us-ascii?Q?noWJLitADaz1c8sAuA3U8mSFSmyUTjOW6T9RWuDlQL83zM8GIwtefDqkm3OB?=
+ =?us-ascii?Q?eypsQDeY2Ie1IHMa3sKbH7ZTlz+7cY+abZNOasoKGGRSIZN9g6TKXMBb4EqL?=
+ =?us-ascii?Q?p3ZbmSUJUxFTvteNCMOq92QaBnah2Qgsfz6jPU3XgW/PIxus+ewS8yGKsLif?=
+ =?us-ascii?Q?CWTSbB1LZ2VN9JhfUA8yIW34UAyKrkB/tkSUExY5Rdj34QhP0LGXv3ld0in6?=
+ =?us-ascii?Q?hi7NjhEmrYTN9Vxhie+GP8Jp7t+pbZobNVa6AcZiiLNzfLJaWRsefdYs3JJC?=
+ =?us-ascii?Q?CGc1GYkwB5xZXYJnJ5nTo4bdx6C6kLk4kZ7sKqLeLmK/lBNoIBnhupd+V+fU?=
+ =?us-ascii?Q?YkeKZsRyVOt8Fp8zevKHnb1rPRgGOnqUtk3J83LQdfqOQw4EMfU0ITBdEyKc?=
+ =?us-ascii?Q?StUzmDGa0Hsg0R9hPDVYK3dDEEG6ZNSdWaM7wqqlGkmJqDNC5ww9W3BEzTba?=
+ =?us-ascii?Q?bq/RXYjhTkG0wQxboRgO3s24bmmytfLhizATmulXKvndvjKLOFldNzBqUqQd?=
+ =?us-ascii?Q?I5queVYCHBhVVegjLHK/yIOosgQ/K0t8gYXcbfYRytpHXxVEUy5qmHVHkrMI?=
+ =?us-ascii?Q?CTToLOO3DC0pbu5A2PohS9Osa8KTMjqv0VkrUah6NkJxFvD+wskRfUUYEcyB?=
+ =?us-ascii?Q?8RTb7ReFh0PL2ReIqz2jSyNhZbrYkHIl1Q0GiGD0540FMjmr3xV16I/RuoUq?=
+ =?us-ascii?Q?Yjb8Gkn26L6ksPdk4u73PIYdbWpHgaZcFsNpJa5fySCk+UGDM4R5SNcvA4+H?=
+ =?us-ascii?Q?QCBEnSdzbTKIbEhomp0utThM1iStSwEJdfM/y0U3xXt1jo044bqyb4XHalMF?=
+ =?us-ascii?Q?Z4rLgq17imODOzGJxnuCyuFJqzIBuuNuDZQZjTgpWdD8UcYqJABXHcg6u3cA?=
+ =?us-ascii?Q?5MfTVwTBcAyefr1j6RMW+FuX9GByxIDijpiiVVuL1kEaDVYUOjqateGEtQfg?=
+ =?us-ascii?Q?jjwwlchdHV+Q2uGUyjzP6XZi3LfpBWswr4vfKPiFHlgypQAejYjrmCMdO01T?=
+ =?us-ascii?Q?Msu7xRTm4OE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB8663.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?yvMhjiT6++/ExQyCEHIeDH0BRwhTKa9Azya8O0Tt8AFZPFgUmuQLYEM2NERC?=
+ =?us-ascii?Q?oA2j6hliR8pVMJ/eGfc92OVulao4Vbf99wDUVgVuHBMda5H2Fr/kJXB5zHpu?=
+ =?us-ascii?Q?XAjMG8c2MfOXlSJfoypp4JYK3ZfQ4uD5/Hlaa/NlriWT6+zWPO6MWeRIzH5N?=
+ =?us-ascii?Q?8REjLU5Epv2y8O5IEhrLeAcruom7jMOBPlc0xwku+De6pDLfMrC+9OmwFSQZ?=
+ =?us-ascii?Q?txDAShus/FL3J9JzjQGKfG0ZJs6kXazqYH9Ylww6mEbU700T/Q/CNAIvW+te?=
+ =?us-ascii?Q?xUklcO87f0S5o+XRl3xyStA/UGlqRMuvZ5VO5ssKsqbQOomgmcvn33WtGbpp?=
+ =?us-ascii?Q?ipnO+PIDEe61GK78KET47O3ujZSOm/0AKaTeeRexIUzV/84nQbblJnFpCgMK?=
+ =?us-ascii?Q?ni3TmSrkbabgGW9Fuk9COQEQlfFJM+lkxcJll2qiN52cRpssCu3bStNIoEUe?=
+ =?us-ascii?Q?fB29kqdtpHzTAS7PsK40mldcSJke81RIH4s2dnItDK3UV4NA7qhvxabBimKX?=
+ =?us-ascii?Q?hU9L8ibgKJbWgVK5PdwilrlxXuxZAoematRGy9fJ3RnOv10/cMq89/56/3pu?=
+ =?us-ascii?Q?rYFi8bslteSpNcf3WVFu0YVDE//Ai+yM/DwgF6zbktK3F6Lqzd+8riiGZT5L?=
+ =?us-ascii?Q?MHYU0qBApnsXXMreQuUTlE+STEBCZyZAEQlYc1Bbwov8zgy/0YhBH/TBICbL?=
+ =?us-ascii?Q?Ey/TA+EF2sL4qdE3/GeeFcOUNwdsOxoqAmlkPodKSQiNrVIF9KM/BEPBunwM?=
+ =?us-ascii?Q?LB56Bv/k6rH7ToJEO6JPy/gYvQIygH9ssB5dMIUphFrbRrQ5NazFXm+ShD5h?=
+ =?us-ascii?Q?Hr2imsVQoborHKmuxXFGh78e00lhkxmAJnErL7i50/dGdEn5/WmZumFrfiKQ?=
+ =?us-ascii?Q?eUC+o2MRdq6tWCgDx9XlhiZRH+QLi/v1/uSdrsR//lLiBGaarzmxcvmq9gKZ?=
+ =?us-ascii?Q?fuLLkIhMHBpHJSEdMdZr1hvnxwHQV2336uqVjTeIoqvU0eMZJmfp6z1wT1vx?=
+ =?us-ascii?Q?RcceUYY12yvebzFMmQkJF13KLo+lu6ellJyiAir+yCEbGixqaafAS0hTAdhQ?=
+ =?us-ascii?Q?IGxaoexix1pbs30VY9siC2DTAkTToTHRSoLqX9DgRFsHGdn0gdtIrCyVq+wF?=
+ =?us-ascii?Q?KmEPiNr5HFd3ABs9qWGzbEqsKTayTKlBxHWCKAg93faART3euL2o/gavU4j3?=
+ =?us-ascii?Q?yGtPvKmhWQtbHfkhNpDR2DkX8Y5+zJ+N50p/QHE3Pmh77IHzY0xOXCNa9gsM?=
+ =?us-ascii?Q?H2hiVzTqZ1ZXurA05ysk2YXB4n+6+yS281uhYAeacKQw8yXWaiaGUV7faBd8?=
+ =?us-ascii?Q?ZhzKDavLpaUD0LSujr/4RljozD0c2iOg8/fQvW+P+vxMbRv31jv+nhkGoyTn?=
+ =?us-ascii?Q?Yn6+NSNwUstSUMYAbx24m1/PNf7u3SWGpt0B/2/Sb0wDCX3tT3gE1lldNBH+?=
+ =?us-ascii?Q?YW3yq3pAKcdN7xJuXLQgjRDFmX7BNlb752W8BF7hNlfDIz9EvGIxHZTHWVKD?=
+ =?us-ascii?Q?XG3neKCJ62+gcRzXM1n9j6WG0c9tXpfDjGS8UjcHipAIBPoqUmju3PyKNxPx?=
+ =?us-ascii?Q?L3sg8vStSXTj+ysYXAIbSWdcGqiWt7XNHmjH7a6d?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 152382b4-fda9-4412-6998-08dd5d743092
+X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8663.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 12:32:57.0314
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iJoqvDFTuuJ3YjYWB38mSAwxbqgdhDV3bycoJ42f9qcXksELnmNOCm4JKFXAAeZs
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6288
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Fri, Mar 07, 2025 at 11:28:37AM +0100, Simona Vetter wrote:
 
-Linus,
+> > I wouldn't say it is wrong. It is still the correct thing to do, and
+> > following down the normal cleanup paths is a good way to ensure the
+> > special case doesn't have bugs. The primary difference is you want to
+> > understand the device is dead and stop waiting on it faster. Drivers
+> > need to consider these things anyhow if they want resiliency against
+> > device crashes, PCI link wobbles and so on that don't involve
+> > remove().
+> 
+> Might need to revisit that discussion, but Greg didn't like when we asked
+> for a pci helper to check whether the device is physically gone (at least
+> per the driver model). Hacking that in drivers is doable, but feels
+> icky.
 
-Please pull the following set of GPIO driver fixes for the next RC.
+I think Greg is right here, the driver model has less knowledge than
+the driver if the device is alive.
 
-Thanks,
-Bartosz
+The resiliency/fast-failure issue is not just isolated to having
+observed a proper hot-unplug, but there are many classes of failure
+that cause the device HW to malfunction that a robust driver can
+detect and recover from. mlx5 attempts to do this for instance.
 
-The following changes since commit 7eb172143d5508b4da468ed59ee857c6e5e01da6:
+It turns out when you deploy clusters with 800,000 NICs in them there
+are weird HW fails constantly and you have to be resilient on the SW
+side and try to recover from them when possible.
 
-  Linux 6.14-rc5 (2025-03-02 11:48:20 -0800)
+So I'd say checking for a -1 read return on PCI is a sufficient
+technique for the driver to use to understand if it's device is still
+present. mlx5 devices further have an interactive register operation
+"health check" that proves the device and it's PCI path is alive.
 
-are available in the Git repository at:
+Failing health checks trigger recovery, which shoot downs sleeps,
+cleanly destroys stuff, resets the device, and starts running
+again. IIRC this is actually done with a rdma hot unplug/plug sequence
+autonomously executed inside the driver.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.14-rc6
+A driver can do a health check immediately in remove() and make a
+decision if the device is alive or not to speed up removal in the
+hostile hot unplug case.
 
-for you to fetch changes up to 391b41f983bf7ff853de44704d8e14e7cc648a9b:
-
-  gpio: rcar: Fix missing of_node_put() call (2025-03-06 15:51:27 +0100)
-
-----------------------------------------------------------------
-gpio fixes for v6.14-rc6
-
-- protect gpio-aggregator against module unload
-- use raw spinlock in gpio-rcar to fix a lockdep splat
-- fix OF node leak in gpio-rcar
-
-----------------------------------------------------------------
-Fabrizio Castro (1):
-      gpio: rcar: Fix missing of_node_put() call
-
-Koichiro Den (1):
-      gpio: aggregator: protect driver attr handlers against module unload
-
-Niklas Söderlund (1):
-      gpio: rcar: Use raw_spinlock to protect register access
-
- drivers/gpio/gpio-aggregator.c | 20 +++++++++++++++++---
- drivers/gpio/gpio-rcar.c       | 31 ++++++++++++++++++-------------
- 2 files changed, 35 insertions(+), 16 deletions(-)
+Jason
 
