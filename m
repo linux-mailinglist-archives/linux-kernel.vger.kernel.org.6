@@ -1,125 +1,100 @@
-Return-Path: <linux-kernel+bounces-550604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41637A561E1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:35:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17DBBA561E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:36:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B3A1172A7D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:35:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7761418943C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4631AA1F6;
-	Fri,  7 Mar 2025 07:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1BD1A5B91;
+	Fri,  7 Mar 2025 07:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TfQyf8Ye"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IDSP2MZm"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E531A9B34
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 07:35:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F35192B7F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 07:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741332906; cv=none; b=WOqeGTBEIg4koy3daRNTQ89WKXVAgaGXDaVRSS3L0c3zO0DDHf4b19kUT0ypB6vARt4BNDq5zy00SSik7/nXf1lRMI+W9Pq05YQrSJuXSDLe7b2mJFL6Ui7o2RTCP6mQysmEQAI9XxgBXvjnhp6lXAsDWnYKgKTEBPRJtIjOCio=
+	t=1741332962; cv=none; b=Bsr+XQDduafS+d2ROa7WwFG3UFfMV1UA2RjHCPvsfqC1kdZaoPelsCqlZXvLuHbu4hL0uPWU3lQlhEHrK6GXmC540KDpUv5EpLimSLnWbSnMY064lUYdyLG8xXYwEXXq56tcKpD6Q0XoDpZZ0TGf4mZFfmRwiDgqoLpOGjOSot0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741332906; c=relaxed/simple;
-	bh=fTXXbYfB0BUH1DTF0YolYq7hexyvidsXazu4RK0mlKM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YGjCtsGai8ac8fA37FjV+TQdPmBmrZdk2v9mE/N1VMHknjZRDS6wuOWWVsAh0yzlmB3ZgqgyPZuIXQ5+6UvnQ9eUWXQpwB9f1S8x1ZuCP+31yMICDRhhgwEU0LHVkPXXSbQDz+OrCihRBk3b8qfub23eB08hFp5QoSUVZLByO3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TfQyf8Ye; arc=none smtp.client-ip=209.85.216.48
+	s=arc-20240116; t=1741332962; c=relaxed/simple;
+	bh=kS/wAfRICL8/Z1ZMuj8iqMdcWfGIpXLJLsnbid/srE0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s2GeHfilfUCC4yg7sfoHmDEQlOn97/5vvnxa4kNWzmTNSNL1CObhM5f/7RUc3pVv4y6WbBs3/notz/nZjCkg80f/Trp36PQp1ykQufnimirbZSqLcAKmZviGu+t01JdK/hxEJFj74mcIRsCUfvJVRcQxOwmpZvg42XcKPVLiDmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IDSP2MZm; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2fee4d9c2efso2804682a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 23:35:04 -0800 (PST)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2feb867849fso2476174a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 23:36:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741332904; x=1741937704; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DNjPZDPj3mGb5UUG5cx3FWB8PP4SBA0xRr+ffK+aNvI=;
-        b=TfQyf8YekiaepaYT0wPmnd82PmbfczzdjD5jKbW2Y3kvQg6D4I75jAts5gXuhbWZc/
-         24CQf+C19jWEIZQxnW9do2wKws6dcxXvaZT91KS+woiaBvEhbNBrskWQatAIFIkC6fyh
-         mvj7RvEkZlZkP+SKinj5t2VadDL4oZhcZHitFc9C8o3+WeKiveibZITSgS15d4nbO7b9
-         DJVxE23maUEbCTUIlC6qQkb9EXOoX7tfVcyvPoHd0sSWqSQo/YJm59O4rD8AI8V+nVLi
-         P0mhR3S210GGMGlCDwWHxYJnNQQ/Ijvi+ZuVWBWilNxja4Ka65oMeJILVrtUvv33qmqw
-         NmLg==
+        d=linaro.org; s=google; t=1741332960; x=1741937760; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=KhlBNUmEkS2TvnlzidKmyqH88E53PRaLZAwbWIhiIM0=;
+        b=IDSP2MZm/61dKg4Sl2nh51HyUI3RsJ+4KBa2mXo2CogXoTTDwbHVqd5nqgk0EFJu/W
+         KItpBvxdtc2ze1s+wqQpZm4GZMoNDILx/5QNOle8U/JgYbyOL0mjhCXUkAExGj0OVB9V
+         SvZ51uGy65zRFehFc5auiZ09GdO3rdsTCktAFftStRbbmYiBPSN223qHJmKKKEJU3tU0
+         e0RPyhrhxI2G1J5GQ49dfHH4IMFxkLC9gI8/GlJCgiIpfXQs1ZP/WacEvoJiLqJl2Oe7
+         gOu0wHRmqA+8hFYxaIO1gVP/0XGWYRaZSq48vkrZQFpJW7jOEV0mvJznElpM8PF9GGmz
+         akPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741332904; x=1741937704;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DNjPZDPj3mGb5UUG5cx3FWB8PP4SBA0xRr+ffK+aNvI=;
-        b=ah2XkaGsKMQVLGK1YLi3InJo5t+QZMuD2c7AfcqEwCfTQ1p9LgI7TBFtKmKZFgkogT
-         Jf/7ZWtYB0RUfz62R/0tSYXupBf2QcBpzrOb3roH2bEJfeQy0CHL8jpovVVkgPbQXdCX
-         UVW1YFR7Iu4+Uznw8Wz2cvr5SMYMdTGwp929/5CUJ+fQhXzVdjAh8kX6HbDAc0mBVy1V
-         xN4SELUuM+mPM+Hkm55Pt1nwG/YLkmcXaeWkPv1wA6RYfYAT3OttODe5kNxqIVtkQQpc
-         wA70VzN+0XMJyQfU30U2DWLRzAU6n+PNu5iwFLbbkMlnbZF3wQ25D6/c0unRuYp4UEqf
-         h4Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCWq0e316pS4jFdpHsamIYEvWHnOJTa3K6CiHMSsYvulrKrEZTqCUb0oWQB6i5FKwrGdeNYamuegmFXqWOk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ/lsFpLnIiuSqB48pZLQpRNeoNDFF2rnwWMzZxQRNYtDtu+IX
-	4lrCsRswuCNqjSAo7wMnTH2meAxZLUfRXqh2CKWP5eTtJDETQ9oDkK+c3dAqg1g=
-X-Gm-Gg: ASbGncuuwtbZO40A8M+8RIEGrwzyiejY11usdUkVz2ZZ2qbDMRInQ5ltrm7ZZzz8JNv
-	H7xZSdWOZVX0SS3CPNtmSd82Qw27fZ18dsXV+5BvQAQv0oSU7e61kxlWpJABMlOJKyq+WxuL+KW
-	8h3Pj1iC+MZ5nnMgf18ARXtj5lyzCTChFzqdOxbYtoAzxoBQpAVgL3FSNgvzu00QoMge0/l0Mlh
-	V94S1wHGWypWrRvkQcaT9udNZa/KYdxF7hAGuAGSaBx3/vdiG9XHXN+YGAcBf2MFkteloihv5O2
-	gtydGpMiaiQjGAZzlwB0TCsnZvzXC7EpXnNQgxZpvlIJdQ==
-X-Google-Smtp-Source: AGHT+IELLQymfxCOfXAQsArNa5EtDTkaOw7sWZqUBknBo6zO+r6U5BuBGVSheMI+bVvvCeDVppbhlA==
-X-Received: by 2002:a05:6a21:78a8:b0:1ee:d87c:8051 with SMTP id adf61e73a8af0-1f544af83d7mr4983169637.13.1741332903923;
-        Thu, 06 Mar 2025 23:35:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741332960; x=1741937760;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KhlBNUmEkS2TvnlzidKmyqH88E53PRaLZAwbWIhiIM0=;
+        b=wl2izZZ5aT84Sjvm6X28STeyrX4Ck89roNtCiAtHRJRDkhGYPNA//VzQzXbQk2VMro
+         q2W4yYYXai33Wd0+lkRmMyhH6F+VXVFOe+X1nH2/S3N9eTI1vkmcBvi5AVeEKvStdwTQ
+         yle4DvImCGG+l6lScWg3Q40841kNQNpD/bl+v1dgGBAnJ064BzT3zWmve+S1KnckZC1C
+         BzIQb0beEiyAEUOrfQRPmz16ZbvaU3+gkkseO4xMQgzqg8M9OJP2cG3nEOmOmaEXbzXq
+         z38DBs2ysk4cC91gLaaQMDVe1slFDNiT3uSh1i83u2b83xaQq29hNz2yAjqlBuqhrwdB
+         08Rw==
+X-Gm-Message-State: AOJu0YzN84s2KuwzXl2KMaGTw3Af7ke59uNqPPrYa5Zyf4tHV0sjPVqC
+	Ql8M3Aq1O4A+CTjg9M//TzCGujdDZ2MjnoX7KfRWVbOb91jc07TR5j3JCjjFyE8=
+X-Gm-Gg: ASbGncsorybv3WkjlEngx+OlYNTccLGTn/FFI8+0GJydLeYMHtW9fZeOv5uMefeyps3
+	2ySWzDUs013PUo2v2jsNXq1Co6zVJ9AteSOW3DsBrx7OrktsYgjw5LHSd8ICJ0aMvn7oNk3/s/J
+	zi306nJS44Zjl/5Osq3OVj5xoknrNMKmMLkzuY5VwMN11gGpu7BJaPCZrOzsXopZGiBa1CKB9F0
+	alO3QZh2A6moTZlimyTe15FFA/VvCkRX056Y+BbE2adifcbrSWvsT1B/NMb4M3K1os5eyx/aIKr
+	5kzrq7OA2C3ckokjNVRGGe4h3MukIpa9asiTUZ45uy5qvg==
+X-Google-Smtp-Source: AGHT+IGOdrCDjUOWOctY9ypzGe1WcTQ7a0Ncd/vIVHwKLYKY7sBgPHnDUOFGJi3BCT1sD2mGgZwdxQ==
+X-Received: by 2002:a17:90b:38cd:b0:2ee:741c:e9f4 with SMTP id 98e67ed59e1d1-2ff7ce8e5dfmr4026503a91.11.1741332960217;
+        Thu, 06 Mar 2025 23:36:00 -0800 (PST)
 Received: from localhost ([122.172.84.15])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af281093128sm2037888a12.22.2025.03.06.23.35.02
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e7ff94fsm4275750a91.36.2025.03.06.23.35.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 23:35:03 -0800 (PST)
+        Thu, 06 Mar 2025 23:35:59 -0800 (PST)
+Date: Fri, 7 Mar 2025 13:05:57 +0530
 From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Yury Norov <yury.norov@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Akira Yokosawa <akiyks@gmail.com>,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V2 2/2] docs: core-api: Update kernel-api.rst to include cpumask.h
-Date: Fri,  7 Mar 2025 13:04:52 +0530
-Message-Id: <1612cd8c37245a9f1b25d470d9889a22ca9aec9a.1741332579.git.viresh.kumar@linaro.org>
-X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
-In-Reply-To: <cover.1741332579.git.viresh.kumar@linaro.org>
-References: <cover.1741332579.git.viresh.kumar@linaro.org>
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: linux-kernel@vger.kernel.org, linux@rasmusvillemoes.dk,
+	vincent.guittot@linaro.org, yury.norov@gmail.com
+Subject: Re: [PATCH 1/2] cpumask: Fix kernel-doc formatting errors in
+ cpumask.h
+Message-ID: <20250307073557.a2m7vq26n76phqix@vireshk-i7>
+References: <1489a042f329b1c1238756c68fd880e2966f242d.1741257214.git.viresh.kumar@linaro.org>
+ <8cacf9df-fb8e-40d5-a716-cc43a266b43b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8cacf9df-fb8e-40d5-a716-cc43a266b43b@gmail.com>
 
-Updated Documentation/core-api/kernel-api.rst to include `cpumask.h`,
-providing better reference for CPU mask operations in the kernel API.
+On 07-03-25, 00:38, Akira Yokosawa wrote:
+> I think 1/2 would be better to be CC'ed linux-doc as well.
+> Please do so in respin. 
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
- Documentation/core-api/kernel-api.rst | 6 ++++++
- 1 file changed, 6 insertions(+)
+Thanks for the feedback Akira. linux-doc is cc'd now for entire series.
 
-diff --git a/Documentation/core-api/kernel-api.rst b/Documentation/core-api/kernel-api.rst
-index ae92a2571388..5817632381f9 100644
---- a/Documentation/core-api/kernel-api.rst
-+++ b/Documentation/core-api/kernel-api.rst
-@@ -90,6 +90,12 @@ Bitmap Operations
- .. kernel-doc:: include/linux/bitmap.h
-    :internal:
- 
-+Cpumask Operations
-+------------------
-+
-+.. kernel-doc:: include/linux/cpumask.h
-+   :internal:
-+
- Command-line Parsing
- --------------------
- 
 -- 
-2.31.1.272.g89b43f80a514
-
+viresh
 
