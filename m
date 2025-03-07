@@ -1,58 +1,61 @@
-Return-Path: <linux-kernel+bounces-552009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F948A573FA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:49:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95056A573FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:50:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D23D3AEF08
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:49:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00E7C3AF14A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C771E1E07;
-	Fri,  7 Mar 2025 21:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAF521B4254;
+	Fri,  7 Mar 2025 21:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="KMB6+/+M"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fb02LTDH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5800B63CF;
-	Fri,  7 Mar 2025 21:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A6485931;
+	Fri,  7 Mar 2025 21:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741384186; cv=none; b=lHsFDlHxGfffzBKWL+80YDsJmtcv1rBzM++SL2eHATTh1gSQmbYkpv6phCB1ECvJQMXg8Gy3kWZSkkIQxqQT1GenyQef30Lz5W6BlhDSx9zPLq+BjQh0r51ALpE7chSpD3k7Ynn3kiy6L2IiFPTH7gv8vgxB8KnAs/AmWxKziow=
+	t=1741384212; cv=none; b=EUlrCGphe9VQV4Mt2I4jNMZ7YbKF67kHGJoy87cpHfSnyNsuuxBaoNtgm3O+L3h/oai8nRZC6sFjKxKZR0nQsyb6IXlSJAU8sUlsb2GeyTBUFMMMtboTdJvxE6f7R2SCcnLmoqZx+NWz3ffEAef83PMRlPbVFMMbh37z+704rAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741384186; c=relaxed/simple;
-	bh=GNtu/FYVOPpx1D8ovsMcUOZSryKBm6D3HYLuaMozZZI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ec4wz2USxtIeDh17b6ZOp3WCAH2yoB+S8FNSU8+9QWu/xizP0fXfGiwAXQgnTEGjt1+F9hpX8yDWSTTPP6H3Jsc4mRlSmSkdRC8B4YZNPZ0GWTXimzRx9ZXTPN8oyEi0MGrDhzd0zAyQVxje2d9kfl1qLeUQzmZW37NJw2OOYL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=KMB6+/+M; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=kEIoVsmgphcJxiinYI1QXjOtupscvV7ehu3P/xwclBU=; b=KMB6+/+M6LgnpkmU
-	P0qg/zKFRiMsrCCdPMewfKO6bzBKvHtfpg/xKovWnqyx0M+7dCe/hbdDTmZ+4pvhZ0N3prId/1/KC
-	S1LcCTZeg/zp8ReO5qAo9R2iwRDhu5Qg5025W5CoFHkJSxIdThnzM7sqwF57D+AkgLcpujiyiqw/Q
-	Za5iub/ZV7Y2My/byrgeWB7WqA0N0GZJHPOv3XcuydRcUwNTCjkd5QpSTGxMeQEE269RcMnFaTk5f
-	4apjQh+BS2wtEsNnzbLoLUK3620f4asvvFB+TJmSHF9CxngBJjDngnCrRi63CnyZAlSt+ql6wiWRE
-	EgsWlHZ6QECnLZ/cwQ==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tqfZZ-003WVM-2v;
-	Fri, 07 Mar 2025 21:49:37 +0000
-From: linux@treblig.org
-To: rafael.j.wysocki@intel.com,
-	linux-acpi@vger.kernel.org
-Cc: corbet@lwn.net,
-	linux-doc@vger.kernel.org,
+	s=arc-20240116; t=1741384212; c=relaxed/simple;
+	bh=t3J9Jbzv3WAbF/p3VfDFeviiTiXXWFrij1QqVAZd35Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=O2UieGKQqWKu+XpFhVdwg770V8rj4d0a7tekNov0b+mGAR+IaMcvs3dwbQwrFWqalFMBokHrZ2KC5RrO2WTzwymn9jhax7RLs31+0f4Hadj4gVAepY4gMl94nnD+mUZvd0zVecNRaGq8JJxgb4ILLr60Mhf0JJ3mljSjcf86VuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fb02LTDH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A138C4CED1;
+	Fri,  7 Mar 2025 21:50:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741384211;
+	bh=t3J9Jbzv3WAbF/p3VfDFeviiTiXXWFrij1QqVAZd35Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Fb02LTDH7hor0YmkayUrHN4QiBx4M2WCZEvl37aytUv8JnhvMIJS9eAxoKI4/Uprg
+	 grVRPcGg0SVHLB6iuIOOpHaHP6lCpLpvwEmVfTDc2dzpbqOsWzrGhtsD1Gq1jOLkMW
+	 kYLiJxfzR999hpZLQGTbWBtehMUFjgFQ3mxE1BB6t0/pYBm1EDuNTIMh6vWmYlVWRX
+	 +8krqjDNe8RiOf7XYraAb+B4SnkTYw8R5iazCoQZJxUXlGuO+rBmRtX3L+6TKYc8QU
+	 QoEklri//+t1zHEM/GLUDMN74iKC479iPPp1eNd/2RVp/bOm7XA8OE6MJlyy+yoDs8
+	 FYVgVcmHpiALw==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	jslaby@suse.cz,
 	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] PNP: Remove prehistoric deadcode
-Date: Fri,  7 Mar 2025 21:49:36 +0000
-Message-ID: <20250307214936.74504-1-linux@treblig.org>
-X-Mailer: git-send-email 2.48.1
+	lwn@lwn.net,
+	stable@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	Huacai Chen <chenhuacai@kernel.org>,
+	WANG Xuerui <kernel@xen0n.name>,
+	loongarch@lists.linux.dev
+Subject: Re: Linux 6.12.18
+Date: Fri,  7 Mar 2025 22:49:43 +0100
+Message-ID: <20250307214943.372210-1-ojeda@kernel.org>
+In-Reply-To: <2025030745-flaxseed-unsubtly-c5e3@gregkh>
+References: <2025030745-flaxseed-unsubtly-c5e3@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,154 +64,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+On Fri, 07 Mar 2025 18:52:44 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+>
+> I'm announcing the release of the 6.12.18 kernel.
+>
+> All users of the 6.12 kernel series must upgrade.
 
-pnp_remove_card() is currently unused, it has been since it was
-added in 2003's BKrev: 3e6d3f19XSmESWEZnNEReEJOJW5SOw
+While testing another backport, I found an unrelated build failure for
+loongarch in v6.12.18 that I did not see in v6.12.17 -- I cannot find it
+reported from a quick look, so I am doing so here:
 
-pnp_unregister_protocol() is currently unused,  it has been since
-it was added in 2002's BKrev: 3df0cf6d4FVUKndhbfxjL7pksw5PGA
+       CC      arch/loongarch/kernel/asm-offsets.s - due to target missing
+    In file included from arch/loongarch/kernel/asm-offsets.c:8:
+    In file included from ./include/linux/sched.h:12:
+    In file included from ./arch/loongarch/include/generated/asm/current.h:1:
+    In file included from ./include/asm-generic/current.h:6:
+    ./include/linux/thread_info.h:249:6: error: call to undeclared function 'annotate_reachable'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+      249 |         if (WARN_ON_ONCE(bytes > INT_MAX))
+          |             ^
+    ./include/asm-generic/bug.h:113:3: note: expanded from macro 'WARN_ON_ONCE'
+      113 |                 __WARN_FLAGS(BUGFLAG_ONCE |                     \
+          |                 ^
+    ./arch/loongarch/include/asm/bug.h:47:2: note: expanded from macro '__WARN_FLAGS'
+       47 |         annotate_reachable();                                   \
+          |         ^
 
-Remove them, and pnp_remove_card_device() and __pnp_remove_device()
-which are now no longer used.
+As well as warnings:
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- Documentation/admin-guide/pnp.rst |  3 ---
- drivers/pnp/base.h                |  4 ----
- drivers/pnp/card.c                | 32 -------------------------------
- drivers/pnp/core.c                | 16 ----------------
- 4 files changed, 55 deletions(-)
+    In file included from arch/loongarch/kernel/asm-offsets.c:9:
+    In file included from ./include/linux/mm.h:1120:
+    In file included from ./include/linux/huge_mm.h:8:
+    In file included from ./include/linux/fs.h:33:
+    In file included from ./include/linux/percpu-rwsem.h:7:
+    In file included from ./include/linux/rcuwait.h:6:
+    In file included from ./include/linux/sched/signal.h:6:
+    ./include/linux/signal.h:114:27: warning: array index 3 is past the end of the array (that has type 'const unsigned long[1]') [-Warray-bounds]
+      114 |                 return  (set1->sig[3] == set2->sig[3]) &&
+          |                                          ^         ~
+    ./include/uapi/asm-generic/signal.h:62:2: note: array 'sig' declared here
+       62 |         unsigned long sig[_NSIG_WORDS];
+          |         ^
 
-diff --git a/Documentation/admin-guide/pnp.rst b/Documentation/admin-guide/pnp.rst
-index 3eda08191d13..24d80e3eb309 100644
---- a/Documentation/admin-guide/pnp.rst
-+++ b/Documentation/admin-guide/pnp.rst
-@@ -129,9 +129,6 @@ pnp_put_protocol
- pnp_register_protocol
-   use this to register a new PnP protocol
- 
--pnp_unregister_protocol
--  use this function to remove a PnP protocol from the Plug and Play Layer
--
- pnp_register_driver
-   adds a PnP driver to the Plug and Play Layer
- 
-diff --git a/drivers/pnp/base.h b/drivers/pnp/base.h
-index 4e80273dfb1e..b342570d0236 100644
---- a/drivers/pnp/base.h
-+++ b/drivers/pnp/base.h
-@@ -9,7 +9,6 @@ extern const struct attribute_group *pnp_dev_groups[];
- extern const struct bus_type pnp_bus_type;
- 
- int pnp_register_protocol(struct pnp_protocol *protocol);
--void pnp_unregister_protocol(struct pnp_protocol *protocol);
- 
- #define PNP_EISA_ID_MASK 0x7fffffff
- void pnp_eisa_id_to_string(u32 id, char *str);
-@@ -21,9 +20,7 @@ int pnp_add_device(struct pnp_dev *dev);
- struct pnp_id *pnp_add_id(struct pnp_dev *dev, const char *id);
- 
- int pnp_add_card(struct pnp_card *card);
--void pnp_remove_card(struct pnp_card *card);
- int pnp_add_card_device(struct pnp_card *card, struct pnp_dev *dev);
--void pnp_remove_card_device(struct pnp_dev *dev);
- 
- struct pnp_port {
- 	resource_size_t min;	/* min base number */
-@@ -138,7 +135,6 @@ void pnp_init_resources(struct pnp_dev *dev);
- void pnp_fixup_device(struct pnp_dev *dev);
- void pnp_free_options(struct pnp_dev *dev);
- int __pnp_add_device(struct pnp_dev *dev);
--void __pnp_remove_device(struct pnp_dev *dev);
- 
- int pnp_check_port(struct pnp_dev *dev, struct resource *res);
- int pnp_check_mem(struct pnp_dev *dev, struct resource *res);
-diff --git a/drivers/pnp/card.c b/drivers/pnp/card.c
-index 9610a9f08ff4..c7596dc24fbd 100644
---- a/drivers/pnp/card.c
-+++ b/drivers/pnp/card.c
-@@ -269,25 +269,6 @@ int pnp_add_card(struct pnp_card *card)
- 	return 0;
- }
- 
--/**
-- * pnp_remove_card - removes a PnP card from the PnP Layer
-- * @card: pointer to the card to remove
-- */
--void pnp_remove_card(struct pnp_card *card)
--{
--	struct list_head *pos, *temp;
--
--	device_unregister(&card->dev);
--	mutex_lock(&pnp_lock);
--	list_del(&card->global_list);
--	list_del(&card->protocol_list);
--	mutex_unlock(&pnp_lock);
--	list_for_each_safe(pos, temp, &card->devices) {
--		struct pnp_dev *dev = card_to_pnp_dev(pos);
--		pnp_remove_card_device(dev);
--	}
--}
--
- /**
-  * pnp_add_card_device - adds a device to the specified card
-  * @card: pointer to the card to add to
-@@ -306,19 +287,6 @@ int pnp_add_card_device(struct pnp_card *card, struct pnp_dev *dev)
- 	return 0;
- }
- 
--/**
-- * pnp_remove_card_device- removes a device from the specified card
-- * @dev: pointer to the device to remove
-- */
--void pnp_remove_card_device(struct pnp_dev *dev)
--{
--	mutex_lock(&pnp_lock);
--	dev->card = NULL;
--	list_del(&dev->card_list);
--	mutex_unlock(&pnp_lock);
--	__pnp_remove_device(dev);
--}
--
- /**
-  * pnp_request_card_device - Searches for a PnP device under the specified card
-  * @clink: pointer to the card link, cannot be NULL
-diff --git a/drivers/pnp/core.c b/drivers/pnp/core.c
-index 6a60c5d83383..ac48db6dcfe3 100644
---- a/drivers/pnp/core.c
-+++ b/drivers/pnp/core.c
-@@ -78,16 +78,6 @@ int pnp_register_protocol(struct pnp_protocol *protocol)
- 	return ret;
- }
- 
--/**
-- * pnp_unregister_protocol - removes a pnp protocol from the pnp layer
-- * @protocol: pointer to the corresponding pnp_protocol structure
-- */
--void pnp_unregister_protocol(struct pnp_protocol *protocol)
--{
--	pnp_remove_protocol(protocol);
--	device_unregister(&protocol->dev);
--}
--
- static void pnp_free_ids(struct pnp_dev *dev)
- {
- 	struct pnp_id *id;
-@@ -220,12 +210,6 @@ int pnp_add_device(struct pnp_dev *dev)
- 	return 0;
- }
- 
--void __pnp_remove_device(struct pnp_dev *dev)
--{
--	pnp_delist_device(dev);
--	device_unregister(&dev->dev);
--}
--
- static int __init pnp_init(void)
- {
- 	return bus_register(&pnp_bus_type);
--- 
-2.48.1
+I hope that helps.
 
+Cheers,
+Miguel
 
