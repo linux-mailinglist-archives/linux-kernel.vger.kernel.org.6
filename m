@@ -1,288 +1,114 @@
-Return-Path: <linux-kernel+bounces-550601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47A14A561DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:33:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5E3A561DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:35:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FC0E1894560
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:33:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D92C61891A3E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C6D1A5BAA;
-	Fri,  7 Mar 2025 07:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07A651A5B96;
+	Fri,  7 Mar 2025 07:35:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="G+/lI6zr"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SLN3tCrX"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B788A19CC02;
-	Fri,  7 Mar 2025 07:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E364F192B7F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 07:34:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741332798; cv=none; b=i9vyGPxx2GkixAW7446DuuVfCVsqWj4ctDlKRlry8A32xmff/lT+frvnoV7cl5iREHwb+Mt2TNov1iEV3IalDyzwxULRAmjUrqzlDn+jOupz7EukV8sL9zEFkqIfh6cdRv6OR/n+jaiQTyUMy0je0FWdflLY6qHSKjZ8X7HqFKo=
+	t=1741332899; cv=none; b=nOU2Xc3RRCXjaLgFDXcMn7Vpn26/kpZ7fWPqeEukePmhOi8Qbe84xglqOn5pzn9J18m5ioHWhuUyUPAy3I3Hw/Vr1TYmRNhvcjcMddBdA06coHWJbBeKU8kZJz7gSFMyJsn4AfnLX6w1XCiJbw7V0gi13m4BaApIJ4zZCHQ9dWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741332798; c=relaxed/simple;
-	bh=eDPyLva+3ycJMNxZ3ZwXOg52wZmOxAi1w6ol2jRP/u8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Rxg0nCshMTQ+DSFN5NCMGwemgHUHvbChxVLjNGKwRdPF2K9VAUy31WUXyf5WxVHqLgMXRPY2NR5ww5eYzAFTIemo5fsbYdHYFh+pomFx7tNHmqcian6c/ICVqpmv3DR7t0k6frdyZBg1OpM+KF5AsbjZvAnN20US/uaqCcfC2RQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=G+/lI6zr; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526KpdMX011752;
-	Fri, 7 Mar 2025 07:32:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=ubrYVp
-	qk50rcjMnv39H3MY8gteUJk4S0eCQfVy0GMbk=; b=G+/lI6zrT3e8gE2GIYRTjB
-	QSBzvJZ2D5gvCmhOMOJ778iBmMY7h/ScsPGA23z9GkKtBvXC7kRGobvy0qpSK25A
-	Twefz8e3XC7xqgAx+XEeI5n6h4/BdSOIqs+/F0OBDaEuJFZM2KtAaIXMyymb4tX8
-	nwGdk6YTCGbiVSK9a2XrXDhQN2rBvIcm7A9Mh7gT7ZoFdwqBEZWIMfuoxI1b900p
-	QNS3EV8/0elZUMDGkEXdR47eiK852fqKbEYDxlUArv/BbYH0CvXiSSlZYWaCvKIF
-	qk+hWLTAEZV8ax1d/MzbczeFyFsnehzSaO1+detcdJKb6ZrkC/cMT8AnNdcG2vRQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457k45aadp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 07:32:24 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5277RAJC028063;
-	Fri, 7 Mar 2025 07:32:23 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457k45aadh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 07:32:23 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5273rtrB025064;
-	Fri, 7 Mar 2025 07:32:22 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 454f92cyw7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 07:32:22 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5277WKcs50004248
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Mar 2025 07:32:21 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DC8A92004E;
-	Fri,  7 Mar 2025 07:32:20 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 99FB920040;
-	Fri,  7 Mar 2025 07:32:16 +0000 (GMT)
-Received: from [9.124.218.213] (unknown [9.124.218.213])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  7 Mar 2025 07:32:16 +0000 (GMT)
-Message-ID: <295680e1-ba91-4019-9b7f-e8efd75d7f13@linux.ibm.com>
-Date: Fri, 7 Mar 2025 13:02:15 +0530
+	s=arc-20240116; t=1741332899; c=relaxed/simple;
+	bh=ctPVAtWaXaKCuE5LuTAIwOQM11ywFK6RGE21gBeVs4A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lgxcEXge2Jy1pbaDnLcWq3qpIqxGRivw0OgsRZFfH+mrGSfsU0U9P48HiOCAVdiBJLtIlfaxaqT/EmK0Ta37PVy5LkmSInpm1a0SsGMxR0ufgQIlilMGyootq0vA/wS7iF+lWDzbpyxChTHAkvq6J7uEfIPb1qrCoXiHxGkVVaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SLN3tCrX; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2feb91a2492so2806557a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 23:34:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741332897; x=1741937697; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sjt9C8VUJdpZK8WtjI+8HyAWHpGHvW/BGncHWkhwnb4=;
+        b=SLN3tCrX+JSr1ChAm2tuvZPUzcO0iOExvt0Hmt29/L1cmSuRJgjtIuqMrbqrGDD5tV
+         CI9LFd2PkOnql8R+T+6u0IiUCn6cd0DHDskdk0q0HHQlaYIpU9yrZYLOOpilJfx+mEJs
+         f1B+h0i8gfCqvy3IXqZxA2BMZ20w5DZW3WZwB91YQozzS9ElSjEwDv8nLhoBTdvGQ2Oo
+         bGp7iJnkHE7EqJ5l1yRxLA9kg71gJgYeph4joNlwhWB+2C86XO2DaXUeizOIbmmL/SJO
+         ExSi7PWqT8OhaqMRzDHT6T34OfExtmUO1I7PFksjLzEyY16BAeGD4hvFbBQHysYcvGiW
+         xBLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741332897; x=1741937697;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Sjt9C8VUJdpZK8WtjI+8HyAWHpGHvW/BGncHWkhwnb4=;
+        b=apZ+RMfjVGOfkrvOM9GR9Z2MY+tcEGCFAXW2MwWcfgTHJMALBZxfuqVnTWnJmo3uqk
+         Ej/gdEDnd7bf/i8Whg6tNldx7yVuKhjEntwW+7+BGIqVwcE48VrzKphXCrAigSpijggM
+         3Er1KbIfeB17AzTsPkV91TuOh6gzMTG68axv/AD6hydyu8lCmfUgaMUv1K3PWoGDMn6S
+         DscXzeU9ljjCf7qRF8vvjJAVEBB7/nFtwx4o+sPbi5LtfInvp9IFcyYII2rvDye+xfOE
+         OwIa0d3Z7T+Po+HY3cUTTJsZY3cUsCzTpgSsKSi+end6eySvluDCgG/dS6OIeXmelu/U
+         0DVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWgrmdDvbKivS8ehWS6xcbfZh9ZIU/E5bfruMNHSvUZz4Q0TcJ1A1mz/GgmezKm1rFR9GIb6YR1x+4jiHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbpGKTBjBIb9zCm2ILbYu0c8sxt4l5EBFfSUdg32e2YWcUgaOF
+	He7z8TZLRoCNNJCOxEzUjHbMfupQUf0mpBw1S3sYgkiB0vN0QLpjNUyCFZcKbE0=
+X-Gm-Gg: ASbGncv9En/QJ3v4BRn79adHNXSmbCkRz3frx8QqHR8JVPPGujswNf0FESqrGNeKpoT
+	2rLf1/+V/d6HWlmvIbbN+wzM60hKuUS7MTrYUwBzNHDspI4XBVkwaf2tB9gSn50lD8JTorRRjMS
+	db1wVGh2WGjf1fSZzdaOG4E+tNrgKncOetETrPftGLtyv8xKVc3mLwvyLYGgbjuTsxlAtkLl8mL
+	Bgap0hB4hltglbBeCQqlzHFrBzHy4QrHY83b+MwzCKLmxz7kjciO4/j+l9OHFjR981XOzBqagrO
+	Y/UgF6TLHPKr3E178+jwi+5ZB7NZICo5ScD1cr+NTV/ecw==
+X-Google-Smtp-Source: AGHT+IHPPYSmazDZOD2fKozTzdVGJsqxTd/WpRg3ZyN7X/9jbeje9ZktEhzBuMmRrqA89MatMiIFrQ==
+X-Received: by 2002:a05:6a21:104:b0:1f3:42c3:89ae with SMTP id adf61e73a8af0-1f544c7ff60mr4958963637.42.1741332897220;
+        Thu, 06 Mar 2025 23:34:57 -0800 (PST)
+Received: from localhost ([122.172.84.15])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7369824593csm2568640b3a.71.2025.03.06.23.34.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 23:34:56 -0800 (PST)
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Yury Norov <yury.norov@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Viresh Kumar <viresh.kumar@linaro.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Akira Yokosawa <akiyks@gmail.com>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH V2 0/2] docs: core-api: Update kernel-api.rst to include cpumask.h
+Date: Fri,  7 Mar 2025 13:04:50 +0530
+Message-Id: <cover.1741332579.git.viresh.kumar@linaro.org>
+X-Mailer: git-send-email 2.31.1.272.g89b43f80a514
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/8] sched/deadline: Rebuild root domain accounting
- after every update
-To: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>,
-        Qais Yousef <qyousef@layalina.io>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Swapnil Sapkal <swapnil.sapkal@amd.com>, Phil Auld <pauld@redhat.com>,
-        luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
-        Jon Hunter <jonathanh@nvidia.com>
-References: <20250306141016.268313-1-juri.lelli@redhat.com>
- <20250306141016.268313-5-juri.lelli@redhat.com>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <20250306141016.268313-5-juri.lelli@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: H5E39Y8HQmVajRQaIIoFk01IleThurC5
-X-Proofpoint-GUID: P6_eV3Mygq6EyTwXENHnTUGYqqXswSxh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-07_02,2025-03-06_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 adultscore=0 clxscore=1015 impostorscore=0
- priorityscore=1501 suspectscore=0 bulkscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503070053
+Content-Transfer-Encoding: 8bit
 
+Hello,
 
+This includes cpumask.h in kernel-api.rst and fixes some kernel-doc formatting
+warnings/errors.
 
-On 3/6/25 19:40, Juri Lelli wrote:
-> Rebuilding of root domains accounting information (total_bw) is
-> currently broken on some cases, e.g. suspend/resume on aarch64. Problem
-> is that the way we keep track of domain changes and try to add bandwidth
-> back is convoluted and fragile.
-> 
-> Fix it by simplify things by making sure bandwidth accounting is cleared
-> and completely restored after root domains changes (after root domains
-> are again stable).
-> 
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Fixes: 53916d5fd3c0 ("sched/deadline: Check bandwidth overflow earlier for hotplug")
-> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-> ---
->   include/linux/sched/deadline.h |  4 ++++
->   include/linux/sched/topology.h |  2 ++
->   kernel/cgroup/cpuset.c         | 16 +++++++++-------
->   kernel/sched/deadline.c        | 16 ++++++++++------
->   kernel/sched/topology.c        |  1 +
->   5 files changed, 26 insertions(+), 13 deletions(-)
-> 
-> diff --git a/include/linux/sched/deadline.h b/include/linux/sched/deadline.h
-> index 6ec578600b24..a780068aa1a5 100644
-> --- a/include/linux/sched/deadline.h
-> +++ b/include/linux/sched/deadline.h
-> @@ -34,6 +34,10 @@ static inline bool dl_time_before(u64 a, u64 b)
->   struct root_domain;
->   extern void dl_add_task_root_domain(struct task_struct *p);
->   extern void dl_clear_root_domain(struct root_domain *rd);
-> +extern void dl_clear_root_domain_cpu(int cpu);
-> +
-> +extern u64 dl_cookie;
-> +extern bool dl_bw_visited(int cpu, u64 gen);
->   
->   #endif /* CONFIG_SMP */
->   
-> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
-> index 7f3dbafe1817..1622232bd08b 100644
-> --- a/include/linux/sched/topology.h
-> +++ b/include/linux/sched/topology.h
-> @@ -166,6 +166,8 @@ static inline struct cpumask *sched_domain_span(struct sched_domain *sd)
->   	return to_cpumask(sd->span);
->   }
->   
-> +extern void dl_rebuild_rd_accounting(void);
-> +
->   extern void partition_sched_domains_locked(int ndoms_new,
->   					   cpumask_var_t doms_new[],
->   					   struct sched_domain_attr *dattr_new);
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index f87526edb2a4..f66b2aefdc04 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -954,10 +954,12 @@ static void dl_update_tasks_root_domain(struct cpuset *cs)
->   	css_task_iter_end(&it);
->   }
->   
-> -static void dl_rebuild_rd_accounting(void)
-> +void dl_rebuild_rd_accounting(void)
->   {
->   	struct cpuset *cs = NULL;
->   	struct cgroup_subsys_state *pos_css;
-> +	int cpu;
-> +	u64 cookie = ++dl_cookie;
->   
->   	lockdep_assert_held(&cpuset_mutex);
->   	lockdep_assert_cpus_held();
-> @@ -965,11 +967,12 @@ static void dl_rebuild_rd_accounting(void)
->   
->   	rcu_read_lock();
->   
-> -	/*
-> -	 * Clear default root domain DL accounting, it will be computed again
-> -	 * if a task belongs to it.
-> -	 */
-> -	dl_clear_root_domain(&def_root_domain);
-> +	for_each_possible_cpu(cpu) {
-> +		if (dl_bw_visited(cpu, cookie))
-> +			continue;
-> +
-> +		dl_clear_root_domain_cpu(cpu);
-> +	}
->   
+V2:
+- Don't escape *, use @ instead before argument name.
+- Don't escape %, use space before "[".
+- Use "::" instead of fancy code-blocks.
 
-This will clear all possible root domains bandwidth and rebuild it.
+Viresh Kumar (2):
+  cpumask: Fix kernel-doc formatting errors in cpumask.h
+  docs: core-api: Update kernel-api.rst to include cpumask.h
 
-For an online CPUs, the fair server bandwidth is added i think in 
-rq_attach_root. But for an offline CPUs the sched domains wont be 
-rebuilt. It may not be an issue. but the def_root_domain's bw may be 
-different afterwords. no?
+ Documentation/core-api/kernel-api.rst |  6 +++
+ include/linux/cpumask.h               | 65 ++++++++++++++-------------
+ 2 files changed, 40 insertions(+), 31 deletions(-)
 
->   	cpuset_for_each_descendant_pre(cs, pos_css, &top_cpuset) {
->   
-> @@ -996,7 +999,6 @@ partition_and_rebuild_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
->   {
->   	sched_domains_mutex_lock();
->   	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
-> -	dl_rebuild_rd_accounting();
->   	sched_domains_mutex_unlock();
->   }
->   
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 339434271cba..17b040c92885 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -166,7 +166,7 @@ static inline unsigned long dl_bw_capacity(int i)
->   	}
->   }
->   
-> -static inline bool dl_bw_visited(int cpu, u64 cookie)
-> +bool dl_bw_visited(int cpu, u64 cookie)
->   {
->   	struct root_domain *rd = cpu_rq(cpu)->rd;
->   
-> @@ -207,7 +207,7 @@ static inline unsigned long dl_bw_capacity(int i)
->   	return SCHED_CAPACITY_SCALE;
->   }
->   
-> -static inline bool dl_bw_visited(int cpu, u64 cookie)
-> +bool dl_bw_visited(int cpu, u64 cookie)
->   {
->   	return false;
->   }
-> @@ -2981,18 +2981,22 @@ void dl_clear_root_domain(struct root_domain *rd)
->   	rd->dl_bw.total_bw = 0;
->   
->   	/*
-> -	 * dl_server bandwidth is only restored when CPUs are attached to root
-> -	 * domains (after domains are created or CPUs moved back to the
-> -	 * default root doamin).
-> +	 * dl_servers are not tasks. Since dl_add_task_root_domanin ignores
-> +	 * them, we need to account for them here explicitly.
->   	 */
->   	for_each_cpu(i, rd->span) {
->   		struct sched_dl_entity *dl_se = &cpu_rq(i)->fair_server;
->   
->   		if (dl_server(dl_se) && cpu_active(i))
-> -			rd->dl_bw.total_bw += dl_se->dl_bw;
-> +			__dl_add(&rd->dl_bw, dl_se->dl_bw, dl_bw_cpus(i));
->   	}
->   }
->   
-> +void dl_clear_root_domain_cpu(int cpu)
-> +{
-> +	dl_clear_root_domain(cpu_rq(cpu)->rd);
-> +}
-> +
->   #endif /* CONFIG_SMP */
->   
->   static void switched_from_dl(struct rq *rq, struct task_struct *p)
-> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-> index 44093339761c..363ad268a25b 100644
-> --- a/kernel/sched/topology.c
-> +++ b/kernel/sched/topology.c
-> @@ -2791,6 +2791,7 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
->   	ndoms_cur = ndoms_new;
->   
->   	update_sched_domain_debugfs();
-> +	dl_rebuild_rd_accounting();
->   }
->   
->   /*
+-- 
+2.31.1.272.g89b43f80a514
 
 
