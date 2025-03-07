@@ -1,169 +1,132 @@
-Return-Path: <linux-kernel+bounces-551318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6E30A56B06
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:01:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E854BA56B10
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:03:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D253A177660
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:01:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBB60177964
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:02:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28A1921C167;
-	Fri,  7 Mar 2025 15:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D6021ADC1;
+	Fri,  7 Mar 2025 15:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zj7Smsbk"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b="tAe9EA5z"
+Received: from out-10.pe-a.jellyfish.systems (out-10.pe-a.jellyfish.systems [198.54.127.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC16021ADC1
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C3E21C9E3;
+	Fri,  7 Mar 2025 15:02:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741359661; cv=none; b=JBUO27CXB6XbQ2MUZXs23Ry/JD7tUKrh3SrzdFZLlcbup3fR3Fl02wGDMabanrgQE3MthodoNOobxaI34XltIbDCItOpUig0mbXlrI60R1pEyppKP/4O054IvVjrNwjv/kM4vjyDzTPQpOCAErFeZF5urb5UOqD25g0d952VUF0=
+	t=1741359767; cv=none; b=LAUiVgy8PHvaiBV8mw7Bcl59VMgEPke0FzTubpAw3nJoc9swquu5CeAWsbXxwPW1FSjvmFQxZDoNp9tRvuMqc9OXQHf5slot66+fohGQIqGpI9no10k+oah//+a8radyq1bOIMjlIubRZY/FLJXaS0n339ywtgygGgQFSomdfh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741359661; c=relaxed/simple;
-	bh=qHtTx50HpEAPQhi+oOAilwuHPWB/0cppXyBnHt6uC6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=o2HdRiaXzzFIQ2FxUID51Qg05XZoQ7cSZnssVeZy25iw8TVnffbvJ4hUmWHmaPuD4WqbLMIa3/0tD7HHori0Cw44rGSMFkZx9X05ftzSOIZa4PMltC3RjYZ9gyfwJZSZe22FG9LLxT23qJl6VdKMQeyVa5kvh2rmzZyFkHHlgrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zj7Smsbk; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43bc2f816daso2108445e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:00:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741359658; x=1741964458; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=CG/0+ifxr75o2y5vXP38zdPvnGa50K7D2JsI3Q0oVMA=;
-        b=zj7SmsbkDNFC3tqjz2OpvawdJfbAbVUxJnxgeYrYdbVCLuAV1pqS4VZw+QZNo2+JX4
-         XlS/8es2i9/JbRkprOqAsK6pkstJsET3GzK7hI+SzC+IPLGJX7qMOBpNw+1wGb+SSdnZ
-         HXeEzQqHXqFx1TWrQkPKimsgJElZHYqWXqW1um82aZrZsPM5sP98mQC/yB9AJd6Q1AAP
-         vu84YjzSAwSp055N9nwBhJ7xVNEpUaCBaW8/o1na8BZLuFhWXb9+BtUTn49YLWLrv+cV
-         4RypA+XI91eKQW3MDMO9+B42GMcFLmfv8guQRjDpOTA1iCnAN90Z7R8p+FRvTyTiqZql
-         XYUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741359658; x=1741964458;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CG/0+ifxr75o2y5vXP38zdPvnGa50K7D2JsI3Q0oVMA=;
-        b=ED2As1Qeb0mtgiig1skmHOz5nLRV00/VJIpXpCfkwLaD2EU/cSnnSqm9nhQfeDtlBs
-         O/sP7exoOVnOJBIvVpWLNt/i7zfEqePE/I4K9AR94pXWxAWAXljRsEwQr9iDyVoW4GZB
-         igIhaovg+Rj2DKdY+phEFVRuEktGnLN/9rGlRRKWaGznCFB6UuxNYFD50dbxvJBxEpfq
-         wYkcJ6ygkTro/iPrSigU1sUdBEpUV/zDOFL7OeG0k79MnHGMb4xfiaoXX6rEbxGzgPFm
-         xQA6CUUQbKdCo6v8Lr5EYYPjWWmuWn73TD/1m36H4Z40vM0AeyoG42LjmLeDkdPLyN4/
-         S+mg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+/nTeSiCvU+PEMZHiVHkrcnZyiOChRfWjInK5SmTDV7s/SvN34Sq7y7DV1vbeswtpgs5mn3qBBBuSyyQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIwnxRmPviZkYuL7zrmFXnIXUn56NKIiEpXG7XwehT6tIoP5NS
-	ohHI9Oo39vTbeM8MWTNWty12CnVJEQSE01q/8V1Tpd+betF94kXv0fnwe1sVZBo=
-X-Gm-Gg: ASbGncsAY6mcabIEaXRtfCgIwXRil1bU5Ec9tMb1iKz3pRC+eO1V+KMEPpz/JTE4ofP
-	S0TneG8dwWqYlslWKGlkd5x9wBX1Fm9Z3UTa14qIaeQy4V6QsuO/ymINsKAEgtyQQMIHDYk9VPa
-	7rjR3Zt9FnKZXnKVlJC5OOn6H5UJfgpSLH1IGSjSOFuf7uPygD/sEDqzCsAmYYOaUSvyFo/sLgn
-	wxQgF59i0T6Tx4cTRLvSggFLUwnGeiMYHZGKUIPJBYIpVzyu66nhIDSS4NMWMUjLsA0HliM3VBt
-	W/YMt5PlM24V3TU5qeojPqr+p/+l7zvpRDAJfrXXd3UZqtlu028tnoa7fdmwGZhZ
-X-Google-Smtp-Source: AGHT+IGGZYO9R1Ir9jZGE3PRQGONJFCKHQHAZ8yS9pdVo8obZtmL6fx1WKDeNC/DhwpJv1mJ7ANdZg==
-X-Received: by 2002:a05:600c:5108:b0:439:90f5:3919 with SMTP id 5b1f17b1804b1-43c5c4bb61fmr11520345e9.4.1741359656901;
-        Fri, 07 Mar 2025 07:00:56 -0800 (PST)
-Received: from [192.168.1.20] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c11e9desm5476847f8f.101.2025.03.07.07.00.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 07:00:56 -0800 (PST)
-Message-ID: <ceb3be8e-8f5c-43a8-a4b9-3ee62e67dfd6@linaro.org>
-Date: Fri, 7 Mar 2025 16:00:53 +0100
+	s=arc-20240116; t=1741359767; c=relaxed/simple;
+	bh=lb4uAfI1SXGgn8ggLjB/c6P103RVqbD3+e/SwUMNEq8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aQWZivKvHo9nRTkzyaaZ4DVdgfrYhc883VDcWWKIRCSE9ImSX+GPOFvwaj0STbV1WSsIMVfxddRlKjh+c+9+O5HauS5f4B5Xx40b/g1AZKc95Iokb2336ouXO5kgXwiufGqDm9y6/l7J2VCi7w13OxCutWLcOY/y6U7WdMWU1tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org; spf=pass smtp.mailfrom=framepointer.org; dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b=tAe9EA5z; arc=none smtp.client-ip=198.54.127.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=framepointer.org
+Received: from prod-lbout-phx.jellyfish.systems (new-01-3.privateemail.com [66.29.159.56])
+	by pe-a.jellyfish.systems (Postfix) with ESMTPA id 4Z8Tzl5ThGz9tTZ;
+	Fri, 07 Mar 2025 15:02:43 +0000 (UTC)
+Received: from MTA-09.privateemail.com (unknown [10.50.14.19])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by NEW-01-3.privateemail.com (Postfix) with ESMTPS id 4Z8Tzl4chdz2Sd0Q;
+	Fri,  7 Mar 2025 10:02:43 -0500 (EST)
+Received: from mta-09.privateemail.com (localhost [127.0.0.1])
+	by mta-09.privateemail.com (Postfix) with ESMTP id 4Z8Tzl3G0Sz3hhRy;
+	Fri,  7 Mar 2025 10:02:43 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=framepointer.org;
+	s=default; t=1741359763;
+	bh=lb4uAfI1SXGgn8ggLjB/c6P103RVqbD3+e/SwUMNEq8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tAe9EA5z2kSFNqRUhyg6XQhAtOLtCTCqF4i9VL4Q1fgpNoH7zv2AhNf3A0FxA3Ji8
+	 ucLtPVbxBg98AJmRNjrrzZqftlhiGMVwf8pPyA+aInATgyBU1u1rTla99io8+nmjMt
+	 CBSPWuW+iw9SGFKx+W1GmNi2siWuQqlg5ueKcJzXJtbkyU8Wg+sL4wRWlQjkxEWAcD
+	 aD2IcImWHtPJmOS2nCFIF530f4Jd8tPRasraqe3RuVItvk8PJpARSonuP1wdv/lLrA
+	 CJsFEt99cGFr6oEL9mR54wpHtJGZNaqf4xgpsKhZIfh4A3XTnG/nW3hmoaN8Dt454q
+	 AIQJi21WF4Zhg==
+Received: from 65YTFL3.secure.tethers.com (unknown [152.44.190.141])
+	by mta-09.privateemail.com (Postfix) with ESMTPA;
+	Fri,  7 Mar 2025 10:02:29 -0500 (EST)
+From: Sam Winchenbach <sam.winchenbach@framepointer.org>
+To: linux-kernel@vger.kernel.org
+Cc: lars@metafoo.de,
+	Michael.Hennerich@analog.com,
+	antoniu.miclaus@analog.com,
+	jic23@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	sam.winchenbach@framepointer.org,
+	bpellegrino@arka.org
+Subject: [PATCH v6 1/6] dt-bindings: iio: filter: Add lpf/hpf freq margins
+Date: Fri,  7 Mar 2025 10:02:11 -0500
+Message-ID: <20250307150216.374643-1-sam.winchenbach@framepointer.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC/RFT 00/12] clk: samsung: Use platform_driver_probe()
- to avoid __refdata
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>,
- Peter Griffin <peter.griffin@linaro.org>,
- Tudor Ambarus <tudor.ambarus@linaro.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250305-clk-samsung-ref-init-data-v1-0-a4e03a019306@linaro.org>
- <01cdf3a68e120d30bdcf4fc225bb236dba47fdff.camel@linaro.org>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <01cdf3a68e120d30bdcf4fc225bb236dba47fdff.camel@linaro.org>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On 07/03/2025 15:29, André Draszik wrote:
-> Hi Krzysztof,
-> 
-> Nice idea!
-> 
-> On Wed, 2025-03-05 at 22:43 +0100, Krzysztof Kozlowski wrote:
->> RFT/RFC because testing needed. I tried to do the same on exynos5-subcmu
->> and it caused weird oopses which even KASAN did not narrow. Probably
->> because of multiple exynos5-subcmu devices?
-> 
-> I've tried this on top of next-20250225, and it doesn't work on gs101
-> either and OOPSes several times during boot in different places, but
-> I can not dig deeper right now.
-> 
-> [   11.502919][   T58] Unable to handle kernel paging request at virtual address ffffbfe2ab25cc30
+Adds two properties to add a margin when automatically finding the
+corner frequencies.
 
-Thanks. I'll dig more once have a bit more time. The calltrace is
-exactly what I saw with exynos5-subcmu and it puzzles me.
+Signed-off-by: Sam Winchenbach <sam.winchenbach@framepointer.org>
+---
+ .../bindings/iio/filter/adi,admv8818.yaml     | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
-Best regards,
-Krzysztof
+diff --git a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+index b77e855bd594..ff0cb553e871 100644
+--- a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
++++ b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+@@ -44,6 +44,24 @@ properties:
+   '#clock-cells':
+     const: 0
+ 
++  adi,lpf-margin-mhz:
++    description:
++      Sets the minimum distance between the fundamental frequency of `rf_in`
++      and the corner frequency of the low-pass, output filter when operated in
++      'auto' mode. The selected low-pass corner frequency will be greater than,
++      or equal to, `rf_in` + `lpf-margin-hz`. If not setting is found that
++      satisfies this relationship the filter will be put into 'bypass'.
++    default: 0
++
++  adi,hpf-margin-mhz:
++    description:
++      Sets the minimum distance between the fundamental frequency of `rf_in`
++      and the corner frequency of the high-pass, input filter when operated in
++      'auto' mode. The selected high-pass corner frequency will be less than,
++      or equal to, `rf_in` - `hpf-margin-hz`. If not setting is found that
++      satisfies this relationship the filter will be put into 'bypass'.
++    default: 0
++
+ required:
+   - compatible
+   - reg
+@@ -61,6 +79,8 @@ examples:
+         spi-max-frequency = <10000000>;
+         clocks = <&admv8818_rfin>;
+         clock-names = "rf_in";
++        adi,lpf-margin-mhz = <300>;
++        adi,hpf-margin-mhz = <300>;
+       };
+     };
+ ...
+-- 
+2.48.1
+
 
