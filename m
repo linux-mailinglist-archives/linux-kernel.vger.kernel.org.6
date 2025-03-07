@@ -1,156 +1,155 @@
-Return-Path: <linux-kernel+bounces-551884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 774FCA57289
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:53:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA2FBA5728C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:53:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2736A3B5EAC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:53:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC9D91720AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911E925523E;
-	Fri,  7 Mar 2025 19:53:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F400524FBE5;
+	Fri,  7 Mar 2025 19:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kb5jl3f7"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N+TaZrMh"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540361A4F3C;
-	Fri,  7 Mar 2025 19:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6461A4F3C;
+	Fri,  7 Mar 2025 19:53:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741377197; cv=none; b=DWrLWxwZQlqP0YMemrRUK85voiMjnbgac68d5dA6x57YT4QMiAKIU40gYuyHLqaUBpdKQiImKVr/SrA6XubUdzIbHBHYs4rgHPlECDwiERAvm6wBH1GrCrQ4fAsI4K1vq1Wi0lVSuX98AjTCdMKEH4EiJ1RA43AwiDOu5OTQnoI=
+	t=1741377204; cv=none; b=noU3pF+q6Ax2vnIqyf2dTJ6zOF9e/ozZTqCkROHx8Dgncx8YjAAs+wM6OWVqPN2cZw7S7/ZkgR4VNw3BjxQAUKdk31XIBYnkCzHamCOp75o1E+sjROeBtMDe3VzlTgHEAy8JD4cxa1Q7uzr9U33fc0L6ZD9s68qwAcL/gphezpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741377197; c=relaxed/simple;
-	bh=LNHS/O5qk8V3R4mU1dNCTKTGoEiRwLqi9UP8XhBs1YI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N8pErDizUMC8DDxjx4Mvsk30Onu2iDjel45rHtk+6pc6bRX2miV+LlZwuDTt1NKiQlOm6zXzRd1SxKN2jgNWmZvaXSFW4QZEU1A96K1cpudV9C10PX0sceaP4PCucNfg8eAcwYLDAYG62ByyLSg6L4uEqz7lRwSzGQRa2IxEgG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kb5jl3f7; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-438a39e659cso13250065e9.2;
-        Fri, 07 Mar 2025 11:53:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741377194; x=1741981994; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OFjCWoFVVseHqDKPyVju+l4iTZxEMM/BbzUS5g6rWQg=;
-        b=kb5jl3f7XFMcjOTPKOzvk+iJs5Pb5+mKTp9Jyt2MyRfgGGfAPnW81BqWlx+n29EnB5
-         HC/oHdZB9Keqf+rN1ACTB1pNTf37gWpfcE/7uaGzxifp5+50dXAxgk4ixrKutgx4o6Nz
-         CP1wzm5+ZgkxGG5NGzUuW23jgf45WmG4AYyzPgvcJ1jf5cg1pTiwMk1LriCxGqXwKd6e
-         PeExadqaVN57vYQdN21528j1nA+oa8FG5olSGGd+3GKsBR2Szwp+3eYZwJLbTdMtQqzR
-         oTFtz/32/jj/VcQdaqr1S9xRaO3Kwj1SxoEDR5MmtpYBn49CMyz6l3c/xa30XNxceYbP
-         ndvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741377194; x=1741981994;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OFjCWoFVVseHqDKPyVju+l4iTZxEMM/BbzUS5g6rWQg=;
-        b=e4N/cFXpuy7TUqN1tFk+sYWwE9tza69iiCxt+FTi/ZuzVoU73cGRpolPwDdtRFn3P4
-         YzSpLbxPjSKN0wgjyEcBruRpo42996EoXZKq5+t57XgRZ4zO5xSXY1VqDvjMjCTWCNvd
-         Lt4xQQ/PAipcCs2vfb5WJeyzbPJkT9mb6lYrVpy8N9Fvwjx3NH8F2BzoEWdXnWYEEnkq
-         nz9uGSC008nR3FjmMtWT/7kzuKKuZO+9wM//Zf/togdwxe6NU70uusFY3cuTgvuMltkj
-         W4kLC9oC4p14c+fwfW7tpc1cIsfzvJeUo9q7w0CoogIWANX5dQ6TnuwVs+ZTps0gO60F
-         WBRw==
-X-Forwarded-Encrypted: i=1; AJvYcCV1KNS1Wfx5vnaVLLWgCA5a9GYPk1hEDwm6r6pqFHTQk+hMC8ziw+HrDCdRC7adBhmrdj0=@vger.kernel.org, AJvYcCV486pIEFjoKrrvnbJk6kZqOWGY2TEtfIhMlE04LoQEPOJiC8WKapWXCpmT2B8R3XDVzrWjg9wz1eHyHJHX@vger.kernel.org, AJvYcCVSWviZas7P2ndmQzi4ig4Xqul7atnTVgIAmK0EhfsXYIzh1pHLIxOqOk3ErKToQtRJ+xJPsfdOz1RjMIzAQd8=@vger.kernel.org, AJvYcCWb9966QWA7Mt1ol+84XzJyiy3IZ3ApsVkBQ0+gSHLHdFJ3HxZR2Sf9izxFnxyL65YEIhhmzxTlammMbpE=@vger.kernel.org, AJvYcCXa1zqEsfBnK6+tMru9h1ls8GgLtYzi/dBfnGJZk2JNVG/d8PKmiRw/2tHsGVELAfSVU4cEq0r6vh7i+cE=@vger.kernel.org, AJvYcCXcoIxzCONdTPmph2yADDUx/oIGOd5+BMeb+3983oxJWCOjmyRMcikQbPlujiag21i8WGQ7dzBH@vger.kernel.org, AJvYcCXeX1aGXcQWLcuQ/j34AlF3VAK+1yFECddR0b1Xq/Iw7clPhVxlA/i/sfT/pNS3s43K86SFPaIQ2azYr9+q@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCeDQ3XOefdeNwWOyWlt8WAGG2k0lZeOZ5qhkdsj9HSBm8hrpq
-	tcON1DYFTyaqwrYn2iAJG5XfI+0Kz5PVgc5slaNvsHu2iqK8ABQE
-X-Gm-Gg: ASbGncvB0+y8GWDg2jdy2TpXj+sxAopY3CYUSjtsMOa8SgqE/RoghUL+spc/DbkcBoO
-	HfUM5kPWiaQJmRfM+qP/X/rWYoHeThQ62RSOkHeGDjbkGNI7YY5jnHslYZ0iph3Kq6eS9R93lOf
-	rfkDzc8+lIX82i7Qy3E6mE8k5EDmQEOJqLtLqKIQ00I3bUy7B+mZ0+JYWz725/FxUa9P+CbcWib
-	22QIoGKC8lewgbUMxLWFPcv+6rCpf+4fYpQmqQDj1b+tlEZlVHL9WnQklApDuY7KRcz7A4tA7H6
-	Kkwrq1d4uhktFCWpVG81XjFTNFhyGfYCm6FwhhXxTY+ZzB4gnAeNCMHi/kms8R426sRB2hRQ/Ut
-	05RaJTuw=
-X-Google-Smtp-Source: AGHT+IFtUYsYiNnYKhfvrcaN1ioOhGevW7gRyAbgDR19AZMXszweQZgGUKeQX4mOm4dqyM9BgE29Gg==
-X-Received: by 2002:a05:6000:18ab:b0:391:122c:8aa with SMTP id ffacd0b85a97d-39132d96079mr3226538f8f.30.1741377194381;
-        Fri, 07 Mar 2025 11:53:14 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c01d2cdsm6394936f8f.57.2025.03.07.11.53.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 11:53:13 -0800 (PST)
-Date: Fri, 7 Mar 2025 19:53:10 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
- Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
- akpm@linux-foundation.org, alistair@popple.id.au, andrew+netdev@lunn.ch,
- andrzej.hajda@intel.com, arend.vanspriel@broadcom.com,
- awalls@md.metrocast.net, bp@alien8.de, bpf@vger.kernel.org,
- brcm80211-dev-list.pdl@broadcom.com, brcm80211@lists.linux.dev,
- dave.hansen@linux.intel.com, davem@davemloft.net,
- dmitry.torokhov@gmail.com, dri-devel@lists.freedesktop.org,
- eajames@linux.ibm.com, edumazet@google.com, eleanor15x@gmail.com,
- gregkh@linuxfoundation.org, hverkuil@xs4all.nl, jernej.skrabec@gmail.com,
- jirislaby@kernel.org, jk@ozlabs.org, joel@jms.id.au,
- johannes@sipsolutions.net, jonas@kwiboo.se, jserv@ccns.ncku.edu.tw,
- kuba@kernel.org, linux-fsi@lists.ozlabs.org, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mtd@lists.infradead.org, linux-serial@vger.kernel.org,
- linux-wireless@vger.kernel.org, linux@rasmusvillemoes.dk,
- louis.peens@corigine.com, maarten.lankhorst@linux.intel.com,
- mchehab@kernel.org, mingo@redhat.com, miquel.raynal@bootlin.com,
- mripard@kernel.org, neil.armstrong@linaro.org, netdev@vger.kernel.org,
- oss-drivers@corigine.com, pabeni@redhat.com,
- parthiban.veerasooran@microchip.com, rfoss@kernel.org, richard@nod.at,
- simona@ffwll.ch, tglx@linutronix.de, tzimmermann@suse.de, vigneshr@ti.com,
- visitorckw@gmail.com, x86@kernel.org, yury.norov@gmail.com
-Subject: Re: [PATCH v3 00/16] Introduce and use generic parity16/32/64
- helper
-Message-ID: <20250307195310.58abff8c@pumpkin>
-In-Reply-To: <5A790652-1B22-4D13-AAC5-5D9931E90903@zytor.com>
-References: <4732F6F6-1D41-4E3F-BE24-E54489BC699C@zytor.com>
-	<efc2ee9d-5382-457f-b471-f3c44b81a190@citrix.com>
-	<5A790652-1B22-4D13-AAC5-5D9931E90903@zytor.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1741377204; c=relaxed/simple;
+	bh=jW13cb5LfXx1elX2HCWSeQ4XXS/LTqhw13X2BO7S/yM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jnh0ecQrvKjheGtosCXZqKTrLNB8lZ8oC8wSk0SGwNw5MomIHK8uzhCvnHzjK0cMtgOetyHNF/hkY4xBcTFwiz9Ec75eBqpB4SPVnvg2u+2LyI80x0ca45TyWG473vZkwl4SupWtV5E7PGasbwg5UsQW8a9xaxIFzG7ESWEe184=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N+TaZrMh; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741377203; x=1772913203;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jW13cb5LfXx1elX2HCWSeQ4XXS/LTqhw13X2BO7S/yM=;
+  b=N+TaZrMhFn/uJ51M/UAPMDzC/Zul7pAp7yBy1ikQcJUkycQeIjPEfUWd
+   8K0YtDzdxo4ESXLlfasyLS687EGLQewSmGRiHjt98lXNPYTKRc0h8oK98
+   lnC34WYQeiiv9rtN/KtqIx5o369J7l4ODvKl+kPTO+z1oRVy9JFplgNN0
+   zSndKBwuWIeGRmJ8q1Gh9lUIrqtW07rJlGPxn58QuSCoL+CbuKtowRiok
+   3VVYYR26l38aHXXK2/LaS1JIWwhpVUmmv5xjWTrSm58Jkvz77oLawMDNC
+   8RfdtlsyXvMJCn3yUXI956RVCR81Ojs4U6r/jSUYjC0Vnpg6W6swopcwD
+   Q==;
+X-CSE-ConnectionGUID: hRdI6WlESoWa7MnNxKOgFg==
+X-CSE-MsgGUID: 5hwMx20RRcCkfKtreUVApQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11366"; a="46362199"
+X-IronPort-AV: E=Sophos;i="6.14,230,1736841600"; 
+   d="scan'208";a="46362199"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 11:53:22 -0800
+X-CSE-ConnectionGUID: 2GvcInyMSbeO20ibsiAMuA==
+X-CSE-MsgGUID: fLxSYKcnScOnnm+4wTrZrA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,230,1736841600"; 
+   d="scan'208";a="124430688"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.110.159])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 11:53:21 -0800
+Date: Fri, 7 Mar 2025 11:53:18 -0800
+From: Alison Schofield <alison.schofield@intel.com>
+To: shiju.jose@huawei.com
+Cc: linux-cxl@vger.kernel.org, dan.j.williams@intel.com, dave@stgolabs.net,
+	jonathan.cameron@huawei.com, dave.jiang@intel.com,
+	vishal.l.verma@intel.com, ira.weiny@intel.com, david@redhat.com,
+	Vilas.Sridharan@amd.com, linux-edac@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, bp@alien8.de, tony.luck@intel.com,
+	rafael@kernel.org, lenb@kernel.org, mchehab@kernel.org,
+	leo.duran@amd.com, Yazen.Ghannam@amd.com, rientjes@google.com,
+	jiaqiyan@google.com, Jon.Grimm@amd.com, dave.hansen@linux.intel.com,
+	naoya.horiguchi@nec.com, james.morse@arm.com, jthoughton@google.com,
+	somasundaram.a@hpe.com, erdemaktas@google.com, pgonda@google.com,
+	duenwen@google.com, gthelen@google.com,
+	wschwartz@amperecomputing.com, dferguson@amperecomputing.com,
+	wbs@os.amperecomputing.com, nifan.cxl@gmail.com,
+	tanxiaofei@huawei.com, prime.zeng@hisilicon.com,
+	roberto.sassu@huawei.com, kangkang.shen@futurewei.com,
+	wanghuiqiang@huawei.com, linuxarm@huawei.com
+Subject: Re: [PATCH 2/8] cxl/memfeature: Add CXL memory device patrol scrub
+ control feature
+Message-ID: <Z8tOrqOnkv-ZUsEy@aschofie-mobl2.lan>
+References: <20250227223816.2036-1-shiju.jose@huawei.com>
+ <20250227223816.2036-3-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227223816.2036-3-shiju.jose@huawei.com>
 
-On Fri, 07 Mar 2025 11:30:35 -0800
-"H. Peter Anvin" <hpa@zytor.com> wrote:
+On Thu, Feb 27, 2025 at 10:38:09PM +0000, shiju.jose@huawei.com wrote:
+> From: Shiju Jose <shiju.jose@huawei.com>
 
-> On March 7, 2025 10:49:56 AM PST, Andrew Cooper <andrew.cooper3@citrix.com> wrote:
-> >> (int)true most definitely is guaranteed to be 1.  
-> >
-> >That's not technically correct any more.
-> >
-> >GCC has introduced hardened bools that intentionally have bit patterns
-> >other than 0 and 1.
-> >
-> >https://gcc.gnu.org/gcc-14/changes.html
-> >
-> >~Andrew  
+snip
+
 > 
-> Bit patterns in memory maybe (not that I can see the Linux kernel using them) but
-> for compiler-generated conversations that's still a given, or the manager isn't C
-> or anything even remotely like it.
+> +static int cxl_ps_get_attrs(struct cxl_patrol_scrub_context *cxl_ps_ctx,
+> +			    struct cxl_memdev_ps_params *params)
+> +{
+> +	struct cxl_mailbox *cxl_mbox;
+> +	struct cxl_memdev *cxlmd;
+> +	u16 min_scrub_cycle = 0;
+> +	int i, ret;
+> +
+> +	if (cxl_ps_ctx->cxlr) {
+> +		struct cxl_region *cxlr = cxl_ps_ctx->cxlr;
+> +		struct cxl_region_params *p = &cxlr->params;
+> +
+> +		ret = cxl_hold_region_and_dpa();
+> +		if (ret)
+> +			return ret;
+> +		for (i = p->interleave_ways - 1; i >= 0; i--) {
+> +			struct cxl_endpoint_decoder *cxled = p->targets[i];
+> +
+
+Hi Shiju,
+
+Although not functionally wrong, the above for loop caught my eye.
+
+p->nr_targets is a better loop initializer when walking p->targets[]
+(at this point nr_targets better equal interleave ways but lets use
+the count intended for the array being walked)
+
+Is there a reason to walk in reverse? This seems clearer:
+for (i = 0; i < p->nr_targets; i++)
+
+The same for loop header repeats below in:
+cxl_ps_set_attrs()
+cxl_region_scrub_init()
+If you change for one, change for all.
+
+snip
+
+> +static int cxl_memdev_scrub_init(struct cxl_memdev *cxlmd,
+> +				 struct edac_dev_feature *ras_feature, u8 scrub_inst)
+> +{
+> +	struct cxl_patrol_scrub_context *cxl_ps_ctx;
+> +	struct cxl_feat_entry *feat_entry;
+> +
+> +	feat_entry = cxl_get_feature_entry(cxlmd->cxlds, &CXL_FEAT_PATROL_SCRUB_UUID);
+> +	if (IS_ERR(feat_entry))
+> +		return -EOPNOTSUPP;
+> +
+
+Along w patch 1 comment, perhaps just check for (!feat_entry) here 
+and in a couple of other places below.
+
+snip
+
 > 
-
-The whole idea of 'bool' is pretty much broken by design.
-The underlying problem is that values other than 'true' and 'false' can
-always get into 'bool' variables.
-
-Once that has happened it is all fubar.
-
-Trying to sanitise a value with (say):
-int f(bool v)
-{
-	return (int)v & 1;
-}    
-just doesn't work (see https://www.godbolt.org/z/MEndP3q9j)
-
-I really don't see how using (say) 0xaa and 0x55 helps.
-What happens if the value is wrong? a trap or exception?, good luck recovering
-from that.
-
-	David
 
