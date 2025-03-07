@@ -1,253 +1,279 @@
-Return-Path: <linux-kernel+bounces-551986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE737A573C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:39:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 09BFCA573D5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:41:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C63E3B7A86
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:38:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E199A3AEFB7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797E5258CD6;
-	Fri,  7 Mar 2025 21:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6767259CB4;
+	Fri,  7 Mar 2025 21:40:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VCLimyH7"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dw4z69sk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF2A7252912;
-	Fri,  7 Mar 2025 21:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741383498; cv=fail; b=PDTvHw5a4xEg1UcChEDWGmAh0pA0C890pPAoB03Kivd+FT+UNEAvzM4sSFSG5mEdtAovFxI/mYIWnq1RaJ/vjbmTpv2doHePSaTUkfOnJ361IuEqt0OzpJKsCsmu9dMEkHTqiewzBcFOLTNlglr88V1LgunUrMHGTQB8IokCkmk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741383498; c=relaxed/simple;
-	bh=vKH/Cv5rrbswrtNBecUZEGh0nL2TNZqOs8+DilUsTPg=;
-	h=Message-ID:Date:Subject:From:To:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=OTaHqW5dh+OrpsVhGsi/09AhzWxrA5JlFOHzRyabmYl1F85cnDFP1hgdtRatjIzJj3SxhVm2XfWb8qfpS5mbHjTiYmzHvcauI66NinSplaLaowHhpIaUAjsTlASzP6mR0x8rCtX60M2GqT+woLNU1ZabSzttrv5vdpGOVLMAblc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VCLimyH7; arc=fail smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741383497; x=1772919497;
-  h=message-id:date:subject:from:to:references:in-reply-to:
-   content-transfer-encoding:mime-version;
-  bh=vKH/Cv5rrbswrtNBecUZEGh0nL2TNZqOs8+DilUsTPg=;
-  b=VCLimyH7F36gQBT7ZwCGfIeEhIwBaUzAz6TSvv/U1m29A0A5lcbgeU2k
-   qMF5/Lnxa0ydXVSXAGuM+TnoVcqVswSr1NKUuTBUxjMajp5YOaiZQIclx
-   qDGs17cn84MjdOisbjckGF/08oQwvyQyHdxDuMPIO4XfXa+VtCvZl3Hyn
-   EDJpbXrzR0a3CkKIOfEBpTtqkMXD8Q8xTjRXL0dukH2wwnrOWiDHHtdyz
-   Q7izg5jhrYf6VGQMQionh+wb7lZKDLsB8HkW4xKh3M14+Gk+an4evDAxS
-   4Ht04JBpNDdh+onXnHQkdhF2XlxfihSUiYeCzhyBnusTbsIMnfm0rbka5
-   g==;
-X-CSE-ConnectionGUID: ISiybjnxQAy4PJDOwIN50g==
-X-CSE-MsgGUID: 3KCEiSoXQLmmGvy1fomoKA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11366"; a="42570916"
-X-IronPort-AV: E=Sophos;i="6.14,230,1736841600"; 
-   d="scan'208";a="42570916"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 13:38:16 -0800
-X-CSE-ConnectionGUID: zeY/eUsnRJqZIrcWZQdgDA==
-X-CSE-MsgGUID: 505YBqrfRiuRrL3l5u4tPw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,230,1736841600"; 
-   d="scan'208";a="119180065"
-Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 13:38:16 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Fri, 7 Mar 2025 13:38:15 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 13:38:15 -0800
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.46) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Fri, 7 Mar 2025 13:38:13 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G8RGoyWayZxpAfiMwwTgxwwXKi7Jybzd35T5f4ZT9Kk8TVOiKDcI7S70drF9j4UDmM1HATD6DSjiXdd00+/L+ktXvf3MSApidtB3H8ldrSReR9FY6cktv09lNtyMZ5WQjAkvZsYqsIt7HJymRFk9iF8pLd3ArI7OY8PVnB3aVo1I2eq/ogQ8fLSKWnmTmdz6BRGFccD+C/nWHGnD/LJ8bH+ZNgsqAjt5esGu9h4o21v2RU3rEMkFTmgb03Fmb0SFT03ORFwv27qvarEYZ3lCJ3Bezr2p9pLqBVkbkOdJL3Cd5olSQo4x9slBmvJcfrTN1sPuxJhA2L0G78UwbQuRoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=u0GeIgGSZZQH+zaT/axk9oSUnqhq9GT8z2QrbJAO5To=;
- b=j+XfbJ5k9i1h5Rn3VDu9YTPujFERGNxQI/Z2EoO2DFtkK/YVJUAQxMUICrUS4k1wBbiXOi/O/Vs+7Fz07UT3mUj7iJNoAGLFzBZyEpVUIYf9LzUPrCVvBpviEErMUnxV4of/PfqlM30SDItfUMaWerAAHqYe59N+RNzq9zaQ+srYG6+FaBQjSaeI3voneDo4ArFpvL88sDrXYcA5/7fjmmZBzVK2Sv/3LZAX6IqiIreg1Pyl9Y4Y1qV9a9bj6KLcTBPR3We9PDZApjqS7AQrydRo1UjcHfmWttD9is4loEeMd3MYF3Oo6yfDXSmlBk2G0QDVCLXk0Pj4K5zw1BAdGA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from BL3PR11MB6435.namprd11.prod.outlook.com (2603:10b6:208:3bb::9)
- by IA0PR11MB7741.namprd11.prod.outlook.com (2603:10b6:208:400::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Fri, 7 Mar
- 2025 21:37:39 +0000
-Received: from BL3PR11MB6435.namprd11.prod.outlook.com
- ([fe80::23a7:1661:19d4:c1ab]) by BL3PR11MB6435.namprd11.prod.outlook.com
- ([fe80::23a7:1661:19d4:c1ab%5]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
- 21:37:39 +0000
-Message-ID: <8d3bafbc-eb45-49c5-be78-cec96be52f82@intel.com>
-Date: Fri, 7 Mar 2025 13:37:35 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH iwl-net] igc: Fix XSK queue NAPI ID mapping
-From: Tony Nguyen <anthony.l.nguyen@intel.com>
-To: Joe Damato <jdamato@fastly.com>, <florian@bezdeka.de>,
-	<netdev@vger.kernel.org>, <vitaly.lifshits@intel.com>,
-	<avigailx.dahan@intel.com>, <stable@vger.kernel.org>, Alexei Starovoitov
-	<ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
-	<davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, "Jesper Dangaard
- Brouer" <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
-	"Przemek Kitszel" <przemyslaw.kitszel@intel.com>, Andrew Lunn
-	<andrew+netdev@lunn.ch>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
-	<pabeni@redhat.com>, <bpf@vger.kernel.org>,
-	<intel-wired-lan@lists.osuosl.org>, <linux-kernel@vger.kernel.org>
-References: <20250305180901.128286-1-jdamato@fastly.com>
- <796726995fe2c0e895188862321a0de8@bezdeka.de> <Z8nRNJ7QmevZrKYZ@LQ3V64L9R2>
- <9ddf6293-6cb0-47ea-a0e7-cad7d33c2535@intel.com>
-Content-Language: en-US
-In-Reply-To: <9ddf6293-6cb0-47ea-a0e7-cad7d33c2535@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: MW4PR04CA0340.namprd04.prod.outlook.com
- (2603:10b6:303:8a::15) To BL3PR11MB6435.namprd11.prod.outlook.com
- (2603:10b6:208:3bb::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B56257452;
+	Fri,  7 Mar 2025 21:40:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741383653; cv=none; b=AW9yBGPWe3yi4w4mUKxxDJ8pgBSZFdaTy6UjbOa7dJ2rAFHxhUrYDo0pmgbjTdUvyBqLbZ5jsb+WYEaRnJ8cu5DNaic2JvzVK8aGnW/s94AmOYTyKtaQC1nnzWfaSIOfvNaWUP4ToD47xl61f5zir+bqX8ZrpqFwk4b4q57k/4k=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741383653; c=relaxed/simple;
+	bh=ZSKKNa7OLNdgPn/VeIX1fSXWE5pUKXzsRcqYzZ5rMAo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jWDM59Zlrg+8zlXQkaC5WuQLpUykunwGs2Nda0rFYd+W6fxLyBR8ZqKk+rZydAj9Sx2ZOf95lFHs68c3n0jUUYMI7yDFAKNzlme1xZ/4qeAApK3w9Y/NAzQuTdEi+6TIfAgvW6ASsju5TEyfqUFS4pXyV3mthSznHl8TmN1alek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dw4z69sk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4AB3C4CED1;
+	Fri,  7 Mar 2025 21:40:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741383652;
+	bh=ZSKKNa7OLNdgPn/VeIX1fSXWE5pUKXzsRcqYzZ5rMAo=;
+	h=From:Subject:Date:To:Cc:From;
+	b=Dw4z69skZWw07XWF+Bnxb2680S6GWSCW/1yFnNxBEVX5sAVm0nQdPV27KGmQN9wCN
+	 KlDh+je3o0AE6crOVJMCiVTHZchxx9C/Bs16p9VJb8r7AIGbbeX1DKB14PQIvael7u
+	 sVYxcncVbwZdEaJ+7v1VpEHkpqMPd0UKRzjzuwr5HPJ6hzd7og0co61ZPWCSCy+dmI
+	 NAV4nHyncB1UxFF9hSa0FMI8AbbYCI3qf9EsOB9Q/yivM0hNabM9XPXgsQH6pNIbLq
+	 FQ0u9PN3eaJmMcLSIbtMyRyzAT8i6q06z2IHqBhOs1JZNNzCix1cDovRZCKXHjYlxM
+	 Ww5oYMJhNAyfw==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+Subject: [PATCH v11 00/13] hrtimer Rust API
+Date: Fri, 07 Mar 2025 22:38:41 +0100
+Message-Id: <20250307-hrtimer-v3-v6-12-rc2-v11-0-7934aefd6993@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR11MB6435:EE_|IA0PR11MB7741:EE_
-X-MS-Office365-Filtering-Correlation-Id: e1bd6ac7-0588-4035-3df1-08dd5dc048ae
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016|921020;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?WnhpTjhjNzVtSDJuWTRqU3Z2cmJoQWFPUVROQm1QN1Z4MWtaYy9pYnVRVmQ2?=
- =?utf-8?B?b3BUUE1yWU9Vam83bjU2SnZOMDM2UGFCQkFyUTVvZ0c1MGpjb0JLWGhGdVlY?=
- =?utf-8?B?d05NSGdFV2tUQkJEU0VNZGtXcWsvQlNqSFduS3JGQUE2RVBsZ3o5bzV4Tmc2?=
- =?utf-8?B?UnJFTEQxcGVrRE40QUVNZFp5eG9pWVVFdDFOMGErdVg4M0RpS3NPUnBvNEph?=
- =?utf-8?B?RE56REQ0Q3p1akdXTHhTaFFHSlg1WjE3TnRjZ05Fd0tuK1VCc0FGSjlMTWcw?=
- =?utf-8?B?MGF4Sk9UWityb2x3MERKUXFNR2RmL1BSWHRzc3JHRW5pOVU3SnEvV1c4L2RN?=
- =?utf-8?B?dHlyQjNORDEvc3NVSUxUSUIxVFdzRWRkem9xbm9UaERKRUlzRHQvMmxINFly?=
- =?utf-8?B?Z0loOXJWa1JFL3ZKbi81MmVPYVZPZ0FHY0V4UEFNUWg4ZVdxM3VDWEpuZjE1?=
- =?utf-8?B?Z2JBNzNvc1E2Tk94SDdoTGg1ZndOeXZYc3Zoeis3ZmxwSTF6aHZiT2t2RmdW?=
- =?utf-8?B?NEJWR2N5VktUbTJJNFBHY3I3bEljYXpHZXdLSmFDRU1zUkFrM2c3V0R5bFcv?=
- =?utf-8?B?S3ZDMkRiUy9XdExvODg0YndqYndzdEpNSE9BaFE0a0hhb1JXZXhSc3U5c0Z4?=
- =?utf-8?B?U0RzN0N2UmVITHlqek9QYlFFQXRQMjBMUnkrWGFvYlYzeVZPSVBrL2MzcEFv?=
- =?utf-8?B?MDhvbDNhNmNNaVFodmQzbitiSThBdHY5TVJiR0ZMeDBLRGdEbEl5NmpUa2Ew?=
- =?utf-8?B?Z3NldlBRMUp6VTBCSXZ0WlpDUWF0a0tTM0FYNFBMT2VQYlVUelYwbzJyQTFr?=
- =?utf-8?B?Zy9IQ3NrK2dyVWFaUlNHSmMya2h0aUtVdUp6bjNrcjRhbDkvWkc3K2F1TUZN?=
- =?utf-8?B?Rm5hdmJwMEZNMlhaMWcwZlVKTVd6cTlVUStBQ1lsdmhuMDJ1Z0F5STVCYkQv?=
- =?utf-8?B?TXpOSzVmRmpMdUZrTkYwTi9peHhIck1mK3pxWUV2TlkzdnZoZUNoTXRHek5N?=
- =?utf-8?B?VTZmdFNWY1AvcWJETFNleU1vYmNhWEJkQkVMUXYvQXVoR0s2ZUNDZTJGbFdy?=
- =?utf-8?B?Q2ppeFFCM2pCZVViUlhpSnFFd0JpOVU0Y3VOVXRqNTdHYkExZDdOckpoT01O?=
- =?utf-8?B?eURQYjNXWC9YeVJRSkloZUgraktZOGJnaEZzMHRFZGdwM08rSnRqT2trUERO?=
- =?utf-8?B?Zk52TFd6TGhCNUhSYUNiYlE0d3hOcGtLQzE5ZWJWeXBEZ0UvcmhiYjhuVis2?=
- =?utf-8?B?ak1mLzFhdEpabWRLWnltZ3drSWt6bFdZdS9HYjZYN0VNd1dzR2twSjdMcTVG?=
- =?utf-8?B?bEp0OGRzRW4wUVNaY0FKNURFM1pYeUlVMHE4b3Bnb0gzczdkeDUwOU1ZbTVI?=
- =?utf-8?B?S25ZbVVmL0dMemIwc2RGWUhEdklKYVhISG94Q2gvUll0QlJhd1FNUE5DTzhT?=
- =?utf-8?B?ODlYaUgvdUtDSFhmVzRGeHRaRUl0ZTBjeE0wMS84U3dVbkxDVzNvZFlja2V5?=
- =?utf-8?B?S01YZHBBNU9vTjJOT0oyWWdLUURGV0xTN0FYWVZ0dFBsa0c3Zzd1TG1zNWRj?=
- =?utf-8?B?S25uWDlMUWQyV0QwWnNEWVVQUDZ1WVIyMzllSnNidzhxWE54TjVqcERvZit0?=
- =?utf-8?B?Z21SUmI2QUZiQTVLc3daMG11WGJIZlM4eHF4c1gwQVBiam84VEpUQUZiL2Jk?=
- =?utf-8?B?NTQ2ckVvYXEvbU4xM0Z1dnFJKytWbk1lU3JRSjNseGovcEFmekM0WW9sRDNr?=
- =?utf-8?B?Y0E3c3FOY2MxZ3FueE5FUTVJWEt4OUJFMFNOSTVEbDFMMWNERnpheWhITVJH?=
- =?utf-8?B?S3BHWCt6UzFRNEpGY0dzZ1phUUFZanZnQTFLdTYwTmVCR2JYcHNCNHBxdU5C?=
- =?utf-8?Q?9dEYJBqUQJYxt?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR11MB6435.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TE9qYnBheWZBZmRpRS9TRXFDUHBqMjladUpoL1d2QTRxNjVSNndWeUdjMW1F?=
- =?utf-8?B?UENBVmt4ZFkwZWQ5Ky9hMlVtVUhVNDh6clVYbGNNajB1dkFYZUdodWc2Yk5q?=
- =?utf-8?B?Zm1kWFFSN0tFVmNjS1NOQ0M5K1JQTnlvMXFFSnZnZm5NOC9ueGxmcGxvS3JI?=
- =?utf-8?B?VVpjUytEaW9qSUVMNTZHdytaV1N3Z254eVFxZFpkVzJJVjhoRGV1ZmpKVnJz?=
- =?utf-8?B?RTl6V3pLSHp1cFJ4Q1RRS1FuMjJ2NHNXeTJNbkJGQmJWa0hZaGdWdlc1VDZr?=
- =?utf-8?B?SGppUHQ1NnM0dWc5aUVNaTdYdkw4aWFIcHUxWFBoYU1JczlqMXhCdktkSFlk?=
- =?utf-8?B?OVJuelAySjkzTDBQbXlINTBmYi9DWjI3cElYcmRHaFhUNnBpd1Z0VHA4REV5?=
- =?utf-8?B?TkpNSE5uMFY3N3JhMzh1MW1nVlI2S0EweVpYWnBsenhXODR1bms0R2lvNWdy?=
- =?utf-8?B?NCtBWUhNMlNaWUpsbXlYSkNCd0tWaDBDckpWcVk2MExGMnlnczVvdW55YkY0?=
- =?utf-8?B?SGlSQ09KeG55L2Uvb3pZUHhOOHh2Q0FuM3M3TGJYcWpMOWwzYjFsdjg1QWpz?=
- =?utf-8?B?UnZDcFJkTnFTaGtGUWo5U1d1WmVoMnNtdGRGR2xvMC81azRLamozZnBlSDZB?=
- =?utf-8?B?K2tpZzBwY04yclpscGc5UURMdVhOTjVzTmxBWmZlL0xwVytkTVNnVTBCRjVw?=
- =?utf-8?B?OEpuc3VNTWtqZ2hucW03ZiswMG5VekZhYWlIT3Z2RDFCVjViME55NkJ3Y1lD?=
- =?utf-8?B?S3kvVWFnc3FsSjB3RFRhOExmbnVYUmM2M0c3SlZidHRWdStuaWxwLzVmdWZQ?=
- =?utf-8?B?anM5ZGtNVGJ3cXMxUFMxK3prOGtESzBnSG90eHlTaWxEaVE0djcvQzZwT2xk?=
- =?utf-8?B?SHRVRWFuQ29WZEpicUJYT2psRWUzMFY0Mi9UN25NTG4yeHU3L2ozRmVaR2Fa?=
- =?utf-8?B?NTJkeVI0c1hSMlZWdE5pMzZ0ak1hZDVCUUQyY29WdzN2c2d6U29qZU1sSDdY?=
- =?utf-8?B?bUR6QkdpTW1VenV1Y1FQblJORGdNRnh4ODNuTjAzODJpQ05NeVpUVnNxRStW?=
- =?utf-8?B?OG9tUlZRbnNzNGQyd1pBQmhZRS83akI4U3FRRGJicGRVMU1xWXZVbzhnWkRo?=
- =?utf-8?B?QUVqejhBREgyMk9YTkJpK0NpNDJpUDlFR1M4NlhRL01rY1doNWc0N3pvcUVJ?=
- =?utf-8?B?VUJYZHpzWGtNaTlIY0hKSVJjV09xajl5a2lNdHBRQU9mb3FiV3RBYlB3Vnhj?=
- =?utf-8?B?bm5WK3VwUElDTzRJNTB2TDhYQ2E1eUQzcDhiSkZ1Q2xSdkJjWWV1L0c5Qldl?=
- =?utf-8?B?VjdyNjlOZ2k2cnBEb2xnY3hUa09RNnlBWHQ4MkszMTJtYlhIbk9jNHF1cW5Z?=
- =?utf-8?B?bnhLSjNub3laUytrSEtHZEJkTG85MTZjdVZGaWhtMStSanNWWlQ1ZjFKdjlx?=
- =?utf-8?B?eDEwOEIrMCtHSUgvaTNPV0ExcnFydzR6RUVyTVJxQ0ZZcjBvWjNTQSt0QWhS?=
- =?utf-8?B?Yk1MTTJXL3BzMFM2LzIyOWt2aEpqZk9xOEJmc25VVmoxVXRRTytMaUY0bWFO?=
- =?utf-8?B?aGE4Z0wwZ1NtVk9wamVHbWV4VU50MGVGMEc1WFlNK2F4THVFOVJ1VFNQR1U1?=
- =?utf-8?B?MllkM1pMeXY2Tmtobk5Wc2ZoYmJRVHJtbFBRY0VLVzl0bm1qWTZscStHRWJz?=
- =?utf-8?B?ZzlCaUJMblZNbGc4ODVnQUVIcmJudVRzc2d2R2Z4U3FnckxVYWEzUzdFcE9y?=
- =?utf-8?B?eXRKMWUyTnZJZGZhVlJic3Jka0lCcEtXMlhCQVR6VHB3djczMmw1NmhXRUcx?=
- =?utf-8?B?MUltL3RKUmdyWmViTUduRjZBeURtenNsRHl3K3dySlZvM2kya2s0UkRFaDNi?=
- =?utf-8?B?ZVlSRWpkWEtWeEdFd3krVkNINXZUTy9iUXdNazUzYXBzeHI1TWIyZmxDa1ho?=
- =?utf-8?B?cmNGYk9HMnhkS2E4RDdJN1FGTmFjeHp3U2RIOFYvemR5VU9Ca2IyTVc3V2tH?=
- =?utf-8?B?Q1J4a1lvRFl5aFNPNXdxZERmOEYrTmRRbE05ZjIvK013bjJBYnRPdjNXeVdE?=
- =?utf-8?B?eUlVQ2VzQm0wVHl0YlFxd0E0eGk2RkVzeVZBOXFUWXBnU3c4bUtER2JYOHFS?=
- =?utf-8?B?cFBCa2RKWTd5WUJJSEJGbW83ZWxNY1hENWdkZ0x4T29pRlZoQk9Hd1kvTVdB?=
- =?utf-8?B?WGc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e1bd6ac7-0588-4035-3df1-08dd5dc048ae
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR11MB6435.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 21:37:39.2874
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5dRp1hU6bDwf1UXVygTKFDVu94cAENN2h7BY9XEMPciRoZIQtJXjZUA5414LrwMS5t94fuU8Oj89jpcPAp3lAO73glFyb3ItQEfSJpMnG84=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7741
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGFny2cC/3XTyW7bMBAG4FcxdC4FznC45ZT3CHrgMoqJVHJCK
+ UKLIO9e2kZiF6rAC4fA/3HA5aObuRaeu4fDR1d5LXM5Ta0A+HHo0jFMzyxKbgsdSiSQYMWxLmX
+ kKlYlViMARU0oEHROJoLxceha9LXyUH5f3KefrT6WeTnVP5dtVjivXkBJqKUno6hHg8aSADGN5
+ XHkJcyvIXGfX7pzfsVbxoNFRKt8D+gdWt1CoT+WKcdTfX584Trxr75Nr0n1ndxvvxVSaB+sTjE
+ S5bBR6KagNDsKNcWk6JIyVhmHG0XfKbu96KZERQllSJii3SjmS9ESQO4opimDhazlAIb+04u9K
+ SjVjmKbAs4DkUWtvN8o7k4Bt6O4ppDLnKMEzVFtFH+nIO0o/nxHMas4yMQmpY0C8sYouXe87cT
+ aSINlTx5yoH+cz+vjrfz23v7Ccn3BXQwzi3Qax7I8HFACJa/DwIlZsTUpUNDGaxO8MowKnRqkj
+ g37/AvJJuiYYAMAAA==
+X-Change-ID: 20241017-hrtimer-v3-v6-12-rc2-215dc6b169bf
+To: Miguel Ojeda <ojeda@kernel.org>, 
+ Anna-Maria Behnsen <anna-maria@linutronix.de>, 
+ Frederic Weisbecker <frederic@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+ Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, 
+ Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, 
+ Daniel Almeida <daniel.almeida@collabora.com>, 
+ Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, 
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8749; i=a.hindborg@kernel.org;
+ h=from:subject:message-id; bh=ZSKKNa7OLNdgPn/VeIX1fSXWE5pUKXzsRcqYzZ5rMAo=;
+ b=kA0DAAgB4bgaPnkoY3cByyZiAGfLZ2TITL+yNgOjcfF/rCQBSvRXy54e7MLQU/m1r9/7py0tF
+ 4kCMwQAAQgAHRYhBBLB+UdWv3wqFdbAEuG4Gj55KGN3BQJny2dkAAoJEOG4Gj55KGN3Fx8QAMEa
+ V1IlzQV+tKge6l2k6hMbj8GFkpiGDi8OAszqqsONyOaTQFuomPLJoQ75mCcyqrjbWq4ecGVtPP+
+ kZ3NVrjASwPHRKRgifrqYHhx170BPRTRKlgYuIMZRSl/ESXyhHId/p4pJhK8C7h/23NihPmR0Pp
+ ZOPY39WL7VodYmiopqwEBo0uPD1+lex8ICzxpGyLW+PYIJT4D8MBJRnfTXx12doNIfx52ZXUWJD
+ a/xD2TGkbTlCC1OE8AY8Oi15ohltxDYbacbgOowUnEolN9BoEcwJnFbn/ZN9QatjuZoSQP0lfov
+ dCsAKzlmIO4UMUoEryq/ueQIRk8DpSWpHesQYRUNodARyY8qnRjkM99DG9bBpVbJcNXcpV03/+g
+ AIadDQmyeLDAochHeUryMREr5QWGC3PBU+JGhEcDK3l3zMGy3ui7TN1YdqDm6bNhcKFl0NwsJg4
+ P2FSqCLqdjvUxlfZIhFnZstAotAa8vcf7LrvBpMsEA5tT0FfcnB0V1fM5Zu2sVFSeR7dtxmC55l
+ K5bwr9zmO8KZxxbfTjpat9QoQf6hKRztz1ilCVFd39YJCRQK9+PbcRArywTQ7h5i34ztvha+gS/
+ sws9L9mPbBu5W5ZcY2Mhhn8Qoq4ArDBFqIGbPxBeDIj4bgbbv0UnlEUQwBRNf/lkEOdn+duaHAb
+ iY/Kx
+X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
+ fpr=3108C10F46872E248D1FB221376EB100563EF7A7
 
+Add support for using the `hrtimer` subsystem from Rust code.
 
+Add support for timer mode and clock source configuration during timer
+initialization. Do not add examples and functionality to execute closures at
+timer expiration , as these depend on either atomics [3] or `SpinLockIrq` [4],
+which are still being worked on.
 
-On 3/6/2025 10:31 AM, Tony Nguyen wrote:
-> On 3/6/2025 8:45 AM, Joe Damato wrote:
->> On Thu, Mar 06, 2025 at 05:27:38PM +0100, florian@bezdeka.de wrote:
-> 
-> ...
-> 
->>> Btw: I got this patch via stable. It doesn't make sense to send it
->>> to stable where this patch does not apply.
->>
->> Maybe I made a mistake, but as far as I can tell the commit under
->> fixes is in 6.14-rc*:
->>
->> $ git tag --contains b65969856d4f
->> v6.14-rc1
->> v6.14-rc2
->> v6.14-rc3
->> v6.14-rc4
->>
->> So, I think this change is:
->>    - Correct
->>    - Definitely a "fixes" and should go to iwl-net
->>    - But maybe does not need to CC stable ?
->>
->> If the Intel folks would like me to resend with some change please
->> let me know.
-> 
-> Seems like the only change needed is the omission of stable. If so, no 
-> changes need. I can take care of that when sending on to netdev.
+This series is a dependency for unmerged features of the Rust null block driver
+[1], and for rkvms [2].
 
-I missed this comment [1] when I responded; I can make this change though.
+Link: https://git.kernel.org/pub/scm/linux/kernel/git/a.hindborg/linux.git/log/?h=rnull-v6.11-rc2 [1]
+Link: https://gitlab.freedesktop.org/lyudess/linux/-/tree/rvkms-wip [2]
+Link: https://lore.kernel.org/rust-for-linux/20240612223025.1158537-1-boqun.feng@gmail.com/ [3]
+Link: https://lore.kernel.org/rust-for-linux/20240916213025.477225-1-lyude@redhat.com/ [4]
+Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+---
+Changes in v11:
+- Change the way we invent a `Pin<&mut T>` in `Pin<Box<_> as
+  RawHrTimerCallback>::run`.
+- Use `Pin<&'a mut T>` as `CallbackTarget` for `RawHrTimerCallback`.
+- Remove unnecessary trait bounds on `HrTimerPointer` impls.
+- Use a pointer rather than a reference in `PinMutTimerHandle`.
+- Properly format `impl_has_hr_timer`.
+- Add invariant to `BoxHrTimerHandle`.
+- Fix safety comment in `<Pin<&mut T> as RawHrTimerCallback>::run`.
+- Use `Pin::get_unchecked_mut` rather than `Deref::deref` to get a pointer in
+  `<Pin<&'a mut T> as UnsafeHrTimerPointer>::start`.
+- Fix safety comment in `<Pin<&'a T> as RawHrTimerCallback<'a, T>>::run`.
+- Use `Pin::get_ref` rather than `Deref::deref` in `<Pin<&'a T> as
+  UnsafeHrTimerPointer>::start`.
+- Fix safety comment in `<Arc<T> as RawHrTimerCallback>::run`.
+- Fix a typo in docs for `HrTimerPointer::start`.
+- Fix safety requirements for `HasHrTimer::raw_get_timer` and
+  `HasHrTimer::c_timer_ptr`.
+- Remove unused documentation link in `HasHrTimer` docs.
+- Update documentation for `RawTimerCallback::CallbackTarget`.
+- Link to v10: https://lore.kernel.org/r/20250307-hrtimer-v3-v6-12-rc2-v10-0-0cf7e9491da4@kernel.org
 
-Thanks,
-Tony
+Changes in v10:
+- Use imperative language for all commit messages.
+- Spelling and grammar fixes for documentation.
+- Consistently use `this` as argument name for functions taking a pointer to
+  `Self`.
+- Correct module documentation describing states.
+- Derive some standard traits for configuration enums.
+- Rephrase documentation for function that refrain from crating references.
+- Use "has returned" rather than "has finished executing" when describing
+  handler termination.
+- Simplify documentation of `HrTimer::cancel`.
+- Fix a documentation bug in the description of `Sync` requirement for
+  `HrTimerPointer`.
+- Consistently use the wording "contains" about types that contain another type.
+- Remove `OFFSET` from `HasHrTimer`.
+- Use direct mapping for enumerations where applicable.
+- Remove `RUST_HRTIMER` kconfig.
+- Add Frederic Weisbecker and Lyude Paul as reviewers.
+- Add Thomas Gleixner and Anna-Maria Behnsen as reviewers.
+- Change `ClockSource` to `ClockId` and move to `time` module.
+- Add scm tree to maintainer entry.
+- Add a note about effects of timer operations concurrent with cancel operation.
+- Update documentation for CLOCK_REALTIME and CLOCK_TAI.
+- Link to v9: https://lore.kernel.org/r/20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org
 
-[1] 
-https://lore.kernel.org/intel-wired-lan/9ddf6293-6cb0-47ea-a0e7-cad7d33c2535@intel.com/T/#m47dd425fb4de4c1738839c2f8253ec51718d299e
+Changes in v9:
+- Hide `From` conversions for opaque enums.
+- Add kconfig entry for rust hrtimer API.
+- Move `CallbackTargetParameter` to `RawHrTimerPointer`
+- Shorten first paragraphs for clock source descriptions.
+- Link `HrTimerHandle::cancel` in docs.
+- Clarify exclusive/shared access to callback parameter in docs.
+- Improve documentation for functions that avoid creating references.
+- Expand safety requirement for `HasHrTimer::start`.
+- Update module level documentation and diagram.
+- Use `NonNull` to store pointer in BoxHrTimerHandle.
+- Add a note to `HrTimerHandle` safety requirement.
+- Link to v8: https://lore.kernel.org/r/20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org
+
+Changes in v8:
+- Publicly expose timer handles.
+- Link to v7: https://lore.kernel.org/r/20250203-hrtimer-v3-v6-12-rc2-v7-0-189144725399@kernel.org
+
+Changes in v7:
+- fix a typo in commit message for "rust: time: Add Ktime::from_ns()"
+- fix a typo in safety comment in `HrTimer::new`
+- fix a typo in `HrTimer::raw_cancel`
+- fix a typo in the vocabulary
+- fix a typo in `HrTimerCallback` docs
+- refactor module documentation
+- add an ascii state diagram to module documentation
+- specify reason for adding `Arc::as_ptr`'
+- change `boxed` to `this` in `Box::into_pin`
+- change `from_ns` to `from_nanos` to align with std
+- imporove safety comment for `impl Send for HrTimer`
+- remove useless paragraph in docs for `HrTimerPointer`
+- rephrase docs for `HrTimerPointer::TimerHandle`
+- update docs for `HrTimerCallback::CallbackTarget`
+- explain how users should use safe functions for cancelling a timer
+- rename generics for consistency
+- remove a note about storing mode in `HrTimer` - this is still required
+- rebase on v6.14-rc1
+- Link to v6: https://lore.kernel.org/r/20250110-hrtimer-v3-v6-12-rc2-v6-0-f71d50f16482@kernel.org
+
+Changes in v6:
+- prefix all hrtimer related type names with `Hr`
+- add a few links for type names in the documentation
+- Link to v5: https://lore.kernel.org/r/20241217-hrtimer-v3-v6-12-rc2-v5-0-b34c20ac2cb7@kernel.org
+
+Changes in v5:
+- Fix a typo in `impl_has_timer`
+- Implement `Box::into_pin` in terms of `impl From<Box> for Pin<Box>`
+- Link to v4: https://lore.kernel.org/r/20241206-hrtimer-v3-v6-12-rc2-v4-0-6cb8c3673682@kernel.org
+
+Changes in v4:
+- rebase on v6.13-rc1 and adapt to kernel `Box`
+- add a missing safety comment to `hrtimer::start`
+- use `hrtimer_setup`
+- fix a build issue when `bindings::hrtimer_restart` is signed
+- fix a memory leak where box was not destroyed
+- fix a documentation typo
+- remove `as` coercion at multiple locations
+- use fully qualified syntax when invoking `deref`
+- move `hrtimer` into `time` module
+- Link to v3: https://lore.kernel.org/r/20241017-hrtimer-v3-v6-12-rc2-v3-0-59a75cbb44da@kernel.org
+
+Changes in v3:
+- support timer mode selection
+- support clock source selection
+- eliminate `Arc::clone_from_raw` in favor of using `ArcBorrow`
+- make `Arc::as_ptr` an associated method
+- update safety requirement for `ArcBorrow::from_raw`
+- remove examples (pending `SpinLockIrq` and `CondVar` patches)
+- remove `start_function` (v2 `schedule_function`, pending `SpinLockIrq` and `CondVar` patches)
+- change function naming from schedule/armed to start/running
+- add vocabulary to documentation
+- update safety comment in `Arc::as_ptr`
+- Link to v2: https://lore.kernel.org/r/20240917222739.1298275-1-a.hindborg@kernel.org
+
+Changes in v2:
+- use a handle to own the timer callback target
+- add ability to for callback to reschedule timer
+- improve `impl_has_timer` to allow generics
+- add support for stack allocated timers
+- add support for scheduling closures
+- use `Ktime` for setting expiration
+- use `CondVar` instead of `AtomicBool` in examples
+- rebase on 6.11
+- improve documentation
+- Link to v1: https://lore.kernel.org/r/20240425094634.262674-1-nmi@metaspace.dk
+
+---
+Andreas Hindborg (13):
+      rust: hrtimer: introduce hrtimer support
+      rust: sync: add `Arc::as_ptr`
+      rust: hrtimer: implement `HrTimerPointer` for `Arc`
+      rust: hrtimer: allow timer restart from timer handler
+      rust: hrtimer: add `UnsafeHrTimerPointer`
+      rust: hrtimer: add `hrtimer::ScopedHrTimerPointer`
+      rust: hrtimer: implement `UnsafeHrTimerPointer` for `Pin<&T>`
+      rust: hrtimer: implement `UnsafeHrTimerPointer` for `Pin<&mut T>`
+      rust: alloc: add `Box::into_pin`
+      rust: hrtimer: implement `HrTimerPointer` for `Pin<Box<T>>`
+      rust: hrtimer: add `HrTimerMode`
+      rust: hrtimer: add clocksource selection through `ClockId`
+      rust: hrtimer: add maintainer entry
+
+ MAINTAINERS                         |  15 ++
+ rust/kernel/alloc/kbox.rs           |   6 +
+ rust/kernel/sync/arc.rs             |  13 +-
+ rust/kernel/time.rs                 |  68 +++++
+ rust/kernel/time/hrtimer.rs         | 517 ++++++++++++++++++++++++++++++++++++
+ rust/kernel/time/hrtimer/arc.rs     | 100 +++++++
+ rust/kernel/time/hrtimer/pin.rs     | 104 ++++++++
+ rust/kernel/time/hrtimer/pin_mut.rs | 110 ++++++++
+ rust/kernel/time/hrtimer/tbox.rs    | 118 ++++++++
+ 9 files changed, 1049 insertions(+), 2 deletions(-)
+---
+base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
+change-id: 20241017-hrtimer-v3-v6-12-rc2-215dc6b169bf
+
+Best regards,
+-- 
+Andreas Hindborg <a.hindborg@kernel.org>
+
 
 
