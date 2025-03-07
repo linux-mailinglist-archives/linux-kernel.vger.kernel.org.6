@@ -1,79 +1,123 @@
-Return-Path: <linux-kernel+bounces-551611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 159ACA56E8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:03:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F410A56E92
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:04:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38E69166712
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:03:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E49C17A9937
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F22123F27A;
-	Fri,  7 Mar 2025 17:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D8523E336;
+	Fri,  7 Mar 2025 17:03:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sV9Hd4Yf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WVfPzsP2"
+Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9651921D3D7;
-	Fri,  7 Mar 2025 17:03:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E907A23ED5F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 17:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741367014; cv=none; b=tR7veFQOZlHld37sfp5fh7FHwfRexOeg8a+BlJoaLalxXqMQXdOMUUub7iolPpZznVqUpGGMmq4PjqtmVhZTDBWc5NTDXBgDMBVMVWW/23FjmIC2ggJpbJSyE8ETGd5vjdgCh+sPHWlk5E1U59jKCb/Lj8hTldaglVNOUxBSw0U=
+	t=1741367028; cv=none; b=SfIEYNM0F8lV+ppFJi53YvK4XoQFn0Jaed2b6Jy5dPU3CLBMg2mg7c/ocOGeu/9db5UejFogX711nzYeKzmiR6/zPgjqA8bG+lclDadXWLYuI/1bm4C81F3m6KioftKLGNCLyO/2muIG1kscVm89kWexfcYQ2UoNWnBsyv1xmLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741367014; c=relaxed/simple;
-	bh=XBbVJpPHg4+2H/f38CpCQLx2/GuGU/dn/gz42YpI29w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bbOMDC92sGdBucjDK+uIN8OPiWrcGFvYntF9jVnj/LAyEJ3Qtu9/2v4PlOcrK5ksSdA8odrccuhZdWJF1jSxGssyifgFU0lNCmsjG3QBL5sT4xX5Ch2BevmTkOXRRbUcKAVREVAtlZCncQzwJUBsKW719snX8Ygw0Hc9QjpZwSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sV9Hd4Yf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82CF7C4CED1;
-	Fri,  7 Mar 2025 17:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741367014;
-	bh=XBbVJpPHg4+2H/f38CpCQLx2/GuGU/dn/gz42YpI29w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=sV9Hd4Yf9C49FE32tguBVSysvAGK55gV/SYBpBVyTUbVTgzKy6XQXMAkjzfUgcm9/
-	 yC+p21WNf5WDyatZEYTIriHWbcpBLv3DXMppjSSCFpWtWzXYR+Coz7uhlly4lGCkS2
-	 Y4Q8JYoBVhXAD30Cy6aRI4nK2hA29jMAZtWrkoaTAVtM++ne8uhqsAnrmcpjI0/KPw
-	 L/3qtIZkzWKPnVbUFWpDRzUDgtAGblMHA7G8m3uPxLT3wGkcycB74I1wWsix7ubqVo
-	 RigqULAA4BT8fJ2D8mXZ/JRoc//B0j1QskgHCSQxAvs0rtSUoM+5Nz9ZubnENo2Mny
-	 e8725pSMUaXMQ==
-Date: Fri, 7 Mar 2025 09:03:32 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Nikolay Aleksandrov <razor@blackwall.org>
-Cc: Hangbin Liu <liuhangbin@gmail.com>, netdev@vger.kernel.org, Jay Vosburgh
- <jv@jvosburgh.net>, Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Shuah Khan
- <shuah@kernel.org>, Tariq Toukan <tariqt@nvidia.com>, Jianbo Liu
- <jianbol@nvidia.com>, Jarod Wilson <jarod@redhat.com>, Steffen Klassert
- <steffen.klassert@secunet.com>, Cosmin Ratiu <cratiu@nvidia.com>, Petr
- Machata <petrm@nvidia.com>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv5 net 1/3] bonding: fix calling sleeping function in
- spin lock and some race conditions
-Message-ID: <20250307090332.5b556ebb@kernel.org>
-In-Reply-To: <6dd52efd-3367-4a77-8e7b-7f73096bcb3f@blackwall.org>
-References: <20250307031903.223973-1-liuhangbin@gmail.com>
-	<20250307031903.223973-2-liuhangbin@gmail.com>
-	<6dd52efd-3367-4a77-8e7b-7f73096bcb3f@blackwall.org>
+	s=arc-20240116; t=1741367028; c=relaxed/simple;
+	bh=dfiUsq9W5ls7h4Glcsz+kMz9CrSmoycX9lFyV96Twg0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cotHo0TlJkG4+AVDsrfdmO/h+HYRWxL065kEaZXmE2lGOMk/brwmfh63uDqUvjk1nWGjYDt1l99xHlVYeW6whxC7O+tSEAXiAAhEcF0nY4m7J39WK1AojHnZ3JMUsYjAdA5y78WTbWjt0U4BZ8WHuJaVlNN6NI8+QdwFIxhYFhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WVfPzsP2; arc=none smtp.client-ip=209.85.219.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6e8fb83e137so12499486d6.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 09:03:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741367025; x=1741971825; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QiKTsfH4WXXUP4h2ca4OnXKk4k04SEzwaACzL1m5raw=;
+        b=WVfPzsP2zHFn5eq8zSHoacmEia9YRpYlTXE2Q9Jb9MXZ1A8UDKgp6+smpDpoUPf9ka
+         ODmGj+13K53lfEShgbUwuLwIDWv+9j8GgGykY/KsQGcaTRAcNnHoxl5DVE/cXbF+rL7/
+         W3iY96JGJ/r4rE3fQbS9w5LWXgiVjiwSwBSbIUEEVo3Hu2c/iiJ8HIXMn8Wx6+tX9fpj
+         vHGvFFrtFgpXwzRneD0FuN1zyh3K4jcOOhddcyFJU1daE+CY/BUj8uyyavs04n0zhJRG
+         1+/kDBKJNWCmMJ0X62c2XZHk3ySyUUojd+xLVI0V1Muh36biPDyVUeikg5lAQg74wMmh
+         cF6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741367025; x=1741971825;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QiKTsfH4WXXUP4h2ca4OnXKk4k04SEzwaACzL1m5raw=;
+        b=bIiZCmwen46wk6ijT0IhV1/qNNqG0NkamJJSm8yk3pzhZEuH1BmQ2BABOi6Vc/h9dK
+         OW4o+FG22IlkqeXljji560ObINMcOb5qpyiQSByqwEDbT84XNoofyPhrQ0Jws4VgVFRt
+         zlm1k5DE05YNmDqD4hcMn/yWqrovhqdbTeFr5vsJxjZbbENTtwBxadaLH3DAkZbyxuGS
+         29rSfrrQTTFXSTtySWXY+obDNymR0xFqF71QmEkAgOiYrgt2CgnrvQIxVZXBT+HDFbrO
+         m9X6Up7aPleaVwc09dfgubbYb9R93Qeui9FHafcp3aOhq0sKbyJ4yEcvGrcRig3gopga
+         +08A==
+X-Forwarded-Encrypted: i=1; AJvYcCXQBSDYQBHhP6zrvWuzUwH7+UQjgeQLb3PgAyfTzhkGEK5awoe8BEyyR/ANhMXDv472Hpljj51D2EVYZRQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE69754sDPnMzQAPrsbeO18PIiLijiNLdYBKp0w4MCyyuh6pKv
+	Cu1qPNY2Hf3oY/qvIhLU0T+IHIgwEGVCy7CR57H7WCRhbJuTtzaSJPcpz5zzRV1sVp6ra8niCUB
+	QGxSO1SJicZBRZVPAtrPVvHvSCVw=
+X-Gm-Gg: ASbGnctXa8miactUs+n4qOBvJ5gZIcfcXke3KwN6bzSNfDum25fo9cs7LuXGm8CxUYf
+	eGNwjPexbkeaiE/wMn3fkd2OTh1kmnWGhNXRn7EzAjh0mWNdal4iZa/lRRN5z0pWt4N8LCQ9mwH
+	t3YcpKxxZZcElkVB4Jb1i8vgjh107404yi+5LE1aisxPA+gE1Nc7YDfsa1cA==
+X-Google-Smtp-Source: AGHT+IFDUByAKqeG8kqL/TqrXOQ3VWLLMyvQiLw5d3pGfsiCMMwZjVs1Ffmr17Euv9p8n7myqeOQBp4rksyFy+cpusY=
+X-Received: by 2002:a05:6214:226f:b0:6e4:4331:aae0 with SMTP id
+ 6a1803df08f44-6e9005b6680mr47282826d6.1.1741367024662; Fri, 07 Mar 2025
+ 09:03:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250306230015.1456794-1-nphamcs@gmail.com> <Z8oy0A-vBbGI6ux9@google.com>
+In-Reply-To: <Z8oy0A-vBbGI6ux9@google.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Fri, 7 Mar 2025 09:03:33 -0800
+X-Gm-Features: AQ5f1JrgxbP54B3olz9OKTba3hhi9h0SB_F7i4XiV2ykaR3qfQRC6OQNfCjFJ9s
+Message-ID: <CAKEwX=P+Oh+a0Pducc9v1EGsGVG4vi1RT4xywkvhnnA2hEpzCw@mail.gmail.com>
+Subject: Re: [PATCH] page_io: return proper error codes for swap_read_folio_zeromap()
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: akpm@linux-foundation.org, hannes@cmpxchg.org, chengming.zhou@linux.dev, 
+	linux-mm@kvack.org, kernel-team@meta.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 7 Mar 2025 09:42:49 +0200 Nikolay Aleksandrov wrote:
-> TBH, keeping buggy code with a comment doesn't sound good to me. I'd rather remove this
-> support than tell people "good luck, it might crash". It's better to be safe until a
-> correct design is in place which takes care of these issues.
+On Thu, Mar 6, 2025 at 3:42=E2=80=AFPM Yosry Ahmed <yosry.ahmed@linux.dev> =
+wrote:
+>
+> > + *
+> > + *  -EINVAL: some of the subpages in the folio are zeromaped, but not =
+all of
+> > + *  them. This is an error because we don't currently support a large =
+folio
+> > + *  that is partially in the zeromap. The folio is unlocked, but NOT m=
+arked
+> > + *  up-to-date, so that an IO error is emitted (e.g. do_swap_page() wi=
+ll
+> > + *  sigbus).
+>
+> This is a bit repetitive. Maybe:
+>
+>  *  -EINVAL: The folio is partially in the zeromap, which is not
+>  *  currently supported. The folio is unlocked, but NOT marked
+>  *  up-to-date, so that an IO error is emitted (e.g. do_swap_page() will
+>  *  sigbus).
+>
+>
+>
+> I would drop this whole comment now because it's mostly repeating what's
+> now documneted above.
+>
+> With the comments fixed up:
+>
+> Reviewed-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+>
 
-That's my feeling too, FWIW. I think we knew about this issue
-for a while now, the longer we wait the more users we may disrupt
-with the revert.
+Ah I like both suggestions :) Gimme one sec to send out a fixlet.
+
+Thanks, Yosry!
 
