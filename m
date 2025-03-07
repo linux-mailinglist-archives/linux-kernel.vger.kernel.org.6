@@ -1,70 +1,73 @@
-Return-Path: <linux-kernel+bounces-550486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99813A56031
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:44:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EEB3A56036
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:45:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03BA71891C21
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:44:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87A5C16E551
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C18192B7F;
-	Fri,  7 Mar 2025 05:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D031922DC;
+	Fri,  7 Mar 2025 05:45:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Gw8AA/zt"
-Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="uOjyGJgk"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CDC813C9A3;
-	Fri,  7 Mar 2025 05:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F97D4A21
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 05:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741326258; cv=none; b=NtWh8pde1tgeZFOnztQ49IVcrLAO3Y7ZtpeJyOU7+hXlQ8sQBsa7FpXtSfHHzZPj8m5XdeelsszbKNNtFXJuQhEI3uzORlsqHkGWBo6yNL5u05tOzJiD+3sY4rqMVa5j5ZQxB7ez86vlWBMNBJcH77vURyQv6+7zR2qGqwFuTL4=
+	t=1741326327; cv=none; b=pQ40XKSU3KW6/mMRgRPH5pNSgtJygXTP3PelvTIPkwhJPf4W0/UDzYAGcSfiNrjj86PsCkyXgq+n957lqJd67XALPqJbra4UIFmRJN0CG9jVX1GicmS/KhOgzN4V5ADSxC3YrO2Pn1ck+VyAWU075KMJgzsa26ZEWEhOcBfnodw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741326258; c=relaxed/simple;
-	bh=ZOHXpr5EjoUdMxd0KS6PI80BQwNm1kjqbbGRIpSFliI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YuLY+MzRx539Ka5hWbyo5amA6ExC47aAwhXyUzL1c6IV12VMHlLKd9xfmMDK4IYwZjRbnoFTPs7kMXs+Dn8yDbGng/6B3xnn/mlsBvsWL0AlfX6BpYr23r+l1i2OMCoXPUkHvkR20VBHCJGBkotjtVh7gcRizCq5h4fB1D6dlEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Gw8AA/zt; arc=none smtp.client-ip=115.124.30.111
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1741326252; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=zNNjpjby7OEVOGOuCOx/+9vNU60KKs/GI6CHsj1/Iek=;
-	b=Gw8AA/ztNQ85AetmvGmhWPIWaVv+CguWO4BVFcsMXIVRyM9n9Uva64hjw0b0VsFP5xNl71Y2Yp20zcWpDr7ZwXQTQkOEj4hpx8fePxaOvxSEk1lldv6/rb30NnhN0gr2zzrMBl6QcN/aVjZZ4UxHug+sYGktx5Qph8VJ5Zq1J2A=
-Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQr2xBP_1741326249 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 07 Mar 2025 13:44:10 +0800
-From: Shuai Xue <xueshuai@linux.alibaba.com>
-To: tony.luck@intel.com,
-	bp@alien8.de,
-	peterz@infradead.org,
-	catalin.marinas@arm.com,
-	yazen.ghannam@amd.com,
-	akpm@linux-foundation.org,
-	linmiaohe@huawei.com,
-	nao.horiguchi@gmail.com
-Cc: tglx@linutronix.de,
-	mingo@redhat.com,
-	dave.hansen@linux.intel.com,
-	x86@kernel.org,
-	hpa@zytor.com,
-	jpoimboe@kernel.org,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	baolin.wang@linux.alibaba.com,
-	tianruidong@linux.alibaba.com,
-	xueshuai@linux.alibaba.com
-Subject: [PATCH v4 3/3] mm: memory-failure: Enhance comments for return value of memory_failure()
-Date: Fri,  7 Mar 2025 13:44:04 +0800
-Message-ID: <20250307054404.73877-4-xueshuai@linux.alibaba.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20250307054404.73877-1-xueshuai@linux.alibaba.com>
-References: <20250307054404.73877-1-xueshuai@linux.alibaba.com>
+	s=arc-20240116; t=1741326327; c=relaxed/simple;
+	bh=FrPFJOi5cvGEKY4s2nV7EyjhGWXJ99ekvAiQeCBRjvc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DWrpITfRgQPEk0auyglF+v1SaWY7882Xy40kquWc9gpZedfO5TsnshgaH4rkO8AueQQwxJb7dC6rs8li+rIdOmPMSoTdyoKBB0DYeYKmk5Pm/qNVrVEjDFlmYgv49hzO5C8rAIbeoXMK7LnSVfwIHdnQG5u5zndzNGbZDtvnNhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=uOjyGJgk; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 5ae3d56afb1711ef8eb9c36241bbb6fb-20250307
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=sb9MNp7gIFnjf4puevqUWTv9bTnAa3A6ErG94WVlhYc=;
+	b=uOjyGJgkU2vTgU9aaxr5SIKnt1JAPVDefpRFX0lBZOfC2vjiXHbZEhf8GQbooiyelQkLdmi2T16re8ehWYh5P9JA6d/8r4MjD45mbtSPpvkKGJ6C3momeieje3G1kgAQUhoxboF/AbRk2RkJ1K8yhkljQwd+2wWLalNKGtmF4W8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:c5ee9363-f073-4767-b4fe-46df21ea50a5,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:244c09c6-16da-468a-87f7-8ca8d6b3b9f7,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 5ae3d56afb1711ef8eb9c36241bbb6fb-20250307
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
+	(envelope-from <xueqi.zhang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1863938294; Fri, 07 Mar 2025 13:45:19 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 7 Mar 2025 13:45:18 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Fri, 7 Mar 2025 13:45:18 +0800
+From: Xueqi Zhang <xueqi.zhang@mediatek.com>
+To: Yong Wu <yong.wu@mediatek.com>, Krzysztof Kozlowski <krzk@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, Xueqi Zhang
+	<xueqi.zhang@mediatek.com>
+Subject: [PATCH] memory: mtk-smi: Add ostd setting for mt8192
+Date: Fri, 7 Mar 2025 13:45:08 +0800
+Message-ID: <20250307054515.23455-1-xueqi.zhang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,42 +75,71 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The comments for the return value of memory_failure are not complete,
-supplement the comments.
+Add initial ostd setting for mt8192. All the settings come from DE.
+These settings help adjust Multimedia HW's bandwidth limits to achieve
+a balanced bandwidth requirement.
+Without this, the VENC HW work abnormal while stress testing.
 
-Signed-off-by: Shuai Xue <xueshuai@linux.alibaba.com>
-Reviewed-by: Jarkko Sakkinen <jarkko@kernel.org>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Reviewed-by: Yazen Ghannam <yazen.ghannam@amd.com>
-Reviewed-by: Jane Chu <jane.chu@oracle.com>
-Acked-by: Miaohe Lin <linmiaohe@huawei.com>
+Fixes: 02c02ddce427 ("memory: mtk-smi: Add mt8192 support")
+Signed-off-by: Xueqi Zhang <xueqi.zhang@mediatek.com>
 ---
- mm/memory-failure.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/memory/mtk-smi.c | 33 +++++++++++++++++++++++++++++++++
+ 1 file changed, 33 insertions(+)
 
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index b037952565be..8649849bcdb4 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -2216,9 +2216,13 @@ static void kill_procs_now(struct page *p, unsigned long pfn, int flags,
-  * Must run in process context (e.g. a work queue) with interrupts
-  * enabled and no spinlocks held.
-  *
-- * Return: 0 for successfully handled the memory error,
-- *         -EOPNOTSUPP for hwpoison_filter() filtered the error event,
-- *         < 0(except -EOPNOTSUPP) on failure.
-+ * Return:
-+ *   0             - success,
-+ *   -ENXIO        - memory not managed by the kernel
-+ *   -EOPNOTSUPP   - hwpoison_filter() filtered the error event,
-+ *   -EHWPOISON    - the page was already poisoned, potentially
-+ *                   kill process,
-+ *   other negative values - failure.
-  */
- int memory_failure(unsigned long pfn, int flags)
- {
+diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
+index 5710348f72f6..a8f5467d6b31 100644
+--- a/drivers/memory/mtk-smi.c
++++ b/drivers/memory/mtk-smi.c
+@@ -332,6 +332,38 @@ static const u8 mtk_smi_larb_mt8188_ostd[][SMI_LARB_PORT_NR_MAX] = {
+ 	[25] = {0x01},
+ };
+ 
++static const u8 mtk_smi_larb_mt8192_ostd[][SMI_LARB_PORT_NR_MAX] = {
++	[0] = {0x2, 0x2, 0x28, 0xa, 0xc, 0x28,},
++	[1] = {0x2, 0x2, 0x18, 0x18, 0x18, 0xa, 0xc, 0x28,},
++	[2] = {0x5, 0x5, 0x5, 0x5, 0x1,},
++	[3] = {},
++	[4] = {0x28, 0x19, 0xb, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x4, 0x1,},
++	[5] = {0x1, 0x1, 0x4, 0x1, 0x1, 0x1, 0x1, 0x16,},
++	[6] = {},
++	[7] = {0x1, 0x3, 0x2, 0x1, 0x1, 0x5, 0x2, 0x12, 0x13, 0x4, 0x4, 0x1,
++	       0x4, 0x2, 0x1,},
++	[8] = {},
++	[9] = {0xa, 0x7, 0xf, 0x8, 0x1, 0x8, 0x9, 0x3, 0x3, 0x6, 0x7, 0x4,
++	       0xa, 0x3, 0x4, 0xe, 0x1, 0x7, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1,
++	       0x1, 0x1, 0x1, 0x1, 0x1,},
++	[10] = {},
++	[11] = {0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1,
++		0x1, 0x1, 0x1, 0xe, 0x1, 0x7, 0x8, 0x7, 0x7, 0x1, 0x6, 0x2,
++		0xf, 0x8, 0x1, 0x1, 0x1,},
++	[12] = {},
++	[13] = {0x2, 0xc, 0xc, 0xe, 0x6, 0x6, 0x6, 0x6, 0x6, 0x12, 0x6, 0x28,
++		0x2, 0xc, 0xc, 0x28, 0x12, 0x6,},
++	[14] = {},
++	[15] = {0x28, 0x14, 0x2, 0xc, 0x18, 0x4, 0x28, 0x14, 0x4, 0x4, 0x4, 0x2,
++		0x4, 0x2, 0x8, 0x4, 0x4,},
++	[16] = {0x28, 0x14, 0x2, 0xc, 0x18, 0x4, 0x28, 0x14, 0x4, 0x4, 0x4, 0x2,
++		0x4, 0x2, 0x8, 0x4, 0x4,},
++	[17] = {0x28, 0x14, 0x2, 0xc, 0x18, 0x4, 0x28, 0x14, 0x4, 0x4, 0x4, 0x2,
++		0x4, 0x2, 0x8, 0x4, 0x4,},
++	[18] = {0x2, 0x2, 0x4, 0x2,},
++	[19] = {0x9, 0x9, 0x5, 0x5, 0x1, 0x1,},
++};
++
+ static const u8 mtk_smi_larb_mt8195_ostd[][SMI_LARB_PORT_NR_MAX] = {
+ 	[0] = {0x0a, 0xc, 0x22, 0x22, 0x01, 0x0a,}, /* larb0 */
+ 	[1] = {0x0a, 0xc, 0x22, 0x22, 0x01, 0x0a,}, /* larb1 */
+@@ -427,6 +459,7 @@ static const struct mtk_smi_larb_gen mtk_smi_larb_mt8188 = {
+ 
+ static const struct mtk_smi_larb_gen mtk_smi_larb_mt8192 = {
+ 	.config_port                = mtk_smi_larb_config_port_gen2_general,
++	.ostd			    = mtk_smi_larb_mt8192_ostd,
+ };
+ 
+ static const struct mtk_smi_larb_gen mtk_smi_larb_mt8195 = {
 -- 
-2.39.3
+2.46.0
 
 
