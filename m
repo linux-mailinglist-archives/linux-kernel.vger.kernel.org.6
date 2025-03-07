@@ -1,73 +1,63 @@
-Return-Path: <linux-kernel+bounces-550446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C731A55FAD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:56:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 651AEA55FB2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:56:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E9263B4BAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:56:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1AD31895D5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23EEC198E6F;
-	Fri,  7 Mar 2025 04:56:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CCE19AA56;
+	Fri,  7 Mar 2025 04:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ULo03jYg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYxPicWK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F364642D;
-	Fri,  7 Mar 2025 04:56:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C8B31993B1;
+	Fri,  7 Mar 2025 04:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741323362; cv=none; b=GN0hBhw/QIiLWRl8bO5yejOaiPet5q2ngdWyERpVJXDahAu/kRiNWV6ifH/DzIhOhxmCKbn4SVQqgBFsulHSNCJq7LgsBJ5S/vKLtdnb3isX/dnwy4N3QjfqCBhk+ZDU+0flrTf7VAAODA6UCnhAAi0AvLP/pUjbQGQ5hkjom9o=
+	t=1741323365; cv=none; b=pD8KrcLFFQB61cbYaqnH+uGOpt/EleHvvJB4zsfRKyZg6FLGMxmkHyIG4x4LhB788yRx/7ODXnp0AvMpaUU8NKt3Vifuf47107YC8+mpjmtFAyV03P/XlRSg928lhbqA9ceE5HcuseshpY0BPWWJDHZM2sQnouwi9FqK975fmco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741323362; c=relaxed/simple;
-	bh=XWXNbvIxximv5SHxdHtGkkmkTEQ52Z6C89taO57X5vg=;
+	s=arc-20240116; t=1741323365; c=relaxed/simple;
+	bh=2ZLuRs05EFLs3RD0f9DnbMQSSO8CqlO7N/wzQjxQSIw=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hHQdb6xGqSMgbpAf4odBwq6B6eaJUtgb3H8Udcrr/8Bfjru6nBF+bHKPn8NxjuP4WuB7L6hyLp24frVf+6FvhUZFo3JL/0c+R8ha5MaI/FWCekI6ZTnFAJFTFNgGg0L2GSjz0Wu/sug+ez6X+Zh7EpZnai1edSM+Qh8NXHTRQow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ULo03jYg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66A0EC4CEE2;
-	Fri,  7 Mar 2025 04:55:57 +0000 (UTC)
+	 MIME-Version:Content-Type; b=e+ucvlC80A9N3KYWFQORumjwDH7WfcJS1T1KVY2mugv6OvYmb/d5qdjVAPDPsOWMXtS+53dk746gInJkSjWR7Pi1EdmjJyMMuD2RfKm0Cw/XgYe7KB1NTaWQW4glrZrbRRfhWxDvCjpESYfl6Tv5u9lN+9rZPXIa+kD49Fupcvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sYxPicWK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 795DFC4CEE3;
+	Fri,  7 Mar 2025 04:56:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741323362;
-	bh=XWXNbvIxximv5SHxdHtGkkmkTEQ52Z6C89taO57X5vg=;
+	s=k20201202; t=1741323365;
+	bh=2ZLuRs05EFLs3RD0f9DnbMQSSO8CqlO7N/wzQjxQSIw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ULo03jYgTl/A7Sx10Lga84AvKwy1O12N+xCjWJyIPIArQaZa5HBodckhx42j5xwIr
-	 6AoZldOCszwDEgq1EMj6SJKsz70+HZmADYyW7vbcd8RHYp4Fz8FozS0bKTgUnU5NmP
-	 LGOxjePjhQvnjV598JHP/+GZ27VSh8VBWFFwqKiJWvKgaNOjcGCWT6sEJJiVJ/uFOI
-	 Q32kIV+6yErdgDDa8ZglQJvyk25+3yd5M5k+jaWRDibXba4DJhPcp/3XuuZVQGDvj2
-	 0la0QWB+sfqL3gddVr9NgVGCIkemlp+3zyeTv4adp1eFo/pJ0iPtCVyH/RLlDnv/Z6
-	 YIAtiLLFZN4Gg==
+	b=sYxPicWKpJ28EHWTe/nUB/X51Mr3we/2sf7V7Hy8tKUdZJuGkzg17k1xkGs0D7BDp
+	 vqt+ZNvrWsMaSEcfV7bsWJchXzGVTs/5/DVTbuDJDitbQ+sSXJZ/QVTj5fTn392nCg
+	 SQsNw4ouGECX1in1qm/jfOseY46h3BHW4X25SGPy2Zo4ilbElD092GEcJROy9laJSf
+	 VzwNG9W3nPHcJS1hazQtnCS0lNpIT9BTWT/Zr2PcQcEiRWWc7Uoy4LtiuxZWA9cttP
+	 LEwgLIVJt2XlfhgtybScKaM0TlMr2cdW65owYyRl2ciez9US9WnPeHbq6mtRIODupL
+	 xlU+2QJ8J1uLg==
 From: Dmitry Baryshkov <lumag@kernel.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Clark <robdclark@gmail.com>,
+To: Rob Clark <robdclark@gmail.com>,
 	Abhinav Kumar <quic_abhinavk@quicinc.com>,
 	Sean Paul <sean@poorly.run>,
 	Marijn Suijten <marijn.suijten@somainline.org>,
-	Chandan Uddaraju <chandanu@codeaurora.org>,
-	Jeykumar Sankaran <jsanka@codeaurora.org>,
-	Jordan Crouse <jordan@cosmicpenguin.net>,
-	Sravanthi Kollukuduru <skolluku@codeaurora.org>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
 	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Archit Taneja <architt@codeaurora.org>,
-	Rajesh Yadav <ryadav@codeaurora.org>,
-	linux-arm-msm@vger.kernel.org,
+Cc: linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
 	freedreno@lists.freedesktop.org,
-	Simona Vetter <simona.vetter@ffwll.ch>
-Subject: Re: [PATCH v2 0/4] drm/msm/dpu: follow rules for drm_atomic_helper_check_modeset()
-Date: Fri,  7 Mar 2025 06:55:46 +0200
-Message-Id: <174132327775.1133698.7325717045129206986.b4-ty@linaro.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] drm/msm/dpu: enable CDM for all supported platforms
+Date: Fri,  7 Mar 2025 06:55:47 +0200
+Message-Id: <174132327773.1133698.16972736017988736297.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250123-drm-dirty-modeset-v2-0-bbfd3a6cd1a4@linaro.org>
-References: <20250123-drm-dirty-modeset-v2-0-bbfd3a6cd1a4@linaro.org>
+In-Reply-To: <20250220-dpu-add-cdm-v2-0-77f5f0df3d9a@linaro.org>
+References: <20250220-dpu-add-cdm-v2-0-77f5f0df3d9a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,27 +70,26 @@ Content-Transfer-Encoding: 8bit
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 
-On Thu, 23 Jan 2025 14:43:32 +0200, Dmitry Baryshkov wrote:
-> As pointed out by Simona, the drm_atomic_helper_check_modeset() and
-> drm_atomic_helper_check() require the former function is rerun if the
-> driver's callbacks modify crtc_state->mode_changed. MSM is one of the
-> drivers which failed to follow this requirement.
+On Thu, 20 Feb 2025 05:59:21 +0200, Dmitry Baryshkov wrote:
+> Enable CDM block on all the platforms where it is supposed to be
+> present. Notably, from the platforms being supported by the DPU driver
+> it is not enabled for SM6115 (DPU 6.3), QCM2290 (DPU 6.5) and SM6375
+> (DPU 6.9)
 > 
-> Rework the MSM / DPU driver to follow the requirements of the
-> drm_atomic_helper_check_modeset() helper function.
 > 
-> [...]
 
 Applied, thanks!
 
-[1/4] drm/msm/dpu: don't use active in atomic_check()
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/25b4614843bc
-[2/4] drm/msm/dpu: move needs_cdm setting to dpu_encoder_get_topology()
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/7d39f5bb82c0
-[3/4] drm/msm/dpu: simplify dpu_encoder_get_topology() interface
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/41921f231abf
-[4/4] drm/msm/dpu: don't set crtc_state->mode_changed from atomic_check()
-      https://gitlab.freedesktop.org/lumag/msm/-/commit/2dde2aadaed1
+[1/5] drm/msm/dpu: rename CDM block definition
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/51bc064005c5
+[2/5] drm/msm/dpu: enable CDM_0 for DPUs 5.x+
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/15f2825defeb
+[3/5] drm/msm/dpu: enable CDM_0 for DPUs 1.x - 4.x
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/d5c1e00ea2de
+[4/5] drm/msm/dpu: enable CDM_0 for SC8280XP platform
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/b5bbf4fab0a9
+[5/5] drm/msm/dpu: enable CDM_0 for X Elite platform
+      https://gitlab.freedesktop.org/lumag/msm/-/commit/989a24211eaf
 
 Best regards,
 -- 
