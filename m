@@ -1,67 +1,66 @@
-Return-Path: <linux-kernel+bounces-550501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE238A56077
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:55:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 422DCA5607C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:55:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0FD13AA3AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:54:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A85A818956B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4374C199EBB;
-	Fri,  7 Mar 2025 05:54:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB5F199FDE;
+	Fri,  7 Mar 2025 05:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="aQ1AS8QJ"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jaDFXWdV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CEE618DB09;
-	Fri,  7 Mar 2025 05:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24B7198E6D;
+	Fri,  7 Mar 2025 05:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741326896; cv=none; b=ejRbgi/pndb3JL8OmkeBuuBRu86K2Sn+wpDwkzxb+9yq7aJfBbAwV2z3YLzm5i6NDUvcG+d4KZOGIbSOL94s6akvEHklkk32cQKnLxol6haRB1YWhcJmKS/XvX+T8bnca3UbRysL3a5Q62dXBaezGqiYxyKwV8augEvigY7gsns=
+	t=1741326928; cv=none; b=kxv7OmE253Ezxtyv2eLZfn8siAlYAb4qWA7cBUAXF94jHitLpqg7Q/Kn/1FgjK5r5leSwQsINQCOHfUpwBaP4Ml+rjJChdd3gDA7NoaZeZHmcG15RVnGLtG03pxDwSzhf2wHomE3yxszERatZsUs3PfK6DSdbNHghQJp8X2Pw78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741326896; c=relaxed/simple;
-	bh=OhobIH36SElrBRrR9xlBtbM4ljdbiJGVn6a0IJ6ZmIk=;
+	s=arc-20240116; t=1741326928; c=relaxed/simple;
+	bh=MhiyITzafn+oL8EbKVQjdW6/i3/2fPQ6p6JW0xN59M0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dl/OwVUXNM6zLyhgS6MBb/jDvQW8p9jaK3rx5hiMPwr3o8auvsjhiUPAC+ou4GHvtxQaR528szvS3bGAV7HuNRQhzeRDse1/PaHabSnvgMlfLE/fIL7xP3UM/AcHrGkcm2ZDgjefDPsyVMS76lzPmeh3fNMU5pJ3G0usBAmPQc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=aQ1AS8QJ; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 790E223CA6;
-	Fri,  7 Mar 2025 06:54:52 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id GEDfSjYbRJfd; Fri,  7 Mar 2025 06:54:48 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1741326882; bh=OhobIH36SElrBRrR9xlBtbM4ljdbiJGVn6a0IJ6ZmIk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=aQ1AS8QJQnkqsjN6cCDhEslz1d7op9C+MUyuNcjmdwVvv9aj/jf046pMvlSwTDFLe
-	 JdjylhVLOBu5OhPar3AT7/wLW/k+O2v2ezX4Doy9ucxYQBmKe6oCf2rnARVh5pszmC
-	 KwlRCPeupk9T7U6pren2Kc7QXQ1hrvzpRe/RejNap3+4k7EcpS4FAeoOE33YSKRLjg
-	 Frh7rHwFAuCkH4m56VZYphHMJgocffkPKppGe9TDWxWEZkd17G+lwUDzOgUzsyavHp
-	 7LeOKmEqw9Cl9yWRRWDyooo9qpSVouUh0mLS9VMCebr+YQ3TLxsQa1pODij+tF7YRf
-	 EHiDkQboMaEcw==
-Date: Fri, 7 Mar 2025 05:54:27 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Jonas Karlman <jonas@kwiboo.se>, Chukun Pan <amadeus@jmu.edu.cn>
-Cc: conor+dt@kernel.org, cristian.ciocaltea@collabora.com,
-	detlev.casanova@collabora.com, devicetree@vger.kernel.org,
-	heiko@sntech.de, krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 7/8] arm64: dts: rockchip: Add SDMMC/SDIO controllers
- for RK3528
-Message-ID: <Z8qKEzmTFxhHKApG@pie>
-References: <20250305194612.47171-1-ziyao@disroot.org>
- <20250306140009.384469-1-amadeus@jmu.edu.cn>
- <Z8nPjjbZvpRJ2R5B@pie.lan>
- <3d3db030-26e6-4fe1-9158-85f8cebef89c@kwiboo.se>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hT8X+pqL9YQNG/Ua5KZMCrdFPUkFtSdueTjd7O+xBWzHxQ+3KsG0gEAxJDQDvsdLnxMuIlnbByJCdcUtmZPuh08A84QBVoUIliSJj+oudjTWYI2/Tb1LeNk0VN2NNoHmXCqlJwEkKWQoAY+stbSzXT37A+6Ckjfgw9SaGJdaxt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jaDFXWdV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8CAAC4CED1;
+	Fri,  7 Mar 2025 05:55:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741326927;
+	bh=MhiyITzafn+oL8EbKVQjdW6/i3/2fPQ6p6JW0xN59M0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jaDFXWdVefRVlF5I4F1zLj0PsGHZOmZnbvI96wxh0Xru+rB5XamCaShyRZr+njJNo
+	 6beP32EjV5Miai+UIKcynMRVboeVl50qr9uvuBsAgMz0TyzwKZaA/CuUs1EIglKhm7
+	 xyA4/Cmf9tzK82NDZb8Z4PQCYYHl9L3Efz+MrmFlLmUHydkN4elrX79KF0jcZ6K+fI
+	 2rpxKN+IRtce1ECwZOrARfO72hPMemqhOp6R870ixSN2Yc4afGtllk/cj5BjkKHC63
+	 7jv55UfYx5LBPNQQbzMHkwY8fua7xVfJ0FNBEdf5+KuxF881aSdAM4tG5BC4O8Dhg9
+	 VTdrcK4FruVww==
+Date: Fri, 7 Mar 2025 07:55:22 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Ross Philipson <ross.philipson@oracle.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+	ardb@kernel.org, mjg59@srcf.ucam.org,
+	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
+	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu,
+	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
+	ebiederm@xmission.com, dwmw2@infradead.org,
+	baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
+	andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
+Subject: Re: [PATCH v12 07/19] x86/msr: Add variable MTRR base/mask and
+ x2apic ID registers
+Message-ID: <Z8qKStnfCBvSw_yI@kernel.org>
+References: <20241219194216.152839-1-ross.philipson@oracle.com>
+ <20241219194216.152839-8-ross.philipson@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,109 +69,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3d3db030-26e6-4fe1-9158-85f8cebef89c@kwiboo.se>
+In-Reply-To: <20241219194216.152839-8-ross.philipson@oracle.com>
 
-On Fri, Mar 07, 2025 at 12:05:16AM +0100, Jonas Karlman wrote:
-> On 2025-03-06 17:43, Yao Zi wrote:
-> > On Thu, Mar 06, 2025 at 10:00:09PM +0800, Chukun Pan wrote:
-> >> Hi,
-> >>
-> >>> +		sdio0: mmc@ffc10000 {
-> >>> +			compatible = "rockchip,rk3528-dw-mshc",
-> >>> +				     "rockchip,rk3288-dw-mshc";
-> >>> +			reg = <0x0 0xffc10000 0x0 0x4000>;
-> >>> +			clocks = <&cru HCLK_SDIO0>,
-> >>> +				 <&cru CCLK_SRC_SDIO0>,
-> >>> +				 <&cru SCLK_SDIO0_DRV>,
-> >>> +				 <&cru SCLK_SDIO0_SAMPLE>;
-> >>> +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-> >>> +			fifo-depth = <0x100>;
-> >>> +			interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
-> >>> +			max-frequency = <150000000>;
-> >>> +			pinctrl-names = "default";
-> >>> +			pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>,
-> >>> +				    <&sdio0_det>, <&sdio0_pwren>;
-> >>
-> >> The sdio module is usually "non-removable", no need det,
-> >> and pwren may be other gpio (use mmc-pwrseq). So it should
-> >> be `pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>;`
-> > 
-> > This doesn't affect the fact that these two pins are assigned as
-> > functional pins for SDIO0, as pointed out by the datasheet[1].
-> > 
-> > But with more digging, I found the reference design[2] of Rockchip
-> > actually uses the two pins as normal GPIOs. This is more obvious in
-> > downstream devicetree of an EVB[3]. Most of the existing boards (Radxa
-> > 2A, ArmSOM Sige 1) follow the reference design.
-> > 
-> > For me, it's kind of surprising that the SDIO IP functions with two
-> > functional pins assigned as different modes. I'm not sure whether we
-> > should apply pin configuration for these two pins in the SoC devicetree.
-> > Jonas, what do you think about it?
-> 
-> I think it make sense to match the pins used by reference boards, i.e.
-> the pinconf most likely to be used by majority of boards that will use
-> the sdio interface.
+On Thu, Dec 19, 2024 at 11:42:04AM -0800, Ross Philipson wrote:
+> These values are needed by Secure Launch to locate particular CPUs
+> during AP startup and to restore the MTRR state after a TXT launch.
 
-Thanks, will take it.
+Hmm... does the first part with like locating particular CPU cores?
 
-> Of my RK3528 boards, only ArmSoM Sige1 use sdio for onboard wifi and
-> there I currently have following in my work-in-progress board DT [4]:
-> 
->   pinctrl-names = "default";
->   pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>, <&clkm1_32k_out>;
-> 
-> The Radxa ROCK 2A/2F seem to use USB for wifi/bt.
-> 
-> [4] https://github.com/Kwiboo/linux-rockchip/blob/next-20250305-rk3528/arch/arm64/boot/dts/rockchip/rk3528-armsom-sige1.dts
-> 
-> Regards,
-> Jonas
-> 
-> > 
-> >>> +			resets = <&cru SRST_H_SDIO0>;
-> >>> +			reset-names = "reset";
-> >>> +			status = "disabled";
-> >>> +		};
-> >>> +
-> >>> +		sdio1: mmc@ffc20000 {
-> >>> +			compatible = "rockchip,rk3528-dw-mshc",
-> >>> +				     "rockchip,rk3288-dw-mshc";
-> >>> +			reg = <0x0 0xffc20000 0x0 0x4000>;
-> >>> +			clocks = <&cru HCLK_SDIO1>,
-> >>> +				 <&cru CCLK_SRC_SDIO1>,
-> >>> +				 <&cru SCLK_SDIO1_DRV>,
-> >>> +				 <&cru SCLK_SDIO1_SAMPLE>;
-> >>> +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
-> >>> +			fifo-depth = <0x100>;
-> >>> +			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
-> >>> +			max-frequency = <150000000>;
-> >>> +			pinctrl-names = "default";
-> >>> +			pinctrl-0 = <&sdio1_bus4>, <&sdio1_clk>, <&sdio1_cmd>,
-> >>> +				    <&sdio1_det>, <&sdio1_pwren>;
-> >>
-> >> Same here.
-> >>
-> >>> +			resets = <&cru SRST_H_SDIO1>;
-> >>> +			reset-names = "reset";
-> >>> +			status = "disabled";
-> >>> +		};
-> >>
-> >> Thanks,
-> >> Chukun
-> >>
-> >> -- 
-> >> 2.25.1
-> >>
-> > 
-> > Best regards,
-> > Yao Zi
-> > 
-> > [1]: https://github.com/DeciHD/rockchip_docs/blob/main/rk3528/Rockchip%C2%A0RK3528%C2%A0Datasheet%C2%A0V1.0-20230522.pdf
-> > [2]: https://github.com/DeciHD/rockchip_docs/blob/main/rk3528/RK3528_BOX_REF_V10_20230525.pdf
-> > [3]: https://github.com/rockchip-linux/kernel/blob/604cec4004abe5a96c734f2fab7b74809d2d742f/arch/arm64/boot/dts/rockchip/rk3528-evb1-ddr4-v10.dtsi#L128
-> 
+I'd start also the sentence with the action taken except assuring
+why the undefined action is taken.
 
-Best regards,
-Yao Zi
+"Add the MSR values required by Secure Launch (SL) to locate particular
+CPU cores during application processor (AP) startup, and restore the
+MTRR state after a Intel TXT launch."
+
+Along the lines would be more informative...
+
+BR, Jarkko
 
