@@ -1,90 +1,75 @@
-Return-Path: <linux-kernel+bounces-550264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C93A55D50
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:50:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF96A55D52
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:52:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7B2E18952DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:51:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95792189535C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:52:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 169ED15990C;
-	Fri,  7 Mar 2025 01:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08B901624E0;
+	Fri,  7 Mar 2025 01:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="VvSupxeh"
-Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CwAs+mfK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07748143748;
-	Fri,  7 Mar 2025 01:50:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65AA9143748;
+	Fri,  7 Mar 2025 01:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741312248; cv=none; b=IVr2nM7w/1uGg4fndazLwCX1MlkOO2iRfLX5rY8qTqWOpAisM5UKH44/5+TQt/0Z5bLaHaxvdBMBvu6vLUtTFZjKxDJQAXYw8LNJK4Fkdg8tZ0GcHFKA6jHyDf44PJMBoUBZ6oJxRbD7AhH+nmkMQaEiARbCr/U0Svj969p8f2Y=
+	t=1741312341; cv=none; b=Pzz5h75TEy1J6EzHv2vRR+LJkOi0AGi946dExHh8Xqxx7ztNh32xQq28vF3ZgfcmWYz+4al8zPBoO7fr8Q/Ru7lkJ4zMvNZ9loK8TF+gEJlr27cz8y24abVl6GLELHKWn8q5zsNlQ1/a/hkJz5ntBos5e0ROTKcf96gPpFiKEpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741312248; c=relaxed/simple;
-	bh=SBPIG7jGFl35PPlGXciLwpGYDq5C+aqPbA9Zjunteo4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZNsDf0ZAoi3sDVzr+dcYjWIc+F4hmAR2+ELVk2yMIZ1BnQmxnuNsoNtZSPBJ9LEvH9i9xhCtY9iSEGMn4L0w6dryQAs5ut408YoIKXZyQPN7PBgK0syJXDU7lYyMjycqGfVa6iYcLRSok23fRqMfDxdv2CI6E9sCSJ+aVZN88Nk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=VvSupxeh; arc=none smtp.client-ip=115.124.30.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1741312239; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=rVR0/YI1qnfP9PhqbcZtPg5wmkc8O7eEXmX+qFp6sTQ=;
-	b=VvSupxeh93VN5sGIvSftgk7TH4bB9QZ/P4IlJA3Q6Yd1ewOObCX9dxahQAi/9ReqOTyTjQoz+mujD7if75zY2sOG+ylrhCAJr7N6chkeGr4GiCj5cG+pMYMH+9UM3k7pimSutbNwnvtvmXZGwAtOO8Z6jQdzzCkyhD0jCcqmGHI=
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WQqGnBV_1741312231 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 07 Mar 2025 09:50:38 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: robdclark@gmail.com
-Cc: quic_abhinavk@quicinc.com,
-	dmitry.baryshkov@linaro.org,
-	sean@poorly.run,
-	marijn.suijten@somainline.org,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] drm/msm/dpu: Remove duplicate dpu_hw_cwb.h header
-Date: Fri,  7 Mar 2025 09:50:30 +0800
-Message-Id: <20250307015030.86282-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1741312341; c=relaxed/simple;
+	bh=xwNJxF1YyGce08oYy0Fe12Vy2Z2KPkn8AONDnD2E1JY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=j2VGUtehtPSZ4FbuuP7GABVLaBVAEPba/Mk3mZxObt2Ytrx8/EimY51KsVg/dyzMhyl9ABZ+2Qd2WWGLJNHT8YYf8RHKrcb/gEyaWJjVMgkovNSW2IL9ZcsAgpP4gWZFAaQwzI94/t32NpXhi95K2IuvJLoaizXnGVb5fmrqgwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CwAs+mfK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 64B1BC4CEE0;
+	Fri,  7 Mar 2025 01:52:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741312340;
+	bh=xwNJxF1YyGce08oYy0Fe12Vy2Z2KPkn8AONDnD2E1JY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CwAs+mfKWvL9z58F7FJ5FdtMkL7EfeYt2+CkaLUaJDsjP+o26naI1OyHwHrQgxHiq
+	 JuUNCUgfxSZXKfvzGxaWX9ZJWY1lS2nuzMebHqw+njI9sEtEh6z2B9qzfYPMrADE6K
+	 MXeynKnC2rU7aPCD4UwrCMEqWM635Tf98YKr+cNFA9ajCiXXGBbTrvssLXJZ+thUb7
+	 BMSP0TMUU3usi1NgrAjDktdC6gcMJVQx6lQ2Vh2+irlix5uDV/USkh0jNYkR3EaS0S
+	 vIX1UwGLmPRfUH79W1xudnj9F0/A07nmawPcitDJtlUGC7univDGgw+80kFSB4FKKY
+	 KCa635LSHeETg==
+Date: Thu, 6 Mar 2025 17:52:19 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jaakko Karrenpalo <jkarrenpalo@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
+ <horms@kernel.org>, Lukasz Majewski <lukma@denx.de>, MD Danish Anwar
+ <danishanwar@ti.com>, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ Jaakko Karrenpalo <jaakko.karrenpalo@fi.abb.com>
+Subject: Re: [PATCH net-next v4 2/2] net: hsr: Add KUnit test for PRP
+Message-ID: <20250306175219.54874d3d@kernel.org>
+In-Reply-To: <20250304104030.69395-2-jkarrenpalo@gmail.com>
+References: <20250304104030.69395-1-jkarrenpalo@gmail.com>
+	<20250304104030.69395-2-jkarrenpalo@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-./drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c: dpu_hw_cwb.h is included more than once.
+On Tue,  4 Mar 2025 12:40:30 +0200 Jaakko Karrenpalo wrote:
+> Add unit tests for the PRP duplicate detection
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=19239
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 1 -
- 1 file changed, 1 deletion(-)
+The patch appears unable to survive an allmodconfig build:
+ERROR: modpost: "prp_register_frame_out" [net/hsr/prp_dup_discard_test.ko] undefined!
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index 0eed93a4d056..4d2589140426 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -29,7 +29,6 @@
- #include "dpu_hw_dsc.h"
- #include "dpu_hw_merge3d.h"
- #include "dpu_hw_cdm.h"
--#include "dpu_hw_cwb.h"
- #include "dpu_formats.h"
- #include "dpu_encoder_phys.h"
- #include "dpu_crtc.h"
+Guessing that it ends up built in and the function is in a module?
+Maybe a depends on ?
 -- 
-2.32.0.3.g01195cf9f
-
+pw-bot: cr
 
