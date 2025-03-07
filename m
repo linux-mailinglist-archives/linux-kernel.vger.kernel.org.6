@@ -1,125 +1,77 @@
-Return-Path: <linux-kernel+bounces-551471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C48A56CD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:59:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 817D8A56CDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:00:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DBFA67A624C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:58:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C6C83B8872
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAE3422156B;
-	Fri,  7 Mar 2025 15:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LqROB/MQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7DC220683;
-	Fri,  7 Mar 2025 15:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3F82222CA;
+	Fri,  7 Mar 2025 15:58:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBCC21D3F7;
+	Fri,  7 Mar 2025 15:57:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741363076; cv=none; b=Q/NGAe1EGStTrR6jXwDDor0duL7eE6iCIa1rAGEZVv8oaTktKYmdvyBtqI0goY3OGVzvWpCeGvQiW8HgPy2Pu5Q/xWdGJeKTUpdmMZRJpTkVSgtTkfiaMDjeGN+9sfjGbuJSXUNMuSxAbCMR5HYPlB6dq40lgldRLBsau8Kj1gU=
+	t=1741363081; cv=none; b=Vv7hfRi5UPdbFvMSuZSGgV+JFC8XHFQv6KQCTDkauVMOJbpev3/LL3w2yH2tEU59WfLX+R4xj12cftfvZr1HHKDcy3I9FJH75JqnExUM/iFY9uqqbS0JgnTkGz2Oic8veaKAmlqsyttcS+SO5ofTgkG5MCauvszaGjUDniU69OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741363076; c=relaxed/simple;
-	bh=QT1XHh/w8QwT1pLRiOGWxMsbky6BpHG6YvS1p8T0uU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ayrXSB+ZnN0+oOyFlxvz0CQJkBpjFba3icDqefdoW4O5PXD0mtF/N5LOVLCIYJ9iJiGvY4gVVcqXzG1j+u8ACKR8Z9bnhIW7Ax2HKzys0WKoRr7hCpzxzn0hwmh81R4IwTKMaqo1gEUNIWEgqC01TNdPrzMnTyGmRi/HMsBvgyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LqROB/MQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AF12C4CED1;
-	Fri,  7 Mar 2025 15:57:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741363074;
-	bh=QT1XHh/w8QwT1pLRiOGWxMsbky6BpHG6YvS1p8T0uU8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LqROB/MQjqgP6Rxj7Ka2JK/VyG82Yw1XNISbXOGkuJVwtsqWRhMcXuyrPpAXmqbMf
-	 eqJ8MhwoTh0o8qu8D7AU14C5aWPnC8IV4XMCsGy1R4YdhKH1k93ZTUbU/ehUZPoxTZ
-	 RF+kya+bNA+vAWYvH4UlgWJgBeA6vu19p0A5O8gEJ0Lu1NgvvaaJY6JC6uM8KA5iPK
-	 gp2r/4730w41fI6wZfjxOPNY2hpkbmQsVusd1q2NB/iUMH2PWFWwEhDb2DFdb7J5Gr
-	 9SOTUOE25hNfyv5M3STCc95jPsDlzkbqExLIN7e3so/vWoMJrlhXXetaSVv0ITUnEK
-	 qwkAK5IRMJQBg==
-Date: Fri, 7 Mar 2025 15:57:49 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Bai Ping <ping.bai@nxp.com>,
-	"open list:CLOCKSOURCE, CLOCKEVENT DRIVERS" <linux-kernel@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	imx@lists.linux.dev
-Subject: Re: [PATCH] dt-bindings: timer: nxp,sysctr-timer: Add i.MX94 support
-Message-ID: <20250307-popular-margarita-f16341b53f30@spud>
-References: <20250306170902.241057-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1741363081; c=relaxed/simple;
+	bh=fRDrJH1m2u038pPBi26MkMxgn5EvMPa4VcxYn0IQTwM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NG0teYhlSWMQ15VrvjwoTh+SdnosXnou5A+kabMhhcM8RDuP7kmKTOVRUb5KWL1M14Ghl8HeUYgqtJ8H87jfWZV/svYFZ0i9k/hnLELOrodhzefcKu12eItkC0W21NYwhJJjaLlgOQAgj2CIOL3/fBqzQbecue9xZKP/+IUx4hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EFE701477;
+	Fri,  7 Mar 2025 07:58:05 -0800 (PST)
+Received: from [10.57.84.99] (unknown [10.57.84.99])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 496F83F673;
+	Fri,  7 Mar 2025 07:57:52 -0800 (PST)
+Message-ID: <ef069b96-aeec-4974-bbb4-59bc11a6d158@arm.com>
+Date: Fri, 7 Mar 2025 15:57:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MqHaBOafbLChmy6G"
-Content-Disposition: inline
-In-Reply-To: <20250306170902.241057-1-Frank.Li@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] mm/madvise: Always set ptes via arch helpers
+Content-Language: en-GB
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ David Hildenbrand <david@redhat.com>
+References: <20250307123307.262298-1-ryan.roberts@arm.com>
+ <dbdeb4d7-f7b9-4b10-ada3-c2d37e915f6d@lucifer.local>
+ <03997253-0717-4ecb-8ac8-4a7ba49481a3@arm.com>
+ <3653c47f-f21a-493e-bcc4-956b99b6c501@lucifer.local>
+ <2308a4d0-273e-4cf8-9c9f-3008c42b6d18@arm.com>
+ <d9cd67d7-f322-4131-a080-f7db9bf0f1fc@lucifer.local>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <d9cd67d7-f322-4131-a080-f7db9bf0f1fc@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 07/03/2025 14:55, Lorenzo Stoakes wrote:
+> I'm not necessarily against just making this consitent, but I like this
+> property of us controlling what happens instead of just giving a pointer
+> into the page table - the principle of exposing the least possible.
 
---MqHaBOafbLChmy6G
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Given the function is called walk_page_range(), I do wonder how much
+insulation/abstraction from the page tables is actually required.
 
-On Thu, Mar 06, 2025 at 12:09:02PM -0500, Frank Li wrote:
-> Add compatible string "nxp,imx94-sysctr-timer" for the i.MX94 chip, which
-> is backward compatible with i.MX95. Set it to fall back to
-> "nxp,imx95-sysctr-timer".
+But I think in general we are on the same page. Feel free to put looking at this
+quite a long way down your todo list, it's certainly not getting in anyone's way
+right now. But given it tripped me up, it will probably trip more people up
+eventually.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+Thanks,
+Ryan
 
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../devicetree/bindings/timer/nxp,sysctr-timer.yaml   | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/timer/nxp,sysctr-timer.yam=
-l b/Documentation/devicetree/bindings/timer/nxp,sysctr-timer.yaml
-> index 891cca0095281..6b80b060672e5 100644
-> --- a/Documentation/devicetree/bindings/timer/nxp,sysctr-timer.yaml
-> +++ b/Documentation/devicetree/bindings/timer/nxp,sysctr-timer.yaml
-> @@ -18,9 +18,14 @@ description: |
-> =20
->  properties:
->    compatible:
-> -    enum:
-> -      - nxp,imx95-sysctr-timer
-> -      - nxp,sysctr-timer
-> +    oneOf:
-> +      - enum:
-> +          - nxp,imx95-sysctr-timer
-> +          - nxp,sysctr-timer
-> +      - items:
-> +          - enum:
-> +              - nxp,imx94-sysctr-timer
-> +          - const: nxp,imx95-sysctr-timer
-> =20
->    reg:
->      maxItems: 1
-> --=20
-> 2.34.1
->=20
-
---MqHaBOafbLChmy6G
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8sXfQAKCRB4tDGHoIJi
-0o+GAQDkXHThxI93oIJC0azv+CB0mG0BDZBf4Kg7YZh9Ts8v3wEAgq0KKkRnfRel
-dWTh3Aam6YBVKAh9krDuOp956tpoTAo=
-=atln
------END PGP SIGNATURE-----
-
---MqHaBOafbLChmy6G--
 
