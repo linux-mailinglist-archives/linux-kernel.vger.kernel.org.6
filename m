@@ -1,75 +1,72 @@
-Return-Path: <linux-kernel+bounces-550907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677B0A5659A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:39:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47A65A56596
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:39:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A09E91735C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:39:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2066189701F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04468212B39;
-	Fri,  7 Mar 2025 10:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313EE211276;
+	Fri,  7 Mar 2025 10:39:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YmgbTYzp"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TpGJq7Z/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C59211A20;
-	Fri,  7 Mar 2025 10:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C134B1A239E;
+	Fri,  7 Mar 2025 10:39:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741343965; cv=none; b=djS4pZZJNqumKFcYOvSoPnvSwmNqEAhyvYyueHKiAM2F5VlkNlVkZ94ph7loGnE46v0FKencUS/iMV1Fc3eP7tNS+2YVK0cMjGgdNiA7gssFnVtukAqWUirXYSUacJqsgxAdEd/afQF7CZD2RRaeAE6EpNOf/GH7fM4SUp5L7yk=
+	t=1741343960; cv=none; b=dXEWUyHds4dURgFCd2tXlEVT/AGsOQAf30Eo9B7NFhkcjkfYj5RB1iZQj45TRHAaAbNsAWBgUOOW/l45+RvbO/3RnQm23/V36EczPUyrrV7wOYvAG/QvJuFPbz1cLLC2UelHNOjIMyyfrJY5BFLT9BbdIn1uLPB2zdQUAHVydVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741343965; c=relaxed/simple;
-	bh=HxWFlzYZ/kTUSwmC8giaqnJl4ApMkmawbxezqzBZsMQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WOJ639Y5P0H4V10Dy94GemTSH9Mr01F6LJXbl3Kwh0L6uqZ2DTrEr0WZ1iHTF7C02jlcbhfszfOWPv/BZXjopdSdoxHxGxXasRfS+l5VhOk1ocwi9L4JE3O329j1N1CiuqC/N5ucpobV35wHXPUXuxsywavwIaktm41Lp5a50wk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YmgbTYzp; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 527AdAd94040303
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Mar 2025 04:39:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741343951;
-	bh=YU88KIu28z7FJc3ACej39tJ8cAKVnj4yM8ha3DZROns=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=YmgbTYzpuzp2KYj0yx0UEIjAjZFY/Ns7gVzjbZXvDPQOF90datY/E1DWIswto0oDP
-	 cTn89tlo+BCHcA/MGcdgi9li1WjQ3h7q7ExNliNOjzZaHdE24hvTnXRqDFruBu7K1k
-	 DF46X4VLGzHEKqt1gxVt9U2OhsroZ113B0TdFVXI=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 527AdA44004468
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 7 Mar 2025 04:39:10 -0600
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
- Mar 2025 04:39:10 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 7 Mar 2025 04:39:10 -0600
-Received: from uda0132425.dhcp.ti.com (dhcp-10-24-69-250.dhcp.ti.com [10.24.69.250])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527Ad65t082496;
-	Fri, 7 Mar 2025 04:39:07 -0600
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Daniel Schultz
-	<d.schultz@phytec.de>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, <w.egorov@phytec.de>,
-        <upstream@lists.phytec.de>
-Subject: Re: [PATCH v2] arm64: dts: ti: am64-phyboard-electra: Add DT overlay for X27 connector
-Date: Fri, 7 Mar 2025 16:09:03 +0530
-Message-ID: <174133309360.1072814.5781136460553851194.b4-ty@ti.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250128100356.462934-1-d.schultz@phytec.de>
-References: <20250128100356.462934-1-d.schultz@phytec.de>
+	s=arc-20240116; t=1741343960; c=relaxed/simple;
+	bh=99wAVcYRjJq/6/DqsC5mahdq+/vz2vQmHA/zE8ELOBM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=HngLIDc2S3HJNHZNV8detsDpV0rwy+kjPI7tKmcLuqlcKN6ADdINeXbd76b7X75EIsWM/M9zL1JAqM6v2WKA2DsZ/clH2xHk9x4Kik2iHUMZ5V6GFki04JxSWSeV+gHOL3/a/ZQMFImUhE37Aqyi0CFJQ5RnqNWs4FX+95ye3NA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TpGJq7Z/; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741343959; x=1772879959;
+  h=from:to:cc:in-reply-to:references:subject:message-id:
+   date:mime-version:content-transfer-encoding;
+  bh=99wAVcYRjJq/6/DqsC5mahdq+/vz2vQmHA/zE8ELOBM=;
+  b=TpGJq7Z/EC0AHVMXbLjn/8rit5vDP3j8ALpHH30l364DEb4nmFWD73Bg
+   mY0cf2Z4ZfiKJ+S/oI5j/MOcJYgAla2A3f5GaPXmMYAc5VezWBmW8xdEN
+   STFRlcyqsgquwQHw8QTQggH11XQybBKOrki6T0qLmhEXCqFHeIcd1sJdW
+   Hfb6p7BJe/sJUSwlQ92kOji7EeASzmP+k+n3v7EU6X6PbN7qQT/2fg01T
+   JUl7IpgsaPgSysWYgObNFeHDrptGxI6nuHPhEcmSVlxF8HfnyuH8er8Cr
+   CRtj+uoCNG1yHTZky4kSM9xpNCDTVsxEo7pvZ6EFDrn38/ocSxRZDbcwi
+   Q==;
+X-CSE-ConnectionGUID: vLca3PQTS2mMGxy3GaPTVA==
+X-CSE-MsgGUID: 32Z+F4pcQuuVhaTYsNLH4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="29968927"
+X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
+   d="scan'208";a="29968927"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 02:39:16 -0800
+X-CSE-ConnectionGUID: /IWgKA95TnOML6Ea/6JBrg==
+X-CSE-MsgGUID: cWCzXnrgSpi4Y+wll4CEfQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
+   d="scan'208";a="142520112"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.120])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 02:39:14 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: hdegoede@redhat.com, sre@kernel.org, Armin Wolf <W_Armin@gmx.de>
+Cc: platform-driver-x86@vger.kernel.org, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250305053009.378609-1-W_Armin@gmx.de>
+References: <20250305053009.378609-1-W_Armin@gmx.de>
+Subject: Re: [PATCH 0/3] platform/x86: dell-ddv: Rework battery temperature
+ handling
+Message-Id: <174134395033.2047.10351866706866482165.b4-ty@linux.intel.com>
+Date: Fri, 07 Mar 2025 12:39:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,46 +74,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Hi Daniel Schultz,
+On Wed, 05 Mar 2025 06:30:06 +0100, Armin Wolf wrote:
 
-On Tue, 28 Jan 2025 02:03:56 -0800, Daniel Schultz wrote:
-> Add a device tree overlay for SPI1 , UART3 and GPIO1 on
-> X27 connector.
+> This patch series reworks the handling of the battery temperature
+> inside the dell-wmi-ddv driver.
 > 
-> By default, not all interfaces on the X27 connector are accessible
-> due to being disabled or set to alternative pin mux configurations.
-> This overlay activates and configures these interfaces to support
-> connections with external devices.
+> The first patch fixes an issue inside the calculation formula for
+> the temperature value that resulted in strange temperature values
+> like 29.1 degrees celcius.
 > 
 > [...]
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
 
-[1/1] arm64: dts: ti: am64-phyboard-electra: Add DT overlay for X27 connector
-      commit: 638ab30ce4c63edae4934dcaa7a61f37b96efe6c
+Thank you for your contribution, it has been applied to my local
+review-ilpo-next branch. Note it will show up in the public
+platform-drivers-x86/review-ilpo-next branch only once I've pushed my
+local branch there, which might take a while.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+The list of commits applied:
+[1/3] platform/x86: dell-ddv: Fix temperature calculation
+      commit: 7a248294a3145bc65eb0d8980a0a8edbb1b92db4
+[2/3] platform/x86: dell-ddv: Use devm_battery_hook_register
+      commit: 8dc3f0161e35d6ceb12de4a70cbed593e5b0583f
+[3/3] platform/x86: dell-ddv: Use the power supply extension mechanism
+      commit: 99923a0df7852311fa3d01eaddb430c958780143
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
 --
-Vignesh
+ i.
 
 
