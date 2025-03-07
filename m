@@ -1,156 +1,81 @@
-Return-Path: <linux-kernel+bounces-552096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE6E1A575BA
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:04:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24673A575C0
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:05:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAAEF7A6D9C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:03:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EFA0189A13E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B04258CD9;
-	Fri,  7 Mar 2025 23:04:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E840623FC68;
+	Fri,  7 Mar 2025 23:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EuGdljpt"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n69nen5U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69141B0F11
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 23:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F4F319006F;
+	Fri,  7 Mar 2025 23:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741388688; cv=none; b=JiqLeKfS6QVS5lN5nWPzNV8/GqDjy3k9nsvISwuk7rJCwyXb5guumzDxG0OoSoU+9/a4KIhaVDnoDWqOICCnps3vZRK4XgELu2DeC1kME7V7GBz423N/unfw2+HhfkNG0XjXcEgoHj3lLgULgxOpAwn6F+5XjUk6blom6NDyryA=
+	t=1741388736; cv=none; b=oxTMY5IedoNN8XN8t9OuF4A1zpc8NLB2EYVKYyE2YUia49yaC9fwPmWUmtyp+HYlNpKbwBn/DPxD8ILeXg3UNGUKnmdiFoa+RgJon5XpyfoX1lKC5YJsS5xjmFhyUbuiQk0OzfRgxkezB0r4iHB0XbZqBnuU8YaUvvwy0hmnij8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741388688; c=relaxed/simple;
-	bh=037h1qvGSyHX25RVz/MQsjTkT/9oI6JagFBorEczsZI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SqHhKpf+U1k+8a1b34tyBUrngpT42ptXbslVnftyhrB/MxxaQl4bW7rYacdZ4a6+nXpau8ZCeKMW+wNLTyNZVrweE5bBRl/752v0EI0VhicEavEq0Z9dA2AcaDJ0wb13HVOgzbqbgXW2Soy8TcBexrkdWEy57UfOCOnBL5M2gio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EuGdljpt; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-224192ff68bso33791955ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 15:04:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741388686; x=1741993486; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cT76M5nOMYPj1kKKAkhRDAQZijMJO1Yeab7naAnYE5o=;
-        b=EuGdljptDQqHRrrLWOhro6Yznt65Y2Cwcxfq9w/l+xM0dZcMlbubhYtHdi1Ytg1bhx
-         DhSheno6DQ8T3TCPxMGNECHrmBakgCZI9X1AtMwWhz+6+x6chrDvHd6bi3XtlwDwWkOp
-         GxotDFu3RxUOWOvBlEgPPq57DBRDUylXUsoatoRb+G6vguyVh6QQbvu/WisKIFk3dOUy
-         luJPIENRT3yqSEMmCKALD9KOpOqtTCdGRaKUSylRwdOyh/nyNjBG993PpDbmII9eQzCh
-         f+arbe75tUdqWmvh2j+pc5gSrKoNytlAxEmc1mJu4JVWWrcBbgHNnJfSX7HyOPFJAED2
-         vqgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741388686; x=1741993486;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cT76M5nOMYPj1kKKAkhRDAQZijMJO1Yeab7naAnYE5o=;
-        b=X7GXAh+TD67Jj5kkTlN+KNsFStdyR8FdgLWutIGMnrX7muP4r7IUG3tukAD0rlkvQV
-         huDE+6sHWSahHjGX8E/1pQw7AdQFAiFZf9LNAHA8LlsphHiKtCeGhnYKqYeJP5xeIwuY
-         34i1B+A6sJhaxze1XBUyHP27APSgPYqti1/qFIl7PpdEWQounXk2U8nyrkl950ceA9Qo
-         m2Q4u04R9yT6NF7U9pTq3aCzUB4bWhqaC+tZqpMol+Hu2vVgMmVOrYuexWJNECRCPdgc
-         nDLX6R6TcPW0n2vvnxDxzRLlB7pxkc1vs7REXEMH1LtB9pIcTHfwuMzS3wPgQS79Hdid
-         bBpA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBTSh4h/d5bmrVxnOgGicenIrYshleNxRtVVpM+YEo0GTPGaQ2tixB1mshQoctQPdeKK2wE8ojtMe+NdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgcajLnPDzH371jqRGSPHzTmAOltzeVhLQknvfldBIhvgRUYT2
-	C/rdzdz7H+Bi0yYX34KIKmiZWflJEuV7YRPn4P1heUAMejaMfRHVJEFtjdPZGerHfEBt7bun2kE
-	XbQ==
-X-Google-Smtp-Source: AGHT+IHct+pLavXuZw6EDxxZ7ZokK0tGuArbgipPORHJKdMgfjFghFar2LGWx+A6U/e+4H/R7dy+puDVzRA=
-X-Received: from pjbmf14.prod.google.com ([2002:a17:90b:184e:b0:2ef:7af4:5e8e])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:cf41:b0:223:5e76:637a
- with SMTP id d9443c01a7336-2242889c67bmr85553605ad.23.1741388686143; Fri, 07
- Mar 2025 15:04:46 -0800 (PST)
-Date: Fri, 7 Mar 2025 15:04:44 -0800
-In-Reply-To: <CABgObfahNJWCMPMV101ta-d0Cxu=RjjfMkKbOWTdRmk_VtACuw@mail.gmail.com>
+	s=arc-20240116; t=1741388736; c=relaxed/simple;
+	bh=xkz0UTREMr5lxZRm0L2JACHrFzJS6kI42IRiXa/YOr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cjrrn8aTPgOCJWysTA9GjiaYtoNEqBpmWivC71DB0wQ2jmWbGkmKl8WVM/RoWWX8X3YdHBGZZWQ9qHsKilM0uMPP1kDm4RjZrTvsWxWcNXqWTZRYfz7Q6c03IFmlBtO7T04rIWCCATxB8TNNsarKtcedmxoGFYUqIKLjp6czOlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n69nen5U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77A92C4CED1;
+	Fri,  7 Mar 2025 23:05:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741388734;
+	bh=xkz0UTREMr5lxZRm0L2JACHrFzJS6kI42IRiXa/YOr8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n69nen5UF3U337rjqyCm1+pgToPzrl7eRyd7RDoyG7mtCQItKuOBezHuuRk9KVHWI
+	 gbFwWCh65f451dr5V+oMChsBvecLABr5fJtV6WD9ra8IHG7tjvpJ6nqCqMIzTB5BMa
+	 LzdDG42g4ElmeLhFwMpgN6r52UrfUZkank4h1QPJzDSpAPZR3GIkCAPe3ZR3A/bN7G
+	 bUDhoaOkbS/I45Dy7DKjSjtkGzFqhJG2j4u5+gXUqnz9F//hJowrGEWepVWksvVO8M
+	 r0hYx03q3pEcvWUr/1SmWTvVkoR2KQQ4bIU0t692aT+OA/lX6psu9xmNZokBUQV7Sp
+	 /9raIowvr8Rnw==
+Date: Sat, 8 Mar 2025 00:05:29 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org,
+	tip-bot2 for Josh Poimboeuf <tip-bot2@linutronix.de>,
+	linux-tip-commits@vger.kernel.org,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Brian Gerst <brgerst@gmail.com>, x86@kernel.org
+Subject: Re: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on
+ frame pointers
+Message-ID: <Z8t7ubUE5P7woAr5@gmail.com>
+References: <174108458405.14745.4864877018394987266.tip-bot2@tip-bot2>
+ <90B1074B-E7D4-4CE0-8A82-ADEB7BAED7AD@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250129095902.16391-1-adrian.hunter@intel.com>
- <20250129095902.16391-3-adrian.hunter@intel.com> <01e85b96-db63-4de2-9f49-322919e054ec@intel.com>
- <0745c6ee-9d8b-4936-ab1f-cfecceb86735@redhat.com> <Z8oImITJahUiZbwj@google.com>
- <CABgObfahNJWCMPMV101ta-d0Cxu=RjjfMkKbOWTdRmk_VtACuw@mail.gmail.com>
-Message-ID: <Z8t16I-UXNQhcd3N@google.com>
-Subject: Re: [PATCH V2 02/12] KVM: x86: Allow the use of kvm_load_host_xsave_state()
- with guest_state_protected
-From: Sean Christopherson <seanjc@google.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Xiaoyao Li <xiaoyao.li@intel.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	kvm <kvm@vger.kernel.org>, Rick Edgecombe <rick.p.edgecombe@intel.com>, 
-	Kai Huang <kai.huang@intel.com>, reinette.chatre@intel.com, 
-	Tony Lindgren <tony.lindgren@linux.intel.com>, Binbin Wu <binbin.wu@linux.intel.com>, 
-	David Matlack <dmatlack@google.com>, Isaku Yamahata <isaku.yamahata@intel.com>, 
-	Nikolay Borisov <nik.borisov@suse.com>, linux-kernel@vger.kernel.org, 
-	Yan Zhao <yan.y.zhao@intel.com>, Chao Gao <chao.gao@intel.com>, 
-	Weijiang Yang <weijiang.yang@intel.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <90B1074B-E7D4-4CE0-8A82-ADEB7BAED7AD@zytor.com>
 
-On Thu, Mar 06, 2025, Paolo Bonzini wrote:
-> Il gio 6 mar 2025, 21:44 Sean Christopherson <seanjc@google.com> ha scritto:
-> > > Allowing the use of kvm_load_host_xsave_state() is really ugly, especially
-> > > since the corresponding code is so simple:
-> > >
-> > >         if (cpu_feature_enabled(X86_FEATURE_PKU) && vcpu->arch.pkru != 0)
-> > >                         wrpkru(vcpu->arch.host_pkru);
-> >
-> > It's clearly not "so simple", because this code is buggy.
-> >
-> > The justification for using kvm_load_host_xsave_state() is that either KVM gets
-> > the TDX state model correct and the existing flows Just Work, or we handle all
-> > that state as one-offs and at best replicate concepts and flows, and at worst
-> > have bugs that are unique to TDX, e.g. because we get the "simple" code wrong,
-> > we miss flows that subtly consume state, etc.
+
+* H. Peter Anvin <hpa@zytor.com> wrote:
+
+> > #endif /* __ASSEMBLY__ */
 > 
-> A typo doesn't change the fact that kvm_load_host_xsave_state is
-> optimized with knowledge of the guest CR0 and CR4; faking the values
-> so that the same field means both "exit value" and "guest value",
+> So we are going to be using this version despite the gcc maintainers 
+> telling us it is not supported?
 
-I can't argue against that, but I still absolutely detest carrying dedicated code
-for SEV and TDX state management.  It's bad enough that figuring out WTF actually
-happens basically requires encyclopedic knowledge of massive specs.
+No, neither patches are in the x86 tree at the moment.
 
-I tried to figure out a way to share code, but everything I can come up with that
-doesn't fake vCPU state makes the non-TDX code a mess.  :-(
+Thanks,
 
-> just so that the common code does the right thing for pkru/xcr0/xss,
-
-FWIW, it's not just to that KVM does the right thing for those values, it's a
-defense in depth mechanism so that *when*, not if, KVM screws up, the odds of the
-bug being fatal to KVM and/or the guest are reduced.
-
-> is > unmaintainable and conceptually just wrong. 
-
-I don't necessarily disagree, but what we have today isn't maintainable either.
-Without actual sanity check and safeguards in the low level helpers, we absolutely
-are playing a game of whack-a-mole.
-
-E.g. see commit 9b42d1e8e4fe ("KVM: x86: Play nice with protected guests in
-complete_hypercall_exit()").
-
-At a glance, kvm_hv_hypercall() is still broken, because is_protmode() will return
-false incorrectly.
-
-> And while the change for XSS (and possibly other MSRs) is actually correct,
-> it should be justified for both SEV-ES/SNP and TDX rather than sneaked into
-> the TDX patches.
-> 
-> While there could be other flows that consume guest state, they're
-> just as bound to do the wrong thing if vcpu->arch is only guaranteed
-> to be somehow plausible (think anything that for whatever reason uses
-> cpu_role).
-
-But the MMU code is *already* broken.  kvm_init_mmu() => vcpu_to_role_regs().  It
-"works" because the fubar role is never truly consumed.  I'm sure there are more
-examples.
-
-> There's no way the existing flows for !guest_state_protected should run _at
-> all_ when the register state is not there. If they do, it's a bug and fixing
-> them is the right thing to do (it may feel like whack-a-mole but isn't)
-
-Eh, it's still whack-a-mole, there just happen to be a finite number of moles :-)
+	Ingo
 
