@@ -1,77 +1,132 @@
-Return-Path: <linux-kernel+bounces-551472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 817D8A56CDE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:00:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833B5A56CDB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:00:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C6C83B8872
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:59:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B556B178D3E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C3F82222CA;
-	Fri,  7 Mar 2025 15:58:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBCC21D3F7;
-	Fri,  7 Mar 2025 15:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A949C221710;
+	Fri,  7 Mar 2025 15:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lfm1QjW0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 042FF194C78;
+	Fri,  7 Mar 2025 15:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741363081; cv=none; b=Vv7hfRi5UPdbFvMSuZSGgV+JFC8XHFQv6KQCTDkauVMOJbpev3/LL3w2yH2tEU59WfLX+R4xj12cftfvZr1HHKDcy3I9FJH75JqnExUM/iFY9uqqbS0JgnTkGz2Oic8veaKAmlqsyttcS+SO5ofTgkG5MCauvszaGjUDniU69OE=
+	t=1741363098; cv=none; b=FNXYCoPO92ahn4XSZetM8LTxH6zGTWHAXJS5DXh+2mVKPThHPOfwH7izspHl4VR2ym6oTeVko68cqUjTW2FmYba2es95Vl50BvnE0Dga8OUkUuBR5GTYSKsq8O3PnY2GUhT7R3WZMrXy2tYo2YYNWi+Td+lYtfdpSmjw/40vsJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741363081; c=relaxed/simple;
-	bh=fRDrJH1m2u038pPBi26MkMxgn5EvMPa4VcxYn0IQTwM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NG0teYhlSWMQ15VrvjwoTh+SdnosXnou5A+kabMhhcM8RDuP7kmKTOVRUb5KWL1M14Ghl8HeUYgqtJ8H87jfWZV/svYFZ0i9k/hnLELOrodhzefcKu12eItkC0W21NYwhJJjaLlgOQAgj2CIOL3/fBqzQbecue9xZKP/+IUx4hw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EFE701477;
-	Fri,  7 Mar 2025 07:58:05 -0800 (PST)
-Received: from [10.57.84.99] (unknown [10.57.84.99])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 496F83F673;
-	Fri,  7 Mar 2025 07:57:52 -0800 (PST)
-Message-ID: <ef069b96-aeec-4974-bbb4-59bc11a6d158@arm.com>
-Date: Fri, 7 Mar 2025 15:57:50 +0000
+	s=arc-20240116; t=1741363098; c=relaxed/simple;
+	bh=DbOJCP64/Zf1wfRed5mRMA7gHSuE9mWdYEEM8LkNjNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tTlTVxN3k+32FwNqaQZIoXKrUnYlLiR+7JHTnJ0EX3FQnP97qqd5eMNAzCkt4B1dC20nwr7eUkGumlb4x2iKT/2/+fadvlt2yeo2kgFe/R7C96KHzTh41La/rHA1UaE1MRitCUt9MXoUCYKZZaPSvgSGfB3EpXusLUUm3TAWTSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lfm1QjW0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F5BDC4CED1;
+	Fri,  7 Mar 2025 15:58:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741363097;
+	bh=DbOJCP64/Zf1wfRed5mRMA7gHSuE9mWdYEEM8LkNjNc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lfm1QjW0+Yj40viKDxMa/eaI1kIybtAHMSB9BuuhaavCDsQS+lTcgvkY6LsfGIaM8
+	 ycoYHNpzCe4tQgpyS93zEEpX2Ujp4Xc9G/udOdZmUMhBcqGYTdWuQ70Q33xRghPYIt
+	 oB6U/ZoAW3oRVKmCSsey8mMo9Jy0ZEBBt560tzIIqLoQaQ4wPBQ8hSOKxp/FovR89E
+	 1TAdPTWiB8WL5uXYfeO8EU26V5IdurFTlb/TQb5Cx7VcAMN/wAxD8xDeWowH4kUsIE
+	 fa119vcwUufZu7wvBPeShILRoz29j2dhEDA+HId+rG/RzP1/wKVrgwYcq+Lzb4mHOd
+	 Tzvje4zwr6hmw==
+Date: Fri, 7 Mar 2025 15:58:12 +0000
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	"open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dt-bindings: pwm: imx: Add i.MX93, i.MX94 and i.MX95
+ support
+Message-ID: <20250307-scion-comprised-03e8ea95abed@spud>
+References: <20250306170845.240555-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm/madvise: Always set ptes via arch helpers
-Content-Language: en-GB
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- David Hildenbrand <david@redhat.com>
-References: <20250307123307.262298-1-ryan.roberts@arm.com>
- <dbdeb4d7-f7b9-4b10-ada3-c2d37e915f6d@lucifer.local>
- <03997253-0717-4ecb-8ac8-4a7ba49481a3@arm.com>
- <3653c47f-f21a-493e-bcc4-956b99b6c501@lucifer.local>
- <2308a4d0-273e-4cf8-9c9f-3008c42b6d18@arm.com>
- <d9cd67d7-f322-4131-a080-f7db9bf0f1fc@lucifer.local>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <d9cd67d7-f322-4131-a080-f7db9bf0f1fc@lucifer.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="lEFFTIemAybPsts5"
+Content-Disposition: inline
+In-Reply-To: <20250306170845.240555-1-Frank.Li@nxp.com>
 
-On 07/03/2025 14:55, Lorenzo Stoakes wrote:
-> I'm not necessarily against just making this consitent, but I like this
-> property of us controlling what happens instead of just giving a pointer
-> into the page table - the principle of exposing the least possible.
 
-Given the function is called walk_page_range(), I do wonder how much
-insulation/abstraction from the page tables is actually required.
+--lEFFTIemAybPsts5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-But I think in general we are on the same page. Feel free to put looking at this
-quite a long way down your todo list, it's certainly not getting in anyone's way
-right now. But given it tripped me up, it will probably trip more people up
-eventually.
+On Thu, Mar 06, 2025 at 12:08:45PM -0500, Frank Li wrote:
+> Add compatible string "fsl,imx93-pwm", "fsl,imx94-pwm" and "fsl,imx95-pwm=
+",
+> which is backward compatible with i.MX7ULP. Set it to fall back to
+> "fsl,imx7ulp-pwm".
 
-Thanks,
-Ryan
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../devicetree/bindings/pwm/imx-tpm-pwm.yaml          | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml b/Doc=
+umentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml
+> index ac0a35bf8648c..d5a9340ff9209 100644
+> --- a/Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml
+> +++ b/Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml
+> @@ -23,8 +23,15 @@ properties:
+>      const: 3
+> =20
+>    compatible:
+> -    enum:
+> -      - fsl,imx7ulp-pwm
+> +    oneOf:
+> +      - enum:
+> +          - fsl,imx7ulp-pwm
+> +      - items:
+> +          - enum:
+> +              - fsl,imx93-pwm
+> +              - fsl,imx94-pwm
+> +              - fsl,imx95-pwm
+> +          - const: fsl,imx7ulp-pwm
+> =20
+>    reg:
+>      maxItems: 1
+> --=20
+> 2.34.1
+>=20
+
+--lEFFTIemAybPsts5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8sXlAAKCRB4tDGHoIJi
+0vOkAQDWqdqeelxxD0R357bSU/Q1uJv1tmCMs6Lf/ewtxmAb2AD9HplVxYRL9SjA
+/DlA2PnHJvXCFTiqK98yaz/Qb8OR3wo=
+=lBWI
+-----END PGP SIGNATURE-----
+
+--lEFFTIemAybPsts5--
 
