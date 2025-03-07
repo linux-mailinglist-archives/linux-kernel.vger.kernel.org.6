@@ -1,110 +1,139 @@
-Return-Path: <linux-kernel+bounces-550659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B683DA5628A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:26:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15124A5628C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:28:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5E86176C48
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:26:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74C2218951E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB221C6FF0;
-	Fri,  7 Mar 2025 08:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MUy9Ewf3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504FF1B86EF;
+	Fri,  7 Mar 2025 08:28:25 +0000 (UTC)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA8D1A5B86;
-	Fri,  7 Mar 2025 08:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28FA186607
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 08:28:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741336011; cv=none; b=VmsIhHSuEKT72J2mPRaIDzD9mBuP45jwQZE33K3de8KEl33JpeqYyxXJUXdL6mQpztSj5YLnelfrEGy9hBJnuTLYkR3yYQ/jG9QHk8TmXuJPhxdPK3ZCGRkGni/f8m/GXQztQDju/O6Frp93bGg3Nbp7vWDIm5/udm8sM3ze7c4=
+	t=1741336104; cv=none; b=AqkwzhoaHMjvT7p3mSxuUt8q9Et0iVREBB3ttX4YEpVXhe4n1/qji0R2DwcR5GB8JroDt7YPVUuolVfyfRHivqNdCnky34/vhZ+cVCmnqkRwTMZI3vtzZSD1nzreaxqW8zQkATOqb7tWN31DaxxFXPrn2nPi36Ngxo/LTiZi4ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741336011; c=relaxed/simple;
-	bh=4g4KFVEllHF9Fzyk30OF0hRqc9JoCbYtjKmWSqDx7uI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rGQYf9xhm7QHkMBsENKsZN7UTVM7knXjnJ5Ngr+Q0S3mkzWK5cv6pOIKDfuKzw+AQoKvhonIHu0BTatiOOXKCTuvN4fabxCw7T84iPGNfQPY1uuk64RT46Fv9rSDHPOqBkd3rd6klWkuesGsP8Jk0yYZPOm/P/+r1B2ziySV+Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MUy9Ewf3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78902C4CED1;
-	Fri,  7 Mar 2025 08:26:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741336010;
-	bh=4g4KFVEllHF9Fzyk30OF0hRqc9JoCbYtjKmWSqDx7uI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MUy9Ewf3tVuuvEuoi4JjxRnHfFDBBZ8agqsMeht/L3IHHDfmSNPi0UcsbLnezXZxm
-	 gICDgiLTQMxGAwN2+xp1MhFsfCf5CnUY6LOjVJEHwxiKwbN8zbNrNTLCLSqt61c2wD
-	 PF9YNGMMQ4DILHADeaTzVndOBQuO82CVSjjF4UJf6U6fmYzN53Hki4xhfMIbEKFs/X
-	 BPR8yGXVrX6vXPSeSeDKo7eVscXnAgDTJ7d3DvqQlBkPSoU3bE1MsU9vh9ba0gMUqF
-	 CWkvb8SPDaPFJb4sHYjPfNqslI17euLFM9qRWgBokn7/9AlaM0N6Aw8LQRhw806TZs
-	 KrlUrV+tyxZmQ==
-Date: Fri, 7 Mar 2025 09:26:46 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Haylen Chu <heylenay@4d2.org>
-Cc: Yixun Lan <dlan@gentoo.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Haylen Chu <heylenay@outlook.com>, linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, spacemit@lists.linux.dev, 
-	Inochi Amaoto <inochiama@outlook.com>, Chen Wang <unicornxdotw@foxmail.com>, 
-	Jisheng Zhang <jszhang@kernel.org>, Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
-Subject: Re: [PATCH v5 3/5] clk: spacemit: Add clock support for Spacemit K1
- SoC
-Message-ID: <20250307-impossible-fine-panther-38c66b@krzk-bin>
-References: <20250306175750.22480-2-heylenay@4d2.org>
- <20250306175750.22480-5-heylenay@4d2.org>
- <20250307005149-GYA66361@gentoo>
- <Z8qVOssDHaVDQmLY@ketchup>
+	s=arc-20240116; t=1741336104; c=relaxed/simple;
+	bh=RLW5W7vE6eKHVXzzEER3TJZBcheFUauQWYUYHYGJdj0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ahmw9ZySbnf3HgpO2gdSx6Lj0kg8FNmYZfMmmjS0uU2KHurgj9lpjO4NDiQJSqCtirO226qe8+KW2Mup+OGaZcT7nfEX4nl8u+oFfHBR5SZNvpJ7d3K7X/BGVQJfFmow5gY1lousun6spuZnGbkFfSX3LSzP4OhkxVdT+Gi7a1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-51eb1a6ca1bso671983e0c.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 00:28:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741336101; x=1741940901;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xum+DVk/hz2H5siGnkfuO3VHERgZhJbJ0D0R2U7DBis=;
+        b=Yf/8NEAHkZ2dya1RRuV3gyjQG1sHvBWMyHvT6vJpOyaCXQ+B89LNn0rGdP9WzHaow4
+         /S2ESgUi63rXgU23X4cKho+/yhQMLslYNTd4lPzp/i4ZjJXuf6OY9K278dkaUC2xschK
+         kfeV8PDdRT9AvrjWZ1zgcV57yfjIcMGbxyck/BG0f7yx9vZ4AElTzlRJx+NKNUNStaiH
+         sKJk90F4nSAgWrSWvulvIrwXhfciXSH5bQsr4V8/DolKHE1IGpxAedmWL4oioaFottia
+         8ZiVHKtt8pJ44FoXPZJVLArGk69lkyTNrJ3JCddW/fVYJCPHQXAj7SZ/+MozCLD39cNs
+         OtPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXaaw//v/phUpuHsckicVioyawUKORNUqmcby2A9gw1+GsdNg8mekAJSBApbTPlb9Omc9tjBmCVf77XW7Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjGRyn/UMyouL5tiq+YcLbVMoMoTiRFU4UZns9JmnpeGZe35y0
+	laVNhnfzImkRez7GyhWulaKZdzdhqvRluTd7mIUdr5uzoXhRhqTtWkMSlaoR05E=
+X-Gm-Gg: ASbGncu2SCGiEpDQ/jHNx8KjeKRhnyq4J2oNZ66t88hgEGrb2XpJ/FPoNmdUZZsZabZ
+	vIy2VZicnP3MIHPvej4YitRfdDlI0qJ/vmE+IUvoeuza1XU7cuRKREQecRRXtUdUAh3rTaoQU3Y
+	cfKz+QocYgta+XvBy6H/Zj3nfVDyAEhRABh+RiagTBXIiVTQjtXdj9R4/PD4x0pISH/m5mYv6AN
+	Qw7Ni4jVYSjzUD1i10qsFBFvXXGz8t3Iv7lIw29P45gyJtL6B6Jj8K8UJm+xL9iK2RXX6HiNB3p
+	WKvmduzIEors10VtllqJjqwjieQ8IANZPPXYQrKtLrQh8Zee+CtEjYwk7uqVG6jp+9dMJ7FNKgf
+	1/Lyw7iY=
+X-Google-Smtp-Source: AGHT+IFoZ3sqq81yMs1WB95I9u+6kobMfzkR8Zo9AkCZ6l6IlH/u8NxFumWIH7ei2xgF18q8zbPBPg==
+X-Received: by 2002:a05:6122:65a8:b0:520:6416:56f8 with SMTP id 71dfb90a1353d-523e40245e9mr2230174e0c.3.1741336101302;
+        Fri, 07 Mar 2025 00:28:21 -0800 (PST)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523d8cbad9csm445410e0c.43.2025.03.07.00.28.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Mar 2025 00:28:21 -0800 (PST)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-86714f41f5bso667181241.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 00:28:21 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV0AJNbrA4b8BBt0Fbeg7T80ncitcymfB2Jjon6UcpBpTGre6G9Yj9Giu91vwxxrLr0jv560ZWgUlz/+yE=@vger.kernel.org
+X-Received: by 2002:a05:6102:38cf:b0:4bc:82f:b4e0 with SMTP id
+ ada2fe7eead31-4c30a6d240emr1447532137.22.1741336100864; Fri, 07 Mar 2025
+ 00:28:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Z8qVOssDHaVDQmLY@ketchup>
+References: <20250302230532.245884-2-thorsten.blum@linux.dev>
+ <CAMuHMdUonC54g-XSt-EkNbEGxhkOWMxBc87Qtw0MyeXoPqDD4A@mail.gmail.com> <e5e10808-5cca-243b-304f-4aa8db1d30b6@linux-m68k.org>
+In-Reply-To: <e5e10808-5cca-243b-304f-4aa8db1d30b6@linux-m68k.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 7 Mar 2025 09:28:09 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWjOkUXy+jf0yghs2_SQM3UWY3e8or3T11=fXYYD-VJEw@mail.gmail.com>
+X-Gm-Features: AQ5f1Jr2qcPxvP5d5iuyyv-KmQbBRQb47zOza6WWuoy8m5L3ptAnJ84hV5gOB4E
+Message-ID: <CAMuHMdWjOkUXy+jf0yghs2_SQM3UWY3e8or3T11=fXYYD-VJEw@mail.gmail.com>
+Subject: Re: [PATCH] m68k: mm: Remove size argument when calling strscpy()
+To: Finn Thain <fthain@linux-m68k.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>, 
+	Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>, linux-m68k@lists.linux-m68k.org, 
+	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Mar 07, 2025 at 06:42:02AM +0000, Haylen Chu wrote:
-> > > +static int k1_ccu_probe(struct platform_device *pdev)
-> > > +{
-> > > +	struct regmap *base_regmap, *lock_regmap = NULL;
-> > > +	struct device *dev = &pdev->dev;
-> > > +	int ret;
-> > > +
-> > > +	base_regmap = device_node_to_regmap(dev->of_node);
-> > > +	if (IS_ERR(base_regmap))
-> > > +		return dev_err_probe(dev, PTR_ERR(base_regmap),
-> > > +				     "failed to get regmap\n");
-> > > +
-> > > +	if (of_device_is_compatible(dev->of_node, "spacemit,k1-pll")) {
-> > ..
-> > > +		struct device_node *mpmu = of_parse_phandle(dev->of_node,
-> > > +							    "spacemit,mpmu", 0);
-> > > +		if (!mpmu)
-> > > +			return dev_err_probe(dev, -ENODEV,
-> > > +					     "Cannot parse MPMU region\n");
-> > > +
-> > > +		lock_regmap = device_node_to_regmap(mpmu);
-> > > +		of_node_put(mpmu);
-> > > +
-> > you can simplify above with syscon_regmap_lookup_by_phandle(), which
-> > would save a few lines
-> > 
-> > or further, just call syscon_regmap_lookup_by_compatible()? then
-> > won't be necessary to introduce the "spacemit,mpmu" property..
-> > 
-> 
-> These syscon_* functions differ a little from device_node_to_regmap():
-> they get and enable the first item in "clocks" property when
-> instantiating a regmap, which isn't desired for a clock controller.
+Hi Finn,
 
-Yes. And mpmu is not a syscon, so it would be inaccurate or even wrong
-API to use.
+CC Kees
 
-Best regards,
-Krzysztof
+On Fri, 7 Mar 2025 at 00:24, Finn Thain <fthain@linux-m68k.org> wrote:
+> On Thu, 6 Mar 2025, Geert Uytterhoeven wrote:
+> > On Mon, 3 Mar 2025 at 00:07, Thorsten Blum <thorsten.blum@linux.dev> wrote:
+> > > The size parameter of strscpy() is optional and specifying the size of
+> > > the destination buffer is unnecessary. Remove it to simplify the code.
+> > >
+> > > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> >
+> > Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> > i.e. will queue in the m68k tree for v6.15.
+>
+> The commit message says "simplify the code" which is only true if you
+> never scratch the surface (i.e. it's simple code if the reader is simple
+> too...)
 
+The code is simpler in the sense that the API is simpler to use,
+and harder to abuse (i.e. to get it wrong).
+
+> Commit 30035e45753b ("string: provide strscpy()") was a good idea. It was
+> easily auditable. But that's not what we have now.
+>
+> Patches like this one (which appear across the whole tree) need reviewers
+> (lots of them) that know what kind of a bounds check you end up with when
+> you ask an arbitary compiler to evaluate this:
+>
+> sizeof(dst) + __must_be_array(dst) + __must_be_cstr(dst) + __must_be_cstr(src)
+>
+> Frankly, I can't be sure. But it's a serious question, and not what I'd
+> call a "simple" one.
+
+All the __must_be_*() macros evaluate to zero when true, and cause a
+build failure when false.
+
+BTW, Linux does not support being built by an "arbitrary compiler":
+only gcc and clang are supported.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
