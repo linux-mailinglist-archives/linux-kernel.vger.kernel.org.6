@@ -1,145 +1,105 @@
-Return-Path: <linux-kernel+bounces-550489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EEB3A56036
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:45:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F47BA56038
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:48:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87A5C16E551
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:45:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AA3F1896498
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:48:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30D031922DC;
-	Fri,  7 Mar 2025 05:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 791E3192B9D;
+	Fri,  7 Mar 2025 05:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="uOjyGJgk"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="fV3dDslj"
+Received: from out30-132.freemail.mail.aliyun.com (out30-132.freemail.mail.aliyun.com [115.124.30.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F97D4A21
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 05:45:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0B54A21;
+	Fri,  7 Mar 2025 05:47:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741326327; cv=none; b=pQ40XKSU3KW6/mMRgRPH5pNSgtJygXTP3PelvTIPkwhJPf4W0/UDzYAGcSfiNrjj86PsCkyXgq+n957lqJd67XALPqJbra4UIFmRJN0CG9jVX1GicmS/KhOgzN4V5ADSxC3YrO2Pn1ck+VyAWU075KMJgzsa26ZEWEhOcBfnodw=
+	t=1741326472; cv=none; b=JAxPbmxo8L/4OHYBNb5uQDxPWjbf3kq/XGx8i7O1dACJRehSBSMs4EAy2+oAUMdsG56KaPA+GsaiRFPeiNr8Z1zElMlh0xmJI79BUlawpqkDEytzT8C7pBI04kMhe+1KCOUE9UIf4L0FREhelLaqYvZzPD5Cv0zirVuL/+k3Od0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741326327; c=relaxed/simple;
-	bh=FrPFJOi5cvGEKY4s2nV7EyjhGWXJ99ekvAiQeCBRjvc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DWrpITfRgQPEk0auyglF+v1SaWY7882Xy40kquWc9gpZedfO5TsnshgaH4rkO8AueQQwxJb7dC6rs8li+rIdOmPMSoTdyoKBB0DYeYKmk5Pm/qNVrVEjDFlmYgv49hzO5C8rAIbeoXMK7LnSVfwIHdnQG5u5zndzNGbZDtvnNhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=uOjyGJgk; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 5ae3d56afb1711ef8eb9c36241bbb6fb-20250307
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=sb9MNp7gIFnjf4puevqUWTv9bTnAa3A6ErG94WVlhYc=;
-	b=uOjyGJgkU2vTgU9aaxr5SIKnt1JAPVDefpRFX0lBZOfC2vjiXHbZEhf8GQbooiyelQkLdmi2T16re8ehWYh5P9JA6d/8r4MjD45mbtSPpvkKGJ6C3momeieje3G1kgAQUhoxboF/AbRk2RkJ1K8yhkljQwd+2wWLalNKGtmF4W8=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:c5ee9363-f073-4767-b4fe-46df21ea50a5,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:0ef645f,CLOUDID:244c09c6-16da-468a-87f7-8ca8d6b3b9f7,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 5ae3d56afb1711ef8eb9c36241bbb6fb-20250307
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
-	(envelope-from <xueqi.zhang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1863938294; Fri, 07 Mar 2025 13:45:19 +0800
-Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Fri, 7 Mar 2025 13:45:18 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.28 via Frontend Transport; Fri, 7 Mar 2025 13:45:18 +0800
-From: Xueqi Zhang <xueqi.zhang@mediatek.com>
-To: Yong Wu <yong.wu@mediatek.com>, Krzysztof Kozlowski <krzk@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>
-CC: <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<linux-mediatek@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Xueqi Zhang
-	<xueqi.zhang@mediatek.com>
-Subject: [PATCH] memory: mtk-smi: Add ostd setting for mt8192
-Date: Fri, 7 Mar 2025 13:45:08 +0800
-Message-ID: <20250307054515.23455-1-xueqi.zhang@mediatek.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1741326472; c=relaxed/simple;
+	bh=cSgU8cHvWbc37Lebk+pboqkr3rsJ4iGhMVkicICKTH8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bIK0iipSVxgxCapfybU7NbkJTRykqHnnyvY2Ejq7qiDKZxIF28YNztVD97gNzs0yEiXFIw0hFaKrdjeBJVqeSn7JMBTVFZOpb2TclU/VZN3QMCEuHx+x+UAtrD5ls+g568wm1pcKF6voHBvnAMNsFbfwsBjv1SX7y+FtCun8tWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=fV3dDslj; arc=none smtp.client-ip=115.124.30.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1741326462; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=i8hBVXXenNjxx3BHyz1WHioxLNd57++2diGf/KDJPqY=;
+	b=fV3dDsljtwze2lM5gpPGfuuXq2fZEPi81Zwg8VOSwFAGBkz6H7jo2X3fawTTfP/kG0sNKhIxwYIqnmmRkFUgBzLGrpfNiK8hLI66Rcj1J8fNdhRa3KOnKLUL6YDMQkg1IhoyP+8aFx8oCgpriyUkJeFEqAXWS8BkGAtGeho6d+E=
+Received: from 30.246.161.128(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQqyKli_1741326459 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 07 Mar 2025 13:47:40 +0800
+Message-ID: <e29fa433-99c0-4dce-bade-cbe7b5638bc7@linux.alibaba.com>
+Date: Fri, 7 Mar 2025 13:47:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] x86/mce: Use is_copy_from_user() to determine
+ copy-from-user context
+To: "Luck, Tony" <tony.luck@intel.com>, "bp@alien8.de" <bp@alien8.de>,
+ "peterz@infradead.org" <peterz@infradead.org>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "yazen.ghannam@amd.com" <yazen.ghannam@amd.com>,
+ "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+ "linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+ "nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>
+Cc: "tglx@linutronix.de" <tglx@linutronix.de>,
+ "mingo@redhat.com" <mingo@redhat.com>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "jpoimboe@kernel.org" <jpoimboe@kernel.org>,
+ "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-mm@kvack.org" <linux-mm@kvack.org>,
+ "baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+ "tianruidong@linux.alibaba.com" <tianruidong@linux.alibaba.com>
+References: <20250306021031.5538-1-xueshuai@linux.alibaba.com>
+ <20250306021031.5538-2-xueshuai@linux.alibaba.com>
+ <SJ1PR11MB60837DE67D37F45B0D106C9CFCCA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+In-Reply-To: <SJ1PR11MB60837DE67D37F45B0D106C9CFCCA2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
 
-Add initial ostd setting for mt8192. All the settings come from DE.
-These settings help adjust Multimedia HW's bandwidth limits to achieve
-a balanced bandwidth requirement.
-Without this, the VENC HW work abnormal while stress testing.
 
-Fixes: 02c02ddce427 ("memory: mtk-smi: Add mt8192 support")
-Signed-off-by: Xueqi Zhang <xueqi.zhang@mediatek.com>
----
- drivers/memory/mtk-smi.c | 33 +++++++++++++++++++++++++++++++++
- 1 file changed, 33 insertions(+)
 
-diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-index 5710348f72f6..a8f5467d6b31 100644
---- a/drivers/memory/mtk-smi.c
-+++ b/drivers/memory/mtk-smi.c
-@@ -332,6 +332,38 @@ static const u8 mtk_smi_larb_mt8188_ostd[][SMI_LARB_PORT_NR_MAX] = {
- 	[25] = {0x01},
- };
- 
-+static const u8 mtk_smi_larb_mt8192_ostd[][SMI_LARB_PORT_NR_MAX] = {
-+	[0] = {0x2, 0x2, 0x28, 0xa, 0xc, 0x28,},
-+	[1] = {0x2, 0x2, 0x18, 0x18, 0x18, 0xa, 0xc, 0x28,},
-+	[2] = {0x5, 0x5, 0x5, 0x5, 0x1,},
-+	[3] = {},
-+	[4] = {0x28, 0x19, 0xb, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x4, 0x1,},
-+	[5] = {0x1, 0x1, 0x4, 0x1, 0x1, 0x1, 0x1, 0x16,},
-+	[6] = {},
-+	[7] = {0x1, 0x3, 0x2, 0x1, 0x1, 0x5, 0x2, 0x12, 0x13, 0x4, 0x4, 0x1,
-+	       0x4, 0x2, 0x1,},
-+	[8] = {},
-+	[9] = {0xa, 0x7, 0xf, 0x8, 0x1, 0x8, 0x9, 0x3, 0x3, 0x6, 0x7, 0x4,
-+	       0xa, 0x3, 0x4, 0xe, 0x1, 0x7, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1,
-+	       0x1, 0x1, 0x1, 0x1, 0x1,},
-+	[10] = {},
-+	[11] = {0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1, 0x1,
-+		0x1, 0x1, 0x1, 0xe, 0x1, 0x7, 0x8, 0x7, 0x7, 0x1, 0x6, 0x2,
-+		0xf, 0x8, 0x1, 0x1, 0x1,},
-+	[12] = {},
-+	[13] = {0x2, 0xc, 0xc, 0xe, 0x6, 0x6, 0x6, 0x6, 0x6, 0x12, 0x6, 0x28,
-+		0x2, 0xc, 0xc, 0x28, 0x12, 0x6,},
-+	[14] = {},
-+	[15] = {0x28, 0x14, 0x2, 0xc, 0x18, 0x4, 0x28, 0x14, 0x4, 0x4, 0x4, 0x2,
-+		0x4, 0x2, 0x8, 0x4, 0x4,},
-+	[16] = {0x28, 0x14, 0x2, 0xc, 0x18, 0x4, 0x28, 0x14, 0x4, 0x4, 0x4, 0x2,
-+		0x4, 0x2, 0x8, 0x4, 0x4,},
-+	[17] = {0x28, 0x14, 0x2, 0xc, 0x18, 0x4, 0x28, 0x14, 0x4, 0x4, 0x4, 0x2,
-+		0x4, 0x2, 0x8, 0x4, 0x4,},
-+	[18] = {0x2, 0x2, 0x4, 0x2,},
-+	[19] = {0x9, 0x9, 0x5, 0x5, 0x1, 0x1,},
-+};
-+
- static const u8 mtk_smi_larb_mt8195_ostd[][SMI_LARB_PORT_NR_MAX] = {
- 	[0] = {0x0a, 0xc, 0x22, 0x22, 0x01, 0x0a,}, /* larb0 */
- 	[1] = {0x0a, 0xc, 0x22, 0x22, 0x01, 0x0a,}, /* larb1 */
-@@ -427,6 +459,7 @@ static const struct mtk_smi_larb_gen mtk_smi_larb_mt8188 = {
- 
- static const struct mtk_smi_larb_gen mtk_smi_larb_mt8192 = {
- 	.config_port                = mtk_smi_larb_config_port_gen2_general,
-+	.ostd			    = mtk_smi_larb_mt8192_ostd,
- };
- 
- static const struct mtk_smi_larb_gen mtk_smi_larb_mt8195 = {
--- 
-2.46.0
+在 2025/3/7 02:15, Luck, Tony 写道:
+>> diff --git a/arch/x86/kernel/cpu/mce/severity.c b/arch/x86/kernel/cpu/mce/severity.c
+>> index dac4d64dfb2a..cb021058165f 100644
+>> --- a/arch/x86/kernel/cpu/mce/severity.c
+>> +++ b/arch/x86/kernel/cpu/mce/severity.c
+>> @@ -300,13 +300,12 @@ static noinstr int error_context(struct mce *m, struct pt_regs *regs)
+>>        copy_user  = is_copy_from_user(regs);
+>>        instrumentation_end();
+>>
+>> -     switch (fixup_type) {
+>> -     case EX_TYPE_UACCESS:
+>> -             if (!copy_user)
+>> -                     return IN_KERNEL;
+>> -             m->kflags |= MCE_IN_KERNEL_COPYIN;
+>> -             fallthrough;
+>> +     if (copy_user) {
+>> +             m->kflags |= MCE_IN_KERNEL_COPYIN | MCE_IN_KERNEL_COPYIN;
+> 
+> You have " MCE_IN_KERNEL_COPYIN" twice here.
 
+Sorry for this noise, please ignore this version,
+I resend a new ready version, please see:
+https://lore.kernel.org/linux-mm/20250307054404.73877-1-xueshuai@linux.alibaba.com/
+
+Thanks
+Shuai
 
