@@ -1,196 +1,211 @@
-Return-Path: <linux-kernel+bounces-551294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C24C1A56ABA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:45:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A07A56ABF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:46:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDD8C16EB01
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:45:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61FD0188EFA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:46:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECD421C185;
-	Fri,  7 Mar 2025 14:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E8119D8A8;
+	Fri,  7 Mar 2025 14:46:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n/llTaxo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lN9zY8ox";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="n/llTaxo";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="lN9zY8ox"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="dcFIt+Ix"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2059.outbound.protection.outlook.com [40.107.244.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7480521B1BC
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741358698; cv=none; b=tM1QvTXCtfNnHXDHCtR6XZI9693kSPPoalzRD2uUpkpCjaHiTi+iNotMVm6r8b3yILExNaTx4qPcjVQbuAfdHXG21hVOs64yn9e5g0SVBwV2w91rixdzZgJwqk+SnrI6/dv1FdeI7fE7KicqYCSW76v8Q+QTdFhGnssTQwyp02g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741358698; c=relaxed/simple;
-	bh=K7t9dY+nh12KijOjgnCLrP+GspnzQ29wp6brHMN7oPI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WWe56fL+pyV5+svF+ZAahUO0BXmnIQvBW9IgI9icIcOiz7h9OgI6Ad/IxCGx20bzHSxfG63CaE1ponH6pDqG2uHmpFzUQY0YIleEW2sLX9x0J7TpUMr5gPEwh/nllWH5sQF+X3DWDB8lKPn60K86sS5t5wI6eH9nNQ5OLkpoMbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n/llTaxo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lN9zY8ox; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=n/llTaxo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=lN9zY8ox; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 97CE721186;
-	Fri,  7 Mar 2025 14:44:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741358694; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C2uC1jpoTkgilVEYFEfAMTD+YDfOcoaz54txYRkx9kI=;
-	b=n/llTaxoR8gCjsFQ/rb5vtcXGfGRuqZ+c28qK24hOdnLNJZGLcxkJNIUOBOLf+2oepvlO8
-	nuc1AxWdxgetACUOeWoCAum4J5El+7sCgfh/TBvam03e8W4YzstMw48/LQOSesl9NE8oq6
-	+Iryl3nomYFmfnTEnin1kMxnza/JILk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741358694;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C2uC1jpoTkgilVEYFEfAMTD+YDfOcoaz54txYRkx9kI=;
-	b=lN9zY8oxmsOAbsS6hblOyaWa5FXCbZTQ3E1MCxhd7h8GDAgESvcx63uBrbak2AQ9NS2OxB
-	yjEV/9tjgC6bIYBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741358694; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C2uC1jpoTkgilVEYFEfAMTD+YDfOcoaz54txYRkx9kI=;
-	b=n/llTaxoR8gCjsFQ/rb5vtcXGfGRuqZ+c28qK24hOdnLNJZGLcxkJNIUOBOLf+2oepvlO8
-	nuc1AxWdxgetACUOeWoCAum4J5El+7sCgfh/TBvam03e8W4YzstMw48/LQOSesl9NE8oq6
-	+Iryl3nomYFmfnTEnin1kMxnza/JILk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741358694;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=C2uC1jpoTkgilVEYFEfAMTD+YDfOcoaz54txYRkx9kI=;
-	b=lN9zY8oxmsOAbsS6hblOyaWa5FXCbZTQ3E1MCxhd7h8GDAgESvcx63uBrbak2AQ9NS2OxB
-	yjEV/9tjgC6bIYBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8F53813939;
-	Fri,  7 Mar 2025 14:44:54 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ffT7ImYGy2dhMQAAD6G6ig
-	(envelope-from <jack@suse.cz>); Fri, 07 Mar 2025 14:44:54 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 64752A087F; Fri,  7 Mar 2025 15:44:50 +0100 (CET)
-Date: Fri, 7 Mar 2025 15:44:50 +0100
-From: Jan Kara <jack@suse.cz>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH 1/7] fs: export invalidate_inodes()
-Message-ID: <nfdw5bpwvgl2beynlpp7zwjiy3kglk3s5zbouygotvuy3x2uoo@lkhzxvky2ii4>
-References: <20250307134933.1033872-1-kent.overstreet@linux.dev>
- <20250307134933.1033872-2-kent.overstreet@linux.dev>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4678BE5;
+	Fri,  7 Mar 2025 14:46:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741358797; cv=fail; b=X7yR175Td+LHJrh95R4SXbISM/9SB4MolVzsL5DFMOVyQKdAJ8olpQwD/R8jLZ42EOy34G76LWjtJ2C7ISsvB/fFlCrVFNeYT1rCfSPyGXUfCrkuhInxtd4b8Vba16hzOLFIqKXflzgeS6aiIKplsYB4zdaehtVw1l3sJJhSe7o=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741358797; c=relaxed/simple;
+	bh=W9Xl9YADgUwYPTqyln+iLhlwaBS1OZ9jG/hpHCd+wC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=chBC3NodIJGiwf9lGvGQJYd+puV/lNEUsygChkz3rX5EV/N+ka5cziJe9sqofleT4dgmuPlOdQrhqbuuV5+o4I7MsfxgdeyMmPrgv7ycCVTe0Usiz7uTW7n8zAgGm7LuiQ/gZQsqNvWnwCf5XOKDRXdV8PMgiRaJmt8bQ/nWNTg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=dcFIt+Ix; arc=fail smtp.client-ip=40.107.244.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=M2t+YmiWJZ7hIoDFKNs1BolPpS6T6BvXiSHUqTw9tsCvXrpms4G6IVqq3LdBoxMdOCvq3uiIqhDdjx+J+nX+1Ag2t+fYHOvwzI9LTljI6Ia4xpluEdksFTSa3IABR61poP5FX3m/u/5i6vdvqSbjyk/l9Nv6FYOUWIE+bgr0JJoou8lDI6dHP/4CHMIHH2k3r+keoPlOCG7mAcX65xlZriqy8G+yQuvybg4xokY1oEI7I94jZ8qIMVbVIzUeTohbDLlnVMb2Yzl6IuA1+VufTTkpUYWvaBX4xnaDp2/BPZxUs9koEXp1ocFAJSUUURHUsVwG1eMJbFOwitynXkhlmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tQENKdsut2bHSOrlytb0frE4DyA3JlJFlvtCt1CIGok=;
+ b=AhnXQQ1PbecX3ChunIV58kBeXYUa7mPNv822DGl6ZbKQW5lrfWAZc+2P1N8J4uaopQg/qhy6wOByr0TUoKWkpAIxJo4/VO1G9O9tpHGG1+8VK+MBbtZdVZyagKRKFj+3CaaXmRn7NiQm+00b4XlkIsP75FJv8hl7VnqJQGJE5/7IlhPsl7J/tyvYikxQXpBVUrmEu+dmwb4qAy5Qilo7PAOo4n6C0VPcHDAewDQO34iBZQwnplpER53gSB1afWYXvv1GONaW9XKw3hIfUY2y42YnJwB15guenfmNLiKXYsDPVE+br6bib/c0z0AARvBUiO3NgmNdstPZ2V+ouDI6GA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tQENKdsut2bHSOrlytb0frE4DyA3JlJFlvtCt1CIGok=;
+ b=dcFIt+IxXcu+ZIsq2qBGmUTZC178P5VVn5pNaqCFzYeAxREmxxZ0BTKdz4DPgadRwAlbn89d68xv0fQVmLEVBxnYEr8xReArzehKeLhIvQswsOBvOwslgZ3lwZFqNzCy0oMcviE1YzlwwFPjLGeVZFbLGsdw8jC1W1EJBdoa10SjfgbDRWjIyiHAls8pQj/wwKm2aYBAcEWHuiBJIBhts/uSlNJiRJ39UsyAnSiVF/yOTwGAnMAPucasNkMFj8yrPZd+xap0RM9ivxRv/U3PR95jj1csj7OzinLad9pfGg182emmCNy0UTJ5mA3EpPFd2mGWDN1rVBTtjBeFA72pYg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from MW6PR12MB8663.namprd12.prod.outlook.com (2603:10b6:303:240::9)
+ by DS0PR12MB8501.namprd12.prod.outlook.com (2603:10b6:8:15d::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.22; Fri, 7 Mar
+ 2025 14:46:31 +0000
+Received: from MW6PR12MB8663.namprd12.prod.outlook.com
+ ([fe80::594:5be3:34d:77f]) by MW6PR12MB8663.namprd12.prod.outlook.com
+ ([fe80::594:5be3:34d:77f%2]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
+ 14:46:30 +0000
+Date: Fri, 7 Mar 2025 10:46:29 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: John Hubbard <jhubbard@nvidia.com>, Danilo Krummrich <dakr@kernel.org>,
+	Joel Fernandes <joelagnelf@nvidia.com>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Boqun Feng <boqun.feng@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	paulmck@kernel.org
+Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
+ implementation
+Message-ID: <20250307144629.GN354511@nvidia.com>
+References: <20250228184013.GF39591@nvidia.com>
+ <Z8cmBWB8rl97-zSG@phenom.ffwll.local>
+ <20250304164201.GN133783@nvidia.com>
+ <Z8f9mgD4LUJN_dWw@phenom.ffwll.local>
+ <20250305151012.GW133783@nvidia.com>
+ <Z8l8HgZOV7sDWqBh@phenom.ffwll.local>
+ <20250306153236.GE354511@nvidia.com>
+ <Z8rKVZolu8n6lB1P@phenom.ffwll.local>
+ <20250307123255.GK354511@nvidia.com>
+ <2025030753-celtic-quarry-1799@gregkh>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2025030753-celtic-quarry-1799@gregkh>
+X-ClientProxiedBy: MN2PR17CA0036.namprd17.prod.outlook.com
+ (2603:10b6:208:15e::49) To MW6PR12MB8663.namprd12.prod.outlook.com
+ (2603:10b6:303:240::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307134933.1033872-2-kent.overstreet@linux.dev>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -3.80
-X-Spam-Flag: NO
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW6PR12MB8663:EE_|DS0PR12MB8501:EE_
+X-MS-Office365-Filtering-Correlation-Id: e1148b3e-acd6-4bb8-fe45-08dd5d86d8f6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?sBboMNELjfEg2hkDwQKCf0xK+6djszXE+ERqtpPEQ0r0B/J+3Q3eU4tCPxje?=
+ =?us-ascii?Q?XUMMZM4FPb2VoDB78oTbNaIkEDMuAPAnW5mEttRMHs4THGNwvCojY+QfBxiy?=
+ =?us-ascii?Q?C8HrlZtLiXpZSCL7MAKUkFMh3n8IlZsvCnekhug76NcGdHUPSyQkn9pok1tP?=
+ =?us-ascii?Q?C79K8gJ+QNgteEsaGP7nfDPGM7STAWy8d6vJL442ukoQYgJNMxvq2LXyamxm?=
+ =?us-ascii?Q?6gXKk123We2dMJRu1DEH74ALhETK2gW7p1uUhh0vdGjaVwkfMB9Yj6AeaNbj?=
+ =?us-ascii?Q?a3nYQ+zL2iducwQJcNcZSQfcJzexnRY/coyJx4qKNXcoQnuyDNm22y+l3LVW?=
+ =?us-ascii?Q?kyqk+XfcxVhPCFko6S23WgZvXk4YfjvEvWm/uTem12fKXh/ADcEQXmsNI4Q+?=
+ =?us-ascii?Q?9Fh2WrMEEn1vRi6iSBWyibIfmSyUfaqWyyWnlr9VNJsQ+4+Cz0V0cQDJaLfs?=
+ =?us-ascii?Q?YoHrS1365SUGBcKqd+b9IHh/oW8rIedWlYN44sHcJnHsa5F637DFzxMHTnQw?=
+ =?us-ascii?Q?XfhUtYBcx0RhvhEbrvXzM+5RsYbqEiHc5zp/gcJjOrqSBoagBV6ZUw5oVVgy?=
+ =?us-ascii?Q?Mq8nGo+3kXGZOs1BwmM+dsHlpOvBB+b7jYHTg2JqwhkzXNnnYERgqzNU3oUR?=
+ =?us-ascii?Q?zC0Jb9vtg0c1hQc1L482IycyywDSZ5cjGil34AQsdVR62Y+M2WqpOPPGvdVC?=
+ =?us-ascii?Q?C0Rnj0pskdcgdnrINi1M5WVIupZTuKBi79s2T7o/MlXXOjw95RXGRM2flGmp?=
+ =?us-ascii?Q?Z/WUoLMVO/ndrwyh9D+3SNZ3MXTNE3N+s6RPRfdsl397knrhfFuWqGhcuOE3?=
+ =?us-ascii?Q?kPpHxM3OWZqWt9z8P1t0f3OAVPwBCs6iKhnZJYSmBOohKN711aYOzWF+zFUd?=
+ =?us-ascii?Q?sX8G2yCjbibb70n+44Hq29OIwxW5PuvD5e9mQQSxb9mk3U5QsPYvWpYJNilX?=
+ =?us-ascii?Q?a+K+elsW+YigmQDC3U4YVHikP1Iw0IUtaDZKtpFZ/HnoHksRuj7zrGD41zKa?=
+ =?us-ascii?Q?oRI67W51AmGAoYdqYCY31fMZH234BXg/kHA1Rr18BLdz9NY9YtjNGV3zxvrF?=
+ =?us-ascii?Q?IgnNzhrqTmmzjvsDWN4aDPEhezYnhTIZLtb37jodsKK4BGGaY8HBn5lBmksr?=
+ =?us-ascii?Q?WrpGNvIDuLEY4Q7k23FFEuaAUZ42se74ZkfiSPMgPaOtMKKjkFLcxSCBM0XU?=
+ =?us-ascii?Q?k9+EeqjxaatFSe8MbQ1Y/cQW/75nqaT5Ltbg7AYoEta4hPl8takvex0mg2Fu?=
+ =?us-ascii?Q?+r6WxPqpM3bR3r0+4/Anm+67c32TSy2YUBl8ozBKH3UsOq7jGEOmdeV6KYX5?=
+ =?us-ascii?Q?To/RdxesMiihvBOygyqL8P61KCudSQEaM+r/Vfkd3HYTZluZP2EcSV27AN7Z?=
+ =?us-ascii?Q?qSg00qnWYX/2gRwyevxw8LEjQiPf?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB8663.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?d11at41mOhwyrbEhY6WtH2WEvESFAhDJWB3MV/hGXD/CocsjQVJXrgWYaG+n?=
+ =?us-ascii?Q?vkwSibA7nkQdhz3Nzqe7ODRP5G+QUIxA8U+YPy2aLU2PNqjmZJmoNInKTUsV?=
+ =?us-ascii?Q?G9aCkeK0ralst7N33mAlM9UkwKwulBqcb3AE6U8S6G+CIqRelf1yRy+xG2y6?=
+ =?us-ascii?Q?HJt2NWW8fpbn1LosQ7vxb8L5qU8mWE6qOTORn0iHc8fUxUwBigncHkRlZheb?=
+ =?us-ascii?Q?boTLSGoCAXkh+TOM9Kif2aa9gRIFJDJHhnbAkfIw2ia+wjEMjKlEXWu16N6M?=
+ =?us-ascii?Q?nveAHuY08aYR/wTpiZj3gm6Rvq8JWxb3/ZAaATsJZOFv6EvJX4mny1I0tC63?=
+ =?us-ascii?Q?TZc/fUg5oChC9keXH4nj2QfSyresb0tDraTGy4ySiy0+rnsn0kuhptdH2vdb?=
+ =?us-ascii?Q?eoXpqp8Q0Fay8R9xXqYsTLukOrGfQ9NnWAAhxVuNofDRjtPNqBoawGHIVmFR?=
+ =?us-ascii?Q?1pc8SO1ogbbDoPpb6wdRH18VK1paY2gi0Rdc6lqEif6rc09p3Q00U+VqrOlb?=
+ =?us-ascii?Q?D08Zmvfw+Rx4V5BMkuqY4maB6Xly29iEV0hYhkRfdray5mBhaRFaauD+Te0G?=
+ =?us-ascii?Q?LiN51YOw1yqtlo+1qUyxDH47U0N4dXXZIzUjhsIQpv6rNc5Vp2mIpWVvsR3w?=
+ =?us-ascii?Q?4/uDsvEWNon2xEoAtHS+GeVB4zm80vRes7bKC+Pla+bVE071fiTX7Od45cGb?=
+ =?us-ascii?Q?k5aT9N5MEgUbu3nj8IjH5KZ/bHge0n6CqgmSU/nvLC+DIXgsPizKD1/nBVET?=
+ =?us-ascii?Q?r77Z0Nx/76o8q0wkXpmPPgVxvRUvp4Nk7l42RWI7MfI915774dqFnjo2TUdZ?=
+ =?us-ascii?Q?APyVlcYzPT4fA00PFGnN/e5plKipBrv2njNEl8e7yAoyPugPhOFvCnF/QjAN?=
+ =?us-ascii?Q?scJ30ScxOSOeDk4w//dDK62UPlI/wM/DMnM+19iVpAjDb5Ff2dAQdxGtxOH+?=
+ =?us-ascii?Q?Zisv94cKdUPr9Lo3c35Rgz3SBrCobnfE4G3Ci/aR0enOr41sSDt5qd4JxfrR?=
+ =?us-ascii?Q?vSXw2eqT9oJkcvrjs6F1kfRVj7Q0TP6duAb7C/kMmJPvENL9vY7rXOgVTbAS?=
+ =?us-ascii?Q?S3bmUp1/o2TnSfrc+1FUHORytPYizcxvKYhBTTzt2e+EjA4nPiOkeE8au1rF?=
+ =?us-ascii?Q?+XHTmOW2FQDy5HUoVl6KcvGe67tWGUMbyYXi1FVun+8+c94P9X37S5Zn77da?=
+ =?us-ascii?Q?zLpUGZrWIfZnSrM4D8lyvINXNpdBEj1BZ68BuAYThT+scHZssawsdQcucsU3?=
+ =?us-ascii?Q?eDjDq9PacQAV7+3fep+EkrolYpA+ZEqknzMV1IzA2i/lBFzceyX0nOeuC73Q?=
+ =?us-ascii?Q?LbxZnipKhozEi03a/9pgDA/zP0OCAMGdBlJxmG94R689cQirPzNDAARjgwaD?=
+ =?us-ascii?Q?APzsnix8pdpr9XmYnBWkAbL7r9HX6Kyr5JaA3h5LLd5tBHFQZfyURP5L+NMg?=
+ =?us-ascii?Q?zFa3wpdzWdIggL0CSAQr4y/GdrJJ3lR1cfZBrRIllgta2EfQsiq9afxt+ZNX?=
+ =?us-ascii?Q?B5nMATGJz6433aO80M7EEsKKWFcPI8Xb+QBM4wEU38O/iZ0OjQ6E9Vxx05El?=
+ =?us-ascii?Q?psCf0oiOwWCHwXLOdmdz89JNHHTo9SMEdZFZmAkr?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1148b3e-acd6-4bb8-fe45-08dd5d86d8f6
+X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8663.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 14:46:30.5710
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wa2aY7FcZbMASx7ZlQ93FIgMB2YTEiUorrv/A03wUVL002qptrqoDxIlVJ2xkXeP
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8501
 
-On Fri 07-03-25 08:49:25, Kent Overstreet wrote:
-> Needed in bcachefs for implementing blk_holder_ops.mark_dead, since we
-> can't use the standard fs holder ops (whicth assume a single block device
-> filesystem).
+On Fri, Mar 07, 2025 at 03:00:09PM +0100, Greg KH wrote:
+> On Fri, Mar 07, 2025 at 08:32:55AM -0400, Jason Gunthorpe wrote:
+> > On Fri, Mar 07, 2025 at 11:28:37AM +0100, Simona Vetter wrote:
+> > 
+> > > > I wouldn't say it is wrong. It is still the correct thing to do, and
+> > > > following down the normal cleanup paths is a good way to ensure the
+> > > > special case doesn't have bugs. The primary difference is you want to
+> > > > understand the device is dead and stop waiting on it faster. Drivers
+> > > > need to consider these things anyhow if they want resiliency against
+> > > > device crashes, PCI link wobbles and so on that don't involve
+> > > > remove().
+> > > 
+> > > Might need to revisit that discussion, but Greg didn't like when we asked
+> > > for a pci helper to check whether the device is physically gone (at least
+> > > per the driver model). Hacking that in drivers is doable, but feels
+> > > icky.
+> > 
+> > I think Greg is right here, the driver model has less knowledge than
+> > the driver if the device is alive.
 > 
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Christian Brauner <brauner@kernel.org>
-> Cc: Jan Kara <jack@suse.cz>
-> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> That's not why I don't want this.  Think about this sequence:
+> 	if (!device_is_gone(dev)) {
+> 		// do something
+> 	}
+> right after you check it, the value can change. 
 
-Please use evict_inodes(). It is exactly the same and is actually already
-exported. Since you are the second one in last month to ask for this let's
-clean this up [1].
+Oh, I imagined this would latch off. For instance if you hotunplug a
+PCI struct device then that struct device will be destroyed
+eventually. If in the meantime a PCI device is re-discovered at the
+same BDF it would have to wait until the prior one is sufficiently
+destroyed before creating a new struct device and getting plugged in.
 
-								Honza
+> Handle the real cases, like you are are saying here, and then all should
+> be ok.
 
-[1] https://lore.kernel.org/20250307144318.28120-2-jack@suse.cz
+Yes, if you handle physical device unplug, PCI device unplug, and PCI
+device failure recovery then you cover all the actual production use
+cases. That is already so comprehesive and hard that driver writers
+will be overjoyed with the result anyhow :)
 
-> ---
->  fs/inode.c         | 1 +
->  fs/internal.h      | 1 -
->  include/linux/fs.h | 1 +
->  3 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 5587aabdaa5e..6364779a7006 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -939,6 +939,7 @@ void invalidate_inodes(struct super_block *sb)
->  
->  	dispose_list(&dispose);
->  }
-> +EXPORT_SYMBOL_GPL(invalidate_inodes);
->  
->  /*
->   * Isolate the inode from the LRU in preparation for freeing it.
-> diff --git a/fs/internal.h b/fs/internal.h
-> index e7f02ae1e098..7cb515cede3f 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -207,7 +207,6 @@ bool in_group_or_capable(struct mnt_idmap *idmap,
->   * fs-writeback.c
->   */
->  extern long get_nr_dirty_inodes(void);
-> -void invalidate_inodes(struct super_block *sb);
->  
->  /*
->   * dcache.c
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index be3ad155ec9f..5196317598ac 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -3251,6 +3251,7 @@ extern void unlock_new_inode(struct inode *);
->  extern void discard_new_inode(struct inode *);
->  extern unsigned int get_next_ino(void);
->  extern void evict_inodes(struct super_block *sb);
-> +extern void invalidate_inodes(struct super_block *sb);
->  void dump_mapping(const struct address_space *);
->  
->  /*
-> -- 
-> 2.47.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Jason
 
