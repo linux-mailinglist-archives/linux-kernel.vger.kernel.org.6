@@ -1,140 +1,156 @@
-Return-Path: <linux-kernel+bounces-550891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B6BAA56567
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:32:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FF53A5656D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:32:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B033177A10
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:32:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCAF41899E44
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:32:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB4FD20E00F;
-	Fri,  7 Mar 2025 10:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85898212F8F;
+	Fri,  7 Mar 2025 10:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="RAFGnkWD"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Vf012oGj"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45ED620D507;
-	Fri,  7 Mar 2025 10:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741343506; cv=pass; b=kvMuZeDnbFlrJKjpuSkuHt8QWA2UNoktJnavMtGAQuH1nzA1Fuez3Cib+6hZREXyiPj7tv3JF5aqq2DXhefWyKjyprinzrS0cLIaNQE0ykXZp2/q7x106DVoC/nSWevxZTDNUoqcpJp9BPtUD+lF3CuApUnByhTe6nMiwihYKF4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741343506; c=relaxed/simple;
-	bh=G599lok46kj8WZG6hHVTV43Hrzt9xZBG3qGqbQ/XbCM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r8uXw6DsfxJ92x4vtD4Kb/KFFCSVOJ9S+Sxi03x67R6w8KcuUArQSdSchkHaL4fLuGa8NnyVkBvE5KxhV1MUa+vTgCGGAlm3BrU737xbN0TCIVTjd18I/cF8BmwRkMF2WjV5PM/StRzSDprI5z9XwiboHzNF6OiJiRMIhdVs/MY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=RAFGnkWD; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741343480; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Ede+VIul5w8wNXKhjR+eqLdVZpjoOcro+P7EdL4jcJjnzc9lcrVWsAyqh/Ih5X08OUpes6tEXPrIQhceEmXOz/fYT20xLf23PJ04C917SB16dwTDifmBDKHVthvaRyR5xXcgcBAxdH7mmaq287A2zXGPR/7YTl/c8pFFkWyb7+0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741343480; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=qFw2WEAsUwSpHOvEDBz9YvCCp9lt0tHdWoCaN/z09uA=; 
-	b=hcilYfJ9dcwMKOPmlBwubBfCD3KJdBGqplylaF8YpTOTgLqvUYzfTfclJvnoQFtqhJHRASGrb57LQvqTwc3pxddaz23YTuCQ9Aib31qI5wd3ahZsGbiL/9HRj31B2qm5bRbA68Y6qy9iBHmaAVJ2dv2XYWEPebbRt+ALpeUW7fI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741343480;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=qFw2WEAsUwSpHOvEDBz9YvCCp9lt0tHdWoCaN/z09uA=;
-	b=RAFGnkWDwrwggveYQKLJoS1fHCAqFsOvVBxoGQeKFqG2tnQoLFtDSsWN+a9tUphu
-	JJ4aNJfJcKqyMwg8gzt+rjudfon8O7qCNSGypM0RYa95lLyqlxClFZREbPfiGTsj/qX
-	UFa6yDLgKxelXnJik3bFi5bP2nlmYCw5VyC/JLno=
-Received: by mx.zohomail.com with SMTPS id 1741343477176333.4836295262826;
-	Fri, 7 Mar 2025 02:31:17 -0800 (PST)
-Message-ID: <8c685f16-8f49-42ab-ab1b-0fa0804d65f0@collabora.com>
-Date: Fri, 7 Mar 2025 13:31:13 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31504213246;
+	Fri,  7 Mar 2025 10:31:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741343520; cv=none; b=OvK6B4a2rKS0E5kgDrOz/NmHlzW9sGxJovNtAqJMhjccvB2MsJwZITZ3AgQ14zE1KIPdyLqENIfvd3df1dhtn/N5dSKFkZn963l+xGqUPdwQ9MMdySGDLlSsNfUHPnuDRFUt5zGGcve5EQ5sQ0WeJyeEmu/BvLR26ZyNVAc5Nbg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741343520; c=relaxed/simple;
+	bh=OKBAf6irmnU5/d+0U4T3dEDZmAxUVrX5t+/ekGw1Gd4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QIYx05Ni10++VVAI+edubnSlQmyfXz4wD6ymF5l+3CU6y1jQr+k5pAU6Vl6oXnOXHA+DCOP5H23jNUGR5DJxeMOMQHIoSTi/H3da+rwDxG4NYEJDTHRW/sYhWGCqaLtiIs3k8/J7DO/1brAsoBNBHjzWzxTTG3bsbyfM5F9sGgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Vf012oGj; arc=none smtp.client-ip=198.47.19.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 527AVYRl243376
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Mar 2025 04:31:34 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741343494;
+	bh=L8uOvoVLDeLOL1fDGRqGNDMqZxmbAi0wKgSFV9Fi1vY=;
+	h=From:To:CC:Subject:Date;
+	b=Vf012oGjFcG9hNrgbt4V3FRaWISgjJEy65aGrdFrjn/SN0YmbXfpFs91jqq6n2UiI
+	 1qT8m0N9Dm/WUfzJDTS5zLsYzzr4lXN43u6Mssy/zHgsy2PbA1omcpszd1bgNFVTHx
+	 ig981d7OJGsXFCxYkPPRtYmCISYCE/GQONw/L0fE=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 527AVXIB016599
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 7 Mar 2025 04:31:33 -0600
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
+ Mar 2025 04:31:33 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 7 Mar 2025 04:31:33 -0600
+Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.113])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527AVSQ2016876;
+	Fri, 7 Mar 2025 04:31:29 -0600
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <vigneshr@ti.com>, <kishon@kernel.org>,
+        <cassel@kernel.org>, <wojciech.jasko-EXT@continental-corporation.com>,
+        <thomas.richard@bootlin.com>, <bwawrzyn@cisco.com>
+CC: <linux-pci@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, <s-vadapalli@ti.com>
+Subject: [PATCH 0/4] Loadable Module support for PCIe Cadence and J721E
+Date: Fri, 7 Mar 2025 16:01:24 +0530
+Message-ID: <20250307103128.3287497-1-s-vadapalli@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: platform: synopsys: use div_u64() for 64-bit
- division
-To: Arnd Bergmann <arnd@kernel.org>,
- Shreeya Patel <shreeya.patel@collabora.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Dingxian Wen <shawn.wen@rock-chips.com>, Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-media@vger.kernel.org,
- kernel@collabora.com, linux-kernel@vger.kernel.org
-References: <20250307102405.56313-1-arnd@kernel.org>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250307102405.56313-1-arnd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 3/7/25 13:23, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> One open-coded division causes a link failure on 32-bit architectures:
-> 
-> ld.lld-21: error: undefined symbol: __aeabi_uldivmod
->>>> referenced by snps_hdmirx.c
->>>>               drivers/media/platform/synopsys/hdmirx/snps_hdmirx.o:(hdmirx_query_dv_timings) in archive vmlinux.a
-> 
-> Another one uses do_div() with a temporary variable.
-> 
-> Change both to use div_u64() to avoid the link failure and improve
-> readability.
-> 
-> Fixes: 7b59b132ad43 ("media: platform: synopsys: Add support for HDMI input driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> index 4ffc86ad6c35..438536d88c7f 100644
-> --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> @@ -296,7 +296,7 @@ static void hdmirx_get_timings(struct snps_hdmirx_dev *hdmirx_dev,
->  	hfp = htotal - hact - hs - hbp;
->  	vfp = vtotal - vact - vs - vbp;
->  
-> -	fps = (bt->pixelclock + (htotal * vtotal) / 2) / (htotal * vtotal);
-> +	fps = div_u64(bt->pixelclock + (htotal * vtotal) / 2, htotal * vtotal);
->  	bt->width = hact;
->  	bt->height = vact;
->  	bt->hfrontporch = hfp;
-> @@ -396,7 +396,7 @@ static int hdmirx_get_detected_timings(struct snps_hdmirx_dev *hdmirx_dev,
->  	u32 val, tmdsqpclk_freq, pix_clk;
->  	unsigned int num_retries = 0;
->  	u32 field_type, deframer_st;
-> -	u64 tmp_data, tmds_clk;
-> +	u64 tmds_clk;
->  	bool is_dvi_mode;
->  	int ret;
->  
-> @@ -418,9 +418,7 @@ static int hdmirx_get_detected_timings(struct snps_hdmirx_dev *hdmirx_dev,
->  
->  	tmdsqpclk_freq = hdmirx_readl(hdmirx_dev, CMU_TMDSQPCLK_FREQ);
->  	tmds_clk = tmdsqpclk_freq * 4 * 1000;
-> -	tmp_data = tmds_clk * 24;
-> -	do_div(tmp_data, hdmirx_dev->color_depth);
-> -	pix_clk = tmp_data;
-> +	pix_clk = div_u64(tmds_clk * 24, hdmirx_dev->color_depth);
->  	bt->pixelclock = pix_clk;
->  
->  	if (hdmirx_dev->pix_fmt == HDMIRX_YUV420)
+Hello,
 
-Hi, thanks for the fix! Hans already merged a similar patch [1].
+This series enables support to build the PCIe Cadence Controller drivers
+and the PCI J721E Application/Wrapper/Glue driver as Loadable Kernel
+Modules. The motivation for this series is that PCIe is not a necessity
+for booting the SoC, due to which it doesn't have to be a built-in
+module. Additionally, the defconfig doesn't enable the PCIe Cadence
+Controller drivers and the PCI J721E driver, due to which PCIe is not
+supported by default. Enabling the configs as of now (i.e. without this
+series) will result in built-in drivers i.e. a bloated Linux Image for
+everyone who doesn't have the PCIe Controller. Therefore, with this
+series, after enabling support for building the drivers as loadable
+modules, the driver configs can be enabled in the defconfig to build
+the drivers as loadable modules, thereby enabling PCIe.
 
-[1]
-https://patchwork.linuxtv.org/project/linux-media/patch/20250306-synopsys-hdmirx-fix-64-div-v1-1-dd5ff38bba5e@kernel.org/
+Series is based on linux-next tagged next-20250306.
+
+--------------------------
+Series has been tested for
+--------------------------
+[1] Loading and Unloading the PCI J721E driver when operating in the
+Root-Complex mode on J721E-EVM with an NVMe SSD connected to the PCIe
+Connector. "hdparm" based reads of the NVMe SSD have been performed to
+validated functionality before and after a module unload-load sequence
+using modprobe. Logs:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/085fd24d416bab5dc7d798156ce130b3
+
+[2] Loading and Unloading the PCI J721E driver when operating in the
+Endpoint mode on J784S4-EVM with 6 Physical Functions configured in the
+Endpoint and connected to the J721E-EVM as the Root-Complex. Logs:
+https://gist.github.com/Siddharth-Vadapalli-at-TI/1ec568a76bc3ebc1082d434aab4ab00b
+
+The following changes to arch/arm64/configs/defconfig were made to test
+this series and will be posted as a patch after this series gets merged:
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 3a3706db2982..0ca073141c3e 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -209,6 +209,12 @@ CONFIG_NFC=m
+ CONFIG_NFC_NCI=m
+ CONFIG_NFC_S3FWRN5_I2C=m
+ CONFIG_PCI=y
++CONFIG_PCI_J721E=m
++CONFIG_PCI_J721E_HOST=m
++CONFIG_PCI_J721E_EP=m
++CONFIG_PCIE_CADENCE=m
++CONFIG_PCIE_CADENCE_HOST=m
++CONFIG_PCIE_CADENCE_EP=m
+ CONFIG_PCIEPORTBUS=y
+ CONFIG_PCIEAER=y
+ CONFIG_PCI_IOV=y
+
+Regards,
+Siddharth.
+
+Kishon Vijay Abraham I (1):
+  PCI: cadence: Add support to build pcie-cadence library as a kernel
+    module
+
+Siddharth Vadapalli (3):
+  PCI: cadence-host: Introduce cdns_pcie_host_disable helper for cleanup
+  PCI: cadence-ep: Introduce cdns_pcie_ep_disable helper for cleanup
+  PCI: j721e: Add support to build as a loadable module
+
+ drivers/pci/controller/cadence/Kconfig        |  12 +-
+ drivers/pci/controller/cadence/pci-j721e.c    |  37 +++++-
+ .../pci/controller/cadence/pcie-cadence-ep.c  |  16 +++
+ .../controller/cadence/pcie-cadence-host.c    | 113 ++++++++++++++++++
+ drivers/pci/controller/cadence/pcie-cadence.c |  12 ++
+ drivers/pci/controller/cadence/pcie-cadence.h |  14 ++-
+ 6 files changed, 194 insertions(+), 10 deletions(-)
 
 -- 
-Best regards,
-Dmitry
+2.34.1
+
 
