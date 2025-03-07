@@ -1,153 +1,127 @@
-Return-Path: <linux-kernel+bounces-550903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550902-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14F3EA5658D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:37:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD316A5658B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:37:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820A81896190
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:37:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03F76176B1E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF0E20E02A;
-	Fri,  7 Mar 2025 10:37:14 +0000 (UTC)
-Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2E220E33F;
+	Fri,  7 Mar 2025 10:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RgBVVqVg"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50E720D507
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 10:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB8A20D507;
+	Fri,  7 Mar 2025 10:36:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741343834; cv=none; b=M8DIp/FwjjXTyil1NtTZ13Ac+HBLA2bZOrxZ+2CiGsFcNMSnZAn4HkzP3f+V2t/7NgiKm3UAbFG9qGAdEfCZQFepMFiumSQb+xPTrIStpywHs3JCFBYj8q/ZgKl2tIGFYzUXIxORBIbYbpOpv8zfkkopKgmu3BWC24aJurCecpI=
+	t=1741343820; cv=none; b=WusjKWGQRWjPwgfEMRTPxk9aXsQ58vt3e6zzrd19zsU67Mk0nOHRRPGCMcSJw9ukfIVUnwp0PDSKQZyr0M5J2bQt39XAIj5D6BQ6BEiwlpwRiFa0QQEIgYOJRFatXFDowXyIMnS+TEsQ+rWcJhTCUOLE5aXG4yr/jLagh/T2ZFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741343834; c=relaxed/simple;
-	bh=iLn5oLlhbr0s4LMCzs8Lf3sDlErvpf9cLtNXgRVyzAo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AxIsqm+5oPyH3CPkDnIJ5m7KoazKRcb8tox+NyzBLhSq9GTKeFl07yaIQvxbbHrFFchmtRD9EbOhZsa/8madvYOevYnPwWCVk9PkPZHedUS9lBq1RPYNU6bd3HyTR+sBSFnQVFfOxR4KONVJfdZhIPSBkNgXXySjhPN44ik1OFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
-Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
-	by Atcsqr.andestech.com with ESMTPS id 527AaPBY052202
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
-	Fri, 7 Mar 2025 18:36:25 +0800 (+08)
-	(envelope-from ben717@andestech.com)
-Received: from atctrx.andestech.com (10.0.15.11) by ATCPCS34.andestech.com
- (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 7 Mar
- 2025 18:36:25 +0800
-Date: Fri, 7 Mar 2025 18:36:25 +0800
-From: Ben Zong-You Xie <ben717@andestech.com>
-To: Conor Dooley <conor@kernel.org>
-CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
-        <aou@eecs.berkeley.edu>, <alex@ghiti.fr>, <tim609@andestech.com>
-Subject: Re: [PATCH] riscv: add Andes SoC family Kconfig support
-Message-ID: <Z8rMKZoDYmpNosSj@atctrx.andestech.com>
-References: <20250305030526.1986062-1-ben717@andestech.com>
- <20250306-finale-chatroom-c620ff284d8c@spud>
+	s=arc-20240116; t=1741343820; c=relaxed/simple;
+	bh=NxGKOzJhH0syB/5UESiHYjZElY5LVqIHIR57niTMWic=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t25TGWDLuyTUWUNFeAelsqqjJNyak7teyWhM620Qd+BfYeHjuhmheSSbfwICJyrr6cOeKaOaTpr5RyMHtBInrdFWznZMSBQrIqpEgeRwm0VBuN6zk8v3hdXR7MJcoqbQxUxcwgM7/BVsKDhRPkTQb18NfM/KBo5VubmhrpGaWj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RgBVVqVg; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 527AakJR3942632
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+	Fri, 7 Mar 2025 04:36:46 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741343806;
+	bh=/q/4BzWAkO+zh9PIsVSkrHOjIySSifAyOimM8ksoJNM=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=RgBVVqVgcvK/Nii3mcdbyFJ86WQJZs6WZZYiHykmh9RuaLfH5KWoOJfnclNADCM1N
+	 U9OsSZbW6sHY3XqqpmKmsjpg3atje4+Of5hv3/XPAi8VbMpVv0bKHRkJz6pFP7PE4B
+	 awZQ4hsP7p6RCupDTlppHCeKxmsoN2NexubF5v68=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527AakT9029556;
+	Fri, 7 Mar 2025 04:36:46 -0600
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
+ Mar 2025 04:36:45 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 7 Mar 2025 04:36:45 -0600
+Received: from uda0132425.dhcp.ti.com (dhcp-10-24-69-250.dhcp.ti.com [10.24.69.250])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527Aaf28021789;
+	Fri, 7 Mar 2025 04:36:42 -0600
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, Wadim Egorov <w.egorov@phytec.de>
+CC: Vignesh Raghavendra <vigneshr@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
+Subject: Re: [PATCH v2 1/5] arm64: dts: ti: k3-am62x-phyboard-lyra: Add boot phase tags
+Date: Fri, 7 Mar 2025 16:06:36 +0530
+Message-ID: <174133309362.1072814.1438889304366712802.b4-ty@ti.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250305085537.3976579-1-w.egorov@phytec.de>
+References: <20250305085537.3976579-1-w.egorov@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250306-finale-chatroom-c620ff284d8c@spud>
-User-Agent: Mutt/2.1.4 (2021-12-11)
-X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
- ATCPCS34.andestech.com (10.0.1.134)
-X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:Atcsqr.andestech.com 527AaPBY052202
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, Mar 06, 2025 at 04:40:49PM +0000, Conor Dooley wrote:
-> [EXTERNAL MAIL]
+Hi Wadim Egorov,
 
-> Date: Thu, 6 Mar 2025 16:40:49 +0000
-> From: Conor Dooley <conor@kernel.org>
-> To: Ben Zong-You Xie <ben717@andestech.com>
-> Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
->  paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
->  alex@ghiti.fr
-> Subject: Re: [PATCH] riscv: add Andes SoC family Kconfig support
+On Wed, 05 Mar 2025 09:55:33 +0100, Wadim Egorov wrote:
+> The bootph-all and bootph-pre-ram tags were introduced in dt-schema
+> (dtschema/schemas/bootph.yaml) to define node usage across different
+> boot phases.
 > 
-> On Wed, Mar 05, 2025 at 11:05:26AM +0800, Ben Zong-You Xie wrote:
-> > The first SoC in the Andes series is QiLai. It includes a high-performance
-> > quad-core RISC-V AX45MP cluster and one NX27V vector processor.
+> Add boot phase tags to all required nodes to ensure boot support from
+> all sources, including UART, USB (DFU), Ethernet, uSD card, eMMC, and
+> OSPI NOR Flash.
 > 
-> I'd expect a config option like this to come with the user, which in
-> this case is the dts etc for a board using the QiLai SoC or drivers for
-> the SoC. Without dts or drivers, there's no reason to ever enable this,
-> so where are those patches?
-> 
-> Cheers,
-> Conor.
-> 
+> [...]
 
-Hi Conor,
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
 
-We are still preparing those patches for upstream, and we will add them
-in the next patch series.
+[1/5] arm64: dts: ti: k3-am62x-phyboard-lyra: Add boot phase tags
+      commit: c2d18ec0ea4ce9d6d8be5a1a9b266f57a40b5e24
+[2/5] arm64: dts: ti: k3-am62a-phycore-som: Add boot phase tags
+      commit: a5965ee0107a37ca4c73f05f06f55dad759572d2
+[3/5] arm64: dts: ti: k3-am642-phyboard-electra: Add boot phase tags
+      commit: a9c8485cd13cdffee5bdcda6b625f678900994c4
+[4/5] arm64: dts: ti: k3-am642-phyboard-electra: Reorder properties per DTS coding style
+      commit: 61a12b5a9923e4beec5595fed3b9c3d5c0c25c32
+[5/5] arm64: dts: ti: k3-am62a-phycore-som: Reorder properties per DTS coding style
+      commit: a89d3f47b09c793d0454350739ee8695ff30fb5c
 
-Thanks,
-Ben
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
-> > 
-> > For further information, refer to [1].
-> > 
-> > [1] https://www.andestech.com/en/products-solutions/andeshape-platforms/qilai-chip/
-> > 
-> > Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
-> > ---
-> >  arch/riscv/Kconfig.errata | 2 +-
-> >  arch/riscv/Kconfig.socs   | 9 +++++++++
-> >  2 files changed, 10 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
-> > index e318119d570d..be76883704a6 100644
-> > --- a/arch/riscv/Kconfig.errata
-> > +++ b/arch/riscv/Kconfig.errata
-> > @@ -12,7 +12,7 @@ config ERRATA_ANDES
-> >  
-> >  config ERRATA_ANDES_CMO
-> >  	bool "Apply Andes cache management errata"
-> > -	depends on ERRATA_ANDES && ARCH_R9A07G043
-> > +	depends on ERRATA_ANDES && (ARCH_R9A07G043 || ARCH_ANDES)
-> >  	select RISCV_DMA_NONCOHERENT
-> >  	default y
-> >  	help
-> > diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
-> > index 1916cf7ba450..b89b6e0d1bc9 100644
-> > --- a/arch/riscv/Kconfig.socs
-> > +++ b/arch/riscv/Kconfig.socs
-> > @@ -1,5 +1,14 @@
-> >  menu "SoC selection"
-> >  
-> > +config ARCH_ANDES
-> > +	bool "Andes SoCs"
-> > +	depends on MMU && !XIP_KERNEL
-> > +	select ERRATA_ANDES
-> > +	select ERRATA_ANDES_CMO
-> > +	select AX45MP_L2_CACHE
-> > +	help
-> > +	  This enables support for Andes SoC platform hardware.
-> > +
-> >  config ARCH_MICROCHIP_POLARFIRE
-> >  	def_bool ARCH_MICROCHIP
-> >  
-> > -- 
-> > 2.34.1
-> > 
-> > 
-> > _______________________________________________
-> > linux-riscv mailing list
-> > linux-riscv@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-riscv
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
 
 
