@@ -1,179 +1,110 @@
-Return-Path: <linux-kernel+bounces-551849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32922A57206
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:37:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76D8A57215
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:38:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD2987A6143
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:36:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B25F3B657D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CDB2561D0;
-	Fri,  7 Mar 2025 19:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312F82566C5;
+	Fri,  7 Mar 2025 19:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccwRFuX7"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cW+40b7p"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0A9241691;
-	Fri,  7 Mar 2025 19:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 661A1255E58;
+	Fri,  7 Mar 2025 19:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741376211; cv=none; b=T0/GCezIICL+89DTFZqSgxUEoYkeTSbNEVInRILzIT4/O9yjgTdeF2PnOrsKOXw7l3HXOrK66Vh8YsmSsbhekLwgcSiVB2ULMLMwtRoaFqugMajY3JD6pzu9Fpd/g5ek0fJvdE0XQGrprkT+w7UCstzDVDbTUPXdGPVqUJfprbM=
+	t=1741376245; cv=none; b=jisMhbIrzDhJQZoOUULRl0AfTaO5f664JB/gYb7xzUHvRbKeq5R0qooSfom7VsYuxmrlarJq8AT8CuM80KGfbhsqRrmQzUF6/brgd/gUVyU8i7ZjE5tlMLhX19Z2cfPmCOoKXKupDGoYU77aKkcIB0N5vY2S9ssssDa+Ac7+hXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741376211; c=relaxed/simple;
-	bh=03HRd51TAJtBdjj5CN0yBCInrok2ztkJLZtRA9+zaFo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q3t4oloCywgMXfwaZDJbI5r4E+I+wM+4zCPZvo5sy3a1LCif363bKPDS7BuTGPYXBj9k9i2AVV8BtdLZ56iQgRAvRXP3MAHunVfDT9CN4si9Ky6pi2wkZakO6S3Dxm/Z0udz0D1Da2CgkvgNgR+J6LUJhkvIVrnSgZu8fyvvTYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ccwRFuX7; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43bc38bb6baso13485075e9.3;
-        Fri, 07 Mar 2025 11:36:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741376208; x=1741981008; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xFoJyn4DTa2CPJIrOrIuaVtmodM0qzkMs+rPvEMHc5M=;
-        b=ccwRFuX7jgmxL0rWRGmMMGg3xR7JmFRmpIHf6MR3Iqwbz0yik+N3OO7FDwhRWqsRUH
-         UC/TarJ1PmREAPcu5liacHBiMYgzd61m74CqcNlA0m+ClgZtjb8pQgIE3LT1LlZaMkn0
-         n1YiGEXIFn+NGtrX/HUePibqE8DScsSnnKJMLxesway2yW4RJW2GG8/GSz8e8ttgRYKn
-         6x5SRSYS+uUadk5ycdpn2kEMPeo4Prlbbf+mDW7IUGSOj3Ge9kyhjULB9EaWNNQqziFG
-         XTtX2rE/d0pnI0nrctUCM2KaU6/aGrJXGHyfm8JGGTb/njOe1K0td1Djlf671pbFWF4I
-         16JQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741376208; x=1741981008;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xFoJyn4DTa2CPJIrOrIuaVtmodM0qzkMs+rPvEMHc5M=;
-        b=Fl7VLLdYTXyB2g/eumlZuz9o+kR+HbxPyT68UX+Lf/2L359XJmP/pLZFqm5TBNalCj
-         4b3r9N3QU2F6ug8eRFM6QMJZuPlweFOiR88QNvtwKXu1Fj356N5tSXNmLDv4uSHyyKEd
-         y9dX/MfLIQ1Uj6IZiY5GnMQVhVlR7PKjnoARba9unXlzcWiudh4wfsR75Ul5cvCFjqD1
-         l1KSZ/07RE+FwjOUuYcgU2GZXdtUTT3Pb85zzupSTueoWf4k8gofqm0M09NvlSkbva/R
-         A6XGRVvx2RWJFsCgCmX9lrwvh8XYMdu0Kn5MTKizVWeN3Kz0XoLm8DPKDA0saGPuzfw+
-         fsNw==
-X-Forwarded-Encrypted: i=1; AJvYcCUR27zvj6cLDFjYRbsmAf6Sq8p6zlkQNLp/2vPOK19Eg7dRKHULdl8YnF0Mwl7/0Li8QoRyo99NeSO4OVth@vger.kernel.org, AJvYcCUTdSVT+PCmqKOO+LZgicqEpsEKgMq4G0MZrUFzm39RP2r51uWAdIYW6cSmIVKnNzZEdD5cm6vR@vger.kernel.org, AJvYcCVJ1RD1/Zu/TxiSyKItpa/c8SAs6zQOjpVrcaO9Co62auGk9wQmkt/vI42mXoT3UJBVw70pWfWoldRjnJ6FnCM=@vger.kernel.org, AJvYcCVg0k+jpUiUrIkVLtLGV56JAcMYa+Jd2ksh4CyfPqAHVtkQ5c4iVhrcfETPJl5QixIs0UiI6lKxStF+PTUo@vger.kernel.org, AJvYcCWO3nhVS5cWUn7CRs5cv7H35wvRO6visk0hAAPAHo8q7jfG9iN4xa/6KH3tn6CPwIS9b9TTuGnteK+3eLw=@vger.kernel.org, AJvYcCXJ/3JBcou8HS6GT25y4SlcaKs+kk5sX1kg4ZQSruHPr6Jdhqnwz38UCs+zSlDl69J02JU=@vger.kernel.org, AJvYcCXdCZhwtPb53EZdQm6yyO0vpDbTuqYV3GXClhKhuPhG/43bZAoXpjpfoq7Mw+vMsjpDdspOh7/DfYRozsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzP4Zk1OkYatfbMbWXHTExWGfLrJbtjEZ0ostxd1hXU2feLdv6K
-	rD36udqY4YQs6PjoyPGPEPAyY4armieq5OFhbU8+99rTYODVyi3x
-X-Gm-Gg: ASbGnctCS/uEIKcq93Ic8/wKVV7YS6RPkqc5zHiO745dek3H+WpcBU5ak1vGUPlD/8G
-	6USc287t7uo5SOB+VrmaZ0DgtZe3R5fVPYS8e5DaYl7n1Jf7VxSTBwTkLyAQWFWheEo+5uza9dI
-	6BuXgtl0tmsGO3nEaAg4ZQshqaC68Xfwe5EelxS4l/DEJTaDZgwm8ik/CWvpAd2FyxQxP5DXEzP
-	NkX/CI/k6VN221s4K7e3LAmZ0ToLd6UfsaOxN3eOsGsbQSvHvwkX32Y9j8olmqBF9AY/GROfuhs
-	qY50mg1Amt8PggNyWC9zwamznimmNAzR/xb9YB9oALdsiBlzkFiDkNxwf1HOS2CcgsFCuu5JpD1
-	h2lXmito=
-X-Google-Smtp-Source: AGHT+IGYxYOhWA1l6Gh+krzanMxcdhuAnlJytBsEAg4OGnrOW8+O9FUNnMqzwJ9p5yYRvsqSKnj7Zw==
-X-Received: by 2002:a05:600c:3007:b0:43b:c034:57b1 with SMTP id 5b1f17b1804b1-43c6024be64mr30043695e9.20.1741376208006;
-        Fri, 07 Mar 2025 11:36:48 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c1030cfsm6392462f8f.90.2025.03.07.11.36.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 11:36:47 -0800 (PST)
-Date: Fri, 7 Mar 2025 19:36:43 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Jiri Slaby <jirislaby@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Kuan-Wei Chiu <visitorckw@gmail.com>,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, x86@kernel.org, jk@ozlabs.org, joel@jms.id.au,
- eajames@linux.ibm.com, andrzej.hajda@intel.com, neil.armstrong@linaro.org,
- rfoss@kernel.org, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- dmitry.torokhov@gmail.com, mchehab@kernel.org, awalls@md.metrocast.net,
- hverkuil@xs4all.nl, miquel.raynal@bootlin.com, richard@nod.at,
- vigneshr@ti.com, louis.peens@corigine.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
- parthiban.veerasooran@microchip.com, arend.vanspriel@broadcom.com,
- johannes@sipsolutions.net, gregkh@linuxfoundation.org,
- yury.norov@gmail.com, akpm@linux-foundation.org, hpa@zytor.com,
- alistair@popple.id.au, linux@rasmusvillemoes.dk,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, kuba@kernel.org, linux-kernel@vger.kernel.org,
- linux-fsi@lists.ozlabs.org, dri-devel@lists.freedesktop.org,
- linux-input@vger.kernel.org, linux-media@vger.kernel.org,
- linux-mtd@lists.infradead.org, oss-drivers@corigine.com,
- netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com,
- linux-serial@vger.kernel.org, bpf@vger.kernel.org, jserv@ccns.ncku.edu.tw,
- Yu-Chun Lin <eleanor15x@gmail.com>
-Subject: Re: [PATCH v3 01/16] bitops: Change parity8() return type to bool
-Message-ID: <20250307193643.28065d2d@pumpkin>
-In-Reply-To: <a4040c78-8765-425e-a44e-c374dfc02a9c@kernel.org>
-References: <20250306162541.2633025-1-visitorckw@gmail.com>
-	<20250306162541.2633025-2-visitorckw@gmail.com>
-	<9d4b77da-18c5-4551-ae94-a2b9fe78489a@kernel.org>
-	<Z8ra0s9uRoS35brb@gmail.com>
-	<a4040c78-8765-425e-a44e-c374dfc02a9c@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1741376245; c=relaxed/simple;
+	bh=gdJJj0Y+vIMQxl2pF/V+JeYln0YLxtYpZd3GhmHEoMM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tmv7EP3rU6XqaRIvU7lAfguNiuPcM562VIpCm2q2SKVIqUJyDTC6yLtK4Q0EE0wl7HisCdua8J8h/y0V8Xr1bPxMf4sGftYV+R+FEQS7JWHPZRUEiwmnKlxpxqCe+owgnuNWmJLDFrbwAlqnHpa1wWT6HvfHaawTj4JqBA8qoC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cW+40b7p; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1235C4CED1;
+	Fri,  7 Mar 2025 19:37:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741376244;
+	bh=gdJJj0Y+vIMQxl2pF/V+JeYln0YLxtYpZd3GhmHEoMM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cW+40b7p32mLKFSwQhsZH6rP9RxyzfSQuk2cWhW6r7FcrXqRf7t+1NavLAixHCDG4
+	 tof9vEYVEcENkLBBLXtmlDBX+SDWmcOYBOHaDYh08VYLXBxIjXD0MkSGyY1caOWHex
+	 gqYREeYkVZ4FeBdglamBrrGdm3WTfLcNxQUA2aEREznnWqs0Ig19i1yFHKsTCdaFAa
+	 Md1jAQLl3quoOYRr9qd+foB2MFdHcY2uo966ZYZ+X7uYPIqbEnJH6dcAThUvU7o4nD
+	 YKqmoB5xskRqBVoPlBQTpvNJ7xJ9K5SEC6vZWKt4Swc61UgoQyMO3JQWvlOKkgPxSB
+	 QQv1xCH3VauFg==
+Date: Fri, 7 Mar 2025 21:37:19 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: ross.philipson@oracle.com
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+	ardb@kernel.org, mjg59@srcf.ucam.org,
+	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
+	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu,
+	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
+	ebiederm@xmission.com, dwmw2@infradead.org,
+	baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
+	andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
+Subject: Re: [PATCH v12 04/19] x86: Secure Launch main header file
+Message-ID: <Z8tK704hkyoZZc7_@kernel.org>
+References: <20241219194216.152839-1-ross.philipson@oracle.com>
+ <20241219194216.152839-5-ross.philipson@oracle.com>
+ <Z8qFdeM8YEck2j1C@kernel.org>
+ <d2adb4c4-b03f-4fbd-81c2-1cd017ed2822@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d2adb4c4-b03f-4fbd-81c2-1cd017ed2822@oracle.com>
 
-On Fri, 7 Mar 2025 12:42:41 +0100
-Jiri Slaby <jirislaby@kernel.org> wrote:
-
-> On 07. 03. 25, 12:38, Ingo Molnar wrote:
+On Fri, Mar 07, 2025 at 11:25:20AM -0800, ross.philipson@oracle.com wrote:
+> On 3/6/25 9:34 PM, 'Jarkko Sakkinen' via trenchboot-devel wrote:
+> > On Thu, Dec 19, 2024 at 11:42:01AM -0800, Ross Philipson wrote:
+> > > Introduce the main Secure Launch header file used in the early SL stub
+> > > and the early setup code.
 > > 
-> > * Jiri Slaby <jirislaby@kernel.org> wrote:
-> >   
-> >> On 06. 03. 25, 17:25, Kuan-Wei Chiu wrote:  
-> >>> Change return type to bool for better clarity. Update the kernel doc
-> >>> comment accordingly, including fixing "@value" to "@val" and adjusting
-> >>> examples. Also mark the function with __attribute_const__ to allow
-> >>> potential compiler optimizations.
-> >>>
-> >>> Co-developed-by: Yu-Chun Lin <eleanor15x@gmail.com>
-> >>> Signed-off-by: Yu-Chun Lin <eleanor15x@gmail.com>
-> >>> Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
-> >>> ---
-> >>>    include/linux/bitops.h | 10 +++++-----
-> >>>    1 file changed, 5 insertions(+), 5 deletions(-)
-> >>>
-> >>> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
-> >>> index c1cb53cf2f0f..44e5765b8bec 100644
-> >>> --- a/include/linux/bitops.h
-> >>> +++ b/include/linux/bitops.h
-> >>> @@ -231,26 +231,26 @@ static inline int get_count_order_long(unsigned long l)
-> >>>    /**
-> >>>     * parity8 - get the parity of an u8 value
-> >>> - * @value: the value to be examined
-> >>> + * @val: the value to be examined
-> >>>     *
-> >>>     * Determine the parity of the u8 argument.
-> >>>     *
-> >>>     * Returns:
-> >>> - * 0 for even parity, 1 for odd parity
-> >>> + * false for even parity, true for odd parity  
-> >>
-> >> This occurs somehow inverted to me. When something is in parity means that
-> >> it has equal number of 1s and 0s. I.e. return true for even distribution.
-> >> Dunno what others think? Or perhaps this should be dubbed odd_parity() when
-> >> bool is returned? Then you'd return true for odd.  
-> > 
-> > OTOH:
-> > 
-> >   - '0' is an even number and is returned for even parity,
-> >   - '1' is an odd  number and is returned for odd  parity.  
+> > Just would need a *short* description of what slaunch.h holds. I guess
+> > it holds Intel TXT micro-arhitectural data structures? Anything else?
 > 
-> Yes, that used to make sense for me. For bool/true/false, it no longer 
-> does. But as I wrote, it might be only me...
+> Later it will contain data strutures etc. to support other architectures
+> like AMD and Arm64.
+> 
+> > 
+> > This helps e.g. reviewers to skip some but still keep on track what a
+> > patch contains (and return back to it when necessary).
+> 
+> Yes we can make it clearer what is in this header file.
 
-No me as well, I've made the same comment before.
-When reading code I don't want to have to look up a function definition.
-There is even scope for having parity_odd() and parity_even().
-And, with the version that shifts a constant right you want to invert
-the constant!
+As per code changes I did spend two hours reading them just to make sure
+that I can understand the TPM specific code changes, and also that they
+make total sense to me.
 
-	David
+Therefore I've put a lot the nagging is around documentation and
+definitions. I really could not find anything in the source code that I
+could pinpoint being absolutely wrong.
 
+This really needs just now the stamp from tip maintainers. As per TPM
+changes they do have my blessing (no need for reviewed-by's as they
+have SOB already). I hereby also give permission to pull TPM changes
+through tip tree...
 
+> Thanks
+> Ross
 
-
+BR, Jarkko
 
