@@ -1,171 +1,130 @@
-Return-Path: <linux-kernel+bounces-551329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A866A56B2C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:05:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDBC5A56B2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:06:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14B0E189B952
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:05:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CDA03B7BAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23DAD21CA0E;
-	Fri,  7 Mar 2025 15:04:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C544189B94;
+	Fri,  7 Mar 2025 15:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="QFmhOV8E"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2068.outbound.protection.outlook.com [40.107.95.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B017D189B94;
-	Fri,  7 Mar 2025 15:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741359882; cv=fail; b=HkznfzEMC5gQy04PfP/z7Xr4mWTQX4L0Eiq3pMKsXr898ICHT1sv3XCOQNfDnsF1JNyAraAplrOYKfiAiuDuuqbiHKcYrx7/OEEnMFHl0sU/YnzdMV+5ttu+g7RKVDwJ1TPlwAOKHJeFOnR/oe3ZwDQukT9GCZ+UobsgpXko7CY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741359882; c=relaxed/simple;
-	bh=vaxNXbzb2y4dLmY5zVduggw+mZlrlz3ISbvc/DUgwps=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=u7KSINMIIpoBZKVjiFsZsB8yX9LQn7q4im3uduLUXBlUXDvqDZOpfErVDQV+p/k29jxoDTb1u1qssKKevp8BTUO1M32Fpy61PRf0k/73MCAMPqh9KuY+POnHqHXzBVuL02puEhatDQsWRgYskXgx9iOuwk6PazWFCTjiiqZt+P8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=QFmhOV8E; arc=fail smtp.client-ip=40.107.95.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nTVhOD1Hp/B7kNQKgJ4h6vtncwlpW97Iz3r8DyKAS9cTFrZ5+b0RkRfh2qUDZ2gUlSnLXDKTY5fQTrHuFFNm0EdUvR1jndRc/laIGv41AWeMD9AQigktSfGOqXZ1DCaZuU0kbSI3IDRuqr8MRUEVCAUsI2Jg0kRG0josku8SfK6JsOhCNK6u1pGWL/8RiuW9HR3igEKSVdJqDzH8eFh4I34QQQjvmVquWtdS21uL1tXOkd9yP13jDvY7NrHnAoHy7hPuTmpuzZBE6BYvlfxjBtZ5REyymTqrKvdywWP7d/UYMymvzB8CrbQmV4HXds2L/30mjd6EwUO2MmpTd/M5Hg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JzAdnqoNhPFrcTF4ap8kjipi0GN91MHLSeXaO530pjg=;
- b=UQEzYwJ8t3AFgKtEZAcTwQG2+tmDXMMMTfduKc88r+7iDKER5nTsSrkELCr14wmNurJzZ84GjF+St/VY4rzkHnSa5haNNOf2fI1R3cZQdEv8waLl0IkohYlt0dhSUl1EYCs7qWEv5wUpNFZq1TvH+pzte9P2e2UhBFY+iKZJPjD7mrIW40ONBUkqotES4IT7XnYI0Vy0pECswnwegdTAevQgFDhY0lOvgWjhMjO8t/HarJFusgnyRqhdKSBO+11VwzLa7c0PhcqP8ZN4+tItu6nteNe3EI826V7iU63X5iIhn4gZoVMtaIN5kctGf0+RTSxl8mV5jfMQ4A0XB6xyCA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JzAdnqoNhPFrcTF4ap8kjipi0GN91MHLSeXaO530pjg=;
- b=QFmhOV8EriamnW2g6xNB7Z1jsNqAi7TUVHcmPQCnsWRiv7dyzXJzpiPb6jF8FHHZZLe44QZJeanV7CVWbwINovbBEA0UhoByOvllGilL6wGy+Our3/kvK75jv0Ai9tSmSTAwsRQYqQD2OEYTmSVIwR6G4oe4vFvfCMikS6LJjFknWcIVQJSnbugLY0spsl1HQYNMn/wtExJRFf/3r3ZXTEQR3s4VO0r7pzyWmfX6BaV5sD69HkXWURjVXWkavReyXc1ctB4BOKT2rYRIwAJ1Fg7jvLkindK0NTw8cKcGAmLwa/HzNaA+K7ifLG0PnaS5bpf8Ynz81aimranuFYlDGA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MW6PR12MB8663.namprd12.prod.outlook.com (2603:10b6:303:240::9)
- by MW4PR12MB7334.namprd12.prod.outlook.com (2603:10b6:303:219::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Fri, 7 Mar
- 2025 15:04:36 +0000
-Received: from MW6PR12MB8663.namprd12.prod.outlook.com
- ([fe80::594:5be3:34d:77f]) by MW6PR12MB8663.namprd12.prod.outlook.com
- ([fe80::594:5be3:34d:77f%2]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
- 15:04:36 +0000
-Date: Fri, 7 Mar 2025 11:04:34 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Dave Jiang <dave.jiang@intel.com>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the hmm tree
-Message-ID: <20250307150434.GP354511@nvidia.com>
-References: <20250307195715.0b7abf0f@canb.auug.org.au>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307195715.0b7abf0f@canb.auug.org.au>
-X-ClientProxiedBy: BN1PR10CA0028.namprd10.prod.outlook.com
- (2603:10b6:408:e0::33) To MW6PR12MB8663.namprd12.prod.outlook.com
- (2603:10b6:303:240::9)
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="af5d+C1Q"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C81521C179;
+	Fri,  7 Mar 2025 15:05:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741359935; cv=none; b=WOz1+tP8B4abtCVq7H3YTbITeBIxDeOwAJX+ZgLSuBjhFsb9Wp9mm8xcgRkxoO38PAHRbJ6FBBJh0aq5Fv/Dfb1gBlypdH0TyqvJcuOHIzWHL78Ixps0ONsXeH8+73WXOeiTA6CzOetfYWXIC4Eqb6SwN27oN3E6L4BS9JyO8Uw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741359935; c=relaxed/simple;
+	bh=vkajAd6C+aBL/cx4UI6cMxaNKhLSk483ukm9k5uqSgQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Chz5kvc8CuSDGUF2cN+D8v+bgh932Hh/eLF5yCz+JcE7nw2+WlLMo5i76YLIXyD+dZlALEjKYm332cbgytZeXPnUbLeIn37vskEXaEYB2Nifg3dZ+Sr5D5vzGQQVFn9FUBJVc7Egw4gpNoO3kp09Y2BQcY0Gei5Eqh7TZ+vzT7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=af5d+C1Q; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.65.43] (unknown [4.194.122.144])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 622232038F38;
+	Fri,  7 Mar 2025 07:05:28 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 622232038F38
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741359933;
+	bh=qBvGIF1Dvpc7Yt8ucophS5Ds134KAk4AkIU1eqWjtnc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=af5d+C1QG4E3Dv0RaNrDEOOwzVVn9PIMHtjh26hglj7DujoxrmFene6tAhUm1Yd29
+	 JFQlqKiizStpfrMS+PfMs/IlmYIJxb7z1bvO9NRLQQUtLsmbgn9H3PoeN2mmrOZSMi
+	 Fo6bvB8B2Z5etoYsJjYcs3NeeRz8mVohVhRokXY4=
+Message-ID: <81b11433-58ac-4a2c-a497-d6d91e330810@linux.microsoft.com>
+Date: Fri, 7 Mar 2025 20:35:23 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW6PR12MB8663:EE_|MW4PR12MB7334:EE_
-X-MS-Office365-Filtering-Correlation-Id: a17084d2-87e8-49da-00c8-08dd5d895fee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ctKoawi4gMlQiE5Z+PJioEV5oVtqkr/4gTiF+lbafQbfLqS0NNhANtYP1MRV?=
- =?us-ascii?Q?WMIIo0U279FcegroGhPZRawwIQhCZWi+Y7GCzUe+dDLMuP5CT6L1UwBMTEEM?=
- =?us-ascii?Q?CwUZnhsKKZcTvdwytuYp1vV98lGKsciXmBjGjdut13g70rmekcCU/l04dd8E?=
- =?us-ascii?Q?H6n6KszIU2CF6DKeZib/J3C0lkkqmWNcahPIBcinyOX1NkJWX9vrgrUHNy9u?=
- =?us-ascii?Q?I9E9HrW4HJzTGZ+cI3Vnx0earxi8DbwDLohklp/qio6TSeYC+dwR2a09u4KJ?=
- =?us-ascii?Q?5gVpjCOZrKe2BgAA/+tds3BHo8CFhWX5GRNnoQqbQHL2YpIjt+GseRD2WlH8?=
- =?us-ascii?Q?M646cEELUMNN7GYxNuLNu6hx2gMHUx1r2ncPBhCMFg+SrVRqinaGyYcNlmTM?=
- =?us-ascii?Q?cy28IdhPyGUdhKxT3aRqQmD4aI2GQr0VsThJNAAReHaLhQWgz/kVSjyOAPjF?=
- =?us-ascii?Q?jwiwVwQmpFWzQ5410FP61hVyiUHjuO02X30mDaM8Y0G/Dr/oi/CRVxBiTf6q?=
- =?us-ascii?Q?ZQrFxRcmCfzu7JiwTlHeMBuhwARW8Nrgn/6PTUKhyT/FP4LgmAGpUdbFJB9W?=
- =?us-ascii?Q?HnQIJNZp5jWl465YON99Av3mgRwjnagYmWWPI0dQLCL3Dy3BkE7HPPHVhppi?=
- =?us-ascii?Q?EByes2xz/+U3/jgKtKe+WMq3OTWkMONP0adM0dGZ1/6f+DHQ+s+01wDzT4Lo?=
- =?us-ascii?Q?3pTsA+PhVOfL7PKIV9YV+bH1DHumZF5XQtkuQ1mA/N3tzKhWavcgTET3TaTH?=
- =?us-ascii?Q?P8Qj0fC+huQuLGiWSehqljQwXFTD6J/hoOHXqO8T+eu1jGWjVUakdI/cYlox?=
- =?us-ascii?Q?u2WAp1Pmx2NRW9dCHcuanJRbcrpdP09O3hxFhDF24KgFs0pcIIgDX8qOz26I?=
- =?us-ascii?Q?HU3ZhS+0N7hjKSh7dsxFxWPJz1GEt9LzHrk3V864QU6CITNQ+AfLE+TCw52l?=
- =?us-ascii?Q?aHndZfAuMkD+2lVBtyGOdT/G76hQaJr0XsJU+Jl/wqbcY7h8RMq45Bup/HM2?=
- =?us-ascii?Q?6kuH2c/FN4v3ARp1Cf/x3nkH8sJN1D8b67AA8GJc9bt22i7R4W6LUY0bUzV4?=
- =?us-ascii?Q?+hzes7xsJVxPj61eqxz5fbCGhZ6lZ83FgseNkaGeubyPKggYohYgW+rWR1aG?=
- =?us-ascii?Q?2Q6Vfh8p1pKQkUhTVafInGFhDr3/yIgz8peHNpPpDo89jiE0l7EEgGqSAciC?=
- =?us-ascii?Q?rHCJvC/eA6c8W3zSmW2tv9ptzGTiH1spmoGhqSMtO9wjciVIK+sUV2m9A60K?=
- =?us-ascii?Q?/hVplsg/NSp0MAEDf781AtvrijSKqMkYz6VBU8rrFmj7Zem444+DdR95E4kA?=
- =?us-ascii?Q?LzUASRPjNRE/S/f2zHeWbxFFvA1Zk9drdB/HFkK6CGuWOK88lGeC106iE2JN?=
- =?us-ascii?Q?WT+2oL+yQqS5T4zjfHCGFmcoOs9Y?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB8663.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5C5WBK19P04rGO4nSsT9fcztv8GtFTbqj5ZLhgWLzUYcAdSOTTO4gykhQzCs?=
- =?us-ascii?Q?N2Mj1W0C3rtqm0qX31R5jCQzALivL+Gy7HW5myT9Bw4kiqk42pnYJUIgyZjj?=
- =?us-ascii?Q?WLy1eSr/svt5Hy/bhdlB7+pzzFaoiXlXxH2fq7Pt0x4QWWS6CHxjjoD9MHMr?=
- =?us-ascii?Q?RjrC9/nSyLfgt+mCLsRoPc32A3et0DMElNpaSZY6F0bmRrmbne68HSotHA0f?=
- =?us-ascii?Q?p9b+5EYwQiWuwapl1cMnQThYH8JauwUxIvaKC2V3MgFPQM3SiNqMRbKlJ0sq?=
- =?us-ascii?Q?WslwUHgawf2/nclf/BAbnbgAT2VzAMS7GdSdreAlpBuXTPo2jOHKEerOKy71?=
- =?us-ascii?Q?mesaXH6PUkOQihyTZXhLMhqUQMdt82HdiNC6+AlqQ7PpHqqaYrHndhzXkDtz?=
- =?us-ascii?Q?9jRx1SpTtRbgKEiynq8aId3bjNFvYXuGrTicysHP+o8yIzQTMCjKsOtWwSo7?=
- =?us-ascii?Q?pcBobwnMlzaWhKV9o1d2b+pVHl92/bx/LDb+tyiWdgDKuHwjmRBlImec/KZK?=
- =?us-ascii?Q?+1PoYA5Ns45esjlDDYBPfDiu7u2UgGRwtEtS7YAEoUiEq3Xb7n4AiLq/OF2f?=
- =?us-ascii?Q?Hrdhafh2t0xcVm/C7g0TRvUEkfOqcsr+9jgNXVQ3sSv2wGsajhPREIAx6Fj9?=
- =?us-ascii?Q?FmcbSXvqbRtHvspNsaz/rEoiyPumMF+WqjrUqCMAHI78MI7o8roMpq+RbkXs?=
- =?us-ascii?Q?ZA1L75ybxkXhF8u5IBJ65OfRVqJyZKK/k7PSCNm7+VzAHHRzHYc8gXpLnWTa?=
- =?us-ascii?Q?YdDoENQcgDk/AaROqZqgl6hOYM95UjzAb+iDmcGVV4IHdy+VQnU8HOQym4Wx?=
- =?us-ascii?Q?fMMNtU1sQ3sYemlFIRWUXPeeH61iL3uUH9qatZHSam6WNk+WAL/0JcNfeVqb?=
- =?us-ascii?Q?f7XEAm4eKhEEvN335iuntsUNWzTdyHUKuOL3CG4nA+J5NbNomISIOMyJykKS?=
- =?us-ascii?Q?aM5VKVHOfEAPqhruQZXIzC1NfICLKFguhpe02gpDP5buC8qbE0cBmrrIPtFu?=
- =?us-ascii?Q?acVcaxw4CB1+T6JDTpRia6gTXFOWsFC2fKMJN/hRJnO4RHP8inZmrPgJuDpr?=
- =?us-ascii?Q?wOwjge0eLvU6ZvDOs2mjDud5OfjXxPJpbT2LS+LZDEMsnhP0hOtXERjz0tNs?=
- =?us-ascii?Q?Qy9S7QYV8w9JD00r9GRzmDy53igyF/aaNqOjRCybpNnapk+fTJKjoguDAUlT?=
- =?us-ascii?Q?Tb9nRQn/v3qO0b9qyQb1VipAh6I2TCFb0uRaXwKiKJtREoco0sM3JXZh5lH+?=
- =?us-ascii?Q?7kNI/NBfdy19FGaDRoxNiDby0Ekk+yUSU+MQHWgHDtgMBIzqDuZs2pE/D3ze?=
- =?us-ascii?Q?90z+gxftovzfSn5HfAUriDYzf57WdfbCTq0DWT0TVs8sbbfc1jsdZ/1t6rMr?=
- =?us-ascii?Q?h5xKjPwzrriaw4dkXwazNACnRRC+8Vc8/lQ42bdrDY/TweFLPaJFgavzbWZ/?=
- =?us-ascii?Q?TC3N5t0icSTJMt3roFSSMDCL9mazGqFM4IfxyBvVDRyUoSF/3AV4QlAqFUIq?=
- =?us-ascii?Q?CGSvFMhJWgf7HWX3LvJmV9jDV5kT+85Cyl6kTgDKPtaMNpbz7+wMx+ZJRqob?=
- =?us-ascii?Q?/q3VeuFFka3Yp3Y9D7pdC/fFjHodGGsQYFG8j/a9?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a17084d2-87e8-49da-00c8-08dd5d895fee
-X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8663.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 15:04:35.9466
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gCqEHibSQVSwsbpgx8xm8l5CWmE/mmZatdz0EgWVQK9ZKBCOdwDNg7C6yH9/L9u4
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7334
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] sched/topology: Enable topology_span_sane check only
+ for debug builds
+To: Valentin Schneider <vschneid@redhat.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>
+Cc: stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Steve Wahl <steve.wahl@hpe.com>,
+ Saurabh Singh Sengar <ssengar@linux.microsoft.com>, srivatsa@csail.mit.edu,
+ K Prateek Nayak <kprateek.nayak@amd.com>,
+ Michael Kelley <mhklinux@outlook.com>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>
+References: <20250306055354.52915-1-namjain@linux.microsoft.com>
+ <xhsmhwmd2ds0o.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Content-Language: en-US
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <xhsmhwmd2ds0o.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 07, 2025 at 07:57:15PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the hmm tree, today's linux-next build (htmldocs) produced
-> this warning:
-> 
-> Error: Cannot open file /home/sfr/next/next/drivers/cxl/features.c
-> 
-> Introduced by commit
-> 
->   da0dd17604d4 ("fwctl/cxl: Add documentation to FWCTL CXL")
 
-Thanks Stephen,
 
-Dave can you fix all of thes kdoc bugs and post a new version?
+On 3/6/2025 10:18 PM, Valentin Schneider wrote:
+> On 06/03/25 11:23, Naman Jain wrote:
+>> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+>> index c49aea8c1025..666f0a18cc6c 100644
+>> --- a/kernel/sched/topology.c
+>> +++ b/kernel/sched/topology.c
+>> @@ -2359,6 +2359,13 @@ static bool topology_span_sane(struct sched_domain_topology_level *tl,
+>>   {
+>>        int i = cpu + 1;
+>>
+>> +	/* Skip the topology sanity check for non-debug, as it is a time-consuming operation */
+>> +	if (!sched_debug()) {
+>> +		pr_info_once("%s: Skipping topology span sanity check. Use `sched_verbose` boot parameter to enable it.\n",
+>> +			     __func__);
+> 
+> FWIW I'm not against this change, however if you want to add messaging
+> about sched_verbose I'd put that in e.g. sched_domain_debug() (as a print
+> once like you've done here) with something along the lines of:
+> 
+>    "Scheduler topology debugging disabled, add 'sched_verbose' to the cmdline to enable it"
 
-Jason
+
+Thank you so much for reviewing.
+Please correct me if I misunderstood. Are you proposing below change?
+
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -2361,7 +2361,7 @@ static bool topology_span_sane(struct 
+sched_domain_topology_level *tl,
+
+         /* Skip the topology sanity check for non-debug, as it is a 
+time-consuming operation */
+         if (!sched_debug()) {
+-               pr_info_once("%s: Skipping topology span sanity check. 
+Use `sched_verbose` boot parameter to enable it.\n",
++               pr_info_once("%s: Scheduler topology debugging disabled, 
+add 'sched_verbose' to the cmdline to enable it\n",
+                              __func__);
+                 return true;
+         }
+
+
+Regards,
+Naman
+
+> 
+>> +		return true;
+>> +	}
+>> +
+>>        /* NUMA levels are allowed to overlap */
+>>        if (tl->flags & SDTL_OVERLAP)
+>>                return true;
+>> --
+>> 2.34.1
+
 
