@@ -1,182 +1,87 @@
-Return-Path: <linux-kernel+bounces-550561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EFC7A56128
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:49:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 229E8A5612A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:50:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C40903B0175
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:49:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52FBB176E8A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E3371A0BFD;
-	Fri,  7 Mar 2025 06:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cTXLJSVr"
-Received: from out199-8.us.a.mail.aliyun.com (out199-8.us.a.mail.aliyun.com [47.90.199.8])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3F11A01B9;
+	Fri,  7 Mar 2025 06:50:26 +0000 (UTC)
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F87C1632D9;
-	Fri,  7 Mar 2025 06:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E381632D9;
+	Fri,  7 Mar 2025 06:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741330165; cv=none; b=EZDlH9dmoKq6ie3PsIhbJ7SDXV/PIftALq+l4xUvNHYaWUXDxc1aqGu2JfWJPmhoimWzhvwelsXup2fpE9KRNWFXsfnZwXv82CQZ6NGGLy45jvtkQAzPj4v7yWSEfxJfqL+kNaC3kmvaK2oY0UvCxEQHazgmbKY0NS4d49gYpbE=
+	t=1741330226; cv=none; b=ZQ0COv6SSJAQAoermX+SovrNSbJ+fR7aPwcg/t6y+y2GKNUhi8xNCasx9MvwijL6RKToxrTN1D8bdPDb6NaV8MtPu+b7EI3ePypejh+7qgA6TW6nRniOOBcZpw9BIPFpP6G9UVYuF+BriSBb2luW9xR4o2QVoEMTzl5d7wDHYFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741330165; c=relaxed/simple;
-	bh=+si5xtfKaTrCo5XkcrRh9/5zv/jMenw3VsyRd5+2yic=;
-	h=Message-ID:Subject:Date:From:To:Cc:References:In-Reply-To; b=oHpJdqOOCZpYpwZljV/84YoB0awQx1GBYrzVoG/XHTuuAuUiHNeJZct6KLL62mAQKHUxpMkEaeslhziUew/NrzRMX8AaQcApbCmr4t9R9kIotqWBzeljAw3LjR+kB3AoxSdGr75UaKWUKm4kq8sr3JgyHyNO/8ir+BIBlQgZ1eQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cTXLJSVr; arc=none smtp.client-ip=47.90.199.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1741330148; h=Message-ID:Subject:Date:From:To;
-	bh=COzCScwAqWPN27zgbIWMNSKbrRKvc4+xm4mvYs8QRho=;
-	b=cTXLJSVrbxo0h61RYidhCFEXcJEbHR7WRRZZtWzrscbeGOcOKjU5a2EiFv3ziWPWeljsFKwjY1qWeEFaxBqHGOptB2PMNsEMOPG9l6OCFQShUMPqpPgc36iRtW4UWHYu3l9THmgrPThIXvHa+IAYEtZ3AbEU4iZhqOtXi4KH7NY=
-Received: from localhost(mailfrom:xuanzhuo@linux.alibaba.com fp:SMTPD_---0WQr6i8Z_1741330146 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 07 Mar 2025 14:49:06 +0800
-Message-ID: <1741330136.4796808-1-xuanzhuo@linux.alibaba.com>
-Subject: Re: [PATCH net-next v6 0/4] virtio-net: Link queues to NAPIs
-Date: Fri, 7 Mar 2025 14:48:56 +0800
-From: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
-To: Joe Damato <jdamato@fastly.com>
-Cc: mkarsten@uwaterloo.ca,
- gerhard@engleder-embedded.com,
- jasowang@redhat.com,
- kuba@kernel.org,
- mst@redhat.com,
- leiyang@redhat.com,
- Joe Damato <jdamato@fastly.com>,
- Alexei Starovoitov <ast@kernel.org>,
- Andrew Lunn <andrew+netdev@lunn.ch>,
- bpf@vger.kernel.org (open list:XDP (eXpress Data Path):Keyword:(?:\b|_)xdp(?:\b|_)),
- Daniel Borkmann <daniel@iogearbox.net>,
- "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>,
- =?utf-8?q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- linux-kernel@vger.kernel.org (open list),
- Paolo Abeni <pabeni@redhat.com>,
- virtualization@lists.linux.dev (open list:VIRTIO CORE AND NET DRIVERS),
- netdev@vger.kernel.org
-References: <20250307011215.266806-1-jdamato@fastly.com>
-In-Reply-To: <20250307011215.266806-1-jdamato@fastly.com>
+	s=arc-20240116; t=1741330226; c=relaxed/simple;
+	bh=654CtTZeddqqETFu/ZnAfcGbXdZy/aUh1qunbf6aBT8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OIMIZqeTTO7Vn4Hm8RXKoHkh8BLcGzpl/bikdACqF3tj43wJjaIzPbPhOSJ5KmIl9KVxVsNBDN630MKNYFNVlt7CzD6SaXD10w5UoDrj9w0+S3HfXKkXOac/9joBGTnZsK/mbrYjoTtzP5RanN6pJH2SuDr6hw3hEeWcwkLtXR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c00:3300:bb12:a0a3:40d:e82f])
+	by smtp.qiye.163.com (Hmail) with ESMTP id d4e0a9b3;
+	Fri, 7 Mar 2025 14:50:17 +0800 (GMT+08:00)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: jonas@kwiboo.se
+Cc: amadeus@jmu.edu.cn,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	heiko@sntech.de,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	robh@kernel.org,
+	ziyao@disroot.org
+Subject: Re: [PATCH v2 1/1] arm64: dts: rockchip: enable SCMI clk for RK3528 SoC
+Date: Fri,  7 Mar 2025 14:50:15 +0800
+Message-Id: <20250307065015.697377-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <281b8025-8288-4274-b863-f091c05cbabe@kwiboo.se>
+References: <281b8025-8288-4274-b863-f091c05cbabe@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDHh1OVhpMTk9CSklCHk1PS1YeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtLQUhIS0tBGRlKSUEaSxpIQU9LH0EeQ0kdWVdZFhoPEh
+	UdFFlBWU9LSFVKS0lIQktDVUpLS1VKQlkG
+X-HM-Tid: 0a956f5e7a9803a2kunmd4e0a9b3
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MyI6Vhw4NDJWNjdCVh4tT0IO
+	GDxPCRFVSlVKTE9KSEhLSUpDTkhNVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
+	Sx5BSBlIQUkYS0tBSEhLS0EZGUpJQRpLGkhBT0sfQR5DSR1ZV1kIAVlBT01PNwY+
 
-Reviewed-by: Xuan Zhuo <xuanzhuo@linux.alibaba.com>
+Hi,
 
-On Fri,  7 Mar 2025 01:12:08 +0000, Joe Damato <jdamato@fastly.com> wrote:
-> Greetings:
->
-> Welcome to v6. Only patch updated is patch 3. See changelog below.
->
-> Jakub recently commented [1] that I should not hold this series on
-> virtio-net linking queues to NAPIs behind other important work that is
-> on-going and suggested I re-spin, so here we are :)
->
-> As per the discussion on the v3 [2], now both RX and TX NAPIs use the
-> API to link queues to NAPIs. Since TX-only NAPIs don't have a NAPI ID,
-> commit 6597e8d35851 ("netdev-genl: Elide napi_id when not present") now
-> correctly elides the TX-only NAPIs (instead of printing zero) when the
-> queues and NAPIs are linked.
->
-> As per the discussion on the v4 [3], patch 3 has been refactored to hold
-> RTNL only in the specific locations which need it as Jason requested.
->
-> As per the discussion on the v5 [4], patch 3 now leaves refill_work
-> as-is and does not use the API to unlink and relink queues and NAPIs. A
-> comment has been left as suggested by Jakub [5] for future work.
->
-> See the commit message of patch 3 for an example of how to get the NAPI
-> to queue mapping information.
->
-> See the commit message of patch 4 for an example of how NAPI IDs are
-> persistent despite queue count changes.
->
-> Thanks,
-> Joe
->
-> [1]: https://lore.kernel.org/netdev/20250221142650.3c74dcac@kernel.org/
-> [2]: https://lore.kernel.org/netdev/20250127142400.24eca319@kernel.org/
-> [3]: https://lore.kernel.org/netdev/CACGkMEv=ejJnOWDnAu7eULLvrqXjkMkTL4cbi-uCTUhCpKN_GA@mail.gmail.com/
-> [4]: https://lore.kernel.org/lkml/Z8X15hxz8t-vXpPU@LQ3V64L9R2/
-> [5]: https://lore.kernel.org/lkml/20250303160355.5f8d82d8@kernel.org/
->
-> v6:
->   - Patch 3 has been updated to avoid using the queue linking API from
->     refill_work and a comment has been added to instruct future
->     work on the code.
->
-> v5: https://lore.kernel.org/lkml/20250227185017.206785-1-jdamato@fastly.com/
->   - Patch 1 added Acked-by's from Michael and Jason. Added Tested-by
->     from Lei. No functional changes.
->   - Patch 2 added Acked-by's from Michael and Jason. Added Tested-by
->     from Lei. No functional changes.
->   - Patch 3:
->     - Refactored as Jason requested, eliminating the
->       virtnet_queue_set_napi helper entirely, and explicitly holding
->       RTNL in the 3 locations where needed (refill_work, freeze, and
->       restore).
->     - Commit message updated to outline the known paths at the time the
->       commit was written.
->   - Patch 4 added Acked-by from Michael. Added Tested-by from Lei. No
->     functional changes.
->
-> v4: https://lore.kernel.org/lkml/20250225020455.212895-1-jdamato@fastly.com/
->   - Dropped Jakub's patch (previously patch 1).
->   - Significant refactor from v3 affecting patches 1-3.
->   - Patch 4 added tags from Jason and Gerhard.
->
-> rfcv3: https://lore.kernel.org/netdev/20250121191047.269844-1-jdamato@fastly.com/
->   - patch 3:
->     - Removed the xdp checks completely, as Gerhard Engleder pointed
->       out, they are likely not necessary.
->
->   - patch 4:
->     - Added Xuan Zhuo's Reviewed-by.
->
-> v2: https://lore.kernel.org/netdev/20250116055302.14308-1-jdamato@fastly.com/
->   - patch 1:
->     - New in the v2 from Jakub.
->
->   - patch 2:
->     - Previously patch 1, unchanged from v1.
->     - Added Gerhard Engleder's Reviewed-by.
->     - Added Lei Yang's Tested-by.
->
->   - patch 3:
->     - Introduced virtnet_napi_disable to eliminate duplicated code
->       in virtnet_xdp_set, virtnet_rx_pause, virtnet_disable_queue_pair,
->       refill_work as suggested by Jason Wang.
->     - As a result of the above refactor, dropped Reviewed-by and
->       Tested-by from patch 3.
->
->   - patch 4:
->     - New in v2. Adds persistent NAPI configuration. See commit message
->       for more details.
->
-> v1: https://lore.kernel.org/netdev/20250110202605.429475-1-jdamato@fastly.com/
->
->
-> Joe Damato (4):
->   virtio-net: Refactor napi_enable paths
->   virtio-net: Refactor napi_disable paths
->   virtio-net: Map NAPIs to queues
->   virtio_net: Use persistent NAPI config
->
->  drivers/net/virtio_net.c | 101 ++++++++++++++++++++++++++++-----------
->  1 file changed, 74 insertions(+), 27 deletions(-)
->
->
-> base-commit: 8e0e8bef484160ac01ea7bcc3122cc1f0405c982
-> --
-> 2.45.2
->
+> This is new compared to v1, please add operating-points instead.
+> cpu_pvtpll is already initialized to 1.2 GHz by firmware, see e.g. [1].
+> 
+> [1] https://lore.kernel.org/u-boot/20250123224844.3104592-5-jonas@kwiboo.se/
+
+Thanks for this information, I will remove assigned-clocks.
+However, due to unknown reasons, the cpu opp-table does not
+match the actual frequency at all.
+e.g. set 2016MHz, actual 1610MHz
+
+Thanks,
+Chukun
+
+-- 
+2.25.1
+
 
