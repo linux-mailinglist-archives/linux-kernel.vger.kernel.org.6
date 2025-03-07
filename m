@@ -1,105 +1,197 @@
-Return-Path: <linux-kernel+bounces-551221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D031AA5698C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:55:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A775FA5696A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:52:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02911179862
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:54:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D5A43B6B31
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:51:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9EF821ADAC;
-	Fri,  7 Mar 2025 13:53:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E91C21ADD2;
+	Fri,  7 Mar 2025 13:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b="AFjqASyS"
-Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e4kO8eNT"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976C721ADC1
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 13:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.227
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D00721ABA6;
+	Fri,  7 Mar 2025 13:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741355618; cv=none; b=Rp5RsJw/kYRibCRJZ944Ex+LI22yistHqNyRkmP8nYTIHgIPg6nS1nI+vo31bWimFV1zcH02YyksAF+3bG92YHdtqEipgvPPzc1kxk31bTokC8mGpC1QyoJMAL8AV39knAtZM5Yrx4kHBgO1LW9wdJoPMruRpt3YAdAcXzI/o2g=
+	t=1741355500; cv=none; b=JZxe0Q57i8dXvTt/TD7a3FXKoEoTlfPJkNOAu2zwPRFqFbKJ0+HocXMf8dbUGJJJKhj+z5A72m5BRzKPfJiixWHIHQUFfxpoyJsw4RqdHepLSv3PUXXER+0TvXalUnpnf0QPt+Vo47G7GGC7oKOEe1CVBzH5712V8inwYPNbXYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741355618; c=relaxed/simple;
-	bh=cUKKOBIA6AnCtzbT1MqxSkVVKShO6X5VCDkFmfJSlNY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=knENDcAQGYhmCkp2z4Irwa/uXzeVs1jYdLpxZdHWJCJIRWLp9u4S6Kg5hsMJ6GCiO9T6aPwuKPZ3UoAndV9//N9c0K5QCzrmqELhzqZhzCBt5+czSvr2U9fHrP1CHupV3o8jJhFyJi1fW0HWuMDt2ghyaCg5CdxWxFNo8/Hc4tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=alexander.sverdlin@siemens.com header.b=AFjqASyS; arc=none smtp.client-ip=185.136.65.227
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 20250307135325f67685f376872cb33d
-        for <linux-kernel@vger.kernel.org>;
-        Fri, 07 Mar 2025 14:53:25 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm1;
- d=siemens.com; i=alexander.sverdlin@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
- bh=gTZ/5YY+d6HrO592o2qXwOahDlenU2BclkBMG+f5nAs=;
- b=AFjqASySXU/F7WaU3Wt0kAYT03HCFqwxmmlhBTDWDO4kifKJWVilYU/SOVdWYHMD/ZSZbm
- EBPKeN3e0ISGtrPTTnSJPmSOxMaq08UILbi+8Kijm9SI7s6RWxlmCLnlWfcSeqCkFUaYOJiZ
- LCsYzQFLW/ywcNNRIcm/z1+HsP0pW7JOGDaYnOG4Y6ROtjN5U3brenYOnKcamc+ZtMhTiWo4
- AAByvLuZVHQ+MIlsO3daK5L+Kn4muGfUGgx+IgMZpwmb4svtvxQbcQAuHFb6XlF9de5pMHVK
- apyzn+as1f5e/zEDJkm1eRlPG4QAq+rQ16G1n9CD2QxGdTsewx13BTvQ==;
-From: "A. Sverdlin" <alexander.sverdlin@siemens.com>
-To: devicetree@vger.kernel.org
-Cc: Alexander Sverdlin <alexander.sverdlin@siemens.com>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] of/irq: Refuse to of_irq_parse_one() more than one IRQ if #interrupt-cells = <0>
-Date: Fri,  7 Mar 2025 14:52:18 +0100
-Message-ID: <20250307135231.4080272-1-alexander.sverdlin@siemens.com>
+	s=arc-20240116; t=1741355500; c=relaxed/simple;
+	bh=P92GJowE3+xop7nioIlnBSiVvcN8Lu72zS16CGODbKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ek7dBbc1VB1afpCNDBoUYjIjA9x9ERkIwhEi4h9tYNy7WoRtK34DnJc2weBkDeQp1aVjBOQ5tp3tujcT7yNdgVFkq9OLQ6XcF4h5xpLt3cyEKP9QTdM1RJdQl2MG+UYgTE/byxi35CfgvgpajJrhP79FciFe4fiU8yck8BxvoWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e4kO8eNT; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2ff6cf448b8so3400817a91.3;
+        Fri, 07 Mar 2025 05:51:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741355498; x=1741960298; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GsYXGuW9uswGocW86oiWeIN4F7hDphJu+gAUcgsVqKc=;
+        b=e4kO8eNTyWKGQC4Gr3N944KHw3m4eazWQ9N5ZGJT6vnbsEVZhbl23KlYgdTNckzb67
+         K3ZRLQ3piNmWT1fbdppoQ47WXqCip5Wb+JET6XMoPZP104A4Hsd3e7SXRUdoD4h3gJpu
+         7W56f0cT9HxSWEW0FpuxHBEeV5eeLq/BncMTWP5cfuZ54XRq+TBkHTPt53hdfuy/rfaK
+         dISY9jdQN76KYRGcyMVNUDUWeNw0XVqHDjEQZNjYkrkgqVr02nj36c3q0oKO4Ucx+rJT
+         SRv3hM/2VgWuTvdmIVaWAyVrgmOsqaQ1LCXFaGolUwNvaqnOD/IIHrQTXUObW7CqYGzn
+         KHRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741355498; x=1741960298;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GsYXGuW9uswGocW86oiWeIN4F7hDphJu+gAUcgsVqKc=;
+        b=Frs1RXPL3Ou+cM7jmB/rcb9G/opl7fzmyWJuQZTyEMkDHiMleiqQwtUkulMFC5TQqM
+         E9ddZTZhpIhuHpDarJrb+uF7UsuIyK9PAWsYPtHPxykcU4JKSLMnHtFmpfj0eG8tk0Gf
+         4pO5wX4ygCdQp7kHBbFvcDdQvIiEvdnxlBSrISvN7ZHZWsKYA2t3LRhai2gxM2H149qb
+         7gwdxUC00qFc6UB6atGyOTNl1m0zOZP2iaevgW2SXleXk/DepPlV0uKiqk98UOQnI8TL
+         OEpeCZZYyic8FxLxMGBlU/1TT0Ypq0D+EOEKz3XbNgx5wvol9xmCr0eOubsfixqfPzQH
+         nbMg==
+X-Forwarded-Encrypted: i=1; AJvYcCWG0o2QiLfUiGxk0cCeoS+NYeYpdiQr1Y7ozFG7u9alZPqh3EbLmLeH5dhRHBVb2L5MAV2rs/1vDQ4R@vger.kernel.org, AJvYcCX/EpofVely2XnqF3QnkOWzU1IVh1Qfi44NTyORolBszxB/qMYTxBmAcvNrHcYz+cpvgKrx53KcjAtmKw==@vger.kernel.org, AJvYcCXvFcqtaNniZoBbXU+vKB9blGylv9660sZxBxjKu1ZCvTLUXSyRoBY6Fo5w8zxzwGRffKFGjueCNsoR/AIh@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG4M//lPRMew+QY5VWj8bWjjnwnf7UzcWGh1+Ak8W2v9WtjHyt
+	xoX/o1Up5A0gqX04W2RmJZhyF2e5eSisWZiGe/oAUjryLYQOTTB4
+X-Gm-Gg: ASbGncupIxJz8rluu0QzPM5b1C3reKQhUzAvYpUK5xb0SQF+q5onJsA1ksH6Rwi+xvA
+	WkveOaK8fLQpqCH1qOR0ucD+VE5ckmLvaOsP1ac4MCFpFCJ8gA8QzmDi4WigmF4PegM27jrCZgP
+	g0ogUQ2hlfYM/s6JPqmjhJcPTaNLKKuiIoBus7FWlZR4NDitvrOo172nS6F9uu6Jq5Guiq2m8it
+	O2+589JrZNsK+PYMZ6GdH/9R7ryD2IyzUPwjOL+UvTwn4tnrcKjylFmsEvvF3nqGC5zqwAL92Dn
+	pxo2OdAds9x/ofCzHxRma1liKT6IQoiDyPI9XMIT4KZ7RMfju5e/qw==
+X-Google-Smtp-Source: AGHT+IG111djafDJeUEZJzxG4Q6hK3LuycWp707Rg+oLSJoKZFiWESbFt8TBFWsdR/+ya+3HFFV8Ow==
+X-Received: by 2002:a17:90a:d2c6:b0:2ff:6608:78e2 with SMTP id 98e67ed59e1d1-2ff7cea99b3mr6342874a91.16.1741355498482;
+        Fri, 07 Mar 2025 05:51:38 -0800 (PST)
+Received: from localhost ([2804:30c:1f21:4300:1cf6:c485:6555:b1c5])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2ff693e73b9sm3033124a91.38.2025.03.07.05.51.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 05:51:37 -0800 (PST)
+Date: Fri, 7 Mar 2025 10:52:31 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Jonathan Santos <Jonathan.Santos@analog.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>, lars@metafoo.de,
+	Michael.Hennerich@analog.com, marcelo.schmitt@analog.com,
+	jic23@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl,
+	lgirdwood@gmail.com, broonie@kernel.org, dlechner@baylibre.com,
+	jonath4nns@gmail.com
+Subject: Re: [PATCH v4 10/17] iio: adc: ad7768-1: Move buffer allocation to a
+ separate function
+Message-ID: <Z8r6H40mTKO_QF9Y@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1741268122.git.Jonathan.Santos@analog.com>
+ <d078cdcf3a8bdd60ec3b9b6822e9705bf3f98bfa.1741268122.git.Jonathan.Santos@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-456497:519-21489:flowmailer
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d078cdcf3a8bdd60ec3b9b6822e9705bf3f98bfa.1741268122.git.Jonathan.Santos@analog.com>
 
-From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+On 03/06, Jonathan Santos wrote:
+> From: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+> 
+> This change moves the buffer allocation in a separate function, making
+> space for adding another type of iio buffer if needed.
+> 
+> Reviewed-by: David Lechner <dlechner@baylibre.com>
+> Signed-off-by: Sergiu Cuciurean <sergiu.cuciurean@analog.com>
+> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
+> ---
+LGTM
 
-An #interrupt-cells = <0> property may arguably be a right answer for an
-interrupt controller having just one interrupt and no options to configure.
-There are anyway already existing examples in the tree, both in DTs and in
-the bindings.
+Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
 
-Now the problem is that of_irq_count() called on an interrupt generating
-device having one of the former controllers as parent would result in an
-endless loop. It's especially unpleasant in the startup where
-of_irq_count() <= ... <= of_platform_default_populate_init() will silently
-hang forever (unless a watchdog bites).
-
-Prevent others from spending the same time on debugging this by refusing to
-parse more than one IRQ for such controllers.
-
-Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
----
- drivers/of/irq.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-index 6c843d54ebb11..b3a359c7641d3 100644
---- a/drivers/of/irq.c
-+++ b/drivers/of/irq.c
-@@ -381,6 +381,13 @@ int of_irq_parse_one(struct device_node *device, int index, struct of_phandle_ar
- 		goto out;
- 	}
- 
-+	if (!intsize && index) {
-+		pr_debug("%pOF trying to map IRQ %d in %pOF having #interrupt-cells = <0>\n",
-+			 device, index, p);
-+		res = -EINVAL;
-+		goto out;
-+	}
-+
- 	pr_debug(" parent=%pOF, intsize=%d\n", p, intsize);
- 
- 	/* Copy intspec into irq structure */
--- 
-2.48.1
-
+> v4 Changes:
+> * None.
+> 
+> v3 Changes:
+> * Added missing SoB.
+> 
+> v2 Changes:
+> * Interrupt and completion moved out from ad7768_triggered_buffer_alloc(). 
+> ---
+>  drivers/iio/adc/ad7768-1.c | 44 ++++++++++++++++++++++----------------
+>  1 file changed, 26 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
+> index 86f44d28c478..e88e9431bb7a 100644
+> --- a/drivers/iio/adc/ad7768-1.c
+> +++ b/drivers/iio/adc/ad7768-1.c
+> @@ -619,6 +619,31 @@ static int ad7768_set_channel_label(struct iio_dev *indio_dev,
+>  	return 0;
+>  }
+>  
+> +static int ad7768_triggered_buffer_alloc(struct iio_dev *indio_dev)
+> +{
+> +	struct ad7768_state *st = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	st->trig = devm_iio_trigger_alloc(indio_dev->dev.parent, "%s-dev%d",
+> +					  indio_dev->name,
+> +					  iio_device_id(indio_dev));
+> +	if (!st->trig)
+> +		return -ENOMEM;
+> +
+> +	st->trig->ops = &ad7768_trigger_ops;
+> +	iio_trigger_set_drvdata(st->trig, indio_dev);
+> +	ret = devm_iio_trigger_register(indio_dev->dev.parent, st->trig);
+> +	if (ret)
+> +		return ret;
+> +
+> +	indio_dev->trig = iio_trigger_get(st->trig);
+> +
+> +	return devm_iio_triggered_buffer_setup(indio_dev->dev.parent, indio_dev,
+> +					       &iio_pollfunc_store_time,
+> +					       &ad7768_trigger_handler,
+> +					       &ad7768_buffer_ops);
+> +}
+> +
+>  static int ad7768_probe(struct spi_device *spi)
+>  {
+>  	struct ad7768_state *st;
+> @@ -689,20 +714,6 @@ static int ad7768_probe(struct spi_device *spi)
+>  		return ret;
+>  	}
+>  
+> -	st->trig = devm_iio_trigger_alloc(&spi->dev, "%s-dev%d",
+> -					  indio_dev->name,
+> -					  iio_device_id(indio_dev));
+> -	if (!st->trig)
+> -		return -ENOMEM;
+> -
+> -	st->trig->ops = &ad7768_trigger_ops;
+> -	iio_trigger_set_drvdata(st->trig, indio_dev);
+> -	ret = devm_iio_trigger_register(&spi->dev, st->trig);
+> -	if (ret)
+> -		return ret;
+> -
+> -	indio_dev->trig = iio_trigger_get(st->trig);
+> -
+>  	init_completion(&st->completion);
+>  
+>  	ret = ad7768_set_channel_label(indio_dev, ARRAY_SIZE(ad7768_channels));
+> @@ -716,10 +727,7 @@ static int ad7768_probe(struct spi_device *spi)
+>  	if (ret)
+>  		return ret;
+>  
+> -	ret = devm_iio_triggered_buffer_setup(&spi->dev, indio_dev,
+> -					      &iio_pollfunc_store_time,
+> -					      &ad7768_trigger_handler,
+> -					      &ad7768_buffer_ops);
+> +	ret = ad7768_triggered_buffer_alloc(indio_dev);
+>  	if (ret)
+>  		return ret;
+>  
+> -- 
+> 2.34.1
+> 
 
