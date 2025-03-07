@@ -1,91 +1,125 @@
-Return-Path: <linux-kernel+bounces-551236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB1D0A569EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:06:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6489AA569F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:07:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC6183B04BD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:06:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CE4D179C7B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:06:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B5321ADA4;
-	Fri,  7 Mar 2025 14:06:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B6721ADBC;
+	Fri,  7 Mar 2025 14:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lJaj/OxB";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="G1r6x2oo"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="MHwg6mD5"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E713421ABD7
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB4818DF65
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741356386; cv=none; b=ghW87gsonQh9NxhA495ZnZJf1Ppd2XIqsHlUTBZxIQEwzQMo/7hzd2L6gXgLUGXZtJSxVg42AUMS2s1UdQunYj/UeT2I2jq+3j70WkMRic/pJgM6IezuHA8mZaitkSDbwb/x1Bsr4wVFI6Phkw/bG4esEqzRIOprA9yBhdYFCmk=
+	t=1741356402; cv=none; b=mXQP2RL/qxybo3x/YsOGJCRPPjHjA9G7HslTgklBl51pjNhlI2MMHsn0d9RRixQMH6KqBEvpsBVNKGM1xW2cwI48l3aONL/6Den5Qvf/RRbiIC4Ta/c1qdKk+WR/cnbhDXJp36DlsnTTUxtUYe9gplJiJzINscyrVZc4DR+dTNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741356386; c=relaxed/simple;
-	bh=wqhy5TPYm5RJ0L6opguVJAW3lnezYmtMO0kEqr5M6b0=;
+	s=arc-20240116; t=1741356402; c=relaxed/simple;
+	bh=imVyh6k1rb/XZNJVY9COulfZL4IKvp42PjLpgWwlSBc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KItsrqhN98XkduXVpqdja15PzS4Zy06mBxOFsalSK1km6lhl7aFO39erxGbur7+3vdpEeYevrYtESNvVV/bzHUV7uiC8tEXeFxyfcIl4WfFnwFmtwS+OkFJuWLxfAE7eIJUjPZk8e02fnRRhMRRm0DLh4nqqdQGyQcvLbmq1DyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lJaj/OxB; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=G1r6x2oo; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 7 Mar 2025 15:06:20 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741356382;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wqhy5TPYm5RJ0L6opguVJAW3lnezYmtMO0kEqr5M6b0=;
-	b=lJaj/OxB/OCDp40EPPN5/PONPbRUU5n0NWOPOXjqVqkyy6UQGVsNoslUOsErDVLdvcgyh1
-	k/nzSSu4aeYqS83I2F+Vjx6bPJzeYDgVI509A+rCLAfK2gxVEgWM3PF7gn7tpfzRyDypsN
-	y/Eu+6tQ48xCCmRQUtro5P3OwAGTTLNtOHQFspcWwz0j6NV58EkHNUFjx8P2PU9HgPx6PR
-	uVxqDFG2T/VSRte8wIyflqpa8J5Cfdmh364u0FBGusk1ztMvgD1HiWrXHjKv91aO1btDRV
-	rQPwVgQUwit38OTObdAGBS/IgkrywPkTXfwh0VS7ClYhRTGECI7VGdyLwJzB/A==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741356382;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wqhy5TPYm5RJ0L6opguVJAW3lnezYmtMO0kEqr5M6b0=;
-	b=G1r6x2oolXoGZBGc0KHhALnd3QiFSQa1xWbhTYaNtLGUvqSaqUUZC5q7ZPsL1pgebUN8Uo
-	jo1PYgMzxIWMgPAg==
-From: "Ahmed S. Darwish" <darwi@linutronix.de>
-To: Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-	John Ogness <john.ogness@linutronix.de>, x86-cpuid@lists.linux.dev,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 07/12] tools/x86/kcpuid: Add rudimentary CPU vendor
- detection
-Message-ID: <Z8r9XN1wyYEDa_ji@lx-t490>
-References: <20250306205000.227399-1-darwi@linutronix.de>
- <20250306205000.227399-8-darwi@linutronix.de>
- <01a2a955-98a5-47f6-aeb2-275ba840a9fa@citrix.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P0Zh0lT4rzKIMe9xO2GvM0/MUcqZLWBr2qbKKvDAUIPDj+ptW5ce6ox/J3htrygUWjUoBeD/+obEOD/0PEaqsqeJhntxhmNel9WlScGZFfiiS6r08lUpcdWi95Vn0d4FVZxFWeSy11fZ2YtwDi4TAelZaBfjSbSDoTvoKyfYKQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=MHwg6mD5; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=UBQ6q3i2ePjT2i8U7tBuzMQdDLItSqljC2sOjafdBNw=; b=MHwg6mD546FqX8Qj
+	TTP1dLVNaTx/Us4Jukg/gkx3CPbq9+KmF18KUfEyNmQARN+9/JlkGWgYJ/vydPZsvCMCrqwYTDjG1
+	yWPWAei5PZFGyapLmjmB9VIyCypdeDm/SIjSn6d8Qw+fyNNNKNBBn/AxPIZi6dfa+oWVnWZT1UxAG
+	sucV4PDp3n+rMZH8mvQO/6al7/VEhUdjVKLekXH5+KWg55EVrmMAEVVnuxCbYOVa/fv8NbEd/hkAy
+	GNrdja++lzROCpZDPNbBiHzRXQoJYPuzpmqo1qzhOrWogkE59ADqBe5qO0p1hWzvhzHL5mhaW8LFZ
+	M6uvPM+z3/DTLgJvJQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tqYLQ-003Phw-2S;
+	Fri, 07 Mar 2025 14:06:32 +0000
+Date: Fri, 7 Mar 2025 14:06:32 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
+Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] drm/gma500: Remove unused mrst_clock_funcs
+Message-ID: <Z8r9aE0mtb9_R0p8@gallifrey>
+References: <20250306155155.212599-1-linux@treblig.org>
+ <CAMeQTsaNfQJ=OgWXwQ2bAxa1xbbQxAWDYEcokQ3VJE_EApPbzQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <01a2a955-98a5-47f6-aeb2-275ba840a9fa@citrix.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMeQTsaNfQJ=OgWXwQ2bAxa1xbbQxAWDYEcokQ3VJE_EApPbzQ@mail.gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 14:06:22 up 303 days,  1:20,  1 user,  load average: 0.03, 0.01,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On Thu, 06 Mar 2025, Andrew Cooper wrote:
->
-> Many CPUs have ways of overriding the vendor string, thanks to
-> GenuineIntel being hardcoded in too many pieces of software.
->
-> I suggest you check all registers, lest you find yourself on a CPU
-> claiming EBX=0x68747541, ECX=0x6C65746E, EDX=0x6E65476E
->
+* Patrik Jakobsson (patrik.r.jakobsson@gmail.com) wrote:
+> On Thu, Mar 6, 2025 at 4:52 PM <linux@treblig.org> wrote:
+> >
+> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >
+> > The mrst_clock_funcs const was added in 2013 by
+> > commit ac6113ebb70d ("drm/gma500/mrst: Add SDVO clock calculation")
+> > and commented as 'Not used yet'.
+> >
+> > It's not been used since, so remove it.
+> > The helper functions it points to are still used elsewhere.
+> >
+> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> 
+> Applied to drm-misc-next
 
-Indeed; will do.
+Thanks!
 
-Thanks,
-Ahmed
+Dave
+
+> Thanks
+> 
+> 
+> > ---
+> > v2
+> >   commit message fixed to use correct struct name, and add
+> >   note about the functions used still being used.
+> >
+> >  drivers/gpu/drm/gma500/oaktrail_crtc.c | 7 -------
+> >  1 file changed, 7 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/gma500/oaktrail_crtc.c b/drivers/gpu/drm/gma500/oaktrail_crtc.c
+> > index de8ccfe9890f..ea9b41af0867 100644
+> > --- a/drivers/gpu/drm/gma500/oaktrail_crtc.c
+> > +++ b/drivers/gpu/drm/gma500/oaktrail_crtc.c
+> > @@ -658,10 +658,3 @@ const struct drm_crtc_helper_funcs oaktrail_helper_funcs = {
+> >         .prepare = gma_crtc_prepare,
+> >         .commit = gma_crtc_commit,
+> >  };
+> > -
+> > -/* Not used yet */
+> > -const struct gma_clock_funcs mrst_clock_funcs = {
+> > -       .clock = mrst_lvds_clock,
+> > -       .limit = mrst_limit,
+> > -       .pll_is_valid = gma_pll_is_valid,
+> > -};
+> > --
+> > 2.48.1
+> >
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
