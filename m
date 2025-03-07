@@ -1,89 +1,124 @@
-Return-Path: <linux-kernel+bounces-550206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56882A55C93
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:03:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083D1A55C92
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:03:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 890B73AD55C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:02:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89EC01778C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9BDF18DB39;
-	Fri,  7 Mar 2025 00:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xx49e8od"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E50913FD72;
+	Fri,  7 Mar 2025 01:02:04 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2541414A4F9;
-	Fri,  7 Mar 2025 00:59:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A697E28FF;
+	Fri,  7 Mar 2025 01:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741309174; cv=none; b=Zitk01o8x/qn2myIdXbK+4uk7PIzP4fwqQapjt0Dp3eA1W3MFOGhJdP6C9dqGfpvPQG/9IrNJX0iiAZoAMNydfHot7qO9teaChXz9mrMfZ9v9IOtpnsWlFr+BbMI05BDtrJu84ecYdDduFqzsO48cAk6Hk2kZZBXGt5G2afMenw=
+	t=1741309324; cv=none; b=kXsmnaBuEWp9Aa0Rn44pRwSVgFcYf95Xe2sYSFpAy25z/FK/KaBp4fnotJbsjug+J+6PvV4gUwJf2yGoQX0yBv6v9NONVQP6nwhZTirf0f+b+XJTUpRX8Ust7P//iM9PmG45s9DR1OicriyexM3r8rod3oyQTvwvdEUbIXkMqfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741309174; c=relaxed/simple;
-	bh=Cg2qsx4qx6dQxL2dKMoV09fLDr7a4hn6EBItwZqDGGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GjJ3UYmGZft34cQA8CnVpiQhu7LtU4zpqUXhHxC18ajtVYiPgWIBbfEMNu8qLvK2JukEDQiKNWkxOfQzWPzKMmfqbK7Lh3ODEa72yfj93GIt9b4CUI1FRMNSMagHpTQjzsUAAmeVNfypo6x3s6Fp2WQUxVPndxZs48BXKvBB6ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xx49e8od; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37826C4CEE0;
-	Fri,  7 Mar 2025 00:59:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741309173;
-	bh=Cg2qsx4qx6dQxL2dKMoV09fLDr7a4hn6EBItwZqDGGk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Xx49e8odjgKN5abFOiSV4WP/FDGjg6AN+86g670RJ4qn7DNDD6tzDFYOf5sO6pYyg
-	 J9uIA95n5YPjL3ubaBjCrbvqO/lwtwbrBPvSulpqdMwTdF4+H5O+MSorPu282E7sIp
-	 WGJ05Mge/msv+7DjZ7soWwFlJCMjX5LTiP8Xndj5HiEDpr1Cfoizm0THFCdyq98nJs
-	 0s2TJysz2Q0ybXYPB42JpVxbGuwEYcntGG7VjIBoSJp7zY8QgZqRJdmtqUBYKoGKwK
-	 EncNbvLjrOCcLU5aGpV9/7TwEVK9R3DoU6vLDbykGzcGDCapLljk5XvGICRlR8A4ZY
-	 FITRCI7Qg0q2g==
-Date: Thu, 6 Mar 2025 16:59:31 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen Wang
- <unicorn_wang@outlook.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>, Richard Cochran
- <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Romain Gantois <romain.gantois@bootlin.com>, Hariprasad Kelam
- <hkelam@marvell.com>, Jisheng Zhang <jszhang@kernel.org>, =?UTF-8?B?Q2w=?=
- =?UTF-8?B?w6ltZW50IEzDqWdlcg==?= <clement.leger@bootlin.com>, "Jan Petrous
- (OSS)" <jan.petrous@oss.nxp.com>, Simon Horman <horms@kernel.org>, Furong
- Xu <0x1207@gmail.com>, Lothar Rubusch <l.rubusch@gmail.com>, Joe Hattori
- <joe@pf.is.s.u-tokyo.ac.jp>, Bartosz Golaszewski
- <bartosz.golaszewski@linaro.org>, Giuseppe Cavallaro
- <peppe.cavallaro@st.com>, Jose Abreu <joabreu@synopsys.com>,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, sophgo@lists.linux.dev,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-riscv@lists.infradead.org,
- Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH net-next v6 0/4] riscv: sophgo: Add ethernet support for
- SG2044
-Message-ID: <20250306165931.7ffefe3a@kernel.org>
-In-Reply-To: <20250305063920.803601-1-inochiama@gmail.com>
-References: <20250305063920.803601-1-inochiama@gmail.com>
+	s=arc-20240116; t=1741309324; c=relaxed/simple;
+	bh=xkHJgHv1hq6vVqHXKJBL8m/9XUZ+TOSka++iVqVosPs=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=G6fAs0d4YhrhxenNuWGmxniDaIbVBJjYsvGEz4lRUqYh8xnVz3uTf9s8zqr0NP8lRg0nwt8ENX1kbHovKD2O0w5jUQeFDcblFNQWt7EIyYul6gPUJcVTIhvcaVdJD31i8CtUBYbPOI8zrZt5Zh1Uen8cMPdvXv2vjr9m2etHCog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z87Gz49BKz6K8Rw;
+	Fri,  7 Mar 2025 08:59:39 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3A7DF1403D2;
+	Fri,  7 Mar 2025 09:01:59 +0800 (CST)
+Received: from localhost (10.48.43.65) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 7 Mar
+ 2025 02:01:48 +0100
+Date: Fri, 7 Mar 2025 09:01:43 +0800
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: <shiju.jose@huawei.com>
+CC: <linux-cxl@vger.kernel.org>, <dan.j.williams@intel.com>,
+	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>, <david@redhat.com>,
+	<Vilas.Sridharan@amd.com>, <linux-edac@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
+	<rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
+	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
+	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
+	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
+	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
+	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
+	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
+	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
+	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
+	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
+Subject: Re: [PATCH 3/8] cxl/memfeature: Add CXL memory device ECS control
+ feature
+Message-ID: <20250307090143.00003e3f@huawei.com>
+In-Reply-To: <20250227223816.2036-4-shiju.jose@huawei.com>
+References: <20250227223816.2036-1-shiju.jose@huawei.com>
+	<20250227223816.2036-4-shiju.jose@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Wed,  5 Mar 2025 14:39:12 +0800 Inochi Amaoto wrote:
-> The ethernet controller of SG2044 is Synopsys DesignWare IP with
-> custom clock. Add glue layer for it.
+On Thu, 27 Feb 2025 22:38:10 +0000
+<shiju.jose@huawei.com> wrote:
 
-Looks like we have a conflict on the binding, could you rebase
-against latest net-next/main and repost?
--- 
-pw-bot: cr
+> From: Shiju Jose <shiju.jose@huawei.com>
+> 
+> CXL spec 3.2 section 8.2.10.9.11.2 describes the DDR5 ECS (Error Check
+> Scrub) control feature.
+> The Error Check Scrub (ECS) is a feature defined in JEDEC DDR5 SDRAM
+> Specification (JESD79-5) and allows the DRAM to internally read, correct
+> single-bit errors, and write back corrected data bits to the DRAM array
+> while providing transparency to error counts.
+> 
+> The ECS control allows the requester to change the log entry type, the ECS
+> threshold count (provided the request falls within the limits specified in
+> DDR5 mode registers), switch between codeword mode and row count mode, and
+> reset the ECS counter.
+> 
+> Register with EDAC device driver, which retrieves the ECS attribute
+> descriptors from the EDAC ECS and exposes the ECS control attributes to
+> userspace via sysfs. For example, the ECS control for the memory media FRU0
+> in CXL mem0 device is located at /sys/bus/edac/devices/cxl_mem0/ecs_fru0/
+> 
+> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
+Hmm. No idea why I didn't tag this before. It's been fine for ages.
+
+One really small thing if respinning for some other reason,
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+
+> +static int cxl_mem_ecs_set_attrs(struct device *dev,
+> +				 struct cxl_ecs_context *cxl_ecs_ctx,
+> +				 int fru_id, struct cxl_ecs_params *params,
+> +				 u8 param_type)
+> +{
+...
+> +
+> +	/*
+> +	 * Fill attribute to be set for the media FRU
+
+Trivial but could be a single line comment.
+
+> +	 */
+> +	ecs_config = le16_to_cpu(fru_rd_attrs[fru_id].ecs_config);
+> +	switch (param_type) {
+> +	case CXL_ECS_PARAM_LOG_ENTRY_TYPE:
+
 
