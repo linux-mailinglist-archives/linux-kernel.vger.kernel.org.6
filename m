@@ -1,154 +1,204 @@
-Return-Path: <linux-kernel+bounces-551751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD33A57056
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:20:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 884B5A57057
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:20:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 465851896B9C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:20:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D387218967B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1ECA23F411;
-	Fri,  7 Mar 2025 18:20:14 +0000 (UTC)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D842405E4;
+	Fri,  7 Mar 2025 18:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E+mHNaBF"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD251A7AF7
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 18:20:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA30E1A7AF7;
+	Fri,  7 Mar 2025 18:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741371614; cv=none; b=glJBehMJHTPyCrT4SkfGsdxTQXREmVc+zYDgO1CHS1mq/r7kuq8H7DQgjk1gjwgIVRfLmdIw8DZe1HnpZ1RtBwtcOczCoRjLMWJnec5e0tS+/arKkJ/jmTG2lu0/v0LYLiXqogc51wLiFT59Y0dJsEg99cU6e36T+fQaZAFaF48=
+	t=1741371620; cv=none; b=ACxlu1ep8WSN/CtrKlosdq2CN28cFxa1g0jyQOR9peovvCRuvKJ/c72JByMmD3Yjw1vN77iVA02phzH4gxN2f2xHzko6yXw8jyEnMUJoe44/rYRewfHHZMwmBB1V6XvKUaHeWdrskbSLhTyGYitXN4KxzoSQIYsAc49Sid7naRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741371614; c=relaxed/simple;
-	bh=Hhw5T1wEb+xVZ4n3lP57Ca8my2QE1/G0kI7gnZD5tjE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FnTlhg11O6DwAbG8lg0XfPKOe96ehBEpo8AWwwzlPDwqJO7ojykEN1pptEDvdtOhU241fatYEGXM2r5StKtuUXdfunllRAaM3LS6Ljg60y2e5ckhk2lMT+fq8vpKIqFueofLHQuek6bcu4faC8AD8fJWx68ANYrA7hfIEMxIQSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1741371620; c=relaxed/simple;
+	bh=rqrIgGVQ6M5vVw6p4Jr1p0YFHYVdn2Xj93tZ/3VW8rc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fs8GlkedPXvSouInn7Hy3PuTW3r6IdBFPmaOksVW34fo3m8qIy6SZrJWhrYqja/yfgCg31uMbnq9q7fyhZEMDihxLkQa2AWe0aAu8/1NimhfbEEViZHiNhKKlZuxOWwd7YcUW2BYCflhZK5/7jX9XhDyYq64lnYreLm/b4xIN9k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E+mHNaBF; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-523de5611a3so836162e0c.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 10:20:12 -0800 (PST)
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6fed0620395so678157b3.3;
+        Fri, 07 Mar 2025 10:20:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741371618; x=1741976418; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FeJw1/wk13slq8SaTOaUUmP/IYv8V17ltprOZMyg7cg=;
+        b=E+mHNaBFmFiS0Iocn7UQu6+0CFNC3fjcWs5SNuHm+4btnQsj+t3ugV3+d/4SauQGiq
+         N8xtil+Tn3toaPP0kB7UfGPojnMC1T/FAAFaMEY2s6Gqnax83u3fZEQ5q5AQyjA3GHzE
+         d7IvW/t3NHdx8VncHs4pMuI/3h0VtcibbSAdMDmbkBp0XP93o3isL4eFdMmyAGSFVWwA
+         xLreJvhXPpKh/gEW3Enu8nfD2nTtOG8IALwS/ngRhuRE6K/22v41vJ7GZiYqWZcJ2uFk
+         KQgwbSeopmh1WMb3kuuCvpnssV0P/aMdgG15DajkjxbHo1mZvTcKxR11IgsXJC7HITdc
+         j0vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741371610; x=1741976410;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qvPij45MkHD6jH6urWpxBYb71dSRN0xmKbFnFlZVi4A=;
-        b=LRfbZA6B86hUnpe392kbkgchxxuNED41GkXiTI1TELPALZOW3hMeXJXL45ACPYGNlt
-         OxMeHmYB+VTSWywrMfCdb1XKGNzbrtdFt4pVdInF/2fE03xWUr4xlLBIh0w2ezV3DpWi
-         l2GVC4thKkcCjlu+G8oq8rHe7XA9jPYYxeSWdRGRH5kTgNL34oUslDJMVF8c9YczaLm2
-         AgnbDVdbQkUKkQsIBzkkFRZg9mEhxSanTW3uPBm6v5/DQCNT8u2OFAGLWXaGSQPZv5nS
-         y3v5MXIwCufsr1VETu+XIJ8F4wydGMLulH9tEjADaQAdtrXxtISoq3xkrnw3JADKUEdT
-         9yzg==
-X-Gm-Message-State: AOJu0Yw9q6q1aTPjMDgFkQVUz2ObVM/UfwYk78bnXBOq38PSAyVCxz3w
-	768eaPnmnnvkM9iEE07HBvwcCWJm6nvgwZYxVjd6sJQI+vLTMv+njJjfYKWhI4k=
-X-Gm-Gg: ASbGncugvv6TXaUXFQDAZgOEfHiiPnQvQS2KNdKecQvnS524y1t4m6R+KctNu6JyqBw
-	yPIGBkPfSklfJ9lJFJcR9Ve8PdfO9bHDtTEm0cVzDOeWuI6kaHlqcPOESV9GCOT8jH96VV9OwKf
-	6fwthH0qm48ddWMIfKxv46AN5uR0HUTINcX/veY8m2cppbBR+s4aADBkXa7tlHGMOdYFURc1pkV
-	zaDIyFZcba6ocQJEX4LqwvKv3q1VvZ6ASofGiaHSXSd79STSSa3rIpl6NNfzKc4QH5hY5/dKdWA
-	DtRLvJHn1/TJvOBriou7jpQPQXrtRZIYeP3zB5TI+qROunrB+bYCm7dDvcqrrohf4vIWLHwJQq4
-	85rYDddyArVU=
-X-Google-Smtp-Source: AGHT+IFcdllaarSErVen2g1y02DsXxbK5DSX1kFk+fL89JK3jEe4TWPYK07EuPg1SooP+C7jkjahMQ==
-X-Received: by 2002:a05:6122:54b:b0:520:420a:a07a with SMTP id 71dfb90a1353d-523e414404cmr3709064e0c.8.1741371609751;
-        Fri, 07 Mar 2025 10:20:09 -0800 (PST)
-Received: from mail-vk1-f170.google.com (mail-vk1-f170.google.com. [209.85.221.170])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523e9a0802csm249838e0c.27.2025.03.07.10.20.09
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 10:20:09 -0800 (PST)
-Received: by mail-vk1-f170.google.com with SMTP id 71dfb90a1353d-523de5611a3so836137e0c.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 10:20:09 -0800 (PST)
-X-Received: by 2002:a05:6122:3c8e:b0:51f:4154:c1b2 with SMTP id
- 71dfb90a1353d-523e4030d4dmr3908527e0c.2.1741371609324; Fri, 07 Mar 2025
- 10:20:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741371618; x=1741976418;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FeJw1/wk13slq8SaTOaUUmP/IYv8V17ltprOZMyg7cg=;
+        b=e6emIJ3ytodKFKfbKi2IY22OyK1OHShD2fiYTDbrpQ/oO4URoPNwkvCXb7WE8jUvCO
+         BGvqep+lDpanPFBkYWI00Swp2cvV9F6D8jU2x1k4V+680HQmIxP8bkr6lcmsYWfGqXl7
+         PegfikZMsPWIk5UlRoYWEJdLI9KGnjEBfy4cCV3fHBpTIe+W9EGSa5Z1K98L5AwGfZ5+
+         XeIIQBZKXyAaEYA9XvF+ZM6WnI3drJMmoKjCZtUdF37cdkJ8EiyfdVGL5FtyN+hZDP/i
+         Szgf3Wgwc8RJ6nQX3mjEnji+6MygAareHsbfDLrWnCjEW8SWr/Ws+LuedKNXUDepW8Vq
+         z7Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUIroZEMTwTXtgaJAFFFHFCHjl1b0JoCuZD9haxD6zq21DrCcAP1lIuIUnXNJH+af0bsNZcYrrt6a4=@vger.kernel.org, AJvYcCWwMZHZDfBfSA9U/hf9EeIadnKkc5gotr68vdtZL8+RLhR5RMex7mWiFYO1xO/DM8CJ4DdCR6iX8m+zB9yH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnJws5drAkwxQTd+6ogKz4pdo2zcKNeiDvPzHpEpgAvuedWisd
+	/i4dVXrCV93IJZw850I0O9dRwAKziYOuH1O1E0A8lzdfpGRZxqOi
+X-Gm-Gg: ASbGncsn/Gw0GT1JJ68mo+QojsOfyrqihWj7EooRHwtpwRFfPni9/FyLIbqkAeanCdE
+	5hBbLF1KoTLTbibEz1H6zeP+hF9GDufvuJokiLZfJVdMOn0r2rqcS/Z1CRKI+BD0x37ZVCYKqqi
+	NyCTgn3YIMYPNyK7ezYZIXizjevdBifRRgHwZUu/o6BXRkYbxw2oknwySoALgXSAsw3ZvFRAFfv
+	sd4HWfnJE34JC2LDFMkAnP5P2T4Ix/RjH3Eo9e4HpjW+BA+2CQ32t4LO7EhTI/d1HftpihgRgVr
+	lyDMUgzkby9iiiiu70aICwa4f2NPDFtze2tldt5LnZw=
+X-Google-Smtp-Source: AGHT+IG2YFy9NIzuiSU0JWQXIeYFv/n1+QFXy6BL1HyvwEsV80P0bUaURpLNAaL1ozbvN4gTQ0q7mA==
+X-Received: by 2002:a05:690c:998e:b0:6f9:ac35:4483 with SMTP id 00721157ae682-6febf3a9308mr61829397b3.25.1741371617759;
+        Fri, 07 Mar 2025 10:20:17 -0800 (PST)
+Received: from localhost ([2a03:2880:25ff:2::])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6feb2a5c217sm8348817b3.38.2025.03.07.10.20.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 10:20:17 -0800 (PST)
+From: Joshua Hahn <joshua.hahnjy@gmail.com>
+To: Rakie Kim <rakie.kim@sk.com>
+Cc: gourry@gourry.net,
+	akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	linux-cxl@vger.kernel.org,
+	joshua.hahnjy@gmail.com,
+	dan.j.williams@intel.com,
+	ying.huang@linux.alibaba.com,
+	kernel_team@skhynix.com,
+	honggyu.kim@sk.com,
+	yunjeong.mun@sk.com
+Subject: Re: [PATCH 2/4] mm/mempolicy: Enable sysfs support for memory hotplug in weighted interleave
+Date: Fri,  7 Mar 2025 10:19:59 -0800
+Message-ID: <20250307182015.489780-1-joshua.hahnjy@gmail.com>
+X-Mailer: git-send-email 2.43.5
+In-Reply-To: <20250307063534.540-3-rakie.kim@sk.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224173010.219024-1-andriy.shevchenko@linux.intel.com>
- <20250224173010.219024-7-andriy.shevchenko@linux.intel.com>
- <CAMuHMdXP1=7YJzYp=_WJsqx2mtBYcwAjpOGK2_9SH+r4w6v2Ug@mail.gmail.com> <Z8soDV0U2LG2KX9J@smile.fi.intel.com>
-In-Reply-To: <Z8soDV0U2LG2KX9J@smile.fi.intel.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 7 Mar 2025 19:19:57 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV1+ftjpEcg4xYjBLH1BRJHkZcYB5W+p8WUWWLXT3DnUQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JqrBIBhkNlFJDUH_SdoDsEvxpWHkiPSHeJK0yckPiHBvmMqg3yRYehWhls
-Message-ID: <CAMuHMdV1+ftjpEcg4xYjBLH1BRJHkZcYB5W+p8WUWWLXT3DnUQ@mail.gmail.com>
-Subject: Re: [PATCH v1 6/7] auxdisplay: hd44780: Call charlcd_alloc() from hd44780_common_alloc()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, Willy Tarreau <willy@haproxy.com>, 
-	Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Andy,
+On Fri,  7 Mar 2025 15:35:31 +0900 Rakie Kim <rakie.kim@sk.com> wrote:
 
-On Fri, 7 Mar 2025 at 18:08, Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
-> On Fri, Mar 07, 2025 at 10:14:48AM +0100, Geert Uytterhoeven wrote:
-> > On Mon, 24 Feb 2025 at 18:30, Andy Shevchenko
-> > <andriy.shevchenko@linux.intel.com> wrote:
-> > > HD44780 APIs are operate on struct charlcd object. Moreover, the current users
-> >
-> > s/are/all/
-> > s/object/objects/
-> >
-> > > always call charlcd_alloc() and hd44780_common_alloc(). Make the latter call
-> > > the former, so eliminate the additional allocation, make it consistent with
-> >
-> > either s/make/making/, or s/make/to make/
-> >
-> > > the rest of API and avoid duplication.
-> > >
-> > > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> >
-> > As the code looks correct to me:
-> > Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
->
-> Thanks I have corrected all grammar issues in the commit messages except one in
-> the first patch which I do not understand.
->
-> ...
->
-> > While I like the general idea, there are two things in the API I do
-> > not like:
-> >   1. The function is called "hd44780_common_alloc()", but returns
-> >      a pointer to a different struct type than the name suggests,
-> >   2. The real "struct hd44780_common" must be obtained by the caller
-> >      from charlcd.drvdata, which is of type "void *", i.e. unsafe.
-> >
-> > What about changing it to e.g.?
-> >
-> >     struct hd44780_common *hd44780_common_alloc(struct charlcd **lcd)
-> >
-> > so you can return pointers to both structs?
->
-> I don't like this prototype as it seems and feels confusing. Also note,
-> the APIs are using struct charlcd while being in the hd44780 namespace.
-> perhaps better to rename the function to hd44780_common_and_lcd_alloc()?
+Hi Rakie, thank you for your work on this patch! I think it makes a lot of
+sense, given the discussion between Gregory & Honggyu in the weighted
+interleave auto-tuning patch.
 
-That is one option.
+I have a few small nits and questions that I wanted to raise, but none that
+should change the behavior at all : -)
 
-Another option would be to add a "charlcd *lcd" member to
-struct hd44780_common.
+> Previously, sysfs entries for weighted interleave were only created during
+> initialization, preventing dynamically added memory nodes from being recognized.
+> 
+> This patch enables sysfs registration for nodes added via memory hotplug,
+> allowing weighted interleave settings to be updated as the system memory
+> configuration changes.
+> 
+> Signed-off-by: Rakie Kim <rakie.kim@sk.com>
+> ---
+>  mm/mempolicy.c | 51 +++++++++++++++++++++++++++++++-------------------
+>  1 file changed, 32 insertions(+), 19 deletions(-)
+> 
+> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> index 385607179ebd..fc10a9a4be86 100644
+> --- a/mm/mempolicy.c
+> +++ b/mm/mempolicy.c
+> @@ -3389,6 +3389,13 @@ struct iw_node_attr {
+>  	int nid;
+>  };
+>  
+> +struct iw_node_group {
+> +	struct kobject *wi_kobj;
+> +	struct iw_node_attr **nattrs;
+> +};
+> +
+> +static struct iw_node_group *ngrp;
+> +
+>  static ssize_t node_show(struct kobject *kobj, struct kobj_attribute *attr,
+>  			 char *buf)
+>  {
+> @@ -3431,8 +3438,6 @@ static ssize_t node_store(struct kobject *kobj, struct kobj_attribute *attr,
+>  	return count;
+>  }
+>  
+> -static struct iw_node_attr **node_attrs;
+> -
+>  static void sysfs_wi_node_release(struct iw_node_attr *node_attr,
+>  				  struct kobject *parent)
+>  {
+> @@ -3448,7 +3453,7 @@ static void sysfs_wi_release(struct kobject *wi_kobj)
+>  	int i;
+>  
+>  	for (i = 0; i < nr_node_ids; i++)
+> -		sysfs_wi_node_release(node_attrs[i], wi_kobj);
+> +		sysfs_wi_node_release(ngrp->nattrs[i], wi_kobj);
 
-That would allow to fix the other odd part in the API:
+Nit: I think it is slightly awkward to have a global struct ngrp, and then have
+its members passed individually like this. Of course there's nothing that
+we can do for sysfs_wi_release's argument, but I think we can make the
+arguments for sysfs_wi_node_release a bit cleaner. An idea would just be to
+pass an integer (nid) instead of the nattrs[i] pointer. We also don't need
+to pass wi_kobj, since it is accessible from within sysfs_wi_node_release.
 
-    -void hd44780_common_free(struct charlcd *lcd)
-    +void hd44780_common_free(struct hd4480_common *hd)
+Once we make both these changes, patch 3 becomes a little bit cleaner (IMHO),
+where we acquire the lock for the ngrp struct, then access its contents,
+and we don't have to pass two pointers as arguments when they are already
+accessible via the global struct anyways.
 
+>  	kobject_put(wi_kobj);
+>  }
+>  
+> @@ -3486,12 +3491,10 @@ static int add_weight_node(int nid, struct kobject *wi_kobj)
+>  		return -ENOMEM;
+>  	}
+>  
+> -	node_attrs[nid] = node_attr;
+> +	ngrp->nattrs[nid] = node_attr;
+>  	return 0;
+>  }
+>  
+> -struct kobject *wi_kobj;
+> -
+>  static int wi_node_notifier(struct notifier_block *nb,
+>  			       unsigned long action, void *data)
+>  {
+> @@ -3504,10 +3507,10 @@ static int wi_node_notifier(struct notifier_block *nb,
+>  
+>  	switch(action) {
+>  	case MEM_ONLINE:
+> -		err = add_weight_node(nid, wi_kobj);
+> +		err = add_weight_node(nid, ngrp->wi_kobj);
 
-Gr{oetje,eeting}s,
+Same idea here, we probably don't need to pass wi_kobj into add_weight_node.
+With that said, I can also see the argument for passing the struct itself,
+since it saves a line of variable declaration & definition.
 
-                        Geert
+[...snip...]
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+Please let me know what you think! I hope you have a great day, thank you
+again for this patch!
+Joshua
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Sent using hkml (https://github.com/sjp38/hackermail)
+
 
