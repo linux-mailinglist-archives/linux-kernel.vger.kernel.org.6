@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-551799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551800-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 121BEA57114
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:06:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A2AFA57116
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:06:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFE153B8A98
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:06:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 832333B8C1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D86124BBFA;
-	Fri,  7 Mar 2025 19:06:14 +0000 (UTC)
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F419024BBFA;
+	Fri,  7 Mar 2025 19:06:53 +0000 (UTC)
+Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1B617B500
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 19:06:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1CC517B500
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 19:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741374374; cv=none; b=u7ANWSeLjHbbm9OxFngQMtMW2HOTfxTY766crVLBGfoj4y2nDGUwKM1U/7fbauZuvsvh87lojzQtbluBw0jMkFwjtT/jCUJUCsTh7R9QkCVXyQOEiCtoT0dPGIYYIFpCUkbpTCILKek7SK4rflllBH28yHUKK6yo8iZ4HnPYndQ=
+	t=1741374413; cv=none; b=NdJExlFaKFilXl3t53rCoELggkbqPa4tOcRClC27LrbYnD4+yDFU1O/IpEVDQcQ1GNCdHU2UP3qusrlDj9bBDno3aaT9FfTEh2Ax/7XOVMfGr+oZuAzcJKEZFDInzapzlZXXXCuJ75F2NUBqgq46VuPFwDboB7EukMcwQkzszv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741374374; c=relaxed/simple;
-	bh=KQcgaJCiBtQ/TxcW6jMDnPp3L1mrguFcs+VmCvfwuXA=;
+	s=arc-20240116; t=1741374413; c=relaxed/simple;
+	bh=WQSFPh2zicA/PXjMw9JHWU0DMFza0F45XiMt1DvM+lc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ISpNLYlcGyV/mTWT8m/MoogYPRv/Dqbji9G8rjvo6AWMMslv4LwVfJmSqWJSEkSig4I4MQcwTgHsQovjvXsIfN0hxrjhamTIrDpOoGKGAx/QIFg1+B10+JpL9wfd+9eI8PV/S23ydlrT4M7rrLqdH/DTuvP+ewpfefgBYGcTFzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.177
+	 To:Cc:Content-Type; b=QsAUMbEY1ZJ5QIHQpID/zjrrsxBC0yCsf/393jYBkuEWhv1nJCPqEVoexL4ZLeBVM4SgCHNG8l4W72FKTwLrLfpmXBNMQQzXerYuh+NxhpXOXoH/CnZh+lrYdhovssOh/cNtBHBPJ6ABH8miIh/+SOQ6tY4spv2wy+bHDNCCo8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c08b14baa9so206623085a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 11:06:11 -0800 (PST)
+Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-860f0e91121so3405889241.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 11:06:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741374370; x=1741979170;
+        d=1e100.net; s=20230601; t=1741374410; x=1741979210;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=d1kmiGF7uO1vlI4RGhEH0NGmlztmEAIUcGva+o+3j30=;
-        b=fpDcTnPiLAUVahkI10uwnS53XbIoU2CMwEnTTyvsGrPQ5u896Qh5FHanIMUPCR2OUw
-         Z0MsvvdQTSg0ZSt8OQQuVlj/Ov/cKtdk/ygMIiehQB9s+MBjPHmCacZlAbYSSgGWKSis
-         EayZ/EMq3bCaL4qpg+711enqxCvvTx5NReYVE6RKsECbsfHefLEYcThvw38AIeTj6267
-         kUZLNgwXdQ8rM4kD7DHa92E0RL0HOTToqtLbSqLzxIGFyFL2PGQVXSq2kgc5HdRAQ4rE
-         VlP43iD/nHPx9lI6n4DAcCmOAFhOKmFjbguz2XbbEPIcTdal/SkPwCTJvuRswZQe2X/5
-         Q7Jg==
-X-Gm-Message-State: AOJu0YzhZtp98VNsnnII3TzaMZ6G0XN/+SnVYuW82Y2dHh0mMbnXCUuW
-	p2nkyDMsDPBOTNbMNp/qgS7OFwyNAlvz2mtr9KmbKrrLiAkhCDZ+jEqzrSCkNC0=
-X-Gm-Gg: ASbGncvkIcJuAF9fuN33ciVfdZWeeznLJOjykIw5+j+o93DddWJHOI4GVKBuDTZjWOk
-	0hgABPOd24v4c6Qsa86c+UfUcoYxgcBmghkOgyYuvD+2UnROgCZ771GuKIM2jrO2r/uTY3o+b+9
-	iFDuozBTA77EEF1qvxFuCA9TEr9kS0mcuhRyTgWs1dwQ/UBp7cNhuyWVmikHyi82vRRRZRvOi2x
-	+wfNqMD+Or4hG38XJSTiIFoYMl4fVIFD4gYD8ngst2wR49m9xO2stP82CQonV1Bi795GuZmdul1
-	gmTP6QocJOJ86ljpHUwR71KtaIWrtvFtAsmeRy/zT49h4NjDzhvQfheIaAiJu+QVex6Ds/VcHM7
-	a7nfgYbrb394=
-X-Google-Smtp-Source: AGHT+IE+QVj00PxhjOgJn3N3JLGD+xUH6eGBoGSrDi5+jZ6D8xjDSqPld8QSZVci8IrAmLWJn50ffQ==
-X-Received: by 2002:a05:620a:2609:b0:7c0:9df3:a0d7 with SMTP id af79cd13be357-7c4e61763aamr644358385a.41.1741374369663;
-        Fri, 07 Mar 2025 11:06:09 -0800 (PST)
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com. [209.85.222.169])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4751d9a3e02sm23269461cf.37.2025.03.07.11.06.09
+        bh=QpMUUfrBMHHlX0w3ub+fTjcN6MAy6ST8zgJT13ufeuw=;
+        b=RW8iKtPh80dUC0ahyIcinBEm89uPv4TycLPlHDLokcn4zPAy4f5rpO/eAzbKkjm1k2
+         c7fh8Gj27vqTiLcHlyYuHWkAa+p53fW8Sm3FJ8RjBCuN5v9iiKD0PPe7pvCDWfI6Lprm
+         EZQel5DHMsLg5B2+8ArbqHl6SXDHab3nqn6lPvKHnQK2WPJer5nLmHFm9PQeyGFSjzF7
+         iQuHCKnxa8fR6xD+3vTrkDgUz3l8fuZX1+G1gOj7hyqUhGqib60za6eyo1tRmAGc5JNF
+         b4rAvWXfd+vX4lsrwG3+U6KNjNCV6NCeTODpKKMe16F9rDq4zItmq2Kw7lE+Xs/2Xk+c
+         KloA==
+X-Gm-Message-State: AOJu0YxqrB5FzVldPjeSBNE9rQC9ksGntTfYGDJScNOEc5aoHQyC0LFd
+	DY2Cg6cA4NSNw/yqxshEkEq7J+dA0AnUNJhmc09NoWIit9MV9RrPaTSKaiBgDPM=
+X-Gm-Gg: ASbGncsQcomKQGcl8pDG5uRBG5UoFAxpPfDaGDB+pJqFRRth3aUPrMyZoyReKpFdYqc
+	9KfT/1uxDoxDm3nGfe95Axaqhy44b++E7eVW7neRGxGWkWAyFywjkKdB1bndVe8BTrI6oSCTwWB
+	4VbtLwn68ASrh4AOPRZFgefjnMR6YBaNN/cqUT1bDewaJbEuhHF2i0OfPruaEEOCmjpqmsQW5NJ
+	2390pyr7J0CtEKCnzjDPaYH2wmUgYY6um8E4HlnzI6ZYfPySS7+W2w76D1Vv/Uj1Yxs7P53rBJA
+	Z3xuikKn3Avun/+D1ErkVIz4K0kFoHKqdP4j2Id/zBF4WzpfLTiyDZ6VJKUNBCrx/n84SFcIt7p
+	THvWasVsvTDc=
+X-Google-Smtp-Source: AGHT+IEAPvqWqNr5REi2mgHz4+inb0FWkdzF35zVeBHymROgCLsf+WYLMdoW2oE2ZpOxMAHHv0cKeg==
+X-Received: by 2002:a05:6102:374a:b0:4bd:39c7:804d with SMTP id ada2fe7eead31-4c31b2cda7emr618807137.0.1741374409731;
+        Fri, 07 Mar 2025 11:06:49 -0800 (PST)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4c2fbcec740sm828682137.30.2025.03.07.11.06.49
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 11:06:09 -0800 (PST)
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c3d1664ed5so269891685a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 11:06:09 -0800 (PST)
-X-Received: by 2002:a05:620a:2855:b0:7c3:c13f:ae04 with SMTP id
- af79cd13be357-7c4e61763dcmr883907685a.36.1741374368990; Fri, 07 Mar 2025
- 11:06:08 -0800 (PST)
+        Fri, 07 Mar 2025 11:06:49 -0800 (PST)
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-523de79f3b0so1200149e0c.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 11:06:49 -0800 (PST)
+X-Received: by 2002:a05:6122:8c1c:b0:523:771e:8b81 with SMTP id
+ 71dfb90a1353d-523f29e38d9mr662242e0c.7.1741374408949; Fri, 07 Mar 2025
+ 11:06:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,18 +70,17 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20250224173010.219024-1-andriy.shevchenko@linux.intel.com>
- <20250224173010.219024-2-andriy.shevchenko@linux.intel.com>
- <CAMuHMdWBGb5AXv8Ch3XhPPHc0CVYHf31tx1Feh87OU5MDUCdPQ@mail.gmail.com>
- <Z8slexKyo7VFkSKW@smile.fi.intel.com> <CAMuHMdVmg=kuPWCN6rRTxP1LSZFtK=gagd0x092kxzif8Tav2Q@mail.gmail.com>
- <Z8tBnq-j7gKrzlpk@smile.fi.intel.com>
-In-Reply-To: <Z8tBnq-j7gKrzlpk@smile.fi.intel.com>
+ <20250224173010.219024-7-andriy.shevchenko@linux.intel.com>
+ <CAMuHMdXP1=7YJzYp=_WJsqx2mtBYcwAjpOGK2_9SH+r4w6v2Ug@mail.gmail.com>
+ <Z8soDV0U2LG2KX9J@smile.fi.intel.com> <CAMuHMdV1+ftjpEcg4xYjBLH1BRJHkZcYB5W+p8WUWWLXT3DnUQ@mail.gmail.com>
+ <Z8tCbjJk24ryV0DJ@smile.fi.intel.com>
+In-Reply-To: <Z8tCbjJk24ryV0DJ@smile.fi.intel.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 7 Mar 2025 20:05:56 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWeFhqf-A-71pCZ+eFMh+ibGudMwiE5hPrdkfCYwVXHCA@mail.gmail.com>
-X-Gm-Features: AQ5f1JrQEvhAt4IqUMeWu0-h08uB-wRDF7FxywhqQS0iiAUXiXsK145uwgWA3fA
-Message-ID: <CAMuHMdWeFhqf-A-71pCZ+eFMh+ibGudMwiE5hPrdkfCYwVXHCA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/7] auxdisplay: charlcd: Partially revert "Move hwidth
- and bwidth to struct hd44780_common"
+Date: Fri, 7 Mar 2025 20:06:37 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU3KKSFhN8hD_ZoyNfBUV4ZWa5=zxUPfmpivjmVhW8__Q@mail.gmail.com>
+X-Gm-Features: AQ5f1JqCBHM9KLJTTP6KNcJYNps8ej3g0bdp8_nOambiKE5SPcUYy2Dck9ESVBM
+Message-ID: <CAMuHMdU3KKSFhN8hD_ZoyNfBUV4ZWa5=zxUPfmpivjmVhW8__Q@mail.gmail.com>
+Subject: Re: [PATCH v1 6/7] auxdisplay: hd44780: Call charlcd_alloc() from hd44780_common_alloc()
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Cc: linux-kernel@vger.kernel.org, Willy Tarreau <willy@haproxy.com>, 
 	Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
@@ -89,57 +88,47 @@ Content-Type: text/plain; charset="UTF-8"
 
 Hi Andy,
 
-On Fri, 7 Mar 2025 at 19:57, Andy Shevchenko
+On Fri, 7 Mar 2025 at 20:01, Andy Shevchenko
 <andriy.shevchenko@linux.intel.com> wrote:
-> On Fri, Mar 07, 2025 at 07:14:02PM +0100, Geert Uytterhoeven wrote:
-> > On Fri, 7 Mar 2025 at 17:57, Andy Shevchenko
+> On Fri, Mar 07, 2025 at 07:19:57PM +0100, Geert Uytterhoeven wrote:
+> > On Fri, 7 Mar 2025 at 18:08, Andy Shevchenko
 > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > On Fri, Mar 07, 2025 at 10:03:31AM +0100, Geert Uytterhoeven wrote:
+> > > On Fri, Mar 07, 2025 at 10:14:48AM +0100, Geert Uytterhoeven wrote:
 > > > > On Mon, 24 Feb 2025 at 18:30, Andy Shevchenko
 > > > > <andriy.shevchenko@linux.intel.com> wrote:
-> > > > > The commit 2545c1c948a6 ("auxdisplay: Move hwidth and bwidth to struct
+>
+> ...
+>
+> > > > While I like the general idea, there are two things in the API I do
+> > > > not like:
+> > > >   1. The function is called "hd44780_common_alloc()", but returns
+> > > >      a pointer to a different struct type than the name suggests,
+> > > >   2. The real "struct hd44780_common" must be obtained by the caller
+> > > >      from charlcd.drvdata, which is of type "void *", i.e. unsafe.
 > > > >
-> > > > s/The commit/Commit/
+> > > > What about changing it to e.g.?
+> > > >
+> > > >     struct hd44780_common *hd44780_common_alloc(struct charlcd **lcd)
+> > > >
+> > > > so you can return pointers to both structs?
 > > >
-> > > Why? We know that we are talking about the very specific commit.
+> > > I don't like this prototype as it seems and feels confusing. Also note,
+> > > the APIs are using struct charlcd while being in the hd44780 namespace.
+> > > perhaps better to rename the function to hd44780_common_and_lcd_alloc()?
 > >
-> > You can have a noun with or without an article:
->
-> This is not so simple :-), esp. if a noun is a weekday or a toponym.
->
-> >   - "a commit": an unspecified commit,
-> >   - "the commit": a specific commit, specified by context.
-> >   - "commit 1234abcd": a specific commit, specified by what follows.
+> > That is one option.
 > >
-> > > My English is not native I would appreciate a link to a material to study
-> > > the case you pointed out.
+> > Another option would be to add a "charlcd *lcd" member to
+> > struct hd44780_common.
 > >
-> > Neither is mine, but the use of articles is similar in English and Dutch.
-> > (I am aware your mother tongue does not have articles ;-)
+> > That would allow to fix the other odd part in the API:
 > >
-> > I found plenty of articles explaining cases 1 and 2.
-> > Case 3 can be considered equivalent to "Mount Everest" in
-> > https://learnenglish.britishcouncil.org/grammar/a1-a2-grammar/articles-the-or-no-article
+> >     -void hd44780_common_free(struct charlcd *lcd)
+> >     +void hd44780_common_free(struct hd4480_common *hd)
 >
-> Okay, so you actually think that the hash and the title can be considered as
-> "name of a place". Hmm... I don't think it applies here. It's not a place.
-> Moreover some places require "the" article.
+> This I like better. In a separate patch I think?
 
-Only if they are a region, not if they are a country (yes, that's
-unrelated here).
-
-> Here https://www.butte.edu/departments/cas/tipsheets/grammar/articles.html,
-> for example, the sentence "The 2003 federal budget" sounds to me closer to
-> our case. Every year there is a federal budget, but we explicitly point out
-> to one and reader knows what is this. The same with the commit.
->
-> Sorry, but I am still not convinced.
-
-In "The 2003 federal budget", both "2003" and "federal" are adjectives.
-In "commit 1234abcd", "1234abcd" is a name.
-
-Cfr. "King Charles".  "The King Charles" would be used only when
-putting a very special emphasis on "king".
+Fine for me...
 
 Gr{oetje,eeting}s,
 
