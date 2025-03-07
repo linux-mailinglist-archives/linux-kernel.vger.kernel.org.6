@@ -1,138 +1,203 @@
-Return-Path: <linux-kernel+bounces-551580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7329AA56E29
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:45:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95DFAA56E30
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:46:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8242A7A2EA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:44:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3871189A435
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282B923F27B;
-	Fri,  7 Mar 2025 16:45:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A3523CF06;
+	Fri,  7 Mar 2025 16:46:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FqmbsUlj"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="roeLOZQG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19C923ED6C;
-	Fri,  7 Mar 2025 16:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0490917583;
+	Fri,  7 Mar 2025 16:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741365917; cv=none; b=D2wodK7TmY9t98F0C34Pda5ebYQAd0kQWJ7HLzLXifeDPlMtWLBk8gY6a3pQxB4MyKCM+iS/WOiRv8Ez/Imbe9lEguzFRfb+2zmC94RX0Q+NVE+4Ge9M/Vlfk/q+ImAjj9c4lCY40z3KU/Vry/tU2WkojsNUfHrbjsHSjtcg5Cc=
+	t=1741365963; cv=none; b=O2RzxlqiG4hCx5/jTRpO/dq5axPkcUk1Oau+6Rb27JjwEDNSFLzRi3XUAT/nWWobhT/iFDKZzhA+WT4YseMrDYhhteXu/HIU/+E7brm/ovG1n1RmUQbG5DRlkkLJ4/jHdRZXLPaLLUVv+02dRic2HKo0OrKeubGxAJZAXmTyAPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741365917; c=relaxed/simple;
-	bh=yObUS2YQxxpK6Tcsa8ZDIUAE66RCNQ4OmalZ8Sapy0w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uwshlAb8u62coUf5Rfz5oFaIsQ0WhPyhRnTFro88HfUXdgSyCnDxo9Kna7+LPlrTPevorwQhVlihzBmiH+E7qQc+u0AmaDAIk8YjLNMdrYJqOmQw5JNN01JHhe7RrdJCArEjAzSGK1lMiHIBfof0GrW+NnISYdqHS+miZYHXKEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FqmbsUlj; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac0cc83e9adso638112466b.0;
-        Fri, 07 Mar 2025 08:45:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741365914; x=1741970714; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yObUS2YQxxpK6Tcsa8ZDIUAE66RCNQ4OmalZ8Sapy0w=;
-        b=FqmbsUljJvricopOXuQYTOvAi2FJFVXWwp0DyS7By5HKelgVwF4qXU3C/H4Z0y7jDC
-         XuM960LpiUMax1q0MqyDNUP+9JXz6dAfhLXpJKhQ5eYT+TlGunGK+0JETwnjHLWbuHvl
-         2s3oTLytaBQUI88m8npHZSL2oSNuiqE+lxAvwEXkdeWKnocfQUUcgavGzrplYKoh4reT
-         3gbcXHX6s4VLphoCvsuw6YxmOhyYFAjQYKVQQTpzRmoOksxdF9pKqZ9RjIPZZR8cjblK
-         WAqqMOg/90WYsK0vvV0PoOyRL4/fYpL5powMV9vC+Za1CK3Rfe78fgDIX+PXj0FVbaAt
-         FLzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741365914; x=1741970714;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yObUS2YQxxpK6Tcsa8ZDIUAE66RCNQ4OmalZ8Sapy0w=;
-        b=v6lNpwSVXRsukhYUQiCfm/xWUARHF6eZQTRHIxq6BcuPrFvKcplZH2vDzbXf5mnQ/W
-         lmIj3r4PTTz9QrsFQRs/PFK14lmVUgmsI7j6+om6YGqF8RtiKFOYf7OfKq9WjC9/aaHx
-         nNMZI7XVdyGmyEgSXElgskpOwBfP9+tw1cTx2wD0HM6CSkPJwFsRfuWv2R6uJQzWaYof
-         nNjm82cbINTqgLcfIVZpQflBhHTv65uMduehwvzCPa8dNUAWHL41elCby0onWr+udV75
-         /eA7ptYGVb7eWO8GAltjDdyJLd+joaCzjvYYTlHigmfbbZDWVjR+PhZrDX5uyOm8B2Ok
-         dHhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTXeQp5r1yslMAegoHG/HevkC1hM2ZIHiNqE1Q1EFH91zthLIwz1Dmiyi57zhTHuBOyh6sI4Jvtc2qybfj@vger.kernel.org, AJvYcCVwpEG8J5viT930zGGplaKJm1lw4pKy55Z/e4lxrgUiCmCNGuwqwcIbILwLQtDzhviVURZ7KiYVwmQ=@vger.kernel.org, AJvYcCWQl/N2saa3PA5jXW4+AA6LmaF8sVzfQifmV7QZFednZTwSta5a5ljEJqaGbzefS8Efm4zvnUDwL9OTI0mDuw==@vger.kernel.org, AJvYcCWuhYHBwUGGbg53cciUcqstgmkS9tD/oKIvmp/3JyUxVEeMYmx/DEOo9RUHiWl0Jd7eSq/DmA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxy68SwHb79X0wYNsSrzVG+vu8qI/9+Cyb9uQf2851gv0P0WOjK
-	nK46PSF2aegiN+e0oURm58IZ/zw7JYMNH6Oe9fJHFA/NDCjwto5LWVWY224UCU9NGgSzl34stkt
-	9bF9bDWyD7hSGtZMdw52MKy0ZRGo=
-X-Gm-Gg: ASbGnctq0hYWK2Ka/rK0KrXuhfT94iUB9pW80R7T3qHJxbahjx+GfL3AKlF/zyD4V/C
-	eW8B6uOTwfaj7nE/Tkl41THEQfORlMLRrmc/pQsvmlby7l7m2Snl+w/APBIuit0/WncVz6JqKRP
-	RzhURWWF42n8dKkdoz6pHHQQASuQ==
-X-Google-Smtp-Source: AGHT+IHopYBJx1mgx5LeTQc4m4LZnSKPLCKXMYn0njA5opMfDTmm8qs1SyU+pxRhHh07QewdZn5f2BsnGaQ6vCQYGE8=
-X-Received: by 2002:a17:907:c913:b0:abf:23a7:fc6 with SMTP id
- a640c23a62f3a-ac26cab9079mr23579566b.16.1741365913939; Fri, 07 Mar 2025
- 08:45:13 -0800 (PST)
+	s=arc-20240116; t=1741365963; c=relaxed/simple;
+	bh=dxkCyg9/hgzqXxZ4pSS0zIMJT2hY5GRvI0K+a6FCMkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e84LMG4nDGkhGJClJh9uZK6DuMKXkjT608RvHY0nbFdHeRzhV01RUD1irfCBMT+zAB67DAKKor4beMXNVKdcRhBlkHUHqfu66K668yyLVxYNFKN7OIgDc0orlbKGwwla9LiFVuo/V5cB41kT12hebbuus9aJyzsRbw+BoLG04tA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=roeLOZQG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8D47C4CED1;
+	Fri,  7 Mar 2025 16:46:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741365962;
+	bh=dxkCyg9/hgzqXxZ4pSS0zIMJT2hY5GRvI0K+a6FCMkE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=roeLOZQGSeZ329Fhb4v2Ke0hje6eWox1bXX2gXM8giovzLjJcsk/ijPkdIdWHM/SV
+	 8lJyuWnhRwQQU3v/t71XgJpt0cGA9ZC46kDJ1sJi8Bf6tbwF/CGd1LC2byHZ0dziwu
+	 D/yv2k7MKkKl1i4euDLWoTXOWXRsMw0/CcxupXZkG7mAYUTqOrDxlt5BlnOByRf6Js
+	 gLea4imWQDPhGgF41QBRcP5GR8rGmrxHkNBrSvMPspg6ZEaw6iPbVwMpsOj50t6SxY
+	 9nvDGOYKomuMtIuuZ7paNcPGkl4ucJAAFDhPXIFXFwG7gwfRSzxMWTT/Ne4uW8532m
+	 ND03eg2zRjhVA==
+Date: Fri, 7 Mar 2025 18:45:57 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Jonathan McDowell <noodles@earth.li>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@hansenpartnership.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] tpm, tpm_tis: Workaround failed command reception on
+ Infineon devices
+Message-ID: <Z8sixTuKG5sxO-D1@kernel.org>
+References: <Z8lkSKOqBgt78pU2@earth.li>
+ <Z8ogT_gERUYstPbK@kernel.org>
+ <Z8sgfMmsfn894yLj@earth.li>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307161155.760949-1-mjguzik@gmail.com> <20250307164216.GI2023217@ZenIV>
-In-Reply-To: <20250307164216.GI2023217@ZenIV>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Fri, 7 Mar 2025 17:44:57 +0100
-X-Gm-Features: AQ5f1Jpo1dIuW1b7ry84nc2tM9AJQequs9mTW__QY0p-auFq_EfDunHxvmPQwlo
-Message-ID: <CAGudoHGwaoCMnpFyF3Zxm4BxLqyYD8TiRtpdTyfjJspVa=Re9A@mail.gmail.com>
-Subject: Re: [PATCH] fs: support filename refcount without atomics
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: brauner@kernel.org, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org, 
-	audit@vger.kernel.org, axboe@kernel.dk
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8sgfMmsfn894yLj@earth.li>
 
-On Fri, Mar 7, 2025 at 5:42=E2=80=AFPM Al Viro <viro@zeniv.linux.org.uk> wr=
-ote:
->
-> On Fri, Mar 07, 2025 at 05:11:55PM +0100, Mateusz Guzik wrote:
-> > Atomics are only needed for a combination of io_uring and audit.
-> >
-> > Regular file access (even with audit) gets around fine without them.
-> >
-> > With this patch 'struct filename' starts with being refcounted using
-> > regular ops.
-> >
-> > In order to avoid API explosion in the getname*() family, a dedicated
-> > routine is added to switch the obj to use atomics.
-> >
-> > This leaves the room for merely issuing getname(), not issuing the
-> > switch and still trying to manipulate the refcount from another thread.
-> >
-> > Catching such cases is facilitated by CONFIG_DEBUG_VFS-dependent
-> > tracking of who created the given filename object and having refname()
-> > and putname() detect if another thread is trying to modify them.
->
-> Not a good way to handle that, IMO.
->
-> Atomics do hurt there, but they are only plastering over the real
-> problem - names formed in one thread, inserted into audit context
-> there and operation involving them happening in a different thread.
->
-> Refcounting avoids an instant memory corruption, but the real PITA
-> is in audit users of that stuff.
->
-> IMO we should *NOT* grab an audit names slot at getname() time -
-> that ought to be done explicitly at later points.
->
-> The obstacle is that currently there still are several retry loop
-> with getname() done in it; I've most of that dealt with, need to
-> finish that series.
->
-> And yes, refcount becomes non-atomic as the result.
+On Fri, Mar 07, 2025 at 04:36:12PM +0000, Jonathan McDowell wrote:
+> On Fri, Mar 07, 2025 at 12:23:11AM +0200, Jarkko Sakkinen wrote:
+> > On Thu, Mar 06, 2025 at 09:00:56AM +0000, Jonathan McDowell wrote:
+> > > From: Jonathan McDowell <noodles@meta.com>
+> > > 
+> > > Some Infineon devices have a issue where the status register will get
+> > > stuck with a quick REQUEST_USE / COMMAND_READY sequence. This is not
+> > > simply a matter of requiring a longer timeout; the work around is to
+> > > retry the command submission. Add appropriate logic to do this in the
+> > > send path.
+> > > 
+> > > This is fixed in later firmware revisions, but those are not always
+> > > available, and cannot generally be easily updated from outside a
+> > > firmware environment.
+> > > 
+> > > Testing has been performed with a simple repeated loop of doing a
+> > > TPM2_CC_GET_CAPABILITY for TPM_CAP_PROP_MANUFACTURER using the Go code
+> > > at:
+> > > 
+> > >  https://the.earth.li/~noodles/tpm-stuff/timeout-reproducer-simple.go
+> > > 
+> > > It can take several hours to reproduce, and millions of operations.
+> > > 
+> > > Signed-off-by: Jonathan McDowell <noodles@meta.com>
+> > > ---
+> > >  drivers/char/tpm/tpm_tis_core.c | 17 ++++++++++++++---
+> > >  drivers/char/tpm/tpm_tis_core.h |  1 +
+> > >  include/linux/tpm.h             |  1 +
+> > >  3 files changed, 16 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
+> > > index 167d71747666..e4eae206a353 100644
+> > > --- a/drivers/char/tpm/tpm_tis_core.c
+> > > +++ b/drivers/char/tpm/tpm_tis_core.c
+> > > @@ -464,7 +464,10 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
+> > >  
+> > >  		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+> > >  					&priv->int_queue, false) < 0) {
+> > > -			rc = -ETIME;
+> > > +			if (test_bit(TPM_TIS_STATUS_WORKAROUND, &priv->flags))
+> > > +				rc = -EAGAIN;
+> > > +			else
+> > > +				rc = -ETIME;
+> > >  			goto out_err;
+> > >  		}
+> > >  		status = tpm_tis_status(chip);
+> > > @@ -481,7 +484,10 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
+> > >  
+> > >  	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
+> > >  				&priv->int_queue, false) < 0) {
+> > > -		rc = -ETIME;
+> > > +		if (test_bit(TPM_TIS_STATUS_WORKAROUND, &priv->flags))
+> > > +			rc = -EAGAIN;
+> > > +		else
+> > > +			rc = -ETIME;
+> > 
+> > I'd encapsulate this inside wait_for_tpm_stat().
+> 
+> I think that gets a bit more complicated; this is an errata in the send 
+> command path, for a stuck VALID bit, and the fix is to restart the whole 
+> command send (i.e. we need to kick the TPM with tpm_tis_ready() etc). 
+> I'm not sure returning EAGAIN in wait_for_tpm_stat() then makes 
+> tpm_tis_send_data() any simpler.
 
-Well yes, it was audit which caused the appearance of atomics in the
-first place. I was looking for an easy way out.
+OK, it is a fair argument. Let's keep it as it is.
 
-If you have something which gets rid of the underlying problem and it
-is going to land in the foreseeable future, I wont be defending this
-approach.
+> 
+> > >  		goto out_err;
+> > >  	}
+> > >  	status = tpm_tis_status(chip);
+> > > @@ -546,9 +552,11 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
+> > >  		if (rc >= 0)
+> > >  			/* Data transfer done successfully */
+> > >  			break;
+> > > -		else if (rc != -EIO)
+> > > +		else if (rc != EAGAIN && rc != -EIO)
+> > >  			/* Data transfer failed, not recoverable */
+> > >  			return rc;
+> > > +
+> > > +		usleep_range(priv->timeout_min, priv->timeout_max);
+> > >  	}
+> > >  
+> > >  	/* go and do it */
+> > > @@ -1144,6 +1152,9 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
+> > >  		priv->timeout_max = TIS_TIMEOUT_MAX_ATML;
+> > >  	}
+> > >  
+> > > +	if (priv->manufacturer_id == TPM_VID_IFX)
+> > > +		set_bit(TPM_TIS_STATUS_WORKAROUND, &priv->flags);
+> > > +
+> > >  	if (is_bsw()) {
+> > >  		priv->ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
+> > >  					ILB_REMAP_SIZE);
+> > > diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
+> > > index 690ad8e9b731..ce97b58dc005 100644
+> > > --- a/drivers/char/tpm/tpm_tis_core.h
+> > > +++ b/drivers/char/tpm/tpm_tis_core.h
+> > > @@ -89,6 +89,7 @@ enum tpm_tis_flags {
+> > >  	TPM_TIS_INVALID_STATUS		= 1,
+> > >  	TPM_TIS_DEFAULT_CANCELLATION	= 2,
+> > >  	TPM_TIS_IRQ_TESTED		= 3,
+> > > +	TPM_TIS_STATUS_WORKAROUND	= 4,
+> > 
+> > TPM_TIS_TIMEOUT_AGAIN or maybe *_REPEAT? The current name does
+> > not tell anything.
+> 
+> Yeah, TPM_TIS_STATUS_VALID_RETRY is perhaps clearer; it's not a timeout, 
+> and we're looking to do a retry based on STS_VALID.
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+WFM
+
+
+> 
+> > >  };
+> > >  
+> > >  struct tpm_tis_data {
+> > > diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> > > index 20a40ade8030..6c3125300c00 100644
+> > > --- a/include/linux/tpm.h
+> > > +++ b/include/linux/tpm.h
+> > > @@ -335,6 +335,7 @@ enum tpm2_cc_attrs {
+> > >  #define TPM_VID_WINBOND  0x1050
+> > >  #define TPM_VID_STM      0x104A
+> > >  #define TPM_VID_ATML     0x1114
+> > > +#define TPM_VID_IFX      0x15D1
+> > >  
+> > >  enum tpm_chip_flags {
+> > >  	TPM_CHIP_FLAG_BOOTSTRAPPED		= BIT(0),
+> 
+> J.
+> 
+> -- 
+> ... "What's the philosophical difference between a killfile and the
+>     automoderation?" "A killfile throws away good posts.  Automoderation
+>     throws away bad posts." -- Jonathan H N Chin to Calle Dybedahl
+
+BR, Jarkko
 
