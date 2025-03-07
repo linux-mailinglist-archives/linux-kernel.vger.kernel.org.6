@@ -1,414 +1,257 @@
-Return-Path: <linux-kernel+bounces-550927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BA0A565F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:58:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE997A56608
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:01:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81E0A188B318
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:58:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C301516C713
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E79211460;
-	Fri,  7 Mar 2025 10:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A94211719;
+	Fri,  7 Mar 2025 11:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iouX2nYM"
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="taNJNlDz"
 Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6ED5206F05
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 10:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7D5F1DC99A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 11:01:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741345116; cv=none; b=Q2NUbY686KLl0AvmvWkmvbYpu8JpDfmrRf6kHA40OeEQiL6ah3ClxgVWgwIxXqymNzfBD0kikpHAUOk/SJ9mhjcGmFmkzVaYtvX0SzjQUGls7AALq8qjbI343gJs/CT7Yoz+IZjpnXs9lQJ1nNckz/KXW7m3/c8Y73RD6F54JTk=
+	t=1741345295; cv=none; b=oHAdv9MH8eyXnUh0hpPeqADaAI6sjqR1y+GAo1aMiBzH1s2UoeEFTfCQfpWkqX10JlK/Vvw171NiVUphMjtzHNlm2toskBdlpZzllsoNk+4wWJg1EajkwEH9+0dBHqGKICDOLz4iap/4Q3McqpzJF3dhBdz21yR3ZG1nGwoNtkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741345116; c=relaxed/simple;
-	bh=l1dQ0/rtRnz2aTH7XxZx5Q82OW+kzId8sU4BU9VpwFc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=r0mICqXbD/EYkSX2+Mf2MUcDoL9YBRmJ5lFKQI/0dgwdqItWSFlfLkmAHyuDs6Xc6H7rjrHak9gSvs+W9/pvaXvv9Va+QbfLeX+5Qs9t2wPUp3SPPfi93WP3J/YHTtGd3xgI6d1BlvQ5QpSG3B9HS3RgBYoSowftEKhAAOie8Tw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iouX2nYM; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2241053582dso1791165ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 02:58:34 -0800 (PST)
+	s=arc-20240116; t=1741345295; c=relaxed/simple;
+	bh=/g1GkLCKmv9y6KA7+eQLnMk39ax2rDsN2Scy3l2VLdw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To; b=hYcPkJC6U6oI/ZMdTZJG4T2LP/P4G2u5MfzV1tsItR8taWskZDCvOSxmzpGkn6JNPoVQ0qnGCh2uvtW9qgxYT7g5oNIUc2bW4+Fi0ZQreGeKCJDw+JA4YZREtruqrcu+jiF5kzWMBbdFi5rZ87bZQ4QNdUJawoMUhP0NKkohPa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=pass smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=taNJNlDz; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=daynix.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-22423adf751so20563525ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 03:01:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741345114; x=1741949914; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RBF1+pAchwOYwmZk8JsBAh3dFd74qhlpxSBC1djEUD0=;
-        b=iouX2nYM9/ORhVIMSE98X1Y0Z0axvk/DNXMwCOPir3UEcLpJ1pIEHQG7GAItFE8vjj
-         4Nnih0Bb7/t76nledlnwPEpf8nA0JreByvgKpPHNQSu4Yp++U0gS+3zeH+YFZA+yOuz+
-         lxYNp2pkfUkT6LkgcFSLv0dyeTUXNrd01J2bOXo9F5G+4rPCiuL5ZuyatnpryOhBINsX
-         2oayLqMEgLMNzuvqpeEyl1viWx/ZKSS0h/e32CcnuH05yPGhSF0I6+1el28GqjJgwU9B
-         UZDK5Dn1P7OZC0fjXmZIzvsufrDIQgkFdtwgSgmvNSHWl3fuFkFpnqkZMO0CwHx8T38d
-         gEQw==
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1741345293; x=1741950093; darn=vger.kernel.org;
+        h=to:content-transfer-encoding:mime-version:message-id:date:subject
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uzMVlPOa3s/zB/a5VwTHDVG6oc6JLPQwIH8h0o1qpiY=;
+        b=taNJNlDzobekaGuJ8jefR1WgVul0nx6KSzIh4Gwe0wQh22fVJiVA2yqYK17y0b/1Kx
+         OyfmvV3Ao7eERMI39xIxi9wAA4fz3CiSmbgT/j9UzvNECDhSJ4KdLC47hU90OOqsxlHC
+         ZB9Z4NyVdPuxQu5NoDjbWDG4/U/mTFqoIhIUL4g8cdRexIbNtNzAT4V7Qgof98APcmLM
+         LOt+oHU7UIy8FdgzwIC67eCf9YLL8RmUOVcrN2mPoZY8mV6P+uQbMltzYizBBZ/otih3
+         3gIuhmiQ18K+1UpUYa/NayritsPiV14wgUiA4rtzVpZWPHFSbn1T1cExyUjLpjjm0TO3
+         rCfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741345114; x=1741949914;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RBF1+pAchwOYwmZk8JsBAh3dFd74qhlpxSBC1djEUD0=;
-        b=DBPlrR7KJBZ7gz4PycdGaSrKpQ21CTItBxRirr819+lnmcwXmfGqce68UdfKJ8DVxD
-         w/elaWTA44YY9nS2INGFiDxm7fGWmuu8E5T5EesF8LA+mxQUYka33stMc/0lFbxNGQ+l
-         ovN5jQ2sjx5z4KyqCXSozwT0slJ9RRApeuaX1SdMq02TslldGTxSxoAo/k2OuXP2oMHZ
-         F/iwMIlKpyjoGqsjoJHPZSOE+7NcCzZX/1Poqz31aZDd3PKFYLAGAKU2XfOGty8l2160
-         MyqjhJ6FN+zlqSb89mxqyut6CysnXFRxiekw6nn6rBcvMtVrgzL4XpaVqMouAJi4kv3f
-         nfKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUx/b+IjbppEAfFTMQ0Ksf9pBN2/BgJfr4VyttB1vuxSY+pQpJ7l3IlRQ02h7ohUaHnDquH7PioanvLSMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1QAoRCOwyMAJW0mzcGKcEFBlmlckbYXxYYmpCztCFJmXJoKRs
-	yySF9s0AF7IKdOisuDHXiwoKUbpgr4fjLtavNUvlhdomnYFScUdNEhnaK+zaTNO8jNv/u1ntLPH
-	+q1qqu91vrt6sKlttzoAnYwrlY63VRnhYGukJZw==
-X-Gm-Gg: ASbGncvSWzcIV9GHAWXQTVWn0Gh8fOQbwQPhQm5LtjWDTfSc9zn+SlTJeqOr2rk8UY4
-	/vRwp+HIAyB7rz9RP7ZcdS56vVokf8Hia+PEdPCRkGb0IF+dBbH4AqJULNvJBZaYMqJr2W/PPgX
-	y63bbnW9FNnl+Rw+w1SD9+kLs17Ig=
-X-Google-Smtp-Source: AGHT+IGy+H6CFor2Eu5URMCyynzpHIvBG6uUq/tbXtuo7RQ0dg125igVD+2Tl7LGVc5Fu4EoMqeERs+R3WmGjUaIox0=
-X-Received: by 2002:a05:6a20:6a0c:b0:1ee:efb2:f68c with SMTP id
- adf61e73a8af0-1f544aedbb3mr5905497637.12.1741345113846; Fri, 07 Mar 2025
- 02:58:33 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741345293; x=1741950093;
+        h=to:content-transfer-encoding:mime-version:message-id:date:subject
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uzMVlPOa3s/zB/a5VwTHDVG6oc6JLPQwIH8h0o1qpiY=;
+        b=alB+Yz6dG43R1UOyxSIyZaEYRS5WswRSiYRi/Q+mNGdHwh157u3y8mLMPsU1KorIJh
+         IYJxpfeHm1+c7Vc+Gc//+NEykSQZh53y0FS83zAqy3wnqNhiJWkxKZ/az9qtGFEtATps
+         4VNAz8bAiH95tDLFLmtz3qOPSkzn5Bb/AvTXMXRwiL81ojng6psw3Jc9+yzfoyFpmjW7
+         5TYjXX+yWjjhaSOGwAycxwzo7bfR6JaodkennErzlbXV8hsCzluKXnG9n4HzZHW83lEK
+         MvBeHH+kXbn3N1Q+2P3rITWrSFoe5ulWwkQKB+0W6zagUlbygMhgN79Rea6kQo5xOBbB
+         OxIw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9lMjIrKWs7ZLq+XUgFfqagb6i+b9hwvo14wQWe6DnfRCwcoC3irJt4iFMEom5w3rdZaQkecOUiuVQiQM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzIrlMWt4wYeydiD0Ca1JBfIpv8xZ5te+jU6sm01pIM7Ldwzr+O
+	ooykBsOj4XiHQnr2MBZPWplNQATbfucGagAtIuM+d4AzGqmBYUIRvqnepQmc75E=
+X-Gm-Gg: ASbGnct0whF6UiFCcyQPm1CGptPUb1pw4EWfzUBae4fSPdbU2tCsBYWJUQm18uqxzZZ
+	wnl0dyUaj6+3Y0nMX8VVmSjaJhr3LRADIVy3+gpuypIMeoj8jcOJ08HwBG8ajQE2ISKWImSPgQN
+	sTQRYc9mIyaMItpZ8wY0nQRrJaiupH4EUl67hAteRAY9bmNbNq4P6+rScxQtw8/RuuUN4KiuhM0
+	/SFGsMToTMwJuHJ/d7rH3H2f8fHGbvD/ivCrJ85kf8VcjOCs28J0Rls86KszhzSkh4Q+gWgaPs4
+	7cKxc21Ucwat+O9WiMEyV2cg6MRrPd2goG39tokZvDTlRTgn
+X-Google-Smtp-Source: AGHT+IEWkspRFr7qHdskSRCnrxIpvvKyP779SqlsxZvyyYMDg2Rlwude0Tz7fnHYA8IOQruaEpUCgQ==
+X-Received: by 2002:a05:6a00:1887:b0:736:5e28:cfba with SMTP id d2e1a72fcca58-736aaae0343mr4694000b3a.18.1741345293154;
+        Fri, 07 Mar 2025 03:01:33 -0800 (PST)
+Received: from localhost ([157.82.205.237])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73698206a8csm3054423b3a.19.2025.03.07.03.01.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Mar 2025 03:01:32 -0800 (PST)
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+Subject: [PATCH net-next v9 0/6] tun: Introduce virtio-net hashing feature
+Date: Fri, 07 Mar 2025 20:01:16 +0900
+Message-Id: <20250307-rss-v9-0-df76624025eb@daynix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227092640.2666894-1-quic_songchai@quicinc.com> <20250227092640.2666894-5-quic_songchai@quicinc.com>
-In-Reply-To: <20250227092640.2666894-5-quic_songchai@quicinc.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Fri, 7 Mar 2025 10:58:22 +0000
-X-Gm-Features: AQ5f1Johoq6YNGEtVJ7BctoHsSguorr7O26llLcCgo13WzMcb7Ul2rblWp6WUHQ
-Message-ID: <CAJ9a7Vj3eaZB_i8B8ke4cu=Mz7PjB5Z8Gt=MWB13YXZ9MDZyFA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/7] coresight-tgu: Add TGU decode support
-To: songchai <quic_songchai@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andy Gross <agross@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPzRymcC/4XSzW7kIAwA4FcZ5VxGBoyBnPY9Vnvgt4OqJt0kM
+ 5qq6rvXTfozVQ69gfBnbNkv3VymVuauP7x0U7m0uY0DX/zdoUunMNwX0TLfOwUKAUGLaZ5Fsdp
+ m50sN1nYc+TSV2q5rlr/dUBYxlOvS/eOXU5uXcXpe01/k+s6ZtARwYJQEeZSIqJSQIjy0U3sYj
+ 2Pm058cnod2Pabxcc1zUTdWGomSEI+KgJB+tfrTInhp1g4uWoBIpIGT5QhO7RDeIIUbQkYOi9e
+ qJCiUdsh8ofcON2QYVZ0quVwBTN4h+kQGJPgNEaMok4eQLbhKO2S/kVIfP9m1PFRgUow575H7R
+ hpoQ46RDRGroVpR6R/odRvuVP6feTOWjwl/LUZ/WFtVGsRyHgRRkRDQR0i257Zud2gN5QYliXi
+ utUyz8ByOsfJIa+p5wBwew1wE//zYlv6Qs9PW2EqFHAUlnfPepmhcNN6aahFjtNYRl/n6BmFlA
+ ofIAgAA
+X-Change-ID: 20240403-rss-e737d89efa77
+To: Jonathan Corbet <corbet@lwn.net>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Jason Wang <jasowang@redhat.com>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, "Michael S. Tsirkin" <mst@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>, 
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, kvm@vger.kernel.org, 
+ virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org, 
+ Yuri Benditovich <yuri.benditovich@daynix.com>, 
+ Andrew Melnychenko <andrew@daynix.com>, 
+ Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com, 
+ Lei Yang <leiyang@redhat.com>, Simon Horman <horms@kernel.org>, 
+ Akihiko Odaki <akihiko.odaki@daynix.com>
+X-Mailer: b4 0.14.2
 
-Hi,
+virtio-net have two usage of hashes: one is RSS and another is hash
+reporting. Conventionally the hash calculation was done by the VMM.
+However, computing the hash after the queue was chosen defeats the
+purpose of RSS.
 
-On Thu, 27 Feb 2025 at 09:27, songchai <quic_songchai@quicinc.com> wrote:
->
-> From: Songwei Chai <quic_songchai@quicinc.com>
->
-> Decoding is when all the potential pieces for creating a trigger
-> are brought together for a given step. Example - there may be a
-> counter keeping track of some occurrences and a priority-group that
-> is being used to detect a pattern on the sense inputs. These 2
-> inputs to condition_decode must be programmed, for a given step,
-> to establish the condition for the trigger, or movement to another
-> step.
->
-> Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
-> Signed-off-by: songchai <quic_songchai@quicinc.com>
-> ---
->  .../testing/sysfs-bus-coresight-devices-tgu   |   7 ++
->  drivers/hwtracing/coresight/coresight-tgu.c   | 113 ++++++++++++++++--
->  drivers/hwtracing/coresight/coresight-tgu.h   |  29 ++++-
->  3 files changed, 136 insertions(+), 13 deletions(-)
->
-> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
-> index af7332153833..dd6cc1184d52 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
-> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
-> @@ -14,3 +14,10 @@ KernelVersion   6.15
->  Contact:        Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Sam Chai (QUIC) <quic_songchai@quicinc.com>
->  Description:
->                  (RW) Set/Get the sensed siganal with specific step and priority for TGU.
-> +
-> +What:           /sys/bus/coresight/devices/<tgu-name>/step[0:7]_condition_decode/reg[0:3]
-> +Date:           February 2025
-> +KernelVersion   6.15
-> +Contact:        Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Sam Chai (QUIC) <quic_songchai@quicinc.com>
-> +Description:
-> +                (RW) Set/Get the decode mode with specific step for TGU.
-> diff --git a/drivers/hwtracing/coresight/coresight-tgu.c b/drivers/hwtracing/coresight/coresight-tgu.c
-> index f28761619ebe..5eebf5eecbbb 100644
-> --- a/drivers/hwtracing/coresight/coresight-tgu.c
-> +++ b/drivers/hwtracing/coresight/coresight-tgu.c
-> @@ -22,9 +22,21 @@ static int calculate_array_location(struct tgu_drvdata *drvdata, int step_index,
->  {
->         int ret = -EINVAL;
->
-> -       ret = operation_index * (drvdata->max_step) *
-> -                     (drvdata->max_reg) + step_index * (drvdata->max_reg)
-> -                               + reg_index;
-> +       switch (operation_index) {
-> +       case TGU_PRIORITY0:
-> +       case TGU_PRIORITY1:
-> +       case TGU_PRIORITY2:
-> +       case TGU_PRIORITY3:
-> +               ret = operation_index * (drvdata->max_step) *
-> +                       (drvdata->max_reg) + step_index * (drvdata->max_reg)
-> +                       + reg_index;
-> +               break;
-> +       case TGU_CONDITION_DECODE:
-> +               ret = step_index * (drvdata->max_condition_decode) + reg_index;
-> +               break;
-> +       default:
-> +               break;
-> +       }
->
->         return ret;
->  }
-> @@ -36,10 +48,23 @@ static ssize_t tgu_dataset_show(struct device *dev,
->         struct tgu_attribute *tgu_attr =
->                 container_of(attr, struct tgu_attribute, attr);
->
-> -       return sysfs_emit(buf, "0x%x\n",
-> -                         drvdata->value_table->priority[calculate_array_location(
-> +       switch (tgu_attr->operation_index) {
-> +       case TGU_PRIORITY0:
-> +       case TGU_PRIORITY1:
-> +       case TGU_PRIORITY2:
-> +       case TGU_PRIORITY3:
-> +               return sysfs_emit(buf, "0x%x\n",
-> +                                 drvdata->value_table->priority[calculate_array_location(
+Another approach is to use eBPF steering program. This approach has
+another downside: it cannot report the calculated hash due to the
+restrictive nature of eBPF.
 
-calculate_array_location() can return -EINVAL - you could be
-referencing array value drvdata->value_table->priority[-EINVAL] here.
-Test the return before referencing the array.
+Introduce the code to compute hashes to the kernel in order to overcome
+thse challenges.
 
-Same for all following occurrences.
+An alternative solution is to extend the eBPF steering program so that it
+will be able to report to the userspace, but it is based on context
+rewrites, which is in feature freeze. We can adopt kfuncs, but they will
+not be UAPIs. We opt to ioctl to align with other relevant UAPIs (KVM
+and vhost_net).
 
+The patches for QEMU to use this new feature was submitted as RFC and
+is available at:
+https://patchew.org/QEMU/20240915-hash-v3-0-79cb08d28647@daynix.com/
 
->                                   drvdata, tgu_attr->step_index,
->                                   tgu_attr->operation_index, tgu_attr->reg_num)]);
-> +       case TGU_CONDITION_DECODE:
-> +               return sysfs_emit(buf, "0x%x\n",
-> +                                 drvdata->value_table->condition_decode[calculate_array_location(
-> +                                 drvdata, tgu_attr->step_index, tgu_attr->operation_index,
-> +                                 tgu_attr->reg_num)]);
-> +
+This work was presented at LPC 2024:
+https://lpc.events/event/18/contributions/1963/
 
-missing default - did this code compile without warnings?
+V1 -> V2:
+  Changed to introduce a new BPF program type.
 
-> +       }
-> +       return -EINVAL;
->
->  }
->
-> @@ -58,11 +83,25 @@ static ssize_t tgu_dataset_store(struct device *dev,
->                 return ret;
->
->         guard(spinlock)(&tgu_drvdata->spinlock);
-> -       tgu_drvdata->value_table->priority[calculate_array_location(
-> -               tgu_drvdata, tgu_attr->step_index, tgu_attr->operation_index,
-> -               tgu_attr->reg_num)] = val;
-> -       ret = size;
-> -
-> +       switch (tgu_attr->operation_index) {
-> +       case TGU_PRIORITY0:
-> +       case TGU_PRIORITY1:
-> +       case TGU_PRIORITY2:
-> +       case TGU_PRIORITY3:
-> +               tgu_drvdata->value_table->priority[calculate_array_location(
-> +                       tgu_drvdata, tgu_attr->step_index, tgu_attr->operation_index,
-> +                       tgu_attr->reg_num)] = val;
-> +               ret = size;
-> +               break;
-> +       case TGU_CONDITION_DECODE:
-> +               tgu_drvdata->value_table->condition_decode[calculate_array_location(
-> +                       tgu_drvdata, tgu_attr->step_index, tgu_attr->operation_index,
-> +                       tgu_attr->reg_num)] = val;
-> +               ret = size;
-> +               break;
-> +       default:
-> +               break;
-> +       }
->         return ret;
->  }
->
-> @@ -79,8 +118,23 @@ static umode_t tgu_node_visible(struct kobject *kobject, struct attribute *attr,
->                 container_of(dev_attr, struct tgu_attribute, attr);
->
->         if (tgu_attr->step_index < drvdata->max_step) {
-> -               ret = (tgu_attr->reg_num < drvdata->max_reg) ?
-> -                                           attr->mode : 0;
-> +               switch (tgu_attr->operation_index) {
-> +               case TGU_PRIORITY0:
-> +               case TGU_PRIORITY1:
-> +               case TGU_PRIORITY2:
-> +               case TGU_PRIORITY3:
-> +                       ret = (tgu_attr->reg_num < drvdata->max_reg) ?
-> +                                     attr->mode : 0;
-> +                       break;
-> +               case TGU_CONDITION_DECODE:
-> +                       ret = (tgu_attr->reg_num <
-> +                                       drvdata->max_condition_decode) ?
-> +                                               attr->mode : 0;
-> +                       break;
-> +               default:
-> +                       break;
-> +               }
-> +
->                 return ret;
->         }
->         return SYSFS_GROUP_INVISIBLE;
-> @@ -103,6 +157,17 @@ static void tgu_write_all_hw_regs(struct tgu_drvdata *drvdata)
->                 }
->         }
->
-> +       for (i = 0; i < drvdata->max_step; i++) {
-> +               for (j = 0; j < drvdata->max_condition_decode; j++) {
-> +                       tgu_writel(drvdata,
-> +                                  drvdata->value_table
-> +                                          ->condition_decode[calculate_array_location(
-> +                                                  drvdata, i,
-> +                                                  TGU_CONDITION_DECODE, j)],
-> +                                  CONDITION_DECODE_STEP(i, j));
-> +               }
-> +       }
-> +
->         /* Enable TGU to program the triggers */
->         tgu_writel(drvdata, 1, TGU_CONTROL);
->         CS_LOCK(drvdata->base);
-> @@ -245,6 +310,14 @@ static const struct attribute_group *tgu_attr_groups[] = {
->         PRIORITY_ATTRIBUTE_GROUP_INIT(7, 1),
->         PRIORITY_ATTRIBUTE_GROUP_INIT(7, 2),
->         PRIORITY_ATTRIBUTE_GROUP_INIT(7, 3),
-> +       CONDITION_DECODE_ATTRIBUTE_GROUP_INIT(0),
-> +       CONDITION_DECODE_ATTRIBUTE_GROUP_INIT(1),
-> +       CONDITION_DECODE_ATTRIBUTE_GROUP_INIT(2),
-> +       CONDITION_DECODE_ATTRIBUTE_GROUP_INIT(3),
-> +       CONDITION_DECODE_ATTRIBUTE_GROUP_INIT(4),
-> +       CONDITION_DECODE_ATTRIBUTE_GROUP_INIT(5),
-> +       CONDITION_DECODE_ATTRIBUTE_GROUP_INIT(6),
-> +       CONDITION_DECODE_ATTRIBUTE_GROUP_INIT(7),
->         NULL,
->  };
->
-> @@ -289,6 +362,13 @@ static int tgu_probe(struct amba_device *adev, const struct amba_id *id)
->         if (ret)
->                 return -EINVAL;
->
-> +       ret = of_property_read_u32(adev->dev.of_node, "tgu-conditions",
-> +                                  &drvdata->max_condition);
-> +       if (ret)
-> +               return -EINVAL;
-> +
-> +       drvdata->max_condition_decode = drvdata->max_condition;
-> +
->         drvdata->value_table =
->                 devm_kzalloc(dev, sizeof(*drvdata->value_table), GFP_KERNEL);
->         if (!drvdata->value_table)
-> @@ -303,6 +383,15 @@ static int tgu_probe(struct amba_device *adev, const struct amba_id *id)
->         if (!drvdata->value_table->priority)
->                 return -ENOMEM;
->
-> +       drvdata->value_table->condition_decode = devm_kzalloc(
-> +               dev,
-> +               drvdata->max_condition_decode * drvdata->max_step *
-> +                       sizeof(*(drvdata->value_table->condition_decode)),
-> +               GFP_KERNEL);
-> +
-> +       if (!drvdata->value_table->condition_decode)
-> +               return -ENOMEM;
-> +
->         drvdata->enable = false;
->         desc.type = CORESIGHT_DEV_TYPE_HELPER;
->         desc.pdata = adev->dev.platform_data;
-> diff --git a/drivers/hwtracing/coresight/coresight-tgu.h b/drivers/hwtracing/coresight/coresight-tgu.h
-> index 6e5d465117df..c2a9ce38b44f 100644
-> --- a/drivers/hwtracing/coresight/coresight-tgu.h
-> +++ b/drivers/hwtracing/coresight/coresight-tgu.h
-> @@ -46,6 +46,9 @@
->  #define PRIORITY_REG_STEP(step, priority, reg)\
->         (0x0074 + 0x60 * priority + 0x4 * reg + 0x1D8 * step)
->
-> +#define CONDITION_DECODE_STEP(step, decode) \
-> +       (0x0050 + 0x4 * decode + 0x1D8 * step)
-> +
+Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+---
+Changes in v9:
+- Added a missing return statement in patch
+  "tun: Introduce virtio-net hash feature".
+- Link to v8: https://lore.kernel.org/r/20250306-rss-v8-0-7ab4f56ff423@daynix.com
 
-use #define constants with explanations of what they are rather than
-arbitrary magic numbers.
+Changes in v8:
+- Disabled IPv6 to eliminate noises in tests.
+- Added a branch in tap to avoid unnecessary dissection when hash
+  reporting is disabled.
+- Removed unnecessary rtnl_lock().
+- Extracted code to handle new ioctls into separate functions to avoid
+  adding extra NULL checks to the code handling other ioctls.
+- Introduced variable named "fd" to __tun_chr_ioctl().
+- s/-/=/g in a patch message to avoid confusing Git.
+- Link to v7: https://lore.kernel.org/r/20250228-rss-v7-0-844205cbbdd6@daynix.com
 
->  #define tgu_dataset_ro(name, step_index, type, reg_num)     \
->         (&((struct tgu_attribute[]){ {                      \
->                 __ATTR(name, 0444, tgu_dataset_show, NULL), \
-> @@ -66,6 +69,9 @@
->         tgu_dataset_rw(reg##reg_num, step_index, TGU_PRIORITY##priority, \
->                        reg_num)
->
-> +#define STEP_DECODE(step_index, reg_num) \
-> +       tgu_dataset_rw(reg##reg_num, step_index, TGU_CONDITION_DECODE, reg_num)
-> +
->  #define STEP_PRIORITY_LIST(step_index, priority)  \
->         {STEP_PRIORITY(step_index, 0, priority),  \
->          STEP_PRIORITY(step_index, 1, priority),  \
-> @@ -88,6 +94,14 @@
->          NULL                   \
->         }
->
-> +#define STEP_DECODE_LIST(n) \
-> +       {STEP_DECODE(n, 0), \
-> +        STEP_DECODE(n, 1), \
-> +        STEP_DECODE(n, 2), \
-> +        STEP_DECODE(n, 3), \
-> +        NULL           \
-> +       }
-> +
->  #define PRIORITY_ATTRIBUTE_GROUP_INIT(step, priority)\
->         (&(const struct attribute_group){\
->                 .attrs = (struct attribute*[])STEP_PRIORITY_LIST(step, priority),\
-> @@ -95,11 +109,19 @@
->                 .name = "step" #step "_priority" #priority \
->         })
->
-> +#define CONDITION_DECODE_ATTRIBUTE_GROUP_INIT(step)\
-> +       (&(const struct attribute_group){\
-> +               .attrs = (struct attribute*[])STEP_DECODE_LIST(step),\
-> +               .is_visible = tgu_node_visible,\
-> +               .name = "step" #step "_condition_decode" \
-> +       })
-> +
->  enum operation_index {
->         TGU_PRIORITY0,
->         TGU_PRIORITY1,
->         TGU_PRIORITY2,
-> -       TGU_PRIORITY3
-> +       TGU_PRIORITY3,
-> +       TGU_CONDITION_DECODE
->
->  };
->
-> @@ -115,6 +137,7 @@ struct tgu_attribute {
->
->  struct value_table {
->         unsigned int *priority;
-> +       unsigned int *condition_decode;
->  };
->
->  /**
-> @@ -127,6 +150,8 @@ struct value_table {
->   * @value_table: Store given value based on relevant parameters.
->   * @max_reg: Maximum number of registers
->   * @max_step: Maximum step size
-> + * @max_condition: Maximum number of condition
-> + * @max_condition_decode: Maximum number of condition_decode
->   *
->   * This structure defines the data associated with a TGU device, including its base
->   * address, device pointers, clock, spinlock for synchronization, trigger data pointers,
-> @@ -141,6 +166,8 @@ struct tgu_drvdata {
->         struct value_table *value_table;
->         int max_reg;
->         int max_step;
-> +       int max_condition;
-> +       int max_condition_decode;
->  };
->
->  #endif
->
+Changes in v7:
+- Ensured to set hash_report to VIRTIO_NET_HASH_REPORT_NONE for
+  VHOST_NET_F_VIRTIO_NET_HDR.
+- s/4/sizeof(u32)/ in patch "virtio_net: Add functions for hashing".
+- Added tap_skb_cb type.
+- Rebased.
+- Link to v6: https://lore.kernel.org/r/20250109-rss-v6-0-b1c90ad708f6@daynix.com
 
-Regards
+Changes in v6:
+- Extracted changes to fill vnet header holes into another series.
+- Squashed patches "skbuff: Introduce SKB_EXT_TUN_VNET_HASH", "tun:
+  Introduce virtio-net hash reporting feature", and "tun: Introduce
+  virtio-net RSS" into patch "tun: Introduce virtio-net hash feature".
+- Dropped the RFC tag.
+- Link to v5: https://lore.kernel.org/r/20241008-rss-v5-0-f3cf68df005d@daynix.com
 
-Mike
+Changes in v5:
+- Fixed a compilation error with CONFIG_TUN_VNET_CROSS_LE.
+- Optimized the calculation of the hash value according to:
+  https://git.dpdk.org/dpdk/commit/?id=3fb1ea032bd6ff8317af5dac9af901f1f324cab4
+- Added patch "tun: Unify vnet implementation".
+- Dropped patch "tap: Pad virtio header with zero".
+- Added patch "selftest: tun: Test vnet ioctls without device".
+- Reworked selftests to skip for older kernels.
+- Documented the case when the underlying device is deleted and packets
+  have queue_mapping set by TC.
+- Reordered test harness arguments.
+- Added code to handle fragmented packets.
+- Link to v4: https://lore.kernel.org/r/20240924-rss-v4-0-84e932ec0e6c@daynix.com
 
+Changes in v4:
+- Moved tun_vnet_hash_ext to if_tun.h.
+- Renamed virtio_net_toeplitz() to virtio_net_toeplitz_calc().
+- Replaced htons() with cpu_to_be16().
+- Changed virtio_net_hash_rss() to return void.
+- Reordered variable declarations in virtio_net_hash_rss().
+- Removed virtio_net_hdr_v1_hash_from_skb().
+- Updated messages of "tap: Pad virtio header with zero" and
+  "tun: Pad virtio header with zero".
+- Fixed vnet_hash allocation size.
+- Ensured to free vnet_hash when destructing tun_struct.
+- Link to v3: https://lore.kernel.org/r/20240915-rss-v3-0-c630015db082@daynix.com
+
+Changes in v3:
+- Reverted back to add ioctl.
+- Split patch "tun: Introduce virtio-net hashing feature" into
+  "tun: Introduce virtio-net hash reporting feature" and
+  "tun: Introduce virtio-net RSS".
+- Changed to reuse hash values computed for automq instead of performing
+  RSS hashing when hash reporting is requested but RSS is not.
+- Extracted relevant data from struct tun_struct to keep it minimal.
+- Added kernel-doc.
+- Changed to allow calling TUNGETVNETHASHCAP before TUNSETIFF.
+- Initialized num_buffers with 1.
+- Added a test case for unclassified packets.
+- Fixed error handling in tests.
+- Changed tests to verify that the queue index will not overflow.
+- Rebased.
+- Link to v2: https://lore.kernel.org/r/20231015141644.260646-1-akihiko.odaki@daynix.com
+
+---
+Akihiko Odaki (6):
+      virtio_net: Add functions for hashing
+      net: flow_dissector: Export flow_keys_dissector_symmetric
+      tun: Introduce virtio-net hash feature
+      selftest: tun: Test vnet ioctls without device
+      selftest: tun: Add tests for virtio-net hashing
+      vhost/net: Support VIRTIO_NET_F_HASH_REPORT
+
+ Documentation/networking/tuntap.rst  |   7 +
+ drivers/net/Kconfig                  |   1 +
+ drivers/net/tap.c                    |  68 +++-
+ drivers/net/tun.c                    |  98 +++++-
+ drivers/net/tun_vnet.h               | 159 ++++++++-
+ drivers/vhost/net.c                  |  49 +--
+ include/linux/if_tap.h               |   2 +
+ include/linux/skbuff.h               |   3 +
+ include/linux/virtio_net.h           | 188 ++++++++++
+ include/net/flow_dissector.h         |   1 +
+ include/uapi/linux/if_tun.h          |  75 ++++
+ net/core/flow_dissector.c            |   3 +-
+ net/core/skbuff.c                    |   4 +
+ tools/testing/selftests/net/Makefile |   2 +-
+ tools/testing/selftests/net/tun.c    | 656 ++++++++++++++++++++++++++++++++++-
+ 15 files changed, 1255 insertions(+), 61 deletions(-)
+---
+base-commit: dd83757f6e686a2188997cb58b5975f744bb7786
+change-id: 20240403-rss-e737d89efa77
+prerequisite-change-id: 20241230-tun-66e10a49b0c7:v6
+prerequisite-patch-id: 871dc5f146fb6b0e3ec8612971a8e8190472c0fb
+prerequisite-patch-id: 2797ed249d32590321f088373d4055ff3f430a0e
+prerequisite-patch-id: ea3370c72d4904e2f0536ec76ba5d26784c0cede
+prerequisite-patch-id: 837e4cf5d6b451424f9b1639455e83a260c4440d
+prerequisite-patch-id: ea701076f57819e844f5a35efe5cbc5712d3080d
+prerequisite-patch-id: 701646fb43ad04cc64dd2bf13c150ccbe6f828ce
+prerequisite-patch-id: 53176dae0c003f5b6c114d43f936cf7140d31bb5
+prerequisite-change-id: 20250116-buffers-96e14bf023fc:v2
+prerequisite-patch-id: 25fd4f99d4236a05a5ef16ab79f3e85ee57e21cc
+
+Best regards,
 -- 
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+Akihiko Odaki <akihiko.odaki@daynix.com>
+
 
