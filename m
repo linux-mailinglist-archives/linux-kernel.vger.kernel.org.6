@@ -1,176 +1,104 @@
-Return-Path: <linux-kernel+bounces-550298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE72A55DAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:29:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA69A55DB5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:30:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B505F177FFB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:29:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8499178157
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8504D17E45B;
-	Fri,  7 Mar 2025 02:28:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710C818BC36;
+	Fri,  7 Mar 2025 02:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3bZRyMzK"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DDuc9Wg6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606FC1624E0
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 02:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB06815382E;
+	Fri,  7 Mar 2025 02:30:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741314534; cv=none; b=W9zVLcfGMkAb9w+LH2RJfa6vGnZ14KvDWmdoOMpbOUs0DYPLTdlPYNiYFf9yCppilrS3+vMemSd+YMidPUfEM0pITojnVPIWfsw+/u1b5D3HIqJ7D3GSuf3Z8Z5SELFmjZH8aUKdbe6H1OgUDZdlU53E7Mq012dPK0a3A18zGmk=
+	t=1741314608; cv=none; b=hFOHl934OcnuSC213kM67NDeD+Ell1x/yBPOx9Z58Fy6ieO7GBV/ilVyolGuu6zOafXeelcvMGYJQ4VbsPaKPRSRY7r9SC5ciAyAnHW/gx2V0NSR0IvaQNLvUX0ipJCW8LlvU4REuepk+ymqW7WFPgxw+ycsruzjbbvMb8trdEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741314534; c=relaxed/simple;
-	bh=PHNRBklgQlxovQ84UyrbxxvlR1CbdJB09I/jjJGSSFk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BaLfiKFKLZkq452pNZdnKDZMiIw4aLSu1Kkhm4rsPWtK3537ROiYMaWWdcvY1Fdi/sLF1wFEyjrXEs3WRHXFrISIpkBzqX0nIFbr9mOUy5rKijJdeeJPcARH11ctXkxu8M9pbttBCLnUTMR3m/R7rOc95dTjqKHfKzXos6gK8Tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3bZRyMzK; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-474fdb3212aso166541cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 18:28:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741314532; x=1741919332; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oeaol7dKf5hDCsXX8j5PIosUqB5cxOjG0nyihsM76BM=;
-        b=3bZRyMzKDYbYDJvxyV5dHWHn+WPoEqxQrbDLEDzDez12VbmvO6241fwfPNwfvbwc3C
-         tD3/uRu7aqdOFySYoMDW3AljFf/Nm791sX1D0UEfqxA4LV82EP5xYCuCGxN+sRjEOC79
-         WBQetGRIQMRjlMJTKw2VYN8hxQbG0TEJLvn9EAr+cbSaUgNCl7Dz0hgANQ/jk9DTyUtS
-         vBewduhGyjun55wN50gAs0kg23vtIn2nXFhLHbewlCUDRJ0lJyDv8X9C966QEGobYQqn
-         4/B8QmF5FtzpIkEu1XkYFmCYaHHsz5ylMOzoEtGXDfDEMIQFYGJIJg9Je6VE7fre2dxj
-         5QZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741314532; x=1741919332;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oeaol7dKf5hDCsXX8j5PIosUqB5cxOjG0nyihsM76BM=;
-        b=IcIoGWSQ707aQwxZkI6WPKAQWEI62SAJeGSUOjQSXKYAGVFDBolssGYYbfdPegyaAn
-         UvSb2jo+d9PG5xacPr0jIgYOSm/kp53HKf0hckDor8dqp6nZa07DwNzjuaZkymUarSkD
-         SxZQ0rxWdt1x5ReDwkYFYeeO6vSxFPn+NL8zVZZ1roCWAq7wEzzHdp0goeQzePp1m1nx
-         BrSE5VliIRQky1gXUyQUfwYuR6JiLPd2v46S+/s+p4V5rjDpElqh3Zt7tOz3Xbg7ufGp
-         S47AdqVnMrO/aJ5eXbAnBNB6OKPjabDAJ63IU6YAV6vs9eisUjWHmAkGduULOXaSyuQ/
-         kyHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWbyYsIARw+htUBunR+cn7JIf4gMhzeEoRoChY+HM8AvdcsB7P8sQI4O59gAXDaDGC4//k0XWY9Ox5xvxE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGyb18X1YGb7E63vqORhYwzzjuuNtbLxe2srf7vu4HBqoVqztU
-	XmL8rQa859DxteBuUSjX+cLL4tKgiwu+Y51gy3g3SLT8FLMLfaMO22FR6HQzuhhxKTYMWyiSpzq
-	iDrJGxRikyByXYvuW4A3fX9l3P/EXhplJPRl5
-X-Gm-Gg: ASbGncue0OStcxgiNeEEwfINTx+madfqxVzAs/d3OeNLUBfpbA8umLmqUvquzbDvPOc
-	yZFPkjsYPNHRrBsSpzMTorXrKqAxNkKURRN25B0zWqbkh9nq4QL8dkIErdY9upJ9r2dFIDXXFxy
-	iDYMW/MVak41QWtKuPJ59mwg0dvg==
-X-Google-Smtp-Source: AGHT+IEcdFFqgoC5v5nk1CqtfLvnIwlJrlCR79p6l3ceXCbmRcL3l4QYeOtwzNSmiBPLUOn0epow5zQ8pU2CygP8kjw=
-X-Received: by 2002:a05:622a:48d:b0:46d:f29d:4173 with SMTP id
- d75a77b69052e-47620f3e2dbmr1917281cf.16.1741314531920; Thu, 06 Mar 2025
- 18:28:51 -0800 (PST)
+	s=arc-20240116; t=1741314608; c=relaxed/simple;
+	bh=tn3Z1GgSVn9MZE25OAl4TUe3BRvbI67Yak5zmzCjmao=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=tYZRS8bhybXkqhkeopQnI++BmgVKCfaiVE7XFfKm+gRFjy7UpL9iLDndzFnCo841RjlE8tofMtzljCMhHHzZ0ON5BN16WLTZ5X9MrxVpu7FMCCOtVpw+8qoARriGeGKn8p+5156bRnd9NAIw4iK2jS3I0hIx0E2U+3LXHftM9DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DDuc9Wg6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ADF2C4CEE0;
+	Fri,  7 Mar 2025 02:30:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741314608;
+	bh=tn3Z1GgSVn9MZE25OAl4TUe3BRvbI67Yak5zmzCjmao=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=DDuc9Wg6usaZqyJuY0u9UpSyvd1OwrgUxw5p5L6KrwybVaKC6UgNbKyO5ttuwZ1Er
+	 x0oqYlQjNEZnSLdy3j8XWxHFArz1D2orFu5EdVxE/94i3lHxa4RPVt8vZJibC3J2O5
+	 dJ5tx0JYRiEQYf3gK4NGsfLg8dKfgpMBxdJFBgcu9oWMLPex23rxcyRSNRJGXILsq0
+	 IoAjTFeQS5yAcLrEz3oAxAo9Ln4qJkFHAGBBhL/TL2wz4HFXlrO89p60QXKRi+g1Qi
+	 Ct/KkZc/DdGj8YKzCnZHCEc6fLBfu/TP1NVDADGzzvCS6kO7i0iVtYQDGrsvCFWXL6
+	 YZTWZHjf7L3mg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADDB9380CFF6;
+	Fri,  7 Mar 2025 02:30:42 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250306074101epcas1p4b24ac546f93df2c7fe3176607b20e47f@epcas1p4.samsung.com>
- <20250306074056.246582-1-s.suk@samsung.com> <Z8m-vJ6mP1Sh2pt3@infradead.org>
- <CAJrd-UuLvOPLC2Xr=yOzZYvOw9k8qwbNa0r9oNjne31x8Pmnhw@mail.gmail.com> <848301db8f05$a1d79430$e586bc90$@samsung.com>
-In-Reply-To: <848301db8f05$a1d79430$e586bc90$@samsung.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 6 Mar 2025 18:28:40 -0800
-X-Gm-Features: AQ5f1JrGamsGt3IZusMGXc8vrCD2-uzcdGon8NJXEfXnTsNUgJLtgPe59GfjDWc
-Message-ID: <CAJuCfpHjV=nRmkAGrf-tyCxEEygZ0CuW-PRp+F_vHwFbfYS8dA@mail.gmail.com>
-Subject: Re: [RFC PATCH] block, fs: use FOLL_LONGTERM as gup_flags for direct IO
-To: Sooyong Suk <s.suk@samsung.com>
-Cc: Jaewon Kim <jaewon31.kim@gmail.com>, Christoph Hellwig <hch@infradead.org>, viro@zeniv.linux.org.uk, 
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	spssyr@gmail.com, axboe@kernel.dk, linux-block@vger.kernel.org, 
-	dhavale@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next V2 0/6] mlx5 misc enhancements 2025-03-04
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174131464148.1860023.2397596403061740180.git-patchwork-notify@kernel.org>
+Date: Fri, 07 Mar 2025 02:30:41 +0000
+References: <20250304160620.417580-1-tariqt@nvidia.com>
+In-Reply-To: <20250304160620.417580-1-tariqt@nvidia.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+ edumazet@google.com, andrew+netdev@lunn.ch, saeedm@nvidia.com,
+ gal@nvidia.com, leonro@nvidia.com, michal.swiatkowski@linux.intel.com,
+ leon@kernel.org, netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 
-On Thu, Mar 6, 2025 at 6:07=E2=80=AFPM Sooyong Suk <s.suk@samsung.com> wrot=
-e:
->
-> > On Fri, Mar 7, 2025 at 12:26=E2=80=AFAM Christoph Hellwig <hch@infradea=
-d.org>
-> > wrote:
-> > >
-> > > On Thu, Mar 06, 2025 at 04:40:56PM +0900, Sooyong Suk wrote:
-> > > > There are GUP references to pages that are serving as direct IO
-> > buffers.
-> > > > Those pages can be allocated from CMA pageblocks despite they can b=
-e
-> > > > pinned until the DIO is completed.
-> > >
-> > > direct I/O is eactly the case that is not FOLL_LONGTERM and one of th=
-e
-> > > reasons to even have the flag.  So big fat no to this.
-> > >
-> >
->
-> Understood.
->
-> > Hello, thank you for your comment.
-> > We, Sooyong and I, wanted to get some opinions about this FOLL_LONGTERM
-> > for direct I/O as CMA memory got pinned pages which had been pinned fro=
-m
-> > direct io.
-> >
-> > > You also completely failed to address the relevant mailinglist and
-> > > maintainers.
-> >
-> > I added block maintainer Jens Axboe and the block layer maillinst here,
-> > and added Suren and Sandeep, too.
+Hello:
 
-I'm very far from being a block layer expert :)
+This series was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
->
-> Then, what do you think of using PF_MEMALLOC_PIN for this context as belo=
-w?
-> This will only remove __GFP_MOVABLE from its allocation flag.
-> Since __bio_iov_iter_get_pages() indicates that it will pin user or kerne=
-l pages,
-> there seems to be no reason not to use this process flag.
+On Tue, 4 Mar 2025 18:06:14 +0200 you wrote:
+> Hi,
+> 
+> This is V2.
+> Find initial version here:
+> https://lore.kernel.org/lkml/20250226114752.104838-1-tariqt@nvidia.com/
+> 
+> This series introduces enhancements to the mlx5 core and Eth drivers.
+> 
+> [...]
 
-I think this will help you only when the pages are faulted in but if
-__get_user_pages() finds an already mapped page which happens to be
-allocated from CMA, it will not migrate it. So, you might still end up
-with unmovable pages inside CMA.
+Here is the summary with links:
+  - [net-next,V2,1/6] net/mlx5: Relocate function declarations from port.h to mlx5_core.h
+    https://git.kernel.org/netdev/net-next/c/a2f61f1db855
+  - [net-next,V2,2/6] net/mlx5: Refactor link speed handling with mlx5_link_info struct
+    https://git.kernel.org/netdev/net-next/c/65a5d3557184
+  - [net-next,V2,3/6] net/mlx5e: Enable lanes configuration when auto-negotiation is off
+    https://git.kernel.org/netdev/net-next/c/7e959797f021
+  - [net-next,V2,4/6] net/mlx5: Lag, Enable Multiport E-Switch offloads on 8 ports LAG
+    https://git.kernel.org/netdev/net-next/c/5aa2e6de86d5
+  - [net-next,V2,5/6] net/mlx5e: Separate address related variables to be in struct
+    https://git.kernel.org/netdev/net-next/c/348ed4b20546
+  - [net-next,V2,6/6] net/mlx5e: Properly match IPsec subnet addresses
+    https://git.kernel.org/netdev/net-next/c/ca7992f52c2c
 
->
-> block/bio.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/block/bio.c b/block/bio.c
-> index 65c796ecb..671e28966 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -1248,6 +1248,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio=
-, struct iov_iter *iter)
->         unsigned len, i =3D 0;
->         size_t offset;
->         int ret =3D 0;
-> +       unsigned int flags;
->
->         /*
->          * Move page array up in the allocated memory for the bio vecs as=
- far as
-> @@ -1267,9 +1268,11 @@ static int __bio_iov_iter_get_pages(struct bio *bi=
-o, struct iov_iter *iter)
->          * result to ensure the bio's total size is correct. The remainde=
-r of
->          * the iov data will be picked up in the next bio iteration.
->          */
-> +       flags =3D memalloc_pin_save();
->         size =3D iov_iter_extract_pages(iter, &pages,
->                                       UINT_MAX - bio->bi_iter.bi_size,
->                                       nr_pages, extraction_flags, &offset=
-);
-> +       memalloc_pin_restore(flags);
->         if (unlikely(size <=3D 0))
->                 return size ? size : -EFAULT;
->
->
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
