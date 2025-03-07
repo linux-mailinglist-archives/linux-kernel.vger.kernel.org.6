@@ -1,217 +1,230 @@
-Return-Path: <linux-kernel+bounces-551141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B807EA5689B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:15:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B49BA5689C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:15:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B7313B716D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:14:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5736216F5B4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931C021A945;
-	Fri,  7 Mar 2025 13:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0897F13A86C;
+	Fri,  7 Mar 2025 13:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DK0D/Sbz"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="B4chkNii"
+Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AA98219A9F;
-	Fri,  7 Mar 2025 13:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C6A1E868
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 13:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741353279; cv=none; b=FVogJhKPNaMjq57g3aQyUgG4lldbc5wFGuJ+KaNBlJ6jfQd+j0DVRMY+GTleypphBweDMc7v+5qnEmMfgMtrTHR1rwnpflUT4Jrmg1KrCSIB6BWnXqANGEIi9SreQA81X19SlxZ9M7DfpjqTXcI2/LlN21NtZOMhgWR0maXiTeE=
+	t=1741353336; cv=none; b=dcpoim+VgXlls16HIdDIAJAuzzmtOhU+CSGQUIGseyx79FeF6tGBltzW+ukDMRhGOq/DVQTuT86z6hcQ7fFAOTK7ez/VONNXG6C4RcpqV6/PF9UysrFNENqQuUoVPyBltm5xgNjMOhKY7I9vImdgStr6izX+H9HmwH5FSsGig/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741353279; c=relaxed/simple;
-	bh=hA+AL+YkmFHDqEOTVvDJnon/Dsjcg3uYfNOntsX5TuY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=csbzFLDcAP9JXHbs09ZmffS5YHQAOIKdjepZlO0Y3vrxUagbZQqtY+jhd9kyL2kc9aePk4Y7HP/TTniyjly8D8Lj0EH1IynQCMsHKhmWUCqRvOIlwF0vI7G+DDesOxrdpyD+zTNFJ244Hjiuiw6HskGBz86h6iqMR/k1gz+v12g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DK0D/Sbz; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2feae794508so2886956a91.0;
-        Fri, 07 Mar 2025 05:14:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741353278; x=1741958078; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=muSHbuLdeyMAAgXAmJf/8jxjECvkvJugZR3BtpEzTko=;
-        b=DK0D/Sbz4pBBkKSke71zIKT3nZJSwtgGphQZjPcZn+vtpS5IH0p0NUAHm7ASO9f3Qt
-         IgkI2xKhqUDqzalz9ETbzwQZqtCgbXvC2RqKfR1HG7HjIop5qwRp5nR5cjoX2pGU6hsJ
-         sDAUXBw1ARh/mlx0SrNRfBHY5+SfdEop5ahDl/eBOTQwZ64h5Sw3DXiv4dnY6BKNXcSG
-         vTynj2va6OOAiXIQQtePSgK/h/lWup+Ae2TVxBkYsRkjlQdsKsI4FmCI+mwFoNP6Un6K
-         DHHagosB9nwOcruhjO3Y03FkFTZcW6y8/kAbetl7KUu8zywWCsXWPX8GmheGCe8oFMc5
-         A/xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741353278; x=1741958078;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=muSHbuLdeyMAAgXAmJf/8jxjECvkvJugZR3BtpEzTko=;
-        b=Z2bKDaT54wGYV1f9J9+hTAPsr2LrWej2QM/I/rP2wNGaWwzVTcVf0wgfQnLM8dj9Gy
-         mTMd42ljtfYX3E0xLuU1emsSFbrEUKRNk+PwYBoQXUsWmxpTWQlcF5n0maoGp1bBtTXG
-         ad+s+4qNo04p4K578Ixf7sobbdEDuBqX/hbc6To0dioMJblq/u04k6sOezGWnLfEMguc
-         lHgRKckHCgRKqxSzbnT3KxHiBAla9HgWfMmCSKGyHzwNncKQD0wfwYCnjnNoJDvfBxum
-         m4AYSHB6ORzI1SZ/ycYfmT6czE+hn1M9UTc8UYELT7Cb6T2gPQbiZwnD+2v/7XPEJMFJ
-         T/MA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDwnU5Z6/gVTs8FkqviGlzMop4XmyV3OUlVs1dy9I1rTeiKHl+x94Pf+VAyznaq/d/J6eiMPiewiJ6t3Q=@vger.kernel.org, AJvYcCW4QA/C6CZyDRs2NTrh5NYjcCrxEr4oE+O8Cp8Dy+hX9fMFK+M4o8ew/hNhU0Plpve2hvzOr10ILFZNtqTUh8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwY1g/5rnSWDZKKtJTQf2UJyeR9Zq+LslmpXL+wyIVj9G9HEWNw
-	4VTub/Vt6jL7tIML+7yfXixae3hNkKdePl6kHo6quGjuhzx/nN2P
-X-Gm-Gg: ASbGncvoerPLAypsLz5Q/YFhP9xtfe6vMxc4seECuDdNAZIvde2+IUh09ngGks53oxe
-	1BJqS1R8uph3g1J20Kf9+fkawgFCX0pYJ1WyM38Q3EFMYctkt91E3/G6EWyw2XFyxtnduDHQe8T
-	R6dmv1Qwy/3jQevB31iZKo0GZr1GzG5dwiaOEiOde5rsQa+Xy6cXRmK9BCxFsFWlm/84JN8+89a
-	lCbediYR5FCbXLbPDEPuUYzyoHe/9xEz3RtyD7B/ar2apNnrjvT4gy+heNlvYgd7d2LhJRguMbB
-	0L4ioRoW0mgRjixzsqJNCWc0kw0eLDbTCezTGrzSJtX8IzV/CgXS
-X-Google-Smtp-Source: AGHT+IEuVDheS/PgY4zMtBCT8cOnbvLwD3uZygFM/gwL/DgIFzONORW+D14zMmS34sMmJYmGxOwSeA==
-X-Received: by 2002:a17:90b:4ac9:b0:2ff:7031:e380 with SMTP id 98e67ed59e1d1-2ff7ce6cc5amr5499584a91.10.1741353277608;
-        Fri, 07 Mar 2025 05:14:37 -0800 (PST)
-Received: from linuxsimoes.. ([187.120.156.44])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff693e7358sm2965708a91.30.2025.03.07.05.14.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 05:14:37 -0800 (PST)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: a.hindborg@kernel.org,
-	alex.gaynor@gmail.com,
-	aliceryhl@google.com,
-	apw@canonical.com,
-	arnd@arndb.de,
-	aswinunni01@gmail.com,
-	axboe@kernel.dk,
-	benno.lossin@proton.me,
-	bhelgaas@google.com,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	dakr@kernel.org,
-	dwaipayanray1@gmail.com,
-	ethan.twardy@gmail.com,
-	fujita.tomonori@gmail.com,
-	gary@garyguo.net,
-	gregkh@linuxfoundation.org,
-	joe@perches.com,
-	lukas.bulwahn@gmail.com,
-	ojeda@kernel.org,
-	pbonzini@redhat.com,
-	tmgross@umich.edu,
-	walmeida@microsoft.com,
-	charmitro@posteo.net
-Cc: trintaeoitogc@gmail.com,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V7 2/2] checkpatch: check format of Vec<String> in modules
-Date: Fri,  7 Mar 2025 10:14:01 -0300
-Message-Id: <20250307131401.638820-3-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250307131401.638820-1-trintaeoitogc@gmail.com>
-References: <20250307131401.638820-1-trintaeoitogc@gmail.com>
+	s=arc-20240116; t=1741353336; c=relaxed/simple;
+	bh=YQWL+wmIuVv10+yePp6lxnmndBqngTBnuvjom1L3UKc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ti/uJXEK+5kfNna/N+cpDSsVK6nZn51uHECoAtAghFG+SC0aPeKpWsTrpwyuHF4Uoh92NHQgYGgmZXz/PUTaDudYDfL7eUp3p8+kx1dgX1aSZgPioXsgywHYsVqIBIS35IaDEGHFpW0H12LOjmrcFzqZQnsIzsG3zJ9rAWC0PwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=B4chkNii; arc=none smtp.client-ip=79.135.106.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741353332; x=1741612532;
+	bh=50DcLxnh3wd9fr3mX7Hv6xRCBCAsY1XlFpSZNnOZqPQ=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=B4chkNiiIo7CDMMNsxdLpI/vaQKWjEBRhxC8Pf6cbtDJn1Cj/Znng8Lv6FzsOVmQQ
+	 bzF6x95v+w+eXNc9n31bUPGynTKSx7aQlvs2UMHFPZTLjFM+Csymgkg9A+2KJoUmPV
+	 s0Zz+iOqp/idzLxGPmVzjMGHCvENf2UiiDi0dkA8kfEXJDfxjNqQU16xHaQTnK4noX
+	 0jVIsYAvKh4C65KG0qMBZJvrsHtAkQ4uOZSR10FKSYfxIxh0rRlTV4ZwMfoeLu+bHf
+	 HeaDq4F+xrIO1SqXXJfcs/ZKzR5xBS5tbmIhYrJ+27FNJKRLPGoD4Ss7SxeN4yhUOZ
+	 LOYtf28/HrJKA==
+Date: Fri, 07 Mar 2025 13:15:26 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 08/13] rust: hrtimer: implement `UnsafeHrTimerPointer` for `Pin<&mut T>`
+Message-ID: <D8A28FTNL1BC.3AYZMT4OYF79R@proton.me>
+In-Reply-To: <20250307-hrtimer-v3-v6-12-rc2-v10-8-0cf7e9491da4@kernel.org>
+References: <20250307-hrtimer-v3-v6-12-rc2-v10-0-0cf7e9491da4@kernel.org> <20250307-hrtimer-v3-v6-12-rc2-v10-8-0cf7e9491da4@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 97f84d8619d16470f551c5195984fab40fd3b786
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Implement a check to ensure that the author, firmware, and alias fields
-of the module! macro are properly formatted.
+On Fri Mar 7, 2025 at 11:11 AM CET, Andreas Hindborg wrote:
+> Allow pinned mutable references to structs that contain a `HrTimer` node =
+to
+> be scheduled with the `hrtimer` subsystem.
+>
+> Acked-by: Frederic Weisbecker <frederic@kernel.org>
+> Reviewed-by: Lyude Paul <lyude@redhat.com>
+> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+> ---
+>  rust/kernel/time/hrtimer.rs         |   2 +
+>  rust/kernel/time/hrtimer/pin_mut.rs | 101 ++++++++++++++++++++++++++++++=
+++++++
+>  2 files changed, 103 insertions(+)
+>
+> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+> index 2ca56397eade..d2791fd624b7 100644
+> --- a/rust/kernel/time/hrtimer.rs
+> +++ b/rust/kernel/time/hrtimer.rs
+> @@ -441,3 +441,5 @@ unsafe fn timer_container_of(ptr: *mut $crate::time::=
+hrtimer::HrTimer<$timer_typ
+>  pub use arc::ArcHrTimerHandle;
+>  mod pin;
+>  pub use pin::PinHrTimerHandle;
+> +mod pin_mut;
+> +pub use pin_mut::PinMutHrTimerHandle;
+> diff --git a/rust/kernel/time/hrtimer/pin_mut.rs b/rust/kernel/time/hrtim=
+er/pin_mut.rs
+> new file mode 100644
+> index 000000000000..4f4a9e9602d8
+> --- /dev/null
+> +++ b/rust/kernel/time/hrtimer/pin_mut.rs
+> @@ -0,0 +1,101 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +use super::HasHrTimer;
+> +use super::HrTimer;
+> +use super::HrTimerCallback;
+> +use super::HrTimerHandle;
+> +use super::RawHrTimerCallback;
+> +use super::UnsafeHrTimerPointer;
+> +use crate::time::Ktime;
+> +use core::pin::Pin;
+> +
+> +/// A handle for a `Pin<&mut HasHrTimer>`. When the handle exists, the t=
+imer might
+> +/// be running.
+> +pub struct PinMutHrTimerHandle<'a, T>
+> +where
+> +    T: HasHrTimer<T>,
+> +{
+> +    pub(crate) inner: Pin<&'a mut T>,
+> +}
+> +
+> +// SAFETY: We cancel the timer when the handle is dropped. The implement=
+ation of
+> +// the `cancel` method will block if the timer handler is running.
+> +unsafe impl<'a, T> HrTimerHandle for PinMutHrTimerHandle<'a, T>
+> +where
+> +    T: HasHrTimer<T>,
+> +{
+> +    fn cancel(&mut self) -> bool {
+> +        // SAFETY: We are not moving out of `self` or handing out mutabl=
+e
+> +        // references to `self`.
+> +        let self_ptr =3D unsafe { self.inner.as_mut().get_unchecked_mut(=
+) as *mut T };
+> +
+> +        // SAFETY: As we got `self_ptr` from a reference above, it must =
+point to
+> +        // a valid `T`.
+> +        let timer_ptr =3D unsafe { <T as HasHrTimer<T>>::raw_get_timer(s=
+elf_ptr) };
+> +
+> +        // SAFETY: As `timer_ptr` is derived from a reference, it must p=
+oint to
+> +        // a valid and initialized `HrTimer`.
+> +        unsafe { HrTimer::<T>::raw_cancel(timer_ptr) }
+> +    }
+> +}
+> +
+> +impl<'a, T> Drop for PinMutHrTimerHandle<'a, T>
+> +where
+> +    T: HasHrTimer<T>,
+> +{
+> +    fn drop(&mut self) {
+> +        self.cancel();
+> +    }
+> +}
+> +
+> +// SAFETY: We capture the lifetime of `Self` when we create a
+> +// `PinMutHrTimerHandle`, so `Self` will outlive the handle.
+> +unsafe impl<'a, T> UnsafeHrTimerPointer for Pin<&'a mut T>
+> +where
+> +    T: Send + Sync,
+> +    T: HasHrTimer<T>,
+> +    T: HrTimerCallback<Pointer<'a> =3D Self>,
+> +    Pin<&'a mut T>: RawHrTimerCallback<CallbackTarget<'a> =3D Self>,
+> +{
+> +    type TimerHandle =3D PinMutHrTimerHandle<'a, T>;
+> +
+> +    unsafe fn start(self, expires: Ktime) -> Self::TimerHandle {
+> +        // Cast to pointer
+> +        let self_ptr: *const T =3D <Self as core::ops::Deref>::deref(&se=
+lf);
 
-* If the array contains more than one value, enforce vertical
-  formatting.
-* If the array contains only one value, it may be formatted on a single
-  line
+You cannot go through a shared reference here, since you convert the
+pointer obtained here in the `run` function later back into a mutable
+reference. You will have to use `get_unchecked_mut` or
+`into_inner_unchecked`.
 
-Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+> +
+> +        // SAFETY:
+> +        //  - As we derive `self_ptr` from a reference above, it must po=
+int to a
+> +        //    valid `T`.
+> +        //  - We keep `self` alive by wrapping it in a handle below.
+> +        unsafe { T::start(self_ptr, expires) };
+> +
+> +        PinMutHrTimerHandle { inner: self }
+> +    }
+> +}
+> +
+> +impl<'a, T> RawHrTimerCallback for Pin<&'a mut T>
+> +where
+> +    T: HasHrTimer<T>,
+> +    T: HrTimerCallback<Pointer<'a> =3D Self>,
+> +{
+> +    type CallbackTarget<'b> =3D Self;
+> +
+> +    unsafe extern "C" fn run(ptr: *mut bindings::hrtimer) -> bindings::h=
+rtimer_restart {
+> +        // `HrTimer` is `repr(C)`
+> +        let timer_ptr =3D ptr as *mut HrTimer<T>;
+> +
+> +        // SAFETY: By the safety requirement of this function, `timer_pt=
+r`
+> +        // points to a `HrTimer<T>` contained in an `T`.
+> +        let receiver_ptr =3D unsafe { T::timer_container_of(timer_ptr) }=
+;
+> +
+> +        // SAFETY: By the safety requirement of this function, `timer_pt=
+r`
+> +        // points to a `HrTimer<T>` contained in an `T`.
+
+Same question here as for the `Pin<&T>` patch.
+
 ---
- scripts/checkpatch.pl | 67 +++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 67 insertions(+)
+Cheers,
+Benno
 
-diff --git a/scripts/checkpatch.pl b/scripts/checkpatch.pl
-index 7b28ad331742..7c42c1a0ea6b 100755
---- a/scripts/checkpatch.pl
-+++ b/scripts/checkpatch.pl
-@@ -2775,6 +2775,12 @@ sub process {
- 	$realcnt = 0;
- 	$linenr = 0;
- 	$fixlinenr = -1;
-+
-+	my %array_parse_module;
-+	my $expected_spaces;
-+	my $spaces;
-+	my $herevet_space_add;
-+
- 	foreach my $line (@lines) {
- 		$linenr++;
- 		$fixlinenr++;
-@@ -3567,6 +3573,67 @@ sub process {
- # ignore non-hunk lines and lines being removed
- 		next if (!$hunk_line || $line =~ /^-/);
- 
-+# check if the field is about author, firmware or alias from module! macro and find malformed arrays
-+		my $inline = 0;
-+		my $key = "";
-+		my $add_line = $line =~ /^\+/;
-+
-+		if ($line =~ /\b(authors|alias|firmware)\s*:\s*\[/) {
-+			$inline = 1;
-+			$array_parse_module{$1} = 1;
-+		}
-+
-+		my @keys = keys %array_parse_module;
-+		if (@keys) {
-+			$key = $keys[0];
-+		}
-+
-+		if (!$expected_spaces && (!$add_line && $key && !$inline)) {
-+			if ($line =~ /^([\t ]+)(\s)/) {
-+				$expected_spaces = $1;
-+			}
-+		}
-+
-+		if ($add_line && $key) {
-+			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
-+
-+			my $counter = () = $line =~ /"/g;
-+			my $more_than_one = $counter > 2;
-+			if ($more_than_one) {
-+				WARN("ARRAY_MODULE_MACRO",
-+				     "Prefer each array element on a separate line\n". $herevet);
-+			} elsif ($inline && $line !~ /\]/ && $line !~ /,/ && $line =~ /"/) {
-+				WARN("ARRAY_MODULE_MACRO",
-+				     "Prefer declare ] on the same line\n" . $herevet);
-+			} elsif (!$inline && $line =~ /\]/ && $line =~ /\"/) {
-+				WARN("ARRAY_MODULE_MACRO",
-+				     "Prefer a new line after the last value and before ]\n" . $herevet);
-+			} elsif ($inline && $line =~ /,/ && $line !~ /\]/) {
-+				WARN("ARRAY_MODULE_MACRO",
-+				     "Prefer a new line after [\n" . $herevet);
-+			}
-+
-+			if ($line =~ /^\+\s*([\t ]+)(\S)/) {
-+				$spaces = $1;
-+				$herevet_space_add = $herevet;
-+			}
-+		}
-+
-+		if ($expected_spaces && $spaces) {
-+			if (length($spaces) != length($expected_spaces)) {
-+				WARN("ARRAY_MODULE_MACRO",
-+					 "Prefer a align parameters\n" . $herevet_space_add);
-+			}
-+
-+			$spaces = undef;
-+		}
-+
-+		#END OF ANALYZE FIELD
-+		if ($line =~ /\]/) {
-+			delete $array_parse_module{$key};
-+			$expected_spaces = undef;
-+		}
-+
- #trailing whitespace
- 		if ($line =~ /^\+.*\015/) {
- 			my $herevet = "$here\n" . cat_vet($rawline) . "\n";
--- 
-2.34.1
+> +        let receiver_ref =3D unsafe { &mut *receiver_ptr };
+> +
+> +        // SAFETY: `receiver_ref` only exists as pinned, so it is safe t=
+o pin it
+> +        // here.
+> +        let receiver_pin =3D unsafe { Pin::new_unchecked(receiver_ref) }=
+;
+> +
+> +        T::run(receiver_pin).into_c()
+> +    }
+> +}
+>
+> --
+> 2.47.0
+
 
 
