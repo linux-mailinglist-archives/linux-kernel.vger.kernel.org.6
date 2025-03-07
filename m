@@ -1,134 +1,191 @@
-Return-Path: <linux-kernel+bounces-552119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C917A575F6
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:23:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E350AA575FA
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:24:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8014189B3A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:23:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDEE37A7F69
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF1F25A2A7;
-	Fri,  7 Mar 2025 23:23:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55C9825A326;
+	Fri,  7 Mar 2025 23:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Tu8aooUW"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="Bi5LUqWl"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641DD259C8D;
-	Fri,  7 Mar 2025 23:23:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 914E1258CF7
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 23:23:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741389786; cv=none; b=rJeVz2ngoFqqoKVAczJF4a2t68vgp+CTPz39dGK6VtYTHgw2tWg1ZjmHOHlpV8mbGFYuaEcPoq/VkIIr15CNpv6Dpy8MW/hSq5fxOqMwGxMcHmzeTp9lXEVJpBu3XNdF0aUpYy33csu0N9CxDQNW5NsLcOdclJXgkB+QxRaBGfI=
+	t=1741389789; cv=none; b=ccfJTcGJ0sFxjAOoHzWoRaSWuHqxHt1oI3csTMihz1bTbfcyBPMqSzcq514BdH8qyBwhjI4aVxL6xn5jbl0kH+QIc6ncEzUCMijVBRoIH8ZkKhXHBie9GgaDlH1iHsRCWSx6zTcPL8tpE0Hx0MwLPzduHQcl1m4P4kNGJdXgr5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741389786; c=relaxed/simple;
-	bh=7/gQ3HbuSuqtN6i8h3mG5ZDs7jaLScWhYY45wy09/ww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O5+2Q9gpMUzsSML4j8DP5tjUIO2FIV6xx8FSvscxhv7c1JS5O6g0OS0oR+3lZVOgxa69gfSVGr4jcp+yyk32fvS0Jakpqq6JqQ5+3tSQmTPhJ2hIbKdmg7W822aiVOB26MYZbuim9gDrxiTv5kXUnuSX6z1TE4mj1Y7AEZyAzGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Tu8aooUW; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AAD5440E0214;
-	Fri,  7 Mar 2025 23:23:00 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id h6sG7pYvhxPJ; Fri,  7 Mar 2025 23:22:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741389775; bh=wGVPAUm3Qc/F7uwCHOkqJSNfQnzu0aCNZGr8H8HENwI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Tu8aooUW9vK0UyLhWBbazvOuzUyemT2UWN0TvRam0qdEfDDmGxQ4dSmND5fsqRqSM
-	 H9/6Eh/MThLEDfkO5MLPPhYS5iosM1OYoBu4SqdlWkBvzNlOnQqyCaQi2a/Wh+xXGA
-	 ZNRBLnu1Vnakh5m0/4GIYCP9arX0BUKpRfCR+j6o6oduGWioXwRx0641br4JRfLMbH
-	 RnUQ7i4U6BLKAB/3SrNHsdaG5LtA1kqRS38rpqM79JferqtTAqE0txJlPzYBuDg9gR
-	 BAslESc6lz67x2V4RcziroNi8WFIjczvbUz9k674g/KFvfxxO9gD37We7zPdlGuEcB
-	 llw1/OGGzbK95suyJ1VFKZPGx8Xf9JMn8snmdGVKjirWX11ysvr7ukNoefBLexEiye
-	 dIzRSVNsCcDDFLK5quhAx0oZUcoog1dqosnrYzK/ceGbEsgH0Q6BmrLaULe3BP6CJa
-	 0pLPv5JsCoL4Zjy1yYiQbFUhVsDC+tYaQapEuGawLnmkeZoycfcXxrx+suQ6QstCbT
-	 Mz/SvIUplte6GMl3eeoRVZKX7H1NQ18/ynFANVEhLF1Memwn3UgJhUH4PX0glBArbX
-	 Tea/7Ogy7dJ4PkmqNzNWxSuhuVHYbcUILv0XIJCdCLKLwHPaiZyePHOJ8/yFT8jWJ4
-	 R++D1jBK7l7Jfkql26Llqf5w=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4BC9B40E016E;
-	Fri,  7 Mar 2025 23:22:36 +0000 (UTC)
-Date: Sat, 8 Mar 2025 00:22:30 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: Shuai Xue <xueshuai@linux.alibaba.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"yazen.ghannam@amd.com" <yazen.ghannam@amd.com>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"linmiaohe@huawei.com" <linmiaohe@huawei.com>,
-	"nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"jpoimboe@kernel.org" <jpoimboe@kernel.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
-	"tianruidong@linux.alibaba.com" <tianruidong@linux.alibaba.com>
-Subject: Re: [PATCH v4 1/3] x86/mce: Use is_copy_from_user() to determine
- copy-from-user context
-Message-ID: <20250307232230.GMZ8t_tja324AQqYME@fat_crate.local>
-References: <20250307054404.73877-1-xueshuai@linux.alibaba.com>
- <20250307054404.73877-2-xueshuai@linux.alibaba.com>
- <20250307204018.GAZ8tZstt11Y4KFprC@fat_crate.local>
- <SJ1PR11MB6083654405F2721E5AA0C1F2FCD52@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <20250307224645.GKZ8t3VX5a5FhqNyZG@fat_crate.local>
- <SJ1PR11MB6083223A3175F7A84EC4DDDFFCD52@SJ1PR11MB6083.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1741389789; c=relaxed/simple;
+	bh=G7ePHamfmNO0BgmpReDWmfPU5PII/oFI2xQp7oy/HtM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=okEMuucNrt9rhfYKwSdyo6PyCHYsVIUqCMKdURQP8YumJpZ2B4iO5lEn+w38lR9HqO/7aHy+6ReTfqV1+vf1CHRnSzLEolNocu9iNSdH0CL+uCh21YOeeC6F/SQZ5/cncoqMPd9gCmFVK4NDNQE49TX6UjYUaaAVRwySLRCeHrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=Bi5LUqWl; arc=none smtp.client-ip=121.127.44.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1741389780;
+ bh=Fhjx6pxvag6i+ct5LgrY68O1Q0Fj9xs6220lz64mf6E=;
+ b=Bi5LUqWlzHT22EkHM7b0GggX1/NAB2T0lSgvTCrf/3Xbi2rA7pfjh0yRb/dGoxAxH9hVv5+AU
+ xzdDPfk9q7exBwV7fD1qLuZL/7zjBNvUo7HuvlodhO8a2EG5Y+8Iv9pgUNmsVdl5F32UcyjwzhM
+ K/myxKA2ijF4GtMCY8g8hLPge8yXzMAjJmEShHVfLrSME+FfYp2YgDI4kF755d8381m+QZ+drO9
+ FBFpRmfTk7OtAAWfeXy0TzDMPGDga9AYVZ9UArsp+Dic4CeZpO6SqezGcDIW8l+PVu94547oN8/
+ hD+RkDrcxhqdDYq7yxpqJPxLt4f2wKwIdZ/8ayN46cJw==
+X-Forward-Email-ID: 67cb7fcd789af4fdcbb0e87f
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 121.127.44.73
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <56181131-3e48-4c76-87c7-2388a9964727@kwiboo.se>
+Date: Sat, 8 Mar 2025 00:22:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB6083223A3175F7A84EC4DDDFFCD52@SJ1PR11MB6083.namprd11.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/8] arm64: dts: rockchip: Add SDMMC/SDIO controllers
+ for RK3528
+To: Yao Zi <ziyao@disroot.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Shresth Prasad <shresthprasad7@gmail.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Chukun Pan <amadeus@jmu.edu.cn>, linux-mmc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20250305194217.47052-1-ziyao@disroot.org>
+ <20250305194612.47171-1-ziyao@disroot.org>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <20250305194612.47171-1-ziyao@disroot.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 07, 2025 at 11:11:26PM +0000, Luck, Tony wrote:
-> As for "explicit markup" I don't think it would be better to decorate
-> every get_user() and copy_from_user() with some "this one can
-> recover from #MC" 
+Hi Yao Zi,
 
-I don't mean every function - I mean what we had there with EX_TYPE_UACCESS.
-That is explicit and unambiguous. Proving that is_copy_from_user() is always
-correct is a lot harder.
+On 2025-03-05 20:46, Yao Zi wrote:
+> RK3528 features two SDIO controllers and one SD/MMC controller, describe
+> them in devicetree. Since their sample and drive clocks are located in
+> the VO and VPU GRFs, corresponding syscons are added to make these
+> clocks available.
+> 
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 70 ++++++++++++++++++++++++
+>  1 file changed, 70 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> index d3e2a64ff2d5..363023314e9c 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> @@ -130,6 +130,16 @@ gic: interrupt-controller@fed01000 {
+>  			#interrupt-cells = <3>;
+>  		};
+>  
+> +		vpu_grf: syscon@ff340000 {
+> +			compatible = "rockchip,rk3528-vpu-grf", "syscon";
+> +			reg = <0x0 0xff340000 0x0 0x8000>;
+> +		};
+> +
+> +		vo_grf: syscon@ff360000 {
+> +			compatible = "rockchip,rk3528-vo-grf", "syscon";
+> +			reg = <0x0 0xff360000 0x0 0x10000>;
+> +		};
+> +
+>  		cru: clock-controller@ff4a0000 {
+>  			compatible = "rockchip,rk3528-cru";
+>  			reg = <0x0 0xff4a0000 0x0 0x30000>;
+> @@ -274,6 +284,66 @@ saradc: adc@ffae0000 {
+>  			resets = <&cru SRST_P_SARADC>;
+>  			reset-names = "saradc-apb";
+>  			#io-channel-cells = <1>;
+> +		};
 
-> Note also that "what we had recently" was fragile, broke, and resulted
-> in this regression.
+Look like this patch accidentally drops status = "disabled" from the
+adc@ffae0000 node.
 
-Because those exception types got renamed? Oh well, that should've been
-reverted actually but no one involved realized that MCE is using those.
+Regards,
+Jonas
 
-And I'm not saying this is the only way to solve this. We could do something
-like collecting all addresses on which an MCE can be recoverable, for example.
-We haven't considered it that important... yet.
+> +
+> +		sdio0: mmc@ffc10000 {
+> +			compatible = "rockchip,rk3528-dw-mshc",
+> +				     "rockchip,rk3288-dw-mshc";
+> +			reg = <0x0 0xffc10000 0x0 0x4000>;
+> +			clocks = <&cru HCLK_SDIO0>,
+> +				 <&cru CCLK_SRC_SDIO0>,
+> +				 <&cru SCLK_SDIO0_DRV>,
+> +				 <&cru SCLK_SDIO0_SAMPLE>;
+> +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+> +			fifo-depth = <0x100>;
+> +			interrupts = <GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
+> +			max-frequency = <150000000>;
+> +			pinctrl-names = "default";
+> +			pinctrl-0 = <&sdio0_bus4>, <&sdio0_clk>, <&sdio0_cmd>,
+> +				    <&sdio0_det>, <&sdio0_pwren>;
+> +			resets = <&cru SRST_H_SDIO0>;
+> +			reset-names = "reset";
+> +			status = "disabled";
+> +		};
+> +
+> +		sdio1: mmc@ffc20000 {
+> +			compatible = "rockchip,rk3528-dw-mshc",
+> +				     "rockchip,rk3288-dw-mshc";
+> +			reg = <0x0 0xffc20000 0x0 0x4000>;
+> +			clocks = <&cru HCLK_SDIO1>,
+> +				 <&cru CCLK_SRC_SDIO1>,
+> +				 <&cru SCLK_SDIO1_DRV>,
+> +				 <&cru SCLK_SDIO1_SAMPLE>;
+> +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+> +			fifo-depth = <0x100>;
+> +			interrupts = <GIC_SPI 138 IRQ_TYPE_LEVEL_HIGH>;
+> +			max-frequency = <150000000>;
+> +			pinctrl-names = "default";
+> +			pinctrl-0 = <&sdio1_bus4>, <&sdio1_clk>, <&sdio1_cmd>,
+> +				    <&sdio1_det>, <&sdio1_pwren>;
+> +			resets = <&cru SRST_H_SDIO1>;
+> +			reset-names = "reset";
+> +			status = "disabled";
+> +		};
+> +
+> +		sdmmc: mmc@ffc30000 {
+> +			compatible = "rockchip,rk3528-dw-mshc",
+> +				     "rockchip,rk3288-dw-mshc";
+> +			reg = <0x0 0xffc30000 0x0 0x4000>;
+> +			clocks = <&cru HCLK_SDMMC0>,
+> +				 <&cru CCLK_SRC_SDMMC0>,
+> +				 <&cru SCLK_SDMMC_DRV>,
+> +				 <&cru SCLK_SDMMC_SAMPLE>;
+> +			clock-names = "biu", "ciu", "ciu-drive", "ciu-sample";
+> +			fifo-depth = <0x100>;
+> +			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
+> +			max-frequency = <150000000>;
+> +			pinctrl-names = "default";
+> +			pinctrl-0 = <&sdmmc_bus4>, <&sdmmc_clk>, <&sdmmc_cmd>,
+> +				    <&sdmmc_det>;
+> +			resets = <&cru SRST_H_SDMMC0>;
+> +			reset-names = "reset";
+> +			rockchip,default-sample-phase = <90>;
+>  			status = "disabled";
+>  		};
+>  
 
-Looks like we're going to try this new is_copy_from_user() thing now and then
-see where it gets us.
-
-So, after the commit message has been fixed:
-
-Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
-
-I'm presuming, this is going through akpm...
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
