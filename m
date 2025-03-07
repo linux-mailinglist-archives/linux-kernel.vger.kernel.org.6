@@ -1,247 +1,194 @@
-Return-Path: <linux-kernel+bounces-550778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E6EA563FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:35:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0F6A56408
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:35:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C540177A3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:34:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 55F2D188F421
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:35:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77DF0214238;
-	Fri,  7 Mar 2025 09:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D45620C492;
+	Fri,  7 Mar 2025 09:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="aEpVqlaF"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013008.outbound.protection.outlook.com [40.107.159.8])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UhGBRDnF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA1592135D6;
-	Fri,  7 Mar 2025 09:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741339930; cv=fail; b=JNRkagUfj167zvkL85mgb/NVX8md97oDHoI0Hx7i8UrNiuAdaLcA1DWQsXjiWNktOSvQj5gPQAbZctPont6mJO6f3EPWoFlPiH8ffgvo1yrOeKKGhKqbm0A7MfSUwqKkyndlAeIQQI58P4z1ExmRNUsGlBhLNi8SBOgv+D9+WDY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741339930; c=relaxed/simple;
-	bh=nXLpGVkylDbxRDTunOTVUgn9ZrKe2PTwYwYSZwHRx48=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=JcIGYpWyifV8CbswLNytTllYSxXonYJhyuamzlxNJa5mZ4zL5VNIHEBgoPvBe8gG66aJd0lPIOGFlfPRHwiI1rNGU2jADjp4NJ4c9ZJ54iO8VwvMMcslXxxAJXdMGsyTnZIC+2zX67YgEIqM/k/ROA0e9nqGc2+fpYJv8XbdqfM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com; spf=pass smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=aEpVqlaF; arc=fail smtp.client-ip=40.107.159.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OvEQ4+Cq+AozrbHz4h/mZX6Ez0q3cfItjFqhRE+5D+H+pSuy2dc/zUwgfZfhSY8hC65IhY5EwSmxE9r+PLyNwKxbHO1LP1lVuyxXDWY5P8BZEI+8NnyReoZeC/05DYSBVeWRaUW2Wjjzo17fD9Q61wBfCOWDbowrnh5JWWJvPYNtD7m9bAA0UA8CjfdlcQzCd5ofTXeQAnXoNngYsnM0AIu7+RBqjV58n/lu/lF3PU0ccqNHHMaRovB3NfgGCOP1X2qNjQpfexVnlWWfA13KdtoGPVnBwsGHxdtFkQDb+1E3pOkaiVAussgVXMT5Uv4xVJapDetfp6ryNwsXpj3WpA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UKUset5VhFW1hUodJryuhhMaFXFMUoStCuKiNsrjhwc=;
- b=ECNVZ1f6jVsxa/0Fm35CcXb6iQfhy7iKfJWCEbNl1bSibaLPKB6HUmX679HmXgUbROvuiYLFcK8CiB1FS8oYFMWncuar32M2QneaPawqLbBagpiZV+pKyZMwCl9aRun2y46nZxXXm9yMxamQqRPcPOdazzxcx3aM3HApOw+IV1aGc5T9F+VOyN3Zs+nRZ32QELqf5yu21FYr4Nvpde2yAHe18uZouSS8cqtjqsa3dy7lqEb9Ye5jTTRuT/SZUzEjFcAn8zepdanU362CaIj96Sst3PSyLll+Gl9X2MDxJI2nmUMDwfso62FjTkQAJtYYYGsDvn4xg4r+w3Vck51NzQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
- header.d=mt.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UKUset5VhFW1hUodJryuhhMaFXFMUoStCuKiNsrjhwc=;
- b=aEpVqlaFuus5LxZumAoTJNekpVY/kF8gzDwWS0edMEBO2VCYOPooeVFtXXw0fgAota/+tU1IeCZQv7JGq2LesZ03CMDETRFLJP17Myx1PxOGElJuJfFnMtBBq1NmJXiREEQ4oVieRGw3dHLcZUKCDnGMuG6TqfEuSMYoGiXzrC76PTREPZ94SHr6fBl3NnpRBDzIkXLdfGmqBpmy8Mnsty9q+YMvQStRhORbiKVrtPTtpKBsHg+su+OD9OlU7YG6zvpbdlRnhqUfRRa0+e+WAzv6JyOHQeaxuLGgwPbE4B2d8nCydpawzKGMztQB+7MW5f9a6eXzEJ/uK7OJQVWgMQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mt.com;
-Received: from DBBPR03MB10396.eurprd03.prod.outlook.com (2603:10a6:10:53a::11)
- by DU5PR03MB10443.eurprd03.prod.outlook.com (2603:10a6:10:529::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Fri, 7 Mar
- 2025 09:31:59 +0000
-Received: from DBBPR03MB10396.eurprd03.prod.outlook.com
- ([fe80::ee3c:c9be:681:c0bf]) by DBBPR03MB10396.eurprd03.prod.outlook.com
- ([fe80::ee3c:c9be:681:c0bf%7]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
- 09:31:58 +0000
-From: Mathis Foerst <mathis.foerst@mt.com>
-To: linux-kernel@vger.kernel.org
-Cc: Mathis Foerst <mathis.foerst@mt.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	manuel.traut@mt.com,
-	mathis.foerst@zuehlke.com
-Subject: [PATCH v4 6/6] media: mt9m114: Set pad-slew-rate
-Date: Fri,  7 Mar 2025 10:31:40 +0100
-Message-Id: <20250307093140.370061-7-mathis.foerst@mt.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250307093140.370061-1-mathis.foerst@mt.com>
-References: <20250307093140.370061-1-mathis.foerst@mt.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ZR0P278CA0220.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:6a::22) To DBBPR03MB10396.eurprd03.prod.outlook.com
- (2603:10a6:10:53a::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D18204C0E
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741339935; cv=none; b=aQ8yoceT9RZNLREetsovQeDDvCCu4+J4qu5bmyEbJFJFAhkbKgWRrf/B2aoDmqn/EMtXIBuEetz1zbx4qeclAWl4rk0IwVY7cMlAPMPR1CKK5EyEuFQ7f9mfFVXpkMyA7fJlmj31nfhVchg2IyGqYih8LiYs+cAo+7P5XLuvd6w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741339935; c=relaxed/simple;
+	bh=ZN91VVIiE49rxzpSN14jkta0VDEUkNiiJiOjKTsR1UM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RF5I81mNBhitSs+q/scR15nllDQZjCoHe06lmYyJWtEcLqpvRPSBG2bPWZFCkIv6P4YxrzU2RkbwnSFQyqgVeZT0lRWy+alvP8U0PhHzkkYYf0B29kCkm8UT5KvBnMiOMBgCYVPe6gBJy4tz4VmqwY24rgG6+w6EUS0knp6pPF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UhGBRDnF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741339932;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=E1OGWeLhD/3SKHmtpXLwJR/pWSWE9QtQB2+RWYuvjzU=;
+	b=UhGBRDnFX5VK6QMUPK6YEN4bDI30yCn6qwjJjbq4rYdX2tV/ox7pqQvne8yn015E/UBAPx
+	6scRsZDSOo61bQLolIdAoNpJVFYI5PIXiMPC3rd3wRLZ1BdQI6xzwsWOkI9PnMfEnNsJFc
+	x69xl5ay9KbJwMigQ53mdd/ElYLqqts=
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
+ [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-335-dvS8M2qyP5eB4sA5zFQC2w-1; Fri, 07 Mar 2025 04:32:10 -0500
+X-MC-Unique: dvS8M2qyP5eB4sA5zFQC2w-1
+X-Mimecast-MFC-AGG-ID: dvS8M2qyP5eB4sA5zFQC2w_1741339930
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-47508da4b00so21605791cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 01:32:10 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741339930; x=1741944730;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=E1OGWeLhD/3SKHmtpXLwJR/pWSWE9QtQB2+RWYuvjzU=;
+        b=VezAD+clTYoIWaJ+TZUQh5igpfTQnDIwV2eGKoNKDinTCxjUlMGr+G+HVpoP+un/ep
+         Hx+M8HqqwLKRlcYzxo5sK3Hyoi7F3PTXzsY6KmxDLnirkjQ0Pp3G1f+JjPEuJpKJlujj
+         iB79Np/xuir6Jcz2TViPAp/zwWHJ7ne1V9hvSQ2M4yL6T/B+fmkghwZ/jtkYpyRizPxi
+         sRQ+JxeRKqbS7GHN9qFzPJMOqR02860DtE2h06he+X4nJi0liV9s/DAHvT0fttsKlLkt
+         ygm9zPkA4YivItiiR8jD4eFZG2JAP+hxQUt93dzZQFgMEoGxBW8W8JEsjwuql+eym98M
+         qDfg==
+X-Gm-Message-State: AOJu0YyfAL1lRtx5Qkuz7sc9FfUkp0LEA8Qs4cqjQzfFbfFKJM75j3z2
+	ABlyf+CxWFK3Q97uKPxFEHymAKbvgOb+sn7izLZsqCFHVafRuXdAPAMSvplY5YjvNkpLuk9eOue
+	azk7lERNpeM6Mu7gV0P/lZ993FdxP0tAmRBxHCDP+vVICbzSrgGweuI0qofU75Q==
+X-Gm-Gg: ASbGnctCiRknKXjOnrTM9oAPyWSEXLSsclRW4vh6gJoQxf0q1J3+K7NH3GRMIHJCmSu
+	bi8egC9hBfbP0iYx5ut8ilIjfVF+ddXUbfR+yexLFqi4ApQw9gzwPB8S/z2ewDWxijP+hWi/ddT
+	84UrJ2hJcigQ7L7j5ZqmFtgEsRgq7jn4WlH2RKpYcMQr5YXqFWbxybm6HRaS5ijHctG1K5x36rZ
+	d1vkUesMCSo6PLdGLdChy8ySVe0K/afmNFvIa3xsI4Bb5K8CWO3UzXMuaVDC0i0klFSdqxePd2G
+	abbsLtgCsFn+INz2CuzI1q1R/kkxoQHlgCExXix9/Q9uAv7+apToUYaZZ8BemzA1yeLI/eGPtkK
+	ZQvZf
+X-Received: by 2002:a05:622a:118e:b0:475:7c0:9390 with SMTP id d75a77b69052e-47618af3564mr29595821cf.48.1741339929912;
+        Fri, 07 Mar 2025 01:32:09 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFerUMJmzuZeGRv0gplglLVFFk6MAamjLT9/4AYtJqbxasFWs3PcPJWi/IBIlpqfSSTNZ3vGQ==
+X-Received: by 2002:a05:622a:118e:b0:475:7c0:9390 with SMTP id d75a77b69052e-47618af3564mr29595571cf.48.1741339929550;
+        Fri, 07 Mar 2025 01:32:09 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4751d96b568sm18673441cf.25.2025.03.07.01.32.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 01:32:08 -0800 (PST)
+Date: Fri, 7 Mar 2025 09:32:03 +0000
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <llong@redhat.com>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
+	tommaso.cucinotta@santannapisa.it,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 2/5] sched/topology: Wrappers for sched_domains_mutex
+Message-ID: <Z8q9E6j6cMX3jTi8@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250304084045.62554-1-juri.lelli@redhat.com>
+ <20250304084045.62554-3-juri.lelli@redhat.com>
+ <c02dd563-7cfc-404d-80d1-cec934117caf@redhat.com>
+ <0abc29ee-df9c-4c00-a7f9-d55ab5dd90c4@redhat.com>
+ <Z8gs-but1oFcwEn0@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DBBPR03MB10396:EE_|DU5PR03MB10443:EE_
-X-MS-Office365-Filtering-Correlation-Id: 71c53028-03df-4fbb-3910-08dd5d5ae824
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?cOwB7QRP56aUSWS1ixdAs+I0j0Oi31q5cj/HO9tm2MOn2cg6GBmYtBzh1Mfu?=
- =?us-ascii?Q?966vMq1oK8ZERRST2hZgaEJbZZ/uRmGQD2OK1onwE/Q3Lf00/fKY9hvWHlj/?=
- =?us-ascii?Q?3km2wMQjtsnclK2HvQ6exUkI+5dX6qR+hZmvGiHEFvJwRAap3zPrpxsumvw+?=
- =?us-ascii?Q?CS07AIw3R6hjSqDFzZGnJFRgfwmW+S6Ci104DjVzVVG0x36zw2AImLS2Yu4M?=
- =?us-ascii?Q?yG1f7RY7BEiGYlaC6W4xQY+XyPlKieMvvFTs6r+pB/hQ8FOpKw48BLz7/hYo?=
- =?us-ascii?Q?8eVBnGrxg5ffc28YZjfHrUSXK8LV884Q4YWhKlVsLZYL+6VcvZD/Czvh2Gl+?=
- =?us-ascii?Q?OZotifVUMmo2yoYhmxszQixzqaY/R1oLlRw7k63amVfV2eAF1N1q0H0pWkWi?=
- =?us-ascii?Q?ZFlYzMQoFEidvfKSNN5bvMZFensEA+b3J5R55CJ93PPECWvhZldTkgdNSDPg?=
- =?us-ascii?Q?Auk8fOIz6ZJx6h1JTH7O1s9RhKPD/l8k/0YSzW9mHKg36aHigWBUha0YvD0R?=
- =?us-ascii?Q?TcmdxZX7P1CWxDPyTjmFt+Jvu3MdarT1mkJKY0EOpJcw/2STUyVfO58Bfhz/?=
- =?us-ascii?Q?ewUiDiyV82KSnsFTF5DPnSRSEe9x7xNZ46BEZom4mOIXqdHBEJClrDfO7TaN?=
- =?us-ascii?Q?Dmw+kDbo4H4UwMu+OgYnIAZR6/wu5eL32zYK2caV54EcfhiIzAkHNXqDcuk0?=
- =?us-ascii?Q?ya1ikfQ8dLlQgVVRHRibefffkSH5u8GKL41NQuIgMrNem7t2HfxHCyO0PXCe?=
- =?us-ascii?Q?cdDdZ2VgIsKki83sV1m4WqiBe03DUwFvqf/jVUl9KlHtRdTqaS++rZvbWYPB?=
- =?us-ascii?Q?mTas+n+lP29u+tu/pjoxkBehaAlS6d38LrmjPSqXqpP+htGav9GiHV3qP3Y7?=
- =?us-ascii?Q?r9AHF0Cd+/TheWieBKuoanbaQCmabB3vnm7tPM4xemLjUWfiRj22ydb9OP2l?=
- =?us-ascii?Q?/p9XnoHlxBDKuAHBo/5eZYHk0f7aYKqt1sWc1n3gH8EdesvQ0doOxNZ5p6Mt?=
- =?us-ascii?Q?T0FQYHPVxdPRKr/BNJ479kKvIAi+W+Zii2+BA/zVm+lC/6qbLKLkrYeCg1Ml?=
- =?us-ascii?Q?w3DQsoXqYy2cNIWqRV79uFGBv2OD8KOasHKtO8AI9HEA36Dqw8HyGbLhpRHN?=
- =?us-ascii?Q?8Srd+DXYnGrT90Gpi3YYe51M2mHySwE/lxPUkdaEwq/QsbpLzQ7Owj3am35O?=
- =?us-ascii?Q?+mCcPIopXOQvH3esYC6V5cIfJp1HlSOgBcmDnKq0+Ev3tYTWEDF4Dzbz2W4H?=
- =?us-ascii?Q?s87k/hTvVM1+ATBoERk4MQMz70ZEUDJ93N6IuufvjovfYsY0uuIbaO3patJy?=
- =?us-ascii?Q?rSLaANwCYZ9Lmaqnrnl/27Dje71CmKhzIparRLb4p8xz96D3CUBbLUk8BAkO?=
- =?us-ascii?Q?Jcjtz6wtIHx2DzXmG5BgigbjIWWj0Zj1fU2pRGxyT6B8Ai4Pj4qrGxjON2W1?=
- =?us-ascii?Q?XUG2/4KgUsHB71EX/VxpnTWBx2IbKEEO?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR03MB10396.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?8KPkCh8eYRQ6/lU836nKbt2rgijI67zUhosJ3oDCbZQudlHUQmIHwK3op/8u?=
- =?us-ascii?Q?2oIYU45QPZZ/i4bV2hMn0gkBGVEzM3fl6KoCLp+6MYWRlyMs0iy3LU70BWfH?=
- =?us-ascii?Q?mfR7wdAOndkWVGF2ZJ8LGwvM1LG2MTOUAglM/ERH+LyG2Ge4twT5IvjyrW6p?=
- =?us-ascii?Q?hBKAC5yISn8ShnqI3X7jrmyM62Knd9aO4cSJX+9Rn3FrSSjJbQggwz3I8Af2?=
- =?us-ascii?Q?8vEe68ax932M/bZk3BqmCZOMCa62/q8HBoTztv/QjJw/8LnFh7BlLepLJScx?=
- =?us-ascii?Q?teTOm6SEEFBhWoPbdUGB8pt5XzSmQhdFt8PbTp5tN5052Hy6j3/x57p0g/KZ?=
- =?us-ascii?Q?dNWg5ByCaqdIKKDwWr1WrUJrZNh8oJCCX+cYcVs5FB232TeqLOt3wHuiJmlu?=
- =?us-ascii?Q?pJaDdXwK+9uHOa6qpZ9kjEGjEoakFnSwiMZhb/ZXKRIcHg2BtlYlDF7dPO6T?=
- =?us-ascii?Q?OUQJvFOtWIFU4knqd4VFdg1OEtlOmCtuhz8v+R9MJAgVwnSHCJfDv303gOp+?=
- =?us-ascii?Q?xKPpLYas7GdiJChxnKlJnqq0eea81BTM7/rHsaGu1Y1pxlyupItpUyHSBI6e?=
- =?us-ascii?Q?zc+RCxAvlZ3gBQNohU66ca2Vzd1fBGTpuacgjNrhk1+aHYYC3BHsPf/Xp4dH?=
- =?us-ascii?Q?2MN3sUCuFPn0CUX/1VxIQog+OgCvIFsGvjnfLWLw8ciHIK1VqdyEsv3j+xwR?=
- =?us-ascii?Q?nkw/YhW5F/KuDA7vRXvjF4nxako+Fud2mZAiufEuZAeT992SlHQVmw9sF8jZ?=
- =?us-ascii?Q?ODU12CzMWajfwnALV5H2EgxcB79zL0B9P0ijMNUvE9c8FiJiBI6nvtXTDG0T?=
- =?us-ascii?Q?GsmCEDe7ibZb3MTYN2CkZY4Gw62mUqYBQeV8c7EpK9NRLHknJMJVS4SLuBVS?=
- =?us-ascii?Q?UnhVt93T7Y6V7gW8VUyMNXMhsBK0kDaCMKOsZADBM9Dp4RAYnSexZjNXMU78?=
- =?us-ascii?Q?Cf+n2qYezqjJp1qILCx0TwAnS1vNarAruPKi/m7JJSRRvfhG2W7OGiGnLPwc?=
- =?us-ascii?Q?0QW39qBk1h05FmGmjPMd6yvV5T2v9Q6pqGxWvIhi6X3uPbsuEnsM/LHYG9u0?=
- =?us-ascii?Q?YsiP8Hua0KM2hMzSDbLX0quPMsWfFdv4Zy9hJoxNIrE4QXAUd8WROw+WqySy?=
- =?us-ascii?Q?YcF+zSvvfLfH23fy0XTylcQ6oUCbtr/hH3eCKnfnTm5P5hJxKOJWxyvENlMY?=
- =?us-ascii?Q?zkFyEopCDIlg5A5UytbSbIk4313MTmwC+LCLvPm/E2BXIdknR2bjTx9OjZc4?=
- =?us-ascii?Q?Fda9NCuo8E4FYMq4FDaz0VlPwlGLb4wr7DW2vlMUw7syAzSfQ2947S+o/6g8?=
- =?us-ascii?Q?h/pDTfLBkKfzXK808r+p0pBjTRXvwSEC+SlbnWTq4kpA9/oHBoXKbrt7i1BC?=
- =?us-ascii?Q?ljDgrzxD8AjWQmoDNK1nBweGp1hEDIRWC9ygoJZyMT8jXsVmsU0G28/bCLdQ?=
- =?us-ascii?Q?jyzF0j9Z0j6MGVTGpnlXg4sbK37uPjqJjgmRfSVtFSd9CT9gdH/tFSXXbtE4?=
- =?us-ascii?Q?dqNvpqvMqtbt5HHD+H4mpdWgQIDO//PzTamg8RnsFKp2pyKn1R9e31RQvmj9?=
- =?us-ascii?Q?lDwct5Z2Qso17MujTiJJPnS5N0U2b1cxuV4G+mY3?=
-X-OriginatorOrg: mt.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 71c53028-03df-4fbb-3910-08dd5d5ae824
-X-MS-Exchange-CrossTenant-AuthSource: DBBPR03MB10396.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 09:31:58.3205
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: YAMtTMzjMQIj0tVsFQhzQwG11MJ+qSsqrtRcHX4kVA1fLyRfkiCAT4ES7NlBl5qiVimvt0sCmz7qZTjNLcVBlg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU5PR03MB10443
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z8gs-but1oFcwEn0@jlelli-thinkpadt14gen4.remote.csb>
 
-The MT9M114 supports the different slew rates (0 to 7) on the output pads.
-At the moment, this is hardcoded to 7 (the fastest rate).
-The user might want to change this values due to EMC requirements.
+On 05/03/25 10:52, Juri Lelli wrote:
+> On 04/03/25 11:01, Waiman Long wrote:
+> > On 3/4/25 10:05 AM, Waiman Long wrote:
+> > > > --- a/kernel/sched/topology.c
+> > > > +++ b/kernel/sched/topology.c
+> > > > @@ -6,6 +6,19 @@
+> > > >   #include <linux/bsearch.h>
+> > > >     DEFINE_MUTEX(sched_domains_mutex);
+> > > > +#ifdef CONFIG_SMP
+> > > > +void sched_domains_mutex_lock(void)
+> > > > +{
+> > > > +    mutex_lock(&sched_domains_mutex);
+> > > > +}
+> > > > +void sched_domains_mutex_unlock(void)
+> > > > +{
+> > > > +    mutex_unlock(&sched_domains_mutex);
+> > > > +}
+> > > > +#else
+> > > > +void sched_domains_mutex_lock(void) { }
+> > > > +void sched_domains_mutex_unlock(void) { }
+> > > > +#endif
+> > > >     /* Protected by sched_domains_mutex: */
+> > > >   static cpumask_var_t sched_domains_tmpmask;
+> > > > @@ -2791,7 +2804,7 @@ void partition_sched_domains_locked(int
+> > > > ndoms_new, cpumask_var_t doms_new[],
+> > > >   void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+> > > >                    struct sched_domain_attr *dattr_new)
+> > > >   {
+> > > > -    mutex_lock(&sched_domains_mutex);
+> > > > +    sched_domains_mutex_lock();
+> > > >       partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
+> > > > -    mutex_unlock(&sched_domains_mutex);
+> > > > +    sched_domains_mutex_unlock();
+> > > >   }
+> > > 
+> > > There are two "lockdep_assert_held(&sched_domains_mutex);" statements in
+> > > topology.c file and one in cpuset.c. That can be problematic in the
+> > > non-SMP case. Maybe another wrapper to do the assert?
+> > 
+> > Ignore that as both topology.c and cpuset.c will only be compiled if
+> > CONFIG_SMP is defined. IOW, you don't need the the "#ifdef CONFIG_SMP"
+> > above.
+> 
+> Indeed!
 
-Read the 'slew-rate' from the DT and configure the pad slew rates of
-the output pads accordingly in mt9m114_initialize().
-Remove the hardcoded slew rate setting from the mt9m114_init table.
+Ah, actually I believe next patch (3/5) introduce usage for the !SMP
+case in sched_rt_handler()
 
-Signed-off-by: Mathis Foerst <mathis.foerst@mt.com>
----
- drivers/media/i2c/mt9m114.c | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 4b8e33c615b1..8cebe71d2bb1 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -2910,6 +2910,7 @@ static int sched_rt_handler(const struct ctl_table *table, int write, void *buff
+        int ret;
 
-diff --git a/drivers/media/i2c/mt9m114.c b/drivers/media/i2c/mt9m114.c
-index 79c97ab19be9..fce24c587782 100644
---- a/drivers/media/i2c/mt9m114.c
-+++ b/drivers/media/i2c/mt9m114.c
-@@ -42,6 +42,9 @@
- #define MT9M114_RESET_AND_MISC_CONTROL			CCI_REG16(0x001a)
- #define MT9M114_RESET_SOC					BIT(0)
- #define MT9M114_PAD_SLEW				CCI_REG16(0x001e)
-+#define MT9M114_PAD_SLEW_MIN					0x00
-+#define MT9M114_PAD_SLEW_MAX					0x07
-+#define MT9M114_PAD_SLEW_DEFAULT				0x07
- #define MT9M114_PAD_CONTROL				CCI_REG16(0x0032)
- 
- /* XDMA registers */
-@@ -388,6 +391,7 @@ struct mt9m114 {
- 
- 	unsigned int pixrate;
- 	bool streaming;
-+	u32 pad_slew_rate;
- 
- 	/* Pixel Array */
- 	struct {
-@@ -645,9 +649,6 @@ static const struct cci_reg_sequence mt9m114_init[] = {
- 	{ MT9M114_CAM_SENSOR_CFG_FINE_INTEG_TIME_MAX,	1459 },
- 	{ MT9M114_CAM_SENSOR_CFG_FINE_CORRECTION,	96 },
- 	{ MT9M114_CAM_SENSOR_CFG_REG_0_DATA,		32 },
--
--	/* Miscellaneous settings */
--	{ MT9M114_PAD_SLEW,				0x0777 },
- };
- 
- /* -----------------------------------------------------------------------------
-@@ -778,6 +779,13 @@ static int mt9m114_initialize(struct mt9m114 *sensor)
- 	if (ret < 0)
- 		return ret;
- 
-+	value = (sensor->pad_slew_rate & 0xF)
-+	      | (sensor->pad_slew_rate & 0xF) << 4
-+	      |	(sensor->pad_slew_rate & 0xF) << 8;
-+	cci_write(sensor->regmap, MT9M114_PAD_SLEW, value, &ret);
-+	if (ret < 0)
-+		return ret;
-+
- 	ret = mt9m114_set_state(sensor, MT9M114_SYS_STATE_ENTER_CONFIG_CHANGE);
- 	if (ret < 0)
- 		return ret;
-@@ -2357,6 +2365,8 @@ static int mt9m114_parse_dt(struct mt9m114 *sensor)
- {
- 	struct fwnode_handle *fwnode = dev_fwnode(&sensor->client->dev);
- 	struct fwnode_handle *ep;
-+	struct device_node *dev_node = sensor->client->dev.of_node;
-+	u32 slew_rate;
- 	int ret;
- 
- 	ep = fwnode_graph_get_next_endpoint(fwnode, NULL);
-@@ -2385,6 +2395,11 @@ static int mt9m114_parse_dt(struct mt9m114 *sensor)
- 		goto error;
- 	}
- 
-+	ret = of_property_read_u32(dev_node, "slew-rate", &slew_rate);
-+	if (ret || slew_rate < MT9M114_PAD_SLEW_MIN || slew_rate > MT9M114_PAD_SLEW_MAX)
-+		slew_rate = MT9M114_PAD_SLEW_DEFAULT;
-+	sensor->pad_slew_rate = slew_rate;
-+
- 	return 0;
- 
- error:
--- 
-2.34.1
+        mutex_lock(&mutex);
++       sched_domains_mutex_lock();
+        old_period = sysctl_sched_rt_period;
+        old_runtime = sysctl_sched_rt_runtime;
+
+@@ -2936,6 +2937,7 @@ static int sched_rt_handler(const struct ctl_table *table, int write, void *buff
+                sysctl_sched_rt_period = old_period;
+                sysctl_sched_rt_runtime = old_runtime;
+        }
++       sched_domains_mutex_unlock();
+        mutex_unlock(&mutex);
+
+        return ret;
+
+So, I will need to add the ifdef back I guess (I removed it on v2). Do
+you agree?
+
+Thanks,
+Juri
 
 
