@@ -1,187 +1,108 @@
-Return-Path: <linux-kernel+bounces-551729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 458FEA56FDE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:00:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFBF2A56FE0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:01:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D560C18804C6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:00:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62656188AA75
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6343A24290E;
-	Fri,  7 Mar 2025 18:00:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D691607A4;
+	Fri,  7 Mar 2025 18:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="URDSeWQY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="S4cMIX1R"
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5C372417C8;
-	Fri,  7 Mar 2025 18:00:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96A1192B8A;
+	Fri,  7 Mar 2025 18:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741370411; cv=none; b=CdDh85cS+VphP3PKlgsb6dC6Ig2FfrhOj/9AlyFT0nA5HTHJRbr9L6xQ9ZK5O7ivcFgCCQBWl48QGl++o6RHeehgkO6BE7B+nx8R6IAtrfT1gANKDycwkq5GkZpYhdjJ2bRwojA4EfO++IcMquggBgrVL+2xy0rQW2ucp0WfInU=
+	t=1741370475; cv=none; b=hh0qmaMAg+2c8hn/tIeDsOCf/DoTeN/3Q4MZMav44n1pIPc03gH0tjrEJGtHuIPdshWqUH9xldErXKC357dCOlZDwkR8JqJNhKr0o0XJicBdH8qr6IhVnsxRsJMBzHAfdtNEFGM7OHAwIdI7vQkM/isvbPglcVz2jv8fHqGWSpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741370411; c=relaxed/simple;
-	bh=ROXIrFWpvJK0VBYRRw4tGyucWLzGJ+3Ly0c2x9+xZqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ndHxM7czslx4j8StR7Edemx8//PS1WE1dMhCokHkYm1jz7wsEV/fiw5GJ3W06BW9nzx7lJ0mzMB6UWSbEsekZZUcYNys99egyx85TZEhKFMnNQzdvka3MTOCLz/d6U6mUrzi82j0UpS1aVEsQWLFWvoO3DNeE+YeYUvqjEh+ze0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=URDSeWQY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D1CAC4CED1;
-	Fri,  7 Mar 2025 18:00:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741370411;
-	bh=ROXIrFWpvJK0VBYRRw4tGyucWLzGJ+3Ly0c2x9+xZqI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=URDSeWQYLBCpGO7DhzataZEZq6u/PAaEXdUMToU4N6kjKCUx8o/SGMYxLJiqGn5hx
-	 epn4ztMDj7B7dFe17f16mKMkW3HZmYfHm94tpyZBZ1e1pUucTGv0EXv5aHH0lp/9Ra
-	 E/z0JnK1yH+Dcxq0p8QzSZAZbJbA8B3DLlw7zV377clQ5HJt4SPhIIMnxYjxbLY8Gr
-	 cu+7c3bkmgMfjeTgS+M7Fgge3R2r/QbWsNt0flbg+6WAvqfp3NygxT/Ocny3yCatX0
-	 kki0ESccgf21XnWeLgEZU/+T+yHn8b5A3RCRhiLfaEU6wzJnYeC80V6DagmXl9o+mO
-	 3UtWqKKNmhhqA==
-Date: Fri, 7 Mar 2025 18:00:06 +0000
-From: Simon Horman <horms@kernel.org>
-To: Satish Kharat <satishkh@cisco.com>
-Cc: Christian Benvenuti <benve@cisco.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nelson Escobar <neescoba@cisco.com>,
-	John Daley <johndale@cisco.com>
-Subject: Re: [PATCH net-next v3 4/8] enic: enable rq extended cq support
-Message-ID: <20250307180006.GK3666230@kernel.org>
-References: <20250306-enic_cleanup_and_ext_cq-v3-0-92bc165344cf@cisco.com>
- <20250306-enic_cleanup_and_ext_cq-v3-4-92bc165344cf@cisco.com>
+	s=arc-20240116; t=1741370475; c=relaxed/simple;
+	bh=fc/YRA7+YxCdGwZiOQ9Sik/WdGzCbMxW/UHpNzNtcNc=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=BXVydMOASRi5r9UYzT2JXriKCfrd23WOFou1Yc90GRKFUV3Qsk5XuOSiAH+B0gvtr1qiy0ApYJN0O5wRXcu8E1ZCOJWqkHsidEusjfrTWDVIcQHQHwhmDbmx8XgYFJXhEdzuH64NWLyL88tjw0FeoK28D9r3korouL78OkZc4ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=S4cMIX1R; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741370464; x=1741975264; i=markus.elfring@web.de;
+	bh=fc/YRA7+YxCdGwZiOQ9Sik/WdGzCbMxW/UHpNzNtcNc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=S4cMIX1RIn0cX+t+LffCAsFlf49qppSk6wC5Cyk7A9a49Hnyt8lU663lBARpBIRZ
+	 jvDgbRXUL/yD509LfZg7xWy/7GUPFXSqujx5gX2AV7nykkhwf1yF1hO8AFcoI7fVu
+	 UCGGxBKeQQGiwkApaAGWsOqrYWx9wnKKUmnOegA+qLisy1SpMIwIiwsaoWSxNajyK
+	 GFPdmS/g2ixk7VLD9YtEeQyAZkjQ2+y+mfuRDbEs4/bjYnTrkmonoxbA45iaP6Xd+
+	 m/lZP2/izfw0LGw8j/LiIqmnlGRYSAwcfLN6LSvmL1K+loKkXHOheWQwpOF5Qq9HB
+	 AN000z0U0FoD6CLPYQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.70]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MLzmv-1tYo8f1hJ3-00Mg13; Fri, 07
+ Mar 2025 19:01:04 +0100
+Message-ID: <1ed644b8-f3c4-4656-aad0-a3c4f7fb0533@web.de>
+Date: Fri, 7 Mar 2025 19:01:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306-enic_cleanup_and_ext_cq-v3-4-92bc165344cf@cisco.com>
+User-Agent: Mozilla Thunderbird
+To: vulab@iscas.ac.cn, linux-bcachefs@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Kent Overstreet <kent.overstreet@linux.dev>
+References: <20250304040311.2081-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH] bcachefs: Add error handling for bch2_folio()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250304040311.2081-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:vFQpRg8a0qnuMOCHH60YdRw6epS7oSnGKjvElBWGifTarv7YKhm
+ xFh91c7CC0nv5d8CYC1AY29fn0qYeBL/9Z+HOkF5N0w/wp/g3iOwBf6f8N7WOJn1g/mXtoM
+ 5s8TsmBRL1usIuSYsHUU0uuuzRj5VSvpIYAAhlYoZx0Zr3A6FJuNF/7zYO3x02hY0XldYOs
+ ph62l3tIj7T3i8AOvPGfQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:6CMoYsFod04=;+IBVpNIyfjLprH3EO/ur62pKUNo
+ mxHzSFbhI8IPJgAsVgTt07VWRHWUenmQua3BcAadOoos99Cs3HqgLy+knnQpiy0a1aA3HZMXZ
+ qfg2nEw7BWsY/qhOzNRhgSa6liKDOm3gh+f6nGsPyik4aZNidogcNyPO/9xj8RkjzoibgLVBr
+ 8gVulD5KHLPKIzJmWSCMZ3UZ4mYq7TzKRElOITbMPjqlk00XEuVoxQsLjx34COnn47rRV/H88
+ LbUw8fiqKUev1i7mucwmZmOYxenTT3hncNCLb5M+k//UIC9/De1xs8vg5RlKnDOGF721EdAt2
+ zbLlt6de7+KmHGDNMspRRu1/SxzDvWF7y3lwEmpBun08b4r4cpdSrPEqOrBAXm6ywYRkOimyD
+ a/D99n0PxM/lbF9FFw4QO6XeNbFNyiyBv1hBgxuQohxtTkPgz3U0arb8IYSAPttDP1cCPUMYN
+ t5sCaB6zXyHWTQLoeKaqQUqqOo3f3X7PwOz01ypNbdmj5sqTVfDIARLen4wnE0HBAHCn9cQmX
+ 0pOjuw23CO5D6jgCrWn/Y/osXGbWNS+4bQ9qPlFMJhx4V44uy3x4ADyplDXfAL+pvpC5VtmI5
+ Nf3nVtiaCYPKg2QFhkKT45z3u6iEowPaU8+V9OzIW86rYwoV9WPpiWNIUdl0KACSrp6lCmTY7
+ CZcPHD8hKa2hBxmEuDEJ5BLr/0ylRzkog8kx5v1xEDma8I3IHz9lZJDEoQY21WEgX3i4C1mHJ
+ hZNUzLWoaQxhC3XPPyZBRKsne5eSdkZdleD2ZXbrDfvFIR+uQpXall2PwhS/zLfx4lH4MqAOw
+ gKaTdqrm2FbogLctI1BL0A9LIfRTTgaz3PlYRV2wFABFTa/7UB4MNNB09ulHQDqcZvUduWkqC
+ tx5665k8aTGkBSll6WuRaV1vTOLNpQvnaR22BEIAogVCkqkyxE+g1lcZpkn4xPJFEKwxNTd8w
+ BH2EbLeZPnqrxHuMK0THet9gxFEjC1pxOqelpOlZ5Ptvr7J5p1+r31Y88zEZmRTqQHAOEr2+D
+ U56cjWUo5MrvKENMeizxk+S/igiFPUSIcAEL7cImo1zVD+nBuAI4tkSiuD6KO6W6UvfB/UmFr
+ GhwtkvqN9I2DURXZoDXqRsZmtFNMhcNN0bWxIPy7/0FC0B2KhUT3dljKAt4BVkWE+CQ/Maxbt
+ O2CgxboOljkdo6Ja/D2f/knIOj+fHFBdxtJAj7O5Vs8xsXUy4hrFDE7prdQO5jqVGEdQTiPsI
+ xum5Bwvn8LYId/olTbjPgkhfaas0ltq8i7T2IYG17YlnpXUkpbELE1Ezy/Y//OTlJW93TaL/t
+ fMyyKa23k559yANuzBXvjV5OeYegbPvB4yTqVpdYaR+5xH3ZzxZB//zbP1qpf0sdaeRL089ES
+ aksccNI1btctXCavzj6tVFEzfXYggbfDOp2uGXrtcmgUjyUhY32NkNbJ+ai3Cf55f11mBiOOG
+ mbm4tSSa8z0R5LFDuw2UslRvSfvA=
 
-On Thu, Mar 06, 2025 at 07:15:25PM -0500, Satish Kharat via B4 Relay wrote:
-> From: Satish Kharat <satishkh@cisco.com>
-> 
-> Enables getting from hw all the supported rq cq sizes and
-> uses the highest supported cq size.
-> 
-> Co-developed-by: Nelson Escobar <neescoba@cisco.com>
-> Signed-off-by: Nelson Escobar <neescoba@cisco.com>
-> Co-developed-by: John Daley <johndale@cisco.com>
-> Signed-off-by: John Daley <johndale@cisco.com>
-> Signed-off-by: Satish Kharat <satishkh@cisco.com>
+> Add error handling for the case where bch2_folio() returns NULL
+> in __bch2_folio_set(). Return immediately to prevent null pointer
+> dereference.
 
-...
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc5#n145
 
-> diff --git a/drivers/net/ethernet/cisco/enic/enic_rq.c b/drivers/net/ethernet/cisco/enic/enic_rq.c
-> index 842b273c2e2a59e81a7c1423449b023d646f5e81..ccbf5c9a21d0ffe33c7c74042d5425497ea0f9dc 100644
-> --- a/drivers/net/ethernet/cisco/enic/enic_rq.c
-> +++ b/drivers/net/ethernet/cisco/enic/enic_rq.c
-> @@ -21,24 +21,76 @@ static void enic_intr_update_pkt_size(struct vnic_rx_bytes_counter *pkt_size,
->  		pkt_size->small_pkt_bytes_cnt += pkt_len;
->  }
->  
-> -static void enic_rq_cq_desc_dec(struct cq_enet_rq_desc *desc, u8 *type,
-> +static void enic_rq_cq_desc_dec(void *cq_desc, u8 cq_desc_size, u8 *type,
->  				u8 *color, u16 *q_number, u16 *completed_index)
->  {
->  	/* type_color is the last field for all cq structs */
-> -	u8 type_color = desc->type_color;
-> +	u8 type_color;
-> +
-> +	switch (cq_desc_size) {
-> +	case VNIC_RQ_CQ_ENTRY_SIZE_16: {
-> +		struct cq_enet_rq_desc *desc =
-> +			(struct cq_enet_rq_desc *)cq_desc;
-> +		type_color = desc->type_color;
-> +
-> +		/* Make sure color bit is read from desc *before* other fields
-> +		 * are read from desc.  Hardware guarantees color bit is last
-> +		 * bit (byte) written.  Adding the rmb() prevents the compiler
-> +		 * and/or CPU from reordering the reads which would potentially
-> +		 * result in reading stale values.
-> +		 */
-> +		rmb();
->  
-> -	/* Make sure color bit is read from desc *before* other fields
-> -	 * are read from desc.  Hardware guarantees color bit is last
-> -	 * bit (byte) written.  Adding the rmb() prevents the compiler
-> -	 * and/or CPU from reordering the reads which would potentially
-> -	 * result in reading stale values.
-> -	 */
-> -	rmb();
-> +		*q_number = le16_to_cpu(desc->q_number_rss_type_flags) &
-> +			    CQ_DESC_Q_NUM_MASK;
-> +		*completed_index = le16_to_cpu(desc->completed_index_flags) &
-> +				   CQ_DESC_COMP_NDX_MASK;
-> +		break;
-> +	}
-> +	case VNIC_RQ_CQ_ENTRY_SIZE_32: {
-> +		struct cq_enet_rq_desc_32 *desc =
-> +			(struct cq_enet_rq_desc_32 *)cq_desc;
-> +		type_color = desc->type_color;
-> +
-> +		/* Make sure color bit is read from desc *before* other fields
-> +		 * are read from desc.  Hardware guarantees color bit is last
-> +		 * bit (byte) written.  Adding the rmb() prevents the compiler
-> +		 * and/or CPU from reordering the reads which would potentially
-> +		 * result in reading stale values.
-> +		 */
-> +		rmb();
-> +
-> +		*q_number = le16_to_cpu(desc->q_number_rss_type_flags) &
-> +			    CQ_DESC_Q_NUM_MASK;
-> +		*completed_index = le16_to_cpu(desc->completed_index_flags) &
-> +				   CQ_DESC_COMP_NDX_MASK;
-> +		*completed_index |= (desc->fetch_index_flags & CQ_DESC_32_FI_MASK) <<
-> +				CQ_DESC_COMP_NDX_BITS;
-> +		break;
-> +	}
-> +	case VNIC_RQ_CQ_ENTRY_SIZE_64: {
-> +		struct cq_enet_rq_desc_64 *desc =
-> +			(struct cq_enet_rq_desc_64 *)cq_desc;
-> +		type_color = desc->type_color;
-> +
-> +		/* Make sure color bit is read from desc *before* other fields
-> +		 * are read from desc.  Hardware guarantees color bit is last
-> +		 * bit (byte) written.  Adding the rmb() prevents the compiler
-> +		 * and/or CPU from reordering the reads which would potentially
-> +		 * result in reading stale values.
-> +		 */
-> +		rmb();
-> +
-> +		*q_number = le16_to_cpu(desc->q_number_rss_type_flags) &
-> +			    CQ_DESC_Q_NUM_MASK;
-> +		*completed_index = le16_to_cpu(desc->completed_index_flags) &
-> +				   CQ_DESC_COMP_NDX_MASK;
-> +		*completed_index |= (desc->fetch_index_flags & CQ_DESC_64_FI_MASK) <<
-> +				CQ_DESC_COMP_NDX_BITS;
-> +		break;
-> +	}
-> +	}
->  
-> -	*q_number = le16_to_cpu(desc->q_number_rss_type_flags) &
-> -		CQ_DESC_Q_NUM_MASK;
-> -	*completed_index = le16_to_cpu(desc->completed_index_flags) &
-> -	CQ_DESC_COMP_NDX_MASK;
->  	*color = (type_color >> CQ_DESC_COLOR_SHIFT) & CQ_DESC_COLOR_MASK;
->  	*type = type_color & CQ_DESC_TYPE_MASK;
-
-Hi Satish, all,
-
-I'm unsure if this can occur in practice, but it seems that if
-none of the cases above are met then type_color will be used
-uninitialised here.
-
-Flagged by Smatch.
-
->  }
-
-...
+Regards,
+Markus
 
