@@ -1,87 +1,210 @@
-Return-Path: <linux-kernel+bounces-550562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 229E8A5612A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:50:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89AAEA5612F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:51:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52FBB176E8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:50:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5059176F4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C3F11A01B9;
-	Fri,  7 Mar 2025 06:50:26 +0000 (UTC)
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 099101A0BF1;
+	Fri,  7 Mar 2025 06:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="foE95Wbj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82E381632D9;
-	Fri,  7 Mar 2025 06:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3511632D9;
+	Fri,  7 Mar 2025 06:51:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741330226; cv=none; b=ZQ0COv6SSJAQAoermX+SovrNSbJ+fR7aPwcg/t6y+y2GKNUhi8xNCasx9MvwijL6RKToxrTN1D8bdPDb6NaV8MtPu+b7EI3ePypejh+7qgA6TW6nRniOOBcZpw9BIPFpP6G9UVYuF+BriSBb2luW9xR4o2QVoEMTzl5d7wDHYFM=
+	t=1741330265; cv=none; b=IMcUEidwn0Wdg+Hi9fJPiAtdnlPIvLQ4Sq96hLlTf5SRH2LjzEVvG1zosfil/IdO1SMnksoVbBoZ0VOn0CsGW0fjJ9uYO720FQu899rpiAauzM41sd3rYUnU3sXe/fSxeHvUUCxxtpNk7JrG92ZNnfezsGqvD9oK1ABjI1fR1p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741330226; c=relaxed/simple;
-	bh=654CtTZeddqqETFu/ZnAfcGbXdZy/aUh1qunbf6aBT8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OIMIZqeTTO7Vn4Hm8RXKoHkh8BLcGzpl/bikdACqF3tj43wJjaIzPbPhOSJ5KmIl9KVxVsNBDN630MKNYFNVlt7CzD6SaXD10w5UoDrj9w0+S3HfXKkXOac/9joBGTnZsK/mbrYjoTtzP5RanN6pJH2SuDr6hw3hEeWcwkLtXR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c00:3300:bb12:a0a3:40d:e82f])
-	by smtp.qiye.163.com (Hmail) with ESMTP id d4e0a9b3;
-	Fri, 7 Mar 2025 14:50:17 +0800 (GMT+08:00)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: jonas@kwiboo.se
-Cc: amadeus@jmu.edu.cn,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	heiko@sntech.de,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	robh@kernel.org,
-	ziyao@disroot.org
-Subject: Re: [PATCH v2 1/1] arm64: dts: rockchip: enable SCMI clk for RK3528 SoC
-Date: Fri,  7 Mar 2025 14:50:15 +0800
-Message-Id: <20250307065015.697377-1-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <281b8025-8288-4274-b863-f091c05cbabe@kwiboo.se>
-References: <281b8025-8288-4274-b863-f091c05cbabe@kwiboo.se>
+	s=arc-20240116; t=1741330265; c=relaxed/simple;
+	bh=6ZI3dCObpML4Ufp4w1iQZ0U98W7z0VOCfaMcxrJlCIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aOpj1IluhnNkZ0VXi2oZ2mx7PK5i3qdVS9SUIKz43gai601kaH3gZE0eDSPl01sfDNuzF4me8Eosa6JIC40ohvoEX/L+oXGoXTZZFlrMzSGTSgqMFlNgnE74wVd4PnE0k5+G0U0CmDDPfwCEeuptCRP+EAIbUUL37kSRFlVy7Kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=foE95Wbj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A99DC4CED1;
+	Fri,  7 Mar 2025 06:51:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741330264;
+	bh=6ZI3dCObpML4Ufp4w1iQZ0U98W7z0VOCfaMcxrJlCIg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=foE95WbjLJUGTYyscTXMtsFf9MeH/But/AEKvbezNXoxDg6qRlEz4XfAzplYYZQem
+	 raf6W+rXGPu8aIEO1ZZY78yBG1EHTpXKoh5n0sFncxZgkba8GpPsiskg/UKP0sNJ4V
+	 ozkLvrit/URKrTMhsyDSUkkzHvI8LFMiJehSw0j0PwyYaQ4DjHQrEP4YhLA5oP/mg8
+	 ABvwQspdwsa2Elj4PiDw9z/+o2qd5xqVB+Ht4KKRLtoRSiOAzo2ONaKnu+mxXN3omZ
+	 JkqAGDps79dDUt7fi9DxoMFXfTukI+i5r0rqSMV3MBcD83z2PluXhRvaie+exIx3u8
+	 xF1jQAyUUU/0Q==
+Date: Fri, 7 Mar 2025 08:51:00 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Ross Philipson <ross.philipson@oracle.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+	ardb@kernel.org, mjg59@srcf.ucam.org,
+	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
+	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu,
+	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
+	ebiederm@xmission.com, dwmw2@infradead.org,
+	baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
+	andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
+Subject: Re: [PATCH v12 08/19] x86/boot: Place TXT MLE header in the
+ kernel_info section
+Message-ID: <Z8qXVLiab5L-XkgP@kernel.org>
+References: <20241219194216.152839-1-ross.philipson@oracle.com>
+ <20241219194216.152839-9-ross.philipson@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlDHh1OVhpMTk9CSklCHk1PS1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtLQUhIS0tBGRlKSUEaSxpIQU9LH0EeQ0kdWVdZFhoPEh
-	UdFFlBWU9LSFVKS0lIQktDVUpLS1VKQlkG
-X-HM-Tid: 0a956f5e7a9803a2kunmd4e0a9b3
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MyI6Vhw4NDJWNjdCVh4tT0IO
-	GDxPCRFVSlVKTE9KSEhLSUpDTkhNVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
-	Sx5BSBlIQUkYS0tBSEhLS0EZGUpJQRpLGkhBT0sfQR5DSR1ZV1kIAVlBT01PNwY+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241219194216.152839-9-ross.philipson@oracle.com>
 
-Hi,
+On Thu, Dec 19, 2024 at 11:42:05AM -0800, Ross Philipson wrote:
+> The MLE (measured launch environment) header must be locatable by the
+> boot loader and TXT must be setup to do a launch with this header's
 
-> This is new compared to v1, please add operating-points instead.
-> cpu_pvtpll is already initialized to 1.2 GHz by firmware, see e.g. [1].
+(cutting the hairs) nit: /TXT/Intel TXT/
+
+> location. While the offset to the kernel_info structure does not need
+> to be at a fixed offset, the offsets in the header must be relative
+> offsets from the start of the setup kernel. The support in the linker
+> file achieves this.
+
+This is too obfuscated and also sort of misses the action taken by
+the patch.
+
+I presume the goal here is to add relative offset to the MLE header?
+Please state that explicitly.
+
+Like for any possible kernel patch:
+
+1. Come out clean 110% transparent.
+2. Full exposure what you're doing.
+
+;-)
+
+That's the fastest possible path to actual results. 
+
 > 
-> [1] https://lore.kernel.org/u-boot/20250123224844.3104592-5-jonas@kwiboo.se/
+> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+> Suggested-by: Ard Biesheuvel <ardb@kernel.org>
+> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+> ---
+>  arch/x86/boot/compressed/kernel_info.S | 50 +++++++++++++++++++++++---
+>  arch/x86/boot/compressed/vmlinux.lds.S |  7 ++++
+>  2 files changed, 53 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/boot/compressed/kernel_info.S b/arch/x86/boot/compressed/kernel_info.S
+> index f818ee8fba38..a0604a0d1756 100644
+> --- a/arch/x86/boot/compressed/kernel_info.S
+> +++ b/arch/x86/boot/compressed/kernel_info.S
+> @@ -1,12 +1,20 @@
+>  /* SPDX-License-Identifier: GPL-2.0 */
+>  
+> +#include <linux/linkage.h>
+>  #include <asm/bootparam.h>
+>  
+> -	.section ".rodata.kernel_info", "a"
+> +/*
+> + * The kernel_info structure is not placed at a fixed offest in the
+> + * kernel image. So this macro and the support in the linker file
+> + * allow the relative offsets for the MLE header within the kernel
+> + * image to be configured at build time.
+> + */
+> +#define roffset(X) ((X) - kernel_info)
+>  
+> -	.global kernel_info
+> +	.section ".rodata.kernel_info", "a"
+>  
+> -kernel_info:
+> +	.balign	16
+> +SYM_DATA_START(kernel_info)
+>  	/* Header, Linux top (structure). */
+>  	.ascii	"LToP"
+>  	/* Size. */
+> @@ -17,6 +25,40 @@ kernel_info:
+>  	/* Maximal allowed type for setup_data and setup_indirect structs. */
+>  	.long	SETUP_TYPE_MAX
+>  
+> +	/* Offset to the MLE header structure */
+> +#if IS_ENABLED(CONFIG_SECURE_LAUNCH)
+> +	.long	roffset(mle_header_offset)
+> +#else
+> +	.long	0
+> +#endif
+> +
+>  kernel_info_var_len_data:
+>  	/* Empty for time being... */
+> -kernel_info_end:
+> +SYM_DATA_END_LABEL(kernel_info, SYM_L_LOCAL, kernel_info_end)
+> +
+> +#if IS_ENABLED(CONFIG_SECURE_LAUNCH)
+> +	/*
+> +	 * The MLE Header per the TXT Specification, section 2.1
+> +	 * MLE capabilities, see table 4. Capabilities set:
+> +	 * bit 0: Support for GETSEC[WAKEUP] for RLP wakeup
+> +	 * bit 1: Support for RLP wakeup using MONITOR address
+> +	 * bit 2: The ECX register will contain the pointer to the MLE page table
+> +	 * bit 5: TPM 1.2 family: Details/authorities PCR usage support
+> +	 * bit 9: Supported format of TPM 2.0 event log - TCG compliant
+> +	 */
+> +SYM_DATA_START(mle_header)
+> +	.long	0x9082ac5a  /* UUID0 */
+> +	.long	0x74a7476f  /* UUID1 */
+> +	.long	0xa2555c0f  /* UUID2 */
+> +	.long	0x42b651cb  /* UUID3 */
+> +	.long	0x00000034  /* MLE header size */
+> +	.long	0x00020002  /* MLE version 2.2 */
+> +	.long	roffset(sl_stub_entry_offset) /* Linear entry point of MLE (virt. address) */
+> +	.long	0x00000000  /* First valid page of MLE */
+> +	.long	0x00000000  /* Offset within binary of first byte of MLE */
+> +	.long	roffset(_edata_offset) /* Offset within binary of last byte + 1 of MLE */
+> +	.long	0x00000227  /* Bit vector of MLE-supported capabilities */
+> +	.long	0x00000000  /* Starting linear address of command line (unused) */
+> +	.long	0x00000000  /* Ending linear address of command line (unused) */
 
-Thanks for this information, I will remove assigned-clocks.
-However, due to unknown reasons, the cpu opp-table does not
-match the actual frequency at all.
-e.g. set 2016MHz, actual 1610MHz
+Nit: I'd consider aligning these to few tab offsets after even tho it
+might cause checkpatch complain (which is fine when there are legitimite
+reasons to do so).
 
-Thanks,
-Chukun
+Would be easier to read.
 
--- 
-2.25.1
+> +SYM_DATA_END(mle_header)
+> +#endif
+> diff --git a/arch/x86/boot/compressed/vmlinux.lds.S b/arch/x86/boot/compressed/vmlinux.lds.S
+> index 083ec6d7722a..f82184801462 100644
+> --- a/arch/x86/boot/compressed/vmlinux.lds.S
+> +++ b/arch/x86/boot/compressed/vmlinux.lds.S
+> @@ -118,3 +118,10 @@ SECTIONS
+>  	}
+>  	ASSERT(SIZEOF(.rela.dyn) == 0, "Unexpected run-time relocations (.rela) detected!")
+>  }
+> +
+> +#ifdef CONFIG_SECURE_LAUNCH
+> +PROVIDE(kernel_info_offset      = ABSOLUTE(kernel_info - startup_32));
+> +PROVIDE(mle_header_offset       = kernel_info_offset + ABSOLUTE(mle_header - startup_32));
+> +PROVIDE(sl_stub_entry_offset    = kernel_info_offset + ABSOLUTE(sl_stub_entry - startup_32));
+> +PROVIDE(_edata_offset           = kernel_info_offset + ABSOLUTE(_edata - startup_32));
 
+I'd enumerate these one by one in the commit message. I.e. what is added
+explicitly.
+
+> +#endif
+> -- 
+> 2.39.3
+> 
+
+BR, Jarkko
 
