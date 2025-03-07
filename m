@@ -1,77 +1,49 @@
-Return-Path: <linux-kernel+bounces-550787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B104A56419
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:39:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F88CA5641B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:39:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F5DC3A7E9B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:38:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9C3516A35D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC13E20AF67;
-	Fri,  7 Mar 2025 09:38:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XjK9BYyj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6770F1AA7BF;
-	Fri,  7 Mar 2025 09:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D7492066EA;
+	Fri,  7 Mar 2025 09:39:47 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFEE191461;
+	Fri,  7 Mar 2025 09:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741340339; cv=none; b=lZbvEaKOR6WnsoAKsztZj40fVXTlJOksFGkn/x1kneSfik4c2UA/3QXd+7BhlN+cpjFHaTAW6Pn3OOAr+OFNUjKqWj3+vQAClxMdd9PoDZ2ZVuxfDYCx7qTYfc0S8PWg065CNvxJKz5Z6vpdGsjT/zcEehtnWmWpHZcDLpZL1aA=
+	t=1741340387; cv=none; b=j7PlX/xqwcoxySoILHbG4hsLVO9AZinzfV+vf+33C8Ci+oFFLnnCGjFHPQ7rK8vs+TeJ65h06aOIGVQy+ol2Mx0J0t0ZIAc/p+Vj6nSZPtfKfBIr+arX16LbO6Y/04kOa5qqw+8QKCszn2u/HxUJ59mbOZO/ziiumsVTRlDAAQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741340339; c=relaxed/simple;
-	bh=rLs1wzqH52S/8SS8AdvefAUT8BlMKmSH93vnAmNwPS0=;
+	s=arc-20240116; t=1741340387; c=relaxed/simple;
+	bh=erzpsiMOtlrYBxd+7HW4avLKiPxeS/41DggWsa42pHg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a0kgLJdSbbAgu2/I3fn0mBrmVkJx320giIM3sfrXs67Nnel1abo4+u5qCLDHUHzrI06C1i0ht8yA+U5knEL8bQjkhCtuDyo+Wywg82nWlPPWg5WkLtvZIMAWu7pEXDJsfhuWzqe7/qMILceH9SBX8eASuB+6tSTXqqxQPaRIC4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XjK9BYyj; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741340337; x=1772876337;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rLs1wzqH52S/8SS8AdvefAUT8BlMKmSH93vnAmNwPS0=;
-  b=XjK9BYyjLmjuPlQ/q/CiYeSt8/nNghiIlw1+NnAa7uS1YKIC6Dmar7Gy
-   VIYeymI8Jiw15mOAzUfbz9dTytVd9en/kv8xOyUh38rm/mQckyML7JDWU
-   52dWqsYkphq4LTGG9SWGFrfo/bDjJuFo/j+ymWHcV2RNXtKHBhDA0afgD
-   oiC+UVdj7QQ1Pm9D5s5sJZVwAUIZXD09Ev/c34rD5KRr9yIxNKljPSOwO
-   7xcX4lq5Jusl09FVP3+ZgUFf1MrxEgM4IhiMLtDSQtAW4t9J4u2e6j9sI
-   gC5an/bmNfxrRgppeD01p0AM6Ie5wI6pNnOFTIq5Zyfk6cZOTj/wp3eLp
-   g==;
-X-CSE-ConnectionGUID: cJYimkFdSXWvJ+LDJGLWig==
-X-CSE-MsgGUID: RSMkRsIZQ/6xlyGGq4W0qg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="46161764"
-X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
-   d="scan'208";a="46161764"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 01:38:57 -0800
-X-CSE-ConnectionGUID: kGyra7qNQN2eoeVm9SqYaw==
-X-CSE-MsgGUID: xgQLYtAcTSmA84/tKBk4Iw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
-   d="scan'208";a="124371050"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 07 Mar 2025 01:38:54 -0800
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tqUAO-0000Eh-1j;
-	Fri, 07 Mar 2025 09:38:52 +0000
-Date: Fri, 7 Mar 2025 17:38:08 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jiayi Li <lijiayi@kylinos.cn>, gregkh@linuxfoundation.org,
-	stern@rowland.harvard.edu, stefan.eichenberger@toradex.com,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, jiayi_dec@163.com,
-	Jiayi Li <lijiayi@kylinos.cn>
-Subject: Re: [PATCH v1] usb: core: Add boot delay for DH34 board in restore
- mode
-Message-ID: <202503071748.Paav3L6j-lkp@intel.com>
-References: <20250306061749.1502029-1-lijiayi@kylinos.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRiGyx78pJhCSTGlOtEwtNFSnqweU7zZ3kI+vo01jS3AaFE8rPhQ4X/QUey2o+Szx7BZ2igeS36cG9UJ4bkGVJkuLE7dc/HXBkkcDbLtMhmhhN3RP1sse3lbVGfDvFDR5tLSh7WfcCeTHQR00cTT51CvZe/oGapKt4rqZim8dm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A5C37150C;
+	Fri,  7 Mar 2025 01:39:56 -0800 (PST)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EE8603F66E;
+	Fri,  7 Mar 2025 01:39:42 -0800 (PST)
+Date: Fri, 7 Mar 2025 09:39:34 +0000
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org, Sudeep Holla <sudeep.holla@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>
+Subject: Re: [PATCH] firmware: arm_scmi: Balance device refcount when
+ destroying devices
+Message-ID: <Z8q-1jOng_nYP445@pluto>
+References: <20250306185447.2039336-1-cristian.marussi@arm.com>
+ <Z8q9l0vDTLpbo8UR@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,38 +52,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250306061749.1502029-1-lijiayi@kylinos.cn>
+In-Reply-To: <Z8q9l0vDTLpbo8UR@google.com>
 
-Hi Jiayi,
+On Fri, Mar 07, 2025 at 09:34:15AM +0000, Alice Ryhl wrote:
+> On Thu, Mar 06, 2025 at 06:54:47PM +0000, Cristian Marussi wrote:
+> > Using device_find_child() to lookup the proper SCMI device to destroy
+> > causes an unbalance in device refcount, since device_find_child() calls an
+> > implicit get_device(): this, in turns, inhibits the call of the provided
+> > release methods upon devices destruction.
+> > 
+> > As a consequence, one of the structures that is not freed properly upon
+> > destruction is the internal struct device_private dev->p populated by the
+> > drivers subsystem core.
+> > 
+> > KMemleak detects this situation since loading/unloding some SCMI driver
+> > causes related devices to be created/destroyed without calling any
+> > device_release method.
+> > 
+> > unreferenced object 0xffff00000f583800 (size 512):
+> >   comm "insmod", pid 227, jiffies 4294912190
+> >   hex dump (first 32 bytes):
+> >     00 00 00 00 ad 4e ad de ff ff ff ff 00 00 00 00  .....N..........
+> >     ff ff ff ff ff ff ff ff 60 36 1d 8a 00 80 ff ff  ........`6......
+> >   backtrace (crc 114e2eed):
+> >     kmemleak_alloc+0xbc/0xd8
+> >     __kmalloc_cache_noprof+0x2dc/0x398
+> >     device_add+0x954/0x12d0
+> >     device_register+0x28/0x40
+> >     __scmi_device_create.part.0+0x1bc/0x380
+> >     scmi_device_create+0x2d0/0x390
+> >     scmi_create_protocol_devices+0x74/0xf8
+> >     scmi_device_request_notifier+0x1f8/0x2a8
+> >     notifier_call_chain+0x110/0x3b0
+> >     blocking_notifier_call_chain+0x70/0xb0
+> >     scmi_driver_register+0x350/0x7f0
+> >     0xffff80000a3b3038
+> >     do_one_initcall+0x12c/0x730
+> >     do_init_module+0x1dc/0x640
+> >     load_module+0x4b20/0x5b70
+> >     init_module_from_file+0xec/0x158
+> > 
+> > $ ./scripts/faddr2line ./vmlinux device_add+0x954/0x12d0
+> > device_add+0x954/0x12d0:
+> > kmalloc_noprof at include/linux/slab.h:901
+> > (inlined by) kzalloc_noprof at include/linux/slab.h:1037
+> > (inlined by) device_private_init at drivers/base/core.c:3510
+> > (inlined by) device_add at drivers/base/core.c:3561
+> > 
+> > Balance device refcount by issuing a put_device() on devices found via
+> > device_find_child().
+> > 
+> > Reported-by: Alice Ryhl <aliceryhl@google.com>
+> > Closes: https://lore.kernel.org/linux-arm-kernel/Z8nK3uFkspy61yjP@arm.com/T/#mc1f73a0ea5e41014fa145147b7b839fc988ada8f
+> > CC: Sudeep Holla <sudeep.holla@arm.com>
+> > CC: Catalin Marinas <catalin.marinas@arm.com>
+> > Fixes: d4f9dddd21f3 ("firmware: arm_scmi: Add dynamic scmi devices creation")
+> > Signed-off-by: Cristian Marussi <cristian.marussi@arm.com>
+> 
+> I was not able to reproduce the memory leak after applying this patch.
+> 
+> Tested-by: Alice Ryhl <aliceryhl@google.com>
 
-kernel test robot noticed the following build errors:
+Thanks a lot for testing (and for the report) !
 
-[auto build test ERROR on usb/usb-testing]
-[also build test ERROR on usb/usb-next usb/usb-linus linus/master v6.14-rc5 next-20250306]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Cristian
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jiayi-Li/usb-core-Add-boot-delay-for-DH34-board-in-restore-mode/20250306-141857
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-patch link:    https://lore.kernel.org/r/20250306061749.1502029-1-lijiayi%40kylinos.cn
-patch subject: [PATCH v1] usb: core: Add boot delay for DH34 board in restore mode
-config: arm64-randconfig-002-20250307 (https://download.01.org/0day-ci/archive/20250307/202503071748.Paav3L6j-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250307/202503071748.Paav3L6j-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503071748.Paav3L6j-lkp@intel.com/
-
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/exportfs/exportfs.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/zlib_inflate/zlib_inflate.o
->> ERROR: modpost: "saved_command_line" [drivers/usb/core/usbcore.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
