@@ -1,238 +1,388 @@
-Return-Path: <linux-kernel+bounces-550476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17702A56005
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:30:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 130BAA5600F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:32:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4309A17286D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:30:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3D6D7A7978
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF7F1925AC;
-	Fri,  7 Mar 2025 05:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF1A192B63;
+	Fri,  7 Mar 2025 05:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aS1r452c"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IZ+lljTC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99241194C9E
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 05:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E63077FD;
+	Fri,  7 Mar 2025 05:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741325427; cv=none; b=l//HypAE5dngGZTaaOEYT9KcF8cv4Df95vzPSecrQU73bzb7/nqh8nanvTUoKbNNuzHt0VBgTKln7OlNx04jr2QJzKucRUPHED5J6olpcdH0Rn9ihIMPsG1kOZsgKELitFd02O8qGTajNBhv+9WymhYKsEofo2PfKsZF5M7sXQ4=
+	t=1741325530; cv=none; b=mpYQacHk4veyvNQL5EWDx5EJk1rdUV/kbVFnSjgChYWAnUvXcJKSAHAK2G9ESLXalTJSE8nv6RhANJ5MnGXYR6I1wkC7Ei3LAQz8b5dIOuDP2GkTbxTv5av3jPg5MI8CbEJlLO5PHVFF5WX46jTLTXiE/FjQ9Vt0GF4IXhtuhzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741325427; c=relaxed/simple;
-	bh=FTQZUdfUptCa2bLgf3C1tX5NAj4o8RrqNfikG0Y/BmE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qCU+Z0KcXwmASzo3m43JuK7OEG4MYJi0hxbqL5ITP8XWLkE3UPTvmlR9mlEc/GAteqEUiIQgJ4hTU7yw5i3IR4FLyRdKJw0nDi1BVXSK/UiasecEnJGOn4YydJrM/oIeNYSu1W1WEy8bjdD2Yiv544zSle3Vvb3lyiNorIsDOfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aS1r452c; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2242ac37caeso43775ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 21:30:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741325425; x=1741930225; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mdDEJTsHKwvjyl+F7qkE/MVBBT69xP0JtpsTNjb5e+Q=;
-        b=aS1r452c/rW2K/CaWV7lAQ/OcTUf1157keb7CTdojRCHrnRqr+qkFb7MIU71Emeco8
-         63SDP7mv1vIun9Jr2W3yLDYsyywlVfxKrihnvhn8BAH7+WVk+ytPrr21AuYgwQd/gOmG
-         rKpcXNW1C0zlwg3hhuLATW3ED2VGj1AybEqejQ2kP9UK28FMsKHTqAsGuD6BTnJSNRXG
-         a18coJARO4671xDwixiPK3+J5UUFpXo7/rVr3FVbAR/4islVrUCLzJGtH1PscmgKsLz2
-         WmvytLUuuhK4uW/cZlZdT9Tm8Tsslq8L9Wtu/BoEjrGZkfLLCY8mCYcBg2v0ZC7qLJQ6
-         m3Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741325425; x=1741930225;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mdDEJTsHKwvjyl+F7qkE/MVBBT69xP0JtpsTNjb5e+Q=;
-        b=OXQB3MtB+CLuwCwZNhh3/OixMkQGd7MSuRVHCRxQIB+Sn1Cqygl+XX6l3G42a2s4yY
-         U9/iqHMCNAaAZRoPoCngd7aBDoXAVc525ZOtqJVVwT4utBBWlBgAbbENuDH+PNSI+yoH
-         vQgvcnVJ9YWd69SluCYiSic11baguwg37Hi8a0IvZXqmwHdLIRVmu8Q7h6rP1GMcFV1F
-         Ox1VpP0SHf9odwRA6Nk4dpG6QLXAcs1gme3QWOz1Kqo5DG5Zu9kn3kbzegIdBBAWLv7t
-         GqRHFdPpiP2jnfrcuJQT9hAsASMFptFv5xB+tERlzgBJgiWbvkMn3iYEx2WvZ1APDk5G
-         uSBw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHGEKct0sgrcEcwg3Cyg4wIGKWO8qaAltUKNZlWluPRXXw4fnqyx86qQVTywRcoVErm8jIHz45qHXCPho=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywp2sH8PcCYi7VTGUayJe7zvzb53Ohh0RdUEd0Eg/3YShgfMETb
-	3drz0GJJ0ti3+RsdT2mkSdXMUOt7s90ErjOLcd0fa2rQltKNswA71T5Muf6CsptGoO6rLWTIV6N
-	jai2krRLSqhN7++HiQc1x3MQH4izMKzito9vH
-X-Gm-Gg: ASbGnctbJoD1jxFlTn5eJeofro6PR2eZ/9lurZmSjo768Lp2qqh+Sykr2p6N/TROUQx
-	PR9/ZHVQHw9rJy4xwjhI8+L3t51c1dAMDAUbJs69Bmmz7tjK17sRZ8CqQzSUr79Ys0aGf7Ii9SM
-	Euo2HmM1NmNd2xc8V/qLZoJh6cmic=
-X-Google-Smtp-Source: AGHT+IEcodZzFnpZf8m9GKxcrOIuoYtTe9WlblycwKpr+zFPLDPbCwJqYAatYqYzvaFLYn5WJRIGjZXLMcuz4Nbng4s=
-X-Received: by 2002:a17:902:d504:b0:220:ce33:6385 with SMTP id
- d9443c01a7336-2242a6004b6mr1115105ad.9.1741325424567; Thu, 06 Mar 2025
- 21:30:24 -0800 (PST)
+	s=arc-20240116; t=1741325530; c=relaxed/simple;
+	bh=q/OGGBTCPmP4Udx/qeygD3cIJ2xnQNHrGdENR6SWJ/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IRjlSSOlFHpa9w3hJg2D0bD1JIne7UU/MLVwzQnJZqCs2FzD+oZJko0vJZD4P8ifOgwC5a3IZa2d546A7btO+E/SKkA84LxyNWNK9wbGNKWfdA5neO6nRtl1JzdHk8/3R2RDXtqLi71LLFcBm4XATSfChhiKpOCH2g685zv9jdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IZ+lljTC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B960C4CED1;
+	Fri,  7 Mar 2025 05:32:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741325529;
+	bh=q/OGGBTCPmP4Udx/qeygD3cIJ2xnQNHrGdENR6SWJ/I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IZ+lljTCxsj2RC3AiJcM+1C44pzG6kj6sIL8M9ApT74IXt2o7Zxf6rR8DOqeeltXH
+	 sZvhmRU0yh0V+hw7mz1Cd4Oj423VvbMaDJ8xIN7qDfwr4kl9odHtvitat9IB6qy+pI
+	 0p0R5gBoV9ROnGenLnQiNCUmBbzFT6vKV5OnBykkh5MGAgpjCp3KMy7hJ4nSuj22up
+	 FFjYjmj68oyKK15hW23r5cqin3nB+oSTdy/or9sP6YQVz1eV5IxG4VOc50W+3MyVRK
+	 v3mC7tkrrcaRogF8gftQqlNOSAwSsvFE0BXP/000lzqWOVYJpemUBnvie48nRAhNaT
+	 9Y8OzTYP3Q4qw==
+Date: Fri, 7 Mar 2025 07:32:04 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Ross Philipson <ross.philipson@oracle.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+	ardb@kernel.org, mjg59@srcf.ucam.org,
+	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
+	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu,
+	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
+	ebiederm@xmission.com, dwmw2@infradead.org,
+	baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
+	andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
+Subject: Re: [PATCH v12 03/19] x86: Secure Launch Resource Table header file
+Message-ID: <Z8qE1B47InxE7n-v@kernel.org>
+References: <20241219194216.152839-1-ross.philipson@oracle.com>
+ <20241219194216.152839-4-ross.philipson@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304050305.901167-1-irogers@google.com> <20250304050305.901167-7-irogers@google.com>
- <Z8pKTE7tOqdqNUdA@google.com>
-In-Reply-To: <Z8pKTE7tOqdqNUdA@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Thu, 6 Mar 2025 21:30:13 -0800
-X-Gm-Features: AQ5f1JqqAJ5MO97ObltKzRcURCg1d-Uko29NllBm3N5v0f7KDyGvXHVOjRAnU58
-Message-ID: <CAP-5=fXdZZX=wa8EkN-dcpnDjA7J-cQ09BERufAQzoBeoNCT1g@mail.gmail.com>
-Subject: Re: [PATCH v4 06/11] perf dso: Add support for reading the e_machine
- type for a dso
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, guoren <guoren@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Jiri Slaby <jirislaby@kernel.org>, 
-	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>, linux-riscv@lists.infradead.org, 
-	Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241219194216.152839-4-ross.philipson@oracle.com>
 
-On Thu, Mar 6, 2025 at 5:22=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
-rote:
->
-> On Mon, Mar 03, 2025 at 09:03:00PM -0800, Ian Rogers wrote:
-> > For ELF file dsos read the e_machine from the ELF header. For kernel
-> > types assume the e_machine matches the perf tool. In other cases
-> > return EM_NONE.
-> >
-> > Signed-off-by: Ian Rogers <irogers@google.com>
-> > ---
-> >  tools/perf/util/dso.c | 54 +++++++++++++++++++++++++++++++++++++++++++
-> >  tools/perf/util/dso.h |  1 +
-> >  2 files changed, 55 insertions(+)
-> >
-> > diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
-> > index 5c6e85fdae0d..7f2f1af4f73b 100644
-> > --- a/tools/perf/util/dso.c
-> > +++ b/tools/perf/util/dso.c
-> > @@ -1170,6 +1170,60 @@ ssize_t dso__data_read_offset(struct dso *dso, s=
-truct machine *machine,
-> >       return data_read_write_offset(dso, machine, offset, data, size, t=
-rue);
-> >  }
-> >
-> > +uint16_t dso__e_machine(struct dso *dso, struct machine *machine)
-> > +{
-> > +     uint16_t e_machine =3D EM_NONE;
-> > +     int fd;
-> > +
-> > +     switch (dso__binary_type(dso)) {
-> > +     case DSO_BINARY_TYPE__KALLSYMS:
-> > +     case DSO_BINARY_TYPE__GUEST_KALLSYMS:
-> > +     case DSO_BINARY_TYPE__VMLINUX:
-> > +     case DSO_BINARY_TYPE__GUEST_VMLINUX:
-> > +     case DSO_BINARY_TYPE__GUEST_KMODULE:
-> > +     case DSO_BINARY_TYPE__GUEST_KMODULE_COMP:
-> > +     case DSO_BINARY_TYPE__SYSTEM_PATH_KMODULE:
-> > +     case DSO_BINARY_TYPE__SYSTEM_PATH_KMODULE_COMP:
-> > +     case DSO_BINARY_TYPE__KCORE:
-> > +     case DSO_BINARY_TYPE__GUEST_KCORE:
-> > +     case DSO_BINARY_TYPE__BPF_PROG_INFO:
-> > +     case DSO_BINARY_TYPE__BPF_IMAGE:
-> > +     case DSO_BINARY_TYPE__OOL:
-> > +     case DSO_BINARY_TYPE__JAVA_JIT:
->
-> I think some of them can be possible in recorded data.  But let's go
-> simple with EM_HOST as we haven't supported cross-arch trace.
+On Thu, Dec 19, 2024 at 11:42:00AM -0800, Ross Philipson wrote:
+> Introduce the Secure Launch Resource Table which forms the formal
+> interface between the pre and post launch code.
+> 
+> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
 
-I think you are agreeing with the code, which I think is right :-) I
-don't know a way to go from say /proc/kallsyms text file to an
-e_machine number and inventing a way is getting beyond the scope of
-this series.
+Is this interface kernel specific or uarch specific? I'd just
+explicitly state the context of the formal interface, that's
+all.
 
-> > +             return EM_HOST;
-> > +     case DSO_BINARY_TYPE__DEBUGLINK:
-> > +     case DSO_BINARY_TYPE__BUILD_ID_CACHE:
-> > +     case DSO_BINARY_TYPE__BUILD_ID_CACHE_DEBUGINFO:
-> > +     case DSO_BINARY_TYPE__SYSTEM_PATH_DSO:
-> > +     case DSO_BINARY_TYPE__OPENEMBEDDED_DEBUGINFO:
-> > +     case DSO_BINARY_TYPE__FEDORA_DEBUGINFO:
-> > +     case DSO_BINARY_TYPE__UBUNTU_DEBUGINFO:
-> > +     case DSO_BINARY_TYPE__MIXEDUP_UBUNTU_DEBUGINFO:
-> > +     case DSO_BINARY_TYPE__BUILDID_DEBUGINFO:
-> > +             break;
-> > +     case DSO_BINARY_TYPE__NOT_FOUND:
-> > +     default:
-> > +             return EM_NONE;
-> > +     }
-> > +
-> > +     pthread_mutex_lock(&dso__data_open_lock);
->
-> Hmm.. I'm afraid it'd slow down perf trace a bit more.  It sees
-> occasional LOST events.  But it may be ok as it's cached in thread later.
+> ---
+>  include/linux/slr_table.h | 277 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 277 insertions(+)
+>  create mode 100644 include/linux/slr_table.h
+> 
+> diff --git a/include/linux/slr_table.h b/include/linux/slr_table.h
+> new file mode 100644
+> index 000000000000..48d85d505a50
+> --- /dev/null
+> +++ b/include/linux/slr_table.h
+> @@ -0,0 +1,277 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * TrenchBoot Secure Launch Resource Table
+> + *
+> + * The Secure Launch Resource Table is TrenchBoot project defined
+> + * specfication to provide cross-architecture compatibility. See
+> + * TrenchBoot Secure Launch kernel documentation for details.
+> + *
+> + * Copyright (c) 2024 Apertus Solutions, LLC
+> + * Copyright (c) 2024, Oracle and/or its affiliates.
+> + */
+> +
+> +#ifndef _LINUX_SLR_TABLE_H
+> +#define _LINUX_SLR_TABLE_H
+> +
+> +/* Put this in efi.h if it becomes a standard */
+> +#define SLR_TABLE_GUID				EFI_GUID(0x877a9b2a, 0x0385, 0x45d1, 0xa0, 0x34, 0x9d, 0xac, 0x9c, 0x9e, 0x56, 0x5f)
+> +
+> +/* SLR table header values */
+> +#define SLR_TABLE_MAGIC		0x4452544d
+> +#define SLR_TABLE_REVISION	1
+> +
+> +/* Current revisions for the policy and UEFI config */
+> +#define SLR_POLICY_REVISION		1
+> +#define SLR_UEFI_CONFIG_REVISION	1
+> +
+> +/* SLR defined architectures */
+> +#define SLR_INTEL_TXT		1
+> +#define SLR_AMD_SKINIT		2
+> +
+> +/* SLR defined bootloaders */
+> +#define SLR_BOOTLOADER_INVALID	0
+> +#define SLR_BOOTLOADER_GRUB	1
+> +
+> +/* Log formats */
+> +#define SLR_DRTM_TPM12_LOG	1
+> +#define SLR_DRTM_TPM20_LOG	2
+> +
+> +/* DRTM Policy Entry Flags */
+> +#define SLR_POLICY_FLAG_MEASURED	0x1
+> +#define SLR_POLICY_IMPLICIT_SIZE	0x2
+> +
+> +/* Array Lengths */
+> +#define TPM_EVENT_INFO_LENGTH		32
+> +#define TXT_VARIABLE_MTRRS_LENGTH	32
+> +
+> +/* Tags */
+> +#define SLR_ENTRY_INVALID	0x0000
+> +#define SLR_ENTRY_DL_INFO	0x0001
+> +#define SLR_ENTRY_LOG_INFO	0x0002
+> +#define SLR_ENTRY_ENTRY_POLICY	0x0003
+> +#define SLR_ENTRY_INTEL_INFO	0x0004
+> +#define SLR_ENTRY_AMD_INFO	0x0005
+> +#define SLR_ENTRY_ARM_INFO	0x0006
+> +#define SLR_ENTRY_UEFI_INFO	0x0007
+> +#define SLR_ENTRY_UEFI_CONFIG	0x0008
+> +#define SLR_ENTRY_END		0xffff
+> +
+> +/* Entity Types */
+> +#define SLR_ET_UNSPECIFIED	0x0000
+> +#define SLR_ET_SLRT		0x0001
+> +#define SLR_ET_BOOT_PARAMS	0x0002
+> +#define SLR_ET_SETUP_DATA	0x0003
+> +#define SLR_ET_CMDLINE		0x0004
+> +#define SLR_ET_UEFI_MEMMAP	0x0005
+> +#define SLR_ET_RAMDISK		0x0006
+> +#define SLR_ET_TXT_OS2MLE	0x0010
+> +#define SLR_ET_UNUSED		0xffff
+> +
+> +#ifndef __ASSEMBLY__
+> +
+> +/*
+> + * Primary Secure Launch Resource Table Header
+> + */
+> +struct slr_table {
+> +	u32 magic;
+> +	u16 revision;
+> +	u16 architecture;
+> +	u32 size;
+> +	u32 max_size;
+> +	/* table entries */
+> +} __packed;
+> +
+> +/*
+> + * Common SLRT Table Header
+> + */
+> +struct slr_entry_hdr {
+> +	u32 tag;
+> +	u32 size;
+> +} __packed;
+> +
+> +/*
+> + * Boot loader context
+> + */
+> +struct slr_bl_context {
+> +	u16 bootloader;
+> +	u16 reserved[3];
+> +	u64 context;
+> +} __packed;
+> +
+> +/*
+> + * Dynamic Launch Callback Function type
+> + */
+> +typedef void (*dl_handler_func)(struct slr_bl_context *bl_context);
+> +
+> +/*
+> + * DRTM Dynamic Launch Configuration
+> + */
+> +struct slr_entry_dl_info {
+> +	struct slr_entry_hdr hdr;
+> +	u64 dce_size;
+> +	u64 dce_base;
+> +	u64 dlme_size;
+> +	u64 dlme_base;
+> +	u64 dlme_entry;
+> +	struct slr_bl_context bl_context;
+> +	u64 dl_handler;
+> +} __packed;
+> +
+> +/*
+> + * TPM Log Information
+> + */
+> +struct slr_entry_log_info {
+> +	struct slr_entry_hdr hdr;
+> +	u16 format;
+> +	u16 reserved;
+> +	u32 size;
+> +	u64 addr;
+> +} __packed;
+> +
+> +/*
+> + * DRTM Measurement Entry
+> + */
+> +struct slr_policy_entry {
+> +	u16 pcr;
+> +	u16 entity_type;
+> +	u16 flags;
+> +	u16 reserved;
+> +	u64 size;
+> +	u64 entity;
+> +	char evt_info[TPM_EVENT_INFO_LENGTH];
+> +} __packed;
+> +
+> +/*
+> + * DRTM Measurement Policy
+> + */
+> +struct slr_entry_policy {
+> +	struct slr_entry_hdr hdr;
+> +	u16 reserved[2];
+> +	u16 revision;
+> +	u16 nr_entries;
+> +	struct slr_policy_entry policy_entries[];
+> +} __packed;
+> +
+> +/*
+> + * Secure Launch defined MTRR saving structures
+> + */
+> +struct slr_txt_mtrr_pair {
+> +	u64 mtrr_physbase;
+> +	u64 mtrr_physmask;
+> +} __packed;
+> +
+> +struct slr_txt_mtrr_state {
+> +	u64 default_mem_type;
+> +	u64 mtrr_vcnt;
+> +	struct slr_txt_mtrr_pair mtrr_pair[TXT_VARIABLE_MTRRS_LENGTH];
+> +} __packed;
+> +
+> +/*
+> + * Intel TXT Info table
+> + */
+> +struct slr_entry_intel_info {
+> +	struct slr_entry_hdr hdr;
+> +	u64 boot_params_addr;
+> +	u64 txt_heap;
+> +	u64 saved_misc_enable_msr;
+> +	struct slr_txt_mtrr_state saved_bsp_mtrrs;
+> +} __packed;
+> +
+> +/*
+> + * UEFI config measurement entry
+> + */
+> +struct slr_uefi_cfg_entry {
+> +	u16 pcr;
+> +	u16 reserved;
+> +	u32 size;
+> +	u64 cfg; /* address or value */
+> +	char evt_info[TPM_EVENT_INFO_LENGTH];
+> +} __packed;
+> +
+> +/*
+> + * UEFI config measurements
+> + */
+> +struct slr_entry_uefi_config {
+> +	struct slr_entry_hdr hdr;
+> +	u16 reserved[2];
+> +	u16 revision;
+> +	u16 nr_entries;
+> +	struct slr_uefi_cfg_entry uefi_cfg_entries[];
+> +} __packed;
+> +
+> +static inline void *slr_end_of_entries(struct slr_table *table)
 
-Agreed, I think the caching will handle this. The lock is pre-existing
-and is used to guard use of the dso_data->fd. The lock could be made
-reader-writer, it could be placed within the dso_data it could also be
-sharded. I've not done any of that here as I believe the processing is
-all handled on a single thread anyway.
+I'd document these functions. No need to go over the top here i.e.,
+no need to have full parameter descriptions but more like
 
-> > +
-> > +     /*
-> > +      * dso__data(dso)->fd might be closed if other thread opened anot=
-her
-> > +      * file (dso) due to open file limit (RLIMIT_NOFILE).
-> > +      */
-> > +     try_to_open_dso(dso, machine);
-> > +     fd =3D dso__data(dso)->fd;
-> > +     if (fd >=3D 0) {
-> > +             _Static_assert(offsetof(Elf32_Ehdr, e_machine) =3D=3D 18,=
- "Unexpected offset");
-> > +             _Static_assert(offsetof(Elf64_Ehdr, e_machine) =3D=3D 18,=
- "Unexpected offset");
-> > +             if (pread(fd, &e_machine, sizeof(e_machine), 18) !=3D siz=
-eof(e_machine))
->
-> I think it needs to check the endianess and swap the data.
+/*
+ * Tell a short description.
+ */
 
-Agreed. Will send a fix in v5.
+> +{
+> +	return (void *)table + table->size;
+> +}
+> +
+> +static inline void *
+> +slr_next_entry(struct slr_table *table,
+> +	       struct slr_entry_hdr *curr)
+> +{
+> +	struct slr_entry_hdr *next = (struct slr_entry_hdr *)((u8 *)curr + curr->size);
+> +
+> +	if ((void *)next >= slr_end_of_entries(table))
+> +		return NULL;
+> +	if (next->tag == SLR_ENTRY_END)
+> +		return NULL;
+> +
+> +	return next;
+> +}
+> +
+> +static inline void *
+> +slr_next_entry_by_tag(struct slr_table *table,
+> +		      struct slr_entry_hdr *entry,
+> +		      u16 tag)
+> +{
+> +	if (!entry) /* Start from the beginning */
+> +		entry = (struct slr_entry_hdr *)(((u8 *)table) + sizeof(*table));
+> +
+> +	for ( ; ; ) {
+> +		if (entry->tag == tag)
+> +			return entry;
+> +
+> +		entry = slr_next_entry(table, entry);
+> +		if (!entry)
+> +			return NULL;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+> +static inline int
+> +slr_add_entry(struct slr_table *table,
+> +	      struct slr_entry_hdr *entry)
+> +{
+> +	struct slr_entry_hdr *end;
+> +
+> +	if ((table->size + entry->size) > table->max_size)
+> +		return -1;
+> +
+> +	memcpy((u8 *)table + table->size - sizeof(*end), entry, entry->size);
+> +	table->size += entry->size;
+> +
+> +	end  = (struct slr_entry_hdr *)((u8 *)table + table->size - sizeof(*end));
+> +	end->tag = SLR_ENTRY_END;
+> +	end->size = sizeof(*end);
+> +
+> +	return 0;
+> +}
+> +
+> +static inline void
+> +slr_init_table(struct slr_table *slrt, u16 architecture, u32 max_size)
 
-Thanks,
-Ian
+E.g., what does slr_init_table() do and why and when it is called. Basic
+shit.
 
-> Thanks,
-> Namhyung
->
->
-> > +                     e_machine =3D EM_NONE;
-> > +     }
-> > +     pthread_mutex_unlock(&dso__data_open_lock);
-> > +     return e_machine;
-> > +}
-> > +
-> >  /**
-> >   * dso__data_read_addr - Read data from dso address
-> >   * @dso: dso object
-> > diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
-> > index f3ca2a5e7670..ba9b83db061a 100644
-> > --- a/tools/perf/util/dso.h
-> > +++ b/tools/perf/util/dso.h
-> > @@ -818,6 +818,7 @@ int dso__data_file_size(struct dso *dso, struct mac=
-hine *machine);
-> >  off_t dso__data_size(struct dso *dso, struct machine *machine);
-> >  ssize_t dso__data_read_offset(struct dso *dso, struct machine *machine=
-,
-> >                             u64 offset, u8 *data, ssize_t size);
-> > +uint16_t dso__e_machine(struct dso *dso, struct machine *machine);
-> >  ssize_t dso__data_read_addr(struct dso *dso, struct map *map,
-> >                           struct machine *machine, u64 addr,
-> >                           u8 *data, ssize_t size);
-> > --
-> > 2.48.1.711.g2feabab25a-goog
-> >
+> +{
+> +	struct slr_entry_hdr *end;
+> +
+> +	slrt->magic = SLR_TABLE_MAGIC;
+> +	slrt->revision = SLR_TABLE_REVISION;
+> +	slrt->architecture = architecture;
+> +	slrt->size = sizeof(*slrt) + sizeof(*end);
+> +	slrt->max_size = max_size;
+> +	end = (struct slr_entry_hdr *)((u8 *)slrt + sizeof(*slrt));
+> +	end->tag = SLR_ENTRY_END;
+> +	end->size = sizeof(*end);
+> +}
+> +
+> +#endif /* !__ASSEMBLY */
+> +
+> +#endif /* _LINUX_SLR_TABLE_H */
+> -- 
+> 2.39.3
+> 
+
+BR, Jarkko
 
