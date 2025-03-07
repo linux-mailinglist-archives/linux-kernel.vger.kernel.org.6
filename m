@@ -1,221 +1,140 @@
-Return-Path: <linux-kernel+bounces-550249-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37323A55D25
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:35:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1963DA55D28
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:36:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67D031894339
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:35:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5279E17614D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F320B1519BC;
-	Fri,  7 Mar 2025 01:35:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D78AE14EC62;
+	Fri,  7 Mar 2025 01:36:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="MFnlFWQ0"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="CG7dZZvq"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E8547F4A;
-	Fri,  7 Mar 2025 01:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989DE18027
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 01:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741311322; cv=none; b=pTQD4fBcnvEk0eZn4V6ol/O/bSG5iEhK6j0+N282wHmC4fr7xMwi/f+v1tN4stg7u8dfQbiKvNSbaU+bwJ69yd/DyG3GQgrzMfmNK/t2MpB2tFOHNh9kv7iEoGeqgOCkSHtmpmFFT5VkRJLwdkGbFNVtK4I6rbZqzdFyqqvBa9c=
+	t=1741311367; cv=none; b=AQjl54J7+6QNYav0ahDTw0yKp15Uq7BDeGSnPotfgoRXYlEFOgSHpd+r3jGe7LWzMnYs6tJiB5gTVppM7SeXGFthWh8vkYNVD35v88Cj0QvUoQEkQn7O26dPe5dkGWhu+41bjEK8NrQm4oXW6PV16zBm1zVQJv1sNAX5GfyoI7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741311322; c=relaxed/simple;
-	bh=iwmBdA0oZSZkpdZGUsHAyC8ykDesg/5Gu2d76aTgTys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=J7TSQl9ZtAyRRjeCyPXPamTFnzTdPC+wC6ZKnC/fT+uD30t1mV9TDNzR1h3Ebc2NlD2MJrgbmtNhMm5QMDGVptAtDo1jTq7c13X+dNcMJ+1YHHBBjP94e/kiXrp9pKVDcblhDYCMZjhmY1zpIk6j7OSZWDCrmqvlJfX8laQwCGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=MFnlFWQ0; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5271Z5dF3909116
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 6 Mar 2025 19:35:05 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741311305;
-	bh=65QJNz0IzEjYe1Hc+vKnbWORuc7bbdrHpqTtP+HxPT0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=MFnlFWQ0d9WQ8c6y4bWgCqFMkZgjxxAjPOKp0+4ijcT+nxIDfuohEFS4Trpdfok5j
-	 BlR8nqgIMgVYqnMqZGvdWBsw4BBgRacxKwwkX13ktHH5j6CHx49WEa5sdWupBd5ZEg
-	 7w4z9GESzo+uoouisHcCJjQp27+at/chphB9b2Bk=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5271Z58X030946
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 6 Mar 2025 19:35:05 -0600
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 6
- Mar 2025 19:35:04 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 6 Mar 2025 19:35:04 -0600
-Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5271Z44t096721;
-	Thu, 6 Mar 2025 19:35:04 -0600
-Message-ID: <db72b7f7-0771-442c-91bf-507a3e08cfdc@ti.com>
-Date: Thu, 6 Mar 2025 19:35:04 -0600
+	s=arc-20240116; t=1741311367; c=relaxed/simple;
+	bh=BVRY6tFruoswUnFPQ21OUmD/QgS6sdmyxv+4b7sgmVE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L0QwMBeA84eBAIkSdxGPxtYbiJzN93eSKCIz1TT03Fy/E5c8gQHtbHsuZ4M5ebipleQUv63d5JkHOWBJ9cJ/lZXGP4xURgp3Zrlf6oK0jf/G3bw1CLyjne8d9coNUNW934oJh1OBIOmAarFaMyFEWnPWHqGQeWUSUbNE6YFedwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=CG7dZZvq; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c3cb761402so255429585a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 17:36:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1741311361; x=1741916161; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=I1axXD7Ty6zHgaHZGIlmJ4iSvajQDuxDvhtrMSh28go=;
+        b=CG7dZZvqPxmIk8pZAQutd3HS11YO43PNx+EPSWKjjRztHhGg2GYYhJHYfNwGo3zGqu
+         rbhyIRi1XMKvraAZ/jmmnNoA0ai91Owz9wcY9Dcx4xarcYKqMtDeaktDrstCF8pH7hQM
+         +qSThfx1/dERpSZ/+D8G5JlnjVvvY3q6dK7boKkbqVrYSh4bA8FmWntcNGNCxcNu7QP1
+         wxg9aixqpiMpTN9INo/bParKeqjgEy/xTPBddFJZtFsma79VOii7SAufLoWsp1jhqut8
+         DWkBoPyXHg5lQtI/09nkLwrhjjMCQTT8kk5c7sRcOqKqNel0CLjdqyYalFCfk3xQkT+u
+         JhmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741311361; x=1741916161;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I1axXD7Ty6zHgaHZGIlmJ4iSvajQDuxDvhtrMSh28go=;
+        b=jvH1OEf2GZMrzj8HrPd+BP0AdJ9G9O3AKlqn1cG5TFc5pO6aEoKB9GS0CPZoTf5huE
+         vG+OtfN2tqb3GXHm6iIWjkGaeT3AOBpCnxp1Vsv/3eNHGR6Nt4IR4JHzkrj4rTUoYRSw
+         lcl6l32uGv4BJNzsrfMPyjYaxh2OHSyVL52yiy5DLc6UzMRDCzAzUpDAZT7cnJTQ0zIN
+         ew+hZAKhe21jPi5f+kESTbOk/0S+idjrg1SxuK3GBOI56dzLSywKOe/75isUDkOfzEwU
+         CAIlqDMKZT21TlPrIXQeUcHD7M8M3VqLW7j/FAajVjDYiDls0RcAWtFUup4QzGxIji7z
+         Q03w==
+X-Forwarded-Encrypted: i=1; AJvYcCUE5PnSxPh5Nj3kAQTLl4rVi2SpnjxGIyqNdsTmSRLe3r1FrmDM/zO6Oo3wixE01E9Bahu5OqWRDLG/N4s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylzS9cCaTXOim8Fjzmc+LGde7IhfErtApyadjY9tfO0NF1pSjJ
+	kSJKozvbjXe8Id2mOj1Y0kr3x2nm+1uAl4A3cVsWc+l9FxKFwz0NIJ2n9D8+kmA=
+X-Gm-Gg: ASbGncvXuIs9Owls5Aayx7XIuV/IVmk6g4hCNsVNvN9HTZqYi7dfAU04rsplo6wkZJl
+	7Mngi+hiSu1GYiok790or+k71b4BA7CNhPbssmb4gPsI4A8WmBvi+Yy86c80l4/zP1ig/cbOfKr
+	mvfM0z6SP3wN+esPP1wIWo6Zvs+L2Ilnsbg5B1JqUFPPgiue6I7OOSqG7PlvLQq5ReoHE/KtWhn
+	ZGickna4mpiCqB3QZYicAEwtVZnlCIfj06twFjzshjRb6jAPaLTYqdGzHW5y5PN7XsYFTycKa2s
+	l4J6tmdfdW6V9KH78mFdoAbyu4JtQHAaBeW4s7TVYrI=
+X-Google-Smtp-Source: AGHT+IE4fUtCg50WmjJd54wCtiMGccA2dFbqaij+Sd9VqfL03TwwvKXFnADFHg2JGi7aDAzHdcxQGA==
+X-Received: by 2002:a05:620a:6a87:b0:7c3:dfc7:e8fd with SMTP id af79cd13be357-7c4e61121cfmr198986585a.30.1741311361230;
+        Thu, 06 Mar 2025 17:36:01 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c3e533a0b1sm167758585a.10.2025.03.06.17.36.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 17:36:00 -0800 (PST)
+Date: Thu, 6 Mar 2025 20:35:59 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Nhat Pham <nphamcs@gmail.com>
+Cc: akpm@linux-foundation.org, yosryahmed@google.com, yosry.ahmed@linux.dev,
+	chengming.zhou@linux.dev, linux-mm@kvack.org, kernel-team@meta.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] page_io: zswap: do not crash the kernel on
+ decompression failure
+Message-ID: <20250307013559.GA423735@cmpxchg.org>
+References: <20250306205011.784787-1-nphamcs@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/10] arm64: dts: ti: k3-am62p5-sk: Enable IPC with
- remote processors
-To: Devarsh Thakkar <devarsht@ti.com>, Andrew Davis <afd@ti.com>,
-        Nishanth
- Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Hari Nagalla
-	<hnagalla@ti.com>,
-        Soumya <s-tripathy@ti.com>,
-        "'Krishnamoorthy, Venkatesan'"
-	<v-krishnamoorthy@ti.com>,
-        "Khasim, Syed Mohammed" <khasim@ti.com>,
-        "Bajjuri,
- Praneeth" <praneeth@ti.com>
-References: <20250210221530.1234009-1-jm@ti.com>
- <20250210221530.1234009-7-jm@ti.com>
- <04e77daf-e775-44fa-82bf-8b6ebf73bcef@ti.com>
- <787f9d24-25bc-4171-bd8a-88fe9cef694d@ti.com>
- <64fa3794-e36b-2f77-ff8e-3c2ede3c3927@ti.com>
-Content-Language: en-US
-From: Judith Mendez <jm@ti.com>
-In-Reply-To: <64fa3794-e36b-2f77-ff8e-3c2ede3c3927@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306205011.784787-1-nphamcs@gmail.com>
 
-Hi Devarsh,
-
-On 2/27/25 6:05 AM, Devarsh Thakkar wrote:
-> Hi Judith,
+On Thu, Mar 06, 2025 at 12:50:10PM -0800, Nhat Pham wrote:
+> Currently, we crash the kernel when a decompression failure occurs in
+> zswap (either because of memory corruption, or a bug in the compression
+> algorithm). This is overkill. We should only SIGBUS the unfortunate
+> process asking for the zswap entry on zswap load, and skip the corrupted
+> entry in zswap writeback.
 > 
-> Thanks for the patch.
+> See [1] for a recent upstream discussion about this.
 > 
-> On 18/02/25 23:21, Judith Mendez wrote:
->> Hi Andrew,
->>
->>
->> On 2/18/25 10:38 AM, Andrew Davis wrote:
->>> On 2/10/25 4:15 PM, Judith Mendez wrote:
->>>> From: Devarsh Thakkar <devarsht@ti.com>
->>>>
->>>> For each remote proc, reserve memory for IPC and bind the mailbox
->>>> assignments. Two memory regions are reserved for each remote processor.
->>>> The first region of 1MB of memory is used for Vring shared buffers
->>>> and the second region is used as external memory to the remote processor
->>>> for the resource table and for tracebuffer allocations.
->>>>
->>>> Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
->>>> Signed-off-by: Hari Nagalla <hnagalla@ti.com>
->>>> Signed-off-by: Judith Mendez <jm@ti.com>
->>>> ---
->>>> Changes since v4:
->>>> - Drop SRAM node for am62px MCU R5fSS0 core0
->>>> ---
->>>>    arch/arm64/boot/dts/ti/k3-am62p5-sk.dts | 50 ++++++++++++++++++++++---
->>>>    1 file changed, 44 insertions(+), 6 deletions(-)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
->>>> b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
->>>> index ad71d2f27f538..9609727d042d3 100644
->>>> --- a/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
->>>> +++ b/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts
->>>> @@ -48,6 +48,30 @@ reserved-memory {
->>>>            #size-cells = <2>;
->>>>            ranges;
->>>> +        mcu_r5fss0_core0_dma_memory_region:
->>>> mcu-r5fss-dma-memory-region@9b800000 {
->>>> +            compatible = "shared-dma-pool";
->>>> +            reg = <0x00 0x9b800000 0x00 0x100000>;
->>>> +            no-map;
->>>> +        };
->>>> +
+> The zswap writeback case is relatively straightforward to fix. For the
+> zswap_load() case, we change the return behavior:
 > 
-> I believe you are testing these carveouts against the default firmwares
-> shipped with AM62P SDK (compiled from meta-arago), With the same firmwares,
-> each remote core also does inter-processor communication with each other
-> (RTOS<->RTOS) on bootup, so you need to reserve the regions for the same too
-> as done here [1].
-
-This is how I originally had the patch Devarsh, if you see earlier
-review, we removed the SRAM nodes and the rtos-to-rtos memory carveouts.
-
-
+> * Return 0 on success.
+> * Return -ENOENT (with the folio locked) if zswap does not own the
+>   swapped out content.
+> * Return -EIO if zswap owns the swapped out content, but encounters a
+>   decompression failure for some reasons. The folio will be unlocked,
+>   but not be marked up-to-date, which will eventually cause the process
+>   requesting the page to SIGBUS (see the handling of not-up-to-date
+>   folio in do_swap_page() in mm/memory.c), without crashing the kernel.
+> * Return -EINVAL if we encounter a large folio, as large folio should
+>   not be swapped in while zswap is being used. Similar to the -EIO case,
+>   we also unlock the folio but do not mark it as up-to-date to SIGBUS
+>   the faulting process.
 > 
->>>> +        mcu_r5fss0_core0_memory_region: mcu-r5fss-memory-region@9b900000 {
->>>> +            compatible = "shared-dma-pool";
->>>> +            reg = <0x00 0x9b900000 0x00 0xf00000>;
->>>> +            no-map;
->>>> +        };
->>>> +
->>>> +        wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9c800000 {
->>>> +            compatible = "shared-dma-pool";
->>>> +            reg = <0x00 0x9c800000 0x00 0x100000>;
->>>> +            no-map;
->>>> +        };
->>>> +
->>>> +        wkup_r5fss0_core0_memory_region: r5f-memory@9c900000 {
->>>> +            compatible = "shared-dma-pool";
->>>> +            reg = <0x00 0x9c900000 0x00 0x1e00000>;
->>>
->>> 0x1e00000?
->>>
->>> Yes I know you didn't add this and are just coping it from below, but it
->>> is still an issue. I see the same problem for the next patch, the R5F memory
->>> size is 0xc00000??
->>>
->>> Every remote core gets 15MB (0xf00000), this has been true for all K3, and
->>> all cores, DSP, R5F, M4, etc.. You even do it correct for the MCU R5F above,
->>> but the WKUP R5F on AM62P and AM62 are just randomly given 30M and 12MB?
->>
->> Not sure why FW requires 30MB here, I have reached out to FW team to
->> investigate this, will respond back here soon.
->>
+> As a side effect, we require one extra zswap tree traversal in the load
+> and writeback paths. Quick benchmarking on a kernel build test shows no
+> performance difference:
 > 
-> You will need an alignment with the firmware team to make sure that it doesn't
-> break with the default firmwares shipped with the AM62Px SDK. Also just FYI,
-> this will leave a gap of 14 MiB between the wakeup R5 and the next component
-> i.e. ATF, ideally we should have avoided this gap but seems like ATF nodes are
-> already upstream [2], so probably can't do much, nevertheless I hope that 14
-> MiB will be claimed/used by Linux in some manner.
-
-I did a sanity boot test with the default firmwares shipped for am62px
-SDK, no error with am62px boot so far. Changes are: removed SRAM node, 
-reduced wkup r5 memory carveout, no rtos-to-rtos memory carveout).
-
-But I realize this is not a complete test. I believe there may be
-potentially memory corruption with these changes if all implemented.
-
-Andrew, I am not sure we are going in a good direction here, unless we
-have a different reduced/fixed FW in the am62px SDK, we may have memory
-corruption issues on our hands.
-
-~ Judith
-
-
+> With the new scheme:
+> real: mean: 125.1s, stdev: 0.12s
+> user: mean: 3265.23s, stdev: 9.62s
+> sys: mean: 2156.41s, stdev: 13.98s
 > 
-> Soumya,
-> Please provide an ACK for this, if the DM R5 firmware is exceeding 15 MiB,
-> then you will need to update your linker scripts and regenerate the ipc echo
-> test firmwares to make sure the wakeup R5 code/data does not exceed to what is
-> being proposed here (15 MiB).
+> The old scheme:
+> real: mean: 125.78s, stdev: 0.45s
+> user: mean: 3287.18s, stdev: 5.95s
+> sys: mean: 2177.08s, stdev: 26.52s
 > 
-> [1]:
-> https://git.ti.com/cgit/ti-linux-kernel/ti-linux-kernel/tree/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts?h=11.00.05#n72
+> [1]: https://lore.kernel.org/all/ZsiLElTykamcYZ6J@casper.infradead.org/
 > 
-> [2]:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/ti/k3-am62p5-sk.dts?h=next-20250227#n51
-> 
-> Regards
-> Devarsh
+> Suggested-by: Matthew Wilcox <willy@infradead.org>
+> Suggested-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> Suggested-by: Johannes Weiner <hannes@cmpxchg.org>
+> Signed-off-by: Nhat Pham <nphamcs@gmail.com>
 
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
