@@ -1,111 +1,181 @@
-Return-Path: <linux-kernel+bounces-551638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACCFDA56F07
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:29:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5533A56F0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:30:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADBC87A9CAE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:28:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C119E3A8F8D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC2B2405E4;
-	Fri,  7 Mar 2025 17:29:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 217242405F2;
+	Fri,  7 Mar 2025 17:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="dG3MOep0"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iG2yx83z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A215F23FC68;
-	Fri,  7 Mar 2025 17:29:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EC9621ADD1;
+	Fri,  7 Mar 2025 17:30:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741368550; cv=none; b=aB0675jqaLtSw4+1ueT5oXTnRVHMme5zIUlzL9BUn0HPm6DPKLybBXnI2tDDe3ez43vDUyCFiDwhGDQOF8hBwIKSqZ2BCGj5YFxvNlelh6Uvm5jz6v9ZhTCoieWpLrN3hwEXfsoz7TT3Elq9K4wkq8YGtgNVob8zdHhA0m4PxBo=
+	t=1741368620; cv=none; b=LOzkIOgLwBQl32KOANRAsIyEQw0W0n1M2iV0V3vtOHsfN//c7swdKBcf1j9betS8+YydUtee7jrwYDV9VuqQYrI7uIqW584Z8gs5M6ECX4Tkzgy3CSzgLNNOyP/LvmSD2QYs1mmAaKx39pGqHwjhr+jajtYlkWdBd5zsFx4+cN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741368550; c=relaxed/simple;
-	bh=pAXk9nplQXMo4PaQGK2RiTm1NJNkWQ9qJnNQm1qjKCo=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=XqkB3XBYv9HkaN4NVLxW4ZVoYmkPbfaKdbPooPlYIcfThCl/77Ih7b0tN/RsCKaboMrkCdusDK+rUELjhrPUg21rnsmF3DhLDXnQ0shR22OWg25K1g89HAECovgnTi6TH4yTbaXuglUUmgDqrpRFM9q6ZjhjNeGmem47DOx+JtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=dG3MOep0; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741368545; x=1741973345; i=markus.elfring@web.de;
-	bh=9mK+OlGiVmRDcs0Jmovne1s6idfZ5q2umrUN0yXPCNc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=dG3MOep0kSdHLtgbLbH1gwJD7jia4EM1iTw/+4U3WftPFnmQ2GfcaNao3/oYHmai
-	 qO4Bd4DixkzvIABvIoWkJOqUxaG5ciGM4+LnOFJr/CVi2SP8jchZ8PW6VM4X7Vfxz
-	 OA/Cq9q6aFmplq0QQbETkvT7mSOhA2eCqMZClIZij0dAjva9oplFDs9TppWt3d2lS
-	 a94RdMQPxwWJGFFw6p2+dj1fZatmX6keFqPStem3c22EIVZH1XIE3MwA0qVLPIt3n
-	 289JOT242ZrPOvL8QZOGSxj8/EoexG3loiQGP/w2EIJGVNdupseMKcroNUGBU4srw
-	 bcj+/QSpyEWG1HWfLQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.70]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M8T7E-1tv1MH1vHM-000rvy; Fri, 07
- Mar 2025 18:29:05 +0100
-Message-ID: <03bc1b71-6b53-428e-8b2e-4f3a434087b1@web.de>
-Date: Fri, 7 Mar 2025 18:29:02 +0100
+	s=arc-20240116; t=1741368620; c=relaxed/simple;
+	bh=idZpOgGWwBcWwDlTrADTld9lJlnm8FlUf5M8sgWw7Eo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZXQVtnK5dKYtRlGzwVn27QAe0SGPij1pX4A5s6ysnROofCsEU4gmThJz+t/KTtVOT6pjIrIjEDxKPUf5dSAfVx6fiTL2vu/dx0fHP3PoN88/NpehoRgOBMZ50FTQlklDr9zLC5R2hMDJa9h6xNHdbH781/2ZhrLCV+w0a3BIRDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iG2yx83z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7D23C4CED1;
+	Fri,  7 Mar 2025 17:30:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741368619;
+	bh=idZpOgGWwBcWwDlTrADTld9lJlnm8FlUf5M8sgWw7Eo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iG2yx83zckufubez5OOpWPHQR2I52lDOX+Dhg3R0BFZ/eqTo4oD3GzbMUZ8XFNEH6
+	 naejkbQoZnvfAYsDluW0lBydwiElJg43BGTJk/PyJny+4OwuluHVwqNGz1tgEEBqgv
+	 /hz/NHjX1iPuY0cnV0C2nH4ZAfSQg9DNwDFZ0YFPtnP64yJpWMooh0YkYUkeRGrcJ2
+	 BQcTuWueRugSi2gi7KEnmAGiecCNeKKNALsM7Sw5gYKdnRamDynbUpy+OnnT92NfBM
+	 SS/hyL9TCNVSh2Z30GE6J7edjmRzGmC4yOBjumldrRitw7/gdz/XDYhQjTMgDsD1bA
+	 4LJcWMMEWSg8w==
+Date: Fri, 7 Mar 2025 18:30:13 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, aliceryhl@google.com,
+	robin.murphy@arm.com, daniel.almeida@collabora.com,
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+Message-ID: <Z8stJXrDtA5tZB40@cassiopeiae>
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+ <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+ <20250305174118.GA351188@nvidia.com>
+ <Z8mlAxsszdOH-ow8@cassiopeiae>
+ <Z8m9j3SwWHqaCTXo@phenom.ffwll.local>
+ <20250306160907.GF354511@nvidia.com>
+ <Z8qzP3CR8Quhp87Z@pollux>
+ <20250307124809.GL354511@nvidia.com>
+ <Z8rxm-BHldKqEwyp@phenom.ffwll.local>
+ <20250307143821.GM354511@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: vulab@iscas.ac.cn, linux-nfs@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Anna Schumaker <anna@kernel.org>,
- Trond Myklebust <trondmy@kernel.org>
-References: <20250303140314.1650-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH] NFS: handle wait_on_bit_action() errors in
- nfs_vm_page_mkwrite()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250303140314.1650-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:YWnTnJ2Fxc4XORGjPMBmYYOBrRGjG7e8Oq/hxJpYzBc8eCRPzud
- R5sx/ob+f76LUi6gcRbEhhgOeZZnwVqJ7UWzJJSDJjeD69dvQOEnDm52cRqB+w7dVSY3IPL
- 4zLOuql/uVlNMF29wmxIqupzBzv3nml5DaiF5ve2tvreDh+VutVzTE13R2/gP9sNonJcBHB
- /Mlj7l51/tEPTUbGEhE4g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:1EK34QZ6akg=;adCjeFb0z1LeRI04IrU5yu6lNrm
- Q0jJOCbYUBELkUxy0Jlo2RP/j9fAQRatZ5+YKZtYDgoNMuenZ9iLcOBxGqahlsTO0lMShmG/H
- NGkdcPjMUxrkIofsyrigdV5SbihO049OqJdSnkFxov+X0wR8sZGfmEXW3AzJ1Ph0/bAeon1ox
- AlFu0nDhBk2uiYIWlIBkg5cGGa8Zrt7niqYhv8c5C0CPMvEbxGdW+Hf/nqzbYSXNhBHx9/9I2
- ak2Q6PdeYgUUnGRkQAmRvFK6iOY7nMDKNVuBXeKjD67cV/SmKaD5dD2GPfe5e2QQERvZqSScA
- R24zP+/gg8+Yf7dcmSiGPtlzKb7lv9nawO/xEW6pHDCQwRygm1vJ3kZXcWCz2qwq+bnhxs1Xi
- oNfa76XmVDDm0zKJxiA6Yvlqcy7t6HHoRidcam3MWd52nqiW+yC/GY+3cNWhhOygPyBY7lm98
- gzqVMSHDiCzHZvztaa8nZnviP1f1KoVT7G0jpZhGUI0Maf0kS49MaZrv5ErnnkMpy6QxWnVN3
- 04E0JQ5w5twEtFNrk9IkQrlEmQMaVjzIQLvpVvIXzIg1m7Xq5hNC2+AZWlnNU9RQnLW6kRt3i
- rkCPHr2a+ncDBRE7m1sHuPWL9A4TS/+NRVjWo29uZiaYoaA5mZdBsrpd2NjBMu4kAhOhQPEQ5
- zp3hFack2X4hsTGa+rlx3ki64lSMl9i8kEbLK5+q+hjV/JYKOAoEjSOlcMrFfHU2Qn8DdwWHV
- uuUW2pxMqoQPGW4LsNYBvnDFZudxYVG1SaD92NrOKb04Z2Rh5uN/ph3gArcpWplmDiqkimtXK
- WmuEu9Xg513iIgfOuN3wQZqDlioaSuW5EsSJsCKYfBwHAkPP2aOkm5oN0tmTfWo6d3sMg2NRU
- jIo7r21NAVuCt55oNbRfFlzy+IRtO5TgUpCXJmQt3k2D8eyHPvxy8AJuTqMfACC0pRtJR7uMx
- UVkxONOgFNHcAJ0prbr4va0F/n6ARU4epXkGz/nWjo7HvLah+ZFsjMtx9GAatdQyEUvpVE/Ah
- VZo1Iy7rAufva8w/pRAFobzx4Rnp6x6NRBKitNHTWzsMOazwjLN32vfw21KjmnjyQ4LbK2xlM
- RlVDdmiYfcEgNlgz6Ubu1/Ga4AveGwfJ1afSYPIJwKpvvbydN53/m/1tP13FvdZiO0XHDvsvs
- qDTVNIgO6Z9ClCeue4gmnR3sGoG+yTqAo+lPi1IxNZ0ikDcc6Eacd3MYDV1IAwvniJbQHgCCU
- zB4cfPp4Ei9fe1a61Y4A6l06NAiRG2KJowhsSiVIi3DdbWQahg7n/02BGNmwx8itIBKE92a9O
- bkndwVgR3oq1hEJqYGNQhaCCg4WBXopqXGEsb0ySdCco1imV2M4cBVZng801s3IgsQfBxlFut
- Y8fPRSGsqXhaq4lCID7kAqsFoG4ZPIDcmT9qUoc3mpCGfcXpcmewaZUqTd030BD3fCDdbSNG9
- D+flVeKulZ1bqFIzQZMWp/sEtrho=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307143821.GM354511@nvidia.com>
 
-> Add error handling for wait_on_bit_action() failures in the page
-> fault path. Return VM_FAULT_SIGBUS instead of proceeding with
-> folio operations when wait_on_bit_action() fails.
+On Fri, Mar 07, 2025 at 10:38:21AM -0400, Jason Gunthorpe wrote:
+> 
+> This Rust direction is radically transforming how the driver lifecycle model
+> of the kernel works
 
-                                             call failed?
+I already explained in other threads that the Rust abstractions follow the device
+/ driver model. There is no "radical change" to it. Since I assume you still
+refer to the Devres aspect of it, please find another explanation in [1].
 
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc5#n145
+But please also show in detail where you see the "radical change" of the driver
+model, maybe there's some misunderstanding?
 
-Regards,
-Markus
+> with almost no review from any kernel experts.
+
+Do you question Greg being an expert on the driver model? Who do you think
+applied the patches after month of discussions on the mailing list and at
+conferences?
+
+> Certainly I object to it. I think others will too if they understood
+> what was going on here.
+
+Again, this stuff was on the corresponding mailing lists for month; I haven't
+seen such objections.
+
+I'm absolutely willing to address yours though. And I'm happy to be questioned
+on this stuff by you and in general.
+
+But please start doing so in a constructive way, i.e. if you find issues help
+solving them instead of just trying to blame people. If you think there is no
+issue, but still think another approach would be better, please send patches.
+
+> Write a position paper in Documentation/ on how you imagine lifecycle
+> will work with Rust driver bindings
+
+Rust abstractions follow the driver model, just like the C code does.
+
+What - and please provide details - should this position paper describe?
+The driver model itself, implementation details of the Rust abstractions or
+something else?
+
+> and get some acks from experienced people??
+
+Again, this stuff was on the list for month, I can't force people to review it.
+
+Do you have a list of those experienced people? Maybe you can get them to
+revisit things and contribute improvements?
+
+However, let me also say that experienced people *did* review it and work on it.
+
+---
+
+[1] Devres - C vs. Rust
+-----------------------
+
+Starting with C, let's pick the following two functions.
+
+	pcim_iomap()
+	pcim_request_region()
+
+Those two are called from probe() and the pointer returned from pcim_iomap() is
+stored in some driver specific structure, which, depending on the subsystem and
+driver, may out-live driver unbind.
+
+If the driver is unbound the following functions are called automatically after
+remove() from the corresponding devres callbacks.
+
+	pci_iounmap()
+	pci_release_region()
+
+The pointer in the driver specific structure (if still existent) becomes
+invalid.
+
+In Rust the lifecycle of the I/O memory mapping and the resource region are
+bound to a structure called pci::Bar.
+
+Creating a new pci::Bar calls pci_iomap() and pci_request_region(). Dropping the
+object calls pci_iounmap() and pci_release_region(). The pointer to the memory
+mapping is embedded in the pci::Bar object.
+
+The driver model prescribes that device resources must be released when the
+driver is unbound. Hence, we can't hand out a raw pci::Bar object to driver,
+because the object lifetime could be extended across the "driver is unbound"
+boundary.
+
+This is why we only ever give out the pci::Bar object in a Devres container,
+i.e. Devres<pci::Bar>.
+
+Devres puts the pci::Bar in a Revocable and sets up the devres callback. Once
+the devres callback is called the embedded pci::Bar is dropped, which calls
+pci_iounmap() and pci_release_region().
+
+Subsequently, the access to the pci::Bar for the owner of the Devres<pci::Bar>
+object is revoked, since the pointer to the memory mapping within the pci::Bar
+just became invalid.
+
+The latter is the only additional step the Rust abstraction does, in order to
+not leave drivers with an invalid pointer. However, this additional safety
+aspect is *not* a change of the driver model itself.
 
