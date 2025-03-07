@@ -1,470 +1,245 @@
-Return-Path: <linux-kernel+bounces-552105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CA64A575D2
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:11:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E87A575D1
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:11:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6713F189A7E6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:11:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05BB47A3E46
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 020B6259C8E;
-	Fri,  7 Mar 2025 23:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CCE4258CFE;
+	Fri,  7 Mar 2025 23:11:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="S6rX/t3X";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/HLmL+Zr"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aOeSeezs"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B249420D503;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A24208989;
 	Fri,  7 Mar 2025 23:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741389093; cv=none; b=Q4r1nSLX+hb9SiQAWvdUyrgb42v7B2cFq5eSmk77VUVvmdkoarXYTIAr24Rccn/8khaJheedaT3zbDBibmScagi5XIbqjtgVugrNv2EY/JVDzNjgGp5X6pvTa3KEm7r+FofwuJQciu7BWUOrE/roD9WzcuLpQi6ZN+i5aBs+jlA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741389093; c=relaxed/simple;
-	bh=Ij3hVw5vTDgBEzFeIoHCJcqczFlrcv5Zl8n4/HRAUPs=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Xja3oNmLgg8xPFZ2iQ8kZfRQHm4ZyASB3ERrkAmDZBbhrdwP1Tl4ySK/iT2KgceO9zL1yALEWK7zscKroJPq6WNVTKfL4+D0N8W/xEgwy3m6VVq866XDpGa6pKYlVUdGWTfjs4O3kMxp1Xa1UwTWGKxWxfgJyScbYbYe7tSOHIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=S6rX/t3X; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/HLmL+Zr; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 07 Mar 2025 23:11:17 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741389082;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ru1AZXogPtRV+/rRsRR3EzDIkWTbilwRn0lS/h0ZCQI=;
-	b=S6rX/t3XpVjx41U3yIunXJRy4y3zz29e/FDLysMVbErwAgejDXF0vj/J5TyBt2pT5jz40I
-	qshmEWJJNKab/CQ7XL3E5g5qxuIAq3k419A8obvz1mfAP/lxAmFx3alsp+X7T3rBrrqLLd
-	k5aEqkzPgZzbwn+CDNJ63rj6SBG/Z3FJ3TTHVQZljt8YLYl4Ji5vnTtWJ/tas9Vlrjr80L
-	NxrCNiA79wOs0797UH/A9DoipeCdQ6MrYRRpJxmsNE6b6p/XVOyMCcMsepbJdB2rxB68bG
-	DcXrl1DlxJRPoMpKTz2vUrd8QvFXjbsn+lv3rimgSbKSA09JbHxj2OyE+1DV4w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741389082;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ru1AZXogPtRV+/rRsRR3EzDIkWTbilwRn0lS/h0ZCQI=;
-	b=/HLmL+ZrrqOAljKqT6QwSTyW2gV84YE+9qooqY2yJSlxAOVs1UggYxkaB5WN1zfpDBLuLN
-	i36nSercOAHhE1DA==
-From: "tip-bot2 for Ard Biesheuvel" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/build] x86/boot: Drop CRC-32 checksum and the build tool
- that generates it
-Cc: Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, Ian Campbell <ijc@hellion.org.uk>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250307164801.885261-2-ardb+git@google.com>
-References: <20250307164801.885261-2-ardb+git@google.com>
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741389092; cv=fail; b=YzJK2wUuYQEha49k8iVR0eNOMpBEk/YXtMnBT2IIRcQg4SefKyh0ONjEa6QdPvz9schUvMkH9QYhHksT83Hlw0JQDq0BmljHFfjta/RMZML6PxxbwtkTe/iWYYl/gZQqcrl3dhMNipvI6DxbZLwvjfiS3FMa6oNNqMeCG7a1BGc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741389092; c=relaxed/simple;
+	bh=EzDByBjPs0pkWvjHgqPmpyuqjtlCsPJo6dIHb2l6t1c=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=IzIuYnO5Sa7OHksALDiPuYJsD78++5b8xS4fbCdj/KfgIRGBjz9LeAe7mlFl9nYr4olryFDbvWn/+ogzg5e1nIW7ORsw9P/muWdbjjM07W2DvoPEkLRH8pPFErWUnZasbCmRXmJs7OhFrA0BfFiKCiwTx1up3vRaDEaLX15Wh40=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aOeSeezs; arc=fail smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741389090; x=1772925090;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=EzDByBjPs0pkWvjHgqPmpyuqjtlCsPJo6dIHb2l6t1c=;
+  b=aOeSeezsnGL6h8zj/LPSFpLqJQvylHp4VtcD/s3w4H11NCPk3dLkn8Yq
+   eWsya2xF66liLQVADiYpRZmlu3+F5cjjLyEHn+vsXVB9czjTXK4DMmz9k
+   v3qaoVYn/vyzfR8Jebxx5NPr4oXUSxTCkaTEB8pM2WOriztgYT/mHC3x7
+   PXQu1MtHBHkceXb+p2fRhZD86Et6/uMxd6wgUYQKmgs/3yVoTr1rf+uVB
+   V8gctg/gV9N1tCb4fc2pz0MgsLPffrQZeWHYlfV72xsGyfwiM9TJAq+AV
+   NaaBcSFX+rTVHE8v1+zHvSQAb4SuaHZ1XbSVnJVr0OoMAQK47eLlJsgST
+   Q==;
+X-CSE-ConnectionGUID: rJglJAsUTjC5BXA5PCn7Gw==
+X-CSE-MsgGUID: AyfdTGWPT6O4vJBOS0hEQA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11366"; a="41614815"
+X-IronPort-AV: E=Sophos;i="6.14,230,1736841600"; 
+   d="scan'208";a="41614815"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 15:11:30 -0800
+X-CSE-ConnectionGUID: EI1vMkrDRz+gVZbdBWgggw==
+X-CSE-MsgGUID: ryOUwL1cT/CiWk6glYvLUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,230,1736841600"; 
+   d="scan'208";a="119939253"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 07 Mar 2025 15:11:29 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Fri, 7 Mar 2025 15:11:28 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 15:11:28 -0800
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.168)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Fri, 7 Mar 2025 15:11:28 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tNAuL7o8vTYSO1RUO5niOeRWln4c/w9ukZr4S9G+aKDnDKEjRGFGR4uEHc9awlal8owp4zNw2w1gzeeS8OFFNW0EpkZZ7JodHJ/USJH5SBg9a6B2GirLr4PZaktUWNRybi7QNK1oID2qAeExvHXiZtEKNyZpayDUoQwbi/jsUlq2ibDoIs8qn/1evTMdOtVr6KUjq7QeiA4IgVN26pboBndC3s0EY4MC+V2SwjF/K4V2B3XNEUUIBJ36wVqpVO8MT8yV8CRmCIbgvcoMbYDd8d9uHLPTuCGfK6CpY5YLJTz/muUxNwPlGLXJDG5xSw/TOT/wNNHmqPq+41GF224OAQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EzDByBjPs0pkWvjHgqPmpyuqjtlCsPJo6dIHb2l6t1c=;
+ b=fXhPW8k4HU0Ud/JljShhBftZJNzODiV/5bfeH1iKXEl4CMUMxrv6qWMIoNZ0/htOWocaqUdFqnZHitfwILR7szSzqb1r+OBWV4KPkrUYA35zFLw7O+GhgtcZP8XQIzXA81NWmJ8st3fhbekR+8paZHABMy6cFdeZR6qJIwpaR+buLeuBgX0xD7/+c5dzNnEzuKoHmGhJB8SLkRTEBgT4mqprFOasr90SrxAKSmxiOxBBNKZ8MEJhzwoHP8AAExlocgyEfliwyhIGnx1wdbFdpfp1udukm06hTt9JsIWtQh6anBJqAVHECQDQ4F/Ud3S2MSJtMeZBGp6akxCgd2KE6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by SJ0PR11MB4991.namprd11.prod.outlook.com (2603:10b6:a03:2df::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.16; Fri, 7 Mar
+ 2025 23:11:26 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%7]) with mapi id 15.20.8511.020; Fri, 7 Mar 2025
+ 23:11:26 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+To: Borislav Petkov <bp@alien8.de>
+CC: Shuai Xue <xueshuai@linux.alibaba.com>, "peterz@infradead.org"
+	<peterz@infradead.org>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"yazen.ghannam@amd.com" <yazen.ghannam@amd.com>, "akpm@linux-foundation.org"
+	<akpm@linux-foundation.org>, "linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+	"nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
+	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "jpoimboe@kernel.org"
+	<jpoimboe@kernel.org>, "linux-edac@vger.kernel.org"
+	<linux-edac@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+	"tianruidong@linux.alibaba.com" <tianruidong@linux.alibaba.com>
+Subject: RE: [PATCH v4 1/3] x86/mce: Use is_copy_from_user() to determine
+ copy-from-user context
+Thread-Topic: [PATCH v4 1/3] x86/mce: Use is_copy_from_user() to determine
+ copy-from-user context
+Thread-Index: AQHbjyP+jS5lVBxqwkSk4GQtSSn/LLNoI/4AgAAVztCAAA2GgIAABPnQ
+Date: Fri, 7 Mar 2025 23:11:26 +0000
+Message-ID: <SJ1PR11MB6083223A3175F7A84EC4DDDFFCD52@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <20250307054404.73877-1-xueshuai@linux.alibaba.com>
+ <20250307054404.73877-2-xueshuai@linux.alibaba.com>
+ <20250307204018.GAZ8tZstt11Y4KFprC@fat_crate.local>
+ <SJ1PR11MB6083654405F2721E5AA0C1F2FCD52@SJ1PR11MB6083.namprd11.prod.outlook.com>
+ <20250307224645.GKZ8t3VX5a5FhqNyZG@fat_crate.local>
+In-Reply-To: <20250307224645.GKZ8t3VX5a5FhqNyZG@fat_crate.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|SJ0PR11MB4991:EE_
+x-ms-office365-filtering-correlation-id: aa3263b4-fabe-427b-de8f-08dd5dcd62c5
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?YmFIcVFUOUxCc3JvbzE1TTlkM3M0UGU5SktldmZoYS95SngwVGMzejFNQ0JU?=
+ =?utf-8?B?STVyeFFESEZxeWtKNjlBRFJVeU80Z0ZwMWdoVUtjVlZTT2tIVU1hZnZIYzdN?=
+ =?utf-8?B?c1lsakFiTTFwb0l6UzZZQnFDM1lUSUMzcVRnbjhnWjlsb1FMUk84TlhOVVFi?=
+ =?utf-8?B?RU5zNlFuaDJraVlDdVJTREZDbGdlb01SK1c4OGxKc0w2aUEvUXZ0STlpOGVR?=
+ =?utf-8?B?WHdreU92cCtUT2lWTWdIMTBiOW1tbkh4bGFONFQ2dFd0bWQxVmZDZHdSSm1C?=
+ =?utf-8?B?Q3BaWEducjBhWXVmUTNLV3QydzdYQlE3K0JKTFFEV1VtNG50YjF5TjRUcEVK?=
+ =?utf-8?B?ZVNNK0tpMzlvdmdnOXhQYXdRbkgrUFBBL3pFVWV5aFZyVlR0UElVYU9LYXZV?=
+ =?utf-8?B?U05aMUlvbE5wMmNoTkpmTWdkNkdPMnRXam5BcnA5M1o5K240RHhkZzdJYjE0?=
+ =?utf-8?B?b2NaVDlHZ1Y1Q3BoQjRtRGd4QmoraGlFT1lyLzJiMEZoOFh1NWxzMy84aHQ2?=
+ =?utf-8?B?dEtRWmpzbFVmWjcvVzYwU2NTZ3RwWFIzeUQvc01MV2Z4eDBuK0k4NVdBU2w5?=
+ =?utf-8?B?WUw0R1U3UFVkNDA3Mzh0dTdNUVN1TFVJQ0JtSmlvNTZmMFZaS3lRbkhTMjhE?=
+ =?utf-8?B?OWsrTWl0SzlEZnR5bUwvYTdKZTF0cmdCekRvbGlRRFlCV2drVVprUnJDOHVL?=
+ =?utf-8?B?R0NXQ2wyVG4zVFFaQ0ZWbDlZRnR3WnNobDV6RFlIZXJxQi9EQUJ6WWorVENM?=
+ =?utf-8?B?T2JvcEFWelg0R2tzdVZJZ250NlZoaVVZOEJkU0krSFBIbi9UN1JLc1R5L3ZX?=
+ =?utf-8?B?Y3NDOVRSQ3hJYWNhUWpQbTJzemlqT0VGNTVRMWpGN2ZmS2UramVIUXhHTGtT?=
+ =?utf-8?B?WWQrTllxbUwwMHpsRGNOVXJsbzNNcCt4SkFOcVFEOE1PVldqQmtFdDNaamVi?=
+ =?utf-8?B?K1c0QTVjRmFoOC9aZzk1bWsxZ1BXb09iQXhmbXRybGdGV25seE52TTZzNnZj?=
+ =?utf-8?B?ejl0TEJTbVBPWFdkcGdWemw5VERiNm8wZnRvOVpjUzVGcmdHSStqUTZpWGc0?=
+ =?utf-8?B?NnVsQ2hWaE5FOUZvbGlaKzdLU3FFb3ltSnhycDhvYWJlc3E1TmRCS0p5Y24x?=
+ =?utf-8?B?ZU43QitvZEMxbW1qclZDYzRDOFpNVXVEMHlnbVpjN2NtVjBScmtpK1VmODUz?=
+ =?utf-8?B?R3JSK2hWa2NNOEFEblAwdHlpbFFDMldLSlpNbHZGWitLZ3hieHM2SVdtUW9p?=
+ =?utf-8?B?ejF0bGU0MnNnWDBoUTF1M3g5OU9MK1Y5VGFhVE9JcXZnWjV6Q3ZOakJGbVNi?=
+ =?utf-8?B?VURpZ2FSYjR6TkxJNVpmOVRmU2Z5empabnVvVk4ycXdLdXpDZlZMaFBhaWZC?=
+ =?utf-8?B?NHVxMU5pMFcrK2dHSDF3NEJ0V1BnaVM2MUNSL0N1bnpTVW1HYzRtVHNVVUZG?=
+ =?utf-8?B?MDlGNzBwR09WNEdhcmJBN2J4K0RvUHgrS2R3QjFJUmxMNC9RaFh1ZmNOU1JP?=
+ =?utf-8?B?ZzEwdEYzczNTVnNYOExQVFozQmUxdWVZMGRUTUl5aHY0R0kzWDRqeWd3UU0x?=
+ =?utf-8?B?RzZrWXpqSVF0ZmRmUWI5MEhsNDZCTmxVS3dGWUU4bkVEbnIwM3IxK2xQN2Rn?=
+ =?utf-8?B?ckRtVG1BMzM3UTQvL1pxTEs2a1o5N2RXTnlMNEY5L2lNNXRCOTlQTjRiTEds?=
+ =?utf-8?B?SU1JWk9nenBaVEU4M0V1YTdkdkhNUDBqejAzRTZnWUEvdEcyeXJrMStVbzcz?=
+ =?utf-8?B?Wk1iZlpnUHpVT3E0UWw3MEE2MDAvRk1lQkRKKzRwbGphMm92c0NrQnVyeEtv?=
+ =?utf-8?B?azZSSVJZOGduUHlsSEFwakVwcm10bE9GY2RXNFlsQkY4TDh6S2pCOElSaVo3?=
+ =?utf-8?B?SXZpbExZZ0tDNExuZUxDN0xZNC9WUnhvd1JRMUFJZUU1bk9ZM3dybXpkNW9P?=
+ =?utf-8?Q?hvLduZhvZqEeNW8ecqhnC5hTX0Tdd4QD?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZGo5SUlRUnR2cDdIdjdNRUlFdXhlZHhVNkhzbWpzQzU5TjVyakMvcXkxL0lI?=
+ =?utf-8?B?ZHBlRE5oM3Qwei8rMnpJVGhyay9sVFJpR0pkZWJGYkJEVUhlLzhMRE5QTXJG?=
+ =?utf-8?B?Vm12Y3lleHAyaEJKejUzL1JlTHREV2YrdWovUThLbkdoNk1LYlBGWWtJTFdi?=
+ =?utf-8?B?NGxaWkdZQUZzK0RDNForcTVsdGZwVk9wYlJZZlRzbGhDTlJqNWJ5TGlVMkRa?=
+ =?utf-8?B?UmJTTVBCYzI2Rld4ZWs5SDN0TjRwVGQ4UWVYSUFHWkN6bTRFdUgyWC9paHlw?=
+ =?utf-8?B?ZkpyK1h2VDlNTkJaNXBWekpabFlXZE1tdTgxU0NSN0JrWTM2OWk5bWxQMUor?=
+ =?utf-8?B?bFBQczBub0NhU2dVS3ZQNFFlWS9OUjU0WGpOZUZ6anBGVE51LzgzOG5RWWM5?=
+ =?utf-8?B?ZGt6RDc3aXlwL2pKUlVEZ09KSnpaK3NhSmpLR0Y0bFAzVTR1UkIrQjEzaTcw?=
+ =?utf-8?B?STZkRmp1Rll3YnRIeGpmNlNFQlBJSkhMUmxlcCtkOENXNjBwY0gyN1dseGFK?=
+ =?utf-8?B?U1pOUEhKRWpPLzRJRVBHUnJCd0hESVRSdWgyR3dVSEFRRVFTU2FWaktHUmo4?=
+ =?utf-8?B?MjJQOTFwNVduczdMSnNRbWpuNGt4dWNiQTgvQlFKQ1VTdHUwY2JMWkl5RVdB?=
+ =?utf-8?B?bmIrYzJWN0hTVCs5d0xCcVB2WXJHTmtwdTlUZHd4Vjl1ZXJxK3pvUGxDTXNn?=
+ =?utf-8?B?VXUzdDMxWGFGbVhGc20yYmdydldzZmpDdkNjQU9DNnFFTnE3N0dBbHVVbDlz?=
+ =?utf-8?B?Z1VmUzN0RDZIV0gyNkFDOHlvNnFER1NUd0JoblRVWER3VUpJM0FDdmxWcGJu?=
+ =?utf-8?B?NlJsTHpuT24vZW5JTjRxdUM1cUVpd0FBQWlJNU1iK0MzOXV6WnFRZ1czOWhT?=
+ =?utf-8?B?Z1RER3VWMnRibDBZN29NNS9jWU14MzBUVW1Uejd4cElZM1RCVGxVTXJOMDFX?=
+ =?utf-8?B?MXpPSStFVjV6ZUtvYXFrV01ZZWRKRXhteTdtVWdOMlpuTGRaZ1p5V1F2N3NI?=
+ =?utf-8?B?MC9HZ3p5WDcya1dMVEhvaDhMeEEwZzFwYnZmM1dZN09uZiszN1JhYlhjMW5J?=
+ =?utf-8?B?bG9Ud3lveWV3QUVIbm45dWFzYVNJcUlSeUlpMWFVdEljZWlaekFpZW8vd3lp?=
+ =?utf-8?B?dFpaRFhoMXFmZHV2dDl4ODVMZzBYL28rOWN6d2M3SmU5Mk1JeXIwb2NpQWlI?=
+ =?utf-8?B?VGVyREMvYWtDeHFOcGt0dzJmZFNLRWR3QzNYaXV5b01UTEVyOHoxWFg0TnZp?=
+ =?utf-8?B?c1ZXZ0ZZU2FZSXVMRmR4OGVIaEtCZ0gyMUw2NldYM3FJYy9JVWkzSWFscnA4?=
+ =?utf-8?B?TkFFWTZyR1VXUXFPYkwxY0UwTTdRYTFka0RwVno4NHN5Z0RtS0wvakszZ0Zl?=
+ =?utf-8?B?SXdGVlMvQ2xQNzNDRXowbDZDbkNNWWpNZmsrTDMyVHVDYWRkdWtURHpHdXhp?=
+ =?utf-8?B?eStpZVNvZjdibjgwRXVOV3B0dTN5eDlVU3V3WkVlTC9qc0gwYmU3V0U1Z2Yx?=
+ =?utf-8?B?YUkrNFFOSVRjVmhsT1NpajNiVGFqT05xSlRWRSs5SW91V1Y1QXNFRHA1WVRT?=
+ =?utf-8?B?UjBDdEVuOC9uNW5Lb0tUQld0cldrcDZaNDExcmJnQ3c0ZjFUU21ZSkFHdmc5?=
+ =?utf-8?B?bzF4VHgzTS96SzJ2T2NocnVFMVJwQjM4Y3pFOUhBMXV6U1RTbkJWRUtFWmpl?=
+ =?utf-8?B?NHVzWFFaVC96TWxVUkhoQzUvMFJUYXFBNHlQSE0wL1UxQklsSlovaGZRaFAx?=
+ =?utf-8?B?QzdkVDlabFVqd0NXdUg3K2J2eFhuS3U5UWlkWjFnNlh5cXBCcXVMSjVXWGht?=
+ =?utf-8?B?UjIvTUMwSGwxNFlENjNzVFBUdVg0WTgzTHg3MWhmeHI3aUh2em5wdkFHYXVp?=
+ =?utf-8?B?TjdoZk53VWpvVEp2SElEUFBkd1V3NHh2QzNiK3pYem1HODliMk9kTk4zOXVo?=
+ =?utf-8?B?emFnMTVnNTl5ZTlkazg0aFhCN1ErTzJEeHcyNEN4MlVBSkxxWlpZcXlveStG?=
+ =?utf-8?B?WGU4MlovdHFsTFZxNXNtS0FiaWhZVFY3UHJFM253dW9kWUN0bmFYblhlc0lN?=
+ =?utf-8?B?eG1XeW9wZkxrYzZOZmJBVTZGRUh2bDE1a1JZRStoL1JGR0JuSlI5M0w5MmpC?=
+ =?utf-8?Q?WjzlWGzWKW7lfiDMVj739Buoo?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174138907883.14745.965399833848496586.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aa3263b4-fabe-427b-de8f-08dd5dcd62c5
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2025 23:11:26.2858
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5HOxxBaPPYMYDah9xhCy3KjYcAIGKioHmgIYzVajNopzbtrwylxiuAN95YrW+HfqacxO1aBfnJee0NIaY74aPQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB4991
+X-OriginatorOrg: intel.com
 
-The following commit has been merged into the x86/build branch of tip:
-
-Commit-ID:     9c54baab4401db249d6938806b812231e0259380
-Gitweb:        https://git.kernel.org/tip/9c54baab4401db249d6938806b812231e0259380
-Author:        Ard Biesheuvel <ardb@kernel.org>
-AuthorDate:    Fri, 07 Mar 2025 17:48:02 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 07 Mar 2025 23:59:10 +01:00
-
-x86/boot: Drop CRC-32 checksum and the build tool that generates it
-
-Apart from some sanity checks on the size of setup.bin, the only
-remaining task carried out by the arch/x86/boot/tools/build.c build tool
-is generating the CRC-32 checksum of the bzImage. This feature was added
-in commit
-
-  7d6e737c8d2698b6 ("x86: add a crc32 checksum to the kernel image.")
-
-without any motivation (or any commit log text, for that matter). This
-checksum is not verified by any known bootloader, and given that
-
- a) the checksum of the entire bzImage is reported by most tools (zlib,
-    rhash) as 0xffffffff and not 0x0 as documented,
-
- b) the checksum is corrupted when the image is signed for secure boot,
-    which means that no distro ships x86 images with valid CRCs,
-
-it seems quite unlikely that this checksum is being used, so let's just
-drop it, along with the tool that generates it.
-
-Instead, use simple file concatenation and truncation to combine the two
-pieces into bzImage, and replace the checks on the size of the setup
-block with a couple of ASSERT()s in the linker script.
-
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ian Campbell <ijc@hellion.org.uk>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20250307164801.885261-2-ardb+git@google.com
----
- Documentation/arch/x86/boot.rst        |  10 +-
- arch/x86/boot/Makefile                 |   7 +-
- arch/x86/boot/compressed/vmlinux.lds.S |   3 +-
- arch/x86/boot/setup.ld                 |   2 +-
- arch/x86/boot/tools/.gitignore         |   2 +-
- arch/x86/boot/tools/build.c            | 247 +------------------------
- 6 files changed, 5 insertions(+), 266 deletions(-)
- delete mode 100644 arch/x86/boot/tools/.gitignore
- delete mode 100644 arch/x86/boot/tools/build.c
-
-diff --git a/Documentation/arch/x86/boot.rst b/Documentation/arch/x86/boot.rst
-index 76f53d3..77e6163 100644
---- a/Documentation/arch/x86/boot.rst
-+++ b/Documentation/arch/x86/boot.rst
-@@ -1038,16 +1038,6 @@ Offset/size:	0x000c/4
-   This field contains maximal allowed type for setup_data and setup_indirect structs.
- 
- 
--The Image Checksum
--==================
--
--From boot protocol version 2.08 onwards the CRC-32 is calculated over
--the entire file using the characteristic polynomial 0x04C11DB7 and an
--initial remainder of 0xffffffff.  The checksum is appended to the
--file; therefore the CRC of the file up to the limit specified in the
--syssize field of the header is always 0.
--
--
- The Kernel Command Line
- =======================
- 
-diff --git a/arch/x86/boot/Makefile b/arch/x86/boot/Makefile
-index 9cc0ff6..8589471 100644
---- a/arch/x86/boot/Makefile
-+++ b/arch/x86/boot/Makefile
-@@ -35,7 +35,6 @@ setup-y		+= video-vesa.o
- setup-y		+= video-bios.o
- 
- targets		+= $(setup-y)
--hostprogs	:= tools/build
- hostprogs	+= mkcpustr
- 
- HOST_EXTRACFLAGS += -I$(srctree)/tools/include \
-@@ -61,11 +60,9 @@ KBUILD_CFLAGS	+= $(CONFIG_CC_IMPLICIT_FALLTHROUGH)
- $(obj)/bzImage: asflags-y  := $(SVGA_MODE)
- 
- quiet_cmd_image = BUILD   $@
--silent_redirect_image = >/dev/null
--cmd_image = $(obj)/tools/build $(obj)/setup.bin $(obj)/vmlinux.bin \
--			       $(obj)/zoffset.h $@ $($(quiet)redirect_image)
-+      cmd_image = cp $< $@; truncate -s %4K $@; cat $(obj)/vmlinux.bin >>$@
- 
--$(obj)/bzImage: $(obj)/setup.bin $(obj)/vmlinux.bin $(obj)/tools/build FORCE
-+$(obj)/bzImage: $(obj)/setup.bin $(obj)/vmlinux.bin FORCE
- 	$(call if_changed,image)
- 	@$(kecho) 'Kernel: $@ is ready' ' (#'$(or $(KBUILD_BUILD_VERSION),`cat .version`)')'
- 
-diff --git a/arch/x86/boot/compressed/vmlinux.lds.S b/arch/x86/boot/compressed/vmlinux.lds.S
-index 083ec6d..48d0b51 100644
---- a/arch/x86/boot/compressed/vmlinux.lds.S
-+++ b/arch/x86/boot/compressed/vmlinux.lds.S
-@@ -48,8 +48,7 @@ SECTIONS
- 		*(.data)
- 		*(.data.*)
- 
--		/* Add 4 bytes of extra space for a CRC-32 checksum */
--		. = ALIGN(. + 4, 0x200);
-+		. = ALIGN(0x200);
- 		_edata = . ;
- 	}
- 	. = ALIGN(L1_CACHE_BYTES);
-diff --git a/arch/x86/boot/setup.ld b/arch/x86/boot/setup.ld
-index 3a2d136..e1d594a 100644
---- a/arch/x86/boot/setup.ld
-+++ b/arch/x86/boot/setup.ld
-@@ -45,6 +45,8 @@ SECTIONS
- 
- 		setup_size = ALIGN(ABSOLUTE(.), 4096);
- 		setup_sects = ABSOLUTE(setup_size / 512);
-+		ASSERT(setup_sects >= 5, "The setup must be at least 5 sectors in size");
-+		ASSERT(setup_sects <= 64, "The setup must be at most 64 sectors in size");
- 	}
- 
- 	. = ALIGN(16);
-diff --git a/arch/x86/boot/tools/.gitignore b/arch/x86/boot/tools/.gitignore
-deleted file mode 100644
-index ae91f4d..0000000
---- a/arch/x86/boot/tools/.gitignore
-+++ /dev/null
-@@ -1,2 +0,0 @@
--# SPDX-License-Identifier: GPL-2.0-only
--build
-diff --git a/arch/x86/boot/tools/build.c b/arch/x86/boot/tools/build.c
-deleted file mode 100644
-index 10311d7..0000000
---- a/arch/x86/boot/tools/build.c
-+++ /dev/null
-@@ -1,247 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--/*
-- *  Copyright (C) 1991, 1992  Linus Torvalds
-- *  Copyright (C) 1997 Martin Mares
-- *  Copyright (C) 2007 H. Peter Anvin
-- */
--
--/*
-- * This file builds a disk-image from three different files:
-- *
-- * - setup: 8086 machine code, sets up system parm
-- * - system: 80386 code for actual system
-- * - zoffset.h: header with ZO_* defines
-- *
-- * It does some checking that all files are of the correct type, and writes
-- * the result to the specified destination, removing headers and padding to
-- * the right amount. It also writes some system data to stdout.
-- */
--
--/*
-- * Changes by tytso to allow root device specification
-- * High loaded stuff by Hans Lermen & Werner Almesberger, Feb. 1996
-- * Cross compiling fixes by Gertjan van Wingerde, July 1996
-- * Rewritten by Martin Mares, April 1997
-- * Substantially overhauled by H. Peter Anvin, April 2007
-- */
--
--#include <stdio.h>
--#include <string.h>
--#include <stdlib.h>
--#include <stdarg.h>
--#include <sys/types.h>
--#include <sys/stat.h>
--#include <unistd.h>
--#include <fcntl.h>
--#include <sys/mman.h>
--#include <tools/le_byteshift.h>
--
--typedef unsigned char  u8;
--typedef unsigned short u16;
--typedef unsigned int   u32;
--
--/* Minimal number of setup sectors */
--#define SETUP_SECT_MIN 5
--#define SETUP_SECT_MAX 64
--
--/* This must be large enough to hold the entire setup */
--u8 buf[SETUP_SECT_MAX*512];
--
--static unsigned long _edata;
--
--/*----------------------------------------------------------------------*/
--
--static const u32 crctab32[] = {
--	0x00000000, 0x77073096, 0xee0e612c, 0x990951ba, 0x076dc419,
--	0x706af48f, 0xe963a535, 0x9e6495a3, 0x0edb8832, 0x79dcb8a4,
--	0xe0d5e91e, 0x97d2d988, 0x09b64c2b, 0x7eb17cbd, 0xe7b82d07,
--	0x90bf1d91, 0x1db71064, 0x6ab020f2, 0xf3b97148, 0x84be41de,
--	0x1adad47d, 0x6ddde4eb, 0xf4d4b551, 0x83d385c7, 0x136c9856,
--	0x646ba8c0, 0xfd62f97a, 0x8a65c9ec, 0x14015c4f, 0x63066cd9,
--	0xfa0f3d63, 0x8d080df5, 0x3b6e20c8, 0x4c69105e, 0xd56041e4,
--	0xa2677172, 0x3c03e4d1, 0x4b04d447, 0xd20d85fd, 0xa50ab56b,
--	0x35b5a8fa, 0x42b2986c, 0xdbbbc9d6, 0xacbcf940, 0x32d86ce3,
--	0x45df5c75, 0xdcd60dcf, 0xabd13d59, 0x26d930ac, 0x51de003a,
--	0xc8d75180, 0xbfd06116, 0x21b4f4b5, 0x56b3c423, 0xcfba9599,
--	0xb8bda50f, 0x2802b89e, 0x5f058808, 0xc60cd9b2, 0xb10be924,
--	0x2f6f7c87, 0x58684c11, 0xc1611dab, 0xb6662d3d, 0x76dc4190,
--	0x01db7106, 0x98d220bc, 0xefd5102a, 0x71b18589, 0x06b6b51f,
--	0x9fbfe4a5, 0xe8b8d433, 0x7807c9a2, 0x0f00f934, 0x9609a88e,
--	0xe10e9818, 0x7f6a0dbb, 0x086d3d2d, 0x91646c97, 0xe6635c01,
--	0x6b6b51f4, 0x1c6c6162, 0x856530d8, 0xf262004e, 0x6c0695ed,
--	0x1b01a57b, 0x8208f4c1, 0xf50fc457, 0x65b0d9c6, 0x12b7e950,
--	0x8bbeb8ea, 0xfcb9887c, 0x62dd1ddf, 0x15da2d49, 0x8cd37cf3,
--	0xfbd44c65, 0x4db26158, 0x3ab551ce, 0xa3bc0074, 0xd4bb30e2,
--	0x4adfa541, 0x3dd895d7, 0xa4d1c46d, 0xd3d6f4fb, 0x4369e96a,
--	0x346ed9fc, 0xad678846, 0xda60b8d0, 0x44042d73, 0x33031de5,
--	0xaa0a4c5f, 0xdd0d7cc9, 0x5005713c, 0x270241aa, 0xbe0b1010,
--	0xc90c2086, 0x5768b525, 0x206f85b3, 0xb966d409, 0xce61e49f,
--	0x5edef90e, 0x29d9c998, 0xb0d09822, 0xc7d7a8b4, 0x59b33d17,
--	0x2eb40d81, 0xb7bd5c3b, 0xc0ba6cad, 0xedb88320, 0x9abfb3b6,
--	0x03b6e20c, 0x74b1d29a, 0xead54739, 0x9dd277af, 0x04db2615,
--	0x73dc1683, 0xe3630b12, 0x94643b84, 0x0d6d6a3e, 0x7a6a5aa8,
--	0xe40ecf0b, 0x9309ff9d, 0x0a00ae27, 0x7d079eb1, 0xf00f9344,
--	0x8708a3d2, 0x1e01f268, 0x6906c2fe, 0xf762575d, 0x806567cb,
--	0x196c3671, 0x6e6b06e7, 0xfed41b76, 0x89d32be0, 0x10da7a5a,
--	0x67dd4acc, 0xf9b9df6f, 0x8ebeeff9, 0x17b7be43, 0x60b08ed5,
--	0xd6d6a3e8, 0xa1d1937e, 0x38d8c2c4, 0x4fdff252, 0xd1bb67f1,
--	0xa6bc5767, 0x3fb506dd, 0x48b2364b, 0xd80d2bda, 0xaf0a1b4c,
--	0x36034af6, 0x41047a60, 0xdf60efc3, 0xa867df55, 0x316e8eef,
--	0x4669be79, 0xcb61b38c, 0xbc66831a, 0x256fd2a0, 0x5268e236,
--	0xcc0c7795, 0xbb0b4703, 0x220216b9, 0x5505262f, 0xc5ba3bbe,
--	0xb2bd0b28, 0x2bb45a92, 0x5cb36a04, 0xc2d7ffa7, 0xb5d0cf31,
--	0x2cd99e8b, 0x5bdeae1d, 0x9b64c2b0, 0xec63f226, 0x756aa39c,
--	0x026d930a, 0x9c0906a9, 0xeb0e363f, 0x72076785, 0x05005713,
--	0x95bf4a82, 0xe2b87a14, 0x7bb12bae, 0x0cb61b38, 0x92d28e9b,
--	0xe5d5be0d, 0x7cdcefb7, 0x0bdbdf21, 0x86d3d2d4, 0xf1d4e242,
--	0x68ddb3f8, 0x1fda836e, 0x81be16cd, 0xf6b9265b, 0x6fb077e1,
--	0x18b74777, 0x88085ae6, 0xff0f6a70, 0x66063bca, 0x11010b5c,
--	0x8f659eff, 0xf862ae69, 0x616bffd3, 0x166ccf45, 0xa00ae278,
--	0xd70dd2ee, 0x4e048354, 0x3903b3c2, 0xa7672661, 0xd06016f7,
--	0x4969474d, 0x3e6e77db, 0xaed16a4a, 0xd9d65adc, 0x40df0b66,
--	0x37d83bf0, 0xa9bcae53, 0xdebb9ec5, 0x47b2cf7f, 0x30b5ffe9,
--	0xbdbdf21c, 0xcabac28a, 0x53b39330, 0x24b4a3a6, 0xbad03605,
--	0xcdd70693, 0x54de5729, 0x23d967bf, 0xb3667a2e, 0xc4614ab8,
--	0x5d681b02, 0x2a6f2b94, 0xb40bbe37, 0xc30c8ea1, 0x5a05df1b,
--	0x2d02ef8d
--};
--
--static u32 partial_crc32_one(u8 c, u32 crc)
--{
--	return crctab32[(crc ^ c) & 0xff] ^ (crc >> 8);
--}
--
--static u32 partial_crc32(const u8 *s, int len, u32 crc)
--{
--	while (len--)
--		crc = partial_crc32_one(*s++, crc);
--	return crc;
--}
--
--static void die(const char * str, ...)
--{
--	va_list args;
--	va_start(args, str);
--	vfprintf(stderr, str, args);
--	va_end(args);
--	fputc('\n', stderr);
--	exit(1);
--}
--
--static void usage(void)
--{
--	die("Usage: build setup system zoffset.h image");
--}
--
--/*
-- * Parse zoffset.h and find the entry points. We could just #include zoffset.h
-- * but that would mean tools/build would have to be rebuilt every time. It's
-- * not as if parsing it is hard...
-- */
--#define PARSE_ZOFS(p, sym) do { \
--	if (!strncmp(p, "#define ZO_" #sym " ", 11+sizeof(#sym)))	\
--		sym = strtoul(p + 11 + sizeof(#sym), NULL, 16);		\
--} while (0)
--
--static void parse_zoffset(char *fname)
--{
--	FILE *file;
--	char *p;
--	int c;
--
--	file = fopen(fname, "r");
--	if (!file)
--		die("Unable to open `%s': %m", fname);
--	c = fread(buf, 1, sizeof(buf) - 1, file);
--	if (ferror(file))
--		die("read-error on `zoffset.h'");
--	fclose(file);
--	buf[c] = 0;
--
--	p = (char *)buf;
--
--	while (p && *p) {
--		PARSE_ZOFS(p, _edata);
--
--		p = strchr(p, '\n');
--		while (p && (*p == '\r' || *p == '\n'))
--			p++;
--	}
--}
--
--int main(int argc, char ** argv)
--{
--	unsigned int i, sz, setup_sectors;
--	int c;
--	struct stat sb;
--	FILE *file, *dest;
--	int fd;
--	void *kernel;
--	u32 crc = 0xffffffffUL;
--
--	if (argc != 5)
--		usage();
--	parse_zoffset(argv[3]);
--
--	dest = fopen(argv[4], "w");
--	if (!dest)
--		die("Unable to write `%s': %m", argv[4]);
--
--	/* Copy the setup code */
--	file = fopen(argv[1], "r");
--	if (!file)
--		die("Unable to open `%s': %m", argv[1]);
--	c = fread(buf, 1, sizeof(buf), file);
--	if (ferror(file))
--		die("read-error on `setup'");
--	if (c < 1024)
--		die("The setup must be at least 1024 bytes");
--	if (get_unaligned_le16(&buf[510]) != 0xAA55)
--		die("Boot block hasn't got boot flag (0xAA55)");
--	fclose(file);
--
--	/* Pad unused space with zeros */
--	setup_sectors = (c + 4095) / 4096;
--	setup_sectors *= 8;
--	if (setup_sectors < SETUP_SECT_MIN)
--		setup_sectors = SETUP_SECT_MIN;
--	i = setup_sectors*512;
--	memset(buf+c, 0, i-c);
--
--	/* Open and stat the kernel file */
--	fd = open(argv[2], O_RDONLY);
--	if (fd < 0)
--		die("Unable to open `%s': %m", argv[2]);
--	if (fstat(fd, &sb))
--		die("Unable to stat `%s': %m", argv[2]);
--	if (_edata != sb.st_size)
--		die("Unexpected file size `%s': %u != %u", argv[2], _edata,
--		    sb.st_size);
--	sz = _edata - 4;
--	kernel = mmap(NULL, sz, PROT_READ, MAP_SHARED, fd, 0);
--	if (kernel == MAP_FAILED)
--		die("Unable to mmap '%s': %m", argv[2]);
--
--	crc = partial_crc32(buf, i, crc);
--	if (fwrite(buf, 1, i, dest) != i)
--		die("Writing setup failed");
--
--	/* Copy the kernel code */
--	crc = partial_crc32(kernel, sz, crc);
--	if (fwrite(kernel, 1, sz, dest) != sz)
--		die("Writing kernel failed");
--
--	/* Write the CRC */
--	put_unaligned_le32(crc, buf);
--	if (fwrite(buf, 1, 4, dest) != 4)
--		die("Writing CRC failed");
--
--	/* Catch any delayed write failures */
--	if (fclose(dest))
--		die("Writing image failed");
--
--	close(fd);
--
--	/* Everything is OK */
--	return 0;
--}
+PiA+IGlzX2NvcHlfZnJvbV91c2VyKCkgZGVjb2RlcyB0aGUgaW5zdHJ1Y3Rpb24gdGhhdCB0b29r
+IHRoZSB0cmFwLiBJdCBsb29rcyBmb3INCj4gPiBNT1YsIE1PVlogYW5kIE1PVlMgaW5zdHJ1Y3Rp
+b25zIHRvIGZpbmQgdGhlIHNvdXJjZSBhZGRyZXNzLCBhbmQgdGhlbg0KPiA+IGNoZWNrcyB3aGV0
+aGVyIHRoYXQncyB1c2VyICg8IFRBU0tfU0laRV9NQVgpIG9yIGtlcm5lbC4NCj4NCj4gWW91IG1l
+YW4gdGhlcmUncyBhYnNvbHV0ZWx5IG5vdGhpbmcgZWxzZSBsaWtlLCBzYXksIHNvbWUgZXBiZiBv
+ciBzb21lIG90aGVyDQo+IGhhY2tlcnkgd2UgdGVuZCB0byBkbyBpbiB0aGUga2VybmVsIChvciB3
+ZSB3aWxsIGRvIGluIHRoZSBmdXR1cmUpIHdoaWNoIHdvbid0DQo+IGNyZWF0ZSB0aGUgZXhhY3Qg
+c2FtZSB0d28gY29uZGl0aW9uczoNCj4NCj4gLSBvbmUgb2YgdGhlIHRocmVlIGluc25zDQo+IC0g
+dXNlciBtZW0gcmVhZA0KPg0KPiBhbmQgaXQgd291bGQgY2F1c2UgYSByZWNvdmVyeSBhY3Rpb24u
+DQo+DQo+IFBlcmhhcHMgaXQgc3RpbGwgbWlnaHQgYmUgdGhlIHByb3BlciB0aGluZyB0byBkbyBl
+dmVuIHRoZW4gYnV0IGl0IGRvZXMgc291bmQNCj4gZmlzaHkgYW5kIHVuY2xlYW4gdG8gbWUuDQo+
+DQo+IE5vdGhpbmcgYmVhdHMgdGhlIGV4cGxpY2l0IG1hcmt1cCB3ZSBoYWQgdW50aWwgcmVjZW50
+bHkuLi4NCg0KRXZlcnkgInVzZXIgbWVtIHJlYWQiIG5lZWRzIHRvIGhhdmUgYW4gZXh0YWJsZVtd
+IHJlY292ZXJ5IGVudHJ5DQphdHRhY2hlZCB0byB0aGUgSVAgb2YgdGhlIGluc3RydWN0aW9uICAo
+dG8gaGFuZGxlIHRoZSBtdWNoIG1vcmUgY29tbW9uDQojUEYgZm9yIHBhZ2Utbm90LXByZXNlbnQp
+LiBBbGwgdGhvc2UgcGxhY2VzIGFscmVhZHkgaGF2ZSB0byBkZWFsIHdpdGgNCnRoZSBwb3NzaWJp
+bGl0eSB0aGF0IHRoZSAjUEYgY2FuJ3QgYmUgcmVjb3ZlcmVkLiBUaGUgI01DIGhhbmRsaW5nIGlz
+DQpyZWFsbHkganVzdCBhIHNtYWxsIGV4dGVuc2lvbi4NCg0KQXMgZm9yICJleHBsaWNpdCBtYXJr
+dXAiIEkgZG9uJ3QgdGhpbmsgaXQgd291bGQgYmUgYmV0dGVyIHRvIGRlY29yYXRlDQpldmVyeSBn
+ZXRfdXNlcigpIGFuZCBjb3B5X2Zyb21fdXNlcigpIHdpdGggc29tZSAidGhpcyBvbmUgY2FuDQpy
+ZWNvdmVyIGZyb20gI01DIiANCg0KTm90ZSBhbHNvIHRoYXQgIndoYXQgd2UgaGFkIHJlY2VudGx5
+IiB3YXMgZnJhZ2lsZSwgYnJva2UsIGFuZCByZXN1bHRlZA0KaW4gdGhpcyByZWdyZXNzaW9uLg0K
+DQotVG9ueQ0K
 
