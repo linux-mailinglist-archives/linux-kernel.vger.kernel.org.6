@@ -1,202 +1,197 @@
-Return-Path: <linux-kernel+bounces-551289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C496DA56AA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:40:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56F5FA56AA7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:41:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3972189B57B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:40:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B969E188B6EC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ECE121C18A;
-	Fri,  7 Mar 2025 14:40:20 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EEB21C17F;
+	Fri,  7 Mar 2025 14:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e3fs8try"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 748D721ABDC
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0AEC21ABC3;
+	Fri,  7 Mar 2025 14:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741358419; cv=none; b=EyxOgaEyiY2/JsYH6yWs+aXwqV9/HG2v5sbz0DYGrEqDULfE9JgZ0khh/0knLeIlBlPrv6j3kyJAkfBd9sOcTiPV1UURmqZ9Ns992JUm+UWIOhF+zduCg0keSzr2keazpOJLs7fEsq90dbQxyq+Sd5aPeBc6hp2G3kIVgamBJLM=
+	t=1741358455; cv=none; b=dc/1t77VICnvjTw/yGRSgXwz+2LRY37lVaCfMg4cULSVPd5W7q7seP4HvJR3HXOLO3z0Ijc91yTrlTUvLYyFz0doUiCaA+WV2kB5KsQdjG9za6atfrVBQ0lVlB0TLA+xg8JeadZhowxJym6bsqSoY4IkPAsaHMc6Qxrf8MnaEvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741358419; c=relaxed/simple;
-	bh=zJqZeLk7niPxv+gNZzVEwSQrvYWMHIJnaH5lMK+VwS0=;
+	s=arc-20240116; t=1741358455; c=relaxed/simple;
+	bh=gqX4hzoJ+7QuIXnn42nyeKsoGFR9a03BNc0pBhEEqDE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T3l1ekqZBMywdJoJKYtUgsr4ksIyW8xv0DC056nCt/qu6wBX8ujnLiQ3uQsAUOgbSb0YQkk4YuS0f3H5oRBrcLzNcJUc/bi4vaEdHonIHjaFo0WI144TJD5cM+GbyJ9xSRwp+R+HeAtu/oi08xqY13bQmhPJEi44JSnOX7ULJPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tqYrk-0004Bx-MV; Fri, 07 Mar 2025 15:39:56 +0100
-Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tqYrk-004VBw-0X;
-	Fri, 07 Mar 2025 15:39:56 +0100
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1tqYrk-000XG3-06;
-	Fri, 07 Mar 2025 15:39:56 +0100
-Date: Fri, 7 Mar 2025 15:39:56 +0100
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>, Frank Li <Frank.li@nxp.com>,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/5] imx8mp: add support for the IMX AIPSTZ bridge
-Message-ID: <20250307143956.aft3xolakts3nlja@pengutronix.de>
-References: <20250226165314.34205-1-laurentiumihalcea111@gmail.com>
- <20250226212219.lthoofw7nrs3gtg6@pengutronix.de>
- <20250227112856.aylsurbt3uqm4ivw@pengutronix.de>
- <541539db-0015-41de-837f-aabbea68486a@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TSAKRi9wkZLB6s9AUdB9rZX2V6fisgM9k75qO60LA1rfPvHtmVQQiR9CFOfmUWybolkNfXYWfQiXVDQLj9QWomTajaNFRQdxahkBstrWo9l+QnzGIUjsKVwgvk4GD8ZpFGr8xx8i+QHNgcoAqYf4CEydLf26xIvsMU9t9YooTjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e3fs8try; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06349C4CED1;
+	Fri,  7 Mar 2025 14:40:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741358455;
+	bh=gqX4hzoJ+7QuIXnn42nyeKsoGFR9a03BNc0pBhEEqDE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e3fs8tryLeCeqoR6gkGGpggRU0Apu4sSNSVQi1oBZYBUmSsMmRzNqowPnkJt7SFiw
+	 JK2A5vZDvMSaG0oWWahrDnrv1v1i+X+xB/OGEN0q/KuO/mI+8fN+EMoLLdsiaPkZfN
+	 V6FZKXEWHP8Xiu7nmXcGWQBqhnoLClWjHc5dL7ZBFiQIaSTARiIyOjUqNVIID1P6za
+	 rpJWtwep+Hn/tPbCoNilLIpWVh+3dLR5Lhrs2P/rUt14NlPj3xz4nRH+GOtEaWiBuK
+	 wIum5IhwbMYES5Mid/CC9/Xd6LIqoggx1SUaXwxYFv7SoJ7KiCKpONAcY6QQhQdrQu
+	 IzMcyQ4w8hQwg==
+Date: Fri, 7 Mar 2025 15:40:52 +0100
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: Silvano Seva <s.seva@4sigma.it>
+Cc: a.greco@4sigma.it, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	"open list:ST LSM6DSx IMU IIO DRIVER" <linux-iio@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] iio: imu: st_lsm6dsx: fix possible lockup during FIFO
+ read
+Message-ID: <Z8sFdGG4bDyALrsi@lore-desk>
+References: <20250303132124.52811-2-s.seva@4sigma.it>
+ <Z8nDzyVO596rW0Mf@lore-desk>
+ <CALKJsrqc__ZeLoZ5V+hBxVMU+Crpv_YG0KM69N1CXuHc_rM-FQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oUCIrKhfoEupLwpQ"
+Content-Disposition: inline
+In-Reply-To: <CALKJsrqc__ZeLoZ5V+hBxVMU+Crpv_YG0KM69N1CXuHc_rM-FQ@mail.gmail.com>
+
+
+--oUCIrKhfoEupLwpQ
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <541539db-0015-41de-837f-aabbea68486a@gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
 
-On 25-03-05, Laurentiu Mihalcea wrote:
-> 
-> On 2/27/2025 1:28 PM, Marco Felsch wrote:
-> > Hi Laurentiu,
+> On Thu, Mar 6, 2025 at 4:48=E2=80=AFPM Lorenzo Bianconi <lorenzo@kernel.o=
+rg> wrote:
 > >
-> > On 25-02-26, Marco Felsch wrote:
-> >> Hi,
-> >>
-> >> On 25-02-26, Laurentiu Mihalcea wrote:
-> >>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
-> >>>
-> >>> The AIPSTZ bridge offers some security-related configurations which can
-> >>> be used to restrict master access to certain peripherals on the bridge.
-> >>>
-> >>> Normally, this could be done from a secure environment such as ATF before
-> >>> Linux boots but the configuration of AIPSTZ5 is lost each time the power
-> >>> domain is powered off and then powered on. Because of this, it has to be
-> >>> configured each time the power domain is turned on and before any master
-> >>> tries to access the peripherals (e.g: AP, CM7, DSP, on i.MX8MP).
-> >> My question still stands:
-> >>
-> >> Setting these bits requires very often that the core is running at EL3
-> >> (e.g. secure-monitor) which is not the case for Linux. Can you please
-> >> provide more information how Linux can set these bits?
-> > Sorry I didn't noticed your response:
+> > > Prevent st_lsm6dsx_read_fifo and st_lsm6dsx_read_tagged_fifo functions
+> > > from falling in an infinite loop in case pattern_len is equal to zero=
+ and
+> > > the device FIFO is not empty.
+> > >
+> > > Signed-off-by: Silvano Seva <s.seva@4sigma.it>
+> > > ---
+> > >  drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c | 8 ++++++++
+> > >  1 file changed, 8 insertions(+)
+> > >
+> > > diff --git a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c b/drivers=
+/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
+> > > index 0a7cd8c1aa33..7f343614f8a5 100644
+> > > --- a/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
+> > > +++ b/drivers/iio/imu/st_lsm6dsx/st_lsm6dsx_buffer.c
+> > > @@ -395,12 +395,17 @@ int st_lsm6dsx_read_fifo(struct st_lsm6dsx_hw *=
+hw)
+> > >       fifo_len =3D (le16_to_cpu(fifo_status) & fifo_diff_mask) *
+> > >                  ST_LSM6DSX_CHAN_SIZE;
+> > >       fifo_len =3D (fifo_len / pattern_len) * pattern_len;
+> > > +     if (!fifo_len)
+> > > +             return 0;
 > >
-> > https://lore.kernel.org/all/a62ab860-5e0e-4ebc-af1f-6fb7ac621e2b@gmail.com/
+> > I do not think this check is necessary since if fifo_len is 0 we will n=
+ot run
+> > the for loop, right?
+>=20
+> This check is present in the st_lsm6dsx_read_tagged_fifo() function, i
+> added it here for consistency. I agree with you that is not strictly
+> necessary.
+>=20
 > >
-> > If EL1 is allowed to set the security access configuration of the IP
-> > cores doesn't this mean that a backdoor can be opened? E.g. your
-> > secure-boot system configures one I2C IP core to be accessible only from
-> > secure-world S-EL1 (OP-TEE) and after the power-domain was power-cycled
-> > it's accessible from EL1 again. This doesn't seem right. Why should a
-> > user be able to limit the access permissions to an IP core to only be
-> > accessible from secure-world if the IP core is accessible from
-> > normal-world after the power-domain was power-cycled.
+> > >
+> > >       acc_sensor =3D iio_priv(hw->iio_devs[ST_LSM6DSX_ID_ACC]);
+> > >       gyro_sensor =3D iio_priv(hw->iio_devs[ST_LSM6DSX_ID_GYRO]);
+> > >       if (hw->iio_devs[ST_LSM6DSX_ID_EXT0])
+> > >               ext_sensor =3D iio_priv(hw->iio_devs[ST_LSM6DSX_ID_EXT0=
+]);
+> > >
+> > > +     if (!pattern_len)
+> > > +             pattern_len =3D ST_LSM6DSX_SAMPLE_SIZE;
 > >
-> > Regards,
-> >   Marco
-> 
-> I'm no security expert so please feel free to correct me if I get
-> something wrong.
-> 
-> This isn't about S/NS world. The bridge AC doesn't offer any
-> configurations for denying access to peripherals based on S/NS world.
+> > same here, I do not think pattern_len can be 0 since hw->sip must be gr=
+eater
+> > than 0 in order to enable the FIFO. Moreover, this check should be some=
+ lines
+> > above since we have already divided fifo_len by pattern_len here.
+> >
+>=20
+> There is a situation causing the subsequent for loop to never
+> terminate, hanging the kernel boot process: given a system which
+> doesn't have an hardware reset line allowing the kernel to
+> re-initialize the IMU hardware, in case of an hot reboot the driver
+> probe() function attempts to flush the FIFO, which may contain some
+> data, while the hw->sip is zero.
+> The complete execution path is the following:
+> - call of st_lsm6dsx_probe();
+> - allocation of the st_lsm6dsx_hw structure via the devm_kzalloc,
+> zero-initializing the sip field;
+> - call of st_lsm6dsx_init_device();
+> - call of st_lsm6dsx_reset_device();
+> - call of st_lsm6dsx_flush_fifo();
+> - call of st_lsm6dsx_read_fifo/st_lsm6dsx_read_tagged_fifo via the
+> fifo_ops function pointer.
 
-It does, please see the AIPSTZ_OPACR register definition. The imx-atf of
-sets OPACR registers to 0 (of course), which means that the S/NS is not
-checked _but_ it can be configured.
-
-Also please see chapter 4.7.6.1 Security Block:
-
-The AIPSTZ contains a security block that is connected to each
-off-platform peripheral. This block filters accesses based on
-write/read, non-secure, and supervisor signals.
-
-> AFAIK that's the job of the CSU (central security unit), which is a
-> different IP.
-
-Please see above.
-
-> Perhaps I shouldn't have used the term "trusted" as it might have
-> ended up creating more confusion? If so, please do let me know so I
-> can maybe add a comment about it in one of the commit messages. In
-> this context, "master X is trusted for read/writes" means "master X is
-> allowed to perform read/write transactions".
-
-No you didn't confused me but you triggered my interest :) and I started
-to check the (S)TRM.
-
-> Even if the bridge is configured to allow read/write transactions from
-> a master (i.e: master is marked as trusted for read/writes) that
-> wouldn't be very helpful.
-
-We're talking about the IP access permissions, right. If the
-"secure-I2C" is accessible from NS world this would make a difference of
-course.
-
-> You'd still have to bypass the CSU configuration which as far as I
-> understand is also used by the bridge to deny access to peripherals
-> (e.g: if transaction is secure+privileged then forward to peripheral,
-> otherwise abort it). See the "4.7.6.1 Security Block" and "4.7.4 
-> Access Protections" chapters from the IMX8MP RM.
-
-I have read this too, also that the AIPSTZ can force the mode into
-user_mode regardless of the CSU settings, if I get this correct.
-
-What I don't understand as of now is the interaction of the AIPSTZ and
-the CSU. You can configure different bus-masters within the CSU to be
-S/NS as well as the pheripherals. Now the part which I don't understand
-right now: According the OPACx register description:
-
-x0xx SP0 — This peripheral does not require supervisor privilege level
-           for accesses.
-x1xx SP1 — This peripheral requires supervisor privilege level for
-           accesses. The master privilege level must indicate supervisor
-	   via the hprot[1] access attribute, and the MPROTx[MPL] control
-	   bit for the master must be set. If not, the access is
-	   terminated with an error response and no peripheral access is
-	   initiated on the IPS bus.
-
-The peripheral can be configured via the AIPSTZ as well. So which IP
-(CSU or AIPSTZ) override the other if the settings don't match, e.g. if
-CSU says: "this I2C controller for secure-world" and the AIPSTZ says:
-"this I2C is for non-secure-world".
-
-> Given all of this, I think the purpose of this IP's AC is to add some
-> extra, light, security features on top of the CSU.
-
-Or to override the CSU settings like the MPROTOx values:
-
-xxx0 MPL0 — Accesses from this master are forced to user-mode
-           (ips_supervisor_access is forced to zero) regardless of the
-	   hprot[1] access attribute.
-xxx1 MPL1 — Accesses from this master are not forced to user-mode. The
-            hprot[1] access attribute is used directly to determine
-	    ips_supervisor_access.
-
-Can you pleae elaborate a bit more how NXP designed the interaction
-between both the AIPSTZ and the CSU?
+ack, I can see the issue now, thx for pointing this out. I should we should=
+ set
+pattern_len to ST_LSM6DSX_SAMPLE_SIZE or ST_LSM6DSX_TAGGED_SAMPLE_SIZE if i=
+t is
+0. Can you please move the check before updating fifo_len in
+st_lsm6dsx_read_fifo()?
 
 Regards,
-  Marco
+Lorenzo
+
+>=20
+> An alternative solution to solve this situation is initializing the
+> hw->sip field to a sane default value in either the probe() or
+> init_device() function.
+>=20
+> > > +
+> > >       for (read_len =3D 0; read_len < fifo_len; read_len +=3D pattern=
+_len) {
+> > >               err =3D st_lsm6dsx_read_block(hw, ST_LSM6DSX_REG_FIFO_O=
+UTL_ADDR,
+> > >                                           hw->buff, pattern_len,
+> > > @@ -623,6 +628,9 @@ int st_lsm6dsx_read_tagged_fifo(struct st_lsm6dsx=
+_hw *hw)
+> > >       if (!fifo_len)
+> > >               return 0;
+> > >
+> > > +     if (!pattern_len)
+> > > +             pattern_len =3D ST_LSM6DSX_TAGGED_SAMPLE_SIZE;
+> >
+> > for the reason above, this is not necessary.
+> >
+> > Regards,
+> > Lorenzo
+> >
+> > > +
+> > >       for (read_len =3D 0; read_len < fifo_len; read_len +=3D pattern=
+_len) {
+> > >               err =3D st_lsm6dsx_read_block(hw,
+> > >                                           ST_LSM6DSX_REG_FIFO_OUT_TAG=
+_ADDR,
+> > > --
+> > > 2.48.1
+> > >
+
+--oUCIrKhfoEupLwpQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZ8sFdAAKCRA6cBh0uS2t
+rKn+AQD6DYrrbcyM5r9RwPVBgWd6ZHejDs4Bc4gvn+vJU7JNygEA+YKCHSuJ2RKX
+D4s0eQ3y/D/VFULCAElOvu1tjuJNYQw=
+=fTxQ
+-----END PGP SIGNATURE-----
+
+--oUCIrKhfoEupLwpQ--
 
