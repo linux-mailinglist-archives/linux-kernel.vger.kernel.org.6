@@ -1,155 +1,179 @@
-Return-Path: <linux-kernel+bounces-551535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F52A56DD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:34:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A504A56DDA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:34:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D579C3B730D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:32:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2142B3B83BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F27923E220;
-	Fri,  7 Mar 2025 16:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223F223C8CF;
+	Fri,  7 Mar 2025 16:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmqZXY3e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IFq+1D8l"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8CC921CC7B;
-	Fri,  7 Mar 2025 16:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BCB1607A4
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 16:33:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741365170; cv=none; b=Zol9zNNyuzLvbsW51PBy1NMne/3T83GLjf0MusiaqoMe4RBqZ/6v5sN+4wbIUGs0SjqoO1x/k4i97Cx73XsZfe/RafhBgEfg4UHSOf4VLAlpQHvyk/NBR10H+5cSc0ox8EQTqo4U+i61FO7Y4Vm1WhCmJ3bCspaNHUbGVwBXtjc=
+	t=1741365241; cv=none; b=ZGBSQzJTageXhDPV6zUcj5peonQ9NBOWNLMb+qRa71NsWvuuBPx+gB1bHsLGgt+EVGIKZWgtBSiQnmY++x08l1bMLb7UyP/1yu5kUhHInh9BbvO8GlNjWg1iqyxqPnr0k8N5A9LiEXVJ4WWq+x8nHz5OebJEHL4MJ9PUjUNrBk0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741365170; c=relaxed/simple;
-	bh=IYtqKF6RNYuUGwDssKjvbaMKZWh50JK81ILez6ZwBro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UGV6CdBfYW7XToMk1plXembJZDMrpISdTQ55LiSP04a3jCHnPhGzfT+Hz+vbtt2hCVCROZFBbpbdnActzt6Lwzl6MG1Ao3E+faVoaJ8S51Tf5UWASOVvnuYfVfY2G54DoRz2EFqn/m1FK0EZV9/BrZ4riQHcBemNlPBcarErTk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmqZXY3e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87472C4CED1;
-	Fri,  7 Mar 2025 16:32:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741365170;
-	bh=IYtqKF6RNYuUGwDssKjvbaMKZWh50JK81ILez6ZwBro=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AmqZXY3eAmBagMUhD/bF9pCoaMAre3597fTvRXSrgx4KDSzpE7OIrhKyPOsl9G1zE
-	 mHIiqQa3IM0TYy7GRM4nhxbbpZEc+CuhqdCQpru3xe08YHQWWiYMMKRsD0YYO0szML
-	 i8ho+W8Xm+/vmKubB9gMO7H3jKK+YCXJwnYSKeDSBMIJJ6gnHj+SeHS0Ia0I4u1Ny2
-	 ONY5aGltXyKbwzcdExuTaaXPyVX5yDfQe1ncNqFXYUSQK15T/tGjgMsASAF2BEL2AH
-	 tO9AbhOVMerxDn7HL3x7O1rzkoAcId7EgyftX2f8uMno4a25bkvjnwHaRE3tiAR4UF
-	 JD7iZDmoKjlww==
-Date: Fri, 7 Mar 2025 17:32:46 +0100
-From: Maxime Ripard <mripard@kernel.org>
-To: Lyude Paul <lyude@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, rust-for-linux@vger.kernel.org, 
-	Danilo Krummrich <dakr@kernel.org>, mcanal@igalia.com, Alice Ryhl <aliceryhl@google.com>, 
-	Simona Vetter <sima@ffwll.ch>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Asahi Lina <lina@asahilina.net>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC v3 01/33] rust: drm: Add a small handful of fourcc bindings
-Message-ID: <20250307-hypersonic-beryl-buzzard-d06c5f@houat>
-References: <20250305230406.567126-1-lyude@redhat.com>
- <20250305230406.567126-2-lyude@redhat.com>
+	s=arc-20240116; t=1741365241; c=relaxed/simple;
+	bh=iQlIzHtyCwlGcb7Er8PBgL0GFY310hseVnNldeydl7I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QvHM80Ht051xWwYEBcfkU4d50VHGGYWqkfjxUDP29EYmbzfzzGt+XqAEONORVfHXuCecLyb8MYFCjhGE3ZJtbT15PkK8NxFEsCnqjV5gv7oBHycptqsQpFmG+VeaB45iQlfZzXtcy0euK++UX2hewn1RJNBRekRxdzhEvAqGQVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IFq+1D8l; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-391342fc0b5so1261324f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 08:33:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741365238; x=1741970038; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vm9Bfz6JbIJ378qC0it1HzTk3jXpGGODeE+NgRJA20A=;
+        b=IFq+1D8lOXydXt4A1yRhriWWuwZJSrQu70sJ1dfmrMS7bu+CWbwH27wpkyXb3vnWM2
+         bg+wQLO5uvt2/cwR0Yp/ddp1ywY+gGyqlvicFkb9ROKWQ3izVc3uqj6K2O3n191WRF/g
+         T+0/PHKufGTyqBBxVxS9xZUdOIZBhqwlBvSMOQ9DcEZqcTzEpEfkY7+hF+dFWD/BMiTO
+         QNTp+WF5koGbXuCOncwcTACWXJ1ARXoREjWPeAKEy3VA0A1pUGsSRZxLfwIBCI6jsTPH
+         UqoE83sXkZpW4bVLLZ+5Uqc28AZ/3+hUl+lJ3HSUjgmpDRhpOTpLsS6vOL+a2E2scfol
+         8GRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741365238; x=1741970038;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Vm9Bfz6JbIJ378qC0it1HzTk3jXpGGODeE+NgRJA20A=;
+        b=GHLGGs9XtksL34ZpqvoO8AVN4sfhMcxTzKPju8zMJPxw32iTK+U9LwiF+9iXY0IEsH
+         fps6/SsxfxValZ2zMjI0ToWcbtzL/yNJyqHAWruvtuQVDuQz0Ft+Aye34HwFXhi2uMiW
+         7Zx/LjpCe9YSYJPednfGgLPFpLWV/SaFMtMgxpmfkFoGY0fCS9KgYlSFVkkkZX6HNvHS
+         aS8OTyzhzLofFB+ZbusHCK2m0dLpXLNo/VS3c9YJmr//Kxlrn0CNfD0HbXvw/6RJFKWA
+         mrJf8VFPxZV/Eymtpkxa7uSVlXbtIV+XpW2QPa7+xwk1VVRjtb6FsMliBBW+nzQXs/NF
+         /wZg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEMeWMVLCXHJZNe2RwloR1qrM6JEAhVzcZEb0YXxbNF9JLq6IgLAKytFkF3R/ebykl+J6A1EPmN2RoxwY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxflZZ4EcQ0Jq28jzrYm5O1yVAeAUw6IevNlxG4OwMGZ1Nd1Uxh
+	1HXZRmOMkkNoMLImwyRSSHJ3xHtYWRWPYzmCTyKmTXzHrVUjE+NA
+X-Gm-Gg: ASbGncv7sQ9EXT2x7aBuQrpwnnv+u4EG6GeBAZYgM3BnHClqPzvljwTmuBvhAXLJmlK
+	Tjzx058UdqK+kmG7La07Kwn/30p7cktzxNX4Se2PmISzajbaQaNi0adhcTXH3S7Bf8SvN3MsnGi
+	aOpOCjhh4rsCRof6M/28++PNxkrMcCyu+3RUWE3F+IIEeAItrj/7kaSt2eFQTHelbx4QdEcO3IC
+	cpSIEr8Mrg43qbiBJ4eptUcLCKNgtBHLvB5iLJ7aSNGHhSHO8egCtpMYqfgg6JmH02+YLnJLjzF
+	TmTbZPq2bsEkFJuzfk/svvKZhTZA+tGzVuVK3Ul0rfTUZNc=
+X-Google-Smtp-Source: AGHT+IFbiYvKoYtgwvkhobPihEDJGuAH06BPac2DQev4T6RARv+m5Y3Ur1FW3BdPTHrqS2+nV6i5og==
+X-Received: by 2002:a5d:64c7:0:b0:390:e2a3:cb7b with SMTP id ffacd0b85a97d-39132da28a0mr3850747f8f.34.1741365237661;
+        Fri, 07 Mar 2025 08:33:57 -0800 (PST)
+Received: from fedora.. ([213.94.27.232])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c019557sm6031436f8f.50.2025.03.07.08.33.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 08:33:56 -0800 (PST)
+From: =?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+To: louis.chauvet@bootlin.com
+Cc: hamohammed.sa@gmail.com,
+	simona@ffwll.ch,
+	melissa.srw@gmail.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Jos=C3=A9=20Exp=C3=B3sito?= <jose.exposito89@gmail.com>
+Subject: [PATCH v3 00/16] drm/vkms: Add configfs support
+Date: Fri,  7 Mar 2025 17:33:37 +0100
+Message-ID: <20250307163353.5896-1-jose.exposito89@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mbognbzweqfbmz6c"
-Content-Disposition: inline
-In-Reply-To: <20250305230406.567126-2-lyude@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Hi everyone,
+
+This series allow to configure one or more VKMS instances without having
+to reload the driver using configfs.
+
+The series is structured in 3 blocks:
+
+  - Patches 1..11: Basic device configuration. For simplicity, I kept the
+    available options as minimal as possible.
+
+  - Patches 12 and 13: New option to skip the default device creation and to-do
+    cleanup.
+
+  - Patches 14, 15 and 16: Allow to hot-plug and unplug connectors. This is not
+    part of the minimal set of options, but I included in this series so it can
+    be used as a template/example of how new configurations can be added.
+
+The process of configuring a VKMS device is documented in "vkms.rst".
+
+Finally, the code is thoroughly tested by a collection of IGT tests [1].
+
+Best wishes,
+José Expósito
+
+[1] https://lists.freedesktop.org/archives/igt-dev/2025-February/086071.html
+
+Changes in v3:
+
+  - Applied review comments by Louis Chauvet: (thanks!!)
+    - Use scoped_guard() instead of guard(mutex)(...)
+    - Fix a use-after-free error in the connector hot-plug code
+  - Rebased on top of drm-misc-next
+  - Link to v2: https://lore.kernel.org/all/20250225175936.7223-1-jose.exposito89@gmail.com/
+
+Changes in v2:
+
+  - Applied review comments by Louis Chauvet:
+    - Use guard(mutex)(...) instead of lock/unlock
+    - Return -EBUSY when trying to modify a enabled device
+    - Move the connector hot-plug related patches to the end
+  - Rebased on top of drm-misc-next
+  - Link to v1: https://lore.kernel.org/dri-devel/20250218170808.9507-1-jose.exposito89@gmail.com/T/
+
+José Expósito (16):
+  drm/vkms: Expose device creation and destruction
+  drm/vkms: Add and remove VKMS instances via configfs
+  drm/vkms: Allow to configure multiple planes via configfs
+  drm/vkms: Allow to configure the plane type via configfs
+  drm/vkms: Allow to configure multiple CRTCs via configfs
+  drm/vkms: Allow to configure CRTC writeback support via configfs
+  drm/vkms: Allow to attach planes and CRTCs via configfs
+  drm/vkms: Allow to configure multiple encoders via configfs
+  drm/vkms: Allow to attach encoders and CRTCs via configfs
+  drm/vkms: Allow to configure multiple connectors via configfs
+  drm/vkms: Allow to attach connectors and encoders via configfs
+  drm/vkms: Allow to configure the default device creation
+  drm/vkms: Remove completed task from the TODO list
+  drm/vkms: Allow to configure connector status
+  drm/vkms: Allow to update the connector status
+  drm/vkms: Allow to configure connector status via configfs
+
+ Documentation/gpu/vkms.rst                    | 100 ++-
+ drivers/gpu/drm/vkms/Kconfig                  |   1 +
+ drivers/gpu/drm/vkms/Makefile                 |   3 +-
+ drivers/gpu/drm/vkms/tests/vkms_config_test.c |  24 +
+ drivers/gpu/drm/vkms/vkms_config.c            |   8 +-
+ drivers/gpu/drm/vkms/vkms_config.h            |  26 +
+ drivers/gpu/drm/vkms/vkms_configfs.c          | 833 ++++++++++++++++++
+ drivers/gpu/drm/vkms/vkms_configfs.h          |   8 +
+ drivers/gpu/drm/vkms/vkms_connector.c         |  35 +
+ drivers/gpu/drm/vkms/vkms_connector.h         |   9 +
+ drivers/gpu/drm/vkms/vkms_drv.c               |  18 +-
+ drivers/gpu/drm/vkms/vkms_drv.h               |  20 +
+ 12 files changed, 1072 insertions(+), 13 deletions(-)
+ create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.c
+ create mode 100644 drivers/gpu/drm/vkms/vkms_configfs.h
 
 
---mbognbzweqfbmz6c
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC v3 01/33] rust: drm: Add a small handful of fourcc bindings
-MIME-Version: 1.0
+base-commit: 2c7aafc05c8330be4c5f0092b79843507a5e1023
+-- 
+2.48.1
 
-Hi,
-
-On Wed, Mar 05, 2025 at 05:59:17PM -0500, Lyude Paul wrote:
-> This adds some very basic rust bindings for fourcc. We only have a single
-> format code added for the moment, but this is enough to get a driver
-> registered.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
->=20
-> ---
-> V3:
-> * Drop FormatList and ModifierList
->   These aren't actually needed as pointed out by Louis Chauvet
-> * Add a constant for FORMAT_MOD_INVALID
->   I realized that we actually need this because the format list isn't
->   terminated with a 0 like I thought, and we can't pick this up
->   automatically through bindgen
-> * Split out the FormatInfo WIP
->   We'll want this someday, but not yet.
->=20
-> Signed-off-by: Lyude Paul <lyude@redhat.com>
-> ---
->  rust/kernel/drm/fourcc.rs | 21 +++++++++++++++++++++
->  rust/kernel/drm/mod.rs    |  1 +
->  2 files changed, 22 insertions(+)
->  create mode 100644 rust/kernel/drm/fourcc.rs
->=20
-> diff --git a/rust/kernel/drm/fourcc.rs b/rust/kernel/drm/fourcc.rs
-> new file mode 100644
-> index 0000000000000..62203478b5955
-> --- /dev/null
-> +++ b/rust/kernel/drm/fourcc.rs
-> @@ -0,0 +1,21 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> +
-> +//! DRM fourcc bindings.
-> +//!
-> +//! C header: [`include/uapi/drm/drm_fourcc.h`](srctree/include/uapi/drm=
-/drm_fourcc.h)
-> +
-> +/// Return a fourcc format code.
-> +const fn fourcc_code(a: u8, b: u8, c: u8, d: u8) -> u32 {
-> +    (a as u32) | (b as u32) << 8 | (c as u32) << 16 | (d as u32) << 24
-> +}
-> +
-> +// TODO: We manually import this because we don't have a reasonable way =
-of getting constants from
-> +// function-like macros in bindgen yet.
-> +#[allow(dead_code)]
-> +pub(crate) const FORMAT_MOD_INVALID: u64 =3D 0xffffffffffffff;
-> +
-> +// TODO: We need to automate importing all of these. For the time being,=
- just add the single one
-> +// that we need
-> +
-> +/// 32 bpp RGB
-> +pub const XRGB888: u32 =3D fourcc_code(b'X', b'R', b'2', b'4');
-
-It would be nice to keep the DRM prefix still. Fourccs aren't quite
-standardized and the ones from v4l2 and DRM don't match for the same
-formats.
-
-The rest looks good to me
-
-Maxime
-
---mbognbzweqfbmz6c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZ8sfrgAKCRDj7w1vZxhR
-xVjHAQD6iHjWhdGUo4ttrAjNAbZcn611frmBg/w0iAIZKE9PaQD/e87kUsZqmpF5
-VaUSzEUHmsQFXkNdEd+Dl4HibbOOEQc=
-=lIqa
------END PGP SIGNATURE-----
-
---mbognbzweqfbmz6c--
 
