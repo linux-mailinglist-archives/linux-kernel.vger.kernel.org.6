@@ -1,110 +1,164 @@
-Return-Path: <linux-kernel+bounces-550690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FF09A562F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:51:39 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFC3FA562FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:52:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A62A7A4645
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:50:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C04E67AA0A2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:51:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 087681E1DE7;
-	Fri,  7 Mar 2025 08:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8C4E1DE3BD;
+	Fri,  7 Mar 2025 08:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HfVtOAt9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UAG/w4vI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ikro9N4G"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66D4C14D283;
-	Fri,  7 Mar 2025 08:51:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAA7F14D283;
+	Fri,  7 Mar 2025 08:52:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741337488; cv=none; b=ObgHrZSVLb2d1HlLASIl5lFSdwewH2mVuH/3KQijcsBZfx3BLeI0oRAxEtDrvcZ4mFHOdOmPoY1QEaY+jUYANDnXv+hJME99URsHJW/x3CByLGkBD23ygO/AuucrM8MgbI82Z8VpNpp5LK3XiEUGFpA2nhapf43sImH/d4AzdrI=
+	t=1741337527; cv=none; b=c6G63SqpBlOOFiqneZE7krtgVzlMGgTd9LkdUQeE5viNMJpjxx73mny5s9eDKNiAfJJBLfXcUM9q9slG9PDWqbWjznqiWhxrI2+enpu3WZvVCbQTig7kR2lmTudA0AQ2mXHOyM+YLEPVERvxXQ8SbpYL4X/PZJZ0Da9i1NLKHLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741337488; c=relaxed/simple;
-	bh=vpJCeiOgrIUkNzDLmzUQdmvKE38vOGJtILsPmcYctyg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eol0e8JIdxqMLZECfWsQU0T2qDudWJrfq4cWBxb391pcQkkAKjc2/hnGg77DAdzIF08Dx9g0IcORZ4OMaZh1jIqlYWByiS9Op8J4CT36w1lSPtydwd0xOUr51Rt8EfYiZuVaKsnGEHWMr8p4yrp8H8QFlAI56IlN5tsMnHsEFk4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HfVtOAt9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDA53C4CED1;
-	Fri,  7 Mar 2025 08:51:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741337487;
-	bh=vpJCeiOgrIUkNzDLmzUQdmvKE38vOGJtILsPmcYctyg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HfVtOAt9wH6sxqq51gbzk0XjY/RUpaBfQJBa0YBABWuGeFhQGBKpMBCszkdzv0r6r
-	 3w6D9wukUEI3yk3dTlkoD0KDiTHh6lLNyRwkLNiZ5K5usMwN13HHaWpRtvIRfZAl7A
-	 r5ozrazsxkHQ0tXYbzyF541qHqAP8uBsdKG/ocyvNndh0VoAjtpj27JtShyF18nbbO
-	 WgyRabhjbR8+xfTHihdrM5xwGGHB00xNE5HqQ7ZtFH66a1s02vbBxpcnzMPURIHazs
-	 qWD5zHiivXmFUwnN/tfH6ei/VR3IGM9hVLKyujOIX+RkI8Qwk9Z0Ci4q1dL3jnF/yr
-	 /BL46ReGi1kjg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1tqTQT-000000005jN-2TiY;
-	Fri, 07 Mar 2025 09:51:25 +0100
-Date: Fri, 7 Mar 2025 09:51:25 +0100
-From: Johan Hovold <johan@kernel.org>
-To: Miaoqing Pan <quic_miaoqing@quicinc.com>
-Cc: quic_jjohnson@quicinc.com, ath11k@lists.infradead.org,
-	linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH ath-next 2/2] wifi: ath11k: fix HTC rx insufficient length
-Message-ID: <Z8qzjeUE1L5GxFq_@hovoldconsulting.com>
-References: <20250307040848.3822788-1-quic_miaoqing@quicinc.com>
- <20250307040848.3822788-3-quic_miaoqing@quicinc.com>
+	s=arc-20240116; t=1741337527; c=relaxed/simple;
+	bh=hQfwJhsHr4CVUi0qKhXrIyhGMy24OKMPo63dqahohSs=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=GLkVKx6xAIlYRhNDcvquGgKibJcB7vZm3l2Es9FhJ5VOCYpxZpS/eBZGgQpVeIworhl0JgYQYrsfI982rhOkd4is0KgsVOCg87TF1PR/hlGyl59oFNXm4Cw275iuUb6IyL2C9Hkoylpk7jvcMcVGR8ksGADxI+4GGPHY5wuzufc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UAG/w4vI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ikro9N4G; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 07 Mar 2025 08:51:58 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741337522;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CZtKkUi0W48B0wBvZKOzYOBZ4voGfhG5b2Iwp2Q0xCo=;
+	b=UAG/w4vIJp2Cte7DKidQQMLByTRm7UBMKJoLIYB/e21u/0OfcddHRMkf2PkdHudBe5fXtB
+	540TkuyLO2DXvLsjT2quS2HkN1BlvLJ7opuS1yzTIoRKHPJKelW8+xt+B/LvQzd69SRUaf
+	ajy8mt3lQQ9AgT44Zliq6yrbzP752vt8buWWB+KSl7mrDgE8lTlp76DCtrEkmCQk0x6hVB
+	KWUKX01p/rEvsFEInSdtGvqoz/8RoHhrzyGBptZponeyWdzzLpQ/bX+C69gacIKq67SVhy
+	/owWLzEz3pU6RcsVxmj2KSZrUyOn4RVIfuqaTbJzZIEChWnbFzrPwNDM+RslnQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741337522;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CZtKkUi0W48B0wBvZKOzYOBZ4voGfhG5b2Iwp2Q0xCo=;
+	b=Ikro9N4G5VqxccWN+caeh0cWaTkEx+TZS4fa7ltkjB9Onmzzpi4Fzu7KpOi+hQGM8mGCyc
+	Jam7HiuHG1mOCNAA==
+From: "tip-bot2 for Shengjiu Wang" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: irq/drivers] irqchip/imx-irqsteer: Support up to 960 input interrupts
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ye Li <ye.li@nxp.com>,
+ Peng Fan <peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250305095522.2177843-1-ping.bai@nxp.com>
+References: <20250305095522.2177843-1-ping.bai@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307040848.3822788-3-quic_miaoqing@quicinc.com>
+Message-ID: <174133751827.14745.2072440373199317211.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi Miaoqing,
+The following commit has been merged into the irq/drivers branch of tip:
 
-and thanks a lot for looking into this.
+Commit-ID:     7db5fd6b751fbcaca253efc4de68f4346299948f
+Gitweb:        https://git.kernel.org/tip/7db5fd6b751fbcaca253efc4de68f4346299948f
+Author:        Shengjiu Wang <shengjiu.wang@nxp.com>
+AuthorDate:    Wed, 05 Mar 2025 17:55:22 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 07 Mar 2025 09:42:46 +01:00
 
-On Fri, Mar 07, 2025 at 12:08:48PM +0800, Miaoqing Pan wrote:
-> A relatively unusual race condition occurs between host software
-> and hardware, where the host sees the updated destination ring head
-> pointer before the hardware updates the corresponding descriptor.
-> When this situation occurs, the length of the descriptor returns 0.
+irqchip/imx-irqsteer: Support up to 960 input interrupts
 
-Can you explain how this race comes about?
+The irqsteer IP routes groups of input interrupts to a dedicated system
+interrupt per group. Each group handles 64 input interrupts.
 
-I worry that you may just be papering over a driver or firmware bug here
-so it would be good to understand how the host can see the updated
-pointer before the descriptor.
+The current driver is limited to 8 groups, i.e. 512 input interrupts, which
+is sufficient for the existing i.MX SoCs. The upcoming i.MX94 family
+extends the irqsteer IP to 15 groups, i.e. 960 interrupts.
 
-Also do you have any suggestions for how to reproduce this more easily?
-Some users of the X13s (aarch64) hit this very frequently, while I've
-only seen it a few times. At least one user hit this consistently when
-roaming, and another mentioned seeing this while driving his car with
-the laptop on (and presumably seeing a lot of APs go by).
+Extending the group limit to 15 enables this, but the new SoCs are not
+guaranteed to utilize all 15 groups. Unused groups have no mapping for the
+underlying output interrupt, which makes the probe function fail as it
+expects a valid mapping for each group output.
 
-> The current error handling method is to increment descriptor tail
-> pointer by 1, but 'sw_index' is not updated, causing descriptor and
-> skb to not correspond one-to-one, resulting in the following error:
-> 
-> ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1488, expected 1492
-> ath11k_pci 0006:01:00.0: HTC Rx: insufficient length, got 1460, expected 1484
-> 
-> To address this problem, temporarily skip processing the current
-> descriptor and handle it again next time. However, to prevent this
-> descriptor from continuously returning 0, use skb cb to set a flag.
-> If the length returns 0 again, this descriptor will be discarded.
-> 
-> Tested-on: QCA6698AQ hw2.1 PCI WLAN.HSP.1.1-04546-QCAHSPSWPL_V1_V2_SILICONZ_IOE-1
+Remove this limitation and stop the mapping loop, when no valid mapping is
+detected.
 
-Please also include:
+[ tglx: Massage change log ]
 
-Reported-by: Johan Hovold <johan+linaro@kernel.org>
+Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Ye Li <ye.li@nxp.com>
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Link: https://lore.kernel.org/all/20250305095522.2177843-1-ping.bai@nxp.com
+---
+ drivers/irqchip/irq-imx-irqsteer.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218623
-> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
-
-Johan
+diff --git a/drivers/irqchip/irq-imx-irqsteer.c b/drivers/irqchip/irq-imx-irqsteer.c
+index b0e9788..afbfcce 100644
+--- a/drivers/irqchip/irq-imx-irqsteer.c
++++ b/drivers/irqchip/irq-imx-irqsteer.c
+@@ -24,7 +24,7 @@
+ #define CHAN_MINTDIS(t)		(CTRL_STRIDE_OFF(t, 3) + 0x4)
+ #define CHAN_MASTRSTAT(t)	(CTRL_STRIDE_OFF(t, 3) + 0x8)
+ 
+-#define CHAN_MAX_OUTPUT_INT	0x8
++#define CHAN_MAX_OUTPUT_INT	0xF
+ 
+ struct irqsteer_data {
+ 	void __iomem		*regs;
+@@ -228,10 +228,8 @@ static int imx_irqsteer_probe(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < data->irq_count; i++) {
+ 		data->irq[i] = irq_of_parse_and_map(np, i);
+-		if (!data->irq[i]) {
+-			ret = -EINVAL;
+-			goto out;
+-		}
++		if (!data->irq[i])
++			break;
+ 
+ 		irq_set_chained_handler_and_data(data->irq[i],
+ 						 imx_irqsteer_irq_handler,
+@@ -254,9 +252,13 @@ static void imx_irqsteer_remove(struct platform_device *pdev)
+ 	struct irqsteer_data *irqsteer_data = platform_get_drvdata(pdev);
+ 	int i;
+ 
+-	for (i = 0; i < irqsteer_data->irq_count; i++)
++	for (i = 0; i < irqsteer_data->irq_count; i++) {
++		if (!irqsteer_data->irq[i])
++			break;
++
+ 		irq_set_chained_handler_and_data(irqsteer_data->irq[i],
+ 						 NULL, NULL);
++	}
+ 
+ 	irq_domain_remove(irqsteer_data->domain);
+ 
 
