@@ -1,144 +1,110 @@
-Return-Path: <linux-kernel+bounces-551197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B256AA5694B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:47:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D610A5694E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:47:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2267618983F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:47:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90D6B1898ACB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F255D21ADA4;
-	Fri,  7 Mar 2025 13:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B33AD21A457;
+	Fri,  7 Mar 2025 13:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="l/9GMcG7"
-Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Kip3kzr8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F07F20DD79
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 13:46:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9A920DD79
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 13:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741355203; cv=none; b=uqLkO+FzhiFx7V51WluGc+M3Rg+K38NNkUX2lLYKC129f38epFCNfPfw3fG6rbGclolYS1oDzrDsInwINE+zhVv06RubvNowkD6H8p/rvubtd7ptt49ZYTw0SzQ2haXJdy8h7heHGHQO2PvhpzFtLfiNLa6KHWuB9Zg7yCeWhcQ=
+	t=1741355217; cv=none; b=WmjPUwsF3sc9EfRcU94mo1cHGwIy4XUbRjbd8+pd+6KMa0Uj+ucGNcP4rJs0Wocbh+QWVWATiPwmpKj+ej0KjSglfbd5Uy6RyZ/cSSidrz57yYt5vzbqVeTk8lsXwwPokTxtWChJ1pk6lOSo/PfR2DTgO7SN26zfV1+haMgakzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741355203; c=relaxed/simple;
-	bh=He23/8mZZeZEGBeQVNebcLJi23Qj3PgN+QnWnUERjPc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IsYGUYGb3LHG3t3jgnUi7HKyub0RPZ/fVnhQZwwR4pGX7cPCPmLu0tR0xL7azMgHimWYgsjiT/9/IA+FN6RBlHoL0LDQ8j+U55oM0WLHbzSxMvmHtJGjRpwjeNv9d+SkRD5Pw5HQ8De+wF0vnpwJs5b6rEiRuAdFeOkCSQcAXnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=l/9GMcG7; arc=none smtp.client-ip=79.135.106.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=nyswv2o3x5g4lhoo7wghgi26uy.protonmail; t=1741355195; x=1741614395;
-	bh=jQOVrGU7Or9HJAB8PZjksGhwjMOslJNvzzwPKN5EXj4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=l/9GMcG7xVztXmqp2bjBwegVt4l82BHiyt1UxiJ8uC/SHt8y9qBKFLhBDdoX+CxjB
-	 UWWlRbbR7vxQmsPQvZ3WHHInFP4udAH5z2a82dv2JKN7vxnxmbZT+Nc2V5Ehbh8Cl2
-	 drOiK8K9rhBg9K3lNtFVUdqLdKEAEEuxmgNYjeiKb9/k6yuNCCrGkMDa3SkV3joeVq
-	 6S5ElN4dy4eq1j7ZlLd/QqrcnmPcil4gTdzBdUbDM1svALAP/cG3uVv4NxsMBt/NbH
-	 j9L8ox94HWi2RN3ugufMcIAh1Y16aAC9Uligt4006HMtoV1s8r2FzQt5iRGJMmnBwd
-	 2cwOOMieIJEqg==
-Date: Fri, 07 Mar 2025 13:46:32 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 01/13] rust: hrtimer: introduce hrtimer support
-Message-ID: <D8A2W9JIGFX3.20YC7NQRET0XG@proton.me>
-In-Reply-To: <87y0xh3s1u.fsf@kernel.org>
-References: <20250307-hrtimer-v3-v6-12-rc2-v10-0-0cf7e9491da4@kernel.org> <20250307-hrtimer-v3-v6-12-rc2-v10-1-0cf7e9491da4@kernel.org> <BdAxp1BNMXx919FqV2Yamyjr3d4pUGCHU8GhvKZG6scY5etznAwQeuf1ISWLu2lm9XHt2qC9kJUnlSSENhODuA==@protonmail.internalid> <D8A1JVVYBHY5.13BB8V796A7RR@proton.me> <87y0xh3s1u.fsf@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 91620299353540043126fb36575ac411fd18f213
+	s=arc-20240116; t=1741355217; c=relaxed/simple;
+	bh=8WwNjezJF569GFODmGLqiC3SEpVDFY+ddnvepovWS2M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=se68eKGH3wxs+Ct+iidtNRMso9c733KTuRO+MO+tjKDFVp/LXnw4tCoD7+7oSF7XZMUZ9lLV3ZLKHl8XaSdVpz2exHdjtg/tsEhTVYXy+3+OhE044ArekPmtSgiYHmiFxR2GrXC+EFhoC/8LtbNGw9+oxam1KWyacqIWfAiJyeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Kip3kzr8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCFE0C4CED1;
+	Fri,  7 Mar 2025 13:46:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741355216;
+	bh=8WwNjezJF569GFODmGLqiC3SEpVDFY+ddnvepovWS2M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Kip3kzr8+MtnBbHhY3wiGsvy2L7HOLd0njYClwziLY0K+7smxBgc6pbE9ksfq6BhM
+	 9d1Tu9NAAlaGzuQKcfd152naCTuTuyl0xqIa3KILAfBFrQc4UnpKiEIYyF8jT4k3zI
+	 uEjNLLnAqYZEIUk996avo+E68SjgZ7+hx2VxfJXpvdXz3zhuNfAFgOTZso/4TNGe2N
+	 57dqu/yEbEl1mps6/fyvValRfwUo6lM5H0HlS9PeYiTPinv1D/UZas6lz38g5in9PU
+	 ivNF1pNZOHwqH2a+MAdGlioKHx/u6XQ7tpCwy4gtdEIcmnz+sY+2BBdhqUOmJ6pI/m
+	 WtLZ06M2BcDhA==
+Date: Fri, 7 Mar 2025 14:46:53 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Benjamin Segall <bsegall@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrey Vagin <avagin@openvz.org>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [patch V2 01/17] posix-timers: Initialise timer before adding it
+ to the hash table
+Message-ID: <Z8r4zVJz8-XaN52Q@localhost.localdomain>
+References: <20250302185753.311903554@linutronix.de>
+ <20250302193626.974094734@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250302193626.974094734@linutronix.de>
 
-On Fri Mar 7, 2025 at 2:10 PM CET, Andreas Hindborg wrote:
-> "Benno Lossin" <benno.lossin@proton.me> writes:
->> On Fri Mar 7, 2025 at 11:11 AM CET, Andreas Hindborg wrote:
->>> +/// Use to implement the [`HasHrTimer<T>`] trait.
->>> +///
->>> +/// See [`module`] documentation for an example.
->>> +///
->>> +/// [`module`]: crate::time::hrtimer
->>> +#[macro_export]
->>> +macro_rules! impl_has_hr_timer {
->>> +    (
->>> +        impl$({$($generics:tt)*})?
->>> +            HasHrTimer<$timer_type:ty>
->>> +            for $self:ty
->>> +        { self.$field:ident }
->>> +        $($rest:tt)*
->>> +    ) =3D> {
->>> +        // SAFETY: This implementation of `raw_get_timer` only compile=
-s if the
->>> +        // field has the right type.
->>> +        unsafe impl$(<$($generics)*>)? $crate::time::hrtimer::HasHrTim=
-er<$timer_type> for $self {
->>> +
->>> +            #[inline]
->>> +            unsafe fn raw_get_timer(this: *const Self) ->
->>> +                *const $crate::time::hrtimer::HrTimer<$timer_type>
->>> +            {
->>> +                // SAFETY: The caller promises that the pointer is not=
- dangling.
->>> +                unsafe {
->>> +                    ::core::ptr::addr_of!((*this).$field)
->>> +                }
->>> +            }
->>> +
->>> +            #[inline]
->>> +            unsafe fn timer_container_of(ptr: *mut $crate::time::hrtim=
-er::HrTimer<$timer_type>) ->
->>> +                *mut Self
->>
->> This formatting looks a bit weird, (macro formatting is annoying, I
->> know).
->
-> How would you change it?
+Le Sun, Mar 02, 2025 at 08:36:44PM +0100, Thomas Gleixner a écrit :
+> From: Eric Dumazet <edumazet@google.com>
+> 
+> A timer is only valid in the hashtable when both timer::it_signal and
+> timer::it_id are set to their final values, but timers are added without
+> those values being set.
+> 
+> The timer ID is allocated when the timer is added to the hash in invalid
+> state. The ID is taken from a monotonically increasing per process counter
+> which wraps around after reaching INT_MAX. The hash insertion validates
+> that there is no timer with the allocated ID in the hash table which
+> belongs to the same process. That opens a mostly theoretical race condition:
+> 
+> If other threads of the same process manage to create/delete timers in
+> rapid succession before the newly created timer is fully initialized and
+> wrap around to the timer ID which was handed out, then a duplicate timer ID
+> will be inserted into the hash table.
+> 
+> Prevent this by:
+> 
+>   1) Setting timer::it_id before inserting the timer into the hashtable.
+>  
+>   2) Storing the signal pointer in timer::it_signal with bit 0 set before
+>      inserting it into the hashtable.
+> 
+>      Bit 0 acts as a invalid bit, which means that the regular lookup for
+>      sys_timer_*() will fail the comparison with the signal pointer.
+> 
+>      But the lookup on insertion masks out bit 0 and can therefore detect a
+>      timer which is not yet valid, but allocated in the hash table.  Bit 0
+>      in the pointer is cleared once the initialization of the timer
+>      completed.
+> 
+> [ tglx: Fold ID and signal iniitializaion into one patch and massage change
+>   	log and comments. ]
+> 
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Link: https://lore.kernel.org/all/20250219125522.2535263-3-edumazet@google.com
 
-Just use `rustfmt` (copy the macro arm, replace all `$` with `_` in
-names and remove repetitions, `rustfmt` and then revert. You're lucky,
-since you only have one repetition that doesn't cause the line to go
-over the 100 column threshold):
-
-        // SAFETY: This implementation of `raw_get_timer` only compiles if =
-the
-        // field has the right type.
-        unsafe impl$(<$($generics)*>)? $crate::time::hrtimer::HasHrTimer<$t=
-imer_type> for $self {
-
-            #[inline]
-            unsafe fn raw_get_timer(
-                this: *const Self,
-            ) -> *const $crate::time::hrtimer::HrTimer<$timer_type> {
-                // SAFETY: The caller promises that the pointer is not dang=
-ling.
-                unsafe { ::core::ptr::addr_of!((*this).$field) }
-            }
-
-            #[inline]
-            unsafe fn timer_container_of(
-                ptr: *mut $crate::time::hrtimer::HrTimer<$timer_type>,
-            ) -> *mut Self {
-                // SAFETY: As per the safety requirement of this function, =
-`ptr`
-                // is pointing inside a `$timer_type`.
-                unsafe { ::kernel::container_of!(ptr, $timer_type, $field).=
-cast_mut() }
-            }
-        }
-
----
-Cheers,
-Benno
-
+Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
 
