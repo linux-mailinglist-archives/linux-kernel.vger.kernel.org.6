@@ -1,205 +1,352 @@
-Return-Path: <linux-kernel+bounces-550506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80AAAA5608C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:57:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91ECEA5608F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:00:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 647687A6805
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:56:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4FBE1896812
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:00:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8C91991CF;
-	Fri,  7 Mar 2025 05:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E075019C575;
+	Fri,  7 Mar 2025 05:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XdZWCLP6"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2075.outbound.protection.outlook.com [40.107.94.75])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Y23GtGUH"
+Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E91B18DB09
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 05:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741327068; cv=fail; b=KmytLCcWC5TztVXh+CDKT0UaFoArWe+L1N84V/gjgmm6ejPNWrnTUF+t9kKEpklHRBTCWdLolOEDDUNJuMPYC84+9bHfR40ghS4S5vTE8tYA3u/5VP5uyqkHgmCxnYDrElqpe2AZyYIRQxDrl2EEFkdgL3d9r/zk6PnZbArmFUE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741327068; c=relaxed/simple;
-	bh=EFqvLYCd6JBj0zKwrSIvEb+03ByqIDMJqxYfN+N3h0o=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OYm+zPbmEmS3mh6kc7qK7j2xbl6iUphWTvu+r6OTqE9UbJ9xqm4cW5YBNGZ1go12g4JlDjnzMQR5qfUnO4HjnJt1pHUd+/0lXow9GO90rtB/5EDnhVd7Py9UHCoYPPLGsHSrJPUZ9Cej0PDxeN1xnVoCeaOOPLtWdVQrVVE4nYA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XdZWCLP6; arc=fail smtp.client-ip=40.107.94.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=fDLFEzv+qRhxpvilkcLYs6xiagOKg6wSgnRf+IuEE9lsd1V9MqR+gvnSd+0fG5fp6jmxc9f6GRzP37PDTzZf7gib0fv5Q0a418UYcFqD6Dj5vNu3gx80vedRCauV9OudrdSnhFHB9pOwc8WBtH/tWtBNhgByhrxcIkjwprFYHXnCY8aWgK4LYWp9TJcVpoUB9CdYicNMzGMBnLh3z4IdNwv3iCha8PR2chu/cL0e3uy9BqEXllX4HEomvTmMeAQw9RYrz/bV+rz3aOn95cTyDD4BpWP6iqzNOROV0sF2EMsM/nOrT/gy3DXpd82EwWHvwAxELNwdIll+0k5uthBkBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3mrK3MSpLCgYD/wWMjcFPGsBZfNBCUE3TWLYnKV9yQc=;
- b=i36RdkEBZy22wZa2oIBsd50SORVyOstpNsOJpYzvWbTNYOfUxXWG6ZAxMrYUmnmckAUMwvrXpysuuMVygsOgJIcP4kCupzI6fxcz7DAWDAyb7M1rUSfa3X2jPKrC9RhZmQjEQMGdq4483pcSKvqLnI14TiMoa+1yqRie22QP62LgBjsxDGMClwVSqbfgkj4kCZrANercchMlcq9KOcZ1RyvJvLhCy+R+MSdwUtEG2wA+qcpjhcNCErfViES+qYfktzfAz4acTIcmhcDOGEzgj49AVVi8qtEhuDXer/zXsx5PtDfIsRVQVa4xkeHH/TMu3wl61Eh+jqZLz8oso285yQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3mrK3MSpLCgYD/wWMjcFPGsBZfNBCUE3TWLYnKV9yQc=;
- b=XdZWCLP6gSrgREW6XsZSjhiDii1lNnOwyaMv2R9NLUNgVgdnyhKUepmWTlAl4c80el40CBepQn0ZsyaRO8EKrd70PlBx0CxQpeGazAOEQLzA6i7qyYifWHvoC3aUPJo5JgDQaBolhj+J+yNuAc6S36TPgpwg6fx/gV6hdjdZSAAdA5SoQeI5tLSWiUEjsJUruRElZhoUFe8SFSp3LSaOUOtTZwncB3C8+B/MVrsmr024ticNuqK03RiVt238rgfCX6NnT92DQkDqDO7ZP8GEai43zwIuGI9UnzCD/NYSiziwZ95JNg3xgs42c6zsvjKXJLMaXxHPdwwkyhCvRawmSQ==
-Received: from CH2PR20CA0012.namprd20.prod.outlook.com (2603:10b6:610:58::22)
- by MW4PR12MB7286.namprd12.prod.outlook.com (2603:10b6:303:22f::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Fri, 7 Mar
- 2025 05:57:43 +0000
-Received: from CH3PEPF00000015.namprd21.prod.outlook.com
- (2603:10b6:610:58:cafe::87) by CH2PR20CA0012.outlook.office365.com
- (2603:10b6:610:58::22) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.19 via Frontend Transport; Fri,
- 7 Mar 2025 05:57:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- CH3PEPF00000015.mail.protection.outlook.com (10.167.244.120) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8549.1 via Frontend Transport; Fri, 7 Mar 2025 05:57:42 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 6 Mar 2025
- 21:57:33 -0800
-Received: from drhqmail203.nvidia.com (10.126.190.182) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Thu, 6 Mar 2025 21:57:32 -0800
-Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com
- (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Thu, 6 Mar 2025 21:57:32 -0800
-Date: Thu, 6 Mar 2025 21:57:30 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <robin.murphy@arm.com>,
-	<joro@8bytes.org>, <will@kernel.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/3] iommu: Sort out domain user data
-Message-ID: <Z8qKyvNyNU6dkN7V@Asurada-Nvidia>
-References: <cover.1741294235.git.nicolinc@nvidia.com>
- <da7cc6d365ec6a77f6e6007f898eb3de2e581f80.1741294235.git.nicolinc@nvidia.com>
- <fabd6483-af48-4893-b539-2835640c5316@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F20C1990C3
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 05:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741327187; cv=none; b=UgdbWQMtsHF29ZDFf1mcH5CQpmY+Ni9uIi6x55FFoPylbiKwnOXhJ496pwiDfoRZ/4Y0ZqKDrx251EnH32V9qPAn07oSkYdQ+4kroTcEdlxqwPdIRo6tk6XjRyPDadU+qfgCUpmqWrmtBmhtdTMlyKQHcOSm8ldp4prrux4HJIY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741327187; c=relaxed/simple;
+	bh=wwmac+s+ESlIyXNfnNVtMPr0GhgEwFZOhY1IMJmPMZQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OPgkMcIasXH9bjKAHFSg7Gx2jlYIIjpYKltqMG4ds1mYmxONP+VwbUo7cXpcyE7ef1OgE7c9xv5OPIZEuSYEI8G/2JCB7hJ1bcrLnFwELp3joe6ZXVaSZj0b0MoF9ty0nxs+Ci6n7SM30pspDCTCGwrN9lv34WI4+RmctOrkZzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Y23GtGUH; arc=none smtp.client-ip=95.215.58.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741327181;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=7I8JlXAk7XOW8Ec0KDXoqsOGAqhiP+woZaSK8OFzW+A=;
+	b=Y23GtGUH7snKv5PLNOK1WbMqZLI09sdw345e87VF5yfzvB/zAhflbUQmQTPf8N2U71HX42
+	9iJ6OfxCBiKqGj8MEFCfnZc1JK4oC8B6AgkVL4L3HLXDrcT8fwDx3t+wBPGe8HsbMpY1Ot
+	ecJDGe8A2vtpgskccGCGs0JM/0SsYNM=
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-mm@kvack.org,
+	cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: [RFC PATCH] memcg: net: improve charging of incoming network traffic
+Date: Thu,  6 Mar 2025 21:59:36 -0800
+Message-ID: <20250307055936.3988572-1-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <fabd6483-af48-4893-b539-2835640c5316@linux.intel.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PEPF00000015:EE_|MW4PR12MB7286:EE_
-X-MS-Office365-Filtering-Correlation-Id: a7e83ab0-5af7-4aed-2f24-08dd5d3cf9ec
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?TM/YmmW2ha8yEmHwSfX46H7m5Mpt84KZJvM9qv4gLZgLdC1Zn8iQ5grQjAf8?=
- =?us-ascii?Q?MkhCf5/A7G1ApXdvyT+3+qS/fAkzdX8y7Qrlnib3M0c4Cu3bhAiVUxmuo8i4?=
- =?us-ascii?Q?PbmYcJSPQcQdYoC2ynC5feZja7OJxzbGs5ljORNpPM71iL49OHjr2gYcekHq?=
- =?us-ascii?Q?ZybjbfIuEoj8JqhWhagSm5UXzAMaJcHGY+j43DKY1UjkPikWTOOth6pl3iWJ?=
- =?us-ascii?Q?AYEmQIl8E/0MmVpmWJo6K0JVfnj7le10q1xhcfuyX4mqKFcUVBjJm/dQyOOS?=
- =?us-ascii?Q?6fROh4plwWfziR9rkwqRxHg5ZA5dB1zyGI8EyfqshRmcqUw9ofvJS0XDdpyS?=
- =?us-ascii?Q?myB9JudnNd7KK8YPF81Y61JbLkJJWwLvzFxcdqU5tAdZH9BjslD/1AcNg0JR?=
- =?us-ascii?Q?dSx0fK+C3R1FhA4ZLKWesSPYKAfQ4x5e/Doh9Hq6MtNCfRELJ2K61aAZB8kf?=
- =?us-ascii?Q?39GIuK/SwbXwPhl14IgkNnCom4KoR5wTuLq8nsb+b02uLVN8pNqjs+XR4gr5?=
- =?us-ascii?Q?5H+yq6VU7QBSEKRLnHAmAjL8WJTS934o5qsLIKSrmNMyYHGtU4l4EeQhboss?=
- =?us-ascii?Q?H6NyLWfGbmDXmbVpRSwb7ZguGRXuqyqRwz1mb3jHvtYry+0+H7pXU3LBb8TC?=
- =?us-ascii?Q?fhQRL7dFtt/pMjWitSEnUV2bYg1c32IQb4HfHO53auv9CLDhcy6IOwIaCs/n?=
- =?us-ascii?Q?uQUf4jPyzoZYgEOEXeGH+5WInIrhX7JTY+0GrVblt2Z1iWMjLuzq+7YJTD5P?=
- =?us-ascii?Q?OsYb17OfzsuLMHE9vaURvdct6XzbAHp9ma490iI448ebxBG9hdryf6iX0iwr?=
- =?us-ascii?Q?JP+KvrP2965+ylnrIIsS0CTH1JNAlrKsFdB+2jYWheLgASjy+l4Z0TPkUuUb?=
- =?us-ascii?Q?BiaYSEnECSkO1Wd53PAunKTvhYZqPG7B23RlizB7QTHTv93frQO3oThFB7Fi?=
- =?us-ascii?Q?z0GPj5Hx/lYwbSZlsgRE3bSY0cvYRIZnEWiN1LByG1yyw9aw3tok3bok2Ki/?=
- =?us-ascii?Q?7Ep9PoeJXTSUgw2bPWAd5mxhgZC8poOckfbbkNGuK212fQ0SPhCUf9f9jVpY?=
- =?us-ascii?Q?2PFy1FxUvvKVLYez+5vqtKDL9PAozSb/r5vgWlvmqUYKALMYUHcyIc7Vdffl?=
- =?us-ascii?Q?t5UK2L5TfDKjvSOCVrUrvIqCX3zT7+64ScjesIg+5keNJDBOc7SSsphAt2+k?=
- =?us-ascii?Q?PWCCBbeR2smomu1vhorOV/omz4xxWWKHLrEnSNtNsdY8ysCSbPQUVsC89wA+?=
- =?us-ascii?Q?QEEVIjAXFAoSj9pBVnCMd/ljPiBkjmBxRbZMYrn/0uLX6CLnJWuXHOEcFV00?=
- =?us-ascii?Q?HlAPGebkQ7n5ucGBCB8z0uBkV8AS5UnVEN0c982LP81WLcgaZYe8fGKPTdYn?=
- =?us-ascii?Q?MI6/vpN8Ue7zm/tHa6c8Cpe0FAoY5KswGlgWXuhd0NnE4i45Z7dIf6qIjVyI?=
- =?us-ascii?Q?fe92TZHDzgu3PjiUUesnJC4eyh2DbeJ7eAScplkWvbM7uU9DMWiLF6uMUb/d?=
- =?us-ascii?Q?pPQdI7RJzP793fM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 05:57:42.7342
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7e83ab0-5af7-4aed-2f24-08dd5d3cf9ec
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH3PEPF00000015.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7286
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Baolu,
+Memory cgroup accounting is expensive and to reduce the cost, the kernel
+maintains per-cpu charge cache for a single memcg. So, if a charge
+request comes for a different memcg, the kernel will flush the old
+memcg's charge cache and then charge the newer memcg a fixed amount (64
+pages), subtracts the charge request amount and stores the remaining in
+the per-cpu charge cache for the newer memcg.
 
-On Fri, Mar 07, 2025 at 10:28:20AM +0800, Baolu Lu wrote:
-> On 3/7/25 05:00, Nicolin Chen wrote:
-> > From: Robin Murphy<robin.murphy@arm.com>
+This mechanism is based on the assumption that the kernel, for locality,
+keep a process on a CPU for long period of time and most of the charge
+requests from that process will be served by that CPU's local charge
+cache.
 
-Robin had remarks here, wrt iommu_set_fault_handler():
+However this assumption breaks down for incoming network traffic in a
+multi-tenant machine. We are in the process of running multiple
+workloads on a single machine and if such workloads are network heavy,
+we are seeing very high network memory accounting cost. We have observed
+multiple CPUs spending almost 100% of their time in net_rx_action and
+almost all of that time is spent in memcg accounting of the network
+traffic.
 
-> > The fact is that all these cookie types are
-> > mutually exclusive, in the sense that combining them makes zero sense
-> > and/or would be catastrophic (iommu_set_fault_handler() on an SVA
-> > domain, anyone?) - the only combination which*might* be reasonable is
-> > perhaps a fault handler and an MSI cookie, but nobody's doing that at
-> > the moment, so let's rule it out as well for the sake of being clear and
-> > robust.
-[...]
-> > @@ -224,10 +234,10 @@ struct iommu_domain {
-> >   		      phys_addr_t msi_addr);
-> >   #endif
-> > -	union { /* Pointer usable by owner of the domain */
-> > -		struct iommufd_hw_pagetable *iommufd_hwpt; /* iommufd */
-> > -	};
-> > -	union { /* Fault handler */
-> > +	union { /* cookie */
-> > +		struct iommu_dma_cookie *iova_cookie;
-> > +		struct iommu_dma_msi_cookie *msi_cookie;
-> > +		struct iommufd_hw_pagetable *iommufd_hwpt;
-> >   		struct {
-> >   			iommu_fault_handler_t handler;
-> >   			void *handler_token;
-> 
-> My feeling is that IOMMU_COOKIE_FAULT_HANDLER isn't exclusive to
-> IOMMU_COOKIE_DMA_IOVA; both might be used for kernel DMA with a paging
-> domain.
-> 
-> I am afraid that iommu_set_fault_handler() doesn't work anymore as the
-> domain's cookie type has already been set to IOMMU_COOKIE_DMA_IOVA.
+More precisely, net_rx_action is serving packets from multiple workloads
+and is observing/serving mix of packets of these workloads. The memcg
+switch of per-cpu cache is very expensive and we are observing a lot of
+memcg switches on the machine. Almost all the time is being spent on
+charging new memcg and flushing older memcg cache. So, definitely we
+need per-cpu cache that support multiple memcgs for this scenario.
 
-All three existing iommu_set_fault_handler() callers in the tree
-are UNMANAGED domain users:
-   5    451  drivers/gpu/drm/msm/msm_iommu.c <<msm_iommu_gpu_new>>
-             iommu_set_fault_handler(iommu->domain, msm_fault_handler, iommu);
-   6    453  drivers/infiniband/hw/usnic/usnic_uiom.c <<usnic_uiom_alloc_pd>>
-             iommu_set_fault_handler(pd->domain, usnic_uiom_dma_fault, NULL);
-   8    118  drivers/remoteproc/remoteproc_core.c <<rproc_enable_iommu>>
-             iommu_set_fault_handler(domain, rproc_iommu_fault, rproc);
+This prototype implements a network specific scope based memcg charge
+cache that supports holding charge for multiple memcgs. However this is
+not the final design and I wanted to start the conversation on this
+topic with some open questions below:
 
-On the other hand, IOMMU_COOKIE_DMA_IOVA is a private cookie for
-dma-iommu only.
+1. Should we keep existing per-cpu single memcg cache?
+2. Should we have a network specific solution similar to this prototype
+   or more general solution?
+3. If we decide to have multi memcg charge cache, what should be the
+   size? Should it be dynamic or static?
+4. Do we really care about performance (throughput) in PREEMPT_RT?
 
-So, I think we are probably fine?
+Let me give my opinion on these questions:
 
-Thanks
-Nicolin
+A1. We definitely need to evolve the per-cpu charge cache. I am not
+    happy with the irq disabling for memcg charging and stats code. I am
+    planning to move towards two set of stocks, one for in_task() and
+    the other for !in_task() (similar to active_memcg handling) and with
+    that remove the irq disabling from the charge path. In the followup
+    I want to expand this to the obj stocks as well and also remove the
+    irq disabling from that.
+
+A2. I think we need a general solution as I suspect kvfree_rcu_bulk()
+    might be in a similar situation. However I think we can definitely
+    use network specific knowledge to further improve network memory
+    charging. For example, we know kernel uses GFP_ATOMIC for charging
+    incoming traffic which always succeeds. We can exploit this
+    knowledge to further improve network charging throughput.
+
+A3. Here I think we need to start simple and make it more sophisticated
+    as we see more data from production/field from multiple places. This
+    can become complicated very easily. For example the evict policy for
+    memcg charge cache.
+
+A4. I don't think PREEMPT_RT is about throughput but it cares about
+    latency but these memcg charge caches are about throughput. In
+    addition PREEMPT_RT has made memcg code a lot messier (IMO). IMO the
+    PREEMPT_RT kernel should just skip all per-cpu memcg caches
+    including objcg ones and that would make code much simpler.
+
+That is my take and I would really like opinions and suggestions from
+others. BTW I want to resolve this issue asap as this is becoming a
+blocker for multi-tenancy for us.
+
+Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+---
+ include/linux/memcontrol.h | 37 +++++++++++++++++
+ mm/memcontrol.c            | 83 ++++++++++++++++++++++++++++++++++++++
+ net/core/dev.c             |  4 ++
+ 3 files changed, 124 insertions(+)
+
+diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
+index 57664e2a8fb7..3aa22b0261be 100644
+--- a/include/linux/memcontrol.h
++++ b/include/linux/memcontrol.h
+@@ -1617,6 +1617,30 @@ extern struct static_key_false memcg_sockets_enabled_key;
+ #define mem_cgroup_sockets_enabled static_branch_unlikely(&memcg_sockets_enabled_key)
+ void mem_cgroup_sk_alloc(struct sock *sk);
+ void mem_cgroup_sk_free(struct sock *sk);
++
++struct memcg_skmem_batch {
++	int size;
++	struct mem_cgroup *memcg[MEMCG_CHARGE_BATCH];
++	unsigned int nr_pages[MEMCG_CHARGE_BATCH];
++};
++
++void __mem_cgroup_batch_charge_skmem_begin(struct memcg_skmem_batch *batch);
++void __mem_cgroup_batch_charge_skmem_end(struct memcg_skmem_batch *batch);
++
++static inline void mem_cgroup_batch_charge_skmem_begin(struct memcg_skmem_batch *batch)
++{
++	if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
++	   mem_cgroup_sockets_enabled)
++		__mem_cgroup_batch_charge_skmem_begin(batch);
++}
++
++static inline void mem_cgroup_batch_charge_skmem_end(struct memcg_skmem_batch *batch)
++{
++	if (cgroup_subsys_on_dfl(memory_cgrp_subsys) &&
++	   mem_cgroup_sockets_enabled)
++		__mem_cgroup_batch_charge_skmem_end(batch);
++}
++
+ static inline bool mem_cgroup_under_socket_pressure(struct mem_cgroup *memcg)
+ {
+ #ifdef CONFIG_MEMCG_V1
+@@ -1638,6 +1662,19 @@ void reparent_shrinker_deferred(struct mem_cgroup *memcg);
+ #define mem_cgroup_sockets_enabled 0
+ static inline void mem_cgroup_sk_alloc(struct sock *sk) { };
+ static inline void mem_cgroup_sk_free(struct sock *sk) { };
++
++struct memcg_skmem_batch {};
++
++static inline void mem_cgroup_batch_charge_skmem_begin(
++					struct memcg_skmem_batch *batch)
++{
++}
++
++static inline void mem_cgroup_batch_charge_skmem_end(
++					struct memcg_skmem_batch *batch)
++{
++}
++
+ static inline bool mem_cgroup_under_socket_pressure(struct mem_cgroup *memcg)
+ {
+ 	return false;
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 709b16057048..3afca4d055b3 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -88,6 +88,7 @@ EXPORT_PER_CPU_SYMBOL_GPL(int_active_memcg);
+ 
+ /* Socket memory accounting disabled? */
+ static bool cgroup_memory_nosocket __ro_after_init;
++DEFINE_PER_CPU(struct memcg_skmem_batch *, int_skmem_batch);
+ 
+ /* Kernel memory accounting disabled? */
+ static bool cgroup_memory_nokmem __ro_after_init;
+@@ -1775,6 +1776,57 @@ static struct obj_cgroup *drain_obj_stock(struct memcg_stock_pcp *stock);
+ static bool obj_stock_flush_required(struct memcg_stock_pcp *stock,
+ 				     struct mem_cgroup *root_memcg);
+ 
++static inline bool consume_batch_stock(struct mem_cgroup *memcg,
++				       unsigned int nr_pages)
++{
++	int i;
++	struct memcg_skmem_batch *batch;
++
++	if (IS_ENABLED(CONFIG_PREEMPT_RT) || in_task() ||
++	    !this_cpu_read(int_skmem_batch))
++		return false;
++
++	batch = this_cpu_read(int_skmem_batch);
++	for (i = 0; i < batch->size; ++i) {
++		if (batch->memcg[i] == memcg) {
++			if (nr_pages <= batch->nr_pages[i]) {
++				batch->nr_pages[i] -= nr_pages;
++				return true;
++			}
++			return false;
++		}
++	}
++	return false;
++}
++
++static inline bool refill_stock_batch(struct mem_cgroup *memcg,
++				      unsigned int nr_pages)
++{
++	int i;
++	struct memcg_skmem_batch *batch;
++
++	if (IS_ENABLED(CONFIG_PREEMPT_RT) || in_task() ||
++	    !this_cpu_read(int_skmem_batch))
++		return false;
++
++	batch = this_cpu_read(int_skmem_batch);
++	for (i = 0; i < batch->size; ++i) {
++		if (memcg == batch->memcg[i]) {
++			batch->nr_pages[i] += nr_pages;
++			return true;
++		}
++	}
++
++	if (i == MEMCG_CHARGE_BATCH)
++		return false;
++
++	/* i == batch->size */
++	batch->memcg[i] = memcg;
++	batch->nr_pages[i] = nr_pages;
++	batch->size++;
++	return true;
++}
++
+ /**
+  * consume_stock: Try to consume stocked charge on this cpu.
+  * @memcg: memcg to consume from.
+@@ -1795,6 +1847,9 @@ static bool consume_stock(struct mem_cgroup *memcg, unsigned int nr_pages,
+ 	unsigned long flags;
+ 	bool ret = false;
+ 
++	if (consume_batch_stock(memcg, nr_pages))
++		return true;
++
+ 	if (nr_pages > MEMCG_CHARGE_BATCH)
+ 		return ret;
+ 
+@@ -1887,6 +1942,9 @@ static void refill_stock(struct mem_cgroup *memcg, unsigned int nr_pages)
+ {
+ 	unsigned long flags;
+ 
++	if (refill_stock_batch(memcg, nr_pages))
++		return;
++
+ 	if (!localtry_trylock_irqsave(&memcg_stock.stock_lock, flags)) {
+ 		/*
+ 		 * In case of unlikely failure to lock percpu stock_lock
+@@ -4894,6 +4952,31 @@ void mem_cgroup_sk_free(struct sock *sk)
+ 		css_put(&sk->sk_memcg->css);
+ }
+ 
++void __mem_cgroup_batch_charge_skmem_begin(struct memcg_skmem_batch *batch)
++{
++	if (IS_ENABLED(CONFIG_PREEMPT_RT) || in_task() ||
++	    this_cpu_read(int_skmem_batch))
++		return;
++
++	this_cpu_write(int_skmem_batch, batch);
++}
++
++void __mem_cgroup_batch_charge_skmem_end(struct memcg_skmem_batch *batch)
++{
++	int i;
++
++	if (IS_ENABLED(CONFIG_PREEMPT_RT) || in_task() ||
++	    batch != this_cpu_read(int_skmem_batch))
++		return;
++
++	this_cpu_write(int_skmem_batch, NULL);
++	for (i = 0; i < batch->size; ++i) {
++		if (batch->nr_pages[i])
++			page_counter_uncharge(&batch->memcg[i]->memory,
++					      batch->nr_pages[i]);
++	}
++}
++
+ /**
+  * mem_cgroup_charge_skmem - charge socket memory
+  * @memcg: memcg to charge
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 0eba6e4f8ccb..846305d019c6 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -7484,9 +7484,12 @@ static __latent_entropy void net_rx_action(void)
+ 		usecs_to_jiffies(READ_ONCE(net_hotdata.netdev_budget_usecs));
+ 	struct bpf_net_context __bpf_net_ctx, *bpf_net_ctx;
+ 	int budget = READ_ONCE(net_hotdata.netdev_budget);
++	struct memcg_skmem_batch batch = {};
+ 	LIST_HEAD(list);
+ 	LIST_HEAD(repoll);
+ 
++	mem_cgroup_batch_charge_skmem_begin(&batch);
++
+ 	bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
+ start:
+ 	sd->in_net_rx_action = true;
+@@ -7542,6 +7545,7 @@ static __latent_entropy void net_rx_action(void)
+ 	net_rps_action_and_irq_enable(sd);
+ end:
+ 	bpf_net_ctx_clear(bpf_net_ctx);
++	mem_cgroup_batch_charge_skmem_end(&batch);
+ }
+ 
+ struct netdev_adjacent {
+-- 
+2.43.5
+
 
