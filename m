@@ -1,191 +1,109 @@
-Return-Path: <linux-kernel+bounces-551762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9BA2A5707D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:27:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF159A5707F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:27:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7913189BB94
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02A14179F65
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81957241C8B;
-	Fri,  7 Mar 2025 18:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC6A241698;
+	Fri,  7 Mar 2025 18:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Mm//iCO7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fmX1k1+O"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JvfnBXg3"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE5024113E;
-	Fri,  7 Mar 2025 18:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3196F23F434;
+	Fri,  7 Mar 2025 18:27:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741371952; cv=none; b=SNVerXXqYmpzbaDlWp1g4uocN4p09YvADiagRUgiz2ajH57N0LH0ecxlFScNaKa7cNPPbuq+R7Tuhp56E1Hd70/vzmoz3nP/to/zTCdqPadQifri4nCFx+OkmV8UzVN9NnNWT+mkGWodeLT8INc/GPFJBP+YijWQecrSyp0PtLg=
+	t=1741372044; cv=none; b=tIHgzv3g9ss1FStEUt6OerKcJWBt/Tr8OOywfsn+fk/MfIh3X20VH4nRTneZWKkyqjfHWRdlfqYbeDd8hWkxemaOXj2u9r2oHJiSqE6VBBri+Hhoaj/cyLroERWk3yFAARxzHx/RGOhbpo9W0WAd0pmwWNqPJjxaSHF2rEhP8+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741371952; c=relaxed/simple;
-	bh=3Ovd0J5I7/I82BSajaIsMtk4zYygg6eqFGLuo+FNr+c=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=n5z3Rh34K01N/vpVToGlj2V5qoVxTrZ/tbqz3aRYck9WjPYRkRgTvsVRscKzmUe0zlXd5wGkHD7+tckt0No+HcB4Ju8/udlgQYyhxPK5zm0ADxf7h9kYscLXJuz13+lNc1/9uC71Ttcrwr/zbyh1tMsEhgnixoXKWaOFyRShnCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Mm//iCO7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fmX1k1+O; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 07 Mar 2025 18:25:48 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741371949;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5BAgIn8+hjI+E0W6vDfg3HoDMlP1tfnkvdf5IbyHekU=;
-	b=Mm//iCO7c+5qdVznzFCR2OHq615G9xyG96ZJYFFa2pSwTtvRQ9Rp46L72AMDLWnfBVOLYi
-	UWCW6p58tKIyZZYy/6FI3lK7aofLdM/1E78rro5AgGEn8V1RdEqSsFIeB7phjKX28hWD5y
-	dSLbwewfO40Ik/4nzqJromU9Y3YpeetwaR99sM0k/maS85z8u+wbbsSMuf/w5LNA9TtMZr
-	nkK1LUpf3f/h1/jmjHuyBoi1mnNtj5uVRtFWREAq6Hw7vjlArtCxT34K7DSxD4ivcf1BPy
-	e2Z2mSiCrfZm3II6LLcMyR3js93/Ko291/AnsqGyhMfK+QMpKJrZ/RtWavcCmA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741371949;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5BAgIn8+hjI+E0W6vDfg3HoDMlP1tfnkvdf5IbyHekU=;
-	b=fmX1k1+OCjgOUtmCNEhhMZnAwgrtRaotgSiddGMlv9zpXyJuehL76LajuBc0lgXKDdMsQF
-	JIg4EYkP7YxbTcDg==
-From: "tip-bot2 for Nikunj A Dadhania" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] virt: sev-guest: Allocate request data dynamically
-Cc: andreas.stuehrk@yaxi.tech, Nikunj A Dadhania <nikunj@amd.com>,
- Alexey Kardashevskiy <aik@amd.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- stable@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250307013700.437505-2-aik@amd.com>
-References: <20250307013700.437505-2-aik@amd.com>
+	s=arc-20240116; t=1741372044; c=relaxed/simple;
+	bh=WWPFCKjncMR6X7DZ7Y8D9qVllmrW3P1ooSr3vHJo4s4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HiayZrsHJpZ3huG7csf+cbo39uaIVquH7TUPJWpqlZE5XUNS/0um2oWxbsHH4MDlWDKV7e1wpqnec41qIQlFtwNvgZEzQbI5I8gg5f8RZ2dYdywq2+0gkhV0xiqkvClKAW4tPFQgjwnDk6jX1wPTmNaEQdkQYwabG8wpQEMXZeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JvfnBXg3; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2240ff0bd6eso5720605ad.0;
+        Fri, 07 Mar 2025 10:27:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741372042; x=1741976842; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WWPFCKjncMR6X7DZ7Y8D9qVllmrW3P1ooSr3vHJo4s4=;
+        b=JvfnBXg3Nlk8sgyBjzRSTt95OCBZ4mX1MDF6krwP1oMwnElBvAE3ZmGeLz/IeJ59Ny
+         sWdQz+MMb9FpxS1rrBQ8unFwXWJZWwK8/guOtqBnTfvsHZ9K+G7Tv6Sh9VmbpKtJYhH9
+         rVADVBw/1r+KodPhooBewEvAMaKoFWmHruhGK6UfoMC1K1pQVb3zcPL4n4rOkYzVhxkx
+         snW3mQGp6mPRUevU1hsHHA9DPBUIf5Nxq4iT8w1FSTFqKecLzkQtn6sGYzdXOqL1qKt2
+         NNaCtu6p6dLEdtzEXPl47EfhlVQf/RTU8/aHftzjPkyLvCKzTnc4rKmoWVTv5rRg709H
+         Ccvw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741372042; x=1741976842;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WWPFCKjncMR6X7DZ7Y8D9qVllmrW3P1ooSr3vHJo4s4=;
+        b=gpxW2oXEe0CFB/CSZZRn2BnEpf6J+Q3JH1n0WMCDGI0TuZ5HgfHoLJjmK7d2ho9JDO
+         ELncaVmwixoBLgnsJtT3PgWhivtXnYEOjZCcD9oFAvgJ2BhVdXQ17VSWBMxBSgmJ5og1
+         4bQTq8pz0VbklYel8D/2gpbv5FVdj9tPd+NzuCcCdBaVP+4rTiHJeRCQRXTg7+eaeyqR
+         uFsuVPXAFeujALpbIMcEh3hd3xZOgO/dqRd0xHoXCNR3J6JZ1O1l5ux/rYqfiqK7CGFG
+         FWM25OPV/8fW2KNCbQhrdZklx0MJnNTF8mg8YvUHVUBMtrpofCnSM8jGTgmf2BP95CZB
+         BFHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUezbFU2DlCtrIpfrDcYiHmKbwhHd4mtAXzYnuP3FX7IyhM3HQps9s1WvfJPzwewrHfXFquTLplTVgZ@vger.kernel.org, AJvYcCVzxk1MWm7+hebj7ADhiC2g7SGB0qjCCyHvzpnnIwde3aKkyzPZ6o3rLZR4iSmfx2pYxq/WM69dodMa0OiewFg=@vger.kernel.org, AJvYcCWXyr+Mbg0U1qEOadkYJWZCC6M54yZsHiNu+7hwoBHD6eeqk92/mcE20DyoO3kFBhftDFBWQg1+WlZLmt1x@vger.kernel.org, AJvYcCXAPRI/MIOBPEw/xEdjcadtTCdn5E2UljF3AFCJBDn3BQATS0nntvQG5xr/eVAWJNHwG/h9w4ABneUAGkE=@vger.kernel.org, AJvYcCXThV5GeYvXycgzK4AkdTZ8eSlUMxdJEjrb8sRXIhyMRZjCR4UrDQXtOVzrRYGPotsaEwMmWT2h01pczboIf0J1@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL06/ufeUDEK+lapL8+IGH8J2/4XUwutZblDQg3Ujsk17AJ7+b
+	zGSXDHdyOQwukwzXeEOROXiMJjvOoBdtfkFSvUi+1phvtnXF+/NgDo5nGk3WAWYEuQ0nKkHhiBj
+	YJaW2hemSUBEzSciE7FF9nrk5S1Q=
+X-Gm-Gg: ASbGncv24o94PsI3NZX/iA0rwqRRr4v3fh0eh3dG3qv3kqTjBquF7WFFNIXGIEl0agC
+	AMbxtJbkggo3Td4jU+MUTdR+hfQNFwUmOssbdW4ehwCgmsLShYBg7d88OmlYGHJ+ldoD1M/E9JG
+	PXPZLsW+coiNxm5CZLan36rpDvmQ==
+X-Google-Smtp-Source: AGHT+IFzZCN+WDBMLfUjOiNeV6ZDYR/8Xnn0PDTFCTkxoBd3vXIXfne6nV1JEdeDWqb2O84Vu9diIMPLd3gHPA3w1Yc=
+X-Received: by 2002:a17:902:ce05:b0:224:e0e:e08b with SMTP id
+ d9443c01a7336-22541628a67mr56595ad.0.1741372042305; Fri, 07 Mar 2025 10:27:22
+ -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174137194865.14745.6525578423507333253.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20250307-ptr-as-ptr-v1-1-582d06514c98@gmail.com> <D8A6YVP8B1UB.38AHIB0LMO85Y@proton.me>
+In-Reply-To: <D8A6YVP8B1UB.38AHIB0LMO85Y@proton.me>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 7 Mar 2025 19:27:09 +0100
+X-Gm-Features: AQ5f1Jr6LEyVKZec63NBPYaXJv92BoX_oGh9bpii21uvzrdOuGLuwIGdVHT-imA
+Message-ID: <CANiq72nW45z7n=38AQF45vpKQxWfrA5pvt2Q5DbjqgYR2ZR09Q@mail.gmail.com>
+Subject: Re: [PATCH] rust: enable `clippy::ptr_as_ptr` lint
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Tamir Duberstein <tamird@gmail.com>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
+	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
+	linux-pci@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Fri, Mar 7, 2025 at 5:58=E2=80=AFPM Benno Lossin <benno.lossin@proton.me=
+> wrote:
+>
+> You link to the `ptr_as_ptr` lint though, is this a typo?
 
-Commit-ID:     ac7c06acaa3738b38e83815ac0f07140ad320f13
-Gitweb:        https://git.kernel.org/tip/ac7c06acaa3738b38e83815ac0f07140ad320f13
-Author:        Nikunj A Dadhania <nikunj@amd.com>
-AuthorDate:    Thu, 06 Mar 2025 19:17:21 +11:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Fri, 07 Mar 2025 13:34:25 +01:00
+I think Tamir was following the pattern of commit 3fcc23397628 ("rust:
+enable `clippy::ignored_unit_patterns` lint"), which I appreciate! :)
 
-virt: sev-guest: Allocate request data dynamically
-
-Commit
-
-  ae596615d93d ("virt: sev-guest: Reduce the scope of SNP command mutex")
-
-narrowed the command mutex scope to snp_send_guest_request().  However,
-GET_REPORT, GET_DERIVED_KEY, and GET_EXT_REPORT share the req structure in
-snp_guest_dev. Without the mutex protection, concurrent requests can overwrite
-each other's data. Fix it by dynamically allocating the request structure.
-
-Fixes: ae596615d93d ("virt: sev-guest: Reduce the scope of SNP command mutex")
-Closes: https://github.com/AMDESE/AMDSEV/issues/265
-Reported-by: andreas.stuehrk@yaxi.tech
-Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
-Signed-off-by: Alexey Kardashevskiy <aik@amd.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20250307013700.437505-2-aik@amd.com
----
- drivers/virt/coco/sev-guest/sev-guest.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/virt/coco/sev-guest/sev-guest.c b/drivers/virt/coco/sev-guest/sev-guest.c
-index 264b652..23ac177 100644
---- a/drivers/virt/coco/sev-guest/sev-guest.c
-+++ b/drivers/virt/coco/sev-guest/sev-guest.c
-@@ -38,12 +38,6 @@ struct snp_guest_dev {
- 	struct miscdevice misc;
- 
- 	struct snp_msg_desc *msg_desc;
--
--	union {
--		struct snp_report_req report;
--		struct snp_derived_key_req derived_key;
--		struct snp_ext_report_req ext_report;
--	} req;
- };
- 
- /*
-@@ -71,7 +65,7 @@ struct snp_req_resp {
- 
- static int get_report(struct snp_guest_dev *snp_dev, struct snp_guest_request_ioctl *arg)
- {
--	struct snp_report_req *report_req = &snp_dev->req.report;
-+	struct snp_report_req *report_req __free(kfree) = NULL;
- 	struct snp_msg_desc *mdesc = snp_dev->msg_desc;
- 	struct snp_report_resp *report_resp;
- 	struct snp_guest_req req = {};
-@@ -80,6 +74,10 @@ static int get_report(struct snp_guest_dev *snp_dev, struct snp_guest_request_io
- 	if (!arg->req_data || !arg->resp_data)
- 		return -EINVAL;
- 
-+	report_req = kzalloc(sizeof(*report_req), GFP_KERNEL_ACCOUNT);
-+	if (!report_req)
-+		return -ENOMEM;
-+
- 	if (copy_from_user(report_req, (void __user *)arg->req_data, sizeof(*report_req)))
- 		return -EFAULT;
- 
-@@ -116,7 +114,7 @@ e_free:
- 
- static int get_derived_key(struct snp_guest_dev *snp_dev, struct snp_guest_request_ioctl *arg)
- {
--	struct snp_derived_key_req *derived_key_req = &snp_dev->req.derived_key;
-+	struct snp_derived_key_req *derived_key_req __free(kfree) = NULL;
- 	struct snp_derived_key_resp derived_key_resp = {0};
- 	struct snp_msg_desc *mdesc = snp_dev->msg_desc;
- 	struct snp_guest_req req = {};
-@@ -136,6 +134,10 @@ static int get_derived_key(struct snp_guest_dev *snp_dev, struct snp_guest_reque
- 	if (sizeof(buf) < resp_len)
- 		return -ENOMEM;
- 
-+	derived_key_req = kzalloc(sizeof(*derived_key_req), GFP_KERNEL_ACCOUNT);
-+	if (!derived_key_req)
-+		return -ENOMEM;
-+
- 	if (copy_from_user(derived_key_req, (void __user *)arg->req_data,
- 			   sizeof(*derived_key_req)))
- 		return -EFAULT;
-@@ -168,7 +170,7 @@ static int get_ext_report(struct snp_guest_dev *snp_dev, struct snp_guest_reques
- 			  struct snp_req_resp *io)
- 
- {
--	struct snp_ext_report_req *report_req = &snp_dev->req.ext_report;
-+	struct snp_ext_report_req *report_req __free(kfree) = NULL;
- 	struct snp_msg_desc *mdesc = snp_dev->msg_desc;
- 	struct snp_report_resp *report_resp;
- 	struct snp_guest_req req = {};
-@@ -178,6 +180,10 @@ static int get_ext_report(struct snp_guest_dev *snp_dev, struct snp_guest_reques
- 	if (sockptr_is_null(io->req_data) || sockptr_is_null(io->resp_data))
- 		return -EINVAL;
- 
-+	report_req = kzalloc(sizeof(*report_req), GFP_KERNEL_ACCOUNT);
-+	if (!report_req)
-+		return -ENOMEM;
-+
- 	if (copy_from_sockptr(report_req, io->req_data, sizeof(*report_req)))
- 		return -EFAULT;
- 
+Cheers,
+Miguel
 
