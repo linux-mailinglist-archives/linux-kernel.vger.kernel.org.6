@@ -1,138 +1,115 @@
-Return-Path: <linux-kernel+bounces-551686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2924AA56F80
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:46:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 650F9A56FA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:52:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A5FD7AA93C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:45:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9C91189ADF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:52:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2CA123CEF0;
-	Fri,  7 Mar 2025 17:46:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96288217718;
+	Fri,  7 Mar 2025 17:52:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OpCguEab"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b="myQME7X6"
+Received: from mx0b-00300601.pphosted.com (mx0b-00300601.pphosted.com [148.163.142.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F2E187346
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 17:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D8261607A4;
+	Fri,  7 Mar 2025 17:52:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.142.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741369598; cv=none; b=cwypfNmBQNOaq6s2GVVNqlvueXv5VX6lFvZu30ALX9Wpa4eqKAkb6Kkgnk8oHTHiUqztn5OUUtHrAOarNnSbQJYEKIeealSKPDOph1D3F6UclLpdZw98iQK3qJVhCyFRZIXZMGfZ4PBQ7CqsCefACyGf0+mZMGA22rKmVOrLF3E=
+	t=1741369954; cv=none; b=uoHQCP5xslTid7Z5r3yZBCHpgU4OU/yvNABYZ/E3qZLpVwzehs4wIqbjgrufnGB/cE8MQhL6Ob8umv6NLNr4GqEFy5L6kYS9dHEM/iLuojev6Gp5tCmpmJxlyKt9+4CKs0iAfCqiJJKjeH9WdRGm1HV8dk1vE2QPpLQF5Blm9s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741369598; c=relaxed/simple;
-	bh=gz9QobSq1TH6LtLDOr7UA7IpBaLUy1MNXmyFIzdZuog=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bmSLsW7b6+GhOtR5ty4m73h1MBVYjwcnSzJ6Ps8DHXe0ix01SD579s3HqmVHYeSlt0n6X9oVOeGLvQpg+Tp7dBfVnoTwo5he1UA1cK/v4cy6yFq0eqe1pcUo85o+gVMpWVKfbZ6GoF1RgzYAyp9uFrXYvZIqv5WkoENT170GHL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OpCguEab; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741369597; x=1772905597;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=gz9QobSq1TH6LtLDOr7UA7IpBaLUy1MNXmyFIzdZuog=;
-  b=OpCguEabO0B2enrODtLqk/+YKR4WlmhwuyPXURIEHFwkR8YT8TYOHxLT
-   5apsCC0WWDyzh3QsXrGeXnE2UQ6nrKrezczGcel5CKbps9rmJR42ySvQB
-   rdlkf9D4L4wdOoGWIbsDSlsLOSV28oKPiJryKNSTDUSsF3BvwcMRnYwbz
-   AH0EbfUrZtlk8eoh3LWDO1Z39JfLu4c52qiNrMAQg6TxX0QPRl/CywScX
-   FF764MIF+jWwcE7CUHsYx3flfyXfc+f4pE6egJE+rtaKNHF0/epJXQb2w
-   zok1dmh52wEvqLlDGq+bqWiCe46QIcSxGiqiTrA/2ovGFlamFypq7ZbxR
-   A==;
-X-CSE-ConnectionGUID: bfKLxg8QQmenBd1A3toSlg==
-X-CSE-MsgGUID: WLAO/Ol7TJ+xr/dX8J0O8w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42654705"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="42654705"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 09:46:36 -0800
-X-CSE-ConnectionGUID: XTD0cHeZTJC+I1xi0s3rKQ==
-X-CSE-MsgGUID: 6UglvJRnSIK3DOS2W2uNSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="156600797"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 09:46:32 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tqbmG-00000000TXX-1xys;
-	Fri, 07 Mar 2025 19:46:28 +0200
-Date: Fri, 7 Mar 2025 19:46:28 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: mailhol.vincent@wanadoo.fr
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	David Laight <David.Laight@aculab.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v6 2/7] bits: introduce fixed-type genmasks
-Message-ID: <Z8sw9P5__EAW8RQh@smile.fi.intel.com>
-References: <20250308-fixed-type-genmasks-v6-0-f59315e73c29@wanadoo.fr>
- <20250308-fixed-type-genmasks-v6-2-f59315e73c29@wanadoo.fr>
+	s=arc-20240116; t=1741369954; c=relaxed/simple;
+	bh=gyQ1ht+J8DmRAR7Prqe5gFNunJgb4BZkKTGfC87pY4U=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tPOKNahtmKLfMDk8NSIl4ytEd9RdGFZa+8m/ic5Q8TuX43Pbhud9HeCsIibiE+MTTdn3x3iyriPDMFw6ihIumSh1ar52ZOE9e/IEz3WpUfahLeaP3FY4quLab+7YgQvyMMiKL5NLAvgI/fdj5NwwNWESjitpTcoKN9H7LW61MH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com; spf=pass smtp.mailfrom=ni.com; dkim=pass (2048-bit key) header.d=ni.com header.i=@ni.com header.b=myQME7X6; arc=none smtp.client-ip=148.163.142.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ni.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ni.com
+Received: from pps.filterd (m0144091.ppops.net [127.0.0.1])
+	by mx0b-00300601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 527EgwLQ027680;
+	Fri, 7 Mar 2025 17:46:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ni.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=PPS11142024;
+	 bh=1MNzwNl1V5MdHjo8Dhdn0wtzHYZEu9JeuucxhO/f4Vk=; b=myQME7X6f92r
+	cDkhPKE4u7WaLln/T8B1LMvFPm4Af85VWMwbO4qiOBkdiDqypPsXP4LHXUJKwnQn
+	BLQuTx9ZVqC1I27vbjuT6tlTxvFcC1gywv2VerM1sneRHF4fACBsI4Fthk/VLbzZ
+	+yjjq5uZKd49m/MiQOqSJ/Mb0jteJ51LGWa5y2NOWfDulMom7F2pteW6UsHKWolt
+	ERWjdmeBAGRckk2E6F6iKpUDYrqN2cS6Z7qEZPB0rBght7vBUWKEvEhL6QbH2bA/
+	2YHjcilztqofZIOioskZWn0qWx1Ip2o9sPQJOJQlXwIiOhWxbeFkKfi8RGhVb6SZ
+	THX5kSWHhQ==
+Received: from us-aus-excas-p2.ni.corp.natinst.com ([130.164.94.74])
+	by mx0b-00300601.pphosted.com (PPS) with ESMTPS id 457ypjwvbu-7
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 07 Mar 2025 17:46:58 +0000 (GMT)
+Received: from us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) by
+ us-aus-excas-p2.ni.corp.natinst.com (130.164.68.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 7 Mar 2025 11:46:43 -0600
+Received: from ershephe-ubuntu.amer.corp.natinst.com (172.18.68.32) by
+ us-aus-excas-p1.ni.corp.natinst.com (130.164.68.17) with Microsoft SMTP
+ Server id 15.2.1258.28 via Frontend Transport; Fri, 7 Mar 2025 11:46:43 -0600
+From: Erick Shepherd <erick.shepherd@ni.com>
+To: <adrian.hunter@intel.com>
+CC: <brad.mouring@ni.com>, <erick.shepherd@ni.com>,
+        <gratian.crisan@emerson.com>, <kyle.roeschley@ni.com>,
+        <linux-kernel@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+        <ulf.hansson@linaro.org>
+Subject: RE: [PATCH] mmc: core: Wait for Vdd to settle on card power off
+Date: Fri, 7 Mar 2025 11:46:43 -0600
+Message-ID: <20250307174643.1288695-1-erick.shepherd@ni.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <35aebb39-ae2e-4186-8de4-6830ec661f4d@intel.com>
+References: <35aebb39-ae2e-4186-8de4-6830ec661f4d@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250308-fixed-type-genmasks-v6-2-f59315e73c29@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-Proofpoint-GUID: w-lqO7O6jOSeEY0moDe-aW-5iOPqhre9
+X-Proofpoint-ORIG-GUID: w-lqO7O6jOSeEY0moDe-aW-5iOPqhre9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-07_06,2025-03-07_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 suspectscore=0 adultscore=0 mlxlogscore=629 spamscore=0
+ lowpriorityscore=0 bulkscore=0 phishscore=0 mlxscore=0 priorityscore=1501
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503070133
 
-On Sat, Mar 08, 2025 at 01:48:49AM +0900, Vincent Mailhol via B4 Relay wrote:
-> From: Yury Norov <yury.norov@gmail.com>
-> 
-> Add GENMASK_TYPE() which generalizes __GENMASK() to support different
-> types, and implement fixed-types versions of GENMASK() based on it.
-> The fixed-type version allows more strict checks to the min/max values
-> accepted, which is useful for defining registers like implemented by
-> i915 and xe drivers with their REG_GENMASK*() macros.
-> 
-> The strict checks rely on shift-count-overflow compiler check to fail
-> the build if a number outside of the range allowed is passed.
-> Example:
-> 
->   #define FOO_MASK GENMASK_U32(33, 4)
-> 
-> will generate a warning like:
-> 
->   include/linux/bits.h:51:27: error: right shift count >= width of type [-Werror=shift-count-overflow]
->      51 |               type_max(t) >> (BITS_PER_TYPE(t) - 1 - (h)))))
->         |                           ^~
-
-...
-
->  /*
->   * Missing asm support
->   *
-
-> + * GENMASK_U*() depends on BITS_PER_TYPE() which relies on sizeof(),
-
-s/depends/depend/ (we are already referring to a plural)
-
-> + * something not available in asm. Nethertheless, fixed width integers
-> + * is a C concept. Assembly code can rely on the long and long long
-> + * versions instead.
->   */
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+>> The SD spec version 6.0 section 6.4.1.5 requires that Vdd must be=0D
+>> lowered to less than 0.5V for a minimum of 1 ms when powering off a=0D
+>> card. Increase our wait to 15 ms so that voltage has time to drain down=
+=0D
+>> to 0.5V.=0D
+=0D
+> mmc_power_off() has a delay.  So does mmc_power_cycle()=0D
+=0D
+> Why does this need to be in sdhci?  Are you experiencing an=0D
+> issue?=0D
+=0D
+Thank you for taking a look at this. The initial change was made in=0D
+mmc_power_off() due to an issue we had with some of our devices=0D
+requiring more time for the Vdd to drain below 0.5V. Ulf gave us this=0D
+feedback on that change:=0D
+=0D
+> No, this isn't the proper place of adding more "magic" delays.=0D
+=0D
+> Instead, make sure the related ->set_ios() callback in the mmc host=0D
+> driver deals with this instead. In case it uses an external regulator,=0D
+> via the regulator API, then this is something that should be=0D
+> controlled with the definition of the regulator.=0D
+=0D
+Should we take a different approach here? =0D
+=0D
+Regards=0D
+Erick=
 
