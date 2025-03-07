@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-551460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2077A56CBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:56:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F137A56CC1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:56:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 538BC1898725
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:56:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F90B16F5A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223712206AA;
-	Fri,  7 Mar 2025 15:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174E721E0AD;
+	Fri,  7 Mar 2025 15:56:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rD3JLEEc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WtSCAqBy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DD521E0BA;
-	Fri,  7 Mar 2025 15:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D36021D3C8;
+	Fri,  7 Mar 2025 15:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741362984; cv=none; b=l61baK3Qe1GMHWnwzj7ny5kXhovrRw9JEUTxhfypLoasy6USw1P/eRcPGYQLELIw3K0HKh0Db+jvcZiN/b0NpjNf52W0i8ZYlukXe0/exIp+nOeiiQ9V78N07ze2PJKbOlpsUfNeD0DgzeXl5gZG0L8Yokb4DrsUZmDuag4eJCU=
+	t=1741363010; cv=none; b=Unu1ARO33t7y0H44NXRvWWtG4APEqsRwdxKs++zdut8S0gH3n0mUGQ3SdW299qpNXTLxOD0QIHIH+i0Ydk5SB00NSzDQN5vaRhFS/8mutc2X5EbrEMMlZU5R2aHA9mjdSBCKc9R8h86F7jvns6M8/WG/hzzN9JAhdemjNcFbKS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741362984; c=relaxed/simple;
-	bh=ZbL34hW/27gh68ZRT0ugYFZcKY9WnAmuyG/G7jaVWmQ=;
+	s=arc-20240116; t=1741363010; c=relaxed/simple;
+	bh=snIEFmz9xfWYQzlLczIEsvcAaFsQRt1rMH1p2sngHrM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P6IvAhb+h4suKFruQqhiSOt+DUnwckQie1KrDlj8iyNjiJ0aUu9mOmkcM6BHQ1hZoz5EJ84krNJRPBKtBOHDiO/X94fElO1WobL5FOaCm3ZcKlWAmDHEALBtZVlBLf40F1tJOj5i14RcBBDdoHhWxi8bUos3Ov1t0mUxvYmzIuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rD3JLEEc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDA02C4CED1;
-	Fri,  7 Mar 2025 15:56:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Va9XQDI9TXv2YukJCdC25eZ08jXd7VPCPYPHtHLZfVR3lfGSrUqa0WkwzXI2rWo9UyxjP5xOWcomR52CHNff43NTFVCulUBOIvgYq9wrO0HfH1ZqsYqVZ5HYNFOF/XzFIEekajnu/VvigLQSRUFHRr8Ptl/HSTGWEUoPzAiO2Ss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WtSCAqBy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C70C4CED1;
+	Fri,  7 Mar 2025 15:56:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741362984;
-	bh=ZbL34hW/27gh68ZRT0ugYFZcKY9WnAmuyG/G7jaVWmQ=;
+	s=k20201202; t=1741363009;
+	bh=snIEFmz9xfWYQzlLczIEsvcAaFsQRt1rMH1p2sngHrM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rD3JLEEcm40zrCG8Ym/lLoA7Lawl1zLgd4HtvGwPQ04n+NfYHluLZGBwBsZxk5lIs
-	 L/Fwh9dA6fGjnv4OHmlgoh4mr2PH+UIQdvXspQtsP0WkMqXxMwlT1NxAl+KuuG2N3N
-	 VBvhcQbZ6adZo9kcQeEAj0+SC9C10ScoU5V5hVC8Pn5fUa0rOHATZUN0hc1aOah5X/
-	 M46N4kfM4MY90JI6ajG47sgP35rdAthZh3aUKsmkd0KaFfp25jiCtqyKt8MqK6tfkt
-	 Qms8L9wgG4Ot0sri6KYbiA3FLyexrQ0tIDXoHX6/yWchB/lMuzj0elXWrmlI+z8rH1
-	 9xrWK4XwzwGcQ==
-Date: Fri, 7 Mar 2025 15:56:19 +0000
+	b=WtSCAqBydP3J4dcHgQUECWzxCRv7ZnIQnZaF8rpt9JNd+352szrca7CF8RrkLT4Nr
+	 yAPig1lCb5BlnWv/GSOzDjwbrYQoGqOp8br/CCf5SPYi2Csbp9CV4og0fhH4nmooU8
+	 CWcwQQ0JpxcRHVEN4UOOiMw/8B7E6xX3MW2y2XEK9sknyNcohDDRngYZ4dwBmWwSCZ
+	 Rf/tNwAt7QJu18joFvpjLp22JrnEnZdLzRME3Ra353TZYtBnnkLWSNvsUrpjg4pok1
+	 uVTGGru9+Zuemi2U7tTpfF/l6njtqH8ptBultU9vQESMCMJy+Z3fKBOrD3BbDF8zFf
+	 higc/IBxAFPdw==
+Date: Fri, 7 Mar 2025 15:56:45 +0000
 From: Conor Dooley <conor@kernel.org>
 To: Frank Li <Frank.Li@nxp.com>
-Cc: Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	"open list:CAN NETWORK DRIVERS" <linux-can@vger.kernel.org>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	"open list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." <linux-sound@vger.kernel.org>,
 	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
 	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH] dt-bindings: can: fsl,flexcan: add i.MX94 support
-Message-ID: <20250307-catwalk-handiwork-5f2d11b60d85@spud>
-References: <20250306171032.243954-1-Frank.Li@nxp.com>
+Subject: Re: [PATCH] ASoC: dt-bindings: fsl,sai: Add i.MX94 support
+Message-ID: <20250307-walmart-frequency-0430bb25a237@spud>
+References: <20250306171013.243332-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,43 +61,41 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iGmX26asLor8ZikF"
+	protocol="application/pgp-signature"; boundary="FFjeYTYwkjimMl9i"
 Content-Disposition: inline
-In-Reply-To: <20250306171032.243954-1-Frank.Li@nxp.com>
+In-Reply-To: <20250306171013.243332-1-Frank.Li@nxp.com>
 
 
---iGmX26asLor8ZikF
+--FFjeYTYwkjimMl9i
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 06, 2025 at 12:10:32PM -0500, Frank Li wrote:
-> Add compatible string "fsl,imx94-flexcan" for the i.MX94 chip, which is
-> backward compatible with i.MX95. Set it to fall back to
-> "fsl,imx94-flexcan".
+On Thu, Mar 06, 2025 at 12:10:13PM -0500, Frank Li wrote:
+> Add compatible string "fsl,imx94-sai" for the i.MX94 chip, which is
+> backward compatible with i.MX95. Set it to fall back to "fsl,imx95-sai".
 
-typo here, not that it matters ultimately.
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
 >=20
 > Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml | 4 ++++
+>  Documentation/devicetree/bindings/sound/fsl,sai.yaml | 4 ++++
 >  1 file changed, 4 insertions(+)
 >=20
-> diff --git a/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml b=
-/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
-> index 73252fe56fe6c..560da9fa1ea15 100644
-> --- a/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
-> +++ b/Documentation/devicetree/bindings/net/can/fsl,flexcan.yaml
-> @@ -45,6 +45,10 @@ properties:
->            - enum:
->                - nxp,s32g3-flexcan
->            - const: nxp,s32g2-flexcan
+> diff --git a/Documentation/devicetree/bindings/sound/fsl,sai.yaml b/Docum=
+entation/devicetree/bindings/sound/fsl,sai.yaml
+> index 5c95508ee7075..0d733e5b08a4e 100644
+> --- a/Documentation/devicetree/bindings/sound/fsl,sai.yaml
+> +++ b/Documentation/devicetree/bindings/sound/fsl,sai.yaml
+> @@ -41,6 +41,10 @@ properties:
+>                - fsl,imx93-sai
+>                - fsl,imx95-sai
+>                - fsl,vf610-sai
 > +      - items:
 > +          - enum:
-> +              - fsl,imx94-flexcan
-> +          - const: fsl,imx95-flexcan
+> +              - fsl,imx94-sai
+> +          - const: fsl,imx95-sai
 > =20
 >    reg:
 >      maxItems: 1
@@ -105,16 +103,16 @@ Acked-by: Conor Dooley <conor.dooley@microchip.com>
 > 2.34.1
 >=20
 
---iGmX26asLor8ZikF
+--FFjeYTYwkjimMl9i
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8sXIwAKCRB4tDGHoIJi
-0nSxAP4rhBDGVyVFAz83c7InJ5rTTWbKUhqfPsT71YY6YQAQOgEAtmRpkn/QlPGE
-iO4Ewn/RiJ5VPNUmnH0AZ2/vMp1ZIws=
-=YkNV
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8sXPQAKCRB4tDGHoIJi
+0mlhAQCDLOBTTlzlOnEh8Iq9kRCyrPzNjrGAM3aHNpcBGsUuAwEA6LMpql3Rjt6a
+zrp1FWvr1jsyCMqe9GTDKdMHJIhbhAE=
+=6Rpe
 -----END PGP SIGNATURE-----
 
---iGmX26asLor8ZikF--
+--FFjeYTYwkjimMl9i--
 
