@@ -1,107 +1,106 @@
-Return-Path: <linux-kernel+bounces-551843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1195A571ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:34:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 413E4A571D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:31:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6F401756CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:34:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62213173799
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CCA254868;
-	Fri,  7 Mar 2025 19:34:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685CB255E20;
+	Fri,  7 Mar 2025 19:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="i8S6m7b8"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBHdUwuM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A158224242;
-	Fri,  7 Mar 2025 19:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3452221DB9;
+	Fri,  7 Mar 2025 19:30:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741376071; cv=none; b=MccOWbqccPzzqJt3Fb5Qrwz7PNmN9g5LoVVL6zE0cUXN1kkB+PVjHjJj1x9P26Ekc0HWD4Z9j44iDK1U+ZwP7SjkXJ1mTeQ5Sh/igCuwIQNmwrMGHt3TT64f8/VHUE5Uc6+1tKB09znWsR8MWurLUz1K1R2CLt6rRp1pu4x6PTI=
+	t=1741375849; cv=none; b=aLokCw7olrjAul7qlVRX/im0Vy5EL4/0EcMZslHGP7um2E2pSTKkt+tj8AaJpjHSqZd6pSo53QE9Ra9c6Rz38aE16kRd/USZtIRnbhOFKLIkydhoCv/S85ktISRKHlBUk6QoglMOLF87B88WqKxoezOekdNpY1P39So7iqFNetM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741376071; c=relaxed/simple;
-	bh=50NLhdDhI8V8GO7o5jfDm1HRHcKPZ5EFPUWRP6MJAIA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=VOqoQDSeSxkydviSEd5JTFwJ3/B1aJabn/xJokO4FivqkN4OWalSx7m+cU8Q/QeQYA4CYpmgv5bVxDAXrEB1NR+TXrDuTpsxSyw0ouumocYe5ccM/TE/H/Y/50NEYHBdM2Jo9+A6XLFi0TXT4sNVx56QyHe+varQSOoSGEXHuGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=i8S6m7b8; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 527JUdCN395426
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 7 Mar 2025 11:30:39 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 527JUdCN395426
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1741375842;
-	bh=50NLhdDhI8V8GO7o5jfDm1HRHcKPZ5EFPUWRP6MJAIA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=i8S6m7b8Y1bYbI/KAMAEMHyLmm3Y3FEbOP1TAp45PLhWp0+UZa3jzXqYD/PAma8k8
-	 b/Oan43NQx+G8Psx4knFdBaIeGVMBY9RXM4Ckdpi6bnHPizobhJTlwJ9C/oeCEh78k
-	 Stf+80k1tjWDPUZPs2+t5W4E7bcn5x1ArDfWYB9dAaAevi8RglcCPIr1tB2PeYVj29
-	 O7H/KNA8J4/SredKAKB+hHce7/GwWHh4ARCY3vBRtJzld1LsziwXJjEV7Ueot213Z/
-	 QRKE/cCgjphvTYe81eN7CwuSerqHAkatZ00EB031zjlPdsrSQAYtuWc+oXJ6lMl8EH
-	 7JnS1tGvALMKw==
-Date: Fri, 07 Mar 2025 11:30:35 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Andrew Cooper <andrew.cooper3@citrix.com>
-CC: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
-        akpm@linux-foundation.org, alistair@popple.id.au,
-        andrew+netdev@lunn.ch, andrzej.hajda@intel.com,
-        arend.vanspriel@broadcom.com, awalls@md.metrocast.net, bp@alien8.de,
-        bpf@vger.kernel.org, brcm80211-dev-list.pdl@broadcom.com,
-        brcm80211@lists.linux.dev, dave.hansen@linux.intel.com,
-        davem@davemloft.net, dmitry.torokhov@gmail.com,
-        dri-devel@lists.freedesktop.org, eajames@linux.ibm.com,
-        edumazet@google.com, eleanor15x@gmail.com, gregkh@linuxfoundation.org,
-        hverkuil@xs4all.nl, jernej.skrabec@gmail.com, jirislaby@kernel.org,
-        jk@ozlabs.org, joel@jms.id.au, johannes@sipsolutions.net,
-        jonas@kwiboo.se, jserv@ccns.ncku.edu.tw, kuba@kernel.org,
-        linux-fsi@lists.ozlabs.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-serial@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linux@rasmusvillemoes.dk,
-        louis.peens@corigine.com, maarten.lankhorst@linux.intel.com,
-        mchehab@kernel.org, mingo@redhat.com, miquel.raynal@bootlin.com,
-        mripard@kernel.org, neil.armstrong@linaro.org, netdev@vger.kernel.org,
-        oss-drivers@corigine.com, pabeni@redhat.com,
-        parthiban.veerasooran@microchip.com, rfoss@kernel.org, richard@nod.at,
-        simona@ffwll.ch, tglx@linutronix.de, tzimmermann@suse.de,
-        vigneshr@ti.com, visitorckw@gmail.com, x86@kernel.org,
-        yury.norov@gmail.com
-Subject: Re: [PATCH v3 00/16] Introduce and use generic parity16/32/64 helper
-User-Agent: K-9 Mail for Android
-In-Reply-To: <efc2ee9d-5382-457f-b471-f3c44b81a190@citrix.com>
-References: <4732F6F6-1D41-4E3F-BE24-E54489BC699C@zytor.com> <efc2ee9d-5382-457f-b471-f3c44b81a190@citrix.com>
-Message-ID: <5A790652-1B22-4D13-AAC5-5D9931E90903@zytor.com>
+	s=arc-20240116; t=1741375849; c=relaxed/simple;
+	bh=Mm9dkH53vQFmbsvTLUOCgmTJngIQCXH0JJidFARo+KU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ObwFYXdQ5wxR4xSaDO7deXyoekK+Ir29hWVhCnuqcha5djugh4IFghSTJGp3JgiOlsNGJdrk02p6XNA0tKx/hSxwO4gGU0M/f5FbCNbY5nTBPYYJG05EQGOsXbamqx84wTB0GE+NLXMy/kDzzPnIiClvRXhHoIF87EbVRV7y2R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HBHdUwuM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81F2DC4CED1;
+	Fri,  7 Mar 2025 19:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741375849;
+	bh=Mm9dkH53vQFmbsvTLUOCgmTJngIQCXH0JJidFARo+KU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HBHdUwuMqbFRLDoTflKN+B3coXembP6ABjnuxzjaoQgyuW4Cyav/rS7U8CckTWGfg
+	 lHvXLlXLguS8WmCOy5pTEJAbs5TWKQOAkwFu0wbXyaHcIQgcCzazWZjUWt2x3m5G2y
+	 1q+cpdjKTUDPxuKjK7/c828rrUMfNZ/y9sRvHQAVhABFzusm97WiuUV486m/XIZqJg
+	 aRKWpaZeucqLbvfUDT3M1aA2H0PDK9XF9N1rGxl/f4IVRqTk4CwaWffBJXefXrmZ84
+	 lRgM0mrIpXkbvA1h7YMjTslrtbDi5l4/abLdXxwOP10/Gf847iDF/nBwKDFIR27zsV
+	 mbQMHH2ypOmHQ==
+Date: Fri, 7 Mar 2025 21:30:44 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: ross.philipson@oracle.com
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+	ardb@kernel.org, mjg59@srcf.ucam.org,
+	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
+	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu,
+	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
+	ebiederm@xmission.com, dwmw2@infradead.org,
+	baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
+	andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
+Subject: Re: [PATCH v12 03/19] x86: Secure Launch Resource Table header file
+Message-ID: <Z8tJZBl2Nh4RJGDS@kernel.org>
+References: <20241219194216.152839-1-ross.philipson@oracle.com>
+ <20241219194216.152839-4-ross.philipson@oracle.com>
+ <Z8qE1B47InxE7n-v@kernel.org>
+ <de143ab2-44b3-4609-a575-63c47d99ea09@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <de143ab2-44b3-4609-a575-63c47d99ea09@oracle.com>
 
-On March 7, 2025 10:49:56 AM PST, Andrew Cooper <andrew=2Ecooper3@citrix=2E=
-com> wrote:
->> (int)true most definitely is guaranteed to be 1=2E
->
->That's not technically correct any more=2E
->
->GCC has introduced hardened bools that intentionally have bit patterns
->other than 0 and 1=2E
->
->https://gcc=2Egnu=2Eorg/gcc-14/changes=2Ehtml
->
->~Andrew
+On Fri, Mar 07, 2025 at 11:22:02AM -0800, ross.philipson@oracle.com wrote:
+> On 3/6/25 9:32 PM, Jarkko Sakkinen wrote:
+> > On Thu, Dec 19, 2024 at 11:42:00AM -0800, Ross Philipson wrote:
+> > > Introduce the Secure Launch Resource Table which forms the formal
+> > > interface between the pre and post launch code.
+> > > 
+> > > Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+> > 
+> > Is this interface kernel specific or uarch specific? I'd just
+> > explicitly state the context of the formal interface, that's
+> > all.
+> 
+> It is specific to our DRTM solution (i.e. Secure Launch). It is meant to be
+> extensible to accommodate future architectures that have DRTM support
+> available. Not sure if I am getting at your specific question.
 
-Bit patterns in memory maybe (not that I can see the Linux kernel using th=
-em) but for compiler-generated conversations that's still a given, or the m=
-anager isn't C or anything even remotely like it=2E
+OK so:
+
+1. It's software defined set of data structures with no ties to
+   the hardware architecture.
+2. It's essentially an API maintining backwards compatibility.
+
+I have nothing against that definition. It is just that speaking about
+formal interface between pre and post launch code does not provide
+explanation on what are the constraints of the interface.
+
+So what I was not getting was the specific definition (i.e. *the*
+specific formalism under discussion).
+
+BR, Jarkko
+
 
