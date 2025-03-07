@@ -1,127 +1,123 @@
-Return-Path: <linux-kernel+bounces-551515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AE8FA56D86
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:23:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F56A56D8A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADC5C3AA21F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:23:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B85CD1898965
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9DE923BCFE;
-	Fri,  7 Mar 2025 16:23:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C706D23BCF2;
+	Fri,  7 Mar 2025 16:24:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="G7oNfjIz"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Z3h62ObV"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AA1023BCF4
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 16:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4673F23BCF3
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 16:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741364630; cv=none; b=ZD4YkK0/tSgqezEq/0gLxqFY5g7xif4XeaItxMPuKj847yYaTQXCKOgxRkV/eZgDp3HjSu+pHtDqQMRbQdUfb2qTJ3uFphV+enT1MvH2Qbn5tdfQU/oOYfXoPUkm9YCO2gnBB5QdHY+OIbbbiPt83lm5girF+0ExW/ArCi6bzQs=
+	t=1741364642; cv=none; b=FpvFVeitBFO0M53u9ivTtCTJ+UVvd8TWaSer2c1GY4vqOsBMp4pMK71VZYrcYBALsTcuz500LfwWtOoQZT4uNvHMCyVbEyN3R0/8XDDanb/xIyYLo38G6ymBp4R/HoSZVpaT/nQ5dthG8MPAfeubvvcAODouD5yt7nXSZiT0DX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741364630; c=relaxed/simple;
-	bh=yjWhndqBY/p/naYYeyjqW/iXjpCwZxRa8eTsaF7Em3M=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=HfQ1S1SLBXf/qZYemlBSoElrdzpqfMPfU+kBXC8l1gPOdUspaUp6/H2jE9gp5CUbhF4tP6m6EMrFpVoSK42AxVDMBmCa3h+pbkobA18ZLq4kxuEO0YQR+1KwniK36D9IqnyLuc3dza3SlpMvHwoanPsu2DsQYkSzMbfopCyYEzU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=G7oNfjIz; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 527GNJPW317850
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 7 Mar 2025 08:23:19 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 527GNJPW317850
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1741364600;
-	bh=BO+FVZTQ+WFQNezyeYDYypLAuwFFO1XjKGTbH7ev1ns=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=G7oNfjIzeUmIkTDDEEykEbYpjV9zClr0FbDoOz2kY6mrEqT5XK2Rcdamb+rWbzMCh
-	 a1qOrX4P9I8LLcUUe4eAHwWSHRn26Tfh4rwt0waSHkRX5OpBl61Yni+Ufj4HGv7ETA
-	 TcnWuQbjHyJl/HcEoQtwGdzy7PQSAN/9LmVRSCv54R6mheWVwkDF5ev97JC2zFyQOr
-	 0v7GiEXbcS6X+j26hJHlkhCxVrEC8DIwEq0ZQEmOD2HSt1iwr6OYZqwWLYx218w/CW
-	 u0KqmoZYAjlYXhMdK4DtYVxGG3XLxBGhQKjD63cF5OozoR8sScIbp1WiIrs5+VkSMB
-	 RBBPMd0wNWnpw==
-Date: Fri, 07 Mar 2025 08:23:17 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Alexey Dobriyan <adobriyan@gmail.com>, Ingo Molnar <mingo@kernel.org>
-CC: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] x86/asm: delete dummy variables in movdir64b()
-User-Agent: K-9 Mail for Android
-In-Reply-To: <d9d6b9db-dcdb-4024-a14a-bdcbe6afe00a@p183>
-References: <20250307061203.3281-1-adobriyan@gmail.com> <20250307061203.3281-3-adobriyan@gmail.com> <Z8rdRljzdRdh9hu6@gmail.com> <d9d6b9db-dcdb-4024-a14a-bdcbe6afe00a@p183>
-Message-ID: <686459FE-58F5-4009-AF13-B2BF43CF5550@zytor.com>
+	s=arc-20240116; t=1741364642; c=relaxed/simple;
+	bh=mXtKy6AqPJTsyZQnFb8LDOzMrVCF8Jxpd5iGHDtoCGI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pKbUpD5+NI3LAVM3AAaYXmage/5WgPq86X26VY66NQG4dCZ3ehgOPI2o+BwHzv72HOP3WnYJfnw+XczIXZZvGB/USUak8KReqoidceIVnY4LT9od73jLFDoMcq0wCvBzgUWKQcgta+MVEPRVpiNU4Szb6oH6HGyhIIFaz6UZnNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Z3h62ObV; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3912baafc58so1385299f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 08:23:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1741364638; x=1741969438; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qFC22TuZGe+bG1f5l5pg/Qemq+Rum0/SnOpCdO9V/4E=;
+        b=Z3h62ObVMeGJPieKQt3rx0AECyQt8nD55EakDE6+10CK8l/oDR6j8n17mRlyav5VaK
+         +J5PZcp1zeIuKoJi/IF0pcT6axroQOsFpJu3B6XlNAbTbZ44VL2UPmiGXI4atPvMUPvw
+         k7W39V/KdvELNNYVOnwBIAVHaeL0k+w48aPMkpYJq1q9bPMc24PISlA3jE/JUN3izZNJ
+         g4tarfag2/SWykLqOeCt/qhJ4AoA5qGz0FmMexxqszHLiaqxEZ/SqFA46AtnRRorecmV
+         dGgc7stlZ4eSivUucXSGKHRoXwLWB3ruT/HrZld3uOGjySHpHx2k36IqToUcdZW4SXFw
+         qinA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741364638; x=1741969438;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qFC22TuZGe+bG1f5l5pg/Qemq+Rum0/SnOpCdO9V/4E=;
+        b=TStsWcdED4YytpKcEnEtXVLlYqHVkYLZQG1VRVE9mViGgH/TBqTgMCME4OGpP8Y3e7
+         7chz2qUv7JJCmiU3npeQB5VcwlUyFeHz3StfCAbsNtN3Bs+gfqTznRlz7aNMv0SWGBsu
+         yoLU+ipMyo7PvrO+XUJFl8TWavwlGz6nH1ynNzg+IW08LylfyQwAqdMbk3FpRt30epxA
+         vhHYF7HL1KrV7h1ODXQ+45kl6p4nYhYUSNxSJp+1m9zHLn2CFpVbHsU+8KW8pEqsVlBC
+         szuiSf/rEOXJmD8KVTP7wpDt8CorUMXMJ28sn0hkyXGXkAleK5nGfKrECoPRfWnvmvIz
+         yvmw==
+X-Forwarded-Encrypted: i=1; AJvYcCU++tPmjVEuw3EOThbd5bgxojXPnG8M60sSnX83e3dKlgh7kjnXA2mTU7rhLfAZV6gmJRcfGNASk7SgeS4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5XLOZM8wVykgypAl+/o87EYSbpDzuv+pyOsbitVVeohR75aTO
+	y0reMr6Xr1rYLdVznQuiwI8IMdaW1pr+4Ntpd5Ix05ixKgcNlFh2G9Cx2VrKlK4=
+X-Gm-Gg: ASbGncswSwBfpm/xDsF41QW9AQibEli1FfAFz030E41eCqJTqZuzvMG/anhMBd3xs+F
+	Kn/ZxoYmwFcSrlHf1ZDmTJfy56WuD+cIeRbuMKFV2+9bYjAS9Is7fgKJha8fDGAPrdULYfaj7i1
+	6abSV8nUdhPVrf/qha/EjHUv0ItTD5RJip9C5+JLJLPfcnkj6F45CJp8upnzKSOymGs2fF17Wgf
+	egxPAMzfHI9rFp8hJN+xApZv5fWX+Hfxh5cJ0ZdxyH6Odrkah7bXbc15auJRyv1+KVONf31zbxn
+	maWvDRPcr2bZRsqikRgtIjnl0SQlGv2Zcqd+RqEGxS6cVV8=
+X-Google-Smtp-Source: AGHT+IHn0r2Cn/E3lALMkI80pL0QtaTbm6Rd+OGBd1NolTMQ0z7qv14g2CG0Lk8XXwV55vp2Eib2dA==
+X-Received: by 2002:a5d:64ed:0:b0:390:f55b:ba91 with SMTP id ffacd0b85a97d-39132d4e369mr2759140f8f.14.1741364638354;
+        Fri, 07 Mar 2025 08:23:58 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c103035sm5731100f8f.88.2025.03.07.08.23.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 08:23:57 -0800 (PST)
+Date: Fri, 7 Mar 2025 17:23:55 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Arpitha Raghunandan <98.arpi@gmail.com>,
+	David Gow <davidgow@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v5 3/3] printf: implicate test line in failure messages
+Message-ID: <Z8sdm7Nhk4h3hoUq@pathway.suse.cz>
+References: <20250221-printf-kunit-convert-v5-0-5db840301730@gmail.com>
+ <20250221-printf-kunit-convert-v5-3-5db840301730@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250221-printf-kunit-convert-v5-3-5db840301730@gmail.com>
 
-On March 7, 2025 8:15:42 AM PST, Alexey Dobriyan <adobriyan@gmail=2Ecom> wr=
-ote:
->On Fri, Mar 07, 2025 at 12:49:26PM +0100, Ingo Molnar wrote:
->>=20
->> * Alexey Dobriyan <adobriyan@gmail=2Ecom> wrote:
->>=20
->> > Cast to pointer-to-array instead=2E
->> >=20
->> > Signed-off-by: Alexey Dobriyan <adobriyan@gmail=2Ecom>
->> > ---
->> >  arch/x86/include/asm/special_insns=2Eh | 9 +++------
->> >  1 file changed, 3 insertions(+), 6 deletions(-)
->> >=20
->> > diff --git a/arch/x86/include/asm/special_insns=2Eh b/arch/x86/includ=
-e/asm/special_insns=2Eh
->> > index d349aa0f0a83=2E=2Eb24c6c945c38 100644
->> > --- a/arch/x86/include/asm/special_insns=2Eh
->> > +++ b/arch/x86/include/asm/special_insns=2Eh
->> > @@ -215,13 +215,10 @@ static __always_inline void serialize(void)
->> >  /* The dst parameter must be 64-bytes aligned */
->> >  static inline void movdir64b(void *dst, const void *src)
->> >  {
->> > -	const struct { char _[64]; } *__src =3D src;
->> > -	struct { char _[64]; } *__dst =3D dst;
->> > -
->> >  	/*
->> >  	 * MOVDIR64B %(rdx), rax=2E
->> >  	 *
->> > -	 * Both __src and __dst must be memory constraints in order to tell=
- the
->> > +	 * Both src and dst must be memory constraints in order to tell the
->> >  	 * compiler that no other memory accesses should be reordered aroun=
-d
->> >  	 * this one=2E
->> >  	 *
->> > @@ -230,8 +227,8 @@ static inline void movdir64b(void *dst, const voi=
-d *src)
->> >  	 * I=2Ee=2E, not the pointers but what they point to, thus the dere=
-f'ing '*'=2E
->> >  	 */
->> >  	asm volatile("=2Ebyte 0x66, 0x0f, 0x38, 0xf8, 0x02"
->> > -		     : "+m" (*__dst)
->> > -		     :  "m" (*__src), "a" (__dst), "d" (__src));
->> > +		     : "+m" (*(char(*)[64])dst)
->> > +		     :  "m" (*(const char(*)[64])src), "a" (dst), "d" (src));
->>=20
->> In what world is putting type casts inside asm() statements an=20
->> improvement to the code?
->
->In the same world where creating distracting variable whose only purpose
->is to make a cast is considered not good=2E
->
->Notice the cast is shorter, there is not "struct", so it is positive in
->both vertical and horizontal directions=2E
+On Fri 2025-02-21 15:34:32, Tamir Duberstein wrote:
+> This improves the failure output by pointing to the failing line at the
+> top level of the test, e.g.:
+>       # test_number: EXPECTATION FAILED at lib/printf_kunit.c:103
+>   lib/printf_kunit.c:167: vsnprintf(buf, 256, "%#-12x", ...) wrote '0x1234abcd  ', expected '0x1234abce  '
+>       # test_number: EXPECTATION FAILED at lib/printf_kunit.c:142
+>   lib/printf_kunit.c:167: kvasprintf(..., "%#-12x", ...) returned '0x1234abcd  ', expected '0x1234abce  '
+> 
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
-Stuffing more into a single statement =E2=80=93 and asm statements are inv=
-ariably complex =E2=80=93 is not good for clarity=2E Please, no=2E
+Just for record. I like this improvement. But  I am going to wait for the
+next version of the patchset which is going to add back the trailing '\n'.
+
+Best Regards,
+Petr
 
