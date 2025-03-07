@@ -1,102 +1,129 @@
-Return-Path: <linux-kernel+bounces-551113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A53F9A5685B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:58:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FD79A56860
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:59:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E9947A587A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:57:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4A077A6DAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87C3219A93;
-	Fri,  7 Mar 2025 12:58:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE05F219A89;
+	Fri,  7 Mar 2025 12:58:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOjG9Bc/"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HeCfxHi8"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC9FA215760;
-	Fri,  7 Mar 2025 12:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756AB217670
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 12:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741352305; cv=none; b=UzlIwLUT9nTt5Lv+zjvVhCcYqTqJz/EfmNq2nsGnRlneA11qqRbWwuRZPnroCt+d87aJUjKNowpA4fBI/Raw/ygos29Nefsiwl18IytjC2Hb8TSbeABrjWt5Esqxk66SQ0rCUwGt86S2lC2GhbVEGcrOaELf8Pg8/IKs5jIepjg=
+	t=1741352337; cv=none; b=ESVEVY1H9Dy+qX7HQpTsSPQkjZCqphe+HcHkYJ+5q+fQHBNcAE77QD+Pi4iPXgSCXVa1zEQR2UILbLKmLJqEEEb6Kbmn3E/U790JPMBNoKGWjiH0z26t5567ik1JO14+m3qnez4bSXVAiSZBivZr2ykQHjJyRXuHyCLb1gxDyrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741352305; c=relaxed/simple;
-	bh=m/auXCDofkYE2fnxWAv+1WSX5E3g2xIMSNEOGatdYws=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bGaxQ46IqaoM2DbfKH3RsJm4y5/ahU1x35GZG6K3mLQ/0u1KAR9mwU83sSjU65Ja9BucMY/f7fU1rUV3mn+f6n7X+AgCv91j2CoprFcpDr6cE0p+vfqTpSPvIx2t9Bx8gIueCOD8TtE8wqjUV6MqL/6wnC+SQXtLzUM8Jhv48D8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOjG9Bc/; arc=none smtp.client-ip=209.85.218.43
+	s=arc-20240116; t=1741352337; c=relaxed/simple;
+	bh=JyqdUpI+O2H5+nIXtCzwJtTX7mMZjbicNV19pUrQVsc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K0d9bJe8DMhQ3znSFz5729fyqVig5rLrU7nslxmBRss50smAnOWQbWE8yeChHdrWMhBRxuLNdj7/zqzkzSaiJwym/V6HT2M1aXd9zqImTiGyGiPQwhpeQ85VXyO8gIXk0EwnXzer6aMjBIuJGbqJZTGgyjk3xl1qnIvYr6B5wEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HeCfxHi8; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ac25520a289so122614166b.3;
-        Fri, 07 Mar 2025 04:58:23 -0800 (PST)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43bd87f7c2eso10315095e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 04:58:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741352302; x=1741957102; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=m/auXCDofkYE2fnxWAv+1WSX5E3g2xIMSNEOGatdYws=;
-        b=DOjG9Bc/QriI+fKp/xD6n7S24UVcx3cBcTs7XU0LFRzU2H8vzwmS8y+JjyYxP2aonD
-         A+GqtVWM4eiMZFX3ZB9AC5NTDy9yy1IMUjflOLdZP7N8V2dnsj/u4uVJLnD1HfWoNdk6
-         w7Uwkt6ljwfyM2VAU28Wug/a72nGnKQBrKq78M4+f+fSHcThRFaXM+4WRkmTdi+uaQJO
-         6+jxqP58MHnrHjq6jzav1TKgkgF9clHo4HiYyhdZXY8zg7ng6KFyBDYhF82NFMPN8Pa/
-         QWW90q0Q0oa86dY7D+2jS89pafq3+dX4Jmue1Cr1mU92L84WFT2a9xf1Aq0MfhkBLLPA
-         TLGA==
+        d=gmail.com; s=20230601; t=1741352333; x=1741957133; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YomAr+jLWfyA0js2DUztzDdpoJnP9vpapwzHnnzJhTM=;
+        b=HeCfxHi8xKl7bBXvFFSnZWO7jLQ0Ds7ZL/RfF0u/rn4M4SphLHW6k+s3g0f+hpZvyh
+         80bTflFqyCdCWoQLnCeGjaY/6703i24UZmQYHWliFoPsHid7+754p2gBigF4+6qjvlrC
+         Hf61tM/fjBG6gS/kzaqGczhRpAwKOndxPLgnZrqxsZxVFOVmX4LdL5EAgvfgFTRkmIrT
+         fxONFegsUQk76OlJErJuvk8AtIkLByyxmZmafYpwrp40VcM0d5WCrTbY8llS9yI5anTy
+         XOwaQ9d4QH0WBvVPdUPtVuHDFkq18nf7mPy/cRKPbumKNbGI9UtYyED8RQ035FUrCmHn
+         eF6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741352302; x=1741957102;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m/auXCDofkYE2fnxWAv+1WSX5E3g2xIMSNEOGatdYws=;
-        b=PgbhZGgo+738OJiqhhQ0mxpREvl/iEkRPx8Cb+2IX4ieNR1vE54RmdvBv2tdNqcYQJ
-         5cIXuQvq3lMQK+WHONnW29Ln5aHgZi39BNdqzhiLZxUtHnXvJX3O/gH0wCKum1V99tTi
-         ptFzz4kZQpM+Y6bjiweDfIY5rTxgUohNDkGVZB94Sn2ChmDR7HMO1y8+DxYE+RnelBn3
-         /0IavsxFYTZIsoNyll2MO2cW0fks0Yk2Dvlig9m8S0643nFLdP0jjQ7lu+p3fwy07vQE
-         4VHSV+TKsr4II7VchMrKRzMLLdn+zGjVLtJfZW/2nSwUWdKjxIfmgbnqPVC3m4pS/fY9
-         nPGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWtf87ogwrK8haJHuv3nBuq+JL65levRyYJg+/KZ0qGiYLkcZPhr4uEuof/W5Xm1fKvkKuWeVixltFn+h0=@vger.kernel.org, AJvYcCXWpdYNi0gJHBowcm4brakw8y6wDtf6FNklobZphQ5xjp1PTLcgTINeMH1GRE+13UUmDvuexir2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3ePA07ulUpvrdENbKxAICLOUMubQ3GSk+k5YBzMBcD/Eqbne5
-	YXb5CZ4pwSIwCqWyK/QJkyXHreSR8uo1RNQMOuqJ7dviC5G2cpX7PzL2Uu71kR7IWZEv0UOPRbj
-	1dunFQkbg5mBR7yWYruk8R/e+EowTn/dY5TNITeTN2jE=
-X-Gm-Gg: ASbGncs0MEeOhsiX58l27RsYv/tn8WvHOS6MOA+KPnNM0jrYskTI64S0VqQLk68gvNO
-	Bi0ThIR7Itd25wpBiFrNgQRu997WjiASI6wlP8FZDXLtnAP/ehz3K//z3EqeRCJNRsVmt4pSEAQ
-	m5DmAydU7kaHGO9PqS4p1o3bDJ
-X-Google-Smtp-Source: AGHT+IE8oyHIzhSNVi8QTlcKV5tKJD/5qayWxJTZy96ZNvPJRPDzcivpMxNekZW4IxHB1lECfsHmXcvntjNB3+y5r4U=
-X-Received: by 2002:a17:907:7e81:b0:abf:4708:8644 with SMTP id
- a640c23a62f3a-ac252fa0d03mr311432266b.43.1741352301547; Fri, 07 Mar 2025
- 04:58:21 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741352333; x=1741957133;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YomAr+jLWfyA0js2DUztzDdpoJnP9vpapwzHnnzJhTM=;
+        b=na7tM5AChP/MIXl7X/4/aja2mxjAmI05YifiKmvm9KWupda+WxVuy0FwtKNoW9UiN6
+         MFiYuwUhNabKo20itj0KxPs5AzAU7qxN+KEWML9tl1PT9pc7fDwM4JlvxP6Bf6wE/9lK
+         fPA7HA06sCu3HoA3Up1DO08WPKt+i6KeymnDKXKJL51UvvDcg4q1Jea6lAOPICIanW/8
+         evAlrCbHSmsJmYyNLC9opyMcUumqxBv79gcylrU5sox0JpqOuJZ6UUdzeQ7BgfB2NaN8
+         hxRuJ9LLzkpq5/rPHBaR8PRJFdSYieruXdRXc0r+XqPvdhxihBO1D0UczjuZFhPSKitS
+         N2aA==
+X-Forwarded-Encrypted: i=1; AJvYcCUl+K2zASKpso9VR15p/vKuBY3R3AAVfpxdes76KumXJDFLLVZsrP0n6j9ncX0kmLS5jJsC+nTI6lUU4Zk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yww7jWO6lyiih1RxQoXtKLYi0bq87u883mgcaiLoWLV8JYQsvVD
+	7YJRKVfBQpfpXZSnmMScytVRr0cqDO/ESJgd5HFqSmUO7IyAgUx4
+X-Gm-Gg: ASbGncvwb1sUY0xtYVKfcsa17aSla7IMMXiRyLHcbO6vaDcOkW188SUGW/Nd+5O+V8s
+	hxJch222uyHeKUPq0/f34pACEXhzUrO7JnOneRAKodulhGIh2kQx7fyLtcjNVmb7jLgK150Q5gl
+	GPvAagxeJR5kiLecBaswa7TiS1h0qK+hJGoCkG9fPp252INhGM8N9A6Tuf7/iO9fSrUSoCJvnDG
+	Kt1W5hnLN0q0oyB0WICgr67jdpoqD1DBDVjN/b4eqfJCQarGbiLTRj6mAzRf4aUMqc9ehU9kFbP
+	wbQbb83GSFSK/hXdPnjE5HSxajoy7qYwCqdDy0vXiAuDYkbmnwGM0MWhiotnu9SUl1Wl607A5EK
+	R+o7s8YvWG5wXBg==
+X-Google-Smtp-Source: AGHT+IHMt8TRlwPSb4W92+vucsZxD3dN6Z2G83XFOb+e9H+0srYcaupVFJUs2dMUm7RWODeqky3+lg==
+X-Received: by 2002:a05:600c:19d0:b0:439:8a8c:d3ca with SMTP id 5b1f17b1804b1-43c5cf3cea3mr22038715e9.29.1741352332403;
+        Fri, 07 Mar 2025 04:58:52 -0800 (PST)
+Received: from ?IPV6:2001:861:3385:e20:6384:4cf:52c5:3194? ([2001:861:3385:e20:6384:4cf:52c5:3194])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfdfdsm5426950f8f.34.2025.03.07.04.58.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Mar 2025 04:58:52 -0800 (PST)
+Message-ID: <ee3989a0-e03b-4947-acef-7174fef9d36b@gmail.com>
+Date: Fri, 7 Mar 2025 13:58:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAMpRfLORiuJOgUmpmjgCC1LZC1Kp0KFzPGXd9KQZELtr35P+eQ@mail.gmail.com>
- <2025030559-radiated-reviver-eebb@gregkh> <CAMpRfLMQ=rWBpYCaco5X4Sh1ecHuiqa91TwsBo6m2MA_UMKM+g@mail.gmail.com>
-In-Reply-To: <CAMpRfLMQ=rWBpYCaco5X4Sh1ecHuiqa91TwsBo6m2MA_UMKM+g@mail.gmail.com>
-From: =?UTF-8?Q?Se=C3=AFfane_Idouchach?= <seifane53@gmail.com>
-Date: Fri, 7 Mar 2025 20:58:04 +0800
-X-Gm-Features: AQ5f1JpoCfaxtq2-EaR_wPAspVpLWiZcfCV5Kt_4iQsyOusnJqgKaeK-i9--rX8
-Message-ID: <CAMpRfLMakzeazr91DBVyZQnin7y6L9RB+sPFb59U1QZvY3+KBQ@mail.gmail.com>
-Subject: Re: [REGRESSION] Long boot times due to USB enumeration
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: dirk.behme@de.bosch.com, rafael@kernel.org, dakr@kernel.org, 
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/sti: fix inconsistent indenting warning
+To: Charles Han <hanchunchao@inspur.com>, alain.volmat@foss.st.com,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ airlied@gmail.com, simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250305101641.2399-1-hanchunchao@inspur.com>
+Content-Language: en-US, fr
+From: =?UTF-8?Q?Rapha=C3=ABl_Gallais-Pou?= <rgallaispou@gmail.com>
+In-Reply-To: <20250305101641.2399-1-hanchunchao@inspur.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Dear all,
 
-I continued bisecting and while applying Dan's fix (15fffc6a5624) along the way.
-While the patch solves the problem for some commits it seems I am
-hitting another commit that exhibits the error again
-(25f51b76f90f10f9bf2fbc05fc51cf685da7ccad).
 
-I tested on top of v6.14-rc5 (7eb172143d5508) which has the issue,
-applying the fix and reverting the bad commit (25f51b76f90f10) fixes
-it.
-Both the applying fix and the revert are needed to resolve the issue.
+Le 05/03/2025 à 11:16, Charles Han a écrit :
+> Fix below inconsistent indenting smatch warning.
+> smatch warnings:
+> drivers/gpu/drm/sti/sti_hda.c:696 sti_hda_bind() warn: inconsistent indenting
+> 
+> Signed-off-by: Charles Han <hanchunchao@inspur.com>
 
-Let me know your thoughts on this.
+Hi,
+
+Acked-by: Raphaël Gallais-Pou <rgallaispou@gmail.com>
+
+Thanks,
+Raphaël
+> ---
+>   drivers/gpu/drm/sti/sti_hda.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
+> index 14fdc00d2ba0..6c9a49146f44 100644
+> --- a/drivers/gpu/drm/sti/sti_hda.c
+> +++ b/drivers/gpu/drm/sti/sti_hda.c
+> @@ -693,7 +693,7 @@ static int sti_hda_bind(struct device *dev, struct device *master, void *data)
+>   
+>   	connector->hda = hda;
+>   
+> -		bridge = devm_kzalloc(dev, sizeof(*bridge), GFP_KERNEL);
+> +	bridge = devm_kzalloc(dev, sizeof(*bridge), GFP_KERNEL);
+>   	if (!bridge)
+>   		return -ENOMEM;
+>   
+
 
