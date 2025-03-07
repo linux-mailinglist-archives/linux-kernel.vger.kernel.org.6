@@ -1,156 +1,168 @@
-Return-Path: <linux-kernel+bounces-551378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FC00A56BB3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:19:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C25E1A56BB5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:19:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E0021798EA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:19:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF57016E742
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02E0221DA0;
-	Fri,  7 Mar 2025 15:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1090D21CFEA;
+	Fri,  7 Mar 2025 15:17:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H6V8k7bu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hWcBSsbK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB1821CFEC
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97AD21CC7C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:17:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741360591; cv=none; b=AaQsjnZ7Eo+KBz+Od0bXyxgQX3tjS7YsTAfA4333eKIJaKSdii8WSK0WoK+Qew5nn9btM1K7aidmMOdJVlmZJyzgJMmZcU7u8adcy+RGNctmAEo2N7PvI1el3p9Vu31xAlpe+MEmXMKmebh8RQo2dsUIpcqFPo3LfgV2MLFzzTQ=
+	t=1741360630; cv=none; b=MTxxqZrxIuPAkUco10SvYhhG9vHXXK7Cnui34RUxe+WpKkT28tpH0AC64nZ9kwpZvMBt7o/tD1Z/vd8dZDu9YNSJexsb6ZA7sMp5bSJ6EuBjrCQQW39az37LqvUJLAXwMZdeMnrwn1Fn/e9oDadsdaND2SmOExgkrbFl9y/1nVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741360591; c=relaxed/simple;
-	bh=bBxbz03qAUVHviMss484CFNq9Oq7Zp1E6pkNgNBfDkY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NJQjQo8PYt73TI3RdPJYi9h62Jx8YmInMjOMiujI7/S2y5+4zAnLt6Tzlq53quwJB6Le7uIOi4kCywA3LCR5y8ICeeUNsvMPIEfTvzX73f2TIh/+8FeYpdK95cNsBFnoK0t6jlG/p2bpMRhJ2XtD1C9ctnSCQi1rW5OF7VKnZ1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H6V8k7bu; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1741360630; c=relaxed/simple;
+	bh=u1ia+jgdTy6SEy3Z41USO6FQmaZmpeo4fLS9jAxShW0=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=nfyDQPsX0SoNqEhPB5/pbWMFpIqb9U3bSQzzSmELzBgGomtWmJ+NzH2PnkYFwfD+3blXxLjX0EtaAQO4cjGEFOKMrBTXz8XJawjhVHfNNWe8Vx7FxznANEXkn0O1++Mv9ifUWZi3me17gCcexmjhTsYhvhRt0dfoINYS1iDO9jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hWcBSsbK; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741360587;
+	s=mimecast20190719; t=1741360627;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8UPoCF2TV9wNGlnVaBCwxXKKLjXm2csIIhfyrHtuFdo=;
-	b=H6V8k7buZ5Ax9BnQnQlRNr/c/5bxgP2/nUBH8YiPWQN8ml2E/a9RL6DkGUsWu81u3O7H7N
-	F5ntakkA37WmggU+FcvOJaYW4LhWPTJj+xSwanJNUZM8A4QwLmcfNcyrsPVkTP+eBiaNS2
-	47Ampnh05iVsnSDRK4lRVHgT0GTPLqI=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=jSf6oeIJqNd7y0EfyhKwRUYW2AS0darN35r1LLf0w2A=;
+	b=hWcBSsbKGe6Sh495dI/ML//F1e4Lcg8sHK1AQpHO2x0StLYep18JH95txX2Y8wwo33Gis4
+	7Tl1+1zlJMJFmU7dFfbkbi5bAQ5r4M4Un0THI2CUrnDfTIHcFXd7WVPLKvULyVMIU28aS8
+	6fnghiwbJwKYpqBPEwm1flUksLrnEmI=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-681-ZKmOOoqgPYimYjTXX_HO1Q-1; Fri, 07 Mar 2025 10:16:26 -0500
-X-MC-Unique: ZKmOOoqgPYimYjTXX_HO1Q-1
-X-Mimecast-MFC-AGG-ID: ZKmOOoqgPYimYjTXX_HO1Q_1741360585
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43bd0257945so9400815e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:16:26 -0800 (PST)
+ us-mta-14-JCqRoPtCMrS8TjA2X3JoOQ-1; Fri, 07 Mar 2025 10:17:06 -0500
+X-MC-Unique: JCqRoPtCMrS8TjA2X3JoOQ-1
+X-Mimecast-MFC-AGG-ID: JCqRoPtCMrS8TjA2X3JoOQ_1741360626
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c3c0ccf1d3so650840485a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:17:06 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741360585; x=1741965385;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8UPoCF2TV9wNGlnVaBCwxXKKLjXm2csIIhfyrHtuFdo=;
-        b=TYGV0L4PvBjyl6zL9o74mLlkWhVO78g5YKdRcR1Aa9eZr3nChnIWeLgbmdwytIU+VV
-         89zypsj9t6EVo6UchxyQ7hxiN/sAkpoAOIhxYwvlJKPgQwy1eNOA0wh0DiHN7geShMd6
-         FHHpj79bkFwPnhkPDffz5owkBCj1bDhsS4TaRMHUP5vqRLI6SU1KFWT9rohmkH5pznlJ
-         7hDGDULkF6RqJg3luypyFqmRp9yiv7RAtUNd+Mkqhv4WJ0N1AsbL3qkoxkVg+zi/Yt9V
-         1L6TdvAPTe0YNzrcUfddNYlEYVkV5Uy20nJNjSkOdVdNOfW5nyBRInzfoV1BB/lZoAW0
-         quRA==
-X-Gm-Message-State: AOJu0Yz1qbLNeiGcrEB7eFWKfAOLJD4mAu+fntofoROXbYptcy+MhUaz
-	v/Gjhzp7IbCDI3/EYPE2vpJ2jHRwVExCqJESCT/HMaPxdMpDOyZTHGXXSAdY1Jz820WVu8Wmn+I
-	3zN/2NUgrr74ZmKDfjoxAdghiUlTQ/cXygH9r4WoQ8hhGI8Nk+BaQDb6Vx7BEJw==
-X-Gm-Gg: ASbGncs3jjIPESo0rxK5tCo5lteevCwb6KptbhoCyCxQbMXXexS1LBT5DzVfK88JRCi
-	rcQpXE35HCsPdqlLiLBSfwEu4ZVdIQcCHHuVZBzUSbQiRIi6KTXFgjuM8brwWL1AACxVcap8YHc
-	P8Rk63d4zG9RPi2nzpq9bmfVS2TjAlbGkyGoQNJzGpe7uM/fqAtjg1UPdChgfPhjRGKCwZMTjng
-	BivNswmYSEIQxKD8RpSk1dGq6XymzDCjdLBN5KqviTF96r1/eM+wGkuGw/SvYNzkaoMlRMswzft
-	fOHUhl//a+dGIiYOmaL1nEKN5IZDhmxDPwk9qICKzRt2kvSiN1JncxzlCwwNJXA1CF1MZVsPp64
-	AD6DJ
-X-Received: by 2002:a05:600c:154a:b0:43b:d040:3e08 with SMTP id 5b1f17b1804b1-43c601d888emr26835945e9.8.1741360585499;
-        Fri, 07 Mar 2025 07:16:25 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGbqdZopBPMKZX+Hcxaxbbjod5fJk6RsUqCj4tqlz0tE6ncD07MAJKcZmWETr1ADUNAGiMoKw==
-X-Received: by 2002:a05:600c:154a:b0:43b:d040:3e08 with SMTP id 5b1f17b1804b1-43c601d888emr26835525e9.8.1741360585038;
-        Fri, 07 Mar 2025 07:16:25 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c0195bfsm5574660f8f.48.2025.03.07.07.16.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 07:16:24 -0800 (PST)
-Date: Fri, 7 Mar 2025 15:16:22 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	Qais Yousef <qyousef@layalina.io>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Swapnil Sapkal <swapnil.sapkal@amd.com>,
-	Shrikanth Hegde <sshegde@linux.ibm.com>,
-	Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
-	tommaso.cucinotta@santannapisa.it,
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH v2 0/8] Fix SCHED_DEADLINE bandwidth accounting during
- suspend
-Message-ID: <Z8sNxll-9_VZptWB@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250306141016.268313-1-juri.lelli@redhat.com>
- <5cffdf8b-2670-4b46-9434-8024e18e4750@nvidia.com>
+        d=1e100.net; s=20230601; t=1741360626; x=1741965426;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jSf6oeIJqNd7y0EfyhKwRUYW2AS0darN35r1LLf0w2A=;
+        b=svr9c+HsIlUAnW+BrZ5QQIUdzPcu4KGsVjl+0BFK06yt2k9YvIW+fuEBsEPQA+RoS1
+         MTo7WToR/FRC3v+330orKETvUEHQmwx0bOvgZ1WuSVItTyDJbuegUPsX6Bjhki1YAe/O
+         8MrEVPLx0oNTv9sdpW1k939aXtYeJ7S/cxKQgkyprnsesLQq1+4oxfjMgNSj/Awz2frN
+         Y4JvGRMPSLStQz2tcgjp+oCp9wtEW1yPQK7WmEdLDLj39djt5/JlS8/tyO+o/Enibfmm
+         aLIIp0FEv6VyWdHVs+nTC3nYVaRpdysgb97GEAX1AEv4D7R0AUNmL9qC8LucQS5fhKKi
+         x+3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXlqB7jlpAhXTosaMyfc8891cMVSyNH8mH8RmxBsbZaJ/bXB5wlHPlJ25bkdflPpZ5yoQ26kmxeQQURRFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyC46WKxj15TJjomP4jiTCuj81SMiNJzWkM3MChAUgOa/wb2epo
+	fSiWT6bb2cr1IDTWM/58MgDIajHSlDiYXRjuTqj7tUB8Sw3oQcI9KwlOY5i2wcVBiap4+OSkqqe
+	ykQot7IB05CpmKLdVqJM6xoLA5qwkpkVSKbobTI+bSsfHxe9FaSImoVjMAH9xog==
+X-Gm-Gg: ASbGncvbG2UBCKbUmLOGfrxh/Vdygk+sSmOcgf4sOzJzYdrqB33G8rm3gsfpunT2ByY
+	yizzRHG59BnMNj7tYPdU5NnaWrZDZ/cwQx5adtVfhuPcqtJKC3Lk2YBlfohem8j+b2sc0SWnqWu
+	Rphj6vDLmfEdn+dK19lTXENh3W+5pjzZRHXPHaBbx+PFi5MInmXbL0PQk+65MLdv0O4E6HWXzP0
+	3G1M6gTR+ZGEDVk9HU+PeybDgB1M00Sm7jR/vuRx2AUU48yjY1iLOM2F4EgKHmYJd8fhXMHDKzR
+	jqUgOkjxq8oMbabdI8EFGgSEbXAXvv+c6iuY1QXYzMyL//0ceDeilY99MFU=
+X-Received: by 2002:ac8:7c41:0:b0:471:9dd6:b51a with SMTP id d75a77b69052e-475c677efa5mr54669301cf.21.1741360626201;
+        Fri, 07 Mar 2025 07:17:06 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IG7evF0XJq+z5QXXPTC1cKhMgQOZY905OvJ26UXCPt4pNptuMXkQbcvcKa3pfRIHeSjuvtbHw==
+X-Received: by 2002:ac8:7c41:0:b0:471:9dd6:b51a with SMTP id d75a77b69052e-475c677efa5mr54668161cf.21.1741360625415;
+        Fri, 07 Mar 2025 07:17:05 -0800 (PST)
+Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4751db2f961sm21123951cf.62.2025.03.07.07.17.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Mar 2025 07:17:04 -0800 (PST)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <234d750d-cd2e-43b2-8133-43ca1fd889de@redhat.com>
+Date: Fri, 7 Mar 2025 10:17:03 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5cffdf8b-2670-4b46-9434-8024e18e4750@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 8/8] include/{topology,cpuset}: Move
+ dl_rebuild_rd_accounting to cpuset.h
+To: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
+ cgroups@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
+ =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
+ Qais Yousef <qyousef@layalina.io>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Swapnil Sapkal <swapnil.sapkal@amd.com>,
+ Shrikanth Hegde <sshegde@linux.ibm.com>, Phil Auld <pauld@redhat.com>,
+ luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
+ Jon Hunter <jonathanh@nvidia.com>, Waiman Long <llong@redhat.com>
+References: <20250306141016.268313-1-juri.lelli@redhat.com>
+ <20250306141016.268313-9-juri.lelli@redhat.com>
+Content-Language: en-US
+In-Reply-To: <20250306141016.268313-9-juri.lelli@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Jon,
 
-On 07/03/25 11:40, Jon Hunter wrote:
-> Hi Juri,
-> 
-> On 06/03/2025 14:10, Juri Lelli wrote:
-> > Hello!
-> > 
-> > Jon reported [1] a suspend regression on a Tegra board configured to
-> > boot with isolcpus and bisected it to commit 53916d5fd3c0
-> > ("sched/deadline: Check bandwidth overflow earlier for hotplug").
-> > 
-> > Root cause analysis pointed out that we are currently failing to
-> > correctly clear and restore bandwidth accounting on root domains after
-> > changes that initiate from partition_sched_domains(), as it is the case
-> > for suspend operations on that board.
-> > 
-> > This is v2 [2] of the proposed approach to fix the issue. With respect
-> > to v1, the following implements the approach by:
-> > 
-> > - 01: filter out DEADLINE special tasks
-> > - 02: preparatory wrappers to be able to grab sched_domains_mutex on
-> >        UP (remove !SMP wrappers - Waiman)
-> > - 03: generalize unique visiting of root domains so that we can
-> >        re-use the mechanism elsewhere
-> > - 04: the bulk of the approach, clean and rebuild after changes
-> > - 05: clean up a now redundant call
-> > - 06: remove partition_and_rebuild_sched_domains() (Waiman)
-> > - 07: stop exposing partition_sched_domains_locked (Waiman)
-> > 
-> > Please test and review. The set is also available at
-> 
-> 
-> Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Thanks!
-
-Best,
-Juri
+On 3/6/25 9:10 AM, Juri Lelli wrote:
+> dl_rebuild_rd_accounting() is defined in cpuset.c, so it makes more
+> sense to move related declarations to cpuset.h.
+>
+> Implement the move.
+>
+> Suggested-by: Waiman Long <llong@redhat.com>
+> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+> ---
+>   include/linux/cpuset.h         | 5 +++++
+>   include/linux/sched/topology.h | 2 --
+>   2 files changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/linux/cpuset.h b/include/linux/cpuset.h
+> index 835e7b793f6a..c414daa7d503 100644
+> --- a/include/linux/cpuset.h
+> +++ b/include/linux/cpuset.h
+> @@ -125,6 +125,7 @@ static inline int cpuset_do_page_mem_spread(void)
+>   
+>   extern bool current_cpuset_is_being_rebound(void);
+>   
+> +extern void dl_rebuild_rd_accounting(void);
+>   extern void rebuild_sched_domains(void);
+>   
+>   extern void cpuset_print_current_mems_allowed(void);
+> @@ -259,6 +260,10 @@ static inline bool current_cpuset_is_being_rebound(void)
+>   	return false;
+>   }
+>   
+> +static inline void dl_rebuild_rd_accounting(void)
+> +{
+> +}
+> +
+>   static inline void rebuild_sched_domains(void)
+>   {
+>   	partition_sched_domains(1, NULL, NULL);
+> diff --git a/include/linux/sched/topology.h b/include/linux/sched/topology.h
+> index 96e69bfc3c8a..51f7b8169515 100644
+> --- a/include/linux/sched/topology.h
+> +++ b/include/linux/sched/topology.h
+> @@ -166,8 +166,6 @@ static inline struct cpumask *sched_domain_span(struct sched_domain *sd)
+>   	return to_cpumask(sd->span);
+>   }
+>   
+> -extern void dl_rebuild_rd_accounting(void);
+> -
+>   extern void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+>   				    struct sched_domain_attr *dattr_new);
+>   
+Reviewed-by: Waiman Long <llong@redhat.com>
 
 
