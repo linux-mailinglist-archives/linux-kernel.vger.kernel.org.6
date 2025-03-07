@@ -1,415 +1,143 @@
-Return-Path: <linux-kernel+bounces-550984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B7C6A566A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:26:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFF2A56698
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:25:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C12AF17801E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:26:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76B2C177E4C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3869721CC5A;
-	Fri,  7 Mar 2025 11:22:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A462321ADCB;
+	Fri,  7 Mar 2025 11:22:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U2WkxoO/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kaY9Rr8s"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DC3121C9FD;
-	Fri,  7 Mar 2025 11:22:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7781621ABD2
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 11:22:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741346561; cv=none; b=PJ9lDhTG21FZ8wh8uVPQKfMcdtb2Mf4vSqVamZCh3Wczjr+Ew3xx1suwyHAw8tH4JYq1MAtw5b6tLfsdz9PdWgP3p4rxTs9hExTEOOqSE/4RHjbCf3E88W1EKwBZYr7MYWH1s2DfIISLaqVGGcm0PQx0Fr9rFMVq/YP35VX9aO8=
+	t=1741346546; cv=none; b=gOh2CNu3WSjYhm5pZCDfmdht5kC5EtzFNbsxj4YUNY4i2qQa9grZv56hYLQGQUMt7HEF3Bw9aGJpHtjMAbKUOb0VWQDzvuS0M/ci0/dDBpUZCxQIZrsRIs8/5UNCy3o2lT994nvA2xmQiF/KOUODezujIFn3YXFRC+w0BkglWoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741346561; c=relaxed/simple;
-	bh=M7abY9ClFFe0usmXTBaLFww6vMyU0DVh6Id3M5eG7Tw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rpzzUULsqzWMuKyjqIMPK0m9OJAb1cbuIkmh3ZzT2OCVwpLv7SZiZeAt64/domCFQwpY5DzEm8u4iF3bQwXhsCg2Bc5Xoevu1SsTW46ERByp0PPEEhM3AYVWGGTQdZaoEQXQYJXG7KIBeYYP9RLfsS0qOlJ3CrlcFRzGGpz4wt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U2WkxoO/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38A2AC4CEE8;
-	Fri,  7 Mar 2025 11:22:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741346560;
-	bh=M7abY9ClFFe0usmXTBaLFww6vMyU0DVh6Id3M5eG7Tw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=U2WkxoO/c39284t5CK+djBfnZtik5yn3UGTrRlF6KObMiIpy9SS1Qzo3YfaeFzsdJ
-	 DOCDHpWSFb89Co4/6Vc+ESij60yeTxV9WhJPFHgiAXyluWcUrCHa636VH+1R5tdRno
-	 yOn+KR8xB4VtZC1ahrC3/1ahZZ1GDePR76IyzKaR98e4LWmvP4FuNm/sNy1Ckb/STX
-	 ahyTaqusJ+mOHDoAK3Aqp0DI2+H0kLZwQxUC/qFToHfRXrhGggOq3u8tpxcs3wf0tU
-	 47ifnRZ2uJI1CwRsHOF/Irh9/wTexNDPGN/gJv4nc2YknuaFoz2q66+32SsMLhGHWB
-	 ol0ZTt5S4Rzlw==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Fri, 07 Mar 2025 12:21:59 +0100
-Subject: [PATCH net-next 15/15] mptcp: pm: move Netlink PM helpers to
- pm_netlink.c
+	s=arc-20240116; t=1741346546; c=relaxed/simple;
+	bh=07Y53SvaN4HyareOuoHQiwP6ciMkkFkpWBEWCYPiweY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UwVoXNW+VrIa6fNgFGvHSOxXjGOeJq+9TdORE2vprgTf+eLulSTbJUb1MTpyX3fIGUMnHz68DkE79X6WdXJDgxPrl2YFPTkd0sWL0IOfuve2v7HR9cwvyfWeTK0HGWBBOgqU1xqWPDBzUiLNvowdSjqTopzrhbc6yAaXLJqM4KE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kaY9Rr8s; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B4A29432BF;
+	Fri,  7 Mar 2025 11:22:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741346536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qcuD7NlNDZd+xhVem/Y+o+z4MWg9gjtRsouOtv13Y6A=;
+	b=kaY9Rr8s/iRCbvx0GX0icDjID8GQ0lANAxP8yEtn+4eQQIvzjVU+NSkHQOFUFzuzJOtfTL
+	GAmi3h7PM7njnuuWRVxOpB7KVzL6ytdr1lVgbNkFB+HV9MKENMy7bO33KObvVOq97MXB3Y
+	iDKjjRbqR4Zh2LBH/iNV8WdrViBm3wc9kOlXUVGQ2vn90LRQe3EwhqUs7/RJxQwMvWofon
+	MLNahYoNEwETYmW8y4lpsAjsJz/1X0aoK8me0BW5Mzdl9kYHFF3YIUZADuuyYdDcvKIBci
+	Wt6L0z0Ke9qm18BVKX7Ohjf/4YoajG/JoJBfD7qiU/zsO2WI+FGhainZs7xh3Q==
+Date: Fri, 7 Mar 2025 12:22:12 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
+ <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] drm/bridge: fsl-ldb: make warning message more
+ informative
+Message-ID: <20250307122212.18252ca6@booty>
+In-Reply-To: <f8df2b5e-b005-4ada-8108-159b2b94a72e@nxp.com>
+References: <20250306-drm-two-ldb-improvements-v1-0-f139d768b92c@bootlin.com>
+	<20250306-drm-two-ldb-improvements-v1-2-f139d768b92c@bootlin.com>
+	<f8df2b5e-b005-4ada-8108-159b2b94a72e@nxp.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250307-net-next-mptcp-pm-reorg-v1-15-abef20ada03b@kernel.org>
-References: <20250307-net-next-mptcp-pm-reorg-v1-0-abef20ada03b@kernel.org>
-In-Reply-To: <20250307-net-next-mptcp-pm-reorg-v1-0-abef20ada03b@kernel.org>
-To: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9783; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=M7abY9ClFFe0usmXTBaLFww6vMyU0DVh6Id3M5eG7Tw=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnytbSCAu2b35vXS5J3oyX4WmSFV6iYX4xu7xED
- RRNnIn9fO2JAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ8rW0gAKCRD2t4JPQmmg
- c6ueEADrbh1MxpcQV3C4nBGmvLY8wzEurqkLxfxxhReZegtsOHntonNyvrO4K2pXzmyUW98iRBP
- zjLSkA27QYhl0/w02STWGDZfqdBhTxEJCmOihDBXG8E0dB4PBujf6imf+eJIRMQASDiXj9pktTL
- MaBoWgX3W8jJfY0kB8nh1jMJgEZ7A02nC7RBeNNXeP73h8KdYkIWRGTb1Mu/zNfhCkYW41N2gyH
- vgr+zWUOCCLhEkhTqX2PsUmQRC71lZ121cp5ChqNLm/P3rpPD8y+XxSKFbGry2P9qONZZ6n0rBP
- u+H5yk1yS486OG9zypEkjow6TgecSdftERCx6gmydTmElfxHRS+QqrSQfG3hSaAXugyJqnS9LEp
- UKvlokCdL7wyuh5EFQQGml86svRy2OA+SWlShbpxbzY3RZPn82WcvElXoblf8uDCoag5khjAgf0
- TrjxVk5PJZEbGqfz66EbHrdFcbAxa/Dm6nbJ0rKqN+FGbhTlW+IssyL3CdenL7HjMbeppHJN7mj
- MuH3w3LCNm8/CiC57m4YixaGTza2nO6o4kN5LRRml+fakV0S8WQE+jgR/OTzTauYlyxb/mTOXP5
- tBea0OjgNrW1gBpTjuSr/yHxjyURXSepGUmBz5VQodv94Q9JDYQaZeWrkN3fU8oXZYQQtGM2dhf
- gWpq0sWb6L+Z6aw==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduuddtheefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepfeeltdeljeeftdetgeeuuedvheffffekleehkeevhfdttefgleeutdfhkeehkeeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmpdhkvghrnhgvlhdrohhrghenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvuddprhgtphhtthhopehvihgtthhorhdrlhhiuhesnhigphdrtghomhdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtohepnhgvihhlrdgrrhhms
+ hhtrhhonhhgsehlihhnrghrohdrohhrghdprhgtphhtthhopehrfhhoshhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopefnrghurhgvnhhtrdhpihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohepjhhonhgrsheskhifihgsohhordhsvgdprhgtphhtthhopehjvghrnhgvjhdrshhkrhgrsggvtgesghhmrghilhdrtghomhdprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhm
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Before this patch, the PM code was dispersed in different places:
+Hello Liu,
 
-- pm.c had common code for all PMs, but also Netlink specific code that
-  will not be needed with the future BPF path-managers.
+thanks for your reviews.
 
-- pm_netlink.c had common Netlink code.
+On Fri, 7 Mar 2025 14:33:37 +0800
+Liu Ying <victor.liu@nxp.com> wrote:
 
-To clarify the code, a reorganisation is suggested here, only by moving
-code around, and small helper renaming to avoid confusions:
+> On 03/07/2025, Luca Ceresoli wrote:
+> > This warning notifies a clock was set to an inaccurate value. Modify the
+> > string to also show the clock name.
+> > 
+> > While doing that also rewrap the entire function call.
+> > 
+> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > ---
+> >  drivers/gpu/drm/bridge/fsl-ldb.c | 6 +++---
+> >  1 file changed, 3 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
+> > index 0fc8a14fd80062248a43b8b93272101a7ca6158a..c7c899a9644bb827845fb3fe96a9695d79a91474 100644
+> > --- a/drivers/gpu/drm/bridge/fsl-ldb.c
+> > +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+> > @@ -181,9 +181,9 @@ static void fsl_ldb_atomic_enable(struct drm_bridge *bridge,
+> >  
+> >  	configured_link_freq = clk_get_rate(fsl_ldb->clk);
+> >  	if (configured_link_freq != requested_link_freq)
+> > -		dev_warn(fsl_ldb->dev, "Configured LDB clock (%lu Hz) does not match requested LVDS clock: %lu Hz\n",
+> > -			 configured_link_freq,
+> > -			 requested_link_freq);
+> > +		dev_warn(fsl_ldb->dev,
+> > +			 "Configured %pC clock (%lu Hz) does not match requested LVDS clock: %lu Hz\n",
+> > +			 fsl_ldb->clk, configured_link_freq, requested_link_freq);  
+> 
+> Though this slightly changes the warning message userspace sees, I guess it is
+> acceptable.
+> 
+> Does it make sense to s/%pC/%pCn/ so that the clock name is printed in lower
+> case instead of upper case, since it seems that all i.MX specific clock names
+> are in lower case?
 
-- pm_netlink.c now only contains common PM Netlink code:
-  - PM events: this code was already there
-  - shared helpers around Netlink code that were already there as well
-  - shared Netlink commands code from pm.c
+%pC and %pCn print the same string, as I just discovered at
+https://elixir.bootlin.com/linux/v6.14-rc5/source/lib/vsprintf.c#L1972
 
-- pm.c now no longer contain Netlink specific code.
+I've pondering for a moment about whether we should document %pC and
+%pCn produce the same output or rather %pCn. I decided to try the
+latter and just sent a patch to do it [0].
 
-- protocol.h has been updated accordingly:
-  - mptcp_nl_fill_addr() no longer need to be exported.
+FYI in my case the printed value is (with both %pC and %pCn)
+"32ec0000.blk-ctrl:bridge@5c".
 
-The code around the PM is now less confusing, which should help for the
-maintenance in the long term.
+[0] https://lore.kernel.org/20250307-vsprintf-pcn-v1-0-df0b2ccf610f@bootlin.com
 
-This will certainly impact future backports, but because other cleanups
-have already done recently, and more are coming to ease the addition of
-a new path-manager controlled with BPF (struct_ops), doing that now
-seems to be a good time. Also, many issues around the PM have been fixed
-a few months ago while increasing the code coverage in the selftests, so
-such big reorganisation can be done with more confidence now.
-
-No behavioural changes intended.
-
-Reviewed-by: Geliang Tang <geliang@kernel.org>
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- net/mptcp/pm.c         | 119 -------------------------------------------------
- net/mptcp/pm_netlink.c | 119 ++++++++++++++++++++++++++++++++++++++++++++++++-
- net/mptcp/protocol.h   |   2 -
- 3 files changed, 117 insertions(+), 123 deletions(-)
-
-diff --git a/net/mptcp/pm.c b/net/mptcp/pm.c
-index d02a0b3adfc43e134cc83140759703ce1147bc9e..833839d7286e717599579356af3117f70e39de0a 100644
---- a/net/mptcp/pm.c
-+++ b/net/mptcp/pm.c
-@@ -5,12 +5,8 @@
-  */
- #define pr_fmt(fmt) "MPTCP: " fmt
- 
--#include <linux/kernel.h>
--#include <net/mptcp.h>
- #include "protocol.h"
--
- #include "mib.h"
--#include "mptcp_pm_gen.h"
- 
- #define ADD_ADDR_RETRANS_MAX	3
- 
-@@ -888,121 +884,6 @@ bool mptcp_pm_is_backup(struct mptcp_sock *msk, struct sock_common *skc)
- 	return mptcp_pm_nl_is_backup(msk, &skc_local);
- }
- 
--static int mptcp_pm_get_addr(u8 id, struct mptcp_pm_addr_entry *addr,
--			     struct genl_info *info)
--{
--	if (info->attrs[MPTCP_PM_ATTR_TOKEN])
--		return mptcp_userspace_pm_get_addr(id, addr, info);
--	return mptcp_pm_nl_get_addr(id, addr, info);
--}
--
--int mptcp_pm_nl_get_addr_doit(struct sk_buff *skb, struct genl_info *info)
--{
--	struct mptcp_pm_addr_entry addr;
--	struct nlattr *attr;
--	struct sk_buff *msg;
--	void *reply;
--	int ret;
--
--	if (GENL_REQ_ATTR_CHECK(info, MPTCP_PM_ENDPOINT_ADDR))
--		return -EINVAL;
--
--	attr = info->attrs[MPTCP_PM_ENDPOINT_ADDR];
--	ret = mptcp_pm_parse_entry(attr, info, false, &addr);
--	if (ret < 0)
--		return ret;
--
--	msg = nlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
--	if (!msg)
--		return -ENOMEM;
--
--	reply = genlmsg_put_reply(msg, info, &mptcp_genl_family, 0,
--				  info->genlhdr->cmd);
--	if (!reply) {
--		GENL_SET_ERR_MSG(info, "not enough space in Netlink message");
--		ret = -EMSGSIZE;
--		goto fail;
--	}
--
--	ret = mptcp_pm_get_addr(addr.addr.id, &addr, info);
--	if (ret) {
--		NL_SET_ERR_MSG_ATTR(info->extack, attr, "address not found");
--		goto fail;
--	}
--
--	ret = mptcp_nl_fill_addr(msg, &addr);
--	if (ret)
--		goto fail;
--
--	genlmsg_end(msg, reply);
--	ret = genlmsg_reply(msg, info);
--	return ret;
--
--fail:
--	nlmsg_free(msg);
--	return ret;
--}
--
--int mptcp_pm_genl_fill_addr(struct sk_buff *msg,
--			    struct netlink_callback *cb,
--			    struct mptcp_pm_addr_entry *entry)
--{
--	void *hdr;
--
--	hdr = genlmsg_put(msg, NETLINK_CB(cb->skb).portid,
--			  cb->nlh->nlmsg_seq, &mptcp_genl_family,
--			  NLM_F_MULTI, MPTCP_PM_CMD_GET_ADDR);
--	if (!hdr)
--		return -EINVAL;
--
--	if (mptcp_nl_fill_addr(msg, entry) < 0) {
--		genlmsg_cancel(msg, hdr);
--		return -EINVAL;
--	}
--
--	genlmsg_end(msg, hdr);
--	return 0;
--}
--
--static int mptcp_pm_dump_addr(struct sk_buff *msg, struct netlink_callback *cb)
--{
--	const struct genl_info *info = genl_info_dump(cb);
--
--	if (info->attrs[MPTCP_PM_ATTR_TOKEN])
--		return mptcp_userspace_pm_dump_addr(msg, cb);
--	return mptcp_pm_nl_dump_addr(msg, cb);
--}
--
--int mptcp_pm_nl_get_addr_dumpit(struct sk_buff *msg,
--				struct netlink_callback *cb)
--{
--	return mptcp_pm_dump_addr(msg, cb);
--}
--
--static int mptcp_pm_set_flags(struct genl_info *info)
--{
--	struct mptcp_pm_addr_entry loc = { .addr = { .family = AF_UNSPEC }, };
--	struct nlattr *attr_loc;
--	int ret = -EINVAL;
--
--	if (GENL_REQ_ATTR_CHECK(info, MPTCP_PM_ATTR_ADDR))
--		return ret;
--
--	attr_loc = info->attrs[MPTCP_PM_ATTR_ADDR];
--	ret = mptcp_pm_parse_entry(attr_loc, info, false, &loc);
--	if (ret < 0)
--		return ret;
--
--	if (info->attrs[MPTCP_PM_ATTR_TOKEN])
--		return mptcp_userspace_pm_set_flags(&loc, info);
--	return mptcp_pm_nl_set_flags(&loc, info);
--}
--
--int mptcp_pm_nl_set_flags_doit(struct sk_buff *skb, struct genl_info *info)
--{
--	return mptcp_pm_set_flags(info);
--}
--
- static void mptcp_pm_subflows_chk_stale(const struct mptcp_sock *msk, struct sock *ssk)
- {
- 	struct mptcp_subflow_context *iter, *subflow = mptcp_subflow_ctx(ssk);
-diff --git a/net/mptcp/pm_netlink.c b/net/mptcp/pm_netlink.c
-index 530b2362a5a35c5ef44d3bf495c8103bdfa08cff..b2e5bbdcd5df920887ffbd9b6d652f422b32d49e 100644
---- a/net/mptcp/pm_netlink.c
-+++ b/net/mptcp/pm_netlink.c
-@@ -127,8 +127,8 @@ int mptcp_pm_parse_entry(struct nlattr *attr, struct genl_info *info,
- 	return 0;
- }
- 
--int mptcp_nl_fill_addr(struct sk_buff *skb,
--		       struct mptcp_pm_addr_entry *entry)
-+static int mptcp_nl_fill_addr(struct sk_buff *skb,
-+			      struct mptcp_pm_addr_entry *entry)
- {
- 	struct mptcp_addr_info *addr = &entry->addr;
- 	struct nlattr *attr;
-@@ -166,6 +166,121 @@ int mptcp_nl_fill_addr(struct sk_buff *skb,
- 	return -EMSGSIZE;
- }
- 
-+static int mptcp_pm_get_addr(u8 id, struct mptcp_pm_addr_entry *addr,
-+			     struct genl_info *info)
-+{
-+	if (info->attrs[MPTCP_PM_ATTR_TOKEN])
-+		return mptcp_userspace_pm_get_addr(id, addr, info);
-+	return mptcp_pm_nl_get_addr(id, addr, info);
-+}
-+
-+int mptcp_pm_nl_get_addr_doit(struct sk_buff *skb, struct genl_info *info)
-+{
-+	struct mptcp_pm_addr_entry addr;
-+	struct nlattr *attr;
-+	struct sk_buff *msg;
-+	void *reply;
-+	int ret;
-+
-+	if (GENL_REQ_ATTR_CHECK(info, MPTCP_PM_ENDPOINT_ADDR))
-+		return -EINVAL;
-+
-+	attr = info->attrs[MPTCP_PM_ENDPOINT_ADDR];
-+	ret = mptcp_pm_parse_entry(attr, info, false, &addr);
-+	if (ret < 0)
-+		return ret;
-+
-+	msg = nlmsg_new(NLMSG_DEFAULT_SIZE, GFP_KERNEL);
-+	if (!msg)
-+		return -ENOMEM;
-+
-+	reply = genlmsg_put_reply(msg, info, &mptcp_genl_family, 0,
-+				  info->genlhdr->cmd);
-+	if (!reply) {
-+		GENL_SET_ERR_MSG(info, "not enough space in Netlink message");
-+		ret = -EMSGSIZE;
-+		goto fail;
-+	}
-+
-+	ret = mptcp_pm_get_addr(addr.addr.id, &addr, info);
-+	if (ret) {
-+		NL_SET_ERR_MSG_ATTR(info->extack, attr, "address not found");
-+		goto fail;
-+	}
-+
-+	ret = mptcp_nl_fill_addr(msg, &addr);
-+	if (ret)
-+		goto fail;
-+
-+	genlmsg_end(msg, reply);
-+	ret = genlmsg_reply(msg, info);
-+	return ret;
-+
-+fail:
-+	nlmsg_free(msg);
-+	return ret;
-+}
-+
-+int mptcp_pm_genl_fill_addr(struct sk_buff *msg,
-+			    struct netlink_callback *cb,
-+			    struct mptcp_pm_addr_entry *entry)
-+{
-+	void *hdr;
-+
-+	hdr = genlmsg_put(msg, NETLINK_CB(cb->skb).portid,
-+			  cb->nlh->nlmsg_seq, &mptcp_genl_family,
-+			  NLM_F_MULTI, MPTCP_PM_CMD_GET_ADDR);
-+	if (!hdr)
-+		return -EINVAL;
-+
-+	if (mptcp_nl_fill_addr(msg, entry) < 0) {
-+		genlmsg_cancel(msg, hdr);
-+		return -EINVAL;
-+	}
-+
-+	genlmsg_end(msg, hdr);
-+	return 0;
-+}
-+
-+static int mptcp_pm_dump_addr(struct sk_buff *msg, struct netlink_callback *cb)
-+{
-+	const struct genl_info *info = genl_info_dump(cb);
-+
-+	if (info->attrs[MPTCP_PM_ATTR_TOKEN])
-+		return mptcp_userspace_pm_dump_addr(msg, cb);
-+	return mptcp_pm_nl_dump_addr(msg, cb);
-+}
-+
-+int mptcp_pm_nl_get_addr_dumpit(struct sk_buff *msg,
-+				struct netlink_callback *cb)
-+{
-+	return mptcp_pm_dump_addr(msg, cb);
-+}
-+
-+static int mptcp_pm_set_flags(struct genl_info *info)
-+{
-+	struct mptcp_pm_addr_entry loc = { .addr = { .family = AF_UNSPEC }, };
-+	struct nlattr *attr_loc;
-+	int ret = -EINVAL;
-+
-+	if (GENL_REQ_ATTR_CHECK(info, MPTCP_PM_ATTR_ADDR))
-+		return ret;
-+
-+	attr_loc = info->attrs[MPTCP_PM_ATTR_ADDR];
-+	ret = mptcp_pm_parse_entry(attr_loc, info, false, &loc);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (info->attrs[MPTCP_PM_ATTR_TOKEN])
-+		return mptcp_userspace_pm_set_flags(&loc, info);
-+	return mptcp_pm_nl_set_flags(&loc, info);
-+}
-+
-+int mptcp_pm_nl_set_flags_doit(struct sk_buff *skb, struct genl_info *info)
-+{
-+	return mptcp_pm_set_flags(info);
-+}
-+
- static void mptcp_nl_mcast_send(struct net *net, struct sk_buff *nlskb, gfp_t gfp)
- {
- 	genlmsg_multicast_netns(&mptcp_genl_family, net,
-diff --git a/net/mptcp/protocol.h b/net/mptcp/protocol.h
-index 360d8cfa52797a34f43bee817d0ff1e5c2e23219..c51b6a22d5e099c4486cc76fc4abc9a91c574c4a 100644
---- a/net/mptcp/protocol.h
-+++ b/net/mptcp/protocol.h
-@@ -1057,8 +1057,6 @@ bool mptcp_userspace_pm_active(const struct mptcp_sock *msk);
- 
- void mptcp_fastopen_subflow_synack_set_params(struct mptcp_subflow_context *subflow,
- 					      struct request_sock *req);
--int mptcp_nl_fill_addr(struct sk_buff *skb,
--		       struct mptcp_pm_addr_entry *entry);
- int mptcp_pm_genl_fill_addr(struct sk_buff *msg,
- 			    struct netlink_callback *cb,
- 			    struct mptcp_pm_addr_entry *entry);
+Luca
 
 -- 
-2.48.1
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
