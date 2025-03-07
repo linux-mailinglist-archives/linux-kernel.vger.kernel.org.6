@@ -1,158 +1,140 @@
-Return-Path: <linux-kernel+bounces-551088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FEFFA56802
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:41:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D848A56805
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:41:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6694617781B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:41:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 474FC1778E5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE75219309;
-	Fri,  7 Mar 2025 12:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE68321930F;
+	Fri,  7 Mar 2025 12:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EhLbZYRN";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NRP4bvSx"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z9FcE8v1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671D72192F6;
-	Fri,  7 Mar 2025 12:41:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 421DE2192F6;
+	Fri,  7 Mar 2025 12:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741351272; cv=none; b=PNEmwQIm4KlwSv+dys2OYQlHh4OAeNiqoDT6rzmEh0ClvMpugvtgDtWLdid1zcwja0gKoSO1zkXY6CGa+FTbn2S7dqEFKxb+3MaTB3KmvRriYzDbR4zlNhvJxSFovPJ24tk4vY6j5uklBg64KSNOVRxQ7d2brb6wzMWYtWM/Qj8=
+	t=1741351304; cv=none; b=Zik28Jiu+OM33jvZgUo6sFrBq/ZG+tYtEyha5NjvGPcRcJzhZj4bcVCpRHSK5gAI4NzbaiwchcuQSo/H83PqG4H9IEOdixpNoMNLCFEx+BiNpSa90P4sL1dFGemTAxXuKf6i2o3FWd5heISr+W/DplMFpW740a2c3QaCZnA53Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741351272; c=relaxed/simple;
-	bh=RFnMpGCEq6KusUZOTkqeWE75JiqiNWQN8xEID0URfTk=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=KMuzMtb3I4aH0N3musOVd+vHrFY0JfBWPcdf9XPXrKxSFlC3c6vtKLrteuwdTNcUqMlV5hJdHykT2sAD6/Doy9HAdH/v1QKXVfOpCUCogMw6MTzlZIpYRIq1rx8COQfxQjS0rsjDbGtsxtHHzOSbgfDDueSqSbVJVTMfgUy+AFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EhLbZYRN; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NRP4bvSx; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 07 Mar 2025 12:41:08 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741351269;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h7hW6K9PJ8lxkQjFDwtGIOrFreGrUa4zCoiv+rlaSd8=;
-	b=EhLbZYRNoA5BbficassE/mzKeBYeXZOVAx+wWg5T5GPUY/BVVbwgsea8umvLcODkeR8dX3
-	om/YDJ4ht57ykfmVDKtk3lQnVt0jFq0F9k3Syp3DU+enkP6ZjkgHtgGAOj2gmauH90YGVo
-	nc+fJtWEs26/VW2oeyicOTlxfQj6MB2VyrV5k/mFkmGDE9UhYmj2zE5ogHBd389MXQgdM7
-	2bc5uAD445xngOhSfVA3vHwIDssjBmF5okp8aTH+CGX1c5LKAMcVciB1nQ3UCtfkTv8sp/
-	M8jHaXCGpl9zC0dh0iCP+ndX6tfvB2T4qpB9D6XGmFEE426I7CLNk0AmZlNHLQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741351269;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=h7hW6K9PJ8lxkQjFDwtGIOrFreGrUa4zCoiv+rlaSd8=;
-	b=NRP4bvSxu5XmY4ProwuwqSoE8WSEQHhrKS4fnT87YLfHoF3ASUvpgvJttqgwND65inJQqD
-	1M9yUn2ZGVkOWmDg==
-From: "tip-bot2 for Andrew Cooper" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/urgent] x86/amd_nb: Use rdmsr_safe() in amd_get_mmconfig_range()
-Cc: Andrew Cooper <andrew.cooper3@citrix.com>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250307002846.3026685-1-andrew.cooper3@citrix.com>
-References: <20250307002846.3026685-1-andrew.cooper3@citrix.com>
+	s=arc-20240116; t=1741351304; c=relaxed/simple;
+	bh=l2rzz0wip4MQkGxJ5wsAg/4zacNmQ7VcCbwkXPm1c/U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AjEY2FbQQlBR8/nGjhMdCnf7wG26nLfJHjiDuJ9DaZa7j1og5oH3ojf6EYXwJquU+nisPTbZhCjSOlcYWF0Koo4bv9JkcwlMyHoZ2pM6zsGg5AYhlVkz1nlx36DGBc2cmMo2Q/DIktTtUfa7AeDO4nIXk5jRxsXePwwzDGOW6GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z9FcE8v1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C07DC4CED1;
+	Fri,  7 Mar 2025 12:41:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741351303;
+	bh=l2rzz0wip4MQkGxJ5wsAg/4zacNmQ7VcCbwkXPm1c/U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Z9FcE8v1NMCcmi0cp8tpLTenryP4/jT5o6FSKGll/qlYuma26qdp1LDBGQqbu6Kch
+	 CPNRiE2bfjzocpqauwdGXz2OhFM9d8GJTVAAFGl6SeWuiGJVazF0pKGO0gTvCZmozE
+	 tEGRKyuErEiBgMklP7Wo7lNGX9wWAbvXWonBCFyOR+/z/otvm5lqFDl8ZfW2nGf09c
+	 J8pHlKdZE1aX+7Xjoy43mKmh2cJi7C9Y/m0iPDJGkTz8pCqqA9PRUjDaGkCk+/0PSb
+	 mRP40MPq2ZL2el9v81znEyDOBM04kQR83klhzE2asTChpJ2vRbzDOu8EDDb8RchsaJ
+	 tiOLXTIsA7r1A==
+Message-ID: <f9779027-63cf-4cb7-8399-1f3f1843c900@kernel.org>
+Date: Fri, 7 Mar 2025 13:41:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174135126828.14745.8496438046154822833.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] docs: dt-bindings: Specify ordering for properties
+ within groups
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ heiko@sntech.de, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <7276139ea1f4a5f4db48c77f536a3638492e6c2f.1741321984.git.dsimic@manjaro.org>
+ <20250307-logical-nimble-okapi-3ba081@krzk-bin>
+ <0df01d9863f72df3bebff1868f010954@manjaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <0df01d9863f72df3bebff1868f010954@manjaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/urgent branch of tip:
+On 07/03/2025 10:50, Dragan Simic wrote:
+>>> Applying strict alpha-numerical ordering can result in property lists 
+>>> that
+>>> are suboptimal from the usability standpoint.  For the provided 
+>>> example,
+>>> which stems from a real-world DT, [2][3][4] applying strict 
+>>> alpha-numerical
+>>> ordering produces the following undesirable result:
+>>
+>> BTW, your entire commit msg still has incorrect wrapping. Please use
+>> standard editors which understand Git commit msg style (which I believe
+>> is equal to Linux submitting patches).
+> 
+> Sorry, but what makes the wrapping wrong?  I wrap patch descriptions
+> at or well before 78 columns, which I belive is the desired way to do
+> so.  The longest line in this patch description is 77 characters long,
+> which is still below 78 characters.
 
-Commit-ID:     14cb5d83068ecf15d2da6f7d0e9ea9edbcbc0457
-Gitweb:        https://git.kernel.org/tip/14cb5d83068ecf15d2da6f7d0e9ea9edbcbc0457
-Author:        Andrew Cooper <andrew.cooper3@citrix.com>
-AuthorDate:    Fri, 07 Mar 2025 00:28:46 
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 07 Mar 2025 13:28:31 +01:00
+Because it is not correct. Read submitting patches. Run checkpatch.
 
-x86/amd_nb: Use rdmsr_safe() in amd_get_mmconfig_range()
+> 
+> Also, please note that I don't "just use" some random editor, but I use
+> a highly customized Vim setup, in which I over time wrote about 46 KB
+> of Vimscript code in my ~/.vimrc, all by hand.  I've even contributed
+> smaller patches to Vim.
 
-Xen doesn't offer MSR_FAM10H_MMIO_CONF_BASE to all guests.  This results
-in the following warning:
+OK, so not random, but incorrectly configured. Different tools, same result.
 
-  unchecked MSR access error: RDMSR from 0xc0010058 at rIP: 0xffffffff8101d19f (xen_do_read_msr+0x7f/0xa0)
-  Call Trace:
-   xen_read_msr+0x1e/0x30
-   amd_get_mmconfig_range+0x2b/0x80
-   quirk_amd_mmconfig_area+0x28/0x100
-   pnp_fixup_device+0x39/0x50
-   __pnp_add_device+0xf/0x150
-   pnp_add_device+0x3d/0x100
-   pnpacpi_add_device_handler+0x1f9/0x280
-   acpi_ns_get_device_callback+0x104/0x1c0
-   acpi_ns_walk_namespace+0x1d0/0x260
-   acpi_get_devices+0x8a/0xb0
-   pnpacpi_init+0x50/0x80
-   do_one_initcall+0x46/0x2e0
-   kernel_init_freeable+0x1da/0x2f0
-   kernel_init+0x16/0x1b0
-   ret_from_fork+0x30/0x50
-   ret_from_fork_asm+0x1b/0x30
 
-based on quirks for a "PNP0c01" device.  Treating MMCFG as disabled is the
-right course of action, so no change is needed there.
-
-This was most likely exposed by fixing the Xen MSR accessors to not be
-silently-safe.
-
-Fixes: 3fac3734c43a ("xen/pv: support selecting safe/unsafe msr accesses")
-Signed-off-by: Andrew Cooper <andrew.cooper3@citrix.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20250307002846.3026685-1-andrew.cooper3@citrix.com
----
- arch/x86/kernel/amd_nb.c |  9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
-index 11fac09..67e7737 100644
---- a/arch/x86/kernel/amd_nb.c
-+++ b/arch/x86/kernel/amd_nb.c
-@@ -143,7 +143,6 @@ bool __init early_is_amd_nb(u32 device)
- 
- struct resource *amd_get_mmconfig_range(struct resource *res)
- {
--	u32 address;
- 	u64 base, msr;
- 	unsigned int segn_busn_bits;
- 
-@@ -151,13 +150,11 @@ struct resource *amd_get_mmconfig_range(struct resource *res)
- 	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
- 		return NULL;
- 
--	/* assume all cpus from fam10h have mmconfig */
--	if (boot_cpu_data.x86 < 0x10)
-+	/* Assume CPUs from Fam10h have mmconfig, although not all VMs do */
-+	if (boot_cpu_data.x86 < 0x10 ||
-+	    rdmsrl_safe(MSR_FAM10H_MMIO_CONF_BASE, &msr))
- 		return NULL;
- 
--	address = MSR_FAM10H_MMIO_CONF_BASE;
--	rdmsrl(address, msr);
--
- 	/* mmconfig is not enabled */
- 	if (!(msr & FAM10H_MMIO_CONF_ENABLE))
- 		return NULL;
+Best regards,
+Krzysztof
 
