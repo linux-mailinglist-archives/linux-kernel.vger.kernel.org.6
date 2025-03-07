@@ -1,196 +1,101 @@
-Return-Path: <linux-kernel+bounces-551419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DBF5A56C36
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:35:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B75DA56C39
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:35:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C5B23A31C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:34:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5B2E1612EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B63B21D3CC;
-	Fri,  7 Mar 2025 15:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9231321D3F8;
+	Fri,  7 Mar 2025 15:35:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XppAGao6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="bGc5tA3K"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECB42E822;
-	Fri,  7 Mar 2025 15:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECAF121CC7C;
+	Fri,  7 Mar 2025 15:35:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741361704; cv=none; b=aXlpLNkESDDo9CKgd6jcc+rYOrqbqlZ35H7UPKR2w2xBXrxjlWcZgmiS45ukK4qxGGhHkRAmn00847LYH/AF9RDpTdxSrLM1GHnDJ5u18Ku7TAfotyOG8xKgetynWOsErcQ9v04CnEpgH2zX/5zS6ba4NqWdPA1SCun9gi6r2r4=
+	t=1741361714; cv=none; b=OyVS8ud72WRQMG6nAAydHM6YbqW5dAm4d4sEFaUUQ/EvrO1ad4VlywzVo3ZBPFxN3pG23i7sSJ08vwZM+MRcA3rEgP6q/9LJaOG/j6uoJT+b+IAUtkolqmuZJNoC2n8D01UFwC1n526kb//ct6BTHjLGwNaOWhNb0qSYdgxJ78I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741361704; c=relaxed/simple;
-	bh=Yy8lewVJwdLyTidZznICK53OeIQJkdUqGtk8gBdoVns=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=puXWthsZ7nBCt0vNTABXzGoVBrTbQlIaoj/MReBSPqNbvz03vKowOaZC78MMYbOHQg6CJSQcD+y0MwI9+OtExcAmuzwwNoc5RKo0PYT3yvvsumUPPf47xPjopzKjSUvsYtYPjQ/jqCsbJgniWYUyvk0ZGuBlJo3AVuXJhDWBPUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XppAGao6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EE02C4CED1;
-	Fri,  7 Mar 2025 15:34:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741361703;
-	bh=Yy8lewVJwdLyTidZznICK53OeIQJkdUqGtk8gBdoVns=;
-	h=From:To:Cc:Subject:Date:From;
-	b=XppAGao6CvdwA1HttSn95LUSxPj9MadeAM0KoLcpm9PCQl32MJQEYB6yIVFWJLjkW
-	 zb+5DYuv9VduXbP9ob7u2GOWZalo4hLR/m7aQJGlr13ZVQE0WIPXs906vz2EtxFnTH
-	 F+iuayLBSsgB05LdpwU5JS8VXZLoyystD+ncHM8h1FOfCaukGVEb2jAawM54cVerfG
-	 s8nEQrnjh8SNKObc6JcRnf/+btl9/uuQi7OiQeN5mp1pWIcTNEPhF3BV2lZDmJyHiG
-	 x0TY3Tp8r7rxpDihA1gHI2sJOf4ksOP44MR8pLQ+YZEW3AiHhm6fq7DhwWJuLCUAdf
-	 DEBZLv4o1Xx8A==
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	James Clark <james.clark@linaro.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Clark Williams <williams@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Andi Kleen <ak@linux.intel.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	John Garry <john.g.garry@oracle.com>,
-	Leo Yan <leo.yan@linux.dev>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Michael Petlan <mpetlan@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Tavian Barnes <tavianator@tavianator.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/1 next] perf libunwind: Fixup conversion perf_sample->user_regs to a pointer
-Date: Fri,  7 Mar 2025 12:34:48 -0300
-Message-ID: <20250307153448.250871-1-acme@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741361714; c=relaxed/simple;
+	bh=zpDzNzMQTz7b7/qntlneyT/nKeNHRUPJIdqF4FdT5GM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JSOTn3S7iXmk8EV/K/TD7CnUUBgPhwlYbmFXH5y9rLKnBhnqtgAWEVaaQZ7CvyTpARsrOyr8FQpgpZVvYrATy5yUqdBIdNlR+0jMtdvFtzD9rk8KWixWhQPfK2qM4UHiyaeI2CUKMwFcvyw/S/YL+yjTEyEDHn77aNcCfP7ZluI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=bGc5tA3K; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=hCshOJoEiJOSmt4EMGwGg+lny2/v+WdYh03qhKxiJ/0=; b=bGc5tA3KbdA/PPZAg53oSE+w3r
+	ha2dbU/dEeNSx02jKLsnXuahA6Xmpp5kKEUdJstHEMUxoPAg01ChRd7BB0fRaiIJWltp1vAvIkfnF
+	N+oRxqvu5c385AwEXQK7JM55jykYsSFxGxlDlVa+SocAjjRojhOdkO7bGbEvVQ/wkJDM=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tqZj1-003B1F-RW; Fri, 07 Mar 2025 16:34:59 +0100
+Date: Fri, 7 Mar 2025 16:34:59 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: dimitri.fedrau@liebherr.com, Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <f.fainelli@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 0/3] net: phy: dp83822: Add support for changing
+ the MAC series termination
+Message-ID: <d57aff5b-7d1d-43bf-95a1-ee90689f5ac0@lunn.ch>
+References: <20250307-dp83822-mac-impedance-v1-0-bdd85a759b45@liebherr.com>
+ <6aee57d3-8657-44d6-ac21-9f443ca0924e@lunn.ch>
+ <20250307142252.GA2326148@legfed1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307142252.GA2326148@legfed1>
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> Should I add the proper description in the bindings ? Description of the
+> properties are somehow short. However will expand the description.
 
-The dc6d2bc2d893a878 ("perf sample: Make user_regs and intr_regs optional") misses
-the changes to a file, resulting in this problem:
+Yes, please expand the description. For well known concepts, we can
+keep the binding description short. But i would not consider this a
+well known concept, so we need to spell out in detail what it is.
 
-  $ make LIBUNWIND=1 -C tools/perf O=/tmp/build/perf-tools-next install-bin
-  <SNIP>
-    CC      /tmp/build/perf-tools-next/util/unwind-libunwind-local.o
-    CC      /tmp/build/perf-tools-next/util/unwind-libunwind.o
-  <SNIP>
-  util/unwind-libunwind-local.c: In function ‘access_mem’:
-  util/unwind-libunwind-local.c:582:56: error: ‘ui->sample->user_regs’ is a pointer; did you mean to use ‘->’?
-    582 |         if (__write || !stack || !ui->sample->user_regs.regs) {
-        |                                                        ^
-        |                                                        ->
-  util/unwind-libunwind-local.c:587:38: error: passing argument 2 of ‘perf_reg_value’ from incompatible pointer type [-Wincompatible-pointer-types]
-    587 |         ret = perf_reg_value(&start, &ui->sample->user_regs,
-        |                                      ^~~~~~~~~~~~~~~~~~~~~~
-        |                                      |
-        |                                      struct regs_dump **
-<SNIP>
-  ⬢ [acme@toolbox perf-tools-next]$ git bisect bad
-  dc6d2bc2d893a878e7b58578ff01b4738708deb4 is the first bad commit
-  commit dc6d2bc2d893a878e7b58578ff01b4738708deb4 (HEAD)
-  Author: Ian Rogers <irogers@google.com>
-  Date:   Mon Jan 13 11:43:45 2025 -0800
+My knowledge of transmission lines and termination is not so good....
 
-      perf sample: Make user_regs and intr_regs optional
+So this configures the resistor on the PHY outputs. Do PHY inputs also
+need termination resistors? Could there be PHYs which also allow such
+resistors to be configured? Are there use cases where you need
+asymmetric termination resistors?
 
-Detected using:
+My questions are trying to lead to an answer to your question:
 
-  make -C tools/perf build-test
+> Should I rename then "mac-series-termination-ohms" to
+> "output-mac-series-termination-ohms" or similar ?
 
-Fixes: dc6d2bc2d893a878 ("perf sample: Make user_regs and intr_regs optional")
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Charlie Jenkins <charlie@rivosinc.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: James Clark <james.clark@linaro.org>
-Cc: John Garry <john.g.garry@oracle.com>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Leo Yan <leo.yan@linux.dev>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Michael Petlan <mpetlan@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Tavian Barnes <tavianator@tavianator.com>
-Cc: Veronika Molnarova <vmolnaro@redhat.com>
-Cc: coresight@lists.linaro.org
-Cc: linux-arm-kernel@lists.infradead.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/unwind-libunwind-local.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+We should think about this from the general case, not one specific
+PHY, and ideally from thinking about the physics of termination.
 
-diff --git a/tools/perf/util/unwind-libunwind-local.c b/tools/perf/util/unwind-libunwind-local.c
-index 16c2b03831f39afc..cc0e41f2c2f2ef10 100644
---- a/tools/perf/util/unwind-libunwind-local.c
-+++ b/tools/perf/util/unwind-libunwind-local.c
-@@ -579,12 +579,12 @@ static int access_mem(unw_addr_space_t __maybe_unused as,
- 	int ret;
- 
- 	/* Don't support write, probably not needed. */
--	if (__write || !stack || !ui->sample->user_regs.regs) {
-+	if (__write || !stack || !ui->sample->user_regs->regs) {
- 		*valp = 0;
- 		return 0;
- 	}
- 
--	ret = perf_reg_value(&start, &ui->sample->user_regs,
-+	ret = perf_reg_value(&start, perf_sample__user_regs(ui->sample),
- 			     perf_arch_reg_sp(arch));
- 	if (ret)
- 		return ret;
-@@ -628,7 +628,7 @@ static int access_reg(unw_addr_space_t __maybe_unused as,
- 		return 0;
- 	}
- 
--	if (!ui->sample->user_regs.regs) {
-+	if (!ui->sample->user_regs->regs) {
- 		*valp = 0;
- 		return 0;
- 	}
-@@ -637,7 +637,7 @@ static int access_reg(unw_addr_space_t __maybe_unused as,
- 	if (id < 0)
- 		return -EINVAL;
- 
--	ret = perf_reg_value(&val, &ui->sample->user_regs, id);
-+	ret = perf_reg_value(&val, perf_sample__user_regs(ui->sample), id);
- 	if (ret) {
- 		if (!ui->best_effort)
- 			pr_err("unwind: can't read reg %d\n", regnum);
-@@ -741,7 +741,7 @@ static int get_entries(struct unwind_info *ui, unwind_entry_cb_t cb,
- 	unw_cursor_t c;
- 	int ret, i = 0;
- 
--	ret = perf_reg_value(&val, &ui->sample->user_regs,
-+	ret = perf_reg_value(&val, perf_sample__user_regs(ui->sample),
- 			     perf_arch_reg_ip(arch));
- 	if (ret)
- 		return ret;
-@@ -808,7 +808,7 @@ static int _unwind__get_entries(unwind_entry_cb_t cb, void *arg,
- 		.best_effort  = best_effort
- 	};
- 
--	if (!data->user_regs.regs)
-+	if (!data->user_regs->regs)
- 		return -EINVAL;
- 
- 	if (max_stack <= 0)
--- 
-2.47.0
+https://electronics.stackexchange.com/questions/524620/impedance-termination-of-marvell-phy
 
+This seems to suggest RGMII only has termination resistors at the
+outputs. So "mac-series-termination-ohms" would be O.K.
+
+	Andrew
 
