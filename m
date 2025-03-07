@@ -1,427 +1,179 @@
-Return-Path: <linux-kernel+bounces-550461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0589AA55FD3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:15:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E3AFA55FDB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:19:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37AB01895251
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:15:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8DC11894639
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EBA71925AC;
-	Fri,  7 Mar 2025 05:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F083418EFED;
+	Fri,  7 Mar 2025 05:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pqPXGeDQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRO6U2ay"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4915F38DEC;
-	Fri,  7 Mar 2025 05:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4922538DEC;
+	Fri,  7 Mar 2025 05:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741324514; cv=none; b=HMv39Crd1hdQKl3jMeYtfx2mnRtul3iaAwAH/6HtiRtj0FdNdKgBSuJjSz0JphVCDjFWsYZH1LEw4KMlzXfw5N7PvKAoydwqDbDowhAzHKqjSPRo+gauUpvUso8cpVNQ9cnvMmYbgGQHEMYifbclSdSIH9WzVVXBjZv5Aed7sX0=
+	t=1741324752; cv=none; b=LA2XWY2gIuOM4adAzloinKT2iz/kqSUETmO2hVDUf5421DwiQKXFATs83vhHoIIHKU4Pi7kl4riLT1LT93obwLT4IOzGBAFXer0xvqvX/NWIqa8aDRsyNN/Yx9voZki2tUGEWDSWdcJnmLtUBUyLK9Fq2z17auOkS0TZBmBa/5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741324514; c=relaxed/simple;
-	bh=8vpGCeKbScDFGOD5FkC65NFSRVevfnskMVgQXm+k5P8=;
+	s=arc-20240116; t=1741324752; c=relaxed/simple;
+	bh=oTV3msnFDyQULua9BT07OYqshaGZ2Ju8fMOiNnd0ekM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oucJz60Y+YVHGtnQNf6cZ+TikIFOzq1x14B25waHmCRM7boT1xYISvsCuR7DC5JIduX6wByQxMBVLn/smcJCueV8jn/AoTlNxp3YTNrVA7adkzmAPduQhFOaFFt3c+A/u7nHJk9mzSD4jzbz4LKkRIwECfqSPx4WE+hg2erjNPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pqPXGeDQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C86FBC4CED1;
-	Fri,  7 Mar 2025 05:15:12 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AedLSd3eT+bpdA+HvGhEb3EgwBuny1ocpMO1zHWqz7Se23ndKEp1xrgHZXyADZhaW8KLxTDs2+Z5PlW6hC+yPMwnsVbCmUIwiq05XmL54RU1iF6wkBrc6dL8Ke9yRojNfM2yDTTQU51K25u33L2fE42zqBc8p6IBqbVV0TasRIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GRO6U2ay; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B29CC4CED1;
+	Fri,  7 Mar 2025 05:19:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741324513;
-	bh=8vpGCeKbScDFGOD5FkC65NFSRVevfnskMVgQXm+k5P8=;
+	s=k20201202; t=1741324751;
+	bh=oTV3msnFDyQULua9BT07OYqshaGZ2Ju8fMOiNnd0ekM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pqPXGeDQV1pz5g7eAi9byJiYdXRZVu2Ygwo4LyN7c26Q2YlwIfwm6INUR+4bYIvQa
-	 qT2bD3vgZRxIAorwKJ9tDhzLaoW93SlWgAd7QVB7Rpli5v95pRrg6MwqV6E2uZe5eY
-	 kzLDlTVWJAD9ZSRFSCDVRQhSZwHImoQGwh69qThsgwePzHpmjVCIOb08yse3G8YJel
-	 xDwN4ycwQlPoQk52IUuaZ/jSAZ1OQZ8t5n2NFnJ+6+4hNofd3ILXUigTAVRcDu4ITb
-	 1k4H0bcrE5bKAi8mKc3bwVOkbI/7H+b2ttgwl+FpZwpSq1cYX66F5DUIo0he5bVJV0
-	 r1i8ahvGm3R3g==
-Date: Fri, 7 Mar 2025 07:15:08 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Ross Philipson <ross.philipson@oracle.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
-	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
-	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
-	ardb@kernel.org, mjg59@srcf.ucam.org,
-	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
-	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu,
-	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
-	ebiederm@xmission.com, dwmw2@infradead.org,
-	baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
-	andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
-Subject: Re: [PATCH v12 01/19] Documentation/x86: Secure Launch kernel
- documentation
-Message-ID: <Z8qA3HDaxe_GlnXF@kernel.org>
-References: <20241219194216.152839-1-ross.philipson@oracle.com>
- <20241219194216.152839-2-ross.philipson@oracle.com>
- <Z8p_0UfZ3ByzmPfK@kernel.org>
+	b=GRO6U2ayNV1PvmsoXfH3qlGyJNy3tNNv5QnLxM+w9cQaz58h5bmw8Hdd54in6qYmg
+	 HwAmSS65rhBwIJOKk42dKk+ay+KxeWpzU9DGKHrZJ+Vg9gdjEipTqNXK5GtFM+dirc
+	 QWlokc2/cQDRWZDZc9PBpvq5UPOJa6QAbRLbjozfYvkUrgxWioEo33ESHYIvSTjF6R
+	 sRpyH1l69gamht5yKRWiRPl1iVYrFblAW8kxdLLvcBAxs/xkSZF+h+TCdKki52GuaA
+	 pd2Tas7zMA7heIq2hfD1cu9m83hATtxncdASDmJDjoTpogYj1rAL+vSDpqn8nxJTcd
+	 3yXTa+7ENiO/w==
+Date: Thu, 6 Mar 2025 21:19:09 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 2/2] perf report: Fix memory leaks in the hierarchy mode
+Message-ID: <Z8qBzTvjQmwldwcD@google.com>
+References: <20250306075147.195435-1-namhyung@kernel.org>
+ <20250306075147.195435-2-namhyung@kernel.org>
+ <CAP-5=fW=Gs2ATy8DhcZFjGP5tcEemoZp9q=voFV8HRisY9ki7w@mail.gmail.com>
+ <Z8nWNBKuYc0x-sN8@google.com>
+ <Z8pTaVN1uEqjrgRb@google.com>
+ <CAP-5=fV1UCF3D9rrNzMbH8CNP-UAAS13TAjm_0-3rZSLD_+PdQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z8p_0UfZ3ByzmPfK@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fV1UCF3D9rrNzMbH8CNP-UAAS13TAjm_0-3rZSLD_+PdQ@mail.gmail.com>
 
-On Fri, Mar 07, 2025 at 07:10:46AM +0200, Jarkko Sakkinen wrote:
->  On Thu, Dec 19, 2024 at 11:41:58AM -0800, Ross Philipson wrote:
-> > From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
-> > 
-> > Introduce background, overview and configuration/ABI information
-> > for the Secure Launch kernel feature.
-> > 
-> > Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
-> > Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
-> > Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
-> > ---
-> >  Documentation/security/index.rst              |   1 +
-> >  .../security/launch-integrity/index.rst       |  11 +
-> >  .../security/launch-integrity/principles.rst  | 317 ++++++++++
-> >  .../secure_launch_details.rst                 | 587 ++++++++++++++++++
-> >  .../secure_launch_overview.rst                | 252 ++++++++
-> >  5 files changed, 1168 insertions(+)
-> >  create mode 100644 Documentation/security/launch-integrity/index.rst
-> >  create mode 100644 Documentation/security/launch-integrity/principles.rst
-> >  create mode 100644 Documentation/security/launch-integrity/secure_launch_details.rst
-> >  create mode 100644 Documentation/security/launch-integrity/secure_launch_overview.rst
-> > 
-> > diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
-> > index 3e0a7114a862..f89741271ed0 100644
-> > --- a/Documentation/security/index.rst
-> > +++ b/Documentation/security/index.rst
-> > @@ -20,3 +20,4 @@ Security Documentation
-> >     landlock
-> >     secrets/index
-> >     ipe
-> > +   launch-integrity/index
-> > diff --git a/Documentation/security/launch-integrity/index.rst b/Documentation/security/launch-integrity/index.rst
-> > new file mode 100644
-> > index 000000000000..838328186dd2
-> > --- /dev/null
-> > +++ b/Documentation/security/launch-integrity/index.rst
-> > @@ -0,0 +1,11 @@
-> > +=====================================
-> > +System Launch Integrity documentation
-> > +=====================================
-> > +
-> > +.. toctree::
-> > +   :maxdepth: 1
-> > +
-> > +   principles
-> > +   secure_launch_overview
-> > +   secure_launch_details
-> > +
-> > diff --git a/Documentation/security/launch-integrity/principles.rst b/Documentation/security/launch-integrity/principles.rst
-> > new file mode 100644
-> > index 000000000000..a0553d1d93c2
-> > --- /dev/null
-> > +++ b/Documentation/security/launch-integrity/principles.rst
-> > @@ -0,0 +1,317 @@
-> > +.. SPDX-License-Identifier: GPL-2.0
-> > +.. Copyright (c) 2019-2024 Daniel P. Smith <dpsmith@apertussolutions.com>
-> > +
-> > +=======================
-> > +System Launch Integrity
-> > +=======================
-> > +
-> > +:Author: Daniel P. Smith
-> > +:Date: August 2024
-> > +
-> > +This document serves to establish a common understanding of what a system
-> > +launch is, the integrity concern for system launch, and why using a Root of Trust
-> > +(RoT) from a Dynamic Launch may be desirable. Throughout this document,
-> > +terminology from the Trusted Computing Group (TCG) and National Institute for
-> > +Standards and Technology (NIST) is used to ensure that vendor natural language is
-> > +used to describe and reference security-related concepts.
-> > +
-> > +System Launch
-> > +=============
-> > +
-> > +There is a tendency to only consider the classical power-on boot as the only
-> > +means to launch an Operating System (OS) on a computer system. In fact, most
-> > +modern processors support two system launch methods. To provide clarity,
-> > +it is important to establish a common definition of a system launch: during
-> > +a single power life cycle of a system, a system launch consists of an initialization
-> > +event, typically in hardware, that is followed by an executing software payload
-> > +that takes the system from the initialized state to a running state. Driven by
-> > +the Trusted Computing Group (TCG) architecture, modern processors are able to
-> > +support two methods of system launch. These two methods of system launch are known
-> > +as Static Launch and Dynamic Launch.
-> > +
-> > +Static Launch
-> > +-------------
-> > +
-> > +Static launch is the system launch associated with the power cycle of the CPU.
-> > +Thus, static launch refers to the classical power-on boot where the
-> > +initialization event is the release of the CPU from reset and the system
-> > +firmware is the software payload that brings the system up to a running state.
-> > +Since static launch is the system launch associated with the beginning of the
-> > +power lifecycle of a system, it is therefore a fixed, one-time system launch.
-> > +It is because of this that static launch is referred to and thought of as being
-> > +"static".
-> > +
-> > +Dynamic Launch
-> > +--------------
-> > +
-> > +Modern CPUs architectures provides a mechanism to re-initialize the system to a
-> > +"known good" state without requiring a power event. This re-initialization
-> > +event is the event for a dynamic launch and is referred to as the Dynamic
-> > +Launch Event (DLE). The DLE functions by accepting a software payload, referred
-> > +to as the Dynamic Configuration Environment (DCE), that execution is handed to
-> > +after the DLE is invoked. The DCE is responsible for bringing the system back
-> > +to a running state. Since the dynamic launch is not tied to a power event like
-> > +the static launch, this enables a dynamic launch to be initiated at any time
-> > +and multiple times during a single power life cycle. This dynamism is the
-> > +reasoning behind referring to this system launch as "dynamic".
-> > +
-> > +Because a dynamic launch can be conducted at any time during a single power
-> > +life cycle, they are classified into one of two types: an early launch or a
-> > +late launch.
-> > +
-> > +:Early Launch: When a dynamic launch is used as a transition from a static
-> > +   launch chain to the final Operating System.
-> > +
-> > +:Late Launch: The usage of a dynamic launch by an executing Operating System to
-> > +   transition to a "known good" state to perform one or more operations, e.g. to
-> > +   launch into a new Operating System.
-> > +
-> > +System Integrity
-> > +================
-> > +
-> > +A computer system can be considered a collection of mechanisms that work
-> > +together to produce a result. The assurance that the mechanisms are functioning
-> > +correctly and producing the expected result is the integrity of the system. To
-> > +ensure a system's integrity, there is a subset of these mechanisms, commonly
-> > +referred to as security mechanisms, that is present to help ensure the system
-> > +produces the expected result or at least detects the potential of an unexpected
-> > +result. Since the security mechanisms are relied upon to ensue the integrity of
-> > +the system, these mechanisms are trusted. Upon inspection, these security
-> > +mechanisms each have a set of properties and these properties can be evaluated
-> > +to determine how susceptible a mechanism might be to failure. This assessment is
-> > +referred to as the Strength of Mechanism, which allows the trustworthiness of
-> > +that mechanism to be quantified.
-> > +
-> > +For software systems, there are two system states for which the integrity is
-> > +critical: when the software is loaded into memory and when the software is
-> > +executing on the hardware. Ensuring that the expected software is loaded into
-> > +memory is referred to as load-time integrity while ensuring that the software
-> > +executing is the expected software is the runtime integrity of that software.
+On Thu, Mar 06, 2025 at 08:50:46PM -0800, Ian Rogers wrote:
+> On Thu, Mar 6, 2025 at 6:01 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Thu, Mar 06, 2025 at 09:07:00AM -0800, Namhyung Kim wrote:
+> > > Hi Ian,
+> > >
+> > > On Thu, Mar 06, 2025 at 08:55:05AM -0800, Ian Rogers wrote:
+> > > > On Wed, Mar 5, 2025 at 11:51 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> > > > >
+> > > > > Ian told me that there are many memory leaks in the hierarchy mode.  I
+> > > > > can easily reproduce it with the follwing command.
+> > > > >
+> > > > >   $ make DEBUG=1 EXTRA_CFLAGS=-fsanitize=leak
+> > > > >
+> > > > >   $ perf record --latency -g -- ./perf test -w thloop
+> > > > >
+> > > > >   $ perf report -H --stdio
+> > > > >   ...
+> > > > >   Indirect leak of 168 byte(s) in 21 object(s) allocated from:
+> > > > >       #0 0x7f3414c16c65 in malloc ../../../../src/libsanitizer/lsan/lsan_interceptors.cpp:75
+> > > > >       #1 0x55ed3602346e in map__get util/map.h:189
+> > > > >       #2 0x55ed36024cc4 in hist_entry__init util/hist.c:476
+> > > > >       #3 0x55ed36025208 in hist_entry__new util/hist.c:588
+> > > > >       #4 0x55ed36027c05 in hierarchy_insert_entry util/hist.c:1587
+> > > > >       #5 0x55ed36027e2e in hists__hierarchy_insert_entry util/hist.c:1638
+> > > > >       #6 0x55ed36027fa4 in hists__collapse_insert_entry util/hist.c:1685
+> > > > >       #7 0x55ed360283e8 in hists__collapse_resort util/hist.c:1776
+> > > > >       #8 0x55ed35de0323 in report__collapse_hists /home/namhyung/project/linux/tools/perf/builtin-report.c:735
+> > > > >       #9 0x55ed35de15b4 in __cmd_report /home/namhyung/project/linux/tools/perf/builtin-report.c:1119
+> > > > >       #10 0x55ed35de43dc in cmd_report /home/namhyung/project/linux/tools/perf/builtin-report.c:1867
+> > > > >       #11 0x55ed35e66767 in run_builtin /home/namhyung/project/linux/tools/perf/perf.c:351
+> > > > >       #12 0x55ed35e66a0e in handle_internal_command /home/namhyung/project/linux/tools/perf/perf.c:404
+> > > > >       #13 0x55ed35e66b67 in run_argv /home/namhyung/project/linux/tools/perf/perf.c:448
+> > > > >       #14 0x55ed35e66eb0 in main /home/namhyung/project/linux/tools/perf/perf.c:556
+> > > > >       #15 0x7f340ac33d67 in __libc_start_call_main ../sysdeps/nptl/libc_start_call_main.h:58
+> > > > >   ...
+> > > > >
+> > > > >   $ perf report -H --stdio 2>&1 | grep -c '^Indirect leak'
+> > > > >   93
+> > > > >
+> > > > > I found that hist_entry__delete() missed to release child entries in the
+> > > > > hierarchy tree (hroot_{in,out}).  It needs to iterate the child entries
+> > > > > and call hist_entry__delete() recursively.
+> > > > >
+> > > > > After this change:
+> > > > >
+> > > > >   $ perf report -H --stdio 2>&1 | grep -c '^Indirect leak'
+> > > > >   0
+> > > > >
+> > > > > Reported-by: Ian Rogers <irogers@google.com>
+> > > > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > > > > ---
+> > > > >  tools/perf/util/hist.c | 9 +++++++++
+> > > > >  1 file changed, 9 insertions(+)
+> > > > >
+> > > > > diff --git a/tools/perf/util/hist.c b/tools/perf/util/hist.c
+> > > > > index fbf131aeae7ffe9b..bbc6a299b5106c3b 100644
+> > > > > --- a/tools/perf/util/hist.c
+> > > > > +++ b/tools/perf/util/hist.c
+> > > > > @@ -1385,6 +1385,15 @@ void hist_entry__delete(struct hist_entry *he)
+> > > > >  {
+> > > > >         struct hist_entry_ops *ops = he->ops;
+> > > > >
+> > > > > +       while (!RB_EMPTY_ROOT(&he->hroot_out.rb_root)) {
+> > > > > +               struct rb_node *node = rb_first(&he->hroot_out.rb_root);
+> > > > > +               struct hist_entry *child = rb_entry(node, struct hist_entry, rb_node);
+> > > > > +
+> > > > > +               rb_erase_init(node, &he->hroot_out.rb_root);
+> > > > > +
+> > > > > +               hist_entry__delete(child);
+> > > > > +       }
+> > > >
+> > > > Thanks for the fix! A nit, iterating the rbtree of N nodes and calling
+> > > > erase on the first entry, an O(log N) operation, means this is a O(N *
+> > > > log N). rbtree.h has rbtree_postorder_for_each_entry_safe:
+> > > > https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tree/tools/include/linux/rbtree.h?h=perf-tools-next#n81
+> > > > ```
+> > > >  * rbtree_postorder_for_each_entry_safe - iterate in post-order over rb_root of
+> > > >  * given type allowing the backing memory of @pos to be invalidated
+> > > > ```
+> > > > which is O(N). I think this code would be better something like:
+> > > > ```
+> > > > struct hist_entry *pos, *tmp;
+> > > > rbtree_postorder_for_each_entry_safe(pos, tmp, he->hroot_out.rb_root, rb_node)
+> > > >         hist_entry__delete(pos);
+> > > > ```
+> > >
+> > > Thanks for your review!  I was wondering if there's something like this.
+> > > Will update with that.
+> >
+> > I found that the following comments:
+> >
+> >  * Note, however, that it cannot handle other modifications that re-order the
+> >  * rbtree it is iterating over. This includes calling rb_erase() on @pos, as
+> >  * rb_erase() may rebalance the tree, causing us to miss some nodes.
+> >
+> > So I cannot use this here.
 > 
-> I'd consider deleting the first paragraph. It really does not provide
-> anything useful. The 2nd paragraph is totally sufficient introduction to
-> the topic, and makes factors more sense.
-> 
-> We don't need a phrase in kernel documentation stating that computer is
-> a system that produces a result :-)
-> 
-> Should be at least easy enough change to make. I don't think it even
-> needs any refined version as the text below provides more than enough
-> (in many places useful) detail to the topic.
-> 
-> > +
-> > +Load-time Integrity
-> > +-------------------
-> > +
-> > +It is critical to understand what load-time integrity establishes about a
-> > +system and what is assumed, i.e. what is being trusted. Load-time integrity is
-> 
-> I'd delete the very first sentence completely. It serves zero purpose.
-> This would be so much less exhausting read if I could just start on
-> getting the information what load-time integrity is.
-> 
-> Reassurance serves zero purpose. It is up to the read of kernel
-> documentation to make such evaluation.
-> 
-> > +when a trusted entity, i.e. an entity with an assumed integrity, takes an
-> > +action to assess an entity being loaded into memory before it is used. A
-> > +variety of mechanisms may be used to conduct the assessment, each with
-> > +different properties. A particular property is whether the mechanism creates an
-> > +evidence of the assessment. Often either cryptographic signature checking or
-> > +hashing are the common assessment operations used.
-> > +
-> > +A signature checking assessment functions by requiring a representation of the
-> > +accepted authorities and uses those representations to assess if the entity has
-> > +been signed by an accepted authority. The benefit to this process is that
-> > +assessment process includes an adjudication of the assessment. The drawbacks
-> > +are that 1) the adjudication is susceptible to tampering by the Trusted
-> > +Computing Base (TCB), 2) there is no evidence to assert that an untampered
-> > +adjudication was completed, and 3) the system must be an active participant in
-> > +the key management infrastructure.
-> > +
-> > +A cryptographic hashing assessment does not adjudicate the assessment, but
-> 
-> This is actually language barrier: is "cryptographic hashing assesment"
-> same as "cryptographic measurement"? I'd consider using latter as it has
-> wider reach. Most people know what measurement means if they know any of
-> cryptography.
-> 
-> > +instead generates evidence of the assessment to be adjudicated independently.
-> > +The benefits to this approach is that the assessment may be simple such that it
-> > +may be implemented in an immutable mechanism, e.g. in hardware.  Additionally,
-> > +it is possible for the adjudication to be conducted where it cannot be tampered
-> > +with by the TCB. The drawback is that a compromised environment will be allowed
-> > +to execute until an adjudication can be completed.
-> > +
-> > +Ultimately, load-time integrity provides confidence that the correct entity was
-> > +loaded and in the absence of a run-time integrity mechanism assumes, i.e.
-> > +trusts, that the entity will never become corrupted.
-> > +
-> > +Runtime Integrity
-> > +-----------------
-> > +
-> > +Runtime integrity in the general sense is when a trusted entity makes an
-> > +assessment of an entity at any point in time during the assessed entity's
-> > +execution. A more concrete explanation is the taking of an integrity assessment
-> 
-> Great, this is better than the last subsection as it gets straight into
-> the topic! No reassurance part ;-)
-> 
-> > +of an active process executing on the system at any point during the process'
-> > +execution. Often the load-time integrity of an operating system's user-space,
-> > +i.e. the operating environment, is confused with the runtime integrity of the
-> > +system, since it is an integrity assessment of the "runtime" software. The
-> > +reality is that actual runtime integrity is a very difficult problem and thus
-> > +not very many solutions are public and/or available. One example of a runtime
-> > +integrity solution would be Johns Hopkins Advanced Physics Laboratory's (APL)
-> > +Linux Kernel Integrity Module (LKIM).
-> > +
-> > +Trust Chains
-> > +============
-> > +
-> > +Building upon the understanding of security mechanisms to establish load-time
-> > +integrity of an entity, it is possible to chain together load-time integrity
-> > +assessments to establish the integrity of the whole system. This process is
-> > +known as transitive trust and provides the concept of building a chain of
-> > +load-time integrity assessments, commonly referred to as a trust chain. These
-> > +assessments may be used to adjudicate the load-time integrity of the whole
-> > +system. This trust chain is started by a trusted entity that does the first
-> > +assessment. This first entity is referred to as the Root of Trust(RoT) with the
-> > +entities name being derived from the mechanism used for the assessment, i.e.
-> > +RoT for Verification (RTV) and RoT for Measurement (RTM).
-> > +
-> > +A trust chain is itself a mechanism, specifically a mechanism of mechanisms,
-> > +and therefore it also has a Strength of Mechanism. The factors that contribute
-> > +to the strength of a trust chain are:
-> > +
-> > +  - The strength of the chain's RoT
-> > +  - The strength of each member of the trust chain
-> > +  - The length, i.e. the number of members, of the chain
-> > +
-> > +Therefore, the strongest trust chains should start with a strong RoT and should
-> > +consist of members being of low complexity and minimize the number of members
-> > +participating. In a more colloquial sense, a trust chain is only as strong as its
-> > +weakest link, thus more links increase the probability of a weak link.
-> > +
-> > +Dynamic Launch Components
-> > +=========================
-> > +
-> > +The TCG architecture for dynamic launch is composed of a component series
-> > +used to set up and then carry out the launch. These components work together to
-> > +construct an RTM trust chain that is rooted in the dynamic launch and thus commonly
-> > +referred to as the Dynamic Root of Trust for Measurement (DRTM) chain.
-> > +
-> > +What follows is a brief explanation of each component in execution order. A
-> > +subset of these components are what establishes the dynamic launch's trust
-> > +chain.
-> > +
-> > +Dynamic Configuration Environment Preamble
-> > +------------------------------------------
-> > +
-> > +The Dynamic Configuration Environment (DCE) Preamble is responsible for setting
-> > +up the system environment in preparation for a dynamic launch. The DCE Preamble
-> > +is not a part of the DRTM trust chain.
-> > +
-> > +Dynamic Launch Event
-> > +--------------------
-> > +
-> > +The dynamic launch event is the event, typically a CPU instruction, that
-> > +triggers the system's dynamic launch mechanism to begin the launch process. The
-> > +dynamic launch mechanism is also the RoT for the DRTM trust chain.
-> > +
-> > +Dynamic Configuration Environment
-> > +---------------------------------
-> > +
-> > +The dynamic launch mechanism may have resulted in a reset of a portion of the
-> > +system. To bring the system back to an adequate state for system software, the
-> > +dynamic launch will hand over control to the DCE. Prior to handing over this
-> > +control, the dynamic launch will measure the DCE. Once the DCE is complete, it
-> > +will proceed to measure and then execute the Dynamic Launch Measured
-> > +Environment (DLME).
-> > +
-> > +Dynamic Launch Measured Environment
-> > +-----------------------------------
-> > +
-> > +The DLME is the first system kernel to have control of the system, but may not
-> > +be the last. Depending on the usage and configuration, the DLME may be the
-> > +final/target operating system, or it may be a bootloader that will load the
-> > +final/target operating system.
-> > +
-> > +Why DRTM
-> > +========
-> 
-> Nit: maybe 
-> 
-> Why DTRM?
-> =========
-> 
-> 
-> > +
-> > +It is a fact that DRTM increases the load-time integrity of the system by
-> > +providing a trust chain that has an immutable hardware RoT, uses a limited
-> > +number of small, special purpose code to establish the trust chain that starts
-> > +the target operating system. As mentioned in the Trust Chain section, these are
-> > +the main three factors in driving up the strength of a trust chain. As has been
-> > +seen with the BootHole exploit, which in fact did not affect the integrity of
-> > +DRTM solutions, the sophistication of attacks targeting system launch is at an
-> > +all-time high. There is no reason a system should not employ every available
-> > +hardware integrity measure. This is the crux of a defense-in-depth
-> > +approach to system security. In the past, the now closed SMI gap was often
-> > +pointed to as invalidating DRTM, which in fact was nothing but a straw man
-> > +argument. As has continued to be demonstrated, if/when SMM is corrupted, it can
-> > +always circumvent all load-time integrity (SRTM and DRTM) because it is a
-> > +run-time integrity problem. Regardless, Intel and AMD have both deployed
-> > +runtime integrity for SMI and SMM which is tied directly to DRTM such that this
-> > +perceived deficiency is now non-existent and the world is moving forward with
-> > +an expectation that DRTM must be present.
-> 
-> Here's my general feeling about text up to this point. It's way too
-> verbose and has bad reach especially for non-native speakers.
-> 
-> I don't want nitpick every possible sentence that I think could be
-> made for punctual.
-> 
-> What I'd suggest instead would be to go through this internalla at
-> Oracle with some group of people couple of times and try to cut out
-> all the extra fat.
-> 
-> I gave those review comments in order to give an idea what kind of
-> stuff look up for. The benefit is that if you get this document more
-> readable that also as a side-effect lowers the barrier to review the
-> patch series. Right now this is more exhausting to read than some of
-> the actualy science papers I've read.
-> 
-> Hope no one takes this personally. What comes after this is much better
-> fit but I'd still do similar assessment.
-> 
-> Roughly estimated you could have a document 50% of the current length
-> without loss of information content just by being a factor more
-> punctual. I'm worried that the series gets ignored partly because
-> the documentation is already like climbing to a mountain.
+> I thought the tree is no longer in use after the hist_entry__delete,
+> so you don't need to maintain the child/parent pointers as everything
+> is going to get freed. Here is what I think is a similar use:
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/trace/trace_stat.c#n51
 
-I want to soften this by saying that based purely on the information
-content this is one of the best description of how D-RTM works I've
-read but that is not same as saying that it would be best write up.
+Oh, I see.  So it should not call rb_erase().  Will check again.
 
-So a few editing rounds making text more tight and it'll be perfect.
+Thanks,
+Namhyung
 
-BR, Jarkko
 
