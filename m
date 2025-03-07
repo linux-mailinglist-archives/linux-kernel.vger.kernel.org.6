@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-550216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D546A55CAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:08:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E4E7A55CAB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:08:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A4BA16EF0B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:08:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D02C3B2963
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:08:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40BA814B06C;
-	Fri,  7 Mar 2025 01:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68F0155C87;
+	Fri,  7 Mar 2025 01:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkfTuR0K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ln0sEF+y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1499145B27;
-	Fri,  7 Mar 2025 01:08:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 287421547C0;
+	Fri,  7 Mar 2025 01:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741309683; cv=none; b=WzWYm41Ji3fEZnoQaVti/HYystTVod5gwFwxE8WvV1pE5Fl7+fZookZnPZzJm33j9icpYpjElxaUsuEYcnpWPGe4YAhjdQhsU7JbKfHJZF/xXnx8Nd+cXFtWKtwTEYBbms3HZU6mxu1exMltBs4gOACtmdepPi9CfeeFTgN761o=
+	t=1741309685; cv=none; b=pUHQPy1CIZ1zqo0rZlimIoA1382+x4eaaVCokXN+E4rxUgr3gljNbvgtgzJUVNDUIEYkAJf7/F1nDV/PkpK/zN6T7FIjuf1V9UolwEAgChWa1CHzCnHq00FTyiYThaMi/oQBaVUj50XkMZyHl6p3JSuzDTHyzucrerVFDD05tt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741309683; c=relaxed/simple;
-	bh=ouaKAGOGUT7pUC99owzfxsQUE3Rjd4PCRCuSt8gNyZ0=;
+	s=arc-20240116; t=1741309685; c=relaxed/simple;
+	bh=RlfOMZj3emqkxFb+feCatg2AnFF5nDS/d+HMUOBQckw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KGtu5p5XGpgK28uYebK0/B5ae86gZ6eDzFZY6foLrj2FEUNxo13SgoNgnKN1liqpQeeeEjAI8HCfEXM2vjqHDDLVX6Tq4ug0Ad2n82ZtYRfNG1z2vwNt9RhIC1HFLBk55WNovLeAG3p+MiXgzSptxfvuAIjnD+0omaQb99p5Iwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkfTuR0K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49D55C4CEE0;
-	Fri,  7 Mar 2025 01:08:03 +0000 (UTC)
+	 In-Reply-To:To:Cc; b=fD6hm0dGeUiG7oTz89VRq1gEfbue2KluvIV9MHeRbx4MXFLWBJoHoua7rFOO2B8OEjGtNWVTeYVO4ze8ZN264cCRJ3Exnw858Nj4s8RhvVp4NlFmN1MiHmZeTXtluSSHwIMglZZlHir4yOStJdbQ8GluwKD4u/v06sSyaQ8ZgXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ln0sEF+y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 911C2C4CEE0;
+	Fri,  7 Mar 2025 01:08:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741309683;
-	bh=ouaKAGOGUT7pUC99owzfxsQUE3Rjd4PCRCuSt8gNyZ0=;
+	s=k20201202; t=1741309684;
+	bh=RlfOMZj3emqkxFb+feCatg2AnFF5nDS/d+HMUOBQckw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ZkfTuR0KirZgiKNz0oGp/VselMAYwifu6tWPQAInDlYnSMJBsANjsShSbRkFjqOZ6
-	 pzsWPspfZoqV82YK9pW+hgGHI+S/4EoIWWWci3xp+FZSjLCnLU6Kxc26rhZzzMa4c3
-	 AiMCgdb4Y+jjaLHNrX0BDvPGXaMn02j7CFjaFgQ2HrVmfhXfvntG57kOP0fFNMK6HT
-	 Zs6RwXlDl5+lI0t0tElfE+FvzqYMqTX5UUQx5dyPD2HAUsYrOxJAvxrclloW4CrfP4
-	 uR3Z2OsEce8RO6aVOdLMNknDj6YAjoTPl93oSokQrobBTpIvI8+P4TRM+ANWzH6ejv
-	 YJSxsFtkHk0Dg==
+	b=Ln0sEF+yDX5uxme0z1htcAeJNMJL2ySqi8b97uuHbt//7LquDveqdsA97mdAyHBJ5
+	 mkH/V1EljqlTcc2i17od6/BWtnha6QwNytuVpIgETXXjo6XCw6BJM/axKdBFBCf/yK
+	 Eb3LkqRhkanc1oacaO3V88/WAePny4XLY+Ieu1gpeevRQoo3ZKGQz0Dfa0utIQd5i7
+	 qstRqidLqRwooUr7aEbKsMvMihH6SqbnQSB+gzrKzzZfqReTYUBONtoJUtwsdDFThY
+	 ACak/82UZcz+ajUmT/JvNVrE7JzzP5clDrnHKdMWbf98gjCe2ILr+fsBSAAFi9+2aW
+	 dqn3XejhUQawA==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-Date: Thu, 06 Mar 2025 19:07:43 -0600
-Subject: [PATCH 1/4] arm64: dts: amd/seattle: Base Overdrive B1 on top of
- B0 version
+Date: Thu, 06 Mar 2025 19:07:44 -0600
+Subject: [PATCH 2/4] arm64: dts: amd/seattle: Move and simplify fixed
+ clocks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,7 +52,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-dt-amd-fixes-v1-1-011c423ba99a@kernel.org>
+Message-Id: <20250306-dt-amd-fixes-v1-2-011c423ba99a@kernel.org>
 References: <20250306-dt-amd-fixes-v1-0-011c423ba99a@kernel.org>
 In-Reply-To: <20250306-dt-amd-fixes-v1-0-011c423ba99a@kernel.org>
 To: soc@kernel.org, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>, 
@@ -64,101 +64,142 @@ To: soc@kernel.org, Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>,
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 X-Mailer: b4 0.15-dev
 
-AMD Overdrive B1 version is just more peripherals enabled over B0
-version. Rework the B1 .dts to use the B0 .dts.
+The fixed clocks are not part of "simple-bus", so move them out of the
+bus to the top-level. In the process, use the preferred node names of
+"clock-<freq>". There's also little reason to have multiple fixed
+clocks at the same frequencies, so remove them keeping the labels
+to minimize the change.
 
 Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 ---
- arch/arm64/boot/dts/amd/amd-overdrive-rev-b1.dts | 61 +-----------------------
- 1 file changed, 1 insertion(+), 60 deletions(-)
+ arch/arm64/boot/dts/amd/amd-seattle-clks.dtsi   | 24 ++++++---------------
+ arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi    |  4 ++--
+ arch/arm64/boot/dts/amd/amd-seattle-xgbe-b.dtsi | 28 -------------------------
+ 3 files changed, 8 insertions(+), 48 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/amd/amd-overdrive-rev-b1.dts b/arch/arm64/boot/dts/amd/amd-overdrive-rev-b1.dts
-index 58e2b0a6f841..b34dd8d5d1b1 100644
---- a/arch/arm64/boot/dts/amd/amd-overdrive-rev-b1.dts
-+++ b/arch/arm64/boot/dts/amd/amd-overdrive-rev-b1.dts
-@@ -8,32 +8,10 @@
+diff --git a/arch/arm64/boot/dts/amd/amd-seattle-clks.dtsi b/arch/arm64/boot/dts/amd/amd-seattle-clks.dtsi
+index 2dd2c28171ee..73f687773ce6 100644
+--- a/arch/arm64/boot/dts/amd/amd-seattle-clks.dtsi
++++ b/arch/arm64/boot/dts/amd/amd-seattle-clks.dtsi
+@@ -5,51 +5,39 @@
+  * Copyright (C) 2014 Advanced Micro Devices, Inc.
+  */
  
- /dts-v1/;
+-	adl3clk_100mhz: clk100mhz_0 {
++	adl3clk_100mhz: uartspiclk_100mhz: clock-100000000 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <100000000>;
+ 		clock-output-names = "adl3clk_100mhz";
+ 	};
  
--/include/ "amd-seattle-soc.dtsi"
--/include/ "amd-seattle-cpus.dtsi"
-+/include/ "amd-overdrive-rev-b0.dts"
+-	ccpclk_375mhz: clk375mhz {
++	ccpclk_375mhz: clock-375000000 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <375000000>;
+ 		clock-output-names = "ccpclk_375mhz";
+ 	};
  
- / {
- 	model = "AMD Seattle (Rev.B1) Development Board (Overdrive)";
--	compatible = "amd,seattle-overdrive", "amd,seattle";
--
--	chosen {
--		stdout-path = &serial0;
+-	sataclk_333mhz: clk333mhz {
++	sataclk_333mhz: clock-333000000 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <333000000>;
+ 		clock-output-names = "sataclk_333mhz";
+ 	};
+ 
+-	pcieclk_500mhz: clk500mhz_0 {
++	dmaclk_500mhz: pcieclk_500mhz: clock-500000000 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <500000000>;
+ 		clock-output-names = "pcieclk_500mhz";
+ 	};
+ 
+-	dmaclk_500mhz: clk500mhz_1 {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <500000000>;
+-		clock-output-names = "dmaclk_500mhz";
 -	};
 -
--	psci {
--		compatible = "arm,psci-0.2";
--		method = "smc";
+-	miscclk_250mhz: clk250mhz_4 {
++	xgmacclk0_dma_250mhz: xgmacclk0_ptp_250mhz: xgmacclk1_dma_250mhz: xgmacclk1_ptp_250mhz:
++	miscclk_250mhz: clock-250000000 {
+ 		compatible = "fixed-clock";
+ 		#clock-cells = <0>;
+ 		clock-frequency = <250000000>;
+ 		clock-output-names = "miscclk_250mhz";
+ 	};
+ 
+-	uartspiclk_100mhz: clk100mhz_1 {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <100000000>;
+-		clock-output-names = "uartspiclk_100mhz";
 -	};
--};
--
--&ccp0 {
--	status = "okay";
--};
--
--/**
-- * NOTE: In Rev.B, gpio0 is reserved.
-- */
--&gpio1 {
--	status = "okay";
- };
+diff --git a/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi b/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi
+index d3d931eb7677..6a073d13478d 100644
+--- a/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi
++++ b/arch/arm64/boot/dts/amd/amd-seattle-soc.dtsi
+@@ -11,6 +11,8 @@ / {
+ 	#address-cells = <2>;
+ 	#size-cells = <2>;
  
- &gpio2 {
-@@ -44,48 +22,11 @@ &gpio3 {
- 	status = "okay";
- };
++	/include/ "amd-seattle-clks.dtsi"
++
+ 	gic0: interrupt-controller@e1101000 {
+ 		compatible = "arm,gic-400", "arm,cortex-a15-gic";
+ 		interrupt-controller;
+@@ -51,8 +53,6 @@ smb0: smb {
+ 		 */
+ 		dma-ranges = <0x0 0x0 0x0 0x0 0x100 0x0>;
  
--&gpio4 {
--	status = "okay";
--};
+-		/include/ "amd-seattle-clks.dtsi"
 -
--&i2c0 {
--	status = "okay";
--};
--
--&i2c1 {
--	status = "okay";
--};
--
--&pcie0 {
--	status = "okay";
--};
--
- &sata1 {
- 	status = "okay";
- };
+ 		sata0: sata@e0300000 {
+ 			compatible = "snps,dwc-ahci";
+ 			reg = <0 0xe0300000 0 0xf0000>;
+diff --git a/arch/arm64/boot/dts/amd/amd-seattle-xgbe-b.dtsi b/arch/arm64/boot/dts/amd/amd-seattle-xgbe-b.dtsi
+index 9259e547e2e8..056dd3e35042 100644
+--- a/arch/arm64/boot/dts/amd/amd-seattle-xgbe-b.dtsi
++++ b/arch/arm64/boot/dts/amd/amd-seattle-xgbe-b.dtsi
+@@ -5,34 +5,6 @@
+  * Copyright (C) 2015 Advanced Micro Devices, Inc.
+  */
  
--&spi0 {
--	status = "okay";
--};
--
--&spi1 {
--	status = "okay";
--	sdcard0: sdcard@0 {
--		compatible = "mmc-spi-slot";
--		reg = <0>;
--		spi-max-frequency = <20000000>;
--		voltage-ranges = <3200 3400>;
--		pl022,interface = <0>;
--		pl022,com-mode = <0x0>;
--		pl022,rx-level-trig = <0>;
--		pl022,tx-level-trig = <0>;
+-	xgmacclk0_dma_250mhz: clk250mhz_0 {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <250000000>;
+-		clock-output-names = "xgmacclk0_dma_250mhz";
 -	};
--};
 -
- &ipmi_kcs {
- 	status = "okay";
- };
- 
--&smb0 {
--	/include/ "amd-seattle-xgbe-b.dtsi"
--};
+-	xgmacclk0_ptp_250mhz: clk250mhz_1 {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <250000000>;
+-		clock-output-names = "xgmacclk0_ptp_250mhz";
+-	};
+-
+-	xgmacclk1_dma_250mhz: clk250mhz_2 {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <250000000>;
+-		clock-output-names = "xgmacclk1_dma_250mhz";
+-	};
+-
+-	xgmacclk1_ptp_250mhz: clk250mhz_3 {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <250000000>;
+-		clock-output-names = "xgmacclk1_ptp_250mhz";
+-	};
+-
+ 	xgmac0: xgmac@e0700000 {
+ 		compatible = "amd,xgbe-seattle-v1a";
+ 		reg = <0 0xe0700000 0 0x80000>,
 
 -- 
 2.47.2
