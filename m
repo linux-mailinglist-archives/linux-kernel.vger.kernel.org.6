@@ -1,119 +1,123 @@
-Return-Path: <linux-kernel+bounces-552076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E8AA57518
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:45:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5664FA5751B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:47:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F99517765F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:45:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 985E2175071
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:47:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7392E259C81;
-	Fri,  7 Mar 2025 22:45:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C592823FC68;
+	Fri,  7 Mar 2025 22:47:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="arF2/790"
-Received: from p00-icloudmta-asmtp-us-west-1a-10-percent-0.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-west-1a.k8s.cloud.apple.com (p-west1-cluster5-host9-snip4-3.eps.apple.com [57.103.66.194])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ZybLeiGE"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99DED258CFF
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 22:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=57.103.66.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB4018BC36;
+	Fri,  7 Mar 2025 22:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741387527; cv=none; b=ILjvWyHtSUS7WxPACV21MDHnsTel/MN1sXTBD2vW8VGpGdMDsKtwHNBRf/6REpfoxEvLcBO3WTwt2l2Sz3oYdtmhuqknk1wVQR3no59709GsfRm/78k9zp84ZsySduq8IYQsyof+ejoMUv43azI39zpwuWaVvYQCFSwk4E9Vnik=
+	t=1741387641; cv=none; b=oNlQ4p+VRU53p+JCMGQATBsaaeD8zThxmHyhIFzzXsKTFj1I6yEs+/rORyCou1vjNXb7NT2vYIdMSws81z++wHwTb29UAT0/IGx4R4PuVrgJtVsHo71aEMF5/OANJJ0YlrLjJJsvc2U7W7pAmoeHJclp+BVk6YAEz4j5Ti+HeUs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741387527; c=relaxed/simple;
-	bh=8D33UMR4UvUDUQipXJRI98FhV6DGIx3yTYvijJaZDpU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HMlLQTtnBozL9Ef6hfRUu/XUZrZDi2MDPIowBYklnP8fVyo65/lP0id1sD7d4skvEHN5t5JwKMrnlHW5E6e2xO8kRbSm0x06W2+h5aL9b4/n2cQpVisSbNil2qfDVtw8fUV7DM+kq9Zl3Bd++EevJZ5WjWQfdDNQKX8D4PPUwtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=arF2/790; arc=none smtp.client-ip=57.103.66.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=V6HnvG3h8x+Obm8xDLKX/nEgo1l4dVajtmIeyOJkgB8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:x-icloud-hme;
-	b=arF2/790dnJl2X9vPDjH2Y6wyEeq5EKsrAc776jQY2I1+nlneXQTmDbFISkbqqwtA
-	 bI16iZ/dA/hVmRzwX5dibs1gQjQEBEH5CwzbB1kwPbgvZKFw21ho3LG6NgO4kKSnNg
-	 3AzGlWujC/O0KGCx/iDzciQOBnCad6eDBGRDUBldKdg2hKyp9eZOFGyEC8KIBJWHgc
-	 ka8sqjiQFFhU7h53v31UoyLa3eMNGqnTSp9if1kPLGSIuWtlFwl7rNUvRtAWKOI1eP
-	 TCiGicqWN086kiMAw8zEoKyjKKtoAhqKrGxBP5cqvc01RjA8neN6oQHZu4GpVnLAiw
-	 wFDqD1flul6yw==
-Received: from [192.168.1.26] (pv-asmtp-me-k8s.p00.prod.me.com [17.56.9.36])
-	by p00-icloudmta-asmtp-us-west-1a-10-percent-0.p00-icloudmta-asmtp-vip.icloud-mail-production.svc.kube.us-west-1a.k8s.cloud.apple.com (Postfix) with ESMTPSA id D91A41800D55;
-	Fri,  7 Mar 2025 22:45:22 +0000 (UTC)
-Message-ID: <245f2248-e655-40e1-b1b0-6d99a5b4f365@icloud.com>
-Date: Sat, 8 Mar 2025 06:45:18 +0800
+	s=arc-20240116; t=1741387641; c=relaxed/simple;
+	bh=z8yn6Neur/a8yMrAIf57LnMCYQzLcigU3C4z5s6El+8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TYxKU9J8Rw1LbVTscl3YzdK7UWfDu3ymRokTw1Qj5sytq0wsmv5KfUwcs1zYsmG77HP5KHnYQEHS34gHZETiZsLrUq7wfeVVsgg7+9Xz44s5XE4JIige0MpdGlCfaCpvRfnuXrT/zpFYkc53NK3FzbbWwhpCsBPNjbvOJPJDqtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ZybLeiGE; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7928940E0214;
+	Fri,  7 Mar 2025 22:47:14 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id eNGvWaWz9nat; Fri,  7 Mar 2025 22:47:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741387631; bh=hUu5/rpMox0T3Vcm+1lPtdALgmUeb93/9iSEx9fEkY4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZybLeiGEw0Hb+BRvk7jZ3m46EniCvZMNqQNelPB+hkkKltOCz3zBNy2WTYwR7eO6l
+	 ufCAb22jgVbfC/9x31DbnQaCELgtqGGlZMEkP2soiyOyZsgHiEGgPJNH42zCTMT3zv
+	 nsoVMC1KdL9KCjvDuGwpR+NnVQpjZCuWAFL1cxpKCkqKTy6Rt39/o/UiqoD1IxHSVF
+	 H/HdyyVrw1u04MRYiDzIuHEZa0BFzraIrxQD5c4ayWPD2/mR992ChWziYuqo/ZuG88
+	 xHiATgb9w3hKIy8Ibdov5MBuYtTjU0GuiW/cdHtXQwLwNou/25vLlmJlOSMgBugmzV
+	 Fje5aIQnw8JZ3K4p51IcZqtq5cAadjvwfUwmmkzUW93G1uNpfPs0xP5e0M7w4xfFwU
+	 hK912nyLouM8pgPTihrtN0JsV8ut0kTTCmiJxi9Aj+Tq+GR31asnuEEdshZOSy1uk8
+	 muVZiVkZprEH4bkWPVm1hAM9d9pHi/OHcAGxZXfbCiV3a8l4cR9i2FrkX+HSslSwS7
+	 ZlwFFPDhTILTT+jwlzlatf7tm1jjleV+n+7I62kEOo8Yl7LMlM11zrQ59IvyaElMUy
+	 RG/q4vbLFSudiwuDmHlNu7Nh1FJqMcp7JuAgxIQA+6tl39KNNSzNMVWqOZ1YXVCS59
+	 0VnqeOLkhuxQqFn3+diETrDc=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A552540E015D;
+	Fri,  7 Mar 2025 22:46:51 +0000 (UTC)
+Date: Fri, 7 Mar 2025 23:46:45 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: Shuai Xue <xueshuai@linux.alibaba.com>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"yazen.ghannam@amd.com" <yazen.ghannam@amd.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linmiaohe@huawei.com" <linmiaohe@huawei.com>,
+	"nao.horiguchi@gmail.com" <nao.horiguchi@gmail.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"jpoimboe@kernel.org" <jpoimboe@kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"baolin.wang@linux.alibaba.com" <baolin.wang@linux.alibaba.com>,
+	"tianruidong@linux.alibaba.com" <tianruidong@linux.alibaba.com>
+Subject: Re: [PATCH v4 1/3] x86/mce: Use is_copy_from_user() to determine
+ copy-from-user context
+Message-ID: <20250307224645.GKZ8t3VX5a5FhqNyZG@fat_crate.local>
+References: <20250307054404.73877-1-xueshuai@linux.alibaba.com>
+ <20250307054404.73877-2-xueshuai@linux.alibaba.com>
+ <20250307204018.GAZ8tZstt11Y4KFprC@fat_crate.local>
+ <SJ1PR11MB6083654405F2721E5AA0C1F2FCD52@SJ1PR11MB6083.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] driver core: faux: Check device binding state by
- dedicated API device_is_bound()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
- Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20250307-fix_faux-v1-1-91459764575e@quicinc.com>
- <2025030704-lapping-gurgle-d101@gregkh>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <2025030704-lapping-gurgle-d101@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-ORIG-GUID: BsNrqDFay2CNcigDokSlrcBjtWauQlNi
-X-Proofpoint-GUID: BsNrqDFay2CNcigDokSlrcBjtWauQlNi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-07_08,2025-03-07_03,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 bulkscore=0 adultscore=0
- suspectscore=0 clxscore=1015 spamscore=0 malwarescore=0 mlxscore=0
- mlxlogscore=560 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2503070172
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <SJ1PR11MB6083654405F2721E5AA0C1F2FCD52@SJ1PR11MB6083.namprd11.prod.outlook.com>
 
-On 2025/3/7 22:04, Greg Kroah-Hartman wrote:
->> -	if (!dev->driver) {
->> +	/* Do not need to device_lock(dev) due to no race here */
->> +	if (!device_is_bound(dev)) {
-> Ick, this feels wrong.  This is the driver core code, it can poke in
+On Fri, Mar 07, 2025 at 10:05:12PM +0000, Luck, Tony wrote:
+> is_copy_from_user() decodes the instruction that took the trap. It looks for
+> MOV, MOVZ and MOVS instructions to find the source address, and then
+> checks whether that's user (< TASK_SIZE_MAX) or kernel.
 
-both 'dev->driver' and device_is_bound() is okay with this very special
-context.
+You mean there's absolutely nothing else like, say, some epbf or some other
+hackery we tend to do in the kernel (or we will do in the future) which won't
+create the exact same two conditions:
 
-'dev->driver'    :     is binding or have bound successfully.
-device_is_bound():     have bound successfully.
+- one of the three insns
+- user mem read
 
-device_is_bound() may be more accurate here.
+and it would cause a recovery action.
 
-> dev->driver if it wants to, and as the lock is not held, and there is no
-> lock even mentioned in this driver, the comment is confusing unless you
-> dig and go read that device_is_bound() requires this.
-> 
+Perhaps it still might be the proper thing to do even then but it does sound
+fishy and unclean to me.
 
-agree.
+Nothing beats the explicit markup we had until recently...
 
-> Also, when we start to add locking requirements to functions like
-> device_is_bound() (which we really should) this call will fail the
-> check, right?  How are you going to explain that?  🙂
+-- 
+Regards/Gruss,
+    Boris.
 
-Generically, for 'dev->driver' and device_is_bound(), device_lock()
-should be hold firstly to avoid race as driver core codes do.
-
-this patch may be still okay if device_is_bound() is changed to
-bool device_is_bound(struct device *dev)
-{
-	bool ret;
-	
-	device_lock(dev);
-	ret = dev->p && klist_node_attached(&dev->p->knode_driver);
-	device_unlock(dev);
-
-	return ret;
-}
-
-
-
+https://people.kernel.org/tglx/notes-about-netiquette
 
