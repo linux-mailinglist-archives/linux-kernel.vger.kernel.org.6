@@ -1,206 +1,269 @@
-Return-Path: <linux-kernel+bounces-550623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC59DA56226
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:02:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 40DC2A56229
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:02:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C6653B081B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:02:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E96BE3B3A5C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1361D1A5B86;
-	Fri,  7 Mar 2025 08:02:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FB01A23B0;
+	Fri,  7 Mar 2025 08:02:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="lLb8gtNz"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011031.outbound.protection.outlook.com [52.101.65.31])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aS/l8of6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9EeTCHHS"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8498F1AD41F;
-	Fri,  7 Mar 2025 08:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.31
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741334537; cv=fail; b=LGxHkrbDl6uR7FtrPnr6X5Tww6NC9Njw9ORYNGnQ/ZP1Bta8+vZl76amPv7NjhCar27dddH0ujSt2WttFNq6uCpR0oE29SiYxfjkGPZHBJChRQkGA8EmdPsEENp7dH8w56PlrTZQSughhfeFYU/CIs+TgDyQ8fp8GEeMpH83myg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741334537; c=relaxed/simple;
-	bh=da9EoLuXUffp3IieH3vw9mDmCmZWuY05/WCeJEH2AMs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=iGIvzJJQzibKz2B7XtJgOVS1Ldu5oCbKs+z+16nLwH4C7u8bOge/+GcutyA94OOZ8iAOVxR/tuh+1RvqohmCTcxPKLOj2bLKNFQ9oM9FldxPAllRCfW2PmXwe4i3PEDlB2ZoF0UhaQz91W6irZYh7QiKtDuPaR8An4f6iKCmgPs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=lLb8gtNz; arc=fail smtp.client-ip=52.101.65.31
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=FotY7rgKfA2/m+vBcTqUbYKjgIdjrl7xuraRRIDAWeXEHvMDM72wO8ueYQWKQbMiWnWub8/zffeRbWCf4R9oHbcMmlzIKyrVWJPy0M7+vJIEWyA5QBd4TopmNBHdNFfruBTnGrwMG7t6d1VHeLuNLcel8hHr6yo17NRgU62tUEY8w8fA0jT9F4vmqNtM4tldEHnu3CP3HEdHAUVf6dgvdijv61/grcGeoY7i5rcNCmcCwC8aM51U5QuYwTZYgX2vlIhA5iLRnV1jNWM0KEP4lMXdBrsOeUSVSyaYEhbBGPU+PONjG6ZG7GnNSojfrHkRhy0cxueGoKeOLu8pdgIYZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=da9EoLuXUffp3IieH3vw9mDmCmZWuY05/WCeJEH2AMs=;
- b=wZESsn4mPP4VHN0IoeqI4WaImNzDKoNJZK82OfbRpm5kIMJVOiZ+myLXG3hUTZW8NW0YAhtf3TbGsPFy7KYHNVQaaYTy3UjnAFAKBKI5+PkE5cNGQul8IDmqi8izOmmGlMIqUppjVQDWUKLG+Tc00wKzF/ygg5FKAOvjvLErNT/FDNpgRxEvUL2ioYyvCvxaE7frPB1e+1czK+vUv2RUY3mPhp2Z3cxUzh6G8AUNY30XQCW+TbaCDCrNYvgvIC/cwy+A9T2eh021Og4vObVVR9TtRmVdt+udjvm1gA8x6Bpdyll47aKFN5+YpGi2ORJNosohij9ml1rOGa4aPEnY5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=da9EoLuXUffp3IieH3vw9mDmCmZWuY05/WCeJEH2AMs=;
- b=lLb8gtNzjryaOiHTNXMehpBcOy9j/QoRxNTKlzGHb5XFb9lmFZJnOW21KF5zwQHfWEeSANFEXY6w/FgZlni08kwcfi6NiQjYqhzbPFehQhkPMaDoyBkk0IvwdWb2zouQeN675UR61mhaUqtWNPP5nxi/SW2lRyI4AEFvlYJUJdmyTj0fyjwa4z14mipxHB93tvZUoSGuG+ujJ+2vxdj0XgeAOScmnhm6T+eu38Cjj7dIH4ERK+i93wuXG1Ky9mauHuXYRhorDGtOZDQNB0UM84lcKyYIzD6MS8LPUxdn80A6zRZZ9VkqFipVPsqzhK24jlsMozhTO4tyCgJipEhuWA==
-Received: from DB9PR04MB8429.eurprd04.prod.outlook.com (2603:10a6:10:242::19)
- by GV1PR04MB10426.eurprd04.prod.outlook.com (2603:10a6:150:1cc::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Fri, 7 Mar
- 2025 08:02:11 +0000
-Received: from DB9PR04MB8429.eurprd04.prod.outlook.com
- ([fe80::2edf:edc4:794f:4e37]) by DB9PR04MB8429.eurprd04.prod.outlook.com
- ([fe80::2edf:edc4:794f:4e37%6]) with mapi id 15.20.8511.019; Fri, 7 Mar 2025
- 08:02:10 +0000
-From: Sherry Sun <sherry.sun@nxp.com>
-To: Jiri Slaby <jirislaby@kernel.org>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>
-CC: "linux-serial@vger.kernel.org" <linux-serial@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, Shenwei Wang
-	<shenwei.wang@nxp.com>
-Subject: RE: [PATCH 1/2] tty: serial: fsl_lpuart: Use u32 for register
- variables
-Thread-Topic: [PATCH 1/2] tty: serial: fsl_lpuart: Use u32 for register
- variables
-Thread-Index: AQHbjwhYZMNdadGWYUeayBBl7Ss2LbNnRiaAgAAJuEA=
-Date: Fri, 7 Mar 2025 08:02:10 +0000
-Message-ID:
- <DB9PR04MB8429BF55DF50CCF7E9AB827292D52@DB9PR04MB8429.eurprd04.prod.outlook.com>
-References: <20250307022547.1000293-1-sherry.sun@nxp.com>
- <20250307022547.1000293-2-sherry.sun@nxp.com>
- <52c99f0a-670c-4e76-a30d-cdb9cb0e83e7@kernel.org>
-In-Reply-To: <52c99f0a-670c-4e76-a30d-cdb9cb0e83e7@kernel.org>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DB9PR04MB8429:EE_|GV1PR04MB10426:EE_
-x-ms-office365-filtering-correlation-id: 25021424-a247-4d3e-432e-08dd5d4e5d30
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?TTJlMUJmckxPWTRkYmxvUkNSb3FyZEFLMFZUbFpOZXp4WFFmbTIxOXlwRHEy?=
- =?utf-8?B?dUJoQkhWZ3R0aFpKK3A3Y0drakVoSlZsZUhmK0tnd2FiRWJpdG0zQXhaWEhT?=
- =?utf-8?B?WjE4bGlNYm14MDVLM3RWL09DVXR4ejk3T0NybEJKNWZjTWs3MDAyTDkzbXRn?=
- =?utf-8?B?eHVWZUJJa1dQalkyQWpyNE9XSTk1NmxoZ2o4bmF0dmdZV0Jzcld5d2Jzc0Jt?=
- =?utf-8?B?WWxEdUNXNGIvaFViM0NGbmtmVE1oeEtPcDNPOWRpWmNqM0xEYWpVRVJxNUs2?=
- =?utf-8?B?RDBqc3J2T05Ba3kzeDREamE2RkVkZU9ZOTF4MktVekROOTAvOVo0WWI2NW9S?=
- =?utf-8?B?Ui9aOURFdDVKU1ZzTjRtdnFmSVIxSVRhZXhmdmxBcjNNd2laM1J0ZS9zcVlt?=
- =?utf-8?B?aHVWTlAreGhIR0R0b0x4Z0pXR3hBVXhpeWYyQnRwZFZPWmZsL0Y2TnlKbWZz?=
- =?utf-8?B?eFRNOTdoTXFVNmdUTXMxUTV6WmNpUnRteFNWWmFvei9LR1ltenRDbnhhY1dM?=
- =?utf-8?B?WVBFbzUrcDEwVk44V2Y2dTF1L3hESmZocEJtYXJ1ZmNiN0t3bWUrRGN5eEkz?=
- =?utf-8?B?NHQ2bmFLajZUUWtXdGFaem9DM0N3M2I2VGQ5S1ZyL1U0eEJyWVFiV2hHOXh6?=
- =?utf-8?B?Y1BXdE1abmJHUFRJeEdUZW45cFlqMW5MN0RPZWMrTENSaVBRQmF4bUVmc0Qx?=
- =?utf-8?B?ZThSdkYvbmtYNHJvWHA0U2hyOXM1Yk04dCtMaUZFNTJZUVI5aWJGSUw4enFn?=
- =?utf-8?B?aVRQTEZVNEhhcUFiZXUrSlZjMFVwMEFTb3JNcWtCeDZ6UG55dVVGZHZwZXVw?=
- =?utf-8?B?NXc1YVZiQU1Gb0xYMkVjb29GV0JxdEIvYnl0dnlYUVNseW5uTTZVVTh0M28v?=
- =?utf-8?B?OFVJQlNZL2NNalNkTUNhc1BFN2IwN3RmenFsRWU1Mkl4aFZQUnFuODRKbjg2?=
- =?utf-8?B?a0E1MERXRHlmM0swSWFuMzdPbE45MHU1M3NGaGgrZWtwdCt0NjFJM0RrVkxp?=
- =?utf-8?B?THB5UUNMMzBFSFZyalRrWTJsaTZmcEJacFNNN1lpTGJuZXdrZldoRjNIRVdz?=
- =?utf-8?B?SC9rNWNQd00zZlUrQnJENXdBRkxzMGlGNW40T3hsRDNPNkViNHZjLytCT2Vw?=
- =?utf-8?B?azZwa29tZGVGazZSV3N1WGZhc2FKdlQxNzhxS094WE1VQWhkSElNLzNRU3Y5?=
- =?utf-8?B?WlRXUVJsSU9qU2hTaVllZDhuajhXc2V1N1VvNmdJZmh3bmZCTU1KSVZKZFZT?=
- =?utf-8?B?ck1VeGc0czFRUkJVVDNqOHFGOGdZNHg0bjUzaHE3aWJIUmNSdGFkRGxPbUZP?=
- =?utf-8?B?OTRuajF5ZFpWeDVzbGRHV1Q0dUY4MHc4ekpsUmVyRmNZY3hCNWtXaE0wcmFY?=
- =?utf-8?B?UllPY3NqbEVLcjg2UXdMMVVLSXlmbFBVYnlEYVFtdnhmNDhWSjJuejh5REtR?=
- =?utf-8?B?RTZGWE4xSDc3RHUzNFA5YzJxZ25ValZYVFpUY010TmhnSVZJcXVjRDVVYTlO?=
- =?utf-8?B?SXB2M0dneUZsV0hLV0toOFE4Z2M5VlhqN1lhOXpLa2VvbnNhSEphZnZTb0lN?=
- =?utf-8?B?MDhtMUVmTFRmS1U0TTR6YXhQaDNQeDM4S2Q1bVdZa1J0b1p3SHU4b1AvQ1RG?=
- =?utf-8?B?SVJjQk1ybDF5YjNjMXJpVUl3OTZNZmpHekNmWTVLREFvWVYwNXYrbk5TaGNj?=
- =?utf-8?B?RHRzOFJrMkNpNjF2SGM0SjNjZ1Z6dW9ZSy82VktyU2RWRlJ5am5ZcFZkdFhH?=
- =?utf-8?B?NTlSVHpTUXc1Wk5lN2JUelA4RldnY0x0enFzMFhoS0VkWHF4U2d6anh2Umpq?=
- =?utf-8?B?bklwSit4d043aEI4M1plS1VoZ3BTbVc4OVFmbkZhZ3ZzUGJkcG1mM3Bwdjgr?=
- =?utf-8?B?UzJQeTNkc21aTXQ0SXhRNHoxTXF4aXFrMi9kMEM0Q0U1NHpuN0tnVkt2WEdm?=
- =?utf-8?Q?mYI5wMnCHyCybKSOl/fDP0c6VypW2RFv?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8429.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?c0RrVndST3JWRmFOVXl3d2gwYVNZendJWU8vNUZ3QTZXNWgzR2NjTlltVUcz?=
- =?utf-8?B?bE0wV0hTcmdKbWtPdE04TEhnUWlCWEs4eFMyWTJOUVVlaFFIOTRMUHY1bjBY?=
- =?utf-8?B?VHc0MDZUUnN5c2krSjgrMEhPNmFGaUtJWnQ5ZUVGZndxWnhPM0RTeG9sZ1Rh?=
- =?utf-8?B?bmtiZVVqV1RERDRhZTN3ZEFhQ2U4Y2M3S0o4dUxZbE1kc2YxTWlPaExEY2JZ?=
- =?utf-8?B?dFM3SmhUQ01BSDNtQ2wzQWxFT2I5TE80OG1qM2REMklYOEw2bUp0b3Nnd0FY?=
- =?utf-8?B?ZGYzbjVSRVE4OVNYNFNxVmUrWS8vSHJJSXZPOCtDcTVOZ3g0RVhFWHBja05B?=
- =?utf-8?B?TVV5cDAwVDQvVnh3c2p6WVZOVWhaYUJLYmhiZ1RKZmdTQ3dmdEcwOVY4SkZz?=
- =?utf-8?B?NGRVQkVDUnRGL05YWk1uRlVRTVE4U0w3Y2xpalBiNld0N3FWaGZjYnJCTHlD?=
- =?utf-8?B?ZlkzREY4YWQxWjNPTnIzMUZWTGpvMEVzellYVWtXVTY5MGM3NVRPK1owWTRE?=
- =?utf-8?B?eVErYm92WmZLSlRJODF6MkgyZzBiUnI2eG45U3ZUaTZsQ0JEV3FKYWpBOElI?=
- =?utf-8?B?bUNkRlU4OWhFeEtmYlNaTkVwWjZxd05SYXVwdUF5NUxqQnpubFVpZFNtc1Mz?=
- =?utf-8?B?ODFlNjZIZndja3pSUkF2MWhZcmJ0VnhoODVhMmJOWHNTbFl5d01lUXhvN2Qy?=
- =?utf-8?B?dTQzZExXb0tSVTQ3ZTJhUEVXb0ViZWtVcDdNWHlFVk1POUVuL2RZNTB2aXNN?=
- =?utf-8?B?RjNmTWc0cVJFYWR4d29Kc1prbC9hb25LYnRXR3QrY093eHY1MmdVNEtOWFVW?=
- =?utf-8?B?d2dWN2JPMWpGVnNEYWFGd3BJQnVZQm1nZXRtbjlMeEJ6RndiaGJIcFhpVi9S?=
- =?utf-8?B?M1N0aEYvZmJReElkaUUzSXBpa1F2T1NVWFNZMUZyV2RlMlcvK0hURC9aeWNS?=
- =?utf-8?B?RXRkSC9haFpCYmVURlVFaUpSN0tlTU8xVjEwdE95OHJTZDRrMld3M0xnT3Uv?=
- =?utf-8?B?cW5IUUVwZWROMTVwcVVPSWJJQUNBRlFucTcwY0JVUWpYb1VoNXZmM2VKY1BU?=
- =?utf-8?B?a3dlREN3cHJneVQwb1BpM1VUemduNDc2UHppbGNaNS84YkxReG40MmFZcFZw?=
- =?utf-8?B?aGxhNVM1d2w3OGErNmpWSHdrSkh0QUxEU2lzMDFIRm9xMk9vcHBOTk15VVNH?=
- =?utf-8?B?clJPcTAwc2Z3WC92eE0vNFFxTFJKRHVJYk1EaFpjcDdhYnN5R2FIelk3bFNr?=
- =?utf-8?B?dm9zdXkxZEFVNS9jcWRvT25vYkYyVVEwWkxPa0trOG04QXRCNEJQUFUrR0U4?=
- =?utf-8?B?b3Q2aERWQlpvczZ0RjBQRkNxbSsxdkMrTWJjb3pQQ0IxKzcvc2JmdWtFd0Q2?=
- =?utf-8?B?S1l6UW90dVpzamxkdzNEU2ZVWDlDQlpJY3JaR3IxS2RUWmtNelk4eGZWZlh1?=
- =?utf-8?B?TlI2dGVZZGs2bzE3ZjAwbVBaUmRlc3NwbEV5T3lOendFdDhMNnEyZHhjaDdw?=
- =?utf-8?B?QWNiZ2FoQWJMT2g3YWRkLzBWT2tQV0ttSnRKaGgvVmdOcjNUNnhrekxhdFR2?=
- =?utf-8?B?eDZEZWpUTDVNSE1BblR0aXNlSllVajVuWjhrek5xOXZEazZ2K0x2RDF0TFBU?=
- =?utf-8?B?bDN2OSszNHJ4TDJUazJXbGI4UW1mZElaeDNKUTc4NUdlVXlwZkZIWHZmdFlB?=
- =?utf-8?B?dXIrWlBkWUY3V2pVcFBaTEt1alVsMndRVlQ0a0RtTGQ2K1hSTmtjdHhSZ29O?=
- =?utf-8?B?dGM3amF4dWtRcE5TTWVrQ05scFB2MXNJNU5iNHBVTExIYTdmZ0ZrMDA2OTdZ?=
- =?utf-8?B?NHl1RU1yNnloZ0wzZjlaVGtpMHpVQ05vR04yQ1Q4YlpDTkdabkM5VGFzV2VY?=
- =?utf-8?B?UVQ5TXUrNnZLaThtVDAyTFZoR0FVaTQ0RWZPYm8wdytTbXF0WFdOQmRSTk0x?=
- =?utf-8?B?MHYyU0U3MzJtRU5JcDl5RkF4a3FaRG4vMGZyNzZKRE54WXgyOHZpdzBQVFdu?=
- =?utf-8?B?SmdwYndPWnpTMWNxc1NYRHhnWDA5TWFDaDdITTl6OUF4bzBwNEJRT0JIS3Iv?=
- =?utf-8?B?ZmNjdXdsSGUrR0pNb1N1Z1dQRnE1N1hGeDlWb09tS21Ndk0rVUhKc3Z6QTM2?=
- =?utf-8?Q?bOKo=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBCEB157A48;
+	Fri,  7 Mar 2025 08:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741334557; cv=none; b=s3rFK1y1fN/VWRUz+TTGq4lQrQF5VyngcSXUUrqANyLuzJF6yE8hMLJegoU/KzmA4BSHPRyvR0x4+Oi3m16V03VJsPUPLyahOiCrRv80/lwcY3lEajK8AvZpO3GHVX27yxokD8auDrgjOCQHlur4+RueAiE7QTKWU825enfZUF8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741334557; c=relaxed/simple;
+	bh=WSBnNsN62tVBmykCsASSx55WWbKVE14cT7N79EfL/Go=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Sg+XuSGyc9pUqQ5bypiLNYb8NXXNqe+moVGFyKAyk8Oq1+j09dR9dRiyH1A0K86S9Np2e+uZ2Fpkd/CA3g2SBpKg4yK6De00QHO/B+Ts/ZRoe64NOwtO1dqitcv2w4folZjZiaFtn/ZJ8IKB1n6tHISQhcM6/WmlbSAA/plvWj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aS/l8of6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9EeTCHHS; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 07 Mar 2025 08:02:25 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741334554;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4pMY46EuTIkzzojfwD7frFWYrlhvpbsKJkxR2OyT3sI=;
+	b=aS/l8of6xZzW6xeHPYa7g2kPG1X/SX045b02rJuGc4+ZlYn8z6QQiq0t1dywVYd/SdPzjS
+	pgt5lM0TDZ8VEXibiEqy8qAHiL8CFrg/Moy+JuiwWaXec21GJBuBRzYsuHbtgii3UCk1Je
+	FI8WwDqqEv/X+D6G8dl3OIMONI6qB7z4p6sGC1bHVRC9jiN2R8c7PdUhP865dizxca5OQP
+	AfhdA21h1rd5dLYqyv+z2pXo0V4hql4W3YV14ynx/dBHhj9T1M5NYyavYfjyikaeoFDgqP
+	u1JZU5USIbWUBkZzn8DwJK4ZxvqEd9w5xAbOrQT6AaM73f45lwVo0x5Q4xMUNw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741334554;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4pMY46EuTIkzzojfwD7frFWYrlhvpbsKJkxR2OyT3sI=;
+	b=9EeTCHHSOzVBqs5pPvzezUBajXT2YIgY1r83reHX0TzjsPvE3+1H4AAcH9WeuHn77lPfwD
+	rbyQjGEA4YlqpsAA==
+From: "tip-bot2 for Andre Przywara" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: irq/drivers] irqchip/sunxi-nmi: Support Allwinner A523 NMI controller
+Cc: Andre Przywara <andre.przywara@arm.com>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250307005712.16828-7-andre.przywara@arm.com>
+References: <20250307005712.16828-7-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8429.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25021424-a247-4d3e-432e-08dd5d4e5d30
-X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2025 08:02:10.8282
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xGjX7k4gnbnhEEwPJt3vcCY8VEGFWa5R/yAW7MRqQZJry+ff/w2YqO5ELD7Dq3Az8PHiuGGqnIqe4CFrJMkNGQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10426
+Message-ID: <174133454592.14745.4937015305906176856.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogSmlyaSBTbGFieSA8amly
-aXNsYWJ5QGtlcm5lbC5vcmc+DQo+IFNlbnQ6IEZyaWRheSwgTWFyY2ggNywgMjAyNSAzOjI2IFBN
-DQo+IFRvOiBTaGVycnkgU3VuIDxzaGVycnkuc3VuQG54cC5jb20+OyBncmVna2hAbGludXhmb3Vu
-ZGF0aW9uLm9yZw0KPiBDYzogbGludXgtc2VyaWFsQHZnZXIua2VybmVsLm9yZzsgbGludXgta2Vy
-bmVsQHZnZXIua2VybmVsLm9yZzsNCj4gaW14QGxpc3RzLmxpbnV4LmRldjsgU2hlbndlaSBXYW5n
-IDxzaGVud2VpLndhbmdAbnhwLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCAxLzJdIHR0eTog
-c2VyaWFsOiBmc2xfbHB1YXJ0OiBVc2UgdTMyIGZvciByZWdpc3RlciB2YXJpYWJsZXMNCj4gDQo+
-IE9uIDA3LiAwMy4gMjUsIDM6MjUsIFNoZXJyeSBTdW4gd3JvdGU6DQo+ID4gVXNlIHUzMiByYXRo
-ZXIgdGhhbiB1bnNpZ25lZCBsb25nIGZvciByZWdpc3RlciB2YXJpYWJsZXMgZm9yIGNsYXJpdHkN
-Cj4gPiBhbmQgY29uc2lzdGVuY3kuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBTaGVycnkgU3Vu
-IDxzaGVycnkuc3VuQG54cC5jb20+DQo+ID4gLS0tDQo+ID4gICBkcml2ZXJzL3R0eS9zZXJpYWwv
-ZnNsX2xwdWFydC5jIHwgNTQgKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tDQo+ID4g
-ICAxIGZpbGUgY2hhbmdlZCwgMjcgaW5zZXJ0aW9ucygrKSwgMjcgZGVsZXRpb25zKC0pDQo+ID4N
-Cj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy90dHkvc2VyaWFsL2ZzbF9scHVhcnQuYw0KPiA+IGIv
-ZHJpdmVycy90dHkvc2VyaWFsL2ZzbF9scHVhcnQuYyBpbmRleCA0ZGMyZjNlMmI4ZTAuLjg4OGQ3
-NDQ0OTRkNg0KPiA+IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvdHR5L3NlcmlhbC9mc2xfbHB1
-YXJ0LmMNCj4gPiArKysgYi9kcml2ZXJzL3R0eS9zZXJpYWwvZnNsX2xwdWFydC5jDQo+ID4gQEAg
-LTQ1MCw3ICs0NTAsNyBAQCBzdGF0aWMgdm9pZCBscHVhcnRfc3RvcF90eChzdHJ1Y3QgdWFydF9w
-b3J0ICpwb3J0KQ0KPiA+DQo+ID4gICBzdGF0aWMgdm9pZCBscHVhcnQzMl9zdG9wX3R4KHN0cnVj
-dCB1YXJ0X3BvcnQgKnBvcnQpDQo+ID4gICB7DQo+ID4gLQl1bnNpZ25lZCBsb25nIHRlbXA7DQo+
-ID4gKwl1MzIgdGVtcDsNCj4gDQo+IFRoaXMgcGF0Y2ggaXMgZmluZSBwZXIgc2UuIEJ1dCBjb3Vs
-ZCB5b3UgYWxzbyByZW5hbWUgdGhlc2UgdGVtcHMgdG8NCj4gc29tZXRoaW5nIHNhbmU/IChJbiBh
-IHNlcGFyYXRlIHBhdGNoLikgTGlrZSBjdHJsIGluIHRoaXMgY2FzZS4NCj4gDQpIaSBKaXJpLA0K
-U3VyZSwgd2lsbCBtYWtlIGFub3RoZXIgcGF0Y2ggdG8gY2xlYW4gdXAgdGhlc2UgdGVtcCB2YXJp
-YWJsZSBuYW1lcy4NCg0KQmVzdCBSZWdhcmRzDQpTaGVycnkNCg==
+The following commit has been merged into the irq/drivers branch of tip:
+
+Commit-ID:     922ac17c7b47fd0345690046a396f7e324dc733e
+Gitweb:        https://git.kernel.org/tip/922ac17c7b47fd0345690046a396f7e324dc733e
+Author:        Andre Przywara <andre.przywara@arm.com>
+AuthorDate:    Fri, 07 Mar 2025 00:57:03 
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Fri, 07 Mar 2025 08:39:03 +01:00
+
+irqchip/sunxi-nmi: Support Allwinner A523 NMI controller
+
+The NMI controller in the Allwinner A523 is almost compatible to the
+previous versions of this IP, but requires the extra bit 31 to be set in
+the enable register to actually report the NMI.
+
+Add a mask to allow such an enable bit to be specified, and add this to
+the per-SoC data structure. As this struct was just for different register
+offsets so far, it was consequently named "reg_offs", which is now no
+longer applicable, so rename this to the more generic "data" on the way,
+and move the existing offsets into a struct of its own.
+
+Also add the respective Allwinner A523 compatible string, and set bit 31
+in its enable mask, to add support for this SoC.
+
+[ tglx: Mop up some coding style along with it ]
+
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250307005712.16828-7-andre.przywara@arm.com
+
+---
+ drivers/irqchip/irq-sunxi-nmi.c | 85 ++++++++++++++++++--------------
+ 1 file changed, 50 insertions(+), 35 deletions(-)
+
+diff --git a/drivers/irqchip/irq-sunxi-nmi.c b/drivers/irqchip/irq-sunxi-nmi.c
+index 0b43121..01b0d83 100644
+--- a/drivers/irqchip/irq-sunxi-nmi.c
++++ b/drivers/irqchip/irq-sunxi-nmi.c
+@@ -48,32 +48,41 @@ enum {
+ 	SUNXI_SRC_TYPE_EDGE_RISING,
+ };
+ 
+-struct sunxi_sc_nmi_reg_offs {
+-	u32 ctrl;
+-	u32 pend;
+-	u32 enable;
++struct sunxi_sc_nmi_data {
++	struct {
++		u32	ctrl;
++		u32	pend;
++		u32	enable;
++	} reg_offs;
++	u32		enable_val;
+ };
+ 
+-static const struct sunxi_sc_nmi_reg_offs sun6i_reg_offs __initconst = {
+-	.ctrl	= SUN6I_NMI_CTRL,
+-	.pend	= SUN6I_NMI_PENDING,
+-	.enable	= SUN6I_NMI_ENABLE,
++static const struct sunxi_sc_nmi_data sun6i_data __initconst = {
++	.reg_offs.ctrl		= SUN6I_NMI_CTRL,
++	.reg_offs.pend		= SUN6I_NMI_PENDING,
++	.reg_offs.enable	= SUN6I_NMI_ENABLE,
+ };
+ 
+-static const struct sunxi_sc_nmi_reg_offs sun7i_reg_offs __initconst = {
+-	.ctrl	= SUN7I_NMI_CTRL,
+-	.pend	= SUN7I_NMI_PENDING,
+-	.enable	= SUN7I_NMI_ENABLE,
++static const struct sunxi_sc_nmi_data sun7i_data __initconst = {
++	.reg_offs.ctrl		= SUN7I_NMI_CTRL,
++	.reg_offs.pend		= SUN7I_NMI_PENDING,
++	.reg_offs.enable	= SUN7I_NMI_ENABLE,
+ };
+ 
+-static const struct sunxi_sc_nmi_reg_offs sun9i_reg_offs __initconst = {
+-	.ctrl	= SUN9I_NMI_CTRL,
+-	.pend	= SUN9I_NMI_PENDING,
+-	.enable	= SUN9I_NMI_ENABLE,
++static const struct sunxi_sc_nmi_data sun9i_data __initconst = {
++	.reg_offs.ctrl		= SUN9I_NMI_CTRL,
++	.reg_offs.pend		= SUN9I_NMI_PENDING,
++	.reg_offs.enable	= SUN9I_NMI_ENABLE,
+ };
+ 
+-static inline void sunxi_sc_nmi_write(struct irq_chip_generic *gc, u32 off,
+-				      u32 val)
++static const struct sunxi_sc_nmi_data sun55i_a523_data __initconst = {
++	.reg_offs.ctrl		= SUN9I_NMI_CTRL,
++	.reg_offs.pend		= SUN9I_NMI_PENDING,
++	.reg_offs.enable	= SUN9I_NMI_ENABLE,
++	.enable_val		= BIT(31),
++};
++
++static inline void sunxi_sc_nmi_write(struct irq_chip_generic *gc, u32 off, u32 val)
+ {
+ 	irq_reg_writel(gc, val, off);
+ }
+@@ -143,15 +152,13 @@ static int sunxi_sc_nmi_set_type(struct irq_data *data, unsigned int flow_type)
+ }
+ 
+ static int __init sunxi_sc_nmi_irq_init(struct device_node *node,
+-					const struct sunxi_sc_nmi_reg_offs *reg_offs)
++					const struct sunxi_sc_nmi_data *data)
+ {
+-	struct irq_domain *domain;
++	unsigned int irq, clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
+ 	struct irq_chip_generic *gc;
+-	unsigned int irq;
+-	unsigned int clr = IRQ_NOREQUEST | IRQ_NOPROBE | IRQ_NOAUTOEN;
++	struct irq_domain *domain;
+ 	int ret;
+ 
+-
+ 	domain = irq_domain_add_linear(node, 1, &irq_generic_chip_ops, NULL);
+ 	if (!domain) {
+ 		pr_err("Could not register interrupt domain.\n");
+@@ -186,27 +193,28 @@ static int __init sunxi_sc_nmi_irq_init(struct device_node *node,
+ 	gc->chip_types[0].chip.irq_unmask	= irq_gc_mask_set_bit;
+ 	gc->chip_types[0].chip.irq_eoi		= irq_gc_ack_set_bit;
+ 	gc->chip_types[0].chip.irq_set_type	= sunxi_sc_nmi_set_type;
+-	gc->chip_types[0].chip.flags		= IRQCHIP_EOI_THREADED | IRQCHIP_EOI_IF_HANDLED |
++	gc->chip_types[0].chip.flags		= IRQCHIP_EOI_THREADED |
++						  IRQCHIP_EOI_IF_HANDLED |
+ 						  IRQCHIP_SKIP_SET_WAKE;
+-	gc->chip_types[0].regs.ack		= reg_offs->pend;
+-	gc->chip_types[0].regs.mask		= reg_offs->enable;
+-	gc->chip_types[0].regs.type		= reg_offs->ctrl;
++	gc->chip_types[0].regs.ack		= data->reg_offs.pend;
++	gc->chip_types[0].regs.mask		= data->reg_offs.enable;
++	gc->chip_types[0].regs.type		= data->reg_offs.ctrl;
+ 
+ 	gc->chip_types[1].type			= IRQ_TYPE_EDGE_BOTH;
+ 	gc->chip_types[1].chip.irq_ack		= irq_gc_ack_set_bit;
+ 	gc->chip_types[1].chip.irq_mask		= irq_gc_mask_clr_bit;
+ 	gc->chip_types[1].chip.irq_unmask	= irq_gc_mask_set_bit;
+ 	gc->chip_types[1].chip.irq_set_type	= sunxi_sc_nmi_set_type;
+-	gc->chip_types[1].regs.ack		= reg_offs->pend;
+-	gc->chip_types[1].regs.mask		= reg_offs->enable;
+-	gc->chip_types[1].regs.type		= reg_offs->ctrl;
++	gc->chip_types[1].regs.ack		= data->reg_offs.pend;
++	gc->chip_types[1].regs.mask		= data->reg_offs.enable;
++	gc->chip_types[1].regs.type		= data->reg_offs.ctrl;
+ 	gc->chip_types[1].handler		= handle_edge_irq;
+ 
+ 	/* Disable any active interrupts */
+-	sunxi_sc_nmi_write(gc, reg_offs->enable, 0);
++	sunxi_sc_nmi_write(gc, data->reg_offs.enable, data->enable_val);
+ 
+ 	/* Clear any pending NMI interrupts */
+-	sunxi_sc_nmi_write(gc, reg_offs->pend, SUNXI_NMI_IRQ_BIT);
++	sunxi_sc_nmi_write(gc, data->reg_offs.pend, SUNXI_NMI_IRQ_BIT);
+ 
+ 	irq_set_chained_handler_and_data(irq, sunxi_sc_nmi_handle_irq, domain);
+ 
+@@ -221,20 +229,27 @@ fail_irqd_remove:
+ static int __init sun6i_sc_nmi_irq_init(struct device_node *node,
+ 					struct device_node *parent)
+ {
+-	return sunxi_sc_nmi_irq_init(node, &sun6i_reg_offs);
++	return sunxi_sc_nmi_irq_init(node, &sun6i_data);
+ }
+ IRQCHIP_DECLARE(sun6i_sc_nmi, "allwinner,sun6i-a31-sc-nmi", sun6i_sc_nmi_irq_init);
+ 
+ static int __init sun7i_sc_nmi_irq_init(struct device_node *node,
+ 					struct device_node *parent)
+ {
+-	return sunxi_sc_nmi_irq_init(node, &sun7i_reg_offs);
++	return sunxi_sc_nmi_irq_init(node, &sun7i_data);
+ }
+ IRQCHIP_DECLARE(sun7i_sc_nmi, "allwinner,sun7i-a20-sc-nmi", sun7i_sc_nmi_irq_init);
+ 
+ static int __init sun9i_nmi_irq_init(struct device_node *node,
+ 				     struct device_node *parent)
+ {
+-	return sunxi_sc_nmi_irq_init(node, &sun9i_reg_offs);
++	return sunxi_sc_nmi_irq_init(node, &sun9i_data);
+ }
+ IRQCHIP_DECLARE(sun9i_nmi, "allwinner,sun9i-a80-nmi", sun9i_nmi_irq_init);
++
++static int __init sun55i_nmi_irq_init(struct device_node *node,
++				      struct device_node *parent)
++{
++	return sunxi_sc_nmi_irq_init(node, &sun55i_a523_data);
++}
++IRQCHIP_DECLARE(sun55i_nmi, "allwinner,sun55i-a523-nmi", sun55i_nmi_irq_init);
 
