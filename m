@@ -1,156 +1,162 @@
-Return-Path: <linux-kernel+bounces-551643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5370FA56F12
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:32:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B9FA56F14
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:33:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76C493B2BF5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:32:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0CD3188FFDB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B5024113E;
-	Fri,  7 Mar 2025 17:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03D923F267;
+	Fri,  7 Mar 2025 17:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VWydQl1o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BTl893pk"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EA0321ADD1;
-	Fri,  7 Mar 2025 17:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E129E21A44C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 17:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741368766; cv=none; b=K7tIyyVK5GrsQJztdjaTAaAdEquULPyn66lGme3VSPlF6oA5reUhzdaTvlAcqYrvziuXb5Lx85Xh+FrC8KPbKuZTmaeUCKsTf4Hsi4eRPW7shxtP687VoicxP5UNhnaYwq620b3iUq2dGYL3IVnzqltVCqFOIRazscQgMwZjqqc=
+	t=1741368824; cv=none; b=PIlFtBE2H3syGIuiotL9Ov5vjBHLTBXLme7bTMMWYIOxdEcNNKgzZBdmffeDaFzh2/gRah8iYqt83+7vjLRwmhAFYldpFzQCMDGIcJyj+WrcxQ7pgY85jNi6h/a9rLl59onVZkj9QDm6xyg1wfvv5ID2FKJOfzVJo2CYucwOFbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741368766; c=relaxed/simple;
-	bh=WaR8Hp3zZgrEznc1nNzL6QtdxY+vpz769bjSbkaRDtI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=NQgQo5jB0fg262UO4QmV0DnOnT4CKcj698NUYd6n8LFEGUJnvakFRJ6ICq73g36EvgHVev8r84DmPGJMcfKJ382Q1VlHl6HOl+/veomXofOhT6MWIXILQTviRGJeBtKyCCzT4A1EEi0bsqr/YeFQriPlXbHE0YZjyP7GYYy65cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VWydQl1o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 593E8C4CEE2;
-	Fri,  7 Mar 2025 17:32:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741368766;
-	bh=WaR8Hp3zZgrEznc1nNzL6QtdxY+vpz769bjSbkaRDtI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=VWydQl1ouWatZjN1BxQykGaogd6yzRp9NuQDpU17bcfvNecoyprCI2imQr2j6U54r
-	 USZVPuNzXwLvJLwfrGRvgpLJ5i02f3OrNiZD/fEGcUZllb/cqQ6AuBIYdYvtMxsTQA
-	 c6BKtBGzfzCYmMFA1OLkLwdiT/Q6S43EupaCFKi2F9coekpSxBi7qvfGseZwIiwPkr
-	 U7ucLJj+SbBjYBvov9hPcC4KeaZ7kzMx4lwULdCccub/1SJHw8wNMY5PNq/UO+l4Ju
-	 0ltjNvdOUqfWedNMKmbQNxESocxh+hXn+kxqw85Jvv5lGZ3xVSbNbXVpWkdSeCLFt4
-	 X6jHqME6bAjkg==
-Date: Fri, 7 Mar 2025 11:32:45 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-Cc: ilpo.jarvinen@linux.intel.com, bhelgaas@google.com, cassel@kernel.org,
-	christian.koenig@amd.com, kw@linux.com,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
-Subject: Re: [PATCH v4] PCI: Update Resizable BAR Capability Register fields
-Message-ID: <20250307173245.GA414123@bhelgaas>
+	s=arc-20240116; t=1741368824; c=relaxed/simple;
+	bh=ahxE4JYsaxa51CeJ3ENjN1uXinapCT6nJzDtEC7DNRw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SPpbK+IU+iiP0Bbw/L9VAhhT9T0GJ+dglTBrHy2R9hOv+3EG3/sR79fOKsT8PHAg9uPg/yaMsHsPRe2LWKuEtLT64WxuRhRzO1eC1EOgwyNjVlDNNfaxU7dupSMmDKOngCx88sAS2QPuSVTyrp8qqS2oSUp0p/M+B7yuCIed72s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BTl893pk; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2242aca53efso152315ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 09:33:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741368822; x=1741973622; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dPRXab6DmNAusf1g00ev3mIbVuq+IYAJLTGg3hKFOiE=;
+        b=BTl893pkv0k5JeiSgEYH8lYGs+go8Edtnp9A5ikjBW/udXgbbWNScSxynZfdzvJ7kG
+         xu5aAip6oEl+dYw86iT97fXVhuGx9AI2HASziGCh2eQ+oLTYcedjv6Hq1xtDGXwkDdmc
+         IKIuBlQp4BhhhTtIqdQCAZKYgZvbKqp1pkjq06ZjZD0KM9OipzTiZ02aSvF1Ob1WvkHV
+         VnwJI0C/4eZZWaxwTNzHT0wAZCTPaldqm+N+Jp7F9cURtR95gS1gyhwARW7N9m51Pz2t
+         iOB1Z5wfcVyw3omz4UUQutwER5IblyYI3e3DtZyntCAQIZOP49LlGHl9d3Nj2a09cjlw
+         C4OQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741368822; x=1741973622;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dPRXab6DmNAusf1g00ev3mIbVuq+IYAJLTGg3hKFOiE=;
+        b=YHk+4TvtSJ+AS4hl60MTPbF8U1EcOWKDWwIuJt8znZ+uOaiAhEgfGESMY76LazPUdL
+         6i5bay+WQY/8FmAvyNQngbNIQOWfUa8gF3K/mUyeZFzIY62/13P5H81Awd6ttLfojR36
+         VcLhU/UGbau7ttyq5QZDqnUL9qOE6oDVIMFQsl+dMnIT9yvVvkRMg1cIRFsIsFckDy1i
+         HbcBYwqRY3vwWXYDpE4kecVDwuX4lA2NA2ZjkuxNgxTU0DGVSjuBStUETeG7A8vrXC4i
+         d6C34Ww043MIrir4OEB6j2gAe/4Th26tRgQuYQc0c/TZkFNQncSWo33DnUl6zk2FgbeU
+         WlbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWzMMA+v1VaPThEVuT1SQn0LKtxmXdXRRUIkrcPXz3IyBGK0Qwma/2dHvMUyxcE98Kcb5ZmxkhQEFfrBLY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzecoGT9FRi6ICSmcVHWNXu8ju7h5YAhVqdprMEisSgI2e5aV64
+	GXTRIHn6UtUhHeJJLg5ACK2qRry8VeWQ2uU+N0rp+vUmKDBJrkAvyHgJ8Mz2SfdT/fGXT9nadhw
+	KCKvo+uH5dyBYdJ9uO6xhoJEkY+2gYhscLLX8
+X-Gm-Gg: ASbGncsoPJfp7L19cKTFK9pNtuNlrAB2HvPVT7hYYVCV8ssyLVna9gCrjmVVy4lAjjK
+	Cg99HcEAXvdXeYsu/fmZaoXTAAEVzH7k9v2+jLSTpnYrmFYgVzsp4JFMOITgtQmb7tIsPMfR1tq
+	/YrG1twipEucCzagdnY0izcp5Oiro=
+X-Google-Smtp-Source: AGHT+IEzQZheu5TJtSATahjhZ3enat9zM63QIvoyqZ/LEtGcyx3ArOSyUNJsAyUroa9B+ujfe7MnSYf2f6Gm/bwNmMg=
+X-Received: by 2002:a17:902:ce86:b0:224:1fb:7b65 with SMTP id
+ d9443c01a7336-22434c9abd5mr926215ad.22.1741368821959; Fri, 07 Mar 2025
+ 09:33:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250307053535.44918-1-daizhiyuan@phytium.com.cn>
+References: <20250307061250.320849-1-namhyung@kernel.org> <20250307061250.320849-2-namhyung@kernel.org>
+ <403e3848770cef1d70357452082ddda0e92275fc.camel@intel.com>
+In-Reply-To: <403e3848770cef1d70357452082ddda0e92275fc.camel@intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 7 Mar 2025 09:33:30 -0800
+X-Gm-Features: AQ5f1JrOnFoWT_aqgXFAIybmtf8NoAx1Ulyzs8IDlqpY5nPOnusDPd5k8O54K-M
+Message-ID: <CAP-5=fXm_T_REHgCG2ctesmCAu=An6-t-EJAupfd7-et4gGspQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] perf report: Fix memory leaks in the hierarchy mode
+To: "Falcon, Thomas" <thomas.falcon@intel.com>
+Cc: "namhyung@kernel.org" <namhyung@kernel.org>, "acme@kernel.org" <acme@kernel.org>, 
+	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>, "jolsa@kernel.org" <jolsa@kernel.org>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "Hunter, Adrian" <adrian.hunter@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, "mingo@kernel.org" <mingo@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 07, 2025 at 01:35:29PM +0800, Zhiyuan Dai wrote:
-> PCI Express Base Spec r6.0 defines BAR size up to 8 EB (2^63 bytes),
-> but supporting anything bigger than 128TB requires changes to
-> pci_rebar_get_possible_sizes() to read the additional Capability bits
-> from the Control register.
-> 
-> If 8EB support is required, callers will need to be updated to handle u64
-> instead of u32. For now, support is limited to 128TB, and support for
-> sizes greater than 128TB can be deferred to a later time.
-> 
-> Expand the alignment array of `pbus_size_mem` to support up to 128TB.
-> 
-> Signed-off-by: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> Reviewed-by: Christian König <christian.koenig@amd.com>
-> Reviewed-by: Niklas Cassel <cassel@kernel.org>
+On Fri, Mar 7, 2025 at 8:28=E2=80=AFAM Falcon, Thomas <thomas.falcon@intel.=
+com> wrote:
+>
+> On Thu, 2025-03-06 at 22:12 -0800, Namhyung Kim wrote:
+> > Ian told me that there are many memory leaks in the hierarchy mode.
+> > I
+> > can easily reproduce it with the follwing command.
+> >
+> >   $ make DEBUG=3D1 EXTRA_CFLAGS=3D-fsanitize=3Dleak
+> >
+> >   $ perf record --latency -g -- ./perf test -w thloop
+> >
+> >   $ perf report -H --stdio
+> >   ...
+> >   Indirect leak of 168 byte(s) in 21 object(s) allocated from:
+> >       #0 0x7f3414c16c65 in malloc
+> > ../../../../src/libsanitizer/lsan/lsan_interceptors.cpp:75
+> >       #1 0x55ed3602346e in map__get util/map.h:189
+> >       #2 0x55ed36024cc4 in hist_entry__init util/hist.c:476
+> >       #3 0x55ed36025208 in hist_entry__new util/hist.c:588
+> >       #4 0x55ed36027c05 in hierarchy_insert_entry util/hist.c:1587
+> >       #5 0x55ed36027e2e in hists__hierarchy_insert_entry
+> > util/hist.c:1638
+> >       #6 0x55ed36027fa4 in hists__collapse_insert_entry
+> > util/hist.c:1685
+> >       #7 0x55ed360283e8 in hists__collapse_resort util/hist.c:1776
+> >       #8 0x55ed35de0323 in report__collapse_hists
+> > /home/namhyung/project/linux/tools/perf/builtin-report.c:735
+> >       #9 0x55ed35de15b4 in __cmd_report
+> > /home/namhyung/project/linux/tools/perf/builtin-report.c:1119
+> >       #10 0x55ed35de43dc in cmd_report
+> > /home/namhyung/project/linux/tools/perf/builtin-report.c:1867
+> >       #11 0x55ed35e66767 in run_builtin
+> > /home/namhyung/project/linux/tools/perf/perf.c:351
+> >       #12 0x55ed35e66a0e in handle_internal_command
+> > /home/namhyung/project/linux/tools/perf/perf.c:404
+> >       #13 0x55ed35e66b67 in run_argv
+> > /home/namhyung/project/linux/tools/perf/perf.c:448
+> >       #14 0x55ed35e66eb0 in main
+> > /home/namhyung/project/linux/tools/perf/perf.c:556
+> >       #15 0x7f340ac33d67 in __libc_start_call_main
+> > ../sysdeps/nptl/libc_start_call_main.h:58
+> >   ...
+> >
+> >   $ perf report -H --stdio 2>&1 | grep -c '^Indirect leak'
+> >   93
+> >
+> > I found that hist_entry__delete() missed to release child entries in
+> > the
+> > hierarchy tree (hroot_{in,out}).  It needs to iterate the child
+> > entries
+> > and call hist_entry__delete() recursively.
+> >
+> > After this change:
+> >
+> >   $ perf report -H --stdio 2>&1 | grep -c '^Indirect leak'
+> >   0
+> >
+> > Reported-by: Ian Rogers <irogers@google.com>
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+>
+> Tested on an Arrow Lake system.
+>
+> Tested-by Thomas Falcon <thomas.falcon@intel.com>
 
-Replaced the v3 patch that was already applied with this v4 patch,
-thanks.
+Reviewed-by: Ian Rogers <irogers@google.com>
 
-Please:
-
-  - Include a changelog below the "---" marker to tell me what changed
-    between v3 and v4.
-
-  - Don't include Reviewed-by from people who haven't explicitly
-    replied with that tag.  In this case, arguably you could retain
-    those from Christian and Niklas, because they did give that tag
-    for v3, and you only added the pbus_size_mem() change.
-
-    But Ilpo only gave you a comment on v3, and did *not* supply his
-    Reviewed-by.  You should never create a Reviewed-by tag in that
-    event.
-
-    I dropped all the Reviewed-by tags for now; happy to add them
-    if/when the reviewers actually supply them.
-
-> ---
->  drivers/pci/pci.c             | 4 ++--
->  drivers/pci/setup-bus.c       | 2 +-
->  include/uapi/linux/pci_regs.h | 2 +-
->  3 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 661f98c6c63a..77b9ceefb4e1 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -3752,7 +3752,7 @@ static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
->   * @bar: BAR to query
->   *
->   * Get the possible sizes of a resizable BAR as bitmask defined in the spec
-> - * (bit 0=1MB, bit 19=512GB). Returns 0 if BAR isn't resizable.
-> + * (bit 0=1MB, bit 31=128TB). Returns 0 if BAR isn't resizable.
->   */
->  u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
->  {
-> @@ -3800,7 +3800,7 @@ int pci_rebar_get_current_size(struct pci_dev *pdev, int bar)
->   * pci_rebar_set_size - set a new size for a BAR
->   * @pdev: PCI device
->   * @bar: BAR to set size to
-> - * @size: new size as defined in the spec (0=1MB, 19=512GB)
-> + * @size: new size as defined in the spec (0=1MB, 31=128TB)
->   *
->   * Set the new size of a BAR as defined in the spec.
->   * Returns zero if resizing was successful, error code otherwise.
-> diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-> index 5e00cecf1f1a..edb64a6b5585 100644
-> --- a/drivers/pci/setup-bus.c
-> +++ b/drivers/pci/setup-bus.c
-> @@ -1059,7 +1059,7 @@ static int pbus_size_mem(struct pci_bus *bus, unsigned long mask,
->  {
->  	struct pci_dev *dev;
->  	resource_size_t min_align, win_align, align, size, size0, size1;
-> -	resource_size_t aligns[24]; /* Alignments from 1MB to 8TB */
-> +	resource_size_t aligns[28]; /* Alignments from 1MB to 128TB */
->  	int order, max_order;
->  	struct resource *b_res = find_bus_resource_of_type(bus,
->  					mask | IORESOURCE_PREFETCH, type);
-> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-> index 1601c7ed5fab..ce99d4f34ce5 100644
-> --- a/include/uapi/linux/pci_regs.h
-> +++ b/include/uapi/linux/pci_regs.h
-> @@ -1013,7 +1013,7 @@
->  
->  /* Resizable BARs */
->  #define PCI_REBAR_CAP		4	/* capability register */
-> -#define  PCI_REBAR_CAP_SIZES		0x00FFFFF0  /* supported BAR sizes */
-> +#define  PCI_REBAR_CAP_SIZES		0xFFFFFFF0  /* supported BAR sizes */
->  #define PCI_REBAR_CTRL		8	/* control register */
->  #define  PCI_REBAR_CTRL_BAR_IDX		0x00000007  /* BAR index */
->  #define  PCI_REBAR_CTRL_NBAR_MASK	0x000000E0  /* # of resizable BARs */
-> -- 
-> 2.43.0
-> 
+Thanks!
+Ian
 
