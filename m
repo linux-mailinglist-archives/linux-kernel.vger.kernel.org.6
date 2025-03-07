@@ -1,200 +1,248 @@
-Return-Path: <linux-kernel+bounces-550434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C0C1A55F90
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:36:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC441A55F91
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:36:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D07067A898A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:35:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22E36177796
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386E71922DC;
-	Fri,  7 Mar 2025 04:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80297198E6D;
+	Fri,  7 Mar 2025 04:36:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ldKGQrHC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Eij9S78a"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7E913CA9C;
-	Fri,  7 Mar 2025 04:35:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741322143; cv=none; b=kGHFzkzqjNFxu5bcSEWpa9j6PYNtJtP7pWwh8MMEXoM754VOpbIBpsHJ3FpbjqSKCUi4LPaYBdF4qkefZWc4c0nYPbg0Ifv7lx7UeUXIOLGGn+oF4TZRWl3PmdKH/L5gwhm4Z18Shb9Gxrx2cMC/9yG4YZHYNuSyWgsnnasPcuQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741322143; c=relaxed/simple;
-	bh=KL01593/zSX4Xb5hwQBCHJDAckIJ37QdEuF5jXeWgJ8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Jky6HbLzBaBDhl3R8Nv1INCg4bmbZq3I3AElUSjq7dzh+nSAbyru62w4MGFEFDT+KMWG84KxIIfr9+Bfo5Hyzs+Zan1XcFLgMa872m2QXAy7AFBMnfVVsAv/AoWfFjgAVS/ZQoKgRUXblW8Os2/DbrfeZByvsHp4gp7HJ2GsXk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ldKGQrHC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5266C4CEE9;
-	Fri,  7 Mar 2025 04:35:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741322143;
-	bh=KL01593/zSX4Xb5hwQBCHJDAckIJ37QdEuF5jXeWgJ8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=ldKGQrHCCCBRKwxBBjQ7/sdDNo9UDRM9Wuk4aXL/VrX1QWc9XvIPKvuRu7T8kyCAz
-	 VsuiJ5Z/QO4QUG/SxMtNtVWspKFytYNeOOUuseFIIcKEjLRPpkwu52F1VYFZlqa56m
-	 OrYLW5UImkUOXbsCO4SoHXaXpWBZ9OzryLoqdNdE+5/ML0dQ1BAAlLBKviO/tTJaYR
-	 jxqjGGtrSgSehHdEfSUiUSvgH3PfvLnDO3FB5BZes2EDMGY5bNbdLJQyfuXQyGoUI8
-	 d6ANHFMxFlgYXjydA/YWUMQ8WjMow2EBF7RizBcdJkbLLh/+Y9cpyOs5M4b5Hd16iH
-	 z1UHTNk19h3Dw==
-From: Dmitry Baryshkov <lumag@kernel.org>
-Date: Fri, 07 Mar 2025 06:34:49 +0200
-Subject: [PATCH RFC v3 7/7] drm/display: dp-tunnel: use new DCPD access
- helpers
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15C571922E1
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 04:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741322161; cv=fail; b=dIYCkzeXI3jLaORaheU5QAp/pdJVclOl4G7/0+/51dfAbj2j2o3Til49juDfkJlefCuY2EVNwSC2UMe7oU8htC41P1prwt5mf+XzYgnB7pUma8oua8cbjHqHZJR9O2u2QkhzwQ1AmPtQtgwP/NXFgnJ8sc0r1sW1eC7NZuP2bFk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741322161; c=relaxed/simple;
+	bh=taoJ8BPwRz94Yd9gMqlxLZaJ/eR8yaHYEG0Vn4VjCLo=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=EiyjyQ+YwJkoz7MwDIdS49TLaNWxl7DFOIV6qRZ8adaq59tCoTeBFoxVP88t5mhbtAHBWivqTc5Jd1h/tJdG07WQjHOJqDcD3ojPtwC+6yU3+r7XizQ98KZvFnixFH1dCy5tvgpfWFS3+NNZ2FeQDzlXmYGffB/idupTE4ZbqNQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Eij9S78a; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741322161; x=1772858161;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=taoJ8BPwRz94Yd9gMqlxLZaJ/eR8yaHYEG0Vn4VjCLo=;
+  b=Eij9S78aTn8GFRQyPH9j6fwtpQFKjpRo2IHfyztXEnO1+xq9l6nDkB69
+   bkjic8MsD1q6bXfwWB3BDNGKE+3WE1Wr7AQU8jRIqXYt/JwPXNVj9Dz5T
+   PKRnBhpEV0BZbJ9azXbBxCgX6QbCpPEgi2bJgcWQXc20O2tgLkwcJq6z4
+   RSx6GA3koWr38IuhXeHLGOiTmnmHLP0ClMlzElLpNWOpGjUF1uNgPz5zw
+   SyHLD0mWwy2i7ToclgmyWmixTupCDrufkkAfsYyFWAzPVoYGaQk3j2VYL
+   9y0tMStoL6GuRBE//X7t5EAsyuCp+0cNNwW3iFzktUP3JHbtvXexhKHx2
+   A==;
+X-CSE-ConnectionGUID: ll32OMMjSZ2z1rXDDcGKsw==
+X-CSE-MsgGUID: 1nkIsOt5S6K1vavwpaOdVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42559581"
+X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
+   d="scan'208";a="42559581"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 20:36:00 -0800
+X-CSE-ConnectionGUID: cUV5uDTHQySKjm2qLV1E3w==
+X-CSE-MsgGUID: bhR3XIHgQaiUQFkxayrLeA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
+   d="scan'208";a="124145404"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 20:35:59 -0800
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 6 Mar 2025 20:35:58 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14 via Frontend Transport; Thu, 6 Mar 2025 20:35:58 -0800
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.49) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Thu, 6 Mar 2025 20:35:58 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=oSGn7WeIKF6IwRMOel/wCNxO2g+GHjS63DDI/hU9wDZHL92ISs7Q7MzBPgSoCpLl1rqrUza/o1ZbHe/1g3t21HrKo2nZcBeSBv/EvhCxNIsOjV6Ou1pwje6usajwQr/Y+m80TAHtVb6UjshVe7g4ezhevXecNhsOQNFM3Uyr6DhotQCFo371JadD15qhj/rAfrjmzHeRI3Tw6ts+YcUD9QRReHBXLXVTZ5TFmc7GA/hAE8vwdDtmGEDiNRaAaK70A1xr+HCPc1zb7S+29leZaLJY9Jq76ci8SQhIQMKfIJitCvKH+QwySWvD5cJ7adCR89sp3TBRIv0vG7o8ow87Nw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TMIEXpTpcB4YIVnYz5sT7DdFqMhVNz/9l3hMMv60bHo=;
+ b=AGBZZ3mK9aoybP4300y3uoEFRx7sdkp5RLGO0urJP5nxy+3gHNp1n2E2DCAIveSrTyMQ1lKJk9jX/EAaYxoncvX6YUmha5lFiSf/EL77UPXTVFWq/ghOtZKPt5ArAt2NLjckRwylEqXMrNLokVptQuHo1jVYUtaWWNgEExj91U4woWCgV6c4WylLGSsl4Sec1suak2ub+E2xGh4k+Tub6FcN/q1gUrzLB/Z2Od7pHvj6W8k5VyJCYwFEemtVa0h7dyuprBN8KdmR6dd1L0QLsLBUXdR69LSjnaM95NDTRk/GYd60wSkg88gNF1ue+fm7izXsStOP+BQ7iIWmBz0n9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by SA1PR11MB6824.namprd11.prod.outlook.com (2603:10b6:806:29e::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Fri, 7 Mar
+ 2025 04:35:23 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%4]) with mapi id 15.20.8511.020; Fri, 7 Mar 2025
+ 04:35:23 +0000
+Message-ID: <117d83ab-aa02-4372-b15a-a4516ad5f0fb@intel.com>
+Date: Thu, 6 Mar 2025 20:35:18 -0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 18/49] x86/resctrl: Move the is_mbm_*_enabled() helpers
+ to asm/resctrl.h
+To: James Morse <james.morse@arm.com>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>, Babu Moger
+	<Babu.Moger@amd.com>, <shameerali.kolothum.thodi@huawei.com>, "D Scott
+ Phillips OS" <scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+	"Dave Martin" <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>, Shanker
+ Donthineni <sdonthineni@nvidia.com>, <fenghuay@nvidia.com>, Shaopeng Tan
+	<tan.shaopeng@jp.fujitsu.com>, Tony Luck <tony.luck@intel.com>
+References: <20250228195913.24895-1-james.morse@arm.com>
+ <20250228195913.24895-19-james.morse@arm.com>
+From: Reinette Chatre <reinette.chatre@intel.com>
+Content-Language: en-US
+In-Reply-To: <20250228195913.24895-19-james.morse@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR03CA0043.namprd03.prod.outlook.com
+ (2603:10b6:303:8e::18) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250307-drm-rework-dpcd-access-v3-7-9044a3a868ee@linaro.org>
-References: <20250307-drm-rework-dpcd-access-v3-0-9044a3a868ee@linaro.org>
-In-Reply-To: <20250307-drm-rework-dpcd-access-v3-0-9044a3a868ee@linaro.org>
-To: Lyude Paul <lyude@redhat.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
- Jani Nikula <jani.nikula@linux.intel.com>, 
- Alex Deucher <alexander.deucher@amd.com>, 
- =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Xinliang Liu <xinliang.liu@linaro.org>, Tian Tao <tiantao6@hisilicon.com>, 
- Xinwei Kong <kong.kongxinwei@hisilicon.com>, 
- Sumit Semwal <sumit.semwal@linaro.org>, 
- Yongqin Liu <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org, 
- intel-gfx@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
- amd-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@intel.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4082;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=AezDpTs9i2rYRC6AeDwZvqAV87zlWZZG2GdTd51PPFs=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnyndm4YmJ13M13g50Hz9Sq+c+qDBc7tzhUsJZc
- 26viUPY20iJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ8p3ZgAKCRCLPIo+Aiko
- 1X8sB/4888qcKk/8zGB7aMpCxYduTg4THzLpcYD8TWj2W/90FyWWaqO73ENLrgFchxmmyfbNS8a
- uDYKawkLTsjbg4Hf0lxnxHrxmcerpAVcQeOZO1haVm1oU2Uoytx/uWdHsaDk5Y8thUE6X67vXjl
- G+bTSCZk7ALEbOVQYznsizRJchJw5FrA9YoosnZARbCDWrcSLHrcWs1lgiKBFDw/FbgWSqB2jb7
- pqstTbcI6TmS3kiK0BjHUVuaVqtuwFf0lhzfJF0ECNE3rAeSFHqjo4lF8WI6n7iA1OXyZAOof+P
- mKnSCpQbwrKULU5PBolPo0HltA8pk1y+F5Gx/VcSbMJAyDI/
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|SA1PR11MB6824:EE_
+X-MS-Office365-Filtering-Correlation-Id: a31c6caa-be48-4cbc-fcba-08dd5d31799e
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?N1VKZ0xCekI1c2Rpa0NRVXpzUVVlWjhVaXFhbVNsajA5akQxZmN6c2NON0VV?=
+ =?utf-8?B?OGN0MGJ1MGlnL3hkYVVzUjFyVnM0bno5dHpZSzNhS3VqK2tOeTdjSEU5aGdp?=
+ =?utf-8?B?OERMWndBckVUdUh6Z2tNY1NwM1dyLzZNQTdURTlVK0k5eTRHOFZlVm5qZ2Iy?=
+ =?utf-8?B?Y2VRYXRsUVlOcG1vNEJBREo0SmdnclRINCthMC9uY1ZuODZMSGwxS2NhS0pC?=
+ =?utf-8?B?bFFXREl0WjJsTWkvVDFITVRzc3pZV3hGS2wrU0R3dU0xR29QQjFSTGNCeWdO?=
+ =?utf-8?B?c0FPOWlUbUZOeWFzYnlWbU0zSE5KVVM5UE9TMUZzS1VMVFphSjEzVlJJRGV5?=
+ =?utf-8?B?dmtCUXl3NUZNVE1OZFdjUVVpdnFwNC9mYXNGMWdleFEyYWlqWkNXbDFQUUV5?=
+ =?utf-8?B?dXg3NnV2MThYdGtya01QYkQxWGpabUVPZjJyK2pZTk5RK3ViK0JqNkdFYWQ1?=
+ =?utf-8?B?SU9rV0ZBYzlzT0NzTzkzM1hKa0pKeHpndmlNWmhzK2VmWFdEV0YyL2UzS1J1?=
+ =?utf-8?B?c1NaRWQyOXB2alZRempNYVdtTENBVFhqakZaUkNpNlAwL1JrejBSTHpXcW5P?=
+ =?utf-8?B?TDJjSzlRN205OTUwaFRIK3dQV0ZUNHc4WUFqd2szWVVuamluK1RlMVNmWXBz?=
+ =?utf-8?B?OFFLdDFhSzRPbmJPNkF4aFJnM2Q4b3h3bGJaWnBqT3pDVzFSMGI1SktFKzRa?=
+ =?utf-8?B?Y3ZOcFY2SzFqaHI5TTgvVkpFRGc3QTFncnlHbkFkbXlCeHNwbUN6Rm5uKytn?=
+ =?utf-8?B?K3p1clNma3lEbXdJK0VLeU4xdTlUdFNOamtMUmg5S2tqRUdEL1JQWW9zbk9m?=
+ =?utf-8?B?MUltRjRhakwydjc5ZmVhK3QzR0VDc0orUjdVWHRhc2IzSUVaa1k5QktPWXpT?=
+ =?utf-8?B?OTNTMlJUZE9xaU9zclBabkNkSW1NOGEvUndPTlFoVkVvV3RYQnk1OTA2M2V3?=
+ =?utf-8?B?T2NaZWxDUHlJdnZ1eGNLSG1CK240ajV5QzhRSkxSVkpNRmwwZWVydVNFNjlz?=
+ =?utf-8?B?NzB0Z3J4OThRWDNZOUl5L3F4OW5RNWtpSVhPeEpCSVhxcDFJVlgveGZqOWdK?=
+ =?utf-8?B?UkR4MDVEUDA4RzNoN3pkcFVkMW95aHZPTXpZa3Y2TUNBSXBPbC9iY0xhQ3Jq?=
+ =?utf-8?B?RlRxcFpBM0hXRE5UcHNkSDN2R2RITkNuNHZBNm5rR0VBVG1XUktIbS8vcE9Z?=
+ =?utf-8?B?bjFYbWNYb1ZiYkRkS0FkaUNMN3oyR2Mvd0dhd01jYWZLTlNUZzhDRkk5bFh5?=
+ =?utf-8?B?NnErYyswOHZnR3cvaVZwZGlzdmJSYXdaS3ZkeHBFdzlPaURkZnFJSHpvaEZJ?=
+ =?utf-8?B?a3ZWQlZwaVdraXVsUFdjRWxuVFpUN1pZb1dGUlNYdEFsMGtENTF0bkNLNnVx?=
+ =?utf-8?B?ZWhySDQ2NmJoUTBpbzhiTDdNVVMxalRrcUNJcU5PQWtWUk9WeVk2UStwY3gr?=
+ =?utf-8?B?bnp2NjJuZVBUT2ltaXFtUlNyVHEvNkV4dTYyUXBzcVdPektLa3pGakdVZXZF?=
+ =?utf-8?B?eHBwQUxyVnNKTDgzemNhbnFETWw5MjdZTHRabmVHVWdvQUhjNzhjanhaU2FG?=
+ =?utf-8?B?SVNZUVpPTTBzaUpBenRtN2JOU1NhYVZVK0tBQ3Z5KzM1TDNMNWpJelZ1Znlx?=
+ =?utf-8?B?QmZZWFBUTEkwNmlBYUFvd3cxcmZXbW5Hbm5na3pVUkIxNGUxQVhJV1lQTWFO?=
+ =?utf-8?B?YXI4Y1FTd21SNTVwOUJjS1pIb3FDZUprREZMMmczZnNEUTF5YUVlUHZrMmZu?=
+ =?utf-8?B?czM5OW1nYXU0bVJpQ2pyVlpBRjdLeStldHRDZ3JpZDZUSkZuOExsallMRmtj?=
+ =?utf-8?B?cmhYQU44Uyt5YzZtSURBeG9TOTR6bldzRlc4M0xxalkrZnlaa01oY3F4d0NE?=
+ =?utf-8?Q?xBMiBHbzKxOoy?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?UmlXQWtRZmZIcWE3Z0Z5Q3hROTdWRG9kdlhjYndncmlOZythZHBtQnNPNFVh?=
+ =?utf-8?B?amZWeDJnK1NjaVVOSnVMaVVLNmtFdXJNUVpCYU9RZnJEdWhUdHlvTkpwOG05?=
+ =?utf-8?B?UHppSWFvWEJzbzkzV2F5Z2JMdis1RTJZb2pMSXk5SlJCK0g0blk2U25yNFBD?=
+ =?utf-8?B?Ym5nREhUQmYxQ3l0ZE5uNEwyZzRXU2dKWUpqNDVWM0NRMlhkL0laMG03aC9U?=
+ =?utf-8?B?SmgyWXorV0hKdVJrMlM0VHhnTXBZT0IzckN5d3k4cnJVTjZ5TGU1a0ppdmJs?=
+ =?utf-8?B?SXFOcHJMb3JpZVpkcmVBWTZtYjZ2dzhCNGd4TlBncGVRaCtPSVhhdGlZV1F0?=
+ =?utf-8?B?bEhMMHVGaXB1cmhhcFV0YnNDV3A3R3RNdWZ5d1lYV05zZ3ZXSEl4dFRyQVBi?=
+ =?utf-8?B?ZVYzVlFKTHdhazdiUFg5UVNKaHhvTHhmVStvajE4d2dsNlN1OG43VERCVitz?=
+ =?utf-8?B?SDRxdHpsK21OL0puZzU1d2tldVIvelNjNWZ6MVlmWEljaGxjUmpSUnpyc1Jr?=
+ =?utf-8?B?MndBQ0I2RW1KVHBxeTQ0RS9qSTcrVUxWdllhUUJ1ZUVRamhHcjBhQy8ycHV0?=
+ =?utf-8?B?Q3NocVNxeE1JKzcwTXRXM0piZ1RiQ0YxaUNVWTRETWRjTHlsRzU5cGNjU05D?=
+ =?utf-8?B?OW1qMThWWG94MGlYUWtFUzBxRGpNOW10U0lHTjkyS3lsMlc2MXdKcWFKY1RQ?=
+ =?utf-8?B?bFl3UTFnWVJ6TTM4b0hOaklvY0hTK1FHdkFXcFAwVVR4SnBkRGFqeE9HeXVZ?=
+ =?utf-8?B?eGpoV1ppYW54WTVMYlNQR2JKcmNQQ09DdG9CVTZzbGo3U0dFS2Fqa3BIc0Zx?=
+ =?utf-8?B?ZnE3NTRTdjBqcytCK1diWnYwb2pQaHJ3NCtNRE0rcFdUSitDSjVvb0pWdE1R?=
+ =?utf-8?B?YVAvdlZ3ZUp3R1BqVmNRTU9oeitBcmNvZ1BiaG1Gdm9iWUQ4YzJLVzNVN0JG?=
+ =?utf-8?B?c1dCdzRXenZCdlBuWk05OUVzeEZHNE5PY1orZ3NuWHFUdDREQjN1MDl2UFZB?=
+ =?utf-8?B?VWVjRndZUFBxc3NIOGY4L2t4M3I3YkxHYy95amJlUm41bVAzK3N6TngvUjU2?=
+ =?utf-8?B?ak81ZTNQSW9QcFdXTm5xazRtV0FwMDdveVhucW1qRnVzZXNJUHRBSlFpM1VE?=
+ =?utf-8?B?SUdxK2pSbGYyZjRBb0pwbWNCK1kydzNLTWhhRi81SXVlSUtLS3J5V2E5UmlB?=
+ =?utf-8?B?Zy9SQjlqRWxzakNUeGFIQ1luc3B4ZCtXc0l1V1VVU3R4elNYUENnaDVlQXVi?=
+ =?utf-8?B?cHNYMjRHTmtqZVN2VlRmR2JNc05ITkozRVpkRnU2eTRGN1Raa0pPRFdVZjBs?=
+ =?utf-8?B?MlBRbkxLTEZjblhaSEZOWklGQzRjMGoxWE1MS0ZBYzcrSG9JTEQ0N0pUVDRX?=
+ =?utf-8?B?b2huaVJnZDIrQ210c3laUXVFc1ZaR1F0N2pUSk1lVkdwNjVyTEZKZE54aFBl?=
+ =?utf-8?B?VG1pZ1I0c201RVNBNU0vTUVjcUg5UmZGSmFJcGlLblJCNlg3OExmNFl1SWxC?=
+ =?utf-8?B?NUNIOHA5MnhWdzZKMzlDRVROMi9ER2Yyc1FISDBIdlhnV21zbmxVY21pQlRY?=
+ =?utf-8?B?U09YTWE1c2xjTUZha3NldFpuYWlIRklndEpPVkVVU2xiKzYvTUlEdi8xR3BX?=
+ =?utf-8?B?cDFzQktseXdTakFyVDFvdS9LUXB1TWlvd0VINFFBR0VsN1B2dlc1SXVyUTJD?=
+ =?utf-8?B?bCtVYlIrdk1ScGkxKzZBU3F2b1kyY0VUeFVKLzdkNXFSMnpVWkdvUG1TOTlR?=
+ =?utf-8?B?ZVFINThVQnROQURaQ3laL256YjZ0QWpqL0dKcmFWTTV5RnlPdzk4VnVEQkxY?=
+ =?utf-8?B?MktQSFU2Q1VaS294Nmo5c0NIV2tRMERTVm9ldm55T1RrMk51VHdIdlNyNDV0?=
+ =?utf-8?B?Q0xFN1FnUWR5anRnNDFSZWVHZEtBYjNzVkNBZmN0STJUWUhFRkh0aW5TbDNx?=
+ =?utf-8?B?SGpEdnJ2Vzl0ZFVnVW1RL2kveFVHQ2tpMDhicjd5U0p4emtMTUdTU1ErTGJR?=
+ =?utf-8?B?S0xTUUdNaFFHYlJ2SS9NNnQ5U1lnL1RBNHlTck13MWhNZ0xyQi9QcW5oUC9S?=
+ =?utf-8?B?b2pLWGE4RkhaMit6Z3NkTitYWk14RlZqZE5HVjYwTjg5T0dXOFF6T0lId05z?=
+ =?utf-8?B?Y0dscE5JeVBKMmpFV3FoWi95NEZ2RC9jRy91WnF0ZlNRRUEvUmxhUnFJWmJZ?=
+ =?utf-8?B?Znc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a31c6caa-be48-4cbc-fcba-08dd5d31799e
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 04:35:23.3058
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: wXd5ZegeqzoypGXWpQPQ1ZFCHZHtZSvdSq4nTYJjS39hXRIr4p2O7UH2yigb4F/gHfeL2ofT2V0WzntkYKRY5dAyjrXiXJfuEsDvrsAFBhQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6824
+X-OriginatorOrg: intel.com
 
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Hi James,
 
-Switch drm_dp_tunnel.c to use new set of DPCD read / write helpers.
+On 2/28/25 11:58 AM, James Morse wrote:
+> The architecture specific parts of resctrl provide helpers like
+> is_mbm_total_enabled() and is_mbm_local_enabled() to hide accesses
+> to the rdt_mon_features bitmap.
+> 
+> Exposing a group of helpers between the architecture and filesystem code
+> is preferable to a single unsigned-long like rdt_mon_features. Helpers
+> can be more readable and have a well defined behaviour, while allowing
+> architectures to hide more complex behaviour.
+> 
+> Once the filesystem parts of resctrl are moved, these existing helpers can
+> no longer live in internal.h. Move them to include/linux/resctrl.h
+> Once these are exposed to the wider kernel, they should have a
+> 'resctrl_arch_' prefix, to fit the rest of the arch<->fs interface.
+> 
+> Move and rename the helpers that touch rdt_mon_features directly.
+> is_mbm_event() and is_mbm_enabled() are only called from rdtgroup.c,
+> so can be moved into that file.
+> 
+> Signed-off-by: James Morse <james.morse@arm.com>
+> Tested-by: Carl Worth <carl@os.amperecomputing.com> # arm64
+> Tested-by: Shaopeng Tan <tan.shaopeng@jp.fujitsu.com>
+> Reviewed-by: Tony Luck <tony.luck@intel.com>
+> ---
 
-Reviewed-by: Lyude Paul <lyude@redhat.com>
-Acked-by: Jani Nikula <jani.nikula@intel.com>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/display/drm_dp_tunnel.c | 20 ++++++++++----------
- 1 file changed, 10 insertions(+), 10 deletions(-)
+Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
 
-diff --git a/drivers/gpu/drm/display/drm_dp_tunnel.c b/drivers/gpu/drm/display/drm_dp_tunnel.c
-index 90fe07a89260e21e78f2db7f57a90602be921a11..076edf1610480275c62395334ab0536befa42f15 100644
---- a/drivers/gpu/drm/display/drm_dp_tunnel.c
-+++ b/drivers/gpu/drm/display/drm_dp_tunnel.c
-@@ -222,7 +222,7 @@ static int read_tunnel_regs(struct drm_dp_aux *aux, struct drm_dp_tunnel_regs *r
- 	while ((len = next_reg_area(&offset))) {
- 		int address = DP_TUNNELING_BASE + offset;
- 
--		if (drm_dp_dpcd_read(aux, address, tunnel_reg_ptr(regs, address), len) < 0)
-+		if (drm_dp_dpcd_read_data(aux, address, tunnel_reg_ptr(regs, address), len) < 0)
- 			return -EIO;
- 
- 		offset += len;
-@@ -913,7 +913,7 @@ static int set_bw_alloc_mode(struct drm_dp_tunnel *tunnel, bool enable)
- 	u8 mask = DP_DISPLAY_DRIVER_BW_ALLOCATION_MODE_ENABLE | DP_UNMASK_BW_ALLOCATION_IRQ;
- 	u8 val;
- 
--	if (drm_dp_dpcd_readb(tunnel->aux, DP_DPTX_BW_ALLOCATION_MODE_CONTROL, &val) < 0)
-+	if (drm_dp_dpcd_read_byte(tunnel->aux, DP_DPTX_BW_ALLOCATION_MODE_CONTROL, &val) < 0)
- 		goto out_err;
- 
- 	if (enable)
-@@ -921,7 +921,7 @@ static int set_bw_alloc_mode(struct drm_dp_tunnel *tunnel, bool enable)
- 	else
- 		val &= ~mask;
- 
--	if (drm_dp_dpcd_writeb(tunnel->aux, DP_DPTX_BW_ALLOCATION_MODE_CONTROL, val) < 0)
-+	if (drm_dp_dpcd_write_byte(tunnel->aux, DP_DPTX_BW_ALLOCATION_MODE_CONTROL, val) < 0)
- 		goto out_err;
- 
- 	tunnel->bw_alloc_enabled = enable;
-@@ -1039,7 +1039,7 @@ static int clear_bw_req_state(struct drm_dp_aux *aux)
- {
- 	u8 bw_req_mask = DP_BW_REQUEST_SUCCEEDED | DP_BW_REQUEST_FAILED;
- 
--	if (drm_dp_dpcd_writeb(aux, DP_TUNNELING_STATUS, bw_req_mask) < 0)
-+	if (drm_dp_dpcd_write_byte(aux, DP_TUNNELING_STATUS, bw_req_mask) < 0)
- 		return -EIO;
- 
- 	return 0;
-@@ -1052,7 +1052,7 @@ static int bw_req_complete(struct drm_dp_aux *aux, bool *status_changed)
- 	u8 val;
- 	int err;
- 
--	if (drm_dp_dpcd_readb(aux, DP_TUNNELING_STATUS, &val) < 0)
-+	if (drm_dp_dpcd_read_byte(aux, DP_TUNNELING_STATUS, &val) < 0)
- 		return -EIO;
- 
- 	*status_changed = val & status_change_mask;
-@@ -1095,7 +1095,7 @@ static int allocate_tunnel_bw(struct drm_dp_tunnel *tunnel, int bw)
- 	if (err)
- 		goto out;
- 
--	if (drm_dp_dpcd_writeb(tunnel->aux, DP_REQUEST_BW, request_bw) < 0) {
-+	if (drm_dp_dpcd_write_byte(tunnel->aux, DP_REQUEST_BW, request_bw) < 0) {
- 		err = -EIO;
- 		goto out;
- 	}
-@@ -1196,13 +1196,13 @@ static int check_and_clear_status_change(struct drm_dp_tunnel *tunnel)
- 	u8 mask = DP_BW_ALLOCATION_CAPABILITY_CHANGED | DP_ESTIMATED_BW_CHANGED;
- 	u8 val;
- 
--	if (drm_dp_dpcd_readb(tunnel->aux, DP_TUNNELING_STATUS, &val) < 0)
-+	if (drm_dp_dpcd_read_byte(tunnel->aux, DP_TUNNELING_STATUS, &val) < 0)
- 		goto out_err;
- 
- 	val &= mask;
- 
- 	if (val) {
--		if (drm_dp_dpcd_writeb(tunnel->aux, DP_TUNNELING_STATUS, val) < 0)
-+		if (drm_dp_dpcd_write_byte(tunnel->aux, DP_TUNNELING_STATUS, val) < 0)
- 			goto out_err;
- 
- 		return 1;
-@@ -1215,7 +1215,7 @@ static int check_and_clear_status_change(struct drm_dp_tunnel *tunnel)
- 	 * Check for estimated BW changes explicitly to account for lost
- 	 * BW change notifications.
- 	 */
--	if (drm_dp_dpcd_readb(tunnel->aux, DP_ESTIMATED_BW, &val) < 0)
-+	if (drm_dp_dpcd_read_byte(tunnel->aux, DP_ESTIMATED_BW, &val) < 0)
- 		goto out_err;
- 
- 	if (val * tunnel->bw_granularity != tunnel->estimated_bw)
-@@ -1300,7 +1300,7 @@ int drm_dp_tunnel_handle_irq(struct drm_dp_tunnel_mgr *mgr, struct drm_dp_aux *a
- {
- 	u8 val;
- 
--	if (drm_dp_dpcd_readb(aux, DP_TUNNELING_STATUS, &val) < 0)
-+	if (drm_dp_dpcd_read_byte(aux, DP_TUNNELING_STATUS, &val) < 0)
- 		return -EIO;
- 
- 	if (val & (DP_BW_REQUEST_SUCCEEDED | DP_BW_REQUEST_FAILED))
-
--- 
-2.39.5
-
+Reinette
 
