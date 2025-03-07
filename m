@@ -1,227 +1,177 @@
-Return-Path: <linux-kernel+bounces-550939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599F1A56644
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:08:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E56D7A56647
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:08:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D3413ADBE8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:07:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABC083AFEB7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:07:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5AE2153E1;
-	Fri,  7 Mar 2025 11:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4060215168;
+	Fri,  7 Mar 2025 11:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="hwBRG6rU"
-Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PiEGhJPK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15966215197
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 11:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB3320E00F;
+	Fri,  7 Mar 2025 11:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741345660; cv=none; b=bgHNNvmTLPnzekjxzppMYNtr7DmubFFrMtYj/4VQI46D8X1LWO66jK4GZ47sjW3znKfFxKomaMyELkzNgGDx6C3bJJrFzc8Wt7xSUg+5kwzj6C10iSL22LdTPXo221S9LYrVRzoHJLBEUApK9YNIAfCvDxdKsz5rRYcRtaTCglM=
+	t=1741345670; cv=none; b=pcjUksTt9+ZYkztXSFX12/LVLjlyQ+4+U9qcer6V2t3yOdu7AXTRgCKG0XVfpPQctP5vXu/Q8cqvHMawp2tqJ1R1RlmQ7LyEe7/M32VFKHqjjJG93Mr9VkisvrWGjifo1sE5capzqLWsODDeESKqnkqzSr8Ks0xjhKnEBNofL7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741345660; c=relaxed/simple;
-	bh=/A415OXCljgCpImr+LiL3rliHR1Kpik1EOR0GpHxRHE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ss156NM0ErlHuZDsXQEBiQwzFQAvdxKPDi3QDhH6SCwSzyKZuMEjsUWyyhBhFUsxjRYbsnx1mllj6JjKJMNM5KiqmGd5tisP6dX6fNQUOq+R0jYmelP3K2mIwXgTPNy0RPBNFiCaeFcOpFh7kyoF9w8RpBR0MMXzALlrpnyNX1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=hwBRG6rU; arc=none smtp.client-ip=99.78.197.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
-  t=1741345660; x=1772881660;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ozKm3p/1bKf/AhBeeR6IaQNzX87wcW5t5NwVauHrMuk=;
-  b=hwBRG6rUpzGjRACj8XXlYAHsD73Ppyk2Gwus6xCaMfJF22DVbh03z6l8
-   k3cjD9s9DVqnXXCtvOKX2LCaaK8fj96WwTsylXDmENd9wDGGY+FJiLBrN
-   2AK/NlGnbl1SphNjVatUks1sbxJAjgi58AcU/vZ3tDZageK0s0LBoOtR8
-   A=;
-X-IronPort-AV: E=Sophos;i="6.14,229,1736812800"; 
-   d="scan'208";a="384183580"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 11:07:38 +0000
-Received: from EX19MTAEUA002.ant.amazon.com [10.0.17.79:15199]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.26.251:2525] with esmtp (Farcaster)
- id d0e31d44-bf5a-4bd0-a2a5-1a8b79685ab4; Fri, 7 Mar 2025 11:07:36 +0000 (UTC)
-X-Farcaster-Flow-ID: d0e31d44-bf5a-4bd0-a2a5-1a8b79685ab4
-Received: from EX19D018EUA001.ant.amazon.com (10.252.50.145) by
- EX19MTAEUA002.ant.amazon.com (10.252.50.124) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 7 Mar 2025 11:07:34 +0000
-Received: from EX19MTAUEA002.ant.amazon.com (10.252.134.9) by
- EX19D018EUA001.ant.amazon.com (10.252.50.145) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 7 Mar 2025 11:07:33 +0000
-Received: from email-imr-corp-prod-iad-all-1a-47ca2651.us-east-1.amazon.com
- (10.43.8.2) by mail-relay.amazon.com (10.252.134.34) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 11:07:33 +0000
-Received: from dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com [10.253.65.58])
-	by email-imr-corp-prod-iad-all-1a-47ca2651.us-east-1.amazon.com (Postfix) with ESMTP id 7384D408DF;
-	Fri,  7 Mar 2025 11:07:33 +0000 (UTC)
-Received: by dev-dsk-hagarhem-1b-b868d8d5.eu-west-1.amazon.com (Postfix, from userid 23002382)
-	id 2F74120DB5; Fri,  7 Mar 2025 11:07:33 +0000 (UTC)
-Date: Fri, 7 Mar 2025 11:07:33 +0000
-From: Hagar Hemdan <hagarhem@amazon.com>
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-CC: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Steven Rostedt <rostedt@goodmis.org>, "Ben
- Segall" <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
- Schneider <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>,
-	<abuehaze@amazon.com>
-Subject: Re: [PATCH] /sched/core: Fix Unixbench spawn test regression
-Message-ID: <20250307110733.GA10571@amazon.com>
-References: <20250306162635.2614376-1-dietmar.eggemann@arm.com>
+	s=arc-20240116; t=1741345670; c=relaxed/simple;
+	bh=rgT8i8tyBP7pokCoQkNIYajjWNrb3s+Avn54oqy9LSE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Jz3/pYRwjWDj0J2l9dgpDdkuPAZFIMrN4o7SPz3oYDYrbla167R3jCtPl0f6mAHT2Nc7kS01W5jKfNtV+qDkrKJmXe7YjCi3Dl5vgM55ei3Xr/6RDqR+LLyFUPLoGSxbBq0PiQIEhoGFUdMdC+k+zNHSPkevmcXKiHo5plCgzv8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PiEGhJPK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6669C4CED1;
+	Fri,  7 Mar 2025 11:07:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741345669;
+	bh=rgT8i8tyBP7pokCoQkNIYajjWNrb3s+Avn54oqy9LSE=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=PiEGhJPK/aoKV9R7q2VwalT0ZD42Dm5s3f7ypkNYshykx2hW/OfPZGhTrtais1rkk
+	 wk8KZQVnljHB7t6dOQvXD2QlKs7PtohW0W1xy72uERZSDtMWAzUcMBEZ0R20hgQ0Zl
+	 OtFeW5vwYvsHoz4iSLAF06/BNBN82ETA7CIX5kylZ2V9DHNeAGFzq+LH1Ytkg91I7n
+	 ekgK0FaGsEpMyRbfXrI9qwjgHYd3R8wdH9qsy3fteUMLnGYG3YLx69+vxgyjUBCEpJ
+	 jpjqvlO+4920NOb9T+EHd7rnK0KYJv7o9pUR+sMm/Zl86iBV+94O1KQ1FEyO1VOejz
+	 rTSww6iy+Mq+Q==
+Message-ID: <77acf3fbd9946522d1b18a6e8a05000465b72f40.camel@kernel.org>
+Subject: Re: [PATCH 1/2] NFSD: unregister filesystem in case
+ genl_register_family() fails
+From: Jeff Layton <jlayton@kernel.org>
+To: Maninder Singh <maninder1.s@samsung.com>, chuck.lever@oracle.com, 
+	neilb@suse.de, okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, 
+	lorenzo@kernel.org
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	chungki0201.woo@samsung.com
+Date: Fri, 07 Mar 2025 06:07:47 -0500
+In-Reply-To: <20250306092007.1419237-1-maninder1.s@samsung.com>
+References: 
+	<CGME20250306092017epcas5p30812b135b484fdea1f96739635df1d79@epcas5p3.samsung.com>
+	 <20250306092007.1419237-1-maninder1.s@samsung.com>
+Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
+ keydata=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
+ QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250306162635.2614376-1-dietmar.eggemann@arm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
 
-On Thu, Mar 06, 2025 at 05:26:35PM +0100, Dietmar Eggemann wrote:
-> Hagar reported a 30% drop in UnixBench spawn test with commit
-> eff6c8ce8d4d ("sched/core: Reduce cost of sched_move_task when config
-> autogroup") on a m6g.xlarge AWS EC2 instance with 4 vCPUs and 16 GiB RAM
-> (aarch64) (single level MC sched domain) [1].
-> 
-> There is an early bail from sched_move_task() if p->sched_task_group is
-> equal to p's 'cpu cgroup' (sched_get_task_group()). E.g. both are
-> pointing to taskgroup '/user.slice/user-1000.slice/session-1.scope'
-> (Ubuntu '22.04.5 LTS').
-> 
-> So in:
-> 
->   do_exit()
-> 
->     sched_autogroup_exit_task()
-> 
->       sched_move_task()
-> 
->         if sched_get_task_group(p) == p->sched_task_group
->           return
-> 
->         /* p is enqueued */
->         dequeue_task()              \
->         sched_change_group()        |
->           task_change_group_fair()  |
->             detach_task_cfs_rq()    |                              (1)
->             set_task_rq()           |
->             attach_task_cfs_rq()    |
->         enqueue_task()              /
-> 
-> (1) isn't called for p anymore.
-> 
-> Turns out that the regression is related to sgs->group_util in
-> group_is_overloaded() and group_has_capacity(). If (1) isn't called for
-> all the 'spawn' tasks then sgs->group_util is ~900 and
-> sgs->group_capacity = 1024 (single CPU sched domain) and this leads to
-> group_is_overloaded() returning true (2) and group_has_capacity() false
-> (3) much more often compared to the case when (1) is called.
-> 
-> I.e. there are much more cases of 'group_is_overloaded' and
-> 'group_fully_busy' in WF_FORK wakeup sched_balance_find_dst_cpu() which
-> then returns much more often a CPU != smp_processor_id() (5).
-> 
-> This isn't good for these extremely short running tasks (FORK + EXIT)
-> and also involves calling sched_balance_find_dst_group_cpu() unnecessary
-> (single CPU sched domain).
-> 
-> Instead if (1) is called for 'p->flags & PF_EXITING' then the path
-> (4),(6) is taken much more often.
-> 
->   select_task_rq_fair(..., wake_flags = WF_FORK)
-> 
->     cpu = smp_processor_id()
-> 
->     new_cpu = sched_balance_find_dst_cpu(..., cpu, ...)
-> 
->       group = sched_balance_find_dst_group(..., cpu)
-> 
->         do {
-> 
->           update_sg_wakeup_stats()
-> 
->             sgs->group_type = group_classify()
-> 
->               if group_is_overloaded()                             (2)
->                 return group_overloaded
-> 
->               if !group_has_capacity()                             (3)
->                 return group_fully_busy
-> 
->               return group_has_spare                               (4)
-> 
->         } while group
-> 
->         if local_sgs.group_type > idlest_sgs.group_type
->           return idlest                                            (5)
-> 
->         case group_has_spare:
-> 
->           if local_sgs.idle_cpus >= idlest_sgs.idle_cpus
->             return NULL                                            (6)
-> 
-> Unixbench Tests './Run -c 4 spawn' on:
-> 
-> (a) VM AWS instance (m7gd.16xlarge) with v6.13 ('maxcpus=4 nr_cpus=4')
->     and Ubuntu 22.04.5 LTS (aarch64).
-> 
->     Shell & test run in '/user.slice/user-1000.slice/session-1.scope'.
-> 
->     w/o patch	w/ patch
->     21005	27120
-> 
-> (b) i7-13700K with tip/sched/core ('nosmt maxcpus=8 nr_cpus=8') and
->     Ubuntu 22.04.5 LTS (x86_64).
-> 
->     Shell & test run in '/A'.
-> 
->     w/o patch	w/ patch
->     67675	88806
-> 
-> CONFIG_SCHED_AUTOGROUP=y & /sys/proc/kernel/sched_autogroup_enabled equal
-> 0 or 1.
-> 
-> [1] https://lkml.kernel.org/r/20250205151026.13061-1-hagarhem@amazon.com
-> 
-> Reported-by: Hagar Hemdan <hagarhem@amazon.com>
-> Signed-off-by: Dietmar Eggemann <dietmar.eggemann@arm.com>
+On Thu, 2025-03-06 at 14:50 +0530, Maninder Singh wrote:
+> With rpc_status netlink support, unregister of register_filesystem()
+> was missed in case of genl_register_family() fails.
+>=20
+> Correcting it by making new label.
+>=20
+> Fixes: bd9d6a3efa97 ("NFSD: add rpc_status netlink support")
+> Signed-off-by: Maninder Singh <maninder1.s@samsung.com>
 > ---
->  kernel/sched/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> index b00f884701a6..ca0e3c2eb94a 100644
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -9064,7 +9064,7 @@ void sched_move_task(struct task_struct *tsk)
->  	 * group changes.
->  	 */
->  	group = sched_get_task_group(tsk);
-> -	if (group == tsk->sched_task_group)
-> +	if ((group == tsk->sched_task_group) && !(tsk->flags & PF_EXITING))
->  		return;
->  
->  	update_rq_clock(rq);
-> -- 
-> 2.34.1
->
+>  fs/nfsd/nfsctl.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+> index ac265d6fde35..d773481bcf10 100644
+> --- a/fs/nfsd/nfsctl.c
+> +++ b/fs/nfsd/nfsctl.c
+> @@ -2305,7 +2305,7 @@ static int __init init_nfsd(void)
+>  		goto out_free_cld;
+>  	retval =3D register_filesystem(&nfsd_fs_type);
+>  	if (retval)
+> -		goto out_free_all;
+> +		goto out_free_nfsd4;
+>  	retval =3D genl_register_family(&nfsd_nl_family);
+>  	if (retval)
+>  		goto out_free_all;
+> @@ -2313,6 +2313,8 @@ static int __init init_nfsd(void)
+> =20
+>  	return 0;
+>  out_free_all:
+> +	unregister_filesystem(&nfsd_fs_type);
+> +out_free_nfsd4:
+>  	nfsd4_destroy_laundry_wq();
+>  out_free_cld:
+>  	unregister_cld_notifier();
 
-Thank you very much for submitting the fix and for all the explanations.
-
-Could you please add the "Fixes:" tag for commit eff6c8ce8d4d to your patch? So that it is backported to the stable 6.12.
-And actually this has been discovered internally by <abuehaze@amazon> so please add Reported-by: Hazem Mohamed Abuelfotoh <abuehaze@amazon.com> and Tested-by: Hagar Hemdan <hagarhem@amazon.com>.
-
-Thanks,
-Hagar
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
