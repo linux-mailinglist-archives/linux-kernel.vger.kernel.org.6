@@ -1,107 +1,144 @@
-Return-Path: <linux-kernel+bounces-551196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB812A5694A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:46:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B256AA5694B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:47:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC2A63B20BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:46:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2267618983F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E69C321A435;
-	Fri,  7 Mar 2025 13:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F255D21ADA4;
+	Fri,  7 Mar 2025 13:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="DMD604B4"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="l/9GMcG7"
+Received: from mail-10631.protonmail.ch (mail-10631.protonmail.ch [79.135.106.31])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9388219EA5
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 13:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F07F20DD79
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 13:46:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741355200; cv=none; b=Md7UfmoElj/wcABSUMYE2UWPLcQ8eyan6BrMcfKeBIeEQAjkfxvwFFgIuq7LCpueDDkv8Pa3Lj18Qw7hMCRk2ive4s0WVaf/8qsbx2n/o7knf26U7dJFdDSpXlJqXIzImDumhZWuZTYgjYEh/cWPj/uXX+RrJw3TigfPA0F/1P4=
+	t=1741355203; cv=none; b=uqLkO+FzhiFx7V51WluGc+M3Rg+K38NNkUX2lLYKC129f38epFCNfPfw3fG6rbGclolYS1oDzrDsInwINE+zhVv06RubvNowkD6H8p/rvubtd7ptt49ZYTw0SzQ2haXJdy8h7heHGHQO2PvhpzFtLfiNLa6KHWuB9Zg7yCeWhcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741355200; c=relaxed/simple;
-	bh=Ajl5yz/9HKZfXlHGqdiD19xxNeWVYLkq3LJ7DODmHrU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oONllPU1bhLCRyJNxGTUOEJonO5R+PzHw+cBSq+MmRX2MnKvnZZy1ByBTdnT5gYSqOhxjlV5+8Gml8wz4kfoc0oqYr4HrsnkQTxukPJMiE7vx3dWDJNK9uulANYKNTyiCSEcg+KAFwndK/e+lrRk2lNMH+77SsIUjxiGX3CrD38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=DMD604B4; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-54954fa61c9so2296025e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 05:46:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741355197; x=1741959997; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ajl5yz/9HKZfXlHGqdiD19xxNeWVYLkq3LJ7DODmHrU=;
-        b=DMD604B4fbXzD1Wo2WnupxIXIjhzkmP8xTghIQQWhmo90EZcuSk9ZKamSnhtewFpnu
-         1m+kBcFogccaSrcp/im2htxyr/WDqEjj0NnR+tEm0fl7cuZaeWJaLeq9/YueXNQRZter
-         X3NU5Nu3aHrCCBNJCdhVg50NT+EHFlIpezZ7T8wDfIC1eLPNQ3nbM1fMjWIqGbpv1fRZ
-         Qee7Tx5xefQC33pZezQIqVvxfNbdo5Ldw2z6nb/WZyPd/PB3hebnWDdr37FSPaQNMt+m
-         XWNdFuwZISQaNsfCG7SFJlNhLPSq7pORBh0URo16JHGtlF3Dkz22/Fu2RxG1Ia42os9V
-         1ITg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741355197; x=1741959997;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ajl5yz/9HKZfXlHGqdiD19xxNeWVYLkq3LJ7DODmHrU=;
-        b=sDEKmdlpkMUvHcg+im9dQSpRjwdyW+WTQdb6OEnra48sZZFSrxEGnqHbk18SH3N/qx
-         qKv36Z5zAJYfzB3ivsxjGq4xf9RDooOgASLLyyxfl1TOpJh+0hIBh3EewPMl3qCX87rj
-         lB6lvwOMr2Pa1Mo0eBit8LhNecEZggeRTh13EZI6VKvcB13txfYmZTS2EKfqdaGCyJGF
-         oUZj+lHptmPi0iZiRWmpUbaWXo6Nf6KNQXBPZNz91xVW+d4/Y3dM6S+vylCAFcAsRYSo
-         s+F+1f2n0BGaaxs8PTy3UnOn6vJQbZSi0PALqUsDv+jqD9UzOWFGcrhqbdJauYtC7J8X
-         /Ejg==
-X-Forwarded-Encrypted: i=1; AJvYcCXme9ehfa400iZnDQlikwZeArC/7f8mJ+Qj2B838THMU+YRgGfwtvwHDgF9vz1Y8QrMTfvBHY6GWnQ1K6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjJD8lu2kXKVPqwolPBYum+Udtj0BAtSwnP0xCEXQqvbz30ezq
-	ePccgZYyGRlJEz1H5cSXDVu5HLEujxdhVk1MoFLxVs+Li911u/0NZdktH0Q3rW/cqKPIeg50CeE
-	8GpZnWsP/eOrWBVIxbdbZWgwNn7nx9MKIw1klzw==
-X-Gm-Gg: ASbGnctH2vkk1cwHLK6igy6uVG6CpmLOmvOmx3Crv59mRRcOox+Q4+VDSZA+pw/ZLSv
-	bFZkdNn+Iw42RXYJ29Kv8PmECNsw31nBNntziq+VKrwBZgctCuyw3+rJfQEFsTmcTaEB5MVPc2s
-	SEHcLI9qzaTubuSmWCU6TGgluiLH2QVOC+GnH7UP/sfIOJYEG6ri6XTG3Y
-X-Google-Smtp-Source: AGHT+IGMK8J2Fdw7g+cXg5tysK151M2NSF7Hkehrjd3iBWvSDjUL/heh6bjcQSsvIwkLA6Oc0HqPFi8q7sGz5nh4GlA=
-X-Received: by 2002:a05:6512:23a4:b0:545:9ce:7608 with SMTP id
- 2adb3069b0e04-549910b7d3bmr1262013e87.50.1741355196646; Fri, 07 Mar 2025
- 05:46:36 -0800 (PST)
+	s=arc-20240116; t=1741355203; c=relaxed/simple;
+	bh=He23/8mZZeZEGBeQVNebcLJi23Qj3PgN+QnWnUERjPc=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IsYGUYGb3LHG3t3jgnUi7HKyub0RPZ/fVnhQZwwR4pGX7cPCPmLu0tR0xL7azMgHimWYgsjiT/9/IA+FN6RBlHoL0LDQ8j+U55oM0WLHbzSxMvmHtJGjRpwjeNv9d+SkRD5Pw5HQ8De+wF0vnpwJs5b6rEiRuAdFeOkCSQcAXnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=l/9GMcG7; arc=none smtp.client-ip=79.135.106.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=nyswv2o3x5g4lhoo7wghgi26uy.protonmail; t=1741355195; x=1741614395;
+	bh=jQOVrGU7Or9HJAB8PZjksGhwjMOslJNvzzwPKN5EXj4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=l/9GMcG7xVztXmqp2bjBwegVt4l82BHiyt1UxiJ8uC/SHt8y9qBKFLhBDdoX+CxjB
+	 UWWlRbbR7vxQmsPQvZ3WHHInFP4udAH5z2a82dv2JKN7vxnxmbZT+Nc2V5Ehbh8Cl2
+	 drOiK8K9rhBg9K3lNtFVUdqLdKEAEEuxmgNYjeiKb9/k6yuNCCrGkMDa3SkV3joeVq
+	 6S5ElN4dy4eq1j7ZlLd/QqrcnmPcil4gTdzBdUbDM1svALAP/cG3uVv4NxsMBt/NbH
+	 j9L8ox94HWi2RN3ugufMcIAh1Y16aAC9Uligt4006HMtoV1s8r2FzQt5iRGJMmnBwd
+	 2cwOOMieIJEqg==
+Date: Fri, 07 Mar 2025 13:46:32 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>, Dirk Behme <dirk.behme@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>, Tamir Duberstein <tamird@gmail.com>, Markus Elfring <Markus.Elfring@web.de>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v10 01/13] rust: hrtimer: introduce hrtimer support
+Message-ID: <D8A2W9JIGFX3.20YC7NQRET0XG@proton.me>
+In-Reply-To: <87y0xh3s1u.fsf@kernel.org>
+References: <20250307-hrtimer-v3-v6-12-rc2-v10-0-0cf7e9491da4@kernel.org> <20250307-hrtimer-v3-v6-12-rc2-v10-1-0cf7e9491da4@kernel.org> <BdAxp1BNMXx919FqV2Yamyjr3d4pUGCHU8GhvKZG6scY5etznAwQeuf1ISWLu2lm9XHt2qC9kJUnlSSENhODuA==@protonmail.internalid> <D8A1JVVYBHY5.13BB8V796A7RR@proton.me> <87y0xh3s1u.fsf@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 91620299353540043126fb36575ac411fd18f213
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1741268122.git.Jonathan.Santos@analog.com> <d055d21a2a1e4e1d64c457d38e3cf6630d4183bc.1741268122.git.Jonathan.Santos@analog.com>
-In-Reply-To: <d055d21a2a1e4e1d64c457d38e3cf6630d4183bc.1741268122.git.Jonathan.Santos@analog.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 7 Mar 2025 14:46:25 +0100
-X-Gm-Features: AQ5f1JpJ3gRq2Xfa5Nj21IAupyoFyo1b_V79VVEOQLABEY8o2gr7Aj8D3DfetLY
-Message-ID: <CAMRc=MfKD4PNfZHz+BdVjUpCcZJ+eSjaNYYQkdVt1a4vo-2yzQ@mail.gmail.com>
-Subject: Re: [PATCH v4 04/17] dt-bindings: iio: adc: ad7768-1: Document GPIO controller
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, lars@metafoo.de, 
-	Michael.Hennerich@analog.com, marcelo.schmitt@analog.com, jic23@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linus.walleij@linaro.org, lgirdwood@gmail.com, broonie@kernel.org, 
-	dlechner@baylibre.com, marcelo.schmitt1@gmail.com, jonath4nns@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 6, 2025 at 10:01=E2=80=AFPM Jonathan Santos
-<Jonathan.Santos@analog.com> wrote:
+On Fri Mar 7, 2025 at 2:10 PM CET, Andreas Hindborg wrote:
+> "Benno Lossin" <benno.lossin@proton.me> writes:
+>> On Fri Mar 7, 2025 at 11:11 AM CET, Andreas Hindborg wrote:
+>>> +/// Use to implement the [`HasHrTimer<T>`] trait.
+>>> +///
+>>> +/// See [`module`] documentation for an example.
+>>> +///
+>>> +/// [`module`]: crate::time::hrtimer
+>>> +#[macro_export]
+>>> +macro_rules! impl_has_hr_timer {
+>>> +    (
+>>> +        impl$({$($generics:tt)*})?
+>>> +            HasHrTimer<$timer_type:ty>
+>>> +            for $self:ty
+>>> +        { self.$field:ident }
+>>> +        $($rest:tt)*
+>>> +    ) =3D> {
+>>> +        // SAFETY: This implementation of `raw_get_timer` only compile=
+s if the
+>>> +        // field has the right type.
+>>> +        unsafe impl$(<$($generics)*>)? $crate::time::hrtimer::HasHrTim=
+er<$timer_type> for $self {
+>>> +
+>>> +            #[inline]
+>>> +            unsafe fn raw_get_timer(this: *const Self) ->
+>>> +                *const $crate::time::hrtimer::HrTimer<$timer_type>
+>>> +            {
+>>> +                // SAFETY: The caller promises that the pointer is not=
+ dangling.
+>>> +                unsafe {
+>>> +                    ::core::ptr::addr_of!((*this).$field)
+>>> +                }
+>>> +            }
+>>> +
+>>> +            #[inline]
+>>> +            unsafe fn timer_container_of(ptr: *mut $crate::time::hrtim=
+er::HrTimer<$timer_type>) ->
+>>> +                *mut Self
+>>
+>> This formatting looks a bit weird, (macro formatting is annoying, I
+>> know).
 >
-> The AD7768-1 ADC exports four bidirectional GPIOs accessible
-> via register map.
->
-> Document GPIO properties necessary to enable GPIO controller for this
-> device.
->
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> ---
+> How would you change it?
 
-Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Just use `rustfmt` (copy the macro arm, replace all `$` with `_` in
+names and remove repetitions, `rustfmt` and then revert. You're lucky,
+since you only have one repetition that doesn't cause the line to go
+over the 100 column threshold):
+
+        // SAFETY: This implementation of `raw_get_timer` only compiles if =
+the
+        // field has the right type.
+        unsafe impl$(<$($generics)*>)? $crate::time::hrtimer::HasHrTimer<$t=
+imer_type> for $self {
+
+            #[inline]
+            unsafe fn raw_get_timer(
+                this: *const Self,
+            ) -> *const $crate::time::hrtimer::HrTimer<$timer_type> {
+                // SAFETY: The caller promises that the pointer is not dang=
+ling.
+                unsafe { ::core::ptr::addr_of!((*this).$field) }
+            }
+
+            #[inline]
+            unsafe fn timer_container_of(
+                ptr: *mut $crate::time::hrtimer::HrTimer<$timer_type>,
+            ) -> *mut Self {
+                // SAFETY: As per the safety requirement of this function, =
+`ptr`
+                // is pointing inside a `$timer_type`.
+                unsafe { ::kernel::container_of!(ptr, $timer_type, $field).=
+cast_mut() }
+            }
+        }
+
+---
+Cheers,
+Benno
+
 
