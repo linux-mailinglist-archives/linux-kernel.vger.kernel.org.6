@@ -1,190 +1,111 @@
-Return-Path: <linux-kernel+bounces-551365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97EB2A56BA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:18:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90F70A56B90
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:16:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 734B77AB6CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:14:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D965318952C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF0A221704;
-	Fri,  7 Mar 2025 15:11:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4F7622173C;
+	Fri,  7 Mar 2025 15:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ciNWFTMf"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="AO77NOoX"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 935D221CC54;
-	Fri,  7 Mar 2025 15:11:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5F5D21CC7D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:13:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741360293; cv=none; b=LOgVQ32THdTdiJW/X4VGaMC5d4eIDIQeqVMZT1Ia2DKuZu8SdHbGELnQcvxguQ59iQXu/eXk5y6d85cg542vdlikPCnH1vqNqylxn/BgC87ETtWuxjtJJe5VF4OnTu2sVo9DKtw+uik4nzZlSYC3BbaDdQVRJZDIkXcnN59Al0o=
+	t=1741360382; cv=none; b=M3pnyGTSz3/1wOontkH2Otrd4L5sji53gz/x+SDp8GmA3SeGPOB3vuW73zn/ce9FpSblOwdxg6oNrKp0Q5CE8Tm006ZqVPqQBIqyNbnsB9kbhZ5VDN3oH1sqE6LHWkM167CJsN/SI3dxH1BPrlVPRqnFLsXUmh0HECn0kdbuzZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741360293; c=relaxed/simple;
-	bh=68PYA1EofC70Yl9+ZYYWiPFB1L+1AgWZwF/BIm3DqIU=;
+	s=arc-20240116; t=1741360382; c=relaxed/simple;
+	bh=2wMX+dMAk5OZF+yCTsbRVFzfhhV1PUCth+hni04YDPY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nMBNZdcvACGz2G4QCj9iaRDdP6LHQdCCifI7hrSJ9BvIf063Eqsm8A5XJ3B0K0snXeFL7/8NxGenHCe0G/HiuBRbpII+MPadfSo2FsmddjzkvxJyTFgxnrzlOJxhpbPZvMswXGtMXZ2sTWSEMy7xrmCUedySl1C5xUumE+NeIdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ciNWFTMf; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223fb0f619dso40036225ad.1;
-        Fri, 07 Mar 2025 07:11:31 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=WIYqAgFIbqcLZqFQgeIVHzzh29ZRIA8ec69IJhglphIopaKndwd25pniT+KleNUiqPq0jiOf2OawR4+ZoAFc1M6L9nAnhnD4ug9c2stAN+49RwpfsIIGdEN5amdUUZnnsO3y73ACl7R7uLG9QpevH6kIwI9nsFvWJ1FXbtM2Jg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=AO77NOoX; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c08fc20194so349950485a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:13:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741360291; x=1741965091; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Z0smMQNuibFTABZ6w1NkSzGMBPcRi3Tk4bDjmrxiWek=;
-        b=ciNWFTMfK2AKyH+0KifL7CKVCX0AOjNUra7V5iruX44CeXaqGlUPq3fkJAVnSyOA8m
-         I+NgdZEw0E46Bc9fPDpwzUPoWIXXlrRY4KmrDM10uUGEu9WnChZ5BfpDPzdQwTwsrcLC
-         k/NdbAyciEF8dZtxC8r1txZyy3b2OvqxukNdYcwhstgfYHO4iEbOmz6FTL+l+17dwzZq
-         dQJDwBrcEmE8tOSxmp0GWbuha3RjdfhrqcGHqj7KocALAPr8PtCFUrNKHIgrIC0A4rfA
-         twTnXR3ZP23GrlXs6tGULCLNUOGq5Aks/rFaWcuymNdlahsB9a90q/2A3hZT9SX1amZW
-         d1Tw==
+        d=gourry.net; s=google; t=1741360379; x=1741965179; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=vNr4ntECNtNIMvxVKv6TWdyQSFpn2hDLZaLcHO+bzIY=;
+        b=AO77NOoXJBfPlExQuRnKEaWsOzBdXm2Axv0DEqDZChBcM3Cl2RHWDm48r1SUg01GO8
+         qLA9aY4bqaF+sx3JToR8HCG9sNxqQ38GvYG8HyaEl/TczLRk3CedFkH5Ke3qMq75M2s+
+         iaUzR4t7shhI5Zzm5Dvs4Dq7AOPtUUHPL0E+ybyYgBhS2n9R9jgJGfFlV2Gt1vVtDWkT
+         Q+6GEi+6O/GboV+iLJMzY4RLQDFMBBIiMoYp7f8zknCVd65Mb1gDrCWQd3or8Ui/8Li0
+         KKAeu3Q6X3z1boDBxJuogIwhJPIlS+cKhUmmi37W2AbPAdt043GBaVMG98GHvq2pkRpJ
+         9FNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741360291; x=1741965091;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z0smMQNuibFTABZ6w1NkSzGMBPcRi3Tk4bDjmrxiWek=;
-        b=Xb6hffvZ1QyA+qKTAc2qOLRF7JLC5WKPzKUNdtysi2ZX5iZf5CX1m/kh7kgEoEqQFU
-         i1LHRjlMhMny60uiwwERqgTV8Pt3Cm3TkIRQHaml2rmHkzduqCH9IhdkvzI8qS1F9Dcn
-         vvbFyGKY3AUiX8csyh3EadxUkxNyzsfJ31ZumiGYcht4ma0V60XzLPYf8ZcCnVd6E04g
-         q279iJM52CUqhlL92++JnbgDG1xPuyUkYPtGk2yUd72jxVYPLS6qw74xyQ5asydIJkjS
-         kMuWyn/kTvR7aj25IPUxtv5gJGWC3pmUV/FTrE49bOVjOuUGjSsKWT1ng/5qcD4svVzb
-         huZw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmlcUEPD/ZMEk83fNT7FGZN7P6XnF7uqRI2tNNkuvfnroBgSKXQ7NXwhrnU7X4lEwleNJTBGkh7Aj1@vger.kernel.org, AJvYcCVnxH9bTPmYVyohiNUwzt952JA9uDGOB19ccv/hSkV31Hbpgk4cXZtG4oa5xJjdB26NGm+ZG2DbCSV8hUXs@vger.kernel.org, AJvYcCWf0B7OyzIqFtST1Q9PP8HTj2T93smDfCNl5E1j9PDvf4T3BVEYdkXZs3w32OyvJpSYIdneq6nNg/9xpQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3KOJk4hJ3pAb5EGRsFqKRuj25lujdsEHqSsa6S+Q1XIgvEnad
-	KR/feZpFwltS//BcHWuT/CISWTgo0oH4CSWdNXUE6BoM9DRzcxRz
-X-Gm-Gg: ASbGncuusJ7qpIvKdwAtkehJ9Aeq+an1euwAZn5eDNzHr2ynpXbnoH6oKkCWhJP17iK
-	d00NbLp1qN7ToZ1yXSkLjDznXGdL2UaS1P5Z+Vcx1w31kW/8iBuVGwuJSRVSxqvwN/gQEnntpI/
-	2LGtRVQcB2FzTMJLGJhCzpdHqn4HP6A9H0gPTHhcM/STWKzVyprBniC4ZYRWtN+KwZeeLDNgP+n
-	qtAlwTakpHeeHFTa3ycLCwvzwQiGR9qkTT1hUjUuz7a+Uv8+PYOj8J8HS0sCqB8eNy1NLDxHmju
-	oBR5tr1ipT/Tx/DVQTYmDoCTArmZo+tvdUZzp6O4QnSeZPlcF9KA3g==
-X-Google-Smtp-Source: AGHT+IHrwpXL0L5f6em3IgAisRt8eToY4WUgHZ+JzvFiYSU/OoqGtox7zmG/M0KzUZdedDUwYqS0Jw==
-X-Received: by 2002:a17:903:32ce:b0:224:1074:63af with SMTP id d9443c01a7336-22428bdb76amr63670315ad.34.1741360290644;
-        Fri, 07 Mar 2025 07:11:30 -0800 (PST)
-Received: from localhost ([2804:30c:1f21:4300:1cf6:c485:6555:b1c5])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22410a907adsm31000575ad.160.2025.03.07.07.11.29
+        d=1e100.net; s=20230601; t=1741360379; x=1741965179;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vNr4ntECNtNIMvxVKv6TWdyQSFpn2hDLZaLcHO+bzIY=;
+        b=L0tOogFgY2i8ruc1diZidpDU15adfdjpY83jjPFshn2BzaVTJljURHv/rschQe3+vl
+         PKZw53pOwx7fIclOnO9VYuOyvz2Hk3OzkVCAxqR27kI1TyhohJyiYBoJmeyZSlMuB9nF
+         pMQzpzwcwmlA5W+jTBFjOSuUTS0somBzG362EzcBShuo6kGxS6R1msiROh6AysVQlVfk
+         +Bj21FR0vjtbBHqsp1/5NNO+45H8dk9QA8zwtL6m8cOsL331YPPYQP7WbAqI3rYDu7yl
+         REpZ6kxe1qtiUgAl7Qi/Ef+C2nf0rJlBD8qCAL8LPJ60aMKYF6RoLNU7hiZHeJanyITh
+         +B3g==
+X-Forwarded-Encrypted: i=1; AJvYcCXSFnZ6oT3EIXj7g9YCNfIQ6faO2+/Jie3WVcUNp98pktcPFlUtUSo0x6i5uU8m3RS2mR16jlzKgn7htHA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCOGgmweMevh1EVwHLAAdxbPSO0O8a9dGvnpCNdHaZoEzBa/dZ
+	RzDZOpbPl8qhzaFoMPKK10zQQySYqwj99u5za6hUtPgWS30WPnkFkcdXFXJsGLQ=
+X-Gm-Gg: ASbGncsHrHZm+eKQyBg7PsUwzQ8O94+o/llrXari3Cf9tK6w5PubbGFaG80PkkDQ1Jl
+	MtoFmKhGUfGY6BFNlADE79MAr8xXV3qQA2KoD3G5pO/lw+NaxTIX79vSySnqC5GUMIhC1tickHo
+	KBVT4XMhUQhRtyi9MI+7ogBKpqSz/hJLgc1cWIUQeCE7a9x/S61i9tTfBOJhvD3Cw/nRzKGPC8Y
+	D/OTTbx8lWzF6TTEpm8J+6AqM0ql5wKgbV4s856QdxQdZJlc4rz5ycTITEqH4M6nphP4Dt0CVf6
+	kQd6LK4Sl2d4GJrQweuddjtydtEPKeVnlKNM4FCUGX2ambpDWiKQS4ak01dq0immc7lk/axLmRg
+	OLFBDolIXb1qnSG8Bk4J3I8zh364=
+X-Google-Smtp-Source: AGHT+IF1GDg63LmfyEarUB00FtiXShcOK8KVLiCcUDagJpfOb04hfBNYSrYPbaJ5e8IJKwahRj+kBA==
+X-Received: by 2002:a05:620a:8806:b0:7c3:cd38:9be0 with SMTP id af79cd13be357-7c4e61ec9damr536785185a.56.1741360379462;
+        Fri, 07 Mar 2025 07:12:59 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e533a9f9sm252426185a.23.2025.03.07.07.12.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 07:11:29 -0800 (PST)
-Date: Fri, 7 Mar 2025 12:12:22 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Jonathan Santos <Jonathan.Santos@analog.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	lars@metafoo.de, Michael.Hennerich@analog.com,
-	marcelo.schmitt@analog.com, jic23@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linus.walleij@linaro.org,
-	brgl@bgdev.pl, lgirdwood@gmail.com, broonie@kernel.org,
-	dlechner@baylibre.com, jonath4nns@gmail.com
-Subject: Re: [PATCH v4 17/17] iio: adc: ad7768-1: add low pass -3dB cutoff
- attribute
-Message-ID: <Z8sM1uW7pxJVmVN6@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1741268122.git.Jonathan.Santos@analog.com>
- <2aa347a97e7ea974951609b0bdf81cad0b21b993.1741268122.git.Jonathan.Santos@analog.com>
+        Fri, 07 Mar 2025 07:12:59 -0800 (PST)
+Date: Fri, 7 Mar 2025 10:12:57 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Yuquan Wang <wangyuquan1236@phytium.com.cn>
+Cc: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
+	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [LSF/MM] CXL Boot to Bash - Section 0: ACPI and Linux Resources
+Message-ID: <Z8sM-W1F6-TIZcGa@gourry-fedora-PF4VCD3F>
+References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
+ <Z8jORKIWC3ZwtzI4@gourry-fedora-PF4VCD3F>
+ <Z8j8bZ5TS+gDV8+M@phytium.com.cn>
+ <Z8nWobZXQwhtE1nK@gourry-fedora-PF4VCD3F>
+ <Z8pX786s+1DQIMDy@phytium.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2aa347a97e7ea974951609b0bdf81cad0b21b993.1741268122.git.Jonathan.Santos@analog.com>
+In-Reply-To: <Z8pX786s+1DQIMDy@phytium.com.cn>
 
-Looks good. Minor comment inline.
+On Fri, Mar 07, 2025 at 10:20:31AM +0800, Yuquan Wang wrote:
+> > 2a) Is the BIOS programming decoders, or are you programming the
+> >     decoder after boot?
+> Program the decoder after boot. It seems like currently bios for qemu could
+> not programm cxl both on x86(q35) and arm64(virt). I am trying to find a
+> cxl-enable bios for qemu virt to do some test.
 
-On 03/06, Jonathan Santos wrote:
-> Ad7768-1 has a different -3db frequency multiplier depending on
-> the filter type configured. The cutoff frequency also varies according
-> to the current ODR.
-> 
-> Add a readonly low pass -3dB frequency cutoff attribute to clarify to
-> the user which bandwidth is being allowed depending on the filter
-> configurations.
-> 
-> Signed-off-by: Jonathan Santos <Jonathan.Santos@analog.com>
-> ---
+What's likely happening here then is that QEMU is not emitting an SRAT
+(either because the logic is missing or by design). 
 
-Reviewed-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+From other discussions, this may be the intention of the GenPort work,
+which is intended to have placeholders in the SRAT for the Proximity
+Domains for devices to be initialized later (i.e. dynamically).
 
-> v4 Changes:
-> * None
-> 
-> v3 Changes:
-> * None
-> 
-> v2 Changes:
-> * New patch in v2.
-> ---
->  drivers/iio/adc/ad7768-1.c | 22 ++++++++++++++++++++--
->  1 file changed, 20 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/ad7768-1.c b/drivers/iio/adc/ad7768-1.c
-> index 664d0b535340..9ba00e9089bd 100644
-> --- a/drivers/iio/adc/ad7768-1.c
-> +++ b/drivers/iio/adc/ad7768-1.c
-> @@ -150,6 +150,17 @@ enum ad7768_scan_type {
->  	AD7768_SCAN_TYPE_HIGH_SPEED,
->  };
->  
-> +/*
-> + * -3dB cutoff frequency multipliers (relative to ODR) for
-> + * each filter type. Values are multiplied by 1000.
-> + */
-> +static const int ad7768_filter_3db_odr_multiplier[] = {
-> +	[AD7768_FILTER_SINC5] = 204,
-> +	[AD7768_FILTER_SINC3] = 261,
-> +	[AD7768_FILTER_SINC3_REJ60] = 261,
-
-Are these constants from ADAQ7768-1 datasheet?
-There it says "the sinc3 filter has a −3 dB bandwidth of 0.2617 × ODR."
-If so, maybe use 262 as SINC3 multiplier?
-
-> +	[AD7768_FILTER_WIDEBAND] = 433,
-> +};
-> +
->  static const int ad7768_mclk_div_rates[4] = {
->  	16, 8, 4, 2,
->  };
-> @@ -228,7 +239,8 @@ static const struct iio_chan_spec ad7768_channels[] = {
->  		.type = IIO_VOLTAGE,
->  		.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),
->  		.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE) |
-> -					    BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
-> +					    BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO) |
-> +					    BIT(IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY),
->  		.info_mask_shared_by_type_available = BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),
->  		.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ),
->  		.info_mask_shared_by_all_available = BIT(IIO_CHAN_INFO_SAMP_FREQ),
-> @@ -762,7 +774,7 @@ static int ad7768_read_raw(struct iio_dev *indio_dev,
->  {
->  	struct ad7768_state *st = iio_priv(indio_dev);
->  	const struct iio_scan_type *scan_type;
-> -	int scale_uv, ret;
-> +	int scale_uv, ret, temp;
->  
->  	scan_type = iio_get_current_scan_type(indio_dev, chan);
->  	if (IS_ERR(scan_type))
-> @@ -802,6 +814,12 @@ static int ad7768_read_raw(struct iio_dev *indio_dev,
->  	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
->  		*val = st->oversampling_ratio;
->  
-> +		return IIO_VAL_INT;
-> +
-> +	case IIO_CHAN_INFO_LOW_PASS_FILTER_3DB_FREQUENCY:
-> +		temp = st->samp_freq * ad7768_filter_3db_odr_multiplier[st->filter_type];
-> +		*val = DIV_ROUND_CLOSEST(temp, 1000);
-> +
->  		return IIO_VAL_INT;
->  	}
->  
-> -- 
-> 2.34.1
-> 
+~Gregory
 
