@@ -1,206 +1,154 @@
-Return-Path: <linux-kernel+bounces-550310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A1AA55DBF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:40:10 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5207CA55DC2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFC8F3B1C57
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:39:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04F507A7D0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:39:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C1E190482;
-	Fri,  7 Mar 2025 02:39:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF627192B63;
+	Fri,  7 Mar 2025 02:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2A+4PaDv"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XcyMEv9I"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2DD18DB3A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 02:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5D118785D;
+	Fri,  7 Mar 2025 02:39:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741315161; cv=none; b=Y8xb4QX6a0Js6KNGukdmenxWTvmaz1U29pxNKAquqBnYwt7Txhd5WtqRJ8FZ5zbO5Eo+NMd2F5u8mXLZhxDMpEpm7kWhtzX/6EDA+dh5tlPJclPwSGmOirgl0nS3cdJO1U1rvr0h809xVAyuc7y8/NM4kphzR9vptD2hD4nbbxo=
+	t=1741315168; cv=none; b=GV27WZDyMiXVuNUs1jFnOLS+MCnLbKPGkboH2V4ZC/sCO0depgF0e9B5Uxvy+DlZKB+i7VBe6jL1drZVPOn7+5T+B4Kd2z9eNa0bae5PyBJOv/D0UtCbQOvNal0JB2R4EwCXkwdrmIg5oSw9mig2skhgcAjsgW2sMDNejWM5IwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741315161; c=relaxed/simple;
-	bh=moyH7ngutvI28A8PW36UdjVAW7IUQjv1VshIvFSOH9M=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Content-Type; b=hgTdA7CCDr6q8B9ifuFn1ljH1NBxMy5VoziC9si4jktBPi0XaUW7z0F/R0wlUoVVYZD7AA4m+QtyV7wUH1GUp6xQHi6pJMLXio8Py04z6ERFdGa3F0JBGiyptGBNH1Y6neLbtIvhPt9dqMe+YAPQOAoP5N19KnUWj9gg5qz3GFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2A+4PaDv; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2f81a0d0a18so2554652a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 18:39:19 -0800 (PST)
+	s=arc-20240116; t=1741315168; c=relaxed/simple;
+	bh=6OU9bNzpGoUP8m+6t7CMEqs1s2CSGxSHRzD25S3S57U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XoINMAxd9aVKmT6JiqxKq7wnT3SKWvxTuI0YFUsKWWMJj2syb3u0nEgEO4C/wtgaqmVdfl3cLd6bQPn3HvX5CsHwH+L7we8HEoI5ARSgB+G4KIpOPqDhw/m+DH1ly7aXeNp6MLcLmziOVSYQKfSCxBgPfN///vsL1IR3/vQmkDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XcyMEv9I; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2fee4d9c2efso2515642a91.3;
+        Thu, 06 Mar 2025 18:39:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741315159; x=1741919959; darn=vger.kernel.org;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2OrnONqIHmdQK0sEBinAUX8Um88M0UBcNTM3o5mqNKY=;
-        b=2A+4PaDvf8yGcoY+VgPUH6emxj6cosPyk7tEIjbTHXYMgne41nl3YoKwm0EE+oxUBB
-         9hOcIkw5eODO8/ouIOajiwRjZ23D3jE2WCNf6SzpMqdlHWlUSQljLLvpybAz4duf/fF6
-         7OS207bp22HrdQDHzZfUxGtArPw6hGe9Hun6XEuG27PXwnLUNq7acgAhi7l6X1R3dtLD
-         8GaxFgTYI/QlyOUrcBgTsT9D/3yZYaLjDpmI6lBeQgJtC1QwD4IQqrzCk7LrzZk5z3Mp
-         Nsisx/H7qqwi2nvBPhMVtiN7vMjQiIPKrpKRx1kr5qnWnTlU8HGIQV8FvSqBPcVPYx19
-         EsvA==
+        d=gmail.com; s=20230601; t=1741315166; x=1741919966; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=0d4XpVOjBbNecE/XmRwQFw87n6IpADVfzl27NW7S8cM=;
+        b=XcyMEv9I4r/BZMDwgjJ5W8b9t45sKBExMoYdnoQEDng5YuLvkFvM/XboNNGy1YS89g
+         fBPmXQq6Q1YW7yPyObVkckNgirBchJAsfwf22TK2jooHQqYM5ZNFh7fXLbLDPb0lUjO8
+         rhDtaJBN+b1uSJduBidqHIJDzS2CeoBuESn1fALKvO66gZJppsEIUe0m07c489sXBloz
+         nKADFvh5iPKOjvA6qaq/Yr1Hx4jn9C6Wh971yJWuToDAbxEog0QIMcZESQ3KC8WYMxrw
+         8SyU5NaXiNdfMWIZzWWtCiJN1H9P/z6i7YJclVd5294A9fXaleEO7mjYW8qQ3/GzDKHV
+         p04w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741315159; x=1741919959;
-        h=to:from:subject:message-id:references:mime-version:in-reply-to:date
+        d=1e100.net; s=20230601; t=1741315166; x=1741919966;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2OrnONqIHmdQK0sEBinAUX8Um88M0UBcNTM3o5mqNKY=;
-        b=CkJX69HxNAlYsV9oh5OP1vUTpp3ZV6NWyLe6LU5+YjcSON8B66Q6Ncg41l0Fb43oy0
-         aVDe2r17TEesyar8INAqT8NGB1/rtO+tJ/HyM/pMzG0nlsseTvQTkL5AYJJV/wJ/xfP7
-         4lCHJba4rKi8NxGSj2Q4sN1C4mKdd3W0Ya4ai/SZzbKrIIG9gx92DfOFVytdPKooXNJf
-         0WKll1IU0eVyjlBV21F4gMzU3aiP8a4kzGtM4Pt3O6JynlKnfyrgXVUwkRyAWMyhUIq7
-         z8rxEI9ADGRBWXfdmCiu8AY6X8MYeeUH9YZle4XWKgVS5bsN2fgP1ZjSTyM56VdguOLE
-         V8tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmwM/eucl788NxRsnTeHNflj6tFMZUX5aQW4+aaGxyNqqMVmrzUwv4fWs8zMhpACDbAqbKZsk7uLI6Trw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiwDvjA034DkhyYoNOTOLubZ25gJQZJVaS68K1Gu2Fireqe0+W
-	zOxob6yBh8Kkf2+vJi2vS/lCShYYOoLqr3aJhFRx4FMK/yDhstjgEqrH3FH8q0E0I7RIWgvbNb/
-	j3XsGGg==
-X-Google-Smtp-Source: AGHT+IGpKFW3TRJDv127bUtQQfrc+gkgABkcfIUBjfPLAIwuYuyTBMkqGIUvfMdPI2lKVeuL+RI4BKT/kgF3
-X-Received: from pji13.prod.google.com ([2002:a17:90b:3fcd:b0:2ff:4ba2:f3a5])
- (user=irogers job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d605:b0:2f9:cf97:56ac
- with SMTP id 98e67ed59e1d1-2ff7cd3ebcfmr3198108a91.0.1741315159127; Thu, 06
- Mar 2025 18:39:19 -0800 (PST)
-Date: Thu,  6 Mar 2025 18:39:06 -0800
-In-Reply-To: <20250307023906.1135613-1-irogers@google.com>
+        bh=0d4XpVOjBbNecE/XmRwQFw87n6IpADVfzl27NW7S8cM=;
+        b=WqMTcUbrHSIaNJ09U105vDSSZZr3JnOq+YOAExd9pX652moeLTtq5d1UKr9hfTvZvm
+         tmHot1LM24GBWAsr7V2Xvqn/sag1hpciEpBqpASFUtsmYA/SdGzHwWmOmSbn+JtigDwn
+         +V5+xnvW1NFbwGr6qM5HkY/AOli9ykfx8zIO1Br3fQIF5ByOPk9uBJlDXK2HYoJCocmK
+         rxGDBEJxiFKoZjKQ+6yg3GfxpPH18urt7KahPSwp4+JJGvLEMqPiZ93iw8VFz0R3U0Tn
+         jHDBHGQeozssU8BJYgQEoyKlKdvzslBUfMFKHA2TWnmx2+ztSvLwfkOC0VCirxpKjVFp
+         HNMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCmuirdKSEsKy6M0YeygREpQJqtEeNVpRQ5UMRqHettpxoTpaRlT48SShLMHzJrV+w+olVpcvo6fLVvlc=@vger.kernel.org, AJvYcCVOQGhiSCi1C9yIXPIohLTnRgQjSAT7srMvimd7lRdpZkflduItasWHdprQeSq7P44RBSLQvqKO@vger.kernel.org, AJvYcCVjStzII0q3g7xQQC+QgnYHV7YfqUU471Jhxrgxr73gxqtU36MJDmXXxsQzcCLCn1+EjzDnbiGIgnukF2WOauRf@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpOOxre6u9RBsP1DB+IKZoD4NsF9yDogfAH8vKUPxHM4fdjlGX
+	409L0zoZcMcq1d3f/XDkebA3FJPRqYv58c0QRE0k0DfpckUBDkDE
+X-Gm-Gg: ASbGnctj/ZPhr44r7yP51wBqMHATIM5BOTwM6BAtaIUFbHIuIK+x5rk3baRPBHiSip5
+	knZFMOpVhQ5SMjBUuHxiaOxrq23zHBPfpyUB47q9Bc6YAThnbLfQ7PJL3Qn5CfEcnWx90XH+gsG
+	NR9TKKwGiNZVU9L8GFllyOs4Lxq87gdbeDRx9xAX5koz8dtliZypgAg0cnSf/uPawTrs/x7zQdy
+	+Gfrt7pHrgFYrdzlqqhaeBfqRp8wDyoWrT9BS1XCLfTETFNkfwNCKYlzR/wpIIR7FMgAlZAHsKI
+	s/utqjsb7EnVhrZD/OeXmgx5oofB0/iuVdlZRwKfhWRiV1xEaQ==
+X-Google-Smtp-Source: AGHT+IFIZCp6xuHzpUsYKy0v3LgrML3vB01/8gnmD5Qfx9LBkQTRH+vITz9B5AClpfZbdNC2kQVIgw==
+X-Received: by 2002:a05:6a21:3287:b0:1f3:1b78:ceb2 with SMTP id adf61e73a8af0-1f544ad7944mr2951706637.9.1741315166026;
+        Thu, 06 Mar 2025 18:39:26 -0800 (PST)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736a336010dsm1378308b3a.59.2025.03.06.18.39.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 18:39:25 -0800 (PST)
+Date: Fri, 7 Mar 2025 02:39:16 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Cosmin Ratiu <cratiu@nvidia.com>
+Cc: Petr Machata <petrm@nvidia.com>, "shuah@kernel.org" <shuah@kernel.org>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	Jianbo Liu <jianbol@nvidia.com>,
+	"jarod@redhat.com" <jarod@redhat.com>,
+	"razor@blackwall.org" <razor@blackwall.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"jv@jvosburgh.net" <jv@jvosburgh.net>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"steffen.klassert@secunet.com" <steffen.klassert@secunet.com>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCHv4 net 1/3] bonding: move IPsec deletion to
+ bond_ipsec_free_sa
+Message-ID: <Z8pcVHdEkwk2w0En@fedora>
+References: <20250304131120.31135-1-liuhangbin@gmail.com>
+ <20250304131120.31135-2-liuhangbin@gmail.com>
+ <4108bfd8-b19f-46ea-8820-47dd8fb9ee7c@blackwall.org>
+ <Z8hcFSElK7iF8u9o@fedora>
+ <f9bf79aff80eae232bc16863aa7a3ea56c80069a.camel@nvidia.com>
+ <Z8ls6fAwBtiV_C9b@fedora>
+ <Z8lysOLMnYoknLsW@fedora>
+ <60cfc1af3f85dda740ac19ac06a27880e79c9c1e.camel@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250307023906.1135613-1-irogers@google.com>
-X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
-Message-ID: <20250307023906.1135613-5-irogers@google.com>
-Subject: [PATCH v2 5/5] perf test stat: Additional topdown grouping tests
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Andi Kleen <ak@linux.intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Thomas Falcon <thomas.falcon@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <60cfc1af3f85dda740ac19ac06a27880e79c9c1e.camel@nvidia.com>
 
-Add a loop and helper function to avoid repetition, the loop uses
-arrays so switch the shell to bash. Add additional topdown group tests
-where a topdown event needs to be moved beyond others and the slots
-event isn't first in the target group. This replicates issues that
-occur on hybrid systems where the other events are for the cpu_atom
-PMU. Test with both PMU and software events. Place the slots event
-later in the event list.
+On Thu, Mar 06, 2025 at 01:37:15PM +0000, Cosmin Ratiu wrote:
+> On Thu, 2025-03-06 at 10:02 +0000, Hangbin Liu wrote:
+> > > For bond_ipsec_add_sa_all(), I will move the xso.real_dev =
+> > > real_dev
+> > > after .xdo_dev_state_add() in case the following situation.
+> 
+> xso.real_dev needs to be initialized before the call to
+> xdo_dev_state_add, since many of the implementations look in
+> xso.real_dev to determine on which device to operate on.
+> So the ordering should be:
+> - get the lock
+> - set xso.real_dev to real_dev
+> - release the lock
+> - call xdo_dev_state_add
+> - if it fails, reacquire the lock and set the device to NULL.
+> 
+> Unfortunately, this doesn't seem to protect against the scenario below,
+> as after dropping the spinlock from bond_ipsec_add_sa_all,
+> bond_ipsec_del_sa can freely call xdo_dev_state_delete() on real_dev
+> before xdo_dev_state_add happens.
+> 
+> I don't know what to do in this case...
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/tests/shell/stat.sh | 83 +++++++++++++++++++---------------
- 1 file changed, 47 insertions(+), 36 deletions(-)
+Yes, me neither. How about add a note and leave it there until we
+have a solution?
 
-diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/stat.sh
-index 68323d636fb7..8a100a7f2dc1 100755
---- a/tools/perf/tests/shell/stat.sh
-+++ b/tools/perf/tests/shell/stat.sh
-@@ -1,4 +1,4 @@
--#!/bin/sh
-+#!/bin/bash
- # perf stat tests
- # SPDX-License-Identifier: GPL-2.0
- 
-@@ -67,43 +67,54 @@ test_topdown_groups() {
-     echo "Topdown event group test [Skipped event parsing failed]"
-     return
-   fi
--  if perf stat -e '{slots,topdown-retiring}' true 2>&1 | grep -E -q "<not supported>"
--  then
--    echo "Topdown event group test [Failed events not supported]"
--    err=1
--    return
--  fi
--  if perf stat -e 'instructions,topdown-retiring,slots' true 2>&1 | grep -E -q "<not supported>"
--  then
--    echo "Topdown event group test [Failed slots not reordered first in no-group case]"
--    err=1
--    return
--  fi
--  if perf stat -e '{instructions,topdown-retiring,slots}' true 2>&1 | grep -E -q "<not supported>"
--  then
--    echo "Topdown event group test [Failed slots not reordered first in single group case]"
--    err=1
--    return
--  fi
--  if perf stat -e '{instructions,slots},topdown-retiring' true 2>&1 | grep -E -q "<not supported>"
--  then
--    echo "Topdown event group test [Failed topdown metrics event not move into slots group]"
--    err=1
--    return
--  fi
--  if perf stat -e '{instructions,slots},{topdown-retiring}' true 2>&1 | grep -E -q "<not supported>"
--  then
--    echo "Topdown event group test [Failed topdown metrics group not merge into slots group]"
--    err=1
--    return
--  fi
--  if perf stat -e '{instructions,r400,r8000}' true 2>&1 | grep -E -q "<not supported>"
-+  td_err=0
-+  do_topdown_group_test() {
-+    events=$1
-+    failure=$2
-+    if perf stat -e "$events" true 2>&1 | grep -E -q "<not supported>"
-+    then
-+      echo "Topdown event group test [Failed $failure for '$events']"
-+      td_err=1
-+      return
-+    fi
-+  }
-+  do_topdown_group_test "{slots,topdown-retiring}" "events not supported"
-+  do_topdown_group_test "{instructions,r400,r8000}" "raw format slots not reordered first"
-+  filler_events=("instructions" "cycles"
-+                 "context-switches" "faults")
-+  for ((i = 0; i < ${#filler_events[@]}; i+=2))
-+  do
-+    filler1=${filler_events[i]}
-+    filler2=${filler_events[i+1]}
-+    do_topdown_group_test "$filler1,topdown-retiring,slots" \
-+      "slots not reordered first in no-group case"
-+    do_topdown_group_test "slots,$filler1,topdown-retiring" \
-+      "topdown metrics event not reordered in no-group case"
-+    do_topdown_group_test "{$filler1,topdown-retiring,slots}" \
-+      "slots not reordered first in single group case"
-+    do_topdown_group_test "{$filler1,slots},topdown-retiring" \
-+      "topdown metrics event not move into slots group"
-+    do_topdown_group_test "topdown-retiring,{$filler1,slots}" \
-+      "topdown metrics event not move into slots group last"
-+    do_topdown_group_test "{$filler1,slots},{topdown-retiring}" \
-+      "topdown metrics group not merge into slots group"
-+    do_topdown_group_test "{topdown-retiring},{$filler1,slots}" \
-+      "topdown metrics group not merge into slots group last"
-+    do_topdown_group_test "{$filler1,slots},$filler2,topdown-retiring" \
-+      "non-adjacent topdown metrics group not move into slots group"
-+    do_topdown_group_test "$filler2,topdown-retiring,{$filler1,slots}" \
-+      "non-adjacent topdown metrics group not move into slots group last"
-+    do_topdown_group_test "{$filler1,slots},{$filler2,topdown-retiring}" \
-+      "metrics group not merge into slots group"
-+    do_topdown_group_test "{$filler1,topdown-retiring},{$filler2,slots}" \
-+      "metrics group not merge into slots group last"
-+  done
-+  if test "$td_err" -eq 0
-   then
--    echo "Topdown event group test [Failed raw format slots not reordered first]"
--    err=1
--    return
-+    echo "Topdown event group test [Success]"
-+  else
-+    err="$td_err"
-   fi
--  echo "Topdown event group test [Success]"
- }
- 
- test_topdown_weak_groups() {
--- 
-2.49.0.rc0.332.g42c0ae87b1-goog
-
+Regards
+Hangbin
+> 
+> > > 
+> > > bond_ipsec_add_sa_all()
+> > > spin_unlock(&ipsec->x->lock);
+> > > ipsec->xs->xso.real_dev = real_dev;
+> > >                                 __xfrm_state_delete x->state = DEAD
+> > >                                   - bond_ipsec_del_sa()
+> > >                                     - .xdo_dev_state_delete()
+> > > .xdo_dev_state_add()
+> 
+> Cosmin.
 
