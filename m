@@ -1,566 +1,368 @@
-Return-Path: <linux-kernel+bounces-550133-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E14BA55BAE
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:17:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A8B3A55BAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:17:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9319D3B63A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:16:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29EB57A3601
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D813847B;
-	Fri,  7 Mar 2025 00:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A3VwixgS"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3645383;
+	Fri,  7 Mar 2025 00:17:25 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B2DC4430;
-	Fri,  7 Mar 2025 00:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3662B2CA6
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 00:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741306617; cv=none; b=ZjsbqoEH2/FhWsJWk8cdHQHXLfEzdxdIT24yOremwP95JOnonmLKyjVfkCIGVzEBO9V5IOTK5D3L8SjJL2i/haAfhbX4Gx6HlYrQ2BVkTtmICC702q1YnnwCnghk0nrTpFnNfMeK8NeDqJ3rMu9AODHtrhwZMO6gIxEvBBYiBaY=
+	t=1741306645; cv=none; b=Ts+yEfKFtvpGfnCqPocZgIKgizTUK2yYVIyq7ckd2FCSA+FkEy9a7F+90CIdSHMqArpiXkGAM2AJfDKM9FIHWI5MwDyLlFZssxWShxq2hC+bOcfsNpfEER2/jN0csej39uYhKLNGQqVv/bQXlgTrVhQXVdWn4mTF9Ni+rxwsnTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741306617; c=relaxed/simple;
-	bh=twsT9Oo/Us9O7jUvQGjCKb7htDJjyL+JsvOWkId6PNo=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Qhw7oOpVpF2wsdPfalpGyDeCASpWGhXQYZfCKJxvn6I1Jii77QF7xSwZmpSXH7+AiH+i2IRhjwb5q/jzkNf0JBwi+zxzAol1aP1suU7F1Xse1iMkjzL6wFKTSvTYzmxm/jDeVcB50ndJByFhV+mZ8sPuXGB78UFr9dGW+bVGrdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A3VwixgS; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6f679788fd1so10145787b3.2;
-        Thu, 06 Mar 2025 16:16:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741306614; x=1741911414; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Elvo9kYm6JDwLbjCIV9FHjgmEXldhwO9y61s5I5jGbk=;
-        b=A3VwixgSjkpEQf9QrTPmluUtZbrtqsIu+T8qk8rC1vRk8+yNWzbJC2MVzxwCJmNJRt
-         GpmCv+BeNHNrcZvRUS0r6jr0SEnGVxU3R4aMLNOWfRMTzjF8KsKMJgewz5eXt/Awqfr7
-         srbMo5gyy5DW7iidlfQc8TaPKWGToQHxY744aUscs9H/BCgkuqJrdwGGVnrFxiOTAXHr
-         baL3CwFMHB8fmCsTIJ1gfX0f1QQ71cMYhhXb+0NCZEvPPm97XFTJ+pvmKXr8pb2/IxCY
-         AqHzg4sySpXW83ZEjPjywb+QycxPNtWCVNIbZ+nbDAvzjpU7VS5hzsK1zvDamFMHeu5m
-         Dlow==
+	s=arc-20240116; t=1741306645; c=relaxed/simple;
+	bh=cuP/vScxGtaMqppW/h6NaC/dlve9qOgtjc8hq4kp0AU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oospMqq5Og3XQvfYRoUkquVK5ADK0MsWIJuALcXbH7HPBsKwFHz32udXhrI5iuVQ486idhwADlwwRNsNScvJr98uHOklH2FcmGARRPNJ7HK6HLJyqH7hzJpVVbLkI0CKk7zZQ8zySsElS2WHkcj4plO4f6foIEZVD/Izs5U85W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d43355c250so17456435ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 16:17:23 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741306614; x=1741911414;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Elvo9kYm6JDwLbjCIV9FHjgmEXldhwO9y61s5I5jGbk=;
-        b=v8fOgs+X/V7TejQpuiiR2flVvT6qFDypOyGW8B5PRNr8IG6fs9pKyahROpFVg1e708
-         cKfyj/RiSnpECFZVExOI5vgHTNyKDgRptx1Oul/5w95WxTEX5cghEFIyjC7IG1l3d3zj
-         YJ/b80PlT5GkTJiCNn4649jbCV1eopNW9UWJmgkepkFef0AAxw+J7v60eQ0hY4B672KW
-         kKPzr8wTqlL6Ehs2Hl2XBAM4+FMZboAeuEkBj09zFlY2RlXHmyyKUvwku09N05WQjNAP
-         VkBpSc/D4wjaM13rHe2qu02gzGNlAsOaULt/9APJq7obrB74yzmXfbtiu1smOCLWkN7L
-         V7HQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxP3Boh9SPGSKSfAdVMx5TQAH6dorg+mjDQMCdB5KqoEqX0r/EY6bflWOpEuRqugQL5BL57LsZnBf5cmO3@vger.kernel.org, AJvYcCVBUWQx1faJyD/pi4TN3j4V4NiTJG4jtj3r5kwRjEx6i7IfBND0eZbG+4VwkKjN99LPjq6usjRdAp90DDxadwX6yFsjkA==@vger.kernel.org, AJvYcCXKJb/dQDWU6xFJS08urk96RMzMJ5f8x65WqXzxredxpMQXGoppumYkDJywufDTxJIRlrnsXDI2nfZYDg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwCzB856axHp8w8dqxWFppJMLa1FbJpIWrVuU72w6JwltWap491
-	fk8y8yqCMyStEo4eNi20XLAY5CxYpP8SUcxQ7ZF6qL4M7FGNpAvU
-X-Gm-Gg: ASbGnctQptXfqx54cM1ApXgkd9C2V5itAVRhvmGMMUuoOlllNhKK2EjRiQmoTzckuv/
-	iX7gn2bTQBhZy9DmE6B6yOGKfHuCOyLvPj8YcOL2psBMuorQEBhhjhQH8pBUM6wGgdcew5rnIn2
-	aueATnsJOIBciqmNbAfSEzG+5NwvPseFX6QKRFu5InwvRisFEyDwEUHlpZkZ82UOmWpDWia2kXH
-	eTPN4DU42XnNM44K0gcK5Bzi6es9sEY5vmF62ecaeOs+YzWUu492QneE7KXNX0qjqcaREuCut2I
-	tmKn2vPj2WjAuWxAF/LINKea2HdRgEb6H6KFMA==
-X-Google-Smtp-Source: AGHT+IHXPZp8rOFCJiSBB+K3TmJJodLqHdDMDj32MX6uDtjE5aBP4LLJyK5buWMxi5LKcudIYQBGjg==
-X-Received: by 2002:a05:690c:6f0a:b0:6f0:23da:49a3 with SMTP id 00721157ae682-6febf295f42mr23201597b3.8.1741306614078;
-        Thu, 06 Mar 2025 16:16:54 -0800 (PST)
-Received: from localhost ([2800:bf0:61:1288:2be8:bc29:ad13:842f])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6feb2a1c276sm4991197b3.13.2025.03.06.16.16.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Mar 2025 16:16:53 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741306642; x=1741911442;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ifMmxd60Hb7OPYrM+DTw5Np2I8L4Y/29uTi+Rh8hpQk=;
+        b=JFWF4wNlHKQHUNRfYkWXW18a3Y5Af4bwRIS+UxOgMkGYUxLbEhqQsgpWSH+Y2A8jfs
+         15n1F9JEiTnsuU6qI+PkvONXp9sGgKM+TZUpIpicklnPdoEeEEzrmhPP8a9CR5LIhaWl
+         xRZEzImH1Ae1rQQpa3uiA4UQXN7Hp5ATXyeLTB9MQLcuxqJzeiSq5AXpdbEhFAGLgsmE
+         ERABKCfmWOTLot1BvAU92hXQMxvNVd63x/gZi+kNVSkq53Y2B/au10StiIeVpkDKMnVD
+         Zo1Y2zze7FX3tyBEjf8fWLperYFuaOTcRpBT6nzKTB8RJZM5FDbfIe+OMUfRYpyoOs8o
+         nrnA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGua2Y2yoW6qq0AdLE/CoU9p779sVEO8xTrrNHBBbrRNmXZCKg+nTcUGkYwFIdQ6TrT3l3UPaU61YbW9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBKjZVeSAC//3hhINQcCVKByYBejXPErUXIZRscuXQJ/ZtbL27
+	CjoGC0ySYx9HWHfAj+xk/sLT66yEToi+WttEfPpmJSBhbzgmbCKBwfMA82Zn2Qm3F9ncYcNsLm7
+	PhivmJt+uTgBkO+1/gIuwakVAj8Olx6F2WYExt7KTmjYvQY4VD7oDJnw=
+X-Google-Smtp-Source: AGHT+IHaSYhzCfsPSKRQfn1m0L69FqtXfxL8H8qqrKQ143dLCwUt/b74Eyng3ENTCqbHr9lYsCzZuTkhdU16hNsyFPgfX9sjlkgW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 06 Mar 2025 19:16:50 -0500
-Message-Id: <D89LODODY167.1VG4P7K7X2BZO@gmail.com>
-Cc: "Hans de Goede" <hdegoede@redhat.com>,
- <platform-driver-x86@vger.kernel.org>, <Dell.Client.Kernel@dell.com>,
- <linux-kernel@vger.kernel.org>, "Guenter Roeck" <linux@roeck-us.net>, "Jean
- Delvare" <jdelvare@suse.com>, <linux-hwmon@vger.kernel.org>
-Subject: Re: [PATCH v3 08/10] platform/x86: alienware-wmi-wmax: Add support
- for manual fan control
-From: "Kurt Borja" <kuurtb@gmail.com>
-To: "Armin Wolf" <W_Armin@gmx.de>, =?utf-8?q?Ilpo_J=C3=A4rvinen?=
- <ilpo.jarvinen@linux.intel.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a
-References: <20250305-hwm-v3-0-395e7a1407e2@gmail.com>
- <20250305-hwm-v3-8-395e7a1407e2@gmail.com>
- <e8a44866-602c-47bb-8b11-7ba59c3d346f@gmx.de>
-In-Reply-To: <e8a44866-602c-47bb-8b11-7ba59c3d346f@gmx.de>
+MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1848:b0:3d4:2ea4:6b8a with SMTP id
+ e9e14a558f8ab-3d441a0571cmr22898795ab.22.1741306642618; Thu, 06 Mar 2025
+ 16:17:22 -0800 (PST)
+Date: Thu, 06 Mar 2025 16:17:22 -0800
+In-Reply-To: <6761bbbd.050a0220.29fcd0.0075.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67ca3b12.050a0220.15b4b9.006c.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_connect_cfm
+From: syzbot <syzbot+e9abaabc441d3dd18735@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Armin,
+syzbot has found a reproducer for the following issue on:
 
-On Thu Mar 6, 2025 at 5:35 PM -05, Armin Wolf wrote:
-> Am 06.03.25 um 01:56 schrieb Kurt Borja:
->
->> All models with the "AWCC" WMAX device support a way of manually
->> controlling fans.
->>
->> The PWM duty cycle of a fan can't be controlled directly. Instead the
->> AWCC interface let's us tune a PWM `boost` value, which has the
->> following empirically discovered, aproximate behavior over the PWM
->> value:
->>
->> 	pwm =3D pwm_base + (pwm_boost / 255) * (pwm_max - pwm_base)
->>
->> Where the pwm_base is the locked PWM value controlled by the FW and
->> pwm_boost is a value between 0 and 255.
->>
->> Expose this pwm_boost knob as a custom HWMON attribute.
->>
->> Cc: Guenter Roeck <linux@roeck-us.net>
->> Cc: Jean Delvare <jdelvare@suse.com>
->> Cc: linux-hwmon@vger.kernel.org
->> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
->> ---
->>   drivers/platform/x86/dell/alienware-wmi-wmax.c | 223 +++++++++++++++++=
-+++++++-
->>   1 file changed, 220 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/pl=
-atform/x86/dell/alienware-wmi-wmax.c
->> index 20cf3371ee3c0e1ea038b3ca517e831f3b30dc29..de4e8f177aadc9552b05cc73=
-2e41ee458b761143 100644
->> --- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
->> +++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
->> @@ -13,8 +13,11 @@
->>   #include <linux/bits.h>
->>   #include <linux/dmi.h>
->>   #include <linux/hwmon.h>
->> +#include <linux/hwmon-sysfs.h>
->> +#include <linux/minmax.h>
->>   #include <linux/moduleparam.h>
->>   #include <linux/platform_profile.h>
->> +#include <linux/pm.h>
->>   #include <linux/units.h>
->>   #include <linux/wmi.h>
->>   #include "alienware-wmi.h"
->> @@ -179,10 +182,12 @@ enum AWCC_THERMAL_INFORMATION_OPERATIONS {
->>   	AWCC_OP_GET_FAN_MIN_RPM			=3D 0x08,
->>   	AWCC_OP_GET_FAN_MAX_RPM			=3D 0x09,
->>   	AWCC_OP_GET_CURRENT_PROFILE		=3D 0x0B,
->> +	AWCC_OP_GET_FAN_BOOST			=3D 0x0C,
->>   };
->>
->>   enum AWCC_THERMAL_CONTROL_OPERATIONS {
->>   	AWCC_OP_ACTIVATE_PROFILE		=3D 0x01,
->> +	AWCC_OP_SET_FAN_BOOST			=3D 0x02,
->>   };
->>
->>   enum AWCC_GAME_SHIFT_STATUS_OPERATIONS {
->> @@ -248,6 +253,7 @@ struct awcc_fan_data {
->>   	u32 total_temps;
->>   	u32 min_rpm;
->>   	u32 max_rpm;
->> +	u8 suspend_cache;
->>   	u8 id;
->>   };
->>
->> @@ -627,6 +633,17 @@ static inline int awcc_op_get_temperature(struct wm=
-i_device *wdev, u8 temp_id, u
->>   		.arg3 =3D 0,
->>   	};
->>
->> +	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION, &args=
-, out);
->> +}
->> +
->> +static inline int awcc_op_get_fan_boost(struct wmi_device *wdev, u8 fan=
-_id, u32 *out)
->> +{
->> +	struct wmax_u32_args args =3D {
->> +		.operation =3D AWCC_OP_GET_FAN_BOOST,
->> +		.arg1 =3D fan_id,
->> +		.arg2 =3D 0,
->> +		.arg3 =3D 0,
->> +	};
->>
->>   	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_INFORMATION, &arg=
-s, out);
->>   }
->> @@ -656,6 +673,19 @@ static inline int awcc_op_activate_profile(struct w=
-mi_device *wdev, u8 profile)
->>   	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_CONTROL, &args, &=
-out);
->>   }
->>
->> +static int awcc_op_set_fan_boost(struct wmi_device *wdev, u8 fan_id, u8=
- boost)
->> +{
->> +	struct wmax_u32_args args =3D {
->> +		.operation =3D AWCC_OP_SET_FAN_BOOST,
->> +		.arg1 =3D fan_id,
->> +		.arg2 =3D boost,
->> +		.arg3 =3D 0,
->> +	};
->> +	u32 out;
->> +
->> +	return __awcc_wmi_command(wdev, AWCC_METHOD_THERMAL_CONTROL, &args, &o=
-ut);
->> +}
->> +
->>   static int awcc_profile_id_to_pprof(u32 id, enum platform_profile_opti=
-on *profile)
->>   {
->>   	switch (id) {
->> @@ -717,6 +747,7 @@ static int awcc_hwmon_read(struct device *dev, enum =
-hwmon_sensor_types type,
->>   			   u32 attr, int channel, long *val)
->>   {
->>   	struct awcc_priv *priv =3D dev_get_drvdata(dev);
->> +	enum platform_profile_option profile;
->>   	struct awcc_fan_data *fan;
->>   	u32 state;
->>   	int ret;
->> @@ -765,6 +796,28 @@ static int awcc_hwmon_read(struct device *dev, enum=
- hwmon_sensor_types type,
->>   		fan =3D priv->fan_data[channel];
->>
->>   		switch (attr) {
->> +		case hwmon_pwm_enable:
->> +			ret =3D awcc_op_get_current_profile(priv->wdev, &state);
->> +			if (ret)
->> +				return ret;
->> +
->> +			ret =3D awcc_profile_id_to_pprof(state, &profile);
->> +			if (ret)
->> +				return ret;
->> +
->> +			switch (profile) {
->> +			case PLATFORM_PROFILE_PERFORMANCE:
->
-> The hwmon sysfs docs say that 0 means that the fan is spinning at maximum=
- speed. Does PLATFORM_PROFILE_PERFORMANCE
-> guarantee that all fans are always spinning at maximum speed?
+HEAD commit:    f66d6acccbc0 Merge tag 'x86_urgent_for_v6.12' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1666b2e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ca2f08f822652bd0
+dashboard link: https://syzkaller.appspot.com/bug?extid=e9abaabc441d3dd18735
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-Yes PERFORMANCE is full-speed for all devices I know. Manual fan control
-is completely disabled for that profile too.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-In fact I'm thinking about adding a module parameter to suppress this
-behavior. Not everyone may like that. That's outside the scope of these
-series tho.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5b28ec7d6aaa/disk-f66d6acc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1999546fff71/vmlinux-f66d6acc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ef848d42ab19/bzImage-f66d6acc.xz
 
->
-> If no then i suggest to drop support for 0.
->
->> +				*val =3D 0;
->> +				break;
->> +			case PLATFORM_PROFILE_CUSTOM:
->> +				*val =3D 1;
->> +				break;
->> +			default:
->> +				*val =3D 2;
->> +				break;
->> +			}
->> +
->> +			break;
->>   		case hwmon_pwm_auto_channels_temp:
->>   			bitmap_copy(val, fan->auto_channels_temp, BITS_PER_LONG);
->>   			break;
->> @@ -840,10 +893,48 @@ static int awcc_hwmon_read_string(struct device *d=
-ev, enum hwmon_sensor_types ty
->>   	return 0;
->>   }
->>
->> +
->> +static int awcc_hwmon_write(struct device *dev, enum hwmon_sensor_types=
- type,
->> +			    u32 attr, int channel, long val)
->> +{
->> +	struct awcc_priv *priv =3D dev_get_drvdata(dev);
->> +	int ret;
->> +
->> +	switch (type) {
->> +	case hwmon_pwm:
->> +		switch (attr) {
->> +		case hwmon_pwm_enable:
->> +			/*
->> +			 * We don't want to duplicate platform profile logic, so
->> +			 * we only allow enabling manual fan control
->> +			 */
->
-> I do not think that having pwm1_enable brings any benefit, as the pwmX_bo=
-ost attributes
-> behave differently than pwmX attributes. I think it would be enough to do=
-cument that
-> pwmX_boost settings will only reliably work when the custom platform prof=
-ile is selected.
+Bisection is inconclusive: the issue happens on the oldest tested release.
 
-Now I realise I completely forgot about the admin-guide documentation!
-I'll include it in the next revision. Is this path ok?
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=147adb78580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=167adb78580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=127adb78580000
 
-	Documentation/admin-guide/laptops/alienware-wmi.rst
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e9abaabc441d3dd18735@syzkaller.appspotmail.com
 
-Or should I add driver specific ABI documentation? (or both ofc)
+kobject: kobject_add_internal failed for hci5:201 with -EEXIST, don't try to register things with the same name in the same directory.
+Bluetooth: hci5: failed to register connection device
+==================================================================
+BUG: KASAN: slab-use-after-free in l2cap_conn_ready net/bluetooth/l2cap_core.c:1619 [inline]
+BUG: KASAN: slab-use-after-free in l2cap_connect_cfm+0xdbe/0xf80 net/bluetooth/l2cap_core.c:7278
+Read of size 8 at addr ffff8880780f0480 by task kworker/u9:3/5950
 
-I don't want to name the file alienware-laptop because this driver is
-compatible with Dell G-Series too.
+CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Not tainted 6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci5 hci_rx_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ l2cap_conn_ready net/bluetooth/l2cap_core.c:1619 [inline]
+ l2cap_connect_cfm+0xdbe/0xf80 net/bluetooth/l2cap_core.c:7278
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
 
->
->> +			if (val !=3D 1)
->> +				return -EINVAL;
->> +
->> +			ret =3D awcc_op_activate_profile(priv->wdev, AWCC_SPECIAL_PROFILE_CU=
-STOM);
->> +			if (ret)
->> +				return ret;
->> +
->> +			if (priv->ppdev)
->> +				platform_profile_notify(priv->ppdev);
->> +			break;
->> +		default:
->> +			return -EOPNOTSUPP;
->> +		}
->> +
->> +		break;
->> +	default:
->> +		return -EOPNOTSUPP;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>   static const struct hwmon_ops awcc_hwmon_ops =3D {
->>   	.is_visible =3D awcc_hwmon_is_visible,
->>   	.read =3D awcc_hwmon_read,
->>   	.read_string =3D awcc_hwmon_read_string,
->> +	.write =3D awcc_hwmon_write,
->>   };
->>
->>   static const struct hwmon_channel_info * const awcc_hwmon_info[] =3D {
->> @@ -864,7 +955,7 @@ static const struct hwmon_channel_info * const awcc_=
-hwmon_info[] =3D {
->>   			   HWMON_F_LABEL | HWMON_F_INPUT | HWMON_F_MIN | HWMON_F_MAX
->>   			   ),
->>   	HWMON_CHANNEL_INFO(pwm,
->> -			   HWMON_PWM_AUTO_CHANNELS_TEMP,
->> +			   HWMON_PWM_AUTO_CHANNELS_TEMP | HWMON_PWM_ENABLE,
->>   			   HWMON_PWM_AUTO_CHANNELS_TEMP,
->>   			   HWMON_PWM_AUTO_CHANNELS_TEMP,
->>   			   HWMON_PWM_AUTO_CHANNELS_TEMP,
->> @@ -879,6 +970,75 @@ static const struct hwmon_chip_info awcc_hwmon_chip=
-_info =3D {
->>   	.info =3D awcc_hwmon_info,
->>   };
->>
->> +static ssize_t pwm_boost_show(struct device *dev, struct device_attribu=
-te *attr,
->> +			      char *buf)
->> +{
->> +	int ret, index =3D to_sensor_dev_attr(attr)->index;
->
-> Please initialize "index" on a separate line, can remember the reverse xm=
-as-tree order for variables.
+Allocated by task 5950:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ l2cap_chan_create+0x44/0x920 net/bluetooth/l2cap_core.c:449
+ l2cap_sock_alloc.constprop.0+0xf3/0x180 net/bluetooth/l2cap_sock.c:1886
+ l2cap_sock_new_connection_cb+0x101/0x240 net/bluetooth/l2cap_sock.c:1468
+ l2cap_connect_cfm+0x4cc/0xf80 net/bluetooth/l2cap_core.c:7261
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-Ack.
+Freed by task 6070:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2342 [inline]
+ slab_free mm/slub.c:4579 [inline]
+ kfree+0x14f/0x4b0 mm/slub.c:4727
+ l2cap_chan_destroy net/bluetooth/l2cap_core.c:495 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ l2cap_chan_put+0x216/0x2c0 net/bluetooth/l2cap_core.c:519
+ l2cap_sock_cleanup_listen+0x4d/0x2a0 net/bluetooth/l2cap_sock.c:1451
+ l2cap_sock_release+0x5c/0x210 net/bluetooth/l2cap_sock.c:1411
+ __sock_release+0xb3/0x270 net/socket.c:658
+ sock_close+0x1c/0x30 net/socket.c:1426
+ __fput+0x3f9/0xb60 fs/file_table.c:431
+ task_work_run+0x151/0x250 kernel/task_work.c:239
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
->
->> +	struct awcc_priv *priv =3D dev_get_drvdata(dev);
->> +	struct awcc_fan_data *fan =3D priv->fan_data[index];
->> +	u32 boost;
->> +
->> +	ret =3D awcc_op_get_fan_boost(priv->wdev, fan->id, &boost);
->> +	if (ret)
->> +		return ret;
->> +
->> +	return sysfs_emit(buf, "%u\n", boost);
->> +}
->> +
->> +static ssize_t pwm_boost_store(struct device *dev, struct device_attrib=
-ute *attr,
->> +			       const char *buf, size_t count)
->> +{
->> +	int ret, index =3D to_sensor_dev_attr(attr)->index;
->> +	struct awcc_priv *priv =3D dev_get_drvdata(dev);
->> +	struct awcc_fan_data *fan =3D priv->fan_data[index];
->> +	unsigned long val;
->> +
->> +	ret =3D kstrtoul(buf, 0, &val);
->> +	if (ret)
->> +		return ret;
->> +
->> +	ret =3D awcc_op_set_fan_boost(priv->wdev, fan->id, clamp_val(val, 0, 2=
-55));
->> +
->> +	return ret ? ret : count;
->> +}
->> +
->> +static SENSOR_DEVICE_ATTR_RW(pwm1_boost, pwm_boost, 0);
->> +static SENSOR_DEVICE_ATTR_RW(pwm2_boost, pwm_boost, 1);
->> +static SENSOR_DEVICE_ATTR_RW(pwm3_boost, pwm_boost, 2);
->> +static SENSOR_DEVICE_ATTR_RW(pwm4_boost, pwm_boost, 3);
->
-> Since those attributes are working differently than the standard pwm attr=
-ibutes, i suggest to
-> instead name them fanX_boost.
+The buggy address belongs to the object at ffff8880780f0000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 1152 bytes inside of
+ freed 2048-byte region [ffff8880780f0000, ffff8880780f0800)
 
-I went for pwm*_boost because we also export pwm*_auto_channels_temp,
-but I'm ok with fan*_boost too.
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff8880780f6000 pfn:0x780f0
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801b042000 ffffea0001292c00 0000000000000002
+raw: ffff8880780f6000 0000000080080003 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff88801b042000 ffffea0001292c00 0000000000000002
+head: ffff8880780f6000 0000000080080003 00000001f5000000 0000000000000000
+head: 00fff00000000003 ffffea0001e03c01 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 2965, tgid 2965 (kworker/u8:7), ts 97728781507, free_ts 97577158223
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
+ prep_new_page mm/page_alloc.c:1564 [inline]
+ get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
+ __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4751
+ alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
+ alloc_slab_page mm/slub.c:2412 [inline]
+ allocate_slab mm/slub.c:2578 [inline]
+ new_slab+0x2c9/0x410 mm/slub.c:2631
+ ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ __do_kmalloc_node mm/slub.c:4263 [inline]
+ __kmalloc_node_track_caller_noprof+0x355/0x430 mm/slub.c:4283
+ kmalloc_reserve+0xef/0x2c0 net/core/skbuff.c:609
+ __alloc_skb+0x164/0x380 net/core/skbuff.c:678
+ alloc_skb include/linux/skbuff.h:1322 [inline]
+ nlmsg_new include/net/netlink.h:1015 [inline]
+ rtmsg_ifinfo_build_skb+0x81/0x280 net/core/rtnetlink.c:4099
+ unregister_netdevice_many_notify+0x983/0x1e50 net/core/dev.c:11411
+ cleanup_net+0x58c/0xb40 net/core/net_namespace.c:621
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+page last free pid 2965 tgid 2965 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_unref_page+0x661/0x1080 mm/page_alloc.c:2657
+ __folio_put+0x32a/0x450 mm/swap.c:112
+ kvfree+0x47/0x50 mm/util.c:701
+ unix_net_exit+0x61/0xb0 net/unix/af_unix.c:3708
+ ops_exit_list+0xb3/0x180 net/core/net_namespace.c:173
+ cleanup_net+0x5b7/0xb40 net/core/net_namespace.c:626
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
->
->> +
->> +static umode_t pwm_boost_attr_visible(struct kobject *kobj, struct attr=
-ibute *attr, int n)
->> +{
->> +	struct awcc_priv *priv =3D dev_get_drvdata(kobj_to_dev(kobj));
->> +
->> +	return n < priv->fan_count ? attr->mode : 0;
->> +}
->> +
->> +static bool pwm_boost_group_visible(struct kobject *kobj)
->> +{
->> +	return true;
->> +}
->> +
->> +DEFINE_SYSFS_GROUP_VISIBLE(pwm_boost);
->> +
->> +static struct attribute *fan_boost_attrs[] =3D {
->> +	&sensor_dev_attr_pwm1_boost.dev_attr.attr,
->> +	&sensor_dev_attr_pwm2_boost.dev_attr.attr,
->> +	&sensor_dev_attr_pwm3_boost.dev_attr.attr,
->> +	&sensor_dev_attr_pwm4_boost.dev_attr.attr,
->> +	NULL
->> +};
->> +
->> +static const struct attribute_group pwm_boost_group =3D {
->> +	.attrs =3D fan_boost_attrs,
->> +	.is_visible =3D SYSFS_GROUP_VISIBLE(pwm_boost),
->> +};
->> +
->> +static const struct attribute_group *awcc_hwmon_groups[] =3D {
->> +	&pwm_boost_group,
->> +	NULL
->> +};
->> +
->>   static int awcc_hwmon_temps_init(struct wmi_device *wdev)
->>   {
->>   	struct awcc_priv *priv =3D dev_get_drvdata(&wdev->dev);
->> @@ -1011,12 +1171,50 @@ static int awcc_hwmon_init(struct wmi_device *wd=
-ev)
->>   	if (ret)
->>   		return ret;
->>
->> -	priv->hwdev =3D devm_hwmon_device_register_with_info(&wdev->dev, "alie=
-nware_wmi", priv,
->> -							   &awcc_hwmon_chip_info, NULL);
->> +	priv->hwdev =3D devm_hwmon_device_register_with_info(&wdev->dev, "alie=
-nware_wmi",
->> +							   priv, &awcc_hwmon_chip_info,
->> +							   awcc_hwmon_groups);
->>
->>   	return PTR_ERR_OR_ZERO(priv->hwdev);
->>   }
->>
->> +static void awcc_hwmon_suspend(struct device *dev)
->> +{
->> +	struct awcc_priv *priv =3D dev_get_drvdata(dev);
->> +	struct awcc_fan_data *fan;
->> +	unsigned int i;
->> +	u32 boost;
->> +	int ret;
->> +
->> +	for (i =3D 0; i < priv->fan_count; i++) {
->> +		fan =3D priv->fan_data[i];
->> +
->> +		ret =3D awcc_thermal_information(priv->wdev, AWCC_OP_GET_FAN_BOOST,
->> +					       fan->id, &boost);
->> +		if (ret)
->> +			fan->suspend_cache =3D 0;
->
-> Please at least log a warning here that the fan boost value can not be re=
-stored properly.
+Memory state around the buggy address:
+ ffff8880780f0380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880780f0400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff8880780f0480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff8880780f0500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880780f0580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+==================================================================
+BUG: KASAN: wild-memory-access in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: wild-memory-access in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+BUG: KASAN: wild-memory-access in l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+BUG: KASAN: wild-memory-access in l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+BUG: KASAN: wild-memory-access in l2cap_connect_cfm+0x7eb/0xf80 net/bluetooth/l2cap_core.c:7278
+Read of size 4 at addr deacfffffffffc8c by task kworker/u9:3/5950
 
-Ack.
-
-Is not propagating errors a good approach here? My idea was to try to
-turn off fans no matter what.
-
->
->> +		else
->> +			fan->suspend_cache =3D clamp_val(boost, 0, 255);
->> +
->> +		awcc_op_set_fan_boost(priv->wdev, fan->id, 0);
->> +	}
->> +}
->> +
->> +static void awcc_hwmon_resume(struct device *dev)
->> +{
->> +
->> +	struct awcc_priv *priv =3D dev_get_drvdata(dev);
->> +	struct awcc_fan_data *fan;
->> +	unsigned int i;
->> +
->> +	for (i =3D 0; i < priv->fan_count; i++) {
->> +		fan =3D priv->fan_data[i];
->> +
->> +		if (fan->suspend_cache)
->
-> How does the driver restore fan boost settings with a value of 0?
-
-We set to 0 when suspending so I don't think it's necessary to restore
-to 0 again when resuming.
-
->
-> Thanks,
-> Armin Wolf
->
->> +			awcc_op_set_fan_boost(priv->wdev, fan->id, fan->suspend_cache);
->> +	}
->> +}
->> +
->>   /*
->>    * Thermal Profile control
->>    *  - Provides thermal profile control through the Platform Profile AP=
-I
->> @@ -1233,6 +1431,24 @@ static int wmax_wmi_probe(struct wmi_device *wdev=
-, const void *context)
->>   	return ret;
->>   }
->>
->> +static int wmax_wmi_suspend(struct device *dev)
->> +{
->> +	if (awcc->hwmon)
->> +		awcc_hwmon_suspend(dev);
->> +
->> +	return 0;
->> +}
->> +
->> +static int wmax_wmi_resume(struct device *dev)
->> +{
->> +	if (awcc->hwmon)
->> +		awcc_hwmon_resume(dev);
->> +
->> +	return 0;
->> +}
->> +
->> +DEFINE_SIMPLE_DEV_PM_OPS(wmax_wmi_pm_ops, wmax_wmi_suspend, wmax_wmi_re=
-sume);
->> +
->>   static const struct wmi_device_id alienware_wmax_device_id_table[] =3D=
- {
->>   	{ WMAX_CONTROL_GUID, NULL },
->>   	{ },
->> @@ -1243,6 +1459,7 @@ static struct wmi_driver alienware_wmax_wmi_driver=
- =3D {
->>   	.driver =3D {
->>   		.name =3D "alienware-wmi-wmax",
->>   		.probe_type =3D PROBE_PREFER_ASYNCHRONOUS,
->> +		.pm =3D pm_sleep_ptr(&wmax_wmi_pm_ops),
->>   	},
->>   	.id_table =3D alienware_wmax_device_id_table,
->>   	.probe =3D wmax_wmi_probe,
->>
+CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Tainted: G    B              6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
+Tainted: [B]=BAD_PAGE
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci5 hci_rx_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+ l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+ l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+ l2cap_connect_cfm+0x7eb/0xf80 net/bluetooth/l2cap_core.c:7278
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+==================================================================
+Oops: general protection fault, probably for non-canonical address 0xfbd59bffffffff91: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: maybe wild-memory-access in range [0xdeacfffffffffc88-0xdeacfffffffffc8f]
+CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Tainted: G    B              6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
+Tainted: [B]=BAD_PAGE
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci5 hci_rx_work
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
+RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
+RIP: 0010:l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+RIP: 0010:l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+RIP: 0010:l2cap_connect_cfm+0x7f2/0xf80 net/bluetooth/l2cap_core.c:7278
+Code: 80 fb ff ff 49 39 c5 0f 84 29 01 00 00 e8 26 a0 6e f7 49 8d 6f 0c be 04 00 00 00 48 89 ef e8 b5 80 cf f7 48 89 e8 48 c1 e8 03 <0f> b6 14 18 48 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 c5
+RSP: 0018:ffffc90003e0f878 EFLAGS: 00010213
+RAX: 1bd59fffffffff91 RBX: dffffc0000000000 RCX: ffffffff814e821f
+RDX: ffff888030808000 RSI: ffffffff81ee2f8e RDI: 0000000000000007
+RBP: deacfffffffffc8c R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: ffff88804779003b
+R13: ffff88806c83d2c0 R14: 0000000000000080 R15: deacfffffffffc80
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055558a5ef5c8 CR3: 000000007bf02000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
+RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
+RIP: 0010:l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+RIP: 0010:l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+RIP: 0010:l2cap_connect_cfm+0x7f2/0xf80 net/bluetooth/l2cap_core.c:7278
+Code: 80 fb ff ff 49 39 c5 0f 84 29 01 00 00 e8 26 a0 6e f7 49 8d 6f 0c be 04 00 00 00 48 89 ef e8 b5 80 cf f7 48 89 e8 48 c1 e8 03 <0f> b6 14 18 48 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 c5
+RSP: 0018:ffffc90003e0f878 EFLAGS: 00010213
+RAX: 1bd59fffffffff91 RBX: dffffc0000000000 RCX: ffffffff814e821f
+RDX: ffff888030808000 RSI: ffffffff81ee2f8e RDI: 0000000000000007
+RBP: deacfffffffffc8c R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: ffff88804779003b
+R13: ffff88806c83d2c0 R14: 0000000000000080 R15: deacfffffffffc80
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055558a5ef5c8 CR3: 000000007bf02000 CR4: 0000000000350ef0
+----------------
+Code disassembly (best guess), 4 bytes skipped:
+   0:	49 39 c5             	cmp    %rax,%r13
+   3:	0f 84 29 01 00 00    	je     0x132
+   9:	e8 26 a0 6e f7       	call   0xf76ea034
+   e:	49 8d 6f 0c          	lea    0xc(%r15),%rbp
+  12:	be 04 00 00 00       	mov    $0x4,%esi
+  17:	48 89 ef             	mov    %rbp,%rdi
+  1a:	e8 b5 80 cf f7       	call   0xf7cf80d4
+  1f:	48 89 e8             	mov    %rbp,%rax
+  22:	48 c1 e8 03          	shr    $0x3,%rax
+* 26:	0f b6 14 18          	movzbl (%rax,%rbx,1),%edx <-- trapping instruction
+  2a:	48 89 e8             	mov    %rbp,%rax
+  2d:	83 e0 07             	and    $0x7,%eax
+  30:	83 c0 03             	add    $0x3,%eax
+  33:	38 d0                	cmp    %dl,%al
+  35:	7c 08                	jl     0x3f
+  37:	84 d2                	test   %dl,%dl
+  39:	0f                   	.byte 0xf
+  3a:	85 c5                	test   %eax,%ebp
 
 
---=20
- ~ Kurt
-
+---
 
