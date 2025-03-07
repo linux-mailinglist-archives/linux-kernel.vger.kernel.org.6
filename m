@@ -1,84 +1,135 @@
-Return-Path: <linux-kernel+bounces-551081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1EB4A567E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:34:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E32BA567E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:35:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D37F7A980F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:32:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 861CD7A8772
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C616E21930A;
-	Fri,  7 Mar 2025 12:33:20 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15EB14A4F9;
-	Fri,  7 Mar 2025 12:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B856C2192F7;
+	Fri,  7 Mar 2025 12:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U3omxWDY"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8703714A4F9
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 12:35:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741350800; cv=none; b=AYcyPCdZaco7Vv70UA5lUzleZbmYjC1JWhl7BPCKJnuuNmlXj5dmFWUvko/XAx8Y7KCQ6pG3+GiZx5G28EABKRocn02HWAbrgNOLGVJydzzbC3UPl30DzJCLt/XM3vUMTvHXdzi3DneLK3UtEB28cHTvvNlXQfAL97AGtPWVmrM=
+	t=1741350930; cv=none; b=QrVNRwiTu4g0eiGH4Tm8uEqmR+8rs6k5uJsk3xJYYpCA0tb2ZNndHEWL8xDlI8brOxvINhD8h0iTayLKyzonKQySsSlBXS6OC3tAJPltx0RsveXeWRF0GSMhHAMyv2zC4RKXa6WYtQRgwnplHVQmi3YrjfLa/NK4o0hsFjKD9WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741350800; c=relaxed/simple;
-	bh=2cMPsXfDUNXxY0A39P3Pugffdm6/N2LoJqadpXCN3t4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OXBULmq8AMAm/26LYgThu55gG6VQjAP5Ir90/YqcAO7Cq1mSHomhP7F9i2b54RMTChqOrzR/daMomzhRxfuzOXN+K+K5t+viENONO+rz/CEo9kNM4gH1DkmlXyOkj56Hriw6r7ArE1A28Q0BV0TU3PynUzWPPURPc5ptVyON3sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ABBC71477;
-	Fri,  7 Mar 2025 04:33:27 -0800 (PST)
-Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 413323F673;
-	Fri,  7 Mar 2025 04:33:14 -0800 (PST)
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v1] mm/madvise: Always set ptes via arch helpers
-Date: Fri,  7 Mar 2025 12:33:06 +0000
-Message-ID: <20250307123307.262298-1-ryan.roberts@arm.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741350930; c=relaxed/simple;
+	bh=+O60ObcSeqCKo6IVaNkmv38iQCdtkc6nnzxjPx7o408=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WMai1PX3UIPgNQZGApccXN+EkCcz4NpUIpELsyW+QTDXC3T3BH9UDoUcOeFWAd+7eKRO6VgEsIC+7E7AqjpDb2vQsuOOxcDjGIUskMcIJUWgX92NIhGwV/ZXKFEvur8J8j947/k4XJVNGwJFkO796jflSp4wRdkKaWoyi71CXUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U3omxWDY; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741350927;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0c0G0Xk8+hb6RAUbjAEw0Q8vL0/F3bRXsSDovOnkZzE=;
+	b=U3omxWDYkhYmbCiDI9sPNVk40hvWpXX8Nr9fzfShMAKESuFVgtHDAYiMLZTlLmESS5Uvbu
+	0BKLijrRxZdMWWZEiTOGigxPM6rMiRmnK0KTrvZDRG2JKOcoiB7cD2Irzl7oI2EjCJ78FH
+	uGoVl1qjGYIbKwumzgQJ36PKSCmTklY=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-90-bTPcYI5HO32vd-ICEio1MA-1; Fri,
+ 07 Mar 2025 07:35:20 -0500
+X-MC-Unique: bTPcYI5HO32vd-ICEio1MA-1
+X-Mimecast-MFC-AGG-ID: bTPcYI5HO32vd-ICEio1MA_1741350919
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9B72D19560A2;
+	Fri,  7 Mar 2025 12:35:18 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.108])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id D34EA1944F2E;
+	Fri,  7 Mar 2025 12:35:15 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri,  7 Mar 2025 13:34:47 +0100 (CET)
+Date: Fri, 7 Mar 2025 13:34:43 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Hillf Danton <hdanton@sina.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250307123442.GD5963@redhat.com>
+References: <20250228143049.GA17761@redhat.com>
+ <20250228163347.GB17761@redhat.com>
+ <20250304050644.2983-1-hdanton@sina.com>
+ <20250304102934.2999-1-hdanton@sina.com>
+ <20250304233501.3019-1-hdanton@sina.com>
+ <20250305045617.3038-1-hdanton@sina.com>
+ <20250305224648.3058-1-hdanton@sina.com>
+ <20250307060827.3083-1-hdanton@sina.com>
+ <20250307104654.3100-1-hdanton@sina.com>
+ <20250307112920.GB5963@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250307112920.GB5963@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Instead of writing a pte directly into the table, use the set_pte_at()
-helper, which gives the arch visibility of the change.
+In case I wasn't clear...
 
-In this instance we are guaranteed that the pte was originally none and
-is being modified to a not-present pte, so there was unlikely to be a
-bug in practice (at least not on arm64). But it's bad practice to write
-the page table memory directly without arch involvement.
+On 03/07, Oleg Nesterov wrote:
+>
+> On 03/07, Hillf Danton wrote:
+> >
+> > On Fri, 7 Mar 2025 11:54:56 +0530 K Prateek Nayak <kprateek.nayak@amd.com>
+> > >> step-03
+> > >> 	task-118766 new reader
+> > >> 	makes pipe empty
+> > >
+> > >Reader seeing a pipe full should wake up a writer allowing 118768 to
+> > >wakeup again and fill the pipe. Am I missing something?
+> > >
+> > Good catch, but that wakeup was cut off [2,3]
 
-Cc: <stable@vger.kernel.org>
-Fixes: 662df3e5c376 ("mm: madvise: implement lightweight guard page mechanism")
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
----
- mm/madvise.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Please note that "that wakeup" was _not_ removed by the patch below.
 
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 388dc289b5d1..6170f4acc14f 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -1101,7 +1101,7 @@ static int guard_install_set_pte(unsigned long addr, unsigned long next,
- 	unsigned long *nr_pages = (unsigned long *)walk->private;
+"That wakeup" is another wakeup pipe_read() does before return:
 
- 	/* Simply install a PTE marker, this causes segfault on access. */
--	*ptep = make_pte_marker(PTE_MARKER_GUARD);
-+	set_pte_at(walk->mm, addr, ptep, make_pte_marker(PTE_MARKER_GUARD));
- 	(*nr_pages)++;
+	if (wake_writer)
+		wake_up_interruptible_sync_poll(&pipe->wr_wait, ...);
 
- 	return 0;
---
-2.43.0
+And wake_writer must be true if this reader changed the pipe_full()
+condition from T to F.
+
+Note also that pipe_read() won't sleep if it has read even one byte.
+
+> > [2] https://lore.kernel.org/lkml/20250304123457.GA25281@redhat.com/
+> > [3] https://lore.kernel.org/all/20250210114039.GA3588@redhat.com/
+>
+> Why do you think
+>
+> 	[PATCH v2 1/1] pipe: change pipe_write() to never add a zero-sized buffer
+> 	https://lore.kernel.org/all/20250210114039.GA3588@redhat.com/
+>
+> can make any difference ???
+>
+> Where do you think a zero-sized buffer with ->len == 0 can come from?
+
+Oleg.
 
 
