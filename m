@@ -1,288 +1,154 @@
-Return-Path: <linux-kernel+bounces-551908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E9A6A572D4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:13:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 121BEA57114
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:06:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FA12189BB60
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:13:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFE153B8A98
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:06:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F912561C6;
-	Fri,  7 Mar 2025 20:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DxD2zVRS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D86124BBFA;
+	Fri,  7 Mar 2025 19:06:14 +0000 (UTC)
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C0E1A5B8C;
-	Fri,  7 Mar 2025 20:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1B617B500
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 19:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741378406; cv=none; b=L5S9Rs+LFqJgupSYWkTNM8N2/qMacmhjYTcRgT1urOQVf/ksNPDbgMdCZEmaflU1mhSXhY1jnpGMHiLGYnBML3SJnaxvzx4+MadpS69tA1Bsfn9+m6Ck2HgCKPLOn6xBZLiUYiMEZhkeD4+Xy5zHgUgzevjpW2bBlrTy8UDyk94=
+	t=1741374374; cv=none; b=u7ANWSeLjHbbm9OxFngQMtMW2HOTfxTY766crVLBGfoj4y2nDGUwKM1U/7fbauZuvsvh87lojzQtbluBw0jMkFwjtT/jCUJUCsTh7R9QkCVXyQOEiCtoT0dPGIYYIFpCUkbpTCILKek7SK4rflllBH28yHUKK6yo8iZ4HnPYndQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741378406; c=relaxed/simple;
-	bh=M2FARmcsZStMQDjL0QcDCzPZDc8Ui0yVPkCpiS0euQ8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fI/g1zveYzjgL3ClpxwCO3vVq2C8eUGCBFlbbFkFz/qoZNHfRZHCP51vmGp4KoPtSlLWIjfnCvu0LaootG11yTmWCQCyAaCTcWw60+SQ1qcSgCU7NeEJ8eHTpTLtYkzT1GQQvLrQMfglN61RBTitmZJEN3qzvTu/zobNhcPiM8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DxD2zVRS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 877CCC4CED1;
-	Fri,  7 Mar 2025 20:13:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741378406;
-	bh=M2FARmcsZStMQDjL0QcDCzPZDc8Ui0yVPkCpiS0euQ8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=DxD2zVRSjSbe0i7xtUtODsrv9P39bYOyWwnpEsWUCGVujfmi9Dd1X0NvNMnM4hsrw
-	 qLMIhBlX82HEoyhm0Z5fvgRHaRaYxzUfXop7xs4EtPwUuaop/yIP4FhJYZ7nl2ilE8
-	 wkqV+2q36WppiE6AFkp/EoIUNcZi4ENIlMyLT0tmPs0QWEcSNLtyawHauVUvCihzGg
-	 PHHZPK1rayH8eMn97CgmYqnQn4UP2M/lSALZ5cvG2OTPO8HZ/pHSdPGtb0QXKeQgch
-	 +cgrEKyzqQ2QGGf1ySA9Dynov+PsIfM+/ld7B+n49x4hiA2RqBuyiB/YxK99RVJIQE
-	 0iXywE+dDHSCA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,  "Guangbo
- Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel
- Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
- <tamird@gmail.com>,  "Markus Elfring" <Markus.Elfring@web.de>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 10/13] rust: hrtimer: implement `HrTimerPointer` for
- `Pin<Box<T>>`
-In-Reply-To: <D8A3THTBK4SK.3LI57W1VI580J@proton.me> (Benno Lossin's message of
-	"Fri, 07 Mar 2025 14:29:58 +0000")
-References: <20250307-hrtimer-v3-v6-12-rc2-v10-0-0cf7e9491da4@kernel.org>
-	<20250307-hrtimer-v3-v6-12-rc2-v10-10-0cf7e9491da4@kernel.org>
-	<xfHjwuMWnL16ZsoPZa788aqaVAj2E57dGCkenefxU1HFxGOtCTWHdPNc2nPOF_osnruq4qsvkAFoQZFwzxMyZA==@protonmail.internalid>
-	<D8A2DAP4JOOK.PC50NH7JGIM2@proton.me> <87bjud3po0.fsf@kernel.org>
-	<iEFqFgdHr-qWv7gFkDccjbUrujKQzXbIzmC8grlTfXmOx7FwjNLXaDf4l6AbRR6uIIUJz6Hf7PupXYL0vBwNPQ==@protonmail.internalid>
-	<D8A3THTBK4SK.3LI57W1VI580J@proton.me>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 07 Mar 2025 16:33:56 +0100
-Message-ID: <87cyes3lej.fsf@kernel.org>
+	s=arc-20240116; t=1741374374; c=relaxed/simple;
+	bh=KQcgaJCiBtQ/TxcW6jMDnPp3L1mrguFcs+VmCvfwuXA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ISpNLYlcGyV/mTWT8m/MoogYPRv/Dqbji9G8rjvo6AWMMslv4LwVfJmSqWJSEkSig4I4MQcwTgHsQovjvXsIfN0hxrjhamTIrDpOoGKGAx/QIFg1+B10+JpL9wfd+9eI8PV/S23ydlrT4M7rrLqdH/DTuvP+ewpfefgBYGcTFzg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-7c08b14baa9so206623085a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 11:06:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741374370; x=1741979170;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d1kmiGF7uO1vlI4RGhEH0NGmlztmEAIUcGva+o+3j30=;
+        b=fpDcTnPiLAUVahkI10uwnS53XbIoU2CMwEnTTyvsGrPQ5u896Qh5FHanIMUPCR2OUw
+         Z0MsvvdQTSg0ZSt8OQQuVlj/Ov/cKtdk/ygMIiehQB9s+MBjPHmCacZlAbYSSgGWKSis
+         EayZ/EMq3bCaL4qpg+711enqxCvvTx5NReYVE6RKsECbsfHefLEYcThvw38AIeTj6267
+         kUZLNgwXdQ8rM4kD7DHa92E0RL0HOTToqtLbSqLzxIGFyFL2PGQVXSq2kgc5HdRAQ4rE
+         VlP43iD/nHPx9lI6n4DAcCmOAFhOKmFjbguz2XbbEPIcTdal/SkPwCTJvuRswZQe2X/5
+         Q7Jg==
+X-Gm-Message-State: AOJu0YzhZtp98VNsnnII3TzaMZ6G0XN/+SnVYuW82Y2dHh0mMbnXCUuW
+	p2nkyDMsDPBOTNbMNp/qgS7OFwyNAlvz2mtr9KmbKrrLiAkhCDZ+jEqzrSCkNC0=
+X-Gm-Gg: ASbGncvkIcJuAF9fuN33ciVfdZWeeznLJOjykIw5+j+o93DddWJHOI4GVKBuDTZjWOk
+	0hgABPOd24v4c6Qsa86c+UfUcoYxgcBmghkOgyYuvD+2UnROgCZ771GuKIM2jrO2r/uTY3o+b+9
+	iFDuozBTA77EEF1qvxFuCA9TEr9kS0mcuhRyTgWs1dwQ/UBp7cNhuyWVmikHyi82vRRRZRvOi2x
+	+wfNqMD+Or4hG38XJSTiIFoYMl4fVIFD4gYD8ngst2wR49m9xO2stP82CQonV1Bi795GuZmdul1
+	gmTP6QocJOJ86ljpHUwR71KtaIWrtvFtAsmeRy/zT49h4NjDzhvQfheIaAiJu+QVex6Ds/VcHM7
+	a7nfgYbrb394=
+X-Google-Smtp-Source: AGHT+IE+QVj00PxhjOgJn3N3JLGD+xUH6eGBoGSrDi5+jZ6D8xjDSqPld8QSZVci8IrAmLWJn50ffQ==
+X-Received: by 2002:a05:620a:2609:b0:7c0:9df3:a0d7 with SMTP id af79cd13be357-7c4e61763aamr644358385a.41.1741374369663;
+        Fri, 07 Mar 2025 11:06:09 -0800 (PST)
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com. [209.85.222.169])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4751d9a3e02sm23269461cf.37.2025.03.07.11.06.09
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Mar 2025 11:06:09 -0800 (PST)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c3d1664ed5so269891685a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 11:06:09 -0800 (PST)
+X-Received: by 2002:a05:620a:2855:b0:7c3:c13f:ae04 with SMTP id
+ af79cd13be357-7c4e61763dcmr883907685a.36.1741374368990; Fri, 07 Mar 2025
+ 11:06:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20250224173010.219024-1-andriy.shevchenko@linux.intel.com>
+ <20250224173010.219024-2-andriy.shevchenko@linux.intel.com>
+ <CAMuHMdWBGb5AXv8Ch3XhPPHc0CVYHf31tx1Feh87OU5MDUCdPQ@mail.gmail.com>
+ <Z8slexKyo7VFkSKW@smile.fi.intel.com> <CAMuHMdVmg=kuPWCN6rRTxP1LSZFtK=gagd0x092kxzif8Tav2Q@mail.gmail.com>
+ <Z8tBnq-j7gKrzlpk@smile.fi.intel.com>
+In-Reply-To: <Z8tBnq-j7gKrzlpk@smile.fi.intel.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 7 Mar 2025 20:05:56 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWeFhqf-A-71pCZ+eFMh+ibGudMwiE5hPrdkfCYwVXHCA@mail.gmail.com>
+X-Gm-Features: AQ5f1JrQEvhAt4IqUMeWu0-h08uB-wRDF7FxywhqQS0iiAUXiXsK145uwgWA3fA
+Message-ID: <CAMuHMdWeFhqf-A-71pCZ+eFMh+ibGudMwiE5hPrdkfCYwVXHCA@mail.gmail.com>
+Subject: Re: [PATCH v1 1/7] auxdisplay: charlcd: Partially revert "Move hwidth
+ and bwidth to struct hd44780_common"
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org, Willy Tarreau <willy@haproxy.com>, 
+	Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
+Hi Andy,
 
-> On Fri Mar 7, 2025 at 3:01 PM CET, Andreas Hindborg wrote:
->> "Benno Lossin" <benno.lossin@proton.me> writes:
->>
->>> On Fri Mar 7, 2025 at 11:11 AM CET, Andreas Hindborg wrote:
->>>> Allow `Pin<Box<T>>` to be the target of a timer callback.
->>>>
->>>> Acked-by: Frederic Weisbecker <frederic@kernel.org>
->>>> Reviewed-by: Lyude Paul <lyude@redhat.com>
->>>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->>>> ---
->>>>  rust/kernel/time/hrtimer.rs      |   3 ++
->>>>  rust/kernel/time/hrtimer/tbox.rs | 109 +++++++++++++++++++++++++++++++++++++++
->>>>  2 files changed, 112 insertions(+)
->>>>
->>>> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
->>>> index d2791fd624b7..991d37b0524a 100644
->>>> --- a/rust/kernel/time/hrtimer.rs
->>>> +++ b/rust/kernel/time/hrtimer.rs
->>>> @@ -443,3 +443,6 @@ unsafe fn timer_container_of(ptr: *mut $crate::time::hrtimer::HrTimer<$timer_typ
->>>>  pub use pin::PinHrTimerHandle;
->>>>  mod pin_mut;
->>>>  pub use pin_mut::PinMutHrTimerHandle;
->>>> +// `box` is a reserved keyword, so prefix with `t` for timer
->>>> +mod tbox;
->>>> +pub use tbox::BoxHrTimerHandle;
->>>> diff --git a/rust/kernel/time/hrtimer/tbox.rs b/rust/kernel/time/hrtimer/tbox.rs
->>>> new file mode 100644
->>>> index 000000000000..a3b2ed849050
->>>> --- /dev/null
->>>> +++ b/rust/kernel/time/hrtimer/tbox.rs
->>>> @@ -0,0 +1,109 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +
->>>> +use super::HasHrTimer;
->>>> +use super::HrTimer;
->>>> +use super::HrTimerCallback;
->>>> +use super::HrTimerHandle;
->>>> +use super::HrTimerPointer;
->>>> +use super::RawHrTimerCallback;
->>>> +use crate::prelude::*;
->>>> +use crate::time::Ktime;
->>>> +use core::mem::ManuallyDrop;
->>>> +use core::ptr::NonNull;
->>>> +
->>>> +/// A handle for a [`Box<HasHrTimer<T>>`] returned by a call to
->>>> +/// [`HrTimerPointer::start`].
->>>> +pub struct BoxHrTimerHandle<T, A>
->>>
->>> Should this type implement `Send` and `Sync` depending on `T`?
->>
->> Yes. In practice `T` will always be `Send` and `Sync` because of bounds
->> on other traits.
->>
->> I don't think we have to require `T: Sync`, because the handle does not ever
->> create shared references to the underlying `T`?
+On Fri, 7 Mar 2025 at 19:57, Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+> On Fri, Mar 07, 2025 at 07:14:02PM +0100, Geert Uytterhoeven wrote:
+> > On Fri, 7 Mar 2025 at 17:57, Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Fri, Mar 07, 2025 at 10:03:31AM +0100, Geert Uytterhoeven wrote:
+> > > > On Mon, 24 Feb 2025 at 18:30, Andy Shevchenko
+> > > > <andriy.shevchenko@linux.intel.com> wrote:
+> > > > > The commit 2545c1c948a6 ("auxdisplay: Move hwidth and bwidth to struct
+> > > >
+> > > > s/The commit/Commit/
+> > >
+> > > Why? We know that we are talking about the very specific commit.
+> >
+> > You can have a noun with or without an article:
 >
-> Oh I meant to do:
+> This is not so simple :-), esp. if a noun is a weekday or a toponym.
 >
->     unsafe impl<T: Send + Sync, A> Send for BoxHrTimerHandle<T, A> {}
+> >   - "a commit": an unspecified commit,
+> >   - "the commit": a specific commit, specified by context.
+> >   - "commit 1234abcd": a specific commit, specified by what follows.
+> >
+> > > My English is not native I would appreciate a link to a material to study
+> > > the case you pointed out.
+> >
+> > Neither is mine, but the use of articles is similar in English and Dutch.
+> > (I am aware your mother tongue does not have articles ;-)
+> >
+> > I found plenty of articles explaining cases 1 and 2.
+> > Case 3 can be considered equivalent to "Mount Everest" in
+> > https://learnenglish.britishcouncil.org/grammar/a1-a2-grammar/articles-the-or-no-article
 >
-> But since you don't have it, it might be unnecessary.
+> Okay, so you actually think that the hash and the title can be considered as
+> "name of a place". Hmm... I don't think it applies here. It's not a place.
+> Moreover some places require "the" article.
+
+Only if they are a region, not if they are a country (yes, that's
+unrelated here).
+
+> Here https://www.butte.edu/departments/cas/tipsheets/grammar/articles.html,
+> for example, the sentence "The 2003 federal budget" sounds to me closer to
+> our case. Every year there is a federal budget, but we explicitly point out
+> to one and reader knows what is this. The same with the commit.
 >
->>>> +where
->>>> +    T: HasHrTimer<T>,
->>>> +    A: crate::alloc::Allocator,
->>>> +{
->>>> +    pub(crate) inner: NonNull<T>,
->>>> +    _p: core::marker::PhantomData<A>,
->>>> +}
->>>> +
->>>> +// SAFETY: We implement drop below, and we cancel the timer in the drop
->>>> +// implementation.
->>>> +unsafe impl<T, A> HrTimerHandle for BoxHrTimerHandle<T, A>
->>>> +where
->>>> +    T: HasHrTimer<T>,
->>>> +    A: crate::alloc::Allocator,
->>>> +{
->>>> +    fn cancel(&mut self) -> bool {
->>>> +        // SAFETY: As we obtained `self.inner` from a valid reference when we
->>>> +        // created `self`, it must point to a valid `T`.
->>>> +        let timer_ptr = unsafe { <T as HasHrTimer<T>>::raw_get_timer(self.inner.as_ptr()) };
->>>> +
->>>> +        // SAFETY: As `timer_ptr` points into `T` and `T` is valid, `timer_ptr`
->>>> +        // must point to a valid `HrTimer` instance.
->>>> +        unsafe { HrTimer::<T>::raw_cancel(timer_ptr) }
->>>> +    }
->>>> +}
->>>> +
->>>> +impl<T, A> Drop for BoxHrTimerHandle<T, A>
->>>> +where
->>>> +    T: HasHrTimer<T>,
->>>> +    A: crate::alloc::Allocator,
->>>> +{
->>>> +    fn drop(&mut self) {
->>>> +        self.cancel();
->>>> +        // SAFETY: `self.inner` came from a `Box::into_raw` call
->>>
->>> Please add this as an invariant to `Self`.
->>
->> OK.
->>
->>>
->>>> +        drop(unsafe { Box::<T, A>::from_raw(self.inner.as_ptr()) })
->>>> +    }
->>>> +}
->>>> +
->>>> +impl<T, A> HrTimerPointer for Pin<Box<T, A>>
->>>> +where
->>>> +    T: 'static,
->>>> +    T: Send + Sync,
->>>> +    T: HasHrTimer<T>,
->>>> +    T: for<'a> HrTimerCallback<Pointer<'a> = Pin<Box<T, A>>>,
->>>> +    Pin<Box<T, A>>: for<'a> RawHrTimerCallback<CallbackTarget<'a> = Pin<&'a T>>,
->>>
->>> I don't think this is necessary.
->>
->> Should I remove it? I feel like it communicates intent.
->
-> What intent?
->
->>>> +    A: crate::alloc::Allocator,
->>>> +{
->>>> +    type TimerHandle = BoxHrTimerHandle<T, A>;
->>>> +
->>>> +    fn start(self, expires: Ktime) -> Self::TimerHandle {
->>>> +        // SAFETY:
->>>> +        //  - We will not move out of this box during timer callback (we pass an
->>>> +        //    immutable reference to the callback).
->>>> +        //  - `Box::into_raw` is guaranteed to return a valid pointer.
->>>> +        let inner =
->>>> +            unsafe { NonNull::new_unchecked(Box::into_raw(Pin::into_inner_unchecked(self))) };
->>>> +
->>>> +        // SAFETY:
->>>> +        //  - We keep `self` alive by wrapping it in a handle below.
->>>> +        //  - Since we generate the pointer passed to `start` from a valid
->>>> +        //    reference, it is a valid pointer.
->>>> +        unsafe { T::start(inner.as_ptr(), expires) };
->>>> +
->>>> +        BoxHrTimerHandle {
->>>> +            inner,
->>>> +            _p: core::marker::PhantomData,
->>>> +        }
->>>> +    }
->>>> +}
->>>> +
->>>> +impl<T, A> RawHrTimerCallback for Pin<Box<T, A>>
->>>> +where
->>>> +    T: 'static,
->>>> +    T: HasHrTimer<T>,
->>>> +    T: for<'a> HrTimerCallback<Pointer<'a> = Pin<Box<T, A>>>,
->>>> +    A: crate::alloc::Allocator,
->>>> +{
->>>> +    type CallbackTarget<'a> = Pin<&'a T>;
->>>
->>> Why isn't this `Pin<&'a mut T>`?
->>
->> I don't think it matters much? There can be no other mutable references
->> while the callback is running, so why not a shared ref?
->
-> IIUC there can be no references to the value, since the user used a
-> `Pin<Box<T>>` to schedule the timer.
->
-> I thought it might make sense to give a pinned mutable reference, since
-> you explicitly implement the `RawHrTimerCallback` for `Pin<&mut T>`.
-> Which made me believe one sometimes needs to modify the `T` from the
-> callback.
->
-> Since we're able to do that when the user used a `Box`, I think we
-> should just do it.
+> Sorry, but I am still not convinced.
 
-I see your point, I will change it.
+In "The 2003 federal budget", both "2003" and "federal" are adjectives.
+In "commit 1234abcd", "1234abcd" is a name.
 
->
->>>> +
->>>> +    unsafe extern "C" fn run(ptr: *mut bindings::hrtimer) -> bindings::hrtimer_restart {
->>>> +        // `HrTimer` is `repr(C)`
->>>> +        let timer_ptr = ptr.cast::<super::HrTimer<T>>();
->>>> +
->>>> +        // SAFETY: By C API contract `ptr` is the pointer we passed when
->>>> +        // queuing the timer, so it is a `HrTimer<T>` embedded in a `T`.
->>>> +        let data_ptr = unsafe { T::timer_container_of(timer_ptr) };
->>>> +
->>>> +        // SAFETY: We called `Box::into_raw` when we queued the timer.
->>>> +        let tbox = ManuallyDrop::new(Box::into_pin(unsafe { Box::<T, A>::from_raw(data_ptr) }));
->>>
->>> Since you turn this into a reference below and never run the drop, why
->>> not turn the pointer directly into a reference?
->>
->> You mean replace with `unsafe {&*data_ptr};`? I guess that could work,
->> but it hinges on `Box` being transparent which is more subtle than going
->> through the API.
->
-> I think that's cleaner. Also why does that rely on `Box` being
-> transparent?
+Cfr. "King Charles".  "The King Charles" would be used only when
+putting a very special emphasis on "king".
 
-I did not think of `Box::into_raw` as returning a pointer to the
-underlying `T`, but looking at the signature, it does. I thought it was
-returning a pointer to a `Box`.
+Gr{oetje,eeting}s,
 
-I will change it as you suggest.
+                        Geert
 
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Best regards,
-Andreas Hindborg
-
-
-
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
