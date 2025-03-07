@@ -1,464 +1,208 @@
-Return-Path: <linux-kernel+bounces-550851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45DADA564FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:20:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5D44A564FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:20:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A099189326B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:20:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE8AF3AA57D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:19:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F5D21505E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ECAB215042;
 	Fri,  7 Mar 2025 10:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nfS9TtC9"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="eiLb2h4g"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30C98213E87;
-	Fri,  7 Mar 2025 10:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 385DC213E8A
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 10:18:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741342699; cv=none; b=aCW6ziprcBa/EvNXHs9g/sjqqu5Gdb8vcaS02K0fFLwqjkIz6ajpO5gLFw+zwvGCp7WjSbzXsgxOS1o9VbRTjob4HTVghxw8FH39KTiLEwR65QCclEETb+8nLLB3WnoGNAVwQMrTm5O+BQBhJI3jW4qSK9v9cRBdWQdjFEjrnuw=
+	t=1741342699; cv=none; b=NI+K+zs/Pu0gkix1RW5ed/Cb1haoCNBjqu7eK4JQUERQLt4BT27bCj3vZXJBetY2/pWYxJ7YztUlPlB4IsSMOYB8LA4VrGxYuj8ylWXU5TySnDnuHyDf07K8fUPo020AFp2RlvCJZB3qwuLBuoLbtpAeGzTPQuE0lfjQQni5W3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741342699; c=relaxed/simple;
-	bh=THNub4dW2r1h3XFBnOhkiBo9skIxEl99UaN11q092KI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZFUux5o2yLAxZdKhAZXNtJa2s4zeWLMqqEVzqYisSaT4TpnBbeZW3snA/q+s+E5rnsOU0jeyk/dyC1Nnxu25hyTJK5RA32jHXZUOPRDZx38+RnqkNmU8QmAgkqhjUbIbSf4N2MTbclT9B3iIBfJr/bzyaPdEaspf35qn6vZBYzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nfS9TtC9; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-390f69f8083so1432687f8f.0;
-        Fri, 07 Mar 2025 02:18:16 -0800 (PST)
+	bh=A2ngPlxsViHeU++f/T0fHfvoDhTTkba+2oBbb7Nj+nI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vCk3dRpv2mJmlZ37bqMhcVVVsbTyisGb8vkdZHnDhPCcfYMVklacL8eGeID4d0R8SO/2byPd4ISxTx9Cka+iKMDrmyjR+P70VpUHxfhIsnUoIUko+y6pGINUc2SA1iOwp8R32mqxprtPQdHUR8AavjDy82jluIEST9zzUl8IFjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=eiLb2h4g; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-391342fc0b5so655575f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 02:18:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741342695; x=1741947495; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=brGJ0++22o4t57ItnfNx9mwtlw0zh9uLExgnV00v8+M=;
-        b=nfS9TtC9shnpdu9pGgjdMLWVbTQy71/zLUfwxYM/dCJOJC/gNj362aiietG1PKbQ+G
-         9b7C8RvO/psojOXHRRLSAQXtjM1byQN53pG4jQgKFFx6amzUFkGgi3nbtnlF/jtkM73/
-         c0XQmF5uQDFoX5xX4xmS0Z8NRO42dyQ8CR3Ogk1FOiuEsbwQ9MX22kD/saDzElNSvKP7
-         ToNNj2hrIc1vmxU9y3OZ+NZ9zZUjcEBjeOtZz5niS07nDt1CI5+A39IrczaYlBe22Hrt
-         aSAU+ZKV4wRMcsUy1uqUVx0E0Eyh5Ix87ayBDe7wAq1dke0rj3ysI7oCXVy0j+WlvGS4
-         YCMA==
+        d=ffwll.ch; s=google; t=1741342695; x=1741947495; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eriVuZyAjeW4XZxzbs/VYx0wmamknYVQrCt+Q1+FUXw=;
+        b=eiLb2h4gjukf5j52+npr3KDym6bccOdn0JdH3it+D9rbhYFyBwGhz5Z9+pASCnjQRA
+         tZVIl5lx2Z+DxbLn2vh/J0Tkmh53BJvEdIXpKYNzoySYWkaGaDPCX5sJtFDs/vll6Q57
+         KfQ62JeHmX085MjHboJ4HzlUMkb+k8KBhdZ14=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1741342695; x=1741947495;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=brGJ0++22o4t57ItnfNx9mwtlw0zh9uLExgnV00v8+M=;
-        b=EfG1IaZBDWQ+Z6baa8K3fBlE/AqnKtc/9/Y8XslmlCnoFzphYkKSimZDuYI3caibrM
-         N/3qGMtOVDgZ3oCggv+zCnEFlbPJYjMm8SORKl7M76sqPFr7wgYWfFdK8NYkL8Mc4667
-         ozS8nr3IEu74eV3LU/GSAWoexdpmM/taBUWnaFJVA2Wgdihmld4oPvGsgDcRVo9pEjad
-         NF7A460+d5+4o5upqVAqsDIKW6yuGSSzz4F9y4/RsP5x4IlNzRuDBfJ9M4BdCb7Xd3+j
-         MqqQ3A29IHnPRrEAgiZ9VvFYWnZldq6l6QjiA2dj2ONphPsyn13Cw4Np5uRfhSmjM5Np
-         A+Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8VGi1Js2Lgc4t5U2TNW7n/6W3veNLu1vITH58jBx1TqZOp5BtnlPnbjdQNtwbovrHjT5aNI7d8OMgGH7F@vger.kernel.org, AJvYcCVDSWCyNIpSFGFloP+kNsNiDRK6fa1zB+Sb7TIwVLoIyMbqqWbitMrJEJ334WSd0jV9O0lg4pAfSdiT@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIy3YDL+pDnyyhStOOVg3+lST3gAApzzqa9mDORLmMpDuhLiVd
-	FtV1Pi0MKrei1ODwXBU16BTcltOapjP7o54uCdlgJgFqIxV0LN3v
-X-Gm-Gg: ASbGnct1Wb92SxDq5wUJVcwjOJ4fbHl18Kgq7MZv09hAiQu4xmYFCATtap0XOddPzfp
-	J+Z29q0BvO9tZDrFm339OG6LLdWXnJ1Degqr5Cf/37hpfUjg3USPMMDfaJ4zQB8mvXXGmUKRaiE
-	swHvupUGL9qzFfgM140/Q7gAHpVbt/B4n9WXrGmGyJHDzrDlUfwnd0BQiU3G5S84p8eTrZJO8ir
-	UOtW6yeouCrxlvAO3oTl6sVbnbpLDsw4txJfSx8YNq6KF4CBU/tYiCYIWpFgEGvM7sZqT4JX8uN
-	FRDy86Kg8huGKxTTk/40PMw+cHB5ELHEu/1iH+8TZAh8ZBISD0ABZK2fIEBKGSThyx2ht8n66Ep
-	kXIZLPozdMtu6127WoNSAjm0=
-X-Google-Smtp-Source: AGHT+IE9lUI6KVxoDMo3xKo5g7N1PqJTOlIV+7j66eLIltbvNUJfTvQ7+Yxsj8nXHgBmQ0fwpI6xkA==
-X-Received: by 2002:a5d:648b:0:b0:38d:badf:9df5 with SMTP id ffacd0b85a97d-39132d1fc83mr1434684f8f.17.1741342694709;
-        Fri, 07 Mar 2025 02:18:14 -0800 (PST)
-Received: from ernest.corp.toradex.com (31-10-206-125.static.upc.ch. [31.10.206.125])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c103aa5sm4900262f8f.94.2025.03.07.02.18.14
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=eriVuZyAjeW4XZxzbs/VYx0wmamknYVQrCt+Q1+FUXw=;
+        b=YJ8X660tdlV2/q8Uuge1i8xxkDjyg7yxiz3+QYd56pFwIBcirP+AyIMIv3dTYQNSR8
+         DicGMDZUJjJIGbXjCX4E3dTimfjmsSQ1VDErKvNbQFA9CRghZNv/d2SB2aahwGqJiUYA
+         QcbZ7m+we0G43hd3rKHnTCj5A7CkS+o1xqut9dKas0qIqn/apr73ahgsTBaImqsqML49
+         0wMW4R7MmwdrNF+CmPeQx3WU84js1tHN597lbcX7kR/tSmSuXPXhpl4UOPOzbblxmuSW
+         grb46EEPPIJySMx1SOSPz6ogwxxoP57HjyOYAMcmWlvbPyeAZO7RmY9+rlESHjolCpic
+         hUdA==
+X-Forwarded-Encrypted: i=1; AJvYcCXnqI4LPIVgRpL0YpxVin9FrZxbKIBuCgTbac3HEBUt6lVxfJsLe4p/NSbTK93tE12GNk0m9hs1Vd54ApU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY5rbKxIfqmVLAtomnL4iApnQGLiEAOGLoXBVERLbRZzFibbUC
+	0sTT8EgeuiZTwbAcLRBkAi38Hx6NllvJ2sLevM7QaN0p46GDpO6pSsD7GbFh5Mc=
+X-Gm-Gg: ASbGncsPrDwHFwDHyN1gAFolabDFPXI+JuoZW9S0jEeMvqYKNXCUx1O+QlJaUACylpd
+	AZx5/Byv9V/vkFfkI0AqM4ooQd4/iIer0A0ANR/gYuPrU6NOwMHaW7+hbW3fE8Evrd/eJ5zA5cD
+	Ej1sehEN8q3fTZW5bpVc6q7zMPmPLSyChGTRNdwyu1Ggpaw39d5Lx4jP+11eXeLQ3GLsWJEgi33
+	WOAQ/CahJH5QYB7wsitMKED2p+qfb2NNebK9DtSjWLUlBo8hS2/p0LI/dcOlKBVTstUQRnHxty7
+	tYHMSP89oPHvxqNLofEiZl85cJlAxR3GMXsrBtOPu7tQzasWmcMrQ8Bi
+X-Google-Smtp-Source: AGHT+IEAZISqACsxvEE8pMsJbbIN/kzp1kRyxcTMswdSMukChQqkklpQTvMwVWdtKsOw5sLVVDQLwg==
+X-Received: by 2002:a5d:584f:0:b0:391:2e7:67ff with SMTP id ffacd0b85a97d-39132d090fbmr2149096f8f.10.1741342695383;
+        Fri, 07 Mar 2025 02:18:15 -0800 (PST)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfcdasm4798966f8f.23.2025.03.07.02.18.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Fri, 07 Mar 2025 02:18:14 -0800 (PST)
-From: ernestvanhoecke@gmail.com
-X-Google-Original-From: ernest.vanhoecke@toradex.com
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Francesco Dolcini <francesco.dolcini@toradex.com>
-Subject: [PATCH v2 2/2] ARM: dts: apalis/colibri-imx6: Add support for v1.2
-Date: Fri,  7 Mar 2025 11:17:49 +0100
-Message-ID: <20250307101758.27943-3-ernest.vanhoecke@toradex.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250307101758.27943-1-ernest.vanhoecke@toradex.com>
-References: <20250307101758.27943-1-ernest.vanhoecke@toradex.com>
+Date: Fri, 7 Mar 2025 11:18:12 +0100
+From: Simona Vetter <simona.vetter@ffwll.ch>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Jason Gunthorpe <jgg@nvidia.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>, aliceryhl@google.com,
+	robin.murphy@arm.com, daniel.almeida@collabora.com,
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+Message-ID: <Z8rH5D5S7QzyJo1D@phenom.ffwll.local>
+Mail-Followup-To: Danilo Krummrich <dakr@kernel.org>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>, aliceryhl@google.com,
+	robin.murphy@arm.com, daniel.almeida@collabora.com,
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+ <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+ <20250305174118.GA351188@nvidia.com>
+ <Z8mlAxsszdOH-ow8@cassiopeiae>
+ <Z8m9j3SwWHqaCTXo@phenom.ffwll.local>
+ <20250306160907.GF354511@nvidia.com>
+ <Z8qzP3CR8Quhp87Z@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8qzP3CR8Quhp87Z@pollux>
+X-Operating-System: Linux phenom 6.12.11-amd64 
 
-From: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
+On Fri, Mar 07, 2025 at 09:50:07AM +0100, Danilo Krummrich wrote:
+> On Thu, Mar 06, 2025 at 12:09:07PM -0400, Jason Gunthorpe wrote:
+> > On Thu, Mar 06, 2025 at 04:21:51PM +0100, Simona Vetter wrote:
+> > > > >  > a device with no driver bound should not be passed to the DMA API,
+> > > > >  > much less a dead device that's already been removed from its parent
+> > > > >  > bus.
+> > > > 
+> > > > Thanks for bringing this up!
+> > > > 
+> > > > I assume that's because of potential iommu mappings, the memory itself should
+> > > > not be critical.
+> > 
+> > There is a lot of state tied to the struct device lifecycle that the
+> > DMA API and iommu implicitly manages. It is not just iommu mappings.
+> > 
+> > It is incorrect to view the struct device as a simple refcount object
+> > where holding the refcount means it is alive and safe to use. There
+> > are three broad substates (No Driver, Driver Attached, Zombie) that
+> > the struct device can be in that are relevant.
+> > 
+> > Technically it is unsafe and oopsable to call the allocation API as
+> > well on a device that has no driver. This issue is also ignored in
+> > these bindings and cannot be solved with revoke.
+> 
+> This is correct, and I am well aware of it. I brought this up once when working
+> on the initial device / driver, devres and I/O abstractions.
+> 
+> It's on my list to make the creation of the Devres container fallible in this
+> aspect, which would prevent this issue.
+> 
+> For now it's probably not too critical; we never hand out device references
+> before probe(). The only source of error is when a driver tries to create new
+> device resources after the device has been unbound.
+> 
+> > IOW I do not belive you can create bindings here that are truely safe
+> > without also teaching rust to understand the concept of a scope
+> > guaranteed to be within a probed driver's lifetime.
+> > 
+> > > > > Also note that any HW configured to do DMA must be halted before the
+> > > > > free is allowed otherwise it is a UAF bug. It is worth mentioning that
+> > > > > in the documentation.
+> > > > 
+> > > > Agreed, makes sense to document. For embedding the CoherentAllocation into
+> > > > Devres this shouldn't be an issue, since a driver must stop operating the device
+> > > > in remove() by definition.
+> > >
+> > > I think for basic driver allocations that you just need to run the device
+> > > stuffing it all into devres is ok. 
+> > 
+> > What exactly will this revokable critical region protect?
+> > 
+> > The actual critical region extends into the HW itself, it is not
+> > simple to model this with a pure SW construct of bracketing some
+> > allocation. You need to bracket the *entire lifecycle* of the
+> > dma_addr_t that has been returned and passed into HW, until the
+> > dma_addr_t is removed from HW.
+> 
+> Devres callbacks run after remove(). It's the drivers job to stop operating the
+> device latest in remove(). Which means that the design is correct.
+> 
+> Now, you ask for a step further, i.e. make it that we can enforce that a driver
+> actually stopped the device in remove().
+> 
+> But that's just impossible, because obviously no one else than the driver knows
+> the semantics of the devicei; it's the whole purpose of the driver. So, this is
+> one of the exceptions where just have to trust the driver doing the correct
+> thing.
 
-Apalis/Colibri iMX6 V1.2 replaced the STMPE811 ADC/touch controller,
-which is EOL, with the TLA2024 ADC and AD7879 touch controller.
+In general it's impossible, but I think for specific cases like pci we can
+enforce that bus mastering/interrupt generation/whatever else might cause
+havoc is force-disabled after ->remove finishes. For platform devices this
+is more annoying, but then it's much harder to physically yank a platform
+devices. So I'm less worried about that being a practical concern there.
 
-Accurately describe the new hardware.
+> Having that said, it doesn't need to be an "all or nothing", let's catch the
+> ones we can actually catch.
 
-v1.1 of these SoMs is still described by the following DTSI files:
-imx6qdl-apalis.dtsi
-imx6qdl-colibri.dtsi
-
-v1.2 is now supported by a DTSI that modifies v1.1:
-imx6qdl-apalis-v1.2.dtsi
-imx6qdl-colibri-v1.2.dtsi
-
-For each carrier board using these modules, a new DTS file was added
-that includes the v1.1 DTS and modifies it with this v1.2 DTSI.
-
-The original DTS can be used for modules up to and including v1.1.
-
-Signed-off-by: Ernest Van Hoecke <ernest.vanhoecke@toradex.com>
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
-v2: Fixed the "From" field
-v1: https://lore.kernel.org/all/20250227170556.589668-3-ernest.vanhoecke@toradex.com/
----
- arch/arm/boot/dts/nxp/imx/Makefile            |  9 +++
- .../dts/nxp/imx/imx6dl-colibri-v1.2-aster.dts | 11 ++++
- .../nxp/imx/imx6dl-colibri-v1.2-eval-v3.dts   | 11 ++++
- .../nxp/imx/imx6dl-colibri-v1.2-iris-v2.dts   | 11 ++++
- .../dts/nxp/imx/imx6dl-colibri-v1.2-iris.dts  | 11 ++++
- .../nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dts   | 11 ++++
- .../dts/nxp/imx/imx6q-apalis-v1.2-eval.dts    | 11 ++++
- .../nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dts  | 11 ++++
- .../nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dts  | 11 ++++
- .../dts/nxp/imx/imx6q-apalis-v1.2-ixora.dts   | 11 ++++
- .../boot/dts/nxp/imx/imx6qdl-apalis-v1.2.dtsi | 57 +++++++++++++++++++
- .../dts/nxp/imx/imx6qdl-colibri-v1.2.dtsi     | 57 +++++++++++++++++++
- 12 files changed, 222 insertions(+)
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-aster.dts
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dts
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris-v2.dts
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris.dts
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dts
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dts
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dts
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dts
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dts
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6qdl-apalis-v1.2.dtsi
- create mode 100644 arch/arm/boot/dts/nxp/imx/imx6qdl-colibri-v1.2.dtsi
-
-diff --git a/arch/arm/boot/dts/nxp/imx/Makefile b/arch/arm/boot/dts/nxp/imx/Makefile
-index 39a153536d2a..81b6a96e28da 100644
---- a/arch/arm/boot/dts/nxp/imx/Makefile
-+++ b/arch/arm/boot/dts/nxp/imx/Makefile
-@@ -69,6 +69,10 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
- 	imx6dl-colibri-eval-v3.dtb \
- 	imx6dl-colibri-iris.dtb \
- 	imx6dl-colibri-iris-v2.dtb \
-+	imx6dl-colibri-v1.2-aster.dtb \
-+	imx6dl-colibri-v1.2-eval-v3.dtb \
-+	imx6dl-colibri-v1.2-iris.dtb \
-+	imx6dl-colibri-v1.2-iris-v2.dtb \
- 	imx6dl-cubox-i.dtb \
- 	imx6dl-cubox-i-emmc-som-v15.dtb \
- 	imx6dl-cubox-i-som-v15.dtb \
-@@ -158,6 +162,11 @@ dtb-$(CONFIG_SOC_IMX6Q) += \
- 	imx6q-apalis-ixora.dtb \
- 	imx6q-apalis-ixora-v1.1.dtb \
- 	imx6q-apalis-ixora-v1.2.dtb \
-+	imx6q-apalis-v1.2-eval.dtb \
-+	imx6q-apalis-v1.2-eval-v1.2.dtb \
-+	imx6q-apalis-v1.2-ixora.dtb \
-+	imx6q-apalis-v1.2-ixora-v1.1.dtb \
-+	imx6q-apalis-v1.2-ixora-v1.2.dtb \
- 	imx6q-apf6dev.dtb \
- 	imx6q-arm2.dtb \
- 	imx6q-b450v3.dtb \
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-aster.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-aster.dts
-new file mode 100644
-index 000000000000..44c78c07f431
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-aster.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/* Copyright (c) 2025 Toradex */
-+
-+/dts-v1/;
-+
-+#include "imx6dl-colibri-aster.dts"
-+#include "imx6qdl-colibri-v1.2.dtsi"
-+
-+/ {
-+	model = "Toradex Colibri iMX6DL/S V1.2+ on Colibri Aster Board";
-+};
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dts
-new file mode 100644
-index 000000000000..93fd0af53a3c
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-eval-v3.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/* Copyright (c) 2025 Toradex */
-+
-+/dts-v1/;
-+
-+#include "imx6dl-colibri-eval-v3.dts"
-+#include "imx6qdl-colibri-v1.2.dtsi"
-+
-+/ {
-+	model = "Toradex Colibri iMX6DL/S V1.2+ on Colibri Evaluation Board V3";
-+};
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris-v2.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris-v2.dts
-new file mode 100644
-index 000000000000..92d41fc9a13f
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris-v2.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/* Copyright (c) 2025 Toradex */
-+
-+/dts-v1/;
-+
-+#include "imx6dl-colibri-iris-v2.dts"
-+#include "imx6qdl-colibri-v1.2.dtsi"
-+
-+/ {
-+	model = "Toradex Colibri iMX6DL/S V1.2+ on Colibri Iris V2 Board";
-+};
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris.dts b/arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris.dts
-new file mode 100644
-index 000000000000..c8957948c887
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6dl-colibri-v1.2-iris.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/* Copyright (c) 2025 Toradex */
-+
-+/dts-v1/;
-+
-+#include "imx6dl-colibri-iris.dts"
-+#include "imx6qdl-colibri-v1.2.dtsi"
-+
-+/ {
-+	model = "Toradex Colibri iMX6DL/S V1.2+ on Colibri Iris Board";
-+};
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dts b/arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dts
-new file mode 100644
-index 000000000000..908dab57fd87
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval-v1.2.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/* Copyright (c) 2025 Toradex */
-+
-+/dts-v1/;
-+
-+#include "imx6q-apalis-eval-v1.2.dts"
-+#include "imx6qdl-apalis-v1.2.dtsi"
-+
-+/ {
-+	model = "Toradex Apalis iMX6Q/D Module V1.2+ on Apalis Evaluation Board v1.2";
-+};
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dts b/arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dts
-new file mode 100644
-index 000000000000..5463d4127382
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-eval.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/* Copyright (c) 2025 Toradex */
-+
-+/dts-v1/;
-+
-+#include "imx6q-apalis-eval.dts"
-+#include "imx6qdl-apalis-v1.2.dtsi"
-+
-+/ {
-+	model = "Toradex Apalis iMX6Q/D Module V1.2+ on Apalis Evaluation Board";
-+};
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dts b/arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dts
-new file mode 100644
-index 000000000000..84eabf81ba84
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.1.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/* Copyright (c) 2025 Toradex */
-+
-+/dts-v1/;
-+
-+#include "imx6q-apalis-ixora-v1.1.dts"
-+#include "imx6qdl-apalis-v1.2.dtsi"
-+
-+/ {
-+	model = "Toradex Apalis iMX6Q/D Module V1.2+ on Ixora Carrier Board V1.1";
-+};
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dts b/arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dts
-new file mode 100644
-index 000000000000..d7cfab4de457
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora-v1.2.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/* Copyright (c) 2025 Toradex */
-+
-+/dts-v1/;
-+
-+#include "imx6q-apalis-ixora-v1.2.dts"
-+#include "imx6qdl-apalis-v1.2.dtsi"
-+
-+/ {
-+	model = "Toradex Apalis iMX6Q/D Module V1.2+ on Ixora Carrier Board V1.2";
-+};
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dts b/arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dts
-new file mode 100644
-index 000000000000..189b074e31ce
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6q-apalis-v1.2-ixora.dts
-@@ -0,0 +1,11 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/* Copyright (c) 2025 Toradex */
-+
-+/dts-v1/;
-+
-+#include "imx6q-apalis-ixora.dts"
-+#include "imx6qdl-apalis-v1.2.dtsi"
-+
-+/ {
-+	model = "Toradex Apalis iMX6Q/D Module V1.2+ on Ixora Carrier Board";
-+};
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-apalis-v1.2.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-apalis-v1.2.dtsi
-new file mode 100644
-index 000000000000..83fa04fc9f18
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-apalis-v1.2.dtsi
-@@ -0,0 +1,57 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/* Copyright (c) 2025 Toradex */
-+
-+&i2c2 {
-+	/delete-node/ stmpe811@41;
-+
-+	ad7879_ts: touchscreen@2c {
-+		compatible = "adi,ad7879-1";
-+		reg = <0x2c>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_touch_int>;
-+		interrupts = <10 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio4>;
-+		touchscreen-max-pressure = <4096>;
-+		adi,resistance-plate-x = <120>;
-+		adi,first-conversion-delay = /bits/ 8 <3>;
-+		adi,acquisition-time = /bits/ 8 <1>;
-+		adi,median-filter-size = /bits/ 8 <2>;
-+		adi,averaging = /bits/ 8 <1>;
-+		adi,conversion-interval = /bits/ 8 <255>;
-+	};
-+
-+	tla2024_adc: adc@49 {
-+		compatible = "ti,tla2024";
-+		reg = <0x49>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* Apalis AN1_ADC0 */
-+		channel@4 {
-+			reg = <4>;
-+			ti,datarate = <4>;
-+			ti,gain = <1>;
-+		};
-+
-+		/* Apalis AN1_ADC1 */
-+		channel@5 {
-+			reg = <5>;
-+			ti,datarate = <4>;
-+			ti,gain = <1>;
-+		};
-+
-+		/* Apalis AN1_ADC2 */
-+		channel@6 {
-+			reg = <6>;
-+			ti,datarate = <4>;
-+			ti,gain = <1>;
-+		};
-+
-+		/* Apalis AN1_TSWIP_ADC3 */
-+		channel@7 {
-+			reg = <7>;
-+			ti,datarate = <4>;
-+			ti,gain = <1>;
-+		};
-+	};
-+};
-diff --git a/arch/arm/boot/dts/nxp/imx/imx6qdl-colibri-v1.2.dtsi b/arch/arm/boot/dts/nxp/imx/imx6qdl-colibri-v1.2.dtsi
-new file mode 100644
-index 000000000000..d11bf911b728
---- /dev/null
-+++ b/arch/arm/boot/dts/nxp/imx/imx6qdl-colibri-v1.2.dtsi
-@@ -0,0 +1,57 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
-+/* Copyright (c) 2025 Toradex */
-+
-+&i2c2 {
-+	/delete-node/ stmpe811@41;
-+
-+	ad7879_ts: touchscreen@2c {
-+		compatible = "adi,ad7879-1";
-+		reg = <0x2c>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_touch_int>;
-+		interrupts = <20 IRQ_TYPE_LEVEL_LOW>;
-+		interrupt-parent = <&gpio6>;
-+		touchscreen-max-pressure = <4096>;
-+		adi,resistance-plate-x = <120>;
-+		adi,first-conversion-delay = /bits/ 8 <3>;
-+		adi,acquisition-time = /bits/ 8 <1>;
-+		adi,median-filter-size = /bits/ 8 <2>;
-+		adi,averaging = /bits/ 8 <1>;
-+		adi,conversion-interval = /bits/ 8 <255>;
-+	};
-+
-+	tla2024_adc: adc@49 {
-+		compatible = "ti,tla2024";
-+		reg = <0x49>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		/* Colibri AIN0 */
-+		channel@4 {
-+			reg = <4>;
-+			ti,datarate = <4>;
-+			ti,gain = <1>;
-+		};
-+
-+		/* Colibri AIN1 */
-+		channel@5 {
-+			reg = <5>;
-+			ti,datarate = <4>;
-+			ti,gain = <1>;
-+		};
-+
-+		/* Colibri AIN2 */
-+		channel@6 {
-+			reg = <6>;
-+			ti,datarate = <4>;
-+			ti,gain = <1>;
-+		};
-+
-+		/* Colibri AIN3 */
-+		channel@7 {
-+			reg = <7>;
-+			ti,datarate = <4>;
-+			ti,gain = <1>;
-+		};
-+	};
-+};
+Yeah, agreed.
+-Sima
 -- 
-2.43.0
-
+Simona Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
