@@ -1,180 +1,119 @@
-Return-Path: <linux-kernel+bounces-551074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37071A567D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:28:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4B9AA567D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:30:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D00BF3B22CF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:28:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AFE7174B5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F44021930F;
-	Fri,  7 Mar 2025 12:28:40 +0000 (UTC)
-Received: from mail-gw01.astralinux.ru (mail-gw01.astralinux.ru [37.230.196.243])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8450921930A;
+	Fri,  7 Mar 2025 12:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="bpvgkCh9"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF63218EBD;
-	Fri,  7 Mar 2025 12:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.230.196.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 671711E1E0E;
+	Fri,  7 Mar 2025 12:30:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741350519; cv=none; b=cMuRBG1x7gMHQa7XWqEDeXHYnvbBKx3AxhkFmcA9/Kl+1iVZ9IhlfhLqzLFnkVNyWfUwkP4Hjq0M+X9M88BULkHjZSBxTng6YvUUlTDoFQ1koIcL90SsDSACXs5hHgYhIttnHAIiv+AfLjCjZf7mCE1Wf0VJDFh4DMvFEvidtiU=
+	t=1741350613; cv=none; b=KJvFNMjQ5YLRfyG82CKX4th6rtFrJ1F6BjinJDQ8BqViIrXWkbEdq4uuIeugCf0JUQryDc8pXRVNjIgOgpoZgF6Sn4881J+3P+7540itmVdlAt4gOuLRJxxuvUbZbhwqcWBKOACjawD0v6GYtWzttVWrigRe+7xha19iGwHUCVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741350519; c=relaxed/simple;
-	bh=CSdZa/BGFCkVFPBirpA0O/BUijBpHtYF7yEbbo391pI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uCwGUM5D61/KF81Zkqzy86Wol06Xhmkpm1bwka3hqacTO05iFM/x29W36uzUM7g5cQxovZXfMgmUto7CGpi2v4/P0PM/2V6Qaeq+tYtksDkmhltcTquERJjPs7dWSoNILfQAHhua8K9w9yxMwPkLkgOD9AvpvsZn9mcu6M8LAho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=37.230.196.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from gca-sc-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw01.astralinux.ru (Postfix) with ESMTP id 1EDDD24CC8;
-	Fri,  7 Mar 2025 15:28:34 +0300 (MSK)
-Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail05.astralinux.ru [10.177.185.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw01.astralinux.ru (Postfix) with ESMTPS;
-	Fri,  7 Mar 2025 15:28:33 +0300 (MSK)
-Received: from rbta-msk-lt-156703.astralinux.ru (unknown [10.177.20.114])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4Z8QYs2NtXz1c0sm;
-	Fri,  7 Mar 2025 15:28:33 +0300 (MSK)
-From: Alexey Panov <apanov@astralinux.ru>
-To: stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alexey Panov <apanov@astralinux.ru>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org,
-	David Hildenbrand <david@redhat.com>,
-	syzbot+3511625422f7aa637f0d@syzkaller.appspotmail.com,
-	"Liam R . Howlett" <Liam.Howlett@Oracle.com>
-Subject: [PATCH v2 5.10/5.15] mm/mempolicy: fix migrate_to_node() assuming there is at least one VMA in a MM
-Date: Fri,  7 Mar 2025 15:28:30 +0300
-Message-Id: <20250307122830.10655-1-apanov@astralinux.ru>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1741350613; c=relaxed/simple;
+	bh=MSJOYmYhoP3KleVgDgo4/p/vvWrs63VDLh/BlnV+mWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hUQyMDm3VTPX7BYKNfUyoo0PMPMdnMUjZHtjHuZEb5I71ruFPTPshXbmF4uUH7F8VFdSBbOBm24g8qrl50PO4qv6ljy3U0YPYA2mUE3zJBsyXpUW+NV/JndQ40KRmcRdg7kTXrXEnUydHQbammsajY7bt8pbNQJWO2Tr1WWrLiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=bpvgkCh9; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3D97B20457;
+	Fri,  7 Mar 2025 12:30:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741350608;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HKjBd8X3oIbWR4uTQ+kAMB9w4fC+DWN+UImtLmLxNxw=;
+	b=bpvgkCh9S7IjUNZBTXr/d6Tv6HXPAadztsNAopW/nbql7xCncqI4cbpi4dNCocB+dggzyC
+	DAvkPGIF6AoPUO+ZfQIK6bqKoxIzIsBPqi6lWNrpOskmYWMg2IWCLQl6Uqo9IBXDYAKAiW
+	x4aFDoPxpIbsYdUM4LIYuwpEmladRcxbt8tJ1SwRw+y13LtNKwUzdfqDbVJ/E0LSp+Etri
+	MushLLID2uehgB/MvNE4CLDHHLbKc12cVZLN+dTUoJ+ZnJaq3bGUsZLBz9tm+o5EQ0fa8x
+	SNyB0/QIY0hYU9VJOsYYPCNmS3aj6HoRMxwNokCxETbAfT2tGWXyt+H+YIfrBA==
+Date: Fri, 7 Mar 2025 13:30:03 +0100
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano
+ <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, Lukasz Luba
+ <lukasz.luba@arm.com>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Petr Mladek <pmladek@suse.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Rasmus Villemoes
+ <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Jonathan Corbet <corbet@lwn.net>, Andrew Morton
+ <akpm@linux-foundation.org>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Geert
+ Uytterhoeven <geert+renesas@glider.be>, Liu Ying <victor.liu@nxp.com>,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH 0/2] vsprintf: remove redundant %pCn format specifier
+Message-ID: <20250307133003.09f1328f@booty>
+In-Reply-To: <CAMuHMdUeThsk5tSaMnT-6BqO6XSMTTDo1Q9kRgJ_d5iC7MTdcw@mail.gmail.com>
+References: <20250307-vsprintf-pcn-v1-0-df0b2ccf610f@bootlin.com>
+	<CAMuHMdUeThsk5tSaMnT-6BqO6XSMTTDo1Q9kRgJ_d5iC7MTdcw@mail.gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-KSMG-AntiPhishing: NotDetected, bases: 2025/03/07 11:11:00
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: apanov@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {Tracking_uf_ne_domains}, {Tracking_internal2}, {Tracking_from_domain_doesnt_match_to}, new-mail.astralinux.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;astralinux.ru:7.1.1;lkml.kernel.org:7.1.1;lore.kernel.org:7.1.1, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191572 [Mar 07 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/03/07 09:54:00 #27658601
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2025/03/07 11:11:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduuddtieejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnheptdeljeejuddvudetffdtudelfedugfduledtueffuedufefgudegkeegtdeihedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvjedprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthhopehrrghfrggvlheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnhhivghlrdhlvgiitggrn
+ hhosehlihhnrghrohdrohhrghdprhgtphhtthhopehruhhirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtoheplhhukhgrshiirdhluhgsrgesrghrmhdrtghomhdprhgtphhtthhopehflhhorhhirghnrdhfrghinhgvlhhlihessghrohgruggtohhmrdgtohhmpdhrtghpthhtoheprhhjuhhisegsrhhorggutghomhdrtghomhdprhgtphhtthhopehssghrrghnuggvnhessghrohgruggtohhmrdgtohhm
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-From: David Hildenbrand <david@redhat.com>
+On Fri, 7 Mar 2025 13:13:19 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
-commit 091c1dd2d4df6edd1beebe0e5863d4034ade9572 upstream.
+> Hi Luca,
+> 
+> On Fri, 7 Mar 2025 at 12:19, Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
+> > There are two printk format specifiers for clocks: %pC and %pCn, and they
+> > print exactly the same string. The reason for having two is not totally
+> > clear (see discussion in patch 2), but there seem to be no advantage in
+> > having two instead of one.
+> >
+> > Definitely having two without properly documenting they do the same creates
+> > misunderstandings [0].
+> >
+> > Since %pCn is used in a single place, replace it with %pC and remove %pCn
+> > to simplify such format specifiers implementation and avoid
+> > misunderstandings.
+> >
+> > [0] https://lore.kernel.org/dri-devel/71c44221-b18b-4928-8faf-00893ec4a109@nxp.com/  
+> 
+> The link looks unrelated?
 
-We currently assume that there is at least one VMA in a MM, which isn't
-true.
+Wrong link, sorry. The correct one
+is: https://lore.kernel.org/dri-devel/f8df2b5e-b005-4ada-8108-159b2b94a72e@nxp.com/
 
-So we might end up having find_vma() return NULL, to then de-reference
-NULL.  So properly handle find_vma() returning NULL.
+Luca
 
-This fixes the report:
-
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN PTI
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 1 UID: 0 PID: 6021 Comm: syz-executor284 Not tainted 6.12.0-rc7-syzkaller-00187-gf868cd251776 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
-RIP: 0010:migrate_to_node mm/mempolicy.c:1090 [inline]
-RIP: 0010:do_migrate_pages+0x403/0x6f0 mm/mempolicy.c:1194
-Code: ...
-RSP: 0018:ffffc9000375fd08 EFLAGS: 00010246
-RAX: 0000000000000000 RBX: ffffc9000375fd78 RCX: 0000000000000000
-RDX: ffff88807e171300 RSI: dffffc0000000000 RDI: ffff88803390c044
-RBP: ffff88807e171428 R08: 0000000000000014 R09: fffffbfff2039ef1
-R10: ffffffff901cf78f R11: 0000000000000000 R12: 0000000000000003
-R13: ffffc9000375fe90 R14: ffffc9000375fe98 R15: ffffc9000375fdf8
-FS:  00005555919e1380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005555919e1ca8 CR3: 000000007f12a000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- kernel_migrate_pages+0x5b2/0x750 mm/mempolicy.c:1709
- __do_sys_migrate_pages mm/mempolicy.c:1727 [inline]
- __se_sys_migrate_pages mm/mempolicy.c:1723 [inline]
- __x64_sys_migrate_pages+0x96/0x100 mm/mempolicy.c:1723
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-[akpm@linux-foundation.org: add unlikely()]
-Link: https://lkml.kernel.org/r/20241120201151.9518-1-david@redhat.com
-Fixes: 39743889aaf7 ("[PATCH] Swap Migration V5: sys_migrate_pages interface")
-Signed-off-by: David Hildenbrand <david@redhat.com>
-Reported-by: syzbot+3511625422f7aa637f0d@syzkaller.appspotmail.com
-Closes: https://lore.kernel.org/lkml/673d2696.050a0220.3c9d61.012f.GAE@google.com/T/
-Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-Reviewed-by: Christoph Lameter <cl@linux.com>
-Cc: Liam R. Howlett <Liam.Howlett@Oracle.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-[ Alexey: mmap_read_lock is not used in this context, so mmap_read_unlock
-  is removed. Synchronization is provided by an external context in
-  do_migrate_pages(). find_vma(mm, 0) is the same as mm->mmap. ]
-Signed-off-by: Alexey Panov <apanov@astralinux.ru>
----
-v2: Clarify mmap_lock context in changes summary. Fix braces for a single
-statement block. Rearrange the changes with a comment and VM_BUG_ON to
-look more consistent with upstream.
-
- mm/mempolicy.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 6c98585f20df..db94aec0ea17 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -1067,6 +1067,7 @@ static int migrate_to_node(struct mm_struct *mm, int source, int dest,
- 			   int flags)
- {
- 	nodemask_t nmask;
-+	struct vm_area_struct *vma;
- 	LIST_HEAD(pagelist);
- 	int err = 0;
- 	struct migration_target_control mtc = {
-@@ -1077,13 +1078,18 @@ static int migrate_to_node(struct mm_struct *mm, int source, int dest,
- 	nodes_clear(nmask);
- 	node_set(source, nmask);
- 
-+	VM_BUG_ON(!(flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)));
-+
-+	vma = find_vma(mm, 0);
-+	if (unlikely(!vma))
-+		return 0;
-+
- 	/*
- 	 * This does not "check" the range but isolates all pages that
- 	 * need migration.  Between passing in the full user address
- 	 * space range and MPOL_MF_DISCONTIG_OK, this call can not fail.
- 	 */
--	VM_BUG_ON(!(flags & (MPOL_MF_MOVE | MPOL_MF_MOVE_ALL)));
--	queue_pages_range(mm, mm->mmap->vm_start, mm->task_size, &nmask,
-+	queue_pages_range(mm, vma->vm_start, mm->task_size, &nmask,
- 			flags | MPOL_MF_DISCONTIG_OK, &pagelist);
- 
- 	if (!list_empty(&pagelist)) {
 -- 
-2.30.2
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
