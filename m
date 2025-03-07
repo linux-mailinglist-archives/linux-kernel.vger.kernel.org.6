@@ -1,123 +1,112 @@
-Return-Path: <linux-kernel+bounces-551709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5172A56FBC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:55:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4FDDA56FBE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:55:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4ADD188EB2F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:55:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45146188F51A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D04E242909;
-	Fri,  7 Mar 2025 17:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF2C23A982;
+	Fri,  7 Mar 2025 17:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f2zU5XoQ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="fDJmHGyP"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F065241679
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 17:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2380421C180;
+	Fri,  7 Mar 2025 17:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741370062; cv=none; b=g6bBjeyu1dnAgbeviiT8YAy8Ki30RTUWIIMuQVXA/x+5bO3dgoQCHsZ/3J9/2ULQeWaa2hBDZtdY/1lIr3h8yPoUP7flafF0oPqmB38YOhkSYrXyAr9Rgou3Zf1rXOKTwEopXRzMmWH4XdcSceMBmBShV+zdmxtLN45IVUkj4Xo=
+	t=1741370120; cv=none; b=G+D86X+kXGp1PenOCRz/HKIo4t16Dga7uIi30cfbDiTmXS7ShuYJAHf1goooByzfGaKhMmlG9/5cjD0nbGVwuCJQ/4OmLYsVLsJhJohDt2pcWJzOa5IUmcMwOHnWAexyj4hrWUDbbEka4uSiCgbsc5uhZsAlIG13S6/7Z12EUp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741370062; c=relaxed/simple;
-	bh=XCkRz2C+VBAY5TEjrnuDs2evKJARDhM5uRMblUwUFRY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i4qaQWxfLFzx9vvUyTuI2VcPnjBSYwwQoNTXz14fSdX0lCnZIzCgi4v1jmrbXOmn6GzCck9g7PxWiNToBAN5WYr+ZhdnAZPZTzMEInR59ugBr+p0ERdOZ5De69G2E/sikeTGq+vgL9Zfw1yd0Earg4cjWOnfph1bg+3qYAy/jGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f2zU5XoQ; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741370061; x=1772906061;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XCkRz2C+VBAY5TEjrnuDs2evKJARDhM5uRMblUwUFRY=;
-  b=f2zU5XoQrMqCR5fBC/AgQK+bF6lYB5OQf4ZeMxtu4XFiK9P3pue+J2M/
-   87k1cjPHaTZuxPAKpFQ2JhFg7/rEXqxmvMR0EaSZIHVxTLUOQ5GRCOzs3
-   dTCYhN3r59Mp4ZAcIQtcLeC8Tw+zCrvyyR/4iuo7H4yRg1PxIcqY/n8+G
-   dAWbZZGBEAw23MpJsyAVfO0DnksjjFCSm51IlYjJJYKCqHibyqnUZqQNy
-   K37O95iPpB+dSK13Rb/LaKQd8g4WHHUiGYV4wZ3OSKuIrAZTRM8r9l7jR
-   oNdNvyH8igsZ288rkTb6U8jSLJXClaWWhBDSq/58JVJnh/OQyd2AQkh/Y
-   g==;
-X-CSE-ConnectionGUID: V/5A/6R3ScWY6kfhiuwlxQ==
-X-CSE-MsgGUID: 5EbznmLbQmGYZ5+tOEGyZA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42307743"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="42307743"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 09:54:19 -0800
-X-CSE-ConnectionGUID: DTM8c2/QTWaTIKSAZno2rw==
-X-CSE-MsgGUID: Y9fGCcfnRUufYjv0QwQAbw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="123577284"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 09:54:15 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tqbtk-00000000TeE-0Vfq;
-	Fri, 07 Mar 2025 19:54:12 +0200
-Date: Fri, 7 Mar 2025 19:54:11 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: mailhol.vincent@wanadoo.fr
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	David Laight <David.Laight@aculab.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v6 4/7] drm/i915: Convert REG_GENMASK*() to fixed-width
- GENMASK_U*()
-Message-ID: <Z8syw47cN0eEW7lO@smile.fi.intel.com>
-References: <20250308-fixed-type-genmasks-v6-0-f59315e73c29@wanadoo.fr>
- <20250308-fixed-type-genmasks-v6-4-f59315e73c29@wanadoo.fr>
+	s=arc-20240116; t=1741370120; c=relaxed/simple;
+	bh=KVxY2J9DrBZ39YBPI3U2LoJTkdvkmOOB7/uOGPNlBiQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=NLxKhRokJF/DnoLkeBJPgsrX/zepjWPcvjOBrrLHs+UttQAcJ3jXWlMf6dAVMu8AVrtD8R+A0mQ5QTs3x+/B90NXCL4a3Tt+XER+FraKK+rlM9zDQR+/76BaM8esaYbczGX859opNugVYq3b5o9wmwk9OtWCL7nD1kL2qcGMumY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=fDJmHGyP; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741370098; x=1741974898; i=markus.elfring@web.de;
+	bh=KVxY2J9DrBZ39YBPI3U2LoJTkdvkmOOB7/uOGPNlBiQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=fDJmHGyPQ1gBd3ofT2cgD1f4WlTF1BfgWaQgsasgKw8dMEKjc1XNREuvY4rKJ/Y6
+	 GtGq7plq12Uf2Y34X52CS64U2/8zBxPBrWyr/69SmKHSMKeIDwMv8JFcXqMKE59BU
+	 G0nX7AyAUvSHKq66qILD9doT0Sw3v0Vs52iQZvTocBlbGq6baGrr2IseqvT8Dg5xF
+	 84ft86H70y2b670ITAwZASGhoc1eB/gSORGnjuM+xEOlZOqoQXKA3TetGDSp4vSme
+	 yKIdK2ctpu6yXQ85KthkwzGDyRuqonWp7KdO8gz612NvSGBkh1VYISVDcOIHgQRDI
+	 yrvs9eL4Xg0N+ODHxg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.70]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1Mt8kX-1sxYPw40C1-00yChM; Fri, 07
+ Mar 2025 18:54:57 +0100
+Message-ID: <4abdf297-ccd0-479f-89dc-4c57390c074f@web.de>
+Date: Fri, 7 Mar 2025 18:54:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250308-fixed-type-genmasks-v6-4-f59315e73c29@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+To: vulab@iscas.ac.cn, linux-input@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+ Erick Archer <erick.archer@outlook.com>, =?UTF-8?Q?Pali_Roh=C3=A1r?=
+ <pali@kernel.org>
+References: <20250303110731.1491-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH] Input: alps - Propagate alps_passthrough_mode_v2() errors
+ in alps_poll()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250303110731.1491-1-vulab@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:KMBon/1UoHpbgTZClg6pG395xJyt963mU+R7+tl8fNsiC/CYW+h
+ 6yyLVUoTNgCM4/8GkdCxjSEsduB6f8P5ao1EID1MwGff43e/OEHgUYtoYVDSuObCMvGmiyJ
+ 5+8nT3dbjV9D0+sw+0g7qnDOUbrW5nMeLDR+E7o/0Nf7Nmujs3s99ElJEMN518WuKno+Gwl
+ XDZ1lbmU9Y+/+zJdNqlPA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:7C1m0zeEvEk=;gaE78KsF7QS1EyCYBhDt3cHIw4w
+ Qyw280St71q9iMZ2VdJCpEaZhtNTFc6stuZKPPRsd2W6yBQdcB0nDeWQBbzUkVRGs+9YaC0IR
+ k/3JkHU8FDYGD8FNSlr9hPxLlcRUKxxWd2ZJE0kkZRKB2q+VjjtQtLPBIjCcnB3l18QQ6RlPl
+ jSdcz9sfGSOUjhwf/UMC8PJoi0xu0krVIBEjZjLXfPZCwPPvKNsKPqqa1ucYVIxnk6mCeuq+I
+ Pbzdh6DNs2+lRJi36HKIzHRN+Dc07Delva6k9dWvVIKlyswTik+8Mb5Zr0G4YE3Wo++F9l3K7
+ fSAWUPEp12CDOwPeQZy8f3f9Bh5/f4fGjJDaw9F/g0F7NKQj1gHOeSiMVdOxpFK3244QQTvW+
+ kZGaW6LboW0UXrDwxB1p1ma5T+q8ZZuQnF9R4UMsiEFeD68ar0PbMCXeW1qPQf5FjHoQiuFkG
+ CKEoGmXROLMMzgpQ8CQr0DZZw1ZFhVpTn2i6/gjfj3+obOp9C0WjXJvSvPhZBToi78Kiapdk7
+ Xs1Ttv5x37e7APDsvgT/UuCF6iju1leYKKz4vR7OiuR7uOlJgYW8l3StM9g3yK8slh2dy4xHg
+ h3HOjObZARtOPK/2ywC5BU1nbDcga8lnylK4jhERfoS3ybgPwcU6l8pDBc6CPOYth/e3qiOy4
+ ato8PoT4NHB3kbMYhvAZD8W2HwV7+X4lViUJWtnCOMaPeBqt2aTXlHzLw0Qr1P8CkGCOUJvZL
+ 1u1gdJq0/jsXFhaBePloZrKZSKC8dQDNHVWVAFXbiBmV2APbgtKemezr0pdYz6fr2hUqkkCXe
+ n/JdQcWEUrMt8hoWxrFh6EpdCxTjI0fPyQiAENo0qk7AOz9OYOaEqlSfNAQkaUMJn2YUbuYvT
+ 25jQw/ZWMCD0GWwO60gQIdD2+Lj7mPScMgRyG7NPTEaDGDnw6IqXixSf4xD4iE4cFfUbE54Ap
+ RO6EIUNhyKQkn+dwtkJtf5lC0GMB3fTRrqXCuGu7eKqY8W/iCJrzLnxRI/BcpFvmM/NHyxujy
+ /l5ATPG0xmczVCAsAKUB6KkeBSA+p/J9Ng1CQjSoxp0ZbsrYMxZCxttbQyJV6qOzsApbS8kZM
+ DITE/N6gKFG9Q9DWJsAaq2Amfz6J9mik/5J/zxJNAP3fe5J4dn+FVFvtxJfYcmwJjYnsNVK+f
+ GPH7pbgOfxk/pksSKmcS6lZeEmhGFt0j+XbjfPz4k11bZ9lE0llStoNsL3lCo1/vfEJrrGqRn
+ n5V7cTrNQqaFWc9W6EMejymofUFgYqA9Z2zzjqSKgwUhge/EGr6N0NrDKj6Fi5s3QP8zNxc1Q
+ u7zpO1AtIOxkFqwDccW/0KpUUGE/R7IBUriTrCLD4jlWOWs8lT8LWh/UBcvxSjHkz4bXTA0ng
+ mhm+9Ld23SuzkUVFjpjwmKYhrbZvKVwGDRDY04MCyAZHzCoEh7DxDfguD2fOJ7HEff2q0KM9i
+ WOKEL3CwURgLIxOkgsFqLdQM5NYE=
 
-On Sat, Mar 08, 2025 at 01:48:51AM +0900, Vincent Mailhol via B4 Relay wrote:
-> From: Lucas De Marchi <lucas.demarchi@intel.com>
-> 
-> Now that include/linux/bits.h implements fixed-width GENMASK_U*(), use
-> them to implement the i915/xe specific macros. Converting each driver
-> to use the generic macros are left for later, when/if other
-> driver-specific macros are also generalized.
+> Add error handling to propagate alps_passthrough_mode_v2() failures
+> to the caller. When alps_passthrough_mode_v2() fails, immediately
+> return -1 to stop further processing and maintain consistent error
+> reporting.
 
-...
+How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
+=E2=80=9CCc=E2=80=9D) accordingly?
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc5#n145
 
-> +/*
-> + * Wrappers over the generic BIT_* and GENMASK_* implementations,
-
-BIT_U*(), GENMASK_U*() as far as I can see.
-
-Also "...generic fixed-width...".
-
-> + * for compatibility reasons with previous implementation
->   */
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Markus
 
