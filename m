@@ -1,195 +1,278 @@
-Return-Path: <linux-kernel+bounces-550160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 113D4A55C02
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:31:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 893B3A55C09
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:32:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C9FB3B9771
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:30:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A161188ADD1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:32:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072B918C0C;
-	Fri,  7 Mar 2025 00:29:57 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2710F8BE5;
+	Fri,  7 Mar 2025 00:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U9E7bUNc"
+Received: from mail-il1-f181.google.com (mail-il1-f181.google.com [209.85.166.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26A1314293;
-	Fri,  7 Mar 2025 00:29:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EACED3FF1;
+	Fri,  7 Mar 2025 00:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741307396; cv=none; b=TH7/KFzjoXvlpUNBiCX3IuefdyT7lBG1tRskdk9TO7moKpflbN3rVcP1klrKaSWzT/y3vxLwvFFNW/oN7mRtTALzb0JN3H8GOx45xbBrkgxusSgcaLJoXfIu7wpt6BpNDTYZOzDdbYGEZu9zhCdDIjyvD/pDc618lTIzrEq6QBk=
+	t=1741307557; cv=none; b=nKoPuc/8p9iVXdAxPa414HzJrEQpcuybh7ywF+25126NBXrEzn4vpsqWKQmvPw/UysigJ1nhesvMvJK/c+AjgzsLPzZvU0Bfcj5qmcKH8QSZXLBh6IuwLwCZVl6MqBOtC/r5+Xef/liGH6Uf1w16+DWnt9btw0+QejlvCYUR9NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741307396; c=relaxed/simple;
-	bh=AHkW94xodJ1r5ECcBs0x4ZJ4jz7qNAVgbYf3jZilLZY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kx2iLy4hCMUB4XDV7zQEewTQqJ8k+GuY2dZhJC1qUxASxrPNLDcIuHfNv6dxkw/K5/jyTawicsHnJir/1h3qrAAGxCXDJh6pRaHyUC62KEBcSTi6cC6ABAwslnj+NFvJX9AaCDUGU23jxWU3j71BL/XJk4c1j6179DwlXXs+sqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.18.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id DF268342FF0;
-	Fri, 07 Mar 2025 00:29:53 +0000 (UTC)
-Date: Fri, 7 Mar 2025 00:29:43 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Haylen Chu <heylenay@4d2.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Haylen Chu <heylenay@outlook.com>, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Chen Wang <unicornxdotw@foxmail.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Meng Zhang <zhangmeng.kevin@linux.spacemit.com>
-Subject: Re: [PATCH v5 2/5] dt-bindings: clock: spacemit: Add spacemit,k1-pll
-Message-ID: <20250307002943-GYA64516@gentoo>
-References: <20250306175750.22480-2-heylenay@4d2.org>
- <20250306175750.22480-4-heylenay@4d2.org>
+	s=arc-20240116; t=1741307557; c=relaxed/simple;
+	bh=yeHroJuorqC9iv59/qhkFcftHF9SZ5knCvXTDkc+qCQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gAh3jZYONa5llJxDeNx8YxZ3D5KDNYoMZPWLP4EvaxqqAp9vCS8pqsuNk5YPpgpTD8arwS/etiH27/3kTnypl9HmboijAJ++AQibuupNEpKivxw1xd20LwOMKEWAPjkrG3NnDY7J4GVyqt58MgG2mlJmvKX4WpkweKZl29wGMxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U9E7bUNc; arc=none smtp.client-ip=209.85.166.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f181.google.com with SMTP id e9e14a558f8ab-3d43bb5727fso3908245ab.1;
+        Thu, 06 Mar 2025 16:32:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741307554; x=1741912354; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b3Sup5qJO3qw7gpO+9tSvFrA+y2TmJev5Uqf9lLAcqs=;
+        b=U9E7bUNc/twbuVEC9ORQU377dG88Rf4s15BKe9gCulCAswZ5qH8pjsgpFC4/Dt+5qc
+         fKBLGEvSOBcbMPXMyyP8jsTpN4tALleVZbm/WB2I6TjrmUhCbcB9nJreAHWayrcbxjYK
+         cwz6njDaIVpy0DkQFOsN1hz1UJNHg3iyZCN2vT7aT10c8ZiTdpGoBzhXCW+J5dEYuMKU
+         BEohtK50M4jVbiBZivUbRVeQcWwhELZFSBrm4541FDbrXgdxALLU6NRFGC0cOXETYvrv
+         Cdl5StSoov90jeSMun7ehxDYXxmITYGhal60BURNj7SjkNdWbD8pkBjD3aAfzxl8FUQ6
+         5PlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741307554; x=1741912354;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b3Sup5qJO3qw7gpO+9tSvFrA+y2TmJev5Uqf9lLAcqs=;
+        b=PQ4HT4fjLqPwhT6YBQfZELBkx/s5T57QVES5gKDYhiAgYbKe0dpw84J5++dI9vTqjb
+         C5x2/7NWYpa/MMLxOHZqbSWpouruNXi4QoCDZjlJ5K7+iy3LX9JmfZvQat1QEU+wy507
+         D7bsrLjvJUQAkn5i2tfQlKIfMrDKH/1/Pt3lvFWfJuz+9brD62MAy/N+gH7FRBPOrG8G
+         qS1wUT4K978QOZ4v02Sp1ElvouOuiRqLEa6Af5Kyccorsg7lMNQR3kzRdx8aNylpaDx4
+         gL3qX7yA+6SwwMw01pz5aEo2xLrBBB88bsfpCKCyXiY5kbXEfG6eyk1n+sDKWIuNpYrp
+         Fn9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWlACerPgJt16H0MDu03UuMowGlhymzYCPr7eH4b5yn08jCXso1zB7jaGDj8VvbG/WudEKrHSWd4Z8/6BA=@vger.kernel.org, AJvYcCWrhycmvmuJFIxR5tDgXH+tkibkaXf4tlkDoxKkYNFc2YpLAxck9UPxSx/4MnlbvKhcjEVDM8/L@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFb2Fh71i0ZFgSwz5lzJ3LA0EpiTQtueVrsFbm6JJFJ8p9fiOR
+	Y3ht+JaYx4WbgGQ25Y03NWOwy0pgrihncXNRAJxu9nG8WvnNTIsh21eCNzWKx9KYLF8LW010t+J
+	1qWntF9wVMB6LqyAHHTRW50ttEuQ=
+X-Gm-Gg: ASbGncvnJhLnrcS0Yf9qdNy5XA8xf7YxcSywMT+7sGNn2zDA9KN2xtdvJ7oFl80dAfI
+	5Af6hODPyePrT+pHZhTP7+r55/eu9otzxtsko7rjnN0x2SvlYlsUy5vkScNxdrI4cVpcCw2Ztn5
+	XeVzKFChsuYOC+QvNsgBqHH7qu
+X-Google-Smtp-Source: AGHT+IEh2dbYwm4iLN8sq6X/wCxXJcNeuxBtXInN8JeCnK9EITMqRDB7bkIAOcdnlblpCsOvclxm8RrPAhjc+SlOAO8=
+X-Received: by 2002:a05:6e02:164a:b0:3d0:235b:4810 with SMTP id
+ e9e14a558f8ab-3d4418d50e2mr21827055ab.2.1741307553861; Thu, 06 Mar 2025
+ 16:32:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306175750.22480-4-heylenay@4d2.org>
+References: <20250305-net-next-fix-tcp-win-clamp-v1-1-12afb705d34e@kernel.org>
+ <CAL+tcoAqZmeV0-4rjH-EPmhBBaS=ZSwgcXhU8ZsBCr_aXS3Lqw@mail.gmail.com>
+ <CANn89iLqgi5byZd+Si7jTdg7zrLNn13ejWAQjMRurvrQPeg3zg@mail.gmail.com> <CAL+tcoDH0DAWmvYR2RFPtWimq8MW8a1CRdoaTSABpS-OTx_L+w@mail.gmail.com>
+In-Reply-To: <CAL+tcoDH0DAWmvYR2RFPtWimq8MW8a1CRdoaTSABpS-OTx_L+w@mail.gmail.com>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Fri, 7 Mar 2025 08:31:57 +0800
+X-Gm-Features: AQ5f1JrEBEKQoQu65o4Jf2jJo6otydaX4bSK3wpP2Kyj981A7kdWQVyArK7okBw
+Message-ID: <CAL+tcoDSf9AQv5h-EB9mSdLqBP7W63Eejh+4PYOSiVATGa-Mgg@mail.gmail.com>
+Subject: Re: [PATCH net-next] tcp: clamp window like before the cleanup
+To: Eric Dumazet <edumazet@google.com>
+Cc: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>, mptcp@lists.linux.dev, 
+	Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+	"David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Haylen:
+On Thu, Mar 6, 2025 at 7:18=E2=80=AFPM Jason Xing <kerneljasonxing@gmail.co=
+m> wrote:
+>
+> On Thu, Mar 6, 2025 at 5:45=E2=80=AFPM Eric Dumazet <edumazet@google.com>=
+ wrote:
+> >
+> > On Thu, Mar 6, 2025 at 6:22=E2=80=AFAM Jason Xing <kerneljasonxing@gmai=
+l.com> wrote:
+> > >
+> > > On Wed, Mar 5, 2025 at 10:49=E2=80=AFPM Matthieu Baerts (NGI0)
+> > > <matttbe@kernel.org> wrote:
+> > > >
+> > > > A recent cleanup changed the behaviour of tcp_set_window_clamp(). T=
+his
+> > > > looks unintentional, and affects MPTCP selftests, e.g. some tests
+> > > > re-establishing a connection after a disconnect are now unstable.
+> > > >
+> > > > Before the cleanup, this operation was done:
+> > > >
+> > > >   new_rcv_ssthresh =3D min(tp->rcv_wnd, new_window_clamp);
+> > > >   tp->rcv_ssthresh =3D max(new_rcv_ssthresh, tp->rcv_ssthresh);
+> > > >
+> > > > The cleanup used the 'clamp' macro which takes 3 arguments -- value=
+,
+> > > > lowest, and highest -- and returns a value between the lowest and t=
+he
+> > > > highest allowable values. This then assumes ...
+> > > >
+> > > >   lowest (rcv_ssthresh) <=3D highest (rcv_wnd)
+> > > >
+> > > > ... which doesn't seem to be always the case here according to the =
+MPTCP
+> > > > selftests, even when running them without MPTCP, but only TCP.
+> > > >
+> > > > For example, when we have ...
+> > > >
+> > > >   rcv_wnd < rcv_ssthresh < new_rcv_ssthresh
+> > > >
+> > > > ... before the cleanup, the rcv_ssthresh was not changed, while aft=
+er
+> > > > the cleanup, it is lowered down to rcv_wnd (highest).
+> > > >
+> > > > During a simple test with TCP, here are the values I observed:
+> > > >
+> > > >   new_window_clamp (val)  rcv_ssthresh (lo)  rcv_wnd (hi)
+> > > >       117760   (out)         65495         <  65536
+> > > >       128512   (out)         109595        >  80256  =3D> lo > hi
+> > > >       1184975  (out)         328987        <  329088
+> > > >
+> > > >       113664   (out)         65483         <  65536
+> > > >       117760   (out)         110968        <  110976
+> > > >       129024   (out)         116527        >  109696 =3D> lo > hi
+> > > >
+> > > > Here, we can see that it is not that rare to have rcv_ssthresh (lo)
+> > > > higher than rcv_wnd (hi), so having a different behaviour when the
+> > > > clamp() macro is used, even without MPTCP.
+> > > >
+> > > > Note: new_window_clamp is always out of range (rcv_ssthresh < rcv_w=
+nd)
+> > > > here, which seems to be generally the case in my tests with small
+> > > > connections.
+> > > >
+> > > > I then suggests reverting this part, not to change the behaviour.
+> > > >
+> > > > Fixes: 863a952eb79a ("tcp: tcp_set_window_clamp() cleanup")
+> > > > Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/551
+> > > > Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+> > >
+> > > Tested-by: Jason Xing <kerneljasonxing@gmail.com>
+> > >
+> > > Thanks for catching this. I should have done more tests :(
+> > >
+> > > Now I use netperf with TCP_CRR to test loopback and easily see the
+> > > case where tp->rcv_ssthresh is larger than tp->rcv_wnd, which means
+> > > tp->rcv_wnd is not the upper bound as you said.
+> > >
+> > > Thanks,
+> > > Jason
+> > >
+> >
+> > Patch looks fine to me but all our tests are passing with the current k=
+ernel,
+> > and I was not able to trigger the condition.
+> >
+> > Can you share what precise test you did ?
+> >
+> > Thanks !
+>
+> I did the test[1] on the virtual machine running the kernel [2]. And
+> after seeing your reply, I checked out a clean branch and compiled the
+> kernel with the patch reverted again and rebooted. The case can still
+> be reliably reproduced in my machine. Here are some outputs from BPF
+> program[3]:
+>  sudo bpftrace tcp_cap.bt.2
+> Attaching 1 probe...
+> 4327813, 4326775, 4310912
+> netperf
+>         tcp_set_window_clamp+1
+>         tcp_data_queue+1744
+>         tcp_rcv_established+501
+>         tcp_v4_do_rcv+369
+>         tcp_v4_rcv+4800
+>         ip_protocol_deliver_rcu+65
+>
+> 4327813, 4326827, 4310912
+> netperf
+>         tcp_set_window_clamp+1
+>         tcp_data_queue+1744
+>         tcp_rcv_established+501
+>         tcp_v4_do_rcv+369
+>         tcp_v4_rcv+4800
+>         ip_protocol_deliver_rcu+65
+>
+> 418081, 417052, 417024
+> swapper/11
+>         tcp_set_window_clamp+1
+>         tcp_data_queue+1744
+>         tcp_rcv_established+501
+>         tcp_v4_do_rcv+369
+>         tcp_v4_rcv+4800
+>         ip_protocol_deliver_rcu+65
+>
 
-On 17:57 Thu 06 Mar     , Haylen Chu wrote:
-> Add definition for the PLL found on Spacemit K1 SoC, which takes the
-> external 24MHz oscillator as input and generates clocks in various
-> frequencies for the system.
-> 
-> Signed-off-by: Haylen Chu <heylenay@4d2.org>
-> ---
->  .../bindings/clock/spacemit,k1-pll.yaml       | 50 +++++++++++++++++++
->  include/dt-bindings/clock/spacemit,k1-ccu.h   | 37 ++++++++++++++
->  2 files changed, 87 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml b/Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml
-> new file mode 100644
-> index 000000000000..23d7aa1bc573
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/spacemit,k1-pll.yaml
-> @@ -0,0 +1,50 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/spacemit,k1-pll.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Spacemit K1 PLL
-> +
-> +maintainers:
-> +  - Haylen Chu <heylenay@4d2.org>
-> +
-> +properties:
-> +  compatible:
-> +    const: spacemit,k1-pll
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    description: External 24MHz oscillator
-> +
-> +  spacemit,mpmu:
-how about naming it as "spacemit,mpmu-syscon" explicitly?
-to indicate this is a syscon phandle, it's more readable
+Hi Eric, Matthieu
 
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Phandle to the "Main PMU (MPMU)" syscon. It is used to check PLL
-> +      lock status.
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +    description:
-> +      See <dt-bindings/clock/spacemit,k1-ccu.h> for valid indices.
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - spacemit,mpmu
-> +  - "#clock-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock-controller@d4090000 {
-> +        compatible = "spacemit,k1-pll";
-> +        reg = <0xd4090000 0x1000>;
-> +        clocks = <&vctcxo_24m>;
-> +        spacemit,mpmu = <&sysctl_mpmu>;
-> +        #clock-cells = <1>;
-> +    };
-> diff --git a/include/dt-bindings/clock/spacemit,k1-ccu.h b/include/dt-bindings/clock/spacemit,k1-ccu.h
-> index 1f8b01db44ca..4a0c7163257e 100644
-> --- a/include/dt-bindings/clock/spacemit,k1-ccu.h
-> +++ b/include/dt-bindings/clock/spacemit,k1-ccu.h
-> @@ -6,6 +6,43 @@
->  #ifndef _DT_BINDINGS_SPACEMIT_CCU_H_
->  #define _DT_BINDINGS_SPACEMIT_CCU_H_
->  
-> +/*	APBS (PLL) clocks	*/
-> +#define CLK_PLL1		0
-> +#define CLK_PLL2		1
-> +#define CLK_PLL3		2
-> +#define CLK_PLL1_D2		3
-> +#define CLK_PLL1_D3		4
-> +#define CLK_PLL1_D4		5
-> +#define CLK_PLL1_D5		6
-> +#define CLK_PLL1_D6		7
-> +#define CLK_PLL1_D7		8
-> +#define CLK_PLL1_D8		9
-> +#define CLK_PLL1_D11		10
-> +#define CLK_PLL1_D13		11
-> +#define CLK_PLL1_D23		12
-> +#define CLK_PLL1_D64		13
-> +#define CLK_PLL1_D10_AUD	14
-> +#define CLK_PLL1_D100_AUD	15
-> +#define CLK_PLL2_D1		16
-> +#define CLK_PLL2_D2		17
-> +#define CLK_PLL2_D3		18
-> +#define CLK_PLL2_D4		19
-> +#define CLK_PLL2_D5		20
-> +#define CLK_PLL2_D6		21
-> +#define CLK_PLL2_D7		22
-> +#define CLK_PLL2_D8		23
-> +#define CLK_PLL3_D1		24
-> +#define CLK_PLL3_D2		25
-> +#define CLK_PLL3_D3		26
-> +#define CLK_PLL3_D4		27
-> +#define CLK_PLL3_D5		28
-> +#define CLK_PLL3_D6		29
-> +#define CLK_PLL3_D7		30
-> +#define CLK_PLL3_D8		31
-> +#define CLK_PLL3_80		32
-> +#define CLK_PLL3_40		33
-> +#define CLK_PLL3_20		34
-> +
->  /*	MPMU clocks	*/
->  #define CLK_PLL1_307P2		0
->  #define CLK_PLL1_76P8		1
-> -- 
-> 2.48.1
-> 
+I did a quick analysis on this case. It turned out that
+__release_sock() was dealing with skbs in sk_backlog one by one, then:
+1) one skb went into tcp_grow_window(). At the beginning, rcv_ssthresh
+is equal to rcv_wnd, but later rcv_ssthresh will increase by 'incr',
+which means updated rcv_ssthresh is larger than rcv_wnd.
+2) another skb went into tcp_set_window_clamp(), as I saw yesterday,
+the issue happened: rcv_ssthresh > rcv_wnd.
 
--- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+As to the rcv_wnd, in synchronised states, it can be only
+changed/adjusted to new_win in tcp_select_window(). Thus, between
+above 1) and 2) the sk didn't have the chance to update its rcv_wnd
+value, so...
+
+I attached two consecutive calltraces here:
+[Fri Mar  7 08:00:52 2025] netserver, 1, 91234, 65483, (25751,130966)
+[Fri Mar  7 08:00:52 2025] CPU: 0 UID: 266980 PID: 17465 Comm:
+netserver Kdump: loaded Not tainted 6.14.0-rc4+ #415
+[Fri Mar  7 08:00:52 2025] Hardware name: Tencent Cloud CVM, BIOS
+seabios-1.9.1-qemu-project.org 04/01/2014
+[Fri Mar  7 08:00:52 2025] Call Trace:
+[Fri Mar  7 08:00:52 2025]  <TASK>
+[Fri Mar  7 08:00:52 2025]  dump_stack_lvl+0x5b/0x70
+[Fri Mar  7 08:00:52 2025]  dump_stack+0x10/0x20
+[Fri Mar  7 08:00:52 2025]  tcp_grow_window+0x297/0x320
+[Fri Mar  7 08:00:52 2025]  tcp_event_data_recv+0x265/0x400
+[Fri Mar  7 08:00:52 2025]  tcp_data_queue+0x6d0/0xc70
+[Fri Mar  7 08:00:52 2025]  tcp_rcv_established+0x1f5/0x760
+[Fri Mar  7 08:00:52 2025]  ? schedule_timeout+0xe5/0x100
+[Fri Mar  7 08:00:52 2025]  tcp_v4_do_rcv+0x171/0x2d0
+[Fri Mar  7 08:00:52 2025]  __release_sock+0xd1/0xe0
+[Fri Mar  7 08:00:52 2025]  release_sock+0x30/0xa0
+[Fri Mar  7 08:00:52 2025]  inet_accept+0x5c/0x80
+[Fri Mar  7 08:00:52 2025]  do_accept+0xf1/0x180
+.....
+[Fri Mar  7 08:00:52 2025] netserver, 0, 91234, 65483
+[Fri Mar  7 08:00:52 2025] CPU: 0 UID: 266980 PID: 17465 Comm:
+netserver Kdump: loaded Not tainted 6.14.0-rc4+ #415
+[Fri Mar  7 08:00:52 2025] Hardware name: Tencent Cloud CVM, BIOS
+seabios-1.9.1-qemu-project.org 04/01/2014
+[Fri Mar  7 08:00:52 2025] Call Trace:
+[Fri Mar  7 08:00:52 2025]  <TASK>
+[Fri Mar  7 08:00:52 2025]  dump_stack_lvl+0x5b/0x70
+[Fri Mar  7 08:00:52 2025]  dump_stack+0x10/0x20
+[Fri Mar  7 08:00:52 2025]  tcp_set_window_clamp+0xc3/0x1f0
+[Fri Mar  7 08:00:52 2025]  tcp_event_data_recv+0x35b/0x400
+[Fri Mar  7 08:00:52 2025]  tcp_data_queue+0x6d0/0xc70
+[Fri Mar  7 08:00:52 2025]  tcp_rcv_established+0x1f5/0x760
+[Fri Mar  7 08:00:52 2025]  ? schedule_timeout+0xe5/0x100
+[Fri Mar  7 08:00:52 2025]  tcp_v4_do_rcv+0x171/0x2d0
+[Fri Mar  7 08:00:52 2025]  __release_sock+0xd1/0xe0
+[Fri Mar  7 08:00:52 2025]  release_sock+0x30/0xa0
+[Fri Mar  7 08:00:52 2025]  inet_accept+0x5c/0x80
+[Fri Mar  7 08:00:52 2025]  do_accept+0xf1/0x180
+
+Test is simple on my virtual machine just by running "netperf -H
+127.0.0.1" which uses TCP_STREAM by default.
+
+Thanks,
+Jason
 
