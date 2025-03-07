@@ -1,116 +1,90 @@
-Return-Path: <linux-kernel+bounces-551245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E92A56A08
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:09:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3A1A56A0A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:09:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A21A188A30D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:09:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79AE33A76BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B1A21ADD3;
-	Fri,  7 Mar 2025 14:09:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE48321B9C8;
+	Fri,  7 Mar 2025 14:09:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lDngAq3R"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RKt1oP8F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ADB213A86C;
-	Fri,  7 Mar 2025 14:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 467B721ABC3;
+	Fri,  7 Mar 2025 14:09:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741356574; cv=none; b=Mlwhidyb1WG7HJ5ufDHchD2yQiEdd4MWLFSHgsf2roS7ZK5DRZra83cCFgghCb1I3WRlCz74qcEjuMMT7Y2Gi7nthcWO/Mvkm1DCVPxlQVaLDTepnVtLbBsOSZSCEs5HWQ4qTt+Th8YCw5I57rJO6lYNYsCOtjdFqUO8HSI845o=
+	t=1741356579; cv=none; b=HVqFCMtqpo8StCo04lQ5LlzuEUVfVQNf/YdFmHZ+cQ/mGP4BUB4gk6turc7KG0lJXajMYgV49m41rFneFC4O/dh1tTHhBT5fyFG5CTtuzMce0w29KBIE9sDAkOnNIUEZRnBdhwnWa8RtaxLxwzy/C23U9JZKD9Wa3GxGyXrP1R4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741356574; c=relaxed/simple;
-	bh=QlEoGVXKZTShMRvQ4USDMb2GPYj+O4LdSSE2LnXQHmE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Xfm6WOBUeZyxI64wf1BBMccSBrYtbOJjaWMPCb8dkG3jpNMnj5JJbTjqYBek8CWhhrxE5XWTgD2D9FtrHI+nIPkOrtkDIkLd7fmu3VD5l5viYJahd8NC+ZNk5nBhIGCVR/5y4wW3jThKuVYcgN+NMC+KUAPaVqBrFGFDrion1E0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lDngAq3R; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741356573; x=1772892573;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=QlEoGVXKZTShMRvQ4USDMb2GPYj+O4LdSSE2LnXQHmE=;
-  b=lDngAq3R7AJ/DoJ3Q/gFNmraMm+BgS98aoiRcEJmbiQ28VDcGmgQX7FB
-   rgY0JxRsxKBdKJbfnPZ7GyV0KPh2hUZajcNiwpymbj+bVGumunqscbtjJ
-   Lhk7M0nD17tnnt7G+qTOrkTLJBuNhlnLQF3dgu9JpNwirt0mvmRBqLXoT
-   hHv4itlbHCy9iMf+vT6yFzJ2gHDna105Q/9mk6ZOW/J/JT776UJ+AM6eL
-   egMrqP7c2g5lOY9JegU5fMz6HFPIiD5UJt48JBOohGOFiUQA99Zg6NhDa
-   TVXg0s7hhSH1NPyU38JN4lQqXrmrHx8fk0pmdtpUKbsPDVVdfWqsMFplB
-   w==;
-X-CSE-ConnectionGUID: rPNSJUyxTh+MuI0gPvGq+g==
-X-CSE-MsgGUID: C2xWfSIcQ4id7d418QBsEg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="53045205"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="53045205"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 06:09:32 -0800
-X-CSE-ConnectionGUID: dM81vwytTJi5CM1y/u8hZA==
-X-CSE-MsgGUID: 5rykSzCmQvmCB+sxu5O+rg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119258813"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.120])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 06:09:29 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: =?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Subject: [PATCH 1/1] PCI: Do not claim to release resource falsely
-Date: Fri,  7 Mar 2025 16:09:22 +0200
-Message-Id: <20250307140922.5776-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1741356579; c=relaxed/simple;
+	bh=PhF5vbdvBr6B55g5q/tZQ/atXs6+DR2Ee7xz3YBPnSI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OTYUGYbNMKJB35khCVas8a/9TjSBfnkbBLNJ1CQhi7urMDdRhvFi/1V1gsv0gVUxA5CuX5QPUsUchEKP6HVb18vsxPX3PHvsa6cRraNXm743yMChNOppUhBNNOJLkSGimrshRizY/nxwyeYcPKhfStcgRvk5oo1v0Gi+z6Z71v0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RKt1oP8F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B42E1C4CEE5;
+	Fri,  7 Mar 2025 14:09:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741356578;
+	bh=PhF5vbdvBr6B55g5q/tZQ/atXs6+DR2Ee7xz3YBPnSI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=RKt1oP8FJAZyYY0rW7fxVmrhhj4jqHJ1hX+JcIevuVoHcGnh5lmvhgIGG5Wr3DbTG
+	 cAy1/OogXJEOuYVzLL8Gs4hY8B7fL6FWdESVE2iJVOzpE7sj87pkwcqXbX19IyRbrb
+	 0E7LFWESOI04Mo0vPuy57mlCLNJV/DOeDJVLVJxrifSms8f8IKbB7NFGw/6WQrlGES
+	 u9iR8ZuO59mlWCwAlWW4DTsm3jMvpoyiaFs1REvqG1LDfnc6lfLYQV07LcDkt2J5lI
+	 5wF8eabhqQFB65doKVOkPUAQFMprR2smymJSdWfPTKH5KBpJWJYVkHGR86keSqg1oC
+	 qhJgYZPRaNI0Q==
+From: cel@kernel.org
+To: jlayton@kernel.org,
+	neilb@suse.de,
+	okorniev@redhat.com,
+	Dai.Ngo@oracle.com,
+	tom@talpey.com,
+	lorenzo@kernel.org,
+	Maninder Singh <maninder1.s@samsung.com>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	chungki0201.woo@samsung.com
+Subject: Re: [PATCH 1/2] NFSD: unregister filesystem in case genl_register_family() fails
+Date: Fri,  7 Mar 2025 09:09:34 -0500
+Message-ID: <174135655901.96609.15950223024137816385.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20250306092007.1419237-1-maninder1.s@samsung.com>
+References: <CGME20250306092017epcas5p30812b135b484fdea1f96739635df1d79@epcas5p3.samsung.com> <20250306092007.1419237-1-maninder1.s@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-pci_release_resource() will print "... releasing" regardless of the
-resource being assigned or not. Move the print after the res->parent
-check to avoid claiming the kernel would be releasing an unassigned
-resource.
+From: Chuck Lever <chuck.lever@oracle.com>
 
-Likely, none of the current callers pass a resource that is unassigned so
-this change is mostly to correct the non-sensical order than to remove
-errorneous printouts.
+On Thu, 06 Mar 2025 14:50:06 +0530, Maninder Singh wrote:
+> With rpc_status netlink support, unregister of register_filesystem()
+> was missed in case of genl_register_family() fails.
+> 
+> Correcting it by making new label.
+> 
+> 
 
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- drivers/pci/setup-res.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Applied to nfsd-testing, thanks!
 
-diff --git a/drivers/pci/setup-res.c b/drivers/pci/setup-res.c
-index ca14576bf2bf..21719ae29a34 100644
---- a/drivers/pci/setup-res.c
-+++ b/drivers/pci/setup-res.c
-@@ -414,11 +414,11 @@ void pci_release_resource(struct pci_dev *dev, int resno)
- 	struct resource *res = dev->resource + resno;
- 	const char *res_name = pci_resource_name(dev, resno);
- 
--	pci_info(dev, "%s %pR: releasing\n", res_name, res);
--
- 	if (!res->parent)
- 		return;
- 
-+	pci_info(dev, "%s %pR: releasing\n", res_name, res);
-+
- 	release_resource(res);
- 	res->end = resource_size(res) - 1;
- 	res->start = 0;
+[1/2] NFSD: unregister filesystem in case genl_register_family() fails
+      commit: 4c9f0119568834eb4c7f5ce6706ec52a1a426c4c
+[2/2] NFSD: fix race between nfsd registration and exports_proc
+      commit: 5f5262b46b823cfcfdf224b1b6a5ba3027453ea1
 
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-prerequisite-patch-id: e4a2c15d0cd3241e2fdb1af98510211e63ec3d06
--- 
-2.39.5
+--
+Chuck Lever
 
 
