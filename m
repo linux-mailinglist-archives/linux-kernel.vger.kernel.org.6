@@ -1,115 +1,128 @@
-Return-Path: <linux-kernel+bounces-551510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5749DA56D6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:18:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56A40A56D71
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB1B1188B4F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:18:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E01A3A3CE9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A217C23A9BC;
-	Fri,  7 Mar 2025 16:18:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7D823A9B0;
+	Fri,  7 Mar 2025 16:20:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="YCg3Uw0r"
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kOYd/pGB"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBD3823A9AC
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 16:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03625238D22
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 16:19:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741364317; cv=none; b=kU2ZtVYestAXl504GRhIWJOJ4DuW8S008VniHmudBu/3b4MEF9u8AurC1onY2mxTLPitBcbxa6BFXHbfZaoLiDbj/ZcAcssjf2hjHUpnEGp1dly1W1hH3W/uOnYCmwShRhRmWjtt34raIhKdp6Eg+vTDuxpqsVnN8B/WWMcl+RA=
+	t=1741364399; cv=none; b=Bmyx2svBZSAA35+m2/1JDGNTeECt+E/PDDxdRzI6D2Bk5q0hgRrhQwe1dAhh+y+UP6D/FnhxQyi0s9crv1PGI2QHI4BpnQ1zkh/nRkJMhH46LHWKrI/Mrovo2S+P2RhJTJBcvxxmteaMz5y9AsrSqJa3s2MBKAVhszXSZ66/s/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741364317; c=relaxed/simple;
-	bh=Q7P4hSefpkC1UbSfbt+doLOOOpwGC3N9h0F6ojYSWWk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ThwWwFQVPn3xmehOqcqrPW7770KtvlHg9DEnhW34cHSApeCFokeMkQAnm/tUTzj3cIJUL2pJ77AZeQQfethrU9zPz3LLjJZpyINBjC2tJH/Tp10yLMHNIf2BFy9PLhrffnARVTeqcRanmRO+0z4YwRsa0YuKPKx2CL3jDyhv7uY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=YCg3Uw0r; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3cfeff44d94so4818225ab.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 08:18:34 -0800 (PST)
+	s=arc-20240116; t=1741364399; c=relaxed/simple;
+	bh=MibkxaecrsdtN0IlgcvwNtbfOgJZf42RCy7CVAjeczw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FsA7ufiOc8tfiSgF7NWvtwWU/tJkRzFNIYu5zT/0J8nk0juTIaAQW18jp/LzBfXvSEW3c+DqKbqoumgbSxVZjpmnX+gT7mdU2P7BwBXQDzSyV4AJHdD4b1O80mwwn31OrGLKicK4LMb9J4aLZR8L6/9MXZe8fU025NfbA6GZcIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kOYd/pGB; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e5cded3e2eso2796192a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 08:19:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1741364314; x=1741969114; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=In9PPY40Mgr5yyZmxf6kZQr/QlJ7nuj8M0fwjZ4i/fs=;
-        b=YCg3Uw0rWDiMXhs+4gxJ3CqU7x3VRb7hkgp2qae0pBtq+uEomJJNb/jkA270xjZ+aj
-         5iMtwRJrkV6j3UwwVZA+xLSQ0UL2LcKyCA/Mg1QXXaLf96jTtj8EJI6Hoz+X33vcSuh8
-         3C30N694aKe5AuQ1KeNdfW2Swuo/565rcvfuL6yg+wm8Ey3hbbUYxcazmXpMepsAYgsO
-         wSKR3UNgCbKNKFMaeD33MS4pFwOCaYnbEqyabsG3tnWAllX7M97zaRH8FllLahhIyp9O
-         VeBEHU+f4X4XumMkPD9CDn4R0EEhPop0Wv0S4B/docHIUOW6vPFevSmthMmU9GXaQ/Yf
-         U8Og==
+        d=gmail.com; s=20230601; t=1741364395; x=1741969195; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jm6irixwFb9W5g3Hk5DtrqlJdVqED6lv/LIf0U8JUZY=;
+        b=kOYd/pGB8vBzcyLBg2soxzse8FgmNRmXTQeaRdseyZH6NmPmxJTzn+POE2NU/ZqT9V
+         fXvfSsDp/UnWnFgpint2sPmQTrbFTHUtHJXxmVMA7XvSJIfNHMU/Ot7UbZP40dOF1Nnw
+         vT/SocbCcWY6znrwGcjSjv9dK4CFdDKjWQGNFeOSn12/aNE97GH/irRIakUn+lyajrv5
+         b89A0/sBYNxC0EjII2ttuWxfQEN0SE1eyJwFvSbE9A87l27x2rdw83jamjZswP0yfyDj
+         m6054gbQMEpKXNF0niHcBCLH/xXke4e2cUwbx4oopvfoYTuBnp447r8aG/L2G6WKfrK4
+         SHZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741364314; x=1741969114;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=In9PPY40Mgr5yyZmxf6kZQr/QlJ7nuj8M0fwjZ4i/fs=;
-        b=wodIlNVdCTZPiq8f4AmkMtsiQ6FrDS6JmOH/u1+gQhZgeBBiWY10lvDWqBNI9Q5PoH
-         LhQ2lo5EDYWcO128nAuAmF2BIexBlTufAWZuasvp0H4IDjbaSwFL3sp0lFVcMIFOhu+5
-         rxYn5I79+ipmM16aS7gZJ4FX4Idgw0x1XbP/pG0UoMJxwZHy+yeUblbK6im2kAvPJCqg
-         OT5zcRZlUd+xLZnwvSY9G1xeZHg3I1bZhp1cU6yyFcLxixJLcFq8lTmBg2K6fkRSdCjX
-         ClLbUCX4NAq4wI9vftctxiI/I9hvUydptEXXOT2dhr/u5H+hsibENx8uFmwYY7wAiNN4
-         GPGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUa2+sXA9sbc4VtJy8US02gZE2zBhsM27MrJ4zq5q2Yfz4qrm4GeEZTrNRxqAGN+ld1OLxNS9tMjLfp7k0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy71ngaDI5GF9KLYizfssduKlx3l7m6SXb2LLnDUxB/FBLJAvnG
-	xb6lrPMMNEqw0PG3MXpM9ZtBKSfnXLgD/TsZWDQUx/La395iUpNkTLsCUPh7AiY=
-X-Gm-Gg: ASbGnctNyxzCKM+07zoBiUdsyTR7W1ZY5EbDidupk2jetcAxXg3yTmB89qkPZmBzhms
-	9ecdMgldvE2nnKg8mmc7kIWqDjQ9gqnA1qz37KZOA08qBOQpp3kXE2RpybNaoicHHZGE8wZhAsG
-	t+105oZtSdGmscS6VjumcjSU+BO5v/EbFYC/0t+JfVmAKGYYVH+sED3BVdd7ybP1SdW6D0zefvV
-	ol3Xi82Tyf+9+BZnlfezJAAFrgkNft+Ktd4jZrT+Jt7AqN6xVPiuSle7rFV5G00LB+ss+t53EO3
-	40nxkcXW6Qq7OFiE+sA1T53slc4HJ4jyqF9wtp59
-X-Google-Smtp-Source: AGHT+IEZIL6kjCDQac+J10FL30HMzY4rLD57DIbTTax5qwBe0pYmXJaCKIsBu5zSRoGSQEaVsikMCQ==
-X-Received: by 2002:a05:6e02:1a05:b0:3d4:3ab3:daf5 with SMTP id e9e14a558f8ab-3d4418dcc7amr47772725ab.6.1741364313935;
-        Fri, 07 Mar 2025 08:18:33 -0800 (PST)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f20a06b059sm1005242173.136.2025.03.07.08.18.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 08:18:33 -0800 (PST)
-Message-ID: <fa3bbf2c-8079-4bdf-b106-a0641069080b@kernel.dk>
-Date: Fri, 7 Mar 2025 09:18:32 -0700
+        d=1e100.net; s=20230601; t=1741364395; x=1741969195;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jm6irixwFb9W5g3Hk5DtrqlJdVqED6lv/LIf0U8JUZY=;
+        b=SQJVJhy6mlKtsA95zgPtiBLWhDkACRmtJSjPyei8/fetbverMwrZvdx35WzWf+bXkC
+         URZKIhyN7Q8nFqd8I4r0pbG7F81bexVFE5e9699Qgd7YGcrB++ffrbmB+1uUByR63Zuy
+         RrlHpSXOjiGeU5HT9s8ZgJOiBKcJxXtEuPujsmuKyRrxRbdNz8by6HU83NYLW0n7kJby
+         8ZR4mSLnCTYZNuoHemn+d6+WpvnahwyNizzzUqpQ+Dvy7mVFXJqBlFjbreqDQCqh4Dhh
+         CpFEWWyRHuoiZ0X0x9gPBM+hljcVXfoGHPSDuiDdl4EC23Flwf/KEk30c1ButtVV9c2P
+         u04g==
+X-Forwarded-Encrypted: i=1; AJvYcCUipckyPHQ4gAH28fG3+YP89h7yvlafP+fM2UoFmTkbo2T5LcNyAp21bBncYdjUbvQKezTRQyl66PWW7Zk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/CYfrIEHVnMObMRhE4haA/jfuHbMndjBF3709jLbYGZ3DpAf/
+	75kWvrtovAzaf/FORMMzBE/46SB5RBod0+Ta3ju7tCCEzyLBa+k=
+X-Gm-Gg: ASbGncts0GLG2OcMhTrFUTYv755NSuo0oU0JiHxyuGdADEOJs1OazQgKypAX378ABuc
+	iu2Dvt6BUlMEUg8ENC1w7epd5+ApOD6ZqQ7U3T6U6IC3rRT0p8tnWnbVufl+IgQZyZV/MlHb7rF
+	Frg/KGOiZ6uqBMFG1b0UEOxCbevp18KxFN3Ys3Z9d2otKOkkPwWZgExo4bLFiZRCgaC1I9EmVkl
+	YliIfJ3wVerFnvxjIgBT1cPLwblv6B++G9BD8THpLaifYaAa1pBkxXT0rtt0UtYFybl6VU6joC9
+	DIG7AeQtXVq2QlMfGgYPmUyRSigrk/y9XxA=
+X-Google-Smtp-Source: AGHT+IH3QB0rwN1h0x8Mnz9cxWShv/o3L2wam2DYDdSzeMpHR3ElfGtMQeEolbyniA2BNyVY4wH8uA==
+X-Received: by 2002:a17:906:6a1b:b0:abf:4892:b6ea with SMTP id a640c23a62f3a-ac252b35b39mr391113066b.25.1741364394878;
+        Fri, 07 Mar 2025 08:19:54 -0800 (PST)
+Received: from p183 ([178.172.147.220])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac2394389a7sm293303566b.5.2025.03.07.08.19.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 08:19:54 -0800 (PST)
+Date: Fri, 7 Mar 2025 19:19:52 +0300
+From: Alexey Dobriyan <adobriyan@gmail.com>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] x86/asm: inline constant inputs in rdpkru(), wrpkru()
+Message-ID: <360f4fcc-8141-449c-a5fc-cd91182e0899@p183>
+References: <20250306210710.3403-1-adobriyan@gmail.com>
+ <3e354397-1666-4d63-b863-ef9f9d31fa37@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs: support filename refcount without atomics
-To: Mateusz Guzik <mjguzik@gmail.com>, brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
- audit@vger.kernel.org
-References: <20250307161155.760949-1-mjguzik@gmail.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250307161155.760949-1-mjguzik@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <3e354397-1666-4d63-b863-ef9f9d31fa37@intel.com>
 
-> +static inline void makeatomicname(struct filename *name)
-> +{
-> +	VFS_BUG_ON(IS_ERR_OR_NULL(name));
-> +	/*
-> +	 * The name can legitimately already be atomic if it was cached by audit.
-> +	 * If switching the refcount to atomic, we need not to know we are the
-> +	 * only non-atomic user.
-> +	 */
-> +	VFS_BUG_ON(name->owner != current && !name->is_atomic);
-> +	/*
-> +	 * Don't bother branching, this is a store to an already dirtied cacheline.
-> +	 */
-> +	name->is_atomic = true;
-> +}
+On Thu, Mar 06, 2025 at 01:35:01PM -0800, Dave Hansen wrote:
+> On 3/6/25 13:07, Alexey Dobriyan wrote:
+> >  static inline void wrpkru(u32 pkru)
+> >  {
+> > -	u32 ecx = 0, edx = 0;
+> > -
+> >  	/*
+> >  	 * "wrpkru" instruction.  Loads contents in EAX to PKRU,
+> >  	 * requires that ecx = edx = 0.
+> >  	 */
+> >  	asm volatile(".byte 0x0f,0x01,0xef\n\t"
+> > -		     : : "a" (pkru), "c"(ecx), "d"(edx));
+> > +		     : : "a" (pkru), "c" (0), "d" (0));
+> >  }
+> 
+> Hey Alexey,
+> 
+> I appreciate the patch. But I do like how it's written currently. I
+> honestly kinda wish it went even further and did:
+> 
+> 	u32 eax = pkru;
 
-Should this not depend on audit being enabled? io_uring without audit is
-fine.
+I _think_ you can write   "eax" (pkru) .
 
--- 
-Jens Axboe
+I don't like the comment either. It just reiterates the SDM.
+Trailing \n\t too -- they don't do anything in one-liners.
+
+The function is basically:
+
+	// wrpkru
+	asm volatile (
+		".byte 0x0f,0x01,0xef"
+		:
+		: "a" (pkru), "d" (0) , "c" (0)
+	);
 
