@@ -1,124 +1,147 @@
-Return-Path: <linux-kernel+bounces-550175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B693A55C3D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:50:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B41F3A55C3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:50:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C47E3AB6AD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:50:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 121433AF889
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E024913D503;
-	Fri,  7 Mar 2025 00:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C3285931;
+	Fri,  7 Mar 2025 00:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="PzkSHdZc"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BD71E868;
-	Fri,  7 Mar 2025 00:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ge9rrhyd"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E127DA73;
+	Fri,  7 Mar 2025 00:50:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741308618; cv=none; b=neh+Y44tQrimqyshtaEjnA1E7uef6tRaYyPBXadI0vnE0x8aC2haGcYGLiMxHDGfuaf3MJlZW3dXjvURT5dk10zpgDwZEHcdaUaJFAK4y1nroUVOrl3NIP76WJjiB39zZ3p+niwIhae2OWwEhtGRSFsMqSsx9VRqAwrXK5+ABfc=
+	t=1741308636; cv=none; b=D5DM4uGEk4TAHz78m0pftARFVcdQDBoI55gNxVme1/lR3zXdh4zrnjM/AW4ysbrrxBgfGgO9kLmfFTA9g6YYLnyiTNc0E1UBEFhkIJai2sNif6c0/q1K3l7GQugVOEG26dYz9JSKVLFB5FPy2/Qkdbm033hQ+t5Mr6J4BdwI6Kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741308618; c=relaxed/simple;
-	bh=7yeLUMa0JUHL9Jcd5CdiMIm+cVmNMIj7mCsFvxnnDmg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=YbCQ93jnwUs8R0HAqROL62iqdyqLJKFirifxPCT7wFr11epsoGnYeSOULrdg2rb2qkWdz8q75HmQHdrzInxN94zLOkdqWzZLsavAd9m67G1Tqu225qOUUXwbr2e1U7wG5nyJRMrSsGFnRfXw78OyzjwiVg+45Pj3nngkyDXWyeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=PzkSHdZc reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=CnrtcoGRW+pS+hN72KT+FKiUeqkTv48XxIJR0USPjrs=; b=P
-	zkSHdZc1KZ0lkqSkqPyHrEiB1fLYoXtzu8ixrDZ7UrSe0LIw153YMzyj/MOT7WAb
-	Pd2lJZPvsRf5vO18S6yEZTYCMwFxVwqBXq++0HiskWRpzm2ba14pSbtlu4Tzuf8K
-	TU78IH6ozWGfy2Rc9cgIp8uJ1SIGHL+KEliyZCT0sk=
-Received: from andyshrk$163.com ( [103.29.142.67] ) by
- ajax-webmail-wmsvr-40-114 (Coremail) ; Fri, 7 Mar 2025 08:48:55 +0800 (CST)
-Date: Fri, 7 Mar 2025 08:48:55 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Piotr Oniszczuk" <piotr.oniszczuk@gmail.com>
-Cc: heiko@sntech.de, neil.armstrong@linaro.org,
-	sebastian.reichel@collabora.com, devicetree@vger.kernel.org,
-	hjc@rock-chips.com, mripard@kernel.org, linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, yubing.zhang@rock-chips.com,
-	dri-devel@lists.freedesktop.org,
-	"Andy Yan" <andy.yan@rock-chips.com>, krzk+dt@kernel.org,
-	robh@kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re:Re: [PATCH 0/6] Add support for RK3588 DisplayPort Controller
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <326B91E9-FB91-43C3-B98B-3EF079F313C6@gmail.com>
-References: <25401bfa.291d.19564244e54.Coremail.andyshrk@163.com>
- <75189787-28E1-4FC2-8E10-4960B3877A6F@gmail.com>
- <28b0d3fc.bb3.19568f6b5f8.Coremail.andyshrk@163.com>
- <44213B17-FE14-4FB8-8319-1E31BBF6EAA0@gmail.com>
- <74c154b6.8c50.1956aa8c8d2.Coremail.andyshrk@163.com>
- <1573D5D6-AFED-4D92-8112-B0C6BB52D5FF@gmail.com>
- <46c0d239.a4f5.1956b619b97.Coremail.andyshrk@163.com>
- <252BB2E2-4BC5-4402-953D-F7B30EA5DE14@gmail.com>
- <326B91E9-FB91-43C3-B98B-3EF079F313C6@gmail.com>
-X-NTES-SC: AL_Qu2fA/+bt00o4yefZukfmkcVgOw9UcO5v/Qk3oZXOJF8jDvp6zIxdG1jMkbm3ueENxqyjTi3chhO99R2eY5ddJAgLOFk3fWQb48AINGO0GciIQ==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1741308636; c=relaxed/simple;
+	bh=L5TetQ9G1kpTgYnET8zHMfwSbg+e/3rxaOeiCRb1+gc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=I3+mg3XoHHlTvdrQrXjBOOpkLaugunFGCJO6UvytUO0Adi/ZODjg6u8SVFsioq9C5dBfPAL/mJf6/t/dAPmhgP266bu0G3iIOZoJHZQtgwdSqfKmdImaz5FacmNUumnGtawkucAtcJDQIt1HKbYfURmxCeTinlzCwvPnVgB+/ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Ge9rrhyd; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741308629;
+	bh=oRoi6aTjgsf/sHTJh6pAvoMEA42sJA1B4doitLRIb9E=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Ge9rrhydo/meujsOKiyvcXj/rd+AILQ8fwfwElwHciLn5hLZvYd+zDZTsJslhvKEs
+	 p/LMe14h+WW5yJy4EdgEIiWtep3z77wEBQ8XNCizrBMvsBO9pt+H3ziCmyA4lUzZlu
+	 z2C/xB293a4YvPQPS/8OpYbgYItuyZfXHsyliE3i6L+HsEMzOGOlnAjHR74JGK0ony
+	 jCdnddi1NMe34IuxN/IPdDpz/tpKCWdZMECvwGRMWCWetUJzKJJ4t+WOoQ8cckgwTL
+	 MB0mug27jftzKQw35NPIrZSLc78pHV4dAJciAjIf7rzBbp63x8U5ZMojpeQur8fxUb
+	 OttzWQi8iclMA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z874N6dPnz4wyh;
+	Fri,  7 Mar 2025 11:50:28 +1100 (AEDT)
+Date: Fri, 7 Mar 2025 11:50:27 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+ <johan.hedberg@gmail.com>
+Cc: Johan Korsnes <johan.korsnes@remarkable.no>, Kristian Krohn
+ <kristian.krohn@remarkable.no>, Loic Poulain <loic.poulain@linaro.org>,
+ Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, Neeraj Sanjay Kale
+ <neeraj.sanjaykale@nxp.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failures after merge of the bluetooth tree
+Message-ID: <20250307115027.2549e196@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <545cc438.7e3.1956e13a3e2.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:cigvCgD3Xw13QspnURl4AA--.4412W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkBsJXmfKOquklAABsR
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: multipart/signed; boundary="Sig_/rNKcIrlzS2j56k/sHkfQ7UE";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-CkhpIFBpb3RyLArlnKggMjAyNS0wMy0wNiAyMjoyODowOO+8jCJQaW90ciBPbmlzemN6dWsiIDxw
-aW90ci5vbmlzemN6dWtAZ21haWwuY29tPiDlhpnpgZPvvJoKPgo+Cj4+IFdpYWRvbW/Fm8SHIG5h
-cGlzYW5hIHByemV6IFBpb3RyIE9uaXN6Y3p1ayA8cGlvdHIub25pc3pjenVrQGdtYWlsLmNvbT4g
-dyBkbml1IDYgbWFyIDIwMjUsIG8gZ29kei4gMTU6MDg6Cj4+IAo+PiAKPj4gCj4+PiBXaWFkb21v
-xZvEhyBuYXBpc2FuYSBwcnpleiBBbmR5IFlhbiA8YW5keXNocmtAMTYzLmNvbT4gdyBkbml1IDYg
-bWFyIDIwMjUsIG8gZ29kei4gMTM6MTU6Cj4+PiAKPj4+IEhpIFBpb3RyLAo+Pj4gCj4+PiAKPj4+
-IAo+Pj4gVGhlbiB3aGVuIHlvdSBEUCBjYWJsZSBwbHVnaW4sIHlvdSBjYW4gcnVuIGNvbW1hbmQg
-YXMgYmVsbG93IHRvIHNlZSBpZiB0aGUgZHJpdmVyIGRldGVjdHMgdGhlIEhQRDoKPj4+IAo+Pj4g
-IyBjYXQgL3N5cy9jbGFzcy9kcm0vY2FyZDAtRFAtMS9zdGF0dXMgCj4+PiBjb25uZWN0ZWQKPj4+
-ICMgCj4+PiAKPj4gCj4+IAo+PiBBbmR5LAo+PiBUaHghCj4+IAo+PiBXaXRoIGFib3ZlIGNoYW5n
-ZXMgaeKAmW0gZ2V0dGluZyDigJ5jb25uZWN0ZWTigJ0uCj4+IEFsc28gaXQgbG9va3MgY3J0YyBn
-ZXRzIHJlYXNvbmFibGUgbW9kZTogaHR0cHM6Ly9naXN0LmdpdGh1Yi5jb20vd2FycG1lL2Q2MjIw
-ZTNjYzUwMjA4NmE0Yzk1ZjA1YmQ5ZjljZjBjCj4+IAo+PiBTdGlsbCBibGFjayBzY3JlZW4gaG93
-ZXZlcuKApgo+PiAgIAo+Cj5zb21lIGFkZGl0aW9uYWwgZGF0YSBwb2ludDogL3N5cy9rZXJuZWwv
-ZGVidWcvZHJpLzEvdm9wMi9zdW1tYXJ5IAo+Cj4KPndvcmtpbmcgaGRtaToKPgo+VmlkZW8gUG9y
-dDE6IEFDVElWRQo+ICAgIENvbm5lY3RvcjogSERNSS1BLTEKPiAgICAgICAgYnVzX2Zvcm1hdFsw
-XTogVW5rbm93bgo+ICAgICAgICBvdXRwdXRfbW9kZVtmXSBjb2xvcl9zcGFjZVswXQo+ICAgIERp
-c3BsYXkgbW9kZTogMTkyMHgxMDgwcDYwCj4gICAgICAgIGNsa1sxNDg1MDBdIHJlYWxfY2xrWzE0
-ODUwMF0gdHlwZVs0OF0gZmxhZ1s1XQo+ICAgICAgICBIOiAxOTIwIDIwMDggMjA1MiAyMjAwCj4g
-ICAgICAgIFY6IDEwODAgMTA4NCAxMDg5IDExMjUKPiAgICBDbHVzdGVyMC13aW4wOiBBQ1RJVkUK
-PiAgICAgICAgd2luX2lkOiAwCj4gICAgICAgIGZvcm1hdDogWFIyNCBsaXR0bGUtZW5kaWFuICgw
-eDM0MzI1MjU4KSBnbGJfYWxwaGFbMHhmZl0KPiAgICAgICAgcm90YXRlOiB4bWlycm9yOiAwIHlt
-aXJyb3I6IDAgcm90YXRlXzkwOiAwIHJvdGF0ZV8yNzA6IDAKPiAgICAgICAgenBvczogMAo+ICAg
-ICAgICBzcmM6IHBvc1swLCAwXSByZWN0WzE5MjAgeCAxMDgwXQo+ICAgICAgICBkc3Q6IHBvc1sw
-LCAwXSByZWN0WzE5MjAgeCAxMDgwXQo+ICAgICAgICBidWZbMF06IGFkZHI6IDB4MDAwMDAwMDAw
-MTdlMTAwMCBwaXRjaDogNzY4MCBvZmZzZXQ6IDAKPlZpZGVvIFBvcnQyOiBESVNBQkxFRAo+Cj4K
-Pgo+Cj5ub24td29ya2luZyBEUDoKPgo+VmlkZW8gUG9ydDE6IERJU0FCTEVECj5WaWRlbyBQb3J0
-MjogQUNUSVZFCj4gICAgQ29ubmVjdG9yOiBEUC0xCj4gICAgICAgIGJ1c19mb3JtYXRbMTAwYV06
-IFJHQjg4OF8xWDI0Cj4gICAgICAgIG91dHB1dF9tb2RlW2ZdIGNvbG9yX3NwYWNlWzBdCj4gICAg
-RGlzcGxheSBtb2RlOiAxOTIweDEwODBwNjAKPiAgICAgICAgY2xrWzE0ODUwMF0gcmVhbF9jbGtb
-MTQ4NTAwXSB0eXBlWzQ4XSBmbGFnWzVdCj4gICAgICAgIEg6IDE5MjAgMjAwOCAyMDUyIDIyMDAK
-PiAgICAgICAgVjogMTA4MCAxMDg0IDEwODkgMTEyNQo+ICAgIENsdXN0ZXIxLXdpbjA6IEFDVElW
-RQo+ICAgICAgICB3aW5faWQ6IDEKPiAgICAgICAgZm9ybWF0OiBYUjI0IGxpdHRsZS1lbmRpYW4g
-KDB4MzQzMjUyNTgpIGdsYl9hbHBoYVsweGZmXQo+ICAgICAgICByb3RhdGU6IHhtaXJyb3I6IDAg
-eW1pcnJvcjogMCByb3RhdGVfOTA6IDAgcm90YXRlXzI3MDogMAo+ICAgICAgICB6cG9zOiAwCj4g
-ICAgICAgIHNyYzogcG9zWzAsIDBdIHJlY3RbMTkyMCB4IDEwODBdCj4gICAgICAgIGRzdDogcG9z
-WzAsIDBdIHJlY3RbMTkyMCB4IDEwODBdCj4gICAgICAgIGJ1ZlswXTogYWRkcjogMHgwMDAwMDAw
-MDAwN2VkMDAwIHBpdGNoOiA3NjgwIG9mZnNldDogMAoKPgoKQWxsIGR1bXAgaW5mb3JtYXRpb24g
-Y3VycmVudGx5IGFwcGVhcnMgdG8gYmUgY29ycmVjdCwgc28gSSdtIHRlbXBvcmFyaWx5IHVuc3Vy
-ZSB3aHkKdGhlcmUgaXMgbm8gZGlzcGxheSBvbiB0aGUgbW9uaXRvci4KTWF5YmUgdHJ5IHNvbWUg
-cGx1ZyBhbmQgdW5wbHVnIGZvciB0aGUgRFAgY2FibGUsIG9yIHRyeSBhbm90aGVyIGNhYmxlIG9y
-IG1vbml0b3I/CgpJdCBzZWVtcyB0aGF0IHRoaXMgYm9hcmQgdXNlcyBhIERQIHRvIEhETUkgY29u
-dmVydGVyPyBEb2VzIHRoaXMgdHJhbnNtaXR0ZXIgbmVlZCBhIGRyaXZlcj8KCkkgd29uJ3QgYmUg
-YXQgbXkgY29tcHV0ZXIgb3ZlciB0aGUgbmV4dCB0d28gb3IgdGhyZWUgZGF5cywgc28gYW55IGZ1
-cnRoZXIgcmVwbGllcyB0byB5b3VyIGVtYWlsCm1pZ2h0IGhhdmUgdG8gd2FpdCB1bnRpbCBuZXh0
-IHdlZWsuCgoK
+--Sig_/rNKcIrlzS2j56k/sHkfQ7UE
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
+
+Hi all,
+
+After merging the bluetooth tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
+
+In file included from drivers/bluetooth/btnxpuart.c:21:
+drivers/bluetooth/btnxpuart.c: In function 'nxp_set_bdaddr':
+drivers/bluetooth/btnxpuart.c:1322:36: error: 'skb' undeclared (first use i=
+n this function)
+ 1322 |                            PTR_ERR(skb));
+      |                                    ^~~
+include/net/bluetooth/bluetooth.h:264:52: note: in definition of macro 'BT_=
+ERR'
+  264 | #define BT_ERR(fmt, ...)        bt_err(fmt "\n", ##__VA_ARGS__)
+      |                                                    ^~~~~~~~~~~
+drivers/bluetooth/btnxpuart.c:1321:17: note: in expansion of macro 'bt_dev_=
+err'
+ 1321 |                 bt_dev_err(hdev, "Reset before setting local-bd-add=
+r failed (%ld)",
+      |                 ^~~~~~~~~~
+drivers/bluetooth/btnxpuart.c:1322:36: note: each undeclared identifier is =
+reported only once for each function it appears in
+ 1322 |                            PTR_ERR(skb));
+      |                                    ^~~
+include/net/bluetooth/bluetooth.h:264:52: note: in definition of macro 'BT_=
+ERR'
+  264 | #define BT_ERR(fmt, ...)        bt_err(fmt "\n", ##__VA_ARGS__)
+      |                                                    ^~~~~~~~~~~
+drivers/bluetooth/btnxpuart.c:1321:17: note: in expansion of macro 'bt_dev_=
+err'
+ 1321 |                 bt_dev_err(hdev, "Reset before setting local-bd-add=
+r failed (%ld)",
+      |                 ^~~~~~~~~~
+drivers/bluetooth/btnxpuart.c: In function 'nxp_serdev_probe':
+drivers/bluetooth/btnxpuart.c:1724:15: error: 'struct hci_dev' has no membe=
+r named 'cmd_timeout'; did you mean 'cmd_timer'?
+ 1724 |         hdev->cmd_timeout =3D nxp_cmd_timeout;
+      |               ^~~~~~~~~~~
+      |               cmd_timer
+drivers/bluetooth/btnxpuart.c:1673:18: error: unused variable 'ba' [-Werror=
+=3Dunused-variable]
+ 1673 |         bdaddr_t ba =3D {0};
+      |                  ^~
+cc1: all warnings being treated as errors
+
+Caused by commits
+
+  b21ae0e8b437 ("Bluetooth: btnxpuart: Add support for HCI coredump feature=
+")
+  228c506481ea ("Bluetooth: btnxpuart: Add support to set BD address")
+
+I have used the bluetooth tree from next-20250306 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/rNKcIrlzS2j56k/sHkfQ7UE
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfKQtMACgkQAVBC80lX
+0Gw4Swf/SKaFooB/RLgt4NDNOLPb3f9IyhQz9m00RBVfXzeNb7U6qg2Ldw9EbHgs
+78TPf6sB13zKOct1L7Akx7QSs5XPm5J4ERKGQGMdChEuieAkp/8gDgo4ibQfx/YN
+bhGudEBGVY+2m4A+khMjtyDWVwfSmFIB0z+cwRiIg1bkf3MdFJfxViuM4knSVeGC
+bGKZ05Q+Cd5w7dfrtck0t3CGt+WP0vsdcSSKPBJtMxi7XWFkx79ubIu08dJ5qo5Q
+5hyPPwnDaKuVKjL0bYdl7IPQgxk89T0QapKIz5SS6OaFHTGVaF/Ewak8zhI+/4b/
+L7kDE1JPfjPBINPax7mDAm0mIkVy0w==
+=TQFR
+-----END PGP SIGNATURE-----
+
+--Sig_/rNKcIrlzS2j56k/sHkfQ7UE--
 
