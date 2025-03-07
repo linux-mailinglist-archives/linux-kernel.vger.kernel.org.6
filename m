@@ -1,141 +1,155 @@
-Return-Path: <linux-kernel+bounces-550210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416DBA55C9E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:05:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75A4AA55C9F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 02:06:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ACD1171B0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:05:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0618188D660
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D31EC13D897;
-	Fri,  7 Mar 2025 01:05:16 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3EE82899;
+	Fri,  7 Mar 2025 01:06:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IwcNxivV"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984F013EFE3;
-	Fri,  7 Mar 2025 01:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A89F2DDA9
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 01:06:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741309516; cv=none; b=B80J2vG6KSqFmTC6Vdx4Bd/B1jaqWdlAZXVHlrDQuM1xFcyUtmOmN7uT5EMeYE1unR2qupsHrdTpNAwYD2a2HRMEZv9ZKVcxSjIVdFffF1ZZvKiRjsafZnUuEt9ly/kiTGtp+KO/aDJFpODu5w8etuyNkacecDX09+Ja6eUhQQU=
+	t=1741309606; cv=none; b=AJk5oT1Wx85OCoZBf5ZEgDdhpD8J8Tg+gz/CfAWSyy7O85gXIUiibJYbCTon8HYPeV1n9gVkwRxSvPzER2E5Wc0aHOEPwNCBG9VUXyREi1EZjsDSWSKngvhFaRPePgdZ7VBfo3bjiVeCEKZwck7NlNWWM3AS6EdTfeNFh91wsfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741309516; c=relaxed/simple;
-	bh=iT4L85opwyMetiHe/dw31SlIVrfCG0FPmLno1+AEmsc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=aGfmon53bxOfZSSaVJQa1N+C0d8sLHCiMNX4bilGsMcLtZCpZMRVCmrq8svTg9zL6dQFL7ze++rzW4W3Gmc6iyQTKUeNr5RY1LzlpIn/3hrNuvqAYi6fXhM5JxwZy2LVyDqXO37d8+pWDgO1n6QCCqkSoKDdgs7NCv8IH2yIo8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z87Kw5p2Zz6J7Yk;
-	Fri,  7 Mar 2025 09:02:12 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3E9E51403A2;
-	Fri,  7 Mar 2025 09:05:12 +0800 (CST)
-Received: from localhost (10.48.43.65) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 7 Mar
- 2025 02:05:00 +0100
-Date: Fri, 7 Mar 2025 09:04:55 +0800
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: <shiju.jose@huawei.com>
-CC: <linux-cxl@vger.kernel.org>, <dan.j.williams@intel.com>,
-	<dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>, <david@redhat.com>,
-	<Vilas.Sridharan@amd.com>, <linux-edac@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
-	<rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
-	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
-	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
-	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
-	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
-	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
-	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
-	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
-	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
-	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCH 7/8] cxl/memfeature: Add CXL memory device soft PPR
- control feature
-Message-ID: <20250307090455.00001767@huawei.com>
-In-Reply-To: <20250227223816.2036-8-shiju.jose@huawei.com>
-References: <20250227223816.2036-1-shiju.jose@huawei.com>
-	<20250227223816.2036-8-shiju.jose@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1741309606; c=relaxed/simple;
+	bh=3rq6FdcWehS+selXSyYUSaOTTLWNqtE9Jj1n5H5XK5U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jMDm/4sFTBss2hta+aRq4/F5rGpyK6EPLk4xJjLgq/4ENqrwZqFYJWG5+NbWsCec89XgMt4x47NvyILThJ1D2nNqoExPnJK25OBhN3FWYorEPLpaz8GI/HESJlPRvO1WozQOefH+brQRoQ5NqcFMKEAL7zJFfGBL+o1RfxpCUPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IwcNxivV; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-223f4c06e9fso25085705ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 17:06:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741309604; x=1741914404; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=m2yycGHlxZwOczTAamkagrVVXeboHQ+mERBCKpmoV/U=;
+        b=IwcNxivVF9n3x/SJx01G7GjpQ2G1wK7OvaxlWMZjcd4ue2/8G0KWDrSf+jBsG6XbPO
+         rbsndDNjD3+LXHZu8HYkBIxCytTPlzU+dnx9maIBZPRo+WmwpAVn/Cf93nTWf/j3s/ry
+         rbx4DhyivK+cy/4HiPkt6HqSWrUgPZxAgkfY+cqFMZ4BgbWLFmXixv620PLL9oLZd5Sx
+         XR07m9hmF6NqaxTINmZ2sIIhQWpNXgxA/L4REdQb9tc3kcSXtTAeW0kwquF8yvJBpdO9
+         1/ARooQj+C8vxOMWK4m37CDdS3Xdnvs9HegM4wKlkkc0zXJskwgDi6ZT4DyhvOm9Z81g
+         3PgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741309604; x=1741914404;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=m2yycGHlxZwOczTAamkagrVVXeboHQ+mERBCKpmoV/U=;
+        b=WH45EylUJncNspRA4d9+aiSpF/gZ0yBlq8eqx5XCCyKx7s0rcjE7nsguz984bJxrIT
+         chzMfYtFR+TZgINHcE2cc3JiNx3oLF3MhJ1F0bpzgFVaB0eDKsFh7+2cH3kp6M0aeRmX
+         GSR0DU4acB1dNo97R2josU61+yxhCfDBDO5HbnFfXhQZYC+YRJBGQayHdA3HI0dJvkDb
+         G5odTAFA71H7myxOxJuqll39nWwXKuGMhgNmhv9RNffD0jMX+YSpAHuFNuHPdrTLOgzX
+         qLpzheuHePZjooiN1SZc4Kuw1v3Yi+sYqwF8qJoQLgko0Xr5NVyHqEY0+st3VHkEnNET
+         0dqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVq7pXeVvIF2G0qgG56Wvh2+g/6u5jUhFhOEB3An8h2sqI/Yt9AFxKDJq53BbYFpskbqa9GulYc0k7Lpsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPa/IR66GVfklZiqJrE6LzFPBv51IojsO/r4cr+gpzt1nbgp0f
+	IQc6/dtM+cIaFolqbD96DYuHn4ILBYudBJEHLEereE/I/UpvdbMTURtb3g==
+X-Gm-Gg: ASbGncs1Xvc5X1D0aXZ2LlUkMflJCi/xiZM8dJX0FvVrA65pVPCLPHNm4jCoMBTm0Kk
+	NkXst/ab9YQKuMZQfBdGrXzrasTFexiE6yU0jxNUw5kDT6gZBtS4V1zjqTyzsVEjbU5VB9MVaGW
+	Ktji6b4zxSHEgFxJw/J/LhaLcLdwL9JY6jCc8+UU58xkStmSoe6ZTYvIbBlTCx4CzFsYxcRGbYK
+	QxifPphOePN/vZ7B2KCnr+t+pQtu1wJr/cDRLAJvMaJ/Rev7cp8Fknr4MSRkvLle7M4uSrSE2rw
+	D6RDGQkK430ET1I2yDd4Hk0kVkfCoP6rIb4xEvMpUT3aY5LuMwUQ8rUAqp7qFgGQsj2KXtXL57k
+	F0HvkUthq4wvR9yc=
+X-Google-Smtp-Source: AGHT+IGQB2JK30Ur4K4C2V18CwoN2sLc7QQ0rsJrBCGID8Yzs3mzNdwtN1/YQOazL60MmJv8di15RA==
+X-Received: by 2002:a17:902:e802:b0:221:89e6:ccb6 with SMTP id d9443c01a7336-22427071ce8mr26562275ad.25.1741309603835;
+        Thu, 06 Mar 2025 17:06:43 -0800 (PST)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a908a0sm18823665ad.162.2025.03.06.17.06.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 17:06:43 -0800 (PST)
+Message-ID: <638eee89-dd74-4a7a-b780-03ac53860098@gmail.com>
+Date: Fri, 7 Mar 2025 10:06:38 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] cpumask: Fix kernel-doc formatting errors in
+ cpumask.h
+To: Yury Norov <yury.norov@gmail.com>
+Cc: viresh.kumar@linaro.org, linux-kernel@vger.kernel.org,
+ linux@rasmusvillemoes.dk, vincent.guittot@linaro.org,
+ Akira Yokosawa <akiyks@gmail.com>
+References: <1489a042f329b1c1238756c68fd880e2966f242d.1741257214.git.viresh.kumar@linaro.org>
+ <8cacf9df-fb8e-40d5-a716-cc43a266b43b@gmail.com> <Z8njHKwzQXdaUAjD@thinkpad>
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <Z8njHKwzQXdaUAjD@thinkpad>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
- frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, 27 Feb 2025 22:38:14 +0000
-<shiju.jose@huawei.com> wrote:
+Hi,
 
-> From: Shiju Jose <shiju.jose@huawei.com>
+Yury Norov wrote:
+> On Fri, Mar 07, 2025 at 12:38:41AM +0900, Akira Yokosawa wrote:
+>> Hello Viresh,
+>>
+>> On Thu,  6 Mar 2025 16:06:50 +0530, Viresh Kumar wrote:
+>>> This fixes various kernel-doc formatting errors in cpumask.h:
+>>>
+>>> - WARNING: Inline literal start-string without end-string.
+>>> - ERROR: Unexpected indentation.
+>>> - ERROR: Unknown target name: "gfp".
+>>>
+>>> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+>>> ---
+>>>  include/linux/cpumask.h | 65 +++++++++++++++++++++++------------------
+>>>  1 file changed, 37 insertions(+), 28 deletions(-)
+>>>
+>>> diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
+>>> index 36a890d0dd57..73ba808c559f 100644
+>>> --- a/include/linux/cpumask.h
+>>> +++ b/include/linux/cpumask.h
+>>> @@ -20,7 +20,7 @@
+>>>   * cpumask_pr_args - printf args to output a cpumask
+>>>   * @maskp: cpumask to be printed
+>>>   *
+>>> - * Can be used to provide arguments for '%*pb[l]' when printing a cpumask.
+>>> + * Can be used to provide arguments for '\%*pb[l]' when printing a cpumask.
+>>
+>> kernel-doc (script) can recognize the pattern of %*pb but not %*pb[l].
+>> "%*bp [l]" should work here.
+>> (without quotes and a white space in front of "[").
 > 
-> Post Package Repair (PPR) maintenance operations may be supported by CXL
-> devices that implement CXL.mem protocol. A PPR maintenance operation
-> requests the CXL device to perform a repair operation on its media.
-> For example, a CXL device with DRAM components that support PPR features
-> may implement PPR Maintenance operations. DRAM components may support two
-> types of PPR, hard PPR (hPPR), for a permanent row repair, and Soft PPR
-> (sPPR), for a temporary row repair. Soft PPR is much faster than hPPR,
-> but the repair is lost with a power cycle.
-> 
-> During the execution of a PPR Maintenance operation, a CXL memory device:
-> - May or may not retain data
-> - May or may not be able to process CXL.mem requests correctly, including
-> the ones that target the DPA involved in the repair.
-> These CXL Memory Device capabilities are specified by Restriction Flags
-> in the sPPR Feature and hPPR Feature.
-> 
-> Soft PPR maintenance operation may be executed at runtime, if data is
-> retained and CXL.mem requests are correctly processed. For CXL devices with
-> DRAM components, hPPR maintenance operation may be executed only at boot
-> because typically data may not be retained with hPPR maintenance operation.
-> 
-> When a CXL device identifies error on a memory component, the device
-> may inform the host about the need for a PPR maintenance operation by using
-> an Event Record, where the Maintenance Needed flag is set. The Event Record
-> specifies the DPA that should be repaired. A CXL device may not keep track
-> of the requests that have already been sent and the information on which
-> DPA should be repaired may be lost upon power cycle.
-> The userspace tool requests for maintenance operation if the number of
-> corrected error reported on a CXL.mem media exceeds error threshold.
-> 
-> CXL spec 3.2 section 8.2.10.7.1.2 describes the device's sPPR (soft PPR)
-> maintenance operation and section 8.2.10.7.1.3 describes the device's
-> hPPR (hard PPR) maintenance operation feature.
-> 
-> CXL spec 3.2 section 8.2.10.7.2.1 describes the sPPR feature discovery and
-> configuration.
-> 
-> CXL spec 3.2 section 8.2.10.7.2.2 describes the hPPR feature discovery and
-> configuration.
-> 
-> Add support for controlling CXL memory device soft PPR (sPPR) feature.
-> Register with EDAC driver, which gets the memory repair attr descriptors
-> from the EDAC memory repair driver and exposes sysfs repair control
-> attributes for PRR to the userspace. For example CXL PPR control for the
-> CXL mem0 device is exposed in /sys/bus/edac/devices/cxl_mem0/mem_repairX/
-> 
-> Add checks to ensure the memory to be repaired is offline and originates
-> from a CXL DRAM or CXL gen_media error record reported in the current boot,
-> before requesting a PPR operation on the device.
-> 
-> Tested with QEMU patch for CXL PPR feature.
-> https://lore.kernel.org/all/20240730045722.71482-1-dave@stgolabs.net/
-> 
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> So why not fixing kernel-doc instead?
 
+That would be great!
+
+At the moment, re-implementation of kernel-doc into python is under way [1].
+
+[1]: https://lore.kernel.org/cover.1740387599.git.mchehab+huawei@kernel.org/
+
+It is a bug compatible porting from perl to python3, but it is likely
+to be merged during 6.16 merge window.
+
+I think it would be nicer to do the fix on top of python3 kernel-doc
+after that happens.
+
+        Thanks, Akira
+
+>  
+>> No need to escape "%".
+>>
+>>>   */
+>>>  #define cpumask_pr_args(maskp)		nr_cpu_ids, cpumask_bits(maskp)
+>>>  
+[...]
 
 
