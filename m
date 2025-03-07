@@ -1,127 +1,77 @@
-Return-Path: <linux-kernel+bounces-551476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04F5AA56CE6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:00:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FD54A56CDF
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:00:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A5E717A871
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:00:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0019188AD2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:00:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A14621E094;
-	Fri,  7 Mar 2025 15:58:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B878D221F31;
+	Fri,  7 Mar 2025 15:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPyVWWfO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VF+sU4Rs"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E337F2222B4;
-	Fri,  7 Mar 2025 15:58:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2208B221F21
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741363121; cv=none; b=bjrfWtkRVziaLE+KnwfGPgfqoNvmgr4fdS7ZJjGRtulISdadCfqvGwyp6Yo1tA5SP6CHxbDx4/EI2zxdA9xqd5YescvpgbMZx5E67ztOWL7kqDqUFF8QmsBxmBeafW7n6aP5jLMSaBaX0NoEvbwaEgfVJx11spLUUXV6rpaJikg=
+	t=1741363129; cv=none; b=Z6JCEQ16jACviw4GawlJN9X32LVv0YM84AQfKPfpUbWRUwOfC7xnRXBi+pLD4h7NHbmKFzKGwNBILGlSIGW8dwVllCN9VehDfaSDVY0YzBlHUXO6QpSSZvI7LedWvQA9PPDi0dcZ1JmDajxoUNdK/RWirzYDKXHFoE3le3Z/UOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741363121; c=relaxed/simple;
-	bh=qIjEQRPaB18kefxL0AfkJKEKomtj3Ay/2qC0bYTJ9GM=;
+	s=arc-20240116; t=1741363129; c=relaxed/simple;
+	bh=fH/5vaAn2+rupV0lSUMQO+zbP+VjO2bOTmV9omTmFak=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VA3IPRRy2R8AnTDBIlWjCPF2AerlC1LsCz3ulb/NK2b7zlPBLvRpyb+dAXT4cLsznkp3oBhwvGvoa4dSLFLZWr9pbn9/3w21bgb5KXZ6N4Kf/XUW2ZEce3/JalOzcmZ/+IXc1TKd/v0MADtExTOge69QOQ1vUgS+32UjnLLwO7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oPyVWWfO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F21FC4CEEB;
-	Fri,  7 Mar 2025 15:58:36 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qjsiF7MD/P4DycFo/x38dgQq05h987HpVx0XFOFo5A0G5mdSdZZ0ryLqHRcgJKcq1SmncJ8NDF1lhhOVHLU63m7F22Ab1mSEqp+Ih2d+sIhv3IzNPK98NM0OYJ6tV5k2wKUD1k5YlH6dNDFvZrs07cvRoOfbAOj5P9rU8cutQgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VF+sU4Rs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 773BEC4CEE7;
+	Fri,  7 Mar 2025 15:58:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741363120;
-	bh=qIjEQRPaB18kefxL0AfkJKEKomtj3Ay/2qC0bYTJ9GM=;
+	s=k20201202; t=1741363128;
+	bh=fH/5vaAn2+rupV0lSUMQO+zbP+VjO2bOTmV9omTmFak=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oPyVWWfOwbo7R7OEgpGaAJMpK16OGzfnWJHsl0XwAQHcN/O9BR61XjSv2xvVEydn8
-	 ntM7iXqKuNl8aVZVwGBLggTD+zczblQ4MVK9yL64kAwNZmusOl21kjI41FxMjuR1hN
-	 wbCQ/W2/xrSajNoez1EgPJDRf/XAxaKf6yIfUuZgCX0wrT4kFkefJAicHqp/Uygcro
-	 aurEoQ8+5p6RKccxdrWwfzlVuYRt+tIjdNbp0Emvn3kgPIDiuohZmjerf7PxD5BNR7
-	 cfrFuzO1Z3Gcz2iM3TH8dRDZLFZ4Mg9LxEsgN5Z0i9LU8JblUfg9zsEr1BifqvaxSA
-	 f967i5gFC0eSQ==
-Date: Fri, 7 Mar 2025 15:58:34 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Haibo Chen <haibo.chen@nxp.com>, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	"open list:NXP i.MX 7D/6SX/6UL/93 AND VF610 ADC DRIVER" <linux-iio@vger.kernel.org>,
-	"open list:NXP i.MX 7D/6SX/6UL/93 AND VF610 ADC DRIVER" <imx@lists.linux.dev>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: iio: adc: Add i.MX94 and i.MX95 support
-Message-ID: <20250307-county-dissuade-eed621016369@spud>
-References: <20250306170825.239933-1-Frank.Li@nxp.com>
+	b=VF+sU4RsKeo4es9ZCUyEy8Z3VxN/hV+NqpiMdVD9DwhVPdYvsVZTSBrociDmtpgCf
+	 1F+4exBazlf9Ox7D40fzJ2sKjlXni83K1oK+/5gp+N6Hxohq7Ro6dSK420UXNRv//g
+	 OMQNiuQSjqjCEJshATztaRZdoigll1EwxBLmxssssIQkHPNSunHvYCXf2yRgm0QBMo
+	 iJZ0QL0Ge1ni0abQUevf0lyzxNcSlNcyCJ1dmZ2Ax0ZrMto3S2xHlWl7+Fdy12X2AN
+	 JxrGKeMYvozP2JBGx3vYJZ01u7GmYJR7w7bG0Hr5agHhaw2vQ+XVGCLObdDb9BBKdv
+	 y4vQXYC2NABGg==
+Date: Fri, 7 Mar 2025 05:58:47 -1000
+From: Tejun Heo <tj@kernel.org>
+To: lirongqing <lirongqing@baidu.com>
+Cc: void@manifault.com, arighi@nvidia.com, changwoo@igalia.com,
+	mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched_ext: Simplify cpumask computation in balance_scx
+Message-ID: <Z8sXt5eRyga_ukql@slm.duckdns.org>
+References: <20250307064533.2663-1-lirongqing@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KXsyaRMt3FIL14G8"
-Content-Disposition: inline
-In-Reply-To: <20250306170825.239933-1-Frank.Li@nxp.com>
-
-
---KXsyaRMt3FIL14G8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250307064533.2663-1-lirongqing@baidu.com>
 
-On Thu, Mar 06, 2025 at 12:08:25PM -0500, Frank Li wrote:
-> Add compatible string "nxp,imx94-adc" and "nxp,imx95-adc", which is
-> backward compatible with i.MX93. Set it to fall back to "nxp,imx93-adc".
->=20
+On Fri, Mar 07, 2025 at 02:45:33PM +0800, lirongqing wrote:
+> From: Li RongQing <lirongqing@baidu.com>
+> 
+> Compare SMT CPU against RQ CPU and skip balance it, to avoid calling
+> for_each_cpu_andnot() and cpumask_of(), they are relatively expensive
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+How is cpumask_of() expensive? I have a hard time seeing how this would
+actually improve anything. Do you have any measurements?
 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  .../devicetree/bindings/iio/adc/nxp,imx93-adc.yaml       | 9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml=
- b/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
-> index dfc3f512918f6..c2e5ff418920c 100644
-> --- a/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
-> +++ b/Documentation/devicetree/bindings/iio/adc/nxp,imx93-adc.yaml
-> @@ -19,7 +19,14 @@ description:
-> =20
->  properties:
->    compatible:
-> -    const: nxp,imx93-adc
-> +    oneOf:
-> +      - enum:
-> +          - nxp,imx93-adc
-> +      - items:
-> +          - enum:
-> +              - nxp,imx94-adc
-> +              - nxp,imx95-adc
-> +          - const: nxp,imx93-adc
-> =20
->    reg:
->      maxItems: 1
-> --=20
-> 2.34.1
->=20
+Thanks.
 
---KXsyaRMt3FIL14G8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8sXqgAKCRB4tDGHoIJi
-0sW1AQDC/Er748sapxFMd23satNd1nUEpiuLsDDeYVNHhH7FaAD+K4ncLXN2PlXH
-N/Yu5AqvnRZT54ZbMVn+FGE+3SLsRA4=
-=SPaL
------END PGP SIGNATURE-----
-
---KXsyaRMt3FIL14G8--
+-- 
+tejun
 
