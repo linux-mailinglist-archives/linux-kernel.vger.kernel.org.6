@@ -1,124 +1,99 @@
-Return-Path: <linux-kernel+bounces-551070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D161A567C4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:25:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 839C3A567C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:25:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 346BF7A844C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:24:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB366174329
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C952192EE;
-	Fri,  7 Mar 2025 12:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFAF6218EB7;
+	Fri,  7 Mar 2025 12:25:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="qxu8OlZ3"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HI7aHCn3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F63E218E9B;
-	Fri,  7 Mar 2025 12:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D738218E99
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 12:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741350331; cv=none; b=kQzKBU3I+bb+uGGLPIEgVOkKZcKybwTTx8WGlDQr+Ydd7eZYtdcbrNr6VGpuvj1vOdNU8VdxifJS4f4h/Kkl74ESsq0XS4AEs70vxWcYCgWxtgxm5pWUCmTm0s86K8USMur9Z5rpX6yhA/x7WfOyql8zKvlU3mbTvE0qNtIzJDY=
+	t=1741350330; cv=none; b=YOe7ayTih4EH4DO1N6WX56PYK37VypDtPLfxM9oX8YqeE65j5OyX9SesYbSk302gc6JyfMjRWQPfJ/9blx602+iilKbNRv4gWV89wyMR6llWUtwPi6xjSbAUKTZh9aqOMB4bwsLMxsvtCL+etWIHg48CkU9en3Ob/ImxNCbmk3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741350331; c=relaxed/simple;
-	bh=GkxCs4YB8ASsPjX9IWShyzuObf+ZAxnIvvctr0chLgE=;
+	s=arc-20240116; t=1741350330; c=relaxed/simple;
+	bh=xI8knybLezYjJtgoCWfbOC/GevpO0GqbS04MWnM1+6c=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=N2HQPcunCbFLC7Y3TLyeiUJCwiY6kCBmzoWXlMf7oe+FtTMVAc6ruiIDeda4OgCxXD57eqsRAklgoJW4MhmmURHlLEVFCFSB7WDzz5wA2GcKAZx5EoclLlSv96uVwX2PgjI2QdSQnB0dF4QuelrfA3a8tNlWfZ5rtfR4B6PeHVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=qxu8OlZ3; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=6UMNRM9uWjFBtWF7LyfW0g9MVh4V11YndHgWK9NCQm8=; b=qxu8OlZ3T82XliRM3GlO4qym/j
-	wJ5rMG3nIaBEjwvHLCNaTYKvtNnwsR6Fi69R7wsao5aeSuR9GuV5Sen8OAyaz9xjBOCQ6cuj8J5Sp
-	DL4ttjND6HmtHvu9dM8sFtwMgJAfn9jWVtqaukvqM48cYr9lZlV9mTNsCyGjkn0Z3R2E++DtE4cdv
-	mCSjQ8w5R0ANu/db2tpN6moxmwHbVfahznF1iPt1i21pIhT7E4GM+tEXKjBbIZmEfNM4idZHkQoxd
-	TQIo38MwiLTgIVAc0u8gejMfp7a4TASG2en2dpwkpPYpwC/FdQWH+0cSphjnBn0gQXwT/lAwps7aM
-	EHPBf0FQ==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1tqWlX-00CyjR-2Y;
-	Fri, 07 Mar 2025 12:25:23 +0000
-Date: Fri, 7 Mar 2025 12:25:23 +0000
-From: Jonathan McDowell <noodles@earth.li>
-To: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm: End any active auth session before shutdown
-Message-ID: <Z8rls0QkzOliECp_@earth.li>
+	 Content-Disposition; b=Sl+zegxOPhuzTfBehfGJ9v+z+H71pvmowmFHHvQKa5SvzBTqfoq/pZ4bkuSOAj1Wa98dftEEb+IYkPGiSJe3uPfhZXz5mg2KloW4kQ9jeM5I3E+RY4BpAFjsZR8IOW7Ko5MdxtLTGvb1ATcImp3wEmltKCIB8kYH7qp6g99NZUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HI7aHCn3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 772B5C4CED1;
+	Fri,  7 Mar 2025 12:25:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741350329;
+	bh=xI8knybLezYjJtgoCWfbOC/GevpO0GqbS04MWnM1+6c=;
+	h=Date:From:To:Cc:Subject:From;
+	b=HI7aHCn3PFVzVYothDmkEFxDsgZDMHloB6Q1XlIEoKygD7NCZKzmJkUoDfid3wsrO
+	 hm2PK5WEy00z0MSdQ04p0TJ7ZrquXFWdzBWi8YUv+ILkSdoWUfZRf3sB7K+zS3D79+
+	 D+W8xNKFSCRxYGGiEyTJ0lRXH3kE0RBc/xF2teWy5nWmc8+IeZgEwn7UdX9maCYM1y
+	 WL5+TrrVnCxaRlCc8/R3laICJAswaQ0KyIZZ3sChk6nAvuitRPX5nef5mqfWZjacbc
+	 EaJB1csFKkLS2TBW9Nxrxjtxi2wMHuM9YA0sbifNFEKw5NWk1C+VUCnxh6sw03gvLe
+	 fURKxIeC+gIzQ==
+Date: Fri, 7 Mar 2025 13:25:23 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: [GIT PULL] scheduler fixes
+Message-ID: <Z8rls13KRGROvcZ7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 
-From: Jonathan McDowell <noodles@meta.com>
+Linus,
 
-Lazy flushing of TPM auth sessions can interact badly with IMA + kexec,
-resulting in loaded session handles being leaked across the kexec and
-not cleaned up. Fix by ensuring any active auth session is ended before
-the TPM is told about the shutdown, matching what is done when
-suspending.
+Please pull the latest sched/urgent Git tree from:
 
-Before:
+   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-2025-03-07
 
-root@debian-qemu-efi:~# tpm2_getcap handles-loaded-session
-root@debian-qemu-efi:~# tpm2_getcap handles-saved-session
-root@debian-qemu-efi:~# kexec --load --kexec-file-syscall …
-root@debian-qemu-efi:~# systemctl kexec
-…
-root@debian-qemu-efi:~# tpm2_getcap handles-loaded-session
-- 0x2000000
-root@debian-qemu-efi:~# tpm2_getcap handles-saved-session
-root@debian-qemu-efi:~#
-(repeat kexec steps)
-root@debian-qemu-efi:~# tpm2_getcap handles-loaded-session
-- 0x2000000
-- 0x2000001
-root@debian-qemu-efi:~# tpm2_getcap handles-saved-session
-root@debian-qemu-efi:~#
+   # HEAD: b1536481c81fb604074da799e4f2d2038a1663f7 sched/rt: Update limit of sched_rt sysctl in documentation
 
-After:
+Miscellaneous scheduler fixes:
 
-root@debian-qemu-efi:~# tpm2_getcap handles-loaded-session
-root@debian-qemu-efi:~# tpm2_getcap handles-saved-session
-root@debian-qemu-efi:~# kexec --load --kexec-file-syscall …
-root@debian-qemu-efi:~# systemctl kexec
-…
-root@debian-qemu-efi:~# tpm2_getcap handles-loaded-session
-root@debian-qemu-efi:~# tpm2_getcap handles-saved-session
-root@debian-qemu-efi:~#
+ - Fix deadline scheduler sysctl parameter setting bug
+ - Fix RT scheduler sysctl parameter setting bug
+ - Fix possible memory corruption in child_cfs_rq_on_list()
 
-Signed-off-by: Jonathan McDowell <noodles@meta.com>
----
- drivers/char/tpm/tpm-chip.c | 1 +
- 1 file changed, 1 insertion(+)
+ Thanks,
 
-diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
-index 7df7abaf3e52..87f01269b9b5 100644
---- a/drivers/char/tpm/tpm-chip.c
-+++ b/drivers/char/tpm/tpm-chip.c
-@@ -300,6 +300,7 @@ int tpm_class_shutdown(struct device *dev)
- 	down_write(&chip->ops_sem);
- 	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
- 		if (!tpm_chip_start(chip)) {
-+			tpm2_end_auth_session(chip);
- 			tpm2_shutdown(chip, TPM2_SU_CLEAR);
- 			tpm_chip_stop(chip);
- 		}
--- 
-2.48.1
+	Ingo
 
+------------------>
+Shrikanth Hegde (2):
+      sched/deadline: Use online cpus for validating runtime
+      sched/rt: Update limit of sched_rt sysctl in documentation
+
+Zecheng Li (1):
+      sched/fair: Fix potential memory corruption in child_cfs_rq_on_list
+
+
+ Documentation/scheduler/sched-rt-group.rst | 3 +++
+ kernel/sched/deadline.c                    | 2 +-
+ kernel/sched/fair.c                        | 6 ++++--
+ 3 files changed, 8 insertions(+), 3 deletions(-)
 
