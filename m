@@ -1,139 +1,136 @@
-Return-Path: <linux-kernel+bounces-550660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15124A5628C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:28:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6A9A5628D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:29:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74C2218951E3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:28:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82A9516BA24
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:29:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504FF1B86EF;
-	Fri,  7 Mar 2025 08:28:25 +0000 (UTC)
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43FCC1C6FEF;
+	Fri,  7 Mar 2025 08:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="Zdl2TGmN"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B28FA186607
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 08:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A68D1A314C
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 08:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741336104; cv=none; b=AqkwzhoaHMjvT7p3mSxuUt8q9Et0iVREBB3ttX4YEpVXhe4n1/qji0R2DwcR5GB8JroDt7YPVUuolVfyfRHivqNdCnky34/vhZ+cVCmnqkRwTMZI3vtzZSD1nzreaxqW8zQkATOqb7tWN31DaxxFXPrn2nPi36Ngxo/LTiZi4ug=
+	t=1741336141; cv=none; b=gB9/di4qeceql3FoCBO9uMbO0BckMbOMbTZssANIhtUJ+CnUEjaKZdRWNmLUAY7e2aU8gy/6vAw5ZMImwKH+TAbktn1BO1pYTZNln3tjdNCAU/f1Jxi3x2na8HZRY6Nu1G/gGYFUHAxZMfF5s9+cbqluKk0dVQBab/F4yZ1onfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741336104; c=relaxed/simple;
-	bh=RLW5W7vE6eKHVXzzEER3TJZBcheFUauQWYUYHYGJdj0=;
+	s=arc-20240116; t=1741336141; c=relaxed/simple;
+	bh=KAEABgo5QmoLhvA8/dKPBOR8Bq/G4TG267wdgb4RRRs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ahmw9ZySbnf3HgpO2gdSx6Lj0kg8FNmYZfMmmjS0uU2KHurgj9lpjO4NDiQJSqCtirO226qe8+KW2Mup+OGaZcT7nfEX4nl8u+oFfHBR5SZNvpJ7d3K7X/BGVQJfFmow5gY1lousun6spuZnGbkFfSX3LSzP4OhkxVdT+Gi7a1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-51eb1a6ca1bso671983e0c.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 00:28:22 -0800 (PST)
+	 To:Cc:Content-Type; b=J4Ai7UMGHL4ae+6N31PvC+a/NTRH/bRN7jLO3m27HhcTxlz1Wx7MQfLHGmU7gxlF+0bSSURoyngHptnqs7Cr/tLYgA+qoz6o2Y/cfLobZtWwbauNwKyJIC3XH3gPmzdzt7WvEhCK0ilRKg48XTvlsuB71AGh+9zKLviVCYeA0+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=Zdl2TGmN; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3d284b9734fso13707825ab.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 00:28:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1741336139; x=1741940939; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8YlIiXhwG4KRcbOBdAmDvGTlkxDSVAhUX3csscpKyVg=;
+        b=Zdl2TGmNjlXM06Ncz5wDIhQU5kU/XKpjSvqrO1WU+20bi93on/Dr62PNLgLzq9njkp
+         A8KIVGFrLsy6+qndjyEmbO95Zr9dOkP8syd5rWFfnC2jbYWCXShunygvVFuEMETsqr1R
+         p2FHgbc9iNynHkzuCPeJudsXw+miMPttLaIuKfprPvD4txughSOtIA1L4FzOEg8KQJtN
+         UTsi1t8uwlne33L0gE9Z7lOnAnPEunKdvAB11dPz6hZa8aalqxCEsIfJEYfFo6vx97aC
+         BjoZQfopMDxP4m7pjK1GHHPdHRTuPMtOoeL4ZFtGYM390tdduHD4cgli6tmcMPIYlI4V
+         XRSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741336101; x=1741940901;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xum+DVk/hz2H5siGnkfuO3VHERgZhJbJ0D0R2U7DBis=;
-        b=Yf/8NEAHkZ2dya1RRuV3gyjQG1sHvBWMyHvT6vJpOyaCXQ+B89LNn0rGdP9WzHaow4
-         /S2ESgUi63rXgU23X4cKho+/yhQMLslYNTd4lPzp/i4ZjJXuf6OY9K278dkaUC2xschK
-         kfeV8PDdRT9AvrjWZ1zgcV57yfjIcMGbxyck/BG0f7yx9vZ4AElTzlRJx+NKNUNStaiH
-         sKJk90F4nSAgWrSWvulvIrwXhfciXSH5bQsr4V8/DolKHE1IGpxAedmWL4oioaFottia
-         8ZiVHKtt8pJ44FoXPZJVLArGk69lkyTNrJ3JCddW/fVYJCPHQXAj7SZ/+MozCLD39cNs
-         OtPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXaaw//v/phUpuHsckicVioyawUKORNUqmcby2A9gw1+GsdNg8mekAJSBApbTPlb9Omc9tjBmCVf77XW7Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjGRyn/UMyouL5tiq+YcLbVMoMoTiRFU4UZns9JmnpeGZe35y0
-	laVNhnfzImkRez7GyhWulaKZdzdhqvRluTd7mIUdr5uzoXhRhqTtWkMSlaoR05E=
-X-Gm-Gg: ASbGncu2SCGiEpDQ/jHNx8KjeKRhnyq4J2oNZ66t88hgEGrb2XpJ/FPoNmdUZZsZabZ
-	vIy2VZicnP3MIHPvej4YitRfdDlI0qJ/vmE+IUvoeuza1XU7cuRKREQecRRXtUdUAh3rTaoQU3Y
-	cfKz+QocYgta+XvBy6H/Zj3nfVDyAEhRABh+RiagTBXIiVTQjtXdj9R4/PD4x0pISH/m5mYv6AN
-	Qw7Ni4jVYSjzUD1i10qsFBFvXXGz8t3Iv7lIw29P45gyJtL6B6Jj8K8UJm+xL9iK2RXX6HiNB3p
-	WKvmduzIEors10VtllqJjqwjieQ8IANZPPXYQrKtLrQh8Zee+CtEjYwk7uqVG6jp+9dMJ7FNKgf
-	1/Lyw7iY=
-X-Google-Smtp-Source: AGHT+IFoZ3sqq81yMs1WB95I9u+6kobMfzkR8Zo9AkCZ6l6IlH/u8NxFumWIH7ei2xgF18q8zbPBPg==
-X-Received: by 2002:a05:6122:65a8:b0:520:6416:56f8 with SMTP id 71dfb90a1353d-523e40245e9mr2230174e0c.3.1741336101302;
-        Fri, 07 Mar 2025 00:28:21 -0800 (PST)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-523d8cbad9csm445410e0c.43.2025.03.07.00.28.21
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 00:28:21 -0800 (PST)
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-86714f41f5bso667181241.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 00:28:21 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV0AJNbrA4b8BBt0Fbeg7T80ncitcymfB2Jjon6UcpBpTGre6G9Yj9Giu91vwxxrLr0jv560ZWgUlz/+yE=@vger.kernel.org
-X-Received: by 2002:a05:6102:38cf:b0:4bc:82f:b4e0 with SMTP id
- ada2fe7eead31-4c30a6d240emr1447532137.22.1741336100864; Fri, 07 Mar 2025
- 00:28:20 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741336139; x=1741940939;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8YlIiXhwG4KRcbOBdAmDvGTlkxDSVAhUX3csscpKyVg=;
+        b=MgXPVRfQAHfnBMNb7bHarTgW2kYpok7pWehgr5LaLxKbhuwyNVa1mcSSH1oFLZNeCR
+         pkAiX2NM3PtzJoZYCVw3zG+nPWo6AjWZjlYSBnxFcSxL65pglrfkt6mandRdYuQQECcr
+         fopV6Aequ34ANAEn7yPYFH8H9lqlgzd5ClaHFAQwNNyK4nenUh8FaP3wwxXrJ+oyvGWm
+         AE2bwcf0SQ7P8hejpukU4mxQgkul/I0nKkzoi8tF50WYbJmLOg0elMrMLtQ/8wD00iws
+         Mpqcc+PZYTr2aUpfXuSaH/R1r14S/59LqTmi7AAlb8smYSFIjYPMTNeSYkR7pOMHnaIJ
+         YsXw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7w+kB9As8hVmFLufcd79PtGmsGQL/zqa1mdu7Vra7Xc9EH95Gkde30G7yuHSReUHmPcrqDCjjEh8mP58=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxORl0V09YIGu6HCFRDcSVKye6twJYLXegX+2HohkFccQaiQ5VK
+	VMT9njbojv+GNi8aX+38ncmsvIZI5FGzRjz9ci8pPJsq3xlw9ddOeIezMio6xtZHE8/q5eq8edj
+	uVIvJOl75NHqgmAU/lw9tocUg8y3hSpuIWR/DoQ==
+X-Gm-Gg: ASbGncuV/krvBJfmsxARLBJnp71C6P/76eXB2UneAESEsksqARCGChNq8JNBfrvfNDR
+	GZsS/ihNLCY2JDJSW370MmRs3qH6kzlXwcc4asXhJejkw/y7pdbMt0ocB8/9bHF7moPpmX99xQG
+	71QojBUBkikYg/oBD9CIJ1wbhX7sk=
+X-Google-Smtp-Source: AGHT+IHpyge1YXB1VBykLP/dh9ft8HFAB3zzw6CmKWnhV8/XYcR00xSa4YW+S5Z3jF04shZ9TO0vf5OuS0Vy70VC954=
+X-Received: by 2002:a05:6e02:16c7:b0:3d0:239a:c46a with SMTP id
+ e9e14a558f8ab-3d44194816cmr30189715ab.9.1741336139186; Fri, 07 Mar 2025
+ 00:28:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250302230532.245884-2-thorsten.blum@linux.dev>
- <CAMuHMdUonC54g-XSt-EkNbEGxhkOWMxBc87Qtw0MyeXoPqDD4A@mail.gmail.com> <e5e10808-5cca-243b-304f-4aa8db1d30b6@linux-m68k.org>
-In-Reply-To: <e5e10808-5cca-243b-304f-4aa8db1d30b6@linux-m68k.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 7 Mar 2025 09:28:09 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWjOkUXy+jf0yghs2_SQM3UWY3e8or3T11=fXYYD-VJEw@mail.gmail.com>
-X-Gm-Features: AQ5f1Jr2qcPxvP5d5iuyyv-KmQbBRQb47zOza6WWuoy8m5L3ptAnJ84hV5gOB4E
-Message-ID: <CAMuHMdWjOkUXy+jf0yghs2_SQM3UWY3e8or3T11=fXYYD-VJEw@mail.gmail.com>
-Subject: Re: [PATCH] m68k: mm: Remove size argument when calling strscpy()
-To: Finn Thain <fthain@linux-m68k.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>, 
-	Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>, linux-m68k@lists.linux-m68k.org, 
-	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>
+References: <20250303-kvm_pmu_improve-v2-0-41d177e45929@rivosinc.com>
+In-Reply-To: <20250303-kvm_pmu_improve-v2-0-41d177e45929@rivosinc.com>
+From: Anup Patel <anup@brainfault.org>
+Date: Fri, 7 Mar 2025 13:58:46 +0530
+X-Gm-Features: AQ5f1JqfLRDl2sXghMrs9tGiGCXrhEWfy1IvZjbEz2be6tiJtFVbpcg_wKAhY44
+Message-ID: <CAAhSdy3KncYJhPAa20oH=bB1Zi5-=sD8m69OYFS451q3_EMiEA@mail.gmail.com>
+Subject: Re: [PATCH v2 0/4] RISC-V KVM PMU fix and selftest improvement
+To: Atish Patra <atishp@rivosinc.com>
+Cc: Atish Patra <atishp@atishpatra.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Andrew Jones <ajones@ventanamicro.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Finn,
-
-CC Kees
-
-On Fri, 7 Mar 2025 at 00:24, Finn Thain <fthain@linux-m68k.org> wrote:
-> On Thu, 6 Mar 2025, Geert Uytterhoeven wrote:
-> > On Mon, 3 Mar 2025 at 00:07, Thorsten Blum <thorsten.blum@linux.dev> wrote:
-> > > The size parameter of strscpy() is optional and specifying the size of
-> > > the destination buffer is unnecessary. Remove it to simplify the code.
-> > >
-> > > Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
-> >
-> > Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
-> > i.e. will queue in the m68k tree for v6.15.
+On Tue, Mar 4, 2025 at 4:23=E2=80=AFAM Atish Patra <atishp@rivosinc.com> wr=
+ote:
 >
-> The commit message says "simplify the code" which is only true if you
-> never scratch the surface (i.e. it's simple code if the reader is simple
-> too...)
-
-The code is simpler in the sense that the API is simpler to use,
-and harder to abuse (i.e. to get it wrong).
-
-> Commit 30035e45753b ("string: provide strscpy()") was a good idea. It was
-> easily auditable. But that's not what we have now.
+> This series adds a fix for KVM PMU code and improves the pmu selftest
+> by allowing generating precise number of interrupts. It also provided
+> another additional option to the overflow test that allows user to
+> generate custom number of LCOFI interrupts.
 >
-> Patches like this one (which appear across the whole tree) need reviewers
-> (lots of them) that know what kind of a bounds check you end up with when
-> you ask an arbitary compiler to evaluate this:
+> Signed-off-by: Atish Patra <atishp@rivosinc.com>
+> ---
+> Changes in v2:
+> - Initialized the local overflow irq variable to 0 indicate that it's not=
+ a
+>   allowed value.
+> - Moved the introduction of argument option `n` to the last patch.
+> - Link to v1: https://lore.kernel.org/r/20250226-kvm_pmu_improve-v1-0-74c=
+058c2bf6d@rivosinc.com
 >
-> sizeof(dst) + __must_be_array(dst) + __must_be_cstr(dst) + __must_be_cstr(src)
+> ---
+> Atish Patra (4):
+>       RISC-V: KVM: Disable the kernel perf counter during configure
+>       KVM: riscv: selftests: Do not start the counter in the overflow han=
+dler
+>       KVM: riscv: selftests: Change command line option
+>       KVM: riscv: selftests: Allow number of interrupts to be configurabl=
+e
+
+Queued this series for Linux-6.15.
+
+Thanks,
+Anup
+
 >
-> Frankly, I can't be sure. But it's a serious question, and not what I'd
-> call a "simple" one.
-
-All the __must_be_*() macros evaluate to zero when true, and cause a
-build failure when false.
-
-BTW, Linux does not support being built by an "arbitrary compiler":
-only gcc and clang are supported.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+>  arch/riscv/kvm/vcpu_pmu.c                        |  1 +
+>  tools/testing/selftests/kvm/riscv/sbi_pmu_test.c | 81 ++++++++++++++++--=
+------
+>  2 files changed, 57 insertions(+), 25 deletions(-)
+> ---
+> base-commit: 0ad2507d5d93f39619fc42372c347d6006b64319
+> change-id: 20250225-kvm_pmu_improve-fffd038b2404
+> --
+> Regards,
+> Atish patra
+>
 
