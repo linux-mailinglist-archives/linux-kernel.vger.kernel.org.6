@@ -1,534 +1,392 @@
-Return-Path: <linux-kernel+bounces-551129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C16C2A56882
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:11:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A7E4A5688A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:11:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC1EB178956
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:11:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 117D11898E8B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FEBA219EA5;
-	Fri,  7 Mar 2025 13:10:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N7Cm5z1a"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D30219A79;
+	Fri,  7 Mar 2025 13:11:44 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6A1219A6E;
-	Fri,  7 Mar 2025 13:10:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35B1428E8;
+	Fri,  7 Mar 2025 13:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741353038; cv=none; b=qETqwNXhHUpX8CLYcb5sgAYMMSc3NEgtGJN7u0DqfAI3+yNqt6Ipe85432nG81ode/TqsC/DYnSUun2I1Q7RUcU2R4+PCqJsdqeWtC1qrc3eOob+5GbBkJH+sdDjS8va4vmt3Dgv6zzSvTEqjnSq4ZGuVUiJJTWd+7vnd67pkYs=
+	t=1741353104; cv=none; b=HBqwehylyR6p8+NL1fETpqElLLz7oesknjy/pIKkS+LupUPuA6DEofsD4rZCFOyMaVB9eZ94oLVPksRLaMn7BDTM4bsow9HQbxTt2yFpPzxHAJYI0OT15TZ31BVFjYHAVvCSAQPHd/8KEafFXpG+GrZCAiyjwu8ZoAJaVfJO2i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741353038; c=relaxed/simple;
-	bh=On1TxkuTtVpZfupxDNGQBr8L3k1TD7Bi5xW0KQL47Lg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GVkbkCDqDGBX9RyTpZ92ErsFeoNPqIoJ8Gi85+f9RhKJm29C8imxLJLCmZwHiBebQuyLKgrtLQLxiWj7/52PWusFXxIn/ydZRVW3T94UsSHMUZinqtoc3/e6hfZFqKJQJZ9iGWIedrLuBD0nP8WgqJLh/QTtMlk9w+tlF1SkswI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N7Cm5z1a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7B37C4CED1;
-	Fri,  7 Mar 2025 13:10:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741353037;
-	bh=On1TxkuTtVpZfupxDNGQBr8L3k1TD7Bi5xW0KQL47Lg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=N7Cm5z1a99uZevJoycdhMKW3iDdunawWG2hKd5uHckjoLSPoyPAHPoWIIRidrIS2J
-	 iSv7/lhedUY56BqTW4PJRSgpHG34CYo7o1Z2o3NEVEvnakoZNfeefr4RzvZ0jzD1Hz
-	 gePvU0Ku50wPOdSKqbsMrFv+z+8ctFFPCdUFdwbm1TjjDvtdxcWxkwNOm/6YGD0tYA
-	 reGCxdV224tGPhNJD5xndHniqLzvylvjKsbqTcrK+asbd/3ciN5XhhBGFqdC/srBVu
-	 yHxIruS7Sl0HmwGc1S5pn4eKPBuO3JhUOfr4iANkE0yhvG/pS/bgjDVahZ+X+AVMOY
-	 /rKnZ5ZI+GPiA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,  "Guangbo
- Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel
- Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
- <tamird@gmail.com>,  "Markus Elfring" <Markus.Elfring@web.de>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v10 01/13] rust: hrtimer: introduce hrtimer support
-In-Reply-To: <D8A1JVVYBHY5.13BB8V796A7RR@proton.me> (Benno Lossin's message of
-	"Fri, 07 Mar 2025 12:43:18 +0000")
-References: <20250307-hrtimer-v3-v6-12-rc2-v10-0-0cf7e9491da4@kernel.org>
-	<20250307-hrtimer-v3-v6-12-rc2-v10-1-0cf7e9491da4@kernel.org>
-	<BdAxp1BNMXx919FqV2Yamyjr3d4pUGCHU8GhvKZG6scY5etznAwQeuf1ISWLu2lm9XHt2qC9kJUnlSSENhODuA==@protonmail.internalid>
-	<D8A1JVVYBHY5.13BB8V796A7RR@proton.me>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 07 Mar 2025 14:10:21 +0100
-Message-ID: <87y0xh3s1u.fsf@kernel.org>
+	s=arc-20240116; t=1741353104; c=relaxed/simple;
+	bh=vLarW/hqVjAeNuKZBz6uzVLSQerh+6Ir2dlsZtA/83M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mMlvx5FlY2n2dAIj6iP4PBCYW7GkQD68WxJTNQ1eZx4HoNax18hqjZ+iadeKSSnynxdakWMQZtZTTdeTVseDbFZgFFviuf27OgBfCOznMReTrt2wU1WqFWT3lbXU6PDXKPih3i/PFmqnOr1ukgzfJyV2UtJHaBK1yETUyh78tKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1ABD2C4CED1;
+	Fri,  7 Mar 2025 13:11:41 +0000 (UTC)
+Message-ID: <9d0cb8b0-95a5-4766-88bd-45a0c5b54a1b@xs4all.nl>
+Date: Fri, 7 Mar 2025 14:11:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] drm/display: hdmi: Mention Infoframes testing with
+ edid-decode
+To: Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Jonathan Corbet <corbet@lwn.net>
+Cc: dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250306-drm-hdmi-state-docs-v1-0-56a19d3805a1@kernel.org>
+ <20250306-drm-hdmi-state-docs-v1-2-56a19d3805a1@kernel.org>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ xsFNBFQ84W0BEAC7EF1iL4s3tY8cRTVkJT/297h0Hz0ypA+ByVM4CdU9sN6ua/YoFlr9k0K4
+ BFUlg7JzJoUuRbKxkYb8mmqOe722j7N3HO8+ofnio5cAP5W0WwDpM0kM84BeHU0aPSTsWiGR
+ yw55SOK2JBSq7hueotWLfJLobMWhQii0Zd83hGT9SIt9uHaHjgwmtTH7MSTIiaY6N14nw2Ud
+ C6Uykc1va0Wqqc2ov5ihgk/2k2SKa02ookQI3e79laOrbZl5BOXNKR9LguuOZdX4XYR3Zi6/
+ BsJ7pVCK9xkiVf8svlEl94IHb+sa1KrlgGv3fn5xgzDw8Z222TfFceDL/2EzUyTdWc4GaPMC
+ E/c1B4UOle6ZHg02+I8tZicjzj5+yffv1lB5A1btG+AmoZrgf0X2O1B96fqgHx8w9PIpVERN
+ YsmkfxvhfP3MO3oHh8UY1OLKdlKamMneCLk2up1Zlli347KMjHAVjBAiy8qOguKF9k7HOjif
+ JCLYTkggrRiEiE1xg4tblBNj8WGyKH+u/hwwwBqCd/Px2HvhAsJQ7DwuuB3vBAp845BJYUU3
+ 06kRihFqbO0vEt4QmcQDcbWINeZ2zX5TK7QQ91ldHdqJn6MhXulPKcM8tCkdD8YNXXKyKqNl
+ UVqXnarz8m2JCbHgjEkUlAJCNd6m3pfESLZwSWsLYL49R5yxIwARAQABzSFIYW5zIFZlcmt1
+ aWwgPGh2ZXJrdWlsQHhzNGFsbC5ubD7CwZUEEwEKAD8CGwMGCwkIBwMCBhUIAgkKCwQWAgMB
+ Ah4BAheAFiEEBSzee8IVBTtonxvKvS1hSGYUO0wFAmaU3GkFCRf7lXsACgkQvS1hSGYUO0wZ
+ cw//cLMiaV+p2rCyzdpDjWon2XD6M646THYvqXLb9eVWicFlVG78kNtHrHyEWKPhN3OdWWjn
+ kOzXseVR/nS6vZvqCaT3rwgh3ZMb0GvOQk1/7V8UbcIERy036AjQoZmKo5tEDIv48MSvqxjj
+ H6wbKXbCyvnIwpGICLyb0xAwvvpTaJkwZjvGqeo5EL0Z+cQ8fCelfKNO5CFFP3FNd3dH8wU6
+ CHRtdZE03iIVEWpgCTjsG2zwsX/CKfPx0EKcrQajW3Tc50Jm0uuRUEKCVphlYORAPtFAF1dj
+ Ly8zpN1bEXH+0FDXe/SHhzbvgS4sL0J4KQCCZ/GcbKh/vsDC1VLsGS5C7fKOhAtOkUPWRjF+
+ kOEEcTOROMMvSUVokO+gCdb9nA/e3WMgiTwWRumWy5eCEnCpM9+rfI2HzTeACrVgGEDkOTHW
+ eaGHEy8nS9a25ejQzsBhi+T7MW53ZTIjklR7dFl/uuK+EJ6DLbDpVbwyYo2oeiwP+sf8/Rgv
+ WfJv4wzfUo/JABwrsbfWfycVZwFWBzqq+TaKFkMPm017dkLdg4MzxvvTMP7nKfJxU1bQ2OOr
+ xkPk5KDcz+aRYBvTqEXgYZ6OZtnOUFKD+uPlbWf68vuz/1iFbQYnNJkTxwWhiIMN7BULK74d
+ Ek89MU7JlbYNSv0v21lRF+uDo0J6zyoTt0ZxSPzOwU0EVDzhbQEQANzLiI6gHkIhBQKeQaYs
+ p2SSqF9c++9LOy5x6nbQ4s0X3oTKaMGfBZuiKkkU6NnHCSa0Az5ScRWLaRGu1PzjgcVwzl5O
+ sDawR1BtOG/XoPRNB2351PRp++W8TWo2viYYY0uJHKFHML+ku9q0P+NkdTzFGJLP+hn7x0RT
+ DMbhKTHO3H2xJz5TXNE9zTJuIfGAz3ShDpijvzYieY330BzZYfpgvCllDVM5E4XgfF4F/N90
+ wWKu50fMA01ufwu+99GEwTFVG2az5T9SXd7vfSgRSkzXy7hcnxj4IhOfM6Ts85/BjMeIpeqy
+ TDdsuetBgX9DMMWxMWl7BLeiMzMGrfkJ4tvlof0sVjurXibTibZyfyGR2ricg8iTbHyFaAzX
+ 2uFVoZaPxrp7udDfQ96sfz0hesF9Zi8d7NnNnMYbUmUtaS083L/l2EDKvCIkhSjd48XF+aO8
+ VhrCfbXWpGRaLcY/gxi2TXRYG9xCa7PINgz9SyO34sL6TeFPSZn4bPQV5O1j85Dj4jBecB1k
+ z2arzwlWWKMZUbR04HTeAuuvYvCKEMnfW3ABzdonh70QdqJbpQGfAF2p4/iCETKWuqefiOYn
+ pR8PqoQA1DYv3t7y9DIN5Jw/8Oj5wOeEybw6vTMB0rrnx+JaXvxeHSlFzHiD6il/ChDDkJ9J
+ /ejCHUQIl40wLSDRABEBAAHCwXwEGAEKACYCGwwWIQQFLN57whUFO2ifG8q9LWFIZhQ7TAUC
+ ZpTcxwUJF/uV2gAKCRC9LWFIZhQ7TMlPD/9ppgrN4Z9gXta9IdS8a+0E7lj/dc0LnF9T6MMq
+ aUC+CFffTiOoNDnfXh8sfsqTjAT50TsVpdlH6YyPlbU5FR8bC8wntrJ6ZRWDdHJiCDLqNA/l
+ GVtIKP1YW8fA01thMcVUyQCdVUqnByMJiJQDzZYrX+E/YKUTh2RL5Ye0foAGE7SGzfZagI0D
+ OZN92w59e1Jg3zBhYXQIjzBbhGIy7usBfvE882GdUbP29bKfTpcOKkJIgO6K+w82D/1d5TON
+ SD146+UySmEnjYxHI8kBYaZJ4ubyYrDGgXT3jIBPq8i9iZP3JSeZ/0F9UIlX4KeMSG8ymgCR
+ SqL1y9pl9R2ewCepCahEkTT7IieGUzJZz7fGUaxrSyexPE1+qNosfrUIu3yhRA6AIjhwPisl
+ aSwDxLI6qWDEQeeWNQaYUSEIFQ5XkZxd/VN8JeMwGIAq17Hlym+JzjBkgkm1LV9LXw9D8MQL
+ e8tSeEXX8BZIen6y/y+U2CedzEsMKGjy5WNmufiPOzB3q2JwFQCw8AoNic7soPN9CVCEgd2r
+ XS+OUZb8VvEDVRSK5Yf79RveqHvmhAdNOVh70f5CvwR/bfX/Ei2Szxz47KhZXpn1lxmcds6b
+ LYjTAZF0anym44vsvOEuQg3rqxj/7Hiz4A3HIkrpTWclV6ru1tuGp/ZJ7aY8bdvztP2KTw==
+In-Reply-To: <20250306-drm-hdmi-state-docs-v1-2-56a19d3805a1@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
+Hi Maxime,
 
-> On Fri Mar 7, 2025 at 11:11 AM CET, Andreas Hindborg wrote:
->> Add support for intrusive use of the hrtimer system. For now,
->> only add support for embedding one timer per Rust struct.
->>
->> The hrtimer Rust API is based on the intrusive style pattern introduced by
->> the Rust workqueue API.
->>
->> Acked-by: Frederic Weisbecker <frederic@kernel.org>
->> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
->
-> Some smaller changes below, with those fixed:
->
-> Reviewed-by: Benno Lossin <benno.lossin@proton.me>
+On 06/03/2025 18:17, Maxime Ripard wrote:
+> edid-decode gained recently support to check that infoframes are
+> compliant and match the EDID the monitor exposes.
+> 
+> Since the HDMI helpers provide those infoframes in debugfs, it makes it
+> easy to check from userspace that the drivers (and helpers) behave
+> properly.
+> 
+> Let's document it.
+> 
+> Cc: Hans Verkuil <hverkuil@xs4all.nl>
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> ---
+>  drivers/gpu/drm/display/drm_hdmi_state_helper.c | 240 ++++++++++++++++++++++++
+>  1 file changed, 240 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> index 24bfc82bf9b02bf3201d97432e3c239ccc8714b4..86f812b89f0e51abc24910898c114d6b08a78edf 100644
+> --- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> +++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+> @@ -16,10 +16,250 @@
+>   * in the form of KMS helpers.
+>   *
+>   * It contains TMDS character rate computation, automatic selection of
+>   * output formats, infoframes generation, etc.
+>   *
+> + * Infoframes Compliance
+> + * ~~~~~~~~~~~~~~~~~~~~~
+> + *
+> + * Drivers using the helpers will expose the various infoframes
+> + * generated according to the HDMI specification in debugfs.
+> + *
+> + * Compliance can then be tested using a recent-enough ``edid-decode``
+> + * version (released after summer 2024). A sample run would look like:
+> + *
+> + * .. code-block:: bash
+> + *
+> + *	# edid-decode \
+> + *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/audio \
+> + *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/avi \
+> + *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/hdmi \
+> + *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/hdr_drm \
+> + *		-I /sys/kernel/debug/dri/1/HDMI-A-1/infoframes/spd \
+> + *		/sys/class/drm/card1-HDMI-A-1/edid \
+> + *		-c
+> + *
+> + *	edid-decode (hex):
+> + *
+> + *	00 ff ff ff ff ff ff 00 1e 6d f4 5b 1e ef 06 00
+> + *	07 20 01 03 80 2f 1a 78 ea 24 05 af 4f 42 ab 25
+> + *	0f 50 54 21 08 00 d1 c0 61 40 01 01 01 01 01 01
+> + *	01 01 01 01 01 01 56 5e 00 a0 a0 a0 29 50 30 20
+> + *	35 00 d1 06 11 00 00 1a 00 00 00 fd 00 3b 3d 1e
+> + *	70 1e 00 0a 20 20 20 20 20 20 00 00 00 fc 00 4c
+> + *	47 20 53 44 51 48 44 0a 20 20 20 20 00 00 00 ff
+> + *	00 32 30 37 4e 54 52 4c 44 43 34 33 30 0a 01 43
+> + *
+> + *	02 03 29 71 23 09 07 07 4b 01 03 04 90 12 13 1f
+> + *	22 5d 5e 5f 83 01 00 00 6d 03 0c 00 10 00 b8 3c
+> + *	20 00 60 01 02 03 e2 00 6a 00 00 00 00 00 00 00
+> + *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> + *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> + *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> + *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> + *	00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ee
+> + *
+> + *	----------------
+> + *
+> + *	Block 0, Base EDID:
+> + *	  EDID Structure Version & Revision: 1.3
+> + *	 Vendor & Product Identification:
 
-Thanks!
+This looks odd: the two lines above should be aligned, but they are not.
 
->
->> ---
->>  rust/kernel/time.rs         |   2 +
->>  rust/kernel/time/hrtimer.rs | 359 ++++++++++++++++++++++++++++++++++++++++++++
->>  2 files changed, 361 insertions(+)
->>
->> diff --git a/rust/kernel/time.rs b/rust/kernel/time.rs
->> index 379c0f5772e5..fab1dadfa589 100644
->> --- a/rust/kernel/time.rs
->> +++ b/rust/kernel/time.rs
->> @@ -8,6 +8,8 @@
->>  //! C header: [`include/linux/jiffies.h`](srctree/include/linux/jiffies.h).
->>  //! C header: [`include/linux/ktime.h`](srctree/include/linux/ktime.h).
->>
->> +pub mod hrtimer;
->> +
->>  /// The number of nanoseconds per millisecond.
->>  pub const NSEC_PER_MSEC: i64 = bindings::NSEC_PER_MSEC as i64;
->>
->> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
->> new file mode 100644
->> index 000000000000..7d7d490f8b6f
->> --- /dev/null
->> +++ b/rust/kernel/time/hrtimer.rs
->> @@ -0,0 +1,359 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +//! Intrusive high resolution timers.
->> +//!
->> +//! Allows running timer callbacks without doing allocations at the time of
->> +//! starting the timer. For now, only one timer per type is allowed.
->> +//!
->> +//! # Vocabulary
->> +//!
->> +//! States:
->> +//!
->> +//! - Stopped: initialized but not started, or cancelled, or not restarted.
->> +//! - Started: initialized and started or restarted.
->> +//! - Running: executing the callback.
->> +//!
->> +//! Operations:
->> +//!
->> +//! * Start
->> +//! * Cancel
->> +//! * Restart
->> +//!
->> +//! Events:
->> +//!
->> +//! * Expire
->> +//!
->> +//! ## State Diagram
->> +//!
->> +//! ```text
->> +//!                                                   Return NoRestart
->> +//!                       +---------------------------------------------------------------------+
->> +//!                       |                                                                     |
->> +//!                       |                                                                     |
->> +//!                       |                                                                     |
->> +//!                       |                                         Return Restart              |
->> +//!                       |                                      +------------------------+     |
->> +//!                       |                                      |                        |     |
->> +//!                       |                                      |                        |     |
->> +//!                       v                                      v                        |     |
->> +//!           +-----------------+      Start      +------------------+           +--------+-----+--+
->> +//!           |                 +---------------->|                  |           |                 |
->> +//! Init      |                 |                 |                  |  Expire   |                 |
->> +//! --------->|    Stopped      |                 |      Started     +---------->|     Running     |
->> +//!           |                 |     Cancel      |                  |           |                 |
->> +//!           |                 |<----------------+                  |           |                 |
->> +//!           +-----------------+                 +---------------+--+           +-----------------+
->> +//!                                                     ^         |
->> +//!                                                     |         |
->> +//!                                                     +---------+
->> +//!                                                      Restart
->> +//! ```
->> +//!
->> +//!
->> +//! A timer is initialized in the **stopped** state. A stopped timer can be
->> +//! **started** by the `start` operation, with an **expiry** time. After the
->> +//! `start` operation, the timer is in the **started** state. When the timer
->> +//! **expires**, the timer enters the **running** state and the handler is
->> +//! executed. After the handler has returned, the timer may enter the
->> +//! **started* or **stopped** state, depending on the return value of the
->> +//! handler. A timer in the **started** or **running** state may be **canceled**
->> +//! by the `cancel` operation. A timer that is cancelled enters the **stopped**
->> +//! state.
->
-> This looks very nice, thanks!
->
->> +//!
->> +//! A `cancel` or `restart` operation on a timer in the **running** state takes
->> +//! effect after the handler has returned and the timer has transitioned
->> +//! out of the **running** state.
->> +//!
->> +//! A `restart` operation on a timer in the **stopped** state is equivalent to a
->> +//! `start` operation.
->> +
->> +use crate::{init::PinInit, prelude::*, time::Ktime, types::Opaque};
->> +use core::marker::PhantomData;
->> +
->> +/// A timer backed by a C `struct hrtimer`.
->> +///
->> +/// # Invariants
->> +///
->> +/// * `self.timer` is initialized by `bindings::hrtimer_setup`.
->> +#[pin_data]
->> +#[repr(C)]
->> +pub struct HrTimer<T> {
->> +    #[pin]
->> +    timer: Opaque<bindings::hrtimer>,
->> +    _t: PhantomData<T>,
->> +}
->> +
->> +// SAFETY: Ownership of an `HrTimer` can be moved to other threads and
->> +// used/dropped from there.
->> +unsafe impl<T> Send for HrTimer<T> {}
->> +
->> +// SAFETY: Timer operations are locked on the C side, so it is safe to operate
->> +// on a timer from multiple threads.
->> +unsafe impl<T> Sync for HrTimer<T> {}
->> +
->> +impl<T> HrTimer<T> {
->> +    /// Return an initializer for a new timer instance.
->> +    pub fn new() -> impl PinInit<Self>
->> +    where
->> +        T: HrTimerCallback,
->> +    {
->> +        pin_init!(Self {
->> +            // INVARIANT: We initialize `timer` with `hrtimer_setup` below.
->> +            timer <- Opaque::ffi_init(move |place: *mut bindings::hrtimer| {
->> +                // SAFETY: By design of `pin_init!`, `place` is a pointer to a
->> +                // live allocation. hrtimer_setup will initialize `place` and
->> +                // does not require `place` to be initialized prior to the call.
->> +                unsafe {
->> +                    bindings::hrtimer_setup(
->> +                        place,
->> +                        Some(T::Pointer::run),
->> +                        bindings::CLOCK_MONOTONIC as i32,
->> +                        bindings::hrtimer_mode_HRTIMER_MODE_REL,
->> +                    );
->> +                }
->> +            }),
->> +            _t: PhantomData,
->> +        })
->> +    }
->> +
->> +    /// Get a pointer to the contained `bindings::hrtimer`.
->> +    ///
->> +    /// This function is useful to get access to the value without creating
->> +    /// intermediate references.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// `this` must point to a live allocation of at least the size of `Self`.
->> +    unsafe fn raw_get(this: *const Self) -> *mut bindings::hrtimer {
->> +        // SAFETY: The field projection to `timer` does not go out of bounds,
->> +        // because the caller of this function promises that `this` points to an
->> +        // allocation of at least the size of `Self`.
->> +        unsafe { Opaque::raw_get(core::ptr::addr_of!((*this).timer)) }
->> +    }
->> +
->> +    /// Cancel an initialized and potentially running timer.
->> +    ///
->> +    /// If the timer handler is running, this function will block until the
->> +    /// handler returns.
->> +    ///
->> +    /// Note that the timer might be started by a concurrent start operation. If
->> +    /// so, the timer might not be in the **stopped** state when this function
->> +    /// returns.
->> +    ///
->> +    /// Users of the `HrTimer` API would not usually call this method directly.
->> +    /// Instead they would use the safe [`HrTimerHandle::cancel`] on the handle
->> +    /// returned when the timer was started.
->> +    ///
->> +    /// This function is useful to get access to the value without creating
->> +    /// intermediate references.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// `this` must point to a valid `Self`.
->> +    #[allow(dead_code)]
->> +    pub(crate) unsafe fn raw_cancel(this: *const Self) -> bool {
->> +        // SAFETY: `this` points to an allocation of at least `HrTimer` size.
->> +        let c_timer_ptr = unsafe { HrTimer::raw_get(this) };
->> +
->> +        // If the handler is running, this will wait for the handler to return
->> +        // before returning.
->> +        // SAFETY: `c_timer_ptr` is initialized and valid. Synchronization is
->> +        // handled on the C side.
->> +        unsafe { bindings::hrtimer_cancel(c_timer_ptr) != 0 }
->> +    }
->> +}
->> +
->> +/// Implemented by pointer types that point to structs that contain a [`HrTimer`].
->> +///
->> +/// `Self` must be [`Sync`] because it is passed to timer callbacks in another
->> +/// thread of execution (hard or soft interrupt context).
->> +///
->> +/// Starting a timer returns a [`HrTimerHandle`] that can be used to manipulate
->> +/// the timer. Note that it is OK to call the start function repeatedly, and
->> +/// that more than one [`HrTimerHandle`] associated with a [`HrTimerPointer`] may
->> +/// exist. A timer can be manipulated through any of the handles, and a handle
->> +/// may represent a cancelled timer.
->> +pub trait HrTimerPointer: Sync + Sized {
->> +    /// A handle representing a started or restarted timer.
->> +    ///
->> +    /// If the timer is running or if the timer callback is executing when the
->> +    /// handle is dropped, the drop method of [`HrTimerHandle`] should not return
->> +    /// until the timer is stopped and the callback has completed.
->> +    ///
->> +    /// Note: When implementing this trait, consider that it is not unsafe to
->> +    /// leak the handle.
->> +    type TimerHandle: HrTimerHandle;
->> +
->> +    /// Start the timer with expiry after `expires` time units. If the timer was
->> +    /// already running, it is restarted with the new expiry time.
->> +    fn start(self, expires: Ktime) -> Self::TimerHandle;
->> +}
->> +
->> +/// Implemented by [`HrTimerPointer`] implementers to give the C timer callback a
->> +/// function to call.
->> +// This is split from `HrTimerPointer` to make it easier to specify trait bounds.
->> +pub trait RawHrTimerCallback {
->> +    /// This type is passed to [`HrTimerCallback::run`]. It may be a borrow of
->> +    /// [`Self::CallbackTarget`], or it may be `Self::CallbackTarget` if the
->
-> This part of the docs no longer makes sense. You probably mean to say
-> `Self` instead, right?
+Some copy-and-paste issue perhaps?
 
-Yes:
+> + *	    Manufacturer: GSM
+> + *	    Model: 23540
+> + *	    Serial Number: 454430 (0x0006ef1e)
+> + *	    Made in: week 7 of 2022
+> + *	  Basic Display Parameters & Features:
+> + *	    Digital display
+> + *	    Maximum image size: 47 cm x 26 cm
+> + *	    Gamma: 2.20
+> + *	    DPMS levels: Standby Suspend Off
+> + *	    RGB color display
+> + *	    First detailed timing is the preferred timing
+> + *	  Color Characteristics:
+> + *	    Red  : 0.6835, 0.3105
+> + *	    Green: 0.2587, 0.6679
+> + *	    Blue : 0.1445, 0.0585
+> + *	    White: 0.3134, 0.3291
+> + *	  Established Timings I & II:
+> + *	    DMT 0x04:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
+> + *	    DMT 0x09:   800x600    60.316541 Hz   4:3     37.879 kHz     40.000000 MHz
+> + *	    DMT 0x10:  1024x768    60.003840 Hz   4:3     48.363 kHz     65.000000 MHz
+> + *	  Standard Timings:
+> + *	    DMT 0x52:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz
+> + *	    DMT 0x10:  1024x768    60.003840 Hz   4:3     48.363 kHz     65.000000 MHz
+> + *	  Detailed Timing Descriptors:
+> + *	    DTD 1:  2560x1440   59.950550 Hz  16:9     88.787 kHz    241.500000 MHz (465 mm x 262 mm)
+> + *	                 Hfront   48 Hsync  32 Hback   80 Hpol P
+> + *	                 Vfront    3 Vsync   5 Vback   33 Vpol N
+> + *	    Display Range Limits:
+> + *	      Monitor ranges (GTF): 59-61 Hz V, 30-112 kHz H, max dotclock 300 MHz
+> + *	    Display Product Name: 'LG SDQHD'
+> + *	    Display Product Serial Number: '207NTRLDC430'
+> + *	  Extension blocks: 1
+> + *	Checksum: 0x43
+> + *
+> + *	----------------
+> + *
+> + *	Block 1, CTA-861 Extension Block:
+> + *	  Revision: 3
+> + *	  Basic audio support
+> + *	  Supports YCbCr 4:4:4
+> + *	  Supports YCbCr 4:2:2
+> + *	  Native detailed modes: 1
+> + *	  Audio Data Block:
+> + *	    Linear PCM:
+> + *	      Max channels: 2
+> + *	      Supported sample rates (kHz): 48 44.1 32
+> + *	      Supported sample sizes (bits): 24 20 16
+> + *	  Video Data Block:
+> + *	    VIC   1:   640x480    59.940476 Hz   4:3     31.469 kHz     25.175000 MHz
+> + *	    VIC   3:   720x480    59.940060 Hz  16:9     31.469 kHz     27.000000 MHz
+> + *	    VIC   4:  1280x720    60.000000 Hz  16:9     45.000 kHz     74.250000 MHz
+> + *	    VIC  16:  1920x1080   60.000000 Hz  16:9     67.500 kHz    148.500000 MHz (native)
+> + *	    VIC  18:   720x576    50.000000 Hz  16:9     31.250 kHz     27.000000 MHz
+> + *	    VIC  19:  1280x720    50.000000 Hz  16:9     37.500 kHz     74.250000 MHz
+> + *	    VIC  31:  1920x1080   50.000000 Hz  16:9     56.250 kHz    148.500000 MHz
+> + *	    VIC  34:  1920x1080   30.000000 Hz  16:9     33.750 kHz     74.250000 MHz
+> + *	    VIC  93:  3840x2160   24.000000 Hz  16:9     54.000 kHz    297.000000 MHz
+> + *	    VIC  94:  3840x2160   25.000000 Hz  16:9     56.250 kHz    297.000000 MHz
+> + *	    VIC  95:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
+> + *	  Speaker Allocation Data Block:
+> + *	    FL/FR - Front Left/Right
+> + *	  Vendor-Specific Data Block (HDMI), OUI 00-0C-03:
+> + *	    Source physical address: 1.0.0.0
+> + *	    Supports_AI
+> + *	    DC_36bit
+> + *	    DC_30bit
+> + *	    DC_Y444
+> + *	    Maximum TMDS clock: 300 MHz
+> + *	    Extended HDMI video details:
+> + *	      HDMI VICs:
+> + *	        HDMI VIC 1:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
+> + *	        HDMI VIC 2:  3840x2160   25.000000 Hz  16:9     56.250 kHz    297.000000 MHz
+> + *	        HDMI VIC 3:  3840x2160   24.000000 Hz  16:9     54.000 kHz    297.000000 MHz
+> + *	  Video Capability Data Block:
+> + *	    YCbCr quantization: No Data
+> + *	    RGB quantization: Selectable (via AVI Q)
+> + *	    PT scan behavior: Always Underscanned
+> + *	    IT scan behavior: Always Underscanned
+> + *	    CE scan behavior: Always Underscanned
+> + *	Checksum: 0xee  Unused space in Extension Block: 86 bytes
+> + *
+> + *	----------------
+> + *
+> + *	edid-decode SHA: 5332a3b76080 2024-11-19 07:53:00
 
-    /// This passed passed to [`HrTimerCallback::run`]. It may be [`Self`], or a
-    /// pointer type derived from [`Self`].
+I recommend that you get the latest edid-decode version from https://git.linuxtv.org/v4l-utils.git/
+so that the documentation is at least corresponding to the most recent version.
 
->
->> +    /// implementation can guarantee correct access (exclusive or shared
->> +    /// depending on the type) to the target during timer handler execution.
->> +    type CallbackTarget<'a>;
->> +
->> +    /// Callback to be called from C when timer fires.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// Only to be called by C code in the `hrtimer` subsystem. `this` must point
->> +    /// to the `bindings::hrtimer` structure that was used to start the timer.
->> +    unsafe extern "C" fn run(this: *mut bindings::hrtimer) -> bindings::hrtimer_restart;
->> +}
->> +
->> +/// Implemented by structs that can be the target of a timer callback.
->> +pub trait HrTimerCallback {
->> +    /// The type whose [`RawHrTimerCallback::run`] method will be invoked when
->> +    /// the timer expires.
->> +    type Pointer<'a>: RawHrTimerCallback;
->> +
->> +    /// Called by the timer logic when the timer fires.
->> +    fn run(this: <Self::Pointer<'_> as RawHrTimerCallback>::CallbackTarget<'_>)
->> +    where
->> +        Self: Sized;
->> +}
->> +
->> +/// A handle representing a potentially running timer.
->> +///
->> +/// More than one handle representing the same timer might exist.
->> +///
->> +/// # Safety
->> +///
->> +/// When dropped, the timer represented by this handle must be cancelled, if it
->> +/// is running. If the timer handler is running when the handle is dropped, the
->> +/// drop method must wait for the handler to return before returning.
->> +///
->> +/// Note: One way to satisfy the safety requirement is to call `Self::cancel` in
->> +/// the drop implementation for `Self.`
->> +pub unsafe trait HrTimerHandle {
->> +    /// Cancel the timer. If the timer is in the running state, block till the
->> +    /// handler has returned.
->> +    ///
->> +    /// Note that the timer might be started by a concurrent start operation. If
->> +    /// so, the timer might not be in the **stopped** state when this function
->> +    /// returns.
->> +    ///
->> +    fn cancel(&mut self) -> bool;
->> +}
->> +
->> +/// Implemented by structs that contain timer nodes.
->> +///
->> +/// Clients of the timer API would usually safely implement this trait by using
->> +/// the [`crate::impl_has_hr_timer`] macro.
->> +///
->> +/// # Safety
->> +///
->> +/// Implementers of this trait must ensure that the implementer has a [`HrTimer`]
->> +/// field at the offset specified by `OFFSET` and that all trait methods are
->> +/// implemented according to their documentation.
->> +///
->> +/// [`impl_has_timer`]: crate::impl_has_timer
->
-> This link is unused.
+Should there be a link to the official git repo as well?
 
-Thanks.
+> + *
+> + *	Warnings:
+> + *
+> + *	Block 1, CTA-861 Extension Block:
+> + *	  IT Video Formats are overscanned by default, but normally this should be underscanned.
+> + *	  Video Data Block: VIC 1 and the first DTD are not identical. Is this intended?
+> + *	  Video Data Block: All VICs are in ascending order, and the first (preferred) VIC <= 4, is that intended?
+> + *	  Video Capability Data Block: Set Selectable YCbCr Quantization to avoid interop issues.
+> + *	  Video Capability Data Block: S_PT is equal to S_IT and S_CE, so should be set to 0 instead.
+> + *	  Display Product Serial Number is set, so the Serial Number in the Base EDID should be 0.
+> + *	  Add a Colorimetry Data Block with the sRGB colorimetry bit set to avoid interop issues.
+> + *	EDID:
+> + *	  Base EDID: Some timings are out of range of the Monitor Ranges:
+> + *	    Vertical Freq: 24.000 - 60.317 Hz (Monitor: 59.000 - 61.000 Hz)
+> + *
+> + *	Failures:
+> + *
+> + *	Block 1, CTA-861 Extension Block:
+> + *	  Video Capability Data Block: IT video formats are always underscanned, but bit 7 of Byte 3 of the CTA-861 Extension header is set to overscanned.
+> + *	EDID:
+> + *	  CTA-861: Native progressive timings are a mix of several resolutions.
+> + *
+> + *	EDID conformity: FAIL
+> + *
+> + *	================
+> + *
+> + *	InfoFrame of '/sys/kernel/debug/dri/1/HDMI-A-1/infoframes/audio' was empty.
+> + *
+> + *	================
+> + *
+> + *	edid-decode InfoFrame (hex):
+> + *
+> + *	82 02 0d 31 12 28 04 00 00 00 00 00 00 00 00 00
+> + *	00
+> + *
+> + *	----------------
+> + *
+> + *	HDMI InfoFrame Checksum: 0x31
+> + *
+> + *	AVI InfoFrame
+> + *	  Version: 2
+> + *	  Length: 13
+> + *	  Y: Color Component Sample Format: RGB
+> + *	  A: Active Format Information Present: Yes
+> + *	  B: Bar Data Present: Bar Data not present
+> + *	  S: Scan Information: Composed for an underscanned display
+> + *	  C: Colorimetry: No Data
+> + *	  M: Picture Aspect Ratio: 16:9
+> + *	  R: Active Portion Aspect Ratio: 8
+> + *	  ITC: IT Content: No Data
+> + *	  EC: Extended Colorimetry: xvYCC601
+> + *	  Q: RGB Quantization Range: Limited Range
+> + *	  SC: Non-Uniform Picture Scaling: No Known non-uniform scaling
+> + *	  YQ: YCC Quantization Range: Limited Range
+> + *	  CN: IT Content Type: Graphics
+> + *	  PR: Pixel Data Repetition Count: 0
+> + *	  Line Number of End of Top Bar: 0
+> + *	  Line Number of Start of Bottom Bar: 0
+> + *	  Pixel Number of End of Left Bar: 0
+> + *	  Pixel Number of Start of Right Bar: 0
+> + *
+> + *	----------------
+> + *
+> + *	AVI InfoFrame conformity: PASS
+> + *
+> + *	================
+> + *
+> + *	edid-decode InfoFrame (hex):
+> + *
+> + *	81 01 05 49 03 0c 00 20 01
+> + *
+> + *	----------------
+> + *
+> + *	HDMI InfoFrame Checksum: 0x49
+> + *
+> + *	Vendor-Specific InfoFrame (HDMI), OUI 00-0C-03
+> + *	  Version: 1
+> + *	  Length: 5
+> + *	  HDMI Video Format: HDMI_VIC is present
+> + *	  HDMI VIC 1:  3840x2160   30.000000 Hz  16:9     67.500 kHz    297.000000 MHz
+> + *
+> + *	----------------
+> + *
+> + *	Vendor-Specific InfoFrame (HDMI), OUI 00-0C-03 conformity: PASS
+> + *
+> + *	================
+> + *
+> + *	InfoFrame of '/sys/kernel/debug/dri/1/HDMI-A-1/infoframes/hdr_drm' was empty.
+> + *
+> + *	================
+> + *
+> + *	edid-decode InfoFrame (hex):
+> + *
+> + *	83 01 19 93 42 72 6f 61 64 63 6f 6d 56 69 64 65
+> + *	6f 63 6f 72 65 00 00 00 00 00 00 00 09
+> + *
+> + *	----------------
+> + *
+> + *	HDMI InfoFrame Checksum: 0x93
+> + *
+> + *	Source Product Description InfoFrame
+> + *	  Version: 1
+> + *	  Length: 25
+> + *	  Vendor Name: 'Broadcom'
+> + *	  Product Description: 'Videocore'
+> + *	  Source Information: PC general
+> + *
+> + *	----------------
+> + *
+> + *	Source Product Description InfoFrame conformity: PASS
+> + *
+>   * Testing
+>   * ~~~~~~~
+>   *
+>   * The helpers have unit testing and can be tested using kunit with:
+>   *
+> 
 
->
->> +pub unsafe trait HasHrTimer<T> {
->> +    /// Return a pointer to the [`HrTimer`] within `Self`.
->> +    ///
->> +    /// This function is useful to get access to the value without creating
->> +    /// intermediate references.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// `this` must point to a valid struct of type `Self`.
->
-> I don't think that this is the correct requirement. The pointer `this`
-> must be valid (i.e. dereferenceable), but the value that we're pointing
-> at doesn't have to be valid, right?
+Note that the InfoFrame checks are still rudimentary for the AVI and HDMI InfoFrames.
 
-You are right:
+It's on my TODO list to improve this further, but -ENOTIME :-(
 
+Regards,
 
-    /// `this` must be a valid pointer.
-
-
->
-> Same below.
-
-Right.
-
-I shall not update the safety requirement at the call sites, because "`this`
-must point to a valid `Self`" is a stronger requirement, so those are
-all fine.
-
->
->> +    unsafe fn raw_get_timer(this: *const Self) -> *const HrTimer<T>;
->> +
->> +    /// Return a pointer to the struct that is containing the [`HrTimer`] pointed
->> +    /// to by `ptr`.
->> +    ///
->> +    /// This function is useful to get access to the value without creating
->> +    /// intermediate references.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// `ptr` must point to a [`HrTimer<T>`] field in a struct of type `Self`.
->> +    unsafe fn timer_container_of(ptr: *mut HrTimer<T>) -> *mut Self
->> +    where
->> +        Self: Sized;
->> +
->> +    /// Get pointer to the contained `bindings::hrtimer` struct.
->> +    ///
->> +    /// This function is useful to get access to the value without creating
->> +    /// intermediate references.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// `this` must point to a valid `Self`.
->> +    unsafe fn c_timer_ptr(this: *const Self) -> *const bindings::hrtimer {
->> +        // SAFETY: `this` is a valid pointer to a `Self`.
->> +        let timer_ptr = unsafe { Self::raw_get_timer(this) };
->> +
->> +        // SAFETY: timer_ptr points to an allocation of at least `HrTimer` size.
->> +        unsafe { HrTimer::raw_get(timer_ptr) }
->> +    }
->> +
->> +    /// Start the timer contained in the `Self` pointed to by `self_ptr`. If
->> +    /// it is already running it is removed and inserted.
->> +    ///
->> +    /// # Safety
->> +    ///
->> +    /// - `this` must point to a valid `Self`.
->
-> Here the requirement is correct, since you need that for
-> `hrtimer_start_range_ns`.
-
-Yes.
-
->
->> +    /// - Caller must ensure that `self` lives until the timer fires or is
->
-> There is no `self`, do you mean the value living behind `this`?
-
-Yes, will change:
-
-    /// - Caller must ensure that the pointee of `this` lives until the timer
-    ///   fires or is canceled.
-
->
->> +    ///   canceled.
->> +    unsafe fn start(this: *const Self, expires: Ktime) {
->> +        // SAFETY: By function safety requirement, `this`is a valid `Self`.
->> +        unsafe {
->> +            bindings::hrtimer_start_range_ns(
->> +                Self::c_timer_ptr(this).cast_mut(),
->> +                expires.to_ns(),
->> +                0,
->> +                bindings::hrtimer_mode_HRTIMER_MODE_REL,
->> +            );
->> +        }
->> +    }
->> +}
->> +
->> +/// Use to implement the [`HasHrTimer<T>`] trait.
->> +///
->> +/// See [`module`] documentation for an example.
->> +///
->> +/// [`module`]: crate::time::hrtimer
->> +#[macro_export]
->> +macro_rules! impl_has_hr_timer {
->> +    (
->> +        impl$({$($generics:tt)*})?
->> +            HasHrTimer<$timer_type:ty>
->> +            for $self:ty
->> +        { self.$field:ident }
->> +        $($rest:tt)*
->> +    ) => {
->> +        // SAFETY: This implementation of `raw_get_timer` only compiles if the
->> +        // field has the right type.
->> +        unsafe impl$(<$($generics)*>)? $crate::time::hrtimer::HasHrTimer<$timer_type> for $self {
->> +
->> +            #[inline]
->> +            unsafe fn raw_get_timer(this: *const Self) ->
->> +                *const $crate::time::hrtimer::HrTimer<$timer_type>
->> +            {
->> +                // SAFETY: The caller promises that the pointer is not dangling.
->> +                unsafe {
->> +                    ::core::ptr::addr_of!((*this).$field)
->> +                }
->> +            }
->> +
->> +            #[inline]
->> +            unsafe fn timer_container_of(ptr: *mut $crate::time::hrtimer::HrTimer<$timer_type>) ->
->> +                *mut Self
->
-> This formatting looks a bit weird, (macro formatting is annoying, I
-> know).
-
-How would you change it?
-
-
-Best regards,
-Andreas Hindborg
-
-
+	Hans
 
