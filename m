@@ -1,150 +1,141 @@
-Return-Path: <linux-kernel+bounces-550859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E7CA5650A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:22:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E43BA5650C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:22:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D6F83A613F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:22:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49F261703FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:22:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC952135CF;
-	Fri,  7 Mar 2025 10:19:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D018A2135AC;
-	Fri,  7 Mar 2025 10:19:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8D8213254;
+	Fri,  7 Mar 2025 10:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="NUxK/DRG";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="qoELbrT7"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBEA1211474;
+	Fri,  7 Mar 2025 10:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741342753; cv=none; b=mlzTixIRDSgQaU6Bvo8axYN21YP2Psk4a+ifhUjyi3/TLICyYu3e6UwaFyBN1RAo7shEctq+WNBX/EUhwB+Z8hEDWtmOiQqhlGv4M0GBWXfBaBxKCKFnx2vSg3lKZ7tos5zaqgU1Yyn7SWZHBwNB59XNAyunfaHcfRA0Sej36as=
+	t=1741342772; cv=none; b=BAluM7AkdZVIi70qUMP4uSVeMIYgrADu6kzoKeVgd3ziJsxex6s/FGX2EE84Zr/x5IjAKLWq2Tqi7MbnUR0y0ooRcOCTi84HnLyhGbl+4iOOpOGkmoKTTemrKHti3pY2TT5ZIKnfaookmMdKo9TSSGg57F2zcXLP/Rys8uT/8b4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741342753; c=relaxed/simple;
-	bh=pLZMW6lX3DLMse1INX58kD8j1eFBZrBwVyM4agX06SM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pYxmLki0Ms1nLeTtcnKfsVJ+O7jHL7za6T3Q5umZeF8yBb3yRIrQIwUhKAh+m244gyDClOyj69+FEalHkeAZ9QO7pK0BBHIHSvwtrfEWaFNTK27igcUkA0CU58kI+SJDTe6yj3upHThqNGqcbVgyYRxXUtamAqCPXJQo8ncgBuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC65D150C;
-	Fri,  7 Mar 2025 02:19:21 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F3D943F66E;
-	Fri,  7 Mar 2025 02:19:05 -0800 (PST)
-Date: Fri, 7 Mar 2025 10:19:03 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Jacky Bai <ping.bai@nxp.com>
-Cc: "rafael@kernel.org" <rafael@kernel.org>,
-	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
-	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"d-gole@ti.com" <d-gole@ti.com>,
-	"anup@brainfault.org" <anup@brainfault.org>,
-	"paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
-	"palmer@dabbelt.com" <palmer@dabbelt.com>,
-	"aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"khilman@baylibre.com" <khilman@baylibre.com>,
-	"quic_tingweiz@quicinc.com" <quic_tingweiz@quicinc.com>,
-	"quic_yuanjiey@quicinc.com" <quic_yuanjiey@quicinc.com>
-Subject: Re: [PATCH v4] cpuidle: Init cpuidle only for present CPUs
-Message-ID: <Z8rIF3fQr958cf8g@bogus>
-References: <20250307080303.2660506-1-ping.bai@nxp.com>
- <Z8rBYuDiIyo8y6HT@bogus>
- <AS8PR04MB86425B7CEE7443F822A2DBCA87D52@AS8PR04MB8642.eurprd04.prod.outlook.com>
- <Z8rEkgYoThJAJdPV@bogus>
- <AS8PR04MB86425524495B3FEF19F32E6B87D52@AS8PR04MB8642.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1741342772; c=relaxed/simple;
+	bh=47wZE75C3ccWr+Grj15dAwgu5EKzR19KacsbqGuA9D8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HSQrU2sLIu3zZj7qqrFayOZe72acmqjoQrJgfpxdOHHKxBwN1H96ATbnpRP8hrYWH0glu0Gn66YqCEHHFDaX2BGh2YHwMTB0aZgGT2f41M7KgG5ZlucQnHM2LEZc+tqHY76liMIr9x7MAVEnm7aGOGDkiTtSFtzgwshl7ZNfwtE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=NUxK/DRG; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=qoELbrT7 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1741342768; x=1772878768;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=u5NnMAuoCpHi6I8onFu4kw3+wMiYKvzXi7R0wbc3Y8Y=;
+  b=NUxK/DRGhlIsOwTKFux81sAxrCIBmyZEcu66kGX/ef9flxugLU+lXar2
+   6GhOxaneirznIktD6UYsBj2dPDGvRbvuTAHlDVPoAQoHS8eAlt+nMFSD4
+   U1nVgrXjMTLZyK+5d3r72E/Hg9Lk07a58Q6Qca1Fp5B3WMovEV/JvQ6Dz
+   1F0hMgxUI0Lp7Td0RUs3YU+4rWWKbAqDoG+2KtvlySlBqrZSlWjwIJRM4
+   Qqd27LeUN3kEsGwzZTp3u4ADIx8mWT1WUwFyCyzaZ1BJHpSNfR6IaAX4K
+   xUiZDldXncdFU5JMMab/lhNnjZJKsrLUMKMqEUL3QqMUzP1QXtit96OxK
+   g==;
+X-CSE-ConnectionGUID: cwth3I3+SFm4GbrvFaS44w==
+X-CSE-MsgGUID: KT/ZiaJFTAmCZXaQrXGPxg==
+X-IronPort-AV: E=Sophos;i="6.14,228,1736809200"; 
+   d="scan'208";a="42425425"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 07 Mar 2025 11:19:19 +0100
+X-CheckPoint: {67CAC827-10-DC4DC9A0-F4F29281}
+X-MAIL-CPID: 3340A31ABDE18E85EDAED8C6EBB5AE90_0
+X-Control-Analysis: str=0001.0A00639E.67CAC82B.0057,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id EB938171FED;
+	Fri,  7 Mar 2025 11:19:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1741342755;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u5NnMAuoCpHi6I8onFu4kw3+wMiYKvzXi7R0wbc3Y8Y=;
+	b=qoELbrT7dqpxKdLBtp+15LkU3jggW0iYoWlp1nDF01+0gZva1+FyuliyvzFZ5DsiNYOLof
+	AltMCxXCtqdGzpkM+azfga6QX/0CBE5/GBypvksQ8AE1juhqQW4cz5uVMDPAeWfkpfZwER
+	Pchb8NZEMFFLfIsjUHgaJfMtXMLXs+JXbqslBec1iOLC5vNEPqQzO+lajV0px7IKvig9t8
+	NzUuRxF0VdRIjJdcpSpVv+5hKzNrc+QbWobBYh+z0U3wHiRKgJAyAuBzy8HLu2cao1oMZ/
+	K35gyL2hXJUnlSBBJf87+SD+aiKrmzGzhaVztcw3jKW+7lT/4/+DNEDimu3AWw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>,
+ "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>,
+ "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE"
+ <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+Cc: imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH] arm64: dtsi: imx93: add alias id for bbnsm_rtc
+Date: Fri, 07 Mar 2025 11:19:13 +0100
+Message-ID: <116096172.nniJfEyVGO@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250306193014.490091-1-Frank.Li@nxp.com>
+References: <20250306193014.490091-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AS8PR04MB86425524495B3FEF19F32E6B87D52@AS8PR04MB8642.eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Mar 07, 2025 at 10:10:50AM +0000, Jacky Bai wrote:
-> > Subject: Re: [PATCH v4] cpuidle: Init cpuidle only for present CPUs
-> > 
-> > On Fri, Mar 07, 2025 at 10:02:14AM +0000, Jacky Bai wrote:
-> > > Hi Sudeep,
-> > >
-> > > > Subject: Re: [PATCH v4] cpuidle: Init cpuidle only for present CPUs
-> > > >
-> > > > On Fri, Mar 07, 2025 at 04:03:03PM +0800, Jacky Bai wrote:
-> > > > > for_each_possible_cpu() is currently used to initialize cpuidle in
-> > > > > below cpuidle drivers:
-> > > > >   drivers/cpuidle/cpuidle-arm.c
-> > > > >   drivers/cpuidle/cpuidle-big_little.c
-> > > > >   drivers/cpuidle/cpuidle-psci.c
-> > > > >   drivers/cpuidle/cpuidle-riscv-sbi.c
-> > > > >
-> > > > > However, in cpu_dev_register_generic(), for_each_present_cpu() is
-> > > > > used to register CPU devices which means the CPU devices are only
-> > > > > registered for present CPUs and not all possible CPUs.
-> > > > >
-> > > > > With nosmp or maxcpus=0, only the boot CPU is present, lead to the
-> > > > > failure:
-> > > > >
-> > > > >   |  Failed to register cpuidle device for cpu1
-> > > > >
-> > > > > Then rollback to cancel all CPUs' cpuidle registration.
-> > > > >
-> > > > > Change for_each_possible_cpu() to for_each_present_cpu() in the
-> > > > > above cpuidle drivers to ensure it only registers cpuidle devices
-> > > > > for CPUs that are actually present.
-> > > > >
-> > > > > Fixes: b0c69e1214bc ("drivers: base: Use present CPUs in
-> > > > > GENERIC_CPU_DEVICES")
-> > > > > Reviewed-by: Dhruva Gole <d-gole@ti.com>
-> > > > > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
-> > > > > Tested-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-> > > > > Signed-off-by: Jacky Bai <ping.bai@nxp.com>
-> > > > > ---
-> > > > >  - v4 changes:
-> > > > >   - add changes for other cpuidle driver that has the similar issue
-> > > > >     as cpuidle-pcsi driver.
-> > > > >
-> > > > >  - v3 changes:
-> > > > >   - improve the changelog as suggested by Sudeep
-> > > > > ---
-> > > > >  drivers/cpuidle/cpuidle-arm.c        | 8 ++++----
-> > > > >  drivers/cpuidle/cpuidle-big_little.c | 2 +-
-> > > > >  drivers/cpuidle/cpuidle-psci.c       | 4 ++--
-> > > > >  drivers/cpuidle/cpuidle-riscv-sbi.c  | 4 ++--
-> > > >
-> > > >
-> > > > Why have you spared drivers/cpuidle/cpuidle-qcom-spm.c ? IIUC the
-> > > > issue exists there as well.
-> > > >
-> > >
-> > > For qcom-spm driver, it has below code logic to handle no cpu device
-> > > case, and no rollback to cancel the whole cpuidle registration. So I just leave
-> > it as it is.
-> > > Do we need to update it?
-> > >
-> > > for_each_possible_cpu(cpu) {
-> > >         ret = spm_cpuidle_register(&pdev->dev, cpu);
-> > 
-> > Did you look into this function ?
-> 
-> Yes, at the very beginning of this function it will check if the cpu device
-> is available, if not, directly return -ENODEV, something I misunderstood?
-> 
+Hi,
 
-So why do you think spm_cpuidle_register() does anything different than
-psci_idle_init_cpu(). They do exactly same check and yet you apply the
-change for psci_idle_init_cpu() but not for spm_cpuidle_register().
-What am I missing ?
+Am Donnerstag, 6. M=E4rz 2025, 20:30:14 CET schrieb Frank Li:
+> From: Joy Zou <joy.zou@nxp.com>
+>=20
+> Add rtc0 alias to set bbnsm_rtc as the default rtc.
+>=20
+> Signed-off-by: Joy Zou <joy.zou@nxp.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx93.dtsi | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/imx93.dtsi b/arch/arm64/boot/d=
+ts/freescale/imx93.dtsi
+> index 56766fdb0b1e5..7d9aa15ebf5d0 100644
+> --- a/arch/arm64/boot/dts/freescale/imx93.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx93.dtsi
+> @@ -34,6 +34,7 @@ aliases {
+>  		mmc0 =3D &usdhc1;
+>  		mmc1 =3D &usdhc2;
+>  		mmc2 =3D &usdhc3;
+> +		rtc0 =3D &bbnsm_rtc;
 
--- 
-Regards,
-Sudeep
+IMHO this is a board property, not SoC property.
+
+Best regards
+Alexander
+
+>  		serial0 =3D &lpuart1;
+>  		serial1 =3D &lpuart2;
+>  		serial2 =3D &lpuart3;
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
 
