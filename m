@@ -1,165 +1,131 @@
-Return-Path: <linux-kernel+bounces-551482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA968A56CFA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:02:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A3E6FA56CFD
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:02:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 790BA7AA218
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:01:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 777987AA788
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:01:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040E821859D;
-	Fri,  7 Mar 2025 16:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FDC122171D;
+	Fri,  7 Mar 2025 16:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Nk5R+Hr0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bb/UDfeo"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894AF2206AF;
-	Fri,  7 Mar 2025 16:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8B722156A;
+	Fri,  7 Mar 2025 16:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741363316; cv=none; b=Hy56UcXjRz2ll85IU2jrHdokFk/mVyf9cefptw9Fj+X8mcZTqa3kCoryahtjyZM8LLej3C1gJF0RAylJvXDdl6Wyx5QmrPs8nIDpKhmq1c+ehmHa4KNYCLiHdgkpU/iNWaxsYVyhDpQW9XtKyKP8qqCcW0sStFxaW43vytfngIY=
+	t=1741363319; cv=none; b=OLzNbeXipJzckMqksGxX2aT4UiXjKrgmrzS2y4GSv7B8UvAj9vlsXt425zrvW5ORRQss9KUWf7ILyViQCqTJHbQ4YvAd8IpQXLfLWYhJy549PW1x7PRkIn+H3Pr/xNO2C2o1YMI7VaqJuejT0mZ2CH9jRbV+RmnH097pFKCs3/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741363316; c=relaxed/simple;
-	bh=USwgT1jzvRdp1Oc/wwluIHHtxEgVqiKoaZgZt7DJfwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sqIYwjDJhsM+TBFnqp/qmrdETa8u/yDo3f5DUlYDFsPW9tHXIll1NYf21N0Adnk6rDpNL8u50n0jpvxKS7L6ZzRavR8ykY1jx8d30RgVSUEYdoHmX7wGEjukB3DpJ33ZSnmR5ps/hNvtFm6knftJuJJSwbOVh6PN2cQpSyDisXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Nk5R+Hr0; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741363314; x=1772899314;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=USwgT1jzvRdp1Oc/wwluIHHtxEgVqiKoaZgZt7DJfwI=;
-  b=Nk5R+Hr0A2siAGdi0x1buvXx1C1dxmXuRJMLGxQUqSf4xyZ3iTLNo/lg
-   fQhofL+eVGakk2EE1RzSz2TOey8FGmPyxmZYiI09m8R3OSWAry8ERnnI4
-   XOseMMMq5/stpv7aOtHls9cbcZaEA9Cth56MqBEO761qqR41xsNtWunei
-   9Ba3Mf6kmR+84O7vK/Kdy2lMlP44ksok39g7hN3abZGoOvUTkKKyfubPl
-   o5RYwspJN/hovhQfy7civjwODJdj/TSf8n/srBz6k0klPBE3FS0ygXdnW
-   tgKZXK9cPjXEylONXF8jQn9e80eG2Z5iu7vv7K+iDvdv+2rveO6LNU5BI
-   A==;
-X-CSE-ConnectionGUID: y+28BxEsQJuD6Cm4x7CRXg==
-X-CSE-MsgGUID: T9iFjlcCTSeiZfymK4R8Cg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="67787545"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="67787545"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 08:01:54 -0800
-X-CSE-ConnectionGUID: lJYz6EQ0TJK06fvY5zZCjQ==
-X-CSE-MsgGUID: YgnBBq1qRMqrsML9DcgrSw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="123943522"
-Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
-  by fmviesa005.fm.intel.com with ESMTP; 07 Mar 2025 08:01:50 -0800
-Received: from kbuild by a4747d147074 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tqa8v-0000gr-3B;
-	Fri, 07 Mar 2025 16:01:46 +0000
-Date: Sat, 8 Mar 2025 00:01:15 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alistair Francis <alistair@alistair23.me>, bhelgaas@google.com,
-	linux-pci@vger.kernel.org, Jonathan.Cameron@huawei.com,
-	lukas@wunner.de
-Cc: oe-kbuild-all@lists.linux.dev, alex.williamson@redhat.com,
-	christian.koenig@amd.com, kch@nvidia.com,
-	gregkh@linuxfoundation.org, logang@deltatee.com,
-	linux-kernel@vger.kernel.org, alistair23@gmail.com,
-	chaitanyak@nvidia.com, rdunlap@infradead.org,
-	Alistair Francis <alistair@alistair23.me>
-Subject: Re: [PATCH v17 3/4] PCI/DOE: Expose the DOE features via sysfs
-Message-ID: <202503072302.i9H71Jqv-lkp@intel.com>
-References: <20250306075211.1855177-3-alistair@alistair23.me>
+	s=arc-20240116; t=1741363319; c=relaxed/simple;
+	bh=sDYrqSLQwQmSZUEM2jqyh4n0GSf28H5kR5EpLD9dgx4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oo0ommlt7bXvqpX7RkCbnauW13654nSoXOl0NTxz/7tNZe4hdFT8ppitajuy524Fz4U0rCQVo3YYZuYRzls4h0r2gl6sKsKhAXPgTnL2Pszes0oRGzTgfsLi7nHrwE6QGHz1koq02GRZJp4yqyF//oWOlpUB+b5Tq0l6LI0F10s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bb/UDfeo; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3cf880d90bdso6444665ab.3;
+        Fri, 07 Mar 2025 08:01:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741363317; x=1741968117; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XyzCZ6tPew94XfiS+4OSnxV4WHqqsy2FInPHfaV1vig=;
+        b=Bb/UDfeocA4lblPPDYJ2jysvMs9TxfQ5J3uj1zsEhr7e+gg9lZC0uu1O9l/C5DiHF6
+         e+Grm47Mw8NpOsjDpicp4oSvKabFu3ih8SB6awOHCxyt+/fXBODi8oFIVJSEUTvSif7U
+         jjPjPz8g2mC1deW4sc4ZFiMJg0YQ6iXwlBxnPJrKeIkMptd9f9HsRaLfAzsvsKrhPuTT
+         n0n7/nWgcDC6GlaCZLs8v9y+DLoiOd45yndj44REnl1o/OMdpyHi30/tddaEd3Br5iLv
+         y0WEcUYVXmYTkSTTMGK2EPR2PNFNDY/00KSdxTUnvKZ3xYVdMTn3A4+ssKXnt+6smTn5
+         fE5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741363317; x=1741968117;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XyzCZ6tPew94XfiS+4OSnxV4WHqqsy2FInPHfaV1vig=;
+        b=U4O0A2oXSxIyK5PqPg4Fp2IFt/xEtvFo3okYvTIeMiuyNY9DMrhLCaqBxs6VDBmeUj
+         KUGAC2X0iAMfGvmOehf445mxzccFPqBueEqCowhXKGkTLmlkWgWqTR16ADyoy2E1p71m
+         Gc/dWrfCv43wOfpRhwUJQZ8Zw7MxBBhjwe5GSv8hc/sf3vLYOoZZ67UszTU3rSK+xoo3
+         qn7SCbfEqosiklGmlEEVQtdaYdfYzUS1CoWI8JAfcGFjb5odAM1IIsOKdoKunmpj6GzW
+         yzejYkd/sKkZg7uqTHZz37ma3ID02bI1m6jJU6GNGJPc/Vr+b+igcWqfj25xh1K1uynJ
+         /mMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/yf3w1qHT0l2bl4n/Ik8kepT/22iDG5fQsnpqNs32UirrQ70eCj4D0iiwRELYmm2Ig3tk6tidchQIorNr@vger.kernel.org, AJvYcCWTW7AGjMP5GT0U7FoYCJR6o6WCgeYs2p4yU3UYUtc8v+gbKAGFkclcv9ny20SworTVQ5cPBiNFfiUv2F+A@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9DNJVg0lc32ieqNM4n+F1Dzf9VztwSBXadvOf76yERI0P4iKq
+	CXbThSXm7aYyWZpcJDWpa3ttfqjZPv4QCwwcBzqB3H9Hh6ZZ3Il8A3/3e55NciQdk6E8+rB4a7U
+	lZmE4CRwtaa4ukaAC1ojZGa9Mlyo=
+X-Gm-Gg: ASbGnctKG2CoJ8H+EEU4GRNRNInXp5Jqcb0kcSQkGUssifdHn87N2yPmFBwqB1vmfj6
+	8zOVZ015PjaK7xQibhAr5pnF1mDgouvOvxUVscaxq2UH1skK3TFa6CGCdlM2P+C+/g540/nv3vD
+	CHEyOuPwufM0PQ57L/0rXRC3MSgw==
+X-Google-Smtp-Source: AGHT+IEqkZPqqdSckRO+B/IhTs42SUAvVrOyCHyKIDGjAnzV0O98IKKaPcGzJ9vvbFiyM8RlpzW+Mc3ryp1hFh9MUp8=
+X-Received: by 2002:a05:6e02:1a0a:b0:3cf:f844:68eb with SMTP id
+ e9e14a558f8ab-3d4419712b4mr45334665ab.4.1741363317257; Fri, 07 Mar 2025
+ 08:01:57 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250306075211.1855177-3-alistair@alistair23.me>
+References: <20250306-dpu-fix-docs-v1-0-e51b71e8ad84@kernel.org> <20250306-dpu-fix-docs-v1-1-e51b71e8ad84@kernel.org>
+In-Reply-To: <20250306-dpu-fix-docs-v1-1-e51b71e8ad84@kernel.org>
+From: Rob Clark <robdclark@gmail.com>
+Date: Fri, 7 Mar 2025 08:01:44 -0800
+X-Gm-Features: AQ5f1JqcVpnB0n6If-cKi8SOKwKukooOgmurcZp1EWDwVWSRGs12k5HWlnnV4MI
+Message-ID: <CAF6AEGv9ViJtvnYM-n-+oHY_Ky7KvBtng_2EOBDtyTL53SB_hA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] drm/msm/dpu: correct dpu_crtc_check_mode_changed docs
+To: Dmitry Baryshkov <lumag@kernel.org>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Alistair,
+On Thu, Mar 6, 2025 at 12:22=E2=80=AFAM Dmitry Baryshkov <lumag@kernel.org>=
+ wrote:
+>
+> Correct commit 20972609d12c ("drm/msm/dpu: Require modeset if clone mode
+> status changes") and describe old_crtc_state and new_crtc_state params
+> instead of the single previously used parameter crtc_state.
+>
+> Fixes: 20972609d12c ("drm/msm/dpu: Require modeset if clone mode status c=
+hanges")
+> Signed-off-by: Dmitry Baryshkov <lumag@kernel.org>
 
-kernel test robot noticed the following build warnings:
+Reviewed-by: Rob Clark <robdclark@gmail.com>
 
-[auto build test WARNING on pci/next]
-[also build test WARNING on pci/for-linus linus/master v6.14-rc5 next-20250307]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Alistair-Francis/PCI-DOE-Rename-Discovery-Response-Data-Object-Contents-to-type/20250306-155550
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20250306075211.1855177-3-alistair%40alistair23.me
-patch subject: [PATCH v17 3/4] PCI/DOE: Expose the DOE features via sysfs
-config: um-randconfig-r063-20250307 (https://download.01.org/0day-ci/archive/20250307/202503072302.i9H71Jqv-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250307/202503072302.i9H71Jqv-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503072302.i9H71Jqv-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from drivers/pci/msi/pcidev_msi.c:5:
-   drivers/pci/msi/../pci.h: In function 'pci_doe_sysfs_init':
->> drivers/pci/msi/../pci.h:488:70: warning: 'return' with a value, in function returning void [-Wreturn-type]
-     488 | static inline void pci_doe_sysfs_init(struct pci_dev *pdev) { return 0; }
-         |                                                                      ^
-   drivers/pci/msi/../pci.h:488:20: note: declared here
-     488 | static inline void pci_doe_sysfs_init(struct pci_dev *pdev) { return 0; }
-         |                    ^~~~~~~~~~~~~~~~~~
---
-   In file included from drivers/pci/pcie/aspm.c:27:
-   drivers/pci/pcie/../pci.h: In function 'pci_doe_sysfs_init':
->> drivers/pci/pcie/../pci.h:488:70: warning: 'return' with a value, in function returning void [-Wreturn-type]
-     488 | static inline void pci_doe_sysfs_init(struct pci_dev *pdev) { return 0; }
-         |                                                                      ^
-   drivers/pci/pcie/../pci.h:488:20: note: declared here
-     488 | static inline void pci_doe_sysfs_init(struct pci_dev *pdev) { return 0; }
-         |                    ^~~~~~~~~~~~~~~~~~
---
-   In file included from drivers/pci/hotplug/pci_hotplug_core.c:32:
-   drivers/pci/hotplug/../pci.h: In function 'pci_doe_sysfs_init':
->> drivers/pci/hotplug/../pci.h:488:70: warning: 'return' with a value, in function returning void [-Wreturn-type]
-     488 | static inline void pci_doe_sysfs_init(struct pci_dev *pdev) { return 0; }
-         |                                                                      ^
-   drivers/pci/hotplug/../pci.h:488:20: note: declared here
-     488 | static inline void pci_doe_sysfs_init(struct pci_dev *pdev) { return 0; }
-         |                    ^~~~~~~~~~~~~~~~~~
---
-   In file included from drivers/pci/controller/dwc/pcie-designware.c:24:
-   drivers/pci/controller/dwc/../../pci.h: In function 'pci_doe_sysfs_init':
->> drivers/pci/controller/dwc/../../pci.h:488:70: warning: 'return' with a value, in function returning void [-Wreturn-type]
-     488 | static inline void pci_doe_sysfs_init(struct pci_dev *pdev) { return 0; }
-         |                                                                      ^
-   drivers/pci/controller/dwc/../../pci.h:488:20: note: declared here
-     488 | static inline void pci_doe_sysfs_init(struct pci_dev *pdev) { return 0; }
-         |                    ^~~~~~~~~~~~~~~~~~
-
-
-vim +/return +488 drivers/pci/msi/../pci.h
-
-   483	
-   484	#if defined(CONFIG_PCI_DOE) && defined(CONFIG_SYSFS)
-   485	void pci_doe_sysfs_init(struct pci_dev *pci_dev);
-   486	void pci_doe_sysfs_teardown(struct pci_dev *pdev);
-   487	#else
- > 488	static inline void pci_doe_sysfs_init(struct pci_dev *pdev) { return 0; }
-   489	static inline void pci_doe_sysfs_teardown(struct pci_dev *pdev) { }
-   490	#endif
-   491	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> ---
+>  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/m=
+sm/disp/dpu1/dpu_crtc.c
+> index b0a062d6fa3bf942ffd687a91bccac3aa4f06f02..536d15818ba24f8b11f24e3bd=
+9726d31c57ef531 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> @@ -1395,7 +1395,8 @@ static int dpu_crtc_assign_resources(struct drm_crt=
+c *crtc,
+>
+>  /**
+>   * dpu_crtc_check_mode_changed: check if full modeset is required
+> - * @crtc_state:        Corresponding CRTC state to be checked
+> + * @old_crtc_state:    Previous CRTC state
+> + * @new_crtc_state:    Corresponding CRTC state to be checked
+>   *
+>   * Check if the changes in the object properties demand full mode set.
+>   */
+>
+> --
+> 2.39.5
+>
 
