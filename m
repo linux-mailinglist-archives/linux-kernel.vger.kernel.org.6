@@ -1,202 +1,191 @@
-Return-Path: <linux-kernel+bounces-550324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E40AA55DF5
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:00:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8342A55DF7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 04:01:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 910EC188C53B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:00:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1FB017372B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 03:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DAA140E3C;
-	Fri,  7 Mar 2025 03:00:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920C5140E3C;
+	Fri,  7 Mar 2025 03:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IJlNxyLh"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2073.outbound.protection.outlook.com [40.107.220.73])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="qEMb/0vq"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C58554673
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 03:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741316419; cv=fail; b=mUQufg2jS8nmwcZWvNI0cwXaTB+2AZSGpD2qDrAa6MgS/y6112CynI+OFCqxVDlrkp3KnhDCpNqexmPBOmoLFbxlNZ0Zb9KoY/b7/q5HBMDJpUBxdpXsoMMeZpQSKDQRR5VgH4RuZrMLi8bkGnneY/kPSZ4DmaV4mRlVIeIV5IQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741316419; c=relaxed/simple;
-	bh=QQuEAx4LmK7ItErHMT76pr3KNwZPGmuRfSRe70cOjRA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=EQdvwWUJz+uGMJtprVIcS7lsldqjWCGmRRQ2WeBM16T5KN90ngBOV9beqeFOw0NUi5+PPtwA2VZ8gz2hCxqmLqTkzLKwAS1KL15t0TIeSkjvHkd/dbh7JzgxSxU2EtWBkQdD6pSgeRw6mLOjDhC9nmsC86YHcKtjraX2E6zUqAU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IJlNxyLh; arc=fail smtp.client-ip=40.107.220.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xyZNCAnc+tN7Z6TqoeSHigqJebRo6Jchje9b5fVRgvbh0s/yiwU4Z3cXvxQofzDJ7UVLMgw3PDdjKpaEWinC77D7ojEcxANmJnVbkJ8mEmqtsuSDkOL6O4nY+GHQW/qz+omS5PEfbPziUnB0i6/UagD++0Ee455etTOPWh6RyaxQnTXqDlRRi/v1rA36bK+SWk0HVN5bO9wcFqVDju9ubqcbI1oXbHpORiC2Ar+xCl+GdDSwah5gAIax4YFQViENduAVpVuSC78kWcw1Nj903NAUgTzi0NtnF9udh0wC8JjCVPWteHQFNKwPoTxZmwMj8c/pyEDJHQV344nLW9bPfA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c1mY5Jx2urp3PM980gcqNCO+uw5J+kBPxnkSJpxOYNM=;
- b=TLcEMgtjgYvZD+T/gkg5scpQGlHrROUo7zxFD6Rg4xVw3Kc0i5FZCWxNgx/cIXhlcssUHyqUnLFnz5oJso1geNlz5POXCMPIowYLuZ4mV6AgMz4qprtzWLDHVg47BrkguZS+NXci1j1wPqjKLtY6Iz7/K8nB6Njp8DtGWB2k0Yo1qb2oK4cJVVaK17gbPHcupMEH96sM6dKU/cj931ShCHksKoUzlWS33t1JXffIoveRhJ3JQdDUczLUaEyrKcydseQqJ+ZwW4qilbYN/75rzW4JSxW98i3EJ1+DyG5j3zM9Ryld0daIEmhFQeRvEVfp+G3Of7JzpF4XL57m6UbSjg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c1mY5Jx2urp3PM980gcqNCO+uw5J+kBPxnkSJpxOYNM=;
- b=IJlNxyLhOhP1qEaZEAspSEmTByPUpVmySOWwSW0HDm+XsmxsCVuMHdOBdpz9cjOAkyhcZV9aOXzFI13tPaTh233abyZChrdFG8Ok/cB/esKljqEGa9D7AzSa9SS7MaF+kEQFOiE6hTs7DH3RbKGvihVPdaIYpfCITTPE3pifC0k=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA1PR12MB6434.namprd12.prod.outlook.com (2603:10b6:208:3ae::10)
- by DM6PR12MB4281.namprd12.prod.outlook.com (2603:10b6:5:21e::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.18; Fri, 7 Mar
- 2025 03:00:15 +0000
-Received: from IA1PR12MB6434.namprd12.prod.outlook.com
- ([fe80::dbf7:e40c:4ae9:8134]) by IA1PR12MB6434.namprd12.prod.outlook.com
- ([fe80::dbf7:e40c:4ae9:8134%3]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
- 03:00:15 +0000
-Message-ID: <0bd9f76a-e2cc-4dc1-b694-4ea2d229785e@amd.com>
-Date: Fri, 7 Mar 2025 08:30:00 +0530
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/4] mm: migrate: Allow misplaced migration without
- VMA too
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Cc: AneeshKumar.KizhakeVeetil@arm.com, Hasan.Maruf@amd.com,
- Jonathan.Cameron@huawei.com, Michael.Day@amd.com, akpm@linux-foundation.org,
- dave.hansen@intel.com, feng.tang@intel.com, gourry@gourry.net,
- hannes@cmpxchg.org, honggyu.kim@sk.com, hughd@google.com,
- jhubbard@nvidia.com, k.shutemov@gmail.com, kbusch@meta.com,
- kmanaouil.dev@gmail.com, leesuyeon0506@gmail.com, leillc@google.com,
- liam.howlett@oracle.com, mgorman@techsingularity.net, mingo@redhat.com,
- nadav.amit@gmail.com, nphamcs@gmail.com, peterz@infradead.org,
- raghavendra.kt@amd.com, riel@surriel.com, rientjes@google.com,
- rppt@kernel.org, shivankg@amd.com, shy828301@gmail.com, sj@kernel.org,
- vbabka@suse.cz, weixugc@google.com, willy@infradead.org,
- ying.huang@linux.alibaba.com, ziy@nvidia.com, dave@stgolabs.net,
- yuanchu@google.com, hyeonggon.yoo@sk.com
-References: <20250306054532.221138-1-bharata@amd.com>
- <20250306054532.221138-2-bharata@amd.com>
- <2ad7973b-9d92-4b34-8534-73ed1164a1c8@redhat.com>
-Content-Language: en-US
-From: Bharata B Rao <bharata@amd.com>
-In-Reply-To: <2ad7973b-9d92-4b34-8534-73ed1164a1c8@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PEPF00000179.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c04::44) To IA1PR12MB6434.namprd12.prod.outlook.com
- (2603:10b6:208:3ae::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62D51F94C;
+	Fri,  7 Mar 2025 03:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741316470; cv=none; b=nxm2R5BOWN/+LXbZ2MUckTileZFV7t5ij3l4wPoqDbH+4MZfatp4LX+Zfbt2BV9vL+cCF5xmePp7VUPMhnPV0bXyq9k5E0X8HRFpGwM/pGhlOV5cVXuGhEKCDyio3jDlcQ9eBosUoQo374IdnBG6Ne+KQN53pAq3uiDW16a7moI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741316470; c=relaxed/simple;
+	bh=Ce+92LM+uM4YqylDZSx7GYV7EDCMsE46HHc8u/9jI8k=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=EkYfItq6V0uguCI9H25nS/TzomE55Qt78uJJJ57/Ain+KpjBY6d3aIDfsLDn4eI3hjRXh0PKs3496FeM050wubvZo8OVoULGa4YMFZjDCv6FNsA4CmpFmRXbDQ+0AhLf/f9Q8QZnD2ulKrH2gYlhdZb2gB17RSW9I7u0fhnia40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=qEMb/0vq; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [127.0.0.1] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 52730beo023818
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 6 Mar 2025 19:00:37 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 52730beo023818
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741316438;
+	bh=Z55d4SeZwwI/wUtJOp92wkIpa/kadSMCflhcc0ibZ4k=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+	b=qEMb/0vqMjeKOkB2AUT2CZCp2TbxNZhEPUcO0EbXj+rqLOuI2KZnicviOYxiNz2MU
+	 3h1kzQ2BPcdt8jhOKYx0tFRhr3r35duWQDs21MkZvb1AbC2f6vfIWD7wL/DpyMCgJT
+	 3MuNXbCzzJ90S6gBQEFEgsnZqRwvMH5zihrF1CzNM4nZ92kDu033wHWMytiRI67DnK
+	 diZEzo50jOCEPVR4EyvoxLwmyHUNhsEITdMAoCGbT2CSOhbrjGgL3tlKx43AGmP7kk
+	 PXKDARPObino/LK4nr7uOrwOTnPbig623lP+MVndmHVng8C8IFnL9Rs1FTnzUZ1nvs
+	 nC4Zw+PrMt0dA==
+Date: Thu, 06 Mar 2025 19:00:35 -0800
+From: "H. Peter Anvin" <hpa@zytor.com>
+To: linux-kernel@vger.kernel.org,
+        tip-bot2 for Uros Bizjak <tip-bot2@linutronix.de>,
+        linux-tip-commits@vger.kernel.org
+CC: Uros Bizjak <ubizjak@gmail.com>, Ingo Molnar <mingo@kernel.org>,
+        David Woodhouse <dwmw@amazon.co.uk>, Baoquan He <bhe@redhat.com>,
+        Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>,
+        Ard Biesheuvel <ardb@kernel.org>, x86@kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5Btip=3A_x86/asm=5D_x86/kexec=3A_Merge_x86=5F32_a?=
+ =?US-ASCII?Q?nd_x86=5F64_code_using_macros_from_=3Casm/asm=2Eh=3E?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <174129682336.14745.3287112422322924162.tip-bot2@tip-bot2>
+References: <20250306145227.55819-1-ubizjak@gmail.com> <174129682336.14745.3287112422322924162.tip-bot2@tip-bot2>
+Message-ID: <36B61764-A297-459A-AD55-ACC54C409876@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR12MB6434:EE_|DM6PR12MB4281:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3db0e85d-1bdb-45dc-60e8-08dd5d242f08
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?L2JmV1VlZ0o2SHNnYVhlY3YzNkNNakhtVVpLR0xVL3VOd0FUU1hDSHYzM055?=
- =?utf-8?B?cUxlUVRsLzZqL29CY3V6UVFuUjFVbEQvK2d5cUJMZDNqbm9OdWdtYlh1YTIx?=
- =?utf-8?B?aWw4U0hmakZ5SUllSWsyNXhNeGxIMWVqcGFMSjRiQWJneEZtS1piRUJJWWVK?=
- =?utf-8?B?RnMxMDBLVmdidVZqdGdVREVTUFhBZXIxMHpnSndSZ3JWNmpGVUlXZGpEQ28z?=
- =?utf-8?B?SEhVNnpaeDg4TWY5ZFFwcDNzcDRUN3FCQUxIQUlKZk40NUJnN2ZLSFBsQStm?=
- =?utf-8?B?OE83QmNYZDR5UlN3M2VDZG5TS0p0d2RJcjA2VEFUZXFuOEo4RnFuQklmOStP?=
- =?utf-8?B?WVNFaUprQ29FOFpZQzFoT1BKdFFvNUN6dlRqQ29zbzY1Tm5aanJJRVMxem8v?=
- =?utf-8?B?Y2RuOThwbGM0emdjWVdYWVRMTXVzU2pPY3BMSVA5c3BFNmZtMzRyRWxlcEZM?=
- =?utf-8?B?OUdNRlNCZUlZcnc4Yi91bUVCbWdhUXZPbGJpZTBSMWtwT1B3cjk3RkZESERV?=
- =?utf-8?B?QlhJWHdsN2FjWU4yY3Z6MDBiMWFMZlpnQVJHdW00akM3dWJlL3VSMzBpbnNO?=
- =?utf-8?B?eTV6eGpydDMxRzBiSllvTVBCTHkwb3dSOXp1c0lmVVg3a2krL3NMa0VVcm9k?=
- =?utf-8?B?elJTTk1aK1c0b1dqMmJMcWVmVzBGTXcxVml1TDV5L2FIbDhMS0tEbFpFUDJG?=
- =?utf-8?B?OUovaUpRYWJoZGpBSGdVYWZ0bmUxOWpGZmZqd0p2c1FHdjlGMTZycm9TOWhh?=
- =?utf-8?B?T3B4UDFmTXl5Z2xLYUhpVEcrbXBFYmhmb2IyRHRhOTFCN3JYeFdVOWMzTzNL?=
- =?utf-8?B?d1hOUHU0Z2MxZEVEazF0STNJdDdGUlVlRDBmdElaNmJROTdTbFBpOHk1eWVL?=
- =?utf-8?B?TU13RHE3MFJ4a2ZjQTlESTVxblI3aEYwa1o3cXVLYTdacjVUN21SOEwxQjJn?=
- =?utf-8?B?VzR2Ui9hcW9lMWJkRXdNTEFuU2xuZ2cvbGlITURaM1dzR3NYYUFmUzhmUVRa?=
- =?utf-8?B?UFBGWks1SGlVYllxZUR0ZU5odkZHU3I1cUZPK05oSWNwbFpJV1VhRWRpNVJ4?=
- =?utf-8?B?YUsyeEtKbkYvNHE1dm93S3I5MlBvUVJBSTNBem0zZmI4QUFiNFM5M1R0b0JP?=
- =?utf-8?B?Y3BSMWU1cUR3a2hNVHBjaWtSaHI1L0ZkcFh1N3BqTk5vS3lRL3RWWEkvWEtM?=
- =?utf-8?B?TEdRRzYwMUYyVGtUdWltbTgxUEJlcHg0TGtIaGg0aWN6QmV6RTJCem9UWXNH?=
- =?utf-8?B?b2FBcXVmS2lIMUoxQnFiLzYrNjl5YjY3eTVyU1JlUEJQUWp3MnNUWWwxR0ha?=
- =?utf-8?B?UFFjNWpZamI3RWdDUHpXR3g0SW1oT0dkL0xPb2IyVFh2aEtGUHdHUFhLMkVE?=
- =?utf-8?B?VjNlN29yc0NCU2ZhZHNPbTliNEljZER4Y3BrL0VwWldiTjcyK25aVWF2Vjhp?=
- =?utf-8?B?VnBhT1FPSHNPNEF2WE53VThENk9JY2tjSHAyejM0NW45aDVMeEZFQmVSYjdY?=
- =?utf-8?B?ZWFpSUROOUNLeWdMNXhmK2NpYnN6bktwV0ZZZXFHWitNY0dtMzRsWEFMVU1k?=
- =?utf-8?B?Mm9QYVVOcjA4Mjh4eFgzNjNQMjY2VXVpM2FBci9FZzFZdEdSVzBqYWQ5d2ts?=
- =?utf-8?B?cU1ZREFReHplY1ZIZVl0a00vUVBTakRkUU5BRnFxWnNMOFRramM4Qm1RcTNl?=
- =?utf-8?B?ZXRUbnVlN0VoTVA2b3BMM29iY24zVzhsWm5EMDl1R1I2d3NnRndJKzVGVkdy?=
- =?utf-8?B?d2lwY3hXZDEvMHpVT3VBL0JZdkU2MXJoRHA3RnFsZTR2TGc2QkZmT1BHMVh0?=
- =?utf-8?B?L3JaNGplL0I0bVNoV01WMTNLcGw4TU5aMzZ6aVAzanduSjd3dzU2ZnR6cmZ3?=
- =?utf-8?Q?XHQFfRjAAi0/B?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR12MB6434.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UjNTZnZuZWQyZTBQODRMUHhEMzVIYzc2TDUvRFJVNE5OWkRYNGtQUVhJWlky?=
- =?utf-8?B?NFNGOEM1cWlkQ1A3OG5BVGF1NHE0UjhkOEVNa3ppV3NjSDE2VEg4dWkrRngr?=
- =?utf-8?B?dFF1ZG4xTlJBdlRoRURpT1RXbnNVRm1XeEZHbXNtUldnU2VIdVhoODJCclJY?=
- =?utf-8?B?NkpPY285SDZRdXhCSmdOOGQ2SmEwUU1oYzVDUHcrMkdidGRCYXRBUVFuZFk2?=
- =?utf-8?B?WW9KbFNvdVNSZStiRUpCR0k3cWRLUUhlbkwxNWE2VFZPaVQ5NEVlMzBFQUI2?=
- =?utf-8?B?NkV4WGFrR1grUjZMWTA3a2c5eERCRUppVm5RTlpwZTg2Mm9sMmkxbmRpQ3Ar?=
- =?utf-8?B?STY0dGxIQXNtVzZCNG4xUDBmY2VwNDBzUWxETkJWQmtGN3N2OGErcEYzZy9z?=
- =?utf-8?B?dXNpWm9oTmcrUnAxbDFBTW1ZM2s2RGVaaGprWDJheEZHa2RQUDJ3cmRsTDJ3?=
- =?utf-8?B?MDZSeEh5Qjgvd3JUaFJXMVFjOUtXWjM4dmFjYUw4Tks2S2V3dUNrL0QyVVU1?=
- =?utf-8?B?bUsxLy9pZktBemM5Z0RYazhPREVtUW1XUTZVeWdmbHBtcFpFaFhTamZXTHZL?=
- =?utf-8?B?UVRhYVBkNmhKZU1PNjlWeTRDVjUweG9xenZrZDNwbVplUnlhSTBlSm5UMU1X?=
- =?utf-8?B?Z2NGNGYrVEtLSEVBK3pqeFlicHpOa0pNanl3emZjRld2Mm9CUVJQNDJCSWF5?=
- =?utf-8?B?T0dyMGl6SGlFc3ltYXcxY2xYQjFCVks2d2MyQ2xQNEJjQ3pmNzgvUzhxbXBa?=
- =?utf-8?B?RU1lb3pzYWpvalk1c2VBNFkvYU5lbEVZaE95Z3dpaWQ4RWdNTUJCUWFoU0hN?=
- =?utf-8?B?dlM3SEJ6VS9SNzQyUGFNVC93OHFTQktyalFQSTNtNEJYSG42SmU4UHdhNWlF?=
- =?utf-8?B?eFptakJpSHF5S3ZUcEwvaWQ2cGtOc1daZW5VNXZZUFFwbC9VYXFRdCtmalpK?=
- =?utf-8?B?NzlUUWsxWXIrQUtzZFl1Z3JEcE4zdXdQOUM0Zm9WZ2cxZk1CbDRJMDhONHJ3?=
- =?utf-8?B?ZXc1Mm5PMERLRG85em51Si9JQmExTTIvOHhPK3ZQQURpRG9CajArMjF1ZFE2?=
- =?utf-8?B?T3gwK21wL09hUkNrQ2plbUhrSG5raUEyS3p3RFgwRnd1RUtuK2JhZGhmQ283?=
- =?utf-8?B?RG5oN0c1VVFKU3pIdWl4RG15MUs3V0NLVjFYeUFKaCs2dnRDRC9MTHF1OUVK?=
- =?utf-8?B?eXlMVlV5MSs1ZmxHQTNJc2RxWGg2YkFZSlVzcEs0d0NxUmJOck5BeWIvVUND?=
- =?utf-8?B?d29iRkV0a05hU21yZGROYStKNWtZVDkxblZLczhNL1puaHdqM09WaWNKWGR4?=
- =?utf-8?B?RDVnYVVtaUZnb1diaUZNWmN3NzAvU3ZVSDJpSzJTUjR2Sy9Rc05Za0RwMXJx?=
- =?utf-8?B?UElrOXZBSGQrbUZ3K2hKcHdmNXA2TGxnZVNNNkcwV1p2dGxtWkU0bFJBWVR4?=
- =?utf-8?B?YWhXWFY1ZHVSamlaVVRtZXJuaGV6RXBDRXB6bzFPQWZyRW1pbXFRbUJjMkdV?=
- =?utf-8?B?NDYrMitDdTRxTkRPa1FZNkhjbVk2K0xvcEdVNjZDWkhVcWJPVlU1YVpqN2gr?=
- =?utf-8?B?Nnc3Q3p6TkxsWmFuenQvbDhEeEtKNnlzaThsdzI0WFRmOEFVMVYydGptdTdh?=
- =?utf-8?B?RU9tNVl3L0NSNjlrbjR4UVcyd1MxY1VTa2xsMDFxTm5zL21CdStHanhidFQw?=
- =?utf-8?B?aWt5VExWY3dWZ3VDRG1ic1pjeGkvU0w4ZXJkNm1kUThGV2xzYSt5emxRdUh5?=
- =?utf-8?B?eE0weUJvQXZCNEROZWdSanlPMkZHcVN5aFhJMkVJaTgzT3orbk1tSktYWkRD?=
- =?utf-8?B?NzgrYUtHOTdFYTY0RlZncGZ1UHY3QlZaVFVjc2s3dXFiRlR4Q3dpK0wvQUYr?=
- =?utf-8?B?VURzQlFkSkpsc0hHNmVzenduQVE2OTk5Z3lvVG5FNmFNeTZyQUZCUUdBbzdZ?=
- =?utf-8?B?QkU2Q1l5dTc3Vi9TemtXbUl2WlBTejhpU0dtb0ZVKzBCMnVVNVlwWThzVGwr?=
- =?utf-8?B?dFRhQVE4amQwT2ZHeEVGNnFEc1U1dHc1TENMVExVcFR6dEZiSUVOOXRlaUxs?=
- =?utf-8?B?d3FLTm4xSENRa3ZPOWxjNngxQWlLTEdYOG1LT080VjBOWTV2dDNxMzZZV1A4?=
- =?utf-8?Q?NMSIXlSs3fpRpU+lld3FMIQjM?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3db0e85d-1bdb-45dc-60e8-08dd5d242f08
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR12MB6434.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 03:00:15.1018
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 8N/AJcC9fknpfctVY+QSoc4hK8GJ38DLKMGDXzOqRcl8NxUFkfc1omCJIZMR1ASfIs6UcYCUAfGyYUIO2Uq3PQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4281
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 06-Mar-25 5:43 PM, David Hildenbrand wrote:
-> On 06.03.25 06:45, Bharata B Rao wrote:
->> migrate_misplaced_folio_prepare() can be called from a
->> context where VMA isn't available. Allow the migration
->> to work from such contexts too.
-> 
-> I was initially confused about "can be called", because it can't
-> 
-> Consider phrasing it as "We want to make use of 
-> alloc_misplaced_dst_folio() in context where we don't have VMA 
-> information available. To prepare for that ..."
+On March 6, 2025 1:33:43 PM PST, tip-bot2 for Uros Bizjak <tip-bot2@linutro=
+nix=2Ede> wrote:
+>The following commit has been merged into the x86/asm branch of tip:
+>
+>Commit-ID:     aa3942d4d12ef57f031faa2772fe410c24191e36
+>Gitweb:        https://git=2Ekernel=2Eorg/tip/aa3942d4d12ef57f031faa2772f=
+e410c24191e36
+>Author:        Uros Bizjak <ubizjak@gmail=2Ecom>
+>AuthorDate:    Thu, 06 Mar 2025 15:52:11 +01:00
+>Committer:     Ingo Molnar <mingo@kernel=2Eorg>
+>CommitterDate: Thu, 06 Mar 2025 22:04:48 +01:00
+>
+>x86/kexec: Merge x86_32 and x86_64 code using macros from <asm/asm=2Eh>
+>
+>Merge common x86_32 and x86_64 code in crash_setup_regs()
+>using macros from <asm/asm=2Eh>=2E
+>
+>The compiled object files before and after the patch are unchanged=2E
+>
+>Signed-off-by: Uros Bizjak <ubizjak@gmail=2Ecom>
+>Signed-off-by: Ingo Molnar <mingo@kernel=2Eorg>
+>Cc: David Woodhouse <dwmw@amazon=2Eco=2Euk>
+>Cc: Baoquan He <bhe@redhat=2Ecom>
+>Cc: Vivek Goyal <vgoyal@redhat=2Ecom>
+>Cc: Dave Young <dyoung@redhat=2Ecom>
+>Cc: Ard Biesheuvel <ardb@kernel=2Eorg>
+>Cc: "H=2E Peter Anvin" <hpa@zytor=2Ecom>
+>Link: https://lore=2Ekernel=2Eorg/r/20250306145227=2E55819-1-ubizjak@gmai=
+l=2Ecom
+>---
+> arch/x86/include/asm/kexec=2Eh | 58 +++++++++++++++--------------------
+> 1 file changed, 25 insertions(+), 33 deletions(-)
+>
+>diff --git a/arch/x86/include/asm/kexec=2Eh b/arch/x86/include/asm/kexec=
+=2Eh
+>index 8ad1874=2E=2Ee3589d6 100644
+>--- a/arch/x86/include/asm/kexec=2Eh
+>+++ b/arch/x86/include/asm/kexec=2Eh
+>@@ -18,6 +18,7 @@
+> #include <linux/string=2Eh>
+> #include <linux/kernel=2Eh>
+>=20
+>+#include <asm/asm=2Eh>
+> #include <asm/page=2Eh>
+> #include <asm/ptrace=2Eh>
+>=20
+>@@ -71,41 +72,32 @@ static inline void crash_setup_regs(struct pt_regs *n=
+ewregs,
+> 	if (oldregs) {
+> 		memcpy(newregs, oldregs, sizeof(*newregs));
+> 	} else {
+>+		asm volatile("mov %%" _ASM_BX ",%0" : "=3Dm"(newregs->bx));
+>+		asm volatile("mov %%" _ASM_CX ",%0" : "=3Dm"(newregs->cx));
+>+		asm volatile("mov %%" _ASM_DX ",%0" : "=3Dm"(newregs->dx));
+>+		asm volatile("mov %%" _ASM_SI ",%0" : "=3Dm"(newregs->si));
+>+		asm volatile("mov %%" _ASM_DI ",%0" : "=3Dm"(newregs->di));
+>+		asm volatile("mov %%" _ASM_BP ",%0" : "=3Dm"(newregs->bp));
+>+		asm volatile("mov %%" _ASM_AX ",%0" : "=3Dm"(newregs->ax));
+>+		asm volatile("mov %%" _ASM_SP ",%0" : "=3Dm"(newregs->sp));
+>+#ifdef CONFIG_X86_64
+>+		asm volatile("mov %%r8,%0" : "=3Dm"(newregs->r8));
+>+		asm volatile("mov %%r9,%0" : "=3Dm"(newregs->r9));
+>+		asm volatile("mov %%r10,%0" : "=3Dm"(newregs->r10));
+>+		asm volatile("mov %%r11,%0" : "=3Dm"(newregs->r11));
+>+		asm volatile("mov %%r12,%0" : "=3Dm"(newregs->r12));
+>+		asm volatile("mov %%r13,%0" : "=3Dm"(newregs->r13));
+>+		asm volatile("mov %%r14,%0" : "=3Dm"(newregs->r14));
+>+		asm volatile("mov %%r15,%0" : "=3Dm"(newregs->r15));
+>+#endif
+>+		asm volatile("mov %%ss,%k0" : "=3Da"(newregs->ss));
+>+		asm volatile("mov %%cs,%k0" : "=3Da"(newregs->cs));
+> #ifdef CONFIG_X86_32
+>-		asm volatile("movl %%ebx,%0" : "=3Dm"(newregs->bx));
+>-		asm volatile("movl %%ecx,%0" : "=3Dm"(newregs->cx));
+>-		asm volatile("movl %%edx,%0" : "=3Dm"(newregs->dx));
+>-		asm volatile("movl %%esi,%0" : "=3Dm"(newregs->si));
+>-		asm volatile("movl %%edi,%0" : "=3Dm"(newregs->di));
+>-		asm volatile("movl %%ebp,%0" : "=3Dm"(newregs->bp));
+>-		asm volatile("movl %%eax,%0" : "=3Dm"(newregs->ax));
+>-		asm volatile("movl %%esp,%0" : "=3Dm"(newregs->sp));
+>-		asm volatile("movl %%ss, %%eax;" :"=3Da"(newregs->ss));
+>-		asm volatile("movl %%cs, %%eax;" :"=3Da"(newregs->cs));
+>-		asm volatile("movl %%ds, %%eax;" :"=3Da"(newregs->ds));
+>-		asm volatile("movl %%es, %%eax;" :"=3Da"(newregs->es));
+>-		asm volatile("pushfl; popl %0" :"=3Dm"(newregs->flags));
+>-#else
+>-		asm volatile("movq %%rbx,%0" : "=3Dm"(newregs->bx));
+>-		asm volatile("movq %%rcx,%0" : "=3Dm"(newregs->cx));
+>-		asm volatile("movq %%rdx,%0" : "=3Dm"(newregs->dx));
+>-		asm volatile("movq %%rsi,%0" : "=3Dm"(newregs->si));
+>-		asm volatile("movq %%rdi,%0" : "=3Dm"(newregs->di));
+>-		asm volatile("movq %%rbp,%0" : "=3Dm"(newregs->bp));
+>-		asm volatile("movq %%rax,%0" : "=3Dm"(newregs->ax));
+>-		asm volatile("movq %%rsp,%0" : "=3Dm"(newregs->sp));
+>-		asm volatile("movq %%r8,%0" : "=3Dm"(newregs->r8));
+>-		asm volatile("movq %%r9,%0" : "=3Dm"(newregs->r9));
+>-		asm volatile("movq %%r10,%0" : "=3Dm"(newregs->r10));
+>-		asm volatile("movq %%r11,%0" : "=3Dm"(newregs->r11));
+>-		asm volatile("movq %%r12,%0" : "=3Dm"(newregs->r12));
+>-		asm volatile("movq %%r13,%0" : "=3Dm"(newregs->r13));
+>-		asm volatile("movq %%r14,%0" : "=3Dm"(newregs->r14));
+>-		asm volatile("movq %%r15,%0" : "=3Dm"(newregs->r15));
+>-		asm volatile("movl %%ss, %%eax;" :"=3Da"(newregs->ss));
+>-		asm volatile("movl %%cs, %%eax;" :"=3Da"(newregs->cs));
+>-		asm volatile("pushfq; popq %0" :"=3Dm"(newregs->flags));
+>+		asm volatile("mov %%ds,%k0" : "=3Da"(newregs->ds));
+>+		asm volatile("mov %%es,%k0" : "=3Da"(newregs->es));
+> #endif
+>+		asm volatile("pushf\n\t"
+>+			     "pop %0" : "=3Dm"(newregs->flags));
+> 		newregs->ip =3D _THIS_IP_;
+> 	}
+> }
 
-Yes, that would be the right wording.
-
-Thanks,
-Bharata.
+Incidentally, doing this in C code is obviously completely broken, especia=
+lly doing it in multiple statements=2E You have no idea what the compiler h=
+as messed with before you get there=2E
 
