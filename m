@@ -1,118 +1,107 @@
-Return-Path: <linux-kernel+bounces-552061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052DFA574DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:25:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF365A574DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:25:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E600C3B5152
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:25:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E37577A85D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6FAA256C9B;
-	Fri,  7 Mar 2025 22:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D442561DA;
+	Fri,  7 Mar 2025 22:25:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="VOBt5Vhb"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="illAF1zh"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46B023FC68
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 22:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B41823FC68;
+	Fri,  7 Mar 2025 22:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741386320; cv=none; b=BVdAwXfw86okyh2194VexUaxM05+o8uH65hxdYwR9mTtx6q/PYBIM/qp8E1iVr1Epd5GbZXxvYJivUuXHqr7n6FokIOp+PD6X9/HG+GO48Sm1yjVczaNjOebBOFSXMmJnXuy0Tx62URQwgKyynq8Rv+FB1Gg3zYNz2c/hPpRbEk=
+	t=1741386340; cv=none; b=A9C+GdaRueMddfn83z683W7DprGGd7Z7WUf4IiYfQPMkrVYfpTzfz6oZARYV2Sca9xKXcaC0vf/YT6okgciVmx3x2e0hT+unS4iZvqZSupzBeMVc2GExQqkLhOwSA5wfpFHzZS32BVXB4rGKuFEbIX+xEAptPtMJykHlFOT3GFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741386320; c=relaxed/simple;
-	bh=Tefjw0Zt4cnyZO02FKhjkwBKwBWG4UZLtaZPQIzucR8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R39bSblh6HSPJh84AbLLVXj/exHV3wVY04+bPiXv0aY11yoQAioWa9RPBeN1KwMDVvia/i+9TxAB1JEVEmRnpnr5VopzyqBdPpYeE0Dto4G7r0avaV146f7/E4366RRwthaHPUc8kb0jjAC3zRwTCjXqFSgSZZoqYptoHTaB2eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=VOBt5Vhb; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abf45d8db04so365078766b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 14:25:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google; t=1741386316; x=1741991116; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=x7bxGM8ehnB0CKiiNXfobN0duR+gRIWC930Rlv14dlw=;
-        b=VOBt5VhbTOia0Al5PKYxai4X+deB6jaRpfsUq7LHAjRR3qtE58dZazkmVMzcVQ/nh2
-         xlOg7a2SL44mIW2FFujDKocMJ0Q+ImKdDgX10VpDgYcOHtLNDJVdPMWx4J6ilCiqIgdA
-         QbiibculboRuexNoF2QGzv4YRvQSlo4KGVP/I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741386316; x=1741991116;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x7bxGM8ehnB0CKiiNXfobN0duR+gRIWC930Rlv14dlw=;
-        b=tuE/4XvloYc79t3mpURP166h9hpcNuk/NtVCQx4vq5MOl9q7sySDOsTYqckDfjrh/a
-         ax/OLaZCtR/FXrXyu+QVR7dDHPUGQM4B1lQpOci0Z2FYLoAAyMHdFRE6VjB9JAqv4yg+
-         2IcpHchIsXrM/tvD+uYGbo92DSSgaWCwJaNGnJ7R2+YHg47smTm4DHAGA2QPqUryk5Ih
-         y9ESy2wt5e0+M91hQYCP4CDNYoW2wNfHBxdxvGVatHOoVfCQ+gMFKUyFX83sUYwO7Zz8
-         tUbLZ5A0HIBuD8R202gy1jJb9XrKOcSkfwHeyo9r0q888h/0L7/GOfh/aSAVsiGiJiuf
-         Dp8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV8TyrBTu3ucgM8yPRl+z0zEPyW70V2xQCkzMjLd9/rNtHL59FNXtJIYs4PY5jF51Ybw5fnjBGJz8SckV8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwheoPUHvZEfdKmJmeJs4u1RfD2mHfUE6UFlNpjO4IKmlZTOSF
-	rLQZEK+C/ZbsQ5k1fQfsO9UNJ62ON4vUQ7/h+YyMtBL9amZSrs3j5t+lSgxUoaM=
-X-Gm-Gg: ASbGncu1RXaj71WbUnRpJvtp9sUvW/wHaA79wLjr/NU0peqt7k5dlfTdsVQKqUD+CvR
-	iNSVaUMW1fp5IpOI2ONnGZdxX0YBPYpXjbRJPAAxB7I2r3XoJ2vVCIFeleHuQf+QjW+KJkgflQ4
-	EXnSYrcYXf3yW/k0k6iIXJzVvKqhW/A6HixSgRyANCIMXeYV23E9M/zN2HNf8GQBZy4gkCZ7Aud
-	z06TYWNT6vGT5XZeatdSmny+e9Qkt0gDxwlMUbRn1hqc4ior7sK7wBaVK2HEpAiGI8RSPEmOJrL
-	QmbtaPIAH1fE6kWz3DlYawKN0f8ER5Av8xcZN2ytjY0TTzWtRP1a9iGOgnzPZ6bg9k/ozxZxmnz
-	AzRU=
-X-Google-Smtp-Source: AGHT+IGTO+rlQYp8L/Ng/3pTy8WwsLZtG1hOzMYWfjy73pYnHQygx5aMKEaDNsFM6tybUcd4gs8WgA==
-X-Received: by 2002:a17:906:794f:b0:abf:6b14:6cfb with SMTP id a640c23a62f3a-ac2525e314cmr594597266b.5.1741386315785;
-        Fri, 07 Mar 2025 14:25:15 -0800 (PST)
-Received: from localhost (77.33.185.121.dhcp.fibianet.dk. [77.33.185.121])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-ac239438f9bsm339136066b.11.2025.03.07.14.25.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 14:25:15 -0800 (PST)
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Howells <dhowells@redhat.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] fs/pipe.c: merge if statements with identical conditions
-Date: Fri,  7 Mar 2025 23:25:00 +0100
-Message-ID: <20250307222500.1117662-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741386340; c=relaxed/simple;
+	bh=xTON+J8OzvrysxuNQRwrqIVwpO/hkAF5UNeOFyp3wXo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=qGG/9O12Lzuy8y1htLppwpaueLlsJy8IRJ+WAxYw8HPw41IVD83gQCT45uGUuJkZQyrp2DCoH5vNNTHliq21gMGIGyXBzHPkF/na6/SjREmwZ2fJXobymks44DzPystkQtjLVOFqdCoa/gEYCSXpSvzrhSCH6JU3X9N0kCCLnl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=illAF1zh; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 527MPVlt485179
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Mar 2025 16:25:31 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741386331;
+	bh=f5jKSlZGlGiJXcnUBFmBH70jB0bTGdkoasIi160iUrs=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=illAF1zh0Xwf6POhwM3sBNWxWu1razjKqWENqk0zyQO71S2lpVBGF2rkkp5yZFbP1
+	 MN36OCYW/i7kXnvrLmrZxYlUBNkwKqvXrXodCoH1kiZ73yGtvXFjb2TeKDt4j2lZug
+	 eIf/5tQdzkSqElocuZ/b3A8qbv2rlrrKsaZ4J7Sg=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 527MPVcR046961
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 7 Mar 2025 16:25:31 -0600
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
+ Mar 2025 16:25:31 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 7 Mar 2025 16:25:31 -0600
+Received: from [128.247.81.105] (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527MPVPW081358;
+	Fri, 7 Mar 2025 16:25:31 -0600
+Message-ID: <df3842b2-7a7e-4c54-80dc-927c7eb55b3c@ti.com>
+Date: Fri, 7 Mar 2025 16:25:31 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 00/10] Add R5F and C7xv device nodes
+To: Vignesh Raghavendra <vigneshr@ti.com>, Andrew Davis <afd@ti.com>,
+        Hari
+ Nagalla <hnagalla@ti.com>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Nishanth Menon <nm@ti.com>, <devicetree@vger.kernel.org>
+References: <20250210221530.1234009-1-jm@ti.com>
+Content-Language: en-US
+From: Judith Mendez <jm@ti.com>
+In-Reply-To: <20250210221530.1234009-1-jm@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-As 'head' is not updated after head+1 is assigned to pipe->head, the
-condition being tested here is exactly the same as in the big if
-statement just above. Merge the two bodies.
+Hi Vignesh, all,
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
- fs/pipe.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+On 2/10/25 4:15 PM, Judith Mendez wrote:
+> For am62x and am62ax devices, this patch series adds device nodes
+> for the R5F subsystem and C7xv DSP subsystem found in their
+> respective voltage domain, based on the device TRMs [0][1].
+> 
+> This patch series also includes patches for enabling IPC for am62x SK,
+> am62ax SK, and am62px SK by reserving memory and binding the mailbox
+> assignments for each remote core.
+> 
+> Also reserve timers used by C7x DSP for am62ax SK board and timers used
+> by MCU FW for AM642 SK and EVM boards as per firmware requirements.
+> 
 
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 097400cce241..27385e3e5417 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -547,10 +547,8 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 
- 			if (!iov_iter_count(from))
- 				break;
--		}
--
--		if (!pipe_full(head, pipe->tail, pipe->max_usage))
- 			continue;
-+		}
- 
- 		/* Wait for buffer space to become available. */
- 		if ((filp->f_flags & O_NONBLOCK) ||
--- 
-2.48.1
+Is it at all possible to only pick the first 4 patches of this series
+that only enable the core nodes?
+
+I will respin the rest of the series in a different patch series.
+
+~ Judith
+
 
 
