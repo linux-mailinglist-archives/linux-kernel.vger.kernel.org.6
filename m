@@ -1,644 +1,296 @@
-Return-Path: <linux-kernel+bounces-551863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016C2A5723F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:41:43 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66061A57243
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:42:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 426891899D2D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:41:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 672327ABFF6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:41:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F05E254B09;
-	Fri,  7 Mar 2025 19:41:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C43B0254B18;
+	Fri,  7 Mar 2025 19:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QFWbaSOc"
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="e67il7lr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B876924FC03;
-	Fri,  7 Mar 2025 19:41:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AEFE25487F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 19:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741376492; cv=none; b=EVYbxjyCjP2FMiO4uYnkdDTVT9Zx8ZJDlmB/Umhfa+sgDn0OvzetyAZuJ74G8J0f9ckz6zhhWLbAEOLZQWkoW5P4F72hU0RzGHBNPOew/sTrG+FbilWFR/iz0pz6+1NU6kBgtQyO+h6pAmfys0UtzsOunfeF8pU9QAofFtbvsYk=
+	t=1741376529; cv=none; b=O+QPvKdBrXuPJnwSUUgRwxNfJ8s8yMB4Shab23zVJnXrAjE86Y4en4NMbWlI5JWM9qiins+rxXW0g/PHwEQHtJ15PFoESchGv43YRzPjxhGhI3keaZLikQtD1lLvgbiTE/ekrXhqYV8LRGeppI45nVAeJr/XYwCTE5pOa+6RPCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741376492; c=relaxed/simple;
-	bh=yTA4jjpar0nAQIcDEzZ4DTe+OS4ZxvTCnC3mkdPUP+c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rq4dVmK1V4pLAhvDhplXbsY2FwC8II83tUfTEglLp+PySJ+bIAypDKr6kUP03z2EVVap8gzn2sI8gbhKVABY7iFXwqi36abKlRpugrUA9N0IBZwRZ3FDy6C6brv4xtX+LXYeipFD834H8MqwyGEsjIfN7FlousEjzKyJIKCPs8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QFWbaSOc; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-523f1b31cf8so181978e0c.0;
-        Fri, 07 Mar 2025 11:41:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741376488; x=1741981288; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mxADRnTRL5Zf4OanqbxnTYyjpNbUObusM/RVQfon6dU=;
-        b=QFWbaSOci3aSXmpwXSG7P6/DVZ/BPV+ZdTBGe4W/7EmcTazTy+HfBS+/jco+KCJC55
-         3doPbPFEin7HxJmf/yLBYcatts7XE/D5KJFscs+pHZhI7vbQxaJs+eogSwUu40OhohDS
-         SIqZL8w0ZkRomKh01H5R3BnQfv0YGaX8if+X/o2bKKP8H1jo+1GYdJErSd8CLvM5DXkR
-         AB4u6zXNifaeynwsVr6YNiz/rRqxgCGRu3wCzYo0yXmZO+D6N1iEVTCLLNYk8GKMNisa
-         WZA5ECCdvtJb6HNBMd7rEVXFA/zXUGpgTYT2AGUP9oKBESmt6z7Kmm0RiCD+fVJ9GUMj
-         dKgw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741376488; x=1741981288;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mxADRnTRL5Zf4OanqbxnTYyjpNbUObusM/RVQfon6dU=;
-        b=lCn7Iwete8aJDChanBXYOITwI48VROqKg1nCGlJrcGaZcznChtA78qbaFC6c/YbEgh
-         BV2Og5zwTr3EEw/xXYswikuISP4a0QQSRC978jyaGSV/W43LgaFoZLVZ9KshS5ngHPLE
-         YaWQ/v8FgLEACOGnR/OfBt4GbZk52v7TDxGd31g0iNVcHwW9h/W1OujLiaDax/0pgZsO
-         NsuHyuHARb47zh6SFIIog0viuq1uLN5V+HsgwoGaxMhYbdTMbcH4NDQYxXQKNkYx/MqU
-         zrR5WIueuIV6xd1NxE8DtTKI2SzJBbsI5Zm1nXxdxjeiu8lX1Z6wTjnljykBhocYyEdg
-         0cWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVmaq65Mo2ezyiWfuhEy16BCTkm6bXbKwSfFkI37zZteRzc0hdSR1mxWkXnGZ2uyhicyQvvRF/QTVAjlw==@vger.kernel.org, AJvYcCXm8C42sbh+HZieQbM36pY0MFrrPmkM9Zl0sA/OAay9F22PMuaF63Yq7RdDPmBsKSmY3TbIeMM1STG9DfZX@vger.kernel.org
-X-Gm-Message-State: AOJu0YwopFZNfiMjrHaKyY41HWH7gWFv40Vm7I5RoQC+pw4KBkkQ6sGW
-	hswVk88Z6LnIr5k6chqYcov37hJypc/aXKrvDlajRhybjQ6Xzgr4IrC6i+J5bUWwNY3zRNLg6Ut
-	oiNM7QGBsFVYnz07rEHsDjWVsiTI=
-X-Gm-Gg: ASbGncu6Ea5uwd4KPfDuOMfzBCgaMIR+xft9fRohpARzP9RadhSSOf4SNgEboKyIesx
-	eIhcKwxqj5wbKUjFkpGS4/VEdhjbKJ43wo0SUYvFQtIpaSgmxNSH3SqpLqiYbYPlSRwrKpG4jbb
-	H7FMsoSfzVdmZ2ObNiCaoA5Ozp0Q==
-X-Google-Smtp-Source: AGHT+IErC9InPZ9XBRKp6Rom58kBjYYUxu3mePp0BMBXU1RuaBhOiaC4Tj1uk5RWPM1jNhqDuhDOHzIrZjJrW7wbKg4=
-X-Received: by 2002:a05:6102:d8e:b0:4c1:a448:ac7d with SMTP id
- ada2fe7eead31-4c30a54d408mr3032359137.10.1741376488483; Fri, 07 Mar 2025
- 11:41:28 -0800 (PST)
+	s=arc-20240116; t=1741376529; c=relaxed/simple;
+	bh=ubctbGCYsax+MEfuAoCtbkIGyzgm9i0qIVp21VApKuk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lT5X89kYAmLaFW2C+pdRwn+fxciuyUJh4mgy+Mxp1vTUue4Km3YAixx11y9WNSTEAsZmjEy59PZjSc1W1Jn8+YnEt/m9Q8XuJc34GB3ko5VguLgO06y+wfcI6LMq8n0vYzddhVfPplDfxn9BCHbfQRgfYDe1hnMuQ+kKBwqf0UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=e67il7lr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741376526;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0+o7tZizJIjmOCb+T/PxCYGzCkL9BqpzG62i97Ud4Bs=;
+	b=e67il7lrn0f5dO5nfafXl4BiBMAN74e33f6o62thGcBynIByjQMIda2hdvzjILM60q53z5
+	X6RXSAPN4xL85oTmk7g+6DLOdvaHKVUGaaAWwYAiDr4ck+4bZ9vErGp9yJ3mNq2PiA2fJj
+	SieVIG1J3yuPEXaMxkqF/p4nv2cS1+M=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-453-voOF87UYNbihaI6AN4-lxg-1; Fri,
+ 07 Mar 2025 14:41:55 -0500
+X-MC-Unique: voOF87UYNbihaI6AN4-lxg-1
+X-Mimecast-MFC-AGG-ID: voOF87UYNbihaI6AN4-lxg_1741376513
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7796B1955BC9;
+	Fri,  7 Mar 2025 19:41:52 +0000 (UTC)
+Received: from x2.localnet (unknown [10.22.64.245])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 787631828A80;
+	Fri,  7 Mar 2025 19:41:50 +0000 (UTC)
+From: Steve Grubb <sgrubb@redhat.com>
+To: Paul Moore <paul@paul-moore.com>, Richard Guy Briggs <rgb@redhat.com>
+Cc: Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>,
+ LKML <linux-kernel@vger.kernel.org>, linux-modules@vger.kernel.org,
+ Linux Kernel Audit Mailing List <audit@vger.kernel.org>,
+ Eric Paris <eparis@parisplace.org>
+Subject:
+ Re: [PATCH v1] audit,module: restore audit logging in load failure case
+Date: Fri, 07 Mar 2025 14:41:48 -0500
+Message-ID: <2743964.lGaqSPkdTl@x2>
+Organization: Red Hat
+In-Reply-To: <Z8oWlAwgKWW+M8yL@madcap2.tricolour.ca>
+References:
+ <999cdd694f951acd2f4ad665fe7ab97d0834e162.1729717542.git.rgb@redhat.com>
+ <b7f8e0d11b6cfc7547709c7efc472021@paul-moore.com>
+ <Z8oWlAwgKWW+M8yL@madcap2.tricolour.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307120141.1566673-1-qun-wei.lin@mediatek.com> <20250307120141.1566673-3-qun-wei.lin@mediatek.com>
-In-Reply-To: <20250307120141.1566673-3-qun-wei.lin@mediatek.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Sat, 8 Mar 2025 08:41:17 +1300
-X-Gm-Features: AQ5f1Jr_NH_JmxbOO5LScfPMgZlBxT61u6xunECHMLc6vlHdXZJRYzFSi8sd-ig
-Message-ID: <CAGsJ_4xtp9iGPQinu5DOi3R2B47X9o=wS94GdhdY-0JUATf5hw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] kcompressd: Add Kcompressd for accelerated zram compression
-To: Qun-Wei Lin <qun-wei.lin@mediatek.com>
-Cc: Jens Axboe <axboe@kernel.dk>, Minchan Kim <minchan@kernel.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Vishal Verma <vishal.l.verma@intel.com>, 
-	Dan Williams <dan.j.williams@intel.com>, Dave Jiang <dave.jiang@intel.com>, 
-	Ira Weiny <ira.weiny@intel.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chris Li <chrisl@kernel.org>, 
-	Ryan Roberts <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
-	Kairui Song <kasong@tencent.com>, Dan Schatzberg <schatzberg.dan@gmail.com>, 
-	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, 
-	linux-block@vger.kernel.org, nvdimm@lists.linux.dev, linux-mm@kvack.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	Casper Li <casper.li@mediatek.com>, Chinwen Chang <chinwen.chang@mediatek.com>, 
-	Andrew Yang <andrew.yang@mediatek.com>, James Hsu <james.hsu@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Sat, Mar 8, 2025 at 1:02=E2=80=AFAM Qun-Wei Lin <qun-wei.lin@mediatek.co=
-m> wrote:
->
-> Introduced Kcompressd to offload zram page compression, improving
-> system efficiency by handling compression separately from memory
-> reclaiming. Added necessary configurations and dependencies.
->
-> Signed-off-by: Qun-Wei Lin <qun-wei.lin@mediatek.com>
-> ---
->  drivers/block/zram/Kconfig      |  11 ++
->  drivers/block/zram/Makefile     |   3 +-
->  drivers/block/zram/kcompressd.c | 340 ++++++++++++++++++++++++++++++++
->  drivers/block/zram/kcompressd.h |  25 +++
->  drivers/block/zram/zram_drv.c   |  22 ++-
->  5 files changed, 397 insertions(+), 4 deletions(-)
->  create mode 100644 drivers/block/zram/kcompressd.c
->  create mode 100644 drivers/block/zram/kcompressd.h
->
-> diff --git a/drivers/block/zram/Kconfig b/drivers/block/zram/Kconfig
-> index 402b7b175863..f0a1b574f770 100644
-> --- a/drivers/block/zram/Kconfig
-> +++ b/drivers/block/zram/Kconfig
-> @@ -145,3 +145,14 @@ config ZRAM_MULTI_COMP
->           re-compress pages using a potentially slower but more effective
->           compression algorithm. Note, that IDLE page recompression
->           requires ZRAM_TRACK_ENTRY_ACTIME.
-> +
-> +config KCOMPRESSD
-> +       tristate "Kcompressd: Accelerated zram compression"
-> +       depends on ZRAM
-> +       help
-> +         Kcompressd creates multiple daemons to accelerate the compressi=
-on of pages
-> +         in zram, offloading this time-consuming task from the zram driv=
-er.
-> +
-> +         This approach improves system efficiency by handling page compr=
-ession separately,
-> +         which was originally done by kswapd or direct reclaim.
+On Thursday, March 6, 2025 4:41:40=E2=80=AFPM Eastern Standard Time Richard=
+ Guy=20
+Briggs wrote:
+> On 2024-10-24 16:41, Paul Moore wrote:
+> > On Oct 23, 2024 Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > The move of the module sanity check to earlier skipped the audit
+> > > logging
+> > > call in the case of failure and to a place where the previously used
+> > > context is unavailable.
+> > >=20
+> > > Add an audit logging call for the module loading failure case and get
+> > > the module name when possible.
+> > >=20
+> > > Link: https://issues.redhat.com/browse/RHEL-52839
+> > > Fixes: 02da2cbab452 ("module: move check_modinfo() early to
+> > > early_mod_check()") Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > ---
+> > >=20
+> > >  kernel/module/main.c | 4 +++-
+> > >  1 file changed, 3 insertions(+), 1 deletion(-)
+> > >=20
+> > > diff --git a/kernel/module/main.c b/kernel/module/main.c
+> > > index 49b9bca9de12..1f482532ef66 100644
+> > > --- a/kernel/module/main.c
+> > > +++ b/kernel/module/main.c
+> > > @@ -3057,8 +3057,10 @@ static int load_module(struct load_info *info,
+> > > const char __user *uargs,> >=20
+> > >  	 * failures once the proper module was allocated and
+> > >  	 * before that.
+> > >  	 */
+> > >=20
+> > > -	if (!module_allocated)
+> > > +	if (!module_allocated) {
+> > > +		audit_log_kern_module(info->name ? info->name :=20
+"(unavailable)");
+> > >=20
+> > >  		mod_stat_bump_becoming(info, flags);
+> > >=20
+> > > +	}
+> >=20
+> > We probably should move the existing audit_log_kern_module() to just
+> > after the elf_validity_cache_copy() call as both info->name and
+> > info->mod->name should be as valid as they are going to get at that
+> > point.  If we do that then we only have two cases we need to worry abou=
+t,
+> > a failed module_sig_check() or a failed elf_validity_cache_copy(), and
+> > in both cases we can use "(unavailable)" without having to check
+> > info->name first.
+>=20
+> Fair enough.
+>=20
+> > However, assuming we move the audit_log_kern_module() call up a bit as
+> > described above, I'm not sure there is much value in calling
+> > audit_log_kern_module() with an "(unavailable)" module name in those
+> > early two cases.  We know it's an attempted module load based on the
+> > SYSCALL record, seeing an associated "(unavailable)" KERN_MODULE record
+> > doesn't provide us with any more information than if we had simply
+> > skipped the KERN_MODULE record.
+>=20
+> Understood.  I wonder if the absence of the record in the error case
+> will leave us guessing if we lost a record from the event?  We will have
+> the error code from the SYSCALL record but not much more than that, and
+> some of those error codes could just as well be generated after that
+> point too.  This would be a similar situation to the vanishing fields in
+> an existing record, but is likely easier to mitigate than a
+> non-last-field vanishing or shifting around in an existing record.
+>=20
+> Steve?  Atilla?  Any comments?
 
-For direct reclaim, we were previously able to compress using multiple CPUs
-with multi-threading.
-After your patch, it seems that only a single thread/CPU is used for compre=
-ssion
-so it won't necessarily improve direct reclaim performance?
+We should only get the events if we have syscall rules that would result in=
+=20
+kernel module loading/unloading events. I suppose that by the time audit=20
+loads it's rules, many modules have already loaded. So, I don't think we ne=
+ed=20
+to worry about early cases. But when we do get a kernel module load/unload=
+=20
+event based on the rules, we need it's name - even in failures. We need to =
+be=20
+able to determine what was attempted since this could affect system=20
+integrity.
 
-Even for kswapd, we used to have multiple threads like [kswapd0], [kswapd1]=
-,
-and [kswapd2] for different nodes. Now, are we also limited to just one thr=
-ead?
-I also wonder if this could be handled at the vmscan level instead of the z=
-ram
-level. then it might potentially help other sync devices or even zswap late=
-r.
+=2DSteve
 
-But I agree that for phones, modifying zram seems like an easier starting
-point. However, relying on a single thread isn't always the best approach.
-
-
-> +
-> diff --git a/drivers/block/zram/Makefile b/drivers/block/zram/Makefile
-> index 0fdefd576691..23baa5dfceb9 100644
-> --- a/drivers/block/zram/Makefile
-> +++ b/drivers/block/zram/Makefile
-> @@ -9,4 +9,5 @@ zram-$(CONFIG_ZRAM_BACKEND_ZSTD)        +=3D backend_zstd=
-.o
->  zram-$(CONFIG_ZRAM_BACKEND_DEFLATE)    +=3D backend_deflate.o
->  zram-$(CONFIG_ZRAM_BACKEND_842)                +=3D backend_842.o
->
-> -obj-$(CONFIG_ZRAM)     +=3D      zram.o
-> +obj-$(CONFIG_ZRAM)             +=3D zram.o
-> +obj-$(CONFIG_KCOMPRESSD)       +=3D kcompressd.o
-> diff --git a/drivers/block/zram/kcompressd.c b/drivers/block/zram/kcompre=
-ssd.c
-> new file mode 100644
-> index 000000000000..195b7e386869
-> --- /dev/null
-> +++ b/drivers/block/zram/kcompressd.c
-> @@ -0,0 +1,340 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2024 MediaTek Inc.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/kernel.h>
-> +#include <linux/bio.h>
-> +#include <linux/bitops.h>
-> +#include <linux/freezer.h>
-> +#include <linux/kernel.h>
-> +#include <linux/psi.h>
-> +#include <linux/kfifo.h>
-> +#include <linux/swap.h>
-> +#include <linux/delay.h>
-> +
-> +#include "kcompressd.h"
-> +
-> +#define INIT_QUEUE_SIZE                4096
-> +#define DEFAULT_NR_KCOMPRESSD  4
-> +
-> +static atomic_t enable_kcompressd;
-> +static unsigned int nr_kcompressd;
-> +static unsigned int queue_size_per_kcompressd;
-> +static struct kcompress *kcompress;
-> +
-> +enum run_state {
-> +       KCOMPRESSD_NOT_STARTED =3D 0,
-> +       KCOMPRESSD_RUNNING,
-> +       KCOMPRESSD_SLEEPING,
-> +};
-> +
-> +struct kcompressd_para {
-> +       wait_queue_head_t *kcompressd_wait;
-> +       struct kfifo *write_fifo;
-> +       atomic_t *running;
-> +};
-> +
-> +static struct kcompressd_para *kcompressd_para;
-> +static BLOCKING_NOTIFIER_HEAD(kcompressd_notifier_list);
-> +
-> +struct write_work {
-> +       void *mem;
-> +       struct bio *bio;
-> +       compress_callback cb;
-> +};
-> +
-> +int kcompressd_enabled(void)
-> +{
-> +       return likely(atomic_read(&enable_kcompressd));
-> +}
-> +EXPORT_SYMBOL(kcompressd_enabled);
-> +
-> +static void kcompressd_try_to_sleep(struct kcompressd_para *p)
-> +{
-> +       DEFINE_WAIT(wait);
-> +
-> +       if (!kfifo_is_empty(p->write_fifo))
-> +               return;
-> +
-> +       if (freezing(current) || kthread_should_stop())
-> +               return;
-> +
-> +       atomic_set(p->running, KCOMPRESSD_SLEEPING);
-> +       prepare_to_wait(p->kcompressd_wait, &wait, TASK_INTERRUPTIBLE);
-> +
-> +       /*
-> +        * After a short sleep, check if it was a premature sleep. If not=
-, then
-> +        * go fully to sleep until explicitly woken up.
-> +        */
-> +       if (!kthread_should_stop() && kfifo_is_empty(p->write_fifo))
-> +               schedule();
-> +
-> +       finish_wait(p->kcompressd_wait, &wait);
-> +       atomic_set(p->running, KCOMPRESSD_RUNNING);
-> +}
-> +
-> +static int kcompressd(void *para)
-> +{
-> +       struct task_struct *tsk =3D current;
-> +       struct kcompressd_para *p =3D (struct kcompressd_para *)para;
-> +
-> +       tsk->flags |=3D PF_MEMALLOC | PF_KSWAPD;
-> +       set_freezable();
-> +
-> +       while (!kthread_should_stop()) {
-> +               bool ret;
-> +
-> +               kcompressd_try_to_sleep(p);
-> +               ret =3D try_to_freeze();
-> +               if (kthread_should_stop())
-> +                       break;
-> +
-> +               if (ret)
-> +                       continue;
-> +
-> +               while (!kfifo_is_empty(p->write_fifo)) {
-> +                       struct write_work entry;
-> +
-> +                       if (sizeof(struct write_work) =3D=3D kfifo_out(p-=
->write_fifo,
-> +                                               &entry, sizeof(struct wri=
-te_work))) {
-> +                               entry.cb(entry.mem, entry.bio);
-> +                               bio_put(entry.bio);
-> +                       }
-> +               }
-> +
-> +       }
-> +
-> +       tsk->flags &=3D ~(PF_MEMALLOC | PF_KSWAPD);
-> +       atomic_set(p->running, KCOMPRESSD_NOT_STARTED);
-> +       return 0;
-> +}
-> +
-> +static int init_write_queue(void)
-> +{
-> +       int i;
-> +       unsigned int queue_len =3D queue_size_per_kcompressd * sizeof(str=
-uct write_work);
-> +
-> +       for (i =3D 0; i < nr_kcompressd; i++) {
-> +               if (kfifo_alloc(&kcompress[i].write_fifo,
-> +                                       queue_len, GFP_KERNEL)) {
-> +                       pr_err("Failed to alloc kfifo %d\n", i);
-> +                       return -ENOMEM;
-> +               }
-> +       }
-> +       return 0;
-> +}
-> +
-> +static void clean_bio_queue(int idx)
-> +{
-> +       struct write_work entry;
-> +
-> +       while (sizeof(struct write_work) =3D=3D kfifo_out(&kcompress[idx]=
-.write_fifo,
-> +                               &entry, sizeof(struct write_work))) {
-> +               bio_put(entry.bio);
-> +               entry.cb(entry.mem, entry.bio);
-> +       }
-> +       kfifo_free(&kcompress[idx].write_fifo);
-> +}
-> +
-> +static int kcompress_update(void)
-> +{
-> +       int i;
-> +       int ret;
-> +
-> +       kcompress =3D kvmalloc_array(nr_kcompressd, sizeof(struct kcompre=
-ss), GFP_KERNEL);
-> +       if (!kcompress)
-> +               return -ENOMEM;
-> +
-> +       kcompressd_para =3D kvmalloc_array(nr_kcompressd, sizeof(struct k=
-compressd_para), GFP_KERNEL);
-> +       if (!kcompressd_para)
-> +               return -ENOMEM;
-> +
-> +       ret =3D init_write_queue();
-> +       if (ret) {
-> +               pr_err("Initialization of writing to FIFOs failed!!\n");
-> +               return ret;
-> +       }
-> +
-> +       for (i =3D 0; i < nr_kcompressd; i++) {
-> +               init_waitqueue_head(&kcompress[i].kcompressd_wait);
-> +               kcompressd_para[i].kcompressd_wait =3D &kcompress[i].kcom=
-pressd_wait;
-> +               kcompressd_para[i].write_fifo =3D &kcompress[i].write_fif=
-o;
-> +               kcompressd_para[i].running =3D &kcompress[i].running;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static void stop_all_kcompressd_thread(void)
-> +{
-> +       int i;
-> +
-> +       for (i =3D 0; i < nr_kcompressd; i++) {
-> +               kthread_stop(kcompress[i].kcompressd);
-> +               kcompress[i].kcompressd =3D NULL;
-> +               clean_bio_queue(i);
-> +       }
-> +}
-> +
-> +static int do_nr_kcompressd_handler(const char *val,
-> +               const struct kernel_param *kp)
-> +{
-> +       int ret;
-> +
-> +       atomic_set(&enable_kcompressd, false);
-> +
-> +       stop_all_kcompressd_thread();
-> +
-> +       ret =3D param_set_int(val, kp);
-> +       if (!ret) {
-> +               pr_err("Invalid number of kcompressd.\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       ret =3D init_write_queue();
-> +       if (ret) {
-> +               pr_err("Initialization of writing to FIFOs failed!!\n");
-> +               return ret;
-> +       }
-> +
-> +       atomic_set(&enable_kcompressd, true);
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct kernel_param_ops param_ops_change_nr_kcompressd =3D =
-{
-> +       .set =3D &do_nr_kcompressd_handler,
-> +       .get =3D &param_get_uint,
-> +       .free =3D NULL,
-> +};
-> +
-> +module_param_cb(nr_kcompressd, &param_ops_change_nr_kcompressd,
-> +               &nr_kcompressd, 0644);
-> +MODULE_PARM_DESC(nr_kcompressd, "Number of pre-created daemon for page c=
-ompression");
-> +
-> +static int do_queue_size_per_kcompressd_handler(const char *val,
-> +               const struct kernel_param *kp)
-> +{
-> +       int ret;
-> +
-> +       atomic_set(&enable_kcompressd, false);
-> +
-> +       stop_all_kcompressd_thread();
-> +
-> +       ret =3D param_set_int(val, kp);
-> +       if (!ret) {
-> +               pr_err("Invalid queue size for kcompressd.\n");
-> +               return -EINVAL;
-> +       }
-> +
-> +       ret =3D init_write_queue();
-> +       if (ret) {
-> +               pr_err("Initialization of writing to FIFOs failed!!\n");
-> +               return ret;
-> +       }
-> +
-> +       pr_info("Queue size for kcompressd was changed: %d\n", queue_size=
-_per_kcompressd);
-> +
-> +       atomic_set(&enable_kcompressd, true);
-> +       return 0;
-> +}
-> +
-> +static const struct kernel_param_ops param_ops_change_queue_size_per_kco=
-mpressd =3D {
-> +       .set =3D &do_queue_size_per_kcompressd_handler,
-> +       .get =3D &param_get_uint,
-> +       .free =3D NULL,
-> +};
-> +
-> +module_param_cb(queue_size_per_kcompressd, &param_ops_change_queue_size_=
-per_kcompressd,
-> +               &queue_size_per_kcompressd, 0644);
-> +MODULE_PARM_DESC(queue_size_per_kcompressd,
-> +               "Size of queue for kcompressd");
-> +
-> +int schedule_bio_write(void *mem, struct bio *bio, compress_callback cb)
-> +{
-> +       int i;
-> +       bool submit_success =3D false;
-> +       size_t sz_work =3D sizeof(struct write_work);
-> +
-> +       struct write_work entry =3D {
-> +               .mem =3D mem,
-> +               .bio =3D bio,
-> +               .cb =3D cb
-> +       };
-> +
-> +       if (unlikely(!atomic_read(&enable_kcompressd)))
-> +               return -EBUSY;
-> +
-> +       if (!nr_kcompressd || !current_is_kswapd())
-> +               return -EBUSY;
-> +
-> +       bio_get(bio);
-> +
-> +       for (i =3D 0; i < nr_kcompressd; i++) {
-> +               submit_success =3D
-> +                       (kfifo_avail(&kcompress[i].write_fifo) >=3D sz_wo=
-rk) &&
-> +                       (sz_work =3D=3D kfifo_in(&kcompress[i].write_fifo=
-, &entry, sz_work));
-> +
-> +               if (submit_success) {
-> +                       switch (atomic_read(&kcompress[i].running)) {
-> +                       case KCOMPRESSD_NOT_STARTED:
-> +                               atomic_set(&kcompress[i].running, KCOMPRE=
-SSD_RUNNING);
-> +                               kcompress[i].kcompressd =3D kthread_run(k=
-compressd,
-> +                                               &kcompressd_para[i], "kco=
-mpressd:%d", i);
-> +                               if (IS_ERR(kcompress[i].kcompressd)) {
-> +                                       atomic_set(&kcompress[i].running,=
- KCOMPRESSD_NOT_STARTED);
-> +                                       pr_warn("Failed to start kcompres=
-sd:%d\n", i);
-> +                                       clean_bio_queue(i);
-> +                               }
-> +                               break;
-> +                       case KCOMPRESSD_RUNNING:
-> +                               break;
-> +                       case KCOMPRESSD_SLEEPING:
-> +                               wake_up_interruptible(&kcompress[i].kcomp=
-ressd_wait);
-> +                               break;
-> +                       }
-> +                       return 0;
-> +               }
-> +       }
-> +
-> +       bio_put(bio);
-> +       return -EBUSY;
-> +}
-> +EXPORT_SYMBOL(schedule_bio_write);
-> +
-> +static int __init kcompressd_init(void)
-> +{
-> +       int ret;
-> +
-> +       nr_kcompressd =3D DEFAULT_NR_KCOMPRESSD;
-> +       queue_size_per_kcompressd =3D INIT_QUEUE_SIZE;
-> +
-> +       ret =3D kcompress_update();
-> +       if (ret) {
-> +               pr_err("Init kcompressd failed!\n");
-> +               return ret;
-> +       }
-> +
-> +       atomic_set(&enable_kcompressd, true);
-> +       blocking_notifier_call_chain(&kcompressd_notifier_list, 0, NULL);
-> +       return 0;
-> +}
-> +
-> +static void __exit kcompressd_exit(void)
-> +{
-> +       atomic_set(&enable_kcompressd, false);
-> +       stop_all_kcompressd_thread();
-> +
-> +       kvfree(kcompress);
-> +       kvfree(kcompressd_para);
-> +}
-> +
-> +module_init(kcompressd_init);
-> +module_exit(kcompressd_exit);
-> +
-> +MODULE_LICENSE("Dual BSD/GPL");
-> +MODULE_AUTHOR("Qun-Wei Lin <qun-wei.lin@mediatek.com>");
-> +MODULE_DESCRIPTION("Separate the page compression from the memory reclai=
-ming");
-> +
-> diff --git a/drivers/block/zram/kcompressd.h b/drivers/block/zram/kcompre=
-ssd.h
-> new file mode 100644
-> index 000000000000..2fe0b424a7af
-> --- /dev/null
-> +++ b/drivers/block/zram/kcompressd.h
-> @@ -0,0 +1,25 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Copyright (C) 2024 MediaTek Inc.
-> + */
-> +
-> +#ifndef _KCOMPRESSD_H_
-> +#define _KCOMPRESSD_H_
-> +
-> +#include <linux/rwsem.h>
-> +#include <linux/kfifo.h>
-> +#include <linux/atomic.h>
-> +
-> +typedef void (*compress_callback)(void *mem, struct bio *bio);
-> +
-> +struct kcompress {
-> +       struct task_struct *kcompressd;
-> +       wait_queue_head_t kcompressd_wait;
-> +       struct kfifo write_fifo;
-> +       atomic_t running;
-> +};
-> +
-> +int kcompressd_enabled(void);
-> +int schedule_bio_write(void *mem, struct bio *bio, compress_callback cb)=
-;
-> +#endif
-> +
-> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.=
-c
-> index 2e1a70f2f4bd..bcd63ecb6ff2 100644
-> --- a/drivers/block/zram/zram_drv.c
-> +++ b/drivers/block/zram/zram_drv.c
-> @@ -35,6 +35,7 @@
->  #include <linux/part_stat.h>
->  #include <linux/kernel_read_file.h>
->
-> +#include "kcompressd.h"
->  #include "zram_drv.h"
->
->  static DEFINE_IDR(zram_index_idr);
-> @@ -2240,6 +2241,15 @@ static void zram_bio_write(struct zram *zram, stru=
-ct bio *bio)
->         bio_endio(bio);
->  }
->
-> +#if IS_ENABLED(CONFIG_KCOMPRESSD)
-> +static void zram_bio_write_callback(void *mem, struct bio *bio)
-> +{
-> +       struct zram *zram =3D (struct zram *)mem;
-> +
-> +       zram_bio_write(zram, bio);
-> +}
-> +#endif
-> +
->  /*
->   * Handler function for all zram I/O requests.
->   */
-> @@ -2252,6 +2262,10 @@ static void zram_submit_bio(struct bio *bio)
->                 zram_bio_read(zram, bio);
->                 break;
->         case REQ_OP_WRITE:
-> +#if IS_ENABLED(CONFIG_KCOMPRESSD)
-> +               if (kcompressd_enabled() && !schedule_bio_write(zram, bio=
-, zram_bio_write_callback))
-> +                       break;
-> +#endif
->                 zram_bio_write(zram, bio);
->                 break;
->         case REQ_OP_DISCARD:
-> @@ -2535,9 +2549,11 @@ static int zram_add(void)
->  #if ZRAM_LOGICAL_BLOCK_SIZE =3D=3D PAGE_SIZE
->                 .max_write_zeroes_sectors       =3D UINT_MAX,
->  #endif
-> -               .features                       =3D BLK_FEAT_STABLE_WRITE=
-S        |
-> -                                                 BLK_FEAT_READ_SYNCHRONO=
-US     |
-> -                                                 BLK_FEAT_WRITE_SYNCHRON=
-OUS,
-> +               .features                       =3D BLK_FEAT_STABLE_WRITE=
-S
-> +                                                 | BLK_FEAT_READ_SYNCHRO=
-NOUS
-> +#if !IS_ENABLED(CONFIG_KCOMPRESSD)
-> +                                                 | BLK_FEAT_WRITE_SYNCHR=
-ONOUS,
-> +#endif
->         };
->         struct zram *zram;
->         int ret, device_id;
+> > Untested, but this is what I'm talking about:
+> >=20
+> > diff --git a/include/linux/audit.h b/include/linux/audit.h
+> > index 0050ef288ab3..eaa10e3c7eca 100644
+> > --- a/include/linux/audit.h
+> > +++ b/include/linux/audit.h
+> > @@ -417,7 +417,7 @@ extern int __audit_log_bprm_fcaps(struct linux_binp=
+rm
+> > *bprm,>=20
+> >  extern void __audit_log_capset(const struct cred *new, const struct cr=
+ed
+> >  *old); extern void __audit_mmap_fd(int fd, int flags);
+> >  extern void __audit_openat2_how(struct open_how *how);
+> >=20
+> > -extern void __audit_log_kern_module(char *name);
+> > +extern void __audit_log_kern_module(const char *name);
+> >=20
+> >  extern void __audit_fanotify(u32 response, struct
+> >  fanotify_response_info_audit_rule *friar); extern void
+> >  __audit_tk_injoffset(struct timespec64 offset);
+> >  extern void __audit_ntp_log(const struct audit_ntp_data *ad);
+> >=20
+> > @@ -519,7 +519,7 @@ static inline void audit_openat2_how(struct open_how
+> > *how)>=20
+> >                 __audit_openat2_how(how);
+> > =20
+> >  }
+> >=20
+> > -static inline void audit_log_kern_module(char *name)
+> > +static inline void audit_log_kern_module(const char *name)
+> >=20
+> >  {
+> > =20
+> >         if (!audit_dummy_context())
+> >        =20
+> >                 __audit_log_kern_module(name);
+> >=20
+> > @@ -677,7 +677,7 @@ static inline void audit_mmap_fd(int fd, int flags)
+> >=20
+> >  static inline void audit_openat2_how(struct open_how *how)
+> >  { }
+> >=20
+> > -static inline void audit_log_kern_module(char *name)
+> > +static inline void audit_log_kern_module(const char *name)
+> >=20
+> >  {
+> >  }
+> >=20
+> > diff --git a/kernel/audit.h b/kernel/audit.h
+> > index a60d2840559e..5156ecd35457 100644
+> > --- a/kernel/audit.h
+> > +++ b/kernel/audit.h
+> > @@ -199,7 +199,7 @@ struct audit_context {
+> >=20
+> >                         int                     argc;
+> >                =20
+> >                 } execve;
+> >                 struct {
+> >=20
+> > -                       char                    *name;
+> > +                       const char              *name;
+> >=20
+> >                 } module;
+> >                 struct {
+> >                =20
+> >                         struct audit_ntp_data   ntp_data;
+> >=20
+> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> > index 0627e74585ce..f79eb3a5a789 100644
+> > --- a/kernel/auditsc.c
+> > +++ b/kernel/auditsc.c
+> > @@ -2870,7 +2870,7 @@ void __audit_openat2_how(struct open_how *how)
+> >=20
+> >         context->type =3D AUDIT_OPENAT2;
+> > =20
+> >  }
+> >=20
+> > -void __audit_log_kern_module(char *name)
+> > +void __audit_log_kern_module(const char *name)
+> >=20
+> >  {
+> > =20
+> >         struct audit_context *context =3D audit_context();
+> >=20
+> > diff --git a/kernel/module/main.c b/kernel/module/main.c
+> > index 49b9bca9de12..3acb65073c53 100644
+> > --- a/kernel/module/main.c
+> > +++ b/kernel/module/main.c
+> > @@ -2884,6 +2884,8 @@ static int load_module(struct load_info *info,
+> > const char __user *uargs,>=20
+> >         if (err)
+> >        =20
+> >                 goto free_copy;
+> >=20
+> > +       audit_log_kern_module(info->name);
+> > +
+> >=20
+> >         err =3D early_mod_check(info, flags);
+> >         if (err)
+> >        =20
+> >                 goto free_copy;
+> >=20
+> > @@ -2897,8 +2899,6 @@ static int load_module(struct load_info *info,
+> > const char __user *uargs,>=20
+> >         module_allocated =3D true;
+> >=20
+> > -       audit_log_kern_module(mod->name);
+> > -
+> >=20
+> >         /* Reserve our place in the list. */
+> >         err =3D add_unformed_module(mod);
+> >         if (err)
+> >=20
+> > --
+> > paul-moore.com
+>=20
+> - RGB
+>=20
 > --
-> 2.45.2
->
+> Richard Guy Briggs <rgb@redhat.com>
+> Sr. S/W Engineer, Kernel Security, Base Operating Systems
+> Remote, Ottawa, Red Hat Canada
+> Upstream IRC: SunRaycer
+> Voice: +1.613.860 2354 SMS: +1.613.518.6570
 
-Thanks
-Barry
+
+
+
 
