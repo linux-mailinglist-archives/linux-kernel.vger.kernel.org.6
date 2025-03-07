@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-550948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1927A5664F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:10:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20D78A56650
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:10:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 758E616D14E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:09:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F1F7189950A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D55D7216E24;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF89216E1C;
 	Fri,  7 Mar 2025 11:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJOVcQWe"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G35Pw9hK"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE29A2163A8;
-	Fri,  7 Mar 2025 11:08:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064DA2163BA;
+	Fri,  7 Mar 2025 11:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741345729; cv=none; b=SkngRfJnOIyuzIp65fKdJHeY9nAU3pSn+6KKifcoNweg7TIKJPDj5DgQ3g7yrd9ZBC5ntJYypaYDdm/py1Hdw04DAVT8rEhjwduMZrTZL11WzUSMbmzxxNuHuGppuuePBtJKQzqEYRxrwYD+++swOXHiQTVO0A8dCGqEw4Afm+8=
+	t=1741345728; cv=none; b=ozDQtS6Z5vKvdIr4nowuscTUG8lNSw8kwmZHOEAXWK/WZ2th5y814f2gapJCYu2GSWyt+dXhys77GOzgriH5kJiKhdYQn5yvBTd9/YyXwPnH5X7gorGs53BeonIiiS8C0UvYMMiiGjRrfOexiVXPRo5Z4weC1F++SgPNgMdy8PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741345729; c=relaxed/simple;
-	bh=NFKIAidxnRMlrYELYDQT43QLdnHioABterAjD1+vLGg=;
+	s=arc-20240116; t=1741345728; c=relaxed/simple;
+	bh=fWkCL8BMSYNMfEbrDrnuytIEF1WS+GC8K9E0V39YodU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GwHFiqco5eKrAaOK0NG0slzBftxU92h1i3guHaDyg3m+14ex7mUlRg+qNIEuG875jKAyCaRQMJpya5mZmsogvX2lTuDEGsutgSrN2p+DN9yShUq3Qvbk21KAxpC8XLnwWd+2115/VogZmwtIsPbHMnpPTMANs65l6uTrNnkxgXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iJOVcQWe; arc=none smtp.client-ip=209.85.167.46
+	 MIME-Version; b=O/XKO8oEDUdwa9BGHjaPVJ0CtD/47oMaoGLSbci5Yn3apiZxQlmqFfZvxQmTowbiUlBNJsltkXXIuE76BPBNyNu4CocFcDQ75obk1/lfEzq+aHNVzKmMyT8IRKRhIqPZ91Alzva2/X6+IJorePuVyBdNd7c/ZWpIaxVyn9eL2y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G35Pw9hK; arc=none smtp.client-ip=209.85.167.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-549946c5346so351469e87.2;
-        Fri, 07 Mar 2025 03:08:45 -0800 (PST)
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5497590ffbbso1956470e87.1;
+        Fri, 07 Mar 2025 03:08:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741345724; x=1741950524; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741345725; x=1741950525; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Bna1rbJPQWibEFwv4J1kDTSY5U7INmYTRZbd16nD/nc=;
-        b=iJOVcQWeSWibvkunksfU1XYIryqmI1QAv5MN2XiSSDQnKm0Mxw9juMuOwi0HREQGrM
-         eIdXQgsLCLalgoRwoRXPdMeeAx3EHk7DZpibxXJHc47Hzu2uOKwhGgp0TSHdn9NIG5P/
-         Tr8F0B771ZfP822UwR+ZVWnyatdaiviLEepM2Ugv0t2IsPGij/AvP68o1OfSoUTFdX9w
-         pTIz9BCjgwKEfZLpthdhowEehOtkkirLrm6z+GAB0LMRE7dgVCAAV3+i5JCeedpLfujy
-         bgh18Vwg1FOQRC8z4hq7Uy4W2IHPjWm2ii3xYnrNRYWLRYIw0J8ffAUJG9zBbGVj49Ih
-         y2UQ==
+        bh=JjRzcycbu56jCOb7vRNRwX3YWPCEzPaeoXXPekHZQFg=;
+        b=G35Pw9hKozp1SLGGeYYiSrQ0sdrEUGOPW/VU7sSnikUUWzksOgdAkW/KLa7J/vaTHU
+         LITvXQlX7F1sZEoRQl2R96LSKI7yXtL1N9HeUZ1Wb1JPjKg31e1V+z3qe3Hl67bBrN9p
+         Ghq0hu7SMOS8V/U8Qs61wExHmwKOEsLYA2me09I6P214HzrPv2d8lR2PXaYYC4ICKFbj
+         i4lNhrpzJ/b+wfUvVaO1jW2vjXBIrbru0TWcSls6Q4Rv/tiGevDrSpVzFdgnPKRr4lkY
+         1+ArijcFifZfdLR9tvZcqma5lw1VqsNHRUqGgAWwe22GnNo5o7YM5QCbKRyK8COAcD0f
+         tI2Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741345724; x=1741950524;
+        d=1e100.net; s=20230601; t=1741345725; x=1741950525;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Bna1rbJPQWibEFwv4J1kDTSY5U7INmYTRZbd16nD/nc=;
-        b=JOmQitW603PNYdh1tvI0Xyjl5OzcHba7Lui9ut7qvqrTp0KUnDO90zuouHTAr1IOkr
-         K/yG/XkMuYeRej79Pyd/nNKOlCd97oUGYzoEfT8EZa49bhdArjk12EDTJno9GSpKNZ4a
-         2UGDNXJ+p0qnehTej8UOro+HPZQJArynFJyRMjR46avvS7Jgq5/gtqrJMgDQyosuQ33D
-         KtZckrC4ixz4tWmqmodTE0/nVMRibRS9EweR93OFX6tukMz2ul0wBnDLNfn+S1n76lM0
-         eq/JjnwjCa3+JGzSnywNLbj1QiiMaRZuIxQUUBwgqBGjgM9RCHtHVNBCpvz4hwU7hb9T
-         6WEw==
-X-Forwarded-Encrypted: i=1; AJvYcCVEAHfIXO2NNZPAIRA9prPT7HNzgrDqm5APzUjPhneAcSr8Z/Ts9TyrLxVSiyfmoJrnkzYXHup+hgLYZCc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6NVR9yRGv0eyKPthTRxqti0CqyBUDiv7qu+w/5AkSGlf+9hUt
-	+r0UasWQ893UaDjrCbPJsPisXjcXtPtHX/CIcCP2K86La4wuYPov3dozhQ==
-X-Gm-Gg: ASbGncuvVPXvcafESsA1AkgBOebVmjESIR7i+DzfHTNP6maALmvUc0IzZA7S+YWM9sy
-	y1BpRxIWf6iruvk6fOn56eI28F0nExitGIyRqhhbLQOJzVnHV7xEHTXFO7aDTBWpXocnykIHu+7
-	1XanLNZp9NPm+IFEatDplaauLm7+OQrYOMYxbGQI4kvQWLR7Eo7gwWqrQ3bBnlwhSghKB52IWwJ
-	YKvrUmkgfvxetLdFsGD9Y4KADLHrG1vtapK9t94W+rYelINPduA0KKiC2VcUqhzJq07ZJL9AsEX
-	6uzUFgj/vhgIBIxcDrLTqlNl2p7J++PdPnoXVOj82XVHlYrAZXs6tzn4OBUt+ACnfvoIzjH04JT
-	+m7tTxDEjTnvDnn2pYNOWEA==
-X-Google-Smtp-Source: AGHT+IHjaZ7I8vrWUm2jSrf2K7izD3GQ+2svxuHCSAb3JqdODUfWFeX8SdZqFx0ZMpsg2ApCZyJSYg==
-X-Received: by 2002:a05:6512:1597:b0:549:8cc8:efed with SMTP id 2adb3069b0e04-54990ebb232mr1066828e87.48.1741345723841;
-        Fri, 07 Mar 2025 03:08:43 -0800 (PST)
+        bh=JjRzcycbu56jCOb7vRNRwX3YWPCEzPaeoXXPekHZQFg=;
+        b=XAHf5Nl0EFZPMd+ZJrOmEXB329in5GNVZcOMPNVoJxcly8Sxh+qn4zKf+L18qMYFZK
+         7y6A4ohwSzVCFDJu0+r22vRQzaLTfrBfvIsLvbcO6Kth9kfniyowJKAdCV8Q6T/f+p30
+         Ft2TB0j6By85rAB9WQHEcfJ21xfwjBX7EAjoaHXAvxFyY83oV7WaEqMjLglRVqe3VuEV
+         BuUiBiYDk46DW7IRGN1HZ9uAKCsAofENBAjU/m2cPtyUhZ8+bzBQNcVw+v9R6U8BeQn6
+         DedT14kvypmJnnzzKYSFTdG29ylz5NRLInkMNABtfNvGDCAala4aOPhahCFFNS3ag8sg
+         bh9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXIyy3ZeTjmkJChO8OPTrmr+KWeIy+Zk0uZQFkj9Iy7AmkocTGcev3/zmicffhZw1Je7ZLXIvU/AB/Wo1w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YznOgjZjbKI+35Oc2802lWSBXmikOvmnFSR4MoFhs912H7SKCT1
+	X030u/ZqiEKDgUrtDvCSfWBG5VvDLECyVKXvASK7O8HthVoDyowVuihgcA==
+X-Gm-Gg: ASbGncvB51dpdV7R/xivyEiPkF5gEnwTKXI/FpmNf52/qWzlSKGwHe6Ackk2V+eoxNT
+	Y6jX+TkavNKrntqOY3YJvusYnOuB3vaO+zzlHGYHJXrsx4eyu9rYz4nQ/rwh9F+Q4kcwkE+i1aq
+	/9zE3dmGnKD540twnqnnA7BLuD3PG+fsauG4zWYQd6P6XbSjm5/J92OnteSfFISpBqAKeMErLZt
+	hTb2uJKhREwKzhiuolEyLeync8b5JbTdmlIZC6usqvEhRygp1C/fIf9GkQI7jelfbsCYuVWiR6U
+	E4v4ZxeLOUPtpo9khbm8MvSdkVT7Hk+q7I8UEsg4dUqHTM1GwMKB8haGfBLSjG0zYTthMzUMPnh
+	3rJua+0GlgEoQS5X8yucryw==
+X-Google-Smtp-Source: AGHT+IFjoxl6eClgg1VA0EEBG5W1vMJn01ur8ijpiShnc8E2q98l9Vo8EwdrO+pPkvWO3BDH5B5Afw==
+X-Received: by 2002:a05:6512:b99:b0:545:2d4d:36d1 with SMTP id 2adb3069b0e04-54990e5d4e3mr996613e87.20.1741345724809;
+        Fri, 07 Mar 2025 03:08:44 -0800 (PST)
 Received: from abj-NUC9VXQNX.. (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b1c2a08sm448920e87.223.2025.03.07.03.08.42
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b1c2a08sm448920e87.223.2025.03.07.03.08.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 03:08:42 -0800 (PST)
+        Fri, 07 Mar 2025 03:08:44 -0800 (PST)
 From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 To: rust-for-linux@vger.kernel.org,
 	daniel.almeida@collabora.com,
@@ -93,9 +93,9 @@ Cc: Miguel Ojeda <ojeda@kernel.org>,
 	airlied@redhat.com,
 	iommu@lists.linux.dev (open list:DMA MAPPING HELPERS),
 	Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Subject: [PATCH v13 4/7] rust: device: add dma addressing capabilities
-Date: Fri,  7 Mar 2025 13:06:21 +0200
-Message-ID: <20250307110821.1703422-5-abdiel.janulgue@gmail.com>
+Subject: [PATCH v13 5/7] samples: rust: add Rust dma test sample driver
+Date: Fri,  7 Mar 2025 13:06:22 +0200
+Message-ID: <20250307110821.1703422-6-abdiel.janulgue@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250307110821.1703422-1-abdiel.janulgue@gmail.com>
 References: <20250307110821.1703422-1-abdiel.janulgue@gmail.com>
@@ -107,94 +107,160 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add functions to set the DMA mask to inform the kernel about the
-device's DMA addressing capabilities.
+Add a simple driver to excercise the basics of the Rust DMA
+coherent allocator bindings.
 
+Suggested-by: Danilo Krummrich <dakr@kernel.org>
 Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
 ---
- rust/helpers/dma.c     |  8 ++++++++
- rust/helpers/helpers.c |  1 +
- rust/kernel/device.rs  | 29 +++++++++++++++++++++++++++++
- 3 files changed, 38 insertions(+)
- create mode 100644 rust/helpers/dma.c
+ samples/rust/Kconfig     |  11 +++++
+ samples/rust/Makefile    |   1 +
+ samples/rust/rust_dma.rs | 104 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 116 insertions(+)
+ create mode 100644 samples/rust/rust_dma.rs
 
-diff --git a/rust/helpers/dma.c b/rust/helpers/dma.c
+diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+index 3b6eae84b297..04bbba870bd1 100644
+--- a/samples/rust/Kconfig
++++ b/samples/rust/Kconfig
+@@ -78,4 +78,15 @@ config SAMPLE_RUST_HOSTPROGS
+ 
+ 	  If unsure, say N.
+ 
++config SAMPLE_RUST_DRIVER_DMA
++	tristate "DMA test driver"
++	depends on PCI
++	help
++	  This option builds the Rust dma test driver sample.
++
++	  To compile this as a module, choose M here:
++	  the module will be called dma.
++
++	  If unsure, say N.
++
+ endif # SAMPLES_RUST
+diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+index 0dbc6d90f1ef..1a9aff6e8d6a 100644
+--- a/samples/rust/Makefile
++++ b/samples/rust/Makefile
+@@ -7,6 +7,7 @@ obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
+ obj-$(CONFIG_SAMPLE_RUST_DRIVER_FAUX)		+= rust_driver_faux.o
++obj-$(CONFIG_SAMPLE_RUST_DRIVER_DMA)		+= rust_dma.o
+ 
+ rust_print-y := rust_print_main.o rust_print_events.o
+ 
+diff --git a/samples/rust/rust_dma.rs b/samples/rust/rust_dma.rs
 new file mode 100644
-index 000000000000..8eb482386f93
+index 000000000000..aed55ae4dcfe
 --- /dev/null
-+++ b/rust/helpers/dma.c
-@@ -0,0 +1,8 @@
++++ b/samples/rust/rust_dma.rs
+@@ -0,0 +1,104 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+#include <linux/dma-mapping.h>
++//! Rust DMA api test (based on QEMU's `pci-testdev`).
++//!
++//! To make this driver probe, QEMU must be run with `-device pci-testdev`.
 +
-+int rust_helper_dma_set_mask_and_coherent(struct device *dev, u64 mask)
-+{
-+	return dma_set_mask_and_coherent(dev, mask);
++use kernel::{bindings, dma::CoherentAllocation, pci, prelude::*};
++
++struct DmaSampleDriver {
++    pdev: pci::Device,
++    ca: kernel::devres::Devres<CoherentAllocation<MyStruct>>,
 +}
-diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-index 0640b7e115be..8f3808c8b7fe 100644
---- a/rust/helpers/helpers.c
-+++ b/rust/helpers/helpers.c
-@@ -13,6 +13,7 @@
- #include "build_bug.c"
- #include "cred.c"
- #include "device.c"
-+#include "dma.c"
- #include "err.c"
- #include "fs.c"
- #include "io.c"
-diff --git a/rust/kernel/device.rs b/rust/kernel/device.rs
-index db2d9658ba47..f9d3d4f60ddb 100644
---- a/rust/kernel/device.rs
-+++ b/rust/kernel/device.rs
-@@ -6,10 +6,12 @@
- 
- use crate::{
-     bindings,
-+    error::Result,
-     str::CStr,
-     types::{ARef, Opaque},
- };
- use core::{fmt, ptr};
-+use kernel::prelude::*;
- 
- #[cfg(CONFIG_PRINTK)]
- use crate::c_str;
-@@ -187,6 +189,33 @@ pub fn property_present(&self, name: &CStr) -> bool {
-         // SAFETY: By the invariant of `CStr`, `name` is null-terminated.
-         unsafe { bindings::device_property_present(self.as_raw().cast_const(), name.as_char_ptr()) }
-     }
 +
-+    /// Inform the kernel about the device's DMA addressing capabilities.
-+    ///
-+    /// Set both the DMA mask and the coherent DMA mask to the same thing.
-+    /// Note that we don't check the return value from the C `dma_set_coherent_mask`
-+    /// as the DMA API guarantees that the coherent DMA mask can be set to
-+    /// the same or smaller than the streaming DMA mask.
-+    pub fn dma_set_mask_and_coherent(&mut self, mask: u64) -> Result {
-+        // SAFETY: device pointer is guaranteed as valid by invariant on `Device`.
-+        let ret = unsafe { bindings::dma_set_mask_and_coherent(self.as_raw(), mask) };
-+        if ret != 0 {
-+            Err(Error::from_errno(ret))
-+        } else {
-+            Ok(())
-+        }
-+    }
++const TEST_VALUES: [(u32, u32); 5] = [
++    (0xa, 0xb),
++    (0xc, 0xd),
++    (0xe, 0xf),
++    (0xab, 0xba),
++    (0xcd, 0xef),
++];
 +
-+    /// Same as [`dma_set_mask_and_coherent`], but set the mask only for streaming mappings.
-+    pub fn dma_set_mask(&mut self, mask: u64) -> Result {
-+        // SAFETY: device pointer is guaranteed as valid by invariant on `Device`.
-+        let ret = unsafe { bindings::dma_set_mask(self.as_raw(), mask) };
-+        if ret != 0 {
-+            Err(Error::from_errno(ret))
-+        } else {
-+            Ok(())
-+        }
++struct MyStruct {
++    h: u32,
++    b: u32,
++}
++
++impl MyStruct {
++    fn new(h: u32, b: u32) -> Self {
++        Self { h, b }
 +    }
- }
- 
- // SAFETY: Instances of `Device` are always reference-counted.
++}
++// SAFETY: All bit patterns are acceptable values for `MyStruct`.
++unsafe impl kernel::transmute::AsBytes for MyStruct {}
++// SAFETY: Instances of `MyStruct` have no uninitialized portions.
++unsafe impl kernel::transmute::FromBytes for MyStruct {}
++
++kernel::pci_device_table!(
++    PCI_TABLE,
++    MODULE_PCI_TABLE,
++    <DmaSampleDriver as pci::Driver>::IdInfo,
++    [(
++        pci::DeviceId::from_id(bindings::PCI_VENDOR_ID_REDHAT, 0x5),
++        ()
++    )]
++);
++
++impl pci::Driver for DmaSampleDriver {
++    type IdInfo = ();
++    const ID_TABLE: pci::IdTable<Self::IdInfo> = &PCI_TABLE;
++
++    fn probe(pdev: &mut pci::Device, _info: &Self::IdInfo) -> Result<Pin<KBox<Self>>> {
++        let dev = pdev.as_mut();
++
++        dev.dma_set_mask_and_coherent(kernel::dma::dma_bit_mask(64))?;
++
++        dev_info!(dev, "Probe DMA test driver.\n");
++
++        let ca: kernel::devres::Devres<CoherentAllocation<MyStruct>> =
++            CoherentAllocation::alloc_coherent(dev, TEST_VALUES.len(), GFP_KERNEL)?;
++
++        || -> Result {
++            let reg = ca.try_access().ok_or(ENXIO)?;
++
++            for (i, value) in TEST_VALUES.into_iter().enumerate() {
++                kernel::dma_write!(reg[i] = MyStruct::new(value.0, value.1));
++            }
++
++            Ok(())
++        }()?;
++
++        let drvdata = KBox::new(
++            Self {
++                pdev: pdev.clone(),
++                ca,
++            },
++            GFP_KERNEL,
++        )?;
++
++        Ok(drvdata.into())
++    }
++}
++
++impl Drop for DmaSampleDriver {
++    fn drop(&mut self) {
++        dev_info!(self.pdev.as_ref(), "Unload DMA test driver.\n");
++
++        let _ = || -> Result {
++            let reg = self.ca.try_access().ok_or(ENXIO)?;
++            for (i, value) in TEST_VALUES.into_iter().enumerate() {
++                assert_eq!(kernel::dma_read!(reg[i].h), value.0);
++                assert_eq!(kernel::dma_read!(reg[i].b), value.1);
++            }
++            Ok(())
++        }();
++    }
++}
++
++kernel::module_pci_driver! {
++    type: DmaSampleDriver,
++    name: "rust_dma",
++    author: "Abdiel Janulgue",
++    description: "Rust DMA test",
++    license: "GPL v2",
++}
 -- 
 2.43.0
 
