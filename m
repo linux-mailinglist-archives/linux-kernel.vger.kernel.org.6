@@ -1,129 +1,153 @@
-Return-Path: <linux-kernel+bounces-550901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D0E2A56588
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:36:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14F3EA5658D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:37:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 725443B5A0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:36:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 820A81896190
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E332520E33F;
-	Fri,  7 Mar 2025 10:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XT4wEqAv"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF0E20E02A;
+	Fri,  7 Mar 2025 10:37:14 +0000 (UTC)
+Received: from Atcsqr.andestech.com (60-248-80-70.hinet-ip.hinet.net [60.248.80.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98CA20B7FD;
-	Fri,  7 Mar 2025 10:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50E720D507
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 10:37:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.248.80.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741343795; cv=none; b=iBX0H2JcvwcYuSdOjh7N0IyTmrYZWX0KqfdLCT5FkuXcsMhpSrNY0l5wKh7Rf+3XorOk/Gvmidifq03mDx7xWBC7raIIhl0oi/cKcf35m06+mkxj/wuX8+D+yyaCC4Tkd0L4ZjNXt2pex3JsHZWVqIfRJdB07FcNlY9y7/Rz7Iw=
+	t=1741343834; cv=none; b=M8DIp/FwjjXTyil1NtTZ13Ac+HBLA2bZOrxZ+2CiGsFcNMSnZAn4HkzP3f+V2t/7NgiKm3UAbFG9qGAdEfCZQFepMFiumSQb+xPTrIStpywHs3JCFBYj8q/ZgKl2tIGFYzUXIxORBIbYbpOpv8zfkkopKgmu3BWC24aJurCecpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741343795; c=relaxed/simple;
-	bh=IoATmkm/Rjb3OeLxwhR108Qn/R1lDRmF3eQ5DLhG/Yk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nu/+5HATLcPtcBJXqfs5UntCK2vQynC3MVANC7LraDMyX1mV+vektC+Z2k6smOt5vjcP5OkcWkUm0mwQ1b7O6FKMquOfvOp9TzE1p6pDZICK+yFgIPsg+8unAV5fxqzX1m4DxnguqBpVEYgc9oY9q4HyIODQazfPq0xh1TQsRyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XT4wEqAv; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 527AaLnA344561
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 7 Mar 2025 04:36:21 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741343781;
-	bh=Gv5g3lJSEQAWXZM3XwaU06yz84+apKewnJfFnIBLU0s=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=XT4wEqAvYJ83Njy8ZFvObjrXbTRKqkZcg9fsmzPXtw9k9ZGe2iayo+Tv9VDDtajmK
-	 u4udPtHZP0dCjwMdsksZLqgE+kOJLhgYNQyWjgJFk1c19VisxZpnMykEVmRYJG/oI4
-	 pCWzcH2EU8DXFXneMjK4bTYMjU9PxugKErgok/YA=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527AaLNs029394;
-	Fri, 7 Mar 2025 04:36:21 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
- Mar 2025 04:36:21 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 7 Mar 2025 04:36:21 -0600
-Received: from uda0132425.dhcp.ti.com (dhcp-10-24-69-250.dhcp.ti.com [10.24.69.250])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527AaH3S021509;
-	Fri, 7 Mar 2025 04:36:18 -0600
-From: Vignesh Raghavendra <vigneshr@ti.com>
-To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Vaishnav Achath <vaishnav.a@ti.com>
-CC: Vignesh Raghavendra <vigneshr@ti.com>, <linux-kernel@vger.kernel.org>,
-        <jai.luthra@linux.dev>, <y-abhilashchandra@ti.com>
-Subject: Re: [PATCH 0/5] Add J722S CSI support
-Date: Fri, 7 Mar 2025 16:06:15 +0530
-Message-ID: <174133309362.1072814.5440404016847301624.b4-ty@ti.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250218185452.600797-1-vaishnav.a@ti.com>
-References: <20250218185452.600797-1-vaishnav.a@ti.com>
+	s=arc-20240116; t=1741343834; c=relaxed/simple;
+	bh=iLn5oLlhbr0s4LMCzs8Lf3sDlErvpf9cLtNXgRVyzAo=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AxIsqm+5oPyH3CPkDnIJ5m7KoazKRcb8tox+NyzBLhSq9GTKeFl07yaIQvxbbHrFFchmtRD9EbOhZsa/8madvYOevYnPwWCVk9PkPZHedUS9lBq1RPYNU6bd3HyTR+sBSFnQVFfOxR4KONVJfdZhIPSBkNgXXySjhPN44ik1OFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com; spf=pass smtp.mailfrom=andestech.com; arc=none smtp.client-ip=60.248.80.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=andestech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=andestech.com
+Received: from mail.andestech.com (ATCPCS34.andestech.com [10.0.1.134])
+	by Atcsqr.andestech.com with ESMTPS id 527AaPBY052202
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=OK);
+	Fri, 7 Mar 2025 18:36:25 +0800 (+08)
+	(envelope-from ben717@andestech.com)
+Received: from atctrx.andestech.com (10.0.15.11) by ATCPCS34.andestech.com
+ (10.0.1.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 7 Mar
+ 2025 18:36:25 +0800
+Date: Fri, 7 Mar 2025 18:36:25 +0800
+From: Ben Zong-You Xie <ben717@andestech.com>
+To: Conor Dooley <conor@kernel.org>
+CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
+        <aou@eecs.berkeley.edu>, <alex@ghiti.fr>, <tim609@andestech.com>
+Subject: Re: [PATCH] riscv: add Andes SoC family Kconfig support
+Message-ID: <Z8rMKZoDYmpNosSj@atctrx.andestech.com>
+References: <20250305030526.1986062-1-ben717@andestech.com>
+ <20250306-finale-chatroom-c620ff284d8c@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250306-finale-chatroom-c620ff284d8c@spud>
+User-Agent: Mutt/2.1.4 (2021-12-11)
+X-ClientProxiedBy: ATCPCS33.andestech.com (10.0.1.100) To
+ ATCPCS34.andestech.com (10.0.1.134)
+X-DKIM-Results: atcpcs34.andestech.com; dkim=none;
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:Atcsqr.andestech.com 527AaPBY052202
 
-Hi Vaishnav Achath,
+On Thu, Mar 06, 2025 at 04:40:49PM +0000, Conor Dooley wrote:
+> [EXTERNAL MAIL]
 
-On Wed, 19 Feb 2025 00:24:47 +0530, Vaishnav Achath wrote:
-> This series adds support for CSI2RX capture on J722S EVM
-> and enables IMX219 and OV5640 overlays to enables
-> 4 sensors on EVM, this provides a reference for a user to
-> enable a different sensor on any of the ports.
+> Date: Thu, 6 Mar 2025 16:40:49 +0000
+> From: Conor Dooley <conor@kernel.org>
+> To: Ben Zong-You Xie <ben717@andestech.com>
+> Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+>  paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+>  alex@ghiti.fr
+> Subject: Re: [PATCH] riscv: add Andes SoC family Kconfig support
 > 
-> Test logs:
-> IMX219: https://gist.github.com/vaishnavachath/60cc2ef257601f27f28a315f8cf669c4
-> OV5640: https://gist.github.com/vaishnavachath/648202286d4d34d4d25f7c8c9db8b8bd
+> On Wed, Mar 05, 2025 at 11:05:26AM +0800, Ben Zong-You Xie wrote:
+> > The first SoC in the Andes series is QiLai. It includes a high-performance
+> > quad-core RISC-V AX45MP cluster and one NX27V vector processor.
 > 
-> [...]
+> I'd expect a config option like this to come with the user, which in
+> this case is the dts etc for a board using the QiLai SoC or drivers for
+> the SoC. Without dts or drivers, there's no reason to ever enable this,
+> so where are those patches?
+> 
+> Cheers,
+> Conor.
+> 
 
-I have applied the following to branch ti-k3-dts-next on [1].
-Thank you!
+Hi Conor,
 
-[1/5] arm64: dts: ti: k3-j722s-main: Add BCDMA CSI overrides
-      commit: fb1b230bf9c45f5d6579dc329c2aafcd1263b70a
-[2/5] arm64: dts: ti: k3-j722s-main: Add CSI2RX nodes
-      commit: 8fea4519f625e6c1b05078f2ecea252b7b28b06e
-[3/5] arm64: dts: ti: k3-j722s-evm: Add camera peripherals
-      commit: ce553288ad2368f0d27e47b39a23121a825a2b33
-[4/5] arm64: dts: ti: k3-j722s-evm: Add overlay for quad IMX219
-      commit: c24ccb1cd77fb44087b2f7008d99626796b33ca4
-[5/5] arm64: dts: ti: k3-j722s-evm: Add overlay for TEVI OV5640
-      commit: 938806652b0a3c90d67e7137c91708d06940b03d
+We are still preparing those patches for upstream, and we will add them
+in the next patch series.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent up the chain during
-the next merge window (or sooner if it is a relevant bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Thanks,
+Ben
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+> > 
+> > For further information, refer to [1].
+> > 
+> > [1] https://www.andestech.com/en/products-solutions/andeshape-platforms/qilai-chip/
+> > 
+> > Signed-off-by: Ben Zong-You Xie <ben717@andestech.com>
+> > ---
+> >  arch/riscv/Kconfig.errata | 2 +-
+> >  arch/riscv/Kconfig.socs   | 9 +++++++++
+> >  2 files changed, 10 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/riscv/Kconfig.errata b/arch/riscv/Kconfig.errata
+> > index e318119d570d..be76883704a6 100644
+> > --- a/arch/riscv/Kconfig.errata
+> > +++ b/arch/riscv/Kconfig.errata
+> > @@ -12,7 +12,7 @@ config ERRATA_ANDES
+> >  
+> >  config ERRATA_ANDES_CMO
+> >  	bool "Apply Andes cache management errata"
+> > -	depends on ERRATA_ANDES && ARCH_R9A07G043
+> > +	depends on ERRATA_ANDES && (ARCH_R9A07G043 || ARCH_ANDES)
+> >  	select RISCV_DMA_NONCOHERENT
+> >  	default y
+> >  	help
+> > diff --git a/arch/riscv/Kconfig.socs b/arch/riscv/Kconfig.socs
+> > index 1916cf7ba450..b89b6e0d1bc9 100644
+> > --- a/arch/riscv/Kconfig.socs
+> > +++ b/arch/riscv/Kconfig.socs
+> > @@ -1,5 +1,14 @@
+> >  menu "SoC selection"
+> >  
+> > +config ARCH_ANDES
+> > +	bool "Andes SoCs"
+> > +	depends on MMU && !XIP_KERNEL
+> > +	select ERRATA_ANDES
+> > +	select ERRATA_ANDES_CMO
+> > +	select AX45MP_L2_CACHE
+> > +	help
+> > +	  This enables support for Andes SoC platform hardware.
+> > +
+> >  config ARCH_MICROCHIP_POLARFIRE
+> >  	def_bool ARCH_MICROCHIP
+> >  
+> > -- 
+> > 2.34.1
+> > 
+> > 
+> > _______________________________________________
+> > linux-riscv mailing list
+> > linux-riscv@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-riscv
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
---
-Vignesh
 
 
