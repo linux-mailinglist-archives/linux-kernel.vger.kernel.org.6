@@ -1,129 +1,139 @@
-Return-Path: <linux-kernel+bounces-550520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E53FA560B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:18:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E9A7A560B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:25:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E218176227
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:18:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 528EE189488A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:25:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC49719D082;
-	Fri,  7 Mar 2025 06:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CB119C566;
+	Fri,  7 Mar 2025 06:24:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTLXAzr1"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gCjYjSpC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9037DDAB;
-	Fri,  7 Mar 2025 06:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8EC33DF;
+	Fri,  7 Mar 2025 06:24:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741328325; cv=none; b=C80VBtvhhy2sS/9VMfRKmZ9PWL0SBMdWGBAHmCSRXcYJXoKj6XchKxu6amznKunBWPA7IxFiPsom7zUrWlbf0M+cM72QnkbwyJK2afSjZZxLAa9GVjEERFYT9BLcKYRiInXUE6uayb6S8ohxaieVrm7ZziYr7FyCsyEBdbsi8vE=
+	t=1741328698; cv=none; b=oPGuGI3R11w5dgV5G/rynCds71X6HpdawwbmROR0S3bDPUkwCHC3KLk+R+uiDQL38XLd/AWdK9v90q/T1f05H6fQAWbP6Ihv2qcSrhgInN+MP2auG2JCEHEiaLno/suB4rEWSzGtr+u81tXmq7SwjsWL7HDpLNehvyfbI5m8YXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741328325; c=relaxed/simple;
-	bh=1soUIkK5EKDYaH0c8vrvpJEpTwWQncZv9NclynqEpxM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k/1MgQ/h+eS+T2hhT48THA4INpwEoHDtUackheqVAFvsiwu65y5bFiDvfEVLMy7QOxFqItEnKkOOOp7x9Fv1tPo+Wew2q9gk5B38zrC4scOyjNJ2AL1VUbwVlHiEBs3JV2gh3zDcNA0GwPAI5xz3o6TDFnfqSeBJRW3ZKUoa6f8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DTLXAzr1; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4750c3b0097so13048881cf.0;
-        Thu, 06 Mar 2025 22:18:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741328322; x=1741933122; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F10fia5s8BJGMmpI4HkuMx1Ala8TT6PDF9W24WMGIHg=;
-        b=DTLXAzr1METQGL1nVOzo0upACWY064ZI9wB9HCG5didw8yBtCBfykQc+DLedE31n+f
-         w4IMOE495czsJlX0IddESs9sDGbQns9n5uR7r2wNMV8Kl5eNb3TSi9nwI2Ved06TuzJY
-         i+ruvU8iGfi5nH/1LTAhjjQYCTVZ39n/F2GBqBZZaFST618gRdMFiUXEsykwiWR9ikXz
-         F1lwHF36Tv2KwTdrOj1yn6bCUNhDLDnjCF+ydd4aZBZujKJJORZHVaDOFDywTWyNvw1b
-         m8H/WiauP9bJ1CdYv5edL9m7DSxVYuKqHhoRdKRpmbHCxWOwyj9gKQFy5aLzcguY81Oz
-         fXJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741328322; x=1741933122;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=F10fia5s8BJGMmpI4HkuMx1Ala8TT6PDF9W24WMGIHg=;
-        b=XhF1VP5OU+ulAisigFdv70C4rlBZhQkFOgF/OQelRePe08iIhmzvCpM4hQ9b6EH6FY
-         ck8eKP42hTyrNSRLinlONqBagaPPYrMUSZn3E7+Dsdfxt4sK/T+OVyEHX61yPgGRiu/x
-         e4tJrmZk/Cn75asWzISwcYry0noPuUEVzMvfJhsa+NP0lAivGyHirh7VoYMVvvVPcjZg
-         JHmpAxTdOMX18qYgqN3Cz47u1GKf2R5D8nGXxqsvIiB7b8bQpnF5N9lpF2KZ5E0YKZQV
-         VFtvIi61LMQExdQgUq7F2LN1ZT0kQ7+QQTo+JV1PXK7tChKMusL+yYyClJvcTAvIoCzr
-         dK1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUEKE/H5R++2kpFrFB4UtGNN3O7zD6DNl1+dntV+ydFw7aCBGFTf1N3SS9c5RJXhRYg3raADrwquT9xo/fn@vger.kernel.org, AJvYcCURCQr3oSbQZALmvtbdQUInZlLhsfF5KqBpU0JoL8r9D4eR7nAL1xg93Lq6zm5Shu7h1cymdU9xbq4Q@vger.kernel.org, AJvYcCVGwXQ+KNgkt8uwsDsjkh2ns0LZ0vgNHzTl7gWMvEQKM9viq33oHusvTpqTGeW0pg5Pqpe0y/3vGznU7Bw=@vger.kernel.org, AJvYcCXIGwCEJ+sXhLtyWYGqYaTXUOcK8BfJQP2UN+L67wIZIIdzJlMEh3OnWkcCodcx9CaZomMemCT3qtxChFQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmGaljcnPraTFQ8IOFrFsU5ubY50f1eGVs3hvBgW3wTry3iPhN
-	b5YsCOhUKc7Sx3i6yXjeAklkAIXOWEAxEncqVAXbNtMeqLxYDUlthAWNQNIJFxX4i7AaW0LH4m9
-	yqWSNLkWbpxnNRsSSWyqKatgBFL4=
-X-Gm-Gg: ASbGncuoyiWi/MjzkVtPi/nKkwzo9cUFy18aiksRMqmSMhHcfpA70Gt6tDpgG1a+aQ8
-	LWH8H6EJJ90iM3O/pga1SjvAi/kaO4JbG7UHG5gYTpbMEzCETzldfmjo/EcI1RwLNE2aoQL31qF
-	zXCFlwlQlf/bm2mf7LgGtiyhcIsI1J/SdO0E3uXDk0SgFTXgEsHEfVMd+f
-X-Google-Smtp-Source: AGHT+IHhETGPw/ZFKq+YENLV2u5EcdpAk3T+SS5XFSamMDKfcKgYmQS3Mbj3mWKDGRDz4TBEKSSztO8xYHOfJx/qczs=
-X-Received: by 2002:ac8:5e4d:0:b0:474:f29d:2e96 with SMTP id
- d75a77b69052e-47610978d28mr30024911cf.21.1741328322528; Thu, 06 Mar 2025
- 22:18:42 -0800 (PST)
+	s=arc-20240116; t=1741328698; c=relaxed/simple;
+	bh=OhnevS0yjPAh9IfYEi70Vj0NzmzZFYRG0Y6dMvvdbps=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=jqfYWASjnW4N/Z8r/rotXwNJVIVCKEiwmuzC5k9lKNVmc3gf3+At+52rtEffVZAUAigbbiUlNqi61S9QSyR9AC9I4zoLEG6TqujCfAF+40sXMswAGmoC3nzNr904PaVh1z27z6NSA5UlZDEC7mCeTbXwhJJG+Z+sVN9Qs8NNMbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gCjYjSpC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04933C4CED1;
+	Fri,  7 Mar 2025 06:24:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741328696;
+	bh=OhnevS0yjPAh9IfYEi70Vj0NzmzZFYRG0Y6dMvvdbps=;
+	h=From:Subject:Date:To:Cc:From;
+	b=gCjYjSpCBRT24c26wKgBDWgcnZGUIBIKSWF7ZlQFkzehRRTsxIDCJdayC5eDUdyXr
+	 sR0p6eIh4P4bF8Oq1fhXs39sXDc34uI45LUR4+ktKEIlsU3XyuOA45JwTzipGBguE3
+	 N3z7rwLfRmmRZRPtLj8a8k/jejeNQCiSuPiAkHTCF0VmxYEdk7zW2/V5DxPt6R14hB
+	 51bYnL+9wXlhK+S2CrRmGl3LlGqJt7lYIpJCyse4nyy/diTR43WXGdVfCw6iZeCXzg
+	 dy270sgObU+vEiBHQkR0kBbXlZyQpYsxFilbbwDFXCJKnMM4QpHfvgyvTKK72uEA9j
+	 MFseUW4gwutEg==
+From: Dmitry Baryshkov <lumag@kernel.org>
+Subject: [PATCH v3 0/8] drm/msm/dpu: improve CTL handling on DPU >= 5.0
+ platforms
+Date: Fri, 07 Mar 2025 08:24:48 +0200
+Message-Id: <20250307-dpu-active-ctl-v3-0-5d20655f10ca@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250227-apple-codec-changes-v3-0-cbb130030acf@gmail.com>
- <20250227-apple-codec-changes-v3-17-cbb130030acf@gmail.com>
- <20250304135050.GA2485358-robh@kernel.org> <CAHgNfTyVKFuT0fZ3Qj=MdcXs67KscwkSepAH95xkAAKWM1g8Xg@mail.gmail.com>
- <20250305132239.GA1415729-robh@kernel.org>
-In-Reply-To: <20250305132239.GA1415729-robh@kernel.org>
-From: James Calligeros <jcalligeros99@gmail.com>
-Date: Fri, 7 Mar 2025 16:18:31 +1000
-X-Gm-Features: AQ5f1JpO-lY2IBZyJ9phmkLFb8GGKVOf8HdEFFSJcTDAx0YxxJ5ZNijHlkAl-zg
-Message-ID: <CAHgNfTxS1Q4PPsw520-J4Yn6xg+QZOYFkYhg5yv-uZFu5waN_g@mail.gmail.com>
-Subject: Re: [PATCH v3 17/20] ASoC: dt-bindings: tas2770: add flags for SDOUT
- pulldown and zero-fill
-To: Rob Herring <robh@kernel.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Shenghao Ding <shenghao-ding@ti.com>, 
-	Kevin Lu <kevin-lu@ti.com>, Baojun Xu <baojun.xu@ti.com>, Dan Murphy <dmurphy@ti.com>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shi Fu <shifu0704@thundersoft.com>, Jean Delvare <jdelvare@suse.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>, 
-	=?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>, 
-	Hector Martin <marcan@marcan.st>, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	asahi@lists.linux.dev, linux-hwmon@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADCRymcC/2XMSw6CMBSF4a2Qjq1py6t15D6Mg2t7gZsQIC02G
+ sLeLcSBj+E5yf8tLKAnDOyULcxjpEDjkEZ+yJjtYGiRk0ubKaFKoYThbrpzsDNF5HbuudDWQuH
+ 0TWhgKZo8NvTYwcs17Y7CPPrn7ke5vW9KiV8qSi54LS1UNZRV0ehzTwP48Tj6lm1WVJ+9/utV6
+ g0Y1yjEUpr8q1/X9QU+FoOx7QAAAA==
+X-Change-ID: 20250209-dpu-active-ctl-08cca4d8b08a
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Neil Armstrong <neil.armstrong@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2793;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=OhnevS0yjPAh9IfYEi70Vj0NzmzZFYRG0Y6dMvvdbps=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnypEzq6PX4jb0sw/7v51d+IYnAFNlX/ooVBZMo
+ QxDD1ov8qCJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ8qRMwAKCRCLPIo+Aiko
+ 1X5EB/0VUG/MQqtatCn087kw0gnuje3o8i4wDbOrn2aUdX42nH0lwpnBkqJf3JWGv8QaR9YmzvS
+ 9iaFVIFlL6d5xqad+e6C/WkBoz45HSzClQGRomaVQ5KpFuV0FIHHEbLxVKMkkvW7myesC3Skzy5
+ Yga6pCMm713rDjL5Gv/Eks1mkfZC2Zb3MMY33ZmWcHnDrXt/4eBwZQ6FxSkaX4cYBrAXr0GhHoE
+ QBLgtC6nkbTUC1BdA6GvituMDVLBDRrC7g1FNzwJ3JIlcZPGsn7PXXfU9kQFfiJWgmUoJgVQsXx
+ GS+elem72JzaVcC2jzEkvRbfQziRavJ94Ad/zCuHWljmYpNH
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Wed, Mar 5, 2025 at 11:22=E2=80=AFPM Rob Herring <robh@kernel.org> wrote=
-:
-> This just feels like something common because any TDM interface may need
-> to control this. It's not really a property of the chip, but requirement
-> of the TDM interface.
+Since version 5.0 the DPU got an improved way of handling multi-output
+configurations. It is now possible to program all pending changes
+through a single CTL and flush everything at the same time.
 
-What I'm imagining then is something like:
+Implement corresponding changes in the DPU driver.
 
-dai-link@0 {
-    cpu {
-        sound-dai =3D <&some_cpu>;
-    };
-    codec {
-        sound-dai =3D <&some_codec>;
-        dai-tdm-tx-zerofill;
-        dai-tdm-tx-pulldown; /* either or, having both makes no sense */
-    };
-};
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v3:
+- Rebased on top of msm-next
+- Link to v2: https://lore.kernel.org/r/20250228-dpu-active-ctl-v2-0-9a9df2ee5193@linaro.org
 
-Codec drivers would then provide a function to set TDM TX behaviour if they
-support it, and export that as a dai op for use by machine drivers
-when they parse
-the dai link similar to dai-tdm-tx-slot and friends. Is that close to
-what you have
-in mind?
+Changes in v2:
+- Made CTL_MERGE_3D_ACTIVE writes unconditional (Marijn)
+- Added CTL_INTF_MASTER clearing in dpu_hw_ctl_reset_intf_cfg_v1
+  (Marijn)
+- Added a patch to drop extra rm->has_legacy_ctls condition (and an
+  explanation why it can not be folded in an earlier patch).
+- Link to v1: https://lore.kernel.org/r/20250220-dpu-active-ctl-v1-0-71ca67a564f8@linaro.org
 
-Regards,
-James
+---
+Dmitry Baryshkov (8):
+      drm/msm/dpu: don't overwrite CTL_MERGE_3D_ACTIVE register
+      drm/msm/dpu: program master INTF value
+      drm/msm/dpu: pass master interface to CTL configuration
+      drm/msm/dpu: use single CTL if it is the only CTL returned by RM
+      drm/msm/dpu: don't select single flush for active CTL blocks
+      drm/msm/dpu: allocate single CTL for DPU >= 5.0
+      drm/msm/dpu: remove DPU_CTL_SPLIT_DISPLAY from CTL blocks on DPU >= 5.0
+      drm/msm/dpu: drop now-unused condition for has_legacy_ctls
+
+ .../drm/msm/disp/dpu1/catalog/dpu_10_0_sm8650.h    |  5 ++---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_0_sm8150.h |  5 ++---
+ .../drm/msm/disp/dpu1/catalog/dpu_5_1_sc8180x.h    |  4 ++--
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_5_2_sm7150.h |  4 ++--
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_6_0_sm8250.h |  5 ++---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_7_0_sm8350.h |  5 ++---
+ .../drm/msm/disp/dpu1/catalog/dpu_8_0_sc8280xp.h   |  5 ++---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_8_1_sm8450.h |  5 ++---
+ .../drm/msm/disp/dpu1/catalog/dpu_8_4_sa8775p.h    |  5 ++---
+ .../gpu/drm/msm/disp/dpu1/catalog/dpu_9_0_sm8550.h |  5 ++---
+ .../drm/msm/disp/dpu1/catalog/dpu_9_2_x1e80100.h   |  5 ++---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c        |  6 +++++-
+ .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_cmd.c   |  2 ++
+ .../gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c   |  5 ++++-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.c         | 20 ++++++++++++++---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_ctl.h         |  2 ++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c             | 25 +++++++++++-----------
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h             |  2 ++
+ 18 files changed, 67 insertions(+), 48 deletions(-)
+---
+base-commit: 565351ae7e0cee80e9b5ed84452a5b13644ffc4d
+change-id: 20250209-dpu-active-ctl-08cca4d8b08a
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
