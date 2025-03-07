@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-551366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7A1FA56BA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:18:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 140DEA56B81
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:16:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 48DBF7AB87D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:14:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 790C8189C197
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A34722170F;
-	Fri,  7 Mar 2025 15:12:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB09D221735;
+	Fri,  7 Mar 2025 15:12:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eZjbfzL1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QBA6VD2A"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07E621CC63
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1885F221733
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:12:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741360325; cv=none; b=WBNxvxPl6IRERN02BnO8Hi4Hl+OuMHhEYm0s6Nzj9wD+zS40iRm8hM4kHzOAeOby4STKY1LBoAL6Eh8XeTps/uYFLWzbeF9QZL8AolQyEfe4JW0DMo8xeNa4cOlrbEVrehcOX6dLOMMNgMyGc9Lrf2NoXlQ5lePsGYeCutUVS5E=
+	t=1741360342; cv=none; b=cAAb4FgsepZgKHOl4iu2JZhmYmU7D6sr7GWn27swxg8dyE7ynBSpSVO1muwYWCkcxz6BJTSPMTp4JF96VL3txtbfbIodEhjYk5l9t7O7AYBZz2dTSTXaSSoZt4m3RUMM16+ZGmOgIxbRgz3K1G692mIny1rMLerZpb6mIeKLrg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741360325; c=relaxed/simple;
-	bh=C9tM5TuLfhlgQvLUFBgkKrvHur7nfMZAswXEQogvyso=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Xkk/of+9WYeb34yadY50Vf4ru+T8L7wPGd61to6xoAHA4hhYNfrXb9BLlwkYF21sTGnvLJk95clToaMugbd4jnryBpv0dl1dsdxctR490EI1A2jVR/5hIZgPdScJXaRoEKSd4tqNDhRpNledH0qSi5qJuc+woXLm3TjqGUbyML4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eZjbfzL1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741360322;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U3S/y/ILHmIHApB88hRzIwz+jtFgRApUnIcM4kDcX/4=;
-	b=eZjbfzL1vP53CI0D5hGHZ5amGfi/+6J5Shwx0q6tLsA/gfDFEUP3Wxs96YJaQdkzt8hdlO
-	VaZhiHEOJCSgPibDhr6HmtkRXJ0vrN3x25+OZQkrNLe/wHdh6HUIQ+3pZ3iU5cLmsSdu7b
-	/HJGpSBbJwol+VgvcUrK2srSNskGmic=
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
- [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-522-IKWlySv6PD6XDR5jrgbvAg-1; Fri, 07 Mar 2025 10:12:01 -0500
-X-MC-Unique: IKWlySv6PD6XDR5jrgbvAg-1
-X-Mimecast-MFC-AGG-ID: IKWlySv6PD6XDR5jrgbvAg_1741360321
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c3b53373f7so512791185a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:12:01 -0800 (PST)
+	s=arc-20240116; t=1741360342; c=relaxed/simple;
+	bh=X8bFjvWIEL6nNohkMOL5h5TzljFrKQZopW+uAVwDnpk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m/HOcSFOVS0IA5YTdZNiQpqp4z2NL6umYlwTY5yJ3BoAmOpk5Sz4/n9ONjYr5x6qWWU4Ghsl6g2dWRyyTaFvcrx2w+yqKwe6KJ2KNPaPn9m9o8NyTtym1cLwJ0rX5zexaFBLcIqkPUs7Era06wb0GNzIBQGJjDRHkA45IUcniTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QBA6VD2A; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-390f69e71c8so1148662f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:12:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741360338; x=1741965138; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3KPjXWWPyK0oX1t83TQ9M25n1uZNpHn3HsSYBqjRW2A=;
+        b=QBA6VD2AunMwKkSaHhn3XdS+lZVP9RJtNwJLVA9jIyJm8pk2KrkZ0YPZNStB1TfI05
+         ARP4m9N0uxq7hXtfkj8yHYTJRvGuqpWEAKhtrqxocT/KzV5L0zSIn3ziWPr0ef4INjCt
+         BcEtMWvK8BoPFqrled1IOzS4G5WfcAnYIQ4wnTfy+oUrukhxt7FUhHBXxByiIWKpW3HP
+         ObES84JtOipmEkbsN/MUCBD4mp0Q7K2Xo08XZrn7By/VPmzrW6+KNRMEn8euM5/xLdJu
+         WlevOkY/lNmp5v3QqjnQrFzrTiWAhczM3TwRdaR0C1JY89mDpEVhfns1R9VsxGoRGOTq
+         0taw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741360320; x=1741965120;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
+        d=1e100.net; s=20230601; t=1741360338; x=1741965138;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U3S/y/ILHmIHApB88hRzIwz+jtFgRApUnIcM4kDcX/4=;
-        b=rOxx24VTcVOeg1WbC0aJWRemB/bLtotAhvHMkjVLkMhEAZ7ZWzyI5Gg2lqfB/DkIBr
-         0WJT8Fgda2yBzzMvZXh9r8aBQuMvGB9xv9sOKRBjhZFm4t0rMJhokdCPIwgFRJdAeCsc
-         pkh7gkONP9lRn15vzTc/T9WoiJFzWNK0PyikIwb8KUEM8dGAgLELlQ0FXTyBv/KkfZx2
-         Kb4S43XT87Y3NB+BT+RAA6G4I/3Lkk4nuYP3PYsLLEK90xTs4B2/D9i4b52hGfIvIl6j
-         IWM4v6sy7XiWgBYRcqhFi9nxPy+CguMS+IslhT1yYd9SQLEURhwyR979EROpNLa7qGUi
-         DyQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWoy22Ykw4vdqXScN2zRw6rICZKqiE3Jv1CA29X8yqt1f863K+qDwhqSTLfdD/MZtyjvOMUuj5cJNwdv4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7IdVaR9pkN81JSLzpYguOqhgNrIBXY92bwhfMEa6sJrHZ3pJh
-	9njuMktdYXy8TUbB9twFzDGx+nj30lQKjKHS19HMlOynIsGeGFW/d+7qoeEFS2oYr+49tdpSIKH
-	RIEeVy0XOZI5oQ/kioKyPHGxHRKwVgo2dAbEPL+OrqUou0HM34/Gowd63c9B6pvTxyOgNWg==
-X-Gm-Gg: ASbGncu971RqLufBm0DDdcJqzSJgecoLlatmSu6YwzuWNLqdoOLif2irgc0ZfLYz2eG
-	wKfofu6uPHICg15XKc4Pb7+znH8+R3hPGG9qvX5Fi18U3CQUefgAzvD3jmYQta7ym6HWMjylcf7
-	cT9lWLfPfR+Ko1zda+Eu2YuYx7kC3DgcKqYcRwlJMR5lMiHuk4my9Xue9i/JasIyjVvCH9eGLf0
-	eottTNTf096Nr9/8VqTC71MxpoiRdCzqKNL26d6dq2tZmscN44ypPJjCM0ZfBBstC1eXNPXE2O3
-	WOn8Oim9uf56F7P710sXceeSVTujrqZ0KgF8wM1y6k70ArJPxiPjjDfe5fI=
-X-Received: by 2002:a05:620a:261f:b0:7c3:e457:853c with SMTP id af79cd13be357-7c4e61ed4a1mr577216785a.50.1741360320187;
-        Fri, 07 Mar 2025 07:12:00 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHKuw12OwEB6WB4+HUUfMD0cI7kHe8YYf7PqXIevfwUmXERTDQ2AcnR+rdUrcLqQxyKvb/9YA==
-X-Received: by 2002:a05:620a:261f:b0:7c3:e457:853c with SMTP id af79cd13be357-7c4e61ed4a1mr577213785a.50.1741360319918;
-        Fri, 07 Mar 2025 07:11:59 -0800 (PST)
-Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3e533a1a1sm254283185a.6.2025.03.07.07.11.58
+        bh=3KPjXWWPyK0oX1t83TQ9M25n1uZNpHn3HsSYBqjRW2A=;
+        b=VNvx8v8y67+B0mKNaCm5X2Tr9a1MsORJDQ4WNMDNGT4DMiBDb8R3XyR+u945qhW/v9
+         To/BQj7lrogxCY34IRQjWUcTJXM7tvm2iJoayPt5avEu41nmiy7pkO6kClZOzSVl5Coo
+         pqy5mtIzIuXee+iCqoKqPkfPkih+J76zYRt1lNJvyDEBXRQsRojk30BWHrkyHMcpcUx8
+         UF5yyA5UCloisq/lpvdtmlyZEVCe4iPoc6wHrVGNGHZcbXgNpjROJCk8RJNDxi2PDEn6
+         oQgQxQnfCu/C/bP4GpN1hKXtSduqS3jVoIBajbCr3HBfLkYM5uYNQdw6A2oUnbQnkWCh
+         gpTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX8dYtV49RwToA9Qiaq42snAptlGmpHioblUg0j4E1G6Xa+Xm2YpagLbGFAEfb1sy9JOCi+LzUHbI66FiM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYz3qOxsKujcUZa5i1+1p+ZH/10/g9cNUx83b3E9kVUpD9gzaA
+	doTeiKT0Dai//Ajb7aA8UloKvfEZrm8z4Pto3EsVQzxgptYzeE8E0hDDximzdn4=
+X-Gm-Gg: ASbGncvpf71zsIVks7AI3WObxnHpHqAWhN6sAgrW/EhKz9aSIl1lFzoN2vdP3EiWn/v
+	N+5BF7glCdv2dIkixkka3MAcXzQ8H7mdTXfDwaG+fOYcaIHlihpVdJLuh3loqhB9x/xrad+mKCZ
+	03UGjpyJ7pOshXv4SlL5pZcEomc8/Oiu4qu0jcxo/9wWb+U5/oprf0dV+qZxgmefmot7DANu7Kh
+	FxeJVyytAue6ZDMwmE6gM3tgXdzy0VBjFT+Adsk4P3YtDDabUuuacqZz64GUrDNu/TxTa/V3nMD
+	FCMu21MsB+9Z41ZtvtEacSS4VF8CMp0PxC4BXrzfZInoX8PqPKbUTNeSpV+7Pga38u/ugLLqJbj
+	JAwynGOcn
+X-Google-Smtp-Source: AGHT+IF/RAT3IwHfPoJTNREYxSSMrMjlEJSFksJXdPdttaAQyHvw/bJK7g/nq3YVVLUv/LTreYAVjw==
+X-Received: by 2002:a5d:59ae:0:b0:391:22e2:ccd2 with SMTP id ffacd0b85a97d-391296c2485mr5482638f8f.3.1741360338305;
+        Fri, 07 Mar 2025 07:12:18 -0800 (PST)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3912c104acesm5662531f8f.98.2025.03.07.07.12.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 07:11:59 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <eafef3d6-c5ce-435e-850c-60f780500b2e@redhat.com>
-Date: Fri, 7 Mar 2025 10:11:57 -0500
+        Fri, 07 Mar 2025 07:12:17 -0800 (PST)
+Message-ID: <83283a94-6833-4d7d-8d89-6ba42b43b96c@linaro.org>
+Date: Fri, 7 Mar 2025 16:12:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,67 +81,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/8] sched/topology: Wrappers for sched_domains_mutex
-To: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
- cgroups@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Qais Yousef <qyousef@layalina.io>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Swapnil Sapkal <swapnil.sapkal@amd.com>,
- Shrikanth Hegde <sshegde@linux.ibm.com>, Phil Auld <pauld@redhat.com>,
- luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
- Jon Hunter <jonathanh@nvidia.com>
-References: <20250306141016.268313-1-juri.lelli@redhat.com>
- <20250306141016.268313-3-juri.lelli@redhat.com>
+Subject: Re: [PATCH v3 4/8] clocksource: stm32-lptimer: add support for
+ stm32mp25
+To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>, lee@kernel.org,
+ ukleinek@kernel.org, alexandre.torgue@foss.st.com, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, jic23@kernel.org, tglx@linutronix.de
+Cc: catalin.marinas@arm.com, will@kernel.org, devicetree@vger.kernel.org,
+ wbg@kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
+ olivier.moysan@foss.st.com
+References: <20250305094935.595667-1-fabrice.gasnier@foss.st.com>
+ <20250305094935.595667-5-fabrice.gasnier@foss.st.com>
 Content-Language: en-US
-In-Reply-To: <20250306141016.268313-3-juri.lelli@redhat.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20250305094935.595667-5-fabrice.gasnier@foss.st.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/6/25 9:10 AM, Juri Lelli wrote:
-> Create wrappers for sched_domains_mutex so that it can transparently be
-> used on both CONFIG_SMP and !CONFIG_SMP, as some function will need to
-> do.
->
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Fixes: 53916d5fd3c0 ("sched/deadline: Check bandwidth overflow earlier for hotplug")
-> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+On 05/03/2025 10:49, Fabrice Gasnier wrote:
+> On stm32mp25, DIER (former IER) must only be modified when the lptimer
+> is enabled. On earlier SoCs, it must be only be modified when it is
+> disabled. Read the LPTIM_VERR register to properly manage the enable
+> state, before accessing IER.
+> 
+> Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
 > ---
-> v1 -> v2: Remove wrappers for the !SMP case as all users are not defined
->            either in that case
+> Changes in V2:
+> - rely on fallback compatible as no specific .data is associated to the
+>    driver. Use version data from MFD core.
+> - Added interrupt enable register access update in (missed in V1)
 > ---
->   include/linux/sched.h   |  2 ++
->   kernel/cgroup/cpuset.c  |  4 ++--
->   kernel/sched/core.c     |  4 ++--
->   kernel/sched/debug.c    |  8 ++++----
->   kernel/sched/topology.c | 12 ++++++++++--
->   5 files changed, 20 insertions(+), 10 deletions(-)
->
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 9632e3318e0d..d5f8c161d852 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -383,6 +383,8 @@ enum uclamp_id {
->   extern struct root_domain def_root_domain;
->   extern struct mutex sched_domains_mutex;
->   #endif
-> +extern void sched_domains_mutex_lock(void);
-> +extern void sched_domains_mutex_unlock(void);
+>   drivers/clocksource/timer-stm32-lp.c | 26 ++++++++++++++++++++++----
+>   1 file changed, 22 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clocksource/timer-stm32-lp.c b/drivers/clocksource/timer-stm32-lp.c
+> index a4c95161cb22..96d975adf7a4 100644
+> --- a/drivers/clocksource/timer-stm32-lp.c
+> +++ b/drivers/clocksource/timer-stm32-lp.c
+> @@ -25,6 +25,7 @@ struct stm32_lp_private {
+>   	struct clock_event_device clkevt;
+>   	unsigned long period;
+>   	struct device *dev;
+> +	bool ier_wr_enabled;	/* Enables LPTIMER before writing into IER register */
+>   };
+>   
+>   static struct stm32_lp_private*
+> @@ -37,8 +38,15 @@ static int stm32_clkevent_lp_shutdown(struct clock_event_device *clkevt)
+>   {
+>   	struct stm32_lp_private *priv = to_priv(clkevt);
+>   
+> -	regmap_write(priv->reg, STM32_LPTIM_CR, 0);
+> +	/* Disable LPTIMER either before or after writing IER register (else, keep it enabled) */
+> +	if (!priv->ier_wr_enabled)
+> +		regmap_write(priv->reg, STM32_LPTIM_CR, 0);
+> +
+>   	regmap_write(priv->reg, STM32_LPTIM_IER, 0);
+> +
 
-As discussed in the other thread, move the 
-sched_domains_mutex_{lock/unlock}{} inside the "#if CONFIG_SMP" block 
-and define the else part so that it can be used in code block that will 
-also be compiled in the !CONFIG_SMP case.
+Why not encapsulate the function ?
 
-Other than that, the rest looks good to me.
+	regmap_write_ier(struct stm32_lp_private *priv, int value)
+	{
 
-Cheers,
-Longman
+		/* A comment ... */
+		if (!priv->ier_wr_enabled)
+			regmap_write(priv->reg, STM32_LPTIM_CR, 0);
 
+		regmap_write(priv->reg, STM32_LPTIM_IER, value);
+
+		if (!priv->ier_wr_enabled)
+			regmap_write(priv->reg, STM32_LPTIM_CR, STM32_LPTIM_ENABLE);
+	}
+
+
+> +	if (priv->ier_wr_enabled)
+> +		regmap_write(priv->reg, STM32_LPTIM_CR, 0);
+> +
+
+>   	/* clear pending flags */
+>   	regmap_write(priv->reg, STM32_LPTIM_ICR, STM32_LPTIM_ARRMCF);
+>   
+> @@ -51,12 +59,21 @@ static int stm32_clkevent_lp_set_timer(unsigned long evt,
+>   {
+>   	struct stm32_lp_private *priv = to_priv(clkevt);
+>   
+> -	/* disable LPTIMER to be able to write into IER register*/
+> -	regmap_write(priv->reg, STM32_LPTIM_CR, 0);
+> +	if (!priv->ier_wr_enabled) {
+> +		/* Disable LPTIMER to be able to write into IER register */
+> +		regmap_write(priv->reg, STM32_LPTIM_CR, 0);
+> +	} else {
+> +		/* Enable LPTIMER to be able to write into IER register */
+> +		regmap_write(priv->reg, STM32_LPTIM_CR, STM32_LPTIM_ENABLE);
+> +	}
+> +
+>   	/* enable ARR interrupt */
+>   	regmap_write(priv->reg, STM32_LPTIM_IER, STM32_LPTIM_ARRMIE);
+> +
+>   	/* enable LPTIMER to be able to write into ARR register */
+> -	regmap_write(priv->reg, STM32_LPTIM_CR, STM32_LPTIM_ENABLE);
+> +	if (!priv->ier_wr_enabled)
+> +		regmap_write(priv->reg, STM32_LPTIM_CR, STM32_LPTIM_ENABLE);
+> +
+>   	/* set next event counter */
+>   	regmap_write(priv->reg, STM32_LPTIM_ARR, evt);
+>   
+> @@ -151,6 +168,7 @@ static int stm32_clkevent_lp_probe(struct platform_device *pdev)
+>   		return -ENOMEM;
+>   
+>   	priv->reg = ddata->regmap;
+> +	priv->ier_wr_enabled = ddata->version == STM32_LPTIM_VERR_23;
+>   	ret = clk_prepare_enable(ddata->clk);
+>   	if (ret)
+>   		return -EINVAL;
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
