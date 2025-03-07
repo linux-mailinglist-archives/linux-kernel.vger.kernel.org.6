@@ -1,126 +1,133 @@
-Return-Path: <linux-kernel+bounces-550791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A754A5642D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:45:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4724EA56433
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96AD51892584
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:45:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA8443B0B4F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD2C1E1DEE;
-	Fri,  7 Mar 2025 09:45:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE8B20C022;
+	Fri,  7 Mar 2025 09:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VM/8RCV+"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="Fpv3ofoW"
+Received: from mailtransmit04.runbox.com (mailtransmit04.runbox.com [185.226.149.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0151E1E04
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9926E19C575;
+	Fri,  7 Mar 2025 09:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741340718; cv=none; b=gNiSi/3SEE7iB+oMorvovEcAc4C5XCXDUaK7cIwwaeb5ondz17/rKrqJUom3JP362pssHfM3XkfHWzTd2AYajOTlAivPO/mv9pkkgWLTeL65po+xdVx3g+nQSkqlfKxK6DL2utLA7AfsByzmDI4Mb7bISXFyq+GbF1eS1CCY3Yg=
+	t=1741340755; cv=none; b=WI+kxDqSwgzzlq4neSMyryc5ID8ikVezs6axpzZcdDySTMPGFKOmwqG6k/iMBZv8YL36+s47ATY3PtLZO/npDdT5lhFSWGm3upwS6AeuVVlRRkexqf8OoJaJHJhH/MTSxaFIho/o3GdrdD8fxwcr9PlRa5ONpQUgph34Kw6C/xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741340718; c=relaxed/simple;
-	bh=LgETdORplFuf5k5ZwoeGPwHsLIExzbInj1MLRN3nQ3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T3Pss0qx2u2TJEjdaiLzWEZvTT4EnSUpH68Y7LZaMGYJGLZ1XlAbTN9s/njrluJYXND5Pfc9AtB2bs5xnoP+elbr0WEYIVVoyZuQYRjZvOUeRV5nb4FE9BmtQNSm4wmdg7aj2CHkGqB2YQS73Ul6Jjj+71RFVIyN2vRdmAAdI9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VM/8RCV+; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43bdcd0d97dso9159005e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 01:45:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741340715; x=1741945515; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HRkqGPwhP//aPW7BEk/ysV2uJJntAYyCBQb2J1lFSM0=;
-        b=VM/8RCV+Zw3rtZq0fxE1EJ/m14wLlwh1mC+phWW/UBVCBBU2FPm8xHHEqvJoQdwmV7
-         HDpzxg1ljuKSRXTDU3S6KI8knJBk0Op1kggdCXX6FRS4UcOnSbFuXeooULbTp2Ny2fnk
-         VbxEm+8ULBUxAwMLyqRlSUxfeUPBjglKp0DRdPN1+Aot6WgJF2P7mi90Wg3D0Pr3rhXt
-         zK0h3lwLvY8Dc3McETNHIXD/zBFD9VZb09CBrU3nbLNfc9uPya7ZgBfr5GykX3PKzaAG
-         ZLEKJPf37GxFB4nkV3520dwpjCMSB7iuHKsgnZrOaP7aoWRV9NgrzyYOK/zPrNBF/AKr
-         atuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741340715; x=1741945515;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HRkqGPwhP//aPW7BEk/ysV2uJJntAYyCBQb2J1lFSM0=;
-        b=HD8RaS0mT4aFLCCZw/9shnkrfKai9DcCKDePqQJwrT88R+3OEmuNMe2uwvr32Ko6Ys
-         Za3Xmou5c5TeP+xOZ5vyTU5X/Div6d2xvgkgRFsH7KN/5+BAL263g7Sjjd2+aar302tC
-         B2exGH742jA2Pw0oSdm/C0hl3UVpg0aEOQ125AligoVsQnaW0H1SFmka4PDuUfjgPIVX
-         /N+nR+gv1OslwwngnwuLwq5N9/gpnLpBXnWA8U23gv4G5CaipzoQFpEvFryB9NrAZrtQ
-         NXqRuvC67YjCAqhsGhKtqbZOGhIN5OnsM8W01ZOrSqgYUrGHzZV8OWh9Et3z3nUVWB8d
-         Syig==
-X-Forwarded-Encrypted: i=1; AJvYcCXX24IOgyBSFc6yITLKnk/r4C7nr5xaMZzIq3S5Ilig1C5hmwcBxoZxh5SfH36CYRCyOSV0D6N5IQT+P8I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw49vEP+hL6qm80FplEwk/LJgge1FmUAT5lVDEpQyTzEXcQZA6y
-	PHDAD4NWGv+yZCGc25TWB8E8xUgvNTTPNa9nV1WoDwizO0j0BctIrdeVmNy77yw=
-X-Gm-Gg: ASbGncsl95DBkDLLI4eWVwtIsttEG3K4NHcFB+f9bDemGpMrMptbQ/PCCoxUCAahzRo
-	5xPVo/PHxf3Jta78VPZEWAafGy/7qwJ7IsHwsLaHk57MrAPK1gtQH9YE3vOvRgQ69xe9byb47Y6
-	lEx8BX9czLm5n+v8mV6V4niYpzH3mWwJChr8edtFkLRn1gncTL2HisoQYdWaPQJebLzDyAVS2Ja
-	w6No6/oporFijT44C3G5jRhjKrWtG84qAMG7h7Mys1PJ5JGrubLoTYQPlK7i3spExwb//RMr2fC
-	aygvfhTmB22Es7lgDLq7JM/lhEuP8eDz0jQAcfRa4wJ8/hjRJQ==
-X-Google-Smtp-Source: AGHT+IGg8GvzE5Z/w3SPJ6HUWguNYWIga1jjbNiYACDEbFNuFPDlZsOtxem0jVkPwhDdthxVtoTDMw==
-X-Received: by 2002:a05:600c:1d01:b0:439:a138:1d with SMTP id 5b1f17b1804b1-43c635d4fdamr16521205e9.22.1741340715159;
-        Fri, 07 Mar 2025 01:45:15 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bdd9470e2sm45894145e9.33.2025.03.07.01.45.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 01:45:14 -0800 (PST)
-Date: Fri, 7 Mar 2025 12:45:11 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Cc: Shreeya Patel <shreeya.patel@collabora.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Dingxian Wen <shawn.wen@rock-chips.com>,
-	linux-media@vger.kernel.org, kernel@collabora.com,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] media: synopsys: hdmirx: Fix signedness bug in
- hdmirx_parse_dt()
-Message-ID: <4a50949d-e472-4942-9152-3e5a54c6b076@stanley.mountain>
-References: <7ec94789-305c-4de4-b477-c0eb839170e5@stanley.mountain>
- <54d5eef8-66a9-44aa-9e9b-0324d6fee46d@collabora.com>
+	s=arc-20240116; t=1741340755; c=relaxed/simple;
+	bh=8BxwcUC03a1oPRZ2pAlv3i2yCxXMrV7cP/jYoHXH/zs=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BgjmWmVJQwBPqGQtHDMUQB9n/kXDyASiQj3QIjc9lU6rvuzNLutrc6bsELooNpJlc5kqSGe84g44ohGk3NzstBpyWRhdts8SGDH0OZ/rFgLdPhGE0jlYJRGN96nJr0nxIqRapN0yVh7mvs14LzuHCnPoCMmknKrgPOT4O3niaAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=Fpv3ofoW; arc=none smtp.client-ip=185.226.149.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+	by mailtransmit04.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1tqUGs-0033xo-8z; Fri, 07 Mar 2025 10:45:34 +0100
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector1; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:Subject:From:MIME-Version:Date:Message-ID;
+	bh=8tA/kRSVyx+JyEIR4+usiCzAfmuIpsak7pwQ/jnN35Y=; b=Fpv3ofoWZmCgQnpYPTTrolVu6P
+	de8JefFtWeInaxjfUg6dvQf0fUMLHGZAWWioaw1DKq2pRg6rudQT4aJqR9D4nsI3a6I8wPG33XdWB
+	8ktI4nOIW40I3Dycgnpt/LHRPDIQceBf4zW8rLy37gvK2Zf3mGEmxZ8axKldzz5/shnBQY3FhrqCa
+	xySf0CsXSEEiR3LVnC6gDAo9QTdYg1onBEwRlHQ9wN00pIku4eado38x+zfsxt0Mdw8LPd/eu6hq6
+	/IOIurS90GnhKLVxkwwHaesvOfewix+ImcI5Sz82I+c7v3hHOeoWN9TkumkXoCAHDmVoTZm62hlFX
+	BQVMGIlg==;
+Received: from [10.9.9.73] (helo=submission02.runbox)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1tqUGq-0003Tb-67; Fri, 07 Mar 2025 10:45:32 +0100
+Received: by submission02.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1tqUGl-006bBn-4U; Fri, 07 Mar 2025 10:45:27 +0100
+Message-ID: <baeca627-e6f1-4d0a-aea5-fa31689edc4d@rbox.co>
+Date: Fri, 7 Mar 2025 10:45:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <54d5eef8-66a9-44aa-9e9b-0324d6fee46d@collabora.com>
+User-Agent: Mozilla Thunderbird
+From: Michal Luczaj <mhal@rbox.co>
+Subject: Re: [PATCH bpf-next v2 1/3] bpf, sockmap: avoid using sk_socket after
+ free
+To: Jiayuan Chen <jiayuan.chen@linux.dev>, xiyou.wangcong@gmail.com,
+ john.fastabend@gmail.com, jakub@cloudflare.com, martin.lau@linux.dev
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, andrii@kernel.org, eddyz87@gmail.com,
+ mykolal@fb.com, ast@kernel.org, daniel@iogearbox.net, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, shuah@kernel.org, sgarzare@redhat.com,
+ netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, mrpre@163.com, cong.wang@bytedance.com,
+ syzbot+dd90a702f518e0eac072@syzkaller.appspotmail.com
+References: <20250228055106.58071-1-jiayuan.chen@linux.dev>
+ <20250228055106.58071-2-jiayuan.chen@linux.dev>
+Content-Language: pl-PL, en-GB
+In-Reply-To: <20250228055106.58071-2-jiayuan.chen@linux.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 07, 2025 at 12:36:47PM +0300, Dmitry Osipenko wrote:
-> On 3/7/25 12:30, Dan Carpenter wrote:
-> > diff --git a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> > index 4ffc86ad6c35..e0d3fed87a92 100644
-> > --- a/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> > +++ b/drivers/media/platform/synopsys/hdmirx/snps_hdmirx.c
-> > @@ -154,7 +154,7 @@ struct snps_hdmirx_dev {
-> >  	bool hpd_trigger_level_high;
-> >  	bool tmds_clk_ratio;
-> >  	bool plugged;
-> > -	u32 num_clks;
-> > +	int num_clks;
-> >  	u32 edid_blocks_written;
-> >  	u32 cur_fmt_fourcc;
-> >  	u32 color_depth;
-> 
-> Reviewed-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-> 
-> Would be also good to return the original error code. There is no need
-> to check for the < 1 clock, it should be the < 0 check. Can be done in a
-> separate patch later. Thanks for the fix!
+On 2/28/25 06:51, Jiayuan Chen wrote:
+> ...
+>  static void sk_psock_verdict_data_ready(struct sock *sk)
+>  {
+> -	struct socket *sock = sk->sk_socket;
+> +	struct socket *sock;
+>  	const struct proto_ops *ops;
+>  	int copied;
+>  
+>  	trace_sk_data_ready(sk);
+>  
+> +	/* We need RCU to prevent the sk_socket from being released.
+> +	 * Especially for Unix sockets, we are currently in the process
+> +	 * context and do not have RCU protection.
+> +	 */
+> +	rcu_read_lock();
+> +	sock = sk->sk_socket;
+>  	if (unlikely(!sock))
+> -		return;
+> +		goto unlock;
+> +
+>  	ops = READ_ONCE(sock->ops);
+>  	if (!ops || !ops->read_skb)
+> -		return;
+> +		goto unlock;
+> +
+>  	copied = ops->read_skb(sk, sk_psock_verdict_recv);
+>  	if (copied >= 0) {
+>  		struct sk_psock *psock;
+>  
+> -		rcu_read_lock();
+>  		psock = sk_psock(sk);
+>  		if (psock)
+>  			sk_psock_data_ready(sk, psock);
+> -		rcu_read_unlock();
+>  	}
+> +unlock:
+> +	rcu_read_unlock();
+>  }
 
-I'm not very familiar with th edevm_clk_bulk_get_all() function and it's
-not documented.  But clk_bulk_get_all() does return zero, so I can see why
-people would be confused.
+Hi,
 
-regards,
-dan carpenter
+Doesn't sk_psock_handle_skb() (!ingress path) have the same `struct socket`
+release race issue? Any plans on fixing that one, too?
 
+BTW, lockdep (CONFIG_LOCKDEP=y) complains about calling AF_UNIX's
+read_skb() under RCU read lock.
+
+Thanks,
+Michal
 
