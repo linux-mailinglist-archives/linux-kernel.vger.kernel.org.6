@@ -1,141 +1,244 @@
-Return-Path: <linux-kernel+bounces-550482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4359A5601B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:36:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A02AA56019
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:36:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C33EE1710A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:36:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC4381710EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:36:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E2A018DF6B;
-	Fri,  7 Mar 2025 05:36:15 +0000 (UTC)
-Received: from zg8tmtyylji0my4xnjqumte4.icoremail.net (zg8tmtyylji0my4xnjqumte4.icoremail.net [162.243.164.118])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B137FD;
-	Fri,  7 Mar 2025 05:36:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.243.164.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CABF192B63;
+	Fri,  7 Mar 2025 05:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNW/dhx8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8407FD;
+	Fri,  7 Mar 2025 05:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741325775; cv=none; b=cz7FV6OtjMZpf6Tmroi2JisTQHjwSWYqaDZtk6UG1zKy9OPgQC/j3T2zTYZAxSJvGm97zQFoSofsqeLLVlma7iL/PmxCxQt8fplhUl0YE3D9w2tBv320Otp0Pv0ZEwxVf8IS/zNn9Ezy/qKzz8Y/1Xse/EuvmJsUtFHoe4PlOTA=
+	t=1741325762; cv=none; b=ms3AKUGqLnTLC6x6gNVU3vsvtoIgeZwuEBizsHxVasrcHZ9CBQ2ONPiau7sPz0Q50rzGUuBsCEWKI7l2agVOBtRpGhtFDSvGSxo9EKGcQU6E1aLe0l0jBwX7ZOr+QMYx6+bZnEIrprJhmqBPYW+wI/faOL+Iap8qk4azZX+3jsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741325775; c=relaxed/simple;
-	bh=s2Dx4Vu71yHd+sm6B6lF32xIUed696vD1bvGK1vrMew=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XyganqzVH0jYsN/k+5bmy6Hj3woMSo87vIefwq272o7eNLUPzzIJaEkhpB4m1O/xpk+uIt5HT4MGQJGg9a+/tqI2yjS8be+wS5WQXEV2StktPRvRkEYNKY5VgEYCtJohO+qyYlFzqQN5kLxVWpTB62vykXZT3CK8+XZKgBDP2CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn; spf=pass smtp.mailfrom=phytium.com.cn; arc=none smtp.client-ip=162.243.164.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytium.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytium.com.cn
-Received: from prodtpl.icoremail.net (unknown [10.12.1.20])
-	by hzbj-icmmx-7 (Coremail) with SMTP id AQAAfwDXsXm+hcpnK+JmBw--.14747S2;
-	Fri, 07 Mar 2025 13:35:58 +0800 (CST)
-Received: from localhost.localdomain (unknown [219.142.137.151])
-	by mail (Coremail) with SMTP id AQAAfwB3eYW7hcpnId49AA--.2693S2;
-	Fri, 07 Mar 2025 13:35:56 +0800 (CST)
-From: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-To: ilpo.jarvinen@linux.intel.com
-Cc: bhelgaas@google.com,
-	cassel@kernel.org,
-	christian.koenig@amd.com,
-	daizhiyuan@phytium.com.cn,
-	helgaas@kernel.org,
-	kw@linux.com,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH v4] PCI: Update Resizable BAR Capability Register fields
-Date: Fri,  7 Mar 2025 13:35:29 +0800
-Message-ID: <20250307053535.44918-1-daizhiyuan@phytium.com.cn>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <3a6952a9-c80b-bbff-fb38-18c61722bdda@linux.intel.com>
-References: <3a6952a9-c80b-bbff-fb38-18c61722bdda@linux.intel.com>
+	s=arc-20240116; t=1741325762; c=relaxed/simple;
+	bh=boei5N6UlmoAMPlzgq5VIWFcm60SZWwfz3TA9by7qJU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FrlZBxzxqekOByh73t74ZCF4FB/VljbzNH4OaVMVIIquN7RSRjvG6aySYUoGuqlx+euc33rAb8KrrUdZVSrNRaWGzX5Td0bwMofsS/YYN+GlY4t4rCEsf0CevjZZdYUJ3ZiEp0klG61ePm+xLhwW9W/2YIREXIaJH1utNtpzlB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNW/dhx8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74388C4CEE2;
+	Fri,  7 Mar 2025 05:36:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741325762;
+	bh=boei5N6UlmoAMPlzgq5VIWFcm60SZWwfz3TA9by7qJU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XNW/dhx8rYYGJtm4lQKEOrd4NYNLyuCHNrPxxXKIkBoQ1qI5F/iM3f7JroHawql6o
+	 Tts5NW6ZsekGtBDkyI13pXLvEc4xBZ8nZVniSio2GtV7wPazkdIilE038S8VBfPElk
+	 ErjEhC2+wnGNkIaYzHE9D+/BxyuCIHm/Rf+6OF+mBOU1eiZSijAerIMMYt2hKUXFXX
+	 /f0DrZbVG2mSel8Mvu5J5YEsB5xhPTk3uFhtxbsrj3ZQFajDHKMw4dQqrapXhEt/nO
+	 TBn7XuHy7WyfVXCJCTwzYogbN0jZH5mbeho/TF5v4RpjJ6FFlaMiEbbxVAeJJmAXVH
+	 Tr5SLm3j3WlSg==
+Date: Fri, 7 Mar 2025 07:35:57 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Ross Philipson <ross.philipson@oracle.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+	ardb@kernel.org, mjg59@srcf.ucam.org,
+	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
+	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu,
+	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
+	ebiederm@xmission.com, dwmw2@infradead.org,
+	baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
+	andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
+Subject: Re: [PATCH v12 05/19] x86: Add early SHA-1 support for Secure Launch
+ early measurements
+Message-ID: <Z8qFvYEE19yv7z-8@kernel.org>
+References: <20241219194216.152839-1-ross.philipson@oracle.com>
+ <20241219194216.152839-6-ross.philipson@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAfwB3eYW7hcpnId49AA--.2693S2
-X-CM-SenderInfo: hgdl6xpl1xt0o6sk53xlxphulrpou0/
-Authentication-Results: hzbj-icmmx-7; spf=neutral smtp.mail=daizhiyuan
-	@phytium.com.cn;
-X-Coremail-Antispam: 1Uk129KBjvJXoWxAFWDXFWxGF1DXF13GFyfJFb_yoW5CFWDpF
-	WDCa97GrWrGFW7uw4kZ3W8CF4Yg39ruFyYkrWxG3s3u3Z0k3Z2qa4DKFW5ta4DJr4DZF4a
-	yrnFy34UuF98JaDanT9S1TB71UUUUUJqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-	DUYxn0WfASr-VFAU7a7-sFnT9fnUUIcSsGvfJ3UbIYCTnIWIevJa73UjIFyTuYvj4RJUUU
-	UUUUU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241219194216.152839-6-ross.philipson@oracle.com>
 
-PCI Express Base Spec r6.0 defines BAR size up to 8 EB (2^63 bytes),
-but supporting anything bigger than 128TB requires changes to
-pci_rebar_get_possible_sizes() to read the additional Capability bits
-from the Control register.
+On Thu, Dec 19, 2024 at 11:42:02AM -0800, Ross Philipson wrote:
+> From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+> 
+> Secure Launch is written to be compliant with the Intel TXT Measured Launch
+> Developer's Guide. The MLE Guide dictates that the system can be configured to
+> use both the SHA-1 and SHA-2 hashing algorithms.
+> 
+> Regardless of the preference towards SHA-2, if the firmware elected to start
+> with the SHA-1 and SHA-2 banks active and the dynamic launch was configured to
+> include SHA-1, Secure Launch is obligated to record measurements for all
+> algorithms requested in the launch configuration.
+> 
+> The user environment or the integrity management does not desire to use SHA-1,
+> it is free to just ignore the SHA-1 bank in any integrity operation with the
+> TPM. If there is a larger concern about the SHA-1 bank being active, it is free
+> to deliberately cap the SHA-1 PCRs, recording the event in the D-RTM log.
+> 
+> The SHA-1 code here has its origins in the code from the main kernel:
+> 
+> commit c4d5b9f ("crypto: sha1 - implement base layer for SHA-1")
+> 
+> A modified version of this code was introduced to the lib/crypto/sha1.c to bring
+> it in line with the SHA-256 code and allow it to be pulled into the setup kernel
+> in the same manner as SHA-256 is.
+> 
+> Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
+> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+> ---
+>  arch/x86/boot/compressed/Makefile |  2 +
+>  arch/x86/boot/compressed/sha1.c   |  6 +++
+>  include/crypto/sha1.h             |  1 +
+>  lib/crypto/sha1.c                 | 81 +++++++++++++++++++++++++++++++
+>  4 files changed, 90 insertions(+)
+>  create mode 100644 arch/x86/boot/compressed/sha1.c
+> 
+> diff --git a/arch/x86/boot/compressed/Makefile b/arch/x86/boot/compressed/Makefile
+> index f2051644de94..7eb03afb841b 100644
+> --- a/arch/x86/boot/compressed/Makefile
+> +++ b/arch/x86/boot/compressed/Makefile
+> @@ -107,6 +107,8 @@ vmlinux-objs-$(CONFIG_EFI) += $(obj)/efi.o
+>  vmlinux-objs-$(CONFIG_EFI_MIXED) += $(obj)/efi_mixed.o
+>  vmlinux-libs-$(CONFIG_EFI_STUB) += $(objtree)/drivers/firmware/efi/libstub/lib.a
+>  
+> +vmlinux-objs-$(CONFIG_SECURE_LAUNCH) += $(obj)/sha1.o
+> +
+>  $(obj)/vmlinux: $(vmlinux-objs-y) $(vmlinux-libs-y) FORCE
+>  	$(call if_changed,ld)
+>  
+> diff --git a/arch/x86/boot/compressed/sha1.c b/arch/x86/boot/compressed/sha1.c
+> new file mode 100644
+> index 000000000000..d754489941ac
+> --- /dev/null
+> +++ b/arch/x86/boot/compressed/sha1.c
+> @@ -0,0 +1,6 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2024 Apertus Solutions, LLC.
+> + */
+> +
+> +#include "../../../../lib/crypto/sha1.c"
+> diff --git a/include/crypto/sha1.h b/include/crypto/sha1.h
+> index 044ecea60ac8..d715dd5332e1 100644
+> --- a/include/crypto/sha1.h
+> +++ b/include/crypto/sha1.h
+> @@ -42,5 +42,6 @@ extern int crypto_sha1_finup(struct shash_desc *desc, const u8 *data,
+>  #define SHA1_WORKSPACE_WORDS	16
+>  void sha1_init(__u32 *buf);
+>  void sha1_transform(__u32 *digest, const char *data, __u32 *W);
+> +void sha1(const u8 *data, unsigned int len, u8 *out);
+>  
+>  #endif /* _CRYPTO_SHA1_H */
+> diff --git a/lib/crypto/sha1.c b/lib/crypto/sha1.c
+> index ebb60519ae93..0bd32df31743 100644
+> --- a/lib/crypto/sha1.c
+> +++ b/lib/crypto/sha1.c
+> @@ -137,5 +137,86 @@ void sha1_init(__u32 *buf)
+>  }
+>  EXPORT_SYMBOL(sha1_init);
+>  
+> +static void __sha1_transform(u32 *digest, const char *data)
+> +{
+> +	u32 ws[SHA1_WORKSPACE_WORDS];
+> +
+> +	sha1_transform(digest, data, ws);
+> +
+> +	/* Ensure local data for generating digest is cleared in all cases */
+> +	memzero_explicit(ws, sizeof(ws));
+> +}
+> +
+> +static void sha1_update(struct sha1_state *sctx, const u8 *data, unsigned int len)
+> +{
+> +	unsigned int partial = sctx->count % SHA1_BLOCK_SIZE;
+> +	int blocks;
+> +
+> +	sctx->count += len;
+> +
+> +	if (unlikely((partial + len) < SHA1_BLOCK_SIZE))
+> +		goto out;
+> +
+> +	if (partial) {
+> +		int p = SHA1_BLOCK_SIZE - partial;
+> +
+> +		memcpy(sctx->buffer + partial, data, p);
+> +		data += p;
+> +		len -= p;
+> +
+> +		__sha1_transform(sctx->state, sctx->buffer);
+> +	}
+> +
+> +	blocks = len / SHA1_BLOCK_SIZE;
+> +	len %= SHA1_BLOCK_SIZE;
+> +
+> +	if (blocks) {
+> +		while (blocks--) {
+> +			__sha1_transform(sctx->state, data);
+> +			data += SHA1_BLOCK_SIZE;
+> +		}
+> +	}
+> +	partial = 0;
+> +
+> +out:
+> +	memcpy(sctx->buffer + partial, data, len);
+> +}
+> +
+> +static void sha1_final(struct sha1_state *sctx, u8 *out)
+> +{
+> +	const int bit_offset = SHA1_BLOCK_SIZE - sizeof(__be64);
+> +	unsigned int partial = sctx->count % SHA1_BLOCK_SIZE;
+> +	__be64 *bits = (__be64 *)(sctx->buffer + bit_offset);
+> +	__be32 *digest = (__be32 *)out;
+> +	int i;
+> +
+> +	sctx->buffer[partial++] = 0x80;
+> +	if (partial > bit_offset) {
+> +		memset(sctx->buffer + partial, 0x0, SHA1_BLOCK_SIZE - partial);
+> +		partial = 0;
+> +
+> +		__sha1_transform(sctx->state, sctx->buffer);
+> +	}
+> +
+> +	memset(sctx->buffer + partial, 0x0, bit_offset - partial);
+> +	*bits = cpu_to_be64(sctx->count << 3);
+> +	__sha1_transform(sctx->state, sctx->buffer);
+> +
+> +	for (i = 0; i < SHA1_DIGEST_SIZE / sizeof(__be32); i++)
+> +		put_unaligned_be32(sctx->state[i], digest++);
+> +
+> +	*sctx = (struct sha1_state){};
+> +}
+> +
+> +void sha1(const u8 *data, unsigned int len, u8 *out)
+> +{
+> +	struct sha1_state sctx = {0};
+> +
+> +	sha1_init(sctx.state);
+> +	sha1_update(&sctx, data, len);
+> +	sha1_final(&sctx, out);
+> +}
+> +EXPORT_SYMBOL(sha1);
+> +
+>  MODULE_DESCRIPTION("SHA-1 Algorithm");
+>  MODULE_LICENSE("GPL");
+> -- 
+> 2.39.3
+> 
 
-If 8EB support is required, callers will need to be updated to handle u64
-instead of u32. For now, support is limited to 128TB, and support for
-sizes greater than 128TB can be deferred to a later time.
+This looks pretty good and we had already the SHA-1 discussion in
+the past :-)
 
-Expand the alignment array of `pbus_size_mem` to support up to 128TB.
-
-Signed-off-by: Zhiyuan Dai <daizhiyuan@phytium.com.cn>
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Reviewed-by: Christian König <christian.koenig@amd.com>
-Reviewed-by: Niklas Cassel <cassel@kernel.org>
----
- drivers/pci/pci.c             | 4 ++--
- drivers/pci/setup-bus.c       | 2 +-
- include/uapi/linux/pci_regs.h | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-index 661f98c6c63a..77b9ceefb4e1 100644
---- a/drivers/pci/pci.c
-+++ b/drivers/pci/pci.c
-@@ -3752,7 +3752,7 @@ static int pci_rebar_find_pos(struct pci_dev *pdev, int bar)
-  * @bar: BAR to query
-  *
-  * Get the possible sizes of a resizable BAR as bitmask defined in the spec
-- * (bit 0=1MB, bit 19=512GB). Returns 0 if BAR isn't resizable.
-+ * (bit 0=1MB, bit 31=128TB). Returns 0 if BAR isn't resizable.
-  */
- u32 pci_rebar_get_possible_sizes(struct pci_dev *pdev, int bar)
- {
-@@ -3800,7 +3800,7 @@ int pci_rebar_get_current_size(struct pci_dev *pdev, int bar)
-  * pci_rebar_set_size - set a new size for a BAR
-  * @pdev: PCI device
-  * @bar: BAR to set size to
-- * @size: new size as defined in the spec (0=1MB, 19=512GB)
-+ * @size: new size as defined in the spec (0=1MB, 31=128TB)
-  *
-  * Set the new size of a BAR as defined in the spec.
-  * Returns zero if resizing was successful, error code otherwise.
-diff --git a/drivers/pci/setup-bus.c b/drivers/pci/setup-bus.c
-index 5e00cecf1f1a..edb64a6b5585 100644
---- a/drivers/pci/setup-bus.c
-+++ b/drivers/pci/setup-bus.c
-@@ -1059,7 +1059,7 @@ static int pbus_size_mem(struct pci_bus *bus, unsigned long mask,
- {
- 	struct pci_dev *dev;
- 	resource_size_t min_align, win_align, align, size, size0, size1;
--	resource_size_t aligns[24]; /* Alignments from 1MB to 8TB */
-+	resource_size_t aligns[28]; /* Alignments from 1MB to 128TB */
- 	int order, max_order;
- 	struct resource *b_res = find_bus_resource_of_type(bus,
- 					mask | IORESOURCE_PREFETCH, type);
-diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-index 1601c7ed5fab..ce99d4f34ce5 100644
---- a/include/uapi/linux/pci_regs.h
-+++ b/include/uapi/linux/pci_regs.h
-@@ -1013,7 +1013,7 @@
- 
- /* Resizable BARs */
- #define PCI_REBAR_CAP		4	/* capability register */
--#define  PCI_REBAR_CAP_SIZES		0x00FFFFF0  /* supported BAR sizes */
-+#define  PCI_REBAR_CAP_SIZES		0xFFFFFFF0  /* supported BAR sizes */
- #define PCI_REBAR_CTRL		8	/* control register */
- #define  PCI_REBAR_CTRL_BAR_IDX		0x00000007  /* BAR index */
- #define  PCI_REBAR_CTRL_NBAR_MASK	0x000000E0  /* # of resizable BARs */
--- 
-2.43.0
-
+BR, Jarkko
 
