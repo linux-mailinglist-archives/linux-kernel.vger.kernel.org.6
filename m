@@ -1,128 +1,183 @@
-Return-Path: <linux-kernel+bounces-551185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82071A5691B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:40:22 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA8AFA56921
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:41:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 732703B2449
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:40:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 478BC7A98E9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C2021A431;
-	Fri,  7 Mar 2025 13:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6FE21ABC3;
+	Fri,  7 Mar 2025 13:41:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EatyBqzE"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V42A9jRa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EEB9187872;
-	Fri,  7 Mar 2025 13:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30BA0EBE;
+	Fri,  7 Mar 2025 13:41:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741354813; cv=none; b=sZYkktxoDpizkomA1kD0c/+BtxcE0MVCbancHoNAxdh1VrSeqG3y1HbyHFBayCBP7MoWtAlP7QivdMirT3xck5teXHSQ8jEqae8p/pdzwzIAHw0l/hrHIJLDjKkPaCx85Xf2WSO/tHmYFcrvsIdj0rcM83Y++MFb5mqQJXkTPkU=
+	t=1741354886; cv=none; b=blCvKniWXGsCxngxDQzxvHtSuYyTpLwPvfBGD4oynERYEpNmQQWwaShyZdujnDlJB8zZGtpzoWUEiiBMqP2fy9KqlBx7OSDY7gAbePn7rDvbL3QwYM8s8Iz/uY7hvMjbaM0UcrhTQYu38PcvOlSLW/FlAS16555hvQGykQ8HY3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741354813; c=relaxed/simple;
-	bh=Ccf6WOnqeVtaEX17aLvzSPY3yDwittu0de2hVcdK2lE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sXbkR8NPpzwGYtBFxOZ2nPB+bUxoTcwIoYgn4xEtmqvArz55r7vNh/iohf9P1eFnufPScUvlzKmgzCLuXKPNY9uWIe2Ur4ikP+pUpvp6vXJNAChcYgIFiYKDCmW4XXO5Y51c51b/5qYKYY8GZZH14fKDkFXX19jZKroXwoBIZog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EatyBqzE; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22435603572so3324235ad.1;
-        Fri, 07 Mar 2025 05:40:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741354811; x=1741959611; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PAJK/MSGv6f6CCqFqHOXxbXoSD7hyktOLg63JkHcDxs=;
-        b=EatyBqzEP8HIF9Okzew3Q13sq8LUJaxNFngeFeuhzDcKKkpFoFZ1RNhrPKyTi6+uMo
-         mHktnCm4Z/f1/Moht1Gu2l3I/8op8+EF+PX6p0elht25gzCT7pqxJabuGISGLVxkPdkC
-         tHkFfOynUaLQZuBBf4v+NCAK9dZxuGCBfST4bSstanSyW24tahP64rHamajEEbR15seP
-         EOfXVHiCVWXDgHs55tZmaSFOvTIAChtIOIgToHFv/XmlWuBf00QWa1t6hOOCOgDfOWuj
-         Iz8OvJlvLvXebckeoyUR/7S2JIDWgm4BXV39n8Dlx5EyN06TXcy1OzsjEFRyAp/mRvTf
-         q7bg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741354811; x=1741959611;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PAJK/MSGv6f6CCqFqHOXxbXoSD7hyktOLg63JkHcDxs=;
-        b=v0EXm4yETAR07qWClTpg8W0AT1g3xpgarcZHjjTvkfEpTbcnyhuDe76DPc0KohH/d2
-         50uqqnbo9/ifxOnvGQjtKXf4zLuZYquUX6SljmidzsKsTYfGJAudluKtOEScCkRaJ40J
-         GoJjJClZO0JGw6yPUcuqxEhb0bZBn7bgQRWvXDhTyfCm9Hk2UKl/3Q+de/n7ZrDs6a52
-         Y/hxo7oveYLeY0FLsDEK9o7QFXQcO1J9AW9e8rxcRLg87dZALg+H0epIMi32kzx72sdX
-         2WGhPBeXTPBCZA22YgWo2E2ILmWdvYShd6hAuSzphXiU7efRP8mAzJLhc5ucxmyAXWr9
-         vb2w==
-X-Forwarded-Encrypted: i=1; AJvYcCW6+Ddqtr6PgreBoBjEs6EAu+pVQ+CrhAMD0xSxj0ano/NZIz8xgXUjzJ2uW4jeGcxs0XhkJK1wn+l3NnY=@vger.kernel.org, AJvYcCWYk+5FW0LVOyyhYc0HzIjmwAeS35ZRuYnA1Zkgd+l+Z8Dg6OZ9e27KzaRU6nfMPLmYnsRFgwM0@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA2/jEtnd99U9NVaCOfj5zSaGxLldovpgSEDDZpCVGvrk6xV3w
-	yGZ+cER9lWAXMuTPtKJwaQNe5cDsneTrNfU+37buxSixBbJlunwo
-X-Gm-Gg: ASbGncv/rXw0o9SUy7UhixbtQ3nEx76+CWA6nqlwwoZjvrd+JNr3GSqIVcxoSslIkmE
-	4vu27ML2CHMV7g8ra9ljZp/R84uL53YBzoBHmI/JYM/1KJNK98QyGbQzlVG7BEdMoBgnLFvQ/GO
-	C8n4UpljHSZDT7LSlA0RsPrdicjLtBDQNqa7EaooGjBlE+SkbpJB77EEmC/k1gqIalTSJPIMSXh
-	V586YEsx+9eMExWa9OQ3IxcU9PY6P3f6QsNYpJc8qeZbKs41Czg2ah5G9JZDzEao56LqUlzhDIr
-	UkGMaTDQERxXTHjkO79ZYvQvns8ljsn7fzcAMpEpq6o/pcFK2fcGxO7vTmNrv1//uBzjkPLJ8bu
-	DBkZCy8SJl3gEccojb8PEdfGwxj3C410=
-X-Google-Smtp-Source: AGHT+IHl6IfqevUsZeQEG4TtH8KemZ5d37OBc5VdLaT2oePHHn/W2OqKnmnlRSgCD+xni+a1HkPRrg==
-X-Received: by 2002:a17:903:4407:b0:224:721:ed9 with SMTP id d9443c01a7336-22428c12cfdmr67227535ad.44.1741354811502;
-        Fri, 07 Mar 2025 05:40:11 -0800 (PST)
-Received: from localhost.localdomain (p12284229-ipxg45101marunouchi.tokyo.ocn.ne.jp. [60.39.60.229])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-224109dd60esm29710425ad.17.2025.03.07.05.40.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 05:40:11 -0800 (PST)
-From: Ryo Takakura <ryotkkr98@gmail.com>
-To: bp@alien8.de
-Cc: boqun.feng@gmail.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	horms@kernel.org,
-	kuba@kernel.org,
-	kuniyu@amazon.com,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	pabeni@redhat.com,
-	peterz@infradead.org,
-	ryotkkr98@gmail.com,
-	x86@kernel.org
-Subject: Re: request_irq() with local bh disabled
-Date: Fri,  7 Mar 2025 22:39:46 +0900
-Message-Id: <20250307133946.64685-1-ryotkkr98@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250307131319.GBZ8rw74dL4xQXxW-O@fat_crate.local>
-References: <20250307131319.GBZ8rw74dL4xQXxW-O@fat_crate.local>
+	s=arc-20240116; t=1741354886; c=relaxed/simple;
+	bh=3EzXdILJsICpLU/Y0kJ7QJgaNvnAuFSYFmWDvaMIGzY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=uFKyl4wlTu6QqqhmGirprj+IufuYBZsLCUVTT7kL/1bMDHMY47fgy9nu0RO5JM7K4aJRdvKLe7GjgATohT7XUdocEAwJ+cFg2SBD13hUtLHv0He9Octfr8184MUfP5ZGtOORSNTQbGLVNz0/u4vtZ+/yaKKJEYgsBpj+Hzv5WfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V42A9jRa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46142C4CED1;
+	Fri,  7 Mar 2025 13:41:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741354885;
+	bh=3EzXdILJsICpLU/Y0kJ7QJgaNvnAuFSYFmWDvaMIGzY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=V42A9jRaCOCFU45fyv8wdIRw3IVYxtmnAd2XnPVzGfelB21HblQs/U5wXFI2FR2Fy
+	 OjbnagTU1J+rtO+Rh9Hfbc7WzMj4iU0Zyv/RuhyDY0PecD6lJKMSVmpjYl+IKSPspS
+	 BHtjQMSgVoT7VSmMlCAQYAwwcAd4akGD7t+wRuAvRsnaSMFY6SyNj0QsIEROvuSl+T
+	 qLpZpQo1dNCC/0F3VOBtEFl4lvmK84KCDuLCQJPhFyzHBenu5ZwnqgePoy25yr60mU
+	 Mf7eCJL1fqo2WvXfBUhoXgZHKnQalw22gVRdJKTSBtMt6by/Apuk5kU3D0FW0pzQJG
+	 o6H7IvHRyFCvA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <benno.lossin@proton.me>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
+ <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
+  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
+ <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
+ Gross" <tmgross@umich.edu>,  "Lyude Paul" <lyude@redhat.com>,  "Guangbo
+ Cui" <2407018371@qq.com>,  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel
+ Almeida" <daniel.almeida@collabora.com>,  "Tamir Duberstein"
+ <tamird@gmail.com>,  "Markus Elfring" <Markus.Elfring@web.de>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v10 08/13] rust: hrtimer: implement
+ `UnsafeHrTimerPointer` for `Pin<&mut T>`
+In-Reply-To: <D8A28FTNL1BC.3AYZMT4OYF79R@proton.me> (Benno Lossin's message of
+	"Fri, 07 Mar 2025 13:15:26 +0000")
+References: <20250307-hrtimer-v3-v6-12-rc2-v10-0-0cf7e9491da4@kernel.org>
+	<20250307-hrtimer-v3-v6-12-rc2-v10-8-0cf7e9491da4@kernel.org>
+	<8DuLea9f4Ue0LzzIRrjOfpa8OtL_cLObGjZhfPZnw8crCU8ISWZmIC5SVYntldK27JAR_SUGpYXFspN-OigYRQ==@protonmail.internalid>
+	<D8A28FTNL1BC.3AYZMT4OYF79R@proton.me>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Fri, 07 Mar 2025 14:41:15 +0100
+Message-ID: <87h6453qmc.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Boris,
+"Benno Lossin" <benno.lossin@proton.me> writes:
 
-On Fri, 7 Mar 2025 14:13:19 +0100, Borislav Petkov wrote:
->On Fri, Mar 07, 2025 at 09:58:51PM +0900, Ryo Takakura wrote:
->> I'm so sorry that the commit caused this problem...
->> Please let me know if there is anything that I should do.
+> On Fri Mar 7, 2025 at 11:11 AM CET, Andreas Hindborg wrote:
+>> Allow pinned mutable references to structs that contain a `HrTimer` node to
+>> be scheduled with the `hrtimer` subsystem.
+>>
+>> Acked-by: Frederic Weisbecker <frederic@kernel.org>
+>> Reviewed-by: Lyude Paul <lyude@redhat.com>
+>> Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
+>> ---
+>>  rust/kernel/time/hrtimer.rs         |   2 +
+>>  rust/kernel/time/hrtimer/pin_mut.rs | 101 ++++++++++++++++++++++++++++++++++++
+>>  2 files changed, 103 insertions(+)
+>>
+>> diff --git a/rust/kernel/time/hrtimer.rs b/rust/kernel/time/hrtimer.rs
+>> index 2ca56397eade..d2791fd624b7 100644
+>> --- a/rust/kernel/time/hrtimer.rs
+>> +++ b/rust/kernel/time/hrtimer.rs
+>> @@ -441,3 +441,5 @@ unsafe fn timer_container_of(ptr: *mut $crate::time::hrtimer::HrTimer<$timer_typ
+>>  pub use arc::ArcHrTimerHandle;
+>>  mod pin;
+>>  pub use pin::PinHrTimerHandle;
+>> +mod pin_mut;
+>> +pub use pin_mut::PinMutHrTimerHandle;
+>> diff --git a/rust/kernel/time/hrtimer/pin_mut.rs b/rust/kernel/time/hrtimer/pin_mut.rs
+>> new file mode 100644
+>> index 000000000000..4f4a9e9602d8
+>> --- /dev/null
+>> +++ b/rust/kernel/time/hrtimer/pin_mut.rs
+>> @@ -0,0 +1,101 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +
+>> +use super::HasHrTimer;
+>> +use super::HrTimer;
+>> +use super::HrTimerCallback;
+>> +use super::HrTimerHandle;
+>> +use super::RawHrTimerCallback;
+>> +use super::UnsafeHrTimerPointer;
+>> +use crate::time::Ktime;
+>> +use core::pin::Pin;
+>> +
+>> +/// A handle for a `Pin<&mut HasHrTimer>`. When the handle exists, the timer might
+>> +/// be running.
+>> +pub struct PinMutHrTimerHandle<'a, T>
+>> +where
+>> +    T: HasHrTimer<T>,
+>> +{
+>> +    pub(crate) inner: Pin<&'a mut T>,
+>> +}
+>> +
+>> +// SAFETY: We cancel the timer when the handle is dropped. The implementation of
+>> +// the `cancel` method will block if the timer handler is running.
+>> +unsafe impl<'a, T> HrTimerHandle for PinMutHrTimerHandle<'a, T>
+>> +where
+>> +    T: HasHrTimer<T>,
+>> +{
+>> +    fn cancel(&mut self) -> bool {
+>> +        // SAFETY: We are not moving out of `self` or handing out mutable
+>> +        // references to `self`.
+>> +        let self_ptr = unsafe { self.inner.as_mut().get_unchecked_mut() as *mut T };
+>> +
+>> +        // SAFETY: As we got `self_ptr` from a reference above, it must point to
+>> +        // a valid `T`.
+>> +        let timer_ptr = unsafe { <T as HasHrTimer<T>>::raw_get_timer(self_ptr) };
+>> +
+>> +        // SAFETY: As `timer_ptr` is derived from a reference, it must point to
+>> +        // a valid and initialized `HrTimer`.
+>> +        unsafe { HrTimer::<T>::raw_cancel(timer_ptr) }
+>> +    }
+>> +}
+>> +
+>> +impl<'a, T> Drop for PinMutHrTimerHandle<'a, T>
+>> +where
+>> +    T: HasHrTimer<T>,
+>> +{
+>> +    fn drop(&mut self) {
+>> +        self.cancel();
+>> +    }
+>> +}
+>> +
+>> +// SAFETY: We capture the lifetime of `Self` when we create a
+>> +// `PinMutHrTimerHandle`, so `Self` will outlive the handle.
+>> +unsafe impl<'a, T> UnsafeHrTimerPointer for Pin<&'a mut T>
+>> +where
+>> +    T: Send + Sync,
+>> +    T: HasHrTimer<T>,
+>> +    T: HrTimerCallback<Pointer<'a> = Self>,
+>> +    Pin<&'a mut T>: RawHrTimerCallback<CallbackTarget<'a> = Self>,
+>> +{
+>> +    type TimerHandle = PinMutHrTimerHandle<'a, T>;
+>> +
+>> +    unsafe fn start(self, expires: Ktime) -> Self::TimerHandle {
+>> +        // Cast to pointer
+>> +        let self_ptr: *const T = <Self as core::ops::Deref>::deref(&self);
 >
->It is gone from the tip tree so you can take your time and try to do it right.
->
->Peter and/or I could help you reproduce the issue and try to figure out what
->needs to change there.
->
->HTH.
+> You cannot go through a shared reference here, since you convert the
+> pointer obtained here in the `run` function later back into a mutable
+> reference. You will have to use `get_unchecked_mut` or
+> `into_inner_unchecked`.
 
-Thank you so much for this. I really appreciate it.
-I'll once again take a look and try to fix the problem.
+Thanks, will fix.
 
-Sincerely,
-Ryo Takakura
 
->-- 
->Regards/Gruss,
->    Boris.
->
->https://people.kernel.org/tglx/notes-about-netiquette
+Best regards,
+Andreas Hindborg
+
+
 
