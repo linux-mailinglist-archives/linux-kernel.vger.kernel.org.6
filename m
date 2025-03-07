@@ -1,122 +1,152 @@
-Return-Path: <linux-kernel+bounces-550760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80858A563C3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:29:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49B7AA563C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:29:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBE3118967A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:29:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 480FE3B2718
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69239206F30;
-	Fri,  7 Mar 2025 09:28:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E41D20AF8E;
+	Fri,  7 Mar 2025 09:29:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jj5z5QL6"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ACQHOJD9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4371A5BBB
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8352020551E;
+	Fri,  7 Mar 2025 09:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741339735; cv=none; b=dtfKIkLsqxzIjtVKu7GY9ASNe9MJ13UrWa1JH31M/lSdTVacJbDysYf5hwUIMcbQ2RMKhBmqeVQS7yZMffFbgcULxKOmaD48p+7+fSZ3/93Dn83x0jjUZ/UvtpQu9tc5Kr7ChyZYzgXwRR2A907zoYhAKyhQBGzCsyyZvF7RGrE=
+	t=1741339740; cv=none; b=oH3H2DJc/j/2suJHJ6bLZXnPz25Eg4rS284w4PjgKR512fE1ztwGondEXYDP4RZwq0+8ZfcySyONiGp8FyPL7yUgJXQRhcN+pUsfB93nADAG4kstptliUVc5irZDydHRYUhQczgjWtcPSUAzWdAXOl1RYcuhaMqqHE/S716eyfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741339735; c=relaxed/simple;
-	bh=6YeoeqWkwCNXJnRk/T6zgTx0/hcyWZyOla3rDPddU7M=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ELommFuoRw4v2aIMIgZOMHKU46qjW7AmUVUlYOe0Nw0v4TuIm6b3AEy7GszQo9tM1noCn4GcPr0N09fR3L1Gn9zBgaiZqfGgaUVpqOe2l1iiorvQoGyy48eIEKlmd2kK909cV3VSnK5/RXa8Bsiy0Ih1dsFKxmBYzvNsfmmCi3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jj5z5QL6; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3912c09bea5so1171685f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 01:28:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741339732; x=1741944532; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4Ju5ZbvhcNx9BRsCMH0Wbm+2RjeifjUfGKt0f6VkL5g=;
-        b=Jj5z5QL6M2VRGpNNaTVDfm1XFMK0VFQyB29azUW9wibYIS75kkjC7xiPKi+kLHW/hB
-         iEuUtILRLlr0NXptIw2uYX1p5zuPrRgjv2ApLSzpd1kUmdE6opw+gHQ2A4N2Y/yW8lNe
-         wfboyZoRzrPGADWwb5fIurUPHz/eOJCQStW+riumANjjhJz+105AC64W/dYFdSIpyCxm
-         UL4La3YFPcgHJOLVHb0ZV6Ba2uTJT4S3nvwoZoVHifPADB5XQ+dR01COnhrr0Xwvb1cd
-         Rw/0xwzW2EjxGObnEJzw+8GqBSVWgpIJL15883x9N/IlGuoz5/9NReGvbiS6gXgIp2e0
-         RTOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741339732; x=1741944532;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Ju5ZbvhcNx9BRsCMH0Wbm+2RjeifjUfGKt0f6VkL5g=;
-        b=S4bDguTZFVnzlqHucbn2f/7AynyaNrsW0+2QYeDbQmII9MyxCC3xL5gZ9JJ83AzGJc
-         926A61ehMv7VDGUc2Kqzwu7lk2Dkfn1vDn3qjcu9eT6K08oTtl5HgMWYtE19mdkAToHn
-         gBheaRwK7xhwia7aDGjngRROqKy/YeL8PtbQXOBBVIJ1HFQ7R62U62K78ldMkb/223u6
-         zqyIAt++54MuwDK2tJLI94NN1jD9MKOQvepETzQWIKgwu57EFSqwfKlBY6wD32k6ck2w
-         zo4HTnwJC09Vv0Ii+NItG7DHGaa3uXXE3aG3fvt06hdFiIZ1lE0nCKDa1guMi2cTIFhI
-         OQkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPhRKx7dkoi03fyPZRJQIKcvL8RISNmW52QpCv2PK1EykwnXGrSyJg2W5UBK6Be2bWZ73A5I2L9/R50BU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDyh99hcnkZIMzYHTZRxIYzDJIS2AjJ0JDNT1dw1+XMEYUETHP
-	kQGrcvHwtl/B40cnUHcmixTcfzqQ6EqenUct+7XwxyoEufAKa3FkdcUpo2jnRHk=
-X-Gm-Gg: ASbGncv7v6RWq6vrHHIMfNoYLBwXaVd9iwLSbQ8IqCvRlQqCdt1avV3+gFXkgehAd8D
-	dOw0o28KdQLnaSuUFxcNNM14IxFgMBUizmzQu44LtDm/92V16pF7r0VL7y1QvCuY6Pg2iRda4Ca
-	T1OX3zLkdUtge74aE0O1fgit3kNBlgmi5RbI3tWFiWaqrE70XiY/uYDJEg2KKGEi9tHU1SF8CuJ
-	0akRhWbmVZsAbGXDY2zlvx+VmP9Ztw6VYqmttUEn8pYRpQr3Vl3QY4awG8nPkn7PG5XXmVNyc3c
-	CO5cqGemD/OvKZfU+ZiqFCYJTeqIGQZBQfEDG3bDaOZgVOaEFw==
-X-Google-Smtp-Source: AGHT+IHy9+4P7rIHGn06Z9Wnp3OaLVatH22AMmyNL2OvUFsznE8mxvWG+6gIV29lYBEOGpcOgyg8oA==
-X-Received: by 2002:a05:6000:1844:b0:391:3110:de46 with SMTP id ffacd0b85a97d-39132d98a83mr1919691f8f.38.1741339732054;
-        Fri, 07 Mar 2025 01:28:52 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bdd8b0461sm47647725e9.4.2025.03.07.01.28.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 01:28:51 -0800 (PST)
-Date: Fri, 7 Mar 2025 12:28:48 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Lee Trager <lee@trager.us>
-Cc: Alexander Duyck <alexanderduyck@fb.com>,
-	Jakub Kicinski <kuba@kernel.org>, kernel-team@meta.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH net-next] eth: fbnic: fix memory corruption in
- fbnic_tlv_attr_get_string()
-Message-ID: <2791d4be-ade4-4e50-9b12-33307d8410f6@stanley.mountain>
+	s=arc-20240116; t=1741339740; c=relaxed/simple;
+	bh=tuDzms1c08aaCrllft0fOlV2NkLbo4xq5O/5uzKY6M4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CUAwcGfDV7zZSz9Zr41lmgTwbrFd2a4MGH3dr/OtaGwCx9Ot88kHOU+DdsUIK5PSC0cgo14KaDlGRrMMk+YLIuVj9Q2Z5kiPfCgPUVJEziUzwghafi3iqOg7G2IVvGNAhrdZg/0Po1QJEeq8Q1od/lXlZR0b48nOxaV2uRpkNZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ACQHOJD9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33507C4CED1;
+	Fri,  7 Mar 2025 09:28:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741339739;
+	bh=tuDzms1c08aaCrllft0fOlV2NkLbo4xq5O/5uzKY6M4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ACQHOJD9bN90viiTY9SufDegsBVusbO9zg8+V4AbLjviH78OHUVfsLvp8K9GPBbtR
+	 X9EjZTNZ30m2yAs0d8MClY9Vwdhq76D5BkM9txjQnTn5t2fxOYczYWH378TeTav+RH
+	 Gpe0x3WC2UOjzHZE1/6GeAIbNALbnFwViDAfe7wH230U6xvyqqA54VnLDKGTutL1R8
+	 44DDSfn0L5kWvpREV1Ac/FYmlGryipRmhVD3RznfMxQ0NqkeD74ZiV3Or3l5+Sy4CC
+	 45FgsOcudPTxx/Y7i+U6JWmJawVzAyoGLFa8UsLHao0Rk4zcEznlIpoAitko6C0QIc
+	 ikuAKLkXKoZhw==
+Date: Fri, 7 Mar 2025 10:28:53 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	heiko@sntech.de, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] docs: dt-bindings: Specify ordering for properties
+ within groups
+Message-ID: <20250307-logical-nimble-okapi-3ba081@krzk-bin>
+References: <7276139ea1f4a5f4db48c77f536a3638492e6c2f.1741321984.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <7276139ea1f4a5f4db48c77f536a3638492e6c2f.1741321984.git.dsimic@manjaro.org>
 
-This code is trying to ensure that the last byte of the buffer is a NUL
-terminator.  However, the problem is that attr->value[] is an array of
-__le32, not char, so it zeroes out 4 bytes way beyond the end of the
-buffer.  Cast the buffer to char to address this.
+On Fri, Mar 07, 2025 at 05:33:37AM +0100, Dragan Simic wrote:
+> When it comes to ordering of the individual properties inside each property
+> group, applying natural sort order to multi-digit numbers [1] found inside
+> the property names can result in more logical and more usable property lists,
+> similarly to what's already the case with the alpha-numerical ordering of
+> the nodes without unit addresses.
+> 
+> Let's have this clearly specified in the DTS coding style, together with
+> a brief description of the natural sort order for those readers who aren't
+> familiar with it already.  Also expand the provided node example a bit, to
+> actually show the results of applying natural sort order.
+> 
+> Applying strict alpha-numerical ordering can result in property lists that
+> are suboptimal from the usability standpoint.  For the provided example,
+> which stems from a real-world DT, [2][3][4] applying strict alpha-numerical
+> ordering produces the following undesirable result:
 
-Fixes: e5cf5107c9e4 ("eth: fbnic: Update fbnic_tlv_attr_get_string() to work like nla_strscpy()")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/net/ethernet/meta/fbnic/fbnic_tlv.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+BTW, your entire commit msg still has incorrect wrapping. Please use
+standard editors which understand Git commit msg style (which I believe
+is equal to Linux submitting patches).
 
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_tlv.c b/drivers/net/ethernet/meta/fbnic/fbnic_tlv.c
-index d558d176e0df..517ed8b2f1cb 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_tlv.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_tlv.c
-@@ -261,7 +261,7 @@ ssize_t fbnic_tlv_attr_get_string(struct fbnic_tlv_msg *attr, char *dst,
- 		return -E2BIG;
- 
- 	srclen = le16_to_cpu(attr->hdr.len) - sizeof(*attr);
--	if (srclen > 0 && attr->value[srclen - 1] == '\0')
-+	if (srclen > 0 && ((char *)attr->value)[srclen - 1] == '\0')
- 		srclen--;
- 
- 	if (srclen >= dstsize) {
--- 
-2.47.2
+> 
+>   vdd-0v9-supply = <&board_vreg1>;
+>   vdd-12v-supply = <&board_vreg3>;
+>   vdd-1v8-supply = <&board_vreg4>;
+>   vdd-3v3-supply = <&board_vreg2>;
+> 
+> Having the properties sorted in natural order by their associated voltages
+> is more logical, more usable, and a bit more consistent.
+> 
+> [1] https://en.wikipedia.org/wiki/Natural_sort_order
+> [2] https://lore.kernel.org/linux-rockchip/b39cfd7490d8194f053bf3971f13a43472d1769e.1740941097.git.dsimic@manjaro.org/
+> [3] https://lore.kernel.org/linux-rockchip/174104113599.8946.16805724674396090918.b4-ty@sntech.de/
+> [4] https://lore.kernel.org/linux-rockchip/757afa87255212dfa5abf4c0e31deb08@manjaro.org/
+> 
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> ---
+> 
+> Notes:
+>     Changes in v3:
+>       - Rewrote the part of the changes that describes natural sort order
+>         and its relation to "standard" alpha-numerical ordering, to make
+>         it more understandable, as suggested by Krzysztof [6]
+>       - Slightly expanded the patch description, to clarify the additional
+>         goal of explaining the natural sort order briefly
+>     
+>     Changes in v2:
+>       - Changed the additions to the coding style to specify natural sort
+>         order, which avoids amibguity, as suggested by Krzysztof [5]
+>       - Adjusted and expanded the patch description appropriately, together
+>         with including one more reference for the natural sort order
+>     
+>     Link to v1: https://lore.kernel.org/linux-kernel/09d6f2fc111b3d6e58987336944f93ec36b65118.1741071107.git.dsimic@manjaro.org/T/#u
+>     Link to v2: https://lore.kernel.org/linux-kernel/47c51c10098f089e52fb14c5c5527611dc8daf32.1741164239.git.dsimic@manjaro.org/T/#u
+>     
+>     [5] https://lore.kernel.org/linux-kernel/20250305-defiant-serious-newt-b7c5ea@krzk-bin/
+>     [6] https://lore.kernel.org/linux-kernel/20250306-dexterous-goshawk-of-aptitude-e4f1f6@krzk-bin/
+> 
+>  .../devicetree/bindings/dts-coding-style.rst       | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/dts-coding-style.rst b/Documentation/devicetree/bindings/dts-coding-style.rst
+> index 8a68331075a0..7d183c1ade74 100644
+> --- a/Documentation/devicetree/bindings/dts-coding-style.rst
+> +++ b/Documentation/devicetree/bindings/dts-coding-style.rst
+> @@ -133,6 +133,15 @@ The above-described ordering follows this approach:
+>  3. Status is the last information to annotate that device node is or is not
+>     finished (board resources are needed).
+>  
+> +The above-described ordering specifies the preferred ordering of property
+> +groups, while the individual properties inside each group shall use natural
+> +sort order by the property name.
+
+I guess you sent it after my today's reply. Full stop, done. Such
+trivial thing as sorting should have one line. Three lines is already
+longish, but fine, especially that it can be one line.
+
+"Properties within each of above groups should use natural sort order."
+
+> +
+> +The natural sort order differs from alpha-numerical ordering only by treating
+> +any single- and multi-digit numbers found inside the property names atomically,
+> +and by taking their actual numerical values and comparing those values between
+> +themselves to determine the order of property names.
+
+8 lines is 8 times too long.
+
+Best regards,
+Krzysztof
 
 
