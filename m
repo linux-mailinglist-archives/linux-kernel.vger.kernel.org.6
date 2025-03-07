@@ -1,161 +1,247 @@
-Return-Path: <linux-kernel+bounces-550838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6716A564E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:16:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5653EA564B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:11:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8EE887A44F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:15:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F9BE188D24D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E5B20E00C;
-	Fri,  7 Mar 2025 10:16:39 +0000 (UTC)
-Received: from smtp.cecloud.com (unknown [1.203.97.240])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A7120CCF5;
-	Fri,  7 Mar 2025 10:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.240
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741342599; cv=none; b=t06Lw97w0GIkzwhfmvp3WtJd+Pag0tGH6Rle05EXWA6npGjpSgL6M/Wy/p699vYcyPqsV0sGxUlv90dXr0AkVDZls81x3whorUm9/bhP92EloBVXKJ0fNxZ3yx6G/DGxXJU14V1giSGK99IT5b4wsrPEwoZe5GXd+XttWuQYwSQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741342599; c=relaxed/simple;
-	bh=0C8ZfqMqZuoovYFbMVUqy5GecvU3AoQHWZmmwzHJY7o=;
-	h=Date:From:To:Cc:Subject:References:Mime-Version:Message-ID:
-	 Content-Type; b=HBVXBzWLLHNbqLdqhuOC68v0poQqlzl8TRy3nhqezG+mzdOnhK/uTQ7uTAd8ffKTRY9DtuhbmvteN/5KaEy34lVIkafvBWKvoj5WcWBKib/p57C5rZxjNmVmoX0C+l9jPlUelzqE2O3mCxdSTTojD9SFdSJ6cq7iLom+aJ7en2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.cecloud.com (Postfix) with ESMTP id 859D5900113;
-	Fri,  7 Mar 2025 18:10:48 +0800 (CST)
-X-MAIL-GRAY:0
-X-MAIL-DELIVERY:1
-X-SKE-CHECKED:1
-X-ABS-CHECKED:1
-X-ANTISPAM-LEVEL:2
-Received: from desktop-n31qu50 (unknown [39.156.73.12])
-	by smtp.cecloud.com (postfix) whith ESMTP id P3907749T281458224329072S1741342247056699_;
-	Fri, 07 Mar 2025 18:10:47 +0800 (CST)
-X-IP-DOMAINF:1
-X-RL-SENDER:zhang.guanghui@cestc.cn
-X-SENDER:zhang.guanghui@cestc.cn
-X-LOGIN-NAME:zhang.guanghui@cestc.cn
-X-FST-TO:sagi@grimberg.me
-X-RCPT-COUNT:8
-X-LOCAL-RCPT-COUNT:0
-X-MUTI-DOMAIN-COUNT:0
-X-SENDER-IP:39.156.73.12
-X-ATTACHMENT-NUM:0
-X-UNIQUE-TAG:<1be85d387a87dfb187ff48dbfef631eb>
-X-System-Flag:0
-Date: Fri, 7 Mar 2025 18:10:46 +0800
-From: "zhang.guanghui@cestc.cn" <zhang.guanghui@cestc.cn>
-To: sagi <sagi@grimberg.me>, 
-	mgurtovoy <mgurtovoy@nvidia.com>, 
-	kbusch <kbusch@kernel.org>, 
-	sashal <sashal@kernel.org>, 
-	chunguang.xu <chunguang.xu@shopee.com>
-Cc: linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-nvme <linux-nvme@lists.infradead.org>, 
-	linux-block <linux-block@vger.kernel.org>
-Subject: =?UTF-8?B?UmU6IFJlOiBudm1lLXRjcDogZml4IGEgcG9zc2libGUgVUFGIHdoZW4gZmFpbGluZyB0byBzZW5kIHJlcXVlc3TjgJDor7fms6jmhI/vvIzpgq7ku7bnlLFzYWdpZ3JpbUBnbWFpbC5jb23ku6Plj5HjgJE=?=
-References: <2025021015413817916143@cestc.cn>, 
-	<aed9dde7-3271-4b97-9632-8380d37505d9@grimberg.me>
-X-Priority: 3
-X-GUID: 975E8B81-9D52-4F73-B182-02888A113620
-X-Has-Attach: no
-X-Mailer: Foxmail 7.2.25.331[cn]
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0597C20E001;
+	Fri,  7 Mar 2025 10:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="KCzNt062"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2061.outbound.protection.outlook.com [40.107.22.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC2C20CCCD;
+	Fri,  7 Mar 2025 10:10:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741342255; cv=fail; b=YrJk5T6Yqz79HE4gedCA0dtlljnguF+rowk816BNu/AB4lGUAbNox6NZI6rcLwarcNkhaUXNzUPiFg7hzxG9l6xSsKFndfTQ9bboe1kruLkFcau1x/+JxyX7ObfUsnUyN7R0cSf7gy75HMcIPzi7TJyFyw8UPc+Zw1YJ7GzUQw0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741342255; c=relaxed/simple;
+	bh=41H1o0zx9VjinbDlai4D9r43S5S/hQ2Ln3W90FDbZ/I=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=re0unuKIxBnNtVs3xVqBbPbwngnnDAvPlxoMo5LFX6miDm2W031A5Xx5BhSiMXiOIrhmvanrYIIQWW+Miv7UgenEdSAA69bEF6LweQlNWE8EULeluq2GSUbL9GmgkhgG/rXdpSg4Ypb7HRRDSWADXMxOFScS26gdru+G7vdxyR8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=KCzNt062; arc=fail smtp.client-ip=40.107.22.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Y3E+ahmO7+LfIb2LUPFGXxzBqJUayrxV9ocFP+wgCt1ByjXvxGxXwKZFbAZWAVVrGrtn8CvhH6jDhZxhLJIExqRl42fC813kosWDhYow9bu2gSzJKgvxkqQmQWT4OtegnFmuCTSVCarPaxP8PICW13Qgcls1WCyL+xp5m/kWBfE7e60N9vq5mlJMTivZ/+lElP3OF2w66DiUJQUSjEPieTtFv+y9oadIpgdNL48jBAoYXjpLhF8NB82pf/fSR/RWbnVPvd8bjC99ikWnTukwBrXW+292nXaJieNAzQPsCJ904VKmZIztYsofhos6ulvmcccNdfueCInl8FPXL1opRA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1ya6HZAYQcqRbYFvGThCbCZe2yKbmSsTePP8UQLATyI=;
+ b=SEoC1EnE7LagMRHY+kEaDHEWR9dqjNUlvPGDHikkBGBbzwyp0lwEz3VuOgqI8M9Cm/Im2kks09LxSTFRc9ik5jPCOJuavJcZZxPmA/Kol3+LBzPI5y7BeYCN0hqyxfeP/0OYBD2iV8jK7oQTIY01P7Q6xypARTVBgcujZTbW7kVwD87DkxNkQNvQxW6FK6cxOVLyABgFFkaw9cUZayjt6ZCJ2s7zrMhMr8DyPPb6knByIm8h4tQmHx84Ks3RAOQHHhuVCvLU/4tqm3dx9PIN7NLW+MfAwwYzYSADJVJzhgANScyJj7QAfSUQsgqIGE9j7JIFMB7bLf3uw9Jy/dfAKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1ya6HZAYQcqRbYFvGThCbCZe2yKbmSsTePP8UQLATyI=;
+ b=KCzNt062+cJ38H66sC5uRIW4dfDkjmjjuicvFBf0+sBjQtuBZ0svCMYBzije2vKMKIH+viUeqSs+VV+9hk/bLWL8KQV/H2I3V7JLjGm5LUWAhECwZb4RTqnkJLLl7kee0WWWVzCYjtev9H45XQfQ2RYUDG3n94HO15miZb6fNu4R/GHirlkqLwVbl/i4sDGnzI+Cr8rmGn33pZbaELHIxDaugZy6g4PfAnYTp6F24RfZqITvzUDh9uKcPHEtq0AxRo00EWd5woAL0hJu3U1e6KpNByxwwxkKMbUyVlNYKzbgWvcHjc/nh4zogp9YOai8eQNlsLlkCJGyH6KQ8A4fJA==
+Received: from AS8PR04MB8642.eurprd04.prod.outlook.com (2603:10a6:20b:429::24)
+ by DB9PR04MB9723.eurprd04.prod.outlook.com (2603:10a6:10:4ce::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.20; Fri, 7 Mar
+ 2025 10:10:50 +0000
+Received: from AS8PR04MB8642.eurprd04.prod.outlook.com
+ ([fe80::50d3:c32a:2a83:34bb]) by AS8PR04MB8642.eurprd04.prod.outlook.com
+ ([fe80::50d3:c32a:2a83:34bb%7]) with mapi id 15.20.8511.019; Fri, 7 Mar 2025
+ 10:10:50 +0000
+From: Jacky Bai <ping.bai@nxp.com>
+To: Sudeep Holla <sudeep.holla@arm.com>
+CC: "rafael@kernel.org" <rafael@kernel.org>, "daniel.lezcano@linaro.org"
+	<daniel.lezcano@linaro.org>, "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, "james.morse@arm.com"
+	<james.morse@arm.com>, "d-gole@ti.com" <d-gole@ti.com>, "anup@brainfault.org"
+	<anup@brainfault.org>, "paul.walmsley@sifive.com" <paul.walmsley@sifive.com>,
+	"palmer@dabbelt.com" <palmer@dabbelt.com>, "aou@eecs.berkeley.edu"
+	<aou@eecs.berkeley.edu>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>, "imx@lists.linux.dev"
+	<imx@lists.linux.dev>, "khilman@baylibre.com" <khilman@baylibre.com>,
+	"quic_tingweiz@quicinc.com" <quic_tingweiz@quicinc.com>,
+	"quic_yuanjiey@quicinc.com" <quic_yuanjiey@quicinc.com>
+Subject: RE: [PATCH v4] cpuidle: Init cpuidle only for present CPUs
+Thread-Topic: [PATCH v4] cpuidle: Init cpuidle only for present CPUs
+Thread-Index: AQHbjzc48QAeOzv5L02tuSUugwb8UbNnbkUAgAAAI3CAAAOqAIAAACvA
+Date: Fri, 7 Mar 2025 10:10:50 +0000
+Message-ID:
+ <AS8PR04MB86425524495B3FEF19F32E6B87D52@AS8PR04MB8642.eurprd04.prod.outlook.com>
+References: <20250307080303.2660506-1-ping.bai@nxp.com>
+ <Z8rBYuDiIyo8y6HT@bogus>
+ <AS8PR04MB86425B7CEE7443F822A2DBCA87D52@AS8PR04MB8642.eurprd04.prod.outlook.com>
+ <Z8rEkgYoThJAJdPV@bogus>
+In-Reply-To: <Z8rEkgYoThJAJdPV@bogus>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS8PR04MB8642:EE_|DB9PR04MB9723:EE_
+x-ms-office365-filtering-correlation-id: 03c2feb5-1f88-43ca-979c-08dd5d60566e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|7416014|376014|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?0hMl5HA8+u0O3DavDQGgX7+qEpk4b8KGuFsKC1TF3PANAO/X2hlh9yeyeY64?=
+ =?us-ascii?Q?46ZYsxPQy7EzSqFBPcEFyKonrWF5gxYLLBnwjqsT8v5KrYwk+TYoTp4BQSTf?=
+ =?us-ascii?Q?3BMzZhnJNVTcobSfGrBw1ilg/5dKv5bQNsVWuLx7CCl+466pzih558P6Sg7t?=
+ =?us-ascii?Q?sxS/qKMfc+gexczDudiZ/S/Uc4KtOSmCSyFnGKdEn+4eZzCOPuQMhf2nQjjb?=
+ =?us-ascii?Q?86ESgwveztMFWEGvpm/sZ8++OIURF4hG5Th1WOVp12NRvkRjNjax4UxMDypn?=
+ =?us-ascii?Q?AAsPd0txuMHi2NLHXvqsmhI9syb/d0LufUn0AtlCyID0yzBFipIc9dtL1HQf?=
+ =?us-ascii?Q?WTUkCpqdFRXsxc51dXh7H0/9tJ30ej7WCm+VOsBBNQfK55uf5Zlp1Wx+IZWH?=
+ =?us-ascii?Q?WJLfnzRKs8YwJP7Mn13x19YSwIaoIXzbcGN1WBZQfVB6SOLE0AGejeRbj3KZ?=
+ =?us-ascii?Q?5o5BmMg/SEnQHyAdqMI7spdPIpiykXef4Dfrv/VU77BswbfaPEDLoZNYFKl+?=
+ =?us-ascii?Q?g10stsqpg19NS6NUOqgjU4+LflZXFoZUMdGUmExTo/g8amT5ZotXAkU3Zw4C?=
+ =?us-ascii?Q?a/ToJaszDCv1RoT+TuFW85/UIASEmAzlutINVGn+xMYmsnbUfSQAv/9TQjxh?=
+ =?us-ascii?Q?s2TJjmn5cJAD51/uYvQ40QqhTnbdpZ2G+avVokQ4qJjJqVUwkQMxBCHAebJH?=
+ =?us-ascii?Q?JVSoXH3MokF+0y51gQ5wMbNLOUf7plaMi6aTvUcu28rLgZa+AE0YSqxj2E0q?=
+ =?us-ascii?Q?9JEIkPq5o3NI21Cw+l4i7ikQmJDXbfo6h9ChkEhXkWCM4VGa6hhRD35xFW80?=
+ =?us-ascii?Q?dfjb6YKo07tDhL14MnD5t/aVA5tsF0MREehfAPu5aH+n8h4NyFDfPNWiec+F?=
+ =?us-ascii?Q?I8DGiidUYVXflnAtRgNjSNI0tUJxGVGlCSRsu3yy5FH+ecouRof2mMiNC8KZ?=
+ =?us-ascii?Q?LfaGbASrEN4LGKM8PTUXK5oE9InmK41VdER6HYqy72+0MwjpPSW+Irvax1lG?=
+ =?us-ascii?Q?9Ag+jtVXva8Lvb1X5YXMZU1V/8xKOmbJE6TcZI5RWH/2Vtg8Hgns3kOs313/?=
+ =?us-ascii?Q?EfjoCxx0a8yvtnYkgnLE7MBzf3Ay7UHAeoexAE46DbRx4amH2X80qVyaN11H?=
+ =?us-ascii?Q?ExTV/w3bhWGxurkmQQacWplUbVmtEt7bkCk9fUNWw21PcsBYS0dKLqFjoe02?=
+ =?us-ascii?Q?w/mrsWgWJITOTcyUXNOqehJrXl1j09JL6k+UHwvmRSHRnW8+Vw5VKgDiOVhg?=
+ =?us-ascii?Q?7Inn+hg9xvgxKy20PIrhsmy870IHx4K47/72czaM5cgss5hQWf0QTtm9VjY/?=
+ =?us-ascii?Q?dTCiUxE4tmRXP3IeGLpnPta1gNKGTo/qT5lI/A0nhGgXkufFjytiF2QZLgKg?=
+ =?us-ascii?Q?/gk+l3G2a9nHHRbXIsUgCO/WMGW+4Vpx1fG5Owy2SZj3kLCU/2Dd2hlGUc9D?=
+ =?us-ascii?Q?4oCEn7dxcJyA3qkEuOW446To+oUhyDdw?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?E6vYFsphWUoU0Z9bRZMEqyat67EtguYx1grI7IxDzD9GQrst0H2zRsinrqmd?=
+ =?us-ascii?Q?6eB+fiJQGH7MxkWiwd8Gpc7oMmlvYmeG8bRBX9DoaJOW7zoq8wyqTISRxR5O?=
+ =?us-ascii?Q?H0NAhzuzS2CO8ZUXSgMBE/d9QP+g2cw1SAU3erDWDEaVitR68wnc0qpbkBOj?=
+ =?us-ascii?Q?gao9pWKFy3KMAIkVMMTXY5H4GuuULeXaIfbqG9XZUWtfDFZ8Q8ULIbm6bo99?=
+ =?us-ascii?Q?blXoqtMSdAPtm35iLatmRtDXn6eQG93xO3FUtKPu9MCYcvl3GzuqzrZDd4Pg?=
+ =?us-ascii?Q?nPuMX/Mo+/N1ivkSZBJO4wTF8Kg3BoNuOuJNpvWP4afXrwtZeC75+weVw5fc?=
+ =?us-ascii?Q?S4yvgKb8sk1zbsyM4+zj+EC59ILmORNm+ziaT7x6/hPVlq0perZdw4A48WmI?=
+ =?us-ascii?Q?tgpHIElwN0PdEs2eR37XIV0c4l4CiC/ECuqjB+FQSzKRjSAVLySYVfokLT4s?=
+ =?us-ascii?Q?aNg5wzbdmDmubnKaPgsi8XuXqtpgthkLFmSC1Yrtqy01Snvwwgjk/nHkYn4C?=
+ =?us-ascii?Q?oW7CMl2LyoWZrNWMK4bDedqQ45jcX3BHe7o+4VFsSiVuVNlCGoykvivM86wq?=
+ =?us-ascii?Q?JfWgjv/+o6lRMnNcX2aNMVhn382AsXv4kFBLxBLiRKyKEi20ce9NUQyqdVsu?=
+ =?us-ascii?Q?Iss5mUutyzxthpEXATrBX3xhcrvrx9u31UlIyhky5vz2l3pqxV2F4I1D7lxm?=
+ =?us-ascii?Q?dyFVazloa2g/OwQCU0XPuDlFCyaO4B1ysEXnufSIXHC0xNAq0w/NF5gR9b4m?=
+ =?us-ascii?Q?/maVPEfP4p8nEraURIVlyobCjSCSQ8FmwDCm5DuyEjyShl1pbd6mwBrUqLPi?=
+ =?us-ascii?Q?R0kT4KgixJUYD/hengLNU6/PxBD3F21XV4fEpeQ4eu2iBGgINYs2gh2tkyUa?=
+ =?us-ascii?Q?fPhgvcTiLha+zyVoBmtI17mMf83ZkuX4Rg2eoj1Vt+1Y1rrgLBQHluf6ro6u?=
+ =?us-ascii?Q?DKck7Qab3MLA0MC2GVqMzpiIFDjtknRGI195+ira0Ej6ha8GbqVdnfSNint/?=
+ =?us-ascii?Q?EaoPqroiNEU8h17YHGIll6SReMV/MPPJOOB1l0Vq3ejOIz59gH5tMRRMJnVh?=
+ =?us-ascii?Q?w2uT/4d4YOyXPilrxhKYIs1F4Wx5zSOrKNjEy1oULH69shTf8Xw4GMXgnGCn?=
+ =?us-ascii?Q?W2EZktF968cO6WJDfryhHLtU5wLG5G81iMiZBRrAyYQ86Tfv/YrZTNC5cQ9b?=
+ =?us-ascii?Q?sjIjC6u0XwBH+qBanl5kmO3dSRN+e03ofyzqY07NzqeB0LDBkL7NqmTjlL1B?=
+ =?us-ascii?Q?7lO4lBNeATVXPVqfLHNqUXo7V3DpoIAOtEF5kQ540AWyTzOivYzgcqiUzsVv?=
+ =?us-ascii?Q?vZJSExdpQl7QG5+HzhlmM4bQXcOgbLA2USPtY21elabTiviDcKpckxdcKNcb?=
+ =?us-ascii?Q?CTRco3e1fAq+qRxOlk66xR+ZMZceSpAVXcfpPt3oRs/hzbiZRQs+HLwfIBVD?=
+ =?us-ascii?Q?19CdtJ5DPy9MRhkPlm+GMEuFk+FMd4Z7iYYnlnPQe2P7avszscYSE4LKafHO?=
+ =?us-ascii?Q?1Rs4dBmxl6eQeIIR55/HAR8fwUUdENn8xfiQCDxeObRONgmIjLat9UHW3Ps0?=
+ =?us-ascii?Q?bSn9yxzr1piZOo3FGpY=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Message-ID: <202503071810452687957@cestc.cn>
-Content-Type: text/plain;
-	charset="UTF-8"
-Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 03c2feb5-1f88-43ca-979c-08dd5d60566e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2025 10:10:50.4763
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wWjGssMQFo7zCYlZdA2AHQ9xzIyFCxYq/VVdbzaYDFOhTMowqnNk/U+sgk3Q3BtMMjK3UvlfXnITQwCUt2i2GQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9723
 
-CkhpIAoKICAgICAgICBBZnRlciB0ZXN0aW5nIHRoaXMgcGF0Y2gsICAgc2VuZGluZyByZXF1ZXN0
-IGZhaWx1cmUgb2NjdXJyZWQsICAgdW5mb3J0dW5hdGVseSwgdGhlIGlzc3VlIHN0aWxsIHBlcnNp
-c3RzLiAgCgoKYmVzdCB3aXNoZXMKCgoKCnpoYW5nLmd1YW5naHVpQGNlc3RjLmNuCgoKCsKgCgoK
-CuWPkeS7tuS6uu+8msKgU2FnaSBHcmltYmVyZwoKCgrlj5HpgIHml7bpl7TvvJrCoDIwMjUtMDIt
-MTfCoDE1OjQ2CgoKCuaUtuS7tuS6uu+8msKgemhhbmcuZ3VhbmdodWlAY2VzdGMuY247IG1ndXJ0
-b3ZveTsga2J1c2NoOyBzYXNoYWw7IGNodW5ndWFuZy54dQoKCgrmioTpgIHvvJrCoGxpbnV4LWtl
-cm5lbDsgbGludXgtbnZtZTsgbGludXgtYmxvY2sKCgoK5Li76aKY77yawqBSZTogbnZtZS10Y3A6
-IGZpeCBhIHBvc3NpYmxlIFVBRiB3aGVuIGZhaWxpbmcgdG8gc2VuZCByZXF1ZXN044CQ6K+35rOo
-5oSP77yM6YKu5Lu255Sxc2FnaWdyaW1AZ21haWwuY29t5Luj5Y+R44CRCgoKCsKgCgoKCsKgCgoK
-CsKgCgoKCk9uIDEwLzAyLzIwMjUgOTo0MSwgemhhbmcuZ3VhbmdodWlAY2VzdGMuY24gd3JvdGU6
-CgoKCj4gSGVsbG8KCgoKPgoKCgo+CgoKCj4KCgoKPsKgIMKgIMKgwqBXaGVuIHVzaW5nIHRoZSBu
-dm1lLXRjcCBkcml2ZXIgaW4gYSBzdG9yYWdlIGNsdXN0ZXIsIHRoZSBkcml2ZXIgbWF5IHRyaWdn
-ZXIgYSBudWxsIHBvaW50ZXIgY2F1c2luZyB0aGUgaG9zdCB0byBjcmFzaCBzZXZlcmFsIHRpbWVz
-LgoKCgo+CgoKCj4KCgoKPgoKCgo+IEJ5IGFuYWx5emluZyB0aGUgdm1jb3JlLCB3ZSBrbm93IHRo
-ZSBkaXJlY3QgY2F1c2UgaXMgdGhhdMKgIHRoZSByZXF1ZXN0LT5tcV9oY3R4IHdhcyB1c2VkIGFm
-dGVyIGZyZWUuCgoKCj4KCgoKPgoKCgo+CgoKCj4KCgoKPgoKCgo+IENQVTHCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDC
-oCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoCDCoENQVTIKCgoKPgoKCgo+CgoKCj4KCgoKPiBu
-dm1lX3RjcF9wb2xswqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAg
-wqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgwqAgbnZtZV90Y3BfdHJ5X3Nl
-bmTCoCAtLWZhaWxlZCB0byBzZW5kIHJlcXJlc3QgMTMKCgoKPgoKCgo+CgoKCj4KCgoKPsKgIMKg
-IMKgwqBudm1lX3RjcF90cnlfcmVjdsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIG52bWVfdGNwX2Zh
-aWxfcmVxdWVzdAoKCgo+CgoKCj4KCgoKPgoKCgo+wqAgwqAgwqDCoMKgIMKgwqBudm1lX3RjcF9y
-ZWN2X3NrYsKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIG52bWVfdGNwX2VuZF9yZXF1ZXN0CgoKCj4K
-CgoKPgoKCgo+CgoKCj7CoCDCoCDCoMKgwqAgwqDCoMKgIMKgwqBudm1lX3RjcF9yZWN2X3BkdcKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKgIMKg
-IMKgIMKgIMKgIMKgIMKgIMKgIMKgIG52bWVfY29tcGxldGVfcnEKCgoKPgoKCgo+CgoKCj4KCgoK
-PsKgIMKgIMKgwqDCoCDCoMKgwqAgwqDCoMKgIMKgwqBudm1lX3RjcF9oYW5kbGVfY29tcMKgIMKg
-wqDCoCDCoMKgwqAgwqDCoMKgIMKgwqDCoCDCoMKgwqAgwqDCoMKgIMKgwqDCoCDCoMKgwqAgwqDC
-oMKgIMKgwqDCoCDCoMKgwqAgwqDCoMKgIMKgbnZtZV9yZXRyeV9yZXEgLS3CoHJlcXVlc3QtPm1x
-X2hjdHggaGF2ZSBiZWVuIGZyZWVkLCBpcyBOVUxMLgoKCgo+CgoKCj4KCgoKPgoKCgo+wqAgwqAg
-wqDCoMKgIMKgwqDCoCDCoMKgwqAgwqDCoMKgIMKgwqBudm1lX3RjcF9wcm9jZXNzX252bWVfY3Fl
-CgoKCj4KCgoKPgoKCgo+CgoKCj7CoCDCoCDCoMKgwqAgwqDCoMKgIMKgwqDCoCDCoMKgwqAgwqDC
-oMKgIMKgIG52bWVfY29tcGxldGVfcnEKCgoKPgoKCgo+CgoKCj4KCgoKPsKgIMKgIMKgwqDCoCDC
-oMKgwqAgwqDCoMKgIMKgwqDCoCDCoMKgwqAgwqDCoMKgIMKgIG52bWVfZW5kX3JlcQoKCgo+CgoK
-Cj4KCgoKPgoKCgo+wqAgwqAgwqDCoMKgIMKgwqDCoCDCoMKgwqAgwqDCoMKgIMKgwqDCoCDCoMKg
-wqAgwqDCoMKgIMKgwqDCoCBibGtfbXFfZW5kX3JlcXVlc3QKCgoKPgoKCgo+CgoKCj4KCgoKPgoK
-Cgo+CgoKCj4KCgoKPgoKCgo+IHdoZW4gbnZtZV90Y3BfdHJ5X3NlbmQgZmFpbGVkIHRvIHNlbmQg
-cmVxcmVzdCAxMywgaXQgbWF5YmUgYmUgcmVzdWx0ZWQgYnkgc2VsaW51eCBvciBvdGhlciByZWFz
-b25zLCB0aGlzIGlzIGEgcHJvYmxlbS4gdGhlbsKgIHRoZSBudm1lX3RjcF9mYWlsX3JlcXVlc3Qg
-d291bGQgZXhlY3V0ZeOAggoKCgo+CgoKCj4KCgoKPgoKCgo+IGJ1dCB0aGUgbnZtZV90Y3BfcmVj
-dl9wZHUgbWF5IGhhdmUgcmVjZWl2ZWQgdGhlIHJlc3BvbmRpbmcgcGR1IGFuZCB0aGUgbnZtZV90
-Y3BfcHJvY2Vzc19udm1lX2NxZSB3b3VsZCBoYXZlIGNvbXBsZXRlZCB0aGUgcmVxdWVzdC7CoCBy
-ZXF1ZXN0LT5tcV9oY3R4IHdhcyB1c2VkIGFmdGVyIGZyZWUuCgoKCj4KCgoKPgoKCgo+CgoKCj4g
-dGhlIGZvbGxvdyBwYXRjaCBpcyB0byBzb2x2ZSBpdC4KCgoKwqAKCgoKWmhhbmcsIHlvdXIgZW1h
-aWwgY2xpZW50IG5lZWRzIGZpeGluZyAtIGl0IGlzIGltcG9zc2libGUgdG8gZm9sbG93IHlvdXIK
-CgoKZW1haWxzLgoKCgrCoAoKCgo+CgoKCj4KCgoKPgoKCgo+IGNhbiB5b3UgZ2l2ZcKgIHNvbWUg
-c3VnZ2VzdGlvbnM/wqAgdGhhbmtzIQoKCgrCoAoKCgpUaGUgcHJvYmxlbSBpcyB0aGUgQzJIVGVy
-bSB0aGF0IHRoZSBob3N0IGlzIHVuYWJsZSB0byBoYW5kbGUgY29ycmVjdGx5LgoKCgpBbmQgaXQg
-YWxzbyBhcHBlYXJzIHRoYXQgbnZtZV90Y3BfcG9sbCgpIGRvZXMgbm90IHNpZ25hbCBjb3JyZWN0
-bHkgdG8KCgoKYmxrLW1xIHRvIHN0b3AKCgoKY2FsbGluZyBwb2xsLgoKCgrCoAoKCgpPbmUgdGhp
-bmcgdG8gZG8gaXMgdG8gaGFuZGxlIEMySFRlcm0gUERVIGNvcnJlY3RseSwgYW5kLCBoZXJlIGlz
-IGEKCgoKcG9zc2libGUgZml4IHRvIHRyeSBmb3IgdGhlIFVBRiBpc3N1ZToKCgoKLS0KCgoKZGlm
-ZiAtLWdpdCBhL2RyaXZlcnMvbnZtZS9ob3N0L3RjcC5jIGIvZHJpdmVycy9udm1lL2hvc3QvdGNw
-LmMKCgoKaW5kZXggYzYzN2ZmMDRhMDUyLi4wZTM5MGU5OGFhZjkgMTAwNjQ0CgoKCi0tLSBhL2Ry
-aXZlcnMvbnZtZS9ob3N0L3RjcC5jCgoKCisrKyBiL2RyaXZlcnMvbnZtZS9ob3N0L3RjcC5jCgoK
-CkBAIC0yNjczLDYgKzI2NzMsNyBAQCBzdGF0aWMgaW50IG52bWVfdGNwX3BvbGwoc3RydWN0IGJs
-a19tcV9od19jdHgKCgoKKmhjdHgsIHN0cnVjdCBpb19jb21wX2JhdGNoICppb2IpCgoKCsKgewoK
-CgrCoMKgwqDCoMKgwqDCoCBzdHJ1Y3QgbnZtZV90Y3BfcXVldWUgKnF1ZXVlID0gaGN0eC0+ZHJp
-dmVyX2RhdGE7CgoKCsKgwqDCoMKgwqDCoMKgIHN0cnVjdCBzb2NrICpzayA9IHF1ZXVlLT5zb2Nr
-LT5zazsKCgoKK8KgwqDCoMKgwqDCoCBpbnQgcmV0OwoKCgrCoAoKCgrCoMKgwqDCoMKgwqDCoCBp
-ZiAoIXRlc3RfYml0KE5WTUVfVENQX1FfTElWRSwgJnF1ZXVlLT5mbGFncykpCgoKCsKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXR1cm4gMDsKCgoKQEAgLTI2ODAsOSArMjY4MSw5IEBA
-IHN0YXRpYyBpbnQgbnZtZV90Y3BfcG9sbChzdHJ1Y3QgYmxrX21xX2h3X2N0eAoKCgoqaGN0eCwg
-c3RydWN0IGlvX2NvbXBfYmF0Y2ggKmlvYikKCgoKwqDCoMKgwqDCoMKgwqAgc2V0X2JpdChOVk1F
-X1RDUF9RX1BPTExJTkcsICZxdWV1ZS0+ZmxhZ3MpOwoKCgrCoMKgwqDCoMKgwqDCoCBpZiAoc2tf
-Y2FuX2J1c3lfbG9vcChzaykgJiYKCgoKc2tiX3F1ZXVlX2VtcHR5X2xvY2tsZXNzKCZzay0+c2tf
-cmVjZWl2ZV9xdWV1ZSkpCgoKCsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCBza19idXN5
-X2xvb3Aoc2ssIHRydWUpOwoKCgotwqDCoMKgwqDCoMKgIG52bWVfdGNwX3RyeV9yZWN2KHF1ZXVl
-KTsKCgoKK8KgwqDCoMKgwqDCoCByZXQgPSBudm1lX3RjcF90cnlfcmVjdihxdWV1ZSk7CgoKCsKg
-wqDCoMKgwqDCoMKgIGNsZWFyX2JpdChOVk1FX1RDUF9RX1BPTExJTkcsICZxdWV1ZS0+ZmxhZ3Mp
-OwoKCgotwqDCoMKgwqDCoMKgIHJldHVybiBxdWV1ZS0+bnJfY3FlOwoKCgorwqDCoMKgwqDCoMKg
-IHJldHVybiByZXQgPCAwID8gcmV0IDogcXVldWUtPm5yX2NxZTsKCgoKwqB9CgoKCsKgCgoKCsKg
-c3RhdGljIGludCBudm1lX3RjcF9nZXRfYWRkcmVzcyhzdHJ1Y3QgbnZtZV9jdHJsICpjdHJsLCBj
-aGFyICpidWYsIGludAoKCgpzaXplKQoKCgotLQoKCgrCoAoKCgpEb2VzIHRoaXMgaGVscD8KCgoK
-wqAKCgoKwqAKCgo=
+> Subject: Re: [PATCH v4] cpuidle: Init cpuidle only for present CPUs
+>=20
+> On Fri, Mar 07, 2025 at 10:02:14AM +0000, Jacky Bai wrote:
+> > Hi Sudeep,
+> >
+> > > Subject: Re: [PATCH v4] cpuidle: Init cpuidle only for present CPUs
+> > >
+> > > On Fri, Mar 07, 2025 at 04:03:03PM +0800, Jacky Bai wrote:
+> > > > for_each_possible_cpu() is currently used to initialize cpuidle in
+> > > > below cpuidle drivers:
+> > > >   drivers/cpuidle/cpuidle-arm.c
+> > > >   drivers/cpuidle/cpuidle-big_little.c
+> > > >   drivers/cpuidle/cpuidle-psci.c
+> > > >   drivers/cpuidle/cpuidle-riscv-sbi.c
+> > > >
+> > > > However, in cpu_dev_register_generic(), for_each_present_cpu() is
+> > > > used to register CPU devices which means the CPU devices are only
+> > > > registered for present CPUs and not all possible CPUs.
+> > > >
+> > > > With nosmp or maxcpus=3D0, only the boot CPU is present, lead to th=
+e
+> > > > failure:
+> > > >
+> > > >   |  Failed to register cpuidle device for cpu1
+> > > >
+> > > > Then rollback to cancel all CPUs' cpuidle registration.
+> > > >
+> > > > Change for_each_possible_cpu() to for_each_present_cpu() in the
+> > > > above cpuidle drivers to ensure it only registers cpuidle devices
+> > > > for CPUs that are actually present.
+> > > >
+> > > > Fixes: b0c69e1214bc ("drivers: base: Use present CPUs in
+> > > > GENERIC_CPU_DEVICES")
+> > > > Reviewed-by: Dhruva Gole <d-gole@ti.com>
+> > > > Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+> > > > Tested-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+> > > > Signed-off-by: Jacky Bai <ping.bai@nxp.com>
+> > > > ---
+> > > >  - v4 changes:
+> > > >   - add changes for other cpuidle driver that has the similar issue
+> > > >     as cpuidle-pcsi driver.
+> > > >
+> > > >  - v3 changes:
+> > > >   - improve the changelog as suggested by Sudeep
+> > > > ---
+> > > >  drivers/cpuidle/cpuidle-arm.c        | 8 ++++----
+> > > >  drivers/cpuidle/cpuidle-big_little.c | 2 +-
+> > > >  drivers/cpuidle/cpuidle-psci.c       | 4 ++--
+> > > >  drivers/cpuidle/cpuidle-riscv-sbi.c  | 4 ++--
+> > >
+> > >
+> > > Why have you spared drivers/cpuidle/cpuidle-qcom-spm.c ? IIUC the
+> > > issue exists there as well.
+> > >
+> >
+> > For qcom-spm driver, it has below code logic to handle no cpu device
+> > case, and no rollback to cancel the whole cpuidle registration. So I ju=
+st leave
+> it as it is.
+> > Do we need to update it?
+> >
+> > for_each_possible_cpu(cpu) {
+> >         ret =3D spm_cpuidle_register(&pdev->dev, cpu);
+>=20
+> Did you look into this function ?
 
+Yes, at the very beginning of this function it will check if the cpu device
+is available, if not, directly return -ENODEV, something I misunderstood?
 
-
+BR
+>=20
+> --
+> Regards,
+> Sudeep
 
