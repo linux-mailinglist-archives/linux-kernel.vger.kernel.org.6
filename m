@@ -1,170 +1,149 @@
-Return-Path: <linux-kernel+bounces-551323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73F3BA56B1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:04:14 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E883A56B17
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:03:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 023481896D1F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:04:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E4067A9785
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7901921CC70;
-	Fri,  7 Mar 2025 15:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3140D21C16D;
+	Fri,  7 Mar 2025 15:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="PTaD5YiF"
-Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lIB2qU9h"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A731F21C163;
-	Fri,  7 Mar 2025 15:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A8F21CA1F
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741359806; cv=none; b=LB/CWGWWsrjPZwDOj1RJ4FipMhfnOt2rCcKKlIokBqHTrO7PsPfzfktqmTd8SNc/TkwziB1vZAhekAFWe/1jwMljjipxAqvZkAGPyz4GKMkaFLadPzgO+Wf3Ic9oXydyYtYUpoKS8DbePNjlc2bSdX8vZW+LIMXTWNKvEzo7HGA=
+	t=1741359803; cv=none; b=XiQYda2RpQJX+c1TDjOoxzcQnud5uW4pNnaP+WxyfKukELbVCuMken67iGJFj7ncULqBpwzbzX2ZR4whdDPbMcfD2l5wAISFMY5UtXQbUgPiwiiZpEc5v6hCTY5+xhpyNI0DDtRH0Px6mG0uwUCB33FF4lQSlkSYEb93N8zt870=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741359806; c=relaxed/simple;
-	bh=EvP4qRjvDYAMbUjjDQRTdexQOft/Fz2pInKApi/481Y=;
-	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GFNv/CTo1NRrbxxbekb06LwefwZVUbyZtah/hhOf4xSZYfBle0AtueYRVIGGuMmIIB/XvPyEKVXFR8l1h49id/0IkYnDIbstbIkADxCxwXRQuBcvUQ1mCwmznPxA2ylE/pWc/ck0KM2ltXXzVrziOp3c8JDRO0MwHbKbjulkYmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=PTaD5YiF; arc=none smtp.client-ip=52.119.213.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+	s=arc-20240116; t=1741359803; c=relaxed/simple;
+	bh=ClXgnNB8s9sls8sH6ohCBtkUa60dce5RsindDE59v7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rTqw5Yo/NqcP+RnzAjUyNgkOyZWyA4GzD5oT/O2KPpe01RBtKYzdbyvh6/4vhLfryVcwiG6CsB5yFA7PHP3iskF5JMXeNLK3KkmnYGxYf/NIX3GxCXpV9dKceCiXbiM1SWdqSJ8jiy3UitqWGznS0bNK4e72G430ptzuAcsE0y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lIB2qU9h; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
   t=1741359802; x=1772895802;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=qqZcaiLaNCbDu9YJf0F0p4Av7x9/ggfLV9yLqVI9lR8=;
-  b=PTaD5YiFFggXebRV8TEr+rFnoPNSvNRK6ICyqvYBoxx8+QLUrWlLMz0i
-   lTXkYuAM6Yf7Ocj+ToPUMEtOs6Lvsw3jYD+c0+l5KXM8SaEp3z4FfrmgM
-   LN99vluEduiNZf+ZRQReLNhk34TYBvgSsJVHW5iSGhTBIsxy1Aa8wgop6
-   E=;
-X-IronPort-AV: E=Sophos;i="6.14,229,1736812800"; 
-   d="scan'208";a="277234234"
-Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
-  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 15:03:16 +0000
-Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:12889]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.40.101:2525] with esmtp (Farcaster)
- id 581fd502-d217-44f4-a221-2819cfffdf66; Fri, 7 Mar 2025 15:03:15 +0000 (UTC)
-X-Farcaster-Flow-ID: 581fd502-d217-44f4-a221-2819cfffdf66
-Received: from EX19D020UWC004.ant.amazon.com (10.13.138.149) by
- EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 7 Mar 2025 15:03:01 +0000
-Received: from EX19MTAUWA002.ant.amazon.com (10.250.64.202) by
- EX19D020UWC004.ant.amazon.com (10.13.138.149) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Fri, 7 Mar 2025 15:03:01 +0000
-Received: from email-imr-corp-prod-pdx-all-2c-785684ef.us-west-2.amazon.com
- (10.25.36.210) by mail-relay.amazon.com (10.250.64.203) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 15:03:01 +0000
-Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
-	by email-imr-corp-prod-pdx-all-2c-785684ef.us-west-2.amazon.com (Postfix) with ESMTP id 3C58BA05AE;
-	Fri,  7 Mar 2025 15:03:01 +0000 (UTC)
-Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
-	id C61C752B5; Fri,  7 Mar 2025 15:03:00 +0000 (UTC)
-From: Pratyush Yadav <ptyadav@amazon.de>
-To: Randy Dunlap <rdunlap@infradead.org>
-CC: <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, "Eric
- Biederman" <ebiederm@xmission.com>, Arnd Bergmann <arnd@arndb.de>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, Alexander Viro
-	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
-	<jack@suse.cz>, Hugh Dickins <hughd@google.com>, Alexander Graf
-	<graf@amazon.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "David
- Woodhouse" <dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, "Mike
- Rapoport" <rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, "Pasha
- Tatashin" <tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>,
-	Dave Hansen <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>,
-	Jason Gunthorpe <jgg@nvidia.com>, Matthew Wilcox <willy@infradead.org>, "Wei
- Yang" <richard.weiyang@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
-	<linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-	<linux-mm@kvack.org>, <kexec@lists.infradead.org>
-Subject: Re: [RFC PATCH 2/5] misc: add documentation for FDBox
-In-Reply-To: <E41DA7C8-635C-4E6E-A2CA-5D657526BE85@infradead.org>
-References: <20250307005830.65293-1-ptyadav@amazon.de>
-	<20250307005830.65293-3-ptyadav@amazon.de>
-	<E41DA7C8-635C-4E6E-A2CA-5D657526BE85@infradead.org>
-Date: Fri, 7 Mar 2025 15:03:00 +0000
-Message-ID: <mafs0r038j32z.fsf@amazon.de>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=ClXgnNB8s9sls8sH6ohCBtkUa60dce5RsindDE59v7Q=;
+  b=lIB2qU9hi0mzDNtzHsYEoyKjI1gnfxJb0JzMvfPCBycGR5LKfk6dD9Ls
+   1eXqUB0F8CjRsQ9Z3uZTrzRFPy0kH5dL+A2iKk32emwzTXxVPO0FSa6ZR
+   x37jmao/lPar7zhhnO7Sg+mwZDTNis6nmq9auQx4uh+18ZjeODl6kHqZF
+   pTHGHGy8wP4zAls2MAymLRbcBERKAmIoKhjc+87w/JMbtMadSfhxiBJHk
+   kmLVbE7edaOKZp3f1ZnqYnUHWiuVi6FjWS0X12B8Zp2b9Bw1d6csYSLby
+   noFWIsIUkfakKdQGOwE67dS8VMgMPOX7myK83n0or8qIHpPO7Q1rLHeUr
+   A==;
+X-CSE-ConnectionGUID: ATEzcQy0Su6KJwPCGaIEuA==
+X-CSE-MsgGUID: 1BUzcIMXTdO/IhgvKyuGlw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42550745"
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="42550745"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 07:03:21 -0800
+X-CSE-ConnectionGUID: rjKDA3kTSi+mH+unG99b2g==
+X-CSE-MsgGUID: 7tikOMWGQUSsecx5fuhUkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="124436070"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.110.132]) ([10.125.110.132])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 07:03:20 -0800
+Message-ID: <0ade78e7-7a3c-459d-bf1c-f0bb1f24baee@intel.com>
+Date: Fri, 7 Mar 2025 07:03:43 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 07/12] tools/x86/kcpuid: Add rudimentary CPU vendor
+ detection
+To: "Ahmed S. Darwish" <darwi@linutronix.de>, Borislav Petkov <bp@alien8.de>,
+ Ingo Molnar <mingo@redhat.com>, Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ Andrew Cooper <andrew.cooper3@citrix.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ x86@kernel.org, John Ogness <john.ogness@linutronix.de>,
+ x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+References: <20250306205000.227399-1-darwi@linutronix.de>
+ <20250306205000.227399-8-darwi@linutronix.de>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250306205000.227399-8-darwi@linutronix.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Mar 06 2025, Randy Dunlap wrote:
+On 3/6/25 12:49, Ahmed S. Darwish wrote:
+> The kcpuid CSV file will soon be updated with CPUID indices that are only
+> valid for certain CPU vendors, such as Centaur or Transmeta.  Thus,
+> introduce rudimentary x86 vendor detection to kcpuid.
 
-> On March 6, 2025 4:57:36 PM PST, Pratyush Yadav <ptyadav@amazon.de> wrote:
->>With FDBox in place, add documentation that describes what it is and how
->>it is used, along with its UAPI and in-kernel API.
->>
->>Since the document refers to KHO, add a reference tag in kho/index.rst.
->>
->>Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
->>---
-[...]
->>+
->>+The File Descriptor Box (FDBox) is a mechanism for userspace to name file
->>+descriptors and give them over to the kernel to hold. They can later be
->>+retrieved by passing in the same name.
->>+
->>+The primary purpose of FDBox is to be used with :ref:`kho`. There are many kinds
->
->     many kinds of 
->
->>+anonymous file descriptors in the kernel like memfd, guest_memfd, iommufd, etc.
->
->    etc.,
+Do we really need the vendor detection? For example, look at the end of
+cpuid(1)'s output:
 
-Thanks, will fix these.
+   # cpuid -1 --raw
+   ...
+   0x20000000 0x00: eax=0x00000000 ebx=0x00000000 ecx=0x00000000
+edx=0x00000000
+   ...
+   0x80860000 0x00: eax=0x00000000 ebx=0x00000000 ecx=0x00000000
+edx=0x00000000
+   0xc0000000 0x00: eax=0x00000000 ebx=0x00000000 ecx=0x00000000
+edx=0x00000000
 
-[...]
->>+
->>+Box
->>+---
->>+
->>+The box is a container for FDs. Boxes are identified by their name, which must
->>+be unique. Userspace can put FDs in the box using the ``FDBOX_PUT_FD``
->>+operation, and take them out of the box using the ``FDBOX_GET_FD`` operation.
->
-> Is this ioctl range documented is ioctl-number.rst?
-> I didn't notice a patch for that.
-
-My bad, missed that.
-
->
->>+Once all the required FDs are put into the box, it can be sealed to make it
->>+ready for shipping. This can be done by the ``FDBOX_SEAL`` operation. The seal
->>+operation notifies each FD in the box. If any of the FDs have a dependency on
->>+another, this gives them an opportunity to ensure all dependencies are met, or
->>+fail the seal if not. Once a box is sealed, no FDs can be added or removed from
->>+the box until it is unsealed. Only sealed boxes are transported to a new kernel
->
-> What if KHO is not being used?
-
-Then the FDs are lost on shutdown.
-
->
->>+via KHO. The box can be unsealed by the ``FDBOX_UNSEAL`` operation. This is the
->>+opposite of seal. It also notifies each FD in the box to ensure all dependencies
->>+are met. This can be useful in case some FDs fail to be restored after KHO.
->>+
->>+Box FD
->>+------
->
-> I can't tell in my email font, but is each underlinoat least as long as the title above it?
-
-They are. I went and double-checked as well. Maybe just something with
-your email font.
-
-[...]
-
--- 
-Regards,
-Pratyush Yadav
+It seems to just blindly poke at all of the CPUID regions. There are
+only a handful of these and there's no hard in poking at them other
+than an extra couple of executions of CPUID.
 
