@@ -1,79 +1,74 @@
-Return-Path: <linux-kernel+bounces-551793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6BCA57102
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:01:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1EAEA57105
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:04:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96217189A6B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:01:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A5E91798FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFCA23FC54;
-	Fri,  7 Mar 2025 19:01:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D6924C667;
+	Fri,  7 Mar 2025 19:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bqs4qHkr"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dgT6Bczv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3141C17B500
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 19:01:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E564F23E23C;
+	Fri,  7 Mar 2025 19:03:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741374068; cv=none; b=bEtDw9VLXYdYiT6x8YPkM44P9YqnEJkwyRvM5oP0bAA8Yc5nLCnPrNDRCIMKQGWFI4W2Z8U0Wm1KbbzEdrxTWxETJrSFvghctMfLZ5wkb0Q4zJPF14WlQj0YS4jC3VEq9xJi0bLZcmiaqJf5qwZseU3OW3IKpfsjsFwsV0A6mgE=
+	t=1741374233; cv=none; b=EG5YI/Z36H4p4yDc2ZweJCu3J2gfCwSgEjsxMBNGHGzwKz1JIoNXSFlj8qTq/3xg7rM2aqDhys6sS77CvVEJZKH3z6VV6/eZ7q/Nk5Zfq5F+rxpQU5Vn98WVGj65am0q+iSvWDBvAN94n1XWmUbIHX8VRBA4oTFKDFR5P/8rlTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741374068; c=relaxed/simple;
-	bh=rFoUxa2PsbbG5AGKVNYCXSIQhP9ClmJMnEp9PjdsSaE=;
+	s=arc-20240116; t=1741374233; c=relaxed/simple;
+	bh=7XE+okAqZbnST1X4dPRpwQVmabqaYZxhCYTZ9oCbMuA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hHW9qJd5w83/SzRTHVQdtZbvrEMPme6P9KuFwibe/RskRt2PCk5+F1E/AGHR/qOmEASgPNVeE08M18y06e/k9aTd86UOxOg/x9IROeOcL9WG23h4pKeY6+uRWJgVytshZkMbmvay9MZ+vHi21xBwU5t0Ta/Ihr2LlmgN8eqBsDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bqs4qHkr; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741374067; x=1772910067;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=rFoUxa2PsbbG5AGKVNYCXSIQhP9ClmJMnEp9PjdsSaE=;
-  b=bqs4qHkrppNJhmLPoCT+45TtrM3la8PlAMFEPqVSJQFINyQ1OLURIqF+
-   V70VaaOWleyK/4bFD+wVJ0l35OSjc2c8gLdIytnBNXwhUMz2ZJCrNrWCo
-   OqZwZRMfDrNU5h3TekNcWfTqB70WHRRPLOm8+SENROAIQMMGEuLdVIbcz
-   6dxElLPH16+0C4WfG5zLB+4crQOQDr8D3DrdIikRUkcXr1vcHMSDqBS40
-   wgV0cbg9tImqfQtn/2s1twryLu5OKm6d5GlL/CSVihpK1PR2kzpFEcnhl
-   PkQ9/+zLGzGgLgtZx9oS1XTVwrZQfDlJulsMAp+2yNDG5LQbkTZcJnwed
-   A==;
-X-CSE-ConnectionGUID: KgLPx9z6SC6JuHytCDTdtw==
-X-CSE-MsgGUID: OGJyvCCxS2WdD1bj6ZgVwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="30012394"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="30012394"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 11:01:06 -0800
-X-CSE-ConnectionGUID: GFeiGgMfRW6w/0nLAjrQow==
-X-CSE-MsgGUID: HRP2dsjbQoqzzP/Htprsnw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="119224220"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 11:01:05 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tqcwR-00000000UnL-0EZy;
-	Fri, 07 Mar 2025 21:01:03 +0200
-Date: Fri, 7 Mar 2025 21:01:02 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-kernel@vger.kernel.org, Willy Tarreau <willy@haproxy.com>,
-	Ksenija Stanojevic <ksenija.stanojevic@gmail.com>
-Subject: Re: [PATCH v1 6/7] auxdisplay: hd44780: Call charlcd_alloc() from
- hd44780_common_alloc()
-Message-ID: <Z8tCbjJk24ryV0DJ@smile.fi.intel.com>
-References: <20250224173010.219024-1-andriy.shevchenko@linux.intel.com>
- <20250224173010.219024-7-andriy.shevchenko@linux.intel.com>
- <CAMuHMdXP1=7YJzYp=_WJsqx2mtBYcwAjpOGK2_9SH+r4w6v2Ug@mail.gmail.com>
- <Z8soDV0U2LG2KX9J@smile.fi.intel.com>
- <CAMuHMdV1+ftjpEcg4xYjBLH1BRJHkZcYB5W+p8WUWWLXT3DnUQ@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OEUHt5B4JyrEi4bab7llAb8QYUPviRKhWDmX6QyH1K+BVHlhV8MFVE2DLACXCk1dsMDsI9wuLdFlKXrSNqkscSsq8ms5uxn7RujAlpFHfQ7twZkvh8O4WjjZHJdWsQqJAi3sLtCSGLZh4HlxwWv8coYztBoqKoviW8tJYDlE3yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dgT6Bczv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E35EC4CED1;
+	Fri,  7 Mar 2025 19:03:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741374232;
+	bh=7XE+okAqZbnST1X4dPRpwQVmabqaYZxhCYTZ9oCbMuA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dgT6BczvX+Ncor2NddjIGOQ+7gzQy7kLqXwCbnixouO20Ubkh5fx2F8Zi3TR66UXL
+	 Ai0v0F2vlxpBMK/WGIDK7K68Z2iSAb8Iop3Hnd0FtYWN/itA4erqXwhsnQa0LWI3lc
+	 vwMF+VRRDcvaliXpxfXQuWor8R+0e17LpcQIQz1y4dV+TwYFlSbq4frC40ejNEbNci
+	 azz9IDU8tbMkgTnMZLNuRaJVbghcAcxQ25xLzXh9O9olxXVCSddYlCB2kMupO22J/x
+	 xUaIE5QdasLmZcgoLOpGrtAqFiPFJR2LnD/oML4VPc/cggf5OIJ9reqrHXfkctTxsH
+	 r7dnPts+Vmxdg==
+Date: Fri, 7 Mar 2025 20:03:45 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, aliceryhl@google.com,
+	robin.murphy@arm.com, daniel.almeida@collabora.com,
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+Message-ID: <Z8tDEU2BKj9F3hZ8@cassiopeiae>
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+ <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+ <20250305174118.GA351188@nvidia.com>
+ <Z8mlAxsszdOH-ow8@cassiopeiae>
+ <Z8m9j3SwWHqaCTXo@phenom.ffwll.local>
+ <20250306160907.GF354511@nvidia.com>
+ <Z8qzP3CR8Quhp87Z@pollux>
+ <20250307124809.GL354511@nvidia.com>
+ <Z8saLZAylcVp89n_@cassiopeiae>
+ <20250307165751.GT354511@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,50 +77,58 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMuHMdV1+ftjpEcg4xYjBLH1BRJHkZcYB5W+p8WUWWLXT3DnUQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20250307165751.GT354511@nvidia.com>
 
-On Fri, Mar 07, 2025 at 07:19:57PM +0100, Geert Uytterhoeven wrote:
-> On Fri, 7 Mar 2025 at 18:08, Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> > On Fri, Mar 07, 2025 at 10:14:48AM +0100, Geert Uytterhoeven wrote:
-> > > On Mon, 24 Feb 2025 at 18:30, Andy Shevchenko
-> > > <andriy.shevchenko@linux.intel.com> wrote:
-
-...
-
-> > > While I like the general idea, there are two things in the API I do
-> > > not like:
-> > >   1. The function is called "hd44780_common_alloc()", but returns
-> > >      a pointer to a different struct type than the name suggests,
-> > >   2. The real "struct hd44780_common" must be obtained by the caller
-> > >      from charlcd.drvdata, which is of type "void *", i.e. unsafe.
-> > >
-> > > What about changing it to e.g.?
-> > >
-> > >     struct hd44780_common *hd44780_common_alloc(struct charlcd **lcd)
-> > >
-> > > so you can return pointers to both structs?
-> >
-> > I don't like this prototype as it seems and feels confusing. Also note,
-> > the APIs are using struct charlcd while being in the hd44780 namespace.
-> > perhaps better to rename the function to hd44780_common_and_lcd_alloc()?
+On Fri, Mar 07, 2025 at 12:57:51PM -0400, Jason Gunthorpe wrote:
 > 
-> That is one option.
+> Why are you explaining very simple concepts as though I do not
+> understand how RCU or devm works?
 > 
-> Another option would be to add a "charlcd *lcd" member to
-> struct hd44780_common.
+> I asked you what you intend to protect with the critical region.
+
+When you ask what the critical region protects, I think that it protects the
+resource pointer from changing.
+
+I did not read it as "what's meant to be within the critical region".
+
 > 
-> That would allow to fix the other odd part in the API:
+> I belive you intend to wrapper every memcpy/etc of the allocated
+> coherent memory with a RCU critical section, correct?
 > 
->     -void hd44780_common_free(struct charlcd *lcd)
->     +void hd44780_common_free(struct hd4480_common *hd)
+> Meaning something like:
+> 
+>   mem.ptr = dma_alloc_coherent(&handle)
+>   make_hw_do_dma(handle)
+> 
+>   start RCU critical section on mem:
+>       copy_to_user(mem.ptr) // Sleeps! Can't do it!
+>   dma_free_coherent(mem, handle)
+> 
+> Right?
 
-This I like better. In a separate patch I think?
+Yes, that would indeed be a problem. Thanks for pointing it out.
 
--- 
-With Best Regards,
-Andy Shevchenko
+While we could do an SRCU variant, provide separate try_access() methods, etc.,
+I think we should do something more efficient:
 
+There is no reason to revoke the *whole* CoherentAllocation object, but only the
+the parts that are critical to actually cleanup on driver unbind, i.e. iommu
+mappings, etc.
 
+The actual memory allocation itself is not an issue in terms of living beyond
+driver unbind and hence doesn't need to be revoked.
+
+With this, you would not need any critical section to access the
+CoherentAllocation's memory from the driver.
+
+> Further, if the critical section ever fails to obtain mem.ptr the
+> above code is *BUGGY* because it has left a HW DMA running, UAF'd the
+> now free'd buffer *and the driver author cannot fix it*.
+
+I don't think that'd be the case in a Rust driver, your example is in C, and
+hence doesn't do the Rust style error and cleanup handling that the
+corresponding Rust code would do.
+
+But as mentioned above, putting the whole CoherentAllocation in a Devres
+container seems wrong anyways. We need to do it at a finer granularity.
 
