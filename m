@@ -1,110 +1,158 @@
-Return-Path: <linux-kernel+bounces-551110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B8D4A56851
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:53:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6676A56818
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:49:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 611EE7A9957
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:52:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9234A174EDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC68219E9E;
-	Fri,  7 Mar 2025 12:50:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23391219A7E;
+	Fri,  7 Mar 2025 12:48:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="tDg8pN7S"
-Received: from pv50p00im-ztdg10021201.me.com (pv50p00im-ztdg10021201.me.com [17.58.6.45])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="i84q0r2M"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25D221ABA6
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 12:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46C64184E;
+	Fri,  7 Mar 2025 12:48:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741351826; cv=none; b=Bvz/d8G0WyZKwBUoNnNU8P7A/DrZZhvCsQ9n3139cw1EmbqOukSd1COflpjfmiB3k2lLQtPfNZgUARvsfG1jCmxCzz0lLG6yT4llpwlwTXIT0VEYWJDa0CPOEsMmds2FF4DWeR9AeSlSi1TR4aBETptDWZifahaJt3KwZ9S4o5g=
+	t=1741351735; cv=none; b=OtpcONT2ehl6MkmExhHcl10bY+tebp/hzacPWcvJ2Xv7Q5BhzLBQa0RvH5pcc9ixrdDRKANc+Sj12ZEnS17PKm80Xf2swKQrLVZ+ZJVTZ0WyPFHCAkkFcQZR82U1z9S5RPWtpvnf3jASYvmfzwQMptIMClLyCGnToSi0Q+ROVaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741351826; c=relaxed/simple;
-	bh=ki2B8HmLzHt7SFGIKrwsoRPEZdjP8OBV4OmH0Gi+Xb0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=h7ubhY4IA5Gle+MVKRoxIiyEKxTWfRM6gPOl0Vjvv6mdPFArpkJtp8AUE8cj6GP8Rxj7RhMxShGkVYZ4RgOgw+OOySmRBFXqueyTmZqLIV83GYMttSZAALRQcoUdLJkxu19lOtWfJpbKQ/uRi5FkfJHI6vSExE6GqoMKFE/78TM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=tDg8pN7S; arc=none smtp.client-ip=17.58.6.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; bh=gUs8XrpApCfd2Rppq+ZXU8/T5MPfQ+c1pN1GeAjxBjI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:x-icloud-hme;
-	b=tDg8pN7ShpHmm2rP4jh3CuAZBPYJB8YyQ3pKikjkcY8gekrCEvM05MGHprYsYHET3
-	 7iGyPcoL4/iAcNQlyg2fJSKi0E/mNo9SXC4ZWn6g5bzcWupfI+beAyAZ6OMc7mh97z
-	 WTqj4Or3Lqh6KaKpxUQSTM+CxTtCAX0O3UV/z7V3gEOWRqWyOrzesziynfFeKmew0I
-	 MOlM7arCk97dyuo7tmxuLAXd0nlemvpz7X1IMZ81100kjs95EVSTRVQpvxA/wQ4ScA
-	 saMBAHSGSx/5nUfy0eQvt+riRMKgmgOh6yiEkX95qXaGzovyxBp7RljYTfNWl6pQGJ
-	 FybbisIEXbj/w==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-ztdg10021201.me.com (Postfix) with ESMTPSA id 6B8A03118BB4;
-	Fri,  7 Mar 2025 12:50:21 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Fri, 07 Mar 2025 20:47:16 +0800
-Subject: [PATCH] driver core: faux: Check device binding state by dedicated
- API device_is_bound()
+	s=arc-20240116; t=1741351735; c=relaxed/simple;
+	bh=Qx0eR6ifW003J6H6uGcA4Q0ERrSnpHS3FBSvx5nlccU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l28pFjQcY0a7xNnNsm75hWRP+sN2aUB3MwEHrJiD9x97OqhP/Fv8PGz5w1fiBSvRPL6pzRVPFvUAO8Roe/w8lnIyfrEA14OTDarNXSV+sSomYKZAarhOwNrhqLP8oV8R/bH0HXVMwO1KUwa4QT8slI1t0vgqcr2k7effxtspwxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=i84q0r2M; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 823ec170fb5211ef8eb9c36241bbb6fb-20250307
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=T9Q64H7eOqwbabEl9fMLo/Azsox+IgNpX2vvtqqW2qw=;
+	b=i84q0r2MXPRG68MkBg/YXfM/45iplZe6eYKHIcISNB/VEuz8tFdMJcUQLKTnOgfg3KOMc/gCf6F6XRB+8pLFJX2HuqX1IfqJdz6RljVnOWSSLYBDb7+B6zwHcEJtRawCmjh4S2iypqPPsyk6qGJxXtbGrctlc6Q4lPx0hgVnbgo=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:79c727e7-328c-49b3-8d58-4077f467e8d7,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:2413d249-a527-43d8-8af6-bc8b32d9f5e9,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|102,TC:nil,Content:0|50,EDM:-3,IP
+	:nil,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,
+	LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 823ec170fb5211ef8eb9c36241bbb6fb-20250307
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+	(envelope-from <darren.ye@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1057125565; Fri, 07 Mar 2025 20:48:46 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Fri, 7 Mar 2025 20:48:45 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Fri, 7 Mar 2025 20:48:44 +0800
+From: Darren.Ye <darren.ye@mediatek.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>, Darren Ye
+	<darren.ye@mediatek.com>
+Subject: [PATCH 00/14] ASoC: mediatek: Add support for MT8196 SoC
+Date: Fri, 7 Mar 2025 20:47:26 +0800
+Message-ID: <20250307124841.23777-1-darren.ye@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250307-fix_faux-v1-1-91459764575e@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIANPqymcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDYwNz3bTMivi0xNIKXQMTI4M0wxSL1OREMyWg8oKiVKAc2Kjo2NpaADa
- lKLFaAAAA
-X-Change-ID: 20250307-fix_faux-0420f1d8eca6
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
-Cc: Zijun Hu <zijun_hu@icloud.com>, linux-kernel@vger.kernel.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Proofpoint-GUID: K61dMBVy0T_lXYoXmkWjQnXd33LrcncF
-X-Proofpoint-ORIG-GUID: K61dMBVy0T_lXYoXmkWjQnXd33LrcncF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-07_05,2025-03-06_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 spamscore=0
- suspectscore=0 adultscore=0 mlxscore=0 clxscore=1015 mlxlogscore=682
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2503070094
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
+From: Darren Ye <darren.ye@mediatek.com>
 
-Use dedicated API device_is_bound() instead of 'dev->driver' to check
-device binding state in faux_device_create_with_groups().
-
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/base/faux.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/base/faux.c b/drivers/base/faux.c
-index 407c1d1aad50b7969a6dab9d2027d8beab66a754..76fe494a128254aaaf1339386ab37817a732781f 100644
---- a/drivers/base/faux.c
-+++ b/drivers/base/faux.c
-@@ -154,7 +154,8 @@ struct faux_device *faux_device_create_with_groups(const char *name,
- 	 * if not, let's fail the creation as trying to guess if probe was
- 	 * successful is almost impossible to determine by the caller.
- 	 */
--	if (!dev->driver) {
-+	/* Do not need to device_lock(dev) due to no race here */
-+	if (!device_is_bound(dev)) {
- 		dev_err(dev, "probe did not succeed, tearing down the device\n");
- 		faux_device_destroy(faux_dev);
- 		faux_dev = NULL;
+This series of patches adds support for Mediatek AFE of MT8196 SoC.
+Patches are based on broonie tree "for-next" branch.
 
 ---
-base-commit: 21b0dc55bed6d9b5dd5d1ad22b75d9d1c7426bbc
-change-id: 20250307-fix_faux-0420f1d8eca6
+This series patches dependent on:
+[1]
+https://lore.kernel.org/all/20250307032942.10447-1-guangjie.song@mediatek.com/
 
-Best regards,
+Darren Ye (14):
+  ASoC: mediatek: common: modify mtk afe common driver for mt8196
+  ASoC: mediatek: common: modify mtk afe platform driver for mt8196
+  ASoC: mediatek: mt8196: add common header
+  ASoC: mediatek: mt8196: add common interface for mt8196 DAI driver
+  ASoC: mediatek: mt8196: support audio clock control
+  ASoC: mediatek: mt8196: support audio GPIO control
+  ASoC: mediatek: mt8196: support ADDA in platform driver
+  ASoC: mediatek: mt8196: support I2S in platform driver
+  ASoC: mediatek: mt8196: support TDM in platform driver
+  ASoC: mediatek: mt8196: support CM in platform driver
+  ASoC: mediatek: mt8196: add platform driver
+  dt-bindings: mediatek: mt8196: add audio AFE document
+  ASoC: mediatek: mt8196: add machine driver with mt6681
+  dt-bindings: mediatek: mt8196: add mt8196-mt6681 document
+
+ .../bindings/sound/mediatek,mt8196-afe.yaml   |   259 +
+ .../sound/mediatek,mt8196-mt6681.yaml         |   122 +
+ sound/soc/mediatek/Kconfig                    |    30 +
+ sound/soc/mediatek/Makefile                   |     1 +
+ sound/soc/mediatek/common/mtk-afe-fe-dai.c    |    30 +-
+ sound/soc/mediatek/common/mtk-afe-fe-dai.h    |     6 +
+ .../mediatek/common/mtk-afe-platform-driver.c |    63 +-
+ .../mediatek/common/mtk-afe-platform-driver.h |     5 +
+ sound/soc/mediatek/common/mtk-base-afe.h      |    13 +
+ sound/soc/mediatek/mt8196/Makefile            |    19 +
+ sound/soc/mediatek/mt8196/mt8196-afe-clk.c    |   698 +
+ sound/soc/mediatek/mt8196/mt8196-afe-clk.h    |   313 +
+ sound/soc/mediatek/mt8196/mt8196-afe-cm.c     |    94 +
+ sound/soc/mediatek/mt8196/mt8196-afe-cm.h     |    23 +
+ sound/soc/mediatek/mt8196/mt8196-afe-common.h |   290 +
+ .../soc/mediatek/mt8196/mt8196-afe-control.c  |   109 +
+ sound/soc/mediatek/mt8196/mt8196-afe-gpio.c   |   239 +
+ sound/soc/mediatek/mt8196/mt8196-afe-gpio.h   |    58 +
+ sound/soc/mediatek/mt8196/mt8196-afe-pcm.c    |  5134 +++++++
+ sound/soc/mediatek/mt8196/mt8196-dai-adda.c   |  2207 +++
+ sound/soc/mediatek/mt8196/mt8196-dai-i2s.c    |  4399 ++++++
+ sound/soc/mediatek/mt8196/mt8196-dai-tdm.c    |   837 ++
+ .../mediatek/mt8196/mt8196-interconnection.h  |   121 +
+ sound/soc/mediatek/mt8196/mt8196-mt6681.c     |   879 ++
+ sound/soc/mediatek/mt8196/mt8196-reg.h        | 12133 ++++++++++++++++
+ 25 files changed, 28055 insertions(+), 27 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/sound/mediatek,mt8196-afe.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/mediatek,mt8196-mt6681.yaml
+ create mode 100644 sound/soc/mediatek/mt8196/Makefile
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-clk.c
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-clk.h
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-cm.c
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-cm.h
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-common.h
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-control.c
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-gpio.c
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-gpio.h
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-afe-pcm.c
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-dai-adda.c
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-dai-i2s.c
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-dai-tdm.c
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-interconnection.h
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-mt6681.c
+ create mode 100644 sound/soc/mediatek/mt8196/mt8196-reg.h
+
 -- 
-Zijun Hu <quic_zijuhu@quicinc.com>
+2.45.2
 
 
