@@ -1,103 +1,92 @@
-Return-Path: <linux-kernel+bounces-550666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 796D2A5629B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:34:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8547DA5629E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:35:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B296F171465
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:34:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0CF61891721
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:35:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DA51B4240;
-	Fri,  7 Mar 2025 08:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWJRy/cT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB3661C860C;
+	Fri,  7 Mar 2025 08:34:55 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B0215382E;
-	Fri,  7 Mar 2025 08:34:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D2F11A83E8;
+	Fri,  7 Mar 2025 08:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741336468; cv=none; b=RfJhFpjufLr+1QbSG5hXXOR1XXra393tKrgtE2QVIVGyiMajZ1m+u+C5dxQkqc/612RCYn+D++3Hud+zwMlvLufE0f7tY+kKtoGz8vqzzy9XN6dXqqVeXaLiPpOja4DNvHbza1CViK/Xjsrmmt5D+JzhcAktDl97FJ94MSJp15w=
+	t=1741336495; cv=none; b=lglH1y5kWiWwNFNXqJo5rC61y6vxUHjy5gR2sK95DcKVkpfM7drvkllc5HKJoudCAgqv0rrHiFkYZeEAyx7+WUk5o71ik/reAK7AkQZufb/sHQCTB2MkiqSC6hIXVnk8fAiO0HiJKs0pnVQRh9BhEikfT9vDRxnqXY6ONkI71Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741336468; c=relaxed/simple;
-	bh=eFJNtO+gPLfeMVIMbA8EOsQEQtMeWOxWdDojxK6sC4U=;
+	s=arc-20240116; t=1741336495; c=relaxed/simple;
+	bh=QKt7S8W8M5/jPz1pe4PXUMPxklGGARlrxMvPPd2OrFg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RPvi8PQAavZ8KFqIOrx3i1z59m0a8OGEs5SH7vQV/acbH6AL+NbJIz1b+XLovFYz+RogbfI+Dac41OwnA6Lzl4uLWlZOj0tHZwzxDxNLe3yaZuaSv+VhptQbsLP0FNtz/6F6WfBBbw+kMqQO+1is0KtFVIvW9gCTMDLAKEYpqbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWJRy/cT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1B6BC4CED1;
-	Fri,  7 Mar 2025 08:34:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741336467;
-	bh=eFJNtO+gPLfeMVIMbA8EOsQEQtMeWOxWdDojxK6sC4U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PWJRy/cTBnY4eQjRSnNxKHgwOvZvf7FPvMe4vxvX5RazqS7VAMis0zbS6nMGp5q6x
-	 oJwiPXy1OuRdMHTScBusB2utPearjfmaTeBfnHOaEAGxPf4HsSw/NWe1OjhiHhh+NS
-	 OqQAGKEUkR+bc1PrKsjpgETvq3tXx3Q4t1hmP5CScZea0/JDgJApcJMQ3CZT44WhAz
-	 UaUQ54AjYKb23nwx3cFdHUnTIkL35Un4xUw9Fzn5459939eeHc/3umq/D31n9n24A7
-	 Zy+FHo2fOCRGeUBfYfi6eOPAND/OSmd19pOfVMFYxSIsrQEvDsRNFzbzQ1QF6uhXOp
-	 K9QkjEhrp5yjg==
-Date: Fri, 7 Mar 2025 09:34:24 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Sam Winchenbach <sam.winchenbach@framepointer.org>
-Cc: linux-kernel@vger.kernel.org, lars@metafoo.de, 
-	Michael.Hennerich@analog.com, antoniu.miclaus@analog.com, jic23@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, bpellegrino@arka.org
-Subject: Re: [PATCH v5 1/6] dt-bindings: iio: filter: Add lpf/hpf freq margins
-Message-ID: <20250307-handsome-merry-alpaca-17da9f@krzk-bin>
-References: <20250306183314.150253-1-sam.winchenbach@framepointer.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ay4iABwIyG18Xqqjr+CXjm1ef+BZaaBj2h1CHNzg+JACG5SM+HjCzwxsxZT28GTOvXIxtrWaq1gIr8kmCoO5ZAD9g0osfqjcgEDTzDnIz6Nnj7qk8BWbKzM14/zC7bObuPjP3Idwwl2Ndq6YHWLVaSLlXuOKg/bRli8a99LlsWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 35CA03001409A;
+	Fri,  7 Mar 2025 09:34:43 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 2442C2A7F6; Fri,  7 Mar 2025 09:34:43 +0100 (CET)
+Date: Fri, 7 Mar 2025 09:34:43 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dan Williams <dan.j.williams@intel.com>
+Subject: Re: [RFC PATCH 1/1] PCI: Add Extended Tag + MRRS quirk for Xeon 6
+Message-ID: <Z8qvo0_tuSbwwyIY@wunner.de>
+References: <20250304135108.2599-1-ilpo.jarvinen@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20250306183314.150253-1-sam.winchenbach@framepointer.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250304135108.2599-1-ilpo.jarvinen@linux.intel.com>
 
-On Thu, Mar 06, 2025 at 01:33:09PM -0500, Sam Winchenbach wrote:
-> Adds two properties to add a margin when automatically finding the
-> corner frequencies.
-> 
-> Signed-off-by: Sam Winchenbach <sam.winchenbach@framepointer.org>
-> ---
->  .../bindings/iio/filter/adi,admv8818.yaml     | 23 +++++++++++++++++++
->  1 file changed, 23 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
-> index b77e855bd594..3f9c61547a78 100644
-> --- a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
-> +++ b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
-> @@ -44,6 +44,27 @@ properties:
->    '#clock-cells':
->      const: 0
+On Tue, Mar 04, 2025 at 03:51:08PM +0200, Ilpo Järvinen wrote:
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -5564,6 +5564,33 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0144, quirk_no_ext_tags);
+>  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0420, quirk_no_ext_tags);
+>  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0422, quirk_no_ext_tags);
 >  
+> +static void quirk_pcie2x_no_tags_no_mrrs(struct pci_dev *pdev)
+> +{
+> +	struct pci_host_bridge *bridge = pci_find_host_bridge(pdev->bus);
+> +	u32 linkcap;
 > +
+> +	if (!bridge)
+> +		return;
 
-Unnecessary blank line
+I note that in a lot of places where pci_find_host_bridge() is called,
+no NULL pointer check is performed.  So omitting it would appear
+to be safe.
 
-> +  adi,lpf-margin-hz:
-> +    description:
-> +      Sets the minimum distance (in Hz) between the fundamental
-> +      frequency of `rf_in` and the corner frequency of the low-pass, output
-> +      filter when operatred in 'auto' mode. The selected low-pass corner
-> +      frequency will be greater than, or equal to, `rf_in` + `lpf-margin-hz`. If
-> +      not setting is found that satisfies this relationship the filter will be
-> +      put into 'bypass'.
-> +    default: 0
+The quirk is x86-specific, so compiling it into the kernel on other
+arches creates unnecessary bloat.  Avoid by moving to arch/x86/pci/fixup.c.
 
-hz are 32-bit, not 64-bit, so I think you need:
+There should definitely be a multi-line code comment above the function
+explaining what defect this works around (slower performance apparently),
+and also link to the PDF document.
 
-  default: [0, 0]
-  minItems: 2
-  maxItems: 2
+BTW the PDF document says "Intel Confidential", I'm wondering why this
+has been made public without stripping the confidentiality marker...
 
-Best regards,
-Krzysztof
+Thanks,
 
+Lukas
 
