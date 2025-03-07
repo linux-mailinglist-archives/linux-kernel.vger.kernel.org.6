@@ -1,349 +1,210 @@
-Return-Path: <linux-kernel+bounces-550807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB89A56462
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:52:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A3BCA56465
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:53:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82DA73B2B71
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:52:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3C4A16FE04
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B3F20C47A;
-	Fri,  7 Mar 2025 09:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3314820C484;
+	Fri,  7 Mar 2025 09:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cxVt61gh"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SamWFfD6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E56F1E1DEE;
-	Fri,  7 Mar 2025 09:52:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 762DE1E1DEE;
+	Fri,  7 Mar 2025 09:53:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741341160; cv=none; b=dtqMHSdwg5lFBOdZ0wS44okZc1yo+JVJzFl6wdLPKV6ww8HqZxVXjYrTBtSKIpfwpEo9pyLab0TxK76xGliS1lY78Optz6KE7VSirBrVOZAHa2m6yFGQQqmiSph9D6ToN5xZC7IQL9oJev2DJWHOi7FCxO3mWmyOjDg9wkhXmK8=
+	t=1741341213; cv=none; b=lIqIDHIshaV3vDg23krDyzuple2K7YRSIHzRLY6LWq0LuC1PSmyFt53GQSEa/WLG+6fsm+NBIAwsEfWywI16QUagtDp8Ofq70tJ/19bTvbo+qNKjFWJb3kwyVCFVpEMgIt4aff3/nJt5I2is8iM65yK5AfNUl/SkfwPaj6eoLMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741341160; c=relaxed/simple;
-	bh=M+281YHHKdHfMn68/HHlu54H0+BomZX22hWoyjy9IxM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FsuHPgxFpWq4I8R95sc7jLumWt/u3Fp8m5GW16NsKFvzmIke0rUIa/zCylp56j/hV8+LWJBlE0LuaVVflee18zxhGnZ5f5gfTMd5e8jJTRKSuaR1pvWsj4AHWhyHPQLsojastEiTh2pfGEeJnJUHaRj1frfvKEQQ4/jsyC8Iai0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cxVt61gh; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741341160; x=1772877160;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=M+281YHHKdHfMn68/HHlu54H0+BomZX22hWoyjy9IxM=;
-  b=cxVt61ghw7EmyNa7/OxxDmG/vs10qqgWJOU08LLeYRo46YCU2AEl4bst
-   xUnObek6c/wKtQe0OIiphfuxKK/V3EatPEpi2K2F8Y+YSdSCs//ciTSSE
-   2odFVv2svuhDeemWtn390VaEGglDnl7hSwoUL2Ve1LWDzCmanhHZTgx5D
-   Yv83UJbhfs/RdB/FHaDRPD5gsVt5LfVp6Tm+dAxvuZVNBtoIXFcsNJvpB
-   /IWpZNGM04ixu/IHaKrD9cxq/CUeAm6Y9RdCCo5JUE05ErFVjlbJqbR1j
-   Flp1egqeVocwxso/auDk8owSqx3IXxPmCX9B8LckS7Z9h/FxlMSwQXZ6O
-   w==;
-X-CSE-ConnectionGUID: pOLiiHS4QUScaqxpPOLtcw==
-X-CSE-MsgGUID: SUcwpYicRXGNxqFzhvGKBA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="53373302"
-X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
-   d="scan'208";a="53373302"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 01:52:39 -0800
-X-CSE-ConnectionGUID: G9NIp5EGQKSDY+3n1vsGtw==
-X-CSE-MsgGUID: ioNmOyZ8TjqfhY38evX2WA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
-   d="scan'208";a="119020581"
-Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 01:52:35 -0800
-Message-ID: <97416612-68a4-47b4-a9b3-c8290c1088ed@linux.intel.com>
-Date: Fri, 7 Mar 2025 17:52:32 +0800
+	s=arc-20240116; t=1741341213; c=relaxed/simple;
+	bh=R7va4ZOYcRU/Jgig4WSUdBULAgDeoE6ZzyA21S1NKac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gnDolZk6LfBqbg7pOjgITSnqKAkQb3Z+wqMHWSQJ1LUDeYuzSbbwE0TKUEQPrKbX7oB/rz9tnNXVsoHvDPQgtPRxcrrxYNOkjqfVXA4/Oxd7iReXJnlZVUKOitZGfdXEpc1zUJP1AdFWT21L1Q7IJ5V87+f4sHkO8MWztlhu56M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SamWFfD6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D1F1C4CED1;
+	Fri,  7 Mar 2025 09:53:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741341212;
+	bh=R7va4ZOYcRU/Jgig4WSUdBULAgDeoE6ZzyA21S1NKac=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SamWFfD6ZSeTD2JrNTRYVn/oCXt8vIvryW6ivWniA+DzkcQN5gj46XEa+n/O4Hy5f
+	 7La3Jt6JQ+8FJqW5KOL52hS8lgykILsnt0kqNRhdQW8+tGutD5rvoOUiW9WS57D/9+
+	 zS/pZ7UrqOtct6/dLaw0MbAEQqdZkGppupBezyILafPR8Vj5F0C/ruWgctbCxZ6sPs
+	 mpFQASiyWjUQxQ5KW1pLkzTd8jLBwUwrqzY9lyQewxp/+cvu0Kqf9gurAwdgTfYr4g
+	 aAl23fczurFkIvxpIIiNzXgclra7Il5nZTrePWixdi2enMnvE9CXQwgm0zCtzmszxO
+	 f5rxyl/YnGHiQ==
+Date: Fri, 7 Mar 2025 10:53:27 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Eric <eric.4.debian@grabatoulnz.fr>
+Cc: Salvatore Bonaccorso <carnil@debian.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Jian-Hong Pan <jhp@endlessos.org>, regressions@lists.linux.dev,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	Dieter Mummenschanz <dmummenschanz@web.de>
+Subject: Re: Regression from 7627a0edef54 ("ata: ahci: Drop low power policy
+ board type") on reboot (but not cold boot)
+Message-ID: <Z8rCF39n5GjTwfjP@ryzen>
+References: <Z8SBZMBjvVXA7OAK@eldamar.lan>
+ <Z8SyVnXZ4IPZtgGN@ryzen>
+ <8763ed79-991a-4a19-abb6-599c47a35514@grabatoulnz.fr>
+ <Z8VLZERz0FpvpchM@x1-carbon>
+ <8b1cbfd4-6877-48ef-b17d-fc10402efbf7@grabatoulnz.fr>
+ <Z8l61Kxss0bdvAQt@ryzen>
+ <Z8l7paeRL9szo0C0@ryzen>
+ <689f8224-f118-47f0-8ae0-a7377c6ff386@grabatoulnz.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] perf parse-events: Corrections to topdown sorting
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>,
- Dominique Martinet <asmadeus@codewreck.org>, Andi Kleen
- <ak@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Thomas Falcon <thomas.falcon@intel.com>
-References: <20250307023906.1135613-1-irogers@google.com>
- <20250307023906.1135613-3-irogers@google.com>
-Content-Language: en-US
-From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
-In-Reply-To: <20250307023906.1135613-3-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <689f8224-f118-47f0-8ae0-a7377c6ff386@grabatoulnz.fr>
+
+Hello Eric,
+
+On Thu, Mar 06, 2025 at 01:27:17PM +0100, Eric wrote:
+> 
+> I installed the same system on a USB stick, on which I also installed grub,
+> so that the reboot is made independent of weather the UEFI sees the SSD disk
+> or not. I'll attach dmesg extracts (grep on ata or ahci) to this mail.
+
+Exellent idea!
 
 
-On 3/7/2025 10:39 AM, Ian Rogers wrote:
-> In the case of '{instructions,slots},faults,topdown-retiring' the
-> first event that must be grouped, slots, is ignored causing the
-> topdown-retiring event not to be adjacent to the group it needs to be
-> inserted into. Don't ignore the group members when computing the
-> force_grouped_index.
->
-> Make the force_grouped_index be for the leader of the group it is
-> within and always use it first rather than a group leader index so
-> that topdown events may be sorted from one group into another.
->
-> As the PMU name comparison applies to moving events in the same group
-> ensure the name ordering is always respected.
->
-> Change the group splitting logic to not group if there are no other
-> topdown events and to fix cases where the force group leader wasn't
-> being grouped with the other members of its group.
->
-> Reported-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> Closes: https://lore.kernel.org/lkml/20250224083306.71813-2-dapeng1.mi@linux.intel.com/
-> Closes: https://lore.kernel.org/lkml/f7e4f7e8-748c-4ec7-9088-0e844392c11a@linux.intel.com/
-> Signed-off-by: Ian Rogers <irogers@google.com>
+> 
+> One is the dmesg after coldbooting from the USB stick, the other is
+> rebooting on the USB stick. First of all, the visible result : the SSD is
+> not detected by linux at reboot (but is when coldbooting).
+> 
+> Here is what changes :
+> 
+> eric@gwaihir:~$ diff
+> /media/eric/trixieUSB/home/eric/dmesg-ahci-ata-coldboot.untimed.txt
+> /media/eric/trixieUSB/home/eric/dmesg-ahci-ata-reboot.untimed.txt
+> 
+> 4c4
+> <  ahci 0000:00:11.0: 4/4 ports implemented (port mask 0x3c)
 > ---
->  tools/perf/arch/x86/util/evlist.c |  15 ++--
->  tools/perf/util/parse-events.c    | 145 ++++++++++++++++++++----------
->  2 files changed, 105 insertions(+), 55 deletions(-)
->
-> diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/util/evlist.c
-> index 447a734e591c..ed205d1b207d 100644
-> --- a/tools/perf/arch/x86/util/evlist.c
-> +++ b/tools/perf/arch/x86/util/evlist.c
-> @@ -76,12 +76,15 @@ int arch_evlist__cmp(const struct evsel *lhs, const struct evsel *rhs)
->  		 * topdown metrics events are already in same group with slots
->  		 * event, do nothing.
->  		 */
-> -		if (arch_is_topdown_metrics(lhs) && !arch_is_topdown_metrics(rhs) &&
-> -		    lhs->core.leader != rhs->core.leader)
-> -			return -1;
-> -		if (!arch_is_topdown_metrics(lhs) && arch_is_topdown_metrics(rhs) &&
-> -		    lhs->core.leader != rhs->core.leader)
-> -			return 1;
-> +		if (lhs->core.leader != rhs->core.leader) {
-> +			bool lhs_topdown = arch_is_topdown_metrics(lhs);
-> +			bool rhs_topdown = arch_is_topdown_metrics(rhs);
-> +
-> +			if (lhs_topdown && !rhs_topdown)
-> +				return -1;
-> +			if (!lhs_topdown && rhs_topdown)
-> +				return 1;
-> +		}
->  	}
->  
->  	/* Retire latency event should not be group leader*/
-> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-> index 35e48fe56dfa..5152fd5a6ead 100644
-> --- a/tools/perf/util/parse-events.c
-> +++ b/tools/perf/util/parse-events.c
-> @@ -1980,48 +1980,55 @@ static int evlist__cmp(void *_fg_idx, const struct list_head *l, const struct li
->  	int *force_grouped_idx = _fg_idx;
->  	int lhs_sort_idx, rhs_sort_idx, ret;
->  	const char *lhs_pmu_name, *rhs_pmu_name;
-> -	bool lhs_has_group, rhs_has_group;
->  
->  	/*
-> -	 * First sort by grouping/leader. Read the leader idx only if the evsel
-> -	 * is part of a group, by default ungrouped events will be sorted
-> -	 * relative to grouped events based on where the first ungrouped event
-> -	 * occurs. If both events don't have a group we want to fall-through to
-> -	 * the arch specific sorting, that can reorder and fix things like
-> -	 * Intel's topdown events.
-> +	 * Get the indexes of the 2 events to sort. If the events are
-> +	 * in groups then the leader's index is used otherwise the
-> +	 * event's index is used. An index may be forced for events that
-> +	 * must be in the same group, namely Intel topdown events.
->  	 */
-> -	if (lhs_core->leader != lhs_core || lhs_core->nr_members > 1) {
-> -		lhs_has_group = true;
-> -		lhs_sort_idx = lhs_core->leader->idx;
-> +	if (*force_grouped_idx != -1 && arch_evsel__must_be_in_group(lhs)) {
-> +		lhs_sort_idx = *force_grouped_idx;
->  	} else {
-> -		lhs_has_group = false;
-> -		lhs_sort_idx = *force_grouped_idx != -1 && arch_evsel__must_be_in_group(lhs)
-> -			? *force_grouped_idx
-> -			: lhs_core->idx;
-> -	}
-> -	if (rhs_core->leader != rhs_core || rhs_core->nr_members > 1) {
-> -		rhs_has_group = true;
-> -		rhs_sort_idx = rhs_core->leader->idx;
-> +		bool lhs_has_group = lhs_core->leader != lhs_core || lhs_core->nr_members > 1;
-> +
-> +		lhs_sort_idx = lhs_has_group ? lhs_core->leader->idx : lhs_core->idx;
-> +	}
-> +	if (*force_grouped_idx != -1 && arch_evsel__must_be_in_group(rhs)) {
-> +		rhs_sort_idx = *force_grouped_idx;
->  	} else {
-> -		rhs_has_group = false;
-> -		rhs_sort_idx = *force_grouped_idx != -1 && arch_evsel__must_be_in_group(rhs)
-> -			? *force_grouped_idx
-> -			: rhs_core->idx;
-> +		bool rhs_has_group = rhs_core->leader != rhs_core || rhs_core->nr_members > 1;
-> +
-> +		rhs_sort_idx = rhs_has_group ? rhs_core->leader->idx : rhs_core->idx;
->  	}
->  
-> +	/* If the indices differ then respect the insertion order. */
->  	if (lhs_sort_idx != rhs_sort_idx)
->  		return lhs_sort_idx - rhs_sort_idx;
->  
-> -	/* Group by PMU if there is a group. Groups can't span PMUs. */
-> -	if (lhs_has_group && rhs_has_group) {
-> -		lhs_pmu_name = lhs->group_pmu_name;
-> -		rhs_pmu_name = rhs->group_pmu_name;
-> -		ret = strcmp(lhs_pmu_name, rhs_pmu_name);
-> -		if (ret)
-> -			return ret;
-> -	}
-> +	/*
-> +	 * Ignoring forcing, lhs_sort_idx == rhs_sort_idx so lhs and rhs should
-> +	 * be in the same group. Events in the same group need to be ordered by
-> +	 * their grouping PMU name as the group will be broken to ensure only
-> +	 * events on the same PMU are programmed together.
-> +	 *
-> +	 * With forcing the lhs_sort_idx == rhs_sort_idx shows that one or both
-> +	 * events are being forced to be at force_group_index. If only one event
-> +	 * is being forced then the other event is the group leader of the group
-> +	 * we're trying to force the event into. Ensure for the force grouped
-> +	 * case that the PMU name ordering is also respected.
-> +	 */
-> +	lhs_pmu_name = lhs->group_pmu_name;
-> +	rhs_pmu_name = rhs->group_pmu_name;
-> +	ret = strcmp(lhs_pmu_name, rhs_pmu_name);
-> +	if (ret)
-> +		return ret;
->  
-> -	/* Architecture specific sorting. */
-> +	/*
-> +	 * Architecture specific sorting, by default sort events in the same
-> +	 * group with the same PMU by their insertion index. On Intel topdown
-> +	 * constraints must be adhered to - slots first, etc.
-> +	 */
->  	return arch_evlist__cmp(lhs, rhs);
->  }
->  
-> @@ -2030,9 +2037,11 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
->  	int idx = 0, force_grouped_idx = -1;
->  	struct evsel *pos, *cur_leader = NULL;
->  	struct perf_evsel *cur_leaders_grp = NULL;
-> -	bool idx_changed = false, cur_leader_force_grouped = false;
-> +	bool idx_changed = false;
->  	int orig_num_leaders = 0, num_leaders = 0;
->  	int ret;
-> +	struct evsel *force_grouped_leader = NULL;
-> +	bool last_event_was_forced_leader = false;
->  
->  	/*
->  	 * Compute index to insert ungrouped events at. Place them where the
-> @@ -2055,10 +2064,13 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
->  		 */
->  		pos->core.idx = idx++;
->  
-> -		/* Remember an index to sort all forced grouped events together to. */
-> -		if (force_grouped_idx == -1 && pos == pos_leader && pos->core.nr_members < 2 &&
-> -		    arch_evsel__must_be_in_group(pos))
-> -			force_grouped_idx = pos->core.idx;
-> +		/*
-> +		 * Remember an index to sort all forced grouped events
-> +		 * together to. Use the group leader as some events
-> +		 * must appear first within the group.
-> +		 */
-> +		if (force_grouped_idx == -1 && arch_evsel__must_be_in_group(pos))
-> +			force_grouped_idx = pos_leader->core.idx;
->  	}
->  
->  	/* Sort events. */
-> @@ -2086,31 +2098,66 @@ static int parse_events__sort_events_and_fix_groups(struct list_head *list)
->  		 * Set the group leader respecting the given groupings and that
->  		 * groups can't span PMUs.
->  		 */
-> -		if (!cur_leader)
-> +		if (!cur_leader) {
->  			cur_leader = pos;
-> +			cur_leaders_grp = &pos->core;
-> +			if (pos_force_grouped)
-> +				force_grouped_leader = pos;
-> +		}
->  
->  		cur_leader_pmu_name = cur_leader->group_pmu_name;
-> -		if ((cur_leaders_grp != pos->core.leader &&
-> -		     (!pos_force_grouped || !cur_leader_force_grouped)) ||
-> -		    strcmp(cur_leader_pmu_name, pos_pmu_name)) {
-> -			/* Event is for a different group/PMU than last. */
-> +		if (strcmp(cur_leader_pmu_name, pos_pmu_name)) {
-> +			/* PMU changed so the group/leader must change. */
->  			cur_leader = pos;
-> -			/*
-> -			 * Remember the leader's group before it is overwritten,
-> -			 * so that later events match as being in the same
-> -			 * group.
-> -			 */
->  			cur_leaders_grp = pos->core.leader;
-> +			if (pos_force_grouped && force_grouped_leader == NULL)
-> +				force_grouped_leader = pos;
-> +		} else if (cur_leaders_grp != pos->core.leader) {
-> +			bool split_even_if_last_leader_was_forced = true;
-> +
->  			/*
-> -			 * Avoid forcing events into groups with events that
-> -			 * don't need to be in the group.
-> +			 * Event is for a different group. If the last event was
-> +			 * the forced group leader then subsequent group events
-> +			 * and forced events should be in the same group. If
-> +			 * there are no other forced group events then the
-> +			 * forced group leader wasn't really being forced into a
-> +			 * group, it just set arch_evsel__must_be_in_group, and
-> +			 * we don't want the group to split here.
->  			 */
-> -			cur_leader_force_grouped = pos_force_grouped;
-> +			if (force_grouped_idx != -1 && last_event_was_forced_leader) {
-> +				struct evsel *pos2 = pos;
-> +				/*
-> +				 * Search the whole list as the group leaders
-> +				 * aren't currently valid.
-> +				 */
-> +				list_for_each_entry_continue(pos2, list, core.node) {
-> +					if (pos->core.leader == pos2->core.leader &&
-> +					    arch_evsel__must_be_in_group(pos2)) {
-> +						split_even_if_last_leader_was_forced = false;
-> +						break;
-> +					}
-> +				}
-> +			}
-> +			if (!last_event_was_forced_leader || split_even_if_last_leader_was_forced) {
-> +				if (pos_force_grouped) {
-> +					if (force_grouped_leader) {
-> +						cur_leader = force_grouped_leader;
-> +						cur_leaders_grp = force_grouped_leader->core.leader;
-> +					} else {
-> +						cur_leader = force_grouped_leader = pos;
-> +						cur_leaders_grp = &pos->core;
-> +					}
-> +				} else {
-> +					cur_leader = pos;
-> +					cur_leaders_grp = pos->core.leader;
-> +				}
-> +			}
->  		}
->  		if (pos_leader != cur_leader) {
->  			/* The leader changed so update it. */
->  			evsel__set_leader(pos, cur_leader);
->  		}
-> +		last_event_was_forced_leader = (force_grouped_leader == pos);
->  	}
->  	list_for_each_entry(pos, list, core.node) {
->  		struct evsel *pos_leader = evsel__leader(pos);
+> >  ahci 0000:00:11.0: 3/3 ports implemented (port mask 0x38)
+> 14c14
+> <  ata3: SATA max UDMA/133 abar m1024@0xfeb0b000 port 0xfeb0b200 irq 19
+> lpm-pol 3
+> ---
+> >  ata3: DUMMY
+> 27,28d26
+> <  ata3: SATA link up 6.0 Gbps (SStatus 133 SControl 300)
+> <  ata6: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
+> 29a28
+> >  ata6: SATA link up 3.0 Gbps (SStatus 123 SControl 300)
+> 31,34d29
+> <  ata3.00: Model 'Samsung SSD 870 QVO 2TB', rev 'SVQ02B6Q', applying
+> quirks: noncqtrim zeroaftertrim noncqonati
+> <  ata3.00: supports DRM functions and may not be fully accessible
+> <  ata3.00: ATA-11: Samsung SSD 870 QVO 2TB, SVQ02B6Q, max UDMA/133
+> <  ata3.00: 3907029168 sectors, multi 1: LBA48 NCQ (not used)
+> 37a33
+> >  ata5.00: configured for UDMA/100
+> 40d35
+> <  ata5.00: configured for UDMA/100
+> 43,46d37
+> <  ata3.00: Features: Trust Dev-Sleep
+> <  ata3.00: supports DRM functions and may not be fully accessible
+> <  ata3.00: configured for UDMA/133
+> <  scsi 2:0:0:0: Direct-Access     ATA      Samsung SSD 870 2B6Q PQ: 0 ANSI:
+> 5
+> 50,51d40
+> <  ata3.00: Enabling discard_zeroes_data
+> <  ata3.00: Enabling discard_zeroes_data
+> 
+> I hope this is useful for diagnosing the problem.
 
-Perf stat and record tests pass on SPR and ARL.
+It is indeed!
 
-Tested-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Wow.
+
+The problem does not appear to be with the SSD firmware.
+
+The problem appears to be that your AHCI controller reports different
+values in the PI (Ports Implemented) register.
+
+This is supposed to be a read-only register :)
+
+At cold boot the print is:
+4/4 ports implemented (port mask 0x3c)
+meaning ports 1,2 are not implemented (DUMMY ports).
+
+At reboot the print is:
+3/3 ports implemented (port mask 0x38)
+meaning ports 1,2,3 are not implemented (DUMMY ports).
+
+So, the problem is that your AHCI controller appears to report different
+values in the PI register.
+
+Most likely, if the AHCI controller reported the same register values the
+second boot, libata would be able to scan and detect the drive correctly.
+
+What AHCI controller is this?
+
+$ sudo lspci -nns 0000:00:11.0
 
 
+Which kernel version are you using?
+
+Please test with v6.14-rc5 as there was a bug in v6.14-rc4 where
+mask_port_map would get incorrecly set. (Although, this bug should only
+affect device tree based platforms. Most often when using UEFI, you do
+not use device tree.)
+
+
+I do see that your AHCI controller is < AHCI 1.3, so we do take this path:
+https://github.com/torvalds/linux/blob/v6.14-rc5/drivers/ata/libahci.c#L571-L578
+
+Could you please provide a full dmesg?
+
+
+Also, it would be helpful if you could print every time we read/write the
+PI register. (Don't ask me why libata writes a read-only register...
+we were not always the maintainers for this driver...)
+
+
+diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
+index e7ace4b10f15..dd837834245b 100644
+--- a/drivers/ata/libahci.c
++++ b/drivers/ata/libahci.c
+@@ -533,6 +533,7 @@ void ahci_save_initial_config(struct device *dev, struct ahci_host_priv *hpriv)
+ 
+ 	/* Override the HBA ports mapping if the platform needs it */
+ 	port_map = readl(mmio + HOST_PORTS_IMPL);
++	dev_err(dev, "%s:%d PI: read: %#lx\n", __func__, __LINE__, port_map);
+ 	if (hpriv->saved_port_map && port_map != hpriv->saved_port_map) {
+ 		dev_info(dev, "forcing port_map 0x%lx -> 0x%x\n",
+ 			port_map, hpriv->saved_port_map);
+@@ -629,6 +630,7 @@ static void ahci_restore_initial_config(struct ata_host *host)
+ 	if (hpriv->saved_cap2)
+ 		writel(hpriv->saved_cap2, mmio + HOST_CAP2);
+ 	writel(hpriv->saved_port_map, mmio + HOST_PORTS_IMPL);
++	dev_err(host->dev, "%s:%d PI: wrote: %#x\n", __func__, __LINE__, hpriv->saved_port_map);
+ 	(void) readl(mmio + HOST_PORTS_IMPL);	/* flush */
+ 
+ 	for_each_set_bit(i, &port_map, AHCI_MAX_PORTS) {
+
+
+
+
+Kind regards,
+Niklas
 
