@@ -1,146 +1,157 @@
-Return-Path: <linux-kernel+bounces-552160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E6E9A5765C
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:50:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB6E4A57660
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:57:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D230E3B417D
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:50:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00FE5176F15
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204542135DE;
-	Fri,  7 Mar 2025 23:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fUAg0o/Z"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09207213E64;
+	Fri,  7 Mar 2025 23:57:05 +0000 (UTC)
+Received: from mail115-69.sinamail.sina.com.cn (mail115-69.sinamail.sina.com.cn [218.30.115.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D581537A7;
-	Fri,  7 Mar 2025 23:50:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1777212D8D
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 23:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741391430; cv=none; b=MS3//RVhMS4CTkkirUwgERbZMJV5ZXxt1IGMDxSII28wpnfiXP2vGeukedzxXatn7myRzyDAR5eRWtQEYfBz3jvlcyMBy3B130kxRZROac4W+m3xwzeYmZxcY6AzfEljAr0qgkgOWr3LadZa+vS6H1PiSHAD+x+rN8Ng7zAHVyg=
+	t=1741391824; cv=none; b=GBMLZbUKk3hWErKTXDiYGqyKq9wxYHcmP3tiKmHd0/3k9cFmlJ3s8JNgMGlj49mYGFicBItd6lBfOT2yT/bmeyBVNgMnH4WOE0bv0luH29bYIjNXfiJ5RKsUfzm4CxfYUxFRxAjTW2q3tc8l+rRXNHsOhz4kSl174cP096A8YCs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741391430; c=relaxed/simple;
-	bh=MKoG9BDEne2P9qDxJ+le1YCyCIoqc00XD9PNyqv41tU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pM/pol9rKpB7cz6d8OY+IJI/pPpK77meqYfC1JC6nYXuk3aAT2z+ZDQvCJy5XjtlsznYBbh8K4Ud40r2bCzluSBK6g6qxQ9rQktVEgPvw+2SzsRmeZ5FZHdMO9KCIgMuoEZjOgus8gN7Btu6QnMG+Nq1JYe5MoQ8+VpsHBoSVZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fUAg0o/Z; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22359001f1aso61027435ad.3;
-        Fri, 07 Mar 2025 15:50:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741391428; x=1741996228; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mAsWR6sk3fVTY/Vs6HL9NRLHq38ZlYaBZpLhSpVA9HU=;
-        b=fUAg0o/ZAytVV+Cscitn5Bkf8SmyOXQl+9UTknvXoUIOy5l673DdLu1WVE5+RdJZsm
-         7jty/yvLRP2x8ii3yALj/pfu9KddAGjIJVa4pWC/T6dtQ6mypfp8g6gWxgtz2RHTYiD+
-         +gJwjpRkjxJhZ8YESzpXdOevw/SUFcMDXgPgE7otU4UB3IDEuJrUVkmhec4WxVopFdhY
-         qRRhZKvx5Po+xXmLs/bJ3wGkosrzaCGue02X/iXMTCY/DVsG/xSGt7XPfG93zsJScns+
-         wIkF/geHs4K60ZtX++bhBZaTfRNg7lAtiGnCZemiT3tXqd49Wqu2Ewe4JChm7YFKjp8U
-         VDwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741391428; x=1741996228;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mAsWR6sk3fVTY/Vs6HL9NRLHq38ZlYaBZpLhSpVA9HU=;
-        b=spem/5P6A5WJE3Z1DzAI3w3L5jW//MkM9n22XWELUGrzVz9KH+GvtGKTwAhJu4St9j
-         FlGt7jfDQDHq/cDbBfufxothKQX2VSJiKVbz+FXL3aomfB9b9egUabYkLf3ZOXRCitAi
-         fn8J0sHjF7RsPrqdLp86hT+ip2Zqq5MjhCKXWxKuiRaIfJNvXZ3/gPy/gPKhP534wBsA
-         WWfPKkv2I69yplebQKnlZ/bb+SpcP1MHE/BJaF7/DOCWzsuW2aNI8Ta1i2DUHpTaYfQW
-         MW0V2JsABpGBQg0DAldIAS40YRsej0OKYZxGr2dFwzZvld1jmRuNL5nzXzTmjd3CSghZ
-         LEdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqBph510GCKFj8pJMwMHciPWy5EkjxqGnd6Hu43EuhNaObChIperC+otzuQSwee/tvVu20GWQY@vger.kernel.org, AJvYcCV1cD1lZfwuR4Ws2BVPRgqgVZFTiLQvUosPznv5Hks8fDOz/9tXY+NUzjcPv3x5NazNWinub7WRAIIwMaQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxzf08NkQeUQmqKhG8ptj9xBH1dK1D5+RIzJhbeLZTpjGhK8Q5h
-	bgY0HfPqQ6mjtum24qYhmtzrpGbUfX4tbnC/8xne/ickuBOp/qo=
-X-Gm-Gg: ASbGncs2pj98z+GGmZ7BzvEScrhXwODGFuG3D8RgwK73SqMfGILxnoGO6kzCgbuZXyC
-	III3dFJ+A8zivarlnChTY8mLSZvZDCt6xWjh4lzDr1elYM4XwwIEG62Gl9oSmufvH08MzyguzWi
-	vVlgiWCxJzf+OiaGEoDM6lMO+muZwQXWyEInLJZ6Kio0A4yDA9P7kuJw8OmUX8h4UMAg82Vx0Io
-	leCW+7RWoejNbmPOxO18mIZrOKXFKkvSEbvGs7SlAl/3M2vW74uqgUvDYiCO3ir+iE1Vy6QJnGE
-	r+3/YEX+gNxDKORJvqTRTDxbCeLivJRWJnWeY2BuKJ7g
-X-Google-Smtp-Source: AGHT+IGaEzUzXa/cEOFXAJvoAJ2Sr3JzH0/1tDWJDNx9UWIW0uTfx1wta99FIoM5yC1asMMZwnyQDA==
-X-Received: by 2002:a05:6a00:cd2:b0:736:4b08:cc0e with SMTP id d2e1a72fcca58-736aaadf56amr6431152b3a.17.1741391428413;
-        Fri, 07 Mar 2025 15:50:28 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-736a80853d1sm2642685b3a.91.2025.03.07.15.50.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 15:50:27 -0800 (PST)
-Date: Fri, 7 Mar 2025 15:50:27 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	linux-kernel@vger.kernel.org, horms@kernel.org,
-	donald.hunter@gmail.com, michael.chan@broadcom.com,
-	pavan.chebbi@broadcom.com, andrew+netdev@lunn.ch,
-	jdamato@fastly.com, xuanzhuo@linux.alibaba.com,
-	almasrymina@google.com, asml.silence@gmail.com, dw@davidwei.uk
-Subject: Re: [PATCH net-next v1 4/4] net: drop rtnl_lock for queue_mgmt
- operations
-Message-ID: <Z8uGQ33kaodoZykm@mini-arch>
-References: <20250307155725.219009-1-sdf@fomichev.me>
- <20250307155725.219009-5-sdf@fomichev.me>
- <20250307153922.18e52263@kernel.org>
+	s=arc-20240116; t=1741391824; c=relaxed/simple;
+	bh=cbqO59Mk+i6S1QTdb0JLB7Qdre2NTEo9Q7ERa64Y8OQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=h0Zkv2CP8ODHuFn49PyQlq/xBOLVTbnu2UXsh3w3i8fypW3gfXBDlS1OD9yIidj3yj/Mr1uRkWfGvkzfPsbIBSveHFswEAYQwEd236h/mt3on28OC8UFLLmZwxWhsCvsLjDYFlwmfiNJ4XBpVjdD9iqD+BSHka+tYXbU0DbuFlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.65.201])
+	by sina.com (10.185.250.22) with ESMTP
+	id 67CB87C50000738D; Fri, 8 Mar 2025 07:56:56 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 3463937602705
+X-SMAIL-UIID: D289D84087F14E859A4F18EA1CB54F50-20250308-075656-1
+From: Hillf Danton <hdanton@sina.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
+Date: Sat,  8 Mar 2025 07:56:44 +0800
+Message-ID: <20250307235645.3117-1-hdanton@sina.com>
+In-Reply-To: <20250307123442.GD5963@redhat.com>
+References: <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com> <20250304050644.2983-1-hdanton@sina.com> <20250304102934.2999-1-hdanton@sina.com> <20250304233501.3019-1-hdanton@sina.com> <20250305045617.3038-1-hdanton@sina.com> <20250305224648.3058-1-hdanton@sina.com> <20250307060827.3083-1-hdanton@sina.com> <20250307104654.3100-1-hdanton@sina.com> <20250307112920.GB5963@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250307153922.18e52263@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On 03/07, Jakub Kicinski wrote:
-> On Fri,  7 Mar 2025 07:57:25 -0800 Stanislav Fomichev wrote:
-> > All drivers that use queue API are already converted to use
-> > netdev instance lock. Move netdev instance lock management to
-> > the netlink layer and drop rtnl_lock.
+On Fri, 7 Mar 2025 13:34:43 +0100 Oleg Nesterov <oleg@redhat.com>
+> On 03/07, Oleg Nesterov wrote:
+> > On 03/07, Hillf Danton wrote:
+> > > On Fri, 7 Mar 2025 11:54:56 +0530 K Prateek Nayak <kprateek.nayak@amd.com>
+> > > >> step-03
+> > > >> 	task-118766 new reader
+> > > >> 	makes pipe empty
+> > > >
+> > > >Reader seeing a pipe full should wake up a writer allowing 118768 to
+> > > >wakeup again and fill the pipe. Am I missing something?
+> > > >
+> > > Good catch, but that wakeup was cut off [2,3]
 > 
-> > @@ -860,12 +854,11 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
-> >  	}
-> >  
-> >  	mutex_lock(&priv->lock);
-> > -	rtnl_lock();
-> >  
-> > -	netdev = __dev_get_by_index(genl_info_net(info), ifindex);
-> > +	netdev = netdev_get_by_index_lock(genl_info_net(info), ifindex);
-> >  	if (!netdev || !netif_device_present(netdev)) {
-> >  		err = -ENODEV;
-> > -		goto err_unlock;
-> > +		goto err_unlock_sock;
-> >  	}
-> >  
-> >  	if (dev_xdp_prog_count(netdev)) {
-> > @@ -918,14 +911,15 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
-> >  	if (err)
-> >  		goto err_unbind;
-> >  
-> > -	rtnl_unlock();
-> > +	netdev_unlock(netdev);
+> Please note that "that wakeup" was _not_ removed by the patch below.
 > 
-> Ah, here's the unlock :)
+After another look, you did cut it.
 
-mutex_unlock(&priv->lock) is still missing :(
+Link: https://lore.kernel.org/all/20250209150718.GA17013@redhat.com/
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+---
+ fs/pipe.c | 45 +++++++++------------------------------------
+ 1 file changed, 9 insertions(+), 36 deletions(-)
 
-> Looks good for the devmem binding, I think, the other functions will
-> need a bit more careful handling. So perhaps drop the queue get changes?
-> I'm cooking some patches for the queue get and queue stats.
-> AFAIU we need helpers which will go over netdevs and either take rtnl
-> lock or instance lock, depending on whether the driver is "ops locked"
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 2ae75adfba64..b0641f75b1ba 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -360,29 +360,9 @@ anon_pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ 			break;
+ 		}
+ 		mutex_unlock(&pipe->mutex);
+-
+ 		/*
+ 		 * We only get here if we didn't actually read anything.
+ 		 *
+-		 * However, we could have seen (and removed) a zero-sized
+-		 * pipe buffer, and might have made space in the buffers
+-		 * that way.
+-		 *
+-		 * You can't make zero-sized pipe buffers by doing an empty
+-		 * write (not even in packet mode), but they can happen if
+-		 * the writer gets an EFAULT when trying to fill a buffer
+-		 * that already got allocated and inserted in the buffer
+-		 * array.
+-		 *
+-		 * So we still need to wake up any pending writers in the
+-		 * _very_ unlikely case that the pipe was full, but we got
+-		 * no data.
+-		 */
+-		if (unlikely(wake_writer))
+-			wake_up_interruptible_sync_poll(&pipe->wr_wait, EPOLLOUT | EPOLLWRNORM);
+-		kill_fasync(&pipe->fasync_writers, SIGIO, POLL_OUT);
+-
+-		/*
+ 		 * But because we didn't read anything, at this point we can
+ 		 * just return directly with -ERESTARTSYS if we're interrupted,
+ 		 * since we've done any required wakeups and there's no need
+@@ -391,7 +371,6 @@ anon_pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ 		if (wait_event_interruptible_exclusive(pipe->rd_wait, pipe_readable(pipe)) < 0)
+ 			return -ERESTARTSYS;
+ 
+-		wake_writer = false;
+ 		wake_next_reader = true;
+ 		mutex_lock(&pipe->mutex);
+ 	}
 
-Here is what I was tentatively playing with (rtnl_netdev_{,un}lock_ops
-abomination):
-https://github.com/fomichev/linux/commit/f791a23c358c7db0e798bc4181dc6c243c8ff77d
+> "That wakeup" is another wakeup pipe_read() does before return:
+> 
+> 	if (wake_writer)
+> 		wake_up_interruptible_sync_poll(&pipe->wr_wait, ...);
+> 
+> And wake_writer must be true if this reader changed the pipe_full()
+> condition from T to F.
+> 
+Could you read Prateek's comment again, then try to work out why he
+did so?
 
-Which sort of does what you're suggesting in:
-https://github.com/fomichev/linux/commit/392ae1f3ca823dc412a2dac2263b6c8355f6925d
-
-Although I'm still unconditionally holding rtnl_lock during
-for_each_netdev_dump..
+> Note also that pipe_read() won't sleep if it has read even one byte.
+> 
+> > > [2] https://lore.kernel.org/lkml/20250304123457.GA25281@redhat.com/
+> > > [3] https://lore.kernel.org/all/20250210114039.GA3588@redhat.com/
+> >
+> > Why do you think
+> >
+> > 	[PATCH v2 1/1] pipe: change pipe_write() to never add a zero-sized buffer
+> > 	https://lore.kernel.org/all/20250210114039.GA3588@redhat.com/
+> >
+> > can make any difference ???
+> >
+> > Where do you think a zero-sized buffer with ->len == 0 can come from?
+> 
+> Oleg.
 
