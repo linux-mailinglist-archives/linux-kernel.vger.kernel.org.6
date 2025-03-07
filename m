@@ -1,115 +1,192 @@
-Return-Path: <linux-kernel+bounces-551464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B87AA56CC7
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:57:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0667BA56CCE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:58:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89D2816E402
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:57:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 777691899152
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BAB321E0BA;
-	Fri,  7 Mar 2025 15:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MUh8kJyM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061B9221721;
+	Fri,  7 Mar 2025 15:57:32 +0000 (UTC)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A245A21B9EC;
-	Fri,  7 Mar 2025 15:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E111A221547;
+	Fri,  7 Mar 2025 15:57:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741363047; cv=none; b=jvrMIvwhjfvNLc8l7OLfk5sYx4xAI/PKR3VqTNMqn7dH7Os03axx7MKGnnjF5kFZsZBMKtt11Wl11QalQA6Kz5ka2wmU4NOyfRWtG58VybmVaF6PaItLJT+NrmCmV8Wv3fRNGk2BPVxUaXbUXwWeFOtovTA4fECsj27ky3IopsM=
+	t=1741363051; cv=none; b=AE/8DekubAr0iG943akUzWgbtEHrKaXwRw4DGF6SsOgP3v5otjJl61o2X80SAlJJwmtbexxDDq3q1Q+1IjnvQTY01OLsjXqu+PNmFcUxV4iqiJuqRUUg1m5z+3dE0lCNsDak90pdO2tJbd7DcOCBHnkn17xeWZEi613vBmdScKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741363047; c=relaxed/simple;
-	bh=Ic5vB9Uu/K/pkNFQ6maZXf+CQuaqOYMtTPNTW8AjeWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KhPCDyxTu66POdWhAhucuIrRFygoRELk62yewrrIFUPCwrIe+hmN0LsrBwKicqNsSnI4tF3NZZu/JOfXtw2cSWcaG+IepFUw6Gh9DtfR+TkUnEkgpk6AQm3R5AkgWD2H5C2K+XL+alOxIV6nwOdQKJB4ufV15zrI7b5ePeJRvDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MUh8kJyM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65458C4CED1;
-	Fri,  7 Mar 2025 15:57:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741363046;
-	bh=Ic5vB9Uu/K/pkNFQ6maZXf+CQuaqOYMtTPNTW8AjeWI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MUh8kJyM/dy1MrGz2OAq2//s/rOxXgpz+CWFfra5A1icQvFfCmIIWLFk2T6rnLC/b
-	 Vk378YNCu2jfMbOK8g0pYIhDF9P5uKpsta2+aQK1UHdn2hgGhS2M6S4sFwM4Qg0Zz2
-	 ViFKdbc+vQsvxydrazzpMw3gSVORMIfKXJ8xJBODEGLRZR7559sIEMgzGseGCL8lB0
-	 kXM2eYSISP31kOyasGy5s0cQwde0B/ElP/gMGkCvbUa/PQm2Dlw4QXBAcm/UsANkgt
-	 PxLVXIz4yR4PJghsfX1PHQHbb9y6Q9VlgkNnOE26RgZ5SsbM0G/o6joDUVLcpSRKZW
-	 y2bv5cHXBr2lA==
-Date: Fri, 7 Mar 2025 15:57:22 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stefan Agner <stefan@agner.ch>,
-	"open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH] dt-bindings: gpio: vf610: Add i.MX94 support
-Message-ID: <20250307-seizing-safari-c56132a11b76@spud>
-References: <20250306170921.241690-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1741363051; c=relaxed/simple;
+	bh=JniLJibKpEppVkt3pfDVBslPwEadXmwWbzGIt0QUQWk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=UX4YIZ6R0rYpiOZn8GsGlM5nZ1wGdLYavOrfTKq6nhVMeEI7PSAzM3FRQZqjMyr1Qm8HKAHI4ezedk4X79kv8u3eKIAFPY1mNEiar3D/tz9Ens7kS+C1GRJe+vngwbCEGJPKH5CaYnl5NxFgwE4oC0iAPAT58ng3l3KJSNSdMbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2241053582dso11716365ad.1;
+        Fri, 07 Mar 2025 07:57:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741363049; x=1741967849;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fNf+k9hhNyVSY2O3O8aKeeb+5wxc5hlSdDGv1HkARCE=;
+        b=RehljJckTmUGPW1BLm65w4RifRg6kdAVu5byLN5p8iugQPxYLO5xR+kY1ScpRjIt9T
+         VyhJo/ly8gNBfUPBIx9z17kv55gpuCgFNxN8GwB881BHyMd6wFjwv6s0M13gK7O22Ym2
+         LVBbT0k3bhe3BIYRLtnDZYjqNzIO/syXxWihoYZF/wq1y6Jh7b4chd5fFw6/VZQt1/4q
+         Twk9bXhsMCzChFDABKXJcd10PnsmTMSjD/cWPLvWT22L2R0AyxLGRzlS23aJUJB+tFlq
+         N6DTf2Xxdf8JqNrjs2SBcP38DL8XiSxKGkuLJ/KkQCRG8NNjbt3dzBUDicmQHvhXhumq
+         am1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW6dOp+PLoyYUAo5rPD+f5QHn4KYdXf0sYBdSb5NlNic5gIpItTNEseJVauUwFS3MYn30GC7RtqNYQLjbU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6MrKppWyhHC7iGmWu0twhUSxMkbCbS8Rl1J3/xXxn2F1uM+1s
+	s6sg/bB6Tp39X3wBssUE032KJPebD6ipBvgiV+uKSTqjKdBj5QoW9lPN
+X-Gm-Gg: ASbGnct4ogE0wQIpvys8xgiISZ1njH6BsF4xl3y7MfOMRWN7VCDYJlQMz9xEg+fRmOM
+	MnTWwKxf2txByBLYOuq34wSoHPXAxrLET2gJmnCjsfFCkW1zvxwSrJixKPEAcres2deap66sr5v
+	tC8bC0qfiw9awm9T0VhmkMaCcwqiB4Dxdo7+wgkUvwjc/BZA6jXLVPG9nmcIwa8dD4cXr5eSiBL
+	AvUIhEWF7kShSFTJ4pO5WajGju7asTk5Oz23A9PIEuUz6GS81bz4N7iwble3Djpu3GN3MvWU2Yg
+	SXinZUq/z0JjTLXf6bIuUo/DwshyPJp7L/yFX2u3uXbx
+X-Google-Smtp-Source: AGHT+IHIlEarVBMAmVMhYTsCxYZWZDmie8Syv0Q2HhlZf5ejT//6e8OjZ/bByE+MuJvWYL1wxcP4Zw==
+X-Received: by 2002:a17:902:f54e:b0:224:7a4:b32 with SMTP id d9443c01a7336-2242888b350mr60240155ad.20.1741363048785;
+        Fri, 07 Mar 2025 07:57:28 -0800 (PST)
+Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-224109e99dfsm31733925ad.91.2025.03.07.07.57.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 07:57:28 -0800 (PST)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	horms@kernel.org,
+	donald.hunter@gmail.com,
+	michael.chan@broadcom.com,
+	pavan.chebbi@broadcom.com,
+	andrew+netdev@lunn.ch,
+	jdamato@fastly.com,
+	sdf@fomichev.me,
+	xuanzhuo@linux.alibaba.com,
+	almasrymina@google.com,
+	asml.silence@gmail.com,
+	dw@davidwei.uk
+Subject: [PATCH net-next v1 2/4] net: protect net_devmem_dmabuf_bindings by new net_devmem_bindings_mutex
+Date: Fri,  7 Mar 2025 07:57:23 -0800
+Message-ID: <20250307155725.219009-3-sdf@fomichev.me>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250307155725.219009-1-sdf@fomichev.me>
+References: <20250307155725.219009-1-sdf@fomichev.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wm3Zg//nlpBg/ltd"
-Content-Disposition: inline
-In-Reply-To: <20250306170921.241690-1-Frank.Li@nxp.com>
+Content-Transfer-Encoding: 8bit
 
+In the process of making queue management API rtnl_lock-less, we
+need a separate lock to protect xa that keeps a global list of bindings.
 
---wm3Zg//nlpBg/ltd
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Also change the ordering of 'posting' binding to
+net_devmem_dmabuf_bindings: xa_alloc is done after binding is fully
+initialized (so xa_load lookups fully instantiated bindings) and
+xa_erase is done as a first step during unbind.
 
-On Thu, Mar 06, 2025 at 12:09:21PM -0500, Frank Li wrote:
-> Add compatible string "fsl,imx94-gpio" for the i.MX94 chip, which is
-> backward compatible with i.MX8ULP. Set it to fall back to
-> "fsl,imx8ulp-gpio".
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Cc: Mina Almasry <almasrymina@google.com>
+Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
+---
+ net/core/devmem.c | 29 ++++++++++++++---------------
+ 1 file changed, 14 insertions(+), 15 deletions(-)
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+diff --git a/net/core/devmem.c b/net/core/devmem.c
+index 7c6e0b5b6acb..c16cdac46bed 100644
+--- a/net/core/devmem.c
++++ b/net/core/devmem.c
+@@ -25,7 +25,7 @@
+ 
+ /* Device memory support */
+ 
+-/* Protected by rtnl_lock() */
++static DEFINE_MUTEX(net_devmem_bindings_mutex);
+ static DEFINE_XARRAY_FLAGS(net_devmem_dmabuf_bindings, XA_FLAGS_ALLOC1);
+ 
+ static const struct memory_provider_ops dmabuf_devmem_ops;
+@@ -119,6 +119,10 @@ void net_devmem_unbind_dmabuf(struct net_devmem_dmabuf_binding *binding)
+ 	unsigned long xa_idx;
+ 	unsigned int rxq_idx;
+ 
++	mutex_lock(&net_devmem_bindings_mutex);
++	xa_erase(&net_devmem_dmabuf_bindings, binding->id);
++	mutex_unlock(&net_devmem_bindings_mutex);
++
+ 	if (binding->list.next)
+ 		list_del(&binding->list);
+ 
+@@ -133,8 +137,6 @@ void net_devmem_unbind_dmabuf(struct net_devmem_dmabuf_binding *binding)
+ 		WARN_ON(netdev_rx_queue_restart(binding->dev, rxq_idx));
+ 	}
+ 
+-	xa_erase(&net_devmem_dmabuf_bindings, binding->id);
+-
+ 	net_devmem_dmabuf_binding_put(binding);
+ }
+ 
+@@ -220,24 +222,15 @@ net_devmem_bind_dmabuf(struct net_device *dev, unsigned int dmabuf_fd,
+ 	}
+ 
+ 	binding->dev = dev;
+-
+-	err = xa_alloc_cyclic(&net_devmem_dmabuf_bindings, &binding->id,
+-			      binding, xa_limit_32b, &id_alloc_next,
+-			      GFP_KERNEL);
+-	if (err < 0)
+-		goto err_free_binding;
+-
+ 	xa_init_flags(&binding->bound_rxqs, XA_FLAGS_ALLOC);
+-
+ 	refcount_set(&binding->ref, 1);
+-
+ 	binding->dmabuf = dmabuf;
+ 
+ 	binding->attachment = dma_buf_attach(binding->dmabuf, dev->dev.parent);
+ 	if (IS_ERR(binding->attachment)) {
+ 		err = PTR_ERR(binding->attachment);
+ 		NL_SET_ERR_MSG(extack, "Failed to bind dmabuf to device");
+-		goto err_free_id;
++		goto err_free_binding;
+ 	}
+ 
+ 	binding->sgt = dma_buf_map_attachment_unlocked(binding->attachment,
+@@ -305,6 +298,14 @@ net_devmem_bind_dmabuf(struct net_device *dev, unsigned int dmabuf_fd,
+ 		virtual += len;
+ 	}
+ 
++	mutex_lock(&net_devmem_bindings_mutex);
++	err = xa_alloc_cyclic(&net_devmem_dmabuf_bindings, &binding->id,
++			      binding, xa_limit_32b, &id_alloc_next,
++			      GFP_KERNEL);
++	mutex_unlock(&net_devmem_bindings_mutex);
++	if (err < 0)
++		goto err_free_chunks;
++
+ 	return binding;
+ 
+ err_free_chunks:
+@@ -316,8 +317,6 @@ net_devmem_bind_dmabuf(struct net_device *dev, unsigned int dmabuf_fd,
+ 					  DMA_FROM_DEVICE);
+ err_detach:
+ 	dma_buf_detach(dmabuf, binding->attachment);
+-err_free_id:
+-	xa_erase(&net_devmem_dmabuf_bindings, binding->id);
+ err_free_binding:
+ 	kfree(binding);
+ err_put_dmabuf:
+-- 
+2.48.1
 
-> ---
->  Documentation/devicetree/bindings/gpio/gpio-vf610.yaml | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml b/Doc=
-umentation/devicetree/bindings/gpio/gpio-vf610.yaml
-> index cabda2eab4a23..4fb32e9aec0a3 100644
-> --- a/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
-> +++ b/Documentation/devicetree/bindings/gpio/gpio-vf610.yaml
-> @@ -28,6 +28,7 @@ properties:
->        - items:
->            - enum:
->                - fsl,imx93-gpio
-> +              - fsl,imx94-gpio
->                - fsl,imx95-gpio
->            - const: fsl,imx8ulp-gpio
-> =20
-> --=20
-> 2.34.1
->=20
-
---wm3Zg//nlpBg/ltd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8sXYgAKCRB4tDGHoIJi
-0leaAQDNu+bsdqnUmbWocpGU1nB64e+zSq/KuuvbbNiLjLiJrAD/chOF+FkjFJ8l
-mPtACziZv1uZw9DZ7LdIrjiwmKP1hAI=
-=ZDVJ
------END PGP SIGNATURE-----
-
---wm3Zg//nlpBg/ltd--
 
