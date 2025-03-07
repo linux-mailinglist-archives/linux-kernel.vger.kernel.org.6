@@ -1,248 +1,180 @@
-Return-Path: <linux-kernel+bounces-550678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C46AA562D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:44:06 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24302A562E7
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:48:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 981D7170262
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:44:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 216247A4B30
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87AE51E1DEA;
-	Fri,  7 Mar 2025 08:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC611AF4C1;
+	Fri,  7 Mar 2025 08:48:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Djpc60WN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UEafKVHp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA33E1C861C;
-	Fri,  7 Mar 2025 08:43:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B08C19E971
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 08:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741337037; cv=none; b=qTF1+0Kv+OWyUsgk/LB0Xcue9C9pt+Ezvcs5U5HKv+5s9UA0rDbUGjP33UFER/KLuDewA0tVQ7u+9I9wX8nz0o37wF8ne6OONMkIniNWZOVwmszIJ176j55gP3Km7ULwprh+HXMCtBFGZulV6tW4qQusNc0bkH2RoY3Kjz8T/P4=
+	t=1741337281; cv=none; b=u5mt2nTKGdg6KNsu+Ozv03rfKxaqBhteAicJsf0oSSvEguaBmxbW682jaytK+9IgZ8wXBORe+rm2wI2OvPEH7hBj0yb1n/t+jtEWQ8chU/yqr1k5nfo9FwulE9K4E1CXpzDsW1YNRC57zdS0I5H80O6ayU59PYwQOWQvXOx23Vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741337037; c=relaxed/simple;
-	bh=WcIPsud+/UeAJLAwbqQqP5bSvYxrFp1JApjAuuMLvBk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bfycIyIQhTlFHuXwXt2MV1rFnIlL42cUr35kN8SnIZsuO8d1d0q/conZj7s0zvPzzrcBQ5wQQee4eCp7sp0pvRDWUQC292wzIw8R4yFsqrtqUf74C9M5qYaFZU1fXPi6JdsVRks/WIE7TdcMlRkof+5tagdtPBcEAmGw9hjZfhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Djpc60WN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75A47C4CED1;
-	Fri,  7 Mar 2025 08:43:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741337037;
-	bh=WcIPsud+/UeAJLAwbqQqP5bSvYxrFp1JApjAuuMLvBk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Djpc60WNtcCDAgBW6fAFzRxWnnLVQTD60WFqtBpUQpTTqUYSWtPUuVc4/0JOR1qud
-	 QDmsq3fwoTFHVQm6zRQQwGTE+HHe3raXaQix2tYp7YRaW0loKLs4lUHkZwsXEb1Nzx
-	 g/hs+59KQQW8GVBjeUDdlgAFmfNyJILCHbPYM9ZQbOKwQ8Qagszuw8qYq3oBnDu8Im
-	 FFkL9v50tNaO82qwUlgBwhRU5lzoCPTSABUcR+aCEMPDtJS0NPc6ToTFFRghhERE3R
-	 HSMv8EdJQWWD4sjOg9XAir+VafiuJCPKdetb+TPy5gGT103bgOLIKwpK/Ap5+CWaAe
-	 UN0OqLV/wRMKg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Ralf Jung" <post@ralfj.de>
-Cc: "Alice Ryhl" <aliceryhl@google.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "comex" <comexk@gmail.com>,  "Daniel Almeida"
- <daniel.almeida@collabora.com>,  "Benno Lossin" <benno.lossin@proton.me>,
-  "Abdiel Janulgue" <abdiel.janulgue@gmail.com>,  <dakr@kernel.org>,
-  <robin.murphy@arm.com>,  <rust-for-linux@vger.kernel.org>,  "Miguel
- Ojeda" <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary
- Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Valentin Obst"
- <kernel@valentinobst.de>,  <linux-kernel@vger.kernel.org>,  "Christoph
- Hellwig" <hch@lst.de>,  "Marek Szyprowski" <m.szyprowski@samsung.com>,
-  <airlied@redhat.com>,  <iommu@lists.linux.dev>,  <lkmm@lists.linux.dev>
-Subject: Re: Allow data races on some read/write operations
-In-Reply-To: <580cfb1a-3619-410f-8b03-61ee984c1b1f@ralfj.de> (Ralf Jung's
-	message of "Wed, 05 Mar 2025 22:53:39 +0100")
-References: <87bjuil15w.fsf@kernel.org> <87ikoqjg1n.fsf@kernel.org>
-	<KpWTCfIlcLYFBpSvWPfALJ9VQn5a99_RAvxgMBc1aCrSalPB-qaW9IhXyaDG7HM1AcFPX5chj_Yr7IQp3F7UqA==@protonmail.internalid>
-	<CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
-	<87mse2hrd8.fsf@kernel.org> <Z8YMTiKS4T9wC4t_@boqun-archlinux>
-	<ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
-	<88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
-	<hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
-	<25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de>
-	<CAH5fLgidPHQzdUORNpNhtRFsKPU1T-0xdn5OSwYYZh3BgOVRQA@mail.gmail.com>
-	<18cmxblLU2QAa4YP25RWCKEnxuonOwWXavYmSsS4C5D40o8RaCkIXo0UDZ2SPnksk5nWYB29Y4zHkjQeOgd4ng==@protonmail.internalid>
-	<3aabca39-4658-454a-b0e3-e946e72977e1@ralfj.de> <87eczb71xs.fsf@kernel.org>
-	<M_YejDCAOZ7AX0l8ZZ7Z5EesJicUgsjYJUTm0SzLkhYTAYyXRJFTr4QYZMagG4KX6YdHoT-IPhf8ygjircrs0A==@protonmail.internalid>
-	<915eacce-cfd8-4bed-a407-32513e43978f@ralfj.de> <87tt875fu8.fsf@kernel.org>
-	<-_bKVxONywzmy2K6TPj5TT6swM4PhCN6ulfel4V8yTlJi3MzAGbIiKIVQ0TQzoVJ7wRfM8Ie5Jh5MSv9yf-sKg==@protonmail.internalid>
-	<580cfb1a-3619-410f-8b03-61ee984c1b1f@ralfj.de>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 07 Mar 2025 09:43:44 +0100
-Message-ID: <87frjp5iyn.fsf@kernel.org>
+	s=arc-20240116; t=1741337281; c=relaxed/simple;
+	bh=stm8J5gXFKeg0kDXqkjFf2m6eLexUCdtvHC4jHfKAJ0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lr8McSgp3BE3DcbRuLqDPngqfsLFSfPIvUbqhM32yGFZ1MnazeYX98R29rAeBvNuMbB1thUORuCzDjXb51RbCLy1K/kMAJFWMUZvTOQiVNGsZhsaDGfRc+mJ/EJ+08rIkQP2LhQFgKQjpWfb7XHcqclaecWuueL5Zsb17Wp5Kc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.helo=mgamail.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UEafKVHp; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.helo=mgamail.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741337280; x=1772873280;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=stm8J5gXFKeg0kDXqkjFf2m6eLexUCdtvHC4jHfKAJ0=;
+  b=UEafKVHpbv7S9AyFCrWlzt1YSZGiipN8+qh6jVtiUUwwNpKUTnKs0jc7
+   vprzwtIcdAVpmTBeJCQm0R8FF8i+5qniVN7ar5RiU8k6Di3NuWsCcuXmM
+   OPyQbhzxhVlGPDRLG6N+8gl2e5NcUOi6TyDgNhLPVbRWwO62XpVDHH1d6
+   ZqjtAboYTkce6sSE8FtK86RWOX3Zd2OeT2xEaM8d/sijlaHPiHLOFgyFA
+   xPBb+WzFgAX8eR9ZhJE2HrTLp/HVDdRnp1JLDWyBmKtUXsfyj46CY9qDN
+   0ENYVAMxcPwOdmdXvwyMVPAsucYHSSIXFFLs99R4jcHsoR6YU6VQ8InNM
+   g==;
+X-CSE-ConnectionGUID: 8hHZNZ2KTEarRWy3oxoFdw==
+X-CSE-MsgGUID: IMXSGq/4Tv6fvYTMlSnUFw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="53769252"
+X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
+   d="scan'208";a="53769252"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 00:44:34 -0800
+X-CSE-ConnectionGUID: oGr4x6h7SmuAvUGno+g93w==
+X-CSE-MsgGUID: DiqR7WcBTBW1JLx2QHUJ8A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
+   d="scan'208";a="119447799"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa008.fm.intel.com with ESMTP; 07 Mar 2025 00:44:30 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1000)
+	id CE7751FC; Fri, 07 Mar 2025 10:44:28 +0200 (EET)
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+To: akpm@linux-foundation.org,
+	ebiederm@xmission.com,
+	bhe@redhat.com
+Cc: dave.hansen@intel.com,
+	x86@kernel.org,
+	kexec@lists.infradead.org,
+	linux-coco@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	rick.p.edgecombe@intel.com,
+	Yan Zhao <yan.y.zhao@intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ashish Kalra <Ashish.Kalra@amd.com>,
+	Jianxiong Gao <jxgao@google.com>
+Subject: [PATCHv3] kexec_core: Accept unaccepted kexec segments' destination addresses
+Date: Fri,  7 Mar 2025 10:44:11 +0200
+Message-ID: <20250307084411.2150367-1-kirill.shutemov@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-"Ralf Jung" <post@ralfj.de> writes:
+From: Yan Zhao <yan.y.zhao@intel.com>
 
-> Hi all,
->
-> On 05.03.25 22:26, Andreas Hindborg wrote:
->> "Ralf Jung" <post@ralfj.de> writes:
->>
->>> Hi all,
->>>
->>>>>> For some kinds of hardware, we might not want to trust the hardware.
->>>>>> I.e., there is no race under normal operation, but the hardware could
->>>>>> have a bug or be malicious and we might not want that to result in U=
-B.
->>>>>> This is pretty similar to syscalls that take a pointer into userspace
->>>>>> memory and read it - userspace shouldn't modify that memory during t=
-he
->>>>>> syscall, but it can and if it does, that should be well-defined.
->>>>>> (Though in the case of userspace, the copy happens in asm since it
->>>>>> also needs to deal with virtual memory and so on.)
->>>>>
->>>>> Wow you are really doing your best to combine all the hard problems a=
-t the same
->>>>> time. ;)
->>>>> Sharing memory with untrusted parties is another tricky issue, and ev=
-en leaving
->>>>> aside all the theoretical trouble, practically speaking you'll want to
->>>>> exclusively use atomic accesses to interact with such memory. So doin=
-g this
->>>>> properly requires atomic memcpy. I don't know what that is blocked on=
-, but it is
->>>>> good to know that it would help the kernel.
->>>>
->>>> I am sort of baffled by this, since the C kernel has no such thing and
->>>> has worked fine for a few years. Is it a property of Rust that causes =
-us
->>>> to need atomic memcpy, or is what the C kernel is doing potentially da=
-ngerous?
->>>
->>> It's the same in C: a memcpy is a non-atomic access. If something else
->>> concurrently mutates the memory you are copying from, or something else
->>> concurrently reads/writes the memory you are copying two, that is UB.
->>> This is not specific to memcpy; it's the same for regular pointer loads=
-/stores.
->>> That's why you need READ_ONCE and WRITE_ONCE to specifically indicate t=
-o the
->>> compiler that these are special accesses that need to be treated differ=
-ently.
->>> Something similar is needed for memcpy.
->>
->> I'm not a compiler engineer, so I might be wrong about this, but. If I
->> do a C `memcpy` from place A to place B where A is experiencing racy
->> writes, if I don't interpret the data at place B after the copy
->> operation, the rest of my C program is fine and will work as expected.
->
-> The program has UB in that case. A program that has UB may work as expect=
-ed
-> today, but that changes nothing about it having UB.
-> The C standard is abundantly clear here:
-> "The execution of a program contains a data race if it contains two confl=
-icting
-> actions in different threads, at least one of which is not atomic, and ne=
-ither
-> happens before the other. Any such data race results in undefined behavio=
-r."
-> (C23, =C2=A75.1.2.4)
->
-> You are describing a hypothetical language that treats data races in a di=
-fferent
-> way. Is such a language *possible*? Definitely. For the specific case you
-> describe here, one "just" has to declare read-write races to be not UB, b=
-ut to
-> return "poison data" on the read side (poison data is a bit like uninitia=
-lized
-> memory or padding), which the memcpy would then store on the target side.=
- Any
-> future interpretation of the target memory would be UB ("poison data" is =
-not the
-> same as "random data"). Such a model has actually been studied [1], thoug=
-h no a
-> lot, and not as a proposal for a semantics of a user-facing language. (Ra=
-ther,
-> that was a proposal for an internal compiler IR.) The extra complications
-> incurred by this choice are significant -- there is no free lunch here.
->
-> [1]: https://sf.snu.ac.kr/publications/promising-ir-full.pdf
->
-> However, C is not that language, and neither is Rust. Defining a concurre=
-ncy
-> memory model is extremely non-trivial (there's literally hundreds of pape=
-rs
-> proposing various different models, and there are still some unsolved pro=
-blems).
-> The route the C++ model took was to strictly rule out all data races, and=
- since
-> they were the first to actually undertake the effort of defining a model =
-at this
-> level of rigor (for a language not willing to pay the cost that would be
-> incurred by the Java concurrency memory model), that has been the standar=
-d ever
-> since. There's a lot of subtle trade-offs here, and I am far from an expe=
-rt on
-> the exact consequences each different choice would have. I just want to c=
-aution
-> against the obvious reaction of "why don't they just". :)
->
+The UEFI Specification version 2.9 introduces the concept of memory
+acceptance: some Virtual Machine platforms, such as Intel TDX or AMD
+SEV-SNP, require memory to be accepted before it can be used by the
+guest.
 
-Thanks for the elaborate explanation.
+Accepting memory is expensive. The memory must be allocated by the VMM
+and then brought to a known safe state: cache must be flushed, memory
+must be zeroed with the guest's encryption key, and associated metadata
+must be manipulated. These operations must be performed from a trusted
+environment (firmware or TDX module). Switching context to and from it
+also takes time.
 
->
->> I
->> may even later copy the data at place B to place C where C might have
->> concurrent reads and/or writes, and the kernel will not experience UB
->> because of this. The data may be garbage, but that is fine. I am not
->> interpreting the data, or making control flow decisions based on it. I
->> am just moving the data.
->>
->> My understand is: In Rust, this program would be illegal and might
->> experience UB in unpredictable ways, not limited to just the data that
->> is being moved.
->
-> That is correct. C and Rust behave the same here.
+This cost adds up. On large confidential VMs, memory acceptance alone
+can take minutes. It is better to delay memory acceptance until the
+memory is actually needed.
 
-Is there a difference between formal models of the languages and
-practical implementations of the languages here? I'm asking this because
-C kernel developers seem to be writing these programs that are illegal
-under the formal spec of the C language, but work well in practice.
-Could it be the same in Rust?
+The kernel accepts memory when it is allocated from buddy allocator for
+the first time. This reduces boot time and decreases memory overhead as
+the VMM can allocate memory as needed.
 
-That is, can I do this copy and get away with it in practice under the
-circumstances outlined earlier?
+It does not work when the guest attempts to kexec into a new kernel.
 
->
->> One option I have explored is just calling C memcpy directly, but
->> because of LTO, that is no different than doing the operation in Rust.
->>
->> I don't think I need atomic memcpy, I just need my program not to
->> explode if I move some data to or from a place that is experiencing
->> concurrent writes without synchronization. Not in general, but for some
->> special cases where I promise not to look at the data outside of moving
->> it.
->
-> I'm afraid I do not know of a language, other than assembly, that can pro=
-vide this.
->
-> Atomic memcpy, however, should be able to cover your use-case, so it seem=
-s like
-> a reasonable solution to me? Marking things as atomic is literally how yo=
-u tell
-> the compiler "don't blow up if there are concurrent accesses".
+The kexec segments' destination addresses are not allocated by the buddy
+allocator. Instead, they are searched from normal system RAM (top-down or
+bottom-up) and exclude driver-managed memory, ACPI, persistent, and
+reserved memory. Unaccepted memory is normal system RAM from kernel
+point of view and kexec can place segments there.
 
-If atomic memcpy is what we really need to write these kinds of programs in
-Rust, what would be the next steps to get this in the language?
+Kexec bypasses the code path in buddy allocator where memory gets
+accepted and it leads to a crash when kexec accesses segments' memory.
 
-Also, would there be a performance price to pay for this?
+Accept the destination addresses during the kexec load, immediately after
+they pass sanity checks. This ensures the code is located in a common place
+shared by both the kexec_load and kexec_file_load system calls.
 
+This will not conflict with the accounting in try_to_accept_memory_one()
+since the accounting is set during kernel boot and decremented when pages
+are moved to the freelists. There is no harm in invoking accept_memory() on
+a page before making it available to the buddy allocator.
 
-Best regards,
-Andreas Hindborg
+No need to worry about re-accepting memory since accept_memory() checks the
+unaccepted bitmap before accepting a memory page.
 
+Although a user may perform kexec loading without ever triggering the jump,
+it doesn't impact much since kexec loading is not in a performance-critical
+path. Additionally, the destination addresses are always searched and found
+in the same location on a given system.
 
+Changes to the destination address searching logic to locate only memory in
+either unaccepted or accepted status are unnecessary and complicated.
+
+Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+[ kirill: Update the commit message ]
+Acked-by: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Ashish Kalra <Ashish.Kalra@amd.com>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Jianxiong Gao <jxgao@google.com>
+---
+ v3:
+   - Update the commit message and retest the patch.
+
+ kernel/kexec_core.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/kernel/kexec_core.c b/kernel/kexec_core.c
+index c0bdc1686154..9a2095216f4f 100644
+--- a/kernel/kexec_core.c
++++ b/kernel/kexec_core.c
+@@ -210,6 +210,16 @@ int sanity_check_segment_list(struct kimage *image)
+ 	}
+ #endif
+ 
++	/*
++	 * The destination addresses are searched from system RAM rather than
++	 * being allocated from the buddy allocator, so they are not guaranteed
++	 * to be accepted by the current kernel.  Accept the destination
++	 * addresses before kexec swaps their content with the segments' source
++	 * pages to avoid accessing memory before it is accepted.
++	 */
++	for (i = 0; i < nr_segments; i++)
++		accept_memory(image->segment[i].mem, image->segment[i].memsz);
++
+ 	return 0;
+ }
+ 
+-- 
+2.47.2
 
 
