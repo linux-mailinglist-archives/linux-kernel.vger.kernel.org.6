@@ -1,167 +1,455 @@
-Return-Path: <linux-kernel+bounces-551061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F32A567AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:16:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F406A567B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:17:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEA9C3B560F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:16:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA84E3A8A1D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:17:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7042192F6;
-	Fri,  7 Mar 2025 12:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0353E215760;
+	Fri,  7 Mar 2025 12:17:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Me+fOF2r"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2055.outbound.protection.outlook.com [40.107.237.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RMfKgFh0"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B130C218EB8;
-	Fri,  7 Mar 2025 12:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741349773; cv=fail; b=W3c+lXMz13sTDolaf7WcP5y3YdXtwkJpHk3nzMp1D9JtRCUdwI7MQz/l3rupYfzm8Bf2+60JVeAjzRmEhsJb4FCOWvXXRINKxnpkEE9JtQNL5HE49Dr+j36hYcfqWfvTstOTXWXIGPZ9I6x7kPc3JEFaOAFQrlA+iD/a8ZWVAdc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741349773; c=relaxed/simple;
-	bh=U9j5w3NnYbhNA7k/hYyFtGNY6pIeU6EbWdMM45ZxwTI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=gNs3k+SNwjnbqkeZq0ThGl7hWHkzao7MG3ntnk5s143m7tuTeluj6ZU2BYLp0J/AeCqOJ8wzQ9bcvuuEr8cIYnUMPSyVyWS0wYWKdsNO6GfuPT8LipoKKsISgOl6hVLSE/gQ585BxQJAHRmpiBnnpI1ucJZSFVV4MCaY0xHZa3o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Me+fOF2r; arc=fail smtp.client-ip=40.107.237.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P7pqr8MYXAW983wegBal9UtCL7XvhV4tU70OH+aM1zqAE0rlCbDSPbeM9/AyRSSZTB/MpeJLyMPezGx2139jd+aiJC0WCK3hcZn+rOR1koBIFUjaXcgTvsMNibw5lEg5nwE0ZQn4sRQ8lu+XYKFsBEjXNrFomY4jX6pG2WfRtVTEbktfJVHuCdhH2beEkIy6qRIcvQe/HzTC8zo0X9wsubC6yQ8I6kUxuORUIYSgSfTUqQ1zaMeOk/pIRDUnJH0biq6YWPv9QEjmIOT+Ra88f1oFiR4gPxGXLHk7vw7JXEXFE5nl/pfpDs/slyBTj8xqG6G+NC0Z+Y4OXoLWBMVIRw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aK2hd2iHSzz2oo+OFc5ouGAxFGyAFNWMUeUXzWn0iMQ=;
- b=sGi7MrraVnu47K+gHzZ1+t+A+Wp1wyoS6K8VY7hlGMoGxXx/2RVloqb3cIt+zwisjCvmx/CyyGGhqkq1JlC2Pe6V6w/KOVoUAZBFfqgnMWgXMK8aDi92+Ho9yyW68mshnOoK0LH+zyOwo6kKIiXMyDh8uza5rRE0PJG4HIUiQIpA9RdZ1b2izpgCa1Fnr75yYC0cilqaNAMBANHyZ/aGn7PtJgCgw3oxGjofCMaghfmAqYTDNLi1OLnBrJogWMJKIIsxGypK3UpT1b+apS0G0TxVdckIPLSdrTegfmWEd/q6tN+MgBIR3BHS9oUo9LQzQq1ZD1rXg9Uwo7LLyxw5AA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aK2hd2iHSzz2oo+OFc5ouGAxFGyAFNWMUeUXzWn0iMQ=;
- b=Me+fOF2rYgaRla1nSTwOuXltoDUiipUX6mxal//oHqzr6jLCQgVFwNYOUgYDpeNL/5F3toVxEln+o/zc6RB5YKRTRVDEGtKrFGviZaIw2WY7AntMe+s7WkzzzvnJXSTKxfCwwSZFW3rr3AsoERknY2x8GRQhENF3/z1nACsn0Ftl2+Tj797sdQEMCIzAlqVm5U1heZ1Xn8vPf7k3goxT9uDCstVOveHmCF0ktDZb/zl16qHo+tBepF6OH51AjCK/OZYxFjvav+2dC4shpPiq0Mg6WcxSCnv6idGweAlvZnaIZpNmWcrv2b35zFyk1r2BCDO5+1M3BJ7Z5v0USrxeXw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from MW6PR12MB8663.namprd12.prod.outlook.com (2603:10b6:303:240::9)
- by CH2PR12MB4245.namprd12.prod.outlook.com (2603:10b6:610:af::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Fri, 7 Mar
- 2025 12:16:08 +0000
-Received: from MW6PR12MB8663.namprd12.prod.outlook.com
- ([fe80::594:5be3:34d:77f]) by MW6PR12MB8663.namprd12.prod.outlook.com
- ([fe80::594:5be3:34d:77f%2]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
- 12:16:07 +0000
-Date: Fri, 7 Mar 2025 08:16:06 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the cxl tree with the hmm tree
-Message-ID: <20250307121606.GJ354511@nvidia.com>
-References: <20250307191448.36be9934@canb.auug.org.au>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307191448.36be9934@canb.auug.org.au>
-X-ClientProxiedBy: BLAPR05CA0044.namprd05.prod.outlook.com
- (2603:10b6:208:335::27) To MW6PR12MB8663.namprd12.prod.outlook.com
- (2603:10b6:303:240::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312E5184E
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 12:17:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741349841; cv=none; b=aOItJqRxZ6KL0ztw2GyrWft7iERNrRjB0xXld5AlNwC2r9ZLXFy7YeLUg/0S181sdSj/Fh3T+kNCQq1ruah1K3N+kyQOG4cMSlu7j6U8Ivmu+xwLrPOw9AvYqIpaUbkwbkgIijKE+a72CD76/MldZuG7jmYHvK//PxV/oDqEwiU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741349841; c=relaxed/simple;
+	bh=95Sqv0StA8OGODYElwMV9P+e9Z/vyzlsd2TUirln5ZA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rcCkP1dThweBFaRTDlgJSX/xkqIti/CqRRyjBj4JAWRMcGvPbXJ0LyRlSh1oK/c0L2jW1wAawnSZyrB5n72tVADwFZl6HAWW7u+1ppd6NMsvuPr91T+L4vecwhFEmF0T21oWe3Oy7pglhQCZtAVejsb4eyu5rGXy0nPxaTX/Ja8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RMfKgFh0; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-224171d6826so3281885ad.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 04:17:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741349838; x=1741954638; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hv/gVLl2qHT3OP5ugQYjdLZvq+nefm2QS0Hproa/Q1s=;
+        b=RMfKgFh0j70baDIS9XSwxylUILg3sA4Suiydcru82/mAj6q1RaRMNkwHpV06eghUwc
+         SZjpKc2g4/C1W/cPGmaqabvkaQayhh8wsc8NyrHedRnhADSvTxZOBM7C0hJfiVrbiR0U
+         PpGqi15rJAcvo9im5nxa6n407SJ3rO7wrTkEeGL4IuWO+kzuuzeyVzb00P+aiHdKE91b
+         3XEYWSOybwYvofuzIJmDYQTmSdtoq5ja3HglVuqT63QGavIfGGBqFwwMGs36dgyHgCGc
+         BhOTkOL9at1dK6d3qtGJhcJ6ksNAcjDAmwoIrs4TQTwGr0zpC/BtATIq4FZAsk+j4woS
+         2x0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741349838; x=1741954638;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Hv/gVLl2qHT3OP5ugQYjdLZvq+nefm2QS0Hproa/Q1s=;
+        b=gZKXdX9OrCBl49ofItkq9/pYbOjmUFitzybb/WGNmXeS3to3S5WfnjIh5YLH1ocJYT
+         O3KSryouwJb5iP5IzrCLcgT1hiVfSfqc54bDvNEAc9vgckdds1GYz35U8LK4yXIRaehB
+         B5+OoJEPvBa8dklavhkU2fPkwFeCB6+Sk+Zlsl+Pkn1H1v0JQjuh9jJlwOC94HANdMDg
+         43lFrcP4Kc3cqk0iCkFOTNNQdNDXYvCIxGwwK4A/5UnafFJ/tBjQOVpY4b1AucKLhEex
+         Lcum6t97VEIdk9m++ph5Sp4eCfMG8NrsHDMntOBU3oZMaOe6/n/Hfu7VTyZXo4Rrncxf
+         3GyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDpRHYfj6HRSSb7Cbe9eOUMpB5PVMzwN8dWimHwjutXv2KU029ss9iW9v33Lgo32uKQqtMbA2M68FNxLE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBPiKZIokwavyPtB45W8T79tl0VxgEx0rLLT7GWCq9e3TS982b
+	sXaOKC7wYLBqUakK7f9PMu6qK+F+TVlHBrRImwTCg+MbGHmPnHS+jTd5OakXBfZRVJOK0Mra3Hq
+	MPTJS9jsq/0DwqdFSOfgDmOacV9gExCg6BJCVhg==
+X-Gm-Gg: ASbGncuPa/v4gnEiXA6lqQEoziGrflaXDaeC48X5BbrrgqaHAJjhH++/Oh+Qh7Cjtpa
+	cInf9Mw9149swLyOsBViUYmRiJA8P24FrVjQ4wXeZVcShl+mxirCL1mnJjionYMlKEc6oFT7eTI
+	m+cxQdsCLNhz61QzzwuK0xJbh8WMs=
+X-Google-Smtp-Source: AGHT+IH573IS5QtUx20I6gmw8IwbjOS9N3JKhGKodkJA2RjHHnjVw0eGQJw9/ecW7LGByF/yQgZQ/285vJSUaEc7A0Y=
+X-Received: by 2002:a05:6a00:843:b0:736:a973:748 with SMTP id
+ d2e1a72fcca58-736aaad3d00mr5126533b3a.22.1741349838300; Fri, 07 Mar 2025
+ 04:17:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW6PR12MB8663:EE_|CH2PR12MB4245:EE_
-X-MS-Office365-Filtering-Correlation-Id: 84b191ea-5866-4eeb-0e42-08dd5d71d6fb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eQ7o/c5FCMNWI5s08RQWn9gihAQzZ+IdoHz6yO6dGB+JcuEuYH2+QducSp1r?=
- =?us-ascii?Q?eHlwL+GVppPbD+qlE9HnkTcA1VQ8XjxlwlMWiaUkgcG0ikJTGvUjZxQVPNw6?=
- =?us-ascii?Q?o/WhW97bJpWDxiPgY5OWJ/Sv8hYpi4l7cxtMKl6lQVeoCGNQfFHxJIAvbA0t?=
- =?us-ascii?Q?p/lvYn7EIZrEJ1aXmolc3LPYC9JT2eVU3u+Z/ZJBZVAMsVHE2P/bqirCjWGi?=
- =?us-ascii?Q?fJFTL7rt/4mzNgGQqvCo73ek0TEDEQEkmNYwrhj+380aT0b7OfIDNGItDb2w?=
- =?us-ascii?Q?4s4sqF+sEqXYjnoVxJNTLrkWOWertQQ1AtlFxLC0eyAQdZ3h7ZFZGW4H8/+z?=
- =?us-ascii?Q?biUNi3gk4b0HFv6Toif6vJCOtkotNbDPHWovVos/QdhBAw/pJgqVm4Z3UN/r?=
- =?us-ascii?Q?kyLZ8A/rQUJ9tHArCvbo5z36H5Mel5+lZXcVZFThE2RhcE43S2qPE5WLfeav?=
- =?us-ascii?Q?5NvGRQI5TJitJ6A8szgzRyUU6ePpb5OqhrOPT7cdeCM0FbY+pF9ZSCI9vzGy?=
- =?us-ascii?Q?ffIO+23l3xguHi8pMkZG94DIMYp3R2zKWMcY6RZRkk8FOmB+TZi6EEgf/55S?=
- =?us-ascii?Q?d7kC4Wgf/WWPvHj3l4BCWAmFnbH7/7avlijI+7fXaqDvermbLobAuXAhVUVq?=
- =?us-ascii?Q?4JL4M6SfDFukf9QGnFGIB6TjuQ9JngXQsAy0xnCXsD4KlzRUZW2s3wQfHbfX?=
- =?us-ascii?Q?n256m4DjwrS6ypOrXlDVoh05FLeKMNqXg2snVr5jMKP804UiNe3cONKa2h00?=
- =?us-ascii?Q?f6IeMPSn08bfP93tdHofbleJVZ2IaJbED9cnU75qyHyE0avGAdqcLmxXek6U?=
- =?us-ascii?Q?Hws2N2q1v/AZyTRLgnQyuOpU4LfYwEn0esfYlDyE0uDg0wvJ1EfqbTwg+PwX?=
- =?us-ascii?Q?F46dCI/PGfROhYfwKtGfHsWAmLbSG+0EtYZLya56qLAGwSXm9CjaIHnK+Y82?=
- =?us-ascii?Q?aYonIhBlat0LP7Q5JbqlRQEWGEnopcZ3QbrtpwUa6Hmlhfm0ihUpybkQg4M9?=
- =?us-ascii?Q?VhgKmYSVzy70AI/KOJqGJGvOc/0QNTA6VD+7RPrg6s8agugbkWb+oDRAjomW?=
- =?us-ascii?Q?rMWTf4j7YrNYhy6rh+g+lyahuv6Lk39vH6HFDtSf7QDgLefuiC5cprFjBBo4?=
- =?us-ascii?Q?oNz+uewL7iL0OAAEpw9wcRkT36xnyAG1zU4iZATS5uX7ul0kDmV6DDqgEq5t?=
- =?us-ascii?Q?tV26bfZ7Qlc3/upy1z66xm3zJWFu18A7D5ShtyOBbNNJOx5dm3UNra9OVj0M?=
- =?us-ascii?Q?ttPWMSPgzYalNBeh/biXGD/FpEQuh8bXVsw0d8vG72+yX8CeG+I/gZ1DNYrW?=
- =?us-ascii?Q?RM5fkHveXVNz1T7//GwMqlFoaXyFALPmZHkTAZn0ieeAzC0dxPSZ0WiZELLJ?=
- =?us-ascii?Q?jeWrBMC3RKSwxWi1Fx/JatPe2HUn?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW6PR12MB8663.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?raSYu/fztSOyF4FQJQfSqAtWKufvgRMzhelFBGUMqgyiIBKjuxHziGQJR0ac?=
- =?us-ascii?Q?T5cV3KgyJzgIqhcZMCfFMIUh2W4pc+9qptaFOKitM85jj4NgMgtB5HwYEkWa?=
- =?us-ascii?Q?NkIFetV1SK7bTiiTxYXVuN+cudPILxoniGtfSpLdTTRx9UiIOn8dMw3v4u0t?=
- =?us-ascii?Q?V89cEiYqpaz11saMHWzbvikKCcIVU/OIYKtG1/5oXYPl/EZMps/ts5KBTutR?=
- =?us-ascii?Q?PoJl2CEIb60MH/5hYiX9UdSRf9lrAV7N4PbmjOJcr+4BJttO/6Rxb9ACxKPK?=
- =?us-ascii?Q?I/wD0xdOmOSI3f0gdh3zMD/fUGfbDnlxr5hSQBWTLpMWkQDfv/FHLMo6SiSi?=
- =?us-ascii?Q?1XOWS/Tr9iq9n1qN6I5lAQdSp2vF+iXCpn7WUVY2Jdhn8J8Pc43uGihlFvKf?=
- =?us-ascii?Q?Y0uY7udf2abE5gBC3uYl6LCsBaXSCUZmG9TapxFKGnsu3kQz+e++s2a9da53?=
- =?us-ascii?Q?gsm4l0gu3us3HmUl+/2gdLRKgssyRYxfzEKkrq6lxB0ifv/wGIezJ5CgAycZ?=
- =?us-ascii?Q?EPF2pKLh2RY7vWpr6eiPZLnW3MQgwg6g+XiGnmDCx2hryn1JDAyFM0c61BEq?=
- =?us-ascii?Q?2Lylv+lEwgnwwvGC5+9vq+VCjfglWV3iilS6ejIOZc3fW0a//ajNKmlgyk7D?=
- =?us-ascii?Q?XPE4S6gQjTiDEPPwuDISYXeRfZEDcU51C4ZhqR/uij6hdYCUG5w18/EhnU7+?=
- =?us-ascii?Q?oG6sYCIzlyPrb/m31AJCP+qMhzv9ZmuHxNxhW2hdQ748Y+HuiuWHsPiBIoPQ?=
- =?us-ascii?Q?7o6psfLE5sn5RosfPSKODWAY9oVaiYRaYe8CXESCcYWGNoBn/agf3xb3koVw?=
- =?us-ascii?Q?Upas/4u5bJGdchkWSVehYNTJlaKNt6R1l+85D6luFhcm8S+bRypONfINRVXJ?=
- =?us-ascii?Q?5RljZwfuAMVNYtCymVhejPK7Q2iH3l8QgS3c2+kTnltOosholqZYo0X6z29N?=
- =?us-ascii?Q?/+9UTGPSKyrv3nLpP3oI4qCWrd20Hdz+Cmr5UFQNjPH1+0CbJYzYaq2LrHeD?=
- =?us-ascii?Q?Sy68vIAWWe+OgS8/tlwQwZ77KPGkiUD94x5IZzW6kYZ7zBFVIt3TRBl/19P8?=
- =?us-ascii?Q?eEfwbLfmEej4yJ4Y8BwBIQ5GIyoxLlaPEcK4EJ48UrC5ixfGjKMxQpG6fPHa?=
- =?us-ascii?Q?iSVXIs8+1Nx2F1PMBLNhyOrLDki8haFt67FRYiNy7O0m7jtb06TeXs9z3uza?=
- =?us-ascii?Q?a71EsIpUe1RRi/lsltwdIuU+PfUn+VHqt6U+Yxdf4pmug2HqS4y2r5mEQsxw?=
- =?us-ascii?Q?jCFS/7bJfQpZp1TskDtrQWA68Yd7hXajqn7sBPZUw8aSF3aLyELyhjzIy+Yi?=
- =?us-ascii?Q?YAaJLdpAC6Vp8+hwc92+18LJWt/phrp1/+lJvz0l3N4ORpnzyFdrEq5HnYV9?=
- =?us-ascii?Q?uzHcvh9h0xxIMLfgjLgj0seW1FdzxvVSrHXeUQr1FcV62pWUjeqk1/OXxa3I?=
- =?us-ascii?Q?HJhLBOch3y7g7jc7XNEggweWdd+l4l/Fa78dZuMFpau2ivfGcGpyBu11KbYk?=
- =?us-ascii?Q?fi10NHdyoZ19v6qecQZMYk3vJq24tEPodriPB8+qmBhtu4IGrFV4fdS2lHG2?=
- =?us-ascii?Q?79g79yT3zWCXwZ2M76Q=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84b191ea-5866-4eeb-0e42-08dd5d71d6fb
-X-MS-Exchange-CrossTenant-AuthSource: MW6PR12MB8663.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 12:16:07.7486
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IbObYBYy+piWxmCAcXsu21Hmpv33Ztt91499GLw+ONIgXl9QsGc2te7ts+zf4GYB
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4245
+References: <20250227092640.2666894-1-quic_songchai@quicinc.com> <20250227092640.2666894-4-quic_songchai@quicinc.com>
+In-Reply-To: <20250227092640.2666894-4-quic_songchai@quicinc.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Fri, 7 Mar 2025 12:17:05 +0000
+X-Gm-Features: AQ5f1JokkN84bPdZY7gP5fhbY5F7Y4Itc_hcgefVYh4EcU6KzYt95XIRUUYFQ2Q
+Message-ID: <CAJ9a7Vi9CWGKGYe6jBELFN_X6dSG4EfQQd5moju5ekbrLWxi2g@mail.gmail.com>
+Subject: Re: [PATCH v3 3/7] coresight-tgu: Add signal priority support
+To: songchai <quic_songchai@quicinc.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andy Gross <agross@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Mar 07, 2025 at 07:14:48PM +1100, Stephen Rothwell wrote:
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+Hi
 
-Thanks, it looks right
+On Thu, 27 Feb 2025 at 09:27, songchai <quic_songchai@quicinc.com> wrote:
+>
+> From: Songwei Chai <quic_songchai@quicinc.com>
+>
+> Like circuit of a Logic analyzer, in TGU, the requirement could be
+> configured in each step and the trigger will be created once the
+> requirements are met. Add priority functionality here to sort the
+> signals into different priorities. The signal which is wanted could
+> be configured in each step's priority node, the larger number means
+> the higher priority and the signal with higher priority will be sensed
+> more preferentially.
+>
+> Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
+> Signed-off-by: songchai <quic_songchai@quicinc.com>
+> ---
+>  .../testing/sysfs-bus-coresight-devices-tgu   |   7 +
+>  drivers/hwtracing/coresight/coresight-tgu.c   | 139 ++++++++++++++++++
+>  drivers/hwtracing/coresight/coresight-tgu.h   | 110 ++++++++++++++
+>  3 files changed, 256 insertions(+)
+>
+> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
+> index 741bc9fd9df5..af7332153833 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
+> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
+> @@ -7,3 +7,10 @@ Description:
+>                 Accepts only one of the 2 values -  0 or 1.
+>                 0 : disable TGU.
+>                 1 : enable TGU.
+> +
+> +What:           /sys/bus/coresight/devices/<tgu-name>/step[0:7]_priority[0:3]/reg[0:17]
+> +Date:           February 2025
+> +KernelVersion   6.15
+> +Contact:        Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Sam Chai (QUIC) <quic_songchai@quicinc.com>
+> +Description:
+> +                (RW) Set/Get the sensed siganal with specific step and priority for TGU.
 
-Jason
+sp/siganal/signal
+
+> diff --git a/drivers/hwtracing/coresight/coresight-tgu.c b/drivers/hwtracing/coresight/coresight-tgu.c
+> index da4c04ac1097..f28761619ebe 100644
+> --- a/drivers/hwtracing/coresight/coresight-tgu.c
+> +++ b/drivers/hwtracing/coresight/coresight-tgu.c
+> @@ -17,9 +17,92 @@
+>
+>  DEFINE_CORESIGHT_DEVLIST(tgu_devs, "tgu");
+>
+> +static int calculate_array_location(struct tgu_drvdata *drvdata, int step_index,
+> +                         int operation_index, int reg_index)
+> +{
+> +       int ret = -EINVAL;
+> +
+> +       ret = operation_index * (drvdata->max_step) *
+> +                     (drvdata->max_reg) + step_index * (drvdata->max_reg)
+> +                               + reg_index;
+> +
+> +       return ret;
+> +}
+> +
+> +static ssize_t tgu_dataset_show(struct device *dev,
+> +                               struct device_attribute *attr, char *buf)
+> +{
+> +       struct tgu_drvdata *drvdata = dev_get_drvdata(dev->parent);
+> +       struct tgu_attribute *tgu_attr =
+> +               container_of(attr, struct tgu_attribute, attr);
+> +
+> +       return sysfs_emit(buf, "0x%x\n",
+> +                         drvdata->value_table->priority[calculate_array_location(
+> +                                 drvdata, tgu_attr->step_index,
+> +                                 tgu_attr->operation_index, tgu_attr->reg_num)]);
+> +
+> +}
+> +
+> +static ssize_t tgu_dataset_store(struct device *dev,
+> +                                struct device_attribute *attr, const char *buf,
+> +                                size_t size)
+> +{
+> +       unsigned long val;
+> +       ssize_t ret = -EINVAL;
+> +
+> +       struct tgu_drvdata *tgu_drvdata = dev_get_drvdata(dev->parent);
+> +       struct tgu_attribute *tgu_attr =
+> +               container_of(attr, struct tgu_attribute, attr);
+> +
+> +       if (kstrtoul(buf, 0, &val))
+> +               return ret;
+> +
+> +       guard(spinlock)(&tgu_drvdata->spinlock);
+> +       tgu_drvdata->value_table->priority[calculate_array_location(
+> +               tgu_drvdata, tgu_attr->step_index, tgu_attr->operation_index,
+> +               tgu_attr->reg_num)] = val;
+> +       ret = size;
+> +
+> +       return ret;
+
+ret is unneeded - directly return either size or -EINVAL.
+
+> +}
+> +
+> +static umode_t tgu_node_visible(struct kobject *kobject, struct attribute *attr,
+> +                               int n)
+> +{
+> +       struct device *dev = kobj_to_dev(kobject);
+> +       struct tgu_drvdata *drvdata = dev_get_drvdata(dev->parent);
+> +       int ret = 0;
+> +
+> +       struct device_attribute *dev_attr =
+> +               container_of(attr, struct device_attribute, attr);
+> +       struct tgu_attribute *tgu_attr =
+> +               container_of(dev_attr, struct tgu_attribute, attr);
+> +
+> +       if (tgu_attr->step_index < drvdata->max_step) {
+> +               ret = (tgu_attr->reg_num < drvdata->max_reg) ?
+> +                                           attr->mode : 0;
+> +               return ret;
+> +       }
+> +       return SYSFS_GROUP_INVISIBLE;
+> +}
+
+default ret as SYSFS_GROUP_INVISIBLE, and returnret at end
+
+> +
+>  static void tgu_write_all_hw_regs(struct tgu_drvdata *drvdata)
+>  {
+> +       int i, j, k;
+> +
+>         CS_UNLOCK(drvdata->base);
+> +
+> +       for (i = 0; i < drvdata->max_step; i++) {
+> +               for (j = 0; j < MAX_PRIORITY; j++) {
+> +                       for (k = 0; k < drvdata->max_reg; k++) {
+> +                               tgu_writel(drvdata,
+> +                                          drvdata->value_table->priority
+> +                                                  [calculate_array_location(drvdata, i, j, k)],
+> +                                          PRIORITY_REG_STEP(i, j, k));
+> +                       }
+> +               }
+> +       }
+> +
+>         /* Enable TGU to program the triggers */
+>         tgu_writel(drvdata, 1, TGU_CONTROL);
+>         CS_LOCK(drvdata->base);
+> @@ -130,6 +213,38 @@ static const struct attribute_group tgu_common_grp = {
+>
+>  static const struct attribute_group *tgu_attr_groups[] = {
+>         &tgu_common_grp,
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(0, 0),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(0, 1),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(0, 2),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(0, 3),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(1, 0),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(1, 1),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(1, 2),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(1, 3),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(2, 0),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(2, 1),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(2, 2),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(2, 3),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(3, 0),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(3, 1),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(3, 2),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(3, 3),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(4, 0),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(4, 1),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(4, 2),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(4, 3),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(5, 0),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(5, 1),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(5, 2),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(5, 3),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(6, 0),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(6, 1),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(6, 2),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(6, 3),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(7, 0),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(7, 1),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(7, 2),
+> +       PRIORITY_ATTRIBUTE_GROUP_INIT(7, 3),
+>         NULL,
+>  };
+>
+> @@ -164,6 +279,30 @@ static int tgu_probe(struct amba_device *adev, const struct amba_id *id)
+>
+>         spin_lock_init(&drvdata->spinlock);
+>
+> +       ret = of_property_read_u32(adev->dev.of_node, "tgu-regs",
+> +                                  &drvdata->max_reg);
+> +       if (ret)
+> +               return -EINVAL;
+> +
+> +       ret = of_property_read_u32(adev->dev.of_node, "tgu-steps",
+> +                                  &drvdata->max_step);
+> +       if (ret)
+> +               return -EINVAL;
+> +
+> +       drvdata->value_table =
+> +               devm_kzalloc(dev, sizeof(*drvdata->value_table), GFP_KERNEL);
+> +       if (!drvdata->value_table)
+> +               return -ENOMEM;
+> +
+> +       drvdata->value_table->priority = devm_kzalloc(
+> +               dev,
+> +               MAX_PRIORITY * drvdata->max_reg * drvdata->max_step *
+> +                       sizeof(*(drvdata->value_table->priority)),
+> +               GFP_KERNEL);
+> +
+> +       if (!drvdata->value_table->priority)
+> +               return -ENOMEM;
+> +
+>         drvdata->enable = false;
+>         desc.type = CORESIGHT_DEV_TYPE_HELPER;
+>         desc.pdata = adev->dev.platform_data;
+> diff --git a/drivers/hwtracing/coresight/coresight-tgu.h b/drivers/hwtracing/coresight/coresight-tgu.h
+> index 380686f94130..6e5d465117df 100644
+> --- a/drivers/hwtracing/coresight/coresight-tgu.h
+> +++ b/drivers/hwtracing/coresight/coresight-tgu.h
+> @@ -13,6 +13,110 @@
+>  #define tgu_writel(drvdata, val, off) __raw_writel((val), drvdata->base + off)
+>  #define tgu_readl(drvdata, off) __raw_readl(drvdata->base + off)
+>
+> +/*
+> + *  TGU configuration space                              Step configuration
+> + *  offset table                                         space layout
+> + * x-------------------------x$                          x-------------x$
+> + * |                         |$                          |             |$
+> + * |                         |                           |   reserve   |$
+> + * |                         |                           |             |$
+> + * |coresight management     |                           |-------------|base+n*0x1D8+0x1F4$
+> + * |     registe             |                     |---> |prioroty[3]  |$
+> + * |                         |                     |     |-------------|base+n*0x1D8+0x194$
+> + * |                         |                     |     |prioroty[2]  |$
+> + * |-------------------------|                     |     |-------------|base+n*0x1D8+0x134$
+> + * |                         |                     |     |prioroty[1]  |$
+> + * |         step[7]         |                     |     |-------------|base+n*0x1D8+0xD4$
+> + * |-------------------------|->base+0x40+7*0x1D8  |     |prioroty[0]  |$
+> + * |                         |                     |     |-------------|base+n*0x1D8+0x74$
+> + * |         ...             |                     |     |  condition  |$
+> + * |                         |                     |     |   select    |$
+> + * |-------------------------|->base+0x40+1*0x1D8  |     |-------------|base+n*0x1D8+0x60$
+> + * |                         |                     |     |  condition  |$
+> + * |         step[0]         |-------------------->      |   decode    |$
+> + * |-------------------------|-> base+0x40               |-------------|base+n*0x1D8+0x50$
+> + * |                         |                           |             |$
+> + * | Control and status space|                           |Timer/Counter|$
+> + * |        space            |                           |             |$
+> + * x-------------------------x->base                     x-------------x base+n*0x1D8+0x40$
+> + *
+> + */
+> +
+> +/* Calculate compare step addresses */
+> +#define PRIORITY_REG_STEP(step, priority, reg)\
+> +       (0x0074 + 0x60 * priority + 0x4 * reg + 0x1D8 * step)
+> +
+
+use #defines + explanation instead of arbitrary magic numbers
+
+> +#define tgu_dataset_ro(name, step_index, type, reg_num)     \
+> +       (&((struct tgu_attribute[]){ {                      \
+> +               __ATTR(name, 0444, tgu_dataset_show, NULL), \
+> +               step_index,                                 \
+> +               type,                                       \
+> +               reg_num,                                    \
+> +       } })[0].attr.attr)
+> +
+
+
+This define unused in this patch, Drop till it is used.
+
+> +#define tgu_dataset_rw(name, step_index, type, reg_num)                  \
+> +       (&((struct tgu_attribute[]){ {                                   \
+> +               __ATTR(name, 0644, tgu_dataset_show, tgu_dataset_store), \
+> +               step_index,                                              \
+> +               type,                                                    \
+> +               reg_num,                                                 \
+> +       } })[0].attr.attr)
+> +
+> +#define STEP_PRIORITY(step_index, reg_num, priority)                     \
+> +       tgu_dataset_rw(reg##reg_num, step_index, TGU_PRIORITY##priority, \
+> +                      reg_num)
+> +
+> +#define STEP_PRIORITY_LIST(step_index, priority)  \
+> +       {STEP_PRIORITY(step_index, 0, priority),  \
+> +        STEP_PRIORITY(step_index, 1, priority),  \
+> +        STEP_PRIORITY(step_index, 2, priority),  \
+> +        STEP_PRIORITY(step_index, 3, priority),  \
+> +        STEP_PRIORITY(step_index, 4, priority),  \
+> +        STEP_PRIORITY(step_index, 5, priority),  \
+> +        STEP_PRIORITY(step_index, 6, priority),  \
+> +        STEP_PRIORITY(step_index, 7, priority),  \
+> +        STEP_PRIORITY(step_index, 8, priority),  \
+> +        STEP_PRIORITY(step_index, 9, priority),  \
+> +        STEP_PRIORITY(step_index, 10, priority), \
+> +        STEP_PRIORITY(step_index, 11, priority), \
+> +        STEP_PRIORITY(step_index, 12, priority), \
+> +        STEP_PRIORITY(step_index, 13, priority), \
+> +        STEP_PRIORITY(step_index, 14, priority), \
+> +        STEP_PRIORITY(step_index, 15, priority), \
+> +        STEP_PRIORITY(step_index, 16, priority), \
+> +        STEP_PRIORITY(step_index, 17, priority), \
+> +        NULL                   \
+> +       }
+> +
+> +#define PRIORITY_ATTRIBUTE_GROUP_INIT(step, priority)\
+> +       (&(const struct attribute_group){\
+> +               .attrs = (struct attribute*[])STEP_PRIORITY_LIST(step, priority),\
+> +               .is_visible = tgu_node_visible,\
+> +               .name = "step" #step "_priority" #priority \
+> +       })
+> +
+> +enum operation_index {
+> +       TGU_PRIORITY0,
+> +       TGU_PRIORITY1,
+> +       TGU_PRIORITY2,
+> +       TGU_PRIORITY3
+> +
+> +};
+> +
+> +/* Maximum priority that TGU supports */
+> +#define MAX_PRIORITY 4
+> +
+> +struct tgu_attribute {
+> +       struct device_attribute attr;
+> +       u32 step_index;
+> +       enum operation_index operation_index;
+> +       u32 reg_num;
+> +};
+> +
+> +struct value_table {
+> +       unsigned int *priority;
+> +};
+> +
+>  /**
+>   * struct tgu_drvdata - Data structure for a TGU (Trigger Generator Unit) device
+>   * @base: Memory-mapped base address of the TGU device
+> @@ -20,6 +124,9 @@
+>   * @csdev: Pointer to the associated coresight device
+>   * @spinlock: Spinlock for handling concurrent access
+>   * @enable: Flag indicating whether the TGU device is enabled
+> + * @value_table: Store given value based on relevant parameters.
+> + * @max_reg: Maximum number of registers
+> + * @max_step: Maximum step size
+>   *
+>   * This structure defines the data associated with a TGU device, including its base
+>   * address, device pointers, clock, spinlock for synchronization, trigger data pointers,
+> @@ -31,6 +138,9 @@ struct tgu_drvdata {
+>         struct coresight_device *csdev;
+>         spinlock_t spinlock;
+>         bool enable;
+> +       struct value_table *value_table;
+> +       int max_reg;
+> +       int max_step;
+>  };
+>
+>  #endif
+
+Regards
+
+Mike
+
+-- 
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
