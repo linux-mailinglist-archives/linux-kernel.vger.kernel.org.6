@@ -1,166 +1,166 @@
-Return-Path: <linux-kernel+bounces-552106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE068A575D5
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:12:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 099E8A575D8
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:13:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 046C4179366
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:12:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3677217536D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2FD258CED;
-	Fri,  7 Mar 2025 23:12:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D0B259C89;
+	Fri,  7 Mar 2025 23:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jqC2HE2G"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YZGCpVhd"
+Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44072258CD1
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 23:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EA115746E;
+	Fri,  7 Mar 2025 23:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741389163; cv=none; b=V6hEY8wW7wN4Z4eTRu5xUGQVteqJWPUN02ze9FrWG1oYAHIqsM1FpYrx0paRZtEzfi+zDa5hGWgjIhosvPViG6IbOn7/zdzfVjnULDCHNDvmd9cx2KZN91MNOjsDU78WaG1ejKeKAHhhL6Qs6ibnVeGX6zrBi/Akw4S7zRwqrgs=
+	t=1741389205; cv=none; b=TapXQtOcJz8mlBajMHlL26Pma/TjEgSZdFpvmpHagROGm/ypA/TngBlJfM7+q5RNuvqyGV++TLVFD73jQfeW6h4akvncyRZlwKGhKj9YWMnmmYOTqTuCqutFHOgYoD+hDgHXBdtXqBT2KuC31CUF0uAcSqlEQEmGFiGbAN5aMp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741389163; c=relaxed/simple;
-	bh=iAr5WyJszTlsFuuCiqSrDjfdnmsHP/Pi4YVF/CoLA7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m/ObfHI4LZ4ScBWGblkdDYNfIRnt1fgTNl2zARo+O+jBFAquup90pIEiZiRElD9r3Eg8mga/OyqSfzqXXlJr5LewcaB7gZxlWj27pATD3MkbgfsnfYwYZBy6hco8dHxoShk0yRduvJnH5UUNfGLERo/dNkgZj+SR1MTzmL96h9E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jqC2HE2G; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-85b018062a5so199400939f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 15:12:42 -0800 (PST)
+	s=arc-20240116; t=1741389205; c=relaxed/simple;
+	bh=G63d06X8W9arXCJggGOHT2w3cbPycEOHJ8wMoqYNgPQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s04pM0MQdDzeMG1EZ4GHemxfLB+XjKXvU/itLymCsslivj488RAButgwn4+jLNA+TWR1s107yGogXQCQc7BbBbUQBm8qDnoBFwCBpL/6DJ7Cz5oGa+tPMw6FK//Odjx+ImtEBEzpVXI5zaIxdnUPO1X04YQkYKYVRZ+3+yZuhXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YZGCpVhd; arc=none smtp.client-ip=209.85.219.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6e8ec399427so15986606d6.2;
+        Fri, 07 Mar 2025 15:13:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741389161; x=1741993961; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rWk7dXPmdm5yCaIaVrSCJTIdKCaoNn8ysMEwHD+DXFk=;
-        b=jqC2HE2GAR5fjnLq7k9HHXB9YU8wqgTJ+srKfDYA1zjBjjOFFvlCIa4oZJwpoHLnig
-         FgTPTgiGKEf9Hi4kRTaw83z0sG4Y+u36LAoZ4KTZ5R4F3rZ4dr/ULb+7E8GLS4C6oCAI
-         0ATDZTck0tSBPKRRai9l08E9dDydqIUlNkQQYwvxb9OiH1tl2yHrpVUtDs9c2XohMAfJ
-         KrrjCTU+N6jxxYQE8Lk65/BKvK+FvR5SyWB2FcA/Zj9FWPqrlUNTaNxTce1ZsCLxWxCP
-         Ly0qO3gAzeJH77UrTUwaznHZh+Mgax3HKEeyTgrqb7EiumnaFxPQro8En0k45BrWnJWy
-         uiXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741389161; x=1741993961;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741389203; x=1741994003; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rWk7dXPmdm5yCaIaVrSCJTIdKCaoNn8ysMEwHD+DXFk=;
-        b=cUkhFgXsOOIEdP0gGtJSvSR4gaJAcwyjaVrR6CDkK+vGLiZbk2Y3yeqHQ0YHCyIMXI
-         1X2zyaagKk/o4oXFAN23YStZcJcVT6UPuf+9fBbODNFEZpaI/6pArQAejRMjBHrl/REB
-         QCfKrQ5pwFR6FwQCFPEroJLGPbepWTW2eMMm4LvCx4AKxcsXvbNwSpZmAe+usjD6D3vv
-         k30iSuA+w30G/8XzIMlYf5PFBX8NaeUHqmiHNoEfdq/Mc04pj5fHMvLLBZRGDusUisVm
-         EQ6seXQApN/GjGkuTuBo+rU8by/dYtzzPGGZyj8Qt9GSJ6ndNt2HvcZrke8lXMq0Z8Df
-         26Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCWEQp+2yPX+722kJMWTgIQbVQv8FkivaWv3ICP2/UHOueKR2B9CHHu+LXvSu0C/9zSd/8Bj4hgMtqc3Ro0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsGN5qQ6Ub5Zz7ey9pXol6KnO4gvfgDuTvLSbd3DMc6aDEOVMS
-	D4bST+wousY4FHDTcpnY5Oh0dxCP8x53K8odbxoRDheXqRnpmtjE6ALQcjy/sQ==
-X-Gm-Gg: ASbGncsn2fEm0hY56YJ9nhAK4RHJtZLfVrrdtgmZQMAc5N6RboEuq3JdeTo3dzUgXS6
-	NAiRqGFp/eob1BNvoDLXTfaxGgPoc41vCh7SZAuqhAnMSRYuUG5sgn4hHapeVt28CetaY8UHAwC
-	+XU5s9/rUfXFF5SGeNRJoiy+qJrBvZpHKLYooseuClUxOZZ9mvF2Pf8+mtD0LpsJUytl06rtVjw
-	+7pMvWcQ5EjdwwqSsxZ7JRGx1ynRrl+OpDmC47lbv4XFjiWklWy7cxYI3UBETs4Q3GAqce4/kM6
-	/1qo1XfrNMIZPUiSyfaI2CeykMXzVheCvpMTC9zX6Yku88uBwmdtFGG7tVTUajn5WRCU8pM1XZh
-	7a6aJMb+B
-X-Google-Smtp-Source: AGHT+IHiiJqDXqIfUK/CVTI1rCS7/zKGfwuR4j+jwP7Uw2SRUCzehVJJV8FDhIdmPV4bfql6Mc8Hcw==
-X-Received: by 2002:a05:6602:c8a:b0:85a:eff8:4ce0 with SMTP id ca18e2360f4ac-85b1cf7fbb6mr661020739f.1.1741389161258;
-        Fri, 07 Mar 2025 15:12:41 -0800 (PST)
-Received: from google.com (26.80.59.108.bc.googleusercontent.com. [108.59.80.26])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f216f55378sm681019173.109.2025.03.07.15.12.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 15:12:40 -0800 (PST)
-Date: Fri, 7 Mar 2025 15:12:35 -0800
-From: Justin Stitt <justinstitt@google.com>
-To: Kees Cook <kees@kernel.org>
-Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Marco Elver <elver@google.com>, 
-	Andrey Konovalov <andreyknvl@gmail.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, 
-	linux-kbuild@vger.kernel.org, kasan-dev@googlegroups.com, linux-hardening@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Hao Luo <haoluo@google.com>, 
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>, Bill Wendling <morbo@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Tony Ambardar <tony.ambardar@gmail.com>, 
-	Alexander Potapenko <glider@google.com>, Jan Hendrik Farr <kernel@jfarr.cc>, 
-	Alexander Lobakin <aleksander.lobakin@intel.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH 2/3] ubsan/overflow: Enable pattern exclusions
-Message-ID: <yduqbthmtpc5e2n4u73ofbp326chk3qdkgdiyrgmwcbhgeqceq@yybbkifwt4zk>
-References: <20250307040948.work.791-kees@kernel.org>
- <20250307041914.937329-2-kees@kernel.org>
+        bh=cqomUUPjRLiQmonoip8f3BCduAZxVjsjo6bLnE0yfxE=;
+        b=YZGCpVhdVwnMccQG60h1+BC2fxJTiY3QuFIhTMj95lWP3gTatd/PqhzHcBh1Whomtl
+         73sMldiapnqKss05dMeJe7znRKJdGitHzw6XGzTzC/wNCzXIbjI5DnKUavfhSztyrJLR
+         wBYVDMqmnnHvxtpJ9MYVf8mMBs0n3WSEMcm55SpjwsWHV04Cbl4ewS3w5+BOwmmNMuIw
+         P437SgkE95NTAM1X99/au8k0UlMxoPzSs8WCjB2mkHuzax+jWw7rVx+lpXm6SQLLpH9y
+         B4nKqN5myU6jOLB7Z12e1MHBpiDsDIRkmmtcTZm+DFsndFbl5Sa9gLe+l10nJje+4fFu
+         Kt3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741389203; x=1741994003;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cqomUUPjRLiQmonoip8f3BCduAZxVjsjo6bLnE0yfxE=;
+        b=Gz1RQm78nFbF90NtTd8z+sTQ9N1aZDsOFRbbN0dfvklSReZz7Q9dpUBCv6tSpr996a
+         ZCSMRdTM9f4+zqaRmuWY5uWvAxLc7sWKWOhFJSI/sxnXaoQlfR6UIpMXzAXb15SWomdF
+         KnsVmOVAjC9Lgc7yFJagMo6QxHkLP3ednShr3YUaLqdWVwfb4eDmYxxqUFOck5NDRL1v
+         TQG+d2qoDPrPtwh+yIMKWV2wF8ssv5xMMUPUuo/8D1DKGdHWSM8zZMwdeiuLpIiJnFmZ
+         zSfhZvkw7lvE71vF931V/vpuxPaIZ/W5pORwzQwQQ6cS1J9YuOfGXMNNZ52WoUiOd4op
+         bYvg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5zbY3L/NY+HBATLN/Sufdb8TvKZJVvuc69OmKLDCTlY3z5EDMxgS/U5seGChCSLLy6k91sIqoG1tiEg==@vger.kernel.org, AJvYcCXBCSTdkV2SHWjNjlOiHcfugwfnNliu0V37eAwpuZFJeU7b2rA9tAh8RbM/Vk1liBKMPQRa960/PrsLUxtc@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBXlX8JHhtBK8LcuJcqqXmP0E6TbSCEu0GkfMUvMB8SIdU/nqp
+	SmZ2oQbMhEb9v+WfQoNwKLvRVh59EdkZIB+OVT0rnBj2x/7pqoGwlE2LY7IJh+7xHIFam+N7I6E
+	XQEzguKei1ABczOfUpiJN6sQo0Oo=
+X-Gm-Gg: ASbGncv+xob802HwJFdex2i2k9Ye+qR3rvRCEX/3ydTO6ZS6Z7th4imLtr82OAmuT9g
+	F63LYWARkvBB0dK3ds+C7oqRQ0oW2s5heHwpohXpPq0x2rGMvHM49Gw6ibRW6PeMaQr3J3m+Y3d
+	CTfBuM/yNQlLiW5650RnOkyBt3oikLzI5HYuC+9V/ysA==
+X-Google-Smtp-Source: AGHT+IGgO4waxliJRJEjcjUATYM+tLYXbT7o9vAllgT5zmhdZvJYwca7AqrIUigw62PVDCYdl3bzS0BOeN1gV1tcJBc=
+X-Received: by 2002:a05:6214:21a6:b0:6e4:2dd7:5c88 with SMTP id
+ 6a1803df08f44-6e90068196dmr70464496d6.38.1741389203258; Fri, 07 Mar 2025
+ 15:13:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250307041914.937329-2-kees@kernel.org>
+References: <20250307120141.1566673-1-qun-wei.lin@mediatek.com>
+ <20250307120141.1566673-3-qun-wei.lin@mediatek.com> <CAGsJ_4xtp9iGPQinu5DOi3R2B47X9o=wS94GdhdY-0JUATf5hw@mail.gmail.com>
+In-Reply-To: <CAGsJ_4xtp9iGPQinu5DOi3R2B47X9o=wS94GdhdY-0JUATf5hw@mail.gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Fri, 7 Mar 2025 15:13:12 -0800
+X-Gm-Features: AQ5f1JooOtTd4HVR7CCnLuHoQkyIFVDhrvbdPzpgk1fPg8et0mZMLZfSKYeQ1OE
+Message-ID: <CAKEwX=OP9PJ9YeUvy3ZMQPByH7ELHLDfeLuuYKvPy3aCQCAJwQ@mail.gmail.com>
+Subject: Re: [PATCH 2/2] kcompressd: Add Kcompressd for accelerated zram compression
+To: Barry Song <21cnbao@gmail.com>
+Cc: Qun-Wei Lin <qun-wei.lin@mediatek.com>, Jens Axboe <axboe@kernel.dk>, 
+	Minchan Kim <minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Vishal Verma <vishal.l.verma@intel.com>, Dan Williams <dan.j.williams@intel.com>, 
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Chris Li <chrisl@kernel.org>, 
+	Ryan Roberts <ryan.roberts@arm.com>, "Huang, Ying" <ying.huang@intel.com>, 
+	Kairui Song <kasong@tencent.com>, Dan Schatzberg <schatzberg.dan@gmail.com>, 
+	Al Viro <viro@zeniv.linux.org.uk>, linux-kernel@vger.kernel.org, 
+	linux-block@vger.kernel.org, nvdimm@lists.linux.dev, linux-mm@kvack.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	Casper Li <casper.li@mediatek.com>, Chinwen Chang <chinwen.chang@mediatek.com>, 
+	Andrew Yang <andrew.yang@mediatek.com>, James Hsu <james.hsu@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Mar 7, 2025 at 11:41=E2=80=AFAM Barry Song <21cnbao@gmail.com> wrot=
+e:
+>
+> On Sat, Mar 8, 2025 at 1:02=E2=80=AFAM Qun-Wei Lin <qun-wei.lin@mediatek.=
+com> wrote:
+> >
+> > Introduced Kcompressd to offload zram page compression, improving
+> > system efficiency by handling compression separately from memory
+> > reclaiming. Added necessary configurations and dependencies.
+> >
+> > Signed-off-by: Qun-Wei Lin <qun-wei.lin@mediatek.com>
+> > ---
+> >  drivers/block/zram/Kconfig      |  11 ++
+> >  drivers/block/zram/Makefile     |   3 +-
+> >  drivers/block/zram/kcompressd.c | 340 ++++++++++++++++++++++++++++++++
+> >  drivers/block/zram/kcompressd.h |  25 +++
+> >  drivers/block/zram/zram_drv.c   |  22 ++-
+> >  5 files changed, 397 insertions(+), 4 deletions(-)
+> >  create mode 100644 drivers/block/zram/kcompressd.c
+> >  create mode 100644 drivers/block/zram/kcompressd.h
+> >
+> > diff --git a/drivers/block/zram/Kconfig b/drivers/block/zram/Kconfig
+> > index 402b7b175863..f0a1b574f770 100644
+> > --- a/drivers/block/zram/Kconfig
+> > +++ b/drivers/block/zram/Kconfig
+> > @@ -145,3 +145,14 @@ config ZRAM_MULTI_COMP
+> >           re-compress pages using a potentially slower but more effecti=
+ve
+> >           compression algorithm. Note, that IDLE page recompression
+> >           requires ZRAM_TRACK_ENTRY_ACTIME.
+> > +
+> > +config KCOMPRESSD
+> > +       tristate "Kcompressd: Accelerated zram compression"
+> > +       depends on ZRAM
+> > +       help
+> > +         Kcompressd creates multiple daemons to accelerate the compres=
+sion of pages
+> > +         in zram, offloading this time-consuming task from the zram dr=
+iver.
+> > +
+> > +         This approach improves system efficiency by handling page com=
+pression separately,
+> > +         which was originally done by kswapd or direct reclaim.
+>
+> For direct reclaim, we were previously able to compress using multiple CP=
+Us
+> with multi-threading.
+> After your patch, it seems that only a single thread/CPU is used for comp=
+ression
+> so it won't necessarily improve direct reclaim performance?
+>
+> Even for kswapd, we used to have multiple threads like [kswapd0], [kswapd=
+1],
+> and [kswapd2] for different nodes. Now, are we also limited to just one t=
+hread?
+> I also wonder if this could be handled at the vmscan level instead of the=
+ zram
+> level. then it might potentially help other sync devices or even zswap la=
+ter.
 
-On Thu, Mar 06, 2025 at 08:19:10PM -0800, Kees Cook wrote:
-> To make integer wrap-around mitigation actually useful, the associated
-> sanitizers must not instrument cases where the wrap-around is explicitly
-> defined (e.g. "-2UL"), being tested for (e.g. "if (a + b < a)"), or
-> where it has no impact on code flow (e.g. "while (var--)"). Enable
-> pattern exclusions for the integer wrap sanitizers.
-> 
-> Signed-off-by: Kees Cook <kees@kernel.org>
-> ---
-> Cc: Justin Stitt <justinstitt@google.com>
-> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Cc: Nathan Chancellor <nathan@kernel.org>
-> Cc: Nicolas Schier <nicolas@fjasle.eu>
-> Cc: Marco Elver <elver@google.com>
-> Cc: Andrey Konovalov <andreyknvl@gmail.com>
-> Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-> Cc: linux-kbuild@vger.kernel.org
-> Cc: kasan-dev@googlegroups.com
-> Cc: linux-hardening@vger.kernel.org
-> ---
->  lib/Kconfig.ubsan      | 1 +
->  scripts/Makefile.ubsan | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/lib/Kconfig.ubsan b/lib/Kconfig.ubsan
-> index 63e5622010e0..888c2e72c586 100644
-> --- a/lib/Kconfig.ubsan
-> +++ b/lib/Kconfig.ubsan
-> @@ -120,6 +120,7 @@ config UBSAN_INTEGER_WRAP
->  	bool "Perform checking for integer arithmetic wrap-around"
->  	default UBSAN
->  	depends on !COMPILE_TEST
-> +	depends on $(cc-option,-fsanitize-undefined-ignore-overflow-pattern=all)
+Agree. A shared solution would be much appreciated. We can keep the
+kcompressd idea, but have it accept IO work from multiple sources
+(zram, zswap, whatever) through a shared API.
 
-This option group "all" may be expanded in the future, e.g., negations
-of unsigned integers (not just unsigned integer literals). As these are
-deliberately designed for the kernel, I think we will want them anyways.
-So, all is good.
-
->  	depends on $(cc-option,-fsanitize=signed-integer-overflow)
->  	depends on $(cc-option,-fsanitize=unsigned-integer-overflow)
->  	depends on $(cc-option,-fsanitize=implicit-signed-integer-truncation)
-> diff --git a/scripts/Makefile.ubsan b/scripts/Makefile.ubsan
-> index 4fad9afed24c..233379c193a7 100644
-> --- a/scripts/Makefile.ubsan
-> +++ b/scripts/Makefile.ubsan
-> @@ -15,6 +15,7 @@ ubsan-cflags-$(CONFIG_UBSAN_TRAP)		+= $(call cc-option,-fsanitize-trap=undefined
->  export CFLAGS_UBSAN := $(ubsan-cflags-y)
->  
->  ubsan-integer-wrap-cflags-$(CONFIG_UBSAN_INTEGER_WRAP)     +=	\
-> +	-fsanitize-undefined-ignore-overflow-pattern=all	\
->  	-fsanitize=signed-integer-overflow			\
->  	-fsanitize=unsigned-integer-overflow			\
->  	-fsanitize=implicit-signed-integer-truncation		\
-> -- 
-> 2.34.1
-> 
-
-Reviewed-by: Justin Stitt <justinstitt@google.com>
-
-Justin
+Otherwise we would need to reinvent the wheel multiple times :)
 
