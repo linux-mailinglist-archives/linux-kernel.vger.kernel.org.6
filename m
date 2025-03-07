@@ -1,79 +1,101 @@
-Return-Path: <linux-kernel+bounces-552153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-552154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D556BA57649
-	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:40:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24746A5764C
+	for <lists+linux-kernel@lfdr.de>; Sat,  8 Mar 2025 00:40:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26CF5188B4AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:40:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D054188AE02
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 23:40:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B02D3213E68;
-	Fri,  7 Mar 2025 23:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72E5214238;
+	Fri,  7 Mar 2025 23:39:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XysOcXqC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FaponxcO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08585208990;
-	Fri,  7 Mar 2025 23:38:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220F81925AC;
+	Fri,  7 Mar 2025 23:39:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741390729; cv=none; b=oXndnI80Wa/ukGwLfA3a44pJmXvFgxfdu9ziuOQ6y01PZTQOAtvZwBlZe7hSuiXlIMIyKkezCqu1St/nkaLY00cQEBY3YcQgHFGevjEViVlS4+ZACB7/mMmVPZnfrHvXfnmzsNLVhHrey2FKsge7v+51vPuWBCMGcvseQwKX4i4=
+	t=1741390764; cv=none; b=R4ki4ZevuKUS4E3Vp/cZXW4DqfYLbxHjf8XyughpANKh3HfwiFs/BbSTDVKee5XIzrBr7In+HLPxhGtx6hPrLVjrFoOpwU7WKZMZlN971vR3U3VG+R7ASbyKFGTJoBkepKY4Ndson0+KZYZREIjHxlADCUz05fBdrzyup9hdfdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741390729; c=relaxed/simple;
-	bh=P4vyWk3reiE07secgDDnsAhYfN69/dzogtDPEgwwIbQ=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=lp48wCNvQ6a2oqIQvTCzmXOg3J8HHGPBWBgj81aVxaelZGHaJODYpw5Ei1E7Ce2miQfOP6R5ZRaHitHdj9P0FfHoUxSfEFLTRrUruHikMTEy5/01vhVVY7yBwChqEEZSzzcnbDPz8rMCCEkgPV35U7wXwoknBrdKWASJh6Sv9sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XysOcXqC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62D7BC4CED1;
-	Fri,  7 Mar 2025 23:38:48 +0000 (UTC)
+	s=arc-20240116; t=1741390764; c=relaxed/simple;
+	bh=SV4Yv8MgpgnqWWpntSd6DC3/0ggPzEEXI2koiecMUBo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=H4NiCVaL+1eXbsUfSm8cdCdVMjrmLBnpKMVtjkbR/OX9X5w5ZWF4w4quAUR52461iakJXwhV6gT8tcCU/YCznqN6BgUXnQSqPVA9yuRXVJe/89urbiXfXchmpoiBAcV0XxNqGV6wqLDFevDG2ab4xAsCHTvAU28f4nUnwUCIzfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FaponxcO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25218C4CED1;
+	Fri,  7 Mar 2025 23:39:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741390728;
-	bh=P4vyWk3reiE07secgDDnsAhYfN69/dzogtDPEgwwIbQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=XysOcXqCwMhS/vjHd/vkus1NSBXvMx+V20sF2wi+4D/DHzvdTO5N8cLEgm4REpjkc
-	 zszDsIMRor4cnRLho6jBpvF22DJex74YlJEan3P0ygsToJOndi4aAk7Ly1GvYj/fOi
-	 RBy4GV/oU2xKuxl0WCsiVtVfuTXtAdo0IpF5RqqymSYj4Va/7za+OMeBX8yu6Vf77U
-	 e1B/xP7+KaGYVx6dG576dsR5Ri5UjTOvY0ZiqSkSlE4BK1jTFdYULIQDwEe4lLKDT7
-	 aINNGQE45jl1Kj91ObuWnVv3B0T7yJ2lkMrLT1o0Y97L5Il4qJw0ofDIVrmto0tl24
-	 8/lypsITcWvnw==
-Message-ID: <8e6c0123099039c2f69715f57ef7ba42.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1741390763;
+	bh=SV4Yv8MgpgnqWWpntSd6DC3/0ggPzEEXI2koiecMUBo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=FaponxcOG2H7IyzQ4u8CvOl03z/JLRCtCPS4bVJudRJKFSlQlt46sz3sDkNTuNGyY
+	 ORrW0SK8bUrzQUz4Sc6m8r1H5bO6SLdMvied32PtNvdwY9LDrhu9LziGIOEsY5wlh4
+	 VHF+aVbO17w2MpYAOAX2pDqgckK4AByp2uCHJEQLMSCG4CdfjfghnUvbJ4ECBk1Ee9
+	 Sn6zFcsFvkSpgeuc9cev2B6i5nOb8sqYQCE5Tx6pVMyLu5XqR2xi8D6bx1EfK7JIcH
+	 SwrOTp8b6AhOn1FJ8x27dOwSLNvxujYAjS4cifIq0SA044cyrI3Qe/CWE7qIZtXvBw
+	 5duJJ76hlerRA==
+Date: Fri, 7 Mar 2025 15:39:22 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, linux-kernel@vger.kernel.org, horms@kernel.org,
+ donald.hunter@gmail.com, michael.chan@broadcom.com,
+ pavan.chebbi@broadcom.com, andrew+netdev@lunn.ch, jdamato@fastly.com,
+ xuanzhuo@linux.alibaba.com, almasrymina@google.com, asml.silence@gmail.com,
+ dw@davidwei.uk
+Subject: Re: [PATCH net-next v1 4/4] net: drop rtnl_lock for queue_mgmt
+ operations
+Message-ID: <20250307153922.18e52263@kernel.org>
+In-Reply-To: <20250307155725.219009-5-sdf@fomichev.me>
+References: <20250307155725.219009-1-sdf@fomichev.me>
+	<20250307155725.219009-5-sdf@fomichev.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250307-vsprintf-pcn-v1-2-df0b2ccf610f@bootlin.com>
-References: <20250307-vsprintf-pcn-v1-0-df0b2ccf610f@bootlin.com> <20250307-vsprintf-pcn-v1-2-df0b2ccf610f@bootlin.com>
-Subject: Re: [PATCH 2/2] vsprintf: remove redundant and unused %pCn format specifier
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Michael Turquette <mturquette@baylibre.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Liu Ying <victor.liu@nxp.com>, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Florian Fainelli <florian.fainelli@broadcom.com>, Jonathan Corbet <corbet@lwn.net>, Luca Ceresoli <luca.ceresoli@bootlin.com>, Lukasz Luba <lukasz.luba@arm.com>, Petr Mladek <pmladek@suse.com>, Rafael J. Wysocki <rafael@kernel.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt <rostedt@goodmis.org>, Zhang Rui <rui.zhang@intel.com>
-Date: Fri, 07 Mar 2025 15:38:46 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Quoting Luca Ceresoli (2025-03-07 03:19:08)
-> %pC and %pCn print the same string, and commit 900cca294425 ("lib/vsprint=
-f:
-> add %pC{,n,r} format specifiers for clocks") introducing them does not
-> clarify any intended difference. It can be assumed %pC is a default for
-> %pCn as some other specifiers do, but not all are consistent with this
-> policy. Moreover there is now no other suffix other than 'n', which makes=
- a
-> default not really useful.
->=20
-> All users in the kernel were using %pC except for one which has been
-> converted. So now remove %pCn and all the unnecessary extra code and
-> documentation.
->=20
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> ---
+On Fri,  7 Mar 2025 07:57:25 -0800 Stanislav Fomichev wrote:
+> All drivers that use queue API are already converted to use
+> netdev instance lock. Move netdev instance lock management to
+> the netlink layer and drop rtnl_lock.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+> @@ -860,12 +854,11 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
+>  	}
+>  
+>  	mutex_lock(&priv->lock);
+> -	rtnl_lock();
+>  
+> -	netdev = __dev_get_by_index(genl_info_net(info), ifindex);
+> +	netdev = netdev_get_by_index_lock(genl_info_net(info), ifindex);
+>  	if (!netdev || !netif_device_present(netdev)) {
+>  		err = -ENODEV;
+> -		goto err_unlock;
+> +		goto err_unlock_sock;
+>  	}
+>  
+>  	if (dev_xdp_prog_count(netdev)) {
+> @@ -918,14 +911,15 @@ int netdev_nl_bind_rx_doit(struct sk_buff *skb, struct genl_info *info)
+>  	if (err)
+>  		goto err_unbind;
+>  
+> -	rtnl_unlock();
+> +	netdev_unlock(netdev);
+
+Ah, here's the unlock :)
+
+Looks good for the devmem binding, I think, the other functions will
+need a bit more careful handling. So perhaps drop the queue get changes?
+I'm cooking some patches for the queue get and queue stats.
+AFAIU we need helpers which will go over netdevs and either take rtnl
+lock or instance lock, depending on whether the driver is "ops locked"
 
