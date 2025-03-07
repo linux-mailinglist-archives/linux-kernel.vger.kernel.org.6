@@ -1,114 +1,129 @@
-Return-Path: <linux-kernel+bounces-550718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61DAAA56340
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:08:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E5C6A56351
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:12:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16E93173530
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:08:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79E0D18953D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911091E1E09;
-	Fri,  7 Mar 2025 09:08:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 695B01E1E14;
+	Fri,  7 Mar 2025 09:12:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kgfoQ6Zy"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PrZzu2Tm"
+Received: from fhigh-a7-smtp.messagingengine.com (fhigh-a7-smtp.messagingengine.com [103.168.172.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64A2E168B1;
-	Fri,  7 Mar 2025 09:08:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22671A8F60;
+	Fri,  7 Mar 2025 09:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741338501; cv=none; b=YUeBYxUHfMAxFBfq45QgkoWiYpmDYwqWA7sIG5IxaehKcBYU+rgafnsJjmerjnbbFEWShf9FoXyqrrTGkhCHo3HhmQi6/txe7jrYKYsMsGtCp4mnPNCzd150kPo8yBb40Mm5dmei4SfXmLnUWERw17ekYF6r1NxkJykSsfFFPRQ=
+	t=1741338773; cv=none; b=j7pNuTV3fevLbFvXaD5Z+T7ZkvIDPusKNcUzCxF0TS68mRr4aJASLWnHJjstgN3GeTa004vDywjHjqrYaoBRTRhr/+RTKEj3Y5/ywrF+ZVdMevavEcngEU9w75DjWLFzidSRyAoz6ObQKFFlUbiLqt051uHIigiD+RwK+bSisbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741338501; c=relaxed/simple;
-	bh=jOsiZoxoFzlTIhij6u4HaEvVq0vQLmO2U5xEqzBcz7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HRvRu39w6kJH5R15byFgJ7FqGlvbpLYYM86gzyak4koeFfIOuxX3jnKTRQb6XPlS5MLrOBTA6ygfmOHH9o2yeBS2h9Ti14dSwaMKeYGKoWK2N2V51PrP5jcta8s50m8TUgCYtq6DlYB7eMmuNymch1k6LadcGaYF0lZL9kUWjF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kgfoQ6Zy; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 339EE42FF4;
-	Fri,  7 Mar 2025 09:08:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741338493;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CxdZ0Ku1n71J8CTAjlvJAGWeCY/e13LyHsQRhYqRe0Y=;
-	b=kgfoQ6ZyI+B/x+wq5Xp0AXdaDaVcelUCNuzcnSS1tKniUx2KBPqb1T5Pj5MhIBrd1sLTDC
-	vBVTSuJgtvq4dC/PhKM8a3GxkNAuVH37CgzcP16eQDhGbyGNk8WyriXq7kJBQ5S3buyvTS
-	xpI6Y2FeuFYhop44Wk9Caf+/vGkVirrpHFOsq+4txB1CRYfoqCk1srdlj7X9zZxwAdIth7
-	ySXkzIhlXNI2v/G1GwyfwJcq9uX0MhNgk5r9AWjOrK/A6nezD9CqOib+t4ppSrmmscs93M
-	hOqPyNt08DegzFnODAAY8sMZRrSqxfTtUltJzmRDeqeNvqd4CsiMnIkfAzEQjQ==
-Date: Fri, 7 Mar 2025 10:08:09 +0100
-From: Kory Maincent <kory.maincent@bootlin.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Andrew Lunn <andrew@lunn.ch>, Oleksij Rempel <o.rempel@pengutronix.de>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Jonathan Corbet
- <corbet@lwn.net>, Donald Hunter <donald.hunter@gmail.com>, Rob Herring
- <robh@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>, Simon Horman
- <horms@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark
- Brown <broonie@kernel.org>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, Kyle Swenson <kyle.swenson@est.tech>, Dent
- Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, Maxime
- Chevallier <maxime.chevallier@bootlin.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v6 02/12] net: pse-pd: Add support for
- reporting events
-Message-ID: <20250307100809.3de6db1e@kmaincent-XPS-13-7390>
-In-Reply-To: <20250306174345.51a1d56d@kernel.org>
-References: <20250304-feature_poe_port_prio-v6-0-3dc0c5ebaf32@bootlin.com>
-	<20250304-feature_poe_port_prio-v6-2-3dc0c5ebaf32@bootlin.com>
-	<20250306174345.51a1d56d@kernel.org>
-Organization: bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741338773; c=relaxed/simple;
+	bh=SI7/zfo5ZeW1S7cwDCksy4BuoO+WtxO6HWfPQp20Qec=;
+	h=To:Cc:Message-ID:From:Subject:Date; b=A9CiBngo56uWQASA+/BcPgjBZIU/PCsP2SliZdV8KXwIRkuJjajSDHo3fTs2JkEjm04ppl57VkVFIdHoJMtWqJxXRpXHJd2CSJCrh1bvH0EYVSW7CwkKQqWDJ+l8zBnDJNegAwcQBlwQ8kG2H31lm3IxfM1HlHs9qy8hHne0/fM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PrZzu2Tm; arc=none smtp.client-ip=103.168.172.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id E6162114010A;
+	Fri,  7 Mar 2025 04:12:49 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Fri, 07 Mar 2025 04:12:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+	:feedback-id:from:from:in-reply-to:message-id:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1741338769; x=1741425169; bh=hg3PLU/0C0HunaKuqzKlrTLma1Fo
+	k3lK/tApVH6mYfQ=; b=PrZzu2TmVZzHwRZMKfKbOy3jtmB7DIBbdVm7Jsv/BwOp
+	FjXDLjWijBZG65WRlzfKdX7mjWuHZaMNHVVo51d5LLV3gclEK0EfcL6IhYhz7mcb
+	bY1KZ/wC0R4wqZg2HGh+lIgSDHwQ9ygfMznmKB9hAIDjn1ZLssGrvn59IzOZNMOh
+	jfymPWlunWBvmD7i6fhlXeBUoIZ1t3Owfn4YPwEr+2Ek5xnPz2ujN5MD3bmXEd7I
+	79Gf8Cuk/1r4qsr+URN9aZRNsj0JtC5uhg1oc+vx4Zmlcp6Ce+y21ANsoOgM4VSF
+	yKq3FbSHovCbMpX5c0DeCnSI6kF4HluVn9JJqXdSWA==
+X-ME-Sender: <xms:kbjKZ0laZAw_DfXw_Ax4hIsjzEO52Bnwseiuxp_lTgBtPO5Nv2jcTA>
+    <xme:kbjKZz0jGkHdTKwA83nx7E9kubZae_B87dyfPZa3qtcALPU--pfot3YjXxieAw5Ec
+    BUawVDnxsxjBW7KT5k>
+X-ME-Received: <xmr:kbjKZyonZo1gpzJyhz4G7p3KXiJtlvWpqwVvljS-kKdZ3goc_WBdiUtDbOUQDjbXFaiBzJqwrIYUFvnkHaX1RP2D20TlijMULLU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduuddtvdekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepvfevkffhufffsedttdertddttddtnecuhfhr
+    ohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheikehkrdhorh
+    hgqeenucggtffrrghtthgvrhhnpefgheduvdegffektdehjeejhfekieelleffgffgjeff
+    hfffueefgefhvdevudegtdenucffohhmrghinhephhgvrggurdhssgenucevlhhushhtvg
+    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhu
+    gidqmheikehkrdhorhhgpdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuth
+    dprhgtphhtthhopehgvggvrhhtsehlihhnuhigqdhmieekkhdrohhrghdprhgtphhtthho
+    pehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuh
+    igqdhmieekkheslhhishhtshdrlhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtohep
+    lhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:kbjKZwnVSccfYx3he3o3jtcVXBtcm2thVSsuO5s4g_kZsjLSFSgTuw>
+    <xmx:kbjKZy2PZZ7PJyGMCTuOvfFLc4M8EMtqQPMK1__XSOV79-T5HlqlWw>
+    <xmx:kbjKZ3sAQzQtC8j8bufK7unYyfLDpgUtquNswau4ngPrNqsTtEGsHQ>
+    <xmx:kbjKZ-VH9wCx1M5z1vfAByKu-xJPVNqqwv4pkXy4mk4L4AyjAbQTBQ>
+    <xmx:kbjKZ3zaXrYUoLoP5FKU-TJZwYd3_CdtSvCrplvW5y9l83P8-5YdHu0Q>
+Feedback-ID: i58a146ae:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 7 Mar 2025 04:12:47 -0500 (EST)
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: stable@vger.kernel.org,
+    linux-m68k@lists.linux-m68k.org,
+    linux-kernel@vger.kernel.org
+Message-ID: <c03e60ce451e4ccdf12830192080be4262b31b89.1741338535.git.fthain@linux-m68k.org>
+From: Finn Thain <fthain@linux-m68k.org>
+Subject: [PATCH] m68k: Fix lost column on framebuffer debug console
+Date: Fri, 07 Mar 2025 20:08:55 +1100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduuddtvdeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemtggsudelmeekheekjeemjedutddtmeektdhfheemgegulegvmeejugehsgemjeeggeefnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkeehkeejmeejuddttdemkedtfhehmeegugelvgemjeguhegsmeejgeegfedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdejpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehordhrvghmphgvlhesphgvn
- hhguhhtrhhonhhigidruggvpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopegtohhrsggvtheslhifnhdrnhgvthdprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrsehgmhgrihhlrdgtohhm
-X-GND-Sasl: kory.maincent@bootlin.com
 
-On Thu, 6 Mar 2025 17:43:45 -0800
-Jakub Kicinski <kuba@kernel.org> wrote:
+When long lines are sent to the debug console on the framebuffer, the
+right-most column is lost. Fix this by subtracting 1 from the column
+count before comparing it with console_struct_cur_column, as the latter
+counts from zero.
 
-> On Tue, 04 Mar 2025 11:18:51 +0100 Kory Maincent wrote:
-> > +      -
-> > +        name: events
-> > +        type: u32 =20
->=20
-> type: uint
-> enum: your-enum-name
->=20
-> and you need to define the events like eg. c33-pse-ext-state
-> in the "definitions" section
+Linewrap is handled with a recursive call to console_putc, but this
+alters the console_struct_cur_row global. Store the old value before
+calling console_putc, so the right-most character gets rendered on the
+correct line.
 
-Oh indeed, I forgot to use enum in the specs. Thanks for spotting it.
-=20
-> BTW I was hoping you'd CC hwmon etc. Did you forget or some
-> of the CCed individuals are representing other subsystems?
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: stable@vger.kernel.org
+Signed-off-by: Finn Thain <fthain@linux-m68k.org>
+---
+ arch/m68k/kernel/head.S | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-I have Cced Regulator maintainers Mark and Liam. hwmon are not related the
-regulator events.
+diff --git a/arch/m68k/kernel/head.S b/arch/m68k/kernel/head.S
+index 852255cf60de..9c60047764d0 100644
+--- a/arch/m68k/kernel/head.S
++++ b/arch/m68k/kernel/head.S
+@@ -3583,11 +3583,16 @@ L(console_not_home):
+ 	movel	%a0@(Lconsole_struct_cur_column),%d0
+ 	addql	#1,%a0@(Lconsole_struct_cur_column)
+ 	movel	%a0@(Lconsole_struct_num_columns),%d1
++	subil	#1,%d1
+ 	cmpl	%d1,%d0
+ 	jcs	1f
+-	console_putc	#'\n'	/* recursion is OK! */
++	/*	recursion will alter console_struct so load d1 register first */
++	movel	%a0@(Lconsole_struct_cur_row),%d1
++	console_putc	#'\n'
++	jmp	2f
+ 1:
+ 	movel	%a0@(Lconsole_struct_cur_row),%d1
++2:
+ 
+ 	/*
+ 	 *	At this point we make a shift in register usage
+-- 
+2.45.3
 
-Regards,
---=20
-K=C3=B6ry Maincent, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
 
