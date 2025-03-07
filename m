@@ -1,242 +1,103 @@
-Return-Path: <linux-kernel+bounces-550665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34479A56299
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:34:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796D2A5629B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:34:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 13FBE18939B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:34:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B296F171465
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:34:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4053F1C8637;
-	Fri,  7 Mar 2025 08:34:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DA51B4240;
+	Fri,  7 Mar 2025 08:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="HUcJE0gl"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWJRy/cT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F511A83E8
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 08:34:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B0215382E;
+	Fri,  7 Mar 2025 08:34:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741336443; cv=none; b=bg5LccujCbZ/Afz3kORt6HLANitvX94W8WMLCNhwtKQIsEHnYCZbW7Y51W5NJeyibZ2rN3XVcsuallG5p7KLN7XlBK1DOZXt/vlQnQ25VkEusMZpg1d2vHtQu5Q4cff4keVFg4WrMEoNdlj8CsH3hIo2rt/gvdR/lesBN5YbQvY=
+	t=1741336468; cv=none; b=RfJhFpjufLr+1QbSG5hXXOR1XXra393tKrgtE2QVIVGyiMajZ1m+u+C5dxQkqc/612RCYn+D++3Hud+zwMlvLufE0f7tY+kKtoGz8vqzzy9XN6dXqqVeXaLiPpOja4DNvHbza1CViK/Xjsrmmt5D+JzhcAktDl97FJ94MSJp15w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741336443; c=relaxed/simple;
-	bh=Sh+rfGzLOB1b2a9HdUZm3hMkw4gRexqTGwuwkToRcCo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T0JArESw47IOpzYT8zJg/eZjl1YDCzJUlmIkGuwbxOQENnizuhiDz+n/BRpjEy8DwufGc1fZFAxBraE5DasuAgGertrSCD4qiL+RzqmdrlhhGDpvEoEehNF6w10wg9sMfTb2RrpRNbVx//coRmNDUhMMnDiBBHPPinf2WkFYoTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=HUcJE0gl; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-abf45d8db04so236773566b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 00:34:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1741336439; x=1741941239; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=omvOTZNwfWYDk44NVBjyy3sj3JkUlQjIuVhlR5xVZsk=;
-        b=HUcJE0glopRm2s2EVRLmgyiXPnj7czeCa6DesDG07VeU9PKz0I30Q2DKSwft8j53hG
-         O4EXvXXdJYOKOtOzmHWPx6Y9MS/9OLC5JsIhoHSwboKYIhcavptDy+vcxDOUargYb2gp
-         o0zaKIEq4aF8+XmRDqnHkSoKnMHwlUD1kF0sq8XqzoTzylI7GmpYTc8QIpXsuR/80qB9
-         oEL4l8rKV/H+2TgHkefftRKfW6WWUjjSe1kOrYgsWjkSwcAeICCdRQAVAp8imT11XUGy
-         pvmKtcnAeHBl41BtDXrVpXRGOR7iY/H6VnF2eGX0+VAra/nHRZMO6oet14JJmQ3xF+fr
-         /B9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741336439; x=1741941239;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=omvOTZNwfWYDk44NVBjyy3sj3JkUlQjIuVhlR5xVZsk=;
-        b=ffypBCpTQN6ko8gCmI+ZZwOsQuYUEgFFsSYrupXBQkluOkAB4AxrDZPxNwSmpiHKx8
-         53hJY76vyockJD5Gu9pXEmE1TBcDpvOsSZv08FJKl+FHQ/rSNGma/s3VQwDXrIfxXgFe
-         BKI1j3RkXoINGEV7xixJkly9RzRnk2YYTKF+pSEkODkLstIq1Oe88C/H3CNjz0fFHBN+
-         hXGqohXNiIxpHSs8k65TUpX+ipItSZIeDhq45cHNOeo73PFV/8F8OGspEnmMRW1dJNot
-         JW1zY/DjA7Oijn/TNGJBtZFKbTWSmjxvmBWrDKFNWqPb+McSEuSh7wjv11KWYqHFmNI0
-         ZlRw==
-X-Forwarded-Encrypted: i=1; AJvYcCV2SVoHKpNo5Ojih7TeehROjf4bQTnYOsGGqRMf0IvIVdlwlr770l1Ajd9xhfvWJlaGanWheMxM9kuIYgU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEG2R6Oz3wjgVCH/JLrpbtP9UdmIfj8JWU1uuwu6IzJXliZ3m5
-	YKvVQ0yejr+l/sfUzLbpWxcVfUfkie7YcqC7HoJ0JVBpyLp0jV/CUigDTgXqiWg=
-X-Gm-Gg: ASbGncvoU7VW+pqcFYcXHYWepx2xqiW10n2tUIsxqkJpZfGk1dwQcjEDjVeYY7deHHP
-	nv2gwpy2c/VK2LsCbduNbWr0NsP960gY48k45zblguqPFllsG2s965sHwbuzln5BxwILvmvVATE
-	CbcPGVYpwwoptno5e8KvL9a75Nc817JnQuMTQSkbCBWO/k8+sIG+2CgQCT+kY5ztnv6GlMEtCox
-	dRRavTuTp1OGoP/D9MPmzFvEhzcdZeQEFGO6mCvv2dsnTkKxYlP8mZSvjXvoU2MUQ+VVDuq3F2n
-	MJbVIHRgo9JYz/knV/xaoWKycc0+WyZmaxScWTHtL7OAtTwfSZNTRhnm7MqVTCNCYkBqM2YgvgS
-	0
-X-Google-Smtp-Source: AGHT+IFYSQRuaqRplHXA2kM66xT02LPg8//qgKuUDazDg3f9slGb176+oPKyRdb+pVUCcWIuBeQN8A==
-X-Received: by 2002:a17:907:94ce:b0:ac2:344:a15e with SMTP id a640c23a62f3a-ac252658e60mr239230766b.22.1741336438714;
-        Fri, 07 Mar 2025 00:33:58 -0800 (PST)
-Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac23973b09asm234762766b.119.2025.03.07.00.33.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 00:33:58 -0800 (PST)
-Message-ID: <9b0312c8-dc96-494e-86f9-69ee45369029@blackwall.org>
-Date: Fri, 7 Mar 2025 10:33:57 +0200
+	s=arc-20240116; t=1741336468; c=relaxed/simple;
+	bh=eFJNtO+gPLfeMVIMbA8EOsQEQtMeWOxWdDojxK6sC4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RPvi8PQAavZ8KFqIOrx3i1z59m0a8OGEs5SH7vQV/acbH6AL+NbJIz1b+XLovFYz+RogbfI+Dac41OwnA6Lzl4uLWlZOj0tHZwzxDxNLe3yaZuaSv+VhptQbsLP0FNtz/6F6WfBBbw+kMqQO+1is0KtFVIvW9gCTMDLAKEYpqbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWJRy/cT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1B6BC4CED1;
+	Fri,  7 Mar 2025 08:34:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741336467;
+	bh=eFJNtO+gPLfeMVIMbA8EOsQEQtMeWOxWdDojxK6sC4U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PWJRy/cTBnY4eQjRSnNxKHgwOvZvf7FPvMe4vxvX5RazqS7VAMis0zbS6nMGp5q6x
+	 oJwiPXy1OuRdMHTScBusB2utPearjfmaTeBfnHOaEAGxPf4HsSw/NWe1OjhiHhh+NS
+	 OqQAGKEUkR+bc1PrKsjpgETvq3tXx3Q4t1hmP5CScZea0/JDgJApcJMQ3CZT44WhAz
+	 UaUQ54AjYKb23nwx3cFdHUnTIkL35Un4xUw9Fzn5459939eeHc/3umq/D31n9n24A7
+	 Zy+FHo2fOCRGeUBfYfi6eOPAND/OSmd19pOfVMFYxSIsrQEvDsRNFzbzQ1QF6uhXOp
+	 K9QkjEhrp5yjg==
+Date: Fri, 7 Mar 2025 09:34:24 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Sam Winchenbach <sam.winchenbach@framepointer.org>
+Cc: linux-kernel@vger.kernel.org, lars@metafoo.de, 
+	Michael.Hennerich@analog.com, antoniu.miclaus@analog.com, jic23@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, bpellegrino@arka.org
+Subject: Re: [PATCH v5 1/6] dt-bindings: iio: filter: Add lpf/hpf freq margins
+Message-ID: <20250307-handsome-merry-alpaca-17da9f@krzk-bin>
+References: <20250306183314.150253-1-sam.winchenbach@framepointer.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv5 net 1/3] bonding: fix calling sleeping function in spin
- lock and some race conditions
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Jianbo Liu <jianbol@nvidia.com>,
- Jarod Wilson <jarod@redhat.com>,
- Steffen Klassert <steffen.klassert@secunet.com>,
- Cosmin Ratiu <cratiu@nvidia.com>, Petr Machata <petrm@nvidia.com>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250307031903.223973-1-liuhangbin@gmail.com>
- <20250307031903.223973-2-liuhangbin@gmail.com>
- <6dd52efd-3367-4a77-8e7b-7f73096bcb3f@blackwall.org>
- <Z8qqS9IlRAMYIqXb@fedora>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <Z8qqS9IlRAMYIqXb@fedora>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250306183314.150253-1-sam.winchenbach@framepointer.org>
 
-On 3/7/25 10:11, Hangbin Liu wrote:
-> Hi Nikolay,
-> On Fri, Mar 07, 2025 at 09:42:49AM +0200, Nikolay Aleksandrov wrote:
->> On 3/7/25 05:19, Hangbin Liu wrote:
->>> The fixed commit placed mutex_lock() inside spin_lock_bh(), which triggers
->>> a warning:
->>>
->>>   BUG: sleeping function called from invalid context at...
->>>
->>> Fix this by moving the IPsec deletion operation to bond_ipsec_free_sa,
->>> which is not held by spin_lock_bh().
->>>
->>> Additionally, there are also some race conditions as bond_ipsec_del_sa_all()
->>> and __xfrm_state_delete could running in parallel without any lock.
->>> e.g.
->>>
->>>   bond_ipsec_del_sa_all()            __xfrm_state_delete()
->>>     - .xdo_dev_state_delete            - bond_ipsec_del_sa()
->>>     - .xdo_dev_state_free                - .xdo_dev_state_delete()
->>>                                        - bond_ipsec_free_sa()
->>>   bond active_slave changes              - .xdo_dev_state_free()
->>>
->>>   bond_ipsec_add_sa_all()
->>>     - ipsec->xs->xso.real_dev = real_dev;
->>>     - xdo_dev_state_add
->>>
->>> To fix this, let's add xs->lock during bond_ipsec_del_sa_all(), and delete
->>> the IPsec list when the XFRM state is DEAD, which could prevent
->>> xdo_dev_state_free() from being triggered again in bond_ipsec_free_sa().
->>>
->>> In bond_ipsec_add_sa(), if .xdo_dev_state_add() failed, the xso.real_dev
->>> is set without clean. Which will cause trouble if __xfrm_state_delete is
->>> called at the same time. Reset the xso.real_dev to NULL if state add failed.
->>>
->>> Despite the above fixes, there are still races in bond_ipsec_add_sa()
->>> and bond_ipsec_add_sa_all(). If __xfrm_state_delete() is called immediately
->>> after we set the xso.real_dev and before .xdo_dev_state_add() is finished,
->>> like
->>>
->>>   ipsec->xs->xso.real_dev = real_dev;
->>>                                        __xfrm_state_delete
->>>                                          - bond_ipsec_del_sa()
->>>                                            - .xdo_dev_state_delete()
->>>                                          - bond_ipsec_free_sa()
->>>                                            - .xdo_dev_state_free()
->>>   .xdo_dev_state_add()
->>>
->>> But there is no good solution yet. So I just added a FIXME note in here
->>> and hope we can fix it in future.
->>>
->>> Fixes: 2aeeef906d5a ("bonding: change ipsec_lock from spin lock to mutex")
->>> Reported-by: Jakub Kicinski <kuba@kernel.org>
->>> Closes: https://lore.kernel.org/netdev/20241212062734.182a0164@kernel.org
->>> Suggested-by: Cosmin Ratiu <cratiu@nvidia.com>
->>> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
->>> ---
->>>  drivers/net/bonding/bond_main.c | 69 ++++++++++++++++++++++++---------
->>>  1 file changed, 51 insertions(+), 18 deletions(-)
->>>
->>> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
->>> index e45bba240cbc..dd3d0d41d98f 100644
->>> --- a/drivers/net/bonding/bond_main.c
->>> +++ b/drivers/net/bonding/bond_main.c
->>> @@ -506,6 +506,7 @@ static int bond_ipsec_add_sa(struct xfrm_state *xs,
->>>  		list_add(&ipsec->list, &bond->ipsec_list);
->>>  		mutex_unlock(&bond->ipsec_lock);
->>>  	} else {
->>> +		xs->xso.real_dev = NULL;
->>>  		kfree(ipsec);
->>>  	}
->>>  out:
->>> @@ -541,7 +542,15 @@ static void bond_ipsec_add_sa_all(struct bonding *bond)
->>>  		if (ipsec->xs->xso.real_dev == real_dev)
->>>  			continue;
->>>  
->>> +		/* Skip dead xfrm states, they'll be freed later. */
->>> +		if (ipsec->xs->km.state == XFRM_STATE_DEAD)
->>> +			continue;
->>
->> As we commented earlier, reading this state without x->lock is wrong.
+On Thu, Mar 06, 2025 at 01:33:09PM -0500, Sam Winchenbach wrote:
+> Adds two properties to add a margin when automatically finding the
+> corner frequencies.
 > 
-> But even we add the lock, like
+> Signed-off-by: Sam Winchenbach <sam.winchenbach@framepointer.org>
+> ---
+>  .../bindings/iio/filter/adi,admv8818.yaml     | 23 +++++++++++++++++++
+>  1 file changed, 23 insertions(+)
 > 
-> 		spin_lock_bh(&ipsec->xs->lock);
-> 		if (ipsec->xs->km.state == XFRM_STATE_DEAD) {
-> 			spin_unlock_bh(&ipsec->xs->lock);
-> 			continue;
-> 		}
-> 
-> We still may got the race condition. Like the following note said.
-> So I just leave it as the current status. But I can add the spin lock
-> if you insist.
-> 
+> diff --git a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+> index b77e855bd594..3f9c61547a78 100644
+> --- a/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+> +++ b/Documentation/devicetree/bindings/iio/filter/adi,admv8818.yaml
+> @@ -44,6 +44,27 @@ properties:
+>    '#clock-cells':
+>      const: 0
+>  
+> +
 
-I don't insist at all, I just pointed out that this is buggy and the value doesn't
-make sense used like that. Adding more bugs to the existing code wouldn't make it better.
+Unnecessary blank line
 
->>> +
->>>  		ipsec->xs->xso.real_dev = real_dev;
->>> +		/* FIXME: there is a race that before .xdo_dev_state_add()
->>> +		 * is called, the __xfrm_state_delete() is called in parallel,
->>> +		 * which will call .xdo_dev_state_delete() and xdo_dev_state_free()
->>> +		 */
->>>  		if (real_dev->xfrmdev_ops->xdo_dev_state_add(ipsec->xs, NULL)) {
->>>  			slave_warn(bond_dev, real_dev, "%s: failed to add SA\n", __func__);
->>>  			ipsec->xs->xso.real_dev = NULL;
->> [snip]
->>
->> TBH, keeping buggy code with a comment doesn't sound good to me. I'd rather remove this
->> support than tell people "good luck, it might crash". It's better to be safe until a
->> correct design is in place which takes care of these issues.
-> 
-> I agree it's not a good experience to let users using an unstable feature.
-> But this is a race condition, although we don't have a good fix yet.
-> 
-> On the other hand, I think we can't remove a feature people is using, can we?
-> What I can do is try fix the issues as my best.
-> 
+> +  adi,lpf-margin-hz:
+> +    description:
+> +      Sets the minimum distance (in Hz) between the fundamental
+> +      frequency of `rf_in` and the corner frequency of the low-pass, output
+> +      filter when operatred in 'auto' mode. The selected low-pass corner
+> +      frequency will be greater than, or equal to, `rf_in` + `lpf-margin-hz`. If
+> +      not setting is found that satisfies this relationship the filter will be
+> +      put into 'bypass'.
+> +    default: 0
 
-I do appreciate the hard work you've been doing on this, don't get me wrong, but this is
-not really uapi, it's an optimization. The path will become slower as it won't be offloaded,
-but it will still work and will be stable until a proper fix or new design comes in.
+hz are 32-bit, not 64-bit, so I think you need:
 
-Are you suggesting to knowingly leave a race condition that might lead to a number
-of problems in place with a comment?
-IMO that is not ok, but ultimately it's up to the maintainers to decide if they can live
-with it. :)
+  default: [0, 0]
+  minItems: 2
+  maxItems: 2
 
-> By the way, I started this patch because my patch 2/3 is blocked by the
-> selftest results from patch 3/3...
-> 
-> Thanks
-> Hangbin
-
+Best regards,
+Krzysztof
 
 
