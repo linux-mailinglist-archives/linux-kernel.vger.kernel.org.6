@@ -1,53 +1,52 @@
-Return-Path: <linux-kernel+bounces-551351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4837EA56B5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:11:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A038A56B5C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:12:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3672F3AAC9F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3D3C1898DC1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:12:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54E4221F2E;
-	Fri,  7 Mar 2025 15:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3872222C2;
+	Fri,  7 Mar 2025 15:08:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="mr5nnchc"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EjgnWCKO"
 Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5506F221D86
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E923221DBA
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741360137; cv=none; b=OZtptUW+Zkrdj0NieqeFSkUO7ih32MEOQrisfcb62Q7k9VQWZJ+kwETb2HxuygPgFHeXikGeZBKF1mSeT47eqyWToi3jeBDRRcrxyq4FllWqH3aawvdRPzD//DSxDTGuvcr6/1ptca5fi0XcHlxVgz1OS7tiou8ZdqefGOoUQwc=
+	t=1741360139; cv=none; b=MeX4QxSXNbfTu4nV0nbSbxVoByOB3V3DBc3Wd8AgUfY0q9YeChvaBPcyoQehLyezZbHapDgjj9b6173itrhYjHTVmb/ihYBqqcKKDKwBgXaisWxppuGGKtaJrQ7T4AKlRlfG+t2y18xpynma2fSZuIzERF2mxTfXTC1m5whn93s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741360137; c=relaxed/simple;
-	bh=YYfHdTVfdIBHuLworKHcP0+uA91yBWCUkthGHhOZyLo=;
+	s=arc-20240116; t=1741360139; c=relaxed/simple;
+	bh=fQWkSayVIUUtsIwFfKM8AukfADug7zHZFNoTbLiP8jU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=VC8OHvFlN4yIVnn6WVLlOU6WIOH5zRtsEpkSDctdvg3R7g8cvlt+6csmom8jclvrZzp+FSpGkbQyFifBp1js/eiJyTpJlXPAE4/q3zRs82qVSW+M4NjaV0wHnktuieZ/SAnR+1zJdbw28TTdzXuDYFc7qxuHSmrZ/HfZOv377QM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=mr5nnchc; arc=none smtp.client-ip=217.70.183.193
+	 In-Reply-To:To:Cc; b=LciUf/dLoOnvBKwbzpClJ36rQ6uv4S2UjnPFc5SbTHEdS9YkHutHEjJ70PISzPo5UeOGCk7C2q80smI8Dm9pJCKkLwiyjGKWj8bcas6uaeMtbKa8IJg+Ok65hBN9Sw0uYDXIaDCteqdOzomPM/M2W08p7MgE2A/eXqJ8Fv8n794=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EjgnWCKO; arc=none smtp.client-ip=217.70.183.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 043E0442CC;
-	Fri,  7 Mar 2025 15:08:52 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 309F84430E;
+	Fri,  7 Mar 2025 15:08:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741360134;
+	t=1741360135;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=WECXh7nIg9BOskWhhlhrtWyWNPsyuyZQXyUxS7Sign4=;
-	b=mr5nnchc3NbjVs9RwXDUVRohjjTjUInH8uIoUiti8aWGJcLuQ6FHvwgvr4UTAjW3wPs9OV
-	nRPgT2nk9NOLq9NqH9ENqpJOkCbHGvbbttH/gqdJ1PbJLFjff2ATGWUMrMsK+g+BlPGLJ5
-	MON5tXUxj5zcdr6ZdKgYEqD4beA+b+RqA8jUKvZujNcmDdT/3nYyiVxAW0Bd226irYsPeo
-	a+Ft+HYNkVmOeITJ0PthmpNmFH3WgATyWg4ZW+VKtfnj1C+0rmgpWqfl14h794M591t0Sk
-	6pnCgdM6IR7mIGc256qxKCygvypf06D7wtYdOmJU7SYWaDrDRU9iilsGLXfGLw==
+	bh=PsAcuJOu7/lWVEH8aUBxgETw4MYWZ072uSOVdJKydWQ=;
+	b=EjgnWCKOvcKmEm5sEc5LjeK5s0O+6ydsozM24Obus0PBzC9VK6jzZnNGIQCPfgwmnQi6Ui
+	FloIWtZc5knad+dpIZZcLpYld1ah0Bw3Z5r5eclpQYVoGcByRo4AoGw5CTPHLJJvU27vU8
+	cEIt+gag5Cj8/Sp4UAiM+jqwihblrx2FM0e/kTQwu3BHqWDnAo1cG9ZEyjWNNWvOnflhi7
+	ZWU7/dEqozPLpSjD7reR61RQgcKwFaXpI0tyeWdV1V+HEZHGlukW/HxpFQvot/lQ11nYsU
+	pssM8k8GfqpETtSvkt+GSf0itr8/Ix+KFoRtxNllrgcljMGFTWyEt2IDfQS0Dg==
 From: Miquel Raynal <miquel.raynal@bootlin.com>
-Date: Fri, 07 Mar 2025 16:08:36 +0100
-Subject: [PATCH 17/21] mtd: spinand: Define octal read from cache
- operations
+Date: Fri, 07 Mar 2025 16:08:37 +0100
+Subject: [PATCH 18/21] mtd: spinand: winbond: Add octal read support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250307-winbond-6-14-rc1-octal-v1-17-45c1e074ad74@bootlin.com>
+Message-Id: <20250307-winbond-6-14-rc1-octal-v1-18-45c1e074ad74@bootlin.com>
 References: <20250307-winbond-6-14-rc1-octal-v1-0-45c1e074ad74@bootlin.com>
 In-Reply-To: <20250307-winbond-6-14-rc1-octal-v1-0-45c1e074ad74@bootlin.com>
 To: Richard Weinberger <richard@nod.at>, 
@@ -73,49 +72,47 @@ X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduuddtleekucetufdoteggode
  hdvseifihhnsghonhgurdgtohhmpdhrtghpthhtohepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehprhgrthihuhhshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvhhighhnvghshhhrsehtihdrtghomh
 X-GND-Sasl: miquel.raynal@bootlin.com
 
-SPI NAND chips may support octal read from cache transfers. List the
-opcodes by defining the relevant macros describing these operations.
+Describe the octal read from cache operations (1S_1S_8S, 1S_8S_8S and
+1S_1D_8D_OP) supported by the W35N01JW chip.
 
-Controllers supporting operations mixing SDR and DTR operations might even
-leverage octal DTR data I/O transfers.
+There is no observable improvement between the two octal SDR modes,
+which anyway offered a great read speed improvement compared to single
+mode.
+
+flash_speed test results ran on the TI AM62A7 LP SK using a 25MHz SPI bus:
+
+* Single mode:
+eraseblock read speed is  2346 KiB/s
+page       read speed is  2342 KiB/s
+
+* Octal modes:
+eraseblock read speed is 10801 KiB/s
+page       read speed is 10711 KiB/s
+
+However, testing on the cadence qspi controller driver did not allow
+mixed modes (where SDR and DTR cycles are mixed in the same operation),
+thus 1S-1D-8D mode could not be tested and is provided for reference (it
+is anyway skipped on platforms not supporting this).
 
 Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
 ---
- include/linux/mtd/spinand.h | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/mtd/nand/spi/winbond.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/include/linux/mtd/spinand.h b/include/linux/mtd/spinand.h
-index 148e2cddeed4fad6b71e74e3a343b5409814b177..ed02fa891d946c71e73d349c605447cbea48ebf9 100644
---- a/include/linux/mtd/spinand.h
-+++ b/include/linux/mtd/spinand.h
-@@ -170,6 +170,27 @@
- 		   SPI_MEM_DTR_OP_DATA_IN(len, buf, 4),			\
- 		   SPI_MEM_OP_MAX_FREQ(freq))
+diff --git a/drivers/mtd/nand/spi/winbond.c b/drivers/mtd/nand/spi/winbond.c
+index 9b0369a077efadac8bd6be632f15b822d42a7227..4b1bfc15588ad3ffc8f2cb7615db6c14d0b62903 100644
+--- a/drivers/mtd/nand/spi/winbond.c
++++ b/drivers/mtd/nand/spi/winbond.c
+@@ -24,6 +24,9 @@
+  */
  
-+#define SPINAND_PAGE_READ_FROM_CACHE_1S_1S_8S_OP(addr, ndummy, buf, len, freq) \
-+	SPI_MEM_OP(SPI_MEM_OP_CMD(0x8b, 1),				\
-+		   SPI_MEM_OP_ADDR(2, addr, 1),				\
-+		   SPI_MEM_OP_DUMMY(ndummy, 1),				\
-+		   SPI_MEM_OP_DATA_IN(len, buf, 8),			\
-+		   SPI_MEM_OP_MAX_FREQ(freq))
-+
-+#define SPINAND_PAGE_READ_FROM_CACHE_1S_8S_8S_OP(addr, ndummy, buf, len, freq) \
-+	SPI_MEM_OP(SPI_MEM_OP_CMD(0xcb, 1),				\
-+		   SPI_MEM_OP_ADDR(2, addr, 8),				\
-+		   SPI_MEM_OP_DUMMY(ndummy, 8),				\
-+		   SPI_MEM_OP_DATA_IN(len, buf, 8),			\
-+		   SPI_MEM_OP_MAX_FREQ(freq))
-+
-+#define SPINAND_PAGE_READ_FROM_CACHE_1S_1D_8D_OP(addr, ndummy, buf, len, freq) \
-+	SPI_MEM_OP(SPI_MEM_OP_CMD(0x9d, 1),				\
-+		   SPI_MEM_DTR_OP_ADDR(2, addr, 1),			\
-+		   SPI_MEM_DTR_OP_DUMMY(ndummy, 1),			\
-+		   SPI_MEM_DTR_OP_DATA_IN(len, buf, 8),			\
-+		   SPI_MEM_OP_MAX_FREQ(freq))
-+
- #define SPINAND_PROG_EXEC_1S_1S_0_OP(addr)				\
- 	SPI_MEM_OP(SPI_MEM_OP_CMD(0x10, 1),				\
- 		   SPI_MEM_OP_ADDR(3, addr, 1),				\
+ static SPINAND_OP_VARIANTS(read_cache_octal_variants,
++		SPINAND_PAGE_READ_FROM_CACHE_1S_1D_8D_OP(0, 2, NULL, 0, 105 * HZ_PER_MHZ),
++		SPINAND_PAGE_READ_FROM_CACHE_1S_8S_8S_OP(0, 16, NULL, 0, 86 * HZ_PER_MHZ),
++		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_8S_OP(0, 1, NULL, 0, 133 * HZ_PER_MHZ),
+ 		SPINAND_PAGE_READ_FROM_CACHE_FAST_1S_1S_1S_OP(0, 1, NULL, 0),
+ 		SPINAND_PAGE_READ_FROM_CACHE_1S_1S_1S_OP(0, 1, NULL, 0));
+ 
 
 -- 
 2.48.1
