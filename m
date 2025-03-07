@@ -1,170 +1,170 @@
-Return-Path: <linux-kernel+bounces-551320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3184CA56B12
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:03:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73F3BA56B1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:04:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58ADF189A66A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:03:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 023481896D1F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADAE21C182;
-	Fri,  7 Mar 2025 15:03:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7901921CC70;
+	Fri,  7 Mar 2025 15:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LM/6X+Y9"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="PTaD5YiF"
+Received: from smtp-fw-52004.amazon.com (smtp-fw-52004.amazon.com [52.119.213.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4822155342;
-	Fri,  7 Mar 2025 15:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A731F21C163;
+	Fri,  7 Mar 2025 15:03:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741359782; cv=none; b=JLA/LLShr10C0CmRXVieYuYuy9uR1Oxu+0EMDTDbSrPLFABR/3fPwpH0LgTHzxd43tazn/LTDqhUA9YIuLtsSh1pdDE+z/QlicV+SSxg30nRVj5IPJqdAJgT+VUsVbGvgn6eK1CVWmMw7axfOQOC37RkMQ5y2beoZFF/Ssp277I=
+	t=1741359806; cv=none; b=LB/CWGWWsrjPZwDOj1RJ4FipMhfnOt2rCcKKlIokBqHTrO7PsPfzfktqmTd8SNc/TkwziB1vZAhekAFWe/1jwMljjipxAqvZkAGPyz4GKMkaFLadPzgO+Wf3Ic9oXydyYtYUpoKS8DbePNjlc2bSdX8vZW+LIMXTWNKvEzo7HGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741359782; c=relaxed/simple;
-	bh=2sn5q5F540xMeAvwbPbZHiitLTVXFn/dDYoDxee1Ydg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hbNNxY9kBNroEXhyVFGm1TxrAwUS90AnjMitJTwSMdxkfsUsh1ZMX7qc5Bm5ePnFlIYLrPK7J5qLVRF3xJir9X4JsTtsiQKJ2ZrTL2T/X/bmsdSiOitA2ss8gWr12mjw1qkJPVuTvoHnfHaGYjawEXqDPaMLIP8FI9UCdJv4NbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LM/6X+Y9; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30613802a04so20616371fa.2;
-        Fri, 07 Mar 2025 07:03:00 -0800 (PST)
+	s=arc-20240116; t=1741359806; c=relaxed/simple;
+	bh=EvP4qRjvDYAMbUjjDQRTdexQOft/Fz2pInKApi/481Y=;
+	h=From:To:CC:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=GFNv/CTo1NRrbxxbekb06LwefwZVUbyZtah/hhOf4xSZYfBle0AtueYRVIGGuMmIIB/XvPyEKVXFR8l1h49id/0IkYnDIbstbIkADxCxwXRQuBcvUQ1mCwmznPxA2ylE/pWc/ck0KM2ltXXzVrziOp3c8JDRO0MwHbKbjulkYmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=PTaD5YiF; arc=none smtp.client-ip=52.119.213.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741359779; x=1741964579; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JJe0bNeCyyLIrsUyV751ygPvbRMQaDREYBG7uK+LWKQ=;
-        b=LM/6X+Y9P1Vw9phMzRF2kEaEMputBGXSd+yqmuTZd1hjoBcdSZF0MpYJr3PI0LGrhH
-         NpzFkQzuU2fXbS11GK/8dO206nOR7LGIGE8RxDL4QtvUv0q08uekctAVplZG/H06sXdE
-         QQG966jAxRUgqsBj4+U/hT2i5lPZ8ccJyOifzwnf9K23MunLSpeqgN7AS9XR6wdT1Dx6
-         qKEc0f09fBwnoK7Z26tu4nAf8eLbBhp9el0BQDhB77dEEg7/QXG6pu12gAm7aFmdbMzx
-         tFOj4cqSnmJVMQMY/m2KYkfpWITjnnBq7PxHHmfAwgfb6H5KKZ9rQ0HZqd1kvJ5Y3ANj
-         NoJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741359779; x=1741964579;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JJe0bNeCyyLIrsUyV751ygPvbRMQaDREYBG7uK+LWKQ=;
-        b=jVrvu9/FRVqywHcBBfFPyCp+ikDAAr3HuyelZQXPH53ZBLufmZCGZoK9TlaE2ptHsk
-         MHC3fSPsIHpIBs7M5PdqCEK6mA5ag6NDprDb3iCvAJSNV14E76L3gkOgoVUbd0vWyofW
-         JO1U7YTFBKUtt+9h1rH8/s++YGrsygvKCyVH4ZunMbWqmt6aoNgErIIt6CPYcXE0XEFv
-         t2FsJxeGZALY7v7KJtyXCNDX9WGyw3H6TfWbNGu9kCa7YoiXCNS55usfJY872fezADhN
-         /58Tpo1eRsqrono8YJ3igzHSsjfqU5WTPnfQbYGjMi4n4NCVCTYGnn5QZ6/KLKjS1uhn
-         8tXA==
-X-Forwarded-Encrypted: i=1; AJvYcCU7E0eOZ0CcV0Q+7BOntSqO2WNeYrAFj8isjoc1n++URnyXY2Wcwg7KZRN9WIVb9XbD+6IRJ0BklDEQKf72@vger.kernel.org, AJvYcCVLSyV6lBPud1bQLAPZhvS0s7gCylFtKiVTsw7pFTv0rT7Z4Tbs27NsgCjSSMYsAJ5L/T/R/WHFyze9qY1wVVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6IablG7sOq8CbOPCWM0uJCgmxXFSX+dyPfUm3bypdmCrOogoi
-	fOfvj2gLWNIsRPIPNmhas7vQ2ms/7st/Dd2JTJWYM6Me54NnQm8QptFTzQK7shzJwImPyHGeKGA
-	fi5jzR2p223Vc6UqKHXf7DDuFxqw=
-X-Gm-Gg: ASbGnctzDG6SykGBtC1EE9945UDkS5FhzVqE1Nfp+YuOh3ze+r+tjiBHnoL94ZiMpMN
-	umVTLvxA4u4KiplQirPfv/pmgNw5BqL96ziy2bbladoyqAQcF5QVIbEIJt8qfsXxu/eAXRFUZdS
-	nR4LmgY0846vVJFiAEWUmlcOVB
-X-Google-Smtp-Source: AGHT+IEtW6v/7aTnFHwF52LOmZ/tMOL8C1lamhsu7wwMnJTJa06ZeHkeHeCLsIyhfCQKIO0xY+G9HlWcQHZu388iqYw=
-X-Received: by 2002:a2e:9111:0:b0:30b:ef0f:81f1 with SMTP id
- 38308e7fff4ca-30bf4523798mr12352911fa.20.1741359778374; Fri, 07 Mar 2025
- 07:02:58 -0800 (PST)
+  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
+  t=1741359802; x=1772895802;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=qqZcaiLaNCbDu9YJf0F0p4Av7x9/ggfLV9yLqVI9lR8=;
+  b=PTaD5YiFFggXebRV8TEr+rFnoPNSvNRK6ICyqvYBoxx8+QLUrWlLMz0i
+   lTXkYuAM6Yf7Ocj+ToPUMEtOs6Lvsw3jYD+c0+l5KXM8SaEp3z4FfrmgM
+   LN99vluEduiNZf+ZRQReLNhk34TYBvgSsJVHW5iSGhTBIsxy1Aa8wgop6
+   E=;
+X-IronPort-AV: E=Sophos;i="6.14,229,1736812800"; 
+   d="scan'208";a="277234234"
+Received: from iad12-co-svc-p1-lb1-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.2])
+  by smtp-border-fw-52004.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 15:03:16 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:12889]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.40.101:2525] with esmtp (Farcaster)
+ id 581fd502-d217-44f4-a221-2819cfffdf66; Fri, 7 Mar 2025 15:03:15 +0000 (UTC)
+X-Farcaster-Flow-ID: 581fd502-d217-44f4-a221-2819cfffdf66
+Received: from EX19D020UWC004.ant.amazon.com (10.13.138.149) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 7 Mar 2025 15:03:01 +0000
+Received: from EX19MTAUWA002.ant.amazon.com (10.250.64.202) by
+ EX19D020UWC004.ant.amazon.com (10.13.138.149) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
+ Fri, 7 Mar 2025 15:03:01 +0000
+Received: from email-imr-corp-prod-pdx-all-2c-785684ef.us-west-2.amazon.com
+ (10.25.36.210) by mail-relay.amazon.com (10.250.64.203) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1544.14 via Frontend Transport; Fri, 7 Mar 2025 15:03:01 +0000
+Received: from dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com [172.19.91.144])
+	by email-imr-corp-prod-pdx-all-2c-785684ef.us-west-2.amazon.com (Postfix) with ESMTP id 3C58BA05AE;
+	Fri,  7 Mar 2025 15:03:01 +0000 (UTC)
+Received: by dev-dsk-ptyadav-1c-43206220.eu-west-1.amazon.com (Postfix, from userid 23027615)
+	id C61C752B5; Fri,  7 Mar 2025 15:03:00 +0000 (UTC)
+From: Pratyush Yadav <ptyadav@amazon.de>
+To: Randy Dunlap <rdunlap@infradead.org>
+CC: <linux-kernel@vger.kernel.org>, Jonathan Corbet <corbet@lwn.net>, "Eric
+ Biederman" <ebiederm@xmission.com>, Arnd Bergmann <arnd@arndb.de>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, Alexander Viro
+	<viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara
+	<jack@suse.cz>, Hugh Dickins <hughd@google.com>, Alexander Graf
+	<graf@amazon.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, "David
+ Woodhouse" <dwmw2@infradead.org>, James Gowans <jgowans@amazon.com>, "Mike
+ Rapoport" <rppt@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>, "Pasha
+ Tatashin" <tatashin@google.com>, Anthony Yznaga <anthony.yznaga@oracle.com>,
+	Dave Hansen <dave.hansen@intel.com>, David Hildenbrand <david@redhat.com>,
+	Jason Gunthorpe <jgg@nvidia.com>, Matthew Wilcox <willy@infradead.org>, "Wei
+ Yang" <richard.weiyang@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<linux-mm@kvack.org>, <kexec@lists.infradead.org>
+Subject: Re: [RFC PATCH 2/5] misc: add documentation for FDBox
+In-Reply-To: <E41DA7C8-635C-4E6E-A2CA-5D657526BE85@infradead.org>
+References: <20250307005830.65293-1-ptyadav@amazon.de>
+	<20250307005830.65293-3-ptyadav@amazon.de>
+	<E41DA7C8-635C-4E6E-A2CA-5D657526BE85@infradead.org>
+Date: Fri, 7 Mar 2025 15:03:00 +0000
+Message-ID: <mafs0r038j32z.fsf@amazon.de>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307080907.218398-1-neeraj.sanjaykale@nxp.com>
-In-Reply-To: <20250307080907.218398-1-neeraj.sanjaykale@nxp.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Fri, 7 Mar 2025 10:02:46 -0500
-X-Gm-Features: AQ5f1Jp-F8Dt4YrmS3Z--RPaEvLIehTazO0Kh1J6eNmrHbhZndyb60YX9n7mr6E
-Message-ID: <CABBYNZ+rHFdnxOtdV-FAFr3vKw1bAE2NMN15yc5_soOXc4d_5w@mail.gmail.com>
-Subject: Re: [PATCH v1] Bluetooth: btnxpuart: Fix compile errors due to BTNXPUART
-To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-Cc: marcel@holtmann.org, linux-bluetooth@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, amitkumar.karwar@nxp.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Neeraj,
+On Thu, Mar 06 2025, Randy Dunlap wrote:
 
-On Fri, Mar 7, 2025 at 3:07=E2=80=AFAM Neeraj Sanjay Kale
-<neeraj.sanjaykale@nxp.com> wrote:
+> On March 6, 2025 4:57:36 PM PST, Pratyush Yadav <ptyadav@amazon.de> wrote:
+>>With FDBox in place, add documentation that describes what it is and how
+>>it is used, along with its UAPI and in-kernel API.
+>>
+>>Since the document refers to KHO, add a reference tag in kho/index.rst.
+>>
+>>Signed-off-by: Pratyush Yadav <ptyadav@amazon.de>
+>>---
+[...]
+>>+
+>>+The File Descriptor Box (FDBox) is a mechanism for userspace to name file
+>>+descriptors and give them over to the kernel to hold. They can later be
+>>+retrieved by passing in the same name.
+>>+
+>>+The primary purpose of FDBox is to be used with :ref:`kho`. There are many kinds
 >
-> This fixes compilation errors seen due to merging recent patches.
+>     many kinds of 
 >
-> hdev->cmd_timeout was recently renamed to hdev->reset in following
-> commit:
-> commit f07d478090b0 ("Bluetooth: Get rid of cmd_timeout and use the reset
-> callback")
+>>+anonymous file descriptors in the kernel like memfd, guest_memfd, iommufd, etc.
 >
-> Renamed nxp_cmd_timeout() to nxp_reset() accordingly.
->
-> In latest master, the check for "local-bd-address" device property seems
-> to be missing. Added the missing code in the patch.
->
-> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202503070951.EcxRrnHK-lkp@i=
-ntel.com/
-> Closes: https://lore.kernel.org/oe-kbuild-all/202503071045.5Ac2pLEW-lkp@i=
-ntel.com/
-> ---
->  drivers/bluetooth/btnxpuart.c | 14 ++++++++++----
->  1 file changed, 10 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.=
-c
-> index abe2ccd92604..b3454227c7c6 100644
-> --- a/drivers/bluetooth/btnxpuart.c
-> +++ b/drivers/bluetooth/btnxpuart.c
-> @@ -1318,8 +1318,8 @@ static int nxp_set_bdaddr(struct hci_dev *hdev, con=
-st bdaddr_t *bdaddr)
->         /* BD address can be assigned only after first reset command. */
->         err =3D __hci_cmd_sync_status(hdev, HCI_OP_RESET, 0, NULL, HCI_IN=
-IT_TIMEOUT);
->         if (err) {
-> -               bt_dev_err(hdev, "Reset before setting local-bd-addr fail=
-ed (%ld)",
-> -                          PTR_ERR(skb));
-> +               bt_dev_err(hdev, "Reset before setting local-bd-addr fail=
-ed (%d)",
-> +                          err);
->                 return err;
->         }
->
-> @@ -1422,7 +1422,7 @@ static bool nxp_wakeup(struct hci_dev *hdev)
->         return false;
->  }
->
-> -static void nxp_cmd_timeout(struct hci_dev *hdev)
-> +static void nxp_reset(struct hci_dev *hdev)
->  {
->         struct btnxpuart_dev *nxpdev =3D hci_get_drvdata(hdev);
->
-> @@ -1721,9 +1721,15 @@ static int nxp_serdev_probe(struct serdev_device *=
-serdev)
->         hdev->shutdown =3D nxp_shutdown;
->         hdev->wakeup =3D nxp_wakeup;
->         hdev->set_bdaddr =3D nxp_set_bdaddr;
-> -       hdev->cmd_timeout =3D nxp_cmd_timeout;
-> +       hdev->reset =3D nxp_reset;
->         SET_HCIDEV_DEV(hdev, &serdev->dev);
->
-> +       device_property_read_u8_array(&nxpdev->serdev->dev,
-> +                                     "local-bd-address",
-> +                                     (u8 *)&ba, sizeof(ba));
-> +       if (bacmp(&ba, BDADDR_ANY))
-> +               set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
-> +
->         if (hci_register_dev(hdev) < 0) {
->                 dev_err(&serdev->dev, "Can't register HCI device\n");
->                 goto probe_fail;
-> --
-> 2.25.1
+>    etc.,
 
-Ive fixed them in place since they were not pushed yet to the net tree.
+Thanks, will fix these.
 
---=20
-Luiz Augusto von Dentz
+[...]
+>>+
+>>+Box
+>>+---
+>>+
+>>+The box is a container for FDs. Boxes are identified by their name, which must
+>>+be unique. Userspace can put FDs in the box using the ``FDBOX_PUT_FD``
+>>+operation, and take them out of the box using the ``FDBOX_GET_FD`` operation.
+>
+> Is this ioctl range documented is ioctl-number.rst?
+> I didn't notice a patch for that.
+
+My bad, missed that.
+
+>
+>>+Once all the required FDs are put into the box, it can be sealed to make it
+>>+ready for shipping. This can be done by the ``FDBOX_SEAL`` operation. The seal
+>>+operation notifies each FD in the box. If any of the FDs have a dependency on
+>>+another, this gives them an opportunity to ensure all dependencies are met, or
+>>+fail the seal if not. Once a box is sealed, no FDs can be added or removed from
+>>+the box until it is unsealed. Only sealed boxes are transported to a new kernel
+>
+> What if KHO is not being used?
+
+Then the FDs are lost on shutdown.
+
+>
+>>+via KHO. The box can be unsealed by the ``FDBOX_UNSEAL`` operation. This is the
+>>+opposite of seal. It also notifies each FD in the box to ensure all dependencies
+>>+are met. This can be useful in case some FDs fail to be restored after KHO.
+>>+
+>>+Box FD
+>>+------
+>
+> I can't tell in my email font, but is each underlinoat least as long as the title above it?
+
+They are. I went and double-checked as well. Maybe just something with
+your email font.
+
+[...]
+
+-- 
+Regards,
+Pratyush Yadav
 
