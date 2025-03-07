@@ -1,248 +1,227 @@
-Return-Path: <linux-kernel+bounces-550742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A38FFA5638C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:20:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A526A56396
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:21:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECE4C3B4E26
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:20:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4625A175F81
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 146851FFC44;
-	Fri,  7 Mar 2025 09:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B34B120CCEA;
+	Fri,  7 Mar 2025 09:20:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="bNFzI++1"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ajb6w2AS"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28213207DED
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CEA20968E;
+	Fri,  7 Mar 2025 09:20:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741339199; cv=none; b=j27C/Pau4jGSMlKAuAJngs/pX6cVTVuBBNvEt/RvjYu/EAk++LpGa8jsGpaAabhrCDFvigXD3Hp7MvI6P1S7gC+BvV1302+6J9R6GYsusQTyFmRdgoMhbA1RokWoSC/V5w5Pbd2/U4bRroPzlqAjjU8+XVBWST56sfEhjzahqm0=
+	t=1741339223; cv=none; b=WZhwPgSKh7TieH9efwK0amd5m28fXnwTB2Lem/fnHMRa1NUK0ya8w0k1/gGFWZoX5Ps40kS+/O7c3cJmQjoEFjWoPtSLMqblUGaAlpUts4x4gaIl3vGo1thB7+I/1utFv2iFz6SiDHbvH/Mk/DQ4otFXFEQIFf8h0yvkZG+/eus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741339199; c=relaxed/simple;
-	bh=mmDJGlTiXfNeJMEuXKVI397heeQI8lNwD4tu96M9a9Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EWFn0yLJGorg5Q0V3++YBmcRI6wgyYHAJkkgE7/i4C94fr3TDAaEVndXwbp0F+euf8UEve62iqt8ZdtuCLXCyt+JYEhFE9enOUi5b4mxRgq+erEFneM0F0bKtJsghf4uTNlSrhZCdM8gDfblwHi4uhZ/e45CjxNy+TtebLNHHuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=bNFzI++1; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-855183fdcafso84060039f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 01:19:55 -0800 (PST)
+	s=arc-20240116; t=1741339223; c=relaxed/simple;
+	bh=9/DjYnN9zqXerfNuhVK8b5x7ZDMPC9BjRHtPhecmp7g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EH4X/R6oy/casBnI4a/JF5b5aK4ceU1OkBzmGC58u8ycsfNKXoKDDH1+088SMvwkZQDY8NHngfbf1U/LLvE1Z5IzrlsFjPmbDXlEwD7yxAhGDDt6I6PZRLH6V3uk4+8/wJ0Ol4zL6X+pHlvSZPNJQwfZXqUiLKl3cKYkBaoxW24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ajb6w2AS; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-30b9f7c4165so14285241fa.3;
+        Fri, 07 Mar 2025 01:20:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1741339195; x=1741943995; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZsKZEMr3HHLvjCn4YoRhdUIIxvIOxDzrpOUWVftatik=;
-        b=bNFzI++1qvgLg2R3nJqdUYVRLpcWA+H83tJclXa72NYrp+oGyzHGEUdgDES43/PWKf
-         c56sk2TfmcA8YkdwlA+GFs6fLcKc0+XLk1LRCBbgjZuRL1/YxjIPj8VbX89E7LSPf+59
-         Wed6SILuMBNuizfQGgjqOgTE6/ary3xOHJ5xGio1vMikfjUoUe6cwHJb9d2Aik76afgL
-         gv0wJ1mNczi6rfJg6JHO53TMiOYQabe+n5QVinjlLMdA5dNzkLjfXMgkMCF2iib8ihwj
-         au8A54FRifwAJLSZ2W8pKfxUKY0xkcWZTbFqTdrPRg/LlCey9YfoDo/yS621hrb8BU2u
-         Wb0w==
+        d=gmail.com; s=20230601; t=1741339219; x=1741944019; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wF098SdY1+et+6WUIEyzSNWkuQHvhxC9RenO2Oeg7L4=;
+        b=Ajb6w2ASTSi+klEWJAI0fp9zV+O4itR/k0jIFpOhFayP7nfpIDFPWkGEGzire/LZoq
+         k6NPHjm0Pk4kcnj3tR8EiQMlGl8R8vithjv4btua/I0crkIOSfPovBzR/vbvgzEoQ8Ry
+         mP3rTB5QzpLLO31YSYAhqUK6ov7HNdmsiXw2XtuSSIbVHrd/thwOGwhYgB/1cMJZxgj7
+         vPNp1yKAKqa1GbLOpNSFio+qI9T+y2sBsXGAqMmBowYIa7Xnioc5FHDvJBFynmPd7/46
+         wctgD3zgzFDh21y0zsazuH+YqGO+vEqIEd0gdjaXwvcM8gu5mZ0ZhqVo3fwXp+rI3u+E
+         XLZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741339195; x=1741943995;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZsKZEMr3HHLvjCn4YoRhdUIIxvIOxDzrpOUWVftatik=;
-        b=ubZT6D8e6qbuRajIN9sy3K/tZLXDIBRq6/fhU6raRDT8p2Eq7r815Joknh2+1oQNb0
-         UhTGksg8bXhoH6srqxNb+5bBHW0TSZfFMXao8veen26Etotad+/YxGRh1PgFh5r2c1Qq
-         IZk7O/nYNox5b1HnUAoSrmaa2rSM6tenaV9i56o/XfAtf38/BMQtkE0w9zTjov49i846
-         /r01jqZ7A4GqoBEZU9FfFsiCE4e6/XGwCXOqRGUxVFP38ZAGnAAEYKMNmWcoWKmSkwXM
-         kiv4hUqZV6IautXe8ofNHeN7V/jGvF0H0V6TONxQ/EDe3Lqsk1g6xgshiqobq1Njs0vb
-         xvLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU57ZaJ/5HYA1PTIT6SbEDSraNyUNVmilAjRL5YBTDNq30Nav0R3me6qnfv4uWfecx+7bEMOlXud/Qlgbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVSmd9Bu7iN6+sbyq9rQJM2Hp4tsZVCxaeVDUubuUTLq1iSQP8
-	Jq8xJ4MEZTJ5ybnLhOK8VhIEGO6TqtgOaCmVPW0Mupzj0aMlIFsPdvek9HgFRwk=
-X-Gm-Gg: ASbGncvaxn4MwnMuXZ9U7kx6fk13ELyN8RCVZj7eh7aBVsrMxgRXNZXAM2j9F/hAyLs
-	TM/siuxvsVFt3qdenIXjZN40kwZp7xQJhrIs5Sje5EiR2V3qZNddo15UAeFK2obcUhsyU4nFAvj
-	vGVuh0gVYdU/OLURMwil0sm/rupcrPZwwIkXBLmWbbGWqjiASSYEHVurq+kiUTg97gFPZpyGxfo
-	qgBQkMBEY0csKVJ3JkNuNTL/S1/vy2BkbSgy779yX3Jz8mmdfmsXe/KpLtoFkuKd6wKsmChBIcW
-	C7lizQlshWtB3Invj1XaGuRCSibHiM4i1nuTFAsZmRAYYRVuGuaZuuIO0cUBQg==
-X-Google-Smtp-Source: AGHT+IHYz1YNu90yzXHeRG9Cltgc3qDq8cWUxHoIVZOWm3IFTOEk9LCi5Cpyrkar83w7qV9HsmfOEw==
-X-Received: by 2002:a05:6602:584:b0:855:9ba9:618 with SMTP id ca18e2360f4ac-85b0eb2db5fmr650176639f.8.1741339195150;
-        Fri, 07 Mar 2025 01:19:55 -0800 (PST)
-Received: from [100.64.0.1] ([170.85.6.166])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f20a008ffcsm822075173.101.2025.03.07.01.19.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 01:19:54 -0800 (PST)
-Message-ID: <1198d3ac-d715-4f82-853e-bf9d0ad9dde7@sifive.com>
-Date: Fri, 7 Mar 2025 03:19:52 -0600
+        d=1e100.net; s=20230601; t=1741339219; x=1741944019;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wF098SdY1+et+6WUIEyzSNWkuQHvhxC9RenO2Oeg7L4=;
+        b=sBgFK9PxZeNrhDZNXj4r4VmChfLL87++xXNmy/GS6sjA8wEVUIFqPXp+C43TYiMCRw
+         +8+a4B9U2nqh+q85KTa/LixsUa7tETuNSamG1kZlactHNtfJaYhN0mbt9rg3Tk8zWKHQ
+         FE7OUeFGfEoOlAPy78TI8gYZb68Oj5XwDdFsK++rAxOTBwV1X2d8oBmwDTCFihRKKadP
+         V9D26Lo4kfG0XlpPk0s3EA4Gv+Wu5uw5zrhQbK5OdnqmFVrinK6EHnOoWh/C3Rd+JtGx
+         Vw6N2w2I1KKf1WHkgFdKr9VQp3JGgTSqaH+U3L/KKbe07WClQJWbkVjkY/Q8+nJjWEyA
+         LOpg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKAyTOK6BdaMOX2VRenB+Pryp469h887RBeyyixdQ7OqtlzzUYT0Et0vfr41k9dA7FLuSM4Wm0BWjr+FuTdAlRJQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHgYcFsUuojDo7p3XMnqU7Cex714IxYCnMd4JBRIQnDcJ+vvFb
+	9IcEoyzADjMT+YvzZbW1zNGEX9G3uvO2nVNuxkYdWl3OhiibnwJpDj9UXcnazlFSwRGSddSlRnn
+	r+oOJVjK3wUxGmqhqOg29ObtTelY=
+X-Gm-Gg: ASbGncsQ9QN7KjUSCKwykphSmuNz1rggZcFkW7n1BCEQVJF0+2oH57U5ig5u6kz4vLp
+	6B+qX7rSDCSlwbfWB68/Kjt6Ueoid/c3ecDLy2zdNI1sd20B59oSC0DT2pRcb6+JAmYPEQBWvRz
+	ZO7gpFzKp7kbd2/nEPC5SZm3B4vw==
+X-Google-Smtp-Source: AGHT+IHMIXZAmq0xjTS/MjdX+YO4P+6+KRfg7gGC9idOm09cQdiYuLjszuYADBZJhbus3dLJha+Axtk2WNQeiZ6XaC4=
+X-Received: by 2002:a2e:a78a:0:b0:302:4a61:8b85 with SMTP id
+ 38308e7fff4ca-30bf4631610mr8821851fa.37.1741339218732; Fri, 07 Mar 2025
+ 01:20:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RESEND PATCH 0/7] perf vendor events riscv: Update SiFive CPU
- PMU events
-To: Atish Patra <atishp@atishpatra.org>
-Cc: linux-riscv@lists.infradead.org,
- Arnaldo Carvalho de Melo <acme@redhat.com>, Ian Rogers <irogers@google.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, linux-perf-users@vger.kernel.org,
- Mark Rutland <mark.rutland@arm.com>, Adrian Hunter
- <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- linux-kernel@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>
-References: <20250213220341.3215660-1-samuel.holland@sifive.com>
- <Z7ZLB-wZY9wTZSBZ@google.com>
- <CAOnJCUJYKkGXOJiLTnPOgPSnEiCeXFaoGQRiT5Au+rbvP1unZQ@mail.gmail.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-Content-Language: en-US
-In-Reply-To: <CAOnJCUJYKkGXOJiLTnPOgPSnEiCeXFaoGQRiT5Au+rbvP1unZQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250306145227.55819-1-ubizjak@gmail.com> <174129682336.14745.3287112422322924162.tip-bot2@tip-bot2>
+ <36B61764-A297-459A-AD55-ACC54C409876@zytor.com>
+In-Reply-To: <36B61764-A297-459A-AD55-ACC54C409876@zytor.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Fri, 7 Mar 2025 10:20:17 +0100
+X-Gm-Features: AQ5f1JoVpHqNHwbVu--vKXyqWzq-qOcE0rHDZ88XBE3Cn6aNJZwSdr1dWlQyEdM
+Message-ID: <CAFULd4b29XMoBoN9_0BCtuV2dgasO=WUu0re91Refjx68Q9O9A@mail.gmail.com>
+Subject: Re: [tip: x86/asm] x86/kexec: Merge x86_32 and x86_64 code using
+ macros from <asm/asm.h>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org, 
+	tip-bot2 for Uros Bizjak <tip-bot2@linutronix.de>, linux-tip-commits@vger.kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, David Woodhouse <dwmw@amazon.co.uk>, Baoquan He <bhe@redhat.com>, 
+	Vivek Goyal <vgoyal@redhat.com>, Dave Young <dyoung@redhat.com>, Ard Biesheuvel <ardb@kernel.org>, 
+	x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Atish,
+On Fri, Mar 7, 2025 at 4:00=E2=80=AFAM H. Peter Anvin <hpa@zytor.com> wrote=
+:
+>
+> On March 6, 2025 1:33:43 PM PST, tip-bot2 for Uros Bizjak <tip-bot2@linut=
+ronix.de> wrote:
+> >The following commit has been merged into the x86/asm branch of tip:
+> >
+> >Commit-ID:     aa3942d4d12ef57f031faa2772fe410c24191e36
+> >Gitweb:        https://git.kernel.org/tip/aa3942d4d12ef57f031faa2772fe41=
+0c24191e36
+> >Author:        Uros Bizjak <ubizjak@gmail.com>
+> >AuthorDate:    Thu, 06 Mar 2025 15:52:11 +01:00
+> >Committer:     Ingo Molnar <mingo@kernel.org>
+> >CommitterDate: Thu, 06 Mar 2025 22:04:48 +01:00
+> >
+> >x86/kexec: Merge x86_32 and x86_64 code using macros from <asm/asm.h>
+> >
+> >Merge common x86_32 and x86_64 code in crash_setup_regs()
+> >using macros from <asm/asm.h>.
+> >
+> >The compiled object files before and after the patch are unchanged.
+> >
+> >Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+> >Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> >Cc: David Woodhouse <dwmw@amazon.co.uk>
+> >Cc: Baoquan He <bhe@redhat.com>
+> >Cc: Vivek Goyal <vgoyal@redhat.com>
+> >Cc: Dave Young <dyoung@redhat.com>
+> >Cc: Ard Biesheuvel <ardb@kernel.org>
+> >Cc: "H. Peter Anvin" <hpa@zytor.com>
+> >Link: https://lore.kernel.org/r/20250306145227.55819-1-ubizjak@gmail.com
+> >---
+> > arch/x86/include/asm/kexec.h | 58 +++++++++++++++--------------------
+> > 1 file changed, 25 insertions(+), 33 deletions(-)
+> >
+> >diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
+> >index 8ad1874..e3589d6 100644
+> >--- a/arch/x86/include/asm/kexec.h
+> >+++ b/arch/x86/include/asm/kexec.h
+> >@@ -18,6 +18,7 @@
+> > #include <linux/string.h>
+> > #include <linux/kernel.h>
+> >
+> >+#include <asm/asm.h>
+> > #include <asm/page.h>
+> > #include <asm/ptrace.h>
+> >
+> >@@ -71,41 +72,32 @@ static inline void crash_setup_regs(struct pt_regs *=
+newregs,
+> >       if (oldregs) {
+> >               memcpy(newregs, oldregs, sizeof(*newregs));
+> >       } else {
+> >+              asm volatile("mov %%" _ASM_BX ",%0" : "=3Dm"(newregs->bx)=
+);
+> >+              asm volatile("mov %%" _ASM_CX ",%0" : "=3Dm"(newregs->cx)=
+);
+> >+              asm volatile("mov %%" _ASM_DX ",%0" : "=3Dm"(newregs->dx)=
+);
+> >+              asm volatile("mov %%" _ASM_SI ",%0" : "=3Dm"(newregs->si)=
+);
+> >+              asm volatile("mov %%" _ASM_DI ",%0" : "=3Dm"(newregs->di)=
+);
+> >+              asm volatile("mov %%" _ASM_BP ",%0" : "=3Dm"(newregs->bp)=
+);
+> >+              asm volatile("mov %%" _ASM_AX ",%0" : "=3Dm"(newregs->ax)=
+);
+> >+              asm volatile("mov %%" _ASM_SP ",%0" : "=3Dm"(newregs->sp)=
+);
+> >+#ifdef CONFIG_X86_64
+> >+              asm volatile("mov %%r8,%0" : "=3Dm"(newregs->r8));
+> >+              asm volatile("mov %%r9,%0" : "=3Dm"(newregs->r9));
+> >+              asm volatile("mov %%r10,%0" : "=3Dm"(newregs->r10));
+> >+              asm volatile("mov %%r11,%0" : "=3Dm"(newregs->r11));
+> >+              asm volatile("mov %%r12,%0" : "=3Dm"(newregs->r12));
+> >+              asm volatile("mov %%r13,%0" : "=3Dm"(newregs->r13));
+> >+              asm volatile("mov %%r14,%0" : "=3Dm"(newregs->r14));
+> >+              asm volatile("mov %%r15,%0" : "=3Dm"(newregs->r15));
+> >+#endif
+> >+              asm volatile("mov %%ss,%k0" : "=3Da"(newregs->ss));
+> >+              asm volatile("mov %%cs,%k0" : "=3Da"(newregs->cs));
+> > #ifdef CONFIG_X86_32
+> >-              asm volatile("movl %%ebx,%0" : "=3Dm"(newregs->bx));
+> >-              asm volatile("movl %%ecx,%0" : "=3Dm"(newregs->cx));
+> >-              asm volatile("movl %%edx,%0" : "=3Dm"(newregs->dx));
+> >-              asm volatile("movl %%esi,%0" : "=3Dm"(newregs->si));
+> >-              asm volatile("movl %%edi,%0" : "=3Dm"(newregs->di));
+> >-              asm volatile("movl %%ebp,%0" : "=3Dm"(newregs->bp));
+> >-              asm volatile("movl %%eax,%0" : "=3Dm"(newregs->ax));
+> >-              asm volatile("movl %%esp,%0" : "=3Dm"(newregs->sp));
+> >-              asm volatile("movl %%ss, %%eax;" :"=3Da"(newregs->ss));
+> >-              asm volatile("movl %%cs, %%eax;" :"=3Da"(newregs->cs));
+> >-              asm volatile("movl %%ds, %%eax;" :"=3Da"(newregs->ds));
+> >-              asm volatile("movl %%es, %%eax;" :"=3Da"(newregs->es));
+> >-              asm volatile("pushfl; popl %0" :"=3Dm"(newregs->flags));
+> >-#else
+> >-              asm volatile("movq %%rbx,%0" : "=3Dm"(newregs->bx));
+> >-              asm volatile("movq %%rcx,%0" : "=3Dm"(newregs->cx));
+> >-              asm volatile("movq %%rdx,%0" : "=3Dm"(newregs->dx));
+> >-              asm volatile("movq %%rsi,%0" : "=3Dm"(newregs->si));
+> >-              asm volatile("movq %%rdi,%0" : "=3Dm"(newregs->di));
+> >-              asm volatile("movq %%rbp,%0" : "=3Dm"(newregs->bp));
+> >-              asm volatile("movq %%rax,%0" : "=3Dm"(newregs->ax));
+> >-              asm volatile("movq %%rsp,%0" : "=3Dm"(newregs->sp));
+> >-              asm volatile("movq %%r8,%0" : "=3Dm"(newregs->r8));
+> >-              asm volatile("movq %%r9,%0" : "=3Dm"(newregs->r9));
+> >-              asm volatile("movq %%r10,%0" : "=3Dm"(newregs->r10));
+> >-              asm volatile("movq %%r11,%0" : "=3Dm"(newregs->r11));
+> >-              asm volatile("movq %%r12,%0" : "=3Dm"(newregs->r12));
+> >-              asm volatile("movq %%r13,%0" : "=3Dm"(newregs->r13));
+> >-              asm volatile("movq %%r14,%0" : "=3Dm"(newregs->r14));
+> >-              asm volatile("movq %%r15,%0" : "=3Dm"(newregs->r15));
+> >-              asm volatile("movl %%ss, %%eax;" :"=3Da"(newregs->ss));
+> >-              asm volatile("movl %%cs, %%eax;" :"=3Da"(newregs->cs));
+> >-              asm volatile("pushfq; popq %0" :"=3Dm"(newregs->flags));
+> >+              asm volatile("mov %%ds,%k0" : "=3Da"(newregs->ds));
+> >+              asm volatile("mov %%es,%k0" : "=3Da"(newregs->es));
+> > #endif
+> >+              asm volatile("pushf\n\t"
+> >+                           "pop %0" : "=3Dm"(newregs->flags));
+> >               newregs->ip =3D _THIS_IP_;
+> >       }
+> > }
+>
+> Incidentally, doing this in C code is obviously completely broken, especi=
+ally doing it in multiple statements. You have no idea what the compiler ha=
+s messed with before you get there.
 
-On 2025-03-01 3:21 AM, Atish Patra wrote:
-> On Wed, Feb 19, 2025 at 1:27 PM Namhyung Kim <namhyung@kernel.org> wrote:
->>
->> Hello,
->>
->> On Wed, Feb 12, 2025 at 05:21:33PM -0800, Samuel Holland wrote:
->>> This series updates the PMU event JSON files to add support for newer
->>> SiFive CPUs, including those used in the HiFive Premier P550 board.
->>> Since most changes are incremental, symbolic links are used when a set
->>> of events is unchanged from the previous CPU series.
->>>
->>> I originally sent this series about a year ago[1], but received no
->>> feedback. The P550 board is now available (and I have tested this series
->>> on it), so it would be good to get perf support for it upstream.
->>>
->>> [1]: https://lore.kernel.org/linux-perf-users/20240509021531.680920-1-samuel.holland@sifive.com/
->>>
-> 
-> Tested the patches that are part of sifive's release tree for p550.
-> Both perf stat/record seems to work fine
-> for a bunch of events.
-> 
-> Based on that
-> Tested-by: Atish Patra <atishp@rivosinc.com>
+These are "asm volatile" statemets, so at least they won't be
+scheduled in a different way. OTOH, please note that the patch is very
+carefully written to not change code flow, usage of hardregs in the
+inline asm is usually the sign of fragile code.
 
-Thanks for testing!
-
-> @Samuel Holland : perf report that the following two events are not
-> supported on the p550 board.
-> 
-> cycle and instruction count:
->   core_clock_cycles
->        [Counts core clock cycles]
->   instructions_retired
->        [Counts instructions retired]
-> 
-> I assumed that these are raw events cycle/instruction retired events
-> that can support
-> perf sampling as well. Maybe I am missing something ? DT binding ?
-
-perf is correct. Those two events are not supported on P550, only by the newer
-cores (bulled-0d and p650). Yes, those are aliases of cycles and instructions
-that were added to support sampling.
-
-Regards,
-Samuel
-
->>>
->>> Eric Lin (5):
->>>   perf vendor events riscv: Update SiFive Bullet events
->>>   perf vendor events riscv: Add SiFive Bullet version 0x07 events
->>>   perf vendor events riscv: Add SiFive Bullet version 0x0d events
->>>   perf vendor events riscv: Add SiFive P550 events
->>>   perf vendor events riscv: Add SiFive P650 events
->>>
->>> Samuel Holland (2):
->>>   perf vendor events riscv: Rename U74 to Bullet
->>>   perf vendor events riscv: Remove leading zeroes
->>
->> It'd be nice if anyone in the RISC-V community can review this.
->>
->> Thanks,
->> Namhyung
->>
->>>
->>>  tools/perf/pmu-events/arch/riscv/mapfile.csv  |  6 +-
->>>  .../cycle-and-instruction-count.json          | 12 +++
->>>  .../arch/riscv/sifive/bullet-07/firmware.json |  1 +
->>>  .../riscv/sifive/bullet-07/instruction.json   |  1 +
->>>  .../arch/riscv/sifive/bullet-07/memory.json   |  1 +
->>>  .../riscv/sifive/bullet-07/microarch.json     | 62 +++++++++++++
->>>  .../riscv/sifive/bullet-07/watchpoint.json    | 42 +++++++++
->>>  .../cycle-and-instruction-count.json          |  1 +
->>>  .../arch/riscv/sifive/bullet-0d/firmware.json |  1 +
->>>  .../riscv/sifive/bullet-0d/instruction.json   |  1 +
->>>  .../arch/riscv/sifive/bullet-0d/memory.json   |  1 +
->>>  .../riscv/sifive/bullet-0d/microarch.json     | 72 +++++++++++++++
->>>  .../riscv/sifive/bullet-0d/watchpoint.json    |  1 +
->>>  .../sifive/{u74 => bullet}/firmware.json      |  0
->>>  .../arch/riscv/sifive/bullet/instruction.json | 92 +++++++++++++++++++
->>>  .../arch/riscv/sifive/bullet/memory.json      | 32 +++++++
->>>  .../arch/riscv/sifive/bullet/microarch.json   | 57 ++++++++++++
->>>  .../arch/riscv/sifive/p550/firmware.json      |  1 +
->>>  .../arch/riscv/sifive/p550/instruction.json   |  1 +
->>>  .../arch/riscv/sifive/p550/memory.json        | 47 ++++++++++
->>>  .../arch/riscv/sifive/p550/microarch.json     |  1 +
->>>  .../p650/cycle-and-instruction-count.json     |  1 +
->>>  .../arch/riscv/sifive/p650/firmware.json      |  1 +
->>>  .../arch/riscv/sifive/p650/instruction.json   |  1 +
->>>  .../arch/riscv/sifive/p650/memory.json        | 57 ++++++++++++
->>>  .../arch/riscv/sifive/p650/microarch.json     | 62 +++++++++++++
->>>  .../arch/riscv/sifive/p650/watchpoint.json    |  1 +
->>>  .../arch/riscv/sifive/u74/instructions.json   | 92 -------------------
->>>  .../arch/riscv/sifive/u74/memory.json         | 32 -------
->>>  .../arch/riscv/sifive/u74/microarch.json      | 57 ------------
->>>  30 files changed, 555 insertions(+), 182 deletions(-)
->>>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/cycle-and-instruction-count.json
->>>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/firmware.json
->>>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/instruction.json
->>>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/memory.json
->>>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/microarch.json
->>>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-07/watchpoint.json
->>>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/cycle-and-instruction-count.json
->>>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/firmware.json
->>>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/instruction.json
->>>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/memory.json
->>>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/microarch.json
->>>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/bullet-0d/watchpoint.json
->>>  rename tools/perf/pmu-events/arch/riscv/sifive/{u74 => bullet}/firmware.json (100%)
->>>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet/instruction.json
->>>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet/memory.json
->>>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/bullet/microarch.json
->>>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p550/firmware.json
->>>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p550/instruction.json
->>>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/p550/memory.json
->>>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p550/microarch.json
->>>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/cycle-and-instruction-count.json
->>>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/firmware.json
->>>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/instruction.json
->>>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/p650/memory.json
->>>  create mode 100644 tools/perf/pmu-events/arch/riscv/sifive/p650/microarch.json
->>>  create mode 120000 tools/perf/pmu-events/arch/riscv/sifive/p650/watchpoint.json
->>>  delete mode 100644 tools/perf/pmu-events/arch/riscv/sifive/u74/instructions.json
->>>  delete mode 100644 tools/perf/pmu-events/arch/riscv/sifive/u74/memory.json
->>>  delete mode 100644 tools/perf/pmu-events/arch/riscv/sifive/u74/microarch.json
->>>
->>> --
->>> 2.47.0
->>>
->>
->> _______________________________________________
->> linux-riscv mailing list
->> linux-riscv@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-riscv
-> 
-> 
-> 
-> --
-> Regards,
-> Atish
-
+Uros.
 
