@@ -1,117 +1,138 @@
-Return-Path: <linux-kernel+bounces-551532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EF3BA56DBB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:32:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED5CAA56DB9
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:32:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6931417917C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:32:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23DFD177CB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1961F21A44E;
-	Fri,  7 Mar 2025 16:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F393A23BD1A;
+	Fri,  7 Mar 2025 16:31:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gb8wy99Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hK7XBG0H"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AD221CC7B;
-	Fri,  7 Mar 2025 16:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D542721CC71;
+	Fri,  7 Mar 2025 16:31:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741365134; cv=none; b=it6Sqgvi9rehKFgd3uSZS6DG/hUFua/P2blKbdXMG5nfxBDuLdNC+V71IMK2/edDqtYGpZNxkkRVXPU94S1P40b2IQb94jax8wvOKHXtByAG9lBHCg75+KXPeItBaEnkgJBc+SFo/HDE+M7yhB93PE3KE7sQyQitSIEeJjlmMA8=
+	t=1741365119; cv=none; b=IfIlbsWRJ6fVl4u9W10nZlMAcXKpCroyjdwnFOBjV7cI7G8nJ+9OjdjM3V/69i+kHNTvO+nHwldPN96T6UYfdQzRLpzQ8YAEjuAKKyUwkNUt6XR2K+CkAjDt8207Nwz/8CSpzqP0YkK6ABTXFCKgVmFG915OZMTRth7aK64t/Rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741365134; c=relaxed/simple;
-	bh=Sm2u4lkW9WmjbUbfrUxh0xjfgPJJFZa6w+NyuKr9lJY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bOocashLy8/TvayiJFVSEz0LBL+co4xTjaoqYyj78ZGLLxIBvYEOKxn1RELB8wNZ8wQ8tOGj2/EAS1vB+m2y1oXBtcn1CGz/YY6+zmTGxH7+s+K6beEhKXV2kbX6iVngIzioAcZn/2oCgIG3Hrbo6KqHT3SG0Ngj6ziI7rEm7co=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gb8wy99Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4084AC4CED1;
-	Fri,  7 Mar 2025 16:32:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741365133;
-	bh=Sm2u4lkW9WmjbUbfrUxh0xjfgPJJFZa6w+NyuKr9lJY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Gb8wy99Qc6kqeeXN0aV5hFK0czGJZEoZK70atA8Arhc9mN247Fr0CgGSYZbK7BwuA
-	 rX4UxHHouy1ukcLy9zX/I8JtmRsN02BUw3op93sTEaqaZTV9RNDgPacO5FhrbISqSV
-	 Bn07pK6wchQO/8/IKk1JoWHvaaoyEVzwd6mxAQ6rSstQyZKp90Xap1XdvtSNKDCZ3o
-	 OKGpsTrxn/LeIlFY5zLadLScHy3UmjBhwQJwFJq5mdgLRVBYFe0xntaWUn9B0Xma+q
-	 hg7INV2MtqXhJcoZBMkpzz99TuHZq99x2Ga6Wf6mPbjhUQVe8LgiglY6Mj4g+hh9Tk
-	 xFGCHeKjljABA==
-Date: Fri, 7 Mar 2025 18:32:08 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, Thomas Gleixner <tglx@linutronix.de>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
-	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
-	Dionna Glaze <dionnaglaze@google.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 3/6] tpm: add send_recv() ops in tpm_class_ops
-Message-ID: <Z8sfiDEhsG6RATiQ@kernel.org>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-4-sgarzare@redhat.com>
- <Z8Jmps6AF_geaHUw@kernel.org>
- <3p5erujbhxw7ozdnfpmresv3dqdh2xszolv6mh4khkagoy3wit@ow5qht4keh4h>
- <0e156883acf95d31b9358831550d6d675e3ce4ff.camel@kernel.org>
- <Z8dg46Mj81Q9Z0WV@kernel.org>
- <jkr5z4thb55gs2jcmtcfipgg6p7z6ikhr6etd6l3nqpf723hf7@3fns3z5cjqk4>
- <20250305190229.GC354403@ziepe.ca>
- <Z8oZLqn4p2-AWQbz@kernel.org>
- <fgxwcfm6fctdsjnzdbf3ecxss453dir3pgaqio7bzazjj5qotj@mdi6wtuzorvn>
+	s=arc-20240116; t=1741365119; c=relaxed/simple;
+	bh=6koPqbaiXehRUtS1o2eqtpenSIGsDtYORqBMCQEWFHA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mr2JjJVGRFLbDomYflP0du7gfh1UAN5da1H6BH6YnkVWI/60HEWZdyWsoqOBQmGZo8l2SxT51WiFKNJjWvZYlrtiU6Mt1Xh0I/zcCZMKLxNZ+1BG1GHtY0NMLrna9Cp9n6p3PRfATZV9T/mCJtEqDoTrkBfl7al97Q/iHZEgzQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hK7XBG0H; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741365118; x=1772901118;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6koPqbaiXehRUtS1o2eqtpenSIGsDtYORqBMCQEWFHA=;
+  b=hK7XBG0Hueq5sotRm1CTdaNeC00VfORoLbVpxi6AfB3ndUmYPArz0rEp
+   1d9/mynMEAEIbD0ZXlQReE9G74pSlF5YxJqqw+aCiDoHflRL/xmGrPYM1
+   Y5NNFS+fEZhNE36CJD8EMAZQBoObp90T+SCxdBxsVA29hmIVT2mDcQhzq
+   oonBJRfrUO9pUNoNRq2CF+dJv77O16QDJ28p9oZE+fTPNe/jlse1rxKQh
+   ckrMuHfPM1Ib6fyqiqTA6Dt826UcuZ5URhmpJx34UacEUyB3/pt9VFSiI
+   zfppvzr8y5GZBw0/eUWKFhYk+Vc4uid7herRVK+CzKGZ3ghPWDcS4T4bo
+   A==;
+X-CSE-ConnectionGUID: xcuxLdMESwuQcJaiTA8ZRg==
+X-CSE-MsgGUID: wM1YYHm3TI6V+1pbaUxa8A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="46343216"
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="46343216"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 08:31:57 -0800
+X-CSE-ConnectionGUID: SVA+Yqo+QvSPPHjZgj7+mw==
+X-CSE-MsgGUID: axinV2HQQOKgSoqlVbBhvg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="124396879"
+Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.110.132]) ([10.125.110.132])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 08:31:57 -0800
+Message-ID: <c43a1936-d8a6-42f4-bcfe-d4de56b38f10@intel.com>
+Date: Fri, 7 Mar 2025 08:32:20 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fgxwcfm6fctdsjnzdbf3ecxss453dir3pgaqio7bzazjj5qotj@mdi6wtuzorvn>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/microcode/AMD: Fix out-of-bounds on systems with
+ CPU-less NUMA nodes
+To: Florent Revest <revest@chromium.org>
+Cc: bp@alien8.de, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+ mingo@redhat.com, dave.hansen@linux.intel.com, x86@kernel.org,
+ hpa@zytor.com, stable@vger.kernel.org
+References: <20250307131243.2703699-1-revest@chromium.org>
+ <2cf9798f-1a89-46e1-b1a4-7deec9cb7e40@intel.com>
+ <CABRcYmLcXosu62EbTMQNGCEa+mmNtRKCQX8oL=WDrgP-UH6B_g@mail.gmail.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <CABRcYmLcXosu62EbTMQNGCEa+mmNtRKCQX8oL=WDrgP-UH6B_g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 07, 2025 at 04:37:12PM +0100, Stefano Garzarella wrote:
-> On Thu, Mar 06, 2025 at 11:52:46PM +0200, Jarkko Sakkinen wrote:
-> > On Wed, Mar 05, 2025 at 03:02:29PM -0400, Jason Gunthorpe wrote:
-> > > On Wed, Mar 05, 2025 at 10:04:25AM +0100, Stefano Garzarella wrote:
-> > > > Jason suggested the send_recv() ops [2], which I liked, but if you prefer to
-> > > > avoid that, I can restore what we did in v1 and replace the
-> > > > TPM_CHIP_FLAG_IRQ hack with your point 2 (or use TPM_CHIP_FLAG_IRQ if you
-> > > > think it is fine).
-> > > 
-> > > I think it is a pretty notable simplification for the driver as it
-> > > does not need to implement send, status, req_canceled and more ops.
-> > > 
-> > > Given the small LOC on the core side I'd call that simplification a
-> > > win..
-> > 
-> > I'm sorry to disagree with you on this but adding a callback for
-> > one leaf driver is not what I would call "a win" :-)
-> 
-> IIUC in the ftpm driver (tpm_ftpm_tee.c) we could also use send_recv() and
-> save a memcpy() to a temporally buffer (pvt_data->resp_buf) and also that 4k
-> buffer allocated with the private data of the driver.
-> 
-> BTW if you agree, for now I'll do something similar of what we do in the
-> ftpm driver (which would be what Jarkko recommended - status() returns 0,
-> .req_complete_mask = 0, .req_complete_val = 0) and we can discuss
-> send_recv() in a new series where I can include changes for the ftpm driver
-> too, to see whether it makes sense or not.
-> 
-> WDYT?
+On 3/7/25 07:58, Florent Revest wrote:
+> One thing I'm not entirely sure about is that
+> for_each_node_with_cpus() is implemented on top of
+> for_each_online_node(). This differs from the current code which uses
+> for_each_node(). I can't tell if iterating over offline nodes is a bug
+> or a feature of load_microcode_amd() so this would be an extra change
+> to the business logic which I can't really explain/justify.
 
-Yeah, that would work. Althought not related to this callback interface
-per se, also tpm-dev-common.c is one example (in a way).
-
-> 
-> Thanks,
-> Stefano
-
-BR, Jarkko
+Actually, the per-node caches seem to have gone away at some point too.
+Boris would know the history. This might need a a cleanup like Boris
+alluded to in 05e91e7211383. This might not even need a nid loop.
 
