@@ -1,80 +1,127 @@
-Return-Path: <linux-kernel+bounces-551435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 853FDA56C5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:43:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 286C0A56C61
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:44:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 991C21884F88
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:43:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D0BB3AE70A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:43:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5081E1DF2;
-	Fri,  7 Mar 2025 15:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AA8121D3FC;
+	Fri,  7 Mar 2025 15:43:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Cnd6nlwm"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="muCUQIOq"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F5B318DB09
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C8318DB09;
+	Fri,  7 Mar 2025 15:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741362223; cv=none; b=hbDV+yuCPwj6cVSQ71MPtWiuOtnhzPS0pBVMnKqRykNd990AEfM6q6C/cildATTpA7mZC/kMceWT7roZwC3wSZBg/Rc1ybeHdPcDBew/5+o25w20d+/E2I2jdT1I97tT7VGErfniFggP4Z2dd509UE3UJdWb+3oLxUpGj1n5msQ=
+	t=1741362235; cv=none; b=kW3XkXs8A/XKf7pUITGk/KZoymyC224Gb6BCtTCSs/cZDsegT4wnnQChYZ0E9sCQAm5gDC5OEvr0W6xcTNM++O+/dpcvSd1PIx+AeUy4wo4TpSks46HVvVjDkVvplS7odnC9G8AGSapb20EMSK2rZdgxx3MKbXPwnyYa+XdxNiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741362223; c=relaxed/simple;
-	bh=AAz0DLMgMTB7F/jGw9WZlIhTliLR8/Li8mvbnaQ5IKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UsLG6c+25kbCYD/oLJQCNVgwdVy+2Ow/i6G1KoDtLxhba599Y3d/HGkcbbN0Ux3wJjgMl7lZoTQjkh7i6569+tFl53vHvjhLHkwnzK+ZF0sJj6vS/DqKRgaG5nFwi3WZrm8fTRVfNKocdlGl/ZRxrwS+hOtwSzUkvOQ8ELwIsic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Cnd6nlwm; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Fri, 7 Mar 2025 10:43:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741362207;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cSv+AiBlTooU4HUGgPN9nT0ov+EzLUep7a9Pvn6pdIc=;
-	b=Cnd6nlwmGSQNZskWbnP6bQ4sg50AyaozLxWqiZNbBcWzB5S1dwBH3ihQtFre2YFuZelY3X
-	5gKOPADhY3/QJK6xVMewuk+Nt++Jq0umNKO5eXYzagNtNCfuEmuCcjPL8hze9aTEnUjSTU
-	/554GSBnDGoNhdbgmdBc2H3RCiO8Emg=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Jan Kara <jack@suse.cz>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
-Subject: Re: [PATCH 1/7] fs: export invalidate_inodes()
-Message-ID: <plajio56ykhjbehtkppn3uuqkzxijvgsz4me746ozauxjkpxv6@ai67wcxekbhs>
-References: <20250307134933.1033872-1-kent.overstreet@linux.dev>
- <20250307134933.1033872-2-kent.overstreet@linux.dev>
- <nfdw5bpwvgl2beynlpp7zwjiy3kglk3s5zbouygotvuy3x2uoo@lkhzxvky2ii4>
+	s=arc-20240116; t=1741362235; c=relaxed/simple;
+	bh=8Ntml2Sm/nvVtmwH68yQthsfn5zmCNmXmNrMDICic5M=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=O3CNLlNR8gO4hVf7Il9DdKl/GagOECTMhdto+n6s/Q9+yCP9gDK9iF/GpeM2Ft+/uJp2ZMWbxWjtMGW0xxd9DDWLPtDF70m693pUtHB3QYrheTE0HBqar1ypsrRN7NVB2vuRH8jshqYdcnOiYyKPLRwP0va2iAHjqtfTaYk9g94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=muCUQIOq; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22401f4d35aso38158085ad.2;
+        Fri, 07 Mar 2025 07:43:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741362234; x=1741967034; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8Ntml2Sm/nvVtmwH68yQthsfn5zmCNmXmNrMDICic5M=;
+        b=muCUQIOqpn4LLsxcBfkp/oayuP8BKQLoWZiUyTdfX1hvzmNUrQhTXUhvScx+6PN/p5
+         gZ3mkO42SLv6L3rNvj2aqLg25RFtxIznQGJTAJOYx2w3eiyEIF6EH9DweRoLjDTcYIVi
+         gcBmVB3cvYZYI2bi4LH3qRV6Sj2P/KzJrUZ4Rb0naAHK5/QwkMqY/q6dZ5NVFrfL1p2l
+         n+kVpWZLI7i9GQXTfGjRtQPcTtdWt7KYw0HuTVFrV/SBBSwTLJfvtJoO1PBujtjrQvw+
+         FcsRHYiw+eQCa8ODIrRzwNgUww7EoJxx7bvD7upax7Zjkbr2sKKgk4g5GN31yKoIs6Cr
+         nMqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741362234; x=1741967034;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8Ntml2Sm/nvVtmwH68yQthsfn5zmCNmXmNrMDICic5M=;
+        b=wNXukvwGPYcH6hj29ewJEbznJyDhlKXUQ4hoB4fZ83TmRjHq5n164oe1MKpIrH6BJA
+         Lyhg/SOQCdUKPUATgp0BppWqr+66RPwzWWIXT5xfGM0HQdt3CUgwEOU4f9XYnLA0/dJa
+         G5dxaln+Sy8hwoMTHjHZSb5NHYRvwO1H6akYO4rfCueaMG3r4hRltjF/d1NKNDwffZWt
+         /T5fUnABopnATRwS/WZJSndKHCKYDJ9mgeC+WibwiprQJlQpVl8VFWuRWcvXYowsdXOm
+         Svynjo2oa9aYiZ2zBQfD8It55+OfpbXmgMfXaTrWXFkY/8f0nqkqlYT1yWJZM/s1az/S
+         3i4g==
+X-Forwarded-Encrypted: i=1; AJvYcCUPZzFz5ikKrEUxdOib5KUtxt5H9aiEIWfVWaUS2ZvoqlSuTmhOWEdF0SFifWdkXc8nkGEXztJDllIVmC8ZpkI=@vger.kernel.org, AJvYcCWZdkyQz8NU+dQc40f0WHJdSQof0stTDIoeyYoFnGWkwI9s/3tDo1TwYWznim+cP827W1juRt0Apuwwqp0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxTvGMDXXs1Jn6iVDPT2hvecitBihsbdOpOrcAKaQHpjtVN1dN
+	r/eWkICicrM5NGuL/Z5k4vISi0O/BRHnqHXbN8pi26jV91wyIPaJ
+X-Gm-Gg: ASbGncujfQqbb9vMuZy0TF3F4Ydj/xkQkupXpYUfJ5XfOFBjzb2d9Qd3Isd9jRZRy3w
+	kTZaTW6TwPeWCJBuLb/xhNndYq74N5CLtyAIgfYZpQU/3aBCqR5K2p8FJe+ZOl37dms4yG1XUV0
+	Q0fYNSJDliC7/Sbh5qYR+TubB0Tn+L/tjwuV9fbPcRw2Ot45WhapRfEnTXw19EKPFxHzHWpbkEf
+	mTGA08525JlzrQy/TrwIby67EuoDJX1dW5plMiEf0BWIyAvHE2mmNVSdrSEBTj7M3t+JreWq6TA
+	oEctIkIDHjyhJ1ncPsyUTmpzWMX65V29apE2ijkPlMscF9P0yN3e
+X-Google-Smtp-Source: AGHT+IFyDY96a8FxgwWSCXMs3Af462cFrv4KB62caHD64k6gpbhzlCUmJwlqDHwdaGjqoLtwkXv6Og==
+X-Received: by 2002:a17:903:22c8:b0:220:c813:dfd1 with SMTP id d9443c01a7336-22428ac9182mr67446895ad.36.1741362233534;
+        Fri, 07 Mar 2025 07:43:53 -0800 (PST)
+Received: from linuxsimoes.. ([187.120.156.44])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22410a918e5sm31290995ad.167.2025.03.07.07.43.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 07:43:53 -0800 (PST)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: aliceryhl@google.com
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	apw@canonical.com,
+	arnd@arndb.de,
+	aswinunni01@gmail.com,
+	axboe@kernel.dk,
+	benno.lossin@proton.me,
+	bhelgaas@google.com,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	charmitro@posteo.net,
+	dakr@kernel.org,
+	dwaipayanray1@gmail.com,
+	ethan.twardy@gmail.com,
+	fujita.tomonori@gmail.com,
+	gary@garyguo.net,
+	gregkh@linuxfoundation.org,
+	joe@perches.com,
+	linux-kernel@vger.kernel.org,
+	lukas.bulwahn@gmail.com,
+	miguel.ojeda.sandonis@gmail.com,
+	ojeda@kernel.org,
+	pbonzini@redhat.com,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu,
+	trintaeoitogc@gmail.com,
+	walmeida@microsoft.com
+Subject: Re: [PATCH V7 1/2] rust: module: change author to an array
+Date: Fri,  7 Mar 2025 12:43:41 -0300
+Message-Id: <20250307154341.639752-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <Z8rz9nrY7Yj1Z2hP@google.com>
+References: <Z8rz9nrY7Yj1Z2hP@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nfdw5bpwvgl2beynlpp7zwjiy3kglk3s5zbouygotvuy3x2uoo@lkhzxvky2ii4>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 07, 2025 at 03:44:50PM +0100, Jan Kara wrote:
-> On Fri 07-03-25 08:49:25, Kent Overstreet wrote:
-> > Needed in bcachefs for implementing blk_holder_ops.mark_dead, since we
-> > can't use the standard fs holder ops (whicth assume a single block device
-> > filesystem).
-> > 
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: Christian Brauner <brauner@kernel.org>
-> > Cc: Jan Kara <jack@suse.cz>
-> > Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
-> 
-> Please use evict_inodes(). It is exactly the same and is actually already
-> exported. Since you are the second one in last month to ask for this let's
-> clean this up [1].
+Alice Ryhl <aliceryhl@google.com> wrote:
+> I believe I reviewed this on the previous version. Did you forget to
+> pick up my tag, or did you change something in this patch that requires
+> a re-review?
+I'm sorry, I will pick up your tag and send a v8
 
-Switched it to evict_inodes().
+Too, I will pick up Charalampos and Andreas tags
+
+Thanks,
+Guilherme
 
