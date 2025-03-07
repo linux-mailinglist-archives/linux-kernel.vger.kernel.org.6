@@ -1,90 +1,156 @@
-Return-Path: <linux-kernel+bounces-550502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422DCA5607C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:55:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 565C6A5607E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:56:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A85A818956B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:55:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4A5218956AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAB5F199FDE;
-	Fri,  7 Mar 2025 05:55:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D892199235;
+	Fri,  7 Mar 2025 05:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jaDFXWdV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QfMbo0kd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24B7198E6D;
-	Fri,  7 Mar 2025 05:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871E018DB09;
+	Fri,  7 Mar 2025 05:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741326928; cv=none; b=kxv7OmE253Ezxtyv2eLZfn8siAlYAb4qWA7cBUAXF94jHitLpqg7Q/Kn/1FgjK5r5leSwQsINQCOHfUpwBaP4Ml+rjJChdd3gDA7NoaZeZHmcG15RVnGLtG03pxDwSzhf2wHomE3yxszERatZsUs3PfK6DSdbNHghQJp8X2Pw78=
+	t=1741326960; cv=none; b=bq0U2H5KzBPCB1ro+mcxyVxIpZAa8LXUUvtGPhL7XQgtVNDBwI4S+fQoF9+jwYTDxSq8VE8GnsXb9wu6WbBQIrO55rue9672aKVoYG6Qp6k+vHpkApTEF21lv//y/h4f/YILXEWD+JalSRaxHAyqdL7yicr10PkK6t94o+bMwj0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741326928; c=relaxed/simple;
-	bh=MhiyITzafn+oL8EbKVQjdW6/i3/2fPQ6p6JW0xN59M0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hT8X+pqL9YQNG/Ua5KZMCrdFPUkFtSdueTjd7O+xBWzHxQ+3KsG0gEAxJDQDvsdLnxMuIlnbByJCdcUtmZPuh08A84QBVoUIliSJj+oudjTWYI2/Tb1LeNk0VN2NNoHmXCqlJwEkKWQoAY+stbSzXT37A+6Ckjfgw9SaGJdaxt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jaDFXWdV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8CAAC4CED1;
-	Fri,  7 Mar 2025 05:55:26 +0000 (UTC)
+	s=arc-20240116; t=1741326960; c=relaxed/simple;
+	bh=Vg0Hiu6DbcVv9W2tmXX02bwit9obI/fnahHZu0wzzIQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cv9xH+PVNsVpRcM4advFm/qnOdSOGdeOPg/tg2scNcZKLiHPkVCq+216exyThHabHEuyvG1RFtrTNYr+tqsYgRa01f/5nLzhh9fJkvb85MhkL8EiOancBjGwbJjRKalTxIFJak+zCRpjETyqlRBQjXn8m/yd4vxmwRvEcMXvRwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QfMbo0kd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8714C4CED1;
+	Fri,  7 Mar 2025 05:55:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741326927;
-	bh=MhiyITzafn+oL8EbKVQjdW6/i3/2fPQ6p6JW0xN59M0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jaDFXWdVefRVlF5I4F1zLj0PsGHZOmZnbvI96wxh0Xru+rB5XamCaShyRZr+njJNo
-	 6beP32EjV5Miai+UIKcynMRVboeVl50qr9uvuBsAgMz0TyzwKZaA/CuUs1EIglKhm7
-	 xyA4/Cmf9tzK82NDZb8Z4PQCYYHl9L3Efz+MrmFlLmUHydkN4elrX79KF0jcZ6K+fI
-	 2rpxKN+IRtce1ECwZOrARfO72hPMemqhOp6R870ixSN2Yc4afGtllk/cj5BjkKHC63
-	 7jv55UfYx5LBPNQQbzMHkwY8fua7xVfJ0FNBEdf5+KuxF881aSdAM4tG5BC4O8Dhg9
-	 VTdrcK4FruVww==
-Date: Fri, 7 Mar 2025 07:55:22 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Ross Philipson <ross.philipson@oracle.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
-	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
-	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
-	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
-	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
-	ardb@kernel.org, mjg59@srcf.ucam.org,
-	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
-	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu,
-	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
-	ebiederm@xmission.com, dwmw2@infradead.org,
-	baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
-	andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
-Subject: Re: [PATCH v12 07/19] x86/msr: Add variable MTRR base/mask and
- x2apic ID registers
-Message-ID: <Z8qKStnfCBvSw_yI@kernel.org>
-References: <20241219194216.152839-1-ross.philipson@oracle.com>
- <20241219194216.152839-8-ross.philipson@oracle.com>
+	s=k20201202; t=1741326959;
+	bh=Vg0Hiu6DbcVv9W2tmXX02bwit9obI/fnahHZu0wzzIQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=QfMbo0kdh3/NueEADcRfkfnCWdAf1o/ivN0hQvzUoKcFlfNnm0pDkx2eK8+Yvtbav
+	 Gv6rMIXFKx45Xg4Gd5n/IQsKEIkvZEGNIvr4gPtn8dOfFZCyjbHPPqGmWMKnfZ9kAt
+	 43ZyiJGHTfKTkaCUv5l1BWq7+nlQjEac2Vprtr6OzRzaZPcTtTaZRE9mdA72R2unYG
+	 e+bk4lnuu/8msIWXHpFGFtFlRlMDD38a8kXtzsjXLlRGaHVKML59dT98HrVlN9lrqd
+	 ZifY0PPYv4Q5sDklcKJVeRWoLygg+2QwmNXW62cfYpIPvbZEmaAjK8/D38GSgCMAlW
+	 cnTdGyl5jCDVw==
+From: Dmitry Baryshkov <lumag@kernel.org>
+Subject: [PATCH v5 0/2] drm/bridge: reuse DRM HDMI Audio helpers for
+ DisplayPort bridges
+Date: Fri, 07 Mar 2025 07:55:51 +0200
+Message-Id: <20250307-dp-hdmi-audio-v5-0-f3be215fdb78@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241219194216.152839-8-ross.philipson@oracle.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGeKymcC/3XOQW7CMBCF4asgr+tqPHbSmFXvgVjYGZuM1MbIK
+ REI5e442TQQsXwjfb/mLoaQOQxiv7uLHEYeOPVlVB870XauPwXJVLZAwAoQakln2dEvS3chTlJ
+ VZCP54L2NophzDpGvS+9wLLvj4S/l25If1Xx9VxqVBNk4p4xrWiBD3z/cu5w+Uz6JOTXimttXj
+ oWrmnwdfESMccP1iqsN14UbtAARtPEGNtz8cw3qlZv5efzSllzEpm2f+DRND5VqBkxoAQAA
+X-Change-ID: 20250206-dp-hdmi-audio-15d9fdbebb9f
+To: Andrzej Hajda <andrzej.hajda@intel.com>, 
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+ Hermes Wu <Hermes.wu@ite.com.tw>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3055;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=Vg0Hiu6DbcVv9W2tmXX02bwit9obI/fnahHZu0wzzIQ=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnyopr5KVlXt0JP31KEmd2371Jw/0vQBmvcI0ag
+ 1v6uuFiaeqJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ8qKawAKCRCLPIo+Aiko
+ 1SlhB/wP+QdH/pAwZYyUeHuoc3+8xbN74dkgJw3gvcuYXMQedq7CU/bA0YIa0dtSqyTikjWRIJc
+ 4gRgEy7J0VQwNvfN6fq4XSREkdw/agYoWeJy9rgbXv5hmEfgPIGlWAW9Vq/qUC2AOIqkcibhdI7
+ ja8uTAInZCRyz6VhjopFfXMGERxUuZ7yFLxqQIHP3kXvIpRI9z2uK32M6V6HnIS55OKD3G8Ugtj
+ ofk14N2licxSG/s4eoBsEtwLcLKVPZ+rPMhvIkYyn9Z75aXEhyMoYPnqJ3FZQ623elPuQEntW0l
+ 8nkY3670i3rXl+Lz1pAAbH61NFjuS6SebqDGFyhHeHFvzR7H
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Thu, Dec 19, 2024 at 11:42:04AM -0800, Ross Philipson wrote:
-> These values are needed by Secure Launch to locate particular CPUs
-> during AP startup and to restore the MTRR state after a TXT launch.
+A lot of DisplayPort bridges use HDMI Codec in order to provide audio
+support. Present DRM HDMI Audio support has been written with the HDMI
+and in particular DRM HDMI Connector framework support, however those
+audio helpers can be easily reused for DisplayPort drivers too.
 
-Hmm... does the first part with like locating particular CPU cores?
+Patches by Hermes Wu that targeted implementing HDMI Audio support in
+the iTE IT6506 driver pointed out the necessity of allowing one to use
+generic audio helpers for DisplayPort drivers, as otherwise each driver
+has to manually (and correctly) implement the get_eld() and plugged_cb
+support.
 
-I'd start also the sentence with the action taken except assuring
-why the undefined action is taken.
+Implement necessary integration in drm_bridge_connector and provide an
+example implementation in the msm/dp driver.
 
-"Add the MSR values required by Secure Launch (SL) to locate particular
-CPU cores during application processor (AP) startup, and restore the
-MTRR state after a Intel TXT launch."
+The plan is to land core parts via the drm-misc-next tree and MSM DP
+patch via the msm-next tree.
 
-Along the lines would be more informative...
+NOTE: The first patch now depends on the drm-misc-next _and_ msm-next
+trees, as MSM HDMI driver was switched to DRM_BRIDGE_OP_HDMI. The
+easiest option is to wait for msm-next to be merged to drm-misc-next
+(through drm-next).
 
-BR, Jarkko
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Changes in v5:
+- Rebased on top of linux-next, also handling HDMI audio piece of the
+  MSM HDMI driver.
+- Link to v4: https://lore.kernel.org/r/20250301-dp-hdmi-audio-v4-0-82739daf28cc@linaro.org
+
+Changes in v4:
+- Rebased on linux-next, adding DRM_BRIDGE_OP_HDMI_AUDIO to Synopsys QP
+  HDMI driver.
+- Drop outdated comment regarding subconnector from the commit message.
+- Link to v3: https://lore.kernel.org/r/20250219-dp-hdmi-audio-v3-0-42900f034b40@linaro.org
+
+Changes in v3:
+- Dropped DRM_BRIDGE_OP_DisplayPort, added DRM_BRIDGE_OP_HDMI_AUDIO
+  (Laurent, Maxime)
+- Dropped the subconnector patch (again)
+- Link to v2: https://lore.kernel.org/r/20250209-dp-hdmi-audio-v2-0-16db6ebf22ff@linaro.org
+
+Changes in v2:
+- Added drm_connector_attach_dp_subconnector_property() patches
+- Link to v1: https://lore.kernel.org/r/20250206-dp-hdmi-audio-v1-0-8aa14a8c0d4d@linaro.org
+
+---
+Dmitry Baryshkov (2):
+      drm/bridge: split HDMI Audio from DRM_BRIDGE_OP_HDMI
+      drm/msm/dp: reuse generic HDMI codec implementation
+
+ drivers/gpu/drm/bridge/lontium-lt9611.c        |   2 +-
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-qp.c   |   1 +
+ drivers/gpu/drm/display/drm_bridge_connector.c |  59 +++++++----
+ drivers/gpu/drm/msm/Kconfig                    |   1 +
+ drivers/gpu/drm/msm/dp/dp_audio.c              | 131 +++----------------------
+ drivers/gpu/drm/msm/dp/dp_audio.h              |  27 ++---
+ drivers/gpu/drm/msm/dp/dp_display.c            |  28 +-----
+ drivers/gpu/drm/msm/dp/dp_display.h            |   6 --
+ drivers/gpu/drm/msm/dp/dp_drm.c                |   8 ++
+ drivers/gpu/drm/msm/hdmi/hdmi_bridge.c         |   1 +
+ include/drm/drm_bridge.h                       |  23 ++++-
+ 11 files changed, 92 insertions(+), 195 deletions(-)
+---
+base-commit: 565351ae7e0cee80e9b5ed84452a5b13644ffc4d
+change-id: 20250206-dp-hdmi-audio-15d9fdbebb9f
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
