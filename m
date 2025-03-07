@@ -1,90 +1,70 @@
-Return-Path: <linux-kernel+bounces-550873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74A04A5652B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:26:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 793EEA5652A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:25:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D70AA1899710
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:26:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B24F3177624
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:25:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9705214802;
-	Fri,  7 Mar 2025 10:24:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D59720DD71;
+	Fri,  7 Mar 2025 10:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XctVTEVJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S3t+BCk9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13582139A2;
-	Fri,  7 Mar 2025 10:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0171D20E020;
+	Fri,  7 Mar 2025 10:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741343076; cv=none; b=PB4bSDg8oG7gVZuFMou5SjgxMs/aBeXMH2EATA5Ds4x0BNCNg8oKBwX+JoJrE0HSao2Xopv8SBTAiTfJmapD0Vuk5wnWdnAKUQ+W6o3GZC2TqhpeWa6/q9GSALQMZ/mOGslMGPM5/zQ2eGsOblJxfcj8pmYBNZeeRaZGuGH6poA=
+	t=1741343075; cv=none; b=umePw62ZNzdpelbiWpBYuYY/MOEkmy8f176Wf6dm8D8ZsVJyxfWlvmRXMQNGSoyT7NcFqDHyeugQp0YLeDIx9EflgYA2voKwQ4mtkl13TDf7Q8c0DBD/02f7JmjWb4NVBiZKWwn7hdw893psUVFcX0BHluGwk/lKTGj5verKb2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741343076; c=relaxed/simple;
-	bh=HeDIxAdEuAAa3TOF0TBW/06fHRb1X6hHqGgLAIC4cBE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jxnf3PvbxHkXvHLcTOvpnMv7j+4r+npu6mgR+4qRchyi/C0dThT8SSHWRKXXdul9EIJ63lAU/+wpBKI8WGBEhvBGE4GCvYB83z0RptZjntOgYAi/x00aAyUbIwNlOfYJCQF2XkZDNJ5cuiLbfQ8QLguFKf33H46gouxhOorNuyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XctVTEVJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1162C4CED1;
+	s=arc-20240116; t=1741343075; c=relaxed/simple;
+	bh=Djv5FfsTg2UX6dg4OBS0LDjluXA5XJF6DZ9+8Th4zzg=;
+	h=Message-ID:Date:From:To:Subject:In-Reply-To:References:Cc; b=JMboLT26isxFv6dIqjss9zZoF87c/S/p2unCPpgzmnomdDuU+HZYsMK1o4qIhFH0wjvNX5teH2xrjMkUSN8X9axA6aW2hclpgg4M8vyqy2BLoJoYQaR7IK06RJ6Yn8H6HxXoi60nRIjFGxh5DF37vK6XV40tZfQ61rWiCElPx1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S3t+BCk9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27A0AC4AF0B;
 	Fri,  7 Mar 2025 10:24:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741343075;
-	bh=HeDIxAdEuAAa3TOF0TBW/06fHRb1X6hHqGgLAIC4cBE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=XctVTEVJRnVQ9XGxH2L0Jk8Zo4JjD8Giv4AeoyuEm2v3B+LnqoaEQUbMhcQmYWWey
-	 2IbYgMTA5Sw2hv9kYox+qfP9B/SGbfruqUr02bD+YkrQlKq9KoY0YIjqssKJ5YXFxa
-	 GLtZn0cK5vyPk0TyNrK36EhYvyNMCUnn+327IeHdvMLqrDUdnSc6Boi3JSH7wMN9uP
-	 oOdnhiyG2LYwkyQuXjtoAScjak0Y7mWOo6gFs+DtvCamRwlxQJxi0XIMxmfEW9D8u6
-	 Slz+144smcR8CdjFVZrryDejVSthfyL797WG8wbl5vyOo9m0KXUOfYy8PXq5DhzJAw
-	 GI5S1ZoB8GKRw==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Martin Tuma <martin.tuma@digiteqautomotive.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Ricardo Ribalda <ribalda@chromium.org>,
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] media: pci: mgb4: include linux/errno.h
-Date: Fri,  7 Mar 2025 11:24:27 +0100
-Message-Id: <20250307102431.73506-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	s=k20201202; t=1741343074;
+	bh=Djv5FfsTg2UX6dg4OBS0LDjluXA5XJF6DZ9+8Th4zzg=;
+	h=Date:From:To:Subject:In-Reply-To:References:Cc:From;
+	b=S3t+BCk9NLYTS7XjOhYLrvBE1N4GNvPKIldIC1/0Qp6NWEM2GKbT2J25uBb2Crc7L
+	 H8A4DpxOooZRRBaszTC6uQnUl0ixVql/Q8ydxXiCTGu3clxD+U4pbb9LVzuJXzfQlJ
+	 qvPy62eA0Zm+rJElabY8L4eZ5METZJEaKVsq97B7nzHSNN53om/abizHKPjSyCk2rj
+	 y3HXIUPtuhxyfObvWGrL6Yge/43X8o6CO3HkGgSLF8q/QdMf8+JU3kIY3qv/zs45v1
+	 MiXgOzBezKkFpVtFFnGMM/kQATct5dX7EOjagStffN2fNVxtf4sbwSVf22As7SuKtJ
+	 CoqtIeM8MxT5g==
+Message-ID: <249fa2f35689b1b2914ada0179c73e6c@kernel.org>
+Date: Fri, 07 Mar 2025 10:24:31 +0000
+From: "Maxime Ripard" <mripard@kernel.org>
+To: "Louis Chauvet" <louis.chauvet@bootlin.com>
+Subject: Re: [PATCH] drm/vkms: Add "hardware limitation" emulation TODO
+In-Reply-To: <20250225-vkms-update-todo-v1-1-afb1e6f7d714@bootlin.com>
+References: <20250225-vkms-update-todo-v1-1-afb1e6f7d714@bootlin.com>
+Cc: dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, "David
+ Airlie" <airlied@gmail.com>, "Haneen Mohammed" <hamohammed.sa@gmail.com>, "Jonathan
+ Corbet" <corbet@lwn.net>, "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>, "Maxime
+ Ripard" <mripard@kernel.org>, "Melissa Wen" <melissa.srw@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>, "Thomas Zimmermann" <tzimmermann@suse.de>
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Tue, 25 Feb 2025 16:46:22 +0100, Louis Chauvet wrote:
+> Add the hardware limitation todo.
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 
-The errno.h header is not always included indirectly, leading
-to rare randconfig build warnings.
+Reviewed-by: Maxime Ripard <mripard@kernel.org>
 
-drivers/media/pci/mgb4/mgb4_regs.c:20:11: error: use of undeclared identifier 'EINVAL'
-   20 |                 return -EINVAL;
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/media/pci/mgb4/mgb4_regs.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/media/pci/mgb4/mgb4_regs.c b/drivers/media/pci/mgb4/mgb4_regs.c
-index 31befd722d72..b45537dbfafa 100644
---- a/drivers/media/pci/mgb4/mgb4_regs.c
-+++ b/drivers/media/pci/mgb4/mgb4_regs.c
-@@ -5,6 +5,7 @@
-  */
- 
- #include <linux/ioport.h>
-+#include <linux/errno.h>
- #include "mgb4_regs.h"
- 
- int mgb4_regs_map(struct resource *res, struct mgb4_regs *regs)
--- 
-2.39.5
-
+Thanks!
+Maxime
 
