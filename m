@@ -1,108 +1,75 @@
-Return-Path: <linux-kernel+bounces-551730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFBF2A56FE0
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:01:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F735A56FF6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:02:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62656188AA75
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:01:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D18B188EC02
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:02:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1D691607A4;
-	Fri,  7 Mar 2025 18:01:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D1023ED6E;
+	Fri,  7 Mar 2025 18:02:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="S4cMIX1R"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="LCrA7F1A"
+Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96A1192B8A;
-	Fri,  7 Mar 2025 18:01:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F60721C180
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 18:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741370475; cv=none; b=hh0qmaMAg+2c8hn/tIeDsOCf/DoTeN/3Q4MZMav44n1pIPc03gH0tjrEJGtHuIPdshWqUH9xldErXKC357dCOlZDwkR8JqJNhKr0o0XJicBdH8qr6IhVnsxRsJMBzHAfdtNEFGM7OHAwIdI7vQkM/isvbPglcVz2jv8fHqGWSpk=
+	t=1741370546; cv=none; b=NQxcuV9RILlNVarpQGBPCCnVcL98ceDmGLvQKQfNWPVCnftjQyRgZr/FKYfgH+5Iya9+fNgAyVocuSFEbtkhZPyk44xlZdDs2+Cn4ipMPRFVVZxOf3HBiLrbvB2qlTsAB01z6LawP/EFWIKgeej5U2QqvheNuzqQkwwu6k+xPko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741370475; c=relaxed/simple;
-	bh=fc/YRA7+YxCdGwZiOQ9Sik/WdGzCbMxW/UHpNzNtcNc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=BXVydMOASRi5r9UYzT2JXriKCfrd23WOFou1Yc90GRKFUV3Qsk5XuOSiAH+B0gvtr1qiy0ApYJN0O5wRXcu8E1ZCOJWqkHsidEusjfrTWDVIcQHQHwhmDbmx8XgYFJXhEdzuH64NWLyL88tjw0FeoK28D9r3korouL78OkZc4ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=S4cMIX1R; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741370464; x=1741975264; i=markus.elfring@web.de;
-	bh=fc/YRA7+YxCdGwZiOQ9Sik/WdGzCbMxW/UHpNzNtcNc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=S4cMIX1RIn0cX+t+LffCAsFlf49qppSk6wC5Cyk7A9a49Hnyt8lU663lBARpBIRZ
-	 jvDgbRXUL/yD509LfZg7xWy/7GUPFXSqujx5gX2AV7nykkhwf1yF1hO8AFcoI7fVu
-	 UCGGxBKeQQGiwkApaAGWsOqrYWx9wnKKUmnOegA+qLisy1SpMIwIiwsaoWSxNajyK
-	 GFPdmS/g2ixk7VLD9YtEeQyAZkjQ2+y+mfuRDbEs4/bjYnTrkmonoxbA45iaP6Xd+
-	 m/lZP2/izfw0LGw8j/LiIqmnlGRYSAwcfLN6LSvmL1K+loKkXHOheWQwpOF5Qq9HB
-	 AN000z0U0FoD6CLPYQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.70]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MLzmv-1tYo8f1hJ3-00Mg13; Fri, 07
- Mar 2025 19:01:04 +0100
-Message-ID: <1ed644b8-f3c4-4656-aad0-a3c4f7fb0533@web.de>
-Date: Fri, 7 Mar 2025 19:01:03 +0100
+	s=arc-20240116; t=1741370546; c=relaxed/simple;
+	bh=y2toQQYUoaG3Hk/vLxGI7RZEKDnGyzA6U+NxbH1cp7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=od5Mrco18YA4KNe/S3Fa+LUk+FPFkE/PoIAyNvlSvOfNckbrIpsSdO0eeR+/mNH5AfC+h6XjE81o9IC98tnWsHwPyr5EGp7MvvwoRty7Pw2CWS2zVhx8wRNIsCrH99AQiCE+FZMWPxq4Kt2ImLOD4F5Qhg64IDfPek0DujZ+41U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=LCrA7F1A; arc=none smtp.client-ip=91.218.175.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Fri, 7 Mar 2025 13:02:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741370531;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KE6q/rKYH7PUqFF/DQcNeOX4lcfTqpEyOJp+maO+/S0=;
+	b=LCrA7F1AUCeHsxUkKCqBA5SalbHCToyUyDL+GjqMDl9IyYhHaA9Qy0REMXNKORjDatw0tI
+	hQEF3Df76adnqLFsmm0OJFcXbO+eCyom0/u/89x00iBv7Ddakm9eBuXVoLYYKd3lq8oTa8
+	YRDa7NQU0AOmnOv2kmlpMuIQ3rXTHcM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: vulab@iscas.ac.cn, linux-bcachefs@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bcachefs: Add error handling for bch2_folio()
+Message-ID: <ubkcjbt76z5jaiw75irjhybullftj5gnbtwn4p5y7xfu6mw254@ky3rsexlfrpg>
+References: <20250304040311.2081-1-vulab@iscas.ac.cn>
+ <1ed644b8-f3c4-4656-aad0-a3c4f7fb0533@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: vulab@iscas.ac.cn, linux-bcachefs@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>
-References: <20250304040311.2081-1-vulab@iscas.ac.cn>
-Subject: Re: [PATCH] bcachefs: Add error handling for bch2_folio()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250304040311.2081-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:vFQpRg8a0qnuMOCHH60YdRw6epS7oSnGKjvElBWGifTarv7YKhm
- xFh91c7CC0nv5d8CYC1AY29fn0qYeBL/9Z+HOkF5N0w/wp/g3iOwBf6f8N7WOJn1g/mXtoM
- 5s8TsmBRL1usIuSYsHUU0uuuzRj5VSvpIYAAhlYoZx0Zr3A6FJuNF/7zYO3x02hY0XldYOs
- ph62l3tIj7T3i8AOvPGfQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:6CMoYsFod04=;+IBVpNIyfjLprH3EO/ur62pKUNo
- mxHzSFbhI8IPJgAsVgTt07VWRHWUenmQua3BcAadOoos99Cs3HqgLy+knnQpiy0a1aA3HZMXZ
- qfg2nEw7BWsY/qhOzNRhgSa6liKDOm3gh+f6nGsPyik4aZNidogcNyPO/9xj8RkjzoibgLVBr
- 8gVulD5KHLPKIzJmWSCMZ3UZ4mYq7TzKRElOITbMPjqlk00XEuVoxQsLjx34COnn47rRV/H88
- LbUw8fiqKUev1i7mucwmZmOYxenTT3hncNCLb5M+k//UIC9/De1xs8vg5RlKnDOGF721EdAt2
- zbLlt6de7+KmHGDNMspRRu1/SxzDvWF7y3lwEmpBun08b4r4cpdSrPEqOrBAXm6ywYRkOimyD
- a/D99n0PxM/lbF9FFw4QO6XeNbFNyiyBv1hBgxuQohxtTkPgz3U0arb8IYSAPttDP1cCPUMYN
- t5sCaB6zXyHWTQLoeKaqQUqqOo3f3X7PwOz01ypNbdmj5sqTVfDIARLen4wnE0HBAHCn9cQmX
- 0pOjuw23CO5D6jgCrWn/Y/osXGbWNS+4bQ9qPlFMJhx4V44uy3x4ADyplDXfAL+pvpC5VtmI5
- Nf3nVtiaCYPKg2QFhkKT45z3u6iEowPaU8+V9OzIW86rYwoV9WPpiWNIUdl0KACSrp6lCmTY7
- CZcPHD8hKa2hBxmEuDEJ5BLr/0ylRzkog8kx5v1xEDma8I3IHz9lZJDEoQY21WEgX3i4C1mHJ
- hZNUzLWoaQxhC3XPPyZBRKsne5eSdkZdleD2ZXbrDfvFIR+uQpXall2PwhS/zLfx4lH4MqAOw
- gKaTdqrm2FbogLctI1BL0A9LIfRTTgaz3PlYRV2wFABFTa/7UB4MNNB09ulHQDqcZvUduWkqC
- tx5665k8aTGkBSll6WuRaV1vTOLNpQvnaR22BEIAogVCkqkyxE+g1lcZpkn4xPJFEKwxNTd8w
- BH2EbLeZPnqrxHuMK0THet9gxFEjC1pxOqelpOlZ5Ptvr7J5p1+r31Y88zEZmRTqQHAOEr2+D
- U56cjWUo5MrvKENMeizxk+S/igiFPUSIcAEL7cImo1zVD+nBuAI4tkSiuD6KO6W6UvfB/UmFr
- GhwtkvqN9I2DURXZoDXqRsZmtFNMhcNN0bWxIPy7/0FC0B2KhUT3dljKAt4BVkWE+CQ/Maxbt
- O2CgxboOljkdo6Ja/D2f/knIOj+fHFBdxtJAj7O5Vs8xsXUy4hrFDE7prdQO5jqVGEdQTiPsI
- xum5Bwvn8LYId/olTbjPgkhfaas0ltq8i7T2IYG17YlnpXUkpbELE1Ezy/Y//OTlJW93TaL/t
- fMyyKa23k559yANuzBXvjV5OeYegbPvB4yTqVpdYaR+5xH3ZzxZB//zbP1qpf0sdaeRL089ES
- aksccNI1btctXCavzj6tVFEzfXYggbfDOp2uGXrtcmgUjyUhY32NkNbJ+ai3Cf55f11mBiOOG
- mbm4tSSa8z0R5LFDuw2UslRvSfvA=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1ed644b8-f3c4-4656-aad0-a3c4f7fb0533@web.de>
+X-Migadu-Flow: FLOW_OUT
 
-> Add error handling for the case where bch2_folio() returns NULL
-> in __bch2_folio_set(). Return immediately to prevent null pointer
-> dereference.
+On Fri, Mar 07, 2025 at 07:01:03PM +0100, Markus Elfring wrote:
+> > Add error handling for the case where bch2_folio() returns NULL
+> > in __bch2_folio_set(). Return immediately to prevent null pointer
+> > dereference.
+> 
+> How do you think about to add any tags (like “Fixes” and “Cc”) accordingly?
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.14-rc5#n145
 
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc5#n145
-
-Regards,
-Markus
+I'm only doing backports for _really_ critical fixes until the
+experimental tag is lifted, so don't worry about it yet
 
