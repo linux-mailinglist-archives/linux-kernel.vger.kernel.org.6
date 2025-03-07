@@ -1,77 +1,55 @@
-Return-Path: <linux-kernel+bounces-551783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0BE9A570CD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:50:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECB7CA570D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:50:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 040E31782ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:50:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEFAD189B13B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:50:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E55B24A049;
-	Fri,  7 Mar 2025 18:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A02FC2459EA;
+	Fri,  7 Mar 2025 18:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="DkWjcQAC"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="aMGjL7nG"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C582C2459D6
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 18:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BB0D2459F6
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 18:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741373402; cv=none; b=X2UMiLmSYPcSV797ZRrGE94QlFm3yGpQVSktFHShikA7PWf8AHX4Y+xGh3XbSOzRnXYbu0ey0/28kGahMyVHGJv0MFUQTO4hjBlNhP6agHRDGkeH/5f1P9Xwf9z/qHYntoAeKE2VWOCBvcV6tbj50Zt2I6h8I7+Ofj9Dc5UrFQY=
+	t=1741373436; cv=none; b=uFJlj+rZ2cOXXz2avI2MRm3nYIHXRjLsZXyspqWC2/UYEs+nFa+7qmF2nzahQVfiDCtNej08gYbPBBBdOFRoMfg2gZTyWWi0lxisxnxCWyfAB0+u2JV2kQ+nAsxfud+CmGxJG77WPKVbKWHagFzVqXX0z/5mkhqs76UxaVv+X6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741373402; c=relaxed/simple;
-	bh=iY8btfX+g/V/cLT+RlidyZhd+i1kGYYOkkkl+VytfXM=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=uoo6oc3rBDSSmdqysNVdc5rm5dDKsDAsOUPJmgNaZnwMGeAYeYxAYciS7jjbQlfBW79S14PdzpQYqtPY7M9gd8cTNo1uf4tBfdtW8ndRGOuIJ/uKEGP7rocr0yYyFoWclgJZv9I/erbjCpZH4mLmIGeLMr2GJrgPY58BNa0NSsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=DkWjcQAC; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-390e88caa4dso1250211f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 10:50:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=citrix.com; s=google; t=1741373399; x=1741978199; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:subject:references:cc:to:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=iY8btfX+g/V/cLT+RlidyZhd+i1kGYYOkkkl+VytfXM=;
-        b=DkWjcQAC5C0/tvdNiOQOFtyEoSV+GivWOME44KbetdV2C8s9mjk9kJMlq69hUV1xpJ
-         C/d4ewKlGNRFEvIBNZRQrY+TcB4ulGj99/8idRRQmKUjj6OiQjEIsbZqa/DUCpV+vc/s
-         q8tbCBHmrACDAIxxYlm+hj8K1fPoEitZbhPwg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741373399; x=1741978199;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:subject:references:cc:to:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iY8btfX+g/V/cLT+RlidyZhd+i1kGYYOkkkl+VytfXM=;
-        b=lLNsmwWCQvZVqdtO9JuMDeLG8jHMfyz5oSWFlsSkolD7mdg1YUWFNE9OYJTCr3lJJ3
-         jWrX6dABS7wC8PhL4kctx7CYwtimO+KdMrWOpfA1PEBfhhtrLf8sr3DgCtkL3QdqiNRY
-         oPIjq7bxf4Yr2GxeLGfqo4wkczPEfAXGWex+pAJTh67ueftR9aUqnNSxf40F+yPGghwY
-         6ifVIiLnkRcrx6wkU//zR+L/h89h64H5oomos8c1T56smFZVlYWiAIKPrG3/KrodpkX9
-         hl6WPusIlujoMNGb2V+A3AMNDOPGBjE+4+WXWf0dJoTaS7WDp3Yt/hGXFxd0mzGMiI5e
-         xtaw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4xw2ZBqW49Gx9m9PRbr/IDObC18ZYJzqFObJl/MJHESyg9vCAWdtpQEQZoIX1FEV7WF5Hj6u8groTjlU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxccO5yRbTZaoiOY17mRXv3i/aC4Kg3jMIxUuzD35/tj0U6KPsp
-	rX8mxqnKPLJ1Xb2IT81Nz763Rt4tmCtYE16BamFJvCzgtU/Sg3NhGrz+4ng2Ka4=
-X-Gm-Gg: ASbGncs5vBCDSgz5tz2pbm9zxmcdldxLg9RgmSwGvAx7GxAeYhR1mcJJejA4/gLC9L4
-	IP0EyBC1IzfKjFc9TpwweAtXcMRMS6T7KiqbNrxVvx4uFAU2V/+zk+MSeo1+Z75Sgq4XcdSBzSd
-	by+kaYhGyNQ9JBE9judwkTkmnrVm3Ttu/1yMwTF59efLeviQ2ckfDj0gkRUP8Hl5L/zlnqLwu43
-	iJVVuJDrozppDegvhlm5YNr88mrPkUW1z/SyhUbwmNp8EUsDfpKR1zXJPzeXwMeuqr01zfMEwK2
-	WtFpcLjrwGm7XeDrKy22nySSIPMEPWKq2g85vM+iHhVQryVbroisHj/8w5mxxoavEPfw3aiBoL3
-	n+j7Z5SWA
-X-Google-Smtp-Source: AGHT+IGmeOPTWjHa0Be27hfI/1kYnZp0UHx0P0R/hj81LDLYhuR4kj7WMmpAAdsX/afUuDK/xqqF5Q==
-X-Received: by 2002:a5d:59a7:0:b0:391:1139:2653 with SMTP id ffacd0b85a97d-39132de145bmr3407200f8f.52.1741373399039;
-        Fri, 07 Mar 2025 10:49:59 -0800 (PST)
-Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfba848sm6051474f8f.4.2025.03.07.10.49.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 10:49:57 -0800 (PST)
-Message-ID: <efc2ee9d-5382-457f-b471-f3c44b81a190@citrix.com>
-Date: Fri, 7 Mar 2025 18:49:56 +0000
+	s=arc-20240116; t=1741373436; c=relaxed/simple;
+	bh=YqR8YrWh4j0XPBC3GF1gbJlAYRdPP86NGadqz0RY0rk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uizY83M4+PuM4HcssM98633+zqzNL3JE7XxNKERKEBerSCjVt0zCnVNcYruYbPTFfGTr1mqrB8JNDdd8EHHhY+rj5e8vY7tDi5exYTfFGTyiKlzBhaeh89tk/wPb/kQhLJ7ugxFiuDJT7wM6xnHIyHeszrwNjK6yu/C66qsoEOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=aMGjL7nG; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1741373434;
+ bh=qmRiDQKZXzZ5w+8TJZygVsnLCM0DBXbnOysWCxlvMp4=;
+ b=aMGjL7nG/XHHzP6CtSXljRfBKmX/TR4vCBZOL9NwA5HClucbTZvfyYDmAPEREs/45nXkHuv35
+ 7iD7+RfMBP174bkbdKGSS0oWcupBfdVftAB1yBKP2ajiHBxIPy9PepXqxJh+HpfctvbNl6t6BIY
+ oOshMiSeYz+N5HufmnXRYD9nHjbQc4Cp6UYncXrXGH7ConaZbAlv7nrTt5Or1Y8XWMb25WPQja/
+ yB3mQtxqRh5DxferpeDZCd8JWRAZFzuUJP/QdtmkO7vtOBPmQ0ZFFpDoCMMLjsgZrl+DZnSbB61
+ /OPTPtxTzug3SWkYwoRuHGgE2mN0HAPAcWcw1yb/L0hg==
+X-Forward-Email-ID: 67cb3fe8789af4fdcbb0b28f
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+Message-ID: <67294dfc-a816-4828-9e45-6a897c5710d5@kwiboo.se>
+Date: Fri, 7 Mar 2025 19:50:10 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,87 +57,56 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: hpa@zytor.com
-Cc: Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
- akpm@linux-foundation.org, alistair@popple.id.au, andrew+netdev@lunn.ch,
- andrzej.hajda@intel.com, arend.vanspriel@broadcom.com,
- awalls@md.metrocast.net, bp@alien8.de, bpf@vger.kernel.org,
- brcm80211-dev-list.pdl@broadcom.com, brcm80211@lists.linux.dev,
- dave.hansen@linux.intel.com, davem@davemloft.net, dmitry.torokhov@gmail.com,
- dri-devel@lists.freedesktop.org, eajames@linux.ibm.com, edumazet@google.com,
- eleanor15x@gmail.com, gregkh@linuxfoundation.org, hverkuil@xs4all.nl,
- jernej.skrabec@gmail.com, jirislaby@kernel.org, jk@ozlabs.org,
- joel@jms.id.au, johannes@sipsolutions.net, jonas@kwiboo.se,
- jserv@ccns.ncku.edu.tw, kuba@kernel.org, linux-fsi@lists.ozlabs.org,
- linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-mtd@lists.infradead.org,
- linux-serial@vger.kernel.org, linux-wireless@vger.kernel.org,
- linux@rasmusvillemoes.dk, louis.peens@corigine.com,
- maarten.lankhorst@linux.intel.com, mchehab@kernel.org, mingo@redhat.com,
- miquel.raynal@bootlin.com, mripard@kernel.org, neil.armstrong@linaro.org,
- netdev@vger.kernel.org, oss-drivers@corigine.com, pabeni@redhat.com,
- parthiban.veerasooran@microchip.com, rfoss@kernel.org, richard@nod.at,
- simona@ffwll.ch, tglx@linutronix.de, tzimmermann@suse.de, vigneshr@ti.com,
- visitorckw@gmail.com, x86@kernel.org, yury.norov@gmail.com
-References: <4732F6F6-1D41-4E3F-BE24-E54489BC699C@zytor.com>
-Subject: Re: [PATCH v3 00/16] Introduce and use generic parity16/32/64 helper
-Content-Language: en-GB
-From: Andrew Cooper <andrew.cooper3@citrix.com>
-Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
- 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
- 6+ahAA==
-In-Reply-To: <4732F6F6-1D41-4E3F-BE24-E54489BC699C@zytor.com>
+Subject: Re: [PATCH 2/2] net: stmmac: dwmac-rk: Validate rockchip,grf and
+ php-grf during probe
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
+ Jakub Kicinski <kuba@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>, Heiko Stuebner <heiko@sntech.de>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>, netdev@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20250306210950.1686713-1-jonas@kwiboo.se>
+ <20250306210950.1686713-3-jonas@kwiboo.se>
+ <bab793bb-1cbe-4df6-ba6b-7ac8bfef989d@lunn.ch>
+ <1dd9e663-561e-4d6c-b9d9-6ded22b9f81b@kwiboo.se>
+ <20250307085558.5f8fcb90@kernel.org> <Z8s5ZZyTCpS9xHlA@shell.armlinux.org.uk>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <Z8s5ZZyTCpS9xHlA@shell.armlinux.org.uk>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-> (int)true most definitely is guaranteed to be 1.
+On 2025-03-07 19:22, Russell King (Oracle) wrote:
+> On Fri, Mar 07, 2025 at 08:55:58AM -0800, Jakub Kicinski wrote:
+>> On Fri, 7 Mar 2025 00:49:38 +0100 Jonas Karlman wrote:
+>>> Subject: Re: [PATCH 2/2] net: stmmac: dwmac-rk: Validate rockchip,grf and php-grf during probe
+>>>
+>>> [encrypted.asc  application/octet-stream (3384 bytes)] 
+>>
+>> Is it just me or does anyone else get blobs from Jonas?
+>> The list gets text, according to lore.
+> 
+> Looking at the emails I've received, some which were via the list, some
+> which were direct, I don't see anything out of the ordinary - seems to
+> just be text/plain here.
+> 
 
-That's not technically correct any more.
+I just learned that my outgoing email provider will automatically
+attempt to PGP encrypt messages on a per-recipient basis using Web Key
+Directory ("WKD"), and Jakub Kicinski seem to have an openpgpkey
+published at [1].
 
-GCC has introduced hardened bools that intentionally have bit patterns
-other than 0 and 1.
+Should I reach out to my outgoing email provider and ask if they can
+disable the automatic encryption feature?
 
-https://gcc.gnu.org/gcc-14/changes.html
+[1] https://kernel.org/.well-known/openpgpkey/hu/k5mqwn6xdasq745xgzbqu7eq3p5ysxjz?l=kuba
 
-~Andrew
+Regards,
+Jonas
 
