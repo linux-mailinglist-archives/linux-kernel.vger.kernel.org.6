@@ -1,234 +1,153 @@
-Return-Path: <linux-kernel+bounces-551769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 012C4A5709C
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:35:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 599BBA570C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:47:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D090F3A8501
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0BD5189B223
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 401342417C3;
-	Fri,  7 Mar 2025 18:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 774B121ADCC;
+	Fri,  7 Mar 2025 18:47:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NU7WveBb"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="JW0AK+zL"
+Received: from sonic313-15.consmr.mail.ne1.yahoo.com (sonic313-15.consmr.mail.ne1.yahoo.com [66.163.185.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FECA194C9E;
-	Fri,  7 Mar 2025 18:34:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D70B199FDE
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 18:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741372491; cv=none; b=mUkV7W8Y9Fr5PrZ3XQ45ixBdtCvrlLgqL5Gllz1+G5lyqEj2bOOzKYvIFAacajqdgTeCEpmmiZko9/HjHlk1hjGjCEIsMasJiWfjzuH5MDfPU2ltU261v/kZavHRLZMjbrYQJBggldI7dEJv7avXaFrpQ6S2qXmy6ylLpgEwmYk=
+	t=1741373238; cv=none; b=tBAY7UA6+42jHo4E7DlQ0Z0yxvUA505H/ATFSeFihBQrgst9TwTN9W3rlSvEt5JOB1RPrQCDl6ruxzOJOUV+lMWVIRFuQpuNqZKo0AUq2yeQi4S3ggLMyte6I5IxXqFfiyznVMsPzlxU2x1a14iD/psBUQ/yg4aLZKfH/6/oUQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741372491; c=relaxed/simple;
-	bh=+9gDGcZfqpQByrzcz5GniB5ENASVWayTOdWAGshyqxc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oMoufD8TsIdoihfOKgRFwGb/9Zvty8YsimwaaQ3XIJnDjuMHN3tihTo/tRZ4iSXGJbhiK7K6R7joMzfWyNiLKFdEFGxN6XwwrMtDU+wjbLSmaeEizG3Nn2bENRUHJY4wl80ugLJS7WWlO+Nlc4dBP5UkTb9hWelHfM5V5fy74zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NU7WveBb; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6e8f254b875so16595836d6.1;
-        Fri, 07 Mar 2025 10:34:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741372489; x=1741977289; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=haDsDg9goM1Uf0CHzwm79RjyrC+9rpHKIsMViflMU/Y=;
-        b=NU7WveBbTWuSDzj1xF/sdhidWew4hjiQl3aaBDVy8nAZd014ARpf8uWuEpfXJ73wAu
-         Q1yo65w4sW0OWBJWfXEh9KUEqHbxbnK+dGvT2jd8/iMBDrfeydB7jS0ODmRHirXmky2f
-         lWWO8YglwxB75xhVttGwYY7WZgt7idEDj4r/3ADOS/s6wKKU9LWnT6RLUC5ZDEEQ7QBE
-         V5aWPtPlK/HsVHQo+Oam1XEDpJrrjoN9v59DtmuiEmj3ArQ/06BsNKPhktJ8H2cfCjVi
-         uZh0357LYkL3R3s8dHoYv0x9oMrWv9afPoSRCgHRUWlzuGozo2kQUBD4aDQNE8Q9zaQf
-         jgkQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741372489; x=1741977289;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=haDsDg9goM1Uf0CHzwm79RjyrC+9rpHKIsMViflMU/Y=;
-        b=vddouuw4GZBx33hKmFZCW31TjE0h2KE6lRp6x7gGha1GMO0WX5ntFIMRJQLaZb1tBQ
-         TtEnKoXx1MTbdIk3+HX53pnkhQPMZrGFlHv77yeoWRSqyXp38WokJoY3ICRw/tQXvCbR
-         KoHP/GiD4tDAAHu5Bb0SMgZU8siP40KE8vnXSgSXGqFirtqxjMVW9dosBb28+1loetGL
-         oPonWwJWCxhgZexEfZOoHpi+eQ36L4YMYR0nwgxNJ7mPOi2LpebwNteR4XzsrMjG90Na
-         FKs5EtuVAElDrS/s2EzgiQy9s8tll9HvYFaoSKpoMvo9cqIH0sg+sdiNCnMd3ylYC/Cj
-         ivZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGuO8biFUz7de5SspMqiCERckIBJQoJO8QTKknAh71JoLCYTffCiXNqVo87yNp2w4Qq6AV4OFZZ22DAtE=@vger.kernel.org, AJvYcCVweNnLumdjNj0FJkRY9XJe46+/xr1yZzQYoQ0wyjzCOEkJRYoW9/kHiw7xqZdBgdMDSUixAUF3@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7v5k7CjuiUVFNfZnEjNtox3OT96zFg3QStVxH3XuGTFw5Lp66
-	f4YmhfW7vKWEj8tffCYyMcmJgTqsw93J7PloXWoi0wsFfz4Jrtu6
-X-Gm-Gg: ASbGncsDnw6HtJJ8nPBLh5UBBa3DBkkKTl/UZg1gH8hRHGGOzHNKe9/szreSNwuZOdo
-	3uWYXwretPwD2KxP8/phXC73LOmv+2f/Hlw6qMzdfXqhe9B2Te6oGBbFcHfO4XlV00+42fO9SIE
-	8ZeVm8lrnJLjBhZaGnRwsyGFBNyoacL14T5aEC2lYnnPw8vCwGXleedi/AvYcsD1IJUHIIODpsz
-	uSFkWdCt4viKpb5EYNV46nltW+RrU/49xt3g6RySZ1/mFzRLQLiQGwTjqfE5X9FkJkGPiEX7OCM
-	E8aLbMP4e5rTCXg4Md0qKyJL9jLW0BD37ni/gtn6KADSkw4w0ZARLNvsfk81k0V0lw35AFVhXPv
-	WNdanm1sD5Lal4RCE6Kt19P+QIZ7iy5/BkqE=
-X-Google-Smtp-Source: AGHT+IFLDTDJ/m0lNtsyy0A68/QZ3C8P/SJZ5YIt5SuaIL7ydu9Y1k+o8fmDRJBpD9rUl+4VX2rTSQ==
-X-Received: by 2002:a05:6214:4c11:b0:6e8:fd4d:dba5 with SMTP id 6a1803df08f44-6e90067f388mr44623226d6.33.1741372488754;
-        Fri, 07 Mar 2025 10:34:48 -0800 (PST)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8f715baaasm22100866d6.85.2025.03.07.10.34.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 10:34:48 -0800 (PST)
-Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
-	by mailfauth.phl.internal (Postfix) with ESMTP id D876B120006B;
-	Fri,  7 Mar 2025 13:34:47 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-07.internal (MEProxy); Fri, 07 Mar 2025 13:34:47 -0500
-X-ME-Sender: <xms:RzzLZ2orjrHfV27h54b3fPqjExMjafv9lTs68nssgbeEkAWso9qijQ>
-    <xme:RzzLZ0rUN47xEZzf7DeA0gEVG-TD8C3eXI7ePDroOsP5zPHkTDHp8iyv2DteklI8E
-    zd6pp_EfW8iHjAWbQ>
-X-ME-Received: <xmr:RzzLZ7M3GI46BXnJ7gIKm1Mu1Hl-ZFu6Oy5Mt2gwo_LtaIyIyO8086X3Qjg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduuddufeelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpeffhf
-    fvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhnucfhvghnghcu
-    oegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrthhtvghrnhephe
-    dugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudffiedvnecuvehl
-    uhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdomh
-    gvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejkeeh
-    heehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgrmh
-    gvpdhnsggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohep
-    rhihohhtkhhkrhelkeesghhmrghilhdrtghomhdprhgtphhtthhopegsphesrghlihgvnh
-    ekrdguvgdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghp
-    thhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehhohhrmh
-    hssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtohepkhhunhhihihusegrmhgriihonhdrtghomhdprhgtphhtthhopehlih
-    hnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehn
-    vghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:RzzLZ171QRqxpMMiPdPiEv8B0WA1KakX9NmZPDZsjiSPRJe6c7OjBQ>
-    <xmx:RzzLZ16xc2OX_ruE8YWGKJzaqRwBK0Gzsnnoz5mPjlIv313MwlUIrQ>
-    <xmx:RzzLZ1iVK9GHxKh-ba3DXJA1yj9s3a2a-dEqNGKn9SaD3olmlTF78g>
-    <xmx:RzzLZ_43eaft5SYtZ0R-v-bxekmINh5ogxuxuDmgm_JTaUZM6DfMjQ>
-    <xmx:RzzLZwLYwyHlLw8xsieywpQzlnkh8DAU9S4tTSoD5BAm1nDzRL3-iIF2>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 7 Mar 2025 13:34:47 -0500 (EST)
-Date: Fri, 7 Mar 2025 10:33:36 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Ryo Takakura <ryotkkr98@gmail.com>
-Cc: bp@alien8.de, davem@davemloft.net, edumazet@google.com,
-	horms@kernel.org, kuba@kernel.org, kuniyu@amazon.com,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, peterz@infradead.org, x86@kernel.org
-Subject: Re: request_irq() with local bh disabled
-Message-ID: <Z8s8AG3oIxerZHjG@boqun-archlinux>
-References: <20250307131319.GBZ8rw74dL4xQXxW-O@fat_crate.local>
- <20250307133946.64685-1-ryotkkr98@gmail.com>
- <Z8sXdDFJTjYbpAcq@tardis>
+	s=arc-20240116; t=1741373238; c=relaxed/simple;
+	bh=zz3uBk48+7no25j+Ns24PzVLZrTPAcWmGdELG9brV9I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=knbMwWZJ8zT3GXNvXfjhZR4nfcO9ktN1145l20hk1NRB+/P66PRzT4p6kxI5yd1Tu/2tgcyfwSU2i5ptM8Aw459+drWK73aB69YxaZdrU55flov/mukTvhhlXbxRS/kbfHvXOMpoVagnVk5YWrl38GWLJ5GNJ+5lVi6jb36NPj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=JW0AK+zL; arc=none smtp.client-ip=66.163.185.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741373236; bh=dR6sLeIF6x2BIfs1xnT3U5+B1dmWz+hDD8EKB1ZIw3c=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=JW0AK+zLCffOsqkQN/3VH3Xguv9R2HSkhMkNlYYnQfBi4sNqAJEtMm2wxt66WrVnVqetNiBNKU53m9N7x8qWzQ7WXIe9W3RSgGSTSEwKvyXCTXq7aJQQvfNjxN15Do23vZLDXFRxeEOTi5RumK8eZLPzQUlToO10QxGIVOwH6BqykaHyk9uu08mbqJgGG+cZFa6wsHUa1jsBFDOtxZNNA+iAM6aXOCi5tXqgGEoQJV4pSpRdItCbFPCTGQXmkyXHLOCK2qoXoO/TmbmlYEl7UPSWM/0blUtaotLvY4jzl6HvzQO7h6DUyQCH3zWz9DgTMuThS/iljJ1lkc2XujNFSA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741373236; bh=wLj0L1ttOYxtl91TgYtvENeBsK3UAXYLueSEP0NsA14=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=DHPhQ550X2or5pIEpsvSOeOMWhVyHqL2Rk9rbyimAgWdAkePPdbmAb6bh8mSMCwV5UDdSrTCL9krlzmipFfWa4gpdb+h79P8GXQjv7IlyAxhh+gnDUHiVvqoBlxTmTxtC1btfJ1fH/3Wp3iLdL8L7Z5Rp6pe5oYiF/cKfVq7AsyLPoaM4Vthu4njqRy+ato7y/RI365tObGK8Wh1rEHum39cr4d1IJ7sE5va7DeZ+Urp++p6HwzdT84gWaRAmvqRZJVDAGQhZeHrHcrB9czJY6a0DqlZ9lnYzzh5NwA0TPSp8WaPFD+elANIVsfptpV2rPAMNU72yVO+Jry95mcK/g==
+X-YMail-OSG: fiDnTWsVM1n8p45s0EHmwAEbkem6XNTjPuFp3Zrm_5MKw3_HGV29AJwdKdwjIJo
+ IaIn7o1IsE3sf4en7wqgjYrZOjUv8tzW.5xPU6htXL9pP8tT1t13IqH9QF.9v7gkAk9UGaIWlGW0
+ dyaHLGGxgeXxQOW.2Hln3bnkljYiO4S5qDma1GD5afMIgufm7sR3kUoVkrrH4NR0EVVnfZdi0Q5w
+ dR1GQlPQtnqCsA1FDpG6t5L3JZS87NOR1maWdCTb_jMpBImAXIyS1luPiL60vgpwOGbC0_wKI0z5
+ 2gdJUmU8qyh3M4aBdaVeyLSdFcgbnw3MwnDSP6XZHEPmII8dIGGJw27s5jR48OSaTSPfSZHbTvk7
+ iEwzi.UkpZ_N.dAefv6f6qb2W337QusD.VSnbQnM6ND_kKZQaQ4yGdQgZuqcs6lG7dM9n4635KiU
+ TKSQl8Qsx9sc.bGCc20FsE1vt.YGga5vovwEBScTThBda9dZSMLcaNqsKcHVMTuC.R0agZAgtC6C
+ kmhayd4Sirh.1vx3hd2anAXctO_Qzz5lsWIHDrJHABNmmZXkk9vDrfmY80bx7UX5pK5G3evUzYx5
+ rYPyzmwJRY2Ko3plooof35Ezc80w6NwXkf7Q2FXEO._GhfhWMHRZuerU9bYYOErc6R3imbJ8xFuj
+ 5iwA0XhLeob7YIcTRdOUIsICJclQoxMCFX13THTkOJIHCip5medoA93.MF7zGKL2.8rC5YXsByFu
+ MhdwhqyI8UAz3Sduj21piVeZ_.6sIu4Ez8osBA6HDDxcmnqr5Y8gFHn2Lnfzz4EH1fdnre3.s6Rv
+ 42EN5YDb3VptkBdaTb9hUq30phVocxMafvL.2FeMC3KOtD6PBeDVhr_iWb4KDyeGp_mmS.SWUOm6
+ G7kn49jBOSXW59YXflRczK5z2AmW.N3oPBhIhFSk6EFVOK_YJC5rbvGV56s6X55a_p88qfaqYgvy
+ Sn5j.6oirqc3.J3i4nkxKm27OhxvE7MRKePbSxqL2cdly.OhQc5pfCdVqhO13mnZfFG.rjgADA_p
+ Obazzn_YpX_pM.BVLH2BeLK8QdTJD.80yM9d1j0w0L0wugiT8nLI29RMzbIzG8Bre1Y8DUDpeYl0
+ TYIkrueOlj2KeoUmSq4ughcFwVPuUHMeYwTrFGVz2LQ0Hvduar4Pwp_k6aZMoU4kfzuTCZ8zJ2CB
+ L9bG3DPrlKt0.fCN1VQuAlYFIvhKClOcvYSUr.QxeT0.mhtRWozdC19Fq4nyWD7qZPJX37wC5Ccs
+ 13fWD64QnggBpwxERMLsmHyJqJ5uFwjv7LGNp2SXzAK6bfOtbx6XxCq_zUYZt_m6olRQ1.F__JJn
+ ZKNNABNxs5ujnDEe_8Tv3dM7ACWDANf.55wgVqCDFirWzhVbY7WZIELKvabmvzY7E8tSb2HpLVvd
+ Tacu8Zr29FKbHLfZUq4r9tKXvzlFGjk48SmKVO4SUFPgY32kRs7a6kXBBDgBeVmQhdtWbI3jhYiV
+ 7EjvJCjWt3OPCFHrCcPsvgNbYGfGFu0jgxCHIqCSIo66qjiKkfzaMZl4DN4KL0trN_maByiN8lsC
+ owFNtspFy5raBu.LQByFD8WAslq7hLApgiRRGtBIR_RF8lzH5ChZpLmiF6Y0SQ2ra3l3AhM_jdr7
+ ZmINSXne3z4Dea.5ULVyvc1w3GwhJ6KUofoS.O1GaIcDySNiMn4FVPIfOEPoSvvvObJ.1cJx7p9i
+ gU3nHjMhY0gCKfPXuPJ4yhSbgFrM_BV9rIYoNwpfdoQen8cmP6V9Fg9gUeXKnGwYLYbrHlJXpuMa
+ 7wH4.TZTy_sVgsP1ieabGD17l0e_DA6s1oo1RFGnrlgzTzZi3c4tNbqzAfF6tYds534NQs8lim4M
+ 7rOB5QvT56ecMrUr_SRW3XLipRhKeoxOClre00QxTX7qkxLIpcQcUaEx4gLm2KsTvGJ2gJzI8BEZ
+ fIG8lOjP9ic0DL4DR53LptOMW18vdb3D9eeuAT8UqVGfUHsjO_EV04XWJMJeqZTzWSYOBawG0BGD
+ BlP6J5atJI.6s6dkITkAz.01hRBDsgKczjTU0LaariXLIJ6F6BmahoBJ06V__AxB.OeI4aXuGhjR
+ usOgLMBqFJWBIKjUdISBig0omF.bm6x3mpG4ECaLKimqN4Omm_P7IrqmotRvEhGhkYfIKU4bOgfh
+ g6MLYWJgbXDC1OS4WtGp9N0vDb_psixdrUTj2YU_JM2MwZJwzXEtrvlVhc63ooXTSaUwPUpojxEx
+ tz3TiLBrOdeXnBLOepibYvIVEar26fUDv3c_4Oo5AsCTtq2RwCzEmhrlBKluDCt90uGWVUi2hiG2
+ zspYSjUluTsi3uGDlWAtk74k-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: fb54d543-40b2-4d78-bd7f-e5e71d482f8a
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.ne1.yahoo.com with HTTP; Fri, 7 Mar 2025 18:47:16 +0000
+Received: by hermes--production-gq1-7d5f4447dd-9qjv2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 9e6d6a2ea591e1dd2da3497c747300b1;
+          Fri, 07 Mar 2025 18:37:06 +0000 (UTC)
+From: Casey Schaufler <casey@schaufler-ca.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	eparis@redhat.com,
+	linux-security-module@vger.kernel.org,
+	audit@vger.kernel.org
+Cc: jmorris@namei.org,
+	serge@hallyn.com,
+	keescook@chromium.org,
+	john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com,
+	linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org
+Subject: [PATCH v2 0/6] Audit: Records for multiple security contexts
+Date: Fri,  7 Mar 2025 10:36:55 -0800
+Message-ID: <20250307183701.16970-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8sXdDFJTjYbpAcq@tardis>
+Content-Transfer-Encoding: 8bit
+References: <20250307183701.16970-1-casey.ref@schaufler-ca.com>
 
-On Fri, Mar 07, 2025 at 07:57:40AM -0800, Boqun Feng wrote:
-> On Fri, Mar 07, 2025 at 10:39:46PM +0900, Ryo Takakura wrote:
-> > Hi Boris,
-> > 
-> > On Fri, 7 Mar 2025 14:13:19 +0100, Borislav Petkov wrote:
-> > >On Fri, Mar 07, 2025 at 09:58:51PM +0900, Ryo Takakura wrote:
-> > >> I'm so sorry that the commit caused this problem...
-> > >> Please let me know if there is anything that I should do.
-> > >
-> > >It is gone from the tip tree so you can take your time and try to do it right.
-> > >
-> > >Peter and/or I could help you reproduce the issue and try to figure out what
-> > >needs to change there.
-> > >
-> > >HTH.
-> > 
-> > Thank you so much for this. I really appreciate it.
-> > I'll once again take a look and try to fix the problem.
-> > 
-> 
-> Looks like we missed cases where
-> 
-> acquire the lock:
-> 
-> 	netif_addr_lock_bh():
-> 	  local_bh_disable();
-> 	  spin_lock_nested();
-> 
-> release the lock:
-> 
-> 	netif_addr_unlock_bh():
-> 	  spin_unlock_bh(); // <- calling __local_bh_disable_ip() directly
-> 
-> means we should do the following on top of your changes.
-> 
-> Regards,
-> Boqun
-> 
-> ------------------->8
-> diff --git a/include/linux/bottom_half.h b/include/linux/bottom_half.h
-> index 0640a147becd..7553309cbed4 100644
-> --- a/include/linux/bottom_half.h
-> +++ b/include/linux/bottom_half.h
-> @@ -22,7 +22,6 @@ extern struct lockdep_map bh_lock_map;
->  
->  static inline void local_bh_disable(void)
->  {
-> -	lock_map_acquire_read(&bh_lock_map);
->  	__local_bh_disable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
->  }
->  
-> @@ -31,13 +30,11 @@ extern void __local_bh_enable_ip(unsigned long ip, unsigned int cnt);
->  
->  static inline void local_bh_enable_ip(unsigned long ip)
->  {
-> -	lock_map_release(&bh_lock_map);
->  	__local_bh_enable_ip(ip, SOFTIRQ_DISABLE_OFFSET);
->  }
->  
->  static inline void local_bh_enable(void)
->  {
-> -	lock_map_release(&bh_lock_map);
->  	__local_bh_enable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
->  }
->  
-> diff --git a/kernel/softirq.c b/kernel/softirq.c
-> index e864f9ce1dfe..782d5e9753f6 100644
-> --- a/kernel/softirq.c
-> +++ b/kernel/softirq.c
-> @@ -175,6 +175,8 @@ void __local_bh_disable_ip(unsigned long ip, unsigned int cnt)
->  		lockdep_softirqs_off(ip);
->  		raw_local_irq_restore(flags);
->  	}
-> +
-> +	lock_map_acquire_read(&bh_lock_map);
->  }
->  EXPORT_SYMBOL(__local_bh_disable_ip);
->  
-> @@ -183,6 +185,8 @@ static void __local_bh_enable(unsigned int cnt, bool unlock)
->  	unsigned long flags;
->  	int newcnt;
->  
-> +	lock_map_release(&bh_lock_map);
-> +
->  	DEBUG_LOCKS_WARN_ON(current->softirq_disable_cnt !=
->  			    this_cpu_read(softirq_ctrl.cnt));
->  
-> @@ -208,6 +212,8 @@ void __local_bh_enable_ip(unsigned long ip, unsigned int cnt)
->  	u32 pending;
->  	int curcnt;
->  
-> +	lock_map_release(&bh_lock_map);
-> +
+The Linux audit system includes LSM based security "context" information
+in its events. Historically, only one LSM that uses security contexts can
+be active on a system. One of the few obsticles to allowing multiple LSM
+support is the inability to report more than one security context in an
+audit event. This patchset provides a mechanism to provide supplimental
+records containing more than one security context for subjects and
+objects. 
+  
+The mechanism for reporting multiple security contexts inspired
+considerable discussion. It would have been possible to add multiple
+contexts to existing records using sophisticated formatting. This would
+have significant backward compatibility issues, and require additional
+parsing in user space code. Adding new records for an event that contain
+the contexts is more in keeping with the way audit events have been
+constructed in the past.
+ 
+Only audit events associated with system calls have required multiple
+records prior to this. Mechanism has been added allowing any event
+to be composed of multiple records. This should make it easier to
+add information to existing audit events without breaking backward
+compatability.
+ 
+v2:
+Maintain separate counts for LSMs using subject contexts and object
+contexts. AppArmor uses the former but not the latter.
+Correct error handling in object record creation.
 
-Ok, this is not needed because __local_bh_enable() will be called by
-__local_bh_enable_ip().
+https://github.com/cschaufler/lsm-stacking#audit-records-multiple-contexts-v2
 
-Regards,
-Boqun
+Casey Schaufler (6):
+  Audit: Create audit_stamp structure
+  Audit: Allow multiple records in an audit_buffer
+  LSM: security_lsmblob_to_secctx module selection
+  Audit: Add record for multiple task security contexts
+  Audit: multiple subject lsm values for netlabel
+  Audit: Add record for multiple object contexts
 
->  	WARN_ON_ONCE(in_hardirq());
->  	lockdep_assert_irqs_enabled();
->  
+ include/linux/audit.h        |  13 ++
+ include/linux/lsm_hooks.h    |   4 +
+ include/linux/security.h     |   8 +-
+ include/uapi/linux/audit.h   |   2 +
+ kernel/audit.c               | 235 +++++++++++++++++++++++++++++------
+ kernel/audit.h               |  13 +-
+ kernel/auditsc.c             |  65 +++-------
+ net/netlabel/netlabel_user.c |   8 +-
+ security/apparmor/lsm.c      |   1 +
+ security/bpf/hooks.c         |   1 +
+ security/security.c          |  19 ++-
+ security/selinux/hooks.c     |   2 +
+ security/smack/smack_lsm.c   |   2 +
+ 13 files changed, 274 insertions(+), 99 deletions(-)
+
+-- 
+2.47.0
+
 
