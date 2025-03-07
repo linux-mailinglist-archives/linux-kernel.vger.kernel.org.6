@@ -1,269 +1,113 @@
-Return-Path: <linux-kernel+bounces-551681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B907A56F71
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:44:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E37A56F68
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:44:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D6561731A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:44:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD0D9188A4D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:44:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD981241114;
-	Fri,  7 Mar 2025 17:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DD724110D;
+	Fri,  7 Mar 2025 17:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cpR9H4gD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Lsm8S7ZZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B0C23BD11
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 17:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF74217718
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 17:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741369425; cv=none; b=Yyr0XqeRJ7vEZ1Gk7WjzOaJpFFh1RjJxIdj1Jz8yqL1p2uvY7QaqaUVhakH8w7/CcaFuwKUUHnxNQHscDicA6auG3jZdohtpdFK6KjbYhMjJe+E9iALXbp57Fvu525OTLmBeTG4RMFTg7fFrU+nsNcUcVHmyVeVHj88/OPAApf4=
+	t=1741369448; cv=none; b=pWC9SrnyBd80yMsKPUGDzLkO+MSzD4jqLoUd4GS5k+IYJn/xvj/bD5DUXIZPO2ZI1BCnyyG24M19aViDvYF2MfQzf7DKXgRbyBlxOuiPwmLJabniNq3ytMRK7kR9vAkvks2Onhmar1T1SQfut35LmDRSlEJLZPTXNzjwFmhePfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741369425; c=relaxed/simple;
-	bh=60vohEiMEApZR4nLnfno/LrXHhbOoJAKQwBR7WhFeDE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sBX38JnIfvyueDO0cziZvC+CJd8Jj8AZSZhI7sPEPj2VmxASAnPdsA0pJ2ORPFBukxVwfnyn8B5PQMBjwOdNrhMukNrcC+McXwQTOsMMW6GZ41Scp5TpvzZql5ZJ8f6yS50M6SPj3anShMzmgiLqKLCkfEHzS6u+XqYnEgcDouo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cpR9H4gD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741369422;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=ssD53hVxTYei45HA/qWDyDYoSrpwLT2aETtzN0PpbiY=;
-	b=cpR9H4gDXUqw0zIvb/ABrrDSPnjPgnajBJb7YZhkNbnPt2pvSQdY+FPwVU3gyQGz671bGy
-	4qTK9zA7tMvLToMC455a/BpHJS3hFvKuickzvH4Xyq6LaniVV9mcS2v5SkakWaVLVLNfpU
-	dK1MqIZsIwDTAdaTY0D6Ufri9m56+9w=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-475-koU54AjUMRWeheEK4kpNnA-1; Fri, 07 Mar 2025 12:43:38 -0500
-X-MC-Unique: koU54AjUMRWeheEK4kpNnA-1
-X-Mimecast-MFC-AGG-ID: koU54AjUMRWeheEK4kpNnA_1741369418
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-39131f2bbe5so580626f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 09:43:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741369417; x=1741974217;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=ssD53hVxTYei45HA/qWDyDYoSrpwLT2aETtzN0PpbiY=;
-        b=OZtMpZbWa6OvvfpFPZqFMufsGWRjOxVyVfJjdRuUGY6tiIO4CkQBNXBQfshPqD+mZ9
-         QTeio1e7YEZnymBH1phWlt11HGL1nNB1ZoTBztnyhf6h9zoEbiT3e6Eaw6Adk8Kgzrvg
-         PV4zCPK8q9M72dl7yufKq4/avqq8nfIiYcnJu3PU+pT9y9jx9HODmuwMuYhvzF7zSAoS
-         pVQ/jwGJgSBrOMR8q9186dE4V2Eo1ehAiqSdn/PP2TnDOZXhvZ2wUfPoZzklrKMWsxLP
-         HHKSTYmtTVSUj+qr1VKuqRK19LZ5AbbjIWlSYBL7BV9xirMEriRXyNw+Z9NnaOJY3ql0
-         xyJA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVNVuyExKkuVw60AD7j+R/5LZkWUhdTDQ9F8EsZVYFqdVQ/cmYJ0Jh4C0PMimxOjKHB45mqwK5kbaItv0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/0Pu0oCRD7ubAiowKrPAhTyE78cexxK4jnoBO36alaJBGV2oC
-	iwYYWd7xqYltl48TfoRwbE0OQoPnxDL/D809tQYrOEXDc3QL5jzQef0WuvXJLy1lGj132zZG3rl
-	eBB3b/fm6Z0FoX3zDKhoV9Tsn0wA3aKmXprYuizK/FUBHPWCxtSJiwEdyi9wASA==
-X-Gm-Gg: ASbGncu8yOc+MaDszDjV7BpiaZ7EQjC0hqhagkXP56Kic1pnulvOUBYSnbULIGyqcah
-	rniTShmBitaKnISQQSXjuX60OW7mM4atBmHQabk1UTxH7/tHaVi98e4U23DpTZ/A7B2KxCKPQcz
-	0UucJOlrljtldPKnDIOFnM6DbD4fM3BU+AHjT5tpjTEanlU+2MA0P4em5k+/I7keyQMV7hZ8/Ec
-	U07v/8XQ193agB9+mXx547+zpPKbsbGO26bf9Y6mgdTMZBZPqvDEEUvZ7hs1FVta98Xsk+iAKoG
-	3DP1xvtLiKy/Rv4o8juhbfdkRCdOHhGjpfp1WDNQ04al2XicNK4HfHS2J4R+EE+OSwMLQ8Dt1nJ
-	HXswVwGpaJJKKvR9Exmo+AUD8jQZIZdT8V7ue5Q==
-X-Received: by 2002:a05:6000:18a3:b0:391:2e19:9ab with SMTP id ffacd0b85a97d-39132da8e5dmr2428199f8f.47.1741369417619;
-        Fri, 07 Mar 2025 09:43:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGltnvAubGl1bA54vpc9cRsNvD8yx49qAt0cTcAw9YyB1BLXfs2F8swCZL5LZ0PFPmKZTZsHg==
-X-Received: by 2002:a05:6000:18a3:b0:391:2e19:9ab with SMTP id ffacd0b85a97d-39132da8e5dmr2428184f8f.47.1741369417165;
-        Fri, 07 Mar 2025 09:43:37 -0800 (PST)
-Received: from ?IPV6:2003:cb:c721:7400:ab0b:9ceb:d2:6a17? (p200300cbc7217400ab0b9ceb00d26a17.dip0.t-ipconnect.de. [2003:cb:c721:7400:ab0b:9ceb:d2:6a17])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfdfddcsm6079481f8f.35.2025.03.07.09.43.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 07 Mar 2025 09:43:35 -0800 (PST)
-Message-ID: <ba694acd-07b7-4f28-828a-19bf4c803ca0@redhat.com>
-Date: Fri, 7 Mar 2025 18:43:35 +0100
+	s=arc-20240116; t=1741369448; c=relaxed/simple;
+	bh=1srF4LgWxxJj/Y9eDyJgZvB55VhLx8r7xdOwjT1Oc+E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R5uIsK/W0EulFUqweNNNVW0uL7+qGf7Dnmr7V9HDFry49u7efWd2NHnM8LN3cjplrQ7uXcj8iMBd+MpMTSNWPkHL45a2vnH0MIKi/k4bIUP3xhdFcVLeOUqEeQP+mD07jgDXbsrq9syA+gWkTOn9mmTyYBIqlSe/2Iq5BXxaOfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Lsm8S7ZZ; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741369447; x=1772905447;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=1srF4LgWxxJj/Y9eDyJgZvB55VhLx8r7xdOwjT1Oc+E=;
+  b=Lsm8S7ZZnuwxX+Rjv6Pd4i+QbqiVFpy6evV7h2hzx95j83QQcXajKX2L
+   LJGbm8QAn9KZfozVMP8EHPyPBLbamHkySiE+hCjn3a5pnAF9re14e1oW7
+   07MRott77niGlygPmCE2ZI8AxycjB0a9Q7q9sEdaHLAnHz9H+GRsut0Ck
+   6S3bbhN9AnA/fkv3/G2s7iIPKwjGIh29HnsFo+QSYltaqeWbALppI3vm/
+   zdOctp/ij1t0kp6UjLiJ8OkEYhIWvLXwleYBtVO+zcuBHSwtJL1W+tRxd
+   dVfcme9X0CBpiie306DLTbTiJ3MGUTAYePhMdAqSkjG0+A1VU1U+mR1DB
+   A==;
+X-CSE-ConnectionGUID: h3tHp35/QnS2hLVU8Kz5dg==
+X-CSE-MsgGUID: Ca4Mbd8mSQSENjKzhl400g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="42461795"
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="42461795"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 09:44:07 -0800
+X-CSE-ConnectionGUID: HwCCIbF9QDS6ezXMH8jalw==
+X-CSE-MsgGUID: QfApuOshQTisfw2kd/i7wQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
+   d="scan'208";a="124472094"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 09:44:01 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tqbjp-00000000TVy-36Lu;
+	Fri, 07 Mar 2025 19:43:57 +0200
+Date: Fri, 7 Mar 2025 19:43:57 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: mailhol.vincent@wanadoo.fr, Lucas De Marchi <lucas.demarchi@intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	David Laight <David.Laight@aculab.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [PATCH v6 0/7] bits: Fixed-type GENMASK_U*() and BIT_U*()
+Message-ID: <Z8swXUGf9rtTHw1o@smile.fi.intel.com>
+References: <20250308-fixed-type-genmasks-v6-0-f59315e73c29@wanadoo.fr>
+ <Z8sqSpKZzfolKm8Q@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] mm/madvise: Always set ptes via arch helpers
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Ryan Roberts <ryan.roberts@arm.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org,
- Oscar Salvador <osalvador@suse.de>
-References: <20250307123307.262298-1-ryan.roberts@arm.com>
- <dbdeb4d7-f7b9-4b10-ada3-c2d37e915f6d@lucifer.local>
- <03997253-0717-4ecb-8ac8-4a7ba49481a3@arm.com>
- <3653c47f-f21a-493e-bcc4-956b99b6c501@lucifer.local>
- <2308a4d0-273e-4cf8-9c9f-3008c42b6d18@arm.com>
- <d9cd67d7-f322-4131-a080-f7db9bf0f1fc@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <d9cd67d7-f322-4131-a080-f7db9bf0f1fc@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8sqSpKZzfolKm8Q@thinkpad>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
->> It's certainly not read-only in general. Just having a quick look to verify, the
->> very first callback I landed on was clear_refs_pte_range(), which implements
->> .pmd_entry to clear the softdirty and access flags from a leaf pmd or from all
->> the child ptes.
+On Fri, Mar 07, 2025 at 12:18:02PM -0500, Yury Norov wrote:
+> No rush, please allow your reviewers a week or two before submitting
+> a new iteration unless you want to disregard the previous version for
+> some reason, of course. This will not get into the upcoming merge
+> window, anyways.
 > 
-> Yup sorry I misspoke, working some long hours atm so forgive me :) what I meant
-> to say is that we either read or modify existing.
-> 
-> And yes users do do potentially crazy things and yada yada.
-> 
-> David and I have spoken quite a few times about implementing generic page
-> table code that could help abstract a lot of things, and it feels like this
-> logic could all be rejigged in some fashion as to prevent the kind of
-> 'everybody does their own handler' logic.q
+> So, what should I do? Go through the v5 and all discussions in there,
+> or just jump on this?
 
-Oscar is currently prototyping a new pt walker that will batch entries 
-(e.g., folio ranges, pte none ares), and not use indirect calls. The 
-primary focus will will read-traversal, but nothing speaks against 
-modifications (likely helpers for installing pte_none()->marker could be 
-handy, and just creating page tables if we hit pmd_none() etc.).
-
-Not sure yet how many use cases we can cover with the initial approach. 
-But the idea is to start with something that works for many cases, to 
-then gradually improve it.
-
-
-> 
-> I guess I felt it was more _dangerous_ as you are establishing _new_
-> mappings here, with the page tables being constructed for you up to the PTE
-> level.
-> 
-> And wanted to 'lock things down' somewhat.
-> 
-> But indeed, all this cries out for a need for a more generalised, robust
-> interface that handles some of what the downstream users of this are doing.
-> 
->>
->>>
->>> When setting things are a little different, I'd rather not open up things to a
->>> user being able to do *whatever*, but rather limit to the smallest scope
->>> possible for installing the PTE.
->>
->> Understandable, but personally I think it will lead to potential misunderstandings:
->>
->>   - it will get copy/pasted as an example of how to set a pte (which is wrong;
->> you have to use set_pte_at()/set_ptes()). There is currently only a single other
->> case of direct dereferencing a pte to set it (in write_protect_page()).
-> 
-> Yeah, at least renaming the param could help, as 'ptep' implies you really
-> do have a pointer to the page table entry.
-> 
-> If we didn't return an error we could just return the PTE value or
-> something... hm.
-> 
->>
->>   - new users of .install_pte may assume (like I did) that the passed in ptep is
->> pointing to the pgtable and they will manipulate it with arch helpers. arm64
->> arch helpers all assume they are only ever passed pointers into pgtable memory.
->> It will end horribly if that is not the case.
-> 
-> It will end very horribly indeed :P or perhaps with more of a fizzle than
-> anticipated...
-
-Yes, I'm hoping we can avoid new users with the old api ... :)
-
-> 
->>
->>>
->>> And also of course, it allows us to _mandate_ that set_pte_at() is used so we do
->>> the right thing re: arches :)
->>>
->>> I could have named the parameter better though, in guard_install_pte_entry()
->>> would be better to have called it 'new_pte' or something.
->>
->> I'd suggest at least describing this in the documentation in pagewalk.h. Or
->> better yet, you could make the pte the return value for the function. Then it is
->> clear because you have no pointer. You'd lose the error code but the only user
->> of this currently can't fail anyway.
-> 
-> Haha and here you make the same point I did above... great minds :)
-> 
-> I mean yeah returning a pte would make it clearer what you're doing, but
-> then it makes it different from every other callback... but this already is
-> different :)
-> 
-> I do very much want the ability to return an error value to stop the walk
-> (if you return >0 you can indicate to caller that a non-error stop occurred
-> for instance, something I use on the reading side).
-> 
-> But we do need to improve this one way or another, at the very least the
-> documentation/comments.
-> 
-> David - any thoughts?
-
-Maybe document "don't use this until we have something better" :D
-
-
-> 
-> I'm not necessarily against just making this consitent, but I like this
-> property of us controlling what happens instead of just giving a pointer
-> into the page table - the principle of exposing the least possible.
-> 
-> ANWYAY, I will add to my ever expanding whiteboard TODO list [literally the
-> only todo that work for me] to look at this, will definitely improve docs
-> at very least.
-
-Maybe we can talk at LSF/MM about this. I assume Oscar might be 
-partially covering that in his hugetlb talk.
+There is also question to you. Are we going to leave with U128 variants or is
+it subject to remove? If the latter, can you issue a formal patch?
 
 -- 
-Cheers,
+With Best Regards,
+Andy Shevchenko
 
-David / dhildenb
 
 
