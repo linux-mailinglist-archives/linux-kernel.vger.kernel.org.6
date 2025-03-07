@@ -1,140 +1,156 @@
-Return-Path: <linux-kernel+bounces-551978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F3C4A573AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:32:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BDB9A573AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 22:34:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CDBF61899199
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:32:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0E313B0804
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 21:34:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E529E25523E;
-	Fri,  7 Mar 2025 21:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE8523F438;
+	Fri,  7 Mar 2025 21:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="E/YkaMOp"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bs3lMYc5"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C8552F88;
-	Fri,  7 Mar 2025 21:32:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A711AA1D9;
+	Fri,  7 Mar 2025 21:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741383145; cv=none; b=O99e2R12qH4gDbriRtd7Q2V9zAY2An6MlMGZSP59USeL/X6dlD65zkva7Qx0GKNJIIJH/hW98N8VQWY5zvKxUSwEVPOJDyvL3zM+PSbUY6hY4u/51Y3dBxPoU+g98OX5WjwTJgei37ufFOcF42krK57qw1F312J5UhBuyO4HP0Q=
+	t=1741383250; cv=none; b=qSofLSfRXXBfdXkve6HfmNYMXunFIuYupY1nDXXLnA3WEd48dJ0D/rKC/7VvxHKf3ap/vemgxXMLoUD2AUfWLG7k3ILpW3I70GcAALFNfCFaXtW1+pU5m9Fvl3WbepKOSa/0720ARfu/DHCzpcymb86ajGVPZ78eDCWmRTfWMA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741383145; c=relaxed/simple;
-	bh=ea5QbX6IzEXBGeiREOq3fPlIiSB5nrJrrq+ZM6Dhr4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tT31DxNYXNPu5szWAJom0mx9DgJiKKgFDh/7mX2wtWK5Oq8uEt4NAEV6jogka9Tsnz95rxvTcnJCddx26pCNm6SMt+hQ7KbvLRVv5T/YquWwSzadxbETK9J0HN67zm8+xf154PlBzjFcvU9AYG4wGIijogx8hGisY/rTxFY7TeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=E/YkaMOp; arc=none smtp.client-ip=209.85.208.174
+	s=arc-20240116; t=1741383250; c=relaxed/simple;
+	bh=iKD2hfqpK3i4DHA3EEG9DcONp3f7uz5jm6h+RrK8dZo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mdcrkzodutPvsY38CzdyK0Qbm7s/xcruk32TIsVAhXaNUF0YiTL2/n8ufj4FtNSvmfmhNWeOYifJE2vABCvVRifqzO+fiXE5T2fMJqw3ibkvtzDcdeL/9rYUqaaBZDVTIlqw9BnSxl9fKWSSoskA5qrHD5zZzYJPidIK5VtCr54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bs3lMYc5; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-30613802a04so24956051fa.2;
-        Fri, 07 Mar 2025 13:32:23 -0800 (PST)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-216513f8104so4803735ad.2;
+        Fri, 07 Mar 2025 13:34:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741383142; x=1741987942; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ARuhzLHKgFAOlu2Q7LP5aYiWyJne5EpXab6RXQoDcXE=;
-        b=E/YkaMOpGZhUOr4BLU9lFjNXPB0d/yJu9uubcj/CvoyskjGjkaa+QYmPHxflBHG1Cr
-         ljBvMgx7nkGOhebtsNKgXWXcr5hursgwlSDrWslqEVfGGGSco/ZxLNUfU28LzhvQLRaN
-         kYN5wK3rD0xUTX0XjUZKLm29YP7Xd+zRtuuQJ01APGTG6hv3Eg6U6JWRXrbBiYcW/+cW
-         IuCA6g+ttRj8qriNCniRvwh1SGNg75s8BRYVxRmPwUrLAOMwSzw1tMPXShplv54DU3Hx
-         D356fv2RhRdEkFi19AqaZWavVH9YCLP0+Y2EFY6CRbkmYlGdfZrwAS5HuQhqEc553Q+P
-         I5wA==
+        d=gmail.com; s=20230601; t=1741383248; x=1741988048; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2kEgsNWjuBG1Rlp30GfVSxF9HcCJGvmeB0AXoL2Q2Fk=;
+        b=bs3lMYc5efpmlKPqcOMoZl5VdZo61/iysOeQOpRNta9gmZNxQjs1nq9KrfalnKOg+Y
+         3fcYH1VNft3j/4fXRBydF67Sk2OMT1LWA7O1Pk9FLP+lwUKd09OMC/N3aQ/X1zQjER8S
+         93GY9QACSHMSJ5RchssyMv15qpCouuJvBN5Y4Z6Kwvg8hYPTr0osoll5WN277sOpGYuw
+         2YSYiWtAVg+6TkjjRD2hUrByJkLoSTs4IE2VvXqYMuyHwOnO5Tx7IvOu1aXC0AWvO8HC
+         RjxKHdl8u08JSGCa7KwveBxEXpit4gx2OnkG718t+i+/irlD1YLuLH8O7P9BWNO01HSr
+         T9kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741383142; x=1741987942;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ARuhzLHKgFAOlu2Q7LP5aYiWyJne5EpXab6RXQoDcXE=;
-        b=Nr94Mx+AXzvP3cfUO0jA50LuReVW2+aDlvXwDgMyk3Bujj2NzRGpemhoNuRtZCbKtJ
-         5+lv0N2oeeMSqWvHT8yOqHsiPlwlbTruVnoJEO6XCb1oXzH+bDPjpJdtM6wYwNVYsfw6
-         Mpudah5hDDkVA20kq9wH+FHFNp4nLXDlmexDmbMQTNpUs9tGtJ/uf8Ldu9ZwSU1IcFer
-         sXMerNakDoUtT62tFp3P8TdbWNkhWLalpYS/gCnUJzuYuVltetA8//kxs08BTWTPZ99k
-         LHYDMN/UcLV5zDLqIkcvbPLJeSXgKn5OaO4n+F5ME1c/vfWN4lWONzUkAhptTrSviLvv
-         vLYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUApOfytG7hrHuLNkRDsPCwCIzTz2RUIDmTbFURxBiX226/72mXdZUYEhV99GCtG4GmgO4r08PJM8PSFB/E@vger.kernel.org, AJvYcCVJIbYgUPL11Y7RHLebRd4p42nxrneMrpAhjJAHiZxW0BXzsSRWwQqgnJqJI3rElUh+pHUO0chTkt2n5Lw=@vger.kernel.org, AJvYcCVcknB92lOKIEV6JurI1hkZpBBNrViu7VbzNK+hV+8zO1LzGW1zRrCDE6fIGK2XLo7fRwV/68itXqv3@vger.kernel.org, AJvYcCXMyH38juIP+XRMcWk9Z1ox1Dg3Be983ioNr9RWdk8DPtZyVLcBzJdUkiEQYneMD/q6b8wfWf8meECtXWioZ6k=@vger.kernel.org, AJvYcCXUAFS0SUPBZf87wbA6YnYsWTlDUEv0dnYybK97bFkSKW4tiZdKMVW75LfEWWOvjawChKfMGg5NFHKG3jQJPcpO@vger.kernel.org
-X-Gm-Message-State: AOJu0YygneeLghaMLagOCB1yVA4akUnaUIMWq6zrPXBuhztyvtmiioiA
-	gjSzm1MMKnV1OXEyWgopWPfKuCxnBPuz8/6MoLHnrhxQeOs0uSJ0CnZly7LqkSKNEX674zInnWI
-	hJgbjFX5xTQySHw3rAdWkbOm17eU=
-X-Gm-Gg: ASbGncuPiolM+chTK6FWZF4YKc1LRNxoQoTo6uKN7kFerXNkjsZNfC68iIj1LCUCaKr
-	DfGvnysG06S1uJirYhvfzW5z/6g3zRoBvYbANn2mySP5ktyvu9jgDNFl9QZyoHNVw4oRFqDHQ7E
-	fgylDU5YS3qEjqv0VRdZhjrdsS3Sakywh6uZaWKY900t4p9vNLqpT1Cr+LHFg3
-X-Google-Smtp-Source: AGHT+IFdsPweWJvHGLz80jL2G7JVEo6FQUSZN8RROpkrVaDfRFA5+62kZX+VW47Fc+dzP9GteUEXyi+zFHV0PgHEd2A=
-X-Received: by 2002:a05:651c:1542:b0:30b:d5ed:55c7 with SMTP id
- 38308e7fff4ca-30bf465adc2mr19017741fa.36.1741383141346; Fri, 07 Mar 2025
- 13:32:21 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741383248; x=1741988048;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2kEgsNWjuBG1Rlp30GfVSxF9HcCJGvmeB0AXoL2Q2Fk=;
+        b=rfvxCM4iZwxM1SCuVvtB7te68RXMr/IaJeZMgtOGeUhktymYJXRVbq1/KgjIe1lTwP
+         k+qEJdjcoJqrlOg+Ko2OHOF/kDEAZq2MZlPrjh58V2964ba7jk+BNvBTUuwOPLcuFwjr
+         m7C645CvNVayoaRk2zhRZ6f26XFXHEWrR4o4i+XyPfen0IzCOcCtXxlSXSbc5TdSylYT
+         JVQe9dFuoSj9u0q9dpYSAvjLJjsFvMby1UH4nGFUcV61JFvVPgG3pBtkso0o5S8Bu7bq
+         9A4ShJXYSRIrUGr0i7tU/3p+RXKckh8eV6K7P6hlG8bKCPb2pb0vnngB0zWWjOAFXZuZ
+         4WZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVMI4zx3SlVNeWdTTqv3IGt1v0ijGMivkMPFw8bnrOLQWxh3aHImSrmYnuga5jd3Lj2ExB+evRWEq6gKY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHINYFji13zoi8Kn70wvRqEdXgi7tRIvuvGKXmTRQSgX65CcFD
+	IeG5ek3Wp/ZLcUZKrxLo+yQvWnjKd2bLMPc4Z2bD7dh1F5CnJTP5
+X-Gm-Gg: ASbGnct4JWgJ9OMb3UqsZySgB2AO1Z821etaFcNnZKlDiKsu3lp3tozohzHuvWsOvkM
+	MVWmGfRwxUURGMMXwghu4Pjk9ElVqY+/UyZkfpE2a8elfTrvG//+nRYKZaNTple6bNfrzLOSGFQ
+	RPnnY3GRlje/IE77ndaV9Ht6lZwMzO9r1xGsNziHVJtTWCeeGBjuT6hKG3xEmpRzAJfiE/mJX0C
+	q47skx76RfEOUnNEAeEqVCfcsp1KZ4p28XPxc9tj2e15NxrjT4EKW0el+zmarfcFgWKYh5AxMDH
+	uISPx5AY5Q4xqhLb/dckip7NZmrBVpM3rH3p0pVXawT3f8OqkL8yTA==
+X-Google-Smtp-Source: AGHT+IFpIbghEXYNTZOtEUyaPvCuWT9aVCtfenazq4IYK1FK4TvSByQAcE96AIcnA1tH6mC80jw8QQ==
+X-Received: by 2002:a05:6a20:6f93:b0:1f3:329a:db7e with SMTP id adf61e73a8af0-1f5583f0511mr266453637.10.1741383248120;
+        Fri, 07 Mar 2025 13:34:08 -0800 (PST)
+Received: from localhost ([2409:40f2:1049:75fb:98f4:7f2a:9f11:7927])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-af50b2d4c9fsm1465985a12.76.2025.03.07.13.34.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 13:34:07 -0800 (PST)
+From: Navon John Lukose <navonjohnlukose@gmail.com>
+To: perex@perex.cz,
+	tiwai@suse.com
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Navon John Lukose <navonjohnlukose@gmail.com>
+Subject: [PATCH] ALSA: hda/realtek: Add mute LED quirk for HP Pavilion x360 14-dy1xxx
+Date: Sat,  8 Mar 2025 03:03:19 +0530
+Message-ID: <20250307213319.35507-1-navonjohnlukose@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250307-ptr-as-ptr-v1-1-582d06514c98@gmail.com> <D8A6YVP8B1UB.38AHIB0LMO85Y@proton.me>
-In-Reply-To: <D8A6YVP8B1UB.38AHIB0LMO85Y@proton.me>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 7 Mar 2025 16:31:45 -0500
-X-Gm-Features: AQ5f1JpSIMesRtsEKl89gOnukKxYXJaio0pmeP0gT1zPDpJ0Rn9dPatry3rsobM
-Message-ID: <CAJ-ks9mnDzD2ZQ1ebvJVe8bvHtc2b3E=ORVjhWJ7=MjgmqbpBg@mail.gmail.com>
-Subject: Re: [PATCH] rust: enable `clippy::ptr_as_ptr` lint
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-pci@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Mar 7, 2025 at 11:58=E2=80=AFAM Benno Lossin <benno.lossin@proton.m=
-e> wrote:
->
-> On Fri Mar 7, 2025 at 5:41 PM CET, Tamir Duberstein wrote:
-> > In Rust 1.51.0, Clippy introduced the `ignored_unit_patterns` lint [1]:
->
-> You link to the `ptr_as_ptr` lint though, is this a typo?
->
-> >> Though `as` casts between raw pointers are not terrible,
-> >> `pointer::cast` is safer because it cannot accidentally change the
-> >> pointer's mutability, nor cast the pointer to other types like `usize`=
-.
-> >
-> > There are a few classes of changes required:
-> > - Modules generated by bindgen are marked
-> >   `#[allow(clippy::ptr_as_ptr)]`.
-> > - Inferred casts (` as _`) are replaced with `.cast()`.
-> > - Ascribed casts (` as *... T`) are replaced with `.cast::<T>()`.
-> > - Multistep casts from references (` as *const _ as *const T`) are
-> >   replaced with `let x: *const _ =3D &x;` and `.cast()` or `.cast::<T>(=
-)`
-> >   according to the previous rules. The intermediate `let` binding is
-> >   required because `(x as *const _).cast::<T>()` results in inference
-> >   failure.
-> > - Native literal C strings are replaced with `c_str!().as_char_ptr()`.
->
-> These all seem very nice, thanks! I think it would also be a good idea
-> to enable `ptr_cast_constness` [1], since those are the other kind of
-> `as` usage that we should be doing via `cast_mut`/`cast_const`.
->
-> There are still some legitimate uses of `as` casts, when unsizing
-> values. I don't know if these two lints can trigger on those, it would
-> be nice if they don't. So those should continue to use `as`, but other
-> than that, there shouldn't be any `as` in our code :)
->
-> [1]: https://rust-lang.github.io/rust-clippy/master/index.html#ptr_cast_c=
-onstness
->
-> (I will take a look at the patch itself a bit later)
+Add a fixup to enable the mute LED on HP Pavilion x360 Convertible
+14-dy1xxx with ALC295 codec. The appropriate coefficient index and bits
+were identified through a brute-force method, as detailed in
+https://bbs.archlinux.org/viewtopic.php?pid=2079504#p2079504.
 
-I'll go ahead and send v2 soon where this has become a 5 patch series.
+Signed-off-by: Navon John Lukose <navonjohnlukose@gmail.com>
+---
+ sound/pci/hda/patch_realtek.c | 21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index d2a1f836d..a84857a3c 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -4790,6 +4790,21 @@ static void alc236_fixup_hp_coef_micmute_led(struct hda_codec *codec,
+ 	}
+ }
+ 
++static void alc295_fixup_hp_mute_led_coefbit11(struct hda_codec *codec,
++				const struct hda_fixup *fix, int action)
++{
++	struct alc_spec *spec = codec->spec;
++
++	if (action == HDA_FIXUP_ACT_PRE_PROBE) {
++		spec->mute_led_polarity = 0;
++		spec->mute_led_coef.idx = 0xb;
++		spec->mute_led_coef.mask = 3 << 3;
++		spec->mute_led_coef.on = 1 << 3;
++		spec->mute_led_coef.off = 1 << 4;
++		snd_hda_gen_add_mute_led_cdev(codec, coef_mute_led_set);
++	}
++}
++
+ static void alc285_fixup_hp_mute_led(struct hda_codec *codec,
+ 				const struct hda_fixup *fix, int action)
+ {
+@@ -7656,6 +7671,7 @@ enum {
+ 	ALC290_FIXUP_MONO_SPEAKERS_HSJACK,
+ 	ALC290_FIXUP_SUBWOOFER,
+ 	ALC290_FIXUP_SUBWOOFER_HSJACK,
++	ALC295_FIXUP_HP_MUTE_LED_COEFBIT11,
+ 	ALC269_FIXUP_THINKPAD_ACPI,
+ 	ALC269_FIXUP_LENOVO_XPAD_ACPI,
+ 	ALC269_FIXUP_DMIC_THINKPAD_ACPI,
+@@ -9401,6 +9417,10 @@ static const struct hda_fixup alc269_fixups[] = {
+ 		.chained = true,
+ 		.chain_id = ALC283_FIXUP_INT_MIC,
+ 	},
++	[ALC295_FIXUP_HP_MUTE_LED_COEFBIT11] = {
++		.type = HDA_FIXUP_FUNC,
++		.v.func = alc295_fixup_hp_mute_led_coefbit11,
++	},
+ 	[ALC298_FIXUP_SAMSUNG_AMP] = {
+ 		.type = HDA_FIXUP_FUNC,
+ 		.v.func = alc298_fixup_samsung_amp,
+@@ -10451,6 +10471,7 @@ static const struct hda_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x103c, 0x84e7, "HP Pavilion 15", ALC269_FIXUP_HP_MUTE_LED_MIC3),
+ 	SND_PCI_QUIRK(0x103c, 0x8519, "HP Spectre x360 15-df0xxx", ALC285_FIXUP_HP_SPECTRE_X360),
+ 	SND_PCI_QUIRK(0x103c, 0x8537, "HP ProBook 440 G6", ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF),
++	SND_PCI_QUIRK(0x103c, 0x85c6, "HP Pavilion x360 Convertible 14-dy1xxx", ALC295_FIXUP_HP_MUTE_LED_COEFBIT11),
+ 	SND_PCI_QUIRK(0x103c, 0x85de, "HP Envy x360 13-ar0xxx", ALC285_FIXUP_HP_ENVY_X360),
+ 	SND_PCI_QUIRK(0x103c, 0x860f, "HP ZBook 15 G6", ALC285_FIXUP_HP_GPIO_AMP_INIT),
+ 	SND_PCI_QUIRK(0x103c, 0x861f, "HP Elite Dragonfly G1", ALC285_FIXUP_HP_GPIO_AMP_INIT),
+-- 
+2.48.1
+
 
