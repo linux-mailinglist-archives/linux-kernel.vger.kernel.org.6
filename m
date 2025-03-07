@@ -1,100 +1,123 @@
-Return-Path: <linux-kernel+bounces-550180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE126A55C4A
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:55:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E667FA55C50
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:56:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7C57188F4DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:55:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BBC31718A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:56:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF19313C9A3;
-	Fri,  7 Mar 2025 00:55:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrpItbRe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409DB1E868;
-	Fri,  7 Mar 2025 00:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF0A13FD72;
+	Fri,  7 Mar 2025 00:56:02 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AB985270;
+	Fri,  7 Mar 2025 00:55:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741308915; cv=none; b=h522Np4KPooqJhkgXZq5UstIp+LGhOHwsbVO/pTBVFsljBBGUw+c+7Zuj8BMdHciO+RLjRXYKrh7mYjmKUoeXxmpkjlSgn1D1jQY7iIvCJWdKO4xAgSLNT8Daf/iTthNG7MWYep3WKQxEOIYH1F0JBSRBbe6Pn3PKOefxawaC7M=
+	t=1741308961; cv=none; b=o7soto3WNJe3FxutdT17TJH9J4AIlXWYFpQPSfDQ6XafotqOGm9X+DHGJBTAJBxzm+YLt8Tki5Zf+8IyicMp3v/0Ng79KE8edey96vYq7AgIV3YC43kNiaz+4+dODmNtId1vtLx0gLUhkG+S+FOsESa7Nok4/0pIevSuP2NLHuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741308915; c=relaxed/simple;
-	bh=xek2BHPVZ26qJOlIwvynXxMSgyWkeMn3liBIClkp3lI=;
+	s=arc-20240116; t=1741308961; c=relaxed/simple;
+	bh=7pZqwwAprPyeaMEDZxlPD1LzwzVajGFbBevaf2ksr8s=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=V4/yeyKO0VJek+5gHXcoMgDrY5yItiqfROE7NagW4d4MxElJMYZ402ivbKa+hpj0gW4sgNtEgLXwtPDjU3Hq+etqF7HluTxI0Z5a29tDREduUGT5MlnQ458EPWwYfQBpJxd/dbAXQLWA0lwhZszSkFHvKOyAXIEVJisQ3D1gRB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrpItbRe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0F97C4CEE0;
-	Fri,  7 Mar 2025 00:55:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741308914;
-	bh=xek2BHPVZ26qJOlIwvynXxMSgyWkeMn3liBIClkp3lI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QrpItbReJvXV4f5NgW5mLT6raAXR9ILcWXRqNJek5KIcTTvGN4K/B/vomAxa0s7LW
-	 u4aZDEn0nSrDXhaoRTqiVXvn3VaThme6YX8s6fmORw6eDBPiM8AqInegTSJnIygUbN
-	 kmkzeTMC5o/97KmCJg36JTQAlrvaMcAxFirIDLb5xVmPAOJVe3jVwL0fCb3/QRj3A+
-	 wH5k2Okk0ScuJX1DrWC0/L8AYVJCKq8PdMiLFuNuJ8B4IhoS4LvwUN5iu2xUu8z5hV
-	 86lbzUFCHlPP2SMdOd/H4zSLjWAQwKdWKWfq348B2QMnnbe/oMlMH5KgNaN3ZRDPCA
-	 yO7SLVnzsbOzA==
-Date: Thu, 6 Mar 2025 16:55:13 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, Meghana Malladi
- <m-malladi@ti.com>, Diogo Ivo <diogo.ivo@siemens.com>, Lee Trager
- <lee@trager.us>, Andrew Lunn <andrew+netdev@lunn.ch>, Roger Quadros
- <rogerq@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Simon Horman
- <horms@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Eric Dumazet
- <edumazet@google.com>, "David S. Miller" <davem@davemloft.net>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <linux-doc@vger.kernel.org>, <netdev@vger.kernel.org>, <srk@ti.com>
-Subject: Re: [PATCH net-next v2] net: ti: icssg-prueth: Add ICSSG FW Stats
-Message-ID: <20250306165513.541ff46e@kernel.org>
-In-Reply-To: <20250305111608.520042-1-danishanwar@ti.com>
-References: <20250305111608.520042-1-danishanwar@ti.com>
+	 MIME-Version:Content-Type; b=o85ncvqMcbEP2PcZHKEXNNBzuwv0FNiqfZSYDD344B3LmDFS94Qk5KReRQ+iCwhaO2I0pjsgksV2Q8DGKFyslUCZbGDofY2r7VR4EokpyEA5Y6UBdeIZgeV6A7kedFEG6SOVdoZqZjf/6m7Jt4hqa6bHuvW8M4eLuBw94oq42FU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3CD7F169E;
+	Thu,  6 Mar 2025 16:56:12 -0800 (PST)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 19EB63F5A1;
+	Thu,  6 Mar 2025 16:55:57 -0800 (PST)
+Date: Fri, 7 Mar 2025 00:55:55 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Samuel
+ Holland <samuel@sholland.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 08/15] arm64: dts: allwinner: Add Allwinner A523
+ .dtsi file
+Message-ID: <20250307005555.2c52199a@minigeek.lan>
+In-Reply-To: <2646028.Lt9SDvczpP@jernej-laptop>
+References: <20250304222309.29385-1-andre.przywara@arm.com>
+	<20250304222309.29385-9-andre.przywara@arm.com>
+	<2646028.Lt9SDvczpP@jernej-laptop>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 5 Mar 2025 16:46:08 +0530 MD Danish Anwar wrote:
-> + - ``FW_RTU_PKT_DROP``: Diagnostic error counter which increments when RTU drops a locally injected packet due to port being disabled or rule violation.
-> + - ``FW_Q0_OVERFLOW``: TX overflow counter for queue0
-> + - ``FW_Q1_OVERFLOW``: TX overflow counter for queue1
-> + - ``FW_Q2_OVERFLOW``: TX overflow counter for queue2
-> + - ``FW_Q3_OVERFLOW``: TX overflow counter for queue3
-> + - ``FW_Q4_OVERFLOW``: TX overflow counter for queue4
-> + - ``FW_Q5_OVERFLOW``: TX overflow counter for queue5
-> + - ``FW_Q6_OVERFLOW``: TX overflow counter for queue6
-> + - ``FW_Q7_OVERFLOW``: TX overflow counter for queue7
-...
+On Wed, 05 Mar 2025 19:46:20 +0100
+Jernej =C5=A0krabec <jernej.skrabec@gmail.com> wrote:
 
-Thanks for the docs, it looks good. Now, do all of these get included
-in the standard stats returned by icssg_ndo_get_stats64 ?
-That's the primary source of information for the user regarding packet
-loss.
+Hi,
 
->  	if (prueth->pa_stats) {
->  		for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++) {
-> -			reg = ICSSG_FW_STATS_BASE +
-> -			      icssg_all_pa_stats[i].offset *
-> -			      PRUETH_NUM_MACS + slice * sizeof(u32);
-> +			reg = icssg_all_pa_stats[i].offset +
-> +			      slice * sizeof(u32);
->  			regmap_read(prueth->pa_stats, reg, &val);
->  			emac->pa_stats[i] += val;
+> Dne torek, 4. marec 2025 ob 23:23:02 Srednjeevropski standardni =C4=8Das =
+je Andre Przywara napisal(a):
+> > The Allwinner A523, and its siblings A527 and T527, which share the same
+> > die, are a new family of SoCs introduced in 2023. They features eight
+> > Arm Cortex-A55 cores, and, among the other usual peripherals, a PCIe and
+> > USB 3.0 controller.
+> >=20
+> > Add the basic SoC devicetree .dtsi for the chip, describing the
+> > fundamental peripherals: the cores, GIC, timer, RTC, CCU and pinctrl.
+> > Also some other peripherals are fully compatible with previous IP, so
+> > add the USB and MMC nodes as well.
+> > The other peripherals will be added in the future, once we understand
+> > their compatibility and DT requirements.
+> >=20
+> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> > ---
+> >  .../arm64/boot/dts/allwinner/sun55i-a523.dtsi | 598 ++++++++++++++++++
+> >  1 file changed, 598 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+> >=20
+> > diff --git a/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi b/arch/arm6=
+4/boot/dts/allwinner/sun55i-a523.dtsi
+> > new file mode 100644
+> > index 0000000000000..01e662bdf5521
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/allwinner/sun55i-a523.dtsi
+> > @@ -0,0 +1,598 @@
+> > +// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
+> > +// Copyright (C) 2023-2024 Arm Ltd.
+> > +
 
-This gets called by icssg_ndo_get_stats64() which is under RCU 
-protection and nothing else. I don't see any locking here, and
-I hope the regmap doesn't sleep. cat /proc/net/dev to test.
-You probably need to send some fixes to net.
--- 
-pw-bot: cr
+ ...
+
+> > +
+> > +			mmc2_pins: mmc2-pins {
+> > +				pins =3D "PC1" ,"PC5", "PC6", "PC8", "PC9",
+> > +				       "PC10", "PC11", "PC13", "PC14", "PC15",
+> > +				       "PC16"; =20
+>=20
+> I guess PC0 should be also included, for HS400 capable cards.
+
+Sure, it doesn't conflict with much else (just NAND flash), so that's
+no problem.
+
+> With that fixed:
+> Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+
+Many thanks for that!
+
+Cheers,
+Andre
+
+>=20
+> Best regards,
+> Jernej
+>=20
+
 
