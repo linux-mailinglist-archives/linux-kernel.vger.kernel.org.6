@@ -1,367 +1,161 @@
-Return-Path: <linux-kernel+bounces-551374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B29AA56BA3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:18:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18EFBA56BAA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C78F11794DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:18:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE8BC3A5CF2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467BD22154D;
-	Fri,  7 Mar 2025 15:15:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE3BC22171E;
+	Fri,  7 Mar 2025 15:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZvVLK8we"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CO+ayTAF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FA3217583;
-	Fri,  7 Mar 2025 15:15:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2E1221DBC
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 15:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741360544; cv=none; b=AdQwlF81hNY0gKbhMC6JdAPX4Ugv2nQ16PmgBdoNS/C67tCQ+3qqoL8haGjq2fYJeSN3OBIsR9egPN9eOkeQ25xX8PArS0mS2bdf5Nekhj+GGgu5HhdBdUHQFNJ3LTluZFcEt6lVatcUxdcPTGcdLL7LZtlivJm/R4qdN8GgKh4=
+	t=1741360564; cv=none; b=cz5nmd6lwGv692hqRaY9SYjGrMzYdjO3OprV2f6pEv94badIbXSQ0fXyt81xB0sdioqihdRdm13g0Y4HVjo9nMTCrd+fHFPhZgOZsLlPaSdFmxDycVTijKeaQ8j6+WT4xJELcOvWq5vWKqPVD+Ur5Q3CdKNtAwmnHms2buyJogs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741360544; c=relaxed/simple;
-	bh=H8n13blks6nrv7/hlDAzfpW6fo6pnvJRhIVCn9BJ3jc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q9rPG3cAatc2R5s7FEuWAMsMZqxfAG4qOTFH15p0E32RPYIiBx3EjguDuzDceVQPC12x35XRR7a88zV+yjVxcaug8rQmbW7t4M0xgI+wcrwsLRWKiZcsBlRWU86v7qhVB1WsfodHej43FXvBGV1w+2B6EEI/ZgSBnf300cpyh4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZvVLK8we; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 111A7C4CED1;
-	Fri,  7 Mar 2025 15:15:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741360543;
-	bh=H8n13blks6nrv7/hlDAzfpW6fo6pnvJRhIVCn9BJ3jc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZvVLK8weXD5lfjpk3JJDmKzcgvbIiQEjcP5RhNsRPDcz7HsGDiUO4zB+b46CKJi0h
-	 OHECjDmW+r2aMgu4AawEnbs4hO72yXTLwx7z5oCmYfl5hTz9rb1CKTLS3shdY05R72
-	 q0ii4qENMKF+N+FnLDpGu3IA0qFK6hPU7Bh3IXgu1pVkfwCS3zXReRf1pbbvhMR3UQ
-	 Mg7VdJ/bU5ZiV955EdoO/Gm4d4UL4woEcS4+OEQLd82WlIEEu5hqVU1KBDx5q2IC/s
-	 4uPu3dQoXyJzMBlDbZhEAgXIoNCJmSNOEp7Oyh3RT7SCc73FrKkcPBGOk+ElOYllv6
-	 AQz40N+a2ssyQ==
-Message-ID: <cfd05cd7-4541-476f-aafd-9e3239d88048@kernel.org>
-Date: Fri, 7 Mar 2025 16:15:34 +0100
+	s=arc-20240116; t=1741360564; c=relaxed/simple;
+	bh=c3CH7TGyw7ayKW/y+JIiPgELaX0LllMUxZuFzWkEm4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FLtw/FOAHmU69/Xe0Tny0N5xTPwDrVIyJf2xbmnqbLDq/OM4z5UCqyTC3MPV9Pqoa08UHB9d3VG929JiOYUTwl/Ss4u9TSQPBTEP3byTwiamdjSGnH//kIJIS42nOlvmmFZUlu9DeL/Znh5noqCZb16ciyFsKtdjbv5EmS4LZmw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CO+ayTAF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741360561;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qph6zf+ID+ly6xmuaXbG620k26a/5kfcTY2Rgld0WAE=;
+	b=CO+ayTAFciPdfQ7GQX5U0tOlZPsE8hhM3131kGeXGug4Is5aioJBr7WWkrV84qNo1dxF3R
+	lkVqbh+8b8ifpuDccUaVl/3lD4Q34mHNTZMjpca2t1FK4IWH6KIwCQaz8putz7qJHFMgq4
+	oD0/+bcNPRqbTa65qk6RbtWRHxHdQ3A=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-101-1g8rrjGMOEi5KVfT6nwLwQ-1; Fri, 07 Mar 2025 10:16:00 -0500
+X-MC-Unique: 1g8rrjGMOEi5KVfT6nwLwQ-1
+X-Mimecast-MFC-AGG-ID: 1g8rrjGMOEi5KVfT6nwLwQ_1741360559
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-39137e17c50so208051f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 07:15:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741360559; x=1741965359;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qph6zf+ID+ly6xmuaXbG620k26a/5kfcTY2Rgld0WAE=;
+        b=Z7RSKR9cH7Ce5eviNpOGKsvZ2I5pXf6IDO4w60SZN1Jxmuj88BDQTczxFarK61x3sZ
+         P5hIucS96YBky0+C9b6iZOOwRD/RhTRj3vlLgxR2/Uzk/ZOY03RAy7tOEFLUOKifbl+a
+         dVIpGz86x7i60/L30WahQS+REOk3hTpknmdMJNTwuqq2iJDfGOJwbBp1Eo0pUjMt6QtR
+         hCdRKuksPSYFetY8VMRAFgxuQVg3LxL0uboGbYrGLB+z4bpe77wqtGfD1sUuF7sdL6SN
+         5Aj/Uf0u/5N2XFxVMZMBvNzf6NFLkQ9DuJZJ+HuUX4y4nEAOwPpTPt/3Bd563b42dO1L
+         3pgg==
+X-Gm-Message-State: AOJu0Yw535NysxTQRdGUeSrLUmNLLF6QVm71108US7HhRGDXwox/g1+w
+	i4q2ekrkerVRRNzLBWchBeTnCJhb5YMzKjzkJVH6A7DqJjlIbIj87YGMlrEaV60+NcYqPjrI3Zx
+	qIq69mimA1gQUANPxo2SXV8UvDjHLkYl0MrjNtyDnVY+d4+LdRQiJjPKNWkcgpw==
+X-Gm-Gg: ASbGncvhy+LjebYIjzsIgZ+DFTm0+utpqWLXWgH3a/Db9MIdAd3CHWCXGMI3HOGhWNJ
+	F+VfVfTCwplgxUnd2VuUXT9BiiX98gpacToTY7ZlIuppGD5NrmRmb8iRdboWlk6/xqfN8mrumU6
+	sW3FnCAfHhX2gy3cuR5QlEYv6DaYmQAjkfdX3AZkeYbp8lOE7n9yoEyH0rYJdeRtfgdvVTppe+0
+	iSfsR35Puo2iYKS8PH8YyFTZ9J3ZSVGut7VrnCS39jexfw8gGHDNQaQ1SxThavFJJuCj+6RuSc8
+	BxkYsZp+eXDOWAXV0VoBb0sOX0tEXivR7mKwnk9d+0LoO7igTOQaAmQLP3B8gxY+aUW1nfGvDD7
+	FX6r5
+X-Received: by 2002:a05:6000:1a8e:b0:390:eacd:7009 with SMTP id ffacd0b85a97d-39132da110fmr2004178f8f.42.1741360558633;
+        Fri, 07 Mar 2025 07:15:58 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IF1tTVUb8fhqvR/i8Dhv36ZU++qT8Rx+xYofykOLwza7hYP0SmxRFCS3D/ymSQcV7dlgT+jiQ==
+X-Received: by 2002:a05:6000:1a8e:b0:390:eacd:7009 with SMTP id ffacd0b85a97d-39132da110fmr2004126f8f.42.1741360557941;
+        Fri, 07 Mar 2025 07:15:57 -0800 (PST)
+Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bdd948cd0sm52773135e9.38.2025.03.07.07.15.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 07:15:56 -0800 (PST)
+Date: Fri, 7 Mar 2025 15:15:55 +0000
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Waiman Long <llong@redhat.com>
+Cc: linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>, Tejun Heo <tj@kernel.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
+	Qais Yousef <qyousef@layalina.io>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Swapnil Sapkal <swapnil.sapkal@amd.com>,
+	Shrikanth Hegde <sshegde@linux.ibm.com>,
+	Phil Auld <pauld@redhat.com>, luca.abeni@santannapisa.it,
+	tommaso.cucinotta@santannapisa.it,
+	Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 2/8] sched/topology: Wrappers for sched_domains_mutex
+Message-ID: <Z8sNq6gSuz_PrInW@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250306141016.268313-1-juri.lelli@redhat.com>
+ <20250306141016.268313-3-juri.lelli@redhat.com>
+ <eafef3d6-c5ce-435e-850c-60f780500b2e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/14] dt-bindings: mediatek: mt8196: add audio AFE
- document
-To: "Darren.Ye" <darren.ye@mediatek.com>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
-References: <20250307124841.23777-1-darren.ye@mediatek.com>
- <20250307124841.23777-13-darren.ye@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250307124841.23777-13-darren.ye@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <eafef3d6-c5ce-435e-850c-60f780500b2e@redhat.com>
 
-On 07/03/2025 13:47, Darren.Ye wrote:
-> From: Darren Ye <darren.ye@mediatek.com>
+On 07/03/25 10:11, Waiman Long wrote:
+> On 3/6/25 9:10 AM, Juri Lelli wrote:
+> > Create wrappers for sched_domains_mutex so that it can transparently be
+> > used on both CONFIG_SMP and !CONFIG_SMP, as some function will need to
+> > do.
+> > 
+> > Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> > Fixes: 53916d5fd3c0 ("sched/deadline: Check bandwidth overflow earlier for hotplug")
+> > Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+> > ---
+> > v1 -> v2: Remove wrappers for the !SMP case as all users are not defined
+> >            either in that case
+> > ---
+> >   include/linux/sched.h   |  2 ++
+> >   kernel/cgroup/cpuset.c  |  4 ++--
+> >   kernel/sched/core.c     |  4 ++--
+> >   kernel/sched/debug.c    |  8 ++++----
+> >   kernel/sched/topology.c | 12 ++++++++++--
+> >   5 files changed, 20 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index 9632e3318e0d..d5f8c161d852 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -383,6 +383,8 @@ enum uclamp_id {
+> >   extern struct root_domain def_root_domain;
+> >   extern struct mutex sched_domains_mutex;
+> >   #endif
+> > +extern void sched_domains_mutex_lock(void);
+> > +extern void sched_domains_mutex_unlock(void);
 > 
-> Add mt8196 audio AFE document.
-> 
-> Signed-off-by: Darren Ye <darren.ye@mediatek.com>
+> As discussed in the other thread, move the
+> sched_domains_mutex_{lock/unlock}{} inside the "#if CONFIG_SMP" block and
+> define the else part so that it can be used in code block that will also be
+> compiled in the !CONFIG_SMP case.
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+Ack. 
 
-> ---
->  .../bindings/sound/mediatek,mt8196-afe.yaml   | 259 ++++++++++++++++++
->  1 file changed, 259 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/sound/mediatek,mt8196-afe.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt8196-afe.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt8196-afe.yaml
-> new file mode 100644
-> index 000000000000..59f8fdf3167c
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/mediatek,mt8196-afe.yaml
-> @@ -0,0 +1,259 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/mediatek,mt8196-afe.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek Audio Front End PCM controller for MT8196
-> +
-> +maintainers:
-> +  - Darren Ye <darren.ye@mediatek.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,mt8196-afe-pcm
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#sound-dai-cells":
-> +    const: 0
-> +
-> +  clocks:
-> +    items:
-> +      - description: audio hopping clock
-> +      - description: audio f26m clock
-> +      - description: audio ul0 adc clock
-> +      - description: audio ul0 adc hires clock
-> +      - description: audio ul1 adc clock
-> +      - description: audio ul1 adc hires clock
-> +      - description: audio apll1 clock
-> +      - description: audio apll2 clock
-> +      - description: audio apll tuner1 clock
-> +      - description: audio apll tuner2 clock
-> +      - description: vlp mux audio int
-> +      - description: vlp mux aud engen1
-> +      - description: vlp mux aud engen2
-> +      - description: vlp mux audio h
-> +      - description: vlp clock 26m
-> +      - description: ck mainpll d4 d4
-> +      - description: ck mux aud 1
-> +      - description: ck apll1
-> +      - description: ck mux aud 2
-> +      - description: ck apll2
-> +      - description: ck apll1 d4
-> +      - description: ck apll2 d4
-> +      - description: ck i2sin0 m sel
-> +      - description: ck i2sin1 m sel
-> +      - description: ck fmi2s m sel
-> +      - description: ck tdmout m sel
-> +      - description: ck apll12 div i2sin0
-> +      - description: ck apll12 div i2sin1
-> +      - description: ck apll12 div fmi2s
-> +      - description: ck apll12 div tdmout m
-> +      - description: ck apll12 div tdmout b
-> +      - description: ck adsp sel
-> +      - description: ck clock 26m
-> +
-> +  clock-names:
-> +    items:
-> +      - const: aud_hopping_clk
+> Other than that, the rest looks good to me.
 
-Look how other bindings call it. s/_clk//
+Thanks! I will be sending out a v3 early next week (waiting a few more
+hours in case anyone spots something else that needs rework).
 
-> +      - const: aud_f26m_clk
-> +      - const: aud_ul0_adc_clk
-> +      - const: aud_ul0_adc_hires_clk
-> +      - const: aud_ul1_adc_clk
-> +      - const: aud_ul1_adc_hires_clk
-> +      - const: aud_apll1_clk
-> +      - const: aud_apll2_clk
-> +      - const: aud_apll_tuner1_clk
-> +      - const: aud_apll_tuner2_clk
-> +      - const: vlp_mux_audio_int
-> +      - const: vlp_mux_aud_eng1
-> +      - const: vlp_mux_aud_eng2
-> +      - const: vlp_mux_audio_h
-> +      - const: vlp_clk26m_clk
-> +      - const: ck_mainpll_d4_d4
+Best,
+Juri
 
-What does ck stand for? You should name and explain the clocks based on
-this block, not the source.
-
-
-> +      - const: ck_mux_aud_1
-> +      - const: ck_apll1_ck
-> +      - const: ck_mux_aud_2
-> +      - const: ck_apll2_ck
-> +      - const: ck_apll1_d4
-> +      - const: ck_apll2_d4
-> +      - const: ck_i2sin0_m_sel
-> +      - const: ck_i2sin1_m_sel
-> +      - const: ck_fmi2s_m_sel
-> +      - const: ck_tdmout_m_sel
-> +      - const: ck_apll12_div_i2sin0
-> +      - const: ck_apll12_div_i2sin1
-> +      - const: ck_apll12_div_fmi2s
-> +      - const: ck_apll12_div_tdmout_m
-> +      - const: ck_apll12_div_tdmout_b
-> +      - const: ck_adsp_sel
-> +      - const: ck_clk26m_clk
-
-s/ck//
-s/clk// and this goes probably first. Look at other bindings.
-
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  cksys:
-
-Again, open existing bindings.
-
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: Phandle to the cksys clock controller.
-
-This tell me not much. Why do you need it?
-
-Drop redundant 'Phandle to' and explain how it is used.
-
-> +
-> +  vlpcksys:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: Phandle to the vlpcksys clock controller.
-
-No, because you keep encoding clock information via non-clock API.
-
-> +
-> +  memory-region:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-
-Drop, see other bindings.
-
-
-> +    description: Phandle to the reserved memory region for AFE DMA.
-> +
-> +  pinctrl-names:
-
-Drop
-
-> +    items:
-> +      - const: default
-> +
-> +  pinctrl-0:
-
-Drop
-
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description: Phandle to the pin control group for default state.
-> +
-> +  mediatek,etdm-out-ch:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: Number of ETDM output channels.
-> +    enum: [2]
-
-That's pointless.
-
-> +
-> +  mediatek,etdm-in-ch:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: Number of ETDM input channels.
-> +    enum: [2]
-> +
-> +  mediatek,etdm-out-sync:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: ETDM output synchronization.
-> +    enum: [0, 1]
-> +
-> +  mediatek,etdm-in-sync:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: ETDM input synchronization.
-> +    enum: [0, 1]
-> +
-> +  mediatek,etdm-ip-mode:
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: ETDM IP mode.
-> +    enum: [0, 1]
-
-Drop all above properties or explain why they make any sense in the
-terms of board configuration.
-
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - interrupts
-> +  - power-domains
-> +  - cksys
-> +  - vlpcksys
-> +  - memory-region
-
-> +  - pinctrl-names
-> +  - pinctrl-0
-
-Why?
-
-> +  - mediatek,etdm-out-ch
-> +  - mediatek,etdm-in-ch
-> +  - mediatek,etdm-out-sync
-> +  - mediatek,etdm-in-sync
-> +  - mediatek,etdm-ip-mode
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/mt8196-clk.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    #include <dt-bindings/power/mt8196-power.h>
-> +
-> +    soc {
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        afe: mt8196-afe-pcm@1a110000 {
-
-Again... look at other bindings.
-
-
-Best regards,
-Krzysztof
 
