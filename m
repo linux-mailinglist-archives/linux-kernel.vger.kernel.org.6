@@ -1,72 +1,75 @@
-Return-Path: <linux-kernel+bounces-550902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD316A5658B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:37:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F70A56590
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:38:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03F76176B1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:37:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4120B3B435D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:38:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2E220E33F;
-	Fri,  7 Mar 2025 10:37:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85FF20E700;
+	Fri,  7 Mar 2025 10:38:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RgBVVqVg"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZeUFC5Fr"
+Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB8A20D507;
-	Fri,  7 Mar 2025 10:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 989E71A239E;
+	Fri,  7 Mar 2025 10:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741343820; cv=none; b=WusjKWGQRWjPwgfEMRTPxk9aXsQ58vt3e6zzrd19zsU67Mk0nOHRRPGCMcSJw9ukfIVUnwp0PDSKQZyr0M5J2bQt39XAIj5D6BQ6BEiwlpwRiFa0QQEIgYOJRFatXFDowXyIMnS+TEsQ+rWcJhTCUOLE5aXG4yr/jLagh/T2ZFw=
+	t=1741343888; cv=none; b=GYNmOfVhynqR8DcltXq0aUcnGK5anOCH2Cd1U/4sl3RMA/GeSYZY5Dn2GiGYlEiwXzvGx4mElctsczQVsOTP5ZwuAJX+aqV9BAv7OK1T/CDb3mfwZeDRqDc0Yzw6e94B/EAOeL2ZFLq2xqr2LDe6EFG2xXMVIb7x6laEAwXN/tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741343820; c=relaxed/simple;
-	bh=NxGKOzJhH0syB/5UESiHYjZElY5LVqIHIR57niTMWic=;
+	s=arc-20240116; t=1741343888; c=relaxed/simple;
+	bh=NejdsTtVw1HHTKocf1fmib35yAwLtf1yxH2xdipeR7U=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t25TGWDLuyTUWUNFeAelsqqjJNyak7teyWhM620Qd+BfYeHjuhmheSSbfwICJyrr6cOeKaOaTpr5RyMHtBInrdFWznZMSBQrIqpEgeRwm0VBuN6zk8v3hdXR7MJcoqbQxUxcwgM7/BVsKDhRPkTQb18NfM/KBo5VubmhrpGaWj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=RgBVVqVg; arc=none smtp.client-ip=198.47.19.245
+	 MIME-Version:Content-Type; b=iBeY+g/j42hwqmZWPxfXrfkXlx1c3xZ5TPTEaRqiiy8bFw6Ko3V+sA6VIhYLQFoHE0mTAyeP+RY5cQmvjW1/ORnf2pZW6wpcCNd7zgh035Rr2RD99gpVo9AEMMCHFIksjGbZTB9GhsTjQiiAX+m7DCtwzk5ECDaBINCHZlmp+WE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZeUFC5Fr; arc=none smtp.client-ip=198.47.19.246
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 527AakJR3942632
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 7 Mar 2025 04:36:46 -0600
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 527Ac0tQ244116
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Mar 2025 04:38:00 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741343806;
-	bh=/q/4BzWAkO+zh9PIsVSkrHOjIySSifAyOimM8ksoJNM=;
+	s=ti-com-17Q1; t=1741343881;
+	bh=C1++GN37YacsvtvGJVQ2tP4MeEDYm2OhNRDU8/ZHW64=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=RgBVVqVgcvK/Nii3mcdbyFJ86WQJZs6WZZYiHykmh9RuaLfH5KWoOJfnclNADCM1N
-	 U9OsSZbW6sHY3XqqpmKmsjpg3atje4+Of5hv3/XPAi8VbMpVv0bKHRkJz6pFP7PE4B
-	 awZQ4hsP7p6RCupDTlppHCeKxmsoN2NexubF5v68=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527AakT9029556;
-	Fri, 7 Mar 2025 04:36:46 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+	b=ZeUFC5Fr9NyqOc65rZANb7X3bc///Ar7dClPMnYVrozGbFxKmFFTGE41EsMmF/YjD
+	 VvAjuQOBY5Eii6qYpuOiPO2E9OQO7PQy0L0WVpC5SmQq0PgluzAqgRlH70VSRwU+0o
+	 Dqzbt+1gBW4psqz49DZG8xNGWGOMhNVy/l220pBA=
+Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 527Ac0a5088612
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 7 Mar 2025 04:38:00 -0600
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
- Mar 2025 04:36:45 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ Mar 2025 04:38:00 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 7 Mar 2025 04:36:45 -0600
+ Frontend Transport; Fri, 7 Mar 2025 04:38:00 -0600
 Received: from uda0132425.dhcp.ti.com (dhcp-10-24-69-250.dhcp.ti.com [10.24.69.250])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527Aaf28021789;
-	Fri, 7 Mar 2025 04:36:42 -0600
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527Abt74022744;
+	Fri, 7 Mar 2025 04:37:56 -0600
 From: Vignesh Raghavendra <vigneshr@ti.com>
 To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, Wadim Egorov <w.egorov@phytec.de>
-CC: Vignesh Raghavendra <vigneshr@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
-Subject: Re: [PATCH v2 1/5] arm64: dts: ti: k3-am62x-phyboard-lyra: Add boot phase tags
-Date: Fri, 7 Mar 2025 16:06:36 +0530
-Message-ID: <174133309362.1072814.1438889304366712802.b4-ty@ti.com>
+        <conor+dt@kernel.org>, <j-choudhary@ti.com>, <rogerq@kernel.org>,
+        Siddharth
+ Vadapalli <s-vadapalli@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, <stable@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>
+Subject: Re: [PATCH v2] arm64: dts: ti: k3-j784s4-j742s2-main-common: Fix serdes_ln_ctrl reg-masks
+Date: Fri, 7 Mar 2025 16:07:53 +0530
+Message-ID: <174133309359.1072814.1136748837607533827.b4-ty@ti.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250305085537.3976579-1-w.egorov@phytec.de>
-References: <20250305085537.3976579-1-w.egorov@phytec.de>
+In-Reply-To: <20250228053850.506028-1-s-vadapalli@ti.com>
+References: <20250228053850.506028-1-s-vadapalli@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,32 +80,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Wadim Egorov,
+Hi Siddharth Vadapalli,
 
-On Wed, 05 Mar 2025 09:55:33 +0100, Wadim Egorov wrote:
-> The bootph-all and bootph-pre-ram tags were introduced in dt-schema
-> (dtschema/schemas/bootph.yaml) to define node usage across different
-> boot phases.
+On Fri, 28 Feb 2025 11:08:50 +0530, Siddharth Vadapalli wrote:
+> Commit under Fixes added the 'idle-states' property for SERDES4 lane muxes
+> without defining the corresponding register offsets and masks for it in the
+> 'mux-reg-masks' property within the 'serdes_ln_ctrl' node.
 > 
-> Add boot phase tags to all required nodes to ensure boot support from
-> all sources, including UART, USB (DFU), Ethernet, uSD card, eMMC, and
-> OSPI NOR Flash.
+> Fix this.
+> 
 > 
 > [...]
 
 I have applied the following to branch ti-k3-dts-next on [1].
 Thank you!
 
-[1/5] arm64: dts: ti: k3-am62x-phyboard-lyra: Add boot phase tags
-      commit: c2d18ec0ea4ce9d6d8be5a1a9b266f57a40b5e24
-[2/5] arm64: dts: ti: k3-am62a-phycore-som: Add boot phase tags
-      commit: a5965ee0107a37ca4c73f05f06f55dad759572d2
-[3/5] arm64: dts: ti: k3-am642-phyboard-electra: Add boot phase tags
-      commit: a9c8485cd13cdffee5bdcda6b625f678900994c4
-[4/5] arm64: dts: ti: k3-am642-phyboard-electra: Reorder properties per DTS coding style
-      commit: 61a12b5a9923e4beec5595fed3b9c3d5c0c25c32
-[5/5] arm64: dts: ti: k3-am62a-phycore-som: Reorder properties per DTS coding style
-      commit: a89d3f47b09c793d0454350739ee8695ff30fb5c
+[1/1] arm64: dts: ti: k3-j784s4-j742s2-main-common: Fix serdes_ln_ctrl reg-masks
+      commit: 38e7f9092efbbf2a4a67e4410b55b797f8d1e184
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
