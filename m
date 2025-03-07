@@ -1,119 +1,113 @@
-Return-Path: <linux-kernel+bounces-551520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 434E2A56D95
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:25:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48EECA56D91
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:25:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 307DE1771D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:25:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CFAE3AA8F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADFF623BD1A;
-	Fri,  7 Mar 2025 16:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 838191E1E0B;
+	Fri,  7 Mar 2025 16:25:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ehQP7odr"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mxfARFPD"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7700D23BD04;
-	Fri,  7 Mar 2025 16:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4AB23BD01;
+	Fri,  7 Mar 2025 16:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741364716; cv=none; b=BZmZDVLaB3hNEOysoJsUTKYcrSwWiXHUOnr+YWwLJI9lfFevCjaiVM0TMw/R1ZI0PgLMs9BJ+lz39KigiXXplCwmsf4d8IBP5Ca1yrHcw1POd+3RthA/2hSfqEEmglY6R4vFJe4r9QHeMf+YJi0ka522MojcLdHhePqlLvpWi+0=
+	t=1741364705; cv=none; b=FjvadR26XwVhhjIXcqx7MoU2MUb7HZTjkW6j1QPxj6GfbzZQxiATpQzRhZ9POmoBgGPh5K2AyS8Dvz0SZIFG2d9PEpYJM/+VmXzbuee57t1XfLHs5I9vivNTLL4SBZlGbyoE5p15WK6p/WP3A2YEpc83BTgxQBgLOkmvLImibxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741364716; c=relaxed/simple;
-	bh=pIN7bvF1ojgXVeTSfCcjU3c2uUORnFTlgctHnNFCycU=;
+	s=arc-20240116; t=1741364705; c=relaxed/simple;
+	bh=UiLD7yBHAJKBTn6IaZwAwe32NIzhtSP4kxkhZS1qJF0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a5uE1KZMGIxWSc7OVj/qFqhYE2pih75Wxh+csV9834QHxllrLbw52erlaoS7fGAmt7tpJbds69w3d42zuUI4xEIEHVlurDrAEKTCSAmmDmNQiPQTKPE1pSEtUmUkuNoPKY1FwUaM05IidwK93ps3lrN8QVoIINLfLC52GmVXeeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ehQP7odr; arc=none smtp.client-ip=209.85.208.169
+	 To:Cc:Content-Type; b=Nx91dfkCqzTg4Ir+OlwYVIlvF/X69GSLwDfhMuAymGzc2c+AlPCA6RBhXK6myakeqTrhidVMNv6SZBldgFcOZfR2AaZw8viXAy1IBnScXIaoo6VAGA/HoShLjrTsS9n9p0Kw+f3Q5sBzQqjCTJiEnOT8KAXzWYKkDKt3+WJC8Fc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mxfARFPD; arc=none smtp.client-ip=209.85.214.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-307d1ab59c6so21375891fa.1;
-        Fri, 07 Mar 2025 08:25:14 -0800 (PST)
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21f8f3bd828so4064925ad.2;
+        Fri, 07 Mar 2025 08:25:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741364712; x=1741969512; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741364703; x=1741969503; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=k2CFQJbmHziqfZ1WlA8nTaS4u+SIYAl6KppF5R5h+0M=;
-        b=ehQP7odrmXCIpLnx1F3Czmtmtkz4cacGIPdXgdvr5wpIYyP3ymS1AMy8UvqgE+5/R8
-         uiXpu9E1AD9JtRyb1DNiTIr9Wvqt9WnKbfBsqg4wZ11vmsYm/L5Zv40JEDDsLBaGtRkE
-         R5CCuSspvfrJ32aKJVcvDyee5/tGxYjzfFpw6nao8E/PYgwlc2R3Fd4ekpW74Z+uTiqY
-         aNq9iw7XInNHFMa4Rs4jlGvwWgJwgAemInBZ/B41rmh+lPSxHoao3CDfUkOlYckhxbcZ
-         IUkwFG30TJmW+6O2v9vbMBR90FHbl5pESeiqmg6ss3O2vPDmyzA0qjvie/x1xneb/Nza
-         Kebw==
+        bh=UiLD7yBHAJKBTn6IaZwAwe32NIzhtSP4kxkhZS1qJF0=;
+        b=mxfARFPDVc1fX65g1FLA6bZWcSlriVOZ4TM1otfcja8W473+z/hdFtL7aHtPfUOU0a
+         uemj5z9+PE+Otq9bgBj5zfHnBiTd4d/stUjhLNaoTGOT2/dqezQGjJSjiBYhqDC/LPUo
+         /TDwPNNOfM1VcoFGknOnhAbsNMlWD198Zy0LN1+rbhqV8daQTRk8E4kCy51Lj6YKmbw1
+         eokY8lcs2t9Z5oQrxTIHA8397AwEJlLmrju+yOP2GgkmRR1W1haiYIb3fOy9Z/Ds1VRJ
+         FhjE5ztfXUGABpJUvgU5CHyhHcqIgA2s2NmS8h9kR+oGmZDp+PncsAsodPqsBVhSX/VF
+         tYGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741364712; x=1741969512;
+        d=1e100.net; s=20230601; t=1741364703; x=1741969503;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=k2CFQJbmHziqfZ1WlA8nTaS4u+SIYAl6KppF5R5h+0M=;
-        b=D0uaRYzoBReBiY4c/f205Wa+FYuA1ONCQ1VE15uwcnDjlO+ol2VKxKw7NFpOZZzZwN
-         7zMRdL82SynzRD/a/N/60TMOxfLin1SRUHxGT4fAdUJtRtBYBJwjUallHvHbnFiBWSco
-         MVc+92GPBheGKfS9uUvGhszqZGn/8WAmPY/Q8IPbVCVUR37sQZ6F0MVqpXnU6LRtHa/I
-         iz4ptqFOrP4nNXHEUr2su8TbNtAoHchr15HafJC4mwwhQhPqkrsk7HsuUMRugIRpvXSF
-         OamqA215+m9Ud1+1K7zWFow5SC9S9elmWZvzqJHuEqfh0wnxBKG7GCSZWA1oGeouxYAF
-         3NpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWSCIwFZJoRd598a0X/YrGaNMQHkejzjM1+rVcdxIyxZlmdbLovqBIUU9sGRtrwi9bbldZzSUoEVnk=@vger.kernel.org, AJvYcCWhP/M9whmVit66QVepn0Y2dDBlIuMgfW7nlJluysj1LQh+rMoe8fxcUQCtpe6L93E2uUVkrlVFe4e9NLom@vger.kernel.org, AJvYcCWvqFrtURDlIiwvPs0wR3edjltNKnTEo3qDvZwE6+P8ge9EtVqX72YwHfY/ayfmy3XWyu6/WDEJl4XEz/NrMhpy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+2W1MJ+L35i6hrrJxh56iKbxlBE51igpmlYgeYHX+0Gmuf1qO
-	SBaIpRu6mqHoik7mfsdIYIQc8GT3XI+eQUixPmO86G24QJxw6ggjHD+mTaoEqJulobV9qZqDbg8
-	sTAghkDN7I31/Fyx6XDU2+c1kr3Q=
-X-Gm-Gg: ASbGncuQ+6MrHAAoZL6qr6MPGundOk2xPNUEonGlfPY+7IgVC1P/cx1ZMGGPxjvH62U
-	ERtiiLtTR0IQCX9D8unsQBMQGwT3dMOZs3ljdoYjJ9JPeT4WIQA78hcWLyLk5Jz0yjO3LiWJax1
-	4YbPksvbLVLZhxwNezw33Uu3TpvqczhKiGANHy/DLxwbDxGsSMD6wTwXvWOgup
-X-Google-Smtp-Source: AGHT+IGqyL09z7u4Xuju8syY9+78OKZgCCJj4/AtHOZWHMIXhvltnjRbnmZl42z4OZBt1oV5UKnpsTKVfQtr+7NbeCg=
-X-Received: by 2002:a2e:7207:0:b0:302:48fd:6922 with SMTP id
- 38308e7fff4ca-30bf461caecmr13567401fa.37.1741364710717; Fri, 07 Mar 2025
- 08:25:10 -0800 (PST)
+        bh=UiLD7yBHAJKBTn6IaZwAwe32NIzhtSP4kxkhZS1qJF0=;
+        b=VAgpmBW+tSzOoANQR4/RkB59BIA3vFYPBuHpddSGe4LD6o15FDOLIx1uV0akeYv1KD
+         PD8DNgkIHMuIqmFyLwQVm3ddedNEBvoGznb6sFYzymNrvA0/7hJ1TWzYsBYSGjzOIcPm
+         p7XiPbIYTPCkeJBVjcmh2npucK/quTIzy01IZ+7E1Yp9wdE5imVWfQMsbtSiJlbu3ylQ
+         KkIZrbAAMFLWiOto1ls4JcKRPZYTgR0IDKnnt0tewSqZJI0c1dV+joBvcVl+5FcLd5H/
+         JGhCdWekRigo2z4StwDg+v01Ak0k8eF/vqIwA2qIQscPRa1XQ3vn8H/apWEF6aqnJYWE
+         Q1vA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTcugs8nb38bDUHI8I8J8BRWosKolqqpng51oNgY4BrU/1+IHoxcdKTJ0dkELx24yGUhmlHxx8K2qi64s=@vger.kernel.org, AJvYcCXxZlFt8CEbwAefOrCXJKVHo4eOye1ujCeW3q5967MwlDwqu52CRiKMRf2+cV85Gv+yfHYavE9ZVOu73oFUfM4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDoueJ9l0G2dSwPdZqiefPLHVOFDhuJLA4Ro4VYK+6vslL8Kgo
+	82X+ykfANtkBwFHPWznJlPcSUstxGgasxER5bRzUHrWpFcUjFffzQEqnU8toNKnYSY/RSFdbC5Q
+	V85NO8QdxIHb2kp/jXP5y4xKFzJI=
+X-Gm-Gg: ASbGncuX3Al/6T5vPcUv0+4a5i+OO/lJ3yqhKGrxkPGsj4Nhu7Fwr01G4Ej/VFzc1nC
+	owCNGZE/jNyJSv5bXOcOXku7yc+kN4NYjVMVTipZ8ja92LJNesfhmWytQqmVfuynd4HW6g8hrRy
+	lU93PLE3p163YfCSvT+1L3q+RGuw==
+X-Google-Smtp-Source: AGHT+IGzuyx2khrqmQFCRDY1W2460IMmx7kriW6qonWU83eNHoq7OKTDGi/ueoa/0kqUy6eJVU4vHkzvzMaSaBkRh5w=
+X-Received: by 2002:a17:903:22cb:b0:224:706:6d08 with SMTP id
+ d9443c01a7336-2243a1a8c3dmr1521965ad.8.1741364702839; Fri, 07 Mar 2025
+ 08:25:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221-printf-kunit-convert-v5-0-5db840301730@gmail.com>
- <20250221-printf-kunit-convert-v5-3-5db840301730@gmail.com> <Z8sdm7Nhk4h3hoUq@pathway.suse.cz>
-In-Reply-To: <Z8sdm7Nhk4h3hoUq@pathway.suse.cz>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Fri, 7 Mar 2025 11:24:34 -0500
-X-Gm-Features: AQ5f1Jo_IFcC3B8zSbUncIFkWnLYFACfJ9QNhhH044lkvIrDkmW2XRTqrixiWvY
-Message-ID: <CAJ-ks9nA-393OaE8SbttaoQz9s8MUKqED5GNoh8tQyaJm-0GxQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/3] printf: implicate test line in failure messages
-To: Petr Mladek <pmladek@suse.com>
-Cc: Arpitha Raghunandan <98.arpi@gmail.com>, David Gow <davidgow@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Naveen N Rao <naveen@kernel.org>, Brendan Higgins <brendan.higgins@linux.dev>, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-m68k@lists.linux-m68k.org, 
-	linuxppc-dev@lists.ozlabs.org
+References: <Z8rz9nrY7Yj1Z2hP@google.com> <20250307154341.639752-1-trintaeoitogc@gmail.com>
+In-Reply-To: <20250307154341.639752-1-trintaeoitogc@gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 7 Mar 2025 17:24:49 +0100
+X-Gm-Features: AQ5f1Jo8QelYZ4KKLF0a_EY0cI7Lh7m8PaLxO4oDgGsEPFCw_oy1bK-NcDg7AgI
+Message-ID: <CANiq72mWBrHpv9XYcBbVsJkhH9SzM9N4fcL2SqoNQ9X-4GiZbw@mail.gmail.com>
+Subject: Re: [PATCH V7 1/2] rust: module: change author to an array
+To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+Cc: aliceryhl@google.com, a.hindborg@kernel.org, alex.gaynor@gmail.com, 
+	apw@canonical.com, arnd@arndb.de, aswinunni01@gmail.com, axboe@kernel.dk, 
+	benno.lossin@proton.me, bhelgaas@google.com, bjorn3_gh@protonmail.com, 
+	boqun.feng@gmail.com, charmitro@posteo.net, dakr@kernel.org, 
+	dwaipayanray1@gmail.com, ethan.twardy@gmail.com, fujita.tomonori@gmail.com, 
+	gary@garyguo.net, gregkh@linuxfoundation.org, joe@perches.com, 
+	linux-kernel@vger.kernel.org, lukas.bulwahn@gmail.com, ojeda@kernel.org, 
+	pbonzini@redhat.com, rust-for-linux@vger.kernel.org, tmgross@umich.edu, 
+	walmeida@microsoft.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 7, 2025 at 11:23=E2=80=AFAM Petr Mladek <pmladek@suse.com> wrot=
-e:
+On Fri, Mar 7, 2025 at 4:43=E2=80=AFPM Guilherme Giacomo Simoes
+<trintaeoitogc@gmail.com> wrote:
 >
-> On Fri 2025-02-21 15:34:32, Tamir Duberstein wrote:
-> > This improves the failure output by pointing to the failing line at the
-> > top level of the test, e.g.:
-> >       # test_number: EXPECTATION FAILED at lib/printf_kunit.c:103
-> >   lib/printf_kunit.c:167: vsnprintf(buf, 256, "%#-12x", ...) wrote '0x1=
-234abcd  ', expected '0x1234abce  '
-> >       # test_number: EXPECTATION FAILED at lib/printf_kunit.c:142
-> >   lib/printf_kunit.c:167: kvasprintf(..., "%#-12x", ...) returned '0x12=
-34abcd  ', expected '0x1234abce  '
-> >
-> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> I'm sorry, I will pick up your tag and send a v8
 >
-> Just for record. I like this improvement. But  I am going to wait for the
-> next version of the patchset which is going to add back the trailing '\n'=
-.
+> Too, I will pick up Charalampos and Andreas tags
 
-=F0=9F=91=8D
+In general, if it is the last version, you don't need to pick up tags
+-- maintainers will do that for you.
+
+i.e. in this case, it would have been fine telling Alice that you
+didn't change anything (if that is the case -- is it?)
+
+Thanks!
+
+Cheers,
+Miguel
 
