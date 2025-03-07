@@ -1,249 +1,421 @@
-Return-Path: <linux-kernel+bounces-550459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71A37A55FC9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:09:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CD4BA55FCE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:10:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66EF43AACD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:09:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 688393A9CDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F93014F9F7;
-	Fri,  7 Mar 2025 05:09:07 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B991664C6
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 05:09:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD8AB18FC79;
+	Fri,  7 Mar 2025 05:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sz9AmOC/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B014F29408;
+	Fri,  7 Mar 2025 05:10:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741324147; cv=none; b=gvNgjNYlch1IA4xGi/NH3NA2DkKSskIxv39megsPmv/MBKQj2qqG0gulwapO/NMlZ7uQCSO80se6IHEcfj7N0ZjAAozyh4OA+t1adyz+eYn5H94zzhfKVRzPKgRH0qQoU+lpLJ2mPV3+P26vW0g2QCCjO2CI6qn/mpgJIzWxuZI=
+	t=1741324246; cv=none; b=YT7tRSko+i1NVimVGHrUWBsMdy6xVTNM+mNxS9pFAHdCryYHMXFBpIMxYig5Xh3M0UYvLbFDEWP+grNjdwl4pAo44i1dg5O5EZd68X0A8e4p2/2+5JwGjMJQJiQnc67gSic70AmL8Yf9v75YdsD0+mZmjYBu7ZTH/uOopHWmJO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741324147; c=relaxed/simple;
-	bh=p1QbvxaIukFVC5jeBggLlmQn57si+mgW/ZRQvXXfc4k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZFKu1u0y36ZlBGB6yQgCQgh6SGSWv7wMGh0Gq7qds7u69gl/MbKfpCUK4FNTF7U/w5I+tJ7u3RV3NkLo2zC0fDUr35SAyxfHWwuEjUpXRcEsWc8atFFDc9/6u7fXaMMVN/Eh6xn1UGsOxWa8MiIyJom3cGq71F2XtfP2NCIgOqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1F939150C;
-	Thu,  6 Mar 2025 21:09:16 -0800 (PST)
-Received: from a077893.blr.arm.com (a077893.blr.arm.com [10.162.42.6])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 054D83F66E;
-	Thu,  6 Mar 2025 21:08:58 -0800 (PST)
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	linux-kernel@vger.kernel.org,
-	kasan-dev@googlegroups.com
-Subject: [PATCH] arm64/mm: Define PTE_SHIFT
-Date: Fri,  7 Mar 2025 10:38:51 +0530
-Message-Id: <20250307050851.4034393-1-anshuman.khandual@arm.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741324246; c=relaxed/simple;
+	bh=VcUVlFIitotGE0i9+kH0vpVYTvtPQGTwCoxsoWlqZYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oYIXWlT38ID/QPaZuqEF0n83zxyLlIGdKxLZMoN4PYcwXobKz/+VbMBCg/4PwZ7oSv639QwjR4cqhIzVn0R+YGigGQ7Giy/t0PySpak8alsaOyjMtZZy5LVJqaFyf4eyddXmA+bbXl/MYiuyNLYkPXTSd6q9SOTjG2yOME3lWdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sz9AmOC/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39949C4CEE3;
+	Fri,  7 Mar 2025 05:10:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741324246;
+	bh=VcUVlFIitotGE0i9+kH0vpVYTvtPQGTwCoxsoWlqZYQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Sz9AmOC/0FvKvhT31zFnCJzvgv0W8jNaph+1VbsfE4p27+b2BCgpTwevfLQRxGAw9
+	 faosXIp5bn0xPabPqe093AbqpIp/j9AyBM/EozwEMMDEZuuDs2MWhQVJ6IYvMk2lLs
+	 uETJ5RJ5paej3TvE8rdDWh66LyE+3yMbEJP5DdJVCtOv5i4ZUqLiLRdJ405rx1mbyU
+	 aqyC7wigemvLP/Rta/5U46UQMi3HyoneaRc5N2S/4ytLxgK0cTs1bokaayy5vOMoPH
+	 v0uXkw/mPxlHdS62MW/sJ/LqIG9ONM/tBfopTal0KiWM+7LP/bbM6W2HBtU1FRbOnu
+	 5ZKwutMSQpEtw==
+Date: Fri, 7 Mar 2025 07:10:41 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Ross Philipson <ross.philipson@oracle.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	linux-integrity@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-crypto@vger.kernel.org, kexec@lists.infradead.org,
+	linux-efi@vger.kernel.org, iommu@lists.linux-foundation.org,
+	dpsmith@apertussolutions.com, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, hpa@zytor.com, dave.hansen@linux.intel.com,
+	ardb@kernel.org, mjg59@srcf.ucam.org,
+	James.Bottomley@hansenpartnership.com, peterhuewe@gmx.de,
+	jgg@ziepe.ca, luto@amacapital.net, nivedita@alum.mit.edu,
+	herbert@gondor.apana.org.au, davem@davemloft.net, corbet@lwn.net,
+	ebiederm@xmission.com, dwmw2@infradead.org,
+	baolu.lu@linux.intel.com, kanth.ghatraju@oracle.com,
+	andrew.cooper3@citrix.com, trenchboot-devel@googlegroups.com
+Subject: Re: [PATCH v12 01/19] Documentation/x86: Secure Launch kernel
+ documentation
+Message-ID: <Z8p_0UfZ3ByzmPfK@kernel.org>
+References: <20241219194216.152839-1-ross.philipson@oracle.com>
+ <20241219194216.152839-2-ross.philipson@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241219194216.152839-2-ross.philipson@oracle.com>
 
-Address bytes shifted with a single 64 bit page table entry (any page table
-level) has been always hard coded as 3 (aka 2^3 = 8). Although intuitive it
-is not very readable or easy to reason about. Besides it is going to change
-with D128, where each 128 bit page table entry will shift address bytes by
-4 (aka 2^4 = 16) instead.
+ On Thu, Dec 19, 2024 at 11:41:58AM -0800, Ross Philipson wrote:
+> From: "Daniel P. Smith" <dpsmith@apertussolutions.com>
+> 
+> Introduce background, overview and configuration/ABI information
+> for the Secure Launch kernel feature.
+> 
+> Signed-off-by: Daniel P. Smith <dpsmith@apertussolutions.com>
+> Signed-off-by: Ross Philipson <ross.philipson@oracle.com>
+> Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
+> ---
+>  Documentation/security/index.rst              |   1 +
+>  .../security/launch-integrity/index.rst       |  11 +
+>  .../security/launch-integrity/principles.rst  | 317 ++++++++++
+>  .../secure_launch_details.rst                 | 587 ++++++++++++++++++
+>  .../secure_launch_overview.rst                | 252 ++++++++
+>  5 files changed, 1168 insertions(+)
+>  create mode 100644 Documentation/security/launch-integrity/index.rst
+>  create mode 100644 Documentation/security/launch-integrity/principles.rst
+>  create mode 100644 Documentation/security/launch-integrity/secure_launch_details.rst
+>  create mode 100644 Documentation/security/launch-integrity/secure_launch_overview.rst
+> 
+> diff --git a/Documentation/security/index.rst b/Documentation/security/index.rst
+> index 3e0a7114a862..f89741271ed0 100644
+> --- a/Documentation/security/index.rst
+> +++ b/Documentation/security/index.rst
+> @@ -20,3 +20,4 @@ Security Documentation
+>     landlock
+>     secrets/index
+>     ipe
+> +   launch-integrity/index
+> diff --git a/Documentation/security/launch-integrity/index.rst b/Documentation/security/launch-integrity/index.rst
+> new file mode 100644
+> index 000000000000..838328186dd2
+> --- /dev/null
+> +++ b/Documentation/security/launch-integrity/index.rst
+> @@ -0,0 +1,11 @@
+> +=====================================
+> +System Launch Integrity documentation
+> +=====================================
+> +
+> +.. toctree::
+> +   :maxdepth: 1
+> +
+> +   principles
+> +   secure_launch_overview
+> +   secure_launch_details
+> +
+> diff --git a/Documentation/security/launch-integrity/principles.rst b/Documentation/security/launch-integrity/principles.rst
+> new file mode 100644
+> index 000000000000..a0553d1d93c2
+> --- /dev/null
+> +++ b/Documentation/security/launch-integrity/principles.rst
+> @@ -0,0 +1,317 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +.. Copyright (c) 2019-2024 Daniel P. Smith <dpsmith@apertussolutions.com>
+> +
+> +=======================
+> +System Launch Integrity
+> +=======================
+> +
+> +:Author: Daniel P. Smith
+> +:Date: August 2024
+> +
+> +This document serves to establish a common understanding of what a system
+> +launch is, the integrity concern for system launch, and why using a Root of Trust
+> +(RoT) from a Dynamic Launch may be desirable. Throughout this document,
+> +terminology from the Trusted Computing Group (TCG) and National Institute for
+> +Standards and Technology (NIST) is used to ensure that vendor natural language is
+> +used to describe and reference security-related concepts.
+> +
+> +System Launch
+> +=============
+> +
+> +There is a tendency to only consider the classical power-on boot as the only
+> +means to launch an Operating System (OS) on a computer system. In fact, most
+> +modern processors support two system launch methods. To provide clarity,
+> +it is important to establish a common definition of a system launch: during
+> +a single power life cycle of a system, a system launch consists of an initialization
+> +event, typically in hardware, that is followed by an executing software payload
+> +that takes the system from the initialized state to a running state. Driven by
+> +the Trusted Computing Group (TCG) architecture, modern processors are able to
+> +support two methods of system launch. These two methods of system launch are known
+> +as Static Launch and Dynamic Launch.
+> +
+> +Static Launch
+> +-------------
+> +
+> +Static launch is the system launch associated with the power cycle of the CPU.
+> +Thus, static launch refers to the classical power-on boot where the
+> +initialization event is the release of the CPU from reset and the system
+> +firmware is the software payload that brings the system up to a running state.
+> +Since static launch is the system launch associated with the beginning of the
+> +power lifecycle of a system, it is therefore a fixed, one-time system launch.
+> +It is because of this that static launch is referred to and thought of as being
+> +"static".
+> +
+> +Dynamic Launch
+> +--------------
+> +
+> +Modern CPUs architectures provides a mechanism to re-initialize the system to a
+> +"known good" state without requiring a power event. This re-initialization
+> +event is the event for a dynamic launch and is referred to as the Dynamic
+> +Launch Event (DLE). The DLE functions by accepting a software payload, referred
+> +to as the Dynamic Configuration Environment (DCE), that execution is handed to
+> +after the DLE is invoked. The DCE is responsible for bringing the system back
+> +to a running state. Since the dynamic launch is not tied to a power event like
+> +the static launch, this enables a dynamic launch to be initiated at any time
+> +and multiple times during a single power life cycle. This dynamism is the
+> +reasoning behind referring to this system launch as "dynamic".
+> +
+> +Because a dynamic launch can be conducted at any time during a single power
+> +life cycle, they are classified into one of two types: an early launch or a
+> +late launch.
+> +
+> +:Early Launch: When a dynamic launch is used as a transition from a static
+> +   launch chain to the final Operating System.
+> +
+> +:Late Launch: The usage of a dynamic launch by an executing Operating System to
+> +   transition to a "known good" state to perform one or more operations, e.g. to
+> +   launch into a new Operating System.
+> +
+> +System Integrity
+> +================
+> +
+> +A computer system can be considered a collection of mechanisms that work
+> +together to produce a result. The assurance that the mechanisms are functioning
+> +correctly and producing the expected result is the integrity of the system. To
+> +ensure a system's integrity, there is a subset of these mechanisms, commonly
+> +referred to as security mechanisms, that is present to help ensure the system
+> +produces the expected result or at least detects the potential of an unexpected
+> +result. Since the security mechanisms are relied upon to ensue the integrity of
+> +the system, these mechanisms are trusted. Upon inspection, these security
+> +mechanisms each have a set of properties and these properties can be evaluated
+> +to determine how susceptible a mechanism might be to failure. This assessment is
+> +referred to as the Strength of Mechanism, which allows the trustworthiness of
+> +that mechanism to be quantified.
+> +
+> +For software systems, there are two system states for which the integrity is
+> +critical: when the software is loaded into memory and when the software is
+> +executing on the hardware. Ensuring that the expected software is loaded into
+> +memory is referred to as load-time integrity while ensuring that the software
+> +executing is the expected software is the runtime integrity of that software.
 
-Let's just formalise this address bytes shift value into a new macro called
-PTE_SHIFT establishing a logical abstraction, thus improving readability as
-well. This does not cause any functional change.
+I'd consider deleting the first paragraph. It really does not provide
+anything useful. The 2nd paragraph is totally sufficient introduction to
+the topic, and makes factors more sense.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>
-Cc: Alexander Potapenko <glider@google.com>
-Cc: Andrey Konovalov <andreyknvl@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ryan Roberts <ryan.roberts@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Cc: kasan-dev@googlegroups.com
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
----
-This patch applies on v6.14-rc5
+We don't need a phrase in kernel documentation stating that computer is
+a system that produces a result :-)
 
- arch/arm64/Kconfig                      |  2 +-
- arch/arm64/include/asm/kernel-pgtable.h |  3 ++-
- arch/arm64/include/asm/pgtable-hwdef.h  | 26 +++++++++++++------------
- arch/arm64/kernel/pi/map_range.c        |  2 +-
- arch/arm64/mm/kasan_init.c              |  6 +++---
- 5 files changed, 21 insertions(+), 18 deletions(-)
+Should be at least easy enough change to make. I don't think it even
+needs any refined version as the text below provides more than enough
+(in many places useful) detail to the topic.
 
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 940343beb3d4..fd3303f2ccda 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -323,7 +323,7 @@ config ARCH_MMAP_RND_BITS_MIN
- 	default 18
- 
- # max bits determined by the following formula:
--#  VA_BITS - PAGE_SHIFT - 3
-+#  VA_BITS - PAGE_SHIFT - PTE_SHIFT
- config ARCH_MMAP_RND_BITS_MAX
- 	default 19 if ARM64_VA_BITS=36
- 	default 24 if ARM64_VA_BITS=39
-diff --git a/arch/arm64/include/asm/kernel-pgtable.h b/arch/arm64/include/asm/kernel-pgtable.h
-index fd5a08450b12..7150a7a10f00 100644
---- a/arch/arm64/include/asm/kernel-pgtable.h
-+++ b/arch/arm64/include/asm/kernel-pgtable.h
-@@ -49,7 +49,8 @@
- 	(SPAN_NR_ENTRIES(vstart, vend, shift) + (add))
- 
- #define EARLY_LEVEL(lvl, lvls, vstart, vend, add)	\
--	(lvls > lvl ? EARLY_ENTRIES(vstart, vend, SWAPPER_BLOCK_SHIFT + lvl * (PAGE_SHIFT - 3), add) : 0)
-+	(lvls > lvl ? EARLY_ENTRIES(vstart, vend, SWAPPER_BLOCK_SHIFT + \
-+	lvl * (PAGE_SHIFT - PTE_SHIFT), add) : 0)
- 
- #define EARLY_PAGES(lvls, vstart, vend, add) (1 	/* PGDIR page */				\
- 	+ EARLY_LEVEL(3, (lvls), (vstart), (vend), add) /* each entry needs a next level page table */	\
-diff --git a/arch/arm64/include/asm/pgtable-hwdef.h b/arch/arm64/include/asm/pgtable-hwdef.h
-index a9136cc551cc..43f98eac7653 100644
---- a/arch/arm64/include/asm/pgtable-hwdef.h
-+++ b/arch/arm64/include/asm/pgtable-hwdef.h
-@@ -7,40 +7,42 @@
- 
- #include <asm/memory.h>
- 
-+#define PTE_SHIFT 3
-+
- /*
-  * Number of page-table levels required to address 'va_bits' wide
-  * address, without section mapping. We resolve the top (va_bits - PAGE_SHIFT)
-- * bits with (PAGE_SHIFT - 3) bits at each page table level. Hence:
-+ * bits with (PAGE_SHIFT - PTE_SHIFT) bits at each page table level. Hence:
-  *
-- *  levels = DIV_ROUND_UP((va_bits - PAGE_SHIFT), (PAGE_SHIFT - 3))
-+ *  levels = DIV_ROUND_UP((va_bits - PAGE_SHIFT), (PAGE_SHIFT - PTE_SHIFT))
-  *
-  * where DIV_ROUND_UP(n, d) => (((n) + (d) - 1) / (d))
-  *
-  * We cannot include linux/kernel.h which defines DIV_ROUND_UP here
-  * due to build issues. So we open code DIV_ROUND_UP here:
-  *
-- *	((((va_bits) - PAGE_SHIFT) + (PAGE_SHIFT - 3) - 1) / (PAGE_SHIFT - 3))
-+ *	((((va_bits) - PAGE_SHIFT) + (PAGE_SHIFT - PTE_SHIFT) - 1) / (PAGE_SHIFT - PTE_SHIFT))
-  *
-  * which gets simplified as :
-  */
--#define ARM64_HW_PGTABLE_LEVELS(va_bits) (((va_bits) - 4) / (PAGE_SHIFT - 3))
-+#define ARM64_HW_PGTABLE_LEVELS(va_bits) (((va_bits) - PTE_SHIFT - 1) / (PAGE_SHIFT - PTE_SHIFT))
- 
- /*
-  * Size mapped by an entry at level n ( -1 <= n <= 3)
-- * We map (PAGE_SHIFT - 3) at all translation levels and PAGE_SHIFT bits
-+ * We map (PAGE_SHIFT - PTE_SHIFT) at all translation levels and PAGE_SHIFT bits
-  * in the final page. The maximum number of translation levels supported by
-  * the architecture is 5. Hence, starting at level n, we have further
-  * ((4 - n) - 1) levels of translation excluding the offset within the page.
-  * So, the total number of bits mapped by an entry at level n is :
-  *
-- *  ((4 - n) - 1) * (PAGE_SHIFT - 3) + PAGE_SHIFT
-+ *  ((4 - n) - 1) * (PAGE_SHIFT - PTE_SHIFT) + PAGE_SHIFT
-  *
-  * Rearranging it a bit we get :
-- *   (4 - n) * (PAGE_SHIFT - 3) + 3
-+ *   (4 - n) * (PAGE_SHIFT - PTE_SHIFT) + PTE_SHIFT
-  */
--#define ARM64_HW_PGTABLE_LEVEL_SHIFT(n)	((PAGE_SHIFT - 3) * (4 - (n)) + 3)
-+#define ARM64_HW_PGTABLE_LEVEL_SHIFT(n)	((PAGE_SHIFT - PTE_SHIFT) * (4 - (n)) + PTE_SHIFT)
- 
--#define PTRS_PER_PTE		(1 << (PAGE_SHIFT - 3))
-+#define PTRS_PER_PTE		(1 << (PAGE_SHIFT - PTE_SHIFT))
- 
- /*
-  * PMD_SHIFT determines the size a level 2 page table entry can map.
-@@ -49,7 +51,7 @@
- #define PMD_SHIFT		ARM64_HW_PGTABLE_LEVEL_SHIFT(2)
- #define PMD_SIZE		(_AC(1, UL) << PMD_SHIFT)
- #define PMD_MASK		(~(PMD_SIZE-1))
--#define PTRS_PER_PMD		(1 << (PAGE_SHIFT - 3))
-+#define PTRS_PER_PMD		(1 << (PAGE_SHIFT - PTE_SHIFT))
- #endif
- 
- /*
-@@ -59,14 +61,14 @@
- #define PUD_SHIFT		ARM64_HW_PGTABLE_LEVEL_SHIFT(1)
- #define PUD_SIZE		(_AC(1, UL) << PUD_SHIFT)
- #define PUD_MASK		(~(PUD_SIZE-1))
--#define PTRS_PER_PUD		(1 << (PAGE_SHIFT - 3))
-+#define PTRS_PER_PUD		(1 << (PAGE_SHIFT - PTE_SHIFT))
- #endif
- 
- #if CONFIG_PGTABLE_LEVELS > 4
- #define P4D_SHIFT		ARM64_HW_PGTABLE_LEVEL_SHIFT(0)
- #define P4D_SIZE		(_AC(1, UL) << P4D_SHIFT)
- #define P4D_MASK		(~(P4D_SIZE-1))
--#define PTRS_PER_P4D		(1 << (PAGE_SHIFT - 3))
-+#define PTRS_PER_P4D		(1 << (PAGE_SHIFT - PTE_SHIFT))
- #endif
- 
- /*
-diff --git a/arch/arm64/kernel/pi/map_range.c b/arch/arm64/kernel/pi/map_range.c
-index 2b69e3beeef8..3530a5427f57 100644
---- a/arch/arm64/kernel/pi/map_range.c
-+++ b/arch/arm64/kernel/pi/map_range.c
-@@ -31,7 +31,7 @@ void __init map_range(u64 *pte, u64 start, u64 end, u64 pa, pgprot_t prot,
- {
- 	u64 cmask = (level == 3) ? CONT_PTE_SIZE - 1 : U64_MAX;
- 	pteval_t protval = pgprot_val(prot) & ~PTE_TYPE_MASK;
--	int lshift = (3 - level) * (PAGE_SHIFT - 3);
-+	int lshift = (3 - level) * (PAGE_SHIFT - PTE_SHIFT);
- 	u64 lmask = (PAGE_SIZE << lshift) - 1;
- 
- 	start	&= PAGE_MASK;
-diff --git a/arch/arm64/mm/kasan_init.c b/arch/arm64/mm/kasan_init.c
-index b65a29440a0c..90548079b42e 100644
---- a/arch/arm64/mm/kasan_init.c
-+++ b/arch/arm64/mm/kasan_init.c
-@@ -190,7 +190,7 @@ static void __init kasan_pgd_populate(unsigned long addr, unsigned long end,
-  */
- static bool __init root_level_aligned(u64 addr)
- {
--	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 1) * (PAGE_SHIFT - 3);
-+	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 1) * (PAGE_SHIFT - PTE_SHIFT);
- 
- 	return (addr % (PAGE_SIZE << shift)) == 0;
- }
-@@ -245,7 +245,7 @@ static int __init root_level_idx(u64 addr)
- 	 */
- 	u64 vabits = IS_ENABLED(CONFIG_ARM64_64K_PAGES) ? VA_BITS
- 							: vabits_actual;
--	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits) - 1) * (PAGE_SHIFT - 3);
-+	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits) - 1) * (PAGE_SHIFT - PTE_SHIFT);
- 
- 	return (addr & ~_PAGE_OFFSET(vabits)) >> (shift + PAGE_SHIFT);
- }
-@@ -269,7 +269,7 @@ static void __init clone_next_level(u64 addr, pgd_t *tmp_pg_dir, pud_t *pud)
-  */
- static int __init next_level_idx(u64 addr)
- {
--	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 2) * (PAGE_SHIFT - 3);
-+	int shift = (ARM64_HW_PGTABLE_LEVELS(vabits_actual) - 2) * (PAGE_SHIFT - PTE_SHIFT);
- 
- 	return (addr >> (shift + PAGE_SHIFT)) % PTRS_PER_PTE;
- }
--- 
-2.30.2
+> +
+> +Load-time Integrity
+> +-------------------
+> +
+> +It is critical to understand what load-time integrity establishes about a
+> +system and what is assumed, i.e. what is being trusted. Load-time integrity is
 
+I'd delete the very first sentence completely. It serves zero purpose.
+This would be so much less exhausting read if I could just start on
+getting the information what load-time integrity is.
+
+Reassurance serves zero purpose. It is up to the read of kernel
+documentation to make such evaluation.
+
+> +when a trusted entity, i.e. an entity with an assumed integrity, takes an
+> +action to assess an entity being loaded into memory before it is used. A
+> +variety of mechanisms may be used to conduct the assessment, each with
+> +different properties. A particular property is whether the mechanism creates an
+> +evidence of the assessment. Often either cryptographic signature checking or
+> +hashing are the common assessment operations used.
+> +
+> +A signature checking assessment functions by requiring a representation of the
+> +accepted authorities and uses those representations to assess if the entity has
+> +been signed by an accepted authority. The benefit to this process is that
+> +assessment process includes an adjudication of the assessment. The drawbacks
+> +are that 1) the adjudication is susceptible to tampering by the Trusted
+> +Computing Base (TCB), 2) there is no evidence to assert that an untampered
+> +adjudication was completed, and 3) the system must be an active participant in
+> +the key management infrastructure.
+> +
+> +A cryptographic hashing assessment does not adjudicate the assessment, but
+
+This is actually language barrier: is "cryptographic hashing assesment"
+same as "cryptographic measurement"? I'd consider using latter as it has
+wider reach. Most people know what measurement means if they know any of
+cryptography.
+
+> +instead generates evidence of the assessment to be adjudicated independently.
+> +The benefits to this approach is that the assessment may be simple such that it
+> +may be implemented in an immutable mechanism, e.g. in hardware.  Additionally,
+> +it is possible for the adjudication to be conducted where it cannot be tampered
+> +with by the TCB. The drawback is that a compromised environment will be allowed
+> +to execute until an adjudication can be completed.
+> +
+> +Ultimately, load-time integrity provides confidence that the correct entity was
+> +loaded and in the absence of a run-time integrity mechanism assumes, i.e.
+> +trusts, that the entity will never become corrupted.
+> +
+> +Runtime Integrity
+> +-----------------
+> +
+> +Runtime integrity in the general sense is when a trusted entity makes an
+> +assessment of an entity at any point in time during the assessed entity's
+> +execution. A more concrete explanation is the taking of an integrity assessment
+
+Great, this is better than the last subsection as it gets straight into
+the topic! No reassurance part ;-)
+
+> +of an active process executing on the system at any point during the process'
+> +execution. Often the load-time integrity of an operating system's user-space,
+> +i.e. the operating environment, is confused with the runtime integrity of the
+> +system, since it is an integrity assessment of the "runtime" software. The
+> +reality is that actual runtime integrity is a very difficult problem and thus
+> +not very many solutions are public and/or available. One example of a runtime
+> +integrity solution would be Johns Hopkins Advanced Physics Laboratory's (APL)
+> +Linux Kernel Integrity Module (LKIM).
+> +
+> +Trust Chains
+> +============
+> +
+> +Building upon the understanding of security mechanisms to establish load-time
+> +integrity of an entity, it is possible to chain together load-time integrity
+> +assessments to establish the integrity of the whole system. This process is
+> +known as transitive trust and provides the concept of building a chain of
+> +load-time integrity assessments, commonly referred to as a trust chain. These
+> +assessments may be used to adjudicate the load-time integrity of the whole
+> +system. This trust chain is started by a trusted entity that does the first
+> +assessment. This first entity is referred to as the Root of Trust(RoT) with the
+> +entities name being derived from the mechanism used for the assessment, i.e.
+> +RoT for Verification (RTV) and RoT for Measurement (RTM).
+> +
+> +A trust chain is itself a mechanism, specifically a mechanism of mechanisms,
+> +and therefore it also has a Strength of Mechanism. The factors that contribute
+> +to the strength of a trust chain are:
+> +
+> +  - The strength of the chain's RoT
+> +  - The strength of each member of the trust chain
+> +  - The length, i.e. the number of members, of the chain
+> +
+> +Therefore, the strongest trust chains should start with a strong RoT and should
+> +consist of members being of low complexity and minimize the number of members
+> +participating. In a more colloquial sense, a trust chain is only as strong as its
+> +weakest link, thus more links increase the probability of a weak link.
+> +
+> +Dynamic Launch Components
+> +=========================
+> +
+> +The TCG architecture for dynamic launch is composed of a component series
+> +used to set up and then carry out the launch. These components work together to
+> +construct an RTM trust chain that is rooted in the dynamic launch and thus commonly
+> +referred to as the Dynamic Root of Trust for Measurement (DRTM) chain.
+> +
+> +What follows is a brief explanation of each component in execution order. A
+> +subset of these components are what establishes the dynamic launch's trust
+> +chain.
+> +
+> +Dynamic Configuration Environment Preamble
+> +------------------------------------------
+> +
+> +The Dynamic Configuration Environment (DCE) Preamble is responsible for setting
+> +up the system environment in preparation for a dynamic launch. The DCE Preamble
+> +is not a part of the DRTM trust chain.
+> +
+> +Dynamic Launch Event
+> +--------------------
+> +
+> +The dynamic launch event is the event, typically a CPU instruction, that
+> +triggers the system's dynamic launch mechanism to begin the launch process. The
+> +dynamic launch mechanism is also the RoT for the DRTM trust chain.
+> +
+> +Dynamic Configuration Environment
+> +---------------------------------
+> +
+> +The dynamic launch mechanism may have resulted in a reset of a portion of the
+> +system. To bring the system back to an adequate state for system software, the
+> +dynamic launch will hand over control to the DCE. Prior to handing over this
+> +control, the dynamic launch will measure the DCE. Once the DCE is complete, it
+> +will proceed to measure and then execute the Dynamic Launch Measured
+> +Environment (DLME).
+> +
+> +Dynamic Launch Measured Environment
+> +-----------------------------------
+> +
+> +The DLME is the first system kernel to have control of the system, but may not
+> +be the last. Depending on the usage and configuration, the DLME may be the
+> +final/target operating system, or it may be a bootloader that will load the
+> +final/target operating system.
+> +
+> +Why DRTM
+> +========
+
+Nit: maybe 
+
+Why DTRM?
+=========
+
+
+> +
+> +It is a fact that DRTM increases the load-time integrity of the system by
+> +providing a trust chain that has an immutable hardware RoT, uses a limited
+> +number of small, special purpose code to establish the trust chain that starts
+> +the target operating system. As mentioned in the Trust Chain section, these are
+> +the main three factors in driving up the strength of a trust chain. As has been
+> +seen with the BootHole exploit, which in fact did not affect the integrity of
+> +DRTM solutions, the sophistication of attacks targeting system launch is at an
+> +all-time high. There is no reason a system should not employ every available
+> +hardware integrity measure. This is the crux of a defense-in-depth
+> +approach to system security. In the past, the now closed SMI gap was often
+> +pointed to as invalidating DRTM, which in fact was nothing but a straw man
+> +argument. As has continued to be demonstrated, if/when SMM is corrupted, it can
+> +always circumvent all load-time integrity (SRTM and DRTM) because it is a
+> +run-time integrity problem. Regardless, Intel and AMD have both deployed
+> +runtime integrity for SMI and SMM which is tied directly to DRTM such that this
+> +perceived deficiency is now non-existent and the world is moving forward with
+> +an expectation that DRTM must be present.
+
+Here's my general feeling about text up to this point. It's way too
+verbose and has bad reach especially for non-native speakers.
+
+I don't want nitpick every possible sentence that I think could be
+made for punctual.
+
+What I'd suggest instead would be to go through this internalla at
+Oracle with some group of people couple of times and try to cut out
+all the extra fat.
+
+I gave those review comments in order to give an idea what kind of
+stuff look up for. The benefit is that if you get this document more
+readable that also as a side-effect lowers the barrier to review the
+patch series. Right now this is more exhausting to read than some of
+the actualy science papers I've read.
+
+Hope no one takes this personally. What comes after this is much better
+fit but I'd still do similar assessment.
+
+Roughly estimated you could have a document 50% of the current length
+without loss of information content just by being a factor more
+punctual. I'm worried that the series gets ignored partly because
+the documentation is already like climbing to a mountain.
+
+BR, Jarkko
+
+ 
 
