@@ -1,125 +1,78 @@
-Return-Path: <linux-kernel+bounces-551238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6489AA569F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:07:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EBE1A569F6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:07:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6CE4D179C7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:06:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34849189B502
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26B6721ADBC;
-	Fri,  7 Mar 2025 14:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="MHwg6mD5"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285C021B9DA;
+	Fri,  7 Mar 2025 14:06:55 +0000 (UTC)
+Received: from a3.inai.de (a3.inai.de [144.76.212.145])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB4818DF65
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 14:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F164B18DF65;
+	Fri,  7 Mar 2025 14:06:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.76.212.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741356402; cv=none; b=mXQP2RL/qxybo3x/YsOGJCRPPjHjA9G7HslTgklBl51pjNhlI2MMHsn0d9RRixQMH6KqBEvpsBVNKGM1xW2cwI48l3aONL/6Den5Qvf/RRbiIC4Ta/c1qdKk+WR/cnbhDXJp36DlsnTTUxtUYe9gplJiJzINscyrVZc4DR+dTNY=
+	t=1741356414; cv=none; b=AhkccHmQDTj7AaXqWX2HmDHoaIGYgEQMhYql1pHByR0r/u0Yc+yP/wGbKsSkPZyzbqlreErzV1EZCQhn1HbQoxLOBNtqz3AKlFWsEfel0KiHHrlbndB7CkTodrpCCqanwSNVzjEWNxHvCnOfPbn/REe0WGE3MJoEMTLo7zJqrsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741356402; c=relaxed/simple;
-	bh=imVyh6k1rb/XZNJVY9COulfZL4IKvp42PjLpgWwlSBc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P0Zh0lT4rzKIMe9xO2GvM0/MUcqZLWBr2qbKKvDAUIPDj+ptW5ce6ox/J3htrygUWjUoBeD/+obEOD/0PEaqsqeJhntxhmNel9WlScGZFfiiS6r08lUpcdWi95Vn0d4FVZxFWeSy11fZ2YtwDi4TAelZaBfjSbSDoTvoKyfYKQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=MHwg6mD5; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=UBQ6q3i2ePjT2i8U7tBuzMQdDLItSqljC2sOjafdBNw=; b=MHwg6mD546FqX8Qj
-	TTP1dLVNaTx/Us4Jukg/gkx3CPbq9+KmF18KUfEyNmQARN+9/JlkGWgYJ/vydPZsvCMCrqwYTDjG1
-	yWPWAei5PZFGyapLmjmB9VIyCypdeDm/SIjSn6d8Qw+fyNNNKNBBn/AxPIZi6dfa+oWVnWZT1UxAG
-	sucV4PDp3n+rMZH8mvQO/6al7/VEhUdjVKLekXH5+KWg55EVrmMAEVVnuxCbYOVa/fv8NbEd/hkAy
-	GNrdja++lzROCpZDPNbBiHzRXQoJYPuzpmqo1qzhOrWogkE59ADqBe5qO0p1hWzvhzHL5mhaW8LFZ
-	M6uvPM+z3/DTLgJvJQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tqYLQ-003Phw-2S;
-	Fri, 07 Mar 2025 14:06:32 +0000
-Date: Fri, 7 Mar 2025 14:06:32 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: Patrik Jakobsson <patrik.r.jakobsson@gmail.com>
-Cc: maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/gma500: Remove unused mrst_clock_funcs
-Message-ID: <Z8r9aE0mtb9_R0p8@gallifrey>
-References: <20250306155155.212599-1-linux@treblig.org>
- <CAMeQTsaNfQJ=OgWXwQ2bAxa1xbbQxAWDYEcokQ3VJE_EApPbzQ@mail.gmail.com>
+	s=arc-20240116; t=1741356414; c=relaxed/simple;
+	bh=jLtN1XoC+KbFbaxljC9HVSufCwH5cbdUpS2up+/dMhE=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=OFHKOGRCRni+oayvIXEewGuDz3odSW9Rz1zjhYtzGj+IRhqQxDU/fGmP4tOhwsl/YfUtNfW8sZNQLin9XTnnP6dOXheh7mbk7yvM6s+yVUb7Bgj+egj6KS6eve8QIvsVZy+G/rD1KfuA6bv5US8wRtIhq9M4ZeQ30DTPBnLTuO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inai.de; spf=pass smtp.mailfrom=inai.de; arc=none smtp.client-ip=144.76.212.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inai.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inai.de
+Received: by a3.inai.de (Postfix, from userid 25121)
+	id 2F84B1003BB142; Fri,  7 Mar 2025 15:06:38 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by a3.inai.de (Postfix) with ESMTP id 2DA401100AD650;
+	Fri,  7 Mar 2025 15:06:38 +0100 (CET)
+Date: Fri, 7 Mar 2025 15:06:38 +0100 (CET)
+From: Jan Engelhardt <ej@inai.de>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+cc: "Gustavo A. R. Silva" <gustavo@embeddedor.com>, 
+    Simon Horman <horms@verge.net.au>, Julian Anastasov <ja@ssi.bg>, 
+    Pablo Neira Ayuso <pablo@netfilter.org>, 
+    Jozsef Kadlecsik <kadlec@netfilter.org>, 
+    "David S. Miller" <davem@davemloft.net>, 
+    Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+    Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org, 
+    lvs-devel@vger.kernel.org, netfilter-devel@vger.kernel.org, 
+    coreteam@netfilter.org, linux-kernel@vger.kernel.org, 
+    kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH net] ipvs: prevent integer overflow in
+ do_ip_vs_get_ctl()
+In-Reply-To: <6dddcc45-78db-4659-80a2-3a2758f491a6@stanley.mountain>
+Message-ID: <rp565ps2-86qn-0806-qpss-314qr3r0n700@vanv.qr>
+References: <6dddcc45-78db-4659-80a2-3a2758f491a6@stanley.mountain>
+User-Agent: Alpine 2.26 (LSU 649 2022-06-02)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMeQTsaNfQJ=OgWXwQ2bAxa1xbbQxAWDYEcokQ3VJE_EApPbzQ@mail.gmail.com>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 14:06:22 up 303 days,  1:20,  1 user,  load average: 0.03, 0.01,
- 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Type: text/plain; charset=US-ASCII
 
-* Patrik Jakobsson (patrik.r.jakobsson@gmail.com) wrote:
-> On Thu, Mar 6, 2025 at 4:52 PM <linux@treblig.org> wrote:
-> >
-> > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> >
-> > The mrst_clock_funcs const was added in 2013 by
-> > commit ac6113ebb70d ("drm/gma500/mrst: Add SDVO clock calculation")
-> > and commented as 'Not used yet'.
-> >
-> > It's not been used since, so remove it.
-> > The helper functions it points to are still used elsewhere.
-> >
-> > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+
+On Friday 2025-03-07 14:44, Dan Carpenter wrote:
+> 	case IP_VS_SO_GET_SERVICES:
+> 	{
+> 		struct ip_vs_get_services *get;
+>-		int size;
+>+		size_t size;
 > 
-> Applied to drm-misc-next
+> 		get = (struct ip_vs_get_services *)arg;
+> 		size = struct_size(get, entrytable, get->num_services);
+> 		if (*len != size) {
+>-			pr_err("length: %u != %u\n", *len, size);
+>+			pr_err("length: %u != %lu\n", *len, size);
 
-Thanks!
-
-Dave
-
-> Thanks
-> 
-> 
-> > ---
-> > v2
-> >   commit message fixed to use correct struct name, and add
-> >   note about the functions used still being used.
-> >
-> >  drivers/gpu/drm/gma500/oaktrail_crtc.c | 7 -------
-> >  1 file changed, 7 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/gma500/oaktrail_crtc.c b/drivers/gpu/drm/gma500/oaktrail_crtc.c
-> > index de8ccfe9890f..ea9b41af0867 100644
-> > --- a/drivers/gpu/drm/gma500/oaktrail_crtc.c
-> > +++ b/drivers/gpu/drm/gma500/oaktrail_crtc.c
-> > @@ -658,10 +658,3 @@ const struct drm_crtc_helper_funcs oaktrail_helper_funcs = {
-> >         .prepare = gma_crtc_prepare,
-> >         .commit = gma_crtc_commit,
-> >  };
-> > -
-> > -/* Not used yet */
-> > -const struct gma_clock_funcs mrst_clock_funcs = {
-> > -       .clock = mrst_lvds_clock,
-> > -       .limit = mrst_limit,
-> > -       .pll_is_valid = gma_pll_is_valid,
-> > -};
-> > --
-> > 2.48.1
-> >
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+size_t wants %z not %l.
 
