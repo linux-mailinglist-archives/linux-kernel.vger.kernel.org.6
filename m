@@ -1,245 +1,117 @@
-Return-Path: <linux-kernel+bounces-551020-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551022-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED26A56705
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:47:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8DBA5670A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 12:48:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 351BE1898019
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:47:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8DD93B1F1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD003217736;
-	Fri,  7 Mar 2025 11:46:55 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B829D20C46C;
-	Fri,  7 Mar 2025 11:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA59221858E;
+	Fri,  7 Mar 2025 11:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MRu4OUH2"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE8F1217673;
+	Fri,  7 Mar 2025 11:48:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741348015; cv=none; b=GHh2f9vyzE5w/SBSHPbEqLsi3UPsdpvzxKFhvKg52bPiabODisiid3Si/yfo2K78+D+zZxaN/p/18NnQmmHGOp4SbPot+IYSK433SuvtuieTFlnv88eK+fcLsdG/cPhNT8MQ6svNDcB1afiDf5LjBTNBNqgqOl8vzmZp1DNY9Zs=
+	t=1741348124; cv=none; b=WBqGk3ZWGdVOc6nwxzq+LEK1V9WVUsNPuKEdefuq/ZOypLAhpAR4sHjMBPQp7tapK9K909bKBpsN9jS4PiDBgz/a1qxI2yMzTN2U3CL/EKaK7zw9896jrntALz2X4XYKIPn/17EPjCD3Dad0tUYCw16AnVXZYvzTDIjUQrSKuo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741348015; c=relaxed/simple;
-	bh=AL9cZoRUfEXtZJtSLQC01WQ7USliEeAxH9nTF54vJyA=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Maxjh7Ivw6stjBHDpocyU7BUrrXpUwfDxLzUmFLvJvDenW8PA9GSlgedlT5NFJlGUyS0MJrWgOi4ON/Ue6kQGg2Ecw5DnQjipyW8SCeCe2CuImK+VXRzIqcjbZBKB5unPCw5cgNgHNCTRMOdCDHhgqqa96sBJwWqTn40qSTCVV8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-3c9ff7000001d7ae-50-67cadca6c5cc
-Message-ID: <9c0d8aa8-cac7-4679-aece-af88e8129345@sk.com>
-Date: Fri, 7 Mar 2025 20:46:46 +0900
+	s=arc-20240116; t=1741348124; c=relaxed/simple;
+	bh=mS83hYzU6EdawZ4RXVjmVIjBQ0ky7khcAtS5JCNcy7I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hzzRtMAsPtyZfxhGEg/zzWEMoWNsW6a6BlrIOLNH0p2BikymnA6x0GtE+7S7srJ9KcYZ2HaRoU3FXNJFBZbJ9cWEhF6k/GDtnG4LkeIWKm256VRF17nheBOv3q5aZwPpOlz45dql0CauUpO2IF9Njsk3m7CwyL/3Sj0X9PoHCHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MRu4OUH2; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ff611f2ed1so431117a91.0;
+        Fri, 07 Mar 2025 03:48:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741348122; x=1741952922; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mS83hYzU6EdawZ4RXVjmVIjBQ0ky7khcAtS5JCNcy7I=;
+        b=MRu4OUH2kx3wBHdu41lc0byQKWx+7s00+4vsPR9DWbTzqr4syRVweK8T2SX93IbKy0
+         Th4zob84wSKnzxFUEY9COO3ldHEVdq4gS9i09q0xcXAT210oRVvBvG+jOC2y4U+lSzat
+         q/h/GiXEUNibLdG2uSWqeVJsPoH+UaSSl0bwrtNvettjb+wRGIyVIdGcgqwcq88tq/G8
+         vLa8iAj/oABR3S8PYRGYHUlc8gh85bduP6uU/e20e30/+xHv+RvG8/Q2ycbG24LrCgCy
+         9DfNvVU/F+OkKK+A+/8/0fpznVRWxNnqvbCojEMeJ54hXQMQq/umQWFfw0MaGx8eRsEF
+         0fcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741348122; x=1741952922;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mS83hYzU6EdawZ4RXVjmVIjBQ0ky7khcAtS5JCNcy7I=;
+        b=Gg/SvbLLY/nXrOpdwXPlvrpyfmGJM243QTE7RYv+ytYTrK5HDTywatNRBNbQTzoIQM
+         WeSUzWFvcr2JtUq894/uxfRtSjCWkBIBiofTMVFb00anY3mgQKhDOR/fhZ6F+eu+td04
+         cKoNCj2aWsagWhpeobd4nzs0c9e3D88bmISPuQCyTZoJTb8DrHlnDWEJ4Hd+FltJFpag
+         xohcm5A90hPx0V0CghlWMNmc9pvjrIfGHgu4PouS+L9490RPYF+pjJaWmy7x+fgqlZOj
+         lkuqaIbGaFbYLObP70DKAsa3+CyhYHbpcUqNAn2sl5W9kiLrdwWZJ1KDIF4X1LA0uOx4
+         3Hcg==
+X-Forwarded-Encrypted: i=1; AJvYcCU71mEoWgFY/CZ/yIMJsszBiphqHNUMV4jACp6Uh7T/yaZRZmLKBF7BHrIqvC6vwmIPIOwHDYyFah1v+EUdXKE=@vger.kernel.org, AJvYcCUslDDhH1oAtmXv5/KhCWiAfhxhympOzbW5rhZECYLk+4+H1+BHx2K+hIwuxmicZEBIPjb4mG7kJ8dqQzo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8viKK6krVVDFKJowqMWLfrgkpMaqw8COZC+e0JH+tBh+pW83A
+	xswm279pgEV1qKiND+lWpZ729AABGz2j/9kjzXrDFbWkRirhFAFLBX/0mAZV47kxhAZ00NmgckC
+	Vgzag5o2VXqJkX6MbKBUMgOaxKnM=
+X-Gm-Gg: ASbGncu1AHEUtvJwXxPhCX6FLHqZi0S8DYkkQ9kJRW7Gd6hgWoE9cBcv+sCA8K81rtn
+	jrd83umDTj/AQVYnviZx3kXQHhSaYJ1BNYOHedrIQngyKjrqXwnIq/Ab7acBsG2/9Hovq9BGwS0
+	f0AZCWaz7ZnGS4GgSBAGUB8lJH8w==
+X-Google-Smtp-Source: AGHT+IHPZqtCGbMEoElsXHCKwfjspW3Ti4qZFOBDwPjafv3DWqQR3PBGuSRuV15GcsExvjUcH4JxxbsOVBuuMFtjAqU=
+X-Received: by 2002:a17:90b:4b48:b0:2ee:f59a:94d3 with SMTP id
+ 98e67ed59e1d1-2ff7fcf0a67mr1302493a91.0.1741348121973; Fri, 07 Mar 2025
+ 03:48:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: kernel_team@skhynix.com, Joshua Hahn <joshua.hahnjy@gmail.com>,
- harry.yoo@oracle.com, ying.huang@linux.alibaba.com,
- gregkh@linuxfoundation.org, rakie.kim@sk.com, akpm@linux-foundation.org,
- rafael@kernel.org, lenb@kernel.org, dan.j.williams@intel.com,
- Jonathan.Cameron@huawei.com, dave.jiang@intel.com, horen.chuang@linux.dev,
- hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com,
- yunjeong.mun@sk.com
-Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for
- memoryless nodes
-Content-Language: ko
-To: Gregory Price <gourry@gourry.net>
-References: <20250226213518.767670-1-joshua.hahnjy@gmail.com>
- <20250226213518.767670-2-joshua.hahnjy@gmail.com>
- <b8ac8654-92bd-4c08-a3fc-e28a7be5e0e6@sk.com>
- <Z8cqe3BCdobsV4-2@gourry-fedora-PF4VCD3F>
- <f64819e2-8dc6-4907-b8bf-faec66eecd0e@sk.com>
- <Z8ncOp2H54WE4C5s@gourry-fedora-PF4VCD3F>
-From: Honggyu Kim <honggyu.kim@sk.com>
-In-Reply-To: <Z8ncOp2H54WE4C5s@gourry-fedora-PF4VCD3F>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNIsWRmVeSWpSXmKPExsXC9ZZnoe6yO6fSDbpX61rMWb+GzWL61AuM
-	FiduNrJZ/Lx7nN2iefF6NovVm3wt7i97xmJxu/8cq8WqhdfYLI5vncduse8iUMPOh2/ZLJbv
-	62e0uLxrDpvFvTX/WS3mfpnKbLF6TYaDoMfhN++ZPXbOusvu0d12md2j5chbVo/Fe14yeWxa
-	1cnmsenTJHaPEzN+s3jsfGjpsbBhKrPH/rlr2D3OXazw+Pj0FovH501yAXxRXDYpqTmZZalF
-	+nYJXBk9R3YzFSxTq/j0YQdjA+McmS5GTg4JAROJ3hcT2GHsl3fuMILYvAKWEjv/n2XpYuTg
-	YBFQkZjSGQARFpQ4OfMJC4gtKiAvcf/WDKBWLg5mgcfMEp/udDGDJIQFoiR2vvrLBGIzC4hI
-	zO5sYwaZIyKgKtF2xR2kXkhgJZNEz64rYHvZBNQkrrycBFbPKWAmMef6AVaIXjOJrq1djBC2
-	vMT2t3OYQZolBG6xS7Tvn8UGcbSkxMEVN1gmMArOQnLgLCS7ZyGZNQvJrAWMLKsYhTLzynIT
-	M3NM9DIq8zIr9JLzczcxAqN4We2f6B2Mny4EH2IU4GBU4uH1mHoyXYg1say4MvcQowQHs5II
-	r9r2U+lCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeY2+lacICaQnlqRmp6YWpBbBZJk4OKUaGC2Z
-	j710E5gYlhNrJfTTWfMy2wa9l+pS3e3OWomq89p2bvb4lBTj8+1Ly6zcEyEdX+fVftyx3PB0
-	j/DL244VZ5S+BrQf3FrzXO7QLi2h4r68q4uvH5NY4Jjwf82kpPPb84z6HB0+awYtluM+0357
-	XirLLtuKS2bTD3ox5OzY8kFbYdFGlwm/45VYijMSDbWYi4oTAVbdux/eAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02RbUhTYRTHeXbv7r1bLq5r5YOVwjIhSc1IeYyISMknQ/Fb4Re95GVbzhc2
-	G1MaGKnlNEzRsjVDE1bpQhjonJUOZ+mMLJks0pmM3lQa2ZRKTMwlgd9+nPP/nXPgMITUSUYy
-	quIyXlPMqeWUmBS3xiXEW3zjiiOu7ihk7rFS6E7LW4DG3l+l0OrsKI2udfZQqNuWheYsX0g0
-	0zAhRF0dXgqN9t6n0eDkpuBqcwuRwx+g0MPBBoA8A2YKfbBuCFHbSguBhr1fhajbqkRrfY+o
-	UzLs+vadwA7TLI3rajw0rhoJCHHnswUBtnXVUtgWbKLxWOsaiR3+VNxR2ULgoTYrjScm9fjH
-	52kS/5zBuHN+SYCXbVE5bK74RAGvVul4TeLJfLGyfuSpoNQSqw8u9YNKYN5nBCIGssfggs8H
-	QixhU6Fj4zVpBAxDsjGwuTZnqxwO3Xc/kSHezUbDuelW2gjEDMF+JGDQZyRCjV1sLnQsrgtC
-	TLAyeK+2hgjNkbEHYc1URigvZR8LYP3AFB3KUGwsnFpo+pcXsSnQ/M4p3HJToLHXCLY4GtoD
-	ZuIW2Gnadodp2wrTNsW0TWkHZBeQqYp1RZxKnZygLVSWF6v0CRdLimxg868Ww5/GfrDiyRgG
-	LAPkYRLc4lZIhZxOW140DCBDyGWSWPu4Qiop4MoreE1JnuaymtcOg70MKY+QZJ7n86Wsgivj
-	C3m+lNf87woYUWQlOG2gDBbThdUnVTHt8xEb58Jf5fnjq3UrMfU+o/1KW9qDTu52arXBfeNQ
-	Y1owMDRistknZo4fTgT4ZXLr8wPLeTnR6aJs7M2+tKrvfuOl1s807QnLbHY76xZdo9ly2ACr
-	z+5HohceR911ZZLt94D9aIWnb0fWr5t+hTO9hJCTWiWXFEdotNxfKIs33tMCAAA=
-X-CFilter-Loop: Reflected
+References: <6-mv8ahCblqal1f_T1RcVPPPb6QEedsAXlhmcyCNC-lnvAj1USOInn0YNogItuEdy_KthnPdFDElN1F6A9ncwA==@protonmail.internalid>
+ <20250210-rust-analyzer-macros-core-dep-v3-1-45eb4836f218@gmail.com>
+ <874j055csy.fsf@kernel.org> <CAJ-ks9mofNbtGqoYBummkfxZ+zrmEHg5P6viVwwgs9-BuNGbZg@mail.gmail.com>
+In-Reply-To: <CAJ-ks9mofNbtGqoYBummkfxZ+zrmEHg5P6viVwwgs9-BuNGbZg@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 7 Mar 2025 12:48:29 +0100
+X-Gm-Features: AQ5f1JoRmczSy095oDMl7fazeSgHgV-7LfARQvsiTrt41sD_aG9uRcEj1QmcNu4
+Message-ID: <CANiq72=_LW8dBbFbQz=tuuck07OhpPdPGuiEtq-SQ1=g-PyNFw@mail.gmail.com>
+Subject: Re: [PATCH v3] scripts: generate_rust_analyzer.py: add missing macros deps
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, Boris-Chengbiao Zhou <bobo1239@web.de>, Fiona Behrens <me@kloenk.dev>, 
+	Kees Cook <kees@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Chayim Refael Friedman <chayimfr@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Mar 7, 2025 at 12:06=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
+ wrote:
+>
+> It's in anticipation of this follow up patch
+>
+> https://lore.kernel.org/all/20250209-rust-analyzer-host-v1-2-a2286a2a2fa3=
+@gmail.com/
+>
+> where the return value is used to identify the crate. I developed the
+> two in parallel so I added this return to reduce overall churn.
 
+For this case, it is not a big deal (and sometimes it is a good idea,
+e.g. a `return` in a public API that wouldn't make sense not to have),
+but in general, please avoid doing things to avoid churn across series
+if that can confuse others -- future patches may or may not end up
+getting merged, so it is best not to rely on the future.
 
-On 3/7/2025 2:32 AM, Gregory Price wrote:
-> On Thu, Mar 06, 2025 at 09:39:26PM +0900, Honggyu Kim wrote:
->>
->> The memoryless nodes are printed as follows after those ACPI, SRAT,
->> Node N PXM M messages.
->>
->>    [    0.010927] Initmem setup node 0 [mem
->> 0x0000000000001000-0x000000207effffff]
->>    [    0.010930] Initmem setup node 1 [mem
->> 0x0000060f80000000-0x0000064f7fffffff]
->>    [    0.010992] Initmem setup node 2 as memoryless
->>    [    0.011055] Initmem setup node 3 as memoryless
->>    [    0.011115] Initmem setup node 4 as memoryless
->>    [    0.011177] Initmem setup node 5 as memoryless
->>    [    0.011238] Initmem setup node 6 as memoryless
->>    [    0.011299] Initmem setup node 7 as memoryless
->>    [    0.011361] Initmem setup node 8 as memoryless
->>    [    0.011422] Initmem setup node 9 as memoryless
->>    [    0.011484] Initmem setup node 10 as memoryless
->>    [    0.011544] Initmem setup node 11 as memoryless
->>
->> This is related why the 12 nodes at sysfs knobs are provided with the
->> current N_POSSIBLE loop.
->>
-> 
-> This isn't actually why, this is another symptom.  This gets printed
-> because someone is marking nodes 4-11 as possible and setup_nr_node_ids
-> reports 12 total nodes
-> 
-> void __init setup_nr_node_ids(void)
-> {
->          unsigned int highest;
-> 
->          highest = find_last_bit(node_possible_map.bits, MAX_NUMNODES);
->          nr_node_ids = highest + 1;
-> }
-> 
-> Given your configuration data so far, we may have a bug somewhere (or
-> i'm missing a configuration piece).
+Thanks!
 
-Maybe there could be some misunderstanding on this issue.
-This isn't a problem of NUMA detection for CXL memory but just a problem
-of number of "node" knobs only for weighted interleave.
-
-The number of nodes in 'numactl -H' shows the correct nodes even without
-our fix.
-
-   $ numactl -H
-   available: 4 nodes (0-3)
-   node 0 cpus: 0 1 2 3 ...
-   node 0 size: 128504 MB
-   node 0 free: 118563 MB
-   node 1 cpus: 144 145 146 147 ...
-   node 1 size: 257961 MB
-   node 1 free: 242628 MB
-   node 2 cpus:
-   node 2 size: 393216 MB
-   node 2 free: 393216 MB
-   node 3 cpus:
-   node 3 size: 524288 MB
-   node 3 free: 524288 MB
-   node distances:
-   node     0    1    2    3
-      0:   10   21   14   24
-      1:   21   10   24   14
-      2:   14   24   10   26
-      3:   24   14   26   10
-
-You can see more info below.
-
-   $ cd /sys/devices/system/node
-
-   $ ls -d node*
-   node0  node1  node2  node3
-
-   $ cat possible
-   0-11
-
-   $ cat online
-   0-3
-
-   $ cat has_memory
-   0-3
-
-   $ cat has_normal_memory
-   0-1
-
-   $ cat has_cpu
-   0-1
-
->>> Basically I need to know:
->>> 1) Is each CXL device on a dedicated Host Bridge?
->>> 2) Is inter-host-bridge interleaving configured?
->>> 3) Is intra-host-bridge interleaving configured?
->>> 4) Do SRAT entries exist for all nodes?
->>
->> Are there some simple commands that I can get those info?
->>
-> 
-> The content of the CEDT would be sufficient - that will show us the
-> number of CXL host bridges.
-
-Which command do we need for this info specifically?  My output doesn't
-provide some useful info for that.
-
-   $ acpidump -b
-   $ iasl -d *
-   $ cat cedt.dsl
-       ...
-   **** Unknown ACPI table signature [CEDT]
-
-> 
->>> 5) Why are there 12 nodes but only 10 sources? Are there additional
->>>      devices left out of your diagram? Are there 2 CFMWS but and 8 Memory
->>>      Affinity records - resulting in 10 nodes? This is strange.
->>
->> My blind guess is that there could be a logic node that combines 4ch of
->> CXL memory so there are 5 nodes per each socket.  Adding 2 nodes for
->> local CPU/DRAM makes 12 nodes in total.
->>
-> 
-> The issue is that nodes have associated memory regions.  If there are
-> multiple nodes with overlapping memory regions, that seems problematic.
-> 
-> If there are "possible nodes" without memory and no real use case
-> (because the memory is associated with the aggregate node) then those
-> nodes probably shouldn't be reported as possible.
-> 
-> the tl;dr here is we should figure out what is marking those nodes as
-> possible.
-> 
->> Not sure about this part but our approach with hotplug_memory_notifier()
->> resolves this problem.  Rakie will submit an initial working patchset
->> soonish.
-> 
-> This may just be a bandaid on the issue.  We should get our node
-> configuration correct from the get-go.
-
-Not sure about it.  This must be fixed ASAP because current kernel is
-broken on this issue and the fix should go into hotfix tree first.
-
-If you can think this is just a bandaid, but leaving it bleeding as is
-not the right approach.
-
-Our fix was posted a few hours ago.  Please have a look, then think
-about the apprach again.
-https://lore.kernel.org/linux-mm/20250307063534.540-1-rakie.kim@sk.com
-
-Thanks,
-Honggyu
-
-> 
-> ~Gregory
-
+Cheers,
+Miguel
 
