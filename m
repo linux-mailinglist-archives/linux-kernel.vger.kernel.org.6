@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-550588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37618A5619B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:11:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 910B2A5619E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:11:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 761B03B5324
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:10:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 839363B4E8C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69611A4E9E;
-	Fri,  7 Mar 2025 07:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDEA1A3148;
+	Fri,  7 Mar 2025 07:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eyyYH9pI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t3Ks4Gub"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FC51A314E;
-	Fri,  7 Mar 2025 07:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A176F1519A3;
+	Fri,  7 Mar 2025 07:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741331435; cv=none; b=JrU5Jwb/ckZdQMqj3sPXAwy0wD3V+/eiGcSmxMwJPgBTcMI9hqb1PoT2UDATDjObnZaDBj56MgV8T1bmkYnAcB+MN+fzRnPcaNywaJTlr9kx4Jj1kMFdpI3I398LfRG7pdkJIAif6tBUplG0TYvi4rU539b5bNo01iyA8Ai1jUg=
+	t=1741331498; cv=none; b=Lj3keTbUnNX8tQHdVh3ACs5jRXGRBuVjSVuoFgtEPUFERMWYelkh+4csMP01QNa3bCXfVRUiuGTfjK1Xiel1t1OUyYV693c3A0X372Kk6RXnmqJjbpPKichs9Br4Bm2Gm0JsY086JX+vowaxo8tEQgXFzFG2QhhTt1rON1mV2VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741331435; c=relaxed/simple;
-	bh=a5miTD1abVMgj3/j89zRVh6kuZLoji7VxTlmh6kIsG8=;
+	s=arc-20240116; t=1741331498; c=relaxed/simple;
+	bh=bHThK23Ii92GmGLygLItWhYyWiP9FM3nTV3uexprg4A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HTb3yMzyKMAe3JcCM1AJiAYdFrgyfPTkSh4dMsONSLehRPdzhDNzGYAh8uAlptReEEtnshWFHqGaRp7R8awggZwMgRT1ZctCIkeiuPPSSHRp/M7FiFK9o8wy8YEtBAPUNjZIn+bHDJT6I/Ale8AGHFKCUMYzWKjhJw2YIqaxbP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eyyYH9pI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D06B4C4CEE2;
-	Fri,  7 Mar 2025 07:10:27 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=SlmpW5LQvq4cyg8CmKXy90eJdAsVZVhFiFwn5AKXuR6UYXp7w2t7lj0jVmU4uDU9fR8Em7/fHfvhKqYCx9uir+j4MyOktOrOHrmCsfbHxF2+cqv8S7TM3WCAbmP+VIQc+LvD/wko6neR/Yj9MCaIofPjjfhrPsIMgnlOodPuO8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t3Ks4Gub; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7B51C4CED1;
+	Fri,  7 Mar 2025 07:11:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741331434;
-	bh=a5miTD1abVMgj3/j89zRVh6kuZLoji7VxTlmh6kIsG8=;
+	s=k20201202; t=1741331498;
+	bh=bHThK23Ii92GmGLygLItWhYyWiP9FM3nTV3uexprg4A=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eyyYH9pIqBJjTIF5XoIwd4/HcaDTyzwm24wtjoqrPdUJLXsqyi/6G3jBX3YbebjX0
-	 7Oh4TKa7Oefbr98INX++fnNTeMdZiBboMsBoMiBroJlNkyOdCLhiHc4mM2WO9b3sAF
-	 rIr+WOm4jpzy4q+p75a+DweRHjtZoOyaOYfOR+E/RP02vzjoLffssa/3AG5Jg0ESzP
-	 FUt8L5qE1amzN5gW+DwSHa4cmNkJBa26kymmW8LhFxQlr/GRRCRWhX0zexAQaE2Zqn
-	 EgILoXHxD3uJoHYP8Gr/2+zlUItrwWAvAFX/wJTvcA5ueQri+bVDIzX7fgQPI+Z4ZK
-	 ASDCBXDfAo77w==
-Message-ID: <4560876d-22d0-408c-8fc6-63bb79ae1249@kernel.org>
-Date: Fri, 7 Mar 2025 08:10:25 +0100
+	b=t3Ks4GubR6FMSUALNFwOmNpiJa/FoAiuAqE+PZPHyD5m7N9+Sf37PY0ELHivyKySR
+	 tApGnEIA5bc6d++EGlWuPmsck/399uKdSBQsNVr6jSnJ+G7IQaGuwOFDwsbvX9iwXs
+	 p2jbsbA5MIqhK5ioqsosWzstY3lrAyH8c6leVbCnhxFN31f5RR1Lu2mew3d8LYKdVz
+	 /DWDVSxCCHetPEPDN9V2BAl4ieQuq5SmyZUnvXIIErvm7mZWVGNJJUsAeSdlSW2hzY
+	 CzfGj1PMo0u1jIN06YKmKzFZO5n5uT50DU5snMibS7xw2oaVAk1lnnk1E/A7Ri20+D
+	 djw20M2ZNP/tg==
+Message-ID: <0663e03e-e331-4a06-be95-ce8d9059ed6b@kernel.org>
+Date: Fri, 7 Mar 2025 08:11:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 0/7] Add PCIe support for Qualcomm IPQ5332
-To: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
-Cc: Varadarajan Narayanan <quic_varada@quicinc.com>, bhelgaas@google.com,
- lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
- kishon@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
- p.zabel@pengutronix.de, quic_nsekar@quicinc.com,
- dmitry.baryshkov@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
-References: <20250220094251.230936-1-quic_varada@quicinc.com>
- <20250220144551.GB1777078@rocinante>
- <d399a2be-3010-43fc-9531-e4f3560ea6df@kernel.org>
- <20250306125940.GC478887@rocinante>
+Subject: Re: [PATCH v4 01/19] dt-bindings: mfd: mediatek: mt6397: Add accdet
+ subnode
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>,
+ Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ kernel@collabora.com, linux-sound@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-pm@vger.kernel.org
+References: <20250305-mt6359-accdet-dts-v4-0-e5ffa5ee9991@collabora.com>
+ <20250305-mt6359-accdet-dts-v4-1-e5ffa5ee9991@collabora.com>
+ <20250306-certain-jasmine-mastiff-fd67ba@krzk-bin>
+ <2fa6037d-b5e9-45b2-a5d5-dbc92fb3434b@notapiano>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,34 +114,51 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20250306125940.GC478887@rocinante>
+In-Reply-To: <2fa6037d-b5e9-45b2-a5d5-dbc92fb3434b@notapiano>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 06/03/2025 13:59, Krzysztof Wilczyński wrote:
-> Hello,
-> 
->>>> Patch series adds support for enabling the PCIe controller and
->>>> UNIPHY found on Qualcomm IPQ5332 platform. PCIe0 is Gen3 X1 and
->>>> PCIe1 is Gen3 X2 are added.
->>>
->>> Applied to dt-bindings, thank you!
->> I will send reverts for these. This patchset affects users without
->> mentioning it and without providing any rationale.
+On 06/03/2025 13:19, Nícolas F. R. A. Prado wrote:
+>>>    It is interfaced to host controller using SPI interface by a proprietary hardware
+>>>    called PMIC wrapper or pwrap. MT6397/MT6323 PMIC is a child device of pwrap.
+>>> @@ -224,6 +225,30 @@ properties:
+>>>      description:
+>>>        Pin controller
+>>>  
+>>> +  accdet:
+>>> +    type: object
+>>> +    additionalProperties: false
+>>> +    description:
+>>> +      The Accessory Detection module found on the PMIC allows detecting audio
+>>> +      jack insertion and removal, as well as identifying the type of events
+>>> +      connected to the jack.
+>>> +
+>>> +    properties:
+>>> +      compatible:
+>>> +        const: mediatek,mt6359-accdet
 >>
->> What's more, it introduces known to author warnings just to fix them
->> later...
+>> You just removed the other file, no folding happened here. Drop the
+>> accdet node and fold this into parent.
 > 
-> The following commit:
-> 
->   829aa3693f8d ("dt-bindings: PCI: qcom: Use SDX55 'reg' definition for IPQ9574")
-> 
-> Should no longer be present.  However, we still carry the following commit:
-> 
->   f67d04b18337 ("dt-bindings: PCI: qcom: Document the IPQ5332 PCIe controller")
+> Sorry, I'm still not sure what you mean by folding here then. Right now the
+> accdet is a subnode of the PMIC. If you want me to remove the accdet node, where
 
+Yes
 
-Thanks, I looked briefly and it seemed fine.
+> would its compatible and property go?
+
+compatible: nowhere, because it is close to redundancy.
+
+property: to the parent pmic node.
+
+    pmic {
+        compatible = "mediatek,mt6359";
+        interrupt-controller;
+        #interrupt-cells = <2>;
+
+        mediatek,hp-eint-high;
+    };
+
 
 Best regards,
 Krzysztof
