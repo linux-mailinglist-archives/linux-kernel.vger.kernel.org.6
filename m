@@ -1,128 +1,79 @@
-Return-Path: <linux-kernel+bounces-551692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C287CA56F94
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:49:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99BCBA56F96
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 18:50:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27109189A8DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:49:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C20B617506A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C4E23F262;
-	Fri,  7 Mar 2025 17:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B9B24110D;
+	Fri,  7 Mar 2025 17:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EOdv33DB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWl0FdEP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D1F21A43C
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 17:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D01D123C8B5;
+	Fri,  7 Mar 2025 17:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741369786; cv=none; b=MzCdO6JNA7QlHDQa2iUloti+dJEURPGM0kbkUlMBUQjaJHZXn+PQc+OYuuFWOTjCa08joOUKSNgX3l4jr8uHZdZxLsyCf0MPTtwJRoHxFF/LWfzDoPRe5OZ0u/qFf8ojVuKDhYn4OZwvBqW1BsL6Won/CwCW25RgeUZIz3q8yCk=
+	t=1741369800; cv=none; b=FfVM4g5nIBRm+Q2f+QEMzntvVO+Az3j/wi80H83REwUnw4nokNhjzWQPUEPkZFBkOTUcPS5/4vD1+zOt5uiwbzM2Y7RtuYGGoMK3sv1a1Fq1/cpKMSyzqy6T46hnnR6VM69nsqKF4zIprabrNajtiDnuPQkwkxepEWwIadbUvSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741369786; c=relaxed/simple;
-	bh=FK2ser2TMVe2rV3WcVJCYDPlQ11z8XXJHiWq+ZNdT0k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OYCLwkJmSy26Cse8MmfhU6DbqzMwI072UzU4ZTia8ThlKlDCvUMN490kg1xGyskCtbsHbOGLXGesubHAf5Zth6JnN2N94PJ/1XovFOlE1PsjKv9CCtKcLoEZxrXyHp6lvd4O18LIEAROwFg0AYqaYQFCXDMrnmGAqENuHTwbnHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EOdv33DB; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741369785; x=1772905785;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FK2ser2TMVe2rV3WcVJCYDPlQ11z8XXJHiWq+ZNdT0k=;
-  b=EOdv33DB25OPtY4qAWR1jzx/O2lZDJ6jHlxE0dtrj3iua8NWLSldvwuR
-   e3OXknwDkZ610RRbb4DGlv9qgcppiLU+K7WKGauDoEEGcgdRTMHNfd86r
-   LyH6+kGmETlaQPUvc6Yf9e/ZrD1hEh1mk0b37duX9qJDpvkGM9xtk5Wqy
-   RDfpZL8TgHVLuATCtXE3oJFXJx4SAbY8p/kd+mhdDwhfzvcP5XpmmBxng
-   8wchcvZioeTOMeExqFX700Z9jr+aP7iMlaLhR6xqaouca5XJc0NjbFzNo
-   hT/R/tIqET+1U10cYLr37UDa5Jylz0i9uikHRrJMNsoFWEE5lr4tVEUmn
-   g==;
-X-CSE-ConnectionGUID: ezW0SSlYQ7iOoUsH0VRVAw==
-X-CSE-MsgGUID: LkYZTjSDR4OSXQx63KY7xg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="46208237"
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="46208237"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 09:49:45 -0800
-X-CSE-ConnectionGUID: g3Xe9/1aQFK/en7h5/j7Vg==
-X-CSE-MsgGUID: UWY006kQRB6Fu1TIAja4mg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,229,1736841600"; 
-   d="scan'208";a="119134269"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 09:49:40 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tqbpI-00000000Tam-3FaG;
-	Fri, 07 Mar 2025 19:49:36 +0200
-Date: Fri, 7 Mar 2025 19:49:36 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: mailhol.vincent@wanadoo.fr
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	David Laight <David.Laight@aculab.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v6 3/7] bits: introduce fixed-type BIT_U*()
-Message-ID: <Z8sxsCR0KxqZWltB@smile.fi.intel.com>
-References: <20250308-fixed-type-genmasks-v6-0-f59315e73c29@wanadoo.fr>
- <20250308-fixed-type-genmasks-v6-3-f59315e73c29@wanadoo.fr>
- <Z8sxUTR-5j5XmZnO@smile.fi.intel.com>
+	s=arc-20240116; t=1741369800; c=relaxed/simple;
+	bh=0DZPIe95LWP24lYQH6DTn/rr5jMCk3/IPdeK3fYlyKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tLhkTQODxg3aAOSLt3jRDt09bUW/xFjtEQt63EH516abRyGf0+c+4PlEyTQRduY4aQzilzZjS0HZ7BwsZqtrY/Db0O0PDMJAOB3METGSzUsZgX/kpr0wLYZ0qntmpLm/oCB6tIEkTsOeUk2XdP+CyB8YC06KUfH1v+kH7WcP+r0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LWl0FdEP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 359F4C4CED1;
+	Fri,  7 Mar 2025 17:50:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741369800;
+	bh=0DZPIe95LWP24lYQH6DTn/rr5jMCk3/IPdeK3fYlyKE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LWl0FdEPUx7hFd5ydcVHQRcvgNfydg5JuGSCG0WTCGI2vfkumjNIDCp/Li36B9v4A
+	 aWxy6UF0C8jzaLlEsJdwzBkbl9jZfLrYjCbDOPJkw09mgsbUcfS63gCEXYdRAeRKLz
+	 uifN7Z8QusIMQuVXhP+YfgBmAK6vLsglWo+T92Xw9xaAPAz0hZIghMNHQKdC5MaGN4
+	 ulqKirGQXNkZGZ6VAq+kjToS7NYNL++VDVN951Z1oydpNcCwp5us17XdjTKO93SDTd
+	 1jmCa/CIqMagj/ynLm751M/FCxc4uWPbG6G2pRvy1gdqHJROoyzS+p0hvSHNLAxs52
+	 p/TN2qwfSNygg==
+Date: Fri, 7 Mar 2025 09:49:59 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Stanislav Fomichev <sdf@fomichev.me>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, linux-kernel@vger.kernel.org, horms@kernel.org,
+ donald.hunter@gmail.com, michael.chan@broadcom.com,
+ pavan.chebbi@broadcom.com, andrew+netdev@lunn.ch, jdamato@fastly.com,
+ xuanzhuo@linux.alibaba.com, almasrymina@google.com, asml.silence@gmail.com,
+ dw@davidwei.uk
+Subject: Re: [PATCH net-next v1 2/4] net: protect net_devmem_dmabuf_bindings
+ by new net_devmem_bindings_mutex
+Message-ID: <20250307094959.1df7c914@kernel.org>
+In-Reply-To: <20250307155725.219009-3-sdf@fomichev.me>
+References: <20250307155725.219009-1-sdf@fomichev.me>
+	<20250307155725.219009-3-sdf@fomichev.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8sxUTR-5j5XmZnO@smile.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Mar 07, 2025 at 07:48:01PM +0200, Andy Shevchenko wrote:
-> On Sat, Mar 08, 2025 at 01:48:50AM +0900, Vincent Mailhol via B4 Relay wrote:
-
-...
-
-> >  /*
-> >   * Missing asm support
-> >   *
-> > - * GENMASK_U*() depends on BITS_PER_TYPE() which relies on sizeof(),
-> > - * something not available in asm. Nethertheless, fixed width integers
-> > - * is a C concept. Assembly code can rely on the long and long long
-> > - * versions instead.
-> > + * GENMASK_U*() and BIT_U*() depend on BITS_PER_TYPE() which relies on
-> > + * sizeof(), something not available in asm. Nethertheless, fixed
-> > + * width integers is a C concept. Assembly code can rely on the long
-> > + * and long long versions instead.
-> >   */
+On Fri,  7 Mar 2025 07:57:23 -0800 Stanislav Fomichev wrote:
+> In the process of making queue management API rtnl_lock-less, we
+> need a separate lock to protect xa that keeps a global list of bindings.
 > 
-> I don't like this hunk. You just introduced a message which is rewritten
-> completely in the immediate followup. Can you come up in a better text
-> here and/or there so it will give only + LoCs (or minimizes - to 1:ish)?
+> Also change the ordering of 'posting' binding to
+> net_devmem_dmabuf_bindings: xa_alloc is done after binding is fully
+> initialized (so xa_load lookups fully instantiated bindings) and
+> xa_erase is done as a first step during unbind.
 
-And also note, that using up to 90 characters in the comments most likely fine
-here. At least I don't see a problem with that.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+You're just wrapping the calls to xarray here, is there a plan to use
+this new lock for other things? xarray has a built in spin lock, we
+don't have to protect it.
 
