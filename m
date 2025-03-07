@@ -1,144 +1,83 @@
-Return-Path: <linux-kernel+bounces-551841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4890BA571D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:31:56 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28D79A5721F
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:39:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 326EA3B3544
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:31:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33C097A3574
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C2D2505D4;
-	Fri,  7 Mar 2025 19:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BA20254AED;
+	Fri,  7 Mar 2025 19:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="SFFHlPiQ"
-Received: from smtpout.efficios.com (smtpout.efficios.com [158.69.130.18])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ezTlkzZC"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB33221DB9
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 19:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=158.69.130.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55054250BF8
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 19:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741375854; cv=none; b=VW7NKKXjiQ4K+lIgF+FvTNj82CmKA47jY5RszpceUdWfNWtV79TIDMUy38fGD+EvnWOUAUURi7iKqe1GQsQ7N3D3asxBJ6hZ3dvijO3PBX352yFa2GR8ipsQQGgSwhkPTftoYz1ZtkIlTXHPDNQ7UFcVAFGhDVk9D9EJj4cypKk=
+	t=1741376300; cv=none; b=HnkLgcSOR6fhEDkJjttr9W6nVDA/6X1GNFc0e6GOKqJ/cBvx5Y5TGNt0PTLU2QyqVK8A0EB3fRVwOR+oKQasNL6FcAZ8utc12ikbc8Fr8iBW+uKK/pqq3TqTTQdmbxy4DXXibGouMdyNVy1dc6tRBtActVkokIzou/XJCNH/9Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741375854; c=relaxed/simple;
-	bh=I7qUEBsf9z9DvFVeTUwEL2QF/mwYSpxIB5OX23QFtcU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=eb15sAPBV51/VG3imYL8kIXLRitXVrG3xdb10IOYZZKdoXJLEVEKFBm2aeUUV/m3SEwIYFPhRs+ljqNih/I1NZ9uuhILMkt090F5SooZShEVyVpRzEPc1OuEMuFkpthCAzHR3TXAxgPalXdv71UTam4Un3hZHGo0m3gDVUUS+hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=SFFHlPiQ; arc=none smtp.client-ip=158.69.130.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1741375851;
-	bh=I7qUEBsf9z9DvFVeTUwEL2QF/mwYSpxIB5OX23QFtcU=;
-	h=From:To:Cc:Subject:Date:From;
-	b=SFFHlPiQ1dVRlkA83oEwuD3d/a54xPfyT7af1B56LbjBkK/qQx8EPBooVir5Xs/PP
-	 YxGzct4ODrmkgHTHkZwnmo0ATuRRc/KHU8rW3KKL6C4Imra6Y4zOIDMFvysDE/jOfb
-	 a0oimfFSYWEs5uXP9CkxbuL5QXmK6LtMlYVpaoabLXi1NzV7LLLRm6g/mYyAFiivtO
-	 0prauRBELPV8Pqk0Yohajy7xlCeMI2qQHPAEYV4TlMwTZkIaytCPrRj32k7Y4zLiAC
-	 CUxskCVt+Bm9uC4wlzCauOiIw2ew0yIQRtXv00qPOUJAcGlSjwslPr/VYrOprNy4r8
-	 zbwl56EPgfkrA==
-Received: from localhost.localdomain (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4Z8bx71SLyz1gPP;
-	Fri,  7 Mar 2025 14:30:51 -0500 (EST)
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To: Andrew Morton <akpm@linux-foundation.org>
+	s=arc-20240116; t=1741376300; c=relaxed/simple;
+	bh=/3hNA2Uo+0p5qHAkZX40MS4jjODKDMpTpstTj+3Vgc8=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=gvySvIMWtAlVUCpHM29HvJ6re76G9zR4qasLSuPO7MCX9CQGe3Qxub4eMrt4OLfmSXaRW1NPHX/i6J/zHCRf0FuWNeWE8Apjg1o08cBQp60bIDT3snCN7y+sUP4uc/NmYN8mg71KrqyM47YtIQ84lBhxt1AF3ppCbw4XSnxJEqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ezTlkzZC; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Subject:Cc:To:From:Date:Message-ID:
+	Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=XGauN/Z8AN/QXf9GVlFLc0lHdL7IyFuvPpvwm9DWHWc=; b=ezTlkzZC+ggW5Cln5xhjC7Szxm
+	d99VFVMZWJDNnAWgc8xKEHCjxTR+far+1Q5NuEuevKdeaWEzBeZsrFqujTYFrfG4ECqaj/bPNhuRp
+	Bs/af6CokatXlxfeNU3KLQc6B5jKZUUgAAmMqPIi4cNbWuJpxLpbvDvkI+yr+pLJd58Sm3RWrHBrl
+	/ZZ5O/wTaDXJbJhW7t8FJ2SlymvfJ+EU9wgwrGxxY3B+M8H7g9bPG+1FaYJK9nrYiiVF00kLUQseZ
+	+RCOnRbHPkzgSXqWY1RYAGnGa1z7Yk7om3sz5/2OGkMJfCF7c5ctoNsZbTnaF/2ZwxEmHHXwuKLOt
+	uU1Unh5Q==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tqdWP-0000000EKgJ-33V3;
+	Fri, 07 Mar 2025 19:38:13 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 0)
+	id 055CF30031C; Fri,  7 Mar 2025 20:38:13 +0100 (CET)
+Message-ID: <20250307193305.486326750@infradead.org>
+User-Agent: quilt/0.66
+Date: Fri, 07 Mar 2025 20:33:05 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: mingo@kernel.org,
+ ravi.bangoria@amd.com,
+ lucas.demarchi@intel.com
 Cc: linux-kernel@vger.kernel.org,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Alan Stern <stern@rowland.harvard.edu>,
-	Andrea Parri <parri.andrea@gmail.com>,
-	Will Deacon <will@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	David Howells <dhowells@redhat.com>,
-	Jade Alglave <j.alglave@ucl.ac.uk>,
-	Luc Maranget <luc.maranget@inria.fr>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	linux-mm@kvack.org
-Subject: [RFC PATCH] mm: Add missing release barrier on PGDAT_RECLAIM_LOCKED unlock
-Date: Fri,  7 Mar 2025 14:30:47 -0500
-Message-Id: <20250307193047.66079-1-mathieu.desnoyers@efficios.com>
-X-Mailer: git-send-email 2.25.1
+ peterz@infradead.org,
+ acme@kernel.org,
+ namhyung@kernel.org,
+ mark.rutland@arm.com,
+ alexander.shishkin@linux.intel.com,
+ jolsa@kernel.org,
+ irogers@google.com,
+ adrian.hunter@intel.com,
+ kan.liang@linux.intel.com
+Subject: [PATCH v3 0/7] perf: Make perf_pmu_unregister() usable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The PGDAT_RECLAIM_LOCKED bit is used to provide mutual exclusion of
-node reclaim for struct pglist_data using a single bit.
+Hi!
 
-It is "locked" with a test_and_set_bit (similarly to a try lock) which
-provides full ordering with respect to loads and stores done within
-__node_reclaim().
+Much smaller this time because Ingo merged a whole lot of the preperatory
+patches, thanks!
 
-It is "unlocked" with clear_bit(), which does not provide any ordering
-with respect to loads and stores done before clearing the bit.
+This appears to survive a few hours of perf_fuzzer combined with tinypmu testcase.
 
-The lack of clear_bit() memory ordering with respect to stores within
-__node_reclaim() can cause a subsequent CPU to fail to observe stores
-from a prior node reclaim. This is not an issue in practice on TSO (e.g.
-x86), but it is an issue on weakly-ordered architectures (e.g. arm64).
+Patches also at:
 
-Fix this with following changes:
-
-A) Use clear_bit_unlock rather than clear_bit to clear PGDAT_RECLAIM_LOCKED
-   with a release memory ordering semantic.
-
-This provides stronger memory ordering (release rather than relaxed).
-
-B) Use test_and_set_bit_lock rather than test_and_set_bit to test-and-set
-   PGDAT_RECLAIM_LOCKED with an acquire memory ordering semantic.
-
-This changes the "lock" acquisition from a full barrier to an acquire
-memory ordering, which is weaker. The acquire semi-permeable barrier
-paired with the release on unlock is sufficient for this mutual
-exclusion use-case.
-
-Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>
-Cc: Andrea Parri <parri.andrea@gmail.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>
-Cc: Nicholas Piggin <npiggin@gmail.com>
-Cc: David Howells <dhowells@redhat.com>
-Cc: Jade Alglave <j.alglave@ucl.ac.uk>
-Cc: Luc Maranget <luc.maranget@inria.fr>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: linux-mm@kvack.org
----
- mm/vmscan.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index c22175120f5d..021b25bdba91 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -7567,11 +7567,11 @@ int node_reclaim(struct pglist_data *pgdat, gfp_t gfp_mask, unsigned int order)
- 	if (node_state(pgdat->node_id, N_CPU) && pgdat->node_id != numa_node_id())
- 		return NODE_RECLAIM_NOSCAN;
- 
--	if (test_and_set_bit(PGDAT_RECLAIM_LOCKED, &pgdat->flags))
-+	if (test_and_set_bit_lock(PGDAT_RECLAIM_LOCKED, &pgdat->flags))
- 		return NODE_RECLAIM_NOSCAN;
- 
- 	ret = __node_reclaim(pgdat, gfp_mask, order);
--	clear_bit(PGDAT_RECLAIM_LOCKED, &pgdat->flags);
-+	clear_bit_unlock(PGDAT_RECLAIM_LOCKED, &pgdat->flags);
- 
- 	if (ret)
- 		count_vm_event(PGSCAN_ZONE_RECLAIM_SUCCESS);
--- 
-2.25.1
+  git://git.kernel.org/pub/scm/linux/kernel/git/peterz/queue.git perf/pmu-unregister
 
 
