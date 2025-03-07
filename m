@@ -1,241 +1,292 @@
-Return-Path: <linux-kernel+bounces-550917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B541A565C2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:52:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B3D0A565CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:53:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 975F316CA91
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:52:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50AFC189933D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD6F211A35;
-	Fri,  7 Mar 2025 10:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A6920E71E;
+	Fri,  7 Mar 2025 10:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="RE0CEpYq"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="dQL/FHrR"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2070.outbound.protection.outlook.com [40.107.93.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7E6211A29
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 10:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741344737; cv=none; b=CfL75K0ocDLHNt1OaLnGeYXU7kF7BUEYTreJtivW5d5LZpS4isLbRJ3s3WzOmU9rrhLb1sUSkIFk8xnzK+QKEknFjL3+s4eainXxPAHu1psOvfGq+alLBEq4UgAX/8BzNvRcC547noO+n3UhilM9k61LeXDDpq9ZqChzS2g0j78=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741344737; c=relaxed/simple;
-	bh=UPiCGB7id3J1Lgv5V6c3KuQAx79xGzzqfArR+kR1p9s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MexTvN0lWvfWDTXD9n+fr89V6EuBNwZmJXgTQtJbl4ZPW4LzWcpIuGUYkzqNXb8c8J2cH4T31mJi9BbrX3VcQZNTApzgKQupW1200lgye7L2NsuuE08oyqZ4HUFoXG/1pyEyvMV0l2gNuCa12Sg9EajJRQqm84r8gL6jwmo0AtU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=RE0CEpYq; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30beef77634so7487861fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 02:52:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741344732; x=1741949532; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=43iEn7JI+JVfImukURZDy+wlnZTduIdMuwCwHiHb2L4=;
-        b=RE0CEpYqlv8/bp/HpxRm2R5y/7Itgyzq1j79ZmpZGp/tLrTN6svYbSDvNjQxvx0OLO
-         qEH9K9jBMqaTtN6LXUFpxo2OP/SOVQ/NpTAk7vtFjm2RMKVCDuWRIOlp6yBKXYPZtzuV
-         LMnUQ3D4puD0lddLoigvZspYoOb7RdPO/70i09/r/WuUvu/3l5uS7SKFVPBzjaiXx0Gs
-         epYZsWvoEKtzYVyAlsK5yoJj1N7CsFhhpf5JiCbZ6vEdYg17on4ZREs77/fAJWBRqQer
-         D+OzRjlkDrtrID9tViMZYMo85m0dqqdB9c1Uh4jlnVQbxkGhUYQWMrVg+/DfQ3RGeh2n
-         V6iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741344733; x=1741949533;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=43iEn7JI+JVfImukURZDy+wlnZTduIdMuwCwHiHb2L4=;
-        b=HTT/RdD0pAE1EHOaHq5uAvsqlpQFXS8QGIeFe3cH5hyTGyLrTKNbv6kE08mrixz8WN
-         txMIk11vxQ4wCZYqLO12jxEsjawc2Gg73oILN/M1ZHvrHZMZzbNoMF5byrixWkE3KH9e
-         j9VOjcu9wVy3ketMQ3nxc2L+wnc/J7O7kQbrPs8hk4qxtqCHnAsvF1KnB9xD4Ly6jYk9
-         YFa2GZSufKr6E9SATRZqUnKDEgaYYlSc9w7YsPGy2mgEQ1x83p3Va2mSjbJk804OWVM6
-         SUJeTarNOsGvrgVvc26wZF1C0K/gy+Z88LRCx38kWhnTRd5h07AE7osqez3rGaz0GA6z
-         rEBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcSXlRq/bJrjYDL3bUnLHyA21LUdGNb/DifaoiS4VFNbXMNuLoQVWMf6cIfn9f8HJKNuNlYoAdSI/1A8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvaMHQE+4FNA9oV6k8oJKQxuc2/X9luk6+1Xf1GfgTJCWjwYHs
-	8XKIbeLMNUIeTkjPUzVmQQjZxCMU8g4Yl3OwndqfkVKSH4SVbxK5tYjxAnTBih8mE0Ml+hwOttM
-	KekdKCRq7vLIa4caAHseuOmt5rZYVO6D+MIhN8w==
-X-Gm-Gg: ASbGncuTluCFg42RcZz3k6p/eiZUECccQeu6NqdDvIjGDRB6QPHZqwcUCGZHKnWRLc6
-	V84Wo0L5ohWCTzJ4KGHFvx1D50Gu9WrCw+t4rFcrWOFYhOXECJMwuK+9y5m13BPI2pOJKgR2rEz
-	DQ+gP5fSl2rI4sG2CcXpnG3hgYzg==
-X-Google-Smtp-Source: AGHT+IHB3kK56vH8JV6/mkLBm8uqvR7p6MJCGGVmcvlyTK2KPum07gwr4GAktMuyL3uRXkIC0qo1105z0ZQF6RQulRM=
-X-Received: by 2002:a05:651c:1546:b0:308:efa4:d277 with SMTP id
- 38308e7fff4ca-30bf451a693mr10523131fa.15.1741344732515; Fri, 07 Mar 2025
- 02:52:12 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03801502BE;
+	Fri,  7 Mar 2025 10:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741344771; cv=fail; b=DR3o6eXhOdhuOxS+KUyMuiWZBF5PHi2L5kxA5SpyfyzPcUNLxw4yYEzzjkxy6qCVv0vDqAqVNlBdllhcyQnag1NRKWjyeLD6g3TaAMaBO4lg7+Zmkl1aU9w8zuFYG25P6JK5SdL6nnzIJ0Kq2xOuD4bSPYT+xr0EuRMyUknVk/M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741344771; c=relaxed/simple;
+	bh=qbl8eq/qWz0y6YxlseM8bw10qPpR/4PCdBKIFxqcliA=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=t5zmHvkjQhLlnjGVM0DtPmXSAQhklPUKV5EFzHpMsaxSkLtiY9W3bTk2/Wu3y/MV07bD5fLUYywb0og7shfpE6SfrKOUYNJOFlWN4ay7yA/nCM3dZ7rs/xMeYLmV5BvgzoSDate349dERY50xlB6ObxvxYc0hjzo++cp+OGEwII=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=dQL/FHrR; arc=fail smtp.client-ip=40.107.93.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H51o6A/7bQ3xIAJr0dV5o/UbzkBFVn+Wezv1LynnHYUxWOoV3rtVFSQafKYemUwvFrM2iZxD1ybtqWyrQUexfYbTMrsQZJzgaH9kbGgfLxC2fDS87Bnf8wmxMzXx4dqsSyMb3E/uEGRt5SDuhoaIOp+1oy1AL+MaB/GSoVlqtTkIc3wRdGyn999novR0ngxxsKW8INnVbLOeZUP8vJQJzab9wsKDRW+WrzVNAtmXDN+gUMsoahBPAuhmsGdADKf8kOXBjpVB0HswV/gPaTSAQ8neuol+vDL5g2p5Qr01WwzKW/rHL9AzsNP/OBQevk2EQa6JgjZ+9DWf16wY/Ozr0w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4vUWoYBZOImRyYw4DsB8n/DHuNGiGYd77qF9WiHL0ng=;
+ b=fR+PDVs4ZTIlK7MtI55WKoOURJYoEf8aI703gu6AacNXPRPCyQ6DZGzMhBVvntA11/IETUa9VIQ4wE1HyNysdg58aoxgZWUAN17Jd/Jo5R+0k3ksfV68CNg5veBsWYsJFWcP+/I6C5YgwCNM05B3jMLaDMLgTGnPnrH0Z/XujLMMwl/EMDY0Bt9dkhgcx/n30Rf40KKnTpSM1jX+h8puMsaDe/A+8RsMe0RHHsnhVBeZE/BopMSCAYhd8rhMrNaqD20K2idI8SPqf7sX2Ij6oVgj3bjIFhMJOhhP2LN498xOLf+fQStFxSWZKHUf2dlfjMZ9cpMVRCK+oWBguQWcJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4vUWoYBZOImRyYw4DsB8n/DHuNGiGYd77qF9WiHL0ng=;
+ b=dQL/FHrRyXZsaTbC+TU7OxDsMgDI+GMKn3jSAHU8C6tJbOq4YTiXnAF03FS08qj/hoFr5ReNH/6reWgjR3OH8n26dpeKRmOgE0pjHpndv3HpZYYJFlrIkoeELRVY57qeRrfVARtFm2VDhIHXl58Dy//7k5FaCa5gCMZruKkDf/A=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from CH3PR12MB9194.namprd12.prod.outlook.com (2603:10b6:610:19f::7)
+ by IA0PR12MB8863.namprd12.prod.outlook.com (2603:10b6:208:488::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Fri, 7 Mar
+ 2025 10:52:47 +0000
+Received: from CH3PR12MB9194.namprd12.prod.outlook.com
+ ([fe80::53fb:bf76:727f:d00f]) by CH3PR12MB9194.namprd12.prod.outlook.com
+ ([fe80::53fb:bf76:727f:d00f%3]) with mapi id 15.20.8489.025; Fri, 7 Mar 2025
+ 10:52:47 +0000
+Message-ID: <d9d5a244-10c3-4e49-91d1-2b7de71bdd5c@amd.com>
+Date: Fri, 7 Mar 2025 21:52:36 +1100
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH 1/2] virt: sev-guest: Allocate request data dynamically
+Content-Language: en-US
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Tom Lendacky <thomas.lendacky@amd.com>, Nikunj A Dadhania <nikunj@amd.com>,
+ Ard Biesheuvel <ardb@kernel.org>, Pavan Kumar Paluri <papaluri@amd.com>,
+ Ashish Kalra <ashish.kalra@amd.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Michael Roth <michael.roth@amd.com>,
+ Kevin Loughlin <kevinloughlin@google.com>,
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ Brijesh Singh <brijesh.singh@amd.com>, Liam Merwick
+ <liam.merwick@oracle.com>, stable@vger.kernel.org, andreas.stuehrk@yaxi.tech
+References: <20250307013700.437505-1-aik@amd.com>
+ <20250307013700.437505-2-aik@amd.com>
+From: Alexey Kardashevskiy <aik@amd.com>
+In-Reply-To: <20250307013700.437505-2-aik@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MEWP282CA0193.AUSP282.PROD.OUTLOOK.COM
+ (2603:10c6:220:1d6::15) To CH3PR12MB9194.namprd12.prod.outlook.com
+ (2603:10b6:610:19f::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250306-iio-driver-ad4052-v1-0-2badad30116c@analog.com> <20250306-iio-driver-ad4052-v1-3-2badad30116c@analog.com>
-In-Reply-To: <20250306-iio-driver-ad4052-v1-3-2badad30116c@analog.com>
-From: David Lechner <dlechner@baylibre.com>
-Date: Fri, 7 Mar 2025 11:52:01 +0100
-X-Gm-Features: AQ5f1JoiUtEQ4jvbbzJp6JsM_Z5iT3lzE5Y0UsgAtaayiupCCfLSsOBfI0fpWNs
-Message-ID: <CAMknhBFiZZUtCkTjQ=AVSgwqe=wCkMnqAmaTqvW_X6fm1OKuYA@mail.gmail.com>
-Subject: Re: [PATCH 3/4] docs: iio: new docs for ad4052 driver
-To: Jorge Marques <jorge.marques@analog.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB9194:EE_|IA0PR12MB8863:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2f08ad79-6daa-4b5b-486b-08dd5d663246
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YkV6dm1LSXM5RldUQVdyQnRwUzI1N1h6c0FKQ25pYU1naU51dWtNRTlET2FB?=
+ =?utf-8?B?QVFUWnRHaksxcXVudEhGV0YwVWpqUWJpcnBiVTRmTHNjMzY4WFdlbzQyMlEx?=
+ =?utf-8?B?TTdJQnI5enRubDRETk4zQzVzN2lGdjhwQUJTZDQ4THhJaTNTZjlZTVZZRitF?=
+ =?utf-8?B?Vi85RXpFYU1BenM4MVdsQ05QdUphSTh3NVJ2cXY0TGlaS3VXT01GTmlVeEl1?=
+ =?utf-8?B?STEwN3M3dlJUQ2RTRStNU3FNZnl2ZUgrSjV3dnFPYnMrZ29UbmlNZ0VtTG9X?=
+ =?utf-8?B?N2V6Rkx2T2NSM0J1cWhnQ3lBR3lZV0pIWHc1YWRmRXFqay9WK3EvWXVvbEdX?=
+ =?utf-8?B?Tm5QdVpSbHJYcWg1K21oWlUzMm1IbHZrTlBXZjBVaFpOdEowYTVaNWYzMVB6?=
+ =?utf-8?B?Rmp3RTlONkNIMTErR2NQdEF0V1QyL0p2V09aL3hXY1dWMkt4am5GOGlYK2tj?=
+ =?utf-8?B?VCs5RHdOQ2k0UHdjbFFqbmNYT0tvbm91VGszdkE5TnJXZzlRbVlUZHhKNzZU?=
+ =?utf-8?B?ZTFMUloxU001NlpyWGxSclR3NVU2K3pUSE9qVXRrMFBBemJraVRBKzVrL0hj?=
+ =?utf-8?B?RkhrWG1oUGVNNU5zdDVieWhyTHBIcG92Z2kvZ3Qrc1VFZXJPbU1sMEpxcUxJ?=
+ =?utf-8?B?NnQ5RytlaXpSNmY2TmU3SGVyS3A1TWszMzRRUXlQZkNkRHZKNmFTZGE0L3BV?=
+ =?utf-8?B?RnJTV0pzM0t0SWtZamJOemVmM015dmN6UWtoNWJ6Z1VqMU9aU1MvT1FmbWlT?=
+ =?utf-8?B?cC8zazNqUEhXNk16MVNUNFZVSGtyd1daWUp5ajJ5R1VDZVdtSVNxUm1ZYlNh?=
+ =?utf-8?B?MktKa2JaMS93SDNkeFZ0VGgvbDNITXpmdFl5RkZWOVBRRmhhdGw1U2ZhdmZJ?=
+ =?utf-8?B?YkNBRkRhS0ZldzViUWl5Uk95K0Q3MTFieFR3c1RyeXZXcU5lUlpRUy9YdDRV?=
+ =?utf-8?B?VmNqVnFLTFlsa3h1eXYzaS9Eb0EvTjhjdERtUnZlUXJ6aUJNaHdXTDhFZitL?=
+ =?utf-8?B?UDFGbXBUdFhVSmRNa09BRFhMMFRDTWNONDVZSFFhV0NlaGtkampHOFZDT2Mz?=
+ =?utf-8?B?TXQ2TnJHdVhIZGJ6cHh4d2FJQUJtY1puZ04rY3djVjZQeUxjT0xjdEpaUHNK?=
+ =?utf-8?B?dlZKRm9pcE5mM3hLNGoxc2J4L2tpNXA3REVHNFJrVWh6eTVsVElZclQ0dEs5?=
+ =?utf-8?B?YjBxUDBRRkQvcEVTRk5OSkY3M2d1d2IyRzlNcTNVaGs1eHNBTUtpWjYzMkV6?=
+ =?utf-8?B?ZVFtMjl5a1hlRTRFU0RGb3grYTh5QWtSaDRkU2t3TTVYeXdTa2xIenV3SFEw?=
+ =?utf-8?B?VkQ0SWVYSGFJVE1vTVBUbTVBUXZLUGFBM0p3TmNNVm9HcERJZktZdTcwYmc3?=
+ =?utf-8?B?NlpXMHRabXFNSnhwK2hBdWxkNWZGZHkyNDhWOVltbmhXZ1hqQjRUZS9Jdm95?=
+ =?utf-8?B?bnpPRUZmZVlGKzFzSHhKTktxWXF0WHJ1ZDZqNFdOU09HTWJDMm41MzJwUFhu?=
+ =?utf-8?B?SWE0RzBWOVNucVV5VC92UjJDdFI1NVFNWk80Z3E0eGNlc0pHTEErcDlpL0tK?=
+ =?utf-8?B?L0tycHkwbnFSQ2FvOUkxdlhDMTNsL3IrWWoyV3pnQmZhc0ZIYjI2VG00ZzN1?=
+ =?utf-8?B?QU95SkVrbFhOUHdQSGkwT05DbkowaktUL1kwZzRuaFhRbEdPOEVQdmdGUXd4?=
+ =?utf-8?B?aEk4bGhVZEZFVWJMNHgzQ1RKaGRTSFdmV210dTdESkpEL2Ribzc2NCthdm1l?=
+ =?utf-8?B?MnNQVU93UUJKdVZWSk56Q0ExekQ4OGoyWVNJajhWRXdQSGlQY2tOWGlqMzBP?=
+ =?utf-8?B?RnZhYnRMQjZnQnh0OTV0RUcrQk1zVzM3Zk5QWUlFZllCTituNDZGMmFhQ2Js?=
+ =?utf-8?Q?f7k08hjM3MgRr?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB9194.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Sll5WXJoNmZ4Y0tSNVZJc0hUUUhybUVqd0N3Z1Z3NXAxUi90QmFoTTJ5SGJB?=
+ =?utf-8?B?Y0hTeUJYZ29ZRFVvZlorWlZYQVJ4dmFFNm1QY3RRbWV2Y0JMYm92WU1ZVkc5?=
+ =?utf-8?B?a2Vrc2dOTUU0WFIxTVlYZy81R0lKU0RhbnpyNFZKUEUzQ2NiOU9IeUY0Q25J?=
+ =?utf-8?B?dEsrYkkwNTBQQ3JWWGVBb0V5S1VqS3NjTDJTcmMrdXpTMnlBUWE5KzdhQmpz?=
+ =?utf-8?B?TnhobkozdnFSczdBRVR5bUpYS0pJN1FXWVpwSTljVFNEL3FtaFBLekZkMGt0?=
+ =?utf-8?B?QzdOT2tlQ21mMW10Z09jL0lzWlhkUEF3ek5ZdXRuVC82NkNrNkFtWWFTRllV?=
+ =?utf-8?B?aHcrU1QzUmYzaEx1aHZYdlhnWk1VVVRRcERVSUcyN0hkVFFINDU3MmxhU0s1?=
+ =?utf-8?B?WGhaQVNGTUpKN3QxNmdjYlhaaFUwb2RVUk1RQWZUVEJvbUVRNlRBUGVnb2pu?=
+ =?utf-8?B?RmNVYjc5TTFmdDdEY0dIMytUaVlNQ0JMNjlCdndaYlY2WXJVMC9td1pJVEJz?=
+ =?utf-8?B?S2U0S2lFVnJjUStOdkZtaENqU2xjQnlNcHVFQjFHcmJoZXZKTDBvWVIvU2xD?=
+ =?utf-8?B?VUVMcEVTMlF0eHJrbFVpL3V1eFRYRjdCZzFQS2svSGJobEpjL3NiTURnMFlN?=
+ =?utf-8?B?UlBKN3NUUFRUMWFnSUpjbGxQblBMUDc5aVNkWmVnbFkrTU5SUzAwQXg1NFZ4?=
+ =?utf-8?B?UjNBa09XY3ZLcys3eGFFejk2QVRnSjhhYWhISHMwMml2c2hsKzYwS3o3cjJ4?=
+ =?utf-8?B?Q0pGbEpWZitmbUZyckl4M3pxWE8xdVNvcW9IUlpyU1ZOMEU5MTIwWS9QUU1m?=
+ =?utf-8?B?NlNteENVeFBFeW1OY1h2TUNGa3NTajZ3M0w0Qm4wMUlteUZsaUpKZE9ZZmJm?=
+ =?utf-8?B?RnM3YzkvQjFSWUVBMjd3bWZDMjVxaFIydlMzV2dwdkRJeHd5TFR0elEyeVVI?=
+ =?utf-8?B?VjROZjBKQVcxUlBIcWZud3lmWnd1cDVDbkFjaUNwRUZYeXAzbWZ2UGovdWd2?=
+ =?utf-8?B?ejExL2ZiWkp2c2xCanFnTWNnOTJjSURGaWsxbEFVVmhIUnZuNkZjRW40eVRM?=
+ =?utf-8?B?NXJKUXZ6ZVZ4enV5Q085NWxBTzNtWi9oU2I3b2hSN2VLbEFtdDVsZ0JQUXlW?=
+ =?utf-8?B?OEtUZ3pJTTZEUUg5OVdnV3pYNXFrZEx0TGVaSHRuMmFDNFRMaFFTQllJMk0w?=
+ =?utf-8?B?dDdXK3lIWVlsVU5yUk9abHlXbGJHY2Y0WTF5VG5PajVwUlRGN2Q5NldIMnlk?=
+ =?utf-8?B?a2V1alBOOWpsaWdSU2lLQ1RxbU1MaW0rbTNBUVdNNGg4c1YrZVE3djV1aGdH?=
+ =?utf-8?B?WTdJV0NNNnowMXptaHpUUW4rWXdBV3dyU1N1TWVmZWhaMG1OaW8wMkxmZ3Zl?=
+ =?utf-8?B?SG9XRFVPbUZNdHN1Wm5OWHpCRnFyWFdLMURGWEJWLzJ3RnJKTFJVbnYySUVw?=
+ =?utf-8?B?QTF0Rk1RK1FxMStEendzZDRDaEVzSWZVZElhOEhjbFpBNEh4V1NjeFc2OTZS?=
+ =?utf-8?B?MFNzS3pEOHFLWGRQdFRHdUFadEF1TUxBU3IzZWYzRDRzN2FZNDdNSy9MNi95?=
+ =?utf-8?B?VXpiVTNBNVg3cnAwaG1vVDYvRUpZKzdGUVFSb3MxV3JMbFdMc0pncjJWVnVE?=
+ =?utf-8?B?NVh6Z0tzYklSYWIwYjdDQlZBekJMMUkyOU9tY2tqb2s0aWR4SDVKYWZVZDMy?=
+ =?utf-8?B?ZzZvSkNnNGZuQXZML2s0RTJVZGxFMlcxeEZmMjhsWkFkdlBpUmxMWlQvR01T?=
+ =?utf-8?B?cDF4eUZ6bUYxSm41bGR1YzM4TTFmOG9FTDRlUEtTZTNkMWVPaVdjZ1IzVlRz?=
+ =?utf-8?B?NUtTT1BNWlJITXJ6R2xRKzJVN3FFNGxsaGFxUmYwRzNMcXdISFNVeFZ6dnRR?=
+ =?utf-8?B?NWFmWVlvcWQ4MUFpQjFxSHpSVzc0VU9iUlI3cVRXcGxyTEdyMTd0cWMwWkhs?=
+ =?utf-8?B?SEhtMkxQT0Nod0duZzBWWnVWdmhuK3JsMzJlcWpnOU1vMzljZloyQkV0Uzhz?=
+ =?utf-8?B?cmRSVGQvbFdQajBTQ2ZGVEFPODFTQzF3aWxZQjdOaG82SmhlQTh2NXF0MkVR?=
+ =?utf-8?B?ektiUlRXaE1HUkNkS1Zmb3FkMFYybmpUOFNpUDBaZGlzRU5BNzJzcjFYYURk?=
+ =?utf-8?Q?sWH4FXu87P7lls+BRVFDn4jPh?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f08ad79-6daa-4b5b-486b-08dd5d663246
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB9194.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 10:52:47.1491
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3fgDjVepXwMWPzojAT4i5DFx2DdpRVsh9zzudUPpbOHCl9cJ6eSA0nJKA46v4l9/aJ4yy7EdJqun85pjD1YJjA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8863
 
-On Thu, Mar 6, 2025 at 3:04=E2=80=AFPM Jorge Marques <jorge.marques@analog.=
-com> wrote:
->
-> This adds a new page to document how to use the ad4052 ADC driver.
->
-> Signed-off-by: Jorge Marques <jorge.marques@analog.com>
+
+
+On 7/3/25 12:36, Alexey Kardashevskiy wrote:
+> From: Nikunj A Dadhania <nikunj@amd.com>
+> 
+> Commit ae596615d93d ("virt: sev-guest: Reduce the scope of SNP command
+> mutex") narrowed the command mutex scope to snp_send_guest_request.
+> However, GET_REPORT, GET_DERIVED_KEY, and GET_EXT_REPORT share the req
+> structure in snp_guest_dev. Without the mutex protection, concurrent
+> requests can overwrite each other's data. Fix it by dynamically allocating
+> the request structure.
+> 
+> Fixes: ae596615d93d ("virt: sev-guest: Reduce the scope of SNP command mutex")
+> Cc: stable@vger.kernel.org
+> Reported-by: andreas.stuehrk@yaxi.tech
+> Closes: https://github.com/AMDESE/AMDSEV/issues/265
+> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
+
+
+oh. forgot:
+
+Signed-off-by: Alexey Kardashevskiy <aik@amd.com>
+
+
+
+
 > ---
->  Documentation/iio/ad4052.rst | 93 ++++++++++++++++++++++++++++++++++++++=
-++++++
->  MAINTAINERS                  |  1 +
->  2 files changed, 94 insertions(+)
->
-> diff --git a/Documentation/iio/ad4052.rst b/Documentation/iio/ad4052.rst
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..cf0cbd60d0a48ea52f74ea02f=
-de659fcdba61aa1
-> --- /dev/null
-> +++ b/Documentation/iio/ad4052.rst
-> @@ -0,0 +1,93 @@
-> +.. SPDX-License-Identifier: GPL-2.0-only
+>   drivers/virt/coco/sev-guest/sev-guest.c | 24 ++++++++++++--------
+>   1 file changed, 15 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/virt/coco/sev-guest/sev-guest.c b/drivers/virt/coco/sev-guest/sev-guest.c
+> index ddec5677e247..4699fdc9ed44 100644
+> --- a/drivers/virt/coco/sev-guest/sev-guest.c
+> +++ b/drivers/virt/coco/sev-guest/sev-guest.c
+> @@ -39,12 +39,6 @@ struct snp_guest_dev {
+>   	struct miscdevice misc;
+>   
+>   	struct snp_msg_desc *msg_desc;
+> -
+> -	union {
+> -		struct snp_report_req report;
+> -		struct snp_derived_key_req derived_key;
+> -		struct snp_ext_report_req ext_report;
+> -	} req;
+>   };
+>   
+>   /*
+> @@ -72,7 +66,7 @@ struct snp_req_resp {
+>   
+>   static int get_report(struct snp_guest_dev *snp_dev, struct snp_guest_request_ioctl *arg)
+>   {
+> -	struct snp_report_req *report_req = &snp_dev->req.report;
+> +	struct snp_report_req *report_req __free(kfree) = NULL;
+>   	struct snp_msg_desc *mdesc = snp_dev->msg_desc;
+>   	struct snp_report_resp *report_resp;
+>   	struct snp_guest_req req = {};
+> @@ -81,6 +75,10 @@ static int get_report(struct snp_guest_dev *snp_dev, struct snp_guest_request_io
+>   	if (!arg->req_data || !arg->resp_data)
+>   		return -EINVAL;
+>   
+> +	report_req = kzalloc(sizeof(*report_req), GFP_KERNEL_ACCOUNT);
+> +	if (!report_req)
+> +		return -ENOMEM;
 > +
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +AD4052 driver
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>   	if (copy_from_user(report_req, (void __user *)arg->req_data, sizeof(*report_req)))
+>   		return -EFAULT;
+>   
+> @@ -117,7 +115,7 @@ static int get_report(struct snp_guest_dev *snp_dev, struct snp_guest_request_io
+>   
+>   static int get_derived_key(struct snp_guest_dev *snp_dev, struct snp_guest_request_ioctl *arg)
+>   {
+> -	struct snp_derived_key_req *derived_key_req = &snp_dev->req.derived_key;
+> +	struct snp_derived_key_req *derived_key_req __free(kfree) = NULL;
+>   	struct snp_derived_key_resp derived_key_resp = {0};
+>   	struct snp_msg_desc *mdesc = snp_dev->msg_desc;
+>   	struct snp_guest_req req = {};
+> @@ -137,6 +135,10 @@ static int get_derived_key(struct snp_guest_dev *snp_dev, struct snp_guest_reque
+>   	if (sizeof(buf) < resp_len)
+>   		return -ENOMEM;
+>   
+> +	derived_key_req = kzalloc(sizeof(*derived_key_req), GFP_KERNEL_ACCOUNT);
+> +	if (!derived_key_req)
+> +		return -ENOMEM;
 > +
-> +ADC driver for Analog Devices Inc. AD4052 and similar devices.
-> +The module name is ``ad4052``.
+>   	if (copy_from_user(derived_key_req, (void __user *)arg->req_data,
+>   			   sizeof(*derived_key_req)))
+>   		return -EFAULT;
+> @@ -169,7 +171,7 @@ static int get_ext_report(struct snp_guest_dev *snp_dev, struct snp_guest_reques
+>   			  struct snp_req_resp *io)
+>   
+>   {
+> -	struct snp_ext_report_req *report_req = &snp_dev->req.ext_report;
+> +	struct snp_ext_report_req *report_req __free(kfree) = NULL;
+>   	struct snp_msg_desc *mdesc = snp_dev->msg_desc;
+>   	struct snp_report_resp *report_resp;
+>   	struct snp_guest_req req = {};
+> @@ -179,6 +181,10 @@ static int get_ext_report(struct snp_guest_dev *snp_dev, struct snp_guest_reques
+>   	if (sockptr_is_null(io->req_data) || sockptr_is_null(io->resp_data))
+>   		return -EINVAL;
+>   
+> +	report_req = kzalloc(sizeof(*report_req), GFP_KERNEL_ACCOUNT);
+> +	if (!report_req)
+> +		return -ENOMEM;
 > +
-> +Supported devices
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +The following chips are supported by this driver:
-> +
-> +* `AD4050 <https://www.analog.com/AD4050>`_
-> +* `AD4052 <https://www.analog.com/AD4052>`_
-> +* `AD4056 <https://www.analog.com/AD4056>`_
-> +* `AD4058 <https://www.analog.com/AD4058>`_
-> +
-> +Wiring modes
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +The ADC uses SPI 4-wire mode, and contain two programmable GPIOs and
-> +a CNV pin.
-> +
-> +The CNV pin is exposed as the ``cnv-gpios`` and triggers a ADC conversio=
-n.
-> +GP1 is ADC conversion ready signal and GP0 Threshold event interrupt, bo=
-th
-> +exposed as interrupts.
-> +
-> +Omit ``cnv-gpios`` and tie CNV and CS together to use the rising edge
-> +of the CS as the CNV signal.
-> +
-> +Device attributes
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +The ADC contain only one channels, and the following attributes:
-> +
-> +.. list-table:: Driver attributes
-> +   :header-rows: 1
-> +
-> +   * - Attribute
-> +     - Description
-> +   * - ``in_voltage0_raw``
-> +     - Raw ADC voltage value
-> +   * - ``in_voltage0_oversampling_ratio``
-> +     - Enable the device's burst averaging mode to over sample using
-> +       the internal sample rate.
-> +   * - ``in_voltage0_oversampling_ratio_available``
-> +     - List of available oversampling values. Value 0 disable the burst
-> +       averaging mode.
-> +   * - ``sample_rate``
-> +     - Device internal sample rate used in the burst averaging mode.
-> +   * - ``sample_rate_available``
-> +     - List of available sample rates.
+>   	if (copy_from_sockptr(report_req, io->req_data, sizeof(*report_req)))
+>   		return -EFAULT;
+>   
 
-Why not using the standard sampling_frequency[_available] attributes?
+-- 
+Alexey
 
-> +
-> +Threshold events
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +The ADC supports a monitoring mode to raise threshold events.
-> +The driver supports a single interrupt for both rising and falling
-> +readings.
-> +
-> +During monitor mode, the device is busy since other transactions
-> +require to put the device in configuration mode first.
-
-This isn't so clear to me. Is this saying that events do not work
-while doing a buffered read? Do you need to do need to read the
-in_voltage0_raw input to trigger an event?
-
-> +
-> +Low-power mode
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +The device enters low-power mode on idle to save power.
-> +Enabling an event puts the device out of the low-power since the ADC
-> +autonomously samples to assert the event condition.
-> +
-> +SPI offload support
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +To be able to achieve the maximum sample rate, the driver can be used wi=
-th the
-> +`AXI SPI Engine`_ to provide SPI offload support.
-> +
-> +.. _AXI SPI Engine: http://analogdevicesinc.github.io/hdl/projects/ad405=
-2_ardz/index.html
-
-This diagram show a PWM connected to the CNV pin on the ADC, but I
-didn't see a pwms property in the DT bindings to describe this.
-
-> +
-> +When SPI offload is being used, additional attributes are present:
-> +
-> +.. list-table:: Additional attributes
-> +   :header-rows: 1
-> +
-> +   * - Attribute
-> +     - Description
-> +   * - ``in_voltage0_sampling_frequency``
-> +     - Set the sampling frequency.
-> +   * - ``in_voltage0_sampling_frequency_available``
-> +     - Get the sampling frequency range.
-> +
-> +The scan type is different when the buffer with offload support is enabl=
-ed.
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fef8adaee888d59e1aa3b3592dda5a8bea0b7677..312b2cf94b8f06298b1cbe597=
-5ee32e2cf9a74d8 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1322,6 +1322,7 @@ M:        Jorge Marques <jorge.marques@analog.com>
->  S:     Supported
->  W:     https://ez.analog.com/linux-software-drivers
->  F:     Documentation/devicetree/bindings/iio/adc/adi,ad4052.yaml
-> +F:     Documentation/iio/ad4052.rst
->
->  ANALOG DEVICES INC AD4130 DRIVER
->  M:     Cosmin Tanislav <cosmin.tanislav@analog.com>
->
-> --
-> 2.48.1
->
-
-I didn't have time to read the full datasheet or look at the driver
-code yet, but can do that next week.
 
