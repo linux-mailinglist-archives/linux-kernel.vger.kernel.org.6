@@ -1,273 +1,257 @@
-Return-Path: <linux-kernel+bounces-550537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF8CA560EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:35:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE9CA560F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:35:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C20131893332
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:35:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B71D73AC1C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:35:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEC0A19D08F;
-	Fri,  7 Mar 2025 06:34:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AE0E19E7ED;
+	Fri,  7 Mar 2025 06:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sKrDz/RK"
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GHdKuhXo"
 Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D21F3D6D;
-	Fri,  7 Mar 2025 06:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0E319CC0E;
+	Fri,  7 Mar 2025 06:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741329297; cv=none; b=TIiyV6EUZCqS2H61MiZQfJuPd1MwXo749P0yLWTpmC2Jg643ooB7lpdSSIs11hcD70pPGAim/dk7Mm74H/t7d3KawP3ijizOslN53yb6ttL49JNFeAMwwdGk/DI+6IcdyZqPI5KQO8Hz7diGjyTeP9Hq92L7KUALvM0LxqoAErc=
+	t=1741329325; cv=none; b=nta16nN/oEI+3FeI0cTe/f4dQSIa3fRaboraA/cqdTcL4S7kTKeIKg84guHEHaYcVUwMhGte7PEXXQIhoUZsDdd+l6j3PqzQrOUSP5AEJhYabLOtC8U83WCQ/1EcC0RYmUIbnyAsFCSW+XpWX/42y7qYmYI2of5cs9Zxj9g7Mj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741329297; c=relaxed/simple;
-	bh=7tFCBj0t+q7N6pp1MopSr0dJ891vRBAOpXnZ2pdThSk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mmb9uIZYmummw63RqYfd2C7ShS2OMcDoixsbfn5vpzvK/LkAG8FVx3axmF4bYMK0YpeV4R4w1V5F62/h2YAKL7QjyKXMlFfEc4ghQkrVycXmW/3xk6+WwREqEGnqOvJ6Ds0dK+7btalPegCOZIirbfXhZqxSOIb9KO4V9njQQ3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sKrDz/RK; arc=none smtp.client-ip=148.163.158.5
+	s=arc-20240116; t=1741329325; c=relaxed/simple;
+	bh=GYx5eaMgcMyVlORSNU0ESK5+cU+zv7MGm1Y6eXzB8yA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pxiO7LdmGhOAbWWIZg6O6jwgabRQaf07q/9Hy4p1wHCgKH2SqBJJHP5aPVIHRXgAmoKgLdEz030UOtuAWH3wGfpRi4dsA/gg6tnxRZ9+GJsW1sMl0yd5BLiZ3FXd1yuIYOXuXRTysu4Ajvkl9iWC2RQqSIZ4gjD0l1KKxGNnM5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GHdKuhXo; arc=none smtp.client-ip=148.163.158.5
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526KZjs4022133;
-	Fri, 7 Mar 2025 06:34:36 GMT
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526KpeKS011769;
+	Fri, 7 Mar 2025 06:34:38 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=z4aUnM4cVOQONzJ2q3GRhNlPZAUo9q
-	V2N1/iTW5LOTE=; b=sKrDz/RKcCd8KdtgEQCSdafhlvTdlW4CoqF/YMSQi5airM
-	bJV2GsirIx9+9lnu3FbJCBUOXOApK7YQ2gRJmO3nmO71F5LMy1P4s0+v0qwu3hQj
-	4lgHActYmJ5/qrnyIyndYyPCa5z9OOtu89lcL7ii06xblaFMO00x4MUGFIv+nlOP
-	pzG33m6tOP95/qn9qLaylgAZYTKXPOVHysj/FAQP79qOceMK+VLaJKiHq47QOuHg
-	SeCaPIKYLm123ih5NVFBXEUBxkwMfcp4sRZtjgahumqX0mw8F/Xk/dwa3p+t6vG5
-	5rJBno6PXkz0oCLiiYYEuXeBl7bInnJ+zFMscgBQ==
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=aZFszm
+	ZgUb3ZJkTR3TenzC+7WpiH8t/ykh1ucKiM1WU=; b=GHdKuhXozYiZU0py6nK8mN
+	yX8dpt/a3gCE6ITl5/ROF+X4SaWIEpM4jOlacok5vL78dLz/2I0w9sw8/Vhonlu4
+	IRe7RSH4/RNRebINctkOcG2tmy0W6446VtYrfv3UwBoM3T11pYwkskHKgxJnYfoK
+	4UqJc/+lhyqW3f1hCEMOjIg2VGX2UY76EEmGynoG7A8E9scKHrVmyROdX9ighF7z
+	s9l5jlRMRvSj+zhk1iTiGLkUlfnwTaSKyxwX/xQgK8bVoRlvpja9hH8+UmDInira
+	EExjLcYdR1MjiudfdAJvzQ+I1Hc8nnSElUjYHylEKdwVcvGmC/jtlYk/GLW105zA
+	==
 Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457jvpa4sw-1
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457k45a3gg-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 06:34:35 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5276UfI0006862;
-	Fri, 7 Mar 2025 06:34:35 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457jvpa4st-1
+	Fri, 07 Mar 2025 06:34:38 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5276YbwU021836;
+	Fri, 7 Mar 2025 06:34:37 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457k45a3ge-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 06:34:35 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5275lLrv013776;
-	Fri, 7 Mar 2025 06:34:34 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454e2m55mn-1
+	Fri, 07 Mar 2025 06:34:37 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5273rtdS025064;
+	Fri, 7 Mar 2025 06:34:37 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 454f92csce-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 06:34:34 +0000
+	Fri, 07 Mar 2025 06:34:36 +0000
 Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5276YWdj58851594
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5276YZVv50266528
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Mar 2025 06:34:32 GMT
+	Fri, 7 Mar 2025 06:34:35 GMT
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B7FEC2004B;
-	Fri,  7 Mar 2025 06:34:32 +0000 (GMT)
+	by IMSVA (Postfix) with ESMTP id 3FDF520043;
+	Fri,  7 Mar 2025 06:34:35 +0000 (GMT)
 Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 194E320043;
-	Fri,  7 Mar 2025 06:34:31 +0000 (GMT)
-Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.215.108])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	by IMSVA (Postfix) with ESMTP id D7C4820040;
 	Fri,  7 Mar 2025 06:34:30 +0000 (GMT)
-Date: Fri, 7 Mar 2025 12:04:26 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: Zhang Yi <yi.zhang@huaweicloud.com>
-Cc: Jan Kara <jack@suse.cz>, Baokun Li <libaokun1@huawei.com>,
-        linux-kernel@vger.kernel.org, Mahesh Kumar <maheshkumar657g@gmail.com>,
-        linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
-Subject: Re: [PATCH v2 2/3] ext4: avoid journaling sb update on error if
- journal is destroying
-Message-ID: <Z8qTciy49b7LSHqr@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
-References: <cover.1741270780.git.ojaswin@linux.ibm.com>
- <1bf59095d87e5dfae8f019385ba3ce58973baaff.1741270780.git.ojaswin@linux.ibm.com>
- <5b3864c3-bcfd-4f45-b427-224d32aca478@huaweicloud.com>
+Received: from [9.124.218.213] (unknown [9.124.218.213])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  7 Mar 2025 06:34:30 +0000 (GMT)
+Message-ID: <6894861a-4a40-4c6d-8f48-997b999f5778@linux.ibm.com>
+Date: Fri, 7 Mar 2025 12:04:29 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5b3864c3-bcfd-4f45-b427-224d32aca478@huaweicloud.com>
+User-Agent: Mozilla Thunderbird
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Subject: Re: [PATCH v2 2/8] sched/topology: Wrappers for sched_domains_mutex
+To: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+        Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>,
+        Qais Yousef <qyousef@layalina.io>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Swapnil Sapkal <swapnil.sapkal@amd.com>, Phil Auld <pauld@redhat.com>,
+        luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
+        Jon Hunter <jonathanh@nvidia.com>
+References: <20250306141016.268313-1-juri.lelli@redhat.com>
+ <20250306141016.268313-3-juri.lelli@redhat.com>
+Content-Language: en-US
+In-Reply-To: <20250306141016.268313-3-juri.lelli@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: F5IwWDNVtYslrRNU_Rtp0BohzsHmm5xH
-X-Proofpoint-GUID: UmpvnQmW9Lfrnv8R-J41R0zjgfSiyYjW
+X-Proofpoint-ORIG-GUID: 9Sd9Xp_ZckaXXH0fxocA9f18CdD3gSmL
+X-Proofpoint-GUID: tp0MwI61fGU-ugDMdJbuK1I1BdMfA5_m
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-07_02,2025-03-06_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 suspectscore=0 malwarescore=0 clxscore=1015 adultscore=0
- mlxscore=0 impostorscore=0 priorityscore=1501 phishscore=0 bulkscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ mlxlogscore=999 mlxscore=0 adultscore=0 clxscore=1015 impostorscore=0
+ priorityscore=1501 suspectscore=0 bulkscore=0 lowpriorityscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2502100000 definitions=main-2503070044
 
-On Fri, Mar 07, 2025 at 10:49:28AM +0800, Zhang Yi wrote:
-> On 2025/3/6 22:28, Ojaswin Mujoo wrote:
-> > Presently we always BUG_ON if trying to start a transaction on a journal marked
-> > with JBD2_UNMOUNT, since this should never happen. However, while ltp running
-> > stress tests, it was observed that in case of some error handling paths, it is
-> > possible for update_super_work to start a transaction after the journal is
-> > destroyed eg:
-> > 
-> > (umount)
-> > ext4_kill_sb
-> >   kill_block_super
-> >     generic_shutdown_super
-> >       sync_filesystem /* commits all txns */
-> >       evict_inodes
-> >         /* might start a new txn */
-> >       ext4_put_super
-> > 	flush_work(&sbi->s_sb_upd_work) /* flush the workqueue */
-> >         jbd2_journal_destroy
-> >           journal_kill_thread
-> >             journal->j_flags |= JBD2_UNMOUNT;
-> >           jbd2_journal_commit_transaction
-> >             jbd2_journal_get_descriptor_buffer
-> >               jbd2_journal_bmap
-> >                 ext4_journal_bmap
-> >                   ext4_map_blocks
-> >                     ...
-> >                     ext4_inode_error
-> >                       ext4_handle_error
-> >                         schedule_work(&sbi->s_sb_upd_work)
-> > 
-> >                                                /* work queue kicks in */
-> >                                                update_super_work
-> >                                                  jbd2_journal_start
-> >                                                    start_this_handle
-> >                                                      BUG_ON(journal->j_flags &
-> >                                                             JBD2_UNMOUNT)
-> > 
-> > Hence, introduce a new sbi flag s_journal_destroying to indicate journal is
-> > destroying only do a journaled (and deferred) update of sb if this flag is not
-> > set. Otherwise, just fallback to an un-journaled commit.
-> > 
-> > We set sbi->s_journal_destroying = true only after all the FS updates are done
-> > during ext4_put_super() (except a running transaction that will get commited
-> > during jbd2_journal_destroy()). After this point, it is safe to commit the sb
-> > outside the journal as it won't race with a journaled update (refer
-> > 2d01ddc86606).
-> > 
-> > Also, we don't need a similar check in ext4_grp_locked_error since it is only
-> > called from mballoc and AFAICT it would be always valid to schedule work here.
-> > 
-> > Fixes: 2d01ddc86606 ("ext4: save error info to sb through journal if available")
-> > Reported-by: Mahesh Kumar <maheshkumar657g@gmail.com>
-> > Suggested-by: Jan Kara <jack@suse.cz>
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > ---
-> >  fs/ext4/ext4.h      | 2 ++
-> >  fs/ext4/ext4_jbd2.h | 8 ++++++++
-> >  fs/ext4/super.c     | 4 +++-
-> >  3 files changed, 13 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
-> > index 2b7d781bfcad..d48e93bd5690 100644
-> > --- a/fs/ext4/ext4.h
-> > +++ b/fs/ext4/ext4.h
-> > @@ -1728,6 +1728,8 @@ struct ext4_sb_info {
-> >  	 */
-> >  	struct work_struct s_sb_upd_work;
-> >  
-> > +	bool s_journal_destorying;
-> > +
-> >  	/* Atomic write unit values in bytes */
-> >  	unsigned int s_awu_min;
-> >  	unsigned int s_awu_max;
-> > diff --git a/fs/ext4/ext4_jbd2.h b/fs/ext4/ext4_jbd2.h
-> > index 9b3c9df02a39..6bd3ca84410d 100644
-> > --- a/fs/ext4/ext4_jbd2.h
-> > +++ b/fs/ext4/ext4_jbd2.h
-> > @@ -437,6 +437,14 @@ static inline int ext4_journal_destroy(struct ext4_sb_info *sbi, journal_t *jour
-> >  {
-> >  	int err = 0;
-> >  
-> > +	/*
-> > +	 * At this point all pending FS updates should be done except a possible
-> > +	 * running transaction (which will commit in jbd2_journal_destroy). It
-> > +	 * is now safe for any new errors to directly commit superblock rather
-> > +	 * than going via journal.
-> > +	 */
-> > +	sbi->s_journal_destorying = true;
-> > +
-> 
-> Hi, Ojaswin!
-> 
-> I'm afraid you still need to flush the superblock update work here,
-> otherwise I guess the race condition you mentioned in v1 could still
-> occur.
-> 
->  ext4_put_super()
->   flush_work(&sbi->s_sb_upd_work)
-> 
->                     **kjournald2**
->                     jbd2_journal_commit_transaction()
->                     ...
->                     ext4_inode_error()
->                       /* JBD2_UNMOUNT not set */
->                       schedule_work(s_sb_upd_work)
-> 
->                                   **workqueue**
->                                    update_super_work
->                                    /* s_journal_destorying is not set */
->                             	   if (journal && !s_journal_destorying)
-> 
->   ext4_journal_destroy()
->    /* set s_journal_destorying */
->    sbi->s_journal_destorying = true;
->    jbd2_journal_destroy()
->     journal->j_flags |= JBD2_UNMOUNT;
-> 
->                                        jbd2_journal_start()
->                                         start_this_handle()
->                                           BUG_ON(JBD2_UNMOUNT)
-> 
-> Thanks,
-> Yi.
-Hi Yi,
+Hi Juri.
 
-Yes you are right, somehow missed this edge case :(
-
-Alright then, we have to move out sbi->s_journal_destroying outside the
-helper. Just wondering if I should still let it be in
-ext4_journal_destroy and just add an extra s_journal_destroying = false
-before schedule_work(s_sb_upd_work), because it makes sense.
-
-Okay let me give it some thought but thanks for pointing this out!
-
-Regards,
-ojaswin
-
+On 3/6/25 19:40, Juri Lelli wrote:
+> Create wrappers for sched_domains_mutex so that it can transparently be
+> used on both CONFIG_SMP and !CONFIG_SMP, as some function will need to
+> do.
 > 
-> >  	err = jbd2_journal_destroy(journal);
-> >  	sbi->s_journal = NULL;
-> >  
-> > diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-> > index 8ad664d47806..31552cf0519a 100644
-> > --- a/fs/ext4/super.c
-> > +++ b/fs/ext4/super.c
-> > @@ -706,7 +706,7 @@ static void ext4_handle_error(struct super_block *sb, bool force_ro, int error,
-> >  		 * constraints, it may not be safe to do it right here so we
-> >  		 * defer superblock flushing to a workqueue.
-> >  		 */
-> > -		if (continue_fs && journal)
-> > +		if (continue_fs && journal && !EXT4_SB(sb)->s_journal_destorying)
-> >  			schedule_work(&EXT4_SB(sb)->s_sb_upd_work);
-> >  		else
-> >  			ext4_commit_super(sb);
-> > @@ -5311,6 +5311,8 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
-> >  	spin_lock_init(&sbi->s_error_lock);
-> >  	INIT_WORK(&sbi->s_sb_upd_work, update_super_work);
-> >  
-> > +	sbi->s_journal_destorying = false;
-> > +
-> >  	err = ext4_group_desc_init(sb, es, logical_sb_block, &first_not_zeroed);
-> >  	if (err)
-> >  		goto failed_mount3;
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Fixes: 53916d5fd3c0 ("sched/deadline: Check bandwidth overflow earlier for hotplug")
+> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+> ---
+> v1 -> v2: Remove wrappers for the !SMP case as all users are not defined
+>            either in that case
+> ---
+>   include/linux/sched.h   |  2 ++
+>   kernel/cgroup/cpuset.c  |  4 ++--
+>   kernel/sched/core.c     |  4 ++--
+>   kernel/sched/debug.c    |  8 ++++----
+>   kernel/sched/topology.c | 12 ++++++++++--
+>   5 files changed, 20 insertions(+), 10 deletions(-)
 > 
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 9632e3318e0d..d5f8c161d852 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -383,6 +383,8 @@ enum uclamp_id {
+>   extern struct root_domain def_root_domain;
+>   extern struct mutex sched_domains_mutex;
+>   #endif
+> +extern void sched_domains_mutex_lock(void);
+> +extern void sched_domains_mutex_unlock(void);
+>   
+>   struct sched_param {
+>   	int sched_priority;
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index 0f910c828973..f87526edb2a4 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -994,10 +994,10 @@ static void
+>   partition_and_rebuild_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+>   				    struct sched_domain_attr *dattr_new)
+>   {
+> -	mutex_lock(&sched_domains_mutex);
+> +	sched_domains_mutex_lock();
+>   	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
+>   	dl_rebuild_rd_accounting();
+> -	mutex_unlock(&sched_domains_mutex);
+> +	sched_domains_mutex_unlock();
+>   }
+>   
+>   /*
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 67189907214d..58593f4d09a1 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -8424,9 +8424,9 @@ void __init sched_init_smp(void)
+>   	 * CPU masks are stable and all blatant races in the below code cannot
+>   	 * happen.
+>   	 */
+> -	mutex_lock(&sched_domains_mutex);
+> +	sched_domains_mutex_lock();
+>   	sched_init_domains(cpu_active_mask);
+> -	mutex_unlock(&sched_domains_mutex);
+> +	sched_domains_mutex_unlock();
+>   
+>   	/* Move init over to a non-isolated CPU */
+>   	if (set_cpus_allowed_ptr(current, housekeeping_cpumask(HK_TYPE_DOMAIN)) < 0)
+> diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
+> index ef047add7f9e..a0893a483d35 100644
+> --- a/kernel/sched/debug.c
+> +++ b/kernel/sched/debug.c
+> @@ -292,7 +292,7 @@ static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
+>   	bool orig;
+>   
+>   	cpus_read_lock();
+> -	mutex_lock(&sched_domains_mutex);
+> +	sched_domains_mutex_lock();
+>   
+>   	orig = sched_debug_verbose;
+>   	result = debugfs_write_file_bool(filp, ubuf, cnt, ppos);
+> @@ -304,7 +304,7 @@ static ssize_t sched_verbose_write(struct file *filp, const char __user *ubuf,
+>   		sd_dentry = NULL;
+>   	}
+>   
+> -	mutex_unlock(&sched_domains_mutex);
+> +	sched_domains_mutex_unlock();
+>   	cpus_read_unlock();
+>   
+>   	return result;
+> @@ -515,9 +515,9 @@ static __init int sched_init_debug(void)
+>   	debugfs_create_u32("migration_cost_ns", 0644, debugfs_sched, &sysctl_sched_migration_cost);
+>   	debugfs_create_u32("nr_migrate", 0644, debugfs_sched, &sysctl_sched_nr_migrate);
+>   
+> -	mutex_lock(&sched_domains_mutex);
+> +	sched_domains_mutex_lock();
+>   	update_sched_domain_debugfs();
+> -	mutex_unlock(&sched_domains_mutex);
+> +	sched_domains_mutex_unlock();
+>   #endif
+>   
+>   #ifdef CONFIG_NUMA_BALANCING
+> diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+> index c49aea8c1025..296ff2acfd32 100644
+> --- a/kernel/sched/topology.c
+> +++ b/kernel/sched/topology.c
+> @@ -6,6 +6,14 @@
+>   #include <linux/bsearch.h>
+>   
+>   DEFINE_MUTEX(sched_domains_mutex);
+> +void sched_domains_mutex_lock(void)
+> +{
+> +	mutex_lock(&sched_domains_mutex);
+> +}
+> +void sched_domains_mutex_unlock(void)
+> +{
+> +	mutex_unlock(&sched_domains_mutex);
+> +}
+>   
+>   /* Protected by sched_domains_mutex: */
+>   static cpumask_var_t sched_domains_tmpmask;
+> @@ -2791,7 +2799,7 @@ void partition_sched_domains_locked(int ndoms_new, cpumask_var_t doms_new[],
+>   void partition_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
+>   			     struct sched_domain_attr *dattr_new)
+>   {
+> -	mutex_lock(&sched_domains_mutex);
+> +	sched_domains_mutex_lock();
+>   	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
+> -	mutex_unlock(&sched_domains_mutex);
+> +	sched_domains_mutex_unlock();
+>   }
+
+Maybe sched_domains_mutex can be static since its only used in topology.c ?
+
+Other than the above
+Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
 
