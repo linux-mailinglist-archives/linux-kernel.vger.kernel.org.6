@@ -1,108 +1,221 @@
-Return-Path: <linux-kernel+bounces-550485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5C51A56029
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:43:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B675A56034
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:44:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFBFF3B3167
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:42:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFAD83B360C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF8E193409;
-	Fri,  7 Mar 2025 05:43:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1C919580F;
+	Fri,  7 Mar 2025 05:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="la4OyzAA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="D+5xGKdN"
+Received: from out199-8.us.a.mail.aliyun.com (out199-8.us.a.mail.aliyun.com [47.90.199.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213CA15B54C;
-	Fri,  7 Mar 2025 05:43:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0752192B81;
+	Fri,  7 Mar 2025 05:44:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741326181; cv=none; b=QkGvwBoC6cw5u09PbV3cecs44evsAZ8eGi+nYR/MNp3PjQ3jkXpjBYCl3nG4m+CLrW8MJSnOdATnokvdrGe2mFBGazqrpcJuRPtChG/RRchhNPUY2aPZEpLfdgUVDbN56d1y16lwfgg3FBTnKcvUcRBrdOHAk31C1jwh8veNl4o=
+	t=1741326269; cv=none; b=cGfqpK5qSpHhoI/tdOXMT6Gq1OZ83FZ81KtKZ9DRCEI5dU4daThgAOZgL7w75tCZKO+d90qArj2wIPB8Wu3YObDn95xX9mYr9gweUf4qiKKxuKTxO/q3WzRrYbnpqunotsStkV+CaHrH6riofBQ6iJcS/Ik7bCP9o37ylFlKVTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741326181; c=relaxed/simple;
-	bh=d6P3+GeoANuNR+y6EWdLUIcEG+o+je61v4CL1BkvFVc=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=S+D7pQs7RStrDn/MNjPgGU44f1mQZbOZ2m3Vvdo262m+PLjCLwxg7NSmGWXGYAiu882iFjsnji3ZnuEiWbniZ1PtMYzdtcI2SamDUDvQOaQiPb5tWDkOaVt20dfAIdvulp46u6VTFIDrZp3dTV/KzsURnsO8BnGlWFmVPan2NQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=la4OyzAA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A4E4C4CEE2;
-	Fri,  7 Mar 2025 05:43:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741326180;
-	bh=d6P3+GeoANuNR+y6EWdLUIcEG+o+je61v4CL1BkvFVc=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=la4OyzAAvaX0xU8H4oPoH4tX6uTSOfYArgPd+EM3TMX6vSxx0dnHyzdAQ3l+Tg00q
-	 riJthLtqHIZltVkxfeUfgLMip24vlO2xaYtIjliAXl8OiwElCwKOV86NYjOYMkZ0kx
-	 4V9Kc/uyKiZNnd4oWNk0HDq8/3v45oypwVJJQeNVuu2CH3R3Iv2C2jc7qlBbdL85Ao
-	 ve/xV/8+EZeFsRhM3/Efl23U32cU38MyJ3igzIdUyslM+O7oOfWa6NaBW+3kVtQ0TN
-	 yo23R7NWCa+trDtUtxKXqBmfzKqVVMWVEQG0Nh8Iw8pXja46OiNu6KReR2VIXpez5C
-	 irF8AcJHYda0Q==
-Date: Thu, 06 Mar 2025 23:42:58 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1741326269; c=relaxed/simple;
+	bh=yXnROeWdVkdZ6a/ZcyHCFNldlCOsNtasLoVeFiGHuXY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fETzz3JvmzWMFrDKnab2KfwEC2KpYqGV0jRz2o5cFTcP+0yNK5sXiBOV3lCpH+IJArWTVFs8/vrykqUs7w02vWVNNS5fL7Gk9ZQDKvBAp9ksLqKfEgM4m4dIkBrZ9rzGuT+C7jU/BReo9ul3FQmPvz3UnVKC6k+KMVsrUH2SWts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=D+5xGKdN; arc=none smtp.client-ip=47.90.199.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1741326248; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=m8mTAaekKYGlBWk1X9tvWoctARjdc8dOZZ3LVeDO+eg=;
+	b=D+5xGKdN4rLjukIQWsPe+5kv+6ksPwuYRcKXh6NWHLhFobgRIdonYsYhQTMHRVJL6qhkTn71WtvNwD63jZ4ynuQq0KaUq2N0XO88l52gsQYgIbGLnvtbHyKWNM6e1LTJ8GUDTiJfeCsFMx+dnneju/OCdS20IzAkIf+SgtdselM=
+Received: from localhost.localdomain(mailfrom:xueshuai@linux.alibaba.com fp:SMTPD_---0WQr2xA5_1741326245 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 07 Mar 2025 13:44:06 +0800
+From: Shuai Xue <xueshuai@linux.alibaba.com>
+To: tony.luck@intel.com,
+	bp@alien8.de,
+	peterz@infradead.org,
+	catalin.marinas@arm.com,
+	yazen.ghannam@amd.com,
+	akpm@linux-foundation.org,
+	linmiaohe@huawei.com,
+	nao.horiguchi@gmail.com
+Cc: tglx@linutronix.de,
+	mingo@redhat.com,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	jpoimboe@kernel.org,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	baolin.wang@linux.alibaba.com,
+	tianruidong@linux.alibaba.com,
+	xueshuai@linux.alibaba.com
+Subject: [PATCH v4 0/3] mm/hwpoison: Fix regressions in memory failure handling
+Date: Fri,  7 Mar 2025 13:44:01 +0800
+Message-ID: <20250307054404.73877-1-xueshuai@linux.alibaba.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- Project_Global_Chrome_Upstream_Group@mediatek.com, 
- Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- devicetree@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
-To: Guangjie Song <guangjie.song@mediatek.com>
-In-Reply-To: <20250307034454.12243-13-guangjie.song@mediatek.com>
-References: <20250307034454.12243-1-guangjie.song@mediatek.com>
- <20250307034454.12243-13-guangjie.song@mediatek.com>
-Message-Id: <174132617868.2934304.16819918690236058573.robh@kernel.org>
-Subject: Re: [PATCH 12/13] dt-bindings: power: mediatek: Add new MT8196
- power domain
+Content-Transfer-Encoding: 8bit
+
+changes since v3:
+- drop the out-date version per Tony
+
+changes since v2:
+- drop debug error message for non-fatal case per Borislav's strong objections
+- rewrite cover letter by amending MCE and CMCI race background from Tony[1]
+- rewrite commit log
+- use is_copy_from_user() to determine copy-from-user context per Peter
+- keep comments of in kill_me_maybe() per Catalin 
+- add ack-by tag for patch 3 from Miaohe Lin
+- Link: https://lore.kernel.org/lkml/20250217063335.22257-1-xueshuai@linux.alibaba.com/T/#m4d87f152a67e26f2aabb4cdf81e451a1e4c70094
+
+changes singce v1:
+- Patch 1: Fix cur_sev and sev type to `int` per Tony
+- Patch 4: Fix return value to 0 for clean pages per Miaohe
+- Patch 5: pick return value comments of memory-failure()
+
+## 1. What am I trying to do:
+
+This patch resolves two critical regressions related to memory failure
+handling that have appeared in the upstream kernel since version 5.17, as
+compared to 5.10 LTS.
+
+    - copyin case: poison found in user page while kernel copying from user space
+    - instr case: poison found while instruction fetching in user space
+
+## 2. What is the expected outcome and why
+
+- For copyin case:
+
+Kernel can recover from poison found where kernel is doing get_user() or
+copy_from_user() if those places get an error return and the kernel return
+-EFAULT to the process instead of crashing. More specifily, MCE handler
+checks the fixup handler type to decide whether an in kernel #MC can be
+recovered.  When EX_TYPE_UACCESS is found, the PC jumps to recovery code
+specified in _ASM_EXTABLE_FAULT() and return a -EFAULT to user space.
+
+- For instr case:
+
+If a poison found while instruction fetching in user space, full recovery is
+possible. User process takes #PF, Linux allocates a new page and fills by
+reading from storage.
 
 
-On Fri, 07 Mar 2025 11:44:36 +0800, Guangjie Song wrote:
-> Add the binding documentation for power domain on MediaTek MT8196.
-> 
-> Signed-off-by: Guangjie Song <guangjie.song@mediatek.com>
-> ---
->  .../mediatek,mt8196-power-controller.yaml     | 74 +++++++++++++++++++
->  include/dt-bindings/power/mt8196-power.h      | 57 ++++++++++++++
->  2 files changed, 131 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/mediatek,mt8196-power-controller.yaml
->  create mode 100644 include/dt-bindings/power/mt8196-power.h
-> 
+## 3. What actually happens and why
 
-My bot found errors running 'make dt_binding_check' on your patch:
+- For copyin case: kernel panic since v5.17
 
-yamllint warnings/errors:
+Commit 4c132d1d844a ("x86/futex: Remove .fixup usage") introduced a new extable
+fixup type, EX_TYPE_EFAULT_REG, and later patches updated the extable fixup
+type for copy-from-user operations, changing it from EX_TYPE_UACCESS to
+EX_TYPE_EFAULT_REG. It breaks previous EX_TYPE_UACCESS handling when posion
+found in get_user() or copy_from_user().
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/mediatek,mt8196-power-controller.example.dtb: power-controller@1c004000: compatible: ['mediatek,mt8196-scpsys', 'syscon'] is too long
-	from schema $id: http://devicetree.org/schemas/power/mediatek,mt8196-power-controller.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/mediatek,mt8196-power-controller.example.dtb: power-controller@1c004000: reg: [[0, 469778432], [0, 4096]] is too long
-	from schema $id: http://devicetree.org/schemas/mfd/syscon-common.yaml#
+- For instr case: user process is killed by a SIGBUS signal due to #CMCI and #MCE race
 
-doc reference errors (make refcheckdocs):
+When an uncorrected memory error is consumed there is a race between the
+CMCI from the memory controller reporting an uncorrected error with a UCNA
+signature, and the core reporting and SRAR signature machine check when the
+data is about to be consumed.
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250307034454.12243-13-guangjie.song@mediatek.com
+### Background: why *UN*corrected errors tied to *C*MCI in Intel platform [1]
 
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
+Prior to Icelake memory controllers reported patrol scrub events that
+detected a previously unseen uncorrected error in memory by signaling a
+broadcast machine check with an SRAO (Software Recoverable Action Optional)
+signature in the machine check bank. This was overkill because it's not an
+urgent problem that no core is on the verge of consuming that bad data.
+It's also found that multi SRAO UCE may cause nested MCE interrupts and
+finally become an IERR.
 
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
+Hence, Intel downgrades the machine check bank signature of patrol
+scrub from SRAO to UCNA (Uncorrected, No Action required), and signal
+changed to #CMCI. Just to add to the confusion, Linux does take an action
+(in uc_decode_notifier()) to try to offline the page despite the UC*NA*
+signature name.
 
-pip3 install dtschema --upgrade
+### Background: why #CMCI and #MCE race when poison is consuming in Intel platform [1]
 
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Having decided that CMCI/UCNA is the best action for patrol scrub errors,
+the memory controller uses it for reads too. But the memory controller is
+executing asynchronously from the core, and can't tell the difference
+between a "real" read and a speculative read. So it will do CMCI/UCNA if an
+error is found in any read.
+
+Thus:
+
+1) Core is clever and thinks address A is needed soon, issues a speculative read.
+2) Core finds it is going to use address A soon after sending the read request
+3) The CMCI from the memory controller is in a race with MCE from the core
+   that will soon try to retire the load from address A.
+
+Quite often (because speculation has got better) the CMCI from the memory
+controller is delivered before the core is committed to the instruction
+reading address A, so the interrupt is taken, and Linux offlines the page
+(marking it as poison).
+
+
+## Why user process is killed for instr case
+
+Commit 046545a661af ("mm/hwpoison: fix error page recovered but reported
+"not recovered"") tries to fix noise message "Memory error not recovered"
+and skips duplicate SIGBUSs due to the race. But it also introduced a bug
+that kill_accessing_process() return -EHWPOISON for instr case, as result,
+kill_me_maybe() send a SIGBUS to user process.
+
+# 4. The fix, in my opinion, should be:
+
+- For copyin case:
+
+The key point is whether the error context is in a read from user
+memory. We do not care about the ex-type if we know its a MOV
+reading from userspace.
+
+is_copy_from_user() return true when both of the following two checks are
+true:
+
+    - the current instruction is copy
+    - source address is user memory
+
+If copy_user is true, we set
+
+m->kflags |= MCE_IN_KERNEL_COPYIN | MCE_IN_KERNEL_RECOV;
+
+Then do_machine_check() will try fixup_exception() first.
+
+- For instr case: let kill_accessing_process() return 0 to prevent a SIGBUS.
+
+- For patch 3:
+
+The return value of memory_failure() is quite important while discussed
+instr case regression with Tony and Miaohe for patch 4, so add comment
+about the return value.
+
+Shuai Xue (3):
+  x86/mce: Use is_copy_from_user() to determine copy-from-user context
+  mm/hwpoison: Do not send SIGBUS to processes with recovered clean
+    pages
+  mm: memory-failure: Enhance comments for return value of
+    memory_failure()
+
+ arch/x86/kernel/cpu/mce/severity.c | 11 +++++------
+ mm/memory-failure.c                | 21 +++++++++++++++------
+ 2 files changed, 20 insertions(+), 12 deletions(-)
+
+-- 
+2.39.3
 
 
