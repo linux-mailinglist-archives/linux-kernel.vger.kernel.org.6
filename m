@@ -1,454 +1,220 @@
-Return-Path: <linux-kernel+bounces-550739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA94A5637F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:19:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06909A56371
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:18:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A38803B2FEC
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:19:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57AA718913F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8345720C009;
-	Fri,  7 Mar 2025 09:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF101FECC6;
+	Fri,  7 Mar 2025 09:18:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oyxt9znU"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=sandisk.com header.i=@sandisk.com header.b="WplqucfC"
+Received: from esa6.hgst.iphmx.com (esa6.hgst.iphmx.com [216.71.154.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6AAE206F2E;
-	Fri,  7 Mar 2025 09:18:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741339126; cv=none; b=Ci0nTgkRn1+BVFOdgwYE0eYOUwiB5podkAorJnN5ueJd7DBJIhB130kBGJEOZCQw2KENRH6Qzy7GfSzJGuX3JrrV40TBQtReO243hueyxFAul8mB+/7ZROWg62gdGl/PcDC8VUDnSgWBwPe3+QsSdh5+lZyg2q/C6rPMI3T9msU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741339126; c=relaxed/simple;
-	bh=WiVGVURCwI59ZZpRv4lQ3RvtVW+4KnPUpk3X086V73I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gLmeY/FJvN3qxK34pfWyesBHyJHgKLwYkoZ9N3BU0sY7QcxF/5hzki/hSq+U8bg9OD6KwQ3K+WjX6F8Z144Kdv6aGMGFup1+hFuZMFJ7wwoq7Sbfk2zCCr4Oufl35c81aS1im9KigSFPs/JeqQbt5QPuX9FUqiBlfRjqudxL1Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oyxt9znU; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id AA64D4333B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C78E1C2335;
 	Fri,  7 Mar 2025 09:18:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741339115;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2I/L0b8WRRA39r/oQ0k4hUAzOD54s2lqxNL13m3ECtw=;
-	b=oyxt9znU/D4uA8JeY1+pTTSAAD8l2q3RMR4syxfIcsXvtVj9/iehZS1E/ZDFQLaWa5jsZF
-	ANvPK/HAjIo85+pXKaIc96m1Kz8lYm8aVa+zuGsbAcOToAFR7GlKlam63UJpQBTIvBzvc4
-	Q+KtnKlNI4+eivlzxjARVjbLhQff1wNfdGQeswQn01tUde/rL+w6m/RYMnJbEXctm/RQST
-	U70UGDcnzikw6SWkylBDxGtyh3R/xaCz4LiD+qz9VNSE2M0p9lGxeASBLNGmHhC8/WlbTO
-	kylllH8Y9gZzDfHqY4VDeo0UtWiQhAw9jJxeU+qh/upOzp/0QnWTmNWP2uIW7Q==
-From: "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-Date: Fri, 07 Mar 2025 10:18:24 +0100
-Subject: [PATCH bpf-next 2/2] selftests/bpf: lwt_seg6local: Move test to
- test_progs
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=216.71.154.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741339116; cv=fail; b=MvG3lArhFtHAKrfJ6ZKrTF4SPZc+tNbJFzuIOQk+aR3ukqUzukQYhpUQQuTlFq9bMGIze5PRu4byyIjy8LhQRSy6lkXE6/pjwhUBVpSSwQM4lRPeBNHC3Z9BTwHZCLLlIXcuC8JTWMGwxGGSD7OgggXXx0aZsuXSltLNpaQjohI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741339116; c=relaxed/simple;
+	bh=PYEAiyzJvZ+gQlf32GDS7vNPw/nuCN7AixgTqxfDoeM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=iOYUvrTIwRRR/rh0k8OfPXunaDRoTRe1V87Bgcn5QYtJ25aqfoLzIt7/sOnu5izPIS1eT1o9ir0SmLA7Sxwqiu6HVZNEWmIlO2eBSZ51aoa8AHP1OJEreIlq/ueNstgWeZzeUO1gWeKR4BdYhGYD+sYBDMrMK0tuKxAeNYNbSOk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sandisk.com; spf=pass smtp.mailfrom=sandisk.com; dkim=pass (2048-bit key) header.d=sandisk.com header.i=@sandisk.com header.b=WplqucfC; arc=fail smtp.client-ip=216.71.154.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=sandisk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sandisk.com
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=sandisk.com; i=@sandisk.com; q=dns/txt;
+  s=dkim.sandisk.com; t=1741339114; x=1772875114;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=PYEAiyzJvZ+gQlf32GDS7vNPw/nuCN7AixgTqxfDoeM=;
+  b=WplqucfCNA5Gz47D9SeBrQBuys7pEeLnBJUm4Pqulr4uoxlEg8HglR1Z
+   tz2VXmsn6E15ikVAjoIwjjLsJjhw0A6iH16cPdxGruO1xsF7TzUqvcktr
+   pFMe1O8EC+7YmnG4YIBK7YdP2iQ7f/2WVlqxKHG5LsylwzE55Z8zaPGVs
+   s2Ou82h1fF3Flk2SgrByjP1ixMKSVjPTVnnfOVAWsmolJIm9+gCJQM691
+   6cWk/sDvSBp2Wjt5EATF+5YC18rTI5+aWFqWmo1qGioID49XF28phWja+
+   ppge+3qkzcW8BLBna9820rpBeGX7qLPPHfTT5LeQrl5FlwVH6J04iD5jL
+   A==;
+X-CSE-ConnectionGUID: gxbu7T6hSTGeX6edqocFlQ==
+X-CSE-MsgGUID: nUZHjuRWQX6m13zD8EBnmQ==
+X-IronPort-AV: E=Sophos;i="6.14,228,1736784000"; 
+   d="scan'208";a="43159824"
+Received: from mail-dm6nam10lp2042.outbound.protection.outlook.com (HELO NAM10-DM6-obe.outbound.protection.outlook.com) ([104.47.58.42])
+  by ob1.hgst.iphmx.com with ESMTP; 07 Mar 2025 17:18:26 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XWqB7Khd3c/BUMt54ckSzR7ovTkZ3d9LneeBDutZWlRFCvSKLX17htrfEFJnb0JTP8B6TCgbeVl014VbNpzpAzTQb18OxtZhyAinMNjf4x6rBi72RvC3+oMwIr/QP21W38hvIR2d9tQqDihhgGT/Q47RkLer/ppkHr7XH2BLWkG3t/Nc+7JKqc3Wjv4ahlfHTnaHF4BTo2PXh3fwVZf+7d/0tt76Ar0m951FfhD/7XRzZ8ZQHlURU2wrrj+QQd2z8kVkjPxVSYZWFjoxWWOyBOKK+lmyXucjv+282ykFWJwI04oCjVX+u6m24ATfDjfI/qyTrb+amz0Q8ZPArYzqOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=PYEAiyzJvZ+gQlf32GDS7vNPw/nuCN7AixgTqxfDoeM=;
+ b=bv3zviTMZ0zRo2sIA2FU61Xc0eUr4JPU/xCmkTmcSyUimC7VRb1lD6m63x8sT1zx3QHLwoTUADJU9ywp1jJs13AEv5iHzlKzcimIoma1xxwfCgl3uLI+ItUIBaYS5MoC3xvai0pSMdoU7wkWn2XhVs4BnQuLoBCeX1jgTuz6y17A0Uk6qaipHK5+Qv0chjgChoHhiGqg4H/scV+ipQNNWQ932zZFuXTfJQQcFN6WzDjr/TJRdJQo3+fo0dq82m9DMGXtpyrab2HaK+dC6SZUZ8JYza+RHaCP+OA9YGvJaVlPr+jCnYgL1iyEGF1llXfkJjHQCBr587epqMXs1AVEdg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=sandisk.com; dmarc=pass action=none header.from=sandisk.com;
+ dkim=pass header.d=sandisk.com; arc=none
+Received: from SA2PR16MB4251.namprd16.prod.outlook.com (2603:10b6:806:136::8)
+ by SA1PR16MB6504.namprd16.prod.outlook.com (2603:10b6:806:3eb::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Fri, 7 Mar
+ 2025 09:18:25 +0000
+Received: from SA2PR16MB4251.namprd16.prod.outlook.com
+ ([fe80::3415:d4b3:ef92:16a2]) by SA2PR16MB4251.namprd16.prod.outlook.com
+ ([fe80::3415:d4b3:ef92:16a2%5]) with mapi id 15.20.8511.017; Fri, 7 Mar 2025
+ 09:18:25 +0000
+From: Arthur Simchaev <Arthur.Simchaev@sandisk.com>
+To: Bean Huo <huobean@gmail.com>, "martin.petersen@oracle.com"
+	<martin.petersen@oracle.com>, "quic_mapa@quicinc.com"
+	<quic_mapa@quicinc.com>, "quic_cang@quicinc.com" <quic_cang@quicinc.com>
+CC: Avri Altman <Avri.Altman@sandisk.com>, Avi Shchislowski
+	<Avi.Shchislowski@sandisk.com>, "linux-scsi@vger.kernel.org"
+	<linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "bvanassche@acm.org" <bvanassche@acm.org>
+Subject: RE: [PATCH] ufs: core: bsg: Add hibern8 enter/exit to
+ ufshcd_send_bsg_uic_cmd
+Thread-Topic: [PATCH] ufs: core: bsg: Add hibern8 enter/exit to
+ ufshcd_send_bsg_uic_cmd
+Thread-Index: AQHbjPsw3ucJcBmYkUmzp81f56cI4rNmEpWAgAFVAxA=
+Date: Fri, 7 Mar 2025 09:18:25 +0000
+Message-ID:
+ <SA2PR16MB42515681881747A6B5C83352F4D52@SA2PR16MB4251.namprd16.prod.outlook.com>
+References: <20250304114652.210395-1-arthur.simchaev@sandisk.com>
+ <bd2e01d8b33413655a4215221c910eaf2cdf6461.camel@gmail.com>
+In-Reply-To: <bd2e01d8b33413655a4215221c910eaf2cdf6461.camel@gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=sandisk.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA2PR16MB4251:EE_|SA1PR16MB6504:EE_
+x-ms-office365-filtering-correlation-id: c7696a17-98f7-4ecb-e107-08dd5d5903be
+wdcipoutbound: EOP-TRUE
+wdcip_bypass_spam_filter_specific_domain_inbound: TRUE
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?YWpsNUtRVEdIUWMydGI1YUFic2VTZDVCdU1ISEZqM0FDVFZOczA0Q2UycHJZ?=
+ =?utf-8?B?Wk9hOXd6d3RYb3ViL2RsSFc0TlFVSDhlVTRURW40eWdQNy9XUklkRjVyVXQz?=
+ =?utf-8?B?R3NxVG5kOWRmR2ZBUS8vS0RLelBqZVFmNUU0NW1DdE5ubWx2ZG9qR3U2RWpt?=
+ =?utf-8?B?K1VicUNMckJHa2VJTDZjdHVneEJ5eXk1UUF3NHVlb1dUUXF2SUcrd3RpOWJy?=
+ =?utf-8?B?czFCOEFUZDMrNzJmYVFoeVpyY3kzWTlhWi9pOEJiOHVXWWFNV1NlTThTejlV?=
+ =?utf-8?B?WjlVVGs2S0tFcGl0dzc4dTlaUll0SWZnSzRtaE5mVmZtMDQ1UHV1Nnd6a1VJ?=
+ =?utf-8?B?ZW5lb2VtM2hESkx0a2ZuRHMxRXk4S3N2THF5U3kyaW84VzhEKzBYMnFPY05Q?=
+ =?utf-8?B?U09ZU3lEN2ltR3dDWWVtZXZJMEx5S3BhMmRGL3g3YTJHbWhCYmlKTGVLS3RL?=
+ =?utf-8?B?YkFQeXNuUmhBWGh2U3hWUVJ0R2U0KysySUtMSUp0dEVxYlFoZHNnR0JidlZ0?=
+ =?utf-8?B?NW5xZld6NXNzdXVPNnZrWkw0ZWFOTTN2NkdZLzA2UC9OOHpMekcrb2JPNXQy?=
+ =?utf-8?B?amNiQ2daSHRlWDRSSTlGTHRyYlRWbHZlTGc0dVVkUjZsUkxBMkVvbHdJVmc0?=
+ =?utf-8?B?dUF3Zm1DMCtQWU5hVEF0d3FkYVJMbUpFKzVPbGJJWE9zaENZcEcvRW9VVW9n?=
+ =?utf-8?B?bEhqOGFSRGZIUWdOd0hldEFNS29EYmVCeEw4NkllWXpxSWlPMzhJZ1VWTDFq?=
+ =?utf-8?B?ZkZ6VWlIUXNBaWlpaXg2YVMyNS8wREhkSUlnVFlXWldzS2swdHB6aTJONkt0?=
+ =?utf-8?B?RVVmVlFiMVZpdE9lU2lLRFV0eEROVUthQ0NvVWhFcldzZUZCa3RqdUNQTVZz?=
+ =?utf-8?B?NEg0NUdOaGp4allQdzU0anZZbHB2eEdBMmU5Mm43aXIwdTFXVnhZWHk0RUZM?=
+ =?utf-8?B?emxML2hHU2hrNFBCWThzbVB5STVSLzYwU3lZemNpcDdyZm1hT29EVllDbTVx?=
+ =?utf-8?B?cnBxVDVDV3pqRldyUFgrRFI1ZTBsRFV5d0ZzY2djL1ZnU1IwazdraUtRVXBS?=
+ =?utf-8?B?bFV5L3NFSHRzaXhoMDFSK255UGlSaFZlZFk1azgySGpMcDkybGNTVFdJdGdW?=
+ =?utf-8?B?bGZKdmJrbldZeTFrYWUrbFhMUHdWRHM0b1lCY0JzMm1zTmZ0ZzEwZkdUbkoz?=
+ =?utf-8?B?NHFYMC9aQldzNlR2c1JtY1QwaEN1WXhVZ041dmtmOG1jNURmVndVWE5WQXpM?=
+ =?utf-8?B?U2w5c3lFRkhVa094MmdZcTQrd3NacGF2RCtmRjlJMVpXWGd6M3BrSVdMaUh3?=
+ =?utf-8?B?NzViR0xuQ2VoZm1IN3V1cmh0UkdRcks2Z0tCWGl5bCtqNDZKV2pvWDZ1dytT?=
+ =?utf-8?B?ODRoN1BsaWs1NTZ4b2VSMXRoRlhQVDUvcGNPTU02OVVEeEhVTmJxWlFnekJT?=
+ =?utf-8?B?UTFTdVorTkRkWEpQMEV5Ykw1a1E3WlVqd3dUem5XMEs2RklqZ0lZc1RIK1Vn?=
+ =?utf-8?B?TXF6TExYdWNnQk9kQ21rcll2UkRRcGhKdkZoSlY0UzdJRjFiL2dVT2xmK01E?=
+ =?utf-8?B?WUN4Q0l5aG13NG8rL09KNDV0VzlBMG1rMUNnVllOZlh0Z1FFd2tPL3cyZy95?=
+ =?utf-8?B?RlJoaTJpaTFEWEdrSmQzK1l6dGxQaGllOHRKcHcrZG45cENtTU03Mm9YOWVG?=
+ =?utf-8?B?Wll0T0U4KytSQVFsRzYvcVNvU01CUGozb2IvMXlQek1UcVBkVnhHNFZ3SEF5?=
+ =?utf-8?B?cEhTQng2RHpVeUpvMUxZUWNCU3dSSHJjRkdnelhZb0tsZVhmL2YzdWsrSVFh?=
+ =?utf-8?B?T3BFWUFCVDZXU0dlNE5qc3Q1ZnpwWjlXaXVtL0M0eFdleWxHeFU5RW1CbGZ0?=
+ =?utf-8?B?OFF3SmkzeEpTcndlTGFzdEJkcHpJMytiK0VPam94dTdpMlB0a2NkMlE3a2Mv?=
+ =?utf-8?Q?34NNx4DhGJwWVQTh//4LMtyKm2BBTbPy?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA2PR16MB4251.namprd16.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?eG5udmcxUGUveWF2aFZVN3V5UVA4NzdtaXFPekoyaDk3WXhLS3JWUDcrdkl4?=
+ =?utf-8?B?UFJUTTBqYkIxdS9ZbjFiL25ueUJ2ZzlqRnlEL3RjSngvcUVhL0g4Y2g0Zzhn?=
+ =?utf-8?B?cHQreWtxbTZ1TzYrelJReWRMcW1YTkgxL0hiNXFhN2FJR3hmUjlzOGtBMkFz?=
+ =?utf-8?B?WG0xenhxc0had1Yrei9UY3hqWk9kdHR5WGdqM2p6Y2E1NWhyMjdWS2dncUpL?=
+ =?utf-8?B?T21aOUt6RDNGUUdLMFlIUXYyRG51bzV3ckVtUjEvZDhTZndTRlYzbVpJMUhB?=
+ =?utf-8?B?M0IxZGRmOVoyTElrL1hPUXJnNmh6VTgzNko4dXg5SmNmUkROQUpxaHkvY2cw?=
+ =?utf-8?B?UmdvTXVVYTc4VFpRWHZuckpqdVljRWtRNmFleU9NenNQOU1QRFB0M0dmQmRS?=
+ =?utf-8?B?eW02R0VmNXNWelBHLzdSUkh2WTM0TE1EclJVZnpCa0dVTDN0N2pEMDZjYUYy?=
+ =?utf-8?B?NkVMSlRIWXZwQ2xKSHljaEpsN0lyTmRJOHFySlNoZXlqTFJwaW01WVF2Tzd1?=
+ =?utf-8?B?dU9Ya3k1bHhLYmNVRFV3a3pRYjY5VHJwbjJ2UUo0dVJrSDlrcXlRR3lIQjVx?=
+ =?utf-8?B?MXBURmlGQ25vMDdyejJ3TVBuTUJ2ZXlxREtUK0FqdGNnZDBWV01ycS83clpt?=
+ =?utf-8?B?dXZDNUgvbTNseXYvcndvT29HSUwxT1hySHJ1R2hOV2NQVlZVTSttd2d0OWdS?=
+ =?utf-8?B?dURGZUVya2hwTmcvSkt1d3pwOGdUWjBxWWdsa1hWQzFoWUNZbVpvNlhuRlZa?=
+ =?utf-8?B?QUtybldiVEozSGJFQzNzaGRuM0JBOU1QWnlpT2dPMUtlYWJtSjJPZ253UU9k?=
+ =?utf-8?B?NXZnVUZuNUpESTVzejdxOGZYbFNUWU02Z1pxVDkwMWxtWmpPcXlIU1ZUY29Y?=
+ =?utf-8?B?dWFPdVNmeE1CMjdrNWdrbVg1Mjg1enlxTzNRMHpSaEZNRUZZNmRRRTB3TEZ1?=
+ =?utf-8?B?R3Y1a0JLMnNHd2duWjUrNnZoRjQrek5HdFQxV0lURm5NSmJqbXpNbHBzeGFJ?=
+ =?utf-8?B?amJybXhTeWhZcUIzekFUL0FlVUdqTjdZSUNjMmdEenJ5SGlkZXBLWTZxZnA2?=
+ =?utf-8?B?a1k3V0llUTFuSlNsQkZ3T0NaWEhpdkhQS01LZGhOZ044ZCs1UVhHUjIwMERi?=
+ =?utf-8?B?dGdXTFpRZ3FWNjF1VFczWndqdEE4Vkt0Q1dlR0cwRGFBckFXQ29vV3RRWms5?=
+ =?utf-8?B?YjVvTFYwSjRmTGxQNVhyN2paellQQlRyUGE0c1hZd1k0VDNuRXoxUHZxSENw?=
+ =?utf-8?B?elBNdDdnenFtcTJ1dzN4cnJkR1o4alhaMzJydjFyVEFTY1MwNGhVQU9aZ3Fu?=
+ =?utf-8?B?NEtFZnlRRHRsMDgvTkk5bzU2RVBWNXJGRjhkV2RGT2lQb0dFYUw4YmJuT0lJ?=
+ =?utf-8?B?b2o3VjRRMnNLOFhCQ0doUFlVaml0VnVWNlFSNWI3UWV6VTBkb3J6MEd0Ly9a?=
+ =?utf-8?B?dFluSVFmbk93TSszd1BEb2gvWGt3UGJVYmJUcUNtM1dJQlhRMVFuM25Namtl?=
+ =?utf-8?B?RjJ5Z0lZblNuY3FXdXhSWWdYSUhiZDdMTVVubmYvN0p0SUpWbmtyYkhoVUh0?=
+ =?utf-8?B?d0tnNXZuZUZGNmRhUHM2MFhReWVlQkZZWEZ6TE9PbUI3T1MrdHZGaFg2dzdq?=
+ =?utf-8?B?a1BDSlcwZyt4ZDg0bll1REFZbmpsREtwc2pJcGhkRm5DWW53T1l1Z29GTllF?=
+ =?utf-8?B?NnBsNXhvRFJDTXV4V2VFUkQrSXBISW9KanpnWWZudE4wR2NUOHV6Zm1Odmps?=
+ =?utf-8?B?bUcxN1Q2NW1xRVI4blJsT29yVFFmZWp5Zm5QSE5RUjlPSEZYdlZDMHZzZ1Rm?=
+ =?utf-8?B?MnVpV3pLY2FNZXZ6N0o1Qm4zOFhHTXBXYnF4eFFVRGJlNUNlS2hINmpZTXlt?=
+ =?utf-8?B?NTYrRm12Y242aHNyK2QvRDVvUCtHOUlkdWtmdU95ZDMzeGx3QzJGOFZnTFFG?=
+ =?utf-8?B?YndlSzN6dG0xMzlZWndJelNubW5IVmhSRWcyM3IrSkhKYmN2VG03bUpGWFVG?=
+ =?utf-8?B?K0ZSelNyQ1BLRXdpVDdDMCt5L0ZsY1dkbWtCR0RFLzJwdUIzR21qbFNpbmhM?=
+ =?utf-8?B?YWNWNkVxN0NndFlOY3B2aEhnRmxJOUtHWExZUVBOVWpPazNpUTQ4OFlFN0Iy?=
+ =?utf-8?B?TU5NTnowNzZOUzd6VFNma3hPOVQ3SkRzL0RlNDUxazJ5RzdidjRhZXAyT1Bs?=
+ =?utf-8?B?Tmc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250307-seg6local-v1-2-990fff8f180d@bootlin.com>
-References: <20250307-seg6local-v1-0-990fff8f180d@bootlin.com>
-In-Reply-To: <20250307-seg6local-v1-0-990fff8f180d@bootlin.com>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, 
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: Alexis Lothore <alexis.lothore@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- "Bastien Curutchet (eBPF Foundation)" <bastien.curutchet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgdduuddtvdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepfdeurghsthhivghnucevuhhruhhttghhvghtucdlvgeurffhucfhohhunhgurghtihhonhdmfdcuoegsrghsthhivghnrdgtuhhruhhttghhvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegfeduhfeutddtieffteffleejffekveeviedutdegjeelfedtjeegtdejtddthfenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddugegnpdhmrghilhhfrhhomhepsggrshhtihgvnhdrtghurhhuthgthhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtohephihonhhghhhonhhgrdhsohhngheslhhinhhugidruggvvhdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsghogidrnhgvthdprhgtphhtthhopehkphhsihhnghhhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmhihkohhlrghlsehfsgdrtghomhdprhgtphhtt
- hhopehthhhomhgrshdrphgvthgriiiiohhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrlhgvgihishdrlhhothhhohhrvgessghoohhtlhhinhdrtghomhdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhgrohhluhhosehgohhoghhlvgdrtghomh
-X-GND-Sasl: bastien.curutchet@bootlin.com
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	l/p3OEtqCfO0pdg9S1meNRZJOX04ETooOCIDvQa16NDOWHmh1LQEk/7HleoGcuq0kuaTEFJvqwdo4nWgAFEzmVOciy5JdVlSUrQrYtF6FIdtv4/tvfv+iHn7uVHrZ4+kxnp/B7VNFghIo49PSWh0D9/9zVIQM+vQ2/JC+nE2lcJ2XKV6v9R99joyefq2eJW5b3z618CbsPXwniIejSiIRbOMD/L85LAU4sw7qpZCzKG1L/RyMmru+AcfSCTvCEnmTM3aWiJo2s4yVSJRnKxr2Y/UnBXe1Y3SWMgu4mFh8eUdvMiL7J8aNsDhKRMIqNzRc5TTglPBvEov1GNM6eEifaZwat87oAkQlkXa6uHSCzwe2SBcT5oleIEHopaI5WyAlbnCdc39Dqg78We66v85aF9Cp0g8Qj1qQhdBVUTu4zN9Pf3m4CnSJ3kwzgQ/qpCIdXyEadLgZvaZpkUpeXTDyCPNKHqKx3YWdkAORjBA0BWIV4qTtkSVwmZmF9b0sSg9+DiOV8cYIBuRCs/6Hnq3dWZgBkDJSWrSLVnnVS/4qxaQUhxydI3TpOyyI8Q9jpTKCgtOcYk+FQojt/YRIFeZ9qWwiv71IXYgiKJ4anRKVacQMuYQ9inoPpn3B1k6pgGi
+X-OriginatorOrg: sandisk.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA2PR16MB4251.namprd16.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7696a17-98f7-4ecb-e107-08dd5d5903be
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Mar 2025 09:18:25.2298
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7ffe0ff2-35d0-407e-a107-79fc32e84ec4
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: vqRxdG9mwLajhQ+K+KpaRj29EszkIfqtaHFo3KLLvuVGFdcZAPoLIoGb4JbSHvydzyB8wX3cV/tY/R/UbL6TNDb31xAUOHb1JhzNxy2AlVI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR16MB6504
 
-test_lwt_seg6local.sh isn't used by the BPF CI.
-
-Add a new file in the test_progs framework to migrate the tests done by
-test_lwt_seg6local.sh. It uses the same network topology and the same BPF
-programs located in progs/test_lwt_seg6local.c.
-Use the network helpers instead of `nc` to exchange the final packet.
-
-Remove test_lwt_seg6local.sh and its Makefile entry.
-
-Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
----
- tools/testing/selftests/bpf/Makefile               |   1 -
- .../selftests/bpf/prog_tests/lwt_seg6local.c       | 176 +++++++++++++++++++++
- tools/testing/selftests/bpf/test_lwt_seg6local.sh  | 151 ------------------
- 3 files changed, 176 insertions(+), 152 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index e6a02d5b87d123cef7e6b41bfbc96d34083f38e1..b9203be2697db61f541291c4a26defab9b0dbee7 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -100,7 +100,6 @@ TEST_FILES = xsk_prereqs.sh $(wildcard progs/btf_dump_test_case_*.c)
- 
- # Order correspond to 'make run_tests' order
- TEST_PROGS := test_kmod.sh \
--	test_lwt_seg6local.sh \
- 	test_lirc_mode2.sh \
- 	test_xdp_vlan_mode_generic.sh \
- 	test_xdp_vlan_mode_native.sh \
-diff --git a/tools/testing/selftests/bpf/prog_tests/lwt_seg6local.c b/tools/testing/selftests/bpf/prog_tests/lwt_seg6local.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..3bc730b7c7fa0c4809c7c4ed6e00e7a7d12cb555
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/lwt_seg6local.c
-@@ -0,0 +1,176 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+
-+/* Connects 6 network namespaces through veths.
-+ * Each NS may have different IPv6 global scope addresses :
-+ *
-+ *          NS1            NS2             NS3              NS4               NS5             NS6
-+ *      lo  veth1 <-> veth2 veth3 <-> veth4 veth5 <-> veth6 lo veth7 <-> veth8 veth9 <-> veth10 lo
-+ * fb00 ::1  ::12      ::21  ::34      ::43  ::56      ::65     ::78      ::87  ::910     ::109  ::6
-+ * fd00                                                                                          ::4
-+ * fc42                                                     ::1
-+ *
-+ * All IPv6 packets going to fb00::/16 through NS2 will be encapsulated in a
-+ * IPv6 header with a Segment Routing Header, with segments :
-+ *	fd00::1 -> fd00::2 -> fd00::3 -> fd00::4
-+ *
-+ * 3 fd00::/16 IPv6 addresses are binded to seg6local End.BPF actions :
-+ * - fd00::1 : add a TLV, change the flags and apply a End.X action to fc42::1
-+ * - fd00::2 : remove the TLV, change the flags, add a tag
-+ * - fd00::3 : apply an End.T action to fd00::4, through routing table 117
-+ *
-+ * fd00::4 is a simple Segment Routing node decapsulating the inner IPv6 packet.
-+ * Each End.BPF action will validate the operations applied on the SRH by the
-+ * previous BPF program in the chain, otherwise the packet is dropped.
-+ *
-+ * An UDP datagram is sent from fb00::1 to fb00::6. The test succeeds if this
-+ * datagram can be read on NS6 when binding to fb00::6.
-+ */
-+
-+#include "network_helpers.h"
-+#include "test_progs.h"
-+
-+#define NETNS_BASE "lwt-seg6local-"
-+#define BPF_FILE "test_lwt_seg6local.bpf.o"
-+
-+static void cleanup(void)
-+{
-+	int ns;
-+
-+	for (ns = 1; ns < 7; ns++)
-+		SYS_NOFAIL("ip netns del %s%d", NETNS_BASE, ns);
-+}
-+
-+static int setup(void)
-+{
-+	int ns;
-+
-+	for (ns = 1; ns < 7; ns++)
-+		SYS(fail, "ip netns add %s%d", NETNS_BASE, ns);
-+
-+	SYS(fail, "ip -n %s6 link set dev lo up", NETNS_BASE);
-+
-+	for (ns = 1; ns < 6; ns++) {
-+		int local_id = ns * 2 - 1;
-+		int peer_id = ns * 2;
-+		int next_ns = ns + 1;
-+
-+		SYS(fail, "ip -n %s%d link add veth%d type veth peer name veth%d netns %s%d",
-+		    NETNS_BASE, ns, local_id, peer_id, NETNS_BASE, next_ns);
-+
-+		SYS(fail, "ip -n %s%d link set dev veth%d up", NETNS_BASE, ns, local_id);
-+		SYS(fail, "ip -n %s%d link set dev veth%d up", NETNS_BASE, next_ns, peer_id);
-+
-+		/* All link scope addresses to veths */
-+		SYS(fail, "ip -n %s%d -6 addr add fb00::%d%d/16 dev veth%d scope link",
-+		    NETNS_BASE, ns, local_id, peer_id, local_id);
-+		SYS(fail, "ip -n %s%d -6 addr add fb00::%d%d/16 dev veth%d scope link",
-+		    NETNS_BASE, next_ns, peer_id, local_id, peer_id);
-+	}
-+
-+
-+	SYS(fail, "ip -n %s5 -6 route add fb00::109 table 117 dev veth9 scope link", NETNS_BASE);
-+
-+	SYS(fail, "ip -n %s1 -6 addr add fb00::1/16 dev lo", NETNS_BASE);
-+	SYS(fail, "ip -n %s1 -6 route add fb00::6 dev veth1 via fb00::21", NETNS_BASE);
-+
-+	SYS(fail, "ip -n %s2 -6 route add fb00::6 encap bpf in obj %s sec encap_srh dev veth2",
-+	    NETNS_BASE, BPF_FILE);
-+	SYS(fail, "ip -n %s2 -6 route add fd00::1 dev veth3 via fb00::43 scope link", NETNS_BASE);
-+
-+	SYS(fail, "ip -n %s3 -6 route add fc42::1 dev veth5 via fb00::65", NETNS_BASE);
-+	SYS(fail,
-+	    "ip -n %s3 -6 route add fd00::1 encap seg6local action End.BPF endpoint obj %s sec add_egr_x dev veth4",
-+	    NETNS_BASE, BPF_FILE);
-+
-+	SYS(fail,
-+	    "ip -n %s4 -6 route add fd00::2 encap seg6local action End.BPF endpoint obj %s sec pop_egr dev veth6",
-+	    NETNS_BASE, BPF_FILE);
-+	SYS(fail, "ip -n %s4 -6 addr add fc42::1 dev lo", NETNS_BASE);
-+	SYS(fail, "ip -n %s4 -6 route add fd00::3 dev veth7 via fb00::87", NETNS_BASE);
-+
-+	SYS(fail, "ip -n %s5 -6 route add fd00::4 table 117 dev veth9 via fb00::109", NETNS_BASE);
-+	SYS(fail,
-+	    "ip -n %s5 -6 route add fd00::3 encap seg6local action End.BPF endpoint obj %s sec inspect_t dev veth8",
-+	    NETNS_BASE, BPF_FILE);
-+
-+	SYS(fail, "ip -n %s6 -6 addr add fb00::6/16 dev lo", NETNS_BASE);
-+	SYS(fail, "ip -n %s6 -6 addr add fd00::4/16 dev lo", NETNS_BASE);
-+
-+	for (ns = 1; ns < 6; ns++)
-+		SYS(fail, "ip netns exec %s%d sysctl -wq net.ipv6.conf.all.forwarding=1",
-+		    NETNS_BASE, ns);
-+
-+	SYS(fail, "ip netns exec %s6 sysctl -wq net.ipv6.conf.all.seg6_enabled=1", NETNS_BASE);
-+	SYS(fail, "ip netns exec %s6 sysctl -wq net.ipv6.conf.lo.seg6_enabled=1", NETNS_BASE);
-+	SYS(fail, "ip netns exec %s6 sysctl -wq net.ipv6.conf.veth10.seg6_enabled=1", NETNS_BASE);
-+
-+	return 0;
-+fail:
-+	return -1;
-+}
-+
-+#define SERVER_PORT 7330
-+#define CLIENT_PORT 2121
-+void test_lwt_seg6local(void)
-+{
-+	struct sockaddr_in6 server_addr = {};
-+	const char *ns1 = NETNS_BASE "1";
-+	const char *ns6 = NETNS_BASE "6";
-+	struct nstoken *nstoken = NULL;
-+	const char *foobar = "foobar";
-+	ssize_t bytes;
-+	int sfd, cfd;
-+	char buf[7];
-+
-+	if (!ASSERT_OK(setup(), "setup"))
-+		goto out;
-+
-+	nstoken = open_netns(ns6);
-+	if (!ASSERT_OK_PTR(nstoken, "open ns6"))
-+		goto out;
-+
-+	sfd = start_server_str(AF_INET6, SOCK_DGRAM, "fb00::6", SERVER_PORT, NULL);
-+	if (!ASSERT_OK_FD(sfd, "start server"))
-+		goto close_netns;
-+
-+	close_netns(nstoken);
-+
-+	nstoken = open_netns(ns1);
-+	if (!ASSERT_OK_PTR(nstoken, "open ns1"))
-+		goto close_server;
-+
-+	cfd = start_server_str(AF_INET6, SOCK_DGRAM, "fb00::1", CLIENT_PORT, NULL);
-+	if (!ASSERT_OK_FD(cfd, "start client"))
-+		goto close_server;
-+
-+	close_netns(nstoken);
-+	nstoken = NULL;
-+
-+	/* Send a packet larger than MTU */
-+	server_addr.sin6_family = AF_INET6;
-+	server_addr.sin6_port = htons(SERVER_PORT);
-+	if (!ASSERT_EQ(inet_pton(AF_INET6, "fb00::6", &server_addr.sin6_addr), 1,
-+		       "build target addr"))
-+		goto close_client;
-+
-+	bytes = sendto(cfd, foobar, sizeof(foobar), 0,
-+		       (struct sockaddr *)&server_addr, sizeof(server_addr));
-+	if (!ASSERT_EQ(bytes, sizeof(foobar), "send packet"))
-+		goto close_client;
-+
-+	/* Verify we received all expected bytes */
-+	bytes = read(sfd, buf, sizeof(buf));
-+	if (!ASSERT_EQ(bytes, sizeof(buf), "receive packet"))
-+		goto close_client;
-+	ASSERT_STREQ(buf, foobar, "check udp packet");
-+
-+close_client:
-+	close(cfd);
-+close_server:
-+	close(sfd);
-+close_netns:
-+	close_netns(nstoken);
-+
-+out:
-+	cleanup();
-+}
-diff --git a/tools/testing/selftests/bpf/test_lwt_seg6local.sh b/tools/testing/selftests/bpf/test_lwt_seg6local.sh
-deleted file mode 100755
-index 9c74b88730ffd98f8e988a078d218ffbcd9ee95c..0000000000000000000000000000000000000000
---- a/tools/testing/selftests/bpf/test_lwt_seg6local.sh
-+++ /dev/null
-@@ -1,151 +0,0 @@
--#!/bin/bash
--# Connects 6 network namespaces through veths.
--# Each NS may have different IPv6 global scope addresses :
--#   NS1 ---- NS2 ---- NS3 ---- NS4 ---- NS5 ---- NS6
--# fb00::1           fd00::1  fd00::2  fd00::3  fb00::6
--#                   fc42::1           fd00::4
--#
--# All IPv6 packets going to fb00::/16 through NS2 will be encapsulated in a
--# IPv6 header with a Segment Routing Header, with segments :
--# 	fd00::1 -> fd00::2 -> fd00::3 -> fd00::4
--#
--# 3 fd00::/16 IPv6 addresses are binded to seg6local End.BPF actions :
--# - fd00::1 : add a TLV, change the flags and apply a End.X action to fc42::1
--# - fd00::2 : remove the TLV, change the flags, add a tag
--# - fd00::3 : apply an End.T action to fd00::4, through routing table 117
--#
--# fd00::4 is a simple Segment Routing node decapsulating the inner IPv6 packet.
--# Each End.BPF action will validate the operations applied on the SRH by the
--# previous BPF program in the chain, otherwise the packet is dropped.
--#
--# An UDP datagram is sent from fb00::1 to fb00::6. The test succeeds if this
--# datagram can be read on NS6 when binding to fb00::6.
--
--# Kselftest framework requirement - SKIP code is 4.
--ksft_skip=4
--BPF_FILE="test_lwt_seg6local.bpf.o"
--readonly NS1="ns1-$(mktemp -u XXXXXX)"
--readonly NS2="ns2-$(mktemp -u XXXXXX)"
--readonly NS3="ns3-$(mktemp -u XXXXXX)"
--readonly NS4="ns4-$(mktemp -u XXXXXX)"
--readonly NS5="ns5-$(mktemp -u XXXXXX)"
--readonly NS6="ns6-$(mktemp -u XXXXXX)"
--
--msg="skip all tests:"
--if [ $UID != 0 ]; then
--	echo $msg please run this as root >&2
--	exit $ksft_skip
--fi
--
--TMP_FILE="/tmp/selftest_lwt_seg6local.txt"
--
--cleanup()
--{
--	if [ "$?" = "0" ]; then
--		echo "selftests: test_lwt_seg6local [PASS]";
--	else
--		echo "selftests: test_lwt_seg6local [FAILED]";
--	fi
--
--	set +e
--	ip netns del ${NS1} 2> /dev/null
--	ip netns del ${NS2} 2> /dev/null
--	ip netns del ${NS3} 2> /dev/null
--	ip netns del ${NS4} 2> /dev/null
--	ip netns del ${NS5} 2> /dev/null
--	ip netns del ${NS6} 2> /dev/null
--	rm -f $TMP_FILE
--}
--
--set -e
--
--ip netns add ${NS1}
--ip netns add ${NS2}
--ip netns add ${NS3}
--ip netns add ${NS4}
--ip netns add ${NS5}
--ip netns add ${NS6}
--
--trap cleanup 0 2 3 6 9
--
--ip link add veth1 type veth peer name veth2
--ip link add veth3 type veth peer name veth4
--ip link add veth5 type veth peer name veth6
--ip link add veth7 type veth peer name veth8
--ip link add veth9 type veth peer name veth10
--
--ip link set veth1 netns ${NS1}
--ip link set veth2 netns ${NS2}
--ip link set veth3 netns ${NS2}
--ip link set veth4 netns ${NS3}
--ip link set veth5 netns ${NS3}
--ip link set veth6 netns ${NS4}
--ip link set veth7 netns ${NS4}
--ip link set veth8 netns ${NS5}
--ip link set veth9 netns ${NS5}
--ip link set veth10 netns ${NS6}
--
--ip netns exec ${NS1} ip link set dev veth1 up
--ip netns exec ${NS2} ip link set dev veth2 up
--ip netns exec ${NS2} ip link set dev veth3 up
--ip netns exec ${NS3} ip link set dev veth4 up
--ip netns exec ${NS3} ip link set dev veth5 up
--ip netns exec ${NS4} ip link set dev veth6 up
--ip netns exec ${NS4} ip link set dev veth7 up
--ip netns exec ${NS5} ip link set dev veth8 up
--ip netns exec ${NS5} ip link set dev veth9 up
--ip netns exec ${NS6} ip link set dev veth10 up
--ip netns exec ${NS6} ip link set dev lo up
--
--# All link scope addresses and routes required between veths
--ip netns exec ${NS1} ip -6 addr add fb00::12/16 dev veth1 scope link
--ip netns exec ${NS2} ip -6 addr add fb00::21/16 dev veth2 scope link
--ip netns exec ${NS2} ip -6 addr add fb00::34/16 dev veth3 scope link
--ip netns exec ${NS3} ip -6 addr add fb00::43/16 dev veth4 scope link
--ip netns exec ${NS3} ip -6 addr add fb00::56/16 dev veth5 scope link
--ip netns exec ${NS4} ip -6 addr add fb00::65/16 dev veth6 scope link
--ip netns exec ${NS4} ip -6 addr add fb00::78/16 dev veth7 scope link
--ip netns exec ${NS5} ip -6 addr add fb00::87/16 dev veth8 scope link
--ip netns exec ${NS5} ip -6 addr add fb00::910/16 dev veth9 scope link
--ip netns exec ${NS5} ip -6 route add fb00::109 table 117 dev veth9 scope link
--ip netns exec ${NS6} ip -6 addr add fb00::109/16 dev veth10 scope link
--
--ip netns exec ${NS1} ip -6 addr add fb00::1/16 dev lo
--ip netns exec ${NS1} ip -6 route add fb00::6 dev veth1 via fb00::21
--
--ip netns exec ${NS2} ip -6 route add fb00::6 encap bpf in obj ${BPF_FILE} sec encap_srh dev veth2
--ip netns exec ${NS2} ip -6 route add fd00::1 dev veth3 via fb00::43 scope link
--
--ip netns exec ${NS3} ip -6 route add fc42::1 dev veth5 via fb00::65
--ip netns exec ${NS3} ip -6 route add fd00::1 encap seg6local action End.BPF endpoint obj ${BPF_FILE} sec add_egr_x dev veth4
--
--ip netns exec ${NS4} ip -6 route add fd00::2 encap seg6local action End.BPF endpoint obj ${BPF_FILE} sec pop_egr dev veth6
--ip netns exec ${NS4} ip -6 addr add fc42::1 dev lo
--ip netns exec ${NS4} ip -6 route add fd00::3 dev veth7 via fb00::87
--
--ip netns exec ${NS5} ip -6 route add fd00::4 table 117 dev veth9 via fb00::109
--ip netns exec ${NS5} ip -6 route add fd00::3 encap seg6local action End.BPF endpoint obj ${BPF_FILE} sec inspect_t dev veth8
--
--ip netns exec ${NS6} ip -6 addr add fb00::6/16 dev lo
--ip netns exec ${NS6} ip -6 addr add fd00::4/16 dev lo
--
--ip netns exec ${NS1} sysctl net.ipv6.conf.all.forwarding=1 > /dev/null
--ip netns exec ${NS2} sysctl net.ipv6.conf.all.forwarding=1 > /dev/null
--ip netns exec ${NS3} sysctl net.ipv6.conf.all.forwarding=1 > /dev/null
--ip netns exec ${NS4} sysctl net.ipv6.conf.all.forwarding=1 > /dev/null
--ip netns exec ${NS5} sysctl net.ipv6.conf.all.forwarding=1 > /dev/null
--
--ip netns exec ${NS6} sysctl net.ipv6.conf.all.seg6_enabled=1 > /dev/null
--ip netns exec ${NS6} sysctl net.ipv6.conf.lo.seg6_enabled=1 > /dev/null
--ip netns exec ${NS6} sysctl net.ipv6.conf.veth10.seg6_enabled=1 > /dev/null
--
--ip netns exec ${NS6} nc -l -6 -u -d 7330 > $TMP_FILE &
--ip netns exec ${NS1} bash -c "echo 'foobar' | nc -w0 -6 -u -p 2121 -s fb00::1 fb00::6 7330"
--sleep 5 # wait enough time to ensure the UDP datagram arrived to the last segment
--kill -TERM $!
--
--if [[ $(< $TMP_FILE) != "foobar" ]]; then
--	exit 1
--fi
--
--exit 0
-
--- 
-2.48.1
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogQmVhbiBIdW8gPGh1b2Jl
+YW5AZ21haWwuY29tPg0KPiBTZW50OiBUaHVyc2RheSwgTWFyY2ggNiwgMjAyNSAyOjUwIFBNDQo+
+IFRvOiBBcnRodXIgU2ltY2hhZXYgPEFydGh1ci5TaW1jaGFldkBzYW5kaXNrLmNvbT47DQo+IG1h
+cnRpbi5wZXRlcnNlbkBvcmFjbGUuY29tOyBxdWljX21hcGFAcXVpY2luYy5jb207DQo+IHF1aWNf
+Y2FuZ0BxdWljaW5jLmNvbQ0KPiBDYzogQXZyaSBBbHRtYW4gPEF2cmkuQWx0bWFuQHNhbmRpc2su
+Y29tPjsgQXZpIFNoY2hpc2xvd3NraQ0KPiA8QXZpLlNoY2hpc2xvd3NraUBzYW5kaXNrLmNvbT47
+IGxpbnV4LXNjc2lAdmdlci5rZXJuZWwub3JnOyBsaW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVs
+Lm9yZzsgYnZhbmFzc2NoZUBhY20ub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIHVmczogY29y
+ZTogYnNnOiBBZGQgaGliZXJuOCBlbnRlci9leGl0IHRvDQo+IHVmc2hjZF9zZW5kX2JzZ191aWNf
+Y21kDQo+IA0KPiANCj4gQXJ0aHVyLA0KPiANCj4gQXQgcHJlc2VudCwgd2UgbGFjayBhIHVzZXIt
+c3BhY2UgdG9vbCB0byBpbml0aWF0ZSBleWUgbW9uaXRvciBtZWFzdXJlbWVudHMuDQo+IEFkZGl0
+aW9uYWxseSwgb3BlbmluZyBhIGNoYW5uZWwgZm9yIHVzZXJzIGluIHVzZXIgbGFuZCB0byBzZW5k
+IE1QIGNvbW1hbmRzDQo+IHNlZW1zIHVuc2FmZS4NCj4gDQo+IA0KPiBLaW5kIHJlZ2FyZHMsDQo+
+IEJlYW4NCj4gDQoNCkhpIEJlYW4uDQoNCkFjdHVhbGx5LCAgdGhlIEVPTSB0b29sIHdhcyBwdWJs
+aXNoZWQgdHdvIG1vbnRocyBhZ28NClNlZSB0aGUgbWFpbCBmcm9tIENhbiBHdW8uIFRoZSBwYXRj
+aCBzaW1wbHkgZXh0ZW5kcyB0aGUgVUlDIGRlYnVnZ2luZyBmdW5jdGlvbmFsaXR5IGZyb20gdXNl
+ciBzcGFjZS4NCkkgdGhpbmsgaXQgaXMgcXVpdGUgc2FmZSB0byB1c2UgaGliZXJuOCBmdW5jdGlv
+bmFsaXR5IGZvciBkZWJ1Z2dpbmcgcHVycG9zZXMuDQoNClJlZ2FyZHMNCkFydGh1ciANCg==
 
