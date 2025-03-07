@@ -1,496 +1,205 @@
-Return-Path: <linux-kernel+bounces-550505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B1DBA56089
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:56:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80AAAA5608C
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 06:57:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A15E91895535
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:56:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 647687A6805
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 05:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C56F199FDE;
-	Fri,  7 Mar 2025 05:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8C91991CF;
+	Fri,  7 Mar 2025 05:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hdqcwZsJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XdZWCLP6"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2075.outbound.protection.outlook.com [40.107.94.75])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 992BA199235;
-	Fri,  7 Mar 2025 05:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741326971; cv=none; b=l95UDL6EfIIwhL5/jQl1W4koLHgZlggpBZZi1GWfL9soqhxCKO/NVF00Y3kxD1JIBts/Z/QWcEsmSVDZNhfEUl8uDGODYBQnx6uOAVkIPJX0Fs7lLnHwHtYWL+7deIzExhNeIoIrfe/CdfLqMDyXcgfinUP7BYmIdSEbp1GweOw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741326971; c=relaxed/simple;
-	bh=sK4IZg0GzvvyCwby+z2TyP8LDAd2lPZJN4Jr7tk3Vvw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=E39zoVjNzd6qPCI3lqSOhMLLEFv533ZmhnoXozox8CLjMEDFpRNfmhqwhfXpuy2VRFNztrp3Iu90bmD4c1Q+O2otWpAbkZ/UvtGCHyoI9qhAgx7D9grJ+r/l/Fg+YEljPY4llfG1RctntCUyo+F8sx+lAKZkttTm6uYw5uxCNjc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hdqcwZsJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E846BC4CEE9;
-	Fri,  7 Mar 2025 05:56:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741326969;
-	bh=sK4IZg0GzvvyCwby+z2TyP8LDAd2lPZJN4Jr7tk3Vvw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=hdqcwZsJPyxP2nAxfnYZncwyhykYhW0dVl9Cldmyw5abc7dUyNCzp+F9C5pPL7XJW
-	 VUchUVOZdImqqBgSkFyIGq+oMEDF8dPhukTabvmk8fF58S+46RAEEtDND0oSjlNqtB
-	 GT45ghmz9HvHECc2IDXtiJQuWq/qv1YrSvoz7QOjO2vxxg6fROzG/R3RC0HQFwvDgJ
-	 ZJS9Fpi1IpF9rIYXr1QmVzToiQW9OWJ/52N2W87llKGqWbHPguhAmJNgVcu+6EyFr4
-	 zoeAXsAzMZfC44/O8PB6ms98kgxw119rcS9JSTVLb097sNR3df5RR1SShPdGDS2QKv
-	 k8W54LRt3s3OQ==
-From: Dmitry Baryshkov <lumag@kernel.org>
-Date: Fri, 07 Mar 2025 07:55:53 +0200
-Subject: [PATCH v5 2/2] drm/msm/dp: reuse generic HDMI codec implementation
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E91B18DB09
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 05:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.75
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741327068; cv=fail; b=KmytLCcWC5TztVXh+CDKT0UaFoArWe+L1N84V/gjgmm6ejPNWrnTUF+t9kKEpklHRBTCWdLolOEDDUNJuMPYC84+9bHfR40ghS4S5vTE8tYA3u/5VP5uyqkHgmCxnYDrElqpe2AZyYIRQxDrl2EEFkdgL3d9r/zk6PnZbArmFUE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741327068; c=relaxed/simple;
+	bh=EFqvLYCd6JBj0zKwrSIvEb+03ByqIDMJqxYfN+N3h0o=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OYm+zPbmEmS3mh6kc7qK7j2xbl6iUphWTvu+r6OTqE9UbJ9xqm4cW5YBNGZ1go12g4JlDjnzMQR5qfUnO4HjnJt1pHUd+/0lXow9GO90rtB/5EDnhVd7Py9UHCoYPPLGsHSrJPUZ9Cej0PDxeN1xnVoCeaOOPLtWdVQrVVE4nYA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XdZWCLP6; arc=fail smtp.client-ip=40.107.94.75
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fDLFEzv+qRhxpvilkcLYs6xiagOKg6wSgnRf+IuEE9lsd1V9MqR+gvnSd+0fG5fp6jmxc9f6GRzP37PDTzZf7gib0fv5Q0a418UYcFqD6Dj5vNu3gx80vedRCauV9OudrdSnhFHB9pOwc8WBtH/tWtBNhgByhrxcIkjwprFYHXnCY8aWgK4LYWp9TJcVpoUB9CdYicNMzGMBnLh3z4IdNwv3iCha8PR2chu/cL0e3uy9BqEXllX4HEomvTmMeAQw9RYrz/bV+rz3aOn95cTyDD4BpWP6iqzNOROV0sF2EMsM/nOrT/gy3DXpd82EwWHvwAxELNwdIll+0k5uthBkBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3mrK3MSpLCgYD/wWMjcFPGsBZfNBCUE3TWLYnKV9yQc=;
+ b=i36RdkEBZy22wZa2oIBsd50SORVyOstpNsOJpYzvWbTNYOfUxXWG6ZAxMrYUmnmckAUMwvrXpysuuMVygsOgJIcP4kCupzI6fxcz7DAWDAyb7M1rUSfa3X2jPKrC9RhZmQjEQMGdq4483pcSKvqLnI14TiMoa+1yqRie22QP62LgBjsxDGMClwVSqbfgkj4kCZrANercchMlcq9KOcZ1RyvJvLhCy+R+MSdwUtEG2wA+qcpjhcNCErfViES+qYfktzfAz4acTIcmhcDOGEzgj49AVVi8qtEhuDXer/zXsx5PtDfIsRVQVa4xkeHH/TMu3wl61Eh+jqZLz8oso285yQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.118.232) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3mrK3MSpLCgYD/wWMjcFPGsBZfNBCUE3TWLYnKV9yQc=;
+ b=XdZWCLP6gSrgREW6XsZSjhiDii1lNnOwyaMv2R9NLUNgVgdnyhKUepmWTlAl4c80el40CBepQn0ZsyaRO8EKrd70PlBx0CxQpeGazAOEQLzA6i7qyYifWHvoC3aUPJo5JgDQaBolhj+J+yNuAc6S36TPgpwg6fx/gV6hdjdZSAAdA5SoQeI5tLSWiUEjsJUruRElZhoUFe8SFSp3LSaOUOtTZwncB3C8+B/MVrsmr024ticNuqK03RiVt238rgfCX6NnT92DQkDqDO7ZP8GEai43zwIuGI9UnzCD/NYSiziwZ95JNg3xgs42c6zsvjKXJLMaXxHPdwwkyhCvRawmSQ==
+Received: from CH2PR20CA0012.namprd20.prod.outlook.com (2603:10b6:610:58::22)
+ by MW4PR12MB7286.namprd12.prod.outlook.com (2603:10b6:303:22f::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Fri, 7 Mar
+ 2025 05:57:43 +0000
+Received: from CH3PEPF00000015.namprd21.prod.outlook.com
+ (2603:10b6:610:58:cafe::87) by CH2PR20CA0012.outlook.office365.com
+ (2603:10b6:610:58::22) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.19 via Frontend Transport; Fri,
+ 7 Mar 2025 05:57:43 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.118.232) by
+ CH3PEPF00000015.mail.protection.outlook.com (10.167.244.120) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8549.1 via Frontend Transport; Fri, 7 Mar 2025 05:57:42 +0000
+Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
+ (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 6 Mar 2025
+ 21:57:33 -0800
+Received: from drhqmail203.nvidia.com (10.126.190.182) by
+ drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.14; Thu, 6 Mar 2025 21:57:32 -0800
+Received: from Asurada-Nvidia (10.127.8.13) by mail.nvidia.com
+ (10.126.190.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
+ Transport; Thu, 6 Mar 2025 21:57:32 -0800
+Date: Thu, 6 Mar 2025 21:57:30 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Baolu Lu <baolu.lu@linux.intel.com>
+CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <robin.murphy@arm.com>,
+	<joro@8bytes.org>, <will@kernel.org>, <iommu@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/3] iommu: Sort out domain user data
+Message-ID: <Z8qKyvNyNU6dkN7V@Asurada-Nvidia>
+References: <cover.1741294235.git.nicolinc@nvidia.com>
+ <da7cc6d365ec6a77f6e6007f898eb3de2e581f80.1741294235.git.nicolinc@nvidia.com>
+ <fabd6483-af48-4893-b539-2835640c5316@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250307-dp-hdmi-audio-v5-2-f3be215fdb78@linaro.org>
-References: <20250307-dp-hdmi-audio-v5-0-f3be215fdb78@linaro.org>
-In-Reply-To: <20250307-dp-hdmi-audio-v5-0-f3be215fdb78@linaro.org>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
- Hermes Wu <Hermes.wu@ite.com.tw>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13379;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=KmopryLRsoBsdFSco410Np5Qs2VnxCcK7jJoI81N+4Q=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnyopreCk8UPcZpCd07Dhd2q0Ec3fWlsVmF2k6X
- 8Ai3xVN3G+JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ8qKawAKCRCLPIo+Aiko
- 1dIvB/wKV3nLyXw0YMfPSxCO/H8j9+KIcueHf6PiLWzyeZ0rBQtb/ZvzlK5NFvJerD4DCJGx1Ty
- OXiHDh0N3CpGjIYzCvhiHHNPr5eMk/R5qvQub1jEVEg8VKEoPWdsy4Zs7myh1D3fEZ+421WfBv6
- H5SxYFUA5t+byAKbbYt6np9/5ywCCs+h7L5c03t2IrjYfniHyCUIR951jnnVdC/I3wUmTa1v9ds
- kdsJ9aINDz1wmXZ6UbxTVeCFGsB246fn28TwPf0P2gUhmC3/aygoqUN2PExgGTYKsb0K9KaMoDy
- ls5R6jMmxr7Im4P95YfHHJmluKdks6mfjGAE/y/J7Lg+X9Yu
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <fabd6483-af48-4893-b539-2835640c5316@linux.intel.com>
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PEPF00000015:EE_|MW4PR12MB7286:EE_
+X-MS-Office365-Filtering-Correlation-Id: a7e83ab0-5af7-4aed-2f24-08dd5d3cf9ec
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?TM/YmmW2ha8yEmHwSfX46H7m5Mpt84KZJvM9qv4gLZgLdC1Zn8iQ5grQjAf8?=
+ =?us-ascii?Q?MkhCf5/A7G1ApXdvyT+3+qS/fAkzdX8y7Qrlnib3M0c4Cu3bhAiVUxmuo8i4?=
+ =?us-ascii?Q?PbmYcJSPQcQdYoC2ynC5feZja7OJxzbGs5ljORNpPM71iL49OHjr2gYcekHq?=
+ =?us-ascii?Q?ZybjbfIuEoj8JqhWhagSm5UXzAMaJcHGY+j43DKY1UjkPikWTOOth6pl3iWJ?=
+ =?us-ascii?Q?AYEmQIl8E/0MmVpmWJo6K0JVfnj7le10q1xhcfuyX4mqKFcUVBjJm/dQyOOS?=
+ =?us-ascii?Q?6fROh4plwWfziR9rkwqRxHg5ZA5dB1zyGI8EyfqshRmcqUw9ofvJS0XDdpyS?=
+ =?us-ascii?Q?myB9JudnNd7KK8YPF81Y61JbLkJJWwLvzFxcdqU5tAdZH9BjslD/1AcNg0JR?=
+ =?us-ascii?Q?dSx0fK+C3R1FhA4ZLKWesSPYKAfQ4x5e/Doh9Hq6MtNCfRELJ2K61aAZB8kf?=
+ =?us-ascii?Q?39GIuK/SwbXwPhl14IgkNnCom4KoR5wTuLq8nsb+b02uLVN8pNqjs+XR4gr5?=
+ =?us-ascii?Q?5H+yq6VU7QBSEKRLnHAmAjL8WJTS934o5qsLIKSrmNMyYHGtU4l4EeQhboss?=
+ =?us-ascii?Q?H6NyLWfGbmDXmbVpRSwb7ZguGRXuqyqRwz1mb3jHvtYry+0+H7pXU3LBb8TC?=
+ =?us-ascii?Q?fhQRL7dFtt/pMjWitSEnUV2bYg1c32IQb4HfHO53auv9CLDhcy6IOwIaCs/n?=
+ =?us-ascii?Q?uQUf4jPyzoZYgEOEXeGH+5WInIrhX7JTY+0GrVblt2Z1iWMjLuzq+7YJTD5P?=
+ =?us-ascii?Q?OsYb17OfzsuLMHE9vaURvdct6XzbAHp9ma490iI448ebxBG9hdryf6iX0iwr?=
+ =?us-ascii?Q?JP+KvrP2965+ylnrIIsS0CTH1JNAlrKsFdB+2jYWheLgASjy+l4Z0TPkUuUb?=
+ =?us-ascii?Q?BiaYSEnECSkO1Wd53PAunKTvhYZqPG7B23RlizB7QTHTv93frQO3oThFB7Fi?=
+ =?us-ascii?Q?z0GPj5Hx/lYwbSZlsgRE3bSY0cvYRIZnEWiN1LByG1yyw9aw3tok3bok2Ki/?=
+ =?us-ascii?Q?7Ep9PoeJXTSUgw2bPWAd5mxhgZC8poOckfbbkNGuK212fQ0SPhCUf9f9jVpY?=
+ =?us-ascii?Q?2PFy1FxUvvKVLYez+5vqtKDL9PAozSb/r5vgWlvmqUYKALMYUHcyIc7Vdffl?=
+ =?us-ascii?Q?t5UK2L5TfDKjvSOCVrUrvIqCX3zT7+64ScjesIg+5keNJDBOc7SSsphAt2+k?=
+ =?us-ascii?Q?PWCCBbeR2smomu1vhorOV/omz4xxWWKHLrEnSNtNsdY8ysCSbPQUVsC89wA+?=
+ =?us-ascii?Q?QEEVIjAXFAoSj9pBVnCMd/ljPiBkjmBxRbZMYrn/0uLX6CLnJWuXHOEcFV00?=
+ =?us-ascii?Q?HlAPGebkQ7n5ucGBCB8z0uBkV8AS5UnVEN0c982LP81WLcgaZYe8fGKPTdYn?=
+ =?us-ascii?Q?MI6/vpN8Ue7zm/tHa6c8Cpe0FAoY5KswGlgWXuhd0NnE4i45Z7dIf6qIjVyI?=
+ =?us-ascii?Q?fe92TZHDzgu3PjiUUesnJC4eyh2DbeJ7eAScplkWvbM7uU9DMWiLF6uMUb/d?=
+ =?us-ascii?Q?pPQdI7RJzP793fM=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Mar 2025 05:57:42.7342
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: a7e83ab0-5af7-4aed-2f24-08dd5d3cf9ec
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH3PEPF00000015.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7286
 
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Hi Baolu,
 
-The MSM DisplayPort driver implements several HDMI codec functions
-in the driver, e.g. it manually manages HDMI codec device registration,
-returning ELD and plugged_cb support. In order to reduce code
-duplication reuse drm_hdmi_audio_* helpers and drm_bridge_connector
-integration.
+On Fri, Mar 07, 2025 at 10:28:20AM +0800, Baolu Lu wrote:
+> On 3/7/25 05:00, Nicolin Chen wrote:
+> > From: Robin Murphy<robin.murphy@arm.com>
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/msm/Kconfig         |   1 +
- drivers/gpu/drm/msm/dp/dp_audio.c   | 131 ++++--------------------------------
- drivers/gpu/drm/msm/dp/dp_audio.h   |  27 ++------
- drivers/gpu/drm/msm/dp/dp_display.c |  28 ++------
- drivers/gpu/drm/msm/dp/dp_display.h |   6 --
- drivers/gpu/drm/msm/dp/dp_drm.c     |   8 +++
- 6 files changed, 31 insertions(+), 170 deletions(-)
+Robin had remarks here, wrt iommu_set_fault_handler():
 
-diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
-index 974bc7c0ea761147d3326bdce9039d6f26f290d0..7f127e2ae44292f8f5c7ff6a9251c3d7ec8c9f58 100644
---- a/drivers/gpu/drm/msm/Kconfig
-+++ b/drivers/gpu/drm/msm/Kconfig
-@@ -104,6 +104,7 @@ config DRM_MSM_DPU
- config DRM_MSM_DP
- 	bool "Enable DisplayPort support in MSM DRM driver"
- 	depends on DRM_MSM
-+	select DRM_DISPLAY_HDMI_AUDIO_HELPER
- 	select RATIONAL
- 	default y
- 	help
-diff --git a/drivers/gpu/drm/msm/dp/dp_audio.c b/drivers/gpu/drm/msm/dp/dp_audio.c
-index 70fdc9fe228a7149546accd8479a9e4397f3d5dd..f8bfb908f9b4bf93ad5480f0785e3aed23dde160 100644
---- a/drivers/gpu/drm/msm/dp/dp_audio.c
-+++ b/drivers/gpu/drm/msm/dp/dp_audio.c
-@@ -13,13 +13,13 @@
- 
- #include "dp_catalog.h"
- #include "dp_audio.h"
-+#include "dp_drm.h"
- #include "dp_panel.h"
- #include "dp_reg.h"
- #include "dp_display.h"
- #include "dp_utils.h"
- 
- struct msm_dp_audio_private {
--	struct platform_device *audio_pdev;
- 	struct platform_device *pdev;
- 	struct drm_device *drm_dev;
- 	struct msm_dp_catalog *catalog;
-@@ -160,24 +160,11 @@ static void msm_dp_audio_enable(struct msm_dp_audio_private *audio, bool enable)
- 	msm_dp_catalog_audio_enable(catalog, enable);
- }
- 
--static struct msm_dp_audio_private *msm_dp_audio_get_data(struct platform_device *pdev)
-+static struct msm_dp_audio_private *msm_dp_audio_get_data(struct msm_dp *msm_dp_display)
- {
- 	struct msm_dp_audio *msm_dp_audio;
--	struct msm_dp *msm_dp_display;
--
--	if (!pdev) {
--		DRM_ERROR("invalid input\n");
--		return ERR_PTR(-ENODEV);
--	}
--
--	msm_dp_display = platform_get_drvdata(pdev);
--	if (!msm_dp_display) {
--		DRM_ERROR("invalid input\n");
--		return ERR_PTR(-ENODEV);
--	}
- 
- 	msm_dp_audio = msm_dp_display->msm_dp_audio;
--
- 	if (!msm_dp_audio) {
- 		DRM_ERROR("invalid msm_dp_audio data\n");
- 		return ERR_PTR(-EINVAL);
-@@ -186,68 +173,16 @@ static struct msm_dp_audio_private *msm_dp_audio_get_data(struct platform_device
- 	return container_of(msm_dp_audio, struct msm_dp_audio_private, msm_dp_audio);
- }
- 
--static int msm_dp_audio_hook_plugged_cb(struct device *dev, void *data,
--		hdmi_codec_plugged_cb fn,
--		struct device *codec_dev)
--{
--
--	struct platform_device *pdev;
--	struct msm_dp *msm_dp_display;
--
--	pdev = to_platform_device(dev);
--	if (!pdev) {
--		pr_err("invalid input\n");
--		return -ENODEV;
--	}
--
--	msm_dp_display = platform_get_drvdata(pdev);
--	if (!msm_dp_display) {
--		pr_err("invalid input\n");
--		return -ENODEV;
--	}
--
--	return msm_dp_display_set_plugged_cb(msm_dp_display, fn, codec_dev);
--}
--
--static int msm_dp_audio_get_eld(struct device *dev,
--	void *data, uint8_t *buf, size_t len)
--{
--	struct platform_device *pdev;
--	struct msm_dp *msm_dp_display;
--
--	pdev = to_platform_device(dev);
--
--	if (!pdev) {
--		DRM_ERROR("invalid input\n");
--		return -ENODEV;
--	}
--
--	msm_dp_display = platform_get_drvdata(pdev);
--	if (!msm_dp_display) {
--		DRM_ERROR("invalid input\n");
--		return -ENODEV;
--	}
--
--	mutex_lock(&msm_dp_display->connector->eld_mutex);
--	memcpy(buf, msm_dp_display->connector->eld,
--		min(sizeof(msm_dp_display->connector->eld), len));
--	mutex_unlock(&msm_dp_display->connector->eld_mutex);
--
--	return 0;
--}
--
--int msm_dp_audio_hw_params(struct device *dev,
--	void *data,
--	struct hdmi_codec_daifmt *daifmt,
--	struct hdmi_codec_params *params)
-+int msm_dp_audio_prepare(struct drm_connector *connector,
-+			 struct drm_bridge *bridge,
-+			 struct hdmi_codec_daifmt *daifmt,
-+			 struct hdmi_codec_params *params)
- {
- 	int rc = 0;
- 	struct msm_dp_audio_private *audio;
--	struct platform_device *pdev;
- 	struct msm_dp *msm_dp_display;
- 
--	pdev = to_platform_device(dev);
--	msm_dp_display = platform_get_drvdata(pdev);
-+	msm_dp_display = to_dp_bridge(bridge)->msm_dp_display;
- 
- 	/*
- 	 * there could be cases where sound card can be opened even
-@@ -262,7 +197,7 @@ int msm_dp_audio_hw_params(struct device *dev,
- 		goto end;
- 	}
- 
--	audio = msm_dp_audio_get_data(pdev);
-+	audio = msm_dp_audio_get_data(msm_dp_display);
- 	if (IS_ERR(audio)) {
- 		rc = PTR_ERR(audio);
- 		goto end;
-@@ -281,15 +216,14 @@ int msm_dp_audio_hw_params(struct device *dev,
- 	return rc;
- }
- 
--static void msm_dp_audio_shutdown(struct device *dev, void *data)
-+void msm_dp_audio_shutdown(struct drm_connector *connector,
-+			   struct drm_bridge *bridge)
- {
- 	struct msm_dp_audio_private *audio;
--	struct platform_device *pdev;
- 	struct msm_dp *msm_dp_display;
- 
--	pdev = to_platform_device(dev);
--	msm_dp_display = platform_get_drvdata(pdev);
--	audio = msm_dp_audio_get_data(pdev);
-+	msm_dp_display = to_dp_bridge(bridge)->msm_dp_display;
-+	audio = msm_dp_audio_get_data(msm_dp_display);
- 	if (IS_ERR(audio)) {
- 		DRM_ERROR("failed to get audio data\n");
- 		return;
-@@ -311,47 +245,6 @@ static void msm_dp_audio_shutdown(struct device *dev, void *data)
- 	msm_dp_display_signal_audio_complete(msm_dp_display);
- }
- 
--static const struct hdmi_codec_ops msm_dp_audio_codec_ops = {
--	.hw_params = msm_dp_audio_hw_params,
--	.audio_shutdown = msm_dp_audio_shutdown,
--	.get_eld = msm_dp_audio_get_eld,
--	.hook_plugged_cb = msm_dp_audio_hook_plugged_cb,
--};
--
--static struct hdmi_codec_pdata codec_data = {
--	.ops = &msm_dp_audio_codec_ops,
--	.max_i2s_channels = 8,
--	.i2s = 1,
--};
--
--void msm_dp_unregister_audio_driver(struct device *dev, struct msm_dp_audio *msm_dp_audio)
--{
--	struct msm_dp_audio_private *audio_priv;
--
--	audio_priv = container_of(msm_dp_audio, struct msm_dp_audio_private, msm_dp_audio);
--
--	if (audio_priv->audio_pdev) {
--		platform_device_unregister(audio_priv->audio_pdev);
--		audio_priv->audio_pdev = NULL;
--	}
--}
--
--int msm_dp_register_audio_driver(struct device *dev,
--		struct msm_dp_audio *msm_dp_audio)
--{
--	struct msm_dp_audio_private *audio_priv;
--
--	audio_priv = container_of(msm_dp_audio,
--			struct msm_dp_audio_private, msm_dp_audio);
--
--	audio_priv->audio_pdev = platform_device_register_data(dev,
--						HDMI_CODEC_DRV_NAME,
--						PLATFORM_DEVID_AUTO,
--						&codec_data,
--						sizeof(codec_data));
--	return PTR_ERR_OR_ZERO(audio_priv->audio_pdev);
--}
--
- struct msm_dp_audio *msm_dp_audio_get(struct platform_device *pdev,
- 			struct msm_dp_catalog *catalog)
- {
-diff --git a/drivers/gpu/drm/msm/dp/dp_audio.h b/drivers/gpu/drm/msm/dp/dp_audio.h
-index beea34cbab77f31b33873297dc454a9cee446240..58fc14693e48bff2b57ef7278983e5f21ee80ac7 100644
---- a/drivers/gpu/drm/msm/dp/dp_audio.h
-+++ b/drivers/gpu/drm/msm/dp/dp_audio.h
-@@ -35,23 +35,6 @@ struct msm_dp_audio {
- struct msm_dp_audio *msm_dp_audio_get(struct platform_device *pdev,
- 			struct msm_dp_catalog *catalog);
- 
--/**
-- * msm_dp_register_audio_driver()
-- *
-- * Registers DP device with hdmi_codec interface.
-- *
-- * @dev: DP device instance.
-- * @msm_dp_audio: an instance of msm_dp_audio module.
-- *
-- *
-- * Returns the error code in case of failure, otherwise
-- * zero on success.
-- */
--int msm_dp_register_audio_driver(struct device *dev,
--		struct msm_dp_audio *msm_dp_audio);
--
--void msm_dp_unregister_audio_driver(struct device *dev, struct msm_dp_audio *msm_dp_audio);
--
- /**
-  * msm_dp_audio_put()
-  *
-@@ -61,10 +44,12 @@ void msm_dp_unregister_audio_driver(struct device *dev, struct msm_dp_audio *msm
-  */
- void msm_dp_audio_put(struct msm_dp_audio *msm_dp_audio);
- 
--int msm_dp_audio_hw_params(struct device *dev,
--	void *data,
--	struct hdmi_codec_daifmt *daifmt,
--	struct hdmi_codec_params *params);
-+int msm_dp_audio_prepare(struct drm_connector *connector,
-+			 struct drm_bridge *bridge,
-+			 struct hdmi_codec_daifmt *daifmt,
-+			 struct hdmi_codec_params *params);
-+void msm_dp_audio_shutdown(struct drm_connector *connector,
-+			   struct drm_bridge *bridge);
- 
- #endif /* _DP_AUDIO_H_ */
- 
-diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-index bbc47d86ae9e67245c87a8365df366cce0dc529e..ece184d20c0f8bffa3c2a48216015185d6cbc99e 100644
---- a/drivers/gpu/drm/msm/dp/dp_display.c
-+++ b/drivers/gpu/drm/msm/dp/dp_display.c
-@@ -13,6 +13,7 @@
- #include <linux/delay.h>
- #include <linux/string_choices.h>
- #include <drm/display/drm_dp_aux_bus.h>
-+#include <drm/display/drm_hdmi_audio_helper.h>
- #include <drm/drm_edid.h>
- 
- #include "msm_drv.h"
-@@ -288,13 +289,6 @@ static int msm_dp_display_bind(struct device *dev, struct device *master,
- 		goto end;
- 	}
- 
--
--	rc = msm_dp_register_audio_driver(dev, dp->audio);
--	if (rc) {
--		DRM_ERROR("Audio registration Dp failed\n");
--		goto end;
--	}
--
- 	rc = msm_dp_hpd_event_thread_start(dp);
- 	if (rc) {
- 		DRM_ERROR("Event thread create failed\n");
-@@ -316,7 +310,6 @@ static void msm_dp_display_unbind(struct device *dev, struct device *master,
- 
- 	of_dp_aux_depopulate_bus(dp->aux);
- 
--	msm_dp_unregister_audio_driver(dev, dp->audio);
- 	msm_dp_aux_unregister(dp->aux);
- 	dp->drm_dev = NULL;
- 	dp->aux->drm_dev = NULL;
-@@ -626,9 +619,9 @@ static void msm_dp_display_handle_plugged_change(struct msm_dp *msm_dp_display,
- 			struct msm_dp_display_private, msm_dp_display);
- 
- 	/* notify audio subsystem only if sink supports audio */
--	if (msm_dp_display->plugged_cb && msm_dp_display->codec_dev &&
--			dp->audio_supported)
--		msm_dp_display->plugged_cb(msm_dp_display->codec_dev, plugged);
-+	if (dp->audio_supported)
-+		drm_connector_hdmi_audio_plugged_notify(msm_dp_display->connector,
-+							plugged);
- }
- 
- static int msm_dp_hpd_unplug_handle(struct msm_dp_display_private *dp, u32 data)
-@@ -907,19 +900,6 @@ static int msm_dp_display_disable(struct msm_dp_display_private *dp)
- 	return 0;
- }
- 
--int msm_dp_display_set_plugged_cb(struct msm_dp *msm_dp_display,
--		hdmi_codec_plugged_cb fn, struct device *codec_dev)
--{
--	bool plugged;
--
--	msm_dp_display->plugged_cb = fn;
--	msm_dp_display->codec_dev = codec_dev;
--	plugged = msm_dp_display->link_ready;
--	msm_dp_display_handle_plugged_change(msm_dp_display, plugged);
--
--	return 0;
--}
--
- /**
-  * msm_dp_bridge_mode_valid - callback to determine if specified mode is valid
-  * @bridge: Pointer to drm bridge structure
-diff --git a/drivers/gpu/drm/msm/dp/dp_display.h b/drivers/gpu/drm/msm/dp/dp_display.h
-index ecbc2d92f546a346ee53adcf1b060933e4f54317..cc6e2cab36e9c0b1527ff292e547cbb4d69fd95c 100644
---- a/drivers/gpu/drm/msm/dp/dp_display.h
-+++ b/drivers/gpu/drm/msm/dp/dp_display.h
-@@ -7,7 +7,6 @@
- #define _DP_DISPLAY_H_
- 
- #include "dp_panel.h"
--#include <sound/hdmi-codec.h>
- #include "disp/msm_disp_snapshot.h"
- 
- #define DP_MAX_PIXEL_CLK_KHZ	675000
-@@ -15,7 +14,6 @@
- struct msm_dp {
- 	struct drm_device *drm_dev;
- 	struct platform_device *pdev;
--	struct device *codec_dev;
- 	struct drm_connector *connector;
- 	struct drm_bridge *next_bridge;
- 	bool link_ready;
-@@ -25,14 +23,10 @@ struct msm_dp {
- 	bool is_edp;
- 	bool internal_hpd;
- 
--	hdmi_codec_plugged_cb plugged_cb;
--
- 	struct msm_dp_audio *msm_dp_audio;
- 	bool psr_supported;
- };
- 
--int msm_dp_display_set_plugged_cb(struct msm_dp *msm_dp_display,
--		hdmi_codec_plugged_cb fn, struct device *codec_dev);
- int msm_dp_display_get_modes(struct msm_dp *msm_dp_display);
- bool msm_dp_display_check_video_test(struct msm_dp *msm_dp_display);
- int msm_dp_display_get_test_bpp(struct msm_dp *msm_dp_display);
-diff --git a/drivers/gpu/drm/msm/dp/dp_drm.c b/drivers/gpu/drm/msm/dp/dp_drm.c
-index cca57e56c906255a315e759e85a5af5982c80e9c..20b24eea0a4b619598079fbe4a32188485852b04 100644
---- a/drivers/gpu/drm/msm/dp/dp_drm.c
-+++ b/drivers/gpu/drm/msm/dp/dp_drm.c
-@@ -12,6 +12,7 @@
- 
- #include "msm_drv.h"
- #include "msm_kms.h"
-+#include "dp_audio.h"
- #include "dp_drm.h"
- 
- /**
-@@ -114,6 +115,9 @@ static const struct drm_bridge_funcs msm_dp_bridge_ops = {
- 	.hpd_disable  = msm_dp_bridge_hpd_disable,
- 	.hpd_notify   = msm_dp_bridge_hpd_notify,
- 	.debugfs_init = msm_dp_bridge_debugfs_init,
-+
-+	.hdmi_audio_prepare = msm_dp_audio_prepare,
-+	.hdmi_audio_shutdown = msm_dp_audio_shutdown,
- };
- 
- static int msm_edp_bridge_atomic_check(struct drm_bridge *drm_bridge,
-@@ -320,9 +324,13 @@ int msm_dp_bridge_init(struct msm_dp *msm_dp_display, struct drm_device *dev,
- 	 */
- 	if (!msm_dp_display->is_edp) {
- 		bridge->ops =
-+			DRM_BRIDGE_OP_HDMI_AUDIO |
- 			DRM_BRIDGE_OP_DETECT |
- 			DRM_BRIDGE_OP_HPD |
- 			DRM_BRIDGE_OP_MODES;
-+		bridge->hdmi_audio_dev = &msm_dp_display->pdev->dev;
-+		bridge->hdmi_audio_max_i2s_playback_channels = 8;
-+		bridge->hdmi_audio_dai_port = -1;
- 	}
- 
- 	rc = devm_drm_bridge_add(dev->dev, bridge);
+> > The fact is that all these cookie types are
+> > mutually exclusive, in the sense that combining them makes zero sense
+> > and/or would be catastrophic (iommu_set_fault_handler() on an SVA
+> > domain, anyone?) - the only combination which*might* be reasonable is
+> > perhaps a fault handler and an MSI cookie, but nobody's doing that at
+> > the moment, so let's rule it out as well for the sake of being clear and
+> > robust.
+[...]
+> > @@ -224,10 +234,10 @@ struct iommu_domain {
+> >   		      phys_addr_t msi_addr);
+> >   #endif
+> > -	union { /* Pointer usable by owner of the domain */
+> > -		struct iommufd_hw_pagetable *iommufd_hwpt; /* iommufd */
+> > -	};
+> > -	union { /* Fault handler */
+> > +	union { /* cookie */
+> > +		struct iommu_dma_cookie *iova_cookie;
+> > +		struct iommu_dma_msi_cookie *msi_cookie;
+> > +		struct iommufd_hw_pagetable *iommufd_hwpt;
+> >   		struct {
+> >   			iommu_fault_handler_t handler;
+> >   			void *handler_token;
+> 
+> My feeling is that IOMMU_COOKIE_FAULT_HANDLER isn't exclusive to
+> IOMMU_COOKIE_DMA_IOVA; both might be used for kernel DMA with a paging
+> domain.
+> 
+> I am afraid that iommu_set_fault_handler() doesn't work anymore as the
+> domain's cookie type has already been set to IOMMU_COOKIE_DMA_IOVA.
 
--- 
-2.39.5
+All three existing iommu_set_fault_handler() callers in the tree
+are UNMANAGED domain users:
+   5    451  drivers/gpu/drm/msm/msm_iommu.c <<msm_iommu_gpu_new>>
+             iommu_set_fault_handler(iommu->domain, msm_fault_handler, iommu);
+   6    453  drivers/infiniband/hw/usnic/usnic_uiom.c <<usnic_uiom_alloc_pd>>
+             iommu_set_fault_handler(pd->domain, usnic_uiom_dma_fault, NULL);
+   8    118  drivers/remoteproc/remoteproc_core.c <<rproc_enable_iommu>>
+             iommu_set_fault_handler(domain, rproc_iommu_fault, rproc);
 
+On the other hand, IOMMU_COOKIE_DMA_IOVA is a private cookie for
+dma-iommu only.
+
+So, I think we are probably fine?
+
+Thanks
+Nicolin
 
