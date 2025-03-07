@@ -1,170 +1,205 @@
-Return-Path: <linux-kernel+bounces-550608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D323A561EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:40:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9513CA561F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:41:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DB78B18937B6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:41:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F398D18940E2
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722961A8407;
-	Fri,  7 Mar 2025 07:40:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DCC21A8F6E;
+	Fri,  7 Mar 2025 07:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VghUAx6w"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L9uZgIlX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5CE18B476;
-	Fri,  7 Mar 2025 07:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1EF618B476;
+	Fri,  7 Mar 2025 07:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741333249; cv=none; b=d3WmyTjPn+WWYKAclx4mvLlAkQECKGyPUFtt4ndb1AvEX9wRO4QGR23ACpohOcJ4krV4CSBMmn7OWk4vY1v65ucbgSOLDbe2v2c4lm0InqLt8rQq6hcS7ek6EngZMfymkM9CZdEu6yIQHHWPOBKGQgWUImu1Iclz0kYw4mtTmNE=
+	t=1741333293; cv=none; b=u3DHbrObsGT1paONNmsmr59QzWlQ744glHrwfGtYoQ5pzr1bdkn98v2WWZKvNc7DDOgF9aIgRY+2uJMuAc0g4fuvFMZTgLROs6+xGsuHQyM7Yt+JQWU19uMAXbUu9bB2d+lZv/mUTTsTiEnFbEqS8WcgPZqgYGjWuTRQPhlgpFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741333249; c=relaxed/simple;
-	bh=lEHrRaSc6fn1g0LthjtcEDEbqyxHZLFiFYO6+pw4YFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LhPyWYS92H74v5d9wEd9MCyxPitxIEfviVLyhCRM1Z4Rz663JmdU3joKriODzS0asqLI+hY/Uc3jzASej8NsaZrafy0JToQxeIbC7lK/cyZkcR+UckknuZDc6ki80GE+OwALZuD68kcpDTn2MBAwzJ3Xx60lATrwAodwf55U0go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VghUAx6w; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 526KpePj011769;
-	Fri, 7 Mar 2025 07:40:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Weyu1h
-	EJixZ8+uWifCp9lRve1k9ujNyn1Q+HFpBBGnY=; b=VghUAx6woq3gE66mJVHmaa
-	6nNQ6gxPDK4UJJ+15fRjIbx35OuvrUKTS3uJdfDMSDeh7ApCI+6mdWZUC+i63lNr
-	kHt+/GduLoTfAjakg7T+myI5yKG+xC/mqDvNUl1I7CYBxmRtkQo1wDPrOaJitW4X
-	u+HZrVRO77kXKa1nUzUKheJxSCJZSm9s94H1NxMuREYcHsl4YxVBtD2ZffLpbpAJ
-	D65MSBUVwUHSA9UfFvrhZwWr+N4EWj+z/Wmpgy0A8ogL065ZeAd8eU+GHZiD5K5Y
-	YzX8OrvKvA3IVLfDFc6n5eip9OQXc2RLp5c4TriqcMwmVrF8vfFfgb6LoVL/0GCg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457k45abe4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 07:40:27 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5277eR8v024408;
-	Fri, 7 Mar 2025 07:40:27 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 457k45abe1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 07:40:27 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 527758ie020794;
-	Fri, 7 Mar 2025 07:40:26 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 454eskd58k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 07 Mar 2025 07:40:26 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5277eOGg30409426
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 7 Mar 2025 07:40:24 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C42C12004B;
-	Fri,  7 Mar 2025 07:40:24 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5724020040;
-	Fri,  7 Mar 2025 07:40:20 +0000 (GMT)
-Received: from [9.124.218.213] (unknown [9.124.218.213])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  7 Mar 2025 07:40:20 +0000 (GMT)
-Message-ID: <9dc616ee-ad2a-428f-ac26-f7a7280be439@linux.ibm.com>
-Date: Fri, 7 Mar 2025 13:10:19 +0530
+	s=arc-20240116; t=1741333293; c=relaxed/simple;
+	bh=bF4mHFm8U4if18/YMhPJOe0mEyH61C7WCg62Scl77Zk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qjpmJKk+mMFfaSDwGyrmK8UhY8HSh7EDvgY6oHftpuPgc5YHpeCw9jMnJmx2VQ0+7XPBXHc7B2y5fvZqNEBgG9itf0Ddvhmdee8m4kE+MfwsfO0TlwO5h4pP3jNHEsXsSHVWQuR5U5ymB/s0sXKel930U3RnT14SS6nWiAH7ZF8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L9uZgIlX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA816C4CEE3;
+	Fri,  7 Mar 2025 07:41:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741333293;
+	bh=bF4mHFm8U4if18/YMhPJOe0mEyH61C7WCg62Scl77Zk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L9uZgIlXLqnJo2uw3DIO3ns8wZj+4j/ii84D6nl2S4GBYtIj4MjIDSFEwm5O7CU/r
+	 GEGSe/s3pDrwVduFkj/QQ3lFydgrpCtm8GSqsjp6PNy53ePPAU7y9ry5fPdsJ0lR/v
+	 CuEVEUS4OinFeaEbljbYWAEUy98q3CkdeBrRAJQjk2FIVcHUoJ5tZOVo0BvV00il0e
+	 CH1RC/W7l9I2/MJJp0dxSy/roJKTfUdkyhCh3RxA90u7dEZiIUvVYZv5OQ+ewwAXgl
+	 kgIjafzCTI4Q6D95Y6qVSryy3dHrcYCj7JzljY73jYIKPKfIlWGe5bgSQtN4mjwmM4
+	 hrY4G743ZdEiw==
+Date: Fri, 7 Mar 2025 08:41:28 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Guangjie Song <guangjie.song@mediatek.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Ulf Hansson <ulf.hansson@linaro.org>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org, 
+	Project_Global_Chrome_Upstream_Group@mediatek.com
+Subject: Re: [PATCH 12/13] dt-bindings: power: mediatek: Add new MT8196 power
+ domain
+Message-ID: <20250307-groovy-opalescent-spoonbill-cb569e@krzk-bin>
+References: <20250307034454.12243-1-guangjie.song@mediatek.com>
+ <20250307034454.12243-13-guangjie.song@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/8] cgroup/cpuset: Remove
- partition_and_rebuild_sched_domains
-To: Juri Lelli <juri.lelli@redhat.com>, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        =?UTF-8?Q?Michal_Koutn=C3=BD?=
- <mkoutny@suse.com>,
-        Qais Yousef <qyousef@layalina.io>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Swapnil Sapkal <swapnil.sapkal@amd.com>, Phil Auld <pauld@redhat.com>,
-        luca.abeni@santannapisa.it, tommaso.cucinotta@santannapisa.it,
-        Jon Hunter <jonathanh@nvidia.com>, Waiman Long <llong@redhat.com>
-References: <20250306141016.268313-1-juri.lelli@redhat.com>
- <20250306141016.268313-7-juri.lelli@redhat.com>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <20250306141016.268313-7-juri.lelli@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: WERvGmOASmP6HG0VYgdFKGQJILFYTHu3
-X-Proofpoint-GUID: yGUOaU7LWPK1oh7ZYqCwa72lE03Kuu6l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-07_02,2025-03-06_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
- mlxlogscore=999 mlxscore=0 adultscore=0 clxscore=1011 impostorscore=0
- priorityscore=1501 suspectscore=0 bulkscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503070053
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250307034454.12243-13-guangjie.song@mediatek.com>
 
-
-
-On 3/6/25 19:40, Juri Lelli wrote:
-> partition_and_rebuild_sched_domains() and partition_sched_domains() are
-> now equivalent.
+On Fri, Mar 07, 2025 at 11:44:36AM +0800, Guangjie Song wrote:
+> Add the binding documentation for power domain on MediaTek MT8196.
 > 
-> Remove the former as a nice clean up.
-> 
-> Suggested-by: Waiman Long <llong@redhat.com>
-> Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
+> Signed-off-by: Guangjie Song <guangjie.song@mediatek.com>
 > ---
->   kernel/cgroup/cpuset.c | 11 +----------
->   1 file changed, 1 insertion(+), 10 deletions(-)
+>  .../mediatek,mt8196-power-controller.yaml     | 74 +++++++++++++++++++
+>  include/dt-bindings/power/mt8196-power.h      | 57 ++++++++++++++
+
+
+You keep sending multiple patchsets and none of them are tested.
+
+
+>  2 files changed, 131 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/power/mediatek,mt8196-power-controller.yaml
+>  create mode 100644 include/dt-bindings/power/mt8196-power.h
+
+Comments from other patches apply.
+
 > 
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index f66b2aefdc04..7995cd58a01b 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -993,15 +993,6 @@ void dl_rebuild_rd_accounting(void)
->   	rcu_read_unlock();
->   }
->   
-> -static void
-> -partition_and_rebuild_sched_domains(int ndoms_new, cpumask_var_t doms_new[],
-> -				    struct sched_domain_attr *dattr_new)
-> -{
-> -	sched_domains_mutex_lock();
-> -	partition_sched_domains_locked(ndoms_new, doms_new, dattr_new);
-> -	sched_domains_mutex_unlock();
-> -}
-> -
->   /*
->    * Rebuild scheduler domains.
->    *
-> @@ -1063,7 +1054,7 @@ void rebuild_sched_domains_locked(void)
->   	ndoms = generate_sched_domains(&doms, &attr);
->   
->   	/* Have scheduler rebuild the domains */
-> -	partition_and_rebuild_sched_domains(ndoms, doms, attr);
-> +	partition_sched_domains(ndoms, doms, attr);
->   }
->   #else /* !CONFIG_SMP */
->   void rebuild_sched_domains_locked(void)
+> diff --git a/Documentation/devicetree/bindings/power/mediatek,mt8196-power-controller.yaml b/Documentation/devicetree/bindings/power/mediatek,mt8196-power-controller.yaml
+> new file mode 100644
+> index 000000000000..6c2867b25967
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/power/mediatek,mt8196-power-controller.yaml
+> @@ -0,0 +1,74 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/power/mediatek,mt8196-power-controller.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Mediatek MT8196 Power Domains Controller
+> +
+> +maintainers:
+> +  - Guangjie Song <guangjie.song@mediatek.com>
+> +
+> +description: |
+> +  Mediatek processors include support for multiple power domains which can be
+> +  powered up/down by software based on different application scenes to save power.
+> +
+> +properties:
+> +  $nodename:
+> +    pattern: '^power-controller(@[0-9a-f]+)?$'
 
-This makes sense.
 
-Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
+How unit address can be optional?
+
+> +
+> +  compatible:
+> +    enum:
+> +      - mediatek,mt8196-scpsys
+> +      - mediatek,mt8196-hfrpsys
+> +
+> +  '#power-domain-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    description: Address range of the power controller.
+
+No, look how other bindings do it.
+
+> +
+> +  clocks:
+> +    description: |
+
+Look at other bindings.
+
+> +      A number of phandles to clocks that need to be enabled during domain
+> +      power-up sequencing.
+
+Look at other bindings.
+
+> +
+> +  clock-names:
+> +    description: |
+> +      List of names of clock.
+> +
+> +  domain-supply:
+> +    description: domain regulator supply.
+> +
+> +  spm:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: phandle to the device containing the spm register range.
+> +
+> +  mmpc:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: phandle to the device containing the mmpc register range.
+> +
+> +  vote-regmap:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: phandle to the device containing the vote register range.
+> +
+> +  mm-vote-regmap:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description: phandle to the device containing the mm-vote register range.
+
+None of these are correct.
+
+> +
+> +required:
+> +  - compatible
+
+That's just incomplete.
+
+This binding is really incomplete and with multiple issues. Considering
+this was never tested, please first consult some internal folks to do
+proper internal review.
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/power/mt8196-power.h>
+> +
+> +    scpsys: power-controller@1c004000 {
+> +      compatible = "mediatek,mt8196-scpsys", "syscon";
+> +      reg = <0 0x1c004000 0 0x1000>;
+> +      #power-domain-cells = <1>;
+> +      spm = <&scpsys_bus>;
+> +      vote-regmap = <&vote>;
+> +    };
+> diff --git a/include/dt-bindings/power/mt8196-power.h b/include/dt-bindings/power/mt8196-power.h
+> new file mode 100644
+> index 000000000000..b0db89cc435d
+> --- /dev/null
+> +++ b/include/dt-bindings/power/mt8196-power.h
+> @@ -0,0 +1,57 @@
+> +/* SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause */
+> +/*
+> + * Copyright (c) 2023 MediaTek Inc.
+
+We have 2025.
+
+Best regards,
+Krzysztof
+
 
