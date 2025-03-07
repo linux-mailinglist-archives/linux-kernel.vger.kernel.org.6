@@ -1,55 +1,72 @@
-Return-Path: <linux-kernel+bounces-551496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C9FA56D2E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:09:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D254FA56D36
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 17:10:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D81D93B8791
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:08:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B3843B06CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C205A2253EE;
-	Fri,  7 Mar 2025 16:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9BB226D1D;
+	Fri,  7 Mar 2025 16:09:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D0cfEB99"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CRixdy6/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260B822539E;
-	Fri,  7 Mar 2025 16:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C9E3226D0A;
+	Fri,  7 Mar 2025 16:09:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741363658; cv=none; b=trBqLBVzbPvk8dmL3JwbbTFj/Rqe/AFORGSkTeoZAZglV00L6Xmst2NAeaBXjoPKPU5XEB0hBDFwH0//ySE4CVmTQKAE4lnoB1mNx2K7/dUPMI55dlJdiRXxS41+QaPY6+6meHoUvoLTa6kzi6K3ONWwzX8AdXHakORGP4RwjtA=
+	t=1741363765; cv=none; b=BrLMil1evTv41FfXfy2y0db1AHqexI62zYSvvWO6SuKNIpJkSkOgDJlCyK6jKyTYjKMzJiNf6pZURIQKwoE8dF46mPSw4dtEV3FLwBW+o47NJrfQueo92L99Sg8sudtk2+S5AWQ8BC2JDDu6ZbrPIpG9qIeE1CioiUgJ4+0Imk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741363658; c=relaxed/simple;
-	bh=dcm0Hs9gMi5hesN2kdGvOo6rsOd3t+0dAqIv5xGKQKU=;
+	s=arc-20240116; t=1741363765; c=relaxed/simple;
+	bh=OjzgZIrF4I2Usopqifbp/MqmZF5LZWDEmj7w8BfGAOY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g3FZy1NbXPuXh82gAkfxUV3pCRHFTFSQdUQs2zx6wLWxAeaD5wTKzce9+wx34EWjYmkYeJwsqZPmQLov4bMh/hhhUjyIfJ5DY3TlYlzz5FnhLvmQyvr4kEZlb4a0Mu+j1eKPIyvzC9cyML+ykGHuD4lL8odEXH6OlmZB4PFsj/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D0cfEB99; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7814CC4CEE3;
-	Fri,  7 Mar 2025 16:07:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DFUGx/uolgfKyTRwlw2Ljr4Y0UcceQVZni+q/vaAuL9HQTQzWlnKEbdJQHRaMA6y4DFslhYScbPH4Zyy9CNDlSj8eC7PzfCmvoOP/Q788/B8IbqxQf0eHtDDMDsbJxdA8+J6aiRBVxOHBMY1bWjq0YW0BKP3hfP36CpC6OieQWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CRixdy6/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A03B6C4CED1;
+	Fri,  7 Mar 2025 16:09:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741363657;
-	bh=dcm0Hs9gMi5hesN2kdGvOo6rsOd3t+0dAqIv5xGKQKU=;
+	s=k20201202; t=1741363764;
+	bh=OjzgZIrF4I2Usopqifbp/MqmZF5LZWDEmj7w8BfGAOY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=D0cfEB99EdFUY4VmHqJ1fkK2VCAgct+T9BI5TdsqJTdTMUdpp1JrYZbW6YtTQfEHB
-	 ezEI6nTGTVP0KRw17aPzG1XDGYAL3FPZRmP9loDJjRb58U4GPIT+p7IwbYdbWaaeV0
-	 z2knmkZD/pP2wy8iR2Y4KedPST5SpQ8jdrJCoi6rLH0ZK6o/WSnumydyWHJ90pWvKq
-	 zIrQmqoXQWNiUayzSeV6Hht6VsmQwX80WSHcfdAppiFAQFqD9bpbfcfX97pL4v9h+W
-	 q1XjlcugTSdzDTk64FjIKugqz1rh2sCkotVVJcRMxMezuOn9ymf60qr9QMNSh/ZZwM
-	 Q25WZcvDY6aTw==
-Date: Fri, 7 Mar 2025 06:07:36 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Yu Kuai <yukuai1@huaweicloud.com>
-Cc: ming.lei@redhat.com, axboe@kernel.dk, josef@toxicpanda.com,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: Re: [PATCH] blk-throttle: support io merge over iops_limit
-Message-ID: <Z8sZyElaHQQwKqpB@slm.duckdns.org>
-References: <20250307090152.4095551-1-yukuai1@huaweicloud.com>
+	b=CRixdy6/AE5PCxS5J+Ug/OE91n6wpvg3310s9xJb3CIlggDDaMfzy2YA0LLJ+wzMK
+	 KFGtabUqbxPWftAGlrA6QpxjyQWW+ahk8AhjFm0mqplp2aYjzcSOHeSWdGqvdtsjWa
+	 5ZO98/8DZC/a1MawaJ8lzVSvRTbr29iqgiQkGjo0VFQnTY/BpXNb8qpVx5QGEER8Pt
+	 yG8lbMSBb1aU8bOym3nEioEKNrn15zHWOWI3z4OOjRi77OdaB2YFDkZQadiKpc7+cS
+	 LbuzBZ+yjaDP12RjnaSRks4/IMqlBUTruFV5YbHfWu6XnsIkh8gMVS+90lt0FOdFpu
+	 bZ0RF+V5CGFGw==
+Date: Fri, 7 Mar 2025 17:09:17 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, aliceryhl@google.com,
+	robin.murphy@arm.com, daniel.almeida@collabora.com,
+	rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+Message-ID: <Z8saLZAylcVp89n_@cassiopeiae>
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+ <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+ <20250305174118.GA351188@nvidia.com>
+ <Z8mlAxsszdOH-ow8@cassiopeiae>
+ <Z8m9j3SwWHqaCTXo@phenom.ffwll.local>
+ <20250306160907.GF354511@nvidia.com>
+ <Z8qzP3CR8Quhp87Z@pollux>
+ <20250307124809.GL354511@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,51 +75,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250307090152.4095551-1-yukuai1@huaweicloud.com>
+In-Reply-To: <20250307124809.GL354511@nvidia.com>
 
-Hello,
-
-On Fri, Mar 07, 2025 at 05:01:52PM +0800, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
+On Fri, Mar 07, 2025 at 08:48:09AM -0400, Jason Gunthorpe wrote:
+> On Fri, Mar 07, 2025 at 09:50:07AM +0100, Danilo Krummrich wrote:
+> > > The actual critical region extends into the HW itself, it is not
+> > > simple to model this with a pure SW construct of bracketing some
+> > > allocation. You need to bracket the *entire lifecycle* of the
+> > > dma_addr_t that has been returned and passed into HW, until the
+> > > dma_addr_t is removed from HW.
+> > 
+> > Devres callbacks run after remove(). It's the drivers job to stop operating the
+> > device latest in remove(). Which means that the design is correct.
 > 
-> Commit 9f5ede3c01f9 ("block: throttle split bio in case of iops limit")
-> support to account split IO for iops limit, because block layer provides
-> io accounting against split bio.
-> 
-> However, io merge is still not handled, while block layer doesn't
-> account merged io for iops. Fix this problem by decreasing io_disp
-> if bio is merged, and following IO can use the extra budget. If io merge
-> concurrent with iops throttling, it's not handled if one more or one
-> less bio is dispatched, this is fine because as long as new slice is not
-> started, blk-throttle already preserve one extra slice for deviation,
-> and it's not worth it to handle the case that iops_limit rate is less than
-> one per slice.
-> 
-> A regression test will be added for this case [1], before this patch,
-> the test will fail:
-> 
-> +++ /root/blktests-mainline/results/nodev/throtl/007.out.bad
-> @@ -1,4 +1,4 @@
->  Running throtl/007
->  1
-> -1
-> +11
->  Test complete
-> 
-> [1] https://lore.kernel.org/all/20250307080318.3860858-2-yukuai1@huaweicloud.com/
+> It could be the drivers job to unmap the dma as well if you take that
+> logic.
 
-For blk-throtl, iops limit has meant the number of bios issued. I'm not
-necessarily against this change but this is significantly changing what a
-given configuration means. Also, if we're now doing hardware request based
-throttling, maybe we should just move this under rq-qos. That has the
-problem of not supporting bio-based drivers but maybe we can leave
-blk-throtl in deprecation mode and slowly phase it out.
+I really don't understand what you want: *You* brought up that the
+CoherentAllocation is not allowed to out-live driver unbind.
 
-Also, can you please make atomic_t conversion a separate patch and describe
-why that's being done?
+We agreed and provided a way that solves this. But then you point out the
+unsolvable problem of malicious (or wrongly programmed) hardware and use it to
+question why we then even bother solving the problem you just pointed out, that
+is solvable.
 
-Thanks.
+So, what do you ask for?
 
--- 
-tejun
+> You still didn't answer the question, what is the critical region of
+> the DevRes for a dma_alloc_coherent() actually going to protect?
+
+Devres, just like in C, ensures that an object can't out-live driver unbind. The
+RCU read side critical section is to revoke access to the then invalid pointer
+of the object.
+
+C leaves you with an invalid pointer, whereas Rust revokes the access to the
+invalid pointer for safety reasons. The pointer is never written to, except for
+on driver unbind, hence RCU.
+
+We discussed all this in other threads already.
+
+> 
+> You also have to urgently fix the synchronize_rcu() repitition of you
+> plan to do this.
+
+I mentioned this a few days ago, and I did not forget it. :-)
+
+> 
+> > Now, you ask for a step further, i.e. make it that we can enforce that a driver
+> > actually stopped the device in remove().
+> 
+> So where do you draw the line on bugs Rust should prevent and bugs
+> Rust requires the programmer to fix?
+
+It should prevent all safety related bug, but the one above is impossible to
+solve, so we have to live with it. But that doesn't mean it's a justification to
+stop preventing bugs we can actually prevent? Do you disagree?
 
