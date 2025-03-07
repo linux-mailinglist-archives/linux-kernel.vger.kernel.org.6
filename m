@@ -1,125 +1,156 @@
-Return-Path: <linux-kernel+bounces-551883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9BC9A57281
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:51:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 774FCA57289
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:53:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1C3189A05B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:51:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2736A3B5EAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991CE2459F2;
-	Fri,  7 Mar 2025 19:51:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911E925523E;
+	Fri,  7 Mar 2025 19:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NbW2XwWj"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kb5jl3f7"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8B91A5B8A
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 19:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 540361A4F3C;
+	Fri,  7 Mar 2025 19:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741377091; cv=none; b=nIj5do+3fdZtvEmCopF7hvG7W9wcvj08v59dGLS3tOGSpKSo1V2Em3ksCs0vTYGA+ov+aDsPcK+JvStEjZXhKiq7KLkngmq8GrWvBfnnzVuJrzHKjPYYoLyaU5xFbqFf6go6O8nbNcbk8/I2oU1rk91/64kBMxL9AmzSPpfoWKc=
+	t=1741377197; cv=none; b=DWrLWxwZQlqP0YMemrRUK85voiMjnbgac68d5dA6x57YT4QMiAKIU40gYuyHLqaUBpdKQiImKVr/SrA6XubUdzIbHBHYs4rgHPlECDwiERAvm6wBH1GrCrQ4fAsI4K1vq1Wi0lVSuX98AjTCdMKEH4EiJ1RA43AwiDOu5OTQnoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741377091; c=relaxed/simple;
-	bh=DIWtNK0/73Tp14vlsnzpFPmis/W+TpJ+G7ZVFgBV4K4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ladra8vPDrWRs2LylWl3rnDkzTkKaORaWq6HbsQ+aUkkGAIoYVSBV/NPeztQniSFpOunkG6bJsVmp5/WhaoTJPTG42DSGUPIFIaJfs14vP725TJQMSnCDzRHudD37DC7sbQvMYHEaO4sdg5q5xsdRIqsI00Eg9Z7tRxvK4PWYA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NbW2XwWj; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ff799d99dcso3259816a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 11:51:29 -0800 (PST)
+	s=arc-20240116; t=1741377197; c=relaxed/simple;
+	bh=LNHS/O5qk8V3R4mU1dNCTKTGoEiRwLqi9UP8XhBs1YI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=N8pErDizUMC8DDxjx4Mvsk30Onu2iDjel45rHtk+6pc6bRX2miV+LlZwuDTt1NKiQlOm6zXzRd1SxKN2jgNWmZvaXSFW4QZEU1A96K1cpudV9C10PX0sceaP4PCucNfg8eAcwYLDAYG62ByyLSg6L4uEqz7lRwSzGQRa2IxEgG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kb5jl3f7; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-438a39e659cso13250065e9.2;
+        Fri, 07 Mar 2025 11:53:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741377089; x=1741981889; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741377194; x=1741981994; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=q0vxeJ91cIahvPFsZ/TUnYjZG0BU3sHhaPEfqVVFDFQ=;
-        b=NbW2XwWj8SixwvXitTHs8JlOk1X65a5xcxIjW/ikzJ20QmYQC2gp81i4Cn5DTREWnU
-         npInFUv2HcN+l6R6MWRo9Tnn6yVv+u9qhC1PYP/ke/gwWZgHfXDXgfSf8uuyh3k0iI+m
-         u5SxaCYly3Xvz2O2S+qmwTu79REerargAdB4X/gX6eLX40RdtVMXAf2XQL8QWHLuL7xr
-         V88ZnDE9ktDcPw2+LAXJFWnIMbEt+XFoBqSEZHEi8t8suUaUDt4uHYsK3Audk0Af3JkL
-         q7aYpIcmcrZynFEFjwuQkLg4dqWkbYojPsTg46c1UGZXkyHzXDdzvO6/m/+9aC7LhNKR
-         JkuQ==
+        bh=OFjCWoFVVseHqDKPyVju+l4iTZxEMM/BbzUS5g6rWQg=;
+        b=kb5jl3f7XFMcjOTPKOzvk+iJs5Pb5+mKTp9Jyt2MyRfgGGfAPnW81BqWlx+n29EnB5
+         HC/oHdZB9Keqf+rN1ACTB1pNTf37gWpfcE/7uaGzxifp5+50dXAxgk4ixrKutgx4o6Nz
+         CP1wzm5+ZgkxGG5NGzUuW23jgf45WmG4AYyzPgvcJ1jf5cg1pTiwMk1LriCxGqXwKd6e
+         PeExadqaVN57vYQdN21528j1nA+oa8FG5olSGGd+3GKsBR2Szwp+3eYZwJLbTdMtQqzR
+         oTFtz/32/jj/VcQdaqr1S9xRaO3Kwj1SxoEDR5MmtpYBn49CMyz6l3c/xa30XNxceYbP
+         ndvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741377089; x=1741981889;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741377194; x=1741981994;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=q0vxeJ91cIahvPFsZ/TUnYjZG0BU3sHhaPEfqVVFDFQ=;
-        b=Yhq+xEz4CWfxNsazowX/M4pHvShRNZcnrkAYuLDrziAjoRUQSWJKySLFjL/NcLhKYx
-         VDmnXOFxFdCknyNK+VbAfh8qurd+sdVgHk6iturZ/ug2RjgaPYi/pfOVEpYaUeWe9hFu
-         kOt9vOicxkyikd7eM3Jjw+QL+Ao0TQE+f0W3GQZrIcMpLUv3LvNxvHqw8DDCCGb+En2h
-         AUhENxyYUMP5HI9OC5jAAeVDO5kSgHM0mIouJkpzp9qW+dq8bzgZhtmqHnJ7yv13VO/v
-         Ofw34+b+sYIjZzcWw316YgFJxbPpQi4ucEH3WEw6wd/YCUd31atWqZyqZGy/zLJ/Zlp7
-         MNfg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxaPFR4cgrQyGyko2TuzQuD2GHNAHmAA3S/UvUm1x8CcikT/7l2H9Cq4hWuSyne4cM+S4ZKd+KO2X9RA8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxHg7H/fZNPkOs76VHfQSQW8OpeFa6GY6uwe/iHGbxbfJDnRvN
-	Hn7AWCOW9hIjVN7ibPaUK6cz4KyIDie+ytZ5iLbeoWq6K/U4OEMfcUPHDz6/4y9KJ/7KSCyHvX2
-	2ZoXUhJdFdDQJ6TMREokQzKBEzXyYxz0HVUuCYg==
-X-Gm-Gg: ASbGnctxn+fciFHTdtJ0IavUSWvJE4T5cNGj0NHkp+L5vNcRuq7uVnK7EVUMIzEUVZq
-	Dk6+CX1xW6f20aNWIbTnNp3faIVsD++U+AQlqwtc3I4RxwajyriGmWGPqtpmeemAYENmz7ZLBhV
-	BV+V/mDXCgLH2eOY1k4J9bXGNl2A==
-X-Google-Smtp-Source: AGHT+IH4Wpg5uTuvEjCppI+SSHGZ9QA7hC9F+4K74GBw5+jVeQ1H/kZBYBQf5cw61pm7FTEJp+iAMqFFaLciH8g3+zE=
-X-Received: by 2002:a17:90b:1d84:b0:2ee:c291:765a with SMTP id
- 98e67ed59e1d1-2ff7ce77c29mr7469398a91.8.1741377088779; Fri, 07 Mar 2025
- 11:51:28 -0800 (PST)
+        bh=OFjCWoFVVseHqDKPyVju+l4iTZxEMM/BbzUS5g6rWQg=;
+        b=e4N/cFXpuy7TUqN1tFk+sYWwE9tza69iiCxt+FTi/ZuzVoU73cGRpolPwDdtRFn3P4
+         YzSpLbxPjSKN0wgjyEcBruRpo42996EoXZKq5+t57XgRZ4zO5xSXY1VqDvjMjCTWCNvd
+         Lt4xQQ/PAipcCs2vfb5WJeyzbPJkT9mb6lYrVpy8N9Fvwjx3NH8F2BzoEWdXnWYEEnkq
+         nz9uGSC008nR3FjmMtWT/7kzuKKuZO+9wM//Zf/togdwxe6NU70uusFY3cuTgvuMltkj
+         W4kLC9oC4p14c+fwfW7tpc1cIsfzvJeUo9q7w0CoogIWANX5dQ6TnuwVs+ZTps0gO60F
+         WBRw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1KNS1Wfx5vnaVLLWgCA5a9GYPk1hEDwm6r6pqFHTQk+hMC8ziw+HrDCdRC7adBhmrdj0=@vger.kernel.org, AJvYcCV486pIEFjoKrrvnbJk6kZqOWGY2TEtfIhMlE04LoQEPOJiC8WKapWXCpmT2B8R3XDVzrWjg9wz1eHyHJHX@vger.kernel.org, AJvYcCVSWviZas7P2ndmQzi4ig4Xqul7atnTVgIAmK0EhfsXYIzh1pHLIxOqOk3ErKToQtRJ+xJPsfdOz1RjMIzAQd8=@vger.kernel.org, AJvYcCWb9966QWA7Mt1ol+84XzJyiy3IZ3ApsVkBQ0+gSHLHdFJ3HxZR2Sf9izxFnxyL65YEIhhmzxTlammMbpE=@vger.kernel.org, AJvYcCXa1zqEsfBnK6+tMru9h1ls8GgLtYzi/dBfnGJZk2JNVG/d8PKmiRw/2tHsGVELAfSVU4cEq0r6vh7i+cE=@vger.kernel.org, AJvYcCXcoIxzCONdTPmph2yADDUx/oIGOd5+BMeb+3983oxJWCOjmyRMcikQbPlujiag21i8WGQ7dzBH@vger.kernel.org, AJvYcCXeX1aGXcQWLcuQ/j34AlF3VAK+1yFECddR0b1Xq/Iw7clPhVxlA/i/sfT/pNS3s43K86SFPaIQ2azYr9+q@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCeDQ3XOefdeNwWOyWlt8WAGG2k0lZeOZ5qhkdsj9HSBm8hrpq
+	tcON1DYFTyaqwrYn2iAJG5XfI+0Kz5PVgc5slaNvsHu2iqK8ABQE
+X-Gm-Gg: ASbGncvB0+y8GWDg2jdy2TpXj+sxAopY3CYUSjtsMOa8SgqE/RoghUL+spc/DbkcBoO
+	HfUM5kPWiaQJmRfM+qP/X/rWYoHeThQ62RSOkHeGDjbkGNI7YY5jnHslYZ0iph3Kq6eS9R93lOf
+	rfkDzc8+lIX82i7Qy3E6mE8k5EDmQEOJqLtLqKIQ00I3bUy7B+mZ0+JYWz725/FxUa9P+CbcWib
+	22QIoGKC8lewgbUMxLWFPcv+6rCpf+4fYpQmqQDj1b+tlEZlVHL9WnQklApDuY7KRcz7A4tA7H6
+	Kkwrq1d4uhktFCWpVG81XjFTNFhyGfYCm6FwhhXxTY+ZzB4gnAeNCMHi/kms8R426sRB2hRQ/Ut
+	05RaJTuw=
+X-Google-Smtp-Source: AGHT+IFtUYsYiNnYKhfvrcaN1ioOhGevW7gRyAbgDR19AZMXszweQZgGUKeQX4mOm4dqyM9BgE29Gg==
+X-Received: by 2002:a05:6000:18ab:b0:391:122c:8aa with SMTP id ffacd0b85a97d-39132d96079mr3226538f8f.30.1741377194381;
+        Fri, 07 Mar 2025 11:53:14 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912c01d2cdsm6394936f8f.57.2025.03.07.11.53.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 11:53:13 -0800 (PST)
+Date: Fri, 7 Mar 2025 19:53:10 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>,
+ Laurent.pinchart@ideasonboard.com, airlied@gmail.com,
+ akpm@linux-foundation.org, alistair@popple.id.au, andrew+netdev@lunn.ch,
+ andrzej.hajda@intel.com, arend.vanspriel@broadcom.com,
+ awalls@md.metrocast.net, bp@alien8.de, bpf@vger.kernel.org,
+ brcm80211-dev-list.pdl@broadcom.com, brcm80211@lists.linux.dev,
+ dave.hansen@linux.intel.com, davem@davemloft.net,
+ dmitry.torokhov@gmail.com, dri-devel@lists.freedesktop.org,
+ eajames@linux.ibm.com, edumazet@google.com, eleanor15x@gmail.com,
+ gregkh@linuxfoundation.org, hverkuil@xs4all.nl, jernej.skrabec@gmail.com,
+ jirislaby@kernel.org, jk@ozlabs.org, joel@jms.id.au,
+ johannes@sipsolutions.net, jonas@kwiboo.se, jserv@ccns.ncku.edu.tw,
+ kuba@kernel.org, linux-fsi@lists.ozlabs.org, linux-input@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-serial@vger.kernel.org,
+ linux-wireless@vger.kernel.org, linux@rasmusvillemoes.dk,
+ louis.peens@corigine.com, maarten.lankhorst@linux.intel.com,
+ mchehab@kernel.org, mingo@redhat.com, miquel.raynal@bootlin.com,
+ mripard@kernel.org, neil.armstrong@linaro.org, netdev@vger.kernel.org,
+ oss-drivers@corigine.com, pabeni@redhat.com,
+ parthiban.veerasooran@microchip.com, rfoss@kernel.org, richard@nod.at,
+ simona@ffwll.ch, tglx@linutronix.de, tzimmermann@suse.de, vigneshr@ti.com,
+ visitorckw@gmail.com, x86@kernel.org, yury.norov@gmail.com
+Subject: Re: [PATCH v3 00/16] Introduce and use generic parity16/32/64
+ helper
+Message-ID: <20250307195310.58abff8c@pumpkin>
+In-Reply-To: <5A790652-1B22-4D13-AAC5-5D9931E90903@zytor.com>
+References: <4732F6F6-1D41-4E3F-BE24-E54489BC699C@zytor.com>
+	<efc2ee9d-5382-457f-b471-f3c44b81a190@citrix.com>
+	<5A790652-1B22-4D13-AAC5-5D9931E90903@zytor.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250219181556.1020029-1-ralph.siemsen@linaro.org> <20250226082931.-XRIDa6D@linutronix.de>
-In-Reply-To: <20250226082931.-XRIDa6D@linutronix.de>
-From: Ralph Siemsen <ralph.siemsen@linaro.org>
-Date: Fri, 7 Mar 2025 14:51:18 -0500
-X-Gm-Features: AQ5f1JoWaLOl0ZjijIjOgwzx3_177Kjyj88yLqLIwYi0VFpiqFBpb-h1H7TnkV8
-Message-ID: <CANp-EDYH8YF7ga5oRPrawhiveSVwW0w7YosHGJWuCKd4TaApDA@mail.gmail.com>
-Subject: Re: [RFC PATCH] usb: gadget: u_ether: prevent deadlock under RT
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-rt-devel@lists.linux.dev, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Pawel Laszczak <pawell@cadence.com>, 
-	Frank Li <Frank.Li@nxp.com>, Ferry Toth <ftoth@exalondelft.nl>, 
-	Thomas Gleixner <tglx@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Sebastian,
+On Fri, 07 Mar 2025 11:30:35 -0800
+"H. Peter Anvin" <hpa@zytor.com> wrote:
 
-Thanks for your reply!
+> On March 7, 2025 10:49:56 AM PST, Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+> >> (int)true most definitely is guaranteed to be 1.  
+> >
+> >That's not technically correct any more.
+> >
+> >GCC has introduced hardened bools that intentionally have bit patterns
+> >other than 0 and 1.
+> >
+> >https://gcc.gnu.org/gcc-14/changes.html
+> >
+> >~Andrew  
+> 
+> Bit patterns in memory maybe (not that I can see the Linux kernel using them) but
+> for compiler-generated conversations that's still a given, or the manager isn't C
+> or anything even remotely like it.
+> 
 
-On Wed, Feb 26, 2025 at 3:29=E2=80=AFAM Sebastian Andrzej Siewior
-<bigeasy@linutronix.de> wrote:
-> Based on the backtrace the problem is within the cdns3. The driver
-> acquires at the beginning of its threaded routine
->         spin_lock_irqsave(&priv_dev->lock, flags);
->
-> and then before returning the URB it does
->                  spin_unlock(&priv_dev->lock);
->                  usb_gadget_giveback_request()
->
-> so the lock is dropped but the interrupts are still disabled. This makes
-> me wonder why using threaded interrupts at all since interrupts are
-> disabled for the whole routine but then others do the same.
+The whole idea of 'bool' is pretty much broken by design.
+The underlying problem is that values other than 'true' and 'false' can
+always get into 'bool' variables.
 
-I also wondered why threaded interrupts are being used, but I don't
-know the reason.
+Once that has happened it is all fubar.
 
-> If you look at dwc3_thread_interrupt() they have local_bh_disable()/
-> enable() before acquiring the lock and this is what I would suggest
-> doing here, too. The NCM is probably not the only one affected but
-> everything doing network that may since it may recourse into softirq.
+Trying to sanitise a value with (say):
+int f(bool v)
+{
+	return (int)v & 1;
+}    
+just doesn't work (see https://www.godbolt.org/z/MEndP3q9j)
 
-Thanks for the suggestion. I had also thought of doing this. I also
-noticed that the "cdnsp" driver has a similar fix in commit
-58f2fcb3a845 ("usb: cdnsp: Fix deadlock issue during using NCM
-gadget"), which was also backported to stable branches. So I will
-prepare a v2 patch to do the same for "cdns3" driver.
+I really don't see how using (say) 0xaa and 0x55 helps.
+What happens if the value is wrong? a trap or exception?, good luck recovering
+from that.
 
-Regards
-Ralph
+	David
 
