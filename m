@@ -1,120 +1,186 @@
-Return-Path: <linux-kernel+bounces-550720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A80AA56343
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:10:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2121A56344
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:10:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAFC61895251
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:10:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC365175919
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE291E1E06;
-	Fri,  7 Mar 2025 09:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A475D1E1E09;
+	Fri,  7 Mar 2025 09:10:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O1H9mq/8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pkgh4Sw9"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1796DC2E0;
-	Fri,  7 Mar 2025 09:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B101DE2CC
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 09:10:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741338609; cv=none; b=LcJPMA+AyLXcTLWJ1bVvwcRc1RrxyVSzgk3NoZHVjyDeoaU/JlHEggfGtf8vx1We/U1TvDPMcZHVJZfIq/gjpKYz+CTE9Cda0rCRqlQy+iGP9lAo/OTz+4ROlzeol/sdA6iqDbVV87vIKdm6bdJKOpsmlrUDA6wMB5e4KZfJgL8=
+	t=1741338619; cv=none; b=k7oc9kEkWqRUAWpzIz2Tj9zcB8z6npFs/YDFKSq3MK5M2x2ctRn0fNOkOIi3uii6mMDp+lIURs43lZL9mW8x+YNgiS3CRYq/zLhiESPgiYNeXk6Luh9huuemEBaxOBcD7kDjjMAyhchP3CWDPtF5+W/qehNlJRd1qiNbvyMvm/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741338609; c=relaxed/simple;
-	bh=U2FVI4xcxSsKvXkcx9/dl4qkBmci0IUrmk9oTZ/O+w8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=GjBylyjRBg8Za4cwXIdzRdMM1DOQW1CErcoi3VLpsLRaU6P+K4dG1i4vxb9PH3UkYwLNqEqVM3347w0mDofxinsBVnMOefjctZuzEiy+BwJn53l4iNmpXefVFpNuAZTz4rYNqLZ6fQGVcNhBOrCEdJrpHhIMbPAhyKPBA9KGSEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O1H9mq/8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3EB02C4CED1;
-	Fri,  7 Mar 2025 09:10:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741338605;
-	bh=U2FVI4xcxSsKvXkcx9/dl4qkBmci0IUrmk9oTZ/O+w8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=O1H9mq/8tvM+Ds6qKS0v/C/qqPtXjJ6L1QWWyENJTr2lzQiePR3dz3OUmrB6R4T1R
-	 HLlgEOci4Z1u8GhpXEYlv2WSoj6H3L8nqMRbsFUzOv8t0O/RViM3wfNIiZywr+bahh
-	 hFiImzQyka6omCZoWQ1naMG869n5R0AEUMB/iPU2Y3mdfzR9W0mihRfLn6dkdYtNFr
-	 IRJJ1bpSv28WQsxO16HSx1J96N4buKYSn24kGmxiGEv0P0XzMM7bFThw9JedF2etMq
-	 XYyv8NuCCVMFms+HfzTQXs8MXaF+e/wDWZPf8+PZe8AObcXCovoZBAoWCnaumsHCzm
-	 lSHeDDfdz9I1w==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Tamir Duberstein" <tamird@gmail.com>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Anna-Maria Behnsen"
- <anna-maria@linutronix.de>,  "Frederic Weisbecker" <frederic@kernel.org>,
-  "Thomas Gleixner" <tglx@linutronix.de>,  "Danilo Krummrich"
- <dakr@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
-  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Lyude Paul" <lyude@redhat.com>,  "Guangbo Cui" <2407018371@qq.com>,
-  "Dirk Behme" <dirk.behme@gmail.com>,  "Daniel Almeida"
- <daniel.almeida@collabora.com>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v9 01/13] rust: hrtimer: introduce hrtimer support
-In-Reply-To: <CAJ-ks9mozekrYvwFTJ4qKj3cpDa37+gUKefiZ1OscU9mP3NjuQ@mail.gmail.com>
- (Tamir
-	Duberstein's message of "Wed, 26 Feb 2025 10:29:34 -0500")
-References: <20250224-hrtimer-v3-v6-12-rc2-v9-0-5bd3bf0ce6cc@kernel.org>
-	<20250224-hrtimer-v3-v6-12-rc2-v9-1-5bd3bf0ce6cc@kernel.org>
-	<q5sIYQbnCqKmdnZZy-eaKvSUY7O5pOy2-QzwWwCo9VoormFcKS6RS3OVIIby-Pf5PDpTRh67txem3sXQKSB1JQ==@protonmail.internalid>
-	<CAJ-ks9nj8+fXM_oo0LJo4O6Q=skFRcHwz8TLxw-yB3QTcDF9GA@mail.gmail.com>
-	<87cyf6xv7g.fsf@kernel.org>
-	<Wy3wqzRK5qG3GyHC7oEg3NR3tv9-Uv7m_tmgKZTHNEU6aZX5hxrIXLudLfzQvuZNvIz1Av2fKzH5eTvomny1Vg==@protonmail.internalid>
-	<CAJ-ks9=PR-Laj37NqG5s_TbKddONWxp4-Cf3C57AMk9z92mfDQ@mail.gmail.com>
-	<87r03lvnx4.fsf@kernel.org>
-	<RWZWPbf2ND3HRx_kFFVnjBngQMWjrmbidBCzyJr58iQsksyu5SpJVfCiEjf7WYWFOz6eWib5Q9j23QmbSqXyEQ==@protonmail.internalid>
-	<CAJ-ks9mCvGJoeLhkGHLU-7Q-=g_4XHfX4DBX9w=ZcP4jpWXsPQ@mail.gmail.com>
-	<87eczludtp.fsf@kernel.org>
-	<5Rw5FzjGNleoSZMNFRziOKrYHsHzxXJoSmBTH0VXvx7vSLojQvEN5iSvf7HYuQjNUp8ehIxfLvm3U_6r2YZxXQ==@protonmail.internalid>
-	<CAJ-ks9mozekrYvwFTJ4qKj3cpDa37+gUKefiZ1OscU9mP3NjuQ@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Fri, 07 Mar 2025 10:09:52 +0100
-Message-ID: <87a59x5hr3.fsf@kernel.org>
+	s=arc-20240116; t=1741338619; c=relaxed/simple;
+	bh=IGm+yBhG9miftesjI8i8TLMAFLcnfjfk8TQ4w9ar0Ww=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QHN/tA9fDIVvuf64UG5Fx9aQV1IeuIpCV2ZCnBdD+Nn+zFdWw9uuNWH0VCAuUoHbJ0dcBOooNLb1tP3MVKElQSjGWSOtIiDyyhw3ne9RxSd0XoTc+58Ih2UMAaBccRuPFpwgkHe8svfyOC7RvyfKx+8rFP48G/NV2C39+PiGGLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pkgh4Sw9; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e5e1a38c1aso819181a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 01:10:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741338615; x=1741943415; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2OBmKxutCA3PjGE+9J4xr+//nfl2kxxGWalGepjmI9A=;
+        b=Pkgh4Sw99YustOvI61sMRMXaA+LJ92dSLEJS5iB6gF8tJ4JEmElAnY0w7GaXQwKjOn
+         nF2xaYEgE8yh4lHiINJUL/qYUleYp8LS9pfIaCJyUB2vNw9mqeqWbPWjD0vUl19v4kfV
+         3TjSZLJh3gZ8UzHJX+hgZDSWox4bsDQVNumyqWVdGca2UsZuFc96rR2gnXfnhFW0gMKk
+         lft7eTqsNce0vaPjB2IY2OaJ4h67bLk2po3umuyTBTfo6pkkNlLR8za+eflj34ofmcVD
+         L9ZRuSnVRvRbgxw8GIpj0UXQIbuuK6lPZhbc35K3+hFWXIhjH1cTwYsPrsvRh73Ap8eP
+         /WWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741338615; x=1741943415;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2OBmKxutCA3PjGE+9J4xr+//nfl2kxxGWalGepjmI9A=;
+        b=sV1XYh2CvF3P3Io6YirYMW4LsZkZ3ry3VobMCVdsBWzZzgZymzKoohA1eCH67eij4L
+         U/AlhCIjWTb+Sw6ZNBMaC+RlHSjKDgShminW3N9V2raWzDR1Pxpl51C64yofWYOu/jP9
+         +zP8bYwl2MFcvpixxPVhAQjwAA6/kKKX4l9hvqpHT65v5F5o6LnxmvR8ozw8ePrXN0qk
+         Feg39LhbvBY7Nv9Qwargf2QDXmAeWSzmhwR3qy7rOMer25NgIHd1xwXX66Kuj1uKdNAR
+         07S8Qak7nAugrrzHgMcexWxdWmZYSC5Vkx+GS1lX3JznPLwt/jWvTyuXLOLqvQQYaUlS
+         KMVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUECHmQopBaW4fpEv7FBpZJaxdIfM+zu6bUf9wsibcf3qavKbnyDTjxbO3SZ5qzsYMTESrlQ2GeoKjPBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgFcyBjOYSvvT6xtseyIBya7dnUwuCFQV2CgVJF1yzjeUeZjg9
+	c1KHOyWi2Hk6M3u3bX/nxX+8rWElE04jUb3zaPNSa0NOt0tcqO1zMfPgG/d2
+X-Gm-Gg: ASbGnctgCY9mdzHnmUrpzVBmXKrsQ7KYJb9WdZz+fOUVC9Lug/83bh9qLcg1fneabhA
+	PrML5WN+r+kXx5NDbRb7zNccllg15lkq2bE+KfsbbKHjIIXzZ8IdNLzqVDa91gISXs47Qd3NAdi
+	GpiAxcYGGI3FUOiYKqaWXVOn6f6c8XxVdxqDZHnnb8+vmz3jJmDH6Om+jc35UiakudUYfCdbssn
+	vY2s0PijBYwIpohTdEfL9VTEUF1JIh12LI9L+TILzBPZfw0Q/kT5q6z1tEE2yotLcN6e2EzhKtr
+	Wj+CKGhdy1Uho2NnAGmR2inONt/PzZ3Qu8ow
+X-Google-Smtp-Source: AGHT+IH7jF6BfIEvHXvgKAn4ClDz7PtsE4enzXuv5kmRVMCKWooyX5tppAdjT7IzKGtDo/2kCOjBVQ==
+X-Received: by 2002:a05:6402:518f:b0:5dc:6e27:e6e8 with SMTP id 4fb4d7f45d1cf-5e5e246875fmr5606564a12.24.1741338614846;
+        Fri, 07 Mar 2025 01:10:14 -0800 (PST)
+Received: from fedora.. ([193.77.86.199])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5c768f213sm2197614a12.74.2025.03.07.01.10.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 01:10:14 -0800 (PST)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH] x86/boot: Do not test if AC and ID eflags are changeable on x86_64
+Date: Fri,  7 Mar 2025 10:10:03 +0100
+Message-ID: <20250307091022.181136-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-"Tamir Duberstein" <tamird@gmail.com> writes:
+The test for the changeabitily of AC and ID eflags is used to
+distinguish between i386 and i486 processors (AC) and to test
+for cpuid instruction support (ID).
 
-> On Wed, Feb 26, 2025 at 6:48=E2=80=AFAM Andreas Hindborg <a.hindborg@kern=
-el.org> wrote:
->>
->> "Tamir Duberstein" <tamird@gmail.com> writes:
->>
->> > Sorry, I meant HasHrTimer and HrTimerPointer rather than HrTimer and
->> > HrTimerPointer.
->>
->> `HasHrTimer` is named so because it is meant to be implemented by types
->> that contain a field of type `HrTimer`.
->>
->> `HrTimerPointer` is meant to be implemented by pointer types that point
->> to types that implement `HasHrTimer`.
->>
->> They are different, and the naming reflect that.
->>
->> I will not rename `HasHrTimer` to `ContainsHrTimer`, because the rest of
->> the rust kernel uses the `HasFoo` naming scheme.
->
-> The Has prefix makes sense in HasHrTimer. Shouldn't the name
-> HrTimerPointer also contain "Has"? HasHrTimerPointer would be
-> confusing, but perhaps PointerToHasHrTimer? It's a mouthful to be
-> sure.
+Skip these tests on x86_64 processors as they always supports cpuid.
 
-I get your point, but I really think that `HasHrTimer` and
-`HrTimerPointer` is pretty good. Names _can_ get too long.
+Also change the return type of has_eflag() to bool.
 
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+---
+ arch/x86/boot/cpuflags.c | 26 +++++++++-----------------
+ arch/x86/boot/cpuflags.h |  6 +++++-
+ 2 files changed, 14 insertions(+), 18 deletions(-)
 
-Best regards,
-Andreas Hindborg
-
+diff --git a/arch/x86/boot/cpuflags.c b/arch/x86/boot/cpuflags.c
+index d75237ba7ce9..2150a016176f 100644
+--- a/arch/x86/boot/cpuflags.c
++++ b/arch/x86/boot/cpuflags.c
+@@ -29,40 +29,32 @@ static int has_fpu(void)
+ 	return fsw == 0 && (fcw & 0x103f) == 0x003f;
+ }
+ 
++#ifdef CONFIG_X86_32
+ /*
+  * For building the 16-bit code we want to explicitly specify 32-bit
+  * push/pop operations, rather than just saying 'pushf' or 'popf' and
+- * letting the compiler choose. But this is also included from the
+- * compressed/ directory where it may be 64-bit code, and thus needs
+- * to be 'pushfq' or 'popfq' in that case.
++ * letting the compiler choose.
+  */
+-#ifdef __x86_64__
+-#define PUSHF "pushfq"
+-#define POPF "popfq"
+-#else
+-#define PUSHF "pushfl"
+-#define POPF "popfl"
+-#endif
+-
+-int has_eflag(unsigned long mask)
++bool has_eflag(unsigned long mask)
+ {
+ 	unsigned long f0, f1;
+ 
+-	asm volatile(PUSHF "	\n\t"
+-		     PUSHF "	\n\t"
++	asm volatile("pushfl	\n\t"
++		     "pushfl	\n\t"
+ 		     "pop %0	\n\t"
+ 		     "mov %0,%1	\n\t"
+ 		     "xor %2,%1	\n\t"
+ 		     "push %1	\n\t"
+-		     POPF "	\n\t"
+-		     PUSHF "	\n\t"
++		     "popfl	\n\t"
++		     "pushfl	\n\t"
+ 		     "pop %1	\n\t"
+-		     POPF
++		     "popfl"
+ 		     : "=&r" (f0), "=&r" (f1)
+ 		     : "ri" (mask));
+ 
+ 	return !!((f0^f1) & mask);
+ }
++#endif
+ 
+ void cpuid_count(u32 id, u32 count, u32 *a, u32 *b, u32 *c, u32 *d)
+ {
+diff --git a/arch/x86/boot/cpuflags.h b/arch/x86/boot/cpuflags.h
+index fdcc2aa4c3c4..a398d9204ad0 100644
+--- a/arch/x86/boot/cpuflags.h
++++ b/arch/x86/boot/cpuflags.h
+@@ -15,7 +15,11 @@ struct cpu_features {
+ extern struct cpu_features cpu;
+ extern u32 cpu_vendor[3];
+ 
+-int has_eflag(unsigned long mask);
++#ifdef CONFIG_X86_32
++bool has_eflag(unsigned long mask);
++#else
++static inline bool has_eflag(unsigned long mask) { return true; }
++#endif
+ void get_cpuflags(void);
+ void cpuid_count(u32 id, u32 count, u32 *a, u32 *b, u32 *c, u32 *d);
+ bool has_cpuflag(int flag);
+-- 
+2.48.1
 
 
