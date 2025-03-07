@@ -1,154 +1,192 @@
-Return-Path: <linux-kernel+bounces-550669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13009A562A6
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:37:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9846FA562AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 09:38:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EEB427AA90B
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:36:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FD653A6AFB
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:38:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CC31C84CA;
-	Fri,  7 Mar 2025 08:37:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591591DE3C3;
+	Fri,  7 Mar 2025 08:38:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NppbpcFO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EwVZiggL"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E51C884A2B;
-	Fri,  7 Mar 2025 08:37:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136B31B86EF
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 08:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741336638; cv=none; b=LwX9chRpJGGwdUjeIdCL/xeX1D1R+f0SNe8I5716m1jd0Hq+aUCWnIjfA0OklAJXMKdbwdeSffcA+2yLsMO9CuFFhmky8fqPMdopcanof9zdfyArH5KhQOZ0xM/OzhXqUajatTOQtVqwoRXTPe9/LZMLER8xVSyjv5/GKDEMgQ8=
+	t=1741336693; cv=none; b=Ok8gimCsu5OSdVhuknFEEEsOViOCAmN1NmD+v/InwLm5+LD/IM01Ko0RzX7q/VDsuNysle3/R/1DQG7fkJDGgQ/sxDeOnSbTRQSsMzfxr/+rmj/Diuc8BK8YHKDvlRC1AAkRXPXC+mPzQ0AmMGJ8dfre5mD5KIzL20yyOhwN7KQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741336638; c=relaxed/simple;
-	bh=vtTZiS8bVFdFa7T0MXeQKXdymj/N8ObOFNrCa6B34Jg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UbeN0YoieRxFz8m9n5xpE+wyeVyt7mi9rfG0H470VM6O5/GNhz/fkhuFHRz1/iafQccBx0DhR0iVNiM9vK55/jTuMifBKe/KLNS3yA2L/rKOpML/9OTItzx5nURoEDN6U/pbDEiJczjJRtwGzEIpmogBUv/Kf88MTgSU6G8F6hM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NppbpcFO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BB4CC4CEE2;
-	Fri,  7 Mar 2025 08:37:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741336634;
-	bh=vtTZiS8bVFdFa7T0MXeQKXdymj/N8ObOFNrCa6B34Jg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=NppbpcFOckKu5emJghpagO9ZYCVHRZFU/qZEBye+n2ikRTwZ7xLbKz5AvqVDxF4iZ
-	 ZJMA6RUwEh2yTYwfWDt1gw8EpVgdAmyjHPw7S3WGw3i82vmRAjB+mAjusElFir+KMC
-	 fO9wsgWYFA141M1THs66xkBxB+6HoR4wHd++Y/ZVwyxko/6AXmhbsVG+K8Bo03Klgi
-	 x7aZRYITBbNZfbeFVW8jGD2kJRmJOFtsKdgmDq79fOyIA+0YyCgEB+tpryFsTgYagn
-	 sm3Qw2rA9ybpWB7qWXTYqGrHDMbL/8t/f7eIashcn42Ji1zbuZcvPusyrryvPtiQbG
-	 jLxP8Wc2GTG6A==
-Message-ID: <3795c10f-b9ca-45b1-88d3-4bf6b4eb6ecd@kernel.org>
-Date: Fri, 7 Mar 2025 09:37:07 +0100
+	s=arc-20240116; t=1741336693; c=relaxed/simple;
+	bh=GYxyFRQKZQBt9XGGtRQ5AC7grdC0Qr21Eraa7nH9i/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pUUuR3Zp99faOEsuMZ9fYksPbwV/rl8fVq+bxONMPzBWVNzdi7kL0eAp+rTHkXUjhBxgipFeNlQB/iFJ0ADGL1MfjN8PdC/e83s3t7LlsUFzANLh/ugVdApSNquUrdJrgrhsoXJajRKPGWNX1GvX0WezR6AWUTUGVuKJ97zZTEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EwVZiggL; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-547bcef2f96so1833320e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 00:38:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741336689; x=1741941489; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+N6yDlV0NFncs+ZNUB+wRwddFt938JHfbLuCUG/BitY=;
+        b=EwVZiggLREqY/iuY3dJVLoEV4iTF4jVxPQoY20NpVajKhCZ451OmORDbcT+UeFFiXA
+         Gw0mw5J4ZQGQO/8gZ85bf/5okULC9DXsE5rgeuXHVLOMS5FsHpWo/aQPEO8OurBwXU9v
+         dCOcIbFinqQ3fJAqE/CQmtSjmhiw1bG7FjZHhrfsKQm7O2Bc1y/CQndO/EDl6eEX+9FD
+         pINfW98VojfXWNVw5wBjZtIqSe2T9OhnbKTC+0adzrszaEq704ysvQnguLMmAjDJpPun
+         AsFPd/tdsJRT5zqEKyVSqjv0QuBLSPih4IxFu7pp+tnK/efTzGJUF0WWGc5VcJsCQHkm
+         mhBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741336689; x=1741941489;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+N6yDlV0NFncs+ZNUB+wRwddFt938JHfbLuCUG/BitY=;
+        b=G17d9A578c2IHvq6ru+wibcSROFJ0Je2US8IKxYSToiiGE8LkI2E53wb/can7khIAz
+         /9des0zYcdTJbm3wVz0BxbdCUvuH/kxM7DdGAweO4pJrZL3c40o3u9OOOAuqGTZWZ2c8
+         guuI1zGFrcXD0Tc4B2l8tnFJ6pQrvYZlp8CliboIRc3Uz9jVeTVQflRUrtptm1a+1/hd
+         0SQJgpIP+tVggZ5u3ztKADc3dzFvhmRvG7niuH0mooa0vNUK6dQlixyjwDyry93qzfix
+         tvLsFu4hmJne4PZc7xxJOTdc5vDZ7wl/GnvfX4IWu47LZXAcAWgTFLn3EOx0DbV4EPqM
+         KqeA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxvtOGGqEWxDeH9aUcRZFZHFymONUM2yEP0ROCufiJfz+UvjQgzs8T+/zb8tw0vPI2qoJZcSvLaVKmi7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmxaQIruW+7NvDE8RK+F37UtL1XoPfSVI1VEyQfqgweolen2hE
+	r4CtanBl893Z/ZMG5FDwK2+Hyqo838WAPkFYwla9QyXSxcNrowK1/akwZOc294k=
+X-Gm-Gg: ASbGncseerudDHjASqvJzqNvPLmSjy81+bPFeV7sgGBi/xJ75WCCvJIt/UMyXkA5oR6
+	upJuT/sLIc4QqcCPCzkTI0SuNb9kvY9xyyeYIsUhVVcStLmr8fO51JCw9Qm3hUzsMDAWmzdFLZu
+	Ud1DIgZl+5DhbROzd7NDCvLWXXN5N/2BJO2DftbmLvjf79qOx4ipqeaMdfBEblDnGvFV8XYJ8Xz
+	h6yKrsDAOngJMMldK57teRI14VD9+qHR2jGZBjwUISEYMDQCUaxonXe75HmDRQgEKrQ5RlG2iLs
+	vSEmpC/q+7DbKSJoHyDRHlYzthqsFOUS64IqkisFbIeCiaWZZDL+1g44IR81C71o+9Qj5dLer3q
+	QskWBKOW73z9qXrrlRskdivEz
+X-Google-Smtp-Source: AGHT+IGfVv7MlpX59E0f3tOSQukf2FN0b9H49VnDyqRemuSX3X6T5WqxxVCQMq9nBH5XyTBY2wHgBg==
+X-Received: by 2002:a05:6512:2313:b0:549:74a7:12da with SMTP id 2adb3069b0e04-549910b765bmr856831e87.51.1741336689064;
+        Fri, 07 Mar 2025 00:38:09 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498ae46042sm417789e87.30.2025.03.07.00.38.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Mar 2025 00:38:08 -0800 (PST)
+Date: Fri, 7 Mar 2025 10:38:05 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Vikash Garodia <quic_vgarodia@quicinc.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 7/7] media: platform: qcom/iris: add sm8650 support
+Message-ID: <noowenzvhkcmx7cmwbnqqepuabown6taznmuuomw6lp7mo6tam@zihcgcjsmt73>
+References: <20250305-topic-sm8x50-iris-v10-v2-0-bd65a3fc099e@linaro.org>
+ <20250305-topic-sm8x50-iris-v10-v2-7-bd65a3fc099e@linaro.org>
+ <feea4c41-d3cf-4dc7-d197-6d91313d90ff@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] dt-bindings: memory: mediatek: Add SMI reset and
- clamp for MT8188
-To: =?UTF-8?B?RnJpZGF5IFlhbmcgKOadqOmYsyk=?= <Friday.Yang@mediatek.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- =?UTF-8?B?WW9uZyBXdSAo5ZC05YuHKQ==?= <Yong.Wu@mediatek.com>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>
-References: <20250221074846.14105-1-friday.yang@mediatek.com>
- <20250221074846.14105-2-friday.yang@mediatek.com>
- <0dcb2efd-6bbb-4701-960a-74930eb457e4@collabora.com>
- <264f78c1067e363c69e146543ebb77dbedfbd181.camel@mediatek.com>
- <463ca2df-a0ee-4b9e-a988-12f316ae7d1a@kernel.org>
- <9305a4fd6829e5e2ae6c3247d11b9f47ed277f8b.camel@mediatek.com>
- <8d90731b-4b5a-45a8-83d1-4351044f59c7@kernel.org>
- <b57f3a308dde77b26474cda349f61315ded51930.camel@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
- QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
- gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
- /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
- iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
- VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
- 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
- xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
- eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
- AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
- MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
- Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
- ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
- vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
- oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
- lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
- t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
- uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
- 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
- 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <b57f3a308dde77b26474cda349f61315ded51930.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <feea4c41-d3cf-4dc7-d197-6d91313d90ff@quicinc.com>
 
-On 07/03/2025 09:14, Friday Yang (杨阳) wrote:
->>> The 'mediatek,larb-id' for SMI LARBs in the image, IPE, and camera
->>> subsystems are as follows:
->>> - image subsystem: 9, 10, 11, 12, 16
->>> - IPE subsystem: 13
->>> - camera subsystem: 17, 18, 19, 20
->>>
->>> Therefore, we believe that 'mediatek,larb-id' should be 'oneOf' the
->>
->>
->> So explain me where is the second condition?
->>
+On Thu, Mar 06, 2025 at 06:46:06PM +0530, Dikshita Agarwal wrote:
 > 
-> Sorry for the misunderstanding. I should fix it like this:
-> just delete 'oneOf' and use 'enum'
 > 
->   - if:  # only for camera and image subsys
->       properties:
->         com
-> patible:
->           const: mediatek,mt8188-smi-larb
->         mediatek,larb-
-> id:
->           enum:
->             [ 9, 10, 11, 12, 13, 16, 17, 18, 19, 20 ]
-Yes
+> On 3/6/2025 12:35 AM, Neil Armstrong wrote:
+> > Add support for the SM8650 platform by re-using the SM8550
+> > definitions and using the vpu33 ops.
+> > 
+> > The SM8650/vpu33 requires more reset lines, but the H.284
+> > decoder capabilities are identical.
+> > 
+> > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> > ---
+> >  .../platform/qcom/iris/iris_platform_common.h      |  1 +
+> >  .../platform/qcom/iris/iris_platform_sm8550.c      | 64 ++++++++++++++++++++++
+> >  drivers/media/platform/qcom/iris/iris_probe.c      |  4 ++
+> >  3 files changed, 69 insertions(+)
+> > 
+> > diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> > index fdd40fd80178c4c66b37e392d07a0a62f492f108..6bc3a7975b04d612f6c89206eae95dac678695fc 100644
+> > --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
+> > +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> > @@ -35,6 +35,7 @@ enum pipe_type {
+> >  
+> >  extern struct iris_platform_data sm8250_data;
+> >  extern struct iris_platform_data sm8550_data;
+> > +extern struct iris_platform_data sm8650_data;
+> >  
+> >  enum platform_clk_type {
+> >  	IRIS_AXI_CLK,
+> > diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+> > index 35d278996c430f2856d0fe59586930061a271c3e..d0f8fa960d53367023e41bc5807ba3f8beae2efc 100644
+> > --- a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+> > +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+> > @@ -144,6 +144,10 @@ static const struct icc_info sm8550_icc_table[] = {
+> >  
+> >  static const char * const sm8550_clk_reset_table[] = { "bus" };
+> >  
+> > +static const char * const sm8650_clk_reset_table[] = { "bus", "core" };
+> > +
+> > +static const char * const sm8650_controller_reset_table[] = { "xo" };
+> > +
+> >  static const struct bw_info sm8550_bw_table_dec[] = {
+> >  	{ ((4096 * 2160) / 256) * 60, 1608000 },
+> >  	{ ((4096 * 2160) / 256) * 30,  826000 },
+> > @@ -264,3 +268,63 @@ struct iris_platform_data sm8550_data = {
+> >  	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
+> >  	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
+> >  };
+> > +
+> > +/*
+> > + * Shares most of SM8550 data except:
+> > + * - vpu_ops to iris_vpu33_ops
+> > + * - clk_rst_tbl to sm8650_clk_reset_table
+> > + * - controller_rst_tbl to sm8650_controller_reset_table
+> > + * - fwname to "qcom/vpu/vpu33_p4.mbn"
+> > + */
+> > +struct iris_platform_data sm8650_data = {
+[...]
+> > +
+> > +	.dec_ip_int_buf_tbl = sm8550_dec_ip_int_buf_tbl,
+> > +	.dec_ip_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_ip_int_buf_tbl),
+> > +	.dec_op_int_buf_tbl = sm8550_dec_op_int_buf_tbl,
+> > +	.dec_op_int_buf_tbl_size = ARRAY_SIZE(sm8550_dec_op_int_buf_tbl),
+> > +};
+> This approach looks good to me, reusing the platform data like this keeps
+> the code cleaner and avoids duplication. I think this is a good way to
+> handle the differences while sharing the common parts.
 
-Best regards,
-Krzysztof
+Just to share some thoughts. We had this kind of data-sharing in the DPU
+driver. It looked good in the beginning, but at some point we found
+ourselves stuck with the platform data being named semi-randomly
+(following the first-added SoC instead of the first-in-family).
+
+Modifying "catalog" data became troublesome as it was no longer clear,
+which chipsets are going to be affected by the change. So, after some
+thought we ended up duplicating data all over the catalog files for the
+sake of them being easy to modify. There are some ideas on how to
+simplify that, but for now we have (almost) full data set for each SoC.
+
+For example, imagine somebody adding sm8450 support and sm8450 reusing
+sm8550 data. It would be a bit troublesome to remember that changing
+sm8550 data would affect sm8450. And maybe some of the SAR, SA or
+QCM/QCS platforms. I think you see the point.
+
+If you are to explore the data sharing solution, I'd suggest exploring
+an idea similar to the DPU catalog: start naming each of the platform
+files with some kind of generation-like ID. In case of DPU it was easy
+as each DPU instance has unique version. For the Iris devices it might
+be as easy as vpu30_sm8550, vpu33_sm8650, etc. It might make it easier
+to make assumptions and derive common pieces of data.
+
+-- 
+With best wishes
+Dmitry
 
