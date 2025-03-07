@@ -1,81 +1,73 @@
-Return-Path: <linux-kernel+bounces-550900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDA3DA56585
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:36:26 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0E2A56588
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:36:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E0473B5660
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:36:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 725443B5A0E
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7191820E302;
-	Fri,  7 Mar 2025 10:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E332520E33F;
+	Fri,  7 Mar 2025 10:36:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jo2Ui7RS"
-Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XT4wEqAv"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178453398B;
-	Fri,  7 Mar 2025 10:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98CA20B7FD;
+	Fri,  7 Mar 2025 10:36:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741343778; cv=none; b=uUFNe6d5cO65ZEdgay0NkwCruyy9RAVl5pASLpAiJpjKaI5ZtDWZEv8MiGex8rPSEk6coK4yGFuC6I6rSGwBLuyLc3pRgWL40z/hbaz5hJZdbVAlUVPd6Q9sXhnnRIXhNuv+yE/SVsrq7uezHV4QjUd2DK8g8L/a1kdF9LGxMVg=
+	t=1741343795; cv=none; b=iBX0H2JcvwcYuSdOjh7N0IyTmrYZWX0KqfdLCT5FkuXcsMhpSrNY0l5wKh7Rf+3XorOk/Gvmidifq03mDx7xWBC7raIIhl0oi/cKcf35m06+mkxj/wuX8+D+yyaCC4Tkd0L4ZjNXt2pex3JsHZWVqIfRJdB07FcNlY9y7/Rz7Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741343778; c=relaxed/simple;
-	bh=xpz0JnTO8EjnXprVVDznWVVBFkSwf2xO+/6B8EcHiYk=;
+	s=arc-20240116; t=1741343795; c=relaxed/simple;
+	bh=IoATmkm/Rjb3OeLxwhR108Qn/R1lDRmF3eQ5DLhG/Yk=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p7LrqBmOrYwu6WR0ji6yjHJbIfrnx/xb15IhTzukKHEjU/eEvLbO3SxNZaL8LJi1vqVLz1r+Xfk1bJv/qNqY45Tt/fdCdoy1xn8dFacQiw7sKskERXtsm6U2NAp+CONHenivgltx9T4GjPVONfNvgjTxPlUWWx1DKpc/bpXH+XQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jo2Ui7RS; arc=none smtp.client-ip=198.47.19.245
+	 MIME-Version:Content-Type; b=nu/+5HATLcPtcBJXqfs5UntCK2vQynC3MVANC7LraDMyX1mV+vektC+Z2k6smOt5vjcP5OkcWkUm0mwQ1b7O6FKMquOfvOp9TzE1p6pDZICK+yFgIPsg+8unAV5fxqzX1m4DxnguqBpVEYgc9oY9q4HyIODQazfPq0xh1TQsRyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=XT4wEqAv; arc=none smtp.client-ip=198.47.23.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 527Aa3fT3942355
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 527AaLnA344561
 	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 7 Mar 2025 04:36:03 -0600
+	Fri, 7 Mar 2025 04:36:21 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741343763;
-	bh=cvgYwkrSX3m7pHovfj4EkqP0IQAfEUDayUzafJ2vb1I=;
+	s=ti-com-17Q1; t=1741343781;
+	bh=Gv5g3lJSEQAWXZM3XwaU06yz84+apKewnJfFnIBLU0s=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=jo2Ui7RSC0ZEqlQEvafSN1F50gheE8QOeksiKYoEV3x+lcXTQE8xlZhkV5Pl2+9vM
-	 pZYqPQ6USz0DZN+vdwVTlKn7RfswUlCKhqeSIEh2kgWq8BGPw36NY5UrDmySJUR+Be
-	 T6AuIReVOfJuCbMUeX5mv73HXLmT03g+l8U33WAY=
+	b=XT4wEqAvYJ83Njy8ZFvObjrXbTRKqkZcg9fsmzPXtw9k9ZGe2iayo+Tv9VDDtajmK
+	 u4udPtHZP0dCjwMdsksZLqgE+kOJLhgYNQyWjgJFk1c19VisxZpnMykEVmRYJG/oI4
+	 pCWzcH2EU8DXFXneMjK4bTYMjU9PxugKErgok/YA=
 Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527Aa3O8029218;
-	Fri, 7 Mar 2025 04:36:03 -0600
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE104.ent.ti.com
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527AaLNs029394;
+	Fri, 7 Mar 2025 04:36:21 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE104.ent.ti.com
  (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
- Mar 2025 04:36:02 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ Mar 2025 04:36:21 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 7 Mar 2025 04:36:02 -0600
+ Frontend Transport; Fri, 7 Mar 2025 04:36:21 -0600
 Received: from uda0132425.dhcp.ti.com (dhcp-10-24-69-250.dhcp.ti.com [10.24.69.250])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527AZwbc079336;
-	Fri, 7 Mar 2025 04:35:59 -0600
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527AaH3S021509;
+	Fri, 7 Mar 2025 04:36:18 -0600
 From: Vignesh Raghavendra <vigneshr@ti.com>
-To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz
- Golaszewski <brgl@bgdev.pl>,
-        Jared McArthur <j-mcarthur@ti.com>, Michael
- Walle <mwalle@kernel.org>
-CC: Vignesh Raghavendra <vigneshr@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-gpio@vger.kernel.org>
-Subject: Re: [PATCH 1/2] arm64: dts: ti: k3-am62p: fix pinctrl settings
-Date: Fri, 7 Mar 2025 16:05:55 +0530
-Message-ID: <174133309361.1072814.8037717583251450140.b4-ty@ti.com>
+To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Vaishnav Achath <vaishnav.a@ti.com>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, <linux-kernel@vger.kernel.org>,
+        <jai.luthra@linux.dev>, <y-abhilashchandra@ti.com>
+Subject: Re: [PATCH 0/5] Add J722S CSI support
+Date: Fri, 7 Mar 2025 16:06:15 +0530
+Message-ID: <174133309362.1072814.5440404016847301624.b4-ty@ti.com>
 X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250221091447.595199-1-mwalle@kernel.org>
-References: <20250221091447.595199-1-mwalle@kernel.org>
+In-Reply-To: <20250218185452.600797-1-vaishnav.a@ti.com>
+References: <20250218185452.600797-1-vaishnav.a@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,41 +78,33 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Michael Walle,
+Hi Vaishnav Achath,
 
-On Fri, 21 Feb 2025 10:14:46 +0100, Michael Walle wrote:
-> It appears that pinctrl-single is misused on this SoC to control both
-> the mux and the input and output and bias settings. This results in
-> non-working pinctrl configurations for GPIOs within the device tree.
+On Wed, 19 Feb 2025 00:24:47 +0530, Vaishnav Achath wrote:
+> This series adds support for CSI2RX capture on J722S EVM
+> and enables IMX219 and OV5640 overlays to enables
+> 4 sensors on EVM, this provides a reference for a user to
+> enable a different sensor on any of the ports.
 > 
-> This is what happens:
->  (1) During startup the pinctrl settings are applied according to the
->      device tree. I.e. the pin is configured as output and with
->      pull-ups enabled.
->  (2) During startup a device driver requests a GPIO.
->  (3) pinctrl-single is applying the default GPIO setting according to
->      the pinctrl-single,gpio-range property.
+> Test logs:
+> IMX219: https://gist.github.com/vaishnavachath/60cc2ef257601f27f28a315f8cf669c4
+> OV5640: https://gist.github.com/vaishnavachath/648202286d4d34d4d25f7c8c9db8b8bd
 > 
 > [...]
-
-> Maybe one could also switch the pinctrl-single to a pinconf-single node
-> which is able to control all the bias settings and restrict
-> "pinctrl-single,function-mask" to just the actual function. Not
-> sure
-
-I agree, we should probably migrate to pinconf-single bindings in long
-term. There is just too much legacy code and tools relying on current
-bindings though. Something for look at for next SoC. Thanks for the
-patch!
-
 
 I have applied the following to branch ti-k3-dts-next on [1].
 Thank you!
 
-[1/2] arm64: dts: ti: k3-am62p: fix pinctrl settings
-      commit: 33bab9d84e52188cf73c3573fd7cf3ec0e01d007
-[2/2] arm64: dts: ti: k3-j722s: fix pinctrl settings
-      commit: 06daad327d043c23bc1ab4cdb519f589094b9e98
+[1/5] arm64: dts: ti: k3-j722s-main: Add BCDMA CSI overrides
+      commit: fb1b230bf9c45f5d6579dc329c2aafcd1263b70a
+[2/5] arm64: dts: ti: k3-j722s-main: Add CSI2RX nodes
+      commit: 8fea4519f625e6c1b05078f2ecea252b7b28b06e
+[3/5] arm64: dts: ti: k3-j722s-evm: Add camera peripherals
+      commit: ce553288ad2368f0d27e47b39a23121a825a2b33
+[4/5] arm64: dts: ti: k3-j722s-evm: Add overlay for quad IMX219
+      commit: c24ccb1cd77fb44087b2f7008d99626796b33ca4
+[5/5] arm64: dts: ti: k3-j722s-evm: Add overlay for TEVI OV5640
+      commit: 938806652b0a3c90d67e7137c91708d06940b03d
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent up the chain during
