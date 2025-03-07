@@ -1,190 +1,368 @@
-Return-Path: <linux-kernel+bounces-550135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77AADA55BB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:18:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38BE8A55BB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 01:18:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF9983ABEF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:18:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6362C3ADE35
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 00:18:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FFCC63CF;
-	Fri,  7 Mar 2025 00:18:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F454C96;
-	Fri,  7 Mar 2025 00:18:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963365383;
+	Fri,  7 Mar 2025 00:18:24 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3B9DDA9
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 00:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741306694; cv=none; b=dghZ3Yy9ceMnklgBJ3rV/QcOLMQH/JBkf5LBon5iWxLL3k0sBIBaefqIbgujJTDcasw/I+My9DDOO8JBmZoBuTOx8Mey2AH6tnKrfiBYsFZjoDN/kuSJDiwM/2CycC9J3TsaAXMJTkooX0of7EWBLBbrySiq4Qq0nMQUjUzxxog=
+	t=1741306703; cv=none; b=fpwDMwBp6/pYUqaNsP+/tFJvSgSVmy/9r5f9W7zTLLGvlmNSUWUNwGzwIh8ef7ILeh3djL3Isk4fdGuUHcPpyCerJg6He5vcDx9KGFP7DoC88mI4TMG6GrxXVZasvhtFCYWQtysWqWuG54vMLMkIR7OytrQatZynq1Pe0d6/uX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741306694; c=relaxed/simple;
-	bh=dejDcuU9K1sv2fPwxhDRh16lZKxCSGyYQuKNHFNnAlo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PuOJAKFaqFu5HeNx3L+chAEGEo84ksSA8ibZMs+RB6Ys8BkHS59U8DvdX7X5eWOq5+HR/U37iK2C0mJplLgcCFNwLtcIawG4ETqupSnGPlyO3UgykVP1Zm07ppMa6b/xknkXdlr76yUJs6fG7a9FjBGYl2vDjw52Qxnq3gExIVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB1A1169E;
-	Thu,  6 Mar 2025 16:18:24 -0800 (PST)
-Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 299A83F673;
-	Thu,  6 Mar 2025 16:18:10 -0800 (PST)
-Date: Fri, 7 Mar 2025 00:18:03 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai
- <wens@csie.org>, Samuel Holland <samuel@sholland.org>, Philipp Zabel
- <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 03/15] clk: sunxi-ng: Add support for update bit
-Message-ID: <20250307001803.2e4887d7@minigeek.lan>
-In-Reply-To: <3616088.iIbC2pHGDl@jernej-laptop>
-References: <20250304012805.28594-1-andre.przywara@arm.com>
-	<20250304012805.28594-4-andre.przywara@arm.com>
-	<3616088.iIbC2pHGDl@jernej-laptop>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+	s=arc-20240116; t=1741306703; c=relaxed/simple;
+	bh=cuP/vScxGtaMqppW/h6NaC/dlve9qOgtjc8hq4kp0AU=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sYB4t7EUoZGBbyQYVDUigQchhK7SgxEdiMPTL/NY1bUgIz9LYQeXlK7mw27ejVNhnOh44Xh8r3iV7gtANPyfL28kix8vFOViJ07OIQWu4xiAoliLoqUEVv/r6Eh98IkVWtt7BT1HvEPvEZO40nRtZs4YQGA0Rtv4Muuf/zeGnJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3d438be189bso10336315ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 16:18:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741306701; x=1741911501;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ifMmxd60Hb7OPYrM+DTw5Np2I8L4Y/29uTi+Rh8hpQk=;
+        b=OJpoCBSob6IcWSOEEbIm+3wfaQPLGeik3R5ixCnyfh4XfGa7bzDxhvZS2MCeKw/x3k
+         CyhDUikIQljGYtEckTw3NE/tX+UN13NX3zJGVx7tEKhaNWWUIJgRbjkKzPBqhsE9jqxJ
+         ZaHMADsr0m27cVV4qEo0yjYzTCzEgf886KSIc7oJ0vLqfdd1mUcYIY5GNpEKtXBtq3Q9
+         MiqqY7kU8OOpIO8X9Kb0xFlL3dBw2E8KrwayMB6qEs8jDNku9tfSLTyEr2JsPpnzkFpe
+         O05dwp52aRuQQl8gFCZYF2bfOXcrXUxGrKSryHhmRJV/+jY1Llkfots869RsUcRL4kCE
+         5o1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXPatWFu7UO4pqTNhUd1IU7fSjmuu+Juh2YD1cCeSwqSx3bEJXvucqsWDdcAYryeuajjMLWb9VCgUIsJK4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWQxuzIne1QuVanndxyRnEfoofKIfYg4ymagO9Yq5wbtB37YdL
+	+5D/8c+shuM2N+d+ITaTHJ7Mw9TrSIkXZJS7NisRplmDFx//uogU5qe9yMrXTb4KJn86dx/a2ly
+	Dt5Vmhaf9Kk2ZZLOXwgr0ZU+FC8PrxS6PB0Mm7BHxs+X02bp9K+WbqtQ=
+X-Google-Smtp-Source: AGHT+IEusxP8k4yWuQOLACNFpw8OIIkh2J55KWApA7cDMPm6cCxYaHg8iOf6mBj+QqeF0y2k8bFkCmGm7NXEpQbXN4hRjqlFNVx+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a92:c543:0:b0:3d4:28c0:1692 with SMTP id
+ e9e14a558f8ab-3d4418d5121mr17816135ab.5.1741306701050; Thu, 06 Mar 2025
+ 16:18:21 -0800 (PST)
+Date: Thu, 06 Mar 2025 16:18:21 -0800
+In-Reply-To: <6761bbbd.050a0220.29fcd0.0075.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67ca3b4d.050a0220.15b4b9.006d.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in l2cap_connect_cfm
+From: syzbot <syzbot+e9abaabc441d3dd18735@syzkaller.appspotmail.com>
+To: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 04 Mar 2025 16:28:48 +0100
-Jernej =C5=A0krabec <jernej.skrabec@gmail.com> wrote:
+syzbot has found a reproducer for the following issue on:
 
-Hi,
+HEAD commit:    f66d6acccbc0 Merge tag 'x86_urgent_for_v6.12' of git://git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1666b2e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ca2f08f822652bd0
+dashboard link: https://syzkaller.appspot.com/bug?extid=e9abaabc441d3dd18735
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-> Dne torek, 4. marec 2025 ob 02:27:53 Srednjeevropski standardni =C4=8Das =
-je Andre Przywara napisal(a):
-> > Some clocks in the Allwinner A523 SoC contain an "update bit" (bit 27),
-> > which must be set to apply any register changes, namely the mux
-> > selector, the divider and the gate bit.
-> >=20
-> > Add a new CCU feature bit to mark those clocks, and set bit 27 whenever
-> > we are applying any changes.
-> >=20
-> > Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> > ---
-> >  drivers/clk/sunxi-ng/ccu_common.h | 4 ++++
-> >  drivers/clk/sunxi-ng/ccu_div.c    | 2 ++
-> >  drivers/clk/sunxi-ng/ccu_gate.c   | 4 ++++
-> >  drivers/clk/sunxi-ng/ccu_mux.c    | 2 ++
-> >  4 files changed, 12 insertions(+)
-> >=20
-> > diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/c=
-cu_common.h
-> > index 50fd268329671..d41d33bdff470 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_common.h
-> > +++ b/drivers/clk/sunxi-ng/ccu_common.h
-> > @@ -20,10 +20,14 @@
-> >  #define CCU_FEATURE_KEY_FIELD		BIT(8)
-> >  #define CCU_FEATURE_CLOSEST_RATE	BIT(9)
-> >  #define CCU_FEATURE_DUAL_DIV		BIT(10)
-> > +#define CCU_FEATURE_UPDATE_BIT27	BIT(11) =20
->=20
-> There is no reason to have "BIT27" in the name of the macro. This is simi=
-lar
-> to KEY_FIELD, which is generic name and doesn't specify either key or pos=
-ition
-> of this key field. Maybe just CCU_FEATURE_UPDATE_BIT or something equaly
-> generic.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Sure, done. This was mostly in anticipation of the typical Allwinner
-behaviour of introducing another update bit at a different location in
-the future. But I guess we use a bitmask should that happen.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/5b28ec7d6aaa/disk-f66d6acc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/1999546fff71/vmlinux-f66d6acc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ef848d42ab19/bzImage-f66d6acc.xz
 
-> With that fixed:
-> Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+Bisection is inconclusive: the issue happens on the oldest tested release.
 
-Many thanks!
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=147adb78580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=167adb78580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=127adb78580000
 
-Cheers,
-Andre
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e9abaabc441d3dd18735@syzkaller.appspotmail.com
 
->=20
-> Best regards,
-> Jernej
->=20
-> > =20
-> >  /* MMC timing mode switch bit */
-> >  #define CCU_MMC_NEW_TIMING_MODE		BIT(30)
-> > =20
-> > +/* Some clocks need this bit to actually apply register changes */
-> > +#define CCU_SUNXI_UPDATE_BIT		BIT(27)
-> > +
-> >  struct device_node;
-> > =20
-> >  struct ccu_common {
-> > diff --git a/drivers/clk/sunxi-ng/ccu_div.c b/drivers/clk/sunxi-ng/ccu_=
-div.c
-> > index 7f4691f09e01f..2d8b98fe4b13a 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_div.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_div.c
-> > @@ -106,6 +106,8 @@ static int ccu_div_set_rate(struct clk_hw *hw, unsi=
-gned long rate,
-> > =20
-> >  	reg =3D readl(cd->common.base + cd->common.reg);
-> >  	reg &=3D ~GENMASK(cd->div.width + cd->div.shift - 1, cd->div.shift);
-> > +	if (cd->common.features & CCU_FEATURE_UPDATE_BIT27)
-> > +		reg |=3D CCU_SUNXI_UPDATE_BIT;
-> > =20
-> >  	writel(reg | (val << cd->div.shift),
-> >  	       cd->common.base + cd->common.reg);
-> > diff --git a/drivers/clk/sunxi-ng/ccu_gate.c b/drivers/clk/sunxi-ng/ccu=
-_gate.c
-> > index ac52fd6bff677..0490f95781361 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_gate.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_gate.c
-> > @@ -20,6 +20,8 @@ void ccu_gate_helper_disable(struct ccu_common *commo=
-n, u32 gate)
-> >  	spin_lock_irqsave(common->lock, flags);
-> > =20
-> >  	reg =3D readl(common->base + common->reg);
-> > +	if (common->features & CCU_FEATURE_UPDATE_BIT27)
-> > +		reg |=3D CCU_SUNXI_UPDATE_BIT;
-> >  	writel(reg & ~gate, common->base + common->reg);
-> > =20
-> >  	spin_unlock_irqrestore(common->lock, flags);
-> > @@ -44,6 +46,8 @@ int ccu_gate_helper_enable(struct ccu_common *common,=
- u32 gate)
-> >  	spin_lock_irqsave(common->lock, flags);
-> > =20
-> >  	reg =3D readl(common->base + common->reg);
-> > +	if (common->features & CCU_FEATURE_UPDATE_BIT27)
-> > +		reg |=3D CCU_SUNXI_UPDATE_BIT;
-> >  	writel(reg | gate, common->base + common->reg);
-> > =20
-> >  	spin_unlock_irqrestore(common->lock, flags);
-> > diff --git a/drivers/clk/sunxi-ng/ccu_mux.c b/drivers/clk/sunxi-ng/ccu_=
-mux.c
-> > index d7ffbdeee9e04..82ee21e0d3a68 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_mux.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_mux.c
-> > @@ -197,6 +197,8 @@ int ccu_mux_helper_set_parent(struct ccu_common *co=
-mmon,
-> >  	/* The key field always reads as zero. */
-> >  	if (common->features & CCU_FEATURE_KEY_FIELD)
-> >  		reg |=3D CCU_MUX_KEY_VALUE;
-> > +	if (common->features & CCU_FEATURE_UPDATE_BIT27)
-> > +		reg |=3D CCU_SUNXI_UPDATE_BIT;
-> > =20
-> >  	reg &=3D ~GENMASK(cm->width + cm->shift - 1, cm->shift);
-> >  	writel(reg | (index << cm->shift), common->base + common->reg);
-> >  =20
->=20
->=20
->=20
->=20
->=20
+kobject: kobject_add_internal failed for hci5:201 with -EEXIST, don't try to register things with the same name in the same directory.
+Bluetooth: hci5: failed to register connection device
+==================================================================
+BUG: KASAN: slab-use-after-free in l2cap_conn_ready net/bluetooth/l2cap_core.c:1619 [inline]
+BUG: KASAN: slab-use-after-free in l2cap_connect_cfm+0xdbe/0xf80 net/bluetooth/l2cap_core.c:7278
+Read of size 8 at addr ffff8880780f0480 by task kworker/u9:3/5950
 
+CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Not tainted 6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci5 hci_rx_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0xc3/0x620 mm/kasan/report.c:488
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ l2cap_conn_ready net/bluetooth/l2cap_core.c:1619 [inline]
+ l2cap_connect_cfm+0xdbe/0xf80 net/bluetooth/l2cap_core.c:7278
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Allocated by task 5950:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0xaa/0xb0 mm/kasan/common.c:394
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ l2cap_chan_create+0x44/0x920 net/bluetooth/l2cap_core.c:449
+ l2cap_sock_alloc.constprop.0+0xf3/0x180 net/bluetooth/l2cap_sock.c:1886
+ l2cap_sock_new_connection_cb+0x101/0x240 net/bluetooth/l2cap_sock.c:1468
+ l2cap_connect_cfm+0x4cc/0xf80 net/bluetooth/l2cap_core.c:7261
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Freed by task 6070:
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_save_track+0x14/0x30 mm/kasan/common.c:68
+ kasan_save_free_info+0x3b/0x60 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x51/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2342 [inline]
+ slab_free mm/slub.c:4579 [inline]
+ kfree+0x14f/0x4b0 mm/slub.c:4727
+ l2cap_chan_destroy net/bluetooth/l2cap_core.c:495 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ l2cap_chan_put+0x216/0x2c0 net/bluetooth/l2cap_core.c:519
+ l2cap_sock_cleanup_listen+0x4d/0x2a0 net/bluetooth/l2cap_sock.c:1451
+ l2cap_sock_release+0x5c/0x210 net/bluetooth/l2cap_sock.c:1411
+ __sock_release+0xb3/0x270 net/socket.c:658
+ sock_close+0x1c/0x30 net/socket.c:1426
+ __fput+0x3f9/0xb60 fs/file_table.c:431
+ task_work_run+0x151/0x250 kernel/task_work.c:239
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x27b/0x2a0 kernel/entry/common.c:218
+ do_syscall_64+0xda/0x250 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff8880780f0000
+ which belongs to the cache kmalloc-2k of size 2048
+The buggy address is located 1152 bytes inside of
+ freed 2048-byte region [ffff8880780f0000, ffff8880780f0800)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff8880780f6000 pfn:0x780f0
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801b042000 ffffea0001292c00 0000000000000002
+raw: ffff8880780f6000 0000000080080003 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff88801b042000 ffffea0001292c00 0000000000000002
+head: ffff8880780f6000 0000000080080003 00000001f5000000 0000000000000000
+head: 00fff00000000003 ffffea0001e03c01 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 2965, tgid 2965 (kworker/u8:7), ts 97728781507, free_ts 97577158223
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1556
+ prep_new_page mm/page_alloc.c:1564 [inline]
+ get_page_from_freelist+0xfce/0x2f80 mm/page_alloc.c:3474
+ __alloc_pages_noprof+0x223/0x25a0 mm/page_alloc.c:4751
+ alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
+ alloc_slab_page mm/slub.c:2412 [inline]
+ allocate_slab mm/slub.c:2578 [inline]
+ new_slab+0x2c9/0x410 mm/slub.c:2631
+ ___slab_alloc+0xdac/0x1880 mm/slub.c:3818
+ __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ __do_kmalloc_node mm/slub.c:4263 [inline]
+ __kmalloc_node_track_caller_noprof+0x355/0x430 mm/slub.c:4283
+ kmalloc_reserve+0xef/0x2c0 net/core/skbuff.c:609
+ __alloc_skb+0x164/0x380 net/core/skbuff.c:678
+ alloc_skb include/linux/skbuff.h:1322 [inline]
+ nlmsg_new include/net/netlink.h:1015 [inline]
+ rtmsg_ifinfo_build_skb+0x81/0x280 net/core/rtnetlink.c:4099
+ unregister_netdevice_many_notify+0x983/0x1e50 net/core/dev.c:11411
+ cleanup_net+0x58c/0xb40 net/core/net_namespace.c:621
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+page last free pid 2965 tgid 2965 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_unref_page+0x661/0x1080 mm/page_alloc.c:2657
+ __folio_put+0x32a/0x450 mm/swap.c:112
+ kvfree+0x47/0x50 mm/util.c:701
+ unix_net_exit+0x61/0xb0 net/unix/af_unix.c:3708
+ ops_exit_list+0xb3/0x180 net/core/net_namespace.c:173
+ cleanup_net+0x5b7/0xb40 net/core/net_namespace.c:626
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Memory state around the buggy address:
+ ffff8880780f0380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880780f0400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff8880780f0480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                   ^
+ ffff8880780f0500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880780f0580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+==================================================================
+BUG: KASAN: wild-memory-access in instrument_atomic_read include/linux/instrumented.h:68 [inline]
+BUG: KASAN: wild-memory-access in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+BUG: KASAN: wild-memory-access in l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+BUG: KASAN: wild-memory-access in l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+BUG: KASAN: wild-memory-access in l2cap_connect_cfm+0x7eb/0xf80 net/bluetooth/l2cap_core.c:7278
+Read of size 4 at addr deacfffffffffc8c by task kworker/u9:3/5950
+
+CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Tainted: G    B              6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
+Tainted: [B]=BAD_PAGE
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci5 hci_rx_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ kasan_report+0xd9/0x110 mm/kasan/report.c:601
+ check_region_inline mm/kasan/generic.c:183 [inline]
+ kasan_check_range+0xef/0x1a0 mm/kasan/generic.c:189
+ instrument_atomic_read include/linux/instrumented.h:68 [inline]
+ atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
+ l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+ l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+ l2cap_connect_cfm+0x7eb/0xf80 net/bluetooth/l2cap_core.c:7278
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+==================================================================
+Oops: general protection fault, probably for non-canonical address 0xfbd59bffffffff91: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: maybe wild-memory-access in range [0xdeacfffffffffc88-0xdeacfffffffffc8f]
+CPU: 0 UID: 0 PID: 5950 Comm: kworker/u9:3 Tainted: G    B              6.12.0-rc7-syzkaller-00216-gf66d6acccbc0 #0
+Tainted: [B]=BAD_PAGE
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/30/2024
+Workqueue: hci5 hci_rx_work
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
+RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
+RIP: 0010:l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+RIP: 0010:l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+RIP: 0010:l2cap_connect_cfm+0x7f2/0xf80 net/bluetooth/l2cap_core.c:7278
+Code: 80 fb ff ff 49 39 c5 0f 84 29 01 00 00 e8 26 a0 6e f7 49 8d 6f 0c be 04 00 00 00 48 89 ef e8 b5 80 cf f7 48 89 e8 48 c1 e8 03 <0f> b6 14 18 48 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 c5
+RSP: 0018:ffffc90003e0f878 EFLAGS: 00010213
+RAX: 1bd59fffffffff91 RBX: dffffc0000000000 RCX: ffffffff814e821f
+RDX: ffff888030808000 RSI: ffffffff81ee2f8e RDI: 0000000000000007
+RBP: deacfffffffffc8c R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: ffff88804779003b
+R13: ffff88806c83d2c0 R14: 0000000000000080 R15: deacfffffffffc80
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055558a5ef5c8 CR3: 000000007bf02000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ hci_connect_cfm include/net/bluetooth/hci_core.h:1960 [inline]
+ le_conn_complete_evt+0x1665/0x1d80 net/bluetooth/hci_event.c:5758
+ hci_le_conn_complete_evt+0x23c/0x370 net/bluetooth/hci_event.c:5784
+ hci_le_meta_evt+0x2e5/0x5d0 net/bluetooth/hci_event.c:7132
+ hci_event_func net/bluetooth/hci_event.c:7440 [inline]
+ hci_event_packet+0x669/0x1180 net/bluetooth/hci_event.c:7495
+ hci_rx_work+0x2c6/0x1610 net/bluetooth/hci_core.c:4029
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:arch_atomic_read arch/x86/include/asm/atomic.h:23 [inline]
+RIP: 0010:raw_atomic_read include/linux/atomic/atomic-arch-fallback.h:457 [inline]
+RIP: 0010:atomic_read include/linux/atomic/atomic-instrumented.h:33 [inline]
+RIP: 0010:l2cap_chan_lock include/net/bluetooth/l2cap.h:827 [inline]
+RIP: 0010:l2cap_conn_ready net/bluetooth/l2cap_core.c:1621 [inline]
+RIP: 0010:l2cap_connect_cfm+0x7f2/0xf80 net/bluetooth/l2cap_core.c:7278
+Code: 80 fb ff ff 49 39 c5 0f 84 29 01 00 00 e8 26 a0 6e f7 49 8d 6f 0c be 04 00 00 00 48 89 ef e8 b5 80 cf f7 48 89 e8 48 c1 e8 03 <0f> b6 14 18 48 89 e8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 c5
+RSP: 0018:ffffc90003e0f878 EFLAGS: 00010213
+RAX: 1bd59fffffffff91 RBX: dffffc0000000000 RCX: ffffffff814e821f
+RDX: ffff888030808000 RSI: ffffffff81ee2f8e RDI: 0000000000000007
+RBP: deacfffffffffc8c R08: 0000000000000007 R09: 0000000000000000
+R10: 0000000000000000 R11: 3d3d3d3d3d3d3d3d R12: ffff88804779003b
+R13: ffff88806c83d2c0 R14: 0000000000000080 R15: deacfffffffffc80
+FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055558a5ef5c8 CR3: 000000007bf02000 CR4: 0000000000350ef0
+----------------
+Code disassembly (best guess), 4 bytes skipped:
+   0:	49 39 c5             	cmp    %rax,%r13
+   3:	0f 84 29 01 00 00    	je     0x132
+   9:	e8 26 a0 6e f7       	call   0xf76ea034
+   e:	49 8d 6f 0c          	lea    0xc(%r15),%rbp
+  12:	be 04 00 00 00       	mov    $0x4,%esi
+  17:	48 89 ef             	mov    %rbp,%rdi
+  1a:	e8 b5 80 cf f7       	call   0xf7cf80d4
+  1f:	48 89 e8             	mov    %rbp,%rax
+  22:	48 c1 e8 03          	shr    $0x3,%rax
+* 26:	0f b6 14 18          	movzbl (%rax,%rbx,1),%edx <-- trapping instruction
+  2a:	48 89 e8             	mov    %rbp,%rax
+  2d:	83 e0 07             	and    $0x7,%eax
+  30:	83 c0 03             	add    $0x3,%eax
+  33:	38 d0                	cmp    %dl,%al
+  35:	7c 08                	jl     0x3f
+  37:	84 d2                	test   %dl,%dl
+  39:	0f                   	.byte 0xf
+  3a:	85 c5                	test   %eax,%ebp
+
+
+---
 
