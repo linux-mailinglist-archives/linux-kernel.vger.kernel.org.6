@@ -1,145 +1,122 @@
-Return-Path: <linux-kernel+bounces-550905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7E7A56593
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:39:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 677B0A5659A
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:39:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 667BE189699F
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:39:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A09E91735C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:39:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8C920E713;
-	Fri,  7 Mar 2025 10:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04468212B39;
+	Fri,  7 Mar 2025 10:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Iq+fSDAs"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YmgbTYzp"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220441A239E;
-	Fri,  7 Mar 2025 10:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C59211A20;
+	Fri,  7 Mar 2025 10:39:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741343937; cv=none; b=AIB56nXcLBKSAkOjaTRHGKFvo0pF71R5kub6wkL35p17GbNZIqKoW5p2yzRC9xcSmErUmj3mrxix+SDuEWjaVZOuZnSacg8swmvE0Hio91Leti0XxVDL3WD+JGMJvjadEK4YqVjb4CRzBtPlRp2Jpm3wVIRPT/Y6CgVIj0QDxB8=
+	t=1741343965; cv=none; b=djS4pZZJNqumKFcYOvSoPnvSwmNqEAhyvYyueHKiAM2F5VlkNlVkZ94ph7loGnE46v0FKencUS/iMV1Fc3eP7tNS+2YVK0cMjGgdNiA7gssFnVtukAqWUirXYSUacJqsgxAdEd/afQF7CZD2RRaeAE6EpNOf/GH7fM4SUp5L7yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741343937; c=relaxed/simple;
-	bh=KBjfkwRvGCUyvFil1J8pzURsrNfhG9wF/ffzDqhupJA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=i4BrrGamlHs1a4v1xxdafwgIpsQmEEs0MvCmDpa00JNPLu1h1VogIAcUv0cM29hMXIGLWTt6dXPjmXJCAYmymgzCvQd1xxjWV+HMd4g+dtR1j24TgomI96++/M8akgPuZ6ZR9VXCiLABW4MAtZJDKsp8MUudM+4SFuBvJN4dDAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Iq+fSDAs; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43bc6a6aaf7so13054565e9.2;
-        Fri, 07 Mar 2025 02:38:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741343934; x=1741948734; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KBjfkwRvGCUyvFil1J8pzURsrNfhG9wF/ffzDqhupJA=;
-        b=Iq+fSDAs6F0LtZnFNme30f+57EjZXJRwxOrjGWyWbTpkzw2ysl4G5IR8mWyvSnJZQe
-         TDHfGhj7Bj5Asttf87cWLzE8CXEP4/KzJiu9B2j7pAWpMzyjUS03n+dZTjtEsszIMPTB
-         IecUHqZnrdl9DuARvhErSRtIlFz/KKMaP1LIM1Aiba1JUTfyWvhQEU5EiWq5BYc6YfRR
-         9CHBoCFFSPmS+eADmaUkkSM/8Gjkc7KPvmG7GoJonOm85Del5/fWW1Sf8xnW9KjVSOWs
-         UtIrr7k5nbnJlcleksuMUAhMw6vM8kO+R58K+eia4LM6szJSNZD29kDCc0SGwVl5RZM3
-         QV5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741343934; x=1741948734;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KBjfkwRvGCUyvFil1J8pzURsrNfhG9wF/ffzDqhupJA=;
-        b=YdjyfgZWy2V10uQGwXti58psKF1ArR2IH117sWffFk8aGTtU0geo5/vGXgbhtQ/il9
-         a4uWEB8zgHjS7x0QPkebja+vceKjMyEsgo3AIetXVUTj9K2cpp5RU4YER7z4DLSNf/gr
-         9yLpRZp4Azd4OqcvO4vEnTTDtXsU3q9V+ontU7LO5BkdgDNElKG9mJBS/DTKjJ+kEtGp
-         gd5qq0HLr/lFPl7G/3y4d0AwiTqqndL+/TF1K95Bmbg1Ph37qqqEUsMffUiju5mdEiCP
-         hyBEHe4AW86Zn0VRYMMRk5z1Mb+dG8fHE3vYGH2wpVwUt+GtlwhDi9E3FFcA0IOh0CGU
-         C+WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0zdTw7Pk4PHiRBu1JwIobk/mLD9/A+Gdxpw/EfaALSiCE6wgIZGz+aDllRuOGFbH4v254n8ktmsJP0A==@vger.kernel.org, AJvYcCWoKNkxtbVdX4Ejv5Fqr+k06XxJrT/cUfR6xhzyAzC06ehJiPboh4zztqNZvOf+/N1lRbax0EDZb/09ZL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyra+Fppc3bbUMPtbyEyHINh/rJE+6x5zgwtIPiySSJ79gPeDSy
-	ElsGAQzPVcv2/YhKeJrxeYrY78+TG0LpCT65M5Wr8QaQeLp/Ke8J
-X-Gm-Gg: ASbGncudqToUSbQQkZ5WrC5Oy0InGgqQVVl+4TI0Lzbp2xiJgurH0pw7MVDMzY1VjFw
-	iAarJZJ4Wid/Pb3kd65LxP6wxKfjuimqGM6hlhBuih0ARRzr5QDJjyPumnVh9vJJBtz2fZswC4j
-	L8X7n1rjMI7hukBKjjQ1lVaXnDodpu+lhuiE++l0aGsFlHsT7qcMSsfpmv3j+Nqx7qM3n577Jlq
-	M3hGPeh0ZRg/TJmGiX2GC21Xc6y62SSeoTejf8wUexR54A4PhNQHgp4PBbRrJRPNn3TGuXQxPoh
-	iZpmfQvCHGU1LV33d1zLK9cc7jtjCtQcRZRenUQ1uhjZ4lU=
-X-Google-Smtp-Source: AGHT+IEorkdXayPImRPZQsK1R9xIBDq7GWAblWS2lMHO3O/4fE4WLPdorUwZSgvvZskGaZ02RyApBg==
-X-Received: by 2002:a05:600c:3546:b0:43b:cc73:2528 with SMTP id 5b1f17b1804b1-43c5a62a5f8mr17687435e9.20.1741343933990;
-        Fri, 07 Mar 2025 02:38:53 -0800 (PST)
-Received: from [10.176.235.56] ([137.201.254.41])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd4352e29sm76442125e9.32.2025.03.07.02.38.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 02:38:53 -0800 (PST)
-Message-ID: <7c6042974071699f9e5a85a4592d75a6a8c5ce4f.camel@gmail.com>
-Subject: Re: [PATCH] ufs: core: bsg: Add hibern8 enter/exit to
- ufshcd_send_bsg_uic_cmd
-From: Bean Huo <huobean@gmail.com>
-To: Arthur Simchaev <Arthur.Simchaev@sandisk.com>, 
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
- "quic_mapa@quicinc.com" <quic_mapa@quicinc.com>,  "quic_cang@quicinc.com"
- <quic_cang@quicinc.com>
-Cc: Avri Altman <Avri.Altman@sandisk.com>, Avi Shchislowski
-	 <Avi.Shchislowski@sandisk.com>, "linux-scsi@vger.kernel.org"
-	 <linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	 <linux-kernel@vger.kernel.org>, "bvanassche@acm.org" <bvanassche@acm.org>
-Date: Fri, 07 Mar 2025 11:38:52 +0100
-In-Reply-To: <SA2PR16MB42515681881747A6B5C83352F4D52@SA2PR16MB4251.namprd16.prod.outlook.com>
-References: <20250304114652.210395-1-arthur.simchaev@sandisk.com>
-	 <bd2e01d8b33413655a4215221c910eaf2cdf6461.camel@gmail.com>
-	 <SA2PR16MB42515681881747A6B5C83352F4D52@SA2PR16MB4251.namprd16.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1741343965; c=relaxed/simple;
+	bh=HxWFlzYZ/kTUSwmC8giaqnJl4ApMkmawbxezqzBZsMQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WOJ639Y5P0H4V10Dy94GemTSH9Mr01F6LJXbl3Kwh0L6uqZ2DTrEr0WZ1iHTF7C02jlcbhfszfOWPv/BZXjopdSdoxHxGxXasRfS+l5VhOk1ocwi9L4JE3O329j1N1CiuqC/N5ucpobV35wHXPUXuxsywavwIaktm41Lp5a50wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=YmgbTYzp; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 527AdAd94040303
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 7 Mar 2025 04:39:11 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741343951;
+	bh=YU88KIu28z7FJc3ACej39tJ8cAKVnj4yM8ha3DZROns=;
+	h=From:To:CC:Subject:Date:In-Reply-To:References;
+	b=YmgbTYzpuzp2KYj0yx0UEIjAjZFY/Ns7gVzjbZXvDPQOF90datY/E1DWIswto0oDP
+	 cTn89tlo+BCHcA/MGcdgi9li1WjQ3h7q7ExNliNOjzZaHdE24hvTnXRqDFruBu7K1k
+	 DF46X4VLGzHEKqt1gxVt9U2OhsroZ113B0TdFVXI=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 527AdA44004468
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 7 Mar 2025 04:39:10 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
+ Mar 2025 04:39:10 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 7 Mar 2025 04:39:10 -0600
+Received: from uda0132425.dhcp.ti.com (dhcp-10-24-69-250.dhcp.ti.com [10.24.69.250])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527Ad65t082496;
+	Fri, 7 Mar 2025 04:39:07 -0600
+From: Vignesh Raghavendra <vigneshr@ti.com>
+To: <nm@ti.com>, <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Daniel Schultz
+	<d.schultz@phytec.de>
+CC: Vignesh Raghavendra <vigneshr@ti.com>, <w.egorov@phytec.de>,
+        <upstream@lists.phytec.de>
+Subject: Re: [PATCH v2] arm64: dts: ti: am64-phyboard-electra: Add DT overlay for X27 connector
+Date: Fri, 7 Mar 2025 16:09:03 +0530
+Message-ID: <174133309360.1072814.5781136460553851194.b4-ty@ti.com>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250128100356.462934-1-d.schultz@phytec.de>
+References: <20250128100356.462934-1-d.schultz@phytec.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, 2025-03-07 at 09:18 +0000, Arthur Simchaev wrote:
->=20
->=20
-> > -----Original Message-----
-> > From: Bean Huo <huobean@gmail.com>
-> > Sent: Thursday, March 6, 2025 2:50 PM
-> > To: Arthur Simchaev <Arthur.Simchaev@sandisk.com>;
-> > martin.petersen@oracle.com; quic_mapa@quicinc.com;
-> > quic_cang@quicinc.com
-> > Cc: Avri Altman <Avri.Altman@sandisk.com>; Avi Shchislowski
-> > <Avi.Shchislowski@sandisk.com>; linux-scsi@vger.kernel.org; linux-
-> > kernel@vger.kernel.org; bvanassche@acm.org
-> > Subject: Re: [PATCH] ufs: core: bsg: Add hibern8 enter/exit to
-> > ufshcd_send_bsg_uic_cmd
-> >=20
-> >=20
-> > Arthur,
-> >=20
-> > At present, we lack a user-space tool to initiate eye monitor
-> > measurements.
-> > Additionally, opening a channel for users in user land to send MP
-> > commands
-> > seems unsafe.
-> >=20
-> >=20
-> > Kind regards,
-> > Bean
-> >=20
->=20
-> Hi Bean.
->=20
-> Actually,=C2=A0 the EOM tool was published two months ago
-> See the mail from Can Guo. The patch simply extends the UIC debugging
-> functionality from user space.
-> I think it is quite safe to use hibern8 functionality for debugging
-> purposes.
->=20
-> Regards
-> Arthur
+Hi Daniel Schultz,
 
-Great, we will work on that.
+On Tue, 28 Jan 2025 02:03:56 -0800, Daniel Schultz wrote:
+> Add a device tree overlay for SPI1 , UART3 and GPIO1 on
+> X27 connector.
+> 
+> By default, not all interfaces on the X27 connector are accessible
+> due to being disabled or set to alternative pin mux configurations.
+> This overlay activates and configures these interfaces to support
+> connections with external devices.
+> 
+> [...]
 
-Kind regards,
-Bean
+I have applied the following to branch ti-k3-dts-next on [1].
+Thank you!
+
+[1/1] arm64: dts: ti: am64-phyboard-electra: Add DT overlay for X27 connector
+      commit: 638ab30ce4c63edae4934dcaa7a61f37b96efe6c
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent up the chain during
+the next merge window (or sooner if it is a relevant bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/ti/linux.git
+--
+Vignesh
+
 
