@@ -1,99 +1,241 @@
-Return-Path: <linux-kernel+bounces-551176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10AE2A56901
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:32:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3589EA56906
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 14:34:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4AE11167332
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:32:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ABA9188C71B
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 13:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6913A219E9E;
-	Fri,  7 Mar 2025 13:32:09 +0000 (UTC)
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D096F2153CE;
+	Fri,  7 Mar 2025 13:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OctnpHNx"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 970A8219A8B
-	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 13:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7071AA7BA
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 13:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741354329; cv=none; b=nDpo8T/NH/Ixr12b7VfFAEssjE8nsjyVOezl1uQcOXGPl4WPkqCmoktaHYz0FoFVJm8+TRbMAh4Dd1Phf3D1r0pUg3Z5V+7n4Ya2uXQQYH9quhIg1L8WtDS+9+LVr6Vy39Di9Gb32l7JwcLrrJ7vXsVMT3IeHJBkxFjEPevts7c=
+	t=1741354432; cv=none; b=LqVlR88mvaHRDpx3et51/Qz2ziWe8xZwEvWbKoafwb94ty/eY3I30V+nWt6nzC8FrQbWrCeRxPsk4xephInbMsWeluMLkgA/Ij9wEnlNmyIyksYNzi8rxOr8+kmoHAyMQjLUjUIIrZyi0MqF7iZZze/Yz9cofY7+JAqJS0AQ7WU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741354329; c=relaxed/simple;
-	bh=Rk3HTJSdGsZ/NrV0XqotfCYqlViFG6WGB56pcYsPR1I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rHWcftgsXni+VMmYFj2ZjrEAINplKoTYTccaI8PrRlkcBrLCP/KBvPsPf3apAxz9cb2UHF5KEDKQ1v+hSMdvZ1CdbrfUiMilGgvwGO+ntWn9erZMKckvUGtMxV8wOrP46r+DGnBI5bSmgX8foGmiR7cFWuwKZu5zctr2ROxhMgo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from trampoline.thunk.org (pool-173-48-112-49.bstnma.fios.verizon.net [173.48.112.49])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 527DVQBt029743
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 7 Mar 2025 08:31:27 -0500
-Received: by trampoline.thunk.org (Postfix, from userid 15806)
-	id 8E4FE2E010B; Fri, 07 Mar 2025 08:31:26 -0500 (EST)
-Date: Fri, 7 Mar 2025 08:31:26 -0500
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Hector Martin <marcan@marcan.st>,
-        syzbot <syzbot+4364ec1693041cad20de@syzkaller.appspotmail.com>,
-        broonie@kernel.org, joel.granados@kernel.org, kees@kernel.org,
-        linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] general protection fault in proc_sys_compare
-Message-ID: <20250307133126.GA8837@mit.edu>
-References: <67ca5dd0.050a0220.15b4b9.0076.GAE@google.com>
- <239cbc8a-9886-4ebc-865c-762bb807276c@marcan.st>
- <ph6whomevsnlsndjuewjxaxi6ngezbnlmv2hmutlygrdu37k3w@k57yfx76ptih>
+	s=arc-20240116; t=1741354432; c=relaxed/simple;
+	bh=c0EbQhriH0yeVpmDPzQfirvruWs73sJAmiu3cWiAa8s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T+TdEfbMFVoAgRc84u3IDdvX4lRXdHbMVSC6NdjFQQMIqGCxeD82XypdRGKDjdQhJaitcQxwkihwVrn4XGIiEOK3P2q1YDVPrajKqy5LxSEzMH1ldeBXbrjWIMrT6hl80YIMJ43jG1nqbjKyLIhcvy5cKBRGBA1M9jgHY3Puutk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OctnpHNx; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2241053582dso5724465ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 07 Mar 2025 05:33:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741354430; x=1741959230; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qefuz4/zXGnZQBriDiq772OSKh+NBl3pjLrowf6tFto=;
+        b=OctnpHNx9gK9klkiJ9lLMk6wQEP9uyXV1//csgJbE+3FSKjDbugcUElD5WdaUHaG1x
+         bY8kuFzFDvFBT+OoVuPhBfyHpIByajdw9qh2uzUbJI+hPeNQOxM+t3fasgD4vKj4wZnx
+         Bwmn4z3gX95/VbbdqbPLSi36h8XVB84TcR7KfLHRd9AlAxidSZbst4l/1GhqpJEkbJAM
+         ALFOyCU4ImH+vETAtZ0C+90Uei15gNPjwW3p/8Sq0x0Une8QjUGRzSYBRSMXZXmDaog7
+         O+IOo2vaseth6n5oM3uZRBClibinWQiYzi3o5Gi884Kx7J9SpxNr3fqn4PZxgkjDxDq5
+         NuyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741354430; x=1741959230;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qefuz4/zXGnZQBriDiq772OSKh+NBl3pjLrowf6tFto=;
+        b=kndQmMV8YfU0D2FS+Y8SBB/zSCxGTeVGGKj+Htq3+e5rrGxa8lvoZecPKny+z+boHD
+         zK+XG27T3FyMkGtVfYRYh3OVIi+hwnl1VwuU7p8HkNdJlBn+46CeOLBKVy59bq8Ov3fo
+         I9a9lAxlFxyxh2wwRVHsBhZ8JpyUYYy9Ixtu8tq29m2OzoWQSUajM2IXrRkshHnoa5HX
+         Sq34PYE7+nrqOhRvEAliKX+qR2lLYvTncYuQFSreVPKw/1bopWHbxuxzCk3vH0bAM3x/
+         Hou4XeQS4LEqksvEZYx4bN45PxfZWMjz0+YnBKiXVfCxT7RZmcBpM/R8pn2g/RARzjRf
+         e+zw==
+X-Forwarded-Encrypted: i=1; AJvYcCUse3bqWGZwsd++UfAPVHGMNILEDcEpxaIVLd/miMpJfYdXUSL8IECaCr+C7ooIPNrOC8vuwX0KFt//cJc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxuFq1NkvIAJGL7DcXadpRrsrnf+XEdfCCJySNzK4Mjw8gIVZG
+	rzdhvD4kYkWSjRvOX4MaKpatTbdviZZw31MAu9pyX5vWtm7opVCE2yBUC0/eZPC2yLOV8ArGPLL
+	bEkn+icw0EKGdHWN66XACgMvcwjOE88B8J0I/GQ==
+X-Gm-Gg: ASbGncsYu+o+d12Rodc4zqEu5TqgwhH3exdnrhKrJ1S7UM7hRb5mUI8Zui+vuYoWcMF
+	i24F60+U3ImdhlH67D8raViKzCy3VDzgdFtjBhChjptxL54AB49zXDxVcyQfknwXLD0R5/2JU9O
+	Acxy8IHhzFEYEPP29TD4G/neU3eKc=
+X-Google-Smtp-Source: AGHT+IHRGxC49ANZft/8x4Umwrvd3CXrktB6JJunoqMwcMyPwq3u1UK1JigVlbNzMjMBwBcmwlqKciC3HjjxVzAjDN0=
+X-Received: by 2002:a05:6a20:4322:b0:1f1:a608:230b with SMTP id
+ adf61e73a8af0-1f544c6869emr6393060637.26.1741354429780; Fri, 07 Mar 2025
+ 05:33:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ph6whomevsnlsndjuewjxaxi6ngezbnlmv2hmutlygrdu37k3w@k57yfx76ptih>
+References: <20250227092640.2666894-1-quic_songchai@quicinc.com> <20250227092640.2666894-8-quic_songchai@quicinc.com>
+In-Reply-To: <20250227092640.2666894-8-quic_songchai@quicinc.com>
+From: Mike Leach <mike.leach@linaro.org>
+Date: Fri, 7 Mar 2025 13:33:38 +0000
+X-Gm-Features: AQ5f1JrIaweQlcl4Gi_z5MPaMgCPO4piq25c6LCh0NkwnAfTW-agNeURPRb-cXk
+Message-ID: <CAJ9a7Vh4OTZdbEygtwc7BxRJSLgkALoaNRPEiQLJQgZvFtnTtw@mail.gmail.com>
+Subject: Re: [PATCH v3 7/7] coresight-tgu: add reset node to initialize
+To: songchai <quic_songchai@quicinc.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Andy Gross <agross@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Mar 07, 2025 at 06:51:23AM -0500, Kent Overstreet wrote:
-> 
-> Better bisection algorithm? Standand bisect does really badly when fed
-> noisy data, but it wouldn't be hard to fix that: after N successive
-> passes or fails, which is unlikely because bisect tests are coinflips,
-> backtrack and gather more data in the part of the commit history where
-> you don't have much.
+Hi,
 
-My general approach when handling some test failure is to try running
-the reproducer 5-10 times on the original commit where the failure was
-detected, to see if the reproducer is reliable.  Once it's been
-established whether the failure reproduces 100% of the time, or some
-fraction of the time, say 25% of the time, then we can estalbish how
-times we should try running the reproducer before we can conclude the
-that a particular commit is "good" --- and the first time we detect a
-failure, we can declare the commit is "bad", even if it happens on the
-2nd out of the 25 tries that we might need to run a test if it is
-particularly flaky.
+On Thu, 27 Feb 2025 at 09:27, songchai <quic_songchai@quicinc.com> wrote:
+>
+> From: Songwei Chai <quic_songchai@quicinc.com>
+>
+> Add reset node to initialize the value of
+> priority/condition_decode/condition_select/timer/counter nodes
+>
+> Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
+> Signed-off-by: songchai <quic_songchai@quicinc.com>
+> ---
+>  .../testing/sysfs-bus-coresight-devices-tgu   |  7 ++
+>  drivers/hwtracing/coresight/coresight-tgu.c   | 79 +++++++++++++++++++
+>  2 files changed, 86 insertions(+)
+>
+> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
+> index d88d05fbff43..8fb5afd7c655 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
+> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
+> @@ -42,3 +42,10 @@ KernelVersion   6.15
+>  Contact:        Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Sam Chai (QUIC) <quic_songchai@quicinc.com>
+>  Description:
+>                  (RW) Set/Get the counter value with specific step for TGU.
+> +
+> +What:           /sys/bus/coresight/devices/<tgu-name>/reset_tgu
+> +Date:           February 2025
+> +KernelVersion   6.15
+> +Contact:        Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Sam Chai (QUIC) <quic_songchai@quicinc.com>
+> +Description:
+> +                (Write) Reset the dataset for TGU.
 
-Maybe this is something Syzbot could implement?
+Document the value needed to initiate the reset.
 
-And if someone is familiar with the Go language, patches to implement
-this in gce-xfstests's ltm server would be great!  It's something I've
-wanted to do, but I haven't gotten around to implementing it yet so it
-can be fully automated.  Right now, ltm's git branch watcher reruns
-any failing test 5 times, so I get an idea of whether a failure is
-flaky or not.  I'll then manually run a potentially flaky test 30
-times, and based on how reliable or flaky the test failure happens to
-be, I then tell gce-xfstests to do a bisect running each test N times,
-without having it stop once the test fails.  It wasts a bit of test
-resources, but since it doesn't block my personal time (results land
-in my inbox when the bisect completes), it hasn't risen to the top of
-my todo list.
+> diff --git a/drivers/hwtracing/coresight/coresight-tgu.c b/drivers/hwtracing/coresight/coresight-tgu.c
+> index 693d632fb079..b36ced761c0d 100644
+> --- a/drivers/hwtracing/coresight/coresight-tgu.c
+> +++ b/drivers/hwtracing/coresight/coresight-tgu.c
+> @@ -343,6 +343,84 @@ static ssize_t enable_tgu_store(struct device *dev,
+>  }
+>  static DEVICE_ATTR_RW(enable_tgu);
+>
+> +/* reset_tgu_store - Reset Trace and Gating Unit (TGU) configuration. */
+> +static ssize_t reset_tgu_store(struct device *dev,
+> +                              struct device_attribute *attr, const char *buf,
+> +                              size_t size)
+> +{
+> +       unsigned long value;
+> +       struct tgu_drvdata *drvdata = dev_get_drvdata(dev->parent);
+> +       int i, j, ret;
+> +
+> +       if (kstrtoul(buf, 0, &value))
+> +               return -EINVAL;
+> +
 
-Cheers,
+Check "value" here and bail out with an error code if 0.
 
-					- Ted
+> +       if (!drvdata->enable) {
+> +               ret = pm_runtime_get_sync(drvdata->dev);
+> +               if (ret < 0) {
+> +                       pm_runtime_put(drvdata->dev);
+> +                       return ret;
+> +               }
+> +       }
+> +
+> +       spin_lock(&drvdata->spinlock);
+> +       CS_UNLOCK(drvdata->base);
+> +
+> +       if (value) {
+drop this line
+
+> +               tgu_writel(drvdata, 0, TGU_CONTROL);
+> +
+> +               if (drvdata->value_table->priority)
+> +                       memset(drvdata->value_table->priority, 0,
+> +                              MAX_PRIORITY * drvdata->max_step *
+> +                                      drvdata->max_reg * sizeof(unsigned int));
+> +
+> +               if (drvdata->value_table->condition_decode)
+> +                       memset(drvdata->value_table->condition_decode, 0,
+> +                              drvdata->max_condition_decode * drvdata->max_step *
+> +                                      sizeof(unsigned int));
+> +
+> +               /* Initialize all condition registers to NOT(value=0x1000000) */
+> +               for (i = 0; i < drvdata->max_step; i++) {
+> +                       for (j = 0; j < drvdata->max_condition_decode; j++) {
+> +                               drvdata->value_table
+> +                                       ->condition_decode[calculate_array_location(
+> +                                               drvdata, i, TGU_CONDITION_DECODE, j)] =
+> +                                       0x1000000;
+> +                       }
+> +               }
+> +
+> +               if (drvdata->value_table->condition_select)
+> +                       memset(drvdata->value_table->condition_select, 0,
+> +                              drvdata->max_condition_select * drvdata->max_step *
+> +                                      sizeof(unsigned int));
+> +
+> +               if (drvdata->value_table->timer)
+> +                       memset(drvdata->value_table->timer, 0,
+> +                              (drvdata->max_step) *
+> +                                      (drvdata->max_timer_counter) *
+> +                                      sizeof(unsigned int));
+> +
+> +               if (drvdata->value_table->counter)
+> +                       memset(drvdata->value_table->counter, 0,
+> +                              (drvdata->max_step) *
+> +                                      (drvdata->max_timer_counter) *
+> +                                      sizeof(unsigned int));
+> +
+> +               dev_dbg(dev, "Coresight-TGU reset complete\n");
+> +       } else {
+> +               dev_dbg(dev, "Coresight-TGU invalid input\n");
+
+not needed if early exit on input errror
+
+> +       }
+> +
+> +       CS_LOCK(drvdata->base);
+> +
+> +       drvdata->enable = false;
+> +       spin_unlock(&drvdata->spinlock);
+> +       pm_runtime_put(drvdata->dev);
+> +
+> +       return size;
+> +}
+> +static DEVICE_ATTR_WO(reset_tgu);
+> +
+>  static const struct coresight_ops_helper tgu_helper_ops = {
+>         .enable = tgu_enable,
+>         .disable = tgu_disable,
+> @@ -354,6 +432,7 @@ static const struct coresight_ops tgu_ops = {
+>
+>  static struct attribute *tgu_common_attrs[] = {
+>         &dev_attr_enable_tgu.attr,
+> +       &dev_attr_reset_tgu.attr,
+>         NULL,
+>  };
+>
+>
+
+
+Regards
+
+Mike
+
+-- 
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
 
