@@ -1,190 +1,194 @@
-Return-Path: <linux-kernel+bounces-550614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CED5A56206
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:50:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BAED9A56204
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 08:50:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 802DF3B2C5E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:50:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC5173B2CB1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 07:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651B21B0F11;
-	Fri,  7 Mar 2025 07:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QYvq0+LU"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5C3E1AB530;
+	Fri,  7 Mar 2025 07:50:23 +0000 (UTC)
+Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908F11A5B91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934901A840A
 	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 07:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741333824; cv=none; b=Xt88BQccHToOKo3boPgcb+KdoXhDJweQwDng4zuVpTHw1LkVt1pmoMWvYkZly3MapJewAockxExVUmYj9Xnokf6hFct7tTfY2pC/aPsFl511oDs2FfJF+Dul7PBUBH1xx6UgJBwbE+FqdunIhszLNPGYzmGRBebPKKfUzYh84OE=
+	t=1741333823; cv=none; b=F3OiMQOhY6OL/DBD+EqTVsX3zoxorTp0vDzcWERnLYARj4j2Ueaa3z3gpEFyUz9r2unfUvRbRGRJwT2dVy42BCjj1OzVMtknNTXvG7xOeP2U9X+TeA4JdpjFZRA1tnarwmMpsbDdQcWYJTfxR0OMx4Oc+WftWXWm1OhI+jlIl5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741333824; c=relaxed/simple;
-	bh=bqH27dhm4vqCW2KMETRfbzKIt9nb2UJ9bHwplDfeGC0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LsqENaK+55Ig6d8ihdblXwIkuetQ/1ZjSMdSrGIUlvisDcO2AAoE8NPnrcEZsE5s0hegcVaGaxBOAsE66RFS0jNSkXa96B0BEQwikdauTc9RytHjPdv6K1BW5igCbRiJlfI2JZgvcWETEVRrV9yMaSo+AuRx84mzxkxSXHCFtlY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QYvq0+LU; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e52c1c3599so2406943a12.2
+	s=arc-20240116; t=1741333823; c=relaxed/simple;
+	bh=giaBLs3hyne3tM/XFkPDE9Ytzv14/NHb7BbuxvdFVVg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pEsuTzpQqdQrU45T+5qWab2yFsYVBTp5qo2x56MhehAdtj9gjggQc6Wcv8nRjySgFoG68F7NNPwTgPCzKU4h2cBfZSmXJLZtMm/8thy+h6Y699MMdeevG4VlY06vZyiOzfbG5d9xBDDzObSm0vlSw1dJYkX4PYHbaqpGO5tIIRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d2ef1a37beso10667455ab.0
         for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 23:50:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741333820; x=1741938620; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zfctkjh729cDVPkdN9atc8gq/aSrxKUuXnRIylg+etw=;
-        b=QYvq0+LUYtGaowqmWUKGU/PorqKBuQ8FMqyEF+ZXfW3s9dXwYO+ZbqJE70zIQLS4G8
-         x6a94RRKWTJnTDWZA4rQ7ZaUQaDLJ6PhdYoLJWeQZGxUQvWvXbJIlxJFumJj9gjCTPIb
-         6vX94fDLoC9bm0Bkw32EIUnzNRmmpeDPH7wJ7XNrL7HevfW5zswsha0gi3VoL0yFB4Gs
-         Jq1fhrZe7IWnxU8bAMIZabIlfZT+AHqgcv1T3qM+0M0OU+Lh6ZPNuhitvku90kn9Oj/i
-         fl3xXs+b9CGc+b5unLvoai7EeFcSoTDbT4jn8Ye/vNvj/heSQy+4esbaMTCQrNVBMkRf
-         vWLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1741333820; x=1741938620;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Zfctkjh729cDVPkdN9atc8gq/aSrxKUuXnRIylg+etw=;
-        b=oUf1dz+0mOjruF2nIdkIWUDaLKCFYxDnwMVDh9uEZha6tO5rXjkCtIziHxpG1ZrQob
-         6DAAkxYPVq+6zEckVhTQ/q0QYDJ3ZxE+yzLypMwpU7xjCdPQIiW/4/5SMDxwstDhWpzU
-         T9hW31MPZxEOpAmy06XuCHSROglPylLHPgK71aADevsKrowBulu9kttK0nq0RgSZ8ntQ
-         HhW/OPdy4NgnQP4VXDsDQ25QBu3LGrBOtCxuTbcncoG6x4MnQ6ik1huyDuJBEq8dxElA
-         hgR8vq1hqcpcmfar3br4UdUeqOWpU2NzpKcErvAxZwvSeyAhATndgipQQFIwRS2TphXD
-         zVEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYC5mqZauhsPoPcC3zFaCSxBn8zs9byM9H/slIjotl166SgVg7joXQnwTiBJ5Uef+tEpazXAiaZMTL/sI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSaYVWWgDgmn/6jNXl+bdApnBk7yX4mxk75z95F3VWovJUsNdd
-	At8By4L7UxWl2gm+dJzH77ZI8Lu+oAESnUJAIPPRGqMFeiOQ7T1VWJo30AbfOHc=
-X-Gm-Gg: ASbGncv1UeMO9hqAk6PelmJZZgqOA0aIhlDvVOFhx0L1QMjhlR+zAAfuk1mv3UJkkXc
-	C8VExArVCS6zhhwl+8bLjTtrvLtDe4Q8zQee/CxVrPrIA6TNtuvNcGcJ+6Ue7ACvMibWRIaxbgK
-	7hrKpcklzEEiy4KOa85c2tjssO9sH6wsGshsWJw65gPJA0QJIhTADFAWdkGooke2SCqAnnbaZHt
-	5xV3DLTHTyZtJPVWj2cNR3gwI76pB4oQhlvHxfrtlHMh7MmkELwUY0Hcd6GlVXr8pdZXgcKNB8d
-	aMwvk6n3w/NlrLZkY9PRtV671YSlCLFpyDxxbQquq6+Ga50AmMSqNYUtXqbJP81DHL+txbmDxce
-	DpkmSriUNQmM4wmMEGQif0fTFiq/m
-X-Google-Smtp-Source: AGHT+IHSTYkSFpMW1RFfKaWXb1ATMwztSGSZ5Ez0LczLYAG6rFexYL/a+DB0sXugidVUGNZyN8XuBw==
-X-Received: by 2002:a17:907:9705:b0:abf:7026:13a2 with SMTP id a640c23a62f3a-ac252a9e2fdmr207923666b.17.1741333819756;
-        Thu, 06 Mar 2025 23:50:19 -0800 (PST)
-Received: from puffmais.c.googlers.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac239483a18sm228224166b.43.2025.03.06.23.50.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 23:50:19 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 07 Mar 2025 07:50:18 +0000
-Subject: [PATCH] power: reset: reboot-mode: better compatibility with DT
- (replace ' ,/')
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=23oKdPpYUG2H+ttZRn9j/52CQGFrerZN/cow3WNUW/o=;
+        b=S54pFBDPBZOqVETVxCJboiFdmLDiyVsiQxvhCz176lGtGNUmJEpJxDvh8IaJUYTt1s
+         Dwt4sPGzVlfZU1AKZ5kR3tu6VhkOxyaFVq7D10wEs8h6nypBsqmrsLjE0Dq75SEKBCiB
+         jd8yupgsGe8pR0qanDq7eBFB8vCliB7RITWodGQb0GwM5tDPKow36cfq+maGmexZCXcw
+         G1gxkQUYewQq9DnMuVdqZQb0q6ZptxNCYzWk1PGuiiLBTlhS4EWUUac9OFFDKd9q0+Ya
+         u2usH0SpFrBgOx0XDA4A9M1pLs15pzVSdKMpHG38GNmeIKHXm5JE+PHyMGof2clsiPrj
+         pBtA==
+X-Forwarded-Encrypted: i=1; AJvYcCXZW9XbK0jEpl65wkD3+uwr5vMf2L3JK2P5ah0spZA7yNrVO9I0ACTu2h1OjwcRUCczrYP+fFxRVScaKLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfJ031Zc9LIcj0FeZAoOwbyb1ZUmQoVWVSacAqzzzOBFXVFfTF
+	1TaUsHMRZMAwNFG1qooOxGnAQbt4dfQd3dHIFjW+34MKx4brvxZIkL81WPPGCEpoHkZLJRX5ogi
+	Zm8BCEyxs2lI8MRuJ03J6qgRtXzxqCMyyKTJaNOHJf+EMYg21UDdGdVw=
+X-Google-Smtp-Source: AGHT+IFkoYSPvDc/CwfIpB/a8TC7mdTQhtuJnwamnqmgmXKy0U9SI1LQKEyHr3+E8Esv1FEOlzZl77JPNSQtRe+a+fvG8aRnaQ1O
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250307-reboot-mode-chars-v1-1-d83ff95da524@linaro.org>
-X-B4-Tracking: v=1; b=H4sIADmlymcC/x2MzQ5AMBAGX0X2bJMq4udVxAH9sAcqWxGJeHeN4
- yQz81CACgK1yUOKS4L4PUKWJjStw76AxUUma2xpclOxYvT+5M07cDQ0sG0KoGisq5FR7A7FLPf
- /7Pr3/QAg3/T6YwAAAA==
-X-Change-ID: 20250307-reboot-mode-chars-294ee492d8e1
-To: Sebastian Reichel <sre@kernel.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.14.2
+X-Received: by 2002:a05:6e02:1a69:b0:3d3:e11a:3a8 with SMTP id
+ e9e14a558f8ab-3d4419ff34cmr24731985ab.14.1741333820574; Thu, 06 Mar 2025
+ 23:50:20 -0800 (PST)
+Date: Thu, 06 Mar 2025 23:50:20 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67caa53c.050a0220.15b4b9.0078.GAE@google.com>
+Subject: [syzbot] [bcachefs?] BUG: unable to handle kernel paging request in pipe_write
+From: syzbot <syzbot+46cddce16efb51810fff@syzkaller.appspotmail.com>
+To: brauner@kernel.org, jack@suse.cz, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
+	viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
 
-This driver's purpose is to parse boot modes described in DT, via key
-(node name) / value pairs, and to match them to a reboot mode requested
-by the kernel. Unfortunately, DT node names can not contain certain
-characters, like space ' ' or comma ',' or slash '/', while the
-requested reboot mode may.
+Hello,
 
-This is a problem because it makes it impossible to match reboot modes
-containing any of those characters.
+syzbot found the following issue on:
 
-For example, this makes it impossible to communicate DM verity errors
-to the boot loader - DM verity errors trigger a reboot with mode
-"dm-verity device corrupted" in drivers/md/dm-verity-target.c and
-devices typically have to take action in that case [1]. Changing this
-string itself is not feasible, see e.g. discussion in [2], but would
-also just cover this one case.
+HEAD commit:    848e07631744 Merge tag 'hid-for-linus-2025030501' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=173c4a64580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2040405600e83619
+dashboard link: https://syzkaller.appspot.com/bug?extid=46cddce16efb51810fff
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10c7fda8580000
 
-Another example is Android, which may use comma in the reboot mode
-string, e.g. as "shutdown,thermal" in [3].
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-848e0763.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c46426c0526b/vmlinux-848e0763.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d575feb1a7df/bzImage-848e0763.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/50b3934b613c/mount_0.gz
 
-The kernel also shouldn't prescribe what characters are allowed inside
-the boot mode string for a user to set. It hasn't done this so far, and
-introducing such a restriction would be an interface break and
-arbitrarily enforce a random new policy.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+46cddce16efb51810fff@syzkaller.appspotmail.com
 
-Therefore, update this driver to do another round of string matching,
-after replacing the common characters mentioned above with dash '-', if
-a match hasn't been found without doing said replacement.
-This now allows us to have DT entries of e.g.:
+BUG: unable to handle page fault for address: ffff887fabfbcf80
+#PF: supervisor write access in kernel mode
+#PF: error_code(0x0002) - not-present page
+PGD 0 P4D 0 
+Oops: Oops: 0002 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5336 Comm: syz-executor Not tainted 6.14.0-rc5-syzkaller-00039-g848e07631744 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:__percpu_down_read_trylock kernel/locking/percpu-rwsem.c:50 [inline]
+RIP: 0010:__percpu_down_read+0x40/0x130 kernel/locking/percpu-rwsem.c:169
+Code: 49 bd 00 00 00 00 00 fc ff df 4c 8d 77 68 4c 89 f5 48 c1 ed 03 42 80 7c 2d 00 00 74 08 4c 89 f7 e8 35 7e 1e f6 49 8b 44 24 68 <65> ff 00 f0 83 44 24 fc 00 49 8d 9c 24 c8 00 00 00 48 89 df be 04
+RSP: 0018:ffffc9000d1c7aa0 EFLAGS: 00010246
+RAX: ffffffff8c3bcf80 RBX: 000000008e29c24b RCX: ffff8880001fc880
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffffffff8ecc2fd8
+RBP: 1ffffffff1d98608 R08: ffffffff823d3401 R09: 1ffffffff2079e8e
+R10: dffffc0000000000 R11: fffffbfff2079e8f R12: ffffffff8ecc2fd8
+R13: dffffc0000000000 R14: ffffffff8ecc3040 R15: ffffffff8ecc2fd8
+FS:  0000555594365500(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff887fabfbcf80 CR3: 000000004349a000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ percpu_down_read_trylock include/linux/percpu-rwsem.h:84 [inline]
+ __sb_start_write_trylock include/linux/fs.h:1790 [inline]
+ sb_start_write_trylock include/linux/fs.h:1926 [inline]
+ pipe_write+0x16db/0x1950 fs/pipe.c:605
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0xacf/0xd10 fs/read_write.c:679
+ ksys_write+0x18f/0x2b0 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fc094d8bbe0
+Code: 40 00 48 c7 c2 a8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 80 3d 61 19 1f 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+RSP: 002b:00007ffe88624b48 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+RAX: ffffffffffffffda RBX: 0000555594379d50 RCX: 00007fc094d8bbe0
+RDX: 0000000000000030 RSI: 00007ffe88624b80 RDI: 000000000000000b
+RBP: 0000555594378f20 R08: 0000000005a61143 R09: 7fffffffffffffff
+R10: 00007fc095b50038 R11: 0000000000000202 R12: 0000000000000001
+R13: 0000000000000000 R14: 00007ffe88624b60 R15: 0000000000000000
+ </TASK>
+Modules linked in:
+CR2: ffff887fabfbcf80
+---[ end trace 0000000000000000 ]---
+RIP: 0010:__percpu_down_read_trylock kernel/locking/percpu-rwsem.c:50 [inline]
+RIP: 0010:__percpu_down_read+0x40/0x130 kernel/locking/percpu-rwsem.c:169
+Code: 49 bd 00 00 00 00 00 fc ff df 4c 8d 77 68 4c 89 f5 48 c1 ed 03 42 80 7c 2d 00 00 74 08 4c 89 f7 e8 35 7e 1e f6 49 8b 44 24 68 <65> ff 00 f0 83 44 24 fc 00 49 8d 9c 24 c8 00 00 00 48 89 df be 04
+RSP: 0018:ffffc9000d1c7aa0 EFLAGS: 00010246
+RAX: ffffffff8c3bcf80 RBX: 000000008e29c24b RCX: ffff8880001fc880
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffffffff8ecc2fd8
+RBP: 1ffffffff1d98608 R08: ffffffff823d3401 R09: 1ffffffff2079e8e
+R10: dffffc0000000000 R11: fffffbfff2079e8f R12: ffffffff8ecc2fd8
+R13: dffffc0000000000 R14: ffffffff8ecc3040 R15: ffffffff8ecc2fd8
+FS:  0000555594365500(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffff887fabfbcf80 CR3: 000000004349a000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	49 bd 00 00 00 00 00 	movabs $0xdffffc0000000000,%r13
+   7:	fc ff df
+   a:	4c 8d 77 68          	lea    0x68(%rdi),%r14
+   e:	4c 89 f5             	mov    %r14,%rbp
+  11:	48 c1 ed 03          	shr    $0x3,%rbp
+  15:	42 80 7c 2d 00 00    	cmpb   $0x0,0x0(%rbp,%r13,1)
+  1b:	74 08                	je     0x25
+  1d:	4c 89 f7             	mov    %r14,%rdi
+  20:	e8 35 7e 1e f6       	call   0xf61e7e5a
+  25:	49 8b 44 24 68       	mov    0x68(%r12),%rax
+* 2a:	65 ff 00             	incl   %gs:(%rax) <-- trapping instruction
+  2d:	f0 83 44 24 fc 00    	lock addl $0x0,-0x4(%rsp)
+  33:	49 8d 9c 24 c8 00 00 	lea    0xc8(%r12),%rbx
+  3a:	00
+  3b:	48 89 df             	mov    %rbx,%rdi
+  3e:	be                   	.byte 0xbe
+  3f:	04                   	.byte 0x4
 
-    mode-dm-verity-device-corrupted = <...>
 
-and so on.
-
-Link: https://cs.android.com/android/kernel/superproject/+/android14-gs-pixel-6.1:private/google-modules/power/reset/exynos-gs101-reboot.c;l=144 [1]
-Link: https://lore.kernel.org/all/CAAFS_9FuSb7PZwQ2itUh_H7ZdhvAEiiX7fhxJ4kmmv9JCaHmkA@mail.gmail.com/ [2]
-Link: https://cs.android.com/android/platform/superproject/main/+/main:system/core/init/reboot_utils.cpp;drc=79ad1e2e9bf1628c141c8cd2fbb4f3df61a6ba75;l=122 [3]
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/power/reset/reboot-mode.c | 25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/power/reset/reboot-mode.c b/drivers/power/reset/reboot-mode.c
-index b4076b10b89376a71ff6f6c3ba807b20e673de86..fba53f638da04655e756b5f8b7d2d666d1379535 100644
---- a/drivers/power/reset/reboot-mode.c
-+++ b/drivers/power/reset/reboot-mode.c
-@@ -23,20 +23,29 @@ static unsigned int get_reboot_mode_magic(struct reboot_mode_driver *reboot,
- 					  const char *cmd)
- {
- 	const char *normal = "normal";
--	int magic = 0;
- 	struct mode_info *info;
-+	char cmd_[110];
- 
- 	if (!cmd)
- 		cmd = normal;
- 
--	list_for_each_entry(info, &reboot->head, list) {
--		if (!strcmp(info->mode, cmd)) {
--			magic = info->magic;
--			break;
--		}
--	}
-+	list_for_each_entry(info, &reboot->head, list)
-+		if (!strcmp(info->mode, cmd))
-+			return info->magic;
-+
-+	/* try to match again, replacing characters impossible in DT */
-+	if (strscpy(cmd_, cmd, sizeof(cmd_)) == -E2BIG)
-+		return 0;
- 
--	return magic;
-+	strreplace(cmd_, ' ', '-');
-+	strreplace(cmd_, ',', '-');
-+	strreplace(cmd_, '/', '-');
-+
-+	list_for_each_entry(info, &reboot->head, list)
-+		if (!strcmp(info->mode, cmd_))
-+			return info->magic;
-+
-+	return 0;
- }
- 
- static int reboot_mode_notify(struct notifier_block *this,
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
----
-base-commit: 0226d0ce98a477937ed295fb7df4cc30b46fc304
-change-id: 20250307-reboot-mode-chars-294ee492d8e1
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-Best regards,
--- 
-André Draszik <andre.draszik@linaro.org>
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
