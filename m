@@ -1,232 +1,138 @@
-Return-Path: <linux-kernel+bounces-551416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA10BA56C29
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:33:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7125EA56C2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 16:33:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 502DA189C165
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:33:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0390172CC1
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 15:33:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0192F21D3E5;
-	Fri,  7 Mar 2025 15:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E8EE21D002;
+	Fri,  7 Mar 2025 15:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZUObU9qs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QZ/JP1O2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1035521ABD2;
-	Fri,  7 Mar 2025 15:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E869B218827;
+	Fri,  7 Mar 2025 15:33:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741361593; cv=none; b=aeGh1FtpIG8aVRMyZ82Raef2UF3o/0Uj9LlsPcLzh1YbqWsfkOecKjFs0rwf0tFUsjoVDrDqgDWjbw1pVVJnkXub8ZacwaR1m/Mw+jdcGbljwrto4hwlHJGyIk3N1YKfyAJa/mSfbGzRAvS/qOdiVRyO7bi8nP0bo1Or2hW06rE=
+	t=1741361611; cv=none; b=Doywtphm/V8iZhmeYf2vo6/Wbv58+kf1eBCmGIYHbZK9VDxjbfehWG/C9+HvsPct6GV1PWw4/dusUiE2cAf0EUhikKjg5GFOQp+uQQuZEp7vCFZ0KeM3pM3srUwrN6uUiwRK3tHYHFKKIPwIAwVCwhzvCDtp/C6tidtQRfwKC1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741361593; c=relaxed/simple;
-	bh=T8pm9fzwyKtv3TmcyIBDRu8FWKQO9PkFtQpCXZzkH5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sNmXMj2eqF+8JrjplndbcMn7uKoKCU2lU8pN5Ql96FdM/Kb3M5JJLyzqwojixPT3jqIJq9xfiW6FuA5VK5AeLQvTp3MMgXBJYNpyELLLs8phaZ/U4+FPvAghW/82zm60+ZbaE00H3K/A8Ed1Cjk3OTOMCe/nASsN/29cUdXRk08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZUObU9qs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CD04C4CED1;
-	Fri,  7 Mar 2025 15:33:08 +0000 (UTC)
+	s=arc-20240116; t=1741361611; c=relaxed/simple;
+	bh=fucjhRt4B4i0MTYMnz37VVRApNqvklUwdMNx/EW2P5Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fer5Plhafs0dcuWPdikV4tGg8tnl1lsEJo3f2HotoYfKLCmYAcTKj5w4s7OShec8KDPjA0/EMzAPSES3AYS066oLNCebG9h4rItJbUClJpKEriLyTwETxGpXdu+28PlIjHt2PEUBeG6WPzsH9xYo0pqtsDhemAszmLXUdGcfpx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QZ/JP1O2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBF8EC4CEE3;
+	Fri,  7 Mar 2025 15:33:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741361592;
-	bh=T8pm9fzwyKtv3TmcyIBDRu8FWKQO9PkFtQpCXZzkH5c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZUObU9qsjd1SooeVdUfrrJl9fVYTuXf+V439lXM1M7u0b5lKvuIMBf/hNgn3h1cZ4
-	 wtohVxDmaoJOxnGSx3co3YI7J3bR9OmrleAurHNVvvFApz7SPumbRu06wbccHRPw9C
-	 kWAoR5ZN3YcxKvCx416ezcBICJGp8I4SCzzt0WfedBtFKqX5fkqF4wRGVRNabQm0qg
-	 DT5qoI699jnzTOO0ne+jj0Z/ZGrQY2S1jojvv40kjy13z0jY1zYwvdBIn4CD5mLC60
-	 uesnhPB79pTv8GIMKAiCvAfh5HFBcnskvV9dxt6EUO/v5uje+7FJpHp1AxJWR16Koa
-	 g/znbMB1M8rng==
-Date: Fri, 7 Mar 2025 15:33:05 +0000
-From: Conor Dooley <conor@kernel.org>
-To: John Madieu <john.madieu.xa@bp.renesas.com>
-Cc: "geert+renesas@glider.be" <geert+renesas@glider.be>,
-	"magnus.damm@gmail.com" <magnus.damm@gmail.com>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
-	"rui.zhang@intel.com" <rui.zhang@intel.com>,
-	"lukasz.luba@arm.com" <lukasz.luba@arm.com>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"will@kernel.org" <will@kernel.org>,
-	"john.madieu@gmail.com" <john.madieu@gmail.com>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	Biju Das <biju.das.jz@bp.renesas.com>
-Subject: Re: [PATCH v2 3/7] dt-bindings: thermal: r9a09g047-tsu: Document the
- TSU unit
-Message-ID: <20250307-everyone-ragweed-e05a10a9646b@spud>
-References: <20250227122453.30480-1-john.madieu.xa@bp.renesas.com>
- <20250227122453.30480-4-john.madieu.xa@bp.renesas.com>
- <20250228-shampoo-uprising-44ae0d3bd68b@spud>
- <OSBPR01MB2775DFC184F78E9FB50F28FFFFD52@OSBPR01MB2775.jpnprd01.prod.outlook.com>
+	s=k20201202; t=1741361610;
+	bh=fucjhRt4B4i0MTYMnz37VVRApNqvklUwdMNx/EW2P5Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QZ/JP1O2zukR7U7fBlk9fa48mjUe5AXkUXRMmycfdndQ1qw2DCMMPm9dvJrrXRXkd
+	 JWIP9KeMxkEXY9AEGh93YG1IVUO/72+K6yrhwp4Reh6tto37Q7kW+6zg1AAVZ4iVNQ
+	 5FWVR/g0cRoNm2il2BCh9XYz7ndB2+Cb/cRA75+/blUj0BysXNcdiltZx0Rfrgmszt
+	 yv6u+NDa/CoUOwtmGc6OXrlru9mgsNIMg4vsBc1l86ZoEGNn2n0by71x4nQ2IVWgbi
+	 YPZl87JZJLqTdu65mHhmwfGputu1IA3P6R3j2CzyyNLti0Dc8fMJTjDD/CCcwXe0y3
+	 n2+a9whRnFTug==
+Message-ID: <40bb42ca-52f5-4579-a9c7-58e6ff5dbbb5@kernel.org>
+Date: Fri, 7 Mar 2025 16:33:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="aWY9G/uo86esg184"
-Content-Disposition: inline
-In-Reply-To: <OSBPR01MB2775DFC184F78E9FB50F28FFFFD52@OSBPR01MB2775.jpnprd01.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/14] ASoC: mediatek: mt8196: support CM in platform
+ driver
+To: "Darren.Ye" <darren.ye@mediatek.com>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org
+References: <20250307124841.23777-1-darren.ye@mediatek.com>
+ <20250307124841.23777-11-darren.ye@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250307124841.23777-11-darren.ye@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 07/03/2025 13:47, Darren.Ye wrote:
+> +int mt8196_enable_cm_bypass(struct mtk_base_afe *afe, int id, bool en)
+> +{
+> +	int reg = AFE_CM0_CON0 + 0x10 * id;
+> +
+> +	mtk_regmap_update_bits(afe->regmap, reg, AFE_CM_BYPASS_MODE_MASK,
+> +			       en, AFE_CM_BYPASS_MODE_SFT);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(mt8196_enable_cm_bypass);
+> +
+> +MODULE_DESCRIPTION("Mediatek afe cm");
+> +MODULE_AUTHOR("darren ye <darren.ye@mediatek.com>");
+> +MODULE_LICENSE("GPL");
 
---aWY9G/uo86esg184
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+If this is module, where is Makefile and Kconfig?
 
-On Fri, Mar 07, 2025 at 03:14:05PM +0000, John Madieu wrote:
-> Hi Conor,
->=20
-> Thanks for your review!
->=20
-> > -----Original Message-----
-> > From: Conor Dooley <conor@kernel.org>
-> > Sent: Friday, February 28, 2025 8:03 PM
-> > To: John Madieu <john.madieu.xa@bp.renesas.com>
-> > Subject: Re: [PATCH v2 3/7] dt-bindings: thermal: r9a09g047-tsu: Docume=
-nt
-> > the TSU unit
-> >=20
-> > On Thu, Feb 27, 2025 at 01:24:39PM +0100, John Madieu wrote:
-> > > The Renesas RZ/G3E SoC includes a Thermal Sensor Unit (TSU) block
-> > > designed to measure the junction temperature. The device provides
-> > > real-time temperature measurements for thermal management, utilizing a
-> > > single dedicated channel (channel 1) for temperature sensing.
-> > >
-> > > Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
-> > > ---
-> > > v1 -> v2:
-> > >  * Fix reg property specifier to get rid of yamlint warnings
-> > >  * Fix IRQ name to reflect TSU expectations
-> > >
-> > >  .../thermal/renesas,r9a09g047-tsu.yaml        | 123 ++++++++++++++++=
-++
-> > >  1 file changed, 123 insertions(+)
-> > >  create mode 100644
-> > > Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
-> > >
-> > > diff --git
-> > > a/Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
-> > > b/Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.yaml
-> > > new file mode 100644
-> > > index 000000000000..e786561ddbe3
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/thermal/renesas,r9a09g047-tsu.
-> > > +++ yaml
-> > > @@ -0,0 +1,123 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
-> > > +---
-> > > +$id:
-> > > +http://devicetree.org/schemas/thermal/renesas,r9a09g047-tsu.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Renesas RZ/G3E Temperature Sensor Unit (TSU)
-> > > +
-> > > +maintainers:
-> > > +  - John Madieu <john.madieu.xa@bp.renesas.com>
-> > > +
-> > > +description:
-> > > +  The Temperature Sensor Unit (TSU) is an integrated thermal sensor
-> > > +that
-> > > +  monitors the chip temperature on the Renesas RZ/G3E SoC. The TSU
-> > > +provides
-> > > +  real-time temperature measurements for thermal management.
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    const: renesas,r9a09g047-tsu
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  clocks:
-> > > +    maxItems: 1
-> > > +
-> > > +  resets:
-> > > +    maxItems: 1
-> > > +
-> > > +  power-domains:
-> > > +    maxItems: 1
-> > > +
-> > > +  interrupts:
-> > > +    description: |
-> > > +      Interrupt specifiers for the TSU:
-> > > +      - S12TSUADI1: Conversion complete interrupt signal (pulse)
-> > > +      - S12TSUADCMPI1: Comparison result interrupt signal (level)
-> > > +
-> > > +  interrupt-names:
-> > > +    items:
-> > > +      - const: adi
-> > > +      - const: adcmpi
-> > > +
-> > > +  "#thermal-sensor-cells":
-> > > +    const: 0
-> > > +
-> > > +  renesas,tsu-calibration-sys:
-> > > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > > +    description: |
-> > > +      Phandle to the system controller (sys) that contains the TSU
-> > > +      calibration values used for temperature calculations.
-> > > +
-> > > +  renesas,tsu-operating-mode:
-> > > +    $ref: /schemas/types.yaml#/definitions/uint32
-> > > +    enum: [0, 1]
-> > > +    description: |
-> > > +      TSU operating mode:
-> > > +      0: Mode 0 - Conversion started by software
-> > > +      1: Mode 1 - Conversion started by ELC trigger
-> >=20
-> > Can you make this "software" and "elc" or something please, unless peop=
-le
-> > will genuinely find "0" and 1" to be more informative.
-> > And why doesn't the property have a default?
->=20
-> Sorry for miss-specifying.
-> ELC is an external event trigger. May be should I specify it like that ?
+All previous comments about missing kerneldoc also apply.
 
-If "elc trigger" is meaningful to people using hte device (IOW, it
-matches datasheet wording) then that's fine I think.
-
-> To make sure I got your point, do you mean specifying a default value in
-> bindings ?
-
-The property doesn't actually need to be required, it could easily have
-a default (say software) and only be set in the case of using the elc
-trigger - which brings you to Rob's comment that it can just be a
-boolean, setting the property if elc and leaving it out of software.
-
-Rob's other comment was
-
-| Who/what decides the mode? If a user is going to want to change this,=20
-| then it should be a runtime control, not a DT property.
-
-which I think needs an answer ;)
-
---aWY9G/uo86esg184
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8sRsQAKCRB4tDGHoIJi
-0ioIAP0R4s3zFK5NRjcsBtyJZDB/M7Q2SCqtsT6CE2fAYWOOsgD/UCmd1Aqqudy+
-R+Wg5p4BqNSch5uuEQ1JlX9CAR0TwgM=
-=rZ5t
------END PGP SIGNATURE-----
-
---aWY9G/uo86esg184--
+Best regards,
+Krzysztof
 
