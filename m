@@ -1,115 +1,97 @@
-Return-Path: <linux-kernel+bounces-551845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-551846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9E03A571F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:35:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D69CA571F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 20:35:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2BDD3B2545
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:35:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4FA418980C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 19:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E380E183CB0;
-	Fri,  7 Mar 2025 19:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="McuRxN67"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1156A1A3035;
-	Fri,  7 Mar 2025 19:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCE524FC1F;
+	Fri,  7 Mar 2025 19:35:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58198183CB0
+	for <linux-kernel@vger.kernel.org>; Fri,  7 Mar 2025 19:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741376127; cv=none; b=obq296Ah9D6RfLyAFbVlfvpsebjM47OoA82IYHVAXuHvSVWRw6C0fK/PG6u1tRXE3nholygBgh5uG8jxmZkaXlB7dIHMxkeqvtxw37gAsnrUACd32RFGe/4SMZ1rrWB8gD4cLzo4LMOF42VdpxcKyq2O0l7RFB2gIEG8fWYiFe0=
+	t=1741376142; cv=none; b=lh6GLVsiRdf1aqSPAbQBj2McmNga9CvAdMRISoSptRaeCBWwTjl6Ard9h8FIWuO9fJZAxvVrGBAIsG0JZTAFw0hrWCFssejX1K8SvjFqO5XOd4HZBMQfw3WkRSQdvYxiUnN1ry5qEp5tIpoO9xQ1Jnm8vxGPGRk44ktXquD2iik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741376127; c=relaxed/simple;
-	bh=b3YKDd4f5VM0/bYXYdj1H2B9mEQNOdGupx/drXrREsA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nMPex/MeDgidOeGT4IUbTIRYO1Lm5bkR0770oiwV9v+VM9Ke0Lv02HZgPStknXC7vxxETDYv+z/d/Csuw39Ii69gAkupSmz/1Ff/FsIgbUF6i0kN/wG1sdIdz5Ns2s9l3rCeHGDv+oOPw/BJxxmnckDItOGF+96arcdc6rv2+cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=McuRxN67; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-223fb0f619dso47624385ad.1;
-        Fri, 07 Mar 2025 11:35:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741376125; x=1741980925; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=w8BWp7SYMVhayY4CKxIe7LlJTrQSlVuOhnW/1p2aS4w=;
-        b=McuRxN67rqeNwb8r41mYaMJYW31m1uJUEMQlwzxPp+8FMdLkpLK+i0D2DR4ufQLY/1
-         mXdhXZsPKXt0ta9HiYo18nUWzT2cAbquzN+0gksm9GGGYwHgbQNwh+rxs7LEWCEBVFFY
-         A2hVW4r6pql8gwrc4YWl39kZK2KH7vnE2CMKvnHDoi02gtlcv/XdCGmWFisVlz2Eaftc
-         QBdlksR0DPnMqYf/h0//JKip6CgGfeqSnsKcSC6XWHcR+9WcbJSjfigvgNDWDjatqj39
-         ql4GZSmVolDZiFJEyLzUg8tCLHVMsVbtsyacxGJQofd0sTBZprocgaSKUz/QvNPhY4P6
-         kMQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741376125; x=1741980925;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w8BWp7SYMVhayY4CKxIe7LlJTrQSlVuOhnW/1p2aS4w=;
-        b=Wu/ogzMxoTOhmuQ/SWwDEngF9HsVxFlGG/NgEtXaCPMOjfpBfSKDf4eAQ5zBeHuIi3
-         GCx8iT+iK9Q1Mh+7ljrQpVcd7AJBG3z5FDBOUrPAY1S7Opi22bDOi9jPfFsupGJzoF+y
-         QKg1nv+BAW/fnffFCW3wtDWayfDX+0lJX6it+di7Luk9NhRxYhV9wYlqeiZqMNV5x5df
-         WBbtnXxsEyqa0c7Hs5FlQ5V/Uaz2eoxtnvRSf4Y6WPbfU0WdO3p85i1TD6ekwWDe/WHG
-         6Jmhue3KuMkUcLsretacOftq0a6023qJ9g4iPCPbcq/yV07pTuJgecDNYYzhBncISNOX
-         OSuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVZl6GOeE03Ooz+QrNTOsR6eQN8W5bQXAUzKIVLoeEbBM1u13j8+4Znqb3ivFPrgdHnw8XKlFcx@vger.kernel.org, AJvYcCXojccpn4Ov7vqpuS2cxsjzTMDnYNUZEJzpq5Hp0/rqvqWM8TaF5tlPTZnH9FCO730KzGPqQoIqt4a+usU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEaJMs5+a4+IjJM7tv482ztnoIJFOmm0XOb6lZasrqdnDoCBVg
-	uMu9aEHFsJSuGjrpVwkWXKUxDFpgAVOn2TQpkom1xuVcWPvEHeY=
-X-Gm-Gg: ASbGncvMBHGIkkz3wAfSHWRRtmRrxvEYV22Phwky2kWxO0vwXUH6ubk11PrTwcsJLWE
-	JvCsQATS36ARf2gl8FMfozL26syRIf8yfcluitGG1ms2BDFHiI7Y3tmdRWMGbavCOW099KKmUXy
-	Inof44NB6c9ZHcurA0kfPzStRVda+U/B5dSi4WVK/E4ymwMfT7Q6htaXo9PVbsNssQ3rUj+CWC6
-	J4T7+ixTwYqCnWOpT80EOiXmitwcWQMkrXd5+Naz8zVY+JLnW24UbTlHkN5MLc/WUfw/Vc4GszG
-	BIenU86UUTn0EolsQrYT3dUlfmC+tcuG37LW1PyeP8eB
-X-Google-Smtp-Source: AGHT+IEE0ql92Xapw9wLKAOKUtGO9j+8KA94RO/jKP8EfxcqJZ3AEbydlBJnrddqp7jCteCnMnGH7w==
-X-Received: by 2002:a17:902:d4c5:b0:224:76f:9e4a with SMTP id d9443c01a7336-2242889249amr79831735ad.14.1741376125143;
-        Fri, 07 Mar 2025 11:35:25 -0800 (PST)
-Received: from localhost ([2601:646:9e00:f56e:2844:3d8f:bf3e:12cc])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7369820697esm3634589b3a.8.2025.03.07.11.35.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Mar 2025 11:35:24 -0800 (PST)
-Date: Fri, 7 Mar 2025 11:35:23 -0800
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Stanislav Fomichev <sdf@fomichev.me>, netdev@vger.kernel.org,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	linux-kernel@vger.kernel.org, horms@kernel.org,
-	donald.hunter@gmail.com, michael.chan@broadcom.com,
-	pavan.chebbi@broadcom.com, andrew+netdev@lunn.ch,
-	jdamato@fastly.com, xuanzhuo@linux.alibaba.com,
-	almasrymina@google.com, asml.silence@gmail.com, dw@davidwei.uk
-Subject: Re: [PATCH net-next v1 3/4] net: add granular lock for the netdev
- netlink socket
-Message-ID: <Z8tKe5O7ICE3xK80@mini-arch>
-References: <20250307155725.219009-1-sdf@fomichev.me>
- <20250307155725.219009-4-sdf@fomichev.me>
- <20250307095049.39cba053@kernel.org>
+	s=arc-20240116; t=1741376142; c=relaxed/simple;
+	bh=g7/oFp2KwrBtLUDUYgjRZXPWEC4FqpgEtuOvuaF45Ho=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hn+fAvELdYld5fVAwJuU5s1uOw2aWpfLHVcSALDp2nlVy4sItsvK3sAL/i4SFHeMGXnazpRSUrtfO1u9THj5TfWo3ZGQVqVfDayMBIhnqbUs7XZMhQe8cImXMpqfdpnhAJG2rJUZaHFKY+mJi0bgQdjkkErc4uGfJzQR7VTbi7w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 901E81477;
+	Fri,  7 Mar 2025 11:35:51 -0800 (PST)
+Received: from [10.1.197.49] (eglon.cambridge.arm.com [10.1.197.49])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 085E43F66E;
+	Fri,  7 Mar 2025 11:35:35 -0800 (PST)
+Message-ID: <ebfd206a-1a48-4c3f-958a-7cf981dd3671@arm.com>
+Date: Fri, 7 Mar 2025 19:35:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250307095049.39cba053@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 12/49] x86/resctrl: Move rdt_find_domain() to be
+ visible to arch and fs code
+To: Reinette Chatre <reinette.chatre@intel.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, H Peter Anvin <hpa@zytor.com>,
+ Babu Moger <Babu.Moger@amd.com>, shameerali.kolothum.thodi@huawei.com,
+ D Scott Phillips OS <scott@os.amperecomputing.com>,
+ carl@os.amperecomputing.com, lcherian@marvell.com,
+ bobo.shaobowang@huawei.com, tan.shaopeng@fujitsu.com,
+ baolin.wang@linux.alibaba.com, Jamie Iles <quic_jiles@quicinc.com>,
+ Xin Hao <xhao@linux.alibaba.com>, peternewman@google.com,
+ dfustini@baylibre.com, amitsinght@marvell.com,
+ David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+ Dave Martin <dave.martin@arm.com>, Koba Ko <kobak@nvidia.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, fenghuay@nvidia.com
+References: <20250228195913.24895-1-james.morse@arm.com>
+ <20250228195913.24895-13-james.morse@arm.com>
+ <2c7ead86-138b-4d26-8524-8109176d791f@intel.com>
+Content-Language: en-GB
+From: James Morse <james.morse@arm.com>
+In-Reply-To: <2c7ead86-138b-4d26-8524-8109176d791f@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 03/07, Jakub Kicinski wrote:
-> On Fri,  7 Mar 2025 07:57:24 -0800 Stanislav Fomichev wrote:
-> > As we move away from rtnl_lock for queue ops, introduce
-> > per-netdev_nl_sock lock.
+Hi Reinette,
+
+On 07/03/2025 04:34, Reinette Chatre wrote:
+> On 2/28/25 11:58 AM, James Morse wrote:
+>> rdt_find_domain() finds a domain given a resource and a cache-id.
+>> This is used by both the architecture code and the filesystem code.
+>>
+>> After the filesystem code moves to live in /fs/, this helper is either
+>> duplicated by all architectures, or needs exposing by the filesystem code.
+>>
+>> Add the definition to the global header file. As its now globally visible,
 > 
-> What is it protecting?
+> "definition" -> "declaration"?
 
-The 'bindings' field of the netlink socket:
+Ugh, I always get those the wrong way round.
 
-struct netdev_nl_sock {
-       struct mutex lock;
-       struct list_head bindings; <<<
-};
 
-I'm assuming it's totally valid to have several bindings per socket?
-(attached to different rx queues)
+>> and has only a handful of callers, swap the 'rdt' for 'resctrl'. Move
+>> the function to live with its caller in ctrlmondata.c as the filesystem
+>> code will not have anything corresponding to core.c.
+
+
+> | Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
+
+
+Thanks!
+
+James
 
