@@ -1,197 +1,141 @@
-Return-Path: <linux-kernel+bounces-550896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-550897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E8FCA5657E
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:34:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BB19A56580
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 11:34:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBF713B5BB9
-	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:33:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 940FE3AC006
+	for <lists+linux-kernel@lfdr.de>; Fri,  7 Mar 2025 10:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEBF212B38;
-	Fri,  7 Mar 2025 10:32:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E02D121323D;
+	Fri,  7 Mar 2025 10:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="o/LtjNU6"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AhkRhXrI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB1F2116EC;
-	Fri,  7 Mar 2025 10:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E710212D9E;
+	Fri,  7 Mar 2025 10:32:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741343541; cv=none; b=jbMX5Zc8T4HkOeb4VihHyH8kjbEgYgs3KgEyi5iPLyBHVViJR7ts0jD/pUltWt3TwetvZZfRR84VbwQGj2bos0zi4t9TLSa12GsbT7ES9uyOKBavIykNvXc7Ga/RZNtjoKQL8PmjifQYo3Ikr2581wWoXah7OPNxT41dwELJKcY=
+	t=1741343556; cv=none; b=J5RZVtaeeH6lZTM0Thv0WU3ZuCaIt8zzHQ+2HGl9fDMnml6jh970Ypv/lPAwTKXXIa+hmsQI9y8lPqwUsW6xmh5N1igfJoMKMFE8YK0ohxU/FRsIPkBTtXkYAoKQhlHnW0bEIWNQndyIS4uxoE/wi+BBnKJgk/76XvqGJe5cfs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741343541; c=relaxed/simple;
-	bh=otfaJ0xMMeh/atsNLkGV1pQKe210EqmR07xww2LVZqg=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u+34muXwEFwkXMH6WjK7cN14tWeQ5aYHijTlPcenRk31I7ZcAIhLoyi5lleAb4erJ5Tw6AFBu4oGWdMXgdM6DLcF9/yo5LMsFR/8Zhjy2WX2hGvu3bl9/d1RxBdxa/5YxRkOhdERlaEXuRvuSPN+k00dJF/AWwbzbX9NfuAnRyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=o/LtjNU6; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 527AVrsd343912
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Fri, 7 Mar 2025 04:31:53 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741343513;
-	bh=gWdPIaObctAFLenCR68iVhRvFpVcjAdMR3Ra7YLkhsk=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=o/LtjNU6UtuYlYW3rP7wA4CE3z0/Bvfo/R1N3XIPoZ01XFeWHJdNsaEkuAiAFGwd9
-	 txuGJZj47kBuHmV5YRj6iXgZkeuAJt4wPouN51d5Lr5BuypRIHWT1+oNe2XI7h3+Fl
-	 s7ldFUKj8qirdYgM8kWfQc0mC5hO8U3EJgeHgy6U=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527AVrBY026836;
-	Fri, 7 Mar 2025 04:31:53 -0600
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 7
- Mar 2025 04:31:52 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 7 Mar 2025 04:31:52 -0600
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.113])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 527AVSQ6016876;
-	Fri, 7 Mar 2025 04:31:48 -0600
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <lpieralisi@kernel.org>, <kw@linux.com>,
-        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
-        <bhelgaas@google.com>, <vigneshr@ti.com>, <kishon@kernel.org>,
-        <cassel@kernel.org>, <wojciech.jasko-EXT@continental-corporation.com>,
-        <thomas.richard@bootlin.com>, <bwawrzyn@cisco.com>
-CC: <linux-pci@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, <s-vadapalli@ti.com>
-Subject: [PATCH 4/4] PCI: j721e: Add support to build as a loadable module
-Date: Fri, 7 Mar 2025 16:01:28 +0530
-Message-ID: <20250307103128.3287497-5-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250307103128.3287497-1-s-vadapalli@ti.com>
-References: <20250307103128.3287497-1-s-vadapalli@ti.com>
+	s=arc-20240116; t=1741343556; c=relaxed/simple;
+	bh=eaFXM5ndfzcSejieQgyRUMqCp/DYjdcvdOcHWt4mbqA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RN0+toRod4soHC5nY1R9JEVDxF2tpm34Rb2Eo6UJ99DdaSPA+Gm5R+xG3b+R72p4uHRMKtkIJtnYlvdNp6g2QbrifX3A+WxSeyHXcuIukIZ6H09JN8dKjUdVT5vbgpxO9xGQJLQid25JHlkbFCIyEXPW62lCOEvOZmCxrXNyEYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AhkRhXrI; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741343554; x=1772879554;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=eaFXM5ndfzcSejieQgyRUMqCp/DYjdcvdOcHWt4mbqA=;
+  b=AhkRhXrINTsEbCMqNiN4yFC31JdFwVb2eHsOt1k4Ty4eHZGBpiePPqhR
+   3DtNyoLIIjWPR/4ZZojwBs//cyCLCLZNVjp/4azVifGKFYjsWi0J9K9aN
+   H9COqt54Yub9EzoQGLQuOpbS42o21YGb9nVIzC0RlbPCUqKPHMq8mkPLw
+   fWzLI2wlc8MbbSuhi7e8BW6rXVpvwhHTsAutaUghIZxF0gSrGJ6oyB6P+
+   iC17JYY/qTsDOInn4o/yq8KzHfVtzjFJ316GeWC6pXKyD3gfDeBQxI+nT
+   23EznovhfQMiEGDwLt067r1zZnM9ES1n/E529ucH4Rxnn+CKWZEDvSEdT
+   w==;
+X-CSE-ConnectionGUID: WszuDZ7SQmSCaPVEwIXZtw==
+X-CSE-MsgGUID: qRXUyq91QU2C6RRECqDJeg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11365"; a="53023630"
+X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
+   d="scan'208";a="53023630"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Mar 2025 02:32:34 -0800
+X-CSE-ConnectionGUID: fIAv12/HSamVvCAGlF+p9A==
+X-CSE-MsgGUID: n3eYZvM/Qzy8b6cjiZJCfw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,228,1736841600"; 
+   d="scan'208";a="119117900"
+Received: from lkp-server02.sh.intel.com (HELO a4747d147074) ([10.239.97.151])
+  by fmviesa006.fm.intel.com with ESMTP; 07 Mar 2025 02:32:32 -0800
+Received: from kbuild by a4747d147074 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tqV0A-0000Jf-1P;
+	Fri, 07 Mar 2025 10:32:23 +0000
+Date: Fri, 7 Mar 2025 18:32:04 +0800
+From: kernel test robot <lkp@intel.com>
+To: Max Kellermann <max.kellermann@ionos.com>, serge@hallyn.com,
+	paul@paul-moore.com, jmorris@namei.org,
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Max Kellermann <max.kellermann@ionos.com>
+Subject: Re: [PATCH] security/commoncap: don't assume "setid" if all ids are
+ identical
+Message-ID: <202503071808.FE4vwUc4-lkp@intel.com>
+References: <20250306082615.174777-1-max.kellermann@ionos.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250306082615.174777-1-max.kellermann@ionos.com>
 
-The 'pci-j721e.c' driver is the application/glue/wrapper driver for the
-Cadence PCIe Controllers on TI SoCs. Implement support for building it as a
-loadable module.
+Hi Max,
 
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
- drivers/pci/controller/cadence/Kconfig     |  6 ++--
- drivers/pci/controller/cadence/pci-j721e.c | 37 ++++++++++++++++++++--
- 2 files changed, 38 insertions(+), 5 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/drivers/pci/controller/cadence/Kconfig b/drivers/pci/controller/cadence/Kconfig
-index 82b58096eea0..72d7d264d6c3 100644
---- a/drivers/pci/controller/cadence/Kconfig
-+++ b/drivers/pci/controller/cadence/Kconfig
-@@ -43,10 +43,10 @@ config PCIE_CADENCE_PLAT_EP
- 	  different vendors SoCs.
- 
- config PCI_J721E
--	bool
-+	tristate
- 
- config PCI_J721E_HOST
--	bool "TI J721E PCIe controller (host mode)"
-+	tristate "TI J721E PCIe controller (host mode)"
- 	depends on ARCH_K3 || COMPILE_TEST
- 	depends on OF
- 	select PCIE_CADENCE_HOST
-@@ -57,7 +57,7 @@ config PCI_J721E_HOST
- 	  core.
- 
- config PCI_J721E_EP
--	bool "TI J721E PCIe controller (endpoint mode)"
-+	tristate "TI J721E PCIe controller (endpoint mode)"
- 	depends on ARCH_K3 || COMPILE_TEST
- 	depends on OF
- 	depends on PCI_ENDPOINT
-diff --git a/drivers/pci/controller/cadence/pci-j721e.c b/drivers/pci/controller/cadence/pci-j721e.c
-index 0341d51d6aed..0900e7dd6ac7 100644
---- a/drivers/pci/controller/cadence/pci-j721e.c
-+++ b/drivers/pci/controller/cadence/pci-j721e.c
-@@ -15,6 +15,7 @@
- #include <linux/irqchip/chained_irq.h>
- #include <linux/irqdomain.h>
- #include <linux/mfd/syscon.h>
-+#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/pci.h>
- #include <linux/platform_device.h>
-@@ -27,6 +28,7 @@
- #define cdns_pcie_to_rc(p) container_of(p, struct cdns_pcie_rc, pcie)
- 
- #define ENABLE_REG_SYS_2	0x108
-+#define ENABLE_CLR_REG_SYS_2	0x308
- #define STATUS_REG_SYS_2	0x508
- #define STATUS_CLR_REG_SYS_2	0x708
- #define LINK_DOWN		BIT(1)
-@@ -116,6 +118,15 @@ static irqreturn_t j721e_pcie_link_irq_handler(int irq, void *priv)
- 	return IRQ_HANDLED;
- }
- 
-+static void j721e_pcie_disable_link_irq(struct j721e_pcie *pcie)
-+{
-+	u32 reg;
-+
-+	reg = j721e_pcie_intd_readl(pcie, ENABLE_CLR_REG_SYS_2);
-+	reg |= pcie->linkdown_irq_regfield;
-+	j721e_pcie_intd_writel(pcie, ENABLE_CLR_REG_SYS_2, reg);
-+}
-+
- static void j721e_pcie_config_link_irq(struct j721e_pcie *pcie)
- {
- 	u32 reg;
-@@ -632,9 +643,27 @@ static void j721e_pcie_remove(struct platform_device *pdev)
- 	struct j721e_pcie *pcie = platform_get_drvdata(pdev);
- 	struct cdns_pcie *cdns_pcie = pcie->cdns_pcie;
- 	struct device *dev = &pdev->dev;
-+	struct cdns_pcie_ep *ep;
-+	struct cdns_pcie_rc *rc;
-+
-+	if (pcie->mode == PCI_MODE_RC) {
-+		rc = container_of(cdns_pcie, struct cdns_pcie_rc, pcie);
-+		cdns_pcie_host_disable(rc);
-+	} else {
-+		ep = container_of(cdns_pcie, struct cdns_pcie_ep, pcie);
-+		cdns_pcie_ep_disable(ep);
-+	}
-+
-+	if (pcie->reset_gpio) {
-+		msleep(PCIE_T_PVPERL_MS);
-+		gpiod_set_value_cansleep(pcie->reset_gpio, 1);
-+	}
-+
-+	if (pcie->refclk)
-+		clk_disable_unprepare(pcie->refclk);
- 
--	clk_disable_unprepare(pcie->refclk);
- 	cdns_pcie_disable_phy(cdns_pcie);
-+	j721e_pcie_disable_link_irq(pcie);
- 	pm_runtime_put(dev);
- 	pm_runtime_disable(dev);
- }
-@@ -729,4 +758,8 @@ static struct platform_driver j721e_pcie_driver = {
- 		.pm	= pm_sleep_ptr(&j721e_pcie_pm_ops),
- 	},
- };
--builtin_platform_driver(j721e_pcie_driver);
-+module_platform_driver(j721e_pcie_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_DESCRIPTION("PCIe controller driver for TI's J721E and related SoCs");
-+MODULE_AUTHOR("Kishon Vijay Abraham I <kishon@ti.com>");
+[auto build test WARNING on pcmoore-selinux/next]
+[also build test WARNING on linus/master v6.14-rc5 next-20250306]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Max-Kellermann/security-commoncap-don-t-assume-setid-if-all-ids-are-identical/20250306-162826
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git next
+patch link:    https://lore.kernel.org/r/20250306082615.174777-1-max.kellermann%40ionos.com
+patch subject: [PATCH] security/commoncap: don't assume "setid" if all ids are identical
+config: arc-allnoconfig (https://download.01.org/0day-ci/archive/20250307/202503071808.FE4vwUc4-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250307/202503071808.FE4vwUc4-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503071808.FE4vwUc4-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> security/commoncap.c:865: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+    * Are all user/group ids in both cred instances identical?
+
+
+vim +865 security/commoncap.c
+
+   863	
+   864	/**
+ > 865	 * Are all user/group ids in both cred instances identical?
+   866	 *
+   867	 * It can be used after __is_setuid() / __is_setgid() to check whether
+   868	 * this is really a set*id operation or whether both processes just
+   869	 * have differing real/effective ids.  It is safe to keep differing
+   870	 * real/effective ids in "unsafe" program execution.
+   871	 */
+   872	static bool has_identical_uids_gids(const struct cred *a, const struct cred *b)
+   873	{
+   874		return uid_eq(a->uid, b->uid) &&
+   875			gid_eq(a->gid, b->gid) &&
+   876			uid_eq(a->suid, b->suid) &&
+   877			gid_eq(a->sgid, b->sgid) &&
+   878			uid_eq(a->euid, b->euid) &&
+   879			gid_eq(a->egid, b->egid) &&
+   880			uid_eq(a->fsuid, b->fsuid) &&
+   881			gid_eq(a->fsgid, b->fsgid);
+   882	}
+   883	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
